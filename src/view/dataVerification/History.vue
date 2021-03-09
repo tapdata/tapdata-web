@@ -56,7 +56,7 @@
 									"
 								>
 									<span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
-										<i class="el-icon-error"></i>
+										<i class="data-verify-history__icon el-icon-error"></i>
 										<span>
 											{{ $t('dataVerification.rowConsistent') }}
 											{{ Math.abs(scope.row.target_total - scope.row.source_total) }}
@@ -72,7 +72,7 @@
 									"
 								>
 									<span class="error" v-if="scope.row.difference_number">
-										<i class="el-icon-error"></i>
+										<i class="data-verify-history__icon el-icon-error"></i>
 										<span>
 											{{ $t('dataVerification.contConsistent') }}
 											{{ scope.row.difference_number }}
@@ -80,7 +80,7 @@
 									</span>
 								</div>
 								<span class="success" v-if="scope.row.result === 'passed'">
-									<i class="el-icon-success"></i>
+									<i class="data-verify-history__icon el-icon-success"></i>
 									<span>{{ $t('dataVerification.consistent') }}</span>
 								</span>
 							</div>
@@ -195,6 +195,9 @@ export default {
 	display: flex;
 	height: 100%;
 	overflow: hidden;
+	.data-verify-history__icon {
+		color: #fff;
+	}
 	.panel-slider {
 		width: 200px;
 		height: 100%;
