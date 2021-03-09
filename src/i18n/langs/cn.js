@@ -145,6 +145,7 @@ const cn = {
 			dataGovernance: '数据治理',
 			metadataDefinition: '元数据管理',
 			metadata: '数据目录',
+			metadataSearch: '元数据检索',
 			dataQuality: '数据质量',
 			timeToLive: '生命周期管理',
 			dataMap: '数据地图',

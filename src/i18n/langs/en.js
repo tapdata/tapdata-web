@@ -146,6 +146,7 @@ const en = {
 			dataGovernance: 'Data Governance',
 			metadataDefinition: 'Metadata management',
 			metadata: 'Data Catalog',
+			metadataSearch: 'Data Search',
 			dataQuality: 'Data Quality',
 			timeToLive: 'Time To Live',
 			dataMap: 'Data Lineage',

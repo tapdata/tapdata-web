@@ -42,13 +42,15 @@
 				<div ref="searchResult" class="search-result" v-else @scroll="handleLoad">
 					<ul class="table">
 						<li class="table-li" v-for="item in searchData" :key="item.id">
-							<div class="table-box-wrap" v-if="item.table">
+							<div class="table-box-wrap" v-if="item.table" @click="goMetaInfo">
 								<div class="image-box">
 									<el-image src="static/image/metaSearchTable.png"></el-image>
 								</div>
 								<div class="info-box">
 									<span class="title" v-html="item.table.name"></span>
-									<span class="title" v-html="item.table.original_name">}</span>
+									<span class="title" v-if="item.table.original_name">( 原表名:</span>
+									<span class="title" v-html="item.table.original_name"></span>
+									<span class="title" v-if="item.table.original_name"> )</span>
 									<div class="desc" v-html="item.table.comment"></div>
 								</div>
 							</div>
@@ -59,7 +61,9 @@
 									</div>
 									<div class="info-box">
 										<span class="title" v-html="filed.field_name"></span>
-										<span class="title" v-html="filed.original_name">}</span>
+										<span class="title" v-if="filed.original_name">( 原表名:</span>
+										<span class="title" v-html="filed.original_name"></span>
+										<span class="title" v-if="filed.original_name"> )</span>
 										<div class="desc" v-html="filed.comment"></div>
 									</div>
 								</li>
@@ -108,6 +112,9 @@ export default {
 				this.showNoSearch = true;
 				return;
 			}
+			if (this.keyword.length > 100) {
+				this.$message.error('检索关键字不能超过100个字符');
+			}
 			if (id === '') {
 				this.firstSearch = 0;
 				this.searchData = []; //没有id 视为重新搜索
@@ -119,7 +126,7 @@ export default {
 				.then(result => {
 					let resultData = result.data.data || [];
 					//关键字标记
-					this.firstSearch = this.firstSearch + 1;
+					resultData = this.getMockData(params);
 					this.handleKeywords(resultData || []);
 					this.searchData = this.searchData.concat(resultData);
 				});
@@ -167,6 +174,36 @@ export default {
 			) {
 				this.handleSearch(lastId);
 			}
+		},
+		goMetaInfo() {
+			this.$router.push('/metadataDetails?id=601dfb9d02c7e300575dbc99');
+		},
+		getMockData(findObj) {
+			let mockData = [];
+			let id = findObj.lastId || '';
+			if (findObj.pageSize) {
+				for (let x = 0; x < findObj.pageSize; x++) {
+					let obj = {};
+					obj.id = id + x;
+					obj.table = {
+						name: 'tableName' + obj.id,
+						original_name: 'origin table name' + obj.id,
+						comment: 'comment ' + obj.id
+					};
+					if (findObj.type === 'column') {
+						obj.columns = [
+							{
+								field_name: 'column name' + obj.id,
+								original_field_name: 'ori column name' + obj.id,
+								comment: 'field comment ' + obj.id,
+								type: 'string'
+							}
+						];
+					}
+					mockData.push(obj);
+				}
+			}
+			return mockData;
 		}
 	}
 };
@@ -258,7 +295,7 @@ export default {
 		.search-result {
 			margin: 10px;
 			padding: 10px;
-			height: 500px;
+			height: 800px;
 			overflow-y: auto;
 			border-radius: 3px;
 			background-color: rgba(255, 255, 255, 100);
@@ -282,6 +319,7 @@ export default {
 			.table-li {
 				border-bottom: 1px solid rgba(238, 238, 238, 100);
 				padding-bottom: 10px;
+				cursor: pointer;
 			}
 		}
 		.column {

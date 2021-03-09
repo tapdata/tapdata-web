@@ -146,6 +146,7 @@ const tc = {
 			dataGovernance: '數據治理',
 			metadataDefinition: '元數據管理',
 			metadata: '數據目錄',
+			metadataSearch: '元数据检索',
 			dataQuality: '數據質量',
 			timeToLive: '生命週期管理',
 			dataMap: '數據地圖',
