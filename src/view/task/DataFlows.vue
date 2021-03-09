@@ -80,7 +80,10 @@
 						</el-select>
 					</li>
 					<li>
-						<el-button size="mini" type="text" @click="reset()">{{ $t('button.reset') }}</el-button>
+						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
+					</li>
+					<li>
+						<el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
 					</li>
 				</ul>
 			</template>
@@ -152,7 +155,15 @@
 			>
 				<template slot-scope="scope">
 					<span class="dataflow-name">
-						<span>{{ scope.row.name }}</span>
+						<span
+							class="name"
+							@click="
+								scope.row.status === 'draft'
+									? handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)
+									: handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate)
+							"
+							>{{ scope.row.name }}</span
+						>
 						<el-tag
 							v-if="scope.row.listtags && scope.row.listtags.length"
 							class="tag"
@@ -168,7 +179,7 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataFlow.syncType')" width="150">
+			<el-table-column :label="$t('dataFlow.syncType')" min-width="150">
 				<template slot-scope="scope">
 					<span>
 						{{
@@ -574,14 +585,17 @@ export default {
 				ws.send(msg);
 			});
 		},
-		reset() {
-			this.searchParams = {
-				keyword: '',
-				status: '',
-				progress: '',
-				executionStatus: '',
-				timeData: ''
-			};
+		reset(name) {
+			if (name === 'reset') {
+				this.searchParams = {
+					keyword: '',
+					status: '',
+					progress: '',
+					executionStatus: '',
+					timeData: ''
+				};
+			}
+
 			this.table.fetch(1);
 		},
 		getData({ page, tags }) {
@@ -613,7 +627,8 @@ export default {
 			if (keyword && keyword.trim()) {
 				where.or = [
 					{ name: { like: toRegExp(keyword), options: 'i' } },
-					{ original_name: { like: toRegExp(keyword), options: 'i' } }
+					{ 'stages.tableName': { like: toRegExp(keyword), options: 'i' } },
+					{ 'stages.name': { like: toRegExp(keyword), options: 'i' } }
 				];
 			}
 			if (tags && tags.length) {
@@ -1139,11 +1154,20 @@ export default {
 				}
 			}
 		}
-		.dataflow-name .tag {
-			margin-left: 5px;
-			color: #999999;
-			background: #f5f5f5;
-			border: 1px solid #dedee4;
+		.dataflow-name {
+			.tag {
+				margin-left: 5px;
+				color: #999999;
+				background: #f5f5f5;
+				border: 1px solid #dedee4;
+			}
+			.name {
+				color: #48b6e2;
+				cursor: pointer;
+			}
+			.name:hover {
+				text-decoration: underline;
+			}
 		}
 		.table-operations {
 			display: flex;

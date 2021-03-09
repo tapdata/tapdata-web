@@ -291,10 +291,11 @@ const childRoutes = [
 	{
 		path: '/users',
 		name: 'users',
-		component: view('ExternalLink'),
+		// component: view('ExternalLink'),
+		component: view('Users/List'),
 		meta: {
 			code: 'user_management_menu',
-			url: '/old/index.html#/users',
+			// url: '/old/index.html#/users',
 			title: i18n.t('tap.userManagement'),
 			isCollapse: false
 		}
@@ -620,6 +621,7 @@ router.beforeEach(async (to, from, next) => {
 	let cookie = window.VueCookie;
 	let token = cookie.get('token');
 	let showGuide = window.getSettingByKey('SHOW_SIMPLE_SCENE') && cookie.get('show_guide');
+	// let showGuide = true;
 	let userId = cookie.get('user_id');
 
 	if (token) {

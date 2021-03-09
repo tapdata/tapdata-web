@@ -25,7 +25,7 @@ export default class Tab extends Component {
 		`);
 
 		if (this.opts.hiddenTabBar) {
-			this.hideTapBar();
+			// this.hideTapBar();
 		}
 	}
 

@@ -280,7 +280,7 @@ export default class Editor extends BaseObject {
 		// this.getBottomTabPanel().removeAll();
 	}
 	initMonitor(dataFlow) {
-		this.getRightTabPanel().removeAll();
+		// this.getRightTabPanel().removeAll();
 		this.seeMonitor = true;
 		let self = this;
 		if (dataFlow) this.dataFlow = dataFlow;
@@ -289,6 +289,7 @@ export default class Editor extends BaseObject {
 			let monitor = rightTabPanel.getChildByName('monitor');
 			if (!monitor) {
 				monitor = new VueComponent({
+					title: i18n.t('editor.ui.sidebar.statistics'),
 					name: 'monitor',
 					editor: this,
 					propsData: {

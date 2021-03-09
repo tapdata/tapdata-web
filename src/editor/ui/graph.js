@@ -497,6 +497,7 @@ export default class Graph extends Component {
 				columns: 3,
 				rowHeight: 53
 			},
+
 			/* search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],
 				'org.Member': ['attrs/.rank/text', 'attrs/root/dataTooltip', 'attrs/.name/text']
@@ -707,14 +708,14 @@ export default class Graph extends Component {
 				}
 				this.selectCell(cell);
 			} else {
-				$('.monitorTab').html('<div class="e-tab-title active">config</div>');
+				this.editor.seeMonitor = false;
 				this.selectPrimaryLink(cellView);
 			}
 		}
 		this.createInspector(cell);
-		if (cell.isElement()) {
-			this.emit(EditorEventType.SELECTED_STAGE, cell.toJSON());
-		}
+		// if (cell.isElement()) {
+		this.emit(EditorEventType.SELECTED_STAGE, cell.toJSON());
+		// }
 	}
 
 	selectPrimaryElement(elementView) {

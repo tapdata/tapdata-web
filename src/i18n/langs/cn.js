@@ -355,12 +355,14 @@ const cn = {
 		level: '级别'
 	},
 	button: {
+		refresh: '刷新',
 		reset: '重置',
 		delete: '删除',
 		rename: '改名',
 		details: '详情',
 		more: '更多',
-		edit: '编辑'
+		edit: '编辑',
+		query: '查询'
 	},
 	dataFlow: {
 		leave: '离开',
@@ -585,6 +587,7 @@ const cn = {
 		ddlTip: '注意：自动DDL处理不支持JS处理器、字段处理器',
 		transformerConcurrency: '目标写入线程数',
 		processorConcurrency: '处理器线程数',
+		cdcEngineFilter: '启用引擎过滤',
 		cdcFetchSize: '增量批次读取条数',
 		cdcFetchSizeTip: '每次读取的数据条数。',
 		cdcFetchSizeTip1: '条数越小，增量实时性高，但处理速度相对较慢。',
@@ -1245,7 +1248,8 @@ const cn = {
 					},
 					joinPath: {
 						label: '关联后写入路径',
-						placeholder: '请输入关联后写入路径'
+						placeholder: '请输入关联后写入路径',
+						copyLabel: '复制写入路径'
 					},
 					joinKeys: {
 						label: '关联条件',
@@ -1303,6 +1307,7 @@ const cn = {
 			sidebar: {
 				setting: '任务设置',
 				node_setting: '节点属性',
+				statistics: '统计',
 				logs: '运行日志',
 				milestone: '任务里程碑',
 				capture: '抓取数据',
@@ -1752,6 +1757,7 @@ const cn = {
 	},
 	classification: {
 		title: '数据分类',
+		userTitle: '用户组',
 		nameExist: '分类名称已存在',
 		addNode: '新增同级分类',
 		addChildernNode: '新增子分类',
@@ -2471,7 +2477,75 @@ const cn = {
 		btn_to_dashboard: '暂不编辑任务，先逛逛',
 
 		not_source: '请选择一个源连接',
-		not_target: '请选择一个目标连接'
+		not_target: '请选择一个目标连接',
+
+		agentServiceTitle: 'Agent 服务状态异常',
+		abnormalText: '异常原因',
+		abnormal: 'Agnet 进程所在环境断开连接',
+		abnormal1: 'Agnet 服务进程被干掉',
+		solutionText: '解决方案',
+		windowsSolution: 'WINDOWS：启动服务器并执行命令 ',
+		windowsSolution1: 'WINDOWS：在安装Agent环境下执行命令 ',
+		linuxSolution: 'LINUX：启动服务器并执行命令 ',
+		linuxSolution1: 'LINUX：在安装Agent环境下执行命令 ',
+		restartProcess: ' 以重启进程',
+		clickText: '进程已重启？请点击'
+	},
+	user: {
+		des: '用户管理页面提供对用户的创建、编辑、删除，以及状态设置功能',
+		all: '全部',
+		inactivated: '未激活',
+		unverified: '未验证',
+		userNameEmail: '请输入用户名 / 邮箱',
+		changeTime: ' 修改时间',
+		creatUser: '创建用户',
+		editUser: '编辑用户',
+		userName: '用户名',
+		email: '邮箱',
+		password: '密码',
+		role: '关联角色',
+		source: '来源',
+		status: '状态',
+		opera: '操作',
+		activation: '激活',
+		freeze: '冻结',
+		delete: '删除',
+		check: '校验',
+		edit: '编辑',
+		bulkActivation: '批量激活',
+		bulkFreeze: '批量冻结',
+		bulkCheck: '批量校验',
+		creat: '创建',
+		registration: '注册',
+		notVerified: '未验证',
+		notActivated: '未激活',
+		activated: '已激活',
+		rejected: '已拒绝',
+		passwordNull: '请输入密码, 长度为 5 ~ 100 个字符',
+		pass_hint: '密码长度不能小于5位数',
+		activationCode: '激活码',
+		delUserTitle: '是否删除该用户',
+		delUser: '删除用户',
+		deluserLast: ' 后，此用户将无法恢复',
+		checkUserTitle: '是否通过校验该用户',
+		checkUser: '通过校验用户',
+		checkUserLast: ' 的邮箱后，此用户可以被激活',
+		activationUserTitle: '是否激活该用户？',
+		activetionUser: '激活用户',
+		activetionUserLast: ' 后，此用户将可以使用 TAPDATA 系统',
+		freezeUserTitle: '是否冻结该用户？',
+		freezeUser: '冻结用户',
+		freezeUserLast: ' 后，此用户将不可以使用 TAPDATA 系统',
+		startTime: '开始时间',
+		endTime: '结束时间',
+		emailNull: '邮箱不能为空',
+		email_must_valid: '请输入有效邮箱地址',
+		activetionSuccess: '激活成功',
+		activetionError: '激活失败',
+		freezeSuccess: '冻结成功',
+		freezeError: '冻结失败',
+		checkSuccess: '通过校验',
+		checkError: '校验失败'
 	}
 };
 

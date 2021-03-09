@@ -21,7 +21,10 @@
 						</el-input>
 					</li>
 					<li class="item">
-						<el-button type="text" class="restBtn" size="mini" @click="rest()">
+						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
+					</li>
+					<li class="item">
+						<el-button type="text" class="restBtn" size="mini" @click="rest('reset')">
 							{{ $t('dataFlow.reset') }}
 						</el-button>
 					</li>
@@ -44,10 +47,11 @@
 					:data="tableData"
 					height="100%"
 					style="border: 1px solid #dedee4;"
-					class="dv-table"
+					class="role-table"
 					row-key="id"
+					border
 				>
-					<el-table-column :label="$t('role.roleName')" :show-overflow-tooltip="true" width="240">
+					<el-table-column :label="$t('role.roleName')" :show-overflow-tooltip="true">
 						<template slot-scope="scope">
 							<div>{{ scope.row.name }}</div>
 						</template>
@@ -62,7 +66,7 @@
 							<span>{{ scope.row.userCount }}</span>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('role.founder')" width="180">
+					<el-table-column :label="$t('role.founder')">
 						<template slot-scope="scope">
 							<div>
 								{{ scope.row.userEmail }}
@@ -506,11 +510,14 @@ export default {
 		},
 
 		// 重置
-		rest() {
-			this.searchNav = {
-				selectedSeachType: '0',
-				keyword: ''
-			};
+		rest(name) {
+			if (name === 'reset') {
+				this.searchNav = {
+					selectedSeachType: '0',
+					keyword: ''
+				};
+			}
+
 			this.handleDataApi();
 		},
 
@@ -595,7 +602,7 @@ export default {
 			display: flex;
 			flex-direction: column;
 			font-size: 12px;
-			.dv-table {
+			.role-table {
 				flex: 1;
 				overflow: hidden;
 			}
@@ -643,7 +650,7 @@ export default {
 		}
 	}
 	.table-box {
-		.dv-table {
+		.role-table {
 			color: #333;
 			th {
 				padding: 2px 0;
@@ -655,6 +662,10 @@ export default {
 					padding-left: 10px;
 				}
 			}
+		}
+		.el-table--border td,
+		.el-table--border th {
+			border-right: 0;
 		}
 
 		.el-button {

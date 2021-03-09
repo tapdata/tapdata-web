@@ -46,9 +46,9 @@
 							:content="$t('dataForm.copyDatabase')"
 							placement="top-start"
 						>
-							<el-button size="mini" style="padding: 7px;margin-left: 7px">
+							<div class="el-button" style="padding: 7px;margin-left: 7px">
 								<ClipButton :value="copyConnectionId"></ClipButton>
-							</el-button>
+							</div>
 						</el-tooltip>
 						<el-tooltip
 							class="item"
@@ -101,9 +101,12 @@
 							effect="light"
 							:content="$t('dataForm.copyCollection')"
 						>
-							<el-button size="mini" style="padding: 7px;margin-left: 7px">
+							<!-- <el-button size="mini" style="padding: 7px;margin-left: 7px">
 								<ClipButton :value="model.tableName"></ClipButton>
-							</el-button>
+							</el-button> -->
+							<div class="el-button" style="padding: 7px;margin-left: 7px">
+								<ClipButton :value="model.tableName"></ClipButton>
+							</div>
 						</el-tooltip>
 						<el-tooltip
 							class="item"

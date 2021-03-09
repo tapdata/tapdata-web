@@ -12,9 +12,7 @@ export default {
 	},
 	data() {
 		return {
-			defaultConfig: {
-				size: 'mini'
-			},
+			defaultConfig: {},
 			filterList: this.config.options || []
 		};
 	},

@@ -358,12 +358,14 @@ const en = {
 		level: 'Level'
 	},
 	button: {
+		refresh: 'Refresh',
 		reset: 'Reset',
 		delete: 'Delete',
 		rename: 'Rename',
 		details: 'Details',
 		more: 'More',
-		edit: 'Edit'
+		edit: 'Edit',
+		query: 'query'
 	},
 	dataFlow: {
 		leave: 'Leave',
@@ -591,6 +593,7 @@ const en = {
 		ddlTip: 'Warn: Automatic DDL does not support JS processor and field processor',
 		transformerConcurrency: 'Transformer Concurrency',
 		processorConcurrency: 'Processor Concurrency',
+		cdcEngineFilter: 'Enable Engine Filtering',
 		cdcFetchSize: 'Number of CDC batch reads',
 		cdcFetchSizeTip: 'Number of data read by system each time.',
 		cdcFetchSizeTip1:
@@ -1269,7 +1272,8 @@ const en = {
 					},
 					joinPath: {
 						label: 'Target path',
-						placeholder: 'Please input target path'
+						placeholder: 'Please input target path',
+						copyLabel: 'Copy target path'
 					},
 					joinKeys: {
 						label: 'Association condition',
@@ -1326,6 +1330,7 @@ const en = {
 			sidebar: {
 				setting: 'Data Flow Settings',
 				node_setting: 'Node Settings',
+				statistics: 'Statistics',
 				logs: 'Running Logs',
 				milestone: 'Task Milestone',
 				capture: 'Capture',
@@ -1790,6 +1795,7 @@ const en = {
 	},
 	classification: {
 		title: 'Data Category',
+		userTitle: 'User Group',
 		nameExist: 'Category name already existed.',
 		addNode: 'Add category at the same level',
 		addChildernNode: 'Add Child Category',
@@ -2530,7 +2536,75 @@ const en = {
 		btn_to_dashboard: "Don't edit the task for now, go shopping first",
 
 		not_source: 'Please choose a source connection',
-		not_target: 'Please choose a target connection'
+		not_target: 'Please choose a target connection',
+
+		agentServiceTitle: 'Agent service status is abnormal',
+		abnormalText: 'abnormal reason',
+		abnormal: 'The environment where the Agnet process is located is disconnected',
+		abnormal1: 'Agnet service process was killed',
+		solutionText: 'Solution',
+		windowsSolution: 'WINDOWS: Start the server and execute commands',
+		windowsSolution1: 'WINDOWS: execute commands in the Agent environment',
+		linuxSolution: 'LINUX: Start the server and execute commands',
+		linuxSolution1: 'LINUX: execute commands in the Agent environment',
+		restartProcess: 'To restart the process',
+		clickText: 'The process has been restarted? Please click'
+	},
+	user: {
+		des: 'The user management page provides functions to create, edit, delete, and status settings for users',
+		all: 'All',
+		inactivated: 'Not activated',
+		unverified: 'Unverified',
+		userNameEmail: 'Please enter your username/email',
+		changeTime: 'Modification time',
+		creatUser: 'Create user',
+		editUser: 'Edit User',
+		userName: 'Username',
+		email: 'Mailbox',
+		password: 'Password',
+		role: 'Associated role',
+		source: 'Source',
+		status: 'Status',
+		opera: 'Operation',
+		activation: 'Activation',
+		freeze: 'Freeze',
+		delete: 'Delete',
+		check: 'Check',
+		edit: 'Edit',
+		bulkActivation: 'Bulk activation',
+		bulkFreeze: 'Bulk Freeze',
+		bulkCheck: 'Batch check',
+		creat: 'Create',
+		registration: 'Register',
+		notVerified: 'Not verified',
+		notActivated: 'Not activated',
+		activated: 'Activated',
+		rejected: 'Rejected',
+		passwordNull: 'Please enter a password, the length is 5 ~ 100 characters',
+		pass_hint: 'Password length cannot be less than 5 digits',
+		activationCode: 'Activation Code',
+		delUserTitle: 'Whether to delete this user',
+		delUser: 'Delete user',
+		deluserLast: 'After this user will not be able to recover',
+		checkUserTitle: 'Whether to verify this user',
+		checkUser: 'Pass the verification user',
+		checkUserLast: 'After the mailbox, this user can be activated',
+		activationUserTitle: 'Do you want to activate this user? ',
+		activetionUser: 'Activation User',
+		activetionUserLast: 'After that, this user will be able to use the TAPDATA system',
+		freezeUserTitle: 'Do you want to freeze this user? ',
+		freezeUser: 'Freeze user',
+		freezeUserLast: 'After this user will not be able to use the TAPDATA system',
+		startTime: 'Start Time',
+		endTime: 'End Time',
+		emailNull: 'Email cannot be empty',
+		email_must_valid: 'Please enter a valid email address',
+		activetionSuccess: 'Activation successful',
+		activetionError: 'Activation failed',
+		freezeSuccess: 'Freeze successful',
+		freezeError: 'Freeze failed',
+		checkSuccess: 'Pass verification',
+		checkError: 'Verification failed'
 	}
 };
 
