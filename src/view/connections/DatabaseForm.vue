@@ -679,12 +679,15 @@ export default {
 			};
 			this.$api('tcm')
 				.strategy(params)
-				.finally(result => {
+				.then(result => {
 					this.createStrategyDisabled = false;
 					this.model.platformInfo.isThrough = true;
 					if (result.data) {
 						this.model.database_host = result.data.dummyFipAddress;
 					}
+				})
+				.catch(() => {
+					this.$message.error('开通失败');
 				});
 		},
 		goBack() {
