@@ -114,6 +114,7 @@
 					:data="page.data"
 					class="dv-table"
 					height="100%"
+					border
 					@sort-change="sortHandler"
 					@selection-change="selectHandler"
 					align="left"
@@ -146,7 +147,7 @@
 							{{ scope.row.InspectResult ? scope.row.InspectResult.target_total : '-' }}
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
+					<el-table-column :label="$t('dataVerification.verifyResult')">
 						<template slot-scope="scope">
 							<div
 								class="inspect-result"
@@ -686,6 +687,14 @@ export default {
 				text-align: right;
 			}
 		}
+	}
+}
+</style>
+<style lang="less">
+.data-verify-wrap {
+	.el-table--border td,
+	.el-table--border th {
+		border-right: 0;
 	}
 }
 </style>

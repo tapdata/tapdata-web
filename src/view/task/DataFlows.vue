@@ -179,7 +179,7 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataFlow.syncType')" width="150">
+			<el-table-column :label="$t('dataFlow.syncType')" min-width="150">
 				<template slot-scope="scope">
 					<span>
 						{{

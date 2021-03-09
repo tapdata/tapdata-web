@@ -139,7 +139,7 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column prop="username" :label="$t('connection.creator')" width="80" sortable="username">
+			<el-table-column prop="username" :label="$t('connection.creator')" sortable="username">
 				<template slot-scope="scope">
 					<div class="database-text" style="margin-left:0;">
 						<div>{{ scope.row.username }}</div>

@@ -47,11 +47,11 @@
 					:data="tableData"
 					height="100%"
 					style="border: 1px solid #dedee4;"
-					class="dv-table"
+					class="role-table"
 					row-key="id"
 					border
 				>
-					<el-table-column :label="$t('role.roleName')" :show-overflow-tooltip="true" width="240">
+					<el-table-column :label="$t('role.roleName')" :show-overflow-tooltip="true">
 						<template slot-scope="scope">
 							<div>{{ scope.row.name }}</div>
 						</template>
@@ -66,7 +66,7 @@
 							<span>{{ scope.row.userCount }}</span>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('role.founder')" width="180">
+					<el-table-column :label="$t('role.founder')">
 						<template slot-scope="scope">
 							<div>
 								{{ scope.row.userEmail }}
@@ -602,7 +602,7 @@ export default {
 			display: flex;
 			flex-direction: column;
 			font-size: 12px;
-			.dv-table {
+			.role-table {
 				flex: 1;
 				overflow: hidden;
 			}
@@ -650,7 +650,7 @@ export default {
 		}
 	}
 	.table-box {
-		.dv-table {
+		.role-table {
 			color: #333;
 			th {
 				padding: 2px 0;
