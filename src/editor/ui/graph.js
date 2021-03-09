@@ -430,7 +430,9 @@ export default class Graph extends Component {
 				let monitor = rightTabPanel.getChildByName('monitor');
 				rightTabPanel.select(monitor);
 				this.editor.getRightSidebar().show();
-				$('.monitorTab').html('<div class="e-tab-title active">tongji</div>');
+				$('.monitorTab').html(
+					`<div class="e-tab-title active">${i18n.t('editor.ui.sidebar.statistics')}</div>`
+				);
 			}
 		}
 		this.unHighlightAllCells();
@@ -672,7 +674,9 @@ export default class Graph extends Component {
 			if (cell.isElement()) {
 				if ($('.monitorTab').html().length < 50) {
 					$('.monitorTab').html(
-						'<div class="e-tab-title active">tongji</div><div class="e-tab-title">config</div>'
+						`<div class="e-tab-title active">${i18n.t(
+							'editor.ui.sidebar.statistics'
+						)}</div><div class="e-tab-title">${i18n.t('editor.ui.sidebar.config')}</div>`
 					);
 					this.editor.goBackMontior();
 					$('.monitorTab')
@@ -708,14 +712,14 @@ export default class Graph extends Component {
 				}
 				this.selectCell(cell);
 			} else {
-				this.editor.seeMonitor = false;
+				$('.monitorTab').html(`<div class="e-tab-title active">${i18n.t('editor.ui.sidebar.config')}</div>`);
 				this.selectPrimaryLink(cellView);
 			}
 		}
 		this.createInspector(cell);
-		// if (cell.isElement()) {
-		this.emit(EditorEventType.SELECTED_STAGE, cell.toJSON());
-		// }
+		if (cell.isElement()) {
+			this.emit(EditorEventType.SELECTED_STAGE, cell.toJSON());
+		}
 	}
 
 	selectPrimaryElement(elementView) {

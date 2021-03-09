@@ -1304,10 +1304,11 @@ const tc = {
 				setting: '任務設置',
 				node_setting: '節點屬性',
 				statistics: '統計',
+				milestone: '任務里程碑',
 				logs: '日誌',
 				capture: '抓取數據',
 				style: '樣式',
-
+				config: '配置',
 				data_nodes: '數據節點',
 				processor: '處理節點',
 				tableSelector: '快速選擇'

@@ -5,11 +5,11 @@
 			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
 		</head>
 		<div class="nodeBody">
-			<div class="head-btns">
+			<!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
-			</div>
+			</div> -->
 			<el-form class="e-form" label-position="top" :model="model" :disabled="disabled" ref="form">
 				<!-- <span class="addTxt">+新建文件</span> -->
 				<el-form-item
@@ -63,7 +63,7 @@ import Entity from '../link/Entity';
 import _ from 'lodash';
 import factory from '../../../api/factory';
 let connections = factory('connections');
-let editorMonitor = null;
+// let editorMonitor = null;
 import MultiSelection from '../../../components/MultiSelection';
 export default {
 	name: 'redis',
@@ -213,7 +213,7 @@ export default {
 			}
 		},
 
-		setData(data, cell, dataNodeInfo, vueAdapter) {
+		setData(data, cell) {
 			if (data) {
 				_.merge(this.model, data);
 			}
@@ -229,7 +229,7 @@ export default {
 					  )
 					: [];
 
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
@@ -245,11 +245,11 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
-		},
-
-		seeMonitor() {
-			editorMonitor.goBackMontior();
 		}
+
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// }
 	}
 };
 </script>

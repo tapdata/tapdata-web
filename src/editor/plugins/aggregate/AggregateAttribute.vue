@@ -1,9 +1,9 @@
 <template>
 	<div class="aggregate">
 		<div class="head-btns">
-			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+			<!-- <el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 				{{ $t('dataFlow.button.viewMonitoring') }}
-			</el-button>
+			</el-button> -->
 			<p>{{ $t('dataFlow.aggregatePrompt') }}</p>
 		</div>
 		<el-form
@@ -218,7 +218,7 @@ import { mergeJoinTablesToTargetSchema, removeDeleted } from '../../util/Schema'
 import MultiSelection from '../../../components/MultiSelection';
 
 let counter = 0;
-let editorMonitor = null;
+// let editorMonitor = null;
 export default {
 	name: 'Aggregate',
 	components: { MultiSelection },
@@ -324,7 +324,7 @@ export default {
 			}
 		},
 
-		setData(data, cell, dataNodeInfo, vueAdapter) {
+		setData(data, cell) {
 			if (data) {
 				_.merge(this.form, data);
 				this.form.aggregations.map((item, index) => {
@@ -365,7 +365,7 @@ export default {
 				counter++;
 			}
 
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
@@ -374,11 +374,11 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
-		},
-
-		seeMonitor() {
-			editorMonitor.goBackMontior();
 		}
+
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// }
 	}
 };
 </script>

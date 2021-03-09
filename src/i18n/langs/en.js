@@ -1335,7 +1335,7 @@ const en = {
 				milestone: 'Task Milestone',
 				capture: 'Capture',
 				style: 'Style',
-
+				config: 'Config',
 				data_nodes: 'Data Nodes',
 				processor: 'Processor',
 				tableSelector: 'Fast Selection'

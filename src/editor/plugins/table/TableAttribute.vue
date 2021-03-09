@@ -1,11 +1,11 @@
 <template>
 	<div class="e-table nodeStyle" :class="{ nodeHeight: disabled }">
 		<div class="nodeBody">
-			<div class="head-btns">
+			<!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
-			</div>
+			</div> -->
 
 			<el-form
 				class="e-form"
@@ -254,7 +254,7 @@ import factory from '@/api/factory';
 
 let connectionApi = factory('connections');
 const MetadataInstances = factory('MetadataInstances');
-let editor = null;
+// let editor = null;
 let tempSchemas = [];
 export default {
 	name: 'Table',
@@ -442,10 +442,10 @@ export default {
 			window.open(href, '_blank');
 		},
 
-		// 查看监控
-		seeMonitor() {
-			editor.goBackMontior();
-		},
+		// // 查看监控
+		// seeMonitor() {
+		// 	editor.goBackMontior();
+		// },
 
 		// 获取新建表名称
 		getAddTableName(val) {
@@ -677,7 +677,7 @@ export default {
 			// });
 		},
 
-		setData(data, cell, dataNodeInfo, vueAdapter) {
+		setData(data, cell, dataNodeInfo) {
 			if (data) {
 				let conds;
 				if (data.custSql && data.custSql.conditions) {
@@ -715,7 +715,7 @@ export default {
 			cell.on('change:outputSchema', () => {
 				this.mergedSchema = cell.getOutputSchema();
 			});
-			editor = vueAdapter.editor;
+			// editor = vueAdapter.editor;
 		},
 		getData() {
 			if (this.model.isFilter)

@@ -143,7 +143,7 @@
 				:reserve-selection="true"
 			>
 			</el-table-column>
-			<el-table-column :label="$t('user.userName')" prop="name" sortable="custom">
+			<el-table-column :label="$t('user.userName')" prop="username" sortable="username">
 				<template slot-scope="scope">
 					<div class="metadata-name">
 						<p>{{ scope.row.username }}</p>
@@ -158,7 +158,7 @@
 					{{ permissionsmethod(scope.row.roleMappings) }}
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('user.changeTime')" prop="last_updated">
+			<el-table-column :label="$t('user.changeTime')" prop="last_updated" sortable="last_updated">
 				<template slot-scope="scope">
 					{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
 				</template>
@@ -168,7 +168,7 @@
 					{{ scope.row.source ? $t('user.' + scope.row.source) : '' }}
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('user.status')" prop="status" sortable="custom">
+			<el-table-column :label="$t('user.status')" prop="status" sortable="status">
 				<template slot-scope="scope">
 					{{ scope.row.status ? $t('user.' + scope.row.status) : '' }}
 				</template>

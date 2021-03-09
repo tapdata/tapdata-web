@@ -1,11 +1,11 @@
 <template>
 	<div class="e-link-wrap nodeStyle" @scroll="$refs.mappingComp.position()">
 		<div class="nodeBody">
-			<div class="head-btns">
+			<!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
-			</div>
+			</div> -->
 			<el-form
 				:disabled="disabled"
 				class="e-form"
@@ -211,7 +211,7 @@ import log from '../../../log';
 import { JOIN_TABLE_TPL } from '../../constants';
 import ClipButton from '@/components/ClipButton';
 import { removeDeleted } from '../../util/Schema';
-let editorMonitor = null;
+// let editorMonitor = null;
 export default {
 	name: 'Link',
 	components: { Mapping, ClipButton },
@@ -463,7 +463,7 @@ export default {
 			this.$emit(EditorEventType.RESIZE);
 			this.showMapping(data, cell, vueAdapter);
 
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 		},
 
 		handleUpSert() {},
@@ -557,11 +557,11 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
-		},
-
-		seeMonitor() {
-			editorMonitor.goBackMontior();
 		}
+
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// }
 	},
 
 	destroyed() {

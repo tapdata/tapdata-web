@@ -5,11 +5,11 @@
 			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
 		</head>
 		<div class="nodeBody">
-			<div class="head-btns">
+			<!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
-			</div>
+			</div> -->
 
 			<el-form
 				class="e-form"
@@ -98,7 +98,7 @@ import _ from 'lodash';
 // import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
 
 let connections = factory('connections');
-let editorMonitor = null;
+// let editorMonitor = null;
 export default {
 	name: 'Database',
 
@@ -196,13 +196,13 @@ export default {
 			window.open(href, '_blank');
 		},
 
-		setData(data, cell, dataNodeInfo, vueAdapter) {
+		setData(data, cell, dataNodeInfo) {
 			if (data) {
 				_.merge(this.model, data);
 			}
 			this.cell = cell;
 			this.isSourceDataNode = dataNodeInfo && !dataNodeInfo.isTarget;
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 
 			this.loadDataSource();
 		},
@@ -401,11 +401,11 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
-		},
-
-		seeMonitor() {
-			editorMonitor.goBackMontior();
 		}
+
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// }
 	}
 };
 </script>

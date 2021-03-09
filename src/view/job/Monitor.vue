@@ -9,11 +9,11 @@
 						</el-option>
 					</el-select>
 				</el-col>
-				<el-col :span="8" style="text-align: right;">
+				<!-- <el-col :span="8" style="text-align: right;">
 					<el-button class="e-button" type="primary" v-if="stageId !== 'all'" @click="seeNodeData">{{
 						$t('dataFlow.button.viewConfig')
 					}}</el-button>
-				</el-col>
+				</el-col> -->
 				<!--				<el-col :span="4" style="float: right; text-align: right;">-->
 				<!--					<el-button-->
 				<!--						class="e-button"-->
@@ -930,23 +930,23 @@ export default {
 			};
 		},
 
-		seeNodeData() {
-			let result = this.getAllCellsNode();
-			let selectCell = null;
-			result.forEach(item => {
-				if (this.stageId === item.cell.id) {
-					selectCell = item.cell;
-				}
-			});
-			if (this.stageId && this.stageId !== 'all') {
-				this.editor.seeMonitor = false;
-				this.editor.graph.selectionPosition(selectCell);
-			}
-			// else {
-			// 	this.editor.showSetting(true);
-			// 	this.$message.error(this.$t('dataFlow.selectNode'));
-			// }
-		},
+		// seeNodeData() {
+		// 	let result = this.getAllCellsNode();
+		// 	let selectCell = null;
+		// 	result.forEach(item => {
+		// 		if (this.stageId === item.cell.id) {
+		// 			selectCell = item.cell;
+		// 		}
+		// 	});
+		// 	if (this.stageId && this.stageId !== 'all') {
+		// 		this.editor.seeMonitor = false;
+		// 		this.editor.graph.selectionPosition(selectCell);
+		// 	}
+		// 	// else {
+		// 	// 	this.editor.showSetting(true);
+		// 	// 	this.$message.error(this.$t('dataFlow.selectNode'));
+		// 	// }
+		// },
 
 		// 输入输出获取数据
 		getSpeed(data, time) {

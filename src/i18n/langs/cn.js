@@ -1312,7 +1312,7 @@ const cn = {
 				milestone: '任务里程碑',
 				capture: '抓取数据',
 				style: '样式',
-
+				config: '配置',
 				data_nodes: '数据节点',
 				processor: '处理节点',
 				tableSelector: '快速选择'

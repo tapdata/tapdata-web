@@ -302,9 +302,10 @@ export default class Editor extends BaseObject {
 			rightTabPanel.select(monitor);
 			self.getRightSidebar().show();
 		}
+		let tapTitle = i18n.t('editor.ui.sidebar.statistics');
 		$('.e-tab-panel')
 			.last()
-			.prepend('<div class="monitorTab"><div class="e-tab-title active">tongji</div></div>');
+			.prepend(`<div class="monitorTab"><div class="e-tab-title active">${tapTitle}</div></div>`);
 	}
 
 	/**
