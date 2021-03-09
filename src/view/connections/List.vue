@@ -141,19 +141,19 @@
 			<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
 				<template slot-scope="scope">
 					<span class="error" v-if="['invalid'].includes(scope.row.status)">
-						<i class="el-icon-error"></i>
+						<i class="connections-status__icon el-icon-error"></i>
 						<span>
 							{{ $t('connection.status.invalid') }}
 						</span>
 					</span>
 					<span class="success" v-if="['ready'].includes(scope.row.status)">
-						<i class="el-icon-success"></i>
+						<i class="connections-status__icon el-icon-success"></i>
 						<span>
 							{{ $t('connection.status.ready') }}
 						</span>
 					</span>
 					<span class="warning" v-if="['testing'].includes(scope.row.status)">
-						<i class="el-icon-loading"></i>
+						<i class="connections-status__icon el-icon-loading"></i>
 						<span>
 							{{ $t('connection.status.testing') }}
 						</span>
@@ -305,7 +305,9 @@ export default {
 			],
 			sourceTypeMapping: {
 				rds: 'RDS实例',
-				selfDB: '云外自建数据库'
+				selfDB: '云外自建数据库',
+				ecs: 'ECS自建库',
+				ddl: 'DDL'
 			},
 			testData: null
 		};
@@ -746,6 +748,9 @@ export default {
 	}
 	.warning {
 		color: #e6a23c;
+	}
+	.connections-status__icon {
+		font-size: 14px;
 	}
 	.search-bar {
 		display: flex;

@@ -114,7 +114,7 @@
 			<!--			>-->
 			<!--			</el-pagination>-->
 		</div>
-		<div class="panel-main" v-if="type !== 'row_count'">
+		<div class="panel-main" v-if="type !== 'row_count'" v-loading="detailsLoading">
 			<div class="tip" style="padding-left: 10px">{{ $t('dataVerification.verifyDetail') }}</div>
 			<div class="main">
 				<ul class="inspect-result" v-if="resultData && resultData[0] && resultData[0].status">
@@ -226,15 +226,16 @@
 				</div>
 			</div>
 			<el-pagination
+				v-if="!showAdvancedVerification"
 				class="pagination"
 				background
 				layout="total,prev, pager, next,sizes"
-				:page-sizes="!showAdvancedVerification ? [20, 30, 50, 100] : [1]"
+				:page-sizes="[20, 30, 50, 100]"
 				:page-size.sync="inspectPageSize"
 				:total="inspectTotal"
 				:current-page.sync="inspectResultCurrentPage"
 				@current-change="changeInspectResult(inspectResultCurrentPage, taskId)"
-				@size-change="changeInspectResult(1)"
+				@size-change="changeInspectResult(1, taskId)"
 			>
 			</el-pagination>
 		</div>
@@ -258,6 +259,7 @@ export default {
 			tasks: [],
 			showAdvancedVerification: false,
 			loading: false,
+			detailsLoading: false,
 			dialogJsonVisible: false,
 			advanceVerifyData: {},
 			tableCurrentPage: 1,
@@ -347,6 +349,7 @@ export default {
 			if (!taskId) {
 				return;
 			}
+			this.detailsLoading = true;
 			let findAdVance = this.tasks.filter(item => item.taskId === taskId);
 			if (findAdVance.length > 0) this.showAdvancedVerification = findAdVance[0].showAdvancedVerification;
 			this.taskId = taskId;
@@ -381,6 +384,7 @@ export default {
 				})
 				.finally(() => {
 					this.loading = false;
+					this.detailsLoading = false;
 				});
 		},
 		handleOtherVerify(data) {

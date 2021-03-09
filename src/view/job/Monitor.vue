@@ -32,7 +32,7 @@
 		</el-form>
 		<div class="echartMain">
 			<div class="echartlist">
-				<echart-head :data="stageType ? nodeDetailsObj : taskDetailsObj"></echart-head>
+				<EchartHeader :data="stageType ? nodeDetailsObj : taskDetailsObj"></EchartHeader>
 				<div
 					class="info fl"
 					v-if="['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database'].includes(stageType)"
@@ -166,7 +166,7 @@
 			</div>
 
 			<div class="echartlist">
-				<echart-head :data="screeningObj" @twoRadio="getTwoRadio"></echart-head>
+				<EchartHeader :data="screeningObj" @twoRadio="getTwoRadio"></EchartHeader>
 				<shaftless-echart
 					:sliderBar="sliderBar"
 					class="fr echartMain"
@@ -178,7 +178,7 @@
 			</div>
 
 			<div class="echartlist">
-				<echart-head :data="inputOutputObj" @getSpeed="getSpeed"></echart-head>
+				<EchartHeader :data="inputOutputObj" @getSpeed="getSpeed"></EchartHeader>
 				<div class="floatLayer">
 					<span style="background-color:rgba(72,182,226,.3);color:#48b6e2;"
 						>{{ $t('dataFlow.average') }}:{{ this.inputAverage }}</span
@@ -196,7 +196,7 @@
 				></echarts-compinent>
 			</div>
 			<div class="echartlist">
-				<echart-head :data="transfObj" @getTime="getTime"></echart-head>
+				<EchartHeader :data="transfObj" @getTime="getTime"></EchartHeader>
 				<div class="floatLayer">
 					<span style="background-color:rgba(251,142,0,.3);color:#fb8e00;"
 						>{{ $t('dataFlow.current') }}:{{ this.currentTime }}</span
@@ -211,7 +211,7 @@
 				></echarts-compinent>
 			</div>
 			<div class="echartlist">
-				<echart-head :data="replicateObj" @getTime="getTime"></echart-head>
+				<EchartHeader :data="replicateObj" @getTime="getTime"></EchartHeader>
 				<div class="floatLayer">
 					<span style="background-color:rgba(7245,108,108,.3);color:#f56c6c;"
 						>{{ $t('dataFlow.current') }}:{{ this.ransfTime }}</span
@@ -229,7 +229,7 @@
 	</div>
 </template>
 <script>
-import echartHead from './components/echartHead';
+import EchartHeader from './components/EchartHeader';
 import echartsCompinent from '../../components/echartsCompinent';
 import shaftlessEchart from '../../components/shaftlessEchart';
 import factory from '../../api/factory';
@@ -242,7 +242,7 @@ let currentStageData = null;
 
 export default {
 	name: 'JobMonitor',
-	components: { echartHead, echartsCompinent, shaftlessEchart },
+	components: { EchartHeader, echartsCompinent, shaftlessEchart },
 	props: {
 		dataFlow: {
 			type: Object,

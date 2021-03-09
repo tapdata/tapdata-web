@@ -2098,7 +2098,9 @@ const tc = {
 		configurationTip: '校驗配置',
 		deleteTip: '刪除',
 		checkStatusPre: '此任務處於 ',
-		checkStatusSuffix: '狀態，無法配置校驗設置'
+		checkStatusSuffix: '狀態，無法配置校驗設置',
+		backConfirmMessage: '此操作會丟失當前正在創建（編輯）的校驗任務',
+		backConfirmTitle: '是否放棄創建（編輯）校驗任務？'
 	},
 	queryBuilder: {
 		addCond: '字段條件'

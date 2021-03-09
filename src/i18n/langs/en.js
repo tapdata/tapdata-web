@@ -2168,7 +2168,9 @@ const en = {
 		configurationTip: 'Configuration',
 		deleteTip: 'Delete',
 		checkStatusPre: 'The job status is ',
-		checkStatusSuffix: ' , cannot modify configuration'
+		checkStatusSuffix: ' , cannot modify configuration',
+		backConfirmMessage: 'This operation will lose the verification task currently being created (edited)',
+		backConfirmTitle: 'Would you give up creating (editing) verification tasks? '
 	},
 	queryBuilder: {
 		addCond: 'field Cond'

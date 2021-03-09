@@ -1,44 +1,58 @@
 <template>
-	<div class="echartHead">
+	<div class="echart-head">
 		<h2>{{ data.title }}</h2>
-		<el-popover
-			v-if="data.isIput"
-			placement="top-start"
-			width="300"
-			popper-class="echartsTitle_popover"
-			trigger="hover"
-			:content="data.tip"
-		>
-			<span class="icon iconfont icon-tishi1" slot="reference"></span>
-		</el-popover>
-		<i class="el-icon-loading" v-if="data && data.loading"></i>
-		<div class="rightOpt fr">
-			<el-radio-group v-model="num" size="mini" :class="selectColor" @change="changeRadio" v-if="data.isScreeing">
-				<el-radio-button label="flow">{{ $t('dataFlow.rowCount') }}</el-radio-button>
-				<el-radio-button label="stage">KB</el-radio-button>
-			</el-radio-group>
-			<el-radio-group v-model="speed" size="mini" :class="selectColor" @change="changeSpeed" v-if="data.isSpeed">
-				<el-radio-button label="qps">QPS</el-radio-button>
-				<el-radio-button label="kbs">KB/S</el-radio-button>
-			</el-radio-group>
-			<el-radio-group v-model="time" size="mini" :class="selectColor" @change="changeTime" v-if="data.isIput">
-				<el-radio-button label="second" v-if="this.data.type !== 'replicate'">{{
-					$t('dataFlow.second')
-				}}</el-radio-button>
-				<el-radio-button label="minute">{{ $t('dataFlow.min') }}</el-radio-button>
-				<el-radio-button label="hour">{{ $t('dataFlow.hour') }}</el-radio-button>
-				<el-radio-button label="day">{{ $t('dataFlow.day') }}</el-radio-button>
-			</el-radio-group>
-		</div>
-		<div class="unit fr" v-if="data.isIput && !data.isSpeed">
+		<ElTooltip v-if="data.isIput" class="ml-10" placement="top-start" :content="data.tip">
+			<i class="echart-head-tooltip__icon el-icon-warning-outline"></i>
+		</ElTooltip>
+		<span style="flex: 1;">
+			<i class="el-icon-loading" v-if="data && data.loading"></i>
+		</span>
+		<div class="unit" v-if="data.isIput && !data.isSpeed">
 			<span v-if="data.type !== 'replicate'">{{ $t('dataFlow.unit') }} : ms / {{ $t('dataFlow.article') }}</span>
 			<span v-else>{{ $t('dataFlow.unit') }} : {{ $t('dataFlow.secondUnit') }}</span>
 		</div>
+		<el-radio-group
+			v-if="data.isScreeing"
+			v-model="num"
+			class="ml-10"
+			size="mini"
+			:class="selectColor"
+			@change="changeRadio"
+		>
+			<el-radio-button label="flow">{{ $t('dataFlow.rowCount') }}</el-radio-button>
+			<el-radio-button label="stage">KB</el-radio-button>
+		</el-radio-group>
+		<el-radio-group
+			v-if="data.isSpeed"
+			v-model="speed"
+			class="ml-10"
+			size="mini"
+			:class="selectColor"
+			@change="changeSpeed"
+		>
+			<el-radio-button label="qps">QPS</el-radio-button>
+			<el-radio-button label="kbs">KB/S</el-radio-button>
+		</el-radio-group>
+		<el-radio-group
+			v-if="data.isIput"
+			v-model="time"
+			class="ml-10"
+			size="mini"
+			:class="selectColor"
+			@change="changeTime"
+		>
+			<el-radio-button v-if="this.data.type !== 'replicate'" label="second">{{
+				$t('dataFlow.second')
+			}}</el-radio-button>
+			<el-radio-button label="minute">{{ $t('dataFlow.min') }}</el-radio-button>
+			<el-radio-button label="hour">{{ $t('dataFlow.hour') }}</el-radio-button>
+			<el-radio-button label="day">{{ $t('dataFlow.day') }}</el-radio-button>
+		</el-radio-group>
 	</div>
 </template>
 <script>
 export default {
-	name: 'echartHead',
+	name: 'EchartHeader',
 	props: {
 		data: {
 			type: Object,
@@ -100,29 +114,19 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.echartHead {
+.echart-head {
+	display: flex;
+	align-items: center;
 	height: 38px;
-	line-height: 38px;
 	padding: 0 10px;
 	border-bottom: 1px solid #dcdfe6;
 	background-color: #fafafa;
-
 	h2 {
 		display: inline-block;
 		font-size: 14px;
 		color: #333;
+		vertical-align: bottom;
 	}
-
-	span {
-		padding: 0 5px;
-		color: #999;
-		cursor: pointer;
-	}
-
-	span:hover {
-		color: #48b6e2;
-	}
-
 	.arrow {
 		display: inline-block;
 		position: relative;
@@ -149,18 +153,19 @@ export default {
 			border-radius: 3px;
 		}
 	}
+	.echart-head-tooltip__icon {
+		color: #999;
+	}
 }
 </style>
 <style lang="less">
-.echartHead {
+.echart-head {
 	.el-radio-button--mini .el-radio-button__inner {
 		padding: 4px 6px;
 	}
-
-	.el-radio-group {
-		padding-left: 10px;
+	.el-radio-button__orig-radio:checked + .el-radio-button__inner {
+		color: #fff;
 	}
-
 	.screeningColor,
 	.putColor {
 		.el-radio-button__orig-radio:checked + .el-radio-button__inner {
