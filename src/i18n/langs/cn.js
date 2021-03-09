@@ -2105,7 +2105,9 @@ const cn = {
 		configurationTip: '校验配置',
 		deleteTip: '删除',
 		checkStatusPre: '此任务处于 ',
-		checkStatusSuffix: '状态，无法配置校验设置'
+		checkStatusSuffix: '状态，无法配置校验设置',
+		backConfirmMessage: '此操作会丢失当前正在创建（编辑）的校验任务',
+		backConfirmTitle: '是否放弃创建（编辑）校验任务？'
 	},
 	queryBuilder: {
 		addCond: '字段条件'

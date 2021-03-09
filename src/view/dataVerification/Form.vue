@@ -840,7 +840,9 @@ export default {
 			this.dialogAddScriptVisible = true;
 		},
 		removeScript(index) {
-			this.$confirm(this.$t('message.verifyConfirm'), this.$t('message.delete')).then(() => {
+			this.$confirm(this.$t('message.verifyConfirm'), this.$t('message.delete'), {
+				type: 'warning'
+			}).then(() => {
 				this.form.tasks[index].webScript = '';
 			});
 		},
@@ -859,7 +861,15 @@ export default {
 			this.dialogAddScriptVisible = false;
 		},
 		goBack() {
-			this.$router.push('/dataVerification');
+			this.$confirm(
+				this.$t('dataVerification.backConfirmMessage'),
+				this.$t('dataVerification.backConfirmTitle'),
+				{
+					type: 'warning'
+				}
+			).then(() => {
+				this.$router.push('/dataVerification');
+			});
 		},
 		nextStep() {
 			this.$refs.baseForm.validate(valid => {
@@ -1079,6 +1089,7 @@ export default {
 		bottom: 0;
 		left: 0;
 		padding: 20px;
+		border-top: 1px solid #f2f2f2;
 		text-align: center;
 		width: 100%;
 		box-sizing: border-box;
