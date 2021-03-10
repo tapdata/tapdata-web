@@ -349,7 +349,7 @@
 						</el-pagination>
 					</div>
 					<div class="table-box" v-if="activePanel == 'relations'">
-						<Relations></Relations>
+						<Relations :tableId="metadataDataObj.qualified_name"></Relations>
 					</div>
 				</div>
 			</el-main>

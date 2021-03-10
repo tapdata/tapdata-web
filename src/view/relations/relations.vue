@@ -16,7 +16,12 @@ const LineageGraphsAPI = factory('LineageGraphs');
 
 export default {
 	name: 'DataRelations',
-
+	props: {
+		tableId: {
+			required: true,
+			value: String
+		}
+	},
 	data() {
 		return {
 			currentLevel: 1,
@@ -25,10 +30,10 @@ export default {
 		};
 	},
 	mounted() {
-		LineageGraphsAPI.graphData('T_oracle_XE_TAPDATA_CUSTOMER_5fe1a7a6b64d9e8027637b19')
+		LineageGraphsAPI.graphData(this.tableId)
 			.then(res => {
 				if (res.data) {
-					this.graph.draw(this.graph.joint, this.graph.graph, res.data.items, res.data.links);
+					this.graph.draw(res.data.items, res.data.links);
 				}
 			})
 			.finally(() => {
