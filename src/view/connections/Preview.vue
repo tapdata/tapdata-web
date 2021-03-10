@@ -190,7 +190,7 @@ export default {
 				rds: 'RDS实例',
 				ecs: 'ECS自建库',
 				selfDB: '云外自建库',
-				ddl: 'DDL实例'
+				dds: 'DDS实例'
 			}
 		};
 	},

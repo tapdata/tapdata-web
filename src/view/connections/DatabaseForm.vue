@@ -528,7 +528,7 @@ export default {
 		//第二步 选择源端
 		getDataSourceRegion() {
 			let param = {
-				productType: 'MYSQL'
+				productType: this.model.database_type
 			};
 			this.$api('tcm')
 				.productVip(param)
@@ -680,15 +680,20 @@ export default {
 			this.$api('tcm')
 				.strategy(params)
 				.then(result => {
-					this.createStrategyDisabled = false;
 					this.model.platformInfo.isThrough = true;
 					if (result.data) {
 						this.getVpcList(); //更新vpc列表
 						this.model.database_host = result.data.dummyFipAddress;
+						if (this.model.database_type === 'mongodb') {
+							this.model.database_uri = `mongodb://${result.data.dummyFipAddress}/test`;
+						}
 					}
 				})
 				.catch(() => {
 					this.$message.error('开通失败');
+				})
+				.finally(() => {
+					this.createStrategyDisabled = false;
 				});
 		},
 		goBack() {

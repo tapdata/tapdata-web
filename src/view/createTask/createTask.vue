@@ -147,7 +147,8 @@ export default {
 			instanceMock: [],
 			dataSourceZone: '',
 			dataSourceMock: [],
-			dialogDatabaseTypeVisible: false
+			dialogDatabaseTypeVisible: false,
+			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
 		};
 	},
 	created() {
@@ -229,11 +230,8 @@ export default {
 		},
 		//第二步 选择源端
 		getDataSourceRegion() {
-			let param = {
-				productType: 'MYSQL'
-			};
 			this.$api('tcm')
-				.productVip(param)
+				.productVip()
 				.then(data => {
 					this.dataSourceMock = data.data.poolList || [];
 					if (this.dataSourceModel.source_region === '' && this.dataSourceMock.length > 0) {
@@ -374,28 +372,28 @@ export default {
 			let where = {};
 			if (['rds', 'ecs'].includes(this.dataSourceModel.source_sourceType) && type === 'source') {
 				where = {
-					database_type: { in: ['mysql', 'mariadb'] },
+					database_type: { in: this.allowDataType },
 					sourceType: this.dataSourceModel.source_sourceType,
 					'platformInfo.DRS_region': this.dataSourceModel.source_region,
 					'platformInfo.DRS_zone': this.dataSourceModel.source_zone
 				};
 			} else if (this.dataSourceModel.source_sourceType === 'selfDB' && type === 'source') {
 				where = {
-					database_type: { in: ['mysql', 'mariadb'] },
+					database_type: { in: this.allowDataType },
 					sourceType: 'selfDB',
 					'platformInfo.DRS_region': { $exists: false },
 					'platformInfo.DRS_zone': { $exists: false }
 				};
 			} else if (['rds', 'ecs'].includes(this.dataSourceModel.source_sourceType) && type === 'target') {
 				where = {
-					database_type: { in: ['mysql', 'mariadb'] },
+					database_type: { in: this.allowDataType },
 					sourceType: this.dataSourceModel.source_sourceType,
 					region: this.platformInfo.region,
 					zone: this.platformInfo.zone
 				};
 			} else {
 				where = {
-					database_type: { in: ['mysql', 'mariadb'] },
+					database_type: { in: this.allowDataType },
 					sourceType: 'selfDB'
 				};
 			}

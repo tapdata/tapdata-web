@@ -12,6 +12,11 @@ import mariadb from './maria';
 import mysqlpxc from './mysqlpxc';
 import drs_mysql from './drs_mysql';
 import drs_mariadb from './drs_maria';
+import drs_oracle from './drs_oracle';
+import drs_mysqlpxc from './drs_mysqlpxc';
+import drs_postgres from './drs_postgres';
+import drs_db2 from './drs_db2';
+import drs_mongodb from './drs_mongodb';
 
 export default {
 	mysql,
@@ -27,5 +32,10 @@ export default {
 	mariadb,
 	mysqlpxc,
 	drs_mysql,
-	drs_mariadb
+	drs_mariadb,
+	drs_oracle,
+	drs_mysqlpxc,
+	drs_postgres,
+	drs_db2,
+	drs_mongodb
 };

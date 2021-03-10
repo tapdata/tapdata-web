@@ -153,7 +153,13 @@ export const defaultCloudModel = {
 		database_username: '',
 		database_password: '',
 		plain_password: '',
-		database_uri: ''
+		database_uri: '',
+		sslCA: '',
+		sslCAFile: null,
+		sslKeyFile: null,
+		ssl: false,
+		sslKey: '',
+		sslPass: ''
 	},
 	drs: {
 		s_zone: '',

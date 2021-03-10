@@ -307,7 +307,7 @@ export default {
 				rds: 'RDS实例',
 				selfDB: '云外自建数据库',
 				ecs: 'ECS自建库',
-				ddl: 'DDL'
+				dds: 'DDS实例'
 			},
 			testData: null
 		};

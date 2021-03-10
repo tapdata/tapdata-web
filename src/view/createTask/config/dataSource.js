@@ -19,6 +19,10 @@ export default function() {
 						value: 'rds'
 					},
 					{
+						label: 'DDS实例',
+						value: 'dds'
+					},
+					{
 						label: 'ECS自建库',
 						value: 'ecs'
 					},
@@ -107,6 +111,10 @@ export default function() {
 					{
 						label: 'ECS自建库',
 						value: 'ecs'
+					},
+					{
+						label: 'DDS实例',
+						value: 'dds'
 					}
 				],
 				required: true

@@ -1079,7 +1079,7 @@ export default {
 			if (this.$refs.agentDialog.checkAgent()) {
 				let id = this.$route.query.id;
 				let doStart = () => {
-					let data = this.getDataFlowData();
+					let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData(); //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
 					if (data) {
 						this.doSaveStartDataFlow(data);
 					}
@@ -1636,7 +1636,7 @@ export default {
 			dataCells.forEach(cell => {
 				let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null;
 				let tableName = {
-					value: formData.tableName || formData.name,
+					value: formData.tableName || formData.name || '',
 					cell: cell
 				};
 				dataCellName.push(tableName);
