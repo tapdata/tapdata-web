@@ -243,7 +243,7 @@ export default class Graph extends Component {
 
 		paper.on('blank:mousewheel', _.partial(this.onMousewheel, null), this);
 		paper.on('cell:mousewheel', this.onMousewheel, this);
-		paper.on('blank:pointerclick', this.onClickBlank.bind(this));
+		//paper.on('blank:pointerclick', this.onClickBlank.bind(this));
 		paper.on({
 			//鼠标移入Pager区域后，其他元素失去焦点
 			'paper:mouseenter': () => {
@@ -594,6 +594,7 @@ export default class Graph extends Component {
 					this.paperScroller.startPanning(evt, x, y);
 					this.paper.removeTools();
 				}
+				this.onClickBlank();
 			},
 			this
 		);
@@ -714,6 +715,10 @@ export default class Graph extends Component {
 			} else {
 				$('.monitorTab').html(`<div class="e-tab-title active">${i18n.t('editor.ui.sidebar.config')}</div>`);
 				this.selectPrimaryLink(cellView);
+				setTimeout(() => {
+					let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
+					self.editor.getRightTabPanel().select(monitor);
+				}, 20);
 			}
 		}
 		this.createInspector(cell);
