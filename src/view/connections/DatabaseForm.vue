@@ -683,6 +683,7 @@ export default {
 					this.createStrategyDisabled = false;
 					this.model.platformInfo.isThrough = true;
 					if (result.data) {
+						this.getVpcList(); //更新vpc列表
 						this.model.database_host = result.data.dummyFipAddress;
 					}
 				})

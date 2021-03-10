@@ -288,7 +288,7 @@
 				<el-button type="primary" @click="confirmReloadSchemaDialog">{{ $t('message.confirm') }}</el-button>
 			</span>
 		</el-dialog>
-		<AddBtnTip v-if="!loading && isEditable()"></AddBtnTip>
+		<AddBtnTip v-if="!loading && isEditable() && !$window.getSettingByKey('HIDE_HOT_KEY_BUTTON')"></AddBtnTip>
 		<DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
 		<SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
 	</div>
