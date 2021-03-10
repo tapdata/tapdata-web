@@ -88,11 +88,11 @@
 						</el-date-picker>
 					</li> -->
 
-					<li>
+					<li v-if="searchParams.keyword">
 						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
 					</li>
 
-					<li>
+					<li v-if="searchParams.keyword">
 						<el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
 					</li>
 				</ul>
@@ -170,7 +170,20 @@
 			</el-table-column>
 			<el-table-column :label="$t('user.status')" prop="status" sortable="status">
 				<template slot-scope="scope">
-					{{ scope.row.status ? $t('user.' + scope.row.status) : '' }}
+					<span
+						:style="
+							`color: ${
+								{
+									activated: '#67C23A',
+									notActivated: '#F19149',
+									notVerified: '#cccccc',
+									rejected: '#f53724'
+								}[scope.row.status]
+							};`
+						"
+					>
+						{{ scope.row.status ? $t('user.' + scope.row.status) : '' }}
+					</span>
 				</template>
 			</el-table-column>
 			<el-table-column :label="$t('user.opera')">
@@ -179,7 +192,7 @@
 						v-readonlybtn="'user_edition'"
 						size="mini"
 						type="text"
-						v-if="scope.row.status === 'rejected' || scope.row.status === 'notActivated'"
+						v-if="scope.row.emailVerified && scope.row.account_status !== 1"
 						:disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
 						@click="handleActive(scope.row)"
 					>
@@ -189,7 +202,7 @@
 						v-readonlybtn="'user_edition'"
 						size="mini"
 						type="text"
-						v-if="scope.row.status !== 'rejected'"
+						v-if="scope.row.account_status !== 0"
 						:disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
 						@click="handleFreeze(scope.row)"
 					>
@@ -199,7 +212,7 @@
 						v-readonlybtn="'user_edition'"
 						size="mini"
 						type="text"
-						v-if="scope.row.status === 'notVerified'"
+						v-if="!scope.row.emailVerified"
 						:disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
 						@click="handleCheck(scope.row)"
 						>{{ $t('user.check') }}</el-button
@@ -208,7 +221,7 @@
 						v-readonlybtn="'user_edition'"
 						size="mini"
 						type="text"
-						v-if="scope.row.status === 'activated' || scope.row.status === 'rejected'"
+						v-if="scope.row.emailVerified && scope.row.account_status !== 2"
 						:disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
 						@click="edit(scope.row)"
 						>{{ $t('user.edit') }}</el-button
@@ -217,6 +230,7 @@
 						v-readonlybtn="'user_delete'"
 						size="mini"
 						type="text"
+						style="color: #F56C6C"
 						:disabled="$disabledByPermission('user_delete_all_data', scope.row.user_id)"
 						@click="remove(scope.row)"
 						>{{ $t('user.delete') }}</el-button
@@ -256,7 +270,7 @@
 			</div>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="createDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
-				<el-button type="primary" @click="createNewUser()" size="mini">{{ $t('message.confirm') }}</el-button>
+				<el-button type="primary" @click="createNewUser()" size="mini">{{ $t('message.save') }}</el-button>
 			</span>
 		</el-dialog>
 	</section>
@@ -278,7 +292,7 @@ export default {
 				// time: ''
 			},
 			showTooltip: false,
-			order: 'name DESC',
+			order: 'last_updated DESC',
 			list: null,
 			multipleSelection: [],
 			roleMappding: [],
@@ -313,21 +327,24 @@ export default {
 						type: 'input',
 						label: this.$t('user.userName'),
 						field: 'username',
-						required: true
+						maxlength: 100,
+						required: true,
+						showWordLimit: true
 					},
 					{
 						type: 'input',
 						label: this.$t('user.email'),
 						field: 'email',
 						required: true,
-						maxlength: 150,
+						maxlength: 100,
+						showWordLimit: true,
 						rules: [
 							{
 								required: true,
 								validator: (rule, v, callback) => {
 									if (!v || !v.trim()) {
 										return callback(new Error(this.$t('user.emailNull')));
-									} else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v)) { // eslint-disable-line
+									} else if (!/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/.test(v)) { // eslint-disable-line
 										return callback(new Error(this.$t('user.email_must_valid')));
 									} else {
 										return callback();
@@ -341,14 +358,18 @@ export default {
 						field: 'password',
 						label: this.$t('user.password'),
 						domType: 'password',
+						maxlength: 32,
 						showPassword: true,
 						rules: [
 							{
 								required: true,
 								validator: (rule, v, callback) => {
+									if (this.createForm.id) {
+										return callback();
+									}
 									if (!v || !v.trim()) {
 										return callback(new Error(this.$t('user.passwordNull')));
-									} else if (v.length < 5) {
+									} else if (v.length < 5 || v.length > 32) {
 										return callback(new Error(this.$t('user.pass_hint')));
 									} else if (/[\s\u4E00-\u9FA5]/.test(v)) {
 										return callback(new Error(this.$t('account.passwordNotCN')));
@@ -382,7 +403,8 @@ export default {
 				]
 			},
 			count1: 0,
-			count2: 0
+			count2: 0,
+			userRole: []
 		};
 	},
 	created() {
@@ -415,10 +437,20 @@ export default {
 			let where = {};
 			if (keyword && keyword.trim()) {
 				let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword;
-				where.or = [{ name: filterObj }, { email: filterObj }];
+				where.or = [{ username: filterObj }, { email: filterObj }];
 			}
 			if (this.activePanel !== 'all') {
-				where.status = this.activePanel;
+				switch (this.activePanel) {
+					case 'notActivated':
+						where.emailVerified = true;
+						where.account_status = 2;
+						break;
+					case 'notVerified':
+						where.emailVerified = false;
+						break;
+					case 'rejected':
+						where.account_status = 0;
+				}
 			}
 
 			if (tags && tags.length) {
@@ -439,6 +471,19 @@ export default {
 				})
 			]).then(([countRes, res]) => {
 				this.getCount();
+				res.data.forEach(item => {
+					if (item.emailVerified) {
+						if (item.account_status === 0) {
+							this.$set(item, 'status', 'rejected');
+						} else if (item.account_status === 1) {
+							this.$set(item, 'status', 'activated');
+						} else {
+							this.$set(item, 'status', 'notActivated');
+						}
+					} else {
+						this.$set(item, 'status', 'notVerified');
+					}
+				});
 				return {
 					total: countRes.data.count,
 					data: res.data
@@ -447,9 +492,9 @@ export default {
 		},
 		getCount() {
 			Promise.all([
-				this.$api('users').count({ where: { status: 'notActivated' } }),
-				this.$api('users').count({ where: { status: 'notVerified' } }),
-				this.$api('users').count({ where: { status: 'rejected' } })
+				this.$api('users').count({ where: { emailVerified: true, account_status: 2 } }),
+				this.$api('users').count({ where: { emailVerified: false } }),
+				this.$api('users').count({ where: { account_status: 0 } })
 			]).then(([notActivatedCount, notVerifiedCount, rejectedCount]) => {
 				this.notActivatedCount = notActivatedCount.data.count;
 				this.notVerifiedCount = notVerifiedCount.data.count;
@@ -458,15 +503,6 @@ export default {
 		},
 		// 获取角色下拉值
 		getDbOptions() {
-			// let filter = {
-			// 	fields: {
-			// 		name: true,
-			// 		id: true,
-			// 		database_type: true,
-			// 		connection_type: true,
-			// 		status: true
-			// 	}
-			// };
 			this.$api('role')
 				.get({})
 				.then(res => {
@@ -540,25 +576,74 @@ export default {
 		// 创建用户弹窗
 		openCreateDialog() {
 			this.createDialogVisible = true;
-
+			let roleusers = [];
+			let parmas = {
+				filter: {
+					where: {
+						register_user_default: true
+					}
+				}
+			};
+			this.$api('role')
+				.get(parmas)
+				.then(res => {
+					if (res.data && res.data.length) {
+						res.data.forEach(item => {
+							roleusers.push(item.id);
+						});
+					}
+				});
 			this.createForm = {
 				username: '',
 				email: '',
 				password: '',
-				roleusers: [],
+				roleusers: roleusers,
 				status: 'activated',
-				accesscode: ''
+				accesscode: '',
+				emailVerified: true,
+				account_status: 1
 			};
-			this.$refs.form.clearValidate();
+			setTimeout(() => {
+				this.$refs.form.clearValidate();
+			}, 10);
 		},
 		// 保存用户表单
 		createNewUser() {
 			let that = this;
+
 			this.$refs.form.validate(valid => {
+				if (that.createForm.id) {
+					this.$refs.form.clearValidate('password');
+				}
 				if (valid) {
 					let params = that.createForm;
-					params.source = 'creat';
 
+					if (!params.id) {
+						params.source = 'create';
+					}
+
+					switch (that.createForm.status) {
+						case 'notVerified':
+							params.emailVerified = false;
+							params.account_status = 2;
+							break;
+						case 'notActivated':
+							params.emailVerified = true;
+							params.emailVerified_from_frontend = true;
+							params.account_status = 2;
+							break;
+						case 'activated':
+							params.emailVerified = true;
+							params.emailVerified_from_frontend = true;
+							params.account_status = 1;
+							break;
+						case 'rejected':
+							params.emailVerified = true;
+							params.emailVerified_from_frontend = true;
+							params.account_status = 0;
+							break;
+					}
+					// delete params.status;
 					that.$api('users')
 						[that.createForm.id ? 'patch' : 'post'](params)
 						.then(res => {
@@ -593,6 +678,8 @@ export default {
 									.then(() => {
 										that.$message.success(this.$t('message.saveOK'));
 									});
+
+								this.table.fetch();
 							}
 						})
 						.catch(() => {
@@ -607,6 +694,7 @@ export default {
 		// 编辑用户
 		edit(item) {
 			this.createDialogVisible = true;
+
 			this.createForm = {
 				id: item.id,
 				username: item.username,
@@ -614,22 +702,50 @@ export default {
 				password: '',
 				roleusers: item.roleusers,
 				status: item.status ? item.status : '',
-				accesscode: item.accesscode
+				accesscode: item.accesscode,
+				emailVerified: item.emailVerified,
+				account_status: item.account_status
 			};
+
+			// if (!item.emailVerified) {
+			// 	this.createForm.status = 'notVerified';
+			// } else {
+			// 	if (item.account_status !== 1) {
+			// 		this.createForm.status = 'notActivated';
+			// 	}
+			// }
+			// if (item.account_status === 1) {
+			// 	this.createForm.status = 'activated';
+			// } else if (item.account_status === 0) {
+			// 	this.createForm.status = 'rejected';
+			// }
 			this.getMappingModel(item.id);
 		},
 
 		// 删除用户
 		remove(item) {
 			const h = this.$createElement;
-			let message = h('p', [
-				this.$t('user.delUser') + ' ',
-				h('span', { style: { color: '#48b6e2' } }, item.username),
-				this.$t('user.deluserLast')
+			let message = h('div', [
+				h('h1', [
+					h('i', {
+						class: 'el-icon-warning',
+						style: { paddingRight: '10px', fontSize: '20px', color: '#fe983d', verticalAlign: 'text-top' }
+					}),
+					h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.delUserTitle'))
+				]),
+				h('p', { style: { paddingTop: '12px', paddingLeft: '32px', fontSize: '12px' } }, [
+					this.$t('user.delUser') + ' ',
+					h('span', { style: { color: '#48b6e2' } }, item.username),
+					this.$t('user.deluserLast')
+				])
 			]);
-			this.$confirm(message, this.$t('user.delUserTitle'), {
-				type: 'warning',
+			this.$confirm(message, {
+				// type: 'warning',
 				closeOnClickModal: false,
+				confirmButtonText: this.$t('user.delete'),
+				confirmButtonClass: 'delConfirmbtn',
+				customClass: 'user-confirm',
+				showClose: false,
 				beforeClose: (action, instance, done) => {
 					if (action === 'confirm') {
 						instance.confirmButtonLoading = true;
@@ -655,60 +771,95 @@ export default {
 		// 激活
 		handleActive(item) {
 			const h = this.$createElement;
-			let message = h('p', [
-				this.$t('user.activetionUser') + ' ',
-				h('span', { style: { color: '#48b6e2' } }, item.username),
-				this.$t('user.activetionUserLast')
+			let message = h('div', [
+				h('h1', [
+					h('i', {
+						class: 'el-icon-warning',
+						style: { paddingRight: '10px', fontSize: '20px', color: '#fe983d', verticalAlign: 'text-top' }
+					}),
+					h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.activationUserTitle'))
+				]),
+				h('p', { style: { paddingTop: '12px', paddingLeft: '32px', fontSize: '12px' } }, [
+					this.$t('user.activetionUser') + ' ',
+					h('span', { style: { color: '#48b6e2' } }, item.username),
+					this.$t('user.activetionUserLast')
+				])
 			]);
 			let params = {
 				id: item.id,
-				status: 'activated'
+				account_status: 1
 			};
 			let successMsg = this.$t('user.activetionSuccess');
 			let errorMsg = this.$t('user.activetionError');
-			this.$confirm(
-				message,
-				this.$t('user.activationUserTitle'),
-				this.handleStatus(params, successMsg, errorMsg)
-			);
+			this.$confirm(message, this.handleStatus(params, successMsg, errorMsg, this.$t('user.activation')));
 		},
 		// 冻结
 		handleFreeze(item) {
 			const h = this.$createElement;
-			let message = h('p', [
-				this.$t('user.freezeUser') + ' ',
-				h('span', { style: { color: '#48b6e2' } }, item.username),
-				this.$t('user.freezeUserLast')
+
+			let message = h('div', [
+				h('h1', [
+					h('i', {
+						class: 'el-icon-warning',
+						style: { paddingRight: '10px', fontSize: '20px', color: '#fe983d', verticalAlign: 'text-top' }
+					}),
+					h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.freezeUserTitle'))
+				]),
+				h('p', { style: { paddingTop: '12px', paddingLeft: '32px', fontSize: '12px' } }, [
+					this.$t('user.freezeUser') + ' ',
+					h('span', { style: { color: '#48b6e2' } }, item.username),
+					this.$t('user.freezeUserLast')
+				])
 			]);
 			let params = {
 				id: item.id,
-				status: 'rejected'
+				account_status: 0
 			};
 			let successMsg = this.$t('user.freezeSuccess');
 			let errorMsg = this.$t('user.freezeError');
-			this.$confirm(message, this.$t('user.freezeUserTitle'), this.handleStatus(params, successMsg, errorMsg));
+			this.$confirm(
+				message,
+
+				this.handleStatus(params, successMsg, errorMsg, this.$t('user.freeze'))
+			);
 		},
 		// 校验
 		handleCheck(item) {
 			const h = this.$createElement;
-			let message = h('p', [
-				this.$t('user.checkUser') + ' ',
-				h('span', { style: { color: '#48b6e2' } }, item.username),
-				this.$t('user.checkUserLast')
+
+			let message = h('div', [
+				h('h1', [
+					h('i', {
+						class: 'el-icon-warning',
+						style: { paddingRight: '10px', fontSize: '20px', color: '#fe983d', verticalAlign: 'text-top' }
+					}),
+					h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.checkUserTitle'))
+				]),
+				h('p', { style: { paddingTop: '12px', paddingLeft: '32px', fontSize: '12px' } }, [
+					this.$t('user.checkUser') + ' ',
+					h('span', { style: { color: '#48b6e2' } }, item.username),
+					this.$t('user.checkUserLast')
+				])
 			]);
 			let params = {
 				id: item.id,
-				status: 'notActivated'
+				emailVerified: true
 			};
-			let successMsg = this.$t('user.freezeSuccess');
-			let errorMsg = this.$t('user.freezeError');
-			this.$confirm(message, this.$t('user.checkUserTitle'), this.handleStatus(params, successMsg, errorMsg));
+			let successMsg = this.$t('user.checkSuccess');
+			let errorMsg = this.$t('user.checkError');
+			this.$confirm(
+				message,
+
+				this.handleStatus(params, successMsg, errorMsg, this.$t('user.checkSuccess'))
+			);
 		},
 		// 改变状态提示
-		handleStatus(data, successMsg, errorMsg) {
+		handleStatus(data, successMsg, errorMsg, confirmButton) {
 			return {
-				type: 'warning',
 				closeOnClickModal: false,
+				confirmButtonText: confirmButton,
+				customClass: 'user-confirm',
+				showClose: false,
 				beforeClose: (action, instance, done) => {
 					if (action === 'confirm') {
 						instance.confirmButtonLoading = true;
@@ -907,6 +1058,17 @@ export default {
 			font-size: 12px;
 			box-sizing: border-box;
 		}
+	}
+}
+.user-confirm {
+	width: 500px;
+	padding-bottom: 20px;
+	.el-message-box__content {
+		padding: 20px 30px;
+	}
+	.delConfirmbtn {
+		background-color: #f56c6c;
+		border: 1px solid #f56c6c;
 	}
 }
 </style>

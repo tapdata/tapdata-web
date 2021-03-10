@@ -156,6 +156,8 @@ export default {
 						this.errorMessage = this.$t('app.signIn.watingApprove');
 					} else if (e.response.msg.indexOf('not been verified') !== -1) {
 						this.errorMessage = this.$t('app.signIn.hasVerified');
+					} else if (e.response.msg === 'ACCOUNT_DISABLED') {
+						this.errorMessage = this.$t('app.signIn.accountDisabled');
 					} else {
 						this.errorMessage = this.$t('app.signIn.signInFail');
 					}

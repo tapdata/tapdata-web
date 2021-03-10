@@ -83,14 +83,23 @@
 						</el-option>
 					</el-select>
 				</li>
-				<li class="item">
-					<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
-				</li>
-				<li class="item">
-					<el-button type="text" class="restBtn" size="mini" @click="reset('reset')">
-						{{ $t('dataFlow.reset') }}
-					</el-button>
-				</li>
+				<template
+					v-if="
+						searchParams.keyword ||
+							searchParams.status ||
+							searchParams.databaseType ||
+							searchParams.databaseModel
+					"
+				>
+					<li class="item">
+						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
+					</li>
+					<li class="item">
+						<el-button type="text" class="restBtn" size="mini" @click="reset('reset')">
+							{{ $t('dataFlow.reset') }}
+						</el-button>
+					</li>
+				</template>
 			</ul>
 			<div slot="operation">
 				<el-button
@@ -316,7 +325,7 @@ export default {
 		this.getDatabaseType();
 		//header
 		let guideDoc =
-			' <a style="color: #48B6E2" href="https://docs.tapdata.net/data-source">' +
+			' <a target="_blank" style="color: #48B6E2" href="https://docs.tapdata.net/data-source">' +
 			this.$t('dataForm.form.guideDoc') +
 			'</a>';
 		this.description = this.$t('connection.desc') + guideDoc;
@@ -337,19 +346,6 @@ export default {
 		//筛选条件
 		handleSortTable({ order, prop }) {
 			this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`;
-			this.table.fetch(1);
-		},
-		// 重置
-		reset(name) {
-			if (name === 'reset') {
-				this.searchParams = {
-					keyword: '',
-					isFuzzy: true,
-					databaseType: '',
-					databaseModel: '',
-					status: ''
-				};
-			}
 			this.table.fetch(1);
 		},
 		async getDatabaseType() {
@@ -386,7 +382,7 @@ export default {
 			};
 			//精准搜索 iModel
 			if (keyword && keyword.trim()) {
-				let filterObj = iModel ? { like: verify(keyword), options: 'i' } : keyword;
+				let filterObj = iModel === 'fuzzy' ? { like: verify(keyword), options: 'i' } : keyword;
 				where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
 			}
 			where.database_type = {
@@ -423,16 +419,19 @@ export default {
 				};
 			});
 		},
-		rest() {
-			this.searchParams = {
-				iModel: 'fuzzy',
-				databaseType: '',
-				keyword: '',
-				databaseModel: '',
-				status: '',
-				panelFlag: true
-			};
-			this.table.fetch(1);
+		// 重置
+		reset(name) {
+			if (name === 'reset') {
+				this.searchParams = {
+					iModel: 'fuzzy',
+					databaseType: '',
+					keyword: '',
+					databaseModel: '',
+					status: '',
+					panelFlag: true
+				};
+				this.table.fetch(1);
+			}
 		},
 		getImgByType(type) {
 			if (!type) {

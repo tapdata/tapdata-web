@@ -16,6 +16,7 @@
 		</div>
 		<div class="tree-block">
 			<el-tree
+				v-if="treeData && treeData.length > 0"
 				check-strictly
 				show-checkbox
 				class="classification-tree"
@@ -51,6 +52,13 @@
 					</el-dropdown>
 				</span>
 			</el-tree>
+			<span v-else v-readonlybtn="authority" @click="showDialog()" class="create">
+				{{
+					types[0] === 'user'
+						? $t('classification.creatUserGroup')
+						: $t('classification.creatDataClassification')
+				}}
+			</span>
 		</div>
 		<el-dialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
 			<span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
@@ -509,6 +517,12 @@ export default {
 		&:hover .btn-menu {
 			display: block;
 		}
+	}
+	.create {
+		padding: 20px 10px;
+		font-size: 12px;
+		color: #48b6e2;
+		cursor: pointer;
 	}
 }
 </style>

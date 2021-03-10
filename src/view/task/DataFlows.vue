@@ -79,12 +79,23 @@
 							></el-option>
 						</el-select>
 					</li>
-					<li>
-						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
-					</li>
-					<li>
-						<el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
-					</li>
+					<template
+						v-if="
+							searchParams.keyword ||
+								searchParams.executionStatus ||
+								searchParams.progress ||
+								searchParams.status
+						"
+					>
+						<li>
+							<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
+						</li>
+						<li>
+							<el-button size="mini" type="text" @click="reset('reset')">{{
+								$t('button.reset')
+							}}</el-button>
+						</li>
+					</template>
 				</ul>
 			</template>
 			<div class="buttons" slot="operation">

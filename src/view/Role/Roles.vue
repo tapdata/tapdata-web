@@ -20,11 +20,11 @@
 							</el-select>
 						</el-input>
 					</li>
-					<li class="item">
+					<li class="item" v-if="searchNav.keyword">
 						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
 					</li>
-					<li class="item">
-						<el-button type="text" class="restBtn" size="mini" @click="rest('reset')">
+					<li class="item" v-if="searchNav.keyword">
+						<el-button type="text" class="restBtn" size="mini" @click="reset('reset')">
 							{{ $t('dataFlow.reset') }}
 						</el-button>
 					</li>
@@ -510,7 +510,7 @@ export default {
 		},
 
 		// 重置
-		rest(name) {
+		reset(name) {
 			if (name === 'reset') {
 				this.searchNav = {
 					selectedSeachType: '0',
@@ -605,6 +605,13 @@ export default {
 			.role-table {
 				flex: 1;
 				overflow: hidden;
+				.name {
+					color: #48b6e2;
+					cursor: pointer;
+				}
+				.name:hover {
+					text-decoration: underline;
+				}
 			}
 			.el-button.is-disabled {
 				color: #c0c4cc;
@@ -642,10 +649,6 @@ export default {
 		.input-with-select {
 			.el-select .el-input {
 				width: 100px;
-			}
-			.el-input-group__append,
-			.el-input-group__prepend {
-				background: #fff;
 			}
 		}
 	}
