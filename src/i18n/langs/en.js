@@ -2564,7 +2564,7 @@ const en = {
 		creatUser: 'Create user',
 		editUser: 'Edit User',
 		userName: 'Username',
-		email: 'Mailbox',
+		email: 'Email',
 		password: 'Password',
 		role: 'Role',
 		source: 'Source',
