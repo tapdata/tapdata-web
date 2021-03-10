@@ -4,26 +4,6 @@
 			<div class="data-map-title">数据血缘</div>
 		</div>
 		<div class="data-map-main">
-			<div class="data-map-info">
-				<el-form class="e-form" label-position="top" label-width="160px" ref="form">
-					<el-form-item>
-						<el-button type="primary">
-							刷新所有血缘数据
-						</el-button>
-					</el-form-item>
-					<el-form-item :label="$t('editor.cell.data_node.table.form.database.label')" prop="connectionId">
-						<div style="display:flex;">
-							<FbSelect v-model="connectionId" :config="databaseSelectConfig"></FbSelect>
-						</div>
-					</el-form-item>
-
-					<el-form-item :label="$t('editor.cell.data_node.table.form.table.label')" prop="tableName">
-						<div class="flex-block">
-							<FbSelect class="e-select" v-model="tableName" :config="schemaSelectConfig"></FbSelect>
-						</div>
-					</el-form-item>
-				</el-form>
-			</div>
 			<div id="paper" class="data-map"></div>
 		</div>
 	</div>
@@ -31,6 +11,9 @@
 
 <script>
 import graph from './graph';
+import factory from '../../api/factory';
+const LineageGraphsAPI = factory('LineageGraphs');
+
 export default {
 	name: 'DataRelations',
 
@@ -38,39 +21,20 @@ export default {
 		return {
 			currentLevel: 1,
 			connectionId: '',
-			tableName: '',
-			databaseSelectConfig: {
-				size: 'mini',
-				placeholder: this.$t('editor.cell.data_node.database.form.placeholder'),
-				loading: false,
-				filterable: true,
-				on: {
-					change() {
-						self.handlerConnectionChange();
-					}
-				},
-				options: []
-			},
-			schemaSelectConfig: {
-				size: 'mini',
-				placeholder: this.$t('editor.cell.data_node.table.form.table.placeholder'),
-				loading: false,
-				filterable: true,
-				on: {
-					change() {
-						self.handlerSchemaChange();
-					}
-				},
-				options: [],
-				allowCreate: false,
-				defaultFirstOption: false,
-				clearable: true
-			}
+			tableName: ''
 		};
 	},
-
 	mounted() {
-		graph();
+		LineageGraphsAPI.graphData('T_oracle_XE_TAPDATA_CUSTOMER_5fe1a7a6b64d9e8027637b19')
+			.then(res => {
+				if (res.data) {
+					this.graph.draw(this.graph.joint, this.graph.graph, res.data.items, res.data.links);
+				}
+			})
+			.finally(() => {
+				this.apiLoading = false;
+			});
+		this.graph = graph();
 	},
 	methods: {}
 };

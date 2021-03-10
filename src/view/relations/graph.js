@@ -248,208 +248,36 @@ export default function() {
 		selection.addRange(range);
 	}
 
-	(function(joint, graph) {
-		var rdatas = [
-			{
-				id: 'adm_greenbuild_project_date_used_water_count_1',
-				label: 'adm_greenbuild_project_date_used_water_count_1',
-				items: [
-					{ id: '_id', label: '_id', type: 'String', primary_key_position: 1 },
-					{ id: 'branch_abb', label: 'branch_abb', type: 'String' },
-					{ id: 'branch_id', label: 'branch_id', type: 'Integer' },
-					{ id: 'branch_name', label: 'branch_name', type: 'String' },
-					{ id: 'engineer_id', label: 'engineer_id', type: 'Integer' },
-					{ id: 'water_record_date', label: 'water_record_date', type: 'String' },
-					{ id: 'used_water_count', label: 'used_water_count', type: 'Double' }
-				],
-				connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-			},
-			{
-				id: 'mdm_project_info',
-				label: 'mdm_project_info',
-				items: [
-					{ id: '_id', label: '_id', type: 'String', primary_key_position: 1 },
-					{ id: 'branch_id', label: 'branch_id', type: 'Integer' },
-					{ id: 'pro_bulid_area', label: 'pro_bulid_area', type: 'Double' }
-				],
-				connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-			},
-			{
-				id: 'adm_ls_engineer_use_water_temp',
-				label: '用水汇总临时表',
-				items: [
-					{ id: '_id', label: '_id', type: 'String', primary_key_position: 1 },
-					{ id: 'branch_abb', label: 'branch_abb', type: 'String' },
-					{ id: 'branch_id', label: 'branch_id', type: 'Integer' },
-					{ id: 'branch_name', label: 'branch_name', type: 'String' },
-					{ id: 'engineer_id', label: 'engineer_id', type: 'Integer' },
-					{ id: 'water_record_date', label: 'water_record_date', type: 'String' },
-					{ id: 'used_water_count', label: 'used_water_count', type: 'Double' },
-					{ id: 'pro_bulid_area', label: 'pro_bulid_area', type: 'Double' }
-				],
-				connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-			},
-			{
-				id: 'adm_greenbuild_branch_date_used_water_count',
-				label: '用水汇总表',
-				items: [
-					{ id: '_id', label: '_id', type: 'String', primary_key_position: 1 },
-					{ id: 'branch_abb', label: 'branch_abb', type: 'String' },
-					{ id: 'branch_id', label: 'branch_id', type: 'Integer' },
-					{ id: 'branch_name', label: 'branch_name', type: 'String' },
-					{ id: 'engineer_id', label: 'engineer_id', type: 'Integer' },
-					{ id: 'water_record_date', label: 'water_record_date', type: 'String' },
-					{ id: 'used_water_count', label: 'used_water_count', type: 'Double' },
-					{ id: 'pro_bulid_area', label: 'pro_bulid_area', type: 'Double' },
-					{ id: 'avg_water_count', label: 'avg_water_count', type: 'Double' }
-				],
-				connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-			}
-		];
-
-		var linkdatas = (links = [
-			{
-				source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'branch_abb' },
-				target: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_abb' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'branch_id' },
-				target: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_id' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'branch_name' },
-				target: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_name' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'engineer_id' },
-				target: { id: 'adm_ls_engineer_use_water_temp', port: 'engineer_id' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'water_record_date' },
-				target: { id: 'adm_ls_engineer_use_water_temp', port: 'water_record_date' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'used_water_count' },
-				target: { id: 'adm_ls_engineer_use_water_temp', port: 'used_water_count' },
-				dataFlows: [
-					{
-						id: '60127fe2ace10a61d0570ae9',
-						name: '05_ADM_用水用电情况合并_二公司',
-						aggregate: { type: 'SUM', field: 'pro_bulid_area', group: 'branch_id' }
-					}
-				]
-			},
-			{
-				source: { id: 'mdm_project_info', port: 'branch_id' },
-				target: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_id' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'mdm_project_info', port: 'pro_bulid_area' },
-				target: { id: 'adm_ls_engineer_use_water_temp', port: 'pro_bulid_area' },
-				dataFlows: [
-					{
-						id: '60127fe2ace10a61d0570ae9',
-						name: '05_ADM_用水用电情况合并_二公司',
-						aggregate: { type: 'SUM', field: 'pro_bulid_area', group: 'branch_id' }
-					}
-				]
-			},
-			{
-				source: { id: 'adm_ls_engineer_use_water_temp', port: 'adm_ls_engineer_use_water_temp' },
-				target: {
-					id: 'adm_greenbuild_branch_date_used_water_count',
-					port: 'adm_greenbuild_branch_date_used_water_count'
-				},
-				dataFlows: [
-					{
-						id: '60127fe2ace10a61d0570ae9',
-						name: '05_ADM_用水用电情况合并_二公司',
-						javascript:
-							'function process(record){\n' +
-							'\n' +
-							'\tif(record.pro_bulid_area && record.pro_bulid_area>0){\n' +
-							'\t\trecord.avg_water_count = record.used_water_count/record.pro_bulid_area\n' +
-							'\t}else{\n' +
-							'\t\trecord.avg_water_count = 0\n' +
-							'\t}\n' +
-							'\treturn record;\n' +
-							'}'
-					}
-				]
-			},
-			{
-				source: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_abb' },
-				target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'branch_abb' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_id' },
-				target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'branch_id' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_name' },
-				target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'branch_name' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_ls_engineer_use_water_temp', port: 'engineer_id' },
-				target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'engineer_id' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_ls_engineer_use_water_temp', port: 'water_record_date' },
-				target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'water_record_date' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_ls_engineer_use_water_temp', port: 'used_water_count' },
-				target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'used_water_count' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_ls_engineer_use_water_temp', port: 'pro_bulid_area' },
-				target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'pro_bulid_area' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			},
-			{
-				source: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_abb' },
-				target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'branch_abb' },
-				dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-			}
-		]);
-
-		rdatas.forEach((table, idx) => {
-			var node = new joint.shapes.mapping.Record({ items: [[table]] });
-			linkdatas.map((link, idx, linkdatas) => {
-				if (link.source.id == table.id) linkdatas[idx].source.id = node.id;
-				if (link.target.id == table.id) linkdatas[idx].target.id = node.id;
+	return {
+		joint: joint,
+		graph: graph,
+		draw: function(rdatas, linkdatas) {
+			rdatas.forEach((table, idx) => {
+				var node = new joint.shapes.mapping.Record({ items: [[table]] });
+				linkdatas.map((link, idx, linkdatas) => {
+					if (link.source.id == table.id) linkdatas[idx].source.id = node.id;
+					if (link.target.id == table.id) linkdatas[idx].target.id = node.id;
+				});
+				node.setName(table.connection.name);
+				node.position(idx * 350 + 50, 130);
+				node.addTo(graph);
 			});
-			node.setName(table.connection.name);
-			node.position(idx * 350 + 50, 130);
-			node.addTo(graph);
-		});
 
-		var links = linkdatas.map(link => {
-			return new joint.shapes.mapping.Link({
-				source: { id: link.source.id, port: link.source.port },
-				target: { id: link.target.id, port: link.target.port },
-				labels: [
-					{
-						attrs: { text: { text: link.dataFlows[0].name } }
-					}
-				]
+			var links = linkdatas.map(link => {
+				return new joint.shapes.mapping.Link({
+					source: { id: link.source.id, port: link.source.port },
+					target: { id: link.target.id, port: link.target.port },
+					labels: [
+						{
+							attrs: { text: { text: link.dataFlows[0].name } }
+						}
+					]
+				});
 			});
-		});
 
-		links.forEach(function(link) {
-			link.addTo(graph);
-		});
-	})(joint, graph);
+			links.forEach(function(link) {
+				link.addTo(graph);
+			});
+		}
+	};
 }
