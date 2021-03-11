@@ -291,7 +291,7 @@ export default {
 			this.getFavMenus();
 		});
 		if (this.$cookie.get('email')) {
-			this.userName = this.$cookie.get('email').split('@')[0] || '';
+			this.userName = this.$cookie.get('username') || this.$cookie.get('email').split('@')[0] || '';
 		}
 
 		window.iframeRouterChange = route => {

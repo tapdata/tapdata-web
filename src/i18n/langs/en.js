@@ -2589,16 +2589,16 @@ const en = {
 		activationCode: 'Access Code',
 		delUserTitle: 'Whether to delete this user ?',
 		delUser: 'Delete user',
-		deluserLast: 'After this user will not be able to recover',
+		deluserLast: ' after this user will not be able to recover',
 		checkUserTitle: 'Whether to verify this user ?',
 		checkUser: 'Pass the verification user',
-		checkUserLast: 'After the mailbox, this user can be activated',
+		checkUserLast: ' after the mailbox, this user can be activated',
 		activationUserTitle: 'Do you want to activate this user ? ',
 		activetionUser: 'Activation User',
-		activetionUserLast: 'After that, this user will be able to use the TAPDATA system',
+		activetionUserLast: ' after that, this user will be able to use the TAPDATA system',
 		freezeUserTitle: 'Do you want to freeze this user ? ',
 		freezeUser: 'Freeze user',
-		freezeUserLast: 'After this user will not be able to use the TAPDATA system',
+		freezeUserLast: ' after this user will not be able to use the TAPDATA system',
 		startTime: 'Start Time',
 		endTime: 'End Time',
 		emailNull: 'Email cannot be empty',
@@ -2608,7 +2608,8 @@ const en = {
 		freezeSuccess: 'Freeze successful',
 		freezeError: 'Freeze failed',
 		checkSuccess: 'Pass verification',
-		checkError: 'Verification failed'
+		checkError: 'Verification failed',
+		alreadyExists: 'User name cannot be repeated'
 	}
 };
 

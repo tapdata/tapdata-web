@@ -263,22 +263,26 @@ export default {
 	created() {
 		this.getDataApi(this.getSteps);
 		this.getConnections();
-		this.handleAgent();
+		this.timer = setInterval(() => {
+			this.handleAgent();
+		}, 3000);
 	},
 	methods: {
 		getImgByType,
 		// 轮询agent
 		handleAgent() {
-			this.timer = setInterval(() => {
-				this.getDataApi((isShow, data) => {
-					if (data.length && data[0].status !== 'running') {
-						this.agentVisible = true;
-						if (data[0].engine.status !== 'running') {
-							this.agentEngineVisible = true;
-						}
+			this.getDataApi((isShow, data) => {
+				if (data.length && data[0].status !== 'running') {
+					this.agentVisible = true;
+					if (data[0].engine.status !== 'running') {
+						this.agentEngineVisible = true;
+					} else {
+						this.agentEngineVisible = false;
 					}
-				});
-			}, 3000);
+				} else {
+					this.agentVisible = false;
+				}
+			});
 		},
 		// 获取Agent是否安装
 		getDataApi(cb) {

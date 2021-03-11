@@ -463,7 +463,9 @@ export default {
 		},
 		openCreateDialog() {
 			this.createDialogVisible = true;
-			this.$refs.form.clearValidate();
+			this.$nextTick(() => {
+				this.$refs.form.clearValidate();
+			});
 			this.createForm = {
 				model_type: 'collection',
 				database: '',

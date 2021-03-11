@@ -2548,7 +2548,8 @@ const cn = {
 		freezeSuccess: '冻结成功',
 		freezeError: '冻结失败',
 		checkSuccess: '通过校验',
-		checkError: '校验失败'
+		checkError: '校验失败',
+		alreadyExists: '用户名不能重复'
 	}
 };
 

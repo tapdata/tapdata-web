@@ -109,7 +109,11 @@
 					<i class="iconfont icon-biaoqian back-btn-icon"></i>
 					<span> {{ $t('dataFlow.taskBulkTag') }}</span>
 				</el-button>
-				<el-dropdown @command="handleCommand($event)" v-show="multipleSelection.length > 0">
+				<el-dropdown
+					@command="handleCommand($event)"
+					v-readonlybtn="'user_edition'"
+					v-show="multipleSelection.length > 0"
+				>
 					<el-button class="btn btn-dropdowm" size="mini">
 						<i class="iconfont icon-piliang back-btn-icon"></i>
 						<span> {{ $t('dataFlow.taskBulkOperation') }}</span>
@@ -192,7 +196,7 @@
 						v-readonlybtn="'user_edition'"
 						size="mini"
 						type="text"
-						v-if="scope.row.emailVerified && scope.row.account_status !== 1"
+						v-if="['rejected', 'notActivated'].includes(scope.row.status)"
 						:disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
 						@click="handleActive(scope.row)"
 					>
@@ -202,7 +206,7 @@
 						v-readonlybtn="'user_edition'"
 						size="mini"
 						type="text"
-						v-if="scope.row.account_status !== 0"
+						v-if="!['rejected'].includes(scope.row.status)"
 						:disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
 						@click="handleFreeze(scope.row)"
 					>
@@ -212,7 +216,7 @@
 						v-readonlybtn="'user_edition'"
 						size="mini"
 						type="text"
-						v-if="!scope.row.emailVerified"
+						v-if="['notVerified'].includes(scope.row.status)"
 						:disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
 						@click="handleCheck(scope.row)"
 						>{{ $t('user.check') }}</el-button
@@ -221,7 +225,7 @@
 						v-readonlybtn="'user_edition'"
 						size="mini"
 						type="text"
-						v-if="scope.row.emailVerified && scope.row.account_status !== 2"
+						v-if="['activated', 'rejected'].includes(scope.row.status)"
 						:disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
 						@click="edit(scope.row)"
 						>{{ $t('user.edit') }}</el-button
@@ -338,6 +342,7 @@ export default {
 						required: true,
 						maxlength: 100,
 						showWordLimit: true,
+						mode: 'text',
 						rules: [
 							{
 								required: true,
@@ -349,6 +354,19 @@ export default {
 									} else {
 										return callback();
 									}
+								}
+							}
+						],
+						dependOn: [
+							{
+								triggerOptions: [
+									{
+										field: 'id',
+										value: undefined
+									}
+								],
+								triggerConfig: {
+									mode: 'form'
 								}
 							}
 						]
@@ -447,6 +465,7 @@ export default {
 						break;
 					case 'notVerified':
 						where.emailVerified = false;
+						where.account_status = { neq: 0 };
 						break;
 					case 'rejected':
 						where.account_status = 0;
@@ -472,16 +491,17 @@ export default {
 			]).then(([countRes, res]) => {
 				this.getCount();
 				res.data.forEach(item => {
-					if (item.emailVerified) {
-						if (item.account_status === 0) {
-							this.$set(item, 'status', 'rejected');
-						} else if (item.account_status === 1) {
+					if (!item.emailVerified) {
+						this.$set(item, 'status', 'notVerified');
+					} else {
+						if (item.account_status === 1) {
 							this.$set(item, 'status', 'activated');
 						} else {
 							this.$set(item, 'status', 'notActivated');
 						}
-					} else {
-						this.$set(item, 'status', 'notVerified');
+					}
+					if (item.account_status === 0) {
+						this.$set(item, 'status', 'rejected');
 					}
 				});
 				return {
@@ -493,7 +513,7 @@ export default {
 		getCount() {
 			Promise.all([
 				this.$api('users').count({ where: { emailVerified: true, account_status: 2 } }),
-				this.$api('users').count({ where: { emailVerified: false } }),
+				this.$api('users').count({ where: { emailVerified: false, account_status: { neq: 0 } } }),
 				this.$api('users').count({ where: { account_status: 0 } })
 			]).then(([notActivatedCount, notVerifiedCount, rejectedCount]) => {
 				this.notActivatedCount = notActivatedCount.data.count;
@@ -603,9 +623,9 @@ export default {
 				emailVerified: true,
 				account_status: 1
 			};
-			setTimeout(() => {
+			this.$nextTick(() => {
 				this.$refs.form.clearValidate();
-			}, 10);
+			});
 		},
 		// 保存用户表单
 		createNewUser() {
@@ -678,12 +698,15 @@ export default {
 									.then(() => {
 										that.$message.success(this.$t('message.saveOK'));
 									});
-
 								this.table.fetch();
 							}
 						})
-						.catch(() => {
-							that.$message.success(this.$t('message.saveOK'));
+						.catch(e => {
+							if (e.response.msg.indexOf('User already exists') !== -1) {
+								that.$message.error(this.$t('user.alreadyExists'));
+							} else {
+								that.$message.error(this.$t('message.saveFail'));
+							}
 						})
 						.finally(() => {
 							that.createDialogVisible = false;
@@ -706,19 +729,9 @@ export default {
 				emailVerified: item.emailVerified,
 				account_status: item.account_status
 			};
-
-			// if (!item.emailVerified) {
-			// 	this.createForm.status = 'notVerified';
-			// } else {
-			// 	if (item.account_status !== 1) {
-			// 		this.createForm.status = 'notActivated';
-			// 	}
-			// }
-			// if (item.account_status === 1) {
-			// 	this.createForm.status = 'activated';
-			// } else if (item.account_status === 0) {
-			// 	this.createForm.status = 'rejected';
-			// }
+			this.$nextTick(() => {
+				this.$refs.form.clearValidate();
+			});
 			this.getMappingModel(item.id);
 		},
 
@@ -892,8 +905,20 @@ export default {
 					inq: ids
 				}
 			};
+			let params = {};
+			switch (command) {
+				case 'activated':
+					params.account_status = 1;
+					break;
+				case 'rejected':
+					params.account_status = 0;
+					break;
+				case 'notActivated':
+					params.emailVerified = true;
+					break;
+			}
 			this.$api('users')
-				.update(where, { status: command })
+				.update(where, params)
 				.then(() => {
 					this.table.fetch();
 					this.$message.success(this.$t('message.operationSuccuess'));

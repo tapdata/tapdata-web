@@ -2542,7 +2542,8 @@ const tc = {
 		freezeSuccess: '凍結成功',
 		freezeError: '凍結失敗',
 		checkSuccess: '通過校驗',
-		checkError: '校驗失敗'
+		checkError: '校驗失敗',
+		alreadyExists: '用戶名不能重複'
 	}
 };
 
