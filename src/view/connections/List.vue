@@ -301,7 +301,9 @@ export default {
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE'),
 			sourceTypeOptions: [
 				{ label: 'RDS实例', value: 'rds' },
-				{ label: '云外自建数据库', value: 'selfDB' }
+				{ label: '云外自建数据库', value: 'selfDB' },
+				{ label: 'DDS实例', value: 'dds' },
+				{ label: 'ECS自建库', value: 'ecs' }
 			],
 			sourceTypeMapping: {
 				rds: 'RDS实例',
