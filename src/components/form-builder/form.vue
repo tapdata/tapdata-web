@@ -51,14 +51,20 @@ export default {
 				clearable: true,
 				on: {}
 			},
-			form: null
+			form: null,
+			itemsConfig: this.config.items.concat()
 		};
+	},
+	watch: {
+		'config.items'(configs) {
+			this.itemsConfig = configs.concat();
+		}
 	},
 	render(h) {
 		let formConfig = Object.assign(this.defaultFormConfig, this.config.form, {
 			model: this.value
 		});
-		let formItems = this.config.items || [];
+		let formItems = this.itemsConfig || [];
 		let el = h(
 			'ElForm',
 			{
@@ -215,6 +221,10 @@ export default {
 										});
 									}
 									config.on.input && config.on.input(val);
+									self.$emit('value-change', {
+										field: config.field,
+										value: val
+									});
 								},
 								change(...args) {
 									config.on.change && config.on.change(...args);
@@ -229,6 +239,18 @@ export default {
 			} else {
 				return [el];
 			}
+		},
+		setItemConfig(field, config) {
+			let configs = this.itemsConfig;
+			for (let i = 0; i < configs.length; i++) {
+				const c = configs[i];
+				if (c.field === field) {
+					this.$set(this.itemsConfig, i, Object.assign({}, c, config));
+				}
+			}
+		},
+		initConfig() {
+			this.itemsConfig = this.config.items.concat();
 		}
 	}
 };
