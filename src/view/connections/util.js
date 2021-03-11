@@ -154,6 +154,7 @@ export const defaultCloudModel = {
 		database_password: '',
 		plain_password: '',
 		database_uri: '',
+		isUrl: false,
 		sslCA: '',
 		sslCAFile: null,
 		sslKeyFile: null,

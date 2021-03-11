@@ -486,6 +486,9 @@ export default {
 				if (this.model.database_type === 'mongodb' && this.$route.params.id && itemIsUrl) {
 					itemIsUrl.options[0].disabled = true;
 					this.model.isUrl = false;
+				} else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
+					itemIsUrl.options[1].disabled = true;
+					this.model.isUrl = true;
 				}
 				if (this.$route.params.id) {
 					//编辑模式下 不展示
@@ -827,9 +830,7 @@ export default {
 						}
 					}
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
-						.then(res => {
-							let id = res.data.id;
-							this.model.id = id;
+						.then(() => {
 							this.$message.success(this.$t('message.saveOK'));
 							this.$router.push('/connections');
 						})
