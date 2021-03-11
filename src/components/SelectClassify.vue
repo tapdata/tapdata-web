@@ -106,7 +106,6 @@ export default {
 					.get({})
 					.then(res => {
 						if (res.data) {
-							debugger;
 							let treeData = res.data.map(item => ({
 								value: item.name,
 								id: item.id,
@@ -124,7 +123,6 @@ export default {
 					filter: JSON.stringify(filter)
 				}).then(res => {
 					if (res.data) {
-						debugger;
 						this.treeData = this.formatData(res.data);
 						cb && cb(res.data);
 					}

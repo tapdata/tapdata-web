@@ -201,7 +201,7 @@
 					</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')" width="180">
+			<el-table-column prop="status" sortable="custom" :label="$t('dataFlow.taskStatus')">
 				<template slot-scope="scope">
 					<div>
 						<img
@@ -239,7 +239,7 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="150" sortable="custom">
+			<el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" sortable="custom">
 				<template slot-scope="scope">
 					{{ scope.row.startTime ? $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
 				</template>

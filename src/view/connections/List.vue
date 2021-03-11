@@ -159,7 +159,6 @@
 				prop="connection_type"
 				:label="$t('connection.connectionType')"
 				:formatter="formatterConnectionType"
-				width="120"
 				sortable="connection_type"
 			></el-table-column>
 			<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100" sortable="status">
@@ -184,7 +183,7 @@
 					</span>
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('connection.operate')" width="220">
+			<el-table-column :label="$t('connection.operate')">
 				<template slot-scope="scope">
 					<el-button class="btn-text" type="text" @click="preview(scope.row.id, scope.row.database_type)">
 						{{ $t('message.preview') }}

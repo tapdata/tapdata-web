@@ -3,15 +3,20 @@
 		<el-button class="btn-expand" size="mini" @click="toggle()">
 			<i class="iconfont icon-zhankai2"></i>
 		</el-button>
+		<el-button class="btn-addIcon" size="mini" type="text">
+			<i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i>
+		</el-button>
+		<el-button class="btn-query" size="mini" type="text">
+			<i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
+		</el-button>
 		<div class="classification-header">
 			<div class="title">
 				<span>{{ types[0] === 'user' ? $t('classification.userTitle') : $t('classification.title') }}</span>
 			</div>
-			<div class="search-box">
+			<div class="search-box" v-if="searchFalg">
 				<el-input class="search" size="mini" v-model="filterText">
-					<i slot="suffix" class="el-icon-search"></i>
+					<i slot="prefix" class="el-icon-search"></i>
 				</el-input>
-				<i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i>
 			</div>
 		</div>
 		<div class="tree-block">
@@ -33,8 +38,8 @@
 			>
 				<span class="custom-tree-node" slot-scope="{ node, data }">
 					<span class="iconfont icon-Folder-closed icon-folder"></span>
-					<span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span>
-					<span class="table-label" v-else>{{ data.value }}</span>
+					<!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
+					<span class="table-label">{{ data.value }}</span>
 					<el-dropdown
 						class="btn-menu"
 						size="mini"
@@ -98,6 +103,7 @@ export default {
 	},
 	data() {
 		return {
+			searchFalg: false,
 			isExpand: true,
 			filterText: '',
 			treeData: [],
@@ -177,8 +183,20 @@ export default {
 					.get({})
 					.then(res => {
 						if (res.data) {
-							this.treeData = this.formatData(res.data);
-							cb && cb(res.data);
+							let treeData = [];
+							if (res.data && res.data.length) {
+								treeData = res.data.map(item => ({
+									value: item.name,
+									name: item.name,
+									id: item.id,
+									gid: item.gid,
+									parent_id: item.parent_id,
+									last_updated: item.last_updated,
+									user_id: item.user_id
+								}));
+							}
+							this.treeData = this.formatData(treeData);
+							cb && cb(treeData);
 						}
 					});
 			} else {
@@ -201,8 +219,19 @@ export default {
 					.get({})
 					.then(res => {
 						if (res.data) {
+							let treeData = [];
+							if (res.data && res.data.length) {
+								treeData = res.data.map(item => ({
+									value: item.name,
+									id: item.id,
+									gid: item.gid,
+									parent_id: item.parent_id,
+									last_updated: item.last_updated,
+									user_id: item.user_id
+								}));
+							}
 							// this.treeData = this.formatData(res.data);
-							cb && cb(res.data);
+							cb && cb(treeData);
 						}
 					});
 			} else {
@@ -417,18 +446,21 @@ export default {
 	display: flex;
 	flex-direction: column;
 	width: 26px;
-	height: 26px;
+	height: 22px;
 	user-select: none;
 	box-sizing: border-box;
 	border-top: none;
 	background: #fff;
 	border-radius: 3px;
 	overflow: hidden;
+	box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
 	.btn-expand {
 		padding: 2px 3px;
 		color: #666;
 		transform: rotate(0);
 		box-sizing: border-box;
+		background: #eff1f4;
+		border: 0;
 	}
 	&.expand {
 		height: 100%;
@@ -440,47 +472,85 @@ export default {
 			right: 8px;
 			transform: rotate(180deg);
 		}
-	}
-	/*头部样式*/
-	.classification-header {
-		background: #fafafa;
-		border-bottom: 1px solid #dedee4;
-		font-size: 12px;
-		line-height: 31px;
-		padding: 0 8px;
-		display: flex;
-		flex-direction: column;
-		.title {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			color: #999;
-		}
-		.search-box {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			margin-bottom: 3px;
-			.iconfont {
-				color: #c0c4cc;
-				font-size: 12px;
-				background: #fff;
-				border: 1px solid #dedee4;
+		.btn-addIcon {
+			position: absolute;
+			right: 33px;
+			.iconfont.icon-jia {
 				display: flex;
+				flex-direction: row;
 				justify-content: center;
 				align-items: center;
+				color: #666;
+				font-size: 16px;
+				// background: #fff;
+				// border: 1px solid #dedee4;
+
 				height: 66%;
-				padding: 0 4px;
-				padding-right: 6px;
-				padding-left: 5px;
+				// padding: 0 4px;
+				// padding-right: 6px;
+				// padding-left: 5px;
 				margin-top: 0px;
 				border-top-width: 1px;
 				border-radius: 3px;
 				cursor: pointer;
 			}
 		}
+		.btn-query {
+			position: absolute;
+			right: 54px;
+			.icon-fangdajing {
+				font-size: 16px;
+				color: #666;
+				&:hover {
+					color: #48b6e2;
+				}
+			}
+		}
+	}
+
+	/*头部样式*/
+	.classification-header {
+		background: #fafafa;
+		// border-bottom: 1px solid #dedee4;
+		font-size: 12px;
+		line-height: 31px;
+		display: flex;
+		width: 213px;
+		flex-direction: column;
+		.title {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 8px;
+			color: #666;
+			background-color: #eff1f4;
+		}
+
+		.search-box {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 3px;
+			// .iconfont {
+			// 	color: #c0c4cc;
+			// 	font-size: 12px;
+			// 	background: #fff;
+			// 	border: 1px solid #dedee4;
+			// 	display: flex;
+			// 	justify-content: center;
+			// 	align-items: center;
+			// 	height: 66%;
+			// 	padding: 0 4px;
+			// 	padding-right: 6px;
+			// 	padding-left: 5px;
+			// 	margin-top: 0px;
+			// 	border-top-width: 1px;
+			// 	border-radius: 3px;
+			// 	cursor: pointer;
+			// }
+		}
 		.search {
-			margin-right: 8px;
+			margin: 0 10px;
 		}
 	}
 	.tree-block {

@@ -362,7 +362,6 @@ export default {
 		next() {
 			if (this.steps[this.activeStep].index === 1) {
 				this.getDataApi(hasDownloadAgent => {
-					debugger;
 					if (hasDownloadAgent) {
 						this.activeStep += 1;
 					} else {
