@@ -170,6 +170,8 @@ export default {
 	height: 100%;
 	background: #fafafa;
 	min-width: 720px;
+	flex: 1;
+	width: 100%;
 	.table-page-header {
 		padding: 15px 10px;
 		background: #ffffff;

@@ -700,6 +700,7 @@ router.beforeEach(async (to, from, next) => {
 				if (!user.isCompleteGuide) {
 					cookie.set('show_guide', 1);
 				}
+				userId = user.id;
 			}
 			//无权限，说明是首次进入页面，重新请求后台获取
 			let loading = Loading.service({
