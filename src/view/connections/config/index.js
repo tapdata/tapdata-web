@@ -17,6 +17,7 @@ import drs_mysqlpxc from './drs_mysqlpxc';
 import drs_postgres from './drs_postgres';
 import drs_db2 from './drs_db2';
 import drs_mongodb from './drs_mongodb';
+import drs_sqlserver from './drs_sqlserver';
 
 export default {
 	mysql,
@@ -37,5 +38,6 @@ export default {
 	drs_mysqlpxc,
 	drs_postgres,
 	drs_db2,
-	drs_mongodb
+	drs_mongodb,
+	drs_sqlserver
 };

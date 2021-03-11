@@ -708,6 +708,9 @@ export default {
 			});
 		},
 		handleName(ops) {
+			if (!ops.sourceData || ops.sourceData.length === 0) {
+				return;
+			}
 			let data = ops.sourceData.filter(item => item[ops.target] === ops.field);
 			if (data.length === 0) return;
 			return data[0][ops.name];
