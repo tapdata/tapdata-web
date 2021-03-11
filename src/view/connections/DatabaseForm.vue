@@ -39,7 +39,7 @@
 				</header>
 				<div class="form-wrap">
 					<div class="form">
-						<form-builder ref="form" v-model="model" :config="config">
+						<form-builder ref="form" v-model="model" :config="config" @value-change="formValueChange">
 							<div class="url-tip" slot="name" v-if="!$route.params.id">
 								中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
 							</div>
@@ -398,6 +398,20 @@ export default {
 	},
 	methods: {
 		getImgByType,
+		formValueChange({ field, value }) {
+			//TODO 测试代码
+			this.$refs.form.initConfig();
+			if (field === 'name' && value === 'sss') {
+				this.$refs.form.setItemConfig('region', {
+					// options: [
+					// 	{ label: 'ddsss', value: 'dddeee' },
+					// 	{ label: '222', value: '3333' },
+					// 	{ label: '4444', value: '4444' },
+					// 	{ label: '2ss', value: 'ddss' }
+					// ]
+				});
+			}
+		},
 		async initData(data) {
 			let editData = null;
 			this.checkTestConnectionAvailable(); //先检测agent
