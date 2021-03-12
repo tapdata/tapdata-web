@@ -78,10 +78,239 @@ export default {
 		};
 	},
 	mounted() {
-		LineageGraphsAPI.graphData(this.tableId).then(res => {
-			if (res.data) {
-				this.graph.draw(res.data.items, res.data.links, this);
-			}
+		LineageGraphsAPI.graphData(this.tableId).then(() => {
+			let data = {
+				items: [
+					{
+						id: 'MC_mongodb_admin_S_604b65b63b07e70058fff592',
+						label: 'S(S)',
+						connection: {
+							database_type: 'mongodb',
+							database_uri: 'mongodb://root:Gotapd8!@192.168.1.181:31193/admin',
+							database_host: '192.168.1.181:31193',
+							database_port: 0,
+							database_name: 'admin',
+							database_owner: '',
+							basePath: null,
+							path: null,
+							apiVersion: null,
+							name: 'S',
+							id: '604b65b63b07e70058fff592'
+						},
+						items: [
+							{
+								id: 'fields',
+								label: 'fields',
+								items: [
+									{
+										id: 'MC_mongodb_admin_S_604b65b63b07e70058fff592_x',
+										label: 'x',
+										java_type: 'Double',
+										primary_key_position: 0,
+										foreign_key_position: 0,
+										field_name: 'x',
+										alias_name: ''
+									},
+									{
+										id: 'MC_mongodb_admin_S_604b65b63b07e70058fff592__id',
+										label: '_id',
+										java_type: 'String',
+										primary_key_position: 1,
+										foreign_key_position: 0,
+										field_name: '_id',
+										alias_name: ''
+									}
+								]
+							}
+						]
+					},
+					{
+						id: 'MC_mongodb_admin_S1_604b65b63b07e70058fff592',
+						label: 'S1(S1)',
+						connection: {
+							database_type: 'mongodb',
+							database_uri: 'mongodb://root:Gotapd8!@192.168.1.181:31193/admin',
+							database_host: '192.168.1.181:31193',
+							database_port: 0,
+							database_name: 'admin',
+							database_owner: '',
+							basePath: null,
+							path: null,
+							apiVersion: null,
+							name: 'S',
+							id: '604b65b63b07e70058fff592'
+						},
+						items: [
+							{
+								id: 'fields',
+								label: 'fields',
+								items: [
+									{
+										id: 'MC_mongodb_admin_S1_604b65b63b07e70058fff592_x',
+										label: 'x',
+										java_type: 'Double',
+										primary_key_position: 0,
+										foreign_key_position: 0,
+										field_name: 'x',
+										alias_name: ''
+									},
+									{
+										id: 'MC_mongodb_admin_S1_604b65b63b07e70058fff592__id',
+										label: '_id',
+										java_type: 'String',
+										primary_key_position: 0,
+										foreign_key_position: 0,
+										field_name: '_id',
+										alias_name: ''
+									}
+								]
+							}
+						]
+					},
+					{
+						id: 'MC_mongodb_admin_S2_604b65b63b07e70058fff592',
+						label: 'S2(S2)',
+						connection: {
+							database_type: 'mongodb',
+							database_uri: 'mongodb://root:Gotapd8!@192.168.1.181:31193/admin',
+							database_host: '192.168.1.181:31193',
+							database_port: 0,
+							database_name: 'admin',
+							database_owner: '',
+							basePath: null,
+							path: null,
+							apiVersion: null,
+							name: 'S',
+							id: '604b65b63b07e70058fff592'
+						},
+						items: [
+							{
+								id: 'fields',
+								label: 'fields',
+								items: []
+							}
+						]
+					},
+					{
+						id: 'MC_mongodb_admin_S3_604b65b63b07e70058fff592',
+						label: 'S3(S3)',
+						connection: {
+							database_type: 'mongodb',
+							database_uri: 'mongodb://root:Gotapd8!@192.168.1.181:31193/admin',
+							database_host: '192.168.1.181:31193',
+							database_port: 0,
+							database_name: 'admin',
+							database_owner: '',
+							basePath: null,
+							path: null,
+							apiVersion: null,
+							name: 'S',
+							id: '604b65b63b07e70058fff592'
+						},
+						items: [
+							{
+								id: 'fields',
+								label: 'fields',
+								items: []
+							}
+						]
+					}
+				],
+				links: [
+					{
+						source: {
+							id: 'MC_mongodb_admin_S_604b65b63b07e70058fff592',
+							port: 'fields'
+						},
+						target: {
+							id: 'MC_mongodb_admin_S1_604b65b63b07e70058fff592',
+							port: 'fields'
+						},
+						dataFlows: [
+							{
+								id: '604b67a03b07e70058fff668',
+								name: '新任务_72989c5',
+								mappingTemplate: 'custom',
+								processors: []
+							}
+						]
+					},
+					{
+						source: {
+							id: 'MC_mongodb_admin_S1_604b65b63b07e70058fff592',
+							port: 'fields'
+						},
+						target: {
+							id: 'MC_mongodb_admin_S2_604b65b63b07e70058fff592',
+							port: 'fields'
+						},
+						dataFlows: [
+							{
+								id: '604b67a03b07e70058fff668',
+								name: '新任务_72989c5',
+								mappingTemplate: 'custom',
+								processors: []
+							}
+						]
+					},
+					{
+						source: {
+							id: 'MC_mongodb_admin_S1_604b65b63b07e70058fff592',
+							port: 'fields'
+						},
+						target: {
+							id: 'MC_mongodb_admin_S3_604b65b63b07e70058fff592',
+							port: 'fields'
+						},
+						dataFlows: [
+							{
+								id: '604b67a03b07e70058fff668',
+								name: '新任务_72989c5',
+								mappingTemplate: 'custom',
+								processors: []
+							}
+						]
+					},
+					{
+						source: {
+							id: 'MC_mongodb_admin_S_604b65b63b07e70058fff592',
+							port: 'MC_mongodb_admin_S_604b65b63b07e70058fff592_x'
+						},
+						target: {
+							id: 'MC_mongodb_admin_S1_604b65b63b07e70058fff592',
+							port: 'MC_mongodb_admin_S1_604b65b63b07e70058fff592_x'
+						},
+						dataFlows: [
+							{
+								id: '604b67a03b07e70058fff668',
+								name: '新任务_72989c5',
+								processors: []
+							}
+						]
+					},
+					{
+						source: {
+							id: 'MC_mongodb_admin_S_604b65b63b07e70058fff592',
+							port: 'MC_mongodb_admin_S_604b65b63b07e70058fff592__id'
+						},
+						target: {
+							id: 'MC_mongodb_admin_S1_604b65b63b07e70058fff592',
+							port: 'MC_mongodb_admin_S1_604b65b63b07e70058fff592__id'
+						},
+						dataFlows: [
+							{
+								id: '604b67a03b07e70058fff668',
+								name: '新任务_72989c5',
+								processors: []
+							}
+						]
+					}
+				]
+			};
+			this.graph.draw(data.items, data.links, this);
+			// if (res.data) {
+			// 	this.graph.draw(res.data.items, res.data.links, this);
+			// }
 		});
 		this.graph = graph();
 		LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(res => {

@@ -1,5 +1,8 @@
 import joint from '../../editor/lib/rappid/rappid';
+import navigatorElementView from '../../editor/lib/rappid/view/navigator';
 import paperSetting from './paperSetting';
+import $ from 'jquery';
+import _ from 'lodash';
 // import i18n from '../../i18n/i18n';
 // import { Message } from 'element-ui';
 
@@ -8,15 +11,17 @@ window.joint = joint;
 export default function() {
 	paperSetting();
 
-	var toolbarHeight = 50;
+	//var toolbarHeight = 50;
 
 	var graph = new joint.dia.Graph();
 
 	var paper = new joint.dia.Paper({
 		el: document.getElementById('paper'),
 		model: graph,
-		width: '100%',
-		height: 'calc(100% - ' + toolbarHeight + 'px)',
+		width: 800,
+		height: 800,
+		// width: '100%',
+		// height: 'calc(100% - ' + toolbarHeight + 'px)',
 		gridSize: 10,
 		background: { color: '#f6f6f6' },
 		magnetThreshold: 'onleave',
@@ -24,6 +29,7 @@ export default function() {
 		clickThreshold: 5,
 		linkPinning: false,
 		sorting: joint.dia.Paper.sorting.APPROX,
+
 		interactive: {
 			linkMove: false,
 			elementMove: false
@@ -74,6 +80,49 @@ export default function() {
 			graph.vcomp.previewVisible = true;
 		}
 	});
+	const paperScroller = new joint.ui.PaperScroller({
+		paper: paper,
+		autoResizePaper: true,
+		cursor: 'grab',
+		contentOptions: function(paperScroller) {
+			let visibleArea = paperScroller.getVisibleArea();
+			return {
+				padding: {
+					bottom: visibleArea.height / 2,
+					top: visibleArea.height / 2,
+					left: visibleArea.width / 2,
+					right: visibleArea.width / 2
+				},
+				allowNewOrigin: 'any'
+			};
+		}
+	});
+	$('#paper').append(paperScroller.render().el);
+	paperScroller.render().center();
+	navigatorElementView(joint);
+
+	let navigator = new joint.ui.Navigator({
+		width: 150,
+		height: 150,
+		paperScroller: this.paperScroller,
+		zoom: {
+			grid: 0.2,
+			min: 0.2,
+			max: 5
+		},
+		paperOptions: {
+			async: true,
+			elementView: joint.shapes.app.NavigatorElementView,
+			linkView: joint.shapes.app.NavigatorLinkView,
+			cellViewNamespace: {
+				/* no other views are accessible in the navigator */
+			}
+		}
+	});
+	$('#paper').append(navigator.render().el);
+	paper.on('blank:pointerdown', paperScroller.startPanning);
+	paper.on('blank:mousewheel', _.partial(this.onMousewheel, null), this);
+	paper.on('cell:mousewheel', this.onMousewheel, this);
 
 	return {
 		joint: joint,
