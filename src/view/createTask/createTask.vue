@@ -303,8 +303,8 @@ export default {
 						}
 						this.dataSourceModel.source_connectionName = source.name;
 						this.dataSourceModel.target_connectionName = target.name;
-						this.dataSourceModel['target_databaseType'] = source.type;
-						this.dataSourceModel['source_databaseType'] = target.type;
+						this.dataSourceModel['source_databaseType'] = source.type;
+						this.dataSourceModel['target_databaseType'] = target.type;
 						this.activeStep += 1;
 						this.getFormConfig();
 					}

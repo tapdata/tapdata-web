@@ -28,11 +28,14 @@
 									{{ $t('connection.change') }}
 								</div>
 							</div>
-							<div class="tip">
+							<div class="tip" v-if="!$window.getSettingByKey('SUPPORT_RDS')">
 								{{ $t('dataForm.form.guide') }}
 								<a class="color-primary" href="https://docs.tapdata.net/data-source">{{
 									$t('dataForm.form.guideDoc')
 								}}</a>
+							</div>
+							<div class="tip" v-if="$window.getSettingByKey('SUPPORT_RDS')">
+								请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
 							</div>
 						</div>
 					</div>
