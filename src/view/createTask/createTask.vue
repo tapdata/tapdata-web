@@ -370,7 +370,7 @@ export default {
 		},
 		getWhere(type) {
 			let where = {};
-			if (['rds', 'ecs'].includes(this.dataSourceModel.source_sourceType) && type === 'source') {
+			if (['rds', 'ecs', 'dds'].includes(this.dataSourceModel.source_sourceType) && type === 'source') {
 				where = {
 					database_type: { in: this.allowDataType },
 					sourceType: this.dataSourceModel.source_sourceType,
@@ -384,10 +384,10 @@ export default {
 					'platformInfo.DRS_region': { $exists: false },
 					'platformInfo.DRS_zone': { $exists: false }
 				};
-			} else if (['rds', 'ecs'].includes(this.dataSourceModel.source_sourceType) && type === 'target') {
+			} else if (['rds', 'ecs', 'dds'].includes(this.dataSourceModel.target_sourceType) && type === 'target') {
 				where = {
 					database_type: { in: this.allowDataType },
-					sourceType: this.dataSourceModel.source_sourceType,
+					sourceType: this.dataSourceModel.target_sourceType,
 					region: this.platformInfo.region,
 					zone: this.platformInfo.zone
 				};

@@ -229,6 +229,12 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.password'),
 				domType: 'password',
 				showPassword: true
+			},
+			{
+				type: 'input',
+				field: 'database_owner',
+				label: vm.$t('dataForm.form.databaseOwner'),
+				required: true
 			}
 		]
 	};

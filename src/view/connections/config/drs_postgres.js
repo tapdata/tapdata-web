@@ -238,6 +238,12 @@ export default function(vm) {
 				showPassword: true
 			},
 			{
+				type: 'input',
+				field: 'database_owner',
+				label: vm.$t('dataForm.form.databaseOwner'),
+				required: true
+			},
+			{
 				type: 'select',
 				field: 'pgsql_log_decorder_plugin_name',
 				label: vm.$t('dataForm.form.plugin_name'),
