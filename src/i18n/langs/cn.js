@@ -1761,7 +1761,7 @@ const cn = {
 		deteleMessage: '此操作会将该分类下存在的子类都删除，是否删除'
 	},
 	relations: {
-		blood: '血缘',
+		blood: '表链路图',
 		refresh: '刷新数据',
 		refreshStatus: '上次刷新'
 	},

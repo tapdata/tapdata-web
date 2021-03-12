@@ -326,6 +326,8 @@ export default {
 			LineageGraphsAPI.refreshGraphData()
 				.then(res => {
 					if (res.data == true) {
+						this.refreshResult.allProgress = 10;
+						this.refreshResult.currProgress = 0;
 						this.refreshing = true;
 						let self = this;
 						this.inter = setInterval(() => {
