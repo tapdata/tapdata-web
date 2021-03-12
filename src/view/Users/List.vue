@@ -6,7 +6,7 @@
 			class="user-list"
 			:title="$t('app.menu.' + $route.name)"
 			:desc="$t('user.des')"
-			:classify="{ authority: 'data_catalog_category_management', types: ['user'] }"
+			:classify="{ authority: 'user_category_management', types: ['user'] }"
 			:remoteMethod="getData"
 			@selection-change="handleSelectionChange"
 			@classify-submit="handleOperationClassify"
@@ -100,7 +100,7 @@
 			<div slot="operation">
 				<el-button
 					v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-					v-readonlybtn="'data_catalog_category_application'"
+					v-readonlybtn="'user_category_application'"
 					size="mini"
 					class="btn"
 					v-show="multipleSelection.length > 0"

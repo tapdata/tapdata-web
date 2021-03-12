@@ -429,14 +429,14 @@ export default {
 											});
 									});
 									self.$api('users')
-										.deletePermissionRoleMapping(res.data.id)
+										.deletePermissionRoleMapping(res.data.id, { data: { data: newRoleMappings } })
 										.then(res => {
 											if (res && res.data) {
-												roleMappingModel.post(newRoleMappings);
+												// roleMappingModel.post(newRoleMappings);
+												this.$message.success(this.$t('message.saveOK'));
 											}
 										});
 								}
-								this.$message.success(this.$t('message.saveOK'));
 							}
 						})
 						.catch(e => {
