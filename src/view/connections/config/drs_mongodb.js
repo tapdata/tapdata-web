@@ -177,11 +177,26 @@ export default function(vm) {
 			},
 			{
 				type: 'slot',
-				slot: 'vpc-setting'
+				slot: 'vpc-setting',
+				show: false,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'sourceType',
+								value: 'ecs'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
 			},
 			{
 				type: 'radio',
 				field: 'isUrl',
+				show: false,
 				label: vm.$t('dataForm.form.options.connectionMode'),
 				options: [
 					{
@@ -254,7 +269,21 @@ export default function(vm) {
 			},
 			{
 				type: 'slot',
-				slot: 'urlTip'
+				slot: 'urlTip',
+				show: false,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'isUrl',
+								value: true
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
 			},
 			{
 				type: 'input',
