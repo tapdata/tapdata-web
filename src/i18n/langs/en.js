@@ -1799,9 +1799,9 @@ const en = {
 		deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
 	},
 	relations: {
-		blood: 'source',
-		refresh: 'refresh',
-		refreshStatus: 'last refresh'
+		blood: 'Table Tracing',
+		refresh: 'Refresh',
+		refreshStatus: 'Last Refresh'
 	},
 	metadata: {
 		createNewModel: 'Create model',
