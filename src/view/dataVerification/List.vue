@@ -692,9 +692,11 @@ export default {
 </style>
 <style lang="less">
 .data-verify-wrap {
-	.el-table--border td,
-	.el-table--border th {
+	.el-table--border td {
 		border-right: 0;
+	}
+	.el-table--border th {
+		border-right: 1px solid #ccc;
 	}
 }
 </style>

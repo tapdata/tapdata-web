@@ -1094,13 +1094,12 @@ export default {
 		getScreening(time, seriesData) {
 			this.dataScreening = {
 				tooltip: {
-					show: false,
-					trigger: 'none',
+					trigger: 'axis',
 					axisPointer: {
-						type: 'none',
-						crossStyle: {
-							color: '#999'
-						}
+						type: 'none'
+						// crossStyle: {
+						// 	color: '#999'
+						// }
 					}
 				},
 				toolbox: {
@@ -1162,7 +1161,16 @@ export default {
 									show: true,
 									// verticalAlign: 'middle',
 									position: 'top',
-									distance: 10
+									distance: 10,
+									formatter: function(value) {
+										if (value.data / (1000 * 1000 * 1000) > 1) {
+											return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T';
+										} else if (value.data / (1000 * 1000) > 1) {
+											return (value.data / (1000 * 1000)).toFixed(1) + ' M';
+										} else if (value.data / 1000 > 1) {
+											return (value.data / 1000).toFixed(1) + ' K';
+										}
+									}
 								}
 							}
 						}

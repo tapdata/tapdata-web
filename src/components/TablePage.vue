@@ -247,7 +247,9 @@ export default {
 		.el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
 			border-right: 0;
 		}
-
+		.el-table--border th {
+			border-right: 1px solid #ccc;
+		}
 		.table-page-pagination {
 			margin-top: 5px;
 		}
