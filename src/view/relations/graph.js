@@ -1,8 +1,8 @@
 import joint from '../../editor/lib/rappid/rappid';
-import navigatorElementView from '../../editor/lib/rappid/view/navigator';
+//import navigatorElementView from '../../editor/lib/rappid/view/navigator';
 import paperSetting from './paperSetting';
-import $ from 'jquery';
-import _ from 'lodash';
+// import $ from 'jquery';
+// import _ from 'lodash';
 // import i18n from '../../i18n/i18n';
 // import { Message } from 'element-ui';
 
@@ -80,49 +80,49 @@ export default function() {
 			graph.vcomp.previewVisible = true;
 		}
 	});
-	const paperScroller = new joint.ui.PaperScroller({
-		paper: paper,
-		autoResizePaper: true,
-		cursor: 'grab',
-		contentOptions: function(paperScroller) {
-			let visibleArea = paperScroller.getVisibleArea();
-			return {
-				padding: {
-					bottom: visibleArea.height / 2,
-					top: visibleArea.height / 2,
-					left: visibleArea.width / 2,
-					right: visibleArea.width / 2
-				},
-				allowNewOrigin: 'any'
-			};
-		}
-	});
-	$('#paper').append(paperScroller.render().el);
-	paperScroller.render().center();
-	navigatorElementView(joint);
-
-	let navigator = new joint.ui.Navigator({
-		width: 150,
-		height: 150,
-		paperScroller: this.paperScroller,
-		zoom: {
-			grid: 0.2,
-			min: 0.2,
-			max: 5
-		},
-		paperOptions: {
-			async: true,
-			elementView: joint.shapes.app.NavigatorElementView,
-			linkView: joint.shapes.app.NavigatorLinkView,
-			cellViewNamespace: {
-				/* no other views are accessible in the navigator */
-			}
-		}
-	});
-	$('#paper').append(navigator.render().el);
-	paper.on('blank:pointerdown', paperScroller.startPanning);
-	paper.on('blank:mousewheel', _.partial(this.onMousewheel, null), this);
-	paper.on('cell:mousewheel', this.onMousewheel, this);
+	// const paperScroller = new joint.ui.PaperScroller({
+	// 	paper: paper,
+	// 	autoResizePaper: true,
+	// 	cursor: 'grab',
+	// 	contentOptions: function(paperScroller) {
+	// 		let visibleArea = paperScroller.getVisibleArea();
+	// 		return {
+	// 			padding: {
+	// 				bottom: visibleArea.height / 2,
+	// 				top: visibleArea.height / 2,
+	// 				left: visibleArea.width / 2,
+	// 				right: visibleArea.width / 2
+	// 			},
+	// 			allowNewOrigin: 'any'
+	// 		};
+	// 	}
+	// });
+	// $('.data-map').append(paperScroller.render().el);
+	// paperScroller.render().center();
+	// navigatorElementView(joint);
+	//
+	// let navigator = new joint.ui.Navigator({
+	// 	width: 150,
+	// 	height: 150,
+	// 	paperScroller: this.paperScroller,
+	// 	zoom: {
+	// 		grid: 0.2,
+	// 		min: 0.2,
+	// 		max: 5
+	// 	},
+	// 	paperOptions: {
+	// 		async: true,
+	// 		elementView: joint.shapes.app.NavigatorElementView,
+	// 		linkView: joint.shapes.app.NavigatorLinkView,
+	// 		cellViewNamespace: {
+	// 			/* no other views are accessible in the navigator */
+	// 		}
+	// 	}
+	// });
+	// $('#paper').append(navigator.render().el);
+	//paper.on('blank:pointerdown', paperScroller.startPanning);
+	// paper.on('blank:mousewheel', _.partial(this.onMousewheel, null), this);
+	// paper.on('cell:mousewheel', this.onMousewheel, this);
 	return {
 		joint: joint,
 		graph: graph,
