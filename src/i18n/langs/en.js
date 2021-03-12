@@ -1618,7 +1618,7 @@ const en = {
 			indexPrefix: 'Index prefix',
 			agentMsg:
 				'The test connection service is not available, please check if the Data Synchronization Agent is started correctly.',
-
+			multiTenant: 'Multi-tenant',
 			uriTips: {
 				label: 'Example',
 				content:

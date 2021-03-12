@@ -1586,7 +1586,7 @@ const cn = {
 			supportUpdatePk: '支持同步时更新主键',
 			indexPrefix: '索引前缀',
 			agentMsg: '当前测试连接服务不可用，请检查是否正确启动数据同步(Agent)服务',
-
+			multiTenant: '多租户模式',
 			uriTips: {
 				label: '示例',
 				content:

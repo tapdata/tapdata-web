@@ -1584,6 +1584,7 @@ const tc = {
 			supportUpdatePk: '支持同步時更新主鍵',
 			indexPrefix: '索引前綴',
 			agentMsg: '當前測試連接服務不可用，請檢查是否正確啟動數據同步(Agent)服務',
+			multiTenant: '多租戶模式',
 			uriTips: {
 				label: '示例',
 				content:
