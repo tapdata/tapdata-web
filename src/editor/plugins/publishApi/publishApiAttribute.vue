@@ -1,10 +1,10 @@
 <template>
 	<div class="releaseApi">
-		<div class="head-btns">
+		<!-- <div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
-		</div>
+		</div> -->
 		<el-form ref="form" :model="form" :rules="rules" :disabled="disabled" label-position="top" label-width="200px">
 			<el-form-item prop="name" :label="$t('editor.cell.data_node.api.dataApiName')">
 				<el-input
@@ -95,7 +95,7 @@ import { removeDeleted } from '../../util/Schema';
 // import { convertSchemaToTreeData } from "../../util/Schema";
 // import log from '../../../log';
 // import {mergeJoinTablesToTargetSchema} from "../../util/Schema";
-let editorMonitor = null;
+// let editorMonitor = null;
 let defaultForm = {
 	apiVersion: 'V1',
 	connection: '',
@@ -150,7 +150,7 @@ export default {
 
 	methods: {
 		// convertSchemaToTreeData,
-		setData(data, cell, dataNodeInfo, vueAdapter) {
+		setData(data, cell) {
 			this.form = _.cloneDeep(defaultForm);
 			if (data) {
 				_.merge(this.form, data);
@@ -191,7 +191,7 @@ export default {
 					});
 				}
 			}
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
@@ -239,11 +239,11 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
-		},
-
-		seeMonitor() {
-			editorMonitor.goBackMontior();
 		}
+
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// }
 	}
 };
 </script>

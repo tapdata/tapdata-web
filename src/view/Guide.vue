@@ -152,6 +152,36 @@
 			:formData="connectionForm"
 			@returnTestData="returnTestData"
 		></Test>
+		<el-dialog
+			:visible.sync="agentVisible"
+			width="500"
+			:close-on-click-modal="false"
+			:show-close="false"
+			custom-class="agentErrorDialog"
+		>
+			<h1>
+				<i class="el-icon-warning"></i>
+				{{ $t('guide.agentServiceTitle') }}
+			</h1>
+
+			<div class="dialogBox">
+				<h3>{{ $t('guide.abnormalText') }}:</h3>
+				<p>{{ !agentEngineVisible ? $t('guide.abnormal') : $t('guide.abnormal1') }}</p>
+				<h3>{{ $t('guide.solutionText') }}:</h3>
+				<p>
+					{{ !agentEngineVisible ? $t('guide.windowsSolution') : $t('guide.windowsSolution1') }}
+					<i>tapdata start backend</i> {{ $t('guide.restartProcess') }}
+				</p>
+				<p>
+					{{ !agentEngineVisible ? $t('guide.linuxSolution') : $t('guide.linuxSolution1') }}
+					<i>./tapdata start backend</i> {{ $t('guide.restartProcess') }}
+				</p>
+			</div>
+			<div slot="footer" class="dialog-footer">
+				<span class="text">{{ $t('guide.clickText') }}</span>
+				<el-button type="primary" size="small" @click="handleAgent()">{{ $t('button.refresh') }}</el-button>
+			</div>
+		</el-dialog>
 	</el-container>
 </template>
 <script>
@@ -172,6 +202,7 @@ export default {
 	},
 	data() {
 		return {
+			agentVisible: false,
 			loading: false,
 			logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
 			typeMap: TYPEMAP,
@@ -224,28 +255,45 @@ export default {
 			},
 			dialogTestVisible: false,
 			status: '',
-			mdHtml: ''
+			mdHtml: '',
+			agentEngineVisible: false,
+			timer: null
 		};
 	},
 	created() {
 		this.getDataApi(this.getSteps);
 		this.getConnections();
+		this.timer = setInterval(() => {
+			this.handleAgent();
+		}, 3000);
 	},
 	methods: {
 		getImgByType,
+		// 轮询agent
+		handleAgent() {
+			this.getDataApi((isShow, data) => {
+				if (data.length && data[0].status !== 'running') {
+					this.agentVisible = true;
+					if (data[0].engine.status !== 'running') {
+						this.agentEngineVisible = true;
+					} else {
+						this.agentEngineVisible = false;
+					}
+				} else {
+					this.agentVisible = false;
+				}
+			});
+		},
 		// 获取Agent是否安装
 		getDataApi(cb) {
-			if (parseInt(this.$cookie.get('isAdmin')) || localStorage.getItem('BTN_AUTHS') === 'BTN_AUTHS') {
-				cb(true);
-				return;
-			}
 			this.loading = true;
 			let params = {};
 			params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
 			this.$api('cluster')
 				.get(params)
 				.then(res => {
-					cb(res.data && res.data.length > 0);
+					let isShow = res.data && res.data.length > 0;
+					cb(isShow, res.data);
 				})
 				.finally(() => {
 					this.loading = false;
@@ -582,6 +630,10 @@ export default {
 			if (!data.status || data.status === null) return;
 			this.status = data.status;
 		}
+	},
+	destroyed() {
+		clearInterval(this.timer);
+		this.timer = null;
 	}
 };
 </script>
@@ -612,6 +664,47 @@ export default {
 		}
 		.name {
 			margin-left: 10px;
+		}
+	}
+}
+.guide-wrap {
+	.agentErrorDialog {
+		.el-dialog__body {
+			padding: 30px;
+			h1 {
+				font-size: 18px;
+				color: #333;
+				i {
+					padding-right: 10px;
+					font-size: 22px;
+					color: #fe983d;
+				}
+			}
+			.dialogBox {
+				padding: 30px 30px 0;
+				h3 {
+					padding: 10px 0;
+					font-size: 14px;
+				}
+				p {
+					padding: 10px 0;
+					font-size: 12px;
+					color: #555;
+					i {
+						display: inline-block;
+						padding: 2px 10px;
+						color: #666;
+						background-color: #f1f1f1;
+					}
+				}
+			}
+		}
+		.dialog-footer {
+			.text {
+				padding-right: 10px;
+				font-size: 12px;
+				color: #666;
+			}
 		}
 	}
 }

@@ -1,10 +1,10 @@
 <template>
 	<section class="join-cache-wrap">
-		<div class="head-btns">
+		<!-- <div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
-		</div>
+		</div> -->
 		<form-builder ref="form" v-model="model" :config="config">
 			<el-table border size="mini" slot="joinSettings" :data="model.joinSettings">
 				<el-table-column
@@ -37,7 +37,7 @@ import Mapping from '../link/Mapping';
 import { mergeJoinTablesToTargetSchema, mergeSchema, removeDeleted } from '../../util/Schema';
 // import log from '../../../log';
 import _ from 'lodash';
-let editorMonitor = null;
+// let editorMonitor = null;
 export default {
 	name: 'JointCache',
 	components: {
@@ -211,7 +211,7 @@ export default {
 			this.getSourceFields(schema);
 			this.showMapping();
 
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 		},
 		getScript() {
 			let { cacheId, joinSettings, joinKey, removeFields } = this.model;
@@ -253,11 +253,11 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
-		},
-
-		seeMonitor() {
-			editorMonitor.goBackMontior();
 		}
+
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// }
 	}
 };
 </script>

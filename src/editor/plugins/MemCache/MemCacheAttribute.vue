@@ -1,11 +1,11 @@
 <template>
 	<div class="e-memery-cache nodeStyle">
 		<div class="nodeBody">
-			<div class="head-btns">
+			<!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
-			</div>
+			</div> -->
 			<el-form
 				class="e-form"
 				label-position="top"
@@ -134,7 +134,7 @@ import MultiSelection from '../../../components/MultiSelection';
 // import log from '../../../log';
 import _ from 'lodash';
 import { removeDeleted } from '../../util/Schema';
-let editorMonitor = null;
+// let editorMonitor = null;
 export default {
 	name: 'memCache',
 
@@ -188,7 +188,7 @@ export default {
 	},
 
 	methods: {
-		setData(data, cell, dataNodeInfo, vueAdapter) {
+		setData(data, cell) {
 			if (data) {
 				_.merge(this.model, data);
 				this.setLimited(data.maxSize);
@@ -214,7 +214,7 @@ export default {
 				}
 			}
 
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
@@ -247,11 +247,11 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
-		},
-
-		seeMonitor() {
-			editorMonitor.goBackMontior();
 		}
+
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// }
 	}
 };
 </script>

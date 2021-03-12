@@ -100,14 +100,34 @@ export default {
 			let filter = {
 				where
 			};
-			MetadataDefinitions.get({
-				filter: JSON.stringify(filter)
-			}).then(res => {
-				if (res.data) {
-					this.treeData = this.formatData(res.data);
-					cb && cb(res.data);
-				}
-			});
+
+			if (this.types[0] === 'user') {
+				this.$api('UserGroup')
+					.get({})
+					.then(res => {
+						if (res.data) {
+							let treeData = res.data.map(item => ({
+								value: item.name,
+								id: item.id,
+								gid: item.gid,
+								parent_id: item.parent_id,
+								last_updated: item.last_updated,
+								user_id: item.user_id
+							}));
+							this.treeData = this.formatData(treeData);
+							cb && cb(res.data);
+						}
+					});
+			} else {
+				MetadataDefinitions.get({
+					filter: JSON.stringify(filter)
+				}).then(res => {
+					if (res.data) {
+						this.treeData = this.formatData(res.data);
+						cb && cb(res.data);
+					}
+				});
+			}
 		},
 		//格式化分类数据
 		formatData(items) {

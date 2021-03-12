@@ -154,8 +154,13 @@ export default {
 				if (e && e.response && e.response.msg) {
 					if (e.response.msg === 'WAITING_APPROVE') {
 						this.errorMessage = this.$t('app.signIn.watingApprove');
-					} else if (e.response.msg.indexOf('not been verified') !== -1) {
+					} else if (
+						e.response.msg.indexOf('not been verified') !== -1 ||
+						e.response.msg === 'EMAIL_NON_VERIFLED'
+					) {
 						this.errorMessage = this.$t('app.signIn.hasVerified');
+					} else if (e.response.msg === 'ACCOUNT_DISABLED') {
+						this.errorMessage = this.$t('app.signIn.accountDisabled');
 					} else {
 						this.errorMessage = this.$t('app.signIn.signInFail');
 					}

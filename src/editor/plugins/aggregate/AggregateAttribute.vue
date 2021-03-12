@@ -71,6 +71,13 @@
 						</el-input>
 					</div>
 				</el-form-item>
+				<el-form-item :label="$t('dataFlow.keepAggreHistoryData')" required>
+					<el-switch
+						v-model="form.keepAggRet"
+						:active-text="form.keepAggRet ? $t('dataFlow.yes') : $t('dataFlow.no')"
+					>
+					</el-switch>
+				</el-form-item>
 			</el-col>
 			<el-col style="padding: 0 10px;">
 				<el-row
@@ -247,7 +254,8 @@ export default {
 					}
 				],
 				primaryKeys: '',
-				aggCacheMaxSize: 100000
+				aggCacheMaxSize: 100000,
+				keepAggRet: false
 			},
 			primaryKeyOptions: [],
 			aggaggExpression: '1',
@@ -462,11 +470,7 @@ export default {
 	.el-select {
 		width: 100%;
 	}
-	.el-switch__label {
-		span {
-			font-size: 12px !important;
-		}
-	}
+
 	.el-form-item {
 		margin-bottom: 8px;
 		.el-form-item__label,
@@ -476,6 +480,11 @@ export default {
 		.el-input__inner {
 			height: 30px;
 			line-height: 30px;
+		}
+		.el-switch__label {
+			span {
+				font-size: 12px !important;
+			}
 		}
 	}
 

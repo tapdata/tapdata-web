@@ -25,6 +25,7 @@ export default {
 				clearable: config.clearable,
 				showPassword: config.showPassword,
 				showWordLimit: config.showWordLimit,
+				disabled: config.disabled,
 				autocomplete: config.domType === 'password' ? 'new-password' : 'off'
 			},
 			class: {

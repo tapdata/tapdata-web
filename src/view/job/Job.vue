@@ -370,14 +370,14 @@ export default {
 					this.getGlobalSetting();
 				}
 				this.mappingTemplate = this.$route.query.mapping;
-
+				if (self.$route.query.isMoniting == 'true') self.isMoniting = true;
 				self.editor = editor({
 					container: $('.editor-container'),
 					actionBarEl: $('.editor-container .action-buttons'),
 					scope: self,
 					customProcessors
 				});
-				if (self.$route.query.isMoniting == 'true') self.isMoniting = true;
+
 				if (self.$route.query.isSimple == 'true') {
 					this.initData(db2db.data);
 					this.mappingTemplate = 'cluster-clone';

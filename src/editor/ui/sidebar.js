@@ -3,15 +3,15 @@
  * @date 2/26/20
  * @description
  */
-import Component from "../lib/Component";
-import $ from "jquery";
-import { EditorEventType } from "../lib/events";
+import Component from '../lib/Component';
+import $ from 'jquery';
+import { EditorEventType } from '../lib/events';
 export default class Sidebar extends Component {
 	constructor(opts) {
 		super(
 			Object.assign(
 				{
-					region: "left",
+					region: 'left',
 					split: true,
 					maxWidth: 400,
 					minWidth: 180,
@@ -30,7 +30,7 @@ export default class Sidebar extends Component {
 	doInit() {
 		this.el = $(
 			`<div class="e-sidebar e-sidebar-${this.opts.region}"><div class="e-sidebar-content" style="${this.opts
-				.bodyStyle || ""}"></div></div>`
+				.bodyStyle || ''}"></div></div>`
 		);
 		this.splitEl = $(`<div class="e-slider e-slider-${this.opts.region}"><!--||--></div>`);
 
@@ -54,13 +54,13 @@ export default class Sidebar extends Component {
 		let overlayEl = null;
 		let region = self.opts.region;
 
-		self.splitEl.on("mousedown", e => {
+		self.splitEl.on('mousedown', e => {
 			overlayEl = $(
 				`<div class="resizable-overlay ${
-					["top", "bottom"].includes(region) ? "y" : "x"
+					['top', 'bottom'].includes(region) ? 'y' : 'x'
 				}-resizable-overlay"></div>`
 			);
-			$("body").append(overlayEl);
+			$('body').append(overlayEl);
 
 			let startX = e.clientX;
 			let startY = e.clientY;
@@ -68,12 +68,12 @@ export default class Sidebar extends Component {
 			let startHeight = self.el.height();
 
 			let mouseMove = function(e) {
-				self.splitEl.addClass("active");
+				self.splitEl.addClass('active');
 
 				let offsetX = e.clientX - startX;
 				let offsetY = e.clientY - startY;
-				let _width = region === "left" ? startWidth + offsetX : startWidth - offsetX;
-				let _height = region === "top" ? startHeight + offsetY : startHeight - offsetY;
+				let _width = region === 'left' ? startWidth + offsetX : startWidth - offsetX;
+				let _height = region === 'top' ? startHeight + offsetY : startHeight - offsetY;
 
 				if (self.opts.minWidth) _width = _width < self.opts.minWidth ? self.opts.minWidth : _width;
 				if (self.opts.maxWidth) _width = _width > self.opts.maxWidth ? self.opts.maxWidth : _width;
@@ -81,12 +81,12 @@ export default class Sidebar extends Component {
 				if (self.opts.minHeight) _height = _height < self.opts.minHeight ? self.opts.minHeight : _height;
 				if (self.opts.minHeight) _height = _height > self.opts.maxHeight ? self.opts.maxHeight : _height;
 
-				if (region === "left" || region === "right") {
+				if (region === 'left' || region === 'right') {
 					if (self.el.width() !== _width) {
 						self.width(_width);
 						self.emit(EditorEventType.RESIZE, _width, startHeight, startWidth, startHeight, e);
 					}
-				} else if (region === "bottom" || region === "top") {
+				} else if (region === 'bottom' || region === 'top') {
 					if (self.el.height() !== _height) {
 						self.height(_height);
 						self.emit(EditorEventType.RESIZE, startWidth, _height, startWidth, startHeight, e);
@@ -94,17 +94,17 @@ export default class Sidebar extends Component {
 				}
 			};
 			let mouseUp = function() {
-				self.splitEl.removeClass("active");
+				self.splitEl.removeClass('active');
 				if (overlayEl) {
 					overlayEl.remove();
 				}
 
-				window.removeEventListener("mousemove", mouseMove);
-				window.removeEventListener("mouseup", mouseUp);
+				window.removeEventListener('mousemove', mouseMove);
+				window.removeEventListener('mouseup', mouseUp);
 			};
 
-			window.addEventListener("mousemove", mouseMove);
-			window.addEventListener("mouseup", mouseUp);
+			window.addEventListener('mousemove', mouseMove);
+			window.addEventListener('mouseup', mouseUp);
 		});
 	}
 
@@ -140,6 +140,6 @@ export default class Sidebar extends Component {
 	}
 
 	getContentEl() {
-		return this.el.find(".e-sidebar-content");
+		return this.el.find('.e-sidebar-content');
 	}
 }

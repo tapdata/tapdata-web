@@ -74,10 +74,11 @@
 							{{ searchParams.tag.value }}
 						</el-tag>
 					</li> -->
-					<li class="search-item">
-						<el-button size="mini" @click="reset">
-							<i class="iconfont icon-shuaxin1"></i>
-						</el-button>
+					<li>
+						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
+					</li>
+					<li>
+						<el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
 					</li>
 				</ul>
 				<div class="topbar-buttons">
@@ -113,6 +114,7 @@
 					:data="page.data"
 					class="dv-table"
 					height="100%"
+					border
 					@sort-change="sortHandler"
 					@selection-change="selectHandler"
 					align="left"
@@ -120,7 +122,7 @@
 					<!--					<el-table-column type="selection" width="44" align="center"></el-table-column>-->
 					<el-table-column :label="$t('dataVerification.verifyJobName')">
 						<template slot-scope="scope">
-							<div>{{ scope.row.name }}</div>
+							<div class="name">{{ scope.row.name }}</div>
 							<div style="color: #aaa;">
 								<span
 									>{{ inspectMethod[scope.row.inspectMethod] }} (
@@ -145,7 +147,7 @@
 							{{ scope.row.InspectResult ? scope.row.InspectResult.target_total : '-' }}
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
+					<el-table-column :label="$t('dataVerification.verifyResult')">
 						<template slot-scope="scope">
 							<div
 								class="inspect-result"
@@ -492,14 +494,17 @@ export default {
 					this.loading = false;
 				});
 		},
-		reset() {
-			this.searchParams = {
-				keyword: '',
-				inspectMethod: '',
-				mode: '',
-				enabled: '',
-				result: ''
-			};
+		reset(name) {
+			if (name === 'reset') {
+				this.searchParams = {
+					keyword: '',
+					inspectMethod: '',
+					mode: '',
+					enabled: '',
+					result: ''
+				};
+			}
+
 			this.search(1);
 		},
 		searchParamsChange() {
@@ -647,6 +652,13 @@ export default {
 			.dv-table {
 				flex: 1;
 				overflow: hidden;
+				// .name {
+				// 	color: #48b6e2;
+				// 	cursor: pointer;
+				// }
+				// .name:hover {
+				// 	text-decoration: underline;
+				// }
 			}
 			.btn-icon {
 				font-size: 16px;
@@ -675,6 +687,16 @@ export default {
 				text-align: right;
 			}
 		}
+	}
+}
+</style>
+<style lang="less">
+.data-verify-wrap {
+	.el-table--border td {
+		border-right: 0;
+	}
+	.el-table--border th {
+		border-right: 1px solid #ccc;
 	}
 }
 </style>

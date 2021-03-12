@@ -1,11 +1,11 @@
 <template>
 	<div class="e-collection nodeStyle" :class="{ nodeHeight: disabled }">
 		<div class="nodeBody">
-			<div class="head-btns">
+			<!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
-			</div>
+			</div> -->
 			<el-form
 				class="e-form"
 				label-position="top"
@@ -46,9 +46,9 @@
 							:content="$t('dataForm.copyDatabase')"
 							placement="top-start"
 						>
-							<el-button size="mini" style="padding: 7px;margin-left: 7px">
+							<div class="el-button" style="padding: 7px;margin-left: 7px">
 								<ClipButton :value="copyConnectionId"></ClipButton>
-							</el-button>
+							</div>
 						</el-tooltip>
 						<el-tooltip
 							class="item"
@@ -101,9 +101,12 @@
 							effect="light"
 							:content="$t('dataForm.copyCollection')"
 						>
-							<el-button size="mini" style="padding: 7px;margin-left: 7px">
+							<!-- <el-button size="mini" style="padding: 7px;margin-left: 7px">
 								<ClipButton :value="model.tableName"></ClipButton>
-							</el-button>
+							</el-button> -->
+							<div class="el-button" style="padding: 7px;margin-left: 7px">
+								<ClipButton :value="model.tableName"></ClipButton>
+							</div>
 						</el-tooltip>
 						<el-tooltip
 							class="item"
@@ -380,7 +383,7 @@ import ws from '../../../api/ws';
 import factory from '../../../api/factory';
 let connectionApi = factory('connections');
 const MetadataInstances = factory('MetadataInstances');
-let editorMonitor = null;
+// let editorMonitor = null;
 let tempSchemas = [];
 const RETAINED_OPS_TPL = {
 	id: '',
@@ -946,7 +949,7 @@ export default {
 			cell.on('change:outputSchema', () => {
 				this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
 			});
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 			let settingData = vueAdapter.editor.getData().settingData;
 			this.sync_typeFalg = settingData.sync_type === 'initial_sync' ? true : false;
 
@@ -983,9 +986,9 @@ export default {
 			this.disabled = disabled;
 		},
 
-		seeMonitor() {
-			editorMonitor.goBackMontior();
-		},
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// },
 
 		//  聚合处理弹窗开启设置
 		handleAggregation(val) {

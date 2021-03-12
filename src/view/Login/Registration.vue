@@ -135,6 +135,7 @@ export default {
 		},
 		async submit() {
 			let form = this.form;
+			form.source = 'registration';
 			let message = '';
 			if (!form.email || !form.email.trim()) {
 				message = this.$t('app.signIn.email_require');

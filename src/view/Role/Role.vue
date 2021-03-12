@@ -874,6 +874,7 @@ export default {
 			self.$api('users')
 				.deletePermissionRoleMapping(roleId, { data: { data: newRoleMappings } })
 				.then(() => {
+					this.$emit('saveBack');
 					this.$message.success(this.$t('message.saveOK'));
 					// roleMappingModel
 					// 	.post(newRoleMappings)

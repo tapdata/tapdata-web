@@ -270,6 +270,8 @@ const defaultModel = {
 	sslKey: '',
 	sslPass: '',
 	schemaAutoUpdate: false,
+	multiTenant: false,
+	pdb: '',
 	sslValidate: false,
 	sslCA: '',
 	sslCAFile: null,
