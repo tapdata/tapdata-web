@@ -123,37 +123,6 @@ export default function() {
 	paper.on('blank:pointerdown', paperScroller.startPanning);
 	paper.on('blank:mousewheel', _.partial(this.onMousewheel, null), this);
 	paper.on('cell:mousewheel', this.onMousewheel, this);
-
-    paper.on('cell:pointerclick', function(cellView) {
-		if (cellView.model.isLink()) {
-			graph.vcomp.flowList = cellView.model.info.dataFlows;
-			graph.vcomp.dialogFormVisible = true;
-		} else {
-			graph.vcomp.connectionId = cellView.model.connection.id;
-			graph.vcomp.databaseType = cellView.model.connection.database_type;
-			graph.vcomp.previewVisible = true;
-		}
-	});
-	const paperScroller = (this.paperScroller = new joint.ui.PaperScroller({
-		paper: paper,
-		autoResizePaper: true,
-		cursor: 'grab',
-		contentOptions: function(paperScroller) {
-			let visibleArea = paperScroller.getVisibleArea();
-			return {
-				padding: {
-					bottom: visibleArea.height / 2,
-					top: visibleArea.height / 2,
-					left: visibleArea.width / 2,
-					right: visibleArea.width / 2
-				},
-				allowNewOrigin: 'any'
-			};
-		}
-	}));
-	$('#paper').append(paperScroller.render().el);
-	paper.on('blank:pointerdown', paperScroller.startPanning);
-
 	return {
 		joint: joint,
 		graph: graph,
