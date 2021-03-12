@@ -155,12 +155,14 @@ export const defaultCloudModel = {
 		plain_password: '',
 		database_uri: '',
 		isUrl: false,
+		ssl: false,
+		sslKey: '',
+		sslPass: '',
+		sslValidate: false,
 		sslCA: '',
 		sslCAFile: null,
 		sslKeyFile: null,
-		ssl: false,
-		sslKey: '',
-		sslPass: ''
+		pgsql_log_decorder_plugin_name: ''
 	},
 	drs: {
 		s_zone: '',

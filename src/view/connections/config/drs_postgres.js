@@ -236,6 +236,17 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.password'),
 				domType: 'password',
 				showPassword: true
+			},
+			{
+				type: 'select',
+				field: 'pgsql_log_decorder_plugin_name',
+				label: vm.$t('dataForm.form.plugin_name'),
+				options: [
+					{ label: 'json streaming', value: 'wal2json_streaming' },
+					{ label: 'json streaming on rds', value: 'wal2json_rds_streaming' },
+					{ label: 'pgoutput', value: 'pgoutput' }
+				],
+				required: true
 			}
 		]
 	};

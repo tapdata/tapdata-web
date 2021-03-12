@@ -412,8 +412,11 @@ export default {
 					this.getVpcList();
 				}
 				this.rename = this.model.name;
-			} else this.model = Object.assign(this.model, data, { name: this.model.name });
-
+				this.model.isUrl = false;
+			} else {
+				this.model = Object.assign(this.model, data, { name: this.model.name });
+				this.model.isUrl = true;
+			}
 			if (this.model.database_type === 'file' && this.model.file_sources) {
 				this.model.file_sources.forEach(item => {
 					if (item.exclude_filename) {
@@ -485,10 +488,8 @@ export default {
 				let itemIsUrl = items.find(it => it.field === 'isUrl');
 				if (this.model.database_type === 'mongodb' && this.$route.params.id && itemIsUrl) {
 					itemIsUrl.options[0].disabled = true;
-					this.model.isUrl = false;
 				} else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
 					itemIsUrl.options[1].disabled = true;
-					this.model.isUrl = true;
 				}
 				if (this.$route.params.id) {
 					//编辑模式下 不展示
