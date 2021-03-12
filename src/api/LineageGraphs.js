@@ -9,4 +9,8 @@ export default class LineageGraphsAPI extends PublicAPI {
 		let url = `${this.url}/graphData?qualifiedName=` + qualifiedName;
 		return axios.get(url);
 	}
+	refreshGraphData() {
+		let url = `${this.url}/refreshGraphData?`;
+		return axios.get(url);
+	}
 }
