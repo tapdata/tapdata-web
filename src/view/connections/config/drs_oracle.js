@@ -6,8 +6,7 @@ export default function(vm) {
 		},
 		defaultModel: {
 			connection_type: 'source_and_target',
-			thin_type: 'SID',
-			supportUpdatePk: false
+			sourceType: 'ecs'
 		},
 		items: [
 			{
