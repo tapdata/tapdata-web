@@ -286,7 +286,7 @@ export default {
 				'db2',
 				'kafka',
 				'mariadb',
-				'mysqlpxc'
+				'mysql pxc'
 			],
 			model: '',
 			config: {

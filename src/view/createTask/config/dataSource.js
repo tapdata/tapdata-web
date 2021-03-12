@@ -115,6 +115,10 @@ export default function() {
 					{
 						label: 'DDS实例',
 						value: 'dds'
+					},
+					{
+						label: '云外自建库',
+						value: 'selfDB'
 					}
 				],
 				required: true
