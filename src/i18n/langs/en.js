@@ -622,6 +622,7 @@ const en = {
 		aggExpression: 'Target',
 		filterPredicate: 'Filter Predicate',
 		groupByExpression: 'Group Field',
+		keepAggreHistoryData: 'Keep aggregation historical data',
 		aggregation: 'Aggregation',
 		enterFilterTable: 'Please enter the filter table content',
 		aggregatePrompt: 'Warn：Using the aggregation processor node, the job will be reset when excutes restart',

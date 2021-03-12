@@ -611,6 +611,7 @@ const tc = {
 		aggExpression: '作用目標',
 		filterPredicate: '過濾器',
 		groupByExpression: '分組字段',
+		keepAggreHistoryData: '保留聚合歷史數據',
 		aggregation: '聚合處理',
 		enterFilterTable: '請輸入過濾表內容',
 		aggregatePrompt: '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',

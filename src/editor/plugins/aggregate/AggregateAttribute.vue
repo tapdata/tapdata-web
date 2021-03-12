@@ -1,9 +1,9 @@
 <template>
 	<div class="aggregate">
 		<div class="head-btns">
-			<!-- <el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 				{{ $t('dataFlow.button.viewMonitoring') }}
-			</el-button> -->
+			</el-button>
 			<p>{{ $t('dataFlow.aggregatePrompt') }}</p>
 		</div>
 		<el-form
@@ -70,6 +70,13 @@
 							</template>
 						</el-input>
 					</div>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.keepAggreHistoryData')" required>
+					<el-switch
+						v-model="form.keepAggRet"
+						:active-text="form.keepAggRet ? $t('dataFlow.yes') : $t('dataFlow.no')"
+					>
+					</el-switch>
 				</el-form-item>
 			</el-col>
 			<el-col style="padding: 0 10px;">
@@ -218,7 +225,7 @@ import { mergeJoinTablesToTargetSchema, removeDeleted } from '../../util/Schema'
 import MultiSelection from '../../../components/MultiSelection';
 
 let counter = 0;
-// let editorMonitor = null;
+let editorMonitor = null;
 export default {
 	name: 'Aggregate',
 	components: { MultiSelection },
@@ -247,7 +254,8 @@ export default {
 					}
 				],
 				primaryKeys: '',
-				aggCacheMaxSize: 100000
+				aggCacheMaxSize: 100000,
+				keepAggRet: false
 			},
 			primaryKeyOptions: [],
 			aggaggExpression: '1',
@@ -324,7 +332,7 @@ export default {
 			}
 		},
 
-		setData(data, cell) {
+		setData(data, cell, dataNodeInfo, vueAdapter) {
 			if (data) {
 				_.merge(this.form, data);
 				this.form.aggregations.map((item, index) => {
@@ -365,7 +373,7 @@ export default {
 				counter++;
 			}
 
-			// editorMonitor = vueAdapter.editor;
+			editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
@@ -374,11 +382,11 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
-		}
+		},
 
-		// seeMonitor() {
-		// 	editorMonitor.goBackMontior();
-		// }
+		seeMonitor() {
+			editorMonitor.goBackMontior();
+		}
 	}
 };
 </script>
@@ -462,11 +470,7 @@ export default {
 	.el-select {
 		width: 100%;
 	}
-	.el-switch__label {
-		span {
-			font-size: 12px !important;
-		}
-	}
+
 	.el-form-item {
 		margin-bottom: 8px;
 		.el-form-item__label,
@@ -476,6 +480,11 @@ export default {
 		.el-input__inner {
 			height: 30px;
 			line-height: 30px;
+		}
+		.el-switch__label {
+			span {
+				font-size: 12px !important;
+			}
 		}
 	}
 
