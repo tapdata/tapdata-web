@@ -1,11 +1,10 @@
 .<template>
 	<div class="data-map-container">
 		<div class="data-map-header">
-			<el-button type="warning" size="mini" @click="refreshData">刷新数据</el-button>
+			<el-button type="warning" size="mini" @click="refreshData">{{ $t('relations.refresh') }}</el-button>
 			<span :class="rClass" @click="checkError"
-				>上次刷新: {{ $moment(refreshResult.finish_date).format('YYYY-MM-DD HH:mm:ss') }}--{{
-					refreshResult.status
-				}}</span
+				>{{ $t('relations.refreshStatus') }}:
+				{{ $moment(refreshResult.finish_date).format('YYYY-MM-DD HH:mm:ss') }}--{{ refreshResult.status }}</span
 			>
 			<el-progress
 				:text-inside="true"

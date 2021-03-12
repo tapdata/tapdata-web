@@ -437,7 +437,7 @@ export default {
 			activePanel: 'model',
 			menuList: [
 				{ name: this.$t('metadata.details.model'), key: 'model' },
-				{ name: this.$t('blood'), key: 'relations' }
+				{ name: this.$t('relations.blood'), key: 'relations' }
 			],
 			description: '',
 			searchParams: {},
