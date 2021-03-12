@@ -1,11 +1,11 @@
 <template>
 	<div class="nodeStyle">
 		<div class="nodeBody">
-			<div class="head-btns">
+			<!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
-			</div>
+			</div> -->
 			<el-form
 				class="e-form"
 				label-position="top"
@@ -45,7 +45,7 @@ import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema } from '../../ut
 import log from '../../../log';
 import _ from 'lodash';
 import { getFieldsIds, handleOperation, getUrlSearch } from './util';
-let editorMonitor = null;
+// let editorMonitor = null;
 export default {
 	name: 'FieldProcess',
 	components: { SchemaEditor },
@@ -88,7 +88,7 @@ export default {
 
 	methods: {
 		convertSchemaToTreeData,
-		setData(data, cell, dataNodeInfo, vueAdapter) {
+		setData(data, cell) {
 			if (data) {
 				//模型改变 数据的兼容处理
 				Object.keys(data).forEach(key => (this.model[key] = data[key]));
@@ -128,7 +128,7 @@ export default {
 					this.model.operations
 				);
 			}
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
@@ -137,11 +137,11 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
-		},
-
-		seeMonitor() {
-			editorMonitor.goBackMontior();
 		}
+
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// }
 	}
 };
 </script>

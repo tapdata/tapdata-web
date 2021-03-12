@@ -164,6 +164,30 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.ReloadSchema')
 			},
 			{
+				type: 'switch',
+				field: 'multiTenant',
+				label: vm.$t('dataForm.form.multiTenant')
+			},
+			{
+				type: 'input',
+				field: 'pdb',
+				label: 'PDB',
+				show: false,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'multiTenant',
+								value: true
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
+			},
+			{
 				type: 'input',
 				field: 'table_filter',
 				domType: 'textarea',

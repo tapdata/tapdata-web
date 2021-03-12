@@ -1,10 +1,10 @@
 <template>
 	<div class="e-data-filter">
-		<div class="head-btns">
+		<!-- <div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
-		</div>
+		</div> -->
 		<el-form class="e-form" label-position="top" label-width="130px" :model="model" ref="form" :disabled="disabled">
 			<el-form-item :required="true" :label="$t('editor.cell.processor.dataFilter.form.name.label')" size="mini">
 				<el-input
@@ -149,7 +149,7 @@ import JsEditor from '../../../components/JsEditor';
 import { EditorEventType } from '../../lib/events';
 import _ from 'lodash';
 
-let editorMonitor = null;
+// let editorMonitor = null;
 export default {
 	name: 'DataFilterAttribute',
 	components: { JsEditor },
@@ -181,12 +181,12 @@ export default {
 		});
 	},
 	methods: {
-		setData(data, cell, dataNodeInfo, vueAdapter) {
+		setData(data) {
 			if (data) {
 				_.merge(this.model, data);
 			}
 
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
@@ -195,11 +195,11 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
-		},
-
-		seeMonitor() {
-			editorMonitor.goBackMontior();
 		}
+
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// }
 	}
 };
 </script>

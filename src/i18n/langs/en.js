@@ -91,6 +91,8 @@ const en = {
 			permission_denied: 'Permission denied.',
 			signInFail: "The email and password didn't work.",
 			watingApprove: 'This account is not approved, please wait for contact email.',
+			accountDisabled:
+				'Your account has been frozen, if you have any questions, please contact customer service. ',
 			hasVerified: 'The email has not been verified',
 			registry: 'Registration',
 			registry_tip: 'I agree with',
@@ -358,12 +360,14 @@ const en = {
 		level: 'Level'
 	},
 	button: {
+		refresh: 'Refresh',
 		reset: 'Reset',
 		delete: 'Delete',
 		rename: 'Rename',
 		details: 'Details',
 		more: 'More',
-		edit: 'Edit'
+		edit: 'Edit',
+		query: 'Query'
 	},
 	dataFlow: {
 		leave: 'Leave',
@@ -591,6 +595,7 @@ const en = {
 		ddlTip: 'Warn: Automatic DDL does not support JS processor and field processor',
 		transformerConcurrency: 'Transformer Concurrency',
 		processorConcurrency: 'Processor Concurrency',
+		cdcEngineFilter: 'Enable Engine Filtering',
 		cdcFetchSize: 'Number of CDC batch reads',
 		cdcFetchSizeTip: 'Number of data read by system each time.',
 		cdcFetchSizeTip1:
@@ -617,6 +622,7 @@ const en = {
 		aggExpression: 'Target',
 		filterPredicate: 'Filter Predicate',
 		groupByExpression: 'Group Field',
+		keepAggreHistoryData: 'Keep aggregation historical data',
 		aggregation: 'Aggregation',
 		enterFilterTable: 'Please enter the filter table content',
 		aggregatePrompt: 'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
@@ -1269,7 +1275,8 @@ const en = {
 					},
 					joinPath: {
 						label: 'Target path',
-						placeholder: 'Please input target path'
+						placeholder: 'Please input target path',
+						copyLabel: 'Copy target path'
 					},
 					joinKeys: {
 						label: 'Association condition',
@@ -1326,11 +1333,12 @@ const en = {
 			sidebar: {
 				setting: 'Data Flow Settings',
 				node_setting: 'Node Settings',
+				statistics: 'Statistics',
 				logs: 'Running Logs',
 				milestone: 'Task Milestone',
 				capture: 'Capture',
 				style: 'Style',
-
+				config: 'Config',
 				data_nodes: 'Data Nodes',
 				processor: 'Processor',
 				tableSelector: 'Fast Selection'
@@ -1611,7 +1619,7 @@ const en = {
 			indexPrefix: 'Index prefix',
 			agentMsg:
 				'The test connection service is not available, please check if the Data Synchronization Agent is started correctly.',
-
+			multiTenant: 'Multi-tenant',
 			uriTips: {
 				label: 'Example',
 				content:
@@ -1790,6 +1798,9 @@ const en = {
 	},
 	classification: {
 		title: 'Data Category',
+		userTitle: 'User Group',
+		creatUserGroup: 'Create user group',
+		creatDataClassification: 'Create data classification',
 		nameExist: 'Category name already existed.',
 		addNode: 'Add category at the same level',
 		addChildernNode: 'Add Child Category',
@@ -2535,7 +2546,76 @@ const en = {
 		btn_to_dashboard: "Don't edit the task for now, go shopping first",
 
 		not_source: 'Please choose a source connection',
-		not_target: 'Please choose a target connection'
+		not_target: 'Please choose a target connection',
+
+		agentServiceTitle: 'Agent service status is abnormal',
+		abnormalText: 'abnormal reason',
+		abnormal: 'The environment where the Agnet process is located is disconnected',
+		abnormal1: 'Agnet service process was killed',
+		solutionText: 'Solution',
+		windowsSolution: 'WINDOWS: Start the server and execute commands',
+		windowsSolution1: 'WINDOWS: execute commands in the Agent environment',
+		linuxSolution: 'LINUX: Start the server and execute commands',
+		linuxSolution1: 'LINUX: execute commands in the Agent environment',
+		restartProcess: 'To restart the process',
+		clickText: 'The process has been restarted? Please click'
+	},
+	user: {
+		des: 'The user management page provides functions to create, edit, delete, and status settings for users',
+		all: 'All',
+		inactivated: 'Not activated',
+		unverified: 'Unverified',
+		userNameEmail: 'Please enter your username/email',
+		changeTime: 'Modification time',
+		creatUser: 'Create user',
+		editUser: 'Edit User',
+		userName: 'Username',
+		email: 'Email',
+		password: 'Password',
+		role: 'Role',
+		source: 'Source',
+		status: 'Status',
+		opera: 'Operation',
+		activation: 'Activation',
+		freeze: 'Freeze',
+		delete: 'Delete',
+		check: 'Check',
+		edit: 'Edit',
+		bulkActivation: 'Bulk activation',
+		bulkFreeze: 'Bulk Freeze',
+		bulkCheck: 'Batch check',
+		create: 'Create',
+		registration: 'Register',
+		notVerified: 'Not verified',
+		notActivated: 'Not activated',
+		activated: 'Activated',
+		rejected: 'Rejected',
+		passwordNull: 'Please enter a password, the length is 5 ~ 32 characters',
+		pass_hint: 'Password length cannot be less than 5 and greater than 32',
+		activationCode: 'Access Code',
+		delUserTitle: 'Whether to delete this user ?',
+		delUser: 'Delete user',
+		deluserLast: ' after this user will not be able to recover',
+		checkUserTitle: 'Whether to verify this user ?',
+		checkUser: 'Pass the verification user',
+		checkUserLast: ' after the mailbox, this user can be activated',
+		activationUserTitle: 'Do you want to activate this user ? ',
+		activetionUser: 'Activation User',
+		activetionUserLast: ' after that, this user will be able to use the TAPDATA system',
+		freezeUserTitle: 'Do you want to freeze this user ? ',
+		freezeUser: 'Freeze user',
+		freezeUserLast: ' after this user will not be able to use the TAPDATA system',
+		startTime: 'Start Time',
+		endTime: 'End Time',
+		emailNull: 'Email cannot be empty',
+		email_must_valid: 'Please enter a valid email address',
+		activetionSuccess: 'Activation successful',
+		activetionError: 'Activation failed',
+		freezeSuccess: 'Freeze successful',
+		freezeError: 'Freeze failed',
+		checkSuccess: 'Pass verification',
+		checkError: 'Verification failed',
+		alreadyExists: 'User name cannot be repeated'
 	}
 };
 

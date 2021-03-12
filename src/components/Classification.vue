@@ -3,19 +3,25 @@
 		<el-button class="btn-expand" size="mini" @click="toggle()">
 			<i class="iconfont icon-zhankai2"></i>
 		</el-button>
+		<el-button class="btn-addIcon" size="mini" type="text">
+			<i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i>
+		</el-button>
+		<el-button class="btn-query" size="mini" type="text">
+			<i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
+		</el-button>
 		<div class="classification-header">
 			<div class="title">
-				<span>{{ $t('classification.title') }}</span>
+				<span>{{ types[0] === 'user' ? $t('classification.userTitle') : $t('classification.title') }}</span>
 			</div>
-			<div class="search-box">
+			<div class="search-box" v-if="searchFalg">
 				<el-input class="search" size="mini" v-model="filterText">
-					<i slot="suffix" class="el-icon-search"></i>
+					<i slot="prefix" class="el-icon-search"></i>
 				</el-input>
-				<i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i>
 			</div>
 		</div>
 		<div class="tree-block">
 			<el-tree
+				v-if="treeData && treeData.length > 0"
 				check-strictly
 				show-checkbox
 				class="classification-tree"
@@ -32,6 +38,7 @@
 			>
 				<span class="custom-tree-node" slot-scope="{ node, data }">
 					<span class="iconfont icon-Folder-closed icon-folder"></span>
+					<!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
 					<span class="table-label">{{ data.value }}</span>
 					<el-dropdown
 						class="btn-menu"
@@ -50,6 +57,13 @@
 					</el-dropdown>
 				</span>
 			</el-tree>
+			<span v-else v-readonlybtn="authority" @click="showDialog()" class="create">
+				{{
+					types[0] === 'user'
+						? $t('classification.creatUserGroup')
+						: $t('classification.creatDataClassification')
+				}}
+			</span>
 		</div>
 		<el-dialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
 			<span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
@@ -89,6 +103,7 @@ export default {
 	},
 	data() {
 		return {
+			searchFalg: false,
 			isExpand: true,
 			filterText: '',
 			treeData: [],
@@ -163,25 +178,70 @@ export default {
 			let filter = {
 				where
 			};
-			MetadataDefinitions.get({
-				filter: JSON.stringify(filter)
-			}).then(res => {
-				if (res.data) {
-					this.treeData = this.formatData(res.data);
-					cb && cb(res.data);
-				}
-			});
+			if (this.types[0] === 'user') {
+				this.$api('UserGroup')
+					.get({})
+					.then(res => {
+						if (res.data) {
+							let treeData = [];
+							if (res.data && res.data.length) {
+								treeData = res.data.map(item => ({
+									value: item.name,
+									name: item.name,
+									id: item.id,
+									gid: item.gid,
+									parent_id: item.parent_id,
+									last_updated: item.last_updated,
+									user_id: item.user_id
+								}));
+							}
+							this.treeData = this.formatData(treeData);
+							cb && cb(treeData);
+						}
+					});
+			} else {
+				MetadataDefinitions.get({
+					filter: JSON.stringify(filter)
+				}).then(res => {
+					if (res.data) {
+						this.treeData = this.formatData(res.data);
+						cb && cb(res.data);
+					}
+				});
+			}
 		},
 		getDataAll(cb) {
 			let params = {
 				filter: {}
 			};
-			MetadataDefinitions.get(params).then(res => {
-				if (res.data) {
-					//this.treeData = this.formatData(res.data);
-					cb && cb(res.data);
-				}
-			});
+			if (this.types[0] === 'user') {
+				this.$api('UserGroup')
+					.get({})
+					.then(res => {
+						if (res.data) {
+							let treeData = [];
+							if (res.data && res.data.length) {
+								treeData = res.data.map(item => ({
+									value: item.name,
+									id: item.id,
+									gid: item.gid,
+									parent_id: item.parent_id,
+									last_updated: item.last_updated,
+									user_id: item.user_id
+								}));
+							}
+							// this.treeData = this.formatData(res.data);
+							cb && cb(treeData);
+						}
+					});
+			} else {
+				MetadataDefinitions.get(params).then(res => {
+					if (res.data) {
+						// this.treeData = this.formatData(res.data);
+						cb && cb(res.data);
+					}
+				});
+			}
 		},
 		//格式化分类数据
 		formatData(items) {
@@ -263,6 +323,7 @@ export default {
 			let id = config.id;
 			let itemType = config.itemType;
 			let method = 'post';
+
 			if (!value || value.trim() === '') {
 				this.$message.error(this.$t('classification.nodeName'));
 				return;
@@ -271,54 +332,108 @@ export default {
 			if (nameExist) {
 				return this.$message.error(this.$t('classification.nameExist'));
 			}
-			let params = {
-				item_type: itemType,
-				value
-			};
-			if (config.type === 'edit') {
-				method = 'changeById';
-				params.id = id;
-			} else if (id) {
-				params.parent_id = id;
-			}
-			MetadataDefinitions[method](params)
-				.then(res => {
-					let self = this;
-					if (res.data) {
-						self.getData(() => {
-							this.$nextTick(() => {
-								this.emitCheckedNodes();
+
+			if (this.types[0] === 'user') {
+				let params = {
+					name: value
+				};
+				if (config.type === 'edit') {
+					method = 'patch';
+					params.id = id;
+				} else if (id) {
+					params.parent_id = id;
+				}
+				this.$api('UserGroup')
+					[method](params)
+					.then(res => {
+						let self = this;
+						if (res.data) {
+							self.getData(() => {
+								this.$nextTick(() => {
+									this.emitCheckedNodes();
+								});
 							});
-						});
-						self.hideDialog();
-					}
-				})
-				.catch(e => {
-					this.$message.error('MetadataInstances error' + e);
-				});
+							self.hideDialog();
+						}
+					})
+					.catch(e => {
+						this.$message.error('MetadataInstances error' + e);
+					});
+			} else {
+				let params = {
+					item_type: itemType,
+					value
+				};
+				if (config.type === 'edit') {
+					method = 'changeById';
+					params.id = id;
+				} else if (id) {
+					params.parent_id = id;
+				}
+				MetadataDefinitions[method](params)
+					.then(res => {
+						let self = this;
+						if (res.data) {
+							self.getData(() => {
+								this.$nextTick(() => {
+									this.emitCheckedNodes();
+								});
+							});
+							self.hideDialog();
+						}
+					})
+					.catch(e => {
+						this.$message.error('MetadataInstances error' + e);
+					});
+			}
 		},
 		deleteNode(id) {
+			let that = this;
 			this.$confirm(this.$t('classification.deteleMessage'), {
 				confirmButtonText: this.$t('message.delete'),
 				cancelButtonText: this.$t('message.cancel'),
 				type: 'warning',
 				closeOnClickModal: false
 			}).then(() => {
-				MetadataDefinitions.delete(id)
-					.then(() => {
-						let self = this;
-						self.getData();
-					})
-					.catch(() => {
-						this.$message.info(this.$t('message.deleteFail'));
-					});
+				if (that.types[0] === 'user') {
+					let params = {
+						id: id,
+						headers: {
+							gid: id
+						}
+					};
+					that.$api('UserGroup')
+						.delete(params)
+						.then(() => {
+							let self = this;
+							self.getData();
+						})
+						.catch(() => {
+							this.$message.info(this.$t('message.deleteFail'));
+						});
+				} else {
+					MetadataDefinitions.delete(id)
+						.then(() => {
+							let self = this;
+							self.getData();
+						})
+						.catch(() => {
+							this.$message.info(this.$t('message.deleteFail'));
+						});
+				}
 			});
 		},
 		checkName(value) {
 			return new Promise(resolve => {
-				this.getDataAll(items => {
-					resolve(items.find(it => it.value === value));
-				});
+				if (this.types[0] === 'user') {
+					this.getDataAll(items => {
+						resolve(items.find(it => it.name === value));
+					});
+				} else {
+					this.getDataAll(items => {
+						resolve(items.find(it => it.value === value));
+					});
+				}
 			});
 		}
 	}
@@ -331,18 +446,21 @@ export default {
 	display: flex;
 	flex-direction: column;
 	width: 26px;
-	height: 26px;
+	height: 22px;
 	user-select: none;
 	box-sizing: border-box;
 	border-top: none;
 	background: #fff;
 	border-radius: 3px;
 	overflow: hidden;
+	box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
 	.btn-expand {
 		padding: 2px 3px;
 		color: #666;
 		transform: rotate(0);
 		box-sizing: border-box;
+		background: #eff1f4;
+		border: 0;
 	}
 	&.expand {
 		height: 100%;
@@ -354,47 +472,85 @@ export default {
 			right: 8px;
 			transform: rotate(180deg);
 		}
-	}
-	/*头部样式*/
-	.classification-header {
-		background: #fafafa;
-		border-bottom: 1px solid #dedee4;
-		font-size: 12px;
-		line-height: 31px;
-		padding: 0 8px;
-		display: flex;
-		flex-direction: column;
-		.title {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			color: #999;
-		}
-		.search-box {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			margin-bottom: 3px;
-			.iconfont {
-				color: #c0c4cc;
-				font-size: 12px;
-				background: #fff;
-				border: 1px solid #dedee4;
+		.btn-addIcon {
+			position: absolute;
+			right: 33px;
+			.iconfont.icon-jia {
 				display: flex;
+				flex-direction: row;
 				justify-content: center;
 				align-items: center;
+				color: #666;
+				font-size: 16px;
+				// background: #fff;
+				// border: 1px solid #dedee4;
+
 				height: 66%;
-				padding: 0 4px;
-				padding-right: 6px;
-				padding-left: 5px;
+				// padding: 0 4px;
+				// padding-right: 6px;
+				// padding-left: 5px;
 				margin-top: 0px;
 				border-top-width: 1px;
 				border-radius: 3px;
 				cursor: pointer;
 			}
 		}
+		.btn-query {
+			position: absolute;
+			right: 54px;
+			.icon-fangdajing {
+				font-size: 16px;
+				color: #666;
+				&:hover {
+					color: #48b6e2;
+				}
+			}
+		}
+	}
+
+	/*头部样式*/
+	.classification-header {
+		background: #fafafa;
+		// border-bottom: 1px solid #dedee4;
+		font-size: 12px;
+		line-height: 31px;
+		display: flex;
+		width: 213px;
+		flex-direction: column;
+		.title {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 8px;
+			color: #666;
+			background-color: #eff1f4;
+		}
+
+		.search-box {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 3px;
+			// .iconfont {
+			// 	color: #c0c4cc;
+			// 	font-size: 12px;
+			// 	background: #fff;
+			// 	border: 1px solid #dedee4;
+			// 	display: flex;
+			// 	justify-content: center;
+			// 	align-items: center;
+			// 	height: 66%;
+			// 	padding: 0 4px;
+			// 	padding-right: 6px;
+			// 	padding-left: 5px;
+			// 	margin-top: 0px;
+			// 	border-top-width: 1px;
+			// 	border-radius: 3px;
+			// 	cursor: pointer;
+			// }
+		}
 		.search {
-			margin-right: 8px;
+			margin: 0 10px;
 		}
 	}
 	.tree-block {
@@ -431,6 +587,12 @@ export default {
 		&:hover .btn-menu {
 			display: block;
 		}
+	}
+	.create {
+		padding: 20px 10px;
+		font-size: 12px;
+		color: #48b6e2;
+		cursor: pointer;
 	}
 }
 </style>

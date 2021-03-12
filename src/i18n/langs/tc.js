@@ -91,6 +91,7 @@ const tc = {
 			permission_denied: '沒有權限',
 			signInFail: '帳戶或密碼錯誤',
 			watingApprove: '此賬號尚未審核，請等待聯繫郵件',
+			accountDisabled: '你的賬號已被凍結，如有疑問請聯繫客服。 ',
 			hasVerified: '郵箱沒有校驗',
 			registry: '賬號註冊',
 			registry_tip: '我已同意',
@@ -353,12 +354,14 @@ const tc = {
 		level: '級別'
 	},
 	button: {
+		refresh: '刷新',
 		reset: '重置',
 		delete: '删除',
 		rename: '改名',
 		details: '詳情',
 		more: '更多',
-		edit: '編輯'
+		edit: '編輯',
+		query: '查詢'
 	},
 	dataFlow: {
 		leave: '離開',
@@ -583,6 +586,7 @@ const tc = {
 		ddlTip: '注意：自動DDL處理不支持JS處理器，分段處理器',
 		transformerConcurrency: '目標寫入線程數',
 		processorConcurrency: '處理器線程數',
+		cdcEngineFilter: '啟用引擎過濾',
 		cdcFetchSize: '增量批次讀取條數',
 		cdcFetchSizeTip: '每次讀取的數據條數。',
 		cdcFetchSizeTip1: '條數越小，增量實時性高，但處理速度相對較慢。',
@@ -607,6 +611,7 @@ const tc = {
 		aggExpression: '作用目標',
 		filterPredicate: '過濾器',
 		groupByExpression: '分組字段',
+		keepAggreHistoryData: '保留聚合歷史數據',
 		aggregation: '聚合處理',
 		enterFilterTable: '請輸入過濾表內容',
 		aggregatePrompt: '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
@@ -1229,25 +1234,26 @@ const tc = {
 				},
 				form: {
 					label: {
-						label: '标签',
-						placeholder: '请输入标签'
+						label: '標籤',
+						placeholder: '請輸入標籤'
 					},
 					joinMethod: {
 						label: '不匹配數據插入方式',
 						placeholder: '請選擇數據插入方式'
 					},
 					joinType: {
-						label: '数据写入模式',
-						placeholder: '请选择数据写入模式'
+						label: '數據寫入模式',
+						placeholder: '請選擇數據寫入模式'
 					},
 					joinPath: {
-						label: '关联后写入路径',
-						placeholder: '请输入关联后写入路径'
+						label: '關聯後寫入路徑',
+						placeholder: '請輸入關聯後寫入路徑',
+						copyLabel: '複製寫入路徑'
 					},
 					joinKeys: {
-						label: '关联條件',
+						label: '關聯條件',
 						sourceField: '源字段',
-						targetField: '目标字段'
+						targetField: '目標字段'
 					},
 					arrayUniqueKey: {
 						label: '內嵌數組匹配條件',
@@ -1299,10 +1305,12 @@ const tc = {
 			sidebar: {
 				setting: '任務設置',
 				node_setting: '節點屬性',
+				statistics: '統計',
+				milestone: '任務里程碑',
 				logs: '日誌',
 				capture: '抓取數據',
 				style: '樣式',
-
+				config: '配置',
 				data_nodes: '數據節點',
 				processor: '處理節點',
 				tableSelector: '快速選擇'
@@ -1577,6 +1585,7 @@ const tc = {
 			supportUpdatePk: '支持同步時更新主鍵',
 			indexPrefix: '索引前綴',
 			agentMsg: '當前測試連接服務不可用，請檢查是否正確啟動數據同步(Agent)服務',
+			multiTenant: '多租戶模式',
 			uriTips: {
 				label: '示例',
 				content:
@@ -1747,6 +1756,9 @@ const tc = {
 	},
 	classification: {
 		title: '數據分類',
+		userTitle: '用戶組',
+		creatUserGroup: '創建用戶組',
+		creatDataClassification: '創建數據分類',
 		nameExist: '分類名稱已存在',
 		addNode: '新增同級分類',
 		addChildernNode: '新增子分類',
@@ -2469,7 +2481,76 @@ const tc = {
 		btn_to_dashboard: '暫不編輯任務，先逛逛',
 
 		not_source: '請選擇一個源連接',
-		not_target: '請選擇一個目標連接'
+		not_target: '請選擇一個目標連接',
+
+		agentServiceTitle: 'Agent 服務狀態異常',
+		abnormalText: '異常原因',
+		abnormal: 'Agnet 進程所在環境斷開連接',
+		abnormal1: 'Agnet 服務進程被幹掉',
+		solutionText: '解決方案',
+		windowsSolution: 'WINDOWS：啟動服務器並執行命令 ',
+		windowsSolution1: 'WINDOWS：在安裝Agent環境下執行命令 ',
+		linuxSolution: 'LINUX：啟動服務器並執行命令 ',
+		linuxSolution1: 'LINUX：在安裝Agent環境下執行命令 ',
+		restartProcess: ' 以重啟進程',
+		clickText: '進程已重啟？請點擊'
+	},
+	user: {
+		des: '用戶管理頁面提供對用戶的創建、編輯、刪除，以及狀態設置功能',
+		all: '全部',
+		inactivated: '未激活',
+		unverified: '未驗證',
+		userNameEmail: '請輸入用戶名 / 郵箱',
+		changeTime: ' 修改時間',
+		creatUser: '創建用戶',
+		editUser: '編輯用戶',
+		userName: '用戶名',
+		email: '郵箱',
+		password: '密碼',
+		role: '關聯角色',
+		source: '來源',
+		status: '狀態',
+		opera: '操作',
+		activation: '激活',
+		freeze: '凍結',
+		delete: '刪除',
+		check: '校驗',
+		edit: '編輯',
+		bulkActivation: '批量激活',
+		bulkFreeze: '批量凍結',
+		bulkCheck: '批量校驗',
+		create: '創建',
+		registration: '註冊',
+		notVerified: '未驗證',
+		notActivated: '未激活',
+		activated: '已激活',
+		rejected: '已拒絕',
+		passwordNull: '請輸入密碼, 長度為 5 ~ 32 個字符',
+		pass_hint: '密碼長度不能小於5大於32',
+		activationCode: '訪問碼',
+		delUserTitle: '是否刪除該用戶？',
+		delUser: '刪除用戶',
+		deluserLast: ' 後，此用戶將無法恢復',
+		checkUserTitle: '是否通過校驗該用戶？',
+		checkUser: '通過校驗用戶',
+		checkUserLast: ' 的郵箱後，此用戶可以被激活',
+		activationUserTitle: '是否激活該用戶？ ',
+		activetionUser: '激活用戶',
+		activetionUserLast: ' 後，此用戶將可以使用 TAPDATA 系統',
+		freezeUserTitle: '是否凍結該用戶？ ',
+		freezeUser: '凍結用戶',
+		freezeUserLast: ' 後，此用戶將不可以使用 TAPDATA 系統',
+		startTime: '開始時間',
+		endTime: '結束時間',
+		emailNull: '郵箱不能為空',
+		email_must_valid: '請輸入有效郵箱地址',
+		activetionSuccess: '激活成功',
+		activetionError: '激活失敗',
+		freezeSuccess: '凍結成功',
+		freezeError: '凍結失敗',
+		checkSuccess: '通過校驗',
+		checkError: '校驗失敗',
+		alreadyExists: '用戶名不能重複'
 	}
 };
 

@@ -83,11 +83,23 @@
 						</el-option>
 					</el-select>
 				</li>
-				<li class="item">
-					<el-button type="text" class="restBtn" size="mini" @click="rest()">
-						{{ $t('dataFlow.reset') }}
-					</el-button>
-				</li>
+				<template
+					v-if="
+						searchParams.keyword ||
+							searchParams.status ||
+							searchParams.databaseType ||
+							searchParams.databaseModel
+					"
+				>
+					<li class="item">
+						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
+					</li>
+					<li class="item">
+						<el-button type="text" class="restBtn" size="mini" @click="reset('reset')">
+							{{ $t('dataFlow.reset') }}
+						</el-button>
+					</li>
+				</template>
 			</ul>
 			<div slot="operation">
 				<el-button
@@ -126,17 +138,17 @@
 					<div class="database-text" :class="{ lineHeight: !scope.row.database_uri }">
 						<span class="name" @click="preview(scope.row.id, scope.row.database_type)"
 							>{{ scope.row.name }}
-							<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
-								formatterListTags(scope.row)
-							}}</span></span
-						>
+						</span>
+						<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
+							formatterListTags(scope.row)
+						}}</span>
 						<div class="user" v-if="scope.row.database_uri">
 							{{ formatterDatabaseType(scope.row) }}
 						</div>
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column prop="username" :label="$t('connection.creator')" width="80" sortable="username">
+			<el-table-column prop="username" :label="$t('connection.creator')" sortable="username">
 				<template slot-scope="scope">
 					<div class="database-text" style="margin-left:0;">
 						<div>{{ scope.row.username }}</div>
@@ -147,7 +159,6 @@
 				prop="connection_type"
 				:label="$t('connection.connectionType')"
 				:formatter="formatterConnectionType"
-				width="120"
 				sortable="connection_type"
 			></el-table-column>
 			<el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100" sortable="status">
@@ -172,7 +183,7 @@
 					</span>
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('connection.operate')" width="220">
+			<el-table-column :label="$t('connection.operate')">
 				<template slot-scope="scope">
 					<el-button class="btn-text" type="text" @click="preview(scope.row.id, scope.row.database_type)">
 						{{ $t('message.preview') }}
@@ -313,7 +324,7 @@ export default {
 		this.getDatabaseType();
 		//header
 		let guideDoc =
-			' <a style="color: #48B6E2" href="https://docs.tapdata.net/data-source">' +
+			' <a target="_blank" style="color: #48B6E2" href="https://docs.tapdata.net/data-source">' +
 			this.$t('dataForm.form.guideDoc') +
 			'</a>';
 		this.description = this.$t('connection.desc') + guideDoc;
@@ -370,7 +381,7 @@ export default {
 			};
 			//精准搜索 iModel
 			if (keyword && keyword.trim()) {
-				let filterObj = iModel ? { like: verify(keyword), options: 'i' } : keyword;
+				let filterObj = iModel === 'fuzzy' ? { like: verify(keyword), options: 'i' } : keyword;
 				where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
 			}
 			where.database_type = {
@@ -407,16 +418,19 @@ export default {
 				};
 			});
 		},
-		rest() {
-			this.searchParams = {
-				iModel: 'fuzzy',
-				databaseType: '',
-				keyword: '',
-				databaseModel: '',
-				status: '',
-				panelFlag: true
-			};
-			this.table.fetch(1);
+		// 重置
+		reset(name) {
+			if (name === 'reset') {
+				this.searchParams = {
+					iModel: 'fuzzy',
+					databaseType: '',
+					keyword: '',
+					databaseModel: '',
+					status: '',
+					panelFlag: true
+				};
+				this.table.fetch(1);
+			}
 		},
 		getImgByType(type) {
 			if (!type) {
@@ -623,6 +637,9 @@ export default {
 		.name {
 			color: #48b6e2;
 			cursor: pointer;
+		}
+		.name:hover {
+			text-decoration: underline;
 		}
 		div {
 			line-height: 14px;

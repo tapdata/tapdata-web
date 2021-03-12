@@ -20,6 +20,7 @@ import Tab from './tab';
 import i18n from '../../i18n/i18n';
 import { Message } from 'element-ui';
 import { getUrlSearch } from '../../util/util';
+import $ from 'jquery';
 
 window.joint = joint;
 let count = 0;
@@ -242,7 +243,7 @@ export default class Graph extends Component {
 
 		paper.on('blank:mousewheel', _.partial(this.onMousewheel, null), this);
 		paper.on('cell:mousewheel', this.onMousewheel, this);
-		paper.on('blank:pointerclick', this.onClickBlank.bind(this));
+		//paper.on('blank:pointerclick', this.onClickBlank.bind(this));
 		paper.on({
 			//鼠标移入Pager区域后，其他元素失去焦点
 			'paper:mouseenter': () => {
@@ -423,6 +424,16 @@ export default class Graph extends Component {
 			}
 			this.editor.rightSidebar.add(rightTabPanel);
 			this.editor.getRightSidebar().hide();
+		} else {
+			let rightTabPanel = this.editor.getRightTabPanel();
+			if (rightTabPanel) {
+				let monitor = rightTabPanel.getChildByName('monitor');
+				rightTabPanel.select(monitor);
+				this.editor.getRightSidebar().show();
+				$('.monitorTab').html(
+					`<div class="e-tab-title active">${i18n.t('editor.ui.sidebar.statistics')}</div>`
+				);
+			}
 		}
 		this.unHighlightAllCells();
 	}
@@ -488,6 +499,7 @@ export default class Graph extends Component {
 				columns: 3,
 				rowHeight: 53
 			},
+
 			/* search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],
 				'org.Member': ['attrs/.rank/text', 'attrs/root/dataTooltip', 'attrs/.name/text']
@@ -582,6 +594,7 @@ export default class Graph extends Component {
 					this.paperScroller.startPanning(evt, x, y);
 					this.paper.removeTools();
 				}
+				this.onClickBlank();
 			},
 			this
 		);
@@ -645,7 +658,8 @@ export default class Graph extends Component {
 	}
 
 	selectPrimaryCell(cellView) {
-		let cell = cellView.model;
+		let cell = cellView.model,
+			self = this;
 		if (this.selectedLink) {
 			this.selectedLinkattr('line/stroke', '#8f8f8f');
 			this.selectedLink = false;
@@ -659,9 +673,52 @@ export default class Graph extends Component {
 			}
 		} else {
 			if (cell.isElement()) {
+				if ($('.monitorTab').html().length < 50) {
+					$('.monitorTab').html(
+						`<div class="e-tab-title active">${i18n.t(
+							'editor.ui.sidebar.statistics'
+						)}</div><div class="e-tab-title">${i18n.t('editor.ui.sidebar.config')}</div>`
+					);
+					this.editor.goBackMontior();
+					$('.monitorTab')
+						.children()
+						.first()
+						.click(() => {
+							self.editor.goBackMontior();
+							$('.monitorTab')
+								.children()
+								.first()
+								.addClass('active');
+							$('.monitorTab')
+								.children()
+								.last()
+								.removeClass('active');
+						});
+					$('.monitorTab')
+						.children()
+						.last()
+						.click(() => {
+							self.editor.seeMonitor = false;
+							let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
+							self.editor.getRightTabPanel().select(monitor);
+							$('.monitorTab')
+								.children()
+								.last()
+								.addClass('active');
+							$('.monitorTab')
+								.children()
+								.first()
+								.removeClass('active');
+						});
+				}
 				this.selectCell(cell);
 			} else {
+				$('.monitorTab').html(`<div class="e-tab-title active">${i18n.t('editor.ui.sidebar.config')}</div>`);
 				this.selectPrimaryLink(cellView);
+				setTimeout(() => {
+					let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
+					self.editor.getRightTabPanel().select(monitor);
+				}, 20);
 			}
 		}
 		this.createInspector(cell);

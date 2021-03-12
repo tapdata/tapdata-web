@@ -27,6 +27,7 @@ import { EditorEventType } from './lib/events';
 import i18n from '../i18n/i18n';
 
 import factory from '../api/factory';
+import $ from 'jquery';
 
 const connections = factory('connections');
 
@@ -255,37 +256,6 @@ export default class Editor extends BaseObject {
 
 		self.ui.setDisableName(true);
 
-		// self.getRightTabPanel().removeAll();
-		// remove stage config
-		// let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
-		// if( nodeSettingPanel ) self.getRightTabPanel().remove(nodeSettingPanel);
-
-		// remove setting
-		// let setting = self.getRightTabPanel().getChildByName('setting');
-		// if( setting ) self.getRightTabPanel().remove(setting);
-
-		// add monitor
-		/* let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
-		if( !rightTabPanel) {
-			rightTabPanel = new Tab({
-				name: 'rightTabPanel'
-			});
-			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
-		} */
-
-		// let monitor = self.getRightTabPanel().getChildByName("monitor");
-		// if (!monitor) {
-		// 	monitor = new VueComponent({
-		// 		name: "monitor",
-		// 		editor: this,
-		// 		propsData: {
-		// 			dataFlow: dataFlow
-		// 		},
-		// 		component: Monitor
-		// 	});
-		// 	self.getRightTabPanel().add(monitor);
-		// }
-		// self.getRightSidebar().show();
 		self.initMonitor(dataFlow);
 		self.showLogs(dataFlow, true);
 	}
@@ -310,7 +280,7 @@ export default class Editor extends BaseObject {
 		// this.getBottomTabPanel().removeAll();
 	}
 	initMonitor(dataFlow) {
-		this.getRightTabPanel().removeAll();
+		// this.getRightTabPanel().removeAll();
 		this.seeMonitor = true;
 		let self = this;
 		if (dataFlow) this.dataFlow = dataFlow;
@@ -319,6 +289,7 @@ export default class Editor extends BaseObject {
 			let monitor = rightTabPanel.getChildByName('monitor');
 			if (!monitor) {
 				monitor = new VueComponent({
+					title: i18n.t('editor.ui.sidebar.statistics'),
 					name: 'monitor',
 					editor: this,
 					propsData: {
@@ -331,6 +302,10 @@ export default class Editor extends BaseObject {
 			rightTabPanel.select(monitor);
 			self.getRightSidebar().show();
 		}
+		let tapTitle = i18n.t('editor.ui.sidebar.statistics');
+		$('.e-tab-panel')
+			.last()
+			.prepend(`<div class="monitorTab"><div class="e-tab-title active">${tapTitle}</div></div>`);
 	}
 
 	/**
@@ -353,6 +328,7 @@ export default class Editor extends BaseObject {
 
 			let settingData = self.graph.getSettingData() || {};
 			settingData.editDisable = !!editDisable;
+			if (settingData.editDisable) $('.monitorTab').html('<div class="e-tab-title active">setting</div>');
 			setting.setData(settingData);
 			rightTabPanel.select(setting);
 		}

@@ -1,10 +1,10 @@
 <template>
 	<section class="custom_processor-wrap">
-		<div class="head-btns">
+		<!-- <div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor()">
 				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
-		</div>
+		</div> -->
 		<main>
 			<!-- <div style="text-align: right;">
 				<el-button size="mini" type="primary">更新节点配置</el-button>
@@ -18,7 +18,7 @@
 import _ from 'lodash';
 import { mergeJoinTablesToTargetSchema, removeDeleted } from '../../util/Schema';
 // import log from '../../../log';
-let editorMonitor = null;
+// let editorMonitor = null;
 export default {
 	name: 'CustomProcessor',
 	data() {
@@ -57,11 +57,11 @@ export default {
 			this.disabled = disabled;
 			this.formConfig.form.disabled = true;
 		},
-		seeMonitor() {
-			editorMonitor.goBackMontior();
-		},
-		setData(data, cell, dataNodeInfo, vueAdapter) {
-			editorMonitor = vueAdapter.editor;
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// },
+		setData(data, cell) {
+			// editorMonitor = vueAdapter.editor;
 			if (data) {
 				this.model = Object.assign(this.model, data);
 			}

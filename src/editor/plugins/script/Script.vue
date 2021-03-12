@@ -1,11 +1,11 @@
 <template>
 	<div class="nodeStyle">
 		<div class="nodeBody">
-			<div class="head-btns">
+			<!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
-			</div>
+			</div> -->
 			<el-form
 				class="e-form"
 				label-position="top"
@@ -69,7 +69,7 @@ import { EditorEventType } from '../../lib/events';
 import Debug from './Debug';
 import ws, { EventName } from '../../../api/ws';
 import _ from 'lodash';
-let editorMonitor = null;
+// let editorMonitor = null;
 
 const gData = {};
 export default {
@@ -128,14 +128,14 @@ export default {
 	},
 
 	methods: {
-		setData(data, cell, dataNodeInfo, vueAdapter) {
+		setData(data, cell) {
 			if (data) {
 				_.merge(this.model, data);
 			}
 			gData.stageId = cell.id;
 			gData.dataFlowId = arguments[3].editor.scope.dataFlowId;
 			if (this.$refs.jsEditor) this.$refs.jsEditor.init(this.model.script);
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 		},
 		getData() {
 			// return JSON.parse(JSON.stringify(this.model));
@@ -146,9 +146,9 @@ export default {
 			this.disabled = disabled;
 		},
 
-		seeMonitor() {
-			editorMonitor.goBackMontior();
-		},
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// },
 
 		showDebug() {
 			log('Connect to Test Server');
