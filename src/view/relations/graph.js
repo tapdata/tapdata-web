@@ -1,6 +1,7 @@
 import joint from '../../editor/lib/rappid/rappid';
 //import navigatorElementView from '../../editor/lib/rappid/view/navigator';
 import paperSetting from './paperSetting';
+import $ from 'jquery';
 // import $ from 'jquery';
 // import _ from 'lodash';
 // import i18n from '../../i18n/i18n';
@@ -13,60 +14,67 @@ export default function() {
 
 	//var toolbarHeight = 50;
 
+	var getContentBBox = function() {
+		const parent = $('.data-map-main');
+		const width = parent.width();
+		const height = parent.height();
+		return {
+			w: width,
+			h: height
+		};
+	};
+
 	var graph = new joint.dia.Graph();
 
 	var paper = new joint.dia.Paper({
-		el: document.getElementById('paper'),
+		// el: document.getElementById('paper'),
 		model: graph,
 		width: 800,
 		height: 800,
-		// width: '100%',
-		// height: 'calc(100% - ' + toolbarHeight + 'px)',
-		gridSize: 10,
-		background: { color: '#f6f6f6' },
-		magnetThreshold: 'onleave',
-		moveThreshold: 5,
-		clickThreshold: 5,
+		gridSize: 30,
+		drawGrid: {
+			name: 'doubleMesh',
+			args: [
+				{ color: '#dddddd', thickness: 1 }, // settings for the primary mesh
+				{ color: 'black', scaleFactor: 5, thickness: 1 } //settings for the secondary mesh
+			]
+		},
+		defaultConnectionPoint: { name: 'boundary', args: { extrapolate: true } },
+		// defaultConnectionPoint: joint.shapes.dataMap.Link.connectionPoint,
+		defaultConnector: { name: 'rounded' },
+		defaultRouter: { name: 'manhattan' },
+		/*restrictTranslate: function(elementView) {
+			let parentId = elementView.model.get('parent');
+			let parentCell = parentId && this.model.getCell(parentId);
+			//let parentCellType = parentCell && parentCell.get('type');
+			let parentBBox = parentCell && parentCell.getBBox();
+			//if(parentCellType === 'dataMap.Lane'){
+			parentBBox = parentBBox || {};
+			parentBBox.y += 50;
+			parentBBox.height -= 50;
+			//}
+			return parentCell && parentBBox;
+		},*/
+		/*embeddingMode: false,*/
+		// frontParentOnly: false,
+		defaultAnchor: { name: 'center' },
 		linkPinning: false,
-		sorting: joint.dia.Paper.sorting.APPROX,
+		/*frozen: true*/
+		//sorting: joint.dia.Paper.sorting.APPROX
 
-		interactive: {
-			linkMove: false,
-			elementMove: false
-		},
-		markAvailable: true,
-		snapLinks: { radius: 40 },
-		defaultRouter: {
-			name: 'mapping',
-			args: { padding: 30 }
-		},
-		defaultConnectionPoint: { name: 'anchor' },
-		defaultAnchor: { name: 'mapping' },
-		defaultConnector: {
-			name: 'jumpover',
-			args: { jump: 'cubic' }
-		},
+		/*validateConnection: function(sv, sm, tv, tm, end) {
+			if (sv === tv) return false;
+			if (sv.model.isLink() || tv.model.isLink()) return false;
+			if (end === 'target') return tv.model.getItemSide(tv.findAttribute('item-id', tm)) !== 'right';
+			return sv.model.getItemSide(sv.findAttribute('item-id', sm)) !== 'left';
+		},*/
 		highlighting: {
-			magnetAvailability: {
+			default: {
 				name: 'addClass',
 				options: {
-					className: 'record-item-available'
-				}
-			},
-			connecting: {
-				name: 'stroke',
-				options: {
-					padding: 8,
-					attrs: {
-						stroke: 'none',
-						fill: '#7c68fc',
-						'fill-opacity': 0.2
-					}
+					className: 'active'
 				}
 			}
-		},
-		defaultLink: function() {
-			return new joint.shapes.mapping.Link();
 		}
 	});
 
@@ -80,53 +88,41 @@ export default function() {
 			graph.vcomp.previewVisible = true;
 		}
 	});
-	// const paperScroller = new joint.ui.PaperScroller({
-	// 	paper: paper,
-	// 	autoResizePaper: true,
-	// 	cursor: 'grab',
-	// 	contentOptions: function(paperScroller) {
-	// 		let visibleArea = paperScroller.getVisibleArea();
-	// 		return {
-	// 			padding: {
-	// 				bottom: visibleArea.height / 2,
-	// 				top: visibleArea.height / 2,
-	// 				left: visibleArea.width / 2,
-	// 				right: visibleArea.width / 2
-	// 			},
-	// 			allowNewOrigin: 'any'
-	// 		};
-	// 	}
-	// });
-	// $('.data-map').append(paperScroller.render().el);
-	// paperScroller.render().center();
-	// navigatorElementView(joint);
-	//
-	// let navigator = new joint.ui.Navigator({
-	// 	width: 150,
-	// 	height: 150,
-	// 	paperScroller: this.paperScroller,
-	// 	zoom: {
-	// 		grid: 0.2,
-	// 		min: 0.2,
-	// 		max: 5
-	// 	},
-	// 	paperOptions: {
-	// 		async: true,
-	// 		elementView: joint.shapes.app.NavigatorElementView,
-	// 		linkView: joint.shapes.app.NavigatorLinkView,
-	// 		cellViewNamespace: {
-	// 			/* no other views are accessible in the navigator */
-	// 		}
-	// 	}
-	// });
-	// $('#paper').append(navigator.render().el);
-	//paper.on('blank:pointerdown', paperScroller.startPanning);
-	// paper.on('blank:mousewheel', _.partial(this.onMousewheel, null), this);
-	// paper.on('cell:mousewheel', this.onMousewheel, this);
+	const paperScroller = new joint.ui.PaperScroller({
+		el: document.getElementById('paper'),
+		paper: paper,
+		autoResizePaper: true,
+		cursor: 'grab',
+		contentOptions: function() {
+			// let visibleArea = paperScroller.getVisibleArea();
+			let bbox = getContentBBox();
+			return {
+				maxWidth: bbox.width,
+				maxHeight: bbox.height,
+				padding: {
+					bottom: 20,
+					top: 20,
+					left: 20,
+					right: 20
+				},
+				allowNewOrigin: 'any'
+			};
+		}
+	});
+	window.paperScroller = paperScroller;
+	window.paper = paper;
+	paper.on('blank:pointerdown', paperScroller.startPanning);
+	paper.on('cell:pointerdown', (cellView, evt, x, y) => {
+		paperScroller.startPanning(evt, x, y);
+	});
+	paperScroller.render();
+	paperScroller.zoom(0.8, { absolute: true });
 	return {
 		joint: joint,
 		graph: graph,
 		draw: function(rdatas, linkdatas, vcomp) {
+			graph.clear();
+
 			graph.vcomp = vcomp;
 			rdatas.forEach(table => {
 				var node = new joint.shapes.mapping.Record({ items: [[table.items[0]]] });
@@ -166,7 +162,7 @@ export default function() {
 				marginX: 100,
 				marginY: 100,
 				// resizeToFit: true,
-				nodeSep: 230,
+				nodeSep: 100,
 				edgeSep: 10,
 				rankSep: 80,
 				// ranker: 'tight-tree',
@@ -174,6 +170,7 @@ export default function() {
 				resizeClusters: true
 				//clusterPadding: { top: 50, left: 35, right: 35, bottom: 20 }
 			});
+			paperScroller.center();
 		}
 	};
 }

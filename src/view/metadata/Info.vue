@@ -564,8 +564,8 @@ export default {
 			return Promise.all([this.$api('MetadataInstances').get([this.$route.query.id])])
 				.then(res => {
 					this.metadataDataObj = res[0].data;
-					this.pageTotal = res[0].data.fields.length;
-					this.setCurrentPageData(this.metadataDataObj.fields);
+					this.pageTotal = (res[0].data.fields && res[0].data.fields.length) || 0;
+					this.setCurrentPageData(this.metadataDataObj.fields || []);
 				})
 				.finally(() => {
 					this.loading = false;
