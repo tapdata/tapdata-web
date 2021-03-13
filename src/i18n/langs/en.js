@@ -1809,6 +1809,11 @@ const en = {
 		nodeName: 'Please enter classification',
 		deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
 	},
+	relations: {
+		blood: 'Table Tracing',
+		refresh: 'Refresh',
+		refreshStatus: 'Last Refresh'
+	},
 	metadata: {
 		createNewModel: 'Create model',
 		namePlaceholder: 'Please enter the table name/database name',

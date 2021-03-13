@@ -1767,6 +1767,11 @@ const tc = {
 		nodeName: '請輸入分類名稱',
 		deteleMessage: '此操作會將該分類下存在的子類都刪除，是否刪除'
 	},
+	relations: {
+		blood: '表鏈路圖',
+		refresh: '刷新數據',
+		refreshStatus: '上次刷新'
+	},
 	metadata: {
 		createNewModel: '創建模型',
 		namePlaceholder: '請輸入表名/數據庫名',

@@ -153,7 +153,7 @@
 					<div class="tapNav">
 						<ul class="mune">
 							<li
-								v-for="item in muneList"
+								v-for="item in menuList"
 								:key="item.icon"
 								:class="activePanel === item.key ? 'active' : ''"
 								@click="changeName(item.key)"
@@ -164,7 +164,7 @@
 						</ul>
 					</div>
 
-					<div class="table-box">
+					<div class="table-box" v-if="activePanel == 'model'">
 						<div class="table-page-topbar">
 							<div class="table-page-search-bar">
 								<ul class="search-bar">
@@ -349,6 +349,9 @@
 						>
 						</el-pagination>
 					</div>
+					<div class="table-box" v-if="activePanel == 'relations'">
+						<Relations :tableId="metadataDataObj.qualified_name"></Relations>
+					</div>
 				</div>
 			</el-main>
 		</el-container>
@@ -419,9 +422,11 @@
 <script>
 // import TablePage from '@/components/TablePage';
 import FormPage from './Form';
+import Relations from '../relations/relations.vue';
 export default {
 	components: {
 		// TablePage,
+		Relations,
 		FormPage
 	},
 	data() {
@@ -431,7 +436,10 @@ export default {
 			asideFalg: true,
 			activeNames: ['1', '2'],
 			activePanel: 'model',
-			muneList: [{ name: this.$t('metadata.details.model'), key: 'model' }],
+			menuList: [
+				{ name: this.$t('metadata.details.model'), key: 'model' },
+				{ name: this.$t('relations.blood'), key: 'relations' }
+			],
 			description: '',
 			searchParams: {},
 			multipleSelection: [],
@@ -540,6 +548,9 @@ export default {
 				this.getTableData = resultData.data;
 			}
 		},
+		changeName(key) {
+			this.activePanel = key;
+		},
 		//新建字段
 		hanldCreateFiled() {
 			this.fieldObj = {};
@@ -554,8 +565,8 @@ export default {
 			return Promise.all([this.$api('MetadataInstances').get([this.$route.query.id])])
 				.then(res => {
 					this.metadataDataObj = res[0].data;
-					this.pageTotal = res[0].data.fields.length;
-					this.setCurrentPageData(this.metadataDataObj.fields);
+					this.pageTotal = (res[0].data.fields && res[0].data.fields.length) || 0;
+					this.setCurrentPageData(this.metadataDataObj.fields || []);
 				})
 				.finally(() => {
 					this.loading = false;
