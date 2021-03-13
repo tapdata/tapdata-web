@@ -228,29 +228,25 @@ export default {
 		};
 	},
 	created() {
-		this.getDataApi(this.getSteps);
+		// this.getDataApi(this.getSteps);
 		this.getConnections();
 	},
 	methods: {
 		getImgByType,
-		// 获取Agent是否安装
-		getDataApi(cb) {
-			if (parseInt(this.$cookie.get('isAdmin')) || localStorage.getItem('BTN_AUTHS') === 'BTN_AUTHS') {
-				cb(true);
-				return;
-			}
-			this.loading = true;
-			let params = {};
-			params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-			this.$api('cluster')
-				.get(params)
-				.then(res => {
-					cb(res.data && res.data.length > 0);
-				})
-				.finally(() => {
-					this.loading = false;
-				});
-		},
+		// // 获取Agent是否安装
+		// getDataApi(cb) {
+		// 	this.loading = true;
+		// 	let params = {};
+		// 	params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
+		// 	this.$api('cluster')
+		// 		.get(params)
+		// 		.then(res => {
+		// 			cb(res.data && res.data.length > 0);
+		// 		})
+		// 		.finally(() => {
+		// 			this.loading = false;
+		// 		});
+		// },
 		getConnections() {
 			let where = {
 				database_type: {
@@ -355,7 +351,7 @@ export default {
 			this.$api('users')
 				.isCompleteGuide(this.$cookie.get('user_id'))
 				.then(() => {
-					this.$cookie.delete('show_guide');
+					// this.$cookie.delete('show_guide');
 					this.$router.replace('/');
 					cb && cb();
 				})

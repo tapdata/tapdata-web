@@ -298,22 +298,16 @@ export default {
 				if (result === 'error') {
 					where.status = 'error';
 				} else if (result === 'passed') {
-					where = {
-						status: { neq: 'error' },
-						result: 'passed'
-					};
+					where.status = { neq: 'error' };
+					where.result = 'passed';
 				} else if (result === 'row_count') {
-					where = {
-						status: { neq: 'error' },
-						result: 'failed',
-						inspectMethod: 'row_count'
-					};
+					where.status = { neq: 'error' };
+					where.result = 'failed';
+					where.inspectMethod = 'row_count';
 				} else {
-					where = {
-						status: { neq: 'error' },
-						result: 'failed',
-						inspectMethod: { neq: 'row_count' }
-					};
+					where.status = { neq: 'error' };
+					where.result = 'failed';
+					where.inspectMethod = { neq: 'row_count' };
 				}
 			}
 			inspectMethod && (where.inspectMethod = inspectMethod);

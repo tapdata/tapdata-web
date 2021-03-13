@@ -11,11 +11,16 @@ const view = path => () => import(`../view/${path}`);
 Vue.use(Router);
 
 const childRoutes = [
+	// {
+	// 	path: '/dashboard',
+	// 	name: 'dashboard',
+	// 	component: view('dashboard/Dashboard'),
+	// 	meta: { title: i18n.t('tap.home'), isCollapse: false }
+	// },
 	{
 		path: '/dashboard',
 		name: 'dashboard',
-		component: view('dashboard/Dashboard'),
-		meta: { title: i18n.t('tap.home'), isCollapse: false }
+		component: view('dashboard/DFSDashboard')
 	},
 	{
 		path: '/connections',
@@ -598,58 +603,6 @@ const router = new Router({
 			name: 'guide',
 			component: view('Guide')
 		}
-		// {
-		// 	path: '/drs_connections',
-		// 	name: 'drs_connections',
-		// 	component: view('connections/List'),
-		// 	meta: {
-		// 		title: i18n.t('tap.connection')
-		// 	}
-		// },
-		// {
-		// 	path: '/drs_connections/create',
-		// 	name: 'drs_connectionsCreate',
-		// 	component: view('connections/DatabaseForm'),
-		// 	meta: {
-		// 		title: i18n.t('tap.connection')
-		// 	}
-		// },
-		// {
-		// 	path: '/drs_connections/:id/edit',
-		// 	name: 'drs_connectionsEdit',
-		// 	component: view('connections/DatabaseForm'),
-		// 	meta: {
-		// 		title: i18n.t('tap.connection')
-		// 	}
-		// },
-		// {
-		// 	path: '/drs_dataFlows',
-		// 	name: 'drs_dataFlows',
-		// 	component: view('task/DataFlows'),
-		// 	meta: {
-		// 		title: i18n.t('tap.jobFlow')
-		// 	}
-		// },
-		// {
-		// 	path: '/drs_createTask/create',
-		// 	name: 'drs_createTask',
-		// 	component: view('createTask/createTask')
-		// },
-		// {
-		// 	path: '/drs_createTask/:id/edit',
-		// 	name: 'drs_editTask',
-		// 	component: view('createTask/createTask')
-		// },
-		// {
-		// 	path: '/drs_connections/:id/edit',
-		// 	name: 'drs_connectionsEdit',
-		// 	component: view('connections/DatabaseForm')
-		// },
-		// {
-		// 	path: '/drs_connections/create',
-		// 	name: 'drs_connectionsCreate',
-		// 	component: view('connections/DatabaseForm')
-		// }
 	]
 });
 
@@ -659,14 +612,6 @@ router.afterEach(() => {
 });
 let isFirst = true;
 router.beforeEach(async (to, from, next) => {
-	// if (parent.__tm_router_prefix && !to.name.startsWith(parent.__tm_router_prefix)) {
-	// 	return next({
-	// 		name: parent.__tm_router_prefix + to.name,
-	// 		query: to.query,
-	// 		params: to.params,
-	// 		meta: to.meta
-	// 	});
-	// }
 	window.parent && window.parent.emitRouteChange && window.parent.emitRouteChange(to);
 	if (!to.matched.length) {
 		Message.error({
@@ -681,7 +626,7 @@ router.beforeEach(async (to, from, next) => {
 	let cookie = window.VueCookie;
 	let token = cookie.get('token');
 	let xToken = cookie.get('xToken');
-	let showGuide = window.getSettingByKey('SHOW_SIMPLE_SCENE') && cookie.get('show_guide');
+	// let showGuide = window.getSettingByKey('SHOW_SIMPLE_SCENE') && cookie.get('show_guide');
 	let userId = cookie.get('user_id');
 
 	if (token || xToken) {
@@ -742,13 +687,13 @@ router.beforeEach(async (to, from, next) => {
 			matched = permissions.some(p => p.code === to.meta.code);
 		}
 		if (matched) {
-			if (showGuide) {
-				if (to.name === 'guide') {
-					return next();
-				} else {
-					return next('/guide');
-				}
-			}
+			// if (showGuide) {
+			// 	if (to.name === 'guide') {
+			// 		return next();
+			// 	} else {
+			// 		return next('/guide');
+			// 	}
+			// }
 			if (to.name === 'login' || to.name === 'guide') {
 				next('/');
 			} else {
