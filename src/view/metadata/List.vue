@@ -192,7 +192,7 @@
 			</el-table-column>
 		</TablePage>
 		<el-dialog
-			width="400px"
+			width="600px"
 			:title="$t('metadata.createNewModel')"
 			:close-on-click-modal="false"
 			:visible.sync="createDialogVisible"

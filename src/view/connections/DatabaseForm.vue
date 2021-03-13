@@ -398,6 +398,11 @@ export default {
 			} else if (val === 'ftp') {
 				this.model.database_port = '21';
 			}
+		},
+		'model.multiTenant'(val) {
+			if (!val) {
+				this.model.pdb = '';
+			}
 		}
 	},
 	methods: {
