@@ -3,7 +3,7 @@
 		<div class="panel-main">
 			<div class="title">{{ name }}</div>
 			<div class="table-wrap">
-				<el-table :data="page.data" height="100%" class="dv-table">
+				<el-table :data="page.data" height="100%" class="dv-table border">
 					<el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
 						<template slot-scope="scope">
 							{{

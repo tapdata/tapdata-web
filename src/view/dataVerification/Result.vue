@@ -18,7 +18,7 @@
 					@row-click="rowClick"
 					ref="singleTable"
 					height="100%"
-					class="dv-table"
+					class="dv-table border"
 				>
 					<ElTableColumn width="45">
 						<template slot-scope="scope">
