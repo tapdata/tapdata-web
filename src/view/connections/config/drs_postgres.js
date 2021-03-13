@@ -18,14 +18,14 @@ export default function(vm) {
 			{
 				type: 'select',
 				field: 'region',
-				label: '选择实例',
+				label: '选择实例所在区域',
 				options: [],
 				required: true
 			},
 			{
 				type: 'select',
 				field: 'zone',
-				label: '选择实例可用区',
+				label: '选择实例所在可用区',
 				options: [],
 				dependOn: [
 					{
