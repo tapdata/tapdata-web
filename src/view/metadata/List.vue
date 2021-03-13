@@ -193,7 +193,7 @@
 		</TablePage>
 		<el-dialog
 			width="600px"
-			custom-class="creatDialog"
+			custom-class="create-dialog"
 			:title="$t('metadata.createNewModel')"
 			:close-on-click-modal="false"
 			:visible.sync="createDialogVisible"
@@ -609,6 +609,23 @@ export default {
 			}
 			.parent {
 				color: #cccccc;
+			}
+		}
+	}
+}
+</style>
+<style lang="less">
+.metadata-list-wrap {
+	.create-dialog {
+		.el-dialog__body {
+			padding: 30px;
+			.el-form {
+				.el-form-item {
+					margin-bottom: 12px;
+					.el-form-item__label {
+						text-align: left;
+					}
+				}
 			}
 		}
 	}

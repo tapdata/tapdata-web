@@ -428,8 +428,9 @@ export default {
 
 		backDataFlow() {
 			if (!this.dataChangeFalg) {
+				let mapping = this.$route.query.mapping;
 				this.$router.push({
-					path: '/dataFlows?mapping=custom'
+					path: '/dataFlows?mapping=' + mapping
 				});
 			} else {
 				this.$confirm(this.$t('dataFlow.saveReminder'), this.$t('dataFlow.backlistText'), {

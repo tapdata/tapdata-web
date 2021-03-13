@@ -154,7 +154,7 @@
 					prop="name"
 					:rules="[{ required: true, message: $t('role.role_null'), trigger: 'blur' }]"
 				>
-					<el-input v-model="form.name" :placeholder="$t('role.selectRoleName')"></el-input>
+					<el-input v-model="form.name" :placeholder="$t('role.selectRoleName')" size="small"></el-input>
 				</el-form-item>
 				<el-form-item :label="$t('role.roleDesc')" style="margin-bottom: 10px">
 					<el-input
