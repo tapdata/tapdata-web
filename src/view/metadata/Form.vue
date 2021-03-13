@@ -4,7 +4,7 @@
 		:close-on-click-modal="false"
 		:before-close="handleClose"
 		:visible.sync="dialogFormVisible"
-		custom-class="dialogField"
+		custom-class="dialogInfo-form"
 	>
 		<el-form :model="form" :rules="rules" ref="form" label-width="120" class="e-form" label-position="left">
 			<div class="box">
@@ -579,47 +579,47 @@ export default {
 </style>
 <style lang="less">
 .metadata-info {
-	.dialogField {
+	.dialogInfo-form {
 		height: 90%;
 		margin: 50px auto 0 !important;
 		overflow: hidden;
-	}
-	.el-dialog__body {
-		height: calc(100% - 126px);
-		padding: 10px 20px 0;
-		overflow: hidden;
-		overflow-y: auto;
-		background-color: rgba(238, 240, 243, 100);
-		.el-form-item__label {
-			width: 100px;
-			text-align: right;
-			font-size: 12px;
-		}
-		.el-form-item__content {
-			display: inline-block;
-			width: calc(100% - 100px);
-		}
-		.el-form-item {
-			margin-bottom: 10px;
-			.el-select {
-				width: 100%;
+		.el-dialog__body {
+			height: calc(100% - 126px);
+			padding: 10px 20px 0;
+			overflow: hidden;
+			overflow-y: auto;
+			background-color: rgba(238, 240, 243, 100);
+			.el-form-item__label {
+				width: 100px;
+				text-align: right;
+				font-size: 12px;
 			}
-		}
-		.e-table {
-			th {
-				padding: 4px 0;
-				color: #666;
-				background-color: #eff1f4;
+			.el-form-item__content {
+				display: inline-block;
+				width: calc(100% - 100px);
 			}
-			td {
-				padding: 0;
+			.el-form-item {
+				margin-bottom: 10px;
+				.el-select {
+					width: 100%;
+				}
 			}
-		}
-		.addBtn {
-			.el-button {
-				color: #666;
-				background-color: #ececec;
-				border-color: #ececec;
+			.e-table {
+				th {
+					padding: 4px 0;
+					color: #666;
+					background-color: #eff1f4;
+				}
+				td {
+					padding: 0;
+				}
+			}
+			.addBtn {
+				.el-button {
+					color: #666;
+					background-color: #ececec;
+					border-color: #ececec;
+				}
 			}
 		}
 	}

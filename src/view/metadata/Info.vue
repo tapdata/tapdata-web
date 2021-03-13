@@ -867,7 +867,7 @@ export default {
 						font-size: 12px;
 						border-radius: 0px 3px 0px 0px;
 						background-color: rgba(244, 245, 247, 100);
-						box-shadow: 0 -1px 10px 0px rgba(0, 0, 0, 0.15);
+						// box-shadow: 0 -1px 10px 0px rgba(0, 0, 0, 0.15);
 						li {
 							float: left;
 							width: 100px;
