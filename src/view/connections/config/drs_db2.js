@@ -5,7 +5,8 @@ export default function(vm) {
 			labelWidth: '200px'
 		},
 		defaultModel: {
-			connection_type: 'source_and_target'
+			connection_type: 'source_and_target',
+			sourceType: 'ecs'
 		},
 		items: [
 			{
@@ -156,7 +157,21 @@ export default function(vm) {
 			},
 			{
 				type: 'slot',
-				slot: 'vpc-setting'
+				slot: 'vpc-setting',
+				show: false,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'sourceType',
+								value: 'ecs'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
 			},
 			{
 				type: 'input',

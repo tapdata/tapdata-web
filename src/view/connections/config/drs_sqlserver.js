@@ -161,7 +161,21 @@ export default function(vm) {
 			},
 			{
 				type: 'slot',
-				slot: 'vpc-setting'
+				slot: 'vpc-setting',
+				show: false,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'sourceType',
+								value: 'ecs'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
 			},
 			{
 				type: 'input',
@@ -199,19 +213,6 @@ export default function(vm) {
 				field: 'database_port',
 				label: vm.$t('dataForm.form.port'),
 				required: true,
-				dependOn: [
-					{
-						triggerOptions: [
-							{
-								field: 'sourceType',
-								value: 'ecs'
-							}
-						],
-						triggerConfig: {
-							disabled: true
-						}
-					}
-				],
 				rules: [
 					{
 						required: true,
@@ -246,6 +247,12 @@ export default function(vm) {
 				label: vm.$t('dataForm.form.password'),
 				domType: 'password',
 				showPassword: true
+			},
+			{
+				type: 'input',
+				field: 'database_owner',
+				label: vm.$t('dataForm.form.databaseOwner'),
+				required: true
 			}
 		]
 	};

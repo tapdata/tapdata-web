@@ -28,18 +28,21 @@
 									{{ $t('connection.change') }}
 								</div>
 							</div>
-							<div class="tip">
+							<div class="tip" v-if="!$window.getSettingByKey('SUPPORT_RDS')">
 								{{ $t('dataForm.form.guide') }}
 								<a class="color-primary" href="https://docs.tapdata.net/data-source">{{
 									$t('dataForm.form.guideDoc')
 								}}</a>
+							</div>
+							<div class="tip" v-if="$window.getSettingByKey('SUPPORT_RDS')">
+								请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
 							</div>
 						</div>
 					</div>
 				</header>
 				<div class="form-wrap">
 					<div class="form">
-						<form-builder ref="form" v-model="model" :config="config" @value-change="formValueChange">
+						<form-builder ref="form" v-model="model" :config="config" @value-change="formChange">
 							<div class="url-tip" slot="name" v-if="!$route.params.id">
 								中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
 							</div>
@@ -286,7 +289,7 @@ export default {
 				'db2',
 				'kafka',
 				'mariadb',
-				'mysqlpxc'
+				'mysql pxc'
 			],
 			model: '',
 			config: {
@@ -398,18 +401,10 @@ export default {
 	},
 	methods: {
 		getImgByType,
-		formValueChange({ field, value }) {
-			//TODO 测试代码
-			this.$refs.form.initConfig();
-			if (field === 'name' && value === 'sss') {
-				this.$refs.form.setItemConfig('region', {
-					// options: [
-					// 	{ label: 'ddsss', value: 'dddeee' },
-					// 	{ label: '222', value: '3333' },
-					// 	{ label: '4444', value: '4444' },
-					// 	{ label: '2ss', value: 'ddss' }
-					// ]
-				});
+		formChange(data) {
+			let filed = data.field || '';
+			if (filed === 'sourceType') {
+				this.model.database_host = '';
 			}
 		},
 		async initData(data) {
@@ -426,8 +421,11 @@ export default {
 					this.getVpcList();
 				}
 				this.rename = this.model.name;
-			} else this.model = Object.assign(this.model, data, { name: this.model.name });
-
+				this.model.isUrl = false;
+			} else {
+				this.model = Object.assign(this.model, data, { name: this.model.name });
+				this.model.isUrl = true;
+			}
 			if (this.model.database_type === 'file' && this.model.file_sources) {
 				this.model.file_sources.forEach(item => {
 					if (item.exclude_filename) {
@@ -499,7 +497,8 @@ export default {
 				let itemIsUrl = items.find(it => it.field === 'isUrl');
 				if (this.model.database_type === 'mongodb' && this.$route.params.id && itemIsUrl) {
 					itemIsUrl.options[0].disabled = true;
-					this.model.isUrl = false;
+				} else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
+					itemIsUrl.options[1].disabled = true;
 				}
 				if (this.$route.params.id) {
 					//编辑模式下 不展示
@@ -841,9 +840,7 @@ export default {
 						}
 					}
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
-						.then(res => {
-							let id = res.data.id;
-							this.model.id = id;
+						.then(() => {
 							this.$message.success(this.$t('message.saveOK'));
 							this.$router.push('/connections');
 						})

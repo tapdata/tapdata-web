@@ -161,7 +161,21 @@ export default function(vm) {
 			},
 			{
 				type: 'slot',
-				slot: 'vpc-setting'
+				slot: 'vpc-setting',
+				show: false,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'sourceType',
+								value: 'ecs'
+							}
+						],
+						triggerConfig: {
+							show: true
+						}
+					}
+				]
 			},
 			{
 				type: 'input',
