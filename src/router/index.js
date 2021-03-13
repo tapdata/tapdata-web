@@ -634,18 +634,26 @@ router.beforeEach(async (to, from, next) => {
 		let permissions = sessionStorage.getItem('tapdata_permissions');
 		if (!permissions || isFirst) {
 			if (xToken) {
-				let res = await usersModel.getUserInfo();
-				let user = res.data;
-				cookie.set('email', user.email);
-				cookie.set('username', user.username || '');
-				cookie.set('login', 1);
-				cookie.set('isAdmin', parseInt(user.role) || 0);
-				cookie.set('user_id', user.id);
-				cookie.delete('show_guide');
-				if (!user.isCompleteGuide) {
-					cookie.set('show_guide', 1);
+				try {
+					let res = await usersModel.getUserInfo();
+					let user = res.data;
+					cookie.set('email', user.email);
+					cookie.set('username', user.username || '');
+					cookie.set('login', 1);
+					cookie.set('isAdmin', parseInt(user.role) || 0);
+					cookie.set('user_id', user.id);
+					cookie.delete('show_guide');
+					if (!user.isCompleteGuide) {
+						cookie.set('show_guide', 1);
+					}
+					userId = user.id;
+				} catch (e) {
+					if (e.response && e.response.msg) {
+						Message.error({
+							message: e.response.msg
+						});
+					}
 				}
-				userId = user.id;
 			}
 			//无权限，说明是首次进入页面，重新请求后台获取
 			let loading = Loading.service({
@@ -654,28 +662,35 @@ router.beforeEach(async (to, from, next) => {
 				text: 'Loading...',
 				background: 'rgba(0, 0, 0, 0.7)'
 			});
-
-			let result = await usersModel.getPermissions(`/${userId}/permissions`);
-			isFirst = false;
-			loading.close();
-			if (result && result.data) {
-				permissions = result.data.permissions || [];
-				//权限存在则存入缓存并继续向下走
-				permissions = setPermission(permissions);
-				// else {
-				// 	//权限列表为空，说明没有权限进入，执行sign out操作并跳转到登录页面
-				// 	Message.error({
-				// 		message: i18n.t('app.signIn.permission_denied')
-				// 	});
-				// 	signOut();
-				// 	return;
-				// }
-			} else {
-				Message.error({
-					message: i18n.t('app.signIn.permission_denied')
-				});
-				next(false);
-				return;
+			try {
+				let result = await usersModel.getPermissions(`/${userId}/permissions`);
+				isFirst = false;
+				loading.close();
+				if (result && result.data) {
+					permissions = result.data.permissions || [];
+					//权限存在则存入缓存并继续向下走
+					permissions = setPermission(permissions);
+					// else {
+					// 	//权限列表为空，说明没有权限进入，执行sign out操作并跳转到登录页面
+					// 	Message.error({
+					// 		message: i18n.t('app.signIn.permission_denied')
+					// 	});
+					// 	signOut();
+					// 	return;
+					// }
+				} else {
+					Message.error({
+						message: i18n.t('app.signIn.permission_denied')
+					});
+					next(false);
+					return;
+				}
+			} catch (e) {
+				if (e.response && e.response.msg) {
+					Message.error({
+						message: e.response.msg
+					});
+				}
 			}
 		} else {
 			permissions = JSON.parse(permissions);
