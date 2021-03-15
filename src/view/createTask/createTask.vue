@@ -419,7 +419,7 @@ export default {
 							status: 1,
 							database_host: 1,
 							database_port: 1,
-							database_username: 1
+							database_name: 1
 						},
 						order: ['status DESC', 'name ASC']
 					})
@@ -471,7 +471,7 @@ export default {
 						source_connectionId.loading = false;
 						source_connectionId.options = data.map(item => {
 							return {
-								id: item.database_host + item.database_port + item.database_username,
+								id: item.database_host + item.database_port + item.database_name,
 								name: item.name,
 								label: item.name,
 								value: item.id,
@@ -487,7 +487,7 @@ export default {
 						target_connectionId.loading = false;
 						target_connectionId.options = data.map(item => {
 							return {
-								id: item.database_host + item.database_port + item.database_username,
+								id: item.database_host + item.database_port + item.database_name,
 								name: item.name,
 								label: item.name,
 								value: item.id,
@@ -670,8 +670,7 @@ export default {
 					type: 'database',
 					readBatchSize: 1000,
 					readCdcInterval: 500,
-					dropTable: this.settingModel.distinctWriteType === 'compel' ? true : false,
-					dropType: 'no_drop',
+					dropType: this.settingModel.distinctWriteType === 'compel' ? 'drop_data' : 'no_drop',
 					database_type: this.dataSourceModel['target_databaseType'] || 'mysql'
 				})
 			];
