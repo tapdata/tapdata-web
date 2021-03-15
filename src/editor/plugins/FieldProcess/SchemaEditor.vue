@@ -38,7 +38,7 @@
 			</div>
 		</div>
 		<div class="clear"></div>
-		<div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
+		<div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom" v-if="schema">
 			<el-container v-loading="loadingSchema">
 				<el-main>
 					<el-tree
@@ -53,19 +53,26 @@
 					>
 						<span class="custom-tree-node" slot-scope="{ node, data }">
 							<span class="e-port e-port-in" :data-id="getId(data)"></span>
-							<span
-								class="e-label"
-								:class="{
-									activename: isRename(data.id) || isCreate(data.id, data.label)
-								}"
-							>
-								<el-input
-									v-model="data.label"
-									@blur="handleRename(node, data)"
-									@change="handleRename(node, data)"
-									:disabled="isRemove(data.id) || disabledMode"
-								></el-input>
-							</span>
+							<el-tooltip class="item" effect="dark" placement="left-start">
+								<span slot="content"
+									>{{ `原字段名: ${data.original_field_name};` }}<br />{{
+										`原字段类型: ${data.type};`
+									}}</span
+								>
+								<span
+									class="e-label"
+									:class="{
+										activename: isRename(data.id) || isCreate(data.id, data.label)
+									}"
+								>
+									<el-input
+										v-model="data.label"
+										@blur="handleRename(node, data)"
+										@change="handleRename(node, data)"
+										:disabled="isRemove(data.id) || disabledMode"
+									></el-input>
+								</span>
+							</el-tooltip>
 							<el-select
 								v-model="data.type"
 								class="e-select"
