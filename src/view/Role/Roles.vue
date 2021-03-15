@@ -670,7 +670,7 @@ export default {
 			border-right: 0;
 		}
 		.el-table--border th {
-			border-right: 1px solid #ccc;
+			border-right: 1px solid #dcdfe6;
 		}
 
 		.el-button {

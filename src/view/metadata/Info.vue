@@ -248,6 +248,7 @@
 							class="table-page-table"
 							height="100%"
 							v-loading="loading"
+							border
 							:element-loading-text="$t('dataFlow.dataLoading')"
 							:data="tableFieldList"
 							:header-cell-style="tableHeaderStyle"
@@ -1128,16 +1129,18 @@ export default {
 		overflow: hidden;
 		box-sizing: border-box;
 		.table-page-table {
+			border: 0;
 			th {
 				padding: 0;
 				background-color: #eff1f4 !important;
 			}
-		}
-		.table-page-pagination {
-			padding-top: 5px;
-			box-sizing: border-box;
-			border-top: 1px solid #ddd;
-			background-color: #fff;
+			td,
+			.is-scrolling-left ~ .el-table__fixed {
+				border-right: 0;
+			}
+			th {
+				border-right: 1px solid #dcdfe6;
+			}
 		}
 	}
 	.dialogForm {
