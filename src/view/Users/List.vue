@@ -1048,12 +1048,12 @@ export default {
 			.el-table {
 				padding: 0 10px;
 				box-sizing: border-box;
-				border-top: 0;
-				.has-gutter {
-					th {
-						background-color: #eff1f4 !important;
-					}
-				}
+				// border-top: 0;
+				// .has-gutter {
+				// 	th {
+				// 		background-color: #eff1f4 !important;
+				// 	}
+				// }
 			}
 			.table-page-pagination {
 				margin-top: 0;

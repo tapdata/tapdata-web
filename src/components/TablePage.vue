@@ -248,7 +248,7 @@ export default {
 			border-right: 0;
 		}
 		.el-table--border th {
-			border-right: 1px solid #ccc;
+			border-right: 1px solid #ebeef5;
 		}
 		.table-page-pagination {
 			margin-top: 5px;
