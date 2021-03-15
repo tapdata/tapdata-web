@@ -126,8 +126,15 @@
 								</div>
 							</template>
 							<ul>
-								<li v-for="(item, key, index) in metadataDataObj.custom_properties" :key="index">
-									{{ key }} : {{ item }}
+								<li
+									class="business"
+									v-for="(item, key, index) in metadataDataObj.custom_properties"
+									:key="index"
+								>
+									<span>{{ key }} : {{ item }}</span>
+									<span class="delete" @click="delBusiness(item, key, index)">{{
+										$t('button.delete')
+									}}</span>
 								</li>
 								<!-- <li>
 									<span class="label">{{ $t('metadata.details.tableLayering') }}：</span>
@@ -156,7 +163,7 @@
 								v-for="item in menuList"
 								:key="item.icon"
 								:class="activePanel === item.key ? 'active' : ''"
-								@click="changeName(item.key)"
+								@click="changePanel(item.key)"
 							>
 								<i :class="['iconfont', item.icon]"></i>
 								<span slot="title">{{ item.name }}</span>
@@ -521,34 +528,34 @@ export default {
 	},
 	methods: {
 		// 获取数据
-		async handleGetDataApi() {
-			let params = {
-				where: {
-					databaseId: {
-						regexp: `^${this.$router.databaseId}$`
-					},
-					meta_type: this.metadataDataObj.meta_type,
-					id: {
-						neq: this.metadataDataObj.id
-					},
-					'relation.table_name': {
-						neq: this.metadataDataObj.original_name
-					}
-				},
-				fields: {
-					histories: false,
-					original_name: true,
-					id: true
-				}
-			};
+		// async handleGetDataApi() {
+		// 	let params = {
+		// 		where: {
+		// 			databaseId: {
+		// 				regexp: `^${this.$route.query.id}$`
+		// 			},
+		// 			meta_type: this.metadataDataObj.meta_type,
+		// 			id: {
+		// 				neq: this.metadataDataObj.id
+		// 			},
+		// 			'relation.table_name': {
+		// 				neq: this.metadataDataObj.original_name
+		// 			}
+		// 		},
+		// 		fields: {
+		// 			histories: false,
+		// 			original_name: true,
+		// 			id: true
+		// 		}
+		// 	};
 
-			let resultData = await this.$api('MetadataInstances').get({ filter: JSON.stringify(params) });
+		// 	let resultData = await this.$api('MetadataInstances').get({ filter: JSON.stringify(params) });
 
-			if (resultData.data) {
-				this.getTableData = resultData.data;
-			}
-		},
-		changeName(key) {
+		// 	if (resultData.data) {
+		// 		this.getTableData = resultData.data;
+		// 	}
+		// },
+		changePanel(key) {
 			this.activePanel = key;
 		},
 		//新建字段
@@ -561,6 +568,7 @@ export default {
 			this.fieldObj = item;
 			this.dialogFormVisible = true;
 		},
+		// 获取数据
 		getData() {
 			return Promise.all([this.$api('MetadataInstances').get([this.$route.query.id])])
 				.then(res => {
@@ -681,6 +689,46 @@ export default {
 				value: ''
 			};
 		},
+		// 删除业务属性
+		delBusiness(item, key) {
+			const h = this.$createElement;
+			let message = h('p', [
+				this.$t('message.deleteOrNot') + ' ',
+				h('span', { style: { color: '#48b6e2' } }, key)
+			]);
+			this.$confirm(message, this.$t('message.prompt'), {
+				type: 'warning',
+				closeOnClickModal: false,
+				beforeClose: (action, instance, done) => {
+					if (action === 'confirm') {
+						instance.confirmButtonLoading = true;
+						for (let value in this.metadataDataObj.custom_properties) {
+							if (value === key) {
+								delete this.metadataDataObj.custom_properties[value];
+							}
+						}
+						let params = {
+							custom_properties: this.metadataDataObj.custom_properties
+						};
+						this.$api('MetadataInstances')
+							.patch(this.metadataDataObj.id, params)
+							.then(() => {
+								this.getData();
+								this.$message.success(this.$t('metadata.details.success_Release'));
+								done();
+							})
+							.catch(() => {
+								this.$message.error(this.$t('message.saveFail'));
+							})
+							.finally(() => {
+								instance.confirmButtonLoading = false;
+							});
+					} else {
+						done();
+					}
+				}
+			});
+		},
 		// 保存业务属性
 		saveBusiness() {
 			let obj = {},
@@ -694,7 +742,7 @@ export default {
 			this.$api('MetadataInstances')
 				.patch(this.metadataDataObj.id, params)
 				.then(() => {
-					this.handleGetDataApi();
+					this.getData();
 					this.$message.success(this.$t('metadata.details.success_Release'));
 				})
 				.catch(() => {
@@ -838,12 +886,28 @@ export default {
 					li {
 						padding-bottom: 5px;
 						span {
+							display: inline-block;
 							color: #666;
 						}
 						.label {
 							display: inline-block;
 							width: 100px;
 							color: #aaa;
+						}
+					}
+					li.business {
+						display: flex;
+						justify-content: space-between;
+						.delete {
+							display: none;
+						}
+
+						&:hover {
+							.delete {
+								display: inline-block;
+								cursor: pointer;
+								color: #48b6e2;
+							}
 						}
 					}
 				}
@@ -886,7 +950,7 @@ export default {
 							color: #666;
 							text-align: center;
 							border-right: 1px solid #dedee4;
-
+							cursor: pointer;
 							&:last-child {
 								border-right: 0;
 							}
