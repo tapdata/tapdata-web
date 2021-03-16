@@ -31,14 +31,14 @@ export default function() {
 		model: graph,
 		width: 800,
 		height: 800,
-		gridSize: 30,
+		/*gridSize: 30,
 		drawGrid: {
 			name: 'doubleMesh',
 			args: [
 				{ color: '#dddddd', thickness: 1 }, // settings for the primary mesh
 				{ color: 'black', scaleFactor: 5, thickness: 1 } //settings for the secondary mesh
 			]
-		},
+		},*/
 		defaultConnectionPoint: { name: 'boundary', args: { extrapolate: true } },
 		// defaultConnectionPoint: joint.shapes.dataMap.Link.connectionPoint,
 		defaultConnector: { name: 'rounded' },
