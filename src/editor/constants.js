@@ -123,7 +123,7 @@ export const FORM_DATA_KEY = 'form_data',
 			shapeImage: 'static/editor/o-kafka-q.svg',
 			stencilImage: 'static/editor/wKafka.svg'
 		},
-		mariaDB: {
+		mariadb: {
 			type: 'mariadb',
 			name: 'MariaDB',
 			shapeImage: 'static/editor/o-maria.svg',
