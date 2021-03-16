@@ -874,22 +874,6 @@ export default {
 			// window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
 		},
 		async creatText() {
-			let result = await this.$api('tcm').getRegionZone();
-			let data = result.data || [];
-			if (data.length === 0) {
-				this.$confirm(
-					'创建任务要先订购同步实例，同步任务的服务进程环境要在实例中运行，实例的链路与性能影响同步任务的运行效率。',
-					'您尚未订购同步实例，请先订购实例',
-					{
-						confirmButtonText: '订购实例',
-						cancelButtonText: '取消',
-						type: 'warning'
-					}
-				).then(() => {
-					top.location.href = '/purchase.html#/';
-				});
-				return;
-			}
 			this.$router.push({
 				path: '/createTask/create'
 			});
