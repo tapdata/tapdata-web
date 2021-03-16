@@ -1161,25 +1161,25 @@ export default {
 						}
 					});
 				};
-				if (data.id && this.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
-					const h = this.$createElement;
-					let arr = this.$t('message.startAggregation_message').split('XXX');
-					this.$confirm(
-						h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, data.name), ')' + arr[1]]),
-						this.$t('dataFlow.importantReminder'),
-						{
-							type: 'warning',
-							closeOnClickModal: false
-						}
-					).then(() => {
-						//若任务内存在聚合处理器，启动前先重置
-						dataFlowsApi.reset(data.id).then(() => {
-							start();
-						});
-					});
-				} else {
-					start();
-				}
+				// if (data.id && this.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
+				// 	const h = this.$createElement;
+				// 	let arr = this.$t('message.startAggregation_message').split('XXX');
+				// 	this.$confirm(
+				// 		h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, data.name), ')' + arr[1]]),
+				// 		this.$t('dataFlow.importantReminder'),
+				// 		{
+				// 			type: 'warning',
+				// 			closeOnClickModal: false
+				// 		}
+				// 	).then(() => {
+				// 		//若任务内存在聚合处理器，启动前先重置
+				// 		dataFlowsApi.reset(data.id).then(() => {
+				// 			start();
+				// 		});
+				// 	});
+				// } else {
+				start();
+				// }
 			}
 			this.dialogFormVisible = false;
 		},
