@@ -84,7 +84,7 @@ export default {
 		var validatePrefix = (rule, value, callback) => {
 			if (value === '') {
 				callback();
-			} else if (!/^[a-zA-Z]([a-zA-Z0-9_\-.])*/.test(value)) {
+			} else if (!/^[a-zA-Z]([a-zA-Z0-9_\-.])*$/.test(value)) {
 				callback(new Error('请按照以下规则输入: '));
 			} else if (/^(system).*/.test(value)) {
 				callback(new Error('请按照以下规则输入: '));

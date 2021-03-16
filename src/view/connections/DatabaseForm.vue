@@ -661,7 +661,7 @@ export default {
 		//切换sourceType ecs需要请求VPC 开通网络策略
 		getVpcList() {
 			if (this.model.sourceType !== 'ecs') return;
-			let userId = this.$cookie.get('user_id');
+			let userId = this.$cookie.get('userId');
 			this.$api('tcm')
 				.getVpcList(userId)
 				.then(result => {
