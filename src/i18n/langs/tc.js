@@ -2551,6 +2551,18 @@ const tc = {
 		checkSuccess: '通過校驗',
 		checkError: '校驗失敗',
 		alreadyExists: '用戶名不能重複'
+	},
+	dataQuality: {
+		title: '數據質量',
+		desc: '數據質量頁面展示出的是對違反數據規則的表數據匯總的頁面，用戶可以在此頁面對違反規則的數據進行修正',
+		keywordTip: '請搜索表名/字段名',
+		sourceName: '表名/連接名',
+		totalDocs: '總記錄數',
+		violatedDocs: '違反規則數',
+		violatePercentage: '違反比例',
+		createTime: '統計時間',
+		actions: '操作',
+		view: '查看'
 	}
 };
 

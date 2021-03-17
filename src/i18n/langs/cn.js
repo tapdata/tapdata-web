@@ -2556,6 +2556,18 @@ const cn = {
 		checkSuccess: '通过校验',
 		checkError: '校验失败',
 		alreadyExists: '用户名不能重复'
+	},
+	dataQuality: {
+		title: '数据质量',
+		desc: '数据质量页面展示出的是对违反数据规则的表数据汇总的页面，用户可以在此页面对违反规则的数据进行修正',
+		keywordTip: '请搜索表名/字段名',
+		sourceName: '表名/连接名',
+		totalDocs: '总记录数',
+		violatedDocs: '违反规则数',
+		violatePercentage: '违反比例',
+		createTime: '统计时间',
+		actions: '操作',
+		view: '查看'
 	}
 };
 

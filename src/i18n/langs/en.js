@@ -2616,6 +2616,18 @@ const en = {
 		checkSuccess: 'Pass verification',
 		checkError: 'Verification failed',
 		alreadyExists: 'User name cannot be repeated'
+	},
+	dataQuality: {
+		title: 'Data Quality',
+		desc: 'The data quality page shows the summary of the table data that violates the data rules, and the user can correct the data that violates the rules on this page.',
+		keywordTip: 'Please search for table name/field name',
+		sourceName: 'table name/connection name',
+		totalDocs: 'Total number of records ',
+		violatedDocs: 'number of violations',
+		violatePercentage: 'violatePercentage',
+		createTime: 'count time',
+		actions: 'Actions',
+		view: 'view'
 	}
 };
 
