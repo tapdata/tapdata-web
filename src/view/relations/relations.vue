@@ -37,24 +37,25 @@
 			<span class="value align-center"> {{ refreshResult.message }}</span>
 			<pre class="align-center pre"> {{ refreshResult.stack }}</pre>
 		</el-dialog>
-		<Preview
-			:id="connectionId"
+		<Info
+			:connectionId="connectionId"
+			:tableId="currentTableId"
 			:visible="previewVisible"
 			:databaseType="databaseType"
 			v-on:previewVisible="handlePreviewVisible"
-		></Preview>
+		></Info>
 	</div>
 </template>
 
 <script>
 import graph from './graph';
 import factory from '../../api/factory';
-import Preview from '../connections/Preview';
+import Info from './Info';
 const LineageGraphsAPI = factory('LineageGraphs');
 
 export default {
 	name: 'DataRelations',
-	components: { Preview },
+	components: { Info },
 	props: {
 		tableId: {
 			required: true,
@@ -65,6 +66,7 @@ export default {
 		return {
 			currentLevel: 1,
 			connectionId: '',
+			currentTableId: '',
 			databaseType: '',
 			tableName: '',
 			rClass: 'refreshS',
@@ -105,6 +107,9 @@ export default {
 							LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(res => {
 								if (res.data) {
 									self.refreshResult = res.data[0];
+									if (self.refreshResult.sync_data) {
+										this.$message.error('正在同步图形数据，图形可能缺失，请稍后刷新重试');
+									}
 									if (self.refreshResult.status == 'finish') {
 										LineageGraphsAPI.graphData(this.tableId).then(res => {
 											if (res.data) {

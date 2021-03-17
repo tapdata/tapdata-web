@@ -84,7 +84,7 @@ export default function() {
 			graph.vcomp.dialogFormVisible = true;
 		} else {
 			graph.vcomp.connectionId = cellView.model.connection.id;
-			graph.vcomp.databaseType = cellView.model.connection.database_type;
+			graph.vcomp.currentTableId = cellView.model.tableId;
 			graph.vcomp.previewVisible = true;
 		}
 	});
@@ -131,6 +131,7 @@ export default function() {
 					if (link.target.id == table.id) linkdatas[idx].target.id = node.id;
 				});
 				node.setName(table.label);
+				node.tableId = table.id;
 				node.connection = table.connection;
 				if (table.id == vcomp.tableId) {
 					node.attr('header/fill', '#d0d8e8');
