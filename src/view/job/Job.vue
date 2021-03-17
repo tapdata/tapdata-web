@@ -22,7 +22,7 @@
 				<el-autocomplete
 					class="inline-input searchNode"
 					id="searchNode"
-					v-model="state1"
+					v-model="state"
 					size="mini"
 					:fetch-suggestions="querySearch"
 					:placeholder="$t('dataFlow.searchNode')"
@@ -342,7 +342,7 @@ export default {
 
 			loading: true,
 			cells: [],
-			state1: '',
+			state: '',
 			editable: false,
 			isMoniting: false,
 			isSimple: false,

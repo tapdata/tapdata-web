@@ -14,7 +14,17 @@
 						{{ $t('milestone.btn_check_error') }}
 					</el-button>
 				</div>
-				<div :class="'status ' + item.status">
+				<div v-if="!['running'].includes(dataFlow.status) && item.status === 'running'">
+					<div :class="'status ' + 'error'">
+						<span class="milestone-icon">
+							<i class="el-icon-success"></i>
+							<i class="el-icon-error"></i>
+							<i class="el-icon-loading"></i>
+						</span>
+						<span>{{ $t('milestone.status_' + 'error') }}</span>
+					</div>
+				</div>
+				<div :class="'status ' + item.status" v-else>
 					<span class="milestone-icon">
 						<i class="el-icon-success"></i>
 						<i class="el-icon-error"></i>
