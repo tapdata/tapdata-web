@@ -55,7 +55,13 @@
       </el-table-column>
       <el-table-column :label="$t('dataQuality.violatedDocs')" prop="violated_docs">
         <template slot-scope="scope">
-          {{ scope.row.violated_docs }}
+          <a 
+            target="_blank" 
+            :class="{ link: scope.row.violated_docs }" 
+            @click="violationData(scope.row)"
+          >
+            {{ scope.row.violated_docs }}
+          </a>
         </template>
       </el-table-column>
       <el-table-column :label="$t('dataQuality.violatePercentage')" prop="violate_percentage">
@@ -76,6 +82,7 @@
           <el-button
             class="btn-text"
             type="text"
+            @click="$message.info('开发中')"
             >
             {{ $t('dataQuality.view') }}
           </el-button>
@@ -99,45 +106,39 @@ export default {
   data () {
     return {
       searchParams: { // 搜索参数
-        keyword: '',
-        isFuzzy: true,
+        keyword: '', // 关键词
+        isFuzzy: true, // 是否模糊查询
       },
-      order: 'last_updated DESC',
+      order: 'last_updated DESC', // 默认排序方法
     }
   },
 
   computed: {
+    // table组件dom实体
     table() {
       return this.$refs.table;
     }
   },
 
-  created () {
-
-  },
-
-  mounted () {
-    
-  },
   methods: {
-    getData({ page }) {
+    // 获取列表数据
+    getData({ page }) { 
       let { current, size } = page;
       let { isFuzzy, keyword } = this.searchParams;
-      let where = {};
+      let where = {}; // 查询条件
 
       if (keyword && keyword.trim()) {
         let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword;
-        // where.or = [ {'source.name': filterObj }, { collection: filterObj }];
-        where['source.name']='v15 mongo'
+        where.or = [ {'source.name': filterObj }, { collection: filterObj }];
       }
 
       let filter = {
         order: this.order,
         limit: size,
-        // fields: fields,
         skip: (current - 1) * size,
         where
       };
+
       return Promise.all([
         this.$api('DataQuality').count({ where }),
         this.$api('DataQuality').get({
@@ -154,7 +155,21 @@ export default {
         };
       });
     },
-    reset(name) { // 重置表单
+    // 跳转详情页(暂时跳老页面)
+    violationData(item){
+      if (item.violated_docs ) {
+        this.$router.push({ 
+          name: 'dataQualityDetail', 
+          params: { id: item.id }, 
+          query: {
+            name: item.collection, 
+            connection_id: item.connection_id
+          }
+        })        
+      }
+    },
+    // 重置表单
+    reset(name) {
       if (name === 'reset') {
         this.searchParams = {
           keyword: '',
@@ -180,6 +195,10 @@ export default {
     }
     .gray {
       color: #bbb;
+    }
+    .link {
+      cursor: pointer;
+      color: #1976D2;
     }
   }
 </style>
