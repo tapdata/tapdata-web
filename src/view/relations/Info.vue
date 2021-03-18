@@ -1,50 +1,44 @@
 <template>
-	<el-drawer
-		class="lineage-info-drawer"
-		ref="drawer"
-		:visible.sync="visible"
-		:title="$t('dataForm.title')"
-		size="40%"
-		:before-close="handleClose"
-		:withHeader="false"
-	>
-		<div class="lineage-info-wrap">
-			<el-tabs v-model="activeName" type="card">
-				<el-tab-pane label="数据源信息" name="first">
-					<ul>
-						<li v-for="(value, key) in dataFlows" :key="key">
-							<span class="label">{{ dataFlowsFields[key] }}</span>
-							<span>{{ value }}</span>
-						</li>
-					</ul>
-				</el-tab-pane>
-				<el-tab-pane label="元数据信息" name="second">
-					<ul>
-						<li v-for="(value, key) in metaData" :key="key">
-							<span class="label">{{ metaDataFields[key] }}</span>
-							<span>{{ value }}</span>
-						</li>
-					</ul>
-				</el-tab-pane>
-				<el-tab-pane label="包含字段" name="third">
-					<div class="table-wrap">
-						<el-table :data="fields">
-							<el-table-column prop="name" label="字段类型/字段名称">
-								<template slot-scope="scope">
-									<div class="database-img">
-										<img :src="getImgByType(scope.row.java_type)" />
-									</div>
-									<div class="database-text">
-										{{ scope.row.field_name }}
-									</div>
-								</template>
-							</el-table-column>
-						</el-table>
-					</div>
-				</el-tab-pane>
-			</el-tabs>
-		</div>
-	</el-drawer>
+	<div class="lineage-info-wrap" v-show="visible">
+		<div class="bar"><i class="el-icon-arrow-right" @click="handleClose"></i></div>
+		<header class="header">
+			<span>{{ tableName }}</span>
+		</header>
+		<el-tabs v-model="activeName" type="card" class="lineage-info-tab">
+			<el-tab-pane label="字段" name="first">
+				<div class="lineage-info-field-btn">
+					<el-button type="text" @click="handleFields">查看血缘</el-button>
+				</div>
+				<div class="table-wrap">
+					<el-table :data="fields" @selection-change="handleSelectionChange">
+						<el-table-column type="selection"></el-table-column>
+						<el-table-column prop="name" label="字段类型/字段名称">
+							<template slot-scope="scope">
+								<div class="database-img">
+									<img :src="getImgByType(scope.row.java_type)" />
+								</div>
+								<div class="database-text">
+									{{ scope.row.field_name }}
+								</div>
+							</template>
+						</el-table-column>
+					</el-table>
+				</div>
+			</el-tab-pane>
+			<el-tab-pane label="属性" name="second">
+				<ul>
+					<li v-for="(value, key) in metaData" :key="key">
+						<span class="label">{{ metaDataFields[key] }}</span>
+						<span>{{ value }}</span>
+					</li>
+					<li v-for="(value, key) in dataFlows" :key="key">
+						<span class="label">{{ dataFlowsFields[key] }}</span>
+						<span>{{ value }}</span>
+					</li>
+				</ul>
+			</el-tab-pane>
+		</el-tabs>
+	</div>
 </template>
 
 <script>
@@ -70,6 +64,8 @@ export default {
 			metaData: {},
 			dataFlows: {},
 			fields: [],
+			multipleSelection: [],
+			tableName: '',
 			metaDataFields: {
 				name: '别名(原名称)',
 				qualified_name: '唯一表示',
@@ -129,7 +125,7 @@ export default {
 					let data = result.data || [];
 					if (data && data.length !== 0) {
 						this.metaData = {
-							name: `${data[0].name}(${data[0].original_name})`,
+							name: data[0].name ? `${data[0].name}(${data[0].original_name})` : data[0].original_name,
 							qualified_name: data[0].qualified_name,
 							meta_type: data[0].meta_type,
 							create_source: data[0].source.name,
@@ -137,8 +133,9 @@ export default {
 							last_updated: data[0].last_updated,
 							last_user_name: data[0].last_user_name
 						};
+						this.tableName = data[0].name || data[0].original_name;
+						this.fields = data[0].fields;
 					}
-					this.fields = data[0].fields;
 				});
 		},
 		getDataFlows() {
@@ -155,6 +152,16 @@ export default {
 						};
 					}
 				});
+		},
+		//表格所选中的fields
+		handleSelectionChange(val) {
+			this.multipleSelection = val;
+		},
+		handleFields() {
+			if (this.multipleSelection.length === 0) return;
+			let fields = [];
+			fields = this.multipleSelection.map(field => field.field_name);
+			this.$emit('handleFields', this.tableName, fields);
 		}
 	}
 };
@@ -162,38 +169,68 @@ export default {
 
 <style scoped lang="less">
 .lineage-info-wrap {
-	ul {
-		font-size: 12px;
-		color: #666;
+	position: absolute;
+	right: -21px;
+	top: 43px;
+	background: #fff;
+	height: 800px;
+	width: 430px;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 100);
+	.header {
+		padding-top: 20px;
 		padding-left: 20px;
-		li {
-			margin-bottom: 10px;
-		}
-		.label {
-			display: inline-block;
-			text-align: left;
-			width: 100px;
-		}
+		margin-bottom: 10px;
+		color: rgba(72, 182, 226, 100);
+		font-size: 18px;
+		text-align: left;
+		font-weight: bold;
 	}
-	.table-wrap {
+	.bar {
+		background: #f5f5f5;
+		height: 22px;
+	}
+	.lineage-info-tab {
 		padding-left: 20px;
-		.database-img {
-			vertical-align: middle;
-			width: 28px;
-			height: 28px;
-			background: #ffffff;
-			border-radius: 3px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			float: left;
-			img {
-				width: 60%;
+		ul {
+			font-size: 12px;
+			color: #666;
+			padding-left: 20px;
+			li {
+				margin-bottom: 10px;
+			}
+			.label {
+				display: inline-block;
+				text-align: left;
+				width: 100px;
 			}
 		}
-		.database-text {
-			float: left;
-			margin-left: 10px;
+		.lineage-info-field-btn {
+			margin-right: 10px;
+			display: flex;
+			justify-content: flex-end;
+		}
+		.table-wrap {
+			height: 600px;
+			overflow-y: auto;
+			.database-img {
+				vertical-align: middle;
+				width: 28px;
+				height: 28px;
+				background: #ffffff;
+				border-radius: 3px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				float: left;
+				img {
+					width: 60%;
+				}
+			}
+			.database-text {
+				float: left;
+				margin-left: 10px;
+			}
 		}
 	}
 }
@@ -211,6 +248,16 @@ export default {
 	.el-tabs--card > .el-tabs__header .el-tabs__item:focus.is-active.is-focus:not(:active) {
 		box-shadow: none;
 		border-radius: 0;
+	}
+	.lineage-info-tab {
+		.el-tabs__item {
+			height: 24px;
+			line-height: 24px;
+			font-size: 12px;
+		}
+		.el-tabs__header {
+			margin: 0;
+		}
 	}
 }
 </style>

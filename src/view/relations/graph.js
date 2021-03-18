@@ -1,5 +1,5 @@
 import joint from '../../editor/lib/rappid/rappid';
-//import navigatorElementView from '../../editor/lib/rappid/view/navigator';
+import navigatorElementView from '../../editor/lib/rappid/view/navigator';
 import paperSetting from './paperSetting';
 import $ from 'jquery';
 // import $ from 'jquery';
@@ -31,14 +31,14 @@ export default function() {
 		model: graph,
 		width: 800,
 		height: 800,
-		/*gridSize: 30,
-		drawGrid: {
-			name: 'doubleMesh',
-			args: [
-				{ color: '#dddddd', thickness: 1 }, // settings for the primary mesh
-				{ color: 'black', scaleFactor: 5, thickness: 1 } //settings for the secondary mesh
-			]
-		},*/
+		// gridSize: 30,
+		// drawGrid: {
+		// 	name: 'doubleMesh',
+		// 	args: [
+		// 		{ color: '#dddddd', thickness: 1 }, // settings for the primary mesh
+		// 		{ color: 'black', scaleFactor: 5, thickness: 1 } //settings for the secondary mesh
+		// 	]
+		// },
 		defaultConnectionPoint: { name: 'boundary', args: { extrapolate: true } },
 		// defaultConnectionPoint: joint.shapes.dataMap.Link.connectionPoint,
 		defaultConnector: { name: 'rounded' },
@@ -112,11 +112,35 @@ export default function() {
 	window.paperScroller = paperScroller;
 	window.paper = paper;
 	paper.on('blank:pointerdown', paperScroller.startPanning);
-	paper.on('cell:pointerdown', (cellView, evt, x, y) => {
-		paperScroller.startPanning(evt, x, y);
-	});
+	// paper.on('cell:pointerdown', (cellView, evt, x, y) => {
+	// 	paperScroller.startPanning(evt, x, y);
+	// });
 	paperScroller.render();
 	paperScroller.zoom(0.8, { absolute: true });
+
+	joint.shapes.app = {};
+	navigatorElementView(joint);
+	let navigator = new joint.ui.Navigator({
+		el: document.getElementById('navigator-container'),
+		width: 150,
+		height: 150,
+		paperScroller: paperScroller,
+		zoom: {
+			grid: 0.2,
+			min: 0.2,
+			max: 5
+		},
+		paperOptions: {
+			//async: true,
+			elementView: joint.shapes.app.NavigatorElementView,
+			linkView: joint.shapes.app.NavigatorLinkView,
+			cellViewNamespace: {
+				/* no other views are accessible in the navigator */
+			}
+		}
+	});
+	navigator.render();
+	// window.navigator = navigator;
 	return {
 		joint: joint,
 		graph: graph,
@@ -171,7 +195,6 @@ export default function() {
 				resizeClusters: true
 				//clusterPadding: { top: 50, left: 35, right: 35, bottom: 20 }
 			});
-			paperScroller.center();
 		}
 	};
 }

@@ -906,7 +906,7 @@ export default class Graph extends Component {
 				max: 5
 			},
 			paperOptions: {
-				async: true,
+				//async: true,
 				elementView: joint.shapes.app.NavigatorElementView,
 				linkView: joint.shapes.app.NavigatorLinkView,
 				cellViewNamespace: {
