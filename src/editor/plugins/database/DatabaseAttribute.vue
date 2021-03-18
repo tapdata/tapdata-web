@@ -1,9 +1,9 @@
 <template>
 	<div class="database nodeStyle">
-		<head class="head">
+		<!-- <head class="head">
 			<span class="headIcon iconfont icon-you2" type="primary"></span>
 			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
-		</head>
+		</head> -->
 		<div class="nodeBody">
 			<!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
