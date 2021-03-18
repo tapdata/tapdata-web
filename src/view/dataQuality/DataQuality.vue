@@ -6,6 +6,7 @@
       :desc="$t('dataQuality.desc')"
       :remoteMethod="getData"
     >
+      <!-- 过滤项 -->
       <div slot="search">
         <ul class="search-bar">
           <li>
@@ -42,6 +43,7 @@
         </ul>
       </div>
 
+      <!-- 列表项 -->
       <el-table-column :label="$t('dataQuality.sourceName')" prop="name">
         <template slot-scope="scope">
           {{ scope.row.source ? scope.row.source.name : '' }}
@@ -75,17 +77,6 @@
       <el-table-column :label="$t('dataQuality.createTime')" prop="create_time">
         <template slot-scope="scope">
           {{ $moment(scope.row.create_time).format('YYYY-MM-DD HH:mm:ss') }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('dataQuality.actions')">
-        <template slot-scope="scope">
-          <el-button
-            class="btn-text"
-            type="text"
-            @click="$message.info('开发中')"
-            >
-            {{ $t('dataQuality.view') }}
-          </el-button>
         </template>
       </el-table-column>
     </TablePage>    
@@ -198,7 +189,7 @@ export default {
     }
     .link {
       cursor: pointer;
-      color: #1976D2;
+      color: #F56C6C;
     }
   }
 </style>
