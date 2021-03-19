@@ -350,7 +350,7 @@ export default {
 			};
 			if (keyword && keyword.trim()) {
 				let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword;
-				where.or = [{ name: filterObj }, { original_name: filterObj }];
+				where.or = [{ name: filterObj }, { original_name: filterObj }, { 'source.name': filterObj }];
 			}
 
 			if (tags && tags.length) {
