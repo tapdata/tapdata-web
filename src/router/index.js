@@ -384,7 +384,7 @@ const childRoutes = [
 		meta: {}
 	},
 	{
-		path: '/',
+		path: '/dataMap',
 		name: 'dataMap',
 		component: view('dataMap/DataMap'),
 		meta: {

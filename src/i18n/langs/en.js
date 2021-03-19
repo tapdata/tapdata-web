@@ -1858,7 +1858,7 @@ const en = {
 			typesOf: 'Type',
 			owningConnection: 'Connection',
 			primaryKey: 'PK',
-			source: 'Origin type',
+			source: 'Source',
 			creationTime: 'Create time',
 			founder: 'Creater',
 			changeTime: 'Edit time',
@@ -1930,7 +1930,8 @@ const en = {
 			attrName: 'Property name',
 			attrKey: 'Property value',
 			editAliasNameTitle: 'Edit alias',
-			editCommentTitle: 'Edit description'
+			editCommentTitle: 'Edit description',
+			uniquelyIdentifies: 'Qualified Name'
 		}
 	},
 	notification: {

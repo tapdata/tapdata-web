@@ -1888,7 +1888,8 @@ const tc = {
 			attrName: '屬性名',
 			attrKey: '屬性值',
 			editAliasNameTitle: '編輯別名',
-			editCommentTitle: '編輯描述'
+			editCommentTitle: '編輯描述',
+			uniquelyIdentifies: '唯一標識'
 		}
 	},
 	notification: {

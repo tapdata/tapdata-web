@@ -427,8 +427,8 @@ export default {
 		},
 
 		backDataFlow() {
+			let mapping = this.$route.query.mapping;
 			if (!this.dataChangeFalg) {
-				let mapping = this.$route.query.mapping;
 				this.$router.push({
 					path: '/dataFlows?mapping=' + mapping
 				});
@@ -439,7 +439,7 @@ export default {
 					closeOnClickModal: false
 				}).then(() => {
 					this.$router.push({
-						path: '/dataFlows?mapping=custom'
+						path: '/dataFlows?mapping=' + mapping
 					});
 				});
 			}

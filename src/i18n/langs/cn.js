@@ -1891,7 +1891,8 @@ const cn = {
 			attrName: '属性名',
 			attrKey: '属性值',
 			editAliasNameTitle: '编辑别名',
-			editCommentTitle: '编辑描述'
+			editCommentTitle: '编辑描述',
+			uniquelyIdentifies: '唯一标识'
 		}
 	},
 	dialog: {

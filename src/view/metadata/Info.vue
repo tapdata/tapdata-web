@@ -75,7 +75,9 @@
 								</li> -->
 								<li>
 									<span class="label">{{ $t('metadata.details.originalTableName') }}：</span>
-									<span>{{ metadataDataObj.original_name }}</span>
+									<el-tooltip :content="metadataDataObj.original_name" placement="right">
+										<span>{{ metadataDataObj.original_name }}</span>
+									</el-tooltip>
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.typesOf') }}：</span>
@@ -83,14 +85,24 @@
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.owningConnection') }}：</span>
-									<span v-if="metadataDataObj.source && metadataDataObj.source.name">{{
-										metadataDataObj.source.name
-									}}</span>
+									<el-tooltip :content="metadataDataObj.source.name" placement="right">
+										<span v-if="metadataDataObj.source && metadataDataObj.source.name">{{
+											metadataDataObj.source.name
+										}}</span>
+									</el-tooltip>
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.primaryKey') }}：</span>
-									<span>{{ metadataDataObj.id }}</span>
+									<el-tooltip :content="metadataDataObj.qualified_name" placement="right">
+										<span>{{ metadataDataObj.qualified_name }}</span>
+									</el-tooltip>
 								</li>
+								<!-- <li>
+									<span class="label">{{ $t('metadata.details.uniquelyIdentifies') }}：</span>
+									<el-tooltip :content="metadataDataObj.qualified_name" placement="right">
+										<span>{{ metadataDataObj.qualified_name }}</span>
+									</el-tooltip>
+								</li> -->
 								<li>
 									<span class="label">{{ $t('metadata.details.source') }}：</span>
 									<span>{{ metadataDataObj.create_source }}</span>
@@ -885,15 +897,23 @@ export default {
 					padding: 10px 10px 10px 20px;
 					font-size: 12px;
 					li {
-						padding-bottom: 5px;
+						padding-bottom: 10px;
+						overflow: hidden;
 						span {
 							display: inline-block;
+							float: left;
 							color: #666;
 						}
 						.label {
 							display: inline-block;
-							width: 100px;
+							width: 95px;
 							color: #aaa;
+						}
+						.label + span {
+							display: inline-block;
+							max-width: calc(100% - 100px);
+							text-overflow: ellipsis;
+							overflow: hidden;
 						}
 					}
 					li.business {
