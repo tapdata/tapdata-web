@@ -151,10 +151,13 @@ export default {
       if (item.violated_docs ) {
         this.$router.push({ 
           name: 'dataQualityDetail', 
-          params: { id: item.id }, 
+          params: { 
+            id: item.id
+          }, 
           query: {
-            name: item.collection, 
-            connection_id: item.connection_id
+            collection_name: item.collection, 
+            connection_id: item.connection_id, 
+            source_name: item.source.name
           }
         })        
       }

@@ -12,11 +12,11 @@
           class="page-header-title link"  
           @click="$router.push({ name: 'dataQuality' })"
         >
-          数据质量
+          {{$t('dataQuality.title')}}
         </a>
         /
-        <span class="page-header-title">{{$t('dataQuality.title')}}</span>
-        <div class="page-header-desc">{{$t('dataQuality.desc')}}</div>
+        <span class="page-header-title">{{ $route.query.source_name }}</span>
+        <div class="page-header-desc">{{ $t('dataQuality.desc') }}</div>
       </div>
 
       <!-- 过滤项 -->
@@ -151,7 +151,7 @@
 
     <!-- 列过滤弹框 -->
     <el-dialog
-      width="500px"
+      width="520px"
       custom-class="data-quality-detail-filter-dialog"
       :title="'字段过滤'"
       :close-on-click-modal="false"
@@ -172,7 +172,7 @@
         <el-table-column
           prop="date"
           label="字段名"
-          width="300"
+          width="330"
         >
           <template slot-scope="scope">
             字段名{{scope.row.id}}
@@ -349,6 +349,18 @@ export default {
     }
   },
 
+  created() {
+    const { collection_name, connection_id } = this.$route.query
+
+    this.$api('modules').getByCollectionName({
+      connection_id,
+      collection_name
+    }).then(({data}) => {
+      
+      console.log(data)
+    })
+  },
+
   mounted() {
     this.filterArr = [{id: 1, check: true},{id: 2, check: true},{id: 3, check: true},{id: 4, check: true}]
   },
@@ -442,7 +454,7 @@ export default {
           name: 'dataQualityDetail', 
           params: { id: item.id }, 
           query: {
-            name: item.collection, 
+            collection_name: item.collection, 
             connection_id: item.connection_id
           }
         })        
