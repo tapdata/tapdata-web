@@ -267,6 +267,19 @@ export default function(vm) {
 					{ label: 'pgoutput', value: 'pgoutput' }
 				],
 				required: true
+			},
+			{
+				type: 'select',
+				field: 'database_datetype_without_timezone',
+				label: vm.$t('dataForm.form.timeZone'),
+				//tips: vm.$t('dataForm.form.timeZoneTips'),
+				options: [],
+				show: true
+			},
+			{
+				type: 'slot',
+				slot: 'timezone',
+				show: true
 			}
 		]
 	};
