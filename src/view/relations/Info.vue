@@ -196,6 +196,7 @@ export default {
 			font-size: 12px;
 			color: #666;
 			padding-left: 20px;
+			margin-top: 10px;
 			li {
 				margin-bottom: 10px;
 			}
