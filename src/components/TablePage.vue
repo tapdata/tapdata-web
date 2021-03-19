@@ -187,6 +187,10 @@ export default {
 			font-size: 16px;
 			color: #333;
 			font-weight: 600;
+			&.link {
+				color: rgb(72, 182, 226);
+				cursor: pointer;
+			}
 		}
 		.page-header-desc {
 			margin-top: 10px;

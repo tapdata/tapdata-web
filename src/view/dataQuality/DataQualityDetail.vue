@@ -6,6 +6,19 @@
       :desc="$t('dataQuality.desc')"
       :remoteMethod="getData"
     >
+      <!-- 面包屑 -->
+      <div slot="header">
+        <a 
+          class="page-header-title link"  
+          @click="$router.push({ name: 'dataQuality' })"
+        >
+          数据质量
+        </a>
+        /
+        <span class="page-header-title">{{$t('dataQuality.title')}}</span>
+        <div class="page-header-desc">{{$t('dataQuality.desc')}}</div>
+      </div>
+
       <!-- 过滤项 -->
       <div slot="search">
         <ul class="search-bar">
@@ -148,7 +161,6 @@
         <el-switch
           active-text="全选"
           v-model="all"
-          @change="checkAll"
         >
         </el-switch>
       </div>
@@ -289,9 +301,6 @@ export default {
         content: '', // 修改的内容
       },
       batchFormConfig: {
-        form: {
-
-        },
         items: [
           {
             type: 'select',
@@ -317,7 +326,6 @@ export default {
         ]
       },
       filterVisible: false, // 是否显示字段过滤弹框
-      all: false, // 是否全选字段
       filterArr: [], // 当前所有字段
     }
   },
@@ -326,11 +334,23 @@ export default {
     // table组件dom实体
     table() {
       return this.$refs.table;
+    },
+    // 是否全选字段
+    all: {
+      get() {
+        return this.filterArr.filter(v => v.check).length === this.filterArr.length
+      },
+      set(val) {
+        this.filterArr = this.filterArr.map(v => ({
+          ...v,
+          check: val
+        }))
+      }
     }
   },
 
   mounted() {
-    this.filterArr = [{id: 1},{id: 2},{id: 3},{id: 4}]
+    this.filterArr = [{id: 1, check: true},{id: 2, check: true},{id: 3, check: true},{id: 4, check: true}]
   },
 
   methods: {
@@ -428,16 +448,9 @@ export default {
         })        
       }
     },
-    // 改变规则
+    // 改变规则更新列表
     ruleChange() {
 
-    },
-    // 全选子段
-    checkAll(val) {
-      this.filterArr = this.filterArr.map(v => ({
-        ...v,
-        check: val
-      }))
     },
     // 重置表单
     reset(name) {
