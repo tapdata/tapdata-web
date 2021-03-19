@@ -148,7 +148,6 @@
 								</div>
 							</div>
 						</template>
-
 						<el-button size="mini" class="test" @click="startTest()">{{
 							$t('connection.testConnection')
 						}}</el-button>
