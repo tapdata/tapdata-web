@@ -1,43 +1,135 @@
 <template>
-	<div class="lineage-info-wrap" v-show="visible">
+	<div class="lineage-info-wrap" v-show="model.previewVisible">
 		<div class="bar"><i class="el-icon-arrow-right" @click="handleClose"></i></div>
-		<header class="header">
-			<span>{{ tableName }}</span>
-		</header>
-		<el-tabs v-model="activeName" type="card" class="lineage-info-tab">
-			<el-tab-pane label="字段" name="first">
-				<div class="lineage-info-field-btn">
-					<el-button type="text" @click="handleFields">查看血缘</el-button>
-				</div>
-				<div class="table-wrap">
-					<el-table :data="fields" @selection-change="handleSelectionChange">
-						<el-table-column type="selection"></el-table-column>
-						<el-table-column prop="name" label="字段类型/字段名称">
-							<template slot-scope="scope">
-								<div class="database-img">
-									<img :src="getImgByType(scope.row.java_type)" />
+		<div v-if="model.level === 'table'">
+			<header class="header">
+				<span>{{ tableName }}</span>
+			</header>
+			<el-tabs v-model="activeName" type="card" class="lineage-info-tab">
+				<el-tab-pane label="字段" name="first">
+					<div class="lineage-info-field-btn">
+						<el-button type="text" @click="handleFields">查看血缘</el-button>
+					</div>
+					<div class="table-wrap">
+						<el-table :data="fields" @selection-change="handleSelectionChange">
+							<el-table-column type="selection"></el-table-column>
+							<el-table-column prop="name" label="字段类型/字段名称">
+								<template slot-scope="scope">
+									<div class="database-img">
+										<img :src="getImgByType(scope.row.java_type)" />
+									</div>
+									<div class="database-text">
+										{{ scope.row.field_name }}
+									</div>
+								</template>
+							</el-table-column>
+						</el-table>
+					</div>
+				</el-tab-pane>
+				<el-tab-pane label="属性" name="second">
+					<ul>
+						<li v-for="(value, key) in metaData" :key="key">
+							<span class="label">{{ metaDataFields[key] }}</span>
+							<span>{{ value }}</span>
+						</li>
+						<li v-for="(value, key) in dataFlows" :key="key">
+							<span class="label">{{ dataFlowsFields[key] }}</span>
+							<span>{{ value }}</span>
+						</li>
+					</ul>
+				</el-tab-pane>
+			</el-tabs>
+		</div>
+		<div v-else>
+			<el-menu default-active="1" class="el-menu-vertical-lineage">
+				<template v-for="(item, index1) in model.dataFlows">
+					<el-submenu v-if="item.processors" :key="item.id" :index="index1 + 1">
+						<template slot="title">
+							<span slot="title">{{ item.name }}</span>
+						</template>
+						<template v-for="(processor, index2) in item.processors">
+							<el-submenu
+								v-if="processor.operations || processor.scripts || processor.aggregations"
+								:key="processor.id"
+								:index="`${index1 + 1}-${index2 + 1}`"
+							>
+								<template slot="title">
+									<span slot="title">{{
+										`${processorMap[processor.type]} [${processor.name}]`
+									}}</span>
+								</template>
+								<div v-if="processor.type === 'field_processor'">
+									<template v-for="(op, index3) in processor.operations">
+										<el-menu-item :key="op.id" :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`">
+											<span v-if="['CREATE'].includes(op.op)">
+												<span class="label">新增</span>
+												<span> : {{ op.field }}</span>
+											</span>
+											<span v-if="['REMOVE'].includes(op.op)">
+												<span class="label">删除</span>
+												<span> : {{ op.field }}</span>
+											</span>
+											<span v-if="['RENAME'].includes(op.op)">
+												<span class="label">更名</span>
+												<span> : {{ op.field }} -> {{ op.operand }}</span>
+												<span v-if="op.script" class="keywords">字段脚本</span>
+											</span>
+											<span v-if="['CONVERT'].includes(op.op)">
+												<span class="label">改类型</span>
+												<span> : {{ op.originalDataType }} -> {{ op.operand }}</span>
+											</span>
+										</el-menu-item>
+									</template>
 								</div>
-								<div class="database-text">
-									{{ scope.row.field_name }}
+								<div v-if="processor.type === 'script_processor'">
+									<template v-for="(op, index3) in processor.scripts">
+										<el-menu-item :key="op.id" :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`">
+											{{ op.script }}
+										</el-menu-item>
+									</template>
 								</div>
-							</template>
-						</el-table-column>
-					</el-table>
-				</div>
-			</el-tab-pane>
-			<el-tab-pane label="属性" name="second">
-				<ul>
-					<li v-for="(value, key) in metaData" :key="key">
-						<span class="label">{{ metaDataFields[key] }}</span>
-						<span>{{ value }}</span>
-					</li>
-					<li v-for="(value, key) in dataFlows" :key="key">
-						<span class="label">{{ dataFlowsFields[key] }}</span>
-						<span>{{ value }}</span>
-					</li>
-				</ul>
-			</el-tab-pane>
-		</el-tabs>
+								<div v-if="processor.type === 'aggregations_processor'">
+									<template v-for="(op, index3) in processor.aggregations">
+										<el-menu-item :key="op.id" :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`">
+											<span v-if="['COUNT'].includes(op.aggFunction)">
+												<span class="label">计算总数</span>
+												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
+													, 根据{{ op.groupByExpression.join(',') }}进行分组</span
+												>
+											</span>
+											<span v-if="['SUM'].includes(op.aggFunction)">
+												<span class="label">求和</span>
+												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
+													, 根据{{ op.groupByExpression.join(',') }}进行分组</span
+												>
+											</span>
+											<span v-if="['AVG'].includes(op.aggFunction)">
+												<span class="label">求平均值</span>
+												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
+													, 根据{{ op.groupByExpression.join(',') }}进行分组</span
+												>
+											</span>
+											<span v-if="['MAX'].includes(op.aggFunction)">
+												<span class="label">求最大值</span>
+												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
+													, 根据{{ op.groupByExpression.join(',') }}进行分组</span
+												>
+											</span>
+											<span v-if="['MIN'].includes(op.aggFunction)">
+												<span class="label">求最小值</span>
+												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
+													, 根据{{ op.groupByExpression.join(',') }}进行分组</span
+												>
+											</span>
+										</el-menu-item>
+									</template>
+								</div>
+							</el-submenu>
+						</template>
+					</el-submenu>
+				</template>
+			</el-menu>
+		</div>
 	</div>
 </template>
 
@@ -45,17 +137,8 @@
 export default {
 	name: 'Info',
 	props: {
-		connectionId: {
-			required: true,
-			value: String
-		},
-		tableId: {
-			required: true,
-			value: String
-		},
-		visible: {
-			required: true,
-			value: String
+		model: {
+			required: true
 		}
 	},
 	data() {
@@ -66,6 +149,8 @@ export default {
 			fields: [],
 			multipleSelection: [],
 			tableName: '',
+			firstNames: '1',
+			secondNames: '1',
 			metaDataFields: {
 				name: '别名(原名称)',
 				qualified_name: '唯一表示',
@@ -82,20 +167,25 @@ export default {
 				database_username: '用户名',
 				database_name: '数据库名称',
 				database_owner: '模式'
+			},
+			processorMap: {
+				field_processor: '字段处理器',
+				script_processor: '脚本处理器',
+				aggregations_processor: '聚合处理器'
 			}
 		};
 	},
 	watch: {
-		connectionId: {
+		'model.connectionId': {
 			handler() {
-				if (this.connectionId) {
+				if (this.model.connectionId) {
 					this.getDataFlows();
 				}
 			}
 		},
-		tableId: {
+		'model.tableId': {
 			handler() {
-				if (this.tableId) {
+				if (this.model.tableId) {
 					this.getMetaData();
 				}
 			}
@@ -115,7 +205,7 @@ export default {
 			let params = {
 				filter: {
 					where: {
-						qualified_name: this.tableId
+						qualified_name: this.model.tableId
 					}
 				}
 			};
@@ -140,7 +230,7 @@ export default {
 		},
 		getDataFlows() {
 			this.$api('connections')
-				.get([this.connectionId])
+				.get([this.model.connectionId])
 				.then(result => {
 					let data = result.data || {};
 					if (data) {
@@ -189,6 +279,16 @@ export default {
 	.bar {
 		background: #f5f5f5;
 		height: 22px;
+	}
+	.el-menu-vertical-lineage {
+		.keywords {
+			color: rgba(72, 182, 226, 100);
+			cursor: pointer;
+		}
+		.label {
+			display: inline-block;
+			font-weight: bold;
+		}
 	}
 	.lineage-info-tab {
 		padding-left: 20px;
@@ -258,6 +358,24 @@ export default {
 		}
 		.el-tabs__header {
 			margin: 0;
+		}
+	}
+	.el-menu-vertical-lineage {
+		.el-menu-item,
+		.el-submenu__title {
+			height: 30px;
+			line-height: 30px;
+			font-size: 12px;
+		}
+		.el-menu-item:focus,
+		.el-menu-item:hover {
+			background-color: #fff;
+		}
+		.el-submenu__title:hover {
+			background-color: #fff;
+		}
+		.el-menu-item.is-active {
+			color: #303133;
 		}
 	}
 }

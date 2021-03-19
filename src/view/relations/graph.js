@@ -77,15 +77,23 @@ export default function() {
 			}
 		}
 	});
-
 	paper.on('cell:pointerclick', function(cellView) {
 		if (cellView.model.isLink()) {
-			graph.vcomp.flowList = cellView.model.info.dataFlows;
-			graph.vcomp.dialogFormVisible = true;
+			//点击link 查看血缘 或者查看任务详情
+			graph.vcomp.model = {
+				level: 'field',
+				dataFlows: cellView.model.info.dataFlows,
+				previewVisible: true
+			};
 		} else {
-			graph.vcomp.connectionId = cellView.model.connection.id;
-			graph.vcomp.currentTableId = cellView.model.tableId;
-			graph.vcomp.previewVisible = true;
+			if (graph.vcomp.model.level !== 'field') {
+				graph.vcomp.model = {
+					level: 'table',
+					connectionId: cellView.model.connection.id,
+					tableId: cellView.model.tableId,
+					previewVisible: true
+				};
+			}
 		}
 	});
 	const paperScroller = new joint.ui.PaperScroller({
@@ -112,6 +120,9 @@ export default function() {
 	window.paperScroller = paperScroller;
 	window.paper = paper;
 	paper.on('blank:pointerdown', paperScroller.startPanning);
+	paper.on('blank:pointerdown', function() {
+		graph.vcomp.model.previewVisible = false;
+	});
 	// paper.on('cell:pointerdown', (cellView, evt, x, y) => {
 	// 	paperScroller.startPanning(evt, x, y);
 	// });
