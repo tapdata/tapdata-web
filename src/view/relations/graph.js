@@ -80,10 +80,13 @@ export default function() {
 	paper.on('cell:pointerclick', function(cellView) {
 		if (cellView.model.isLink()) {
 			//点击link 查看血缘 或者查看任务详情
+			let cellModel = cellView.model;
 			graph.vcomp.model = {
 				level: 'field',
 				dataFlows: cellView.model.info.dataFlows,
-				previewVisible: true
+				previewVisible: true,
+				sourceName: cellModel.get('source').port,
+				targetName: cellModel.get('target').port
 			};
 		} else {
 			if (graph.vcomp.model.level !== 'field') {
@@ -160,6 +163,19 @@ export default function() {
 
 			graph.vcomp = vcomp;
 			rdatas.forEach(table => {
+				if (table.items) {
+					let items = table.items[0].items;
+					if (items.length > 0) {
+						items.forEach(it => {
+							if (it.is_deleted) {
+								it['icon'] = '../../static/editor/api.svg';
+							}
+							if (it.is_add) {
+								it['icon'] = '../../static/editor/back.svg';
+							}
+						});
+					}
+				}
 				var node = new joint.shapes.mapping.Record({ items: [[table.items[0]]] });
 				linkdatas.map((link, idx, linkdatas) => {
 					if (link.source.id == table.id) linkdatas[idx].source.id = node.id;

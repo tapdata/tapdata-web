@@ -4,6 +4,7 @@
 			<div class="tool-bar">
 				<i class="iconfont icon-plus-circle" @click="zoomIn"></i>
 				<i class="iconfont icon-minus-circle" @click="zoomOut"></i>
+				<i v-if="level === 'fields'" class="iconfont icon-shangyibu" @click="getData"></i>
 				<i class="iconfont icon-shuaxin1" @click="refreshData"></i>
 			</div>
 			<span class="refreshS" :class="{ errorClass: !rClass, actProgress: !refreshing }" @click="checkError"
@@ -52,12 +53,15 @@ export default {
 		return {
 			rClass: true,
 			form: {},
+			level: 'table',
 			model: {
 				level: 'table',
 				connectionId: '',
 				tableId: '',
 				previewVisible: false,
-				dataFlows: []
+				dataFlows: [],
+				sourceName: '',
+				targetName: ''
 			},
 			refreshResult: {},
 			dialogFormVisible: false,
@@ -82,6 +86,13 @@ export default {
 		});
 	},
 	methods: {
+		getData() {
+			LineageGraphsAPI.graphData(this.tableId).then(res => {
+				if (res.data) {
+					this.graph.draw(res.data.items, res.data.links, this);
+				}
+			});
+		},
 		refreshData() {
 			LineageGraphsAPI.refreshGraphData()
 				.then(res => {
@@ -231,13 +242,6 @@ export default {
 		handlePreviewVisible() {
 			this.model.previewVisible = false;
 		},
-		toDataFlow(id) {
-			let routeUrl = this.$router.resolve({
-				path: '/job',
-				query: { id: id, isMoniting: true } //, mapping: mappingTemplate
-			});
-			window.open(routeUrl.href, 'monitor_' + id);
-		},
 		checkError() {
 			if (this.refreshResult.status == 'error') this.errorVisible = true;
 		},
@@ -248,6 +252,7 @@ export default {
 			window.paperScroller.zoom(-0.2, { min: 0.2 });
 		},
 		changeLevel(qualifiedName, fields) {
+			this.level = 'fields';
 			this.$api('LineageGraphs')
 				.graphData(qualifiedName, 'field', fields)
 				.then(() => {
@@ -261,8 +266,8 @@ export default {
 									label: 'adm_greenbuild_project_date_used_water_count_1',
 									items: [
 										{ id: '_id', label: '_id', type: 'String', primary_key_position: 1 },
-										{ id: 'branch_abb', label: 'branch_abb', type: 'String' },
-										{ id: 'branch_id', label: 'branch_id', type: 'Integer' },
+										{ id: 'branch_abb', label: 'branch_abb', type: 'String', is_deleted: true },
+										{ id: 'branch_id', label: 'branch_id', type: 'Integer', is_add: true },
 										{ id: 'branch_name', label: 'branch_name', type: 'String' },
 										{ id: 'engineer_id', label: 'engineer_id', type: 'Integer' },
 										{ id: 'water_record_date', label: 'water_record_date', type: 'String' },

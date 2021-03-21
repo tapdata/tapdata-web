@@ -1,17 +1,28 @@
 <template>
 	<div class="lineage-info-wrap" v-show="model.previewVisible">
-		<div class="bar"><i class="el-icon-arrow-right" @click="handleClose"></i></div>
+		<div class="bar">
+			<el-button class="back-btn-icon-box" @click="goBack"
+				><i class="iconfont icon-right-circle back-btn-icon"></i
+			></el-button>
+		</div>
 		<div v-if="model.level === 'table'">
 			<header class="header">
 				<span>{{ tableName }}</span>
+				<div class="connection" @click="goConnection">{{ connections.name }}</div>
 			</header>
 			<el-tabs v-model="activeName" type="card" class="lineage-info-tab">
 				<el-tab-pane label="字段" name="first">
-					<div class="lineage-info-field-btn">
-						<el-button type="text" @click="handleFields">查看血缘</el-button>
+					<div class="relation-btn-wrap">
+						<el-button class="relation-btn" type="text" @click="handleFields">查看血缘</el-button>
 					</div>
+					<el-input
+						class="customize-field"
+						size="mini"
+						placeholder="自定义字段,多个字段请用','隔开"
+						v-model="customFields"
+					></el-input>
 					<div class="table-wrap">
-						<el-table :data="fields" @selection-change="handleSelectionChange">
+						<el-table class="field-table" :data="fields" @selection-change="handleSelectionChange">
 							<el-table-column type="selection"></el-table-column>
 							<el-table-column prop="name" label="字段类型/字段名称">
 								<template slot-scope="scope">
@@ -32,8 +43,8 @@
 							<span class="label">{{ metaDataFields[key] }}</span>
 							<span>{{ value }}</span>
 						</li>
-						<li v-for="(value, key) in dataFlows" :key="key">
-							<span class="label">{{ dataFlowsFields[key] }}</span>
+						<li v-for="(value, key) in connections" :key="key">
+							<span class="label">{{ connectionsFields[key] }}</span>
 							<span>{{ value }}</span>
 						</li>
 					</ul>
@@ -41,11 +52,16 @@
 			</el-tabs>
 		</div>
 		<div v-else>
+			<header class="header">
+				<span>{{ model.sourceName }} -> {{ model.targetName }}</span>
+			</header>
 			<el-menu default-active="1" class="el-menu-vertical-lineage">
-				<template v-for="(item, index1) in model.dataFlows">
-					<el-submenu v-if="item.processors" :key="item.id" :index="index1 + 1">
+				<template v-for="(item, index1) in model.connections">
+					<el-submenu v-if="item.processors" :key="item.id" :index="index1 + 1" class="parentMenu">
 						<template slot="title">
-							<span slot="title">{{ item.name }}</span>
+							<span slot="title">
+								<span class="keywords" @click="goJob(item.id)">任务[ {{ item.name }} ]</span>
+							</span>
 						</template>
 						<template v-for="(processor, index2) in item.processors">
 							<el-submenu
@@ -72,7 +88,12 @@
 											<span v-if="['RENAME'].includes(op.op)">
 												<span class="label">更名</span>
 												<span> : {{ op.field }} -> {{ op.operand }}</span>
-												<span v-if="op.script" class="keywords">字段脚本</span>
+												<span
+													v-if="op.script"
+													class="keywords"
+													@click="handleShowScript(op.script)"
+													>字段脚本</span
+												>
 											</span>
 											<span v-if="['CONVERT'].includes(op.op)">
 												<span class="label">改类型</span>
@@ -84,7 +105,9 @@
 								<div v-if="processor.type === 'script_processor'">
 									<template v-for="(op, index3) in processor.scripts">
 										<el-menu-item :key="op.id" :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`">
-											{{ op.script }}
+											<span v-if="op.script" class="keywords" @click="handleShowScript(op.script)"
+												>function process(record){...}</span
+											>
 										</el-menu-item>
 									</template>
 								</div>
@@ -130,12 +153,18 @@
 				</template>
 			</el-menu>
 		</div>
+		<el-dialog :visible.sync="showScriptVisible" width="60%" :before-close="handleCloseScript">
+			<JsEditor :code.sync="showScript" ref="jsEditor" :width.sync="width" v-if="showScriptVisible"></JsEditor>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
+import JsEditor from '@/components/JsEditor';
+import _ from 'lodash';
 export default {
 	name: 'Info',
+	components: { JsEditor },
 	props: {
 		model: {
 			required: true
@@ -145,12 +174,13 @@ export default {
 		return {
 			activeName: 'first',
 			metaData: {},
-			dataFlows: {},
+			connections: {},
 			fields: [],
 			multipleSelection: [],
 			tableName: '',
-			firstNames: '1',
-			secondNames: '1',
+			customFields: '',
+			showScript: '',
+			showScriptVisible: false,
 			metaDataFields: {
 				name: '别名(原名称)',
 				qualified_name: '唯一表示',
@@ -160,7 +190,7 @@ export default {
 				last_updated: '修改时间',
 				last_user_name: '修改人'
 			},
-			dataFlowsFields: {
+			connectionsFields: {
 				name: '连接名称',
 				database_host: '地址',
 				database_port: '端口',
@@ -172,6 +202,15 @@ export default {
 				field_processor: '字段处理器',
 				script_processor: '脚本处理器',
 				aggregations_processor: '聚合处理器'
+			},
+			statusBtMap: {
+				// scheduled, draft, running, stopping, error, paused, force stopping
+				run: { draft: true, error: true, paused: true },
+				stop: { running: true },
+				delete: { draft: true, error: true, paused: true },
+				edit: { draft: true, error: true, paused: true },
+				reset: { draft: true, error: true, paused: true },
+				forceStop: { stopping: true }
 			}
 		};
 	},
@@ -179,7 +218,7 @@ export default {
 		'model.connectionId': {
 			handler() {
 				if (this.model.connectionId) {
-					this.getDataFlows();
+					this.getConnections();
 				}
 			}
 		},
@@ -198,7 +237,7 @@ export default {
 			}
 			return require(`../../../static/image/types/${type.toLowerCase()}.png`);
 		},
-		handleClose() {
+		goBack() {
 			this.$emit('previewVisible', false);
 		},
 		getMetaData() {
@@ -228,14 +267,14 @@ export default {
 					}
 				});
 		},
-		getDataFlows() {
+		getConnections() {
 			this.$api('connections')
 				.get([this.model.connectionId])
 				.then(result => {
 					let data = result.data || {};
 					if (data) {
-						this.dataFlows = {
-							name: data.database_username,
+						this.connections = {
+							name: data.database_username || '',
 							database_host: data.database_host,
 							database_port: data.database_port,
 							database_username: data.database_username
@@ -248,10 +287,46 @@ export default {
 			this.multipleSelection = val;
 		},
 		handleFields() {
-			if (this.multipleSelection.length === 0) return;
+			if (this.multipleSelection.length === 0 && this.customFields === '') {
+				this.$message.error('请选择字段或者输入自定义字段');
+				return;
+			}
+			let customField = [];
+			if (this.customFields !== '') {
+				customField = this.customFields.split(',');
+			}
 			let fields = [];
 			fields = this.multipleSelection.map(field => field.field_name);
+			//合并数组
+			fields = Array.from(new Set([...fields, ...customField]));
+			this.$emit('previewVisible', false);
 			this.$emit('handleFields', this.tableName, fields);
+		},
+		//显示脚本
+		handleShowScript(script) {
+			this.showScript = _.cloneDeep(script);
+			this.showScriptVisible = true;
+		},
+		handleCloseScript() {
+			this.showScript = '';
+			this.showScriptVisible = false;
+		},
+		//跳转到任务列表
+		async goJob(id) {
+			let result = await this.$api('DataFlows').get([id]);
+			if (result.data) {
+				let isMoniting = !this.statusBtMap['edit'][result.data.status];
+				let routeUrl = this.$router.resolve({
+					path: '/job',
+					query: { id: id, isMoniting: isMoniting, mapping: result.data.mappingTemplate }
+				});
+				window.open(routeUrl.href, 'monitor_' + id);
+			} else {
+				this.$message.error('当前选中任务被删除或者是不存在,id为:6051820d19998b005728343c');
+			}
+		},
+		goConnection() {
+			this.$router.push('/connections');
 		}
 	}
 };
@@ -261,9 +336,9 @@ export default {
 .lineage-info-wrap {
 	position: absolute;
 	right: -21px;
-	top: 43px;
+	top: 40px;
 	background: #fff;
-	height: 800px;
+	height: calc(100% - 44px);
 	width: 430px;
 	overflow: hidden;
 	border: 1px solid rgba(255, 255, 255, 100);
@@ -276,10 +351,50 @@ export default {
 		text-align: left;
 		font-weight: bold;
 	}
-	.bar {
-		background: #f5f5f5;
-		height: 22px;
+	.connection {
+		color: #999;
+		font-size: 12px;
+		margin-bottom: 10px;
+		cursor: pointer;
 	}
+	.bar {
+		height: 30px;
+		font-size: 12px;
+		background: #f5f5f5;
+		border: 1px solid #dedee4;
+		line-height: 30px;
+		.back-btn-icon-box {
+			width: 30px;
+			height: 30px;
+			display: inline-block;
+			border-radius: 0;
+			line-height: 1;
+			white-space: nowrap;
+			cursor: pointer;
+			background: #48b6e2;
+			border: 0;
+			-webkit-appearance: none;
+			text-align: center;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+			outline: 0;
+			margin: 0;
+			-webkit-transition: 0.1s;
+			transition: 0.1s;
+			font-weight: normal;
+			padding: 0;
+			font-size: 14px;
+		}
+		.back-btn-icon-box:hover {
+			background: #6dc5e8;
+		}
+		.back-btn-icon {
+			color: #fff;
+		}
+	}
+	/*.parentMenu {*/
+	/*	background-color: #f5f5f5;*/
+	/*}*/
 	.el-menu-vertical-lineage {
 		.keywords {
 			color: rgba(72, 182, 226, 100);
@@ -291,7 +406,7 @@ export default {
 		}
 	}
 	.lineage-info-tab {
-		padding-left: 20px;
+		padding: 0 20px;
 		ul {
 			font-size: 12px;
 			color: #666;
@@ -306,14 +421,25 @@ export default {
 				width: 100px;
 			}
 		}
-		.lineage-info-field-btn {
-			margin-right: 10px;
+		.relation-btn-wrap {
 			display: flex;
+			margin-top: 10px;
 			justify-content: flex-end;
+			.relation-btn {
+				padding: 0;
+			}
+		}
+		.customize-field {
+			margin: 10px 10px 10px 0;
 		}
 		.table-wrap {
-			height: 600px;
-			overflow-y: auto;
+			display: flex;
+			flex: 1;
+			overflow: hidden;
+			.field-table {
+				overflow: auto;
+				max-height: 442px;
+			}
 			.database-img {
 				vertical-align: middle;
 				width: 28px;
@@ -350,6 +476,13 @@ export default {
 		box-shadow: none;
 		border-radius: 0;
 	}
+	.field-table table thead tr th {
+		padding: 0px;
+		line-height: 30px;
+		background: rgb(250, 250, 250);
+		color: rgb(153, 153, 153);
+		cursor: pointer;
+	}
 	.lineage-info-tab {
 		.el-tabs__item {
 			height: 24px;
@@ -377,6 +510,9 @@ export default {
 		.el-menu-item.is-active {
 			color: #303133;
 		}
+		/*.parentMenu .el-submenu__title :hover {*/
+		/*	background-color: #f5f5f5*/
+		/*}*/
 	}
 }
 </style>
