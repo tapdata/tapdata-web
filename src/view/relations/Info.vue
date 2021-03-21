@@ -56,7 +56,7 @@
 				<span>{{ model.sourceName }} -> {{ model.targetName }}</span>
 			</header>
 			<el-menu default-active="1" class="el-menu-vertical-lineage">
-				<template v-for="(item, index1) in model.connections">
+				<template v-for="(item, index1) in model.dataFlows">
 					<el-submenu v-if="item.processors" :key="item.id" :index="index1 + 1" class="parentMenu">
 						<template slot="title">
 							<span slot="title">

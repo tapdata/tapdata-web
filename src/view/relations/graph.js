@@ -164,7 +164,7 @@ export default function() {
 			graph.vcomp = vcomp;
 			rdatas.forEach(table => {
 				if (table.items) {
-					let items = table.items[0].items;
+					let items = table.items[0].items || [];
 					if (items.length > 0) {
 						items.forEach(it => {
 							if (it.is_deleted) {

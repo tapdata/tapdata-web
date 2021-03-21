@@ -87,6 +87,8 @@ export default {
 	},
 	methods: {
 		getData() {
+			this.level = 'table';
+			this.model.level = 'table';
 			LineageGraphsAPI.graphData(this.tableId).then(res => {
 				if (res.data) {
 					this.graph.draw(res.data.items, res.data.links, this);
