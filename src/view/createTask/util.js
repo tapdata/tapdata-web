@@ -13,11 +13,7 @@ export const SETTING_MODEL = {
 
 export const DATASOURCE_MODEL = {
 	source_sourceType: 'rds',
-	target_sourceType: 'rds',
-	source_region: '',
-	target_region: '',
-	source_zone: '',
-	target_zone: '',
+	target_sourceType: 'dds',
 	source_connectionId: '',
 	target_connectionId: '',
 	source_connectionName: '',
