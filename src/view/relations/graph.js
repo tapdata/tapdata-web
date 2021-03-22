@@ -168,10 +168,10 @@ export default function() {
 					if (items.length > 0) {
 						items.forEach(it => {
 							if (it.is_deleted) {
-								it['icon'] = '../../static/editor/api.svg';
+								it['icon'] = '../../static/relation/removeField.svg';
 							}
 							if (it.is_add) {
-								it['icon'] = '../../static/editor/back.svg';
+								it['icon'] = '../../static/relation/addField.svg';
 							}
 						});
 					}
