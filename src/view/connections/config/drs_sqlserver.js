@@ -253,6 +253,19 @@ export default function(vm) {
 				field: 'database_owner',
 				label: vm.$t('dataForm.form.databaseOwner'),
 				required: true
+			},
+			{
+				type: 'select',
+				field: 'database_datetype_without_timezone',
+				label: vm.$t('dataForm.form.timeZone'),
+				//tips: vm.$t('dataForm.form.timeZoneTips'),
+				options: [],
+				show: true
+			},
+			{
+				type: 'slot',
+				slot: 'timezone',
+				show: true
 			}
 		]
 	};
