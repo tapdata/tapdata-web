@@ -48,7 +48,7 @@
 							<div class="desc">
 								用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
 							</div>
-							<form-builder ref="setting" v-model="settingModel" :config="config">
+							<form-builder ref="setting" v-model="settingModel" :config="config" @submit.native.prevent>
 								<div
 									slot="needToCreateIndex"
 									class="ddl-tip"

@@ -431,12 +431,14 @@ export default {
 						if (platformInfo && platformInfo.regionName) {
 							item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName;
 						}
-						if (item.database_type !== 'mongo') {
+						if (item.database_type !== 'mongodb') {
 							item.connectionUrl = '';
 							if (item.database_username) {
 								item.connectionUrl += item.database_username + ':***@';
 							}
 							item.connectionUrl += item.database_host + ':' + item.database_port;
+						} else {
+							item.connectionUrl = item.database_uri;
 						}
 						item.connectionSource = this.sourceTypeMapping[item.sourceType];
 						item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss');
