@@ -85,11 +85,11 @@
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.owningConnection') }}：</span>
-									<el-tooltip :content="metadataDataObj.source.name" placement="right">
-										<span v-if="metadataDataObj.source && metadataDataObj.source.name">{{
-											metadataDataObj.source.name
-										}}</span>
-									</el-tooltip>
+									<template v-if="metadataDataObj.source && metadataDataObj.source.name">
+										<el-tooltip :content="metadataDataObj.source.name" placement="right">
+											<span>{{ metadataDataObj.source.name }}</span>
+										</el-tooltip>
+									</template>
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.primaryKey') }}：</span>
@@ -391,7 +391,9 @@
 		>
 			<FormBuilder ref="form" v-model="businessForm" :config="businessFormConfig"></FormBuilder>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="businessDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button class="cancel" @click="businessDialogVisible = false" size="small">{{
+					$t('message.cancel')
+				}}</el-button>
 				<el-button type="primary" @click="saveBusiness()" size="small">{{ $t('message.save') }}</el-button>
 			</span>
 		</el-dialog>
@@ -411,7 +413,9 @@
 				</el-form-item>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="editNameDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button class="cancel" @click="editNameDialogVisible = false" size="small">{{
+					$t('message.cancel')
+				}}</el-button>
 				<el-button type="primary" @click="saveAliasName()" size="small">{{ $t('message.save') }}</el-button>
 			</span>
 		</el-dialog>
@@ -433,7 +437,9 @@
 				</el-form-item>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="editCommentDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button class="cancel" @click="editCommentDialogVisible = false" size="small">{{
+					$t('message.cancel')
+				}}</el-button>
 				<el-button type="primary" @click="saveComment()" size="small">{{ $t('message.save') }}</el-button>
 			</span>
 		</el-dialog>
@@ -1172,6 +1178,11 @@ export default {
 			.el-textarea__inner {
 				min-height: 100px !important;
 			}
+		}
+		.el-button.cancel {
+			color: #666;
+			border: 0;
+			background-color: #eee;
 		}
 	}
 }

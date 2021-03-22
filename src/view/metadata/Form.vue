@@ -111,7 +111,7 @@
 									v-for="item in getAvailableTable(scope.$index)"
 									:label="item.original_name"
 									:value="item.original_name"
-									:key="item.original_name"
+									:key="item.id"
 								></el-option>
 							</el-select>
 						</template>
@@ -163,7 +163,7 @@
 			</div>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
-			<el-button @click="handleClose()" size="small">
+			<el-button class="cancel" @click="handleClose()" size="small">
 				{{ $t('message.cancel') }}
 			</el-button>
 			<el-button type="primary" @click="save()" size="small">{{ $t('message.save') }}</el-button>
@@ -189,7 +189,9 @@
 				</li>
 			</ul> -->
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="dialogDictionaryVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button class="cancel" @click="dialogDictionaryVisible = false" size="small">{{
+					$t('message.cancel')
+				}}</el-button>
 				<el-button type="primary" @click="handleSelectDictionary" size="small">{{
 					$t('message.confirm')
 				}}</el-button>
@@ -329,7 +331,6 @@ export default {
 					}
 					result.push(val);
 				});
-
 			return result;
 		},
 		// 获取关联字段数据
@@ -589,6 +590,17 @@ export default {
 			overflow: hidden;
 			overflow-y: auto;
 			background-color: rgba(238, 240, 243, 100);
+			.cell {
+				padding: 0;
+				.el-input {
+					.el-input__inner {
+						border: 0;
+					}
+				}
+				.el-button {
+					padding-left: 10px;
+				}
+			}
 			.el-form-item__label {
 				width: 100px;
 				text-align: right;
@@ -606,7 +618,7 @@ export default {
 			}
 			.e-table {
 				th {
-					padding: 4px 0;
+					padding: 4px 10px;
 					color: #666;
 					background-color: #eff1f4;
 				}
@@ -621,6 +633,11 @@ export default {
 					border-color: #ececec;
 				}
 			}
+		}
+		.el-button.cancel {
+			color: #666;
+			border: 0;
+			background-color: #eee;
 		}
 	}
 }

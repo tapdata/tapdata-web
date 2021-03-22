@@ -200,8 +200,8 @@
 		>
 			<FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="createDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
-				<el-button type="primary" @click="createNewModel()" size="mini">{{ $t('message.confirm') }}</el-button>
+				<el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>
 			</span>
 		</el-dialog>
 	</section>

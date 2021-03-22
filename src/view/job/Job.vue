@@ -731,10 +731,11 @@ export default {
 			}
 			log('DataFlows Draft Save Params: ', data);
 			promise = dataFlowsApi.draft(data);
+
 			if (promise) {
 				promise
 					.catch(e => {
-						if (e.response.data === 'duplication for names') {
+						if (e.response.msg === 'duplication for names') {
 							self.$message.error(self.$t('message.exists_name'));
 						} else {
 							self.$message.error(self.$t('message.saveFail'));
