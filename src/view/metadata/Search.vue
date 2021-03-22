@@ -124,9 +124,9 @@ export default {
 			this.$api('MetadataInstances')
 				.search(params)
 				.then(result => {
-					let resultData = result.data.data || [];
+					let resultData = result.data.records.data || [];
 					//关键字标记
-					resultData = this.getMockData(params);
+					//resultData = this.getMockData(params);
 					this.handleKeywords(resultData || []);
 					this.searchData = this.searchData.concat(resultData);
 				});
@@ -147,13 +147,13 @@ export default {
 				if (item.table) {
 					item.table.name = this.markKeyword(this.keyword, item.table.name);
 					item.table.original_name = this.markKeyword(this.keyword, item.table.original_name);
-					item.table.comment = this.markKeyword(this.keyword, item.table.comment);
+					if (item.table.comment) item.table.comment = this.markKeyword(this.keyword, item.table.comment);
 				}
 				if (item.columns && item.columns.length > 0) {
 					item.columns.forEach(field => {
 						field.field_name = this.markKeyword(this.keyword, field.field_name);
 						field.original_field_name = this.markKeyword(this.keyword, field.original_field_name);
-						field.comment = this.markKeyword(this.keyword, field.comment);
+						if (field.comment) field.comment = this.markKeyword(this.keyword, field.comment);
 					});
 				}
 			});
