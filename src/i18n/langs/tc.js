@@ -1873,6 +1873,20 @@ const tc = {
 			attrKey: '屬性值',
 			editAliasNameTitle: '編輯別名',
 			editCommentTitle: '編輯描述'
+		},
+		metadataSearch: {
+			title: '元數據檢索',
+			desc:
+				'元數據檢索提供對錶、字段的名稱、別名、描述等內容的搜索功能，請先選擇搜索表/字段，再輸入內容，點擊搜索按鈕進行搜索',
+			table: '搜索表',
+			column: '搜索字段',
+			search: '搜索',
+			noSearch: '請按“回車”鍵發起檢索',
+			noResult: '暫無搜索結果，請確認搜索關鍵字',
+			originalName: '原表名',
+			noMore: '無更多檢索結果',
+			more: '點擊加載更多',
+			placeholder: '請輸入搜索關鍵字'
 		}
 	},
 	notification: {

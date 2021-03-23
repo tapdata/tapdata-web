@@ -2,42 +2,46 @@
 	<section class="metadata-search-wrap" :class="{ 'metadata-change-background': !showNoSearch }">
 		<div class="no-search-box-wrap" v-show="showNoSearch">
 			<div class="no-search-box">
-				<header class="metadata-search-title">元数据检索</header>
-				<el-input placeholder="请输入内容" v-model="keyword" class="input-with">
+				<header class="metadata-search-title">{{ $t('metadata.metadataSearch.title') }}</header>
+				<el-input :placeholder="$t('metadata.metadataSearch.placeholder')" v-model="keyword" class="input-with">
 					<el-select v-model="meta_type" slot="prepend" placeholder="请选择" class="input-with-select">
-						<el-option label="搜索表" value="table"></el-option>
-						<el-option label="搜索字段" value="column"></el-option>
+						<el-option :label="$t('metadata.metadataSearch.table')" value="table"></el-option>
+						<el-option :label="$t('metadata.metadataSearch.column')" value="column"></el-option>
 					</el-select>
-					<el-button type="primary" slot="append" @click="handleSearch">搜索</el-button>
+					<el-button type="primary" slot="append" @click="handleSearch">{{
+						$t('metadata.metadataSearch.search')
+					}}</el-button>
 				</el-input>
 				<div class="desc">
-					元数据检索提供对表、字段的名称、别名、描述等内容的搜索功能，请先选择搜索表/字段，再输入内容，点击搜索按钮进行搜索
+					{{ $t('metadata.metadataSearch.desc') }}
 				</div>
 			</div>
 		</div>
 		<div class="search-box-wrap" v-show="!showNoSearch">
 			<div class="search-box">
 				<div class="search-header">
-					<span class="search-title">元数据搜索</span>
+					<span class="search-title">{{ $t('metadata.metadataSearch.title') }}</span>
 					<el-input
 						class="input-with"
-						placeholder="请输入内容"
+						:placeholder="$t('metadata.metadataSearch.placeholder')"
 						v-model="keyword"
 						ref="searchInput"
 						@keyup.native.13="handleSearch"
 					>
 						<el-select v-model="meta_type" slot="prepend" placeholder="请选择" class="input-with-select">
-							<el-option label="搜索表" value="table"></el-option>
-							<el-option label="搜索字段" value="column"></el-option>
+							<el-option :label="$t('metadata.metadataSearch.table')" value="table"></el-option>
+							<el-option :label="$t('metadata.metadataSearch.column')" value="column"></el-option>
 						</el-select>
-						<el-button type="primary" slot="append" @click="handleSearch('')">搜索</el-button>
+						<el-button type="primary" slot="append" @click="handleSearch('')">{{
+							$t('metadata.metadataSearch.search')
+						}}</el-button>
 					</el-input>
 				</div>
 				<div class="no-result" v-if="searchData.length === 0 && firstSearch === 0">
-					请按“回车”键发起检索
+					{{ $t('metadata.metadataSearch.noSearch') }}
 				</div>
 				<div class="no-result" v-else-if="searchData.length === 0 && firstSearch !== 0">
-					暂无搜索结果，请确认搜索关键字
+					{{ $t('metadata.metadataSearch.noResult') }}
 				</div>
 				<div ref="searchResult" class="search-result" v-else @scroll="handleLoad">
 					<ul class="table">
@@ -69,8 +73,9 @@
 								</li>
 							</ul>
 						</li>
-						<li class="desc">
-							无更多检索结果 ?_(:з」∠)......
+						<li class="desc" v-if="noMore">{{ $t('metadata.metadataSearch.noMore') }} ?_(:з」∠)......</li>
+						<li v-else class="more" @click="handleSearch(lastId)">
+							{{ $t('metadata.metadataSearch.more') }}
 						</li>
 					</ul>
 				</div>
@@ -88,9 +93,11 @@ export default {
 			meta_type: 'table',
 			keyword: '',
 			showNoSearch: true,
+			noMore: false,
 			searchData: [],
 			originalData: [],
-			firstSearch: 0
+			firstSearch: 0,
+			lastId: ''
 		};
 	},
 	watch: {
@@ -124,11 +131,24 @@ export default {
 			this.$api('MetadataInstances')
 				.search(params)
 				.then(result => {
+					if (!result.data || (result.data && !result.data.records)) {
+						this.noMore = true;
+						return;
+					}
 					let resultData = result.data.records.data || [];
 					//关键字标记
-					//resultData = this.getMockData(params);
 					this.handleKeywords(resultData || []);
 					this.searchData = this.searchData.concat(resultData);
+					if (this.searchData.length === 0) {
+						this.noMore = true;
+						return;
+					}
+					this.lastId = this.searchData[this.searchData.length - 1].id;
+				})
+				.catch(err => {
+					if (err && err.response) {
+						this.$message.error(err.response.msg);
+					}
 				});
 		},
 		handleParams(id) {
@@ -165,14 +185,13 @@ export default {
 			return text;
 		},
 		handleLoad() {
-			let lastId = this.searchData[this.searchData.length - 1].id;
 			if (
 				this.$refs.searchResult.scrollHeight -
 					this.$refs.searchResult.clientHeight -
 					this.$refs.searchResult.scrollTop <
 				100
 			) {
-				this.handleSearch(lastId);
+				this.handleSearch(this.lastId);
 			}
 		},
 		goMetaInfo() {
@@ -232,12 +251,16 @@ export default {
 <style scoped lang="less">
 .metadata-change-background {
 	background: #fafafa;
+	display: flex;
+	height: 100%;
+	overflow: hidden;
+	width: 100%;
 }
 .metadata-search-wrap {
 	height: 100%;
 	overflow: hidden;
 	.input-with-select {
-		width: 120px;
+		width: 140px;
 	}
 	.input-with {
 		width: 605px;
@@ -251,7 +274,7 @@ export default {
 			display: flex;
 			flex-direction: column;
 			.metadata-search-title {
-				width: 150px;
+				width: 250px;
 				height: 40px;
 				color: rgba(72, 182, 226, 100);
 				font-size: 24px;
@@ -267,6 +290,18 @@ export default {
 		}
 	}
 	.search-box-wrap {
+		width: 100%;
+		.search-box {
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+			height: 100%;
+			width: 100%;
+		}
+		.search-result {
+			isplay: flex;
+			flex: 1;
+		}
 		.keyword {
 			color: #d54e21;
 		}
@@ -295,7 +330,7 @@ export default {
 		.search-result {
 			margin: 10px;
 			padding: 10px;
-			height: 800px;
+			max-height: 800px;
 			overflow-y: auto;
 			border-radius: 3px;
 			background-color: rgba(255, 255, 255, 100);
@@ -341,6 +376,11 @@ export default {
 			.title {
 				color: #48b6e2;
 			}
+		}
+		.more {
+			color: #999;
+			font-size: 12px;
+			cursor: pointer;
 		}
 	}
 }

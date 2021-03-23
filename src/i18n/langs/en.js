@@ -1916,6 +1916,20 @@ const en = {
 			attrKey: 'Property value',
 			editAliasNameTitle: 'Edit alias',
 			editCommentTitle: 'Edit description'
+		},
+		metadataSearch: {
+			title: 'Metadata retrieval',
+			desc:
+				'Metadata retrieval provides search functions for the names, aliases, descriptions of tables and fields, please select the search table/field first, then enter the content, and click the search button to search',
+			table: 'Search table',
+			column: 'Search field',
+			search: 'Search',
+			noSearch: 'Please press "Enter" to initiate a search',
+			noResult: 'No search results, please confirm the search keywords',
+			originalName: 'Original table name',
+			noMore: 'No more search results',
+			more: 'Click to load more',
+			placeholder: 'please enter keyword to search'
 		}
 	},
 	notification: {
