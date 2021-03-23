@@ -68,3 +68,9 @@ export function delayTrigger(func, t = 500) {
 		func && func();
 	}
 }
+export const getImgByType = function(type) {
+	if (!type) {
+		type = 'default';
+	}
+	return require(`../../static/image/types/${type.toLowerCase()}.png`);
+};

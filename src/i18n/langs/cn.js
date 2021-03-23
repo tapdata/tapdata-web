@@ -146,6 +146,7 @@ const cn = {
 			dataGovernance: '数据治理',
 			metadataDefinition: '元数据管理',
 			metadata: '数据目录',
+			metadataSearch: '元数据检索',
 			dataQuality: '数据质量',
 			timeToLive: '生命周期管理',
 			dataMap: '数据地图',
@@ -1893,6 +1894,20 @@ const cn = {
 			editAliasNameTitle: '编辑别名',
 			editCommentTitle: '编辑描述',
 			uniquelyIdentifies: '唯一标识'
+		},
+		metadataSearch: {
+			title: '元数据检索',
+			desc:
+				'元数据检索提供对表、字段的名称、别名、描述等内容的搜索功能，请先选择搜索表/字段，再输入内容，点击搜索按钮进行搜索',
+			table: '搜索表',
+			column: '搜索字段',
+			search: '搜索',
+			noSearch: '请按“回车”键发起检索',
+			noResult: '暂无搜索结果，请确认搜索关键字',
+			originalName: '原表名',
+			noMore: '无更多检索结果',
+			more: '点击加载更多',
+			placeholder: '请输入搜索关键字'
 		}
 	},
 	dialog: {

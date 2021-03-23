@@ -81,6 +81,15 @@ const childRoutes = [
 		}
 	},
 	{
+		path: '/metadataSearch',
+		name: 'metadataSearch',
+		component: view('metadata/Search'),
+		meta: {
+			title: i18n.t('tap.metadataInstances'),
+			isCollapse: true
+		}
+	},
+	{
 		path: '/metadataInstances/:id',
 		name: 'metadataInstances',
 		component: view('ExternalLink'),
