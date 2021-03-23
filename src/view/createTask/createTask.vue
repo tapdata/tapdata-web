@@ -343,9 +343,7 @@ export default {
 			} else if (this.dataSourceModel.source_sourceType === 'selfDB' && type === 'source') {
 				where = {
 					database_type: { in: this.allowDataType },
-					sourceType: 'selfDB',
-					'platformInfo.region': { $exists: false },
-					'platformInfo.zone': { $exists: false }
+					sourceType: 'selfDB'
 				};
 			} else if (['rds', 'ecs', 'dds'].includes(this.dataSourceModel.target_sourceType) && type === 'target') {
 				where = {
@@ -357,9 +355,7 @@ export default {
 			} else {
 				where = {
 					database_type: { in: this.allowDataType },
-					sourceType: 'selfDB',
-					'platformInfo.region': { $exists: false },
-					'platformInfo.zone': { $exists: false }
+					sourceType: 'selfDB'
 				};
 			}
 			return where;
