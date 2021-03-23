@@ -254,6 +254,9 @@ export default {
 					this.reloadApi();
 				}
 				let type = this.type;
+				if (type === 'mysql pxc') {
+					type = 'mysqlpxc';
+				}
 				if (window.getSettingByKey('SUPPORT_RDS')) {
 					type = 'drs_' + type;
 				}
