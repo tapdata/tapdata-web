@@ -38,7 +38,7 @@
 			</div>
 		</div>
 		<div class="clear"></div>
-		<div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
+		<div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom" v-if="schema">
 			<el-container v-loading="loadingSchema">
 				<el-main>
 					<el-tree
@@ -53,19 +53,32 @@
 					>
 						<span class="custom-tree-node" slot-scope="{ node, data }">
 							<span class="e-port e-port-in" :data-id="getId(data)"></span>
-							<span
-								class="e-label"
-								:class="{
-									activename: isRename(data.id) || isCreate(data.id, data.label)
-								}"
-							>
-								<el-input
-									v-model="data.label"
-									@blur="handleRename(node, data)"
-									@change="handleRename(node, data)"
-									:disabled="isRemove(data.id) || disabledMode"
-								></el-input>
-							</span>
+							<el-tooltip class="item" effect="dark" placement="left-start">
+								<span slot="content"
+									>{{ $t('editor.cell.processor.field.form.originalName') + data.original_field_name
+									}}<br />
+									<span v-if="data.original_javaType">{{
+										$t('editor.cell.processor.field.form.originalType') + data.original_type
+									}}</span>
+									<span v-else
+										>{{ $t('editor.cell.processor.field.form.originalType')
+										}}{{ handleOriginalType(data.type, data.id) }}</span
+									>
+								</span>
+								<span
+									class="e-label"
+									:class="{
+										'active-name': isRename(data.id) || isCreate(data.id, data.label)
+									}"
+								>
+									<el-input
+										v-model="data.label"
+										@blur="handleRename(node, data)"
+										@change="handleRename(node, data)"
+										:disabled="isRemove(data.id) || disabledMode"
+									></el-input>
+								</span>
+							</el-tooltip>
 							<el-select
 								v-model="data.type"
 								class="e-select"
@@ -361,7 +374,7 @@ import $ from 'jquery';
 import log from '../../../log';
 import _ from 'lodash';
 import { uuid } from '../../util/Schema';
-import { isValidate, isScript, fieldsNamesMap, delScript } from './util';
+import { isValidate, isScript, fieldsNamesMap, delScript, originalType } from './util';
 
 const REMOVE_OPS_TPL = {
 	id: '',
@@ -510,6 +523,16 @@ export default {
 					}
 				}, 100);
 			});
+		},
+		//originalType 旧数据兼容
+		handleOriginalType(type, id) {
+			debugger;
+			let javaType = originalType(this.model.operations, id);
+			let currentType = type;
+			if (javaType !== '') {
+				currentType = javaType;
+			}
+			return currentType;
 		},
 		setOperations(operations) {
 			this.model.operations = operations;
@@ -1298,7 +1321,7 @@ export default {
 			}
 		}
 
-		.activename {
+		.active-name {
 			.el-input__inner {
 				color: @color;
 			}

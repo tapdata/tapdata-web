@@ -1082,6 +1082,8 @@ const cn = {
 							label: '描述',
 							placeholder: '请输入节点描述'
 						},
+						originalName: '原字段名: ',
+						originalType: '原类型: ',
 						errorUndefined:
 							'检测到源节点的模型有变化，字段处理器无法使用，请在上一级节点的配置面板点击更新模型按钮以更新模型',
 						errorOperationSaveTip: '字段处理节点检测到冲突待处理',

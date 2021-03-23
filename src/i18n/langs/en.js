@@ -1102,6 +1102,8 @@ const en = {
 							label: 'Description',
 							placeholder: 'Please input you node description'
 						},
+						originalName: 'Original field name: ',
+						originalType: 'Original type: ',
 						errorUndefined:
 							'The model of the source node has changed, so that the field processor does not work, please click the UPDATE MODEL button in the configuration panel of the upper node to handle this issue',
 						errorOperationSaveTip: 'The field processor node has conflict to be handled',
