@@ -333,29 +333,19 @@ export default {
 		},
 		getWhere(type) {
 			let where = {};
-			if (['rds', 'ecs', 'dds'].includes(this.dataSourceModel.source_sourceType) && type === 'source') {
+			if (type === 'source') {
 				where = {
 					database_type: { in: this.allowDataType },
 					sourceType: this.dataSourceModel.source_sourceType,
-					region: this.platformInfo.region,
-					zone: this.platformInfo.zone
-				};
-			} else if (this.dataSourceModel.source_sourceType === 'selfDB' && type === 'source') {
-				where = {
-					database_type: { in: this.allowDataType },
-					sourceType: 'selfDB'
-				};
-			} else if (['rds', 'ecs', 'dds'].includes(this.dataSourceModel.target_sourceType) && type === 'target') {
-				where = {
-					database_type: { in: this.allowDataType },
-					sourceType: this.dataSourceModel.target_sourceType,
-					region: this.platformInfo.region,
-					zone: this.platformInfo.zone
+					'platformInfo.region': this.platformInfo.region,
+					'platformInfo.zone': this.platformInfo.zone
 				};
 			} else {
 				where = {
 					database_type: { in: this.allowDataType },
-					sourceType: 'selfDB'
+					sourceType: this.dataSourceModel.target_sourceType,
+					'platformInfo.region': this.platformInfo.region,
+					'platformInfo.zone': this.platformInfo.zone
 				};
 			}
 			return where;
