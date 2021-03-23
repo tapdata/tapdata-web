@@ -109,15 +109,15 @@
 			</el-table-column>
 			<el-table-column
 				prop="sourceTotal"
-				width="200"
+				width="120"
 				:label="$t('dataVerification.sourceTotalRows')"
 			></el-table-column>
 			<el-table-column
 				prop="targetTotal"
-				width="200"
+				width="120"
 				:label="$t('dataVerification.targetTotalRows')"
 			></el-table-column>
-			<el-table-column :label="$t('dataVerification.verifyResult')" width="180">
+			<el-table-column :label="$t('dataVerification.verifyResult')" width="140">
 				<template slot-scope="scope">
 					<div v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
 						<span v-if="scope.row.result !== 'passed'" class="error">
@@ -144,7 +144,7 @@
 					<div v-else>{{ statusMap[scope.row.status] }}</div>
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataVerification.verifyStatus')" width="140" prop="status">
+			<el-table-column :label="$t('dataVerification.verifyStatus')" width="120" prop="status">
 				<template slot-scope="scope">
 					<span>{{ statusMap[scope.row.status] }}</span>
 					<span v-if="scope.row.InspectResult && scope.row.status === 'running'">
