@@ -526,7 +526,6 @@ export default {
 		},
 		//originalType 旧数据兼容
 		handleOriginalType(type, id) {
-			debugger;
 			let javaType = originalType(this.model.operations, id);
 			let currentType = type;
 			if (javaType !== '') {

@@ -329,7 +329,14 @@ export default class Editor extends BaseObject {
 
 			let settingData = self.graph.getSettingData() || {};
 			settingData.editDisable = !!editDisable;
-			if (settingData.editDisable) $('.monitorTab').html('<div class="e-tab-title active">setting</div>');
+
+			if (settingData.editDisable) {
+				$('.monitorTab').html('<div class="e-tab-title active">setting</div>');
+				let removeTab = document.getElementsByClassName('monitorTab');
+				if (removeTab && removeTab.length > 0) {
+					removeTab[0].remove();
+				}
+			}
 			setting.setData(settingData);
 			rightTabPanel.select(setting);
 		}
