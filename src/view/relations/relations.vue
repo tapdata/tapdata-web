@@ -4,7 +4,7 @@
 			<div class="tool-bar">
 				<i class="iconfont icon-plus-circle" @click="zoomIn"></i>
 				<i class="iconfont icon-minus-circle" @click="zoomOut"></i>
-				<i v-if="level === 'fields'" class="iconfont icon-shangyibu" @click="getData"></i>
+				<i v-if="level === 'field'" class="iconfont icon-shangyibu" @click="getData"></i>
 				<i class="iconfont icon-shuaxin1" @click="refreshData"></i>
 			</div>
 			<span class="refreshS" :class="{ errorClass: !rClass, actProgress: !refreshing }" @click="checkError"
@@ -72,15 +72,11 @@ export default {
 	},
 	mounted() {
 		this.graph = graph();
-		LineageGraphsAPI.graphData(this.tableId).then(res => {
-			if (res.data) {
-				this.graph.draw(res.data.items, res.data.links, this);
-			}
-		});
+		this.getData();
 		LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(res => {
 			if (res.data) {
 				this.refreshResult = res.data[0];
-				if (this.refreshResult.status == 'error') this.rClass = false;
+				if (this.refreshResult.status === 'error') this.rClass = false;
 				else this.rClass = true;
 			}
 		});
@@ -89,7 +85,11 @@ export default {
 		getData() {
 			this.level = 'table';
 			this.model.level = 'table';
-			LineageGraphsAPI.graphData(this.tableId).then(res => {
+			let params = {
+				level: this.level,
+				qualifiedName: this.tableId
+			};
+			LineageGraphsAPI.graphData(params).then(res => {
 				if (res.data) {
 					this.graph.draw(res.data.items, res.data.links, this);
 				}
@@ -98,7 +98,7 @@ export default {
 		refreshData() {
 			LineageGraphsAPI.refreshGraphData()
 				.then(res => {
-					if (res.data == true) {
+					if (res.data) {
 						this.refreshResult.allProgress = 10;
 						this.refreshResult.currProgress = 0;
 						this.refreshing = true;
@@ -111,107 +111,7 @@ export default {
 										this.$message.error('正在同步图形数据，图形可能缺失，请稍后刷新重试');
 									}
 									if (self.refreshResult.status == 'finish') {
-										LineageGraphsAPI.graphData(this.tableId).then(res => {
-											if (res.data) {
-												let items = [
-													{
-														id: 'adm_greenbuild_project_date_used_water_count_1',
-														label: 'adm_greenbuild_project_date_used_water_count_1',
-														items: [
-															{
-																id: 'adm_greenbuild_project_date_used_water_count_1',
-																label: 'adm_greenbuild_project_date_used_water_count_1'
-															}
-														],
-														connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-													},
-													{
-														id: 'mdm_project_info',
-														label: 'mdm_project_info',
-														items: [
-															{
-																id: 'fields',
-																label: 'fields'
-															}
-														],
-														connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-													},
-													{
-														id: 'adm_ls_engineer_use_water_temp',
-														label: '用水汇总临时表',
-														items: [
-															{
-																id: 'fields',
-																label: 'fields'
-															}
-														],
-														connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-													},
-													{
-														id: 'adm_greenbuild_branch_date_used_water_count',
-														label: '用水汇总表',
-														items: [
-															{
-																id: 'fields',
-																label: 'fields'
-															}
-														],
-														connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-													}
-												];
-												let links = [
-													{
-														source: {
-															id: 'adm_greenbuild_project_date_used_water_count_1',
-															port: 'fields'
-														},
-														target: {
-															id: 'adm_ls_engineer_use_water_temp',
-															port: 'fields'
-														},
-														dataFlows: [
-															{
-																id: '60127fe2ace10a61d0570ae9',
-																name: '05_ADM_用水用电情况合并_二公司'
-															}
-														]
-													},
-													{
-														source: {
-															id: 'adm_greenbuild_project_date_used_water_count_1',
-															port: 'branch_abb'
-														},
-														target: {
-															id: 'adm_ls_engineer_use_water_temp',
-															port: 'branch_abb'
-														},
-														dataFlows: [
-															{
-																id: '60127fe2ace10a61d0570ae9',
-																name: '05_ADM_用水用电情况合并_二公司'
-															}
-														]
-													},
-													{
-														source: {
-															id: 'adm_greenbuild_project_date_used_water_count_1',
-															port: 'branch_id'
-														},
-														target: {
-															id: 'adm_ls_engineer_use_water_temp',
-															port: 'branch_id'
-														},
-														dataFlows: [
-															{
-																id: '60127fe2ace10a61d0570ae9',
-																name: '05_ADM_用水用电情况合并_二公司'
-															}
-														]
-													}
-												];
-												this.graph.draw(items, links, this);
-											}
-										});
+										this.getData();
 										//this.graph = graph();
 										clearInterval(self.inter);
 										setTimeout(() => {
@@ -229,7 +129,7 @@ export default {
 						LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(res => {
 							if (res.data) {
 								this.refreshResult = res.data[0];
-								if (this.refreshResult.status == 'error') {
+								if (this.refreshResult.status === 'error') {
 									this.rClass = false;
 									this.errorVisible = true;
 									this.refreshing = false;
@@ -245,7 +145,7 @@ export default {
 			this.model.previewVisible = false;
 		},
 		checkError() {
-			if (this.refreshResult.status == 'error') this.errorVisible = true;
+			if (this.refreshResult.status === 'error') this.errorVisible = true;
 		},
 		zoomIn() {
 			window.paperScroller.zoom(0.2, { max: 4 });
@@ -254,299 +154,16 @@ export default {
 			window.paperScroller.zoom(-0.2, { min: 0.2 });
 		},
 		changeLevel(qualifiedName, fields) {
-			this.level = 'fields';
+			this.level = 'field';
+			let params = {
+				level: this.level,
+				qualifiedName: qualifiedName,
+				fields: fields
+			};
 			this.$api('LineageGraphs')
-				.graphData(qualifiedName, 'field', fields)
-				.then(() => {
-					let items = [
-						{
-							id: 'adm_greenbuild_project_date_used_water_count_1',
-							label: 'adm_greenbuild_project_date_used_water_count_1',
-							items: [
-								{
-									id: 'adm_greenbuild_project_date_used_water_count_1',
-									label: 'adm_greenbuild_project_date_used_water_count_1',
-									items: [
-										{ id: '_id', label: '_id', type: 'String', primary_key_position: 1 },
-										{ id: 'branch_abb', label: 'branch_abb', type: 'String', is_deleted: true },
-										{ id: 'branch_id', label: 'branch_id', type: 'Integer', is_add: true },
-										{ id: 'branch_name', label: 'branch_name', type: 'String' },
-										{ id: 'engineer_id', label: 'engineer_id', type: 'Integer' },
-										{ id: 'water_record_date', label: 'water_record_date', type: 'String' },
-										{ id: 'used_water_count', label: 'used_water_count', type: 'Double' }
-									]
-								}
-							],
-							connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-						},
-						{
-							id: 'mdm_project_info',
-							label: 'mdm_project_info',
-							items: [
-								{
-									id: 'fields',
-									label: 'fields',
-									items: [
-										{ id: '_id', label: '_id', type: 'String', primary_key_position: 1 },
-										{ id: 'branch_id', label: 'branch_id', type: 'Integer' },
-										{ id: 'pro_bulid_area', label: 'pro_bulid_area', type: 'Double' }
-									]
-								}
-							],
-							connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-						},
-						{
-							id: 'adm_ls_engineer_use_water_temp',
-							label: '用水汇总临时表',
-							items: [
-								{
-									id: 'fields',
-									label: 'fields',
-									items: [
-										{ id: '_id', label: '_id', type: 'String', primary_key_position: 1 },
-										{ id: 'branch_abb', label: 'branch_abb', type: 'String' },
-										{ id: 'branch_id', label: 'branch_id', type: 'Integer' },
-										{ id: 'branch_name', label: 'branch_name', type: 'String' },
-										{ id: 'engineer_id', label: 'engineer_id', type: 'Integer' },
-										{ id: 'water_record_date', label: 'water_record_date', type: 'String' },
-										{ id: 'used_water_count', label: 'used_water_count', type: 'Double' },
-										{ id: 'pro_bulid_area', label: 'pro_bulid_area', type: 'Double' }
-									]
-								}
-							],
-							connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-						},
-						{
-							id: 'adm_greenbuild_branch_date_used_water_count',
-							label: '用水汇总表',
-							items: [
-								{
-									id: 'fields',
-									label: 'fields',
-									items: [
-										{ id: '_id', label: '_id', type: 'String', primary_key_position: 1 },
-										{ id: 'branch_abb', label: 'branch_abb', type: 'String' },
-										{ id: 'branch_id', label: 'branch_id', type: 'Integer' },
-										{ id: 'branch_name', label: 'branch_name', type: 'String' },
-										{ id: 'engineer_id', label: 'engineer_id', type: 'Integer' },
-										{ id: 'water_record_date', label: 'water_record_date', type: 'String' },
-										{ id: 'used_water_count', label: 'used_water_count', type: 'Double' },
-										{ id: 'pro_bulid_area', label: 'pro_bulid_area', type: 'Double' },
-										{ id: 'avg_water_count', label: 'avg_water_count', type: 'Double' }
-									]
-								}
-							],
-							connection: { id: '', name: '全项目的中间及统计集合库YTMB' }
-						}
-					];
-
-					let links = [
-						{
-							source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'fields' },
-							target: { id: 'adm_ls_engineer_use_water_temp', port: 'fields' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'branch_abb' },
-							target: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_abb' },
-							dataFlows: [
-								{
-									id: '60127fe2ace10a61d0570ae9',
-									name: '05_ADM_用水用电情况合并_二公司',
-									processors: [
-										{
-											id: 'qqq',
-											name: '字段处理1',
-											type: 'field_processor',
-											operations: [
-												{
-													color: '#409EFF',
-													field: 'COVER_START',
-													id: '604f2410ba8cc10057cbed06',
-													label: 'COVER_START',
-													op: 'REMOVE',
-													operand: true,
-													primary_key_position: 0,
-													table_name: 'POLICY',
-													type: 'Date'
-												},
-												{
-													color: '#3q55dc',
-													field: 'gender',
-													id: '604f2410ba8cc10057cbec8d',
-													label: 'genderll',
-													op: 'RENAME',
-													operand: 'genderll',
-													primary_key_position: 0,
-													table_name: 'PERSON',
-													type: 'String',
-													script: 'ff'
-												},
-												{
-													color: '#e6a23c',
-													field: 'CO_CDE',
-													id: '604f2410ba8cc10057cbef2d',
-													label: 'CO_CDE',
-													op: 'CONVERT',
-													operand: 'Date',
-													originalDataType: 'String',
-													primary_key_position: 0,
-													table_name: 'IM_DEPT_INDEX',
-													type: 'Date'
-												}
-											]
-										},
-										{
-											id: 'www',
-											name: '脚本处理1',
-											type: 'script_processor',
-											scripts: [
-												{
-													lang: 'js',
-													script: '222222222'
-												}
-											]
-										},
-										{
-											id: 'eee',
-											name: '聚合1',
-											type: 'aggregations_processor',
-											aggregations: [
-												{
-													groupByExpression: ['q', 'b'],
-													aggFunction: 'AVG'
-												},
-												{
-													groupByExpression: ['q', 'b'],
-													aggFunction: 'SUM'
-												},
-												{
-													groupByExpression: ['q', 'b'],
-													aggFunction: 'COUNT'
-												},
-												{
-													groupByExpression: ['q', 'b'],
-													aggFunction: 'MAX'
-												},
-												{
-													groupByExpression: [],
-													aggFunction: 'MIN'
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'branch_id' },
-							target: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_id' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'branch_name' },
-							target: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_name' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'engineer_id' },
-							target: { id: 'adm_ls_engineer_use_water_temp', port: 'engineer_id' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'water_record_date' },
-							target: { id: 'adm_ls_engineer_use_water_temp', port: 'water_record_date' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_greenbuild_project_date_used_water_count_1', port: 'used_water_count' },
-							target: { id: 'adm_ls_engineer_use_water_temp', port: 'used_water_count' },
-							dataFlows: [
-								{
-									id: '60127fe2ace10a61d0570ae9',
-									name: '05_ADM_用水用电情况合并_二公司',
-									aggregate: { type: 'SUM', field: 'pro_bulid_area', group: 'branch_id' }
-								}
-							]
-						},
-						{
-							source: { id: 'mdm_project_info', port: 'branch_id' },
-							target: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_id' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'mdm_project_info', port: 'pro_bulid_area' },
-							target: { id: 'adm_ls_engineer_use_water_temp', port: 'pro_bulid_area' },
-							dataFlows: [
-								{
-									id: '60127fe2ace10a61d0570ae9',
-									name: '05_ADM_用水用电情况合并_二公司',
-									aggregate: { type: 'SUM', field: 'pro_bulid_area', group: 'branch_id' }
-								}
-							]
-						},
-						{
-							source: { id: 'adm_ls_engineer_use_water_temp', port: 'fields' },
-							target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'fields' },
-							dataFlows: [
-								{
-									id: '60127fe2ace10a61d0570ae9',
-									name: '05_ADM_用水用电情况合并_二公司',
-									javascript:
-										'function process(record){\n' +
-										'\n' +
-										'\tif(record.pro_bulid_area && record.pro_bulid_area>0){\n' +
-										'\t\trecord.avg_water_count = record.used_water_count/record.pro_bulid_area\n' +
-										'\t}else{\n' +
-										'\t\trecord.avg_water_count = 0\n' +
-										'\t}\n' +
-										'\treturn record;\n' +
-										'}'
-								}
-							]
-						},
-						{
-							source: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_abb' },
-							target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'branch_abb' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_id' },
-							target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'branch_id' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_name' },
-							target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'branch_name' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_ls_engineer_use_water_temp', port: 'engineer_id' },
-							target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'engineer_id' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_ls_engineer_use_water_temp', port: 'water_record_date' },
-							target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'water_record_date' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_ls_engineer_use_water_temp', port: 'used_water_count' },
-							target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'used_water_count' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_ls_engineer_use_water_temp', port: 'pro_bulid_area' },
-							target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'pro_bulid_area' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						},
-						{
-							source: { id: 'adm_ls_engineer_use_water_temp', port: 'branch_abb' },
-							target: { id: 'adm_greenbuild_branch_date_used_water_count', port: 'branch_abb' },
-							dataFlows: [{ id: '60127fe2ace10a61d0570ae9', name: '05_ADM_用水用电情况合并_二公司' }]
-						}
-					];
-					this.graph.draw(items, links, this);
+				.graphData(params)
+				.then(res => {
+					this.graph.draw(res.data.items, res.data.links, this);
 				});
 		}
 	}

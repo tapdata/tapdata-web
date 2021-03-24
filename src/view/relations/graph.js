@@ -81,22 +81,25 @@ export default function() {
 		if (cellView.model.isLink()) {
 			//点击link 查看血缘 或者查看任务详情
 			let cellModel = cellView.model;
+			//根据 id 截取到label
+			let source = cellModel.get('source');
+			let sourceName = source.port.replace(source.original_id + '_', '');
+			let target = cellModel.get('target');
+			let targetName = target.port.replace(target.original_id + '_', '');
 			graph.vcomp.model = {
 				level: 'field',
 				dataFlows: cellView.model.info.dataFlows,
 				previewVisible: true,
-				sourceName: cellModel.get('source').port,
-				targetName: cellModel.get('target').port
+				sourceName: sourceName,
+				targetName: targetName
 			};
 		} else {
-			if (graph.vcomp.model.level !== 'field') {
-				graph.vcomp.model = {
-					level: 'table',
-					connectionId: cellView.model.connection.id,
-					tableId: cellView.model.tableId,
-					previewVisible: true
-				};
-			}
+			graph.vcomp.model = {
+				level: 'table',
+				connectionId: cellView.model.connection.id,
+				tableId: cellView.model.tableId,
+				previewVisible: true
+			};
 		}
 	});
 	const paperScroller = new joint.ui.PaperScroller({
@@ -178,8 +181,15 @@ export default function() {
 				}
 				var node = new joint.shapes.mapping.Record({ items: [[table.items[0]]] });
 				linkdatas.map((link, idx, linkdatas) => {
-					if (link.source.id == table.id) linkdatas[idx].source.id = node.id;
-					if (link.target.id == table.id) linkdatas[idx].target.id = node.id;
+					if (link.source.id === table.id) {
+						linkdatas[idx].source['is_add'] = node.is_add;
+						linkdatas[idx].source['original_id'] = link.source.id;
+						linkdatas[idx].source.id = node.id;
+					}
+					if (link.target.id === table.id) {
+						linkdatas[idx].target['original_id'] = link.target.id;
+						linkdatas[idx].target.id = node.id;
+					}
 				});
 				node.setName(table.label);
 				node.tableId = table.id;
@@ -187,14 +197,20 @@ export default function() {
 				if (table.id == vcomp.tableId) {
 					node.attr('header/fill', '#d0d8e8');
 				}
+				node.toggleItemCollapse(table.id);
 				node.addTo(graph);
 				node.toggleItemCollapse(table.items[0].id);
 			});
 
 			var links = linkdatas.map(link => {
 				let res = new joint.shapes.mapping.Link({
-					source: { id: link.source.id, port: link.source.port },
-					target: { id: link.target.id, port: link.target.port }
+					source: {
+						id: link.source.id,
+						port: link.source.port,
+						original_id: link.source.original_id,
+						is_add: link.source.is_add
+					},
+					target: { id: link.target.id, port: link.target.port, original_id: link.target.original_id }
 					// labels: [
 					// 	{
 					// 		attrs: { text: { text: link.dataFlows[0].name } }
