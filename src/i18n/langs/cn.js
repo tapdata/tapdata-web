@@ -2305,7 +2305,7 @@ const cn = {
 			system_settings_menu: '系统设置',
 			dictionary_menu: '字典模板管理',
 			Topology_menu: '网络拓扑',
-			servers_oversee_menu: '浏览运维'
+			servers_oversee_menu: '运维运控'
 		},
 		moduleMeun: {
 			Dashboard: '浏览控制台(首页)',

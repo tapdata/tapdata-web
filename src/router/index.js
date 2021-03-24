@@ -143,7 +143,7 @@ const childRoutes = [
 		name: 'topology',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'topology_menu',
+			code: 'Topology_menu',
 			url: '/old/index.html#/topology',
 			title: i18n.t('tap.topology'),
 			isCollapse: false

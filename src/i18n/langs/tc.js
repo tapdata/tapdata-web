@@ -2300,7 +2300,7 @@ const tc = {
 			system_settings_menu: '系統設置',
 			dictionary_menu: '字典模板管理',
 			Topology_menu: '網絡拓撲',
-			servers_oversee_menu: '瀏覽運維'
+			servers_oversee_menu: '運維運控'
 		},
 		moduleMeun: {
 			Dashboard: '瀏覽控制台(首頁)',
