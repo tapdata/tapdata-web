@@ -2294,7 +2294,6 @@ const tc = {
 			schedule_jobs_menu: '調度任務',
 			Cluster_management_menu: '集群管理',
 			agents_menu: '進程管理',
-			dictionary: '字典模板',
 			user_management_menu: '用戶管理',
 			role_management_menu: '角色管理',
 			system_settings_menu: '系統設置',
@@ -2324,6 +2323,7 @@ const tc = {
 			schedule_jobs: '調度任務',
 			Cluster_management: '集群管理',
 			agents: '進程管理',
+			dictionary: '字典模板',
 			user_management: '用戶管理',
 			role_management: '角色管理',
 			system_settings: '系統設置'
