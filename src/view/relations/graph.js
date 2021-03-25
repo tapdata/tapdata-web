@@ -42,7 +42,11 @@ export default function() {
 		defaultConnectionPoint: { name: 'boundary', args: { extrapolate: true } },
 		// defaultConnectionPoint: joint.shapes.dataMap.Link.connectionPoint,
 		defaultConnector: { name: 'rounded' },
-		defaultRouter: { name: 'manhattan' },
+		//defaultRouter: { name: 'manhattan' },
+		defaultRouter: {
+			name: 'normal',
+			args: { padding: 40 }
+		},
 		/*restrictTranslate: function(elementView) {
 			let parentId = elementView.model.get('parent');
 			let parentCell = parentId && this.model.getCell(parentId);
@@ -182,7 +186,6 @@ export default function() {
 				var node = new joint.shapes.mapping.Record({ items: [[table.items[0]]] });
 				linkdatas.map((link, idx, linkdatas) => {
 					if (link.source.id === table.id) {
-						linkdatas[idx].source['is_add'] = node.is_add;
 						linkdatas[idx].source['original_id'] = link.source.id;
 						linkdatas[idx].source.id = node.id;
 					}
@@ -199,7 +202,6 @@ export default function() {
 				}
 				node.toggleItemCollapse(table.id);
 				node.addTo(graph);
-				node.toggleItemCollapse(table.items[0].id);
 			});
 
 			var links = linkdatas.map(link => {
@@ -207,8 +209,7 @@ export default function() {
 					source: {
 						id: link.source.id,
 						port: link.source.port,
-						original_id: link.source.original_id,
-						is_add: link.source.is_add
+						original_id: link.source.original_id
 					},
 					target: { id: link.target.id, port: link.target.port, original_id: link.target.original_id }
 					// labels: [
