@@ -22,7 +22,12 @@
 						v-model="customFields"
 					></el-input>
 					<div class="table-wrap">
-						<el-table class="field-table" :data="fields" @selection-change="handleSelectionChange">
+						<el-table
+							class="field-table"
+							ref="multipleTable"
+							:data="fields"
+							@selection-change="handleSelectionChange"
+						>
 							<el-table-column type="selection"></el-table-column>
 							<el-table-column prop="name" label="字段类型/字段名称">
 								<template slot-scope="scope">
@@ -57,15 +62,16 @@
 			</header>
 			<el-menu default-active="1" class="el-menu-vertical-lineage">
 				<template v-for="(item, index1) in model.dataFlows">
-					<el-submenu v-if="item.processors" :key="item.id" :index="index1 + 1" class="parentMenu">
+					<el-submenu :key="item.id" :index="index1 + 1" class="parentMenu">
 						<template slot="title">
 							<span slot="title">
-								<span class="keywords" @click="goJob(item.id)">任务[ {{ item.name }} ]</span>
+								<span>任务[ {{ item.name }} ]</span>
+								<span class="keywords" @click="goJob(item.id)">查看任务详情</span>
 							</span>
 						</template>
 						<template v-for="(processor, index2) in item.processors">
 							<el-submenu
-								v-if="processor.operations || processor.scripts || processor.aggregations"
+								v-if="processor.operations || processor.aggregations"
 								:key="processor.id"
 								:index="`${index1 + 1}-${index2 + 1}`"
 							>
@@ -76,7 +82,7 @@
 								</template>
 								<div v-if="processor.type === 'field_processor'">
 									<template v-for="(op, index3) in processor.operations">
-										<el-menu-item :key="op.id" :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`">
+										<el-menu-item :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`" :key="op.id">
 											<span v-if="['CREATE'].includes(op.op)">
 												<span class="label">新增</span>
 												<span> : {{ op.field }}</span>
@@ -88,30 +94,21 @@
 											<span v-if="['RENAME'].includes(op.op)">
 												<span class="label">更名</span>
 												<span> : {{ op.field }} -> {{ op.operand }}</span>
-												<span
-													v-if="op.script"
-													class="keywords"
-													@click="handleShowScript(op.script)"
-													>字段脚本</span
-												>
 											</span>
 											<span v-if="['CONVERT'].includes(op.op)">
 												<span class="label">改类型</span>
 												<span> : {{ op.originalDataType }} -> {{ op.operand }}</span>
 											</span>
+											<span v-if="['JS'].includes(op.op)">
+												<span class="label">脚本处理</span>
+												<span class="keywords" @click="handleShowScript(op.script)">
+													: 字段脚本</span
+												>
+											</span>
 										</el-menu-item>
 									</template>
 								</div>
-								<div v-if="processor.type === 'script_processor'">
-									<template v-for="(op, index3) in processor.scripts">
-										<el-menu-item :key="op.id" :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`">
-											<span v-if="op.script" class="keywords" @click="handleShowScript(op.script)"
-												>function process(record){...}</span
-											>
-										</el-menu-item>
-									</template>
-								</div>
-								<div v-if="processor.type === 'aggregations_processor'">
+								<div v-if="processor.type === 'aggregation_processor'">
 									<template v-for="(op, index3) in processor.aggregations">
 										<el-menu-item :key="op.id" :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`">
 											<span v-if="['COUNT'].includes(op.aggFunction)">
@@ -148,6 +145,16 @@
 									</template>
 								</div>
 							</el-submenu>
+							<div v-if="processor.type === 'js_processor'" :key="processor.id">
+								<el-menu-item :index="`${index1 + 1}-${index2 + 1}`">
+									<span
+										v-if="processor.script"
+										class="keywords"
+										@click="handleShowScript(processor.script)"
+										>脚本处理器[function process(record){...}]</span
+									>
+								</el-menu-item>
+							</div>
 						</template>
 					</el-submenu>
 				</template>
@@ -200,8 +207,8 @@ export default {
 			},
 			processorMap: {
 				field_processor: '字段处理器',
-				script_processor: '脚本处理器',
-				aggregations_processor: '聚合处理器'
+				js_processor: '脚本处理器',
+				aggregation_processor: '聚合处理器'
 			},
 			statusBtMap: {
 				// scheduled, draft, running, stopping, error, paused, force stopping
@@ -215,6 +222,13 @@ export default {
 		};
 	},
 	watch: {
+		'model.previewVisible': {
+			handler() {
+				if (!this.model.previewVisible) {
+					this.clear();
+				}
+			}
+		},
 		'model.connectionId': {
 			handler() {
 				if (this.model.connectionId) {
@@ -239,6 +253,11 @@ export default {
 		},
 		goBack() {
 			this.$emit('previewVisible', false);
+		},
+		//清空数据
+		clear() {
+			this.customFields = '';
+			this.$refs.multipleTable.clearSelection();
 		},
 		getMetaData() {
 			let params = {
@@ -300,7 +319,7 @@ export default {
 			//合并数组
 			fields = Array.from(new Set([...fields, ...customField]));
 			this.$emit('previewVisible', false);
-			this.$emit('handleFields', this.tableName, fields);
+			this.$emit('handleFields', this.model.tableId, fields);
 		},
 		//显示脚本
 		handleShowScript(script) {
