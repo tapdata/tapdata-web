@@ -81,7 +81,7 @@ export default function(vm) {
 			{
 				type: 'select',
 				field: 's_region',
-				label: 'RDS地域',
+				label: 'DDS地域',
 				options: [],
 				show: true,
 				dependOn: [
@@ -114,7 +114,7 @@ export default function(vm) {
 			{
 				type: 'select',
 				field: 's_zone',
-				label: 'RDS可用区',
+				label: 'DDS可用区',
 				options: [],
 				show: true,
 				dependOn: [

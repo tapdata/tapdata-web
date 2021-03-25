@@ -163,6 +163,9 @@ export default {
 	watch: {
 		'platformInfo.region'() {
 			this.changeInstanceRegion(); //第一步实例change
+			if (!this.id) {
+				this.platformInfo.zone = '';
+			}
 		},
 		'dataSourceModel.source_sourceType'() {
 			this.getConnection(this.getWhere('source'), 'source_connectionId');
@@ -218,8 +221,10 @@ export default {
 			if (zone.length > 0) {
 				this.platformInfo.zone = this.platformInfo.zone || zone[0].zones[0].code;
 				this.platformInfoZone = zone[0].zones;
-				this.changeConfig(zone[0].zones || [], 'zone');
+			} else {
+				this.platformInfoZone = [];
 			}
+			this.changeConfig(this.platformInfoZone, 'zone');
 		},
 		getSteps() {
 			const steps = [

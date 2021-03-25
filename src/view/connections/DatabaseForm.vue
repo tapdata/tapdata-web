@@ -406,6 +406,12 @@ export default {
 			if (filed === 'sourceType') {
 				this.model.database_host = '';
 			}
+			if (filed === 'region') {
+				this.model.zone = '';
+			}
+			if (filed === 's_region') {
+				this.model.s_zone = '';
+			}
 		},
 		async initData(data) {
 			let editData = null;
@@ -533,10 +539,12 @@ export default {
 		changeInstanceRegion() {
 			let zone = this.instanceMock.filter(item => item.code === this.model.region);
 			if (zone.length > 0) {
-				this.model.zone = this.model.s_zone || zone[0].zones[0].code;
+				this.model.zone = this.model.zone || zone[0].zones[0].code;
 				this.instanceModelZone = zone[0].zones;
-				this.changeConfig(zone[0].zones || [], 'zone');
+			} else {
+				this.instanceModelZone = [];
 			}
+			this.changeConfig(zone[0].zones, 'zone');
 		},
 		//第二步 选择源端
 		getDataSourceRegion() {
@@ -559,8 +567,10 @@ export default {
 			if (zone.length > 0) {
 				this.model.s_zone = this.model.s_zone || zone[0].zoneInfo[0].zoneCode;
 				this.dataSourceZone = zone[0].zoneInfo;
-				this.changeConfig(zone[0].zoneInfo || [], 's_defaultZone');
+			} else {
+				this.dataSourceZone = [];
 			}
+			this.changeConfig(zone[0].zoneInfo, 's_defaultZone');
 		},
 		//可用区联动database host
 		changeDatabaseHost() {
