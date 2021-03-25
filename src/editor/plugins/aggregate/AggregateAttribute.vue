@@ -78,6 +78,36 @@
 					>
 					</el-switch>
 				</el-form-item>
+				<el-form-item :label="$t('dataFlow.aggrCleanSecond')" required>
+					<el-input
+						type="number"
+						:value="form.aggrCleanSecond <= 3600 ? 3600 : form.aggrCleanSecond"
+						@input="
+							v => {
+								form.aggrCleanSecond = !v || v <= 3600 ? 3600 : v;
+							}
+						"
+					>
+						<template slot="append">
+							{{ $t('dataFlow.secondUnit') }}
+						</template>
+					</el-input>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.aggrFullSyncSecond')" required>
+					<el-input
+						type="number"
+						:value="form.aggrFullSyncSecond <= 3600 ? 3600 : form.aggrFullSyncSecond"
+						@input="
+							v => {
+								form.aggrFullSyncSecond = !v || v <= 3600 ? 3600 : v;
+							}
+						"
+					>
+						<template slot="append">
+							{{ $t('dataFlow.secondUnit') }}
+						</template>
+					</el-input>
+				</el-form-item>
 			</el-col>
 			<el-col style="padding: 0 10px;">
 				<el-row
@@ -244,6 +274,8 @@ export default {
 			form: {
 				name: '',
 				type: 'aggregation_processor',
+				aggrCleanSecond: 3600,
+				aggrFullSyncSecond: 3600,
 				aggregations: [
 					{
 						name: 'COUNT',

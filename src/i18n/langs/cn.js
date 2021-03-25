@@ -616,6 +616,8 @@ const cn = {
 		groupByExpression: '分组字段',
 		keepAggreHistoryData: '保留聚合历史数据',
 		aggregation: '聚合处理',
+		aggrCleanSecond: '清理旧版本数据时间',
+		aggrFullSyncSecond: '全量同步时间',
 		aggregatePrompt: '提示：使用聚合处理节点后，此任务停止后再次启动，任务将会重置',
 		nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
 		enterFilterTable: '请输入过滤表内容',

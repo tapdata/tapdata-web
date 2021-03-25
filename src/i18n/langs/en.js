@@ -625,6 +625,8 @@ const en = {
 		groupByExpression: 'Group Field',
 		keepAggreHistoryData: 'Keep aggregation historical data',
 		aggregation: 'Aggregation',
+		aggrCleanSecond: 'Time to clean up old version data',
+		aggrFullSyncSecond: 'Full synchronization time',
 		enterFilterTable: 'Please enter the filter table content',
 		aggregatePrompt: 'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
 		nameTip:
