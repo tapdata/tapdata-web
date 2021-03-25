@@ -564,6 +564,7 @@ export default {
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+		height: 100%;
 	}
 	.header {
 		display: flex;
@@ -673,6 +674,7 @@ export default {
 		font-weight: normal;
 	}
 	.info-list {
+		flex: 1;
 		overflow-y: auto;
 		max-height: 690px;
 		margin: 0 auto;
@@ -748,12 +750,7 @@ export default {
 		margin-bottom: 10px;
 	}
 	.el-drawer__body {
-		display: flex;
-		flex-direction: column;
 		overflow: hidden;
-		.info-list {
-			flex: 1;
-		}
 	}
 }
 </style>
