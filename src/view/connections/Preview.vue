@@ -104,41 +104,37 @@
 					v-if="showProgress"
 				></el-progress>
 			</header>
-			<div class="info-list-wrap">
-				<ul class="info-list">
-					<li v-for="item in form" :key="item.label" v-show="item.show">
-						<span class="label">{{ item.label }}</span>
-						<span
-							class="value align-center"
-							:class="{ 'align-top': item.label && item.label.length > 15 }"
-							>{{ item.value }}</span
-						>
+			<ul class="info-list">
+				<li v-for="item in form" :key="item.label" v-show="item.show">
+					<span class="label">{{ item.label }}</span>
+					<span class="value align-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
+						item.value
+					}}</span>
+				</li>
+				<!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
+					<span class="label">{{ $t('dataForm.form.port') }}</span>
+					<span class="value align-center"> {{ data.database_port }}</span>
+				</li> -->
+				<div
+					v-for="(item, index) in data.file_sources"
+					:key="index"
+					v-show="
+						data.database_type === 'file' &&
+							data.connection_type === 'source' &&
+							data.file_sources &&
+							data.file_sources[0].path
+					"
+				>
+					<li>
+						<span class="label">{{ $t('dataForm.form.file.fileUrl') + (index + 1) }}</span>
+						<span class="value align-center"> {{ item.path }}</span>
 					</li>
-					<!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
-						<span class="label">{{ $t('dataForm.form.port') }}</span>
-						<span class="value align-center"> {{ data.database_port }}</span>
-					</li> -->
-					<div
-						v-for="(item, index) in data.file_sources"
-						:key="index"
-						v-show="
-							data.database_type === 'file' &&
-								data.connection_type === 'source' &&
-								data.file_sources &&
-								data.file_sources[0].path
-						"
-					>
-						<li>
-							<span class="label">{{ $t('dataForm.form.file.fileUrl') + (index + 1) }}</span>
-							<span class="value align-center"> {{ item.path }}</span>
-						</li>
-						<li>
-							<span class="label">{{ $t('dataForm.form.file.recursive') }}</span>
-							<span class="value align-center"> {{ item.recursive }}</span>
-						</li>
-					</div>
-				</ul>
-			</div>
+					<li>
+						<span class="label">{{ $t('dataForm.form.file.recursive') }}</span>
+						<span class="value align-center"> {{ item.recursive }}</span>
+					</li>
+				</div>
+			</ul>
 		</div>
 		<Test
 			ref="test"
@@ -564,6 +560,12 @@ export default {
 
 <style scoped lang="less">
 .connection-drawer {
+	.connection-drawer-wrap {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		height: 100%;
+	}
 	.header {
 		display: flex;
 		flex-direction: column;
@@ -672,10 +674,13 @@ export default {
 		font-weight: normal;
 	}
 	.info-list {
+		flex: 1;
 		overflow-y: auto;
+		max-height: 690px;
 		margin: 0 auto;
 		padding-left: 56px;
 		width: 100%;
+		box-sizing: border-box;
 		li {
 			margin-bottom: 20px;
 		}
@@ -745,12 +750,7 @@ export default {
 		margin-bottom: 10px;
 	}
 	.el-drawer__body {
-		display: flex;
-		flex-direction: column;
 		overflow: hidden;
-		.info-list {
-			flex: 1;
-		}
 	}
 }
 </style>

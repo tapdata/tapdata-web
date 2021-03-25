@@ -119,8 +119,8 @@
 			></el-table-column>
 			<el-table-column :label="$t('dataVerification.verifyResult')" width="140">
 				<template slot-scope="scope">
-					<div v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
-						<span v-if="scope.row.result !== 'passed'" class="error">
+					<template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
+						<div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
 							<i class="data-verify__icon el-icon-error"></i>
 							<span>
 								{{
@@ -134,14 +134,20 @@
 										: scope.row.difference_number
 								}}
 							</span>
-						</span>
-						<span v-else class="success">
+						</div>
+						<div v-else class="data-verify__status success">
 							<i class="data-verify__icon el-icon-success"></i>
 							<span>{{ $t('dataVerification.consistent') }}</span>
-						</span>
+						</div>
+					</template>
+					<div v-else-if="scope.row.status === 'error'" class="data-verify__status">
+						<i class="data-verify__icon el-icon-error"></i>
+						<span>Error</span>
 					</div>
-					<div v-else-if="scope.row.status === 'error'">Error</div>
-					<div v-else>{{ statusMap[scope.row.status] }}</div>
+					<div v-else class="data-verify__status">
+						<img style="width: 26px;vertical-align: middle;" :src="$window._TAPDATA_OPTIONS_.loadingImg" />
+						<span>{{ statusMap[scope.row.status] }}</span>
+					</div>
 				</template>
 			</el-table-column>
 			<el-table-column :label="$t('dataVerification.verifyStatus')" width="120" prop="status">
@@ -448,7 +454,13 @@ export default {
 			margin-left: 5px;
 		}
 	}
+	.data-verify__status {
+		display: flex;
+		align-items: center;
+	}
 	.data-verify__icon {
+		width: 26px;
+		text-align: center;
 		font-size: 14px;
 	}
 }
