@@ -1088,7 +1088,8 @@ const en = {
 					aggregateSizeTips:
 						'Put in the range of cached aggregation result, the excess data will be stored in target database.',
 					allAggregateSize: 'All data write in cache',
-					customAggregateSize: 'Custom the cache range'
+					customAggregateSize: 'Custom the cache range',
+					timeLess3600: 'The time cannot be less than 3600'
 				},
 				field: {
 					name: 'Field',

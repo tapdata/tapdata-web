@@ -1068,7 +1068,8 @@ const cn = {
 					aggregateSizeLabel: '聚合结果缓存条数',
 					aggregateSizeTips: '聚合结果在设置的条数范围内存在缓存里，超出的数据会被存入目标库。',
 					allAggregateSize: '全部存入缓存',
-					customAggregateSize: '自定义缓存条数'
+					customAggregateSize: '自定义缓存条数',
+					timeLess3600: '时间不能少于3600'
 				},
 				field: {
 					name: '字段',
