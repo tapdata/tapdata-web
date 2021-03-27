@@ -15,6 +15,7 @@ const cn = {
 		dataCatalog: 'Tapdata-数据目录',
 		metadata: 'Tapdata-元数据管理',
 		metadataInstances: 'Tapdata-元数据详情',
+		metadataSearch: 'Tapdata-元数据检索',
 		dataQuality: 'Tapdata-数据质量',
 		TimeToLive: 'Tapdata-生命周期管理',
 		dataLineage: 'Tapdata-数据地图',

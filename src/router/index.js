@@ -85,7 +85,7 @@ const childRoutes = [
 		name: 'metadataSearch',
 		component: view('metadata/Search'),
 		meta: {
-			title: i18n.t('tap.metadataInstances'),
+			title: i18n.t('tap.metadataSearch'),
 			isCollapse: true
 		}
 	},

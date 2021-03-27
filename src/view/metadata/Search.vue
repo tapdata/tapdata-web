@@ -3,7 +3,12 @@
 		<div class="no-search-box-wrap" v-show="showNoSearch">
 			<div class="no-search-box">
 				<header class="metadata-search-title">{{ $t('metadata.metadataSearch.title') }}</header>
-				<el-input :placeholder="$t('metadata.metadataSearch.placeholder')" v-model="keyword" class="input-with">
+				<el-input
+					:placeholder="$t('metadata.metadataSearch.placeholder')"
+					v-model="keyword"
+					class="input-with"
+					maxlength="100"
+				>
 					<el-select v-model="meta_type" slot="prepend" placeholder="请选择" class="input-with-select">
 						<el-option :label="$t('metadata.metadataSearch.table')" value="table"></el-option>
 						<el-option :label="$t('metadata.metadataSearch.column')" value="column"></el-option>
@@ -26,7 +31,8 @@
 						:placeholder="$t('metadata.metadataSearch.placeholder')"
 						v-model="keyword"
 						ref="searchInput"
-						@keyup.native.13="handleSearch"
+						maxlength="100"
+						@keyup.native.13="handleSearch('')"
 					>
 						<el-select v-model="meta_type" slot="prepend" placeholder="请选择" class="input-with-select">
 							<el-option :label="$t('metadata.metadataSearch.table')" value="table"></el-option>
@@ -43,10 +49,10 @@
 				<div class="no-result" v-else-if="searchData.length === 0 && firstSearch !== 0">
 					{{ $t('metadata.metadataSearch.noResult') }}
 				</div>
-				<div ref="searchResult" class="search-result" v-else @scroll="handleLoad">
+				<div ref="searchResult" class="search-result" v-else>
 					<ul class="table">
 						<li class="table-li" v-for="item in searchData" :key="item.id">
-							<div class="table-box-wrap" v-if="item.table" @click="goMetaInfo">
+							<div class="table-box-wrap" v-if="item.table" @click="goMetaInfo(item.id)">
 								<div class="image-box">
 									<el-image src="static/image/metaSearchTable.png"></el-image>
 								</div>
@@ -73,8 +79,8 @@
 								</li>
 							</ul>
 						</li>
-						<li class="desc" v-if="noMore">{{ $t('metadata.metadataSearch.noMore') }} ?_(:з」∠)......</li>
-						<li v-else class="more" @click="handleSearch(lastId)">
+						<li class="more" v-if="noMore">{{ $t('metadata.metadataSearch.noMore') }} ?_(:з」∠)......</li>
+						<li v-else class="more" v-loading="loading" @click="handleSearch(lastId)">
 							{{ $t('metadata.metadataSearch.more') }}
 						</li>
 					</ul>
@@ -97,7 +103,8 @@ export default {
 			searchData: [],
 			originalData: [],
 			firstSearch: 0,
-			lastId: ''
+			lastId: '',
+			loading: true
 		};
 	},
 	watch: {
@@ -117,10 +124,8 @@ export default {
 		handleSearch(id) {
 			if (this.keyword === '') {
 				this.showNoSearch = true;
+				this.searchData = [];
 				return;
-			}
-			if (this.keyword.length > 100) {
-				this.$message.error('检索关键字不能超过100个字符');
 			}
 			if (id === '') {
 				this.firstSearch = 0;
@@ -128,10 +133,13 @@ export default {
 			}
 			let params = this.handleParams(id);
 			this.firstSearch = this.firstSearch === 0 ? 1 : this.firstSearch;
+			this.loading = true;
 			this.$api('MetadataInstances')
 				.search(params)
 				.then(result => {
-					if (!result.data || (result.data && !result.data.records)) {
+					let data = result.data.records || [];
+					this.noMore = false;
+					if (data.data.length === 0 || data.data.length < data.pageSize) {
 						this.noMore = true;
 						return;
 					}
@@ -139,23 +147,22 @@ export default {
 					//关键字标记
 					this.handleKeywords(resultData || []);
 					this.searchData = this.searchData.concat(resultData);
-					if (this.searchData.length === 0) {
-						this.noMore = true;
-						return;
-					}
 					this.lastId = this.searchData[this.searchData.length - 1].id;
 				})
 				.catch(err => {
 					if (err && err.response) {
 						this.$message.error(err.response.msg);
 					}
+				})
+				.finally(() => {
+					this.loading = false;
 				});
 		},
 		handleParams(id) {
 			let params = {
 				type: this.meta_type,
 				keyword: this.keyword,
-				pageSize: 15,
+				pageSize: 16,
 				lastId: id || ''
 			};
 			return params;
@@ -184,45 +191,8 @@ export default {
 			}
 			return text;
 		},
-		handleLoad() {
-			if (
-				this.$refs.searchResult.scrollHeight -
-					this.$refs.searchResult.clientHeight -
-					this.$refs.searchResult.scrollTop <
-				100
-			) {
-				this.handleSearch(this.lastId);
-			}
-		},
-		goMetaInfo() {
-			this.$router.push('/metadataDetails?id=601dfb9d02c7e300575dbc99');
-		},
-		getMockData(findObj) {
-			let mockData = [];
-			let id = findObj.lastId || '';
-			if (findObj.pageSize) {
-				for (let x = 0; x < findObj.pageSize; x++) {
-					let obj = {};
-					obj.id = id + x;
-					obj.table = {
-						name: 'tableName' + obj.id,
-						original_name: 'origin table name' + obj.id,
-						comment: 'comment ' + obj.id
-					};
-					if (findObj.type === 'column') {
-						obj.columns = [
-							{
-								field_name: 'column name' + obj.id,
-								original_field_name: 'ori column name' + obj.id,
-								comment: 'field comment ' + obj.id,
-								type: 'string'
-							}
-						];
-					}
-					mockData.push(obj);
-				}
-			}
-			return mockData;
+		goMetaInfo(id) {
+			this.$router.push('/metadataDetails?id=' + id);
 		}
 	}
 };
@@ -310,10 +280,6 @@ export default {
 			background: #ffffff;
 			overflow: hidden;
 			border-bottom: 1px solid #dedee4;
-			-webkit-box-shadow: 0px 0px 4px 0px rgb(0 0 0 / 10%);
-			box-shadow: 0px 0px 4px 0px rgb(0 0 0 / 10%);
-			-webkit-box-sizing: border-box;
-			box-sizing: border-box;
 			.search-title {
 				font-size: 14px;
 				color: #333;
@@ -346,14 +312,18 @@ export default {
 		}
 		.table {
 			li {
-				margin-bottom: 10px;
+				box-sizing: border-box;
 				.table-box-wrap {
 					display: flex;
+				}
+				&:hover {
+					background: #fafafa;
 				}
 			}
 			.table-li {
 				border-bottom: 1px solid rgba(238, 238, 238, 100);
-				padding-bottom: 10px;
+				padding-bottom: 6px;
+				padding-top: 12px;
 				cursor: pointer;
 			}
 		}
@@ -381,6 +351,8 @@ export default {
 			color: #999;
 			font-size: 12px;
 			cursor: pointer;
+			text-align: center;
+			line-height: 40px;
 		}
 	}
 }
