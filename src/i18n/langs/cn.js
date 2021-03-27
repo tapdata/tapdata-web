@@ -2567,7 +2567,31 @@ const cn = {
 		violatePercentage: '违反比例',
 		createTime: '统计时间',
 		actions: '操作',
-		view: '查看'
+		view: '查看',
+		btnFilter: '列过滤',
+		btnBatch: '批量修改',
+		save: '保存',
+		cancel: '取消',
+		viewDetail: '浏览详情',
+		del: '删除',
+		fieldFilter: '字段过滤',
+		allCheck: '全选',
+		fieldName: '字段名',
+		show: '显示',
+		hide: '不显示',
+		json: '业务数据',
+		verifyRuleTip: '选择违反的质量规则',
+		verifyContentTip: '请输入要修改的内容',
+		verifyContentLength: '长度不能超过100',
+		msgPostApi: '请先基于这张表发布一个api',
+		msgNoValidApi: '没有可用API服务器',
+		msgNotStartApi: '没有启用api服务？',
+		ifDel: '是否删除当前行？',
+		unlikeAjv: '输入的内容不符合选择的数据规则',
+		allUpdateSuccessTip1: '操作成功，一共修改',
+		allUpdateSuccessTip2: '条数据',
+		updateFail: '更新失败',
+		dataTypeError: '数据类型转换失败，期望==>'
 	}
 };
 

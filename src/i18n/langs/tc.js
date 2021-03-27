@@ -2562,7 +2562,31 @@ const tc = {
 		violatePercentage: '違反比例',
 		createTime: '統計時間',
 		actions: '操作',
-		view: '查看'
+		view: '查看',
+		btnFilter: '列過濾',
+		btnBatch: '批量修改',
+		save: '保存',
+		cancel: '取消',
+		viewDetail: '瀏覽詳情',
+		del: '刪除',
+		fieldFilter: '字段過濾',
+		allCheck: '全選',
+		fieldName: '字段名',
+		show: '顯示',
+		hide: '不顯示',
+		json: '業務數據',
+		verifyRuleTip: '選擇違反的質量規則',
+		verifyContentTip: '請輸入要修改的內容',
+		verifyContentLength: '長度不能超過100',
+		msgPostApi: '請先基於這張表發布一個api',
+		msgNoValidApi: '沒有可用API服務器',
+		msgNotStartApi: '沒有啟用api服務？',
+		ifDel: '是否刪除當前行？',
+		unlikeAjv: '輸入的內容不符合選擇的數據規則',
+		allUpdateSuccessTip1: '操作成功，一共修改',
+		allUpdateSuccessTip2: '條數據',
+		updateFail: '更新失敗',
+		dataTypeError: '數據類型轉換失敗，期望==>'
 	}
 };
 

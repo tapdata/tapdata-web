@@ -93,7 +93,6 @@ const childRoutes = [
 	{
 		path: '/dataQuality',
 		name: 'dataQuality',
-		// component: view('ExternalLink'),
 		component: view('dataQuality/DataQuality'),
 		meta: {
 			code: 'data_quality_menu',
@@ -104,12 +103,11 @@ const childRoutes = [
 	{
 		path: '/dataQuality/:id',
 		name: 'dataQualityDetail',
-		// component: view('ExternalLink'),
 		component: view('dataQuality/DataQualityDetail'),
-		meta: { 
-			code: 'data_quality_edition', 
-			title: i18n.t('tap.dataQuality'), 
-			isCollapse: true 
+		meta: {
+			code: 'data_quality_edition',
+			title: i18n.t('tap.dataQuality'),
+			isCollapse: true
 		}
 	},
 	{

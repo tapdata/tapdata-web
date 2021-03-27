@@ -1,5 +1,5 @@
 <template>
-	<section class="data-quality-detail-wrap">
+	<section class="data-quality-detail-wrap" v-loading="!showTable">
 		<TablePage
 			v-if="showTable"
 			ref="table"
@@ -24,7 +24,7 @@
 						<el-select
 							@change="ruleChange"
 							v-model="searchParams.rule"
-							:placeholder="'选择违反的质量规则'"
+							:placeholder="$t('dataQuality.verifyRuleTip')"
 							clearable
 							size="mini"
 						>
@@ -41,22 +41,29 @@
 
 			<!-- 页面操作 -->
 			<div slot="operation">
-				<el-button class="action-btn" size="mini" @click="filterOpen">
-					<i class="iconfont icon-daoru back-btn-icon" />
-					<span>列过滤</span>
-				</el-button>
+				<div v-if="headers.length">
+					<el-button class="action-btn" size="mini" @click="filterOpen">
+						<i class="iconfont icon-guolv back-btn-icon" />
+						<span>{{ $t('dataQuality.btnFilter') }}</span>
+					</el-button>
 
-				<el-button v-readonlybtn="'new_model_creation'" class="action-btn" size="mini" @click="batchOpen">
-					<i class="iconfont icon-daoru back-btn-icon" />
-					<span>批量修改</span>
-				</el-button>
+					<el-button v-readonlybtn="'new_model_creation'" class="action-btn" size="mini" @click="batchOpen">
+						<i class="iconfont icon-daoru back-btn-icon" />
+						<span>{{ $t('dataQuality.btnBatch') }}</span>
+					</el-button>
+				</div>
 			</div>
 
 			<!-- 列表项 -->
-			<el-table-column v-for="(item, index) in headers.filter(v => v.visible)" :key="index" :label="item.text">
+			<el-table-column
+				v-for="(item, index) in headers.filter(v => v.visible)"
+				:key="index"
+				min-width="120"
+				:label="item.text"
+			>
 				<template slot-scope="scope">
 					<div v-if="scope.row.wrongFields[item.text]">
-						<div v-if="scope.row.edit">
+						<div v-if="scope.row.editing">
 							<el-input
 								@keyup.enter.native="editOk(scope.row, item.text)"
 								ref="editInput"
@@ -73,10 +80,10 @@
 									type="text"
 									size="small"
 								>
-									保存
+									{{ $t('dataQuality.save') }}
 								</el-button>
 								<el-button @click="editCancel" class="btn-text" type="text" size="small">
-									取消
+									{{ $t('dataQuality.cancel') }}
 								</el-button>
 							</div>
 						</div>
@@ -102,21 +109,26 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataQuality.actions')" fixed="right" width="120">
+			<el-table-column :label="$t('dataQuality.actions')" min-width="120" fixed="right">
 				<template slot-scope="scope">
 					<el-button class="btn-text" type="text" size="small" @click="detailOpen(scope.row)">
-						浏览详情
+						{{ $t('dataQuality.viewDetail') }}
 					</el-button>
 
 					<el-button class="btn-text" type="text" size="small" @click="remove(scope.row)">
-						删除
+						{{ $t('dataQuality.del') }}
 					</el-button>
 				</template>
 			</el-table-column>
 		</TablePage>
 
 		<!-- 批量修改弹框 -->
-		<el-dialog width="500px" :title="'批量修改'" :close-on-click-modal="false" :visible.sync="batchVisible">
+		<el-dialog
+			width="500px"
+			:title="$t('dataQuality.btnBatch')"
+			:close-on-click-modal="false"
+			:visible.sync="batchVisible"
+		>
 			<FormBuilder ref="batchForm" v-model="batchForm" :config="batchFormConfig" />
 
 			<span slot="footer" class="dialog-footer">
@@ -134,33 +146,36 @@
 		<el-dialog
 			width="520px"
 			custom-class="data-quality-detail-filter-dialog"
-			:title="'字段过滤'"
+			:title="$t('dataQuality.fieldFilter')"
 			:close-on-click-modal="false"
 			:visible.sync="filterVisible"
 		>
 			<div class="text-rf">
-				<el-switch active-text="全选" v-model="all"> </el-switch>
+				<el-switch :active-text="$t('dataQuality.allCheck')" v-model="all"> </el-switch>
 			</div>
 
 			<el-table :data="filterArr" height="350" class="filter-table">
-				<el-table-column prop="date" label="字段名" width="330">
+				<el-table-column prop="date" :label="$t('dataQuality.fieldName')" width="330">
 					<template slot-scope="scope">
 						<div :style="{ color: errorObj[scope.row.text] ? 'red' : undefined }">
 							{{ scope.row.text }}
 						</div>
 					</template>
 				</el-table-column>
-				<el-table-column prop="name" label="操作">
+				<el-table-column prop="name" :label="$t('dataQuality.actions')">
 					<template slot-scope="scope">
-						<el-switch v-model="scope.row.visible" :active-text="scope.row.visible ? '显示' : '不显示'">
+						<el-switch
+							v-model="scope.row.visible"
+							:active-text="scope.row.visible ? $t('dataQuality.show') : $t('dataQuality.hide')"
+						>
 						</el-switch>
 					</template>
 				</el-table-column>
 			</el-table>
 
 			<div slot="footer" class="dialog-footer">
-				<el-button size="small" @click="filterVisible = false">取 消</el-button>
-				<el-button size="small" type="primary" @click="filterOk">保 存</el-button>
+				<el-button size="small" @click="filterVisible = false">{{ $t('message.cancel') }}</el-button>
+				<el-button size="small" type="primary" @click="filterOk">{{ $t('message.save') }}</el-button>
 			</div>
 		</el-dialog>
 
@@ -168,7 +183,7 @@
 		<el-dialog
 			custom-class="data-quality-detail-json-dialog"
 			width="600px"
-			title="业务数据"
+			:title="$t('dataQuality.json')"
 			:visible.sync="detailVisible"
 		>
 			<div class="json-box">
@@ -194,6 +209,7 @@ export default {
 
 	data() {
 		return {
+			showTable: false, // 是否渲染表单
 			searchParams: {
 				// 搜索参数
 				rule: '' // 所选规则
@@ -216,8 +232,6 @@ export default {
 			collection: '', // 当前集合名称
 			sortBy: '_id', // 默认排序字段
 			descending: true, // 是否降序
-			showTable: false, // 是否渲染表单
-			tableData: [], // 列表数据
 			editValue: '', // 要单独编辑的字段的值
 			editLoading: false, // 编辑字段确认的loading
 			ajv: new Ajv() // ajv校验实例
@@ -243,9 +257,9 @@ export default {
 		},
 		// 记录当前页所有数据那些字段有错误
 		errorObj() {
-			if (this.tableData.length) {
+			if (this.table && this.table.list && this.table.list.length) {
 				let obj = {};
-				this.tableData.forEach(v => {
+				this.table.list.forEach(v => {
 					if (v.wrongFields) {
 						for (let i in v.wrongFields) {
 							obj[i] = v.wrongFields[i];
@@ -263,22 +277,22 @@ export default {
 				items: [
 					{
 						type: 'select',
-						label: '选择违反的质量规则',
+						label: this.$t('dataQuality.verifyRuleTip'),
 						field: 'rule',
 						options: this.rulesList.map(v => ({
 							label: v.displayName,
 							value: v.displayName
 						})),
-						rules: [{ required: true, message: '请选择违反的质量规则' }]
+						rules: [{ required: true, message: this.$t('dataQuality.verifyRuleTip') }]
 					},
 					{
 						type: 'input',
-						label: '输入要修改的内容',
+						label: this.$t('dataQuality.verifyContentTip'),
 						field: 'value',
 						required: true,
 						rules: [
-							{ required: true, message: '请输入修改内容' },
-							{ max: 100, message: '长度不能超过100' }
+							{ required: true, message: this.$t('dataQuality.verifyContentTip') },
+							{ max: 100, message: this.$t('dataQuality.verifyContentLength') }
 						]
 					}
 				]
@@ -291,7 +305,7 @@ export default {
 	},
 
 	methods: {
-		// 获取字段
+		// 获取字段信息
 		getCollection() {
 			const { collection_name, connection_id } = this.$route.query;
 
@@ -301,7 +315,7 @@ export default {
 					collection_name
 				})
 				.then(({ data }) => {
-					if (data) {
+					if (data.id) {
 						this.modapiId = data.id;
 						this.fieldsDef = data.fields || [];
 
@@ -317,14 +331,14 @@ export default {
 									});
 								}
 							});
+
+						this.apiServer();
 					} else {
-						this.$message.info('请先基于这张表发布一个api');
+						this.showTableFn();
+						this.$message.info(this.$t('dataQuality.msgPostApi'));
 					}
 				});
-
-			this.apiServer();
 		},
-
 		// api服务
 		async apiServer() {
 			this.collection = this.$route.query['name'] || null;
@@ -368,12 +382,11 @@ export default {
 					}
 				}
 
-				this.showTable = true;
+				this.showTableFn();
 			} else {
-				this.$message.info('没有可用API服务器');
+				this.$message.info(this.$t('dataQuality.msgNoValidApi'));
 			}
 		},
-
 		// 获取列表数据
 		getDataFromApi({ page }) {
 			let { current, size } = page;
@@ -400,7 +413,8 @@ export default {
 				where
 			};
 
-			if (!this.apiClient) return;
+			if (!this.apiClient) return new Promise(resolve => resolve({ total: 0, data: [] }));
+
 			return this.apiClient
 				.find(filter)
 				.then(result => {
@@ -415,15 +429,16 @@ export default {
 							return record;
 						});
 						this.table.setCache({ rule });
-						this.tableData = resdata;
 						return {
 							total: result.data.total.count,
 							data: resdata
 						};
 					} else {
-						this.$message.info(
-							`this.i18n.map[result.msg.split(' ').join('_')]` || result.msg || result.data
-						);
+						this.$message.info(result.msg || result.data);
+						return {
+							total: 0,
+							data: []
+						};
 					}
 				})
 				.catch(err => {
@@ -433,16 +448,15 @@ export default {
 					//   '401': '您无权访问API。'
 					// }
 					if (err.response && err.response.status === 404) {
-						this.$message.info('api server not start?');
+						this.$message.info(this.$t('dataQuality.msgNotStartApi'));
 					} else {
 						this.$message.info(err.message);
 					}
 				});
 		},
-
 		// 删除行
 		remove(item) {
-			this.$confirm('是否删除当前行？', this.$t('message.prompt'), {
+			this.$confirm(this.$t('dataQuality.ifDel'), this.$t('message.prompt'), {
 				type: 'warning',
 				closeOnClickModal: false,
 				beforeClose: (action, instance, done) => {
@@ -470,65 +484,68 @@ export default {
 		},
 		// 确认提交批量修改表单
 		batchOk() {
-			this.$refs.batchForm.validate(valid => {
-				if (valid) {
-					let fieldName = this.batchForm.rule.split('-->')[0],
-						rule = this.batchForm.rule.split('-->')[1],
-						value = this.batchForm.value;
+			this.$refs.batchForm.validate(async valid => {
+				if (!valid) {
+					return;
+				}
+				let fieldName = this.batchForm.rule.split('-->')[0],
+					rule = this.batchForm.rule.split('-->')[1],
+					value = this.batchForm.value;
 
-					let vschema = this.buildAjvSchema(fieldName, eval('(' + rule + ')')),
-						item = {};
-					item[fieldName] = this.setType(fieldName, value);
-					if (!this.ajv.validate(vschema, item)) this.$message.info('输入的内容不符合选择的数据规则');
-					else this.editAllAction();
+				let vschema = this.buildAjvSchema(fieldName, eval('(' + rule + ')')),
+					setter = {};
+				setter[fieldName] = this.setType(fieldName, value);
+
+				// 校验数据
+				if (!this.ajv.validate(vschema, setter)) {
+					this.$message.warning(this.$t('dataQuality.unlikeAjv'));
+					return;
+				}
+
+				let where = {
+					'__tapd8.hitRules.fieldName': fieldName,
+					'__tapd8.hitRules.rules': rule,
+					'__tapd8.result': 'invalid'
+				};
+				let params = { $pull: { '__tapd8.hitRules': { rules: rule, fieldName: fieldName } }, $set: setter };
+				this.batchLoading = true;
+				// 发起修改请求
+				let result = await this.apiClient.updateAll({ where: JSON.stringify(where) }, params);
+				if (result.success) {
+					// 修改没有违反规则的行的状态
+					await this.apiClient.updateAll(
+						{ where: JSON.stringify({ '__tapd8.hitRules': { size: 0 } }) },
+						{ $unset: { '__tapd8.result': 1, '__tapd8.hitRules': 1 } }
+					);
+					this.$message.success(
+						this.$t('dataQuality.allUpdateSuccessTip1') +
+							this.table.page.total +
+							this.$t('dataQuality.allUpdateSuccessTip2')
+					);
+					this.batchCancel();
+					// 刷新列表
+					this.table.fetch();
+					// 提交日志
+					await this.$api('UserLogs').post({
+						biz_module: 'dataQuality',
+						desc: {
+							_id: '',
+							biz_module: 'dataQuality',
+							last_updated: new Date().toTimeString(),
+							desc: 'allUpdate or create dataQuality',
+							modelName: 'dataQuality',
+							requestMethod: 'POST',
+							before: rule, //字段规则
+							after: value, //修改内容
+							name: fieldName,
+							apititle: this.$route.params.id
+						}
+					});
+				} else {
+					this.$message.error(this.$t('dataQuality.updateFail'));
+					this.batchLoading = false;
 				}
 			});
-		},
-		// 批量修改请求
-		async editAllAction() {
-			let fieldName = this.batchForm.rule.split('-->')[0],
-				rule = this.batchForm.rule.split('-->')[1],
-				value = this.batchForm.value;
-			let where = {
-				'__tapd8.hitRules.fieldName': fieldName,
-				'__tapd8.hitRules.rules': rule,
-				'__tapd8.result': 'invalid'
-			};
-
-			let setter = {};
-			setter[fieldName] = this.setType(fieldName, value);
-			let paramas = { $pull: { '__tapd8.hitRules': { rules: rule, fieldName: fieldName } }, $set: setter };
-			this.batchLoading = true;
-			let result = await this.apiClient.updateAll({ where: JSON.stringify(where) }, paramas);
-			if (result.success) {
-				await this.apiClient.updateAll(
-					{ where: JSON.stringify({ '__tapd8.hitRules': { size: 0 } }) },
-					{ $unset: { '__tapd8.result': 1, '__tapd8.hitRules': 1 } }
-				);
-				this.table.fetch();
-				let edidobj = { biz_module: 'dataQuality' };
-				edidobj.desc = {
-					_id: '',
-					biz_module: 'dataQuality',
-					last_updated: new Date().toTimeString(),
-					desc: 'allUpdate or create dataQuality',
-					modelName: 'dataQuality',
-					requestMethod: 'POST',
-					befroe: rule, //字段规则
-					after: value, //修改内容
-					name: fieldName,
-					apititle: this.$route.query['connection_id']
-				};
-				let resultedidobj = await this.$api('UserLogs').post(edidobj);
-				if (resultedidobj.response.status != 200) {
-					this.$message.error('添加用户操作日志失败');
-				}
-				this.$message.success('操作成功，一共修改' + this.table.page.total + '条数据');
-				this.batchCancel();
-			} else {
-				this.$message.error('更新失败');
-				this.batchLoading = false;
-			}
 		},
 		// 批量修改取消
 		batchCancel() {
@@ -540,7 +557,7 @@ export default {
 		editItem(item, key) {
 			this.editValue = item[key];
 			this.table.list = this.table.list.map(v => {
-				v.edit = v === item;
+				v.editing = v === item;
 				return v;
 			});
 			this.$nextTick(() => {
@@ -556,9 +573,7 @@ export default {
 		// 取消编辑字段
 		editCancel() {
 			this.table.list = this.table.list.map(v => {
-				if (v.edit) {
-					v.edit = false;
-				}
+				if (v.editing) v.editing = false;
 				return v;
 			});
 		},
@@ -567,42 +582,48 @@ export default {
 			// 检验字段类型规则
 			let hitRules = [];
 			hitRules = item.__tapd8.hitRules.filter(it => it.fieldName == key);
-			item[key] = this.setType(key, this.editValue);
-			if (isNaN(item[key])) {
+			let saveItem = JSON.parse(JSON.stringify(item)); // 临时存储即将修改的表单项的值
+			saveItem[key] = this.setType(key, this.editValue);
+			if (saveItem[key] !== saveItem[key]) {
 				this.$message.warning(
-					'数据类型转换失败，期望==>' +
+					this.$t('dataQuality.dataTypeError') +
 						this.fieldsDef[this.fieldsDef.findIndex(it => it.field_name == key)].java_type
 				);
 				return;
 			}
 			hitRules.forEach(it => {
+				// 若修改的值符合之前违反的规则，就去除当前字段错误标记
 				let vschema = this.buildAjvSchema(key, eval('(' + it.rules + ')'));
-				if (this.ajv.validate(vschema, item)) {
-					item.__tapd8.hitRules.splice(item.__tapd8.hitRules.indexOf(it), 1);
-					item.wrongFields.splice(item.wrongFields.indexOf(key), 1);
+				if (this.ajv.validate(vschema, saveItem)) {
+					saveItem.__tapd8.hitRules.splice(saveItem.__tapd8.hitRules.indexOf(it), 1);
+					saveItem.wrongFields[key] = undefined;
 				}
 			});
-			if (item.__tapd8.hitRules.length == 0) {
-				item.__tapd8.hitRules = [];
-				item.__tapd8.result = '';
+			if (saveItem.__tapd8.hitRules.length == 0) {
+				// 检查当前行若没有错误标记，就去除当前行错误标记
+				saveItem.__tapd8.hitRules = [];
+				saveItem.__tapd8.result = '';
 			}
 
 			// 发送请求
 			this.editLoading = true;
-			let saveItem = JSON.parse(JSON.stringify(item));
-			saveItem[key] = this.editValue;
-			delete saveItem.edit;
+			// 处理手动添加的属性
+			let attrs = {
+				editing: saveItem.editing,
+				wrongFields: saveItem.wrongFields
+			};
+			delete saveItem.editing;
 			delete saveItem.wrongFields;
 			let result = await this.apiClient.updateById(item._id, saveItem);
 			if (result.success) {
 				this.table.list = this.table.list.map(v => {
 					if (v === item) {
-						v.edit = false;
-						v[key] = this.editValue;
+						return { ...saveItem, ...attrs, editing: false };
+					} else {
+						return v;
 					}
-					return v;
 				});
-				this.$message.success('保存成功');
+				this.$message.success(this.$t('message.saveOK'));
 			}
 			this.editLoading = false;
 
@@ -614,10 +635,10 @@ export default {
 				desc: 'Update or create dataQuality',
 				modelName: 'dataQuality',
 				requestMethod: 'POST',
-				befroe: item[key],
+				before: item[key],
 				after: this.editValue,
 				name: key,
-				apititle: this.$route.query['connection_id']
+				apititle: this.$route.params.id
 			});
 		},
 		// 打开批量过滤弹框
@@ -635,7 +656,7 @@ export default {
 			let obj = { ...item };
 			// 删除自定义的属性
 			delete obj.wrongFields;
-			delete obj.edit;
+			delete obj.editing;
 			this.jsonData = obj;
 			this.detailVisible = true;
 		},
@@ -643,16 +664,13 @@ export default {
 		ruleChange() {
 			this.table.fetch(1);
 		},
-		// 重置表单
-		reset(name) {
-			if (name === 'reset') {
-				this.searchParams = {
-					keyword: '',
-					isFuzzy: true
-				};
-			}
-
-			this.table.fetch(1);
+		// 显示表格
+		showTableFn() {
+			this.showTable = true;
+			// 初始化缓存搜索参数
+			this.$nextTick(() => {
+				this.searchParams = Object.assign(this.searchParams, this.table.getCache());
+			});
 		},
 		// 按类型给字段赋值
 		setType(fieldName, value) {
@@ -662,6 +680,7 @@ export default {
 			else if (fieldDef.java_type == 'Boolean') return value.toLowerCase().startsWith('t');
 			else return value;
 		},
+		// 创建ajv校验模式
 		buildAjvSchema(fieldName, ruleObj) {
 			let res = { properties: {} };
 			Object.keys(ruleObj).forEach(key => {
@@ -718,6 +737,8 @@ export default {
 .data-quality-detail-json-dialog {
 	.json-box {
 		margin-top: -20px;
+		max-height: 520px;
+		overflow: auto;
 		.jv-light {
 			background-color: #f8f8f8;
 		}

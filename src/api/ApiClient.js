@@ -216,6 +216,7 @@ export default class {
 		window.open(url, '__target');
 	}
 
+	// 查询列表
 	async find(params) {
 		try {
 			if (!this.collections || !this.collection) {
@@ -299,6 +300,7 @@ export default class {
 		}
 	}
 
+	// 根据id更新单条数据
 	async updateById(id, doc) {
 		try {
 			pretreatment(doc);
@@ -353,6 +355,7 @@ export default class {
 		}
 	}
 
+	// 删除行
 	async deleteById(id) {
 		try {
 			const request = axios.create({ headers: { access_token: await this.getAPIServerToken() } });
@@ -380,6 +383,7 @@ export default class {
 		}
 	}
 
+	// 批量更新
 	async updateAll(where, data) {
 		try {
 			where = where || {};
