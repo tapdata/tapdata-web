@@ -362,6 +362,7 @@ const cn = {
 		all: '全部'
 	},
 	dataFlow: {
+		saveFail: '任务保存失败，请检查配置信息并确保数据源状态有效',
 		aggregateNotDataNode: '连接聚合节点的第一个目标数据节点只能是数据集',
 		batchSortOperation: '批量分类操作',
 		selectRowdata: '请选择行数据',

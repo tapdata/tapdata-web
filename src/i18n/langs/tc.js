@@ -360,6 +360,7 @@ const tc = {
 		all: '全部'
 	},
 	dataFlow: {
+		saveFail: '任務保存失敗，請檢查配置信息並確保數據源狀態有效',
 		aggregateNotDataNode: '連接聚合節點的第一個目標數據節點只能是數據集',
 		batchSortOperation: '批量分類操作',
 		selectRowdata: '請選擇行數據',

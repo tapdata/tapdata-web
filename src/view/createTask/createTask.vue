@@ -197,6 +197,8 @@ export default {
 							table_suffix: stages[1].table_suffix,
 							selectSourceArr: stages[1].syncObjects[0] ? stages[1].syncObjects[0].objectNames : []
 						};
+						// TODO 临时为了解决bug现在这里加，回头优化
+						this.getFormConfig();
 					}
 				});
 		},
@@ -509,7 +511,7 @@ export default {
 			let postData = {
 				name: this.settingModel.name,
 				description: '',
-				status: 'draft',
+				status: 'paused',
 				executeMode: 'normal',
 				category: '数据库克隆',
 				stopOnError: false,
@@ -572,11 +574,14 @@ export default {
 					database_type: this.dataSourceModel['target_databaseType'] || 'mysql'
 				})
 			];
+			let promise = null;
 			if (this.id) {
 				postData['id'] = this.id;
+				promise = this.$api('DataFlows').patchId(this.id, postData);
+			} else {
+				promise = this.$api('DataFlows').create(postData);
 			}
-			this.$api('DataFlows')
-				.draft(postData)
+			promise
 				.then(() => {
 					this.$router.push({
 						path: '/dataFlows?mapping=cluster-clone'

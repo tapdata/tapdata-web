@@ -70,12 +70,7 @@
 					</span>
 				</template>
 			</el-table-column>
-			<el-table-column
-				prop="fail_message"
-				:label="$t('dataForm.test.information')"
-				width="308"
-				v-if="hideTableInfo"
-			>
+			<el-table-column prop="fail_message" :label="$t('dataForm.test.information')" width="308">
 			</el-table-column>
 		</el-table>
 		<span slot="footer" class="dialog-footer">
@@ -110,7 +105,7 @@ export default {
 			wsError: '',
 			status: '',
 			timer: null,
-			hideTableInfo: true,
+			// hideTableInfo: false,
 			colorMap: {
 				passed: '#70AD47',
 				waiting: '#aaaaaa',
@@ -166,16 +161,16 @@ export default {
 					if (result.response_body) {
 						let validate_details = result.response_body.validate_details || [];
 						let res = validate_details.filter(item => item.status !== 'waiting');
-						let passedNums = validate_details.filter(item => item.status !== 'passed');
+						// let unPassedNums = validate_details.filter(item => item.status !== 'passed');
 						if (res.length === 0) {
 							validate_details = validate_details.map(item => {
 								item.status = 'unTest';
 								return item;
 							});
 						}
-						if (passedNums.length === 0) {
-							this.hideTableInfo = false;
-						}
+						// if (unPassedNums.length === 0) {
+						// 	this.hideTableInfo = true;
+						// }
 						this.testData.testLogs = validate_details;
 						testData['testLogs '] = validate_details;
 						testData['status'] = result.status;

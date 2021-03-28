@@ -365,6 +365,8 @@ const en = {
 		all: 'All'
 	},
 	dataFlow: {
+		saveFail:
+			'Failed to save the task, please check the configuration and ensure that the data source status is valid.',
 		aggregateNotDataNode: 'The first target data node of aggregation node can only be COLLECTION',
 		batchSortOperation: 'Batch sort operation',
 		selectRowdata: 'Please select row data',

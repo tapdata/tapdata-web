@@ -263,7 +263,7 @@
 							v-if="!['running', 'stopping'].includes(scope.row.status)"
 							effect="dark"
 							:content="$t('dataFlow.draftNotStart')"
-							:manual="scope.row.status !== 'draft' || scope.row.checked"
+							:manual="!(scope.row.status === 'draft' && scope.row.checked === false)"
 							placement="top-start"
 						>
 							<span>
@@ -273,7 +273,7 @@
 									:disabled="
 										$disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
 											!statusBtMap['run'][scope.row.status] ||
-											(scope.row.status === 'draft' && !scope.row.checked)
+											(scope.row.status === 'draft' && scope.row.checked === false)
 									"
 									@click="run([scope.row.id], scope.row)"
 									>{{ $t('dataFlow.run') }}</ElLink

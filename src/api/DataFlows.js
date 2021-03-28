@@ -30,6 +30,9 @@ export default class DataFlows extends PublicAPI {
 	reset(id) {
 		return axios.post(`${this.url}/${id}/reset`);
 	}
+	create(params) {
+		return axios.post(`${this.url}`, params);
+	}
 	patchId(id, params) {
 		return axios.patch(`${this.url}/${id}`, params);
 	}
