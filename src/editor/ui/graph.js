@@ -73,6 +73,8 @@ export default class Graph extends Component {
 						self.createInspector(cell);
 					} else if (cell.isElement()) {
 						self.selection.collection.reset([cell]);
+						//deal with connect nodes
+						this.dealWithConnectBetweenLink(cell);
 					}
 				}, 100);
 				self.emit(EditorEventType.ADD_CELL);
@@ -378,6 +380,33 @@ export default class Graph extends Component {
 				'</style>'
 			].join(' ')
 		);
+	}
+
+	dealWithConnectBetweenLink(cell) {
+		let currentPosition = cell.position();
+		let allLinks = this.graph.getLinks();
+		if (this.graph.getNeighbors(cell).length == 0 && allLinks.length > 0) {
+			//only no linked cell can perform this operation.
+			// if no link on paper yet, nothing to do.
+			let matchedLink = allLinks.filter(item => {
+				return item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition);
+			});
+			if (matchedLink.length > 0) {
+				let linkView = this.paper.findViewByModel(matchedLink[0]);
+				let originalFormData = linkView.model.getFormData();
+				let preLink = new joint.shapes.app.Link();
+				preLink.source(linkView.sourceView.model);
+				preLink.target(cell);
+				preLink.addTo(this.graph);
+
+				let afterLink = new joint.shapes.app.Link();
+				afterLink.source(cell);
+				afterLink.target(linkView.targetView.model);
+				afterLink.addTo(this.graph);
+				afterLink.setFormData(originalFormData);
+				linkView.model.remove();
+			}
+		}
 	}
 
 	selectionPosition(cell) {
@@ -831,7 +860,11 @@ export default class Graph extends Component {
 						collection.reset([cell]);
 					}
 				},
-
+				'element:pointerup': function(elementView) {
+					//trigger if the element drag to paper, then move to between link
+					let element = elementView.model;
+					this.dealWithConnectBetweenLink(element);
+				},
 				'link:mouseenter': function(linkView) {
 					if (linkView.model.getFormData().disabled) return;
 					if (linkView.hasTools()) return;
