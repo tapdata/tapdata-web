@@ -2371,6 +2371,7 @@ const cn = {
 		status_running: '进行中',
 		status_error: '错误',
 		status_finish: '已完成',
+		status_paused: '已暂停',
 		btn_check_error: '查看错误原因'
 	},
 	guide: {

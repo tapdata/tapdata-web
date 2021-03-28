@@ -2364,6 +2364,7 @@ const tc = {
 		status_running: '進行中',
 		status_error: '錯誤',
 		status_finish: '已完成',
+		status_paused: '已暂停',
 		btn_check_error: '查看錯誤原因'
 	},
 	guide: {

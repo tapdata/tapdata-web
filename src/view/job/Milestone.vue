@@ -14,21 +14,19 @@
 						{{ $t('milestone.btn_check_error') }}
 					</el-button>
 				</div>
-				<div v-if="!['running'].includes(dataFlow.status) && item.status === 'running'">
-					<div :class="'status ' + 'error'">
-						<span class="milestone-icon">
-							<i class="el-icon-success"></i>
-							<i class="el-icon-error"></i>
-							<i class="el-icon-loading"></i>
+				<div v-if="['draft', 'paused', 'error'].includes(dataFlow.status) && item.status === 'running'">
+					<div class="status paused">
+						<span class="milestone-icon-wrap">
+							<i class="milestone-status__icon el-icon-video-pause"></i>
 						</span>
-						<span>{{ $t('milestone.status_' + 'error') }}</span>
+						<span>{{ $t('milestone.status_paused') }}</span>
 					</div>
 				</div>
 				<div :class="'status ' + item.status" v-else>
-					<span class="milestone-icon">
-						<i class="el-icon-success"></i>
-						<i class="el-icon-error"></i>
-						<i class="el-icon-loading"></i>
+					<span class="milestone-icon-wrap">
+						<i class="milestone-status__icon el-icon-success"></i>
+						<i class="milestone-status__icon el-icon-error"></i>
+						<i class="milestone-status__icon el-icon-loading"></i>
 					</span>
 					<span>{{ $t('milestone.status_' + item.status) }}</span>
 				</div>
@@ -173,17 +171,15 @@ export default {
 					margin-left: 10px;
 				}
 			}
-			.status {
-				width: 100px;
-				color: #999;
-			}
 			.from-now {
 				width: 150px;
 				color: #999;
 			}
 			.status {
 				position: relative;
-				.milestone-icon {
+				width: 100px;
+				color: #999;
+				.milestone-icon-wrap {
 					position: absolute;
 					left: -21px;
 					top: 50%;
@@ -192,23 +188,20 @@ export default {
 						display: none;
 					}
 				}
+				.milestone-status__icon {
+					display: inline-block;
+				}
 				&.running {
 					color: #48b6e2;
-					.el-icon-loading {
-						display: inline-block;
-					}
 				}
 				&.error {
 					color: #f56c6c;
-					.el-icon-error {
-						display: inline-block;
-					}
 				}
 				&.finish {
 					color: #67c23a;
-					.el-icon-success {
-						display: inline-block;
-					}
+				}
+				&.paused {
+					color: #999;
 				}
 			}
 		}

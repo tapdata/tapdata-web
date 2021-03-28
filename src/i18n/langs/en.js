@@ -2434,6 +2434,7 @@ const en = {
 		status_running: 'running',
 		status_error: 'error',
 		status_finish: 'finish',
+		status_paused: 'paused',
 		btn_check_error: 'Check Error Info'
 	},
 	guide: {
