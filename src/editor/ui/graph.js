@@ -389,7 +389,15 @@ export default class Graph extends Component {
 			//only no linked cell can perform this operation.
 			// if no link on paper yet, nothing to do.
 			let matchedLink = allLinks.filter(item => {
-				return item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition);
+				return (
+					item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition) ||
+					(item.getBBox({ useModelGeometry: true }).height == 0 &&
+						this.paper.findViewByModel(item).sourceView.model.position().x < currentPosition.x &&
+						this.paper.findViewByModel(allLinks[0]).targetView.model.position().x > currentPosition.x) ||
+					(item.getBBox({ useModelGeometry: true }).width == 0 &&
+						this.paper.findViewByModel(item).sourceView.model.position().y < currentPosition.y &&
+						this.paper.findViewByModel(allLinks[0]).targetView.model.position().y > currentPosition.y)
+				);
 			});
 			if (matchedLink.length > 0) {
 				let linkView = this.paper.findViewByModel(matchedLink[0]);
@@ -408,6 +416,23 @@ export default class Graph extends Component {
 			}
 		}
 	}
+
+	// checkIntersection(item, currentPosition){
+	// 	// if(item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition) ) {
+	// 	// 	return true;
+	// 	// }else if (item.getBBox({ useModelGeometry: true }).height == 0) {
+	// 	// 	if(this.paper.findViewByModel(item).sourceView.model.position().x< currentPosition.x && this.paper.findViewByModel(allLinks[0]).targetView.model.position().x > currentPosition.x) {
+
+	// 	// 	}
+	// 	// }else if (item.getBBox({ useModelGeometry: true }).width == 0){
+	// 	// 	if(this.paper.findViewByModel(item).sourceView.model.position().y< currentPosition.y && this.paper.findViewByModel(allLinks[0]).targetView.model.position().y > currentPosition.y) {
+
+	// 	// 	}
+	// 	// }else {
+	// 	// 	return false;
+	// 	// }
+
+	// }
 
 	selectionPosition(cell) {
 		// this.paperScroller.center();
