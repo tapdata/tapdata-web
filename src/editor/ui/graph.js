@@ -385,19 +385,21 @@ export default class Graph extends Component {
 	dealWithConnectBetweenLink(cell) {
 		let currentPosition = cell.position();
 		let allLinks = this.graph.getLinks();
+		let self = this;
 		if (this.graph.getNeighbors(cell).length == 0 && allLinks.length > 0) {
 			//only no linked cell can perform this operation.
 			// if no link on paper yet, nothing to do.
 			let matchedLink = allLinks.filter(item => {
-				return (
-					item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition) ||
-					(item.getBBox({ useModelGeometry: true }).height == 0 &&
-						this.paper.findViewByModel(item).sourceView.model.position().x < currentPosition.x &&
-						this.paper.findViewByModel(allLinks[0]).targetView.model.position().x > currentPosition.x) ||
-					(item.getBBox({ useModelGeometry: true }).width == 0 &&
-						this.paper.findViewByModel(item).sourceView.model.position().y < currentPosition.y &&
-						this.paper.findViewByModel(allLinks[0]).targetView.model.position().y > currentPosition.y)
-				);
+				// return (
+				// 	item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition) ||
+				// 	(item.getBBox({ useModelGeometry: true }).height == 0 &&
+				// 		this.paper.findViewByModel(item).sourceView.model.position().x < currentPosition.x &&
+				// 		this.paper.findViewByModel(allLinks[0]).targetView.model.position().x > currentPosition.x) ||
+				// 	(item.getBBox({ useModelGeometry: true }).width == 0 &&
+				// 		this.paper.findViewByModel(item).sourceView.model.position().y < currentPosition.y &&
+				// 		this.paper.findViewByModel(allLinks[0]).targetView.model.position().y > currentPosition.y)
+				// );
+				return self.checkIntersection(item, currentPosition);
 			});
 			if (matchedLink.length > 0) {
 				let linkView = this.paper.findViewByModel(matchedLink[0]);
@@ -416,23 +418,53 @@ export default class Graph extends Component {
 			}
 		}
 	}
-
-	// checkIntersection(item, currentPosition){
-	// 	// if(item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition) ) {
-	// 	// 	return true;
-	// 	// }else if (item.getBBox({ useModelGeometry: true }).height == 0) {
-	// 	// 	if(this.paper.findViewByModel(item).sourceView.model.position().x< currentPosition.x && this.paper.findViewByModel(allLinks[0]).targetView.model.position().x > currentPosition.x) {
-
-	// 	// 	}
-	// 	// }else if (item.getBBox({ useModelGeometry: true }).width == 0){
-	// 	// 	if(this.paper.findViewByModel(item).sourceView.model.position().y< currentPosition.y && this.paper.findViewByModel(allLinks[0]).targetView.model.position().y > currentPosition.y) {
-
-	// 	// 	}
-	// 	// }else {
-	// 	// 	return false;
-	// 	// }
-
-	// }
+	// check if the cell is drag to between nodes, right on link
+	checkIntersection(item, currentPosition) {
+		if (item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition)) {
+			//inside bbox
+			return true;
+		} else if (item.getBBox({ useModelGeometry: true }).height == 0) {
+			//source target on same y
+			if (
+				this.paper.findViewByModel(item).sourceView.model.position().x < currentPosition.x &&
+				this.paper.findViewByModel(item).targetView.model.position().x > currentPosition.x &&
+				Math.abs(this.paper.findViewByModel(item).sourceView.model.position().y - currentPosition.y) <
+					this.paper.findViewByModel(item).sourceView.model.attributes.size.height / 2
+			) {
+				// left -> right
+				return true;
+			} else if (
+				this.paper.findViewByModel(item).sourceView.model.position().x > currentPosition.x &&
+				this.paper.findViewByModel(item).targetView.model.position().x < currentPosition.x &&
+				Math.abs(this.paper.findViewByModel(item).sourceView.model.position().y - currentPosition.y) <
+					this.paper.findViewByModel(item).sourceView.model.attributes.size.height / 2
+			) {
+				// right -> left
+				return true;
+			}
+		} else if (item.getBBox({ useModelGeometry: true }).width == 0) {
+			//source target on same x
+			if (
+				this.paper.findViewByModel(item).sourceView.model.position().y < currentPosition.y &&
+				this.paper.findViewByModel(item).targetView.model.position().y > currentPosition.y &&
+				Math.abs(this.paper.findViewByModel(item).sourceView.model.position().x - currentPosition.x) <
+					this.paper.findViewByModel(item).sourceView.model.attributes.size.width / 2
+			) {
+				// up -> down
+				return true;
+			} else if (
+				this.paper.findViewByModel(item).sourceView.model.position().y > currentPosition.y &&
+				this.paper.findViewByModel(item).targetView.model.position().y < currentPosition.y &&
+				Math.abs(this.paper.findViewByModel(item).sourceView.model.position().x - currentPosition.x) <
+					this.paper.findViewByModel(item).sourceView.model.attributes.size.width / 2
+			) {
+				// down -> up
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
 
 	selectionPosition(cell) {
 		// this.paperScroller.center();
