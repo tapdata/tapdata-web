@@ -275,6 +275,9 @@ const defaultModel = {
 	sslCA: '',
 	sslCAFile: null,
 	sslKeyFile: null,
+	jiraUrl: '',
+	jiraUsername: '',
+	jiraPassword: '',
 
 	ftp_passive: true, // 连接方式
 	connection_timeout_seconds: 60, //连接超时时间
