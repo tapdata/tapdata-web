@@ -175,6 +175,15 @@ export default {
 						testData['testLogs '] = validate_details;
 						testData['status'] = result.status;
 						this.status = result.status;
+					} else {
+						let logs = this.testData.testLogs.map(item => {
+							item.status = 'invalid';
+							return item;
+						});
+						this.testData.testLogs = logs;
+						testData['testLogs '] = logs;
+						testData['status'] = result.status;
+						this.status = result.status;
 					}
 					this.$emit('returnTestData', testData);
 				});
