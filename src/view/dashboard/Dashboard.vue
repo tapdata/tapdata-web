@@ -381,12 +381,12 @@ export default {
 			dataScreening: {
 				tooltip: {
 					show: false,
-					trigger: 'none',
+					trigger: 'axis',
 					axisPointer: {
-						type: 'cross',
-						crossStyle: {
-							color: '#999'
-						}
+						type: 'none'
+						// crossStyle: {
+						// 	color: '#999'
+						// }
 					}
 				},
 				toolbox: {
@@ -449,8 +449,16 @@ export default {
 									show: true,
 									// verticalAlign: 'middle',
 									position: 'top',
-									distance: 10
-									// formatter: '{b}\n{c}'
+									distance: 10,
+									formatter: function(value) {
+										if (value.data / (1000 * 1000 * 1000) > 1) {
+											return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T';
+										} else if (value.data / (1000 * 1000) > 1) {
+											return (value.data / (1000 * 1000)).toFixed(1) + ' M';
+										} else if (value.data / 1000 > 1) {
+											return (value.data / 1000).toFixed(1) + ' K';
+										}
+									}
 								}
 							}
 						}

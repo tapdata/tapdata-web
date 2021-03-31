@@ -314,7 +314,8 @@ export default {
 				'db2',
 				'kafka',
 				'mariadb',
-				'mysql pxc'
+				'mysql pxc',
+				'jira'
 			], //目前白名单,
 			searchParams: this.$store.state.connections,
 			allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
@@ -351,7 +352,7 @@ export default {
 			let filter = {
 				where: {
 					type: {
-						in: this.allowDataType
+						in: this.whiteList
 					}
 				}
 			};
@@ -385,7 +386,7 @@ export default {
 				where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
 			}
 			where.database_type = {
-				in: this.allowDataType
+				in: this.whiteList
 			};
 			databaseType && (where.database_type = databaseType);
 			// if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
@@ -433,7 +434,7 @@ export default {
 			}
 		},
 		getImgByType(type) {
-			if (!type) {
+			if (!type || type === 'jira') {
 				type = 'default';
 			}
 			return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);

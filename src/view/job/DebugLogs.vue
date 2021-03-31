@@ -63,12 +63,14 @@ export default {
 				if (self.firstLogsId.length == 0) self.firstLogsId = dat[dat.length - 1].id;
 			}
 		});
+
 		let int = setInterval(() => {
 			if (ws.ws.readyState == 1) {
 				ws.send(msg);
 				clearInterval(int);
 			}
 		}, 2000);
+		this.loadNew();
 	},
 
 	methods: {

@@ -9,7 +9,7 @@
 				<div class="title">{{ $t('app.customerService.technicalSupport') }}</div>
 				<div class="content">
 					<span>{{ $t('app.customerService.technicalSupportText') }}</span>
-						{{ $t('app.customerService.userSupport') }}
+					{{ $t('app.customerService.userSupport') }}
 					<span>{{ $t('app.customerService.technicalSupportText1') }}</span>
 				</div>
 			</div>

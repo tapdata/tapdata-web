@@ -148,6 +148,7 @@ const en = {
 			dataGovernance: 'Data Governance',
 			metadataDefinition: 'Metadata management',
 			metadata: 'Data Catalog',
+			metadataSearch: 'Data Search',
 			dataQuality: 'Data Quality',
 			timeToLive: 'Time To Live',
 			dataMap: 'Data Lineage',
@@ -624,6 +625,8 @@ const en = {
 		groupByExpression: 'Group Field',
 		keepAggreHistoryData: 'Keep aggregation historical data',
 		aggregation: 'Aggregation',
+		aggrCleanSecond: 'Time to clean up old version data',
+		aggrFullSyncSecond: 'Full synchronization time',
 		enterFilterTable: 'Please enter the filter table content',
 		aggregatePrompt: 'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
 		nameTip:
@@ -1085,7 +1088,8 @@ const en = {
 					aggregateSizeTips:
 						'Put in the range of cached aggregation result, the excess data will be stored in target database.',
 					allAggregateSize: 'All data write in cache',
-					customAggregateSize: 'Custom the cache range'
+					customAggregateSize: 'Custom the cache range',
+					timeLess3600: 'The time cannot be less than 3600'
 				},
 				field: {
 					name: 'Field',
@@ -1101,6 +1105,8 @@ const en = {
 							label: 'Description',
 							placeholder: 'Please input you node description'
 						},
+						originalName: 'Original field name: ',
+						originalType: 'Original type: ',
 						errorUndefined:
 							'The model of the source node has changed, so that the field processor does not work, please click the UPDATE MODEL button in the configuration panel of the upper node to handle this issue',
 						errorOperationSaveTip: 'The field processor node has conflict to be handled',
@@ -1858,7 +1864,7 @@ const en = {
 			typesOf: 'Type',
 			owningConnection: 'Connection',
 			primaryKey: 'PK',
-			source: 'Origin type',
+			source: 'Source',
 			creationTime: 'Create time',
 			founder: 'Creater',
 			changeTime: 'Edit time',
@@ -1930,7 +1936,22 @@ const en = {
 			attrName: 'Property name',
 			attrKey: 'Property value',
 			editAliasNameTitle: 'Edit alias',
-			editCommentTitle: 'Edit description'
+			editCommentTitle: 'Edit description',
+			uniquelyIdentifies: 'Qualified Name'
+		},
+		metadataSearch: {
+			title: 'Metadata retrieval',
+			desc:
+				'Metadata retrieval provides search functions for the names, aliases, descriptions of tables and fields, please select the search table/field first, then enter the content, and click the search button to search',
+			table: 'Search table',
+			column: 'Search field',
+			search: 'Search',
+			noSearch: 'Please press "Enter" to initiate a search',
+			noResult: 'No search results, please confirm the search keywords',
+			originalName: 'Original table name',
+			noMore: 'No more search results',
+			more: 'Click to load more',
+			placeholder: 'please enter keyword to search'
 		}
 	},
 	notification: {

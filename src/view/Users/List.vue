@@ -627,6 +627,26 @@ export default {
 				this.$refs.form.clearValidate();
 			});
 		},
+		// 编辑用户
+		edit(item) {
+			this.createDialogVisible = true;
+
+			this.createForm = {
+				id: item.id,
+				username: item.username,
+				email: item.email,
+				password: '',
+				roleusers: item.roleusers,
+				status: item.status ? item.status : '',
+				accesscode: item.accesscode,
+				emailVerified: item.emailVerified,
+				account_status: item.account_status
+			};
+			this.$nextTick(() => {
+				this.$refs.form.clearValidate();
+			});
+			this.getMappingModel(item.id);
+		},
 		// 保存用户表单
 		createNewUser() {
 			let that = this;
@@ -714,27 +734,6 @@ export default {
 				}
 			});
 		},
-		// 编辑用户
-		edit(item) {
-			this.createDialogVisible = true;
-
-			this.createForm = {
-				id: item.id,
-				username: item.username,
-				email: item.email,
-				password: '',
-				roleusers: item.roleusers,
-				status: item.status ? item.status : '',
-				accesscode: item.accesscode,
-				emailVerified: item.emailVerified,
-				account_status: item.account_status
-			};
-			this.$nextTick(() => {
-				this.$refs.form.clearValidate();
-			});
-			this.getMappingModel(item.id);
-		},
-
 		// 删除用户
 		remove(item) {
 			const h = this.$createElement;

@@ -107,7 +107,13 @@
 					{{ $t('dialog.downAgent.refresh') }}</el-button
 				> -->
 				<template v-if="downLoadNum < 1">
-					<el-button size="mini" type="primary" class="install" v-if="lastDataNum > 0">
+					<el-button
+						size="mini"
+						type="primary"
+						class="install"
+						v-if="lastDataNum > 0"
+						style="background-color: #3FADDE;color: #fff;"
+					>
 						{{ $t('dialog.downAgent.agentRun') }}
 					</el-button>
 					<el-button size="mini" class="install" v-else>

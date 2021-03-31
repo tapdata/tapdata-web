@@ -81,6 +81,15 @@ const childRoutes = [
 		}
 	},
 	{
+		path: '/metadataSearch',
+		name: 'metadataSearch',
+		component: view('metadata/Search'),
+		meta: {
+			title: i18n.t('tap.metadataSearch'),
+			isCollapse: true
+		}
+	},
+	{
 		path: '/metadataInstances/:id',
 		name: 'metadataInstances',
 		component: view('ExternalLink'),
@@ -134,7 +143,7 @@ const childRoutes = [
 		name: 'topology',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'topology_menu',
+			code: 'Topology_menu',
 			url: '/old/index.html#/topology',
 			title: i18n.t('tap.topology'),
 			isCollapse: false
@@ -384,7 +393,7 @@ const childRoutes = [
 		meta: {}
 	},
 	{
-		path: '/',
+		path: '/dataMap',
 		name: 'dataMap',
 		component: view('dataMap/DataMap'),
 		meta: {

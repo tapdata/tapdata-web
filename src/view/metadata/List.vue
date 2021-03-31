@@ -200,8 +200,8 @@
 		>
 			<FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="createDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
-				<el-button type="primary" @click="createNewModel()" size="mini">{{ $t('message.confirm') }}</el-button>
+				<el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>
 			</span>
 		</el-dialog>
 	</section>
@@ -350,7 +350,7 @@ export default {
 			};
 			if (keyword && keyword.trim()) {
 				let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword;
-				where.or = [{ name: filterObj }, { original_name: filterObj }];
+				where.or = [{ name: filterObj }, { original_name: filterObj }, { 'source.name': filterObj }];
 			}
 
 			if (tags && tags.length) {

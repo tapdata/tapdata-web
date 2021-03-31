@@ -147,6 +147,7 @@ const tc = {
 			dataGovernance: '數據治理',
 			metadataDefinition: '元數據管理',
 			metadata: '數據目錄',
+			metadataSearch: '元数据检索',
 			dataQuality: '數據質量',
 			timeToLive: '生命週期管理',
 			dataMap: '數據地圖',
@@ -613,6 +614,8 @@ const tc = {
 		groupByExpression: '分組字段',
 		keepAggreHistoryData: '保留聚合歷史數據',
 		aggregation: '聚合處理',
+		aggrCleanSecond: '清理舊版本數據時間',
+		aggrFullSyncSecond: '全量同步時間',
 		enterFilterTable: '請輸入過濾表內容',
 		aggregatePrompt: '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
 		nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
@@ -1063,7 +1066,8 @@ const tc = {
 					aggregateSizeLabel: '聚合結果緩存條數',
 					aggregateSizeTips: '聚合結果在設置的條數範圍內存在緩存里，超出的數據會被存入目標庫。',
 					allAggregateSize: '全部存入緩存',
-					customAggregateSize: '自定義緩存條數'
+					customAggregateSize: '自定義緩存條數',
+					timeLess3600: '時間不能少於3600'
 				},
 				field: {
 					name: '字段',
@@ -1079,6 +1083,8 @@ const tc = {
 							label: '描述',
 							placeholder: '請輸入節點描述'
 						},
+						originalName: '原字段名: ',
+						originalType: '原類型: ',
 						errorUndefined:
 							'檢測到源節點的模型有變化，字段處理器無法使用，請在上一級節點的配置面板點擊更新模型按鈕以更新模型',
 						errorOperationSaveTip: '字段處理節點檢測到衝突待處理',
@@ -1136,7 +1142,6 @@ const tc = {
 						time: '耗時',
 						log: '日誌'
 					},
-
 					form: {
 						name: {
 							label: '节点名称',
@@ -1888,7 +1893,22 @@ const tc = {
 			attrName: '屬性名',
 			attrKey: '屬性值',
 			editAliasNameTitle: '編輯別名',
-			editCommentTitle: '編輯描述'
+			editCommentTitle: '編輯描述',
+			uniquelyIdentifies: '唯一標識'
+		},
+		metadataSearch: {
+			title: '元數據檢索',
+			desc:
+				'元數據檢索提供對錶、字段的名稱、別名、描述等內容的搜索功能，請先選擇搜索表/字段，再輸入內容，點擊搜索按鈕進行搜索',
+			table: '搜索表',
+			column: '搜索字段',
+			search: '搜索',
+			noSearch: '請按“回車”鍵發起檢索',
+			noResult: '暫無搜索結果，請確認搜索關鍵字',
+			originalName: '原表名',
+			noMore: '無更多檢索結果',
+			more: '點擊加載更多',
+			placeholder: '請輸入搜索關鍵字'
 		}
 	},
 	notification: {
@@ -2277,13 +2297,12 @@ const tc = {
 			schedule_jobs_menu: '調度任務',
 			Cluster_management_menu: '集群管理',
 			agents_menu: '進程管理',
-			dictionary: '字典模板',
 			user_management_menu: '用戶管理',
 			role_management_menu: '角色管理',
 			system_settings_menu: '系統設置',
 			dictionary_menu: '字典模板管理',
 			Topology_menu: '網絡拓撲',
-			servers_oversee_menu: '瀏覽運維'
+			servers_oversee_menu: '運維運控'
 		},
 		moduleMeun: {
 			Dashboard: '瀏覽控制台(首頁)',
@@ -2307,6 +2326,7 @@ const tc = {
 			schedule_jobs: '調度任務',
 			Cluster_management: '集群管理',
 			agents: '進程管理',
+			dictionary: '字典模板',
 			user_management: '用戶管理',
 			role_management: '角色管理',
 			system_settings: '系統設置'

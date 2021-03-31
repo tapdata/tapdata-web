@@ -899,42 +899,42 @@ export default {
 			};
 			MetadataInstance.download(where);
 		},
-		run(ids, node) {
+		run(ids) {
 			if (this.$refs.agentDialog.checkAgent()) {
-				if (node) {
-					this.$refs.errorHandler.checkError(node, () => {
-						//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
-						if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
-							const h = this.$createElement;
-							let arr = this.$t('message.startAggregation_message').split('XXX');
-							this.$confirm(
-								h('p', [
-									arr[0] + '(',
-									h('span', { style: { color: '#48b6e2' } }, node.name),
-									')' + arr[1]
-								]),
-								this.$t('dataFlow.importantReminder'),
-								{
-									type: 'warning',
-									closeOnClickModal: false
-								}
-							)
-								.then(() => {
-									//若任务内存在聚合处理器，启动前先重置
-									dataFlows.reset(node.id).then(() => {
-										this.changeStatus(ids, { status: 'scheduled' });
-									});
-								})
-								.catch(() => {
-									this.table.fetch();
-								});
-						} else {
-							this.changeStatus(ids, { status: 'scheduled' });
-						}
-					});
-				} else {
-					this.changeStatus(ids, { status: 'scheduled' });
-				}
+				// if (node) {
+				// 	this.$refs.errorHandler.checkError(node, () => {
+				// 		//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
+				// 		if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
+				// 			const h = this.$createElement;
+				// 			let arr = this.$t('message.startAggregation_message').split('XXX');
+				// 			this.$confirm(
+				// 				h('p', [
+				// 					arr[0] + '(',
+				// 					h('span', { style: { color: '#48b6e2' } }, node.name),
+				// 					')' + arr[1]
+				// 				]),
+				// 				this.$t('dataFlow.importantReminder'),
+				// 				{
+				// 					type: 'warning',
+				// 					closeOnClickModal: false
+				// 				}
+				// 			)
+				// 				.then(() => {
+				// 					//若任务内存在聚合处理器，启动前先重置
+				// 					dataFlows.reset(node.id).then(() => {
+				// 						this.changeStatus(ids, { status: 'scheduled' });
+				// 					});
+				// 				})
+				// 				.catch(() => {
+				// 					this.table.fetch();
+				// 				});
+				// 		} else {
+				// 			this.changeStatus(ids, { status: 'scheduled' });
+				// 		}
+				// 	});
+				// } else {
+				this.changeStatus(ids, { status: 'scheduled' });
+				// }
 			}
 		},
 		stop(ids) {

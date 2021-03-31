@@ -15,6 +15,7 @@ const cn = {
 		dataCatalog: 'Tapdata-数据目录',
 		metadata: 'Tapdata-元数据管理',
 		metadataInstances: 'Tapdata-元数据详情',
+		metadataSearch: 'Tapdata-元数据检索',
 		dataQuality: 'Tapdata-数据质量',
 		TimeToLive: 'Tapdata-生命周期管理',
 		dataLineage: 'Tapdata-数据地图',
@@ -146,6 +147,7 @@ const cn = {
 			dataGovernance: '数据治理',
 			metadataDefinition: '元数据管理',
 			metadata: '数据目录',
+			metadataSearch: '元数据检索',
 			dataQuality: '数据质量',
 			timeToLive: '生命周期管理',
 			dataMap: '数据地图',
@@ -615,6 +617,8 @@ const cn = {
 		groupByExpression: '分组字段',
 		keepAggreHistoryData: '保留聚合历史数据',
 		aggregation: '聚合处理',
+		aggrCleanSecond: '清理旧版本数据时间',
+		aggrFullSyncSecond: '全量同步时间',
 		aggregatePrompt: '提示：使用聚合处理节点后，此任务停止后再次启动，任务将会重置',
 		nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
 		enterFilterTable: '请输入过滤表内容',
@@ -1065,7 +1069,8 @@ const cn = {
 					aggregateSizeLabel: '聚合结果缓存条数',
 					aggregateSizeTips: '聚合结果在设置的条数范围内存在缓存里，超出的数据会被存入目标库。',
 					allAggregateSize: '全部存入缓存',
-					customAggregateSize: '自定义缓存条数'
+					customAggregateSize: '自定义缓存条数',
+					timeLess3600: '时间不能少于3600'
 				},
 				field: {
 					name: '字段',
@@ -1081,6 +1086,8 @@ const cn = {
 							label: '描述',
 							placeholder: '请输入节点描述'
 						},
+						originalName: '原字段名: ',
+						originalType: '原类型: ',
 						errorUndefined:
 							'检测到源节点的模型有变化，字段处理器无法使用，请在上一级节点的配置面板点击更新模型按钮以更新模型',
 						errorOperationSaveTip: '字段处理节点检测到冲突待处理',
@@ -1891,7 +1898,22 @@ const cn = {
 			attrName: '属性名',
 			attrKey: '属性值',
 			editAliasNameTitle: '编辑别名',
-			editCommentTitle: '编辑描述'
+			editCommentTitle: '编辑描述',
+			uniquelyIdentifies: '唯一标识'
+		},
+		metadataSearch: {
+			title: '元数据检索',
+			desc:
+				'元数据检索提供对表、字段的名称、别名、描述等内容的搜索功能，请先选择搜索表/字段，再输入内容，点击搜索按钮进行搜索',
+			table: '搜索表',
+			column: '搜索字段',
+			search: '搜索',
+			noSearch: '请按“回车”键发起检索',
+			noResult: '暂无搜索结果，请确认搜索关键字',
+			originalName: '原表名',
+			noMore: '无更多检索结果',
+			more: '点击加载更多',
+			placeholder: '请输入搜索关键字'
 		}
 	},
 	dialog: {
@@ -2287,7 +2309,7 @@ const cn = {
 			system_settings_menu: '系统设置',
 			dictionary_menu: '字典模板管理',
 			Topology_menu: '网络拓扑',
-			servers_oversee_menu: '浏览运维'
+			servers_oversee_menu: '运维运控'
 		},
 		moduleMeun: {
 			Dashboard: '浏览控制台(首页)',

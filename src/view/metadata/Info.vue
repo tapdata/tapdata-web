@@ -75,7 +75,9 @@
 								</li> -->
 								<li>
 									<span class="label">{{ $t('metadata.details.originalTableName') }}：</span>
-									<span>{{ metadataDataObj.original_name }}</span>
+									<el-tooltip :content="metadataDataObj.original_name" placement="right">
+										<span>{{ metadataDataObj.original_name }}</span>
+									</el-tooltip>
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.typesOf') }}：</span>
@@ -83,14 +85,24 @@
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.owningConnection') }}：</span>
-									<span v-if="metadataDataObj.source && metadataDataObj.source.name">{{
-										metadataDataObj.source.name
-									}}</span>
+									<template v-if="metadataDataObj.source && metadataDataObj.source.name">
+										<el-tooltip :content="metadataDataObj.source.name" placement="right">
+											<span>{{ metadataDataObj.source.name }}</span>
+										</el-tooltip>
+									</template>
 								</li>
 								<li>
 									<span class="label">{{ $t('metadata.details.primaryKey') }}：</span>
-									<span>{{ metadataDataObj.id }}</span>
+									<el-tooltip :content="metadataDataObj.qualified_name" placement="right">
+										<span>{{ metadataDataObj.qualified_name }}</span>
+									</el-tooltip>
 								</li>
+								<!-- <li>
+									<span class="label">{{ $t('metadata.details.uniquelyIdentifies') }}：</span>
+									<el-tooltip :content="metadataDataObj.qualified_name" placement="right">
+										<span>{{ metadataDataObj.qualified_name }}</span>
+									</el-tooltip>
+								</li> -->
 								<li>
 									<span class="label">{{ $t('metadata.details.source') }}：</span>
 									<span>{{ metadataDataObj.create_source }}</span>
@@ -379,7 +391,9 @@
 		>
 			<FormBuilder ref="form" v-model="businessForm" :config="businessFormConfig"></FormBuilder>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="businessDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button class="cancel" @click="businessDialogVisible = false" size="small">{{
+					$t('message.cancel')
+				}}</el-button>
 				<el-button type="primary" @click="saveBusiness()" size="small">{{ $t('message.save') }}</el-button>
 			</span>
 		</el-dialog>
@@ -399,7 +413,9 @@
 				</el-form-item>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="editNameDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button class="cancel" @click="editNameDialogVisible = false" size="small">{{
+					$t('message.cancel')
+				}}</el-button>
 				<el-button type="primary" @click="saveAliasName()" size="small">{{ $t('message.save') }}</el-button>
 			</span>
 		</el-dialog>
@@ -421,7 +437,9 @@
 				</el-form-item>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="editCommentDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+				<el-button class="cancel" @click="editCommentDialogVisible = false" size="small">{{
+					$t('message.cancel')
+				}}</el-button>
 				<el-button type="primary" @click="saveComment()" size="small">{{ $t('message.save') }}</el-button>
 			</span>
 		</el-dialog>
@@ -885,15 +903,38 @@ export default {
 					padding: 10px 10px 10px 20px;
 					font-size: 12px;
 					li {
-						padding-bottom: 5px;
+						padding-bottom: 10px;
+						overflow: hidden;
 						span {
 							display: inline-block;
+							float: left;
 							color: #666;
 						}
 						.label {
 							display: inline-block;
-							width: 100px;
+							width: 95px;
 							color: #aaa;
+						}
+						.label + span {
+							display: inline-block;
+							max-width: calc(100% - 100px);
+							text-overflow: ellipsis;
+							overflow: hidden;
+						}
+					}
+					li.business {
+						display: flex;
+						justify-content: space-between;
+						.delete {
+							display: none;
+						}
+
+						&:hover {
+							.delete {
+								display: inline-block;
+								cursor: pointer;
+								color: #48b6e2;
+							}
 						}
 					}
 					li.business {
@@ -1152,6 +1193,11 @@ export default {
 			.el-textarea__inner {
 				min-height: 100px !important;
 			}
+		}
+		.el-button.cancel {
+			color: #666;
+			border: 0;
+			background-color: #eee;
 		}
 	}
 }

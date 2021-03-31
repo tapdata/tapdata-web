@@ -150,6 +150,18 @@ export default function(vm) {
 				type: 'input',
 				field: 'additionalString',
 				label: vm.$t('dataForm.form.additionalString')
+			},
+			{
+				type: 'select',
+				field: 'database_datetype_without_timezone',
+				label: vm.$t('dataForm.form.timeZone'),
+				options: [],
+				show: true
+			},
+			{
+				type: 'slot',
+				slot: 'timezone',
+				show: true
 			}
 		]
 	};

@@ -594,6 +594,7 @@ export default {
 						label: item.table_name,
 						value: item.table_name
 					}));
+					this.tableIsLink();
 				})
 				.finally(() => {
 					this.schemaSelectConfig.loading = false;

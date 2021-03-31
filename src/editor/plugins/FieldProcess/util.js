@@ -212,6 +212,16 @@ export const delScript = function(operations, scripts, id) {
 	return scripts;
 };
 
+//兼容数据 操作记录改变type => original_type
+export const originalType = function(operations, id) {
+	let data = operations.filter(v => v.id === id && v.op === 'CONVERT');
+	let original_type = '';
+	if (data.length > 0) {
+		original_type = data[0].originalDataType;
+	}
+	return original_type;
+};
+
 export const getUrlSearch = function(name) {
 	// 未传参，返回空
 	if (!name) return null;

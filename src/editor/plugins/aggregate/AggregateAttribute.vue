@@ -13,6 +13,7 @@
 			label-position="top"
 			label-width="200px"
 			:disabled="disabled"
+			:rules="rules"
 		>
 			<el-col :span="21" class="aggregateName">
 				<el-form-item :label="$t('dataFlow.nodeName')" required>
@@ -77,6 +78,26 @@
 						:active-text="form.keepAggRet ? $t('dataFlow.yes') : $t('dataFlow.no')"
 					>
 					</el-switch>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.aggrCleanSecond')" prop="aggrCleanSecond" required>
+					<!-- :value="form.aggrCleanSecond <= 3600 ? 3600 : form.aggrCleanSecond"
+						@blur="
+							v => {
+								form.aggrCleanSecond = !v || v <= 3600 ? 3600 : v;
+							}
+						" -->
+					<el-input type="number" v-model="form.aggrCleanSecond">
+						<template slot="append">
+							{{ $t('dataFlow.secondUnit') }}
+						</template>
+					</el-input>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.aggrFullSyncSecond')" prop="aggrFullSyncSecond" required>
+					<el-input type="number" v-model="form.aggrFullSyncSecond">
+						<template slot="append">
+							{{ $t('dataFlow.secondUnit') }}
+						</template>
+					</el-input>
 				</el-form-item>
 			</el-col>
 			<el-col style="padding: 0 10px;">
@@ -244,6 +265,8 @@ export default {
 			form: {
 				name: '',
 				type: 'aggregation_processor',
+				aggrCleanSecond: 3600,
+				aggrFullSyncSecond: 3600,
 				aggregations: [
 					{
 						name: 'COUNT',
@@ -256,6 +279,30 @@ export default {
 				primaryKeys: '',
 				aggCacheMaxSize: 100000,
 				keepAggRet: false
+			},
+			rules: {
+				aggrCleanSecond: [
+					{
+						required: true,
+						trigger: 'blur',
+						validator: (rule, value, callback) => {
+							if (!value || value < 3600) {
+								callback(new Error(this.$t('editor.cell.processor.aggregate.timeLess3600')));
+							}
+						}
+					}
+				],
+				aggrFullSyncSecond: [
+					{
+						required: true,
+						trigger: 'blur',
+						validator: (rule, value, callback) => {
+							if (!value || value < 3600) {
+								callback(new Error(this.$t('editor.cell.processor.aggregate.timeLess3600')));
+							}
+						}
+					}
+				]
 			},
 			primaryKeyOptions: [],
 			aggaggExpression: '1',
@@ -485,6 +532,9 @@ export default {
 			span {
 				font-size: 12px !important;
 			}
+		}
+		.el-form-item__error {
+			top: 80%;
 		}
 	}
 
