@@ -512,7 +512,7 @@ const cn = {
 		replicate_pop: '数据同步差距: 源库和目标库数据最后更新时间的差距，数值越小越好',
 		status: {
 			running: '运行中',
-			paused: '已暂停',
+			paused: '待启动',
 			draft: '待启动',
 			scheduled: '启动中',
 			stopping: '停止中',
