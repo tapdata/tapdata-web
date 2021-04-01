@@ -691,12 +691,16 @@ export default {
 	methods: {
 		// 点击节点跳转到表
 		handTableName(data) {
-			window.open('/#/metadataInstances/' + data.tableMetadataInstanceId);
+			if (!window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')) {
+				window.open('/#/metadataInstances/' + data.tableMetadataInstanceId);
+			}
 		},
 
 		// 跳转到所属库
 		handDatabaseName(data) {
-			window.open('/#/metadataInstances/' + data.connMetadataInstanceId);
+			if (!window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')) {
+				window.open('/#/metadataInstances/' + data.connMetadataInstanceId);
+			}
 		},
 
 		// 获取节点名称

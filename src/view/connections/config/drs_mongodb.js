@@ -378,6 +378,25 @@ export default function(vm) {
 				showPassword: true
 			},
 			{
+				type: 'input',
+				field: 'additionalString',
+				label: vm.$t('dataForm.form.additionalString'),
+				show: true,
+				dependOn: [
+					{
+						triggerOptions: [
+							{
+								field: 'isUrl',
+								value: true
+							}
+						],
+						triggerConfig: {
+							show: false
+						}
+					}
+				]
+			},
+			{
 				type: 'radio',
 				field: 'ssl',
 				label: vm.$t('dataForm.form.ssl'),

@@ -365,20 +365,24 @@ export default {
 			if (option) {
 				option.loading = true;
 			}
+			let fields = {
+				name: 1,
+				id: 1,
+				database_type: 1,
+				connection_type: 1,
+				status: 1,
+				database_host: 1,
+				database_port: 1,
+				database_name: 1
+			};
+			if (type === 'source_connectionId') {
+				fields['database_username'] = 1;
+			}
 			this.$api('connections')
 				.get({
 					filter: JSON.stringify({
 						where: where,
-						fields: {
-							name: 1,
-							id: 1,
-							database_type: 1,
-							connection_type: 1,
-							status: 1,
-							database_host: 1,
-							database_port: 1,
-							database_name: 1
-						},
+						fields: fields,
 						order: ['status DESC', 'name ASC']
 					})
 				})

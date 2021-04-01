@@ -164,7 +164,8 @@ export const defaultCloudModel = {
 		sslCAFile: null,
 		sslKeyFile: null,
 		pgsql_log_decorder_plugin_name: '',
-		database_datetype_without_timezone: ''
+		database_datetype_without_timezone: '',
+		additionalString: ''
 	},
 	drs: {
 		s_zone: '',
