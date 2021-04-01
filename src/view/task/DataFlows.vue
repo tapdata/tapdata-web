@@ -162,7 +162,14 @@
 				</el-button>
 			</div>
 
-			<el-table-column type="selection" width="45" :selectable="row => !row.hasChildren"> </el-table-column>
+			<el-table-column
+				type="selection"
+				width="45"
+				:selectable="
+					row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)
+				"
+			>
+			</el-table-column>
 			<el-table-column
 				v-if="$window.getSettingByKey('SHOW_REGION_AND_ZONE')"
 				min-width="200"
