@@ -28,13 +28,19 @@
 									{{ $t('connection.change') }}
 								</div>
 							</div>
-							<div class="tip" v-if="!$window.getSettingByKey('SUPPORT_RDS')">
+							<div
+								class="tip"
+								v-if="!$window.getSettingByKey('SUPPORT_RDS') || !$window.getSettingByKey('SUPPORT_')"
+							>
 								{{ $t('dataForm.form.guide') }}
 								<a class="color-primary" href="https://docs.tapdata.net/data-source">{{
 									$t('dataForm.form.guideDoc')
 								}}</a>
 							</div>
-							<div class="tip" v-if="$window.getSettingByKey('SUPPORT_RDS')">
+							<div
+								class="tip"
+								v-if="$window.getSettingByKey('SUPPORT_RDS') || $window.getSettingByKey('SUPPORT_DFS')"
+							>
 								请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
 							</div>
 						</div>
@@ -490,6 +496,8 @@ export default {
 			}
 			if (window.getSettingByKey('SUPPORT_RDS')) {
 				type = 'drs_' + type;
+			} else if (window.getSettingByKey('SUPPORT_DFS')) {
+				type = 'dfs_' + type;
 			}
 			let func = formConfig[type];
 
@@ -852,7 +860,11 @@ export default {
 					connectionsModel[this.model.id ? 'patchId' : 'post'](params)
 						.then(() => {
 							this.$message.success(this.$t('message.saveOK'));
-							this.$router.push('/connections');
+							if (this.$route.query.step) {
+								this.$router.push('/connections?step=' + this.$route.query.step);
+							} else {
+								this.$router.push('/connections');
+							}
 						})
 						.catch(err => {
 							if (err && err.response) {
@@ -886,7 +898,7 @@ export default {
 			} else {
 				this.$refs.form.validate(valid => {
 					if (valid) {
-						if (window.getSettingByKey('SUPPORT_RDS')) {
+						if (window.getSettingByKey('DFS')) {
 							this.model['platformInfo'] = Object.assign(
 								this.model['platformInfo'],
 								this.handlePlatformInfo(this.model)

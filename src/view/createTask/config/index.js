@@ -4,11 +4,13 @@
  * @description
  */
 import instance from './instance';
-import dataSource from './dataSource';
+import drs_dataSource from './drs_dataSource';
+import dfs_dataSource from './dfs_dataSource';
 import setting from './setting';
 
 export default {
 	instance,
-	dataSource,
+	drs_dataSource,
+	dfs_dataSource,
 	setting
 };
