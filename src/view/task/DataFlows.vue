@@ -75,7 +75,7 @@
 						</el-select>
 					</li> -->
 					<li>
-						<ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
+						<ElButton class="btn-refresh" size="small" @click="table.fetch()">
 							<i class="el-icon-refresh"></i>
 						</ElButton>
 					</li>
@@ -256,7 +256,7 @@
 					{{ scope.row.startTime ? $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataFlow.operate')" width="250">
+			<el-table-column :label="$t('dataFlow.operate')" width="250" fixed="right">
 				<template slot-scope="scope">
 					<div class="table-operations" v-if="!scope.row.hasChildren">
 						<el-tooltip
@@ -1271,6 +1271,7 @@ export default {
 </style>
 <style lang="less">
 .data-flow-wrap .data-flow-list .dataflow-table__icon {
+	margin-left: -5px;
 	font-size: 14px;
 	width: 26px;
 	text-align: center;

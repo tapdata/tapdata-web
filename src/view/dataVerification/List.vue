@@ -90,7 +90,7 @@
 					<span> {{ $t('dataVerification.addVerifyTip') }}</span>
 				</ElButton>
 			</div>
-			<el-table-column :label="$t('dataVerification.verifyJobName')">
+			<el-table-column :label="$t('dataVerification.verifyJobName')" min-width="180">
 				<template slot-scope="scope">
 					<div>{{ scope.row.name }}</div>
 					<div style="color: #aaa;">
@@ -162,9 +162,9 @@
 				:label="$t('dataVerification.verifyTime')"
 				prop="lastStartTime"
 				sortable="custom"
-				width="180"
+				width="140"
 			></el-table-column>
-			<el-table-column :label="$t('dataVerification.operation')" width="320">
+			<el-table-column :label="$t('dataVerification.operation')" width="320" fixed="right">
 				<template slot-scope="scope">
 					<ElLink
 						v-readonlybtn="'verify_job_edition'"
@@ -208,7 +208,7 @@
 					<ElLink
 						v-readonlybtn="'verify_job_delete'"
 						class="ml-10"
-						type="danger"
+						type="primary"
 						:disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
 						@click="remove(scope.row.name, scope.row.id)"
 						>{{ $t('dataVerification.deleteTip') }}</ElLink
@@ -450,15 +450,13 @@ export default {
 		&.btn-dropdowm {
 			margin-left: 5px;
 		}
-		&.btn-create {
-			margin-left: 5px;
-		}
 	}
 	.data-verify__status {
 		display: flex;
 		align-items: center;
 	}
 	.data-verify__icon {
+		margin-left: -5px;
 		width: 26px;
 		text-align: center;
 		font-size: 14px;

@@ -170,7 +170,7 @@
 								</div>
 							</div>
 						</template>
-						<el-button size="mini" class="test" @click="startTest()">{{
+						<el-button type="primary" size="mini" class="test" @click="startTest()">{{
 							$t('connection.testConnection')
 						}}</el-button>
 						<span class="status">
@@ -1132,7 +1132,6 @@ export default {
 				margin-left: 200px;
 				margin-bottom: 20px;
 				margin-top: 16px;
-				background: #fafafa;
 			}
 		}
 		.status {
@@ -1163,23 +1162,27 @@ export default {
 		position: relative;
 	}
 	.footer {
+		margin: 10px auto;
+		width: 100%;
 		height: 62px;
 		background-color: #fff;
-		margin: 10px auto;
 		border-left: none;
 		line-height: 62px;
+		border-top: 1px solid #dedee4;
 		.footer-btn {
-			width: 450px;
 			display: flex;
-			border-top: 1px solid #dedee4;
 			align-items: center;
 			justify-content: flex-end;
+			margin: 0 auto;
 			padding-top: 18px;
+			width: 450px;
 		}
 		button {
-			width: 140px;
+			margin-left: 10px;
+			padding: 0 15px;
 			height: 32px;
-			margin-left: 20px;
+			line-height: 32px;
+			border-radius: 2px;
 		}
 	}
 }
