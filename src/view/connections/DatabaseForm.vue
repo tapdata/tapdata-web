@@ -501,10 +501,18 @@ export default {
 					item.options = this.timezones;
 				}
 				let itemIsUrl = items.find(it => it.field === 'isUrl');
+				let sslKey = items.find(it => it.field === 'sslKeyFile');
+				let sslCA = items.find(it => it.field === 'sslCAFile');
 				if (this.model.database_type === 'mongodb' && this.$route.params.id && itemIsUrl) {
 					itemIsUrl.options[0].disabled = true;
 				} else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
 					itemIsUrl.options[1].disabled = true;
+				}
+				if (this.model.database_type === 'mongodb' && this.$route.params.id && sslKey) {
+					sslKey.rules = [];
+				}
+				if (this.model.database_type === 'mongodb' && this.$route.params.id && sslCA) {
+					sslCA.rules = [];
 				}
 				if (this.$route.params.id) {
 					//编辑模式下 不展示
@@ -815,7 +823,6 @@ export default {
 					let params = Object.assign(
 						{},
 						{
-							sslCert: this.model.sslKey,
 							// user_id: this.$cookie.get('user_id'),
 							status: 'testing',
 							schema: {},
@@ -827,6 +834,7 @@ export default {
 						},
 						this.model
 					);
+					params['sslCert'] = this.model.sslKey;
 					delete params.sslKeyFile;
 					delete params.sslCAFile;
 					delete params.status; //编辑的情况下不传status
