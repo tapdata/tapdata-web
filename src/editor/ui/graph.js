@@ -408,12 +408,14 @@ export default class Graph extends Component {
 				preLink.source(linkView.sourceView.model);
 				preLink.target(cell);
 				preLink.addTo(this.graph);
+				this.updateOutputSchema(preLink);
 
 				let afterLink = new joint.shapes.app.Link();
 				afterLink.source(cell);
 				afterLink.target(linkView.targetView.model);
 				afterLink.addTo(this.graph);
 				afterLink.setFormData(originalFormData);
+				this.updateOutputSchema(afterLink);
 				linkView.model.remove();
 			}
 		}
