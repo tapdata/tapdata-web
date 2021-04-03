@@ -390,33 +390,30 @@ export default class Graph extends Component {
 			//only no linked cell can perform this operation.
 			// if no link on paper yet, nothing to do.
 			let matchedLink = allLinks.filter(item => {
-				// return (
-				// 	item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition) ||
-				// 	(item.getBBox({ useModelGeometry: true }).height == 0 &&
-				// 		this.paper.findViewByModel(item).sourceView.model.position().x < currentPosition.x &&
-				// 		this.paper.findViewByModel(allLinks[0]).targetView.model.position().x > currentPosition.x) ||
-				// 	(item.getBBox({ useModelGeometry: true }).width == 0 &&
-				// 		this.paper.findViewByModel(item).sourceView.model.position().y < currentPosition.y &&
-				// 		this.paper.findViewByModel(allLinks[0]).targetView.model.position().y > currentPosition.y)
-				// );
 				return self.checkIntersection(item, currentPosition);
 			});
 			if (matchedLink.length > 0) {
 				let linkView = this.paper.findViewByModel(matchedLink[0]);
 				let originalFormData = linkView.model.getFormData();
-				let preLink = new joint.shapes.app.Link();
-				preLink.source(linkView.sourceView.model);
-				preLink.target(cell);
-				preLink.addTo(this.graph);
-				this.updateOutputSchema(preLink);
+				//if disabled, can not connect.
+				if (
+					!linkView.targetView.model.getFormData().disabled &&
+					!linkView.sourceView.model.getFormData().disabled
+				) {
+					let preLink = new joint.shapes.app.Link();
+					preLink.source(linkView.sourceView.model);
+					preLink.target(cell);
+					preLink.addTo(this.graph);
+					this.updateOutputSchema(preLink);
 
-				let afterLink = new joint.shapes.app.Link();
-				afterLink.source(cell);
-				afterLink.target(linkView.targetView.model);
-				afterLink.addTo(this.graph);
-				afterLink.setFormData(originalFormData);
-				this.updateOutputSchema(afterLink);
-				linkView.model.remove();
+					let afterLink = new joint.shapes.app.Link();
+					afterLink.source(cell);
+					afterLink.target(linkView.targetView.model);
+					afterLink.addTo(this.graph);
+					afterLink.setFormData(originalFormData);
+					this.updateOutputSchema(afterLink);
+					linkView.model.remove();
+				}
 			}
 		}
 	}
