@@ -8,7 +8,7 @@ import axios from 'axios';
 
 export default class TCM extends PublicAPI {
 	constructor() {
-		super('/api/tcm');
+		super('api/tcm');
 	}
 	//h获取可用区
 	getRegion() {
