@@ -23,6 +23,10 @@ axios.interceptors.request.use(
 		if (xToken) {
 			config.headers['X-Token'] = xToken;
 		}
+		let preUrl = window.getSettingByKey('API_PRE_URL');
+		if (preUrl) {
+			config.url = preUrl + config.url;
+		}
 
 		let key = JSON.stringify(config);
 		let cancelFunc = null;
