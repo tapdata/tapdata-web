@@ -63,7 +63,7 @@
 			>
 				<template slot-scope="scope">
 					<div v-if="scope.row.wrongFields[item.text]">
-						<div v-if="scope.row.editing">
+						<div v-if="scope.row.editing && editCol === item.text">
 							<el-input
 								@keyup.enter.native="editOk(scope.row, item.text)"
 								ref="editInput"
@@ -233,6 +233,7 @@ export default {
 			sortBy: '_id', // 默认排序字段
 			descending: true, // 是否降序
 			editValue: '', // 要单独编辑的字段的值
+			editCol: '', // 当前编辑的字段名
 			editLoading: false, // 编辑字段确认的loading
 			ajv: new Ajv() // ajv校验实例
 		};
@@ -555,6 +556,7 @@ export default {
 		},
 		// 双击编辑字段
 		editItem(item, key) {
+			this.editCol = key;
 			this.editValue = item[key];
 			this.table.list = this.table.list.map(v => {
 				v.editing = v === item;
