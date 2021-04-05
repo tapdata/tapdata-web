@@ -75,7 +75,7 @@ let init = settings => {
 		template: '<App/>'
 	});
 };
-fetch('config.json')
+fetch('static/config.json')
 	.then(res => {
 		return res.json();
 	})
