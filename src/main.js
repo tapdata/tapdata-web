@@ -75,33 +75,40 @@ let init = settings => {
 		template: '<App/>'
 	});
 };
-//获取全局项目设置（OEM信息）
-factory('Setting')
-	.get()
-	.then(({ data }) => {
-		// data = [
-		// 	//前端相关
-		// 	// { category: 'Frontend', key: 'PRODUCT_TITLE', value: 'Tapdata' },
-		// 	// { category: 'Frontend', key: 'PRODUCT_LOGO', value: 'logo.svg' },
-		// 	{ category: 'Frontend', key: 'SHOW_LANGUAGE', value: 1 },
-		// 	{ category: 'Frontend', key: 'DEFAULT_LANGUAGE', value: 'en' },
-		// 	{ category: 'Frontend', key: 'SHOW_REGISTER', value: 1 },
-		// 	{ category: 'Frontend', key: 'SHOW_OLD_PAGE', value: 1 },
-		// 	{ category: 'Frontend', key: 'SHOW_PAGE_TITLE', value: 1 },
-		// 	{ category: 'Frontend', key: 'SHOW_LICENSE', value: 1 },
-		// 	{ category: 'Frontend', key: 'SHOW_NOTIFICATION', value: 1 },
-		// 	{ category: 'Frontend', key: 'SHOW_QA_AND_HELP', value: 1 },
-		// 	{ category: 'Frontend', key: 'SHOW_SETTING_BUTTON', value: 1 },
-		// 	{ category: 'Frontend', key: 'SHOW_HOME_BUTTON', value: 1 },
-		// 	{ category: 'Frontend', key: 'ALLOW_DOWNLOAD_AGENT', value: 1 },
-		// 	{ category: 'Frontend', key: 'USE_CLOUD_MENU', value: 1 },
-		// 	{ category: 'Frontend', key: 'SHOW_DK_VERSION', value: 1 }
-		// ];
-		if (data && data.length) {
-			localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(data));
-		}
-		init(data || []);
+fetch('static/config.json')
+	.then(res => {
+		return res.json();
+	})
+	.then(data => {
+		window.__API_PRE_URL__ = data.API_PRE_URL;
+		factory('Setting')
+			.get()
+			.then(({ data }) => {
+				// data = [
+				// 	//前端相关
+				// 	// { category: 'Frontend', key: 'PRODUCT_TITLE', value: 'Tapdata' },
+				// 	// { category: 'Frontend', key: 'PRODUCT_LOGO', value: 'logo.svg' },
+				// 	{ category: 'Frontend', key: 'SHOW_LANGUAGE', value: 1 },
+				// 	{ category: 'Frontend', key: 'DEFAULT_LANGUAGE', value: 'en' },
+				// 	{ category: 'Frontend', key: 'SHOW_REGISTER', value: 1 },
+				// 	{ category: 'Frontend', key: 'SHOW_OLD_PAGE', value: 1 },
+				// 	{ category: 'Frontend', key: 'SHOW_PAGE_TITLE', value: 1 },
+				// 	{ category: 'Frontend', key: 'SHOW_LICENSE', value: 1 },
+				// 	{ category: 'Frontend', key: 'SHOW_NOTIFICATION', value: 1 },
+				// 	{ category: 'Frontend', key: 'SHOW_QA_AND_HELP', value: 1 },
+				// 	{ category: 'Frontend', key: 'SHOW_SETTING_BUTTON', value: 1 },
+				// 	{ category: 'Frontend', key: 'SHOW_HOME_BUTTON', value: 1 },
+				// 	{ category: 'Frontend', key: 'ALLOW_DOWNLOAD_AGENT', value: 1 },
+				// 	{ category: 'Frontend', key: 'USE_CLOUD_MENU', value: 1 },
+				// 	{ category: 'Frontend', key: 'SHOW_DK_VERSION', value: 1 }
+				// ];
+				if (data && data.length) {
+					localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(data));
+				}
+				init(data || []);
+			});
 	});
+//获取全局项目设置（OEM信息）
 
 //解决浏览器tab切换时，element ui 组件tooltip气泡不消失的问题  #7752
 document.addEventListener('visibilitychange', () => {

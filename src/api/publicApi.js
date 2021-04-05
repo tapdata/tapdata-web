@@ -23,6 +23,11 @@ axios.interceptors.request.use(
 		if (xToken) {
 			config.headers['X-Token'] = xToken;
 		}
+		config.headers['Pool-Id'] = 'CIDC-RP-25';
+		let preUrl = window.__API_PRE_URL__;
+		if (preUrl) {
+			config.url = preUrl + config.url;
+		}
 
 		let key = JSON.stringify(config);
 		let cancelFunc = null;
