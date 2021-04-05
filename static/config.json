@@ -1,4 +1,4 @@
 {
-	"API_PRE_URL": "/api/web/eclouddrs/tm/",
+	"API_PRE_URL": "/api/web/eclouddrs/tm",
 	"TCM_API_PRE_URL": "/api/web/eclouddrs"
 }

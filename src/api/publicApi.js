@@ -23,6 +23,13 @@ axios.interceptors.request.use(
 		if (xToken) {
 			config.headers['X-Token'] = xToken;
 		}
+		let apiPre = window.__API_PRE_URL__ || '';
+		let tcmApiPre = window.__TCM_API_PRE_URL__ || '';
+		if (config.url.startsWith('/api/tcm')) {
+			config.url = tcmApiPre + config.url;
+		} else {
+			config.url = apiPre + config.url;
+		}
 		config.headers['Pool-Id'] = 'CIDC-RP-25';
 
 		let key = JSON.stringify(config);
@@ -150,10 +157,6 @@ axios.interceptors.response.use(
 
 export default class PublicAPI {
 	constructor(url) {
-		if (url.startsWith('/') && !url.startsWith(window.__TCM_API_PRE_URL__ + '/api/tcm')) {
-			let preUrl = window.__API_PRE_URL__ || '';
-			url = preUrl + url.substring(1);
-		}
 		this.url = url;
 	}
 
