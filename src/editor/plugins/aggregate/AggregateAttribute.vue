@@ -287,7 +287,7 @@ export default {
 						trigger: 'blur',
 						validator: (rule, value, callback) => {
 							if (!value || value < 3600) {
-								callback(new Error(this.$t('editor.cell.processor.aggregate.timeLess3600')));
+								callback(new Error(this.$t('editor.cell.processor.aggregate.cleanSecondTimeLess3600')));
 							}
 						}
 					}
@@ -298,7 +298,9 @@ export default {
 						trigger: 'blur',
 						validator: (rule, value, callback) => {
 							if (!value || value < 3600) {
-								callback(new Error(this.$t('editor.cell.processor.aggregate.timeLess3600')));
+								callback(
+									new Error(this.$t('editor.cell.processor.aggregate.fullSyncSecondTimeLess3600'))
+								);
 							}
 						}
 					}

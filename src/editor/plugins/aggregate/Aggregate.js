@@ -117,9 +117,9 @@ export const aggregateConfig = {
 				if (data.aggregations && data.aggregations.length === 0)
 					throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_stage')}`);
 				if (data.aggrCleanSecond < 3600)
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.timeLess3600')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.cleanSecondTimeLess3600')}`);
 				if (data.aggrFullSyncSecond < 3600)
-					throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.timeLess3600')}`);
+					throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.fullSyncSecondTimeLess3600')}`);
 
 				if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`);
 				let aggFunctionArr = [];

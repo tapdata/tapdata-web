@@ -1070,7 +1070,8 @@ const cn = {
 					aggregateSizeTips: '聚合结果在设置的条数范围内存在缓存里，超出的数据会被存入目标库。',
 					allAggregateSize: '全部存入缓存',
 					customAggregateSize: '自定义缓存条数',
-					timeLess3600: '时间不能少于3600'
+					cleanSecondTimeLess3600: '清理旧版本数据时间不能少于3600',
+					fullSyncSecondTimeLess3600: '全量同步时间不能少于3600'
 				},
 				field: {
 					name: '字段',

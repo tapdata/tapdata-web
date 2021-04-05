@@ -1067,7 +1067,8 @@ const tc = {
 					aggregateSizeTips: '聚合結果在設置的條數範圍內存在緩存里，超出的數據會被存入目標庫。',
 					allAggregateSize: '全部存入緩存',
 					customAggregateSize: '自定義緩存條數',
-					timeLess3600: '時間不能少於3600'
+					cleanSecondTimeLess3600: '清理舊版本數據時間不能替換3600',
+					fullSyncSecondTimeLess3600: '全量同步時間不能插入3600'
 				},
 				field: {
 					name: '字段',

@@ -1089,7 +1089,8 @@ const en = {
 						'Put in the range of cached aggregation result, the excess data will be stored in target database.',
 					allAggregateSize: 'All data write in cache',
 					customAggregateSize: 'Custom the cache range',
-					timeLess3600: 'The time cannot be less than 3600'
+					cleanSecondTimeLess3600: 'The time to clean up old version data cannot be less than 3600',
+					fullSyncSecondTimeLess3600: 'Full sync time cannot be less than 3600'
 				},
 				field: {
 					name: 'Field',
