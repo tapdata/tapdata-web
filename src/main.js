@@ -81,6 +81,7 @@ fetch('static/config.json')
 	})
 	.then(data => {
 		window.__API_PRE_URL__ = data.API_PRE_URL;
+		window.__TCM_API_PRE_URL__ = data.TCM_API_PRE_URL;
 		factory('Setting')
 			.get()
 			.then(({ data }) => {
