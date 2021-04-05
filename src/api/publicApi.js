@@ -3,12 +3,19 @@ import Cookie from 'tiny-cookie';
 import { signOut } from '../util/util';
 import { Message } from 'element-ui';
 import i18n from '../i18n/i18n';
+import Qs from 'qs';
 
 let pending = []; //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
 const CancelToken = axios.CancelToken;
 
 axios.interceptors.request.use(
 	function(config) {
+		config.paramsSerializer = params => {
+			return Qs.stringify(params, {
+				arrayFormat: 'repeat',
+				encoder: str => window.encodeURIComponent(str)
+			});
+		};
 		let accessToken = Cookie.get('token');
 		if (accessToken) {
 			if (~config.url.indexOf('?')) {
