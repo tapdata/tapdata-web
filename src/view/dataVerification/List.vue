@@ -82,6 +82,24 @@
 					</li>
 				</ul>
 				<div class="topbar-buttons">
+					<!-- <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
+						<i class="iconfont icon-daoru back-btn-icon"></i>
+						<span> {{ $t('dataFlow.bulkExport') }}</span>
+					</el-button> -->
+					<el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
+						<i class="iconfont icon-daoru back-btn-icon"></i>
+						<span> {{ $t('dataFlow.bulkImport') }}</span>
+					</el-button>
+					<el-button
+						v-readonlybtn="'SYNC_category_application'"
+						size="mini"
+						class="btn"
+						v-show="selections.length > 0"
+						@click="handleExport"
+					>
+						<i class="iconfont icon-dakai1 back-btn-icon"></i>
+						<span> {{ $t('dataFlow.bulkExport') }}</span>
+					</el-button>
 					<el-button size="mini" v-show="selections.length" v-readonlybtn="'verify_job_execution'">
 						<i class="iconfont icon-piliang"></i>
 						<span>{{ $t('dataVerification.batchVerify') }}</span>
@@ -120,6 +138,7 @@
 					align="left"
 				>
 					<!--					<el-table-column type="selection" width="44" align="center"></el-table-column>-->
+					<el-table-column type="selection" width="45"></el-table-column>
 					<el-table-column :label="$t('dataVerification.verifyJobName')">
 						<template slot-scope="scope">
 							<div class="name">{{ scope.row.name }}</div>
@@ -394,6 +413,23 @@ export default {
 		}, 10000);
 	},
 	methods: {
+		// 批量导入
+		handleImport() {
+			let routeUrl = this.$router.resolve({
+				path: '/upload?type=Inspect'
+			});
+			window.open(routeUrl.href, '_blank');
+		},
+		// 批量导出
+		handleExport() {
+			let where = {
+				_id: {
+					in: this.selections
+				}
+			};
+
+			this.$api('MetadataInstances').download(where, 'Inspect');
+		},
 		keyup() {
 			if (timeout) {
 				window.clearTimeout(timeout);
@@ -640,6 +676,9 @@ export default {
 						transform: rotate(180deg);
 					}
 				}
+			}
+			.topbar-buttons {
+				white-space: nowrap;
 			}
 		}
 		.table-wrap {

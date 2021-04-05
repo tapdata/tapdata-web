@@ -897,7 +897,7 @@ export default {
 					in: ids
 				}
 			};
-			MetadataInstance.download(where);
+			MetadataInstance.download(where, 'DataFLow');
 		},
 		run(ids) {
 			if (this.$refs.agentDialog.checkAgent()) {
