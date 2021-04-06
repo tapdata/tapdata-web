@@ -552,7 +552,8 @@ export default {
 			} else {
 				this.instanceModelZone = [];
 			}
-			this.changeConfig(zone[0].zones, 'zone');
+			let data = zone.length ? zone[0].zones : [];
+			this.changeConfig(data, 'zone');
 		},
 		//第二步 选择源端
 		getDataSourceRegion() {
@@ -578,7 +579,8 @@ export default {
 			} else {
 				this.dataSourceZone = [];
 			}
-			this.changeConfig(zone[0].zoneInfo, 's_defaultZone');
+			let data = zone.length ? zone[0].zones : [];
+			this.changeConfig(data, 's_defaultZone');
 		},
 		//可用区联动database host
 		changeDatabaseHost() {
