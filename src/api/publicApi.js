@@ -12,7 +12,7 @@ axios.interceptors.request.use(
 	function(config) {
 		config.paramsSerializer = params => {
 			return Qs.stringify(params, {
-				arrayFormat: 'repeat',
+				arrayFormat: 'brackets',
 				encoder: str => window.encodeURIComponent(str)
 			});
 		};
