@@ -147,6 +147,7 @@ class WSClient extends EventEmitter {
 	}
 
 	send(msg) {
+		debugger;
 		// this.ready(() => {
 		msg = typeof msg === 'string' ? msg : JSON.stringify(msg);
 		this.ws.send(msg);
