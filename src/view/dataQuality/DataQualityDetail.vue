@@ -301,7 +301,7 @@ export default {
 		}
 	},
 
-	created() {
+	mounted() {
 		this.getCollection();
 	},
 
@@ -583,8 +583,8 @@ export default {
 		async editOk(item, key) {
 			// 检验字段类型规则
 			let hitRules = [];
-			hitRules = item.__tapd8.hitRules.filter(it => it.fieldName == key);
 			let saveItem = JSON.parse(JSON.stringify(item)); // 临时存储即将修改的表单项的值
+			hitRules = saveItem.__tapd8.hitRules.filter(it => it.fieldName == key);
 			saveItem[key] = this.setType(key, this.editValue);
 			if (saveItem[key] !== saveItem[key]) {
 				this.$message.warning(
@@ -671,7 +671,7 @@ export default {
 			this.showTable = true;
 			// 初始化缓存搜索参数
 			this.$nextTick(() => {
-				this.searchParams = Object.assign(this.searchParams, this.table.getCache());
+				this.searchParams = Object.assign(this.searchParams, this.$refs.table.getCache());
 			});
 		},
 		// 按类型给字段赋值

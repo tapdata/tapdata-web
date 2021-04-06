@@ -110,7 +110,7 @@ export default {
 		getData({ page }) {
 			let { current, size } = page;
 			let { isFuzzy, keyword } = this.searchParams;
-			let where = {}; // 查询条件
+			let where = { violated_docs: { gt: 0 } }; // 查询条件
 
 			if (keyword && keyword.trim()) {
 				let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword;
