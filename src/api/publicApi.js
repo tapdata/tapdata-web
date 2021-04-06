@@ -188,13 +188,13 @@ export default class PublicAPI {
 	update(where, attributes) {
 		if (typeof where === 'object') where = JSON.stringify(where);
 
-		return axios.post(this.url + '/update?where=' + where, attributes);
+		return axios.post(this.url + '/update?where=' + encodeURIComponent(where), attributes);
 	}
 
 	get(params, filter) {
 		if (Array.isArray(params)) {
 			filter = typeof filter === 'object' ? JSON.stringify(filter) : filter;
-			let qs = filter ? '?filter=' + filter : '';
+			let qs = filter ? '?filter=' + encodeURIComponent(filter) : '';
 			return axios.get(this.url + '/' + params.join('/') + qs);
 		}
 		params = params || {};

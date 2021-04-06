@@ -44,7 +44,7 @@ export default class DataFlows extends PublicAPI {
 	getId(id, params, filter) {
 		if (Array.isArray(params)) {
 			filter = typeof filter === 'object' ? JSON.stringify(filter) : filter;
-			let qs = filter ? '?filter=' + filter : '';
+			let qs = filter ? '?filter=' + encodeURIComponent(filter) : '';
 			return axios.get(this.url + '/' + id + params.join('/') + qs);
 		}
 		params = params || {};
@@ -61,11 +61,11 @@ export default class DataFlows extends PublicAPI {
 	}
 	deleteAll(where) {
 		if (typeof where === 'object') where = JSON.stringify(where);
-		return axios.post(this.url + '/removeAll?where=' + where);
+		return axios.post(this.url + '/removeAll?where=' + encodeURIComponent(where));
 	}
 	resetAll(where) {
 		if (typeof where === 'object') where = JSON.stringify(where);
-		return axios.post(this.url + '/resetAll?id=' + where);
+		return axios.post(this.url + '/resetAll?id=' + encodeURIComponent(where));
 	}
 
 	saveStage(stages) {
