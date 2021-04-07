@@ -44,8 +44,8 @@ export default function() {
 		defaultConnector: { name: 'rounded' },
 		//defaultRouter: { name: 'manhattan' },
 		defaultRouter: {
-			name: 'normal',
-			args: { padding: 40 }
+			name: 'manhattan',
+			args: { padding: 30 }
 		},
 		/*restrictTranslate: function(elementView) {
 			let parentId = elementView.model.get('parent');
@@ -200,6 +200,7 @@ export default function() {
 				if (table.id == vcomp.tableId) {
 					node.attr('header/fill', '#d0d8e8');
 				}
+				node.toggleItemCollapse(table.items[0].id);
 				node.toggleItemCollapse(table.id);
 				node.addTo(graph);
 			});

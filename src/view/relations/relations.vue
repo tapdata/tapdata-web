@@ -5,6 +5,7 @@
 				<i class="iconfont icon-plus-circle" @click="zoomIn"></i>
 				<i class="iconfont icon-minus-circle" @click="zoomOut"></i>
 				<i v-if="level === 'field'" class="iconfont icon-shangyibu" @click="getData"></i>
+				<i v-if="level === 'table' && qualifiedName" class="iconfont icon-xiayibu" @click="resFieldData"></i>
 				<i class="iconfont icon-shuaxin1" @click="refreshData"></i>
 			</div>
 			<span class="refreshS" :class="{ errorClass: !rClass, actProgress: !refreshing }" @click="checkError"
@@ -63,6 +64,8 @@ export default {
 				sourceName: '',
 				targetName: ''
 			},
+			qualifiedName: '',
+			fields: '',
 			refreshResult: {},
 			dialogFormVisible: false,
 			errorVisible: false,
@@ -94,6 +97,21 @@ export default {
 					this.graph.draw(res.data.items, res.data.links, this);
 				}
 			});
+		},
+		resFieldData() {
+			this.level = 'field';
+			this.model.level = 'field';
+			this.level = 'field';
+			let params = {
+				level: this.level,
+				qualifiedName: this.qualifiedName,
+				fields: this.fields
+			};
+			this.$api('LineageGraphs')
+				.graphData(params)
+				.then(res => {
+					this.graph.draw(res.data.items, res.data.links, this);
+				});
 		},
 		refreshData() {
 			LineageGraphsAPI.refreshGraphData()
@@ -154,6 +172,8 @@ export default {
 			window.paperScroller.zoom(-0.2, { min: 0.2 });
 		},
 		changeLevel(qualifiedName, fields) {
+			this.qualifiedName = qualifiedName;
+			this.fields = fields;
 			this.level = 'field';
 			let params = {
 				level: this.level,
@@ -163,6 +183,7 @@ export default {
 			this.$api('LineageGraphs')
 				.graphData(params)
 				.then(res => {
+					this.fieldData = res.data;
 					this.graph.draw(res.data.items, res.data.links, this);
 				});
 		}
