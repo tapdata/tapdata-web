@@ -617,10 +617,6 @@ const tc = {
 		aggrCleanSecond: '清理舊版本數據時間',
 		aggrFullSyncSecond: '全量同步時間',
 		enterFilterTable: '請輸入過濾表內容',
-		maxCpuUsage: '最大CPU使用率',
-		maxHeapMemoryUsage: '最大堆內存使用率',
-		maxCpuUsageError: 'CPU最大使用率取值範圍是 0.1 ~ 1 之​​間',
-		maxHeapMemoryUsageError: '最大堆內存使用率是 0.1 ~ 1 之​​間',
 		aggregatePrompt: '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
 		nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
 		button: {

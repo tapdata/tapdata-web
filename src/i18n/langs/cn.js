@@ -622,10 +622,6 @@ const cn = {
 		aggregatePrompt: '提示：使用聚合处理节点后，此任务停止后再次启动，任务将会重置',
 		nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
 		enterFilterTable: '请输入过滤表内容',
-		maxCpuUsage: '最大CPU使用率',
-		maxHeapMemoryUsage: '最大堆内存使用率',
-		maxCpuUsageError: 'CPU最大使用率取值范围是 0.1 ~ 1 之间',
-		maxHeapMemoryUsageError: '最大堆内存使用率是 0.1 ~ 1 之间',
 		button: {
 			submit: '提交执行',
 			viewConfig: '查看节点配置',
