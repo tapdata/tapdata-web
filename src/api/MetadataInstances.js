@@ -18,9 +18,9 @@ export default class MetadataInstancesAPI extends PublicApi {
 	classification(params) {
 		return axios.patch(this.url + '/classifications', params);
 	}
-	download(where) {
+	download(where, type) {
 		if (typeof where === 'object') where = JSON.stringify(where);
-		window.open(this.url + '/download?where=' + where);
+		window.open(this.url + `/download?where=${where}&type=${type}`);
 		// return axios.get(this.url + '/download?where=' + where);
 	}
 
