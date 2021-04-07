@@ -5,9 +5,8 @@ export default class LineageGraphsAPI extends PublicAPI {
 	constructor() {
 		super('/api/LineageGraphs');
 	}
-	graphData(qualifiedName) {
-		let url = `${this.url}/graphData?qualifiedName=` + qualifiedName;
-		return axios.get(url);
+	graphData(params) {
+		return axios.post(`${this.url}/graphData`, params);
 	}
 	refreshGraphData() {
 		let url = `${this.url}/refreshGraphData?`;

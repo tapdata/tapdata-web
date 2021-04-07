@@ -102,7 +102,7 @@ export default class Graph extends Component {
 			interactive: {
 				linkMove: false
 			},
-			async: true,
+			//async: true,
 			sorting: joint.dia.Paper.sorting.APPROX,
 			snapLinks: 75,
 			// highlighting: {
