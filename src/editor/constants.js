@@ -60,7 +60,9 @@ export const FORM_DATA_KEY = 'form_data',
 			}
 		],
 		processorConcurrency: 1,
-		transformerConcurrency: 8
+		transformerConcurrency: 8,
+		maxCpuUsage: 1,
+		maxHeapMemoryUsage: 0.8
 	},
 	DATABASE_TYPE_MAPPING = {
 		mysql: {
