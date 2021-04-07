@@ -20,8 +20,11 @@
 							</el-select>
 						</el-input>
 					</li>
-					<li class="item">
-						<el-button type="text" class="restBtn" size="mini" @click="rest()">
+					<li class="item" v-if="searchNav.keyword">
+						<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
+					</li>
+					<li class="item" v-if="searchNav.keyword">
+						<el-button type="text" class="restBtn" size="mini" @click="reset('reset')">
 							{{ $t('dataFlow.reset') }}
 						</el-button>
 					</li>
@@ -44,10 +47,11 @@
 					:data="tableData"
 					height="100%"
 					style="border: 1px solid #dedee4;"
-					class="dv-table"
+					class="role-table"
 					row-key="id"
+					border
 				>
-					<el-table-column :label="$t('role.roleName')" :show-overflow-tooltip="true" width="240">
+					<el-table-column :label="$t('role.roleName')" :show-overflow-tooltip="true">
 						<template slot-scope="scope">
 							<div>{{ scope.row.name }}</div>
 						</template>
@@ -62,7 +66,7 @@
 							<span>{{ scope.row.userCount }}</span>
 						</template>
 					</el-table-column>
-					<el-table-column :label="$t('role.founder')" width="180">
+					<el-table-column :label="$t('role.founder')">
 						<template slot-scope="scope">
 							<div>
 								{{ scope.row.userEmail }}
@@ -150,7 +154,7 @@
 					prop="name"
 					:rules="[{ required: true, message: $t('role.role_null'), trigger: 'blur' }]"
 				>
-					<el-input v-model="form.name" :placeholder="$t('role.selectRoleName')"></el-input>
+					<el-input v-model="form.name" :placeholder="$t('role.selectRoleName')" size="small"></el-input>
 				</el-form-item>
 				<el-form-item :label="$t('role.roleDesc')" style="margin-bottom: 10px">
 					<el-input
@@ -425,14 +429,14 @@ export default {
 											});
 									});
 									self.$api('users')
-										.deletePermissionRoleMapping(res.data.id)
+										.deletePermissionRoleMapping(res.data.id, { data: { data: newRoleMappings } })
 										.then(res => {
 											if (res && res.data) {
-												roleMappingModel.post(newRoleMappings);
+												// roleMappingModel.post(newRoleMappings);
+												this.$message.success(this.$t('message.saveOK'));
 											}
 										});
 								}
-								this.$message.success(this.$t('message.saveOK'));
 							}
 						})
 						.catch(e => {
@@ -506,11 +510,14 @@ export default {
 		},
 
 		// 重置
-		rest() {
-			this.searchNav = {
-				selectedSeachType: '0',
-				keyword: ''
-			};
+		reset(name) {
+			if (name === 'reset') {
+				this.searchNav = {
+					selectedSeachType: '0',
+					keyword: ''
+				};
+			}
+
 			this.handleDataApi();
 		},
 
@@ -595,9 +602,16 @@ export default {
 			display: flex;
 			flex-direction: column;
 			font-size: 12px;
-			.dv-table {
+			.role-table {
 				flex: 1;
 				overflow: hidden;
+				.name {
+					color: #48b6e2;
+					cursor: pointer;
+				}
+				.name:hover {
+					text-decoration: underline;
+				}
 			}
 			.el-button.is-disabled {
 				color: #c0c4cc;
@@ -636,14 +650,10 @@ export default {
 			.el-select .el-input {
 				width: 100px;
 			}
-			.el-input-group__append,
-			.el-input-group__prepend {
-				background: #fff;
-			}
 		}
 	}
 	.table-box {
-		.dv-table {
+		.role-table {
 			color: #333;
 			th {
 				padding: 2px 0;
@@ -655,6 +665,12 @@ export default {
 					padding-left: 10px;
 				}
 			}
+		}
+		.el-table--border td {
+			border-right: 0;
+		}
+		.el-table--border th {
+			border-right: 1px solid #dcdfe6;
 		}
 
 		.el-button {

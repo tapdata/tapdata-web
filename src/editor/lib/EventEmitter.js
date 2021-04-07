@@ -149,7 +149,7 @@ export default class EventEmitter {
 		/* eslint no-unused-vars: 0 */
 		const self = internal(this);
 
-		if (typeof callback !== "function") {
+		if (typeof callback !== 'function') {
 			throw new TypeError(`${callback} is not a function`);
 		}
 

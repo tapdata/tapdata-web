@@ -7,6 +7,7 @@
 			class="action-buttons"
 			style="display:flex;align-items: center;justify-content: space-between;padding-right: 10px;"
 		>
+			<i @click="backDataFlow" :title="$t('dataFlow.backlistText')" class="iconfont icon-sanheng backIcon"></i>
 			<div class="flex-center">
 				<el-button
 					v-if="isEditable() && !isMoniting"
@@ -360,6 +361,7 @@ export default {
 			flowDataName: '',
 			mappingTemplate: '',
 			creatUserId: '',
+			dataChangeFalg: false,
 			statusBtMap
 		};
 	},
@@ -383,14 +385,14 @@ export default {
 					this.getGlobalSetting();
 				}
 				this.mappingTemplate = this.$route.query.mapping;
-
+				if (self.$route.query.isMoniting == 'true') self.isMoniting = true;
 				self.editor = editor({
 					container: $('.editor-container'),
 					actionBarEl: $('.editor-container .action-buttons'),
 					scope: self,
 					customProcessors
 				});
-				if (self.$route.query.isMoniting == 'true') self.isMoniting = true;
+
 				if (self.$route.query.isSimple == 'true') {
 					this.initData(db2db.data);
 					this.mappingTemplate = 'cluster-clone';
@@ -437,6 +439,25 @@ export default {
 		// 关闭agent下载弹窗返回参数
 		closeAgentDialog() {
 			this.start();
+		},
+
+		backDataFlow() {
+			let mapping = this.$route.query.mapping;
+			if (!this.dataChangeFalg) {
+				this.$router.push({
+					path: '/dataFlows?mapping=' + mapping
+				});
+			} else {
+				this.$confirm(this.$t('dataFlow.saveReminder'), this.$t('dataFlow.backlistText'), {
+					type: 'warning',
+					confirmButtonText: this.$t('dataFlow.leave'),
+					closeOnClickModal: false
+				}).then(() => {
+					this.$router.push({
+						path: '/dataFlows?mapping=' + mapping
+					});
+				});
+			}
 		},
 
 		isEditable() {
@@ -620,6 +641,10 @@ export default {
 			this.setSelector(this.$route.query.mapping);
 			this.editor.graph.setSettingData(dataFlow.setting);
 			this.wsSend();
+			let self = this;
+			setTimeout(() => {
+				self.dataChangeFalg = false;
+			}, 100);
 		},
 		wsSend() {
 			if (this.dataFlowId) {
@@ -685,7 +710,10 @@ export default {
 			let self = this;
 			this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
 				changeData = this.getDataFlowData(true);
-				if (changeData) self.timeSave();
+				if (changeData) {
+					self.dataChangeFalg = true;
+					self.timeSave();
+				}
 			});
 		},
 		//点击draft save按钮
@@ -718,10 +746,11 @@ export default {
 			}
 			log('DataFlows Draft Save Params: ', data);
 			promise = dataFlowsApi.draft(data);
+
 			if (promise) {
 				promise
 					.catch(e => {
-						if (e.response.data === 'duplication for names') {
+						if (e.response.msg === 'duplication for names') {
 							self.$message.error(self.$t('message.exists_name'));
 						} else {
 							self.$message.error(self.$t('message.saveFail'));
@@ -1148,25 +1177,25 @@ export default {
 						}
 					});
 				};
-				if (data.id && this.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
-					const h = this.$createElement;
-					let arr = this.$t('message.startAggregation_message').split('XXX');
-					this.$confirm(
-						h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, data.name), ')' + arr[1]]),
-						this.$t('dataFlow.importantReminder'),
-						{
-							type: 'warning',
-							closeOnClickModal: false
-						}
-					).then(() => {
-						//若任务内存在聚合处理器，启动前先重置
-						dataFlowsApi.reset(data.id).then(() => {
-							start();
-						});
-					});
-				} else {
-					start();
-				}
+				// if (data.id && this.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
+				// 	const h = this.$createElement;
+				// 	let arr = this.$t('message.startAggregation_message').split('XXX');
+				// 	this.$confirm(
+				// 		h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, data.name), ')' + arr[1]]),
+				// 		this.$t('dataFlow.importantReminder'),
+				// 		{
+				// 			type: 'warning',
+				// 			closeOnClickModal: false
+				// 		}
+				// 	).then(() => {
+				// 		//若任务内存在聚合处理器，启动前先重置
+				// 		dataFlowsApi.reset(data.id).then(() => {
+				// 			start();
+				// 		});
+				// 	});
+				// } else {
+				start();
+				// }
 			}
 			this.dialogFormVisible = false;
 		},
@@ -1208,6 +1237,9 @@ export default {
 					}
 				});
 			});
+			// .catch(() => {
+			// 	this.$message.error(self.$t('message.stopFail'));
+			// });
 		},
 
 		preview() {
@@ -1716,6 +1748,22 @@ export default {
 	.flex-center {
 		display: flex;
 		align-items: center;
+	}
+	.backIcon {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 41px;
+		height: 41px;
+		line-height: 41px;
+		font-size: 24px;
+		text-align: center;
+		color: #fff;
+		cursor: pointer;
+		background-color: #48b6e2;
+	}
+	.backIcon:hover {
+		background-color: #6dc5e8;
 	}
 	.mr-5 {
 		margin-right: 5px;

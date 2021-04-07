@@ -48,7 +48,7 @@ export const FORM_DATA_KEY = 'form_data',
 			error: false,
 			paused: false
 		},
-		stopOnError: false,
+		stopOnError: true,
 		syncPoints: [
 			{
 				connectionId: '',

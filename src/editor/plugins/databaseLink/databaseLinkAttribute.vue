@@ -5,11 +5,11 @@
 			<span class="txt">{{ $t('editor.cell.link.mappingRelations') }}</span>
 		</head>
 		<div class="nodeBody">
-			<div class="head-btns">
+			<!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
-			</div>
+			</div> -->
 			<el-form
 				:disabled="disabled"
 				class="e-form"
@@ -349,10 +349,10 @@ export default {
 			this.disabled = disabled;
 		},
 
-		// 查看监控按钮
-		seeMonitor() {
-			editorMonitor.goBackMontior();
-		},
+		// // 查看监控按钮
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// },
 
 		// 修改名称
 		handleChageTransfer(data) {

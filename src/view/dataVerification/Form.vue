@@ -375,7 +375,8 @@ export default {
 			dialogAddScriptVisible: false,
 			formIndex: '',
 			webScript: '',
-			width: '600'
+			width: '600',
+			allStages: null
 		};
 	},
 	created() {
@@ -426,7 +427,8 @@ export default {
 						fields: {
 							id: true,
 							name: true
-						}
+						},
+						order: 'createTime DESC'
 					})
 				})
 				.then(res => {
@@ -516,6 +518,7 @@ export default {
 		dealCustomFlow(flowData, callback) {
 			let flowStages = flowData.stages.filter(stg => ['table', 'collection'].includes(stg.type));
 			this.flowStages = flowStages;
+			this.allStages = flowData.stages;
 			let connectionIds = [];
 			let tableNames = [];
 			flowStages.forEach(stg => {
@@ -656,9 +659,8 @@ export default {
 			let checkOutputLanes = lanes => {
 				let result = [];
 				lanes.forEach(stgId => {
-					let targetStg = stages.find(it => it.id === stgId);
+					let targetStg = this.allStages.find(it => it.id === stgId);
 					if (targetStg.outputLanes.length) {
-						result.push(stgId);
 						result.push(...checkOutputLanes(targetStg.outputLanes));
 					} else {
 						result.push(stgId);

@@ -10,6 +10,7 @@ import file from './file';
 import kafka from './kafka';
 import mariadb from './maria';
 import mysqlpxc from './mysqlpxc';
+import jira from './jira';
 import drs_mysql from './drs_mysql';
 import drs_mariadb from './drs_maria';
 import drs_oracle from './drs_oracle';
@@ -32,6 +33,7 @@ export default {
 	kafka,
 	mariadb,
 	mysqlpxc,
+	jira,
 	drs_mysql,
 	drs_mariadb,
 	drs_oracle,

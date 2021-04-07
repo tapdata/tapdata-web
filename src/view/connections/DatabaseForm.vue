@@ -342,6 +342,9 @@ export default {
 			case 'file':
 				this.model = Object.assign({}, defaultModel['file']);
 				break;
+			case 'jira':
+				this.model = Object.assign({}, defaultModel['jira']);
+				break;
 		}
 		this.getDT(this.databaseType);
 		this.initTimezones();
@@ -379,6 +382,11 @@ export default {
 				this.model.database_port = '445';
 			} else if (val === 'ftp') {
 				this.model.database_port = '21';
+			}
+		},
+		'model.multiTenant'(val) {
+			if (!val) {
+				this.model.pdb = '';
 			}
 		},
 		'model.region'() {

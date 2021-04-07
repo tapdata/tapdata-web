@@ -77,4 +77,8 @@ export default class users extends PublicAPI {
 	getUserInfo() {
 		return axios.get(this.url + '/self');
 	}
+
+	update(where, params) {
+		return axios.post(this.url + '/update?where=' + JSON.stringify(where), params);
+	}
 }

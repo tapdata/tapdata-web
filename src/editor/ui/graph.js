@@ -20,6 +20,7 @@ import Tab from './tab';
 import i18n from '../../i18n/i18n';
 import { Message } from 'element-ui';
 import { getUrlSearch } from '../../util/util';
+import $ from 'jquery';
 
 window.joint = joint;
 let count = 0;
@@ -101,7 +102,7 @@ export default class Graph extends Component {
 			interactive: {
 				linkMove: false
 			},
-			async: true,
+			//async: true,
 			sorting: joint.dia.Paper.sorting.APPROX,
 			snapLinks: 75,
 			// highlighting: {
@@ -118,22 +119,35 @@ export default class Graph extends Component {
 			// 		}
 			// 	}
 			// },
-			validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end) {
+			validateConnection: function(cellViewS, magnetS, cellViewT) {
 				// don't allow loop links
 				if (cellViewS === cellViewT) return false;
-				// if (!magnetT) return false;
-				// if (magnetT.getAttribute('port-group') !== 'in') return false;
 
-				let targetView = end === 'target' ? cellViewT : cellViewS;
-				let sourceView = end === 'target' ? cellViewS : cellViewT;
+				let targetView = cellViewT; //end === 'target' ? cellViewT : cellViewS;
+				let sourceView = cellViewS; //end === 'target' ? cellViewS : cellViewT;
+				let curLink = { attributes: {} };
+				if (event.target.classList[0] == 'target-arrowhead') {
+					//切换头尾节点
+					let attrs = event.target.attributes;
+					let lid;
+					for (var i = attrs.length - 1; i >= 0; i--)
+						if (attrs[i].nodeName == 'model-id') lid = attrs[i].value;
+					curLink = self.graph.getCell(lid);
+				}
 				let sameTarget = false;
 				self.graph.getConnectedLinks(sourceView.model).map(link => {
-					if (link.getTargetCell() && link.getTargetCell().id == targetView.model.id) sameTarget = true;
+					if (
+						link.id != curLink.attributes.id &&
+						link.getTargetCell() &&
+						link.getTargetCell().id == targetView.model.id
+					)
+						sameTarget = true;
 				});
 				if (sameTarget) return false;
 
 				// don't allow link to link connection
 				if (targetView.model.isLink()) return false;
+				if (sourceView.model.isLink()) return false;
 				if (targetView.model.getFormData().disabled) return false;
 
 				// target don't accept source connection
@@ -180,6 +194,7 @@ export default class Graph extends Component {
 			if (!self.editable) return;
 			if (cellView.model.getFormData().disabled) return;
 			cellView.vel.addClass('visible');
+			this._curCell = cellView;
 			if (event.target.getAttribute('port')) {
 				this._curMag = event.target.getAttribute('port');
 				this._curCell = cellView;
@@ -187,17 +202,16 @@ export default class Graph extends Component {
 				cellView.model.portProp(this._curMag, 'attrs/circle/stroke', '#48b6e2');
 				cellView.model.portProp(this._curMag, 'attrs/circle/stroke-width', 2);
 				cellView.model.portProp(this._curMag, 'attrs/circle/r', 7);
-			} else if (this._curMag && this._curCell.model.hasPort(this._curMag)) {
+			} else if (this._curMag && this._curCell.model.hasPort && this._curCell.model.hasPort(this._curMag)) {
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/fill', '#fff');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke', '#dedee4');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/r', 5);
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke-width', 1);
 				delete this._curMag;
-				delete this._curCell;
 			}
 		});
 		paper.on('blank:mouseover', function() {
-			if (this._curMag && this._curCell.model.hasPort(this._curMag)) {
+			if (this._curMag && this._curCell.model.hasPort && this._curCell.model.hasPort(this._curMag)) {
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/fill', '#fff');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke', '#dedee4');
 				this._curCell.model.portProp(this._curMag, 'attrs/circle/stroke-width', 1);
@@ -205,7 +219,11 @@ export default class Graph extends Component {
 				delete this._curMag;
 				delete this._curCell;
 			}
-			if (this._curCell) this._curCell.vel.removeClass('visible');
+			delete this._curMag;
+			if (this._curCell) {
+				this._curCell.vel.removeClass('visible');
+				delete this._curCell;
+			}
 		});
 		paper.on('cell:mouseout', function(cellView) {
 			cellView.vel.removeClass('visible');
@@ -225,7 +243,7 @@ export default class Graph extends Component {
 
 		paper.on('blank:mousewheel', _.partial(this.onMousewheel, null), this);
 		paper.on('cell:mousewheel', this.onMousewheel, this);
-		paper.on('blank:pointerclick', this.onClickBlank.bind(this));
+		//paper.on('blank:pointerclick', this.onClickBlank.bind(this));
 		paper.on({
 			//鼠标移入Pager区域后，其他元素失去焦点
 			'paper:mouseenter': () => {
@@ -233,6 +251,7 @@ export default class Graph extends Component {
 				ele && ele.blur();
 			}
 		});
+
 		paper.on({
 			'link:connect': linkView => {
 				if (linkView.targetView.model.getFormData().disabled) {
@@ -405,6 +424,16 @@ export default class Graph extends Component {
 			}
 			this.editor.rightSidebar.add(rightTabPanel);
 			this.editor.getRightSidebar().hide();
+		} else {
+			let rightTabPanel = this.editor.getRightTabPanel();
+			if (rightTabPanel) {
+				let monitor = rightTabPanel.getChildByName('monitor');
+				rightTabPanel.select(monitor);
+				this.editor.getRightSidebar().show();
+				$('.monitorTab').html(
+					`<div class="e-tab-title active">${i18n.t('editor.ui.sidebar.statistics')}</div>`
+				);
+			}
 		}
 		this.unHighlightAllCells();
 	}
@@ -470,6 +499,7 @@ export default class Graph extends Component {
 				columns: 3,
 				rowHeight: 53
 			},
+
 			/* search: {
 				'*': ['type', 'attrs/text/text', 'attrs/root/dataTooltip', 'attrs/label/text'],
 				'org.Member': ['attrs/.rank/text', 'attrs/root/dataTooltip', 'attrs/.name/text']
@@ -564,6 +594,7 @@ export default class Graph extends Component {
 					this.paperScroller.startPanning(evt, x, y);
 					this.paper.removeTools();
 				}
+				this.onClickBlank();
 			},
 			this
 		);
@@ -627,7 +658,8 @@ export default class Graph extends Component {
 	}
 
 	selectPrimaryCell(cellView) {
-		let cell = cellView.model;
+		let cell = cellView.model,
+			self = this;
 		if (this.selectedLink) {
 			this.selectedLinkattr('line/stroke', '#8f8f8f');
 			this.selectedLink = false;
@@ -641,9 +673,52 @@ export default class Graph extends Component {
 			}
 		} else {
 			if (cell.isElement()) {
+				if ($('.monitorTab').html().length < 50) {
+					$('.monitorTab').html(
+						`<div class="e-tab-title active">${i18n.t(
+							'editor.ui.sidebar.statistics'
+						)}</div><div class="e-tab-title">${i18n.t('editor.ui.sidebar.config')}</div>`
+					);
+					this.editor.goBackMontior();
+					$('.monitorTab')
+						.children()
+						.first()
+						.click(() => {
+							self.editor.goBackMontior();
+							$('.monitorTab')
+								.children()
+								.first()
+								.addClass('active');
+							$('.monitorTab')
+								.children()
+								.last()
+								.removeClass('active');
+						});
+					$('.monitorTab')
+						.children()
+						.last()
+						.click(() => {
+							self.editor.seeMonitor = false;
+							let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
+							self.editor.getRightTabPanel().select(monitor);
+							$('.monitorTab')
+								.children()
+								.last()
+								.addClass('active');
+							$('.monitorTab')
+								.children()
+								.first()
+								.removeClass('active');
+						});
+				}
 				this.selectCell(cell);
 			} else {
+				$('.monitorTab').html(`<div class="e-tab-title active">${i18n.t('editor.ui.sidebar.config')}</div>`);
 				this.selectPrimaryLink(cellView);
+				setTimeout(() => {
+					let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
+					self.editor.getRightTabPanel().select(monitor);
+				}, 20);
 			}
 		}
 		this.createInspector(cell);
@@ -763,13 +838,26 @@ export default class Graph extends Component {
 					if (!self.editable) return;
 
 					let ns = joint.linkTools;
+					let sourceHead = joint.linkTools.SourceArrowhead.extend({
+						tagName: 'circle',
+						attributes: {
+							cx: 3,
+							r: 6,
+							fill: '#5755a1',
+							stroke: '#5755a1',
+							'stroke-width': 2,
+							cursor: 'move',
+							class: 'target-arrowhead',
+							'fill-opacity': 0.2
+						}
+					});
 					let toolsView = new joint.dia.ToolsView({
 						name: 'link-hover',
 						tools: [
 							new ns.Vertices({
 								vertexAdding: false
 							}),
-							new ns.SourceArrowhead(),
+							new sourceHead(),
 							new ns.TargetArrowhead()
 						]
 					});
@@ -818,7 +906,7 @@ export default class Graph extends Component {
 				max: 5
 			},
 			paperOptions: {
-				async: true,
+				//async: true,
 				elementView: joint.shapes.app.NavigatorElementView,
 				linkView: joint.shapes.app.NavigatorLinkView,
 				cellViewNamespace: {

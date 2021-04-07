@@ -188,7 +188,15 @@
 			>
 				<template slot-scope="scope">
 					<span class="dataflow-name">
-						<span>{{ scope.row.name }}</span>
+						<span
+							class="name"
+							@click="
+								scope.row.status === 'draft'
+									? handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)
+									: handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate)
+							"
+							>{{ scope.row.name }}</span
+						>
 						<el-tag
 							v-if="scope.row.listtags && scope.row.listtags.length"
 							class="tag"
@@ -210,7 +218,7 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column width="180">
+			<el-table-column min-width="150">
 				<div slot="header">
 					{{ $t('dataFlow.syncType') }}
 					<TableFilter
@@ -987,44 +995,44 @@ export default {
 					in: ids
 				}
 			};
-			MetadataInstance.download(where);
+			MetadataInstance.download(where, 'DataFLow');
 		},
-		run(ids, node) {
+		run(ids) {
 			if (this.$refs.agentDialog.checkAgent()) {
-				if (node) {
-					this.$refs.errorHandler.checkError(node, () => {
-						//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
-						if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
-							const h = this.$createElement;
-							let arr = this.$t('message.startAggregation_message').split('XXX');
-							this.$confirm(
-								h('p', [
-									arr[0] + '(',
-									h('span', { style: { color: '#48b6e2' } }, node.name),
-									')' + arr[1]
-								]),
-								this.$t('dataFlow.importantReminder'),
-								{
-									type: 'warning',
-									closeOnClickModal: false
-								}
-							)
-								.then(() => {
-									//若任务内存在聚合处理器，启动前先重置
-									dataFlows.reset(node.id).then(() => {
-										this.changeStatus(ids, { status: 'scheduled' });
-									});
-								})
-								.catch(() => {
-									this.table.fetch();
-								});
-						} else {
-							this.changeStatus(ids, { status: 'scheduled' });
-						}
-					});
-				} else {
-					this.changeStatus(ids, { status: 'scheduled' });
-				}
+				// if (node) {
+				// 	this.$refs.errorHandler.checkError(node, () => {
+				// 		//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
+				// 		if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
+				// 			const h = this.$createElement;
+				// 			let arr = this.$t('message.startAggregation_message').split('XXX');
+				// 			this.$confirm(
+				// 				h('p', [
+				// 					arr[0] + '(',
+				// 					h('span', { style: { color: '#48b6e2' } }, node.name),
+				// 					')' + arr[1]
+				// 				]),
+				// 				this.$t('dataFlow.importantReminder'),
+				// 				{
+				// 					type: 'warning',
+				// 					closeOnClickModal: false
+				// 				}
+				// 			)
+				// 				.then(() => {
+				// 					//若任务内存在聚合处理器，启动前先重置
+				// 					dataFlows.reset(node.id).then(() => {
+				// 						this.changeStatus(ids, { status: 'scheduled' });
+				// 					});
+				// 				})
+				// 				.catch(() => {
+				// 					this.table.fetch();
+				// 				});
+				// 		} else {
+				// 			this.changeStatus(ids, { status: 'scheduled' });
+				// 		}
+				// 	});
+				// } else {
+				this.changeStatus(ids, { status: 'scheduled' });
+				// }
 			}
 		},
 		stop(ids, item = {}) {
@@ -1249,11 +1257,20 @@ export default {
 				}
 			}
 		}
-		.dataflow-name .tag {
-			margin-left: 5px;
-			color: #999999;
-			background: #f5f5f5;
-			border: 1px solid #dedee4;
+		.dataflow-name {
+			.tag {
+				margin-left: 5px;
+				color: #999999;
+				background: #f5f5f5;
+				border: 1px solid #dedee4;
+			}
+			.name {
+				color: #48b6e2;
+				cursor: pointer;
+			}
+			.name:hover {
+				text-decoration: underline;
+			}
 		}
 		.task-name {
 			color: #333;

@@ -33,12 +33,14 @@ export default {
 		return {
 			show: true,
 			defaultFormConfig: {
+				mode: 'form',
 				model: null,
 				rules: null,
 				inline: false,
 				labelPosition: 'top',
 				labelWidth: '160px',
 				size: 'mini',
+				inlineMessage: false,
 				disabled: false
 			},
 			defaultFormItemConfig: {
@@ -147,7 +149,7 @@ export default {
 					},
 					key: config.field || index
 				},
-				[this.getLabel(h, config), this.getBody(h, config)]
+				[this.getLabel(h, config), this.getBody(h, config, formConfig)]
 			);
 			return config.show ? item : '';
 		},
@@ -195,42 +197,47 @@ export default {
 						]
 				  );
 		},
-		getBody(h, config) {
+		getBody(h, config, formConfig) {
 			let self = this;
 			let appendSlot = config.appendSlot ? config.appendSlot(h, this.value) : null;
-			let el =
-				config.type === 'slot'
-					? this.$slots[config.slot]
-					: h(TYPE_MAPPING[config.type], {
-							props: {
-								value: self.value[config.field],
-								config: config
-							},
-							on: {
-								input(val) {
-									if (self.value[config.field] === undefined) {
-										throw new Error(`The field "${config.field}" of the model is not defined!`);
-									}
-									self.value[config.field] = val;
-									let influences = config.influences;
-									if (influences && influences.length) {
-										influences.forEach(it => {
-											if (it.byValue === val) {
-												self.value[it.field] = it.value;
-											}
-										});
-									}
-									config.on.input && config.on.input(val);
-									self.$emit('value-change', {
-										field: config.field,
-										value: val
-									});
-								},
-								change(...args) {
-									config.on.change && config.on.change(...args);
-								}
+			let el = null;
+			if (config.type === 'slot') {
+				el = this.$slots[config.slot];
+			} else if (formConfig.mode === 'text' || config.mode === 'text') {
+				el = self.value[config.field];
+			} else {
+				el = h(TYPE_MAPPING[config.type], {
+					props: {
+						value: self.value[config.field],
+						config: config
+					},
+					on: {
+						input(val) {
+							if (self.value[config.field] === undefined) {
+								throw new Error(`The field "${config.field}" of the model is not defined!`);
 							}
-					  });
+							self.value[config.field] = val;
+							let influences = config.influences;
+							if (influences && influences.length) {
+								influences.forEach(it => {
+									if (it.byValue === val) {
+										self.value[it.field] = it.value;
+									}
+								});
+							}
+							config.on.input && config.on.input(val);
+							self.$emit('value-change', {
+								field: config.field,
+								value: val
+							});
+						},
+						change(...args) {
+							config.on.change && config.on.change(...args);
+						}
+					}
+				});
+			}
+
 			if (appendSlot) {
 				return h('div', { class: { 'fb-item-group': true } }, [
 					el,

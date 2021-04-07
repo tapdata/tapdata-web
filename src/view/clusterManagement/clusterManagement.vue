@@ -285,9 +285,9 @@
 import addServe from './component/addServe';
 import factory from '../../api/factory';
 const cluster = factory('cluster');
-const clusterVersion = factory('clusterVersion');
-const settings = factory('Setting');
-const dataFlows = factory('DataFlows');
+// const clusterVersion = factory('clusterVersion');
+// const settings = factory('Setting');
+// const dataFlows = factory('DataFlows');
 export default {
 	components: {
 		addServe
@@ -321,11 +321,11 @@ export default {
 		};
 	},
 	created() {
-		settings.get().then(res => {
-			if (res.data && res.data.length) {
-				this.toVersion = res.data.findWhere({ key: 'tapdataAgentVersion' }).value;
-			}
-		});
+		// settings.get().then(res => {
+		// 	if (res.data && res.data.length) {
+		// 		this.toVersion = res.data.findWhere({ key: 'tapdataAgentVersion' }).value;
+		// 	}
+		// });
 
 		this.getDataApi();
 		// 这是一个定时器
@@ -496,28 +496,27 @@ export default {
 			this.canUpdate = false;
 		},
 		async getVersion(datas) {
-			for (let i = 0; i < datas.length; i++)
-				if (datas[i].status != 'down')
-					await clusterVersion
-						.get({ filter: JSON.stringify({ where: { 'version.uuid': datas[i].uuid } }) })
-						.then(res => {
-							if (res.data && res.data.length) {
-								datas[i].curVersion = res.data[0].version.backend;
-							}
-						});
-			let where = {},
-				allCdc = false;
-			if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-				where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
-			where['stats.stagesMetrics.status'] = { neq: 'cdc' };
-			where.status = { eq: 'running' };
-			await dataFlows.count({ where: where }).then(res => {
-				if (res.data) {
-					if (res.data.count == 0) allCdc = true;
-				}
-			});
-			for (let i = 0; i < datas.length; i++)
-				datas[i].canUpdate = allCdc && datas[i].curVersion != this.toVersion && datas[i].status != 'down';
+			// for (let i = 0; i < datas.length; i++)
+			// 	if (datas[i].status != 'down')
+			// 		await clusterVersion
+			// 			.get({ filter: JSON.stringify({ where: { 'version.uuid': datas[i].uuid } }) })
+			// 			.then(res => {
+			// 				if (res.data && res.data.length) {
+			// 					datas[i].curVersion = res.data[0].version.backend;
+			// 				}
+			// 			});
+			// let where = {},
+			// 	allCdc = false;
+			// if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
+			// 	where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
+			// where['stats.stagesMetrics.status'] = { neq: 'cdc' };
+			// where.status = { eq: 'running' };
+			// await dataFlows.count({ where: where }).then(res => {
+			// 	if (res.data) {
+			// 		if (res.data.count == 0) allCdc = true;
+			// 	}
+			// });
+			for (let i = 0; i < datas.length; i++) datas[i].canUpdate = false; //allCdc && datas[i].curVersion == this.toVersion && datas[i].status != 'down';
 			let [...waterfallData] = datas;
 			let [...newWaterfallData] = [[], []];
 			waterfallData.forEach((item, index) => {
@@ -638,6 +637,10 @@ export default {
 		goDailyRecord() {
 			this.$router.push('/dailyRecord');
 		}
+	},
+	destroyed() {
+		clearInterval(this.timer);
+		this.timer = null;
 	}
 };
 </script>

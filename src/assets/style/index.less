@@ -141,6 +141,29 @@ a{
 		min-height: 0;
 	}
 }
+.passwordIconfont {
+	font-family: "iconfont" !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+input[type="text"] + .el-input__suffix {
+	.el-input__icon.el-icon-view {
+		.passwordIconfont();
+		&::before {
+			content: "\e63c";
+		}
+	}
+}
+input[type="password"] + .el-input__suffix {
+	.el-input__icon.el-icon-view {
+		.passwordIconfont();
+		&::before {
+			content: "\e63b";
+		}
+	}
+}
 
 .loop(@index) when(@index <= 20   ) {
 	.ml-@{index} {

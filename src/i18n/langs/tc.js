@@ -91,6 +91,7 @@ const tc = {
 			permission_denied: '沒有權限',
 			signInFail: '帳戶或密碼錯誤',
 			watingApprove: '此賬號尚未審核，請等待聯繫郵件',
+			accountDisabled: '你的賬號已被凍結，如有疑問請聯繫客服。 ',
 			hasVerified: '郵箱沒有校驗',
 			registry: '賬號註冊',
 			registry_tip: '我已同意',
@@ -146,6 +147,7 @@ const tc = {
 			dataGovernance: '數據治理',
 			metadataDefinition: '元數據管理',
 			metadata: '數據目錄',
+			metadataSearch: '元数据检索',
 			dataQuality: '數據質量',
 			timeToLive: '生命週期管理',
 			dataMap: '數據地圖',
@@ -257,6 +259,8 @@ const tc = {
 		preview: '預覽',
 		cancel: '取 消',
 		confirm: '確定',
+		save: '保 存',
+		deleteOrNot: '是否刪除',
 		placeholderMonServer: '請輸入監控的服務名稱',
 		placeholderCommand: '請輸入command',
 		nullContent: '不能為空',
@@ -351,15 +355,20 @@ const tc = {
 		level: '級別'
 	},
 	button: {
+		refresh: '刷新',
 		reset: '重置',
 		delete: '删除',
 		rename: '改名',
 		details: '詳情',
 		more: '更多',
 		edit: '編輯',
+		query: '查詢',
 		all: '全部'
 	},
 	dataFlow: {
+		leave: '離開',
+		backlistText: '返回列表頁',
+		saveReminder: '此任務尚未保存，離開本頁面會導致任務配置丟失，確定要離開嗎?',
 		saveFail: '任務保存失敗，請檢查配置信息並確保數據源狀態有效',
 		aggregateNotDataNode: '連接聚合節點的第一個目標數據節點只能是數據集',
 		batchSortOperation: '批量分類操作',
@@ -580,6 +589,7 @@ const tc = {
 		ddlTip: '注意：自動DDL處理不支持JS處理器，分段處理器',
 		transformerConcurrency: '目標寫入線程數',
 		processorConcurrency: '處理器線程數',
+		cdcEngineFilter: '啟用引擎過濾',
 		cdcFetchSize: '增量批次讀取條數',
 		cdcFetchSizeTip: '每次讀取的數據條數。',
 		cdcFetchSizeTip1: '條數越小，增量實時性高，但處理速度相對較慢。',
@@ -604,7 +614,10 @@ const tc = {
 		aggExpression: '作用目標',
 		filterPredicate: '過濾器',
 		groupByExpression: '分組字段',
+		keepAggreHistoryData: '保留聚合歷史數據',
 		aggregation: '聚合處理',
+		aggrCleanSecond: '清理舊版本數據時間',
+		aggrFullSyncSecond: '全量同步時間',
 		enterFilterTable: '請輸入過濾表內容',
 		aggregatePrompt: '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
 		nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
@@ -1078,7 +1091,9 @@ const tc = {
 					aggregateSizeLabel: '聚合結果緩存條數',
 					aggregateSizeTips: '聚合結果在設置的條數範圍內存在緩存里，超出的數據會被存入目標庫。',
 					allAggregateSize: '全部存入緩存',
-					customAggregateSize: '自定義緩存條數'
+					customAggregateSize: '自定義緩存條數',
+					cleanSecondTimeLess3600: '清理舊版本數據時間不能替換3600',
+					fullSyncSecondTimeLess3600: '全量同步時間不能插入3600'
 				},
 				field: {
 					name: '字段',
@@ -1094,6 +1109,8 @@ const tc = {
 							label: '描述',
 							placeholder: '請輸入節點描述'
 						},
+						originalName: '原字段名: ',
+						originalType: '原類型: ',
 						errorUndefined:
 							'檢測到源節點的模型有變化，字段處理器無法使用，請在上一級節點的配置面板點擊更新模型按鈕以更新模型',
 						errorOperationSaveTip: '字段處理節點檢測到衝突待處理',
@@ -1151,7 +1168,6 @@ const tc = {
 						time: '耗時',
 						log: '日誌'
 					},
-
 					form: {
 						name: {
 							label: '节点名称',
@@ -1249,25 +1265,26 @@ const tc = {
 				},
 				form: {
 					label: {
-						label: '标签',
-						placeholder: '请输入标签'
+						label: '標籤',
+						placeholder: '請輸入標籤'
 					},
 					joinMethod: {
 						label: '不匹配數據插入方式',
 						placeholder: '請選擇數據插入方式'
 					},
 					joinType: {
-						label: '数据写入模式',
-						placeholder: '请选择数据写入模式'
+						label: '數據寫入模式',
+						placeholder: '請選擇數據寫入模式'
 					},
 					joinPath: {
-						label: '关联后写入路径',
-						placeholder: '请输入关联后写入路径'
+						label: '關聯後寫入路徑',
+						placeholder: '請輸入關聯後寫入路徑',
+						copyLabel: '複製寫入路徑'
 					},
 					joinKeys: {
-						label: '关联條件',
+						label: '關聯條件',
 						sourceField: '源字段',
-						targetField: '目标字段'
+						targetField: '目標字段'
 					},
 					arrayUniqueKey: {
 						label: '內嵌數組匹配條件',
@@ -1319,10 +1336,12 @@ const tc = {
 			sidebar: {
 				setting: '任務設置',
 				node_setting: '節點屬性',
+				statistics: '統計',
+				milestone: '任務里程碑',
 				logs: '日誌',
 				capture: '抓取數據',
 				style: '樣式',
-
+				config: '配置',
 				data_nodes: '數據節點',
 				processor: '處理節點',
 				tableSelector: '快速選擇'
@@ -1599,6 +1618,7 @@ const tc = {
 			supportUpdatePk: '支持同步時更新主鍵',
 			indexPrefix: '索引前綴',
 			agentMsg: '當前測試連接服務不可用，請檢查是否正確啟動數據同步(Agent)服務',
+			multiTenant: '多租戶模式',
 			uriTips: {
 				label: '示例',
 				content:
@@ -1649,7 +1669,9 @@ const tc = {
 				CHECK_ACCESS_TOKEN: '檢查access token是否可用',
 				CHECK_API_AUTH: '檢查api是否有訪問權限',
 				CHECK_LOCAL_PORT: '檢查本地端口是否可用',
-				SCAN_FILE: '掃描目錄中的文件'
+				SCAN_FILE: '掃描目錄中的文件',
+				CHECK_BIN_LOG_SYNC: '檢查binlog日誌同步是否開啟',
+				CHECK_GTID: ' 檢查GTID模式與GTID一致性是否開啟'
 			},
 			file: {
 				fileAddr: '文件地址',
@@ -1745,7 +1767,7 @@ const tc = {
 			noCreate: '，無法被重複創建',
 			kafkaNameRange: '主題名稱長度大於256'
 		},
-		createDatabase: '新建數據庫',
+		createDatabase: '創建新數據源',
 		copyDatabase: '複製數據庫名',
 		checkDatabase: '查看詳情',
 		createTable: '創建新表',
@@ -1767,6 +1789,9 @@ const tc = {
 	},
 	classification: {
 		title: '數據分類',
+		userTitle: '用戶組',
+		creatUserGroup: '創建用戶組',
+		creatDataClassification: '創建數據分類',
 		nameExist: '分類名稱已存在',
 		addNode: '新增同級分類',
 		addChildernNode: '新增子分類',
@@ -1774,6 +1799,11 @@ const tc = {
 		deleteNode: '刪除',
 		nodeName: '請輸入分類名稱',
 		deteleMessage: '此操作會將該分類下存在的子類都刪除，是否刪除'
+	},
+	relations: {
+		blood: '表鏈路圖',
+		refresh: '刷新數據',
+		refreshStatus: '上次刷新'
 	},
 	metadata: {
 		createNewModel: '創建模型',
@@ -1805,6 +1835,108 @@ const tc = {
 			database: '數據庫',
 			tableName: '表名稱',
 			none_table_name: '表名稱不能為空'
+		},
+		details: {
+			model: '模型',
+			dataDirectory: '數據目錄',
+			dataDetails: '數據詳情',
+			basicAttributes: '基礎屬性',
+			businessAttributes: '業務屬性',
+			clickAddDes: '點擊添加描述',
+			propertyDetails: '屬性詳情',
+			name: '名稱',
+			originalTableName: '原表名',
+			typesOf: '類型',
+			owningConnection: '所屬連接',
+			primaryKey: '主鍵',
+			source: '來源',
+			creationTime: '創建時間',
+			founder: '創建人',
+			changeTime: '修改時間',
+			Modifier: '修改人',
+			renamed: '改名',
+			edit: '編輯',
+			searchPlaceholder: '字段名/別名/描述',
+			selsectSource: '選擇來源',
+			createFiled: '新建字段',
+			editFild: '編輯字段',
+			prohibitOverwriting: ' 批量禁止覆蓋',
+			batchCoverage: '批量覆蓋',
+			refreshModel: '刷新模型',
+			filedName: '字段名',
+			alias: '別名',
+			description: '描述',
+			fieldType: '字段類型',
+			allowOverwrite: '允許覆蓋',
+			selfIncreasing: '自增',
+			fieldLength: '字段長度',
+			accuracy: '精準度',
+			numberLength: '數字長度',
+			dictionarySettings: '字典設置',
+			initialValue: '初始值',
+			mappedValue: '映射值',
+			enterInitialValue: '輸入初始值',
+			enterMappedValue: '輸入映射值',
+			opera: '操作',
+			newMapping: '新增映射',
+			chooseTemplate: '選擇模板',
+			foreignKeySetting: '外鍵設置',
+			associationTable: '關聯表',
+			associationField: '關聯字段',
+			connectionRelation: '關聯關係',
+			oneone: '一對一',
+			onemany: '一對多',
+			manyone: '多對一',
+			addRelatedTable: '新增關聯表',
+			enter: '請輸入',
+			filedAliasName: '字段名/別名',
+			Float: '浮點數',
+			String: '字符串',
+			baseObject: '對象',
+			Array: '數組',
+			Map: '字典對象',
+			Short: '短整型',
+			Long: '長整型',
+			Double: '雙精度',
+			Byte: '字節',
+			Bytes: '字節數',
+			BigDecimal: '十進制',
+			Boolean: '布爾值',
+			Date: '日期',
+			Integer: '整數',
+			dictionary_typeNo: '此字段類型不能添加字典模板',
+			fieldNameNo: '字段名為空',
+			moreAttributes: '更多屬性',
+			msgFiledName: '請輸入字段名稱',
+			success_Release: '保存成功,請手動重新發布',
+			filedName_repeat: '字段名不能重名',
+			filedDictionary: '字段字典',
+			foreignKeyAssociation: '外鍵關聯',
+			tableLayering: '表分層',
+			theme: '主題',
+			taskReference: '任務引用',
+			APIReference: 'API引用',
+			creat: '新建',
+			businessAttrTitle: '業務屬性',
+			attrName: '屬性名',
+			attrKey: '屬性值',
+			editAliasNameTitle: '編輯別名',
+			editCommentTitle: '編輯描述',
+			uniquelyIdentifies: '唯一標識'
+		},
+		metadataSearch: {
+			title: '元數據檢索',
+			desc:
+				'元數據檢索提供對錶、字段的名稱、別名、描述等內容的搜索功能，請先選擇搜索表/字段，再輸入內容，點擊搜索按鈕進行搜索',
+			table: '搜索表',
+			column: '搜索字段',
+			search: '搜索',
+			noSearch: '請按“回車”鍵發起檢索',
+			noResult: '暫無搜索結果，請確認搜索關鍵字',
+			originalName: '原表名',
+			noMore: '無更多檢索結果',
+			more: '點擊加載更多',
+			placeholder: '請輸入搜索關鍵字'
 		}
 	},
 	notification: {
@@ -1950,6 +2082,7 @@ const tc = {
 			linuxInstructionsText2: '· 在環境中執行以上命令，將會自動下載和​​啟動 Agent',
 			linuxInstructionsText3: '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止 Agent',
 			waitingInstall: '等待安裝',
+			agentInstallation: 'Agent 已經安裝',
 			agentNum: 'Agent 已安裝數',
 			downLoadAgent: '下載 Agent',
 			windowsText:
@@ -2194,13 +2327,12 @@ const tc = {
 			schedule_jobs_menu: '調度任務',
 			Cluster_management_menu: '集群管理',
 			agents_menu: '進程管理',
-			dictionary: '字典模板',
 			user_management_menu: '用戶管理',
 			role_management_menu: '角色管理',
 			system_settings_menu: '系統設置',
 			dictionary_menu: '字典模板管理',
 			Topology_menu: '網絡拓撲',
-			servers_oversee_menu: '瀏覽運維'
+			servers_oversee_menu: '運維運控'
 		},
 		moduleMeun: {
 			Dashboard: '瀏覽控制台(首頁)',
@@ -2224,6 +2356,7 @@ const tc = {
 			schedule_jobs: '調度任務',
 			Cluster_management: '集群管理',
 			agents: '進程管理',
+			dictionary: '字典模板',
 			user_management: '用戶管理',
 			role_management: '角色管理',
 			system_settings: '系統設置'
@@ -2399,7 +2532,76 @@ const tc = {
 		btn_to_dashboard: '暫不編輯任務，先逛逛',
 
 		not_source: '請選擇一個源連接',
-		not_target: '請選擇一個目標連接'
+		not_target: '請選擇一個目標連接',
+
+		agentServiceTitle: 'Agent 服務狀態異常',
+		abnormalText: '異常原因',
+		abnormal: 'Agnet 進程所在環境斷開連接',
+		abnormal1: 'Agnet 服務進程被幹掉',
+		solutionText: '解決方案',
+		windowsSolution: 'WINDOWS：啟動服務器並執行命令 ',
+		windowsSolution1: 'WINDOWS：在安裝Agent環境下執行命令 ',
+		linuxSolution: 'LINUX：啟動服務器並執行命令 ',
+		linuxSolution1: 'LINUX：在安裝Agent環境下執行命令 ',
+		restartProcess: ' 以重啟進程',
+		clickText: '進程已重啟？請點擊'
+	},
+	user: {
+		des: '用戶管理頁面提供對用戶的創建、編輯、刪除，以及狀態設置功能',
+		all: '全部',
+		inactivated: '未激活',
+		unverified: '未驗證',
+		userNameEmail: '請輸入用戶名 / 郵箱',
+		changeTime: ' 修改時間',
+		creatUser: '創建用戶',
+		editUser: '編輯用戶',
+		userName: '用戶名',
+		email: '郵箱',
+		password: '密碼',
+		role: '關聯角色',
+		source: '來源',
+		status: '狀態',
+		opera: '操作',
+		activation: '激活',
+		freeze: '凍結',
+		delete: '刪除',
+		check: '校驗',
+		edit: '編輯',
+		bulkActivation: '批量激活',
+		bulkFreeze: '批量凍結',
+		bulkCheck: '批量校驗',
+		create: '創建',
+		registration: '註冊',
+		notVerified: '未驗證',
+		notActivated: '未激活',
+		activated: '已激活',
+		rejected: '已拒絕',
+		passwordNull: '請輸入密碼, 長度為 5 ~ 32 個字符',
+		pass_hint: '密碼長度不能小於5大於32',
+		activationCode: '訪問碼',
+		delUserTitle: '是否刪除該用戶？',
+		delUser: '刪除用戶',
+		deluserLast: ' 後，此用戶將無法恢復',
+		checkUserTitle: '是否通過校驗該用戶？',
+		checkUser: '通過校驗用戶',
+		checkUserLast: ' 的郵箱後，此用戶可以被激活',
+		activationUserTitle: '是否激活該用戶？ ',
+		activetionUser: '激活用戶',
+		activetionUserLast: ' 後，此用戶將可以使用 TAPDATA 系統',
+		freezeUserTitle: '是否凍結該用戶？ ',
+		freezeUser: '凍結用戶',
+		freezeUserLast: ' 後，此用戶將不可以使用 TAPDATA 系統',
+		startTime: '開始時間',
+		endTime: '結束時間',
+		emailNull: '郵箱不能為空',
+		email_must_valid: '請輸入有效郵箱地址',
+		activetionSuccess: '激活成功',
+		activetionError: '激活失敗',
+		freezeSuccess: '凍結成功',
+		freezeError: '凍結失敗',
+		checkSuccess: '通過校驗',
+		checkError: '校驗失敗',
+		alreadyExists: '用戶名不能重複'
 	}
 };
 

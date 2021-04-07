@@ -24,9 +24,11 @@ import TableSelector from '../view/job/TableSelector';
 import DatabaseSelector from '../view/job/DatabaseSelector';
 import { DEFAULT_SETTING } from './constants';
 import { EditorEventType } from './lib/events';
+import { Message } from 'element-ui';
 import i18n from '../i18n/i18n';
 
 import factory from '../api/factory';
+import $ from 'jquery';
 
 const connections = factory('connections');
 
@@ -255,37 +257,6 @@ export default class Editor extends BaseObject {
 
 		self.ui.setDisableName(true);
 
-		// self.getRightTabPanel().removeAll();
-		// remove stage config
-		// let nodeSettingPanel = self.getRightTabPanel().getChildByName('nodeSettingPanel');
-		// if( nodeSettingPanel ) self.getRightTabPanel().remove(nodeSettingPanel);
-
-		// remove setting
-		// let setting = self.getRightTabPanel().getChildByName('setting');
-		// if( setting ) self.getRightTabPanel().remove(setting);
-
-		// add monitor
-		/* let rightTabPanel = self.getRightSidebar().getChildByName('rightTabPanel');
-		if( !rightTabPanel) {
-			rightTabPanel = new Tab({
-				name: 'rightTabPanel'
-			});
-			self.getRightSidebar().add(rightTabPanel); //添加空白panel 节点渲染
-		} */
-
-		// let monitor = self.getRightTabPanel().getChildByName("monitor");
-		// if (!monitor) {
-		// 	monitor = new VueComponent({
-		// 		name: "monitor",
-		// 		editor: this,
-		// 		propsData: {
-		// 			dataFlow: dataFlow
-		// 		},
-		// 		component: Monitor
-		// 	});
-		// 	self.getRightTabPanel().add(monitor);
-		// }
-		// self.getRightSidebar().show();
 		self.initMonitor(dataFlow);
 		self.showLogs(dataFlow, true);
 	}
@@ -310,7 +281,7 @@ export default class Editor extends BaseObject {
 		// this.getBottomTabPanel().removeAll();
 	}
 	initMonitor(dataFlow) {
-		this.getRightTabPanel().removeAll();
+		// this.getRightTabPanel().removeAll();
 		this.seeMonitor = true;
 		let self = this;
 		if (dataFlow) this.dataFlow = dataFlow;
@@ -319,6 +290,7 @@ export default class Editor extends BaseObject {
 			let monitor = rightTabPanel.getChildByName('monitor');
 			if (!monitor) {
 				monitor = new VueComponent({
+					title: i18n.t('editor.ui.sidebar.statistics'),
 					name: 'monitor',
 					editor: this,
 					propsData: {
@@ -331,6 +303,10 @@ export default class Editor extends BaseObject {
 			rightTabPanel.select(monitor);
 			self.getRightSidebar().show();
 		}
+		let tapTitle = i18n.t('editor.ui.sidebar.statistics');
+		$('.e-tab-panel')
+			.last()
+			.prepend(`<div class="monitorTab"><div class="e-tab-title active">${tapTitle}</div></div>`);
 	}
 
 	/**
@@ -353,6 +329,14 @@ export default class Editor extends BaseObject {
 
 			let settingData = self.graph.getSettingData() || {};
 			settingData.editDisable = !!editDisable;
+
+			if (settingData.editDisable) {
+				$('.monitorTab').html('<div class="e-tab-title active">setting</div>');
+				let removeTab = document.getElementsByClassName('monitorTab');
+				if (removeTab && removeTab.length > 0) {
+					removeTab[0].remove();
+				}
+			}
 			setting.setData(settingData);
 			rightTabPanel.select(setting);
 		}
@@ -703,45 +687,55 @@ export default class Editor extends BaseObject {
 				}
 			})
 		};
-		connections.get(params).then(result => {
-			if (result.data && result.data.length !== 0) {
-				/**
-				 * connectionId -> table name -> schema
-				 * @type {{object}}
-				 */
-				let connectionSchemaData = {};
+		connections
+			.get(params)
+			.then(result => {
+				if (result.data && result.data.length !== 0) {
+					/**
+					 * connectionId -> table name -> schema
+					 * @type {{object}}
+					 */
+					let connectionSchemaData = {};
 
-				result.data.forEach(connection => {
-					if (connection.schema && connection.schema.tables) {
-						let tables = {};
-						connection.schema.tables.forEach(table => (tables[table.table_name] = table));
-						connectionSchemaData[connection.id] = tables;
-					}
-				});
-
-				// 3. 分别更新对应节点schema
-				if (dataCells) {
-					dataCells.map(cell => {
-						let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null;
-						if (!formData) return;
-
-						let type = cell.get('type');
-						let connectionIdFieldName = self.mapping[type];
-						let connectionId = formData[connectionIdFieldName];
-						let tableName = formData.tableName;
-
-						let schema =
-							connectionSchemaData[connectionId] && connectionSchemaData[connectionId][tableName];
-
-						if (!connectionId || !tableName || !schema) return;
-						cell.setSchema(schema, false);
+					result.data.forEach(connection => {
+						if (connection.schema && connection.schema.tables) {
+							let tables = {};
+							connection.schema.tables.forEach(table => (tables[table.table_name] = table));
+							connectionSchemaData[connection.id] = tables;
+						}
 					});
 
-					// 4. 更新所有节点的schema
-					self.graph.graph.getSources().forEach(cell => cell.updateOutputSchema());
+					// 3. 分别更新对应节点schema
+					if (dataCells) {
+						dataCells.map(cell => {
+							let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null;
+							if (!formData) return;
+
+							let type = cell.get('type');
+							let connectionIdFieldName = self.mapping[type];
+							let connectionId = formData[connectionIdFieldName];
+							let tableName = formData.tableName;
+
+							let schema =
+								connectionSchemaData[connectionId] && connectionSchemaData[connectionId][tableName];
+
+							if (!connectionId || !tableName || !schema) return;
+							cell.setSchema(schema, false);
+						});
+
+						// 4. 更新所有节点的schema
+						self.graph.graph.getSources().forEach(cell => cell.updateOutputSchema());
+					}
 				}
-			}
-		});
+				Message.success({
+					message: i18n.t('message.reloadSchemaSuccess')
+				});
+			})
+			.catch(() => {
+				Message.error({
+					message: i18n.t('message.reloadSchemaError')
+				});
+			});
 	}
 	getAllCells() {
 		let dataCells = this.graph.graph

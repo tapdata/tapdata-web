@@ -58,7 +58,9 @@ import {
 	Step,
 	Transfer,
 	Badge,
-	Progress
+	Progress,
+	Collapse,
+	CollapseItem
 } from 'element-ui';
 //重写ElementUI Select组件多选时的触发函数，去掉去重的处理
 Select.methods.handleOptionSelect = function(option, byClick) {
@@ -148,6 +150,8 @@ Vue.component(Step.name, Step);
 Vue.component(Transfer.name, Transfer);
 Vue.component(Badge.name, Badge);
 Vue.component(Progress.name, Progress);
+Vue.component(Collapse.name, Collapse);
+Vue.component(CollapseItem.name, CollapseItem);
 Vue.use(Loading.directive);
 /***提示只显示一次**/
 // 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用

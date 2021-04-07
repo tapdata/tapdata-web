@@ -1,10 +1,10 @@
 <template>
 	<div class="logminer">
-		<div class="head-btns">
+		<!-- <div class="head-btns">
 			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
-		</div>
+		</div> -->
 
 		<el-form ref="model" :model="model" label-position="top" label-width="200px" :disabled="disabled">
 			<el-col :span="21" class="aggregateName">
@@ -143,7 +143,7 @@ import MultiSelection from '../../../components/MultiSelection';
 
 let connectionApi = factory('connections');
 
-let editorMonitor = null;
+// let editorMonitor = null;
 let tempSchemas = [];
 export default {
 	name: 'Aggregate',
@@ -352,7 +352,7 @@ export default {
 			this.$forceUpdate();
 		},
 
-		setData(data, cell, dataNodeInfo, vueAdapter) {
+		setData(data) {
 			let timeZone = new Date().getTimezoneOffset() / 60;
 			if (timeZone > 0) {
 				timeZone = 0 - timeZone;
@@ -399,7 +399,7 @@ export default {
 				});
 			}
 
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 		},
 
 		getData() {
@@ -415,11 +415,11 @@ export default {
 
 		setDisabled(disabled) {
 			this.disabled = disabled;
-		},
-
-		seeMonitor() {
-			editorMonitor.goBackMontior();
 		}
+
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// }
 	}
 };
 </script>

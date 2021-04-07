@@ -215,6 +215,7 @@ let menuSetting = [
 		children: [
 			{ name: 'metadataDefinition', code: 'data_catalog_menu' },
 			{ name: 'metadata', code: 'data_catalog_menu' },
+			{ name: 'metadataSearch' },
 			{ name: 'dataQuality', code: 'data_quality_menu' },
 			{ name: 'timeToLive', code: 'time_to_live_menu' },
 			{ name: 'dataMap', code: 'data_lineage_menu' },
@@ -270,7 +271,9 @@ export default {
 				this.$has('home_notice_settings') ||
 				(this.$has('system_settings') && this.$has('system_settings_menu')),
 			settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
-			creatAuthority: true,
+			creatAuthority:
+				(this.$has('SYNC_job_creation') && this.$has('Data_SYNC_menu')) ||
+				(this.$has('datasource_creation') && this.$has('datasource_menu')),
 			menus: [],
 			activeMenu: '',
 			favMenus: [],
@@ -291,7 +294,7 @@ export default {
 			this.getFavMenus();
 		});
 		if (this.$cookie.get('email')) {
-			this.userName = this.$cookie.get('email').split('@')[0] || '';
+			this.userName = this.$cookie.get('username') || this.$cookie.get('email').split('@')[0] || '';
 		}
 
 		window.iframeRouterChange = route => {

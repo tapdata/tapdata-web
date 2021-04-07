@@ -86,6 +86,15 @@ const childRoutes = [
 		}
 	},
 	{
+		path: '/metadataSearch',
+		name: 'metadataSearch',
+		component: view('metadata/Search'),
+		meta: {
+			title: i18n.t('tap.metadataSearch'),
+			isCollapse: true
+		}
+	},
+	{
 		path: '/metadataInstances/:id',
 		name: 'metadataInstances',
 		component: view('ExternalLink'),
@@ -139,7 +148,7 @@ const childRoutes = [
 		name: 'topology',
 		component: view('ExternalLink'),
 		meta: {
-			code: 'topology_menu',
+			code: 'Topology_menu',
 			url: '/old/index.html#/topology',
 			title: i18n.t('tap.topology'),
 			isCollapse: false
@@ -296,10 +305,11 @@ const childRoutes = [
 	{
 		path: '/users',
 		name: 'users',
-		component: view('ExternalLink'),
+		// component: view('ExternalLink'),
+		component: view('Users/List'),
 		meta: {
 			code: 'user_management_menu',
-			url: '/old/index.html#/users',
+			// url: '/old/index.html#/users',
 			title: i18n.t('tap.userManagement'),
 			isCollapse: false
 		}
@@ -380,6 +390,12 @@ const childRoutes = [
 			title: i18n.t('tap.jobFlow'),
 			isCollapse: false
 		}
+	},
+	{
+		path: '/relations',
+		name: 'relations',
+		component: view('relations/relations'),
+		meta: {}
 	},
 	{
 		path: '/dataMap',
@@ -529,6 +545,16 @@ const childRoutes = [
 			title: i18n.t('tap.dataCatalog'),
 			isCollapse: true,
 			types: ['table', 'view', 'collection', 'mongo_view']
+		}
+	},
+	{
+		path: '/metadataDetails',
+		name: 'metadataDetails',
+		component: view('metadata/Info'),
+		meta: {
+			code: 'data_catalog_menu',
+			title: i18n.t('tap.dataCatalog'),
+			isCollapse: true
 		}
 	}
 ];

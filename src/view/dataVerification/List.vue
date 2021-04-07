@@ -79,6 +79,20 @@
 				</li>
 			</ul>
 			<div slot="operation">
+				<el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
+					<i class="iconfont icon-daoru back-btn-icon"></i>
+					<span> {{ $t('dataFlow.bulkImport') }}</span>
+				</el-button>
+				<el-button
+					v-readonlybtn="'SYNC_category_application'"
+					size="mini"
+					class="btn"
+					v-show="multipleSelection.length > 0"
+					@click="handleExport"
+				>
+					<i class="iconfont icon-dakai1 back-btn-icon"></i>
+					<span> {{ $t('dataFlow.bulkExport') }}</span>
+				</el-button>
 				<ElButton
 					v-readonlybtn="'datasource_creation'"
 					class="btn btn-create"
@@ -90,6 +104,7 @@
 					<span> {{ $t('dataVerification.addVerifyTip') }}</span>
 				</ElButton>
 			</div>
+			<el-table-column type="selection" width="45"></el-table-column>
 			<el-table-column :label="$t('dataVerification.verifyJobName')" min-width="180">
 				<template slot-scope="scope">
 					<div>{{ scope.row.name }}</div>
@@ -280,6 +295,23 @@ export default {
 		clearInterval(timeout);
 	},
 	methods: {
+		// 批量导入
+		handleImport() {
+			let routeUrl = this.$router.resolve({
+				path: '/upload?type=Inspect'
+			});
+			window.open(routeUrl.href, '_blank');
+		},
+		// 批量导出
+		handleExport() {
+			let where = {
+				_id: {
+					in: this.multipleSelection
+				}
+			};
+
+			this.$api('MetadataInstances').download(where, 'Inspect');
+		},
 		handleSelectionChange(val) {
 			this.multipleSelection = val;
 		},
@@ -460,6 +492,16 @@ export default {
 		width: 26px;
 		text-align: center;
 		font-size: 14px;
+	}
+}
+</style>
+<style lang="less">
+.data-verify-wrap {
+	.el-table--border td {
+		border-right: 0;
+	}
+	.el-table--border th {
+		border-right: 1px solid #dcdfe6;
 	}
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
 	<div class="editor-file-form-builder">
 		<div class="main">
-			<div class="head-btns">
+			<!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
-			</div>
+			</div> -->
 			<header class="form-builder-header">
 				<div class="img-box">
 					<img :src="getImgByType(model.database_type)" />
@@ -185,7 +185,7 @@ import formConfigs from './config';
 import Entity from '../link/Entity';
 import { mergeJoinTablesToTargetSchema, convertSchemaToTreeData, removeDeleted } from '../../util/Schema';
 import ws from '../../../api/ws';
-let editorMonitor = null;
+// let editorMonitor = null;
 let fieldsNamesMap = {};
 export default {
 	name: 'FileNode',
@@ -341,12 +341,12 @@ export default {
 	},
 	methods: {
 		convertSchemaToTreeData,
-		setData(data, cell, dataNodeInfo, vueAdapter) {
+		setData(data, cell) {
 			if (data) {
 				_.merge(this.model, data);
 			}
 			this.model.fileProperty['file_type'] = this.model.database_type;
-			editorMonitor = vueAdapter.editor;
+			// editorMonitor = vueAdapter.editor;
 			this.schema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema());
 			let fields = this.schema.fields || [];
 			if (fields.length) {
@@ -473,10 +473,10 @@ export default {
 			this.disabled = disabled;
 			this.config.form.disabled = disabled;
 			this.fileConfig.disabled = disabled;
-		},
-		seeMonitor() {
-			editorMonitor.goBackMontior();
 		}
+		// seeMonitor() {
+		// 	editorMonitor.goBackMontior();
+		// }
 	}
 };
 </script>

@@ -288,7 +288,8 @@ export default {
 				'db2',
 				'kafka',
 				'mariadb',
-				'mysql pxc'
+				'mysql pxc',
+				'jira'
 			], //目前白名单,
 			searchParams: {
 				databaseType: '',
@@ -328,7 +329,7 @@ export default {
 		this.getDatabaseType();
 		//header
 		let guideDoc =
-			' <a style="color: #48B6E2" href="https://docs.tapdata.net/data-source">' +
+			' <a target="_blank" style="color: #48B6E2" href="https://docs.tapdata.net/data-source">' +
 			this.$t('dataForm.form.guideDoc') +
 			'</a>';
 		this.description = this.$t('connection.desc') + guideDoc;
@@ -353,7 +354,7 @@ export default {
 			let filter = {
 				where: {
 					type: {
-						in: this.allowDataType
+						in: this.whiteList
 					}
 				}
 			};
@@ -394,7 +395,7 @@ export default {
 				where.name = { like: verify(keyword), options: 'i' };
 			}
 			where.database_type = {
-				in: this.allowDataType
+				in: this.whiteList
 			};
 			region && (where['platformInfo.region'] = region);
 			databaseType && (where.database_type = databaseType);
@@ -448,7 +449,7 @@ export default {
 			});
 		},
 		getImgByType(type) {
-			if (!type) {
+			if (!type || type === 'jira') {
 				type = 'default';
 			}
 			return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);
@@ -699,6 +700,9 @@ export default {
 		.name {
 			color: #48b6e2;
 			cursor: pointer;
+		}
+		.name:hover {
+			text-decoration: underline;
 		}
 		div {
 			line-height: 14px;

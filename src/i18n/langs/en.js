@@ -91,6 +91,8 @@ const en = {
 			permission_denied: 'Permission denied.',
 			signInFail: "The email and password didn't work.",
 			watingApprove: 'This account is not approved, please wait for contact email.',
+			accountDisabled:
+				'Your account has been frozen, if you have any questions, please contact customer service. ',
 			hasVerified: 'The email has not been verified',
 			registry: 'Registration',
 			registry_tip: 'I agree with',
@@ -146,6 +148,7 @@ const en = {
 			dataGovernance: 'Data Governance',
 			metadataDefinition: 'Metadata management',
 			metadata: 'Data Catalog',
+			metadataSearch: 'Data Search',
 			dataQuality: 'Data Quality',
 			timeToLive: 'Time To Live',
 			dataMap: 'Data Lineage',
@@ -258,6 +261,8 @@ const en = {
 		preview: 'Detail',
 		cancel: 'Cancel',
 		confirm: 'Confirm',
+		save: 'Save',
+		deleteOrNot: 'Delete or not',
 		placeholderMonServer: 'Please enter the monitored service name',
 		placeholderCommand: 'Please enter command',
 		nullContent: 'Can not be empty',
@@ -356,15 +361,21 @@ const en = {
 		level: 'Level'
 	},
 	button: {
+		refresh: 'Refresh',
 		reset: 'Reset',
 		delete: 'Delete',
 		rename: 'Rename',
 		details: 'Details',
 		more: 'More',
 		edit: 'Edit',
+		query: 'Query',
 		all: 'All'
 	},
 	dataFlow: {
+		leave: 'Leave',
+		backlistText: 'Back to sync job list page',
+		saveReminder:
+			'This jobhas not been saved yet, If you leave this page, the job configuration will be lost. Are you sure to leave ?',
 		saveFail:
 			'Failed to save the task, please check the configuration and ensure that the data source status is valid.',
 		aggregateNotDataNode: 'The first target data node of aggregation node can only be COLLECTION',
@@ -589,6 +600,7 @@ const en = {
 		ddlTip: 'Warn: Automatic DDL does not support JS processor and field processor',
 		transformerConcurrency: 'Transformer Concurrency',
 		processorConcurrency: 'Processor Concurrency',
+		cdcEngineFilter: 'Enable Engine Filtering',
 		cdcFetchSize: 'Number of CDC batch reads',
 		cdcFetchSizeTip: 'Number of data read by system each time.',
 		cdcFetchSizeTip1:
@@ -615,7 +627,10 @@ const en = {
 		aggExpression: 'Target',
 		filterPredicate: 'Filter Predicate',
 		groupByExpression: 'Group Field',
+		keepAggreHistoryData: 'Keep aggregation historical data',
 		aggregation: 'Aggregation',
+		aggrCleanSecond: 'Time to clean up old version data',
+		aggrFullSyncSecond: 'Full synchronization time',
 		enterFilterTable: 'Please enter the filter table content',
 		aggregatePrompt: 'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
 		nameTip:
@@ -732,12 +747,12 @@ const en = {
 		fuzzyQuery: 'Fuzzy query',
 		PreciseQuery: 'Precise query',
 		databaseTittle: 'Data connection management',
-		createNewDataSource: 'Create Datasource',
+		createNewDataSource: 'Create New Connection',
 		info: 'Database information',
 		copyMsg: 'copy successfully',
 		testMsg: 'test successfully',
 		creator: 'Creator',
-		editDataSource: 'Edit Datasource',
+		editDataSource: 'Edit Connection',
 		reloadOK: 'reloading schema',
 		reloadFail: 'Failed to schema',
 		reloadTittle: 'Reload schema',
@@ -1106,7 +1121,9 @@ const en = {
 					aggregateSizeTips:
 						'Put in the range of cached aggregation result, the excess data will be stored in target database.',
 					allAggregateSize: 'All data write in cache',
-					customAggregateSize: 'Custom the cache range'
+					customAggregateSize: 'Custom the cache range',
+					cleanSecondTimeLess3600: 'The time to clean up old version data cannot be less than 3600',
+					fullSyncSecondTimeLess3600: 'Full sync time cannot be less than 3600'
 				},
 				field: {
 					name: 'Field',
@@ -1122,6 +1139,8 @@ const en = {
 							label: 'Description',
 							placeholder: 'Please input you node description'
 						},
+						originalName: 'Original field name: ',
+						originalType: 'Original type: ',
 						errorUndefined:
 							'The model of the source node has changed, so that the field processor does not work, please click the UPDATE MODEL button in the configuration panel of the upper node to handle this issue',
 						errorOperationSaveTip: 'The field processor node has conflict to be handled',
@@ -1296,7 +1315,8 @@ const en = {
 					},
 					joinPath: {
 						label: 'Target path',
-						placeholder: 'Please input target path'
+						placeholder: 'Please input target path',
+						copyLabel: 'Copy target path'
 					},
 					joinKeys: {
 						label: 'Association condition',
@@ -1353,11 +1373,12 @@ const en = {
 			sidebar: {
 				setting: 'Data Flow Settings',
 				node_setting: 'Node Settings',
+				statistics: 'Statistics',
 				logs: 'Running Logs',
 				milestone: 'Task Milestone',
 				capture: 'Capture',
 				style: 'Style',
-
+				config: 'Config',
 				data_nodes: 'Data Nodes',
 				processor: 'Processor',
 				tableSelector: 'Fast Selection'
@@ -1640,7 +1661,7 @@ const en = {
 			indexPrefix: 'Index prefix',
 			agentMsg:
 				'The test connection service is not available, please check if the Data Synchronization Agent is started correctly.',
-
+			multiTenant: 'Multi-tenant',
 			uriTips: {
 				label: 'Example',
 				content:
@@ -1694,7 +1715,9 @@ const en = {
 				CHECK_ACCESS_TOKEN: 'Check if access token is available',
 				CHECK_API_AUTH: 'Check if api auth is available',
 				CHECK_LOCAL_PORT: 'Check if local port is available',
-				SCAN_FILE: 'Scan the files in the directory'
+				SCAN_FILE: 'Scan the files in the directory',
+				CHECK_BIN_LOG_SYNC: 'Check BINLOG sync enable',
+				CHECK_GTID: 'Check of GTID mode and GTID consistency enable'
 			},
 			file: {
 				fileAddr: 'File Address',
@@ -1795,7 +1818,7 @@ const en = {
 			noCreate: ' , Cannot be created repeatedly',
 			kafkaNameRange: 'The topic name length is greater than 256'
 		},
-		createDatabase: 'Create new database',
+		createDatabase: 'Create New Connection',
 		copyDatabase: 'Copy name',
 		checkDatabase: 'Check property',
 		createTable: 'Create New Table',
@@ -1817,6 +1840,9 @@ const en = {
 	},
 	classification: {
 		title: 'Data Category',
+		userTitle: 'User Group',
+		creatUserGroup: 'Create user group',
+		creatDataClassification: 'Create data classification',
 		nameExist: 'Category name already existed.',
 		addNode: 'Add category at the same level',
 		addChildernNode: 'Add Child Category',
@@ -1824,6 +1850,11 @@ const en = {
 		deleteNode: 'Delete',
 		nodeName: 'Please enter classification',
 		deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
+	},
+	relations: {
+		blood: 'Table Tracing',
+		refresh: 'Refresh',
+		refreshStatus: 'Last Refresh'
 	},
 	metadata: {
 		createNewModel: 'Create model',
@@ -1855,6 +1886,108 @@ const en = {
 			database: 'Database',
 			tableName: 'Table name',
 			none_table_name: 'The table name cannot be empty'
+		},
+		details: {
+			model: 'Model',
+			dataDirectory: 'Data Directory',
+			dataDetails: 'Data Details',
+			basicAttributes: 'Basic Properties',
+			businessAttributes: 'Custom Properties',
+			clickAddDes: 'Click to add a description',
+			propertyDetails: 'Property Details',
+			name: 'Name',
+			originalTableName: 'Original name',
+			typesOf: 'Type',
+			owningConnection: 'Connection',
+			primaryKey: 'PK',
+			source: 'Source',
+			creationTime: 'Create time',
+			founder: 'Creater',
+			changeTime: 'Edit time',
+			Modifier: 'Editor',
+			renamed: 'Renamed',
+			edit: 'Edit',
+			searchPlaceholder: 'Field name/alias/description',
+			selsectSource: 'Select source',
+			createFiled: 'Create field',
+			editFild: 'Edit field',
+			prohibitOverwriting: 'Batch overwriting is prohibited',
+			batchCoverage: 'Batch coverage',
+			refreshModel: 'Refresh model',
+			filedName: 'Field name',
+			alias: 'Alias',
+			description: 'Description',
+			fieldType: 'Field Type',
+			allowOverwrite: 'Sync by DB',
+			selfIncreasing: 'Autoincrement',
+			fieldLength: 'Column size',
+			accuracy: 'Precision',
+			numberLength: 'Scale',
+			dictionarySettings: 'Dictionary Settings',
+			initialValue: 'Initial value',
+			mappedValue: 'Mapping value',
+			enterInitialValue: 'Enter initial value',
+			enterMappedValue: 'Enter the mapped value',
+			opera: 'Operation',
+			newMapping: 'Create new',
+			chooseTemplate: 'Choose template',
+			foreignKeySetting: 'Foreign Key Set',
+			associationTable: 'Associated table',
+			associationField: 'Associated field',
+			connectionRelation: 'Relation type',
+			oneone: 'one to one',
+			onemany: 'one to many',
+			manyone: 'many to one',
+			addRelatedTable: 'Create new',
+			enter: 'Please enter',
+			filedAliasName: 'Field name/Alias',
+			Float: 'Floating point number',
+			String: 'String',
+			baseObject: 'Object',
+			Array: 'Array',
+			Map: 'Dictionary Object',
+			Short: 'Short integer',
+			Long: 'Long integer',
+			Double: 'Double Precision',
+			Byte: 'Byte',
+			Bytes: 'Number of bytes',
+			BigDecimal: 'Decimal',
+			Boolean: 'Boolean value',
+			Date: 'Date',
+			Integer: 'Integer',
+			dictionary_typeNo: 'This field type cannot add a dictionary template',
+			fieldNameNo: 'The field name is empty',
+			moreAttributes: 'More Properties',
+			msgFiledName: 'Please enter the field name',
+			success_Release: 'Save successfully, please republish manually',
+			filedName_repeat: 'Field name cannot be the same name',
+			filedDictionary: 'Field Dictionary',
+			foreignKeyAssociation: 'Foreign key',
+			tableLayering: 'Category',
+			theme: 'Theme',
+			taskReference: 'Task Reference',
+			APIReference: 'API Reference',
+			creat: 'New',
+			businessAttrTitle: 'Business attribute',
+			attrName: 'Property name',
+			attrKey: 'Property value',
+			editAliasNameTitle: 'Edit alias',
+			editCommentTitle: 'Edit description',
+			uniquelyIdentifies: 'Qualified Name'
+		},
+		metadataSearch: {
+			title: 'Metadata retrieval',
+			desc:
+				'Metadata retrieval provides search functions for the names, aliases, descriptions of tables and fields, please select the search table/field first, then enter the content, and click the search button to search',
+			table: 'Search table',
+			column: 'Search field',
+			search: 'Search',
+			noSearch: 'Please press "Enter" to initiate a search',
+			noResult: 'No search results, please confirm the search keywords',
+			originalName: 'Original table name',
+			noMore: 'No more search results',
+			more: 'Click to load more',
+			placeholder: 'please enter keyword to search'
 		}
 	},
 	notification: {
@@ -2009,6 +2142,7 @@ const en = {
 			linuxInstructionsText3:
 				'· You can start and stop Agent by executing the command "tapdata start/stop backend".',
 			waitingInstall: 'Waiting installation',
+			agentInstallation: 'Agent has been installed',
 			agentNum: 'Agents installed',
 			downLoadAgent: 'Download Agent',
 			windowsText:
@@ -2430,11 +2564,11 @@ const en = {
 		WRITE_CDC_EVENT: '【Data transfer】Target enters incremental write mode',
 
 		emptyText: 'The job has not been started or has been reset, so there is no running milestone data.',
-		status_waiting: 'waiting',
-		status_running: 'running',
-		status_error: 'error',
-		status_finish: 'finish',
 		status_paused: 'paused',
+		status_waiting: 'Waiting',
+		status_running: 'Running',
+		status_error: 'Error',
+		status_finish: 'Finish',
 		btn_check_error: 'Check Error Info'
 	},
 	guide: {
@@ -2472,7 +2606,76 @@ const en = {
 		btn_to_dashboard: "Don't edit the task for now, go shopping first",
 
 		not_source: 'Please choose a source connection',
-		not_target: 'Please choose a target connection'
+		not_target: 'Please choose a target connection',
+
+		agentServiceTitle: 'Agent service status is abnormal',
+		abnormalText: 'abnormal reason',
+		abnormal: 'The environment where the Agnet process is located is disconnected',
+		abnormal1: 'Agnet service process was killed',
+		solutionText: 'Solution',
+		windowsSolution: 'WINDOWS: Start the server and execute commands',
+		windowsSolution1: 'WINDOWS: execute commands in the Agent environment',
+		linuxSolution: 'LINUX: Start the server and execute commands',
+		linuxSolution1: 'LINUX: execute commands in the Agent environment',
+		restartProcess: 'To restart the process',
+		clickText: 'The process has been restarted? Please click'
+	},
+	user: {
+		des: 'The user management page provides functions to create, edit, delete, and status settings for users',
+		all: 'All',
+		inactivated: 'Not activated',
+		unverified: 'Unverified',
+		userNameEmail: 'Please enter your username/email',
+		changeTime: 'Modification time',
+		creatUser: 'Create user',
+		editUser: 'Edit User',
+		userName: 'Username',
+		email: 'Email',
+		password: 'Password',
+		role: 'Role',
+		source: 'Source',
+		status: 'Status',
+		opera: 'Operation',
+		activation: 'Activation',
+		freeze: 'Freeze',
+		delete: 'Delete',
+		check: 'Check',
+		edit: 'Edit',
+		bulkActivation: 'Bulk activation',
+		bulkFreeze: 'Bulk Freeze',
+		bulkCheck: 'Batch check',
+		create: 'Create',
+		registration: 'Register',
+		notVerified: 'Not verified',
+		notActivated: 'Not activated',
+		activated: 'Activated',
+		rejected: 'Rejected',
+		passwordNull: 'Please enter a password, the length is 5 ~ 32 characters',
+		pass_hint: 'Password length cannot be less than 5 and greater than 32',
+		activationCode: 'Access Code',
+		delUserTitle: 'Whether to delete this user ?',
+		delUser: 'Delete user',
+		deluserLast: ' after this user will not be able to recover',
+		checkUserTitle: 'Whether to verify this user ?',
+		checkUser: 'Pass the verification user',
+		checkUserLast: ' after the mailbox, this user can be activated',
+		activationUserTitle: 'Do you want to activate this user ? ',
+		activetionUser: 'Activation User',
+		activetionUserLast: ' after that, this user will be able to use the TAPDATA system',
+		freezeUserTitle: 'Do you want to freeze this user ? ',
+		freezeUser: 'Freeze user',
+		freezeUserLast: ' after this user will not be able to use the TAPDATA system',
+		startTime: 'Start Time',
+		endTime: 'End Time',
+		emailNull: 'Email cannot be empty',
+		email_must_valid: 'Please enter a valid email address',
+		activetionSuccess: 'Activation successful',
+		activetionError: 'Activation failed',
+		freezeSuccess: 'Freeze successful',
+		freezeError: 'Freeze failed',
+		checkSuccess: 'Pass verification',
+		checkError: 'Verification failed',
+		alreadyExists: 'User name cannot be repeated'
 	}
 };
 

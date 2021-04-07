@@ -1,6 +1,6 @@
 <template>
 	<div class="table-page-container">
-		<div class="table-page-header" v-if="!$window.getSettingByKey('HIDE_TABLE_TITLE')">
+		<div class="table-page-header" v-if="!$window.getSettingByKey('HIDE_TABLE_TITLE') && title">
 			<slot name="header">
 				<div class="page-header-title">{{ title }}</div>
 				<div v-if="desc" class="page-header-desc" v-html="desc"></div>
@@ -16,6 +16,9 @@
 				></Classification>
 			</div>
 			<div class="table-page-body">
+				<div class="table-page-nav">
+					<slot name="nav"></slot>
+				</div>
 				<div class="table-page-topbar">
 					<div class="table-page-search-bar">
 						<slot name="search"></slot>
@@ -223,6 +226,13 @@ export default {
 			overflow: auto;
 			border-bottom: none;
 			background: #fff;
+		}
+		.el-table--border td,
+		.el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
+			border-right: 0;
+		}
+		.el-table--border th {
+			border-right: 1px solid #ebeef5;
 		}
 		.table-page-pagination {
 			margin-top: 5px;

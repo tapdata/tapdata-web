@@ -4,7 +4,7 @@
  * @description
  */
 export const getImgByType = function(type) {
-	if (!type) {
+	if (!type || type === 'jira') {
 		type = 'default';
 	}
 	return require(`../../../static/image/databaseType/${type.toLowerCase()}.png`);
@@ -59,7 +59,8 @@ export const TYPEMAP = {
 	gridfs: 'GridFS',
 	kafka: 'Kafka',
 	mariadb: 'MariaDB',
-	'mysql pxc': 'MySQL PXC'
+	'mysql pxc': 'MySQL PXC',
+	jira: 'jira'
 };
 
 //数据源基础字段
@@ -140,6 +141,13 @@ export const defaultModel = {
 				exclude_filename: ''
 			}
 		]
+	},
+	jira: {
+		multiTenant: false,
+		pdb: '',
+		jiraUrl: '',
+		jiraUsername: '',
+		jiraPassword: ''
 	}
 };
 export const defaultCloudModel = {
