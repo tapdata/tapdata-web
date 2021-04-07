@@ -937,6 +937,21 @@ export default {
 							}
 						}
 					}
+					li.business {
+						display: flex;
+						justify-content: space-between;
+						.delete {
+							display: none;
+						}
+
+						&:hover {
+							.delete {
+								display: inline-block;
+								cursor: pointer;
+								color: #48b6e2;
+							}
+						}
+					}
 				}
 			}
 			.aside {
