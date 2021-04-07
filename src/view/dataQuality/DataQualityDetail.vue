@@ -422,6 +422,13 @@ export default {
 					if (result.status === 200) {
 						let resdata = result.data.data || [];
 						resdata.map(record => {
+							// 根据实际数据补充表格头部字段
+							for (let i in record) {
+								if (i !== '__tapd8' && !this.headers.filter(v => v.text === i).length) {
+									this.headers.push({ text: i, visible: true, format: '' });
+								}
+							}
+
 							let obj = {};
 							record.__tapd8.hitRules.forEach(v => {
 								obj[v.fieldName] = v.rules;
@@ -689,17 +696,17 @@ export default {
 				if (key == 'nullable') res.required = [fieldName];
 				let keyField = (res.properties[fieldName] = {});
 				if (key == 'range') {
-					if (!ruleObj[key].none)
-						keyField.range = [
-							ruleObj[key].gte ? ruleObj[key].gte : ruleObj[key].gt,
-							ruleObj[key].lte ? ruleObj[key].lte : ruleObj[key].lt
-						];
-					else if (ruleObj[key].gte || ruleObj[key].gt) {
-						keyField.minimum = Number(ruleObj[key].gte ? ruleObj[key].gte : ruleObj[key].gt);
-						if (ruleObj[key].gte) keyField.exclusiveMinimum = keyField.minimum;
-					} else if (ruleObj[key].lte || ruleObj[key].lt) {
-						keyField.maximum = Number(ruleObj[key].lte ? ruleObj[key].lte : ruleObj[key].lt);
-						if (ruleObj[key].gte) keyField.exclusiveMaximum = keyField.maximum;
+					if (ruleObj[key].gte) {
+						keyField.minimum = Number(ruleObj[key].gte);
+					}
+					if (ruleObj[key].gt) {
+						keyField.exclusiveMinimum = Number(ruleObj[key].gt);
+					}
+					if (ruleObj[key].lte) {
+						keyField.maximum = Number(ruleObj[key].lte);
+					}
+					if (ruleObj[key].lt) {
+						keyField.exclusiveMaximum = Number(ruleObj[key].lt);
 					}
 				}
 				if (key == 'type') {
