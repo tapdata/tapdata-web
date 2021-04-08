@@ -17,6 +17,7 @@
 					:percentage="Math.trunc((refreshResult.currProgress / refreshResult.allProgress) * 100)"
 				></el-progress>
 			</span>
+			<span class="consume-time">耗时：{{ consumeTime }} 毫秒</span>
 		</div>
 		<div id="navigator-container" class="navigator-container"></div>
 		<div class="data-map-main">
@@ -66,6 +67,7 @@ export default {
 			},
 			qualifiedName: '',
 			fields: '',
+			consumeTime: '',
 			refreshResult: {},
 			dialogFormVisible: false,
 			errorVisible: false,
@@ -79,6 +81,7 @@ export default {
 		LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(res => {
 			if (res.data) {
 				this.refreshResult = res.data[0];
+				this.consumeTime = this.getConsumeTime(this.refreshResult.start_date, this.refreshResult.finish_date);
 				if (this.refreshResult.status === 'error') this.rClass = false;
 				else this.rClass = true;
 			}
@@ -112,6 +115,12 @@ export default {
 				.then(res => {
 					this.graph.draw(res.data.items, res.data.links, this);
 				});
+		},
+		//分析耗时
+		getConsumeTime(start, end) {
+			let current = new Date(end).getTime() - new Date(start).getTime();
+			let time = this.$moment(current).get('millisecond');
+			return time;
 		},
 		refreshData() {
 			LineageGraphsAPI.refreshGraphData()
@@ -213,6 +222,13 @@ export default {
 	margin-left: 10px;
 	margin-top: 3px;
 	color: #67c23a;
+	font-size: 12px;
+}
+.consume-time {
+	margin-left: 10px;
+	margin-top: 3px;
+	color: #999;
+	line-height: 24px;
 	font-size: 12px;
 }
 .actProgress {
