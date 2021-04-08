@@ -37,7 +37,12 @@
 									>创建数据连接</span
 								>
 							</div>
-							<form-builder ref="dataSource" v-model="dataSourceModel" :config="config">
+							<form-builder
+								ref="dataSource"
+								v-model="dataSourceModel"
+								:config="config"
+								@value-change="formChange"
+							>
 								<div slot="source" class="dataSource-title">源端连接</div>
 								<div slot="target" class="dataSource-title">目标端连接</div>
 							</form-builder>
@@ -111,8 +116,9 @@ import formConfig from './config';
 import Transfer from '@/components/Transfer';
 import DatabaseTypeDialog from '../connections/DatabaseTypeDialog';
 import _ from 'lodash';
-import { SETTING_MODEL, DATASOURCE_MODEL, INSTANCE_MODEL } from './util';
+import { SETTING_MODEL, DATASOURCE_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from './util';
 import { uuid } from '../../editor/util/Schema';
+import { TYPEMAP } from '../connections/util';
 
 export default {
 	components: { Transfer, DatabaseTypeDialog },
@@ -155,7 +161,14 @@ export default {
 		this.id = this.$route.params.id;
 		this.getSteps();
 		this.getFormConfig();
-		this.getInstanceRegion();
+		if (window.getSettingByKey('SUPPORT_DFS')) {
+			this.dataSourceModel = _.cloneDeep(DFSDATASOURCE_MODEL);
+			this.allowDatabaseType();
+			this.getConnection(this.getWhere('source'), 'source_connectionId');
+			this.getConnection(this.getWhere('target'), 'target_connectionId');
+		} else {
+			this.getInstanceRegion();
+		}
 		if (this.id) {
 			this.intiData(this.id);
 		}
@@ -228,6 +241,19 @@ export default {
 			}
 			this.changeConfig(this.platformInfoZone, 'zone');
 		},
+		//云版支持数据源
+		allowDatabaseType() {
+			this.changeConfig(this.allowDataType, 'databaseType');
+		},
+		formChange(data) {
+			let filed = data.field || '';
+			if (filed === 'source_databaseType') {
+				this.getConnection(this.getWhere('source'), 'source_connectionId');
+			}
+			if (filed === 'target_databaseType') {
+				this.getConnection(this.getWhere('target'), 'target_connectionId');
+			}
+		},
 		getSteps() {
 			const steps = [
 				{ index: 1, text: '选择实例', type: 'instance' },
@@ -235,10 +261,13 @@ export default {
 				{ index: 3, text: '任务设置', type: 'setting' },
 				{ index: 4, text: '映射设置', type: 'mapping' }
 			];
-			if (this.id) {
-				this.steps = steps.slice(2, 4);
+			if (window.getSettingByKey('SUPPORT_DFS')) {
+				this.steps = steps.slice(1, 4);
 			} else {
 				this.steps = steps.concat();
+			}
+			if (this.id) {
+				this.steps = steps.slice(2, 4);
 			}
 		},
 		next() {
@@ -303,6 +332,9 @@ export default {
 		// 根据步骤获取不同的表单项目
 		async getFormConfig() {
 			let type = this.steps[this.activeStep].type || 'instance';
+			if (type === 'dataSource') {
+				type = window.getSettingByKey('SUPPORT_DFS') ? 'dfs_dataSource' : 'drs_dataSource';
+			}
 			let func = formConfig[type];
 			if (func) {
 				let config = func(this);
@@ -340,20 +372,32 @@ export default {
 		},
 		getWhere(type) {
 			let where = {};
-			if (type === 'source') {
-				where = {
-					database_type: { in: this.allowDataType },
-					sourceType: this.dataSourceModel.source_sourceType,
-					'platformInfo.region': this.platformInfo.region,
-					'platformInfo.zone': this.platformInfo.zone
-				};
+			if (window.getSettingByKey('SUPPORT_DFS')) {
+				if (type === 'source') {
+					where = {
+						database_type: { in: [this.dataSourceModel.source_databaseType] }
+					};
+				} else {
+					where = {
+						database_type: { in: [this.dataSourceModel.target_databaseType] }
+					};
+				}
 			} else {
-				where = {
-					database_type: { in: this.allowDataType },
-					sourceType: this.dataSourceModel.target_sourceType,
-					'platformInfo.region': this.platformInfo.region,
-					'platformInfo.zone': this.platformInfo.zone
-				};
+				if (type === 'source') {
+					where = {
+						database_type: { in: this.allowDataType },
+						sourceType: this.dataSourceModel.source_sourceType,
+						'platformInfo.region': this.platformInfo.region,
+						'platformInfo.zone': this.platformInfo.zone
+					};
+				} else {
+					where = {
+						database_type: { in: this.allowDataType },
+						sourceType: this.dataSourceModel.target_sourceType,
+						'platformInfo.region': this.platformInfo.region,
+						'platformInfo.zone': this.platformInfo.zone
+					};
+				}
 			}
 			return where;
 		},
@@ -464,6 +508,27 @@ export default {
 					let op = items.find(it => it.field === 'isOpenAutoDDL');
 					if (op) {
 						op.show = false;
+					}
+					break;
+				}
+				case 'databaseType': {
+					let source = items.find(it => it.field === 'source_databaseType');
+					if (source) {
+						source.options = data.map(item => {
+							return {
+								label: TYPEMAP[item],
+								value: TYPEMAP[item]
+							};
+						});
+					}
+					let target = items.find(it => it.field === 'target_databaseType');
+					if (target) {
+						target.options = data.map(item => {
+							return {
+								label: TYPEMAP[item],
+								value: TYPEMAP[item]
+							};
+						});
 					}
 					break;
 				}

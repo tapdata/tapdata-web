@@ -340,11 +340,23 @@ export default {
 	},
 	mounted() {
 		this.searchParams = Object.assign(this.searchParams, this.table.getCache());
+		if (this.$route.query.step) {
+			this.handleGuide();
+		}
 	},
 	destroyed() {
 		clearInterval(timeout);
 	},
 	methods: {
+		//兼容新手引导
+		handleGuide() {
+			let item = {
+				visible: true,
+				step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 5
+			};
+			window.parent && window.parent.noviceGuideChange && window.parent.noviceGuideChange(item);
+			this.$router.push('/connections');
+		},
 		//筛选条件
 		handleSortTable({ order, prop }) {
 			this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`;
