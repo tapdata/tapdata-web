@@ -104,10 +104,18 @@ export default {
 		border-color: #48b6e2;
 	}
 	table {
-		display: table;
+		display: block;
 		width: 100%;
 		max-width: 100%;
 		margin-bottom: 20px;
+		th {
+			font-size: 14px;
+			white-space: nowrap;
+		}
+		td {
+			font-size: 12px;
+			white-space: nowrap;
+		}
 	}
 }
 </style>
