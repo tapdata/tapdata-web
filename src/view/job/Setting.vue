@@ -171,7 +171,12 @@
 				</el-form-item>
 				<el-form-item :label="$t('dataFlow.transformerConcurrency')" v-show="formData.sync_type !== 'cdc'">
 					<!-- 目标写入线程 -->
-					<el-input-number v-model="formData.transformerConcurrency" :min="1" size="mini"></el-input-number>
+					<el-input-number
+						v-model="formData.transformerConcurrency"
+						:min="1"
+						:max="100"
+						size="mini"
+					></el-input-number>
 				</el-form-item>
 				<el-form-item :label="$t('dataFlow.SyncPoint')" v-show="formData.sync_type === 'cdc'" size="mini">
 					<el-row v-for="item in formData.syncPoints" :key="item.name">
