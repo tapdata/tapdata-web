@@ -516,26 +516,29 @@ export default {
 		height: calc(100% - 30px);
 		overflow: hidden;
 	}
-	.database-tableBox {
-		padding-top: 10px;
-		height: 640px;
-		box-sizing: border-box;
-		.box-text {
-			display: flex;
-			padding-bottom: 10px;
-			justify-content: space-between;
-			font-size: 12px;
-			color: #333;
-			h3 {
-				color: #606266;
-			}
-			.box-btn {
-				color: #48b6e2;
-				cursor: pointer;
-				.e-button {
-					padding: 4px 10px;
-					color: #666;
-					background-color: #f5f5f5;
+	.e-form {
+		height: 100%;
+		.database-tableBox {
+			padding-top: 10px;
+			height: calc(100% - 140px);
+			box-sizing: border-box;
+			.box-text {
+				display: flex;
+				padding-bottom: 10px;
+				justify-content: space-between;
+				font-size: 12px;
+				color: #333;
+				h3 {
+					color: #606266;
+				}
+				.box-btn {
+					color: #48b6e2;
+					cursor: pointer;
+					.e-button {
+						padding: 4px 10px;
+						color: #666;
+						background-color: #f5f5f5;
+					}
 				}
 			}
 		}
@@ -551,7 +554,7 @@ export default {
 			padding-right: 6px;
 		}
 		.el-transfer {
-			height: 100%;
+			height: 640px;
 			.el-transfer-panel {
 				width: 300px;
 				.el-transfer-panel__body {
@@ -617,6 +620,7 @@ export default {
 		}
 		.transfer {
 			height: calc(100% - 32px) !important;
+			overflow: auto;
 		}
 		.el-transfer,
 		.el-transfer-panel {
