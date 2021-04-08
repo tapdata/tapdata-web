@@ -55,9 +55,16 @@ if (parent && parent.__USER_INFO__) {
 	VueCookie.set('userId', userInfo.id);
 }
 let init = settings => {
+	let config = parent ? parent.__TM_CONFIG__ || {} : {};
 	window.getSettingByKey = key => {
-		let setting = settings.find(it => it.key === key) || {};
-		return setting.isArray ? setting.value.split(',') : setting.value;
+		let value = '';
+		if (key.startWidth('DFS_')) {
+			value = config[key];
+		} else {
+			let setting = settings.find(it => it.key === key) || {};
+			value = setting.isArray ? setting.value.split(',') : setting.value;
+		}
+		return value;
 	};
 	let lang = localStorage.getItem('tapdata_localize_lang');
 	if (!lang) {
@@ -75,39 +82,32 @@ let init = settings => {
 		template: '<App/>'
 	});
 };
-fetch('static/config.json')
-	.then(res => {
-		return res.json();
-	})
-	.then(data => {
-		window.__API_PRE_URL__ = data.API_PRE_URL;
-		window.__TCM_API_PRE_URL__ = data.TCM_API_PRE_URL;
-		factory('Setting')
-			.get()
-			.then(({ data }) => {
-				// data = [
-				// 	//前端相关
-				// 	// { category: 'Frontend', key: 'PRODUCT_TITLE', value: 'Tapdata' },
-				// 	// { category: 'Frontend', key: 'PRODUCT_LOGO', value: 'logo.svg' },
-				// 	{ category: 'Frontend', key: 'SHOW_LANGUAGE', value: 1 },
-				// 	{ category: 'Frontend', key: 'DEFAULT_LANGUAGE', value: 'en' },
-				// 	{ category: 'Frontend', key: 'SHOW_REGISTER', value: 1 },
-				// 	{ category: 'Frontend', key: 'SHOW_OLD_PAGE', value: 1 },
-				// 	{ category: 'Frontend', key: 'SHOW_PAGE_TITLE', value: 1 },
-				// 	{ category: 'Frontend', key: 'SHOW_LICENSE', value: 1 },
-				// 	{ category: 'Frontend', key: 'SHOW_NOTIFICATION', value: 1 },
-				// 	{ category: 'Frontend', key: 'SHOW_QA_AND_HELP', value: 1 },
-				// 	{ category: 'Frontend', key: 'SHOW_SETTING_BUTTON', value: 1 },
-				// 	{ category: 'Frontend', key: 'SHOW_HOME_BUTTON', value: 1 },
-				// 	{ category: 'Frontend', key: 'ALLOW_DOWNLOAD_AGENT', value: 1 },
-				// 	{ category: 'Frontend', key: 'USE_CLOUD_MENU', value: 1 },
-				// 	{ category: 'Frontend', key: 'SHOW_DK_VERSION', value: 1 }
-				// ];
-				if (data && data.length) {
-					localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(data));
-				}
-				init(data || []);
-			});
+
+factory('Setting')
+	.get()
+	.then(({ data }) => {
+		// data = [
+		// 	//前端相关
+		// 	// { category: 'Frontend', key: 'PRODUCT_TITLE', value: 'Tapdata' },
+		// 	// { category: 'Frontend', key: 'PRODUCT_LOGO', value: 'logo.svg' },
+		// 	{ category: 'Frontend', key: 'SHOW_LANGUAGE', value: 1 },
+		// 	{ category: 'Frontend', key: 'DEFAULT_LANGUAGE', value: 'en' },
+		// 	{ category: 'Frontend', key: 'SHOW_REGISTER', value: 1 },
+		// 	{ category: 'Frontend', key: 'SHOW_OLD_PAGE', value: 1 },
+		// 	{ category: 'Frontend', key: 'SHOW_PAGE_TITLE', value: 1 },
+		// 	{ category: 'Frontend', key: 'SHOW_LICENSE', value: 1 },
+		// 	{ category: 'Frontend', key: 'SHOW_NOTIFICATION', value: 1 },
+		// 	{ category: 'Frontend', key: 'SHOW_QA_AND_HELP', value: 1 },
+		// 	{ category: 'Frontend', key: 'SHOW_SETTING_BUTTON', value: 1 },
+		// 	{ category: 'Frontend', key: 'SHOW_HOME_BUTTON', value: 1 },
+		// 	{ category: 'Frontend', key: 'ALLOW_DOWNLOAD_AGENT', value: 1 },
+		// 	{ category: 'Frontend', key: 'USE_CLOUD_MENU', value: 1 },
+		// 	{ category: 'Frontend', key: 'SHOW_DK_VERSION', value: 1 }
+		// ];
+		if (data && data.length) {
+			localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(data));
+		}
+		init(data || []);
 	});
 //获取全局项目设置（OEM信息）
 

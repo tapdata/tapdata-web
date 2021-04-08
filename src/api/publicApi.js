@@ -30,12 +30,12 @@ axios.interceptors.request.use(
 		if (xToken) {
 			config.headers['X-Token'] = xToken;
 		}
-		let apiPre = window.__API_PRE_URL__ || '';
-		let tcmApiPre = window.__TCM_API_PRE_URL__ || '';
+		let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || '';
+		let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || '';
 		if (config.url.startsWith('/api/tcm')) {
 			config.url = tcmApiPre + config.url;
 		} else {
-			config.url = apiPre + config.url;
+			config.url = tcmApiPre + apiPre + config.url;
 		}
 		config.headers['Pool-Id'] = 'CIDC-RP-25';
 

@@ -229,9 +229,9 @@ class WSClient extends EventEmitter {
 		var loc = window.location,
 			new_uri,
 			path = loc.pathname;
-		if (window.__API_PRE_URL__) {
-			path = window.__API_PRE_URL__ + '/';
-		}
+		let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || '';
+		let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || '';
+		path = tcmApiPre + apiPre + '/';
 		if (loc.protocol === 'https:') {
 			new_uri = 'wss:';
 		} else {
