@@ -162,7 +162,12 @@
 				</el-form-item>
 				<el-form-item :label="$t('dataFlow.processorConcurrency')">
 					<!-- 处理器线程 -->
-					<el-input-number v-model="formData.processorConcurrency" :min="1" size="mini"></el-input-number>
+					<el-input-number
+						v-model="formData.processorConcurrency"
+						:min="1"
+						:max="100"
+						size="mini"
+					></el-input-number>
 				</el-form-item>
 				<el-form-item :label="$t('dataFlow.transformerConcurrency')" v-show="formData.sync_type !== 'cdc'">
 					<!-- 目标写入线程 -->
