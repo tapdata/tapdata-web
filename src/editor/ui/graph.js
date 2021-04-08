@@ -400,13 +400,24 @@ export default class Graph extends Component {
 					!linkView.targetView.model.getFormData().disabled &&
 					!linkView.sourceView.model.getFormData().disabled
 				) {
-					let preLink = new joint.shapes.app.Link();
+					let preLink = null;
+					let afterLink = null;
+					if (linkView.sourceView.model.get('type') === 'app.Database') {
+						preLink = new joint.shapes.app.databaseLink();
+					} else {
+						preLink = new joint.shapes.app.Link();
+					}
 					preLink.source(linkView.sourceView.model);
 					preLink.target(cell);
 					preLink.addTo(this.graph);
 					this.updateOutputSchema(preLink);
 
-					let afterLink = new joint.shapes.app.Link();
+					if (linkView.targetView.model.get('type') === 'app.Database') {
+						afterLink = new joint.shapes.app.databaseLink();
+					} else {
+						afterLink = new joint.shapes.app.Link();
+					}
+
 					afterLink.source(cell);
 					afterLink.target(linkView.targetView.model);
 					afterLink.addTo(this.graph);
