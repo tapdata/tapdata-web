@@ -60,7 +60,7 @@
 			<header class="header">
 				<span>{{ model.sourceName }} -> {{ model.targetName }}</span>
 			</header>
-			<el-menu default-active="1" class="el-menu-vertical-lineage">
+			<el-menu :default-active="1" class="el-menu-vertical-lineage" :default-openeds="defaultOpeneds">
 				<template v-for="(item, index1) in model.dataFlows">
 					<el-submenu :key="item.id" :index="index1 + 1" class="parentMenu">
 						<template slot="title">
@@ -85,19 +85,21 @@
 										<el-menu-item :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`" :key="op.id">
 											<span v-if="['CREATE'].includes(op.op)">
 												<span class="label">新增</span>
-												<span> : {{ op.field }}</span>
+												<span class="value"> : {{ op.field }}</span>
 											</span>
 											<span v-if="['REMOVE'].includes(op.op)">
 												<span class="label">删除</span>
-												<span> : {{ op.field }}</span>
+												<span class="value"> : {{ op.field }}</span>
 											</span>
 											<span v-if="['RENAME'].includes(op.op)">
 												<span class="label">更名</span>
-												<span> : {{ op.field }} -> {{ op.operand }}</span>
+												<span class="value"> : {{ op.field }} -> {{ op.operand }}</span>
 											</span>
 											<span v-if="['CONVERT'].includes(op.op)">
 												<span class="label">改类型</span>
-												<span> : {{ op.originalDataType }} -> {{ op.operand }}</span>
+												<span class="value">
+													: {{ op.originalDataType }} -> {{ op.operand }}</span
+												>
 											</span>
 											<span v-if="['JS'].includes(op.op)">
 												<span class="label">脚本处理</span>
@@ -188,6 +190,7 @@ export default {
 			customFields: '',
 			showScript: '',
 			showScriptVisible: false,
+			defaultOpeneds: ['1-1-1'],
 			metaDataFields: {
 				name: '别名(原名称)',
 				qualified_name: '唯一表示',
@@ -341,7 +344,7 @@ export default {
 				});
 				window.open(routeUrl.href, 'monitor_' + id);
 			} else {
-				this.$message.error('当前选中任务被删除或者是不存在,id为:6051820d19998b005728343c');
+				this.$message.error('当前选中任务被删除或者是不存在,id为:' + id);
 			}
 		},
 		goConnection() {
@@ -422,6 +425,11 @@ export default {
 		.label {
 			display: inline-block;
 			font-weight: bold;
+		}
+		.value {
+			white-space: pre-line;
+			word-break: break-all;
+			word-wrap: break-word;
 		}
 	}
 	.lineage-info-tab {

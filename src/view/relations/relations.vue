@@ -4,9 +4,8 @@
 			<div class="tool-bar">
 				<i class="iconfont icon-plus-circle" @click="zoomIn"></i>
 				<i class="iconfont icon-minus-circle" @click="zoomOut"></i>
-				<i v-if="level === 'field'" class="iconfont icon-shangyibu" @click="getData"></i>
-				<i v-if="level === 'table' && qualifiedName" class="iconfont icon-xiayibu" @click="resFieldData"></i>
-				<i class="iconfont icon-shuaxin1" @click="refreshData"></i>
+				<i class="iconfont icon-shuaxin1" @click="getData"></i>
+				<i class="iconfont icon-kujitongbucopy" @click="refreshData"></i>
 			</div>
 			<span class="refreshS" :class="{ errorClass: !rClass, actProgress: !refreshing }" @click="checkError"
 				>{{ $t('relations.refreshStatus') }}:
@@ -17,9 +16,17 @@
 					:percentage="Math.trunc((refreshResult.currProgress / refreshResult.allProgress) * 100)"
 				></el-progress>
 			</span>
-			<span class="consume-time">耗时：{{ consumeTime }} 毫秒</span>
+			<span class="consume-time">上次耗时：{{ consumeTime }} </span>
+			<span class="consume-time">解析任务总数：{{ allProgress }} </span>
 		</div>
 		<div id="navigator-container" class="navigator-container"></div>
+		<div class="center-bar">
+			<el-radio-group v-model="level" @change="changeViews">
+				<el-radio label="table">{{ $t('dataMap.tableLevel') }}</el-radio>
+				<span class="space-line"></span>
+				<el-radio label="field">{{ $t('dataMap.fieldLevel') }}</el-radio>
+			</el-radio-group>
+		</div>
 		<div class="data-map-main">
 			<div id="paper" class="data-map"></div>
 		</div>
@@ -72,16 +79,19 @@ export default {
 			dialogFormVisible: false,
 			errorVisible: false,
 			flowList: [],
-			refreshing: false
+			refreshing: false,
+			allProgress: ''
 		};
 	},
 	mounted() {
 		this.graph = graph();
 		this.getData();
+		this.getMetaData(); //默认展示当前表的字段映射
 		LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(res => {
 			if (res.data) {
 				this.refreshResult = res.data[0];
 				this.consumeTime = this.getConsumeTime(this.refreshResult.start_date, this.refreshResult.finish_date);
+				this.allProgress = this.refreshResult.allProgress;
 				if (this.refreshResult.status === 'error') this.rClass = false;
 				else this.rClass = true;
 			}
@@ -97,6 +107,7 @@ export default {
 			};
 			LineageGraphsAPI.graphData(params).then(res => {
 				if (res.data) {
+					this.$message.success('更新完成');
 					this.graph.draw(res.data.items, res.data.links, this);
 				}
 			});
@@ -107,7 +118,7 @@ export default {
 			this.level = 'field';
 			let params = {
 				level: this.level,
-				qualifiedName: this.qualifiedName,
+				qualifiedName: this.qualifiedName || this.tableId,
 				fields: this.fields
 			};
 			this.$api('LineageGraphs')
@@ -116,56 +127,136 @@ export default {
 					this.graph.draw(res.data.items, res.data.links, this);
 				});
 		},
+		changeViews(val) {
+			this.level = val;
+			if (val === 'table') {
+				this.getData();
+			} else {
+				this.resFieldData();
+			}
+		},
+		getMetaData() {
+			let params = {
+				filter: {
+					where: {
+						qualified_name: this.tableId
+					}
+				}
+			};
+			this.$api('MetadataInstances')
+				.get(params)
+				.then(result => {
+					let data = result.data || [];
+					if (data && data.length !== 0) {
+						let fields = data[0].fields || [];
+						this.fields = fields.map(field => field.field_name);
+					}
+				});
+		},
 		//分析耗时
 		getConsumeTime(start, end) {
-			let current = new Date(end).getTime() - new Date(start).getTime();
-			let time = this.$moment(current).get('millisecond');
-			return time;
+			let diff = new Date(end).getTime() - new Date(start).getTime();
+
+			//计算出相差天数
+			var days = Math.floor(diff / (24 * 3600 * 1000));
+
+			//计算出小时数
+			var leave1 = diff % (24 * 3600 * 1000); //计算天数后剩余的毫秒数
+			var hours = Math.floor(leave1 / (3600 * 1000));
+			//计算相差分钟数
+			var leave2 = leave1 % (3600 * 1000); //计算小时数后剩余的毫秒数
+			var minutes = Math.floor(leave2 / (60 * 1000));
+
+			//计算相差秒数
+			var leave3 = leave2 % (60 * 1000); //计算分钟数后剩余的毫秒数
+			var seconds = Math.round(leave3 / 1000);
+
+			var returnStr = seconds + '秒';
+
+			if (minutes > 0) {
+				returnStr = minutes + '分钟'; //+ returnStr;
+			}
+			if (hours > 0) {
+				returnStr = hours + '小时'; // + returnStr;
+			}
+			if (days > 0) {
+				returnStr = days + '天'; //+ returnStr;
+			}
+			return returnStr;
 		},
 		refreshData() {
-			LineageGraphsAPI.refreshGraphData()
-				.then(res => {
-					if (res.data) {
-						this.refreshResult.allProgress = 10;
-						this.refreshResult.currProgress = 0;
-						this.refreshing = true;
-						let self = this;
-						this.inter = setInterval(() => {
-							LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(res => {
-								if (res.data) {
-									self.refreshResult = res.data[0];
-									if (self.refreshResult.sync_data) {
-										this.$message.error('正在同步图形数据，图形可能缺失，请稍后刷新重试');
-									}
-									if (self.refreshResult.status == 'finish') {
-										this.getData();
-										//this.graph = graph();
-										clearInterval(self.inter);
-										setTimeout(() => {
-											self.refreshing = false;
-										}, 3000);
-									} else if (self.refreshResult.status == 'error') {
-										this.rClass = false;
-										this.errorVisible = true;
-										clearInterval(self.inter);
-									}
-								}
-							});
-						}, 2000);
-					} else
-						LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(res => {
+			this.$confirm('开始对所有同步任务进行解析，并生产溯源图形，耗时可能比较久，点击“是”开始执行', '字段溯源', {
+				confirmButtonText: '是',
+				cancelButtonText: '取消',
+				type: 'warning',
+				closeOnClickModal: false
+			})
+				.then(() => {
+					LineageGraphsAPI.refreshGraphData()
+						.then(res => {
 							if (res.data) {
-								this.refreshResult = res.data[0];
-								if (this.refreshResult.status === 'error') {
-									this.rClass = false;
-									this.errorVisible = true;
-									this.refreshing = false;
-								}
-							}
+								this.refreshResult.allProgress = 10;
+								this.refreshResult.currProgress = 0;
+								this.refreshing = true;
+								let self = this;
+								this.inter = setInterval(() => {
+									LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(
+										res => {
+											if (res.data) {
+												self.refreshResult = res.data[0];
+												if (self.refreshResult.sync_data) {
+													this.$message.error(
+														'正在同步图形数据，图形可能缺失，请稍后刷新重试'
+													);
+												}
+												if (self.refreshResult.status == 'finish') {
+													this.getData();
+													//this.graph = graph();
+													clearInterval(self.inter);
+													//计算耗时
+													self.consumeTime = self.getConsumeTime(
+														self.refreshResult.start_date,
+														self.refreshResult.finish_date
+													);
+													self.allProgress = self.refreshResult.allProgress;
+													setTimeout(() => {
+														self.refreshing = false;
+													}, 3000);
+												} else if (self.refreshResult.status == 'error') {
+													this.rClass = false;
+													this.errorVisible = true;
+													//计算耗时
+													self.consumeTime = self.getConsumeTime(
+														self.refreshResult.start_date,
+														self.refreshResult.finish_date
+													);
+													self.allProgress = self.refreshResult.allProgress;
+													clearInterval(self.inter);
+												}
+											}
+										}
+									);
+								}, 2000);
+							} else
+								LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(
+									res => {
+										if (res.data) {
+											this.refreshResult = res.data[0];
+											if (this.refreshResult.status === 'error') {
+												this.rClass = false;
+												this.errorVisible = true;
+												this.refreshing = false;
+											}
+										}
+									}
+								);
+						})
+						.finally(() => {
+							this.apiLoading = false;
 						});
 				})
-				.finally(() => {
-					this.apiLoading = false;
+				.catch(() => {
+					this.$message.error('溯源失败,请重试');
 				});
 		},
 		handlePreviewVisible() {
@@ -192,7 +283,6 @@ export default {
 			this.$api('LineageGraphs')
 				.graphData(params)
 				.then(res => {
-					this.fieldData = res.data;
 					this.graph.draw(res.data.items, res.data.links, this);
 				});
 		}
@@ -346,6 +436,28 @@ export default {
 		white-space: -pre-wrap; /* Opera 4-6 */
 		white-space: -o-pre-wrap; /* Opera 7 */
 		word-wrap: break-word; /* Internet Explorer 5.5+ */
+	}
+	.center-bar {
+		background: #fff;
+		margin-left: 30px;
+		border-radius: 5px;
+		-webkit-box-shadow: 0 0 3px 1px rgb(220 220 2.44444444%);
+		box-shadow: 0 0 3px 1px rgb(220 220 2.44444444%);
+		padding: 12px;
+		position: absolute;
+		bottom: 40px;
+		left: 200px;
+		z-index: 9999;
+		.el-radio {
+			margin-right: 10px;
+			margin-left: 10px;
+		}
+		.space-line {
+			margin-bottom: 3px;
+			display: inline-block;
+			width: 30px;
+			border: 1px solid #dddddd;
+		}
 	}
 }
 </style>
