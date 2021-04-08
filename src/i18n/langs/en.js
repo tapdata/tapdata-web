@@ -628,10 +628,6 @@ const en = {
 		aggrCleanSecond: 'Time to clean up old version data',
 		aggrFullSyncSecond: 'Full synchronization time',
 		enterFilterTable: 'Please enter the filter table content',
-		maxCpuUsage: 'Max CPU usage',
-		maxHeapMemoryUsage: 'Max heap memory usage',
-		maxCpuUsageError: 'The value range of the maximum CPU usage is between 0.1 and 1',
-		maxHeapMemoryUsageError: 'The maximum heap memory usage is between 0.1 and 1',
 		aggregatePrompt: 'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
 		nameTip:
 			'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',

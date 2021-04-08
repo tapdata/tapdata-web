@@ -34,33 +34,6 @@
 					:active-text="formData.cdcEngineFilter ? $t('dataFlow.yes') : $t('dataFlow.no')"
 				></el-switch>
 			</el-form-item>
-			<el-form-item :label="$t('dataFlow.maxCpuUsage')" prop="maxCpuUsage">
-				<!-- <el-input-number v-model="formData.maxCpuUsage" :min="0.1" :max="1" size="mini"></el-input-number> -->
-				<el-input
-					class="e-input"
-					v-model="formData.maxCpuUsage"
-					:min="0.1"
-					:max="1"
-					size="mini"
-					type="number"
-				></el-input>
-			</el-form-item>
-			<el-form-item :label="$t('dataFlow.maxHeapMemoryUsage')" prop="maxHeapMemoryUsage">
-				<!-- <el-input-number
-					v-model="formData.maxHeapMemoryUsage"
-					:min="0.1"
-					:max="1"
-					size="mini"
-				></el-input-number> -->
-				<el-input
-					class="e-input"
-					v-model="formData.maxHeapMemoryUsage"
-					:min="0.1"
-					:max="1"
-					size="mini"
-					type="number"
-				></el-input>
-			</el-form-item>
 			<el-form-item :label="$t('dataFlow.stop_on_error')">
 				<!-- 遇到错误时停止同步 -->
 				<el-switch
@@ -272,34 +245,6 @@ export default {
 							let value = this.formData.cronExpression;
 							if (!value || !value.trim()) {
 								callback(this.$t('dataFlow.cronExpression'));
-							} else {
-								callback();
-							}
-						},
-						trigger: 'blur'
-					}
-				],
-				maxCpuUsage: [
-					{
-						required: true,
-						validator: (rule, v, callback) => {
-							let value = this.formData.maxCpuUsage;
-							if (!value || value < 0 || value > 1) {
-								callback(this.$t('dataFlow.maxCpuUsageError'));
-							} else {
-								callback();
-							}
-						},
-						trigger: 'blur'
-					}
-				],
-				maxHeapMemoryUsage: [
-					{
-						required: true,
-						validator: (rule, v, callback) => {
-							let value = this.formData.maxHeapMemoryUsage;
-							if (!value || value < 0 || value > 1) {
-								callback(this.$t('dataFlow.maxHeapMemoryUsageError'));
 							} else {
 								callback();
 							}

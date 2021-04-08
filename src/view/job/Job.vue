@@ -834,10 +834,6 @@ export default {
 			settingData.notificationWindow = settingData.notificationWindow
 				? Number(settingData.notificationWindow)
 				: 0;
-			settingData.maxCpuUsage = settingData.maxCpuUsage ? Number(settingData.maxCpuUsage) : 0.8;
-			settingData.maxHeapMemoryUsageError = settingData.maxHeapMemoryUsageError
-				? Number(settingData.maxHeapMemoryUsageError)
-				: 1;
 			settingData.readBatchSize = settingData.readBatchSize ? Number(settingData.readBatchSize) : 1000;
 			settingData.readCdcInterval = settingData.readCdcInterval ? Number(settingData.readCdcInterval) : 500;
 			settingData.transformerConcurrency = settingData.transformerConcurrency

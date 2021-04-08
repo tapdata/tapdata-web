@@ -599,15 +599,6 @@ export default class Editor extends BaseObject {
 			return i18n.t('dataFlow.cronExpression');
 		}
 
-		let settingData = getData.settingData;
-
-		if (settingData.maxCpuUsage < 0 || settingData.maxCpuUsage > 1) {
-			return i18n.t('dataFlow.maxCpuUsageError');
-		}
-		if (settingData.maxHeapMemoryUsageError < 0 || settingData.maxHeapMemoryUsageError > 1) {
-			return i18n.t('dataFlow.maxHeapMemoryUsageError');
-		}
-
 		let verified = this.graph.validate();
 		if (verified !== true) return verified;
 		return this.validateGraphData();
