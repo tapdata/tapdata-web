@@ -54,18 +54,20 @@ if (parent && parent.__USER_INFO__) {
 	VueCookie.set('xToken', userInfo.token);
 	VueCookie.set('userId', userInfo.id);
 }
+
+let config = parent ? parent.__TM_CONFIG__ || {} : {};
+window.getSettingByKey = key => {
+	let value = '';
+	if (!window.__settings__ || key.startsWith('DFS_')) {
+		value = config[key];
+	} else {
+		let setting = window.__settings__.find(it => it.key === key) || {};
+		value = setting.isArray ? setting.value.split(',') : setting.value;
+	}
+	return value;
+};
 let init = settings => {
-	let config = parent ? parent.__TM_CONFIG__ || {} : {};
-	window.getSettingByKey = key => {
-		let value = '';
-		if (key.startWidth('DFS_')) {
-			value = config[key];
-		} else {
-			let setting = settings.find(it => it.key === key) || {};
-			value = setting.isArray ? setting.value.split(',') : setting.value;
-		}
-		return value;
-	};
+	window.__settings__ = settings;
 	let lang = localStorage.getItem('tapdata_localize_lang');
 	if (!lang) {
 		lang = window.getSettingByKey('DEFAULT_LANGUAGE');

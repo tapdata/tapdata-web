@@ -1,6 +1,6 @@
 <template>
 	<div class="databaseFrom">
-		<header class="header" v-if="!$window.getSettingByKey('HIDE_CONNECTION_OUTSIDE_PART')">
+		<header class="header" v-if="!$window.getSettingByKey('DFS_TCM_HIDE_CONNECTION_OUTSIDE_PART')">
 			{{ $route.params.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
 		</header>
 		<div class="databaseFrom-body">
@@ -30,7 +30,10 @@
 							</div>
 							<div
 								class="tip"
-								v-if="!$window.getSettingByKey('SUPPORT_RDS') || !$window.getSettingByKey('SUPPORT_')"
+								v-if="
+									!$window.getSettingByKey('DFS_TCM_PLATFORM') ||
+										!$window.getSettingByKey('DFS_TCM_PLATFORM')
+								"
 							>
 								{{ $t('dataForm.form.guide') }}
 								<a class="color-primary" href="https://docs.tapdata.net/data-source">{{
@@ -39,7 +42,10 @@
 							</div>
 							<div
 								class="tip"
-								v-if="$window.getSettingByKey('SUPPORT_RDS') || $window.getSettingByKey('SUPPORT_DFS')"
+								v-if="
+									$window.getSettingByKey('DFS_TCM_PLATFORM') ||
+										$window.getSettingByKey('DFS_TCM_PLATFORM')
+								"
 							>
 								请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
 							</div>
@@ -210,7 +216,7 @@
 					</div>
 				</footer>
 			</main>
-			<gitbook v-if="!$window.getSettingByKey('HIDE_CONNECTION_OUTSIDE_PART')"></gitbook>
+			<gitbook v-if="!$window.getSettingByKey('DFS_TCM_HIDE_CONNECTION_OUTSIDE_PART')"></gitbook>
 		</div>
 		<Test
 			ref="test"
@@ -336,7 +342,7 @@ export default {
 	created() {
 		this.databaseType = this.$route.query.databaseType || this.$store.state.createConnection.databaseType;
 		//确认类型 按照type 初始化变量
-		if (window.getSettingByKey('SUPPORT_RDS')) {
+		if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
 			this.model = Object.assign({}, defaultCloudModel['default'], defaultCloudModel['drs']);
 		} else {
 			this.model = Object.assign({}, defaultModel['default']);
@@ -502,9 +508,9 @@ export default {
 			if (type === 'mysql pxc') {
 				type = 'mysqlpxc';
 			}
-			if (window.getSettingByKey('SUPPORT_RDS')) {
+			if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
 				type = 'drs_' + type;
-			} else if (window.getSettingByKey('SUPPORT_DFS')) {
+			} else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
 				type = 'dfs_' + type;
 			}
 			let func = formConfig[type];
@@ -826,7 +832,7 @@ export default {
 				this.$message.error('请授权允许数据同步服务访问您的ECS实例');
 				return;
 			}
-			if (!this.model.platformInfo.isThrough && this.model.sourceType === 'ecs') {
+			if (this.model.platformInfo && !this.model.platformInfo.isThrough && this.model.sourceType === 'ecs') {
 				this.$message.error('请"点击开通"开通网络策略');
 				return;
 			}
@@ -866,7 +872,7 @@ export default {
 						params.fill = params.isUrl ? 'uri' : '';
 						delete params.isUrl;
 					}
-					if (window.getSettingByKey('SUPPORT_RDS')) {
+					if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
 						params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params));
 						if (params.sourceType === 'selfDB') {
 							delete params.DRS_region;
@@ -916,7 +922,7 @@ export default {
 			} else {
 				this.$refs.form.validate(valid => {
 					if (valid) {
-						if (window.getSettingByKey('DFS')) {
+						if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
 							this.model['platformInfo'] = Object.assign(
 								this.model['platformInfo'],
 								this.handlePlatformInfo(this.model)

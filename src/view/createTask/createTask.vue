@@ -161,7 +161,7 @@ export default {
 		this.id = this.$route.params.id;
 		this.getSteps();
 		this.getFormConfig();
-		if (window.getSettingByKey('SUPPORT_DFS')) {
+		if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
 			this.dataSourceModel = _.cloneDeep(DFSDATASOURCE_MODEL);
 			this.allowDatabaseType();
 			this.getConnection(this.getWhere('source'), 'source_connectionId');
@@ -261,7 +261,7 @@ export default {
 				{ index: 3, text: '任务设置', type: 'setting' },
 				{ index: 4, text: '映射设置', type: 'mapping' }
 			];
-			if (window.getSettingByKey('SUPPORT_DFS')) {
+			if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
 				this.steps = steps.slice(1, 4);
 			} else {
 				this.steps = steps.concat();
@@ -333,7 +333,7 @@ export default {
 		async getFormConfig() {
 			let type = this.steps[this.activeStep].type || 'instance';
 			if (type === 'dataSource') {
-				type = window.getSettingByKey('SUPPORT_DFS') ? 'dfs_dataSource' : 'drs_dataSource';
+				type = window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs' ? 'dfs_dataSource' : 'drs_dataSource';
 			}
 			let func = formConfig[type];
 			if (func) {
@@ -372,7 +372,7 @@ export default {
 		},
 		getWhere(type) {
 			let where = {};
-			if (window.getSettingByKey('SUPPORT_DFS')) {
+			if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
 				if (type === 'source') {
 					where = {
 						database_type: { in: [this.dataSourceModel.source_databaseType] }
