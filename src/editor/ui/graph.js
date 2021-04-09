@@ -395,6 +395,20 @@ export default class Graph extends Component {
 			if (matchedLink.length > 0) {
 				let linkView = this.paper.findViewByModel(matchedLink[0]);
 				let originalFormData = linkView.model.getFormData();
+				// target don't accept source connection
+				if (
+					typeof linkView.targetView.model.allowSource === 'function' &&
+					!linkView.targetView.model.allowSource(linkView.sourceView.model)
+				) {
+					return;
+				}
+				// source don't allow connect to target
+				if (
+					typeof linkView.sourceView.model.allowTarget === 'function' &&
+					!linkView.sourceView.model.allowTarget(linkView.targetView.model)
+				) {
+					return;
+				}
 				//if disabled, can not connect.
 				if (
 					!linkView.targetView.model.getFormData().disabled &&
