@@ -64,6 +64,8 @@ export default {
 		this.type = this.$route.query && this.$route.query.type ? this.$route.query.type : '';
 		if (this.type === 'api') {
 			this.downType = 'APIServer';
+		} else if (this.type === 'Inspect') {
+			this.downType = 'Inspect';
 		} else {
 			this.downType = 'dataflow';
 		}
