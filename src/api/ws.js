@@ -220,22 +220,11 @@ class WSClient extends EventEmitter {
 	}
 
 	getUrl() {
-		// let hostname = location.hostname;
-		// let host = location.host;
-		// if (['localhost', '127.0.0.1'].includes(hostname)) {
-		// 	host = hostname + ':3030';
-		// }
-		// host = '192.168.1.181:30300';
 		var loc = window.location,
-			new_uri,
+			new_uri = 'ws:',
 			path = loc.pathname;
-		let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || '';
-		let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || '';
-		path = tcmApiPre + apiPre + '/';
 		if (loc.protocol === 'https:') {
 			new_uri = 'wss:';
-		} else {
-			new_uri = 'ws:';
 		}
 		new_uri += '//' + loc.host;
 		new_uri += path + 'ws/agent';
