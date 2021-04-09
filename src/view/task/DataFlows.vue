@@ -791,7 +791,7 @@ export default {
 				}
 				return r;
 			};
-			if (item.stats && !window.getSettingByKey('SHOW_REGION_AND_ZONE')) {
+			if (item.stats && window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
 				item.hasChildren = false;
 				let children = item.stages;
 				item.children = [];
