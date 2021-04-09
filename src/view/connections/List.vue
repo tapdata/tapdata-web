@@ -160,7 +160,7 @@
 					</span>
 				</template>
 			</el-table-column>
-			<el-table-column width="160">
+			<el-table-column v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'" width="160">
 				<div slot="header">
 					{{ $t('connection.connectionSource') }}
 					<TableFilter

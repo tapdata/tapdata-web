@@ -171,7 +171,7 @@
 			>
 			</el-table-column>
 			<el-table-column
-				v-if="$window.getSettingByKey('SHOW_REGION_AND_ZONE')"
+				v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
 				min-width="200"
 				:label="$t('dataFlow.taskName') + '/地域'"
 			>
@@ -180,12 +180,7 @@
 					<div class="region-info">{{ scope.row.regionInfo }}</div>
 				</template>
 			</el-table-column>
-			<el-table-column
-				v-if="!$window.getSettingByKey('SHOW_REGION_AND_ZONE')"
-				min-width="200"
-				:label="$t('dataFlow.taskName')"
-				:show-overflow-tooltip="true"
-			>
+			<el-table-column v-else min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
 				<template slot-scope="scope">
 					<span class="dataflow-name">
 						<span
@@ -207,7 +202,7 @@
 							{{ scope.row.listtags[0].value }}
 						</el-tag>
 					</span>
-					<div style="margin-left: 20px;color:#ccc">
+					<!-- <div style="color:#ccc">
 						{{
 							scope.row.user
 								? scope.row.user.username
@@ -215,7 +210,7 @@
 									: scope.row.user.email
 								: ''
 						}}
-					</div>
+					</div> -->
 				</template>
 			</el-table-column>
 			<el-table-column min-width="150">
@@ -261,7 +256,11 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataFlow.creatdor')" width="180">
+			<el-table-column
+				v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
+				:label="$t('dataFlow.creatdor')"
+				width="180"
+			>
 				<template slot-scope="scope">
 					{{ scope.row.user ? scope.row.user.username : '-' }}
 				</template>
