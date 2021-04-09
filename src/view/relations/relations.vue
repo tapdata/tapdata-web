@@ -1,6 +1,6 @@
 .<template>
-	<div class="data-map-container">
-		<div class="data-map-header">
+	<div class="relation-container">
+		<div class="relation-header">
 			<div class="tool-bar">
 				<i class="iconfont icon-plus-circle" @click="zoomIn"></i>
 				<i class="iconfont icon-minus-circle" @click="zoomOut"></i>
@@ -16,8 +16,8 @@
 					:percentage="Math.trunc((refreshResult.currProgress / refreshResult.allProgress) * 100)"
 				></el-progress>
 			</span>
-			<span class="consume-time">上次耗时：{{ consumeTime }} </span>
-			<span class="consume-time">解析任务总数：{{ allProgress }} </span>
+			<span class="consume-time">{{ $t('relations.lastTimeConsume') }} ：{{ consumeTime }} </span>
+			<span class="consume-time">{{ $t('relations.allProgress') }} ：{{ allProgress }} </span>
 		</div>
 		<div id="navigator-container" class="navigator-container"></div>
 		<div class="center-bar">
@@ -27,8 +27,8 @@
 				<el-radio label="field">{{ $t('dataMap.fieldLevel') }}</el-radio>
 			</el-radio-group>
 		</div>
-		<div class="data-map-main">
-			<div id="paper" class="data-map"></div>
+		<div class="relation-main">
+			<div id="paper" class="relation"></div>
 		</div>
 		<el-dialog :title="$t('message.preview')" :visible.sync="errorVisible" width="650px">
 			<span class="value align-center"> {{ refreshResult.message }}</span>
@@ -107,7 +107,6 @@ export default {
 			};
 			LineageGraphsAPI.graphData(params).then(res => {
 				if (res.data) {
-					this.$message.success('更新完成');
 					this.graph.draw(res.data.items, res.data.links, this);
 				}
 			});
@@ -171,23 +170,23 @@ export default {
 			var leave3 = leave2 % (60 * 1000); //计算分钟数后剩余的毫秒数
 			var seconds = Math.round(leave3 / 1000);
 
-			var returnStr = seconds + '秒';
+			var returnStr = seconds + this.$t('relations.second');
 
 			if (minutes > 0) {
-				returnStr = minutes + '分钟'; //+ returnStr;
+				returnStr = minutes + this.$t('relations.minute'); //+ returnStr;
 			}
 			if (hours > 0) {
-				returnStr = hours + '小时'; // + returnStr;
+				returnStr = hours + this.$t('relations.hours'); // + returnStr;
 			}
 			if (days > 0) {
-				returnStr = days + '天'; //+ returnStr;
+				returnStr = days + this.$t('relations.day'); //+ returnStr;
 			}
 			return returnStr;
 		},
 		refreshData() {
-			this.$confirm('开始对所有同步任务进行解析，并生产溯源图形，耗时可能比较久，点击“是”开始执行', '字段溯源', {
-				confirmButtonText: '是',
-				cancelButtonText: '取消',
+			this.$confirm(this.$t('relations.refreshMsg'), this.$t('relations.refreshTittle'), {
+				confirmButtonText: this.$t('relations.yes'),
+				cancelButtonText: this.$t('relations.no'),
 				type: 'warning',
 				closeOnClickModal: false
 			})
@@ -205,9 +204,7 @@ export default {
 											if (res.data) {
 												self.refreshResult = res.data[0];
 												if (self.refreshResult.sync_data) {
-													this.$message.error(
-														'正在同步图形数据，图形可能缺失，请稍后刷新重试'
-													);
+													this.$message.error(this.$t('relations.refreshStatusMsg'));
 												}
 												if (self.refreshResult.status == 'finish') {
 													this.getData();
@@ -256,7 +253,7 @@ export default {
 						});
 				})
 				.catch(() => {
-					this.$message.error('溯源失败,请重试');
+					this.$message.error(this.$t('relations.parsingFailed'));
 				});
 		},
 		handlePreviewVisible() {
@@ -292,7 +289,7 @@ export default {
 <style lang="less">
 @import '../../editor/lib/rappid/rappid.css';
 @import '../../editor/lib/rappid/themes/style.default.css';
-.data-map-container {
+.relation-container {
 	.navigator-container {
 		position: absolute;
 		left: 20px;
@@ -330,7 +327,7 @@ export default {
 	margin-top: 3px;
 	color: red;
 }
-.data-map-container {
+.relation-container {
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
@@ -354,7 +351,7 @@ export default {
 			width: 250px;
 		}
 	}
-	.data-map-header {
+	.relation-header {
 		padding-bottom: 10px;
 		background: #ffffff;
 		overflow: hidden;
@@ -366,12 +363,12 @@ export default {
 		display: flex;
 		flex-direction: row;
 	}
-	.data-map-title {
+	.relation-title {
 		font-size: 16px;
 		color: #333;
 		font-weight: 600;
 	}
-	.data-map-main {
+	.relation-main {
 		-webkit-box-flex: 1;
 		-ms-flex: 1;
 		flex: 1;
@@ -388,11 +385,11 @@ export default {
 			/*border: 1px solid red;*/
 		}
 	}
-	.data-map-info {
+	.relation-info {
 		width: 244px;
 		border: 1px solid #dedede;
 	}
-	.data-map {
+	.relation {
 		-webkit-box-flex: 1;
 		-ms-flex: 1;
 		flex: 1;

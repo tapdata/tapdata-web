@@ -1819,7 +1819,27 @@ const en = {
 	relations: {
 		blood: 'Table Tracing',
 		refresh: 'Refresh',
-		refreshStatus: 'Last Refresh'
+		refreshStatus: 'Last Refresh',
+		lastTimeConsume: 'Last time consuming',
+		allProgress: 'Total number of parsing tasks',
+		refreshMsg:
+			'All synchronous tasks will be analyzed and lineage graph will be generated. It may take a long time, click "YES" to confirm',
+		refreshTitle: 'Synchronous tasks analysis',
+		refreshStatusMsg: 'Syncing graphics data, graphics may be missing, please refresh later and try again',
+		second: ' Second',
+		minute: ' Minute',
+		hours: ' Hours',
+		day: ' Day',
+		customFields: 'Custom fields, please separate multiple fields with , ',
+		label: 'Field type/field name',
+		viewTaskInfo: 'Task details',
+		task: 'Task',
+		add: 'Add',
+		delete: 'Delete',
+		rename: 'Rename',
+		changeType: 'Change type',
+		script: 'Script processing',
+		fieldScript: 'Field script'
 	},
 	metadata: {
 		createNewModel: 'Create model',

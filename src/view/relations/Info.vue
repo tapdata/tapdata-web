@@ -13,12 +13,14 @@
 			<el-tabs v-model="activeName" type="card" class="lineage-info-tab">
 				<el-tab-pane label="字段" name="first">
 					<div class="relation-btn-wrap">
-						<el-button class="relation-btn" type="text" @click="handleFields">查看血缘</el-button>
+						<el-button class="relation-btn" type="text" @click="handleFields">{{
+							$t('dataMap.fieldLevel')
+						}}</el-button>
 					</div>
 					<el-input
 						class="customize-field"
 						size="mini"
-						placeholder="自定义字段,多个字段请用','隔开"
+						:placeholder="$t(relations.customFields)"
 						v-model="customFields"
 					></el-input>
 					<div class="table-wrap">
@@ -29,7 +31,7 @@
 							@selection-change="handleSelectionChange"
 						>
 							<el-table-column type="selection"></el-table-column>
-							<el-table-column prop="name" label="字段类型/字段名称">
+							<el-table-column prop="name" :label="$t('relations.label')">
 								<template slot-scope="scope">
 									<div class="database-img">
 										<img :src="getImgByType(scope.row.java_type)" />
@@ -58,15 +60,15 @@
 		</div>
 		<div v-else>
 			<header class="header">
-				<span>{{ model.sourceName }} -> {{ model.targetName }}</span>
+				<span class="text">{{ model.sourceName }} -> {{ model.targetName }}</span>
 			</header>
 			<el-menu :default-active="1" class="el-menu-vertical-lineage" :default-openeds="defaultOpeneds">
 				<template v-for="(item, index1) in model.dataFlows">
 					<el-submenu :key="item.id" :index="index1 + 1" class="parentMenu">
 						<template slot="title">
 							<span slot="title">
-								<span>任务[ {{ item.name }} ]</span>
-								<span class="keywords" @click="goJob(item.id)">查看任务详情</span>
+								<span>{{ $t('relations.task') }}[ {{ item.name }} ]</span>
+								<span class="keywords" @click="goJob(item.id)">{{ $t('relations.viewTaskInfo') }}</span>
 							</span>
 						</template>
 						<template v-for="(processor, index2) in item.processors">
@@ -84,27 +86,27 @@
 									<template v-for="(op, index3) in processor.operations">
 										<el-menu-item :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`" :key="op.id">
 											<span v-if="['CREATE'].includes(op.op)">
-												<span class="label">新增</span>
+												<span class="label">{{ $t('relations.add') }}</span>
 												<span class="value"> : {{ op.field }}</span>
 											</span>
 											<span v-if="['REMOVE'].includes(op.op)">
-												<span class="label">删除</span>
+												<span class="label">{{ $t('relations.delete') }}</span>
 												<span class="value"> : {{ op.field }}</span>
 											</span>
 											<span v-if="['RENAME'].includes(op.op)">
-												<span class="label">更名</span>
+												<span class="label">{{ $t('relations.rename') }}</span>
 												<span class="value"> : {{ op.field }} -> {{ op.operand }}</span>
 											</span>
 											<span v-if="['CONVERT'].includes(op.op)">
-												<span class="label">改类型</span>
+												<span class="label">{{ $t('relations.changeType') }}</span>
 												<span class="value">
 													: {{ op.originalDataType }} -> {{ op.operand }}</span
 												>
 											</span>
 											<span v-if="['JS'].includes(op.op)">
-												<span class="label">脚本处理</span>
+												<span class="label">{{ $t('relations.script') }}</span>
 												<span class="keywords" @click="handleShowScript(op.script)">
-													: 字段脚本</span
+													: {{ $t('relations.fieldScript') }}</span
 												>
 											</span>
 										</el-menu-item>
@@ -153,7 +155,7 @@
 										v-if="processor.script"
 										class="keywords"
 										@click="handleShowScript(processor.script)"
-										>脚本处理器[function process(record){...}]</span
+										>{{ $t('relations.script') }}[function process(record){...}]</span
 									>
 								</el-menu-item>
 							</div>
@@ -372,6 +374,11 @@ export default {
 		font-size: 18px;
 		text-align: left;
 		font-weight: bold;
+		span {
+			white-space: pre-line;
+			word-break: break-all;
+			word-wrap: break-word;
+		}
 	}
 	.connection {
 		color: #999;

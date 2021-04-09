@@ -232,7 +232,7 @@ export default function() {
 				marginX: 100,
 				marginY: 100,
 				// resizeToFit: true,
-				nodeSep: 100,
+				nodeSep: 150,
 				edgeSep: 10,
 				rankSep: 80,
 				// ranker: 'tight-tree',

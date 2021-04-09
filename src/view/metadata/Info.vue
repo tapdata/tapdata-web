@@ -893,6 +893,7 @@ export default {
 			display: flex;
 			flex-direction: row;
 			padding: 10px 0 0;
+			overflow: hidden;
 			.metadata-aside {
 				width: 360px;
 				height: 100%;
