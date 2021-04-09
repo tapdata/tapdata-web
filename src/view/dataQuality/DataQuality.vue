@@ -94,7 +94,7 @@ export default {
 				keyword: '', // 关键词
 				isFuzzy: true // 是否模糊查询
 			},
-			order: 'last_updated DESC' // 默认排序方法
+			order: { last_updated: -1 } // 默认排序方法
 		};
 	},
 
@@ -126,7 +126,7 @@ export default {
 
 			return Promise.all([
 				this.$api('DataQuality').count({ where }),
-				this.$api('DataQuality').get({
+				this.$api('DataQuality').getList({
 					filter: JSON.stringify(filter)
 				})
 			]).then(([countRes, res]) => {
