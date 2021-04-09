@@ -398,14 +398,14 @@ export default class Graph extends Component {
 				// target don't accept source connection
 				if (
 					typeof linkView.targetView.model.allowSource === 'function' &&
-					!linkView.targetView.model.allowSource(linkView.sourceView.model)
+					!linkView.targetView.model.allowSource(cell)
 				) {
 					return;
 				}
 				// source don't allow connect to target
 				if (
 					typeof linkView.sourceView.model.allowTarget === 'function' &&
-					!linkView.sourceView.model.allowTarget(linkView.targetView.model)
+					!linkView.sourceView.model.allowTarget(cell)
 				) {
 					return;
 				}
