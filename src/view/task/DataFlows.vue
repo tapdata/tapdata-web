@@ -171,7 +171,7 @@
 			>
 			</el-table-column>
 			<el-table-column
-				v-if="$window.getSettingByKey('SHOW_REGION_AND_ZONE')"
+				v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
 				min-width="200"
 				:label="$t('dataFlow.taskName') + '/地域'"
 			>
@@ -181,7 +181,7 @@
 				</template>
 			</el-table-column>
 			<el-table-column
-				v-if="!$window.getSettingByKey('SHOW_REGION_AND_ZONE')"
+				v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
 				min-width="200"
 				:label="$t('dataFlow.taskName')"
 				:show-overflow-tooltip="true"
@@ -792,7 +792,7 @@ export default {
 				}
 				return r;
 			};
-			if (item.stats && !window.getSettingByKey('SHOW_REGION_AND_ZONE')) {
+			if (item.stats && window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
 				item.hasChildren = false;
 				let children = item.stages;
 				item.children = [];

@@ -173,7 +173,7 @@
 							</span>
 						</el-tooltip>
 					</div>
-					<div class="info-list" v-if="$window.getSettingByKey('SUPPORT_RDS')">
+					<div class="info-list" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
 						<span class="info-label">实例地域:</span>
 						<span class="info-text">
 							{{ stage.platformInfo ? stage.platformInfo.regionName : '' }} |

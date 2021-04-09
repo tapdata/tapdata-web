@@ -1,7 +1,7 @@
 <template>
 	<el-drawer
 		class="connection-drawer"
-		:class="$window.getSettingByKey('SUPPORT_RDS') ? 'no-top-drawer' : 'top-drawer'"
+		:class="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs' ? 'no-top-drawer' : 'top-drawer'"
 		ref="drawer"
 		:visible.sync="visible"
 		:title="$t('dataForm.title')"
@@ -253,8 +253,11 @@ export default {
 				if (type === 'mysql pxc') {
 					type = 'mysqlpxc';
 				}
-				if (window.getSettingByKey('SUPPORT_RDS')) {
+				if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
 					type = 'drs_' + type;
+				}
+				if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+					type = 'dfs_' + type;
 				}
 				let func = formConfig[type];
 				if (func) {
@@ -266,7 +269,7 @@ export default {
 							field: it.field,
 							show: true
 						};
-						if (window.getSettingByKey('SUPPORT_RDS')) {
+						if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
 							switch (node.field) {
 								case 's_region': {
 									node.value = data.platformInfo.DRS_regionName || node.value;
