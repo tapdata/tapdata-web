@@ -26,6 +26,9 @@ export function signOut() {
 	cookie.delete('username');
 	cookie.delete('isReadonly');
 	window.App.$router.push('/login');
+	if (window !== top) {
+		top.window.location.href = '/login';
+	}
 }
 
 export function toRegExp(word) {

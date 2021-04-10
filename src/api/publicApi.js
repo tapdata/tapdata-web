@@ -38,6 +38,7 @@ axios.interceptors.request.use(
 			config.url = tcmApiPre + apiPre + config.url;
 		}
 		config.headers['Pool-Id'] = 'CIDC-RP-25';
+		config.headers['x-requested-with'] = 'XMLHttpRequest';
 
 		let key = JSON.stringify(config);
 		let cancelFunc = null;
