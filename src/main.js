@@ -49,11 +49,12 @@ window._TAPDATA_OPTIONS_ = {
 	version: 'DAAS_BUILD_NUMBER',
 	loadingImg: require('../static/icon/loading.svg')
 };
-if (parent && parent.__USER_INFO__) {
-	let userInfo = parent.__USER_INFO__;
-	VueCookie.set('xToken', userInfo.token);
-	VueCookie.set('userId', userInfo.id);
-}
+// if (parent && parent.__USER_INFO__) {
+// 	let userInfo = parent.__USER_INFO__;
+// 	if (userInfo.token) {
+// 		VueCookie.set('xToken', userInfo.token);
+// 	}
+// }
 
 let config = parent ? parent.__TM_CONFIG__ || {} : {};
 window.getSettingByKey = key => {
