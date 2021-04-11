@@ -418,6 +418,14 @@ export default class Graph extends Component {
 				) {
 					return;
 				}
+				//when it is database, only two nodes in link are allowed.
+				if (
+					['app.Database'].includes(cell.get('type')) &&
+					['app.Database'].includes(linkView.sourceView.model.get('type')) &&
+					['app.Database'].includes(linkView.targetView.model.get('type'))
+				) {
+					return;
+				}
 				//if disabled, can not connect.
 				if (
 					!linkView.targetView.model.getFormData().disabled &&
