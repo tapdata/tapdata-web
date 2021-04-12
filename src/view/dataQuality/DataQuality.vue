@@ -136,7 +136,7 @@ export default {
 				});
 				return {
 					total: countRes.count,
-					data: res.data || []
+					data: res || []
 				};
 			});
 		},
