@@ -723,14 +723,15 @@ export default {
 				this.$set(item, 'checked', true);
 			}
 
-			if (!event) {
-				second.checkAllData = false;
-				item.checkedAllData = false;
-			}
+			// if (!event) {
+			// 	second.checkAllData = false;
+			// 	item.checkedAllData = false;
+			// }
 
 			let checkedCount = children.filter(el => {
 				return el.checked;
 			});
+			// debugger;
 
 			switch (type) {
 				case 'children':
@@ -763,8 +764,8 @@ export default {
 							this.$set(children[i], 'checked', false);
 						}
 
-						this.$set(children[i], 'checkAllData', false);
-						this.$set(item, 'checkedAllData', false);
+						// this.$set(children[i], 'checkAllData', false);
+						// this.$set(item, 'checkedAllData', false);
 					}
 				}
 			}
