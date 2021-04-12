@@ -2658,6 +2658,43 @@ const en = {
 		checkSuccess: 'Pass verification',
 		checkError: 'Verification failed',
 		alreadyExists: 'User name cannot be repeated'
+	},
+	dataQuality: {
+		title: 'Data Quality',
+		desc:
+			'The data quality page shows the summary of the table data that violates the data rules, and the user can correct the data that violates the rules on this page.',
+		keywordTip: 'Please search for table name/field name',
+		sourceName: 'Name/Origin',
+		totalDocs: 'Total',
+		violatedDocs: 'Violated',
+		violatePercentage: 'Percentage',
+		createTime: 'Create time',
+		actions: 'Actions',
+		view: 'view',
+		btnFilter: 'Column Filter',
+		btnBatch: 'Bulk Changes',
+		save: 'save',
+		cancel: 'cancel',
+		viewDetail: 'details',
+		del: 'delete',
+		fieldFilter: 'Field filter',
+		allCheck: 'select all',
+		fieldName: 'The field name',
+		show: 'show',
+		hide: 'hide',
+		json: 'Business data',
+		verifyRuleTip: 'Select the quality rule to be violated',
+		verifyContentTip: 'Please enter what you want to modify',
+		verifyContentLength: 'The length cannot exceed 100',
+		msgPostApi: 'Please first publish an API based on this table',
+		msgNoValidApi: 'No API server is available',
+		msgNotStartApi: 'No API service enabled?',
+		ifDel: 'Do you want to delete the current row?',
+		unlikeAjv: 'The input does not match the selected data rule',
+		allUpdateSuccessTip1: 'Operation successful, A total of',
+		allUpdateSuccessTip2: 'pieces of data have been modified',
+		updateFail: 'Update failed',
+		dataTypeError: 'Data type conversion failed, expected==>'
 	}
 };
 
