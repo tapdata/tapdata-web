@@ -55,7 +55,8 @@ if (parent && parent.__USER_INFO__) {
 	VueCookie.set('userId', userInfo.id);
 }
 
-let config = parent ? parent.__TM_CONFIG__ || {} : {};
+let config = sessionStorage.getItem('TM_CONFIG') || '{}';
+config = JSON.parse(config);
 window.getSettingByKey = key => {
 	let value = '';
 	if (!window.__settings__ || key.startsWith('DFS_')) {
