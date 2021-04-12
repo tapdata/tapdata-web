@@ -32,15 +32,13 @@
 					<el-col class="list" :md="12" :sm="24" v-for="(element, i) in waterfallData" :key="i">
 						<div class="grid-content listBox" v-for="item in element" :key="item.ip">
 							<div class="boxTop">
-								<div class="fl" style="width: 60%;">
+								<div style="width: 60%;">
 									<i class="circular" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
 									<h2 class="name">
 										{{ item.agentName ? item.agentName : item.systemInfo.hostname }}
 									</h2>
-									<span>{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
-									<span class="uuid">{{ item.systemInfo.uuid }}</span>
 								</div>
-								<div class="operation-bar" v-readonlybtn="'Cluster_operation'">
+								<div class="operation-bar " v-readonlybtn="'Cluster_operation'">
 									<el-button
 										size="mini"
 										type="danger"
@@ -61,6 +59,20 @@
 										@click="delConfirm(item)"
 									></i>
 								</div>
+							</div>
+							<div class="info">
+								<span>{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
+								<template v-if="item.metricValues">
+									<span class="usageRate"
+										>{{ $t('cluster.cpuUsage') }}: {{ item.metricValues.CpuUsage }}</span
+									>
+									<span class="usageRate"
+										>{{ $t('cluster.heapMemoryUsage') }}:
+										{{ item.metricValues.HeapMemoryUsage }}</span
+									>
+								</template>
+
+								<div class="uuid">{{ item.systemInfo.uuid }}</div>
 							</div>
 							<div class="boxBottom">
 								<el-row :gutter="20" class="data-list" v-if="managementType === 'cluster'">
@@ -317,7 +329,8 @@ export default {
 			agentName: '',
 			currentNde: {},
 			delData: '',
-			managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT')
+			managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT'),
+			processIdData: []
 		};
 	},
 	created() {
@@ -336,6 +349,31 @@ export default {
 		}, 10000);
 	},
 	methods: {
+		// 获取最大cpu、内存使用率
+		getUsageRate(processId) {
+			let parmas = {
+				filter: {
+					where: {
+						process_id: {
+							inq: processId
+						}
+					}
+				}
+			};
+			this.$api('Workers')
+				.get(parmas)
+				.then(res => {
+					if (res && res.data && res.data.length) {
+						let metricValuesData = [];
+						res.data.forEach(item => {
+							if (item.metricValues) {
+								metricValuesData.push(item);
+							}
+						});
+						this.processIdData = metricValuesData;
+					}
+				});
+		},
 		// 提交
 		async submitForm() {
 			let getFrom = this.$refs.childRules.ruleForm;
@@ -520,6 +558,14 @@ export default {
 			let [...waterfallData] = datas;
 			let [...newWaterfallData] = [[], []];
 			waterfallData.forEach((item, index) => {
+				this.processIdData.forEach(processId => {
+					if (item.systemInfo.process_id === processId.process_id) {
+						processId.metricValues.CpuUsage = (processId.metricValues.CpuUsage * 100).toFixed(2) + '%';
+						processId.metricValues.HeapMemoryUsage =
+							(processId.metricValues.HeapMemoryUsage * 100).toFixed(2) + '%';
+						this.$set(item, 'metricValues', processId.metricValues);
+					}
+				});
 				if (index % 2) {
 					newWaterfallData[1].push(item);
 				} else {
@@ -573,6 +619,16 @@ export default {
 			}
 			cluster.get(params).then(res => {
 				if (res.data) {
+					let processId = [];
+					if (res.data.length > 0) {
+						res.data.forEach(item => {
+							if (item.systemInfo.process_id) {
+								processId.push(item.systemInfo.process_id);
+							}
+						});
+					}
+					// 获取最大内存、cpu使用率
+					this.getUsageRate(processId);
 					//自动升级
 					this.getVersion(res.data);
 				}
@@ -726,25 +782,12 @@ export default {
 							text-overflow: ellipsis;
 							overflow: hidden;
 						}
-						.uuid {
-							padding: 5px 0;
-							font-size: 12px;
-							color: #999;
-						}
-						span {
-							font-size: 14px;
-							color: #555;
-						}
+
 						.addBtn {
 							span {
 								font-size: 12px;
 							}
 						}
-					}
-					.boxTop {
-						// .el-button {
-						//   span { font-size: 12px;}
-						// }
 					}
 					.boxBottom {
 						padding-top: 10px;
@@ -777,6 +820,22 @@ export default {
 								cursor: pointer;
 							}
 						}
+					}
+				}
+				.info {
+					.usageRate {
+						padding-right: 10px;
+						font-size: 12px;
+						color: #999;
+					}
+					.uuid {
+						padding: 5px 0;
+						font-size: 12px;
+						color: #999;
+					}
+					span {
+						font-size: 14px;
+						color: #555;
 					}
 				}
 			}

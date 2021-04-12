@@ -352,7 +352,9 @@ const tc = {
 		uniqueEncode: '唯一編碼',
 		logs: '日誌信息',
 		serviceType: '服務類型',
-		level: '級別'
+		level: '級別',
+		cpuUsage: 'CPU使用率',
+		heapMemoryUsage: '堆內存使用率'
 	},
 	button: {
 		refresh: '刷新',

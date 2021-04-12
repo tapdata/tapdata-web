@@ -358,7 +358,9 @@ const en = {
 		uniqueEncode: 'Unique encoding',
 		logs: 'Log',
 		serviceType: 'Service type',
-		level: 'Level'
+		level: 'Level',
+		cpuUsage: 'CPU Usage',
+		heapMemoryUsage: 'Heap memory usage'
 	},
 	button: {
 		refresh: 'Refresh',

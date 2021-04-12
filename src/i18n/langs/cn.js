@@ -355,7 +355,9 @@ const cn = {
 		uniqueEncode: '唯一编码',
 		logs: '日志信息',
 		serviceType: '服务类型',
-		level: '级别'
+		level: '级别',
+		cpuUsage: 'CPU使用率',
+		heapMemoryUsage: '堆内存使用率'
 	},
 	button: {
 		refresh: '刷新',
