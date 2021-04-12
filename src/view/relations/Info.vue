@@ -11,7 +11,7 @@
 				<div class="connection" @click="goConnection">{{ connections.name }}</div>
 			</header>
 			<el-tabs v-model="activeName" type="card" class="lineage-info-tab">
-				<el-tab-pane label="字段" name="first">
+				<el-tab-pane :label="$t('relations.field')" name="first">
 					<div class="relation-btn-wrap">
 						<el-button class="relation-btn" type="text" @click="handleFields">{{
 							$t('dataMap.fieldLevel')
@@ -20,7 +20,7 @@
 					<el-input
 						class="customize-field"
 						size="mini"
-						:placeholder="$t(relations.customFields)"
+						:placeholder="$t('relations.customFields')"
 						v-model="customFields"
 					></el-input>
 					<div class="table-wrap">
@@ -44,11 +44,14 @@
 						</el-table>
 					</div>
 				</el-tab-pane>
-				<el-tab-pane label="属性" name="second">
+				<el-tab-pane :label="$t('relations.attributes')" name="second">
 					<ul>
 						<li v-for="(value, key) in metaData" :key="key">
 							<span class="label">{{ metaDataFields[key] }}</span>
-							<span>{{ value }}</span>
+							<span v-if="['createTime', 'last_updated'].includes(key)">{{
+								$moment(value).format('YYYY-MM-DD HH:mm:ss')
+							}}</span>
+							<span v-else>{{ value }}</span>
 						</li>
 						<li v-for="(value, key) in connections" :key="key">
 							<span class="label">{{ connectionsFields[key] }}</span>
@@ -116,33 +119,38 @@
 									<template v-for="(op, index3) in processor.aggregations">
 										<el-menu-item :key="op.id" :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`">
 											<span v-if="['COUNT'].includes(op.aggFunction)">
-												<span class="label">计算总数</span>
+												<span class="label">{{ $t('relations.count') }}</span>
 												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-													, 根据{{ op.groupByExpression.join(',') }}进行分组</span
+													, {{ $t('relations.group')
+													}}{{ op.groupByExpression.join(',') }}</span
 												>
 											</span>
 											<span v-if="['SUM'].includes(op.aggFunction)">
-												<span class="label">求和</span>
+												<span class="label">{{ $t('relations.sum') }}</span>
 												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-													, 根据{{ op.groupByExpression.join(',') }}进行分组</span
+													, {{ $t('relations.group')
+													}}{{ op.groupByExpression.join(',') }}</span
 												>
 											</span>
 											<span v-if="['AVG'].includes(op.aggFunction)">
-												<span class="label">求平均值</span>
+												<span class="label">{{ $t('relations.average') }}</span>
 												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-													, 根据{{ op.groupByExpression.join(',') }}进行分组</span
+													, {{ $t('relations.group')
+													}}{{ op.groupByExpression.join(',') }}</span
 												>
 											</span>
 											<span v-if="['MAX'].includes(op.aggFunction)">
-												<span class="label">求最大值</span>
+												<span class="label">{{ $t('relations.MAX') }}</span>
 												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-													, 根据{{ op.groupByExpression.join(',') }}进行分组</span
+													, {{ $t('relations.group')
+													}}{{ op.groupByExpression.join(',') }}</span
 												>
 											</span>
 											<span v-if="['MIN'].includes(op.aggFunction)">
-												<span class="label">求最小值</span>
+												<span class="label">{{ $t('relations.min') }}</span>
 												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-													, 根据{{ op.groupByExpression.join(',') }}进行分组</span
+													, {{ $t('relations.group')
+													}}{{ op.groupByExpression.join(',') }}</span
 												>
 											</span>
 										</el-menu-item>
@@ -194,26 +202,26 @@ export default {
 			showScriptVisible: false,
 			defaultOpeneds: ['1-1-1'],
 			metaDataFields: {
-				name: '别名(原名称)',
-				qualified_name: '唯一表示',
-				meta_type: '类型',
-				create_source: '来源',
-				createTime: '创建时间',
-				last_updated: '修改时间',
-				last_user_name: '修改人'
+				name: this.$t('relations.originalName'),
+				qualified_name: this.$t('relations.qualified_name'),
+				meta_type: this.$t('relations.meta_type'),
+				create_source: this.$t('relations.create_source'),
+				createTime: this.$t('relations.createTime'),
+				last_updated: this.$t('relations.last_updated'),
+				last_user_name: this.$t('relations.last_user_name')
 			},
 			connectionsFields: {
-				name: '连接名称',
-				database_host: '地址',
-				database_port: '端口',
-				database_username: '用户名',
-				database_name: '数据库名称',
-				database_owner: '模式'
+				name: this.$t('relations.field_processor'),
+				database_host: this.$t('relations.database_host'),
+				database_port: this.$t('relations.database_port'),
+				database_username: this.$t('relations.database_username'),
+				database_name: this.$t('relations.database_name'),
+				database_owner: this.$t('relations.database_owner')
 			},
 			processorMap: {
-				field_processor: '字段处理器',
-				js_processor: '脚本处理器',
-				aggregation_processor: '聚合处理器'
+				field_processor: this.$t('relations.field_processor'),
+				js_processor: this.$t('relations.js_processor'),
+				aggregation_processor: this.$t('relations.aggregation_processor')
 			},
 			statusBtMap: {
 				// scheduled, draft, running, stopping, error, paused, force stopping

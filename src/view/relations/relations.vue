@@ -184,77 +184,71 @@ export default {
 			return returnStr;
 		},
 		refreshData() {
-			this.$confirm(this.$t('relations.refreshMsg'), this.$t('relations.refreshTittle'), {
+			this.$confirm(this.$t('relations.refreshMsg'), this.$t('relations.refreshTitle'), {
 				confirmButtonText: this.$t('relations.yes'),
 				cancelButtonText: this.$t('relations.no'),
 				type: 'warning',
 				closeOnClickModal: false
-			})
-				.then(() => {
-					LineageGraphsAPI.refreshGraphData()
-						.then(res => {
-							if (res.data) {
-								this.refreshResult.allProgress = 10;
-								this.refreshResult.currProgress = 0;
-								this.refreshing = true;
-								let self = this;
-								this.inter = setInterval(() => {
-									LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(
-										res => {
-											if (res.data) {
-												self.refreshResult = res.data[0];
-												if (self.refreshResult.sync_data) {
-													this.$message.error(this.$t('relations.refreshStatusMsg'));
-												}
-												if (self.refreshResult.status == 'finish') {
-													this.getData();
-													//this.graph = graph();
-													clearInterval(self.inter);
-													//计算耗时
-													self.consumeTime = self.getConsumeTime(
-														self.refreshResult.start_date,
-														self.refreshResult.finish_date
-													);
-													self.allProgress = self.refreshResult.allProgress;
-													setTimeout(() => {
-														self.refreshing = false;
-													}, 3000);
-												} else if (self.refreshResult.status == 'error') {
-													this.rClass = false;
-													this.errorVisible = true;
-													//计算耗时
-													self.consumeTime = self.getConsumeTime(
-														self.refreshResult.start_date,
-														self.refreshResult.finish_date
-													);
-													self.allProgress = self.refreshResult.allProgress;
-													clearInterval(self.inter);
-												}
-											}
-										}
-									);
-								}, 2000);
-							} else
+			}).then(() => {
+				LineageGraphsAPI.refreshGraphData()
+					.then(res => {
+						if (res.data) {
+							this.refreshResult.allProgress = 10;
+							this.refreshResult.currProgress = 0;
+							this.refreshing = true;
+							let self = this;
+							this.inter = setInterval(() => {
 								LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(
 									res => {
 										if (res.data) {
-											this.refreshResult = res.data[0];
-											if (this.refreshResult.status === 'error') {
+											self.refreshResult = res.data[0];
+											if (self.refreshResult.sync_data) {
+												this.$message.error(this.$t('relations.refreshStatusMsg'));
+											}
+											if (self.refreshResult.status == 'finish') {
+												this.getData();
+												//this.graph = graph();
+												clearInterval(self.inter);
+												//计算耗时
+												self.consumeTime = self.getConsumeTime(
+													self.refreshResult.start_date,
+													self.refreshResult.finish_date
+												);
+												self.allProgress = self.refreshResult.allProgress;
+												setTimeout(() => {
+													self.refreshing = false;
+												}, 3000);
+											} else if (self.refreshResult.status == 'error') {
 												this.rClass = false;
 												this.errorVisible = true;
-												this.refreshing = false;
+												//计算耗时
+												self.consumeTime = self.getConsumeTime(
+													self.refreshResult.start_date,
+													self.refreshResult.finish_date
+												);
+												self.allProgress = self.refreshResult.allProgress;
+												clearInterval(self.inter);
 											}
 										}
 									}
 								);
-						})
-						.finally(() => {
-							this.apiLoading = false;
-						});
-				})
-				.catch(() => {
-					this.$message.error(this.$t('relations.parsingFailed'));
-				});
+							}, 2000);
+						} else
+							LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then(res => {
+								if (res.data) {
+									this.refreshResult = res.data[0];
+									if (this.refreshResult.status === 'error') {
+										this.rClass = false;
+										this.errorVisible = true;
+										this.refreshing = false;
+									}
+								}
+							});
+					})
+					.finally(() => {
+						this.apiLoading = false;
+					});
+			});
 		},
 		handlePreviewVisible() {
 			this.model.previewVisible = false;
