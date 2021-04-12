@@ -129,14 +129,14 @@ export default {
 				this.$api('DataQuality').getList({
 					filter: JSON.stringify(filter)
 				})
-			]).then(([countRes, res]) => {
+			]).then(([{ data: countRes }, { data: res }]) => {
 				this.table.setCache({
 					isFuzzy,
 					keyword
 				});
 				return {
-					total: countRes.data.count,
-					data: res.data
+					total: countRes.count,
+					data: res.data || []
 				};
 			});
 		},
