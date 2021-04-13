@@ -251,6 +251,7 @@ export default function (vm) {
         field: 'database_uri',
         label: vm.$t('dataForm.form.databaseUri'),
         domType: 'textarea',
+        rows: '5',
         required: true,
         show: false,
         dependOn: [

@@ -210,6 +210,12 @@ export default {
     },
     //第一步 选择实例
     getInstanceRegion() {
+      //接口请求之前 loading = true
+      let items = this.config.items
+      let option = items.find((it) => it.field === 'region')
+      if (option) {
+        option.loading = true
+      }
       this.$api('tcm')
         .getRegionZone()
         .then((data) => {
@@ -333,10 +339,14 @@ export default {
           this.changeInstanceRegion()
           break
         }
-        case 'dataSource': {
+        case 'dfs_dataSource': {
           this.getConnection(this.getWhere('source'), 'source_connectionId')
           this.getConnection(this.getWhere('target'), 'target_connectionId')
-          this.changeConfig([], 'target_defaultRegionZone')
+          break
+        }
+        case 'drs_dataSource': {
+          this.getConnection(this.getWhere('source'), 'source_connectionId')
+          this.getConnection(this.getWhere('target'), 'target_connectionId')
           break
         }
         case 'setting': {
@@ -647,7 +657,7 @@ export default {
           if (e.response.msg === 'duplication for names') {
             this.$message.error(this.$t('message.exists_name'))
           } else {
-            this.$message.error(this.$t('message.saveFail'))
+            this.$message.error(e.response.msg)
           }
         })
     },
@@ -675,9 +685,11 @@ export default {
       height: 64px;
       padding: 10px;
     }
+
     .select-connection-option {
       display: flex;
       align-items: center;
+
       .img {
         padding: 6px;
         width: 44px;
@@ -688,17 +700,20 @@ export default {
         box-sizing: border-box;
         text-align: center;
         color: #999;
+
         img {
           display: block;
           width: 100%;
           height: 100%;
         }
       }
+
       .name {
         margin-left: 10px;
       }
     }
   }
+
   .step-3 {
     .ddl-tip {
       font-size: 12px;
@@ -706,14 +721,17 @@ export default {
       color: #aaa;
     }
   }
+
   .step-header {
     .step-box {
       li {
         &.active {
           color: #48b6e2;
+
           &::before {
             background: #48b6e2;
           }
+
           .step-index {
             background: #48b6e2;
           }
@@ -727,6 +745,7 @@ export default {
 .CT-task-wrap {
   height: 100%;
   background: rgba(250, 250, 250, 1);
+
   .step-header {
     display: flex;
     justify-content: center;
@@ -735,12 +754,15 @@ export default {
     border-bottom: 1px solid #dedee4;
     color: rgba(102, 102, 102, 100);
     font-size: 12px;
+
     .step-box {
       margin-left: 20px;
       display: flex;
       align-items: center;
+
       li + li {
         margin-left: 54px;
+
         &::before {
           content: '';
           position: absolute;
@@ -751,16 +773,19 @@ export default {
           background: #bbb;
         }
       }
+
       li {
         position: relative;
         display: flex;
         align-items: center;
+
         &.active {
           .step-index {
             border-color: #fff;
             color: #fff;
           }
         }
+
         .step-index {
           margin-right: 7px;
           width: 20px;
@@ -776,17 +801,21 @@ export default {
       }
     }
   }
+
   .right-aside {
     background: #fafafa;
     border-left: 1px solid #dedee4;
   }
+
   .CT-task-main {
     background: #fff;
     overflow: auto;
+
     .body {
       margin: 0 auto;
       padding-bottom: 50px;
-      width: 880px;
+      width: 910px;
+
       .title {
         padding: 20px 200px;
         color: rgba(51, 51, 51, 100);
@@ -794,35 +823,42 @@ export default {
         font-weight: bold;
         text-align: left;
       }
+
       .desc {
         padding: 0 200px;
         margin-bottom: 20px;
         color: #999;
         font-size: 12px;
       }
+
       .CT-task-transfer {
         margin-left: 200px;
         height: 500px;
       }
     }
+
     .step-4 {
       width: 1050px;
     }
+
     .dataSource-title {
       font-size: 16px;
       font-weight: bold;
       margin: 10px 0;
     }
   }
+
   .CT-task-footer {
     display: flex;
     justify-content: center;
     align-items: center;
     border-top: 1px solid #dedee4;
   }
+
   .btn-step {
     width: 212px;
     position: relative;
+
     .btn-pass {
       position: absolute;
       top: 50%;
@@ -830,93 +866,116 @@ export default {
       transform: translate(100%, -50%);
     }
   }
+
   .btn-step + .btn-step {
     margin-left: 32px;
   }
+
   .select-connection {
     display: block;
     width: 450px;
   }
+
   .database-type {
     padding: 0 200px;
     display: flex;
     align-items: center;
+
     .img {
       padding: 10px;
       width: 54px;
       height: 54px;
       border: 1px solid #dedee4;
       box-sizing: border-box;
+
       img {
         display: block;
         width: 100%;
         height: 100%;
       }
     }
+
     .database-name {
       margin-left: 15px;
       font-size: 28px;
     }
+
     .btn-change {
       margin-top: 10px;
       margin-left: 15px;
     }
   }
+
   .create-form {
     margin-top: 20px;
     padding-right: 200px;
   }
+
   .btn-test {
     padding-left: 200px;
+
     .status {
       margin-left: 10px;
       font-size: 12px;
+
       &.invalid {
         color: #f56c6c;
+
         .el-icon-error {
           display: inline-block;
         }
       }
+
       &.ready {
         color: #67c23a;
+
         .el-icon-success {
           display: inline-block;
         }
       }
+
       &.testing {
         color: #e6a23c;
+
         .el-icon-warning {
           display: inline-block;
         }
       }
+
       .status-icon {
         display: none;
       }
     }
   }
+
   .error-msg {
     padding: 0 200px;
     line-height: 26px;
     color: rgba(238, 83, 83, 100);
     font-size: 14px;
   }
+
   .task-type-radio {
     padding: 0 200px;
     box-sizing: border-box;
   }
+
   .step-1 {
     .os-buttons {
       margin-top: 66px;
       display: flex;
       justify-content: space-between;
+
       .el-button {
         position: relative;
         width: 260px;
         font-family: Roboto;
+
         &.active {
           border-color: #c8e9f6;
           background-color: #edf8fc;
         }
+
         i {
           position: absolute;
           left: 19px;

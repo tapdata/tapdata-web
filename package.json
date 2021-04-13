@@ -1,6 +1,6 @@
 {
-  "name": "frontend-el",
-  "version": "0.1.0",
+  "name": "tapdaas",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve --open",
