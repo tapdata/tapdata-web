@@ -56,7 +56,8 @@ window._TAPDATA_OPTIONS_ = {
 // 	}
 // }
 
-let config = parent ? parent.__TM_CONFIG__ || {} : {};
+let config = sessionStorage.getItem('TM_CONFIG') || '{}';
+config = JSON.parse(config);
 window.getSettingByKey = key => {
 	let value = '';
 	if (!window.__settings__ || key.startsWith('DFS_')) {

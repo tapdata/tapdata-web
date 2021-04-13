@@ -222,13 +222,15 @@ class WSClient extends EventEmitter {
 
 	getUrl() {
 		var loc = window.location,
-			new_uri = 'ws:',
-			path = loc.pathname;
+			new_uri = 'ws:';
 		if (loc.protocol === 'https:') {
 			new_uri = 'wss:';
 		}
+		let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || '';
+		let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || '';
+		let path = tcmApiPre + apiPre;
 		new_uri += '//' + loc.host;
-		new_uri += path + 'ws/agent';
+		new_uri += path + '/ws/agent';
 		return new_uri;
 	}
 }
