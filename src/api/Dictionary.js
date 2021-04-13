@@ -1,7 +1,7 @@
-import PublicApi from './publicApi';
+import PublicApi from './publicApi'
 
 export default class DictionariesAPI extends PublicApi {
-	constructor() {
-		super('/api/Dictionaries');
-	}
+  constructor() {
+    super('/api/Dictionaries')
+  }
 }

@@ -1,7 +1,7 @@
-import PublicApi from './publicApi';
+import PublicApi from './publicApi'
 // import axios from 'axios';
 export default class InspectAPI extends PublicApi {
-	constructor() {
-		super('/api/InspectDetails');
-	}
+  constructor() {
+    super('/api/InspectDetails')
+  }
 }

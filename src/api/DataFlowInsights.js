@@ -3,15 +3,15 @@
  * @date 3/2/20
  * @description
  */
-import axios from "axios";
-import PublicAPI from "./publicApi";
+import axios from 'axios'
+import PublicAPI from './publicApi'
 
 export default class DataFlowInsights extends PublicAPI {
-	constructor() {
-		super("/api/DataFlowInsights");
-	}
+  constructor() {
+    super('/api/DataFlowInsights')
+  }
 
-	runtimeMonitor(params) {
-		return axios.get(this.url + "/runtimeMonitor", { params });
-	}
+  runtimeMonitor(params) {
+    return axios.get(this.url + '/runtimeMonitor', { params })
+  }
 }
