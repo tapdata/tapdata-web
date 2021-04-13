@@ -430,9 +430,11 @@ export default {
 							}
 
 							let obj = {};
-							record.__tapd8.hitRules.forEach(v => {
-								obj[v.fieldName] = v.rules;
-							});
+							if (record.__tapd8 && record.__tapd8.hitRules && record.__tapd8.hitRules.length) {
+								record.__tapd8.hitRules.forEach(v => {
+									obj[v.fieldName] = v.rules;
+								});
+							}
 							record.wrongFields = obj;
 							return record;
 						});
