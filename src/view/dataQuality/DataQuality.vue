@@ -146,7 +146,7 @@ export default {
 				this.$router.push({
 					name: 'dataQualityDetail',
 					params: {
-						id: item.id
+						id: item._id
 					},
 					query: {
 						collection_name: item.collection,
