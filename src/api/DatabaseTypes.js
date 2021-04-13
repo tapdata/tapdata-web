@@ -1,7 +1,7 @@
-import PublicAPI from './publicApi';
+import PublicAPI from './publicApi'
 
 export default class extends PublicAPI {
-	constructor() {
-		super('/api/DatabaseTypes');
-	}
+  constructor() {
+    super('/api/DatabaseTypes')
+  }
 }

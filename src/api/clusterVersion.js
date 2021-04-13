@@ -3,10 +3,10 @@
  * @date 2/27/20
  * @description
  */
-import PublicAPI from './publicApi';
+import PublicAPI from './publicApi'
 
 export default class ClusterVersion extends PublicAPI {
-	constructor() {
-		super('/api/clusterVersions');
-	}
+  constructor() {
+    super('/api/clusterVersions')
+  }
 }
