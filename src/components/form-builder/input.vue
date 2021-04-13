@@ -26,6 +26,7 @@ export default {
 				disabled: config.disabled || false,
 				showPassword: config.showPassword,
 				showWordLimit: config.showWordLimit,
+				rows: config.rows || '',
 				autocomplete: config.domType === 'password' ? 'new-password' : 'off'
 			},
 			class: {

@@ -217,6 +217,12 @@ export default {
 		},
 		//第一步 选择实例
 		getInstanceRegion() {
+			//接口请求之前 loading = true
+			let items = this.config.items;
+			let option = items.find(it => it.field === 'region');
+			if (option) {
+				option.loading = true;
+			}
 			this.$api('tcm')
 				.getRegionZone()
 				.then(data => {
@@ -346,10 +352,14 @@ export default {
 					this.changeInstanceRegion();
 					break;
 				}
-				case 'dataSource': {
+				case 'dfs_dataSource': {
 					this.getConnection(this.getWhere('source'), 'source_connectionId');
 					this.getConnection(this.getWhere('target'), 'target_connectionId');
-					this.changeConfig([], 'target_defaultRegionZone');
+					break;
+				}
+				case 'drs_dataSource': {
+					this.getConnection(this.getWhere('source'), 'source_connectionId');
+					this.getConnection(this.getWhere('target'), 'target_connectionId');
 					break;
 				}
 				case 'setting': {
@@ -660,7 +670,7 @@ export default {
 					if (e.response.msg === 'duplication for names') {
 						this.$message.error(this.$t('message.exists_name'));
 					} else {
-						this.$message.error(this.$t('message.saveFail'));
+						this.$message.error(e.response.msg);
 					}
 				});
 		},
@@ -799,7 +809,7 @@ export default {
 		.body {
 			margin: 0 auto;
 			padding-bottom: 50px;
-			width: 880px;
+			width: 910px;
 			.title {
 				padding: 20px 200px;
 				color: rgba(51, 51, 51, 100);
