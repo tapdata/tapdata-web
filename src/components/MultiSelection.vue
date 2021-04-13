@@ -1,67 +1,67 @@
 <template>
-	<div class="multi-selection">
-		<el-select
-			size="mini"
-			:value="values"
-			multiple
-			filterable
-			allow-create
-			default-first-option
-			:placeholder="placeholder"
-			@remove-tag="$emit('remove-tag', $event)"
-			@change="$emit('change', $event)"
-			@input="inputHandler"
-		>
-			<el-option v-for="opt in options.filter(i => !!i)" :key="opt" :label="opt" :value="opt"> </el-option>
-		</el-select>
-		<ClipButton :value="value" v-if="showCopyBtn"></ClipButton>
-	</div>
+  <div class="multi-selection">
+    <el-select
+      size="mini"
+      :value="values"
+      multiple
+      filterable
+      allow-create
+      default-first-option
+      :placeholder="placeholder"
+      @remove-tag="$emit('remove-tag', $event)"
+      @change="$emit('change', $event)"
+      @input="inputHandler"
+    >
+      <el-option v-for="opt in options.filter((i) => !!i)" :key="opt" :label="opt" :value="opt"> </el-option>
+    </el-select>
+    <ClipButton :value="value" v-if="showCopyBtn"></ClipButton>
+  </div>
 </template>
 
 <script>
-import ClipButton from './ClipButton';
+import ClipButton from './ClipButton'
 export default {
-	components: {
-		ClipButton
-	},
-	props: {
-		value: {
-			type: [String],
-			required: true
-		},
-		options: Array,
-		placeholder: String,
-		showCopyBtn: {
-			type: Boolean,
-			default: true
-		}
-	},
-	computed: {
-		values() {
-			let value = this.value;
-			return value && value.length ? value.split(',') : [];
-		}
-	},
-	methods: {
-		inputHandler(values) {
-			//过滤空字符串并去重，之后使用逗号分隔
-			this.$emit('input', Array.from(new Set(values.filter(v => !!v.trim()))).join(','));
-		}
-	}
-};
+  components: {
+    ClipButton
+  },
+  props: {
+    value: {
+      type: [String],
+      required: true
+    },
+    options: Array,
+    placeholder: String,
+    showCopyBtn: {
+      type: Boolean,
+      default: true
+    }
+  },
+  computed: {
+    values() {
+      let value = this.value
+      return value && value.length ? value.split(',') : []
+    }
+  },
+  methods: {
+    inputHandler(values) {
+      //过滤空字符串并去重，之后使用逗号分隔
+      this.$emit('input', Array.from(new Set(values.filter((v) => !!v.trim()))).join(','))
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
 .multi-selection {
-	display: flex;
-	align-items: center;
+  display: flex;
+  align-items: center;
 }
 </style>
 <style lang="less">
 .multi-selection .el-select__input.is-mini {
-	height: 16px;
+  height: 16px;
 }
 .multi-selection .el-select {
-	padding-right: 8px;
+  padding-right: 8px;
 }
 </style>

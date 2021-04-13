@@ -4,8 +4,8 @@
  * @description
  */
 export const haloConfig = {
-	handles: [
-		/*{
+  handles: [
+    /*{
 			name: "remove",
 			position: "nw",
 			events: { pointerdown: "removeElement" },
@@ -97,5 +97,5 @@ export const haloConfig = {
 				}
 			}
 		} */
-	]
-};
+  ]
+}

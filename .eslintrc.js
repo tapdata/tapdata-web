@@ -1,49 +1,32 @@
-// https://eslint.org/docs/user-guide/configuring
-
 module.exports = {
-	root: true,
-	parserOptions: {
-		parser: 'babel-eslint',
-		ecmaFeatures: true
-	},
-	env: {
-		browser: true,
-		node: true,
-		es6: true
-	},
-	extends: [
-		// https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
-		// consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
-		'plugin:vue/essential',
-		// https://github.com/standard/standard/blob/master/docs/RULES-en.md
-		'eslint:recommended',
-		'plugin:prettier/recommended'
-	],
-	// required to lint *.vue files
-	plugins: ['vue'],
-	// add your custom rules here
-	rules: {
-		'prettier/prettier': [
-			'error',
-			{
-				singleQuote: true,
-				trailingComma: 'none',
-				bracketSpacing: true,
-				jsxBracketSameLine: true
-			}
-		],
-		// allow async-await
-		'generator-star-spacing': 'off',
-		'no-new': 'off',
-		'one-var': 'off',
-		'no-control-regex': 'off',
-		'standard/computed-property-even-spacing': 0,
-		// allow debugger during development
-		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-		//'quotes': [1, 'single', 'backtick', 'double'],
-		'no-console': ['error', { allow: ['warn'] }],
-		'no-multiple-empty-lines': ['warn', { max: 2, maxEOF: 1 }],
-		semi: [1, 'always'],
-		'no-undef': ['error']
-	}
-};
+  root: true,
+  env: {
+    node: true
+  },
+  extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/prettier'],
+  parserOptions: {
+    parser: 'babel-eslint'
+  },
+  rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+
+    'prettier/prettier': [
+      'error',
+      {
+        // 使用space代替tab
+        useTab: false,
+        // 使用两个空格缩进
+        tabWidth: 2,
+        // 单引号
+        singleQuote: true,
+        // 取消尾分号
+        semi: false,
+        // 取消尾逗号
+        trailingComma: 'none',
+        // 统一换行符为\n
+        endOfLine: 'lf'
+      }
+    ]
+  }
+}
