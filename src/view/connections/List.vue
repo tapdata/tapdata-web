@@ -352,7 +352,7 @@ export default {
 		handleGuide() {
 			let item = {
 				visible: true,
-				step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 5
+				step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0
 			};
 			window.parent && window.parent.noviceGuideChange && window.parent.noviceGuideChange(item);
 			this.$router.push('/connections');

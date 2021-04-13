@@ -30,10 +30,17 @@
 						<!--步骤2-->
 						<div class="body" v-if="steps[activeStep].index === 2">
 							<div class="title">选择源端与目标端连接</div>
-							<div class="desc">
+							<div class="desc" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
 								选择已创建的源端/目标端的数据库连接，如果需要创建新的数据库连接，请点击<span
 									style="color: #337DFF;cursor: pointer"
 									@click="dialogDatabaseTypeVisible = true"
+									>创建数据连接</span
+								>
+							</div>
+							<div class="desc" v-else>
+								如果你还未添加数据源，请点击添加数据源按钮进行添加，为了方便你的测试，我们建议数据源的数量不少2个<span
+									style="color: #337DFF;cursor: pointer"
+									@click="handleCreateDatabase"
 									>创建数据连接</span
 								>
 							</div>
@@ -194,6 +201,25 @@ export default {
 		}
 	},
 	methods: {
+		//兼容新手引导
+		handleCreateDatabase() {
+			if (this.$route.query.step) {
+				let item = {
+					visible: true,
+					step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0
+				};
+				window.parent && window.parent.noviceGuideChange && window.parent.noviceGuideChange(item);
+			} else {
+				this.dialogDatabaseTypeVisible = true;
+			}
+		},
+		handleTaskEnd() {
+			let item = {
+				visible: true,
+				step: -1
+			};
+			window.parent && window.parent.noviceGuideChange && window.parent.noviceGuideChange(item);
+		},
 		//初始化数据 编辑跳转
 		intiData(id) {
 			this.$api('DataFlows')
@@ -662,9 +688,13 @@ export default {
 			}
 			promise
 				.then(() => {
-					this.$router.push({
-						path: '/dataFlows?mapping=cluster-clone'
-					});
+					if (this.$route.query.step) {
+						this.handleTaskEnd();
+					} else {
+						this.$router.push({
+							path: '/dataFlows?mapping=cluster-clone'
+						});
+					}
 				})
 				.catch(e => {
 					if (e.response.msg === 'duplication for names') {
