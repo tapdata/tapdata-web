@@ -659,8 +659,12 @@ export default {
 		},
 		// 确认提交批量过滤表单
 		filterOk() {
-			this.headers = JSON.parse(JSON.stringify(this.filterArr));
-			this.filterVisible = false;
+			if (this.filterArr.filter(v => v.visible).length) {
+				this.headers = JSON.parse(JSON.stringify(this.filterArr));
+				this.filterVisible = false;
+			} else {
+				this.$message.warning(this.$t('dataQuality.columnTip'));
+			}
 		},
 		// 浏览当前行数据
 		detailOpen(item) {

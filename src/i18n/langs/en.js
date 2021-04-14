@@ -2720,7 +2720,8 @@ const en = {
 		allUpdateSuccessTip1: 'Operation successful, A total of',
 		allUpdateSuccessTip2: 'pieces of data have been modified',
 		updateFail: 'Update failed',
-		dataTypeError: 'Data type conversion failed, expected==>'
+		dataTypeError: 'Data type conversion failed, expected==>',
+		columnTip: 'Please select at least one column'
 	}
 };
 

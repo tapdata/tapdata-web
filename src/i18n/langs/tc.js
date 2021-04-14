@@ -2653,7 +2653,8 @@ const tc = {
 		allUpdateSuccessTip1: '操作成功，一共修改',
 		allUpdateSuccessTip2: '條數據',
 		updateFail: '更新失敗',
-		dataTypeError: '數據類型轉換失敗，期望==>'
+		dataTypeError: '數據類型轉換失敗，期望==>',
+		columnTip: '請至少選擇一列'
 	}
 };
 

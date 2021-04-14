@@ -2660,7 +2660,8 @@ const cn = {
 		allUpdateSuccessTip1: '操作成功，一共修改',
 		allUpdateSuccessTip2: '条数据',
 		updateFail: '更新失败',
-		dataTypeError: '数据类型转换失败，期望==>'
+		dataTypeError: '数据类型转换失败，期望==>',
+		columnTip: '请至少选择一列'
 	}
 };
 
