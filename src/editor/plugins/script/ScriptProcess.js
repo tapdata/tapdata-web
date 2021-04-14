@@ -16,7 +16,7 @@ export const scriptProcessConfig = {
       size: { width: 120, height: 28 },
       attrs: {
         image: {
-          xlinkHref: 'editor/o-js.svg',
+          xlinkHref: 'static/editor/o-js.svg',
           refWidth: '25%',
           refHeight: '84%',
           refX: '-8%',
@@ -41,7 +41,8 @@ export const scriptProcessConfig = {
       [FORM_DATA_KEY]: {
         name: 'JavaScript',
         type: 'js_processor',
-        script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}'
+        script:
+          'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}'
       }
     },
     prototypeProperties: {
@@ -63,9 +64,20 @@ export const scriptProcessConfig = {
       validate: function (data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
-        if (!data.type) throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script_type')}`)
-        if (!data.script) throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
+          )
+        if (!data.type)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.processor.script.none_script_type'
+            )}`
+          )
+        if (!data.script)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.processor.script.none_script')}`
+          )
         return true
       },
 
@@ -168,7 +180,10 @@ export const scriptProcessConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -217,7 +232,7 @@ export const scriptProcessConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/js.svg',
+        xlinkHref: 'static/editor/js.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

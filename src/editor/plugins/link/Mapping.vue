@@ -60,8 +60,14 @@ export default {
 
     if (this.sourceSchema) this.createLine(this.sourceSchema.fields)
 
-    this.$refs.sourceContainer.addEventListener('scroll', this.position.bind(this))
-    this.$refs.targetContainer.addEventListener('scroll', this.position.bind(this))
+    this.$refs.sourceContainer.addEventListener(
+      'scroll',
+      this.position.bind(this)
+    )
+    this.$refs.targetContainer.addEventListener(
+      'scroll',
+      this.position.bind(this)
+    )
     this.$refs.sourceEntity.$on('expand', this.position.bind(this))
     this.$refs.sourceEntity.$on('collapse', this.position.bind(this))
     this.$refs.sourceEntity.$on('drop', this.position.bind(this))
@@ -127,10 +133,19 @@ export default {
       for (let i = 0; i < tableNames.length; i++) {
         let tableName = tableNames[i]
         let table = tables[tableName]
-        let sourceEl = self.$refs.sourceEntity ? self.$refs.sourceEntity.getOutPort() : null
-        let targetEl = self.$refs.targetEntity ? self.$refs.targetEntity.getInPort(table) : null
+        let sourceEl = self.$refs.sourceEntity
+          ? self.$refs.sourceEntity.getOutPort()
+          : null
+        let targetEl = self.$refs.targetEntity
+          ? self.$refs.targetEntity.getInPort(table)
+          : null
 
-        if (sourceEl && targetEl && self.isConnected(sourceEl) && self.isConnected(targetEl)) {
+        if (
+          sourceEl &&
+          targetEl &&
+          self.isConnected(sourceEl) &&
+          self.isConnected(targetEl)
+        ) {
           let line = new LeaderLine({
             start: sourceEl,
             end: targetEl,
@@ -153,7 +168,10 @@ export default {
     },
 
     isConnected(dom) {
-      return !(dom.compareDocumentPosition(document) & Node.DOCUMENT_POSITION_DISCONNECTED)
+      return !(
+        dom.compareDocumentPosition(document) &
+        Node.DOCUMENT_POSITION_DISCONNECTED
+      )
     },
 
     /**
@@ -168,7 +186,13 @@ export default {
       let source = convertSchemaToTreeData(sourceSchema)
       let target = convertSchemaToTreeData(targetSchema)
 
-      if (source && source.fields && source.fields.length && target.fields && target.fields.length)
+      if (
+        source &&
+        source.fields &&
+        source.fields.length &&
+        target.fields &&
+        target.fields.length
+      )
         target.fields.sort((a, b) => {
           if (a.table_name !== source.name) {
             return b.table_name === source.name ? 1 : 0
@@ -183,7 +207,10 @@ export default {
       this.sourceSchema = _.cloneDeep(source)
       if (source && source.fields) {
         source.fields.forEach((field) => {
-          if (!this.tables[field.table_name] && source.name === field.table_name) {
+          if (
+            !this.tables[field.table_name] &&
+            source.name === field.table_name
+          ) {
             this.tables[field.table_name] = {
               color: field.color,
               table_name: field.table_name

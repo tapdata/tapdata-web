@@ -14,10 +14,15 @@ export default function (joint) {
       var refPoint = ref
       if (ref instanceof Element) {
         var refView = this.paper.findView(ref)
-        refPoint = refView ? refView.getNodeBBox(ref).center() : new joint.g.Point()
+        refPoint = refView
+          ? refView.getNodeBBox(ref).center()
+          : new joint.g.Point()
       }
       refPoint.rotate(center, angle)
-      anchor = refPoint.x <= bbox.x + bbox.width / 2 ? bbox.leftMiddle() : bbox.rightMiddle()
+      anchor =
+        refPoint.x <= bbox.x + bbox.width / 2
+          ? bbox.leftMiddle()
+          : bbox.rightMiddle()
     }
     return anchor.rotate(center, -angle)
   }

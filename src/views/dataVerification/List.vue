@@ -27,9 +27,18 @@
             :placeholder="$t('dataVerification.verifyType')"
             @input="table.fetch(1)"
           >
-            <ElOption :label="$t('dataVerification.rowVerify')" value="row_count"></ElOption>
-            <ElOption :label="$t('dataVerification.contentVerify')" value="field"></ElOption>
-            <ElOption :label="$t('dataVerification.jointVerify')" value="jointField"></ElOption>
+            <ElOption
+              :label="$t('dataVerification.rowVerify')"
+              value="row_count"
+            ></ElOption>
+            <ElOption
+              :label="$t('dataVerification.contentVerify')"
+              value="field"
+            ></ElOption>
+            <ElOption
+              :label="$t('dataVerification.jointVerify')"
+              value="jointField"
+            ></ElOption>
           </ElSelect>
         </li>
         <li class="item">
@@ -40,8 +49,14 @@
             :placeholder="$t('dataVerification.singleRepeatingVerify')"
             @input="table.fetch(1)"
           >
-            <ElOption :label="$t('dataVerification.singleVerify')" value="manual"></ElOption>
-            <ElOption :label="$t('dataVerification.repeatingVerify')" value="cron"></ElOption>
+            <ElOption
+              :label="$t('dataVerification.singleVerify')"
+              value="manual"
+            ></ElOption>
+            <ElOption
+              :label="$t('dataVerification.repeatingVerify')"
+              value="cron"
+            ></ElOption>
           </ElSelect>
         </li>
         <li class="item">
@@ -52,8 +67,14 @@
             :placeholder="$t('dataVerification.verifystatus')"
             @input="table.fetch(1)"
           >
-            <ElOption :label="$t('dataVerification.enable')" :value="1"></ElOption>
-            <ElOption :label="$t('dataVerification.disable')" :value="2"></ElOption>
+            <ElOption
+              :label="$t('dataVerification.enable')"
+              :value="1"
+            ></ElOption>
+            <ElOption
+              :label="$t('dataVerification.disable')"
+              :value="2"
+            ></ElOption>
           </ElSelect>
         </li>
         <li class="item">
@@ -64,17 +85,32 @@
             :placeholder="$t('dataVerification.result')"
             @input="table.fetch(1)"
           >
-            <ElOption v-for="item in validList" :key="item.value" :label="item.name" :value="item.value"></ElOption>
+            <ElOption
+              v-for="item in validList"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"
+            ></ElOption>
           </ElSelect>
         </li>
         <li class="item">
-          <ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
+          <ElButton
+            plain
+            class="btn-refresh"
+            size="small"
+            @click="table.fetch()"
+          >
             <i class="el-icon-refresh"></i>
           </ElButton>
         </li>
       </ul>
       <div slot="operation">
-        <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
+        <el-button
+          v-readonlybtn="'SYNC_job_import'"
+          size="mini"
+          class="btn"
+          @click="handleImport"
+        >
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
@@ -100,7 +136,10 @@
         </ElButton>
       </div>
       <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column :label="$t('dataVerification.verifyJobName')" min-width="180">
+      <el-table-column
+        :label="$t('dataVerification.verifyJobName')"
+        min-width="180"
+      >
         <template slot-scope="scope">
           <div>{{ scope.row.name }}</div>
           <div style="color: #aaa">
@@ -113,16 +152,34 @@
               }}
               )
             </span>
-            <span v-if="!scope.row.enabled" style="color: #f56c6c">&nbsp;Disabled</span>
+            <span v-if="!scope.row.enabled" style="color: #f56c6c"
+              >&nbsp;Disabled</span
+            >
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="sourceTotal" width="120" :label="$t('dataVerification.sourceTotalRows')"></el-table-column>
-      <el-table-column prop="targetTotal" width="120" :label="$t('dataVerification.targetTotalRows')"></el-table-column>
+      <el-table-column
+        prop="sourceTotal"
+        width="120"
+        :label="$t('dataVerification.sourceTotalRows')"
+      ></el-table-column>
+      <el-table-column
+        prop="targetTotal"
+        width="120"
+        :label="$t('dataVerification.targetTotalRows')"
+      ></el-table-column>
       <el-table-column :label="$t('dataVerification.verifyResult')" width="140">
         <template slot-scope="scope">
-          <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
-            <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
+          <template
+            v-if="
+              scope.row.InspectResult &&
+              ['waiting', 'done'].includes(scope.row.status)
+            "
+          >
+            <div
+              v-if="scope.row.result !== 'passed'"
+              class="data-verify__status error"
+            >
               <i class="data-verify__icon el-icon-error"></i>
               <span>
                 {{
@@ -130,7 +187,11 @@
                     ? $t('dataVerification.rowConsistent')
                     : $t('dataVerification.contConsistent')
                 }}
-                {{ scope.row.inspectMethod === 'row_count' ? scope.row.diffNum : scope.row.difference_number }}
+                {{
+                  scope.row.inspectMethod === 'row_count'
+                    ? scope.row.diffNum
+                    : scope.row.difference_number
+                }}
               </span>
             </div>
             <div v-else class="data-verify__status success">
@@ -138,20 +199,32 @@
               <span>{{ $t('dataVerification.consistent') }}</span>
             </div>
           </template>
-          <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
+          <div
+            v-else-if="scope.row.status === 'error'"
+            class="data-verify__status"
+          >
             <i class="data-verify__icon el-icon-error"></i>
             <span>Error</span>
           </div>
           <div v-else class="data-verify__status">
-            <img style="width: 26px; vertical-align: middle" :src="$window._TAPDATA_OPTIONS_.loadingImg" />
+            <img
+              style="width: 26px; vertical-align: middle"
+              :src="$window._TAPDATA_OPTIONS_.loadingImg"
+            />
             <span>{{ statusMap[scope.row.status] }}</span>
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('dataVerification.verifyStatus')" width="120" prop="status">
+      <el-table-column
+        :label="$t('dataVerification.verifyStatus')"
+        width="120"
+        prop="status"
+      >
         <template slot-scope="scope">
           <span>{{ statusMap[scope.row.status] }}</span>
-          <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
+          <span
+            v-if="scope.row.InspectResult && scope.row.status === 'running'"
+          >
             {{ `(${Math.round(scope.row.InspectResult.progress * 100)}%)` }}
           </span>
         </template>
@@ -162,14 +235,20 @@
         sortable="custom"
         width="140"
       ></el-table-column>
-      <el-table-column :label="$t('dataVerification.operation')" width="320" fixed="right">
+      <el-table-column
+        :label="$t('dataVerification.operation')"
+        width="320"
+        fixed="right"
+      >
         <template slot-scope="scope">
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="
-              $disabledByPermission('verify_job_edition_all_data', scope.row.user_id) ||
-              ['running', 'scheduling'].includes(scope.row.status)
+              $disabledByPermission(
+                'verify_job_edition_all_data',
+                scope.row.user_id
+              ) || ['running', 'scheduling'].includes(scope.row.status)
             "
             @click="startTask(scope.row.id)"
             >{{ $t('dataVerification.executeVerifyTip') }}</ElLink
@@ -178,7 +257,14 @@
             class="ml-10"
             type="primary"
             :disabled="!scope.row.InspectResult"
-            @click="toTableInfo(scope.row.id, scope.row.InspectResult.id, scope.row.inspectMethod, scope.row.name)"
+            @click="
+              toTableInfo(
+                scope.row.id,
+                scope.row.InspectResult.id,
+                scope.row.inspectMethod,
+                scope.row.name
+              )
+            "
             >{{ $t('dataVerification.detailTip') }}</ElLink
           >
           <ElLink
@@ -192,7 +278,12 @@
             v-readonlybtn="'verify_job_edition'"
             class="ml-10"
             type="primary"
-            :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
+            :disabled="
+              $disabledByPermission(
+                'verify_job_edition_all_data',
+                scope.row.user_id
+              )
+            "
             @click="goEdit(scope.row.id, scope.row.flowId)"
             >{{ $t('dataVerification.configurationTip') }}</ElLink
           >
@@ -200,7 +291,12 @@
             v-readonlybtn="'verify_job_delete'"
             class="ml-10"
             type="primary"
-            :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
+            :disabled="
+              $disabledByPermission(
+                'verify_job_delete_all_data',
+                scope.row.user_id
+              )
+            "
             @click="remove(scope.row.name, scope.row.id)"
             >{{ $t('dataVerification.deleteTip') }}</ElLink
           >
@@ -293,7 +389,9 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'createTime'} ${
+        order === 'ascending' ? 'ASC' : 'DESC'
+      }`
       this.table.fetch(1)
     },
     getData({ page }) {
@@ -351,7 +449,9 @@ export default {
               targetTotal = result.target_total
               diffNum = Math.abs(targetTotal - sourceTotal)
             }
-            item.lastStartTime = this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
+            item.lastStartTime = this.$moment(item.lastStartTime).format(
+              'YYYY-MM-DD HH:mm:ss'
+            )
             item.sourceTotal = sourceTotal
             item.targetTotal = targetTotal
             item.diffNum = diffNum
@@ -396,11 +496,15 @@ export default {
         })
     },
     remove(name, id) {
-      this.$confirm(`${this.$t('dataVerification.deleteMessage')} ${name}?`, this.$t('dataFlow.importantReminder'), {
-        confirmButtonText: this.$t('classification.deleteNode'),
-        cancelButtonText: this.$t('message.cancel'),
-        type: 'warning'
-      }).then(() => {
+      this.$confirm(
+        `${this.$t('dataVerification.deleteMessage')} ${name}?`,
+        this.$t('dataFlow.importantReminder'),
+        {
+          confirmButtonText: this.$t('classification.deleteNode'),
+          cancelButtonText: this.$t('message.cancel'),
+          type: 'warning'
+        }
+      ).then(() => {
         this.$api('Inspects')
           .delete(id)
           .then(() => {

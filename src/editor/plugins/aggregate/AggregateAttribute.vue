@@ -1,7 +1,12 @@
 <template>
   <div class="aggregate">
     <div class="head-btns">
-      <el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
+      <el-button
+        v-if="disabled"
+        class="e-button"
+        type="primary"
+        @click="seeMonitor"
+      >
         {{ $t('dataFlow.button.viewMonitoring') }}
       </el-button>
       <p>{{ $t('dataFlow.aggregatePrompt') }}</p>
@@ -17,23 +22,37 @@
     >
       <el-col :span="21" class="aggregateName">
         <el-form-item :label="$t('dataFlow.nodeName')" required>
-          <el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
+          <el-input
+            v-model="form.name"
+            maxlength="20"
+            show-word-limit
+          ></el-input>
         </el-form-item>
-        <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" required>
+        <el-form-item
+          :label="$t('editor.cell.data_node.collection.form.pk.label')"
+          required
+        >
           <MultiSelection
             v-model="form.primaryKeys"
             :options="primaryKeyOptions"
-            :placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+            :placeholder="
+              $t('editor.cell.data_node.collection.form.pk.placeholder')
+            "
           ></MultiSelection>
         </el-form-item>
         <el-form-item required>
           <span slot="label">
-            <span>{{ $t('editor.cell.processor.aggregate.aggregateSizeLabel') }}</span>
+            <span>{{
+              $t('editor.cell.processor.aggregate.aggregateSizeLabel')
+            }}</span>
             <el-tooltip effect="dark" placement="top">
               <div style="max-width: 300px" slot="content">
                 {{ $t('editor.cell.processor.aggregate.aggregateSizeTips') }}
               </div>
-              <span class="icon iconfont icon-tishi1" style="vertical-align: bottom"></span>
+              <span
+                class="icon iconfont icon-tishi1"
+                style="vertical-align: bottom"
+              ></span>
             </el-tooltip>
           </span>
           <div style="display: flex; align-items: center">
@@ -46,8 +65,16 @@
                 }
               "
             >
-              <el-option :label="$t('editor.cell.processor.aggregate.allAggregateSize')" value="all"></el-option>
-              <el-option :label="$t('editor.cell.processor.aggregate.customAggregateSize')" value="custom"></el-option>
+              <el-option
+                :label="$t('editor.cell.processor.aggregate.allAggregateSize')"
+                value="all"
+              ></el-option>
+              <el-option
+                :label="
+                  $t('editor.cell.processor.aggregate.customAggregateSize')
+                "
+                value="custom"
+              ></el-option>
             </el-select>
             <el-input
               style="flex: 1; margin-left: 10px; margin-bottom: -1px"
@@ -67,10 +94,19 @@
           </div>
         </el-form-item>
         <el-form-item :label="$t('dataFlow.keepAggreHistoryData')" required>
-          <el-switch v-model="form.keepAggRet" :active-text="form.keepAggRet ? $t('dataFlow.yes') : $t('dataFlow.no')">
+          <el-switch
+            v-model="form.keepAggRet"
+            :active-text="
+              form.keepAggRet ? $t('dataFlow.yes') : $t('dataFlow.no')
+            "
+          >
           </el-switch>
         </el-form-item>
-        <el-form-item :label="$t('dataFlow.aggrCleanSecond')" prop="aggrCleanSecond" required>
+        <el-form-item
+          :label="$t('dataFlow.aggrCleanSecond')"
+          prop="aggrCleanSecond"
+          required
+        >
           <!-- :value="form.aggrCleanSecond <= 3600 ? 3600 : form.aggrCleanSecond"
 						@blur="
 							v => {
@@ -83,7 +119,11 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item :label="$t('dataFlow.aggrFullSyncSecond')" prop="aggrFullSyncSecond" required>
+        <el-form-item
+          :label="$t('dataFlow.aggrFullSyncSecond')"
+          prop="aggrFullSyncSecond"
+          required
+        >
           <el-input type="number" v-model="form.aggrFullSyncSecond">
             <template slot="append">
               {{ $t('dataFlow.secondUnit') }}
@@ -92,7 +132,13 @@
         </el-form-item>
       </el-col>
       <el-col style="padding: 0 10px">
-        <el-row type="flex" :gutter="20" class="loopFrom" v-for="(item, index) in form.aggregations" :key="index">
+        <el-row
+          type="flex"
+          :gutter="20"
+          class="loopFrom"
+          v-for="(item, index) in form.aggregations"
+          :key="index"
+        >
           <el-col :span="21" class="fromLoopBox">
             <el-row :gutter="10">
               <el-col :span="6">
@@ -101,8 +147,16 @@
                   :prop="'aggregations.' + index + '.aggFunction'"
                   required
                 >
-                  <el-select v-model="item.aggFunction" @change="changeAggFunction(item, index)">
-                    <el-option v-for="item in selectList" :key="item.value" :label="item.label" :value="item.value">
+                  <el-select
+                    v-model="item.aggFunction"
+                    @change="changeAggFunction(item, index)"
+                  >
+                    <el-option
+                      v-for="item in selectList"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    >
                     </el-option>
                   </el-select>
                 </el-form-item>
@@ -134,9 +188,13 @@
             </el-row>
             <el-form-item required :prop="'aggregations.' + index + '.name'">
               <div class="e-label" slot="label">
-                <label class="el-form-item__label">{{ $t('dataFlow.aggName') }}</label>
+                <label class="el-form-item__label">{{
+                  $t('dataFlow.aggName')
+                }}</label>
                 <el-tooltip effect="dark" placement="top">
-                  <div style="max-width: 300px" slot="content">{{ $t('dataFlow.nameTip') }}</div>
+                  <div style="max-width: 300px" slot="content">
+                    {{ $t('dataFlow.nameTip') }}
+                  </div>
                   <span class="icon iconfont icon-tishi1"></span>
                 </el-tooltip>
               </div>
@@ -151,7 +209,10 @@
 						</el-popover> -->
               <el-input v-model="item.name"></el-input>
             </el-form-item>
-            <el-form-item :label="$t('dataFlow.filterPredicate')" :prop="'aggregations.' + index + '.filterPredicate'">
+            <el-form-item
+              :label="$t('dataFlow.filterPredicate')"
+              :prop="'aggregations.' + index + '.filterPredicate'"
+            >
               <el-input
                 style="margin: 5px 0"
                 type="textarea"
@@ -190,7 +251,10 @@
       </el-col>
       <el-col>
         <el-form-item class="btnClass">
-          <el-button @click="addRow">+ {{ $t('editor.cell.processor.aggregate.new_aggregate') }}</el-button>
+          <el-button @click="addRow"
+            >+
+            {{ $t('editor.cell.processor.aggregate.new_aggregate') }}</el-button
+          >
         </el-form-item>
       </el-col>
     </el-form>
@@ -200,15 +264,23 @@
         {
         <li>
           <span class="text">_id: "students_sum",</span>
-          <span class="comment">{{ $t('editor.cell.processor.aggregate.idComment') }}</span>
+          <span class="comment">{{
+            $t('editor.cell.processor.aggregate.idComment')
+          }}</span>
         </li>
         <li>
           <span class="text">COUNT: 132,</span>
-          <span class="comment">{{ $t('editor.cell.processor.aggregate.countComment') }}</span>
+          <span class="comment">{{
+            $t('editor.cell.processor.aggregate.countComment')
+          }}</span>
         </li>
         <li>
-          <span class="text">{{ $t('editor.cell.processor.aggregate.school_name') }}</span>
-          <span class="comment">{{ $t('editor.cell.processor.aggregate.school_nameComment') }}</span>
+          <span class="text">{{
+            $t('editor.cell.processor.aggregate.school_name')
+          }}</span>
+          <span class="comment">{{
+            $t('editor.cell.processor.aggregate.school_nameComment')
+          }}</span>
         </li>
         }
       </ul>
@@ -264,7 +336,13 @@ export default {
             trigger: 'blur',
             validator: (rule, value, callback) => {
               if (!value || value < 3600) {
-                callback(new Error(this.$t('editor.cell.processor.aggregate.cleanSecondTimeLess3600')))
+                callback(
+                  new Error(
+                    this.$t(
+                      'editor.cell.processor.aggregate.cleanSecondTimeLess3600'
+                    )
+                  )
+                )
               }
             }
           }
@@ -275,7 +353,13 @@ export default {
             trigger: 'blur',
             validator: (rule, value, callback) => {
               if (!value || value < 3600) {
-                callback(new Error(this.$t('editor.cell.processor.aggregate.fullSyncSecondTimeLess3600')))
+                callback(
+                  new Error(
+                    this.$t(
+                      'editor.cell.processor.aggregate.fullSyncSecondTimeLess3600'
+                    )
+                  )
+                )
               }
             }
           }
@@ -372,13 +456,18 @@ export default {
         schema.fields = removeDeleted(schema.fields)
         this.primaryKeyOptions = schema.fields.map((f) => f.field_name)
         if (!this.form.primaryKeys) {
-          let primaryKeys = schema.fields.filter((f) => f.primary_key_position > 0).map((f) => f.field_name)
-          if (primaryKeys.length > 0) this.form.primaryKeys = Array.from(new Set(primaryKeys)).join(',')
+          let primaryKeys = schema.fields
+            .filter((f) => f.primary_key_position > 0)
+            .map((f) => f.field_name)
+          if (primaryKeys.length > 0)
+            this.form.primaryKeys = Array.from(new Set(primaryKeys)).join(',')
         }
       }
 
       let object = {}
-      this.groupList = schema.fields ? schema.fields.sort((v1, v2) => (v1 > v2 ? 1 : v1 === v2 ? 0 : -1)) : []
+      this.groupList = schema.fields
+        ? schema.fields.sort((v1, v2) => (v1 > v2 ? 1 : v1 === v2 ? 0 : -1))
+        : []
       if (!!this.groupList && this.groupList.length > 0) {
         this.groupList = this.groupList.reduce((cur, next) => {
           if (!object[next.field_name]) {
@@ -393,7 +482,8 @@ export default {
 
       if (!this.form.name) {
         if (counter === 0) this.form.name = this.$t('dataFlow.aggregation')
-        if (counter !== 0) this.form.name = this.$t('dataFlow.aggregation') + counter
+        if (counter !== 0)
+          this.form.name = this.$t('dataFlow.aggregation') + counter
         counter++
       }
 

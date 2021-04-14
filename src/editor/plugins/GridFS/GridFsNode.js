@@ -11,7 +11,7 @@ export const GridFSNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'editor/o-gridfs2.svg'
+          xlinkHref: 'static/editor/o-gridfs2.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.gridfs.name')
@@ -45,7 +45,9 @@ export const GridFSNodeConfig = {
         if (formData.gridfsReadMode === 'binary') {
           return ['app.FileNode'].includes(targetCell.get('type'))
         } else if (formData.gridfsReadMode === 'data') {
-          return !['app.GridFSNode', 'app.Database'].includes(targetCell.get('type'))
+          return !['app.GridFSNode', 'app.Database'].includes(
+            targetCell.get('type')
+          )
         } else {
           return false
         }
@@ -65,10 +67,23 @@ export const GridFSNodeConfig = {
         log('GridFsNode.validate', data)
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.gridfs.gridFs_isNull')}`)
-        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.gridfs.gridFs_isNull')}`
+          )
+        if (!data.connectionId)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.data_node.collection.none_database'
+            )}`
+          )
         if (data.isSource) {
-          if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`)
+          if (!data.tableName)
+            throw new Error(
+              `${name}: ${i18n.t(
+                'editor.cell.data_node.collection.none_collection'
+              )}`
+            )
           // if (!data.primaryKeys)
           // 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
         }
@@ -238,7 +253,7 @@ export const GridFSNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/gridfs2.svg',
+        xlinkHref: 'static/editor/gridfs2.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

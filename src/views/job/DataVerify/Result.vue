@@ -1,13 +1,22 @@
 <template>
   <div>
     <div v-if="loading">
-      <div v-loading="loading" style="margin-top: 100px; padding-bottom: 100px"></div>
       <div
-        v-if="validateStatus == 'waiting' || validateStatus == 'draft' || validateStatus == 'interrupted'"
+        v-loading="loading"
+        style="margin-top: 100px; padding-bottom: 100px"
+      ></div>
+      <div
+        v-if="
+          validateStatus == 'waiting' ||
+          validateStatus == 'draft' ||
+          validateStatus == 'interrupted'
+        "
         class="verifyLog"
       >
         <span>{{ verifylog[validateStatus] }}</span>
-        <span @click="GoBack" class="verify-backBtn">{{ $t('dataVerify.back') }}</span>
+        <span @click="GoBack" class="verify-backBtn">{{
+          $t('dataVerify.back')
+        }}</span>
         <span>{{ $t('dataVerify.verifyRunningInfo') }}</span>
       </div>
       <div v-if="validateStatus === 'validating'" class="verifyLog">
@@ -17,19 +26,28 @@
         </span>
         <span>{{ $t('dataVerify.verifyRunningInfo') }}</span>
         <span>{{ $t('dataVerify.or') }}</span>
-        <span class="verify-backBtn" @click="handleVerifyCancel">{{ $t('dataVerify.verifyStatusStop') }}</span>
+        <span class="verify-backBtn" @click="handleVerifyCancel">{{
+          $t('dataVerify.verifyStatusStop')
+        }}</span>
       </div>
-      <div v-if="validateStatus == 'error' || validateStatus == 'completed'" class="verifyLog">
+      <div
+        v-if="validateStatus == 'error' || validateStatus == 'completed'"
+        class="verifyLog"
+      >
         <span>{{ verifylog[validateStatus] }}</span>
       </div>
     </div>
     <div class="back-btn-box" v-if="!loading">
-      <el-button class="back-btn-icon-box" @click="GoBack"><i class="iconfont icon-you2 back-btn-icon"></i></el-button>
+      <el-button class="back-btn-icon-box" @click="GoBack"
+        ><i class="iconfont icon-you2 back-btn-icon"></i
+      ></el-button>
       <span class="back-btn-text">{{ $t('dataVerify.dataVerify') }}</span>
     </div>
     <div class="data-contPreView" v-if="!loading">
       <div class="dv-pre-btn">
-        <el-button size="mini" type="primary" @click="handleAddList"> {{ $t('dataVerify.again') }}</el-button>
+        <el-button size="mini" type="primary" @click="handleAddList">
+          {{ $t('dataVerify.again') }}</el-button
+        >
       </div>
       <div class="clear"></div>
       <el-alert
@@ -45,43 +63,73 @@
           {{ $t('dataVerify.overView') }}
           <div class="dv-pre-right">
             <span>{{ $t('dataVerify.time') }}: {{ overview.createTime }} </span>
-            <span>{{ $t('dataVerify.duration') }}: {{ overview.costTime }}</span>
+            <span
+              >{{ $t('dataVerify.duration') }}: {{ overview.costTime }}</span
+            >
           </div>
         </div>
         <el-table border :data="validateStats" height="250" style="width: 100%">
-          <el-table-column prop="sourceTableName" :label="$t('dataVerify.source')" width="180">
+          <el-table-column
+            prop="sourceTableName"
+            :label="$t('dataVerify.source')"
+            width="180"
+          >
             <template slot-scope="scope">
               <el-tooltip
                 class="item"
                 effect="dark"
-                :content="scope.row.sourceDatabaseName + ' / ' + scope.row.sourceTableName"
+                :content="
+                  scope.row.sourceDatabaseName +
+                  ' / ' +
+                  scope.row.sourceTableName
+                "
                 placement="top-end"
               >
                 <div>
                   <div>{{ `[S] ${scope.row.sourceDatabaseName}` }}</div>
                   <div>{{ scope.row.sourceTableName }}</div>
-                  <div style="color: #bbb">{{ `[T] ${scope.row.targetDatabaseName}` }}</div>
+                  <div style="color: #bbb">
+                    {{ `[T] ${scope.row.targetDatabaseName}` }}
+                  </div>
                   <div style="color: #bbb">{{ scope.row.targetTableName }}</div>
                 </div>
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="validateType" :label="$t('dataVerify.dataWay')" width="95">
+          <el-table-column
+            prop="validateType"
+            :label="$t('dataVerify.dataWay')"
+            width="95"
+          >
             <template slot-scope="scope">
               <span>
                 {{ $t('dataVerify.' + scope.row.validateType) }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="rows" :label="$t('dataVerify.range')"> </el-table-column>
+          <el-table-column prop="rows" :label="$t('dataVerify.range')">
+          </el-table-column>
           <el-table-column prop="rowsDiffer" :label="$t('dataVerify.result')">
             <template slot-scope="scope">
-              <span :class="{ error: scope.row.rowsDiffer !== 0 || scope.row.rowsMismatch !== 0 }">
-                {{ scope.row.validateType == 'row' ? scope.row.rowsDiffer : scope.row.rowsMismatch }}
+              <span
+                :class="{
+                  error:
+                    scope.row.rowsDiffer !== 0 || scope.row.rowsMismatch !== 0
+                }"
+              >
+                {{
+                  scope.row.validateType == 'row'
+                    ? scope.row.rowsDiffer
+                    : scope.row.rowsMismatch
+                }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="consistencyRate" :label="$t('dataVerify.accuracyRate')" width="80">
+          <el-table-column
+            prop="consistencyRate"
+            :label="$t('dataVerify.accuracyRate')"
+            width="80"
+          >
             <template slot-scope="scope">
               <span :class="{ error: scope.row.consistencyRate != 100 }">
                 {{ scope.row.consistencyRate }}
@@ -106,7 +154,13 @@
               </el-pagination>
             </div>
             {{ $t('dataVerify.errorComparison') }}
-            <el-select size="mini" v-model="source.tableName" class="dv-pre-right" @change="handleSearch" clearable>
+            <el-select
+              size="mini"
+              v-model="source.tableName"
+              class="dv-pre-right"
+              @change="handleSearch"
+              clearable
+            >
               <el-option
                 v-for="item in validateStats"
                 :key="item.sourceTableName"
@@ -116,13 +170,26 @@
               </el-option>
             </el-select>
           </div>
-          <el-table border :data="failedRow" class="dv-result-fail-table" style="width: 100%" :loading="failRowLoading">
-            <el-table-column prop="sourceTableData" :label="$t('dataVerify.source')">
+          <el-table
+            border
+            :data="failedRow"
+            class="dv-result-fail-table"
+            style="width: 100%"
+            :loading="failRowLoading"
+          >
+            <el-table-column
+              prop="sourceTableData"
+              :label="$t('dataVerify.source')"
+            >
               <template slot-scope="scope">
                 <el-tooltip
                   class="item"
                   effect="dark"
-                  :content="scope.row.sourceStage.databaseName + ' / ' + scope.row.sourceStage.tableName"
+                  :content="
+                    scope.row.sourceStage.databaseName +
+                    ' / ' +
+                    scope.row.sourceStage.tableName
+                  "
                   placement="top-end"
                 >
                   <div>
@@ -139,12 +206,19 @@
                 </el-tooltip>
               </template>
             </el-table-column>
-            <el-table-column prop="targetTableData" :label="$t('dataVerify.target')">
+            <el-table-column
+              prop="targetTableData"
+              :label="$t('dataVerify.target')"
+            >
               <template slot-scope="scope">
                 <el-tooltip
                   class="item"
                   effect="dark"
-                  :content="scope.row.targetStage.databaseName + ' / ' + scope.row.targetStage.tableName"
+                  :content="
+                    scope.row.targetStage.databaseName +
+                    ' / ' +
+                    scope.row.targetStage.tableName
+                  "
                   placement="top-end"
                 >
                   <div>
@@ -234,8 +308,13 @@ export default {
         .then((res) => {
           if (res.statusText === 'OK' || res.status === 200) {
             this.validateStatus = res.data.validateStatus
-            if (res.data.validateStatus === 'completed' || res.data.validateStatus === 'error') {
-              this.validateBatchId = res.data.validateBatchId ? res.data.validateBatchId.toString() : ''
+            if (
+              res.data.validateStatus === 'completed' ||
+              res.data.validateStatus === 'error'
+            ) {
+              this.validateBatchId = res.data.validateBatchId
+                ? res.data.validateBatchId.toString()
+                : ''
               this.validateFailedMSG = res.data.validateFailedMSG
               // 清除定时器
               clearInterval(this.timer)
@@ -265,15 +344,20 @@ export default {
           if (res.data) {
             this.loading = false
             if (res.data[1]) {
-              this.overview = res.data[1].type === 'overview' ? res.data[1] : res.data[0]
+              this.overview =
+                res.data[1].type === 'overview' ? res.data[1] : res.data[0]
               this.overview.createTime = this.overview.createTime
                 ? moment(this.overview.createTime).format('YYYY-MM-DD HH:mm:ss')
                 : ''
-              this.overview.costTime = this.overview.costTime ? this.overview.costTime / 1000 + ' s' : ''
+              this.overview.costTime = this.overview.costTime
+                ? this.overview.costTime / 1000 + ' s'
+                : ''
             }
             if (res.data[0]) {
               this.validateStats =
-                res.data[0].type === 'tableOverview' ? res.data[0].validateStats : res.data[1].validateStats
+                res.data[0].type === 'tableOverview'
+                  ? res.data[0].validateStats
+                  : res.data[1].validateStats
             }
             log('dataVerify.result', this.validateStats)
           }
@@ -308,7 +392,9 @@ export default {
         }
       }
       if (this.source.tableName && this.source.tableName !== '') {
-        whereFailedRow.filter.where['sourceStage.tableName'] = this.source.tableName
+        whereFailedRow.filter.where[
+          'sourceStage.tableName'
+        ] = this.source.tableName
       }
       this.failRowLoading = true
       ValidationResults.get(whereFailedRow).then((res) => {

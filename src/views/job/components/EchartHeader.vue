@@ -1,15 +1,24 @@
 <template>
   <div class="echart-head">
     <h2>{{ data.title }}</h2>
-    <ElTooltip v-if="data.isIput" class="ml-10" placement="top-start" :content="data.tip">
+    <ElTooltip
+      v-if="data.isIput"
+      class="ml-10"
+      placement="top-start"
+      :content="data.tip"
+    >
       <i class="echart-head-tooltip__icon el-icon-warning-outline"></i>
     </ElTooltip>
     <span style="flex: 1">
       <i class="el-icon-loading" v-if="data && data.loading"></i>
     </span>
     <div class="unit" v-if="data.isIput && !data.isSpeed">
-      <span v-if="data.type !== 'replicate'">{{ $t('dataFlow.unit') }} : ms / {{ $t('dataFlow.article') }}</span>
-      <span v-else>{{ $t('dataFlow.unit') }} : {{ $t('dataFlow.secondUnit') }}</span>
+      <span v-if="data.type !== 'replicate'"
+        >{{ $t('dataFlow.unit') }} : ms / {{ $t('dataFlow.article') }}</span
+      >
+      <span v-else
+        >{{ $t('dataFlow.unit') }} : {{ $t('dataFlow.secondUnit') }}</span
+      >
     </div>
     <el-radio-group
       v-if="data.isScreeing"
@@ -19,7 +28,9 @@
       :class="selectColor"
       @change="changeRadio"
     >
-      <el-radio-button label="flow">{{ $t('dataFlow.rowCount') }}</el-radio-button>
+      <el-radio-button label="flow">{{
+        $t('dataFlow.rowCount')
+      }}</el-radio-button>
       <el-radio-button label="stage">KB</el-radio-button>
     </el-radio-group>
     <el-radio-group

@@ -22,7 +22,10 @@
           required
         >
           <div style="display: flex">
-            <FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
+            <FbSelect
+              v-model="model.connectionId"
+              :config="databaseSelectConfig"
+            ></FbSelect>
             <el-tooltip
               class="item"
               popper-class="collection-tooltip"
@@ -69,7 +72,11 @@
           </div>
         </el-form-item>
 
-        <el-form-item :label="$t('editor.cell.data_node.collection.form.collection.label')" prop="tableName" required>
+        <el-form-item
+          :label="$t('editor.cell.data_node.collection.form.collection.label')"
+          prop="tableName"
+          required
+        >
           <div class="flex-block">
             <FbSelect
               class="e-select"
@@ -122,23 +129,40 @@
         </el-form-item>
         <el-form-item>
           <template slot="label">
-            {{ $t('editor.cell.data_node.collection.form.fieldFilterTip.label') }}
+            {{
+              $t('editor.cell.data_node.collection.form.fieldFilterTip.label')
+            }}
             <el-tooltip effect="light" popper-class="collection-tooltip">
               <div slot="content">
                 <div style="word-break: keep-all">
-                  {{ $t('editor.cell.data_node.collection.form.fieldFilterTip.keepAllFields') }}
+                  {{
+                    $t(
+                      'editor.cell.data_node.collection.form.fieldFilterTip.keepAllFields'
+                    )
+                  }}
                 </div>
                 <div style="word-break: keep-all">
-                  {{ $t('editor.cell.data_node.collection.form.fieldFilterTip.retainedField') }}
+                  {{
+                    $t(
+                      'editor.cell.data_node.collection.form.fieldFilterTip.retainedField'
+                    )
+                  }}
                 </div>
                 <div style="word-break: keep-all">
-                  {{ $t('editor.cell.data_node.collection.form.fieldFilterTip.deleteField') }}
+                  {{
+                    $t(
+                      'editor.cell.data_node.collection.form.fieldFilterTip.deleteField'
+                    )
+                  }}
                 </div>
               </div>
               <i class="e-primary el-icon-warning-outline"></i>
             </el-tooltip>
           </template>
-          <el-select v-model="model.fieldFilterType" @change="handleCurrentFieldFilterType">
+          <el-select
+            v-model="model.fieldFilterType"
+            @change="handleCurrentFieldFilterType"
+          >
             <el-option
               v-for="item in filterTypeOptions"
               :key="item.value"
@@ -154,8 +178,12 @@
             :options="primaryKeyOptions"
             :placeholder="
               model.fieldFilterType === 'retainedField'
-                ? $t('editor.cell.data_node.collection.form.fieldFilter.placeholderKeep')
-                : $t('editor.cell.data_node.collection.form.fieldFilter.placeholderDelete')
+                ? $t(
+                    'editor.cell.data_node.collection.form.fieldFilter.placeholderKeep'
+                  )
+                : $t(
+                    'editor.cell.data_node.collection.form.fieldFilter.placeholderDelete'
+                  )
             "
             @change="handleFilterChange()"
           ></MultiSelection>
@@ -163,7 +191,9 @@
 
         <el-form-item
           required
-          :label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
+          :label="
+            $t('editor.cell.data_node.collection.form.initialSyncOrder.keep')
+          "
           v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
         >
           <div class="flex-block">
@@ -187,15 +217,29 @@
           v-if="dataNodeInfo.isTarget"
         >
           <el-select v-model="model.dropTable" size="mini" :disabled="logsFlag">
-            <el-option :label="$t('editor.cell.data_node.collection.form.dropTable.keep')" :value="false"></el-option>
-            <el-option :label="$t('editor.cell.data_node.collection.form.dropTable.remove')" :value="true"></el-option>
+            <el-option
+              :label="
+                $t('editor.cell.data_node.collection.form.dropTable.keep')
+              "
+              :value="false"
+            ></el-option>
+            <el-option
+              :label="
+                $t('editor.cell.data_node.collection.form.dropTable.remove')
+              "
+              :value="true"
+            ></el-option>
           </el-select>
         </el-form-item>
 
         <el-form-item
           required
           v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
-          :label="$t('editor.cell.data_node.collection.form.aggregation.aggregationText')"
+          :label="
+            $t(
+              'editor.cell.data_node.collection.form.aggregation.aggregationText'
+            )
+          "
         >
           <div class="flex-block">
             <el-tooltip
@@ -206,8 +250,12 @@
               effect="light"
               :content="
                 !sync_typeFalg
-                  ? $t('editor.cell.data_node.collection.form.aggregation.seetingAggreTip')
-                  : $t('editor.cell.data_node.collection.form.aggregation.filterAggreTip')
+                  ? $t(
+                      'editor.cell.data_node.collection.form.aggregation.seetingAggreTip'
+                    )
+                  : $t(
+                      'editor.cell.data_node.collection.form.aggregation.filterAggreTip'
+                    )
               "
             >
               <el-switch
@@ -217,20 +265,37 @@
                 :disabled="!this.sync_typeFalg || this.model.isFilter"
                 :active-text="
                   model.collectionAggregate
-                    ? $t('editor.cell.data_node.collection.form.aggregation.enabled')
-                    : $t('editor.cell.data_node.collection.form.aggregation.disabled')
+                    ? $t(
+                        'editor.cell.data_node.collection.form.aggregation.enabled'
+                      )
+                    : $t(
+                        'editor.cell.data_node.collection.form.aggregation.disabled'
+                      )
                 "
                 style="margin-right: 20px"
               ></el-switch>
             </el-tooltip>
           </div>
         </el-form-item>
-        <el-form-item v-if="model.collectionAggrPipeline && model.pipelineFalg" class="aggregation-item">
+        <el-form-item
+          v-if="model.collectionAggrPipeline && model.pipelineFalg"
+          class="aggregation-item"
+        >
           <div class="flex-block">
             <div class="head">Pipeline</div>
-            <el-input class="e-textarea" type="textarea" disabled v-model="model.collectionAggrPipeline"></el-input>
+            <el-input
+              class="e-textarea"
+              type="textarea"
+              disabled
+              v-model="model.collectionAggrPipeline"
+            ></el-input>
           </div>
-          <el-tooltip class="item" popper-class="collection-tooltip" effect="light" :content="$t('dataFlow.edit')">
+          <el-tooltip
+            class="item"
+            popper-class="collection-tooltip"
+            effect="light"
+            :content="$t('dataFlow.edit')"
+          >
             <el-button
               size="mini"
               class="iconfont icon-bianji edit"
@@ -242,7 +307,9 @@
 
         <el-form-item
           required
-          :label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')"
+          :label="
+            $t('editor.cell.data_node.collection.form.filter.fiflterSetting')
+          "
           v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
         >
           <div class="flex-block">
@@ -252,7 +319,11 @@
               effect="light"
               :disabled="filterTooltip"
               placement="top-start"
-              :content="$t('editor.cell.data_node.collection.form.aggregation.filterAggreTip')"
+              :content="
+                $t(
+                  'editor.cell.data_node.collection.form.aggregation.filterAggreTip'
+                )
+              "
             >
               <el-switch
                 v-model="model.isFilter"
@@ -261,8 +332,12 @@
                 inactive-color="#dcdfe6"
                 :active-text="
                   model.isFilter
-                    ? $t('editor.cell.data_node.collection.form.aggregation.enabled')
-                    : $t('editor.cell.data_node.collection.form.aggregation.disabled')
+                    ? $t(
+                        'editor.cell.data_node.collection.form.aggregation.enabled'
+                      )
+                    : $t(
+                        'editor.cell.data_node.collection.form.aggregation.disabled'
+                      )
                 "
                 style="margin-right: 20px"
               ></el-switch>
@@ -271,7 +346,9 @@
         </el-form-item>
 
         <queryBuilder
-          v-if="(dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter"
+          v-if="
+            (dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter
+          "
           v-model="model.custSql"
           v-bind:initialOffset.sync="model.initialOffset"
           :primaryKeyOptions="primaryKeyOptions"
@@ -292,7 +369,9 @@
           @click="hanlderLoadSchema"
         >
           <i class="el-icon-loading" v-if="reloadModelLoading"></i>
-          <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+          <span v-if="reloadModelLoading">{{
+            $t('dataFlow.loadingText')
+          }}</span>
           <span v-else>{{ $t('dataFlow.updateModel') }}</span>
         </el-button>
         <entity
@@ -303,13 +382,26 @@
         ></entity>
       </div>
     </div>
-    <CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
+    <CreateTable
+      v-if="addtableFalg"
+      :dialog="dialogData"
+      @handleTable="getAddTableName"
+    ></CreateTable>
     <relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
-    <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
+    <el-dialog
+      :title="$t('message.prompt')"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      width="30%"
+    >
       <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" size="mini" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
+        <el-button @click="dialogVisible = false" size="mini">{{
+          $t('message.cancel')
+        }}</el-button>
+        <el-button type="primary" size="mini" @click="confirmDialog">{{
+          $t('message.confirm')
+        }}</el-button>
       </span>
     </el-dialog>
 
@@ -332,7 +424,9 @@
       <div class="dialogMain">
         <div class="head">
           {{ $t('dialog.library') }}
-          (<span class="databaseColor" @click="handDatabase">{{ copyConnectionId }}</span
+          (<span class="databaseColor" @click="handDatabase">{{
+            copyConnectionId
+          }}</span
           >){{ $t('dialog.sameTable') }}
         </div>
 
@@ -351,7 +445,12 @@ import ClipButton from '@/components/ClipButton'
 import queryBuilder from '@/components/QueryBuilder'
 import CreateTable from '@/components/dialog/createTable'
 import AggregationDialog from './aggregationDialog'
-import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, removeDeleted, uuid } from '../../util/Schema'
+import {
+  convertSchemaToTreeData,
+  mergeJoinTablesToTargetSchema,
+  removeDeleted,
+  uuid
+} from '../../util/Schema'
 import Entity from '../link/Entity'
 import _ from 'lodash'
 import ws from '../../../api/ws'
@@ -442,7 +541,9 @@ export default {
               ]
             }
           if (this.model.tableName) {
-            schema = schemas.filter((s) => s.table_name === this.model.tableName)
+            schema = schemas.filter(
+              (s) => s.table_name === this.model.tableName
+            )
             schema = schema && schema.length > 0 ? schema[0] : defaultSchema
 
             let fields = schema.fields || []
@@ -479,7 +580,11 @@ export default {
     },
     defaultSchema: {
       handler() {
-        if (this.defaultSchema && this.defaultSchema.fields && this.defaultSchema.fields.length > 0) {
+        if (
+          this.defaultSchema &&
+          this.defaultSchema.fields &&
+          this.defaultSchema.fields.length > 0
+        ) {
           let fields = this.defaultSchema.fields
           //过滤被删除的字段
           if (fields) {
@@ -515,15 +620,21 @@ export default {
       disabled: false,
       filterTypeOptions: [
         {
-          label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.keepAllFields'),
+          label: this.$t(
+            'editor.cell.data_node.collection.form.fieldFilterType.keepAllFields'
+          ),
           value: 'keepAllFields'
         },
         {
-          label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.retainedField'),
+          label: this.$t(
+            'editor.cell.data_node.collection.form.fieldFilterType.retainedField'
+          ),
           value: 'retainedField'
         },
         {
-          label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.deleteField'),
+          label: this.$t(
+            'editor.cell.data_node.collection.form.fieldFilterType.deleteField'
+          ),
           value: 'deleteField'
         }
       ],
@@ -542,7 +653,9 @@ export default {
 
       schemaSelectConfig: {
         size: 'mini',
-        placeholder: this.$t('editor.cell.data_node.collection.form.collection.placeholder'),
+        placeholder: this.$t(
+          'editor.cell.data_node.collection.form.collection.placeholder'
+        ),
         loading: false,
         filterable: true,
         options: [],
@@ -552,10 +665,14 @@ export default {
       },
 
       rules: {
-        connectionId: [{ required: true, trigger: 'blur', message: `Please select database` }],
+        connectionId: [
+          { required: true, trigger: 'blur', message: `Please select database` }
+        ],
         filter: {
           type: 'string',
-          message: this.$t('editor.cell.data_node.collection.form.filter.invalidJSON'),
+          message: this.$t(
+            'editor.cell.data_node.collection.form.filter.invalidJSON'
+          ),
           validator: (rule, value) => {
             if (value) {
               try {
@@ -625,7 +742,11 @@ export default {
         })
       }
     }
-    this.collectionAggregateTip = !this.sync_typeFalg ? false : !this.model.isFilter ? true : false
+    this.collectionAggregateTip = !this.sync_typeFalg
+      ? false
+      : !this.model.isFilter
+      ? true
+      : false
     this.filterTooltip = this.model.collectionAggregate ? false : true
   },
 
@@ -733,7 +854,9 @@ export default {
     },
 
     handleFilterChange() {
-      let fieldFilter = this.model.fieldFilter ? this.model.fieldFilter.split(',') : []
+      let fieldFilter = this.model.fieldFilter
+        ? this.model.fieldFilter.split(',')
+        : []
 
       let fieldList = this.getFieldData(fieldFilter)
       if (this.model.fieldFilterType === 'retainedField') {
@@ -750,7 +873,9 @@ export default {
 
       fieldFilter.forEach((f) => {
         let self = this
-        let ops = self.model.operations.filter((v) => v.op === 'RETAINED' && v.id === f.id)
+        let ops = self.model.operations.filter(
+          (v) => v.op === 'RETAINED' && v.id === f.id
+        )
         let op
         if (ops.length === 0) {
           op = Object.assign(_.cloneDeep(RETAINED_OPS_TPL), {
@@ -766,7 +891,9 @@ export default {
       fieldFilter.forEach((f) => {
         let self = this
         let fn = function (field) {
-          let ops = self.model.operations.filter((v) => v.op === 'DELETE' && v.id === field.id)
+          let ops = self.model.operations.filter(
+            (v) => v.op === 'DELETE' && v.id === field.id
+          )
           let op
           if (ops.length === 0) {
             op = Object.assign(_.cloneDeep(DELETE_OPS_TPL), {
@@ -786,7 +913,9 @@ export default {
       let currentFiled = []
       fieldFilter.forEach((f) => {
         if (f && f.length) {
-          let op = this.defaultSchema.fields.find((item) => item.field_name === f)
+          let op = this.defaultSchema.fields.find(
+            (item) => item.field_name === f
+          )
           currentFiled.push(op)
         }
       })
@@ -849,9 +978,14 @@ export default {
         .get([connectionId])
         .then((result) => {
           if (result.data && result.data.schema && result.data.schema.tables) {
-            let schemas = (result.data.schema && result.data.schema.tables) || []
+            let schemas =
+              (result.data.schema && result.data.schema.tables) || []
             tempSchemas = schemas.sort((t1, t2) =>
-              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+              t1.table_name > t2.table_name
+                ? 1
+                : t1.table_name === t2.table_name
+                ? 0
+                : -1
             )
             let tableList = tempSchemas.map((item) => ({
               label: item.table_name,
@@ -892,7 +1026,12 @@ export default {
           delete data.custSql.conditions
         }
         _.merge(this.model, data)
-        if (this.model.custSql && this.model.custSql.conditions && conds && conds.length > 0)
+        if (
+          this.model.custSql &&
+          this.model.custSql.conditions &&
+          conds &&
+          conds.length > 0
+        )
           conds.forEach((it) => {
             this.model.custSql.conditions.push(it)
           })
@@ -920,13 +1059,20 @@ export default {
       }
 
       this.dataNodeInfo = dataNodeInfo || {}
-      this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema())
+      this.defaultSchema = mergeJoinTablesToTargetSchema(
+        cell.getSchema(),
+        cell.getInputSchema()
+      )
       cell.on('change:outputSchema', () => {
-        this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema())
+        this.defaultSchema = mergeJoinTablesToTargetSchema(
+          cell.getSchema(),
+          cell.getInputSchema()
+        )
       })
       // editorMonitor = vueAdapter.editor;
       let settingData = vueAdapter.editor.getData().settingData
-      this.sync_typeFalg = settingData.sync_type === 'initial_sync' ? true : false
+      this.sync_typeFalg =
+        settingData.sync_type === 'initial_sync' ? true : false
 
       // let getCellData = vueAdapter.editor.graph.graph.getCells();
 
@@ -943,7 +1089,8 @@ export default {
     },
     getData() {
       if (this.model.isFilter) {
-        if (this.model.custSql.filterType === 'field') this.model.filter = this.model.custSql.cSql
+        if (this.model.custSql.filterType === 'field')
+          this.model.filter = this.model.custSql.cSql
         else this.model.filter = this.model.custSql.editSql
       } else this.model.filter = ''
 
@@ -987,7 +1134,11 @@ export default {
 
     // 过滤设置开启任务
     handleIsFilter() {
-      this.collectionAggregateTip = !this.sync_typeFalg ? false : !this.model.isFilter ? true : false
+      this.collectionAggregateTip = !this.sync_typeFalg
+        ? false
+        : !this.model.isFilter
+        ? true
+        : false
       // this.filterTooltip = this.model.collectionAggregate ? false : true;
     },
 
@@ -1000,7 +1151,10 @@ export default {
     confirmDialog() {
       this.reloadModelLoading = true
 
-      if (this.model.collectionAggregate && !!this.model.collectionAggrPipeline) {
+      if (
+        this.model.collectionAggregate &&
+        !!this.model.collectionAggrPipeline
+      ) {
         let params = {
           type: 'aggregatePreview',
           data: {
@@ -1052,7 +1206,10 @@ export default {
           this.reloadModelLoading = false
           if (templeSchema && templeSchema.length) {
             templeSchema.forEach((item) => {
-              if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
+              if (
+                item.connId === this.model.connectionId &&
+                item.tableName === this.model.tableName
+              ) {
                 schema = item.schema
               }
             })

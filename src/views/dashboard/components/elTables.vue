@@ -8,7 +8,12 @@
       style="width: 100%"
     >
       <!-- <template v-if="tableObj.isHeader"> -->
-      <el-table-column v-for="(ele, index) in header" :key="index" :prop="ele.prop" :label="ele.label">
+      <el-table-column
+        v-for="(ele, index) in header"
+        :key="index"
+        :prop="ele.prop"
+        :label="ele.label"
+      >
       </el-table-column>
       <!-- </template> -->
     </el-table>

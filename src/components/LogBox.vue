@@ -3,12 +3,17 @@
     <ul class="log-box-container" v-show="count" ref="logContainer"></ul>
     <div v-show="!count" class="noData">
       <div class="imageBox">
-        <el-image style="width: 200px; height: 200px" :src="require('@/assets/images/noData.svg')"></el-image>
+        <el-image
+          style="width: 200px; height: 200px"
+          :src="require('@/assets/images/noData.svg')"
+        ></el-image>
       </div>
 
       <div v-if="load">
         {{ $t('dataFlow.noLogTip') }}?_(:з」∠)......
-        <span class="clickLoad" @click="load">{{ $t('dataFlow.clickLoadTxt') }}</span>
+        <span class="clickLoad" @click="load">{{
+          $t('dataFlow.clickLoadTxt')
+        }}</span>
       </div>
     </div>
   </div>
@@ -55,12 +60,16 @@ export default {
         : ''
       let markKeyword = function (text) {
         if (keyword && text.indexOf(keyword) !== -1) {
-          return text.split(keyword).join(`<span class="keyword">${keyword}</span>`)
+          return text
+            .split(keyword)
+            .join(`<span class="keyword">${keyword}</span>`)
         }
         return text
       }
 
-      let date = item.date ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss') : ''
+      let date = item.date
+        ? this.$moment(item.date).format('YYYY-MM-DD HH:mm:ss')
+        : ''
       // let lastModified = item.last_updated ? this.$moment(item.last_updated).format("YYYY-MM-DD HH:mm:ss") : "";
       let colorMap = {
         ERROR: 'redActive',
@@ -69,7 +78,9 @@ export default {
 
       return (
         `<li class="log-box-item">` +
-        `[<span class="level ${colorMap[item.level] || ''}">${item.level}</span>] &nbsp;` +
+        `[<span class="level ${colorMap[item.level] || ''}">${
+          item.level
+        }</span>] &nbsp;` +
         `<span>${date}</span>&nbsp;` +
         `<span>[${markKeyword(item.threadName)}]</span>&nbsp;` +
         `<span>${markKeyword(item.loggerName)}</span>&nbsp;-&nbsp;` +

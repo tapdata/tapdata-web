@@ -10,7 +10,7 @@ export const KafkaNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'editor/o-kafka.svg'
+          xlinkHref: 'static/editor/o-kafka.svg'
         },
         label: {
           text: 'kafka'
@@ -93,10 +93,19 @@ export const KafkaNodeConfig = {
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.kafkaName_isNull')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.kafkaName_isNull')}`
+          )
 
-        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`)
-        if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`)
+        if (!data.connectionId)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`
+          )
+        if (!data.tableName)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`
+          )
         // if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_pk')}`);
 
         return true
@@ -265,7 +274,7 @@ export const KafkaNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/Kafka.svg',
+        xlinkHref: 'static/editor/Kafka.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

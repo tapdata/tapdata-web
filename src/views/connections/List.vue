@@ -5,7 +5,10 @@
       row-key="id"
       :title="$t('connection.databaseTittle')"
       :desc="description"
-      :classify="{ authority: 'datasource_catalog_management', types: ['database'] }"
+      :classify="{
+        authority: 'datasource_catalog_management',
+        types: ['database']
+      }"
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
       @classify-submit="handleOperationClassify"
@@ -13,9 +16,18 @@
     >
       <ul class="search-bar" slot="search">
         <li class="item">
-          <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
+          <ElSelect
+            v-model="searchParams.status"
+            size="small"
+            @input="table.fetch(1)"
+          >
             <ElOption label="全部状态" value=""></ElOption>
-            <ElOption v-for="item in databaseStatusOptions" :key="item.value" :label="item.label" :value="item.value">
+            <ElOption
+              v-for="item in databaseStatusOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
             </ElOption>
           </ElSelect>
         </li>
@@ -64,7 +76,12 @@
           </el-select>
         </li> -->
         <li class="item">
-          <ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
+          <ElButton
+            plain
+            class="btn-refresh"
+            size="small"
+            @click="table.fetch()"
+          >
             <i class="el-icon-refresh"></i>
           </ElButton>
         </li>
@@ -133,7 +150,11 @@
           {{ scope.row.connectionUrl }}
         </template>
       </el-table-column>
-      <el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
+      <el-table-column
+        prop="status"
+        :label="$t('connection.dataBaseStatus')"
+        width="100"
+      >
         <template slot-scope="scope">
           <span class="error" v-if="['invalid'].includes(scope.row.status)">
             <i class="connections-status__icon el-icon-error"></i>
@@ -155,7 +176,10 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'" width="160">
+      <el-table-column
+        v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
+        width="160"
+      >
         <div slot="header">
           {{ $t('connection.connectionSource') }}
           <TableFilter
@@ -175,23 +199,39 @@
       </el-table-column>
       <el-table-column :label="$t('connection.operate')" width="220">
         <template slot-scope="scope">
-          <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection.testConnection') }} </ElLink>
+          <ElLink type="primary" @click="testConnection(scope.row)"
+            >{{ $t('connection.testConnection') }}
+          </ElLink>
           <ElLink
             v-readonlybtn="'datasource_edition'"
             class="ml-10"
             type="primary"
-            :disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
+            :disabled="
+              $disabledByPermission(
+                'datasource_edition_all_data',
+                scope.row.user_id
+              )
+            "
             @click="edit(scope.row.id, scope.row.database_type, scope.row)"
             >{{ $t('message.edit') }}
           </ElLink>
-          <ElLink v-readonlybtn="'datasource_creation'" class="ml-10" type="primary" @click="copy(scope.row)"
+          <ElLink
+            v-readonlybtn="'datasource_creation'"
+            class="ml-10"
+            type="primary"
+            @click="copy(scope.row)"
             >{{ $t('message.copy') }}
           </ElLink>
           <ElLink
             v-readonlybtn="'datasource_delete'"
             class="ml-10"
             type="primary"
-            :disabled="$disabledByPermission('datasource_delete_all_data', scope.row.user_id)"
+            :disabled="
+              $disabledByPermission(
+                'datasource_delete_all_data',
+                scope.row.user_id
+              )
+            "
             @click="remove(scope.row)"
             >{{ $t('message.delete') }}
           </ElLink>
@@ -209,7 +249,12 @@
       @dialogVisible="handleDialogDatabaseTypeVisible"
       @databaseType="handleDatabaseType"
     ></DatabaseTypeDialog>
-    <Test ref="test" :dialogTestVisible="false" :formData="testData" @returnTestData="returnTestData"></Test>
+    <Test
+      ref="test"
+      :dialogTestVisible="false"
+      :formData="testData"
+      @returnTestData="returnTestData"
+    ></Test>
   </section>
 </template>
 <script>
@@ -343,12 +388,16 @@ export default {
         visible: true,
         step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0
       }
-      window.parent && window.parent.noviceGuideChange && window.parent.noviceGuideChange(item)
+      window.parent &&
+        window.parent.noviceGuideChange &&
+        window.parent.noviceGuideChange(item)
       this.$router.push('/connections')
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'last_updated'} ${
+        order === 'ascending' ? 'ASC' : 'DESC'
+      }`
       this.table.fetch(1)
     },
     async getDatabaseType() {
@@ -359,13 +408,21 @@ export default {
           }
         }
       }
-      let databaseTypes = await this.$api('DatabaseTypes').get({ filter: JSON.stringify(filter) })
+      let databaseTypes = await this.$api('DatabaseTypes').get({
+        filter: JSON.stringify(filter)
+      })
       databaseTypes.data.forEach((dt) => this.databaseTypeOptions.push(dt))
     },
     getData({ page, tags }) {
       let region = this.$route.query.region
       let { current, size } = page
-      let { keyword, databaseType, databaseModel, status, sourceType } = this.searchParams
+      let {
+        keyword,
+        databaseType,
+        databaseModel,
+        status,
+        sourceType
+      } = this.searchParams
       let where = {}
       let fields = {
         name: true,
@@ -431,19 +488,23 @@ export default {
           data: list.map((item) => {
             let platformInfo = item.platformInfo
             if (platformInfo && platformInfo.regionName) {
-              item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
+              item.regionInfo =
+                platformInfo.regionName + ' ' + platformInfo.zoneName
             }
             if (item.database_type !== 'mongodb') {
               item.connectionUrl = ''
               if (item.database_username) {
                 item.connectionUrl += item.database_username + ':***@'
               }
-              item.connectionUrl += item.database_host + ':' + item.database_port
+              item.connectionUrl +=
+                item.database_host + ':' + item.database_port
             } else {
               item.connectionUrl = item.database_uri
             }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
-            item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+            item.lastUpdateTime = this.$moment(item.last_updated).format(
+              'YYYY-MM-DD HH:mm:ss'
+            )
             return item
           })
         }
@@ -654,9 +715,17 @@ export default {
       if (!data.status || data.status === null) return
       let status = data.status
       if (status === 'ready') {
-        this.$message.success(this.$t('connection.testConnection') + this.$t('connection.status.ready'), false)
+        this.$message.success(
+          this.$t('connection.testConnection') +
+            this.$t('connection.status.ready'),
+          false
+        )
       } else {
-        this.$message.error(this.$t('connection.testConnection') + this.$t('connection.status.invalid'), false)
+        this.$message.error(
+          this.$t('connection.testConnection') +
+            this.$t('connection.status.invalid'),
+          false
+        )
       }
     }
   }

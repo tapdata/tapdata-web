@@ -3,7 +3,10 @@
     <div v-for="(cond, idx) in value.conditions" :key="idx">
       <span
         v-if="
-          (cond.type == 'group' && cond.conditions.length > 0 && cond.operator && cond.operator.length > 0) ||
+          (cond.type == 'group' &&
+            cond.conditions.length > 0 &&
+            cond.operator &&
+            cond.operator.length > 0) ||
           (cond.type != 'group' && cond.operator && cond.operator.length > 0)
         "
         class="cond-operator"
@@ -18,13 +21,28 @@
       ></queryCond>
       <div v-if="cond.type != 'group'" class="item">
         <div class="field">
-          <el-select v-model="cond.field" filterable size="mini" placeholder="select field">
-            <el-option v-for="item in primaryKeyOptions" :key="item" :label="item" :value="item"></el-option>
+          <el-select
+            v-model="cond.field"
+            filterable
+            size="mini"
+            placeholder="select field"
+          >
+            <el-option
+              v-for="item in primaryKeyOptions"
+              :key="item"
+              :label="item"
+              :value="item"
+            ></el-option>
           </el-select>
         </div>
         <div class="field">
           <el-select v-model="cond.command" size="mini" placeholder="select op">
-            <el-option v-for="item in calculationList" :label="item" :value="item" :key="item"></el-option>
+            <el-option
+              v-for="item in calculationList"
+              :label="item"
+              :value="item"
+              :key="item"
+            ></el-option>
           </el-select>
         </div>
 
@@ -46,13 +64,26 @@
 
         <div class="field">
           <div class="btn" style="width: 52px">
-            <span class="el-icon-close" @click="removeChild(idx)" style="width: 24px"></span>
+            <span
+              class="el-icon-close"
+              @click="removeChild(idx)"
+              style="width: 24px"
+            ></span>
             <el-dropdown size="mini" @command="handleCommand">
               <span class="el-dropdown-link el-icon-plus"></span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="databaseType != 'mongodb'" command="and">+ and</el-dropdown-item>
-                <el-dropdown-item v-if="databaseType != 'mongodb'" command="or">+ or</el-dropdown-item>
-                <el-dropdown-item v-if="databaseType == 'mongodb'" command="cond"> + </el-dropdown-item>
+                <el-dropdown-item v-if="databaseType != 'mongodb'" command="and"
+                  >+ and</el-dropdown-item
+                >
+                <el-dropdown-item v-if="databaseType != 'mongodb'" command="or"
+                  >+ or</el-dropdown-item
+                >
+                <el-dropdown-item
+                  v-if="databaseType == 'mongodb'"
+                  command="cond"
+                >
+                  +
+                </el-dropdown-item>
                 <el-dropdown-item command="andQ">+ and()</el-dropdown-item>
                 <el-dropdown-item command="orQ">+ or()</el-dropdown-item>
               </el-dropdown-menu>

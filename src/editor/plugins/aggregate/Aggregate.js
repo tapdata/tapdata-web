@@ -14,7 +14,7 @@ export const aggregateConfig = {
       size: { width: 120, height: 28 },
       attrs: {
         image: {
-          xlinkHref: 'editor/o-aggregator.svg',
+          xlinkHref: 'static/editor/o-aggregator.svg',
           refWidth: '25%',
           refHeight: '84%',
           refX: '-8%',
@@ -61,14 +61,16 @@ export const aggregateConfig = {
         let groupFields = []
         let functionNames = []
         data.aggregations.forEach((stage) => {
-          if (stage.groupByExpression) groupFields.push(...stage.groupByExpression)
+          if (stage.groupByExpression)
+            groupFields.push(...stage.groupByExpression)
           if (stage.aggFunction && !functionNames.includes(stage.aggFunction)) {
             functionNames.push(stage.aggFunction)
           }
         })
 
         let fields = outputSchema.fields || []
-        outputSchema.fields = fields.filter((field) => groupFields.includes(field.field_name)) || []
+        outputSchema.fields =
+          fields.filter((field) => groupFields.includes(field.field_name)) || []
 
         functionNames.forEach((fnName) => {
           outputSchema.fields.push(
@@ -112,32 +114,68 @@ export const aggregateConfig = {
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
+          )
 
         if (data.aggregations && data.aggregations.length === 0)
-          throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_stage')}`)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.processor.aggregate.none_stage')}`
+          )
         if (data.aggrCleanSecond < 3600)
-          throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.cleanSecondTimeLess3600')}`)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.processor.aggregate.cleanSecondTimeLess3600'
+            )}`
+          )
         if (data.aggrFullSyncSecond < 3600)
-          throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.fullSyncSecondTimeLess3600')}`)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.processor.aggregate.fullSyncSecondTimeLess3600'
+            )}`
+          )
 
-        if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`)
+        if (!data.name)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.validate.empty_name')}`
+          )
         let aggFunctionArr = []
         if (data.aggregations && data.aggregations.length > 0) {
           data.aggregations.forEach((item) => {
             aggFunctionArr.push(item.name)
             if (!item.aggFunction)
-              throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_function')}`)
+              throw new Error(
+                `${name}: ${i18n.t(
+                  'editor.cell.processor.aggregate.none_function'
+                )}`
+              )
             if (!item.groupByExpression)
-              throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_group')}`)
+              throw new Error(
+                `${name}: ${i18n.t(
+                  'editor.cell.processor.aggregate.none_group'
+                )}`
+              )
             if (!item.aggExpression && item.aggFunction !== 'COUNT')
-              throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_aggregation_expression')}`)
+              throw new Error(
+                `${name}: ${i18n.t(
+                  'editor.cell.processor.aggregate.none_aggregation_expression'
+                )}`
+              )
             if (!item.name)
-              throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.none_subprocessingName')}`)
+              throw new Error(
+                `${name}: ${i18n.t(
+                  'editor.cell.processor.aggregate.none_subprocessingName'
+                )}`
+              )
           })
         }
         if (new Set(aggFunctionArr).size !== aggFunctionArr.length)
-          throw new Error(`${name}: ${i18n.t('editor.cell.processor.aggregate.name_notRepeated')}`)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.processor.aggregate.name_notRepeated'
+            )}`
+          )
         return true
       }
     }
@@ -221,7 +259,10 @@ export const aggregateConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -270,7 +311,7 @@ export const aggregateConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/aggregator.svg',
+        xlinkHref: 'static/editor/aggregator.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

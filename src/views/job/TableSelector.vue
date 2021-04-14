@@ -3,7 +3,10 @@
     <div class="box-head">
       <div class="metadata-header-btns" style="width: 100%">
         <i class="iconfont icon-fangdajing" @click="isActive = !isActive"></i>
-        <i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
+        <i
+          class="iconfont icon-xiangshanghebing2"
+          @click="handleDefault_expanded"
+        ></i>
         <i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
         <i class="el-icon-loading" v-if="loading"></i>
       </div>
@@ -31,7 +34,11 @@
         </el-select>
       </el-input>
     </div>
-    <div class="treeBox" v-loading="loading" :element-loading-text="$t('dataFlow.dataLoading')">
+    <div
+      class="treeBox"
+      v-loading="loading"
+      :element-loading-text="$t('dataFlow.dataLoading')"
+    >
       <el-tree
         :data="data"
         :props="props"
@@ -52,16 +59,31 @@
               :class="`iconfont filter-icon-table ${mapping[data.meta_type]}`"
             ></span>
             <span
-              v-if="['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)"
+              v-if="
+                ['database', 'directory', 'ftp', 'apiendpoint'].includes(
+                  data.meta_type
+                )
+              "
               :class="`iconfont filter-icon-table ${
-                mapping[data.source.database_type] ? mapping[data.source.database_type] : mapping['database']
+                mapping[data.source.database_type]
+                  ? mapping[data.source.database_type]
+                  : mapping['database']
               } `"
             ></span>
             <span class="table-label">
-              <el-tooltip class="table-tooltip" effect="dark" :content="node.label" placement="right">
+              <el-tooltip
+                class="table-tooltip"
+                effect="dark"
+                :content="node.label"
+                placement="right"
+              >
                 <div>
-                  <span v-if="data.meta_type === 'database'">{{ node.label }}</span>
-                  <span v-else @dblclick="handleGraph(data)">{{ node.label }}</span>
+                  <span v-if="data.meta_type === 'database'">{{
+                    node.label
+                  }}</span>
+                  <span v-else @dblclick="handleGraph(data)">{{
+                    node.label
+                  }}</span>
                 </div>
               </el-tooltip>
             </span>
@@ -72,7 +94,9 @@
       <div class="noData" v-if="loadingError">
         <div>
           {{ $t('dataFlow.loadingError')
-          }}<span class="clickLoad" @click="clickLoad">{{ $t('dataVerify.refresh') }}</span>
+          }}<span class="clickLoad" @click="clickLoad">{{
+            $t('dataVerify.refresh')
+          }}</span>
         </div>
       </div>
     </div>
@@ -181,7 +205,11 @@ export default {
                   original_name: record.original_name || '',
                   fields: record.fields
                 }
-                if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
+                if (
+                  ['collection', 'table', 'mongo_view', 'view'].includes(
+                    record.meta_type
+                  )
+                ) {
                   node.leaf = true
                 }
                 self.data.push(node)
@@ -216,7 +244,11 @@ export default {
                   original_name: record.original_name || '',
                   fields: record.fields
                 }
-                if (['collection', 'table', 'mongo_view', 'view'].includes(record.meta_type)) {
+                if (
+                  ['collection', 'table', 'mongo_view', 'view'].includes(
+                    record.meta_type
+                  )
+                ) {
                   node.leaf = true
                 }
                 self.data.push(node)
@@ -295,9 +327,15 @@ export default {
         return resolve([])
       }
       if (
-        ['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection', 'redis'].includes(
-          node.data.source.database_type
-        )
+        [
+          'dummy db',
+          'gridfs',
+          'file',
+          'elasticsearch',
+          'rest api',
+          'custom_connection',
+          'redis'
+        ].includes(node.data.source.database_type)
       ) {
         return resolve([])
       }
@@ -391,9 +429,15 @@ export default {
       if (data.meta_type === 'database') {
         if (
           data.source.database_type &&
-          ['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection', 'redis'].includes(
-            data.source.database_type
-          )
+          [
+            'dummy db',
+            'gridfs',
+            'file',
+            'elasticsearch',
+            'rest api',
+            'custom_connection',
+            'redis'
+          ].includes(data.source.database_type)
         ) {
           formData = {
             connectionId: data.source._id,
@@ -412,7 +456,9 @@ export default {
           name: data.source.name || data.label,
           type: data.source.database_type
         }
-      } else if (['table', 'view', 'collection', 'mongo_view'].includes(data.meta_type)) {
+      } else if (
+        ['table', 'view', 'collection', 'mongo_view'].includes(data.meta_type)
+      ) {
         // let primaryKeys = '';
         if (data.fields) {
           // primaryKeys = data.fields
@@ -420,7 +466,11 @@ export default {
           // 	.map(item => item.field_name)
           // 	.join(',');
 
-          data.fields.forEach((item) => (item.original_field_name = item.original_field_name || item.field_name))
+          data.fields.forEach(
+            (item) =>
+              (item.original_field_name =
+                item.original_field_name || item.field_name)
+          )
         }
         // log('primaryKeys', primaryKeys);
         formData = {
@@ -443,20 +493,40 @@ export default {
 
       this.count = this.count + 50
       let cell = ''
-      if (['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)) {
+      if (
+        ['database', 'directory', 'ftp', 'apiendpoint'].includes(data.meta_type)
+      ) {
         if (
           data.source.database_type &&
-          ['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'custom_connection', 'redis'].includes(
-            data.source.database_type
-          )
+          [
+            'dummy db',
+            'gridfs',
+            'file',
+            'elasticsearch',
+            'rest api',
+            'custom_connection',
+            'redis'
+          ].includes(data.source.database_type)
         ) {
           let dataType = data.source.database_type
-          cell = this.editor.graph.createCell(mapping[dataType], formData, schema)
+          cell = this.editor.graph.createCell(
+            mapping[dataType],
+            formData,
+            schema
+          )
         } else {
-          cell = this.editor.graph.createCell(mapping[data.meta_type], formData, schema)
+          cell = this.editor.graph.createCell(
+            mapping[data.meta_type],
+            formData,
+            schema
+          )
         }
       } else {
-        cell = this.editor.graph.createCell(mapping[data.meta_type], formData, schema)
+        cell = this.editor.graph.createCell(
+          mapping[data.meta_type],
+          formData,
+          schema
+        )
       }
       let coordinates = this.editor.graph.getClientOffset()
       cell.position(coordinates.x + 400, coordinates.y + this.count + 160)

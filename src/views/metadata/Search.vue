@@ -1,17 +1,33 @@
 <template>
-  <section class="metadata-search-wrap" :class="{ 'metadata-change-background': !showNoSearch }">
+  <section
+    class="metadata-search-wrap"
+    :class="{ 'metadata-change-background': !showNoSearch }"
+  >
     <div class="no-search-box-wrap" v-show="showNoSearch">
       <div class="no-search-box">
-        <header class="metadata-search-title">{{ $t('metadata.metadataSearch.title') }}</header>
+        <header class="metadata-search-title">
+          {{ $t('metadata.metadataSearch.title') }}
+        </header>
         <el-input
           :placeholder="$t('metadata.metadataSearch.placeholder')"
           v-model="keyword"
           class="input-with"
           maxlength="100"
         >
-          <el-select v-model="meta_type" slot="prepend" placeholder="请选择" class="input-with-select">
-            <el-option :label="$t('metadata.metadataSearch.table')" value="table"></el-option>
-            <el-option :label="$t('metadata.metadataSearch.column')" value="column"></el-option>
+          <el-select
+            v-model="meta_type"
+            slot="prepend"
+            placeholder="请选择"
+            class="input-with-select"
+          >
+            <el-option
+              :label="$t('metadata.metadataSearch.table')"
+              value="table"
+            ></el-option>
+            <el-option
+              :label="$t('metadata.metadataSearch.column')"
+              value="column"
+            ></el-option>
           </el-select>
           <el-button type="primary" slot="append" @click="handleSearch">{{
             $t('metadata.metadataSearch.search')
@@ -25,7 +41,9 @@
     <div class="search-box-wrap" v-show="!showNoSearch">
       <div class="search-box">
         <div class="search-header">
-          <span class="search-title">{{ $t('metadata.metadataSearch.title') }}</span>
+          <span class="search-title">{{
+            $t('metadata.metadataSearch.title')
+          }}</span>
           <el-input
             class="input-with"
             :placeholder="$t('metadata.metadataSearch.placeholder')"
@@ -34,31 +52,56 @@
             maxlength="100"
             @keyup.native.13="handleSearch('')"
           >
-            <el-select v-model="meta_type" slot="prepend" placeholder="请选择" class="input-with-select">
-              <el-option :label="$t('metadata.metadataSearch.table')" value="table"></el-option>
-              <el-option :label="$t('metadata.metadataSearch.column')" value="column"></el-option>
+            <el-select
+              v-model="meta_type"
+              slot="prepend"
+              placeholder="请选择"
+              class="input-with-select"
+            >
+              <el-option
+                :label="$t('metadata.metadataSearch.table')"
+                value="table"
+              ></el-option>
+              <el-option
+                :label="$t('metadata.metadataSearch.column')"
+                value="column"
+              ></el-option>
             </el-select>
             <el-button type="primary" slot="append" @click="handleSearch('')">{{
               $t('metadata.metadataSearch.search')
             }}</el-button>
           </el-input>
         </div>
-        <div class="no-result" v-if="searchData.length === 0 && firstSearch === 0">
+        <div
+          class="no-result"
+          v-if="searchData.length === 0 && firstSearch === 0"
+        >
           {{ $t('metadata.metadataSearch.noSearch') }}
         </div>
-        <div class="no-result" v-else-if="searchData.length === 0 && firstSearch !== 0">
+        <div
+          class="no-result"
+          v-else-if="searchData.length === 0 && firstSearch !== 0"
+        >
           {{ $t('metadata.metadataSearch.noResult') }}
         </div>
         <div ref="searchResult" class="search-result" v-else>
           <ul class="table">
             <li class="table-li" v-for="item in searchData" :key="item.id">
-              <div class="table-box-wrap" v-if="item.table" @click="goMetaInfo(item.id)">
+              <div
+                class="table-box-wrap"
+                v-if="item.table"
+                @click="goMetaInfo(item.id)"
+              >
                 <div class="image-box">
-                  <el-image :src="require('@/assets/images/metaSearchTable.png')"></el-image>
+                  <el-image
+                    :src="require('@/assets/images/metaSearchTable.png')"
+                  ></el-image>
                 </div>
                 <div class="info-box">
                   <span class="title" v-html="item.table.name"></span>
-                  <span class="title" v-if="item.table.original_name">( 原表名:</span>
+                  <span class="title" v-if="item.table.original_name"
+                    >( 原表名:</span
+                  >
                   <span class="title" v-html="item.table.original_name"></span>
                   <span class="title" v-if="item.table.original_name"> )</span>
                   <div class="desc" v-html="item.table.comment"></div>
@@ -67,11 +110,15 @@
               <ul class="column" v-if="item.columns && item.columns.length > 0">
                 <li v-for="filed in item.columns" :key="filed.field_name">
                   <div class="image-box">
-                    <el-image :src="getImgByType(filed.type) || getImgByType('Default')"></el-image>
+                    <el-image
+                      :src="getImgByType(filed.type) || getImgByType('Default')"
+                    ></el-image>
                   </div>
                   <div class="info-box">
                     <span class="title" v-html="filed.field_name"></span>
-                    <span class="title" v-if="filed.original_name">( 原表名:</span>
+                    <span class="title" v-if="filed.original_name"
+                      >( 原表名:</span
+                    >
                     <span class="title" v-html="filed.original_name"></span>
                     <span class="title" v-if="filed.original_name"> )</span>
                     <div class="desc" v-html="filed.comment"></div>
@@ -79,8 +126,15 @@
                 </li>
               </ul>
             </li>
-            <li class="more" v-if="noMore">{{ $t('metadata.metadataSearch.noMore') }} ?_(:з」∠)......</li>
-            <li v-else class="more" v-loading="loading" @click="handleSearch(lastId)">
+            <li class="more" v-if="noMore">
+              {{ $t('metadata.metadataSearch.noMore') }} ?_(:з」∠)......
+            </li>
+            <li
+              v-else
+              class="more"
+              v-loading="loading"
+              @click="handleSearch(lastId)"
+            >
               {{ $t('metadata.metadataSearch.more') }}
             </li>
           </ul>
@@ -173,21 +227,34 @@ export default {
       targetData.forEach((item) => {
         if (item.table) {
           item.table.name = this.markKeyword(this.keyword, item.table.name)
-          item.table.original_name = this.markKeyword(this.keyword, item.table.original_name)
-          if (item.table.comment) item.table.comment = this.markKeyword(this.keyword, item.table.comment)
+          item.table.original_name = this.markKeyword(
+            this.keyword,
+            item.table.original_name
+          )
+          if (item.table.comment)
+            item.table.comment = this.markKeyword(
+              this.keyword,
+              item.table.comment
+            )
         }
         if (item.columns && item.columns.length > 0) {
           item.columns.forEach((field) => {
             field.field_name = this.markKeyword(this.keyword, field.field_name)
-            field.original_field_name = this.markKeyword(this.keyword, field.original_field_name)
-            if (field.comment) field.comment = this.markKeyword(this.keyword, field.comment)
+            field.original_field_name = this.markKeyword(
+              this.keyword,
+              field.original_field_name
+            )
+            if (field.comment)
+              field.comment = this.markKeyword(this.keyword, field.comment)
           })
         }
       })
     },
     markKeyword(keyword, text) {
       if (keyword && text.indexOf(keyword) !== -1) {
-        return text.split(keyword).join(`<span style="color: red">${keyword}</span>`)
+        return text
+          .split(keyword)
+          .join(`<span style="color: red">${keyword}</span>`)
       }
       return text
     },

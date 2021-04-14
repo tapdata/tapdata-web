@@ -5,8 +5,18 @@
 				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
 		</div> -->
-    <el-form ref="form" :model="form" :rules="rules" :disabled="disabled" label-position="top" label-width="200px">
-      <el-form-item prop="name" :label="$t('editor.cell.data_node.api.dataApiName')">
+    <el-form
+      ref="form"
+      :model="form"
+      :rules="rules"
+      :disabled="disabled"
+      label-position="top"
+      label-width="200px"
+    >
+      <el-form-item
+        prop="name"
+        :label="$t('editor.cell.data_node.api.dataApiName')"
+      >
         <el-input
           v-model="form.name"
           maxlength="20"
@@ -15,7 +25,10 @@
           required
         ></el-input>
       </el-form-item>
-      <el-form-item :label="$t('editor.cell.data_node.api.description')" class="pdTop5 e-textarea">
+      <el-form-item
+        :label="$t('editor.cell.data_node.api.description')"
+        class="pdTop5 e-textarea"
+      >
         <el-input
           type="textarea"
           v-model="form.description"
@@ -28,7 +41,12 @@
         <el-col :span="6">
           <el-form-item :label="$t('editor.cell.data_node.api.method')">
             <el-select v-model="form.paths.method">
-              <el-option v-for="item in selectList" :key="item.value" :label="item.label" :value="item.value">
+              <el-option
+                v-for="item in selectList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
               </el-option>
             </el-select>
           </el-form-item>
@@ -37,15 +55,24 @@
           <el-form-item
             :label="
               mergedSchema && mergedSchema.table_name
-                ? 'URL/API/V1/' + mergedSchema.table_name + '/cust/' + form.apiPath
+                ? 'URL/API/V1/' +
+                  mergedSchema.table_name +
+                  '/cust/' +
+                  form.apiPath
                 : 'URL/API/V1/cust/' + form.apiPath
             "
           >
-            <el-input v-model="form.apiPath" :placeholder="$t('editor.cell.data_node.api.enterEndUrl')"></el-input>
+            <el-input
+              v-model="form.apiPath"
+              :placeholder="$t('editor.cell.data_node.api.enterEndUrl')"
+            ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item :label="$t('editor.cell.data_node.api.fieldSettings')" class="pdTop5">
+      <el-form-item
+        :label="$t('editor.cell.data_node.api.fieldSettings')"
+        class="pdTop5"
+      >
         <el-table
           border
           :data="form.paths.fields"
@@ -53,8 +80,16 @@
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
           style="width: 100%"
         >
-          <el-table-column prop="field_name" :label="$t('editor.cell.data_node.api.table_field')"> </el-table-column>
-          <el-table-column prop="javaType" :label="$t('editor.cell.data_node.api.table_type')" width="80">
+          <el-table-column
+            prop="field_name"
+            :label="$t('editor.cell.data_node.api.table_field')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="javaType"
+            :label="$t('editor.cell.data_node.api.table_type')"
+            width="80"
+          >
           </el-table-column>
           <el-table-column
             align="center"
@@ -64,7 +99,9 @@
           >
             <template slot-scope="scope">
               <!-- <el-checkbox-group v-model="scope.row.checkList"> -->
-              <el-checkbox v-model="scope.row.required">{{ $t('editor.cell.data_node.api.required') }}</el-checkbox>
+              <el-checkbox v-model="scope.row.required">{{
+                $t('editor.cell.data_node.api.required')
+              }}</el-checkbox>
               <el-checkbox v-model="scope.row.query">{{
                 $t('editor.cell.data_node.api.availableQueries')
               }}</el-checkbox>
@@ -120,7 +157,10 @@ export default {
             message: this.$t('editor.cell.data_node.api.enterPublishApiName'),
             trigger: 'blur'
           },
-          { pattern: /^[a-zA-Z$_][a-zA-Z\d_]*$/, message: this.$t('editor.cell.data_node.api.variable_name') }
+          {
+            pattern: /^[a-zA-Z$_][a-zA-Z\d_]*$/,
+            message: this.$t('editor.cell.data_node.api.variable_name')
+          }
         ]
       },
       // inputSchemas: [],
@@ -218,7 +258,8 @@ export default {
           delete item.query
         })
         if (this.mergedSchema) {
-          data.paths.path = '/API/V1/' + this.mergedSchema.table_name + '/cust/' + data.apiPath
+          data.paths.path =
+            '/API/V1/' + this.mergedSchema.table_name + '/cust/' + data.apiPath
         } else {
           data.paths.path = '/API/V1/' + 'cust/' + data.apiPath
         }

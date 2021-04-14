@@ -5,7 +5,7 @@
  */
 export const options = {
   colorPalette: [
-    { content: 'transparent', icon: 'editor/transparent-icon.svg' },
+    { content: 'transparent', icon: 'static/editor/transparent-icon.svg' },
     { content: '#f6f6f6' },
     { content: '#dcd7d7' },
     { content: '#8f8f8f' },
@@ -24,7 +24,7 @@ export const options = {
   ],
 
   colorPaletteReset: [
-    { content: undefined, icon: 'editor/no-color-icon.svg' },
+    { content: undefined, icon: 'static/editor/no-color-icon.svg' },
     { content: '#f6f6f6' },
     { content: '#dcd7d7' },
     { content: '#8f8f8f' },
@@ -68,7 +68,8 @@ export const options = {
     },
     {
       value: 'Roboto Condensed',
-      content: '<span style="font-family: Roboto Condensed">Roboto Condensed</span>'
+      content:
+        '<span style="font-family: Roboto Condensed">Roboto Condensed</span>'
     }
   ],
 
@@ -99,31 +100,33 @@ export const options = {
 
   imageIcons: [
     {
-      value: 'editor/image-icon1.svg',
+      value: 'static/editor/image-icon1.svg',
       content: '<img height="42px" src="editor/image-icon1.svg"/>'
     },
     {
-      value: 'editor/image-icon2.svg',
+      value: 'static/editor/image-icon2.svg',
       content: '<img height="80px" src="editor/image-icon2.svg"/>'
     },
     {
-      value: 'editor/image-icon3.svg',
+      value: 'static/editor/image-icon3.svg',
       content: '<img height="80px" src="editor/image-icon3.svg"/>'
     },
     {
-      value: 'editor/image-icon4.svg',
+      value: 'static/editor/image-icon4.svg',
       content: '<img height="80px" src="editor/image-icon4.svg"/>'
     }
   ],
 
   imageGender: [
     {
-      value: 'editor/member-male.png',
-      content: '<img height="50px" src="editor/member-male.png" style="margin: 5px 0 0 2px;"/>'
+      value: 'static/editor/member-male.png',
+      content:
+        '<img height="50px" src="editor/member-male.png" style="margin: 5px 0 0 2px;"/>'
     },
     {
-      value: 'editor/member-female.png',
-      content: '<img height="50px" src="editor/member-female.png" style="margin: 5px 0 0 2px;"/>'
+      value: 'static/editor/member-female.png',
+      content:
+        '<img height="50px" src="editor/member-female.png" style="margin: 5px 0 0 2px;"/>'
     }
   ],
 
@@ -137,26 +140,31 @@ export const options = {
   strokeWidth: [
     {
       value: 1,
-      content: '<div style="background:#fff;width:2px;height:30px;margin:0 14px;border-radius: 2px;"/>'
+      content:
+        '<div style="background:#fff;width:2px;height:30px;margin:0 14px;border-radius: 2px;"/>'
     },
     {
       value: 2,
-      content: '<div style="background:#fff;width:4px;height:30px;margin:0 13px;border-radius: 2px;"/>'
+      content:
+        '<div style="background:#fff;width:4px;height:30px;margin:0 13px;border-radius: 2px;"/>'
     },
     {
       value: 4,
-      content: '<div style="background:#fff;width:8px;height:30px;margin:0 11px;border-radius: 2px;"/>'
+      content:
+        '<div style="background:#fff;width:8px;height:30px;margin:0 11px;border-radius: 2px;"/>'
     },
     {
       value: 8,
-      content: '<div style="background:#fff;width:16px;height:30px;margin:0 8px;border-radius: 2px;"/>'
+      content:
+        '<div style="background:#fff;width:16px;height:30px;margin:0 8px;border-radius: 2px;"/>'
     }
   ],
 
   router: [
     {
       value: 'normal',
-      content: '<p style="background:#fff;width:2px;height:30px;margin:0 14px;border-radius: 2px;"/>'
+      content:
+        '<p style="background:#fff;width:2px;height:30px;margin:0 14px;border-radius: 2px;"/>'
     },
     {
       value: 'orthogonal',
@@ -165,14 +173,16 @@ export const options = {
     },
     {
       value: 'oneSide',
-      content: '<p style="width:20px;height:30px;margin:0 5px;border: 2px solid #fff;border-top: none;"/>'
+      content:
+        '<p style="width:20px;height:30px;margin:0 5px;border: 2px solid #fff;border-top: none;"/>'
     }
   ],
 
   connector: [
     {
       value: 'normal',
-      content: '<p style="width:20px;height:20px;margin:5px;border-top:2px solid #fff;border-left:2px solid #fff;"/>'
+      content:
+        '<p style="width:20px;height:20px;margin:5px;border-top:2px solid #fff;border-left:2px solid #fff;"/>'
     },
     {
       value: 'rounded',
@@ -693,7 +703,10 @@ export const inspectorConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -789,7 +802,10 @@ export const inspectorConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/stroke-width': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/stroke-width': 0 } }
+              ]
             },
             index: 4
           }
@@ -885,7 +901,10 @@ export const inspectorConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -981,7 +1000,10 @@ export const inspectorConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -1019,7 +1041,10 @@ export const inspectorConfig = {
             label: 'Outline style',
             group: 'top',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -1283,7 +1308,10 @@ export const inspectorConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -1436,7 +1464,10 @@ export const inspectorConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -1761,7 +1792,10 @@ export const inspectorConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/.root/stroke': 'transparent' } }, { ne: { 'attrs/.root/stroke-width': 0 } }]
+              and: [
+                { ne: { 'attrs/.root/stroke': 'transparent' } },
+                { ne: { 'attrs/.root/stroke-width': 0 } }
+              ]
             },
             index: 4
           }
@@ -1868,7 +1902,10 @@ export const inspectorConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/rect/stroke': 'transparent' } }, { ne: { 'attrs/rect/stroke-width': 0 } }]
+              and: [
+                { ne: { 'attrs/rect/stroke': 'transparent' } },
+                { ne: { 'attrs/rect/stroke-width': 0 } }
+              ]
             },
             index: 3
           }
@@ -3542,7 +3579,10 @@ export const inspectorConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/.card/stroke': 'transparent' } }, { ne: { 'attrs/.card/stroke-width': 0 } }]
+              and: [
+                { ne: { 'attrs/.card/stroke': 'transparent' } },
+                { ne: { 'attrs/.card/stroke-width': 0 } }
+              ]
             },
             index: 4
           }

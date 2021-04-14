@@ -4,14 +4,22 @@
       <i class="iconfont icon-zhankai2"></i>
     </el-button>
     <el-button class="btn-addIcon" size="mini" type="text">
-      <i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i>
+      <i
+        class="iconfont icon-jia"
+        v-readonlybtn="authority"
+        @click="showDialog()"
+      ></i>
     </el-button>
     <el-button class="btn-query" size="mini" type="text">
       <i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
     </el-button>
     <div class="classification-header">
       <div class="title">
-        <span>{{ types[0] === 'user' ? $t('classification.userTitle') : $t('classification.title') }}</span>
+        <span>{{
+          types[0] === 'user'
+            ? $t('classification.userTitle')
+            : $t('classification.title')
+        }}</span>
       </div>
       <div class="search-box" v-if="searchFalg">
         <el-input class="search" size="mini" v-model="filterText">
@@ -40,23 +48,47 @@
           <span class="iconfont icon-Folder-closed icon-folder"></span>
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
           <span class="table-label">{{ data.value }}</span>
-          <el-dropdown class="btn-menu" size="mini" @command="handleRowCommand($event, node)" v-readonlybtn="authority">
-            <el-button type="text"><i class="iconfont icon-gengduo3 task-list-icon"></i></el-button>
+          <el-dropdown
+            class="btn-menu"
+            size="mini"
+            @command="handleRowCommand($event, node)"
+            v-readonlybtn="authority"
+          >
+            <el-button type="text"
+              ><i class="iconfont icon-gengduo3 task-list-icon"></i
+            ></el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="add">
                 {{ $t('classification.addChildernNode') }}
               </el-dropdown-item>
-              <el-dropdown-item command="edit">{{ $t('classification.editNode') }}</el-dropdown-item>
-              <el-dropdown-item command="delete">{{ $t('classification.deleteNode') }}</el-dropdown-item>
+              <el-dropdown-item command="edit">{{
+                $t('classification.editNode')
+              }}</el-dropdown-item>
+              <el-dropdown-item command="delete">{{
+                $t('classification.deleteNode')
+              }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </span>
       </el-tree>
-      <span v-else v-readonlybtn="authority" @click="showDialog()" class="create">
-        {{ types[0] === 'user' ? $t('classification.creatUserGroup') : $t('classification.creatDataClassification') }}
+      <span
+        v-else
+        v-readonlybtn="authority"
+        @click="showDialog()"
+        class="create"
+      >
+        {{
+          types[0] === 'user'
+            ? $t('classification.creatUserGroup')
+            : $t('classification.creatDataClassification')
+        }}
       </span>
     </div>
-    <el-dialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+    <el-dialog
+      :visible.sync="dialogConfig.visible"
+      width="30%"
+      :close-on-click-modal="false"
+    >
       <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
       <el-input
         size="mini"
@@ -66,7 +98,9 @@
         show-word-limit
       ></el-input>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="hideDialog()">{{ $t('message.cancel') }}</el-button>
+        <el-button size="mini" @click="hideDialog()">{{
+          $t('message.cancel')
+        }}</el-button>
         <el-button size="mini" type="primary" @click="dialogSubmit()">
           {{ $t('message.confirm') }}
         </el-button>

@@ -32,7 +32,23 @@ export function signOut() {
 }
 
 export function toRegExp(word) {
-  let arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
+  let arr = [
+    '\\',
+    '$',
+    '(',
+    ')',
+    '*',
+    '+',
+    '.',
+    '[',
+    ']',
+    '?',
+    '^',
+    '{',
+    '}',
+    '|',
+    '-'
+  ]
   for (let i = 0; i < arr.length; i++) {
     let str = '\\' + arr[i]
     word = word.replace(new RegExp(str, 'g'), '\\' + arr[i])

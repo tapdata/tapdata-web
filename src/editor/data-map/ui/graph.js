@@ -93,7 +93,10 @@ export default class Graph extends Component {
       validateConnection: function (sv, sm, tv, tm, end) {
         if (sv === tv) return false
         if (sv.model.isLink() || tv.model.isLink()) return false
-        if (end === 'target') return tv.model.getItemSide(tv.findAttribute('item-id', tm)) !== 'right'
+        if (end === 'target')
+          return (
+            tv.model.getItemSide(tv.findAttribute('item-id', tm)) !== 'right'
+          )
         return sv.model.getItemSide(sv.findAttribute('item-id', sm)) !== 'left'
       },
       highlighting: {
@@ -171,7 +174,9 @@ export default class Graph extends Component {
     if (cell.isLink()) {
       this.getCellInbounds(graph, cell.getSourceCell(), result)
     } else if (cell.isElement()) {
-      graph.getConnectedLinks(cell, { inbound: true }).forEach((link) => this.getCellInbounds(graph, link, result))
+      graph
+        .getConnectedLinks(cell, { inbound: true })
+        .forEach((link) => this.getCellInbounds(graph, link, result))
     }
 
     /*let self = this;
@@ -187,7 +192,9 @@ export default class Graph extends Component {
     if (cell.isLink()) {
       this.getCellOutbounds(graph, cell.getTargetCell(), result)
     } else if (cell.isElement()) {
-      graph.getConnectedLinks(cell, { outbound: true }).forEach((link) => this.getCellOutbounds(graph, link, result))
+      graph
+        .getConnectedLinks(cell, { outbound: true })
+        .forEach((link) => this.getCellOutbounds(graph, link, result))
     }
     /*let self = this;
 		let outCell = graph.getNeighbors(cell, { outbound: true }) || [];
@@ -358,7 +365,8 @@ export default class Graph extends Component {
     if (embedElements && embedElements.length > 0) {
       let embedBBox = this.getCellsBBox(embedElements)
       width = embedBBox.width > defaultWidth ? embedBBox.width : defaultWidth
-      height = embedBBox.height > defaultHeight ? embedBBox.height : defaultHeight
+      height =
+        embedBBox.height > defaultHeight ? embedBBox.height : defaultHeight
     }
     lane.resize(width, height)
     this.setLaneHeaderStyle(lane, width, this.spacing)
@@ -379,16 +387,26 @@ export default class Graph extends Component {
     let sourceWidth = sourceBBox.width
 
     this.resizeLanes(this.tapdataLane, width, height)
-    this.tapdataLane.position(spacing + sourceWidth + spacing, spacing, { deep: true })
+    this.tapdataLane.position(spacing + sourceWidth + spacing, spacing, {
+      deep: true
+    })
     let tapdataBBox = this.tapdataLane.getBBox()
     let tapdataWidth = tapdataBBox.width
 
     this.resizeLanes(this.apiLane, width, height)
-    this.apiLane.position(spacing + sourceWidth + spacing + tapdataWidth + spacing, spacing, { deep: true })
+    this.apiLane.position(
+      spacing + sourceWidth + spacing + tapdataWidth + spacing,
+      spacing,
+      { deep: true }
+    )
     let apiBBox = this.apiLane.getBBox()
     let apiWidth = apiBBox.width
 
-    let maxHeight = [sourceBBox.height, tapdataBBox.height, apiBBox.height].sort((a, b) => b - a)[0]
+    let maxHeight = [
+      sourceBBox.height,
+      tapdataBBox.height,
+      apiBBox.height
+    ].sort((a, b) => b - a)[0]
     this.sourceLane.resize(sourceWidth, maxHeight)
     this.tapdataLane.resize(tapdataWidth, maxHeight)
     this.apiLane.resize(apiWidth, maxHeight)
@@ -455,7 +473,9 @@ export default class Graph extends Component {
     /*this.paper.scaleContentToFit({
 			top: 240, bottom: 240, left: 240, right: 240
 		});*/
-    this.paperScroller.centerContent({ padding: { top: 200, bottom: 200, left: 200, right: 200 } })
+    this.paperScroller.centerContent({
+      padding: { top: 200, bottom: 200, left: 200, right: 200 }
+    })
   }
 
   updateElementHeader() {
@@ -556,12 +576,19 @@ export default class Graph extends Component {
         {
           attrs: {
             label: {
-              text: cellData.name !== '' && cellData.name ? breakText.breakText(cellData.name, 200) : cellConfig.type
+              text:
+                cellData.name !== '' && cellData.name
+                  ? breakText.breakText(cellData.name, 200)
+                  : cellConfig.type
             }
           },
-          properties: _.assignWith(cellData.properties || {}, { name: cellData.name }, (oldValue, newValue) => {
-            return oldValue || newValue || ''
-          })
+          properties: _.assignWith(
+            cellData.properties || {},
+            { name: cellData.name },
+            (oldValue, newValue) => {
+              return oldValue || newValue || ''
+            }
+          )
         },
         opts
       )
@@ -818,7 +845,10 @@ export default class Graph extends Component {
         content: 'Are you sure you want to delete this link?',
         buttons: [
           { action: 'cancel', content: 'Cancel' },
-          { action: 'remove', content: '<span style="color:#fe854f">Remove</span>' }
+          {
+            action: 'remove',
+            content: '<span style="color:#fe854f">Remove</span>'
+          }
         ]
       })
 
@@ -905,7 +935,11 @@ export default class Graph extends Component {
       if (!stage.stageId || !stage.fields) return
 
       let fields = []
-      let tableName = stage.tableName || (stage.fields && stage.fields.length > 0 ? stage.fields[0].table_name : '')
+      let tableName =
+        stage.tableName ||
+        (stage.fields && stage.fields.length > 0
+          ? stage.fields[0].table_name
+          : '')
       stage.tableName = stage.tableName || tableName
       fields = this.convertRecords(stage)
       /*let schema = convertSchemaToTreeData();
@@ -944,8 +978,12 @@ export default class Graph extends Component {
         if (_.isObject(link.target) && link.target.port && link.target.id)
           this.ensurePort(link.target.id, link.target.port)
 
-        let sourceCell = this.graph.getCell(_.isObject(link.source) ? link.source.id : link.source)
-        let targetCell = this.graph.getCell(_.isObject(link.target) ? link.target.id : link.target)
+        let sourceCell = this.graph.getCell(
+          _.isObject(link.source) ? link.source.id : link.source
+        )
+        let targetCell = this.graph.getCell(
+          _.isObject(link.target) ? link.target.id : link.target
+        )
 
         if (sourceCell && targetCell) {
           // let sourceCellType = sourceCell.get('type');
@@ -1101,7 +1139,7 @@ export default class Graph extends Component {
         let record = {
           id: fields.id,
           label: `${fields.label}    (${fields.type})`,
-          icon: 'editor/file.svg'
+          icon: 'static/editor/file.svg'
         }
         if (fields.children && fields.children.length > 0) {
           record.icon = ''
@@ -1329,7 +1367,9 @@ export default class Graph extends Component {
     dom.find('>*').remove()
     Object.keys(properties).forEach((key) => {
       let label = i18n.t('dataMap.properties.' + key) || key
-      let value = Array.isArray(properties[key]) ? properties[key].join(', ') : properties[key]
+      let value = Array.isArray(properties[key])
+        ? properties[key].join(', ')
+        : properties[key]
       dom.append($(`<div>${label}: ${value}</div>`))
     })
   }

@@ -8,7 +8,11 @@ import { stencilConfig, inspectorConfig } from '../lib/rappid/config'
 import { vueAdapter } from '../vue-adapter'
 import joint from '../lib/rappid/rappid'
 import * as plugins from './index'
-import { FORM_DATA_KEY, DATABASE_TYPE_MAPPING, FILE_TYPE_MAPPING } from '../constants'
+import {
+  FORM_DATA_KEY,
+  DATABASE_TYPE_MAPPING,
+  FILE_TYPE_MAPPING
+} from '../constants'
 
 export const loadPlugins = function (cNodes) {
   const defineShape = (type, shape) => {
@@ -19,9 +23,14 @@ export const loadPlugins = function (cNodes) {
 
     let parentObj = _.get(joint.shapes, shape.extends)
 
-    if (parentObj && parentObj.define && typeof parentObj.define === 'function') {
+    if (
+      parentObj &&
+      parentObj.define &&
+      typeof parentObj.define === 'function'
+    ) {
       let args = [shapeType]
-      if (shape.defaultInstanceProperties) args.push(shape.defaultInstanceProperties)
+      if (shape.defaultInstanceProperties)
+        args.push(shape.defaultInstanceProperties)
       if (shape.prototypeProperties) {
         args.push(shape.prototypeProperties)
         let initialize = shape.prototypeProperties.initialize
@@ -60,7 +69,12 @@ export const loadPlugins = function (cNodes) {
     delete stencil.group
     delete stencil.groupLabel
     stencil.type = type
-    if (stencil && stencil.attrs && stencil.attrs.label && stencil.attrs.label.text) {
+    if (
+      stencil &&
+      stencil.attrs &&
+      stencil.attrs.label &&
+      stencil.attrs.label.text
+    ) {
       stencil.attrs.label.text = joint.util.breakText(
         stencil.attrs.label.text,
         { width: 60, height: 40 },
@@ -81,7 +95,10 @@ export const loadPlugins = function (cNodes) {
     let replace = false
     for (let i = 0; i < stencilConfig.shapes[group].length; i++) {
       // if (stencilConfig.shapes[group][i].type === type) {
-      if (stencilConfig.shapes[group][i].attrs.label.text === stencil.attrs.label.text) {
+      if (
+        stencilConfig.shapes[group][i].attrs.label.text ===
+        stencil.attrs.label.text
+      ) {
         stencilConfig.shapes[group][i] = stencil
         replace = true
         break
@@ -118,17 +135,23 @@ export const loadPlugins = function (cNodes) {
       }
 
       let type = plugin.type
-      if (!map[type] || window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(map[type])) {
+      if (
+        !map[type] ||
+        window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(map[type])
+      ) {
         defineShape(type, plugin.shape)
         addInspector(type, plugin.styleFormConfig)
         addSettingForm(type, plugin.settingFormConfig)
 
         if (type === 'app.Database' || type === 'app.FileFormBuilder') {
-          let addData = type === 'app.Database' ? DATABASE_TYPE_MAPPING : FILE_TYPE_MAPPING
+          let addData =
+            type === 'app.Database' ? DATABASE_TYPE_MAPPING : FILE_TYPE_MAPPING
           Object.keys(addData).forEach((key) => {
             let database = addData[key]
             if (
-              window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(database.type) ||
+              window
+                .getSettingByKey('ALLOW_CONNECTION_TYPE')
+                .includes(database.type) ||
               type === 'app.FileFormBuilder'
             ) {
               let cell = _.cloneDeep(database)
@@ -153,9 +176,10 @@ export const loadPlugins = function (cNodes) {
           cNodes.forEach((config) => {
             let plugin = _.cloneDeep(plugins[name])
             let nodeConfig = config.nodeConfig
-            config.nodeConfig.shapeImage = 'editor/o-table-processor.svg'
+            config.nodeConfig.shapeImage = 'static/editor/o-table-processor.svg'
             // plugin.stencil['attrs']['image']['xlinkHref'] = nodeConfig.stencilImage;
-            plugin.stencil['attrs']['image']['xlinkHref'] = 'editor/table-processor.svg'
+            plugin.stencil['attrs']['image']['xlinkHref'] =
+              'static/editor/table-processor.svg'
             plugin.stencil['attrs']['label']['text'] = nodeConfig.name
             plugin.stencil['attrs']['root']['dataTooltip'] = nodeConfig.tips
             addStencil(

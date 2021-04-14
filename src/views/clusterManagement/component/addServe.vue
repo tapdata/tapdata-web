@@ -1,6 +1,12 @@
 <template>
   <section class="addServe-wrap">
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="addServe">
+    <el-form
+      :model="ruleForm"
+      :rules="rules"
+      ref="ruleForm"
+      label-width="100px"
+      class="addServe"
+    >
       <el-form-item
         label="name"
         prop="name"
@@ -10,7 +16,11 @@
           trigger: 'blur'
         }"
       >
-        <el-input v-model="ruleForm.name" size="mini" :placeholder="$t('message.placeholderMonServer')"></el-input>
+        <el-input
+          v-model="ruleForm.name"
+          size="mini"
+          :placeholder="$t('message.placeholderMonServer')"
+        ></el-input>
       </el-form-item>
 
       <el-form-item
@@ -22,11 +32,19 @@
           trigger: 'blur'
         }"
       >
-        <el-input v-model="ruleForm.command" size="mini" :placeholder="$t('message.placeholderCommand')"></el-input>
+        <el-input
+          v-model="ruleForm.command"
+          size="mini"
+          :placeholder="$t('message.placeholderCommand')"
+        ></el-input>
       </el-form-item>
 
       <el-form-item label="arguements" prop="arguements">
-        <el-input v-model="ruleForm.arguments" size="mini" placeholder="arguements"></el-input>
+        <el-input
+          v-model="ruleForm.arguments"
+          size="mini"
+          placeholder="arguements"
+        ></el-input>
       </el-form-item>
     </el-form>
   </section>
@@ -45,7 +63,10 @@ export default {
         uuid: this.editItem.uuid ? this.editItem.uuid : '',
         name: this.editItem.name ? this.editItem.name : '',
         command: this.editItem.command ? this.editItem.command : '',
-        arguments: this.editItem.arguments || this.editItem.arguments !== null ? this.editItem.arguments : ''
+        arguments:
+          this.editItem.arguments || this.editItem.arguments !== null
+            ? this.editItem.arguments
+            : ''
       },
       rules: {}
     }

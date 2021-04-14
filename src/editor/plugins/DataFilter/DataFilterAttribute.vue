@@ -5,11 +5,24 @@
 				{{ $t('dataFlow.button.viewMonitoring') }}
 			</el-button>
 		</div> -->
-    <el-form class="e-form" label-position="top" label-width="130px" :model="model" ref="form" :disabled="disabled">
-      <el-form-item :required="true" :label="$t('editor.cell.processor.dataFilter.form.name.label')" size="mini">
+    <el-form
+      class="e-form"
+      label-position="top"
+      label-width="130px"
+      :model="model"
+      ref="form"
+      :disabled="disabled"
+    >
+      <el-form-item
+        :required="true"
+        :label="$t('editor.cell.processor.dataFilter.form.name.label')"
+        size="mini"
+      >
         <el-input
           v-model="model.name"
-          :placeholder="$t('editor.cell.processor.dataFilter.form.name.placeholder')"
+          :placeholder="
+            $t('editor.cell.processor.dataFilter.form.name.placeholder')
+          "
         ></el-input>
       </el-form-item>
 
@@ -18,13 +31,24 @@
           {{ $t('editor.cell.processor.dataFilter.form.expression.label') }}
           <el-tooltip placement="right-end">
             <div slot="content">
-              {{ $t('editor.cell.processor.dataFilter.form.expression.labelTip') }}
+              {{
+                $t('editor.cell.processor.dataFilter.form.expression.labelTip')
+              }}
             </div>
             <i class="e-primary el-icon-warning-outline"></i>
           </el-tooltip>
         </template>
-        <el-input type="textarea" v-model="model.expression" :autosize="{ minRows: 20 }" v-if="disabled"></el-input>
-        <JsEditor :code.sync="model.expression" :width.sync="width" v-if="!disabled"></JsEditor>
+        <el-input
+          type="textarea"
+          v-model="model.expression"
+          :autosize="{ minRows: 20 }"
+          v-if="disabled"
+        ></el-input>
+        <JsEditor
+          :code.sync="model.expression"
+          :width.sync="width"
+          v-if="!disabled"
+        ></JsEditor>
         <!--				<el-input-->
         <!--					type="textarea"-->
         <!--					v-model="model.expression"-->
@@ -34,18 +58,28 @@
         <!--				></el-input>-->
         <div style="color: #888888; font-size: 0.8em">
           <h3 style="font-size: 1.1em; font-weight: bold">
-            {{ $t('editor.cell.processor.dataFilter.form.expressionExample.label') }}:
+            {{
+              $t(
+                'editor.cell.processor.dataFilter.form.expressionExample.label'
+              )
+            }}:
           </h3>
           <p style="text-indent: 2em">
-            {{ $t('editor.cell.processor.dataFilter.form.expressionExample.tip') }}
+            {{
+              $t('editor.cell.processor.dataFilter.form.expressionExample.tip')
+            }}
           </p>
           <p style="text-indent: 2em">
-            <span style="color: red">(</span> record.gender <span style="color: #f5af3f">==</span> 0
-            <span style="color: #f5af3f">&&</span> record.age <span style="color: #f5af3f">&gt;</span> 50
+            <span style="color: red">(</span> record.gender
+            <span style="color: #f5af3f">==</span> 0
+            <span style="color: #f5af3f">&&</span> record.age
+            <span style="color: #f5af3f">&gt;</span> 50
             <span style="color: red">)</span>
             <span style="color: #f5af3f">|| </span>
-            <span style="color: red">(</span> record.age <span style="color: #f5af3f">&ge;</span>30
-            <span style="color: #f5af3f">&&</span> record.salary <span style="color: #f5af3f">&le;</span> 10000
+            <span style="color: red">(</span> record.age
+            <span style="color: #f5af3f">&ge;</span>30
+            <span style="color: #f5af3f">&&</span> record.salary
+            <span style="color: #f5af3f">&le;</span> 10000
             <span style="color: red">)</span>
           </p>
 
@@ -118,10 +152,20 @@
         </div>
       </el-form-item>
 
-      <el-form-item :required="true" size="mini" :label="$t('editor.cell.processor.dataFilter.form.action.label')">
+      <el-form-item
+        :required="true"
+        size="mini"
+        :label="$t('editor.cell.processor.dataFilter.form.action.label')"
+      >
         <el-select v-model="model.action">
-          <el-option value="retain" :label="$t('editor.cell.processor.dataFilter.form.action.retain')"></el-option>
-          <el-option value="discard" :label="$t('editor.cell.processor.dataFilter.form.action.discard')"></el-option>
+          <el-option
+            value="retain"
+            :label="$t('editor.cell.processor.dataFilter.form.action.retain')"
+          ></el-option>
+          <el-option
+            value="discard"
+            :label="$t('editor.cell.processor.dataFilter.form.action.discard')"
+          ></el-option>
         </el-select>
       </el-form-item>
     </el-form>

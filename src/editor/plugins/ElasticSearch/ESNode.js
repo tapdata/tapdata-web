@@ -10,7 +10,7 @@ export const esNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'editor/o-es.svg'
+          xlinkHref: 'static/editor/o-es.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.es.name')
@@ -54,7 +54,10 @@ export const esNodeConfig = {
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`
+          )
         return true
       }
     }
@@ -138,7 +141,10 @@ export const esNodeConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -187,7 +193,7 @@ export const esNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/elastic-search-clust.svg',
+        xlinkHref: 'static/editor/elastic-search-clust.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

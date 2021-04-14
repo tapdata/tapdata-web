@@ -9,7 +9,10 @@ export default function (vm) {
         field: 'connection_type',
         label: vm.$t('dataForm.form.connectionType'),
         options: [
-          { label: vm.$t('dataForm.form.options.sourceAndTarget'), value: 'source_and_target' },
+          {
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            value: 'source_and_target'
+          },
           { label: vm.$t('dataForm.form.options.source'), value: 'source' },
           { label: vm.$t('dataForm.form.options.target'), value: 'target' }
         ],

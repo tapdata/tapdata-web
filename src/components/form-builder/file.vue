@@ -28,7 +28,8 @@ export default {
       'ElInput',
       {
         attrs: {
-          placeholder: config.placeholder || self.$t('formBuilder.file.placeholder')
+          placeholder:
+            config.placeholder || self.$t('formBuilder.file.placeholder')
         },
         props: {
           value: fileName,

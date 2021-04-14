@@ -1,15 +1,26 @@
 <template>
-  <section class="dashboard" v-if="!$window.getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
+  <section
+    class="dashboard"
+    v-if="!$window.getSettingByKey('SHOW_OLD_PAGE')"
+    v-loading="loading"
+  >
     <el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC_menu'">
       <el-col :span="12" class="e-col">
         <div class="charts-list">
-          <echart-head :data="migrationJobObj" @getAllData="getAllData"></echart-head>
+          <echart-head
+            :data="migrationJobObj"
+            @getAllData="getAllData"
+          ></echart-head>
           <div class="info fl">
             <span>{{ $t('app.Home.allTask') }}</span>
             <span class="number">{{ migrationTotal }}</span>
           </div>
           <ul class="jobList">
-            <li v-for="task in migrationTaskList" :key="task.name" @click="handleMigrationStatus(task.name)">
+            <li
+              v-for="task in migrationTaskList"
+              :key="task.name"
+              @click="handleMigrationStatus(task.name)"
+            >
               <span class="text" :style="`color: ${colorMap[task.name]};`">{{
                 $t('dataFlow.status.' + task.name)
               }}</span
@@ -40,13 +51,20 @@
       </el-col>
       <el-col :span="12" class="e-col">
         <div class="charts-list">
-          <echart-head :data="migrationJobStatusObj" @getUnit="getUnit"></echart-head>
+          <echart-head
+            :data="migrationJobStatusObj"
+            @getUnit="getUnit"
+          ></echart-head>
           <ul class="status-box">
             <li v-for="item in taskStatusStatistics" :key="item.value">
               <p>{{ item.name }}</p>
               <div
                 @click="jumpMigrationTask(item.value)"
-                :class="{ lagColor: item.value === 'Lag' && migrationJobStatusList[item.value] > 0 }"
+                :class="{
+                  lagColor:
+                    item.value === 'Lag' &&
+                    migrationJobStatusList[item.value] > 0
+                }"
               >
                 {{ migrationJobStatusList[item.value] }}
               </div>
@@ -58,13 +76,20 @@
     <el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC_menu'">
       <el-col :span="12" class="e-col">
         <div class="charts-list">
-          <echart-head :data="syncJobObj" @getAllData="getAllData"></echart-head>
+          <echart-head
+            :data="syncJobObj"
+            @getAllData="getAllData"
+          ></echart-head>
           <div class="info fl">
             <span>{{ $t('app.Home.allTask') }}</span>
             <span class="number">{{ syncTotal }}</span>
           </div>
           <ul class="jobList">
-            <li v-for="task in syncTaskList" :key="task.name" @click="handleSncyStatus(task.name)">
+            <li
+              v-for="task in syncTaskList"
+              :key="task.name"
+              @click="handleSncyStatus(task.name)"
+            >
               <span class="text" :style="`color: ${colorMap[task.name]};`">{{
                 $t('dataFlow.status.' + task.name)
               }}</span
@@ -83,13 +108,19 @@
       </el-col>
       <el-col :span="12" class="e-col">
         <div class="charts-list">
-          <echart-head :data="syncJobStatusObj" @getUnit="getUnit"></echart-head>
+          <echart-head
+            :data="syncJobStatusObj"
+            @getUnit="getUnit"
+          ></echart-head>
           <ul class="status-box">
             <li v-for="item in taskStatusStatistics" :key="item.value">
               <p>{{ item.name }}</p>
               <div
                 @click="jumpSyncTask(item.value)"
-                :class="{ lagColor: item.value === 'Lag' && syncJobStatusList[item.value] > 0 }"
+                :class="{
+                  lagColor:
+                    item.value === 'Lag' && syncJobStatusList[item.value] > 0
+                }"
               >
                 {{ syncJobStatusList[item.value] }}
               </div>
@@ -103,7 +134,9 @@
       <li class="e-col" v-readonlybtn="'Data_SYNC_menu'">
         <div class="charts-list">
           <echart-head :data="screeningObj" @getUnit="getUnit"></echart-head>
-          <div class="unit">{{ $t('dataFlow.unit') }}:{{ $t('dataFlow.rowCount') }}</div>
+          <div class="unit">
+            {{ $t('dataFlow.unit') }}:{{ $t('dataFlow.rowCount') }}
+          </div>
           <shaftless-echart
             class="charts-box"
             :sliderBar="sliderBar"
@@ -116,7 +149,10 @@
       </li>
       <li class="e-col" v-readonlybtn="'Data_verify_menu'">
         <div class="charts-list">
-          <echart-head :data="dataValidationObj" @getUnit="getUnit"></echart-head>
+          <echart-head
+            :data="dataValidationObj"
+            @getUnit="getUnit"
+          ></echart-head>
           <ul class="status-box">
             <li v-for="item in validList" :key="item.value">
               <p>{{ item.name }}</p>
@@ -124,8 +160,10 @@
                 @click="jumpCheck(item.value)"
                 :class="{
                   redColor:
-                    (item.value === 'valueDiff' && verifySummaryData[item.value] > 0) ||
-                    (item.value === 'countDiff' && verifySummaryData[item.value] > 0)
+                    (item.value === 'valueDiff' &&
+                      verifySummaryData[item.value] > 0) ||
+                    (item.value === 'countDiff' &&
+                      verifySummaryData[item.value] > 0)
                 }"
               >
                 {{ verifySummaryData[item.value] }}
@@ -136,28 +174,56 @@
       </li>
       <li class="e-col" v-readonlybtn="'Cluster_management_menu'">
         <div class="charts-list">
-          <echart-head :data="serverProcessObj" @getAllData="getAllData"></echart-head>
-          <el-table :data="serverProcess.tableData" :height="transfer.height" style="width: 100%">
-            <el-table-column prop="systemInfo.ip" :label="$t('app.Home.server')"> </el-table-column>
-            <el-table-column prop="management.status" :label="$t('app.Home.managementSide')">
+          <echart-head
+            :data="serverProcessObj"
+            @getAllData="getAllData"
+          ></echart-head>
+          <el-table
+            :data="serverProcess.tableData"
+            :height="transfer.height"
+            style="width: 100%"
+          >
+            <el-table-column
+              prop="systemInfo.ip"
+              :label="$t('app.Home.server')"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="management.status"
+              :label="$t('app.Home.managementSide')"
+            >
               <template slot-scope="scope">
-                <span :style="`color: ${colorServeMap[scope.row.management.status]};`">
+                <span
+                  :style="`color: ${
+                    colorServeMap[scope.row.management.status]
+                  };`"
+                >
                   {{ $t('app.Home.' + scope.row.management.status) }}
                 </span>
               </template>
             </el-table-column>
-            <el-table-column prop="engine.status" :label="$t('app.Home.taskTransfer')">
+            <el-table-column
+              prop="engine.status"
+              :label="$t('app.Home.taskTransfer')"
+            >
               <template slot-scope="scope">
-                <span :style="`color: ${colorServeMap[scope.row.engine.status]};`">{{
-                  $t('app.Home.' + scope.row.engine.status)
-                }}</span>
+                <span
+                  :style="`color: ${colorServeMap[scope.row.engine.status]};`"
+                  >{{ $t('app.Home.' + scope.row.engine.status) }}</span
+                >
               </template>
             </el-table-column>
-            <el-table-column prop="apiServer.status" :label="$t('app.Home.apiService')">
+            <el-table-column
+              prop="apiServer.status"
+              :label="$t('app.Home.apiService')"
+            >
               <template slot-scope="scope">
-                <span :style="`color: ${colorServeMap[scope.row.apiServer.status]};`">{{
-                  $t('app.Home.' + scope.row.apiServer.status)
-                }}</span>
+                <span
+                  :style="`color: ${
+                    colorServeMap[scope.row.apiServer.status]
+                  };`"
+                  >{{ $t('app.Home.' + scope.row.apiServer.status) }}</span
+                >
               </template>
             </el-table-column>
           </el-table>
@@ -218,7 +284,11 @@
 			</el-col> -->
     </ul>
 
-    <el-row :gutter="20" class="e-row" v-readonlybtn="'Cluster_management_menu'">
+    <el-row
+      :gutter="20"
+      class="e-row"
+      v-readonlybtn="'Cluster_management_menu'"
+    >
       <el-col :span="12" class="e-col"> </el-col>
       <!-- <el-col :span="12" class="e-col">
 				<div class="charts-list">
@@ -235,7 +305,12 @@
 			</el-col> -->
     </el-row>
   </section>
-  <iframe v-else src="/old/index.html#/dashboard" frameborder="0" style="height: 100%; width: 100%"></iframe>
+  <iframe
+    v-else
+    src="/old/index.html#/dashboard"
+    frameborder="0"
+    style="height: 100%; width: 100%"
+  ></iframe>
 </template>
 
 <script>
@@ -315,7 +390,8 @@ export default {
       syncType: {
         initial_sync: this.$t('dataFlow.initial_sync'),
         cdc: this.$t('dataFlow.cdc'),
-        'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
+        'initial_sync+cdc':
+          this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
       },
 
       allTaskEchart: {
@@ -438,7 +514,13 @@ export default {
             itemStyle: {
               normal: {
                 color: function (params) {
-                  var colorList = ['#7ba75d', '#48b6e2', '#d9742c', '#e6b451', '#e06c6c']
+                  var colorList = [
+                    '#7ba75d',
+                    '#48b6e2',
+                    '#d9742c',
+                    '#e6b451',
+                    '#e06c6c'
+                  ]
                   return colorList[params.dataIndex]
                 },
                 label: {
@@ -448,7 +530,9 @@ export default {
                   distance: 10,
                   formatter: function (value) {
                     if (value.data / (1000 * 1000 * 1000) > 1) {
-                      return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
+                      return (
+                        (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
+                      )
                     } else if (value.data / (1000 * 1000) > 1) {
                       return (value.data / (1000 * 1000)).toFixed(1) + ' M'
                     } else if (value.data / 1000 > 1) {
@@ -477,7 +561,10 @@ export default {
       this.getDataFlowApi()
     }
 
-    if (this.$has('Cluster_management') || this.$has('Cluster_management_menu')) {
+    if (
+      this.$has('Cluster_management') ||
+      this.$has('Cluster_management_menu')
+    ) {
       this.getClsterDataApi()
     }
 
@@ -529,7 +616,12 @@ export default {
     // 	allFalg: true
     // };
     this.taskRankingObj = {
-      title: this.$t('app.Home.taskRanking') + '  (' + this.$t('app.Home.before') + '10' + ')',
+      title:
+        this.$t('app.Home.taskRanking') +
+        '  (' +
+        this.$t('app.Home.before') +
+        '10' +
+        ')',
       type: 'taskRanking'
     }
     this.serverProcessObj = {
@@ -623,7 +715,10 @@ export default {
               res.data.chart2[0].totalDelete
             ]
             self.unitData = self.dataScreening.series[0].data
-            self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize]
+            self.kbData = [
+              res.data.chart2[0].totalOutputDataSize,
+              res.data.chart2[0].totalInputDataSize
+            ]
             self.transfer.tableData = res.data.chart3
             self.migrationJobStatusList = res.data.chart4
             self.syncJobStatusList = res.data.chart6
@@ -638,7 +733,9 @@ export default {
     // 数据处理
     handleDataProcessing(dataItem) {
       let statusItem = []
-      dataItem.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1))
+      dataItem.statusCount.sort((a, b) =>
+        a._id > b._id ? 1 : a._id === b._id ? 0 : -1
+      )
       dataItem.statusCount.forEach((element) => {
         statusItem.unshift({ name: element._id, value: element.count })
       })

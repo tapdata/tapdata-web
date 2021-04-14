@@ -21,15 +21,30 @@ export default {
   data() {
     return {
       settingList: [
-        { icon: 'icon-shezhi1', name: this.$t('account.systemSetting'), key: 'setting' },
-        { icon: 'icon-lingdang', name: this.$t('notification.setting'), key: 'notification' },
-        { icon: 'icon-gerenzhongxin', name: this.$t('account.accountSettings'), key: 'account' }
+        {
+          icon: 'icon-shezhi1',
+          name: this.$t('account.systemSetting'),
+          key: 'setting'
+        },
+        {
+          icon: 'icon-lingdang',
+          name: this.$t('notification.setting'),
+          key: 'notification'
+        },
+        {
+          icon: 'icon-gerenzhongxin',
+          name: this.$t('account.accountSettings'),
+          key: 'account'
+        }
       ],
       isActive: 'notification'
     }
   },
   mounted() {
-    this.isActive = this.$route.params && this.$route.params.type ? this.$route.params.type : 'notification'
+    this.isActive =
+      this.$route.params && this.$route.params.type
+        ? this.$route.params.type
+        : 'notification'
   },
   methods: {
     changeName(data) {

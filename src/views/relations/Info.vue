@@ -8,12 +8,16 @@
     <div v-if="model.level === 'table'">
       <header class="header">
         <span>{{ tableName }}</span>
-        <div class="connection" @click="goConnection">{{ connections.name }}</div>
+        <div class="connection" @click="goConnection">
+          {{ connections.name }}
+        </div>
       </header>
       <el-tabs v-model="activeName" type="card" class="lineage-info-tab">
         <el-tab-pane label="字段" name="first">
           <div class="relation-btn-wrap">
-            <el-button class="relation-btn" type="text" @click="handleFields">查看血缘</el-button>
+            <el-button class="relation-btn" type="text" @click="handleFields"
+              >查看血缘</el-button
+            >
           </div>
           <el-input
             class="customize-field"
@@ -22,7 +26,12 @@
             v-model="customFields"
           ></el-input>
           <div class="table-wrap">
-            <el-table class="field-table" ref="multipleTable" :data="fields" @selection-change="handleSelectionChange">
+            <el-table
+              class="field-table"
+              ref="multipleTable"
+              :data="fields"
+              @selection-change="handleSelectionChange"
+            >
               <el-table-column type="selection"></el-table-column>
               <el-table-column prop="name" label="字段类型/字段名称">
                 <template slot-scope="scope">
@@ -61,7 +70,9 @@
             <template slot="title">
               <span slot="title">
                 <span>任务[ {{ item.name }} ]</span>
-                <span class="keywords" @click="goJob(item.id)">查看任务详情</span>
+                <span class="keywords" @click="goJob(item.id)"
+                  >查看任务详情</span
+                >
               </span>
             </template>
             <template v-for="(processor, index2) in item.processors">
@@ -71,11 +82,16 @@
                 :index="`${index1 + 1}-${index2 + 1}`"
               >
                 <template slot="title">
-                  <span slot="title">{{ `${processorMap[processor.type]} [${processor.name}]` }}</span>
+                  <span slot="title">{{
+                    `${processorMap[processor.type]} [${processor.name}]`
+                  }}</span>
                 </template>
                 <div v-if="processor.type === 'field_processor'">
                   <template v-for="(op, index3) in processor.operations">
-                    <el-menu-item :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`" :key="op.id">
+                    <el-menu-item
+                      :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`"
+                      :key="op.id"
+                    >
                       <span v-if="['CREATE'].includes(op.op)">
                         <span class="label">新增</span>
                         <span> : {{ op.field }}</span>
@@ -90,46 +106,91 @@
                       </span>
                       <span v-if="['CONVERT'].includes(op.op)">
                         <span class="label">改类型</span>
-                        <span> : {{ op.originalDataType }} -> {{ op.operand }}</span>
+                        <span>
+                          : {{ op.originalDataType }} -> {{ op.operand }}</span
+                        >
                       </span>
                       <span v-if="['JS'].includes(op.op)">
                         <span class="label">脚本处理</span>
-                        <span class="keywords" @click="handleShowScript(op.script)"> : 字段脚本</span>
+                        <span
+                          class="keywords"
+                          @click="handleShowScript(op.script)"
+                        >
+                          : 字段脚本</span
+                        >
                       </span>
                     </el-menu-item>
                   </template>
                 </div>
                 <div v-if="processor.type === 'aggregation_processor'">
                   <template v-for="(op, index3) in processor.aggregations">
-                    <el-menu-item :key="op.id" :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`">
+                    <el-menu-item
+                      :key="op.id"
+                      :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`"
+                    >
                       <span v-if="['COUNT'].includes(op.aggFunction)">
                         <span class="label">计算总数</span>
-                        <span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-                          , 根据{{ op.groupByExpression.join(',') }}进行分组</span
+                        <span
+                          v-if="
+                            op.groupByExpression &&
+                            op.groupByExpression.length > 0
+                          "
+                        >
+                          , 根据{{
+                            op.groupByExpression.join(',')
+                          }}进行分组</span
                         >
                       </span>
                       <span v-if="['SUM'].includes(op.aggFunction)">
                         <span class="label">求和</span>
-                        <span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-                          , 根据{{ op.groupByExpression.join(',') }}进行分组</span
+                        <span
+                          v-if="
+                            op.groupByExpression &&
+                            op.groupByExpression.length > 0
+                          "
+                        >
+                          , 根据{{
+                            op.groupByExpression.join(',')
+                          }}进行分组</span
                         >
                       </span>
                       <span v-if="['AVG'].includes(op.aggFunction)">
                         <span class="label">求平均值</span>
-                        <span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-                          , 根据{{ op.groupByExpression.join(',') }}进行分组</span
+                        <span
+                          v-if="
+                            op.groupByExpression &&
+                            op.groupByExpression.length > 0
+                          "
+                        >
+                          , 根据{{
+                            op.groupByExpression.join(',')
+                          }}进行分组</span
                         >
                       </span>
                       <span v-if="['MAX'].includes(op.aggFunction)">
                         <span class="label">求最大值</span>
-                        <span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-                          , 根据{{ op.groupByExpression.join(',') }}进行分组</span
+                        <span
+                          v-if="
+                            op.groupByExpression &&
+                            op.groupByExpression.length > 0
+                          "
+                        >
+                          , 根据{{
+                            op.groupByExpression.join(',')
+                          }}进行分组</span
                         >
                       </span>
                       <span v-if="['MIN'].includes(op.aggFunction)">
                         <span class="label">求最小值</span>
-                        <span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-                          , 根据{{ op.groupByExpression.join(',') }}进行分组</span
+                        <span
+                          v-if="
+                            op.groupByExpression &&
+                            op.groupByExpression.length > 0
+                          "
+                        >
+                          , 根据{{
+                            op.groupByExpression.join(',')
+                          }}进行分组</span
                         >
                       </span>
                     </el-menu-item>
@@ -138,7 +199,10 @@
               </el-submenu>
               <div v-if="processor.type === 'js_processor'" :key="processor.id">
                 <el-menu-item :index="`${index1 + 1}-${index2 + 1}`">
-                  <span v-if="processor.script" class="keywords" @click="handleShowScript(processor.script)"
+                  <span
+                    v-if="processor.script"
+                    class="keywords"
+                    @click="handleShowScript(processor.script)"
                     >脚本处理器[function process(record){...}]</span
                   >
                 </el-menu-item>
@@ -148,8 +212,17 @@
         </template>
       </el-menu>
     </div>
-    <el-dialog :visible.sync="showScriptVisible" width="60%" :before-close="handleCloseScript">
-      <JsEditor :code.sync="showScript" ref="jsEditor" :width.sync="width" v-if="showScriptVisible"></JsEditor>
+    <el-dialog
+      :visible.sync="showScriptVisible"
+      width="60%"
+      :before-close="handleCloseScript"
+    >
+      <JsEditor
+        :code.sync="showScript"
+        ref="jsEditor"
+        :width.sync="width"
+        v-if="showScriptVisible"
+      ></JsEditor>
     </el-dialog>
   </div>
 </template>
@@ -261,7 +334,9 @@ export default {
           let data = result.data || []
           if (data && data.length !== 0) {
             this.metaData = {
-              name: data[0].name ? `${data[0].name}(${data[0].original_name})` : data[0].original_name,
+              name: data[0].name
+                ? `${data[0].name}(${data[0].original_name})`
+                : data[0].original_name,
               qualified_name: data[0].qualified_name,
               meta_type: data[0].meta_type,
               create_source: data[0].source.name,
@@ -325,11 +400,17 @@ export default {
         let isMoniting = !this.statusBtMap['edit'][result.data.status]
         let routeUrl = this.$router.resolve({
           path: '/job',
-          query: { id: id, isMoniting: isMoniting, mapping: result.data.mappingTemplate }
+          query: {
+            id: id,
+            isMoniting: isMoniting,
+            mapping: result.data.mappingTemplate
+          }
         })
         window.open(routeUrl.href, 'monitor_' + id)
       } else {
-        this.$message.error('当前选中任务被删除或者是不存在,id为:6051820d19998b005728343c')
+        this.$message.error(
+          '当前选中任务被删除或者是不存在,id为:6051820d19998b005728343c'
+        )
       }
     },
     goConnection() {
@@ -479,7 +560,9 @@ export default {
   }
 }
 .lineage-info-wrap {
-  .el-tabs--card > .el-tabs__header .el-tabs__item:focus.is-active.is-focus:not(:active) {
+  .el-tabs--card
+    > .el-tabs__header
+    .el-tabs__item:focus.is-active.is-focus:not(:active) {
     box-shadow: none;
     border-radius: 0;
   }
