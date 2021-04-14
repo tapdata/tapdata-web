@@ -73,6 +73,8 @@ export default class Graph extends Component {
 						self.createInspector(cell);
 					} else if (cell.isElement()) {
 						self.selection.collection.reset([cell]);
+						//deal with connect nodes
+						this.dealWithConnectBetweenLink(cell);
 					}
 				}, 100);
 				self.emit(EditorEventType.ADD_CELL);
@@ -378,6 +380,131 @@ export default class Graph extends Component {
 				'</style>'
 			].join(' ')
 		);
+	}
+
+	dealWithConnectBetweenLink(cell) {
+		let currentPosition = cell.position();
+		let allLinks = this.graph.getLinks();
+		let self = this;
+		if (this.graph.getNeighbors(cell).length == 0 && allLinks.length > 0) {
+			//only no linked cell can perform this operation.
+			// if no link on paper yet, nothing to do.
+			let matchedLink = allLinks.filter(item => {
+				return self.checkIntersection(item, currentPosition);
+			});
+			if (matchedLink.length > 0) {
+				let linkView = this.paper.findViewByModel(matchedLink[0]);
+				let originalFormData = linkView.model.getFormData();
+				//from view of cell itself
+				// target don't accept source connection
+				if (typeof cell.allowSource === 'function' && !cell.allowSource(linkView.sourceView.model)) {
+					return;
+				}
+				// source don't allow connect to target
+				if (typeof cell.allowTarget === 'function' && !cell.allowTarget(linkView.targetView.model)) {
+					return;
+				}
+				//from view of source
+				if (
+					typeof linkView.sourceView.model.allowTarget === 'function' &&
+					!linkView.sourceView.model.allowTarget(cell)
+				) {
+					return;
+				}
+				//from view of target
+				if (
+					typeof linkView.targetView.model.allowSource === 'function' &&
+					!linkView.targetView.model.allowSource(cell)
+				) {
+					return;
+				}
+				//when it is database, only two nodes in link are allowed.
+				if (
+					['app.Database'].includes(cell.get('type')) &&
+					['app.Database'].includes(linkView.sourceView.model.get('type')) &&
+					['app.Database'].includes(linkView.targetView.model.get('type'))
+				) {
+					return;
+				}
+				//if disabled, can not connect.
+				if (
+					!linkView.targetView.model.getFormData().disabled &&
+					!linkView.sourceView.model.getFormData().disabled
+				) {
+					let preLink = null;
+					let afterLink = null;
+					if (linkView.sourceView.model.get('type') === 'app.Database') {
+						preLink = new joint.shapes.app.databaseLink();
+					} else {
+						preLink = new joint.shapes.app.Link();
+					}
+					preLink.source(linkView.sourceView.model);
+					preLink.target(cell);
+					preLink.addTo(this.graph);
+					this.updateOutputSchema(preLink);
+
+					if (linkView.targetView.model.get('type') === 'app.Database') {
+						afterLink = new joint.shapes.app.databaseLink();
+					} else {
+						afterLink = new joint.shapes.app.Link();
+					}
+
+					afterLink.source(cell);
+					afterLink.target(linkView.targetView.model);
+					afterLink.addTo(this.graph);
+					afterLink.setFormData(originalFormData);
+					this.updateOutputSchema(afterLink);
+					linkView.model.remove();
+				}
+			}
+		}
+	}
+	// check if the cell is drag to between nodes, right on link
+	checkIntersection(item, currentPosition) {
+		if (item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition)) {
+			//inside bbox
+			return true;
+		} else if (item.getBBox({ useModelGeometry: true }).height == 0) {
+			//source target on same y
+			if (
+				this.paper.findViewByModel(item).sourceView.model.position().x < currentPosition.x &&
+				this.paper.findViewByModel(item).targetView.model.position().x > currentPosition.x &&
+				Math.abs(this.paper.findViewByModel(item).sourceView.model.position().y - currentPosition.y) <
+					this.paper.findViewByModel(item).sourceView.model.attributes.size.height / 2
+			) {
+				// left -> right
+				return true;
+			} else if (
+				this.paper.findViewByModel(item).sourceView.model.position().x > currentPosition.x &&
+				this.paper.findViewByModel(item).targetView.model.position().x < currentPosition.x &&
+				Math.abs(this.paper.findViewByModel(item).sourceView.model.position().y - currentPosition.y) <
+					this.paper.findViewByModel(item).sourceView.model.attributes.size.height / 2
+			) {
+				// right -> left
+				return true;
+			}
+		} else if (item.getBBox({ useModelGeometry: true }).width == 0) {
+			//source target on same x
+			if (
+				this.paper.findViewByModel(item).sourceView.model.position().y < currentPosition.y &&
+				this.paper.findViewByModel(item).targetView.model.position().y > currentPosition.y &&
+				Math.abs(this.paper.findViewByModel(item).sourceView.model.position().x - currentPosition.x) <
+					this.paper.findViewByModel(item).sourceView.model.attributes.size.width / 2
+			) {
+				// up -> down
+				return true;
+			} else if (
+				this.paper.findViewByModel(item).sourceView.model.position().y > currentPosition.y &&
+				this.paper.findViewByModel(item).targetView.model.position().y < currentPosition.y &&
+				Math.abs(this.paper.findViewByModel(item).sourceView.model.position().x - currentPosition.x) <
+					this.paper.findViewByModel(item).sourceView.model.attributes.size.width / 2
+			) {
+				// down -> up
+				return true;
+			}
+		} else {
+			return false;
+		}
 	}
 
 	selectionPosition(cell) {
@@ -831,7 +958,11 @@ export default class Graph extends Component {
 						collection.reset([cell]);
 					}
 				},
-
+				'element:pointerup': function(elementView) {
+					//trigger if the element drag to paper, then move to between link
+					let element = elementView.model;
+					this.dealWithConnectBetweenLink(element);
+				},
 				'link:mouseenter': function(linkView) {
 					if (linkView.model.getFormData().disabled) return;
 					if (linkView.hasTools()) return;
