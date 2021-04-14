@@ -12,7 +12,7 @@ export const jointCacheConfig = {
       size: { width: 120, height: 28 },
       attrs: {
         image: {
-          xlinkHref: 'editor/o-jc.svg',
+          xlinkHref: 'static/editor/o-jc.svg',
           refWidth: '25%',
           refHeight: '84%',
           refX: '-8%',
@@ -55,11 +55,31 @@ export const jointCacheConfig = {
         data = data || this.getFormData()
         let name = this.attr('label/text')
         log('JointCache Formdata')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
-        if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.name.none')}`)
-        if (!data.cacheId) throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.cacheId.none')}`)
-        if (!data.joinSettings.length || data.joinSettings.some((it) => !it.sourceKey))
-          throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.joinSettings.none')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
+          )
+        if (!data.name)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.processor.jointCache.form.name.none'
+            )}`
+          )
+        if (!data.cacheId)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.processor.jointCache.form.cacheId.none'
+            )}`
+          )
+        if (
+          !data.joinSettings.length ||
+          data.joinSettings.some((it) => !it.sourceKey)
+        )
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.processor.jointCache.form.joinSettings.none'
+            )}`
+          )
         return true
       },
 
@@ -166,7 +186,10 @@ export const jointCacheConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -215,7 +238,7 @@ export const jointCacheConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/jc.svg',
+        xlinkHref: 'static/editor/jc.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

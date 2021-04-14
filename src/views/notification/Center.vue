@@ -3,12 +3,18 @@
     <div class="left-panel">
       <div class="header">{{ $t('notification.noticeCenter') }}</div>
       <ul class="menu">
-        <li :class="{ active: activePanel === 'system' }" @click="selectPanel('system')">
+        <li
+          :class="{ active: activePanel === 'system' }"
+          @click="selectPanel('system')"
+        >
           <i class="iconfont icon-lingdang"></i>
           <span class="content">{{ $t('notification.systemNotice') }}</span>
           <span class="unread" v-show="unRead > 0">{{ unRead }}</span>
         </li>
-        <li :class="{ active: activePanel === 'user' }" @click="selectPanel('user')">
+        <li
+          :class="{ active: activePanel === 'user' }"
+          @click="selectPanel('user')"
+        >
           <i class="iconfont icon-lishijilu"></i>
           <span class="content">{{ $t('notification.userNotice') }}</span>
         </li>

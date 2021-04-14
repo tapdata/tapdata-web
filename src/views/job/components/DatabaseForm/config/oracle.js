@@ -11,13 +11,17 @@ export default function (vm) {
       let databaseDatetypeWithoutTimezone = vm.config.items.find(
         (item) => item.field === 'database_datetype_without_timezone'
       )
-      let supportUpdatePk = vm.config.items.find((item) => item.field === 'supportUpdatePk')
+      let supportUpdatePk = vm.config.items.find(
+        (item) => item.field === 'supportUpdatePk'
+      )
       vm.$nextTick(() => {
         if (databaseDatetypeWithoutTimezone) {
-          databaseDatetypeWithoutTimezone.show = val && ['source', 'source_and_target'].includes(val)
+          databaseDatetypeWithoutTimezone.show =
+            val && ['source', 'source_and_target'].includes(val)
         }
         if (supportUpdatePk) {
-          supportUpdatePk.show = val && ['target', 'source_and_target'].includes(val)
+          supportUpdatePk.show =
+            val && ['target', 'source_and_target'].includes(val)
         }
         vm.$refs.form.$forceUpdate()
       })
@@ -28,7 +32,10 @@ export default function (vm) {
         field: 'connection_type',
         label: vm.$t('dataForm.form.connectionType'),
         options: [
-          { label: vm.$t('dataForm.form.options.sourceAndTarget'), value: 'source_and_target' },
+          {
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            value: 'source_and_target'
+          },
           { label: vm.$t('dataForm.form.options.source'), value: 'source' },
           { label: vm.$t('dataForm.form.options.target'), value: 'target' }
         ],

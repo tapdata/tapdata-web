@@ -6,7 +6,10 @@
           <li
             v-for="(step, index) in steps"
             :key="index"
-            :class="[{ active: activeStep >= index }, { 'color-primary': activeStep >= index }]"
+            :class="[
+              { active: activeStep >= index },
+              { 'color-primary': activeStep >= index }
+            ]"
           >
             <span class="step-index">
               <i v-if="activeStep > index" class="el-icon-check"></i>
@@ -25,12 +28,19 @@
               <div class="desc">
                 请先选择一个有实例的地域可用区，可用区下的全部实例都能运行该同步任务，可用实例越多任务运行越稳定。任务创建后不支持更换地域可用区
               </div>
-              <form-builder ref="instance" v-model="platformInfo" :config="config"></form-builder>
+              <form-builder
+                ref="instance"
+                v-model="platformInfo"
+                :config="config"
+              ></form-builder>
             </div>
             <!--步骤2-->
             <div class="body" v-if="steps[activeStep].index === 2">
               <div class="title">选择源端与目标端连接</div>
-              <div class="desc" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
+              <div
+                class="desc"
+                v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
+              >
                 选择已创建的源端/目标端的数据库连接，如果需要创建新的数据库连接，请点击<span
                   style="color: #337dff; cursor: pointer"
                   @click="dialogDatabaseTypeVisible = true"
@@ -44,7 +54,12 @@
                   >创建数据连接</span
                 >
               </div>
-              <form-builder ref="dataSource" v-model="dataSourceModel" :config="config" @value-change="formChange">
+              <form-builder
+                ref="dataSource"
+                v-model="dataSourceModel"
+                :config="config"
+                @value-change="formChange"
+              >
                 <div slot="source" class="dataSource-title">源端连接</div>
                 <div slot="target" class="dataSource-title">目标端连接</div>
               </form-builder>
@@ -55,7 +70,12 @@
               <div class="desc">
                 用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
               </div>
-              <form-builder ref="setting" v-model="settingModel" :config="config" @submit.native.prevent>
+              <form-builder
+                ref="setting"
+                v-model="settingModel"
+                :config="config"
+                @submit.native.prevent
+              >
                 <div
                   slot="needToCreateIndex"
                   class="ddl-tip"
@@ -75,19 +95,29 @@
                 用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。
               </div>
               <div class="CT-task-transfer">
-                <Transfer ref="transfer" :transferData="transferData"></Transfer>
+                <Transfer
+                  ref="transfer"
+                  :transferData="transferData"
+                ></Transfer>
               </div>
             </div>
           </el-main>
           <el-footer class="CT-task-footer" height="80px">
             <el-button
               class="btn-step"
-              v-if="[2, 4].includes(steps[activeStep].index) || (steps[activeStep].index === 3 && !id)"
+              v-if="
+                [2, 4].includes(steps[activeStep].index) ||
+                (steps[activeStep].index === 3 && !id)
+              "
               @click="back()"
             >
               {{ $t('guide.btn_back') }}
             </el-button>
-            <el-button class="btn-step" v-if="[1].includes(steps[activeStep].index)" @click="goBackList()">
+            <el-button
+              class="btn-step"
+              v-if="[1].includes(steps[activeStep].index)"
+              @click="goBackList()"
+            >
               取消
             </el-button>
             <el-button
@@ -99,7 +129,15 @@
             >
               <span>{{ $t('guide.btn_next') }}</span>
             </el-button>
-            <el-button v-else type="primary" class="btn-step" :loading="loading" @click="save()"> 完成 </el-button>
+            <el-button
+              v-else
+              type="primary"
+              class="btn-step"
+              :loading="loading"
+              @click="save()"
+            >
+              完成
+            </el-button>
           </el-footer>
         </el-container>
         <DatabaseTypeDialog
@@ -116,7 +154,12 @@ import formConfig from './config'
 import Transfer from '@/components/Transfer'
 import DatabaseTypeDialog from '../connections/DatabaseTypeDialog'
 import _ from 'lodash'
-import { SETTING_MODEL, DATASOURCE_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from './util'
+import {
+  SETTING_MODEL,
+  DATASOURCE_MODEL,
+  INSTANCE_MODEL,
+  DFSDATASOURCE_MODEL
+} from './util'
 import { uuid } from '../../editor/util/Schema'
 import { TYPEMAP } from '../connections/util'
 
@@ -201,7 +244,9 @@ export default {
           visible: true,
           step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0
         }
-        window.parent && window.parent.noviceGuideChange && window.parent.noviceGuideChange(item)
+        window.parent &&
+          window.parent.noviceGuideChange &&
+          window.parent.noviceGuideChange(item)
       } else {
         this.dialogDatabaseTypeVisible = true
       }
@@ -211,7 +256,9 @@ export default {
         visible: true,
         step: -1
       }
-      window.parent && window.parent.noviceGuideChange && window.parent.noviceGuideChange(item)
+      window.parent &&
+        window.parent.noviceGuideChange &&
+        window.parent.noviceGuideChange(item)
     },
     //初始化数据 编辑跳转
     intiData(id) {
@@ -227,7 +274,9 @@ export default {
             this.transferData = {
               table_prefix: stages[1].table_prefix,
               table_suffix: stages[1].table_suffix,
-              selectSourceArr: stages[1].syncObjects[0] ? stages[1].syncObjects[0].objectNames : []
+              selectSourceArr: stages[1].syncObjects[0]
+                ? stages[1].syncObjects[0].objectNames
+                : []
             }
             // TODO 临时为了解决bug现在这里加，回头优化
             this.getFormConfig()
@@ -257,7 +306,9 @@ export default {
         })
     },
     changeInstanceRegion() {
-      let zone = this.instanceMock.filter((item) => item.code === this.platformInfo.region)
+      let zone = this.instanceMock.filter(
+        (item) => item.code === this.platformInfo.region
+      )
       if (zone.length > 0) {
         this.platformInfo.zone = this.platformInfo.zone || zone[0].zones[0].code
         this.platformInfoZone = zone[0].zones
@@ -309,13 +360,22 @@ export default {
         this.$refs.dataSource.validate((valid) => {
           if (valid) {
             //源端目标端不可选择相同库 规则: id一致
-            if (this.dataSourceModel.source_connectionId === this.dataSourceModel.target_connectionId) {
+            if (
+              this.dataSourceModel.source_connectionId ===
+              this.dataSourceModel.target_connectionId
+            ) {
               this.$message.error('源端连接与目标端连接不能选择相同的连接')
               return
             }
             //数据源名称
-            let source = this.handleConnectionName(this.dataSourceModel.source_connectionId, 'source_connectionId')
-            let target = this.handleConnectionName(this.dataSourceModel.target_connectionId, 'target_connectionId')
+            let source = this.handleConnectionName(
+              this.dataSourceModel.source_connectionId,
+              'source_connectionId'
+            )
+            let target = this.handleConnectionName(
+              this.dataSourceModel.target_connectionId,
+              'target_connectionId'
+            )
             //source.id/target.id = host + port + username
             if (source.id === target.id) {
               this.$message.error('源端连接与目标端连接不能选择相同的连接')
@@ -352,7 +412,10 @@ export default {
     async getFormConfig() {
       let type = this.steps[this.activeStep].type || 'instance'
       if (type === 'dataSource') {
-        type = window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs' ? 'dfs_dataSource' : 'drs_dataSource'
+        type =
+          window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'
+            ? 'dfs_dataSource'
+            : 'drs_dataSource'
       }
       let func = formConfig[type]
       if (func) {
@@ -495,12 +558,15 @@ export default {
         }
         case 'source_connectionId': {
           // 第二步 数据源连接ID
-          let source_connectionId = items.find((it) => it.field === 'source_connectionId')
+          let source_connectionId = items.find(
+            (it) => it.field === 'source_connectionId'
+          )
           if (source_connectionId) {
             source_connectionId.loading = false
             source_connectionId.options = data.map((item) => {
               return {
-                id: item.database_host + item.database_port + item.database_name,
+                id:
+                  item.database_host + item.database_port + item.database_name,
                 name: item.name,
                 label: item.name,
                 value: item.id,
@@ -511,12 +577,15 @@ export default {
           break
         }
         case 'target_connectionId': {
-          let target_connectionId = items.find((it) => it.field === 'target_connectionId')
+          let target_connectionId = items.find(
+            (it) => it.field === 'target_connectionId'
+          )
           if (target_connectionId) {
             target_connectionId.loading = false
             target_connectionId.options = data.map((item) => {
               return {
-                id: item.database_host + item.database_port + item.database_name,
+                id:
+                  item.database_host + item.database_port + item.database_name,
                 name: item.name,
                 label: item.name,
                 value: item.id,
@@ -574,7 +643,9 @@ export default {
     save() {
       this.transferData = this.$refs.transfer.returnData()
       if (this.transferData.selectSourceArr.length === 0) {
-        this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
+        this.$message.error(
+          '请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表'
+        )
         return
       }
       let source = this.dataSourceModel
@@ -635,8 +706,14 @@ export default {
         })
       }
       //存实例名称
-      postData.platformInfo.regionName = this.handleName(this.instanceMock || [], this.platformInfo.region)
-      postData.platformInfo.zoneName = this.handleName(this.platformInfoZone || [], this.platformInfo.zone)
+      postData.platformInfo.regionName = this.handleName(
+        this.instanceMock || [],
+        this.platformInfo.region
+      )
+      postData.platformInfo.zoneName = this.handleName(
+        this.platformInfoZone || [],
+        this.platformInfo.zone
+      )
       postData.stages = [
         Object.assign({}, stageDefault, {
           id: sourceId,
@@ -662,7 +739,10 @@ export default {
           type: 'database',
           readBatchSize: 1000,
           readCdcInterval: 500,
-          dropType: this.settingModel.distinctWriteType === 'compel' ? 'drop_data' : 'no_drop',
+          dropType:
+            this.settingModel.distinctWriteType === 'compel'
+              ? 'drop_data'
+              : 'no_drop',
           database_type: this.dataSourceModel['target_databaseType'] || 'mysql'
         })
       ]

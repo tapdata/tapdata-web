@@ -59,9 +59,23 @@ let db2db = {
       isSchedule: false,
       cronExpression: '',
       isOpenAutoDDL: false,
-      emailWaring: { edited: false, started: false, error: false, paused: false },
+      emailWaring: {
+        edited: false,
+        started: false,
+        error: false,
+        paused: false
+      },
       stopOnError: false,
-      syncPoints: [{ connectionId: '', type: 'current', time: '', date: '', name: '', timezone: '+08:00' }],
+      syncPoints: [
+        {
+          connectionId: '',
+          type: 'current',
+          time: '',
+          date: '',
+          name: '',
+          timezone: '+08:00'
+        }
+      ],
       processorConcurrency: 1,
       transformerConcurrency: 8
     },

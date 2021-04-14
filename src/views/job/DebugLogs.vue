@@ -2,17 +2,33 @@
   <div class="e-debug-log">
     <el-form inline action="javascript: void(0);">
       <el-form-item>
-        <el-input class="inputStyle" :placeholder="$t('message.search')" v-model="search" size="mini"> </el-input>
+        <el-input
+          class="inputStyle"
+          :placeholder="$t('message.search')"
+          v-model="search"
+          size="mini"
+        >
+        </el-input>
       </el-form-item>
       <el-form-item>
-        <el-button icon="el-icon-search" size="mini" @click="loadNew" :disabled="loading"></el-button>
+        <el-button
+          icon="el-icon-search"
+          size="mini"
+          @click="loadNew"
+          :disabled="loading"
+        ></el-button>
       </el-form-item>
 
       <i class="el-icon-loading" v-if="loading"></i>
     </el-form>
     <!-- v-loading="loading" :element-loading-text="$t('dataFlow.loadLogTip')" -->
     <div class="logBox">
-      <LogBox ref="log" :keyword="search" :load="clickLoad" @scroll="logScroll"></LogBox>
+      <LogBox
+        ref="log"
+        :keyword="search"
+        :load="clickLoad"
+        @scroll="logScroll"
+      ></LogBox>
     </div>
   </div>
 </template>
@@ -59,7 +75,8 @@ export default {
       let dat = data.data
       if (dat && dat.length > 0) {
         self.$refs.log.add({ logs: dat, prepend: true })
-        if (self.firstLogsId.length == 0) self.firstLogsId = dat[dat.length - 1].id
+        if (self.firstLogsId.length == 0)
+          self.firstLogsId = dat[dat.length - 1].id
       }
     })
 
@@ -74,7 +91,12 @@ export default {
 
   methods: {
     logScroll(logContainer) {
-      if (logContainer.scrollHeight - logContainer.clientHeight - logContainer.scrollTop < 100) {
+      if (
+        logContainer.scrollHeight -
+          logContainer.clientHeight -
+          logContainer.scrollTop <
+        100
+      ) {
         this.loadOld()
       }
     },

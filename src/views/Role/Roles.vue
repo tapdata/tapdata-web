@@ -14,17 +14,34 @@
               class="input-with-select"
               suffix-icon="el-icon-search"
             >
-              <el-select v-model="searchNav.selectedSeachType" slot="prepend" size="mini">
-                <el-option :label="$t('role.fuzzyMatching')" value="0"></el-option>
-                <el-option :label="$t('role.preciseMatching')" value="1"></el-option>
+              <el-select
+                v-model="searchNav.selectedSeachType"
+                slot="prepend"
+                size="mini"
+              >
+                <el-option
+                  :label="$t('role.fuzzyMatching')"
+                  value="0"
+                ></el-option>
+                <el-option
+                  :label="$t('role.preciseMatching')"
+                  value="1"
+                ></el-option>
               </el-select>
             </el-input>
           </li>
           <li class="item" v-if="searchNav.keyword">
-            <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
+            <el-button size="mini" type="text" @click="reset()">{{
+              $t('button.query')
+            }}</el-button>
           </li>
           <li class="item" v-if="searchNav.keyword">
-            <el-button type="text" class="restBtn" size="mini" @click="reset('reset')">
+            <el-button
+              type="text"
+              class="restBtn"
+              size="mini"
+              @click="reset('reset')"
+            >
               {{ $t('dataFlow.reset') }}
             </el-button>
           </li>
@@ -51,12 +68,18 @@
           row-key="id"
           border
         >
-          <el-table-column :label="$t('role.roleName')" :show-overflow-tooltip="true">
+          <el-table-column
+            :label="$t('role.roleName')"
+            :show-overflow-tooltip="true"
+          >
             <template slot-scope="scope">
               <div>{{ scope.row.name }}</div>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('role.description')" :show-overflow-tooltip="true">
+          <el-table-column
+            :label="$t('role.description')"
+            :show-overflow-tooltip="true"
+          >
             <template slot-scope="scope">
               <div>{{ scope.row.description }}</div>
             </template>
@@ -88,7 +111,12 @@
               <el-button
                 type="text"
                 v-readonlybtn="'role_edition'"
-                :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
+                :disabled="
+                  $disabledByPermission(
+                    'role_edition_all_data',
+                    scope.row.user_id
+                  )
+                "
                 @click="handleSettingPermissions(scope.row.id, scope.row.name)"
               >
                 {{ $t('role.settingPermissions') }}
@@ -98,7 +126,10 @@
                 type="text"
                 @click="handleAssociatUsers(scope.row.id)"
                 :disabled="
-                  $disabledByPermission('role_edition_all_data', scope.row.user_id) || scope.row.name === 'admin'
+                  $disabledByPermission(
+                    'role_edition_all_data',
+                    scope.row.user_id
+                  ) || scope.row.name === 'admin'
                 "
                 v-readonlybtn="'role_edition'"
               >
@@ -107,7 +138,12 @@
               <el-button
                 type="text"
                 v-readonlybtn="'role_edition'"
-                :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
+                :disabled="
+                  $disabledByPermission(
+                    'role_edition_all_data',
+                    scope.row.user_id
+                  )
+                "
                 @click="createRole(scope.row.id, scope.row)"
               >
                 {{ $t('role.edit') }}
@@ -116,7 +152,10 @@
                 type="text"
                 @click="handleDelete(scope.row)"
                 :disabled="
-                  $disabledByPermission('role_delete_all_data', scope.row.user_id) || scope.row.name === 'admin'
+                  $disabledByPermission(
+                    'role_delete_all_data',
+                    scope.row.user_id
+                  ) || scope.row.name === 'admin'
                 "
                 v-readonlybtn="'role_delete'"
               >
@@ -150,9 +189,15 @@
         <el-form-item
           :label="$t('role.roleName')"
           prop="name"
-          :rules="[{ required: true, message: $t('role.role_null'), trigger: 'blur' }]"
+          :rules="[
+            { required: true, message: $t('role.role_null'), trigger: 'blur' }
+          ]"
         >
-          <el-input v-model="form.name" :placeholder="$t('role.selectRoleName')" size="small"></el-input>
+          <el-input
+            v-model="form.name"
+            :placeholder="$t('role.selectRoleName')"
+            size="small"
+          ></el-input>
         </el-form-item>
         <el-form-item :label="$t('role.roleDesc')" style="margin-bottom: 10px">
           <el-input
@@ -166,14 +211,20 @@
           <el-switch
             v-model="form.register_user_default"
             inactive-color="#dcdfe6"
-            :active-text="form.register_user_default ? $t('role.yes') : $t('role.no')"
+            :active-text="
+              form.register_user_default ? $t('role.yes') : $t('role.no')
+            "
             style="margin-right: 20px"
           ></el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogFormVisible = false">{{ $t('message.cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="createSave">{{ $t('message.confirm') }}</el-button>
+        <el-button size="mini" @click="dialogFormVisible = false">{{
+          $t('message.cancel')
+        }}</el-button>
+        <el-button size="mini" type="primary" @click="createSave">{{
+          $t('message.confirm')
+        }}</el-button>
       </div>
     </el-dialog>
 
@@ -185,14 +236,31 @@
       width="600px"
     >
       <div class="userBox">
-        <el-select v-model="roleusers" filterable multiple :placeholder="$t('role.selectUser')">
-          <el-option v-for="item in userGroup" :key="item.id" :label="item.email" :value="item.id"> </el-option>
+        <el-select
+          v-model="roleusers"
+          filterable
+          multiple
+          :placeholder="$t('role.selectUser')"
+        >
+          <el-option
+            v-for="item in userGroup"
+            :key="item.id"
+            :label="item.email"
+            :value="item.id"
+          >
+          </el-option>
         </el-select>
-        <div class="num">{{ $t('role.connected') }}: {{ roleusers.length }}</div>
+        <div class="num">
+          {{ $t('role.connected') }}: {{ roleusers.length }}
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogUserVisible = false">{{ $t('message.cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveUser">{{ $t('dataForm.submit') }}</el-button>
+        <el-button size="mini" @click="dialogUserVisible = false">{{
+          $t('message.cancel')
+        }}</el-button>
+        <el-button size="mini" type="primary" @click="saveUser">{{
+          $t('dataForm.submit')
+        }}</el-button>
       </span>
     </el-dialog>
 
@@ -205,11 +273,18 @@
     >
       <p>
         {{ $t('role.delete_remind') }}
-        <span @click="delLinkRole(deleteObj.id)" style="color: #48b6e2; cursor: pointer"> {{ deleteObj.name }}</span>
+        <span
+          @click="delLinkRole(deleteObj.id)"
+          style="color: #48b6e2; cursor: pointer"
+        >
+          {{ deleteObj.name }}</span
+        >
         ?
       </p>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="deleteDialogVisible = false">{{ $t('message.cancel') }}</el-button>
+        <el-button size="mini" @click="deleteDialogVisible = false">{{
+          $t('message.cancel')
+        }}</el-button>
         <el-button size="mini" type="primary" @click="confirmDelete">
           {{ $t('classification.deleteNode') }}
         </el-button>
@@ -350,16 +425,18 @@ export default {
       _this.roleusers = []
       _this.oldUser = []
 
-      await roleMappingModel.get({ 'filter[where][roleId]': id }).then((res) => {
-        if (res && res.data) {
-          res.data.forEach((roleMapping) => {
-            if (roleMapping.principalType === 'USER') {
-              _this.roleusers.push(roleMapping.principalId)
-              _this.oldUser.push(roleMapping)
-            }
-          })
-        }
-      })
+      await roleMappingModel
+        .get({ 'filter[where][roleId]': id })
+        .then((res) => {
+          if (res && res.data) {
+            res.data.forEach((roleMapping) => {
+              if (roleMapping.principalType === 'USER') {
+                _this.roleusers.push(roleMapping.principalId)
+                _this.oldUser.push(roleMapping)
+              }
+            })
+          }
+        })
     },
 
     // 删除角色
@@ -416,7 +493,10 @@ export default {
                 self.handleDataApi()
                 if (method === 'post') {
                   this.permissions.forEach((selectPermission) => {
-                    if (selectPermission.type === 'read' && !selectPermission.isMenu)
+                    if (
+                      selectPermission.type === 'read' &&
+                      !selectPermission.isMenu
+                    )
                       newRoleMappings.push({
                         principalType: 'PERMISSION',
                         principalId: selectPermission.name,
@@ -425,7 +505,9 @@ export default {
                   })
                   self
                     .$api('users')
-                    .deletePermissionRoleMapping(res.data.id, { data: { data: newRoleMappings } })
+                    .deletePermissionRoleMapping(res.data.id, {
+                      data: { data: newRoleMappings }
+                    })
                     .then((res) => {
                       if (res && res.data) {
                         // roleMappingModel.post(newRoleMappings);

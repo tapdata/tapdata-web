@@ -16,7 +16,7 @@ export const memCacheConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'editor/o-cache3.svg'
+          xlinkHref: 'static/editor/o-cache3.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.memCache.name')
@@ -51,13 +51,34 @@ export const memCacheConfig = {
         data = data || this.getFormData()
         let name = this.attr('label/text')
         log('MemCache Formdata')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
-        if (!data.cacheName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.cacheName.none')}`)
-        if (!data.cacheKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.cacheKeys.none')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
+          )
+        if (!data.cacheName)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.data_node.memCache.form.cacheName.none'
+            )}`
+          )
+        if (!data.cacheKeys)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.data_node.memCache.form.cacheKeys.none'
+            )}`
+          )
         if (data.maxSize !== 0 && !data.maxSize)
-          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.maxSize.none')}`)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.data_node.memCache.form.maxSize.none'
+            )}`
+          )
         if (data.maxRows !== 0 && !data.maxRows)
-          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.maxRows.none')}`)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.data_node.memCache.form.maxRows.none'
+            )}`
+          )
         return true
       },
 
@@ -77,7 +98,9 @@ export const memCacheConfig = {
        */
       allowSource(sourceCell) {
         return (
-          ['app.Collection', 'app.KafkaNode'].includes(sourceCell.get('type')) &&
+          ['app.Collection', 'app.KafkaNode'].includes(
+            sourceCell.get('type')
+          ) &&
           sourceCell.graph.getConnectedLinks(this, {
             inbound: true
           }).length < 1
@@ -248,7 +271,7 @@ export const memCacheConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/cache3.svg',
+        xlinkHref: 'static/editor/cache3.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

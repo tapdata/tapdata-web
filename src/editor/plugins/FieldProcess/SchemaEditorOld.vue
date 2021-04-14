@@ -6,7 +6,9 @@
           <el-button type="text" @click="handleAllDelete">{{
             $t('editor.cell.processor.field.form.delete')
           }}</el-button>
-          <el-button type="text" @click="handleAllReset">{{ $t('dataFlow.reset') }}</el-button>
+          <el-button type="text" @click="handleAllReset">{{
+            $t('dataFlow.reset')
+          }}</el-button>
           <el-button type="text" @click="handleAllToUpperCase()">{{
             $t('editor.cell.processor.field.form.toUpperCase')
           }}</el-button>
@@ -16,16 +18,23 @@
         </el-form-item>
       </el-form>
     </el-row>
-    <div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom">
+    <div
+      class="e-schema-editor"
+      :style="width > 0 ? `width: ${width}px;` : ''"
+      ref="entityDom"
+    >
       <el-container>
         <el-header height="20">
           <!--{{schema ? schema.name : ''}}-->
         </el-header>
         <div class="header-row">
           <div class="e-col">
-            <el-checkbox v-model="checkAll" @change="handleCheckAllChange" style="color: #fff">{{
-              $t('dataFlow.selectAll')
-            }}</el-checkbox>
+            <el-checkbox
+              v-model="checkAll"
+              @change="handleCheckAllChange"
+              style="color: #fff"
+              >{{ $t('dataFlow.selectAll') }}</el-checkbox
+            >
           </div>
           <div class="e-col">
             {{ $t('editor.cell.processor.field.form.fieldName') }}
@@ -91,46 +100,70 @@
                 <el-option
                   value="String"
                   label="String"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Date"
                   label="Date"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Integer"
                   label="Integer"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Double"
                   label="Double"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Float"
                   label="Float"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="BigDecimal"
                   label="BigDecimal"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Long"
                   label="Long"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Short"
                   label="Short"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
 
-                <el-option value="Map" label="Map" v-if="isCreate(data.id)"></el-option>
-                <el-option value="Array" label="Array" v-if="isCreate(data.id)"></el-option>
+                <el-option
+                  value="Map"
+                  label="Map"
+                  v-if="isCreate(data.id)"
+                ></el-option>
+                <el-option
+                  value="Array"
+                  label="Array"
+                  v-if="isCreate(data.id)"
+                ></el-option>
               </el-select>
 
               <el-button
@@ -148,16 +181,25 @@
                 :hide-on-click="false"
                 @command="(command) => handleCreate(command, node, data)"
               >
-                <span class="e-field-action el-icon-plus" @click="handleCreate('create_sibling', node, data)"></span>
+                <span
+                  class="e-field-action el-icon-plus"
+                  @click="handleCreate('create_sibling', node, data)"
+                ></span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="create_sibling" icon="iconfont icon-create_sibling_node">{{
-                    $t('editor.cell.processor.field.form.addField')
-                  }}</el-dropdown-item>
+                  <el-dropdown-item
+                    command="create_sibling"
+                    icon="iconfont icon-create_sibling_node"
+                    >{{
+                      $t('editor.cell.processor.field.form.addField')
+                    }}</el-dropdown-item
+                  >
                   <el-dropdown-item
                     command="create_child"
                     icon="iconfont icon-create_child_node"
                     v-if="['Map', 'Array'].includes(data.type)"
-                    >{{ $t('editor.cell.processor.field.form.addEmbedField') }}</el-dropdown-item
+                    >{{
+                      $t('editor.cell.processor.field.form.addEmbedField')
+                    }}</el-dropdown-item
                   >
                 </el-dropdown-menu>
               </el-dropdown>
@@ -165,12 +207,22 @@
               <el-button
                 type="text"
                 v-if="isRemove(data.id) || ['Array', 'Map'].includes(data.type)"
-                :class="[{ operWidth: disabledMode }, 'e-field-action', 'iconfont', 'icon-script']"
+                :class="[
+                  { operWidth: disabledMode },
+                  'e-field-action',
+                  'iconfont',
+                  'icon-script'
+                ]"
                 disabled
               ></el-button>
               <span
                 v-else
-                :class="[{ operWidth: disabledMode }, 'e-field-action', 'iconfont', 'icon-script']"
+                :class="[
+                  { operWidth: disabledMode },
+                  'e-field-action',
+                  'iconfont',
+                  'icon-script'
+                ]"
                 :style="isScript(data.id) ? 'color: #f98004;' : ''"
                 @click="handleScript(node, data)"
               ></span>
@@ -178,7 +230,10 @@
               <el-button
                 type="text"
                 v-show="!disabledMode"
-                v-if="originalSchema.type === 'collection' && data.primary_key_position > 0"
+                v-if="
+                  originalSchema.type === 'collection' &&
+                  data.primary_key_position > 0
+                "
                 class="e-field-action iconfont icon-l-del"
                 disabled
               ></el-button>
@@ -194,7 +249,11 @@
                 @click="handleReset(node, data)"
               ></span>
 
-              <span v-show="!disabledMode" class="e-port e-port-out" :data-id="getId(data)"></span>
+              <span
+                v-show="!disabledMode"
+                class="e-port e-port-out"
+                :data-id="getId(data)"
+              ></span>
             </span>
           </el-tree>
         </el-main>
@@ -240,8 +299,12 @@
           <div>{{ $t('editor.cell.processor.field.form.exampleRow4') }}</div>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="scriptDialog.open = false" size="mini">{{ $t('message.cancel') }}</el-button>
-          <el-button @click="scriptDialog.fn" type="primary" size="mini">{{ $t('message.confirm') }}</el-button>
+          <el-button @click="scriptDialog.open = false" size="mini">{{
+            $t('message.cancel')
+          }}</el-button>
+          <el-button @click="scriptDialog.fn" type="primary" size="mini">{{
+            $t('message.confirm')
+          }}</el-button>
         </div>
       </el-dialog>
     </div>
@@ -350,15 +413,21 @@ export default {
       this.checkAll = false
     },
     isRemove(id) {
-      let ops = this.model.operations.filter((v) => v.id === id && v.op === 'REMOVE')
+      let ops = this.model.operations.filter(
+        (v) => v.id === id && v.op === 'REMOVE'
+      )
       return ops && ops.length > 0
     },
     isRename(id) {
-      let ops = this.model.operations.filter((v) => v.id === id && v.op === 'RENAME')
+      let ops = this.model.operations.filter(
+        (v) => v.id === id && v.op === 'RENAME'
+      )
       return ops && ops.length > 0
     },
     isConvertDataType(id) {
-      let ops = this.model.operations.filter((v) => v.id === id && v.op === 'CONVERT')
+      let ops = this.model.operations.filter(
+        (v) => v.id === id && v.op === 'CONVERT'
+      )
       return ops && ops.length > 0
     },
     isScript(id) {
@@ -366,7 +435,9 @@ export default {
       return scripts && scripts.length > 0
     },
     isCreate(id) {
-      let ops = this.model.operations.filter((v) => v.id === id && v.op === 'CREATE')
+      let ops = this.model.operations.filter(
+        (v) => v.id === id && v.op === 'CREATE'
+      )
       return ops && ops.length > 0
     },
 
@@ -425,13 +496,17 @@ export default {
     },
     handleDataType(node, data) {
       log('SchemaEditor.handleDataType', node, data)
-      let createOps = this.model.operations.filter((v) => v.id === data.id && v.op === 'CREATE')
+      let createOps = this.model.operations.filter(
+        (v) => v.id === data.id && v.op === 'CREATE'
+      )
       if (createOps && createOps.length > 0) {
         let op = createOps[0]
         op.javaType = data.type
       } else {
         let nativeData = this.getNativeData(this.originalSchema.fields, data.id)
-        let ops = this.model.operations.filter((v) => v.id === data.id && v.op === 'CONVERT')
+        let ops = this.model.operations.filter(
+          (v) => v.id === data.id && v.op === 'CONVERT'
+        )
         let op
         if (ops.length === 0) {
           op = Object.assign(_.cloneDeep(CONVERT_OPS_TPL), {
@@ -458,7 +533,9 @@ export default {
         data.label = nativeData.label
         return
       }
-      let createOps = this.model.operations.filter((v) => v.id === data.id && v.op === 'CREATE')
+      let createOps = this.model.operations.filter(
+        (v) => v.id === data.id && v.op === 'CREATE'
+      )
       if (createOps && createOps.length > 0) {
         let op = createOps[0]
         let level = op.level
@@ -466,8 +543,16 @@ export default {
         fieldNames[level] = data.label
         op.field = fieldNames.join('.')
       } else {
-        log('Entity1.handlerRename(node,data,nativeData,operations)', node, data, nativeData, this.model.operations)
-        let ops = this.model.operations.filter((v) => v.id === nativeData.id && v.op === 'RENAME')
+        log(
+          'Entity1.handlerRename(node,data,nativeData,operations)',
+          node,
+          data,
+          nativeData,
+          this.model.operations
+        )
+        let ops = this.model.operations.filter(
+          (v) => v.id === nativeData.id && v.op === 'RENAME'
+        )
         let op
         if (ops.length === 0) {
           op = Object.assign(_.cloneDeep(RENAME_OPS_TPL), {
@@ -484,14 +569,22 @@ export default {
           })
         }
         //删除 相同字段名称
-        if (this.model.scripts && this.model.operations.length && this.model.operations.length > 0) {
+        if (
+          this.model.scripts &&
+          this.model.operations.length &&
+          this.model.operations.length > 0
+        ) {
           for (let i = 0; i < this.model.operations.length; i++) {
             let originalFieldName = this.model.operations[i].field
             if (originalFieldName.indexOf('.') >= 0) {
               originalFieldName = originalFieldName.split('.')
-              originalFieldName = originalFieldName[originalFieldName.length - 1]
+              originalFieldName =
+                originalFieldName[originalFieldName.length - 1]
             }
-            if (originalFieldName === this.model.operations[i].operand && this.model.operations[i].op === 'RENAME') {
+            if (
+              originalFieldName === this.model.operations[i].operand &&
+              this.model.operations[i].op === 'RENAME'
+            ) {
               this.model.operations.splice(i, 1)
               i--
             }
@@ -502,7 +595,9 @@ export default {
     },
     handleDelete(node, data) {
       log('SchemaEditor.handleDelete', node, data)
-      let createOpsIndex = this.model.operations.findIndex((v) => v.id === data.id && v.op === 'CREATE')
+      let createOpsIndex = this.model.operations.findIndex(
+        (v) => v.id === data.id && v.op === 'CREATE'
+      )
       if (createOpsIndex >= 0) {
         let fieldName = this.model.operations[createOpsIndex].field_name + '.'
         this.model.operations.splice(createOpsIndex, 1)
@@ -510,14 +605,20 @@ export default {
         for (let i = 0; i < this.model.operations.length; i++) {
           let op = this.model.operations[i]
           let opFieldName = op.field || op.field_name
-          if (opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
+          if (
+            opFieldName.indexOf(fieldName) === 0 &&
+            opFieldName.length === fieldName.length
+          ) {
             this.model.operations.splice(i, 1)
             i--
           }
         }
         this.$refs.tree.remove(node)
       } else {
-        let originalField = this.getNativeData(this.originalSchema.fields, data.id)
+        let originalField = this.getNativeData(
+          this.originalSchema.fields,
+          data.id
+        )
         let self = this
 
         let fn = function (field) {
@@ -540,7 +641,9 @@ export default {
           // 	}
           // }
 
-          let ops = self.model.operations.filter((v) => v.op === 'REMOVE' && v.id === field.id)
+          let ops = self.model.operations.filter(
+            (v) => v.op === 'REMOVE' && v.id === field.id
+          )
 
           let op
           if (ops.length === 0) {
@@ -559,7 +662,11 @@ export default {
         if (originalField) fn(originalField)
       }
       //删除 对应字段js脚本处理
-      if (this.model.scripts && this.model.scripts.length && this.model.scripts.length > 0) {
+      if (
+        this.model.scripts &&
+        this.model.scripts.length &&
+        this.model.scripts.length > 0
+      ) {
         for (let i = 0; i < this.model.scripts.length; i++) {
           if (data.id === this.model.scripts[i].id) {
             this.model.scripts.splice(i, 1)
@@ -582,7 +689,9 @@ export default {
       // 改名前查找同级中是否重名，若有则return且还原改动并提示
       let exist = false
       if (node && node.parent && node.parent.childNodes) {
-        let parentNode = node.parent.childNodes.filter((v) => data.label === v.data.label)
+        let parentNode = node.parent.childNodes.filter(
+          (v) => data.label === v.data.label
+        )
         if (parentNode && parentNode.length === 2) {
           this.$message.error(data.label + this.$t('message.exists_name'))
           exist = true
@@ -595,7 +704,10 @@ export default {
       if (ids && ids.length > 0) {
         ids.map((id) => {
           let node = this.$refs.tree.getNode(id)
-          if (this.originalSchema.type === 'collection' && node.data.primary_key_position > 0) {
+          if (
+            this.originalSchema.type === 'collection' &&
+            node.data.primary_key_position > 0
+          ) {
             return
           }
           this.handleDelete(node, node.data)
@@ -633,14 +745,20 @@ export default {
       log('SchemaEditor.handleReset', node, data)
       let parentId = node.parent.data.id
       let dataLabel = _.cloneDeep(data.label)
-      let indexId = this.model.operations.filter((v) => v.op === 'REMOVE' && v.id === parentId)
+      let indexId = this.model.operations.filter(
+        (v) => v.op === 'REMOVE' && v.id === parentId
+      )
       if (parentId && indexId.length !== 0) {
         return
       }
       let self = this
       let nativeData = self.getNativeData(self.originalSchema.fields, data.id)
       let fn = function (node, data) {
-        for (let i = 0, length = node.childNodes.length; i < node.childNodes.length; i++) {
+        for (
+          let i = 0, length = node.childNodes.length;
+          i < node.childNodes.length;
+          i++
+        ) {
           let childNode = node.childNodes[i]
           fn(childNode, childNode.data)
           if (node.childNodes.length !== length) {
@@ -688,7 +806,11 @@ export default {
         data.label = dataLabel
       }
       //删除 对应字段js脚本处理
-      if (this.model.scripts && this.model.scripts.length && this.model.scripts.length > 0) {
+      if (
+        this.model.scripts &&
+        this.model.scripts.length &&
+        this.model.scripts.length > 0
+      ) {
         for (let i = 0; i < this.model.scripts.length; i++) {
           if (data.id === this.model.scripts[i].id) {
             this.model.scripts.splice(i, 1)
@@ -727,7 +849,9 @@ export default {
 
       let fieldId = uuid()
       let newFieldOperation = Object.assign(_.cloneDeep(CREATE_OPS_TPL), {
-        field: parentFieldName ? parentFieldName + '.newFieldName' : 'newFieldName',
+        field: parentFieldName
+          ? parentFieldName + '.newFieldName'
+          : 'newFieldName',
         tableName: data.table_name,
         javaType: 'String',
         id: fieldId,
@@ -768,7 +892,9 @@ export default {
     handleScript(node, data) {
       let self = this
 
-      let fieldName = (self.scriptDialog.fieldName = self.getParentFieldName(node))
+      let fieldName = (self.scriptDialog.fieldName = self.getParentFieldName(
+        node
+      ))
       let tableName = (self.scriptDialog.tableName = data.table_name)
       let id = data.id
 

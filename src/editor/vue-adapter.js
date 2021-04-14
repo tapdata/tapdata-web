@@ -24,10 +24,19 @@ export class VueAdapter extends BaseObject {
     this.graphUI = graphUI
 
     this.editor.on(EditorEventType.BEFORE_DESTROY, this.destroy.bind(this))
-    editor.getRightSidebar().on(EditorEventType.RESIZE, this.handlerResize.bind(this))
-    editor.getRightSidebar().on(EditorEventType.HIDE, this.handlerHide.bind(this))
-    editor.getRightTabPanel().on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this))
-    editor.on(EditorEventType.DATA_FLOW_UPDATED, this.handlerDataFlowUpdated.bind(this))
+    editor
+      .getRightSidebar()
+      .on(EditorEventType.RESIZE, this.handlerResize.bind(this))
+    editor
+      .getRightSidebar()
+      .on(EditorEventType.HIDE, this.handlerHide.bind(this))
+    editor
+      .getRightTabPanel()
+      .on(EditorEventType.SELECTED, this.handlerTapChanged.bind(this))
+    editor.on(
+      EditorEventType.DATA_FLOW_UPDATED,
+      this.handlerDataFlowUpdated.bind(this)
+    )
   }
 
   /**
@@ -53,7 +62,10 @@ export class VueAdapter extends BaseObject {
     let self = this
     let name = cell.get('type')
     let formData = self.getFormDataForCell(cell)
-    let isDataNode = cell.isElement() && typeof cell.isDataNode === 'function' && cell.isDataNode()
+    let isDataNode =
+      cell.isElement() &&
+      typeof cell.isDataNode === 'function' &&
+      cell.isDataNode()
     let dataNodeInfo = isDataNode
       ? {
           isSource: self.graphUI.graph.getConnectedLinks(cell, {
@@ -68,7 +80,9 @@ export class VueAdapter extends BaseObject {
       let vueComponentConfig = vueAdapter[name]
       let Comp = Vue.extend(vueComponentConfig.component)
 
-      let settings = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel')
+      let settings = self.editor
+        .getRightTabPanel()
+        .getChildByName('nodeSettingPanel')
       if (!settings) {
         settings = new Panel({
           name: 'nodeSettingPanel',
@@ -92,7 +106,9 @@ export class VueAdapter extends BaseObject {
       if (typeof self.vm.setData === 'function') {
         self.vm.setData(formData, cell, dataNodeInfo, self)
       } else {
-        throw new Error(`Custom form component does not implement "${name}" method`)
+        throw new Error(
+          `Custom form component does not implement "${name}" method`
+        )
       }
 
       let editable = self.editor.editable
@@ -172,6 +188,11 @@ export class VueAdapter extends BaseObject {
 
     if (typeof cell.id === 'string') cell = this.graphUI.graph.getCell(cell.id)
 
-    return cell && (cell.get('form_data') ? cell.get('form_data') : cell.attributes.attrs.form_data)
+    return (
+      cell &&
+      (cell.get('form_data')
+        ? cell.get('form_data')
+        : cell.attributes.attrs.form_data)
+    )
   }
 }

@@ -10,13 +10,20 @@
   >
     <el-form label-width="150px">
       <el-form-item :label="$t('dataFlow.taskName')">
-        <el-input v-model="dataflow.name" maxlength="50" show-word-limit class="task-name"></el-input>
+        <el-input
+          v-model="dataflow.name"
+          maxlength="50"
+          show-word-limit
+          class="task-name"
+        ></el-input>
       </el-form-item>
     </el-form>
     <setting ref="setting"></setting>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">{{ $t('dataFlow.previous') }}</el-button>
-      <el-button type="primary" @click="save">{{ $t('dataFlow.execution') }}</el-button>
+      <el-button type="primary" @click="save">{{
+        $t('dataFlow.execution')
+      }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -31,7 +38,9 @@ export default {
     dialogVisibleSetting: {
       handler() {
         this.dataflow.name = this.$parent.dataFlow.name
-        this.dataflow.setting = this.$parent.editor.graph.getSettingData() || this.$parent.dataFlow.setting
+        this.dataflow.setting =
+          this.$parent.editor.graph.getSettingData() ||
+          this.$parent.dataFlow.setting
       }
     }
   },
@@ -51,7 +60,9 @@ export default {
   },
   mounted() {
     this.dataflow.name = this.$parent.editor.ui.getName()
-    this.dataflow.setting = this.$parent.editor.graph.getSettingData() || this.$parent.dataFlow.setting
+    this.dataflow.setting =
+      this.$parent.editor.graph.getSettingData() ||
+      this.$parent.dataFlow.setting
     this.$nextTick(() => {
       this.$refs.setting.isSimple = true
       this.$refs.setting.showMore = false

@@ -6,7 +6,9 @@
     </header>
     <main>
       <div class="panel">
-        <div class="title">{{ $t('app.customerService.technicalSupport') }}</div>
+        <div class="title">
+          {{ $t('app.customerService.technicalSupport') }}
+        </div>
         <div class="content">
           <span>{{ $t('app.customerService.technicalSupportText') }}</span>
           {{ $t('app.customerService.userSupport') }}

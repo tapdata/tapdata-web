@@ -5,7 +5,12 @@
  */
 import joint from '../lib/rappid/rappid'
 import log from '../../log'
-import { FORM_DATA_KEY, SCHEMA_DATA_KEY, OUTPUT_SCHEMA_DATA_KEY, JOIN_TABLE_TPL } from '../constants'
+import {
+  FORM_DATA_KEY,
+  SCHEMA_DATA_KEY,
+  OUTPUT_SCHEMA_DATA_KEY,
+  JOIN_TABLE_TPL
+} from '../constants'
 import { mergeJoinTablesToTargetSchema } from '../util/Schema'
 import _ from 'lodash'
 // import joint from '../lib/rappid/rappid';
@@ -39,7 +44,7 @@ joint.dia.Element.define(
         fill: '#333333'
       },
       statusImage: {
-        xlinkHref: 'editor/disabled.svg',
+        xlinkHref: 'static/editor/disabled.svg',
         refWidth: '30%',
         refHeight: -20,
         refX: '75%',
@@ -123,7 +128,7 @@ export const baseElementConfig = {
           magnet: false
         },
         image: {
-          // xlinkHref: 'editor/table.svg',
+          // xlinkHref: 'static/editor/table.svg',
           refWidth: '19%',
           refHeight: '82%',
           refX: '-4%',
@@ -251,8 +256,10 @@ export const baseElementConfig = {
           }
           if (formData && formData.name) {
             let name = formData.name
-            let isDataNode = typeof self.isDataNode === 'function' ? self.isDataNode() : false
-            let isProcess = typeof self.isProcess === 'function' ? self.isProcess() : false
+            let isDataNode =
+              typeof self.isDataNode === 'function' ? self.isDataNode() : false
+            let isProcess =
+              typeof self.isProcess === 'function' ? self.isProcess() : false
             let width = isDataNode ? 120 : isProcess ? 90 : false
             if (width) {
               name = breakText.breakText(name, width)
@@ -319,7 +326,9 @@ export const baseElementConfig = {
               let schema = sourceCell.getOutputSchema()
               let sourceCellFormData = sourceCell.getFormData()
 
-              joinTable = joinTable ? _.cloneDeep(joinTable) : _.cloneDeep(JOIN_TABLE_TPL)
+              joinTable = joinTable
+                ? _.cloneDeep(joinTable)
+                : _.cloneDeep(JOIN_TABLE_TPL)
 
               if (schema) {
                 // let fields = schema.fields || [];
@@ -339,8 +348,11 @@ export const baseElementConfig = {
 									} */
               }
               let parentDataNodes =
-                typeof sourceCell.getFirstDataNode === 'function' ? sourceCell.getFirstDataNode() : []
-              joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : ''
+                typeof sourceCell.getFirstDataNode === 'function'
+                  ? sourceCell.getFirstDataNode()
+                  : []
+              joinTable.stageId =
+                parentDataNodes.length > 0 ? parentDataNodes[0].id : ''
               joinTable.connectionId = sourceCellFormData.connectionId
 
               formData.joinTable = _.cloneDeep(joinTable)
@@ -348,7 +360,11 @@ export const baseElementConfig = {
 
               joinTable.sourceSchema = schema
 
-              log('BaseElement.getInputSchema.joinTables', cell.getFormData(), joinTable)
+              log(
+                'BaseElement.getInputSchema.joinTables',
+                cell.getFormData(),
+                joinTable
+              )
               return joinTable
             } else {
               return null
@@ -363,15 +379,17 @@ export const baseElementConfig = {
       __mergeOutputSchema() {
         let inputSchema = this.getInputSchema() || []
         let schema = this.getSchema() || {
-          meta_type: this.get('type') === 'app.Collection' ? 'collection' : 'table',
-          table_name: inputSchema && inputSchema.length && inputSchema[0].tableName // 新增表没有schema,中间有处理节点，目标节点拿不到tableName,增加table_name
+          meta_type:
+            this.get('type') === 'app.Collection' ? 'collection' : 'table',
+          table_name:
+            inputSchema && inputSchema.length && inputSchema[0].tableName // 新增表没有schema,中间有处理节点，目标节点拿不到tableName,增加table_name
         }
         let outputSchema = mergeJoinTablesToTargetSchema(schema, inputSchema)
-        log(this.get('type') + '.__mergeOutputSchema[this.schema,inputSchema,outputSchema]', [
-          schema,
-          inputSchema,
-          outputSchema
-        ])
+        log(
+          this.get('type') +
+            '.__mergeOutputSchema[this.schema,inputSchema,outputSchema]',
+          [schema, inputSchema, outputSchema]
+        )
         let _outputSchema
         try {
           _outputSchema = this.mergeOutputSchema(outputSchema)
@@ -398,14 +416,18 @@ export const baseElementConfig = {
         let graph = this.graph
         graph.getConnectedLinks(this, { outbound: true }).forEach((link) => {
           let targetCell = link.getTargetCell()
-          if (targetCell && typeof targetCell.updateOutputSchema === 'function') {
+          if (
+            targetCell &&
+            typeof targetCell.updateOutputSchema === 'function'
+          ) {
             setTimeout(() => targetCell.updateOutputSchema(), 0)
           }
         })
       },
 
       getFirstDataNode() {
-        if (typeof this.isDataNode === 'function' && this.isDataNode()) return [this]
+        if (typeof this.isDataNode === 'function' && this.isDataNode())
+          return [this]
         let graph = this.graph
         let inboundLinks = graph.getConnectedLinks(this, { inbound: true })
         let parentDataNodes = []
@@ -413,9 +435,15 @@ export const baseElementConfig = {
           let link = inboundLinks[i]
           let sourceCell = link.getSourceCell()
           if (sourceCell) {
-            if (typeof sourceCell.isDataNode === 'function' && sourceCell.isDataNode()) {
+            if (
+              typeof sourceCell.isDataNode === 'function' &&
+              sourceCell.isDataNode()
+            ) {
               parentDataNodes.push(sourceCell)
-            } else if (typeof sourceCell.isProcess === 'function' && sourceCell.isProcess()) {
+            } else if (
+              typeof sourceCell.isProcess === 'function' &&
+              sourceCell.isProcess()
+            ) {
               parentDataNodes.push(...sourceCell.getFirstDataNode())
             }
           }
@@ -460,34 +488,45 @@ export const baseElementConfig = {
           onewayOut = false,
           self = this
         self.graph.startBatch('disable')
-        if (self.graph.getConnectedLinks(cell, { inbound: true }).length == 0) onewayIn = true
-        if (self.graph.getConnectedLinks(cell, { outbound: true }).length == 0) onewayOut = true
-        self.graph.getConnectedLinks(cell, { inbound: true }).forEach((link) => {
-          if (!link.attributes.form_data.disabled) onewayIn = true
-        })
-        self.graph.getConnectedLinks(cell, { outbound: true }).forEach((link) => {
-          if (!link.attributes.form_data.disabled) onewayOut = true
-        })
+        if (self.graph.getConnectedLinks(cell, { inbound: true }).length == 0)
+          onewayIn = true
+        if (self.graph.getConnectedLinks(cell, { outbound: true }).length == 0)
+          onewayOut = true
+        self.graph
+          .getConnectedLinks(cell, { inbound: true })
+          .forEach((link) => {
+            if (!link.attributes.form_data.disabled) onewayIn = true
+          })
+        self.graph
+          .getConnectedLinks(cell, { outbound: true })
+          .forEach((link) => {
+            if (!link.attributes.form_data.disabled) onewayOut = true
+          })
         if (!(onewayIn && onewayOut) || checked) {
           cell.attributes.form_data.disabled = true
           if (checked) cell.attributes.form_data.disablChecker = true
           cell.attr('body/fill', '#f1f1f1')
           cell.attr('body/stroke', 'grey')
           cell.attr('label/fill', '#ccc')
-          self.graph.getConnectedLinks(cell, { inbound: true }).forEach((link) => {
-            if (!!link.attributes.form_data.disabled && !checked) return
-            link.attributes.form_data.disabled = true
-            link.attr('line/stroke', '#dedede')
-            link.toBack()
-            self.setDisabled(link.getSourceCell())
-          })
-          self.graph.getConnectedLinks(cell, { outbound: true }).forEach((link) => {
-            if (!!link.attributes.form_data.disabled && !checked) return
-            link.attributes.form_data.disabled = true
-            link.attr('line/stroke', '#dedede')
-            link.toBack()
-            if (!link.getTargetCell().isDataNode()) self.setDisabled(link.getTargetCell())
-          })
+          self.graph
+            .getConnectedLinks(cell, { inbound: true })
+            .forEach((link) => {
+              if (!!link.attributes.form_data.disabled && !checked) return
+              link.attributes.form_data.disabled = true
+              link.attr('line/stroke', '#dedede')
+              link.toBack()
+              self.setDisabled(link.getSourceCell())
+            })
+          self.graph
+            .getConnectedLinks(cell, { outbound: true })
+            .forEach((link) => {
+              if (!!link.attributes.form_data.disabled && !checked) return
+              link.attributes.form_data.disabled = true
+              link.attr('line/stroke', '#dedede')
+              link.toBack()
+              if (!link.getTargetCell().isDataNode())
+                self.setDisabled(link.getTargetCell())
+            })
         }
         if (checked) {
           cell.attr('body/fill', '#f1f1f1')

@@ -2,10 +2,16 @@
   <div class="e-qb">
     <el-tabs type="border-card" v-model="value.filterType">
       <el-tab-pane name="field" :disabled="disabled">
-        <span slot="label"> {{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span>
+        <span slot="label">
+          {{
+            $t('editor.cell.data_node.collection.form.filter.fieldFilter')
+          }}</span
+        >
         <el-form-item
           v-if="!value.noFieldFilter"
-          :placeholder="$t('editor.cell.data_node.collection.form.filter.allField')"
+          :placeholder="
+            $t('editor.cell.data_node.collection.form.filter.allField')
+          "
         >
           <el-select v-model="value.fieldFilterType">
             <el-option
@@ -20,8 +26,12 @@
           v-if="value.fieldFilterType !== 'keepAllFields'"
           :placeholder="
             value.fieldFilterType === 'retainedField'
-              ? $t('editor.cell.data_node.collection.form.fieldFilter.placeholderKeep')
-              : $t('editor.cell.data_node.collection.form.fieldFilter.placeholderDelete')
+              ? $t(
+                  'editor.cell.data_node.collection.form.fieldFilter.placeholderKeep'
+                )
+              : $t(
+                  'editor.cell.data_node.collection.form.fieldFilter.placeholderDelete'
+                )
           "
         >
           <el-select
@@ -32,12 +42,20 @@
             default-first-option
             @change="handleFilterChange()"
           >
-            <el-option v-for="opt in primaryKeyOptions" :key="opt" :label="opt" :value="opt"> </el-option>
+            <el-option
+              v-for="opt in primaryKeyOptions"
+              :key="opt"
+              :label="opt"
+              :value="opt"
+            >
+            </el-option>
           </el-select>
         </el-form-item>
         <div class="fiflter">
           <div v-if="!value.noLineLimit" class="rowSlot">
-            <span slot="prepend">{{ $t('editor.cell.data_node.collection.form.filter.rowLimit') }}</span>
+            <span slot="prepend">{{
+              $t('editor.cell.data_node.collection.form.filter.rowLimit')
+            }}</span>
             <el-select v-model="value.limitLines" size="mini" class="e-select">
               <el-option
                 v-for="item in rowNumberList"
@@ -47,33 +65,72 @@
               ></el-option>
             </el-select>
           </div>
-          <el-row v-if="databaseType == 'mongodb' && value.conditions.length == 0">
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('group', 'and')"
+          <el-row
+            v-if="databaseType == 'mongodb' && value.conditions.length == 0"
+          >
+            <el-button
+              plain
+              class="el-button--small"
+              style="height: 28px"
+              @click="addCond('group', 'and')"
               >+ and()</el-button
             >
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('group', 'or')"
+            <el-button
+              plain
+              class="el-button--small"
+              style="height: 28px"
+              @click="addCond('group', 'or')"
               >+ or()</el-button
             >
           </el-row>
-          <el-row v-if="databaseType != 'mongodb' && value.conditions.length == 0">
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('cond')"
+          <el-row
+            v-if="databaseType != 'mongodb' && value.conditions.length == 0"
+          >
+            <el-button
+              plain
+              class="el-button--small"
+              style="height: 28px"
+              @click="addCond('cond')"
               >+{{ $t('queryBuilder.addCond') }}</el-button
             >
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('group')"
+            <el-button
+              plain
+              class="el-button--small"
+              style="height: 28px"
+              @click="addCond('group')"
               >+({{ $t('queryBuilder.addCond') }})</el-button
             >
           </el-row>
-          <el-row v-if="databaseType != 'mongodb' && value.conditions.length > 0" style="padding-bottom: 10px">
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('cond', 'and')"
+          <el-row
+            v-if="databaseType != 'mongodb' && value.conditions.length > 0"
+            style="padding-bottom: 10px"
+          >
+            <el-button
+              plain
+              class="el-button--small"
+              style="height: 28px"
+              @click="addCond('cond', 'and')"
               >+ and</el-button
             >
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('cond', 'or')"
+            <el-button
+              plain
+              class="el-button--small"
+              style="height: 28px"
+              @click="addCond('cond', 'or')"
               >+ or</el-button
             >
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('group', 'and')"
+            <el-button
+              plain
+              class="el-button--small"
+              style="height: 28px"
+              @click="addCond('group', 'and')"
               >+ and()</el-button
             >
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('group', 'or')"
+            <el-button
+              plain
+              class="el-button--small"
+              style="height: 28px"
+              @click="addCond('group', 'or')"
               >+ or()</el-button
             >
           </el-row>
@@ -91,10 +148,14 @@
       </el-tab-pane>
       <el-tab-pane name="sql" :disabled="disabled">
         <span v-if="databaseType != 'mongodb'" slot="label">
-          {{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span
+          {{
+            $t('editor.cell.data_node.collection.form.filter.sqlFilter')
+          }}</span
         >
         <span v-if="databaseType == 'mongodb'" slot="label">
-          {{ $t('editor.cell.data_node.collection.form.filter.mqlFilter') }}</span
+          {{
+            $t('editor.cell.data_node.collection.form.filter.mqlFilter')
+          }}</span
         >
         <el-form-item prop="sql">
           <el-input
@@ -117,7 +178,9 @@
           <el-input
             :value="initialOffset"
             @input="$emit('update:initialOffset', $event)"
-            :placeholder="$t('editor.cell.data_node.table.form.initial_offset.placeholder')"
+            :placeholder="
+              $t('editor.cell.data_node.table.form.initial_offset.placeholder')
+            "
             size="mini"
           ></el-input>
         </el-form-item>
@@ -193,29 +256,41 @@ export default {
       sqlWhere: '',
       filterTypeOptions: [
         {
-          label: this.$t('editor.cell.data_node.collection.form.filter.allField'),
+          label: this.$t(
+            'editor.cell.data_node.collection.form.filter.allField'
+          ),
           value: 'keepAllFields'
         },
         {
-          label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.retainedField'),
+          label: this.$t(
+            'editor.cell.data_node.collection.form.fieldFilterType.retainedField'
+          ),
           value: 'retainedField'
         },
         {
-          label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.deleteField'),
+          label: this.$t(
+            'editor.cell.data_node.collection.form.fieldFilterType.deleteField'
+          ),
           value: 'deleteField'
         }
       ],
       rowNumberList: [
         {
-          label: this.$t('editor.cell.data_node.collection.form.filter.allRows'),
+          label: this.$t(
+            'editor.cell.data_node.collection.form.filter.allRows'
+          ),
           value: 'all'
         },
         {
-          label: this.$t('editor.cell.data_node.collection.form.filter.oneThousandRows'),
+          label: this.$t(
+            'editor.cell.data_node.collection.form.filter.oneThousandRows'
+          ),
           value: 1000
         },
         {
-          label: this.$t('editor.cell.data_node.collection.form.filter.tenThousandRows'),
+          label: this.$t(
+            'editor.cell.data_node.collection.form.filter.tenThousandRows'
+          ),
           value: 10000
         }
       ]
@@ -272,32 +347,45 @@ export default {
         custSql = this.value
       if (!this.sqlWhere) this.sqlWhere = ''
       while (this.custFields.length > 0) this.custFields.pop()
-      if (this.value.selectedFields.length > 0 && custSql.fieldFilterType == 'retainedField')
+      if (
+        this.value.selectedFields.length > 0 &&
+        custSql.fieldFilterType == 'retainedField'
+      )
         this.value.selectedFields.forEach((it) => this.custFields.push(it))
-      else if (this.value.selectedFields.length > 0 && custSql.fieldFilterType == 'deleteField') {
+      else if (
+        this.value.selectedFields.length > 0 &&
+        custSql.fieldFilterType == 'deleteField'
+      ) {
         this.primaryKeyOptions
           .filter((it) => !this.value.selectedFields.includes(it))
           .forEach((it) => this.custFields.push(it))
       }
 
-      if (this.custFields.length > 0 && this.custFields.length != this.primaryKeyOptions.length)
+      if (
+        this.custFields.length > 0 &&
+        this.custFields.length != this.primaryKeyOptions.length
+      )
         res += this.custFields.join(',')
       else res += '* '
       res += ' FROM ' + this.tableName + ' '
       if (
         (this.sqlWhere && this.sqlWhere.length > 0) ||
-        (custSql.limitLines && custSql.limitLines != 'all' && this.databaseType == 'oracle')
+        (custSql.limitLines &&
+          custSql.limitLines != 'all' &&
+          this.databaseType == 'oracle')
       )
         res += ' WHERE '
       res += this.sqlWhere
       if (custSql.limitLines && custSql.limitLines != 'all') {
         if (this.databaseType == 'mysql') res += ' limit ' + custSql.limitLines
-        if (this.databaseType == 'sqlserver') res = res.replace('SELECT ', 'SELECT top ' + custSql.limitLines + ' ')
+        if (this.databaseType == 'sqlserver')
+          res = res.replace('SELECT ', 'SELECT top ' + custSql.limitLines + ' ')
         if (this.databaseType == 'oracle') {
           if (res.indexOf('WHERE ') < res.length - 6) res += ' AND '
           res += ' ROWNUM < ' + custSql.limitLines
         }
-        if (this.databaseType == 'db2') res += '  fetch first ' + custSql.limitLines + ' rows only'
+        if (this.databaseType == 'db2')
+          res += '  fetch first ' + custSql.limitLines + ' rows only'
       }
       this.value.cSql = res
     },
@@ -328,17 +416,34 @@ export default {
       let res = ''
       conditions.forEach((cond) => {
         if (cond.field || cond.type == 'group') {
-          if (cond.type == 'group') res += ' ' + cond.operator + ' (' + this.toSqlWhere(cond.conditions) + ')'
+          if (cond.type == 'group')
+            res +=
+              ' ' +
+              cond.operator +
+              ' (' +
+              this.toSqlWhere(cond.conditions) +
+              ')'
           else {
             let quota = ['String', 'Date'].includes(
-                this.mergedSchema.fields.find((it) => it.field_name == cond.field).javaType
+                this.mergedSchema.fields.find(
+                  (it) => it.field_name == cond.field
+                ).javaType
               )
                 ? "'"
                 : '',
               percent = cond.command == 'like' ? '%' : ''
             if (quota == '' && percent == '%') quota = "'"
             if (res.length > 1) res += ' ' + cond.operator + ' '
-            res += cond.field + ' ' + cond.command + ' ' + quota + percent + cond.value + percent + quota
+            res +=
+              cond.field +
+              ' ' +
+              cond.command +
+              ' ' +
+              quota +
+              percent +
+              cond.value +
+              percent +
+              quota
           }
         }
       })
@@ -370,7 +475,11 @@ export default {
       } else if (condition.type === 'condition' && condition.field) {
         let val = condition.value
         if (
-          !['String', 'Date'].includes(this.mergedSchema.fields.find((it) => it.field_name == condition.field).javaType)
+          !['String', 'Date'].includes(
+            this.mergedSchema.fields.find(
+              (it) => it.field_name == condition.field
+            ).javaType
+          )
         )
           val = parseFloat(val)
         if (condition.command === 'eq') {
@@ -386,7 +495,9 @@ export default {
         } else {
           return {
             ['' + condition.field + '']: {
-              ['$' + mongoCommand[calculationList.indexOf(condition.command)] + '']: val
+              ['$' +
+              mongoCommand[calculationList.indexOf(condition.command)] +
+              '']: val
             }
           }
         }
@@ -399,13 +510,17 @@ export default {
       if (typeof val === 'object') {
         if (Array.isArray(val)) {
           let result = []
-          for (let i = 0; i < val.length; i++) result.push(this.serializationToRestFilter(`${key}[${i}]`, val[i]))
+          for (let i = 0; i < val.length; i++)
+            result.push(this.serializationToRestFilter(`${key}[${i}]`, val[i]))
           return result.join('&')
         } else {
           let result = []
           for (let name in val) {
             if (name && Object.hasOwnProperty.call(val, name)) {
-              let temp = this.serializationToRestFilter(`${key}[${name}]`, val[name])
+              let temp = this.serializationToRestFilter(
+                `${key}[${name}]`,
+                val[name]
+              )
               if (temp) result.push(temp)
             }
           }

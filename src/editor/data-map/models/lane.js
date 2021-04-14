@@ -52,7 +52,10 @@ export default class Lane {
   }
 
   createData(points, radius) {
-    let origin = new joint.g.Line(points[0], points[points.length - 1]).midpoint()
+    let origin = new joint.g.Line(
+      points[0],
+      points[points.length - 1]
+    ).midpoint()
     return joint.connectors.rounded(origin, origin, points, {
       radius: radius || 30
     })

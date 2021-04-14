@@ -15,7 +15,7 @@ export const redisConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'editor/o-redis.svg'
+          xlinkHref: 'static/editor/o-redis.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.redis.name')
@@ -45,8 +45,16 @@ export const redisConfig = {
       validate: function (data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.redis.Redis_isNull')}`)
-        if (!data.redisKey) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.redis.cacheKey_placeholder')}`)
+        if (!data.connectionId)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.redis.Redis_isNull')}`
+          )
+        if (!data.redisKey)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.data_node.redis.cacheKey_placeholder'
+            )}`
+          )
         return true
       },
 
@@ -149,7 +157,10 @@ export const redisConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -198,7 +209,7 @@ export const redisConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/redis.svg',
+        xlinkHref: 'static/editor/redis.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

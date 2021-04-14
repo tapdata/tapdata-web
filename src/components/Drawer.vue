@@ -33,7 +33,12 @@ export default {
     title: String
   },
   data() {
-    return { drawerVisible: false, opened: false, clientWidth: 0, sliderWidth: 0 }
+    return {
+      drawerVisible: false,
+      opened: false,
+      clientWidth: 0,
+      sliderWidth: 0
+    }
   },
   computed: {
     width() {
@@ -67,7 +72,9 @@ export default {
   },
   methods: {
     resize() {
-      let eSideBarRight = document.body.getElementsByClassName('e-sidebar-right')[0]
+      let eSideBarRight = document.body.getElementsByClassName(
+        'e-sidebar-right'
+      )[0]
       this.$nextTick(() => {
         this.sliderWidth = eSideBarRight.clientWidth
       })

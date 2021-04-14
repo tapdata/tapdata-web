@@ -25,7 +25,9 @@ module.exports = {
         // 取消尾逗号
         trailingComma: 'none',
         // 统一换行符为\n
-        endOfLine: 'lf'
+        endOfLine: 'lf',
+        // 为了便于阅读，每一行建议不要使用超过80个字符
+        printWidth: 80
       }
     ]
   }

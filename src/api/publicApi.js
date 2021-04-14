@@ -150,7 +150,11 @@ axios.interceptors.response.use(
           })
           break
       }
-    } else if (error.code === 'ECONNABORTED' || error.message === 'Network Error' || !window.navigator.onLine) {
+    } else if (
+      error.code === 'ECONNABORTED' ||
+      error.message === 'Network Error' ||
+      !window.navigator.onLine
+    ) {
       Message.error({
         message: i18n.t('errorCode.networkUnconnected')
       })
@@ -191,7 +195,10 @@ export default class PublicAPI {
   update(where, attributes) {
     if (typeof where === 'object') where = JSON.stringify(where)
 
-    return axios.post(this.url + '/update?where=' + encodeURIComponent(where), attributes)
+    return axios.post(
+      this.url + '/update?where=' + encodeURIComponent(where),
+      attributes
+    )
   }
 
   get(params, filter) {

@@ -3,8 +3,8 @@ let nodeConfig = [
     nodeConfig: {
       name: '加前后缀',
       tips: '对字段统一加前缀，如：AA_',
-      shapeImage: 'editor/o-mysql.svg',
-      stencilImage: 'editor/mysql.svg'
+      shapeImage: 'static/editor/o-mysql.svg',
+      stencilImage: 'static/editor/mysql.svg'
     },
     formConfig: {
       items: [
@@ -74,8 +74,8 @@ let nodeConfig = [
     nodeConfig: {
       name: '时区调整',
       tips: '对时区字段进行时区调整（+/- 小时）',
-      shapeImage: 'editor/o-mysql.svg',
-      stencilImage: 'editor/mysql.svg'
+      shapeImage: 'static/editor/o-mysql.svg',
+      stencilImage: 'static/editor/mysql.svg'
     },
     formConfig: {
       items: [
@@ -121,8 +121,8 @@ let nodeConfig = [
     nodeConfig: {
       name: '字段掩盖',
       tips: '敏感字段脱敏',
-      shapeImage: 'editor/o-mysql.svg',
-      stencilImage: 'editor/mysql.svg'
+      shapeImage: 'static/editor/o-mysql.svg',
+      stencilImage: 'static/editor/mysql.svg'
     },
     formConfig: {
       items: [
@@ -285,8 +285,8 @@ let nodeConfig = [
     nodeConfig: {
       name: '字符串转数组',
       tips: '逗号分割的字段值变为列名',
-      shapeImage: 'editor/o-sybase.svg',
-      stencilImage: 'editor/sybase.svg'
+      shapeImage: 'static/editor/o-sybase.svg',
+      stencilImage: 'static/editor/sybase.svg'
     },
     formConfig: {
       items: [
@@ -338,8 +338,8 @@ let nodeConfig = [
     nodeConfig: {
       name: '字段值替换',
       tips: '对某个字段的值，使用词典进行替换',
-      shapeImage: 'editor/o-sybase.svg',
-      stencilImage: 'editor/sybase.svg'
+      shapeImage: 'static/editor/o-sybase.svg',
+      stencilImage: 'static/editor/sybase.svg'
     },
     formConfig: {
       items: [

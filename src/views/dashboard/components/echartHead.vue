@@ -13,13 +13,22 @@
 		</el-popover>
 		<i class="el-icon-loading" v-if="data && data.loading"></i> -->
     <div class="rightOpt fr" v-if="textObj.overviewFalg">
-      <el-radio-group v-model="num" size="mini" :class="selectColor" @change="changeUnit">
-        <el-radio-button label="flow">{{ $t('dataFlow.rowCount') }}</el-radio-button>
+      <el-radio-group
+        v-model="num"
+        size="mini"
+        :class="selectColor"
+        @change="changeUnit"
+      >
+        <el-radio-button label="flow">{{
+          $t('dataFlow.rowCount')
+        }}</el-radio-button>
         <el-radio-button label="stage">KB</el-radio-button>
       </el-radio-group>
     </div>
     <div class="unit fr" v-if="textObj.allFalg">
-      <el-button type="text" @click="handleAll(data)">{{ $t('app.Home.all') }}</el-button>
+      <el-button type="text" @click="handleAll(data)">{{
+        $t('app.Home.all')
+      }}</el-button>
     </div>
   </div>
 </template>

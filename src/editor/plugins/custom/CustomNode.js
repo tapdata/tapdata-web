@@ -10,7 +10,7 @@ export const customNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'editor/o-custom.svg'
+          xlinkHref: 'static/editor/o-custom.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.custom.name')
@@ -48,13 +48,18 @@ export const customNodeConfig = {
        * @return {boolean}
        */
       allowSource(sourceCell) {
-        return ['app.Dummy', 'app.Collection', 'app.Table'].includes(sourceCell.get('type'))
+        return ['app.Dummy', 'app.Collection', 'app.Table'].includes(
+          sourceCell.get('type')
+        )
       },
 
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.custom.none_fileName')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.custom.none_fileName')}`
+          )
         return true
       }
     }
@@ -138,7 +143,10 @@ export const customNodeConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -187,7 +195,7 @@ export const customNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/custom.svg',
+        xlinkHref: 'static/editor/custom.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

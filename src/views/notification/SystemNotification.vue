@@ -11,7 +11,13 @@
           clearable
           size="mini"
         >
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
         </el-select>
         <el-select
           v-model="msg"
@@ -21,38 +27,68 @@
           clearable
           size="mini"
         >
-          <el-option v-for="item in msgOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          <el-option
+            v-for="item in msgOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
         </el-select>
         <span @click="handlePageRead()">{{ $t('notification.maskRead') }}</span>
-        <span @click="handleAllRead()">{{ $t('notification.maskReadAll') }}</span>
+        <span @click="handleAllRead()">{{
+          $t('notification.maskReadAll')
+        }}</span>
         <span v-readonlybtn="'home_notice_settings'">
           <router-link to="/settingCenter/notificationSetting"
-            ><span style="color: #48b6e2">{{ $t('notification.setting') }}</span></router-link
+            ><span style="color: #48b6e2">{{
+              $t('notification.setting')
+            }}</span></router-link
           >
         </span>
       </div>
     </div>
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-      <el-tab-pane :label="$t('notification.allNotice')" name="first"></el-tab-pane>
-      <el-tab-pane :label="$t('notification.unreadNotice')" name="second"></el-tab-pane>
+      <el-tab-pane
+        :label="$t('notification.allNotice')"
+        name="first"
+      ></el-tab-pane>
+      <el-tab-pane
+        :label="$t('notification.unreadNotice')"
+        name="second"
+      ></el-tab-pane>
     </el-tabs>
     <ul class="cuk-list clearfix cuk-list-type-block">
-      <li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
+      <li
+        class="list-item"
+        v-for="item in listData"
+        :key="item.id"
+        @click="handleRead(item.id)"
+      >
         <div class="list-item-content" v-if="item.msg === 'JobDDL'">
           <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
           <div class="list-item-desc">
-            <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
+            <span :style="`color: ${colorMap[item.level]};`"
+              >【{{ item.level }}】</span
+            >
             <span>{{ systemMap[item.system] }}</span>
-            <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
+            <router-link
+              :to="
+                `/job?id=${item.sourceId}&isMoniting=true&mapping=` +
+                item.mappingTemplate
+              "
+            >
               <span style="color: #48b6e2">
                 {{ `${item.serverName} , ` }}
               </span>
             </router-link>
             <span>
               {{
-                `${$t('notification.sourceName')} : ${item.sourceName} , ${$t('notification.databaseName')} : ${
-                  item.databaseName
-                } , ${$t('notification.schemaName')} : ${item.schemaName} ,`
+                `${$t('notification.sourceName')} : ${item.sourceName} , ${$t(
+                  'notification.databaseName'
+                )} : ${item.databaseName} , ${$t(
+                  'notification.schemaName'
+                )} : ${item.schemaName} ,`
               }}
             </span>
             <el-tooltip :content="item.sql" placement="top">
@@ -68,14 +104,18 @@
         <div class="list-item-content" v-else>
           <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
           <div class="list-item-desc">
-            <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
+            <span :style="`color: ${colorMap[item.level]};`"
+              >【{{ item.level }}】</span
+            >
             <span>{{ systemMap[item.system] }}</span>
             <span style="color: #48b6e2" @click="handleGo(item)">
               {{ item.serverName }}
             </span>
             <span>{{ typeMap[item.msg] }}</span>
             <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
-            <span v-if="item.restDay">{{ item.restDay }} {{ $t('notification.day') }}</span>
+            <span v-if="item.restDay"
+              >{{ item.restDay }} {{ $t('notification.day') }}</span
+            >
           </div>
           <div class="list-item-time">
             <span>{{ item.createTime }}</span>
@@ -230,7 +270,9 @@ export default {
             //格式化日期
             if (this.listData && this.listData.length > 0) {
               this.listData.map((item) => {
-                item['createTime'] = item.createTime ? moment(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                item['createTime'] = item.createTime
+                  ? moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+                  : ''
               })
             }
           }

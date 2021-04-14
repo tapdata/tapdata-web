@@ -12,20 +12,49 @@
     <div class="clear"></div>
     <div class="header-row">
       <div class="field">
-        <el-checkbox v-model="checkAll" @change="handleCheckAllChange"></el-checkbox>
+        <el-checkbox
+          v-model="checkAll"
+          @change="handleCheckAllChange"
+        ></el-checkbox>
       </div>
-      <div class="field field-text">{{ $t('editor.cell.processor.field.form.fieldName') }}</div>
+      <div class="field field-text">
+        {{ $t('editor.cell.processor.field.form.fieldName') }}
+      </div>
       <div class="btnBox">
-        <el-button size="mini" type="text" class="btn" @click="handleAllToUpperCase()" :disabled="disabledMode">
+        <el-button
+          size="mini"
+          type="text"
+          class="btn"
+          @click="handleAllToUpperCase()"
+          :disabled="disabledMode"
+        >
           <img src="../../../assets/images/upper.png" alt="" />
         </el-button>
-        <el-button size="mini" type="text" class="btn" @click="handleAllToLowerCase()" :disabled="disabledMode">
+        <el-button
+          size="mini"
+          type="text"
+          class="btn"
+          @click="handleAllToLowerCase()"
+          :disabled="disabledMode"
+        >
           <img src="../../../assets/images/lower.png" alt="" />
         </el-button>
-        <el-button size="mini" type="text" class="btn" @click="handleAllDelete" :disabled="disabledMode">
+        <el-button
+          size="mini"
+          type="text"
+          class="btn"
+          @click="handleAllDelete"
+          :disabled="disabledMode"
+        >
           <img src="../../../assets/images/del.png" alt="" />
         </el-button>
-        <el-button type="text" class="btn" size="mini" @click="handleAllReset" :disabled="disabledMode">
+        <el-button
+          type="text"
+          class="btn"
+          size="mini"
+          @click="handleAllReset"
+          :disabled="disabledMode"
+        >
           <img src="../../../assets/images/return.png" alt="" />
         </el-button>
         <el-button
@@ -38,7 +67,12 @@
       </div>
     </div>
     <div class="clear"></div>
-    <div class="e-schema-editor" :style="width > 0 ? `width: ${width}px;` : ''" ref="entityDom" v-if="schema">
+    <div
+      class="e-schema-editor"
+      :style="width > 0 ? `width: ${width}px;` : ''"
+      ref="entityDom"
+      v-if="schema"
+    >
       <el-container v-loading="loadingSchema">
         <el-main>
           <el-tree
@@ -55,9 +89,13 @@
               <span class="e-port e-port-in" :data-id="getId(data)"></span>
               <el-tooltip class="item" effect="dark" placement="left-start">
                 <span slot="content"
-                  >{{ $t('editor.cell.processor.field.form.originalName') + data.original_field_name }}<br />
+                  >{{
+                    $t('editor.cell.processor.field.form.originalName') +
+                    data.original_field_name
+                  }}<br />
                   <span v-if="data.original_javaType">{{
-                    $t('editor.cell.processor.field.form.originalType') + data.original_type
+                    $t('editor.cell.processor.field.form.originalType') +
+                    data.original_type
                   }}</span>
                   <span v-else
                     >{{ $t('editor.cell.processor.field.form.originalType')
@@ -67,7 +105,8 @@
                 <span
                   class="e-label"
                   :class="{
-                    'active-name': isRename(data.id) || isCreate(data.id, data.label)
+                    'active-name':
+                      isRename(data.id) || isCreate(data.id, data.label)
                   }"
                 >
                   <el-input
@@ -90,46 +129,70 @@
                 <el-option
                   value="String"
                   label="String"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Date"
                   label="Date"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Integer"
                   label="Integer"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Double"
                   label="Double"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Float"
                   label="Float"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="BigDecimal"
                   label="BigDecimal"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Long"
                   label="Long"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
                 <el-option
                   value="Short"
                   label="Short"
-                  v-if="isCreate(data.id) || !['Map', 'Array'].includes(data.type)"
+                  v-if="
+                    isCreate(data.id) || !['Map', 'Array'].includes(data.type)
+                  "
                 ></el-option>
 
-                <el-option value="Map" label="Map" v-if="isCreate(data.id)"></el-option>
-                <el-option value="Array" label="Array" v-if="isCreate(data.id)"></el-option>
+                <el-option
+                  value="Map"
+                  label="Map"
+                  v-if="isCreate(data.id)"
+                ></el-option>
+                <el-option
+                  value="Array"
+                  label="Array"
+                  v-if="isCreate(data.id)"
+                ></el-option>
               </el-select>
 
               <el-button
@@ -147,16 +210,25 @@
                 :hide-on-click="false"
                 @command="(command) => handleCreate(command, node, data)"
               >
-                <span class="e-field-action el-icon-plus" @click="handleCreate('create_sibling', node, data)"></span>
+                <span
+                  class="e-field-action el-icon-plus"
+                  @click="handleCreate('create_sibling', node, data)"
+                ></span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="create_sibling" icon="iconfont icon-create_sibling_node">{{
-                    $t('editor.cell.processor.field.form.addField')
-                  }}</el-dropdown-item>
+                  <el-dropdown-item
+                    command="create_sibling"
+                    icon="iconfont icon-create_sibling_node"
+                    >{{
+                      $t('editor.cell.processor.field.form.addField')
+                    }}</el-dropdown-item
+                  >
                   <el-dropdown-item
                     command="create_child"
                     icon="iconfont icon-create_child_node"
                     v-if="['Map', 'Array'].includes(data.type)"
-                    >{{ $t('editor.cell.processor.field.form.addEmbedField') }}</el-dropdown-item
+                    >{{
+                      $t('editor.cell.processor.field.form.addEmbedField')
+                    }}</el-dropdown-item
                   >
                 </el-dropdown-menu>
               </el-dropdown>
@@ -164,12 +236,22 @@
               <el-button
                 type="text"
                 v-if="isRemove(data.id) || ['Array', 'Map'].includes(data.type)"
-                :class="[{ operWidth: disabledMode }, 'e-field-action', 'iconfont', 'icon-script']"
+                :class="[
+                  { operWidth: disabledMode },
+                  'e-field-action',
+                  'iconfont',
+                  'icon-script'
+                ]"
                 disabled
               ></el-button>
               <span
                 v-else
-                :class="[{ operWidth: disabledMode }, 'e-field-action', 'iconfont', 'icon-script']"
+                :class="[
+                  { operWidth: disabledMode },
+                  'e-field-action',
+                  'iconfont',
+                  'icon-script'
+                ]"
                 :style="isScript(data.id) ? 'color: #f98004;' : ''"
                 @click="handleScript(node, data)"
               ></span>
@@ -177,7 +259,10 @@
               <el-button
                 type="text"
                 v-show="!disabledMode"
-                v-if="originalSchema.type === 'collection' && data.primary_key_position > 0"
+                v-if="
+                  originalSchema.type === 'collection' &&
+                  data.primary_key_position > 0
+                "
                 class="e-field-action iconfont icon-l-del"
                 disabled
               ></el-button>
@@ -193,7 +278,11 @@
                 @click="handleReset(node, data)"
               ></span>
 
-              <span v-show="!disabledMode" class="e-port e-port-out" :data-id="getId(data)"></span>
+              <span
+                v-show="!disabledMode"
+                class="e-port e-port-out"
+                :data-id="getId(data)"
+              ></span>
             </span>
           </el-tree>
         </el-main>
@@ -233,8 +322,12 @@
           <div>{{ $t('editor.cell.processor.field.form.exampleRow4') }}</div>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="scriptDialog.open = false" size="mini">{{ $t('message.cancel') }}</el-button>
-          <el-button @click="scriptDialog.fn" type="primary" size="mini">{{ $t('message.confirm') }}</el-button>
+          <el-button @click="scriptDialog.open = false" size="mini">{{
+            $t('message.cancel')
+          }}</el-button>
+          <el-button @click="scriptDialog.fn" type="primary" size="mini">{{
+            $t('message.confirm')
+          }}</el-button>
         </div>
       </el-dialog>
       <el-dialog
@@ -245,8 +338,12 @@
         width="60%"
       >
         <div v-if="errorOperation.length > 0">
-          <div class="tip">{{ $t('editor.cell.processor.field.form.errorOperationDrop') }}</div>
-          <div class="tip">{{ $t('editor.cell.processor.field.form.errorOperationDesc') }}</div>
+          <div class="tip">
+            {{ $t('editor.cell.processor.field.form.errorOperationDrop') }}
+          </div>
+          <div class="tip">
+            {{ $t('editor.cell.processor.field.form.errorOperationDesc') }}
+          </div>
           <div style="float: right; margin-bottom: 10px; margin-top: 10px">
             <el-button size="mini" @click="delErrorOperation">{{
               $t('editor.cell.processor.field.form.errorOperationDelBtn')
@@ -259,15 +356,26 @@
           <ul class="changeList">
             <li>
               <span class="index">#</span>
-              <span class="item">{{ $t('editor.cell.processor.field.form.originalField') }}</span>
-              <span class="op">{{ $t('editor.cell.processor.field.form.process') }}</span>
-              <span class="item">{{ $t('editor.cell.processor.field.form.result') }}</span>
-              <span class="op">{{ $t('editor.cell.processor.field.form.operation') }}</span>
+              <span class="item">{{
+                $t('editor.cell.processor.field.form.originalField')
+              }}</span>
+              <span class="op">{{
+                $t('editor.cell.processor.field.form.process')
+              }}</span>
+              <span class="item">{{
+                $t('editor.cell.processor.field.form.result')
+              }}</span>
+              <span class="op">{{
+                $t('editor.cell.processor.field.form.operation')
+              }}</span>
             </li>
             <li v-for="(item, index) in errorOperation" :key="item.id">
               <span class="index">{{ index + 1 }}</span>
               <span v-if="item.op === 'RENAME'">
-                <span class="item">{{ item.field }} {{ item.type ? `(${item.type})` : '' }}</span>
+                <span class="item"
+                  >{{ item.field }}
+                  {{ item.type ? `(${item.type})` : '' }}</span
+                >
                 <span class="op">{{ item.op }}</span>
                 <span class="item"
                   ><span class="active">{{ item.operand }}</span>
@@ -275,66 +383,107 @@
                 >
                 <span>
                   <el-radio-group v-model="item.keep">
-                    <el-radio :label="false">{{ $t('editor.cell.processor.field.form.delete') }}</el-radio>
-                    <el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
-                      $t('editor.cell.processor.field.form.keep')
+                    <el-radio :label="false">{{
+                      $t('editor.cell.processor.field.form.delete')
                     }}</el-radio>
+                    <el-radio
+                      :label="true"
+                      v-if="![1, 4].includes(item.isType)"
+                      >{{
+                        $t('editor.cell.processor.field.form.keep')
+                      }}</el-radio
+                    >
                   </el-radio-group>
                 </span>
               </span>
               <span v-if="item.op === 'REMOVE'">
-                <span class="item">{{ item.field }} {{ item.type ? `(${item.type})` : '' }}</span>
+                <span class="item"
+                  >{{ item.field }}
+                  {{ item.type ? `(${item.type})` : '' }}</span
+                >
                 <span class="op">{{ item.op }}</span>
                 <span class="item"></span>
                 <span>
                   <el-radio-group v-model="item.keep">
-                    <el-radio :label="false">{{ $t('editor.cell.processor.field.form.delete') }}</el-radio>
-                    <el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
-                      $t('editor.cell.processor.field.form.keep')
+                    <el-radio :label="false">{{
+                      $t('editor.cell.processor.field.form.delete')
                     }}</el-radio>
+                    <el-radio
+                      :label="true"
+                      v-if="![1, 4].includes(item.isType)"
+                      >{{
+                        $t('editor.cell.processor.field.form.keep')
+                      }}</el-radio
+                    >
                   </el-radio-group>
                 </span>
               </span>
               <span v-if="item.op === 'CREATE'">
                 <span class="item"></span>
                 <span class="op">{{ item.op }}</span>
-                <span class="item active">{{ `${item.field} (${item.javaType})` }}</span>
+                <span class="item active">{{
+                  `${item.field} (${item.javaType})`
+                }}</span>
                 <span>
                   <el-radio-group v-model="item.keep">
-                    <el-radio :label="false">{{ $t('editor.cell.processor.field.form.delete') }}</el-radio>
-                    <el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
-                      $t('editor.cell.processor.field.form.keep')
+                    <el-radio :label="false">{{
+                      $t('editor.cell.processor.field.form.delete')
                     }}</el-radio>
+                    <el-radio
+                      :label="true"
+                      v-if="![1, 4].includes(item.isType)"
+                      >{{
+                        $t('editor.cell.processor.field.form.keep')
+                      }}</el-radio
+                    >
                   </el-radio-group>
                 </span>
               </span>
               <span v-if="item.op === 'CONVERT'">
-                <span class="item">{{ `${item.field} (${item.originalDataType})` }}</span>
+                <span class="item">{{
+                  `${item.field} (${item.originalDataType})`
+                }}</span>
                 <span class="op">{{ item.op }}</span>
                 <span class="item"
-                  >{{ item.field }} <span class="active">{{ `(${item.operand})` }}</span></span
+                  >{{ item.field }}
+                  <span class="active">{{ `(${item.operand})` }}</span></span
                 >
                 <span>
                   <el-radio-group v-model="item.keep">
-                    <el-radio :label="false">{{ $t('editor.cell.processor.field.form.delete') }}</el-radio>
-                    <el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
-                      $t('editor.cell.processor.field.form.keep')
+                    <el-radio :label="false">{{
+                      $t('editor.cell.processor.field.form.delete')
                     }}</el-radio>
+                    <el-radio
+                      :label="true"
+                      v-if="![1, 4].includes(item.isType)"
+                      >{{
+                        $t('editor.cell.processor.field.form.keep')
+                      }}</el-radio
+                    >
                   </el-radio-group>
                 </span>
               </span>
               <span v-if="item.scriptType === 'js'">
-                <span class="item">{{ item.field }} {{ item.type ? `(${item.type})` : '' }}</span>
+                <span class="item"
+                  >{{ item.field }}
+                  {{ item.type ? `(${item.type})` : '' }}</span
+                >
                 <span class="op">{{ item.scriptType }}</span>
                 <span class="item"
                   ><span class="js">{{ item.script }}</span></span
                 >
                 <span>
                   <el-radio-group v-model="item.keep">
-                    <el-radio :label="false">{{ $t('editor.cell.processor.field.form.delete') }}</el-radio>
-                    <el-radio :label="true" v-if="![1, 4].includes(item.isType)">{{
-                      $t('editor.cell.processor.field.form.keep')
+                    <el-radio :label="false">{{
+                      $t('editor.cell.processor.field.form.delete')
                     }}</el-radio>
+                    <el-radio
+                      :label="true"
+                      v-if="![1, 4].includes(item.isType)"
+                      >{{
+                        $t('editor.cell.processor.field.form.keep')
+                      }}</el-radio
+                    >
                   </el-radio-group>
                 </span>
               </span>
@@ -356,7 +505,13 @@ import $ from 'jquery'
 import log from '../../../log'
 import _ from 'lodash'
 import { uuid } from '../../util/Schema'
-import { isValidate, isScript, fieldsNamesMap, delScript, originalType } from './util'
+import {
+  isValidate,
+  isScript,
+  fieldsNamesMap,
+  delScript,
+  originalType
+} from './util'
 
 const REMOVE_OPS_TPL = {
   id: '',
@@ -492,7 +647,9 @@ export default {
       }
       this.$nextTick(() => {
         let load = () => {
-          this.schema.fields.push(...fields.slice((index + 0) * size, (index + 1) * size))
+          this.schema.fields.push(
+            ...fields.slice((index + 0) * size, (index + 1) * size)
+          )
           index++
           this.loadingSchema = false
         }
@@ -526,15 +683,21 @@ export default {
       this.originalOperations = operations
     },
     isRemove(id) {
-      let ops = this.model.operations.filter((v) => v.id === id && v.op === 'REMOVE')
+      let ops = this.model.operations.filter(
+        (v) => v.id === id && v.op === 'REMOVE'
+      )
       return ops && ops.length > 0
     },
     isRename(id) {
-      let ops = this.model.operations.filter((v) => v.id === id && v.op === 'RENAME')
+      let ops = this.model.operations.filter(
+        (v) => v.id === id && v.op === 'RENAME'
+      )
       return ops && ops.length > 0
     },
     isConvertDataType(id) {
-      let ops = this.model.operations.filter((v) => v.id === id && v.op === 'CONVERT')
+      let ops = this.model.operations.filter(
+        (v) => v.id === id && v.op === 'CONVERT'
+      )
       return ops && ops.length > 0
     },
     isScript(id) {
@@ -542,7 +705,9 @@ export default {
       return scripts && scripts.length > 0
     },
     isCreate(id) {
-      let ops = this.model.operations.filter((v) => v.id === id && v.op === 'CREATE')
+      let ops = this.model.operations.filter(
+        (v) => v.id === id && v.op === 'CREATE'
+      )
       return ops && ops.length > 0
     },
 
@@ -567,8 +732,11 @@ export default {
       if (this.showUndefined) {
         this.disabledMode = true
       }
-      this.errorOperation = isValidate(this.originalOperations, this.originalSchemaFiled).errorList || []
-      let script = isScript(this.model.scripts, this.originalSchemaFiled).errorList || []
+      this.errorOperation =
+        isValidate(this.originalOperations, this.originalSchemaFiled)
+          .errorList || []
+      let script =
+        isScript(this.model.scripts, this.originalSchemaFiled).errorList || []
       this.fieldNameMap = fieldsNamesMap(this.originalSchemaFiled.fields)
       this.errorOperation = [...this.errorOperation, ...script]
       if (this.errorOperation.length > 0 && !this.disabledMode) {
@@ -595,18 +763,32 @@ export default {
     },
     saveErrorOperation() {
       for (let i = 0; i < this.errorOperation.length; i++) {
-        let targetId = this.model.operations.findIndex((n) => n.id === this.errorOperation[i].id)
+        let targetId = this.model.operations.findIndex(
+          (n) => n.id === this.errorOperation[i].id
+        )
         if ([1, 4].includes(this.errorOperation[i].isType) && targetId > -1) {
           this.model.operations.splice(targetId, 1)
-        } else if (this.errorOperation[i].isType === 2 && targetId > -1 && this.errorOperation[i].keep) {
+        } else if (
+          this.errorOperation[i].isType === 2 &&
+          targetId > -1 &&
+          this.errorOperation[i].keep
+        ) {
           let id = this.fieldNameMap[this.errorOperation[i].field]
           if (id) {
             this.model.operations[targetId]['keep'] = true //将operations 标记为true
             this.model.operations[targetId].id = id //将id与最新模型id 保持一致
           }
-        } else if (this.errorOperation[i].isType === 3 && targetId > -1 && this.errorOperation[i].keep) {
+        } else if (
+          this.errorOperation[i].isType === 3 &&
+          targetId > -1 &&
+          this.errorOperation[i].keep
+        ) {
           this.model.operations[targetId]['keep'] = true
-        } else if (this.errorOperation[i].isType === 5 && targetId > -1 && this.errorOperation[i].keep) {
+        } else if (
+          this.errorOperation[i].isType === 5 &&
+          targetId > -1 &&
+          this.errorOperation[i].keep
+        ) {
           let id = this.fieldNameMap[this.errorOperation[i].field]
           if (id) {
             this.model.scripts[targetId]['keep'] = true //将operations 标记为true
@@ -644,13 +826,17 @@ export default {
     },
     handleDataType(node, data) {
       log('SchemaEditor.handleDataType', node, data)
-      let createOps = this.model.operations.filter((v) => v.id === data.id && v.op === 'CREATE')
+      let createOps = this.model.operations.filter(
+        (v) => v.id === data.id && v.op === 'CREATE'
+      )
       if (createOps && createOps.length > 0) {
         let op = createOps[0]
         op.javaType = data.type
       } else {
         let nativeData = this.getNativeData(this.originalSchema.fields, data.id)
-        let ops = this.model.operations.filter((v) => v.id === data.id && v.op === 'CONVERT')
+        let ops = this.model.operations.filter(
+          (v) => v.id === data.id && v.op === 'CONVERT'
+        )
         let op
         if (ops.length === 0) {
           op = Object.assign(_.cloneDeep(CONVERT_OPS_TPL), {
@@ -683,7 +869,9 @@ export default {
         this.$message.error(this.$t('message.exists_name'))
         return
       }
-      let removes = this.model.operations.filter((v) => v.id === data.id && v.op === 'REMOVE')
+      let removes = this.model.operations.filter(
+        (v) => v.id === data.id && v.op === 'REMOVE'
+      )
       if (removes.length > 0) {
         data.label = nativeData.label
         return
@@ -693,7 +881,9 @@ export default {
         data.label = nativeData.label
         return
       }
-      let createOps = this.model.operations.filter((v) => v.id === data.id && v.op === 'CREATE')
+      let createOps = this.model.operations.filter(
+        (v) => v.id === data.id && v.op === 'CREATE'
+      )
       if (createOps && createOps.length > 0) {
         let op = createOps[0]
         let level = op.level
@@ -701,7 +891,11 @@ export default {
         fieldNames[level] = data.label
         op.field = fieldNames.join('.')
         //同步对js 改名操作
-        if (this.model.scripts && this.model.scripts.length && this.model.scripts.length > 0) {
+        if (
+          this.model.scripts &&
+          this.model.scripts.length &&
+          this.model.scripts.length > 0
+        ) {
           for (let i = 0; i < this.model.scripts.length; i++) {
             if (op.id === this.model.scripts[i].id) {
               this.model.scripts[i].field = op.field
@@ -710,8 +904,16 @@ export default {
           }
         }
       } else {
-        log('Entity1.handlerRename(node,data,nativeData,operations)', node, data, nativeData, this.model.operations)
-        let ops = this.model.operations.filter((v) => v.id === data.id && v.op === 'RENAME')
+        log(
+          'Entity1.handlerRename(node,data,nativeData,operations)',
+          node,
+          data,
+          nativeData,
+          this.model.operations
+        )
+        let ops = this.model.operations.filter(
+          (v) => v.id === data.id && v.op === 'RENAME'
+        )
         let op
         if (ops.length === 0) {
           op = Object.assign(_.cloneDeep(RENAME_OPS_TPL), {
@@ -731,14 +933,22 @@ export default {
           op.label = data.label
         }
         //删除 相同字段名称
-        if (this.model.scripts && this.model.operations.length && this.model.operations.length > 0) {
+        if (
+          this.model.scripts &&
+          this.model.operations.length &&
+          this.model.operations.length > 0
+        ) {
           for (let i = 0; i < this.model.operations.length; i++) {
             let originalFieldName = this.model.operations[i].field
             if (originalFieldName.indexOf('.') >= 0) {
               originalFieldName = originalFieldName.split('.')
-              originalFieldName = originalFieldName[originalFieldName.length - 1]
+              originalFieldName =
+                originalFieldName[originalFieldName.length - 1]
             }
-            if (originalFieldName === this.model.operations[i].operand && this.model.operations[i].op === 'RENAME') {
+            if (
+              originalFieldName === this.model.operations[i].operand &&
+              this.model.operations[i].op === 'RENAME'
+            ) {
               this.model.operations.splice(i, 1)
               i--
             }
@@ -749,7 +959,9 @@ export default {
     },
     handleDelete(node, data) {
       log('SchemaEditor.handleDelete', node, data)
-      let createOpsIndex = this.model.operations.findIndex((v) => v.id === data.id && v.op === 'CREATE')
+      let createOpsIndex = this.model.operations.findIndex(
+        (v) => v.id === data.id && v.op === 'CREATE'
+      )
       if (createOpsIndex >= 0) {
         let fieldName = this.model.operations[createOpsIndex].field_name + '.'
         this.model.operations.splice(createOpsIndex, 1)
@@ -757,14 +969,20 @@ export default {
         for (let i = 0; i < this.model.operations.length; i++) {
           let op = this.model.operations[i]
           let opFieldName = op.field || op.field_name
-          if (opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
+          if (
+            opFieldName.indexOf(fieldName) === 0 &&
+            opFieldName.length === fieldName.length
+          ) {
             this.model.operations.splice(i, 1)
             i--
           }
         }
         this.$refs.tree.remove(node)
       } else {
-        let originalField = this.getNativeData(this.originalSchema.fields, data.id)
+        let originalField = this.getNativeData(
+          this.originalSchema.fields,
+          data.id
+        )
         let self = this
         let fn = function (field) {
           for (let i = 0; i < self.model.operations.length; i++) {
@@ -783,7 +1001,9 @@ export default {
               self.model.operations.splice(i, 1)
             }
           }
-          let ops = self.model.operations.filter((v) => v.op === 'REMOVE' && v.id === field.id)
+          let ops = self.model.operations.filter(
+            (v) => v.op === 'REMOVE' && v.id === field.id
+          )
           let op
           if (ops.length === 0) {
             op = Object.assign(_.cloneDeep(REMOVE_OPS_TPL), {
@@ -806,7 +1026,11 @@ export default {
         if (originalField) fn(originalField)
       }
       //删除 对应字段js脚本处理
-      this.model.scripts = delScript(this.model.operations, this.model.scripts, data.id)
+      this.model.scripts = delScript(
+        this.model.operations,
+        this.model.scripts,
+        data.id
+      )
       this.$emit('dataChanged', this.model)
     },
     handleAllReset() {
@@ -825,7 +1049,9 @@ export default {
       // 改名前查找同级中是否重名，若有则return且还原改动并提示
       let exist = false
       if (node && node.parent && node.parent.childNodes) {
-        let parentNode = node.parent.childNodes.filter((v) => data.label === v.data.label)
+        let parentNode = node.parent.childNodes.filter(
+          (v) => data.label === v.data.label
+        )
         if (parentNode && parentNode.length === 2) {
           this.$message.error(data.label + this.$t('message.exists_name'))
           exist = true
@@ -839,7 +1065,10 @@ export default {
       if (ids && ids.length > 0) {
         ids.map((id) => {
           let node = this.$refs.tree.getNode(id)
-          if (this.originalSchema.type === 'collection' && node.data.primary_key_position > 0) {
+          if (
+            this.originalSchema.type === 'collection' &&
+            node.data.primary_key_position > 0
+          ) {
             return
           }
           this.handleDelete(node, node.data)
@@ -879,7 +1108,9 @@ export default {
       log('SchemaEditor.handleReset', node, data)
       let parentId = node.parent.data.id
       let dataLabel = _.cloneDeep(data.label)
-      let indexId = this.model.operations.filter((v) => v.op === 'REMOVE' && v.id === parentId)
+      let indexId = this.model.operations.filter(
+        (v) => v.op === 'REMOVE' && v.id === parentId
+      )
       if (parentId && indexId.length !== 0) {
         return
       }
@@ -953,7 +1184,9 @@ export default {
       let level = node.level
       if (action === 'create_sibling') {
         parentFieldName = this.getParentFieldName(node.parent)
-        let parentNode = node.parent.childNodes.filter((v) => v.data.label === 'newFieldName')
+        let parentNode = node.parent.childNodes.filter(
+          (v) => v.data.label === 'newFieldName'
+        )
         if (parentNode && parentNode.length > 0) {
           this.$message.error('newFieldName ' + this.$t('message.exists_name'))
           return
@@ -961,7 +1194,9 @@ export default {
       } else if (action === 'create_child') {
         parentFieldName = this.getParentFieldName(node)
         level++
-        let parentNode = node.childNodes.filter((v) => v.data.label === 'newFieldName')
+        let parentNode = node.childNodes.filter(
+          (v) => v.data.label === 'newFieldName'
+        )
         if (parentNode && parentNode.length > 0) {
           this.$message.error('newFieldName ' + this.$t('message.exists_name'))
           return
@@ -970,7 +1205,9 @@ export default {
 
       let fieldId = uuid()
       let newFieldOperation = Object.assign(_.cloneDeep(CREATE_OPS_TPL), {
-        field: parentFieldName ? parentFieldName + '.newFieldName' : 'newFieldName',
+        field: parentFieldName
+          ? parentFieldName + '.newFieldName'
+          : 'newFieldName',
         tableName: data.table_name,
         javaType: 'String',
         id: fieldId,
@@ -1010,7 +1247,9 @@ export default {
     handleScript(node, data) {
       let self = this
 
-      let fieldName = (self.scriptDialog.fieldName = self.getParentFieldName(node))
+      let fieldName = (self.scriptDialog.fieldName = self.getParentFieldName(
+        node
+      ))
       let tableName = (self.scriptDialog.tableName = data.table_name)
       let id = data.id
 

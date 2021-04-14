@@ -37,7 +37,9 @@ export function hasPermissionByCode(code) {
 
   // 	}
   // }
-  let res = permissions.filter((resource) => _codes.indexOf(resource.code) !== -1)
+  let res = permissions.filter(
+    (resource) => _codes.indexOf(resource.code) !== -1
+  )
   if (res && res.length > 0) {
     return true
   }

@@ -36,7 +36,7 @@ export default (joint) => {
     size: { width: 220, height: 80 },
     attrs: {
       // image: {
-      // 	xlinkHref: 'editor/o-DB.svg',
+      // 	xlinkHref: 'static/editor/o-DB.svg',
       // 	refWidth: '19%',
       // 	refHeight: '82%',
       // 	refX: '-4%',
@@ -68,7 +68,7 @@ export default (joint) => {
     size: { width: 220, height: 42 },
     attrs: {
       image: {
-        xlinkHref: 'editor/o-DB.svg',
+        xlinkHref: 'static/editor/o-DB.svg',
         refWidth: '19%',
         refHeight: '82%',
         refX: '-4%',
@@ -102,7 +102,7 @@ export default (joint) => {
     size: { width: 220, height: 30 },
     attrs: {
       image: {
-        xlinkHref: 'editor/o-table.svg',
+        xlinkHref: 'static/editor/o-table.svg',
         refWidth: '19%',
         refHeight: '82%',
         refX: '-4%',
@@ -136,7 +136,7 @@ export default (joint) => {
     size: { width: 220, height: 42 },
     attrs: {
       image: {
-        xlinkHref: 'editor/link.svg',
+        xlinkHref: 'static/editor/link.svg',
         refWidth: '17%',
         refHeight: '70%',
         refX: '-4%',

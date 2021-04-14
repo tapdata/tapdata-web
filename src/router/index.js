@@ -111,7 +111,11 @@ const childRoutes = [
     path: '/dataQuality/:id',
     name: 'dataQualityDetail',
     component: () => import('@/views/ExternalLink'),
-    meta: { code: 'data_quality_edition', title: i18n.t('tap.dataQuality'), isCollapse: true }
+    meta: {
+      code: 'data_quality_edition',
+      title: i18n.t('tap.dataQuality'),
+      isCollapse: true
+    }
   },
   {
     path: '/ttl',
@@ -630,7 +634,9 @@ router.afterEach(() => {
 })
 let isFirst = true
 router.beforeEach(async (to, from, next) => {
-  window.parent && window.parent.emitRouteChange && window.parent.emitRouteChange(to)
+  window.parent &&
+    window.parent.emitRouteChange &&
+    window.parent.emitRouteChange(to)
   if (!to.matched.length) {
     Message.error({
       message: 'Page not found!'
@@ -739,7 +745,15 @@ router.beforeEach(async (to, from, next) => {
       next(false)
     }
   } else {
-    if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name)) {
+    if (
+      [
+        'login',
+        'registry',
+        'passwordReset',
+        'verificationEmail',
+        'registyResult'
+      ].includes(to.name)
+    ) {
       next()
     } else {
       next('/login')

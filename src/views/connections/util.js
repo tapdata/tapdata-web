@@ -11,7 +11,23 @@ export const getImgByType = function (type) {
 }
 
 export const verify = function (value) {
-  var arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
+  var arr = [
+    '\\',
+    '$',
+    '(',
+    ')',
+    '*',
+    '+',
+    '.',
+    '[',
+    ']',
+    '?',
+    '^',
+    '{',
+    '}',
+    '|',
+    '-'
+  ]
   for (var i = 0; i < arr.length; i++) {
     var str = '\\' + arr[i]
     value = value.replace(new RegExp(str, 'g'), '\\' + arr[i])

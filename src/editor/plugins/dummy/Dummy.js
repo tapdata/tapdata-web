@@ -11,7 +11,7 @@ export const DummyConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'editor/o-dummy.svg'
+          xlinkHref: 'static/editor/o-dummy.svg'
         },
 
         label: {
@@ -42,7 +42,9 @@ export const DummyConfig = {
        */
       allowTarget(targetCell) {
         log('app.Dummy.target', targetCell)
-        return !['app.Database', 'app.FileNode', 'app.GridFSNode'].includes(targetCell.get('type'))
+        return !['app.Database', 'app.FileNode', 'app.GridFSNode'].includes(
+          targetCell.get('type')
+        )
       },
 
       /**
@@ -51,16 +53,31 @@ export const DummyConfig = {
        * @return {boolean}
        */
       allowSource(sourceCell) {
-        return !['app.FileNode', 'app.Database'].includes(sourceCell.get('type'))
+        return !['app.FileNode', 'app.Database'].includes(
+          sourceCell.get('type')
+        )
       },
 
       validate(data) {
         log('选中的Dummy数据', data)
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.dummy.dummy_isNull')}`)
-        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`)
-        if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.dummy.dummy_isNull')}`
+          )
+        if (!data.connectionId)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.data_node.collection.none_database'
+            )}`
+          )
+        if (!data.tableName)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.data_node.collection.none_collection'
+            )}`
+          )
         // if (!data.primaryKeys)
         // 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
         return true
@@ -146,7 +163,10 @@ export const DummyConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -195,7 +215,7 @@ export const DummyConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/dummy.svg',
+        xlinkHref: 'static/editor/dummy.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',
