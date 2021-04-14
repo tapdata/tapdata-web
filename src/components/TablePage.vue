@@ -29,7 +29,7 @@
         </div>
         <el-table
           v-loading="loading"
-          class="table-page-table border"
+          class="table-page-table table-border"
           height="100%"
           :element-loading-text="$t('dataFlow.dataLoading')"
           :row-key="rowKey"
