@@ -715,9 +715,9 @@ export default class Editor extends BaseObject {
             self.graph.graph.getSources().forEach((cell) => cell.updateOutputSchema())
           }
         }
-        Message.success({
-          message: i18n.t('message.reloadSchemaSuccess')
-        })
+        // Message.success({
+        //   message: i18n.t('message.reloadSchemaSuccess')
+        // })
       })
       .catch(() => {
         Message.error({

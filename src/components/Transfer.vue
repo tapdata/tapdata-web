@@ -156,7 +156,10 @@ export default {
     },
     // 穿梭框搜索
     filterMethod(query, item) {
-      return item.label.indexOf(query) > -1
+      if (!!~item.label.indexOf(query) || !!~item.label.toUpperCase().indexOf(query.toUpperCase())) {
+        return true
+      }
+      //return item.label.indexOf(query) > -1
     },
     // 已选择的表
     handleSelectTable(data) {
