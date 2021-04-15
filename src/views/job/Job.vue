@@ -529,7 +529,7 @@ export default {
 
     backDataFlow() {
       let mapping = this.$route.query.mapping
-      if (!this.dataChangeFalg) {
+      if (!this.dataChangeFalg || window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs' || window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
         this.$router.push({
           path: '/dataFlows?mapping=' + mapping
         })
@@ -1921,7 +1921,7 @@ export default {
     width: 41px;
     height: 41px;
     line-height: 41px;
-    font-size: 24px;
+    font-size: 19px;
     text-align: center;
     color: #fff;
     cursor: pointer;
