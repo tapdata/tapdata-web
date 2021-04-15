@@ -2143,7 +2143,7 @@ const cn = {
 			forceStop: ' 强制停止了 ',
 			reset: ' 重置了 ',
 			copy: ' 复制了 ',
-			upload: ' 导出了 ',
+			upload: ' 导入了 ',
 			download: ' 下载了 ',
 			login: ' 登录 ',
 			logout: ' 登出 '
