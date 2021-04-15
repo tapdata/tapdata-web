@@ -98,8 +98,8 @@ class WSClient extends EventEmitter {
 
     self.ws.addEventListener(
       'close',
-      (self.__close = () => {
-        this.handlerClose()
+      (self.__close = (e) => {
+        this.handlerClose(e)
       })
     )
   }
@@ -108,8 +108,8 @@ class WSClient extends EventEmitter {
     log('Websocket is opened!')
   }
 
-  handlerClose() {
-    log('Websocket is closed, ready to reconnect.')
+  handlerClose(e) {
+    log('Websocket is closed, ready to reconnect.', e)
     this.reconnect()
   }
 
