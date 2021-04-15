@@ -16,7 +16,9 @@
           <div class="content">{{ typeMap[item] }}</div>
         </li>
       </ul>
-      <span class="title" v-if="otherType && otherType.length > 0">Other Type</span>
+      <span class="title" v-if="otherType && otherType.length > 0"
+        >Other Type</span
+      >
       <ul class="item clearfix">
         <li v-for="item in otherType" :key="item" @click="databaseType(item)">
           <div class="img-box">
@@ -64,7 +66,13 @@ export default {
         'mysql pxc',
         'jira'
       ],
-      otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
+      otherType: [
+        'gridfs',
+        'dummy db',
+        'rest api',
+        'custom_connection',
+        'file'
+      ],
       typeMap: TYPEMAP
     }
   },
@@ -76,8 +84,10 @@ export default {
         return this.allwoType.includes(val)
       })
     }
-    this.database = allowDataType.filter((type) => this.database.includes(type)) || []
-    this.otherType = allowDataType.filter((type) => this.otherType.includes(type)) || []
+    this.database =
+      allowDataType.filter((type) => this.database.includes(type)) || []
+    this.otherType =
+      allowDataType.filter((type) => this.otherType.includes(type)) || []
   },
   methods: {
     getImgByType,

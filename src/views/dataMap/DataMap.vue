@@ -53,7 +53,12 @@
           :filter-method="filterNode"
           @change="loadCellsByTag"
           filterable
-          :props="{ label: 'value', value: 'id', expandTrigger: 'hover', checkStrictly: true }"
+          :props="{
+            label: 'value',
+            value: 'id',
+            expandTrigger: 'hover',
+            checkStrictly: true
+          }"
         >
         </el-cascader>
         <!--<div class="e-header">{{ $t('dataMap.classification') }}</div>
@@ -211,12 +216,21 @@ export default {
       if (this.level <= 3) {
         params = { level: this.level, tag: this.tag }
       } else if (this.level === 4) {
-        params = { level: 4, connectionId: this.connectionId, tableName: this.tableName }
+        params = {
+          level: 4,
+          connectionId: this.connectionId,
+          tableName: this.tableName
+        }
       }
       metadataInstances
         .dataMap(params)
         .then((result) => {
-          if (result && result.data && result.data.records && result.data.records.length > 0) {
+          if (
+            result &&
+            result.data &&
+            result.data.records &&
+            result.data.records.length > 0
+          ) {
             let cells = result.data.records
             self.dataMap.graph.renderCells(self.level, cells)
           } else {

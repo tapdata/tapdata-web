@@ -54,7 +54,7 @@ export const databaseConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'editor/o-DB.svg'
+          xlinkHref: 'static/editor/o-DB.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.database.name')
@@ -104,8 +104,14 @@ export const databaseConfig = {
       validate: function (data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
-        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.database.none_database')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
+          )
+        if (!data.connectionId)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.database.none_database')}`
+          )
         return true
       },
 
@@ -221,7 +227,10 @@ export const databaseConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -270,7 +279,7 @@ export const databaseConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/database2.svg',
+        xlinkHref: 'static/editor/database2.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

@@ -1,6 +1,9 @@
 <template>
   <div class="table-page-container">
-    <div class="table-page-header" v-if="!$window.getSettingByKey('HIDE_TABLE_TITLE') && title">
+    <div
+      class="table-page-header"
+      v-if="!$window.getSettingByKey('HIDE_TABLE_TITLE') && title"
+    >
       <slot name="header">
         <div class="page-header-title">{{ title }}</div>
         <div v-if="desc" class="page-header-desc" v-html="desc"></div>
@@ -8,7 +11,10 @@
     </div>
 
     <div class="table-page-main">
-      <div class="table-page-left" v-if="classify && $window.getSettingByKey('SHOW_CLASSIFY')">
+      <div
+        class="table-page-left"
+        v-if="classify && $window.getSettingByKey('SHOW_CLASSIFY')"
+      >
         <Classification
           :authority="classify.authority"
           :types="classify.types"
@@ -228,7 +234,9 @@ export default {
       background: #fff;
     }
     .el-table--border td,
-    .el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
+    .el-table__body-wrapper
+      .el-table--border.is-scrolling-left
+      ~ .el-table__fixed {
       border-right: 0;
     }
     .el-table--border th {

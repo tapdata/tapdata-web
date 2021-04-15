@@ -7,7 +7,12 @@
       @close="closeDialogForm"
       width="30%"
     >
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" @submit.native.prevent>
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        @submit.native.prevent
+      >
         <el-form-item prop="newTable">
           <el-input
             v-model="ruleForm.newTable"
@@ -20,8 +25,12 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="closeDialogForm">{{ $t('dataVerify.cancel') }}</el-button>
-        <el-button type="primary" @click="confirm" @>{{ $t('dataVerify.confirm') }}</el-button>
+        <el-button @click="closeDialogForm">{{
+          $t('dataVerify.cancel')
+        }}</el-button>
+        <el-button type="primary" @click="confirm" @>{{
+          $t('dataVerify.confirm')
+        }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -76,7 +85,8 @@ export default {
     },
     confirm() {
       let flag = this.validateForm()
-      let first = this.ruleForm.newTable.split('.')[0] == 'system' ? true : false
+      let first =
+        this.ruleForm.newTable.split('.')[0] == 'system' ? true : false
       if (flag) {
         if (this.dialog.type === 'collection' && first) {
           this.$message.error(this.$t('dialog.collectionValidateTip'))

@@ -1,7 +1,14 @@
 <template>
   <div class="databaseFrom">
-    <header class="header" v-if="!$window.getSettingByKey('DFS_TCM_HIDE_CONNECTION_OUTSIDE_PART')">
-      {{ $route.params.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
+    <header
+      class="header"
+      v-if="!$window.getSettingByKey('DFS_TCM_HIDE_CONNECTION_OUTSIDE_PART')"
+    >
+      {{
+        $route.params.id
+          ? $t('connection.editDataSource')
+          : $t('connection.createNewDataSource')
+      }}
     </header>
     <div class="databaseFrom-body">
       <main class="databaseFrom-main">
@@ -11,7 +18,10 @@
               <img :src="getImgByType(databaseType)" />
             </div>
             <div class="content">{{ model.name }}</div>
-            <div class="addBtn color-primary" @click="dialogEditNameVisible = true">
+            <div
+              class="addBtn color-primary"
+              @click="dialogEditNameVisible = true"
+            >
               {{ $t('connection.rename') }}
             </div>
           </div>
@@ -24,22 +34,33 @@
             <div class="content-box">
               <div class="content">
                 {{ typeMap[databaseType] }}
-                <div class="addBtn color-primary" @click="dialogDatabaseTypeVisible = true">
+                <div
+                  class="addBtn color-primary"
+                  @click="dialogDatabaseTypeVisible = true"
+                >
                   {{ $t('connection.change') }}
                 </div>
               </div>
               <div
                 class="tip"
-                v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM') || !$window.getSettingByKey('DFS_TCM_PLATFORM')"
+                v-if="
+                  !$window.getSettingByKey('DFS_TCM_PLATFORM') ||
+                  !$window.getSettingByKey('DFS_TCM_PLATFORM')
+                "
               >
                 {{ $t('dataForm.form.guide') }}
-                <a class="color-primary" href="https://docs.tapdata.net/data-source">{{
-                  $t('dataForm.form.guideDoc')
-                }}</a>
+                <a
+                  class="color-primary"
+                  href="https://docs.tapdata.net/data-source"
+                  >{{ $t('dataForm.form.guideDoc') }}</a
+                >
               </div>
               <div
                 class="tip"
-                v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') || $window.getSettingByKey('DFS_TCM_PLATFORM')"
+                v-if="
+                  $window.getSettingByKey('DFS_TCM_PLATFORM') ||
+                  $window.getSettingByKey('DFS_TCM_PLATFORM')
+                "
               >
                 请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
               </div>
@@ -48,12 +69,19 @@
         </header>
         <div class="form-wrap">
           <div class="form">
-            <form-builder ref="form" v-model="model" :config="config" @value-change="formChange">
+            <form-builder
+              ref="form"
+              v-model="model"
+              :config="config"
+              @value-change="formChange"
+            >
               <div class="url-tip" slot="name" v-if="!$route.params.id">
                 中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
               </div>
               <div class="url-tip" slot="vpc-setting" v-if="model.vpc">
-                <el-checkbox v-model="model.checkedVpc">授权允许数据同步服务访问您的ECS实例</el-checkbox>
+                <el-checkbox v-model="model.checkedVpc"
+                  >授权允许数据同步服务访问您的ECS实例</el-checkbox
+                >
                 <span v-if="model.checkedVpc">
                   <el-link
                     v-if="!model.platformInfo.isThrough"
@@ -66,8 +94,15 @@
                   <span v-else>已开通</span>
                 </span>
               </div>
-              <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
-              <div class="url-tip" slot="tableFilter">{{ $t('dataForm.form.tableFilterTips') }}</div>
+              <div
+                class="url-tip"
+                slot="urlTip"
+                v-if="model.isUrl"
+                v-html="$t('dataForm.form.uriTips.content')"
+              ></div>
+              <div class="url-tip" slot="tableFilter">
+                {{ $t('dataForm.form.tableFilterTips') }}
+              </div>
               <div class="url-tip" slot="timezone">
                 {{ $t('dataForm.form.timeZoneTips') }}
               </div>
@@ -82,9 +117,16 @@
               </div>
             </form-builder>
             <!-- 文件数据库 -->
-            <template v-if="model.database_type === 'file' && model.connection_type === 'source'">
+            <template
+              v-if="
+                model.database_type === 'file' &&
+                model.connection_type === 'source'
+              "
+            >
               <div class="fileBox">
-                <div class="file-label">{{ $t('dataForm.form.file.fileUrl') }}</div>
+                <div class="file-label">
+                  {{ $t('dataForm.form.file.fileUrl') }}
+                </div>
                 <div class="file-form-content">
                   <el-form
                     :model="model"
@@ -115,35 +157,54 @@
                           <el-input
                             v-model="item.path"
                             size="mini"
-                            :placeholder="$t('dataForm.form.file.pathPlaceholder')"
+                            :placeholder="
+                              $t('dataForm.form.file.pathPlaceholder')
+                            "
                           ></el-input>
                         </el-form-item>
-                        <el-form-item :label="$t('dataForm.form.file.recursive')" prop="path">
+                        <el-form-item
+                          :label="$t('dataForm.form.file.recursive')"
+                          prop="path"
+                        >
                           <el-switch v-model="item.recursive"></el-switch>
                         </el-form-item>
-                        <el-form-item :label="$t('dataForm.form.file.csvFijlter')">
+                        <el-form-item
+                          :label="$t('dataForm.form.file.csvFijlter')"
+                        >
                           <el-select
                             v-model="item.selectFileType"
                             size="mini"
                             style="width: 100%"
-                            @change="changeFileInclude(item, item.selectFileType)"
+                            @change="
+                              changeFileInclude(item, item.selectFileType)
+                            "
                           >
-                            <el-option :label="$t('dataForm.form.file.include_filename')" value="include"></el-option>
-                            <el-option :label="$t('dataForm.form.file.exclude_filename')" value="exclude"></el-option>
+                            <el-option
+                              :label="$t('dataForm.form.file.include_filename')"
+                              value="include"
+                            ></el-option>
+                            <el-option
+                              :label="$t('dataForm.form.file.exclude_filename')"
+                              value="exclude"
+                            ></el-option>
                           </el-select>
                         </el-form-item>
                         <el-form-item v-if="item.selectFileType === 'include'">
                           <el-input
                             v-model="item.include_filename"
                             size="mini"
-                            :placeholder="$t('dataForm.form.file.includePlaceholder')"
+                            :placeholder="
+                              $t('dataForm.form.file.includePlaceholder')
+                            "
                           ></el-input>
                         </el-form-item>
                         <el-form-item v-else>
                           <el-input
                             v-model="item.exclude_filename"
                             size="mini"
-                            :placeholder="$t('dataForm.form.file.excludePlaceholder')"
+                            :placeholder="
+                              $t('dataForm.form.file.excludePlaceholder')
+                            "
                           ></el-input>
                         </el-form-item>
                         <p style="font-size: 12px; color: #666">
@@ -151,21 +212,33 @@
                         </p>
                       </el-col>
                       <el-col :span="2" style="margin-right: -40px">
-                        <el-button plain style="padding: 0" @click="removeRow(item, index)">
+                        <el-button
+                          plain
+                          style="padding: 0"
+                          @click="removeRow(item, index)"
+                        >
                           <i class="iconfont icon-quxiao remove"></i>
                         </el-button>
                       </el-col>
                     </el-row>
-                    <el-button type="text" style="padding: 0" @click="addPathRow()">
+                    <el-button
+                      type="text"
+                      style="padding: 0"
+                      @click="addPathRow()"
+                    >
                       {{ $t('dataForm.form.file.addPath') }}
                     </el-button>
                   </el-form>
                 </div>
               </div>
             </template>
-            <el-button type="primary" size="mini" class="test" @click="startTest()">{{
-              $t('connection.testConnection')
-            }}</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              class="test"
+              @click="startTest()"
+              >{{ $t('connection.testConnection') }}</el-button
+            >
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
                 <i class="el-icon-error"></i>
@@ -190,14 +263,23 @@
         </div>
         <footer slot="footer" class="footer">
           <div class="footer-btn">
-            <el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
-            <el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
+            <el-button size="mini" @click="goBack()">{{
+              $t('dataForm.cancel')
+            }}</el-button>
+            <el-button
+              size="mini"
+              type="primary"
+              :loading="submitBtnLoading"
+              @click="submit"
+            >
               {{ $t('dataForm.submit') }}
             </el-button>
           </div>
         </footer>
       </main>
-      <gitbook v-if="!$window.getSettingByKey('DFS_TCM_HIDE_CONNECTION_OUTSIDE_PART')"></gitbook>
+      <gitbook
+        v-if="!$window.getSettingByKey('DFS_TCM_HIDE_CONNECTION_OUTSIDE_PART')"
+      ></gitbook>
     </div>
     <Test
       ref="test"
@@ -216,16 +298,33 @@
       width="30%"
     >
       <span>
-        <el-input v-model="rename" maxlength="100" show-word-limit clearable></el-input>
-        <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block"
+        <el-input
+          v-model="rename"
+          maxlength="100"
+          show-word-limit
+          clearable
+        ></el-input>
+        <span
+          style="
+            color: #ccc;
+            margin-top: 5px;
+            font-size: 12px;
+            display: inline-block;
+          "
           >中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格</span
         >
       </span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelRename" size="mini">{{ $t('dataForm.cancel') }}</el-button>
-        <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
-          $t('message.confirm')
+        <el-button @click="handleCancelRename" size="mini">{{
+          $t('dataForm.cancel')
         }}</el-button>
+        <el-button
+          @click="submitEdit()"
+          size="mini"
+          type="primary"
+          :loading="editBtnLoading"
+          >{{ $t('message.confirm') }}</el-button
+        >
       </span>
     </el-dialog>
     <!-- <el-dialog
@@ -321,10 +420,16 @@ export default {
     }
   },
   created() {
-    this.databaseType = this.$route.query.databaseType || this.$store.state.createConnection.databaseType
+    this.databaseType =
+      this.$route.query.databaseType ||
+      this.$store.state.createConnection.databaseType
     //确认类型 按照type 初始化变量
     if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-      this.model = Object.assign({}, defaultCloudModel['default'], defaultCloudModel['drs'])
+      this.model = Object.assign(
+        {},
+        defaultCloudModel['default'],
+        defaultCloudModel['drs']
+      )
     } else {
       this.model = Object.assign({}, defaultModel['default'])
     }
@@ -357,7 +462,11 @@ export default {
             validator: (rule, value, callback) => {
               if (!value || !value.trim()) {
                 callback('连接名称不能为空')
-              } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)) {
+              } else if (
+                !/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
+                  value
+                )
+              ) {
                 callback('连接名称不符合规则')
               } else {
                 callback()
@@ -419,7 +528,9 @@ export default {
       this.checkTestConnectionAvailable() //先检测agent
       if (this.$route.params.id) {
         if (this.model.database_type === 'mongodb') {
-          editData = await this.$api('connections').customQuery([this.$route.params.id])
+          editData = await this.$api('connections').customQuery([
+            this.$route.params.id
+          ])
         } else {
           editData = await this.$api('connections').get([this.$route.params.id])
         }
@@ -499,22 +610,40 @@ export default {
       if (func) {
         let config = func(this)
         let items = defaultConfig.concat(config.items)
-        let item = items.find((it) => it.field === 'database_datetype_without_timezone')
+        let item = items.find(
+          (it) => it.field === 'database_datetype_without_timezone'
+        )
         if (item) {
           item.options = this.timezones
         }
         let itemIsUrl = items.find((it) => it.field === 'isUrl')
         let sslKey = items.find((it) => it.field === 'sslKeyFile')
         let sslCA = items.find((it) => it.field === 'sslCAFile')
-        if (this.model.database_type === 'mongodb' && this.$route.params.id && itemIsUrl) {
+        if (
+          this.model.database_type === 'mongodb' &&
+          this.$route.params.id &&
+          itemIsUrl
+        ) {
           itemIsUrl.options[0].disabled = true
-        } else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
+        } else if (
+          this.model.database_type === 'mongodb' &&
+          !this.$route.params.id &&
+          itemIsUrl
+        ) {
           itemIsUrl.options[1].disabled = true
         }
-        if (this.model.database_type === 'mongodb' && this.$route.params.id && sslKey) {
+        if (
+          this.model.database_type === 'mongodb' &&
+          this.$route.params.id &&
+          sslKey
+        ) {
           sslKey.rules = []
         }
-        if (this.model.database_type === 'mongodb' && this.$route.params.id && sslCA) {
+        if (
+          this.model.database_type === 'mongodb' &&
+          this.$route.params.id &&
+          sslCA
+        ) {
           sslCA.rules = []
         }
         if (this.$route.params.id) {
@@ -524,7 +653,11 @@ export default {
         }
         this.config.form = config.form
         this.config.items = items
-        this.initData(Object.assign(this.model, config.defaultModel, { database_type: this.model.database_type })) //切换类型会后初始化数据
+        this.initData(
+          Object.assign(this.model, config.defaultModel, {
+            database_type: this.model.database_type
+          })
+        ) //切换类型会后初始化数据
         this.checkItems = config.checkItems //根据model变化更新表单项显示或隐藏
         this.checkItems && this.checkItems()
       }
@@ -546,7 +679,9 @@ export default {
         })
     },
     changeInstanceRegion() {
-      let zone = this.instanceMock.filter((item) => item.code === this.model.region)
+      let zone = this.instanceMock.filter(
+        (item) => item.code === this.model.region
+      )
       if (zone.length > 0) {
         this.model.zone = this.model.zone || zone[0].zones[0].code
         this.instanceModelZone = zone[0].zones
@@ -573,7 +708,9 @@ export default {
         }) //华东上海
     },
     changeDataSourceRegion() {
-      let zone = this.dataSourceMock.filter((item) => item.poolId === this.model.s_region)
+      let zone = this.dataSourceMock.filter(
+        (item) => item.poolId === this.model.s_region
+      )
       if (zone.length > 0) {
         this.model.s_zone = this.model.s_zone || zone[0].zoneInfo[0].zoneCode
         this.dataSourceZone = zone[0].zoneInfo
@@ -588,9 +725,12 @@ export default {
       if (!this.dataSourceZone || this.dataSourceZone.length === 0) {
         return
       }
-      let currentZone = this.dataSourceZone.filter((item) => item.zoneCode === this.model.s_zone)
+      let currentZone = this.dataSourceZone.filter(
+        (item) => item.zoneCode === this.model.s_zone
+      )
       if (currentZone.length > 0) {
-        this.model.database_host = currentZone[0].ipv4 || currentZone[0].ipv6 || ''
+        this.model.database_host =
+          currentZone[0].ipv4 || currentZone[0].ipv6 || ''
       }
     },
     //change config
@@ -692,7 +832,9 @@ export default {
     },
     //控制是否开通网络策略
     handleStrategy() {
-      let currentData = this.vpcList.filter((item) => item.id === this.model.vpc)
+      let currentData = this.vpcList.filter(
+        (item) => item.id === this.model.vpc
+      )
       if (currentData.length === 0) return
       this.model.platformInfo.isThrough = currentData[0].isThrough
       if (this.model.platformInfo.isThrough) {
@@ -702,7 +844,9 @@ export default {
     //创建网络策略
     createStrategy() {
       this.createStrategyDisabled = true
-      let currentData = this.vpcList.filter((item) => item.id === this.model.vpc)
+      let currentData = this.vpcList.filter(
+        (item) => item.id === this.model.vpc
+      )
       if (currentData.length === 0) return
       let params = {
         userId: this.$cookie.get('user_id'),
@@ -731,8 +875,12 @@ export default {
         })
     },
     goBack() {
-      let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
-      let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
+      let tip = this.$route.params.id
+        ? '此操作会丢失当前修改编辑内容'
+        : '此操作会丢失当前正在创建的连接'
+      let title = this.$route.params.id
+        ? '是否放弃修改内容？'
+        : '是否放弃创建该连接？'
       this.$confirm(tip, title, {
         confirmButtonText: '放弃',
         cancelButtonText: '取消',
@@ -800,7 +948,10 @@ export default {
       this.submitBtnLoading = true
       let flag = true
       this.model.search_databaseType = ''
-      if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
+      if (
+        this.model.database_type === 'file' &&
+        this.model.connection_type === 'source'
+      ) {
         this.$refs.fileForm.validate((valid) => {
           if (!valid) {
             flag = false
@@ -811,7 +962,11 @@ export default {
         this.$message.error('请授权允许数据同步服务访问您的ECS实例')
         return
       }
-      if (this.model.platformInfo && !this.model.platformInfo.isThrough && this.model.sourceType === 'ecs') {
+      if (
+        this.model.platformInfo &&
+        !this.model.platformInfo.isThrough &&
+        this.model.sourceType === 'ecs'
+      ) {
         this.$message.error('请"点击开通"开通网络策略')
         return
       }
@@ -852,7 +1007,10 @@ export default {
             delete params.isUrl
           }
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-            params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params))
+            params['platformInfo'] = Object.assign(
+              params['platformInfo'],
+              this.handlePlatformInfo(params)
+            )
             if (params.sourceType === 'selfDB') {
               delete params.DRS_region
               delete params.DRS_zone
@@ -872,7 +1030,9 @@ export default {
             .catch((err) => {
               if (err && err.response) {
                 if (err.response.msg.indexOf('duplication for names') > -1) {
-                  this.$message.error(this.$t('dataForm.error.connectionNameExist'))
+                  this.$message.error(
+                    this.$t('dataForm.error.connectionNameExist')
+                  )
                 } else if (err.response.msg.indexOf('duplicate source') > -1) {
                   // this.connectionObj.name = err.response.data.name;
                   // this.connectionObj.id = err.response.data.id;
@@ -933,12 +1093,21 @@ export default {
       if (this.rename === '') {
         this.editBtnLoading = false
         this.rename = this.model.name
-        this.$message.error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText'))
+        this.$message.error(
+          this.$t('dataForm.form.connectionName') +
+            this.$t('formBuilder.noneText')
+        )
         return
       }
-      if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.rename)) {
+      if (
+        !/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
+          this.rename
+        )
+      ) {
         this.editBtnLoading = false
-        this.$message.error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格')
+        this.$message.error(
+          '名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'
+        )
         return
       }
       this.model.name = this.rename
@@ -1016,7 +1185,9 @@ export default {
 
     // 文件保留丢弃字段
     changeFileInclude(item, val) {
-      val === 'include' ? (item.exclude_filename = '') : (item.include_filename = '')
+      val === 'include'
+        ? (item.exclude_filename = '')
+        : (item.include_filename = '')
     }
   }
 }

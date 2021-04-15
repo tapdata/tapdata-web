@@ -16,7 +16,7 @@ export const collectionConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'editor/o-collection.svg'
+          xlinkHref: 'static/editor/o-collection.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.collection.name')
@@ -48,9 +48,22 @@ export const collectionConfig = {
       validate: function (data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
-        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`)
-        if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
+          )
+        if (!data.connectionId)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.data_node.collection.none_database'
+            )}`
+          )
+        if (!data.tableName)
+          throw new Error(
+            `${name}: ${i18n.t(
+              'editor.cell.data_node.collection.none_collection'
+            )}`
+          )
         // if (!data.primaryKeys)
         // 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
         return true
@@ -62,7 +75,8 @@ export const collectionConfig = {
         let fieldFilter = data.fieldFilter ? data.fieldFilter.split(',') : []
         if (fieldFilter.length === 0) return outputSchema
         let defaultFields = outputSchema.fields
-        let newSchema = data.fieldFilterType === 'retainedField' ? [] : defaultFields
+        let newSchema =
+          data.fieldFilterType === 'retainedField' ? [] : defaultFields
         fieldFilter.forEach((filedName) => {
           let index = defaultFields.findIndex((f) => filedName === f.field_name)
           if (index >= 0) {
@@ -82,7 +96,10 @@ export const collectionConfig = {
       },
 
       checkParent(fields, field, schema) {
-        if (field.parent && !schema.find((f) => f.field_name === field.parent)) {
+        if (
+          field.parent &&
+          !schema.find((f) => f.field_name === field.parent)
+        ) {
           let parentField = fields.find((f) => f.field_name === field.parent)
           schema.push(parentField)
           this.checkParent(fields, parentField, schema)
@@ -94,7 +111,9 @@ export const collectionConfig = {
         if (childrenFields && childrenFields.length) {
           childrenFields.forEach((cf) => {
             if (!filter.includes(cf.field_name)) {
-              let index = schema.findIndex((f) => f.field_name === cf.field_name)
+              let index = schema.findIndex(
+                (f) => f.field_name === cf.field_name
+              )
               if (index >= 0) {
                 let childField = schema[index]
                 schema.splice(index, 1)
@@ -204,7 +223,10 @@ export const collectionConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
+              and: [
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
+              ]
             },
             index: 4
           }
@@ -253,7 +275,7 @@ export const collectionConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/collection2.svg',
+        xlinkHref: 'static/editor/collection2.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

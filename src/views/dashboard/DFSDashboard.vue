@@ -4,29 +4,45 @@
       <ElCard class="dashboard-guide-item">
         <i class="iconfont icon-shujukuqianyi2 dashboard-guide-item__icon"></i>
         <div class="dashboard-guide-item__content">
-          <div class="dashboard-guide-item__title">{{ $t('dataFlow.databseMigrationHead') }}</div>
-          <div class="dashboard-guide-item__desc">{{ $t('dataFlow.databseMigration') }}</div>
+          <div class="dashboard-guide-item__title">
+            {{ $t('dataFlow.databseMigrationHead') }}
+          </div>
+          <div class="dashboard-guide-item__desc">
+            {{ $t('dataFlow.databseMigration') }}
+          </div>
         </div>
       </ElCard>
       <ElCard class="dashboard-guide-item">
         <i class="iconfont icon-shujukuqianyi2 dashboard-guide-item__icon"></i>
         <div class="dashboard-guide-item__content">
-          <div class="dashboard-guide-item__title">{{ $t('dataFlow.databseFreedomHead') }}</div>
-          <div class="dashboard-guide-item__desc">{{ $t('dataFlow.databseFreedom') }}</div>
+          <div class="dashboard-guide-item__title">
+            {{ $t('dataFlow.databseFreedomHead') }}
+          </div>
+          <div class="dashboard-guide-item__desc">
+            {{ $t('dataFlow.databseFreedom') }}
+          </div>
         </div>
       </ElCard>
       <ElCard class="dashboard-guide-item">
         <i class="iconfont icon-renwubianpai2 dashboard-guide-item__icon"></i>
         <div class="dashboard-guide-item__content">
-          <div class="dashboard-guide-item__title">{{ $t('dataFlow.dataMigrationHead') }}</div>
-          <div class="dashboard-guide-item__desc">{{ $t('dataFlow.dataFreedom') }}</div>
+          <div class="dashboard-guide-item__title">
+            {{ $t('dataFlow.dataMigrationHead') }}
+          </div>
+          <div class="dashboard-guide-item__desc">
+            {{ $t('dataFlow.dataFreedom') }}
+          </div>
         </div>
       </ElCard>
       <ElCard class="dashboard-guide-item">
         <i class="iconfont icon-database dashboard-guide-item__icon"></i>
         <div class="dashboard-guide-item__content">
-          <div class="dashboard-guide-item__title">{{ $t('dataFlow.creatSource') }}</div>
-          <div class="dashboard-guide-item__desc">{{ $t('dataFlow.sourceDescription') }}</div>
+          <div class="dashboard-guide-item__title">
+            {{ $t('dataFlow.creatSource') }}
+          </div>
+          <div class="dashboard-guide-item__desc">
+            {{ $t('dataFlow.sourceDescription') }}
+          </div>
         </div>
       </ElCard>
     </div>

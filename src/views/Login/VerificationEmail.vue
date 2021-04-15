@@ -6,17 +6,26 @@
         <div class="image iconfont icon-fasongyoujian"></div>
         <div class="text">
           <p>
-            {{ type === 'reset' ? $t('app.signIn.passwordResetText') : $t('app.signIn.confirmationEmail') }}
+            {{
+              type === 'reset'
+                ? $t('app.signIn.passwordResetText')
+                : $t('app.signIn.confirmationEmail')
+            }}
             <i>{{ email }}</i>
           </p>
           <p>{{ $t('app.signIn.mailbox') }}</p>
           <div>
             {{ $t('app.signIn.receiveEmail') }}
-            <span @click="resetSend" :class="{ noClick: time > 0 }" v-if="type === 'reset'"
-              >{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }}s)</i></span
+            <span
+              @click="resetSend"
+              :class="{ noClick: time > 0 }"
+              v-if="type === 'reset'"
+              >{{ $t('app.signIn.resend') }}
+              <i v-if="time > 0">({{ time }}s)</i></span
             >
             <span @click="send" :class="{ noClick: time > 0 }" v-else
-              >{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }}s)</i></span
+              >{{ $t('app.signIn.resend') }}
+              <i v-if="time > 0">({{ time }}s)</i></span
             >,
 
             {{ $t('app.signIn.orClick') }}

@@ -2,19 +2,41 @@
   <div style="height: 100%" class="table-flows">
     <el-container class="table-flows-wrap">
       <div class="panel-left" v-if="formData.panelFlag">
-        <Classification ref="classification" :types="['dataflow']" @nodeChecked="nodeChecked"></Classification>
+        <Classification
+          ref="classification"
+          :types="['dataflow']"
+          @nodeChecked="nodeChecked"
+        ></Classification>
       </div>
       <el-container class="table-flows-main">
-        <el-tabs v-model="activeName" type="card" class="tab-card" @tab-click="handleTabClick">
-          <el-tab-pane :label="$t('tableFlow.task_view')" name="dataFlow"></el-tab-pane>
-          <el-tab-pane :label="$t('tableFlow.table_view')" name="tableFlow"></el-tab-pane>
+        <el-tabs
+          v-model="activeName"
+          type="card"
+          class="tab-card"
+          @tab-click="handleTabClick"
+        >
+          <el-tab-pane
+            :label="$t('tableFlow.task_view')"
+            name="dataFlow"
+          ></el-tab-pane>
+          <el-tab-pane
+            :label="$t('tableFlow.table_view')"
+            name="tableFlow"
+          ></el-tab-pane>
         </el-tabs>
         <el-header height="auto">
           <el-form class="search-bar" size="mini" :inline="true">
             <el-form-item>
-              <div :class="[{ panelOpen: formData.panelFlag }, 'item', 'panelBtn']" @click="handlePanelFlag">
+              <div
+                :class="[{ panelOpen: formData.panelFlag }, 'item', 'panelBtn']"
+                @click="handlePanelFlag"
+              >
                 <i class="iconfont icon-xiangshangzhanhang"></i>
-                <span>{{ formData.panelFlag ? $t('dataFlow.closeSetting') : $t('dataFlow.openPanel') }}</span>
+                <span>{{
+                  formData.panelFlag
+                    ? $t('dataFlow.closeSetting')
+                    : $t('dataFlow.openPanel')
+                }}</span>
               </div>
             </el-form-item>
             <el-form-item>
@@ -78,7 +100,11 @@
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button style="padding: 7px" icon="el-icon-refresh-right" @click="reset()"></el-button>
+              <el-button
+                style="padding: 7px"
+                icon="el-icon-refresh-right"
+                @click="reset()"
+              ></el-button>
             </el-form-item>
             <el-form-item style="margin-right: 0; flex: 1; text-align: right">
               <el-button @click="rowCheckAll">
@@ -100,11 +126,21 @@
               @sort-change="sortHandler"
               @selection-change="selectHandler"
             >
-              <el-table-column type="selection" width="44" align="center"></el-table-column>
-              <el-table-column sortable="custom" :label="$t('tableFlow.source_target_table')" prop="stages.name">
+              <el-table-column
+                type="selection"
+                width="44"
+                align="center"
+              ></el-table-column>
+              <el-table-column
+                sortable="custom"
+                :label="$t('tableFlow.source_target_table')"
+                prop="stages.name"
+              >
                 <template slot-scope="scope">
                   <div class="table-item">
-                    <div class="table-source">[S] {{ scope.row.stages.name }}</div>
+                    <div class="table-source">
+                      [S] {{ scope.row.stages.name }}
+                    </div>
                     <div class="from-db">{{ scope.row.databaseName }}</div>
                     <div v-for="item in scope.row.outf" :key="item.name">
                       <div class="table-target">[T] {{ item.name }}</div>
@@ -127,7 +163,12 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column sortable="custom" prop="status" :label="$t('tableFlow.status_text')" width="120">
+              <el-table-column
+                sortable="custom"
+                prop="status"
+                :label="$t('tableFlow.status_text')"
+                width="120"
+              >
                 <template slot-scope="scope">
                   <img
                     v-if="scope.row.status == 'running'"
@@ -145,45 +186,74 @@
               <el-table-column :label="$t('tableFlow.stage')" width="120">
                 <template slot-scope="scope">
                   <span>
-                    {{ scope.row.cdcStatusStr }} (<span class="dark-color">{{ scope.row.ratio }}%</span>)
+                    {{ scope.row.cdcStatusStr }} (<span class="dark-color"
+                      >{{ scope.row.ratio }}%</span
+                    >)
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('tableFlow.output_input')" width="120">
+              <el-table-column
+                :label="$t('tableFlow.output_input')"
+                width="120"
+              >
                 <template slot-scope="scope">
                   <div class="table-item">
                     <div>
-                      <span class="dark-color">[{{ $t('tableFlow.output') }}]</span>&nbsp;
+                      <span class="dark-color"
+                        >[{{ $t('tableFlow.output') }}]</span
+                      >&nbsp;
                       <span>{{ scope.row.output }}</span>
                     </div>
                     <div>
-                      <span class="dark-color">[{{ $t('tableFlow.input') }}]</span>&nbsp;
+                      <span class="dark-color"
+                        >[{{ $t('tableFlow.input') }}]</span
+                      >&nbsp;
                       <span>{{ scope.row.input }}</span>
                     </div>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('tableFlow.speed')" width="120" align="center">
+              <el-table-column
+                :label="$t('tableFlow.speed')"
+                width="120"
+                align="center"
+              >
                 <template slot-scope="scope">
                   <span>{{ scope.row.speed }}</span>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('tableFlow.rows')" width="150" align="center">
+              <el-table-column
+                :label="$t('tableFlow.rows')"
+                width="150"
+                align="center"
+              >
                 <template slot-scope="scope">
                   <i class="el-icon-loading" v-show="scope.row.noshow"></i>
                   <div v-show="!scope.row.noshow">
                     <div class="table-target">[S] {{ scope.row.output }}</div>
-                    <div v-show="!scope.row.noshow" v-for="item in scope.row.outf" :key="item.name">
-                      <div :class="{ red: scope.row.red }">[T] {{ item.input.rows }}</div>
+                    <div
+                      v-show="!scope.row.noshow"
+                      v-for="item in scope.row.outf"
+                      :key="item.name"
+                    >
+                      <div :class="{ red: scope.row.red }">
+                        [T] {{ item.input.rows }}
+                      </div>
                     </div>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column width="120" align="center" :label="$t('tableFlow.opear')">
+              <el-table-column
+                width="120"
+                align="center"
+                :label="$t('tableFlow.opear')"
+              >
                 <template slot-scope="scope">
-                  <el-link size="mini" type="primary" @click="rowCheck(scope.row)">{{
-                    $t('tableFlow.row_count_check')
-                  }}</el-link
+                  <el-link
+                    size="mini"
+                    type="primary"
+                    @click="rowCheck(scope.row)"
+                    >{{ $t('tableFlow.row_count_check') }}</el-link
                   ><br />
                 </template>
               </el-table-column>
@@ -244,7 +314,15 @@ export default {
         stopping: '#F19149',
         error: '#f53724'
       },
-      statusOptions: ['running', 'paused', 'error', 'draft', 'scheduled', 'stopping', 'force_stopping'],
+      statusOptions: [
+        'running',
+        'paused',
+        'error',
+        'draft',
+        'scheduled',
+        'stopping',
+        'force_stopping'
+      ],
       syncOtions: [
         {
           label: this.$t('dataFlow.initial_sync'),
@@ -444,10 +522,14 @@ export default {
       let where = {}
 
       if (this.formData) {
-        if (this.formData.status && this.formData.status !== '') where.status = this.formData.status
-        if (this.formData.way && this.formData.way !== '') where['setting.sync_type'] = this.formData.way
-        if (this.formData.keyword && this.formData.keyword !== '') where.name = this.formData.keyword
-        if (this.formData.executionStatus) where['cdcStatus'] = this.formData.executionStatus
+        if (this.formData.status && this.formData.status !== '')
+          where.status = this.formData.status
+        if (this.formData.way && this.formData.way !== '')
+          where['setting.sync_type'] = this.formData.way
+        if (this.formData.keyword && this.formData.keyword !== '')
+          where.name = this.formData.keyword
+        if (this.formData.executionStatus)
+          where['cdcStatus'] = this.formData.executionStatus
       }
       if (this.checkedTags && this.checkedTags.length) {
         where['listtags.id'] = {
@@ -480,9 +562,17 @@ export default {
       })
     },
     cookRecord(item) {
-      if (item.startTime) item.startTime = this.$moment(item.startTime).format('YYYY-MM-DD HH:mm:ss')
-      item.statusLabel = this.$t('dataFlow.status.' + item.status.replace(/ /g, '_'))
-      if (item.stages.statsStatus) item.cdcStatusStr = this.$t('dataFlow.status.' + item.stages.statsStatus)
+      if (item.startTime)
+        item.startTime = this.$moment(item.startTime).format(
+          'YYYY-MM-DD HH:mm:ss'
+        )
+      item.statusLabel = this.$t(
+        'dataFlow.status.' + item.status.replace(/ /g, '_')
+      )
+      if (item.stages.statsStatus)
+        item.cdcStatusStr = this.$t(
+          'dataFlow.status.' + item.stages.statsStatus
+        )
       if (item.stages.output) item.output = item.stages.output.rows
       else item.output = '0'
       if (item.outf && item.outf.length) {
@@ -495,12 +585,17 @@ export default {
         })
       } else item.input = '0'
       if (typeof item.output == 'number' && item.stages.transmissionTime > 0)
-        item.speed = ((item.output * 1000) / item.stages.transmissionTime).toFixed(0)
+        item.speed = (
+          (item.output * 1000) /
+          item.stages.transmissionTime
+        ).toFixed(0)
       else item.speed = '0'
       if (item.totalCount) {
         if (item.totalCount.findWhere({ stageId: item.stages.stageId }))
           item.ratio = (
-            (item.output / item.totalCount.findWhere({ stageId: item.stages.stageId }).dataCount) *
+            (item.output /
+              item.totalCount.findWhere({ stageId: item.stages.stageId })
+                .dataCount) *
             100
           ).toFixed(0)
       }

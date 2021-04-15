@@ -67,7 +67,8 @@ class WSClient extends EventEmitter {
       this.ws.removeEventListener('error', this.__error)
       this.ws.removeEventListener('open', this.__open)
       this.ws.removeEventListener('close', this.__close)
-      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(this.ws.readyState)) this.ws.close(1, null)
+      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(this.ws.readyState))
+        this.ws.close(1, null)
     }
   }
 
@@ -97,8 +98,8 @@ class WSClient extends EventEmitter {
 
     self.ws.addEventListener(
       'close',
-      (self.__close = () => {
-        this.handlerClose()
+      (self.__close = (e) => {
+        this.handlerClose(e)
       })
     )
   }
@@ -107,8 +108,8 @@ class WSClient extends EventEmitter {
     log('Websocket is opened!')
   }
 
-  handlerClose() {
-    log('Websocket is closed, ready to reconnect.')
+  handlerClose(e) {
+    log('Websocket is closed, ready to reconnect.', e)
     this.reconnect()
   }
 
@@ -198,7 +199,12 @@ class WSClient extends EventEmitter {
         .getAvailableAgent()
         .then((result) => {
           log('ws.getAgentId:', result)
-          if (result && result.data && result.data.result && result.data.result.length > 0) {
+          if (
+            result &&
+            result.data &&
+            result.data.result &&
+            result.data.result.length > 0
+          ) {
             self.agentId = result.data.result[0].process_id
             cb(null, self.agentId)
           } else {

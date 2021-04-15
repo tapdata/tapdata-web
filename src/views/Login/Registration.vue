@@ -11,7 +11,11 @@
           </div>
           <el-form ref="form" :model="form">
             <el-form-item prop="email">
-              <el-input v-model="form.email" type="email" :placeholder="$t('app.signIn.email_placeholder')"></el-input>
+              <el-input
+                v-model="form.email"
+                type="email"
+                :placeholder="$t('app.signIn.email_placeholder')"
+              ></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <el-input
@@ -36,9 +40,14 @@
                 :placeholder="$t('app.signIn.inviteCode_placeholder')"
               ></el-input>
             </el-form-item>
-            <el-checkbox class="keep-sign-in" v-model="keepSignIn" style="display: none">
+            <el-checkbox
+              class="keep-sign-in"
+              v-model="keepSignIn"
+              style="display: none"
+            >
               <span style="color: #999"
-                >{{ $t('app.signIn.registry_tip') }} <i>{{ $t('app.signIn.userPplicy') }}</i></span
+                >{{ $t('app.signIn.registry_tip') }}
+                <i>{{ $t('app.signIn.userPplicy') }}</i></span
               >
             </el-checkbox>
             <el-button
@@ -62,7 +71,11 @@
           <div class="title">{{ $t('app.signIn.getCode') }}</div>
           <p>{{ $t('app.signIn.qrCodeText') }}</p>
           <div class="imageBox">
-            <el-image class="image" :src="require('@/assets/images/tapdateQR.png')" fit="cover"></el-image>
+            <el-image
+              class="image"
+              :src="require('@/assets/images/tapdateQR.png')"
+              fit="cover"
+            ></el-image>
           </div>
         </el-card>
       </div>

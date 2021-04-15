@@ -2,14 +2,26 @@
   <div class="dataflow-upload">
     <div class="dataflow-head">{{ $t('dataFlow.import') }}</div>
     <div class="dataflow-radio">
-      <el-radio v-model="upsert" :label="1">{{ $t('dataFlow.overWrite') }}</el-radio>
-      <el-radio v-model="upsert" :label="0">{{ $t('dataFlow.skipData') }}</el-radio>
+      <el-radio v-model="upsert" :label="1">{{
+        $t('dataFlow.overWrite')
+      }}</el-radio>
+      <el-radio v-model="upsert" :label="0">{{
+        $t('dataFlow.skipData')
+      }}</el-radio>
     </div>
     <div class="dataflow-radio">
-      <el-tag :key="tag" v-for="tag in tagList" :closable="true" @close="handleClose(tag)">
-        {{ tag.value }}<span style="cursor: pointer" @click="handleClose(tag)"> X </span>
+      <el-tag
+        :key="tag"
+        v-for="tag in tagList"
+        :closable="true"
+        @close="handleClose(tag)"
+      >
+        {{ tag.value
+        }}<span style="cursor: pointer" @click="handleClose(tag)"> X </span>
       </el-tag>
-      <span @click="handleClassify" class="classify">{{ $t('dataFlow.taskBulkTag') }}</span>
+      <span @click="handleClassify" class="classify">{{
+        $t('dataFlow.taskBulkTag')
+      }}</span>
     </div>
 
     <el-upload
@@ -22,12 +34,22 @@
       :on-success="handleSuccess"
       :on-change="handleChange"
     >
-      <el-button type="primary" plain slot="trigger" size="small">{{ $t('dataFlow.chooseFile') }}</el-button>
-      <el-button style="margin-left: 10px" size="small" type="success" @click="submitUpload">{{
-        $t('dataFlow.upload')
+      <el-button type="primary" plain slot="trigger" size="small">{{
+        $t('dataFlow.chooseFile')
       }}</el-button>
+      <el-button
+        style="margin-left: 10px"
+        size="small"
+        type="success"
+        @click="submitUpload"
+        >{{ $t('dataFlow.upload') }}</el-button
+      >
     </el-upload>
-    <SelectClassify ref="classify" :types="[type]" v-on:operationsClassify="handleOperationClassify"></SelectClassify>
+    <SelectClassify
+      ref="classify"
+      :types="[type]"
+      v-on:operationsClassify="handleOperationClassify"
+    ></SelectClassify>
     <div v-show="status" class="tooltip">
       {{ $t('dataFlow.uploadOK') }}
     </div>
@@ -57,7 +79,8 @@ export default {
     }
   },
   created() {
-    this.type = this.$route.query && this.$route.query.type ? this.$route.query.type : ''
+    this.type =
+      this.$route.query && this.$route.query.type ? this.$route.query.type : ''
     if (this.type === 'api') {
       this.downType = 'APIServer'
     } else {

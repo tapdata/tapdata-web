@@ -10,7 +10,13 @@
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div> -->
-      <el-form class="e-form" label-position="top" :model="model" :disabled="disabled" ref="form">
+      <el-form
+        class="e-form"
+        label-position="top"
+        :model="model"
+        :disabled="disabled"
+        ref="form"
+      >
         <!-- <span class="addTxt">+新建文件</span> -->
         <el-form-item
           :label="$t('editor.cell.data_node.es.configurationES')"
@@ -26,7 +32,9 @@
           >
             <el-option
               v-for="(item, idx) in databases"
-              :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
+              :label="`${item.name} (${
+                $t('connection.status.' + item.status) || item.status
+              })`"
               :value="item.id"
               v-bind:key="idx"
             ></el-option>
@@ -34,7 +42,10 @@
         </el-form-item>
       </el-form>
       <div class="e-entity-wrap" style="text-align: center">
-        <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+        <entity
+          :schema="convertSchemaToTreeData(mergedSchema)"
+          :editable="false"
+        ></entity>
       </div>
     </div>
   </div>
@@ -164,7 +175,11 @@ export default {
         if (result.data) {
           let schemas = (result.data.schema && result.data.schema.tables) || []
           schemas = schemas.sort((t1, t2) =>
-            t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+            t1.table_name > t2.table_name
+              ? 1
+              : t1.table_name === t2.table_name
+              ? 0
+              : -1
           )
           self.schemas = schemas
         }
@@ -196,7 +211,9 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       if (result.connectionId) {
-        let database = this.databases.filter((db) => db.id === result.connectionId)
+        let database = this.databases.filter(
+          (db) => db.id === result.connectionId
+        )
         if (database && database.length > 0) {
           result.name = database[0].name
         }
