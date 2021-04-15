@@ -184,7 +184,7 @@
         </el-tag>
 
         <el-button-group
-          v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')"
+          v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
           class="action-btn-group"
           v-readonlybtn="'SYNC_job_operation'"
         >
