@@ -573,9 +573,9 @@ export default {
         timezone += ':00'
 
         if (i < 0) {
-          timezone = '-' + timezone
+          timezone = 'UTC ' + i
         } else {
-          timezone = '+' + timezone
+          timezone = 'UTC +' + i
         }
 
         timezones.push({ label: timezone, value: timezone })

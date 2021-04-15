@@ -322,11 +322,44 @@ export default {
       this.changeConfig(this.allowDataType, 'databaseType')
     },
     formChange(data) {
-      let filed = data.field || ''
-      if (filed === 'source_databaseType') {
+      // 不支持 mongodb 到 oracle 的同步
+      let field = data.field || '' // 源端 | 目标端
+      let value = data.value
+      let items = this.config.items
+      if (field === 'source_databaseType') {
+        // 修改目标端
+        let target = items.find((it) => it.field === 'target_databaseType')
+        if (target) {
+          target.options = target.options.map((item) => {
+            if (value === 'mongodb') { // mongodb 时，禁用目标端的 oracle
+              if (item.value === 'oracle') {
+                item.disabled = true
+              }
+              return item
+            } else { // 不是 mongodb，则恢复正常
+              item.disabled = false
+              return item
+            }
+          })
+        }
         this.getConnection(this.getWhere('source'), 'source_connectionId')
       }
-      if (filed === 'target_databaseType') {
+      if (field === 'target_databaseType') {
+        // 修改源端
+        let source = items.find((it) => it.field === 'source_databaseType')
+        if (source) {
+          source.options = source.options.map((item) => {
+            if (value === 'oracle') { // oracle 时，禁用目标端的 oracle
+              if (item.value === 'mongodb') {
+                item.disabled = true
+              }
+              return item
+            } else { // 不是 oracle，则恢复正常
+              item.disabled = false
+              return item
+            }
+          })
+        }
         this.getConnection(this.getWhere('target'), 'target_connectionId')
       }
     },

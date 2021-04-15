@@ -30,7 +30,7 @@ export default {
       {
         class: {
           'fb-radio': true,
-          border: config.border,
+          'radio-border': config.border,
           verical: config.isVertical
         },
         props: {
@@ -98,7 +98,7 @@ export default {
       }
     }
   }
-  &.border {
+  &.radio-border {
     display: flex;
     justify-content: space-between;
     .fb-radio-option {
@@ -110,7 +110,7 @@ export default {
       }
     }
   }
-  &.verical.border {
+  &.verical.radio-border {
     display: block;
     .fb-radio-option {
       width: 100%;
