@@ -540,7 +540,7 @@ export default {
             source.options = data.map((item) => {
               return {
                 label: TYPEMAP[item],
-                value: TYPEMAP[item]
+                value: item
               }
             })
           }
@@ -549,7 +549,7 @@ export default {
             target.options = data.map((item) => {
               return {
                 label: TYPEMAP[item],
-                value: TYPEMAP[item]
+                value: item
               }
             })
           }
