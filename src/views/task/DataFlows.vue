@@ -1064,11 +1064,20 @@ export default {
           }, 200)
         })
       } else {
-        let routeUrl = this.$router.resolve({
-          path: '/job',
-          query: { id: id, isMoniting: true, mapping: mappingTemplate }
-        })
-        window.open(routeUrl.href, 'monitor_' + id)
+        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+          window.open(
+            `${
+              location.href.split('/tm/')[0]
+            }/monitor?id=${id}&isMoniting=true&mapping=${mappingTemplate}`,
+            'monitor_' + id
+          )
+        } else {
+          let routeUrl = this.$router.resolve({
+            path: '/job',
+            query: { id: id, isMoniting: true, mapping: mappingTemplate }
+          })
+          window.open(routeUrl.href, 'monitor_' + id)
+        }
       }
       setTimeout(() => {
         document.querySelectorAll('.el-tooltip__popper').forEach((it) => {
