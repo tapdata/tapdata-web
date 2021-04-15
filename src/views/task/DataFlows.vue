@@ -1068,7 +1068,7 @@ export default {
           window.open(
             `${
               location.href.split('/tm/')[0]
-            }/monitor?id=${id}&isMoniting=true&mapping=${mappingTemplate}`,
+            }/#/monitor?id=${id}&isMoniting=true&mapping=${mappingTemplate}`,
             'monitor_' + id
           )
         } else {
