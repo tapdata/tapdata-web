@@ -2109,7 +2109,7 @@ const en = {
 			forceStop: ' force stopped ',
 			reset: ' reset ',
 			copy: ' copied ',
-			upload: ' upload ',
+			upload: ' exported ',
 			download: ' downloaded ',
 			login: ' login ',
 			logout: ' logout '
