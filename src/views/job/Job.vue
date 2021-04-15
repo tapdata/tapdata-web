@@ -184,6 +184,7 @@
         </el-tag>
 
         <el-button-group
+          v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')"
           class="action-btn-group"
           v-readonlybtn="'SYNC_job_operation'"
         >
@@ -529,7 +530,7 @@ export default {
 
     backDataFlow() {
       let mapping = this.$route.query.mapping
-      if (!this.dataChangeFalg || window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs' || window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+      if (!this.dataChangeFalg || window.getSettingByKey('DFS_TCM_PLATFORM')) {
         this.$router.push({
           path: '/dataFlows?mapping=' + mapping
         })
