@@ -29,7 +29,8 @@ export default {
       return h('ElOption', {
         props: {
           label: opt.label,
-          value: opt.value
+          value: opt.value,
+          disabled: opt.disabled
         },
         key: opt.key || opt.value
       })
