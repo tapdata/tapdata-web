@@ -59,7 +59,10 @@ export default class users extends PublicAPI {
   }
 
   deletePermissionRoleMapping(id, params) {
-    return axios.delete(`${this.url}/deletePermissionRoleMapping?id=${id}`, params)
+    return axios.delete(
+      `${this.url}/deletePermissionRoleMapping?id=${id}`,
+      params
+    )
   }
 
   role(params) {
@@ -67,7 +70,12 @@ export default class users extends PublicAPI {
   }
 
   upsertWithWhere(where, params) {
-    return axios.post(this.url + '/upsertWithWhere?where=' + encodeURIComponent(JSON.stringify(where)), params)
+    return axios.post(
+      this.url +
+        '/upsertWithWhere?where=' +
+        encodeURIComponent(JSON.stringify(where)),
+      params
+    )
   }
 
   isCompleteGuide(id) {
@@ -79,6 +87,9 @@ export default class users extends PublicAPI {
   }
 
   update(where, params) {
-    return axios.post(this.url + '/update?where=' + JSON.stringify(where), params)
+    return axios.post(
+      this.url + '/update?where=' + JSON.stringify(where),
+      params
+    )
   }
 }

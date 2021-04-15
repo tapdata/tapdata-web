@@ -5,22 +5,32 @@
       <div class="test-log-item" v-for="(item, index) in testLogs" :key="index">
         <div>{{ index + 1 }}. {{ item.show_msg }}</div>
         <div class="test-info">
-          <div style="margin-right: 40px">{{ `Required:${item.required}` }}</div>
-          <div>{{ `Status:${item.status === 'fail' ? 'failed' : item.status}` }}</div>
+          <div style="margin-right: 40px">
+            {{ `Required:${item.required}` }}
+          </div>
+          <div>
+            {{ `Status:${item.status === 'fail' ? 'failed' : item.status}` }}
+          </div>
         </div>
         <div v-if="item.fail_message" class="test-info">
           Message:
-          <b :style="{ color: item.required ? 'red' : '#ffc107' }">{{ item.fail_message }}</b>
+          <b :style="{ color: item.required ? 'red' : '#ffc107' }">{{
+            item.fail_message
+          }}</b>
         </div>
       </div>
-      <div class="test-result">{{ testResult || $t('dataForm.test.testing') }}</div>
+      <div class="test-result">
+        {{ testResult || $t('dataForm.test.testing') }}
+      </div>
     </div>
     <form-builder ref="form" v-model="model" :config="config"></form-builder>
     <span slot="footer" class="dialog-footer">
       <el-button size="mini" type="primary" :loading="testing" @click="submit">
         {{ $t('dataForm.submit') }}
       </el-button>
-      <el-button size="mini" @click="visible = false">{{ $t('dataForm.cancel') }}</el-button>
+      <el-button size="mini" @click="visible = false">{{
+        $t('dataForm.cancel')
+      }}</el-button>
     </span>
   </Drawer>
 </template>
@@ -140,7 +150,9 @@ export default {
       this.checkDataTypeOptions()
     },
     checkDataTypeOptions() {
-      let options = this.dataTypes.filter((it) => window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(it.value))
+      let options = this.dataTypes.filter((it) =>
+        window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(it.value)
+      )
       let list = options.filter((opt) => this.whiteList.includes(opt.value))
       defaultConfig[1].options = list
       if (list.length) {
@@ -189,12 +201,18 @@ export default {
       if (func) {
         let config = func(this)
         let items = defaultConfig.concat(config.items)
-        let item = items.find((it) => it.field === 'database_datetype_without_timezone')
+        let item = items.find(
+          (it) => it.field === 'database_datetype_without_timezone'
+        )
         if (item) {
           item.options = this.timezones
         }
         this.config.items = items
-        this.initData(Object.assign(defaultModel, config.defaultModel, { database_type: this.model.database_type })) //切换类型会后初始化数据
+        this.initData(
+          Object.assign(defaultModel, config.defaultModel, {
+            database_type: this.model.database_type
+          })
+        ) //切换类型会后初始化数据
         this.checkItems = config.checkItems //根据model变化更新表单项显示或隐藏
         this.checkItems && this.checkItems()
       }
@@ -211,7 +229,8 @@ export default {
       }
       if (result.data) {
         const data = result.data
-        let validate_details = data.response_body && data.response_body.validate_details
+        let validate_details =
+          data.response_body && data.response_body.validate_details
         this.testLogs = validate_details
         this.$refs.drawer.$el.getElementsByTagName('main')[0].scrollTop = 0
         if (data.status === 'ready') {
@@ -261,7 +280,9 @@ export default {
             })
             .catch((err) => {
               if (err && err.response.status === 500) {
-                this.$message.error(this.$t('dataForm.error.connectionNameExist'))
+                this.$message.error(
+                  this.$t('dataForm.error.connectionNameExist')
+                )
               } else {
                 this.$message.error(this.$t('dataForm.saveFail'))
               }

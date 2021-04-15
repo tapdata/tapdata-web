@@ -1,7 +1,9 @@
 <template>
   <section class="tapdata-transfer-wrap">
     <div class="box-btn">
-      <el-button class="e-button" size="mini" @click="dialogVisible = true">{{ $t('dataFlow.changeName') }}</el-button>
+      <el-button class="e-button" size="mini" @click="dialogVisible = true">{{
+        $t('dataFlow.changeName')
+      }}</el-button>
       <el-button size="mini" class="e-button" @click="handleReduction">{{
         $t('editor.cell.link.reduction')
       }}</el-button>
@@ -27,7 +29,10 @@
       <el-form :rules="rules" ref="form" :model="formData">
         <el-row :gutter="80" class="e-row">
           <el-col :span="12">
-            <el-form-item :label="$t('editor.cell.link.prefixPlaceholder')" prop="table_prefix">
+            <el-form-item
+              :label="$t('editor.cell.link.prefixPlaceholder')"
+              prop="table_prefix"
+            >
               <el-input
                 v-model="formData.table_prefix"
                 autocomplete="off"
@@ -38,12 +43,17 @@
               ></el-input>
             </el-form-item>
             <div class="tip">
-              <span>以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
+              <span
+                >以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span
+              >
               <div>前缀不允许以 system 开头</div>
             </div>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="$t('editor.cell.link.suffixPlaceholder')" prop="table_suffix">
+            <el-form-item
+              :label="$t('editor.cell.link.suffixPlaceholder')"
+              prop="table_suffix"
+            >
               <el-input
                 v-model="formData.table_suffix"
                 autocomplete="off"
@@ -54,17 +64,27 @@
               ></el-input>
             </el-form-item>
             <div class="tip">
-              <span>以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
+              <span
+                >以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span
+              >
             </div>
           </el-col>
         </el-row>
       </el-form>
       <div class="text">
-        {{ `${$t('editor.cell.link.tableNameExample')}: ${formData.table_prefix}tablename${formData.table_suffix}` }}
+        {{
+          `${$t('editor.cell.link.tableNameExample')}: ${
+            formData.table_prefix
+          }tablename${formData.table_suffix}`
+        }}
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel">{{ $t('dataVerify.cancel') }}</el-button>
-        <el-button type="primary" @click="changeName">{{ $t('dataVerify.confirm') }}</el-button>
+        <el-button @click="handleCancel">{{
+          $t('dataVerify.cancel')
+        }}</el-button>
+        <el-button type="primary" @click="changeName">{{
+          $t('dataVerify.confirm')
+        }}</el-button>
       </div>
     </el-dialog>
   </section>
@@ -99,7 +119,10 @@ export default {
       transferLoading: false,
       sourceData: [],
       selectSourceArr: [],
-      titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
+      titles: [
+        this.$t('editor.cell.link.migrationObjece'),
+        this.$t('editor.cell.link.chosen')
+      ],
       formData: {
         table_prefix: '',
         table_suffix: ''
@@ -122,7 +145,11 @@ export default {
           if (result.data) {
             let tables = (result.data.schema && result.data.schema.tables) || []
             tables = tables.sort((t1, t2) =>
-              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+              t1.table_name > t2.table_name
+                ? 1
+                : t1.table_name === t2.table_name
+                ? 0
+                : -1
             )
             if (tables && tables.length) {
               this.sourceData = tables.map((table) => ({
@@ -156,7 +183,10 @@ export default {
     },
     // 穿梭框搜索
     filterMethod(query, item) {
-      return item.label.indexOf(query) > -1
+      if (!!~item.label.indexOf(query) || !!~item.label.toUpperCase().indexOf(query.toUpperCase())) {
+        return true
+      }
+      //return item.label.indexOf(query) > -1
     },
     // 已选择的表
     handleSelectTable(data) {
@@ -204,12 +234,18 @@ export default {
         })
         this.selectSourceArr = selectSourceArr
       }
-      if (this.sourceData && this.sourceData.length && this.selectSourceArr.length) {
+      if (
+        this.sourceData &&
+        this.sourceData.length &&
+        this.selectSourceArr.length
+      ) {
         for (let i = 0; i < this.sourceData.length; i++) {
           for (let j = 0; j < this.selectSourceArr.length; j++) {
             if (this.sourceData[i].key === this.selectSourceArr[j]) {
               this.sourceData[i].label =
-                this.formData.table_prefix + this.sourceData[i].key + this.formData.table_suffix
+                this.formData.table_prefix +
+                this.sourceData[i].key +
+                this.formData.table_suffix
             }
           }
         }
@@ -246,7 +282,10 @@ export default {
 <style lang="less">
 .tapdata-transfer-wrap {
   height: 100%;
-  .el-transfer-panel .el-transfer-panel__header .el-checkbox .el-checkbox__label {
+  .el-transfer-panel
+    .el-transfer-panel__header
+    .el-checkbox
+    .el-checkbox__label {
     height: 30px;
     font-size: 12px;
     padding-right: 6px;

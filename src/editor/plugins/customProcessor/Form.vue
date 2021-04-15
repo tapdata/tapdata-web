@@ -9,7 +9,11 @@
       <!-- <div style="text-align: right;">
 				<el-button size="mini" type="primary">更新节点配置</el-button>
 			</div> -->
-      <form-builder ref="form" v-model="model.formData" :config="formConfig"></form-builder>
+      <form-builder
+        ref="form"
+        v-model="model.formData"
+        :config="formConfig"
+      ></form-builder>
       <pre class="code-pre">{{ this.model.script }}</pre>
     </main>
   </section>
@@ -66,7 +70,10 @@ export default {
         this.model = Object.assign(this.model, data)
       }
 
-      let schema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema())
+      let schema = mergeJoinTablesToTargetSchema(
+        cell.getSchema(),
+        cell.getInputSchema()
+      )
       let fields = schema.fields || []
       if (fields.length) {
         fields = removeDeleted(fields)

@@ -29,15 +29,32 @@
       </ul>
       <div class="content" v-if="waterfallData.length > 0">
         <el-row :gutter="20" class="waterfall">
-          <el-col class="list" :md="12" :sm="24" v-for="(element, i) in waterfallData" :key="i">
-            <div class="grid-content listBox" v-for="item in element" :key="item.ip">
+          <el-col
+            class="list"
+            :md="12"
+            :sm="24"
+            v-for="(element, i) in waterfallData"
+            :key="i"
+          >
+            <div
+              class="grid-content listBox"
+              v-for="item in element"
+              :key="item.ip"
+            >
               <div class="boxTop">
                 <div class="fl" style="width: 60%">
-                  <i class="circular" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
+                  <i
+                    class="circular"
+                    :class="item.status !== 'running' ? 'bgred' : 'bggreen'"
+                  ></i>
                   <h2 class="name">
-                    {{ item.agentName ? item.agentName : item.systemInfo.hostname }}
+                    {{
+                      item.agentName ? item.agentName : item.systemInfo.hostname
+                    }}
                   </h2>
-                  <span>{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
+                  <span>{{
+                    item.custIP ? item.custIP : item.systemInfo.ip
+                  }}</span>
                   <span class="uuid">{{ item.systemInfo.uuid }}</span>
                 </div>
                 <div class="operation-bar" v-readonlybtn="'Cluster_operation'">
@@ -45,7 +62,14 @@
                     size="mini"
                     type="danger"
                     v-if="item.canUpdate"
-                    @click="updateFn(item, item.management.status, 'management', 'update')"
+                    @click="
+                      updateFn(
+                        item,
+                        item.management.status,
+                        'management',
+                        'update'
+                      )
+                    "
                     >{{ $t('cluster.update') }}</el-button
                   >
                   <i
@@ -54,40 +78,92 @@
                     v-readonlybtn="'Cluster_operation'"
                     @click="addServeFn(item)"
                   ></i>
-                  <i class="iconfont icon-icon_shezhi" @click="editAgent(item)"></i>
-                  <i v-show="item.status !== 'running'" class="iconfont icon-shanchu" @click="delConfirm(item)"></i>
+                  <i
+                    class="iconfont icon-icon_shezhi"
+                    @click="editAgent(item)"
+                  ></i>
+                  <i
+                    v-show="item.status !== 'running'"
+                    class="iconfont icon-shanchu"
+                    @click="delConfirm(item)"
+                  ></i>
                 </div>
               </div>
               <div class="boxBottom">
-                <el-row :gutter="20" class="data-list" v-if="managementType === 'cluster'">
+                <el-row
+                  :gutter="20"
+                  class="data-list"
+                  v-if="managementType === 'cluster'"
+                >
                   <el-col :span="8">
-                    <span class="txt"><i class="icon iconfont iconhoutai"></i>{{ $t('cluster.manageSys') }}</span>
+                    <span class="txt"
+                      ><i class="icon iconfont iconhoutai"></i
+                      >{{ $t('cluster.manageSys') }}</span
+                    >
                   </el-col>
                   <el-col :span="4">
-                    <span :class="item.management.status == 'stopped' ? 'red' : 'green'">{{
-                      item.management.status
-                    }}</span>
+                    <span
+                      :class="
+                        item.management.status == 'stopped' ? 'red' : 'green'
+                      "
+                      >{{ item.management.status }}</span
+                    >
                   </el-col>
                   <el-col :span="12">
                     <div class="btn fr" v-readonlybtn="'Cluster_operation'">
                       <el-button
                         size="mini"
-                        :type="item.management.status == 'stopped' ? 'primary' : 'info'"
-                        :disabled="item.management.status == 'stopped' ? false : true"
-                        @click="startFn(item, item.management.status, 'management', 'start')"
+                        :type="
+                          item.management.status == 'stopped'
+                            ? 'primary'
+                            : 'info'
+                        "
+                        :disabled="
+                          item.management.status == 'stopped' ? false : true
+                        "
+                        @click="
+                          startFn(
+                            item,
+                            item.management.status,
+                            'management',
+                            'start'
+                          )
+                        "
                         >{{ $t('cluster.start') }}</el-button
                       >
                       <el-button
                         size="mini"
-                        :type="item.management.status == 'running' ? 'danger' : 'info'"
-                        :disabled="item.management.status == 'running' ? false : true"
-                        @click="closeFn(item, item.management.status, 'management', 'stop')"
+                        :type="
+                          item.management.status == 'running'
+                            ? 'danger'
+                            : 'info'
+                        "
+                        :disabled="
+                          item.management.status == 'running' ? false : true
+                        "
+                        @click="
+                          closeFn(
+                            item,
+                            item.management.status,
+                            'management',
+                            'stop'
+                          )
+                        "
                         >{{ $t('cluster.close') }}</el-button
                       >
                       <el-button
                         type="text"
-                        :disabled="item.management.status == 'running' ? false : true"
-                        @click="restartFn(item, item.management.status, 'management', 'restart')"
+                        :disabled="
+                          item.management.status == 'running' ? false : true
+                        "
+                        @click="
+                          restartFn(
+                            item,
+                            item.management.status,
+                            'management',
+                            'restart'
+                          )
+                        "
                         >{{ $t('cluster.restart') }}</el-button
                       >
                     </div>
@@ -95,85 +171,146 @@
                 </el-row>
                 <el-row :gutter="20" class="data-list">
                   <el-col :span="8">
-                    <span class="txt"><i class="icon iconfont icontongbu"></i>{{ $t('cluster.syncGover') }}</span>
+                    <span class="txt"
+                      ><i class="icon iconfont icontongbu"></i
+                      >{{ $t('cluster.syncGover') }}</span
+                    >
                   </el-col>
                   <el-col :span="4">
-                    <span :class="item.engine.status == 'stopped' ? 'red' : 'green'">{{ item.engine.status }}</span>
+                    <span
+                      :class="item.engine.status == 'stopped' ? 'red' : 'green'"
+                      >{{ item.engine.status }}</span
+                    >
                   </el-col>
                   <el-col :span="12">
                     <div class="btn fr" v-readonlybtn="'Cluster_operation'">
                       <el-button
                         size="mini"
-                        :type="item.engine.status == 'stopped' ? 'primary' : 'info'"
-                        :disabled="item.engine.status == 'stopped' ? false : true"
+                        :type="
+                          item.engine.status == 'stopped' ? 'primary' : 'info'
+                        "
+                        :disabled="
+                          item.engine.status == 'stopped' ? false : true
+                        "
                         @click="startFn(item, item.engine.status, 'engine')"
                         >{{ $t('cluster.start') }}</el-button
                       >
                       <el-button
                         size="mini"
-                        :type="item.engine.status == 'running' ? 'danger' : 'info'"
-                        :disabled="item.engine.status == 'running' ? false : true"
+                        :type="
+                          item.engine.status == 'running' ? 'danger' : 'info'
+                        "
+                        :disabled="
+                          item.engine.status == 'running' ? false : true
+                        "
                         @click="closeFn(item, item.engine.status, 'engine')"
                         >{{ $t('cluster.close') }}</el-button
                       >
                       <el-button
                         type="text"
-                        :disabled="item.engine.status == 'running' ? false : true"
+                        :disabled="
+                          item.engine.status == 'running' ? false : true
+                        "
                         @click="restartFn(item, item.engine.status, 'engine')"
                         >{{ $t('cluster.restart') }}</el-button
                       >
                     </div>
                   </el-col>
                 </el-row>
-                <el-row :gutter="20" class="data-list" v-if="managementType === 'cluster'">
+                <el-row
+                  :gutter="20"
+                  class="data-list"
+                  v-if="managementType === 'cluster'"
+                >
                   <el-col :span="8">
-                    <span class="txt"><i class="icon iconfont iconAPI"></i>API server</span>
+                    <span class="txt"
+                      ><i class="icon iconfont iconAPI"></i>API server</span
+                    >
                   </el-col>
                   <el-col :span="4">
-                    <span :class="item.apiServer.status == 'stopped' ? 'red' : 'green'">{{
-                      item.apiServer.status
-                    }}</span>
+                    <span
+                      :class="
+                        item.apiServer.status == 'stopped' ? 'red' : 'green'
+                      "
+                      >{{ item.apiServer.status }}</span
+                    >
                   </el-col>
                   <el-col :span="12">
                     <div class="btn fr" v-readonlybtn="'Cluster_operation'">
                       <el-button
                         size="mini"
-                        :type="item.apiServer.status == 'stopped' ? 'primary' : 'info'"
-                        :disabled="item.apiServer.status == 'stopped' ? false : true"
-                        @click="startFn(item, item.apiServer.status, 'apiServer')"
+                        :type="
+                          item.apiServer.status == 'stopped'
+                            ? 'primary'
+                            : 'info'
+                        "
+                        :disabled="
+                          item.apiServer.status == 'stopped' ? false : true
+                        "
+                        @click="
+                          startFn(item, item.apiServer.status, 'apiServer')
+                        "
                         >{{ $t('cluster.start') }}</el-button
                       >
                       <el-button
                         size="mini"
-                        :type="item.apiServer.status == 'running' ? 'danger' : 'info'"
-                        :disabled="item.apiServer.status == 'running' ? false : true"
-                        @click="closeFn(item, item.apiServer.status, 'apiServer')"
+                        :type="
+                          item.apiServer.status == 'running' ? 'danger' : 'info'
+                        "
+                        :disabled="
+                          item.apiServer.status == 'running' ? false : true
+                        "
+                        @click="
+                          closeFn(item, item.apiServer.status, 'apiServer')
+                        "
                         >{{ $t('cluster.close') }}</el-button
                       >
                       <el-button
                         type="text"
-                        :disabled="item.apiServer.status == 'running' ? false : true"
-                        @click="restartFn(item, item.apiServer.status, 'apiServer')"
+                        :disabled="
+                          item.apiServer.status == 'running' ? false : true
+                        "
+                        @click="
+                          restartFn(item, item.apiServer.status, 'apiServer')
+                        "
                         >{{ $t('cluster.restart') }}</el-button
                       >
                     </div>
                   </el-col>
                 </el-row>
-                <el-row :gutter="20" class="data-list" v-for="child in item.customMonitorStatus" :key="child.id">
+                <el-row
+                  :gutter="20"
+                  class="data-list"
+                  v-for="child in item.customMonitorStatus"
+                  :key="child.id"
+                >
                   <el-col :span="7" :offset="1">
                     <span class="txt">{{ child.name }}</span>
                   </el-col>
                   <el-col :span="4">
-                    <span :class="item.apiServer.status == 'stopped' ? 'red' : 'green'">{{ child.status }}</span>
+                    <span
+                      :class="
+                        item.apiServer.status == 'stopped' ? 'red' : 'green'
+                      "
+                      >{{ child.status }}</span
+                    >
                   </el-col>
-                  <el-col :span="7" :offset="5" v-readonlybtn="'Cluster_operation'">
+                  <el-col
+                    :span="7"
+                    :offset="5"
+                    v-readonlybtn="'Cluster_operation'"
+                  >
                     <div class="btn fr">
-                      <el-button type="text" @click="delServe(child, item.status)">{{
-                        $t('cluster.delete')
-                      }}</el-button>
-                      <el-button type="text" @click="editServe(child, item.status, item)">{{
-                        $t('cluster.edit')
-                      }}</el-button>
+                      <el-button
+                        type="text"
+                        @click="delServe(child, item.status)"
+                        >{{ $t('cluster.delete') }}</el-button
+                      >
+                      <el-button
+                        type="text"
+                        @click="editServe(child, item.status, item)"
+                        >{{ $t('cluster.edit') }}</el-button
+                      >
                     </div>
                   </el-col>
                 </el-row>
@@ -183,7 +320,10 @@
         </el-row>
       </div>
       <div v-else class="noText">
-        <i class="iconfont icon iconkongyemian_zanwuwendang" style="font-size: 174px"></i>
+        <i
+          class="iconfont icon iconkongyemian_zanwuwendang"
+          style="font-size: 174px"
+        ></i>
       </div>
     </div>
     <el-dialog
@@ -196,10 +336,21 @@
       width="600px"
       @close="closeDialogForm()"
     >
-      <addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
+      <addServe
+        :data="currentData"
+        :editItem="editItem"
+        ref="childRules"
+      ></addServe>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="closeDialogForm()">{{ $t('cluster.cancel') }}</el-button>
-        <el-button size="small" type="primary" @click="submitForm('ruleForm')">{{ $t('cluster.confirm') }}</el-button>
+        <el-button size="small" @click="closeDialogForm()">{{
+          $t('cluster.cancel')
+        }}</el-button>
+        <el-button
+          size="small"
+          type="primary"
+          @click="submitForm('ruleForm')"
+          >{{ $t('cluster.confirm') }}</el-button
+        >
       </div>
     </el-dialog>
     <el-dialog
@@ -221,21 +372,39 @@
               show-word-limit
               :placeholder="$t('cluster.placeholderMonServer')"
             ></el-input>
-            <span class="restBtn" @click="editNameRest">{{ $t('cluster.reduction') }}</span>
+            <span class="restBtn" @click="editNameRest">{{
+              $t('cluster.reduction')
+            }}</span>
           </div>
         </el-form-item>
         <el-form-item :label="$t('cluster.iPDisplay')" prop="command">
-          <el-select v-model="custIP" :placeholder="$t('cluster.iPDisplay')" size="mini" style="width: 85%">
-            <el-option v-for="item in ips" :key="item" :label="item" :value="item"> </el-option>
+          <el-select
+            v-model="custIP"
+            :placeholder="$t('cluster.iPDisplay')"
+            size="mini"
+            style="width: 85%"
+          >
+            <el-option
+              v-for="item in ips"
+              :key="item"
+              :label="item"
+              :value="item"
+            >
+            </el-option>
           </el-select>
           <div class="ipTip">{{ $t('cluster.ipTip') }}</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="editAgentDialog = false">{{ $t('cluster.cancel') }}</el-button>
-        <el-button size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
-          $t('cluster.confirm')
+        <el-button size="small" @click="editAgentDialog = false">{{
+          $t('cluster.cancel')
         }}</el-button>
+        <el-button
+          size="small"
+          type="primary"
+          @click="submitEditAgent('editAgentForm')"
+          >{{ $t('cluster.confirm') }}</el-button
+        >
       </div>
     </el-dialog>
     <el-dialog
@@ -252,8 +421,12 @@
         ?
       </p>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialogVisible = false" size="mini">{{ $t('cluster.cancel') }}</el-button>
-        <el-button type="primary" @click="removeNode(delData.id)" size="mini">{{ $t('cluster.confirm') }}</el-button>
+        <el-button @click="deleteDialogVisible = false" size="mini">{{
+          $t('cluster.cancel')
+        }}</el-button>
+        <el-button type="primary" @click="removeNode(delData.id)" size="mini">{{
+          $t('cluster.confirm')
+        }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -405,11 +578,17 @@ export default {
           server: server,
           operation: 'start'
         }
-        this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.restartServer') + '?', {
-          confirmButtonText: this.$t('cluster.confirm'),
-          cancelButtonText: this.$t('cluster.cancel'),
-          closeOnClickModal: false
-        }).then(() => {
+        this.$confirm(
+          this.$t('cluster.confirmText') +
+            name +
+            this.$t('cluster.restartServer') +
+            '?',
+          {
+            confirmButtonText: this.$t('cluster.confirm'),
+            cancelButtonText: this.$t('cluster.cancel'),
+            closeOnClickModal: false
+          }
+        ).then(() => {
           this.operationFn(data)
         })
       }
@@ -430,11 +609,17 @@ export default {
           server: server,
           operation: 'stop'
         }
-        this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.startServer') + '?', {
-          confirmButtonText: this.$t('cluster.confirm'),
-          cancelButtonText: this.$t('cluster.cancel'),
-          closeOnClickModal: false
-        }).then(() => {
+        this.$confirm(
+          this.$t('cluster.confirmText') +
+            name +
+            this.$t('cluster.startServer') +
+            '?',
+          {
+            confirmButtonText: this.$t('cluster.confirm'),
+            cancelButtonText: this.$t('cluster.cancel'),
+            closeOnClickModal: false
+          }
+        ).then(() => {
           this.operationFn(data)
         })
       }
@@ -454,11 +639,17 @@ export default {
           server: server,
           operation: 'restart'
         }
-        this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.restartServer') + '?', {
-          confirmButtonText: this.$t('cluster.confirm'),
-          cancelButtonText: this.$t('cluster.cancel'),
-          closeOnClickModal: false
-        }).then(() => {
+        this.$confirm(
+          this.$t('cluster.confirmText') +
+            name +
+            this.$t('cluster.restartServer') +
+            '?',
+          {
+            confirmButtonText: this.$t('cluster.confirm'),
+            cancelButtonText: this.$t('cluster.cancel'),
+            closeOnClickModal: false
+          }
+        ).then(() => {
           this.operationFn(data)
         })
       }
@@ -564,7 +755,8 @@ export default {
     delConfirm(data) {
       this.deleteDialogVisible = true
       this.delData = data
-      this.delData.agentName = this.delData.agentName || this.delData.systemInfo.hostname
+      this.delData.agentName =
+        this.delData.agentName || this.delData.systemInfo.hostname
     },
     removeNode(id) {
       this.$api('cluster')
@@ -590,7 +782,9 @@ export default {
     submitEditAgent() {
       if (this.agentName === '') {
         this.agentName = this.currentNde.hostname
-        this.$message.error(this.$t('cluster.serverName') + this.$t('cluster.noneText'))
+        this.$message.error(
+          this.$t('cluster.serverName') + this.$t('cluster.noneText')
+        )
         return
       }
       let data = {

@@ -5,17 +5,29 @@
       <div class="tool-bar">
         <i class="iconfont icon-plus-circle" @click="zoomIn"></i>
         <i class="iconfont icon-minus-circle" @click="zoomOut"></i>
-        <i v-if="level === 'field'" class="iconfont icon-shangyibu" @click="getData"></i>
+        <i
+          v-if="level === 'field'"
+          class="iconfont icon-shangyibu"
+          @click="getData"
+        ></i>
         <i class="iconfont icon-shuaxin1" @click="refreshData"></i>
       </div>
-      <span class="refreshS" :class="{ errorClass: !rClass, actProgress: !refreshing }" @click="checkError"
-        >{{ $t('relations.refreshStatus') }}: {{ $moment(refreshResult.finish_date).format('YYYY-MM-DD HH:mm:ss') }}--{{
-          refreshResult.status
-        }}
+      <span
+        class="refreshS"
+        :class="{ errorClass: !rClass, actProgress: !refreshing }"
+        @click="checkError"
+        >{{ $t('relations.refreshStatus') }}:
+        {{
+          $moment(refreshResult.finish_date).format('YYYY-MM-DD HH:mm:ss')
+        }}--{{ refreshResult.status }}
         <el-progress
           class="tool-bar-progress"
           v-if="refreshing"
-          :percentage="Math.trunc((refreshResult.currProgress / refreshResult.allProgress) * 100)"
+          :percentage="
+            Math.trunc(
+              (refreshResult.currProgress / refreshResult.allProgress) * 100
+            )
+          "
         ></el-progress>
       </span>
     </div>
@@ -23,11 +35,20 @@
     <div class="data-map-main">
       <div id="paper" class="data-map"></div>
     </div>
-    <el-dialog :title="$t('message.preview')" :visible.sync="errorVisible" width="650px">
+    <el-dialog
+      :title="$t('message.preview')"
+      :visible.sync="errorVisible"
+      width="650px"
+    >
       <span class="value align-center"> {{ refreshResult.message }}</span>
       <pre class="align-center pre"> {{ refreshResult.stack }}</pre>
     </el-dialog>
-    <Info ref="Info" :model="model" v-on:previewVisible="handlePreviewVisible" v-on:handleFields="changeLevel"></Info>
+    <Info
+      ref="Info"
+      :model="model"
+      v-on:previewVisible="handlePreviewVisible"
+      v-on:handleFields="changeLevel"
+    ></Info>
   </div>
 </template>
 
@@ -70,7 +91,9 @@ export default {
   mounted() {
     this.graph = graph()
     this.getData()
-    LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then((res) => {
+    LineageGraphsAPI.get({
+      filter: '{"where":{"type":"tableLineageProcessor"}}'
+    }).then((res) => {
       if (res.data) {
         this.refreshResult = res.data[0]
         if (this.refreshResult.status === 'error') this.rClass = false
@@ -101,11 +124,15 @@ export default {
             this.refreshing = true
             let self = this
             this.inter = setInterval(() => {
-              LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then((res) => {
+              LineageGraphsAPI.get({
+                filter: '{"where":{"type":"tableLineageProcessor"}}'
+              }).then((res) => {
                 if (res.data) {
                   self.refreshResult = res.data[0]
                   if (self.refreshResult.sync_data) {
-                    this.$message.error('正在同步图形数据，图形可能缺失，请稍后刷新重试')
+                    this.$message.error(
+                      '正在同步图形数据，图形可能缺失，请稍后刷新重试'
+                    )
                   }
                   if (self.refreshResult.status == 'finish') {
                     this.getData()
@@ -123,7 +150,9 @@ export default {
               })
             }, 2000)
           } else
-            LineageGraphsAPI.get({ filter: '{"where":{"type":"tableLineageProcessor"}}' }).then((res) => {
+            LineageGraphsAPI.get({
+              filter: '{"where":{"type":"tableLineageProcessor"}}'
+            }).then((res) => {
               if (res.data) {
                 this.refreshResult = res.data[0]
                 if (this.refreshResult.status === 'error') {

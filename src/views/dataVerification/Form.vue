@@ -3,10 +3,18 @@
     <div class="form-container">
       <div class="form-body">
         <h1 class="title">
-          <span>{{ $route.params.id ? $t('dataVerification.edit') : $t('dataVerification.newVerify') }}</span>
+          <span>{{
+            $route.params.id
+              ? $t('dataVerification.edit')
+              : $t('dataVerification.newVerify')
+          }}</span>
           <div style="font-size: 12px" v-show="form.mode === 'cron'">
-            <span style="color: #48b6e2" v-show="form.enabled">{{ $t('dataVerification.enable') }}</span>
-            <span style="color: #9a9a9a" v-show="!form.enabled">{{ $t('dataVerification.disable') }}</span>
+            <span style="color: #48b6e2" v-show="form.enabled">{{
+              $t('dataVerification.enable')
+            }}</span>
+            <span style="color: #9a9a9a" v-show="!form.enabled">{{
+              $t('dataVerification.disable')
+            }}</span>
             <el-switch size="mini" v-model="form.enabled"></el-switch>
           </div>
         </h1>
@@ -24,7 +32,9 @@
             style="padding: 10px 20px"
           >
             <el-form-item class="setting-item" prop="flowId">
-              <label class="item-label is-required">{{ $t('dataVerification.chooseJob') }}</label>
+              <label class="item-label is-required">{{
+                $t('dataVerification.chooseJob')
+              }}</label>
               <el-select
                 filterable
                 class="item-select"
@@ -34,15 +44,30 @@
                 :loading="!flowOptions"
                 @input="flowChangeHandler"
               >
-                <el-option v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></el-option>
+                <el-option
+                  v-for="opt in flowOptions"
+                  :key="opt.id"
+                  :label="opt.name"
+                  :value="opt.id"
+                ></el-option>
               </el-select>
             </el-form-item>
             <el-form-item class="setting-item">
-              <label class="item-label">{{ $t('dataVerification.verifytype') }}</label>
-              <el-radio-group v-model="form.inspectMethod" style="margin-left: 10px">
+              <label class="item-label">{{
+                $t('dataVerification.verifytype')
+              }}</label>
+              <el-radio-group
+                v-model="form.inspectMethod"
+                style="margin-left: 10px"
+              >
                 <el-radio label="row_count">
                   {{ $t('dataVerification.rowVerify') }}
-                  <el-tooltip class="item" effect="dark" :content="$t('dataVerification.fastCountTip')" placement="top">
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="$t('dataVerification.fastCountTip')"
+                    placement="top"
+                  >
                     <i class="el-icon-warning-outline"></i>
                   </el-tooltip>
                 </el-radio>
@@ -71,18 +96,43 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item class="setting-item" prop="name">
-              <label class="item-label is-required">{{ $t('dataVerification.verifyJobName') }}</label>
-              <el-input class="item-input" size="mini" v-model="form.name"></el-input>
+              <label class="item-label is-required">{{
+                $t('dataVerification.verifyJobName')
+              }}</label>
+              <el-input
+                class="item-input"
+                size="mini"
+                v-model="form.name"
+              ></el-input>
             </el-form-item>
             <el-form-item class="setting-item">
-              <label class="item-label">{{ $t('dataVerification.frequency') }}</label>
-              <el-select class="item-select" v-model="form.mode" size="mini" placeholder="请选择">
-                <el-option :label="$t('dataVerification.singleVerify')" value="manual"></el-option>
-                <el-option :label="$t('dataVerification.repeatingVerify')" value="cron"></el-option>
+              <label class="item-label">{{
+                $t('dataVerification.frequency')
+              }}</label>
+              <el-select
+                class="item-select"
+                v-model="form.mode"
+                size="mini"
+                placeholder="请选择"
+              >
+                <el-option
+                  :label="$t('dataVerification.singleVerify')"
+                  value="manual"
+                ></el-option>
+                <el-option
+                  :label="$t('dataVerification.repeatingVerify')"
+                  value="cron"
+                ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item class="setting-item" prop="timing.start" v-show="form.mode === 'cron'">
-              <label class="item-label">{{ $t('dataVerification.startAndStopTime') }}</label>
+            <el-form-item
+              class="setting-item"
+              prop="timing.start"
+              v-show="form.mode === 'cron'"
+            >
+              <label class="item-label">{{
+                $t('dataVerification.startAndStopTime')
+              }}</label>
               <el-date-picker
                 class="item-select"
                 size="mini"
@@ -98,8 +148,14 @@
               >
               </el-date-picker>
             </el-form-item>
-            <el-form-item class="setting-item" prop="timing.intervals" v-show="form.mode === 'cron'">
-              <label class="item-label">{{ $t('dataVerification.verifyInterval') }}</label>
+            <el-form-item
+              class="setting-item"
+              prop="timing.intervals"
+              v-show="form.mode === 'cron'"
+            >
+              <label class="item-label">{{
+                $t('dataVerification.verifyInterval')
+              }}</label>
               <el-input
                 class="item-input"
                 size="mini"
@@ -108,15 +164,30 @@
                 onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
               >
                 <template slot="append">
-                  <el-select style="width: 100px" size="mini" v-model="form.timing.intervalsUnit">
-                    <el-option v-for="unit in timeUnitOptions" :key="unit" :label="unit" :value="unit"></el-option>
+                  <el-select
+                    style="width: 100px"
+                    size="mini"
+                    v-model="form.timing.intervalsUnit"
+                  >
+                    <el-option
+                      v-for="unit in timeUnitOptions"
+                      :key="unit"
+                      :label="unit"
+                      :value="unit"
+                    ></el-option>
                   </el-select>
                 </template>
               </el-input>
             </el-form-item>
             <el-form-item class="setting-item">
-              <label class="item-label">{{ $t('dataVerification.inconsistent') }}</label>
-              <el-select class="item-select" size="mini" v-model="form.limit.keep">
+              <label class="item-label">{{
+                $t('dataVerification.inconsistent')
+              }}</label>
+              <el-select
+                class="item-select"
+                size="mini"
+                v-model="form.limit.keep"
+              >
                 <el-option :value="100" label="100(rows)"></el-option>
                 <el-option :value="1000" label="1000(rows)"></el-option>
                 <el-option :value="10000" label="10000(rows)"></el-option>
@@ -127,15 +198,25 @@
         <div class="form-panel" v-if="flowStages">
           <div class="panel-label">
             <span>{{ $t('dataVerification.verifyCondition') }}</span>
-            <el-button style="height: 24px; line-height: 24px; padding: 0 10px" size="mini" @click="clear">
+            <el-button
+              style="height: 24px; line-height: 24px; padding: 0 10px"
+              size="mini"
+              @click="clear"
+            >
               {{ $t('dataVerification.clear') }}
             </el-button>
           </div>
           <ul class="panel-container" id="data-verification-form">
-            <li class="condition-item" v-for="(item, index) in form.tasks" :key="index">
+            <li
+              class="condition-item"
+              v-for="(item, index) in form.tasks"
+              :key="index"
+            >
               <div class="condition-setting">
                 <div class="setting-item">
-                  <label class="item-label is-required">{{ $t('dataVerification.table') }}</label>
+                  <label class="item-label is-required">{{
+                    $t('dataVerification.table')
+                  }}</label>
                   <el-cascader
                     class="item-select"
                     :class="{ red: !item.sourceTable }"
@@ -156,8 +237,13 @@
                     @input="tableChangeHandler(item, 'target')"
                   ></el-cascader>
                 </div>
-                <div class="setting-item" v-show="form.inspectMethod !== 'row_count'">
-                  <label class="item-label is-required">{{ $t('dataVerification.indexField') }}</label>
+                <div
+                  class="setting-item"
+                  v-show="form.inspectMethod !== 'row_count'"
+                >
+                  <label class="item-label is-required">{{
+                    $t('dataVerification.indexField')
+                  }}</label>
                   <MultiSelection
                     v-model="item.source.sortColumn"
                     :options="item.source.fields"
@@ -180,7 +266,9 @@
                   >
                 </div>
                 <div class="setting-item" v-if="item.showAdvancedVerification">
-                  <label class="item-label is-required">{{ $t('dataVerification.JSVerifyLogic') }}</label>
+                  <label class="item-label is-required">{{
+                    $t('dataVerification.JSVerifyLogic')
+                  }}</label>
                   <el-button
                     v-if="!item.webScript || item.webScript === ''"
                     size="mini"
@@ -196,16 +284,28 @@
                       disabled
                     ></el-input>
                     <el-button-group class="setting-buttons">
-                      <el-button size="mini" icon="el-icon-edit" @click="editScript(index)"></el-button>
+                      <el-button
+                        size="mini"
+                        icon="el-icon-edit"
+                        @click="editScript(index)"
+                      ></el-button>
                     </el-button-group>
                     <el-button-group class="setting-buttons">
-                      <el-button size="mini" icon="el-icon-close" @click="removeScript(index)"></el-button>
+                      <el-button
+                        size="mini"
+                        icon="el-icon-close"
+                        @click="removeScript(index)"
+                      ></el-button>
                     </el-button-group>
                   </span>
                 </div>
               </div>
               <el-button-group class="setting-buttons">
-                <el-button size="mini" icon="el-icon-close" @click="removeItem(index)"></el-button>
+                <el-button
+                  size="mini"
+                  icon="el-icon-close"
+                  @click="removeItem(index)"
+                ></el-button>
               </el-button-group>
             </li>
             <li style="color: #ccc" v-show="!form.tasks.length">
@@ -224,8 +324,12 @@
       </div>
     </div>
     <div class="footer">
-      <el-button size="mini" @click="goBack()">{{ $t('dataVerification.back') }}</el-button>
-      <el-button type="primary" size="mini" @click="nextStep()">{{ $t('app.save') }}</el-button>
+      <el-button size="mini" @click="goBack()">{{
+        $t('dataVerification.back')
+      }}</el-button>
+      <el-button type="primary" size="mini" @click="nextStep()">{{
+        $t('app.save')
+      }}</el-button>
     </div>
     <el-dialog
       :title="$t('dataVerification.JSVerifyLogic')"
@@ -235,8 +339,16 @@
     >
       <div class="js-wrap">
         <div class="jsBox">
-          <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <JsEditor v-if="dialogAddScriptVisible" :code.sync="webScript" ref="jsEditor" :width.sync="width"></JsEditor>
+          <div class="js-fixText">
+            <span style="color: #0000ff">function </span
+            ><span> validate(sourceRow){</span>
+          </div>
+          <JsEditor
+            v-if="dialogAddScriptVisible"
+            :code.sync="webScript"
+            ref="jsEditor"
+            :width.sync="width"
+          ></JsEditor>
           <div class="js-fixText">}</div>
         </div>
         <div class="markdown-body-wrap example">
@@ -244,8 +356,12 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleAddScriptClose" size="mini">{{ $t('dataForm.cancel') }}</el-button>
-        <el-button type="primary" @click="submitScript" size="mini">{{ $t('message.confirm') }}</el-button>
+        <el-button @click="handleAddScriptClose" size="mini">{{
+          $t('dataForm.cancel')
+        }}</el-button>
+        <el-button type="primary" @click="submitScript" size="mini">{{
+          $t('message.confirm')
+        }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -314,22 +430,32 @@ export default {
       rules: {
         flowId: [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksDataFlow'))
+            validator: requiredValidator(
+              this.$t('dataVerification.tasksDataFlow')
+            )
           }
         ],
         name: [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksJobName'))
+            validator: requiredValidator(
+              this.$t('dataVerification.tasksJobName')
+            )
           }
         ],
         'timing.start': [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksTime'), true)
+            validator: requiredValidator(
+              this.$t('dataVerification.tasksTime'),
+              true
+            )
           }
         ],
         'timing.intervals': [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksVerifyInterval'), true)
+            validator: requiredValidator(
+              this.$t('dataVerification.tasksVerifyInterval'),
+              true
+            )
           }
         ]
       },
@@ -438,13 +564,16 @@ export default {
         .catch(() => {
           this.loading = false
         })
-      let flow = this.flowOptions.find((item) => item.id === this.form.flowId) || {}
+      let flow =
+        this.flowOptions.find((item) => item.id === this.form.flowId) || {}
       this.form.name = this.form.name || flow.name
       this.form['dataFlowName'] = flow.name
     },
     //处理db克隆的情况
     dealDBFlow(flowData, callback) {
-      let dbStages = flowData.stages.filter((stg) => ['database'].includes(stg.type))
+      let dbStages = flowData.stages.filter((stg) =>
+        ['database'].includes(stg.type)
+      )
       let connectionIds = dbStages.map((stg) => stg.connectionId)
       if (connectionIds.length) {
         this.$api('MetadataInstances')
@@ -466,7 +595,9 @@ export default {
             this.stageMap = {}
             dbStages.forEach((stage) => {
               if (stage.outputLanes.length) {
-                let targetDBStage = dbStages.find((stg) => stg.id === stage.outputLanes[0])
+                let targetDBStage = dbStages.find(
+                  (stg) => stg.id === stage.outputLanes[0]
+                )
                 this.getTreeForDBFlow('source', tables, stage, targetDBStage)
               }
               if (stage.inputLanes.length) {
@@ -482,7 +613,9 @@ export default {
     },
     //处理普通表同步的情况
     dealCustomFlow(flowData, callback) {
-      let flowStages = flowData.stages.filter((stg) => ['table', 'collection'].includes(stg.type))
+      let flowStages = flowData.stages.filter((stg) =>
+        ['table', 'collection'].includes(stg.type)
+      )
       this.flowStages = flowStages
       this.allStages = flowData.stages
       let connectionIds = []
@@ -512,7 +645,11 @@ export default {
           .then((res) => {
             let tables = res.data || []
             flowStages.forEach((stg, index) => {
-              let table = tables.find((tb) => tb.source.id === stg.connectionId && tb.original_name === stg.tableName)
+              let table = tables.find(
+                (tb) =>
+                  tb.source.id === stg.connectionId &&
+                  tb.original_name === stg.tableName
+              )
               if (table) {
                 stg.connectionName = table.source.name
                 stg.fields = table.fields
@@ -577,25 +714,36 @@ export default {
         return tb.source.id === stage.connectionId && flag
       })
       if (!includeTables.length) {
-        return this.$message.error("Can't found the " + type + 'node: ' + stage.tableName)
+        return this.$message.error(
+          "Can't found the " + type + 'node: ' + stage.tableName
+        )
       }
       let parent = {
         label: includeTables[0].source.name,
         value: stage.connectionId,
         children: []
       }
-      let index = this[type + 'Tree'].findIndex((it) => it.value === stage.connectionId)
+      let index = this[type + 'Tree'].findIndex(
+        (it) => it.value === stage.connectionId
+      )
       if (index >= 0) {
         parent = this[type + 'Tree'].splice(index, 1)[0]
       }
       includeTables.forEach((table) => {
-        if (!parent.children.find((child) => child.value === table.original_name)) {
+        if (
+          !parent.children.find((child) => child.value === table.original_name)
+        ) {
           parent.children.push({
             label: table.original_name,
             value: table.original_name
           })
           let outputLanes = targetStage
-            ? [targetStage.connectionId + targetStage.table_prefix + table.original_name + targetStage.table_suffix]
+            ? [
+                targetStage.connectionId +
+                  targetStage.table_prefix +
+                  table.original_name +
+                  targetStage.table_suffix
+              ]
             : null
           let key = stage.connectionId + table.original_name
           if (targetStage) {
@@ -655,7 +803,11 @@ export default {
             if (this.isDbClone) {
               stageKey = sourceTable.join('')
             } else {
-              let stage = stages.find((stg) => stg.connectionId === sourceTable[0] && stg.tableName === sourceTable[1])
+              let stage = stages.find(
+                (stg) =>
+                  stg.connectionId === sourceTable[0] &&
+                  stg.tableName === sourceTable[1]
+              )
               if (stage) {
                 stageKey = stage.id
               }
@@ -712,13 +864,17 @@ export default {
       let source = task.source
       if (source && source.connectionId) {
         let sourceStage = stages.find(
-          (stg) => stg.connectionId === source.connectionId && stg.tableName === source.table
+          (stg) =>
+            stg.connectionId === source.connectionId &&
+            stg.tableName === source.table
         )
         if (sourceStage) {
           task.target = this.setTable(targetStage)
           task.targetTable = [targetStage.connectionId, targetStage.tableName]
           if (targetStage.joinTables) {
-            let joinTable = targetStage.joinTables.find((ts) => ts.stageId === sourceStage.id)
+            let joinTable = targetStage.joinTables.find(
+              (ts) => ts.stageId === sourceStage.id
+            )
             if (joinTable) {
               let sourceSortColumn = []
               let targetSortColumn = []
@@ -775,7 +931,9 @@ export default {
       let stages = this.flowStages
       let values = item[type + 'Table']
       if (values && values.length) {
-        let sourceStage = stages.find((stg) => stg.connectionId === values[0] && stg.tableName === values[1])
+        let sourceStage = stages.find(
+          (stg) => stg.connectionId === values[0] && stg.tableName === values[1]
+        )
         if (sourceStage) {
           item[type] = this.setTable(sourceStage)
           if (type === 'source') {
@@ -786,10 +944,14 @@ export default {
               this.getTaskTree()
               this.$nextTick(() => {
                 let targetTree = task.targetTree
-                if (targetTree.length === 1 && targetTree[0].children.length === 1) {
+                if (
+                  targetTree.length === 1 &&
+                  targetTree[0].children.length === 1
+                ) {
                   let targetStage = stages.find(
                     (stg) =>
-                      stg.connectionId === targetTree[0].value && stg.tableName === targetTree[0].children[0].value
+                      stg.connectionId === targetTree[0].value &&
+                      stg.tableName === targetTree[0].children[0].value
                   )
                   this.setTarget(task, targetStage)
                 }
@@ -810,9 +972,13 @@ export default {
       this.dialogAddScriptVisible = true
     },
     removeScript(index) {
-      this.$confirm(this.$t('message.verifyConfirm'), this.$t('message.delete'), {
-        type: 'warning'
-      }).then(() => {
+      this.$confirm(
+        this.$t('message.verifyConfirm'),
+        this.$t('message.delete'),
+        {
+          type: 'warning'
+        }
+      ).then(() => {
         this.form.tasks[index].webScript = ''
       })
     },
@@ -831,9 +997,13 @@ export default {
       this.dialogAddScriptVisible = false
     },
     goBack() {
-      this.$confirm(this.$t('dataVerification.backConfirmMessage'), this.$t('dataVerification.backConfirmTitle'), {
-        type: 'warning'
-      }).then(() => {
+      this.$confirm(
+        this.$t('dataVerification.backConfirmMessage'),
+        this.$t('dataVerification.backConfirmTitle'),
+        {
+          type: 'warning'
+        }
+      ).then(() => {
         this.$router.push('/dataVerification')
       })
     },
@@ -843,7 +1013,9 @@ export default {
           let tasks = this.form.tasks
           let index = 0
           if (!tasks.length) {
-            return this.$message.error(this.$t('dataVerification.tasksVerifyCondition'))
+            return this.$message.error(
+              this.$t('dataVerification.tasksVerifyCondition')
+            )
           }
           if (
             tasks.some((c, i) => {
@@ -851,7 +1023,10 @@ export default {
               return !c.source.table || !c.target.table
             })
           ) {
-            document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
+            document
+              .getElementById('data-verification-form')
+              .childNodes[index - 1].querySelector('input')
+              .focus()
             return this.$message.error(this.$t('dataVerification.lackSource'))
           }
           index = 0
@@ -862,7 +1037,10 @@ export default {
               return !c.source.sortColumn || !c.target.sortColumn
             })
           ) {
-            document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
+            document
+              .getElementById('data-verification-form')
+              .childNodes[index - 1].querySelector('input')
+              .focus()
             return this.$message.error(this.$t('dataVerification.lackIndex'))
           }
           index = 0
@@ -870,7 +1048,10 @@ export default {
             this.form.inspectMethod !== 'row_count' &&
             tasks.some((c, i) => {
               index = i + 1
-              return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
+              return (
+                c.source.sortColumn.split(',').length !==
+                c.target.sortColumn.split(',').length
+              )
             })
           ) {
             let item = document.getElementById('itemSource' + (index - 1))
@@ -897,7 +1078,14 @@ export default {
                 status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
                 ping_time: 0,
                 tasks: this.form.tasks.map(
-                  ({ source, target, fullMatch, showAdvancedVerification, script, webScript }) => {
+                  ({
+                    source,
+                    target,
+                    fullMatch,
+                    showAdvancedVerification,
+                    script,
+                    webScript
+                  }) => {
                     if (webScript && webScript !== '') {
                       script = 'function validate(sourceRow){' + webScript + '}'
                     }

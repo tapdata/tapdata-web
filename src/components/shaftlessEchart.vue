@@ -1,6 +1,11 @@
 <template>
   <div class="shaftlessBox">
-    <div class="echarts" :id="echartsId" :echartObj="echartObj" ref="echarts"></div>
+    <div
+      class="echarts"
+      :id="echartsId"
+      :echartObj="echartObj"
+      ref="echarts"
+    ></div>
   </div>
 </template>
 <script>
@@ -117,7 +122,9 @@ export default {
           axisTick: { show: false },
           splitLine: configures.xAxis.splitLine,
           axisLine: configures.xAxis.axisLine,
-          formatter: configures.xAxis.formatter ? configures.xAxis.formatter : null
+          formatter: configures.xAxis.formatter
+            ? configures.xAxis.formatter
+            : null
           // axisLabel: configures.xAxis.axisLabel ? configures.xAxis.axisLabel : null
           // axisLine: {
           //   lineStyle: {

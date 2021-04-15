@@ -21,15 +21,22 @@
       </div>
     </div>
     <div class="prompt">
-      <span style="word-break: break-word" v-show="osList[activeOS].key === 'linux'">{{
-        $t('dialog.downAgent.text')
-      }}</span>
-      <span v-show="osList[activeOS].key === 'windows'" @click="downLoadWindows">
+      <span
+        style="word-break: break-word"
+        v-show="osList[activeOS].key === 'linux'"
+        >{{ $t('dialog.downAgent.text') }}</span
+      >
+      <span
+        v-show="osList[activeOS].key === 'windows'"
+        @click="downLoadWindows"
+      >
         <span class="operaKey">
           <i class="iconfont icon-xiazai clickIcont"></i>
           {{ $t('dialog.downAgent.downLoadAgent') }}</span
         >
-        <span style="word-break: break-word">{{ $t('dialog.downAgent.windowsText') }}</span>
+        <span style="word-break: break-word">{{
+          $t('dialog.downAgent.windowsText')
+        }}</span>
       </span>
       <el-tooltip
         placement="top"
@@ -45,7 +52,8 @@
           @click.stop="() => {}"
           @mouseleave="showTooltip = false"
         >
-          <i class="iconfont icon-fuzhi1 clickIcont"></i>{{ $t('dialog.downAgent.copy') }}
+          <i class="iconfont icon-fuzhi1 clickIcont"></i
+          >{{ $t('dialog.downAgent.copy') }}
         </span>
       </el-tooltip>
     </div>
@@ -59,12 +67,16 @@
       <span>{{ $t('dialog.downAgent.downloadInstallInstructions') }}</span>
     </div>
     <ul class="installation-notes" v-show="osList[activeOS].key === 'linux'">
-      <li style="color: #f56c6c">{{ $t('dialog.downAgent.linuxInstructionsText1') }}</li>
+      <li style="color: #f56c6c">
+        {{ $t('dialog.downAgent.linuxInstructionsText1') }}
+      </li>
       <li>{{ $t('dialog.downAgent.linuxInstructionsText2') }}</li>
       <li>{{ $t('dialog.downAgent.linuxInstructionsText3') }}</li>
     </ul>
     <ul class="installation-notes" v-show="osList[activeOS].key === 'windows'">
-      <li style="color: #f56c6c">{{ $t('dialog.downAgent.windowsInstructionsText1') }}</li>
+      <li style="color: #f56c6c">
+        {{ $t('dialog.downAgent.windowsInstructionsText1') }}
+      </li>
       <li>{{ $t('dialog.downAgent.windowsInstructionsText2') }}</li>
       <li>{{ $t('dialog.downAgent.windowsInstructionsText3') }}</li>
       <li style="padding-top: 10px">{{ $t('dialog.downAgent.important') }}</li>

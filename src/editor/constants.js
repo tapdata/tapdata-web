@@ -66,93 +66,93 @@ export const FORM_DATA_KEY = 'form_data',
     mysql: {
       name: 'MySQL',
       type: 'mysql',
-      shapeImage: 'editor/o-mysql.svg',
-      stencilImage: 'editor/mysql.svg'
+      shapeImage: 'static/editor/o-mysql.svg',
+      stencilImage: 'static/editor/mysql.svg'
     },
     'mysql pxc': {
       type: 'mysql pxc',
       name: 'Mysql PXC',
-      shapeImage: 'editor/o-mysqlpxc.svg',
-      stencilImage: 'editor/mysqlpxc.svg'
+      shapeImage: 'static/editor/o-mysqlpxc.svg',
+      stencilImage: 'static/editor/mysqlpxc.svg'
     },
     oracle: {
       type: 'oracle',
       name: 'Oracle',
-      shapeImage: 'editor/o-ora.svg',
-      stencilImage: 'editor/ora2.svg'
+      shapeImage: 'static/editor/o-ora.svg',
+      stencilImage: 'static/editor/ora2.svg'
     },
     mongodb: {
       type: 'mongodb',
       name: 'MongoDB',
-      shapeImage: 'editor/o-mongo.svg',
-      stencilImage: 'editor/mongo.svg'
+      shapeImage: 'static/editor/o-mongo.svg',
+      stencilImage: 'static/editor/mongo.svg'
     },
     db2: {
       type: 'db2',
       name: 'DB2',
-      shapeImage: 'editor/o-db2.svg',
-      stencilImage: 'editor/DB2.svg'
+      shapeImage: 'static/editor/o-db2.svg',
+      stencilImage: 'static/editor/DB2.svg'
     },
     postgres: {
       type: 'postgres',
       name: 'Postgres',
-      shapeImage: 'editor/o-pg.svg',
-      stencilImage: 'editor/pg.svg'
+      shapeImage: 'static/editor/o-pg.svg',
+      stencilImage: 'static/editor/pg.svg'
     },
     sqlserver: {
       type: 'sqlserver',
       name: 'SQL Server',
-      shapeImage: 'editor/o-sqlserver.svg',
-      stencilImage: 'editor/sqlserver.svg'
+      shapeImage: 'static/editor/o-sqlserver.svg',
+      stencilImage: 'static/editor/sqlserver.svg'
     },
     'gbase-8s': {
       type: 'gbase-8s',
       name: 'GBase 8s',
-      shapeImage: 'editor/o-gbase.svg',
-      stencilImage: 'editor/gbase.svg'
+      shapeImage: 'static/editor/o-gbase.svg',
+      stencilImage: 'static/editor/gbase.svg'
     },
     'sybase ase': {
       type: 'sybase ase',
       name: 'Sybase ASE',
-      shapeImage: 'editor/o-sybase.svg',
-      stencilImage: 'editor/sybase.svg'
+      shapeImage: 'static/editor/o-sybase.svg',
+      stencilImage: 'static/editor/sybase.svg'
     },
     kafka: {
       type: 'kafka',
       name: 'Kafka',
-      shapeImage: 'editor/o-kafka-q.svg',
-      stencilImage: 'editor/wKafka.svg'
+      shapeImage: 'static/editor/o-kafka-q.svg',
+      stencilImage: 'static/editor/wKafka.svg'
     },
     mariadb: {
       type: 'mariadb',
       name: 'MariaDB',
-      shapeImage: 'editor/o-maria.svg',
-      stencilImage: 'editor/maria.svg'
+      shapeImage: 'static/editor/o-maria.svg',
+      stencilImage: 'static/editor/maria.svg'
     }
   },
   FILE_TYPE_MAPPING = {
     xml: {
       type: 'xml',
       name: 'XML',
-      shapeImage: 'editor/o-xml.svg',
-      stencilImage: 'editor/xml.svg'
+      shapeImage: 'static/editor/o-xml.svg',
+      stencilImage: 'static/editor/xml.svg'
     },
     excel: {
       type: 'excel',
       name: 'EXCEL',
-      shapeImage: 'editor/o-excel.svg',
-      stencilImage: 'editor/excel.svg'
+      shapeImage: 'static/editor/o-excel.svg',
+      stencilImage: 'static/editor/excel.svg'
     },
     csv: {
       type: 'csv',
       name: 'CSV',
-      shapeImage: 'editor/o-csv.svg',
-      stencilImage: 'editor/csv.svg'
+      shapeImage: 'static/editor/o-csv.svg',
+      stencilImage: 'static/editor/csv.svg'
     },
     json: {
       type: 'json',
       name: 'JSON',
-      shapeImage: 'editor/o-json.svg',
-      stencilImage: 'editor/json.svg'
+      shapeImage: 'static/editor/o-json.svg',
+      stencilImage: 'static/editor/json.svg'
     }
   }

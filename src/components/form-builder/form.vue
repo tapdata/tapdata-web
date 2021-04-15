@@ -103,7 +103,9 @@ export default {
           required: true,
           validator(rule, value, callback) {
             if ((!value && value !== 0) || (value && !(value + '').trim())) {
-              callback(new Error(`${config.label}` + self.$t('formBuilder.noneText')))
+              callback(
+                new Error(`${config.label}` + self.$t('formBuilder.noneText'))
+              )
             } else {
               callback()
             }
@@ -123,9 +125,14 @@ export default {
         dependOn.forEach((depend) => {
           let triggerOptions = depend.triggerOptions
           let triggerConfig = depend.triggerConfig
-          if (triggerOptions.every((opt) => opt.value === this.value[opt.field])) {
+          if (
+            triggerOptions.every((opt) => opt.value === this.value[opt.field])
+          ) {
             config = Object.assign(config, depend.triggerConfig)
-            if (Object.hasOwnProperty.call(triggerConfig, 'value') && triggerConfig.value === '') {
+            if (
+              Object.hasOwnProperty.call(triggerConfig, 'value') &&
+              triggerConfig.value === ''
+            ) {
               this.value[config.field] = ''
             }
           }
@@ -188,7 +195,8 @@ export default {
                       },
                       [
                         h('i', {
-                          class: 'el-icon-warning-outline e-form-builder-item-tips'
+                          class:
+                            'el-icon-warning-outline e-form-builder-item-tips'
                         })
                       ]
                     )
@@ -199,7 +207,9 @@ export default {
     },
     getBody(h, config, formConfig) {
       let self = this
-      let appendSlot = config.appendSlot ? config.appendSlot(h, this.value) : null
+      let appendSlot = config.appendSlot
+        ? config.appendSlot(h, this.value)
+        : null
       let el = null
       if (config.type === 'slot') {
         el = this.$slots[config.slot]
@@ -214,7 +224,9 @@ export default {
           on: {
             input(val) {
               if (self.value[config.field] === undefined) {
-                throw new Error(`The field "${config.field}" of the model is not defined!`)
+                throw new Error(
+                  `The field "${config.field}" of the model is not defined!`
+                )
               }
               self.value[config.field] = val
               let influences = config.influences
@@ -241,7 +253,9 @@ export default {
       if (appendSlot) {
         return h('div', { class: { 'fb-item-group': true } }, [
           el,
-          h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot])
+          h('div', { class: { 'fb-form-item-append-slot': true } }, [
+            appendSlot
+          ])
         ])
       } else {
         return [el]

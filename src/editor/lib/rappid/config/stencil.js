@@ -8,7 +8,10 @@ export const stencilConfig = {
   groups: {
     data: { index: 1, label: i18n.t('editor.ui.sidebar.data_nodes') },
     processor: { index: 2, label: i18n.t('editor.ui.sidebar.processor') },
-    tableSelector: { index: 3, label: i18n.t('editor.ui.sidebar.tableSelector') }
+    tableSelector: {
+      index: 3,
+      label: i18n.t('editor.ui.sidebar.tableSelector')
+    }
   },
   shapes: {
     data: [
@@ -171,7 +174,7 @@ export const stencilConfig = {
 					dataTooltipPositionSelector: '.joint-stencil'
 				},
 				image: {
-					xlinkHref: 'editor/image-icon1.svg'
+					xlinkHref: 'static/editor/image-icon1.svg'
 				},
 				body: {
 					fill: 'transparent',
@@ -204,7 +207,7 @@ export const stencilConfig = {
 						strokeDasharray: '0'
 					},
 					image: {
-						xlinkHref: 'editor/image-icon1.svg'
+						xlinkHref: 'static/editor/image-icon1.svg'
 					},
 					label: {
 						text: 'card',
@@ -234,7 +237,7 @@ export const stencilConfig = {
 					fill: 'transparent'
 				},
 				image: {
-					xlinkHref: 'editor/image-icon1.svg'
+					xlinkHref: 'static/editor/image-icon1.svg'
 				},
 				label: {
 					text: 'icon',

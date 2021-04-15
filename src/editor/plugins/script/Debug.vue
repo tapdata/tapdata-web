@@ -33,12 +33,22 @@
               :label="$t('editor.cell.processor.script.debug.order')"
               width="80"
             ></el-table-column>
-            <el-table-column align="center" :label="$t('editor.cell.processor.script.debug.status')" width="80">
+            <el-table-column
+              align="center"
+              :label="$t('editor.cell.processor.script.debug.status')"
+              width="80"
+            >
               <template slot-scope="scope">
-                <span class="color-danger" v-if="scope.row.status === 'ERROR'">{{
-                  $t('editor.cell.processor.script.debug.status_error')
+                <span
+                  class="color-danger"
+                  v-if="scope.row.status === 'ERROR'"
+                  >{{
+                    $t('editor.cell.processor.script.debug.status_error')
+                  }}</span
+                >
+                <span class="color-primary" v-else>{{
+                  $t('editor.cell.processor.script.debug.status_success')
                 }}</span>
-                <span class="color-primary" v-else>{{ $t('editor.cell.processor.script.debug.status_success') }}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -47,13 +57,18 @@
               :label="$t('editor.cell.processor.script.debug.time') + '(ms)'"
               width="100"
             ></el-table-column>
-            <el-table-column align="left" :label="$t('editor.cell.processor.script.debug.log')">
+            <el-table-column
+              align="left"
+              :label="$t('editor.cell.processor.script.debug.log')"
+            >
               <template slot-scope="scope">
                 <div v-html="getFirstLine(scope.row.out)"></div>
               </template>
             </el-table-column>
           </el-table>
-          <div class="error-panel">[<span class="color-danger">ERROR</span>] {{ errorMsg }}</div>
+          <div class="error-panel">
+            [<span class="color-danger">ERROR</span>] {{ errorMsg }}
+          </div>
         </div>
       </div>
     </transition>
@@ -67,17 +82,29 @@
           <h4>{{ $t('editor.cell.processor.script.debug.bottom_header') }}</h4>
           <ul class="bar">
             <template v-if="selectedLog.index >= 0">
-              <li>{{ $t('editor.cell.processor.script.debug.order') }}: {{ selectedLog.index + 1 }}</li>
+              <li>
+                {{ $t('editor.cell.processor.script.debug.order') }}:
+                {{ selectedLog.index + 1 }}
+              </li>
               <li>
                 {{ $t('editor.cell.processor.script.debug.status') }}:
-                <span class="color-primary" v-show="!selectedLog.status === 'ERROR'">
+                <span
+                  class="color-primary"
+                  v-show="!selectedLog.status === 'ERROR'"
+                >
                   {{ $t('editor.cell.processor.script.debug.status_success') }}
                 </span>
-                <span class="color-danger" v-show="selectedLog.status === 'ERROR'">
+                <span
+                  class="color-danger"
+                  v-show="selectedLog.status === 'ERROR'"
+                >
                   {{ $t('editor.cell.processor.script.debug.status_error') }}
                 </span>
               </li>
-              <li>{{ $t('editor.cell.processor.script.debug.time') }}: {{ selectedLog.time }}ms</li>
+              <li>
+                {{ $t('editor.cell.processor.script.debug.time') }}:
+                {{ selectedLog.time }}ms
+              </li>
             </template>
             <li>
               <i class="el-icon-arrow-down" @click="hide"></i>
@@ -86,16 +113,24 @@
         </div>
         <ul class="details">
           <li>
-            <label>{{ $t('editor.cell.processor.script.debug.detail.parameter') }}</label>
+            <label>{{
+              $t('editor.cell.processor.script.debug.detail.parameter')
+            }}</label>
             <div class="value">
-              <div class="params" v-for="(p, index) in selectedLog.params" :key="index">
+              <div
+                class="params"
+                v-for="(p, index) in selectedLog.params"
+                :key="index"
+              >
                 <span>{{ index + 1 }}: </span>
                 <pre>{{ stringify(p) }}</pre>
               </div>
             </div>
           </li>
           <li>
-            <label>{{ $t('editor.cell.processor.script.debug.detail.return') }}</label>
+            <label>{{
+              $t('editor.cell.processor.script.debug.detail.return')
+            }}</label>
             <div class="value">
               <pre>{{ stringify(selectedLog.result) }}</pre>
             </div>
@@ -152,7 +187,9 @@ export default {
   mounted() {
     log('Debug Component Mounted')
     let eBodyEl = document.body.getElementsByClassName('e-body')[0]
-    let eSideBarRight = document.body.getElementsByClassName('e-sidebar-right')[0]
+    let eSideBarRight = document.body.getElementsByClassName(
+      'e-sidebar-right'
+    )[0]
     this.clientWidth = eBodyEl.clientWidth
     eBodyEl.appendChild(this.$el)
     this.$nextTick(() => {

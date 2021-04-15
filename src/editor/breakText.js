@@ -9,7 +9,10 @@ const V = joint.V
 const isString = function (value) {
   var toString = Object.prototype.toString
   return (
-    typeof value === 'string' || (!!value && typeof value === 'object' && toString.call(value) === '[object String]')
+    typeof value === 'string' ||
+    (!!value &&
+      typeof value === 'object' &&
+      toString.call(value) === '[object String]')
   )
 }
 
@@ -22,7 +25,9 @@ const parseCssNumeric = function (val, restrictUnits) {
     // ), followed by
     // `validUnitExp`, followed by
     // end of string
-    var matches = new RegExp('(?:\\d+(?:\\.\\d+)*)(' + validUnitExp + ')$').exec(val)
+    var matches = new RegExp(
+      '(?:\\d+(?:\\.\\d+)*)(' + validUnitExp + ')$'
+    ).exec(val)
 
     if (!matches) return null
     return matches[1]
@@ -181,14 +186,23 @@ const breakText = function (text, size, styles, opt) {
             h = 0
           } else {
             var hyphenIndex = word.search(hyphen)
-            if (hyphenIndex > -1 && hyphenIndex !== word.length - 1 && hyphenIndex !== 0) {
+            if (
+              hyphenIndex > -1 &&
+              hyphenIndex !== word.length - 1 &&
+              hyphenIndex !== 0
+            ) {
               h = hyphenIndex + 1
               p = 0
             }
 
             // We initiate partitioning or splitting
             // split the long word into two words
-            words.splice(i, 1, word.substring(0, h || p), word.substring(h || p))
+            words.splice(
+              i,
+              1,
+              word.substring(0, h || p),
+              word.substring(h || p)
+            )
             // adjust words length
             len++
           }
@@ -219,7 +233,10 @@ const breakText = function (text, size, styles, opt) {
         if (styles.lineHeight === 'auto') {
           heightValue = { value: 1.5, unit: 'em' }
         } else {
-          heightValue = parseCssNumeric(styles.lineHeight, ['em']) || { value: 1, unit: 'em' }
+          heightValue = parseCssNumeric(styles.lineHeight, ['em']) || {
+            value: 1,
+            unit: 'em'
+          }
         }
 
         lineHeight = heightValue.value

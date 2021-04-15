@@ -13,6 +13,7 @@ const proxy = {
   changeOrigin: false
 }
 const { resolve } = require('path')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 module.exports = {
   assetsDir: 'static',
@@ -51,7 +52,13 @@ module.exports = {
       .end()
 
     // svg loader排除 icon 目录
-    config.module.rule('svg').exclude.add(resolve(iconDir)).end().use('svgo-loader').loader('svgo-loader').end()
+    config.module
+      .rule('svg')
+      .exclude.add(resolve(iconDir))
+      .end()
+      .use('svgo-loader')
+      .loader('svgo-loader')
+      .end()
 
     // svg-sprite-loader打包svg
     config.module
@@ -80,5 +87,13 @@ module.exports = {
         ]
       })
       .end()
+  },
+  configureWebpack: {
+    plugins: [
+      new MonacoWebpackPlugin({
+        languages: ['javascript', 'json'],
+        features: ['coreCommands', 'find']
+      })
+    ]
   }
 }

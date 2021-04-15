@@ -183,7 +183,9 @@ export default function () {
             })
           }
         }
-        var node = new joint.shapes.mapping.Record({ items: [[table.items[0]]] })
+        var node = new joint.shapes.mapping.Record({
+          items: [[table.items[0]]]
+        })
         linkdatas.map((link, idx, linkdatas) => {
           if (link.source.id === table.id) {
             linkdatas[idx].source['original_id'] = link.source.id
@@ -211,7 +213,11 @@ export default function () {
             port: link.source.port,
             original_id: link.source.original_id
           },
-          target: { id: link.target.id, port: link.target.port, original_id: link.target.original_id }
+          target: {
+            id: link.target.id,
+            port: link.target.port,
+            original_id: link.target.original_id
+          }
           // labels: [
           // 	{
           // 		attrs: { text: { text: link.dataFlows[0].name } }

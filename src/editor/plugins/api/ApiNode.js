@@ -10,7 +10,7 @@ export const ApiNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'editor/0-API-target1.svg'
+          xlinkHref: 'static/editor/0-API-target1.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.api.name')
@@ -39,7 +39,9 @@ export const ApiNodeConfig = {
        * @return {boolean}
        */
       allowTarget(targetCell) {
-        return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(targetCell.get('type'))
+        return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(
+          targetCell.get('type')
+        )
       },
 
       /**
@@ -54,10 +56,19 @@ export const ApiNodeConfig = {
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`)
+        if (!data)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`
+          )
 
-        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`)
-        if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`)
+        if (!data.connectionId)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`
+          )
+        if (!data.tableName)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`
+          )
         // if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_pk')}`);
 
         return true
@@ -226,7 +237,7 @@ export const ApiNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'editor/API-target1.svg',
+        xlinkHref: 'static/editor/API-target1.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

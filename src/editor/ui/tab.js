@@ -49,7 +49,9 @@ export default class Tab extends Component {
 
     tab.id = self.generatorId()
 
-    let titleEl = $(`<div class="e-tab-title">${tab.title || tab.opts.title}</div>`)
+    let titleEl = $(
+      `<div class="e-tab-title">${tab.title || tab.opts.title}</div>`
+    )
     let tabEl = $(`<div class="e-tab"></div>`)
 
     titleEl.attr('data-target', `${tab.id}`)
@@ -63,7 +65,9 @@ export default class Tab extends Component {
       self.el.find('.e-tab-content').append(tabEl)
     }
     if (tab.opts.closeBtn) {
-      let closeBt = $('<i class="el-icon-close" style="position:absolute;right:23px;cursor:pointer"></i>')
+      let closeBt = $(
+        '<i class="el-icon-close" style="position:absolute;right:23px;cursor:pointer"></i>'
+      )
       closeBt.click(() => {
         self.parent.hide()
       })
@@ -85,8 +89,12 @@ export default class Tab extends Component {
     this.el.find('>.e-tab-content>.active').removeClass('active')
     let id = tab.id ? tab.id : tab.target ? $(tab.target).data('target') : ''
     if (id) {
-      this.el.find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`).addClass('active')
-      this.el.find(`>.e-tab-content>.e-tab[data-value=${id}]`).addClass('active')
+      this.el
+        .find(`>.e-tab-bar>.e-tab-title[data-target=${id}]`)
+        .addClass('active')
+      this.el
+        .find(`>.e-tab-content>.e-tab[data-value=${id}]`)
+        .addClass('active')
     }
     this.childs.forEach((child) => (child.selected = child === tab))
     this.emit(EditorEventType.SELECTED, tab)

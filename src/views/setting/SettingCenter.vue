@@ -3,7 +3,11 @@
     <div class="setting-left-sidebar">
       <div class="title">{{ $t('account.setCenter') }}</div>
       <ul>
-        <li :class="activePanel === 'settings' ? 'active' : ''" v-if="authoritySetting" @click="changeName('settings')">
+        <li
+          :class="activePanel === 'settings' ? 'active' : ''"
+          v-if="authoritySetting"
+          @click="changeName('settings')"
+        >
           <i class="iconfont icon-shezhi1"></i>
           <span slot="title">{{ this.$t('account.systemSetting') }}</span>
         </li>
@@ -34,11 +38,20 @@ export default {
         // 	name: this.$t('account.systemSetting'),
         // 	key: 'settings'
         // },
-        { icon: 'icon-lingdang', name: this.$t('notification.setting'), key: 'notificationSetting' },
-        { icon: 'icon-gerenzhongxin', name: this.$t('account.accountSettings'), key: 'accountSetting' }
+        {
+          icon: 'icon-lingdang',
+          name: this.$t('notification.setting'),
+          key: 'notificationSetting'
+        },
+        {
+          icon: 'icon-gerenzhongxin',
+          name: this.$t('account.accountSettings'),
+          key: 'accountSetting'
+        }
       ],
       activePanel: '',
-      authoritySetting: this.$has('system_settings') && this.$has('system_settings_menu')
+      authoritySetting:
+        this.$has('system_settings') && this.$has('system_settings_menu')
     }
   },
   watch: {

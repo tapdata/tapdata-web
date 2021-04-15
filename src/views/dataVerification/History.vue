@@ -4,7 +4,10 @@
       <div class="title">{{ name }}</div>
       <div class="table-wrap">
         <el-table :data="page.data" height="100%" class="dv-table border">
-          <el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
+          <el-table-column
+            :label="$t('dataVerification.verifyTime')"
+            prop="start"
+          >
             <template slot-scope="scope">
               {{
                 scope.row.start
@@ -13,38 +16,86 @@
               }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('dataVerification.completeTime')" prop="end" align="center" width="180">
+          <el-table-column
+            :label="$t('dataVerification.completeTime')"
+            prop="end"
+            align="center"
+            width="180"
+          >
             <template slot-scope="scope">
               <span>
-                {{ scope.row.end ? $moment(scope.row.end).format('YYYY-MM-DD HH:mm:ss') : '' }}
+                {{
+                  scope.row.end
+                    ? $moment(scope.row.end).format('YYYY-MM-DD HH:mm:ss')
+                    : ''
+                }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('dataVerification.sourceTotalRows')" prop="source_total"></el-table-column>
-          <el-table-column :label="$t('dataVerification.targetTotalRows')" prop="target_total"></el-table-column>
-          <el-table-column prop="progress" :label="$t('dataVerification.verifyProgress')" width="80px">
+          <el-table-column
+            :label="$t('dataVerification.sourceTotalRows')"
+            prop="source_total"
+          ></el-table-column>
+          <el-table-column
+            :label="$t('dataVerification.targetTotalRows')"
+            prop="target_total"
+          ></el-table-column>
+          <el-table-column
+            prop="progress"
+            :label="$t('dataVerification.verifyProgress')"
+            width="80px"
+          >
             <template slot-scope="scope">
               <div>
                 <span>{{
-                  `${Math.round(scope.row.progress * 10000) / 100 ? Math.round(scope.row.progress * 10000) / 100 : 0}%`
+                  `${
+                    Math.round(scope.row.progress * 10000) / 100
+                      ? Math.round(scope.row.progress * 10000) / 100
+                      : 0
+                  }%`
                 }}</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('dataVerification.verifytype')" prop="inspect.inspectMethod">
+          <el-table-column
+            :label="$t('dataVerification.verifytype')"
+            prop="inspect.inspectMethod"
+          >
             <template slot-scope="scope">
-              <span>{{ inspectMethod[scope.row.inspect ? scope.row.inspect.inspectMethod : ''] }}</span>
+              <span>{{
+                inspectMethod[
+                  scope.row.inspect ? scope.row.inspect.inspectMethod : ''
+                ]
+              }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('dataVerification.verifyResult')" width="180">
-            <template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
+          <el-table-column
+            :label="$t('dataVerification.verifyResult')"
+            width="180"
+          >
+            <template
+              slot-scope="scope"
+              v-if="['waiting', 'done'].includes(scope.row.status)"
+            >
               <div class="inspect-result">
-                <div v-if="scope.row.target_total !== scope.row.source_total && scope.row.result !== 'passed'">
-                  <span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
+                <div
+                  v-if="
+                    scope.row.target_total !== scope.row.source_total &&
+                    scope.row.result !== 'passed'
+                  "
+                >
+                  <span
+                    class="error"
+                    v-if="scope.row.target_total - scope.row.source_total !== 0"
+                  >
                     <i class="data-verify-history__icon el-icon-error"></i>
                     <span>
                       {{ $t('dataVerification.rowConsistent') }}
-                      {{ Math.abs(scope.row.target_total - scope.row.source_total) }}
+                      {{
+                        Math.abs(
+                          scope.row.target_total - scope.row.source_total
+                        )
+                      }}
                     </span>
                   </span>
                 </div>
@@ -71,12 +122,17 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('dataVerification.verifyStatus')" prop="status"></el-table-column>
+          <el-table-column
+            :label="$t('dataVerification.verifyStatus')"
+            prop="status"
+          ></el-table-column>
           <el-table-column :label="$t('dataFlow.operate')" width="60px">
             <template slot-scope="scope">
-              <ElLink type="primary" @click="changeInspectResult(scope.row.id, scope.row.inspect_id)">{{
-                $t('button.details')
-              }}</ElLink>
+              <ElLink
+                type="primary"
+                @click="changeInspectResult(scope.row.id, scope.row.inspect_id)"
+                >{{ $t('button.details') }}</ElLink
+              >
             </template>
           </el-table-column>
         </el-table>

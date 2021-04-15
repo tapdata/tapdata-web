@@ -1,30 +1,54 @@
 <template>
   <div class="data-verify" v-loading="loading">
     <div class="back-btn-box">
-      <el-button class="back-btn-icon-box" @click="GoBack"><i class="iconfont icon-you2 back-btn-icon"></i></el-button>
+      <el-button class="back-btn-icon-box" @click="GoBack"
+        ><i class="iconfont icon-you2 back-btn-icon"></i
+      ></el-button>
       <span class="back-btn-text">{{ $t('dataVerify.dataVerify') }}</span>
     </div>
     <div class="operation">
       <el-button type="text">{{ `total：${this.tableData.length}` }}</el-button>
-      <el-button type="text" @click="handleClear" class="clear-btn" :disabled="disabledDrawer">Clear</el-button>
+      <el-button
+        type="text"
+        @click="handleClear"
+        class="clear-btn"
+        :disabled="disabledDrawer"
+        >Clear</el-button
+      >
     </div>
     <div class="table-box">
       <el-table :data="tableData" border class="dv-table">
-        <el-table-column prop="type" :label="$t('dataVerify.dataWay')" width="80">
+        <el-table-column
+          prop="type"
+          :label="$t('dataVerify.dataWay')"
+          width="80"
+        >
           <template slot-scope="scope">
             <span>
               {{ $t('dataVerify.' + scope.row.type) }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="condition.value" :label="$t('dataVerify.range')" width="80" :formatter="formatterRange">
+        <el-table-column
+          prop="condition.value"
+          :label="$t('dataVerify.range')"
+          width="80"
+          :formatter="formatterRange"
+        >
         </el-table-column>
-        <el-table-column prop="source.tableName" :label="$t('dataVerify.source')">
+        <el-table-column
+          prop="source.tableName"
+          :label="$t('dataVerify.source')"
+        >
           <template slot-scope="scope">
             <el-tooltip
               class="item"
               effect="dark"
-              :content="scope.row.source.tableName + ' / ' + scope.row.source.databaseName"
+              :content="
+                scope.row.source.tableName +
+                ' / ' +
+                scope.row.source.databaseName
+              "
               placement="top-end"
             >
               <div>
@@ -38,12 +62,19 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="target.tableName" :label="$t('dataVerify.target')">
+        <el-table-column
+          prop="target.tableName"
+          :label="$t('dataVerify.target')"
+        >
           <template slot-scope="scope">
             <el-tooltip
               class="item"
               effect="dark"
-              :content="scope.row.target.tableName + ' / ' + scope.row.target.databaseName"
+              :content="
+                scope.row.target.tableName +
+                ' / ' +
+                scope.row.target.databaseName
+              "
               placement="top-end"
             >
               <div>
@@ -84,35 +115,85 @@
     ></el-button>
     <div class="dv-btn-footer-wrapper">
       <div class="dv-btn-footer-box">
-        <el-button size="mini" class="dv-btn-footer" type="primary" @click="handleLoading" :loading="startLoading">{{
-          $t('dataVerify.start')
-        }}</el-button>
-        <el-button size="mini" class="dv-btn-footer" @click="showResult" :disabled="firstVerify">{{
-          $t('dataVerify.cancel')
-        }}</el-button>
+        <el-button
+          size="mini"
+          class="dv-btn-footer"
+          type="primary"
+          @click="handleLoading"
+          :loading="startLoading"
+          >{{ $t('dataVerify.start') }}</el-button
+        >
+        <el-button
+          size="mini"
+          class="dv-btn-footer"
+          @click="showResult"
+          :disabled="firstVerify"
+          >{{ $t('dataVerify.cancel') }}</el-button
+        >
       </div>
     </div>
-    <Drawer ref="drawer" :visible.sync="disabledDrawer" :title="$t('dataVerify.dataVerifySetting')">
+    <Drawer
+      ref="drawer"
+      :visible.sync="disabledDrawer"
+      :title="$t('dataVerify.dataVerifySetting')"
+    >
       <el-form class="dv-add-form" :model="formData" label-position="top">
         <el-form-item :label="$t('dataVerify.dataWay')">
-          <el-radio-group v-model="formData.type" size="mini" class="dv-radio" @change="changeType">
-            <el-radio border label="row" width="150px">{{ $t('dataVerify.row') }}</el-radio>
-            <el-radio border label="hash" width="150px">{{ $t('dataVerify.hash') }}</el-radio>
-            <el-radio border label="advance" width="150px">{{ $t('dataVerify.advance') }}</el-radio>
+          <el-radio-group
+            v-model="formData.type"
+            size="mini"
+            class="dv-radio"
+            @change="changeType"
+          >
+            <el-radio border label="row" width="150px">{{
+              $t('dataVerify.row')
+            }}</el-radio>
+            <el-radio border label="hash" width="150px">{{
+              $t('dataVerify.hash')
+            }}</el-radio>
+            <el-radio border label="advance" width="150px">{{
+              $t('dataVerify.advance')
+            }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-show="formData.type !== 'row'" :label="$t('dataVerify.condition')">
+        <el-form-item
+          v-show="formData.type !== 'row'"
+          :label="$t('dataVerify.condition')"
+        >
           <el-row :gutter="5">
             <el-col :span="12">
-              <el-select size="mini" v-model="formData.condition.type" @change="changeConditionType">
-                <el-option value="rows" :label="$t('dataVerify.rows')"></el-option>
-                <el-option value="sampleRate" :label="$t('dataVerify.sampleRate')"></el-option>
+              <el-select
+                size="mini"
+                v-model="formData.condition.type"
+                @change="changeConditionType"
+              >
+                <el-option
+                  value="rows"
+                  :label="$t('dataVerify.rows')"
+                ></el-option>
+                <el-option
+                  value="sampleRate"
+                  :label="$t('dataVerify.sampleRate')"
+                ></el-option>
               </el-select>
             </el-col>
             <el-col :span="12" class="condition-value">
-              <el-input @change="handleCondition" size="mini" type="number" v-model="formData.condition.value">
-                <template slot="append" v-if="formData.condition.type === 'rows'">{{ $t('dataVerify.psc') }}</template>
-                <template slot="append" v-if="formData.condition.type === 'sampleRate'">%</template>
+              <el-input
+                @change="handleCondition"
+                size="mini"
+                type="number"
+                v-model="formData.condition.value"
+              >
+                <template
+                  slot="append"
+                  v-if="formData.condition.type === 'rows'"
+                  >{{ $t('dataVerify.psc') }}</template
+                >
+                <template
+                  slot="append"
+                  v-if="formData.condition.type === 'sampleRate'"
+                  >%</template
+                >
               </el-input>
             </el-col>
           </el-row>
@@ -142,12 +223,19 @@
             :placeholder="$t('dataVerify.sourceText')"
             @input="handleForceUpdate"
           >
-            <el-option v-for="item in sourceList" :label="item.tableName" :value="item.id" v-bind:key="item.id">
+            <el-option
+              v-for="item in sourceList"
+              :label="item.tableName"
+              :value="item.id"
+              v-bind:key="item.id"
+            >
             </el-option>
           </el-select>
           <el-row v-show="formData.type !== 'advance'">
             <div v-if="formData.source.databaseType === 'mongodb'">
-              <el-checkbox v-model="formData.source.checkedSource"></el-checkbox>
+              <el-checkbox
+                v-model="formData.source.checkedSource"
+              ></el-checkbox>
               <span>MQL {{ $t('dataVerify.filter') }}</span>
               <div v-show="formData.source.checkedSource">
                 <el-input
@@ -156,13 +244,17 @@
                   v-model="formData.source.filter"
                   @input="handleForceUpdate"
                   :placeholder="
-                    formData.type === 'hash' ? $t('dataVerify.exampleHashMQL') : $t('dataVerify.exampleMQL')
+                    formData.type === 'hash'
+                      ? $t('dataVerify.exampleHashMQL')
+                      : $t('dataVerify.exampleMQL')
                   "
                 ></el-input>
               </div>
             </div>
             <div v-else>
-              <el-checkbox v-model="formData.source.checkedSource"></el-checkbox>
+              <el-checkbox
+                v-model="formData.source.checkedSource"
+              ></el-checkbox>
               <span>SQL {{ $t('dataVerify.filter') }}</span>
               <div v-show="formData.source.checkedSource">
                 <el-input
@@ -171,7 +263,9 @@
                   v-model="formData.source.filter"
                   @input="handleForceUpdate"
                   :placeholder="
-                    formData.type === 'hash' ? $t('dataVerify.exampleHashSQL') : $t('dataVerify.exampleSQL')
+                    formData.type === 'hash'
+                      ? $t('dataVerify.exampleHashSQL')
+                      : $t('dataVerify.exampleSQL')
                   "
                 ></el-input>
               </div>
@@ -203,12 +297,19 @@
             :placeholder="$t('dataVerify.targetText')"
             @input="handleForceUpdate"
           >
-            <el-option v-for="item in targetList" :label="item.tableName" :value="item.id" v-bind:key="item.id">
+            <el-option
+              v-for="item in targetList"
+              :label="item.tableName"
+              :value="item.id"
+              v-bind:key="item.id"
+            >
             </el-option>
           </el-select>
           <el-row v-show="formData.type === 'row'">
             <div v-if="formData.target.databaseType === 'mongodb'">
-              <el-checkbox v-model="formData.target.checkedTarget"></el-checkbox>
+              <el-checkbox
+                v-model="formData.target.checkedTarget"
+              ></el-checkbox>
               <span>MQL {{ $t('dataVerify.filter') }}</span>
               <div v-show="formData.target.checkedTarget">
                 <el-input
@@ -221,7 +322,9 @@
               </div>
             </div>
             <div v-else>
-              <el-checkbox v-model="formData.target.checkedTarget"></el-checkbox>
+              <el-checkbox
+                v-model="formData.target.checkedTarget"
+              ></el-checkbox>
               <span>SQL {{ $t('dataVerify.filter') }}</span>
               <div v-show="formData.target.checkedTarget">
                 <el-input
@@ -239,17 +342,28 @@
           <span class="JS-label displayInline">
             {{ $t('dataVerify.exampleJS') }}
           </span>
-          <el-input type="textarea" v-model="formData.validateCode" :rows="10" @input="handleForceUpdate"></el-input>
+          <el-input
+            type="textarea"
+            v-model="formData.validateCode"
+            :rows="10"
+            @input="handleForceUpdate"
+          ></el-input>
         </el-form-item>
         <el-form-item v-show="formData.type === 'advance'">
           <div :span="24" class="example-js">
             <span>Example:</span>
             <span>function validate(sourceRow) { </span>
             <span>var targetRow = target.executeQuery({</span>
-            <span>sql: "select * from VALIDATE_TEST where ID = "+sourceRow.ID});</span>
+            <span
+              >sql: "select * from VALIDATE_TEST where ID =
+              "+sourceRow.ID});</span
+            >
             <span>var result="";</span>
             <span>var message="";</span>
-            <span>if(JSONUtil.obj2Json(sourceRow) === JSONUtil.obj2Json(targetRow)){</span>
+            <span
+              >if(JSONUtil.obj2Json(sourceRow) ===
+              JSONUtil.obj2Json(targetRow)){</span
+            >
             <span>result="passed";</span>
             <span>message="记录一致";</span>
             <span>} else {</span>
@@ -269,7 +383,9 @@
         <el-button size="mini" type="primary" @click="handleAdd">
           {{ $t('dataVerify.confirm') }}
         </el-button>
-        <el-button size="mini" @click="handleClose">{{ $t('dataForm.cancel') }}</el-button>
+        <el-button size="mini" @click="handleClose">{{
+          $t('dataForm.cancel')
+        }}</el-button>
       </span>
     </Drawer>
   </div>
@@ -339,7 +455,9 @@ export default {
           if (res.statusText === 'OK' || res.status === 200) {
             this.loading = false
             if (res.data) {
-              this.tableData = res.data.validationSettings ? res.data.validationSettings : []
+              this.tableData = res.data.validationSettings
+                ? res.data.validationSettings
+                : []
               if (!res.data.validateStatus) {
                 this.firstVerify = true
               }
@@ -358,7 +476,10 @@ export default {
       this.disabledDrawer = true
     },
     handleAdd() {
-      if (this.formData.source.connectionId === '' || !this.formData.source.connectionId) {
+      if (
+        this.formData.source.connectionId === '' ||
+        !this.formData.source.connectionId
+      ) {
         this.$message.error('please select source database')
         return
       }
@@ -366,7 +487,10 @@ export default {
         this.$message.error('please select source')
         return
       }
-      if (this.formData.target.connectionId === '' || !this.formData.target.connectionId) {
+      if (
+        this.formData.target.connectionId === '' ||
+        !this.formData.target.connectionId
+      ) {
         this.$message.error('please select target database')
         return
       }
@@ -395,12 +519,16 @@ export default {
         this.tableData.splice(this.editIndex, 1) // 不是编辑 先删除后新增 -1非编辑模式
       }
       this.tableData = this.tableData || []
-      let source = this.sourceList.filter((item) => item.id === this.formData.source.id)
+      let source = this.sourceList.filter(
+        (item) => item.id === this.formData.source.id
+      )
       if (source.length > 0) {
         this.formData.source.tableName = source[0].tableName
         this.formData.source.stageId = source[0].stageId
       }
-      let target = this.targetList.filter((item) => item.id === this.formData.target.id)
+      let target = this.targetList.filter(
+        (item) => item.id === this.formData.target.id
+      )
       if (target.length > 0) {
         this.formData.target.tableName = target[0].tableName
         this.formData.target.stageId = target[0].stageId
@@ -422,12 +550,16 @@ export default {
       })
     },
     handleClear() {
-      this.$confirm(this.$t('message.deteleMessage'), this.$t('dataFlow.importantReminder'), {
-        confirmButtonText: this.$t('classification.deleteNode'),
-        cancelButtonText: this.$t('message.cancel'),
-        type: 'warning',
-        closeOnClickModal: false
-      })
+      this.$confirm(
+        this.$t('message.deteleMessage'),
+        this.$t('dataFlow.importantReminder'),
+        {
+          confirmButtonText: this.$t('classification.deleteNode'),
+          cancelButtonText: this.$t('message.cancel'),
+          type: 'warning',
+          closeOnClickModal: false
+        }
+      )
         .then(() => {
           let data = {
             validationSettings: []
@@ -468,7 +600,9 @@ export default {
         })
         .then((res) => {
           if (res.statusText === 'OK' || res.status === 200) {
-            data.lastValidateBatchId = res.data.validateBatchId ? res.data.validateBatchId : ''
+            data.lastValidateBatchId = res.data.validateBatchId
+              ? res.data.validateBatchId
+              : ''
             dataFlows.patchId(this.id, data).then((res) => {
               if (res.statusText === 'OK' || res.status === 200) {
                 this.startLoading = false
@@ -530,12 +664,21 @@ export default {
       let type = 'table'
       let sourceOrTarget = 'source'
       this.id = this.id || getUrlSearch.getUrlSearch('id')
-      dataFlows.getSourceList(this.id, type, this.formData.source.connectionId, sourceOrTarget).then((res) => {
-        if (res.statusText === 'OK' || res.status === 200) {
-          this.sourceList = res.data || []
-        }
-      })
-      let source = this.sourceDatabase.filter((item) => item.connectionId === this.formData.source.connectionId)
+      dataFlows
+        .getSourceList(
+          this.id,
+          type,
+          this.formData.source.connectionId,
+          sourceOrTarget
+        )
+        .then((res) => {
+          if (res.statusText === 'OK' || res.status === 200) {
+            this.sourceList = res.data || []
+          }
+        })
+      let source = this.sourceDatabase.filter(
+        (item) => item.connectionId === this.formData.source.connectionId
+      )
       if (source.length > 0) {
         this.formData.source.databaseType = source[0].databaseType
         this.formData.source.databaseName = source[0].databaseName
@@ -545,12 +688,21 @@ export default {
       let type = 'table'
       let sourceOrTarget = 'target'
       this.id = this.id || getUrlSearch.getUrlSearch('id')
-      dataFlows.getSourceList(this.id, type, this.formData.target.connectionId, sourceOrTarget).then((res) => {
-        if (res.statusText === 'OK' || res.status === 200) {
-          this.targetList = res.data || []
-        }
-      })
-      let opTarget = this.targetDatabase.filter((item) => item.connectionId === this.formData.target.connectionId)
+      dataFlows
+        .getSourceList(
+          this.id,
+          type,
+          this.formData.target.connectionId,
+          sourceOrTarget
+        )
+        .then((res) => {
+          if (res.statusText === 'OK' || res.status === 200) {
+            this.targetList = res.data || []
+          }
+        })
+      let opTarget = this.targetDatabase.filter(
+        (item) => item.connectionId === this.formData.target.connectionId
+      )
       if (opTarget.length > 0) {
         this.formData.target.databaseType = opTarget[0].databaseType
         this.formData.target.databaseName = opTarget[0].databaseName
