@@ -347,7 +347,7 @@
             >
               <span>
                 <ElLink
-                  v-if="window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
+                  v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
                   v-readonlybtn="'SYNC_job_operation'"
                   type="primary"
                   :disabled="
