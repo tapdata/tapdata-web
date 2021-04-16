@@ -947,7 +947,7 @@ export default class Graph extends Component {
 				fields.push({
 					id: field.id,
 					label: `${field.field_name} (${field.javaType})`,
-					icon: "editor/file.svg",
+					icon: "static/editor/file.svg",
 				});
 			});*/
 

@@ -156,17 +156,17 @@
             <el-image
               v-if="status === 'running'"
               style="width: 15px; height: 15px"
-              src="editor/running.svg"
+              src="static/editor/running.svg"
             ></el-image>
             <el-image
               v-if="status === 'stopping'"
               style="width: 15px; height: 15px"
-              src="editor/stopping.svg"
+              src="static/editor/stopping.svg"
             ></el-image>
             <el-image
               v-if="status === 'scheduled'"
               style="width: 15px; height: 15px"
-              src="editor/scheduled.svg"
+              src="static/editor/scheduled.svg"
             ></el-image>
           </span>
           <span
@@ -1932,7 +1932,7 @@ export default {
     background-color: #6dc5e8;
   }
   .mr-5 {
-    margin-right: 5px;
+    margin-right: 5px !important;
   }
   .action-btn-group {
     display: flex;

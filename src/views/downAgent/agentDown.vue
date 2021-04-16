@@ -138,7 +138,7 @@
             {{ $t('dialog.downAgent.waitingInstall') }}
             <el-image
               style="width: 32px; height: 15px"
-              src="editor/wating.svg"
+              src="static/editor/wating.svg"
             ></el-image>
           </el-button>
         </template>

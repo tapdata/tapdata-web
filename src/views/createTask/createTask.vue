@@ -331,12 +331,14 @@ export default {
         let target = items.find((it) => it.field === 'target_databaseType')
         if (target) {
           target.options = target.options.map((item) => {
-            if (value === 'mongodb') { // mongodb 时，禁用目标端的 oracle
+            if (value === 'mongodb') {
+              // mongodb 时，禁用目标端的 oracle
               if (item.value === 'oracle') {
                 item.disabled = true
               }
               return item
-            } else { // 不是 mongodb，则恢复正常
+            } else {
+              // 不是 mongodb，则恢复正常
               item.disabled = false
               return item
             }
@@ -349,12 +351,14 @@ export default {
         let source = items.find((it) => it.field === 'source_databaseType')
         if (source) {
           source.options = source.options.map((item) => {
-            if (value === 'oracle') { // oracle 时，禁用目标端的 oracle
+            if (value === 'oracle') {
+              // oracle 时，禁用目标端的 oracle
               if (item.value === 'mongodb') {
                 item.disabled = true
               }
               return item
-            } else { // 不是 oracle，则恢复正常
+            } else {
+              // 不是 oracle，则恢复正常
               item.disabled = false
               return item
             }
