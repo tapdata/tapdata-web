@@ -444,6 +444,10 @@ export default {
       }
       this.activeStep -= 1
       this.getFormConfig()
+      // 重置 数据源类型列表
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+        this.allowDatabaseType()
+      }
     },
     // 根据步骤获取不同的表单项目
     async getFormConfig() {
