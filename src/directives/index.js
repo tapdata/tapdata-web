@@ -48,7 +48,9 @@ export function hasPermissionByCode(code) {
 
 export function permissionBtnDisable(code, id) {
   if (
-    code === 'SYNC_job_operation_all_data' &&
+    ['SYNC_job_edition_all_data', 'SYNC_job_operation_all_data'].includes(
+      code
+    ) &&
     window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
   ) {
     return false
