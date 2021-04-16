@@ -204,7 +204,7 @@
           </ElLink>
           <ElLink
             v-readonlybtn="'datasource_edition'"
-            class="ml-10"
+            style="margin-left: 10px"
             type="primary"
             :disabled="
               $disabledByPermission(
@@ -217,14 +217,14 @@
           </ElLink>
           <ElLink
             v-readonlybtn="'datasource_creation'"
-            class="ml-10"
+            style="margin-left: 10px"
             type="primary"
             @click="copy(scope.row)"
             >{{ $t('message.copy') }}
           </ElLink>
           <ElLink
             v-readonlybtn="'datasource_delete'"
-            class="ml-10"
+            style="margin-left: 10px"
             type="primary"
             :disabled="
               $disabledByPermission(

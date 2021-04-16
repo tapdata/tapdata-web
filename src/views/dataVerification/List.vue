@@ -254,7 +254,7 @@
             >{{ $t('dataVerification.executeVerifyTip') }}</ElLink
           >
           <ElLink
-            class="ml-10"
+            style="margin-left: 10px"
             type="primary"
             :disabled="!scope.row.InspectResult"
             @click="
@@ -268,7 +268,7 @@
             >{{ $t('dataVerification.detailTip') }}</ElLink
           >
           <ElLink
-            class="ml-10"
+            style="margin-left: 10px"
             type="primary"
             :disabled="!scope.row.InspectResult"
             @click="toTableHistory(scope.row.id)"
@@ -276,7 +276,7 @@
           >
           <ElLink
             v-readonlybtn="'verify_job_edition'"
-            class="ml-10"
+            style="margin-left: 10px"
             type="primary"
             :disabled="
               $disabledByPermission(
@@ -289,7 +289,7 @@
           >
           <ElLink
             v-readonlybtn="'verify_job_delete'"
-            class="ml-10"
+            style="margin-left: 10px"
             type="primary"
             :disabled="
               $disabledByPermission(

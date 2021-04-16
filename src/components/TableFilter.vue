@@ -1,8 +1,9 @@
 <template>
   <span class="table-filter">
     <i
-      class="iconfont icon-shaixuan2 table-filter__icon ml-10"
+      class="iconfont icon-shaixuan2 table-filter__icon"
       :class="{ 'color-primary': !!value }"
+      style="margin-left: 10px"
       @click="toggole"
     ></i>
     <ElSelect

@@ -198,7 +198,7 @@
             size="mini"
             @click="start()"
           >
-            <i class="mr-5 iconfont icon-yunhang1"></i>
+            <i class="icon-margin-right-5 iconfont icon-yunhang1"></i>
             <span>{{ $t('dataFlow.button.start') }}</span>
           </el-button>
           <el-button
@@ -212,7 +212,7 @@
             size="mini"
             @click="stop()"
           >
-            <i class="mr-5 iconfont icon-zanting2"></i>
+            <i class="icon-margin-right-5 iconfont icon-zanting2"></i>
             <span>{{ $t('dataFlow.button.stop') }}</span>
           </el-button>
           <el-button
@@ -226,7 +226,7 @@
             size="mini"
             @click="reset"
           >
-            <i class="mr-5 iconfont icon-shuaxin3"></i>
+            <i class="icon-margin-right-5 iconfont icon-shuaxin3"></i>
             <span>{{ $t('dataFlow.button.reset') }}</span>
           </el-button>
           <el-button
@@ -240,7 +240,7 @@
             size="mini"
             @click="stop(true)"
           >
-            <i class="mr-5 iconfont icon-zanting3"></i>
+            <i class="icon-margin-right-5 iconfont icon-zanting3"></i>
             <span>{{ $t('dataFlow.button.force_stop') }}</span>
           </el-button>
         </el-button-group>
@@ -260,7 +260,7 @@
           type="primary"
           @click="setEditable(true)"
         >
-          <i class="mr-5 iconfont icon-bianji2"></i>
+          <i class="icon-margin-right-5 iconfont icon-bianji2"></i>
           <span>{{ $t('dataFlow.edit') }}</span>
         </el-button>
       </div>
@@ -1930,7 +1930,7 @@ export default {
   .backIcon:hover {
     background-color: #6dc5e8;
   }
-  .mr-5 {
+  .icon-margin-right-5 {
     margin-right: 5px !important;
   }
   .action-btn-group {

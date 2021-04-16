@@ -3,7 +3,7 @@
     <h2>{{ data.title }}</h2>
     <ElTooltip
       v-if="data.isIput"
-      class="ml-10"
+      style="margin-left: 10px"
       placement="top-start"
       :content="data.tip"
     >
@@ -23,7 +23,7 @@
     <el-radio-group
       v-if="data.isScreeing"
       v-model="num"
-      class="ml-10"
+      style="margin-left: 10px"
       size="mini"
       :class="selectColor"
       @change="changeRadio"
@@ -36,7 +36,7 @@
     <el-radio-group
       v-if="data.isSpeed"
       v-model="speed"
-      class="ml-10"
+      style="margin-left: 10px"
       size="mini"
       :class="selectColor"
       @change="changeSpeed"
@@ -47,7 +47,7 @@
     <el-radio-group
       v-if="data.isIput"
       v-model="time"
-      class="ml-10"
+      style="margin-left: 10px"
       size="mini"
       :class="selectColor"
       @change="changeTime"

@@ -164,21 +164,3 @@ input[type="password"] + .el-input__suffix {
 		}
 	}
 }
-
-.loop(@index) when(@index <= 20   ) {
-	.ml-@{index} {
-		margin-left: @index * 1px;
-	}
-	.mr-@{index} {
-		margin-right: @index * 1px;
-	}
-	.mt-@{index} {
-		margin-top: @index * 1px;
-	}
-	.mb-@{index} {
-		margin-bottom: @index * 1px;
-	}
-	.loop(@index + 1);
-}
-
-.loop(1);

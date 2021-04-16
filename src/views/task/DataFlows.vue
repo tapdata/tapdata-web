@@ -392,7 +392,7 @@
               {{ $t('dataFlow.status.force_stopping') }}
             </ElLink>
             <ElLink
-              class="ml-3"
+              style="margin-left: 3px"
               type="primary"
               @click="
                 handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate)
@@ -402,7 +402,7 @@
             </ElLink>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
-              class="ml-3"
+              style="margin-left: 3px"
               type="primary"
               :disabled="
                 $disabledByPermission(
@@ -419,7 +419,7 @@
             <ElLink
               v-if="!$window.getSettingByKey('HIDE_SCHEDULE')"
               v-readonlybtn="'SYNC_job_edition'"
-              class="ml-3"
+              style="margin-left: 3px"
               type="primary"
               :disabled="
                 $disabledByPermission(
