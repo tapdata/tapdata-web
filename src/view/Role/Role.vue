@@ -341,8 +341,8 @@ let moduleMapping = [
 	},
 	{
 		name: 'API_data_explorer',
-		children: [
-			{ name: 'API_data_explorer', allName: 'API_data_explorer_all_data' },
+		functional: [
+			{ name: 'API_data_explorer' },
 			{ name: 'API_data_creation' },
 			{ name: 'API_data_explorer_deleting' },
 			{ name: 'API_data_explorer_export' },
@@ -731,7 +731,6 @@ export default {
 			let checkedCount = children.filter(el => {
 				return el.checked;
 			});
-			// debugger;
 
 			switch (type) {
 				case 'children':
@@ -1017,7 +1016,7 @@ export default {
 					.e-col {
 						padding-top: 0 !important;
 						line-height: 34px;
-						height: 40px;
+						min-height: 40px;
 
 						.checkbox-radio {
 							vertical-align: middle;
