@@ -504,7 +504,10 @@ export default {
           cancelButtonText: this.$t('message.cancel'),
           type: 'warning'
         }
-      ).then(() => {
+      ).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
         this.$api('Inspects')
           .delete(id)
           .then(() => {

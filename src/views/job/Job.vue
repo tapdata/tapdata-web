@@ -542,7 +542,10 @@ export default {
             confirmButtonText: this.$t('dataFlow.leave'),
             closeOnClickModal: false
           }
-        ).then(() => {
+        ).then((resFlag) => {
+          if (!resFlag) {
+            return
+          }
           this.$router.push({
             path: '/dataFlows?mapping=' + mapping
           })

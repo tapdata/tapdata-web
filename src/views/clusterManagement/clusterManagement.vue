@@ -550,7 +550,10 @@ export default {
         this.$confirm(this.$t('cluster.deleteOrNot') + '?', {
           confirmButtonText: this.$t('cluster.confirm'),
           cancelButtonText: this.$t('cluster.cancel')
-        }).then(() => {
+        }).then((resFlag) => {
+          if (!resFlag) {
+            return
+          }
           cluster
             .removeMonitor(params)
             .then(() => {
@@ -588,7 +591,10 @@ export default {
             cancelButtonText: this.$t('cluster.cancel'),
             closeOnClickModal: false
           }
-        ).then(() => {
+        ).then((resFlag) => {
+          if (!resFlag) {
+            return
+          }
           this.operationFn(data)
         })
       }
@@ -619,7 +625,10 @@ export default {
             cancelButtonText: this.$t('cluster.cancel'),
             closeOnClickModal: false
           }
-        ).then(() => {
+        ).then((resFlag) => {
+          if (!resFlag) {
+            return
+          }
           this.operationFn(data)
         })
       }
@@ -649,7 +658,10 @@ export default {
             cancelButtonText: this.$t('cluster.cancel'),
             closeOnClickModal: false
           }
-        ).then(() => {
+        ).then((resFlag) => {
+          if (!resFlag) {
+            return
+          }
           this.operationFn(data)
         })
       }

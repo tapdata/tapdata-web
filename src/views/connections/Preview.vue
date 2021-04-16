@@ -539,9 +539,13 @@ export default {
         cancelButtonText: config.cancelButtonText,
         type: 'warning',
         closeOnClickModal: false
+      }).then((resFlag) => {
+        if (resFlag) {
+          callback()
+        } else {
+          catchCallback()
+        }
       })
-        .then(callback)
-        .catch(catchCallback)
     },
     reloadApi(type) {
       this.clearInterval()

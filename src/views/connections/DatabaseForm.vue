@@ -885,7 +885,10 @@ export default {
         confirmButtonText: '放弃',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
+      }).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
         this.$router.push('/connections')
       })
     },

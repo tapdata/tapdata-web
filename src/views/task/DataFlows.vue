@@ -1046,7 +1046,10 @@ export default {
             confirmButtonText: this.$t('dataFlow.continueEditing'),
             type: 'warning'
           }
-        ).then(() => {
+        ).then((resFlag) => {
+          if (!resFlag) {
+            return
+          }
           if (window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')) {
             this.$router.push({
               path: '/createTask/' + id + '/edit'
@@ -1203,7 +1206,10 @@ export default {
       }
       this.$confirm(message, title, {
         type: 'warning'
-      }).then(() => {
+      }).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
         this.changeStatus(ids, { status: 'stopping' })
       })
     },
@@ -1215,7 +1221,10 @@ export default {
       )
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
-      }).then(() => {
+      }).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
         this.changeStatus(ids, { status: 'force stopping' })
       })
     },
@@ -1228,7 +1237,10 @@ export default {
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
-      }).then(() => {
+      }).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
         dataFlows.deleteAll(where).then((res) => {
           if (res.data && res.data.success) {
             this.table.fetch()
@@ -1247,7 +1259,10 @@ export default {
       )
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
-      }).then(() => {
+      }).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
         this.restLoading = true
         dataFlows
           .resetAll(ids)

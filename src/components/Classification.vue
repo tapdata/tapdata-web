@@ -419,7 +419,10 @@ export default {
         cancelButtonText: this.$t('message.cancel'),
         type: 'warning',
         closeOnClickModal: false
-      }).then(() => {
+      }).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
         if (that.types[0] === 'user') {
           let params = {
             id: id,

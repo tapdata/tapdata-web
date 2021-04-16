@@ -586,7 +586,10 @@ export default {
       ])
       this.$confirm(msg, this.$t('connection.deteleDatabaseTittle'), {
         type: 'warning'
-      }).then(() => {
+      }).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
         this.$api('connections')
           .deleteConnection(data.id, data.name)
           .then((res) => {
@@ -624,9 +627,13 @@ export default {
         cancelButtonText: config.cancelButtonText,
         type: 'warning',
         closeOnClickModal: false
+      }).then((resFlag) => {
+        if (resFlag) {
+          callback()
+        } else {
+          catchCallback()
+        }
       })
-        .then(callback)
-        .catch(catchCallback)
     },
     //表格数据格式化
     formatterConnectionType(row) {

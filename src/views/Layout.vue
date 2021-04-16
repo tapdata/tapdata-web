@@ -407,7 +407,10 @@ export default {
       this.$confirm(
         this.$t('message.comfirm') + this.$t('app.menu.delFavMenu'),
         this.$t('app.menu.delFavMenu')
-      ).then(async () => {
+      ).then(async (resFlag) => {
+        if (!resFlag) {
+          return
+        }
         this.favMenus.splice(idx, 1)
         // this.$cookie.get('user_id'),
         let result = await this.$api('users').updateById({
@@ -501,7 +504,10 @@ export default {
           break
         case 'signOut':
           this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut')).then(
-            () => {
+            (resFlag) => {
+              if (!resFlag) {
+                return
+              }
               this.signOut()
             }
           )

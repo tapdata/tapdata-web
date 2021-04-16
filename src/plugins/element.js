@@ -192,7 +192,22 @@ class DoneMessage {
 export const message = new DoneMessage()
 
 Vue.prototype.$loading = Loading.service
-Vue.prototype.$confirm = MessageBox.confirm
+
+// 封装确认弹窗
+Vue.prototype.$confirm = (param1, param2, param3) => {
+  return new Promise((resolve, reject) => {
+    MessageBox.confirm(param1, param2, param3)
+      .then(() => {
+        resolve(true)
+      })
+      .catch(() => {
+        reject(false)
+      })
+  }).catch(() => {
+    // TODO error
+  })
+}
+
 Vue.prototype.$prompt = MessageBox.prompt
 Vue.prototype.$alert = MessageBox.alert
 Vue.prototype.$message = new DoneMessage()

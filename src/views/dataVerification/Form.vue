@@ -978,7 +978,10 @@ export default {
         {
           type: 'warning'
         }
-      ).then(() => {
+      ).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
         this.form.tasks[index].webScript = ''
       })
     },
@@ -1003,7 +1006,10 @@ export default {
         {
           type: 'warning'
         }
-      ).then(() => {
+      ).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
         this.$router.push('/dataVerification')
       })
     },

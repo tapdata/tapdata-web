@@ -559,26 +559,26 @@ export default {
           type: 'warning',
           closeOnClickModal: false
         }
-      )
-        .then(() => {
-          let data = {
-            validationSettings: []
-          }
-          this.loading = true
-          dataFlows.patchId(this.id, data).then((res) => {
-            if (res.statusText === 'OK' || res.status === 200) {
-              this.loading = false
-              this.getData()
-              this.$message.success(this.$t('message.deleteOK'))
-            } else {
-              this.loading = false
-              this.$message.info(this.$t('message.deleteFail'))
-            }
-          })
-        })
-        .catch(() => {
+      ).then((resFlag) => {
+        if (!resFlag) {
           this.getData()
+          return
+        }
+        let data = {
+          validationSettings: []
+        }
+        this.loading = true
+        dataFlows.patchId(this.id, data).then((res) => {
+          if (res.statusText === 'OK' || res.status === 200) {
+            this.loading = false
+            this.getData()
+            this.$message.success(this.$t('message.deleteOK'))
+          } else {
+            this.loading = false
+            this.$message.info(this.$t('message.deleteFail'))
+          }
         })
+      })
     },
     handleLoading() {
       if (this.tableData.length === 0) {
