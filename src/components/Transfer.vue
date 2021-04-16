@@ -1,12 +1,12 @@
 <template>
   <section class="tapdata-transfer-wrap">
     <div class="box-btn">
-      <el-button class="e-button" size="mini" @click="dialogVisible = true">{{
-        $t('dataFlow.changeName')
-      }}</el-button>
-      <el-button size="mini" class="e-button" @click="handleReduction">{{
-        $t('editor.cell.link.reduction')
-      }}</el-button>
+      <el-button class="e-button" size="mini" @click="dialogVisible = true"
+        >{{ $t('dataFlow.changeName') }}
+      </el-button>
+      <el-button size="mini" class="e-button" @click="handleReduction"
+        >{{ $t('editor.cell.link.reduction') }}
+      </el-button>
     </div>
     <el-transfer
       filterable
@@ -79,12 +79,12 @@
         }}
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel">{{
-          $t('dataVerify.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="changeName">{{
-          $t('dataVerify.confirm')
-        }}</el-button>
+        <el-button @click="handleCancel"
+          >{{ $t('dataVerify.cancel') }}
+        </el-button>
+        <el-button type="primary" @click="changeName"
+          >{{ $t('dataVerify.confirm') }}
+        </el-button>
       </div>
     </el-dialog>
   </section>
@@ -183,7 +183,10 @@ export default {
     },
     // 穿梭框搜索
     filterMethod(query, item) {
-      if (!!~item.label.indexOf(query) || !!~item.label.toUpperCase().indexOf(query.toUpperCase())) {
+      if (
+        !!~item.label.indexOf(query) ||
+        !!~item.label.toUpperCase().indexOf(query.toUpperCase())
+      ) {
         return true
       }
       //return item.label.indexOf(query) > -1
@@ -265,6 +268,7 @@ export default {
 .tapdata-transfer-wrap {
   display: flex;
   flex-direction: column;
+
   .box-btn {
     display: flex;
     justify-content: flex-end;
@@ -272,6 +276,7 @@ export default {
     margin-bottom: 10px;
     padding: 4px 10px;
   }
+
   .tip {
     color: #999;
     font-size: 12px;
@@ -282,6 +287,7 @@ export default {
 <style lang="less">
 .tapdata-transfer-wrap {
   height: 100%;
+
   .el-transfer-panel
     .el-transfer-panel__header
     .el-checkbox
@@ -290,13 +296,17 @@ export default {
     font-size: 12px;
     padding-right: 6px;
   }
+
   .el-transfer {
     height: 100%;
+
     .el-transfer-panel {
       width: 300px;
+
       .el-transfer-panel__body {
         .box {
           display: inline-block;
+
           .nameStyle {
             display: none;
             color: #48b6e2;
@@ -304,6 +314,7 @@ export default {
             font-size: 12px;
             padding-left: 10px;
           }
+
           .text {
             width: 230px;
             display: inline-block;
@@ -312,58 +323,72 @@ export default {
           }
         }
       }
+
       .el-transfer-panel__header {
         height: 28px;
         line-height: 28px;
         background: #f5f5f5;
+
         .el-checkbox {
           height: 28px;
           line-height: 28px;
         }
       }
+
       .el-transfer-panel__filter {
         margin: 10px;
+
         .el-input__inner {
           border-radius: 3px;
         }
       }
+
       .el-transfer__button {
         border-radius: 3px;
       }
+
       .el-transfer__button.is-disabled,
       .el-transfer__button.is-disabled:hover {
         background-color: #f5f5f5;
       }
     }
+
     .el-transfer-panel:nth-child(3) {
       .el-transfer-panel__body {
         .el-transfer-panel__item .el-checkbox__label:hover {
           .box .nameStyle {
             display: block;
           }
+
           .active {
             color: rgb(253, 176, 28);
           }
         }
       }
     }
+
     .el-transfer__buttons {
       padding: 0 20px;
     }
   }
+
   .el-transfer-panel__item:hover {
     color: #666;
   }
+
   .transfer {
     height: calc(100% - 32px);
   }
+
   .el-transfer,
   .el-transfer-panel {
     height: 100%;
   }
+
   .el-transfer-panel__body {
     height: calc(100% - 38px);
   }
+
   .el-checkbox-group {
     height: calc(100% - 32px);
     padding-bottom: 5px;
@@ -371,11 +396,13 @@ export default {
     overflow-x: hidden;
     overflow-y: auto;
   }
+
   .el-transfer-panel__item {
     width: 100%;
     margin-right: 10px;
     box-sizing: border-box;
   }
+
   .el-transfer-panel__list.is-filterable {
     height: calc(100% - 38px);
   }

@@ -271,18 +271,20 @@
       >
         <template slot-scope="scope">
           <div style="display: flex; align-items: center">
-            <img
-              v-if="statusMap[scope.row.status].icon == 'loading'"
-              style="width: 26px; vertical-align: middle"
-              :src="$window._TAPDATA_OPTIONS_.loadingImg"
-            />
-            <i
-              v-else
-              :class="
-                'dataflow-table__icon iconfont ' +
-                statusMap[scope.row.status].icon
-              "
-            ></i>
+            <template v-if="statusMap[scope.row.status]">
+              <img
+                v-if="statusMap[scope.row.status].icon == 'loading'"
+                style="width: 26px; vertical-align: middle"
+                :src="$window._TAPDATA_OPTIONS_.loadingImg"
+              />
+              <i
+                v-else
+                :class="
+                  'dataflow-table__icon iconfont ' +
+                  statusMap[scope.row.status].icon
+                "
+              ></i>
+            </template>
             <span>{{ scope.row.statusLabel }}</span>
             <span
               style="color: #999"

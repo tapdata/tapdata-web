@@ -101,19 +101,19 @@ export const options = {
   imageIcons: [
     {
       value: 'static/editor/image-icon1.svg',
-      content: '<img height="42px" src="editor/image-icon1.svg"/>'
+      content: '<img height="42px" src="static/editor/image-icon1.svg"/>'
     },
     {
       value: 'static/editor/image-icon2.svg',
-      content: '<img height="80px" src="editor/image-icon2.svg"/>'
+      content: '<img height="80px" src="static/editor/image-icon2.svg"/>'
     },
     {
       value: 'static/editor/image-icon3.svg',
-      content: '<img height="80px" src="editor/image-icon3.svg"/>'
+      content: '<img height="80px" src="static/editor/image-icon3.svg"/>'
     },
     {
       value: 'static/editor/image-icon4.svg',
-      content: '<img height="80px" src="editor/image-icon4.svg"/>'
+      content: '<img height="80px" src="static/editor/image-icon4.svg"/>'
     }
   ],
 
@@ -121,12 +121,12 @@ export const options = {
     {
       value: 'static/editor/member-male.png',
       content:
-        '<img height="50px" src="editor/member-male.png" style="margin: 5px 0 0 2px;"/>'
+        '<img height="50px" src="static/editor/member-male.png" style="margin: 5px 0 0 2px;"/>'
     },
     {
       value: 'static/editor/member-female.png',
       content:
-        '<img height="50px" src="editor/member-female.png" style="margin: 5px 0 0 2px;"/>'
+        '<img height="50px" src="static/editor/member-female.png" style="margin: 5px 0 0 2px;"/>'
     }
   ],
 

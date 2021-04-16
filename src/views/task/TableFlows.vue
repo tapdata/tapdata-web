@@ -173,7 +173,7 @@
                   <img
                     v-if="scope.row.status == 'running'"
                     style="width: 12px; height: 15px; vertical-align: middle"
-                    src="editor/running-blue.svg"
+                    src="static/editor/running-blue.svg"
                   />
                   <span
                     class="primary-color"

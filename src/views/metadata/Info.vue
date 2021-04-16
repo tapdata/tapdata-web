@@ -13,7 +13,7 @@
     <el-container class="metadata-content">
       <el-header class="matadata-head">
         <div class="img-box">
-          <img src="editor/table.svg" />
+          <img src="static/editor/table.svg" />
         </div>
         <div class="table-info">
           <h3>
