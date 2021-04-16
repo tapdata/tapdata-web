@@ -347,20 +347,6 @@
             >
               <span>
                 <ElLink
-                  v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
-                  v-readonlybtn="'SYNC_job_operation'"
-                  type="primary"
-                  :disabled="
-                    !statusBtMap['run'][scope.row.status] ||
-                    (scope.row.status === 'draft' &&
-                      scope.row.checked === false)
-                  "
-                  @click="run([scope.row.id], scope.row)"
-                >
-                  {{ $t('dataFlow.run') }}
-                </ElLink>
-                <ElLink
-                  v-else
                   v-readonlybtn="'SYNC_job_operation'"
                   type="primary"
                   :disabled="

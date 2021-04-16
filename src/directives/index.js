@@ -47,6 +47,12 @@ export function hasPermissionByCode(code) {
 }
 
 export function permissionBtnDisable(code, id) {
+  if (
+    code === 'SYNC_job_operation_all_data' &&
+    window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+  ) {
+    return false
+  }
   let falg = false
   let cookie = window.VueCookie
   let user_id = cookie.get('user_id')
