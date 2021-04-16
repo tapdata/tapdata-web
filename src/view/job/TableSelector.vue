@@ -150,6 +150,7 @@ export default {
 							like: self.filterText,
 							options: 'i'
 						},
+						'source.user_id': this.$cookie.get('user_id'),
 						is_deleted: false
 					},
 					fields: {

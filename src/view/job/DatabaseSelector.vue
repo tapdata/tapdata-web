@@ -90,6 +90,7 @@ export default {
 							'sybase ase'
 						]
 					},
+					'source.user_id': this.$cookie.get('user_id'),
 					is_deleted: false
 				},
 				order: 'original_name ASC',
