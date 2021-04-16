@@ -787,6 +787,9 @@ export default class Graph extends Component {
           self.editor.getRightTabPanel().select(monitor)
         }, 20)
       }
+      if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
+        $('.monitorTab').hide()
+      }
     }
     this.createInspector(cell)
     if (cell.isElement()) {
