@@ -1083,7 +1083,18 @@ export default class Graph extends Component {
 		toolbar.render();
 	}
 
+	/**
+	 * 事件stop判断
+	 * @param element
+	 * @returns {boolean}
+	 */
+	stopKeyboardCallback(element) {
+		if (element === null || element === document || element === document.body) return false;
+		return !this.el.contains(element);
+	}
+
 	initKeyboardShortcuts() {
+		const self = this;
 		this.keyboard = new joint.ui.Keyboard();
 		let isMac = /macintosh|mac os x/i.test(navigator.userAgent);
 		let keyboardEvents = [
@@ -1097,7 +1108,9 @@ export default class Graph extends Component {
 			},
 			{
 				keystroke: isMac ? 'command+c' : 'ctrl+c',
-				on: function() {
+				on: function(evt) {
+					// 判断是否停止复制
+					if (self.stopKeyboardCallback(evt.target)) return;
 					// Copy all selected elements and their associated links.
 					try {
 						if (this.selection.collection && this.selection.collection.models) {
