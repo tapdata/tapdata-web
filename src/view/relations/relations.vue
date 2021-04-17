@@ -1,4 +1,4 @@
-.<template>
+<template>
 	<div class="relation-container">
 		<div class="relation-header">
 			<div class="tool-bar">
@@ -35,7 +35,7 @@
 			<pre class="align-center pre"> {{ refreshResult.stack }}</pre>
 		</el-dialog>
 		<Info
-			ref="Info"
+			ref="info"
 			:model="model"
 			v-on:previewVisible="handlePreviewVisible"
 			v-on:handleFields="changeLevel"

@@ -5,175 +5,195 @@
 				><i class="iconfont icon-right-circle back-btn-icon"></i
 			></el-button>
 		</div>
-		<div v-if="model.level === 'table'">
-			<header class="header">
-				<span>{{ tableName }}</span>
-				<div class="connection" @click="goConnection">{{ connections.name }}</div>
-			</header>
-			<el-tabs v-model="activeName" type="card" class="lineage-info-tab">
-				<el-tab-pane :label="$t('relations.field')" name="first">
-					<div class="relation-btn-wrap">
-						<el-button class="relation-btn" type="text" @click="handleFields">{{
-							$t('dataMap.fieldLevel')
-						}}</el-button>
-					</div>
-					<el-input
-						class="customize-field"
-						size="mini"
-						:placeholder="$t('relations.customFields')"
-						v-model="customFields"
-					></el-input>
-					<div class="table-wrap">
-						<el-table
-							class="field-table"
-							ref="multipleTable"
-							:data="fields"
-							@selection-change="handleSelectionChange"
-						>
-							<el-table-column type="selection"></el-table-column>
-							<el-table-column prop="name" :label="$t('relations.label')">
-								<template slot-scope="scope">
-									<div class="database-img">
-										<img :src="getImgByType(scope.row.java_type)" />
-									</div>
-									<div class="database-text">
-										{{ scope.row.field_name }}
-									</div>
-								</template>
-							</el-table-column>
-						</el-table>
-					</div>
-				</el-tab-pane>
-				<el-tab-pane :label="$t('relations.attributes')" name="second">
-					<ul>
-						<li v-for="(value, key) in metaData" :key="key">
-							<span class="label">{{ metaDataFields[key] }}</span>
-							<span v-if="['createTime', 'last_updated'].includes(key)">{{
-								$moment(value).format('YYYY-MM-DD HH:mm:ss')
-							}}</span>
-							<span v-else>{{ value }}</span>
-						</li>
-						<li v-for="(value, key) in connections" :key="key">
-							<span class="label">{{ connectionsFields[key] }}</span>
-							<span>{{ value }}</span>
-						</li>
-					</ul>
-				</el-tab-pane>
-			</el-tabs>
-		</div>
-		<div v-else>
-			<header class="header">
-				<span class="text">{{ model.sourceName }} -> {{ model.targetName }}</span>
-			</header>
-			<el-menu :default-active="1" class="el-menu-vertical-lineage" :default-openeds="defaultOpeneds">
-				<template v-for="(item, index1) in model.dataFlows">
-					<el-submenu :key="item.id" :index="index1 + 1" class="parentMenu">
-						<template slot="title">
-							<span slot="title">
-								<span>{{ $t('relations.task') }}[ {{ item.name }} ]</span>
-								<span class="keywords" @click="goJob(item.id)">{{ $t('relations.viewTaskInfo') }}</span>
-							</span>
-						</template>
-						<template v-for="(processor, index2) in item.processors">
-							<el-submenu
-								v-if="processor.operations || processor.aggregations"
-								:key="processor.id"
-								:index="`${index1 + 1}-${index2 + 1}`"
+		<div class="lineage-info-content">
+			<template v-if="model.level === 'table'">
+				<header class="header">
+					<span>{{ tableName }}</span>
+					<div class="connection" @click="goConnection">{{ connections.name }}</div>
+				</header>
+				<el-tabs v-model="activeName" type="card" class="lineage-info-tab">
+					<el-tab-pane :label="$t('relations.field')" name="first">
+						<div class="relation-btn-wrap">
+							<el-button class="relation-btn" type="text" @click="handleFields">{{
+								$t('dataMap.fieldLevel')
+							}}</el-button>
+						</div>
+						<el-input
+							class="customize-field"
+							size="mini"
+							:placeholder="$t('relations.customFields')"
+							v-model="customFields"
+						></el-input>
+						<div class="table-wrap">
+							<el-table
+								class="field-table"
+								ref="multipleTable"
+								:data="fields"
+								@selection-change="handleSelectionChange"
 							>
-								<template slot="title">
-									<span slot="title">{{
-										`${processorMap[processor.type]} [${processor.name}]`
+								<el-table-column type="selection"></el-table-column>
+								<el-table-column prop="name" :label="$t('relations.label')">
+									<template slot-scope="scope">
+										<div class="database-img">
+											<img :src="getImgByType(scope.row.java_type)" />
+										</div>
+										<div class="database-text">
+											{{ scope.row.field_name }}
+										</div>
+									</template>
+								</el-table-column>
+							</el-table>
+						</div>
+					</el-tab-pane>
+					<el-tab-pane :label="$t('relations.attributes')" name="second">
+						<ul>
+							<li v-for="(value, key) in metaData" :key="key">
+								<span class="label">{{ metaDataFields[key] }}</span>
+								<span v-if="['createTime', 'last_updated'].includes(key)">{{
+									$moment(value).format('YYYY-MM-DD HH:mm:ss')
+								}}</span>
+								<span v-else>{{ value }}</span>
+							</li>
+							<li v-for="(value, key) in connections" :key="`ii_${key}`">
+								<span class="label">{{ connectionsFields[key] }}</span>
+								<span>{{ value }}</span>
+							</li>
+						</ul>
+					</el-tab-pane>
+				</el-tabs>
+			</template>
+			<template v-else>
+				<header class="header">
+					<span class="text">{{ model.sourceName }} -> {{ model.targetName }}</span>
+				</header>
+				<el-menu class="el-menu-vertical-lineage" :default-openeds="defaultOpeneds">
+					<template v-for="(item, index1) in model.dataFlows">
+						<el-submenu :key="item.id" :index="`${index1 + 1}`" class="parentMenu">
+							<template slot="title">
+								<span slot="title">
+									<span>{{ $t('relations.task') }}[ {{ item.name }} ]</span>
+									<span class="keywords" @click="goJob(item.id)">{{
+										$t('relations.viewTaskInfo')
 									}}</span>
-								</template>
-								<div v-if="processor.type === 'field_processor'">
-									<template v-for="(op, index3) in processor.operations">
-										<el-menu-item :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`" :key="op.id">
-											<span v-if="['CREATE'].includes(op.op)">
-												<span class="label">{{ $t('relations.add') }}</span>
-												<span class="value"> : {{ op.field }}</span>
-											</span>
-											<span v-if="['REMOVE'].includes(op.op)">
-												<span class="label">{{ $t('relations.delete') }}</span>
-												<span class="value"> : {{ op.field }}</span>
-											</span>
-											<span v-if="['RENAME'].includes(op.op)">
-												<span class="label">{{ $t('relations.rename') }}</span>
-												<span class="value"> : {{ op.field }} -> {{ op.operand }}</span>
-											</span>
-											<span v-if="['CONVERT'].includes(op.op)">
-												<span class="label">{{ $t('relations.changeType') }}</span>
-												<span class="value">
-													: {{ op.originalDataType }} -> {{ op.operand }}</span
-												>
-											</span>
-											<span v-if="['JS'].includes(op.op)">
-												<span class="label">{{ $t('relations.script') }}</span>
-												<span class="keywords" @click="handleShowScript(op.script)">
-													: {{ $t('relations.fieldScript') }}</span
-												>
-											</span>
-										</el-menu-item>
+								</span>
+							</template>
+							<template v-for="(processor, index2) in item.processors">
+								<el-submenu
+									v-if="processor.operations || processor.aggregations"
+									:key="processor.id"
+									:index="`${index1 + 1}-${index2 + 1}`"
+								>
+									<template slot="title">
+										<span slot="title">{{
+											`${processorMap[processor.type]} [${processor.name}]`
+										}}</span>
 									</template>
+									<div v-if="processor.type === 'field_processor'">
+										<template v-for="(op, index3) in processor.operations">
+											<el-menu-item
+												:index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`"
+												:key="op.id"
+											>
+												<span v-if="['CREATE'].includes(op.op)">
+													<span class="label">{{ $t('relations.add') }}</span>
+													<span class="value"> : {{ op.field }}</span>
+												</span>
+												<span v-if="['REMOVE'].includes(op.op)">
+													<span class="label">{{ $t('relations.delete') }}</span>
+													<span class="value"> : {{ op.field }}</span>
+												</span>
+												<span v-if="['RENAME'].includes(op.op)">
+													<span class="label">{{ $t('relations.rename') }}</span>
+													<span class="value"> : {{ op.field }} -> {{ op.operand }}</span>
+												</span>
+												<span v-if="['CONVERT'].includes(op.op)">
+													<span class="label">{{ $t('relations.changeType') }}</span>
+													<span class="value">
+														: {{ op.originalDataType }} -> {{ op.operand }}</span
+													>
+												</span>
+												<span v-if="['JS'].includes(op.op)">
+													<span class="label">{{ $t('relations.script') }}</span>
+													<span class="keywords" @click="handleShowScript(op.script)">
+														: {{ $t('relations.fieldScript') }}</span
+													>
+												</span>
+											</el-menu-item>
+										</template>
+									</div>
+									<div v-if="processor.type === 'aggregation_processor'">
+										<template v-for="(op, index3) in processor.aggregations">
+											<el-menu-item
+												:key="op.id"
+												:index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`"
+											>
+												<span v-if="['COUNT'].includes(op.aggFunction)">
+													<span class="label">{{ $t('relations.count') }}</span>
+													<span
+														v-if="op.groupByExpression && op.groupByExpression.length > 0"
+													>
+														, {{ $t('relations.group')
+														}}{{ op.groupByExpression.join(',') }}</span
+													>
+												</span>
+												<span v-if="['SUM'].includes(op.aggFunction)">
+													<span class="label">{{ $t('relations.sum') }}</span>
+													<span
+														v-if="op.groupByExpression && op.groupByExpression.length > 0"
+													>
+														, {{ $t('relations.group')
+														}}{{ op.groupByExpression.join(',') }}</span
+													>
+												</span>
+												<span v-if="['AVG'].includes(op.aggFunction)">
+													<span class="label">{{ $t('relations.average') }}</span>
+													<span
+														v-if="op.groupByExpression && op.groupByExpression.length > 0"
+													>
+														, {{ $t('relations.group')
+														}}{{ op.groupByExpression.join(',') }}</span
+													>
+												</span>
+												<span v-if="['MAX'].includes(op.aggFunction)">
+													<span class="label">{{ $t('relations.MAX') }}</span>
+													<span
+														v-if="op.groupByExpression && op.groupByExpression.length > 0"
+													>
+														, {{ $t('relations.group')
+														}}{{ op.groupByExpression.join(',') }}</span
+													>
+												</span>
+												<span v-if="['MIN'].includes(op.aggFunction)">
+													<span class="label">{{ $t('relations.min') }}</span>
+													<span
+														v-if="op.groupByExpression && op.groupByExpression.length > 0"
+													>
+														, {{ $t('relations.group')
+														}}{{ op.groupByExpression.join(',') }}</span
+													>
+												</span>
+											</el-menu-item>
+										</template>
+									</div>
+								</el-submenu>
+								<div v-if="processor.type === 'js_processor'" :key="processor.id">
+									<el-menu-item :index="`${index1 + 1}-${index2 + 1}`">
+										<span
+											v-if="processor.script"
+											class="keywords"
+											@click="handleShowScript(processor.script)"
+											>{{ $t('relations.script') }}[function process(record){...}]</span
+										>
+									</el-menu-item>
 								</div>
-								<div v-if="processor.type === 'aggregation_processor'">
-									<template v-for="(op, index3) in processor.aggregations">
-										<el-menu-item :key="op.id" :index="`${index1 + 1}-${index2 + 1}-${index3 + 1}`">
-											<span v-if="['COUNT'].includes(op.aggFunction)">
-												<span class="label">{{ $t('relations.count') }}</span>
-												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-													, {{ $t('relations.group')
-													}}{{ op.groupByExpression.join(',') }}</span
-												>
-											</span>
-											<span v-if="['SUM'].includes(op.aggFunction)">
-												<span class="label">{{ $t('relations.sum') }}</span>
-												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-													, {{ $t('relations.group')
-													}}{{ op.groupByExpression.join(',') }}</span
-												>
-											</span>
-											<span v-if="['AVG'].includes(op.aggFunction)">
-												<span class="label">{{ $t('relations.average') }}</span>
-												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-													, {{ $t('relations.group')
-													}}{{ op.groupByExpression.join(',') }}</span
-												>
-											</span>
-											<span v-if="['MAX'].includes(op.aggFunction)">
-												<span class="label">{{ $t('relations.MAX') }}</span>
-												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-													, {{ $t('relations.group')
-													}}{{ op.groupByExpression.join(',') }}</span
-												>
-											</span>
-											<span v-if="['MIN'].includes(op.aggFunction)">
-												<span class="label">{{ $t('relations.min') }}</span>
-												<span v-if="op.groupByExpression && op.groupByExpression.length > 0">
-													, {{ $t('relations.group')
-													}}{{ op.groupByExpression.join(',') }}</span
-												>
-											</span>
-										</el-menu-item>
-									</template>
-								</div>
-							</el-submenu>
-							<div v-if="processor.type === 'js_processor'" :key="processor.id">
-								<el-menu-item :index="`${index1 + 1}-${index2 + 1}`">
-									<span
-										v-if="processor.script"
-										class="keywords"
-										@click="handleShowScript(processor.script)"
-										>{{ $t('relations.script') }}[function process(record){...}]</span
-									>
-								</el-menu-item>
-							</div>
-						</template>
-					</el-submenu>
-				</template>
-			</el-menu>
+							</template>
+						</el-submenu>
+					</template>
+				</el-menu>
+			</template>
 		</div>
 		<el-dialog :visible.sync="showScriptVisible" width="60%" :before-close="handleCloseScript">
-			<JsEditor :code.sync="showScript" ref="jsEditor" :width.sync="width" v-if="showScriptVisible"></JsEditor>
+			<JsEditor :code.sync="showScript" ref="jsEditor" width="100%" v-if="showScriptVisible"></JsEditor>
 		</el-dialog>
 	</div>
 </template>
@@ -200,7 +220,7 @@ export default {
 			customFields: '',
 			showScript: '',
 			showScriptVisible: false,
-			defaultOpeneds: ['1-1-1'],
+			defaultOpeneds: [],
 			metaDataFields: {
 				name: this.$t('relations.originalName'),
 				qualified_name: this.$t('relations.qualified_name'),
@@ -270,7 +290,7 @@ export default {
 		//清空数据
 		clear() {
 			this.customFields = '';
-			this.$refs.multipleTable.clearSelection();
+			this.$refs.multipleTable && this.$refs.multipleTable.clearSelection();
 		},
 		getMetaData() {
 			let params = {
@@ -359,6 +379,23 @@ export default {
 		},
 		goConnection() {
 			this.$router.push('/connections');
+		},
+
+		// 打开所有菜单
+		handleOpenAllFlows() {
+			this.$nextTick(() => {
+				const { dataFlows } = this.model;
+				let opened = [];
+				dataFlows.forEach((item, i) => {
+					if (item.processors) {
+						opened.push(`${i + 1}`);
+						item.processors.forEach((processor, ii) => {
+							(processor.operations || processor.aggregations) && opened.push(`${i + 1}-${ii + 1}`);
+						});
+					}
+				});
+				this.defaultOpeneds = opened;
+			});
 		}
 	}
 };
@@ -555,6 +592,11 @@ export default {
 		/*.parentMenu .el-submenu__title :hover {*/
 		/*	background-color: #f5f5f5*/
 		/*}*/
+	}
+
+	.lineage-info-content {
+		overflow-y: auto;
+		height: calc(100% - 32px);
 	}
 }
 </style>

@@ -48,17 +48,17 @@ export default function() {
 			args: { padding: 30 }
 		},
 		/*restrictTranslate: function(elementView) {
-			let parentId = elementView.model.get('parent');
-			let parentCell = parentId && this.model.getCell(parentId);
-			//let parentCellType = parentCell && parentCell.get('type');
-			let parentBBox = parentCell && parentCell.getBBox();
-			//if(parentCellType === 'dataMap.Lane'){
-			parentBBox = parentBBox || {};
-			parentBBox.y += 50;
-			parentBBox.height -= 50;
-			//}
-			return parentCell && parentBBox;
-		},*/
+            let parentId = elementView.model.get('parent');
+            let parentCell = parentId && this.model.getCell(parentId);
+            //let parentCellType = parentCell && parentCell.get('type');
+            let parentBBox = parentCell && parentCell.getBBox();
+            //if(parentCellType === 'dataMap.Lane'){
+            parentBBox = parentBBox || {};
+            parentBBox.y += 50;
+            parentBBox.height -= 50;
+            //}
+            return parentCell && parentBBox;
+        },*/
 		/*embeddingMode: false,*/
 		// frontParentOnly: false,
 		defaultAnchor: { name: 'center' },
@@ -67,11 +67,11 @@ export default function() {
 		//sorting: joint.dia.Paper.sorting.APPROX
 
 		/*validateConnection: function(sv, sm, tv, tm, end) {
-			if (sv === tv) return false;
-			if (sv.model.isLink() || tv.model.isLink()) return false;
-			if (end === 'target') return tv.model.getItemSide(tv.findAttribute('item-id', tm)) !== 'right';
-			return sv.model.getItemSide(sv.findAttribute('item-id', sm)) !== 'left';
-		},*/
+            if (sv === tv) return false;
+            if (sv.model.isLink() || tv.model.isLink()) return false;
+            if (end === 'target') return tv.model.getItemSide(tv.findAttribute('item-id', tm)) !== 'right';
+            return sv.model.getItemSide(sv.findAttribute('item-id', sm)) !== 'left';
+        },*/
 		highlighting: {
 			default: {
 				name: 'addClass',
@@ -79,8 +79,46 @@ export default function() {
 					className: 'active'
 				}
 			}
+		},
+
+		interactive: {
+			// 禁止拖线
+			addLinkFromMagnet: false
 		}
 	});
+
+	// Actions：修改节点尺寸
+	function showElementTools(elementView) {
+		var element = elementView.model;
+		var transform = new joint.ui.FreeTransform({
+			cellView: elementView,
+			allowRotation: false
+		});
+		transform.render();
+		transform.listenTo(element, 'change', updateMinSize);
+		updateMinSize();
+
+		function updateMinSize() {
+			var minSize = element.getMinimalSize();
+			transform.options.minHeight = minSize.height;
+			transform.options.minWidth = minSize.width;
+		}
+	}
+
+	/**
+	 * 设置itemLabel的title
+	 * @param node
+	 * @param item
+	 */
+	function setTitle(node, item) {
+		node.setTitle(item.id, item.label);
+		if (item.items && item.items.length) {
+			item.items.forEach(it => {
+				setTitle(node, it);
+			});
+		}
+	}
+
 	paper.on('cell:pointerclick', function(cellView) {
 		if (cellView.model.isLink()) {
 			//点击link 查看血缘 或者查看任务详情
@@ -97,6 +135,8 @@ export default function() {
 				sourceName: sourceName,
 				targetName: targetName
 			};
+			// 默认打开所有menu
+			graph.vcomp.$refs.info.handleOpenAllFlows();
 		} else {
 			graph.vcomp.model = {
 				level: 'table',
@@ -104,6 +144,9 @@ export default function() {
 				tableId: cellView.model.tableId,
 				previewVisible: true
 			};
+
+			// 显示resize工具
+			showElementTools(cellView);
 		}
 	});
 	const paperScroller = new joint.ui.PaperScroller({
@@ -170,6 +213,7 @@ export default function() {
 
 			graph.vcomp = vcomp;
 			rdatas.forEach(table => {
+				// FIXME: 不适合多层级，if判断和下方的逻辑待优化
 				if (table.items) {
 					let items = table.items[0].items || [];
 					if (items.length > 0) {
@@ -183,7 +227,11 @@ export default function() {
 						});
 					}
 				}
-				var node = new joint.shapes.mapping.Record({ items: [[table.items[0]]] });
+				var node = new joint.shapes.mapping.Record({
+					items: [[table.items[0]]]
+				});
+				// 禁用 cursor: crosshair;
+				node.attr('itemLabels/magnet', false);
 				linkdatas.map((link, idx, linkdatas) => {
 					if (link.source.id === table.id) {
 						linkdatas[idx].source['original_id'] = link.source.id;
@@ -195,6 +243,7 @@ export default function() {
 					}
 				});
 				node.setName(table.label);
+				setTitle(node, table.items[0]);
 				node.tableId = table.id;
 				node.connection = table.connection;
 				if (table.id == vcomp.tableId) {

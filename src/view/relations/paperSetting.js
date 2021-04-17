@@ -157,7 +157,7 @@ export default function() {
 						ry: 3
 					},
 					headerLabel: {
-						fontSize: 14,
+						fontSize: 12,
 						textWrap: {
 							ellipsis: true,
 							height: 19
@@ -192,6 +192,11 @@ export default function() {
 						stroke: '#48b6e2',
 						rx: 3,
 						ry: 3
+					},
+
+					itemTitle: {
+						text: 'text',
+						label: 'label'
 					}
 				}
 			},
@@ -199,6 +204,11 @@ export default function() {
 				setName: function(name, opt) {
 					this.attr(['headerLabel', 'textWrap', 'text'], name, opt);
 				},
+
+				setTitle(id, title) {
+					this.attr([`itemLabel_${id}`, 'title'], title);
+				},
+
 				getDefaultItem: function() {
 					return {
 						id: util.uuid(),
@@ -243,6 +253,9 @@ export default function() {
 						}
 					};
 				}
+			},
+			{
+				// attributes: {}
 			}
 		);
 
