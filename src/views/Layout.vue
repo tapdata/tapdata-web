@@ -585,7 +585,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .layout-container {
   overflow: hidden;
   .agentNot {
@@ -613,7 +613,7 @@ export default {
 }
 </style>
 
-<style lang="less">
+<style lang="scss">
 .btn-del-fav-menu {
   display: none;
   position: absolute;

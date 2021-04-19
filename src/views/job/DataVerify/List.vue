@@ -728,7 +728,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .dv-add-header {
   width: 100%;
   height: 35px;
@@ -877,7 +877,7 @@ export default {
   line-height: 16px;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 :focus {
   outline: 0px;
 }

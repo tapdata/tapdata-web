@@ -56,13 +56,13 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .multi-selection-data-verify {
   display: flex;
   align-items: center;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .multi-selection-data-verify .el-select__input.is-mini {
   height: 16px;
 }

@@ -194,7 +194,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .e-debug-log {
   width: 100%;
   height: 100%;

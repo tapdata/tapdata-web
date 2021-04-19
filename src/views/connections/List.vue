@@ -738,7 +738,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .connection-list-wrap {
   height: 100%;
 

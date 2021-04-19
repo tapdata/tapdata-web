@@ -1123,7 +1123,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .el-select-dropdown__item {
   max-width: 600px;
 }
@@ -1252,7 +1252,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .js-wrap {
   display: flex;
   flex-wrap: nowrap;

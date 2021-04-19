@@ -446,7 +446,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .database {
   .el-form-item {
     position: relative;
@@ -494,7 +494,7 @@ export default {
   // }
 }
 </style>
-<style scoped lang="less">
+<style scoped lang="scss">
 .database {
   .head {
     display: none;

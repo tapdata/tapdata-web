@@ -59,8 +59,8 @@ export default {
 }
 </script>
 
-<style lang="less">
-@color: #999999;
+<style lang="scss">
+$color: #999999;
 .dfs-dashboard-wrap {
   width: 100%;
   height: 100%;

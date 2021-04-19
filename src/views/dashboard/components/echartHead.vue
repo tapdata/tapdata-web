@@ -71,7 +71,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .echartHead {
   height: 38px;
   line-height: 38px;
@@ -123,7 +123,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .echartHead {
   .el-radio-button--mini .el-radio-button__inner {
     padding: 4px 6px;

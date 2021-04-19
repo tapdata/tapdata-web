@@ -597,7 +597,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .data-flow-setting {
   .head {
     display: block !important;
@@ -668,7 +668,7 @@ export default {
   vertical-align: middle;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .data-flow-setting {
   .el-form-item__label,
   .el-checkbox__label,

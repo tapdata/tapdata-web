@@ -469,7 +469,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .classification {
   position: relative;
   display: flex;
@@ -625,7 +625,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .classification-header {
   .el-input .el-input__inner {
     height: 24px;

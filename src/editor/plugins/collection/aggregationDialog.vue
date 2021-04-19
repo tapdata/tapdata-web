@@ -212,7 +212,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .collection-aggregation {
   display: flex;
   flex-direction: row;
@@ -293,7 +293,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .collection-aggregation {
   .monaco,
   .margin,

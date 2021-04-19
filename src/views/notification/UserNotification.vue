@@ -156,13 +156,13 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .user-notification-data-picker .el-time-panel.el-popper {
   right: 0;
   left: unset;
 }
 </style>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .user-notification {
   padding-left: 20px;
   display: flex;

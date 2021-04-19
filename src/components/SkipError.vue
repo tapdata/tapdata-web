@@ -113,14 +113,14 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .error-list {
   .el-checkbox__input {
     vertical-align: top;
   }
 }
 </style>
-<style scoped lang="less">
+<style scoped lang="scss">
 .error-list {
   background: #fefefe;
   border: 1px solid #dedee4;

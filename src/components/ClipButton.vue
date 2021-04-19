@@ -32,7 +32,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .el-icon-document-copy {
   color: #999;
   margin-left: 10px;
@@ -42,7 +42,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .el-tooltip__popper.is-dark.copy-tooltip {
   background: #303133 !important;
   color: #fff !important;

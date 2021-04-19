@@ -214,8 +214,8 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
-@unreadColor: #ee5353;
+<style scoped lang="scss">
+$unreadColor: #ee5353;
 .notification {
   height: 100%;
   font-size: 12px;
@@ -326,7 +326,7 @@ export default {
   margin-top: 10px;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .notification {
   .el-tabs__item {
     height: 32px;

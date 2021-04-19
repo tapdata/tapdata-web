@@ -46,7 +46,7 @@ export default {
   padding: 0;
 }
 </style>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .customer-service-wrap {
   position: fixed;
   bottom: 0;

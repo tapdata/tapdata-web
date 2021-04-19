@@ -26,7 +26,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .user-operation-wrap {
   display: inline-block;
   color: #666;

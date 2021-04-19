@@ -505,7 +505,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .aggregate {
   width: 100%;
   height: 100%;
@@ -556,7 +556,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .aggregate {
   .head-btns {
     p {

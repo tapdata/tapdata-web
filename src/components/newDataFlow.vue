@@ -195,8 +195,8 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
-@color: #999999;
+<style scoped lang="scss">
+$color: #999999;
 .item {
   font-size: 12px;
   overflow: hidden;
@@ -211,7 +211,7 @@ export default {
   }
   .model {
     display: block;
-    color: @color;
+    color: $color;
     margin-bottom: 10px;
     margin-left: 20px;
   }
@@ -254,7 +254,7 @@ export default {
   margin-top: 20px;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .simple-scene {
   .el-dialog__body {
     min-height: 240px;

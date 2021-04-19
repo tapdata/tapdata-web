@@ -409,7 +409,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .gridFsNode {
   .el-form-item {
     margin-bottom: 10px;

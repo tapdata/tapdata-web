@@ -373,14 +373,14 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .dummy {
   .el-form-item {
     margin-bottom: 10px;
   }
 }
 </style>
-<style scoped lang="less">
+<style scoped lang="scss">
 .dummy {
   .e-entity-wrap {
     padding: 0 20px;

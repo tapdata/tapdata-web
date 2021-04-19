@@ -96,7 +96,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .addServe-wrap {
   .addServe {
     .el-form-item {

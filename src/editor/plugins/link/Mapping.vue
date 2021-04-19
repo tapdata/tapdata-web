@@ -239,7 +239,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .e-mapping {
   display: flex;
   flex-direction: row;

@@ -294,7 +294,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .test-block {
   margin: 0 auto 15px auto;
   padding: 15px;

@@ -147,7 +147,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .custom_processor-wrap {
   padding: 20px;
   height: 100%;

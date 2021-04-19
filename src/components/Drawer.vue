@@ -101,7 +101,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .drawer-block {
   position: absolute;
   left: 0;

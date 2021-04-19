@@ -1355,7 +1355,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .e-job-monitor {
   width: 100%;
   padding: 5px 12px 10px;

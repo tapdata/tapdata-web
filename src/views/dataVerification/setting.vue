@@ -312,7 +312,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .verify-setting-main {
   display: flex;
   justify-content: space-between;
@@ -342,7 +342,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .verify-setting {
   height: 100%;
   overflow-y: auto;

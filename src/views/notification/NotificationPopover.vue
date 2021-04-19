@@ -311,7 +311,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .notification-popover-wrap {
   > .el-tabs__content {
     padding: 0 !important;
@@ -321,7 +321,7 @@ export default {
   }
 }
 </style>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .notification-popover-wrap {
   margin: -15px;
   width: 440px;

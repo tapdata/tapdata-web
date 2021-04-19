@@ -554,7 +554,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .database-link {
   .head {
     display: block;
@@ -589,7 +589,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .database-link {
   .database-tableBox {
     .el-checkbox__label {

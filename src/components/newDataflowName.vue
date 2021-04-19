@@ -86,7 +86,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .advance-setting {
   color: #48b6e2;
   cursor: pointer;

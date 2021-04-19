@@ -265,7 +265,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .metadata-search-wrap {
   .el-input-group__append {
     background: #48b6e2;
@@ -285,7 +285,7 @@ export default {
   }
 }
 </style>
-<style scoped lang="less">
+<style scoped lang="scss">
 .metadata-change-background {
   background: #fafafa;
   display: flex;

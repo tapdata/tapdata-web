@@ -148,7 +148,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .exit {
   position: absolute;
   bottom: 0;
@@ -230,7 +230,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .action-bar {
   .el-checkbox__input .el-checkbox__inner {
     // margin-bottom: 15px;

@@ -310,7 +310,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .api-info {
   height: 100%;
   overflow: hidden;
@@ -406,7 +406,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .api-info {
   .e-textarea {
     padding-bottom: 30px;

@@ -405,8 +405,8 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
-@unreadColor: #ee5353;
+<style scoped lang="scss">
+$unreadColor: #ee5353;
 // .settingCenter {
 // 	height: 100%;
 // 	font-size: 12px;
@@ -453,7 +453,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .settingCenter {
   .form {
     .el-input__inner {

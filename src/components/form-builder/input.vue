@@ -49,7 +49,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .el-input-maxlength {
   .el-input__inner {
     padding-right: 60px;

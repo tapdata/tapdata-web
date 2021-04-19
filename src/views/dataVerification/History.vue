@@ -230,7 +230,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 @margin: 10px;
 .data-verify-history-wrap {
   display: flex;

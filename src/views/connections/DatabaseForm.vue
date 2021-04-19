@@ -1198,7 +1198,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .databaseFrom {
   display: flex;
   flex-direction: column;
@@ -1378,7 +1378,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .databaseFrom .el-form--label-right .el-form-item {
   .el-form-item__label .e-form-builder-item-label {
     float: right;

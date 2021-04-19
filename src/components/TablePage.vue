@@ -175,7 +175,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .table-page-container {
   display: flex;
   flex-direction: column;

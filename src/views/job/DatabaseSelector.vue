@@ -227,7 +227,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .box {
   width: 234px;
   background: #fafafa;

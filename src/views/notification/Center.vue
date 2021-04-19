@@ -64,8 +64,8 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
-@unreadColor: #ee5353;
+<style lang="scss" scoped>
+$unreadColor: #ee5353;
 .notification-center {
   display: flex;
   justify-content: space-between;
@@ -114,7 +114,7 @@ export default {
         font-size: 12px;
         white-space: nowrap;
         text-align: center;
-        background: @unreadColor;
+        background: $unreadColor;
         box-sizing: border-box;
         outline: 0;
         transition: 0.1s;
