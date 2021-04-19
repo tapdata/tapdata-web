@@ -231,7 +231,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@margin: 10px;
 .data-verify-history-wrap {
   display: flex;
   height: 100%;
@@ -254,7 +253,6 @@ export default {
       font-size: 12px;
       background: #f5f5f5;
       border: 1px solid #dedee4;
-      // padding-left: @margin;
       line-height: 30px;
     }
     .title {
