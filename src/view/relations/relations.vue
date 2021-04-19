@@ -350,8 +350,6 @@ export default {
 		background: #ffffff;
 		overflow: hidden;
 		border-bottom: 1px solid #dedee4;
-		-webkit-box-shadow: 0px 0px 4px 0px rgb(0 0 0 / 10%);
-		box-shadow: 0px 0px 4px 0px rgb(0 0 0 / 10%);
 		-webkit-box-sizing: border-box;
 		box-sizing: border-box;
 		display: flex;
