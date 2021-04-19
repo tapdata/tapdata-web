@@ -598,6 +598,8 @@ export default {
           break
         }
         case 'source_connectionId': {
+          // 清空连接
+          this.dataSourceModel.source_connectionId = ''
           // 第二步 数据源连接ID
           let source_connectionId = items.find(
             (it) => it.field === 'source_connectionId'
@@ -618,6 +620,8 @@ export default {
           break
         }
         case 'target_connectionId': {
+          // 清空连接
+          this.dataSourceModel.target_connectionId = ''
           let target_connectionId = items.find(
             (it) => it.field === 'target_connectionId'
           )
