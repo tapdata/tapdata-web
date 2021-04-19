@@ -445,7 +445,7 @@ export default {
 				executionStatus: '',
 				timeData: ''
 			},
-			order: 'createTime DESC',
+			order: 'startTime DESC',
 			progressOptions: [
 				{
 					label: this.$t('dataFlow.initial_sync'),
@@ -583,7 +583,7 @@ export default {
 						'fullDocument.executeMode': true,
 						'fullDocument.stopOnError': true,
 						'fullDocument.last_updated': true,
-						'fullDocument.createTime': true,
+						'fullDocument.startTime': true,
 						'fullDocument.children': true,
 						'fullDocument.stats': true,
 						'fullDocument.stages.id': true,

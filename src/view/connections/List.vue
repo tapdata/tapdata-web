@@ -37,6 +37,7 @@
 						v-model="searchParams.databaseModel"
 						:placeholder="$t('connection.connectionType')"
 						clearable
+						filterable
 						size="mini"
 						@input="table.fetch(1)"
 					>
@@ -54,6 +55,7 @@
 						v-model="searchParams.databaseType"
 						:placeholder="$t('connection.dataBaseType')"
 						clearable
+						filterable
 						size="mini"
 						@input="table.fetch(1)"
 					>
