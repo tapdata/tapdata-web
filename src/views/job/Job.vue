@@ -1912,6 +1912,7 @@ export default {
 </style>
 <style lang="scss">
 //@import url(../../editor/style/editor.scss);
+@import '../../editor/style/editor';
 .editor-container {
   .flex-center {
     display: flex;
