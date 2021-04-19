@@ -117,6 +117,9 @@ export default {
   },
   methods: {
     getCache() {
+      if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
+        return {}
+      }
       let params = this.$cache.get('TABLE_PAGE_PARAMS') || {}
       return params[this.$route.name] || {}
     },
