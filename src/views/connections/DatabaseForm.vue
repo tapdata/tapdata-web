@@ -571,14 +571,16 @@ export default {
           timezone = Math.abs(i)
         }
         timezone += ':00'
-
+        let UTCName
         if (i < 0) {
-          timezone = 'UTC ' + i
+          timezone = '-' + timezone
+          UTCName = 'UTC ' + i
         } else {
-          timezone = 'UTC +' + i
+          timezone = '+' + timezone
+          UTCName = 'UTC +' + i
         }
 
-        timezones.push({ label: timezone, value: timezone })
+        timezones.push({ label: UTCName, value: timezone })
       }
       this.timezones = timezones
     },
