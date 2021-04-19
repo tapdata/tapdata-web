@@ -106,6 +106,7 @@ class WSClient extends EventEmitter {
 
   handlerOpen() {
     log('Websocket is opened!')
+    this.emit('opened')
   }
 
   handlerClose(e) {
@@ -157,12 +158,9 @@ class WSClient extends EventEmitter {
   }
 
   ready(cb) {
+    this.on('opened', cb)
     if (this.ws.readyState == 1) {
       cb && cb()
-    } else {
-      setTimeout(() => {
-        this.ready(cb)
-      }, 500)
     }
   }
 
