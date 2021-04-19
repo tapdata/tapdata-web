@@ -543,6 +543,7 @@ const cn = {
     lag: '滞后',
     executionStatus: '执行状态',
     searchPlaceholder: '任务名称',
+    searchAgent: 'agent名称',
     dataRange: '创建日期范围',
     startTime: '开始时间',
     endTime: '结束时间',
