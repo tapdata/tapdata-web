@@ -255,7 +255,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .clusterManagement-wrap {
   height: 100%;
   .clusterManagement-list {

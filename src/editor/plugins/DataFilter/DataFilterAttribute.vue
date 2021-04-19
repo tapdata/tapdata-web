@@ -232,8 +232,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-@primaryColor: #f5af3f;
+<style lang="scss" scoped>
+$primaryColor: #f5af3f;
 
 .e-data-filter {
   width: 100%;
@@ -243,7 +243,7 @@ export default {
     padding: 10px 20px;
     box-sizing: border-box;
     .e-primary {
-      color: @primaryColor;
+      color: $primaryColor;
     }
 
     .el-input,

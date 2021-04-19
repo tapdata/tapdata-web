@@ -536,7 +536,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .box {
   width: 234px;
 }
@@ -621,7 +621,7 @@ export default {
   display: flex;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .box-head {
   .el-input .el-input__inner {
     height: 24px;

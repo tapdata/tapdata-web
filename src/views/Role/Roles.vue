@@ -630,7 +630,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .roles {
   display: flex;
   width: 100%;
@@ -714,7 +714,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .roles {
   .topbar-buttons {
     .el-button {

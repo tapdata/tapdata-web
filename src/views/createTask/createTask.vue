@@ -829,7 +829,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .CT-task-wrap {
   .select-connection-popper {
     .el-select-dropdown__item {
@@ -884,7 +884,7 @@ export default {
   }
 }
 </style>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .CT-task-wrap {
   height: 100%;
   background: rgba(250, 250, 250, 1);

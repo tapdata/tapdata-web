@@ -603,7 +603,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .connection-drawer {
   .connection-drawer-wrap {
     display: flex;
@@ -770,7 +770,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .connection-drawer {
   .top-drawer {
     .el-drawer {

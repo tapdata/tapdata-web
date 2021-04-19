@@ -192,7 +192,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .dataflow-upload {
   width: 600px;
   margin: 0 auto;

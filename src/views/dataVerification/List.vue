@@ -535,7 +535,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .data-verify-wrap {
   height: 100%;
   .btn-refresh {
@@ -574,7 +574,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .data-verify-wrap {
   .el-table--border td {
     border-right: 0;

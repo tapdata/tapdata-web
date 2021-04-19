@@ -147,7 +147,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .page-registry_email {
   background: #fafafa;
   height: 100%;

@@ -120,7 +120,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .echartBox {
   height: 100%;
   .echarts {

@@ -137,12 +137,12 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .error-box-body {
   width: 850px;
 }
 </style>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .milestone-wrap {
   position: relative;
   height: 100%;

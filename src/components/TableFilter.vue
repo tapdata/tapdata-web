@@ -75,7 +75,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .table-filter__icon {
   font-size: 12px;
   cursor: pointer;

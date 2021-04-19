@@ -1,9 +1,9 @@
-@import "../lib/rappid/rappid.css";
-@import "../lib/rappid/themes/style.default.css";
-@import "./animate.less";
+@import "~@/editor/lib/rappid/rappid.css";
+@import "~@/editor/lib/rappid/themes/style.default.css";
+@import "./animate.scss";
 
-@borderColor: #d3d3d3;
-@selectedColor: #d3d3d3;
+$borderColor: #d3d3d3;
+$selectedColor: #d3d3d3;
 
 .color-primary {
 	color: #409EFF
@@ -34,8 +34,8 @@
 	position: relative;
 	background: #fff;
 
-	.editor:extend(.editor-container) {
-
+	.editor {
+    @extend .editor-container;
 		display: flex;
 		flex-flow: column nowrap;
 		justify-content: center;
@@ -58,7 +58,7 @@
 		}
 
 		.e-header {
-			border-bottom: 1px solid @borderColor;
+			border-bottom: 1px solid $borderColor;
 
 			display: flex;
 			justify-content: flex-start;
@@ -69,7 +69,6 @@
 				height: 100%;
 				line-height: 43px;
 				margin-left: 8px;
-				//background: #48b6e2;
 
 				.icon-biaotongbu {
 					color: #48b6e2;
@@ -226,7 +225,7 @@
 				}
 
 				&.e-sidebar-right {
-					border-left: 1px solid @borderColor;
+					border-left: 1px solid $borderColor;
 
 					.fixed {
 						right: 0;
@@ -234,7 +233,7 @@
 				}
 
 				&.e-sidebar-left {
-					border-right: 1px solid @borderColor;
+					border-right: 1px solid $borderColor;
 
 					&.fixed {
 						left: 0;
@@ -290,7 +289,7 @@
 
 					&.active,
 					&:hover {
-						background-color: @borderColor;
+						background-color: $borderColor;
 					}
 				}
 			}
@@ -301,23 +300,16 @@
 				flex-flow: column nowrap;
 				height: 100%;
 
-				//border: 1px solid @borderColor;
 				.monitorTab {
-
-					// border-bottom: 1px solid @borderColor;
 
 					display: flex;
 					flex-flow: row wrap;
 					justify-content: flex-start;
 					align-items: center;
-					// padding-left: 10px;
 					background-color: #EFF1F4;
 					.e-tab-title {
 						line-height: 30px;
 						padding: 0 30px;
-						// border-right: 1px solid @borderColor;
-						// border-top: 1px solid @borderColor;
-						// border-bottom: 1px solid @borderColor;
 						cursor: pointer;
 						background: #EFF1F4;
 
@@ -327,7 +319,7 @@
 						color: #666;
 
 						&:first-child {
-							border-left: 1px solid @borderColor;
+							border-left: 1px solid $borderColor;
 							margin-left: -1px;
 						}
 
@@ -338,14 +330,13 @@
 						&.active {
 							background: #ffffff;
 							color: #48B6E2;
-							// border-bottom: 1px solid #fff;
 						}
 					}
 				}
 
 				.e-tab-bar {
 
-					border-bottom: 1px solid @borderColor;
+					border-bottom: 1px solid $borderColor;
 
 					display: flex;
 					flex-flow: row wrap;
@@ -356,9 +347,9 @@
 					.e-tab-title {
 						line-height: 30px;
 						padding: 0 20px;
-						border-right: 1px solid @borderColor;
-						border-top: 1px solid @borderColor;
-						border-bottom: 1px solid @borderColor;
+						border-right: 1px solid $borderColor;
+						border-top: 1px solid $borderColor;
+						border-bottom: 1px solid $borderColor;
 						cursor: default;
 						background: #fafafa;
 
@@ -367,7 +358,7 @@
 						font-size: 12px;
 
 						&:first-child {
-							border-left: 1px solid @borderColor;
+							border-left: 1px solid $borderColor;
 							margin-left: -1px;
 						}
 
@@ -534,7 +525,6 @@
 	overflow: auto;
 
 	head {
-		// display: block;
 		width: 100%;
 		height: 24px;
 		line-height: 24px;

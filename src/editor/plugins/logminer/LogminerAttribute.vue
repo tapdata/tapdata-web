@@ -495,7 +495,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .logminer {
   width: 100%;
   height: 100%;
@@ -537,7 +537,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .logminer {
   .aggtip {
     position: absolute;

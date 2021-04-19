@@ -195,7 +195,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 @import '../../editor/lib/rappid/rappid.css';
 @import '../../editor/lib/rappid/themes/style.default.css';
 .data-map-container {
@@ -213,7 +213,7 @@ export default {
   }
 }
 </style>
-<style scoped lang="less">
+<style scoped lang="scss">
 .refreshS {
   margin-left: 10px;
   margin-top: 3px;

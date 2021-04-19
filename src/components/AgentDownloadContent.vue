@@ -122,7 +122,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .agent-download-content-wrap {
   .title {
     font-size: 12px;

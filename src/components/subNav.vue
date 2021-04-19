@@ -71,7 +71,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .notification-left-sidebar {
   background: rgba(250, 250, 250, 1);
   border: 1px solid rgba(230, 230, 232, 1);
@@ -103,7 +103,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .notification-left-sidebar .el-menu-vertical-demo {
   .el-menu-item is-active {
     background-color: #eee;

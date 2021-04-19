@@ -113,7 +113,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .log-box {
   overflow: hidden;
   height: 100%;
@@ -135,7 +135,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .log-box-container {
   padding-top: 10px;
   width: 100%;

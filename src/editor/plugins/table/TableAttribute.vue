@@ -862,7 +862,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .e-table {
   .e-entity-wrap {
     flex: 1;
@@ -943,7 +943,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .e-table {
   .fiflter {
     .e-select .el-input--mini .el-input__inner {

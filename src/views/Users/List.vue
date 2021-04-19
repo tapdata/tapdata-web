@@ -1103,7 +1103,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .user-list-wrap {
   height: 100%;
 
@@ -1186,7 +1186,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .user-list-wrap {
   .table-page-container {
     .table-page-body {

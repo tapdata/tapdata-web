@@ -651,7 +651,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .select-connection-popper {
   .el-select-dropdown__item {
     height: 64px;
@@ -682,7 +682,7 @@ export default {
   }
 }
 </style>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .guide-wrap {
   height: 100%;
   background: rgba(250, 250, 250, 1);

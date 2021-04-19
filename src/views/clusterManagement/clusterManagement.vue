@@ -827,7 +827,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .clusterManagement-container {
   display: flex;
   flex-direction: column;
@@ -1004,7 +1004,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .clusterManagement-container {
   .editAgentForm {
     .el-form-item {

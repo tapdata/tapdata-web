@@ -615,7 +615,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .metadata-list-wrap {
   height: 100%;
   .metadata-list {
@@ -665,7 +665,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .metadata-list-wrap {
   .create-dialog {
     .el-dialog__body {

@@ -278,7 +278,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .releaseApi {
   width: 100%;
   height: 100%;
@@ -306,7 +306,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .releaseApi {
   .pdTop5 .el-form-item__content {
     padding-top: 5px;

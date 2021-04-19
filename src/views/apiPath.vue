@@ -344,7 +344,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .metadata {
   height: 100%;
   box-sizing: border-box;
@@ -491,7 +491,7 @@ export default {
   margin-left: 124px;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .MetaDataSelect {
   margin-top: -5px;
   .el-input__inner {

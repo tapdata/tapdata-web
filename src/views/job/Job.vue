@@ -1865,7 +1865,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .spinner-box {
   display: inline-block;
   padding: 0 5px;
@@ -1910,7 +1910,8 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
+//@import url(../../editor/style/editor.scss);
 @import '../../editor/style/editor';
 .editor-container {
   .flex-center {

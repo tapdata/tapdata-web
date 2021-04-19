@@ -319,8 +319,9 @@ export default {
 }
 </script>
 
-<style lang="less">
-@import '../../editor/data-map/style/data-map';
+<style lang="scss">
+@import '../../editor/data-map/style/data-map.scss';
+
 .data-map-container {
   .e-classification {
     padding: 20px;
@@ -336,7 +337,7 @@ export default {
   }
 }
 </style>
-<style scoped lang="less">
+<style scoped lang="scss">
 .source-color {
   background: #fcf9fe;
   border: 1px solid #dedede;

@@ -420,7 +420,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .lineage-info-wrap {
   position: absolute;
   right: -21px;
@@ -550,7 +550,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .lineage-info-drawer {
   .el-drawer {
     box-shadow: -2px 0px 8px 0px rgba(0, 0, 0, 0.1);

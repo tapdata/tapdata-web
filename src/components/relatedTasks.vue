@@ -82,7 +82,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .relatedTasks {
   position: absolute;
   bottom: 0;
@@ -92,7 +92,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .taskLink-popover {
   min-width: 500px !important;
   max-height: 300px;

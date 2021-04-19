@@ -254,7 +254,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .connection-test-dialog {
   .test-result {
     .test-status {
@@ -277,7 +277,7 @@ export default {
 }
 </style>
 
-<style lang="less">
+<style lang="scss">
 .connection-test-dialog {
   .test-progress {
     .el-progress-bar__outer {

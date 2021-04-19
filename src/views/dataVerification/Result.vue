@@ -522,8 +522,8 @@ export default {
 }
 </script>
 
-<style lang="less">
-@margin: 10px;
+<style lang="scss">
+$margin: 10px;
 .data-flow-wrap {
   display: flex;
   width: 100%;
@@ -547,7 +547,7 @@ export default {
       flex-direction: column;
       overflow: hidden;
       .dv-table {
-        margin: @margin;
+        margin: $margin;
         width: 97.5%;
       }
       .row-result {
@@ -583,18 +583,18 @@ export default {
       .title {
         font-weight: bold;
         color: #48b6e2;
-        padding-left: @margin;
+        padding-left: $margin;
         margin: 20px 0 0 0;
       }
       .text {
         color: #666;
         font-size: 12px;
-        margin-top: @margin;
-        padding-left: @margin;
+        margin-top: $margin;
+        padding-left: $margin;
       }
       .inspect-result {
         font-size: 12px;
-        margin: @margin;
+        margin: $margin;
         li {
           margin-top: 10px;
         }

@@ -306,7 +306,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .e-memery-cache {
   .code-template {
     margin-top: 20px;

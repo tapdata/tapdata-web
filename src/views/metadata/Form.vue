@@ -672,7 +672,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .e-form {
   width: 100%;
   font-size: 12px;
@@ -692,7 +692,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .metadata-info {
   .dialogInfo-form {
     height: 90%;

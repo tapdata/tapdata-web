@@ -1425,7 +1425,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
   .btn-refresh {
@@ -1502,7 +1502,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .data-flow-wrap .data-flow-list .dataflow-table__icon {
   margin-left: -5px;
   font-size: 14px;
