@@ -10,6 +10,10 @@ export default class TCM extends PublicAPI {
   constructor() {
     super('/api/tcm')
   }
+  //获取实例列表
+  getAgent() {
+    return axios.get(this.url + '/agent')
+  }
   //h获取可用区
   getRegion() {
     return axios.get(this.url + '/region')

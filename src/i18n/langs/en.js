@@ -558,6 +558,7 @@ const en = {
     lag: 'lag',
     executionStatus: 'Execution status',
     searchPlaceholder: 'Task name',
+    searchAgent: 'Agent name',
     dataRange: 'Date range',
     startTime: 'Start time',
     endTime: 'End time',
