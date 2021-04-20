@@ -139,7 +139,7 @@
 							<span slot="title">{{ menu.label }}</span>
 						</el-menu-item>
 					</template>
-					<!-- 					<el-submenu v-if="favMenus.length" index="favorite">
+					<el-submenu v-if="favMenus.length" index="favorite">
 						<template slot="title">
 							<i class="iconfont icon-shoucang"></i>
 							<span slot="title">{{ $t('app.menu.favorite') }}</span>
@@ -156,7 +156,7 @@
 								</span>
 							</div>
 						</el-menu-item>
-					</el-submenu> -->
+					</el-submenu>
 				</el-menu>
 				<div class="menu-footer" @click="isCollapse = !isCollapse">
 					<i class="el-icon-d-arrow-left btn-collapse" :class="{ 'is-collapse': isCollapse }"></i>
