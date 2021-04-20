@@ -52,7 +52,7 @@ class WSClient extends EventEmitter {
       let token = self.getToken()
       let xToken = Cookie.get('xToken')
       let tokenParam = xToken ? 'X-Token=' + xToken : 'access_token' + token
-      self.ws = new WebSocket(`${url}?xxxxpoolIdxxxx=CIDC-RP-25&${tokenParam}`)
+      self.ws = new WebSocket(`${url}?${tokenParam}`)
     } catch (e) {
       //log('WSClient.connect', 'Connect to server fail', e);
       self.reconnect()
@@ -229,10 +229,11 @@ class WSClient extends EventEmitter {
     if (loc.protocol === 'https:') {
       new_uri = 'wss:'
     }
+    let host = window.getSettingByKey('DFS_TM_WS_HOST') || loc.host
     let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || ''
     let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || ''
     let path = tcmApiPre + apiPre
-    new_uri += '//' + loc.host
+    new_uri += '//' + host
     new_uri += path + '/ws/agent'
     return new_uri
   }
