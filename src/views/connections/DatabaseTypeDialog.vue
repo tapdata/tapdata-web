@@ -91,7 +91,7 @@ export default {
   created() {
     let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || []
     let notAllowDataType =
-      window.getSettingByKey('NOT_ALLOW_CONNECTION_TYPE') || []
+      window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
     let allwoType = this.allwoType
     if (allwoType && allwoType.length) {
       allowDataType = allowDataType.filter((val) => {
