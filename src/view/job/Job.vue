@@ -1,8 +1,7 @@
 <template>
 	<div class="editor-container" v-loading="loading" style="position: relative;">
-		<!-- <simpleScene v-if="$route.query.isSimpleScene"></simpleScene> -->
-		<simpleScene v-if="isSimple" ref="simpleScene"></simpleScene>
-		<newDataFlow v-if="newDataFlowV" ref="newDataFlowV"></newDataFlow>
+		<SimpleScene v-if="isSimple" ref="simpleScene"></SimpleScene>
+		<NewDataFlow v-if="newDataFlowV" ref="newDataFlowV"></NewDataFlow>
 		<div
 			class="action-buttons"
 			style="display:flex;align-items: center;justify-content: space-between;padding-right: 10px;"
@@ -229,40 +228,6 @@
 			</div>
 		</el-dialog>
 		<el-dialog
-			:title="$t('dataFlow.systemHint')"
-			custom-class="systemHint"
-			:before-close="loadData"
-			:visible.sync="tempDialogVisible"
-		>
-			<el-form :model="form">
-				<span class="text">{{ $t('dataFlow.systemText') }}</span>
-				<div class="content">
-					<el-row v-for="item in tempData" :key="item.id">
-						<el-col :span="20"
-							><el-link @click="openTempSaved(item)" type="primary">{{
-								item.split('$$$')[2]
-							}}</el-link></el-col
-						>
-						<el-col :span="4">
-							<el-button size="mini" @click="openTempSaved(item)" type="text">{{
-								$t('dataFlow.stystemOpen')
-							}}</el-button>
-							<el-button size="mini" class="delStyle" @click="deleteTempData(item)" type="text">{{
-								$t('message.delete')
-							}}</el-button>
-						</el-col>
-					</el-row>
-				</div>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button type="text" class="delet" @click="delAllTempData">{{
-					$t('dataFlow.stystemDeleteAll')
-				}}</el-button>
-				<!-- <el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemOpenAll') }}</el-button> -->
-				<el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemLgnoreAll') }}</el-button>
-			</div>
-		</el-dialog>
-		<el-dialog
 			:title="$t('message.prompt')"
 			:visible.sync="reloadSchemaDialog"
 			:close-on-click-modal="false"
@@ -290,8 +255,8 @@ import { db2db } from '../../editor/simpleSceneData';
 import log from '../../log';
 import ws from '../../api/ws';
 import AddBtnTip from './addBtnTip';
-import simpleScene from './SimpleScene';
-import newDataFlow from '@/components/newDataflowName';
+import SimpleScene from './SimpleScene';
+import NewDataFlow from '@/components/newDataflowName';
 import DownAgent from '../downAgent/agentDown';
 import { FORM_DATA_KEY, JOIN_TABLE_TPL, DATABASE_TYPE_MAPPING } from '../../editor/constants';
 import { EditorEventType } from '../../editor/lib/events';
@@ -306,7 +271,7 @@ let changeData = null;
 export default {
 	name: 'Job',
 	dataFlow: null,
-	components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError },
+	components: { AddBtnTip, SimpleScene, NewDataFlow, DownAgent, SkipError },
 	data() {
 		return {
 			downLoadNum: 0,
@@ -318,7 +283,6 @@ export default {
 			},
 
 			dataFlowId: null,
-			tempDialogVisible: false,
 			tempKey: 0,
 			tempId: false,
 			tempData: [],
@@ -358,7 +322,6 @@ export default {
 		}
 	},
 	mounted() {
-		let self = this;
 		// build editor
 		let customProcessors = [];
 		this.$api('nodeConfigs')
@@ -370,19 +333,19 @@ export default {
 					this.getGlobalSetting();
 				}
 				this.mappingTemplate = this.$route.query.mapping;
-				if (self.$route.query.isMoniting == 'true') self.isMoniting = true;
-				self.editor = editor({
+				if (this.$route.query.isMoniting == 'true') this.isMoniting = true;
+				this.editor = editor({
 					container: $('.editor-container'),
 					actionBarEl: $('.editor-container .action-buttons'),
-					scope: self,
+					scope: this,
 					customProcessors
 				});
 
-				if (self.$route.query.isSimple == 'true') {
+				if (this.$route.query.isSimple == 'true') {
 					this.initData(db2db.data);
 					this.mappingTemplate = 'cluster-clone';
 					this.loading = false;
-					setTimeout(() => self.initSimple(), 1100);
+					setTimeout(() => this.initSimple(), 1100);
 					return;
 				}
 				if (window.name && window.name.length > 200) {
@@ -391,25 +354,8 @@ export default {
 					this.loading = false;
 					return;
 				}
-				if (!window.tpdata) {
-					Object.keys(localStorage).forEach(key => {
-						let mapping = key.split('$$$')[3] || '';
-						if (
-							key.startsWith('tapdata.dataflow.$$$') &&
-							window.tempKeys &&
-							mapping === this.$route.query.mapping &&
-							!window.tempKeys.includes(parseInt(key.split('$$$')[1]))
-						)
-							this.tempData.push(key);
-					});
-				} else {
-					this.initData(window.tpdata);
-					this.loading = false;
-					return;
-				}
 				if (!this.isMoniting && this.tempData.length > 0) {
-					self.loading = false;
-					this.tempDialogVisible = true;
+					this.loading = false;
 					return;
 				}
 				this.loadData();
@@ -417,6 +363,8 @@ export default {
 				this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
 					this.draftSave();
 				});
+
+				window.addEventListener('beforeunload', this.handleBeforeUnLoad);
 			});
 	},
 
@@ -448,8 +396,8 @@ export default {
 		isEditable() {
 			return ['draft', 'error', 'paused'].includes(this.status);
 		},
+
 		loadData() {
-			this.tempDialogVisible = false;
 			if (this.$route.query && this.$route.query.id) {
 				this.loadDataFlow(this.$route.query.id);
 			} else {
@@ -458,91 +406,10 @@ export default {
 				this.setEditable(true);
 				this.creatUserId = this.$cookie.get('user_id');
 				this.editor.ui.setName(this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7));
-				// if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
 			}
 			this.setSelector(this.$route.query.mapping);
 		},
-		/****
-		 * Auto save
-		 */
-		timeSave() {
-			if (this.isMoniting) return;
-			let data = this.getDataFlowData(true);
-			if (this.tempKey == 0) {
-				this.tempKey = 1;
-				Object.keys(localStorage).forEach(key => {
-					if (key.startsWith('tapdata.dataflow.$$$'))
-						if (parseInt(key.split('$$$')[1]) >= this.tempKey)
-							this.tempKey = parseInt(key.split('$$$')[1]) + 1;
-				});
-			}
-			if (!this.tempId)
-				this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name + '$$$' + data.mappingTemplate;
-			else {
-				localStorage.removeItem(this.tempId);
-				this.tempId = 'tapdata.dataflow.$$$' + this.tempKey + '$$$' + data.name + '$$$' + data.mappingTemplate;
-			}
-			try {
-				localStorage.setItem(this.tempId, JSON.stringify(data));
-			} catch (e) {
-				try {
-					let ids = [],
-						size = 0;
-					Object.keys(localStorage).forEach(key => {
-						if (key.startsWith('tapdata.dataflow.$$$'))
-							ids.push({ id: parseInt(key.split('$$$')[1]), item: key });
-					});
-					ids = ids.sort((a, b) => a.id - b.id);
-					for (let i = 0; i < ids.length; i++) {
-						size += localStorage.getItem(ids[i].item).length;
-						localStorage.removeItem(ids[i].item);
-						if (size > JSON.stringify(data).length) break;
-					}
-					localStorage.setItem(this.tempId, JSON.stringify(data));
-				} catch (err) {
-					log(err);
-				}
-			}
-			window.tempKey = this.tempKey;
-		},
-		openTempSaved(key) {
-			this.tempDialogVisible = false;
-			let tdata = JSON.parse(localStorage.getItem(key));
-			localStorage.removeItem(key);
-			if (tdata.id != this.$route.query.id) {
-				let routeUrl = this.$router.resolve({
-					path: '/job',
-					query: { id: tdata.id, mapping: tdata.mappingTemplate }
-				});
-				window.opener.windows.push(window.open(routeUrl.href, '_blank'));
-				window.opener.windows[window.opener.windows.length - 1].tpdata = tdata;
-				this.loadData();
-			} else this.initData(tdata);
-		},
-		deleteTempData(key) {
-			this.tempData.splice(this.tempData.indexOf(key), 1);
-			localStorage.removeItem(key);
-			if (this.tempData.length == 0) {
-				this.tempDialogVisible = false;
-				this.loadData();
-			}
-		},
-		delAllTempData() {
-			// Object.keys(localStorage).forEach(key => {
-			// 	if (key.startsWith('tapdata.dataflow.$$$')) localStorage.removeItem(key);
-			// });
-			if (!this.tempData || this.tempData.length === 0) return;
-			let oldData = _.cloneDeep(this.tempData);
-			oldData.forEach((key, index) => {
-				let mapping = key.split('$$$')[3] || '';
-				if (mapping === this.mappingTemplate) {
-					this.tempData.splice(index, 1);
-					localStorage.removeItem(key);
-				}
-			});
-			this.tempDialogVisible = false;
-			this.loadData();
-		},
+
 		simpleRefresh() {
 			let self = this;
 			self.editor.graph.paper.getMountedViews().forEach(ele => {
@@ -568,6 +435,7 @@ export default {
 				}
 			});
 		},
+
 		simpleGoNext(step) {
 			let self = this;
 			if (step == 4) {
@@ -580,6 +448,7 @@ export default {
 				self.simpleRefresh();
 			}, 10);
 		},
+
 		initSimple() {
 			let self = this;
 			this.editor.graph.isSimple = true;
@@ -589,6 +458,7 @@ export default {
 				self.simpleRefresh();
 			}, 10);
 		},
+
 		initData(data) {
 			let dataFlow = data;
 			this.dataFlowId = dataFlow.id;
@@ -697,7 +567,6 @@ export default {
 				changeData = this.getDataFlowData(true);
 				if (changeData) {
 					self.dataChangeFalg = true;
-					self.timeSave();
 				}
 			});
 		},
@@ -792,10 +661,15 @@ export default {
 					if (result && result.data) {
 						self.creatUserId = result.data.user_id;
 						self.initData(result.data);
+						// 删除旧缓存
 						Object.keys(localStorage).forEach(key => {
 							if (key.startsWith('tapdata.dataflow.$$$') && key.split('$$$')[2] == result.data.name)
-								if (JSON.parse(localStorage.getItem(key)).id == result.data.id)
+								try {
+									if (JSON.parse(localStorage.getItem(key)).id == result.data.id)
+										localStorage.removeItem(key);
+								} catch (e) {
 									localStorage.removeItem(key);
+								}
 						});
 					} else {
 						self.$message.error(self.$t('message.api.get.error'));
@@ -1666,6 +1540,21 @@ export default {
 		handleSearchNode(item) {
 			//选中当前节点
 			this.editor.graph.selectionPosition(item.cell);
+		},
+
+		handleBeforeUnLoad(event) {
+			event.preventDefault();
+			if (this.dataChangeFalg) event.returnValue = '';
+		}
+	},
+
+	beforeRouteLeave(to, from, next) {
+		if (this.dataChangeFalg) {
+			if (window.confirm(this.$t('dataFlow.saveReminder'))) {
+				next();
+			}
+		} else {
+			next();
 		}
 	},
 
@@ -1674,6 +1563,7 @@ export default {
 			clearTimeout(this.timeoutId);
 		}
 		this.editor.destroy();
+		window.removeEventListener('beforeunload', this.handleBeforeUnLoad);
 	}
 };
 </script>
@@ -1772,7 +1662,7 @@ export default {
 		}
 	}
 	.btn-operatiton {
-		padding: 0 10;
+		padding: 0 10px;
 		background: rgba(225, 225, 225, 1);
 	}
 	.action-btn {
