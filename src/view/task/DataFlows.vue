@@ -607,6 +607,7 @@ export default {
 				};
 			}
 
+			this.multipleSelection = [];
 			this.table.fetch(1);
 		},
 		getData({ page, tags }) {

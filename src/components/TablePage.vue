@@ -32,6 +32,7 @@
 					border
 					height="100%"
 					v-loading="loading"
+					ref="elTable"
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:row-key="rowKey"
 					:data="list"
@@ -151,6 +152,9 @@ export default {
 							.finally(() => {
 								this.loading = false;
 							});
+
+					// 清空选择
+					this.$refs.elTable && this.$refs.elTable.clearSelection();
 				}, debounce);
 			});
 		},
