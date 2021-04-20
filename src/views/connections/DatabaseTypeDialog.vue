@@ -15,6 +15,17 @@
           </div>
           <div class="content">{{ typeMap[item] }}</div>
         </li>
+        <li v-for="item in notAllowDatabase" :key="item" class="item--disabled">
+          <div class="img-box position-relative">
+            <img :src="getImgByType(item)" />
+            <div
+              class="img-box__mask flex justify-center align-center position-absolute top-0 bottom-0 start-0 end-0"
+            >
+              <span class="mask-text">即将上线</span>
+            </div>
+          </div>
+          <div class="content">{{ typeMap[item] }}</div>
+        </li>
       </ul>
       <span class="title" v-if="otherType && otherType.length > 0"
         >Other Type</span
@@ -66,6 +77,7 @@ export default {
         'mysql pxc',
         'jira'
       ],
+      notAllowDatabase: [],
       otherType: [
         'gridfs',
         'dummy db',
@@ -78,6 +90,8 @@ export default {
   },
   created() {
     let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || []
+    let notAllowDataType =
+      window.getSettingByKey('NOT_ALLOW_CONNECTION_TYPE') || []
     let allwoType = this.allwoType
     if (allwoType && allwoType.length) {
       allowDataType = allowDataType.filter((val) => {
@@ -86,6 +100,9 @@ export default {
     }
     this.database =
       allowDataType.filter((type) => this.database.includes(type)) || []
+    this.notAllowDatabase =
+      notAllowDataType.filter((type) => this.notAllowDatabase.includes(type)) ||
+      []
     this.otherType =
       allowDataType.filter((type) => this.otherType.includes(type)) || []
   },
@@ -132,6 +149,21 @@ export default {
       }
       &:hover {
         box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+      }
+      .img-box__mask {
+        margin: -1px;
+        font-size: 13px;
+        background: rgba(0, 0, 0, 0.4);
+        .mask-text {
+          opacity: 0;
+          color: #fff;
+          font-weight: bold;
+        }
+        &:hover {
+          .mask-text {
+            opacity: 1;
+          }
+        }
       }
     }
     .content {
