@@ -386,6 +386,7 @@ export default {
 					confirmButtonText: this.$t('dataFlow.leave'),
 					closeOnClickModal: false
 				}).then(() => {
+					this.dataChangeFalg = false;
 					this.$router.push({
 						path: '/dataFlows?mapping=' + mapping
 					});
