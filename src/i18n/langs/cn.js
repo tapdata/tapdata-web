@@ -2253,6 +2253,7 @@ const cn = {
     automaticallyAdd: '自动添加',
     enable: '已启用',
     disable: '已禁止',
+    isEnabled: '是否启用',
     newVerify: '新建校验',
     edit: '编辑校验',
     advanceVerify: '高级校验',

@@ -2249,6 +2249,7 @@ const tc = {
     automaticallyAdd: '自動添加',
     enable: '已啟用',
     disable: '已禁止',
+    isEnabled: '是否啟用',
     newVerify: '新建校驗',
     edit: '編輯校驗',
     clickVerified: '點下方按鈕添加校驗表',

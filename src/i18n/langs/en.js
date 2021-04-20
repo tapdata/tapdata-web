@@ -2340,6 +2340,7 @@ const en = {
     automaticallyAdd: 'Automatically add',
     enable: 'Enable',
     disable: 'Disable',
+    isEnabled: 'Is Enabled',
     newVerify: 'New Verify',
     edit: 'Edit',
     clickVerified: 'Click the bottons below to add tables to be verified',
