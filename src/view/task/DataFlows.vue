@@ -543,6 +543,9 @@ export default {
 			tempList.forEach(item => {
 				let list = this.table.list;
 				let index = list.findIndex(it => it.name === item.name);
+				if (item.children && !item.children.length) {
+					delete item.children;
+				}
 				if (index >= 0) {
 					this.table.$set(list, index, Object.assign(list[index], this.cookRecord(item)));
 				}
