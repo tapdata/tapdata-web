@@ -102,10 +102,12 @@ export default {
         return this.allwoType.includes(val)
       })
     }
-    this.database =
-      allowDataType.filter((type) => this.database.includes(type)) || []
     this.comingAllowDatabase =
       comingAllowDataType.filter((type) => this.database.includes(type)) || []
+    console.log('this.comingAllowDatabase', comingAllowDataType, this.database)
+    this.database =
+      allowDataType.filter((type) => this.database.includes(type)) || []
+    console.log('this.allowDataType', allowDataType, this.database)
     this.otherType =
       allowDataType.filter((type) => this.otherType.includes(type)) || []
   },
