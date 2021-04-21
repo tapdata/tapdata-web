@@ -234,7 +234,7 @@ export default {
   }
 }
 </script>
-<style scope lang="less">
+<style scope lang="scss">
 .preview {
   display: flex;
   flex-direction: column;
@@ -278,7 +278,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .preview {
   .el-tab-pane,
   .card {

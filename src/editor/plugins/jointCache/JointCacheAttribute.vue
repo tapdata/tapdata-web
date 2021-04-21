@@ -316,7 +316,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .join-cache-wrap {
   display: flex;
   flex-direction: column;

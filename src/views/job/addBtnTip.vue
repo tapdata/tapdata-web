@@ -76,7 +76,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .fixBtn {
   position: absolute;
   bottom: 30px;
@@ -84,7 +84,7 @@ export default {
   z-index: 100;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .popperFixbtn {
   width: 160px !important;
   .btnList {

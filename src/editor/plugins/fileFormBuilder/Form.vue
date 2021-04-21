@@ -551,7 +551,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .editor-file-form-builder {
   display: flex;
   flex-direction: column;
@@ -639,7 +639,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .editor-file-form-builder .form-excel-wrap {
   .el-form-item {
     margin-bottom: 0;

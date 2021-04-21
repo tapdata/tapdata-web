@@ -129,7 +129,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .fb-select {
   position: relative;
   width: 100%;

@@ -433,7 +433,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .kafkaNode {
   .el-form-item {
     margin-bottom: 10px;

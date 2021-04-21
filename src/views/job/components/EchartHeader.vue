@@ -124,7 +124,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .echart-head {
   display: flex;
   align-items: center;
@@ -169,7 +169,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .echart-head {
   .el-radio-button--mini .el-radio-button__inner {
     padding: 4px 6px;

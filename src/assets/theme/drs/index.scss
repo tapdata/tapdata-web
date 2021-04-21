@@ -1,27 +1,27 @@
-#color() {
-	primary: #337dff;
-	lprimary: #5392FF;
-	success: #10C038;
-	lsuccess: #DBEFD1;
-	danger: #F04134;
-	warning: #f7a237;
-	info: #75849B;
-	linfo: #E9EDF2;
-	disable: #bbb;
-}
-#fontColor() {
-	normal: #333;
-	light: #555;
-	slight: #999;
-}
-#bgColor() {
-	disable: #f5f5f5;
-	hover: #f5f8ff;
-}
-#borderColor() {
-	disable: #d9d9d9;
-	normal: #ddd;
-}
+$color:(
+  primary: #337dff,
+  lprimary: #5392FF,
+  success: #10C038,
+  lsuccess: #DBEFD1,
+  danger: #F04134,
+  warning: #f7a237,
+  info: #75849B,
+  linfo: #E9EDF2,
+  disable: #bbb
+);
+$fontColor:(
+  normal: #333,
+  light: #555,
+  slight: #999
+);
+$bgColor:(
+  disable: #f5f5f5,
+  hover: #f5f8ff
+);
+$borderColor:(
+  disable: #d9d9d9,
+  normal: #ddd
+);
 #app {
 	font-weight: 400;
 	font-style: normal;
@@ -40,28 +40,28 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 .el-icon-success {
-	color: #color[success];
+	color: map-get($color, success);
 }
 .el-icon-error {
-	color: #color[danger];
+	color: map-get($color, danger);
 }
 .icon-daiqidong {
-	color: #color[primary];
+	color: map-get($color, primary);
 }
 .icon-yunhangzhong {
-	color: #color[success];
+	color: map-get($color, success);
 }
 .icon-yichang {
-	color: #color[warning];
+	color: map-get($color, warning);
 }
 .layout-container .iconfont {
 	font-size: 12px;
 }
 .color-primary {
-	color: #color[primary];
+	color: map-get($color, primary);
 }
 .el-select-dropdown__item.selected {
-	color: #color[primary];
+	color: map-get($color, primary);
 	font-weight: normal;
 }
 .el-select-dropdown .el-select-group__wrap {
@@ -73,7 +73,7 @@
 	.el-select-group__title{
 		font-size: 14px;
 		font-weight: bold;
-		color: #fontColor[normal];
+		color: map-get($fontColor, normal);
 	}
 	.el-select-group {
 		padding: 0 20px;
@@ -90,43 +90,43 @@
 		height: 32px;
 		line-height: 30px;
 		font-size: 12px;
-		color: #fontColor[light];
+		color: map-get($fontColor, light);
 		background: #fff;
 		&.selected {
-			border-color: #color[primary];
-			color: #color[primary];
+			border-color: map-get($color, primary);
+			color: map-get($color, primary);
 			background: rgb(225, 236, 255);
 		}
 		&:hover {
-			border-color: #color[primary];
-			color: #color[primary];
+			border-color: map-get($color, primary);
+			color: map-get($color, primary);
 		}
 	}
 }
 .el-select .el-input.is-focus .el-input__inner {
-	border-color: #color[primary];
+	border-color: map-get($color, primary);
 }
 .el-input__inner {
 	border-radius: 2px;
 	border: 1px solid #D9D9D9;
 }
 .el-input__inner:hover {
-	border-color: #color[primary];
+	border-color: map-get($color, primary);
 }
 .el-radio__inner:hover {
-	border-color: #color[primary];
+	border-color: map-get($color, primary);
 }
 .el-radio__input.is-checked .el-radio__inner {
-	border-color: #color[primary];
-	background-color: #color[primary];
+	border-color: map-get($color, primary);
+	background-color: map-get($color, primary);
 }
 .el-radio-button__inner {
 	font-weight: normal;
-	color: #fontColor[light];
+	color: map-get($fontColor, light);
 	background: #fff;
 }
 .el-radio-button__inner:hover {
-	color: #color[primary];
+	color: map-get($color, primary);
 }
 .el-radio-button:first-child:last-child .el-radio-button__inner {
 	border-radius: 2px;
@@ -138,9 +138,9 @@
 	border-radius:  0 2px 2px 0;
 }
 .el-radio-button__orig-radio:checked+.el-radio-button__inner {
-	color: #color[primary];
+	color: map-get($color, primary);
 	background-color: rgb(225, 236, 255);
-	border-color:#color[primary];
+	border-color:map-get($color, primary);
 }
 .el-divider__text, .el-link {
 	font-size: 12px;
@@ -149,27 +149,27 @@
 	display: none;
 }
 .el-link.el-link--default {
-	color: #fontColor[normal];
+	color: map-get($fontColor, normal);
 }
 .el-link.el-link--default:hover {
-	color:#color[primary];
+	color:map-get($color, primary);
 	&::after {
 		display: none;
 	}
 }
 .el-link.el-link--primary {
-	color:#color[primary];
+	color:map-get($color, primary);
 	font-weight: normal;
 	font-size: 12px;
 }
 .el-link.el-link--primary:hover {
-	color: #color[lprimary];
+	color: map-get($color, lprimary);
 }
 .el-link.is-disabled {
 	cursor: default;
 }
 .el-link.el-link--primary.is-disabled {
-	color: #color[disable];
+	color: map-get($color, disable);
 }
 .el-tooltip__popper {
 	padding: 5px 10px;
@@ -182,15 +182,15 @@
 	font-weight: normal;
 }
 .el-button.is-plain:focus {
-	border-color: #borderColor[normal];
-	color: #fontColor[normal];
+	border-color: map-get($borderColor, normal);
+	color: map-get($fontColor, normal);
 }
 .el-button.is-plain:focus:hover {
-	color: #color[primary];
-	border-color: #color[primary];
+	color: map-get($color, primary);
+	border-color: map-get($color, primary);
 }
 .el-button--primary {
-	background-color: #color[primary];
+	background-color: map-get($color, primary);
 	border: none;
 }
 .el-button--mini, .el-button--small {
@@ -198,48 +198,48 @@
 }
 .el-button:focus, .el-button:hover {
 	background-color: #fff;;
-	color: #color[primary];
-	border-color: #color[primary];
+	color: map-get($color, primary);
+	border-color: map-get($color, primary);
 }
 .el-button--primary:hover {
-	background-color: #color[lprimary];
-	border-color: #color[lprimary];
+	background-color: map-get($color, lprimary);
+	border-color: map-get($color, lprimary);
 	color: #fff;
 }
 .el-button--primary:focus.el-button--primary:hover {
-	background-color: #color[lprimary];
-	border-color: #color[lprimary];
+	background-color: map-get($color, lprimary);
+	border-color: map-get($color, lprimary);
 	color: #fff;
 }
 .el-button--primary:focus, .el-button--primary.is-active, .el-button--primary:active {
-	background-color: #color[primary];
-	border-color: #color[primary];
+	background-color: map-get($color, primary);
+	border-color: map-get($color, primary);
 	color: #fff;
 }
 .el-button--primary.is-disabled,
 .el-button--primary.is-disabled:active,
 .el-button--primary.is-disabled:focus,
 .el-button--primary.is-disabled:hover {
-	color: #color[disable];
-	border-color: #borderColor[disable];
-	background-color: #bgColor[disable];
+	color: map-get($color, disable);
+	border-color: map-get($borderColor, disable);
+	background-color: map-get($bgColor, disable);
 }
 .el-checkbox {
 	font-weight: normal;
-	color: #fontColor[light];
+	color: map-get($fontColor, light);
 }
 .el-checkbox__label {
 	font-size: 12px;
 }
 .el-checkbox__inner:hover {
-	border-color: #color[primary];
+	border-color: map-get($color, primary);
 }
 .el-checkbox__input.is-focus .el-checkbox__inner {
-	border-color: #color[primary];
+	border-color: map-get($color, primary);
 }
 .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-	border-color: #color[primary];
-	background-color: #color[primary];
+	border-color: map-get($color, primary);
+	background-color: map-get($color, primary);
 }
 .el-checkbox__input.is-checked+.el-checkbox__label {
 	color: unset;
@@ -253,16 +253,16 @@
 .el-dropdown-link {
 	cursor: pointer;
 	font-size: 12px;
-    color: #color[primary];
+    color: map-get($color, primary);
 }
 .el-dropdown-menu__item {
-	color: #fontColor[normal];
+	color: map-get($fontColor, normal);
 }
 .el-dropdown-menu--small .el-dropdown-menu__item {
 	line-height: 32px;
 }
 .el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
-	color: #fontColor[normal];
+	color: map-get($fontColor, normal);
 }
 .el-menu-item {
 	font-size: 12px;
@@ -273,11 +273,11 @@
 	border-left: 3px solid #fff;
 }
 .el-menu-item.is-active {
-	color: #color[primary];
-	border-color: #color[primary];
+	color: map-get($color, primary);
+	border-color: map-get($color, primary);
 }
 .el-table {
-	color: #fontColor[normal];
+	color: map-get($fontColor, normal);
 }
 .el-table::before {
 	display: none;
@@ -286,7 +286,7 @@
 	display: block;
 }
 .el-table thead {
-	color: #fontColor[normal];
+	color: map-get($fontColor, normal);
 }
 .el-table__fixed-right-patch {
 	background: #F4F5F7;
@@ -311,23 +311,23 @@
 	line-height: 30px;
 }
 .el-table__body tr.hover-row>td {
-	background-color: #bgColor[hover];
+	background-color: map-get($bgColor, hover);
 }
 .table-border.el-table--enable-row-hover .el-table__body tr:hover>td {
 	background-color: inherit;
 }
 .el-pagination.is-background .el-pager li:not(.disabled).active {
-	background-color: #color[primary];
+	background-color: map-get($color, primary);
 }
 .el-breadcrumb__inner a, .el-breadcrumb__inner.is-link {
 	font-weight: normal;
-	color: #color[primary];
+	color: map-get($color, primary);
 }
 .el-breadcrumb__inner a:hover, .el-breadcrumb__inner.is-link:hover {
-	color: #color[lprimary];
+	color: map-get($color, lprimary);
 }
 .el-breadcrumb__item:last-child .el-breadcrumb__inner, .el-breadcrumb__item:last-child .el-breadcrumb__inner a, .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover, .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
-	color: #fontColor[normal];
+	color: map-get($fontColor, normal);
 }
 .el-tag--small {
 	border-radius: 2px;
@@ -335,14 +335,14 @@
 	line-height: 18px;
 }
 .el-tag.el-tag--success {
-	color: #color[success];
-	border-color: #color[success];
-	background-color: #color[lsuccess];
+	color: map-get($color, success);
+	border-color: map-get($color, success);
+	background-color: map-get($color, lsuccess);
 }
 .el-tag.el-tag--info {
-	color: #color[info];
-	border-color: #color[info];
-	background-color: #color[linfo];
+	color: map-get($color, info);
+	border-color: map-get($color, info);
+	background-color: map-get($color, linfo);
 }
 .el-message-box {
 	position: relative;
@@ -355,7 +355,7 @@
 	line-height: 24px;
 	font-size: 14px;
 	font-weight: bold;
-	color: #fontColor[normal];
+	color: map-get($fontColor, normal);
 }
 .el-message-box__headerbtn {
 	display: none;
@@ -371,7 +371,7 @@
 .el-message-box__content {
 	padding: 5px 15px 15px 15px;
 	font-size: 12px;
-	color: #fontColor[light];
+	color: map-get($fontColor, light);
 }
 .el-message-box__status+.el-message-box__message {
 	padding-left: 50px;
@@ -393,13 +393,13 @@
 			.step-box {
 				li {
 					&.active {
-						color: #color[primary];
+						color: map-get($color, primary);
 						&::before {
-							background: #color[primary];
+							background: map-get($color, primary);
 						}
 						.step-index {
 							border-color: #fff;
-							background: #color[primary];
+							background: map-get($color, primary);
 							color: #fff;
 						}
 					}
@@ -409,10 +409,10 @@
 	}
 }
 .fb-radio .el-radio.is-bordered.is-checked {
-	border: 1px solid #color[primary];
+	border: 1px solid map-get($color, primary);
 }
 .data-flow-wrap .panel-main .main.main-border .title {
-	color: #color[primary];
+	color: map-get($color, primary);
 }
 .monitorTab {
   display: none !important;

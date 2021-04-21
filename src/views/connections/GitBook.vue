@@ -23,7 +23,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .git-book {
   max-width: 550px;
   padding: 10px 20px;

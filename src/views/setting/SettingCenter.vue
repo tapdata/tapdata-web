@@ -73,7 +73,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .setting-center {
   height: 100%;
   font-size: 12px;
@@ -120,7 +120,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .setting-left-sidebar .el-menu-vertical-demo {
   .el-menu-item is-active {
     background-color: #eee;

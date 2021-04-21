@@ -632,7 +632,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .e-link-wrap {
   height: 100%;
   display: flex;
@@ -702,7 +702,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .e-link-wrap .el-form .el-radio-group {
   display: flex;
   justify-content: center;

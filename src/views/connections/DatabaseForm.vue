@@ -1,9 +1,6 @@
 <template>
   <div class="databaseFrom">
-    <header
-      class="header"
-      v-if="!$window.getSettingByKey('DFS_TCM_HIDE_CONNECTION_OUTSIDE_PART')"
-    >
+    <header class="header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
       {{
         $route.params.id
           ? $t('connection.editDataSource')
@@ -43,10 +40,7 @@
               </div>
               <div
                 class="tip"
-                v-if="
-                  !$window.getSettingByKey('DFS_TCM_PLATFORM') ||
-                  !$window.getSettingByKey('DFS_TCM_PLATFORM')
-                "
+                v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
               >
                 {{ $t('dataForm.form.guide') }}
                 <a
@@ -57,10 +51,7 @@
               </div>
               <div
                 class="tip"
-                v-if="
-                  $window.getSettingByKey('DFS_TCM_PLATFORM') ||
-                  $window.getSettingByKey('DFS_TCM_PLATFORM')
-                "
+                v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')"
               >
                 请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
               </div>
@@ -309,9 +300,7 @@
           </div>
         </footer>
       </main>
-      <gitbook
-        v-if="!$window.getSettingByKey('DFS_TCM_HIDE_CONNECTION_OUTSIDE_PART')"
-      ></gitbook>
+      <gitbook v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"></gitbook>
     </div>
     <Test
       ref="test"
@@ -1241,7 +1230,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .databaseFrom {
   display: flex;
   flex-direction: column;
@@ -1421,7 +1410,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .databaseFrom .el-form--label-right .el-form-item {
   .el-form-item__label .e-form-builder-item-label {
     float: right;

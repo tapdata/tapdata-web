@@ -88,7 +88,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .fb-array {
   .fb-array-item {
     margin-bottom: 5px;

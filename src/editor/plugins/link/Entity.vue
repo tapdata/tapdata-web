@@ -234,14 +234,14 @@ export default {
 }
 </script>
 
-<style lang="less">
-@color: #4aaf47;
+<style lang="scss">
+$color: #4aaf47;
 
 .e-entity {
   margin: 0 auto;
   width: 100%;
   max-width: 300px;
-  border: 1px solid @color;
+  border: 1px solid $color;
   text-align: left;
   border-radius: 3px;
   overflow: hidden;
@@ -249,7 +249,7 @@ export default {
   .header {
     height: 24px;
     padding-top: 4px;
-    background: @color;
+    background: $color;
     font-size: 12px;
     color: #fff;
   }
@@ -338,10 +338,10 @@ export default {
           transform: translate(-50%, -50%) rotate(90deg);
         }
         &:hover {
-          border: 1px solid @color;
+          border: 1px solid $color;
           &::before,
           &::after {
-            background: @color;
+            background: $color;
           }
         }
       }

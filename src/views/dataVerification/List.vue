@@ -64,7 +64,7 @@
             v-model="searchParams.enabled"
             clearable
             size="small"
-            :placeholder="$t('dataVerification.verifystatus')"
+            :placeholder="$t('dataVerification.isEnabled')"
             @input="table.fetch(1)"
           >
             <ElOption
@@ -535,7 +535,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .data-verify-wrap {
   height: 100%;
   .btn-refresh {
@@ -574,7 +574,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .data-verify-wrap {
   .el-table--border td {
     border-right: 0;

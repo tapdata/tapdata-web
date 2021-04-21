@@ -1294,8 +1294,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-@color: #71c179;
+<style lang="scss" scoped>
+$color: #71c179;
 .operation-area {
   text-align: right;
   color: #48b6e2;
@@ -1347,7 +1347,7 @@ export default {
   clear: both;
 }
 .e-schema-editor {
-  border: 1px solid @color;
+  border: 1px solid $color;
   display: inline-block;
   margin-bottom: 20px;
   box-sizing: border-box;
@@ -1477,9 +1477,9 @@ export default {
   }
 }
 </style>
-<style lang="less">
-@color: #48b6e2; //更改颜色
-@colorBorder: #71c179;
+<style lang="scss">
+$color: #48b6e2; //更改颜色
+$colorborder: #71c179;
 .fieldProcess {
   .e-schema-editor {
     font-size: 11px;
@@ -1509,14 +1509,14 @@ export default {
   }
 
   .e-schema-editor .el-main .el-tree .el-tree-node {
-    border-bottom: 1px solid @colorBorder;
+    border-bottom: 1px solid $colorborder;
 
     &:last-child {
       border-bottom: none;
     }
 
     &:first-child {
-      border-top: 1px solid @colorBorder;
+      border-top: 1px solid $colorborder;
     }
 
     .el-input__inner {
@@ -1528,20 +1528,20 @@ export default {
 
     .activedatatype {
       .el-input__inner {
-        color: @color;
+        color: $color;
       }
     }
 
     .active-name {
       .el-input__inner {
-        color: @color;
+        color: $color;
       }
     }
 
     .e-select {
       width: 100px;
-      border-left: 1px solid @colorBorder;
-      border-right: 1px solid @colorBorder;
+      border-left: 1px solid $colorborder;
+      border-right: 1px solid $colorborder;
       font-size: 11px;
     }
 

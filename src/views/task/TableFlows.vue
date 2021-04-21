@@ -611,9 +611,9 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
-@primaryColor: #48b6e2;
-@darkColor: #aaaaaa;
+<style lang="scss" scoped>
+$primaryColor: #48b6e2;
+$darkColor: #aaaaaa;
 .ellipsis {
   white-space: nowrap;
   overflow: hidden;
@@ -667,23 +667,23 @@ export default {
         overflow: hidden;
         .table-item {
           line-height: 18px;
-          .ellipsis;
+          @extend .ellipsis;
           div {
-            .ellipsis;
+            @extend .ellipsis;
           }
           .table-source {
-            color: @primaryColor;
+            color: $primaryColor;
           }
           .from-db {
             padding-left: 20px;
-            color: @darkColor;
+            color: $darkColor;
           }
         }
         .dark-color {
-          color: @darkColor;
+          color: $darkColor;
         }
         .primary-color {
-          color: @primaryColor;
+          color: $primaryColor;
         }
         .el-button {
           padding: 5px;
@@ -704,7 +704,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .table-flows {
   // .el-tabs__item {
   // 	height: 29px;

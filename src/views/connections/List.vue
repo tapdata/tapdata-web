@@ -280,7 +280,7 @@ export default {
       databaseType: '',
       id: '',
       description: '',
-      order: 'last_updated DESC',
+      order: 'createTime DESC',
       databaseModelOptions: [
         {
           label: this.$t('connection.type.source'),
@@ -395,7 +395,7 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
+      this.order = `${order ? prop : 'createTime'} ${
         order === 'ascending' ? 'ASC' : 'DESC'
       }`
       this.table.fetch(1)
@@ -738,7 +738,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .connection-list-wrap {
   height: 100%;
 

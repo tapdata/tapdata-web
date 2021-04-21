@@ -1051,7 +1051,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .role {
   height: 100%;
   box-sizing: border-box;
@@ -1204,7 +1204,7 @@ export default {
   display: none;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .role {
   .role-table {
     .e-row {

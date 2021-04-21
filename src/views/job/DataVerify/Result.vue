@@ -453,7 +453,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .data-contPreView {
   margin-left: 20px;
   margin-right: 20px;
@@ -621,7 +621,7 @@ export default {
   color: orangered;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .dv-pre-right .el-pagination {
   white-space: nowrap;
   padding: 0;

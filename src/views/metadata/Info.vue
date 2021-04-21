@@ -941,7 +941,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .metadata-info {
   display: flex;
   flex-direction: column;
@@ -1219,7 +1219,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .metadata-info {
   .el-collapse-item {
     font-size: 12px;

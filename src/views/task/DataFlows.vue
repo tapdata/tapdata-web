@@ -48,6 +48,22 @@
               <i slot="prefix" class="el-input__icon el-icon-search"></i>
             </el-input>
           </li>
+          <li v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')">
+            <ElSelect
+              v-model="searchParams.agentId"
+              clearable
+              size="small"
+              :placeholder="$t('dataFlow.searchAgent')"
+              @input="table.fetch(1)"
+            >
+              <ElOption
+                v-for="(value, label) in agentOptions"
+                :key="value"
+                :label="label"
+                :value="value"
+              ></ElOption>
+            </ElSelect>
+          </li>
           <!-- <li>
 						<el-select
 							v-model="searchParams.progress"
@@ -578,7 +594,8 @@ export default {
         progress: '',
         executionStatus: '',
         timeData: '',
-        syncType: ''
+        syncType: '',
+        agentId: ''
       },
       order: 'createTime DESC',
       progressOptions: [
@@ -625,6 +642,8 @@ export default {
           icon: 'loading'
         }
       },
+      agentOptions: [],
+
       multipleSelection: [],
 
       taskSettingsDialog: false, //任务调度设置弹窗开关
@@ -688,6 +707,8 @@ export default {
   created() {
     // window.windows = [];
     this.mappingTemplate = this.$route.query.mapping
+    this.searchParams.agentId = this.$route.query.agentId
+    this.searchParams.status = this.$route.query.status
     ws.on('watch', this.dataflowChange)
     interval = setInterval(() => {
       let tempList = this.tempList
@@ -704,6 +725,7 @@ export default {
       })
       this.tempList = []
     }, 5000)
+    this.getAgentOptions()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -719,6 +741,17 @@ export default {
     }
   },
   methods: {
+    getAgentOptions() {
+      this.$api('tcm')
+        .getAgent()
+        .then((res) => {
+          let list = res.data || []
+          this.agentOptions = list.map((item) => ({
+            label: item.name,
+            value: item.tmInfo.agentId
+          }))
+        })
+    },
     dataflowChange(data) {
       if (data && data.data && data.data.fullDocument) {
         this.tempList.push(data.data.fullDocument)
@@ -771,7 +804,8 @@ export default {
         progress,
         executionStatus,
         timeData,
-        syncType
+        syncType,
+        agentId
       } = this.searchParams
 
       let where = {
@@ -803,6 +837,9 @@ export default {
           { 'stages.tableName': { like: toRegExp(keyword), options: 'i' } },
           { 'stages.name': { like: toRegExp(keyword), options: 'i' } }
         ]
+      }
+      if (agentId) {
+        where['agentId'] = agentId
       }
       if (tags && tags.length) {
         where['listtags.id'] = {
@@ -1388,7 +1425,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
   .btn-refresh {
@@ -1465,7 +1502,7 @@ export default {
   }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .data-flow-wrap .data-flow-list .dataflow-table__icon {
   margin-left: -5px;
   font-size: 14px;

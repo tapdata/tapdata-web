@@ -141,7 +141,7 @@ a{
 		min-height: 0;
 	}
 }
-.passwordIconfont {
+@mixin passwordIconfont {
 	font-family: "iconfont" !important;
 	font-size: 16px;
 	font-style: normal;
@@ -150,7 +150,7 @@ a{
 }
 input[type="text"] + .el-input__suffix {
 	.el-input__icon.el-icon-view {
-		.passwordIconfont();
+		@include passwordIconfont;
 		&::before {
 			content: "\e63c";
 		}
@@ -158,7 +158,7 @@ input[type="text"] + .el-input__suffix {
 }
 input[type="password"] + .el-input__suffix {
 	.el-input__icon.el-icon-view {
-		.passwordIconfont();
+		@include passwordIconfont;
 		&::before {
 			content: "\e63b";
 		}

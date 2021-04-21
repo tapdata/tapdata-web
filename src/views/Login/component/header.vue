@@ -45,7 +45,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 header {
   padding: 70px 80px 0 80px;
   margin: 0 auto;

@@ -41,7 +41,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .json-box {
   display: flex;
   justify-content: space-between;

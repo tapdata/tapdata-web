@@ -224,7 +224,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .filter-icon {
   font-size: 12px;
   color: #edc958;
@@ -243,7 +243,7 @@ export default {
   margin-bottom: 10px;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .SelectClassify-dialog {
   .el-dialog__body {
     padding: 0 0 0 20px;

@@ -277,7 +277,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .e-form-builder-container {
   .color-warning {
     color: #e6a23c;

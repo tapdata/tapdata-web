@@ -438,8 +438,8 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
-@unreadColor: #ee5353;
+<style scoped lang="scss">
+$unreadColor: #ee5353;
 .system-notification {
   margin-left: 20px;
   display: flex;
@@ -512,7 +512,7 @@ export default {
       left: 8px;
       width: 6px;
       height: 6px;
-      background: @unreadColor;
+      background: $unreadColor;
       border-radius: 50%;
     }
     .list-item-desc {
@@ -540,7 +540,7 @@ export default {
   padding: 10px 0 20px 0;
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .system-notification {
   .el-tabs__item {
     height: 32px;

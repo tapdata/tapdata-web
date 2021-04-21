@@ -42,7 +42,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .fb-group {
   display: flex;
   align-items: center;
