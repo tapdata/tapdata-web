@@ -158,6 +158,7 @@ export default function (vm) {
         type: 'slot',
         slot: 'ecsList',
         show: false,
+        name: '选择ECS',
         required: true,
         dependOn: [
           {
