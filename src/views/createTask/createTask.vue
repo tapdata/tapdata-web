@@ -819,6 +819,23 @@ export default {
           database_type: this.dataSourceModel['target_databaseType'] || 'mysql'
         })
       ]
+      //支持双向
+      let node = Object.assign({}, stageDefault, {
+          id: sourceId,
+          connectionId: source.source_connectionId,
+          inputLanes: [targetId],
+          distance: 1,
+          name: this.dataSourceModel.source_connectionName,
+          type: 'database',
+          database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
+          dropType: 'no_drop',
+          readBatchSize: 1000,
+          readCdcInterval: 500
+        })
+      if(this.settingModel.twoWay && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'){
+          postData.stages[1]['outputLanes'] = [sourceId]
+          postData.stages.push(node);
+      }
       let promise = null
       if (this.id) {
         postData['id'] = this.id
