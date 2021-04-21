@@ -14,6 +14,9 @@ export default class TCM extends PublicAPI {
   getAgent() {
     return axios.get(this.url + '/agent')
   }
+  getAgentCount() {
+    return axios.get(this.url + '/agent/agentCount')
+  }
   //h获取可用区
   getRegion() {
     return axios.get(this.url + '/region')
