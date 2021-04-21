@@ -327,42 +327,49 @@ export default {
       let value = data.value
       let items = this.config.items
       if (field === 'source_databaseType') {
-        // 修改目标端
-        let target = items.find((it) => it.field === 'target_databaseType')
-        if (target) {
-          target.options = target.options.map((item) => {
-            if (value === 'mongodb') {
-              // mongodb 时，禁用目标端的 oracle
-              if (item.value === 'oracle') {
-                item.disabled = true
+        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+          // dfs修改目标端
+          let target = items.find((it) => it.field === 'target_databaseType')
+          if (target) {
+            target.options = target.options.map((item) => {
+              if (value === 'mongodb') {
+                // mongodb 时，禁用目标端的 oracle
+                if (item.value === 'oracle') {
+                  item.disabled = true
+                }
+                return item
+              } else {
+                // 不是 mongodb，则恢复正常
+                item.disabled = false
+                return item
               }
-              return item
-            } else {
-              // 不是 mongodb，则恢复正常
-              item.disabled = false
-              return item
-            }
-          })
+            })
+          }
         }
         this.getConnection(this.getWhere('source'), 'source_connectionId')
       }
       if (field === 'target_databaseType') {
-        // 修改源端
+        // dfs修改源端
         let source = items.find((it) => it.field === 'source_databaseType')
         if (source) {
-          source.options = source.options.map((item) => {
-            if (value === 'oracle') {
-              // oracle 时，禁用目标端的 oracle
-              if (item.value === 'mongodb') {
-                item.disabled = true
-              }
-              return item
-            } else {
-              // 不是 oracle，则恢复正常
-              item.disabled = false
-              return item
-            }
-          })
+          // dfs源端不支持 redis
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+            source.options = source.options
+              .filter((item) => item.value !== 'redis')
+              .map((item) => {
+                if (value === 'oracle') {
+                  // oracle 时，禁用目标端的 oracle
+                  if (item.value === 'mongodb') {
+                    item.disabled = true
+                  }
+                  return item
+                } else {
+                  // 不是 oracle，则恢复正常
+                  item.disabled = false
+                  return item
+                }
+              })
+          }
         }
         this.getConnection(this.getWhere('target'), 'target_connectionId')
       }
@@ -651,7 +658,12 @@ export default {
         case 'databaseType': {
           let source = items.find((it) => it.field === 'source_databaseType')
           if (source) {
-            source.options = data.map((item) => {
+            // dfs源端不支持 redis
+            let options = data
+            if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+              options = data.filter((item) => item !== 'redis')
+            }
+            source.options = options.map((item) => {
               return {
                 label: TYPEMAP[item],
                 value: item
