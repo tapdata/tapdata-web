@@ -30,4 +30,8 @@ export default class TCM extends PublicAPI {
   strategy(params) {
     return axios.post(this.url + '/strategy', params)
   }
+  //ecs列表
+  getEcsList(id, params) {
+    return axios.get(this.url + '/ecs/list/' + id, { params })
+  }
 }

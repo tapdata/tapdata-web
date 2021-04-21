@@ -199,6 +199,7 @@ export const defaultCloudModel = {
     region: '',
     zone: '',
     vpc: '',
+    ecs: '',
     checkedVpc: '',
     platformInfo: {
       region: '',
@@ -209,8 +210,9 @@ export const defaultCloudModel = {
       DRS_instances: '',
       IP_type: '',
       vpc: '',
+      ecs: '',
       checkedVpc: false,
-      isThrough: false
+      strategyExistence: false
     }
   }
 }
