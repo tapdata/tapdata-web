@@ -197,12 +197,14 @@ export default {
       dataSourceZone: '',
       dataSourceMock: [],
       dialogDatabaseTypeVisible: false,
-      allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
+      allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE'),
+      supportTwoWay: false
     }
   },
   created() {
     this.id = this.$route.params.id
     this.getSteps()
+    this.getAgentCount()
     this.getFormConfig()
     if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
       this.dataSourceModel = _.cloneDeep(DFSDATASOURCE_MODEL)
@@ -237,6 +239,13 @@ export default {
     }
   },
   methods: {
+    getAgentCount() {
+      this.$api('tcm')
+        .getAgentCount()
+        .then((res) => {
+          this.supportTwoWay = res.data.twoWayAgentRunningCount > 0
+        })
+    },
     //兼容新手引导
     handleCreateDatabase() {
       if (this.$route.query.step) {
@@ -492,6 +501,7 @@ export default {
             this.dataSourceModel['target_databaseType'] !== 'mysql'
           ) {
             this.changeConfig([], 'setting_isOpenAutoDDL')
+            this.changeConfig([], 'setting_twoWay')
           }
           break
         }
@@ -653,6 +663,12 @@ export default {
           if (op) {
             op.show = false
           }
+          break
+        }
+        case 'setting_twoWay': {
+          //映射是否双向同步
+          let op = items.find((it) => it.field === 'twoWay')
+          op.show = !!this.supportTwoWay
           break
         }
         case 'databaseType': {
