@@ -15,7 +15,11 @@
           </div>
           <div class="content">{{ typeMap[item] }}</div>
         </li>
-        <li v-for="item in notAllowDatabase" :key="item" class="item--disabled">
+        <li
+          v-for="item in comingAllowDatabase"
+          :key="item"
+          class="item--disabled"
+        >
           <div class="img-box position-relative">
             <img :src="getImgByType(item)" />
             <div
@@ -77,7 +81,7 @@ export default {
         'mysql pxc',
         'jira'
       ],
-      notAllowDatabase: [],
+      comingAllowDatabase: [], // 即将上线
       otherType: [
         'gridfs',
         'dummy db',
@@ -90,7 +94,7 @@ export default {
   },
   created() {
     let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || []
-    let notAllowDataType =
+    let comingAllowDataType =
       window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
     let allwoType = this.allwoType
     if (allwoType && allwoType.length) {
@@ -100,9 +104,8 @@ export default {
     }
     this.database =
       allowDataType.filter((type) => this.database.includes(type)) || []
-    this.notAllowDatabase =
-      notAllowDataType.filter((type) => this.notAllowDatabase.includes(type)) ||
-      []
+    this.comingAllowDatabase =
+      comingAllowDataType.filter((type) => this.database.includes(type)) || []
     this.otherType =
       allowDataType.filter((type) => this.otherType.includes(type)) || []
   },
