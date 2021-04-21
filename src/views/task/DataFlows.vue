@@ -224,18 +224,23 @@
         <template slot-scope="scope">
           <span class="dataflow-name">
             <span
-              class="name"
+              :class="[
+                'name',
+                { 'text-decoration-none': scope.row.hasChildren }
+              ]"
               @click="
                 scope.row.status === 'draft'
                   ? handleDetail(
                       scope.row.id,
                       'edit',
-                      scope.row.mappingTemplate
+                      scope.row.mappingTemplate,
+                      scope.row.hasChildren
                     )
                   : handleDetail(
                       scope.row.id,
                       'detail',
-                      scope.row.mappingTemplate
+                      scope.row.mappingTemplate,
+                      scope.row.hasChildren
                     )
               "
               >{{ scope.row.name }}</span
@@ -411,7 +416,12 @@
               style="margin-left: 10px"
               type="primary"
               @click="
-                handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate)
+                handleDetail(
+                  scope.row.id,
+                  'detail',
+                  scope.row.mappingTemplate,
+                  scope.row.hasChildren
+                )
               "
             >
               {{ $t('dataFlow.runningMonitor') }}
@@ -427,7 +437,12 @@
                 ) || !statusBtMap['edit'][scope.row.status]
               "
               @click="
-                handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)
+                handleDetail(
+                  scope.row.id,
+                  'edit',
+                  scope.row.mappingTemplate,
+                  scope.row.hasChildren
+                )
               "
             >
               {{ $t('button.edit') }}
@@ -1048,7 +1063,11 @@ export default {
         path: '/createTask/create'
       })
     },
-    handleDetail(id, type, mappingTemplate) {
+    handleDetail(id, type, mappingTemplate, hasChildren) {
+      // 子选项 hasChildren 为 true
+      if (hasChildren) {
+        return
+      }
       const h = this.$createElement
       if (type === 'edit') {
         this.$confirm(
