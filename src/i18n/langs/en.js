@@ -2767,6 +2767,22 @@ const en = {
     checkSuccess: 'Pass verification',
     checkError: 'Verification failed',
     alreadyExists: 'User name cannot be repeated'
+  },
+  process: {
+    name: 'Name/worker type',
+    worker_ip: 'Address',
+    version: 'Version',
+    online: 'Online',
+    all: 'All',
+    state: 'State',
+    job_ids: 'Detail',
+    running_thread: 'Running thread',
+    total_thread: 'Number of threads',
+    worker_type: 'Worker type',
+    ping_time: 'Ping time',
+    start_time: 'Start time',
+    process_id: 'Process ID',
+    processState: 'Working process state'
   }
 }
 

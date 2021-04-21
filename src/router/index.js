@@ -279,10 +279,11 @@ const childRoutes = [
   {
     path: '/agents',
     name: 'agents',
-    component: () => import('@/views/ExternalLink'),
+    // component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/process/List'),
     meta: {
       code: 'agents_menu',
-      url: '/old/index.html#/agents',
+      // url: '/old/index.html#/agents',
       title: i18n.t('tap.agentManagement'),
       isCollapse: false
     }

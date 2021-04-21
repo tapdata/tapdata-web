@@ -2669,6 +2669,22 @@ const tc = {
     checkSuccess: '通過校驗',
     checkError: '校驗失敗',
     alreadyExists: '用戶名不能重複'
+  },
+  process: {
+    name: '名稱/worker 類型',
+    worker_ip: '地址',
+    version: '版本',
+    online: '線上',
+    all: '所有',
+    state: '狀態',
+    job_ids: '明細',
+    running_thread: '運行中的線程',
+    total_thread: '線程數量',
+    worker_type: 'Worker 類型',
+    ping_time: 'Ping 時間',
+    start_time: '開始時間',
+    process_id: '進程 ID',
+    processState: '工作進程狀態'
   }
 }
 

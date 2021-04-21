@@ -2672,6 +2672,22 @@ const cn = {
     checkSuccess: '通过校验',
     checkError: '校验失败',
     alreadyExists: '用户名不能重复'
+  },
+  process: {
+    name: '名称/worker 类型',
+    worker_ip: '地址',
+    version: '版本',
+    online: '线上',
+    all: '所有',
+    state: '状态',
+    job_ids: '明细',
+    running_thread: '运行中的线程',
+    total_thread: '线程数量',
+    worker_type: 'Worker 类型',
+    ping_time: 'Ping 时间',
+    start_time: '开始时间',
+    process_id: '进程 ID',
+    processState: '工作进程状态'
   }
 }
 
