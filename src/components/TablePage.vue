@@ -116,13 +116,6 @@ export default {
 	created() {
 		this.fetch(1);
 	},
-	watch: {
-		classify: function(_new, _old) {
-			if (_new.toString() !== _old.toString()) {
-				this.tags = [];
-			}
-		}
-	},
 	methods: {
 		getCache() {
 			let params = this.$cache.get('TABLE_PAGE_PARAMS') || {};

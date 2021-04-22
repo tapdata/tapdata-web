@@ -60,8 +60,8 @@
 			<!-- 列表项 -->
 			<el-table-column :label="$t('dataQuality.sourceName')" prop="name">
 				<template slot-scope="scope">
-					{{ scope.row.source ? scope.row.source.name : '' }}
-					<div class="gray">{{ scope.row.collection }}</div>
+					{{ scope.row.collection }}
+					<div class="gray">{{ scope.row.source ? scope.row.source.name : '' }}</div>
 				</template>
 			</el-table-column>
 			<el-table-column :label="$t('dataQuality.totalDocs')" prop="total_docs">
