@@ -870,7 +870,10 @@ export default {
     goBackList() {
       this.$confirm('此操作会丢失当前正在创建的任务', '是否放弃创建该任务', {
         type: 'warning'
-      }).then(() => {
+      }).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
         this.$router.push({
           path: '/dataFlows?mapping=cluster-clone'
         })
