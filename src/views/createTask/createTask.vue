@@ -862,8 +862,12 @@ export default {
     },
     //返回任务列表
     goBackList() {
-      this.$router.push({
-        path: '/dataFlows?mapping=cluster-clone'
+      this.$confirm('此操作会丢失当前正在创建的任务', '是否放弃创建该任务', {
+        type: 'warning'
+      }).then(() => {
+        this.$router.push({
+          path: '/dataFlows?mapping=cluster-clone'
+        })
       })
     },
     //选择创建类型

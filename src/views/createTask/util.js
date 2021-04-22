@@ -8,7 +8,8 @@ export const SETTING_MODEL = {
   sync_type: 'initial_sync+cdc',
   distinctWriteType: 'intellect',
   stopOnError: false,
-  isOpenAutoDDL: false
+  isOpenAutoDDL: false,
+  twoWay: false
 }
 
 export const DATASOURCE_MODEL = {
