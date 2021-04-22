@@ -2664,7 +2664,10 @@ const cn = {
 		allUpdateSuccessTip2: '条数据',
 		updateFail: '更新失败',
 		dataTypeError: '数据类型转换失败，期望==>',
-		columnTip: '请至少选择一列'
+		columnTip: '请至少选择一列',
+		countTitle: '重新统计',
+		connectTip: '请至少选择一个数据源',
+		countTip: '正在统计，请稍后'
 	}
 };
 

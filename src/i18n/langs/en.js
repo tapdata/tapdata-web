@@ -2807,7 +2807,10 @@ const en = {
 		allUpdateSuccessTip2: 'pieces of data have been modified',
 		updateFail: 'Update failed',
 		dataTypeError: 'Data type conversion failed, expected==>',
-		columnTip: 'Please select at least one column'
+		columnTip: 'Please select at least one column',
+		countTitle: 'Recount',
+		connectTip: 'Select at least one data source',
+		countTip: 'Statistic in progress, please hold on'
 	}
 }
 

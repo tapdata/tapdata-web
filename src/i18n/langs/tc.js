@@ -2657,7 +2657,10 @@ const tc = {
 		allUpdateSuccessTip2: '條數據',
 		updateFail: '更新失敗',
 		dataTypeError: '數據類型轉換失敗，期望==>',
-		columnTip: '請至少選擇一列'
+		columnTip: '請至少選擇一列',
+		countTitle: '重新統計',
+		connectTip: '請至少選擇一個數據源',
+		countTip: '正在統計，請稍後'
 	}
 };
 
