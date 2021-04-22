@@ -192,12 +192,9 @@ export default {
           })
         }
       })
-      let int = setInterval(() => {
-        if (ws.ws.readyState == 1) {
-          ws.send(msg)
-          clearInterval(int)
-        }
-      }, 2000)
+      ws.ready(() => {
+        ws.send(msg)
+      }, true)
       this.$root.$on('notificationUpdate', () => {
         ws.send(msg)
       })

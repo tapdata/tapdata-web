@@ -243,7 +243,10 @@ export default {
       this.$api('tcm')
         .getAgentCount()
         .then((res) => {
-          this.supportTwoWay = res.data.twoWayAgentRunningCount > 0
+          this.supportTwoWay =
+            res.data.twoWayAgentRunningCount > 0 &&
+            this.dataSourceModel['source_databaseType'] === 'mongodb' &&
+            this.dataSourceModel['target_databaseType'] === 'mongodb'
         })
     },
     //兼容新手引导
@@ -821,20 +824,23 @@ export default {
       ]
       //支持双向
       let node = Object.assign({}, stageDefault, {
-          id: sourceId,
-          connectionId: source.source_connectionId,
-          inputLanes: [targetId],
-          distance: 1,
-          name: this.dataSourceModel.source_connectionName,
-          type: 'database',
-          database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
-          dropType: 'no_drop',
-          readBatchSize: 1000,
-          readCdcInterval: 500
-        })
-      if(this.settingModel.twoWay && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'){
-          postData.stages[1]['outputLanes'] = [sourceId]
-          postData.stages.push(node);
+        id: sourceId,
+        connectionId: source.source_connectionId,
+        inputLanes: [targetId],
+        distance: 1,
+        name: this.dataSourceModel.source_connectionName,
+        type: 'database',
+        database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
+        dropType: 'no_drop',
+        readBatchSize: 1000,
+        readCdcInterval: 500
+      })
+      if (
+        this.settingModel.twoWay &&
+        window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+      ) {
+        postData.stages[1]['outputLanes'] = [sourceId]
+        postData.stages.push(node)
       }
       let promise = null
       if (this.id) {
