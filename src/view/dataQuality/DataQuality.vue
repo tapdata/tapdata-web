@@ -99,6 +99,7 @@
 			:title="$t('dataQuality.countTitle')"
 			:close-on-click-modal="false"
 			:visible.sync="countVisible"
+			@close="countCancel"
 		>
 			<el-select
 				v-model="connection"
