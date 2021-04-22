@@ -57,10 +57,10 @@
               @input="table.fetch(1)"
             >
               <ElOption
-                v-for="(value, label) in agentOptions"
-                :key="value"
-                :label="label"
-                :value="value"
+                v-for="opt in agentOptions"
+                :key="opt.value"
+                :label="opt.label"
+                :value="opt.value"
               ></ElOption>
             </ElSelect>
           </li>
@@ -764,10 +764,12 @@ export default {
         .getAgent()
         .then((res) => {
           let list = res.data && res.data.items ? res.data.items : []
-          this.agentOptions = list.map((item) => ({
-            label: item.name,
-            value: item.tmInfo.agentId
-          }))
+          this.agentOptions = list.map((item) => {
+            return {
+              label: item.name,
+              value: item.tmInfo.agentId
+            }
+          })
         })
     },
     dataflowChange(data) {
