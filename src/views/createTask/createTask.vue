@@ -615,8 +615,6 @@ export default {
           break
         }
         case 'source_connectionId': {
-          // 清空连接
-          this.dataSourceModel.source_connectionId = ''
           // 第二步 数据源连接ID
           let source_connectionId = items.find(
             (it) => it.field === 'source_connectionId'
@@ -637,8 +635,6 @@ export default {
           break
         }
         case 'target_connectionId': {
-          // 清空连接
-          this.dataSourceModel.target_connectionId = ''
           let target_connectionId = items.find(
             (it) => it.field === 'target_connectionId'
           )
@@ -821,20 +817,23 @@ export default {
       ]
       //支持双向
       let node = Object.assign({}, stageDefault, {
-          id: sourceId,
-          connectionId: source.source_connectionId,
-          inputLanes: [targetId],
-          distance: 1,
-          name: this.dataSourceModel.source_connectionName,
-          type: 'database',
-          database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
-          dropType: 'no_drop',
-          readBatchSize: 1000,
-          readCdcInterval: 500
-        })
-      if(this.settingModel.twoWay && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'){
-          postData.stages[1]['outputLanes'] = [sourceId]
-          postData.stages.push(node);
+        id: sourceId,
+        connectionId: source.source_connectionId,
+        inputLanes: [targetId],
+        distance: 1,
+        name: this.dataSourceModel.source_connectionName,
+        type: 'database',
+        database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
+        dropType: 'no_drop',
+        readBatchSize: 1000,
+        readCdcInterval: 500,
+        table_prefix: this.transferData.table_prefix,
+        table_suffix: this.transferData.table_suffix,
+        syncObjects: selectTable //需要同步的表
+      })
+      if (this.settingModel.twoWay && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+        postData.stages[1]['outputLanes'] = [sourceId]
+        postData.stages.push(node)
       }
       let promise = null
       if (this.id) {
