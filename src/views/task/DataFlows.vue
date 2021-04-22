@@ -760,7 +760,7 @@ export default {
       this.$api('tcm')
         .getAgent()
         .then((res) => {
-          let list = res.data || []
+          let list = res.data && res.data.items ? res.data.items : []
           this.agentOptions = list.map((item) => ({
             label: item.name,
             value: item.tmInfo.agentId
