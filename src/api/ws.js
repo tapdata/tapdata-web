@@ -157,10 +157,20 @@ class WSClient extends EventEmitter {
     // });
   }
 
-  ready(cb) {
-    this.on('opened', cb)
-    if (this.ws.readyState == 1) {
-      cb && cb()
+  ready(cb, isSendWhenOpen) {
+    if (isSendWhenOpen) {
+      this.on('opened', cb)
+      if (this.ws.readyState == 1) {
+        cb && cb()
+      }
+    } else {
+      if (this.ws.readyState == 1) {
+        cb && cb()
+      } else {
+        setTimeout(() => {
+          this.ready(cb)
+        }, 500)
+      }
     }
   }
 

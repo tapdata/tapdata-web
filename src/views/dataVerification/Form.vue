@@ -671,7 +671,7 @@ export default {
       }
     },
     //获取源表和目标表数据
-    getTree(tree, stage) {
+    getTree(tree, stage = {}) {
       let parent = tree.find((c) => c.value === stage.connectionId)
       if (!parent) {
         parent = {

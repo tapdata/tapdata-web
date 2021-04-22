@@ -385,7 +385,9 @@ export default {
         }
       }
 
-      if (ws.ws.readyState == 1) ws.send(params)
+      ws.ready(() => {
+        ws.send(params)
+      })
       let self = this,
         schema = null,
         templeSchema = []

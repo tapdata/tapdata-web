@@ -307,6 +307,9 @@
               ></i>
             </template>
             <span>{{ scope.row.statusLabel }}</span>
+            <span v-if="scope.row.status === 'running' && scope.row.tcm"
+              >({{ scope.row.tcm.agentName }})</span
+            >
             <span
               style="color: #999"
               v-if="
@@ -760,7 +763,7 @@ export default {
       this.$api('tcm')
         .getAgent()
         .then((res) => {
-          let list = res.data || []
+          let list = res.data && res.data.items ? res.data.items : []
           this.agentOptions = list.map((item) => ({
             label: item.name,
             value: item.tmInfo.agentId
@@ -797,7 +800,7 @@ export default {
       }
       ws.ready(() => {
         ws.send(msg)
-      })
+      }, true)
     },
     reset() {
       this.searchParams = {
@@ -844,7 +847,8 @@ export default {
         startTime: true,
         listtags: true,
         mappingTemplate: true,
-        platformInfo: true
+        platformInfo: true,
+        agentId: true
       }
       if (keyword && keyword.trim()) {
         where.or = [
