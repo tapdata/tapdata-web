@@ -8,7 +8,7 @@
 		</div>
 
 		<div class="table-page-main">
-			<div class="table-page-left" v-if="classify && $window.getSettingByKey('SHOW_CLASSIFY')">
+			<div class="table-page-left" v-if="classify && !hideClassify && $window.getSettingByKey('SHOW_CLASSIFY')">
 				<Classification
 					:authority="classify.authority"
 					:types="classify.types"
@@ -81,6 +81,11 @@ export default {
 		defaultPageSize: {
 			type: Number,
 			default: 20
+		},
+		hideClassify: {
+			// 是否隐藏左侧栏
+			type: Boolean,
+			default: false
 		},
 		classify: {
 			type: Object

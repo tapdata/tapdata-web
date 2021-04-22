@@ -1,6 +1,12 @@
 <template>
 	<section class="data-quality-wrap">
-		<TablePage ref="table" :title="$t('dataQuality.title')" :desc="$t('dataQuality.desc')" :remoteMethod="getData">
+		<TablePage
+			ref="table"
+			:title="$t('dataQuality.title')"
+			:desc="$t('dataQuality.desc')"
+			:remoteMethod="getData"
+			:classify="{ authority: 'data_catalog_category_management', types: metaType }"
+		>
 			<!-- 过滤项 -->
 			<div slot="search">
 				<ul class="search-bar">
@@ -26,9 +32,9 @@
 						</el-input>
 					</li>
 					<template v-if="searchParams.keyword">
-						<li>
+						<!-- 						<li>
 							<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
-						</li>
+						</li> -->
 						<li>
 							<el-button size="mini" type="text" @click="reset('reset')">{{
 								$t('button.reset')
@@ -102,6 +108,14 @@ export default {
 		// table组件dom实体
 		table() {
 			return this.$refs.table;
+		},
+		metaType() {
+			let metaType = this.searchParams.metaType;
+			if (metaType) {
+				return [metaType];
+			} else {
+				return this.$route.meta.types || [];
+			}
 		}
 	},
 
@@ -136,7 +150,7 @@ export default {
 				});
 				return {
 					total: countRes.count,
-					data: res || []
+					data: res && res.length ? res : []
 				};
 			});
 		},

@@ -3,6 +3,7 @@
 		<TablePage
 			v-if="showTable"
 			ref="table"
+			:hideClassify="true"
 			:title="$t('dataQuality.title')"
 			:desc="$t('dataQuality.desc')"
 			:remoteMethod="getDataFromApi"

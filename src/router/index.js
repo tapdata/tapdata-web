@@ -106,7 +106,8 @@ const childRoutes = [
 		meta: {
 			code: 'data_quality_menu',
 			title: i18n.t('tap.dataQuality'),
-			isCollapse: true
+			isCollapse: true,
+			types: ['table', 'view', 'collection', 'mongo_view']
 		}
 	},
 	{
