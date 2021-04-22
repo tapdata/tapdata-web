@@ -636,7 +636,7 @@ export default {
 						}
 					});
 				} else {
-					this.table.list = this.table.list.map(v => v !== item);
+					this.table.list = this.table.list.filter(v => v !== item);
 				}
 				this.$message.success(this.$t('message.saveOK'));
 			}
