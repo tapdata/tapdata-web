@@ -797,7 +797,7 @@ export default {
       }
       ws.ready(() => {
         ws.send(msg)
-      })
+      }, true)
     },
     reset() {
       this.searchParams = {

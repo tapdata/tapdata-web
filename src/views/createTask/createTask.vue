@@ -243,7 +243,10 @@ export default {
       this.$api('tcm')
         .getAgentCount()
         .then((res) => {
-          this.supportTwoWay = res.data.twoWayAgentRunningCount > 0
+          this.supportTwoWay =
+            res.data.twoWayAgentRunningCount > 0 &&
+            this.dataSourceModel['source_databaseType'] === 'mongodb' &&
+            this.dataSourceModel['target_databaseType'] === 'mongodb'
         })
     },
     //兼容新手引导
@@ -831,7 +834,10 @@ export default {
         table_suffix: this.transferData.table_suffix,
         syncObjects: selectTable //需要同步的表
       })
-      if (this.settingModel.twoWay && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+      if (
+        this.settingModel.twoWay &&
+        window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+      ) {
         postData.stages[1]['outputLanes'] = [sourceId]
         postData.stages.push(node)
       }
@@ -862,8 +868,12 @@ export default {
     },
     //返回任务列表
     goBackList() {
-      this.$router.push({
-        path: '/dataFlows?mapping=cluster-clone'
+      this.$confirm('此操作会丢失当前正在创建的任务', '是否放弃创建该任务', {
+        type: 'warning'
+      }).then(() => {
+        this.$router.push({
+          path: '/dataFlows?mapping=cluster-clone'
+        })
       })
     },
     //选择创建类型
