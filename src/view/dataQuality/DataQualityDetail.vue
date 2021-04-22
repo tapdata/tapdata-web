@@ -613,7 +613,6 @@ export default {
 			});
 			if (saveItem.__tapd8.hitRules.length == 0) {
 				// 检查当前行若没有错误标记，就去除当前行错误标记
-				saveItem.__tapd8.hitRules = [];
 				saveItem.__tapd8.result = '';
 			}
 
@@ -628,13 +627,17 @@ export default {
 			delete saveItem.wrongFields;
 			let result = await this.apiClient.updateById(item._id, saveItem);
 			if (result.success) {
-				this.table.list = this.table.list.map(v => {
-					if (v === item) {
-						return { ...saveItem, ...attrs, editing: false };
-					} else {
-						return v;
-					}
-				});
+				if (saveItem.__tapd8.result) {
+					this.table.list = this.table.list.map(v => {
+						if (v === item) {
+							return { ...saveItem, ...attrs, editing: false };
+						} else {
+							return v;
+						}
+					});
+				} else {
+					this.table.list = this.table.list.map(v => v !== item);
+				}
 				this.$message.success(this.$t('message.saveOK'));
 			}
 			this.editLoading = false;

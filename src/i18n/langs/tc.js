@@ -265,6 +265,7 @@ const tc = {
 		placeholderCommand: '請輸入command',
 		nullContent: '不能為空',
 		saveOK: '保存成功',
+		save: '保存',
 		saveFail: '保存失敗',
 		copyFail: '複製失敗',
 		copySuccess: '複製成功',

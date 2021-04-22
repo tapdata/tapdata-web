@@ -265,6 +265,7 @@ const cn = {
 		placeholderCommand: '请输入命令',
 		nullContent: '不能为空',
 		saveOK: '保存成功',
+		save: '保存',
 		saveFail: '保存失败',
 		createOK: '保存成功',
 		createFail: '创建失败',
