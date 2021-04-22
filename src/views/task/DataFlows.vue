@@ -844,7 +844,8 @@ export default {
         startTime: true,
         listtags: true,
         mappingTemplate: true,
-        platformInfo: true
+        platformInfo: true,
+        agentId: true
       }
       if (keyword && keyword.trim()) {
         where.or = [
