@@ -192,7 +192,12 @@
           {{ scope.row.connectionSource }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('connection.lastUpdateTime')" width="160">
+      <el-table-column
+        :label="$t('connection.lastUpdateTime')"
+        width="160"
+        prop="last_updated"
+        sortable="custom"
+      >
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
