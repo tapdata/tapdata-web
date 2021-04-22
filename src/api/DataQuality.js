@@ -11,6 +11,6 @@ export default class DataQualityAPI extends PublicAPI {
 	}
 
 	analyzeByConnId(params) {
-		return axios.post(this.url + '/analyzeByConnId', { params: params });
+		return axios.post(this.url + '/analyzeByConnId', params);
 	}
 }
