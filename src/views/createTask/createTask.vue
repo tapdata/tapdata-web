@@ -618,8 +618,6 @@ export default {
           break
         }
         case 'source_connectionId': {
-          // 清空连接
-          this.dataSourceModel.source_connectionId = ''
           // 第二步 数据源连接ID
           let source_connectionId = items.find(
             (it) => it.field === 'source_connectionId'
@@ -640,8 +638,6 @@ export default {
           break
         }
         case 'target_connectionId': {
-          // 清空连接
-          this.dataSourceModel.target_connectionId = ''
           let target_connectionId = items.find(
             (it) => it.field === 'target_connectionId'
           )
@@ -833,7 +829,10 @@ export default {
         database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
         dropType: 'no_drop',
         readBatchSize: 1000,
-        readCdcInterval: 500
+        readCdcInterval: 500,
+        table_prefix: this.transferData.table_prefix,
+        table_suffix: this.transferData.table_suffix,
+        syncObjects: selectTable //需要同步的表
       })
       if (
         this.settingModel.twoWay &&
@@ -869,8 +868,12 @@ export default {
     },
     //返回任务列表
     goBackList() {
-      this.$router.push({
-        path: '/dataFlows?mapping=cluster-clone'
+      this.$confirm('此操作会丢失当前正在创建的任务', '是否放弃创建该任务', {
+        type: 'warning'
+      }).then(() => {
+        this.$router.push({
+          path: '/dataFlows?mapping=cluster-clone'
+        })
       })
     },
     //选择创建类型
