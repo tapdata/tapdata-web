@@ -307,6 +307,9 @@
               ></i>
             </template>
             <span>{{ scope.row.statusLabel }}</span>
+            <span v-if="scope.row.status === 'running' && scope.row.tcm"
+              >({{ scope.row.tcm.agentName }})</span
+            >
             <span
               style="color: #999"
               v-if="
