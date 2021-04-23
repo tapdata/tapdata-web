@@ -1040,7 +1040,7 @@ export default {
             params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
           }
           if (params.database_type === 'mongodb') {
-            params['database_uri'] = encodeURIComponent(params['database_uri'])
+            //params['database_uri'] = encodeURIComponent(params['database_uri'])
             params.fill = params.isUrl ? 'uri' : ''
             delete params.isUrl
           }
