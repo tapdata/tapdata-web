@@ -114,6 +114,12 @@ export default {
 		};
 	},
 	created() {
+		// 获取缓存的每页条数
+		let cachePageSize = this.$cache.get('TABLE_PAGE_SIZE');
+		if (cachePageSize && cachePageSize[this.$route.name]) {
+			this.page.size = cachePageSize[this.$route.name];
+		}
+
 		this.fetch(1);
 	},
 	methods: {
@@ -146,6 +152,11 @@ export default {
 								this.cache = null;
 								this.page.total = total;
 								this.list = data || [];
+
+								// 缓存每页条数
+								let pageData = {};
+								pageData[this.$route.name] = this.page.size;
+								this.$cache.set('TABLE_PAGE_SIZE', pageData);
 							})
 							.finally(() => {
 								this.loading = false;
