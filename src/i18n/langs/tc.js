@@ -2065,7 +2065,7 @@ const tc = {
 			forceStop: '強制停止了',
 			reset: '重置了',
 			copy: '複製了',
-			upload: '導出了',
+			upload: ' 導入了 ',
 			download: '下載了',
 			login: '登錄',
 			logout: '登出'
