@@ -294,7 +294,9 @@ export default {
 		this.getDbOptions();
 	},
 	mounted() {
-		this.searchParams = Object.assign(this.searchParams, this.table.getCache());
+		let cache = this.table.getCache();
+		cache.isFuzzy = cache.isFuzzy === true;
+		this.searchParams = cache;
 	},
 	computed: {
 		table() {
