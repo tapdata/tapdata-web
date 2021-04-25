@@ -449,7 +449,8 @@ export default {
         loadFieldsStatus: true,
         schemaAutoUpdate: true,
         platformInfo: true,
-        last_updated: true
+        last_updated: true,
+        additionalString: true
       }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
@@ -710,6 +711,9 @@ export default {
     },
     testConnection(item) {
       let loading = this.$loading()
+      if (item.database_type === 'mongodb') {
+        item.database_uri = ''
+      }
       this.testData = item
       this.$api('connections')
         .updateById(item.id, {
