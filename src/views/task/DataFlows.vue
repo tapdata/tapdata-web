@@ -224,10 +224,7 @@
         <template slot-scope="scope">
           <span class="dataflow-name">
             <span
-              :class="[
-                'name',
-                { 'text-decoration-none': scope.row.hasChildren }
-              ]"
+              :class="['name', { 'has-children': scope.row.hasChildren }]"
               @click="
                 scope.row.status === 'draft'
                   ? handleDetail(
@@ -1499,11 +1496,11 @@ export default {
         border: 1px solid #dedee4;
       }
       .name {
-        color: #48b6e2;
-        cursor: pointer;
-      }
-      .name:hover {
-        text-decoration: underline;
+        &:not(.has-children) {
+          color: #48b6e2;
+          cursor: pointer;
+          text-decoration: underline;
+        }
       }
     }
     .task-name {
