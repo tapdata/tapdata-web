@@ -1661,7 +1661,7 @@ const cn = {
       plugin_name: '日志解码器',
       supportUpdatePk: '支持同步时更新主键',
       indexPrefix: '索引前缀',
-      agentMsg: '当前测试连接服务不可用，请检查是否正确启动数据同步(Agent)服务',
+      agentMsg: 'Agent当前状态异常无法创建连接，请检查',
       multiTenant: '多租户模式',
       uriTips: {
         label: '示例',
