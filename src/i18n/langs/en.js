@@ -1715,7 +1715,7 @@ const en = {
       supportUpdatePk: 'Support Update Primary Key',
       indexPrefix: 'Index prefix',
       agentMsg:
-        'The test connection service is not available, please check if the Data Synchronization Agent is started correctly.',
+        'Agent current state exception cannot create connection, please check.',
       multiTenant: 'Multi-tenant',
       uriTips: {
         label: 'Example',

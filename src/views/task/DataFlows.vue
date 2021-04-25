@@ -224,10 +224,7 @@
         <template slot-scope="scope">
           <span class="dataflow-name">
             <span
-              :class="[
-                'name',
-                { 'text-decoration-none': scope.row.hasChildren }
-              ]"
+              :class="['name', { 'has-children': scope.row.hasChildren }]"
               @click="
                 scope.row.status === 'draft'
                   ? handleDetail(
@@ -947,84 +944,84 @@ export default {
         item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
       }
       item.statusLabel = this.statusMap[item.status].label
-      let statusMap = {}
-      let getLag = (lag) => {
-        let r = '0s'
-        if (lag) {
-          let m = this.$moment.duration(lag, 'seconds')
-          if (m.days()) {
-            r = m.days() + 'd'
-          } else if (m.hours()) {
-            r = m.hours() + 'h'
-          } else if (m.minutes()) {
-            r = m.minutes() + 'm'
-          } else {
-            r = lag + 's'
-          }
-        }
-        return r
-      }
+      // let statusMap = {}
+      // let getLag = (lag) => {
+      //   let r = '0s'
+      //   if (lag) {
+      //     let m = this.$moment.duration(lag, 'seconds')
+      //     if (m.days()) {
+      //       r = m.days() + 'd'
+      //     } else if (m.hours()) {
+      //       r = m.hours() + 'h'
+      //     } else if (m.minutes()) {
+      //       r = m.minutes() + 'm'
+      //     } else {
+      //       r = lag + 's'
+      //     }
+      //   }
+      //   return r
+      // }
       if (item.stats && window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
         item.hasChildren = false
-        let children = item.stages
+        // let children = item.stages
         item.children = []
-        if (children) {
-          let finishedCount = 0
-          children.forEach((k) => {
-            let stage = ''
-            let node = {}
-            if (item.stats.stagesMetrics) {
-              stage = item.stats.stagesMetrics.filter((v) => k.id === v.stageId)
-            }
-            if (!stage.length) {
-              node = {
-                id: item.id + k.id,
-                name: k.name,
-                input: '--',
-                output: '--',
-                transmissionTime: '--',
-                hasChildren: true,
-                statusLabel: '--'
-              }
-            } else {
-              let stg = stage[0]
-              let statusLabel = stg.status
-                ? this.$t('dataFlow.status.' + stg.status)
-                : '--'
-              if (stg.status === 'cdc') {
-                let lag = `(${this.$t('dataFlow.lag')}${getLag(
-                  stg.replicationLag
-                )})`
-                statusLabel += lag
-                statusMap.cdc = true
-              }
-              if (stg.status === 'initializing') {
-                statusMap.initializing = true
-              }
-              if (stg.status === 'initialized') {
-                finishedCount += 1
-              }
-              node = {
-                id: item.id + k.id,
-                name: k.name,
-                input: stg.input.rows,
-                output: stg.output.rows,
-                transmissionTime: stg.transmissionTime,
-                hasChildren: true,
-                statusLabel
-              }
-            }
-            item.children.push(node)
-          })
-          if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
-            statusMap.initialized = true
-          }
-          let statusList = []
-          for (const key in statusMap) {
-            statusList.push(key)
-          }
-          item.statusList = statusList
-        }
+        // if (children) {
+        //   let finishedCount = 0
+        //   children.forEach((k) => {
+        //     let stage = ''
+        //     let node = {}
+        //     if (item.stats.stagesMetrics) {
+        //       stage = item.stats.stagesMetrics.filter((v) => k.id === v.stageId)
+        //     }
+        //     if (!stage.length) {
+        //       node = {
+        //         id: item.id + k.id,
+        //         name: k.name,
+        //         input: '--',
+        //         output: '--',
+        //         transmissionTime: '--',
+        //         hasChildren: true,
+        //         statusLabel: '--'
+        //       }
+        //     } else {
+        //       let stg = stage[0]
+        //       let statusLabel = stg.status
+        //         ? this.$t('dataFlow.status.' + stg.status)
+        //         : '--'
+        //       if (stg.status === 'cdc') {
+        //         let lag = `(${this.$t('dataFlow.lag')}${getLag(
+        //           stg.replicationLag
+        //         )})`
+        //         statusLabel += lag
+        //         statusMap.cdc = true
+        //       }
+        //       if (stg.status === 'initializing') {
+        //         statusMap.initializing = true
+        //       }
+        //       if (stg.status === 'initialized') {
+        //         finishedCount += 1
+        //       }
+        //       node = {
+        //         id: item.id + k.id,
+        //         name: k.name,
+        //         input: stg.input.rows,
+        //         output: stg.output.rows,
+        //         transmissionTime: stg.transmissionTime,
+        //         hasChildren: true,
+        //         statusLabel
+        //       }
+        //     }
+        //     item.children.push(node)
+        //   })
+        //   if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
+        //     statusMap.initialized = true
+        //   }
+        //   let statusList = []
+        //   for (const key in statusMap) {
+        //     statusList.push(key)
+        //   }
+        //   item.statusList = statusList
+        // }
       }
       return item
     },
@@ -1499,11 +1496,11 @@ export default {
         border: 1px solid #dedee4;
       }
       .name {
-        color: #48b6e2;
-        cursor: pointer;
-      }
-      .name:hover {
-        text-decoration: underline;
+        &:not(.has-children) {
+          color: #48b6e2;
+          cursor: pointer;
+          text-decoration: underline;
+        }
       }
     }
     .task-name {
