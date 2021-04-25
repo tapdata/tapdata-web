@@ -92,50 +92,7 @@ export default function() {
 					},
 					stroke: 'gray'
 				}
-			},
-			labels: [
-				{
-					markup: [
-						{
-							tagName: 'rect',
-							selector: 'labelBody'
-						},
-						{
-							tagName: 'text',
-							selector: 'labelText'
-						}
-					],
-					attrs: {
-						labelText: {
-							fill: '#7c68fc',
-							fontSize: 10,
-							textAnchor: 'middle',
-							textVerticalAnchor: 'middle'
-						},
-						labelBody: {
-							ref: 'labelText',
-							refX: -2,
-							refY: -2,
-							refWidth: '100%',
-							refHeight: '100%',
-							refWidth2: 3,
-							refHeight2: 2,
-							stroke: '#7c68fc',
-							fill: 'white',
-							strokeWidth: 1,
-							rx: 2,
-							ry: 2
-						}
-					},
-					position: {
-						distance: 0.5,
-						args: {
-							keepGradient: true,
-							ensureLegibility: true
-						}
-					}
-				}
-			]
+			}
 		});
 
 		joint.shapes.standard.HeaderedRecord.define(

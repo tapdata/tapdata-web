@@ -84,7 +84,7 @@
 					<el-select
 						v-model="formData.distinctWriteType"
 						size="mini"
-						placeholder="请选择"
+						:placeholder="$t('message.placeholderSelect')"
 						class="dataWrite-list"
 					>
 						<el-option

@@ -83,7 +83,12 @@ export default class Graph extends Component {
 		);
 
 		this.commandManager = new joint.dia.CommandManager({
-			graph: graph
+			graph: graph,
+			cmdBeforeAdd: function(cmdName, cell, graph, options) {
+				log('cmdBeforeAdd', cmdName, options);
+				// 忽略不需要回退的操作
+				return !['change:ports', 'change:attrs', 'change:form_data', 'change:labels'].includes(cmdName);
+			}
 		});
 		this.commandManager.on('stack', this.emit.bind(this, EditorEventType.DATAFLOW_CHANGED));
 
@@ -1159,6 +1164,7 @@ export default class Graph extends Component {
 			{
 				keystroke: 'delete backspace',
 				on: function(evt) {
+					if (self.stopKeyboardCallback(evt.target)) return;
 					evt.preventDefault();
 					let hasDised = false;
 					this.selection.collection.toArray().forEach(it => {
@@ -1175,14 +1181,16 @@ export default class Graph extends Component {
 			},
 			{
 				keystroke: isMac ? 'command+z' : 'ctrl+z',
-				on: function() {
+				on: function(evt) {
+					if (self.stopKeyboardCallback(evt.target)) return;
 					this.commandManager.undo();
 					this.selection.cancelSelection();
 				}
 			},
 			{
 				keystroke: isMac ? 'command+shift+z' : 'ctrl+z',
-				on: function() {
+				on: function(evt) {
+					if (self.stopKeyboardCallback(evt.target)) return;
 					this.commandManager.redo();
 					this.selection.cancelSelection();
 				}

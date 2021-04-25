@@ -31,47 +31,27 @@ export default function() {
 		model: graph,
 		width: 800,
 		height: 800,
-		// gridSize: 30,
-		// drawGrid: {
-		// 	name: 'doubleMesh',
-		// 	args: [
-		// 		{ color: '#dddddd', thickness: 1 }, // settings for the primary mesh
-		// 		{ color: 'black', scaleFactor: 5, thickness: 1 } //settings for the secondary mesh
-		// 	]
-		// },
-		defaultConnectionPoint: { name: 'boundary', args: { extrapolate: true } },
-		// defaultConnectionPoint: joint.shapes.dataMap.Link.connectionPoint,
-		defaultConnector: { name: 'rounded' },
-		//defaultRouter: { name: 'manhattan' },
+
 		defaultRouter: {
-			name: 'manhattan',
+			name: 'mapping',
 			args: { padding: 30 }
 		},
-		/*restrictTranslate: function(elementView) {
-            let parentId = elementView.model.get('parent');
-            let parentCell = parentId && this.model.getCell(parentId);
-            //let parentCellType = parentCell && parentCell.get('type');
-            let parentBBox = parentCell && parentCell.getBBox();
-            //if(parentCellType === 'dataMap.Lane'){
-            parentBBox = parentBBox || {};
-            parentBBox.y += 50;
-            parentBBox.height -= 50;
-            //}
-            return parentCell && parentBBox;
-        },*/
-		/*embeddingMode: false,*/
-		// frontParentOnly: false,
-		defaultAnchor: { name: 'center' },
-		linkPinning: false,
-		/*frozen: true*/
-		//sorting: joint.dia.Paper.sorting.APPROX
+		defaultConnectionPoint: { name: 'anchor' },
+		defaultAnchor: { name: 'mapping' },
+		/*
+		 * 线型
+		 * 'normal' - 普通
+		 * 'jumpover' - 连线交叉时显示一个bridge
+		 * 'rounded' - 转折处显示为圆角
+		 * 'smooth' - 贝塞尔曲线
+		 */
+		defaultConnector: {
+			name: 'jumpover',
+			args: { jump: 'cubic' }
+		},
 
-		/*validateConnection: function(sv, sm, tv, tm, end) {
-            if (sv === tv) return false;
-            if (sv.model.isLink() || tv.model.isLink()) return false;
-            if (end === 'target') return tv.model.getItemSide(tv.findAttribute('item-id', tm)) !== 'right';
-            return sv.model.getItemSide(sv.findAttribute('item-id', sm)) !== 'left';
-        },*/
+		linkPinning: false,
+
 		highlighting: {
 			default: {
 				name: 'addClass',
@@ -281,9 +261,9 @@ export default function() {
 				marginX: 100,
 				marginY: 100,
 				// resizeToFit: true,
-				nodeSep: 150,
-				edgeSep: 10,
-				rankSep: 80,
+				nodeSep: 100,
+				edgeSep: 50,
+				rankSep: 200,
 				// ranker: 'tight-tree',
 				// align: "UL",
 				resizeClusters: true

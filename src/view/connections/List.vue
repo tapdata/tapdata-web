@@ -349,13 +349,7 @@ export default {
 			this.table.fetch(1);
 		},
 		async getDatabaseType() {
-			let filter = {
-				where: {
-					type: {
-						in: this.whiteList
-					}
-				}
-			};
+			let filter = {};
 			let databaseTypes = await this.$api('DatabaseTypes').get({ filter: JSON.stringify(filter) });
 			databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt));
 		},
@@ -385,9 +379,9 @@ export default {
 				let filterObj = iModel === 'fuzzy' ? { like: verify(keyword), options: 'i' } : keyword;
 				where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
 			}
-			where.database_type = {
-				in: this.whiteList
-			};
+			// where.database_type = {
+			// 	in: this.whiteList
+			// };
 			databaseType && (where.database_type = databaseType);
 			// if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
 			// 	where.search_databaseType = databaseType;
