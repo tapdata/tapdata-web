@@ -193,7 +193,7 @@ export default {
 			};
 
 			return Promise.all([
-				this.$api('DataQuality').count({ where }),
+				this.$api('DataQuality').getCount({ filter: JSON.stringify(filter) }),
 				this.$api('DataQuality').getList({
 					filter: JSON.stringify(filter)
 				})
@@ -203,7 +203,7 @@ export default {
 					keyword
 				});
 				return {
-					total: countRes.count,
+					total: countRes && countRes.length ? countRes[0].count || 0 : 0,
 					data: res && res.length ? res : []
 				};
 			});
