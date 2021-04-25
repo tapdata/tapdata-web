@@ -847,8 +847,9 @@ export default {
       if (this.model.sourceType !== 'ecs') return
       let userId = this.$cookie.get('userId')
       let params = {
-        page: this.ecsPage,
-        pageSize: this.ecsPageSize
+        page: this.ecsPage || 1,
+        pageSize: this.ecsPageSize || 10,
+        region: this.model.region || ''
       }
       this.$api('tcm')
         .getEcsList(userId, params)
