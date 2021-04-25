@@ -713,6 +713,9 @@ export default {
     },
     //save
     save() {
+      if (this.loading) {
+        return
+      }
       this.transferData = this.$refs.transfer.returnData()
       if (this.transferData.selectSourceArr.length === 0) {
         this.$message.error(
@@ -848,6 +851,7 @@ export default {
       } else {
         promise = this.$api('DataFlows').create(postData)
       }
+      this.loading = true
       promise
         .then(() => {
           if (this.$route.query.step) {
@@ -864,6 +868,9 @@ export default {
           } else {
             this.$message.error(e.response.msg)
           }
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
     //返回任务列表
