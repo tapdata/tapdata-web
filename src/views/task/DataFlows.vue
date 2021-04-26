@@ -858,6 +858,7 @@ export default {
       }
       if (agentId) {
         where['agentId'] = agentId
+        status = status || 'running'
       }
       if (tags && tags.length) {
         where['listtags.id'] = {
