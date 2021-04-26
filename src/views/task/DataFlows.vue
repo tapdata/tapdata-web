@@ -771,6 +771,15 @@ export default {
     },
     dataflowChange(data) {
       if (data && data.data && data.data.fullDocument) {
+        let dataflow = data.data.fullDocument
+        if (dataflow.agentId) {
+          let opt = this.agentOptions.find(
+            (it) => it.value === dataflow.agentId
+          )
+          dataflow.tcm = {
+            agentName: opt.label
+          }
+        }
         this.tempList.push(data.data.fullDocument)
       }
     },
