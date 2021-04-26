@@ -793,7 +793,8 @@ export default {
             'fullDocument.stats': true,
             'fullDocument.stages.id': true,
             'fullDocument.stages.name': true,
-            'fullDocument.errorEvents': true
+            'fullDocument.errorEvents': true,
+            'fullDocument.agentId': true
           }
         }
       }
