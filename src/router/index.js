@@ -120,10 +120,11 @@ const childRoutes = [
   {
     path: '/ttl',
     name: 'timeToLive',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/TimeToLive/List'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'time_to_live_menu',
-      url: '/old/index.html#/ttl',
+      // url: '/old/index.html#/ttl',
       title: i18n.t('tap.TimeToLive'),
       isCollapse: false
     }

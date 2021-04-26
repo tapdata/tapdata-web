@@ -40,6 +40,7 @@
           border
           :element-loading-text="$t('dataFlow.dataLoading')"
           :row-key="rowKey"
+          :span-method="handleSpanMethod"
           :data="list"
           @selection-change="handleSelectionChange"
           @sort-change="$emit('sort-change', $event)"
@@ -168,6 +169,9 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
       this.$emit('selection-change', val)
+    },
+    handleSpanMethod({ row, column, rowIndex, columnIndex }) {
+      this.$emit('span-method', row, column, rowIndex, columnIndex)
     },
     showClassify(tagList) {
       this.$refs.classify.show(tagList)

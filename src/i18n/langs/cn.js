@@ -2688,6 +2688,34 @@ const cn = {
     start_time: '开始时间',
     process_id: '进程 ID',
     processState: '工作进程状态'
+  },
+  timeToLive: {
+    header: {
+      indexName: '索引名称',
+      indexFields: '时间字段',
+      indexStatus: '状态',
+      indexCreate_by: '创建用户',
+      operate: '操作',
+      database: '数据库名称',
+      tableName: '数据表名称',
+      expire: '过期时间'
+    },
+    searchtext: '数据库名称/数据表名称/索引名称',
+    Settinglife: '设置生命周期',
+    m: '分钟',
+    h: '小时',
+    d: '天',
+    s: '秒',
+    w: '周',
+    mo: '月',
+    y: '年',
+    failed: '当前数据库的表，没有发现时间字段，无法创建生命周期',
+    create_by_user: '平台用户',
+    create_by_dba: '数据库管理员',
+    status_creating: '正在创建',
+    status_created: '创建完成',
+    status_creation_failed: '创建失败',
+    status_deleted: '已经删除'
   }
 }
 
