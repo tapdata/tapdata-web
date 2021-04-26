@@ -90,22 +90,30 @@
 						</div>
 						<div
 							v-else
-							@dblclick="editItem(scope.row, item.text)"
 							:title="scope.row.wrongFields[item.text]"
-							style="color: red;"
+							@dblclick="editItem(scope.row, item.text)"
+							style="color: #f15e5e;border: 1px solid #f15e5e;padding-left: 5px;min-height: 32px;"
 						>
 							{{
 								item.format === 'date-time'
-									? $moment(scope.row[item.text]).format('YYYY-MM-DD HH:mm:ss')
-									: scope.row[item.text] || ''
+									? scope.row[item.text]
+										? $moment(scope.row[item.text]).format('YYYY-MM-DD HH:mm:ss')
+										: ''
+									: scope.row[item.text] || scope.row[item.text] === 0
+									? scope.row[item.text]
+									: ''
 							}}
 						</div>
 					</div>
 					<div v-else>
 						{{
 							item.format === 'date-time'
-								? $moment(scope.row[item.text]).format('YYYY-MM-DD HH:mm:ss')
-								: scope.row[item.text] || ''
+								? scope.row[item.text]
+									? $moment(scope.row[item.text]).format('YYYY-MM-DD HH:mm:ss')
+									: ''
+								: scope.row[item.text] || scope.row[item.text] === 0
+								? scope.row[item.text]
+								: ''
 						}}
 					</div>
 				</template>
@@ -573,12 +581,12 @@ export default {
 				return v;
 			});
 			this.$nextTick(() => {
-				if (this.$refs.editInput.length) {
+				if (this.$refs.editInput && this.$refs.editInput.length) {
 					this.$refs.editInput.forEach(v => {
 						v.focus();
 					});
 				} else {
-					this.$refs.editInput.focus();
+					this.$refs.editInput && this.$refs.editInput.focus();
 				}
 			});
 		},
