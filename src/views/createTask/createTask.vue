@@ -439,7 +439,10 @@ export default {
             this.dataSourceModel.target_connectionName = target.name
             this.dataSourceModel['source_databaseType'] = source.type
             this.dataSourceModel['target_databaseType'] = target.type
-            this.supportTwoWay = this.twoWayAgentRunningCount > 0 && this.dataSourceModel['source_databaseType'] === 'mongodb' && this.dataSourceModel['target_databaseType'] === 'mongodb'
+            this.supportTwoWay =
+              this.twoWayAgentRunningCount > 0 &&
+              this.dataSourceModel['source_databaseType'] === 'mongodb' &&
+              this.dataSourceModel['target_databaseType'] === 'mongodb'
             this.activeStep += 1
             this.getFormConfig()
           }
