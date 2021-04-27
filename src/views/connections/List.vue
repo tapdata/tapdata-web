@@ -721,7 +721,7 @@ export default {
           status: 'testing'
         })
         .then(() => {
-          if (this.$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
             this.dialogTestVisible = true
           }
           this.$refs.test.start()
