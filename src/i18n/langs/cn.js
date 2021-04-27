@@ -2700,6 +2700,14 @@ const cn = {
       tableName: '数据表名称',
       expire: '过期时间'
     },
+    form: {
+      databaseTypes: '数据库类型',
+      database: '数据库',
+      tableName: '表名称',
+      fieldName: '字段名称',
+      expire: '过期时间'
+    },
+    creatTtl: '创建生命周期',
     searchtext: '数据库名称/数据表名称/索引名称',
     Settinglife: '设置生命周期',
     m: '分钟',
@@ -2715,7 +2723,9 @@ const cn = {
     status_creating: '正在创建',
     status_created: '创建完成',
     status_creation_failed: '创建失败',
-    status_deleted: '已经删除'
+    status_deleted: '已经删除',
+    filedGetFailed: '当前数据库的表，没有发现时间字段，无法创建生命周期',
+    index_exists: '索引已经存在'
   }
 }
 
