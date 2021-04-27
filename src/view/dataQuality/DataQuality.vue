@@ -31,7 +31,7 @@
 							</el-select>
 						</el-input>
 					</li>
-					<template v-if="searchParams.keyword">
+					<template>
 						<!-- <li>
 							<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
 						</li> -->
@@ -61,6 +61,9 @@
 			<el-table-column :label="$t('dataQuality.sourceName')" prop="name">
 				<template slot-scope="scope">
 					{{ scope.row.collection }}
+					<span v-if="scope.row.asset_desc && scope.row.asset_desc !== scope.row.collection"
+						>（{{ scope.row.asset_desc }}）</span
+					>
 					<div class="gray">{{ scope.row.source ? scope.row.source.name : '' }}</div>
 				</template>
 			</el-table-column>
