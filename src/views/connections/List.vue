@@ -256,7 +256,7 @@
     ></DatabaseTypeDialog>
     <Test
       ref="test"
-      :dialogTestVisible="false"
+      :dialogTestVisible.sync="dialogTestVisible"
       :formData="testData"
       @returnTestData="returnTestData"
     ></Test>
@@ -351,7 +351,8 @@ export default {
         ecs: 'ECS自建库',
         dds: 'DDS实例'
       },
-      testData: null
+      testData: null,
+      dialogTestVisible: false // 连接测试框
     }
   },
   computed: {
@@ -720,6 +721,7 @@ export default {
           status: 'testing'
         })
         .then(() => {
+          this.dialogTestVisible = true
           this.$refs.test.start()
           this.table.fetch()
         })
