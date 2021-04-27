@@ -174,6 +174,7 @@ export default {
       activeStep: 0,
       errorMsg: '',
       showConnectDialog: false,
+      twoWayAgentRunningCount: '',
       platformInfo: _.cloneDeep(INSTANCE_MODEL),
       dataSourceModel: _.cloneDeep(DATASOURCE_MODEL),
       settingModel: _.cloneDeep(SETTING_MODEL),
@@ -243,10 +244,7 @@ export default {
       this.$api('tcm')
         .getAgentCount()
         .then((res) => {
-          this.supportTwoWay =
-            res.data.twoWayAgentRunningCount > 0 &&
-            this.dataSourceModel['source_databaseType'] === 'mongodb' &&
-            this.dataSourceModel['target_databaseType'] === 'mongodb'
+          this.twoWayAgentRunningCount = res.data.twoWayAgentRunningCount || 0
         })
     },
     //兼容新手引导
@@ -441,6 +439,7 @@ export default {
             this.dataSourceModel.target_connectionName = target.name
             this.dataSourceModel['source_databaseType'] = source.type
             this.dataSourceModel['target_databaseType'] = target.type
+            this.supportTwoWay = this.twoWayAgentRunningCount > 0 && this.dataSourceModel['source_databaseType'] === 'mongodb' && this.dataSourceModel['target_databaseType'] === 'mongodb'
             this.activeStep += 1
             this.getFormConfig()
           }
