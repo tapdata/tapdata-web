@@ -727,8 +727,6 @@ export default {
       }
       let source = this.dataSourceModel
       let target = this.dataSourceModel
-      let sourceId = uuid()
-      let targetId = uuid()
       //设置为增量模式
       let timeZone = new Date().getTimezoneOffset() / 60
       let systemTimeZone = ''
@@ -791,11 +789,14 @@ export default {
         this.platformInfoZone || [],
         this.platformInfo.zone
       )
+      let sourceIdA = uuid()
+      let targetIdB = uuid()
+      let sourceIdC = uuid()
       postData.stages = [
         Object.assign({}, stageDefault, {
-          id: sourceId,
+          id: sourceIdA,
           connectionId: source.source_connectionId,
-          outputLanes: [targetId],
+          outputLanes: [targetIdB],
           distance: 1,
           name: this.dataSourceModel.source_connectionName,
           type: 'database',
@@ -805,10 +806,10 @@ export default {
           readCdcInterval: 500
         }),
         Object.assign({}, stageDefault, {
-          id: targetId,
+          id: targetIdB,
           connectionId: target.target_connectionId,
-          inputLanes: [sourceId],
-          outputLanes: [sourceId],
+          inputLanes: [sourceIdA],
+          outputLanes: [sourceIdC],
           distance: 0,
           syncObjects: selectTable,
           name: this.dataSourceModel.target_connectionName,
@@ -826,9 +827,9 @@ export default {
       ]
       //支持双向
       let node = Object.assign({}, stageDefault, {
-        id: sourceId,
+        id: sourceIdC,
         connectionId: source.source_connectionId,
-        inputLanes: [targetId],
+        inputLanes: [targetIdB],
         distance: 1,
         name: this.dataSourceModel.source_connectionName,
         type: 'database',
