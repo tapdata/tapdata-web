@@ -809,7 +809,6 @@ export default {
           id: targetIdB,
           connectionId: target.target_connectionId,
           inputLanes: [sourceIdA],
-          outputLanes: [sourceIdC],
           distance: 0,
           syncObjects: selectTable,
           name: this.dataSourceModel.target_connectionName,
@@ -845,7 +844,7 @@ export default {
         this.settingModel.twoWay &&
         window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
       ) {
-        postData.stages[1]['outputLanes'] = [sourceId]
+        postData.stages[1]['outputLanes'] = [sourceIdC]
         postData.stages.push(node)
       }
       let promise = null
