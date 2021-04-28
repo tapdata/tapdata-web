@@ -1034,7 +1034,11 @@ export default {
       if (this.stageId != 'all') {
         msg['stageId'] = this.stageId
       }
+      // 设置默认值
       this.resultObj.granularity = msg.granularity
+      for (let key in this.resultObj.granularity) {
+        this.resultObj.statsData[key] = []
+      }
       ws.ready(() => {
         ws.send(msg)
       })
