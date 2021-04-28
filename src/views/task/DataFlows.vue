@@ -263,6 +263,21 @@
 					</div> -->
         </template>
       </el-table-column>
+      <el-table-column
+        v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'"
+        prop="status"
+        :label="$t('dataFlow.belongAgent')"
+        width="180"
+      >
+        <template slot-scope="scope">
+          <div style="display: flex; align-items: center">
+            <span>{{
+              scope.row.tcm &&
+              (scope.row.tcm.agentName || scope.row.tcm.agentId || '-')
+            }}</span>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column min-width="150">
         <div slot="header">
           {{ $t('dataFlow.syncType') }}
@@ -304,7 +319,12 @@
               ></i>
             </template>
             <span>{{ scope.row.statusLabel }}</span>
-            <span v-if="scope.row.status === 'running' && scope.row.tcm"
+            <span
+              v-if="
+                $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs' &&
+                scope.row.status === 'running' &&
+                scope.row.tcm
+              "
               >({{ scope.row.tcm.agentName }})</span
             >
             <span

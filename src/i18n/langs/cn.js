@@ -449,6 +449,7 @@ const cn = {
     SyncPoint: '增量采集开始时刻',
     cdcLabel: '数据源:',
     syncType: '任务类型',
+    belongAgent: '所属Agent',
     SyncInfo: {
       localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
       current: '当前时区时间：默认当前时间',

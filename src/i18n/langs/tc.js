@@ -449,6 +449,7 @@ const tc = {
     SyncPoint: '增量採集開始時刻',
     cdcLabel: '數據源:',
     syncType: '任務類型',
+    belongAgent: '所屬Agent',
     SyncInfo: {
       localTZ: '當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
       current: '當前時區時間：默認當前時間',

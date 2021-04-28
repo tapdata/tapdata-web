@@ -461,6 +461,7 @@ const en = {
     SyncPoint: 'CDC start timepoint',
     cdcLabel: 'Data source:',
     syncType: 'Type',
+    belongAgent: 'Agent',
     SyncInfo: {
       localTZ:
         'Local Timezone CDC Time: custom a point of  CDC time，in local time zone',
