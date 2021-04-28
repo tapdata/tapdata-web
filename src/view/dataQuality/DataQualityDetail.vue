@@ -310,7 +310,7 @@ export default {
 		}
 	},
 
-	mounted() {
+	created() {
 		this.getCollection();
 	},
 
@@ -600,9 +600,8 @@ export default {
 		// 确认编辑字段
 		async editOk(item, key) {
 			// 检验字段类型规则
-			let hitRules = [];
 			let saveItem = JSON.parse(JSON.stringify(item)); // 临时存储即将修改的表单项的值
-			hitRules = saveItem.__tapd8.hitRules.filter(it => it.fieldName == key);
+			let hitRule = saveItem.__tapd8.hitRules.find(it => it.fieldName == key);
 			saveItem[key] = this.setType(key, this.editValue);
 			if (saveItem[key] !== saveItem[key]) {
 				this.$message.warning(
@@ -611,34 +610,37 @@ export default {
 				);
 				return;
 			}
-			hitRules.forEach(it => {
-				// 若修改的值符合之前违反的规则，就去除当前字段错误标记
-				let vschema = this.buildAjvSchema(key, eval('(' + it.rules + ')'));
-				if (this.ajv.validate(vschema, saveItem)) {
-					saveItem.__tapd8.hitRules.splice(saveItem.__tapd8.hitRules.indexOf(it), 1);
-					saveItem.wrongFields[key] = undefined;
+
+			// 参数
+			let params = {};
+			params[key] = saveItem[key];
+
+			// 若修改的值符合之前违反的规则，就去除当前字段错误标记
+			let vschema = this.buildAjvSchema(key, eval('(' + hitRule.rules + ')'));
+
+			if (this.ajv.validate(vschema, params)) {
+				saveItem.__tapd8.hitRules.splice(saveItem.__tapd8.hitRules.indexOf(hitRule), 1);
+				saveItem.wrongFields[key] = undefined;
+
+				if (saveItem.__tapd8.hitRules.length == 0) {
+					// 检查当前行若没有错误标记，就去除当前行错误标记
+					saveItem.__tapd8.result = '';
 				}
-			});
-			if (saveItem.__tapd8.hitRules.length == 0) {
-				// 检查当前行若没有错误标记，就去除当前行错误标记
-				saveItem.__tapd8.result = '';
+
+				params.__tapd8 = saveItem.__tapd8;
+			} else {
+				this.$message.warning(this.$t('dataQuality.unlikeAjv'));
+				return;
 			}
 
 			// 发送请求
 			this.editLoading = true;
-			// 处理手动添加的属性
-			let attrs = {
-				editing: saveItem.editing,
-				wrongFields: saveItem.wrongFields
-			};
-			delete saveItem.editing;
-			delete saveItem.wrongFields;
-			let result = await this.apiClient.updateById(item._id, saveItem);
+			let result = await this.apiClient.updateById(item._id, params);
 			if (result.success) {
 				if (saveItem.__tapd8.result) {
 					this.table.list = this.table.list.map(v => {
 						if (v === item) {
-							return { ...saveItem, ...attrs, editing: false };
+							return { ...saveItem, editing: false };
 						} else {
 							return v;
 						}
@@ -647,22 +649,39 @@ export default {
 					this.table.list = this.table.list.filter(v => v !== item);
 				}
 				this.$message.success(this.$t('message.saveOK'));
+
+				// 提交日志
+				await this.$api('UserLogs').post({
+					_id: item['_id'],
+					biz_module: 'dataQuality',
+					last_updated: new Date().toTimeString(),
+					desc: 'Update or create dataQuality',
+					modelName: 'dataQuality',
+					requestMethod: 'POST',
+					before: item[key],
+					after: params[key],
+					name: key,
+					apititle: this.$route.params.id
+				});
+			} else {
+				let msg = result.msg;
+				if (
+					result.response &&
+					result.response.data &&
+					result.response.data.error &&
+					result.response.data.error
+				) {
+					let thisErr = result.response.data.error;
+					if (thisErr.code) {
+						msg = thisErr.code;
+					}
+					if (thisErr.details && thisErr.details.length && thisErr.details[0] && thisErr.details[0].message) {
+						msg = thisErr.details[0].message;
+					}
+				}
+				this.$message.error(msg);
 			}
 			this.editLoading = false;
-
-			// 提交日志
-			await this.$api('UserLogs').post({
-				_id: item['_id'],
-				biz_module: 'dataQuality',
-				last_updated: new Date().toTimeString(),
-				desc: 'Update or create dataQuality',
-				modelName: 'dataQuality',
-				requestMethod: 'POST',
-				before: item[key],
-				after: this.editValue,
-				name: key,
-				apititle: this.$route.params.id
-			});
 		},
 		// 打开批量过滤弹框
 		filterOpen() {
@@ -705,6 +724,7 @@ export default {
 			if (['Short', 'Integer', 'Long'].includes(fieldDef.java_type)) return parseInt(value);
 			else if (['Float', 'BigDecimal', 'Double'].includes(fieldDef.java_type)) return parseFloat(value);
 			else if (fieldDef.java_type == 'Boolean') return value.toLowerCase().startsWith('t');
+			else if (fieldDef.java_type == 'String') return value + '';
 			else return value;
 		},
 		// 创建ajv校验模式

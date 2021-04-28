@@ -2660,7 +2660,7 @@ const cn = {
 		msgNoValidApi: '没有可用API服务器',
 		msgNotStartApi: '没有启用api服务？',
 		ifDel: '是否删除当前行？',
-		unlikeAjv: '输入的内容不符合选择的数据规则',
+		unlikeAjv: '输入的内容不符合数据规则',
 		allUpdateSuccessTip1: '操作成功，一共修改',
 		allUpdateSuccessTip2: '条数据',
 		updateFail: '更新失败',

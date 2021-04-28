@@ -2653,7 +2653,7 @@ const tc = {
 		msgNoValidApi: '沒有可用API服務器',
 		msgNotStartApi: '沒有啟用api服務？',
 		ifDel: '是否刪除當前行？',
-		unlikeAjv: '輸入的內容不符合選擇的數據規則',
+		unlikeAjv: '輸入的內容不符合數據規則',
 		allUpdateSuccessTip1: '操作成功，一共修改',
 		allUpdateSuccessTip2: '條數據',
 		updateFail: '更新失敗',

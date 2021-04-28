@@ -113,7 +113,7 @@ export default {
 			}
 		};
 	},
-	created() {
+	mounted() {
 		// 获取缓存的每页条数
 		let cachePageSize = this.$cache.get('TABLE_PAGE_SIZE');
 		if (cachePageSize && cachePageSize[this.$route.name]) {

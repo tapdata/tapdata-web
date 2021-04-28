@@ -2802,7 +2802,7 @@ const en = {
 		msgNoValidApi: 'No API server is available',
 		msgNotStartApi: 'No API service enabled?',
 		ifDel: 'Do you want to delete the current row?',
-		unlikeAjv: 'The input does not match the selected data rule',
+		unlikeAjv: 'The input does not match the data rule',
 		allUpdateSuccessTip1: 'Operation successful, A total of',
 		allUpdateSuccessTip2: 'pieces of data have been modified',
 		updateFail: 'Update failed',
