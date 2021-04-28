@@ -82,20 +82,7 @@ export default function () {
         type: 'switch',
         field: 'twoWay',
         label: '是否双向',
-        show: false,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'distinctWriteType',
-                value: 'intellect'
-              }
-            ],
-            triggerConfig: {
-              show: true
-            }
-          }
-        ]
+        show: false
       },
       {
         type: 'slot',

@@ -450,7 +450,8 @@ export default {
             this.supportTwoWay =
               this.twoWayAgentRunningCount > 0 &&
               this.dataSourceModel['source_databaseType'] === 'mongodb' &&
-              this.dataSourceModel['target_databaseType'] === 'mongodb'
+              this.dataSourceModel['target_databaseType'] === 'mongodb' &&
+              this.settingModel.distinctWriteType === 'intellect' //必须是写入模式
             this.activeStep += 1
             this.getFormConfig()
           }
