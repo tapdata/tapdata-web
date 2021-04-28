@@ -18,7 +18,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 module.exports = {
   assetsDir: 'static',
   lintOnSave: true,
-  productionSourceMap: true,
+  productionSourceMap: false,
   publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   devServer: {
     proxy: {
