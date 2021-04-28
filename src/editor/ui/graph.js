@@ -847,10 +847,13 @@ export default class Graph extends Component {
 			} else {
 				$('.monitorTab').html(`<div class="e-tab-title active">${i18n.t('editor.ui.sidebar.config')}</div>`);
 				this.selectPrimaryLink(cellView);
-				setTimeout(() => {
-					let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
-					self.editor.getRightTabPanel().select(monitor);
-				}, 20);
+				// 点击连线面版是否出现
+				if (!window.getSettingByKey('DFS_TCM_PLATFORM')) {
+					setTimeout(() => {
+						let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
+						self.editor.getRightTabPanel().select(monitor);
+					}, 20);
+				}
 			}
 		}
 		this.createInspector(cell);
