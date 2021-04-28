@@ -731,9 +731,6 @@ export default class Graph extends Component {
   selectPrimaryCell(cellView) {
     let cell = cellView.model,
       self = this
-    if (cell.attributes.type === 'app.databaseLink') {
-      return
-    }
     if (this.selectedLink) {
       this.selectedLinkattr('line/stroke', '#8f8f8f')
       this.selectedLink = false
@@ -785,13 +782,15 @@ export default class Graph extends Component {
           )}</div>`
         )
         this.selectPrimaryLink(cellView)
-		// 点击连线面版是否出现
-		if (!window.getSettingByKey('DFS_TCM_PLATFORM')) {
-			setTimeout(() => {
-				let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel');
-				self.editor.getRightTabPanel().select(monitor);
-			}, 20);
-		}
+        // 点击连线面版是否出现
+        if (!window.getSettingByKey('DFS_TCM_PLATFORM')) {
+          setTimeout(() => {
+            let monitor = self.editor
+              .getRightTabPanel()
+              .getChildByName('nodeSettingPanel')
+            self.editor.getRightTabPanel().select(monitor)
+          }, 20)
+        }
       }
     }
     this.createInspector(cell)
