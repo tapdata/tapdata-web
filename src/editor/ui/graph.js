@@ -108,9 +108,11 @@ export default class Graph extends Component {
       markAvailable: true,
       // new joint.shapes.app.Link()
       defaultLink: function (cellView) {
-        if (cellView.model.get('type') === 'app.Database')
+        if (cellView.model.get('type') === 'app.Database') {
           return new joint.shapes.app.databaseLink()
-        else return new joint.shapes.app.Link()
+        } else {
+          return new joint.shapes.app.Link()
+        }
       },
       defaultConnectionPoint: joint.shapes.app.Link.connectionPoint,
       interactive: {
@@ -729,6 +731,9 @@ export default class Graph extends Component {
   selectPrimaryCell(cellView) {
     let cell = cellView.model,
       self = this
+    if (cell.attributes.type === 'app.databaseLink') {
+      return
+    }
     if (this.selectedLink) {
       this.selectedLinkattr('line/stroke', '#8f8f8f')
       this.selectedLink = false

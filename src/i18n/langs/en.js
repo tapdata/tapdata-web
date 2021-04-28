@@ -1715,7 +1715,7 @@ const en = {
       supportUpdatePk: 'Support Update Primary Key',
       indexPrefix: 'Index prefix',
       agentMsg:
-        'The test connection service is not available, please check if the Data Synchronization Agent is started correctly.',
+        'Agent current state exception cannot create connection, please check.',
       multiTenant: 'Multi-tenant',
       uriTips: {
         label: 'Example',
@@ -2340,6 +2340,7 @@ const en = {
     automaticallyAdd: 'Automatically add',
     enable: 'Enable',
     disable: 'Disable',
+    isEnabled: 'Is Enabled',
     newVerify: 'New Verify',
     edit: 'Edit',
     clickVerified: 'Click the bottons below to add tables to be verified',

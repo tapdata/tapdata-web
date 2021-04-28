@@ -192,7 +192,12 @@
           {{ scope.row.connectionSource }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('connection.lastUpdateTime')" width="160">
+      <el-table-column
+        :label="$t('connection.lastUpdateTime')"
+        width="160"
+        prop="last_updated"
+        sortable="custom"
+      >
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
@@ -251,7 +256,7 @@
     ></DatabaseTypeDialog>
     <Test
       ref="test"
-      :dialogTestVisible="false"
+      :dialogTestVisible.sync="dialogTestVisible"
       :formData="testData"
       @returnTestData="returnTestData"
     ></Test>
@@ -280,7 +285,7 @@ export default {
       databaseType: '',
       id: '',
       description: '',
-      order: 'last_updated DESC',
+      order: 'createTime DESC',
       databaseModelOptions: [
         {
           label: this.$t('connection.type.source'),
@@ -346,7 +351,8 @@ export default {
         ecs: 'ECS自建库',
         dds: 'DDS实例'
       },
-      testData: null
+      testData: null,
+      dialogTestVisible: false // 连接测试框
     }
   },
   computed: {
@@ -395,7 +401,7 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
+      this.order = `${order ? prop : 'createTime'} ${
         order === 'ascending' ? 'ASC' : 'DESC'
       }`
       this.table.fetch(1)
@@ -444,7 +450,8 @@ export default {
         loadFieldsStatus: true,
         schemaAutoUpdate: true,
         platformInfo: true,
-        last_updated: true
+        last_updated: true,
+        additionalString: true
       }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
@@ -705,12 +712,18 @@ export default {
     },
     testConnection(item) {
       let loading = this.$loading()
+      if (item.database_type === 'mongodb') {
+        item.database_uri = ''
+      }
       this.testData = item
       this.$api('connections')
         .updateById(item.id, {
           status: 'testing'
         })
         .then(() => {
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+            this.dialogTestVisible = true
+          }
           this.$refs.test.start()
           this.table.fetch()
         })

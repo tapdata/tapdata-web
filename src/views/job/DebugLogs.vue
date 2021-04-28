@@ -4,9 +4,9 @@
       <el-form-item>
         <el-input
           class="inputStyle"
-          :placeholder="$t('message.search')"
           v-model="search"
           size="mini"
+          :placeholder="$t('message.search')"
         >
         </el-input>
       </el-form-item>
@@ -14,8 +14,8 @@
         <el-button
           icon="el-icon-search"
           size="mini"
-          @click="loadNew"
           :disabled="loading"
+          @click="searchLogs"
         ></el-button>
       </el-form-item>
 
@@ -80,12 +80,9 @@ export default {
       }
     })
 
-    let int = setInterval(() => {
-      if (ws.ws.readyState == 1) {
-        ws.send(msg)
-        clearInterval(int)
-      }
-    }, 2000)
+    ws.ready(() => {
+      ws.send(msg)
+    }, true)
     this.loadNew()
   },
 
@@ -132,7 +129,10 @@ export default {
     clickLoad() {
       this.loadNew()
     },
-
+    searchLogs() {
+      this.lastLogsId = ''
+      this.loadNew()
+    },
     loadNew() {
       let filter = {
         where: {

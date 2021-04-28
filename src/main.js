@@ -18,6 +18,7 @@ import '@/directives'
 import 'github-markdown-css'
 import '@/assets/style/index.scss'
 import '@/assets/theme/drs/index.scss'
+import LoadMore from '@/utils/loadMore'
 
 import '@/styles/app.scss'
 
@@ -25,6 +26,7 @@ Vue.config.productionTip = false
 Vue.use(VueCookie)
 Vue.use(VueBus)
 Vue.use(VueClipboard)
+Vue.use(LoadMore)
 
 Vue.prototype.$moment = moment
 Vue.prototype.$api = factory

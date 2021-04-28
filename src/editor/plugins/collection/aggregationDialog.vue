@@ -183,7 +183,9 @@ export default {
       }
       this.clickStatus = 'preview'
       this.previewLoading = true
-      if (ws.ws.readyState == 1) ws.send(params)
+      ws.ready(() => {
+        ws.send(params)
+      })
     },
 
     // 关闭aggregation弹窗(聚合没有内容关闭设置开关)
@@ -207,7 +209,9 @@ export default {
       }
       this.clickStatus = 'save'
       this.saveLoading = true
-      if (ws.ws.readyState == 1) ws.send(params)
+      ws.ready(() => {
+        ws.send(params)
+      })
     }
   }
 }

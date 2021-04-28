@@ -57,10 +57,10 @@
               @input="table.fetch(1)"
             >
               <ElOption
-                v-for="(value, label) in agentOptions"
-                :key="value"
-                :label="label"
-                :value="value"
+                v-for="opt in agentOptions"
+                :key="opt.value"
+                :label="opt.label"
+                :value="opt.value"
               ></ElOption>
             </ElSelect>
           </li>
@@ -224,18 +224,20 @@
         <template slot-scope="scope">
           <span class="dataflow-name">
             <span
-              class="name"
+              :class="['name', { 'has-children': scope.row.hasChildren }]"
               @click="
                 scope.row.status === 'draft'
                   ? handleDetail(
                       scope.row.id,
                       'edit',
-                      scope.row.mappingTemplate
+                      scope.row.mappingTemplate,
+                      scope.row.hasChildren
                     )
                   : handleDetail(
                       scope.row.id,
                       'detail',
-                      scope.row.mappingTemplate
+                      scope.row.mappingTemplate,
+                      scope.row.hasChildren
                     )
               "
               >{{ scope.row.name }}</span
@@ -302,6 +304,9 @@
               ></i>
             </template>
             <span>{{ scope.row.statusLabel }}</span>
+            <span v-if="scope.row.status === 'running' && scope.row.tcm"
+              >({{ scope.row.tcm.agentName }})</span
+            >
             <span
               style="color: #999"
               v-if="
@@ -411,7 +416,12 @@
               style="margin-left: 10px"
               type="primary"
               @click="
-                handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate)
+                handleDetail(
+                  scope.row.id,
+                  'detail',
+                  scope.row.mappingTemplate,
+                  scope.row.hasChildren
+                )
               "
             >
               {{ $t('dataFlow.runningMonitor') }}
@@ -427,7 +437,12 @@
                 ) || !statusBtMap['edit'][scope.row.status]
               "
               @click="
-                handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate)
+                handleDetail(
+                  scope.row.id,
+                  'edit',
+                  scope.row.mappingTemplate,
+                  scope.row.hasChildren
+                )
               "
             >
               {{ $t('button.edit') }}
@@ -745,15 +760,26 @@ export default {
       this.$api('tcm')
         .getAgent()
         .then((res) => {
-          let list = res.data || []
-          this.agentOptions = list.map((item) => ({
-            label: item.name,
-            value: item.tmInfo.agentId
-          }))
+          let list = res.data && res.data.items ? res.data.items : []
+          this.agentOptions = list.map((item) => {
+            return {
+              label: item.name,
+              value: item.tmInfo.agentId
+            }
+          })
         })
     },
     dataflowChange(data) {
       if (data && data.data && data.data.fullDocument) {
+        let dataflow = data.data.fullDocument
+        if (dataflow.agentId) {
+          let opt = this.agentOptions.find(
+            (it) => it.value === dataflow.agentId
+          )
+          dataflow.tcm = {
+            agentName: opt.label
+          }
+        }
         this.tempList.push(data.data.fullDocument)
       }
     },
@@ -776,13 +802,14 @@ export default {
             'fullDocument.stats': true,
             'fullDocument.stages.id': true,
             'fullDocument.stages.name': true,
-            'fullDocument.errorEvents': true
+            'fullDocument.errorEvents': true,
+            'fullDocument.agentId': true
           }
         }
       }
       ws.ready(() => {
         ws.send(msg)
-      })
+      }, true)
     },
     reset() {
       this.searchParams = {
@@ -829,7 +856,8 @@ export default {
         startTime: true,
         listtags: true,
         mappingTemplate: true,
-        platformInfo: true
+        platformInfo: true,
+        agentId: true
       }
       if (keyword && keyword.trim()) {
         where.or = [
@@ -840,6 +868,7 @@ export default {
       }
       if (agentId) {
         where['agentId'] = agentId
+        status = status || 'running'
       }
       if (tags && tags.length) {
         where['listtags.id'] = {
@@ -926,84 +955,84 @@ export default {
         item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
       }
       item.statusLabel = this.statusMap[item.status].label
-      let statusMap = {}
-      let getLag = (lag) => {
-        let r = '0s'
-        if (lag) {
-          let m = this.$moment.duration(lag, 'seconds')
-          if (m.days()) {
-            r = m.days() + 'd'
-          } else if (m.hours()) {
-            r = m.hours() + 'h'
-          } else if (m.minutes()) {
-            r = m.minutes() + 'm'
-          } else {
-            r = lag + 's'
-          }
-        }
-        return r
-      }
+      // let statusMap = {}
+      // let getLag = (lag) => {
+      //   let r = '0s'
+      //   if (lag) {
+      //     let m = this.$moment.duration(lag, 'seconds')
+      //     if (m.days()) {
+      //       r = m.days() + 'd'
+      //     } else if (m.hours()) {
+      //       r = m.hours() + 'h'
+      //     } else if (m.minutes()) {
+      //       r = m.minutes() + 'm'
+      //     } else {
+      //       r = lag + 's'
+      //     }
+      //   }
+      //   return r
+      // }
       if (item.stats && window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
         item.hasChildren = false
-        let children = item.stages
+        // let children = item.stages
         item.children = []
-        if (children) {
-          let finishedCount = 0
-          children.forEach((k) => {
-            let stage = ''
-            let node = {}
-            if (item.stats.stagesMetrics) {
-              stage = item.stats.stagesMetrics.filter((v) => k.id === v.stageId)
-            }
-            if (!stage.length) {
-              node = {
-                id: item.id + k.id,
-                name: k.name,
-                input: '--',
-                output: '--',
-                transmissionTime: '--',
-                hasChildren: true,
-                statusLabel: '--'
-              }
-            } else {
-              let stg = stage[0]
-              let statusLabel = stg.status
-                ? this.$t('dataFlow.status.' + stg.status)
-                : '--'
-              if (stg.status === 'cdc') {
-                let lag = `(${this.$t('dataFlow.lag')}${getLag(
-                  stg.replicationLag
-                )})`
-                statusLabel += lag
-                statusMap.cdc = true
-              }
-              if (stg.status === 'initializing') {
-                statusMap.initializing = true
-              }
-              if (stg.status === 'initialized') {
-                finishedCount += 1
-              }
-              node = {
-                id: item.id + k.id,
-                name: k.name,
-                input: stg.input.rows,
-                output: stg.output.rows,
-                transmissionTime: stg.transmissionTime,
-                hasChildren: true,
-                statusLabel
-              }
-            }
-            item.children.push(node)
-          })
-          if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
-            statusMap.initialized = true
-          }
-          let statusList = []
-          for (const key in statusMap) {
-            statusList.push(key)
-          }
-          item.statusList = statusList
-        }
+        // if (children) {
+        //   let finishedCount = 0
+        //   children.forEach((k) => {
+        //     let stage = ''
+        //     let node = {}
+        //     if (item.stats.stagesMetrics) {
+        //       stage = item.stats.stagesMetrics.filter((v) => k.id === v.stageId)
+        //     }
+        //     if (!stage.length) {
+        //       node = {
+        //         id: item.id + k.id,
+        //         name: k.name,
+        //         input: '--',
+        //         output: '--',
+        //         transmissionTime: '--',
+        //         hasChildren: true,
+        //         statusLabel: '--'
+        //       }
+        //     } else {
+        //       let stg = stage[0]
+        //       let statusLabel = stg.status
+        //         ? this.$t('dataFlow.status.' + stg.status)
+        //         : '--'
+        //       if (stg.status === 'cdc') {
+        //         let lag = `(${this.$t('dataFlow.lag')}${getLag(
+        //           stg.replicationLag
+        //         )})`
+        //         statusLabel += lag
+        //         statusMap.cdc = true
+        //       }
+        //       if (stg.status === 'initializing') {
+        //         statusMap.initializing = true
+        //       }
+        //       if (stg.status === 'initialized') {
+        //         finishedCount += 1
+        //       }
+        //       node = {
+        //         id: item.id + k.id,
+        //         name: k.name,
+        //         input: stg.input.rows,
+        //         output: stg.output.rows,
+        //         transmissionTime: stg.transmissionTime,
+        //         hasChildren: true,
+        //         statusLabel
+        //       }
+        //     }
+        //     item.children.push(node)
+        //   })
+        //   if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
+        //     statusMap.initialized = true
+        //   }
+        //   let statusList = []
+        //   for (const key in statusMap) {
+        //     statusList.push(key)
+        //   }
+        //   item.statusList = statusList
+        // }
       }
       return item
     },
@@ -1048,7 +1077,11 @@ export default {
         path: '/createTask/create'
       })
     },
-    handleDetail(id, type, mappingTemplate) {
+    handleDetail(id, type, mappingTemplate, hasChildren) {
+      // 子选项 hasChildren 为 true
+      if (hasChildren) {
+        return
+      }
       const h = this.$createElement
       if (type === 'edit') {
         this.$confirm(
@@ -1474,11 +1507,11 @@ export default {
         border: 1px solid #dedee4;
       }
       .name {
-        color: #48b6e2;
-        cursor: pointer;
-      }
-      .name:hover {
-        text-decoration: underline;
+        &:not(.has-children) {
+          color: #48b6e2;
+          cursor: pointer;
+          text-decoration: underline;
+        }
       }
     }
     .task-name {

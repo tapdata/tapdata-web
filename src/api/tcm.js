@@ -14,6 +14,9 @@ export default class TCM extends PublicAPI {
   getAgent() {
     return axios.get(this.url + '/agent')
   }
+  getAgentCount() {
+    return axios.get(this.url + '/agent/agentCount')
+  }
   //h获取可用区
   getRegion() {
     return axios.get(this.url + '/region')
@@ -33,5 +36,9 @@ export default class TCM extends PublicAPI {
   //创建网络策略
   strategy(params) {
     return axios.post(this.url + '/strategy', params)
+  }
+  //ecs列表
+  getEcsList(id, params) {
+    return axios.get(this.url + '/ecs/list/' + id, { params })
   }
 }
