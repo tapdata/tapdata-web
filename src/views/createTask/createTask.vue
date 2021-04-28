@@ -808,6 +808,7 @@ export default {
           id: targetId,
           connectionId: target.target_connectionId,
           inputLanes: [sourceId],
+          outputLanes: [sourceId],
           distance: 0,
           syncObjects: selectTable,
           name: this.dataSourceModel.target_connectionName,
