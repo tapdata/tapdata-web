@@ -1,6 +1,6 @@
 <template>
   <section class="tapdata-transfer-wrap">
-    <div class="box-btn">
+    <div class="box-btn" v-show="!showOperationBtn">
       <el-button class="e-button" size="mini" @click="dialogVisible = true"
         >{{ $t('dataFlow.changeName') }}
       </el-button>
@@ -117,6 +117,7 @@ export default {
     }
     return {
       transferLoading: false,
+      showOperationBtn: false,
       sourceData: [],
       selectSourceArr: [],
       titles: [
@@ -171,6 +172,10 @@ export default {
         .finally(() => {
           this.transferLoading = false
         })
+    },
+    //是否支持改名
+    showOperation(showOperationBtn) {
+      this.showOperationBtn = showOperationBtn
     },
     // 穿梭框值改变的时候 (重命名 或者还原)
     handleChangeTransfer() {

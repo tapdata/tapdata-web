@@ -336,6 +336,14 @@ export default {
       let field = data.field || '' // 源端 | 目标端
       let value = data.value
       let items = this.config.items
+      if (field === 'distinctWriteType') {
+        let target = items.find((it) => it.field === 'twoWay')
+        if (target) {
+          target.show = false
+          value = false
+          this.transferData = ''
+        }
+      }
       if (field === 'source_databaseType') {
         if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
           // dfs修改目标端
@@ -514,6 +522,7 @@ export default {
           let id = this.dataSourceModel.source_connectionId || ''
           this.$nextTick(() => {
             this.$refs.transfer.getTable(id)
+            this.$refs.transfer.showOperation(this.settingModel.twoWay || false)
           })
           break
         }
