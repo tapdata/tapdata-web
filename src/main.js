@@ -155,8 +155,8 @@ if (isIE) {
     'hashchange',
     () => {
       let currentPath = window.location.hash.slice(1)
-      let arr = ['/dataflow', '/connection', '/verification'] // 匹配的路由
-      let flag = false
+      let arr = ['/dataFlows', '/connections', '/dataVerification'] // 匹配的路由：同步任务、连接管理、数据校验
+      let flag = false // 是否是iframe使用到的路由地址
       arr.forEach((el) => {
         let reg = new RegExp('^' + el)
         if (reg.test(currentPath)) {
@@ -164,7 +164,7 @@ if (isIE) {
         }
       })
       console.log('currentPath', currentPath, window.App.$route, flag)
-      if (flag && window.App.$route.path !== currentPath) {
+      if (flag && window.App.$route.fullPath !== currentPath) {
         window.App.$router.push(currentPath)
       }
     },
