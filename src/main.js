@@ -143,3 +143,31 @@ Object.defineProperty(Array.prototype, 'findWhere', {
     return null
   }
 })
+
+// 判断浏览器是否为IE
+const isIE =
+  /MSIE (\d+\.\d+);/.test(navigator.userAgent) ||
+  ~navigator.userAgent.indexOf('Trident/')
+
+// 兼容ie iframe切换路由不生效
+if (isIE) {
+  window.addEventListener(
+    'hashchange',
+    () => {
+      let currentPath = window.location.hash.slice(1)
+      let arr = ['/dataflow', '/connection', '/verification'] // 匹配的路由
+      let flag = false
+      arr.forEach((el) => {
+        let reg = new RegExp('^' + el)
+        if (reg.test(currentPath)) {
+          flag = true
+        }
+      })
+      console.log('currentPath', currentPath, window.App.$route, flag)
+      if (flag && window.App.$route.path !== currentPath) {
+        window.App.$router.push(currentPath)
+      }
+    },
+    false
+  )
+}
