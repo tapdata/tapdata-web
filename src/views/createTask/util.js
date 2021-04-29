@@ -9,7 +9,7 @@ export const SETTING_MODEL = {
   distinctWriteType: 'intellect',
   stopOnError: false,
   isOpenAutoDDL: false,
-  twoWay: false
+  bidirectional: false
 }
 
 export const DATASOURCE_MODEL = {

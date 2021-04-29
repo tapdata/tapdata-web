@@ -451,7 +451,16 @@ export default {
         schemaAutoUpdate: true,
         platformInfo: true,
         last_updated: true,
-        additionalString: true
+        additionalString: true,
+        fill: true,
+        sslCert: true,
+        ssl: true,
+        sslCAFile: true,
+        sslPass: true,
+        sslKeyFile: true,
+        sslKey: true,
+        sslValidate: false,
+        sslCA: true //MongoDB
       }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {

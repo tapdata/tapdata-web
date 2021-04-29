@@ -337,7 +337,7 @@ export default {
       let value = data.value
       let items = this.config.items
       if (field === 'distinctWriteType') {
-        let target = items.find((it) => it.field === 'twoWay')
+        let target = items.find((it) => it.field === 'bidirectional')
         if (target) {
           target.show = false
           value = false
@@ -523,7 +523,7 @@ export default {
           let id = this.dataSourceModel.source_connectionId || ''
           this.$nextTick(() => {
             this.$refs.transfer.getTable(id)
-            this.$refs.transfer.showOperation(this.settingModel.twoWay || false)
+            this.$refs.transfer.showOperation(this.settingModel.bidirectional || false)
           })
           break
         }
@@ -678,7 +678,7 @@ export default {
         }
         case 'setting_twoWay': {
           //映射是否双向同步
-          let op = items.find((it) => it.field === 'twoWay')
+          let op = items.find((it) => it.field === 'bidirectional')
           op.show = !!this.supportTwoWay
           break
         }
@@ -851,7 +851,7 @@ export default {
         syncObjects: selectTable //需要同步的表
       })
       if (
-        this.settingModel.twoWay &&
+        this.settingModel.bidirectional &&
         window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
       ) {
         postData.stages[1]['outputLanes'] = [sourceIdC]

@@ -80,7 +80,7 @@ export default function () {
       },
       {
         type: 'switch',
-        field: 'twoWay',
+        field: 'bidirectional',
         label: '是否双向',
         show: false
       },
