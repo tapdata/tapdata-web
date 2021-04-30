@@ -586,7 +586,7 @@ const en = {
 		error: 'task error',
 		edited: 'task edited',
 		started: 'task started',
-		shareCdcMode: 'Read share cdc event mode',
+		shareCdcMode: 'Read share cdc mode',
 		streaming: 'STREAMING',
 		polling: 'POLLING',
 		drop_target_before_start: 'Whether the target table is deleted before starting the task',
