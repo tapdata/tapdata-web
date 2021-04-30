@@ -10,6 +10,10 @@ import file from './file'
 import kafka from './kafka'
 import mariadb from './maria'
 import mysqlpxc from './mysqlpxc'
+import sybasease from './sybasease'
+import gbase8s from './gbase8s'
+import gaussdb200 from './gaussdb200'
+import dummydb from './dummydb'
 import jira from './jira'
 import drs_mysql from './drs_mysql'
 import drs_mariadb from './drs_maria'
@@ -59,5 +63,9 @@ export default {
   dfs_db2,
   dfs_mongodb,
   dfs_sqlserver,
-  dfs_redis
+  dfs_redis,
+  sybasease,
+  gbase8s,
+  gaussdb200,
+  dummydb
 }

@@ -78,6 +78,13 @@ export const TYPEMAP = {
   'mysql pxc': 'MySQL PXC',
   jira: 'jira'
 }
+//特殊数据源
+export const TYPEMAPCONFIG = {
+   'gbase-8s': 'gbase8s',
+  'sybase ase': 'sybasease',
+  'dummy db': 'dummydb',
+  'mysql pxc' : 'mysqlpxc',
+}
 
 //数据源基础字段
 export const defaultModel = {
@@ -112,7 +119,9 @@ export const defaultModel = {
     sslCA: '',
     sslCAFile: null,
     sslKeyFile: null,
-    search_databaseType: ''
+    search_databaseType: '',
+    increamentalTps: 100, //dummy
+    initialReadSize: 100000 //dummy
   },
   kafka: {
     id: '',

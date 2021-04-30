@@ -377,7 +377,7 @@ import factory from '@/api/factory'
 import formConfig from './config'
 import gitbook from './GitBook'
 import Test from './Test'
-import { getImgByType, TYPEMAP, defaultModel, defaultCloudModel } from './util'
+import { getImgByType, TYPEMAP, TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 
 const databaseTypesModel = factory('DatabaseTypes')
@@ -626,10 +626,7 @@ export default {
     // 按照数据库类型获取表单配置规则
     getFormConfig() {
       let type = this.model.database_type
-
-      if (type === 'mysql pxc') {
-        type = 'mysqlpxc'
-      }
+      type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
         type = 'drs_' + type
       } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
