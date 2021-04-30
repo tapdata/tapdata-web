@@ -2815,9 +2815,11 @@ const tc = {
     A_replacement_for_the_invalid_field_name:
       ' 一些數據庫對於字段名稱有特殊要求，tapdata將非法的字符在同步時自動做替換。 MongoDB[含有".", "$"作為開頭]',
     true__store_log_to_cloud__false__only_store_to_local_log_file_:
-      'before字段包含每個表列的字段以及更新操作之前該列中的值',
-    aa:
+      'true：將日誌存儲到雲，false：僅存儲到本地日誌文件。 ',
+    When_one_document_may_be_updated_frequently_within_very_short_period_a_few_updates_within_one_second__for_instance___the_change_stream_event_received_by_downstream_processor_may_return_the__fullDocument__that_is_inconsistent_with_the_actual_version_when_the_update_was_applied_to_that_document__To_avoid_this_inconsistency__enable_this_option_to_store_the_full_document_along_with_the_update_operation__This_will_at_the_expense_of_additional_storage_and_degraded_performance_:
       '當一個文檔可能在非常短的時間內頻繁更新（例如，在一秒鐘之內進行幾次更新）時，下游處理器接收到的更改流事件可能會返回與實際版本不一致的“ fullDocument”（與實際版本不一致） 該文件。為避免這種不一致，請啟用此選項以將完整文檔與更新操作一起存儲。這將以增加存儲空間和降低性能為代價。 ',
+    the_before_field_contains_a_field_for_each_table_column_and_the_value_that_was_in_that_column_before_the_update_operation_:
+      'before字段包含每個表列的字段以及更新操作之前該列中的值。 ',
     Job_heart_timeout: '同步任務心跳超時（毫秒）',
     job_cdc_share_mode: '增量同步任務共享模式',
     job_cdc_share_mode_doc:
@@ -2837,7 +2839,11 @@ const tc = {
     connection_schema_update_hour: '數據源schema更新時間',
     connection_schema_update_interval: '數據源schema更新周期（天）',
     creatDuplicateSource: ' 允許創建重複數據源',
-    requestFailed: '請求處理失敗'
+    requestFailed: '請求處理失敗',
+    Mongodb_will_use_this_sample_size_when_load_schema:
+      '加載架構時，Mongodb將使用此樣本大小',
+    Switch_to_batch_insert_mode_interval__s__in_cdc_:
+      '切換到cdc中的批量插入模式間隔。 '
   }
 }
 

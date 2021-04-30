@@ -2923,9 +2923,11 @@ const en = {
     A_replacement_for_the_invalid_field_name:
       'Some databases have special requirements for field names, tapdata will automatically replace illegal characters during synchronization. MongoDB[Contains ".", "$" as the beginning]',
     true__store_log_to_cloud__false__only_store_to_local_log_file_:
-      'Before field contains the fields of each table column and the value in that column before the update operation',
-    aa:
+      'true: store log to cloud, false: only store to local log file.',
+    When_one_document_may_be_updated_frequently_within_very_short_period_a_few_updates_within_one_second__for_instance___the_change_stream_event_received_by_downstream_processor_may_return_the__fullDocument__that_is_inconsistent_with_the_actual_version_when_the_update_was_applied_to_that_document__To_avoid_this_inconsistency__enable_this_option_to_store_the_full_document_along_with_the_update_operation__This_will_at_the_expense_of_additional_storage_and_degraded_performance_:
       'When a document may be frequently updated in a very short time (for example, several updates within a second), the change stream event received by the downstream processor may return "fullDocument" that is inconsistent with the actual version ( Inconsistent with the actual version) the file. To avoid this inconsistency, please enable this option to store the complete document with the update operation. This will be at the expense of increased storage space and reduced performance. ',
+    the_before_field_contains_a_field_for_each_table_column_and_the_value_that_was_in_that_column_before_the_update_operation_:
+      'the before field contains a field for each table column and the value that was in that column before the update operation.',
     Job_heart_timeout: 'Synchronization task heartbeat timeout (milliseconds)',
     job_cdc_share_mode: 'Incremental synchronization task sharing mode',
     job_cdc_share_mode_doc:
@@ -2948,7 +2950,9 @@ const en = {
     connection_schema_update_interval:
       'Data source schema update interval (days)',
     creatDuplicateSource: 'Allow the creation of duplicate data sources',
-    requestFailed: 'Request processing failed'
+    requestFailed: 'Request processing failed',
+    Mongodb_will_use_this_sample_size_when_load_schema:
+      'When loading the schema, Mongodb will use this sample size'
   }
 }
 

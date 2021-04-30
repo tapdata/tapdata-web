@@ -67,7 +67,7 @@
                               .join('_')
                               .split('，')
                               .join('_')
-                              .split("'")
+                              .split('"')
                               .join('_')
                               .split(' ')
                               .join('_')
