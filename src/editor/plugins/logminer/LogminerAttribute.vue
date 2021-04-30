@@ -271,7 +271,7 @@ export default {
 			let result = await connectionApi.get({
 				filter: JSON.stringify({
 					where: {
-						database_type: { in: ['oracle'] }
+						database_type: { in: ['oracle', 'mongodb'] }
 					},
 					fields: {
 						name: 1,
