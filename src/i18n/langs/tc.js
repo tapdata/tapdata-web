@@ -1030,7 +1030,7 @@ const tc = {
 					nodeFunDes: '節點功能說明',
 					function: '功 能',
 					functionContent:
-						'此節點用於採集指定數據庫和表的日誌，保存到MongoDB數據庫，共享日誌數據不需要重複開 啟日誌採集進程，能極大緩解源庫資源的佔用和浪費。 ',
+						'此節點用於採集指定數據庫和表的日誌，保存到MongoDB數據庫，共享日誌數據不需要重複開啟日誌採集進程，能極大緩解源庫資源的佔用和浪費。 ',
 					connectionTarget: '連接目標',
 					connectionText: '只能連接Collection節點',
 					tableFilter: {
