@@ -338,10 +338,10 @@ export default {
       let items = this.config.items
       if (field === 'distinctWriteType') {
         let target = items.find((it) => it.field === 'bidirectional')
-        if (target) {
+        if (target || value === 'compel') {
           target.show = false
-          value = false
-          this.transferData = ''
+          this.settingModel.bidirectional = false
+          console.log(target)
         }
       }
       if (field === 'source_databaseType') {
@@ -524,6 +524,10 @@ export default {
           this.$nextTick(() => {
             this.$refs.transfer.getTable(id)
             this.$refs.transfer.showOperation(this.settingModel.bidirectional || false)
+            if (!this.settingModel.bidirectional || this.settingModel.distinctWriteType ==='compel') {
+              this.transferData = ''
+              this.settingModel.bidirectional = false
+            }
           })
           break
         }
