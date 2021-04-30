@@ -2783,6 +2783,172 @@ const en = {
     start_time: 'Start time',
     process_id: 'Process ID',
     processState: 'Working process state'
+  },
+  setting: {
+    email_template: 'Email template',
+    connect_and_test: 'Connection test',
+    saveSuccess: 'Save successfully, take effect in one minute',
+    nameserver: 'Server name',
+    Log: 'Log',
+    SMTP: 'SMTP',
+    Job: 'Task',
+    license: 'License Control',
+    expiredate: 'Expiration time',
+    import: 'Import',
+    apply: 'Apply for license',
+    license_expire_date: 'License expiration time',
+    Worker: 'Process',
+    Download: 'Download',
+    Log_level: 'Log level',
+    maxCpuUsage: 'Maximum CPU usage (value range 0.1 ~ 1)',
+    maxHeapMemoryUsage: 'Maximum heap memory usage (value range 0.1 ~ 1)',
+    switch_insert_mode_interval:
+      'Interval time for switching to batch insert mode in incremental mode (unit: second)',
+    Email_Communication_Protocol: 'Encryption Method',
+    SMTP_Server_Port: 'SMTP service port',
+    SMTP_Server_User: 'SMTP service account',
+    SMTP_Server_password: 'SMTP service password',
+    Email_Receivers: 'Email receiving email address',
+    Email_Send_Address: 'Email sending email address',
+    SMTP_Server_Host: 'SMTP Service Host',
+    Send_Email_Title_Prefix: 'Send Email title prefix (optional)',
+    Email_Template_Running: 'Task start notification',
+    Email_Template_Paused: 'Task Paused Notification',
+    Email_Template_Error: 'Task error notification',
+    Email_Template_Draft: 'Notification of task being edited',
+    Email_Template_CDC: 'Task Incremental Delay Notification',
+    Email_Template_DDL: 'DDL error notification',
+    Clean_Message_Time: 'Clear message time',
+    Keep_Alive_Message: 'Keep online message',
+    Sample_Rate: 'Sampling rate',
+    ApiServer: 'API distribution settings',
+    Default_Limit: 'The number of rows returned by the default query',
+    Max_Limit: 'Maximum number of rows returned by the query',
+    Send_batch_size: 'Number of packed data',
+    hint_Send_batch_size: 'Number of packed data',
+    Mongodb_target_create_date:
+      'Whether to add the creation time to the target data set',
+    Mongodb_target_create_date_docs:
+      'Whether to add the creation time to the target data set',
+    System: 'System Resource Monitoring',
+    Collect_system_info_interval:
+      'System resource monitoring collection frequency (seconds)',
+    Interval_to_collect_system_info:
+      'System resource information (CPU, memory, hard disk usage) monitoring collection frequency',
+    Job_Sync_Mode: 'Task synchronization mode',
+    Worker_Threshold: 'Process Threshold',
+    Worker_Heartbeat_Expire: 'Process heartbeat period time (seconds)',
+    License_Key: 'Certificate Key',
+    Enter_jobs_log_level__error_warn_info_debug_trace:
+      'Enter task log level: error/warn/info/debug/trace',
+    Email_Receivers_Multiple_separated_by_semicolons:
+      'Mail recipients, you can enter multiple, separated by commas',
+
+    Keep_recent_n_hours_message_before_the_last_processed_message_s_time_:
+      'Keep the last n hours news',
+    Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
+      'Cache a copy of the current overall data and merge it into the target data set',
+    Store_before_field_as_embedded_document_in_target_collection_before_update_operation:
+      'Cache a copy of the overall data before modification and merge it into the target data set',
+    Store_job_script_processor_log_to_cloud:
+      'Whether to transfer task logs to the cloud',
+    Validator_to_validate_data__s_sample_rate: 'Validation data sampling rate',
+    Process_message_mode__consistency_fast:
+      'Message processing mode consistency/fast',
+    Worker_can_execute_the_nums_of_Jobs:
+      'The process can perform multiple tasks',
+    Worker_heartbeat_expire_time: 'Process heartbeat period time',
+    Users: 'User',
+    Show_Page: 'Show download page',
+    User_Registery: 'User registration management',
+    hint_Show_Page: 'Show download page',
+    hint_User_Registery:
+      'User registration type settings. The value is set to "disabled": registration is prohibited; the value is set to "self-signup" to enable user self-registration; the value is set to "manual-approval" to allow user registration, but requires administrator approval. ',
+    DR_Rehearsal: 'Disaster preparedness drill',
+    Mongod_path: 'Mongod path',
+    SSH_User: 'SSH username',
+    SSH_Port: 'SSH Port',
+    hint_Mongod_path: 'Mongod path',
+    hint_SSH_User: 'SSH username, used to connect to the host of Mongod',
+    hint_SSH_Port: 'SSH port, used to connect to the host of Mongod',
+    Enable_DR_Rehearsal: 'Allow disaster recovery exercises',
+    hint_Enable_DR_Rehearsal:
+      'Disaster recovery rehearsal switch, true means on, false means off',
+    Download_Agent_Page: 'Agent Download Page',
+    Background_Analytics: 'Background analysis',
+    Data_quality_analysis_frequency: 'Data quality analysis interval (seconds)',
+    Dashboard_data_analysis_frequency: 'Panel data analysis interval (seconds)',
+    dashboard_Analysis_Interval: 'Panel data analysis interval (seconds)',
+    quality_Analysis_Interval: 'Data quality analysis interval (seconds)',
+    Log_filter_interval: 'Log filtering interval (seconds)',
+    Filter_the_interval_between_duplicate_logs__seconds__:
+      'The same log appears only once within a specified time (valid after 1 minute)',
+    _DK36: 'File download',
+    File_Down_Base_Url: 'Address',
+    Set_the_average_number_of_events_per_second_to_allow:
+      'Log settings allow the average number of events per second',
+    Log_Filter_Rate: 'Log output frequency (line/sec)',
+    Connections: 'Connection Settings',
+    Mongodb_Load_Schema_Sample_Size: 'Mongodb load model sample records (rows)',
+    hint_Mongodb_Load_Schema_Sample_Size:
+      'When MongoDB connects to load the model, this configuration will be used for sampling and loading',
+    Enable_API_Stats_Batch_Report: 'Enable API Statistics',
+    Header: 'UDP header information',
+    hint_Header: 'UDP header information',
+    Size_Of_Trigger_API_Stats_Report: 'Maximum number of API request cache',
+    hint_Size_Of_Trigger_API_Stats_Report:
+      'When the number of API request records reaches the specified number, batches are sent to the management end',
+    Time_Span_Of_Trigger_API_Stats_Report:
+      'API request report frequency (seconds)',
+    hint_Time_Span_Of_Trigger_API_Stats_Report:
+      'The API request is cached and sent to the management end at the specified time',
+    save: 'Save successfully, take effect in one minute',
+    Logout_forward_to_this_url: 'Logout forwarding address',
+    Check_devices: 'Important device detection',
+    ops: 'Operation and maintenance display',
+    server_oversee_url: 'O&M operation control URL',
+    system: 'System global',
+    licenseNoticeDays: 'license expiration reminder',
+    flow_engine_version: 'Flow engine version',
+    tapdata_agent_version: 'tapdata agent version',
+    doc_base_url: 'Help document URL',
+    help: 'Help document',
+    Ip_addresses: 'Ipv4 addresses (separated by multiple commas)',
+    hint_Ip_addresses:
+      'The ipv4 address of the device to be detected, for example: 127.0.0.1, 192.168.0.1',
+    PingTimeout: 'Detection timeout (milliseconds)',
+    hint_PingTimeout:
+      'When this setting is exceeded, it is considered that the device cannot be connected',
+    Job_field_replacement: 'Illegal characters replaced with',
+    A_replacement_for_the_invalid_field_name:
+      'Some databases have special requirements for field names, tapdata will automatically replace illegal characters during synchronization. MongoDB[Contains ".", "$" as the beginning]',
+    true__store_log_to_cloud__false__only_store_to_local_log_file_:
+      'Before field contains the fields of each table column and the value in that column before the update operation',
+    aa:
+      'When a document may be frequently updated in a very short time (for example, several updates within a second), the change stream event received by the downstream processor may return "fullDocument" that is inconsistent with the actual version ( Inconsistent with the actual version) the file. To avoid this inconsistency, please enable this option to store the complete document with the update operation. This will be at the expense of increased storage space and reduced performance. ',
+    Job_heart_timeout: 'Synchronization task heartbeat timeout (milliseconds)',
+    job_cdc_share_mode: 'Incremental synchronization task sharing mode',
+    job_cdc_share_mode_doc:
+      'In the incremental synchronization phase, the sharing mode will be automatically adopted according to whether the log collection task is available. Affected database: Oracle',
+    job_cdc_share_only: 'Incremental tasks are forced to use shared mode',
+    job_cdc_share_only_doc:
+      'When the incremental synchronization task sharing mode is turned on and a sharable log cannot be found, the task will be stopped',
+    test_email_success:
+      'The test email has been sent, please log in to the receiving mailbox to check it',
+    test_email_countdown:
+      'The operation is too frequent, please try again later',
+    email_template_from: 'From',
+    email_template_to: 'Recipient',
+    email_template_subject: 'Subject',
+    job_cdc_record: 'Automatically save incremental events',
+    job_cdc_record_doc: 'Automatically save incremental events',
+    job_cdc_record_ttl: 'Incremental event save time (days)',
+    job_cdc_record_ttl_doc: 'Incremental event save time (days)',
+    connection_schema_update_hour: 'Data source schema update time',
+    connection_schema_update_interval:
+      'Data source schema update interval (days)',
+    creatDuplicateSource: 'Allow the creation of duplicate data sources',
+    requestFailed: 'Request processing failed'
   }
 }
 

@@ -355,10 +355,11 @@ const childRoutes = [
   {
     path: '/settings',
     name: 'settings',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/setting/Setting'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'system_settings_menu',
-      url: '/old/index.html#/settings',
+      // url: '/old/index.html#/settings',
       title: i18n.t('tap.systemSettings'),
       isCollapse: false
     }
