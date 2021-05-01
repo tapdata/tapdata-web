@@ -577,6 +577,9 @@ const tc = {
 		error: '當任務出錯',
 		edited: '當任務被編輯',
 		started: '當任務開啟',
+		shareCdcMode: '共享增量讀取的模式',
+		streaming: '流式讀取',
+		polling: '輪詢讀取',
 		drop_target_before_start: '開啟任務前是否刪除目標表',
 		run_custom_sql: '重複運行自定義SQL',
 		stop_on_error: '遇到錯誤停止',
@@ -1027,7 +1030,7 @@ const tc = {
 					nodeFunDes: '節點功能說明',
 					function: '功 能',
 					functionContent:
-						'此節點用於採集指定數據庫和表的日誌，保存到MongoDB數據庫，共享日誌數據不需要重複開 啟日誌採集進程，能極大緩解源庫資源的佔用和浪費。 ',
+						'此節點用於採集指定數據庫和表的日誌，保存到MongoDB數據庫，共享日誌數據不需要重複開啟日誌採集進程，能極大緩解源庫資源的佔用和浪費。 ',
 					connectionTarget: '連接目標',
 					connectionText: '只能連接Collection節點',
 					tableFilter: {

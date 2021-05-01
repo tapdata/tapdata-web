@@ -580,6 +580,9 @@ const cn = {
 		error: '当任务出错',
 		edited: '当任务被编辑',
 		started: '当任务开启',
+		shareCdcMode: '共享增量读取的模式',
+		streaming: '流式读取',
+		polling: '轮询读取',
 		drop_target_before_start: '开启任务前是否删除目标表',
 		run_custom_sql: '重复自定义SQL',
 		stop_on_error: '遇到错误停止',
@@ -1031,7 +1034,7 @@ const cn = {
 					nodeFunDes: '节点功能说明',
 					function: '功              能',
 					functionContent:
-						'此节点用于采集指定数据库和表的日志，保存到MongoDB数据库，共享日志数据不需要重复开 启日志采集进程，能极大缓解源库资源的占用和浪费。',
+						'此节点用于采集指定数据库和表的日志，保存到MongoDB数据库，共享日志数据不需要重复开启日志采集进程，能极大缓解源库资源的占用和浪费。',
 					connectionTarget: '连接目标',
 					connectionText: '只能连接Collection节点',
 					tableFilter: {

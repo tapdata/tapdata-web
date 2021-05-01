@@ -107,6 +107,17 @@
 					<el-checkbox v-model="formData.emailWaring.edited">{{ $t('dataFlow.edited') }}</el-checkbox>
 					<el-checkbox v-model="formData.emailWaring.started">{{ $t('dataFlow.started') }}</el-checkbox>
 				</el-form-item>
+				<el-form-item :label="$t('dataFlow.shareCdcMode')" v-show="formData.sync_type !== 'initial_sync'">
+					<el-select
+						v-model="formData.readShareLogMode"
+						size="mini"
+						:placeholder="$t('message.placeholderSelect')"
+						class="dataWrite-list"
+					>
+						<el-option :label="$t('dataFlow.streaming')" value="STREAMING"> </el-option>
+						<el-option :label="$t('dataFlow.polling')" value="POLLING"> </el-option>
+					</el-select>
+				</el-form-item>
 				<el-form-item :label="$t('dataFlow.run_custom_sql')" v-show="formData.sync_type === 'initial_sync'">
 					<!-- 重复运行自定义SQL -->
 					<el-switch
