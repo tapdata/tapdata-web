@@ -75,6 +75,7 @@
                 v-model="settingModel"
                 :config="config"
                 @submit.native.prevent
+                @value-change="formChangeSetting"
               >
                 <div
                   slot="needToCreateIndex"
@@ -331,19 +332,26 @@ export default {
     allowDatabaseType() {
       this.changeConfig(this.allowDataType, 'databaseType')
     },
+    formChangeSetting(data) {
+      //删除模式不支持双向
+      let field = data.field || ''
+      let value = data.value
+      let items = this.config.items
+      if (field === 'distinctWriteType') {
+        let target = items.find((it) => it.field === 'bidirectional')
+        if (target && value === 'compel') {
+          target.show = false
+          this.settingModel.bidirectional = false
+        } else if (target && value !== 'compel') {
+          target.show = false
+        }
+      }
+    },
     formChange(data) {
       // 不支持 mongodb 到 oracle 的同步
       let field = data.field || '' // 源端 | 目标端
       let value = data.value
       let items = this.config.items
-      if (field === 'distinctWriteType') {
-        let target = items.find((it) => it.field === 'bidirectional')
-        if (target || value === 'compel') {
-          target.show = false
-          this.settingModel.bidirectional = false
-          console.log(target)
-        }
-      }
       if (field === 'source_databaseType') {
         if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
           // dfs修改目标端
@@ -447,11 +455,6 @@ export default {
             this.dataSourceModel.target_connectionName = target.name
             this.dataSourceModel['source_databaseType'] = source.type
             this.dataSourceModel['target_databaseType'] = target.type
-            this.supportTwoWay =
-              this.twoWayAgentRunningCount > 0 &&
-              this.dataSourceModel['source_databaseType'] === 'mongodb' &&
-              this.dataSourceModel['target_databaseType'] === 'mongodb' &&
-              this.settingModel.distinctWriteType === 'intellect' //必须是写入模式
             this.activeStep += 1
             this.getFormConfig()
           }
@@ -510,6 +513,10 @@ export default {
           break
         }
         case 'setting': {
+          this.supportTwoWay =
+            this.twoWayAgentRunningCount > 0 &&
+            this.dataSourceModel['source_databaseType'] === 'mongodb' &&
+            this.dataSourceModel['target_databaseType'] === 'mongodb' // 进入设置页面再判断
           if (
             this.dataSourceModel['source_databaseType'] !== 'mysql' ||
             this.dataSourceModel['target_databaseType'] !== 'mysql'
@@ -523,7 +530,7 @@ export default {
           let id = this.dataSourceModel.source_connectionId || ''
           this.$nextTick(() => {
             this.$refs.transfer.getTable(id)
-            this.$refs.transfer.showOperation(this.settingModel.bidirectional || false)
+            this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
             if (!this.settingModel.bidirectional || this.settingModel.distinctWriteType ==='compel') {
               this.transferData = ''
               this.settingModel.bidirectional = false
