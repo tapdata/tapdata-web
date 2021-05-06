@@ -258,10 +258,11 @@ const childRoutes = [
   {
     path: '/tasks',
     name: 'tasks',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/process/List'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'schedule_jobs_menu',
-      url: '/old/index.html#/tasks',
+      // url: '/old/index.html#/tasks',
       title: i18n.t('tap.jobSchedule'),
       isCollapse: false
     }

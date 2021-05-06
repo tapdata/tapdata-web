@@ -124,6 +124,7 @@
 
 <script>
 import TablePage from '@/components/TablePage'
+import { toRegExp } from '../../utils/util'
 const MINUTE = 1 * 60 * 1000
 export default {
   components: {
@@ -169,13 +170,14 @@ export default {
           gte_offset: 60000
         }
       }
-      if (keyword && keyword.trim()) {
-        where.worker_type = keyword
-      }
+
       if (state !== 'all') {
         where.worker_type = {
           in: ['connector', 'transformer', 'api-server', 'tapdata-manager']
         }
+      }
+      if (keyword && keyword.trim()) {
+        where.worker_type = { like: toRegExp(keyword), options: 'i' }
       }
       let filter = {
         order: this.order,
