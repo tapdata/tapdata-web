@@ -756,6 +756,7 @@ export default {
           false
         )
       }
+      this.table.fetch()
     }
   }
 }
