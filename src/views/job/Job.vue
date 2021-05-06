@@ -789,12 +789,9 @@ export default {
             }
           }
         }
-        let int = setInterval(() => {
-          if (ws.ws.readyState == 1) {
-            ws.send(msg)
-            clearInterval(int)
-          }
-        }, 2000)
+        ws.ready(() => {
+          ws.send(msg)
+        }, true)
       }
     },
     wsWatch() {
@@ -1368,7 +1365,10 @@ export default {
           type: 'warning',
           closeOnClickModal: false
         })
-        .then(() => {
+        .then((flag) => {
+          if (!flag) {
+            return
+          }
           self.doSave(data, (err) => {
             if (err) {
               this.$message.error(self.$t('message.stopFail'))
@@ -1482,7 +1482,10 @@ export default {
               type: 'warning'
             }
           )
-          .then(() => {
+          .then((flag) => {
+            if (!flag) {
+              return
+            }
             this.loading = true
             dataFlowsApi
               .reset(data.id)

@@ -1,9 +1,6 @@
 <template>
   <div class="databaseFrom">
-    <header
-      class="header"
-      v-if="!$window.getSettingByKey('DFS_TCM_HIDE_CONNECTION_OUTSIDE_PART')"
-    >
+    <header class="header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
       {{
         $route.params.id
           ? $t('connection.editDataSource')
@@ -43,10 +40,7 @@
               </div>
               <div
                 class="tip"
-                v-if="
-                  !$window.getSettingByKey('DFS_TCM_PLATFORM') ||
-                  !$window.getSettingByKey('DFS_TCM_PLATFORM')
-                "
+                v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
               >
                 {{ $t('dataForm.form.guide') }}
                 <a
@@ -57,10 +51,7 @@
               </div>
               <div
                 class="tip"
-                v-if="
-                  $window.getSettingByKey('DFS_TCM_PLATFORM') ||
-                  $window.getSettingByKey('DFS_TCM_PLATFORM')
-                "
+                v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')"
               >
                 请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
               </div>
@@ -78,13 +69,49 @@
               <div class="url-tip" slot="name" v-if="!$route.params.id">
                 中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
               </div>
-              <div class="url-tip" slot="vpc-setting" v-if="model.vpc">
+              <div
+                class="url-tip"
+                slot="ecsList"
+                v-if="model.sourceType === 'ecs'"
+              >
+                <el-select
+                  v-model="model.ecs"
+                  clearable
+                  placeholder="请选择"
+                  v-loadmore="loadMore"
+                  style="width: 100%; margin-top: 10px"
+                  @change="handleEcsList"
+                >
+                  <el-option
+                    v-for="item in ecsList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  >
+                  </el-option>
+                </el-select>
+                <el-select
+                  v-model="model.vpc"
+                  clearable
+                  placeholder="请选择"
+                  style="width: 100%; margin-top: 10px"
+                >
+                  <el-option
+                    v-for="item in vpcList"
+                    :key="item.portId"
+                    :label="item.vpcName"
+                    :value="item.portId"
+                  >
+                  </el-option>
+                </el-select>
+              </div>
+              <div class="url-tip" slot="vpc-setting" v-if="model.ecs">
                 <el-checkbox v-model="model.checkedVpc"
                   >授权允许数据同步服务访问您的ECS实例</el-checkbox
                 >
                 <span v-if="model.checkedVpc">
                   <el-link
-                    v-if="!model.platformInfo.isThrough"
+                    v-if="!model.platformInfo.strategyExistence"
                     :underline="false"
                     @click="createStrategy()"
                     style="color: #d54e21"
@@ -277,9 +304,7 @@
           </div>
         </footer>
       </main>
-      <gitbook
-        v-if="!$window.getSettingByKey('DFS_TCM_HIDE_CONNECTION_OUTSIDE_PART')"
-      ></gitbook>
+      <gitbook v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"></gitbook>
     </div>
     <Test
       ref="test"
@@ -400,7 +425,6 @@ export default {
       connectionTypeOption: '',
       isUrlOption: '',
       rename: '',
-      vpcList: [],
       kafka: {
         id: '',
         name: '',
@@ -416,7 +440,11 @@ export default {
       instanceModelZone: '',
       instanceMock: [],
       dataSourceZone: '',
-      dataSourceMock: []
+      dataSourceMock: [],
+      ecsPageSize: 10,
+      ecsPage: 1,
+      vpcList: [],
+      ecsList: []
     }
   },
   created() {
@@ -501,11 +529,11 @@ export default {
       this.changeDatabaseHost()
     },
     'model.sourceType'() {
-      this.getVpcList()
+      this.getEcsList()
     },
-    'model.vpc'() {
-      this.vpcList = this.vpcList || []
-      if (!this.vpcList || this.vpcList.length === 0) return
+    'model.ecs'() {
+      this.ecsList = this.ecsList || []
+      if (!this.ecsList || this.ecsList.length === 0) return
       this.handleStrategy()
     }
   },
@@ -536,7 +564,7 @@ export default {
         }
         this.model = Object.assign(this.model, editData.data)
         if (this.model.sourceType === 'ecs') {
-          this.getVpcList()
+          this.getEcsList()
         }
         this.rename = this.model.name
         this.model.isUrl = false
@@ -626,7 +654,7 @@ export default {
           this.$route.params.id &&
           itemIsUrl
         ) {
-          itemIsUrl.options[0].disabled = true
+          itemIsUrl.options[0].disabled = true //编辑模式下mongodb不支持URL模式
         } else if (
           this.model.database_type === 'mongodb' &&
           !this.$route.params.id &&
@@ -634,6 +662,7 @@ export default {
         ) {
           itemIsUrl.options[1].disabled = true
         }
+        ////编辑模式下mongodb 不校验证书
         if (
           this.model.database_type === 'mongodb' &&
           this.$route.params.id &&
@@ -799,47 +828,53 @@ export default {
           }
           break
         }
-        case 'vpc': {
-          //选择vpc
-          let vpc = items.find((it) => it.field === 'vpc')
-          if (vpc) {
-            vpc.options = this.vpcList.map((item) => {
-              return {
-                id: item.id,
-                name: item.name,
-                label: item.name,
-                value: item.id,
-                routerId: item.routerId,
-                isThrough: item.isThrough
-              }
-            })
-          }
-          break
-        }
       }
     },
     handleTestVisible() {
       this.dialogTestVisible = false
     },
-    //切换sourceType ecs需要请求VPC 开通网络策略
-    getVpcList() {
+    handleEcsList() {
+      let ecs = this.ecsList.filter((item) => item.id === this.model.ecs)
+      this.model.vpc = '' //清空当前子级值
+      if (ecs.length > 0) {
+        this.vpcList = ecs[0].portDetail
+      } else {
+        this.vpcList = []
+      }
+    },
+    loadMore() {
+      this.ecsPage = this.ecsPage + 1
+      this.getEcsList()
+    },
+    //切换sourceType ecs需要请求ecs列表 开通网络策略
+    getEcsList() {
       if (this.model.sourceType !== 'ecs') return
       let userId = this.$cookie.get('userId')
+      let params = {
+        page: this.ecsPage || 1,
+        pageSize: this.ecsPageSize || 10,
+        region: this.model.region || ''
+      }
       this.$api('tcm')
-        .getVpcList(userId)
+        .getEcsList(userId, params)
         .then((result) => {
-          this.vpcList = result.data || []
-          this.changeConfig(this.vpcList, 'vpc')
+          if (result.data) {
+            const newList = result.data.ecsList
+            if (newList.length > 0) {
+              this.ecsList.push(...newList)
+            }
+          }
         })
     },
     //控制是否开通网络策略
     handleStrategy() {
-      let currentData = this.vpcList.filter(
-        (item) => item.id === this.model.vpc
+      let currentData = this.ecsList.filter(
+        (item) => item.id === this.model.ecs
       )
       if (currentData.length === 0) return
-      this.model.platformInfo.isThrough = currentData[0].isThrough
-      if (this.model.platformInfo.isThrough) {
+      this.model.platformInfo.strategyExistence =
+        currentData[0].strategyExistence
+      if (this.model.platformInfo.strategyExistence) {
         this.createStrategy()
       }
     },
@@ -847,12 +882,12 @@ export default {
     createStrategy() {
       this.createStrategyDisabled = true
       let currentData = this.vpcList.filter(
-        (item) => item.id === this.model.vpc
+        (item) => item.portId === this.model.vpc
       )
       if (currentData.length === 0) return
       let params = {
         userId: this.$cookie.get('user_id'),
-        vpcId: this.model.vpc,
+        ecsId: this.model.ecs,
         region: this.model.region,
         zone: this.model.zone,
         routerId: currentData[0].routerId
@@ -860,9 +895,9 @@ export default {
       this.$api('tcm')
         .strategy(params)
         .then((result) => {
-          this.model.platformInfo.isThrough = true
+          this.model.platformInfo.strategyExistence = true
           if (result.data) {
-            this.getVpcList() //更新vpc列表
+            this.getEcsList() //更新Ecs列表
             this.model.database_host = result.data.dummyFipAddress
             if (this.model.database_type === 'mongodb') {
               this.model.database_uri = `mongodb://${result.data.dummyFipAddress}/test`
@@ -915,7 +950,9 @@ export default {
         DRS_instances: params.DRS_instances || '',
         IP_type: params.IP_type || '',
         checkedVpc: params.checkedVpc || '',
-        vpc: params.vpc || ''
+        vpc: params.vpc || '',
+        ecs: params.ecs || '',
+        strategyExistence: params.strategyExistence || ''
       }
       //存实例名称
       platformInfo['regionName'] = this.handleName({
@@ -969,7 +1006,7 @@ export default {
       }
       if (
         this.model.platformInfo &&
-        !this.model.platformInfo.isThrough &&
+        !this.model.platformInfo.strategyExistence &&
         this.model.sourceType === 'ecs'
       ) {
         this.$message.error('请"点击开通"开通网络策略')
@@ -1008,6 +1045,7 @@ export default {
             params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
           }
           if (params.database_type === 'mongodb') {
+            //params['database_uri'] = encodeURIComponent(params['database_uri'])
             params.fill = params.isUrl ? 'uri' : ''
             delete params.isUrl
           }

@@ -142,11 +142,11 @@ export default function (vm) {
         required: true
       },
       {
-        type: 'select',
-        field: 'vpc',
-        label: '选择VPC',
-        options: [],
+        type: 'slot',
+        slot: 'ecsList',
+        name: '选择ECS',
         show: false,
+        required: true,
         dependOn: [
           {
             triggerOptions: [
@@ -159,8 +159,7 @@ export default function (vm) {
               show: true
             }
           }
-        ],
-        required: true
+        ]
       },
       {
         type: 'slot',

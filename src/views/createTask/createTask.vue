@@ -75,6 +75,7 @@
                 v-model="settingModel"
                 :config="config"
                 @submit.native.prevent
+                @value-change="formChangeSetting"
               >
                 <div
                   slot="needToCreateIndex"
@@ -174,6 +175,7 @@ export default {
       activeStep: 0,
       errorMsg: '',
       showConnectDialog: false,
+      twoWayAgentRunningCount: '',
       platformInfo: _.cloneDeep(INSTANCE_MODEL),
       dataSourceModel: _.cloneDeep(DATASOURCE_MODEL),
       settingModel: _.cloneDeep(SETTING_MODEL),
@@ -197,12 +199,14 @@ export default {
       dataSourceZone: '',
       dataSourceMock: [],
       dialogDatabaseTypeVisible: false,
-      allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE')
+      allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE'),
+      supportTwoWay: false
     }
   },
   created() {
     this.id = this.$route.params.id
     this.getSteps()
+    this.getAgentCount()
     this.getFormConfig()
     if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
       this.dataSourceModel = _.cloneDeep(DFSDATASOURCE_MODEL)
@@ -237,6 +241,13 @@ export default {
     }
   },
   methods: {
+    getAgentCount() {
+      this.$api('tcm')
+        .getAgentCount()
+        .then((res) => {
+          this.twoWayAgentRunningCount = res.data.twoWayAgentRunningCount || 0
+        })
+    },
     //兼容新手引导
     handleCreateDatabase() {
       if (this.$route.query.step) {
@@ -321,48 +332,70 @@ export default {
     allowDatabaseType() {
       this.changeConfig(this.allowDataType, 'databaseType')
     },
+    formChangeSetting(data) {
+      //删除模式不支持双向
+      let field = data.field || ''
+      let value = data.value
+      let items = this.config.items
+      if (field === 'distinctWriteType') {
+        let target = items.find((it) => it.field === 'bidirectional')
+        if (target && value === 'compel') {
+          target.show = false
+          this.settingModel.bidirectional = false
+        } else if (target && value !== 'compel') {
+          target.show = false
+        }
+      }
+    },
     formChange(data) {
       // 不支持 mongodb 到 oracle 的同步
       let field = data.field || '' // 源端 | 目标端
       let value = data.value
       let items = this.config.items
       if (field === 'source_databaseType') {
-        // 修改目标端
-        let target = items.find((it) => it.field === 'target_databaseType')
-        if (target) {
-          target.options = target.options.map((item) => {
-            if (value === 'mongodb') {
-              // mongodb 时，禁用目标端的 oracle
-              if (item.value === 'oracle') {
-                item.disabled = true
+        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+          // dfs修改目标端
+          let target = items.find((it) => it.field === 'target_databaseType')
+          if (target) {
+            target.options = target.options.map((item) => {
+              if (value === 'mongodb') {
+                // mongodb 时，禁用目标端的 oracle
+                if (item.value === 'oracle') {
+                  item.disabled = true
+                }
+                return item
+              } else {
+                // 不是 mongodb，则恢复正常
+                item.disabled = false
+                return item
               }
-              return item
-            } else {
-              // 不是 mongodb，则恢复正常
-              item.disabled = false
-              return item
-            }
-          })
+            })
+          }
         }
         this.getConnection(this.getWhere('source'), 'source_connectionId')
       }
       if (field === 'target_databaseType') {
-        // 修改源端
+        // dfs修改源端
         let source = items.find((it) => it.field === 'source_databaseType')
         if (source) {
-          source.options = source.options.map((item) => {
-            if (value === 'oracle') {
-              // oracle 时，禁用目标端的 oracle
-              if (item.value === 'mongodb') {
-                item.disabled = true
-              }
-              return item
-            } else {
-              // 不是 oracle，则恢复正常
-              item.disabled = false
-              return item
-            }
-          })
+          // dfs源端不支持 redis
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+            source.options = source.options
+              .filter((item) => item.value !== 'redis')
+              .map((item) => {
+                if (value === 'oracle') {
+                  // oracle 时，禁用目标端的 oracle
+                  if (item.value === 'mongodb') {
+                    item.disabled = true
+                  }
+                  return item
+                } else {
+                  // 不是 oracle，则恢复正常
+                  item.disabled = false
+                  return item
+                }
+              })
+          }
         }
         this.getConnection(this.getWhere('target'), 'target_connectionId')
       }
@@ -480,11 +513,16 @@ export default {
           break
         }
         case 'setting': {
+          this.supportTwoWay =
+            this.twoWayAgentRunningCount > 0 &&
+            this.dataSourceModel['source_databaseType'] === 'mongodb' &&
+            this.dataSourceModel['target_databaseType'] === 'mongodb' // 进入设置页面再判断
           if (
             this.dataSourceModel['source_databaseType'] !== 'mysql' ||
             this.dataSourceModel['target_databaseType'] !== 'mysql'
           ) {
             this.changeConfig([], 'setting_isOpenAutoDDL')
+            this.changeConfig([], 'setting_twoWay')
           }
           break
         }
@@ -492,6 +530,11 @@ export default {
           let id = this.dataSourceModel.source_connectionId || ''
           this.$nextTick(() => {
             this.$refs.transfer.getTable(id)
+            this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
+            if (!this.settingModel.bidirectional || this.settingModel.distinctWriteType ==='compel') {
+              this.transferData = ''
+              this.settingModel.bidirectional = false
+            }
           })
           break
         }
@@ -644,10 +687,21 @@ export default {
           }
           break
         }
+        case 'setting_twoWay': {
+          //映射是否双向同步
+          let op = items.find((it) => it.field === 'bidirectional')
+          op.show = !!this.supportTwoWay
+          break
+        }
         case 'databaseType': {
           let source = items.find((it) => it.field === 'source_databaseType')
           if (source) {
-            source.options = data.map((item) => {
+            // dfs源端不支持 redis
+            let options = data
+            if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+              options = data.filter((item) => item !== 'redis')
+            }
+            source.options = options.map((item) => {
               return {
                 label: TYPEMAP[item],
                 value: item
@@ -682,6 +736,9 @@ export default {
     },
     //save
     save() {
+      if (this.loading) {
+        return
+      }
       this.transferData = this.$refs.transfer.returnData()
       if (this.transferData.selectSourceArr.length === 0) {
         this.$message.error(
@@ -691,8 +748,6 @@ export default {
       }
       let source = this.dataSourceModel
       let target = this.dataSourceModel
-      let sourceId = uuid()
-      let targetId = uuid()
       //设置为增量模式
       let timeZone = new Date().getTimezoneOffset() / 60
       let systemTimeZone = ''
@@ -755,11 +810,14 @@ export default {
         this.platformInfoZone || [],
         this.platformInfo.zone
       )
+      let sourceIdA = uuid()
+      let targetIdB = uuid()
+      let sourceIdC = uuid()
       postData.stages = [
         Object.assign({}, stageDefault, {
-          id: sourceId,
+          id: sourceIdA,
           connectionId: source.source_connectionId,
-          outputLanes: [targetId],
+          outputLanes: [targetIdB],
           distance: 1,
           name: this.dataSourceModel.source_connectionName,
           type: 'database',
@@ -769,9 +827,9 @@ export default {
           readCdcInterval: 500
         }),
         Object.assign({}, stageDefault, {
-          id: targetId,
+          id: targetIdB,
           connectionId: target.target_connectionId,
-          inputLanes: [sourceId],
+          inputLanes: [sourceIdA],
           distance: 0,
           syncObjects: selectTable,
           name: this.dataSourceModel.target_connectionName,
@@ -787,6 +845,29 @@ export default {
           database_type: this.dataSourceModel['target_databaseType'] || 'mysql'
         })
       ]
+      //支持双向
+      let node = Object.assign({}, stageDefault, {
+        id: sourceIdC,
+        connectionId: source.source_connectionId,
+        inputLanes: [targetIdB],
+        distance: 1,
+        name: this.dataSourceModel.source_connectionName,
+        type: 'database',
+        database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
+        dropType: 'no_drop',
+        readBatchSize: 1000,
+        readCdcInterval: 500,
+        table_prefix: this.transferData.table_prefix,
+        table_suffix: this.transferData.table_suffix,
+        syncObjects: selectTable //需要同步的表
+      })
+      if (
+        this.settingModel.bidirectional &&
+        window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+      ) {
+        postData.stages[1]['outputLanes'] = [sourceIdC]
+        postData.stages.push(node)
+      }
       let promise = null
       if (this.id) {
         postData['id'] = this.id
@@ -794,6 +875,7 @@ export default {
       } else {
         promise = this.$api('DataFlows').create(postData)
       }
+      this.loading = true
       promise
         .then(() => {
           if (this.$route.query.step) {
@@ -811,11 +893,21 @@ export default {
             this.$message.error(e.response.msg)
           }
         })
+        .finally(() => {
+          this.loading = false
+        })
     },
     //返回任务列表
     goBackList() {
-      this.$router.push({
-        path: '/dataFlows?mapping=cluster-clone'
+      this.$confirm('此操作会丢失当前正在创建的任务', '是否放弃创建该任务', {
+        type: 'warning'
+      }).then((resFlag) => {
+        if (!resFlag) {
+          return
+        }
+        this.$router.push({
+          path: '/dataFlows?mapping=cluster-clone'
+        })
       })
     },
     //选择创建类型

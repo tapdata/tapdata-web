@@ -227,9 +227,12 @@ export default {
       })
     },
     start(updateSchema, editTest) {
+      let data = Object.assign({}, this.formData)
+      delete data.schema
+      delete data.response_body
       let msg = {
         type: 'testConnection',
-        data: this.formData
+        data: data
       }
       msg.data['updateSchema'] = false //默认值
       msg.data['editTest'] = false //默认值

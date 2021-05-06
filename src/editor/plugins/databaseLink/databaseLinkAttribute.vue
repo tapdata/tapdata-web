@@ -600,7 +600,7 @@ export default {
     .el-transfer {
       height: 100%;
       .el-transfer-panel {
-        width: 300px;
+        width: 298px;
         .el-transfer-panel__body {
           .box {
             display: inline-block;

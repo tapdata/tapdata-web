@@ -27,6 +27,7 @@ import dfs_postgres from './dfs_postgres'
 import dfs_db2 from './dfs_db2'
 import dfs_mongodb from './dfs_mongodb'
 import dfs_sqlserver from './dfs_sqlserver'
+import dfs_redis from './dfs_redis'
 
 export default {
   mysql,
@@ -57,5 +58,6 @@ export default {
   dfs_postgres,
   dfs_db2,
   dfs_mongodb,
-  dfs_sqlserver
+  dfs_sqlserver,
+  dfs_redis
 }

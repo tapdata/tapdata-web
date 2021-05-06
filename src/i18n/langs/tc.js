@@ -449,6 +449,7 @@ const tc = {
     SyncPoint: '增量採集開始時刻',
     cdcLabel: '數據源:',
     syncType: '任務類型',
+    belongAgent: '所屬Agent',
     SyncInfo: {
       localTZ: '當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
       current: '當前時區時間：默認當前時間',
@@ -543,7 +544,7 @@ const tc = {
     lag: '滯後',
     executionStatus: '執行狀態',
     searchPlaceholder: '任務名稱',
-    searchAgent: 'Agent名稱',
+    searchAgent: '實例名稱',
     dataRange: '創建日期範圍',
     startTime: '開始時間',
     endTime: '結束時間',
@@ -1660,7 +1661,7 @@ const tc = {
       plugin_name: '日誌解碼器',
       supportUpdatePk: '支持同步時更新主鍵',
       indexPrefix: '索引前綴',
-      agentMsg: '當前測試連接服務不可用，請檢查是否正確啟動數據同步(Agent)服務',
+      agentMsg: 'Agent當前狀態异常無法創建連接，請檢查',
       multiTenant: '多租戶模式',
       uriTips: {
         label: '示例',
@@ -2249,6 +2250,7 @@ const tc = {
     automaticallyAdd: '自動添加',
     enable: '已啟用',
     disable: '已禁止',
+    isEnabled: '是否啟用',
     newVerify: '新建校驗',
     edit: '編輯校驗',
     clickVerified: '點下方按鈕添加校驗表',

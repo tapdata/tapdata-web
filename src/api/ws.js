@@ -106,6 +106,7 @@ class WSClient extends EventEmitter {
 
   handlerOpen() {
     log('Websocket is opened!')
+    this.emit('opened')
   }
 
   handlerClose(e) {
@@ -156,13 +157,20 @@ class WSClient extends EventEmitter {
     // });
   }
 
-  ready(cb) {
-    if (this.ws.readyState == 1) {
-      cb && cb()
+  ready(cb, isSendWhenOpen) {
+    if (isSendWhenOpen) {
+      this.on('opened', cb)
+      if (this.ws.readyState == 1) {
+        cb && cb()
+      }
     } else {
-      setTimeout(() => {
-        this.ready(cb)
-      }, 500)
+      if (this.ws.readyState == 1) {
+        cb && cb()
+      } else {
+        setTimeout(() => {
+          this.ready(cb)
+        }, 500)
+      }
     }
   }
 
@@ -231,10 +239,11 @@ class WSClient extends EventEmitter {
     if (loc.protocol === 'https:') {
       new_uri = 'wss:'
     }
+    let host = window.getSettingByKey('DFS_TM_WS_HOST') || loc.host
     let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || ''
     let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || ''
     let path = tcmApiPre + apiPre
-    new_uri += '//' + loc.host
+    new_uri += '//' + host
     new_uri += path + '/ws/agent'
     return new_uri
   }

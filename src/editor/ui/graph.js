@@ -108,9 +108,11 @@ export default class Graph extends Component {
       markAvailable: true,
       // new joint.shapes.app.Link()
       defaultLink: function (cellView) {
-        if (cellView.model.get('type') === 'app.Database')
+        if (cellView.model.get('type') === 'app.Database') {
           return new joint.shapes.app.databaseLink()
-        else return new joint.shapes.app.Link()
+        } else {
+          return new joint.shapes.app.Link()
+        }
       },
       defaultConnectionPoint: joint.shapes.app.Link.connectionPoint,
       interactive: {
@@ -780,12 +782,15 @@ export default class Graph extends Component {
           )}</div>`
         )
         this.selectPrimaryLink(cellView)
-        setTimeout(() => {
-          let monitor = self.editor
-            .getRightTabPanel()
-            .getChildByName('nodeSettingPanel')
-          self.editor.getRightTabPanel().select(monitor)
-        }, 20)
+        // 点击连线面版是否出现
+        if (!window.getSettingByKey('DFS_TCM_PLATFORM')) {
+          setTimeout(() => {
+            let monitor = self.editor
+              .getRightTabPanel()
+              .getChildByName('nodeSettingPanel')
+            self.editor.getRightTabPanel().select(monitor)
+          }, 20)
+        }
       }
     }
     this.createInspector(cell)

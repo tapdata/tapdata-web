@@ -79,6 +79,12 @@ export default function () {
         show: true
       },
       {
+        type: 'switch',
+        field: 'bidirectional',
+        label: '是否双向',
+        show: false
+      },
+      {
         type: 'slot',
         slot: 'needToCreateIndex'
       }

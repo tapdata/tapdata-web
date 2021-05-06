@@ -449,6 +449,7 @@ const cn = {
     SyncPoint: '增量采集开始时刻',
     cdcLabel: '数据源:',
     syncType: '任务类型',
+    belongAgent: '所属Agent',
     SyncInfo: {
       localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
       current: '当前时区时间：默认当前时间',
@@ -543,7 +544,7 @@ const cn = {
     lag: '滞后',
     executionStatus: '执行状态',
     searchPlaceholder: '任务名称',
-    searchAgent: 'agent名称',
+    searchAgent: '实例名称',
     dataRange: '创建日期范围',
     startTime: '开始时间',
     endTime: '结束时间',
@@ -1661,7 +1662,7 @@ const cn = {
       plugin_name: '日志解码器',
       supportUpdatePk: '支持同步时更新主键',
       indexPrefix: '索引前缀',
-      agentMsg: '当前测试连接服务不可用，请检查是否正确启动数据同步(Agent)服务',
+      agentMsg: 'Agent当前状态异常无法创建连接，请检查',
       multiTenant: '多租户模式',
       uriTips: {
         label: '示例',
@@ -2253,6 +2254,7 @@ const cn = {
     automaticallyAdd: '自动添加',
     enable: '已启用',
     disable: '已禁止',
+    isEnabled: '是否启用',
     newVerify: '新建校验',
     edit: '编辑校验',
     advanceVerify: '高级校验',

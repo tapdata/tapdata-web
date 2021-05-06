@@ -64,7 +64,7 @@
             v-model="searchParams.enabled"
             clearable
             size="small"
-            :placeholder="$t('dataVerification.verifystatus')"
+            :placeholder="$t('dataVerification.isEnabled')"
             @input="table.fetch(1)"
           >
             <ElOption

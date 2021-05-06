@@ -470,6 +470,7 @@ import i18n from '@/i18n'
 import ws from '../../api/ws'
 const dataFlows = factory('DataFlows')
 const connectionApi = factory('connections')
+const DataFlowInsights = factory('DataFlowInsights')
 let currentStageData = null
 
 export default {
@@ -753,7 +754,15 @@ export default {
       intervalReplicate: 20000,
       cdcLastTimes: [],
       tableName: '',
-      showTooltip: false
+      showTooltip: false,
+      resultObj: {
+        collection: 'DataFlowInsight',
+        createTime: 0,
+        dataFlowId: '',
+        granularity: {},
+        statsData: {},
+        type: 'dataFlowInsight'
+      } // 走api请求获取的数据
     }
   },
 
@@ -843,6 +852,8 @@ export default {
       self.dataProcessing(data)
     })
     this.getApiData()
+    // api请求
+    this.getFlowInsightData()
   },
 
   watch: {
@@ -932,6 +943,46 @@ export default {
   },
 
   methods: {
+    getFlowInsightData() {
+      this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType)
+      this.getSpeed(this.isThroughputAll, this.throughputTime)
+      this.getTime(this.transfTime, this.transfType)
+      this.getTime(this.replicateTime, this.replicateType)
+    },
+    // 通过api获取数据
+    getDataByApi(params, type) {
+      params['dataFlowId'] = this.flow.id
+      if (this.stageId !== 'all') {
+        params['stageId'] = this.stageId
+      }
+      if (type === this.inputOutputObj.type) {
+        this.inputOutputObj.loading = true
+      } else if (type === this.transfObj.type) {
+        this.transfObj.loading = true
+      } else if (type === this.replicateObj.type) {
+        this.replicateObj.loading = true
+      }
+      params.granularity &&
+        DataFlowInsights.runtimeMonitor(params)
+          .then((res) => {
+            let data = res.data?.[0]
+            this.resultObj.createTime = data.createTime
+            this.resultObj.dataFlowId = data.dataFlowId
+            this.resultObj.statsData[params.statsType] = data?.statsData || []
+            this.storeData = this.resultObj.statsData
+            this.dataProcessing(this.resultObj)
+          })
+          .finally(() => {
+            if (type === this.inputOutputObj.type) {
+              this.inputOutputObj.loading = false
+            } else if (type === this.transfObj.type) {
+              this.transfObj.loading = false
+            } else if (type === this.replicateObj.type) {
+              this.replicateObj.loading = false
+            }
+          })
+    },
+
     // 复制命令行
     onCopy() {
       this.showTooltip = true
@@ -983,16 +1034,14 @@ export default {
       if (this.stageId != 'all') {
         msg['stageId'] = this.stageId
       }
-      if (ws.ws.readyState != 1) {
-        let int = setInterval(() => {
-          if (ws.ws.readyState == 1) {
-            ws.send(msg)
-            clearInterval(int)
-          }
-        }, 2000)
-      } else {
-        ws.send(msg)
+      // 设置默认值
+      this.resultObj.granularity = msg.granularity
+      for (let key in this.resultObj.granularity) {
+        this.resultObj.statsData[key] = []
       }
+      ws.ready(() => {
+        ws.send(msg)
+      })
     },
 
     // 获取所有节点
@@ -1058,6 +1107,12 @@ export default {
           this.intervalThroughputpop = 86400000
           break
       }
+      // api请求
+      let params = {
+        statsType: 'throughput',
+        granularity: this.selectFlow + time
+      }
+      this.getDataByApi(params, 'throughput', data)
       this.getApiData()
     },
 
@@ -1065,11 +1120,18 @@ export default {
     getTwoRadio(data, type) {
       this.dataOverviewType = type
       this.dataOverviewAll = data
+      // api请求
+      let params = {
+        statsType: 'data_overview',
+        granularity: data
+      }
+      this.getDataByApi(params, type, data)
       this.getApiData()
     },
 
     // 获取返回的时间
     getTime(data, type) {
+      let params = {}
       if (type === 'transf') {
         this.transfType = type
         this.transfTime = data
@@ -1086,6 +1148,10 @@ export default {
           case 'day':
             this.intervalTransf = 86400000
             break
+        }
+        params = {
+          statsType: 'trans_time',
+          granularity: this.selectFlow + data
         }
       } else if (type === 'replicate') {
         switch (data) {
@@ -1104,7 +1170,13 @@ export default {
         }
         this.replicateType = type
         this.replicateTime = data
+        params = {
+          statsType: 'repl_lag',
+          granularity: this.selectFlow + data
+        }
       }
+      // api请求
+      this.getDataByApi(params, type, data)
       this.getApiData()
     },
 
