@@ -343,7 +343,7 @@ export default {
           target.show = false
           this.settingModel.bidirectional = false
         } else if (target && value !== 'compel') {
-          target.show = false
+          target.show = true
         }
       }
     },
