@@ -320,14 +320,6 @@
             </template>
             <span>{{ scope.row.statusLabel }}</span>
             <span
-              v-if="
-                $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs' &&
-                scope.row.status === 'running' &&
-                scope.row.tcm
-              "
-              >({{ scope.row.tcm.agentName }})</span
-            >
-            <span
               style="color: #999"
               v-if="
                 !scope.row.hasChildren &&
@@ -345,12 +337,21 @@
               )
             </span>
           </div>
+          <div
+            v-if="
+              $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs' &&
+              scope.row.status === 'running' &&
+              scope.row.tcm
+            "
+          >
+            {{ scope.row.tcm.agentName }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column
         v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
         :label="$t('dataFlow.creatdor')"
-        width="180"
+        width="200"
       >
         <template slot-scope="scope">
           {{ scope.row.user ? scope.row.user.username : '-' }}
@@ -359,7 +360,7 @@
       <el-table-column
         prop="startTime"
         :label="$t('dataFlow.creationTime')"
-        width="180"
+        width="170"
         sortable="custom"
       >
         <template slot-scope="scope">
