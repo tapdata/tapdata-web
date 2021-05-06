@@ -348,10 +348,8 @@ export default {
           settingData.push(childItem)
         })
       })
-      console.log(settingData)
-      debugger
       this.$api('Setting')
-        .settingPatch(settingData)
+        .save(settingData)
         .then((res) => {
           if (res) {
             this.$message.success(this.$t('message.saveOK'))

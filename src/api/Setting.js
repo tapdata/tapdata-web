@@ -24,4 +24,7 @@ export default class Settings extends PublicAPI {
   testEmail() {
     return axios.post(`${this.url}/testEmail`)
   }
+  save(params) {
+    return axios.patch(`${this.url}/save`, params)
+  }
 }

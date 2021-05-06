@@ -10,9 +10,9 @@
         types: ['database']
       }"
       :remoteMethod="getData"
+      :spanMethod="handleSpanMethod"
       @selection-change="handleSelectionChange"
       @classify-submit="handleOperationClassify"
-      @span-method="handleSpanMethod"
       @sort-change="handleSortTable"
     >
       <div slot="search">
@@ -58,17 +58,6 @@
         </ul>
       </div>
       <div slot="operation">
-        <!-- <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-          v-readonlybtn="'data_catalog_category_application'"
-          size="mini"
-          class="btn"
-          v-show="multipleSelection.length > 0"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
-        </el-button> -->
         <el-button
           v-readonlybtn="'new_model_creation'"
           class="btn btn-create"
@@ -79,12 +68,11 @@
           <span>{{ $t('timeToLive.creatTtl') }}</span>
         </el-button>
       </div>
-      <!-- <el-table-column type="selection" width="45" :reserve-selection="true">
-      </el-table-column> -->
       <el-table-column
         :label="$t('timeToLive.header.database')"
-        prop="database"
-        sortable="database"
+        prop="source.name"
+        sortable="source.name"
+        :show-overflow-tooltip="true"
       >
         <template slot-scope="scope">
           {{ scope.row.source.name }}
@@ -99,11 +87,7 @@
           {{ scope.row.name || scope.row.original_name }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('timeToLive.header.indexName')"
-        prop="name"
-        sortable="name"
-      >
+      <el-table-column :label="$t('timeToLive.header.indexName')" prop="name">
         <template slot-scope="scope">
           {{ scope.row.indexName }}
         </template>
@@ -111,7 +95,6 @@
       <el-table-column
         :label="$t('timeToLive.header.indexFields')"
         prop="fields"
-        sortable="fields"
       >
         <template slot-scope="scope">
           {{
@@ -121,11 +104,7 @@
           }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('timeToLive.header.expire')"
-        prop="expire"
-        sortable="expire"
-      >
+      <el-table-column :label="$t('timeToLive.header.expire')" prop="expire">
         <template slot-scope="scope">
           {{ scope.row.type_data }}
           {{ $t('timeToLive.' + scope.row.data_type) }}
@@ -143,7 +122,6 @@
       <el-table-column
         :label="$t('timeToLive.header.indexCreate_by')"
         prop="create_by"
-        sortable="create_by"
       >
         <template slot-scope="scope">
           {{ scope.row.create_by }}
@@ -168,6 +146,7 @@
         </template>
       </el-table-column>
     </TablePage>
+
     <el-dialog
       width="600px"
       custom-class="create-dialog"
@@ -204,6 +183,8 @@ export default {
     return {
       rowspan: '',
       tableData: [],
+      spanData: [],
+      spanNameData: [],
       types: 'database',
       searchParams: {
         keyword: '',
@@ -320,19 +301,18 @@ export default {
   },
   watch: {
     'createForm.database'(val) {
-      console.log(val, '######')
       this.loadCollections(val)
     },
     'createForm.tableName'(val) {
       let includesTimeField = []
       let selectTable = this.createFormConfig.items[2].options.filter(
-        item => item.value === val
+        (item) => item.value === val
       )
       let schemaField =
         selectTable && selectTable.length ? selectTable[0].record.fields : []
       this.createFormConfig.items[3].options = []
       this.createForm.filed = ''
-      schemaField.forEach(v => {
+      schemaField.forEach((v) => {
         if (v.data_type == 'DATE_TIME' || v.data_type == 'DATETIME') {
           includesTimeField.push(v.field_name)
           if (v.field_name == '__tapd8.ts') {
@@ -373,6 +353,7 @@ export default {
     },
     // 获取列表数据
     getData({ page, tags }) {
+      let tableArrData = []
       let { current, size } = page
       let { isFuzzy, keyword } = this.searchParams
       let where = {
@@ -423,6 +404,14 @@ export default {
         }
       }
 
+      if (!parseInt(this.$cookie.get('isAdmin'))) {
+        if (!this.$disabledByPermission('time_to_live_all_data')) {
+          where['source.user_id'] = {
+            regexp: `^${this.$cookie.get('user_id')}$`
+          }
+        }
+      }
+
       let filter = {
         order: this.order,
         limit: size,
@@ -441,94 +430,91 @@ export default {
           keyword
         })
         if (res.data && res.data.length) {
-          this.tableData = res.data.map(item => {
+          this.tableData = res.data.map((item) => {
             item.indexsFilter = item.indexes.filter(
-              idx => idx.expireAfterSeconds && idx.create_by !== 'dba'
+              (idx) => idx.expireAfterSeconds && idx.create_by !== 'dba'
             )
             return item
           })
-          // res.data.forEach((item) => {
-          //   item.indexes.forEach((idx) => {
-          //     if (idx.expireAfterSeconds && idx.create_by !== 'dba') {
-          //       this.tableData.push({
-          //         database: item.source.name,
-          //         tableName: item.name || item.original_name,
-          //         name: idx.name,
-          //         fields:
-          //           typeof idx.key === 'string'
-          //             ? Object.keys(JSON.parse(idx.key)).join(',')
-          //             : Object.keys(idx.key).join(','),
-          //         expire: idx.type_data,
-          //         data_type: idx.data_type,
-          //         status: idx.status,
-          //         create_by: idx.create_by
-          //       })
-          //     }
-          //   })
-          // })
-          res.data = this.getSpanArr(this.tableData)
+
+          this.tableData.forEach((item) => {
+            for (let i = 0; i < item.indexsFilter.length; i++) {
+              for (let key in item.indexsFilter[i]) {
+                if (key === 'name') {
+                  item.indexsFilter[i]['indexName'] = item.indexsFilter[i][key]
+                  delete item.indexsFilter[i]['name']
+                }
+              }
+              let rdata = {
+                ...item,
+                ...item.indexsFilter[i]
+              }
+              rdata.combineNum = item.indexsFilter.length
+              delete rdata.indexsFilter
+              tableArrData.push(rdata)
+              // if (i == 0) {
+              //   rowspan.push(rdata.combineNum)
+              // } else {
+              //   rowspan.push(0)
+              // }
+            }
+          })
         }
+        this.getSpanArr(tableArrData)
         return {
           total: countRes.data.count,
-          data: res.data
+          data: tableArrData
         }
       })
     },
 
     getSpanArr(data) {
-      let arr = []
-      let rowspan = []
-      data.forEach(item => {
-        for (let i = 0; i < item.indexsFilter.length; i++) {
-          for (let key in item.indexsFilter[i]) {
-            if (key === 'name') {
-              item.indexsFilter[i]['indexName'] = item.indexsFilter[i][key]
-              delete item.indexsFilter[i]['name']
-            }
-          }
-          let rdata = {
-            ...item,
-            ...item.indexsFilter[i]
-          }
-          rdata.combineNum = item.indexsFilter.length
-          delete rdata.indexsFilter
-          arr.push(rdata)
-          if (i == 0) {
-            rowspan.push(rdata.combineNum)
-          } else {
-            rowspan.push(0)
-          }
-        }
-      })
-      this.rowspan = rowspan
-      return arr
-    },
-
-    // 合并单元格
-    handleSpanMethod(row, column, rowIndex, columnIndex) {
-      if (columnIndex === 0) {
-        if (rowIndex % 2 === 0) {
-          return {
-            rowspan: 2,
-            colspan: 1
-          }
+      // 存放计算好的合并单元格的规则
+      this.spanData = []
+      this.spanNameData = []
+      for (let i = 0; i < data.length; i++) {
+        if (i === 0) {
+          this.spanData.push(1)
+          this.spanNameData.push(1)
+          this.pos = 0
+          this.position = 0
         } else {
-          return {
-            rowspan: 0,
-            colspan: 0
+          if (data[i].source.name === data[i - 1].source.name) {
+            this.spanData[this.pos] += 1
+            this.spanData.push(0)
+          } else {
+            this.spanData.push(1)
+            this.pos = i
+          }
+          if (data[i].name === data[i - 1].name) {
+            this.spanNameData[this.position] += 1
+            this.spanNameData.push(0)
+          } else {
+            this.spanNameData.push(1)
+            this.position = i
           }
         }
       }
-      // if (columnIndex === 0 || columnIndex === 1 || columnIndex === 2) {
-      //   const _row = this.rowspan[rowIndex]
-      //   const _col = _row > 0 ? 1 : 0
-      //   console.log(`rowspan:${_row} colspan:${_col}`)
-      //   return {
-      //     // [0,0] 表示这一行不显示， [2,1]表示行的合并数
-      //     rowspan: _row,
-      //     colspan: _col
-      //   }
-      // }
+    },
+
+    // 合并单元格
+    handleSpanMethod({ rowIndex, columnIndex }) {
+      if (columnIndex === 0) {
+        const _row = this.spanData[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
+      if (columnIndex === 1) {
+        const _row = this.spanNameData[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
     },
     // 获取数据库
     getDbOptions() {
@@ -556,10 +542,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then((res) => {
           let dbOptions = res.data
           let options = []
-          dbOptions.forEach(db => {
+          dbOptions.forEach((db) => {
             options.push({
               label: db.name,
               value: db.id
@@ -598,10 +584,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then((res) => {
           let tables = res.data
           let options = []
-          tables.forEach(item => {
+          tables.forEach((item) => {
             options.push({
               label: item.name,
               value: item.id,
@@ -618,15 +604,15 @@ export default {
       }`
       this.table.fetch(1)
     },
-
+    // 分类选择
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-    // 选中分类
+    // 选中分类返回数据
     handleOperationClassify(classifications) {
       this.$api('MetadataInstances')
         .classification({
-          metadatas: this.multipleSelection.map(it => {
+          metadatas: this.multipleSelection.map((it) => {
             return {
               id: it.id,
               classifications: classifications
@@ -637,7 +623,7 @@ export default {
           this.table.fetch()
         })
     },
-
+    // 创建生命周期弹窗开启
     openCreateDialog() {
       this.createDialogVisible = true
       this.$nextTick(() => {
@@ -655,18 +641,11 @@ export default {
     // 保存新建生命周期
     createNewTtl() {
       let _this = this
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
-          let {
-            model_type,
-            database,
-            tableName,
-            filed,
-            data_type,
-            expire
-          } = _this.createForm
+          let { tableName, filed, data_type, expire } = _this.createForm
           let selectTable = this.createFormConfig.items[2].options.find(
-            it => it.value === tableName
+            (it) => it.value === tableName
           )
           let key = {}
           key[filed] = 1
@@ -675,7 +654,7 @@ export default {
           if (collection.indexes) {
             let _keyJson = JSON.stringify(key)
             let existsIndexes = collection.indexes.filter(
-              v => _keyJson === JSON.stringify(v.key)
+              (v) => _keyJson === JSON.stringify(v.key)
             )
 
             if (existsIndexes && existsIndexes.length > 0) {
@@ -700,18 +679,19 @@ export default {
               uri: collection.source ? collection.source.database_uri : ''
             }
           }
-          debugger
           _this
             .$api('ScheduleTasks')
             .post(params)
             .then(() => {
               this.createDialogVisible = false
+              this.table.fetch()
               // this.toDetails(res.data);
             })
         }
       })
     },
 
+    // 删除生命周期
     remove(item) {
       const h = this.$createElement
       let message = h('p', [
