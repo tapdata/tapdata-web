@@ -37,8 +37,10 @@
           v-loading="loading"
           class="table-page-table table-border"
           height="100%"
+          border
           :element-loading-text="$t('dataFlow.dataLoading')"
           :row-key="rowKey"
+          :span-method="spanMethod"
           :data="list"
           @selection-change="handleSelectionChange"
           @sort-change="$emit('sort-change', $event)"
@@ -89,7 +91,8 @@ export default {
       type: Object
     },
     remoteMethod: Function,
-    rowKey: [String, Function]
+    rowKey: [String, Function],
+    spanMethod: [Function]
   },
   data() {
     return {
