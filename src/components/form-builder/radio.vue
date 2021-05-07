@@ -114,6 +114,7 @@ export default {
     display: block;
     .fb-radio-option {
       width: 100%;
+      max-width: none;
       max-width: unset;
       flex: unset;
       margin-right: 0;
