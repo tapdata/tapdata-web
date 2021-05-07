@@ -851,9 +851,9 @@ export default {
       self.storeData = data.statsData
       self.dataProcessing(data)
     })
-    this.getApiData()
     // api请求
     this.getFlowInsightData()
+    this.getApiData()
   },
 
   watch: {

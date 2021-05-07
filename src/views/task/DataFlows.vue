@@ -797,7 +797,7 @@ export default {
             (it) => it.value === dataflow.agentId
           )
           dataflow.tcm = {
-            agentName: opt.label
+            agentName: opt?.label
           }
         }
         this.tempList.push(data.data.fullDocument)
