@@ -331,7 +331,8 @@ export default {
               }
             }
             if (node.field === 'database_datetype_without_timezone') {
-              let timezoneNumber = Number(node.value?.split(':')?.[0])
+              let timezoneNumber =
+                node.value === '-' ? 0 : Number(node.value?.split(':')?.[0])
               if (timezoneNumber < 0) {
                 node.value = 'UTC ' + timezoneNumber
               } else {
