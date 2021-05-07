@@ -22,10 +22,10 @@ export default function () {
             label: 'DDS实例',
             value: 'dds'
           },
-          {
-            label: 'ECS自建库',
-            value: 'ecs'
-          },
+          // {
+          //   label: 'ECS自建库',
+          //   value: 'ecs'
+          // },
           {
             label: '云外自建库',
             value: 'selfDB'
@@ -54,10 +54,10 @@ export default function () {
             label: 'RDS实例',
             value: 'rds'
           },
-          {
-            label: 'ECS自建库',
-            value: 'ecs'
-          },
+          // {
+          //   label: 'ECS自建库',
+          //   value: 'ecs'
+          // },
           {
             label: 'DDS实例',
             value: 'dds'
