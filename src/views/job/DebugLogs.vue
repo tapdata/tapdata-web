@@ -119,7 +119,7 @@ export default {
             lt: this.firstLogsId
           }
         },
-        order: 'millis DESC',
+        order: 'id DESC',
         limit: 100
       }
       this.addFilter(filter)
