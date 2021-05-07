@@ -529,12 +529,11 @@ export default {
         case 'mapping': {
           let id = this.dataSourceModel.source_connectionId || ''
           this.$nextTick(() => {
+            if (!this.settingModel.bidirectional) {
+              this.transferData = ''
+            }
             this.$refs.transfer.getTable(id)
             this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
-            if (!this.settingModel.bidirectional || this.settingModel.distinctWriteType ==='compel') {
-              this.transferData = ''
-              this.settingModel.bidirectional = false
-            }
           })
           break
         }
