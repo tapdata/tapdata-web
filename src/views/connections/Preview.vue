@@ -331,12 +331,15 @@ export default {
               }
             }
             if (node.field === 'database_datetype_without_timezone') {
-              let timezoneNumber =
-                node.value === '-' ? 0 : Number(node.value?.split(':')?.[0])
-              if (timezoneNumber < 0) {
-                node.value = 'UTC ' + timezoneNumber
+              if (node.value === '-') {
+                node.value = 'Database Timezone'
               } else {
-                node.value = 'UTC +' + timezoneNumber
+                let timezoneNumber = Number(node.value?.split(':')?.[0])
+                if (timezoneNumber < 0) {
+                  node.value = 'UTC ' + timezoneNumber
+                } else {
+                  node.value = 'UTC +' + timezoneNumber
+                }
               }
             }
             return node
