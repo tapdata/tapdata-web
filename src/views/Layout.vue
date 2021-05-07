@@ -565,7 +565,7 @@ export default {
         }
       })
       this.$api('Licenses')
-        .get()
+        .expires({})
         .then((res) => {
           if (res) {
             let expires_on = res.data.expires_on || ''
