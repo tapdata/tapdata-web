@@ -122,7 +122,12 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataQuality.actions')" width="120" fixed="right">
+			<el-table-column
+				v-if="headers.filter(v => v.visible).length"
+				:label="$t('dataQuality.actions')"
+				width="120"
+				fixed="right"
+			>
 				<template slot-scope="scope">
 					<el-button class="btn-text" type="text" size="small" @click="detailOpen(scope.row)">
 						{{ $t('dataQuality.viewDetail') }}
@@ -728,8 +733,10 @@ export default {
 		// 按类型给字段赋值
 		setType(fieldName, value) {
 			let fieldDef = this.fieldsDef[this.fieldsDef.findIndex(it => it.field_name == fieldName)];
-			if (['Short', 'Integer', 'Long'].includes(fieldDef.java_type)) return parseInt(value);
-			else if (['Float', 'BigDecimal', 'Double'].includes(fieldDef.java_type)) return parseFloat(value);
+			if (['Short', 'Integer', 'Long'].includes(fieldDef.java_type))
+				return Number(value) ? parseInt(value) : Number(value);
+			else if (['Float', 'BigDecimal', 'Double'].includes(fieldDef.java_type))
+				return Number(value) ? parseFloat(value) : Number(value);
 			else if (fieldDef.java_type == 'Boolean') return value.toLowerCase().startsWith('t');
 			else if (fieldDef.java_type == 'String') return value + '';
 			else return value;
