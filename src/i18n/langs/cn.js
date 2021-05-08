@@ -1667,6 +1667,7 @@ const cn = {
         label: '示例',
         content:
           `<b>MongoDB 数据库连接 URI 示范 :</b><br>` +
+          `<b>URI中的用户名和密码必须做 url encode 编码后在拼接到连接串中</b><br>` +
           `<b>复制集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
           `<b>启用认证的复制集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
           `<b>多节点复制集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
