@@ -13,7 +13,7 @@ const proxy = {
   changeOrigin: false
 }
 const { resolve } = require('path')
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
+// const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 module.exports = {
   assetsDir: 'static',
@@ -90,12 +90,13 @@ module.exports = {
       })
       .end()
   },
-  configureWebpack: {
-    plugins: [
-      new MonacoWebpackPlugin({
-        languages: ['javascript', 'json'],
-        features: ['coreCommands', 'find']
-      })
-    ]
-  }
+  // configureWebpack: {
+  //   plugins: [
+  //     new MonacoWebpackPlugin({
+  //       languages: ['javascript', 'json'],
+  //       features: ['coreCommands', 'find']
+  //     })
+  //   ]
+  // },
+  transpileDependencies: ['monaco-editor']
 }
