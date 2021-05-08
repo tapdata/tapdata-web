@@ -342,7 +342,7 @@ export default {
         if (target && value === 'compel') {
           target.show = false
           this.settingModel.bidirectional = false
-        } else if (target && value !== 'compel') {
+        } else if (target && value !== 'compel' && this.supportTwoWay) {
           target.show = true
         }
       }
