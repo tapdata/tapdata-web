@@ -138,7 +138,8 @@ export default {
   },
   methods: {
     //获取左边数据
-    getTable(id) {
+    getTable(id, bidirectional) {
+      console.log(id, bidirectional)
       this.transferLoading = true
       this.$api('connections')
         .customQuery([id], { schema: true })
@@ -161,9 +162,16 @@ export default {
             }
             //初始化数据
             if (this.transferData) {
+              console.log('TransferData', this.transferData)
               this.formData.table_prefix = this.transferData.table_prefix
               this.formData.table_suffix = this.transferData.table_suffix
               this.selectSourceArr = this.transferData.selectSourceArr
+            }
+            if (bidirectional && (this.transferData.table_prefix !=='' || this.transferData.table_suffix !=='')) { //true 表示 双向且有修改过前后缀
+              this.formData.table_prefix = ''
+              this.formData.table_suffix = ''
+              this.selectSourceArr = []
+              console.log('TransferData.selectSourceArr', this.selectSourceArr)
             }
             this.preFixSuffixData()
             this.$forceUpdate()
