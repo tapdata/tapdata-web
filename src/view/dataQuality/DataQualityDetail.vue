@@ -37,6 +37,9 @@
 							></el-option>
 						</el-select>
 					</li>
+					<li>
+						<el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
+					</li>
 				</ul>
 			</div>
 
@@ -56,12 +59,10 @@
 			</div>
 
 			<!-- 列表项 -->
-			<el-table-column
-				v-for="(item, index) in headers.filter(v => v.visible)"
-				:key="index"
-				min-width="120"
-				:label="item.text"
-			>
+			<el-table-column v-for="(item, index) in headers.filter(v => v.visible)" :key="index" min-width="120">
+				<template slot="header">
+					<span :title="item.text">{{ item.text }}</span>
+				</template>
 				<template slot-scope="scope">
 					<div v-if="scope.row.wrongFields[item.text]">
 						<div v-if="scope.row.editing && editCol === item.text">
@@ -111,9 +112,7 @@
 								? scope.row[item.text]
 									? $moment(scope.row[item.text]).format('YYYY-MM-DD HH:mm:ss')
 									: ''
-								: scope.row[item.text] || scope.row[item.text] === 0
-								? scope.row[item.text]
-								: ''
+								: scope.row[item.text] || (scope.row[item.text] === 0 ? scope.row[item.text] : '')
 						}}
 					</div>
 				</template>
@@ -759,6 +758,15 @@ export default {
 				if (key == 'enum') keyField.enum = ruleObj[key];
 			});
 			return res;
+		},
+		// 重置表单
+		reset(name) {
+			if (name === 'reset') {
+				this.searchParams = {
+					rule: ''
+				};
+			}
+			this.table.fetch(1);
 		}
 	}
 };

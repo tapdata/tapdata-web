@@ -31,6 +31,7 @@
 					class="table-page-table"
 					border
 					height="100%"
+					border
 					v-loading="loading"
 					ref="elTable"
 					:element-loading-text="$t('dataFlow.dataLoading')"
