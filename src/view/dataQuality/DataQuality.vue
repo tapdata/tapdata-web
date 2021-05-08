@@ -221,6 +221,7 @@ export default {
 					},
 					query: {
 						collection_name: item.collection,
+						asset_desc: item.asset_desc,
 						connection_id: item.connection_id,
 						source_name: item.source.name
 					}

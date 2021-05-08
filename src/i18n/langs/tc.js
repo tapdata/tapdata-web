@@ -2661,7 +2661,8 @@ const tc = {
 		columnTip: '請至少選擇一列',
 		countTitle: '重新統計',
 		connectTip: '請至少選擇一個數據源',
-		countTip: '正在統計，請稍後'
+		countTip: '正在統計，請稍後',
+		errCheck: '顯示出錯列'
 	}
 };
 

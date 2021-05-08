@@ -2668,7 +2668,8 @@ const cn = {
 		columnTip: '请至少选择一列',
 		countTitle: '重新统计',
 		connectTip: '请至少选择一个数据源',
-		countTip: '正在统计，请稍后'
+		countTip: '正在统计，请稍后',
+		errCheck: '显示出错列'
 	}
 };
 

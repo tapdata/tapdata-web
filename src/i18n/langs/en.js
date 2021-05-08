@@ -2810,7 +2810,8 @@ const en = {
 		columnTip: 'Please select at least one column',
 		countTitle: 'Recount',
 		connectTip: 'Select at least one data source',
-		countTip: 'Statistic in progress, please hold on'
+		countTip: 'Statistic in progress, please hold on',
+		errCheck: 'Display error columns'
 	}
 }
 

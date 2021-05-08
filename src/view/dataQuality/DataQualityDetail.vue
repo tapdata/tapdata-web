@@ -14,7 +14,12 @@
 					{{ $t('dataQuality.title') }}
 				</a>
 				/
-				<span class="page-header-title">{{ $route.query.source_name }}</span>
+				<span class="page-header-title">
+					{{ $route.query.collection_name }}
+					<span v-if="$route.query.asset_desc && $route.query.asset_desc !== $route.query.collection_name"
+						>({{ $route.query.asset_desc }})</span
+					>
+				</span>
 				<div class="page-header-desc">{{ $t('dataQuality.desc') }}</div>
 			</div>
 
@@ -117,7 +122,7 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column :label="$t('dataQuality.actions')" min-width="120" fixed="right">
+			<el-table-column :label="$t('dataQuality.actions')" width="120" fixed="right">
 				<template slot-scope="scope">
 					<el-button class="btn-text" type="text" size="small" @click="detailOpen(scope.row)">
 						{{ $t('dataQuality.viewDetail') }}
@@ -159,7 +164,10 @@
 			:visible.sync="filterVisible"
 		>
 			<div class="text-rf">
-				<el-switch :active-text="$t('dataQuality.allCheck')" v-model="all"> </el-switch>
+				<el-button style="margin-right: 10px;" size="mini" @click="checkError">{{
+					$t('dataQuality.errCheck')
+				}}</el-button>
+				<el-switch :active-text="$t('dataQuality.allCheck')" v-model="all" />
 			</div>
 
 			<el-table :data="filterArr" height="350" class="filter-table">
@@ -767,6 +775,12 @@ export default {
 				};
 			}
 			this.table.fetch(1);
+		},
+		// 显示出错列
+		checkError() {
+			this.filterArr.forEach(v => {
+				v.visible = !!this.errorObj[v.text];
+			});
 		}
 	}
 };
