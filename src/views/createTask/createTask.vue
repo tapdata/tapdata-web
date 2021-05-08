@@ -516,7 +516,8 @@ export default {
           this.supportTwoWay =
             this.twoWayAgentRunningCount > 0 &&
             this.dataSourceModel['source_databaseType'] === 'mongodb' &&
-            this.dataSourceModel['target_databaseType'] === 'mongodb' // 进入设置页面再判断
+            this.dataSourceModel['target_databaseType'] === 'mongodb' &&
+            this.settingModel['distinctWriteType'] !== 'compel' // 进入设置页面再判断
           if (
             this.dataSourceModel['source_databaseType'] !== 'mysql' ||
             this.dataSourceModel['target_databaseType'] !== 'mysql'
