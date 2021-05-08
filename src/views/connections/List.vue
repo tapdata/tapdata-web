@@ -332,7 +332,8 @@ export default {
         'gbase-8s',
         'sybase ase',
         'gaussdb200',
-        'dummy db'
+        'dummy db',
+        'rest api',
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -707,12 +708,13 @@ export default {
     },
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
-        this.dialogDatabaseTypeVisible = true
-      }
+      this.dialogDatabaseTypeVisible = true
+      // let result = await this.$api('Workers').getAvailableAgent()
+      // if (!result.data.result || result.data.result.length === 0) {
+      //   this.$message.error(this.$t('dataForm.form.agentMsg'))
+      // } else {
+      //   this.dialogDatabaseTypeVisible = true
+      // }
     },
     testConnection(item) {
       let loading = this.$loading()

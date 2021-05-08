@@ -142,6 +142,59 @@
               <div class="url-tip" slot="pushErrorTip">
                 {{ $t('dataForm.form.kafka.pushErrorTip') }}
               </div>
+              <!-- rest api -->
+              <div class="url-tip" slot="req_pre_process">
+                <div>function request_process(url, headers, request_params, offset) {</div>
+                <el-input type="textarea" :rows="5" v-model="model.req_pre_process"></el-input>
+                <div>return {'url': url, 'headers':headers,'request_params':request_params, 'offset': offset};}</div>
+              </div>
+              <div class="url-tip" slot="resp_pre_process">
+                <div>function response_process(result) {</div>
+                <div>var tapdata_result = { data_rows:[], access_token:null, 'tapdata_offset': offset }</div>
+                <el-input type="textarea" :rows="5" v-model="model.resp_pre_process"></el-input>
+                <div>return tapdata_result; }</div>
+              </div>
+              <div class="url-tip rest-api-url" slot="url_info">
+                <div v-for="item in model.url_info">
+                  <el-row type="flex" :gutter="20">
+                    <el-col>
+                      <label>URL</label>
+                      <el-input v-model="item.url" class="large-input"></el-input>
+                    </el-col>
+                  </el-row>
+                  <el-row type="flex" :gutter="20">
+                    <el-col>
+                      <label>请求方法</label>
+                      <el-select v-model="item.method" class="small-input">
+                        <el-option label="GET" value="GET"></el-option>
+                        <el-option label="POST" value="POST"></el-option>
+                      </el-select>
+                    </el-col>
+                    <el-col>
+                      <label>Content Type</label>
+                      <el-select v-model="item.content_type" class="small-input">
+                        <el-option label="form-data" value="form-data"></el-option>
+                        <el-option label="x-www-form-urlencoded" value="x-www-form-urlencoded"></el-option>
+                      </el-select>
+                    </el-col>
+                    <el-col>
+                      <el-input v-model="item.offset_field" class="small-input" placeholder="增量起始值"></el-input>
+                    </el-col>
+                  </el-row>
+                  <el-row type="flex" :gutter="20">
+                    <el-col>
+                      <span>Headers</span>
+                      <el-input placeholder="请求头名称" class="small-input"></el-input>
+                      <el-input placeholder="请求头值" class="small-input"></el-input>
+                    </el-col>
+                    <el-col>
+                      <span>Parameters</span>
+                      <el-input placeholder="参数名称" class="small-input"></el-input>
+                      <el-input placeholder="参数值" class="small-input"></el-input>
+                    </el-col>
+                  </el-row>
+                </div>
+              </div>
             </form-builder>
             <!-- 文件数据库 -->
             <template
@@ -470,6 +523,9 @@ export default {
         break
       case 'jira':
         this.model = Object.assign({}, defaultModel['jira'])
+        break
+      case 'rest api':
+        this.model = Object.assign({}, defaultModel['restApi'])
         break
     }
     this.getDT(this.databaseType)
@@ -1262,6 +1318,14 @@ export default {
           font-size: 12px;
           color: #999;
           line-height: 18px;
+        }
+        .rest-api-url {
+          border: 1px solid #dedee4;
+          padding: 10px;
+          margin-top: 10px;
+          .small-input {
+            width: 100px;
+          }
         }
         .fileBox {
           display: flex;

@@ -80,10 +80,11 @@ export const TYPEMAP = {
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
-   'gbase-8s': 'gbase8s',
+  'gbase-8s': 'gbase8s',
   'sybase ase': 'sybasease',
   'dummy db': 'dummydb',
   'mysql pxc' : 'mysqlpxc',
+  'rest api' : 'restapi',
 }
 
 //数据源基础字段
@@ -173,6 +174,25 @@ export const defaultModel = {
     jiraUrl: '',
     jiraUsername: '',
     jiraPassword: ''
+  },
+  restApi: {
+    auth_type: '',
+    request_interval: '',
+    collection_name: '',
+    unique_keys: '',
+    req_pre_process: '',
+    resp_pre_process: '',
+    data_sync_mode: '',
+    url_info: [{
+      url: '',
+      method: 'GET',
+      url_type: 'INITIAL_SYNC',
+      headers: {},
+      request_parameters: {},
+      offset_field: '',
+      initial_offset: '',
+      content_type: ''
+    }]
   }
 }
 export const defaultCloudModel = {

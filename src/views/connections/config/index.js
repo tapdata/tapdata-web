@@ -13,6 +13,7 @@ import mysqlpxc from './mysqlpxc'
 import sybasease from './sybasease'
 import gbase8s from './gbase8s'
 import gaussdb200 from './gaussdb200'
+import restapi from './restapi'
 import dummydb from './dummydb'
 import jira from './jira'
 import drs_mysql from './drs_mysql'
@@ -67,5 +68,6 @@ export default {
   sybasease,
   gbase8s,
   gaussdb200,
-  dummydb
+  dummydb,
+  restapi
 }

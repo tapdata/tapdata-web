@@ -24,7 +24,9 @@ module.exports = {
     proxy: {
       '/api/': proxy,
       '/oauth/': proxy,
-      '/old/': proxy,
+      '/old/': {
+        target: 'http://localhost:8081'
+      },
       '/ws/': {
         ...proxy,
         ws: true,
