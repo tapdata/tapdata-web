@@ -944,11 +944,6 @@ export default {
 
   methods: {
     getFlowInsightData() {
-      // 设置默认值
-      let types = ['throughput', 'trans_time', 'repl_lag', 'data_overview']
-      types.forEach((key) => {
-        this.resultObj.statsData[key] = []
-      })
       this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType)
       this.getSpeed(this.isThroughputAll, this.throughputTime)
       this.getTime(this.transfTime, this.transfType)
@@ -1038,6 +1033,11 @@ export default {
       }
       if (this.stageId != 'all') {
         msg['stageId'] = this.stageId
+      }
+      // 设置默认值
+      this.resultObj.granularity = msg.granularity
+      for (let key in this.resultObj.granularity) {
+        this.resultObj.statsData[key] = []
       }
       ws.ready(() => {
         ws.send(msg)
