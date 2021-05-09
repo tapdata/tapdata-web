@@ -944,6 +944,11 @@ export default {
 
   methods: {
     getFlowInsightData() {
+      // 设置默认值
+      let types = ['throughput', 'trans_time', 'repl_lag', 'data_overview']
+      types.forEach((key) => {
+        this.resultObj.statsData[key] = []
+      })
       this.getTwoRadio(this.dataOverviewAll, this.dataOverviewType)
       this.getSpeed(this.isThroughputAll, this.throughputTime)
       this.getTime(this.transfTime, this.transfType)
@@ -970,7 +975,7 @@ export default {
             this.resultObj.dataFlowId = data.dataFlowId
             this.resultObj.statsData[params.statsType] = data?.statsData || []
             this.storeData = this.resultObj.statsData
-            this.dataProcessing(this.resultObj, type)
+            this.dataProcessing(this.resultObj)
           })
           .finally(() => {
             if (type === this.inputOutputObj.type) {
@@ -1033,11 +1038,6 @@ export default {
       }
       if (this.stageId != 'all') {
         msg['stageId'] = this.stageId
-      }
-      // 设置默认值
-      this.resultObj.granularity = msg.granularity
-      for (let key in this.resultObj.granularity) {
-        this.resultObj.statsData[key] = []
       }
       ws.ready(() => {
         ws.send(msg)
@@ -1181,7 +1181,7 @@ export default {
     },
 
     // 数据处理
-    dataProcessing(data, type) {
+    dataProcessing(data) {
       let timeList = [],
         ttimeList = [],
         rttimeList = [],
@@ -1211,55 +1211,48 @@ export default {
       ptime('repl_lag')
       ptime('trans_time')
       ptime('throughput')
-      if (!type) {
-        let time = data.statsData.data_overview.t
-        let overView = data.statsData.data_overview
-        let statisticsData = [
-          overView.outputCount,
-          overView.inputCount,
-          overView.insertCount,
-          overView.updateCount,
-          overView.deleteCount
-        ]
-        this.getScreening(time, statisticsData)
-      }
-      if (!type || type === 'throughput') {
-        data.statsData.throughput.forEach((item) => {
-          timeList.push(item.t) // 时间
-          inputSizeList.push(item.inputSize)
-          outputSizeList.push(item.outputSize)
-          inputCountList.push(item.inputCount)
-          outputCountList.push(item.outputCount)
-        })
+      let time = data.statsData.data_overview.t
+      let overView = data.statsData.data_overview
+      let statisticsData = [
+        overView.outputCount,
+        overView.inputCount,
+        overView.insertCount,
+        overView.updateCount,
+        overView.deleteCount
+      ]
+      this.getScreening(time, statisticsData)
 
-        if (this.isThroughputAll === 'qps') {
-          this.dpx = 'QPS'
-          this.inputAverage = inputCountList[inputCountList.length - 1]
-          this.outputAverage = outputCountList[outputCountList.length - 1]
-          this.getThroughputEchart(timeList, inputCountList, outputCountList)
-        } else {
-          this.dpx = 'KB'
-          this.inputAverage = inputSizeList[inputSizeList.length - 1]
-          this.outputAverage = outputSizeList[outputSizeList.length - 1]
-          this.getThroughputEchart(timeList, inputSizeList, outputSizeList)
-        }
+      data.statsData.throughput.forEach((item) => {
+        timeList.push(item.t) // 时间
+        inputSizeList.push(item.inputSize)
+        outputSizeList.push(item.outputSize)
+        inputCountList.push(item.inputCount)
+        outputCountList.push(item.outputCount)
+      })
+
+      if (this.isThroughputAll === 'qps') {
+        this.dpx = 'QPS'
+        this.inputAverage = inputCountList[inputCountList.length - 1]
+        this.outputAverage = outputCountList[outputCountList.length - 1]
+        this.getThroughputEchart(timeList, inputCountList, outputCountList)
+      } else {
+        this.dpx = 'KB'
+        this.inputAverage = inputSizeList[inputSizeList.length - 1]
+        this.outputAverage = outputSizeList[outputSizeList.length - 1]
+        this.getThroughputEchart(timeList, inputSizeList, outputSizeList)
       }
-      if (!type || type === 'transf') {
-        data.statsData.trans_time.forEach((item) => {
-          ttimeList.push(item.t) // 时间
-          dataList.push(item.d)
-        })
-        this.currentTime = dataList[dataList.length - 1]
-        this.getTransTime(ttimeList, dataList)
-      }
-      if (!type || type === 'replicate') {
-        data.statsData.repl_lag.forEach((item) => {
-          rttimeList.push(item.t) // 时间
-          tdataList.push(item.d)
-        })
-        this.ransfTime = dataList[tdataList.length - 1]
-        this.getReplicateTime(rttimeList, tdataList)
-      }
+      data.statsData.trans_time.forEach((item) => {
+        ttimeList.push(item.t) // 时间
+        dataList.push(item.d)
+      })
+      this.currentTime = dataList[dataList.length - 1]
+      this.getTransTime(ttimeList, dataList)
+      data.statsData.repl_lag.forEach((item) => {
+        rttimeList.push(item.t) // 时间
+        tdataList.push(item.d)
+      })
+      this.ransfTime = dataList[tdataList.length - 1]
+      this.getReplicateTime(rttimeList, tdataList)
     },
 
     getScreening(time, seriesData) {
