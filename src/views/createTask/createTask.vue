@@ -339,6 +339,7 @@ export default {
       let items = this.config.items
       if (field === 'distinctWriteType') {
         let target = items.find((it) => it.field === 'bidirectional')
+        this.getSupportTwoWay()
         if (target && value === 'compel') {
           target.show = false
           this.settingModel.bidirectional = false
@@ -513,11 +514,7 @@ export default {
           break
         }
         case 'setting': {
-          this.supportTwoWay =
-            this.twoWayAgentRunningCount > 0 &&
-            this.dataSourceModel['source_databaseType'] === 'mongodb' &&
-            this.dataSourceModel['target_databaseType'] === 'mongodb' &&
-            this.settingModel['distinctWriteType'] !== 'compel' // 进入设置页面再判断
+          this.getSupportTwoWay() // 进入设置页面再判断
           if (
             this.dataSourceModel['source_databaseType'] !== 'mysql' ||
             this.dataSourceModel['target_databaseType'] !== 'mysql'
@@ -536,6 +533,14 @@ export default {
           break
         }
       }
+    },
+    //获取当前是否可以展示双向开关
+    getSupportTwoWay() {
+      this.supportTwoWay =
+        this.twoWayAgentRunningCount > 0 &&
+        this.dataSourceModel['source_databaseType'] === 'mongodb' &&
+        this.dataSourceModel['target_databaseType'] === 'mongodb' &&
+        this.settingModel['distinctWriteType'] !== 'compel' // 进入设置页面再判断
     },
     getWhere(type) {
       let where = {}

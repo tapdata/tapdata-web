@@ -63,15 +63,30 @@ export default function () {
         required: true
       },
       {
+        type: 'input',
+        field: 'readBatchSize',
+        label: '每次读取数量',
+        required: true,
+        rules: [
+          {
+            required: true,
+            validator(rule, value, callback) {
+              if (!value) {
+                callback(new Error('每次读取数量不能为空，默认是1000'))
+              } else if (!/^\d+$/.test(value)) {
+                callback(new Error('每次读取数量只能为数字'))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
+      },
+      {
         type: 'switch',
         field: 'stopOnError',
         label: '遇到错误停止'
       },
-      // {
-      // 	type: 'switch',
-      // 	field: 'needToCreateIndex',
-      // 	label: '自动创建索引'
-      // },
       {
         type: 'switch',
         field: 'isOpenAutoDDL',

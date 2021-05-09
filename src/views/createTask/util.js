@@ -9,7 +9,8 @@ export const SETTING_MODEL = {
   distinctWriteType: 'intellect',
   stopOnError: false,
   isOpenAutoDDL: false,
-  bidirectional: false
+  bidirectional: false,
+  readBatchSize: 1000
 }
 
 export const DATASOURCE_MODEL = {
