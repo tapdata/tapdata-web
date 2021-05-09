@@ -950,7 +950,7 @@ export default {
       this.getTime(this.replicateTime, this.replicateType)
     },
     // 通过api获取数据
-    getDataByApi(params, type) {
+    getDataByApi(params, type, data, cb) {
       params['dataFlowId'] = this.flow.id
       if (this.stageId !== 'all') {
         params['stageId'] = this.stageId
@@ -980,6 +980,7 @@ export default {
             } else if (type === this.replicateObj.type) {
               this.replicateObj.loading = false
             }
+            cb && cb()
           })
     },
 
@@ -1112,8 +1113,9 @@ export default {
         statsType: 'throughput',
         granularity: this.selectFlow + time
       }
-      this.getDataByApi(params, 'throughput', data)
-      this.getApiData()
+      this.getDataByApi(params, 'throughput', data, () => {
+        this.getApiData()
+      })
     },
 
     // 获取返回的单位
@@ -1125,8 +1127,9 @@ export default {
         statsType: 'data_overview',
         granularity: data
       }
-      this.getDataByApi(params, type, data)
-      this.getApiData()
+      this.getDataByApi(params, type, data, () => {
+        this.getApiData()
+      })
     },
 
     // 获取返回的时间
@@ -1176,8 +1179,9 @@ export default {
         }
       }
       // api请求
-      this.getDataByApi(params, type, data)
-      this.getApiData()
+      this.getDataByApi(params, type, data, () => {
+        this.getApiData()
+      })
     },
 
     // 数据处理
