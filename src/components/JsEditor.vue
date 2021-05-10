@@ -25,7 +25,7 @@ const suggestions = [
   }
 ]
 export default {
-  props: {
+   props: {
     code: {
       required: true,
       value: String
@@ -67,7 +67,7 @@ export default {
   methods: {
     init(script) {
       let self = this
-      if (script) this.code = script
+      this.code = script
       self.$refs.container.innerHTML = ''
       var editor = monaco.editor.create(this.$refs.container, {
         value: this.code,

@@ -176,6 +176,7 @@ export const defaultModel = {
     jiraPassword: ''
   },
   restApi: {
+    name: '',
     auth_type: '',
     request_interval: '',
     collection_name: '',
@@ -197,6 +198,16 @@ export const defaultModel = {
       initial_offset: '',
       content_type: ''
     }]
+  },
+  custom_connection: {
+    name: '',
+    connection_type: '',
+    custom_type: '',
+    collection_name: '',
+    unique_keys: '',
+    custom_ondata_script: '',
+    custom_cdc_script: '',
+    custom_initial_script: ''
   }
 }
 export const defaultCloudModel = {

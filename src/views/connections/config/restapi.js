@@ -36,7 +36,6 @@ export default function (vm) {
             value: 'oauth2'
           }
         ],
-        required: true
       },
       {
         type: 'input',
@@ -74,13 +73,11 @@ export default function (vm) {
         type: 'slot',
         slot: 'req_pre_process',
         label: '请求预处理脚本',
-        required: true
       },
       {
         type: 'slot',
         slot: 'resp_pre_process',
         label: '响应预处理脚本',
-        required: true
       },
       {
         type: 'select',

@@ -155,14 +155,47 @@
                 <div>return tapdata_result; }</div>
               </div>
             </form-builder>
+            <!-- custom_connection -->
+            <template v-if="databaseType ==='custom_connection'">
+              <div class="custom-connection-box" v-if="['cdc', 'initial_sync+cdc'].includes(model.custom_type) && ['source'].includes(model.connection_type)">
+                <div class="custom-connection-label">增量数据脚本</div>
+                <div class="custom-connection-main">
+                  <div>function requestData(ctx) {</div>
+                  <JsEditor :code.sync="model.custom_cdc_script" ref="jsCdcEditor" :width.sync="width"></JsEditor>
+                  <div>}</div>
+                </div>
+              </div>
+              <div class="custom-connection-box" v-if="['initial_sync', 'initial_sync+cdc'].includes(model.custom_type) && ['source'].includes(model.connection_type)">
+                <div class="custom-connection-label">历史数据脚本</div>
+                <div class="custom-connection-main">
+                  <div>function requestData() {</div>
+                  <JsEditor :code.sync="model.custom_initial_script" ref="jsInitialEditor" :width.sync="width"></JsEditor>
+                  <div>}</div>
+                </div>
+              </div>
+              <div class="custom-connection-box" v-if="['target'].includes(model.connection_type)">
+                <div class="custom-connection-label">目标数据处理脚本</div>
+                <div class="custom-connection-main">
+                  <div style="margin-top: 10px; font-size: 14px">参数说明</div>
+                  <div>data = [{ <span style="color: #998;font-style: italic"> // data is an array</span></div>
+                  <div style="margin-left: 30px"> op : " i ", <span style="color: #998;font-style: italic"> // i - insert, u - update, d - delete</span></div>
+                  <div style="margin-left: 30px"> from : " ", <span style="color: #998;font-style: italic"> // source table name</span></div>
+                  <div style="margin-left: 30px"> data : { }, <span style="color: #998;font-style: italic"> // master data</span></div>
+                  <div>}] </div>
+                  <div style="padding-bottom: 5px;margin-top: 10px;font-weight: bold">function onData(data) {</div>
+                  <JsEditor :code.sync="model.custom_ondata_script" ref="jsOndataEditor" :width.sync="width"></JsEditor>
+                  <div>}</div>
+                </div>
+              </div>
+            </template>
             <!-- rest api -->
-            <template>
+            <template v-if="databaseType === 'rest api'">
               <div class="rest-api-box">
                 <div class="rest-api-label">
                   URL
                 </div>
                 <div class="url-tip rest-api-url">
-                  <el-form :model="model"  ref="urlInfoForm" label-width="104px" class="demo-ruleForm">
+                  <el-form :model="model"  ref="urlInfoForm" label-width="104px" class="urlInfoForm">
                     <el-row v-for="(item, parentIndex) in model.url_info" :key="parentIndex" >
                       <div class="rest-api-row">{{ model.data_sync_mode ==='INITIAL_INCREMENTAL_SYNC' ? item.url_type :  model.data_sync_mode}}</div>
                       <el-col :span="24" class="fromLoopBox">
@@ -457,6 +490,7 @@
 import factory from '@/api/factory'
 import formConfig from './config'
 import gitbook from './GitBook'
+import JsEditor from '@/components/JsEditor'
 import Test from './Test'
 import { getImgByType, TYPEMAP, TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
@@ -466,7 +500,7 @@ const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { gitbook, Test, DatabaseTypeDialog },
+  components: { gitbook, Test, DatabaseTypeDialog, JsEditor },
   data() {
     return {
       // modelForm: {},
@@ -518,6 +552,7 @@ export default {
         kafkaCompressionType: '',
         kafkaIgnorePushError: false
       },
+      width: 200,
       instanceModelZone: '',
       instanceMock: [],
       dataSourceZone: '',
@@ -554,6 +589,9 @@ export default {
         break
       case 'rest api':
         this.model = Object.assign({}, defaultModel['restApi'])
+        break
+      case 'custom_connection':
+        this.model = Object.assign({}, defaultModel['custom_connection'])
         break
     }
     this.getDT(this.databaseType)
@@ -657,6 +695,15 @@ export default {
           this.model.url_info[0]['url_type'] = value
         }
       }
+      // custom_connection
+      if (filed === 'connection_type' || filed === 'custom_type') {
+        this.model.custom_ondata_script =''
+        this.model.custom_cdc_script =''
+        this.model.custom_initial_script =''
+        this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
+        this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
+        this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
+      }
     },
     async initData(data) {
       let editData = null
@@ -688,6 +735,17 @@ export default {
           }
         })
       }
+      this.$nextTick(() => {
+        if (this.model.database_type === 'custom_connection') {
+          this.updateJsEditor()
+        }
+      })
+    },
+    //手动更新JSEditor
+    updateJsEditor() {
+      if (this.$refs.jsCdcEditor && this.model.custom_cdc_script !== '') this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
+      if (this.$refs.jsInitialEditor && this.model.custom_initial_script !== '') this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
+      if (this.$refs.jsOndataEditor && this.model.custom_ondata_script !== '') this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
     },
     checkDataTypeOptions(type) {
       this.model.database_type = type
@@ -1465,6 +1523,20 @@ export default {
             }
           }
         }
+        .custom-connection-box {
+          display: flex;
+          justify-content: flex-start;
+          .custom-connection-label {
+            font-size: 12px;
+            width: 200px;
+            text-align: right;
+            color: #606266;
+            margin-right: 23px;
+          }
+          .custom-connection-main {
+            width: calc(100% - 200px);
+          }
+        }
         .fileBox {
           display: flex;
           flex: 1;
@@ -1646,6 +1718,11 @@ export default {
     }
     .el-form-item__content {
       line-height: 30px;
+    }
+  }
+  .urlInfoForm {
+    .el-form-item {
+      margin-bottom: 0;
     }
   }
 }
