@@ -10,5 +10,7 @@ module.exports = {
   // 统一换行符为\n
   endOfLine: 'lf',
   // 为了便于阅读，每一行建议不要使用超过80个字符
-  printWidth: 80
+  printWidth: 80,
+  // 箭头函数参数只有一个时省略括号
+  arrowParens: 'avoid'
 }

@@ -16,7 +16,7 @@
         </div>
         <div
           v-if="
-            ['draft', 'paused', 'error'].includes(dataFlow.status) &&
+            ['error'].includes(dataFlow.status) &&
             item.status === 'running'
           "
         >

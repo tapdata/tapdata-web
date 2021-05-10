@@ -262,7 +262,7 @@ export const baseElementConfig = {
               typeof self.isProcess === 'function' ? self.isProcess() : false
             let width = isDataNode ? 120 : isProcess ? 90 : false
             if (width) {
-              name = breakText.breakText(name, width)
+              name = breakText.breakText(name.trim(), width)
               // log(`${this.get("type")} break text`, formData.name, name,width);
             }
             self.attr('label/text', name)
@@ -316,7 +316,7 @@ export const baseElementConfig = {
 
         let joinTables = graph
           .getConnectedLinks(self, { inbound: true })
-          .map((cell) => {
+          .map(cell => {
             let sourceCell = cell.getSourceCell()
             // let targetCell = cell.getTargetCell();
 
@@ -370,9 +370,9 @@ export const baseElementConfig = {
               return null
             }
           })
-          .filter((v) => !!v)
+          .filter(v => !!v)
 
-        let result = joinTables.filter((v) => !!v)
+        let result = joinTables.filter(v => !!v)
         log(`${this.get('type')}.getInputSchema`, result)
         return result
       },
@@ -414,7 +414,7 @@ export const baseElementConfig = {
         log(`${this.get('type')}.updateOutputSchema`, mergedOutputSchema)
 
         let graph = this.graph
-        graph.getConnectedLinks(this, { outbound: true }).forEach((link) => {
+        graph.getConnectedLinks(this, { outbound: true }).forEach(link => {
           let targetCell = link.getTargetCell()
           if (
             targetCell &&
@@ -492,16 +492,12 @@ export const baseElementConfig = {
           onewayIn = true
         if (self.graph.getConnectedLinks(cell, { outbound: true }).length == 0)
           onewayOut = true
-        self.graph
-          .getConnectedLinks(cell, { inbound: true })
-          .forEach((link) => {
-            if (!link.attributes.form_data.disabled) onewayIn = true
-          })
-        self.graph
-          .getConnectedLinks(cell, { outbound: true })
-          .forEach((link) => {
-            if (!link.attributes.form_data.disabled) onewayOut = true
-          })
+        self.graph.getConnectedLinks(cell, { inbound: true }).forEach(link => {
+          if (!link.attributes.form_data.disabled) onewayIn = true
+        })
+        self.graph.getConnectedLinks(cell, { outbound: true }).forEach(link => {
+          if (!link.attributes.form_data.disabled) onewayOut = true
+        })
         if (!(onewayIn && onewayOut) || checked) {
           cell.attributes.form_data.disabled = true
           if (checked) cell.attributes.form_data.disablChecker = true
@@ -510,7 +506,7 @@ export const baseElementConfig = {
           cell.attr('label/fill', '#ccc')
           self.graph
             .getConnectedLinks(cell, { inbound: true })
-            .forEach((link) => {
+            .forEach(link => {
               if (!!link.attributes.form_data.disabled && !checked) return
               link.attributes.form_data.disabled = true
               link.attr('line/stroke', '#dedede')
@@ -519,7 +515,7 @@ export const baseElementConfig = {
             })
           self.graph
             .getConnectedLinks(cell, { outbound: true })
-            .forEach((link) => {
+            .forEach(link => {
               if (!!link.attributes.form_data.disabled && !checked) return
               link.attributes.form_data.disabled = true
               link.attr('line/stroke', '#dedede')
@@ -546,25 +542,25 @@ export const baseElementConfig = {
         cell.attr('label/fill', '#333333')
         cell.attr('statusImage/visibility', 'hidden')
         let cells = []
-        self.graph.search(cell, (cel) => {
+        self.graph.search(cell, cel => {
           if (cel.cid) cells.push(cel)
         })
-        cells.forEach((cell) => {
+        cells.forEach(cell => {
           cell.attributes.form_data.disabled = false
           cell.attr('body/fill', '#fafafa')
           cell.attr('body/stroke', '#2196F3')
           cell.attr('label/fill', '#333333')
           cell.removePort('dis')
-          self.graph.getConnectedLinks(cell).forEach((link) => {
+          self.graph.getConnectedLinks(cell).forEach(link => {
             link.attr('line/stroke', '#8f8f8f')
             link.toFront()
             link.attributes.form_data.disabled = false
           })
         })
         self.graph.stopBatch('enble')
-        cells.forEach((cell) => {
+        cells.forEach(cell => {
           if (cell.attributes.form_data.disablChecker) {
-            self.graph.getConnectedLinks(cell).forEach((link) => {
+            self.graph.getConnectedLinks(cell).forEach(link => {
               link.attr('line/stroke', '#dedede')
               link.toBack()
               link.attributes.form_data.disabled = true
