@@ -68,15 +68,15 @@ window.getSettingByKey = (key) => {
   }
   return value
 }
+if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+  let iframe = document.createElement('iframe')
+  iframe.src = 'https://console-wuxi-1.cmecloud.cn:8443/api/web/user'
+  iframe.style =
+    'width: 1px; height: 1px; position: fixed; top: -10px; left: -10px'
+  document.body.appendChild(iframe)
+}
 let init = (settings) => {
   window.__settings__ = settings
-  if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-    let iframe = document.createElement('iframe')
-    iframe.src = 'https://console-wuxi-1.cmecloud.cn:8443/api/web/user'
-    iframe.style =
-      'width: 1px; height: 1px; position: fixed; top: -10px; left: -10px'
-    document.body.appendChild(iframe)
-  }
   let lang = localStorage.getItem('tapdata_localize_lang')
   if (!lang) {
     lang = window.getSettingByKey('DEFAULT_LANGUAGE')
