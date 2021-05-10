@@ -147,6 +147,7 @@ export default {
       background: #fafafa;
       border: 1px solid #dedee4;
       border-radius: 3px;
+      cursor: pointer;
       img {
         width: 35%;
       }

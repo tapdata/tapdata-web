@@ -256,7 +256,7 @@
     ></DatabaseTypeDialog>
     <Test
       ref="test"
-      :dialogTestVisible="false"
+      :dialogTestVisible.sync="dialogTestVisible"
       :formData="testData"
       @returnTestData="returnTestData"
     ></Test>
@@ -351,7 +351,8 @@ export default {
         ecs: 'ECS自建库',
         dds: 'DDS实例'
       },
-      testData: null
+      testData: null,
+      dialogTestVisible: false // 连接测试框
     }
   },
   computed: {
@@ -449,7 +450,17 @@ export default {
         loadFieldsStatus: true,
         schemaAutoUpdate: true,
         platformInfo: true,
-        last_updated: true
+        last_updated: true,
+        additionalString: true,
+        fill: true,
+        sslCert: true,
+        ssl: true,
+        sslCAFile: true,
+        sslPass: true,
+        sslKeyFile: true,
+        sslKey: true,
+        sslValidate: false,
+        sslCA: true //MongoDB
       }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
@@ -701,21 +712,37 @@ export default {
     },
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
-        this.dialogDatabaseTypeVisible = true
+      //drs 检查实例是否可用 dfs 检查agent是否可用
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+        let result = await this.$api('Workers').getAvailableAgent()
+        if (!result.data.result || result.data.result.length === 0) {
+          this.$message.error(this.$t('dataForm.form.agentMsg'))
+        } else {
+          this.dialogDatabaseTypeVisible = true
+        }
+      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+        let result = await this.$api('tcm').getAgentCount()
+        if (!result.data || !result.data.agentTotalCount || result.data.agentTotalCount <= 0) {
+          this.$message.error('您尚未订购同步实例，请先订购实例')
+        } else {
+          this.dialogDatabaseTypeVisible = true
+        }
       }
     },
     testConnection(item) {
       let loading = this.$loading()
+      if (item.database_type === 'mongodb') {
+        item.database_uri = ''
+      }
       this.testData = item
       this.$api('connections')
         .updateById(item.id, {
           status: 'testing'
         })
         .then(() => {
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+            this.dialogTestVisible = true
+          }
           this.$refs.test.start()
           this.table.fetch()
         })
@@ -739,6 +766,7 @@ export default {
           false
         )
       }
+      this.table.fetch()
     }
   }
 }

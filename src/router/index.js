@@ -120,10 +120,11 @@ const childRoutes = [
   {
     path: '/ttl',
     name: 'timeToLive',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/TimeToLive/List'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'time_to_live_menu',
-      url: '/old/index.html#/ttl',
+      // url: '/old/index.html#/ttl',
       title: i18n.t('tap.TimeToLive'),
       isCollapse: false
     }
@@ -257,10 +258,11 @@ const childRoutes = [
   {
     path: '/tasks',
     name: 'tasks',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/process/List'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'schedule_jobs_menu',
-      url: '/old/index.html#/tasks',
+      // url: '/old/index.html#/tasks',
       title: i18n.t('tap.jobSchedule'),
       isCollapse: false
     }
@@ -279,10 +281,11 @@ const childRoutes = [
   {
     path: '/agents',
     name: 'agents',
-    component: () => import('@/views/ExternalLink'),
+    // component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/process/List'),
     meta: {
       code: 'agents_menu',
-      url: '/old/index.html#/agents',
+      // url: '/old/index.html#/agents',
       title: i18n.t('tap.agentManagement'),
       isCollapse: false
     }
@@ -353,10 +356,11 @@ const childRoutes = [
   {
     path: '/settings',
     name: 'settings',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/setting/Setting'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'system_settings_menu',
-      url: '/old/index.html#/settings',
+      // url: '/old/index.html#/settings',
       title: i18n.t('tap.systemSettings'),
       isCollapse: false
     }

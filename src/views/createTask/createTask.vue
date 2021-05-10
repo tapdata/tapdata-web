@@ -75,6 +75,7 @@
                 v-model="settingModel"
                 :config="config"
                 @submit.native.prevent
+                @value-change="formChangeSetting"
               >
                 <div
                   slot="needToCreateIndex"
@@ -174,6 +175,7 @@ export default {
       activeStep: 0,
       errorMsg: '',
       showConnectDialog: false,
+      twoWayAgentRunningCount: '',
       platformInfo: _.cloneDeep(INSTANCE_MODEL),
       dataSourceModel: _.cloneDeep(DATASOURCE_MODEL),
       settingModel: _.cloneDeep(SETTING_MODEL),
@@ -243,10 +245,7 @@ export default {
       this.$api('tcm')
         .getAgentCount()
         .then((res) => {
-          this.supportTwoWay =
-            res.data.twoWayAgentRunningCount > 0 &&
-            this.dataSourceModel['source_databaseType'] === 'mongodb' &&
-            this.dataSourceModel['target_databaseType'] === 'mongodb'
+          this.twoWayAgentRunningCount = res.data.twoWayAgentRunningCount || 0
         })
     },
     //兼容新手引导
@@ -332,6 +331,22 @@ export default {
     //云版支持数据源
     allowDatabaseType() {
       this.changeConfig(this.allowDataType, 'databaseType')
+    },
+    formChangeSetting(data) {
+      //删除模式不支持双向
+      let field = data.field || ''
+      let value = data.value
+      let items = this.config.items
+      if (field === 'distinctWriteType') {
+        let target = items.find((it) => it.field === 'bidirectional')
+        this.getSupportTwoWay()
+        if (target && value === 'compel') {
+          target.show = false
+          this.settingModel.bidirectional = false
+        } else if (target && value !== 'compel' && this.supportTwoWay) {
+          target.show = true
+        }
+      }
     },
     formChange(data) {
       // 不支持 mongodb 到 oracle 的同步
@@ -499,6 +514,7 @@ export default {
           break
         }
         case 'setting': {
+          this.getSupportTwoWay() // 进入设置页面再判断
           if (
             this.dataSourceModel['source_databaseType'] !== 'mysql' ||
             this.dataSourceModel['target_databaseType'] !== 'mysql'
@@ -511,11 +527,20 @@ export default {
         case 'mapping': {
           let id = this.dataSourceModel.source_connectionId || ''
           this.$nextTick(() => {
-            this.$refs.transfer.getTable(id)
+            this.$refs.transfer.getTable(id, this.settingModel.bidirectional)
+            this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
           })
           break
         }
       }
+    },
+    //获取当前是否可以展示双向开关
+    getSupportTwoWay() {
+      this.supportTwoWay =
+        this.twoWayAgentRunningCount > 0 &&
+        this.dataSourceModel['source_databaseType'] === 'mongodb' &&
+        this.dataSourceModel['target_databaseType'] === 'mongodb' &&
+        this.settingModel['distinctWriteType'] !== 'compel' // 进入设置页面再判断
     },
     getWhere(type) {
       let where = {}
@@ -666,7 +691,7 @@ export default {
         }
         case 'setting_twoWay': {
           //映射是否双向同步
-          let op = items.find((it) => it.field === 'twoWay')
+          let op = items.find((it) => it.field === 'bidirectional')
           op.show = !!this.supportTwoWay
           break
         }
@@ -713,6 +738,9 @@ export default {
     },
     //save
     save() {
+      if (this.loading) {
+        return
+      }
       this.transferData = this.$refs.transfer.returnData()
       if (this.transferData.selectSourceArr.length === 0) {
         this.$message.error(
@@ -722,8 +750,6 @@ export default {
       }
       let source = this.dataSourceModel
       let target = this.dataSourceModel
-      let sourceId = uuid()
-      let targetId = uuid()
       //设置为增量模式
       let timeZone = new Date().getTimezoneOffset() / 60
       let systemTimeZone = ''
@@ -786,11 +812,14 @@ export default {
         this.platformInfoZone || [],
         this.platformInfo.zone
       )
+      let sourceIdA = uuid()
+      let targetIdB = uuid()
+      let sourceIdC = uuid()
       postData.stages = [
         Object.assign({}, stageDefault, {
-          id: sourceId,
+          id: sourceIdA,
           connectionId: source.source_connectionId,
-          outputLanes: [targetId],
+          outputLanes: [targetIdB],
           distance: 1,
           name: this.dataSourceModel.source_connectionName,
           type: 'database',
@@ -800,9 +829,9 @@ export default {
           readCdcInterval: 500
         }),
         Object.assign({}, stageDefault, {
-          id: targetId,
+          id: targetIdB,
           connectionId: target.target_connectionId,
-          inputLanes: [sourceId],
+          inputLanes: [sourceIdA],
           distance: 0,
           syncObjects: selectTable,
           name: this.dataSourceModel.target_connectionName,
@@ -820,9 +849,9 @@ export default {
       ]
       //支持双向
       let node = Object.assign({}, stageDefault, {
-        id: sourceId,
+        id: sourceIdC,
         connectionId: source.source_connectionId,
-        inputLanes: [targetId],
+        inputLanes: [targetIdB],
         distance: 1,
         name: this.dataSourceModel.source_connectionName,
         type: 'database',
@@ -835,10 +864,10 @@ export default {
         syncObjects: selectTable //需要同步的表
       })
       if (
-        this.settingModel.twoWay &&
+        this.settingModel.bidirectional &&
         window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
       ) {
-        postData.stages[1]['outputLanes'] = [sourceId]
+        postData.stages[1]['outputLanes'] = [sourceIdC]
         postData.stages.push(node)
       }
       let promise = null
@@ -848,6 +877,7 @@ export default {
       } else {
         promise = this.$api('DataFlows').create(postData)
       }
+      this.loading = true
       promise
         .then(() => {
           if (this.$route.query.step) {
@@ -864,6 +894,9 @@ export default {
           } else {
             this.$message.error(e.response.msg)
           }
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
     //返回任务列表

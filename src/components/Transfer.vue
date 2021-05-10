@@ -1,6 +1,6 @@
 <template>
   <section class="tapdata-transfer-wrap">
-    <div class="box-btn">
+    <div class="box-btn" v-show="!showOperationBtn">
       <el-button class="e-button" size="mini" @click="dialogVisible = true"
         >{{ $t('dataFlow.changeName') }}
       </el-button>
@@ -117,6 +117,7 @@ export default {
     }
     return {
       transferLoading: false,
+      showOperationBtn: false,
       sourceData: [],
       selectSourceArr: [],
       titles: [
@@ -137,7 +138,8 @@ export default {
   },
   methods: {
     //获取左边数据
-    getTable(id) {
+    getTable(id, bidirectional) {
+      console.log(id, bidirectional)
       this.transferLoading = true
       this.$api('connections')
         .customQuery([id], { schema: true })
@@ -160,9 +162,16 @@ export default {
             }
             //初始化数据
             if (this.transferData) {
+              console.log('TransferData', this.transferData)
               this.formData.table_prefix = this.transferData.table_prefix
               this.formData.table_suffix = this.transferData.table_suffix
               this.selectSourceArr = this.transferData.selectSourceArr
+            }
+            if (bidirectional && (this.transferData.table_prefix !=='' || this.transferData.table_suffix !=='')) { //true 表示 双向且有修改过前后缀
+              this.formData.table_prefix = ''
+              this.formData.table_suffix = ''
+              this.selectSourceArr = []
+              console.log('TransferData.selectSourceArr', this.selectSourceArr)
             }
             this.preFixSuffixData()
             this.$forceUpdate()
@@ -171,6 +180,10 @@ export default {
         .finally(() => {
           this.transferLoading = false
         })
+    },
+    //是否支持改名
+    showOperation(showOperationBtn) {
+      this.showOperationBtn = showOperationBtn
     },
     // 穿梭框值改变的时候 (重命名 或者还原)
     handleChangeTransfer() {

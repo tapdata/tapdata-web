@@ -69,7 +69,11 @@
               <div class="url-tip" slot="name" v-if="!$route.params.id">
                 中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
               </div>
-              <div class="url-tip" slot="ecsList" v-if="model.sourceType ==='ecs'">
+              <div
+                class="url-tip"
+                slot="ecsList"
+                v-if="model.sourceType === 'ecs'"
+              >
                 <el-select
                   v-model="model.ecs"
                   clearable
@@ -847,8 +851,9 @@ export default {
       if (this.model.sourceType !== 'ecs') return
       let userId = this.$cookie.get('userId')
       let params = {
-        page: this.ecsPage,
-        pageSize: this.ecsPageSize
+        page: this.ecsPage || 1,
+        pageSize: this.ecsPageSize || 10,
+        region: this.model.region || ''
       }
       this.$api('tcm')
         .getEcsList(userId, params)

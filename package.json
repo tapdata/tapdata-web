@@ -28,7 +28,7 @@
     "markdown-loader": "^6.0.0",
     "mavon-editor": "^2.9.0",
     "moment": "^2.24.0",
-    "monaco-editor": "^0.23.0",
+    "monaco-editor": "0.18.1",
     "vue": "^2.6.11",
     "vue-bus": "^1.2.1",
     "vue-clipboard2": "^0.3.1",

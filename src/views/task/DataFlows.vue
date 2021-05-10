@@ -224,10 +224,7 @@
         <template slot-scope="scope">
           <span class="dataflow-name">
             <span
-              :class="[
-                'name',
-                { 'text-decoration-none': scope.row.hasChildren }
-              ]"
+              :class="['name', { 'has-children': scope.row.hasChildren }]"
               @click="
                 scope.row.status === 'draft'
                   ? handleDetail(
@@ -264,6 +261,21 @@
 								: ''
 						}}
 					</div> -->
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'"
+        prop="status"
+        :label="$t('dataFlow.belongAgent')"
+        width="180"
+      >
+        <template slot-scope="scope">
+          <div style="display: flex; align-items: center">
+            <span>{{
+              scope.row.tcm &&
+              (scope.row.tcm.agentName || scope.row.tcm.agentId || '-')
+            }}</span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column min-width="150">
@@ -307,9 +319,6 @@
               ></i>
             </template>
             <span>{{ scope.row.statusLabel }}</span>
-            <span v-if="scope.row.status === 'running' && scope.row.tcm"
-              >({{ scope.row.tcm.agentName }})</span
-            >
             <span
               style="color: #999"
               v-if="
@@ -328,12 +337,21 @@
               )
             </span>
           </div>
+          <div
+            v-if="
+              $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs' &&
+              scope.row.status === 'running' &&
+              scope.row.tcm
+            "
+          >
+            {{ scope.row.tcm.agentName }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column
         v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
         :label="$t('dataFlow.creatdor')"
-        width="180"
+        width="200"
       >
         <template slot-scope="scope">
           {{ scope.row.user ? scope.row.user.username : '-' }}
@@ -342,7 +360,7 @@
       <el-table-column
         prop="startTime"
         :label="$t('dataFlow.creationTime')"
-        width="180"
+        width="170"
         sortable="custom"
       >
         <template slot-scope="scope">
@@ -413,7 +431,7 @@
               "
               @click="forceStop([scope.row.id])"
             >
-              {{ $t('dataFlow.status.force_stopping') }}
+              {{ $t('dataFlow.button.force_stop') }}
             </ElLink>
             <ElLink
               style="margin-left: 10px"
@@ -774,6 +792,15 @@ export default {
     },
     dataflowChange(data) {
       if (data && data.data && data.data.fullDocument) {
+        let dataflow = data.data.fullDocument
+        if (dataflow.agentId) {
+          let opt = this.agentOptions.find(
+            (it) => it.value === dataflow.agentId
+          )
+          dataflow.tcm = {
+            agentName: opt?.label
+          }
+        }
         this.tempList.push(data.data.fullDocument)
       }
     },
@@ -796,7 +823,8 @@ export default {
             'fullDocument.stats': true,
             'fullDocument.stages.id': true,
             'fullDocument.stages.name': true,
-            'fullDocument.errorEvents': true
+            'fullDocument.errorEvents': true,
+            'fullDocument.agentId': true
           }
         }
       }
@@ -861,6 +889,7 @@ export default {
       }
       if (agentId) {
         where['agentId'] = agentId
+        status = status || 'running'
       }
       if (tags && tags.length) {
         where['listtags.id'] = {
@@ -919,7 +948,7 @@ export default {
         where
       }
       return Promise.all([
-        this.$api('DataFlows').count({ where: where }),
+        this.$api('DataFlows').count({ where: JSON.stringify(where) }),
         this.$api('DataFlows').get({
           filter: JSON.stringify(filter)
         })
@@ -947,84 +976,84 @@ export default {
         item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
       }
       item.statusLabel = this.statusMap[item.status].label
-      let statusMap = {}
-      let getLag = (lag) => {
-        let r = '0s'
-        if (lag) {
-          let m = this.$moment.duration(lag, 'seconds')
-          if (m.days()) {
-            r = m.days() + 'd'
-          } else if (m.hours()) {
-            r = m.hours() + 'h'
-          } else if (m.minutes()) {
-            r = m.minutes() + 'm'
-          } else {
-            r = lag + 's'
-          }
-        }
-        return r
-      }
+      // let statusMap = {}
+      // let getLag = (lag) => {
+      //   let r = '0s'
+      //   if (lag) {
+      //     let m = this.$moment.duration(lag, 'seconds')
+      //     if (m.days()) {
+      //       r = m.days() + 'd'
+      //     } else if (m.hours()) {
+      //       r = m.hours() + 'h'
+      //     } else if (m.minutes()) {
+      //       r = m.minutes() + 'm'
+      //     } else {
+      //       r = lag + 's'
+      //     }
+      //   }
+      //   return r
+      // }
       if (item.stats && window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
         item.hasChildren = false
-        let children = item.stages
+        // let children = item.stages
         item.children = []
-        if (children) {
-          let finishedCount = 0
-          children.forEach((k) => {
-            let stage = ''
-            let node = {}
-            if (item.stats.stagesMetrics) {
-              stage = item.stats.stagesMetrics.filter((v) => k.id === v.stageId)
-            }
-            if (!stage.length) {
-              node = {
-                id: item.id + k.id,
-                name: k.name,
-                input: '--',
-                output: '--',
-                transmissionTime: '--',
-                hasChildren: true,
-                statusLabel: '--'
-              }
-            } else {
-              let stg = stage[0]
-              let statusLabel = stg.status
-                ? this.$t('dataFlow.status.' + stg.status)
-                : '--'
-              if (stg.status === 'cdc') {
-                let lag = `(${this.$t('dataFlow.lag')}${getLag(
-                  stg.replicationLag
-                )})`
-                statusLabel += lag
-                statusMap.cdc = true
-              }
-              if (stg.status === 'initializing') {
-                statusMap.initializing = true
-              }
-              if (stg.status === 'initialized') {
-                finishedCount += 1
-              }
-              node = {
-                id: item.id + k.id,
-                name: k.name,
-                input: stg.input.rows,
-                output: stg.output.rows,
-                transmissionTime: stg.transmissionTime,
-                hasChildren: true,
-                statusLabel
-              }
-            }
-            item.children.push(node)
-          })
-          if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
-            statusMap.initialized = true
-          }
-          let statusList = []
-          for (const key in statusMap) {
-            statusList.push(key)
-          }
-          item.statusList = statusList
-        }
+        // if (children) {
+        //   let finishedCount = 0
+        //   children.forEach((k) => {
+        //     let stage = ''
+        //     let node = {}
+        //     if (item.stats.stagesMetrics) {
+        //       stage = item.stats.stagesMetrics.filter((v) => k.id === v.stageId)
+        //     }
+        //     if (!stage.length) {
+        //       node = {
+        //         id: item.id + k.id,
+        //         name: k.name,
+        //         input: '--',
+        //         output: '--',
+        //         transmissionTime: '--',
+        //         hasChildren: true,
+        //         statusLabel: '--'
+        //       }
+        //     } else {
+        //       let stg = stage[0]
+        //       let statusLabel = stg.status
+        //         ? this.$t('dataFlow.status.' + stg.status)
+        //         : '--'
+        //       if (stg.status === 'cdc') {
+        //         let lag = `(${this.$t('dataFlow.lag')}${getLag(
+        //           stg.replicationLag
+        //         )})`
+        //         statusLabel += lag
+        //         statusMap.cdc = true
+        //       }
+        //       if (stg.status === 'initializing') {
+        //         statusMap.initializing = true
+        //       }
+        //       if (stg.status === 'initialized') {
+        //         finishedCount += 1
+        //       }
+        //       node = {
+        //         id: item.id + k.id,
+        //         name: k.name,
+        //         input: stg.input.rows,
+        //         output: stg.output.rows,
+        //         transmissionTime: stg.transmissionTime,
+        //         hasChildren: true,
+        //         statusLabel
+        //       }
+        //     }
+        //     item.children.push(node)
+        //   })
+        //   if (finishedCount && !statusMap.cdc && !statusMap.initializing) {
+        //     statusMap.initialized = true
+        //   }
+        //   let statusList = []
+        //   for (const key in statusMap) {
+        //     statusList.push(key)
+        //   }
+        //   item.statusList = statusList
+        // }
       }
       return item
     },
@@ -1499,11 +1528,11 @@ export default {
         border: 1px solid #dedee4;
       }
       .name {
-        color: #48b6e2;
-        cursor: pointer;
-      }
-      .name:hover {
-        text-decoration: underline;
+        &:not(.has-children) {
+          color: #48b6e2;
+          cursor: pointer;
+          text-decoration: underline;
+        }
       }
     }
     .task-name {

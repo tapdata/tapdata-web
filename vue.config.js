@@ -18,13 +18,15 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 module.exports = {
   assetsDir: 'static',
   lintOnSave: true,
-  productionSourceMap: true,
+  productionSourceMap: false,
   publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   devServer: {
     proxy: {
       '/api/': proxy,
       '/oauth/': proxy,
-      '/old/': proxy,
+      '/old/': {
+        target: 'http://192.168.1.101:8081/'
+      },
       '/ws/': {
         ...proxy,
         ws: true,

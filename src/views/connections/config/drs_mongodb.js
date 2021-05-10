@@ -65,11 +65,11 @@ export default function (vm) {
             tip: '创建移动云内的DDS实例为来源的连接',
             value: 'dds'
           },
-          {
-            label: 'ECS自建库',
-            tip: '创建移动云内ECS自建库内的数据库为来源的连接，开通网络策略',
-            value: 'ecs'
-          },
+          // {
+          //   label: 'ECS自建库',
+          //   tip: '创建移动云内ECS自建库内的数据库为来源的连接，开通网络策略',
+          //   value: 'ecs'
+          // },
           {
             label: '云外自建库',
             tip: '创建来自移动云外部的用户自建数据库连接',

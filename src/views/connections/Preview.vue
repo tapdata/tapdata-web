@@ -330,6 +330,18 @@ export default {
                 }
               }
             }
+            if (node.field === 'database_datetype_without_timezone') {
+              if (node.value === '-') {
+                node.value = 'Database Timezone'
+              } else {
+                let timezoneNumber = Number(node.value?.split(':')?.[0])
+                if (timezoneNumber < 0) {
+                  node.value = 'UTC ' + timezoneNumber
+                } else {
+                  node.value = 'UTC +' + timezoneNumber
+                }
+              }
+            }
             return node
           })
           items = items || []

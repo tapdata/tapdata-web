@@ -49,7 +49,7 @@ export default {
   },
   created() {
     window.addEventListener('click', (e) => {
-      if (e.target.className.indexOf('table-filter__icon') < 0) {
+      if (e.target.className.indexOf?.('table-filter__icon') < 0) {
         this.visible = false
       }
     })
