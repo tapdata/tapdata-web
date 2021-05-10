@@ -101,11 +101,6 @@ export default function (vm) {
           }
         ],
         required: true
-      },
-      {
-        type: 'slot',
-        slot: 'url_info',
-        label: 'URL'
       }
     ]
   }

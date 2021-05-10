@@ -154,48 +154,76 @@
                 <el-input type="textarea" :rows="5" v-model="model.resp_pre_process"></el-input>
                 <div>return tapdata_result; }</div>
               </div>
-              <div class="url-tip rest-api-url" slot="url_info">
-                <div v-for="item in model.url_info">
-                  <el-row type="flex" :gutter="20">
-                    <el-col>
-                      <label>URL</label>
-                      <el-input v-model="item.url" class="large-input"></el-input>
-                    </el-col>
-                  </el-row>
-                  <el-row type="flex" :gutter="20">
-                    <el-col>
-                      <label>请求方法</label>
-                      <el-select v-model="item.method" class="small-input">
-                        <el-option label="GET" value="GET"></el-option>
-                        <el-option label="POST" value="POST"></el-option>
-                      </el-select>
-                    </el-col>
-                    <el-col>
-                      <label>Content Type</label>
-                      <el-select v-model="item.content_type" class="small-input">
-                        <el-option label="form-data" value="form-data"></el-option>
-                        <el-option label="x-www-form-urlencoded" value="x-www-form-urlencoded"></el-option>
-                      </el-select>
-                    </el-col>
-                    <el-col>
-                      <el-input v-model="item.offset_field" class="small-input" placeholder="增量起始值"></el-input>
-                    </el-col>
-                  </el-row>
-                  <el-row type="flex" :gutter="20">
-                    <el-col>
-                      <span>Headers</span>
-                      <el-input placeholder="请求头名称" class="small-input"></el-input>
-                      <el-input placeholder="请求头值" class="small-input"></el-input>
-                    </el-col>
-                    <el-col>
-                      <span>Parameters</span>
-                      <el-input placeholder="参数名称" class="small-input"></el-input>
-                      <el-input placeholder="参数值" class="small-input"></el-input>
-                    </el-col>
-                  </el-row>
+            </form-builder>
+            <!-- rest api -->
+            <template>
+              <div class="rest-api-box">
+                <div class="rest-api-label">
+                  URL
+                </div>
+                <div class="url-tip rest-api-url">
+                  <el-form :model="model"  ref="urlInfoForm" label-width="104px" class="demo-ruleForm">
+                    <el-row v-for="(item, parentIndex) in model.url_info" :key="parentIndex" >
+                      <div class="rest-api-row">{{ model.data_sync_mode ==='INITIAL_INCREMENTAL_SYNC' ? item.url_type :  model.data_sync_mode}}</div>
+                      <el-col :span="24" class="fromLoopBox">
+                        <el-form-item
+                          label="URL"
+                          :prop="'url_info.' + parentIndex + '.url'"
+                          :rules="{
+                         required: true,
+                         message: 'URL不能为空',
+                         trigger: 'blur'
+                      }">
+                          <el-input v-model="item.url" size="mini"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="12" class="fromLoopBox" type="flex" :gutter="20">
+                        <el-form-item label="请求方法" :prop="item.method">
+                          <el-select v-model="item.method" class="min-input" size="mini">
+                            <el-option label="GET" value="GET"></el-option>
+                            <el-option label="POST" value="POST"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="12" class="fromLoopBox">
+                        <el-form-item label="Content Type" :prop="item.content_type">
+                          <el-select v-model="item.content_type" class="small-input" size="mini">
+                            <el-option label="form-data" value="application/form-data"></el-option>
+                            <el-option label="x-www-form-urlencoded" value="application/x-www-form-urlencoded;charset=UTF-8"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="24" class="fromLoopBox">
+                        <el-form-item label="增量起始值" :prop="item.offset_field" v-if="model.data_sync_mode ==='INCREMENTAL_SYNC'|| item.url_type ==='INCREMENTAL_SYNC'">
+                          <el-input v-model="item.offset_field" size="mini"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="24" class="fromLoopBox">
+                        <el-form-item label="Headers">
+                          <div v-for="(header,headerIndex) in item.headerArray" class="rest-api-Array">
+                            <el-input placeholder="请求头名称" class="medium-input" size="mini" v-model="header.name"></el-input>
+                            <el-input placeholder="请求头值" class="medium-input rest-api-margin" size="mini" v-model="header.value"></el-input>
+                            <i class="iconfont icon-jia add-btn-icon rest-api-margin" @click="addHeader(parentIndex)"></i>
+                            <i class="iconfont icon-quxiao add-btn-icon rest-api-margin" v-show="item.headerArray.length >1" @click="removeHeader(parentIndex,headerIndex)"></i>
+                          </div>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="24" class="fromLoopBox">
+                        <el-form-item label="Parameters" prop="parameters">
+                          <div v-for="(parameter,parameterIndex) in item.parameterArray" class="rest-api-Array">
+                            <el-input placeholder="参数名称" class="medium-input" size="mini" v-model="parameter.name"></el-input>
+                            <el-input placeholder="参数值" class="medium-input rest-api-margin" size="mini" v-model="parameter.value"></el-input>
+                            <i class="iconfont icon-jia add-btn-icon rest-api-margin" @click="addParameter(parentIndex)"></i>
+                            <i class="iconfont icon-quxiao add-btn-icon rest-api-margin" v-show="item.parameterArray.length >1" @click="removeParameter(parentIndex,parameterIndex)"></i>
+                          </div>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </el-form>
                 </div>
               </div>
-            </form-builder>
+            </template>
+
             <!-- 文件数据库 -->
             <template
               v-if="
@@ -597,6 +625,7 @@ export default {
     getImgByType,
     formChange(data) {
       let filed = data.field || ''
+      let value = data.value
       if (filed === 'sourceType') {
         this.model.database_host = ''
       }
@@ -605,6 +634,28 @@ export default {
       }
       if (filed === 's_region') {
         this.model.s_zone = ''
+      }
+      //rest api
+      if (filed === 'data_sync_mode') {
+        if(value ==='INITIAL_INCREMENTAL_SYNC') {
+          this.model.url_info[0]['url_type'] = 'INCREMENTAL_SYNC'
+          let urlInfo = {
+            url: '',
+            method: 'GET',
+            url_type: 'INITIAL_SYNC',
+            headers: {},
+            request_parameters: {},
+            offset_field: '',
+            initial_offset: '',
+            content_type: '',
+            headerArray: [{name: '', value: ''}],
+            parameterArray: [{name: '', value: ''}]
+          }
+          this.model.url_info.push(urlInfo)
+        } else {
+          this.model.url_info.splice(1, 1)
+          this.model.url_info[0]['url_type'] = value
+        }
       }
     },
     async initData(data) {
@@ -1102,6 +1153,9 @@ export default {
             params.fill = params.isUrl ? 'uri' : ''
             delete params.isUrl
           }
+          //rest api 数据组装
+
+
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
             params['platformInfo'] = Object.assign(
               params['platformInfo'],
@@ -1284,6 +1338,25 @@ export default {
       val === 'include'
         ? (item.exclude_filename = '')
         : (item.include_filename = '')
+    },
+    //rest api
+    addHeader(index) {
+      this.model.url_info[index].headerArray.push({
+        name: '',
+        value: ''
+      })
+    },
+    removeHeader(parentIndex, index) {
+      this.model.url_info[parentIndex].headerArray.splice(index, 1)
+    },
+    addParameter(index) {
+      this.model.url_info[index].parameterArray.push({
+        name: '',
+        value: ''
+      })
+    },
+    removeParameter(parentIndex, index) {
+      this.model.url_info[parentIndex].parameterArray.splice(index, 1)
     }
   }
 }
@@ -1319,12 +1392,54 @@ export default {
           color: #999;
           line-height: 18px;
         }
-        .rest-api-url {
-          border: 1px solid #dedee4;
-          padding: 10px;
-          margin-top: 10px;
-          .small-input {
-            width: 100px;
+        .rest-api-box {
+          display: flex;
+          flex: 1;
+          div.rest-api-label {
+            width: 210px;
+            padding-right: 20px;
+            line-height: 28px;
+            font-size: 12px;
+            color: #606266;
+            text-align: right;
+            box-sizing: border-box;
+          }
+          .rest-api-url {
+            width: calc(100% - 200px);
+            border: 1px solid #dedee4;
+            padding: 10px;
+            margin-top: 5px;
+            .rest-api-row {
+              margin-bottom: 10px;
+            }
+            .rest-api-margin{
+              margin-left: 10px;
+            }
+            .rest-api-marginB {
+              margin-bottom: 10px;
+            }
+            .rest-api-label{
+              display: inline-block;
+              width: 80px;
+            }
+            .rest-api-FloatL {
+              float: left;
+            }
+            .small-input {
+              width: 104px;
+            }
+            .min-input {
+              width: 80px;
+            }
+            .medium-input {
+              width: 130px;
+            }
+            .rest-api-Array {
+              margin-bottom: 10px;
+            }
+            .add-btn-icon {
+              cursor: pointer;
+            }
           }
         }
         .fileBox {
