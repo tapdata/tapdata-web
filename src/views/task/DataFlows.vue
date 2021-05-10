@@ -431,7 +431,7 @@
               "
               @click="forceStop([scope.row.id])"
             >
-              {{ $t('dataFlow.status.force_stopping') }}
+              {{ $t('dataFlow.button.force_stop') }}
             </ElLink>
             <ElLink
               style="margin-left: 10px"
