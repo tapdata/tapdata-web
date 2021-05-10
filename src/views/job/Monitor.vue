@@ -1269,7 +1269,7 @@ export default {
           rttimeList.push(item.t) // 时间
           tdataList.push(item.d)
         })
-        this.ransfTime = dataList[tdataList.length - 1]
+        this.ransfTime = dataList[tdataList.length - 1] || 0
         this.getReplicateTime(rttimeList, tdataList)
       }
     },
