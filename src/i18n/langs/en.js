@@ -558,7 +558,7 @@ const en = {
     },
     lag: 'lag',
     executionStatus: 'Execution status',
-    searchPlaceholder: 'Task name/Node name/Library table name',
+    searchPlaceholder: 'Task name/Node name/DB name',
     searchAgent: 'Agent name',
     dataRange: 'Date range',
     startTime: 'Start time',

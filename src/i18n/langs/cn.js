@@ -543,7 +543,7 @@ const cn = {
     },
     lag: '滞后',
     executionStatus: '执行状态',
-    searchPlaceholder: '任务名称/节点名/库表名',
+    searchPlaceholder: '任务名称/节点名/库名称',
     searchAgent: '实例名称',
     dataRange: '创建日期范围',
     startTime: '开始时间',
