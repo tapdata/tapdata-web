@@ -945,10 +945,10 @@ export default {
 
   methods: {
     getFlowInsightData() {
-      this.getTwoRadio(this.dataOverviewAll, 'screening')
-      this.getSpeed(this.isThroughputAll, 'throughput')
-      this.getTime(this.transfTime, 'transf')
-      this.getTime(this.replicateTime, 'replicate')
+      this.getTwoRadio(this.dataOverviewAll, 'screening', true)
+      this.getSpeed(this.isThroughputAll, 'throughput', true)
+      this.getTime(this.transfTime, 'transf', true)
+      this.getTime(this.replicateTime, 'replicate', true)
     },
     // 通过api获取数据
     getDataByApi(params, type) {
@@ -1091,7 +1091,7 @@ export default {
     // },
 
     // 输入输出获取数据
-    getSpeed(data, time) {
+    getSpeed(data, time, isFirst) {
       this.isThroughputAll = data
       this.throughputTime = time
       switch (time) {
@@ -1114,11 +1114,13 @@ export default {
         granularity: this.selectFlow + time
       }
       this.getDataByApi(params, 'throughput', data)
-      this.getApiData()
+      if (!isFirst) {
+        this.getApiData()
+      }
     },
 
     // 获取返回的单位
-    getTwoRadio(data, type) {
+    getTwoRadio(data, type, isFirst) {
       this.dataOverviewType = type
       this.dataOverviewAll = data
       // api请求
@@ -1127,11 +1129,13 @@ export default {
         granularity: data
       }
       this.getDataByApi(params, type, data)
-      this.getApiData()
+      if (!isFirst) {
+        this.getApiData()
+      }
     },
 
     // 获取返回的时间
-    getTime(data, type) {
+    getTime(data, type, isFirst) {
       let params = {}
       if (type === 'transf') {
         this.transfType = type
@@ -1178,7 +1182,9 @@ export default {
       }
       // api请求
       this.getDataByApi(params, type, data)
-      this.getApiData()
+      if (!isFirst) {
+        this.getApiData()
+      }
     },
 
     // 数据处理
