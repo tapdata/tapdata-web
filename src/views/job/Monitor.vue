@@ -946,7 +946,7 @@ export default {
   methods: {
     getFlowInsightData() {
       this.getTwoRadio(this.dataOverviewAll, 'screening', true)
-      this.getSpeed(this.isThroughputAll, 'throughput', true)
+      this.getSpeed(this.isThroughputAll, this.throughputTime, true)
       this.getTime(this.transfTime, 'transf', true)
       this.getTime(this.replicateTime, 'replicate', true)
     },
