@@ -67,7 +67,7 @@ export default {
         filter: {
           where: { 'contextMap.dataFlowId': { eq: this.dataFlow.id } },
           order: 'millis DESC',
-          limit: 100
+          limit: 20
         }
       },
       self = this
