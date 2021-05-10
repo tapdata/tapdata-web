@@ -697,12 +697,13 @@ export default {
       }
       // custom_connection
       if (filed === 'connection_type' || filed === 'custom_type') {
+        debugger
         this.model.custom_ondata_script =''
         this.model.custom_cdc_script =''
         this.model.custom_initial_script =''
-        this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
-        this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
-        this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
+        if (this.$refs.jsCdcEditor) this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
+        if (this.$refs.jsInitialEditor) this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
+        if (this.$refs.jsOndataEditor) this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
       }
     },
     async initData(data) {
@@ -743,9 +744,9 @@ export default {
     },
     //手动更新JSEditor
     updateJsEditor() {
-      if (this.$refs.jsCdcEditor && this.model.custom_cdc_script !== '') this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
-      if (this.$refs.jsInitialEditor && this.model.custom_initial_script !== '') this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
-      if (this.$refs.jsOndataEditor && this.model.custom_ondata_script !== '') this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
+      if (this.$refs.jsCdcEditor) this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
+      if (this.$refs.jsInitialEditor) this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
+      if (this.$refs.jsOndataEditor) this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
     },
     checkDataTypeOptions(type) {
       this.model.database_type = type
