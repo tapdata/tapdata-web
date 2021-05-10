@@ -948,7 +948,7 @@ export default {
         where
       }
       return Promise.all([
-        this.$api('DataFlows').count({ where: where }),
+        this.$api('DataFlows').count({ where: JSON.stringify(where) }),
         this.$api('DataFlows').get({
           filter: JSON.stringify(filter)
         })
