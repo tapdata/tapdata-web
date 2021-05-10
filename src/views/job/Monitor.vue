@@ -411,11 +411,11 @@
         <div class="floatLayer">
           <span
             style="background-color: rgba(72, 182, 226, 0.3); color: #48b6e2"
-            >{{ $t('dataFlow.average') }}:{{ this.inputAverage }}</span
+            >{{ $t('dataFlow.input') }}:{{ this.inputAverage }}</span
           >
           <span
             style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
-            >{{ $t('dataFlow.average') }}:{{ this.outputAverage }}</span
+            >{{ $t('dataFlow.output') }}:{{ this.outputAverage }}</span
           >
         </div>
         <echarts-compinent
