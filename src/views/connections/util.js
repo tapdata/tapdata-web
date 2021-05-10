@@ -180,8 +180,10 @@ export const defaultModel = {
     request_interval: '',
     collection_name: '',
     unique_keys: '',
-    req_pre_process: '',
-    resp_pre_process: '',
+    req_pre_process: ' // Build-in function\'s MD5/SHA1/SHA256\n' +
+      '    // example:\n' +
+      '    // request_params.sign = MD5(request_params.id+request_params_name+\'secret_key\');',
+    resp_pre_process: '// result: {\'tapdata_offset\': offset, \'response\':<API RESPONSE>}',
     data_sync_mode: 'INCREMENTAL_SYNC',
     url_info: [{
       url: '',

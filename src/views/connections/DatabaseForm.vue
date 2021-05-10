@@ -1104,6 +1104,15 @@ export default {
           }
         })
       }
+      if (
+        this.model.database_type === 'rest api'
+      ) {
+        this.$refs.urlInfoForm.validate((valid) => {
+          if (!valid) {
+            flag = false
+          }
+        })
+      }
       if (!this.model.checkedVpc && this.model.sourceType === 'ecs') {
         this.$message.error('请授权允许数据同步服务访问您的ECS实例')
         return
@@ -1154,8 +1163,22 @@ export default {
             delete params.isUrl
           }
           //rest api 数据组装
-
-
+          if (params.database_type === 'rest api') {
+            params.url_info.forEach((v) => {
+              if (v) {
+                v.headerArray.forEach((header) => {
+                  if (header && header.name) {
+                    v.headers[header.name] = header.value
+                  }
+                })
+                v.parameterArray.forEach((parameter) => {
+                  if (parameter && parameter.name) {
+                    v.request_parameters[parameter.name] = parameter.value
+                  }
+                })
+              }
+            })
+          }
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
             params['platformInfo'] = Object.assign(
               params['platformInfo'],
