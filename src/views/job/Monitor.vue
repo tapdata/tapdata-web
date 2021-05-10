@@ -472,7 +472,7 @@ const dataFlows = factory('DataFlows')
 const connectionApi = factory('connections')
 const DataFlowInsights = factory('DataFlowInsights')
 let currentStageData = null
-
+let lastMsg = ''
 export default {
   name: 'JobMonitor',
   components: { EchartHeader, echartsCompinent, shaftlessEchart },
@@ -1040,9 +1040,13 @@ export default {
       for (let key in this.resultObj.granularity) {
         this.resultObj.statsData[key] = []
       }
-      ws.ready(() => {
-        ws.send(msg)
-      })
+      let msgStr = JSON.stringify(msg)
+      if (lastMsg !== msgStr) {
+        ws.ready(() => {
+          lastMsg = msgStr
+          ws.send(msg)
+        })
+      }
     },
 
     // 获取所有节点
