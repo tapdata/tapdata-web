@@ -2846,6 +2846,28 @@ const tc = {
       '加載架構時，Mongodb將使用此樣本大小',
     Switch_to_batch_insert_mode_interval__s__in_cdc_:
       '切換到cdc中的批量插入模式間隔。 '
+  },
+  dictionary: {
+    creatDictionary: '創建字典模板',
+    editDictionary: '編輯字典模板',
+    classification: '分類',
+    name: '名稱',
+    data_type: '數據類型',
+    isdatatype: '字典模板詳細',
+    baseFloating: '浮點數',
+    baseString: '字符串',
+    baseBoolean: '布爾值',
+    template: '模板',
+    pleaseSelect: '請選擇',
+    pleaseInput: '請輸入',
+    mapping: '映射值',
+    initial: '初始值',
+    initialNum: '初始值只能輸入數字',
+    isMappedvalue: '映射值不能為空',
+    isInitialvalue: '初始值不能為空',
+    titlenametips: '名稱不能有重複，請重新修改',
+    nameCheck: '名稱不能為空',
+    alreadyExists: '規則名稱已存在'
   }
 }
 

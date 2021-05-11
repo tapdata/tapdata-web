@@ -154,10 +154,11 @@ const childRoutes = [
   {
     path: '/dictionary',
     name: 'dictionary',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/dictionary/List'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'dictionary_menu',
-      url: '/old/index.html#/dictionary',
+      // url: '/old/index.html#/dictionary',
       title: i18n.t('tap.dictionary'),
       isCollapse: false
     }
@@ -258,8 +259,8 @@ const childRoutes = [
   {
     path: '/tasks',
     name: 'tasks',
-    component: () => import('@/views/process/List'),
-    // component: () => import('@/views/ExternalLink'),
+    // component: () => import('@/views/process/List'),
+    component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'schedule_jobs_menu',
       // url: '/old/index.html#/tasks',

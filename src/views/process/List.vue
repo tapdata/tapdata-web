@@ -311,7 +311,7 @@ export default {
 }
 </style>
 <style lang="scss">
-.user-list-wrap {
+.process-list-wrap {
   .table-page-container {
     .table-page-body {
       box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);

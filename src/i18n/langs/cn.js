@@ -2888,6 +2888,28 @@ const cn = {
       '加载架构时，Mongodb将使用此样本大小',
     Switch_to_batch_insert_mode_interval__s__in_cdc_:
       '切换到cdc中的批量插入模式间隔。'
+  },
+  dictionary: {
+    creatDictionary: '创建字典模板',
+    editDictionary: '编辑字典模板',
+    classification: '分类',
+    name: '名称',
+    data_type: '数据类型',
+    isdatatype: '字典模板详细',
+    baseFloating: '浮点数',
+    baseString: '字符串',
+    baseBoolean: '布尔值',
+    template: '模板',
+    pleaseSelect: '请选择',
+    pleaseInput: '请输入',
+    mapping: '映射值',
+    initial: '初始值',
+    initialNum: '初始值只能输入数字',
+    isMappedvalue: '映射值不能为空',
+    isInitialvalue: '初始值不能为空',
+    titlenametips: '名称不能有重复，请重新修改',
+    nameCheck: '名称不能为空',
+    alreadyExists: '规则名称已存在'
   }
 }
 

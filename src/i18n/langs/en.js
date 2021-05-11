@@ -2955,6 +2955,28 @@ const en = {
     requestFailed: 'Request processing failed',
     Mongodb_will_use_this_sample_size_when_load_schema:
       'When loading the schema, Mongodb will use this sample size'
+  },
+  dictionary: {
+    creatDictionary: 'Create a dictionary template',
+    editDictionary: 'Edit dictionary template',
+    classification: 'Classification',
+    name: 'Name',
+    data_type: 'Data Type',
+    isdatatype: 'Dictionary template details',
+    baseFloating: 'Floating point number',
+    baseString: 'String',
+    baseBoolean: 'Boolean value',
+    template: 'Template',
+    pleaseSelect: 'Please select',
+    pleaseInput: 'Please input',
+    mapping: 'Mapping value',
+    initial: 'Initial value',
+    initialNum: 'Initial value can only enter numbers',
+    isMappedvalue: 'The mapped value cannot be empty',
+    isInitialvalue: 'Initial value cannot be empty',
+    titlenametips: 'The name cannot be repeated, please modify it again',
+    nameCheck: 'Name cannot be empty',
+    alreadyExists: 'Rule name already exists'
   }
 }
 
