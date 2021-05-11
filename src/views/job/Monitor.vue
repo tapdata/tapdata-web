@@ -471,6 +471,7 @@ import factory from '../../api/factory'
 import { EditorEventType } from '../../editor/lib/events'
 import i18n from '@/i18n'
 import ws from '../../api/ws'
+import _ from "lodash";
 const dataFlows = factory('DataFlows')
 const connectionApi = factory('connections')
 const DataFlowInsights = factory('DataFlowInsights')
@@ -853,6 +854,11 @@ export default {
     ws.on('dataFlowInsight', function (data) {
       self.storeData = data.statsData
       self.dataProcessing(data)
+    })
+    //及时更新输入输出的数据
+    ws.on('watch', function (data) {
+      let dat = data.data.fullDocument
+      self.flow.stats = dat.stats
     })
     // api请求
     this.getFlowInsightData()
