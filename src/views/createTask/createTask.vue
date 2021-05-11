@@ -277,6 +277,7 @@ export default {
         .get([id])
         .then((result) => {
           if (result && result.data) {
+            this.status = result.data.status
             this.settingModel = result.data.setting
             this.settingModel.name = result.data.name
             this.platformInfo = result.data.platformInfo
@@ -802,6 +803,10 @@ export default {
           objectNames: this.transferData.selectSourceArr,
           type: 'table'
         })
+      }
+      //编辑时传原status
+      if (this.id) {
+        postData.status = this.status || 'paused'
       }
       //存实例名称
       postData.platformInfo.regionName = this.handleName(
