@@ -6,7 +6,7 @@ const URL = {
 let ENV
 if (npm_config_argv) {
   const argv = JSON.parse(process.env.npm_config_argv).original
-  ENV = Object.keys(URL).find((k) => argv.includes('--' + k))
+  ENV = Object.keys(URL).find(k => argv.includes('--' + k))
 }
 const proxy = {
   target: URL[ENV || 'dev'],
@@ -19,7 +19,7 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: true,
   productionSourceMap: false,
-  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
+  publicPath: './',
   devServer: {
     proxy: {
       '/api/': proxy,
