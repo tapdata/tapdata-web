@@ -550,7 +550,7 @@ export default {
         this.$confirm(this.$t('cluster.deleteOrNot') + '?', {
           confirmButtonText: this.$t('cluster.confirm'),
           cancelButtonText: this.$t('cluster.cancel')
-        }).then((resFlag) => {
+        }).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -591,7 +591,7 @@ export default {
             cancelButtonText: this.$t('cluster.cancel'),
             closeOnClickModal: false
           }
-        ).then((resFlag) => {
+        ).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -625,7 +625,7 @@ export default {
             cancelButtonText: this.$t('cluster.cancel'),
             closeOnClickModal: false
           }
-        ).then((resFlag) => {
+        ).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -658,7 +658,7 @@ export default {
             cancelButtonText: this.$t('cluster.cancel'),
             closeOnClickModal: false
           }
-        ).then((resFlag) => {
+        ).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -710,7 +710,7 @@ export default {
     },
     // 重启---关闭---启动     --版本--更新
     async operationFn(data) {
-      await cluster.updateStatus(data).then((res) => {
+      await cluster.updateStatus(data).then(res => {
         if (res.status === 200) {
           this.getDataApi()
         }
@@ -751,7 +751,7 @@ export default {
           }
         }
       }
-      cluster.get(params).then((res) => {
+      cluster.get(params).then(res => {
         if (res.data) {
           //自动升级
           this.getVersion(res.data)

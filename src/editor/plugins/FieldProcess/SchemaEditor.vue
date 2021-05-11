@@ -208,7 +208,7 @@
                 size="mini"
                 :show-timeout="10"
                 :hide-on-click="false"
-                @command="(command) => handleCreate(command, node, data)"
+                @command="command => handleCreate(command, node, data)"
               >
                 <span
                   class="e-field-action el-icon-plus"
@@ -684,29 +684,29 @@ export default {
     },
     isRemove(id) {
       let ops = this.model.operations.filter(
-        (v) => v.id === id && v.op === 'REMOVE'
+        v => v.id === id && v.op === 'REMOVE'
       )
       return ops && ops.length > 0
     },
     isRename(id) {
       let ops = this.model.operations.filter(
-        (v) => v.id === id && v.op === 'RENAME'
+        v => v.id === id && v.op === 'RENAME'
       )
       return ops && ops.length > 0
     },
     isConvertDataType(id) {
       let ops = this.model.operations.filter(
-        (v) => v.id === id && v.op === 'CONVERT'
+        v => v.id === id && v.op === 'CONVERT'
       )
       return ops && ops.length > 0
     },
     isScript(id) {
-      let scripts = this.model.scripts.filter((v) => v.id === id)
+      let scripts = this.model.scripts.filter(v => v.id === id)
       return scripts && scripts.length > 0
     },
     isCreate(id) {
       let ops = this.model.operations.filter(
-        (v) => v.id === id && v.op === 'CREATE'
+        v => v.id === id && v.op === 'CREATE'
       )
       return ops && ops.length > 0
     },
@@ -747,7 +747,7 @@ export default {
     },
     keepErrorOperation() {
       if (this.errorOperation.length === 0) return
-      this.errorOperation.forEach((item) => {
+      this.errorOperation.forEach(item => {
         if (![1, 4].includes(item.isType)) {
           item.keep = true
         } else {
@@ -757,14 +757,14 @@ export default {
     },
     delErrorOperation() {
       if (this.errorOperation.length === 0) return
-      this.errorOperation.forEach((item) => {
+      this.errorOperation.forEach(item => {
         item.keep = false
       })
     },
     saveErrorOperation() {
       for (let i = 0; i < this.errorOperation.length; i++) {
         let targetId = this.model.operations.findIndex(
-          (n) => n.id === this.errorOperation[i].id
+          n => n.id === this.errorOperation[i].id
         )
         if ([1, 4].includes(this.errorOperation[i].isType) && targetId > -1) {
           this.model.operations.splice(targetId, 1)
@@ -827,7 +827,7 @@ export default {
     handleDataType(node, data) {
       log('SchemaEditor.handleDataType', node, data)
       let createOps = this.model.operations.filter(
-        (v) => v.id === data.id && v.op === 'CREATE'
+        v => v.id === data.id && v.op === 'CREATE'
       )
       if (createOps && createOps.length > 0) {
         let op = createOps[0]
@@ -835,7 +835,7 @@ export default {
       } else {
         let nativeData = this.getNativeData(this.originalSchema.fields, data.id)
         let ops = this.model.operations.filter(
-          (v) => v.id === data.id && v.op === 'CONVERT'
+          v => v.id === data.id && v.op === 'CONVERT'
         )
         let op
         if (ops.length === 0) {
@@ -870,7 +870,7 @@ export default {
         return
       }
       let removes = this.model.operations.filter(
-        (v) => v.id === data.id && v.op === 'REMOVE'
+        v => v.id === data.id && v.op === 'REMOVE'
       )
       if (removes.length > 0) {
         data.label = nativeData.label
@@ -882,7 +882,7 @@ export default {
         return
       }
       let createOps = this.model.operations.filter(
-        (v) => v.id === data.id && v.op === 'CREATE'
+        v => v.id === data.id && v.op === 'CREATE'
       )
       if (createOps && createOps.length > 0) {
         let op = createOps[0]
@@ -912,7 +912,7 @@ export default {
           this.model.operations
         )
         let ops = this.model.operations.filter(
-          (v) => v.id === data.id && v.op === 'RENAME'
+          v => v.id === data.id && v.op === 'RENAME'
         )
         let op
         if (ops.length === 0) {
@@ -960,7 +960,7 @@ export default {
     handleDelete(node, data) {
       log('SchemaEditor.handleDelete', node, data)
       let createOpsIndex = this.model.operations.findIndex(
-        (v) => v.id === data.id && v.op === 'CREATE'
+        v => v.id === data.id && v.op === 'CREATE'
       )
       if (createOpsIndex >= 0) {
         let fieldName = this.model.operations[createOpsIndex].field_name + '.'
@@ -1002,7 +1002,7 @@ export default {
             }
           }
           let ops = self.model.operations.filter(
-            (v) => v.op === 'REMOVE' && v.id === field.id
+            v => v.op === 'REMOVE' && v.id === field.id
           )
           let op
           if (ops.length === 0) {
@@ -1037,7 +1037,7 @@ export default {
       let ids = this.$refs.tree.getCheckedNodes(false, true)
       this.checkAll = false
       if (ids && ids.length > 0) {
-        ids.map((id) => {
+        ids.map(id => {
           let node = this.$refs.tree.getNode(id)
           if (node) {
             this.handleReset(node, node.data)
@@ -1050,7 +1050,7 @@ export default {
       let exist = false
       if (node && node.parent && node.parent.childNodes) {
         let parentNode = node.parent.childNodes.filter(
-          (v) => data.label === v.data.label
+          v => data.label === v.data.label
         )
         if (parentNode && parentNode.length === 2) {
           this.$message.error(data.label + this.$t('message.exists_name'))
@@ -1063,7 +1063,7 @@ export default {
       let ids = this.$refs.tree.getCheckedNodes()
       this.checkAll = false
       if (ids && ids.length > 0) {
-        ids.map((id) => {
+        ids.map(id => {
           let node = this.$refs.tree.getNode(id)
           if (
             this.originalSchema.type === 'collection' &&
@@ -1079,7 +1079,7 @@ export default {
       let ids = this.$refs.tree.getCheckedNodes()
       this.checkAll = false
       if (ids && ids.length > 0) {
-        ids.map((id) => {
+        ids.map(id => {
           let node = this.$refs.tree.getNode(id)
           node.data.label = node.data.label.toUpperCase()
           this.handleRename(node, node.data)
@@ -1090,7 +1090,7 @@ export default {
       let ids = this.$refs.tree.getCheckedNodes()
       this.checkAll = false
       if (ids && ids.length > 0) {
-        ids.map((id) => {
+        ids.map(id => {
           let node = this.$refs.tree.getNode(id)
           node.data.label = node.data.label.toLowerCase()
           this.handleRename(node, node.data)
@@ -1109,7 +1109,7 @@ export default {
       let parentId = node.parent.data.id
       let dataLabel = _.cloneDeep(data.label)
       let indexId = this.model.operations.filter(
-        (v) => v.op === 'REMOVE' && v.id === parentId
+        v => v.op === 'REMOVE' && v.id === parentId
       )
       if (parentId && indexId.length !== 0) {
         return
@@ -1185,7 +1185,7 @@ export default {
       if (action === 'create_sibling') {
         parentFieldName = this.getParentFieldName(node.parent)
         let parentNode = node.parent.childNodes.filter(
-          (v) => v.data.label === 'newFieldName'
+          v => v.data.label === 'newFieldName'
         )
         if (parentNode && parentNode.length > 0) {
           this.$message.error('newFieldName ' + this.$t('message.exists_name'))
@@ -1195,7 +1195,7 @@ export default {
         parentFieldName = this.getParentFieldName(node)
         level++
         let parentNode = node.childNodes.filter(
-          (v) => v.data.label === 'newFieldName'
+          v => v.data.label === 'newFieldName'
         )
         if (parentNode && parentNode.length > 0) {
           this.$message.error('newFieldName ' + this.$t('message.exists_name'))
@@ -1253,7 +1253,7 @@ export default {
       let tableName = (self.scriptDialog.tableName = data.table_name)
       let id = data.id
 
-      let idx = self.model.scripts.findIndex((script) => script.id === id)
+      let idx = self.model.scripts.findIndex(script => script.id === id)
       let script
       if (idx !== -1) {
         script = self.model.scripts[idx]

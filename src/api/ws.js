@@ -84,21 +84,21 @@ class WSClient extends EventEmitter {
 
     self.ws.addEventListener(
       'message',
-      (self.__message = (msg) => {
+      (self.__message = msg => {
         self.handlerMessage(msg)
       })
     )
 
     self.ws.addEventListener(
       'error',
-      (self.__error = (e) => {
+      (self.__error = e => {
         this.handlerError(e)
       })
     )
 
     self.ws.addEventListener(
       'close',
-      (self.__close = (e) => {
+      (self.__close = e => {
         this.handlerClose(e)
       })
     )
@@ -205,7 +205,7 @@ class WSClient extends EventEmitter {
     } else {
       workerApi
         .getAvailableAgent()
-        .then((result) => {
+        .then(result => {
           log('ws.getAgentId:', result)
           if (
             result &&
@@ -219,7 +219,7 @@ class WSClient extends EventEmitter {
             cb(new Error('Can not found data agent id'))
           }
         })
-        .catch((e) => {
+        .catch(e => {
           cb(e)
         })
     }

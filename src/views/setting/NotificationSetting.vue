@@ -176,7 +176,7 @@ export default {
       }
       this.loading = true
       Setting.findOne(where)
-        .then((res) => {
+        .then(res => {
           if (res.data.value) {
             let value = JSON.parse(res.data.value)
             this.runNotification = value.runNotification

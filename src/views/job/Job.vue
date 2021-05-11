@@ -493,7 +493,7 @@ export default {
           return
         }
         if (!window.tpdata) {
-          Object.keys(localStorage).forEach((key) => {
+          Object.keys(localStorage).forEach(key => {
             let mapping = key.split('$$$')[3] || ''
             if (
               key.startsWith('tapdata.dataflow.$$$') &&
@@ -542,7 +542,7 @@ export default {
             confirmButtonText: this.$t('dataFlow.leave'),
             closeOnClickModal: false
           }
-        ).then((resFlag) => {
+        ).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -580,7 +580,7 @@ export default {
       let data = this.getDataFlowData(true)
       if (this.tempKey == 0) {
         this.tempKey = 1
-        Object.keys(localStorage).forEach((key) => {
+        Object.keys(localStorage).forEach(key => {
           if (key.startsWith('tapdata.dataflow.$$$'))
             if (parseInt(key.split('$$$')[1]) >= this.tempKey)
               this.tempKey = parseInt(key.split('$$$')[1]) + 1
@@ -610,7 +610,7 @@ export default {
         try {
           let ids = [],
             size = 0
-          Object.keys(localStorage).forEach((key) => {
+          Object.keys(localStorage).forEach(key => {
             if (key.startsWith('tapdata.dataflow.$$$'))
               ids.push({ id: parseInt(key.split('$$$')[1]), item: key })
           })
@@ -667,19 +667,19 @@ export default {
     },
     simpleRefresh() {
       let self = this
-      self.editor.graph.paper.getMountedViews().forEach((ele) => {
+      self.editor.graph.paper.getMountedViews().forEach(ele => {
         if (ele.$el) ele.$el.show()
       })
       this.$nextTick(() => {
         self.$refs.simpleScene.cellHtml = self.editor.graph.paper
           .getMountedViews()
-          .map((ele) => {
+          .map(ele => {
             if (ele.model.isElement) return ele.$el[0].outerHTML
             else return ''
           })
           .join('')
         self.$refs.simpleScene.renderCell()
-        self.editor.graph.paper.getMountedViews().forEach((ele) => {
+        self.editor.graph.paper.getMountedViews().forEach(ele => {
           if (ele.$el) ele.$el.hide()
         })
         try {
@@ -854,14 +854,14 @@ export default {
 
       if (promise) {
         promise
-          .catch((e) => {
+          .catch(e => {
             if (e.response.msg === 'duplication for names') {
               self.$message.error(self.$t('message.exists_name'))
             } else {
               self.$message.error(self.$t('message.saveFail'))
             }
           })
-          .then((result) => {
+          .then(result => {
             if (result && result.data) {
               let dataFlow = result.data
               self.dataFlowId = dataFlow.id
@@ -908,11 +908,11 @@ export default {
       let self = this
       dataFlowsApi
         .get([id])
-        .then((result) => {
+        .then(result => {
           if (result && result.data) {
             self.creatUserId = result.data.user_id
             self.initData(result.data)
-            Object.keys(localStorage).forEach((key) => {
+            Object.keys(localStorage).forEach(key => {
               if (
                 key.startsWith('tapdata.dataflow.$$$') &&
                 key.split('$$$')[2] == result.data.name
@@ -926,7 +926,7 @@ export default {
           }
           self.loading = false
         })
-        .catch((err) => {
+        .catch(err => {
           log(err)
           self.$message.error(self.$t('message.api.get.error'))
           self.loading = false
@@ -974,7 +974,7 @@ export default {
       let cells = graphData.cells ? graphData.cells : []
       let edgeCells = {}
       let nodeCells = {}
-      cells.forEach((cell) => {
+      cells.forEach(cell => {
         if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
           if (cell.attrs && cell.attrs.line && cell.attrs.line.stroke) {
             cell.attrs.line.stroke = '#8f8f8f' // 鼠标未失去焦点就保存，针对link选中状态改为默认
@@ -1006,7 +1006,7 @@ export default {
         }
       )
       let stages = {}
-      Object.values(nodeCells).forEach((cell) => {
+      Object.values(nodeCells).forEach(cell => {
         let stage = (stages[cell.id] = Object.assign(
           {
             id: cell.id,
@@ -1034,14 +1034,12 @@ export default {
           Object.assign(stage, {
             dataQualityTag: false,
             joinTables: Object.values(edgeCells)
-              .filter((edge) => edge.target && edge.target.id === cell.id)
-              .map(
-                (edge) => edge[FORM_DATA_KEY] && edge[FORM_DATA_KEY].joinTable
-              )
+              .filter(edge => edge.target && edge.target.id === cell.id)
+              .map(edge => edge[FORM_DATA_KEY] && edge[FORM_DATA_KEY].joinTable)
           })
         }
       })
-      Object.values(edgeCells).forEach((cell) => {
+      Object.values(edgeCells).forEach(cell => {
         if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
           let sourceId = cell.source.id
           let targetId = cell.target.id
@@ -1066,7 +1064,7 @@ export default {
       let stages = dataFlowData.stages
       let { graph } = this.editor.getData() || {}
       let dataFlowId = this.dataFlowId
-      stages.forEach((stage) => {
+      stages.forEach(stage => {
         let cell = graph.getCell(stage.id) || {}
         let schema = cell.getSchema()
         let outputSchema = cell.getOutputSchema()
@@ -1083,9 +1081,9 @@ export default {
       let stages = this.getDataFlowData(true).stages
       let cells = this.editor.graph.graph.getCells()
       let valid = true
-      stages.forEach((stage) => {
+      stages.forEach(stage => {
         if (stage.joinTables)
-          stage.joinTables.forEach((jt) => {
+          stage.joinTables.forEach(jt => {
             if (!jt || !jt.id) return
             let finded = false
             cells.reduce((finded, cell) => {
@@ -1094,7 +1092,7 @@ export default {
             try {
               if (!finded)
                 cells
-                  .filter((cell) => cell.id == stage.id)[0]
+                  .filter(cell => cell.id == stage.id)[0]
                   .updateOutputSchema()
             } catch (e) {
               alert('jointables stageid chaeck failed===>>' + stage.id)
@@ -1120,7 +1118,7 @@ export default {
           : dataFlowsApi.post(data)
 
         promise
-          .then((result) => {
+          .then(result => {
             if (result && result.data) {
               let dataFlow = result.data
 
@@ -1160,7 +1158,7 @@ export default {
             }
             self.loading = false
           })
-          .catch((e) => {
+          .catch(e => {
             self.loading = false
             if (typeof cb === 'function') {
               cb(e, null)
@@ -1180,7 +1178,7 @@ export default {
         self.loading = true
         dataFlowsApi
           .count({ where: JSON.stringify(params) })
-          .then((result) => {
+          .then(result => {
             if (result && result.data && result.data.count > 0) {
               this.$message.error(
                 `${self.$t('message.exists_name')}: ${data.name}`
@@ -1190,7 +1188,7 @@ export default {
               _doSave()
             }
           })
-          .catch((e) => {
+          .catch(e => {
             self.loading = false
             if (typeof cb === 'function') {
               cb(e, null)
@@ -1210,7 +1208,7 @@ export default {
       if (data) {
         if (data.id) delete data.status
 
-        self.doSave(data, (err) => {
+        self.doSave(data, err => {
           if (err) {
             this.$message.error(self.$t('message.saveFail'))
           } else {
@@ -1262,13 +1260,11 @@ export default {
         let objectNamesList = [],
           stageTypeFalg = false
         if (data && data.stages && data.stages.length) {
-          stageTypeFalg = data.stages.every(
-            (stage) => stage.type === 'database'
-          )
+          stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
-            data.stages.forEach((item) => {
+            data.stages.forEach(item => {
               if (item.syncObjects && item.syncObjects.length) {
-                item.syncObjects.forEach((childItem) => {
+                item.syncObjects.forEach(childItem => {
                   if (childItem.objectNames && childItem.objectNames.length) {
                     objectNamesList = childItem.objectNames
                   }
@@ -1345,9 +1341,7 @@ export default {
       if (!self.sync_type.includes('cdc')) {
         message = self.$t('message.stopInitial_syncMessage')
       }
-      if (
-        self.dataFlow.stages.find((s) => s.type === 'aggregation_processor')
-      ) {
+      if (self.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
         const h = self.$createElement
         let arr = self.$t('message.stopAggregation_message').split('XXX')
         message = h('p', [
@@ -1365,11 +1359,11 @@ export default {
           type: 'warning',
           closeOnClickModal: false
         })
-        .then((flag) => {
+        .then(flag => {
           if (!flag) {
             return
           }
-          self.doSave(data, (err) => {
+          self.doSave(data, err => {
             if (err) {
               this.$message.error(self.$t('message.stopFail'))
             }
@@ -1400,7 +1394,7 @@ export default {
             })
           }
           this.isPreview = true
-          self.doSave(data, (err) => {
+          self.doSave(data, err => {
             if (err) {
               this.$message.error(self.$t('message.saveFail'))
             } else {
@@ -1430,7 +1424,7 @@ export default {
             executeMode: 'running_debug'
           })
         }
-        self.doSave(data, (err) => {
+        self.doSave(data, err => {
           if (err) {
             this.$message.error(self.$t('message.saveFail'))
           } else {
@@ -1454,7 +1448,7 @@ export default {
             id: data.id,
             executeMode: 'normal'
           },
-          (err) => {
+          err => {
             if (err) {
               this.$message.error(self.$t('message.saveFail'))
             }
@@ -1482,7 +1476,7 @@ export default {
               type: 'warning'
             }
           )
-          .then((flag) => {
+          .then(flag => {
             if (!flag) {
               return
             }
@@ -1493,7 +1487,7 @@ export default {
                 self.$message.success(self.$t('message.resetOk'))
                 self.editor.emit('dataFlow:reset')
               })
-              .catch((err) => {
+              .catch(err => {
                 if (err && err.response.status === 500) {
                   self.$message.error(self.$t('message.resetFailed'))
                 }
@@ -1523,7 +1517,7 @@ export default {
       }
       this.loading = true
       Setting.findOne(where)
-        .then((res) => {
+        .then(res => {
           if (res.data.value) {
             let value = JSON.parse(res.data.value)
             this.editor.setSettingData(value.runNotification)
@@ -1630,10 +1624,10 @@ export default {
       }
       if (data) {
         let stageMap = {}
-        data.forEach((item) => {
+        data.forEach(item => {
           stageMap[item.id] = item
         })
-        data.map((v) => {
+        data.map(v => {
           let formData = _.cloneDeep(v)
           delete formData.inputLanes
           delete formData.outputLanes
@@ -1743,8 +1737,8 @@ export default {
             cells.push(node)
           }
           if (v.outputLanes) {
-            v.outputLanes = v.outputLanes.filter((d) => d)
-            v.outputLanes.map((k) => {
+            v.outputLanes = v.outputLanes.filter(d => d)
+            v.outputLanes.map(k => {
               let type = 'app.Link'
               if (v.type === 'database' && stageMap[k].type === 'database') {
                 type = 'app.databaseLink'
@@ -1791,7 +1785,7 @@ export default {
     handleJoinTables(stages, graph) {
       log('Job.handleJoinTables', stages, graph)
       if (stages) {
-        stages.map((stage) => {
+        stages.map(stage => {
           if (
             stage.joinTables &&
             stage.joinTables.length > 0 &&
@@ -1808,16 +1802,16 @@ export default {
             // 目标节点 数据节点 jointables
             // tableName -> joinTable
             let joinTables = {}
-            stage.joinTables.map((table) => {
+            stage.joinTables.map(table => {
               joinTables[table.stageId] = table
             })
 
             let cell = graph.getCell(stage.id)
-            graph.getConnectedLinks(cell, { inbound: true }).forEach((link) => {
+            graph.getConnectedLinks(cell, { inbound: true }).forEach(link => {
               let sourceCell = link.getSourceCell()
               let sourceDataCells = sourceCell
                 .getFirstDataNode()
-                .filter((cell) => !!joinTables[cell.id])
+                .filter(cell => !!joinTables[cell.id])
               if (sourceDataCells && sourceDataCells.length > 0) {
                 let formData = link.getFormData()
                 formData.joinTable = joinTables[sourceDataCells[0].id]
@@ -1830,7 +1824,7 @@ export default {
     querySearch(queryString, cb) {
       let dataCells = this.editor.getAllCells()
       let dataCellName = []
-      dataCells.forEach((cell) => {
+      dataCells.forEach(cell => {
         let formData =
           typeof cell.getFormData === 'function' ? cell.getFormData() : null
         let tableName = {
@@ -1847,7 +1841,7 @@ export default {
       cb(results)
     },
     createFilter(queryString) {
-      return (restaurant) => {
+      return restaurant => {
         return (
           restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
           0

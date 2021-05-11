@@ -18,7 +18,7 @@ export default {
   render(h) {
     let self = this
     let config = self.config
-    let selectFile = (file) => {
+    let selectFile = file => {
       this.fileName = file.name
       self.$emit('input', file)
       self.$emit('change', file)
@@ -52,10 +52,10 @@ export default {
               autoUpload: false,
               accept: config.accept,
               showFileList: false,
-              onChange: (file) => {
+              onChange: file => {
                 selectFile(file.raw)
               },
-              onExceed: (fileList) => {
+              onExceed: fileList => {
                 selectFile(fileList[0])
               }
             },

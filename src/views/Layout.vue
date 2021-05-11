@@ -223,7 +223,7 @@
     <DownAgent
       type="dashboard"
       ref="agentDialog"
-      @status-change="(val) => (agentTipFalg = !val)"
+      @status-change="val => (agentTipFalg = !val)"
     ></DownAgent>
   </el-container>
 </template>
@@ -362,7 +362,7 @@ export default {
         ''
     }
 
-    window.iframeRouterChange = (route) => {
+    window.iframeRouterChange = route => {
       this.$router.push(route)
     }
     let self = this
@@ -370,7 +370,7 @@ export default {
       self.$store.commit(key, data)
     }
 
-    window.getFormLocal = (data) => {
+    window.getFormLocal = data => {
       return self.$store.state[data]
     }
     // this.handleGetPermissions();
@@ -407,7 +407,7 @@ export default {
       this.$confirm(
         this.$t('message.comfirm') + this.$t('app.menu.delFavMenu'),
         this.$t('app.menu.delFavMenu')
-      ).then(async (resFlag) => {
+      ).then(async resFlag => {
         if (!resFlag) {
           return
         }
@@ -425,22 +425,22 @@ export default {
       let permissions = sessionStorage.getItem('tapdata_permissions')
       permissions = permissions ? JSON.parse(permissions) : []
       let routerMap = {}
-      let routes = this.$router.options.routes.find((r) => r.name === 'layout')
+      let routes = this.$router.options.routes.find(r => r.name === 'layout')
         .children
-      routes.forEach((r) => {
+      routes.forEach(r => {
         routerMap[r.name] = r
       })
 
-      let formatMenu = (items) => {
-        return items.map((item) => {
+      let formatMenu = items => {
+        return items.map(item => {
           let router = routerMap[item.name]
           let menu = Object.assign({}, item, router)
           menu.label = this.$t('app.menu.' + (item.alias || menu.name))
           let matched =
-            !menu.code || permissions.some((p) => p.code === menu.code)
+            !menu.code || permissions.some(p => p.code === menu.code)
           if (menu.children) {
             menu.children = formatMenu(menu.children)
-            if (menu.children.every((m) => m.hidden)) {
+            if (menu.children.every(m => m.hidden)) {
               menu.hidden = true
             }
           } else if (!matched) {
@@ -504,7 +504,7 @@ export default {
           break
         case 'signOut':
           this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut')).then(
-            (resFlag) => {
+            resFlag => {
               if (!resFlag) {
                 return
               }
@@ -559,14 +559,14 @@ export default {
     async getLicense() {
       let timeStamp = this.$api('TimeStamp')
       let stime = ''
-      await timeStamp.get().then((res) => {
+      await timeStamp.get().then(res => {
         if (res) {
           stime = res.data || new Date().getTime()
         }
       })
       this.$api('Licenses')
         .expires({})
-        .then((res) => {
+        .then(res => {
           if (res) {
             let expires_on = res.data.expires_on || ''
             if (this.$cookie.get('isAdmin') == 1) {

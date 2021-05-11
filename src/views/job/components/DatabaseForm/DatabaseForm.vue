@@ -150,10 +150,10 @@ export default {
       this.checkDataTypeOptions()
     },
     checkDataTypeOptions() {
-      let options = this.dataTypes.filter((it) =>
+      let options = this.dataTypes.filter(it =>
         window.getSettingByKey('ALLOW_CONNECTION_TYPE').includes(it.value)
       )
-      let list = options.filter((opt) => this.whiteList.includes(opt.value))
+      let list = options.filter(opt => this.whiteList.includes(opt.value))
       defaultConfig[1].options = list
       if (list.length) {
         //默认选择第一个数据库类型
@@ -187,7 +187,7 @@ export default {
     async getDT() {
       let result = await databaseTypesModel.get()
       if (result.data) {
-        let options = result.data.map((dt) => {
+        let options = result.data.map(dt => {
           return { label: dt.name, value: dt.type }
         })
         this.dataTypes = options
@@ -202,7 +202,7 @@ export default {
         let config = func(this)
         let items = defaultConfig.concat(config.items)
         let item = items.find(
-          (it) => it.field === 'database_datetype_without_timezone'
+          it => it.field === 'database_datetype_without_timezone'
         )
         if (item) {
           item.options = this.timezones
@@ -250,7 +250,7 @@ export default {
       }
     },
     submit() {
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           let params = Object.assign({}, this.model, {
             sslCert: this.model.sslKey,
@@ -273,12 +273,12 @@ export default {
             delete params.isUrl
           }
           connectionsModel[this.model.id ? 'patch' : 'post'](params)
-            .then((res) => {
+            .then(res => {
               let id = res.data.id
               this.model.id = id
               this.test(id)
             })
-            .catch((err) => {
+            .catch(err => {
               if (err && err.response.status === 500) {
                 this.$message.error(
                   this.$t('dataForm.error.connectionNameExist')

@@ -69,10 +69,8 @@ export const fieldProcessConfig = {
           outputSchema.fields,
           _.cloneDeep(data.operations)
         )
-        temporary.map((item) => {
-          let targetIndex = outputSchema.fields.findIndex(
-            (n) => n.id === item.id
-          )
+        temporary.map(item => {
+          let targetIndex = outputSchema.fields.findIndex(n => n.id === item.id)
           if (targetIndex === -1 && item.op !== 'CREATE') {
             // data.operations.splice(index,1); //删除找不到id的数据
             return
@@ -91,7 +89,7 @@ export const fieldProcessConfig = {
             outputSchema.fields[targetIndex].field_name = newNameStr
 
             // change children field name
-            outputSchema.fields.forEach((field) => {
+            outputSchema.fields.forEach(field => {
               if (field.field_name.startsWith(name + '.')) {
                 field.field_name =
                   newNameStr + field.field_name.substring(name.length)
@@ -114,7 +112,7 @@ export const fieldProcessConfig = {
             }
             if (triggerFieldId) {
               let triggerFieldIndex = outputSchema.fields.findIndex(
-                (f) => f.id === triggerFieldId
+                f => f.id === triggerFieldId
               )
               outputSchema.fields.splice(triggerFieldIndex + 1, 0, newField)
             } else outputSchema.fields.push(newField)

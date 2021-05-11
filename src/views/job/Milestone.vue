@@ -16,8 +16,7 @@
         </div>
         <div
           v-if="
-            ['error'].includes(dataFlow.status) &&
-            item.status === 'running'
+            ['error'].includes(dataFlow.status) && item.status === 'running'
           "
         >
           <div class="status paused">
@@ -66,7 +65,7 @@ export default {
   },
   created() {
     this.getData(true)
-    event = (data) => {
+    event = data => {
       let dataflow = data.data.fullDocument
       if (dataflow && dataflow.milestones) {
         this.formatData(dataflow.milestones)
@@ -108,7 +107,7 @@ export default {
               }
             })
           })
-          .then((res) => {
+          .then(res => {
             if (res.data) {
               let dataFlow = res.data
               let milestones = dataFlow.milestones || []
@@ -121,7 +120,7 @@ export default {
       }
     },
     formatData(milestones = []) {
-      this.list = milestones.map((m) => {
+      this.list = milestones.map(m => {
         let time = m.status === 'running' ? m.start : m.end
         if (time) {
           time = this.$moment(time).format('YYYY-MM-DD HH:mm:ss')

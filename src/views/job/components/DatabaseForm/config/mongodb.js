@@ -24,7 +24,7 @@ export default function (vm) {
       let ssl = vm.model.ssl
       let sslValidate = vm.model.sslValidate
       vm.$nextTick(() => {
-        vm.config.items = vm.config.items.map((item) => {
+        vm.config.items = vm.config.items.map(item => {
           if (item.showByUrl) {
             item.show = item.showByUrl === 1 ? isUrl : !isUrl
           }

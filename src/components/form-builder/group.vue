@@ -30,7 +30,7 @@ export default {
             config: it
           },
           on: Object.assign({}, this.on, {
-            input: (val) => {
+            input: val => {
               this.$set(values, index, val)
               this.on.input(values)
             }

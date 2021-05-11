@@ -171,7 +171,7 @@ export default {
         return
       }
       let self = this
-      connections.get([connectionId]).then((result) => {
+      connections.get([connectionId]).then(result => {
         if (result.data) {
           let schemas = (result.data.schema && result.data.schema.tables) || []
           schemas = schemas.sort((t1, t2) =>
@@ -212,7 +212,7 @@ export default {
       let result = _.cloneDeep(this.model)
       if (result.connectionId) {
         let database = this.databases.filter(
-          (db) => db.id === result.connectionId
+          db => db.id === result.connectionId
         )
         if (database && database.length > 0) {
           result.name = database[0].name

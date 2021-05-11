@@ -330,7 +330,7 @@ export default {
       }
       this.$api('MetadataInstances')
         .get(params)
-        .then((result) => {
+        .then(result => {
           let data = result.data || []
           if (data && data.length !== 0) {
             this.metaData = {
@@ -352,7 +352,7 @@ export default {
     getConnections() {
       this.$api('connections')
         .get([this.model.connectionId])
-        .then((result) => {
+        .then(result => {
           let data = result.data || {}
           if (data) {
             this.connections = {
@@ -378,7 +378,7 @@ export default {
         customField = this.customFields.split(',')
       }
       let fields = []
-      fields = this.multipleSelection.map((field) => field.field_name)
+      fields = this.multipleSelection.map(field => field.field_name)
       //合并数组
       fields = Array.from(new Set([...fields, ...customField]))
       this.$emit('previewVisible', false)

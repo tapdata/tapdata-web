@@ -420,7 +420,7 @@ export default {
     },
     handleSelectTag() {
       let tagList = {}
-      this.multipleSelection.forEach((row) => {
+      this.multipleSelection.forEach(row => {
         if (row.listtags && row.listtags.length > 0) {
           tagList[row.listtags[0].id] = {
             value: row.listtags[0].value
@@ -438,7 +438,7 @@ export default {
         }
         attributes.push(node)
       } else {
-        this.multipleSelection.forEach((row) => {
+        this.multipleSelection.forEach(row => {
           row.listtags = row.listtags || []
           let node = {
             id: row.id,
@@ -497,7 +497,7 @@ export default {
       this.getData()
     },
     keyupEnter() {
-      document.onkeydown = (e) => {
+      document.onkeydown = e => {
         if (e.keyCode === 13) {
           this.getData()
         }
@@ -512,7 +512,7 @@ export default {
       setTimeout(() => that.$set(item, 'noshow', false), 1500)
     },
     rowCheckAll() {
-      this.page.data.forEach((it) => this.rowCheck(it))
+      this.page.data.forEach(it => this.rowCheck(it))
     },
     async getData(pageNum) {
       this.loading = true
@@ -544,7 +544,7 @@ export default {
       })
       await dataFlows
         .tableFlow(_params)
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             this.handleData(res.data.datas)
             this.page.data = res.data.datas
@@ -557,7 +557,7 @@ export default {
     },
     handleData(data) {
       if (!data) return
-      data.forEach((item) => {
+      data.forEach(item => {
         this.cookRecord(item)
       })
     },
@@ -577,7 +577,7 @@ export default {
       else item.output = '0'
       if (item.outf && item.outf.length) {
         item.input = 0
-        item.outf.forEach((it) => {
+        item.outf.forEach(it => {
           if (!it.input) it.input = { rows: 0 }
           item.input += it.input.rows
           if (item.stages.transmissionTime == 0 && it.transmissionTime > 0)

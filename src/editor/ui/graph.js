@@ -151,7 +151,7 @@ export default class Graph extends Component {
           curLink = self.graph.getCell(lid)
         }
         let sameTarget = false
-        self.graph.getConnectedLinks(sourceView.model).map((link) => {
+        self.graph.getConnectedLinks(sourceView.model).map(link => {
           if (
             link.id != curLink.attributes.id &&
             link.getTargetCell() &&
@@ -293,7 +293,7 @@ export default class Graph extends Component {
     })
 
     paper.on({
-      'link:connect': (linkView) => {
+      'link:connect': linkView => {
         if (linkView.targetView.model.getFormData().disabled) {
           linkView.model.disconnect()
           linkView.hideTools()
@@ -345,7 +345,7 @@ export default class Graph extends Component {
         let hasConnected = false
         self.graph
           .getConnectedLinks(elementViewDisconnected.model)
-          .map((link) => {
+          .map(link => {
             if (link.target().port == magent.getAttribute('port'))
               hasConnected = true
             if (link.source().port == magent.getAttribute('port'))
@@ -361,7 +361,7 @@ export default class Graph extends Component {
     })
 
     graph.on({
-      remove: (model) => {
+      remove: model => {
         log('Graph.graph.remove')
         if (model.isLink()) {
           self.graph
@@ -371,7 +371,7 @@ export default class Graph extends Component {
           let hasConnected = false
           self.graph
             .getConnectedLinks(self.graph.getCell(model.get('source').id))
-            .map((link) => {
+            .map(link => {
               if (link.target().port == model.get('source').port)
                 hasConnected = true
               if (link.source().port == model.get('source').port)
@@ -385,7 +385,7 @@ export default class Graph extends Component {
           if (model.get('target').id) {
             self.graph
               .getConnectedLinks(self.graph.getCell(model.get('target').id))
-              .map((link) => {
+              .map(link => {
                 if (link.target().port == model.get('target').port)
                   hasConnected = true
                 if (link.source().port == model.get('target').port)
@@ -508,7 +508,7 @@ export default class Graph extends Component {
     let paper = this.paper
     let cells = this.graph.getCells()
 
-    cells.forEach((cell) => {
+    cells.forEach(cell => {
       if (cell.unhighlight) cell.unhighlight()
       else {
         let cellView = paper.findViewByModel(cell)
@@ -605,12 +605,12 @@ export default class Graph extends Component {
     let cells = stencilConfig.shapes //通过mappingTemplate 将节点分为两大类
     let mappingTemplate = getUrlSearch('mapping')
     if (mappingTemplate === 'cluster-clone') {
-      cells['data'] = cells['data'].filter((cell) =>
+      cells['data'] = cells['data'].filter(cell =>
         ['app.Database', 'app.FileNode', 'app.GridFSNode'].includes(cell.type)
       )
     } else if (mappingTemplate === 'custom') {
       cells['data'] = cells['data'].filter(
-        (cell) => !['app.Database', 'app.FileNode'].includes(cell.type)
+        cell => !['app.Database', 'app.FileNode'].includes(cell.type)
       )
     }
     stencil.render().load(cells)
@@ -627,7 +627,7 @@ export default class Graph extends Component {
       cell.set(SCHEMA_DATA_KEY, schema)
       cell.set(OUTPUT_SCHEMA_DATA_KEY, schema)
     }
-    ;['l', 'r', 't', 'b'].forEach((dir) =>
+    ;['l', 'r', 't', 'b'].forEach(dir =>
       cell.addPort({
         id: cell.id + '_' + dir,
         group: dir
@@ -850,7 +850,7 @@ export default class Graph extends Component {
       )
       halo.$el.find('button').click(() => {
         event.stopPropagation()
-        this.graph.getConnectedLinks(elementView.model).forEach((link) => {
+        this.graph.getConnectedLinks(elementView.model).forEach(link => {
           link.attr('line/stroke', '#dedede')
           link.toBack()
           link.attributes.form_data.disabled = true
@@ -1045,7 +1045,7 @@ export default class Graph extends Component {
           try {
             if (this.selection.collection && this.selection.collection.models) {
               let models = this.selection.collection.models || []
-              models.map((cell) => {
+              models.map(cell => {
                 let formData =
                   typeof cell.getFormData === 'function'
                     ? cell.getFormData()
@@ -1094,7 +1094,7 @@ export default class Graph extends Component {
         on: function (evt) {
           evt.preventDefault()
           let hasDised = false
-          this.selection.collection.toArray().forEach((it) => {
+          this.selection.collection.toArray().forEach(it => {
             if (it.getFormData().disabled) hasDised = true
           })
           if (hasDised) {
@@ -1160,7 +1160,7 @@ export default class Graph extends Component {
       }
     ]
     let keyboardOption = {}
-    keyboardEvents.forEach((e) => {
+    keyboardEvents.forEach(e => {
       keyboardOption[e.keystroke] = e.on
     })
 
@@ -1319,7 +1319,7 @@ export default class Graph extends Component {
       this.toolbar.getWidgetByName('redo').disable()
       this.toolbar.getWidgetByName('undo').disable()
       this.toolbar.getWidgetByName('clear').disable()
-      this.graph.getCells().forEach((c) => {
+      this.graph.getCells().forEach(c => {
         c.findView(this.paper).options.interactive.addLinkFromMagnet = false
       })
       setTimeout(() => this.paperScroller.centerContent(), 0)
@@ -1336,16 +1336,16 @@ export default class Graph extends Component {
     setTimeout(() => {
       self.paperScroller.centerContent()
       //兼容老数据
-      self.graph.getCells().forEach((cell) => {
+      self.graph.getCells().forEach(cell => {
         if (cell.isLink() || cell.getPorts().length > 1) return
-        ;['l', 'r', 't', 'b'].forEach((dir) =>
+        ;['l', 'r', 't', 'b'].forEach(dir =>
           cell.addPort({
             id: cell.id + '_' + dir,
             group: dir
           })
         )
       })
-      self.graph.getCells().forEach((cell) => {
+      self.graph.getCells().forEach(cell => {
         if (cell.isLink() && !cell.get('target').port) {
           let lv = cell.findView(self.paper),
             dir = 'l',
@@ -1357,7 +1357,7 @@ export default class Graph extends Component {
           tMag = cell
             .getTargetCell()
             .get('ports')
-            .items.find((it) => it.group == dir)
+            .items.find(it => it.group == dir)
           if (tMag) {
             cell.set(
               'target',
@@ -1379,7 +1379,7 @@ export default class Graph extends Component {
           tMag = cell
             .getSourceCell()
             .get('ports')
-            .items.find((it) => it.group == dir)
+            .items.find(it => it.group == dir)
           if (tMag) {
             cell.set(
               'source',
@@ -1414,15 +1414,15 @@ export default class Graph extends Component {
     function getInPath(cell) {
       let newPath = this.graph
         .getConnectedLinks(cell, { inbound: true })
-        .map((link) => {
+        .map(link => {
           let p = []
-          inPath[inPath.length - 1].forEach((c) => p.push(c))
+          inPath[inPath.length - 1].forEach(c => p.push(c))
           p.push(link.getSourceCell())
           return p
         })
       if (newPath.length) {
         inPath.pop()
-        newPath.forEach((p) => {
+        newPath.forEach(p => {
           inPath.push(p)
           getInPath.call(this, p[p.length - 1])
         })
@@ -1431,15 +1431,15 @@ export default class Graph extends Component {
     function getOutPath(cell) {
       let newPath = this.graph
         .getConnectedLinks(cell, { outbound: true })
-        .map((link) => {
+        .map(link => {
           let p = []
-          outPath[outPath.length - 1].forEach((c) => p.push(c))
+          outPath[outPath.length - 1].forEach(c => p.push(c))
           p.push(link.getTargetCell())
           return p
         })
       if (newPath.length) {
         outPath.pop()
-        newPath.forEach((p) => {
+        newPath.forEach(p => {
           if (p) {
             outPath.push(p)
             getOutPath.call(this, p[p.length - 1])
@@ -1453,14 +1453,14 @@ export default class Graph extends Component {
     getOutPath.call(this, target.model)
     let paths = [],
       valid = true
-    inPath.forEach((ins) => {
-      outPath.forEach((out) => {
+    inPath.forEach(ins => {
+      outPath.forEach(out => {
         let res = [].concat(ins)
         for (let i = 0; i < out.length; i++) res.unshift(out[i])
         paths.push(res)
       })
     })
-    paths.forEach((path) => {
+    paths.forEach(path => {
       for (let i = path.length; i > 0; i--) {
         if (path[i - 1].get('type') == 'app.Aggregate') {
           for (let j = i; j > 0; j--) {

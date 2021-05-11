@@ -573,7 +573,7 @@ export default {
         this.model.isUrl = true
       }
       if (this.model.database_type === 'file' && this.model.file_sources) {
-        this.model.file_sources.forEach((item) => {
+        this.model.file_sources.forEach(item => {
           if (item.exclude_filename) {
             this.$set(item, 'selectFileType', 'exclude')
           } else {
@@ -616,7 +616,7 @@ export default {
     async getDT(type) {
       let result = await databaseTypesModel.get()
       if (result.data) {
-        let options = result.data.map((dt) => {
+        let options = result.data.map(dt => {
           return { label: dt.name, value: dt.type }
         })
         this.dataTypes = options
@@ -641,14 +641,14 @@ export default {
         let config = func(this)
         let items = defaultConfig.concat(config.items)
         let item = items.find(
-          (it) => it.field === 'database_datetype_without_timezone'
+          it => it.field === 'database_datetype_without_timezone'
         )
         if (item) {
           item.options = this.timezones
         }
-        let itemIsUrl = items.find((it) => it.field === 'isUrl')
-        let sslKey = items.find((it) => it.field === 'sslKeyFile')
-        let sslCA = items.find((it) => it.field === 'sslCAFile')
+        let itemIsUrl = items.find(it => it.field === 'isUrl')
+        let sslKey = items.find(it => it.field === 'sslKeyFile')
+        let sslCA = items.find(it => it.field === 'sslCAFile')
         if (
           this.model.database_type === 'mongodb' &&
           this.$route.params.id &&
@@ -697,7 +697,7 @@ export default {
     getInstanceRegion() {
       this.$api('tcm')
         .getRegionZone()
-        .then((data) => {
+        .then(data => {
           this.instanceMock = data.data || []
           if (this.model.region === '' && this.instanceMock.length > 0) {
             this.model.region = this.instanceMock[0].code
@@ -711,7 +711,7 @@ export default {
     },
     changeInstanceRegion() {
       let zone = this.instanceMock.filter(
-        (item) => item.code === this.model.region
+        item => item.code === this.model.region
       )
       if (zone.length > 0) {
         this.model.zone = this.model.zone || zone[0].zones[0].code
@@ -729,7 +729,7 @@ export default {
       }
       this.$api('tcm')
         .productVip(param)
-        .then((data) => {
+        .then(data => {
           this.dataSourceMock = data.data.poolList || []
           if (this.model.s_region === '' && this.dataSourceMock.length > 0) {
             this.model.s_region = this.dataSourceMock[0].poolId
@@ -740,7 +740,7 @@ export default {
     },
     changeDataSourceRegion() {
       let zone = this.dataSourceMock.filter(
-        (item) => item.poolId === this.model.s_region
+        item => item.poolId === this.model.s_region
       )
       if (zone.length > 0) {
         this.model.s_zone = this.model.s_zone || zone[0].zoneInfo[0].zoneCode
@@ -757,7 +757,7 @@ export default {
         return
       }
       let currentZone = this.dataSourceZone.filter(
-        (item) => item.zoneCode === this.model.s_zone
+        item => item.zoneCode === this.model.s_zone
       )
       if (currentZone.length > 0) {
         this.model.database_host =
@@ -770,9 +770,9 @@ export default {
       switch (type) {
         case 'region': {
           // 第一步 选择实例 选择区域
-          let region = items.find((it) => it.field === 'region')
+          let region = items.find(it => it.field === 'region')
           if (region) {
-            region.options = data.map((item) => {
+            region.options = data.map(item => {
               return {
                 id: item.code,
                 name: item.name,
@@ -785,9 +785,9 @@ export default {
         }
         case 'zone': {
           //映射可用区
-          let zone = items.find((it) => it.field === 'zone')
+          let zone = items.find(it => it.field === 'zone')
           if (zone) {
-            zone.options = this.instanceModelZone.map((item) => {
+            zone.options = this.instanceModelZone.map(item => {
               return {
                 id: item.code,
                 name: item.name,
@@ -800,9 +800,9 @@ export default {
         }
         case 's_defaultRegion': {
           //源端默认等于选择实例可用区
-          let s_region = items.find((it) => it.field === 's_region')
+          let s_region = items.find(it => it.field === 's_region')
           if (s_region) {
-            s_region.options = this.dataSourceMock.map((item) => {
+            s_region.options = this.dataSourceMock.map(item => {
               return {
                 id: item.poolId,
                 name: item.poolName,
@@ -815,9 +815,9 @@ export default {
         }
         case 's_defaultZone': {
           //映射可用区
-          let s_zone = items.find((it) => it.field === 's_zone')
+          let s_zone = items.find(it => it.field === 's_zone')
           if (s_zone) {
-            s_zone.options = this.dataSourceZone.map((item) => {
+            s_zone.options = this.dataSourceZone.map(item => {
               return {
                 id: item.zoneCode,
                 name: item.zoneName,
@@ -834,7 +834,7 @@ export default {
       this.dialogTestVisible = false
     },
     handleEcsList() {
-      let ecs = this.ecsList.filter((item) => item.id === this.model.ecs)
+      let ecs = this.ecsList.filter(item => item.id === this.model.ecs)
       this.model.vpc = '' //清空当前子级值
       if (ecs.length > 0) {
         this.vpcList = ecs[0].portDetail
@@ -857,7 +857,7 @@ export default {
       }
       this.$api('tcm')
         .getEcsList(userId, params)
-        .then((result) => {
+        .then(result => {
           if (result.data) {
             const newList = result.data.ecsList
             if (newList.length > 0) {
@@ -868,9 +868,7 @@ export default {
     },
     //控制是否开通网络策略
     handleStrategy() {
-      let currentData = this.ecsList.filter(
-        (item) => item.id === this.model.ecs
-      )
+      let currentData = this.ecsList.filter(item => item.id === this.model.ecs)
       if (currentData.length === 0) return
       this.model.platformInfo.strategyExistence =
         currentData[0].strategyExistence
@@ -882,7 +880,7 @@ export default {
     createStrategy() {
       this.createStrategyDisabled = true
       let currentData = this.vpcList.filter(
-        (item) => item.portId === this.model.vpc
+        item => item.portId === this.model.vpc
       )
       if (currentData.length === 0) return
       let params = {
@@ -894,7 +892,7 @@ export default {
       }
       this.$api('tcm')
         .strategy(params)
-        .then((result) => {
+        .then(result => {
           this.model.platformInfo.strategyExistence = true
           if (result.data) {
             this.getEcsList() //更新Ecs列表
@@ -922,7 +920,7 @@ export default {
         confirmButtonText: '放弃',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -933,7 +931,7 @@ export default {
       if (!ops.sourceData || ops.sourceData.length === 0) {
         return
       }
-      let data = ops.sourceData.filter((item) => item[ops.target] === ops.field)
+      let data = ops.sourceData.filter(item => item[ops.target] === ops.field)
       if (data.length === 0) return
       return data[0][ops.name]
     },
@@ -994,7 +992,7 @@ export default {
         this.model.database_type === 'file' &&
         this.model.connection_type === 'source'
       ) {
-        this.$refs.fileForm.validate((valid) => {
+        this.$refs.fileForm.validate(valid => {
           if (!valid) {
             flag = false
           }
@@ -1018,7 +1016,7 @@ export default {
       // 	this.model.database_type = 'mysql pxc';
       // }
 
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid && flag) {
           let params = Object.assign(
             {},
@@ -1070,7 +1068,7 @@ export default {
                 this.$router.push('/connections')
               }
             })
-            .catch((err) => {
+            .catch(err => {
               if (err && err.response) {
                 if (err.response.msg.indexOf('duplication for names') > -1) {
                   this.$message.error(
@@ -1102,7 +1100,7 @@ export default {
       if (!result.data.result || result.data.result.length === 0) {
         this.$message.error(this.$t('dataForm.form.agentMsg'))
       } else {
-        this.$refs.form.validate((valid) => {
+        this.$refs.form.validate(valid => {
           if (valid) {
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
               this.model['platformInfo'] = Object.assign(
@@ -1165,7 +1163,7 @@ export default {
           this.$message.success(this.$t('message.saveOK'))
           this.dialogEditNameVisible = false
         })
-        .catch((err) => {
+        .catch(err => {
           this.editBtnLoading = false
           if (err && err.response) {
             if (err.response.msg.indexOf('duplication for names') > -1) {

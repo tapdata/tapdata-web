@@ -169,11 +169,11 @@ export default function () {
       graph.clear()
 
       graph.vcomp = vcomp
-      rdatas.forEach((table) => {
+      rdatas.forEach(table => {
         if (table.items) {
           let items = table.items[0].items || []
           if (items.length > 0) {
-            items.forEach((it) => {
+            items.forEach(it => {
               if (it.is_deleted) {
                 it['icon'] = '../assets/relation/removeField.svg'
               }
@@ -206,7 +206,7 @@ export default function () {
         node.addTo(graph)
       })
 
-      var links = linkdatas.map((link) => {
+      var links = linkdatas.map(link => {
         let res = new joint.shapes.mapping.Link({
           source: {
             id: link.source.id,

@@ -305,7 +305,7 @@ export default {
         .get([this.id], {
           fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
         })
-        .then((res) => {
+        .then(res => {
           if (res.statusText === 'OK' || res.status === 200) {
             this.validateStatus = res.data.validateStatus
             if (
@@ -339,7 +339,7 @@ export default {
           }
         }
       }
-      ValidationResults.get(where).then((res) => {
+      ValidationResults.get(where).then(res => {
         if (res.statusText === 'OK' || res.status === 200) {
           if (res.data) {
             this.loading = false
@@ -397,7 +397,7 @@ export default {
         ] = this.source.tableName
       }
       this.failRowLoading = true
-      ValidationResults.get(whereFailedRow).then((res) => {
+      ValidationResults.get(whereFailedRow).then(res => {
         if (res.statusText === 'OK' || res.status === 200) {
           this.failRowLoading = false
           if (res.data) {
@@ -426,7 +426,7 @@ export default {
       if (this.source.tableName && this.source.tableName !== '') {
         whereCount.where['sourceStage.tableName'] = this.source.tableName
       }
-      ValidationResults.count(whereCount).then((res) => {
+      ValidationResults.count(whereCount).then(res => {
         if (res.statusText === 'OK' || res.status === 200) {
           if (res.data) {
             this.count = res.data.count
@@ -441,7 +441,7 @@ export default {
       let data = {
         validateStatus: 'interrupted'
       }
-      dataFlows.patchId(this.id, data).then((res) => {
+      dataFlows.patchId(this.id, data).then(res => {
         if (res.statusText === 'OK' || res.status === 200) {
           self.editor.showMonitor()
         }

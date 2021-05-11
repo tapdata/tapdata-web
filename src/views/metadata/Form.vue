@@ -415,7 +415,7 @@ export default {
       }
       this.getTableData &&
         this.getTableData.length &&
-        this.getTableData.forEach((val) => {
+        this.getTableData.forEach(val => {
           if (unavailableTable.indexOf(val.original_name) >= 0) {
             return
           }
@@ -428,7 +428,7 @@ export default {
       this.fieldList = []
       let _this = this,
         id = ''
-      this.getTableData.forEach((item) => {
+      this.getTableData.forEach(item => {
         if (item.original_name === name) {
           id = item.id
         }
@@ -447,8 +447,8 @@ export default {
       let relationName = await _this.$api('MetadataInstances').getId(id, params)
       let duplicateName = []
       if (_this.metadata.relation && _this.metadata.relation.length) {
-        _this.metadata.relation.forEach((item) => {
-          item.fields.forEach((fieldName) => {
+        _this.metadata.relation.forEach(item => {
+          item.fields.forEach(fieldName => {
             duplicateName.push(fieldName.local)
           })
         })
@@ -462,10 +462,8 @@ export default {
               _this.form.relation[i].table_name
             )
             if (index > -1) {
-              relationName.data.fields.forEach((field) =>
-                fieldsList.push(field)
-              )
-              fieldsList.map((item) => {
+              relationName.data.fields.forEach(field => fieldsList.push(field))
+              fieldsList.map(item => {
                 let isname = duplicateName.indexOf(item.field_name)
                 if (isname == -1) {
                   _this.fieldList.push(item)
@@ -526,7 +524,7 @@ export default {
     handleSelectDictionary() {
       if (this.selectDictionaryTem) {
         this.dialogDictionaryVisible = false
-        this.dictionaryList.forEach((item) => {
+        this.dictionaryList.forEach(item => {
           if (item.name === this.selectDictionaryTem) {
             this.form.dictionary = item.typearr
           }
@@ -604,11 +602,11 @@ export default {
       let fields = this.metadata.fields
 
       if (fields && fields.length) {
-        fields.forEach((field) => {
+        fields.forEach(field => {
           fieldsArr.push(field.field_name)
           field.relation &&
             field.relation.length &&
-            field.relation.forEach((item) => {
+            field.relation.forEach(item => {
               let key = item.table_name + item.rel
               if (groupRelation[key]) {
                 groupRelation[key].fields.push({
@@ -633,7 +631,7 @@ export default {
 
       let relation = Object.values(groupRelation)
 
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
           let params = {
             // field_name: this.form.field_name,

@@ -249,7 +249,7 @@ export default {
       this.databaseSelectConfig.loading = false
       let self = this
       if (result.data) {
-        this.databaseSelectConfig.options = result.data.map((item) => {
+        this.databaseSelectConfig.options = result.data.map(item => {
           return {
             id: item.id,
             name: item.name,
@@ -270,7 +270,7 @@ export default {
 
       this.cell.graph
         .getConnectedLinks(this.cell, { outbound: true })
-        .forEach((link) => {
+        .forEach(link => {
           let orignData = link.getFormData()
           if (orignData) {
             orignData.selectSourceDatabase = {
@@ -292,7 +292,7 @@ export default {
     lookupDatabaseType() {
       if (!this.model.connectionId) return
       let selectedDbs = this.databaseSelectConfig.options.filter(
-        (db) => db.id === this.model.connectionId
+        db => db.id === this.model.connectionId
       )
       if (selectedDbs && selectedDbs.length > 0) {
         this.database_type = selectedDbs[0].database_type
@@ -312,7 +312,7 @@ export default {
       }
       connections
         .customQuery([connectionId], { schema: true })
-        .then((result) => {
+        .then(result => {
           if (result.data) {
             self.databaseInfo = result.data
             self.model.database_type = self.databaseInfo.database_type
@@ -325,13 +325,13 @@ export default {
                 : -1
             )
             if (!(this.firstRound && this.databaseTables.length > 0)) {
-              let tablesArr = tables.filter((item) => {
+              let tablesArr = tables.filter(item => {
                 if (item.table_name) {
                   return item.table_name
                 }
               })
               this.databaseTables = [
-                ...new Set(tablesArr.map((item) => item.table_name))
+                ...new Set(tablesArr.map(item => item.table_name))
               ]
             }
 
@@ -349,7 +349,7 @@ export default {
     handleIncludeTable() {
       this.cell.graph
         .getConnectedLinks(this.cell, { inbound: true })
-        .forEach((link) => {
+        .forEach(link => {
           let orignData = link.getFormData()
           let includeTable = [],
             databaseTables = []
@@ -358,7 +358,7 @@ export default {
             orignData.selectSourceArr &&
             orignData.selectSourceArr.length
           ) {
-            includeTable = orignData.selectSourceArr.map((item) => {
+            includeTable = orignData.selectSourceArr.map(item => {
               return orignData.table_prefix + item + orignData.table_suffix
             })
 
@@ -371,7 +371,7 @@ export default {
       if (!connectionId) {
         return
       }
-      connections.customQuery([connectionId]).then((result) => {
+      connections.customQuery([connectionId]).then(result => {
         if (result.data) {
           this.loadDataModels([connectionId])
           // this.database_host = result.data.database_host;
@@ -381,7 +381,7 @@ export default {
     },
     filter(list, keyword) {
       let reg = new RegExp(keyword, 'ig')
-      return keyword ? list.filter((t) => t.table_name.match(reg)) : list
+      return keyword ? list.filter(t => t.table_name.match(reg)) : list
     },
     // checkAll() {
     // 	let pane = this.tabs[this.activeName];
@@ -422,7 +422,7 @@ export default {
       let result = _.cloneDeep(this.model)
       if (result.connectionId) {
         let database = this.databaseSelectConfig.options || []
-        database = database.filter((db) => db.id === result.connectionId)
+        database = database.filter(db => db.id === result.connectionId)
 
         if (this.isSourceDataNode) {
           delete result.dropTable

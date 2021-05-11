@@ -10,10 +10,10 @@ const CancelToken = axios.CancelToken
 
 axios.interceptors.request.use(
   function (config) {
-    config.paramsSerializer = (params) => {
+    config.paramsSerializer = params => {
       return Qs.stringify(params, {
         arrayFormat: 'brackets',
-        encoder: (str) => window.encodeURIComponent(str)
+        encoder: str => window.encodeURIComponent(str)
       })
     }
     let accessToken = Cookie.get('token')
@@ -44,7 +44,7 @@ axios.interceptors.request.use(
 
     let key = JSON.stringify(config)
     let cancelFunc = null
-    config.cancelToken = new CancelToken((c) => {
+    config.cancelToken = new CancelToken(c => {
       cancelFunc = c
     })
     if (pending.includes(key)) {
@@ -61,10 +61,10 @@ axios.interceptors.request.use(
 )
 
 axios.interceptors.response.use(
-  (response) => {
+  response => {
     return new Promise((resolve, reject) => {
       let key = JSON.stringify(response.config)
-      let index = pending.findIndex((it) => it === key)
+      let index = pending.findIndex(it => it === key)
       pending.splice(index, 1)
       let data = response.data
       if (data.code === 'ok') {
@@ -118,7 +118,7 @@ axios.interceptors.response.use(
       }
     })
   },
-  (error) => {
+  error => {
     let rsp = error.response
     if (rsp) {
       switch (rsp.status) {

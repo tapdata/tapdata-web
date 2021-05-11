@@ -88,7 +88,7 @@ export default {
   },
 
   async mounted() {
-    this.$refs.entity.$on('dataChanged', (model) => {
+    this.$refs.entity.$on('dataChanged', model => {
       log('FieldProcess.SchemaEditor.dataChanged', model)
       this.model.operations = model.operations
       this.model.scripts = model.scripts
@@ -100,7 +100,7 @@ export default {
     setData(data, cell) {
       if (data) {
         //模型改变 数据的兼容处理
-        Object.keys(data).forEach((key) => (this.model[key] = data[key]))
+        Object.keys(data).forEach(key => (this.model[key] = data[key]))
       }
       this.model.originalSchema = mergeJoinTablesToTargetSchema(
         null,
@@ -120,7 +120,7 @@ export default {
         let ids = getFieldsIds(schema.fields) || []
         //先检车schema是否无ID属性
         if (ids || ids.length > 0) {
-          ids.forEach((id) => {
+          ids.forEach(id => {
             if (!id) {
               this.showUndefined = true
             }

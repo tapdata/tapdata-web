@@ -14,7 +14,7 @@
       @input="inputHandler"
     >
       <el-option
-        v-for="opt in options.filter((i) => !!i)"
+        v-for="opt in options.filter(i => !!i)"
         :key="opt.id + opt.field_name"
         :label="opt.field_name"
         :value="opt.field_name"
@@ -49,7 +49,7 @@ export default {
       //过滤空字符串并去重，之后使用逗号分隔
       this.$emit(
         'input',
-        Array.from(new Set(values.filter((v) => !!v.trim()))).join(',')
+        Array.from(new Set(values.filter(v => !!v.trim()))).join(',')
       )
     }
   }

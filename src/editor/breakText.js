@@ -121,7 +121,7 @@ const breakText = function (text, size, styles, opt) {
         for (var j = 0, jl = eolWords.length - 1; j < jl; j++) {
           eolWords.splice(2 * j + 1, 0, eol)
         }
-        words.splice(i, 1, ...eolWords.filter((word) => word !== ''))
+        words.splice(i, 1, ...eolWords.filter(word => word !== ''))
         i--
         len = words.length
       } else {

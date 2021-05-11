@@ -646,7 +646,7 @@ export default {
       let oldTableData = this.metadataDataObj.fields
       if (val) {
         this.filterData = []
-        this.metadataDataObj.fields.filter((item) => {
+        this.metadataDataObj.fields.filter(item => {
           if (
             String(item.field_name).indexOf(val) > -1 ||
             (item.alias_name && String(item.alias_name).indexOf(val) > -1) ||
@@ -708,7 +708,7 @@ export default {
       return Promise.all([
         this.$api('MetadataInstances').get([this.$route.query.id])
       ])
-        .then((res) => {
+        .then(res => {
           this.metadataDataObj = res[0].data
           this.pageTotal =
             (res[0].data.fields && res[0].data.fields.length) || 0
@@ -743,10 +743,10 @@ export default {
             let fields = this.metadataDataObj.fields
 
             if (fields && fields.length) {
-              fields.forEach((field) => {
+              fields.forEach(field => {
                 field.relation &&
                   field.relation.length &&
-                  field.relation.forEach((item) => {
+                  field.relation.forEach(item => {
                     let key = item.table_name + item.rel
                     if (groupRelation[key]) {
                       groupRelation[key].fields.push({

@@ -179,7 +179,7 @@ export default {
     handleWS() {
       ws.ready(() => {
         //接收数据
-        ws.on('testConnectionResult', (data) => {
+        ws.on('testConnectionResult', data => {
           let result = data.result || []
           this.wsError = data.status
           let testData = {
@@ -187,12 +187,10 @@ export default {
           }
           if (result.response_body) {
             let validate_details = result.response_body.validate_details || []
-            let res = validate_details.filter(
-              (item) => item.status !== 'waiting'
-            )
+            let res = validate_details.filter(item => item.status !== 'waiting')
             // let unPassedNums = validate_details.filter(item => item.status !== 'passed');
             if (res.length === 0) {
-              validate_details = validate_details.map((item) => {
+              validate_details = validate_details.map(item => {
                 item.status = 'unTest'
                 return item
               })
@@ -205,7 +203,7 @@ export default {
             testData['status'] = result.status
             this.status = result.status
           } else {
-            let logs = this.testData.testLogs.map((item) => {
+            let logs = this.testData.testLogs.map(item => {
               item.status = 'invalid'
               return item
             })
@@ -217,7 +215,7 @@ export default {
           this.$emit('returnTestData', testData)
         })
         //长连接失败
-        ws.on('testConnection', (data) => {
+        ws.on('testConnection', data => {
           this.wsError = data.status
           let testData = {
             wsError: data.status

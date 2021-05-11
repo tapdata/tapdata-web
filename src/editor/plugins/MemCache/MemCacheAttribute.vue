@@ -254,11 +254,11 @@ export default {
         if (fields) {
           fields = removeDeleted(fields)
         }
-        this.primaryKeyOptions = fields.map((f) => f.field_name)
+        this.primaryKeyOptions = fields.map(f => f.field_name)
         if (!cacheKeys) {
           let primaryKeys = fields
-            .filter((f) => f.primary_key_position > 0)
-            .map((f) => f.field_name)
+            .filter(f => f.primary_key_position > 0)
+            .map(f => f.field_name)
             .join(',')
           this.model.cacheKeys = primaryKeys || this.primaryKeyOptions[0] || ''
         }
@@ -272,7 +272,7 @@ export default {
     },
 
     setLimited(val) {
-      let option = this.sizeLimitedOptions.find((opt) => opt.value === val)
+      let option = this.sizeLimitedOptions.find(opt => opt.value === val)
       this.maxSizeLimited = option ? val : -1
     },
 

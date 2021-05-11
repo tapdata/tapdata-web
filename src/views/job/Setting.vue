@@ -441,7 +441,7 @@ export default {
     getData() {
       let result = _.cloneDeep(this.formData)
       if (result.syncPoints) {
-        result.syncPoints.forEach((point) => {
+        result.syncPoints.forEach(point => {
           point.date = point.date
             ? moment(point.date).format('YYYY-MM-DD HH:mm:ss')
             : ''
@@ -491,7 +491,7 @@ export default {
       let targetCell = this.editor.getSinks()
       let targetCellIds = []
       if (targetCell && targetCell.length > 0) {
-        targetCell.forEach((cell) => {
+        targetCell.forEach(cell => {
           let formData =
             typeof cell.getFormData === 'function' ? cell.getFormData() : null
           targetCellIds.push(formData.connectionId)
@@ -499,7 +499,7 @@ export default {
       }
       if (dataCells && dataCells.length > 0) {
         return dataCells
-          .map((cell) => {
+          .map(cell => {
             let formData =
               typeof cell.getFormData === 'function' ? cell.getFormData() : null
             let index = targetCellIds.indexOf(formData.connectionId)
@@ -510,7 +510,7 @@ export default {
               return formData.connectionId
             }
           })
-          .filter((v) => !!v)
+          .filter(v => !!v)
       }
     },
     // 获取节点里面有聚合设置的值
@@ -518,7 +518,7 @@ export default {
       let dataCells = this.editor.getAllCells()
       if (dataCells && dataCells.length > 0) {
         let connectionName = []
-        dataCells.forEach((cell) => {
+        dataCells.forEach(cell => {
           let formData =
             typeof cell.getFormData === 'function' ? cell.getFormData() : null
           if (formData.collectionAggregate) {
@@ -546,8 +546,8 @@ export default {
         })
       })
       if (result.data && result.data.length > 0) {
-        result.data.forEach((name) => {
-          this.formData.syncPoints.forEach((point) => {
+        result.data.forEach(name => {
+          this.formData.syncPoints.forEach(point => {
             if (name.id === point.connectionId) {
               point.name = name.name
             }
@@ -562,14 +562,14 @@ export default {
         this.getAllConnectionName(connectionIds)
           .then(() => {})
           .catch(() => {})
-        syncPoints = syncPoints.filter((point) =>
+        syncPoints = syncPoints.filter(point =>
           connectionIds.includes(point.connectionId)
         )
         let map = {}
         // connectionId -> syncPoint
-        syncPoints.forEach((s) => (map[s.connectionId] = s))
+        syncPoints.forEach(s => (map[s.connectionId] = s))
 
-        connectionIds.forEach((connectionId) => {
+        connectionIds.forEach(connectionId => {
           if (!map[connectionId]) {
             map[connectionId] = {
               connectionId: connectionId,

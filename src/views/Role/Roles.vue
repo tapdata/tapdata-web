@@ -373,12 +373,12 @@ export default {
         params
       )
 
-      await usersModel.role(_params).then((res) => {
+      await usersModel.role(_params).then(res => {
         if (res && res.data) {
           this.tableData = res.data
         }
       })
-      await rolesModel.count(_params).then((res) => {
+      await rolesModel.count(_params).then(res => {
         if (res && res.data) {
           this.totalNum = res.data.count
         }
@@ -404,7 +404,7 @@ export default {
         }
         this.$api('Permissions')
           .get({})
-          .then((res) => {
+          .then(res => {
             if (res && res.data && res.data.length) {
               this.permissions = res.data
             }
@@ -425,18 +425,16 @@ export default {
       _this.roleusers = []
       _this.oldUser = []
 
-      await roleMappingModel
-        .get({ 'filter[where][roleId]': id })
-        .then((res) => {
-          if (res && res.data) {
-            res.data.forEach((roleMapping) => {
-              if (roleMapping.principalType === 'USER') {
-                _this.roleusers.push(roleMapping.principalId)
-                _this.oldUser.push(roleMapping)
-              }
-            })
-          }
-        })
+      await roleMappingModel.get({ 'filter[where][roleId]': id }).then(res => {
+        if (res && res.data) {
+          res.data.forEach(roleMapping => {
+            if (roleMapping.principalType === 'USER') {
+              _this.roleusers.push(roleMapping.principalId)
+              _this.oldUser.push(roleMapping)
+            }
+          })
+        }
+      })
     },
 
     // 删除角色
@@ -452,7 +450,7 @@ export default {
     async confirmDelete() {
       rolesModel
         .delete(this.deleteObj.id, this.deleteObj.name)
-        .then((res) => {
+        .then(res => {
           if (res && res.data) {
             this.handleDataApi()
             this.$message.success(this.$t('role.delete_success'))
@@ -474,7 +472,7 @@ export default {
     // 创建保存
     createSave() {
       let self = this
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           const record = {
             name: this.form.name,
@@ -488,11 +486,11 @@ export default {
           let newRoleMappings = []
 
           rolesModel[method](record)
-            .then((res) => {
+            .then(res => {
               if (res && res.data) {
                 self.handleDataApi()
                 if (method === 'post') {
-                  this.permissions.forEach((selectPermission) => {
+                  this.permissions.forEach(selectPermission => {
                     if (
                       selectPermission.type === 'read' &&
                       !selectPermission.isMenu
@@ -508,7 +506,7 @@ export default {
                     .deletePermissionRoleMapping(res.data.id, {
                       data: { data: newRoleMappings }
                     })
-                    .then((res) => {
+                    .then(res => {
                       if (res && res.data) {
                         // roleMappingModel.post(newRoleMappings);
                         this.$message.success(this.$t('message.saveOK'))
@@ -517,7 +515,7 @@ export default {
                 }
               }
             })
-            .catch((e) => {
+            .catch(e => {
               if (e.response && e.response.msg) {
                 if (e.response.msg.indexOf('already exists')) {
                   this.$message.error(this.$t('role.alreadyExists'))
@@ -537,9 +535,9 @@ export default {
 
     // 获取用户列表
     async getUserData() {
-      await usersModel.get({}).then((res) => {
+      await usersModel.get({}).then(res => {
         if (res && res.data) {
-          res.data.forEach((item) => {
+          res.data.forEach(item => {
             if (!item.role) {
               this.userGroup.push(item)
             }
@@ -551,11 +549,11 @@ export default {
     // 保存用户
     saveUser() {
       let newRoleMappings = []
-      this.oldUser.forEach((delRolemapping) => {
+      this.oldUser.forEach(delRolemapping => {
         roleMappingModel.delete(delRolemapping.id)
       })
       // _this.oldUser
-      this.roleusers.forEach((roleuser) => {
+      this.roleusers.forEach(roleuser => {
         if (roleuser) {
           newRoleMappings.push({
             principalType: 'USER',
@@ -566,16 +564,16 @@ export default {
       })
       roleMappingModel
         .post(newRoleMappings)
-        .then((res) => {
+        .then(res => {
           if (res && res.data) {
-            res.data.forEach((item) => {
+            res.data.forEach(item => {
               this.roleusers.push(item.principalId)
             })
             this.handleDataApi()
             this.$message.success(this.$t('message.saveOK'))
           }
         })
-        .catch((e) => {
+        .catch(e => {
           if (e.response && e.response.msg) {
             if (e.response.msg.indexOf('already exists')) {
               this.$message.error(this.$t('role.alreadyExists'))
@@ -608,7 +606,7 @@ export default {
         register_user_default: data.register_user_default
       }
 
-      rolesModel.patch(record).then((res) => {
+      rolesModel.patch(record).then(res => {
         if (res && res.data) {
           this.handleDataApi()
         }

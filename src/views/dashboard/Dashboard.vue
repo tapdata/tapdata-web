@@ -687,7 +687,7 @@ export default {
       let params = {
         type: 'dashboard'
       }
-      cluster.get(params).then((res) => {
+      cluster.get(params).then(res => {
         this.serverProcess.tableData = res.data
       })
     },
@@ -697,7 +697,7 @@ export default {
       let self = this
       self.loading = true
       DataFlows.chart()
-        .then((res) => {
+        .then(res => {
           if (res && res.data) {
             self.migrationTaskList = self.handleDataProcessing(res.data.chart1)
             self.syncTaskList = self.handleDataProcessing(res.data.chart5)
@@ -736,7 +736,7 @@ export default {
       dataItem.statusCount.sort((a, b) =>
         a._id > b._id ? 1 : a._id === b._id ? 0 : -1
       )
-      dataItem.statusCount.forEach((element) => {
+      dataItem.statusCount.forEach(element => {
         statusItem.unshift({ name: element._id, value: element.count })
       })
       statusItem.filter((item, index) => {
@@ -826,7 +826,7 @@ export default {
       this.unitType = type
       if (type === 'stage') {
         if (this.kbData.length) {
-          this.dataScreening.series[0].data = this.kbData.map((item) => {
+          this.dataScreening.series[0].data = this.kbData.map(item => {
             return (Number(item) / 1024).toFixed(2)
           })
         }

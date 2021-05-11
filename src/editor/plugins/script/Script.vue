@@ -137,7 +137,7 @@ export default {
   },
   created() {
     let self = this
-    self.$on(EditorEventType.RESIZE, (width) => {
+    self.$on(EditorEventType.RESIZE, width => {
       self.width = width
       this.$refs.debug.resize(width)
     })
@@ -206,8 +206,8 @@ export default {
         }
       })
 
-      this.$refs.debug.show((cb) => {
-        ws.once(EventName.EXECUTE_SCRIPT_RESULT, (msg) => {
+      this.$refs.debug.show(cb => {
+        ws.once(EventName.EXECUTE_SCRIPT_RESULT, msg => {
           clearTimeout(this.sending)
           this.sending = null
           log('Job.ReceiveMessage', msg)

@@ -300,7 +300,7 @@ export default {
           this.model.table_prefix = targetFormData.table_prefix
           this.model.table_suffix = targetFormData.table_suffix
           if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
-            targetFormData.syncObjects.forEach((item) => {
+            targetFormData.syncObjects.forEach(item => {
               selectTargetType.push(item.type)
               if (item.type === 'table') {
                 this.model.selectSourceArr = item.objectNames
@@ -309,7 +309,7 @@ export default {
           }
 
           if (selectTargetType.length) {
-            Object.keys(this.model.selectSourceDatabase).forEach((key) => {
+            Object.keys(this.model.selectSourceDatabase).forEach(key => {
               this.model.selectSourceDatabase[key] = selectTargetType.includes(
                 key
               )
@@ -349,7 +349,7 @@ export default {
             targetFormData.table_suffix = this.model.table_suffix
             targetFormData.syncObjects = []
             if (this.model.selectSourceDatabase) {
-              Object.keys(this.model.selectSourceDatabase).forEach((key) => {
+              Object.keys(this.model.selectSourceDatabase).forEach(key => {
                 if (this.model.selectSourceDatabase[key]) {
                   targetFormData.syncObjects.push({
                     type: key,
@@ -396,7 +396,7 @@ export default {
 
     // 穿梭框值改变的时候
     handleChangeTransfer() {
-      this.sourceData.forEach((el) => {
+      this.sourceData.forEach(el => {
         if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
           el.label = el.key
         }
@@ -432,8 +432,8 @@ export default {
         this.model.selectSourceArr = Array.from(
           new Set(this.model.selectSourceArr)
         )
-        this.sourceData.forEach((sourceName) => {
-          this.model.selectSourceArr.map((k) => {
+        this.sourceData.forEach(sourceName => {
+          this.model.selectSourceArr.map(k => {
             if (k == sourceName.key) {
               selectSourceArr.push(k)
             }
@@ -490,7 +490,7 @@ export default {
       this.transferLoading = true
       connections
         .customQuery([connectionId], { schema: true })
-        .then((result) => {
+        .then(result => {
           if (result.data) {
             self.databaseInfo = result.data
             let tables = (result.data.schema && result.data.schema.tables) || []
@@ -503,7 +503,7 @@ export default {
             )
 
             if (tables && tables.length) {
-              this.sourceData = tables.map((table) => ({
+              this.sourceData = tables.map(table => ({
                 label: table.table_name,
                 key: table.table_name,
                 // value: table.table_name,

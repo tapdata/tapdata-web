@@ -119,11 +119,11 @@ export class VueAdapter extends BaseObject {
         }
       }
 
-      self.vm.$on('dataChanged', (data) => {
+      self.vm.$on('dataChanged', data => {
         self.setFormData(cell, data)
       })
 
-      self.vm.$on('schemaChange', (schema) => {
+      self.vm.$on('schemaChange', schema => {
         log('VueAdapter.schemaChange', arguments)
         cell.setSchema(schema)
       })

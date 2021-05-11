@@ -306,13 +306,13 @@ export default {
     'createForm.tableName'(val) {
       let includesTimeField = []
       let selectTable = this.createFormConfig.items[2].options.filter(
-        (item) => item.value === val
+        item => item.value === val
       )
       let schemaField =
         selectTable && selectTable.length ? selectTable[0].record.fields : []
       this.createFormConfig.items[3].options = []
       this.createForm.filed = ''
-      schemaField.forEach((v) => {
+      schemaField.forEach(v => {
         if (v.data_type == 'DATE_TIME' || v.data_type == 'DATETIME') {
           includesTimeField.push(v.field_name)
           if (v.field_name == '__tapd8.ts') {
@@ -430,14 +430,14 @@ export default {
           keyword
         })
         if (res.data && res.data.length) {
-          this.tableData = res.data.map((item) => {
+          this.tableData = res.data.map(item => {
             item.indexsFilter = item.indexes.filter(
-              (idx) => idx.expireAfterSeconds && idx.create_by !== 'dba'
+              idx => idx.expireAfterSeconds && idx.create_by !== 'dba'
             )
             return item
           })
 
-          this.tableData.forEach((item) => {
+          this.tableData.forEach(item => {
             for (let i = 0; i < item.indexsFilter.length; i++) {
               for (let key in item.indexsFilter[i]) {
                 if (key === 'name') {
@@ -542,10 +542,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then((res) => {
+        .then(res => {
           let dbOptions = res.data
           let options = []
-          dbOptions.forEach((db) => {
+          dbOptions.forEach(db => {
             options.push({
               label: db.name,
               value: db.id
@@ -584,10 +584,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then((res) => {
+        .then(res => {
           let tables = res.data
           let options = []
-          tables.forEach((item) => {
+          tables.forEach(item => {
             options.push({
               label: item.name,
               value: item.id,
@@ -612,7 +612,7 @@ export default {
     handleOperationClassify(classifications) {
       this.$api('MetadataInstances')
         .classification({
-          metadatas: this.multipleSelection.map((it) => {
+          metadatas: this.multipleSelection.map(it => {
             return {
               id: it.id,
               classifications: classifications
@@ -641,11 +641,11 @@ export default {
     // 保存新建生命周期
     createNewTtl() {
       let _this = this
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           let { tableName, filed, data_type, expire } = _this.createForm
           let selectTable = this.createFormConfig.items[2].options.find(
-            (it) => it.value === tableName
+            it => it.value === tableName
           )
           let key = {}
           key[filed] = 1
@@ -654,7 +654,7 @@ export default {
           if (collection.indexes) {
             let _keyJson = JSON.stringify(key)
             let existsIndexes = collection.indexes.filter(
-              (v) => _keyJson === JSON.stringify(v.key)
+              v => _keyJson === JSON.stringify(v.key)
             )
 
             if (existsIndexes && existsIndexes.length > 0) {

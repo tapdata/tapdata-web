@@ -179,7 +179,7 @@ export default {
         if (this.schemas.length > 0) {
           if (this.model.tableName) {
             let schema = this.schemas.filter(
-              (s) => s.table_name === this.model.tableName
+              s => s.table_name === this.model.tableName
             )
             schema =
               schema && schema.length > 0
@@ -226,7 +226,7 @@ export default {
       this.schemasLoading = true
       connections
         .get([connectionId])
-        .then((result) => {
+        .then(result => {
           if (result.data) {
             let schemas =
               (result.data.schema && result.data.schema.tables) || []

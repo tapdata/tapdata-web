@@ -264,12 +264,12 @@ export default {
       this.loading = true
       notification
         .get(where)
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             this.listData = res.data
             //格式化日期
             if (this.listData && this.listData.length > 0) {
-              this.listData.map((item) => {
+              this.listData.map(item => {
                 item['createTime'] = item.createTime
                   ? moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
                   : ''
@@ -305,7 +305,7 @@ export default {
       }
       notification
         .count(where)
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             this.total = res.data.count
           }
@@ -320,7 +320,7 @@ export default {
           read: false
         }
       }
-      notification.count(where).then((res) => {
+      notification.count(where).then(res => {
         if (res.data) {
           this.count = res.data.count
         }
@@ -328,7 +328,7 @@ export default {
     },
     handleRead(id) {
       let read = this.read
-      notification.patch({ read: true, id: id }).then((res) => {
+      notification.patch({ read: true, id: id }).then(res => {
         if (res.data) {
           this.getUnreadNum() //未读消息数量
           this.getData()
@@ -339,7 +339,7 @@ export default {
     },
     handlePageRead() {
       let ids = []
-      this.listData.map((item) => {
+      this.listData.map(item => {
         ids.push(item.id)
       })
       let where = {
@@ -352,7 +352,7 @@ export default {
       }
       where = JSON.stringify(where)
       let read = this.read
-      notification.upsertWithWhere(where, data).then((res) => {
+      notification.upsertWithWhere(where, data).then(res => {
         if (res.data) {
           this.getUnreadNum() //未读消息数量
           this.getData()
@@ -368,7 +368,7 @@ export default {
       }
       where = JSON.stringify(where)
       let read = this.read
-      notification.readAll(where, data).then((res) => {
+      notification.readAll(where, data).then(res => {
         if (res.data) {
           this.getUnreadNum() //未读消息数量
           this.getData()

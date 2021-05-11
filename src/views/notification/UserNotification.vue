@@ -102,7 +102,7 @@ export default {
     getUsers() {
       this.$api('users')
         .get()
-        .then((res) => {
+        .then(res => {
           this.userOptions = res.data || []
         })
     },
@@ -137,7 +137,7 @@ export default {
       let UserLogs = this.$api('UserLogs')
       UserLogs.count({
         where
-      }).then((res) => {
+      }).then(res => {
         if (res.data) {
           this.page.total = res.data.count
         }
@@ -145,7 +145,7 @@ export default {
       UserLogs.get({
         filter: JSON.stringify(filter)
       })
-        .then((res) => {
+        .then(res => {
           this.page.index = current
           this.list = res.data || []
         })

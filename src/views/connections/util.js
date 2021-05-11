@@ -45,7 +45,7 @@ export const desensitization = function (url) {
 
 export const handleProgress = function (data) {
   let count = 0
-  data.forEach((log) => {
+  data.forEach(log => {
     if (log.status === 'passed') {
       count++
     }

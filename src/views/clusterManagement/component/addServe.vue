@@ -84,7 +84,7 @@ export default {
     // 子组件校验，传递到父组件
     validateForm() {
       let flag = null
-      this.$refs['ruleForm'].validate((valid) => {
+      this.$refs['ruleForm'].validate(valid => {
         if (valid) {
           flag = true
         } else {

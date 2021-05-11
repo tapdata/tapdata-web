@@ -254,11 +254,11 @@ export default {
       let result = {}
       let items = this.formData.items
       if (items && items.length) {
-        let SMTP = find(this.items, (item) => {
+        let SMTP = find(this.items, item => {
           return item.category === 'SMTP'
         })
         if (SMTP && SMTP.items) {
-          SMTP.items.forEach((it) => {
+          SMTP.items.forEach(it => {
             result[it.key_label.split(' ').join('_')] = it.value
           })
         }
@@ -274,7 +274,7 @@ export default {
       _this
         .$api('Licenses')
         .get({})
-        .then((result) => {
+        .then(result => {
           console.log(result, '&&&&&&')
           if (result && result.data) {
             auth_data = result.data
@@ -283,19 +283,19 @@ export default {
       _this
         .$api('Setting')
         .get()
-        .then((res) => {
+        .then(res => {
           let items = [],
             itemsCategories = [],
             cat = []
           if (res && res.data.length) {
-            items = res.data.map((item) => item.category)
+            items = res.data.map(item => item.category)
           }
           items = _.uniq(items)
           items.sort((a, b) => {
             return a.sort < b.sort ? -1 : 1
           })
-          items.map((item) => {
-            let values = res.data.filter((childItem) => {
+          items.map(item => {
+            let values = res.data.filter(childItem => {
               return childItem.category === item && childItem.user_visible
             })
             values.sort((a, b) => {
@@ -307,8 +307,8 @@ export default {
             }
           })
 
-          let sortCategories = cat.map((item) => {
-            let values = res.data.filter((childItem) => {
+          let sortCategories = cat.map(item => {
+            let values = res.data.filter(childItem => {
               return childItem.category === item
             })
             return {
@@ -317,8 +317,8 @@ export default {
             }
           })
 
-          let vals = sortCategories.map((item) => {
-            let value = _.find(itemsCategories, (val) => {
+          let vals = sortCategories.map(item => {
+            let value = _.find(itemsCategories, val => {
               return val.category === item.category
             })
             return Object.assign(value, item)
@@ -343,19 +343,19 @@ export default {
     // 保存
     save() {
       let settingData = []
-      this.formData.items.filter((item) => {
-        item.items.forEach((childItem) => {
+      this.formData.items.filter(item => {
+        item.items.forEach(childItem => {
           settingData.push(childItem)
         })
       })
       this.$api('Setting')
         .save(settingData)
-        .then((res) => {
+        .then(res => {
           if (res) {
             this.$message.success(this.$t('message.saveOK'))
           }
         })
-        .catch((e) => {
+        .catch(e => {
           this.$message.error(e.response.msg)
         })
     },

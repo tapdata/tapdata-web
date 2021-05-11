@@ -1,9 +1,9 @@
 export function setPermission(list) {
   let permissions = []
   if (list) {
-    list.forEach((permission) => {
+    list.forEach(permission => {
       if (permission.resources && permission.resources.length > 0) {
-        permission.resources.forEach((res) => {
+        permission.resources.forEach(res => {
           // if (res.type === 'page')
           permissions.push(res)
         })

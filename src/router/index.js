@@ -727,7 +727,7 @@ router.beforeEach(async (to, from, next) => {
     //判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
     let matched = true
     if (to.meta.code && !window.getSettingByKey('DFS_IGNORE_PERMISSION')) {
-      matched = permissions.some((p) => p.code === to.meta.code)
+      matched = permissions.some(p => p.code === to.meta.code)
     }
     if (matched) {
       // if (showGuide) {

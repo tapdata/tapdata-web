@@ -191,11 +191,11 @@ export default {
           filter: JSON.stringify(filter)
         })
       ]).then(([countRes, res]) => {
-        res.data.forEach((item) => {
+        res.data.forEach(item => {
           if (item.job_ids) {
-            let job_ids = item.job_ids.map((val) => {
+            let job_ids = item.job_ids.map(val => {
               if (item.jobs) {
-                let jobs = item.jobs.filter((v) => v.id === val)
+                let jobs = item.jobs.filter(v => v.id === val)
                 if (jobs && jobs.length > 0) {
                   // return jobs
                   return `<a href="el/#/job?id=${val}" target="_blank">${jobs[0]['name']}</a></br>`

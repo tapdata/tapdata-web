@@ -336,7 +336,7 @@ export default {
         if (this.model.connectionId) {
           this.taskData.id = this.model.connectionId
           if (this.databaseSelectConfig.options.length) {
-            this.databaseSelectConfig.options.forEach((item) => {
+            this.databaseSelectConfig.options.forEach(item => {
               if (item.value === this.model.connectionId) {
                 this.copyConnectionId = item.name
               }
@@ -364,7 +364,7 @@ export default {
           if (fields) {
             fields = removeDeleted(fields)
           }
-          this.primaryKeyOptions = fields.map((f) => f.field_name)
+          this.primaryKeyOptions = fields.map(f => f.field_name)
           // if (!this.model.primaryKeys) {
           // 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
           // 	if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys)).join(',');
@@ -469,7 +469,7 @@ export default {
     if (this.model.connectionId) {
       this.taskData.id = this.model.connectionId
       if (this.databaseSelectConfig.options.length) {
-        this.databaseSelectConfig.options.forEach((item) => {
+        this.databaseSelectConfig.options.forEach(item => {
           if (item.value === this.model.connectionId) {
             this.copyConnectionId = item.name
           }
@@ -540,7 +540,7 @@ export default {
     tableIsLink() {
       this.tableNameId = ''
       if (tempSchemas.length) {
-        tempSchemas.forEach((item) => {
+        tempSchemas.forEach(item => {
           if (item.original_name === this.model.tableName) {
             this.tableNameId = item.id
           }
@@ -570,7 +570,7 @@ export default {
         })
       }
 
-      MetadataInstances.get(params).then((res) => {
+      MetadataInstances.get(params).then(res => {
         this.databaseData = Object.freeze(res.data)
       })
     },
@@ -594,7 +594,7 @@ export default {
 
       this.databaseSelectConfig.loading = false
       if (result.data) {
-        this.databaseSelectConfig.options = result.data.map((item) => {
+        this.databaseSelectConfig.options = result.data.map(item => {
           return {
             id: item.id,
             name: item.name,
@@ -629,9 +629,9 @@ export default {
       }
       self.loading = true
       MetadataInstances.get(params)
-        .then((res) => {
+        .then(res => {
           this.tableIsLink()
-          let schemas = res.data.map((it) => {
+          let schemas = res.data.map(it => {
             it.table_name = it.original_name
             return it
           })
@@ -642,7 +642,7 @@ export default {
               ? 0
               : -1
           )
-          self.schemaSelectConfig.options = tempSchemas.map((item) => ({
+          self.schemaSelectConfig.options = tempSchemas.map(item => ({
             label: item.table_name,
             value: item.table_name
           }))
@@ -670,7 +670,7 @@ export default {
       let self = this
       if (tempSchemas.length > 0) {
         let schemas = tempSchemas.filter(
-          (s) => s.table_name === this.model.tableName
+          s => s.table_name === this.model.tableName
         )
         if (schemas && schemas.length > 0) {
           this.model.tableId = schemas[0].id
@@ -688,15 +688,15 @@ export default {
           })
         }
         self.loading = true
-        MetadataInstances.schema(params).then((res) => {
+        MetadataInstances.schema(params).then(res => {
           if (res.data) {
             let fields = res.data.records[0].schema.tables[0].fields
             // let primaryKeys = fields
             // 	.filter(f => f.primary_key_position > 0)
             // 	.map(f => f.field_name)
             // 	.join(',');
-            self.primaryKeyOptions = fields.map((f) => f.field_name)
-            self.model.custSql.custFields = fields.map((f) => f.field_name)
+            self.primaryKeyOptions = fields.map(f => f.field_name)
+            self.model.custSql.custFields = fields.map(f => f.field_name)
             self.model.custSql.conditions.length = 0
             self.model.custSql.fieldFilterType = 'keepAllFields'
             self.model.custSql.cSql = ''
@@ -749,7 +749,7 @@ export default {
           conds &&
           conds.length > 0
         )
-          conds.forEach((it) => {
+          conds.forEach(it => {
             this.model.custSql.conditions.push(it)
           })
         if (
@@ -830,7 +830,7 @@ export default {
         schema = null,
         templeSchema = []
 
-      ws.on('execute_load_schema_result', (res) => {
+      ws.on('execute_load_schema_result', res => {
         if (res.status === 'SUCCESS' && res.result && res.result.length) {
           templeSchema = res.result
           this.reloadModelLoading = false
@@ -839,7 +839,7 @@ export default {
         }
         this.reloadModelLoading = false
         if (templeSchema && templeSchema.length) {
-          templeSchema.forEach((item) => {
+          templeSchema.forEach(item => {
             if (
               item.connId === this.model.connectionId &&
               item.tableName === this.model.tableName

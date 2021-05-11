@@ -93,7 +93,7 @@ export default {
     this.getData()
     LineageGraphsAPI.get({
       filter: '{"where":{"type":"tableLineageProcessor"}}'
-    }).then((res) => {
+    }).then(res => {
       if (res.data) {
         this.refreshResult = res.data[0]
         if (this.refreshResult.status === 'error') this.rClass = false
@@ -109,7 +109,7 @@ export default {
         level: this.level,
         qualifiedName: this.tableId
       }
-      LineageGraphsAPI.graphData(params).then((res) => {
+      LineageGraphsAPI.graphData(params).then(res => {
         if (res.data) {
           this.graph.draw(res.data.items, res.data.links, this)
         }
@@ -117,7 +117,7 @@ export default {
     },
     refreshData() {
       LineageGraphsAPI.refreshGraphData()
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             this.refreshResult.allProgress = 10
             this.refreshResult.currProgress = 0
@@ -126,7 +126,7 @@ export default {
             this.inter = setInterval(() => {
               LineageGraphsAPI.get({
                 filter: '{"where":{"type":"tableLineageProcessor"}}'
-              }).then((res) => {
+              }).then(res => {
                 if (res.data) {
                   self.refreshResult = res.data[0]
                   if (self.refreshResult.sync_data) {
@@ -152,7 +152,7 @@ export default {
           } else
             LineageGraphsAPI.get({
               filter: '{"where":{"type":"tableLineageProcessor"}}'
-            }).then((res) => {
+            }).then(res => {
               if (res.data) {
                 this.refreshResult = res.data[0]
                 if (this.refreshResult.status === 'error') {
@@ -188,7 +188,7 @@ export default {
       }
       this.$api('LineageGraphs')
         .graphData(params)
-        .then((res) => {
+        .then(res => {
           this.graph.draw(res.data.items, res.data.links, this)
         })
     }

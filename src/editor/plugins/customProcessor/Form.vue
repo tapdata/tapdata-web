@@ -47,7 +47,7 @@ export default {
       deep: true,
       handler() {
         this.$nextTick(() => {
-          this.$refs.form.validate((isFormValid) => {
+          this.$refs.form.validate(isFormValid => {
             this.model.isFormValid = isFormValid
             this.$emit('dataChanged', this.getData())
           })
@@ -85,7 +85,7 @@ export default {
       if (formConfig && formConfig.items) {
         let items = formConfig.items || []
         let formData = this.model.formData
-        items.forEach((it) => {
+        items.forEach(it => {
           let value = formData[it.field]
           if (!value && value !== 0) {
             value = ''
@@ -93,7 +93,7 @@ export default {
           this.$set(this.model.formData, it.field, value)
           if (it.type === 'field') {
             let options = []
-            fields.forEach((f) => {
+            fields.forEach(f => {
               if (f.field_name) {
                 options.push({
                   label: f.field_name,
@@ -125,7 +125,7 @@ export default {
           break
         case '[object Array]':
           value = `[${value
-            .map((v) => {
+            .map(v => {
               return this.getFormatValue(v)
             })
             .toString()}]`

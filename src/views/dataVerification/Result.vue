@@ -432,13 +432,13 @@ export default {
         return
       }
       this.detailsLoading = true
-      let findAdVance = this.tasks.filter((item) => item.taskId === taskId)
+      let findAdVance = this.tasks?.filter(item => item.taskId === taskId) || []
       if (findAdVance.length > 0)
         this.showAdvancedVerification = findAdVance[0].showAdvancedVerification
       this.taskId = taskId
       let currentPage = pageNum || this.inspectResultCurrentPage + 1
       this.resultData = this.tableData.filter(
-        (item) => item.taskId === this.taskId
+        item => item.taskId === this.taskId
       )
       let where = {
         where: {
@@ -478,21 +478,21 @@ export default {
       if (data.length === 0) {
         return
       }
-      data.map((item) => {
+      data.map(item => {
         let source = item.source || {}
         let target = item.target || {}
         let sourceKeys = Object.keys(source)
         let targetKeys = Object.keys(target)
         let key = Array.from(new Set([...sourceKeys, ...targetKeys])) //找出所有的key的并集
-        key.forEach((i) => {
+        key.forEach(i => {
           let sourceValue = ''
           let targetValue = ''
-          if (sourceKeys.filter((v) => i === v)) {
+          if (sourceKeys.filter(v => i === v)) {
             sourceValue = source[i]
           } else {
             sourceValue = ''
           }
-          if (targetKeys.filter((v) => i === v)) {
+          if (targetKeys.filter(v => i === v)) {
             targetValue = target[i]
           } else {
             targetValue = ''

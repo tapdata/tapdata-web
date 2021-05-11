@@ -143,7 +143,7 @@ export default {
       this.transferLoading = true
       this.$api('connections')
         .customQuery([id], { schema: true })
-        .then((result) => {
+        .then(result => {
           if (result.data) {
             let tables = (result.data.schema && result.data.schema.tables) || []
             tables = tables.sort((t1, t2) =>
@@ -154,7 +154,7 @@ export default {
                 : -1
             )
             if (tables && tables.length) {
-              this.sourceData = tables.map((table) => ({
+              this.sourceData = tables.map(table => ({
                 label: table.table_name,
                 key: table.table_name,
                 disabled: this.disabled
@@ -167,7 +167,12 @@ export default {
               this.formData.table_suffix = this.transferData.table_suffix
               this.selectSourceArr = this.transferData.selectSourceArr
             }
-            if (bidirectional && (this.transferData.table_prefix !=='' || this.transferData.table_suffix !=='')) { //true 表示 双向且有修改过前后缀
+            if (
+              bidirectional &&
+              (this.transferData.table_prefix !== '' ||
+                this.transferData.table_suffix !== '')
+            ) {
+              //true 表示 双向且有修改过前后缀
               this.formData.table_prefix = ''
               this.formData.table_suffix = ''
               this.selectSourceArr = []
@@ -187,7 +192,7 @@ export default {
     },
     // 穿梭框值改变的时候 (重命名 或者还原)
     handleChangeTransfer() {
-      this.sourceData.forEach((el) => {
+      this.sourceData.forEach(el => {
         if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
           el.label = el.key
         }
@@ -209,7 +214,7 @@ export default {
       selectKeepArr = data
     },
     changeName() {
-      this.$refs['form'].validate((valid) => {
+      this.$refs['form'].validate(valid => {
         if (valid) {
           this.dialogVisible = false
           this.preFixSuffixData()
@@ -241,8 +246,8 @@ export default {
       if (this.sourceData.length && this.selectSourceArr.length) {
         let selectSourceArr = []
         this.selectSourceArr = Array.from(new Set(this.selectSourceArr))
-        this.sourceData.forEach((sourceName) => {
-          this.selectSourceArr.map((k) => {
+        this.sourceData.forEach(sourceName => {
+          this.selectSourceArr.map(k => {
             if (k === sourceName.key) {
               selectSourceArr.push(k)
             }

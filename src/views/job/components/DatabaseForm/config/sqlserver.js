@@ -41,7 +41,7 @@ export default function (vm) {
             }
           }
         ],
-        appendSlot: (h) => {
+        appendSlot: h => {
           return h('FbInput', {
             props: {
               value: vm.model['database_port'],

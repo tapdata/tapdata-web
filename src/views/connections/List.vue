@@ -417,7 +417,7 @@ export default {
       let databaseTypes = await this.$api('DatabaseTypes').get({
         filter: JSON.stringify(filter)
       })
-      databaseTypes.data.forEach((dt) => this.databaseTypeOptions.push(dt))
+      databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt))
     },
     getData({ page, tags }) {
       let region = this.$route.query.region
@@ -501,7 +501,7 @@ export default {
         let list = res.data
         return {
           total: countRes.data.count,
-          data: list.map((item) => {
+          data: list.map(item => {
             let platformInfo = item.platformInfo
             if (platformInfo && platformInfo.regionName) {
               item.regionInfo =
@@ -572,13 +572,13 @@ export default {
           },
           data.name
         )
-        .then((res) => {
+        .then(res => {
           if (res && res.data) {
             this.table.fetch()
             this.$message.success(this.$t('connection.copyMsg'))
           }
         })
-        .catch((err) => {
+        .catch(err => {
           if (err && err.response) {
             if (err.response.msg === 'duplicate source') {
               this.$message.error(this.$t('connection.copyFailedMsg'))
@@ -602,13 +602,13 @@ export default {
       ])
       this.$confirm(msg, this.$t('connection.deteleDatabaseTittle'), {
         type: 'warning'
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
         this.$api('connections')
           .deleteConnection(data.id, data.name)
-          .then((res) => {
+          .then(res => {
             let jobs = res.jobs || []
             let modules = res.modules || []
             if (jobs.length > 0 || modules.length > 0) {
@@ -643,7 +643,7 @@ export default {
         cancelButtonText: config.cancelButtonText,
         type: 'warning',
         closeOnClickModal: false
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (resFlag) {
           callback()
         } else {
@@ -664,7 +664,7 @@ export default {
     },
     formatterListTags(row) {
       let listTags = row.listtags || []
-      return listTags.map((tag) => tag.value).join(',')
+      return listTags.map(tag => tag.value).join(',')
     },
     formatterDatabaseType(row) {
       let url = null
@@ -677,7 +677,7 @@ export default {
     },
     handleSelectTag() {
       let tagList = {}
-      this.multipleSelection.forEach((row) => {
+      this.multipleSelection.forEach(row => {
         if (row.listtags && row.listtags.length > 0) {
           tagList[row.listtags[0].id] = {
             value: row.listtags[0].value
@@ -688,7 +688,7 @@ export default {
     },
     handleOperationClassify(listtags) {
       let attributes = {
-        id: this.multipleSelection.map((r) => r.id),
+        id: this.multipleSelection.map(r => r.id),
         listtags
       }
       this.$api('connections')
@@ -722,7 +722,11 @@ export default {
         }
       } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
         let result = await this.$api('tcm').getAgentCount()
-        if (!result.data || !result.data.agentTotalCount || result.data.agentTotalCount <= 0) {
+        if (
+          !result.data ||
+          !result.data.agentTotalCount ||
+          result.data.agentTotalCount <= 0
+        ) {
           this.$message.error('您尚未订购同步实例，请先订购实例')
         } else {
           this.dialogDatabaseTypeVisible = true

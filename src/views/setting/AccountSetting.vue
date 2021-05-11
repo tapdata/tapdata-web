@@ -291,8 +291,8 @@ export default {
       }
       let result = await usersModel.get(parmas)
       if (result.data) {
-        this.infoList.forEach((item) => {
-          Object.keys(result.data[0]).forEach((key) => {
+        this.infoList.forEach(item => {
+          Object.keys(result.data[0]).forEach(key => {
             if (item.key === key) {
               item.value = result.data[0][key]
             }
@@ -335,7 +335,7 @@ export default {
             this.usernameDialogFalg = false
             this.handleGetData()
           })
-          .catch((e) => {
+          .catch(e => {
             if (e.response && e.response.msg) {
               if (e.response.msg.indexOf('User already exists')) {
                 this.$message.error(this.$t('account.has_username'))
@@ -355,11 +355,11 @@ export default {
         oldPassword: this.pwd.oldPassword,
         newPassword: this.pwd.newPassword
       }
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           usersModel
             .changePassword(parmas)
-            .then((res) => {
+            .then(res => {
               if (res.msg === 'Invalid current password') {
                 this.$message.error(this.$t('account.currerPawErrorTip'))
               }
@@ -372,7 +372,7 @@ export default {
                 location.reload()
               }, 500)
             })
-            .catch((e) => {
+            .catch(e => {
               if (e.response && e.response.msg === 'Invalid current password') {
                 this.$message.error(this.$t('account.currerPawErrorTip'))
               }

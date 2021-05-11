@@ -37,7 +37,7 @@ export default {
         'el-input-maxlength': config.showWordLimit
       },
       on: Object.assign({}, this.on, {
-        input: (val) => {
+        input: val => {
           if (config.domType === 'number' && val) {
             val = Number(val)
           }

@@ -215,7 +215,7 @@ export default {
       this.$refs.log.clear()
       this.errorMsg = ''
 
-      receiveMessage((msg) => {
+      receiveMessage(msg => {
         let result = []
 
         if (!msg || msg.status === 'ERROR') {
@@ -243,7 +243,7 @@ export default {
     getFirstLine(logs) {
       if (logs && logs.length) {
         let _log =
-          logs.find((item) => {
+          logs.find(item => {
             return item.level === 'ERROR'
           }) || logs[0]
 

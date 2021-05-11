@@ -553,15 +553,15 @@ export default {
       this.loading = true
       roleMappingModel
         .get({ 'filter[where][roleId]': this.$route.query.id })
-        .then((res) => {
+        .then(res => {
           if (res && res.data && res.data.length) {
-            res.data.forEach((item) => {
+            res.data.forEach(item => {
               if (item.principalType === 'USER') {
                 this.roleusers.push(item.principalId)
               }
               if (item.principalType === 'PERMISSION') {
                 let selected = this.permissionList.filter(
-                  (v) => v.name === item.principalId
+                  v => v.name === item.principalId
                 )
                 if (selected && selected.length > 0) {
                   selected[0].self_only = item.self_only
@@ -571,12 +571,12 @@ export default {
             })
             this.rolemappings = res.data
             if (pageData.length) {
-              pageData.forEach((item) => {
+              pageData.forEach(item => {
                 if (this.selectRole && this.selectRole.length) {
                   if (item.children && item.children.length) {
                     let checkedCount = [],
                       pageLength = []
-                    item.children.filter((childItem) => {
+                    item.children.filter(childItem => {
                       this.$set(
                         childItem,
                         'checkAll',
@@ -599,7 +599,7 @@ export default {
               })
             }
             if (mappingData.length) {
-              mappingData.filter((item) => {
+              mappingData.filter(item => {
                 if (this.selectRole && this.selectRole.length) {
                   // for (var child in item) {
                   // 	if (
@@ -673,7 +673,7 @@ export default {
                   if (item.children && item.children.length) {
                     let checkedCount = [],
                       allCheckedCount = []
-                    item.children.filter((childItem) => {
+                    item.children.filter(childItem => {
                       this.$set(
                         childItem,
                         'checkAllData',
@@ -692,7 +692,7 @@ export default {
                         allCheckedCount.push(childItem)
                       }
                     })
-                    let allData = item.children.filter((el) => {
+                    let allData = item.children.filter(el => {
                       return el.allName
                     })
 
@@ -709,7 +709,7 @@ export default {
                   }
                   if (item.classification && item.classification.length) {
                     let checkedCount = []
-                    item.classification.filter((classify) => {
+                    item.classification.filter(classify => {
                       this.$set(
                         classify,
                         'checked',
@@ -727,7 +727,7 @@ export default {
                   }
                   if (item.functional && item.functional.length) {
                     let checkedCount = []
-                    item.functional.filter((fun) => {
+                    item.functional.filter(fun => {
                       this.$set(
                         fun,
                         'checked',
@@ -749,9 +749,9 @@ export default {
           }
           if (res && res.data && res.data.length === 0) {
             if (mappingData.length)
-              mappingData.filter((item) => {
+              mappingData.filter(item => {
                 if (item.children && item.children.length) {
-                  item.children.filter((childItem) => {
+                  item.children.filter(childItem => {
                     this.$set(childItem, 'checked', childItem.type === 'read')
                   })
                 }
@@ -770,19 +770,19 @@ export default {
       self
         .$api('Permissions')
         .get({})
-        .then((res) => {
+        .then(res => {
           if (res) {
             if (res.data && res.data.length) {
               self.permissionList = res.data
 
               // 页面排序  ---- 开始
               let pageMap = {}
-              res.data.forEach((item) => {
+              res.data.forEach(item => {
                 pageMap[item.name] = item
               })
 
-              let pageMenu = (items) => {
-                return items.map((item) => {
+              let pageMenu = items => {
+                return items.map(item => {
                   let page = pageMap[item.name]
                   let menu = Object.assign({}, item, page)
                   if (menu.children) {
@@ -792,8 +792,8 @@ export default {
                 })
               }
 
-              let moduleFun = (items) => {
-                return items.map((item) => {
+              let moduleFun = items => {
+                return items.map(item => {
                   let page = pageMap[item.name]
                   let menu = Object.assign({}, item, page)
                   if (menu.children) {
@@ -827,7 +827,7 @@ export default {
         this.$set(item, 'checkAll', false)
       }
 
-      let checkedCount = item.children.filter((el) => {
+      let checkedCount = item.children.filter(el => {
         return el.checkAll
       })
       item.checked = checkedCount.length === item.children.length
@@ -865,7 +865,7 @@ export default {
         item.checkedAllData = false
       }
 
-      let checkedCount = children.filter((el) => {
+      let checkedCount = children.filter(el => {
         return el.checked
       })
 
@@ -917,12 +917,12 @@ export default {
       } else {
         item.checked = event
       }
-      let checkedCount = children.filter((el) => {
+      let checkedCount = children.filter(el => {
         if (el.allName) {
           return el.checkAllData
         }
       })
-      let allDataCount = children.filter((el) => {
+      let allDataCount = children.filter(el => {
         return el.allName
       })
       item.checkedAllData =
@@ -965,16 +965,16 @@ export default {
         classifyArr = [],
         functionalArr = []
 
-      this.dataList.forEach((item) => {
-        item.children.forEach((child) => {
+      this.dataList.forEach(item => {
+        item.children.forEach(child => {
           if (child.checkAll) {
             pageArr.push(child.name)
           }
         })
       })
-      this.moduleList.forEach((item) => {
+      this.moduleList.forEach(item => {
         if (item.children && item.children.length)
-          item.children.forEach((child) => {
+          item.children.forEach(child => {
             if (child.checkAllData) {
               childreArrAll.push(child.allName)
             }
@@ -983,13 +983,13 @@ export default {
             }
           })
         if (item.classification && item.classification.length)
-          item.classification.forEach((classify) => {
+          item.classification.forEach(classify => {
             if (classify.checked) {
               classifyArr.push(classify.name)
             }
           })
         if (item.functional && item.functional.length)
-          item.functional.forEach((fun) => {
+          item.functional.forEach(fun => {
             if (fun.checked) {
               functionalArr.push(fun.name)
             }
@@ -1006,7 +1006,7 @@ export default {
 
       let newRoleMappings = []
 
-      saveRoleArr.forEach((selectPermission) => {
+      saveRoleArr.forEach(selectPermission => {
         if (selectPermission)
           newRoleMappings.push({
             principalType: 'PERMISSION',

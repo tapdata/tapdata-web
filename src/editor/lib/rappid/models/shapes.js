@@ -4,7 +4,7 @@
  * @description
  */
 import _ from 'lodash'
-export default (joint) => {
+export default joint => {
   joint.shapes.standard.Rectangle.define(
     'app.SourceDB',
     {

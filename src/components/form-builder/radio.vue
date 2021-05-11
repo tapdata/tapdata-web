@@ -38,7 +38,7 @@ export default {
         },
         on: self.on
       },
-      config.options.map((opt) => {
+      config.options.map(opt => {
         return h(
           config.button ? 'ElRadioButton' : 'ElRadio',
           {

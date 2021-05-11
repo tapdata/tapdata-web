@@ -244,7 +244,7 @@ export default {
     getAgentCount() {
       this.$api('tcm')
         .getAgentCount()
-        .then((res) => {
+        .then(res => {
           this.twoWayAgentRunningCount = res.data.twoWayAgentRunningCount || 0
         })
     },
@@ -275,7 +275,7 @@ export default {
     intiData(id) {
       this.$api('DataFlows')
         .get([id])
-        .then((result) => {
+        .then(result => {
           if (result && result.data) {
             this.status = result.data.status
             this.settingModel = result.data.setting
@@ -299,13 +299,13 @@ export default {
     getInstanceRegion() {
       //接口请求之前 loading = true
       let items = this.config.items
-      let option = items.find((it) => it.field === 'region')
+      let option = items.find(it => it.field === 'region')
       if (option) {
         option.loading = true
       }
       this.$api('tcm')
         .getRegionZone()
-        .then((data) => {
+        .then(data => {
           this.instanceMock = data.data || []
           if (this.platformInfo.region === '' && this.instanceMock.length > 0) {
             this.platformInfo.region = this.instanceMock[0].code
@@ -319,7 +319,7 @@ export default {
     },
     changeInstanceRegion() {
       let zone = this.instanceMock.filter(
-        (item) => item.code === this.platformInfo.region
+        item => item.code === this.platformInfo.region
       )
       if (zone.length > 0) {
         this.platformInfo.zone = this.platformInfo.zone || zone[0].zones[0].code
@@ -339,7 +339,7 @@ export default {
       let value = data.value
       let items = this.config.items
       if (field === 'distinctWriteType') {
-        let target = items.find((it) => it.field === 'bidirectional')
+        let target = items.find(it => it.field === 'bidirectional')
         this.getSupportTwoWay()
         if (target && value === 'compel') {
           target.show = false
@@ -357,9 +357,9 @@ export default {
       if (field === 'source_databaseType') {
         if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
           // dfs修改目标端
-          let target = items.find((it) => it.field === 'target_databaseType')
+          let target = items.find(it => it.field === 'target_databaseType')
           if (target) {
-            target.options = target.options.map((item) => {
+            target.options = target.options.map(item => {
               if (value === 'mongodb') {
                 // mongodb 时，禁用目标端的 oracle
                 if (item.value === 'oracle') {
@@ -378,13 +378,13 @@ export default {
       }
       if (field === 'target_databaseType') {
         // dfs修改源端
-        let source = items.find((it) => it.field === 'source_databaseType')
+        let source = items.find(it => it.field === 'source_databaseType')
         if (source) {
           // dfs源端不支持 redis
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
             source.options = source.options
-              .filter((item) => item.value !== 'redis')
-              .map((item) => {
+              .filter(item => item.value !== 'redis')
+              .map(item => {
                 if (value === 'oracle') {
                   // oracle 时，禁用目标端的 oracle
                   if (item.value === 'mongodb') {
@@ -421,7 +421,7 @@ export default {
     next() {
       let type = this.steps[this.activeStep].type || 'instance'
       if (type === 'instance') {
-        this.$refs.instance.validate((valid) => {
+        this.$refs.instance.validate(valid => {
           if (valid) {
             this.activeStep += 1
             this.getFormConfig()
@@ -429,7 +429,7 @@ export default {
         })
       }
       if (type === 'dataSource') {
-        this.$refs.dataSource.validate((valid) => {
+        this.$refs.dataSource.validate(valid => {
           if (valid) {
             //源端目标端不可选择相同库 规则: id一致
             if (
@@ -463,7 +463,7 @@ export default {
         })
       }
       if (type === 'setting') {
-        this.$refs.setting.validate((valid) => {
+        this.$refs.setting.validate(valid => {
           if (valid) {
             this.activeStep += 1
             this.getFormConfig()
@@ -529,7 +529,9 @@ export default {
           let id = this.dataSourceModel.source_connectionId || ''
           this.$nextTick(() => {
             this.$refs.transfer.getTable(id, this.settingModel.bidirectional)
-            this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
+            this.$refs.transfer.showOperation(
+              this.settingModel.bidirectional || false
+            ) //双向模式不可以更改表名
           })
           break
         }
@@ -578,7 +580,7 @@ export default {
     getConnection(where, type) {
       //接口请求之前 loading = true
       let items = this.config.items
-      let option = items.find((it) => it.field === type)
+      let option = items.find(it => it.field === type)
       if (option) {
         option.loading = true
       }
@@ -603,7 +605,7 @@ export default {
             order: ['status DESC', 'name ASC']
           })
         })
-        .then((data) => {
+        .then(data => {
           this.changeConfig(data.data || [], type)
         })
     },
@@ -613,10 +615,10 @@ export default {
       switch (type) {
         case 'region': {
           // 第一步 选择实例 选择区域
-          let region = items.find((it) => it.field === 'region')
+          let region = items.find(it => it.field === 'region')
           if (region) {
             region.loading = false
-            region.options = data.map((item) => {
+            region.options = data.map(item => {
               return {
                 id: item.code,
                 name: item.name,
@@ -629,10 +631,10 @@ export default {
         }
         case 'zone': {
           //映射可用区
-          let zone = items.find((it) => it.field === 'zone')
+          let zone = items.find(it => it.field === 'zone')
           if (zone) {
             zone.loading = false
-            zone.options = this.platformInfoZone.map((item) => {
+            zone.options = this.platformInfoZone.map(item => {
               return {
                 id: item.code,
                 name: item.name,
@@ -646,11 +648,11 @@ export default {
         case 'source_connectionId': {
           // 第二步 数据源连接ID
           let source_connectionId = items.find(
-            (it) => it.field === 'source_connectionId'
+            it => it.field === 'source_connectionId'
           )
           if (source_connectionId) {
             source_connectionId.loading = false
-            source_connectionId.options = data.map((item) => {
+            source_connectionId.options = data.map(item => {
               return {
                 id:
                   item.database_host + item.database_port + item.database_name,
@@ -665,11 +667,11 @@ export default {
         }
         case 'target_connectionId': {
           let target_connectionId = items.find(
-            (it) => it.field === 'target_connectionId'
+            it => it.field === 'target_connectionId'
           )
           if (target_connectionId) {
             target_connectionId.loading = false
-            target_connectionId.options = data.map((item) => {
+            target_connectionId.options = data.map(item => {
               return {
                 id:
                   item.database_host + item.database_port + item.database_name,
@@ -684,7 +686,7 @@ export default {
         }
         case 'setting_isOpenAutoDDL': {
           //映射可用区
-          let op = items.find((it) => it.field === 'isOpenAutoDDL')
+          let op = items.find(it => it.field === 'isOpenAutoDDL')
           if (op) {
             op.show = false
           }
@@ -692,28 +694,28 @@ export default {
         }
         case 'setting_twoWay': {
           //映射是否双向同步
-          let op = items.find((it) => it.field === 'bidirectional')
+          let op = items.find(it => it.field === 'bidirectional')
           op.show = !!this.supportTwoWay
           break
         }
         case 'databaseType': {
-          let source = items.find((it) => it.field === 'source_databaseType')
+          let source = items.find(it => it.field === 'source_databaseType')
           if (source) {
             // dfs源端不支持 redis
             let options = data
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-              options = data.filter((item) => item !== 'redis')
+              options = data.filter(item => item !== 'redis')
             }
-            source.options = options.map((item) => {
+            source.options = options.map(item => {
               return {
                 label: TYPEMAP[item],
                 value: item
               }
             })
           }
-          let target = items.find((it) => it.field === 'target_databaseType')
+          let target = items.find(it => it.field === 'target_databaseType')
           if (target) {
-            target.options = data.map((item) => {
+            target.options = data.map(item => {
               return {
                 label: TYPEMAP[item],
                 value: item
@@ -725,15 +727,15 @@ export default {
       }
     },
     handleName(sourceData, target) {
-      let data = sourceData.filter((item) => item.code === target)
+      let data = sourceData.filter(item => item.code === target)
       if (data.length === 0) return
       return data[0].name
     },
     handleConnectionName(target, type) {
       let items = this.config.items
-      let optionsData = items.find((it) => it.field === type)
+      let optionsData = items.find(it => it.field === type)
       if (optionsData.length === 0) return
-      let data = optionsData.options.filter((op) => op.value === target)
+      let data = optionsData.options.filter(op => op.value === target)
       if (data.length === 0) return
       return data[0]
     },
@@ -893,7 +895,7 @@ export default {
             })
           }
         })
-        .catch((e) => {
+        .catch(e => {
           if (e.response.msg === 'duplication for names') {
             this.$message.error(this.$t('message.exists_name'))
           } else {
@@ -908,7 +910,7 @@ export default {
     goBackList() {
       this.$confirm('此操作会丢失当前正在创建的任务', '是否放弃创建该任务', {
         type: 'warning'
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }

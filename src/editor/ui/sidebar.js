@@ -59,7 +59,7 @@ export default class Sidebar extends Component {
     let overlayEl = null
     let region = self.opts.region
 
-    self.splitEl.on('mousedown', (e) => {
+    self.splitEl.on('mousedown', e => {
       overlayEl = $(
         `<div class="resizable-overlay ${
           ['top', 'bottom'].includes(region) ? 'y' : 'x'

@@ -151,7 +151,7 @@ export default {
       self.loading = true
       logsModel
         .get({ filter: JSON.stringify(filter) })
-        .then((res) => {
+        .then(res => {
           if (res.data && res.data.length > 0) {
             if (reset || prepend || !this.lastLogsId) {
               this.lastLogsId = res.data[0].id

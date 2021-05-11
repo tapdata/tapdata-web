@@ -77,8 +77,8 @@ export const collectionConfig = {
         let defaultFields = outputSchema.fields
         let newSchema =
           data.fieldFilterType === 'retainedField' ? [] : defaultFields
-        fieldFilter.forEach((filedName) => {
-          let index = defaultFields.findIndex((f) => filedName === f.field_name)
+        fieldFilter.forEach(filedName => {
+          let index = defaultFields.findIndex(f => filedName === f.field_name)
           if (index >= 0) {
             let field = defaultFields[index]
             if (data.fieldFilterType === 'retainedField') {
@@ -96,24 +96,19 @@ export const collectionConfig = {
       },
 
       checkParent(fields, field, schema) {
-        if (
-          field.parent &&
-          !schema.find((f) => f.field_name === field.parent)
-        ) {
-          let parentField = fields.find((f) => f.field_name === field.parent)
+        if (field.parent && !schema.find(f => f.field_name === field.parent)) {
+          let parentField = fields.find(f => f.field_name === field.parent)
           schema.push(parentField)
           this.checkParent(fields, parentField, schema)
         }
       },
 
       checkChildren(filter, schema, field) {
-        let childrenFields = schema.filter((f) => f.parent === field.field_name)
+        let childrenFields = schema.filter(f => f.parent === field.field_name)
         if (childrenFields && childrenFields.length) {
-          childrenFields.forEach((cf) => {
+          childrenFields.forEach(cf => {
             if (!filter.includes(cf.field_name)) {
-              let index = schema.findIndex(
-                (f) => f.field_name === cf.field_name
-              )
+              let index = schema.findIndex(f => f.field_name === cf.field_name)
               if (index >= 0) {
                 let childField = schema[index]
                 schema.splice(index, 1)

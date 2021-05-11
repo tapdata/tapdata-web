@@ -234,7 +234,7 @@ export default {
         if (this.schemas.length > 0) {
           if (this.model.tableName) {
             let schema = this.schemas.filter(
-              (s) => s.table_name === this.model.tableName
+              s => s.table_name === this.model.tableName
             )
             schema =
               schema && schema.length > 0
@@ -268,7 +268,7 @@ export default {
             // 	.filter(f => f.primary_key_position > 0)
             // 	.map(f => f.field_name)
             // 	.join(',');
-            this.primaryKeyOptions = fields.map((f) => f.field_name)
+            this.primaryKeyOptions = fields.map(f => f.field_name)
             // if (primaryKeys) {
             // 	this.model.primaryKeys = primaryKeys;
             // } else {
@@ -289,7 +289,7 @@ export default {
           this.mergedSchema.fields.length > 0
         ) {
           let fields = this.mergedSchema.fields
-          this.primaryKeyOptions = fields.map((f) => f.field_name)
+          this.primaryKeyOptions = fields.map(f => f.field_name)
           // if (!this.model.primaryKeys) {
           // 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
           // 	if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
@@ -317,7 +317,7 @@ export default {
       let result = _.cloneDeep(this.model)
       if (result.connectionId) {
         let database = this.databases.filter(
-          (db) => db.id === result.connectionId
+          db => db.id === result.connectionId
         )
         if (database && database.length > 0) {
           result.name = database[0].name
@@ -343,7 +343,7 @@ export default {
         return
       }
       let self = this
-      connectionApi.get([connectionId]).then((result) => {
+      connectionApi.get([connectionId]).then(result => {
         if (result.data) {
           let schemas = (result.data.schema && result.data.schema.tables) || []
           schemas = schemas.sort((t1, t2) =>
@@ -391,7 +391,7 @@ export default {
       let self = this,
         schema = null,
         templeSchema = []
-      ws.on('execute_load_schema_result', (res) => {
+      ws.on('execute_load_schema_result', res => {
         if (res.status === 'SUCCESS' && res.result && res.result.length) {
           templeSchema = res.result
           this.reloadModelLoading = false
@@ -401,7 +401,7 @@ export default {
         }
         this.reloadModelLoading = false
         if (templeSchema && templeSchema.length) {
-          templeSchema.forEach((item) => {
+          templeSchema.forEach(item => {
             if (
               item.connId === this.model.connectionId &&
               item.tableName === this.model.tableName

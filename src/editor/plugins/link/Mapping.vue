@@ -52,7 +52,7 @@ export default {
     this.lines = this.lines || []
 
     if (this.lines.length > 0) {
-      this.lines.forEach((line) => {
+      this.lines.forEach(line => {
         line.remove()
       })
       this.lines.splice(0, this.lines.length)
@@ -80,13 +80,13 @@ export default {
   methods: {
     hide() {
       if (this.lines && this.lines.length > 0) {
-        this.lines.forEach((line) => line.hide('none'))
+        this.lines.forEach(line => line.hide('none'))
       }
     },
 
     show() {
       if (this.lines && this.lines.length > 0) {
-        this.lines.forEach((line) => {
+        this.lines.forEach(line => {
           line.show('none')
           line.position()
         })
@@ -206,7 +206,7 @@ export default {
       this.targetSchema = _.cloneDeep(target)
       this.sourceSchema = _.cloneDeep(source)
       if (source && source.fields) {
-        source.fields.forEach((field) => {
+        source.fields.forEach(field => {
           if (
             !this.tables[field.table_name] &&
             source.name === field.table_name
@@ -227,7 +227,7 @@ export default {
     },
     removeLine() {
       if (this.lines && this.lines.length > 0) {
-        this.lines.forEach((line) => line.remove())
+        this.lines.forEach(line => line.remove())
       }
       this.lines = []
     }

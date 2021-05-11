@@ -93,7 +93,7 @@ export default class EventEmitter {
   _getCallbackIndex(eventName, callback) {
     return this._has(eventName)
       ? this._getCallbacks(eventName).findIndex(
-          (element) => element.callback === callback
+          element => element.callback === callback
         )
       : -1
   }

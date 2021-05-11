@@ -167,7 +167,7 @@ export default {
     }
   },
   computed: mapState({
-    unRead: (state) => state.notification.unRead
+    unRead: state => state.notification.unRead
   }),
   created() {
     this.init()
@@ -178,14 +178,14 @@ export default {
         type: 'notification'
       }
       this.getUnReadNum()
-      ws.on('notification', (data) => {
+      ws.on('notification', data => {
         if (data.data && data.data.length > 0) {
           this.listData.unshift(...data.data)
           this.getUnReadNum()
         }
         //格式化日期
         if (this.listData && this.listData.length > 0) {
-          this.listData.map((item) => {
+          this.listData.map(item => {
             item['createTime'] = item.createTime
               ? this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               : ''
@@ -207,7 +207,7 @@ export default {
       }
       this.$api('notification')
         .count(where)
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             this.$store.commit('notification', {
               unRead: res.data.count
@@ -218,7 +218,7 @@ export default {
     handleRead(id) {
       this.$api('notification')
         .patch({ read: true, id: id })
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             this.listData = []
             this.$root.$emit('notificationUpdate')
@@ -292,7 +292,7 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then((res) => {
+        .then(res => {
           this.userOperations = res.data || []
         })
         .finally(() => {

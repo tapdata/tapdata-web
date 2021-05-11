@@ -113,14 +113,14 @@ export default {
       this.getStageTables()
     }, 10000)
 
-    this.$on(EditorEventType.SELECTED_STAGE, (selectStage) => {
+    this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
       if (selectStage) {
         this.stageId = selectStage ? selectStage.id : ''
         this.getStageTables()
       }
     })
 
-    this.$bus.on('currentStageId', (id) => {
+    this.$bus.on('currentStageId', id => {
       if (id !== 'all') {
         this.stageId = id
       }
@@ -148,7 +148,7 @@ export default {
       }
       this.loading = true
       await DataFlowsDebugs.getTables(params)
-        .then((res) => {
+        .then(res => {
           if (res.data && res.data.data.length > 0) {
             this.nodeList = res.data.data ? res.data.data : []
             if (!this.selectTableName && this.nodeList.length > 0) {
@@ -182,7 +182,7 @@ export default {
       this.loading = true
       this.isloading = true
       await DataFlowsDebugs.get(params)
-        .then((res) => {
+        .then(res => {
           // this.nodeList = Object.keys(res.data);   // 获取下拉项
           if (res.data && res.data.length > 0) {
             // for(let i in res.data) {  // 获取选择后对应的表格数据
@@ -195,14 +195,14 @@ export default {
             // 	delete item.__tapd8;
             // 	item.last_updated = item.last_updated ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '';
             // });
-            let datas = res.data.map((item) => {
+            let datas = res.data.map(item => {
               return item.masterData
             })
             let headerList = []
 
-            datas.forEach((item) => {
+            datas.forEach(item => {
               // 获取表头
-              Object.keys(item).forEach((key) => {
+              Object.keys(item).forEach(key => {
                 if (!headerList.includes(key)) {
                   headerList.push(key)
                 }

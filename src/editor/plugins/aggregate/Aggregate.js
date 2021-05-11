@@ -60,7 +60,7 @@ export const aggregateConfig = {
 
         let groupFields = []
         let functionNames = []
-        data.aggregations.forEach((stage) => {
+        data.aggregations.forEach(stage => {
           if (stage.groupByExpression)
             groupFields.push(...stage.groupByExpression)
           if (stage.aggFunction && !functionNames.includes(stage.aggFunction)) {
@@ -70,9 +70,9 @@ export const aggregateConfig = {
 
         let fields = outputSchema.fields || []
         outputSchema.fields =
-          fields.filter((field) => groupFields.includes(field.field_name)) || []
+          fields.filter(field => groupFields.includes(field.field_name)) || []
 
-        functionNames.forEach((fnName) => {
+        functionNames.forEach(fnName => {
           outputSchema.fields.push(
             Object.assign(_.cloneDeep(fields[0] || {}), {
               field_name: fnName,
@@ -142,7 +142,7 @@ export const aggregateConfig = {
           )
         let aggFunctionArr = []
         if (data.aggregations && data.aggregations.length > 0) {
-          data.aggregations.forEach((item) => {
+          data.aggregations.forEach(item => {
             aggFunctionArr.push(item.name)
             if (!item.aggFunction)
               throw new Error(

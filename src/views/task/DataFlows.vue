@@ -12,7 +12,7 @@
       :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
       :remoteMethod="getData"
       @selection-change="
-        (val) => {
+        val => {
           multipleSelection = val
         }
       "
@@ -199,7 +199,7 @@
         type="selection"
         width="45"
         :selectable="
-          (row) =>
+          row =>
             !row.hasChildren &&
             !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)
         "
@@ -748,9 +748,9 @@ export default {
     ws.on('watch', this.dataflowChange)
     interval = setInterval(() => {
       let tempList = this.tempList
-      tempList.forEach((item) => {
+      tempList.forEach(item => {
         let list = this.table.list
-        let index = list.findIndex((it) => it.name === item.name)
+        let index = list.findIndex(it => it.name === item.name)
         if (index >= 0) {
           this.table.$set(
             list,
@@ -780,9 +780,9 @@ export default {
     getAgentOptions() {
       this.$api('tcm')
         .getAgent()
-        .then((res) => {
+        .then(res => {
           let list = res.data && res.data.items ? res.data.items : []
-          this.agentOptions = list.map((item) => {
+          this.agentOptions = list.map(item => {
             return {
               label: item.name,
               value: item.tmInfo.agentId
@@ -794,9 +794,7 @@ export default {
       if (data && data.data && data.data.fullDocument) {
         let dataflow = data.data.fullDocument
         if (dataflow.agentId) {
-          let opt = this.agentOptions.find(
-            (it) => it.value === dataflow.agentId
-          )
+          let opt = this.agentOptions.find(it => it.value === dataflow.agentId)
           dataflow.tcm = {
             agentName: opt?.label
           }
@@ -954,7 +952,7 @@ export default {
         })
       ]).then(([countRes, res]) => {
         let list = res.data || []
-        this.watchDataflowList(list.map((it) => it.id))
+        this.watchDataflowList(list.map(it => it.id))
         this.table.setCache({
           keyword,
           status,
@@ -964,7 +962,7 @@ export default {
         })
         return {
           total: countRes.data.count,
-          data: list.map((item) => {
+          data: list.map(item => {
             return this.cookRecord(item)
           })
         }
@@ -1059,7 +1057,7 @@ export default {
     },
     handleSelectTag() {
       let tagList = {}
-      this.multipleSelection.forEach((row) => {
+      this.multipleSelection.forEach(row => {
         if (row.listtags && row.listtags.length > 0) {
           tagList[row.listtags[0].id] = {
             value: row.listtags[0].value
@@ -1073,7 +1071,7 @@ export default {
       if (this.dataFlowId) {
         ids = [this.dataFlowId]
       } else {
-        ids = this.multipleSelection.map((r) => r.id)
+        ids = this.multipleSelection.map(r => r.id)
       }
       let attributes = {
         id: ids,
@@ -1137,7 +1135,7 @@ export default {
             confirmButtonText: this.$t('dataFlow.continueEditing'),
             type: 'warning'
           }
-        ).then((resFlag) => {
+        ).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -1152,7 +1150,7 @@ export default {
             query: { id: id, mapping: mappingTemplate }
           })
           setTimeout(() => {
-            document.querySelectorAll('.el-tooltip__popper').forEach((it) => {
+            document.querySelectorAll('.el-tooltip__popper').forEach(it => {
               it.outerHTML = ''
             })
             window.open(routeUrl.href, 'edit_' + id)
@@ -1177,7 +1175,7 @@ export default {
         }
       }
       setTimeout(() => {
-        document.querySelectorAll('.el-tooltip__popper').forEach((it) => {
+        document.querySelectorAll('.el-tooltip__popper').forEach(it => {
           it.outerHTML = ''
         })
       }, 200)
@@ -1218,7 +1216,7 @@ export default {
       if (node) {
         ids = [node.id]
       } else {
-        ids = this.multipleSelection.map((item) => item.id)
+        ids = this.multipleSelection.map(item => item.id)
       }
       this[command](ids, node)
     },
@@ -1282,7 +1280,7 @@ export default {
           }
           if (
             node.stages &&
-            node.stages.find((s) => s.type === 'aggregation_processor')
+            node.stages.find(s => s.type === 'aggregation_processor')
           ) {
             const h = this.$createElement
             let arr = this.$t('message.stopAggregation_message').split('XXX')
@@ -1297,7 +1295,7 @@ export default {
       }
       this.$confirm(message, title, {
         type: 'warning'
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -1312,7 +1310,7 @@ export default {
       )
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -1328,11 +1326,11 @@ export default {
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
-        dataFlows.deleteAll(where).then((res) => {
+        dataFlows.deleteAll(where).then(res => {
           if (res.data && res.data.success) {
             this.table.fetch()
             this.responseHandler(res.data, this.$t('message.deleteOK'))
@@ -1350,14 +1348,14 @@ export default {
       )
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
         this.restLoading = true
         dataFlows
           .resetAll(ids)
-          .then((res) => {
+          .then(res => {
             this.table.fetch()
             this.responseHandler(res.data, this.$t('message.resetOk'))
           })
@@ -1400,7 +1398,7 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      dataFlows.update(where, attributes).then((res) => {
+      dataFlows.update(where, attributes).then(res => {
         this.table.fetch()
         this.responseHandler(res.data, this.$t('message.operationSuccuess'))
       })
@@ -1424,13 +1422,13 @@ export default {
           8: this.$t('dataFlow.multiError.statusError')
         }
         let nameMapping = {}
-        this.table.list.forEach((item) => {
+        this.table.list.forEach(item => {
           nameMapping[item.id] = item.name
         })
         this.$message.warning({
           dangerouslyUseHTMLString: true,
           message: failList
-            .map((item) => {
+            .map(item => {
               return `<div style="line-height: 24px;"><span style="color: #409EFF">${
                 nameMapping[item.id]
               }</span> : <span style="color: #F56C6C">${
@@ -1460,7 +1458,7 @@ export default {
       data.cronExpression = this.formSchedule.cronExpression
       dataFlows
         .patchId(this.formSchedule.id, { setting: data })
-        .then((result) => {
+        .then(result => {
           if (result && result.data) {
             this.$message.success(this.$t('message.saveOK'))
           }
