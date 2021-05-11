@@ -20,7 +20,7 @@ const config = {
   assetsDir: 'static',
   lintOnSave: true,
   productionSourceMap: false,
-  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
+  publicPath: './',
   devServer: {
     proxy: {
       '/api/': proxy,
