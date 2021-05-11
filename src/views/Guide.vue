@@ -515,9 +515,8 @@ export default {
       if (v === '0') {
         this.showConnectDialog = true
       } else {
-        this.stepMap[
-          this.steps[this.activeStep].index
-        ].selectedConnection = this.connectionList.find(c => c.id === v)
+        this.stepMap[this.steps[this.activeStep].index].selectedConnection =
+          this.connectionList.find(c => c.id === v)
       }
       this.errorMsg = ''
     },
@@ -606,9 +605,8 @@ export default {
         .post(params)
         .then(res => {
           let connection = res.data || {}
-          this.stepMap[
-            this.steps[this.activeStep].index
-          ].selectedConnection = connection
+          this.stepMap[this.steps[this.activeStep].index].selectedConnection =
+            connection
           this.selectedDatabaseType = null
           this.activeStep += 1
           this.errorMsg = ''
