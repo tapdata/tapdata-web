@@ -388,7 +388,10 @@
         </div>
       </div>
 
-      <div class="echartlist">
+      <div
+        v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
+        class="echartlist"
+      >
         <EchartHeader
           :data="screeningObj"
           @twoRadio="getTwoRadio"
@@ -411,11 +414,11 @@
         <div class="floatLayer">
           <span
             style="background-color: rgba(72, 182, 226, 0.3); color: #48b6e2"
-            >{{ $t('dataFlow.average') }}:{{ this.inputAverage }}</span
+            >{{ $t('dataFlow.input') }}:{{ this.inputAverage }}</span
           >
           <span
             style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
-            >{{ $t('dataFlow.average') }}:{{ this.outputAverage }}</span
+            >{{ $t('dataFlow.output') }}:{{ this.outputAverage }}</span
           >
         </div>
         <echarts-compinent
@@ -768,7 +771,7 @@ export default {
 
   mounted() {
     this.sliderBar = this.editor.rightSidebar
-    this.$on(EditorEventType.SELECTED_STAGE, (selectStage) => {
+    this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
       if (selectStage) {
         this.stageId = selectStage.id
         this.getNodeName()
@@ -881,9 +884,9 @@ export default {
 
         let cdcList = []
         if (this.flow.cdcLastTimes && this.flow.cdcLastTimes.length) {
-          this.flow.cdcLastTimes.forEach((item) => {
+          this.flow.cdcLastTimes.forEach(item => {
             let flag = cdcList.find(
-              (ele) => ele.sourceConnectionId === item.sourceConnectionId
+              ele => ele.sourceConnectionId === item.sourceConnectionId
             )
             if (!flag) {
               cdcList.push({
@@ -911,7 +914,7 @@ export default {
         } else {
           this.selectFlow = 'stage_'
 
-          cell.forEach((item) => {
+          cell.forEach(item => {
             if (item.get('id') === val) {
               currentStageData = item.getFormData()
             }
@@ -965,7 +968,7 @@ export default {
       }
       params.granularity &&
         DataFlowInsights.runtimeMonitor(params)
-          .then((res) => {
+          .then(res => {
             let data = res.data?.[0]
             this.resultObj.createTime = data.createTime
             this.resultObj.dataFlowId = data.dataFlowId
@@ -1006,7 +1009,7 @@ export default {
     // 获取节点名称
     getNodeName() {
       if (this.flow.stages && this.flow.stages.length) {
-        this.flow.stages.forEach((item) => {
+        this.flow.stages.forEach(item => {
           if (item.id === this.stageId) {
             this.tableName = item.name
           }
@@ -1053,7 +1056,7 @@ export default {
     getAllCellsNode(queryString) {
       let dataCells = this.editor.getAllCells()
       let dataCellName = []
-      dataCells.forEach((cell) => {
+      dataCells.forEach(cell => {
         let formData =
           typeof cell.getFormData === 'function' ? cell.getFormData() : null
         let tableName = { value: formData.tableName, cell: cell }
@@ -1068,7 +1071,7 @@ export default {
     },
 
     createFilter(queryString) {
-      return (restaurant) => {
+      return restaurant => {
         return (
           restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
           0
@@ -1203,7 +1206,7 @@ export default {
         dataList = [],
         tdataList = []
       function ptime(type) {
-        data.statsData[type].forEach((time) => {
+        data.statsData[type].forEach(time => {
           switch (data.granularity[type].split('_')[1]) {
             case 'second':
               time.t = time.t.substring(11, 19)
@@ -1235,7 +1238,7 @@ export default {
         this.getScreening(time, statisticsData)
       }
       if (!type || type === 'throughput') {
-        data.statsData.throughput.forEach((item) => {
+        data.statsData.throughput.forEach(item => {
           timeList.push(item.t) // 时间
           inputSizeList.push(item.inputSize)
           outputSizeList.push(item.outputSize)
@@ -1257,7 +1260,7 @@ export default {
         }
       }
       if (!type || type === 'transf') {
-        data.statsData.trans_time.forEach((item) => {
+        data.statsData.trans_time.forEach(item => {
           ttimeList.push(item.t) // 时间
           dataList.push(item.d)
         })
@@ -1265,7 +1268,7 @@ export default {
         this.getTransTime(ttimeList, dataList)
       }
       if (!type || type === 'replicate') {
-        data.statsData.repl_lag.forEach((item) => {
+        data.statsData.repl_lag.forEach(item => {
           rttimeList.push(item.t) // 时间
           tdataList.push(item.d)
         })
@@ -1393,7 +1396,7 @@ export default {
       // debugger;
       connectionApi
         .customQuery([id], { tableName: tableName })
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             this.stage = res.data
             this.stage.nodeName = currentStageData.name
@@ -1411,7 +1414,7 @@ export default {
         .get([this.flow.id], {
           fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
         })
-        .then((res) => {
+        .then(res => {
           this.loading = false
           if (
             Object.keys(res.data).length === 0 ||
