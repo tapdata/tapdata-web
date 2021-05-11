@@ -187,9 +187,8 @@ export default {
   mounted() {
     log('Debug Component Mounted')
     let eBodyEl = document.body.getElementsByClassName('e-body')[0]
-    let eSideBarRight = document.body.getElementsByClassName(
-      'e-sidebar-right'
-    )[0]
+    let eSideBarRight =
+      document.body.getElementsByClassName('e-sidebar-right')[0]
     this.clientWidth = eBodyEl.clientWidth
     eBodyEl.appendChild(this.$el)
     this.$nextTick(() => {

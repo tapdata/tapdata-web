@@ -310,9 +310,8 @@ export default {
 
           if (selectTargetType.length) {
             Object.keys(this.model.selectSourceDatabase).forEach(key => {
-              this.model.selectSourceDatabase[key] = selectTargetType.includes(
-                key
-              )
+              this.model.selectSourceDatabase[key] =
+                selectTargetType.includes(key)
             })
           }
         }
