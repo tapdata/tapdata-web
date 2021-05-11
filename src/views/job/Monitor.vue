@@ -388,7 +388,10 @@
         </div>
       </div>
 
-      <div class="echartlist">
+      <div
+        v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
+        class="echartlist"
+      >
         <EchartHeader
           :data="screeningObj"
           @twoRadio="getTwoRadio"
