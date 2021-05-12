@@ -401,6 +401,7 @@ const dataFlowsApi = factory('DataFlows')
 const Setting = factory('Setting')
 // const cluster = factory('cluster');
 let changeData = null
+let timer = null
 export default {
   name: 'Job',
   dataFlow: null,
@@ -813,6 +814,31 @@ export default {
         Object.assign(self.dataFlow, dat)
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
       })
+      if (timer) return
+      timer = setInterval(() => {
+        this.updateDataFlow()
+      },5000)
+    },
+    updateDataFlow() {
+      let id = this.$route.query.id
+      dataFlowsApi
+        .get([id])
+        .then(result => {
+            let dat = result?.data || {}
+            self.status = dat.status
+
+            if (self.executeMode !== dat.executeMode)
+              self.executeMode = dat.executeMode
+
+            if (!self.statusBtMap[self.status].start) {
+              self.executeMode = 'normal'
+            }
+            delete self.dataFlow.validateBatchId
+            delete self.dataFlow.validateStatus
+            delete self.dataFlow.validationSettings
+            Object.assign(self.dataFlow, dat)
+            self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
+        })
     },
     onGraphChanged() {
       if (this.isSimple) {
@@ -1857,6 +1883,10 @@ export default {
   beforeDestroy() {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId)
+    }
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
     }
     this.editor.destroy()
   }
