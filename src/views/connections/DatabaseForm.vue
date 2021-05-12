@@ -547,6 +547,9 @@ export default {
       if (filed === 'region') {
         this.model.zone = ''
       }
+      if (filed === 'zone') {
+        this.getDataSourceRegion() //选择完zone 联动实例vip 接口
+      }
       if (filed === 's_region') {
         this.model.s_zone = ''
       }
@@ -586,7 +589,6 @@ export default {
       this.model.database_type = type
       this.getFormConfig()
       this.getInstanceRegion()
-      this.getDataSourceRegion()
     },
     initTimezones() {
       let timezones = [{ label: '(Database Timezone)', value: '' }]
@@ -725,7 +727,9 @@ export default {
     //第二步 选择源端
     getDataSourceRegion() {
       let param = {
-        productType: this.model.database_type
+        productType: this.model.database_type,
+        agentPoolId: this.model.region,
+        agentZoneId: this.model.zone
       }
       this.$api('tcm')
         .productVip(param)
