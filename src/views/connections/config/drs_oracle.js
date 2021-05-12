@@ -6,7 +6,7 @@ export default function (vm) {
     },
     defaultModel: {
       connection_type: 'source_and_target',
-      sourceType: 'ecs'
+      sourceType: 'selfDB'
     },
     items: [
       {
