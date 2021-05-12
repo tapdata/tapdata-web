@@ -1512,6 +1512,7 @@ export default {
               .then(() => {
                 self.$message.success(self.$t('message.resetOk'))
                 self.editor.emit('dataFlow:reset')
+                location.reload()
               })
               .catch(err => {
                 if (err && err.response.status === 500) {
