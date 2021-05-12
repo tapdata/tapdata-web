@@ -525,6 +525,9 @@ export default {
     'model.s_region'() {
       this.changeDataSourceRegion()
     },
+    'model.zone'() {
+      this.getDataSourceRegion() //选择完zone 联动实例vip 接口
+    },
     'model.s_zone'() {
       this.changeDatabaseHost()
     },
@@ -723,6 +726,7 @@ export default {
       }
       let data = zone.length ? zone[0].zones : []
       this.changeConfig(data, 'zone')
+      this.getDataSourceRegion() //选择完zone 联动实例vip 接口
     },
     //第二步 选择源端
     getDataSourceRegion() {
