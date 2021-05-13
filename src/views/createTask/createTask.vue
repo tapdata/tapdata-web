@@ -655,7 +655,10 @@ export default {
             source_connectionId.options = data.map(item => {
               return {
                 id:
-                  item.database_host + item.database_port + item.database_name,
+                  item.database_host +
+                  item.database_port +
+                  item.database_name +
+                  item.database_uri,
                 name: item.name,
                 label: item.name,
                 value: item.id,
@@ -674,7 +677,10 @@ export default {
             target_connectionId.options = data.map(item => {
               return {
                 id:
-                  item.database_host + item.database_port + item.database_name,
+                  item.database_host +
+                  item.database_port +
+                  item.database_name +
+                  item.database_uri,
                 name: item.name,
                 label: item.name,
                 value: item.id,

@@ -1071,7 +1071,7 @@ export default {
               delete params.platformInfo.DRS_zone
             }
           }
-          connectionsModel[this.model.id ? 'update' : 'post'](params)
+          connectionsModel[this.model.id ? 'patchId' : 'post'](params)
             .then(() => {
               this.$message.success(this.$t('message.saveOK'))
               if (this.$route.query.step) {
@@ -1169,7 +1169,7 @@ export default {
         id: this.model.id
       }
       this.$api('connections')
-        .update(params)
+        .patchId(params)
         .then(() => {
           this.editBtnLoading = false
           this.$message.success(this.$t('message.saveOK'))
