@@ -2868,6 +2868,47 @@ const tc = {
     titlenametips: '名稱不能有重複，請重新修改',
     nameCheck: '名稱不能為空',
     alreadyExists: '規則名稱已存在'
+  },
+  dataRule: {
+    creatRule: '創建規則',
+    editRule: '編輯規則',
+    classification: '分類',
+    name: '名稱',
+    pleaseSelect: '請選擇',
+    pleaseInput: '請輸入',
+    nameCheck: '名稱不能為空',
+    rule: '規則',
+    data_type: '字段類型',
+    precision: '精確度',
+    data_Nullable: '可為空',
+    scale: '數字長度',
+    data_Range: '範圍',
+    data_Enum: '枚舉',
+    data_Regex: '正則表達式',
+    greater_that: '大於',
+    less_that: '小於',
+    required: '不能為空',
+    enum_required: '枚舉值不能為空',
+    gt_lt_none: '範圍邊界不能同時為',
+    data_type_required: '數據類型不能為空',
+    data_regex_required: '正則表達式不能為空',
+    correct_rules: '請輸入正確規則',
+    pleaseNum: '請輸入數字',
+    dataType: {
+      baseFloating: '浮點數',
+      baseObject: '對象',
+      baseBinarydata: '二進制數據',
+      baseString: '字符串',
+      baseArray: '數組',
+      baseUndefined: '未定義',
+      baseBoolean: '布爾值',
+      basedate: '日期',
+      baseNull: '空',
+      baseRegularexpression: '正則表達式',
+      baseShorttype: '短整型',
+      baseTimestamp: '時間戳',
+      baseLonginteger: '長整型'
+    }
   }
 }
 

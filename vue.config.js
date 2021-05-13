@@ -25,7 +25,7 @@ module.exports = {
       '/api/': proxy,
       '/oauth/': proxy,
       '/old/': {
-        target: 'http://192.168.1.101:8081/'
+        target: 'http://192.168.1.103:8081/'
       },
       '/ws/': {
         ...proxy,

@@ -2977,6 +2977,47 @@ const en = {
     titlenametips: 'The name cannot be repeated, please modify it again',
     nameCheck: 'Name cannot be empty',
     alreadyExists: 'Rule name already exists'
+  },
+  dataRule: {
+    creatRule: 'Create rule',
+    editRule: 'Edit Rule',
+    classification: 'Classification',
+    name: 'Name',
+    pleaseSelect: 'Please select',
+    pleaseInput: 'Please input',
+    nameCheck: 'The name cannot be empty',
+    rule: 'Rule',
+    data_type: 'Field Type',
+    precision: 'Accuracy',
+    data_Nullable: 'Nullable',
+    scale: 'Number length',
+    data_Range: 'Range',
+    data_Enum: 'Enumeration',
+    data_Regex: 'Regex',
+    greater_that: 'greater than',
+    less_that: 'less than',
+    required: 'Cannot be empty',
+    enum_required: 'Enum value is required',
+    gt_lt_none: 'The range boundary cannot be none at the same time',
+    data_type_required: 'Data type is required',
+    data_regex_required: 'Data regex is required',
+    correct_rules: 'Please enter the correct rules',
+    pleaseNum: 'Please enter a number',
+    dataType: {
+      baseFloating: 'Float',
+      baseObject: 'Object',
+      baseBinarydata: 'Binarydata',
+      baseString: 'String',
+      baseArray: 'Array',
+      baseUndefined: 'Undefined',
+      baseBoolean: 'Booleanvalue',
+      basedate: 'Date',
+      baseNull: 'Null',
+      baseRegularexpression: 'Regularexpression',
+      baseShorttype: 'Shorttype',
+      baseTimestamp: 'Timestamp',
+      baseLonginteger: 'Longinteger'
+    }
   }
 }
 

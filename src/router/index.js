@@ -132,10 +132,11 @@ const childRoutes = [
   {
     path: '/dataRules',
     name: 'dataRules',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/dataRules/List'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'data_rules_menu',
-      url: '/old/index.html#/dataRules',
+      // url: '/old/index.html#/dataRules',
       title: i18n.t('tap.dataRules'),
       isCollapse: false
     }

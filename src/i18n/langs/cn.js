@@ -2910,6 +2910,47 @@ const cn = {
     titlenametips: '名称不能有重复，请重新修改',
     nameCheck: '名称不能为空',
     alreadyExists: '规则名称已存在'
+  },
+  dataRule: {
+    creatRule: '创建规则',
+    editRule: '编辑规则',
+    classification: '分类',
+    name: '名称',
+    pleaseSelect: '请选择',
+    pleaseInput: '请输入',
+    nameCheck: '名称不能为空',
+    rule: '规则',
+    data_type: '字段类型',
+    precision: '精确度',
+    data_Nullable: '可为空',
+    scale: '数字长度',
+    data_Range: '范围',
+    data_Enum: '枚举',
+    data_Regex: '正则表达式',
+    greater_that: '大于',
+    less_that: '小于',
+    required: '不能为空',
+    enum_required: '枚举值不能为空',
+    gt_lt_none: '范围边界不能同时为',
+    data_type_required: '数据类型不能为空',
+    data_regex_required: '正则表达式不能为空',
+    correct_rules: '请输入正确规则',
+    pleaseNum: '请输入数字',
+    dataType: {
+      baseFloating: '浮点数',
+      baseObject: '对象',
+      baseBinarydata: '二进制数据',
+      baseString: '字符串',
+      baseArray: '数组',
+      baseUndefined: '未定义',
+      baseBoolean: '布尔值',
+      basedate: '日期',
+      baseNull: '空',
+      baseRegularexpression: '正则表达式',
+      baseShorttype: '短整型',
+      baseTimestamp: '时间戳',
+      baseLonginteger: '长整型'
+    }
   }
 }
 
