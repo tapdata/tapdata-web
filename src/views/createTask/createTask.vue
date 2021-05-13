@@ -592,7 +592,8 @@ export default {
         status: 1,
         database_host: 1,
         database_port: 1,
-        database_name: 1
+        database_name: 1,
+        database_uri: 1
       }
       if (type === 'source_connectionId') {
         fields['database_username'] = 1
