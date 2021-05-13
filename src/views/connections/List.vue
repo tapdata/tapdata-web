@@ -334,7 +334,8 @@ export default {
         'gaussdb200',
         'dummy db',
         'rest api',
-        'custom_connection'
+        'custom_connection',
+        'gridfs'
       ], //目前白名单,
       searchParams: {
         databaseType: '',

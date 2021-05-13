@@ -15,6 +15,7 @@ import gbase8s from './gbase8s'
 import gaussdb200 from './gaussdb200'
 import restapi from './restapi'
 import custom_connection from './custom_connection'
+import gridfs from './gridfs'
 import dummydb from './dummydb'
 import jira from './jira'
 import drs_mysql from './drs_mysql'
@@ -71,5 +72,6 @@ export default {
   gaussdb200,
   dummydb,
   restapi,
-  custom_connection
+  custom_connection,
+  gridfs
 }
