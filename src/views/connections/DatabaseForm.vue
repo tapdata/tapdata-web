@@ -1071,7 +1071,7 @@ export default {
               delete params.platformInfo.DRS_zone
             }
           }
-          connectionsModel[this.model.id ? 'patchId' : 'post'](params)
+          connectionsModel[this.model.id ? 'update' : 'post'](params)
             .then(() => {
               this.$message.success(this.$t('message.saveOK'))
               if (this.$route.query.step) {
