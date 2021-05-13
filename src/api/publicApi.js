@@ -121,6 +121,11 @@ axios.interceptors.response.use(
   error => {
     let rsp = error.response
     if (rsp) {
+      if (rsp.data && rsp.data.state === 'EXCEPTION') {
+        return new Promise(() => {
+          return Promise.reject(error)
+        })
+      }
       switch (rsp.status) {
         // 用户无权限访问接口
         case 401:
