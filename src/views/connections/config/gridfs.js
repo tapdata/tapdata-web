@@ -245,38 +245,115 @@ export default function (vm) {
       },
       {
         type: 'select',
-        field: 'connection_type',
+        field: 'gridfsReadMode',
         label: '读取模式',
         options: [
           {
             label: '解析成数据',
-            value: 'source'
+            value: 'data'
           },
           {
             label: '二进制传输',
-            value: 'target'
+            value: 'binary'
           }
         ],
-        required: true
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'source'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ],
+        influences: [
+          {
+            field: 'seperate',
+            byValue: true,
+            value: ''
+          },
+          {
+            field: 'json_type',
+            byValue: true,
+            value: ''
+          },
+          {
+            field: 'data_content_xpath',
+            byValue: true,
+            value: ''
+          }
+        ]
       },
       {
         type: 'input',
-        field: 'database_name',
-        label: '包含的文件（正则表达式）'
+        field: 'include_filename',
+        label: '包含的文件（正则表达式）',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'source'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       },
       {
         type: 'input',
-        field: 'database_name',
-        label: '不包含的文件（正则表达式）'
+        field: 'exclude_filename',
+        label: '不包含的文件（正则表达式）',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'source'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       },
       {
         type: 'input',
-        field: 'database_name',
-        label: '目标数据集（如果匹配的文件具有相同的结构，请指定一个通用名）'
+        field: 'file_schema',
+        label: '目标数据集（如果匹配的文件具有相同的结构，请指定一个通用名）',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'gridfsReadMode',
+                value: 'data'
+              },
+              {
+                field: 'connection_type',
+                value: 'source'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       },
       {
         type: 'select',
-        field: 'connection_type',
+        field: 'file_type',
         label: '文件类型',
         options: [
           {
@@ -294,18 +371,58 @@ export default function (vm) {
           {
             label: 'XML',
             value: 'xml'
-          },
+          }
         ],
-        required: true
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'gridfsReadMode',
+                value: 'data'
+              },
+              {
+                field: 'connection_type',
+                value: 'source'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       },
       {
         type: 'input',
-        field: 'database_name',
-        label: '分隔符'
+        field: 'seperate',
+        label: '分隔符',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'file_type',
+                value: 'csv'
+              },
+              {
+                field: 'connection_type',
+                value: 'source'
+              },
+              {
+                field: 'gridfsReadMode',
+                value: 'data'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       },
       {
         type: 'select',
-        field: 'connection_type',
+        field: 'json_type',
         label: 'Json类型',
         options: [
           {
@@ -317,17 +434,123 @@ export default function (vm) {
             value: 'objectbegin'
           }
         ],
-        required: true
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'file_type',
+                value: 'json'
+              },
+              {
+                field: 'connection_type',
+                value: 'source'
+              },
+              {
+                field: 'gridfsReadMode',
+                value: 'data'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       },
       {
         type: 'input',
-        field: 'database_name',
-        label: '数据记录的XPath(/RootTag/Students/Student)*'
+        field: 'data_content_xpath',
+        label: '数据记录的XPath(/RootTag/Students/Student)*',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'file_type',
+                value: 'xml'
+              },
+              {
+                field: 'connection_type',
+                value: 'source'
+              },
+              {
+                field: 'gridfsReadMode',
+                value: 'data'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       },
       {
         type: 'input',
-        field: 'database_name',
-        label: '过滤标签（tag1,tag2）'
+        field: 'tags_filter',
+        label: '过滤标签（tag1,tag2）',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'source'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'input',
+        field: 'tags_filter',
+        label: 'Grid上传文件大小',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'select',
+        field: 'file_upload_mode',
+        label: '上传模式',
+        options: [
+          {
+            label: '流式',
+            value: 'stream'
+          },
+          {
+            label: '内存读取（有内存溢出风险）',
+            value: 'memory'
+          }
+        ],
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }

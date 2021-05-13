@@ -256,7 +256,138 @@
                 </div>
               </div>
             </template>
+            <!-- grid fs -->
+            <template v-if="databaseType ==='gridfs' && model.file_type === 'excel' && model.gridfsReadMode ==='data' && model.connection_type ==='source'">
+              <div class="gridfs-box">
+                <el-form
+                  label-width="200px"
+                  label-position="right"
+                  :rules="gridFSrules"
+                  :model="model"
+                  ref="excelForm"
+                >
+                  <!--工作页 -->
+                  <el-form-item
+                    :label="$t('editor.fileFormBuilder.sheet_range')"
+                    prop="sheet_start"
+                  >
+                    <el-input
+                      v-model.number="model.sheet_start"
+                      maxlength="3"
+                      show-word-limit
+                      size="mini"
+                      onkeyup="model.sheet_start = model.sheet_start.replace(/[^\d.]/g,'');"
+                      :placeholder="$t('editor.fileFormBuilder.sheet_start')"
+                    ></el-input>
+                    <span class="separate"> ~ </span>
+                    <el-input
+                      v-model="model.sheet_end"
+                      maxlength="3"
+                      show-word-limit
+                      size="mini"
+                      onkeyup="model.sheet_end = model.sheet_end.replace(/[^\d.]/g,'');"
+                      :placeholder="$t('editor.fileFormBuilder.sheet_end')"
+                    ></el-input>
+                  </el-form-item>
+                  <!--字段范围 -->
+                  <el-form-item
+                    :label="$t('editor.fileFormBuilder.excel_header_type')"
+                    class="headerType"
+                    prop="excel_header_start"
+                  >
+                    <div>
+                      <el-radio-group
+                        v-model="model.gridfs_header_type"
+                        @change="changeHeaderType"
+                      >
+                        <el-radio label="specified_line">{{
+                          $t('editor.fileFormBuilder.excel_header_coordinate')
+                          }}</el-radio>
+                        <el-radio label="custom">{{
+                          $t('editor.fileFormBuilder.excel_header_range')
+                          }}</el-radio>
+                      </el-radio-group>
+                      <el-input
+                        v-model="model.gridfs_header_config"
+                        size="mini"
+                        :placeholder="
+                    $t('editor.fileFormBuilder.header_type_custom_label')
+                  "
+                        v-show="model.gridfs_header_type === 'custom'"
+                      ></el-input>
+                      <div
+                        v-show="model.gridfs_header_type !== 'custom'"
+                        class="excel_header_start"
+                      >
+                        <el-input
+                          v-model="model.excel_header_start"
+                          size="mini"
+                          :placeholder="
+                      $t('editor.fileFormBuilder.excel_header_start')
+                    "
+                        ></el-input>
+                        <span class="separate"> ~ </span>
+                        <el-input
+                          v-model="model.excel_header_end"
+                          size="mini"
+                          :placeholder="$t('editor.fileFormBuilder.excel_header_end')"
+                        ></el-input>
+                      </div>
+                    </div>
+                  </el-form-item>
+                  <el-form-item
+                    v-show="model.gridfs_header_type !== 'custom'"
+                  ><div style="color: #999">
+                    {{ $t('editor.fileFormBuilder.excel_cell_point') }}
+                  </div></el-form-item
+                  >
+                  <!--字段获取方式 -->
+                  <el-form-item
+                    :label="$t('editor.fileFormBuilder.header_mapping')"
+                    class="excelHeaderType"
+                  >
+                    <el-radio-group v-model="model.excel_header_type">
+                      <el-radio label="value">{{
+                        $t('editor.fileFormBuilder.header_mapping_value')
+                        }}</el-radio>
+                      <el-radio label="index">{{
+                        $t('editor.fileFormBuilder.header_mapping_index')
+                        }}</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                  <!-- 内容 -->
+                  <el-form-item
+                    :label="$t('editor.fileFormBuilder.excel_value_type')"
+                    prop="excel_value_start"
+                    class="excel_value_start"
+                  >
+                    <el-input
+                      v-model.number="model.excel_value_start"
+                      maxlength="10"
+                      show-word-limit
+                      size="mini"
+                      onkeyup="model.excel_value_start = model.excel_value_start.replace(/[^\d.]/g,'');"
+                      :placeholder="$t('editor.fileFormBuilder.excel_value_start')"
+                    ></el-input>
+                    <span class="separate"> ~ </span>
+                    <el-input
+                      v-model.number="model.excel_value_end"
+                      maxlength="10"
+                      show-word-limit
+                      size="mini"
+                      onkeyup="model.excel_value_end = model.excel_value_end.replace(/[^\d.]/g,'');"
+                      :placeholder="$t('editor.fileFormBuilder.excel_value_end')"
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item
+                  ><div style="margin-top: -10px; color: #999">
+                    {{ $t('editor.fileFormBuilder.excel_value_range') }}
+                  </div></el-form-item
+                  >
+                </el-form>
+              </div>
 
+            </template>
             <!-- 文件数据库 -->
             <template
               v-if="
@@ -502,6 +633,61 @@ export default {
   name: 'DatabaseForm',
   components: { gitbook, Test, DatabaseTypeDialog, JsEditor },
   data() {
+    let validateExcelHeader = (rule, value, callback) => {
+      let start = this.model.excel_header_start
+      let end = this.model.excel_header_end
+      let config = this.model.gridfs_header_config
+      if (start === '') {
+        callback(
+          new Error(
+            this.$t('editor.fileFormBuilder.excel_header_start') +
+            this.$t('formBuilder.noneText')
+          )
+        )
+      } else if (end === '') {
+        callback(
+          new Error(
+            this.$t('editor.fileFormBuilder.excel_header_end') +
+            this.$t('formBuilder.noneText')
+          )
+        )
+      } else if (
+        config === '' &&
+        this.model.gridfs_header_type === 'custom'
+      ) {
+        callback(
+          new Error(this.$t('editor.fileFormBuilder.header_type_required'))
+        )
+      } else if (
+        (!/^[A-Z]+[1-9]+$/.test(start) && start !== '') ||
+        (!/^[A-Z]+[1-9]+$/.test(end) && end !== '')
+      ) {
+        callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_tip')))
+      }
+    }
+    let validateSheet = (rule, value, callback) => {
+      let start = this.model.sheet_start
+      let end = this.model.sheet_end
+      if (start === '') {
+        callback(
+          new Error(
+            this.$t('editor.fileFormBuilder.sheet_start') +
+            this.$t('formBuilder.noneText')
+          )
+        )
+      } else if (end === '') {
+        callback(
+          new Error(
+            this.$t('editor.fileFormBuilder.sheet_end') +
+            this.$t('formBuilder.noneText')
+          )
+        )
+      } else if (start > end) {
+        callback(
+          new Error(this.$t('editor.fileFormBuilder.excel_value_end_gt_start'))
+        )
+      }
+    }
     return {
       // modelForm: {},
       rules: [],
@@ -560,7 +746,28 @@ export default {
       ecsPageSize: 10,
       ecsPage: 1,
       vpcList: [],
-      ecsList: []
+      ecsList: [],
+      gridFSrules: {
+        gridfs_header_config: [
+          {
+            required: true,
+            message: this.$t('editor.fileFormBuilder.gridfs_header_config'),
+            trigger: 'blur'
+          }
+        ],
+        excel_header_start: [
+          {
+            validator: validateExcelHeader,
+            trigger: 'blur'
+          }
+        ],
+        sheet_start: [
+          {
+            validator: validateSheet,
+            trigger: 'blur'
+          }
+        ]
+      },
     }
   },
   created() {
@@ -592,6 +799,9 @@ export default {
         break
       case 'custom_connection':
         this.model = Object.assign({}, defaultModel['custom_connection'])
+        break
+      case 'gridfs':
+        this.model = Object.assign({},defaultModel['default'], defaultModel['gridfs'])
         break
     }
     this.getDT(this.databaseType)
@@ -697,7 +907,6 @@ export default {
       }
       // custom_connection
       if (filed === 'connection_type' || filed === 'custom_type') {
-        debugger
         this.model.custom_ondata_script =''
         this.model.custom_cdc_script =''
         this.model.custom_initial_script =''
@@ -1172,6 +1381,13 @@ export default {
           }
         })
       }
+      if( this.model.database_type === 'gridfs' && this.model.file_type ==='excel'){
+        this.$refs.excelForm.validate((valid) => {
+          if (!valid) {
+            flag = false
+          }
+        })
+      }
       if (!this.model.checkedVpc && this.model.sourceType === 'ecs') {
         this.$message.error('请授权允许数据同步服务访问您的ECS实例')
         return
@@ -1538,6 +1754,12 @@ export default {
             width: calc(100% - 200px);
           }
         }
+        .gridfs-box {
+          font-size: 12px;
+          .separate {
+            margin: 0 10px;
+          }
+        }
         .fileBox {
           display: flex;
           flex: 1;
@@ -1724,6 +1946,51 @@ export default {
   .urlInfoForm {
     .el-form-item {
       margin-bottom: 0;
+    }
+  }
+}
+.databaseFrom .gridfs-box {
+  .el-form-item {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+  .el-form-item__content {
+    display: flex;
+    font-size: 12px;
+    margin-right: 20px;
+  }
+  .el-form-item__error {
+    padding-top: 0;
+  }
+  .el-form-item__label:before {
+    content: '*';
+    color: #f56c6c;
+    margin-right: 4px;
+  }
+  .excel_value_start {
+    .el-form-item__label:before {
+      content: '';
+    }
+  }
+  .el-form-item__label {
+    font-size: 12px;
+  }
+  .el-radio__label {
+    font-size: 12px;
+  }
+  .headerType .el-form-item__content {
+    flex-direction: column;
+    .excel_header_start {
+      display: flex;
+      font-size: 12px;
+    }
+  }
+  .excel_header_start {
+  }
+  .excelHeaderType {
+    .el-form-item__content {
+      display: block;
+      font-size: 12px;
     }
   }
 }
