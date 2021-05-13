@@ -448,7 +448,7 @@ export default {
               this.dataSourceModel.target_connectionId,
               'target_connectionId'
             )
-            //source.id/target.id = host + port + username
+            //source.id/target.id = host + port + username + database_uri
             if (source.id === target.id) {
               this.$message.error('源端连接与目标端连接不能选择相同的连接')
               return
@@ -655,7 +655,10 @@ export default {
             source_connectionId.options = data.map(item => {
               return {
                 id:
-                  item.database_host + item.database_port + item.database_name,
+                  item.database_host +
+                  item.database_port +
+                  item.database_name +
+                  item.database_uri,
                 name: item.name,
                 label: item.name,
                 value: item.id,
@@ -674,7 +677,10 @@ export default {
             target_connectionId.options = data.map(item => {
               return {
                 id:
-                  item.database_host + item.database_port + item.database_name,
+                  item.database_host +
+                  item.database_port +
+                  item.database_name +
+                  item.database_uri,
                 name: item.name,
                 label: item.name,
                 value: item.id,

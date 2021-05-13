@@ -767,7 +767,11 @@ export default {
       let currentZone = this.dataSourceZone.filter(
         item => item.zoneCode === this.model.s_zone
       )
-      if (currentZone.length > 0 && this.model.sourceType === 'rds' && this.model.s_zone !=='') {
+      if (
+        currentZone.length > 0 &&
+        this.model.sourceType === 'rds' &&
+        this.model.s_zone !== ''
+      ) {
         this.model.database_host =
           currentZone[0].ipv4 || currentZone[0].ipv6 || ''
       }
@@ -1165,7 +1169,7 @@ export default {
         id: this.model.id
       }
       this.$api('connections')
-        .patchId(params)
+        .update(params)
         .then(() => {
           this.editBtnLoading = false
           this.$message.success(this.$t('message.saveOK'))
