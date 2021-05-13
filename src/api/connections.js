@@ -37,7 +37,8 @@ export default class Connections extends PublicAPI {
   }
   update(params) {
     return axios.post(
-      `${this.url}/update?where=` + JSON.stringify({ _id: params.id }),
+      `${this.url}/update?where=` +
+        encodeURIComponent(JSON.stringify({ _id: params.id })),
       params
     )
   }
