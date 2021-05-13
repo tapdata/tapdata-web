@@ -767,7 +767,7 @@ export default {
       let currentZone = this.dataSourceZone.filter(
         item => item.zoneCode === this.model.s_zone
       )
-      if (currentZone.length > 0 && this.model.sourceType === 'rds') {
+      if (currentZone.length > 0 && this.model.sourceType === 'rds' && this.model.s_zone !=='') {
         this.model.database_host =
           currentZone[0].ipv4 || currentZone[0].ipv6 || ''
       }
