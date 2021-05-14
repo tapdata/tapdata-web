@@ -7,6 +7,7 @@ import EventEmitter from '../editor/lib/EventEmitter'
 import Cookie from 'tiny-cookie'
 import log from '../log'
 import factory from './factory'
+import WSMock from './wsMock'
 
 const workerApi = factory('Workers')
 
@@ -249,7 +250,8 @@ class WSClient extends EventEmitter {
   }
 }
 
-const wsClient = new WSClient()
+const wsClient =
+  process.env.VUE_APP_MOCK === 'true' ? new WSMock() : new WSClient()
 wsClient.connect()
 
 export default wsClient
