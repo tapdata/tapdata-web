@@ -728,7 +728,7 @@ export default {
       this.changeConfig(data, 'zone')
       this.getDataSourceRegion() //选择完zone 联动实例vip 接口
     },
-    //第二步 选择源端
+    //第二步 source_type DRS实例
     getDataSourceRegion() {
       let param = {
         productType: this.model.database_type,
@@ -767,7 +767,11 @@ export default {
       let currentZone = this.dataSourceZone.filter(
         item => item.zoneCode === this.model.s_zone
       )
-      if (currentZone.length > 0) {
+      if (
+        currentZone.length > 0 &&
+        this.model.sourceType === 'rds' &&
+        this.model.s_zone !== ''
+      ) {
         this.model.database_host =
           currentZone[0].ipv4 || currentZone[0].ipv6 || ''
       }

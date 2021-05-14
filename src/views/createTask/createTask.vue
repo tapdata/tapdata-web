@@ -592,7 +592,8 @@ export default {
         status: 1,
         database_host: 1,
         database_port: 1,
-        database_name: 1
+        database_name: 1,
+        database_uri: 1
       }
       if (type === 'source_connectionId') {
         fields['database_username'] = 1
@@ -655,7 +656,10 @@ export default {
             source_connectionId.options = data.map(item => {
               return {
                 id:
-                  item.database_host + item.database_port + item.database_name,
+                  item.database_host +
+                  item.database_port +
+                  item.database_name +
+                  item.database_uri,
                 name: item.name,
                 label: item.name,
                 value: item.id,
@@ -674,7 +678,10 @@ export default {
             target_connectionId.options = data.map(item => {
               return {
                 id:
-                  item.database_host + item.database_port + item.database_name,
+                  item.database_host +
+                  item.database_port +
+                  item.database_name +
+                  item.database_uri,
                 name: item.name,
                 label: item.name,
                 value: item.id,
