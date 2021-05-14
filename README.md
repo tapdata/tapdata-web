@@ -13,6 +13,7 @@ yarn install
 yarn start 启动并打开应用
 // or
 yarn start --dev 开启dev环境的接口代理
+yarn start:mock --local 开启dev环境的接口代理,local表示本地环境,mock表示模拟websocket数据
 ```
 
 3. **打包**
