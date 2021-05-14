@@ -471,7 +471,7 @@ import factory from '../../api/factory'
 import { EditorEventType } from '../../editor/lib/events'
 import i18n from '@/i18n'
 import ws from '../../api/ws'
-import _ from "lodash";
+// import _ from "lodash";
 const dataFlows = factory('DataFlows')
 const connectionApi = factory('connections')
 const DataFlowInsights = factory('DataFlowInsights')
