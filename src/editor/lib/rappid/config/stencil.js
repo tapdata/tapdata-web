@@ -3,16 +3,19 @@
  * @date 2/29/20
  * @description
  */
-import i18n from '../../../../i18n/i18n';
+import i18n from '@/i18n'
 export const stencilConfig = {
-	groups: {
-		data: { index: 1, label: i18n.t('editor.ui.sidebar.data_nodes') },
-		processor: { index: 2, label: i18n.t('editor.ui.sidebar.processor') },
-		tableSelector: { index: 3, label: i18n.t('editor.ui.sidebar.tableSelector') }
-	},
-	shapes: {
-		data: [
-			/* {
+  groups: {
+    data: { index: 1, label: i18n.t('editor.ui.sidebar.data_nodes') },
+    processor: { index: 2, label: i18n.t('editor.ui.sidebar.processor') },
+    tableSelector: {
+      index: 3,
+      label: i18n.t('editor.ui.sidebar.tableSelector')
+    }
+  },
+  shapes: {
+    data: [
+      /* {
 				type: 'app.SourceDB',
 				size: {width: 5, height: 3},
 				attrs: {
@@ -70,10 +73,10 @@ export const stencilConfig = {
 					}
 				}
 			} */
-		],
-		processor: [],
-		standard: []
-		/* standard: [
+    ],
+    processor: [],
+    standard: []
+    /* standard: [
 			{
 				type: 'standard.Rectangle',
 				size: {width: 5, height: 3},
@@ -294,5 +297,5 @@ export const stencilConfig = {
 			}
 		}
 		] */
-	}
-};
+  }
+}

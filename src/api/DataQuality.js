@@ -1,20 +1,20 @@
-import axios from 'axios';
-import PublicAPI from './publicApi';
+import axios from 'axios'
+import PublicAPI from './publicApi'
 
 export default class DataQualityAPI extends PublicAPI {
-	constructor() {
-		super('/api/DataCatalogs');
-	}
+  constructor() {
+    super('/api/DataCatalogs')
+  }
 
-	getCount(params) {
-		return axios.get(this.url + '/getCount', { params: params });
-	}
+  getCount(params) {
+    return axios.get(this.url + '/getCount', { params: params })
+  }
 
-	getList(params) {
-		return axios.get(this.url + '/getList', { params: params });
-	}
+  getList(params) {
+    return axios.get(this.url + '/getList', { params: params })
+  }
 
-	analyzeByConnId(params) {
-		return axios.post(this.url + '/analyzeByConnId', params);
-	}
+  analyzeByConnId(params) {
+    return axios.post(this.url + '/analyzeByConnId', params)
+  }
 }

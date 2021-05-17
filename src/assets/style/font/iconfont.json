@@ -6,6 +6,139 @@
   "description": "Tapdata 线装小图标",
   "glyphs": [
     {
+      "icon_id": "19878629",
+      "name": "异常",
+      "font_class": "yichang",
+      "unicode": "e6af",
+      "unicode_decimal": 59055
+    },
+    {
+      "icon_id": "19878630",
+      "name": "运行错误",
+      "font_class": "yunhangcuowu",
+      "unicode": "e6b0",
+      "unicode_decimal": 59056
+    },
+    {
+      "icon_id": "19878631",
+      "name": "运行中",
+      "font_class": "yunhangzhong",
+      "unicode": "e6b1",
+      "unicode_decimal": 59057
+    },
+    {
+      "icon_id": "19878632",
+      "name": "已冻结",
+      "font_class": "yidongjie",
+      "unicode": "e70e",
+      "unicode_decimal": 59150
+    },
+    {
+      "icon_id": "19878633",
+      "name": "提示",
+      "font_class": "tishi",
+      "unicode": "e70f",
+      "unicode_decimal": 59151
+    },
+    {
+      "icon_id": "19878634",
+      "name": "搜索删除_u251",
+      "font_class": "sousuoshanchu_u251",
+      "unicode": "e711",
+      "unicode_decimal": 59153
+    },
+    {
+      "icon_id": "19878635",
+      "name": "疑问",
+      "font_class": "yiwen",
+      "unicode": "e714",
+      "unicode_decimal": 59156
+    },
+    {
+      "icon_id": "19878636",
+      "name": "刷新",
+      "font_class": "shuaxin4",
+      "unicode": "e730",
+      "unicode_decimal": 59184
+    },
+    {
+      "icon_id": "19878638",
+      "name": "实例信息",
+      "font_class": "shilixinxi",
+      "unicode": "e732",
+      "unicode_decimal": 59186
+    },
+    {
+      "icon_id": "19878639",
+      "name": "空数据",
+      "font_class": "kongshuju",
+      "unicode": "e733",
+      "unicode_decimal": 59187
+    },
+    {
+      "icon_id": "19878640",
+      "name": "订购失败",
+      "font_class": "dinggoushibai",
+      "unicode": "e734",
+      "unicode_decimal": 59188
+    },
+    {
+      "icon_id": "19878641",
+      "name": "表格里编辑名称的错误提示",
+      "font_class": "biaogelibianjimingchengdecuowutishi",
+      "unicode": "e735",
+      "unicode_decimal": 59189
+    },
+    {
+      "icon_id": "19878642",
+      "name": "计费信息",
+      "font_class": "jifeixinxi",
+      "unicode": "e736",
+      "unicode_decimal": 59190
+    },
+    {
+      "icon_id": "19878643",
+      "name": "待启动",
+      "font_class": "daiqidong",
+      "unicode": "e737",
+      "unicode_decimal": 59191
+    },
+    {
+      "icon_id": "19878644",
+      "name": "订购成功",
+      "font_class": "dinggouchenggong",
+      "unicode": "e73a",
+      "unicode_decimal": 59194
+    },
+    {
+      "icon_id": "19878645",
+      "name": "编辑",
+      "font_class": "bianji3",
+      "unicode": "e73b",
+      "unicode_decimal": 59195
+    },
+    {
+      "icon_id": "19878646",
+      "name": "订购",
+      "font_class": "dinggou",
+      "unicode": "e73c",
+      "unicode_decimal": 59196
+    },
+    {
+      "icon_id": "19879046",
+      "name": "筛选",
+      "font_class": "shaixuan2",
+      "unicode": "e73d",
+      "unicode_decimal": 59197
+    },
+    {
+      "icon_id": "19879258",
+      "name": "搜索",
+      "font_class": "sousuo1",
+      "unicode": "e73e",
+      "unicode_decimal": 59198
+    },
+    {
       "icon_id": "6967641",
       "name": "三横",
       "font_class": "sanheng",
