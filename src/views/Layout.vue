@@ -695,7 +695,7 @@ export default {
     }
     .menu {
       width: 260px;
-      flex: 1;
+      //flex: 1;
       padding-bottom: 48px;
       background: rgba(250, 250, 250, 1);
       .iconfont {
