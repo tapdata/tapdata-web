@@ -49,7 +49,6 @@
           </li>
         </ul>
       </div>
-      <div slot="operation"></div>
       <el-table-column
         :label="$t('process.worker_ip')"
         prop="worker_ip"

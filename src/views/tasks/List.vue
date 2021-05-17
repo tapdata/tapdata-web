@@ -105,7 +105,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('user.opera')" width="120">
+      <el-table-column :label="$t('message.operator')" width="120">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'schedule_jobs_management'"

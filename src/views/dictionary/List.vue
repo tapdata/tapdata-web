@@ -52,7 +52,7 @@
       </div>
       <div slot="operation">
         <el-button
-          v-readonlybtn="'new_model_creation'"
+          v-readonlybtn="'dictionary'"
           class="btn btn-create"
           size="mini"
           @click="openCreateDialog"
@@ -87,28 +87,28 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.opera')" width="120">
+      <el-table-column :label="$t('message.operator')" width="120">
         <template slot-scope="scope">
           <el-button
-            v-readonlybtn="'user_edition'"
+            v-readonlybtn="'dictionary'"
             size="mini"
             type="text"
             :disabled="
-              $disabledByPermission('user_edition_all_data', scope.row.user_id)
+              $disabledByPermission('dictionary_all_data', scope.row.user_id)
             "
             @click="edit(scope.row)"
-            >{{ $t('user.edit') }}</el-button
+            >{{ $t('message.edit') }}</el-button
           >
           <el-button
-            v-readonlybtn="'user_delete'"
+            v-readonlybtn="'dictionary'"
             size="mini"
             type="text"
             style="color: #f56c6c"
             :disabled="
-              $disabledByPermission('user_delete_all_data', scope.row.user_id)
+              $disabledByPermission('dictionary_all_data', scope.row.user_id)
             "
             @click="remove(scope.row)"
-            >{{ $t('user.delete') }}</el-button
+            >{{ $t('message.delete') }}</el-button
           >
         </template>
       </el-table-column>
