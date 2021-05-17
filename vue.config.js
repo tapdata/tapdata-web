@@ -1,7 +1,7 @@
 const { npm_config_argv } = process.env
 const URL = {
-  local: 'http://localhost:30300',
-  dev: 'http://192.168.1.181:30300',
+  // dev: 'http://192.168.1.181:30300',
+  dev: 'http://localhost:30300',
   pro: 'http://backend:3030'
 }
 let ENV
