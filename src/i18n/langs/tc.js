@@ -2909,6 +2909,29 @@ const tc = {
       baseTimestamp: '時間戳',
       baseLonginteger: '長整型'
     }
+  },
+  task: {
+    task_name: '任務名稱',
+    task_type: '任務類型',
+    statusText: '狀態',
+    cron_expression: 'Cron 表達式',
+    agent_id: '進程標識',
+    last_updated: '最後更新時間',
+    task_result_code: '執行結果代碼',
+    task_result: '執行結果',
+    task_duration: '任務執行耗時(ms)',
+    task_start_time: '開始執行時間',
+    ahistory: '調度歷史',
+    apitest: 'API 文檔及測試',
+    ping_time: 'Ping 時間',
+    start: '啟動',
+    paused: '暫停',
+    status: {
+      waiting: '等待中',
+      scheduling: '正在執行',
+      paused: '暫停',
+      stopping: '正在停止'
+    }
   }
 }
 

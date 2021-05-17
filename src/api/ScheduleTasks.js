@@ -6,7 +6,7 @@
 import PublicAPI from './publicApi'
 import axios from 'axios'
 
-export default class ScheduleTasks extends PublicAPI {
+export default class TaskHistoriesAPI extends PublicAPI {
   constructor() {
     super('/api/ScheduleTasks')
   }

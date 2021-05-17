@@ -38,6 +38,7 @@ const cn = {
     upload: 'Tapdata-点击上传',
 
     jobSchedule: 'Tapdata-调度任务',
+    taskHistories: 'Tapdata-调度历史',
     clusterManagement: 'Tapdata-集群管理 ',
     agentManagement: 'Tapdata-进程管理 ',
     userManagement: 'Tapdata-用户管理 ',
@@ -164,6 +165,7 @@ const cn = {
       dataCollect: '数据采集(旧版)',
       system: '系统管理',
       tasks: '调度任务',
+      taskHistories: '调度历史',
       agentdownload: '代理下载',
       clusterManagement: '集群管理',
       agentManagement: 'Agent管理',
@@ -2950,6 +2952,29 @@ const cn = {
       baseShorttype: '短整型',
       baseTimestamp: '时间戳',
       baseLonginteger: '长整型'
+    }
+  },
+  task: {
+    task_name: '任务名称',
+    task_type: '任务类型',
+    statusText: '状态',
+    cron_expression: 'Cron 表达式',
+    agent_id: '进程标识',
+    last_updated: '最后更新时间',
+    task_result_code: '执行结果代码',
+    task_result: '执行结果',
+    task_duration: '任务执行耗时(ms)',
+    task_start_time: '开始执行时间',
+    ahistory: '调度历史',
+    apitest: 'API 文档及测试',
+    ping_time: 'Ping 时间',
+    start: '启动',
+    paused: '暂停',
+    status: {
+      waiting: '等待中',
+      scheduling: '正在执行',
+      paused: '暂停',
+      stopping: '正在停止'
     }
   }
 }

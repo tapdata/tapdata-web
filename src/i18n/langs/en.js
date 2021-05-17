@@ -31,6 +31,7 @@ const en = {
     serversOversee: 'Tapdata-ServersOversee',
     journal: 'Tapdata-Journal',
     apiInfo: 'Tapdata-APIInfo',
+    taskHistories: 'Tapdata-Scheduling History',
     agentdownload: 'Tapdata-Agentdownload',
     dataCollect: 'Tapdata-DataCollect',
     upload: 'Tapdata-Upload',
@@ -168,6 +169,7 @@ const en = {
       dataCollect: 'Data Collect(Old)',
       system: 'System',
       tasks: 'Schedule Tasks',
+      taskHistories: 'Scheduling History',
       agentdownload: 'Agent Download',
       clusterManagement: 'Cluster management',
       agentManagement: 'Agent management',
@@ -3017,6 +3019,29 @@ const en = {
       baseShorttype: 'Shorttype',
       baseTimestamp: 'Timestamp',
       baseLonginteger: 'Longinteger'
+    }
+  },
+  task: {
+    task_name: 'Task name',
+    task_type: 'Task Type',
+    statusText: 'Status',
+    cron_expression: 'Cron expression',
+    agent_id: 'Run Agent Id',
+    last_updated: 'Last update time',
+    task_result_code: 'Task Result Code',
+    task_result: 'Task Result',
+    task_duration: 'Task Duration(ms)',
+    task_start_time: 'Task Start Time',
+    ahistory: 'Scheduling History',
+    apitest: 'API Documentation And Testing',
+    ping_time: 'Ping time',
+    start: 'Start',
+    paused: 'Pause',
+    status: {
+      waiting: 'Waiting',
+      scheduling: 'Scheduling',
+      paused: 'Paused',
+      stopping: 'Stopping'
     }
   }
 }

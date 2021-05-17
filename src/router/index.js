@@ -260,12 +260,24 @@ const childRoutes = [
   {
     path: '/tasks',
     name: 'tasks',
-    // component: () => import('@/views/process/List'),
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/tasks/List'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'schedule_jobs_menu',
       // url: '/old/index.html#/tasks',
       title: i18n.t('tap.jobSchedule'),
+      isCollapse: false
+    }
+  },
+  {
+    path: '/taskHistories',
+    name: 'taskHistories',
+    component: () => import('@/views/tasks/Histories'),
+    // component: () => import('@/views/ExternalLink'),
+    meta: {
+      code: 'schedule_jobs_menu',
+      // url: '/old/index.html#/tasks',
+      title: i18n.t('tap.taskHistories'),
       isCollapse: false
     }
   },
