@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve --open",
-    "start:mock": "cross-env VUE_APP_MOCK=true npm run start",
+    "start:ws": "cross-env VUE_APP_WS=true npm run start",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:e2e": "vue-cli-service test:e2e",

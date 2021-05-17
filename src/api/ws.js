@@ -251,7 +251,7 @@ class WSClient extends EventEmitter {
 }
 
 const wsClient =
-  process.env.VUE_APP_MOCK === 'true' ? new WSMock() : new WSClient()
+  process.env.VUE_APP_WS === 'true' ? new WSMock() : new WSClient()
 wsClient.connect()
 
 export default wsClient
