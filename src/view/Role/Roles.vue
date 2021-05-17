@@ -458,7 +458,10 @@ export default {
 				.then(res => {
 					if (res && res.data) {
 						res.data.forEach(roleMapping => {
-							if (roleMapping.principalType === 'USER') {
+							if (
+								roleMapping.principalType === 'USER' &&
+								this.userGroup.find(v => v.id === roleMapping.principalId)
+							) {
 								_this.roleusers.push(roleMapping.principalId);
 								_this.oldUser.push(roleMapping);
 							}

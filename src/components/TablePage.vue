@@ -8,7 +8,7 @@
 		</div>
 
 		<div class="table-page-main">
-			<div class="table-page-left" v-if="classify && $window.getSettingByKey('SHOW_CLASSIFY')">
+			<div class="table-page-left" v-if="classify && !hideClassify && $window.getSettingByKey('SHOW_CLASSIFY')">
 				<Classification
 					:authority="classify.authority"
 					:types="classify.types"
@@ -31,7 +31,9 @@
 					class="table-page-table"
 					border
 					height="100%"
+					border
 					v-loading="loading"
+					ref="elTable"
 					:element-loading-text="$t('dataFlow.dataLoading')"
 					:row-key="rowKey"
 					:data="list"
@@ -81,6 +83,11 @@ export default {
 			type: Number,
 			default: 20
 		},
+		hideClassify: {
+			// 是否隐藏左侧栏
+			type: Boolean,
+			default: false
+		},
 		classify: {
 			type: Object
 		},
@@ -107,15 +114,14 @@ export default {
 			}
 		};
 	},
-	created() {
-		this.fetch(1);
-	},
-	watch: {
-		classify: function(_new, _old) {
-			if (_new.toString() !== _old.toString()) {
-				this.tags = [];
-			}
+	mounted() {
+		// 获取缓存的每页条数
+		let cachePageSize = this.$cache.get('TABLE_PAGE_SIZE');
+		if (cachePageSize && cachePageSize[this.$route.name]) {
+			this.page.size = cachePageSize[this.$route.name];
 		}
+
+		this.fetch(1);
 	},
 	methods: {
 		getCache() {
@@ -147,10 +153,18 @@ export default {
 								this.cache = null;
 								this.page.total = total;
 								this.list = data || [];
+
+								// 缓存每页条数
+								let pageData = {};
+								pageData[this.$route.name] = this.page.size;
+								this.$cache.set('TABLE_PAGE_SIZE', pageData);
 							})
 							.finally(() => {
 								this.loading = false;
 							});
+
+					// 清空选择
+					this.$refs.elTable && this.$refs.elTable.clearSelection();
 				}, debounce);
 			});
 		},

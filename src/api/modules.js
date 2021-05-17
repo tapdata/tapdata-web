@@ -15,7 +15,7 @@ export default class Modules extends PublicAPI {
 		return axios.get(this.url + '/getApiDocument?id=' + id);
 	}
 
-  getByCollectionName (params) {
-    return axios.get(this.url + '/api/getByCollectionName', {params})
-  }
+	getByCollectionName(params) {
+		return axios.get(this.url + '/api/getByCollectionName', { params });
+	}
 }

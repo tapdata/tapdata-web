@@ -445,7 +445,7 @@ export default {
 				executionStatus: '',
 				timeData: ''
 			},
-			order: 'createTime DESC',
+			order: 'startTime DESC',
 			progressOptions: [
 				{
 					label: this.$t('dataFlow.initial_sync'),
@@ -544,7 +544,11 @@ export default {
 				let list = this.table.list;
 				let index = list.findIndex(it => it.name === item.name);
 				if (index >= 0) {
-					this.table.$set(list, index, Object.assign(list[index], this.cookRecord(item)));
+					let handleItem = this.cookRecord(item);
+					if (handleItem.children && !handleItem.children.length) {
+						delete handleItem.children;
+					}
+					this.table.$set(list, index, Object.assign(list[index], handleItem));
 				}
 			});
 			this.tempList = [];
@@ -583,7 +587,7 @@ export default {
 						'fullDocument.executeMode': true,
 						'fullDocument.stopOnError': true,
 						'fullDocument.last_updated': true,
-						'fullDocument.createTime': true,
+						'fullDocument.startTime': true,
 						'fullDocument.children': true,
 						'fullDocument.stats': true,
 						'fullDocument.stages.id': true,
@@ -607,6 +611,7 @@ export default {
 				};
 			}
 
+			this.multipleSelection = [];
 			this.table.fetch(1);
 		},
 		getData({ page, tags }) {

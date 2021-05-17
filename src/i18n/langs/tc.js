@@ -265,6 +265,7 @@ const tc = {
 		placeholderCommand: '請輸入command',
 		nullContent: '不能為空',
 		saveOK: '保存成功',
+		save: '保存',
 		saveFail: '保存失敗',
 		copyFail: '複製失敗',
 		copySuccess: '複製成功',
@@ -577,6 +578,9 @@ const tc = {
 		error: '當任務出錯',
 		edited: '當任務被編輯',
 		started: '當任務開啟',
+		shareCdcMode: '共享增量讀取的模式',
+		streaming: '流式讀取',
+		polling: '輪詢讀取',
 		drop_target_before_start: '開啟任務前是否刪除目標表',
 		run_custom_sql: '重複運行自定義SQL',
 		stop_on_error: '遇到錯誤停止',
@@ -1027,7 +1031,7 @@ const tc = {
 					nodeFunDes: '節點功能說明',
 					function: '功 能',
 					functionContent:
-						'此節點用於採集指定數據庫和表的日誌，保存到MongoDB數據庫，共享日誌數據不需要重複開 啟日誌採集進程，能極大緩解源庫資源的佔用和浪費。 ',
+						'此節點用於採集指定數據庫和表的日誌，保存到MongoDB數據庫，共享日誌數據不需要重複開啟日誌採集進程，能極大緩解源庫資源的佔用和浪費。 ',
 					connectionTarget: '連接目標',
 					connectionText: '只能連接Collection節點',
 					tableFilter: {
@@ -2649,12 +2653,16 @@ const tc = {
 		msgNoValidApi: '沒有可用API服務器',
 		msgNotStartApi: '沒有啟用api服務？',
 		ifDel: '是否刪除當前行？',
-		unlikeAjv: '輸入的內容不符合選擇的數據規則',
+		unlikeAjv: '輸入的內容不符合數據規則',
 		allUpdateSuccessTip1: '操作成功，一共修改',
 		allUpdateSuccessTip2: '條數據',
 		updateFail: '更新失敗',
 		dataTypeError: '數據類型轉換失敗，期望==>',
-		columnTip: '請至少選擇一列'
+		columnTip: '請至少選擇一列',
+		countTitle: '重新統計',
+		connectTip: '請至少選擇一個數據源',
+		countTip: '正在統計，請稍後',
+		errCheck: '顯示出錯列'
 	}
 };
 

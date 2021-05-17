@@ -1,6 +1,12 @@
 <template>
 	<section class="data-quality-wrap">
-		<TablePage ref="table" :title="$t('dataQuality.title')" :desc="$t('dataQuality.desc')" :remoteMethod="getData">
+		<TablePage
+			ref="table"
+			:title="$t('dataQuality.title')"
+			:desc="$t('dataQuality.desc')"
+			:remoteMethod="getData"
+			:classify="{ authority: 'data_catalog_category_management', types: metaType }"
+		>
 			<!-- 过滤项 -->
 			<div slot="search">
 				<ul class="search-bar">
@@ -25,10 +31,10 @@
 							</el-select>
 						</el-input>
 					</li>
-					<template v-if="searchParams.keyword">
-						<li>
+					<template>
+						<!-- <li>
 							<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
-						</li>
+						</li> -->
 						<li>
 							<el-button size="mini" type="text" @click="reset('reset')">{{
 								$t('button.reset')
@@ -38,11 +44,27 @@
 				</ul>
 			</div>
 
+			<!-- 操作项 -->
+			<div slot="operation" class="operation">
+				<el-button
+					@click="countVisible = true"
+					v-readonlybtn="'new_model_creation'"
+					class="btn btn-create"
+					size="mini"
+				>
+					<i class="iconfont icon-tongji" style="font-size: 12px;"></i>
+					<span>{{ $t('dataQuality.countTitle') }}</span>
+				</el-button>
+			</div>
+
 			<!-- 列表项 -->
 			<el-table-column :label="$t('dataQuality.sourceName')" prop="name">
 				<template slot-scope="scope">
-					{{ scope.row.source ? scope.row.source.name : '' }}
-					<div class="gray">{{ scope.row.collection }}</div>
+					{{ scope.row.collection }}
+					<span v-if="scope.row.asset_desc && scope.row.asset_desc !== scope.row.collection"
+						>（{{ scope.row.asset_desc }}）</span
+					>
+					<div class="gray">{{ scope.row.source ? scope.row.source.name : '' }}</div>
 				</template>
 			</el-table-column>
 			<el-table-column :label="$t('dataQuality.totalDocs')" prop="total_docs">
@@ -73,6 +95,36 @@
 				</template>
 			</el-table-column>
 		</TablePage>
+
+		<!-- 重新统计 -->
+		<el-dialog
+			width="500px"
+			:title="$t('dataQuality.countTitle')"
+			:close-on-click-modal="false"
+			:visible.sync="countVisible"
+			@close="countCancel"
+		>
+			<el-select
+				v-model="connection"
+				style="width: 100%;"
+				multiple
+				size="mini"
+				filterable
+				:placeholder="$t('message.placeholderSelect')"
+			>
+				<el-option v-for="item in connections" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+			</el-select>
+
+			<span slot="footer" class="dialog-footer">
+				<el-button size="mini" @click="countCancel">
+					{{ $t('message.cancel') }}
+				</el-button>
+
+				<el-button size="mini" type="primary" :loading="countLoading" @click="countOk">
+					{{ $t('message.confirm') }}
+				</el-button>
+			</span>
+		</el-dialog>
 	</section>
 </template>
 
@@ -94,7 +146,11 @@ export default {
 				keyword: '', // 关键词
 				isFuzzy: true // 是否模糊查询
 			},
-			order: { last_updated: -1 } // 默认排序方法
+			order: { last_updated: -1 }, // 默认排序方法
+			countVisible: false, // 是否显示重新统计弹框
+			connection: [], // 当前选择的重新统计的连接
+			connections: [], // 可供选择的重新统计的连接
+			countLoading: false // 重新统计确认loading
 		};
 	},
 
@@ -102,12 +158,20 @@ export default {
 		// table组件dom实体
 		table() {
 			return this.$refs.table;
+		},
+		metaType() {
+			let metaType = this.searchParams.metaType;
+			if (metaType) {
+				return [metaType];
+			} else {
+				return this.$route.meta.types || [];
+			}
 		}
 	},
 
 	methods: {
 		// 获取列表数据
-		getData({ page }) {
+		getData({ page, tags }) {
 			let { current, size } = page;
 			let { isFuzzy, keyword } = this.searchParams;
 			let where = { violated_docs: { gt: 0 } }; // 查询条件
@@ -115,6 +179,13 @@ export default {
 			if (keyword && keyword.trim()) {
 				let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword;
 				where.or = [{ 'source.name': filterObj }, { collection: filterObj }];
+			}
+
+			// 分类
+			if (tags && tags.length) {
+				where['listtags.id'] = {
+					in: tags
+				};
 			}
 
 			let filter = {
@@ -125,7 +196,7 @@ export default {
 			};
 
 			return Promise.all([
-				this.$api('DataQuality').count({ where }),
+				this.$api('DataQuality').getCount({ filter: JSON.stringify(filter) }),
 				this.$api('DataQuality').getList({
 					filter: JSON.stringify(filter)
 				})
@@ -135,8 +206,8 @@ export default {
 					keyword
 				});
 				return {
-					total: countRes.count,
-					data: res || []
+					total: countRes && countRes.length ? countRes[0].count || 0 : 0,
+					data: res && res.length ? res : []
 				};
 			});
 		},
@@ -150,6 +221,7 @@ export default {
 					},
 					query: {
 						collection_name: item.collection,
+						asset_desc: item.asset_desc,
 						connection_id: item.connection_id,
 						source_name: item.source.name
 					}
@@ -166,7 +238,53 @@ export default {
 			}
 
 			this.table.fetch(1);
+		},
+		// 获取数据源
+		getConnections() {
+			this.$api('connections')
+				.get({
+					filter: {
+						fields: {
+							name: true,
+							id: true
+						},
+						where: {
+							database_type: {
+								inq: ['mongodb']
+							}
+						}
+					}
+				})
+				.then(({ data }) => {
+					this.connections = data || [];
+				});
+		},
+		// 重新统计弹框确认
+		countOk() {
+			if (!this.connection || !this.connection.length) {
+				this.$message.info(this.$t('dataQuality.connectTip'));
+			}
+			this.countLoading = true;
+			this.$api('DataQuality')
+				.analyzeByConnId({ ids: this.connection })
+				.then(() => {
+					this.$message.success(this.$t('dataQuality.countTip'));
+					this.countCancel();
+				})
+				.catch(() => {
+					this.countLoading = false;
+				});
+		},
+		// 重新统计弹框取消
+		countCancel() {
+			this.connection = [];
+			this.countLoading = false;
+			this.countVisible = false;
 		}
+	},
+
+	created() {
+		this.getConnections();
 	},
 
 	mounted() {
@@ -176,9 +294,20 @@ export default {
 };
 </script>
 
+<style lang="less">
+.data-quality-wrap {
+}
+</style>
+
 <style lang="less" scoped>
 .data-quality-wrap {
 	height: 100%;
+	.operation {
+		.btn {
+			padding: 7px;
+			background: #f5f5f5;
+		}
+	}
 	.search-bar {
 		display: flex;
 		li + li {

@@ -265,6 +265,7 @@ const cn = {
 		placeholderCommand: '请输入命令',
 		nullContent: '不能为空',
 		saveOK: '保存成功',
+		save: '保存',
 		saveFail: '保存失败',
 		createOK: '保存成功',
 		createFail: '创建失败',
@@ -580,6 +581,9 @@ const cn = {
 		error: '当任务出错',
 		edited: '当任务被编辑',
 		started: '当任务开启',
+		shareCdcMode: '共享增量读取的模式',
+		streaming: '流式读取',
+		polling: '轮询读取',
 		drop_target_before_start: '开启任务前是否删除目标表',
 		run_custom_sql: '重复自定义SQL',
 		stop_on_error: '遇到错误停止',
@@ -1031,7 +1035,7 @@ const cn = {
 					nodeFunDes: '节点功能说明',
 					function: '功              能',
 					functionContent:
-						'此节点用于采集指定数据库和表的日志，保存到MongoDB数据库，共享日志数据不需要重复开 启日志采集进程，能极大缓解源库资源的占用和浪费。',
+						'此节点用于采集指定数据库和表的日志，保存到MongoDB数据库，共享日志数据不需要重复开启日志采集进程，能极大缓解源库资源的占用和浪费。',
 					connectionTarget: '连接目标',
 					connectionText: '只能连接Collection节点',
 					tableFilter: {
@@ -2656,12 +2660,16 @@ const cn = {
 		msgNoValidApi: '没有可用API服务器',
 		msgNotStartApi: '没有启用api服务？',
 		ifDel: '是否删除当前行？',
-		unlikeAjv: '输入的内容不符合选择的数据规则',
+		unlikeAjv: '输入的内容不符合数据规则',
 		allUpdateSuccessTip1: '操作成功，一共修改',
 		allUpdateSuccessTip2: '条数据',
 		updateFail: '更新失败',
 		dataTypeError: '数据类型转换失败，期望==>',
-		columnTip: '请至少选择一列'
+		columnTip: '请至少选择一列',
+		countTitle: '重新统计',
+		connectTip: '请至少选择一个数据源',
+		countTip: '正在统计，请稍后',
+		errCheck: '显示出错列'
 	}
 };
 

@@ -222,7 +222,7 @@ export default {
 					} else {
 						self.$message.info({
 							message: i18n.t('dataMap.noneData'),
-							duration: 10000,
+							duration: 3000,
 							showClose: true,
 							offset: 100
 						});
