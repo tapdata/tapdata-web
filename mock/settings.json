@@ -1188,7 +1188,7 @@
 		{ "category": "Frontend", "key": "HIDE_FUNCTION_BUTTON", "value": 1, "id": "604f4b80e1ca905fa7545310" },
 		{ "category": "Frontend", "key": "SUPPORT_RDS", "value": 1, "id": "604f4b80e1ca905fa7545312" },
 		{ "category": "Frontend", "key": "HIDE_MENU", "value": 0, "id": "604f4b80e1ca905fa7545314" },
-		{ "category": "Frontend", "key": "HIDE_TOPBAR", "value": 1, "id": "604f4b80e1ca905fa7545316" },
+		{ "category": "Frontend", "key": "HIDE_TOPBAR", "value": 0, "id": "604f4b80e1ca905fa7545316" },
 		{ "category": "Frontend", "key": "HIDE_TABLE_TITLE", "value": 1, "id": "604f4b80e1ca905fa7545318" },
 		{ "category": "Frontend", "key": "HIDE_CONNECTION_OUTSIDE_PART", "value": 1, "id": "604f4b80e1ca905fa754531a" },
 		{ "category": "Frontend", "key": "SHOW_THEME_CSS", "value": 1, "id": "604f4b80e1ca905fa754531c" },

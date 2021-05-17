@@ -33,10 +33,7 @@ const config = {
         ws: true,
         secure: false,
         logLevel: 'debug',
-        target: (ENV === 'local' ? URL['dev'] : proxy.target).replace(
-          /^https?/,
-          'ws'
-        )
+        target: proxy.target.replace(/^https?/, 'ws')
       }
     }
   },
@@ -103,24 +100,5 @@ const config = {
     ]
   }
 }
-// if (ENV !== 'local') {
-//   config.devServer.proxy['/ws/'] = {
-//     ...proxy,
-//     ws: true,
-//     secure: false,
-//     logLevel: 'debug',
-//     target: proxy.target.replace(/^https?/, 'ws')
-//   }
-// } else {
-//   config.publicPath = './'
-//   console.log(URL['dev'])
-//   config.devServer.proxy['/ws/'] = {
-//     target: URL['dev'].replace(/^https?/, 'ws'),
-//     changeOrigin: false,
-//     ws: true,
-//     secure: false,
-//     logLevel: 'debug'
-//   }
-// }
 
 module.exports = config
