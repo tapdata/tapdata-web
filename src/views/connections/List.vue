@@ -32,19 +32,7 @@
             </ElOption>
           </ElSelect>
         </li>
-        <li class="item">
-          <ElInput
-            v-model="searchParams.keyword"
-            clearable
-            class="input-with-select"
-            size="small"
-            :placeholder="$t('connection.dataBaseSearch')"
-            @input="table.fetch(1, 800)"
-          >
-            <i slot="prefix" class="el-input__icon el-icon-search"></i>
-          </ElInput>
-        </li>
-        <li class="item">
+        <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')" class="item">
           <el-select
             v-model="searchParams.databaseModel"
             clearable
@@ -60,7 +48,7 @@
             </el-option>
           </el-select>
         </li>
-        <li class="item">
+        <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')" class="item">
           <el-select
             v-model="searchParams.databaseType"
             clearable
@@ -75,6 +63,18 @@
             >
             </el-option>
           </el-select>
+        </li>
+        <li class="item">
+          <ElInput
+            v-model="searchParams.keyword"
+            clearable
+            class="input-with-select"
+            size="small"
+            :placeholder="$t('connection.dataBaseSearch')"
+            @input="table.fetch(1, 800)"
+          >
+            <i slot="prefix" class="el-input__icon el-icon-search"></i>
+          </ElInput>
         </li>
         <li class="item">
           <ElButton
