@@ -667,7 +667,7 @@ export default {
     handleSncyStatus(status) {
       let routeUrl = this.$router.resolve({
         path: '/dataFlows?mapping=custom',
-        query: { dataFlowStatus: status }
+        query: { status: status }
       })
 
       window.open(routeUrl.href)
@@ -677,7 +677,7 @@ export default {
     handleMigrationStatus(status) {
       let routeUrl = this.$router.resolve({
         path: '/dataFlows?mapping=cluster-clone',
-        query: { dataFlowStatus: status }
+        query: { status: status }
       })
       window.open(routeUrl.href)
     },

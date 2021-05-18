@@ -64,40 +64,23 @@
               ></ElOption>
             </ElSelect>
           </li>
-          <!-- <li>
-						<el-select
-							v-model="searchParams.progress"
-							size="mini"
-							clearable
-							:placeholder="$t('dataFlow.taskSettingPlaceholder')"
-							style="width:160px"
-							@input="table.fetch(1)"
-						>
-							<el-option
-								v-for="item in progressOptions"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
-							></el-option>
-						</el-select>
-					</li>
-					<li>
-						<el-select
-							v-model="searchParams.executionStatus"
-							size="mini"
-							clearable
-							:placeholder="$t('dataFlow.executionStatus')"
-							style="width:160px"
-							@input="table.fetch(1)"
-						>
-							<el-option
-								v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
-								:key="opt"
-								:label="$t('dataFlow.status.' + opt)"
-								:value="opt"
-							></el-option>
-						</el-select>
-					</li> -->
+          <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+            <el-select
+              v-model="searchParams.executionStatus"
+              size="small"
+              clearable
+              :placeholder="$t('dataFlow.executionStatus')"
+              style="width: 160px"
+              @input="table.fetch(1)"
+            >
+              <el-option
+                v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
+                :key="opt"
+                :label="$t('dataFlow.status.' + opt)"
+                :value="opt"
+              ></el-option>
+            </el-select>
+          </li>
           <li>
             <ElButton class="btn-refresh" size="small" @click="table.fetch()">
               <i class="el-icon-refresh"></i>
@@ -744,7 +727,7 @@ export default {
     // window.windows = [];
     this.mappingTemplate = this.$route.query.mapping
     this.searchParams.agentId = this.$route.query.agentId
-    this.searchParams.status = this.$route.query.status
+    this.searchParams.status = this.$route.query.status || ''
     ws.on('watch', this.dataflowChange)
     interval = setInterval(() => {
       let tempList = this.tempList
