@@ -16,7 +16,7 @@
     <el-header
       class="layout-header"
       height="48px"
-      v-if="!$window.getSettingByKey('HIDE_TOPBAR')"
+      v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
     >
       <a class="logo" href="/">
         <img :src="logoUrl" />
@@ -150,7 +150,7 @@
       <el-aside
         class="layout-aside"
         width="auto"
-        v-if="!$window.getSettingByKey('HIDE_MENU')"
+        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
       >
         <el-menu
           class="menu"

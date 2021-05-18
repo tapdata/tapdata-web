@@ -37,16 +37,22 @@
               </ElOption>
             </ElSelect>
           </li>
-          <li>
-            <el-input
-              v-model="searchParams.keyword"
-              clearable
+          <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+            <el-select
+              v-model="searchParams.executionStatus"
               size="small"
-              :placeholder="$t('dataFlow.searchPlaceholder')"
-              @input="table.fetch(1, 800)"
+              clearable
+              :placeholder="$t('dataFlow.executionStatus')"
+              style="width: 160px"
+              @input="table.fetch(1)"
             >
-              <i slot="prefix" class="el-input__icon el-icon-search"></i>
-            </el-input>
+              <el-option
+                v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
+                :key="opt"
+                :label="$t('dataFlow.status.' + opt)"
+                :value="opt"
+              ></el-option>
+            </el-select>
           </li>
           <li v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')">
             <ElSelect
@@ -64,22 +70,16 @@
               ></ElOption>
             </ElSelect>
           </li>
-          <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
-            <el-select
-              v-model="searchParams.executionStatus"
-              size="small"
+          <li>
+            <el-input
+              v-model="searchParams.keyword"
               clearable
-              :placeholder="$t('dataFlow.executionStatus')"
-              style="width: 160px"
-              @input="table.fetch(1)"
+              size="small"
+              :placeholder="$t('dataFlow.searchPlaceholder')"
+              @input="table.fetch(1, 800)"
             >
-              <el-option
-                v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
-                :key="opt"
-                :label="$t('dataFlow.status.' + opt)"
-                :value="opt"
-              ></el-option>
-            </el-select>
+              <i slot="prefix" class="el-input__icon el-icon-search"></i>
+            </el-input>
           </li>
           <li>
             <ElButton class="btn-refresh" size="small" @click="table.fetch()">
