@@ -40,7 +40,6 @@
           class="table-page-table table-border"
           height="100%"
           border
-          ref="elTable"
           :element-loading-text="$t('dataFlow.dataLoading')"
           :row-key="rowKey"
           :span-method="spanMethod"
