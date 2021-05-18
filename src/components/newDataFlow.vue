@@ -68,7 +68,7 @@
             >
           </div>
         </li>
-        <template v-if="!$window.getSettingByKey('HIDE_FOR_CLOUD')">
+        <template v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
           <li
             class="marTop25"
             @click="handleModules"

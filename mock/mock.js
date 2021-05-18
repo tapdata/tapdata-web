@@ -267,31 +267,12 @@ for (const url in service) {
       case '/api/Settings':
         res
           .status(200)
-          .end(JSON.stringify(Mock.mock(formateSettings(mockData))))
+          .end(JSON.stringify(Mock.mock(mockData)))
         break
       default:
         res.status(200).end(JSON.stringify(Mock.mock(mockData)))
     }
   })
-}
-
-// 格式化settings
-function formateSettings(mockData) {
-  let trueArr = []
-  let falseArr = []
-  if (argv[2] === '--dfs') {
-    trueArr = ['HIDE_TOPBAR', 'HIDE_MENU']
-    falseArr = []
-  }
-
-  mockData.data.forEach(el => {
-    if (trueArr.indexOf(el.key) > -1) {
-      el.value = 1
-    } else if (falseArr.indexOf(el.key) > -1) {
-      el.value = 0
-    }
-  })
-  return mockData
 }
 
 app.listen(port, () => {

@@ -87,7 +87,7 @@
             "
             v-if="
               !statusBtMap[status].reloadSchema &&
-              !$window.getSettingByKey('SHOW_DATAFLOW_RELOADSCHEMA_BUTTON')
+              !$window.getSettingByKey('DFS_TCM_PLATFORM')
             "
             class="action-btn"
             size="mini"
@@ -112,7 +112,7 @@
           <el-button
             class="action-btn"
             size="mini"
-            v-if="!$window.getSettingByKey('SHOW_DATAFLOW_LOG')"
+            v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
             @click="showLogs"
           >
             <i class="iconfont icon-rizhi1"></i>
@@ -123,7 +123,7 @@
         <el-button
           class="btn-setting"
           size="mini"
-          v-if="!$window.getSettingByKey('SHOW_DATAFLOW_SETTING')"
+          v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
           @click="showSetting"
         >
           <i class="iconfont icon-shezhi1"></i>
@@ -253,7 +253,7 @@
           v-if="
             !statusBtMap[status].edit &&
             !editable &&
-            !$window.getSettingByKey('HIDE_DATAFLOW_EDIT_BUTTON')
+            !$window.getSettingByKey('DFS_TCM_PLATFORM')
           "
           ff
           class="btn-edit"
@@ -323,7 +323,7 @@
       v-if="
         !loading &&
         isEditable() &&
-        !$window.getSettingByKey('HIDE_HOT_KEY_BUTTON')
+        !$window.getSettingByKey('DFS_TCM_PLATFORM')
       "
     ></AddBtnTip>
     <DownAgent

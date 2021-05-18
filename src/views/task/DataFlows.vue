@@ -92,7 +92,7 @@
         <el-button
           v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'SYNC_category_application'"
-          size="mini"
+          size="small"
           class="btn"
           v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
@@ -101,10 +101,11 @@
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
         </el-button>
         <el-dropdown
+          class="btn"
           @command="handleCommand($event)"
           v-show="multipleSelection.length > 0 && bulkOperation"
         >
-          <el-button class="btn btn-dropdowm" size="small">
+          <el-button class="btn-dropdowm" size="small">
             <i class="iconfont icon-piliang back-btn-icon"></i>
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
           </el-button>
@@ -112,7 +113,7 @@
             <el-dropdown-item
               command="export"
               v-readonlybtn="'SYNC_job_export'"
-              v-if="!$window.getSettingByKey('HIDE_EXPORT')"
+              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
               >{{ $t('dataFlow.bulkExport') }}</el-dropdown-item
             >
             <el-dropdown-item
@@ -136,19 +137,19 @@
           </el-dropdown-menu>
         </el-dropdown>
         <el-button
+          v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
           v-readonlybtn="'SYNC_Function_management'"
           size="small"
           class="btn"
           @click="handleGoFunction"
-          v-if="!$window.getSettingByKey('HIDE_FUNCTION_BUTTON')"
         >
           <i class="iconfont icon-hanshu back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkFx') }}</span>
         </el-button>
         <el-button
-          v-if="!$window.getSettingByKey('HIDE_IMPORT')"
+          v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
           v-readonlybtn="'SYNC_job_import'"
-          size="mini"
+          size="small"
           class="btn"
           @click="handleImport"
         >
@@ -356,7 +357,7 @@
       </el-table-column>
       <el-table-column
         :label="$t('dataFlow.operate')"
-        width="250"
+        width="280"
         fixed="right"
       >
         <template slot-scope="scope">
@@ -452,7 +453,7 @@
               {{ $t('button.edit') }}
             </ElLink>
             <ElLink
-              v-if="!$window.getSettingByKey('HIDE_SCHEDULE')"
+              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
               type="primary"
@@ -488,7 +489,7 @@
                   >{{ $t('dataVerify.dataVerify') }}</el-dropdown-item
                 >
                 <el-dropdown-item
-                  v-if="!$window.getSettingByKey('HIDE_EXPORT')"
+                  v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
                   command="export"
                   v-readonlybtn="'SYNC_job_export'"
                   >{{ $t('dataFlow.dataFlowExport') }}</el-dropdown-item

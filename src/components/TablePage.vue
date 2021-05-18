@@ -2,7 +2,7 @@
   <div class="table-page-container">
     <div
       class="table-page-header"
-      v-if="!$window.getSettingByKey('HIDE_TABLE_TITLE') && title"
+      v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM') && title"
     >
       <slot name="header">
         <div class="page-header-title">{{ title }}</div>
