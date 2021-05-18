@@ -10,6 +10,11 @@ Vue.use(Router)
 
 const childRoutes = [
   {
+    path: '/home',
+    component: () => import('@/views/dashboard/DKDashboard'),
+    meta: { title: i18n.t('tap.home'), isCollapse: false }
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('@/views/dashboard/Dashboard'),
