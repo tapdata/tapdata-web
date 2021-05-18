@@ -1,5 +1,6 @@
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
-
+let config = sessionStorage.getItem('TM_CONFIG') || '{}'
+config = JSON.parse(config)
 const cn = {
   ...zhLocale,
   tap: {
@@ -532,8 +533,8 @@ const cn = {
       '数据同步差距: 源库和目标库数据最后更新时间的差距，数值越小越好',
     status: {
       running: '运行中',
-      paused: '待启动',
-      draft: process.env.VUE_APP_STATUS_DRAFT || '编辑中',
+      paused: config['DFS_TCM_PLATFORM'] ? '待启动' : '已暂停',
+      draft: config['DFS_TCM_PLATFORM'] ? '待启动' : '编辑中',
       scheduled: '启动中',
       stopping: '停止中',
       error: '错误',
