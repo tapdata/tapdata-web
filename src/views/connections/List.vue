@@ -724,7 +724,7 @@ export default {
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
       //drs 检查实例是否可用 dfs 检查agent是否可用
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
         let result = await this.$api('Workers').getAvailableAgent()
         if (!result.data.result || result.data.result.length === 0) {
           this.$message.error(this.$t('dataForm.form.agentMsg'))
