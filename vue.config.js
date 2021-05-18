@@ -84,7 +84,7 @@ const config = {
             name: 'removeAttrs',
             active: true,
             params: {
-              attrs: ['class', 'p-id']
+              attrs: ['class', 'p-id', 'fill']
             }
           }
         ]

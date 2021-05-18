@@ -11,7 +11,7 @@ module.exports = {
       {
         name: '@name',
         connection_type: 'target',
-        database_type: 'mongodb',
+        'database_type|1': ['mysql', 'oracle', 'mongodb'],
         database_host: '',
         database_username: '',
         database_port: Random.integer(0, 5000),
@@ -1721,8 +1721,7 @@ module.exports = {
       {
         _id: '@id',
         conn_info: {
-          uri:
-            'mongodb://root:123456@demodb.tapdata.net:21330/jason_db?replicaSet=tapd8_l&authSource=admin',
+          uri: 'mongodb://root:123456@demodb.tapdata.net:21330/jason_db?replicaSet=tapd8_l&authSource=admin',
           collection: 'TEST_DATA_CATALOG'
         },
         asset_desc: 'TEST_DATA_CATALOG',
