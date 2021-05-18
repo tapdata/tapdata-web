@@ -370,11 +370,21 @@
                               v-model="header.value"
                             ></el-input>
                             <i
-                              class="iconfont icon-jia add-btn-icon rest-api-margin"
+                              class="
+                                iconfont
+                                icon-jia
+                                add-btn-icon
+                                rest-api-margin
+                              "
                               @click="addHeader(parentIndex)"
                             ></i>
                             <i
-                              class="iconfont icon-quxiao add-btn-icon rest-api-margin"
+                              class="
+                                iconfont
+                                icon-quxiao
+                                add-btn-icon
+                                rest-api-margin
+                              "
                               v-show="item.headerArray.length > 1"
                               @click="removeHeader(parentIndex, headerIndex)"
                             ></i>
@@ -403,11 +413,21 @@
                               v-model="parameter.value"
                             ></el-input>
                             <i
-                              class="iconfont icon-jia add-btn-icon rest-api-margin"
+                              class="
+                                iconfont
+                                icon-jia
+                                add-btn-icon
+                                rest-api-margin
+                              "
                               @click="addParameter(parentIndex)"
                             ></i>
                             <i
-                              class="iconfont icon-quxiao add-btn-icon rest-api-margin"
+                              class="
+                                iconfont
+                                icon-quxiao
+                                add-btn-icon
+                                rest-api-margin
+                              "
                               v-show="item.parameterArray.length > 1"
                               @click="
                                 removeParameter(parentIndex, parameterIndex)
@@ -813,7 +833,7 @@ const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { gitbook, Test, DatabaseTypeDialog },
+  components: { gitbook, Test, DatabaseTypeDialog, JsEditor },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start
@@ -2042,6 +2062,7 @@ export default {
           margin-top: 0;
           margin-left: 10px;
         }
+
         .tip {
           margin-left: 15px;
           font-size: 12px;
@@ -2154,37 +2175,46 @@ export default {
     margin-bottom: 0;
     margin-top: 0;
   }
+
   .el-form-item__content {
     display: flex;
     font-size: 12px;
     margin-right: 20px;
   }
+
   .el-form-item__error {
     padding-top: 0;
   }
+
   .el-form-item__label:before {
     content: '*';
     color: #f56c6c;
     margin-right: 4px;
   }
+
   .excel_value_start {
     .el-form-item__label:before {
       content: '';
     }
   }
+
   .el-form-item__label {
     font-size: 12px;
   }
+
   .el-radio__label {
     font-size: 12px;
   }
+
   .headerType .el-form-item__content {
     flex-direction: column;
+
     .excel_header_start {
       display: flex;
       font-size: 12px;
     }
   }
+
   .excelHeaderType {
     .el-form-item__content {
       display: block;

@@ -25,7 +25,7 @@ const suggestions = [
   }
 ]
 export default {
-   props: {
+  props: {
     code: {
       required: true,
       value: String

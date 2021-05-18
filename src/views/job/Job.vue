@@ -321,9 +321,7 @@
     </el-dialog>
     <AddBtnTip
       v-if="
-        !loading &&
-        isEditable() &&
-        !$window.getSettingByKey('DFS_TCM_PLATFORM')
+        !loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')
       "
     ></AddBtnTip>
     <DownAgent
