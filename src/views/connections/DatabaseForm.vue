@@ -2185,8 +2185,6 @@ export default {
       font-size: 12px;
     }
   }
-  .excel_header_start {
-  }
   .excelHeaderType {
     .el-form-item__content {
       display: block;
