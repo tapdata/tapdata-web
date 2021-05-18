@@ -142,7 +142,428 @@
               <div class="url-tip" slot="pushErrorTip">
                 {{ $t('dataForm.form.kafka.pushErrorTip') }}
               </div>
+              <!-- rest api -->
+              <div class="url-tip" slot="req_pre_process">
+                <div>
+                  function request_process(url, headers, request_params, offset)
+                  {
+                </div>
+                <el-input
+                  type="textarea"
+                  :rows="5"
+                  v-model="model.req_pre_process"
+                ></el-input>
+                <div>
+                  return {'url': url,
+                  'headers':headers,'request_params':request_params, 'offset':
+                  offset};}
+                </div>
+              </div>
+              <div class="url-tip" slot="resp_pre_process">
+                <div>function response_process(result) {</div>
+                <div>
+                  var tapdata_result = { data_rows:[], access_token:null,
+                  'tapdata_offset': offset }
+                </div>
+                <el-input
+                  type="textarea"
+                  :rows="5"
+                  v-model="model.resp_pre_process"
+                ></el-input>
+                <div>return tapdata_result; }</div>
+              </div>
             </form-builder>
+            <!-- custom_connection -->
+            <template v-if="databaseType === 'custom_connection'">
+              <div
+                class="custom-connection-box"
+                v-if="
+                  ['cdc', 'initial_sync+cdc'].includes(model.custom_type) &&
+                  ['source'].includes(model.connection_type)
+                "
+              >
+                <div class="custom-connection-label">增量数据脚本</div>
+                <div class="custom-connection-main">
+                  <div>function requestData(ctx) {</div>
+                  <JsEditor
+                    :code.sync="model.custom_cdc_script"
+                    ref="jsCdcEditor"
+                    :width.sync="width"
+                  ></JsEditor>
+                  <div>}</div>
+                </div>
+              </div>
+              <div
+                class="custom-connection-box"
+                v-if="
+                  ['initial_sync', 'initial_sync+cdc'].includes(
+                    model.custom_type
+                  ) && ['source'].includes(model.connection_type)
+                "
+              >
+                <div class="custom-connection-label">历史数据脚本</div>
+                <div class="custom-connection-main">
+                  <div>function requestData() {</div>
+                  <JsEditor
+                    :code.sync="model.custom_initial_script"
+                    ref="jsInitialEditor"
+                    :width.sync="width"
+                  ></JsEditor>
+                  <div>}</div>
+                </div>
+              </div>
+              <div
+                class="custom-connection-box"
+                v-if="['target'].includes(model.connection_type)"
+              >
+                <div class="custom-connection-label">目标数据处理脚本</div>
+                <div class="custom-connection-main">
+                  <div style="margin-top: 10px; font-size: 14px">参数说明</div>
+                  <div>
+                    data = [{
+                    <span style="color: #998; font-style: italic">
+                      // data is an array</span
+                    >
+                  </div>
+                  <div style="margin-left: 30px">
+                    op : " i ",
+                    <span style="color: #998; font-style: italic">
+                      // i - insert, u - update, d - delete</span
+                    >
+                  </div>
+                  <div style="margin-left: 30px">
+                    from : " ",
+                    <span style="color: #998; font-style: italic">
+                      // source table name</span
+                    >
+                  </div>
+                  <div style="margin-left: 30px">
+                    data : { },
+                    <span style="color: #998; font-style: italic">
+                      // master data</span
+                    >
+                  </div>
+                  <div>}]</div>
+                  <div
+                    style="
+                      padding-bottom: 5px;
+                      margin-top: 10px;
+                      font-weight: bold;
+                    "
+                  >
+                    function onData(data) {
+                  </div>
+                  <JsEditor
+                    :code.sync="model.custom_ondata_script"
+                    ref="jsOndataEditor"
+                    :width.sync="width"
+                  ></JsEditor>
+                  <div>}</div>
+                </div>
+              </div>
+            </template>
+            <!-- rest api -->
+            <template v-if="databaseType === 'rest api'">
+              <div class="rest-api-box">
+                <div class="rest-api-label">URL</div>
+                <div class="url-tip rest-api-url">
+                  <el-form
+                    :model="model"
+                    ref="urlInfoForm"
+                    label-width="104px"
+                    class="urlInfoForm"
+                  >
+                    <el-row
+                      v-for="(item, parentIndex) in model.url_info"
+                      :key="parentIndex"
+                    >
+                      <div class="rest-api-row">
+                        {{
+                          model.data_sync_mode === 'INITIAL_INCREMENTAL_SYNC'
+                            ? item.url_type
+                            : model.data_sync_mode
+                        }}
+                      </div>
+                      <el-col :span="24" class="fromLoopBox">
+                        <el-form-item
+                          label="URL"
+                          :prop="'url_info.' + parentIndex + '.url'"
+                          :rules="{
+                            required: true,
+                            message: 'URL不能为空',
+                            trigger: 'blur'
+                          }"
+                        >
+                          <el-input v-model="item.url" size="mini"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col
+                        :span="12"
+                        class="fromLoopBox"
+                        type="flex"
+                        :gutter="20"
+                      >
+                        <el-form-item label="请求方法" :prop="item.method">
+                          <el-select
+                            v-model="item.method"
+                            class="min-input"
+                            size="mini"
+                          >
+                            <el-option label="GET" value="GET"></el-option>
+                            <el-option label="POST" value="POST"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="12" class="fromLoopBox">
+                        <el-form-item
+                          label="Content Type"
+                          :prop="item.content_type"
+                        >
+                          <el-select
+                            v-model="item.content_type"
+                            class="small-input"
+                            size="mini"
+                          >
+                            <el-option
+                              label="form-data"
+                              value="application/form-data"
+                            ></el-option>
+                            <el-option
+                              label="x-www-form-urlencoded"
+                              value="application/x-www-form-urlencoded;charset=UTF-8"
+                            ></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="24" class="fromLoopBox">
+                        <el-form-item
+                          label="增量起始值"
+                          :prop="item.offset_field"
+                          v-if="
+                            model.data_sync_mode === 'INCREMENTAL_SYNC' ||
+                            item.url_type === 'INCREMENTAL_SYNC'
+                          "
+                        >
+                          <el-input
+                            v-model="item.offset_field"
+                            size="mini"
+                          ></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="24" class="fromLoopBox">
+                        <el-form-item label="Headers">
+                          <div
+                            v-for="(header, headerIndex) in item.headerArray"
+                            :key="headerIndex"
+                            class="rest-api-Array"
+                          >
+                            <el-input
+                              placeholder="请求头名称"
+                              class="medium-input"
+                              size="mini"
+                              v-model="header.name"
+                            ></el-input>
+                            <el-input
+                              placeholder="请求头值"
+                              class="medium-input rest-api-margin"
+                              size="mini"
+                              v-model="header.value"
+                            ></el-input>
+                            <i
+                              class="iconfont icon-jia add-btn-icon rest-api-margin"
+                              @click="addHeader(parentIndex)"
+                            ></i>
+                            <i
+                              class="iconfont icon-quxiao add-btn-icon rest-api-margin"
+                              v-show="item.headerArray.length > 1"
+                              @click="removeHeader(parentIndex, headerIndex)"
+                            ></i>
+                          </div>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="24" class="fromLoopBox">
+                        <el-form-item label="Parameters" prop="parameters">
+                          <div
+                            v-for="(
+                              parameter, parameterIndex
+                            ) in item.parameterArray"
+                            :key="parameterIndex"
+                            class="rest-api-Array"
+                          >
+                            <el-input
+                              placeholder="参数名称"
+                              class="medium-input"
+                              size="mini"
+                              v-model="parameter.name"
+                            ></el-input>
+                            <el-input
+                              placeholder="参数值"
+                              class="medium-input rest-api-margin"
+                              size="mini"
+                              v-model="parameter.value"
+                            ></el-input>
+                            <i
+                              class="iconfont icon-jia add-btn-icon rest-api-margin"
+                              @click="addParameter(parentIndex)"
+                            ></i>
+                            <i
+                              class="iconfont icon-quxiao add-btn-icon rest-api-margin"
+                              v-show="item.parameterArray.length > 1"
+                              @click="
+                                removeParameter(parentIndex, parameterIndex)
+                              "
+                            ></i>
+                          </div>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </el-form>
+                </div>
+              </div>
+            </template>
+            <!-- grid fs -->
+            <template
+              v-if="
+                databaseType === 'gridfs' &&
+                model.file_type === 'excel' &&
+                model.gridfsReadMode === 'data' &&
+                model.connection_type === 'source'
+              "
+            >
+              <div class="gridfs-box">
+                <el-form
+                  label-width="200px"
+                  label-position="right"
+                  :rules="gridFSrules"
+                  :model="model"
+                  ref="excelForm"
+                >
+                  <!--工作页 -->
+                  <el-form-item
+                    :label="$t('editor.fileFormBuilder.sheet_range')"
+                    prop="sheet_start"
+                  >
+                    <el-input
+                      v-model.number="model.sheet_start"
+                      maxlength="3"
+                      show-word-limit
+                      size="mini"
+                      onkeyup="model.sheet_start = model.sheet_start.replace(/[^\d.]/g,'');"
+                      :placeholder="$t('editor.fileFormBuilder.sheet_start')"
+                    ></el-input>
+                    <span class="separate"> ~ </span>
+                    <el-input
+                      v-model="model.sheet_end"
+                      maxlength="3"
+                      show-word-limit
+                      size="mini"
+                      onkeyup="model.sheet_end = model.sheet_end.replace(/[^\d.]/g,'');"
+                      :placeholder="$t('editor.fileFormBuilder.sheet_end')"
+                    ></el-input>
+                  </el-form-item>
+                  <!--字段范围 -->
+                  <el-form-item
+                    :label="$t('editor.fileFormBuilder.excel_header_type')"
+                    class="headerType"
+                    prop="excel_header_start"
+                  >
+                    <div>
+                      <el-radio-group
+                        v-model="model.gridfs_header_type"
+                        @change="changeHeaderType"
+                      >
+                        <el-radio label="specified_line">{{
+                          $t('editor.fileFormBuilder.excel_header_coordinate')
+                        }}</el-radio>
+                        <el-radio label="custom">{{
+                          $t('editor.fileFormBuilder.excel_header_range')
+                        }}</el-radio>
+                      </el-radio-group>
+                      <el-input
+                        v-model="model.gridfs_header_config"
+                        size="mini"
+                        :placeholder="
+                          $t('editor.fileFormBuilder.header_type_custom_label')
+                        "
+                        v-show="model.gridfs_header_type === 'custom'"
+                      ></el-input>
+                      <div
+                        v-show="model.gridfs_header_type !== 'custom'"
+                        class="excel_header_start"
+                      >
+                        <el-input
+                          v-model="model.excel_header_start"
+                          size="mini"
+                          :placeholder="
+                            $t('editor.fileFormBuilder.excel_header_start')
+                          "
+                        ></el-input>
+                        <span class="separate"> ~ </span>
+                        <el-input
+                          v-model="model.excel_header_end"
+                          size="mini"
+                          :placeholder="
+                            $t('editor.fileFormBuilder.excel_header_end')
+                          "
+                        ></el-input>
+                      </div>
+                    </div>
+                  </el-form-item>
+                  <el-form-item v-show="model.gridfs_header_type !== 'custom'"
+                    ><div style="color: #999">
+                      {{ $t('editor.fileFormBuilder.excel_cell_point') }}
+                    </div></el-form-item
+                  >
+                  <!--字段获取方式 -->
+                  <el-form-item
+                    :label="$t('editor.fileFormBuilder.header_mapping')"
+                    class="excelHeaderType"
+                  >
+                    <el-radio-group v-model="model.excel_header_type">
+                      <el-radio label="value">{{
+                        $t('editor.fileFormBuilder.header_mapping_value')
+                      }}</el-radio>
+                      <el-radio label="index">{{
+                        $t('editor.fileFormBuilder.header_mapping_index')
+                      }}</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                  <!-- 内容 -->
+                  <el-form-item
+                    :label="$t('editor.fileFormBuilder.excel_value_type')"
+                    prop="excel_value_start"
+                    class="excel_value_start"
+                  >
+                    <el-input
+                      v-model.number="model.excel_value_start"
+                      maxlength="10"
+                      show-word-limit
+                      size="mini"
+                      onkeyup="model.excel_value_start = model.excel_value_start.replace(/[^\d.]/g,'');"
+                      :placeholder="
+                        $t('editor.fileFormBuilder.excel_value_start')
+                      "
+                    ></el-input>
+                    <span class="separate"> ~ </span>
+                    <el-input
+                      v-model.number="model.excel_value_end"
+                      maxlength="10"
+                      show-word-limit
+                      size="mini"
+                      onkeyup="model.excel_value_end = model.excel_value_end.replace(/[^\d.]/g,'');"
+                      :placeholder="
+                        $t('editor.fileFormBuilder.excel_value_end')
+                      "
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item
+                    ><div style="margin-top: -10px; color: #999">
+                      {{ $t('editor.fileFormBuilder.excel_value_range') }}
+                    </div></el-form-item
+                  >
+                </el-form>
+              </div>
+            </template>
             <!-- 文件数据库 -->
             <template
               v-if="
@@ -376,8 +797,15 @@
 import factory from '@/api/factory'
 import formConfig from './config'
 import gitbook from './GitBook'
+import JsEditor from '@/components/JsEditor'
 import Test from './Test'
-import { getImgByType, TYPEMAP, defaultModel, defaultCloudModel } from './util'
+import {
+  getImgByType,
+  TYPEMAP,
+  TYPEMAPCONFIG,
+  defaultModel,
+  defaultCloudModel
+} from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 
 const databaseTypesModel = factory('DatabaseTypes')
@@ -385,8 +813,60 @@ const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { gitbook, Test, DatabaseTypeDialog },
+  components: { gitbook, Test, DatabaseTypeDialog, JsEditor },
   data() {
+    let validateExcelHeader = (rule, value, callback) => {
+      let start = this.model.excel_header_start
+      let end = this.model.excel_header_end
+      let config = this.model.gridfs_header_config
+      if (start === '') {
+        callback(
+          new Error(
+            this.$t('editor.fileFormBuilder.excel_header_start') +
+              this.$t('formBuilder.noneText')
+          )
+        )
+      } else if (end === '') {
+        callback(
+          new Error(
+            this.$t('editor.fileFormBuilder.excel_header_end') +
+              this.$t('formBuilder.noneText')
+          )
+        )
+      } else if (config === '' && this.model.gridfs_header_type === 'custom') {
+        callback(
+          new Error(this.$t('editor.fileFormBuilder.header_type_required'))
+        )
+      } else if (
+        (!/^[A-Z]+[1-9]+$/.test(start) && start !== '') ||
+        (!/^[A-Z]+[1-9]+$/.test(end) && end !== '')
+      ) {
+        callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_tip')))
+      }
+    }
+    let validateSheet = (rule, value, callback) => {
+      let start = this.model.sheet_start
+      let end = this.model.sheet_end
+      if (start === '') {
+        callback(
+          new Error(
+            this.$t('editor.fileFormBuilder.sheet_start') +
+              this.$t('formBuilder.noneText')
+          )
+        )
+      } else if (end === '') {
+        callback(
+          new Error(
+            this.$t('editor.fileFormBuilder.sheet_end') +
+              this.$t('formBuilder.noneText')
+          )
+        )
+      } else if (start > end) {
+        callback(
+          new Error(this.$t('editor.fileFormBuilder.excel_value_end_gt_start'))
+        )
+      }
+    }
     return {
       // modelForm: {},
       rules: [],
@@ -437,6 +917,7 @@ export default {
         kafkaCompressionType: '',
         kafkaIgnorePushError: false
       },
+      width: 200,
       instanceModelZone: '',
       instanceMock: [],
       dataSourceZone: '',
@@ -444,7 +925,28 @@ export default {
       ecsPageSize: 10,
       ecsPage: 1,
       vpcList: [],
-      ecsList: []
+      ecsList: [],
+      gridFSrules: {
+        gridfs_header_config: [
+          {
+            required: true,
+            message: this.$t('editor.fileFormBuilder.gridfs_header_config'),
+            trigger: 'blur'
+          }
+        ],
+        excel_header_start: [
+          {
+            validator: validateExcelHeader,
+            trigger: 'blur'
+          }
+        ],
+        sheet_start: [
+          {
+            validator: validateSheet,
+            trigger: 'blur'
+          }
+        ]
+      }
     }
   },
   created() {
@@ -470,6 +972,19 @@ export default {
         break
       case 'jira':
         this.model = Object.assign({}, defaultModel['jira'])
+        break
+      case 'rest api':
+        this.model = Object.assign({}, defaultModel['restApi'])
+        break
+      case 'custom_connection':
+        this.model = Object.assign({}, defaultModel['custom_connection'])
+        break
+      case 'gridfs':
+        this.model = Object.assign(
+          {},
+          defaultModel['default'],
+          defaultModel['gridfs']
+        )
         break
     }
     this.getDT(this.databaseType)
@@ -544,6 +1059,7 @@ export default {
     getImgByType,
     formChange(data) {
       let filed = data.field || ''
+      let value = data.value
       if (filed === 'sourceType') {
         this.model.database_host = ''
       }
@@ -555,6 +1071,40 @@ export default {
       }
       if (filed === 's_region') {
         this.model.s_zone = ''
+      }
+      //rest api
+      if (filed === 'data_sync_mode') {
+        if (value === 'INITIAL_INCREMENTAL_SYNC') {
+          this.model.url_info[0]['url_type'] = 'INCREMENTAL_SYNC'
+          let urlInfo = {
+            url: '',
+            method: 'GET',
+            url_type: 'INITIAL_SYNC',
+            headers: {},
+            request_parameters: {},
+            offset_field: '',
+            initial_offset: '',
+            content_type: '',
+            headerArray: [{ name: '', value: '' }],
+            parameterArray: [{ name: '', value: '' }]
+          }
+          this.model.url_info.push(urlInfo)
+        } else {
+          this.model.url_info.splice(1, 1)
+          this.model.url_info[0]['url_type'] = value
+        }
+      }
+      // custom_connection
+      if (filed === 'connection_type' || filed === 'custom_type') {
+        this.model.custom_ondata_script = ''
+        this.model.custom_cdc_script = ''
+        this.model.custom_initial_script = ''
+        if (this.$refs.jsCdcEditor)
+          this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
+        if (this.$refs.jsInitialEditor)
+          this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
+        if (this.$refs.jsOndataEditor)
+          this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
       }
     },
     async initData(data) {
@@ -587,6 +1137,20 @@ export default {
           }
         })
       }
+      this.$nextTick(() => {
+        if (this.model.database_type === 'custom_connection') {
+          this.updateJsEditor()
+        }
+      })
+    },
+    //手动更新JSEditor
+    updateJsEditor() {
+      if (this.$refs.jsCdcEditor)
+        this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
+      if (this.$refs.jsInitialEditor)
+        this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
+      if (this.$refs.jsOndataEditor)
+        this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
     },
     checkDataTypeOptions(type) {
       this.model.database_type = type
@@ -631,10 +1195,7 @@ export default {
     // 按照数据库类型获取表单配置规则
     getFormConfig() {
       let type = this.model.database_type
-
-      if (type === 'mysql pxc') {
-        type = 'mysqlpxc'
-      }
+      type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
         type = 'drs_' + type
       } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
@@ -1010,6 +1571,23 @@ export default {
           }
         })
       }
+      if (this.model.database_type === 'rest api') {
+        this.$refs.urlInfoForm.validate(valid => {
+          if (!valid) {
+            flag = false
+          }
+        })
+      }
+      if (
+        this.model.database_type === 'gridfs' &&
+        this.model.file_type === 'excel'
+      ) {
+        this.$refs.excelForm.validate(valid => {
+          if (!valid) {
+            flag = false
+          }
+        })
+      }
       if (!this.model.checkedVpc && this.model.sourceType === 'ecs') {
         this.$message.error('请授权允许数据同步服务访问您的ECS实例')
         return
@@ -1058,6 +1636,23 @@ export default {
             //params['database_uri'] = encodeURIComponent(params['database_uri'])
             params.fill = params.isUrl ? 'uri' : ''
             delete params.isUrl
+          }
+          //rest api 数据组装
+          if (params.database_type === 'rest api') {
+            params.url_info.forEach(v => {
+              if (v) {
+                v.headerArray.forEach(header => {
+                  if (header && header.name) {
+                    v.headers[header.name] = header.value
+                  }
+                })
+                v.parameterArray.forEach(parameter => {
+                  if (parameter && parameter.name) {
+                    v.request_parameters[parameter.name] = parameter.value
+                  }
+                })
+              }
+            })
           }
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
             params['platformInfo'] = Object.assign(
@@ -1241,6 +1836,25 @@ export default {
       val === 'include'
         ? (item.exclude_filename = '')
         : (item.include_filename = '')
+    },
+    //rest api
+    addHeader(index) {
+      this.model.url_info[index].headerArray.push({
+        name: '',
+        value: ''
+      })
+    },
+    removeHeader(parentIndex, index) {
+      this.model.url_info[parentIndex].headerArray.splice(index, 1)
+    },
+    addParameter(index) {
+      this.model.url_info[index].parameterArray.push({
+        name: '',
+        value: ''
+      })
+    },
+    removeParameter(parentIndex, index) {
+      this.model.url_info[parentIndex].parameterArray.splice(index, 1)
     }
   }
 }
@@ -1275,6 +1889,76 @@ export default {
           font-size: 12px;
           color: #999;
           line-height: 18px;
+        }
+        .rest-api-box {
+          display: flex;
+          flex: 1;
+          div.rest-api-label {
+            width: 210px;
+            padding-right: 20px;
+            line-height: 28px;
+            font-size: 12px;
+            color: #606266;
+            text-align: right;
+            box-sizing: border-box;
+          }
+          .rest-api-url {
+            width: calc(100% - 200px);
+            border: 1px solid #dedee4;
+            padding: 10px;
+            margin-top: 5px;
+            .rest-api-row {
+              margin-bottom: 10px;
+            }
+            .rest-api-margin {
+              margin-left: 10px;
+            }
+            .rest-api-marginB {
+              margin-bottom: 10px;
+            }
+            .rest-api-label {
+              display: inline-block;
+              width: 80px;
+            }
+            .rest-api-FloatL {
+              float: left;
+            }
+            .small-input {
+              width: 104px;
+            }
+            .min-input {
+              width: 80px;
+            }
+            .medium-input {
+              width: 130px;
+            }
+            .rest-api-Array {
+              margin-bottom: 10px;
+            }
+            .add-btn-icon {
+              cursor: pointer;
+            }
+          }
+        }
+        .custom-connection-box {
+          display: flex;
+          justify-content: flex-start;
+          .custom-connection-label {
+            font-size: 12px;
+            width: 200px;
+            text-align: right;
+            color: #606266;
+            margin-right: 23px;
+          }
+          .custom-connection-main {
+            width: calc(100% - 200px);
+          }
+        }
+        .gridfs-box {
+          font-size: 12px;
+          .separate {
+            margin: 0 10px;
+          }
         }
         .fileBox {
           display: flex;
@@ -1457,6 +2141,56 @@ export default {
     }
     .el-form-item__content {
       line-height: 30px;
+    }
+  }
+  .urlInfoForm {
+    .el-form-item {
+      margin-bottom: 0;
+    }
+  }
+}
+.databaseFrom .gridfs-box {
+  .el-form-item {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+  .el-form-item__content {
+    display: flex;
+    font-size: 12px;
+    margin-right: 20px;
+  }
+  .el-form-item__error {
+    padding-top: 0;
+  }
+  .el-form-item__label:before {
+    content: '*';
+    color: #f56c6c;
+    margin-right: 4px;
+  }
+  .excel_value_start {
+    .el-form-item__label:before {
+      content: '';
+    }
+  }
+  .el-form-item__label {
+    font-size: 12px;
+  }
+  .el-radio__label {
+    font-size: 12px;
+  }
+  .headerType .el-form-item__content {
+    flex-direction: column;
+    .excel_header_start {
+      display: flex;
+      font-size: 12px;
+    }
+  }
+  .excel_header_start {
+  }
+  .excelHeaderType {
+    .el-form-item__content {
+      display: block;
+      font-size: 12px;
     }
   }
 }
