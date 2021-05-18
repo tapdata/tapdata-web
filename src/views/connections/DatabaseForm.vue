@@ -813,7 +813,7 @@ const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { gitbook, Test, DatabaseTypeDialog, JsEditor },
+  components: { gitbook, Test, DatabaseTypeDialog },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start
