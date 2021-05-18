@@ -637,7 +637,10 @@ export default {
           icon: 'icon-yunhangzhong'
         },
         paused: {
-          label: this.$t('dataFlow.status.draft'),
+          label: this.$t(
+            'dataFlow.status.' +
+              (window.getSettingByKey('DFS_TCM_PLATFORM') ? 'draft' : 'paused')
+          ),
           icon: 'icon-daiqidong'
         },
         error: {
