@@ -616,7 +616,7 @@ export default {
         syncType: '',
         agentId: ''
       },
-      order: 'startTime DESC',
+      order: 'createTime DESC',
       progressOptions: [
         {
           label: this.$t('dataFlow.initial_sync'),
