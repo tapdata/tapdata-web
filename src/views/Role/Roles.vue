@@ -654,6 +654,7 @@ export default {
 </style>
 <style lang="scss">
 .roles-list-wrap {
+  height: 100%;
   .table-page-container {
     .table-page-body {
       box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
@@ -664,7 +665,7 @@ export default {
       }
 
       .el-table {
-        padding: 0 10px;
+        // padding: 0 10px;
         box-sizing: border-box;
         // border-top: 0;
         // .has-gutter {
