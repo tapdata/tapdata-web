@@ -44,11 +44,11 @@
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </ElInput>
         </li>
-        <!-- <li class="item">
+        <li class="item">
           <el-select
             v-model="searchParams.databaseModel"
             clearable
-            size="mini"
+            size="small"
             @input="table.fetch(1)"
           >
             <el-option
@@ -64,7 +64,7 @@
           <el-select
             v-model="searchParams.databaseType"
             clearable
-            size="mini"
+            size="small"
             @input="table.fetch(1)"
           >
             <el-option
@@ -75,7 +75,7 @@
             >
             </el-option>
           </el-select>
-        </li> -->
+        </li>
         <li class="item">
           <ElButton
             plain
@@ -126,14 +126,14 @@
             <div class="database-text">
               <!-- TODO: 缺少分类tag -->
               <!-- <span class="name" @click="preview(scope.row.id, scope.row.database_type)"
-                >{{ scope.row.name }}
-                <span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
-                  formatterListTags(scope.row)
-                }}</span></span
-              > -->
+								>{{ scope.row.name }}
+								<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
+									formatterListTags(scope.row)
+								}}</span></span
+							> -->
               <!-- <div class="user" v-if="scope.row.database_uri">
-                {{ formatterDatabaseType(scope.row) }}
-              </div> -->
+								{{ formatterDatabaseType(scope.row) }}
+							</div> -->
               <ElLink
                 type="primary"
                 style="display: block; line-height: 20px"
@@ -175,6 +175,15 @@
               {{ $t('connection.status.testing') }}
             </span>
           </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="connection_type"
+        :label="$t('connection.connectionType')"
+        width="160"
+      >
+        <template slot-scope="scope">
+          {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
       </el-table-column>
       <el-table-column
@@ -329,7 +338,14 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira'
+        'jira',
+        'gbase-8s',
+        'sybase ase',
+        'gaussdb200',
+        'dummy db',
+        'rest api',
+        'custom_connection',
+        'gridfs'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
