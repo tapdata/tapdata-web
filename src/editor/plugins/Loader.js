@@ -55,7 +55,7 @@ export const loadPlugins = function (cNodes) {
     let group = stencil.group
     if (!stencilConfig.groups[group]) {
       let maxIdx = 1
-      Object.values(stencilConfig.groups).forEach((g) => {
+      Object.values(stencilConfig.groups).forEach(g => {
         if (maxIdx < g.index) maxIdx = g.index
       })
       stencilConfig.groups[group] = {
@@ -122,7 +122,7 @@ export const loadPlugins = function (cNodes) {
     'app.Redis': 'redis',
     'app.ApiNode': 'rest api'
   }
-  Object.keys(plugins).forEach((name) => {
+  Object.keys(plugins).forEach(name => {
     if (name !== 'loadPlugins' && typeof plugins[name] === 'object') {
       let plugin = _.cloneDeep(plugins[name])
 
@@ -146,7 +146,7 @@ export const loadPlugins = function (cNodes) {
         if (type === 'app.Database' || type === 'app.FileFormBuilder') {
           let addData =
             type === 'app.Database' ? DATABASE_TYPE_MAPPING : FILE_TYPE_MAPPING
-          Object.keys(addData).forEach((key) => {
+          Object.keys(addData).forEach(key => {
             let database = addData[key]
             if (
               window
@@ -173,7 +173,7 @@ export const loadPlugins = function (cNodes) {
             }
           })
         } else if (type === 'app.CustomProcessor') {
-          cNodes.forEach((config) => {
+          cNodes.forEach(config => {
             let plugin = _.cloneDeep(plugins[name])
             let nodeConfig = config.nodeConfig
             config.nodeConfig.shapeImage = 'static/editor/o-table-processor.svg'

@@ -224,7 +224,7 @@ export default {
       }
       metadataInstances
         .dataMap(params)
-        .then((result) => {
+        .then(result => {
           if (
             result &&
             result.data &&
@@ -236,7 +236,7 @@ export default {
           } else {
             self.$message.info({
               message: i18n.t('dataMap.noneData'),
-              duration: 10000,
+              duration: 3000,
               showClose: true,
               offset: 100
             })
@@ -244,7 +244,7 @@ export default {
 
           loading.close()
         })
-        .catch((err) => {
+        .catch(err => {
           log(err)
           loading.close()
           self.$message.error({
@@ -275,7 +275,7 @@ export default {
       }
       metadataDefinitions
         .get(params)
-        .then((result) => {
+        .then(result => {
           if (result && result.data) {
             let items = result.data || []
             let rootNode = {

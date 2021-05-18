@@ -268,7 +268,7 @@ export default {
       },
       order: 'last_updated DESC',
       dbOptions: [],
-      metaTypeOptions: types.map((v) => {
+      metaTypeOptions: types.map(v => {
         return {
           label: this.$t('metadata.metaType.' + v),
           value: v
@@ -292,7 +292,7 @@ export default {
             type: 'select',
             label: this.$t('metadata.form.type'),
             field: 'model_type',
-            options: ['collection', 'mongo_view'].map((t) => ({
+            options: ['collection', 'mongo_view'].map(t => ({
               label: this.$t('metadata.metaType.' + t),
               value: t
             })),
@@ -318,7 +318,7 @@ export default {
                       new Error(this.$t('metadata.form.none_table_name'))
                     )
                   }
-									const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v); // eslint-disable-line
+                  const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
                   if (v.split('.')[0] == 'system' || !flag) {
                     return callback(
                       new Error(this.$t('dialog.placeholderTable'))
@@ -338,6 +338,9 @@ export default {
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+    let cache = this.table.getCache()
+    cache.isFuzzy = cache.isFuzzy === true
+    this.searchParams = cache
   },
   computed: {
     table() {
@@ -455,11 +458,11 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then((res) => {
+        .then(res => {
           let dbOptions = res.data
           this.dbOptions = dbOptions
           let options = []
-          dbOptions.forEach((db) => {
+          dbOptions.forEach(db => {
             if (
               db.database_type === 'mongodb' &&
               ['target', 'source_and_target'].includes(db.connection_type)
@@ -484,7 +487,7 @@ export default {
     },
     handleSelectTag() {
       let tagList = {}
-      this.multipleSelection.forEach((row) => {
+      this.multipleSelection.forEach(row => {
         if (row.classifications && row.classifications.length > 0) {
           tagList[row.classifications[0].id] = {
             value: row.classifications[0].value
@@ -496,7 +499,7 @@ export default {
     handleOperationClassify(classifications) {
       this.$api('MetadataInstances')
         .classification({
-          metadatas: this.multipleSelection.map((it) => {
+          metadatas: this.multipleSelection.map(it => {
             return {
               id: it.id,
               classifications: classifications
@@ -525,10 +528,10 @@ export default {
       }
     },
     createNewModel() {
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           let { model_type, database, tableName } = this.createForm
-          let db = this.dbOptions.find((it) => it.id === database)
+          let db = this.dbOptions.find(it => it.id === database)
           let params = {
             connectionId: db.id,
             original_name: tableName,
@@ -554,7 +557,7 @@ export default {
     },
     changeName(item) {
       this.$prompt('', this.$t('connection.rename'), {
-				inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
+        inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
         inputErrorMessage: this.$t('dialog.placeholderTable'),
         inputValue: item.name || item.original_name,
         beforeClose: (action, instance, done) => {

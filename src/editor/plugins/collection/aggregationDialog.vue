@@ -136,7 +136,7 @@ export default {
         : this.model.collectionAggrPipeline
 
     let self = this
-    ws.on('aggregatePreviewResult', (res) => {
+    ws.on('aggregatePreviewResult', res => {
       if (res.status === 'SUCCESS' && !!res.result) {
         if (self.clickStatus === 'preview') {
           if (res.result.previewResult && res.result.previewResult.length) {

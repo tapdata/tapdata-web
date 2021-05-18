@@ -204,7 +204,7 @@ export default {
   },
   mounted() {
     let self = this
-    self.$on(EditorEventType.RESIZE, (width) => {
+    self.$on(EditorEventType.RESIZE, width => {
       self.width = width
     })
   },

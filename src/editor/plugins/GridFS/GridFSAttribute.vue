@@ -246,7 +246,7 @@ export default {
         if (this.schemas.length > 0) {
           if (this.model.tableName) {
             let schema = this.schemas.filter(
-              (s) => s.table_name === this.model.tableName
+              s => s.table_name === this.model.tableName
             )
             schema =
               schema && schema.length > 0
@@ -294,7 +294,7 @@ export default {
       this.schemaLoading = true
       connections
         .get([connectionId])
-        .then((result) => {
+        .then(result => {
           if (result.data) {
             let schemas =
               (result.data.schema && result.data.schema.tables) || []
@@ -330,7 +330,7 @@ export default {
       let result = _.cloneDeep(this.model)
       if (result.connectionId) {
         let database = this.databases.filter(
-          (db) => db.id === result.connectionId
+          db => db.id === result.connectionId
         )
         if (database && database.length > 0) {
           result.name = database[0].name
@@ -380,7 +380,7 @@ export default {
         schema = null,
         templeSchema = []
 
-      ws.on('execute_load_schema_result', (res) => {
+      ws.on('execute_load_schema_result', res => {
         if (res.status === 'SUCCESS' && res.result && res.result.length) {
           templeSchema = res.result
           this.reloadModelLoading = false
@@ -390,7 +390,7 @@ export default {
         }
         this.reloadModelLoading = false
         if (templeSchema && templeSchema.length) {
-          templeSchema.forEach((item) => {
+          templeSchema.forEach(item => {
             if (
               item.connId === this.model.connectionId &&
               item.tableName === this.model.tableName

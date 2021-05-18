@@ -13,7 +13,9 @@
     <div class="table-page-main">
       <div
         class="table-page-left"
-        v-if="classify && $window.getSettingByKey('SHOW_CLASSIFY')"
+        v-if="
+          classify && !hideClassify && $window.getSettingByKey('SHOW_CLASSIFY')
+        "
       >
         <Classification
           :authority="classify.authority"
@@ -37,8 +39,11 @@
           v-loading="loading"
           class="table-page-table table-border"
           height="100%"
+          border
+          ref="elTable"
           :element-loading-text="$t('dataFlow.dataLoading')"
           :row-key="rowKey"
+          :span-method="spanMethod"
           :data="list"
           @selection-change="handleSelectionChange"
           @sort-change="$emit('sort-change', $event)"
@@ -85,11 +90,17 @@ export default {
       type: Number,
       default: 20
     },
+    hideClassify: {
+      // 是否隐藏左侧栏
+      type: Boolean,
+      default: false
+    },
     classify: {
       type: Object
     },
     remoteMethod: Function,
-    rowKey: [String, Function]
+    rowKey: [String, Function],
+    spanMethod: [Function]
   },
   data() {
     return {
@@ -105,16 +116,25 @@ export default {
       classifyDialogVisible: false
     }
   },
-  created() {
+  mounted() {
+    // 获取缓存的每页条数
+    let cachePageSize = this.$cache.get('TABLE_PAGE_SIZE')
+    if (cachePageSize && cachePageSize[this.$route.name]) {
+      this.page.size = cachePageSize[this.$route.name]
+    }
+
     this.fetch(1)
   },
-  watch: {
-    classify: function (_new, _old) {
-      if (_new.toString() !== _old.toString()) {
-        this.tags = []
-      }
-    }
-  },
+  // created() {
+  //   this.fetch(1)
+  // },
+  // watch: {
+  //   classify: function (_new, _old) {
+  //     if (_new.toString() !== _old.toString()) {
+  //       this.tags = []
+  //     }
+  //   }
+  // },
   methods: {
     getCache() {
       if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
@@ -148,6 +168,12 @@ export default {
                 this.cache = null
                 this.page.total = total
                 this.list = data || []
+
+                // 缓存每页条数
+                let pageData = {}
+                pageData[this.$route.name] = this.page.size
+                this.$cache.set('TABLE_PAGE_SIZE', pageData)
+
                 if (total > 0 && (!data || !data.length)) {
                   setTimeout(() => {
                     this.fetch(this.page.current - 1)
@@ -195,6 +221,10 @@ export default {
       font-size: 16px;
       color: #333;
       font-weight: 600;
+      &.link {
+        color: rgb(72, 182, 226);
+        cursor: pointer;
+      }
     }
     .page-header-desc {
       margin-top: 10px;

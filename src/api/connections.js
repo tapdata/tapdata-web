@@ -35,4 +35,11 @@ export default class Connections extends PublicAPI {
     delete params.id
     return axios.patch(`${this.url}/${id}`, params)
   }
+  update(params) {
+    return axios.post(
+      `${this.url}/update?where=` +
+        encodeURIComponent(JSON.stringify({ _id: params.id })),
+      params
+    )
+  }
 }

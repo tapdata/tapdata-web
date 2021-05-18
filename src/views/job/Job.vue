@@ -255,6 +255,7 @@
             !editable &&
             !$window.getSettingByKey('HIDE_DATAFLOW_EDIT_BUTTON')
           "
+          ff
           class="btn-edit"
           size="mini"
           type="primary"
@@ -299,46 +300,6 @@
         }}</el-button>
         <el-button class="e-button" type="primary" @click="start">{{
           $t('dataFlow.submitExecute')
-        }}</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog
-      :title="$t('dataFlow.systemHint')"
-      custom-class="systemHint"
-      :before-close="loadData"
-      :visible.sync="tempDialogVisible"
-    >
-      <el-form :model="form">
-        <span class="text">{{ $t('dataFlow.systemText') }}</span>
-        <div class="content">
-          <el-row v-for="item in tempData" :key="item.id">
-            <el-col :span="20"
-              ><el-link @click="openTempSaved(item)" type="primary">{{
-                item.split('$$$')[2]
-              }}</el-link></el-col
-            >
-            <el-col :span="4">
-              <el-button size="mini" @click="openTempSaved(item)" type="text">{{
-                $t('dataFlow.stystemOpen')
-              }}</el-button>
-              <el-button
-                size="mini"
-                class="delStyle"
-                @click="deleteTempData(item)"
-                type="text"
-                >{{ $t('message.delete') }}</el-button
-              >
-            </el-col>
-          </el-row>
-        </div>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="text" class="delet" @click="delAllTempData">{{
-          $t('dataFlow.stystemDeleteAll')
-        }}</el-button>
-        <!-- <el-button size="mini" @click="loadData">{{ $t('dataFlow.stystemOpenAll') }}</el-button> -->
-        <el-button size="mini" @click="loadData">{{
-          $t('dataFlow.stystemLgnoreAll')
         }}</el-button>
       </div>
     </el-dialog>
@@ -401,6 +362,7 @@ const dataFlowsApi = factory('DataFlows')
 const Setting = factory('Setting')
 // const cluster = factory('cluster');
 let changeData = null
+let timer = null
 export default {
   name: 'Job',
   dataFlow: null,
@@ -419,7 +381,6 @@ export default {
       },
 
       dataFlowId: null,
-      tempDialogVisible: false,
       tempKey: 0,
       tempId: false,
       tempData: [],
@@ -459,7 +420,6 @@ export default {
     }
   },
   mounted() {
-    let self = this
     // build editor
     let customProcessors = []
     this.$api('nodeConfigs')
@@ -471,19 +431,19 @@ export default {
           this.getGlobalSetting()
         }
         this.mappingTemplate = this.$route.query.mapping
-        if (self.$route.query.isMoniting == 'true') self.isMoniting = true
-        self.editor = editor({
+        if (this.$route.query.isMoniting == 'true') this.isMoniting = true
+        this.editor = editor({
           container: $('.editor-container'),
           actionBarEl: $('.editor-container .action-buttons'),
-          scope: self,
+          scope: this,
           customProcessors
         })
 
-        if (self.$route.query.isSimple == 'true') {
+        if (this.$route.query.isSimple == 'true') {
           this.initData(db2db.data)
           this.mappingTemplate = 'cluster-clone'
           this.loading = false
-          setTimeout(() => self.initSimple(), 1100)
+          setTimeout(() => this.initSimple(), 1100)
           return
         }
         if (window.name && window.name.length > 200) {
@@ -492,32 +452,13 @@ export default {
           this.loading = false
           return
         }
-        if (!window.tpdata) {
-          Object.keys(localStorage).forEach((key) => {
-            let mapping = key.split('$$$')[3] || ''
-            if (
-              key.startsWith('tapdata.dataflow.$$$') &&
-              window.tempKeys &&
-              mapping === this.$route.query.mapping &&
-              !window.tempKeys.includes(parseInt(key.split('$$$')[1]))
-            )
-              this.tempData.push(key)
-          })
-        } else {
-          this.initData(window.tpdata)
-          this.loading = false
-          return
-        }
-        if (!this.isMoniting && this.tempData.length > 0) {
-          self.loading = false
-          this.tempDialogVisible = true
-          return
-        }
         this.loadData()
         this.wsWatch()
         this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
           this.draftSave()
         })
+
+        window.addEventListener('beforeunload', this.handleBeforeUnLoad)
       })
   },
 
@@ -542,10 +483,11 @@ export default {
             confirmButtonText: this.$t('dataFlow.leave'),
             closeOnClickModal: false
           }
-        ).then((resFlag) => {
+        ).then(resFlag => {
           if (!resFlag) {
             return
           }
+          this.dataChangeFalg = false
           this.$router.push({
             path: '/dataFlows?mapping=' + mapping
           })
@@ -557,7 +499,6 @@ export default {
       return ['draft', 'error', 'paused'].includes(this.status)
     },
     loadData() {
-      this.tempDialogVisible = false
       if (this.$route.query && this.$route.query.id) {
         this.loadDataFlow(this.$route.query.id)
       } else {
@@ -572,114 +513,22 @@ export default {
       }
       this.setSelector(this.$route.query.mapping)
     },
-    /****
-     * Auto save
-     */
-    timeSave() {
-      if (this.isMoniting) return
-      let data = this.getDataFlowData(true)
-      if (this.tempKey == 0) {
-        this.tempKey = 1
-        Object.keys(localStorage).forEach((key) => {
-          if (key.startsWith('tapdata.dataflow.$$$'))
-            if (parseInt(key.split('$$$')[1]) >= this.tempKey)
-              this.tempKey = parseInt(key.split('$$$')[1]) + 1
-        })
-      }
-      if (!this.tempId)
-        this.tempId =
-          'tapdata.dataflow.$$$' +
-          this.tempKey +
-          '$$$' +
-          data.name +
-          '$$$' +
-          data.mappingTemplate
-      else {
-        localStorage.removeItem(this.tempId)
-        this.tempId =
-          'tapdata.dataflow.$$$' +
-          this.tempKey +
-          '$$$' +
-          data.name +
-          '$$$' +
-          data.mappingTemplate
-      }
-      try {
-        localStorage.setItem(this.tempId, JSON.stringify(data))
-      } catch (e) {
-        try {
-          let ids = [],
-            size = 0
-          Object.keys(localStorage).forEach((key) => {
-            if (key.startsWith('tapdata.dataflow.$$$'))
-              ids.push({ id: parseInt(key.split('$$$')[1]), item: key })
-          })
-          ids = ids.sort((a, b) => a.id - b.id)
-          for (let i = 0; i < ids.length; i++) {
-            size += localStorage.getItem(ids[i].item).length
-            localStorage.removeItem(ids[i].item)
-            if (size > JSON.stringify(data).length) break
-          }
-          localStorage.setItem(this.tempId, JSON.stringify(data))
-        } catch (err) {
-          log(err)
-        }
-      }
-      window.tempKey = this.tempKey
-    },
-    openTempSaved(key) {
-      this.tempDialogVisible = false
-      let tdata = JSON.parse(localStorage.getItem(key))
-      localStorage.removeItem(key)
-      if (tdata.id != this.$route.query.id) {
-        let routeUrl = this.$router.resolve({
-          path: '/job',
-          query: { id: tdata.id, mapping: tdata.mappingTemplate }
-        })
-        window.opener.windows.push(window.open(routeUrl.href, '_blank'))
-        window.opener.windows[window.opener.windows.length - 1].tpdata = tdata
-        this.loadData()
-      } else this.initData(tdata)
-    },
-    deleteTempData(key) {
-      this.tempData.splice(this.tempData.indexOf(key), 1)
-      localStorage.removeItem(key)
-      if (this.tempData.length == 0) {
-        this.tempDialogVisible = false
-        this.loadData()
-      }
-    },
-    delAllTempData() {
-      // Object.keys(localStorage).forEach(key => {
-      // 	if (key.startsWith('tapdata.dataflow.$$$')) localStorage.removeItem(key);
-      // });
-      if (!this.tempData || this.tempData.length === 0) return
-      let oldData = _.cloneDeep(this.tempData)
-      oldData.forEach((key, index) => {
-        let mapping = key.split('$$$')[3] || ''
-        if (mapping === this.mappingTemplate) {
-          this.tempData.splice(index, 1)
-          localStorage.removeItem(key)
-        }
-      })
-      this.tempDialogVisible = false
-      this.loadData()
-    },
+
     simpleRefresh() {
       let self = this
-      self.editor.graph.paper.getMountedViews().forEach((ele) => {
+      self.editor.graph.paper.getMountedViews().forEach(ele => {
         if (ele.$el) ele.$el.show()
       })
       this.$nextTick(() => {
         self.$refs.simpleScene.cellHtml = self.editor.graph.paper
           .getMountedViews()
-          .map((ele) => {
+          .map(ele => {
             if (ele.model.isElement) return ele.$el[0].outerHTML
             else return ''
           })
           .join('')
         self.$refs.simpleScene.renderCell()
-        self.editor.graph.paper.getMountedViews().forEach((ele) => {
+        self.editor.graph.paper.getMountedViews().forEach(ele => {
           if (ele.$el) ele.$el.hide()
         })
         try {
@@ -813,6 +662,30 @@ export default {
         Object.assign(self.dataFlow, dat)
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
       })
+      if (timer) return
+      timer = setInterval(() => {
+        self.updateDataFlow()
+      }, 5000)
+    },
+    updateDataFlow() {
+      let self = this
+      let id = self.$route.query.id
+      dataFlowsApi.get([id]).then(result => {
+        let dat = result?.data || {}
+        self.status = dat.status
+
+        if (self.executeMode !== dat.executeMode)
+          self.executeMode = dat.executeMode
+
+        if (!self.statusBtMap[self.status].start) {
+          self.executeMode = 'normal'
+        }
+        delete self.dataFlow.validateBatchId
+        delete self.dataFlow.validateStatus
+        delete self.dataFlow.validationSettings
+        Object.assign(self.dataFlow, dat)
+        self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
+      })
     },
     onGraphChanged() {
       if (this.isSimple) {
@@ -826,7 +699,6 @@ export default {
         changeData = this.getDataFlowData(true)
         if (changeData) {
           self.dataChangeFalg = true
-          self.timeSave()
         }
       })
     },
@@ -854,14 +726,14 @@ export default {
 
       if (promise) {
         promise
-          .catch((e) => {
+          .catch(e => {
             if (e.response.msg === 'duplication for names') {
               self.$message.error(self.$t('message.exists_name'))
             } else {
               self.$message.error(self.$t('message.saveFail'))
             }
           })
-          .then((result) => {
+          .then(result => {
             if (result && result.data) {
               let dataFlow = result.data
               self.dataFlowId = dataFlow.id
@@ -908,17 +780,24 @@ export default {
       let self = this
       dataFlowsApi
         .get([id])
-        .then((result) => {
+        .then(result => {
           if (result && result.data) {
             self.creatUserId = result.data.user_id
             self.initData(result.data)
-            Object.keys(localStorage).forEach((key) => {
+            // 删除旧缓存
+            Object.keys(localStorage).forEach(key => {
               if (
                 key.startsWith('tapdata.dataflow.$$$') &&
                 key.split('$$$')[2] == result.data.name
               )
-                if (JSON.parse(localStorage.getItem(key)).id == result.data.id)
+                try {
+                  if (
+                    JSON.parse(localStorage.getItem(key)).id == result.data.id
+                  )
+                    localStorage.removeItem(key)
+                } catch (e) {
                   localStorage.removeItem(key)
+                }
             })
           } else {
             self.$message.error(self.$t('message.api.get.error'))
@@ -926,7 +805,7 @@ export default {
           }
           self.loading = false
         })
-        .catch((err) => {
+        .catch(err => {
           log(err)
           self.$message.error(self.$t('message.api.get.error'))
           self.loading = false
@@ -974,7 +853,7 @@ export default {
       let cells = graphData.cells ? graphData.cells : []
       let edgeCells = {}
       let nodeCells = {}
-      cells.forEach((cell) => {
+      cells.forEach(cell => {
         if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
           if (cell.attrs && cell.attrs.line && cell.attrs.line.stroke) {
             cell.attrs.line.stroke = '#8f8f8f' // 鼠标未失去焦点就保存，针对link选中状态改为默认
@@ -1006,7 +885,7 @@ export default {
         }
       )
       let stages = {}
-      Object.values(nodeCells).forEach((cell) => {
+      Object.values(nodeCells).forEach(cell => {
         let stage = (stages[cell.id] = Object.assign(
           {
             id: cell.id,
@@ -1034,14 +913,12 @@ export default {
           Object.assign(stage, {
             dataQualityTag: false,
             joinTables: Object.values(edgeCells)
-              .filter((edge) => edge.target && edge.target.id === cell.id)
-              .map(
-                (edge) => edge[FORM_DATA_KEY] && edge[FORM_DATA_KEY].joinTable
-              )
+              .filter(edge => edge.target && edge.target.id === cell.id)
+              .map(edge => edge[FORM_DATA_KEY] && edge[FORM_DATA_KEY].joinTable)
           })
         }
       })
-      Object.values(edgeCells).forEach((cell) => {
+      Object.values(edgeCells).forEach(cell => {
         if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
           let sourceId = cell.source.id
           let targetId = cell.target.id
@@ -1066,7 +943,7 @@ export default {
       let stages = dataFlowData.stages
       let { graph } = this.editor.getData() || {}
       let dataFlowId = this.dataFlowId
-      stages.forEach((stage) => {
+      stages.forEach(stage => {
         let cell = graph.getCell(stage.id) || {}
         let schema = cell.getSchema()
         let outputSchema = cell.getOutputSchema()
@@ -1083,9 +960,9 @@ export default {
       let stages = this.getDataFlowData(true).stages
       let cells = this.editor.graph.graph.getCells()
       let valid = true
-      stages.forEach((stage) => {
+      stages.forEach(stage => {
         if (stage.joinTables)
-          stage.joinTables.forEach((jt) => {
+          stage.joinTables.forEach(jt => {
             if (!jt || !jt.id) return
             let finded = false
             cells.reduce((finded, cell) => {
@@ -1094,7 +971,7 @@ export default {
             try {
               if (!finded)
                 cells
-                  .filter((cell) => cell.id == stage.id)[0]
+                  .filter(cell => cell.id == stage.id)[0]
                   .updateOutputSchema()
             } catch (e) {
               alert('jointables stageid chaeck failed===>>' + stage.id)
@@ -1120,7 +997,7 @@ export default {
           : dataFlowsApi.post(data)
 
         promise
-          .then((result) => {
+          .then(result => {
             if (result && result.data) {
               let dataFlow = result.data
 
@@ -1160,7 +1037,7 @@ export default {
             }
             self.loading = false
           })
-          .catch((e) => {
+          .catch(e => {
             self.loading = false
             if (typeof cb === 'function') {
               cb(e, null)
@@ -1180,7 +1057,7 @@ export default {
         self.loading = true
         dataFlowsApi
           .count({ where: JSON.stringify(params) })
-          .then((result) => {
+          .then(result => {
             if (result && result.data && result.data.count > 0) {
               this.$message.error(
                 `${self.$t('message.exists_name')}: ${data.name}`
@@ -1190,7 +1067,7 @@ export default {
               _doSave()
             }
           })
-          .catch((e) => {
+          .catch(e => {
             self.loading = false
             if (typeof cb === 'function') {
               cb(e, null)
@@ -1210,7 +1087,7 @@ export default {
       if (data) {
         if (data.id) delete data.status
 
-        self.doSave(data, (err) => {
+        self.doSave(data, err => {
           if (err) {
             this.$message.error(self.$t('message.saveFail'))
           } else {
@@ -1262,13 +1139,11 @@ export default {
         let objectNamesList = [],
           stageTypeFalg = false
         if (data && data.stages && data.stages.length) {
-          stageTypeFalg = data.stages.every(
-            (stage) => stage.type === 'database'
-          )
+          stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
-            data.stages.forEach((item) => {
+            data.stages.forEach(item => {
               if (item.syncObjects && item.syncObjects.length) {
-                item.syncObjects.forEach((childItem) => {
+                item.syncObjects.forEach(childItem => {
                   if (childItem.objectNames && childItem.objectNames.length) {
                     objectNamesList = childItem.objectNames
                   }
@@ -1345,9 +1220,7 @@ export default {
       if (!self.sync_type.includes('cdc')) {
         message = self.$t('message.stopInitial_syncMessage')
       }
-      if (
-        self.dataFlow.stages.find((s) => s.type === 'aggregation_processor')
-      ) {
+      if (self.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
         const h = self.$createElement
         let arr = self.$t('message.stopAggregation_message').split('XXX')
         message = h('p', [
@@ -1365,11 +1238,11 @@ export default {
           type: 'warning',
           closeOnClickModal: false
         })
-        .then((flag) => {
+        .then(flag => {
           if (!flag) {
             return
           }
-          self.doSave(data, (err) => {
+          self.doSave(data, err => {
             if (err) {
               this.$message.error(self.$t('message.stopFail'))
             }
@@ -1400,7 +1273,7 @@ export default {
             })
           }
           this.isPreview = true
-          self.doSave(data, (err) => {
+          self.doSave(data, err => {
             if (err) {
               this.$message.error(self.$t('message.saveFail'))
             } else {
@@ -1430,7 +1303,7 @@ export default {
             executeMode: 'running_debug'
           })
         }
-        self.doSave(data, (err) => {
+        self.doSave(data, err => {
           if (err) {
             this.$message.error(self.$t('message.saveFail'))
           } else {
@@ -1454,7 +1327,7 @@ export default {
             id: data.id,
             executeMode: 'normal'
           },
-          (err) => {
+          err => {
             if (err) {
               this.$message.error(self.$t('message.saveFail'))
             }
@@ -1482,7 +1355,7 @@ export default {
               type: 'warning'
             }
           )
-          .then((flag) => {
+          .then(flag => {
             if (!flag) {
               return
             }
@@ -1492,8 +1365,9 @@ export default {
               .then(() => {
                 self.$message.success(self.$t('message.resetOk'))
                 self.editor.emit('dataFlow:reset')
+                location.reload()
               })
-              .catch((err) => {
+              .catch(err => {
                 if (err && err.response.status === 500) {
                   self.$message.error(self.$t('message.resetFailed'))
                 }
@@ -1523,7 +1397,7 @@ export default {
       }
       this.loading = true
       Setting.findOne(where)
-        .then((res) => {
+        .then(res => {
           if (res.data.value) {
             let value = JSON.parse(res.data.value)
             this.editor.setSettingData(value.runNotification)
@@ -1630,10 +1504,10 @@ export default {
       }
       if (data) {
         let stageMap = {}
-        data.forEach((item) => {
+        data.forEach(item => {
           stageMap[item.id] = item
         })
-        data.map((v) => {
+        data.map(v => {
           let formData = _.cloneDeep(v)
           delete formData.inputLanes
           delete formData.outputLanes
@@ -1743,8 +1617,8 @@ export default {
             cells.push(node)
           }
           if (v.outputLanes) {
-            v.outputLanes = v.outputLanes.filter((d) => d)
-            v.outputLanes.map((k) => {
+            v.outputLanes = v.outputLanes.filter(d => d)
+            v.outputLanes.map(k => {
               let type = 'app.Link'
               if (v.type === 'database' && stageMap[k].type === 'database') {
                 type = 'app.databaseLink'
@@ -1791,7 +1665,7 @@ export default {
     handleJoinTables(stages, graph) {
       log('Job.handleJoinTables', stages, graph)
       if (stages) {
-        stages.map((stage) => {
+        stages.map(stage => {
           if (
             stage.joinTables &&
             stage.joinTables.length > 0 &&
@@ -1808,16 +1682,16 @@ export default {
             // 目标节点 数据节点 jointables
             // tableName -> joinTable
             let joinTables = {}
-            stage.joinTables.map((table) => {
+            stage.joinTables.map(table => {
               joinTables[table.stageId] = table
             })
 
             let cell = graph.getCell(stage.id)
-            graph.getConnectedLinks(cell, { inbound: true }).forEach((link) => {
+            graph.getConnectedLinks(cell, { inbound: true }).forEach(link => {
               let sourceCell = link.getSourceCell()
               let sourceDataCells = sourceCell
                 .getFirstDataNode()
-                .filter((cell) => !!joinTables[cell.id])
+                .filter(cell => !!joinTables[cell.id])
               if (sourceDataCells && sourceDataCells.length > 0) {
                 let formData = link.getFormData()
                 formData.joinTable = joinTables[sourceDataCells[0].id]
@@ -1830,7 +1704,7 @@ export default {
     querySearch(queryString, cb) {
       let dataCells = this.editor.getAllCells()
       let dataCellName = []
-      dataCells.forEach((cell) => {
+      dataCells.forEach(cell => {
         let formData =
           typeof cell.getFormData === 'function' ? cell.getFormData() : null
         let tableName = {
@@ -1847,7 +1721,7 @@ export default {
       cb(results)
     },
     createFilter(queryString) {
-      return (restaurant) => {
+      return restaurant => {
         return (
           restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
           0
@@ -1863,6 +1737,10 @@ export default {
   beforeDestroy() {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId)
+    }
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
     }
     this.editor.destroy()
   }

@@ -451,7 +451,7 @@ export default {
         .get([this.id], {
           fields: ['validationSettings', 'dataFlowId', 'validateStatus']
         })
-        .then((res) => {
+        .then(res => {
           if (res.statusText === 'OK' || res.status === 200) {
             this.loading = false
             if (res.data) {
@@ -520,14 +520,14 @@ export default {
       }
       this.tableData = this.tableData || []
       let source = this.sourceList.filter(
-        (item) => item.id === this.formData.source.id
+        item => item.id === this.formData.source.id
       )
       if (source.length > 0) {
         this.formData.source.tableName = source[0].tableName
         this.formData.source.stageId = source[0].stageId
       }
       let target = this.targetList.filter(
-        (item) => item.id === this.formData.target.id
+        item => item.id === this.formData.target.id
       )
       if (target.length > 0) {
         this.formData.target.tableName = target[0].tableName
@@ -540,7 +540,7 @@ export default {
       this.editIndex = -1
       this.disabledDrawer = false
       this.loading = true
-      dataFlows.patchId(this.id, data).then((res) => {
+      dataFlows.patchId(this.id, data).then(res => {
         if (res.statusText === 'OK' || res.status === 200) {
           this.loading = false
           this.handleClose()
@@ -559,7 +559,7 @@ export default {
           type: 'warning',
           closeOnClickModal: false
         }
-      ).then((resFlag) => {
+      ).then(resFlag => {
         if (!resFlag) {
           this.getData()
           return
@@ -568,7 +568,7 @@ export default {
           validationSettings: []
         }
         this.loading = true
-        dataFlows.patchId(this.id, data).then((res) => {
+        dataFlows.patchId(this.id, data).then(res => {
           if (res.statusText === 'OK' || res.status === 200) {
             this.loading = false
             this.getData()
@@ -598,12 +598,12 @@ export default {
         .get([this.id], {
           fields: ['validateBatchId']
         })
-        .then((res) => {
+        .then(res => {
           if (res.statusText === 'OK' || res.status === 200) {
             data.lastValidateBatchId = res.data.validateBatchId
               ? res.data.validateBatchId
               : ''
-            dataFlows.patchId(this.id, data).then((res) => {
+            dataFlows.patchId(this.id, data).then(res => {
               if (res.statusText === 'OK' || res.status === 200) {
                 this.startLoading = false
                 self.editor.showResult()
@@ -618,7 +618,7 @@ export default {
         validationSettings: this.tableData
       }
       this.loading = true
-      dataFlows.patchId(this.id, data).then((res) => {
+      dataFlows.patchId(this.id, data).then(res => {
         if (res.statusText === 'OK' || res.status === 200) {
           this.loading = false
           this.getData()
@@ -671,13 +671,13 @@ export default {
           this.formData.source.connectionId,
           sourceOrTarget
         )
-        .then((res) => {
+        .then(res => {
           if (res.statusText === 'OK' || res.status === 200) {
             this.sourceList = res.data || []
           }
         })
       let source = this.sourceDatabase.filter(
-        (item) => item.connectionId === this.formData.source.connectionId
+        item => item.connectionId === this.formData.source.connectionId
       )
       if (source.length > 0) {
         this.formData.source.databaseType = source[0].databaseType
@@ -695,13 +695,13 @@ export default {
           this.formData.target.connectionId,
           sourceOrTarget
         )
-        .then((res) => {
+        .then(res => {
           if (res.statusText === 'OK' || res.status === 200) {
             this.targetList = res.data || []
           }
         })
       let opTarget = this.targetDatabase.filter(
-        (item) => item.connectionId === this.formData.target.connectionId
+        item => item.connectionId === this.formData.target.connectionId
       )
       if (opTarget.length > 0) {
         this.formData.target.databaseType = opTarget[0].databaseType
@@ -709,7 +709,7 @@ export default {
       }
     },
     getSourceList(type) {
-      dataFlows.getSourceList(this.id, type).then((res) => {
+      dataFlows.getSourceList(this.id, type).then(res => {
         if (res.statusText === 'OK' || res.status === 200) {
           this.sourceDatabase = res.data.source || []
           this.targetDatabase = res.data.target || []

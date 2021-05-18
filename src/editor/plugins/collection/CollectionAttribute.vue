@@ -502,7 +502,7 @@ export default {
         if (this.model.connectionId) {
           this.taskData.id = this.model.connectionId
           if (this.databaseSelectConfig.options.length) {
-            this.databaseSelectConfig.options.forEach((item) => {
+            this.databaseSelectConfig.options.forEach(item => {
               if (item.value === this.model.connectionId) {
                 this.copyConnectionId = item.name
               }
@@ -541,9 +541,7 @@ export default {
               ]
             }
           if (this.model.tableName) {
-            schema = schemas.filter(
-              (s) => s.table_name === this.model.tableName
-            )
+            schema = schemas.filter(s => s.table_name === this.model.tableName)
             schema = schema && schema.length > 0 ? schema[0] : defaultSchema
 
             let fields = schema.fields || []
@@ -555,13 +553,13 @@ export default {
             // 	.filter(f => f.primary_key_position > 0)
             // 	.map(f => f.field_name)
             // 	.join(',');
-            this.primaryKeyOptions = fields.map((f) => f.field_name)
+            this.primaryKeyOptions = fields.map(f => f.field_name)
             // if (primaryKeys) {
             // 	this.model.primaryKeys = primaryKeys;
             // } else {
             // 	this.model.primaryKeys = '';
             // }
-            this.model.custSql.custFields = fields.map((f) => f.field_name)
+            this.model.custSql.custFields = fields.map(f => f.field_name)
             this.model.custSql.conditions.length = 0
             this.model.custSql.fieldFilterType = 'keepAllFields'
             this.model.custSql.cSql = ''
@@ -590,7 +588,7 @@ export default {
           if (fields) {
             fields = removeDeleted(fields)
           }
-          this.primaryKeyOptions = fields.map((f) => f.field_name)
+          this.primaryKeyOptions = fields.map(f => f.field_name)
           // if (!this.model.primaryKeys) {
           // 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
           // 	if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys)).join(',');
@@ -735,7 +733,7 @@ export default {
     if (this.model.connectionId) {
       this.taskData.id = this.model.connectionId
       if (this.databaseSelectConfig.options.length) {
-        this.databaseSelectConfig.options.forEach((item) => {
+        this.databaseSelectConfig.options.forEach(item => {
           if (item.value === this.model.connectionId) {
             this.copyConnectionId = item.name
           }
@@ -819,7 +817,7 @@ export default {
     tableIsLink() {
       this.tableNameId = ''
       if (tempSchemas && tempSchemas.length) {
-        tempSchemas.forEach((item) => {
+        tempSchemas.forEach(item => {
           if (item.table_name === this.model.tableName) {
             this.tableNameId = item.tableId
           }
@@ -848,7 +846,7 @@ export default {
         })
       }
 
-      MetadataInstances.get(params).then((res) => {
+      MetadataInstances.get(params).then(res => {
         this.databaseData = Object.freeze(res.data)
       })
     },
@@ -871,10 +869,10 @@ export default {
     handleRetainedField(fieldFilter) {
       this.model.operations = []
 
-      fieldFilter.forEach((f) => {
+      fieldFilter.forEach(f => {
         let self = this
         let ops = self.model.operations.filter(
-          (v) => v.op === 'RETAINED' && v.id === f.id
+          v => v.op === 'RETAINED' && v.id === f.id
         )
         let op
         if (ops.length === 0) {
@@ -888,11 +886,11 @@ export default {
     },
     handleDeleteField(fieldFilter) {
       this.model.operations = []
-      fieldFilter.forEach((f) => {
+      fieldFilter.forEach(f => {
         let self = this
         let fn = function (field) {
           let ops = self.model.operations.filter(
-            (v) => v.op === 'DELETE' && v.id === field.id
+            v => v.op === 'DELETE' && v.id === field.id
           )
           let op
           if (ops.length === 0) {
@@ -911,11 +909,9 @@ export default {
     },
     getFieldData(fieldFilter) {
       let currentFiled = []
-      fieldFilter.forEach((f) => {
+      fieldFilter.forEach(f => {
         if (f && f.length) {
-          let op = this.defaultSchema.fields.find(
-            (item) => item.field_name === f
-          )
+          let op = this.defaultSchema.fields.find(item => item.field_name === f)
           currentFiled.push(op)
         }
       })
@@ -955,7 +951,7 @@ export default {
 
       this.databaseSelectConfig.loading = false
       if (result.data) {
-        this.databaseSelectConfig.options = result.data.map((item) => {
+        this.databaseSelectConfig.options = result.data.map(item => {
           return {
             id: item.id,
             name: item.name,
@@ -976,7 +972,7 @@ export default {
 
       connectionApi
         .get([connectionId])
-        .then((result) => {
+        .then(result => {
           if (result.data && result.data.schema && result.data.schema.tables) {
             let schemas =
               (result.data.schema && result.data.schema.tables) || []
@@ -987,7 +983,7 @@ export default {
                 ? 0
                 : -1
             )
-            let tableList = tempSchemas.map((item) => ({
+            let tableList = tempSchemas.map(item => ({
               label: item.table_name,
               value: item.table_name
             }))
@@ -996,7 +992,7 @@ export default {
             let hash = {}
             this.repeatTable = []
             self.schemaSelectConfig.options = []
-            tableList.forEach((item) => {
+            tableList.forEach(item => {
               if (hash[item.value]) {
                 this.repeatTable.push(item.value)
               } else {
@@ -1032,7 +1028,7 @@ export default {
           conds &&
           conds.length > 0
         )
-          conds.forEach((it) => {
+          conds.forEach(it => {
             this.model.custSql.conditions.push(it)
           })
         //老数据的兼容处理
@@ -1079,9 +1075,9 @@ export default {
       // connection上一个节点是日志挖掘，已存在的数据表单项禁用
       let sourceCell = cell.graph
         .getConnectedLinks(cell, { inbound: true })
-        .map((link) => link.getSourceCell().getFormData())
+        .map(link => link.getSourceCell().getFormData())
       if (sourceCell && sourceCell.length) {
-        this.logsFlag = sourceCell.some((item) => item.type === 'log_collect')
+        this.logsFlag = sourceCell.some(item => item.type === 'log_collect')
         if (this.logsFlag) {
           this.model.dropTable = true
         }
@@ -1167,7 +1163,7 @@ export default {
           ws.send(params)
         })
 
-        ws.on('aggregatePreviewResult', (res) => {
+        ws.on('aggregatePreviewResult', res => {
           let templeSchema = null
           if (res.status === 'SUCCESS' && !!res.result) {
             if (res.result.relateDataBaseTable) {
@@ -1200,7 +1196,7 @@ export default {
         let self = this,
           schema = null,
           templeSchema = []
-        ws.on('execute_load_schema_result', (res) => {
+        ws.on('execute_load_schema_result', res => {
           if (res.status === 'SUCCESS' && res.result && res.result.length) {
             templeSchema = res.result
             this.reloadModelLoading = false
@@ -1209,7 +1205,7 @@ export default {
           }
           this.reloadModelLoading = false
           if (templeSchema && templeSchema.length) {
-            templeSchema.forEach((item) => {
+            templeSchema.forEach(item => {
               if (
                 item.connId === this.model.connectionId &&
                 item.tableName === this.model.tableName

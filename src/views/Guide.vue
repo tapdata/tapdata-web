@@ -309,12 +309,12 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             let list = res.data || []
             let sourceList = []
             let targetList = []
-            list.forEach((it) => {
+            list.forEach(it => {
               if (it.connection_type === 'source') {
                 sourceList.push(it)
               }
@@ -362,7 +362,7 @@ export default {
     },
     next() {
       if (this.steps[this.activeStep].index === 1) {
-        this.getDataApi((hasDownloadAgent) => {
+        this.getDataApi(hasDownloadAgent => {
           if (hasDownloadAgent) {
             this.activeStep += 1
           } else {
@@ -371,7 +371,7 @@ export default {
         })
       } else if ([2, 3].includes(this.steps[this.activeStep].index)) {
         if (this.selectedDatabaseType) {
-          this.$refs.form.validate((valid) => {
+          this.$refs.form.validate(valid => {
             if (valid) {
               this.createConnection()
             }
@@ -515,9 +515,8 @@ export default {
       if (v === '0') {
         this.showConnectDialog = true
       } else {
-        this.stepMap[
-          this.steps[this.activeStep].index
-        ].selectedConnection = this.connectionList.find((c) => c.id === v)
+        this.stepMap[this.steps[this.activeStep].index].selectedConnection =
+          this.connectionList.find(c => c.id === v)
       }
       this.errorMsg = ''
     },
@@ -532,7 +531,7 @@ export default {
     },
     signOut() {
       this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut')).then(
-        (resFlag) => {
+        resFlag => {
           if (!resFlag) {
             return
           }
@@ -564,9 +563,9 @@ export default {
         } else {
           model.connection_type = 'target'
         }
-        config.items.forEach((it) => {
+        config.items.forEach(it => {
           if (
-            ((it.rules && it.rules.some((r) => r.required === true)) ||
+            ((it.rules && it.rules.some(r => r.required === true)) ||
               it.required ||
               [
                 'isUrl',
@@ -604,11 +603,10 @@ export default {
       this.loading = true
       this.$api('connections')
         .post(params)
-        .then((res) => {
+        .then(res => {
           let connection = res.data || {}
-          this.stepMap[
-            this.steps[this.activeStep].index
-          ].selectedConnection = connection
+          this.stepMap[this.steps[this.activeStep].index].selectedConnection =
+            connection
           this.selectedDatabaseType = null
           this.activeStep += 1
           this.errorMsg = ''
@@ -616,7 +614,7 @@ export default {
           this.getConnections()
           // this.test(id);
         })
-        .catch((err) => {
+        .catch(err => {
           if (err && err.response) {
             if (err.response.msg.indexOf('duplication for names') > -1) {
               this.$message.error(this.$t('dataForm.error.connectionNameExist'))
@@ -637,7 +635,7 @@ export default {
         })
     },
     startTest() {
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           this.dialogTestVisible = true
           this.$refs.test.start()

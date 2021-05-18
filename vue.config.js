@@ -1,12 +1,13 @@
 const { npm_config_argv } = process.env
 const URL = {
-  dev: 'http://192.168.1.181:30300',
+  // dev: 'http://192.168.1.181:30300',
+  dev: 'http://localhost:30300',
   pro: 'http://backend:3030'
 }
 let ENV
 if (npm_config_argv) {
   const argv = JSON.parse(process.env.npm_config_argv).original
-  ENV = Object.keys(URL).find((k) => argv.includes('--' + k))
+  ENV = Object.keys(URL).find(k => argv.includes('--' + k))
 }
 const proxy = {
   target: URL[ENV || 'dev'],
@@ -15,17 +16,17 @@ const proxy = {
 const { resolve } = require('path')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
-module.exports = {
+const config = {
   assetsDir: 'static',
   lintOnSave: true,
-  productionSourceMap: true,
-  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
+  productionSourceMap: false,
+  publicPath: './',
   devServer: {
     proxy: {
       '/api/': proxy,
       '/oauth/': proxy,
       '/old/': {
-        target: 'http://localhost:8081'
+        target: 'http://192.168.1.101:8081/'
       },
       '/ws/': {
         ...proxy,
@@ -99,3 +100,5 @@ module.exports = {
     ]
   }
 }
+
+module.exports = config

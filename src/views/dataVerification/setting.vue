@@ -282,7 +282,7 @@ export default {
       }
       this.loading = true
       Setting.findOne(where)
-        .then((res) => {
+        .then(res => {
           if (res.data.value) {
             this.formData = JSON.parse(res.data.value)
           }

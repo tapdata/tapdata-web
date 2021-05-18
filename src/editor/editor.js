@@ -236,7 +236,7 @@ export default class Editor extends BaseObject {
       this.getRightTabPanel().add(setting)
     }
 
-    setting.on('dataChanged', (data) => {
+    setting.on('dataChanged', data => {
       self.graph.setSettingData(data)
     })
   }
@@ -504,7 +504,7 @@ export default class Editor extends BaseObject {
 
   setData(dataFlow) {
     let dat = JSON.parse(dataFlow.editorData)
-    dat.cells.forEach((cell) => {
+    dat.cells.forEach(cell => {
       //处理不是从面板拖过来的场景
       if (
         cell.form_data &&
@@ -568,9 +568,9 @@ export default class Editor extends BaseObject {
 
       graphLib
         .predecessors(node)
-        .forEach((node) => predecessors(node, distance + 1))
+        .forEach(node => predecessors(node, distance + 1))
     }
-    graphLib.sinks().forEach((node) => predecessors(node, 0))
+    graphLib.sinks().forEach(node => predecessors(node, 0))
 
     log('Editor.distanceForSink', distanceResult)
 
@@ -631,7 +631,7 @@ export default class Editor extends BaseObject {
     // at least 1 link
     let dataNodeCount = 0,
       linkCount = 0
-    graph.getCells().forEach((cell) => {
+    graph.getCells().forEach(cell => {
       if (cell.isLink()) {
         linkCount++
       } else if (
@@ -648,7 +648,7 @@ export default class Editor extends BaseObject {
 
     let sources = graph.getSources() || []
     let processorSources = sources.filter(
-      (cell) =>
+      cell =>
         cell.isElement() &&
         typeof cell.isProcess === 'function' &&
         cell.isProcess()
@@ -676,7 +676,7 @@ export default class Editor extends BaseObject {
     log('editor.graph.graph.getCells()', self.graph.graph.getCells())
     let dataCells = self.graph.graph
       .getCells() // .filter(cell => cell.isDataNode && cell.isDataNode())
-      .filter((cell) => {
+      .filter(cell => {
         let formData =
           typeof cell.getFormData === 'function' ? cell.getFormData() : null
         let type = cell.get('type')
@@ -686,7 +686,7 @@ export default class Editor extends BaseObject {
         )
       })
     let dataCellIds = []
-    dataCells.forEach((cell) => {
+    dataCells.forEach(cell => {
       let formData =
         typeof cell.getFormData === 'function' ? cell.getFormData() : null
       let type = cell.get('type')
@@ -712,7 +712,7 @@ export default class Editor extends BaseObject {
     }
     connections
       .get(params)
-      .then((result) => {
+      .then(result => {
         if (result.data && result.data.length !== 0) {
           /**
            * connectionId -> table name -> schema
@@ -720,11 +720,11 @@ export default class Editor extends BaseObject {
            */
           let connectionSchemaData = {}
 
-          result.data.forEach((connection) => {
+          result.data.forEach(connection => {
             if (connection.schema && connection.schema.tables) {
               let tables = {}
               connection.schema.tables.forEach(
-                (table) => (tables[table.table_name] = table)
+                table => (tables[table.table_name] = table)
               )
               connectionSchemaData[connection.id] = tables
             }
@@ -732,7 +732,7 @@ export default class Editor extends BaseObject {
 
           // 3. 分别更新对应节点schema
           if (dataCells) {
-            dataCells.map((cell) => {
+            dataCells.map(cell => {
               let formData =
                 typeof cell.getFormData === 'function'
                   ? cell.getFormData()
@@ -755,7 +755,7 @@ export default class Editor extends BaseObject {
             // 4. 更新所有节点的schema
             self.graph.graph
               .getSources()
-              .forEach((cell) => cell.updateOutputSchema())
+              .forEach(cell => cell.updateOutputSchema())
           }
         }
         // Message.success({
@@ -771,7 +771,7 @@ export default class Editor extends BaseObject {
   getAllCells() {
     let dataCells = this.graph.graph
       .getCells() // .filter(cell => cell.isDataNode && cell.isDataNode())
-      .filter((cell) => {
+      .filter(cell => {
         let formData =
           typeof cell.getFormData === 'function' ? cell.getFormData() : null
         let type = cell.get('type')

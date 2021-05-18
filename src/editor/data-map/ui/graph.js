@@ -176,7 +176,7 @@ export default class Graph extends Component {
     } else if (cell.isElement()) {
       graph
         .getConnectedLinks(cell, { inbound: true })
-        .forEach((link) => this.getCellInbounds(graph, link, result))
+        .forEach(link => this.getCellInbounds(graph, link, result))
     }
 
     /*let self = this;
@@ -194,7 +194,7 @@ export default class Graph extends Component {
     } else if (cell.isElement()) {
       graph
         .getConnectedLinks(cell, { outbound: true })
-        .forEach((link) => this.getCellOutbounds(graph, link, result))
+        .forEach(link => this.getCellOutbounds(graph, link, result))
     }
     /*let self = this;
 		let outCell = graph.getNeighbors(cell, { outbound: true }) || [];
@@ -479,7 +479,7 @@ export default class Graph extends Component {
   }
 
   updateElementHeader() {
-    this.graph.getCells().forEach((cell) => {
+    this.graph.getCells().forEach(cell => {
       if (!cell.isElement()) return
 
       if (cell.get('type') === 'dataMap.Lane') return
@@ -834,7 +834,7 @@ export default class Graph extends Component {
       })
     ]
 
-    links.forEach((link) => {
+    links.forEach(link => {
       link.addTo(this.graph)
     })
 
@@ -913,7 +913,7 @@ export default class Graph extends Component {
   _renderFieldMapping(level, stages) {
     let links = []
 
-    stages.forEach((stage) => {
+    stages.forEach(stage => {
       if (stage.type === 'link') {
         links.push(stage)
         return
@@ -971,7 +971,7 @@ export default class Graph extends Component {
     })
 
     if (links.length > 0) {
-      links.forEach((link) => {
+      links.forEach(link => {
         if (_.isObject(link.source) && link.source.port && link.source.id)
           this.ensurePort(link.source.id, link.source.port)
 
@@ -1133,7 +1133,7 @@ export default class Graph extends Component {
 
     function _convert(parent, fields) {
       if (Array.isArray(fields)) {
-        fields.forEach((field) => _convert(parent, field))
+        fields.forEach(field => _convert(parent, field))
       } else if (_.isObject(fields)) {
         parent.items = parent.items || []
         let record = {
@@ -1227,7 +1227,7 @@ export default class Graph extends Component {
 		idMap['tapdataLane'] = this.tapdataLane.id;
 		idMap['apiLane'] = this.apiLane.id;*/
 
-    cells.forEach((cellData) => {
+    cells.forEach(cellData => {
       let cell = null
       if (['link'].includes(cellData.type)) {
         links.push(cellData)
@@ -1260,7 +1260,7 @@ export default class Graph extends Component {
 			}*/
     })
 
-    links.forEach((cellData) => {
+    links.forEach(cellData => {
       self.createLink(idMap[cellData.source], idMap[cellData.target])
     })
 
@@ -1270,8 +1270,8 @@ export default class Graph extends Component {
 
     // process element embed
     cells
-      .filter((c) => !!c.parent)
-      .forEach((cellData) => {
+      .filter(c => !!c.parent)
+      .forEach(cellData => {
         let parentId = idMap[cellData.parent] || ''
         let parentCell = self.graph.getCell(parentId)
         let cell = self.graph.getCell(idMap[cellData.id])
@@ -1290,7 +1290,7 @@ export default class Graph extends Component {
       })
 
     let applyStyle = function (cells, bgColor, borderColor) {
-      cells.forEach((cell) => {
+      cells.forEach(cell => {
         cell.attr({
           body: {
             fill: bgColor,
@@ -1301,27 +1301,27 @@ export default class Graph extends Component {
     }
 
     let sourceCells = []
-    sourceChildren.forEach((cell) => {
+    sourceChildren.forEach(cell => {
       sourceCells.push(cell)
       sourceCells = sourceCells.concat(cell.getEmbeddedCells({ deep: true }))
     })
     applyStyle(sourceCells, '#fcf9fe', '#dedede')
 
     let tapdataCells = []
-    tapdataChildren.forEach((cell) => {
+    tapdataChildren.forEach(cell => {
       tapdataCells.push(cell)
       tapdataCells = tapdataCells.concat(cell.getEmbeddedCells({ deep: true }))
     })
     applyStyle(tapdataCells, '#ebf7fc', '#b1e4f8')
 
     let apiCells = []
-    apiChildren.forEach((cell) => {
+    apiChildren.forEach(cell => {
       apiCells.push(cell)
       apiCells = apiCells.concat(cell.getEmbeddedCells({ deep: true }))
     })
     applyStyle(apiCells, '#fbecec', '#f7dddd')
 
-    self.graph.getCells().forEach((cell) => {
+    self.graph.getCells().forEach(cell => {
       let embeddedCells = cell.getEmbeddedCells()
 
       if (embeddedCells.length > 0) {
@@ -1365,7 +1365,7 @@ export default class Graph extends Component {
     dom.css('left', `${bbox.x + bbox.width + 10}px`)
     dom.css('top', `${bbox.y + bbox.height / 2 - 30}px`)
     dom.find('>*').remove()
-    Object.keys(properties).forEach((key) => {
+    Object.keys(properties).forEach(key => {
       let label = i18n.t('dataMap.properties.' + key) || key
       let value = Array.isArray(properties[key])
         ? properties[key].join(', ')

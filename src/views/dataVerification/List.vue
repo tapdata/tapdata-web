@@ -106,6 +106,7 @@
       </ul>
       <div slot="operation">
         <el-button
+          v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
           v-readonlybtn="'SYNC_job_import'"
           size="mini"
           class="btn"
@@ -439,7 +440,7 @@ export default {
         let list = res.data || []
         return {
           total: countRes.data.count,
-          data: list.map((item) => {
+          data: list.map(item => {
             let result = item.InspectResult
             let sourceTotal = '-'
             let targetTotal = '-'
@@ -504,7 +505,7 @@ export default {
           cancelButtonText: this.$t('message.cancel'),
           type: 'warning'
         }
-      ).then((resFlag) => {
+      ).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -519,7 +520,7 @@ export default {
     goEdit(id, flowId) {
       this.$api('DataFlows')
         .getId(flowId)
-        .then((res) => {
+        .then(res => {
           if (['running', 'paused', 'error'].includes(res.data.status)) {
             this.$router.push('dataVerification/' + id + '/edit')
           } else {

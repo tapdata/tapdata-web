@@ -60,7 +60,7 @@
               style="width: 200px"
               :value="form.aggCacheMaxSize !== -1 ? 'custom' : 'all'"
               @input="
-                (v) => {
+                v => {
                   form.aggCacheMaxSize = v === 'all' ? -1 : 100000
                 }
               "
@@ -82,7 +82,7 @@
               :disabled="form.aggCacheMaxSize === -1"
               :value="form.aggCacheMaxSize === -1 ? '-' : form.aggCacheMaxSize"
               @input="
-                (v) => {
+                v => {
                   form.aggCacheMaxSize = !v || v == 0 ? 1 : v
                 }
               "
@@ -377,7 +377,7 @@ export default {
     }
   },
   mounted() {
-    this.form.aggregations.forEach((item) => {
+    this.form.aggregations.forEach(item => {
       if (item.aggFunction === 'COUNT') {
         item.aggExpression = ''
       }
@@ -390,7 +390,7 @@ export default {
       handler(val) {
         // let aggaggExpression = '1'
         if (val.aggregations && val.aggregations.length > 0) {
-          val.aggregations.forEach((item) => {
+          val.aggregations.forEach(item => {
             if (item.aggFunction === 'COUNT') {
               item.aggExpression = ''
             }
@@ -454,11 +454,11 @@ export default {
       if (schema && schema.fields) {
         //过滤被删除的字段
         schema.fields = removeDeleted(schema.fields)
-        this.primaryKeyOptions = schema.fields.map((f) => f.field_name)
+        this.primaryKeyOptions = schema.fields.map(f => f.field_name)
         if (!this.form.primaryKeys) {
           let primaryKeys = schema.fields
-            .filter((f) => f.primary_key_position > 0)
-            .map((f) => f.field_name)
+            .filter(f => f.primary_key_position > 0)
+            .map(f => f.field_name)
           if (primaryKeys.length > 0)
             this.form.primaryKeys = Array.from(new Set(primaryKeys)).join(',')
         }

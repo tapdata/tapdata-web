@@ -547,7 +547,7 @@ export default {
         })
       ]).then(([countRes, res]) => {
         this.getCount()
-        res.data.forEach((item) => {
+        res.data.forEach(item => {
           if (!item.emailVerified) {
             this.$set(item, 'status', 'notVerified')
           } else {
@@ -586,10 +586,10 @@ export default {
     getDbOptions() {
       this.$api('role')
         .get({})
-        .then((res) => {
+        .then(res => {
           if (res.data && res.data.length) {
             let options = []
-            res.data.forEach((db) => {
+            res.data.forEach(db => {
               if (db.name !== 'admin') {
                 options.push({
                   label: db.name,
@@ -620,7 +620,7 @@ export default {
     // 选择分类
     handleSelectTag() {
       let tagList = {}
-      this.multipleSelection.forEach((row) => {
+      this.multipleSelection.forEach(row => {
         if (row.listtags && row.listtags.length > 0) {
           tagList[row.listtags[0].id] = {
             value: row.listtags[0].value
@@ -631,7 +631,7 @@ export default {
     },
     // 分类设置保存
     handleOperationClassify(listtags) {
-      let ids = this.multipleSelection.map((item) => {
+      let ids = this.multipleSelection.map(item => {
         return item.id
       })
       let where = {
@@ -649,10 +649,10 @@ export default {
     getMappingModel(id) {
       this.$api('roleMapping')
         .get({ 'filter[where][principalId]': id })
-        .then((res) => {
+        .then(res => {
           if (res && res.data) {
             this.roleMappding = res.data
-            this.createForm.roleusers = res.data.map((item) => item.roleId)
+            this.createForm.roleusers = res.data.map(item => item.roleId)
           }
         })
     },
@@ -669,9 +669,9 @@ export default {
       }
       this.$api('role')
         .get(parmas)
-        .then((res) => {
+        .then(res => {
           if (res.data && res.data.length) {
-            res.data.forEach((item) => {
+            res.data.forEach(item => {
               roleusers.push(item.id)
             })
           }
@@ -714,7 +714,7 @@ export default {
     createNewUser() {
       let that = this
 
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (that.createForm.id) {
           this.$refs.form.clearValidate('password')
         }
@@ -750,12 +750,12 @@ export default {
           that
             .$api('users')
             [that.createForm.id ? 'patch' : 'post'](params)
-            .then((res) => {
+            .then(res => {
               if (res) {
                 // 过滤不存在角色
                 let roleIdArr = []
                 if (res.data.roleMappings.length) {
-                  that.createFormConfig.items[3].options.filter((item) => {
+                  that.createFormConfig.items[3].options.filter(item => {
                     if (that.createForm.roleusers.indexOf(item.value) > -1) {
                       roleIdArr.push(item.value)
                     }
@@ -765,12 +765,12 @@ export default {
                 }
 
                 // 删除以前角色id
-                that.roleMappding.forEach((rolemapping) => {
+                that.roleMappding.forEach(rolemapping => {
                   that.$api('roleMapping').delete(rolemapping.id)
                 })
 
                 let newRoleMappings = []
-                roleIdArr.forEach((roleuser) => {
+                roleIdArr.forEach(roleuser => {
                   newRoleMappings.push({
                     principalType: 'USER',
                     principalId: res.data.id,
@@ -786,7 +786,7 @@ export default {
                 this.table.fetch()
               }
             })
-            .catch((e) => {
+            .catch(e => {
               if (e.response.msg.indexOf('User already exists') !== -1) {
                 that.$message.error(this.$t('user.alreadyExists'))
               } else {
@@ -1034,7 +1034,7 @@ export default {
     },
     // 批量操作处理
     handleCommand(command) {
-      let ids = this.multipleSelection.map((item) => {
+      let ids = this.multipleSelection.map(item => {
         return item.id
       })
       let where = {
@@ -1065,7 +1065,7 @@ export default {
     permissionsmethod(data) {
       let html = ''
       if (data && data.length) {
-        data.forEach((item) => {
+        data.forEach(item => {
           if (item.role && item.role.name) {
             html += ' ' + item.role.name + ','
           }
@@ -1196,7 +1196,7 @@ export default {
         background-color: #fff;
       }
       .el-table {
-        padding: 0 10px;
+        // padding: 0 10px;
         box-sizing: border-box;
         // border-top: 0;
         // .has-gutter {

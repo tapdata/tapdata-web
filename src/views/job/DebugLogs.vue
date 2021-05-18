@@ -15,7 +15,7 @@
           icon="el-icon-search"
           size="mini"
           :disabled="loading"
-          @click="searchLogs"
+          @click="loadNew"
         ></el-button>
       </el-form-item>
 
@@ -26,7 +26,7 @@
       <LogBox
         ref="log"
         :keyword="search"
-        :load="clickLoad"
+        :load="loadNew"
         @scroll="logScroll"
       ></LogBox>
     </div>
@@ -67,7 +67,7 @@ export default {
         filter: {
           where: { 'contextMap.dataFlowId': { eq: this.dataFlow.id } },
           order: 'millis DESC',
-          limit: 100
+          limit: 20
         }
       },
       self = this
@@ -119,43 +119,26 @@ export default {
             lt: this.firstLogsId
           }
         },
-        order: 'millis DESC',
-        limit: 100
+        order: 'id DESC',
+        limit: 20
       }
       this.addFilter(filter)
       this.getLogsData(filter, false, false)
     },
-    // 点击加载
-    clickLoad() {
-      this.loadNew()
-    },
-    searchLogs() {
-      this.lastLogsId = ''
-      this.loadNew()
-    },
     loadNew() {
+      this.lastLogsId = ''
       let filter = {
         where: {
           'contextMap.dataFlowId': {
             eq: this.dataFlow.id
           }
         },
-        order: 'millis DESC'
-      }
-
-      let reset = self.lastKeyword !== this.search
-      self.lastKeyword = this.search
-
-      if (!reset && this.lastLogsId) {
-        filter.where.id = {
-          gt: this.lastLogsId
-        }
-      } else {
-        filter.limit = 100
+        order: 'millis DESC',
+        limit: 20
       }
       this.addFilter(filter)
 
-      this.getLogsData(filter, reset, true)
+      this.getLogsData(filter, true, true)
     },
 
     getLogsData(filter, reset = false, prepend = false) {
@@ -167,8 +150,8 @@ export default {
 
       self.loading = true
       logsModel
-        .get({ filter })
-        .then((res) => {
+        .get({ filter: JSON.stringify(filter) })
+        .then(res => {
           if (res.data && res.data.length > 0) {
             if (reset || prepend || !this.lastLogsId) {
               this.lastLogsId = res.data[0].id

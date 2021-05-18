@@ -206,7 +206,7 @@ export const link = {
             if (!joinTable.joinKeys || joinTable.joinKeys.length === 0)
               throw new Error(`${i18n.t('editor.cell.link.none_join_key')}`)
             let errorJoinKeys = joinTable.joinKeys.filter(
-              (v) => !v.source || !v.target
+              v => !v.source || !v.target
             )
             if (errorJoinKeys && errorJoinKeys.length > 0) {
               throw new Error(`${i18n.t('editor.cell.link.none_join_key')}`)

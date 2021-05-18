@@ -94,7 +94,7 @@ export const logminerConfig = {
             `${name}: ${i18n.t('editor.cell.data_node.logminer.validate.name')}`
           )
         if (data.logCollectorSettings && data.logCollectorSettings.length > 0) {
-          data.logCollectorSettings.forEach((item) => {
+          data.logCollectorSettings.forEach(item => {
             if (!item.connectionId)
               throw new Error(
                 `${name}: ${i18n.t(

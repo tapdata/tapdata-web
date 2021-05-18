@@ -93,12 +93,15 @@ export default {
     clearValidate() {
       return this.$refs.form && this.$refs.form.clearValidate()
     },
+    resetFields() {
+      return this.$refs.form && this.$refs.form.resetFields()
+    },
     getFormItem(h, itemConfig, formConfig, index) {
       let self = this
       let config = Object.assign({}, this.defaultFormItemConfig, itemConfig)
       let rules = config.rules || []
       //改变必填项的默认提示
-      if (config.required && !rules.find((r) => r.required)) {
+      if (config.required && !rules.find(r => r.required)) {
         rules.push({
           required: true,
           validator(rule, value, callback) {
@@ -122,11 +125,11 @@ export default {
          *						value: 依赖的值
          *			triggerConfig: 依赖项满足条件后需要更新的配置
          */
-        dependOn.forEach((depend) => {
+        dependOn.forEach(depend => {
           let triggerOptions = depend.triggerOptions
           let triggerConfig = depend.triggerConfig
           if (
-            triggerOptions.every((opt) => opt.value === this.value[opt.field])
+            triggerOptions.every(opt => opt.value === this.value[opt.field])
           ) {
             config = Object.assign(config, depend.triggerConfig)
             if (
@@ -146,7 +149,7 @@ export default {
           props: {
             prop: config.field,
             label: config.label,
-            rules: rules.map((r) => {
+            rules: rules.map(r => {
               let rule = Object.assign({}, r)
               if (rule.validator) {
                 rule.validator = rule.validator.bind(this)
@@ -231,7 +234,7 @@ export default {
               self.value[config.field] = val
               let influences = config.influences
               if (influences && influences.length) {
-                influences.forEach((it) => {
+                influences.forEach(it => {
                   if (it.byValue === val) {
                     self.value[it.field] = it.value
                   }

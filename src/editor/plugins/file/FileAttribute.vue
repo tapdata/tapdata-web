@@ -125,7 +125,7 @@ export default {
       let result = _.cloneDeep(this.model)
       if (result.connectionId) {
         let database = this.databases.filter(
-          (db) => db.id === result.connectionId
+          db => db.id === result.connectionId
         )
         if (database && database.length > 0) {
           result.name = database[0].name

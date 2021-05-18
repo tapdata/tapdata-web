@@ -83,6 +83,8 @@ export default class Graph extends Component {
             self.createInspector(cell)
           } else if (cell.isElement()) {
             self.selection.collection.reset([cell])
+            //deal with connect nodes
+            this.dealWithConnectBetweenLink(cell)
           }
         }, 100)
         self.emit(EditorEventType.ADD_CELL)
@@ -91,7 +93,17 @@ export default class Graph extends Component {
     )
 
     this.commandManager = new joint.dia.CommandManager({
-      graph: graph
+      graph: graph,
+      cmdBeforeAdd: function (cmdName, cell, graph, options) {
+        log('cmdBeforeAdd', cmdName, options)
+        // 忽略不需要回退的操作
+        return ![
+          'change:ports',
+          'change:attrs',
+          'change:form_data',
+          'change:labels'
+        ].includes(cmdName)
+      }
     })
     this.commandManager.on(
       'stack',
@@ -108,15 +120,17 @@ export default class Graph extends Component {
       markAvailable: true,
       // new joint.shapes.app.Link()
       defaultLink: function (cellView) {
-        if (cellView.model.get('type') === 'app.Database')
+        if (cellView.model.get('type') === 'app.Database') {
           return new joint.shapes.app.databaseLink()
-        else return new joint.shapes.app.Link()
+        } else {
+          return new joint.shapes.app.Link()
+        }
       },
       defaultConnectionPoint: joint.shapes.app.Link.connectionPoint,
       interactive: {
         linkMove: false
       },
-      //async: true,
+      async: true,
       sorting: joint.dia.Paper.sorting.APPROX,
       snapLinks: 75,
       // highlighting: {
@@ -149,7 +163,7 @@ export default class Graph extends Component {
           curLink = self.graph.getCell(lid)
         }
         let sameTarget = false
-        self.graph.getConnectedLinks(sourceView.model).map((link) => {
+        self.graph.getConnectedLinks(sourceView.model).map(link => {
           if (
             link.id != curLink.attributes.id &&
             link.getTargetCell() &&
@@ -291,7 +305,7 @@ export default class Graph extends Component {
     })
 
     paper.on({
-      'link:connect': (linkView) => {
+      'link:connect': linkView => {
         if (linkView.targetView.model.getFormData().disabled) {
           linkView.model.disconnect()
           linkView.hideTools()
@@ -343,7 +357,7 @@ export default class Graph extends Component {
         let hasConnected = false
         self.graph
           .getConnectedLinks(elementViewDisconnected.model)
-          .map((link) => {
+          .map(link => {
             if (link.target().port == magent.getAttribute('port'))
               hasConnected = true
             if (link.source().port == magent.getAttribute('port'))
@@ -359,7 +373,7 @@ export default class Graph extends Component {
     })
 
     graph.on({
-      remove: (model) => {
+      remove: model => {
         log('Graph.graph.remove')
         if (model.isLink()) {
           self.graph
@@ -369,7 +383,7 @@ export default class Graph extends Component {
           let hasConnected = false
           self.graph
             .getConnectedLinks(self.graph.getCell(model.get('source').id))
-            .map((link) => {
+            .map(link => {
               if (link.target().port == model.get('source').port)
                 hasConnected = true
               if (link.source().port == model.get('source').port)
@@ -383,7 +397,7 @@ export default class Graph extends Component {
           if (model.get('target').id) {
             self.graph
               .getConnectedLinks(self.graph.getCell(model.get('target').id))
-              .map((link) => {
+              .map(link => {
                 if (link.target().port == model.get('target').port)
                   hasConnected = true
                 if (link.source().port == model.get('target').port)
@@ -440,6 +454,167 @@ export default class Graph extends Component {
         '</style>'
       ].join(' ')
     )
+  }
+
+  dealWithConnectBetweenLink(cell) {
+    let currentPosition = cell.position()
+    let allLinks = this.graph.getLinks()
+    let self = this
+    if (this.graph.getNeighbors(cell).length == 0 && allLinks.length > 0) {
+      //only no linked cell can perform this operation.
+      // if no link on paper yet, nothing to do.
+      let matchedLink = allLinks.filter(item => {
+        return self.checkIntersection(item, currentPosition)
+      })
+      if (matchedLink.length > 0) {
+        let linkView = this.paper.findViewByModel(matchedLink[0])
+        let originalFormData = linkView.model.getFormData()
+        //from view of cell itself
+        // target don't accept source connection
+        if (
+          typeof cell.allowSource === 'function' &&
+          !cell.allowSource(linkView.sourceView.model)
+        ) {
+          return
+        }
+        // source don't allow connect to target
+        if (
+          typeof cell.allowTarget === 'function' &&
+          !cell.allowTarget(linkView.targetView.model)
+        ) {
+          return
+        }
+        //from view of source
+        if (
+          typeof linkView.sourceView.model.allowTarget === 'function' &&
+          !linkView.sourceView.model.allowTarget(cell)
+        ) {
+          return
+        }
+        //from view of target
+        if (
+          typeof linkView.targetView.model.allowSource === 'function' &&
+          !linkView.targetView.model.allowSource(cell)
+        ) {
+          return
+        }
+        //when it is database, only two nodes in link are allowed.
+        if (
+          ['app.Database'].includes(cell.get('type')) &&
+          ['app.Database'].includes(linkView.sourceView.model.get('type')) &&
+          ['app.Database'].includes(linkView.targetView.model.get('type'))
+        ) {
+          return
+        }
+        //if disabled, can not connect.
+        if (
+          !linkView.targetView.model.getFormData().disabled &&
+          !linkView.sourceView.model.getFormData().disabled
+        ) {
+          let preLink = null
+          let afterLink = null
+          if (linkView.sourceView.model.get('type') === 'app.Database') {
+            preLink = new joint.shapes.app.databaseLink()
+          } else {
+            preLink = new joint.shapes.app.Link()
+          }
+          preLink.source(linkView.sourceView.model)
+          preLink.target(cell)
+          preLink.addTo(this.graph)
+          this.updateOutputSchema(preLink)
+
+          if (linkView.targetView.model.get('type') === 'app.Database') {
+            afterLink = new joint.shapes.app.databaseLink()
+          } else {
+            afterLink = new joint.shapes.app.Link()
+          }
+
+          afterLink.source(cell)
+          afterLink.target(linkView.targetView.model)
+          afterLink.addTo(this.graph)
+          afterLink.setFormData(originalFormData)
+          this.updateOutputSchema(afterLink)
+          linkView.model.remove()
+        }
+      }
+    }
+  }
+  // check if the cell is drag to between nodes, right on link
+  checkIntersection(item, currentPosition) {
+    if (
+      item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition)
+    ) {
+      //inside bbox
+      return true
+    } else if (item.getBBox({ useModelGeometry: true }).height == 0) {
+      //source target on same y
+      if (
+        this.paper.findViewByModel(item).sourceView.model.position().x <
+          currentPosition.x &&
+        this.paper.findViewByModel(item).targetView.model.position().x >
+          currentPosition.x &&
+        Math.abs(
+          this.paper.findViewByModel(item).sourceView.model.position().y -
+            currentPosition.y
+        ) <
+          this.paper.findViewByModel(item).sourceView.model.attributes.size
+            .height /
+            2
+      ) {
+        // left -> right
+        return true
+      } else if (
+        this.paper.findViewByModel(item).sourceView.model.position().x >
+          currentPosition.x &&
+        this.paper.findViewByModel(item).targetView.model.position().x <
+          currentPosition.x &&
+        Math.abs(
+          this.paper.findViewByModel(item).sourceView.model.position().y -
+            currentPosition.y
+        ) <
+          this.paper.findViewByModel(item).sourceView.model.attributes.size
+            .height /
+            2
+      ) {
+        // right -> left
+        return true
+      }
+    } else if (item.getBBox({ useModelGeometry: true }).width == 0) {
+      //source target on same x
+      if (
+        this.paper.findViewByModel(item).sourceView.model.position().y <
+          currentPosition.y &&
+        this.paper.findViewByModel(item).targetView.model.position().y >
+          currentPosition.y &&
+        Math.abs(
+          this.paper.findViewByModel(item).sourceView.model.position().x -
+            currentPosition.x
+        ) <
+          this.paper.findViewByModel(item).sourceView.model.attributes.size
+            .width /
+            2
+      ) {
+        // up -> down
+        return true
+      } else if (
+        this.paper.findViewByModel(item).sourceView.model.position().y >
+          currentPosition.y &&
+        this.paper.findViewByModel(item).targetView.model.position().y <
+          currentPosition.y &&
+        Math.abs(
+          this.paper.findViewByModel(item).sourceView.model.position().x -
+            currentPosition.x
+        ) <
+          this.paper.findViewByModel(item).sourceView.model.attributes.size
+            .width /
+            2
+      ) {
+        // down -> up
+        return true
+      }
+    } else {
+      return false
+    }
   }
 
   selectionPosition(cell) {
@@ -506,7 +681,7 @@ export default class Graph extends Component {
     let paper = this.paper
     let cells = this.graph.getCells()
 
-    cells.forEach((cell) => {
+    cells.forEach(cell => {
       if (cell.unhighlight) cell.unhighlight()
       else {
         let cellView = paper.findViewByModel(cell)
@@ -603,12 +778,12 @@ export default class Graph extends Component {
     let cells = stencilConfig.shapes //通过mappingTemplate 将节点分为两大类
     let mappingTemplate = getUrlSearch('mapping')
     if (mappingTemplate === 'cluster-clone') {
-      cells['data'] = cells['data'].filter((cell) =>
+      cells['data'] = cells['data'].filter(cell =>
         ['app.Database', 'app.FileNode', 'app.GridFSNode'].includes(cell.type)
       )
     } else if (mappingTemplate === 'custom') {
       cells['data'] = cells['data'].filter(
-        (cell) => !['app.Database', 'app.FileNode'].includes(cell.type)
+        cell => !['app.Database', 'app.FileNode'].includes(cell.type)
       )
     }
     stencil.render().load(cells)
@@ -625,7 +800,7 @@ export default class Graph extends Component {
       cell.set(SCHEMA_DATA_KEY, schema)
       cell.set(OUTPUT_SCHEMA_DATA_KEY, schema)
     }
-    ;['l', 'r', 't', 'b'].forEach((dir) =>
+    ;['l', 'r', 't', 'b'].forEach(dir =>
       cell.addPort({
         id: cell.id + '_' + dir,
         group: dir
@@ -780,12 +955,15 @@ export default class Graph extends Component {
           )}</div>`
         )
         this.selectPrimaryLink(cellView)
-        setTimeout(() => {
-          let monitor = self.editor
-            .getRightTabPanel()
-            .getChildByName('nodeSettingPanel')
-          self.editor.getRightTabPanel().select(monitor)
-        }, 20)
+        // 点击连线面版是否出现
+        if (!window.getSettingByKey('DFS_TCM_PLATFORM')) {
+          setTimeout(() => {
+            let monitor = self.editor
+              .getRightTabPanel()
+              .getChildByName('nodeSettingPanel')
+            self.editor.getRightTabPanel().select(monitor)
+          }, 20)
+        }
       }
     }
     this.createInspector(cell)
@@ -845,7 +1023,7 @@ export default class Graph extends Component {
       )
       halo.$el.find('button').click(() => {
         event.stopPropagation()
-        this.graph.getConnectedLinks(elementView.model).forEach((link) => {
+        this.graph.getConnectedLinks(elementView.model).forEach(link => {
           link.attr('line/stroke', '#dedede')
           link.toBack()
           link.attributes.form_data.disabled = true
@@ -906,7 +1084,11 @@ export default class Graph extends Component {
             collection.reset([cell])
           }
         },
-
+        'element:pointerup': function (elementView) {
+          //trigger if the element drag to paper, then move to between link
+          let element = elementView.model
+          this.dealWithConnectBetweenLink(element)
+        },
         'link:mouseenter': function (linkView) {
           if (linkView.model.getFormData().disabled) return
           if (linkView.hasTools()) return
@@ -1021,7 +1203,19 @@ export default class Graph extends Component {
     toolbar.render()
   }
 
+  /**
+   * 事件stop判断
+   * @param element
+   * @returns {boolean}
+   */
+  stopKeyboardCallback(element) {
+    if (element === null || element === document || element === document.body)
+      return false
+    return !this.el.contains(element)
+  }
+
   initKeyboardShortcuts() {
+    const self = this
     this.keyboard = new joint.ui.Keyboard()
     let isMac = /macintosh|mac os x/i.test(navigator.userAgent)
     let keyboardEvents = [
@@ -1035,12 +1229,14 @@ export default class Graph extends Component {
       },
       {
         keystroke: isMac ? 'command+c' : 'ctrl+c',
-        on: function () {
+        on: function (evt) {
+          // 判断是否停止复制
+          if (self.stopKeyboardCallback(evt.target)) return
           // Copy all selected elements and their associated links.
           try {
             if (this.selection.collection && this.selection.collection.models) {
               let models = this.selection.collection.models || []
-              models.map((cell) => {
+              models.map(cell => {
                 let formData =
                   typeof cell.getFormData === 'function'
                     ? cell.getFormData()
@@ -1087,9 +1283,10 @@ export default class Graph extends Component {
       {
         keystroke: 'delete backspace',
         on: function (evt) {
+          if (self.stopKeyboardCallback(evt.target)) return
           evt.preventDefault()
           let hasDised = false
-          this.selection.collection.toArray().forEach((it) => {
+          this.selection.collection.toArray().forEach(it => {
             if (it.getFormData().disabled) hasDised = true
           })
           if (hasDised) {
@@ -1103,14 +1300,16 @@ export default class Graph extends Component {
       },
       {
         keystroke: isMac ? 'command+z' : 'ctrl+z',
-        on: function () {
+        on: function (evt) {
+          if (self.stopKeyboardCallback(evt.target)) return
           this.commandManager.undo()
           this.selection.cancelSelection()
         }
       },
       {
         keystroke: isMac ? 'command+shift+z' : 'ctrl+z',
-        on: function () {
+        on: function (evt) {
+          if (self.stopKeyboardCallback(evt.target)) return
           this.commandManager.redo()
           this.selection.cancelSelection()
         }
@@ -1155,7 +1354,7 @@ export default class Graph extends Component {
       }
     ]
     let keyboardOption = {}
-    keyboardEvents.forEach((e) => {
+    keyboardEvents.forEach(e => {
       keyboardOption[e.keystroke] = e.on
     })
 
@@ -1314,7 +1513,7 @@ export default class Graph extends Component {
       this.toolbar.getWidgetByName('redo').disable()
       this.toolbar.getWidgetByName('undo').disable()
       this.toolbar.getWidgetByName('clear').disable()
-      this.graph.getCells().forEach((c) => {
+      this.graph.getCells().forEach(c => {
         c.findView(this.paper).options.interactive.addLinkFromMagnet = false
       })
       setTimeout(() => this.paperScroller.centerContent(), 0)
@@ -1331,16 +1530,16 @@ export default class Graph extends Component {
     setTimeout(() => {
       self.paperScroller.centerContent()
       //兼容老数据
-      self.graph.getCells().forEach((cell) => {
+      self.graph.getCells().forEach(cell => {
         if (cell.isLink() || cell.getPorts().length > 1) return
-        ;['l', 'r', 't', 'b'].forEach((dir) =>
+        ;['l', 'r', 't', 'b'].forEach(dir =>
           cell.addPort({
             id: cell.id + '_' + dir,
             group: dir
           })
         )
       })
-      self.graph.getCells().forEach((cell) => {
+      self.graph.getCells().forEach(cell => {
         if (cell.isLink() && !cell.get('target').port) {
           let lv = cell.findView(self.paper),
             dir = 'l',
@@ -1352,7 +1551,7 @@ export default class Graph extends Component {
           tMag = cell
             .getTargetCell()
             .get('ports')
-            .items.find((it) => it.group == dir)
+            .items.find(it => it.group == dir)
           if (tMag) {
             cell.set(
               'target',
@@ -1374,7 +1573,7 @@ export default class Graph extends Component {
           tMag = cell
             .getSourceCell()
             .get('ports')
-            .items.find((it) => it.group == dir)
+            .items.find(it => it.group == dir)
           if (tMag) {
             cell.set(
               'source',
@@ -1409,15 +1608,15 @@ export default class Graph extends Component {
     function getInPath(cell) {
       let newPath = this.graph
         .getConnectedLinks(cell, { inbound: true })
-        .map((link) => {
+        .map(link => {
           let p = []
-          inPath[inPath.length - 1].forEach((c) => p.push(c))
+          inPath[inPath.length - 1].forEach(c => p.push(c))
           p.push(link.getSourceCell())
           return p
         })
       if (newPath.length) {
         inPath.pop()
-        newPath.forEach((p) => {
+        newPath.forEach(p => {
           inPath.push(p)
           getInPath.call(this, p[p.length - 1])
         })
@@ -1426,15 +1625,15 @@ export default class Graph extends Component {
     function getOutPath(cell) {
       let newPath = this.graph
         .getConnectedLinks(cell, { outbound: true })
-        .map((link) => {
+        .map(link => {
           let p = []
-          outPath[outPath.length - 1].forEach((c) => p.push(c))
+          outPath[outPath.length - 1].forEach(c => p.push(c))
           p.push(link.getTargetCell())
           return p
         })
       if (newPath.length) {
         outPath.pop()
-        newPath.forEach((p) => {
+        newPath.forEach(p => {
           if (p) {
             outPath.push(p)
             getOutPath.call(this, p[p.length - 1])
@@ -1448,14 +1647,14 @@ export default class Graph extends Component {
     getOutPath.call(this, target.model)
     let paths = [],
       valid = true
-    inPath.forEach((ins) => {
-      outPath.forEach((out) => {
+    inPath.forEach(ins => {
+      outPath.forEach(out => {
         let res = [].concat(ins)
         for (let i = 0; i < out.length; i++) res.unshift(out[i])
         paths.push(res)
       })
     })
-    paths.forEach((path) => {
+    paths.forEach(path => {
       for (let i = path.length; i > 0; i--) {
         if (path[i - 1].get('type') == 'app.Aggregate') {
           for (let j = i; j > 0; j--) {

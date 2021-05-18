@@ -187,9 +187,8 @@ export default {
   mounted() {
     log('Debug Component Mounted')
     let eBodyEl = document.body.getElementsByClassName('e-body')[0]
-    let eSideBarRight = document.body.getElementsByClassName(
-      'e-sidebar-right'
-    )[0]
+    let eSideBarRight =
+      document.body.getElementsByClassName('e-sidebar-right')[0]
     this.clientWidth = eBodyEl.clientWidth
     eBodyEl.appendChild(this.$el)
     this.$nextTick(() => {
@@ -215,7 +214,7 @@ export default {
       this.$refs.log.clear()
       this.errorMsg = ''
 
-      receiveMessage((msg) => {
+      receiveMessage(msg => {
         let result = []
 
         if (!msg || msg.status === 'ERROR') {
@@ -243,7 +242,7 @@ export default {
     getFirstLine(logs) {
       if (logs && logs.length) {
         let _log =
-          logs.find((item) => {
+          logs.find(item => {
             return item.level === 'ERROR'
           }) || logs[0]
 

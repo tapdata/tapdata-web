@@ -23,7 +23,17 @@
           <div class="img-box position-relative">
             <img :src="getImgByType(item)" />
             <div
-              class="img-box__mask flex justify-center align-center position-absolute top-0 bottom-0 start-0 end-0"
+              class="
+                img-box__mask
+                flex
+                justify-center
+                align-center
+                position-absolute
+                top-0
+                bottom-0
+                start-0
+                end-0
+              "
             >
               <span class="mask-text">即将上线</span>
             </div>
@@ -98,16 +108,16 @@ export default {
       window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
     let allwoType = this.allwoType
     if (allwoType && allwoType.length) {
-      allowDataType = allowDataType.filter((val) => {
+      allowDataType = allowDataType.filter(val => {
         return this.allwoType.includes(val)
       })
     }
     this.comingAllowDatabase =
-      comingAllowDataType.filter((type) => this.database.includes(type)) || []
+      comingAllowDataType.filter(type => this.database.includes(type)) || []
     this.database =
-      allowDataType.filter((type) => this.database.includes(type)) || []
+      allowDataType.filter(type => this.database.includes(type)) || []
     this.otherType =
-      allowDataType.filter((type) => this.otherType.includes(type)) || []
+      allowDataType.filter(type => this.otherType.includes(type)) || []
   },
   methods: {
     getImgByType,

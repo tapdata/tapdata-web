@@ -171,9 +171,9 @@ export default {
     getIpFn() {
       this.$api('cluster')
         .get()
-        .then((res) => {
+        .then(res => {
           if (res.data) {
-            res.data.forEach((item) => {
+            res.data.forEach(item => {
               this.ipList.push({ value: item.systemInfo.ip })
             })
           }

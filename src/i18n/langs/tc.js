@@ -359,7 +359,9 @@ const tc = {
     uniqueEncode: '唯一編碼',
     logs: '日誌信息',
     serviceType: '服務類型',
-    level: '級別'
+    level: '級別',
+    cpuUsage: 'CPU使用率',
+    heapMemoryUsage: '堆內存使用率'
   },
   button: {
     refresh: '刷新',
@@ -449,6 +451,7 @@ const tc = {
     SyncPoint: '增量採集開始時刻',
     cdcLabel: '數據源:',
     syncType: '任務類型',
+    belongAgent: '所屬Agent',
     SyncInfo: {
       localTZ: '當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
       current: '當前時區時間：默認當前時間',
@@ -542,7 +545,7 @@ const tc = {
     },
     lag: '滯後',
     executionStatus: '執行狀態',
-    searchPlaceholder: '任務名稱',
+    searchPlaceholder: '任務名稱/節點名/庫名稱',
     searchAgent: '實例名稱',
     dataRange: '創建日期範圍',
     startTime: '開始時間',
@@ -588,6 +591,9 @@ const tc = {
     error: '當任務出錯',
     edited: '當任務被編輯',
     started: '當任務開啟',
+    shareCdcMode: '共享增量讀取的模式',
+    streaming: '流式讀取',
+    polling: '輪詢讀取',
     drop_target_before_start: '開啟任務前是否刪除目標表',
     run_custom_sql: '重複運行自定義SQL',
     stop_on_error: '遇到錯誤停止',
@@ -723,8 +729,7 @@ const tc = {
     skipError: {
       title: '跳過錯誤設置',
       skipErrorSettings: '任務錯誤處理',
-      tip:
-        '任務上次停止時發生了以下數據相關的錯誤，請確認這些錯誤已經被處理。如果希望跳過這些錯誤，請勾選相應的錯誤項並點擊“跳過錯誤，啟動任務” 。 ',
+      tip: '任務上次停止時發生了以下數據相關的錯誤，請確認這些錯誤已經被處理。如果希望跳過這些錯誤，請勾選相應的錯誤項並點擊“跳過錯誤，啟動任務” 。 ',
       attention:
         '注意：若導致錯誤的數​​據未被處理，跳過錯誤可能導致這條數據被丟棄。 ',
       startJob: '跳過錯誤，啟動任務',
@@ -759,8 +764,7 @@ const tc = {
     reloadTittle: '重新加載 schema',
     deteleDatabaseTittle: '是否刪除該連接？',
     deteleDatabaseMsg: '刪除連接 xxx 後，此連接將無法恢復',
-    desc:
-      '數據源包括數據庫，結構化文件，應用程序RESTful API，自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除基礎的配置項之外，數據源還有定期/手動加載數據庫結構 ，設置時區，表過濾設置等功能。更多配置說明，請點擊',
+    desc: '數據源包括數據庫，結構化文件，應用程序RESTful API，自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除基礎的配置項之外，數據源還有定期/手動加載數據庫結構 ，設置時區，表過濾設置等功能。更多配置說明，請點擊',
     reloadMsg:
       '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',
     checkMsg: '此數據源被傳輸任務或API所佔用，無法刪除',
@@ -950,8 +954,7 @@ const tc = {
             },
             maximum_transaction: {
               label: '事務最大時長(小時)',
-              tip:
-                '等待事務提交的時間(小時)。輸入您期望事務需要的最長時間。默認為12小時'
+              tip: '等待事務提交的時間(小時)。輸入您期望事務需要的最長時間。默認為12小時'
             }
           }
         },
@@ -1079,7 +1082,7 @@ const tc = {
           nodeFunDes: '節點功能說明',
           function: '功 能',
           functionContent:
-            '此節點用於採集指定數據庫和表的日誌，保存到MongoDB數據庫，共享日誌數據不需要重複開 啟日誌採集進程，能極大緩解源庫資源的佔用和浪費。 ',
+            '此節點用於採集指定數據庫和表的日誌，保存到MongoDB數據庫，共享日誌數據不需要重複開啟日誌採集進程，能極大緩解源庫資源的佔用和浪費。 ',
           connectionTarget: '連接目標',
           connectionText: '只能連接Collection節點',
           tableFilter: {
@@ -1243,8 +1246,7 @@ const tc = {
             expressionExample: {
               label: '表達式示例',
               labelTip: '表達式可以使用JavaScript中的比較符和計算符',
-              tip:
-                '篩選出50歲以上的男性或者收入一萬以下的30歲以上的人,表達式如下：'
+              tip: '篩選出50歲以上的男性或者收入一萬以下的30歲以上的人,表達式如下：'
             },
             symbol: {
               label: '支持的符號',
@@ -1538,8 +1540,7 @@ const tc = {
     all: '全部',
     setting: {
       title: '校驗默認設置',
-      text:
-        '校驗設置為全局的校驗設置，創建的校驗任務裡的高級設置的優先級高於此處的設置。 ',
+      text: '校驗設置為全局的校驗設置，創建的校驗任務裡的高級設置的優先級高於此處的設置。 ',
       keepTimeLabel: '校驗歷史結果和詳情信息保留時間',
       errorSaveSumLable: '校驗出每張表的錯誤信息保存數量限制',
       errorDifferenceResult: '校驗結果允許的差異數據容錯量',
@@ -1852,7 +1853,52 @@ const tc = {
   relations: {
     blood: '表鏈路圖',
     refresh: '刷新數據',
-    refreshStatus: '上次刷新'
+    refreshStatus: '上次刷新',
+    lastTimeConsume: '上次耗時',
+    allProgress: '解析任務總數',
+    refreshMsg:
+      '開始對所有同步任務進行解析，並生產溯源圖形，耗時可能比較久，點擊“是”開始執行',
+    refreshTitle: '同步任務解析',
+    yes: '是',
+    no: '否',
+    refreshStatusMsg: '正在同步圖形數據，圖形可能缺失，請稍後刷新重試',
+    parsingFailed: '解析失敗',
+    second: ' 秒',
+    minute: ' 分',
+    hours: ' 小時',
+    day: ' 天',
+    customFields: '自定義字段,多個字段請用 , 隔開',
+    label: '字段類型/字段名稱',
+    viewTaskInfo: '查看任務詳情',
+    task: '任務',
+    add: '新增',
+    delete: '刪除',
+    rename: '更名',
+    changeType: '改類型',
+    script: '腳本處理',
+    fieldScript: '字段腳本',
+    count: '計算總數',
+    sum: '求和',
+    average: '求平均值',
+    min: '求最小值',
+    max: '求最大值',
+    group: '分組',
+    field_processor: '字段處理器',
+    js_processor: '腳本處理器',
+    aggregation_processor: '聚合處理器',
+    name: '連接名稱',
+    database_host: '地址',
+    database_port: '端口',
+    database_username: '用戶名',
+    database_name: '數據庫名稱',
+    database_owner: '模式',
+    originalName: '別名(原名稱)',
+    qualified_name: '唯一表示',
+    meta_type: '類型',
+    create_source: '來源',
+    createTime: '創建時間',
+    last_updated: '修改時間',
+    last_user_name: '修改人'
   },
   metadata: {
     createNewModel: '創建模型',
@@ -1975,8 +2021,7 @@ const tc = {
     },
     metadataSearch: {
       title: '元數據檢索',
-      desc:
-        '元數據檢索提供對錶、字段的名稱、別名、描述等內容的搜索功能，請先選擇搜索表/字段，再輸入內容，點擊搜索按鈕進行搜索',
+      desc: '元數據檢索提供對錶、字段的名稱、別名、描述等內容的搜索功能，請先選擇搜索表/字段，再輸入內容，點擊搜索按鈕進行搜索',
       table: '搜索表',
       column: '搜索字段',
       search: '搜索',
@@ -2050,8 +2095,7 @@ const tc = {
     settingCenter: '設置中心',
     systemSetting: '系統設置',
     noticeSetting: '通知設置',
-    tip:
-      '此處通知設置為系統全局通知的設置，任務編排頁的通知設置的其優先級高於此處的全局通知設置',
+    tip: '此處通知設置為系統全局通知的設置，任務編排頁的通知設置的其優先級高於此處的全局通知設置',
     jobOperationNotice: '任務運行通知',
     emailNotice: '郵件通知',
     jobStarted: '任務被啟動',
@@ -2096,7 +2140,7 @@ const tc = {
       forceStop: '強制停止了',
       reset: '重置了',
       copy: '複製了',
-      upload: '導出了',
+      upload: ' 導入了 ',
       download: '下載了',
       login: '登錄',
       logout: '登出'
@@ -2127,8 +2171,7 @@ const tc = {
       headInterpretation:
         'Tapdata DFS雲版需要在本地安裝 Agent 以確保連接數據庫和傳輸服務正常運行',
       downloadInstall: '下載安裝',
-      text:
-        '首先，在環境中配置好 JAVA 運行環境，然後使用以下命令下載和啟動 Agent',
+      text: '首先，在環境中配置好 JAVA 運行環境，然後使用以下命令下載和啟動 Agent',
       copy: '複製命令',
       refresh: '刷新',
       copied: '已復制',
@@ -2670,6 +2713,222 @@ const tc = {
     checkSuccess: '通過校驗',
     checkError: '校驗失敗',
     alreadyExists: '用戶名不能重複'
+  },
+  process: {
+    name: '名稱/worker 類型',
+    worker_ip: '地址',
+    version: '版本',
+    online: '線上',
+    all: '所有',
+    state: '狀態',
+    job_ids: '明細',
+    running_thread: '運行中的線程',
+    total_thread: '線程數量',
+    worker_type: 'Worker 類型',
+    ping_time: 'Ping 時間',
+    start_time: '開始時間',
+    process_id: '進程 ID',
+    processState: '工作進程狀態'
+  },
+  setting: {
+    email_template: '郵件模板',
+    connect_and_test: '連接測試',
+    saveSuccess: '保存成功，一分鐘後生效',
+    nameserver: '服務器名稱',
+    Log: '日誌',
+    SMTP: 'SMTP',
+    Job: '任務',
+    license: 'License控制',
+    expiredate: '到期時間',
+    import: '導入',
+    apply: '申請 license',
+    license_expire_date: 'License過期時間',
+    Worker: '進程',
+    Download: '下載',
+    Log_level: '日誌等級',
+    maxCpuUsage: '最大CPU使用率(取值範圍 0.1 ~ 1)',
+    maxHeapMemoryUsage: '最大堆內存使用率(取值範圍 0.1 ~ 1)',
+    switch_insert_mode_interval:
+      ' 增量模式下切換到批量插入模式間隔時間（單位：秒）',
+    Email_Communication_Protocol: ' 加密方式',
+    SMTP_Server_Port: 'SMTP 服務端口',
+    SMTP_Server_User: 'SMTP 服務賬號',
+    SMTP_Server_password: 'SMTP 服務密碼',
+    Email_Receivers: 'Email接受郵件地址',
+    Email_Send_Address: 'Email發送郵件地址',
+    SMTP_Server_Host: 'SMTP 服務Host',
+    Send_Email_Title_Prefix: '發​​送Email標題的前綴（可選）',
+    Email_Template_Running: '任務啟動通知',
+    Email_Template_Paused: '任務停止通知',
+    Email_Template_Error: '任務出錯通知',
+    Email_Template_Draft: '任務被編輯通知',
+    Email_Template_CDC: '任務增量滯後通知',
+    Email_Template_DDL: 'DDL錯誤通知',
+    Clean_Message_Time: '清除消息時間',
+    Keep_Alive_Message: '保持在線消息',
+    Sample_Rate: '採樣率',
+    ApiServer: 'API分發設置',
+    Default_Limit: '默認查詢返回行數',
+    Max_Limit: '最大查詢返回行數',
+    Send_batch_size: '打包數據條數',
+    hint_Send_batch_size: '打包數據條數',
+    Mongodb_target_create_date: '是否在目標端數據集添加創建時間',
+    Mongodb_target_create_date_docs: '是否在目標端數據集添加創建時間',
+    System: '系統資源監控',
+    Collect_system_info_interval: '系統資源監控採集頻率(秒)',
+    Interval_to_collect_system_info:
+      '系統資源信息（CPU，內存，硬盤使用率）監控採集頻率',
+    Job_Sync_Mode: '任務同步模式',
+    Worker_Threshold: '進程閾值',
+    Worker_Heartbeat_Expire: '進程心跳過期時間(秒)',
+    License_Key: '證書秘鑰',
+    Enter_jobs_log_level__error_warn_info_debug_trace:
+      '輸入任務日誌等級: error/warn/info/debug/trace',
+    Email_Receivers_Multiple_separated_by_semicolons:
+      '郵件接受者,可輸入多個，通過逗號分隔',
+
+    Keep_recent_n_hours_message_before_the_last_processed_message_s_time_:
+      '保持最近n小時消息',
+    Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
+      '緩存一份當前整體數據，合併到目標數據集中',
+    Store_before_field_as_embedded_document_in_target_collection_before_update_operation:
+      '緩存一份修改前的整體數據，合併到目標數據集中',
+    Store_job_script_processor_log_to_cloud: '是否傳輸任務日誌到雲端',
+    Validator_to_validate_data__s_sample_rate: '校驗數據採樣率',
+    Process_message_mode__consistency_fast: '消息處理模式 consistency/fast',
+    Worker_can_execute_the_nums_of_Jobs: '進程可以執行多個任務',
+    Worker_heartbeat_expire_time: '進程心跳過期時間',
+    Users: ' 用戶',
+    Show_Page: ' 顯示下載頁面',
+    User_Registery: ' 用戶註冊管理',
+    hint_Show_Page: '顯示下載頁面',
+    hint_User_Registery:
+      '用戶註冊類型設置。值設為 "disabled":禁止註冊; 值設為 "self-signup" 啟用用戶自助註冊; 值設為 "manual-approval" 允用戶註冊,但需要管理員審批。 ',
+    DR_Rehearsal: ' 災備演習',
+    Mongod_path: ' Mongod 路徑',
+    SSH_User: ' SSH 用戶名',
+    SSH_Port: ' SSH 端口',
+    hint_Mongod_path: ' Mongod 路徑',
+    hint_SSH_User: ' SSH 用戶名, 用來連接Mongod的主機',
+    hint_SSH_Port: ' SSH 端口,用來連接Mongod的主機',
+    Enable_DR_Rehearsal: ' 允許災備演習',
+    hint_Enable_DR_Rehearsal: ' 災備演習開關,true表示開,false 表示關',
+    Download_Agent_Page: 'Agent 下載頁面',
+    Background_Analytics: '後台分析',
+    Data_quality_analysis_frequency: '數據質量分析間隔(秒)',
+    Dashboard_data_analysis_frequency: '面板數據分析間隔(秒)',
+    dashboard_Analysis_Interval: '面板數據分析間隔(秒)',
+    quality_Analysis_Interval: '數據質量分析間隔(秒)',
+    Log_filter_interval: '日誌過濾間隔(秒)',
+    Filter_the_interval_between_duplicate_logs__seconds__:
+      '相同日誌在指定時間內只出現一次（1分鐘後生效）',
+    _DK36: '文件下載',
+    File_Down_Base_Url: '地址',
+    Set_the_average_number_of_events_per_second_to_allow:
+      '日誌設置每秒允許的事件平均數量',
+    Log_Filter_Rate: '日誌輸出頻率(行/秒)',
+    Connections: '連接設置',
+    Mongodb_Load_Schema_Sample_Size: 'Mongodb加載模型採樣記錄數(行)',
+    hint_Mongodb_Load_Schema_Sample_Size:
+      '當MongoDB連接加載模型時，會使用該配置進行採樣加載',
+    Enable_API_Stats_Batch_Report: ' 啟用 API 統計',
+    Header: ' UDP 頭信息',
+    hint_Header: ' UDP 頭信息',
+    Size_Of_Trigger_API_Stats_Report: ' API 請求緩存最大個數',
+    hint_Size_Of_Trigger_API_Stats_Report:
+      ' API 請求記錄數到達指定個數時批量發送到管理端',
+    Time_Span_Of_Trigger_API_Stats_Report: ' API 請求匯報頻率(秒)',
+    hint_Time_Span_Of_Trigger_API_Stats_Report:
+      ' API 請求緩存到指定時間發送到管理端',
+    save: ' 保存成功，一分鐘後生效',
+    Logout_forward_to_this_url: ' 登出跳轉地址',
+    Check_devices: ' 重要設備檢測',
+    ops: ' 運維展示',
+    server_oversee_url: ' 運維運控URL',
+    system: ' 系統全局',
+    licenseNoticeDays: ' license 到期提醒',
+    flow_engine_version: ' 流程引擎版本',
+    tapdata_agent_version: ' tapdata agent版本',
+    doc_base_url: ' 幫助文檔URL',
+    help: ' 幫助文檔',
+    Ip_addresses: ' Ipv4地址(多個逗號分隔)',
+    hint_Ip_addresses: ' 需要檢測的設備ipv4地址, 例如: 127.0.0.1, 192.168.0.1',
+    PingTimeout: ' 檢測超時(毫秒)',
+    hint_PingTimeout: ' 當超過該設置，認為設備無法連通',
+    Job_field_replacement: ' 非法字符替換為',
+    A_replacement_for_the_invalid_field_name:
+      ' 一些數據庫對於字段名稱有特殊要求，tapdata將非法的字符在同步時自動做替換。 MongoDB[含有".", "$"作為開頭]',
+    true__store_log_to_cloud__false__only_store_to_local_log_file_:
+      'true：將日誌存儲到雲，false：僅存儲到本地日誌文件。 ',
+    When_one_document_may_be_updated_frequently_within_very_short_period_a_few_updates_within_one_second__for_instance___the_change_stream_event_received_by_downstream_processor_may_return_the__fullDocument__that_is_inconsistent_with_the_actual_version_when_the_update_was_applied_to_that_document__To_avoid_this_inconsistency__enable_this_option_to_store_the_full_document_along_with_the_update_operation__This_will_at_the_expense_of_additional_storage_and_degraded_performance_:
+      '當一個文檔可能在非常短的時間內頻繁更新（例如，在一秒鐘之內進行幾次更新）時，下游處理器接收到的更改流事件可能會返回與實際版本不一致的“ fullDocument”（與實際版本不一致） 該文件。為避免這種不一致，請啟用此選項以將完整文檔與更新操作一起存儲。這將以增加存儲空間和降低性能為代價。 ',
+    the_before_field_contains_a_field_for_each_table_column_and_the_value_that_was_in_that_column_before_the_update_operation_:
+      'before字段包含每個表列的字段以及更新操作之前該列中的值。 ',
+    Job_heart_timeout: '同步任務心跳超時（毫秒）',
+    job_cdc_share_mode: '增量同步任務共享模式',
+    job_cdc_share_mode_doc:
+      '在增量同步階段，會根據日誌採集任務是否可用，自動採用共享模式。影響的數據庫：Oracle',
+    job_cdc_share_only: '增量任務強制使用共享模式',
+    job_cdc_share_only_doc:
+      '當增量同步任務共享模式開啟，並且無法找到一個可共享的日誌，將會停止任務',
+    test_email_success: '測試郵件已發送，請登錄接收郵箱查收',
+    test_email_countdown: '操作太頻繁了，請稍後重試',
+    email_template_from: '發件人',
+    email_template_to: '收件人',
+    email_template_subject: '主題',
+    job_cdc_record: ' 自動保存增量事件',
+    job_cdc_record_doc: ' 自動保存增量事件',
+    job_cdc_record_ttl: ' 增量事件保存時長(天)',
+    job_cdc_record_ttl_doc: ' 增量事件保存時長(天)',
+    connection_schema_update_hour: '數據源schema更新時間',
+    connection_schema_update_interval: '數據源schema更新周期（天）',
+    creatDuplicateSource: ' 允許創建重複數據源',
+    requestFailed: '請求處理失敗',
+    Mongodb_will_use_this_sample_size_when_load_schema:
+      '加載架構時，Mongodb將使用此樣本大小',
+    Switch_to_batch_insert_mode_interval__s__in_cdc_:
+      '切換到cdc中的批量插入模式間隔。 '
+  },
+  dataQuality: {
+    title: '數據質量',
+    desc: '數據質量頁面展示出的是對違反數據規則的表數據匯總的頁面，用戶可以在此頁面對違反規則的數據進行修正',
+    keywordTip: '請搜索表名/字段名',
+    sourceName: '表名/連接名',
+    totalDocs: '總記錄數',
+    violatedDocs: '違反規則數',
+    violatePercentage: '違反比例',
+    createTime: '統計時間',
+    actions: '操作',
+    view: '查看',
+    btnFilter: '列過濾',
+    btnBatch: '批量修改',
+    save: '保存',
+    cancel: '取消',
+    viewDetail: '瀏覽詳情',
+    del: '刪除',
+    fieldFilter: '字段過濾',
+    allCheck: '全選',
+    fieldName: '字段名',
+    show: '顯示',
+    hide: '不顯示',
+    json: '業務數據',
+    verifyRuleTip: '選擇違反的質量規則',
+    verifyContentTip: '請輸入要修改的內容',
+    verifyContentLength: '長度不能超過100',
+    msgPostApi: '請先基於這張表發布一個api',
+    msgNoValidApi: '沒有可用API服務器',
+    msgNotStartApi: '沒有啟用api服務？',
+    ifDel: '是否刪除當前行？',
+    unlikeAjv: '輸入的內容不符合數據規則',
+    allUpdateSuccessTip1: '操作成功，一共修改',
+    allUpdateSuccessTip2: '條數據',
+    updateFail: '更新失敗',
+    dataTypeError: '數據類型轉換失敗，期望==>',
+    columnTip: '請至少選擇一列',
+    countTitle: '重新統計',
+    connectTip: '請至少選擇一個數據源',
+    countTip: '正在統計，請稍後',
+    errCheck: '顯示出錯列'
   }
 }
 

@@ -73,7 +73,7 @@ export const jointCacheConfig = {
           )
         if (
           !data.joinSettings.length ||
-          data.joinSettings.some((it) => !it.sourceKey)
+          data.joinSettings.some(it => !it.sourceKey)
         )
           throw new Error(
             `${name}: ${i18n.t(

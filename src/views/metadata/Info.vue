@@ -646,7 +646,7 @@ export default {
       let oldTableData = this.metadataDataObj.fields
       if (val) {
         this.filterData = []
-        this.metadataDataObj.fields.filter((item) => {
+        this.metadataDataObj.fields.filter(item => {
           if (
             String(item.field_name).indexOf(val) > -1 ||
             (item.alias_name && String(item.alias_name).indexOf(val) > -1) ||
@@ -708,7 +708,7 @@ export default {
       return Promise.all([
         this.$api('MetadataInstances').get([this.$route.query.id])
       ])
-        .then((res) => {
+        .then(res => {
           this.metadataDataObj = res[0].data
           this.pageTotal =
             (res[0].data.fields && res[0].data.fields.length) || 0
@@ -743,10 +743,10 @@ export default {
             let fields = this.metadataDataObj.fields
 
             if (fields && fields.length) {
-              fields.forEach((field) => {
+              fields.forEach(field => {
                 field.relation &&
                   field.relation.length &&
-                  field.relation.forEach((item) => {
+                  field.relation.forEach(item => {
                     let key = item.table_name + item.rel
                     if (groupRelation[key]) {
                       groupRelation[key].fields.push({
@@ -1014,6 +1014,7 @@ export default {
       display: flex;
       flex-direction: row;
       padding: 10px 0 0;
+      overflow: hidden;
       .metadata-aside {
         width: 360px;
         height: 100%;
@@ -1296,6 +1297,19 @@ export default {
         padding: 0;
         background-color: #eff1f4 !important;
       }
+      td,
+      .is-scrolling-left ~ .el-table__fixed {
+        border-right: 0;
+      }
+      th {
+        border-right: 1px solid #dcdfe6;
+      }
+    }
+    .table-page-pagination {
+      padding-top: 5px;
+      box-sizing: border-box;
+      border-top: 1px solid #ddd;
+      background-color: #fff;
       td,
       .is-scrolling-left ~ .el-table__fixed {
         border-right: 0;

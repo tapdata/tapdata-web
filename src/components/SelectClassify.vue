@@ -103,7 +103,7 @@ export default {
     getData(cb) {
       let where = {}
       if (this.types.length) {
-        where.or = this.types.map((t) => ({ item_type: t }))
+        where.or = this.types.map(t => ({ item_type: t }))
       }
       let filter = {
         where
@@ -112,9 +112,9 @@ export default {
       if (this.types[0] === 'user') {
         this.$api('UserGroup')
           .get({})
-          .then((res) => {
+          .then(res => {
             if (res.data) {
-              let treeData = res.data.map((item) => ({
+              let treeData = res.data.map(item => ({
                 value: item.name,
                 id: item.id,
                 gid: item.gid,
@@ -129,7 +129,7 @@ export default {
       } else {
         MetadataDefinitions.get({
           filter: JSON.stringify(filter)
-        }).then((res) => {
+        }).then(res => {
           if (res.data) {
             this.treeData = this.formatData(res.data)
             cb && cb(res.data)
@@ -143,7 +143,7 @@ export default {
         let map = {}
         let nodes = []
         //遍历第一次， 先把所有子类按照id分成若干数组
-        items.forEach((it) => {
+        items.forEach(it => {
           if (it.parent_id) {
             let children = map[it.parent_id] || []
             children.push(it)
@@ -153,8 +153,8 @@ export default {
           }
         })
         //接着从没有子类的数据开始递归，将之前分好的数组分配给每一个类目
-        let checkChildren = (nodes) => {
-          return nodes.map((it) => {
+        let checkChildren = nodes => {
+          return nodes.map(it => {
             let children = map[it.id]
             if (children) {
               it.children = checkChildren(children)

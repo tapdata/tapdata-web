@@ -359,7 +359,9 @@ const cn = {
     uniqueEncode: '唯一编码',
     logs: '日志信息',
     serviceType: '服务类型',
-    level: '级别'
+    level: '级别',
+    cpuUsage: 'CPU使用率',
+    heapMemoryUsage: '堆内存使用率'
   },
   button: {
     refresh: '刷新',
@@ -449,6 +451,7 @@ const cn = {
     SyncPoint: '增量采集开始时刻',
     cdcLabel: '数据源:',
     syncType: '任务类型',
+    belongAgent: '所属Agent',
     SyncInfo: {
       localTZ: '当前时区传输时间：系统所在时区下，开始传输任务的时刻',
       current: '当前时区时间：默认当前时间',
@@ -542,7 +545,7 @@ const cn = {
     },
     lag: '滞后',
     executionStatus: '执行状态',
-    searchPlaceholder: '任务名称',
+    searchPlaceholder: '任务名称/节点名/库名称',
     searchAgent: '实例名称',
     dataRange: '创建日期范围',
     startTime: '开始时间',
@@ -588,6 +591,9 @@ const cn = {
     error: '当任务出错',
     edited: '当任务被编辑',
     started: '当任务开启',
+    shareCdcMode: '共享增量读取的模式',
+    streaming: '流式读取',
+    polling: '轮询读取',
     drop_target_before_start: '开启任务前是否删除目标表',
     run_custom_sql: '重复自定义SQL',
     stop_on_error: '遇到错误停止',
@@ -722,8 +728,7 @@ const cn = {
     skipError: {
       title: '跳过错误设置',
       skipErrorSettings: '任务错误处理',
-      tip:
-        '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
+      tip: '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
       attention:
         '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
       startJob: '跳过错误，启动任务',
@@ -747,8 +752,7 @@ const cn = {
     fuzzyQuery: '模糊匹配',
     PreciseQuery: '精确匹配',
     databaseTittle: '数据源管理',
-    desc:
-      '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
+    desc: '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
     createNewDataSource: '创建连接',
     info: '数据源详情',
     copyMsg: '复制成功',
@@ -951,8 +955,7 @@ const cn = {
             },
             maximum_transaction: {
               label: '事务最大时长(小时)',
-              tip:
-                '等待事务提交的时间(小时)。输入您期望事务需要的最长时间。默认为12小时'
+              tip: '等待事务提交的时间(小时)。输入您期望事务需要的最长时间。默认为12小时'
             }
           }
         },
@@ -1080,7 +1083,7 @@ const cn = {
           nodeFunDes: '节点功能说明',
           function: '功              能',
           functionContent:
-            '此节点用于采集指定数据库和表的日志，保存到MongoDB数据库，共享日志数据不需要重复开 启日志采集进程，能极大缓解源库资源的占用和浪费。',
+            '此节点用于采集指定数据库和表的日志，保存到MongoDB数据库，共享日志数据不需要重复开启日志采集进程，能极大缓解源库资源的占用和浪费。',
           connectionTarget: '连接目标',
           connectionText: '只能连接Collection节点',
           tableFilter: {
@@ -1245,8 +1248,7 @@ const cn = {
             expressionExample: {
               label: '表达式示例',
               labelTip: '表达式可以使用JavaScript中的比较符和计算符',
-              tip:
-                '筛选出50岁以上的男性或者收入一万以下的30岁以上的人,表达式如下：'
+              tip: '筛选出50岁以上的男性或者收入一万以下的30岁以上的人,表达式如下：'
             },
             symbol: {
               label: '支持的符号',
@@ -1540,8 +1542,7 @@ const cn = {
 
     setting: {
       title: '校验默认设置',
-      text:
-        '校验设置为全局的校验设置，创建的校验任务里的高级设置的优先级高于此处的设置。',
+      text: '校验设置为全局的校验设置，创建的校验任务里的高级设置的优先级高于此处的设置。',
       keepTimeLabel: '校验历史结果和详情信息保留时间',
       errorSaveSumLable: '校验出每张表的错误信息保存数量限制',
       errorDifferenceResult: '校验结果允许的差异数据容错量',
@@ -1667,9 +1668,10 @@ const cn = {
         label: '示例',
         content:
           `<b>MongoDB 数据库连接 URI 示范 :</b><br>` +
-          `<b>复制集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-          `<b>启用认证的复制集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-          `<b>多节点复制集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+          `<b>URI中的用户名和密码必须做 url encode 编码后在拼接到连接串中</b><br>` +
+          `<b>副本集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+          `<b>启用认证的副本集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+          `<b>多节点副本集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
           `<b>分片集 :</b> mongodb://192.168.0.100:27017/mydb<br>` +
           `<b>多个mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
       },
@@ -1853,7 +1855,52 @@ const cn = {
   relations: {
     blood: '表链路图',
     refresh: '刷新数据',
-    refreshStatus: '上次刷新'
+    refreshStatus: '上次刷新',
+    lastTimeConsume: '上次耗时',
+    allProgress: '解析任务总数',
+    refreshMsg:
+      '开始对所有同步任务进行解析，并生产溯源图形，耗时可能比较久，点击“是”开始执行',
+    refreshTitle: '同步任务解析',
+    yes: '是',
+    no: '否',
+    refreshStatusMsg: '正在同步图形数据，图形可能缺失，请稍后刷新重试',
+    parsingFailed: '解析失败',
+    second: ' 秒',
+    minute: ' 分',
+    hours: ' 小时',
+    day: ' 天',
+    customFields: '自定义字段,多个字段请用 , 隔开',
+    label: '字段类型/字段名称',
+    viewTaskInfo: '查看任务详情',
+    task: '任务',
+    add: '新增',
+    delete: '删除',
+    rename: '更名',
+    changeType: '改类型',
+    script: '脚本处理',
+    fieldScript: '字段脚本',
+    count: '计算总数',
+    sum: '求和',
+    average: '求平均值',
+    min: '求最小值',
+    max: '求最大值',
+    group: '分组',
+    field_processor: '字段处理器',
+    js_processor: '脚本处理器',
+    aggregation_processor: '聚合处理器',
+    name: '连接名称',
+    database_host: '地址',
+    database_port: '端口',
+    database_username: '用户名',
+    database_name: '数据库名称',
+    database_owner: '模式',
+    originalName: '别名(原名称)',
+    qualified_name: '唯一表示',
+    meta_type: '类型',
+    create_source: '来源',
+    createTime: '创建时间',
+    last_updated: '修改时间',
+    last_user_name: '修改人'
   },
   metadata: {
     createNewModel: '创建模型',
@@ -1976,8 +2023,7 @@ const cn = {
     },
     metadataSearch: {
       title: '元数据检索',
-      desc:
-        '元数据检索提供对表、字段的名称、别名、描述等内容的搜索功能，请先选择搜索表/字段，再输入内容，点击搜索按钮进行搜索',
+      desc: '元数据检索提供对表、字段的名称、别名、描述等内容的搜索功能，请先选择搜索表/字段，再输入内容，点击搜索按钮进行搜索',
       table: '搜索表',
       column: '搜索字段',
       search: '搜索',
@@ -1999,14 +2045,13 @@ const cn = {
     tableValidateTip:
       '新建表名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
     collectionValidateTip:
-      '新建数据集名称仅支持我，并以英文字母开头，不允许 system 开头',
+      '新建数据集名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
     downAgent: {
       headTitle: 'Agent下载与安装',
       headInterpretation:
         'Tapdata DFS云版需要在本地安装 Agent 以确保连接数据库和传输服务正常运行',
       downloadInstall: '下载安装',
-      text:
-        '首先，在环境中配置好 JAVA 运行环境，然后使用以下命令下载和启动 Agent',
+      text: '首先，在环境中配置好 JAVA 运行环境，然后使用以下命令下载和启动 Agent',
       copy: '复制命令',
       refresh: '刷新',
       copied: '已复制',
@@ -2136,8 +2181,7 @@ const cn = {
     settingCenter: '设置中心',
     systemSetting: '系统设置',
     noticeSetting: '通知设置',
-    tip:
-      '此处通知设置为系统全局通知的设置，任务编排页的通知设置的其优先级高于此处的全局通知设置',
+    tip: '此处通知设置为系统全局通知的设置，任务编排页的通知设置的其优先级高于此处的全局通知设置',
     jobOperationNotice: '任务运行通知',
     emailNotice: '邮件通知',
     jobStarted: '任务被启动',
@@ -2182,7 +2226,7 @@ const cn = {
       forceStop: ' 强制停止了 ',
       reset: ' 重置了 ',
       copy: ' 复制了 ',
-      upload: ' 导出了 ',
+      upload: ' 导入了 ',
       download: ' 下载了 ',
       login: ' 登录 ',
       logout: ' 登出 '
@@ -2596,6 +2640,7 @@ const cn = {
     task_type_custom_tips:
       '数据同步聚焦在表级别的数据处理与传输，在满足用户实现多表（数据集）、多级数据之间多表合一、数据拆分、关联映射、字段增减合并、内容过滤、聚合处理JS处理等功能的情况下同时实现实时数据同步。在不影响用户业务的情况下，满足用户对数据的异地或本地数据灾备、跨实例数据同步、查询与报表分流、实时数据仓库管理等多种业务场景的需求。',
     agent_not_install: '系统检测到 Agent 并未安装, 请下载安装后重试',
+
     btn_back: '上一步',
     btn_save: '保存，',
     btn_next: '下一步',
@@ -2673,6 +2718,260 @@ const cn = {
     checkSuccess: '通过校验',
     checkError: '校验失败',
     alreadyExists: '用户名不能重复'
+  },
+  process: {
+    name: '名称/worker 类型',
+    worker_ip: '地址',
+    version: '版本',
+    online: '线上',
+    all: '所有',
+    state: '状态',
+    job_ids: '明细',
+    running_thread: '运行中的线程',
+    total_thread: '线程数量',
+    worker_type: 'Worker 类型',
+    ping_time: 'Ping 时间',
+    start_time: '开始时间',
+    process_id: '进程 ID',
+    processState: '工作进程状态'
+  },
+  timeToLive: {
+    header: {
+      indexName: '索引名称',
+      indexFields: '时间字段',
+      indexStatus: '状态',
+      indexCreate_by: '创建用户',
+      operate: '操作',
+      database: '数据库名称',
+      tableName: '数据表名称',
+      expire: '过期时间'
+    },
+    form: {
+      databaseTypes: '数据库类型',
+      database: '数据库',
+      tableName: '表名称',
+      fieldName: '字段名称',
+      expire: '过期时间'
+    },
+    creatTtl: '创建生命周期',
+    searchtext: '数据库名称/数据表名称/索引名称',
+    Settinglife: '设置生命周期',
+    m: '分钟',
+    h: '小时',
+    d: '天',
+    s: '秒',
+    w: '周',
+    mo: '月',
+    y: '年',
+    failed: '当前数据库的表，没有发现时间字段，无法创建生命周期',
+    create_by_user: '平台用户',
+    create_by_dba: '数据库管理员',
+    status_creating: '正在创建',
+    status_created: '创建完成',
+    status_creation_failed: '创建失败',
+    status_deleted: '已经删除',
+    filedGetFailed: '当前数据库的表，没有发现时间字段，无法创建生命周期',
+    index_exists: '索引已经存在'
+  },
+  setting: {
+    email_template: '邮件模板',
+    connect_and_test: '连接测试',
+    saveSuccess: '保存成功，一分钟后生效',
+    nameserver: '服务器名称',
+    Log: '日志',
+    SMTP: 'SMTP',
+    Job: '任务',
+    license: 'License控制',
+    expiredate: '到期时间',
+    import: '导入',
+    apply: '申请 license',
+    license_expire_date: 'License过期时间',
+    Worker: '进程',
+    Download: '下载',
+    Log_level: '日志等级',
+    maxCpuUsage: '最大CPU使用率(取值范围 0.1 ~ 1)',
+    maxHeapMemoryUsage: '最大堆内存使用率(取值范围 0.1 ~ 1)',
+    switch_insert_mode_interval:
+      ' 增量模式下切换到批量插入模式间隔时间（单位：秒）',
+    Email_Communication_Protocol: ' 加密方式',
+    SMTP_Server_Port: 'SMTP 服务端口',
+    SMTP_Server_User: 'SMTP 服务账号',
+    SMTP_Server_password: 'SMTP 服务密码',
+    Email_Receivers: 'Email接受邮件地址',
+    Email_Send_Address: 'Email发送邮件地址',
+    SMTP_Server_Host: 'SMTP 服务Host',
+    Send_Email_Title_Prefix: '发送Email标题的前缀（可选）',
+    Email_Template_Running: '任务启动通知',
+    Email_Template_Paused: '任务停止通知',
+    Email_Template_Error: '任务出错通知',
+    Email_Template_Draft: '任务被编辑通知',
+    Email_Template_CDC: '任务增量滞后通知',
+    Email_Template_DDL: 'DDL错误通知',
+    Clean_Message_Time: '清除消息时间',
+    Keep_Alive_Message: '保持在线消息',
+    Sample_Rate: '采样率',
+    ApiServer: 'API分发设置',
+    Default_Limit: '默认查询返回行数',
+    Max_Limit: '最大查询返回行数',
+    Send_batch_size: '打包数据条数',
+    hint_Send_batch_size: '打包数据条数',
+    Mongodb_target_create_date: '是否在目标端数据集添加创建时间',
+    Mongodb_target_create_date_docs: '是否在目标端数据集添加创建时间',
+    System: '系统资源监控',
+    Collect_system_info_interval: '系统资源监控采集频率(秒)',
+    Interval_to_collect_system_info:
+      '系统资源信息（CPU，内存，硬盘使用率）监控采集频率',
+    Job_Sync_Mode: '任务同步模式',
+    Worker_Threshold: '进程阈值',
+    Worker_Heartbeat_Expire: '进程心跳过期时间(秒)',
+    License_Key: '证书秘钥',
+    Enter_jobs_log_level__error_warn_info_debug_trace:
+      '输入任务日志等级: error/warn/info/debug/trace',
+    Email_Receivers_Multiple_separated_by_semicolons:
+      '邮件接受者,可输入多个，通过逗号分隔',
+
+    Keep_recent_n_hours_message_before_the_last_processed_message_s_time_:
+      '保持最近n小时消息',
+    Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
+      '缓存一份当前整体数据，合并到目标数据集中',
+    Store_before_field_as_embedded_document_in_target_collection_before_update_operation:
+      '缓存一份修改前的整体数据，合并到目标数据集中',
+    Store_job_script_processor_log_to_cloud: '是否传输任务日志到云端',
+    Validator_to_validate_data__s_sample_rate: '校验数据采样率',
+    Process_message_mode__consistency_fast: '消息处理模式 consistency/fast',
+    Worker_can_execute_the_nums_of_Jobs: '进程可以执行多个任务',
+    Worker_heartbeat_expire_time: '进程心跳过期时间',
+    Users: ' 用户',
+    Show_Page: ' 显示下载页面',
+    User_Registery: ' 用户注册管理',
+    hint_Show_Page: '显示下载页面',
+    hint_User_Registery:
+      '用户注册类型设置。值设为 "disabled":禁止注册; 值设为 "self-signup" 启用用户自助注册; 值设为 "manual-approval" 允用户注册,但需要管理员审批。',
+    DR_Rehearsal: ' 灾备演习',
+    Mongod_path: ' Mongod 路径',
+    SSH_User: ' SSH 用户名',
+    SSH_Port: ' SSH 端口',
+    hint_Mongod_path: ' Mongod 路径',
+    hint_SSH_User: ' SSH 用户名, 用来连接Mongod的主机',
+    hint_SSH_Port: ' SSH 端口,用来连接Mongod的主机',
+    Enable_DR_Rehearsal: ' 允许灾备演习',
+    hint_Enable_DR_Rehearsal: ' 灾备演习开关,true表示开,false 表示关',
+    Download_Agent_Page: 'Agent 下载页面',
+    Background_Analytics: '后台分析',
+    Data_quality_analysis_frequency: '数据质量分析间隔(秒)',
+    Dashboard_data_analysis_frequency: '面板数据分析间隔(秒)',
+    dashboard_Analysis_Interval: '面板数据分析间隔(秒)',
+    quality_Analysis_Interval: '数据质量分析间隔(秒)',
+    Log_filter_interval: '日志过滤间隔(秒)',
+    Filter_the_interval_between_duplicate_logs__seconds__:
+      '相同日志在指定时间内只出现一次（1分钟后生效）',
+    _DK36: '文件下载',
+    File_Down_Base_Url: '地址',
+    Set_the_average_number_of_events_per_second_to_allow:
+      '日志设置每秒允许的事件平均数量',
+    Log_Filter_Rate: '日志输出频率(行/秒)',
+    Connections: '连接设置',
+    Mongodb_Load_Schema_Sample_Size: 'Mongodb加载模型采样记录数(行)',
+    hint_Mongodb_Load_Schema_Sample_Size:
+      '当MongoDB连接加载模型时，会使用该配置进行采样加载',
+    Enable_API_Stats_Batch_Report: ' 启用 API 统计',
+    Header: ' UDP 头信息',
+    hint_Header: ' UDP 头信息',
+    Size_Of_Trigger_API_Stats_Report: ' API 请求缓存最大个数',
+    hint_Size_Of_Trigger_API_Stats_Report:
+      ' API 请求记录数到达指定个数时批量发送到管理端',
+    Time_Span_Of_Trigger_API_Stats_Report: ' API 请求汇报频率(秒)',
+    hint_Time_Span_Of_Trigger_API_Stats_Report:
+      ' API 请求缓存到指定时间发送到管理端',
+    save: ' 保存成功，一分钟后生效',
+    Logout_forward_to_this_url: ' 登出跳转地址',
+    Check_devices: ' 重要设备检测',
+    ops: ' 运维展示',
+    server_oversee_url: ' 运维运控URL',
+    system: ' 系统全局',
+    licenseNoticeDays: ' license 到期提醒',
+    flow_engine_version: ' 流程引擎版本',
+    tapdata_agent_version: ' tapdata agent版本',
+    doc_base_url: ' 帮助文档URL',
+    help: ' 帮助文档',
+    Ip_addresses: ' Ipv4地址(多个逗号分隔)',
+    hint_Ip_addresses: ' 需要检测的设备ipv4地址, 例如: 127.0.0.1, 192.168.0.1',
+    PingTimeout: ' 检测超时(毫秒)',
+    hint_PingTimeout: ' 当超过该设置，认为设备无法连通',
+    Job_field_replacement: ' 非法字符替换为',
+    A_replacement_for_the_invalid_field_name:
+      ' 一些数据库对于字段名称有特殊要求，tapdata将非法的字符在同步时自动做替换。MongoDB[含有".", "$"作为开头]',
+    true__store_log_to_cloud__false__only_store_to_local_log_file_:
+      'true：将日志存储到云，false：仅存储到本地日志文件。',
+    When_one_document_may_be_updated_frequently_within_very_short_period_a_few_updates_within_one_second__for_instance___the_change_stream_event_received_by_downstream_processor_may_return_the__fullDocument__that_is_inconsistent_with_the_actual_version_when_the_update_was_applied_to_that_document__To_avoid_this_inconsistency__enable_this_option_to_store_the_full_document_along_with_the_update_operation__This_will_at_the_expense_of_additional_storage_and_degraded_performance_:
+      '当一个文档可能在非常短的时间内频繁更新（例如，在一秒钟之内进行几次更新）时，下游处理器接收到的更改流事件可能会返回与实际版本不一致的“ fullDocument”（与实际版本不一致） 该文件。 为避免这种不一致，请启用此选项以将完整文档与更新操作一起存储。 这将以增加存储空间和降低性能为代价。',
+    the_before_field_contains_a_field_for_each_table_column_and_the_value_that_was_in_that_column_before_the_update_operation_:
+      'before字段包含每个表列的字段以及更新操作之前该列中的值。',
+    Job_heart_timeout: '同步任务心跳超时（毫秒）',
+    job_cdc_share_mode: '增量同步任务共享模式',
+    job_cdc_share_mode_doc:
+      '在增量同步阶段，会根据日志采集任务是否可用，自动采用共享模式。影响的数据库：Oracle',
+    job_cdc_share_only: '增量任务强制使用共享模式',
+    job_cdc_share_only_doc:
+      '当增量同步任务共享模式开启，并且无法找到一个可共享的日志，将会停止任务',
+    test_email_success: '测试邮件已发送，请登录接收邮箱查收',
+    test_email_countdown: '操作太频繁了，请稍后重试',
+    email_template_from: '发件人',
+    email_template_to: '收件人',
+    email_template_subject: '主题',
+    job_cdc_record: ' 自动保存增量事件',
+    job_cdc_record_doc: ' 自动保存增量事件',
+    job_cdc_record_ttl: ' 增量事件保存时长(天)',
+    job_cdc_record_ttl_doc: ' 增量事件保存时长(天)',
+    connection_schema_update_hour: '数据源schema更新时间',
+    connection_schema_update_interval: '数据源schema更新周期（天）',
+    creatDuplicateSource: ' 允许创建重复数据源',
+    requestFailed: '请求处理失败',
+    Mongodb_will_use_this_sample_size_when_load_schema:
+      '加载架构时，Mongodb将使用此样本大小',
+    Switch_to_batch_insert_mode_interval__s__in_cdc_:
+      '切换到cdc中的批量插入模式间隔。'
+  },
+  dataQuality: {
+    title: '数据质量',
+    desc: '数据质量页面展示出的是对违反数据规则的表数据汇总的页面，用户可以在此页面对违反规则的数据进行修正',
+    keywordTip: '请搜索表名/字段名',
+    sourceName: '表名/连接名',
+    totalDocs: '总记录数',
+    violatedDocs: '违反规则数',
+    violatePercentage: '违反比例',
+    createTime: '统计时间',
+    actions: '操作',
+    view: '查看',
+    btnFilter: '列过滤',
+    btnBatch: '批量修改',
+    save: '保存',
+    cancel: '取消',
+    viewDetail: '浏览详情',
+    del: '删除',
+    fieldFilter: '字段过滤',
+    allCheck: '全选',
+    fieldName: '字段名',
+    show: '显示',
+    hide: '不显示',
+    json: '业务数据',
+    verifyRuleTip: '选择违反的质量规则',
+    verifyContentTip: '请输入要修改的内容',
+    verifyContentLength: '长度不能超过100',
+    msgPostApi: '请先基于这张表发布一个api',
+    msgNoValidApi: '没有可用API服务器',
+    msgNotStartApi: '没有启用api服务？',
+    ifDel: '是否删除当前行？',
+    unlikeAjv: '输入的内容不符合数据规则',
+    allUpdateSuccessTip1: '操作成功，一共修改',
+    allUpdateSuccessTip2: '条数据',
+    updateFail: '更新失败',
+    dataTypeError: '数据类型转换失败，期望==>',
+    columnTip: '请至少选择一列',
+    countTitle: '重新统计',
+    connectTip: '请至少选择一个数据源',
+    countTip: '正在统计，请稍后',
+    errCheck: '显示出错列'
   }
 }
 

@@ -363,7 +363,7 @@ export default {
             msgNode.push(h('i', { class: 'color-primary' }, '_id'))
           }
         })
-        fields.forEach((field) => {
+        fields.forEach(field => {
           if (
             field.fromDB &&
             field.field_name === '_id' &&
@@ -448,10 +448,10 @@ export default {
               )
             : []
         this.sourceList =
-          (sourceList && sourceList.filter((item) => item.field_name !== '')) ||
+          (sourceList && sourceList.filter(item => item.field_name !== '')) ||
           []
         this.targetList =
-          (targetList && targetList.filter((item) => item.field_name !== '')) ||
+          (targetList && targetList.filter(item => item.field_name !== '')) ||
           []
 
         let joinKeys = this.model.joinTable.joinKeys
@@ -478,12 +478,12 @@ export default {
             // let comparedPKs = mergePKs || [];
 
             if (sourcePKs && sourcePKs.length > 0) {
-              joinKeys = sourcePKs.map((field) => {
+              joinKeys = sourcePKs.map(field => {
                 let source = field.field_name
                 let target = ''
                 if (mergeFields && mergeFields.length) {
                   let pk = mergeFields.find(
-                    (tField) => tField.field_name === field.field_name
+                    tField => tField.field_name === field.field_name
                   )
                   if (pk) {
                     target = pk.field_name
@@ -518,7 +518,7 @@ export default {
 
     getPKsFromSchema(schema) {
       return schema && schema.fields && schema.fields.length > 0
-        ? schema.fields.filter((item) => item.primary_key_position > 0)
+        ? schema.fields.filter(item => item.primary_key_position > 0)
         : []
     },
     getData() {
@@ -544,11 +544,11 @@ export default {
       this.targetCellType = this.targetCell.get('type')
       this.writeModels.splice(0, this.writeModels.length)
       if (this.supportEmbedArray()) {
-        this.WRITE_MODELS.forEach((model) => this.writeModels.push(model))
+        this.WRITE_MODELS.forEach(model => this.writeModels.push(model))
       } else {
         this.WRITE_MODELS.filter(
-          (model) => model.value !== 'merge_embed'
-        ).forEach((model) => this.writeModels.push(model))
+          model => model.value !== 'merge_embed'
+        ).forEach(model => this.writeModels.push(model))
       }
 
       this.unwatch = this.$watch(
@@ -585,7 +585,7 @@ export default {
         let targetSchemaFields =
           (mergedTargetSchema && mergedTargetSchema.fields) || []
         let targetJoinFields = targetSchemaFields.filter(
-          (field) => field.field_name === this.model.joinTable.joinPath
+          field => field.field_name === this.model.joinTable.joinPath
         )
         let isArray =
           targetJoinFields &&

@@ -1,4 +1,5 @@
 <template>
+  <!--TODO 代码合并遇到冲突过多，留意此文件出现的问题！！！-->
   <section class="connection-list-wrap">
     <TablePage
       ref="table"
@@ -414,28 +415,17 @@ export default {
       this.table.fetch(1)
     },
     async getDatabaseType() {
-      let filter = {
-        where: {
-          type: {
-            in: this.whiteList
-          }
-        }
-      }
+      let filter = {}
       let databaseTypes = await this.$api('DatabaseTypes').get({
         filter: JSON.stringify(filter)
       })
-      databaseTypes.data.forEach((dt) => this.databaseTypeOptions.push(dt))
+      databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt))
     },
     getData({ page, tags }) {
       let region = this.$route.query.region
       let { current, size } = page
-      let {
-        keyword,
-        databaseType,
-        databaseModel,
-        status,
-        sourceType
-      } = this.searchParams
+      let { keyword, databaseType, databaseModel, status, sourceType } =
+        this.searchParams
       let where = {}
       let fields = {
         name: true,
@@ -458,7 +448,16 @@ export default {
         schemaAutoUpdate: true,
         platformInfo: true,
         last_updated: true,
-        additionalString: true
+        additionalString: true,
+        fill: true,
+        sslCert: true,
+        ssl: true,
+        sslCAFile: true,
+        sslPass: true,
+        sslKeyFile: true,
+        sslKey: true,
+        sslValidate: false,
+        sslCA: true //MongoDB
       }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
@@ -499,7 +498,7 @@ export default {
         let list = res.data
         return {
           total: countRes.data.count,
-          data: list.map((item) => {
+          data: list.map(item => {
             let platformInfo = item.platformInfo
             if (platformInfo && platformInfo.regionName) {
               item.regionInfo =
@@ -570,13 +569,13 @@ export default {
           },
           data.name
         )
-        .then((res) => {
+        .then(res => {
           if (res && res.data) {
             this.table.fetch()
             this.$message.success(this.$t('connection.copyMsg'))
           }
         })
-        .catch((err) => {
+        .catch(err => {
           if (err && err.response) {
             if (err.response.msg === 'duplicate source') {
               this.$message.error(this.$t('connection.copyFailedMsg'))
@@ -600,13 +599,13 @@ export default {
       ])
       this.$confirm(msg, this.$t('connection.deteleDatabaseTittle'), {
         type: 'warning'
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
         this.$api('connections')
           .deleteConnection(data.id, data.name)
-          .then((res) => {
+          .then(res => {
             let jobs = res.jobs || []
             let modules = res.modules || []
             if (jobs.length > 0 || modules.length > 0) {
@@ -641,7 +640,7 @@ export default {
         cancelButtonText: config.cancelButtonText,
         type: 'warning',
         closeOnClickModal: false
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (resFlag) {
           callback()
         } else {
@@ -662,7 +661,7 @@ export default {
     },
     formatterListTags(row) {
       let listTags = row.listtags || []
-      return listTags.map((tag) => tag.value).join(',')
+      return listTags.map(tag => tag.value).join(',')
     },
     formatterDatabaseType(row) {
       let url = null
@@ -675,7 +674,7 @@ export default {
     },
     handleSelectTag() {
       let tagList = {}
-      this.multipleSelection.forEach((row) => {
+      this.multipleSelection.forEach(row => {
         if (row.listtags && row.listtags.length > 0) {
           tagList[row.listtags[0].id] = {
             value: row.listtags[0].value
@@ -686,7 +685,7 @@ export default {
     },
     handleOperationClassify(listtags) {
       let attributes = {
-        id: this.multipleSelection.map((r) => r.id),
+        id: this.multipleSelection.map(r => r.id),
         listtags
       }
       this.$api('connections')
@@ -710,13 +709,26 @@ export default {
     },
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
-      this.dialogDatabaseTypeVisible = true
-      // let result = await this.$api('Workers').getAvailableAgent()
-      // if (!result.data.result || result.data.result.length === 0) {
-      //   this.$message.error(this.$t('dataForm.form.agentMsg'))
-      // } else {
-      //   this.dialogDatabaseTypeVisible = true
-      // }
+      //drs 检查实例是否可用 dfs 检查agent是否可用
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+        let result = await this.$api('Workers').getAvailableAgent()
+        if (!result.data.result || result.data.result.length === 0) {
+          this.$message.error(this.$t('dataForm.form.agentMsg'))
+        } else {
+          this.dialogDatabaseTypeVisible = true
+        }
+      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+        let result = await this.$api('tcm').getAgentCount()
+        if (
+          !result.data ||
+          !result.data.agentTotalCount ||
+          result.data.agentTotalCount <= 0
+        ) {
+          this.$message.error('您尚未订购同步实例，请先订购实例')
+        } else {
+          this.dialogDatabaseTypeVisible = true
+        }
+      }
     },
     testConnection(item) {
       let loading = this.$loading()
@@ -755,6 +767,7 @@ export default {
           false
         )
       }
+      this.table.fetch()
     }
   }
 }

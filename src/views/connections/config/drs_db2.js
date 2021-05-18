@@ -6,7 +6,7 @@ export default function (vm) {
     },
     defaultModel: {
       connection_type: 'source_and_target',
-      sourceType: 'ecs'
+      sourceType: 'selfDB'
     },
     items: [
       {
@@ -45,11 +45,11 @@ export default function (vm) {
         field: 'sourceType',
         label: '连接来源',
         options: [
-          {
-            label: 'ECS自建库',
-            tip: '创建移动云内ECS自建库内的数据库为来源的连接，开通网络策略',
-            value: 'ecs'
-          },
+          // {
+          //   label: 'ECS自建库',
+          //   tip: '创建移动云内ECS自建库内的数据库为来源的连接，开通网络策略',
+          //   value: 'ecs'
+          // },
           {
             label: '云外自建库',
             tip: '创建来自移动云外部的用户自建数据库连接',

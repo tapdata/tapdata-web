@@ -121,7 +121,22 @@ export default {
   },
   data() {
     return {
-      dialogDatabaseTypeVisible: false
+      dialogDatabaseTypeVisible: false,
+      whiteList: [
+        'mysql',
+        'oracle',
+        'mongodb',
+        'sqlserver',
+        'postgres',
+        'elasticsearch',
+        'redis',
+        'file',
+        'db2',
+        'kafka',
+        'mariadb',
+        'mysql pxc',
+        'jira'
+      ] //目前白名单,
     }
   },
 
@@ -187,9 +202,12 @@ export default {
     },
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
-      let href = '/#/connections/create?databaseType=' + type
-      window.open(href)
-      // this.$router.push('connections/create?databaseType=' + type);
+      if (this.whiteList.includes(type)) {
+        this.$router.push('connections/create?databaseType=' + type)
+      } else {
+        top.location.href = '/#/connection'
+        localStorage.setItem('connectionDatabaseType', type)
+      }
     }
   }
 }

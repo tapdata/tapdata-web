@@ -6,14 +6,14 @@
 export const getFieldsIds = function (fields) {
   let fieldIds = []
   if (fields) {
-    fieldIds = fields.map((field) => field.id)
+    fieldIds = fields.map(field => field.id)
   }
   return fieldIds
 }
 export const getOperationIds = function (operation) {
   let fieldIds = []
   if (operation) {
-    fieldIds = operation.map((field) => field.id)
+    fieldIds = operation.map(field => field.id)
   }
   return fieldIds
 }
@@ -21,7 +21,7 @@ export const getOperationIds = function (operation) {
 export const getFieldsNames = function (fields) {
   let fieldNames = []
   if (fields) {
-    fieldNames = fields.map((field) => field.field_name)
+    fieldNames = fields.map(field => field.field_name)
   }
   return fieldNames
 }
@@ -29,7 +29,7 @@ export const getFieldsNames = function (fields) {
 export const fieldsNamesMap = function (fields) {
   let fieldsNamesMap = {}
   if (fields) {
-    fields.map((s) => (fieldsNamesMap[s.field_name] = s.id))
+    fields.map(s => (fieldsNamesMap[s.field_name] = s.id))
   }
   return fieldsNamesMap
 }
@@ -37,7 +37,7 @@ export const fieldsNamesMap = function (fields) {
 export const fieldIsDeleted = function (fields) {
   let fieldIsDeleted = []
   if (fields) {
-    fieldIsDeleted = fields.filter((field) => field.is_deleted).map((n) => n.id)
+    fieldIsDeleted = fields.filter(field => field.is_deleted).map(n => n.id)
   }
   return fieldIsDeleted
 }
@@ -172,7 +172,7 @@ export const isScript = function (operations, scripts) {
   let fieldIds = []
   let errorList = []
   if (operations) {
-    fieldIds = operations.map((field) => field.id)
+    fieldIds = operations.map(field => field.id)
   }
   if (scripts) {
     for (let i = 0; i < scripts.length; i++) {
@@ -199,7 +199,7 @@ export const isScript = function (operations, scripts) {
 export const delScript = function (operations, scripts, id) {
   let fieldIds = []
   if (operations) {
-    fieldIds = operations.map((field) => field.id)
+    fieldIds = operations.map(field => field.id)
   }
   if (scripts) {
     for (let i = 0; i < scripts.length; i++) {
@@ -217,7 +217,7 @@ export const delScript = function (operations, scripts, id) {
 
 //兼容数据 操作记录改变type => original_type
 export const originalType = function (operations, id) {
-  let data = operations.filter((v) => v.id === id && v.op === 'CONVERT')
+  let data = operations.filter(v => v.id === id && v.op === 'CONVERT')
   let original_type = ''
   if (data.length > 0) {
     original_type = data[0].originalDataType

@@ -37,7 +37,7 @@ export default class VueComponent extends Component {
     let vueContainerDom = document.createElement('div')
     this.getContentEl().append(vueContainerDom)
     vm.$mount(vueContainerDom)
-    vm.$on('dataChanged', (data) => {
+    vm.$on('dataChanged', data => {
       self.emit('dataChanged', data)
     })
 

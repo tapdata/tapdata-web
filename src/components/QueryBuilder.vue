@@ -351,14 +351,14 @@ export default {
         this.value.selectedFields.length > 0 &&
         custSql.fieldFilterType == 'retainedField'
       )
-        this.value.selectedFields.forEach((it) => this.custFields.push(it))
+        this.value.selectedFields.forEach(it => this.custFields.push(it))
       else if (
         this.value.selectedFields.length > 0 &&
         custSql.fieldFilterType == 'deleteField'
       ) {
         this.primaryKeyOptions
-          .filter((it) => !this.value.selectedFields.includes(it))
-          .forEach((it) => this.custFields.push(it))
+          .filter(it => !this.value.selectedFields.includes(it))
+          .forEach(it => this.custFields.push(it))
       }
 
       if (
@@ -414,7 +414,7 @@ export default {
     toSqlWhere(conditions) {
       if (!this.mergedSchema) return
       let res = ''
-      conditions.forEach((cond) => {
+      conditions.forEach(cond => {
         if (cond.field || cond.type == 'group') {
           if (cond.type == 'group')
             res +=
@@ -425,9 +425,8 @@ export default {
               ')'
           else {
             let quota = ['String', 'Date'].includes(
-                this.mergedSchema.fields.find(
-                  (it) => it.field_name == cond.field
-                ).javaType
+                this.mergedSchema.fields.find(it => it.field_name == cond.field)
+                  .javaType
               )
                 ? "'"
                 : '',
@@ -459,14 +458,14 @@ export default {
       if (condition && condition.type === 'group') {
         if (condition.operator === 'and') {
           let result = { $and: [] }
-          condition.conditions.forEach((v) => {
+          condition.conditions.forEach(v => {
             let _flat = this.flat(v)
             if (_flat) result.$and.push(_flat)
           })
           return result
         } else if (condition.operator === 'or') {
           let result = { $or: [] }
-          condition.conditions.forEach((v) => {
+          condition.conditions.forEach(v => {
             let _flat = this.flat(v)
             if (_flat) result.$or.push(_flat)
           })
@@ -477,7 +476,7 @@ export default {
         if (
           !['String', 'Date'].includes(
             this.mergedSchema.fields.find(
-              (it) => it.field_name == condition.field
+              it => it.field_name == condition.field
             ).javaType
           )
         )

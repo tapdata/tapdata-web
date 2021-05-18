@@ -32,7 +32,7 @@ export default {
     // 表格表头数据处理
     // this.$nextTick(() => {
     if (this.tableObj.tableData.length) {
-      this.tableObj.tableData.forEach((item) => {
+      this.tableObj.tableData.forEach(item => {
         let tableArr = []
         for (let itemObj in item) {
           var obj = {

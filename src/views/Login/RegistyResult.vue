@@ -97,7 +97,7 @@ export default {
       this.loading = true
       usersModel
         .newResetPassword(this.queryData.access_token)
-        .then((res) => {
+        .then(res => {
           if (res) {
             this.result = 'success'
           }
@@ -114,7 +114,7 @@ export default {
       this.loading = true
       usersModel
         .confirm(uid, token)
-        .then((res) => {
+        .then(res => {
           if (res) {
             this.result = 'success'
           }

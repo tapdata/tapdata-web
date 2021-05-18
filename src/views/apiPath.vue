@@ -173,11 +173,11 @@ export default {
   },
   async mounted() {
     this.handleList()
-    this.$refs.SelectClassify.$on('dialogVisible', (operations) => {
+    this.$refs.SelectClassify.$on('dialogVisible', operations => {
       this.handleChecked(this.checkedValue)
       this.dialogVisible = operations
     })
-    this.$refs.SelectClassify.$on('clearCheckData', (operations) => {
+    this.$refs.SelectClassify.$on('clearCheckData', operations => {
       this.checkData = operations
     })
   },
@@ -206,11 +206,11 @@ export default {
         }
         MetadataDefinitions.get({
           filter: JSON.stringify(filter)
-        }).then((res) => {
+        }).then(res => {
           if (res.data) {
             self.data.splice(0, self.data.length)
             let children = []
-            res.data.forEach((record) => {
+            res.data.forEach(record => {
               children.push({
                 id: record.id,
                 parent_id: record.parent_id,
@@ -230,11 +230,11 @@ export default {
         }
         MetadataDefinitions.get({
           filter: JSON.stringify(filter)
-        }).then((res) => {
+        }).then(res => {
           if (res.data) {
             self.data.splice(0, self.data.length)
             let children = []
-            res.data.forEach((record) => {
+            res.data.forEach(record => {
               children.push({
                 id: record.id,
                 parent_id: record.parent_id,
@@ -279,7 +279,7 @@ export default {
         params['filter[where][tablename][like]'] = this.search
         params['filter[where][tablename][options]'] = 'i'
       }
-      modules.get(params).then((res) => {
+      modules.get(params).then(res => {
         let self = this
         if (res.data) {
           self.listdata = res.data
@@ -296,7 +296,7 @@ export default {
     handleCheckAllChange(val) {
       if (val) {
         if (this.listdata) {
-          this.listdata.forEach((item) => {
+          this.listdata.forEach(item => {
             this.checkData.push(item.id)
           })
         }
@@ -312,7 +312,7 @@ export default {
       let params = {}
       this.checkedValue = val
       params[`filter[where][classifications.id][in][0]`] = val.id
-      MetadataInstances.get(params).then((res) => {
+      MetadataInstances.get(params).then(res => {
         let self = this
         if (res.data) {
           self.listdata = res.data

@@ -127,7 +127,7 @@ export default {
       return this.value.conditions
     },
     isDatetime() {
-      let field = this.fields.filter((v) => v.value === this.queryField)[0]
+      let field = this.fields.filter(v => v.value === this.queryField)[0]
       if (field) {
         let type = field.type
 

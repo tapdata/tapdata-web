@@ -300,7 +300,7 @@ export default {
           this.model.table_prefix = targetFormData.table_prefix
           this.model.table_suffix = targetFormData.table_suffix
           if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
-            targetFormData.syncObjects.forEach((item) => {
+            targetFormData.syncObjects.forEach(item => {
               selectTargetType.push(item.type)
               if (item.type === 'table') {
                 this.model.selectSourceArr = item.objectNames
@@ -309,10 +309,9 @@ export default {
           }
 
           if (selectTargetType.length) {
-            Object.keys(this.model.selectSourceDatabase).forEach((key) => {
-              this.model.selectSourceDatabase[key] = selectTargetType.includes(
-                key
-              )
+            Object.keys(this.model.selectSourceDatabase).forEach(key => {
+              this.model.selectSourceDatabase[key] =
+                selectTargetType.includes(key)
             })
           }
         }
@@ -349,7 +348,7 @@ export default {
             targetFormData.table_suffix = this.model.table_suffix
             targetFormData.syncObjects = []
             if (this.model.selectSourceDatabase) {
-              Object.keys(this.model.selectSourceDatabase).forEach((key) => {
+              Object.keys(this.model.selectSourceDatabase).forEach(key => {
                 if (this.model.selectSourceDatabase[key]) {
                   targetFormData.syncObjects.push({
                     type: key,
@@ -396,7 +395,7 @@ export default {
 
     // 穿梭框值改变的时候
     handleChangeTransfer() {
-      this.sourceData.forEach((el) => {
+      this.sourceData.forEach(el => {
         if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
           el.label = el.key
         }
@@ -432,8 +431,8 @@ export default {
         this.model.selectSourceArr = Array.from(
           new Set(this.model.selectSourceArr)
         )
-        this.sourceData.forEach((sourceName) => {
-          this.model.selectSourceArr.map((k) => {
+        this.sourceData.forEach(sourceName => {
+          this.model.selectSourceArr.map(k => {
             if (k == sourceName.key) {
               selectSourceArr.push(k)
             }
@@ -490,7 +489,7 @@ export default {
       this.transferLoading = true
       connections
         .customQuery([connectionId], { schema: true })
-        .then((result) => {
+        .then(result => {
           if (result.data) {
             self.databaseInfo = result.data
             let tables = (result.data.schema && result.data.schema.tables) || []
@@ -503,7 +502,7 @@ export default {
             )
 
             if (tables && tables.length) {
-              this.sourceData = tables.map((table) => ({
+              this.sourceData = tables.map(table => ({
                 label: table.table_name,
                 key: table.table_name,
                 // value: table.table_name,
@@ -563,26 +562,29 @@ export default {
     height: calc(100% - 30px);
     overflow: hidden;
   }
-  .database-tableBox {
-    padding-top: 10px;
-    height: 640px;
-    box-sizing: border-box;
-    .box-text {
-      display: flex;
-      padding-bottom: 10px;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #333;
-      h3 {
-        color: #606266;
-      }
-      .box-btn {
-        color: #48b6e2;
-        cursor: pointer;
-        .e-button {
-          padding: 4px 10px;
-          color: #666;
-          background-color: #f5f5f5;
+  .e-form {
+    height: 100%;
+    .database-tableBox {
+      padding-top: 10px;
+      height: calc(100% - 140px);
+      box-sizing: border-box;
+      .box-text {
+        display: flex;
+        padding-bottom: 10px;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #333;
+        h3 {
+          color: #606266;
+        }
+        .box-btn {
+          color: #48b6e2;
+          cursor: pointer;
+          .e-button {
+            padding: 4px 10px;
+            color: #666;
+            background-color: #f5f5f5;
+          }
         }
       }
     }
@@ -598,7 +600,7 @@ export default {
       padding-right: 6px;
     }
     .el-transfer {
-      height: 100%;
+      height: 640px;
       .el-transfer-panel {
         width: 298px;
         .el-transfer-panel__body {
@@ -664,6 +666,7 @@ export default {
     }
     .transfer {
       height: calc(100% - 32px) !important;
+      overflow: auto;
     }
     .el-transfer,
     .el-transfer-panel {

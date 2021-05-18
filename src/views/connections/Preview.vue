@@ -299,7 +299,7 @@ export default {
         let func = formConfig[type]
         if (func) {
           let config = func(this)
-          let items = config.items.map((it) => {
+          let items = config.items.map(it => {
             let node = {
               label: it.label,
               value: data[it.field] || '-',
@@ -330,16 +330,28 @@ export default {
                 }
               }
             }
+            if (node.field === 'database_datetype_without_timezone') {
+              if (node.value === '-') {
+                node.value = 'Database Timezone'
+              } else {
+                let timezoneNumber = Number(node.value?.split(':')?.[0])
+                if (timezoneNumber < 0) {
+                  node.value = 'UTC ' + timezoneNumber
+                } else {
+                  node.value = 'UTC +' + timezoneNumber
+                }
+              }
+            }
             return node
           })
           items = items || []
-          items = items.filter((item) => item.label) //清掉undefined
+          items = items.filter(item => item.label) //清掉undefined
 
           // kafka显示
           if (data.database_type === 'kafka') {
-            items.forEach((el) => {
+            items.forEach(el => {
               if (el.field === 'kafkaAcks') {
-                this.kafkaACK.forEach((elChild) => {
+                this.kafkaACK.forEach(elChild => {
                   if (elChild.value === el.value) {
                     el.value = elChild.label
                   }
@@ -350,7 +362,7 @@ export default {
 
           // 文件预览显示
           if (data.database_type === 'file') {
-            items.forEach((el) => {
+            items.forEach(el => {
               if (data.connection_type === 'target') {
                 if (data.file_source_protocol === 'localFile') {
                   if (
@@ -539,7 +551,7 @@ export default {
         cancelButtonText: config.cancelButtonText,
         type: 'warning',
         closeOnClickModal: false
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (resFlag) {
           callback()
         } else {
@@ -559,7 +571,7 @@ export default {
       }
       this.$api('connections')
         .updateById(this.data.id, parms)
-        .then((result) => {
+        .then(result => {
           if (result.data) {
             let data = result.data
             this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态

@@ -388,7 +388,10 @@
         </div>
       </div>
 
-      <div class="echartlist">
+      <div
+        v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
+        class="echartlist"
+      >
         <EchartHeader
           :data="screeningObj"
           @twoRadio="getTwoRadio"
@@ -411,11 +414,11 @@
         <div class="floatLayer">
           <span
             style="background-color: rgba(72, 182, 226, 0.3); color: #48b6e2"
-            >{{ $t('dataFlow.average') }}:{{ this.inputAverage }}</span
+            >{{ $t('dataFlow.input') }}:{{ this.inputAverage }}</span
           >
           <span
             style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
-            >{{ $t('dataFlow.average') }}:{{ this.outputAverage }}</span
+            >{{ $t('dataFlow.output') }}:{{ this.outputAverage }}</span
           >
         </div>
         <echarts-compinent
@@ -468,10 +471,12 @@ import factory from '../../api/factory'
 import { EditorEventType } from '../../editor/lib/events'
 import i18n from '@/i18n'
 import ws from '../../api/ws'
+// import _ from "lodash";
 const dataFlows = factory('DataFlows')
 const connectionApi = factory('connections')
+const DataFlowInsights = factory('DataFlowInsights')
 let currentStageData = null
-
+let lastMsg = ''
 export default {
   name: 'JobMonitor',
   components: { EchartHeader, echartsCompinent, shaftlessEchart },
@@ -753,13 +758,21 @@ export default {
       intervalReplicate: 20000,
       cdcLastTimes: [],
       tableName: '',
-      showTooltip: false
+      showTooltip: false,
+      resultObj: {
+        collection: 'DataFlowInsight',
+        createTime: 0,
+        dataFlowId: '',
+        granularity: {},
+        statsData: {},
+        type: 'dataFlowInsight'
+      } // 走api请求获取的数据
     }
   },
 
   mounted() {
     this.sliderBar = this.editor.rightSidebar
-    this.$on(EditorEventType.SELECTED_STAGE, (selectStage) => {
+    this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
       if (selectStage) {
         this.stageId = selectStage.id
         this.getNodeName()
@@ -842,6 +855,13 @@ export default {
       self.storeData = data.statsData
       self.dataProcessing(data)
     })
+    //及时更新输入输出的数据
+    ws.on('watch', function (data) {
+      let dat = data.data.fullDocument
+      self.flow.stats = dat.stats
+    })
+    // api请求
+    this.getFlowInsightData()
     this.getApiData()
   },
 
@@ -870,9 +890,9 @@ export default {
 
         let cdcList = []
         if (this.flow.cdcLastTimes && this.flow.cdcLastTimes.length) {
-          this.flow.cdcLastTimes.forEach((item) => {
+          this.flow.cdcLastTimes.forEach(item => {
             let flag = cdcList.find(
-              (ele) => ele.sourceConnectionId === item.sourceConnectionId
+              ele => ele.sourceConnectionId === item.sourceConnectionId
             )
             if (!flag) {
               cdcList.push({
@@ -900,7 +920,7 @@ export default {
         } else {
           this.selectFlow = 'stage_'
 
-          cell.forEach((item) => {
+          cell.forEach(item => {
             if (item.get('id') === val) {
               currentStageData = item.getFormData()
             }
@@ -925,6 +945,7 @@ export default {
             this.getStageDataApi(currentStageData.connectionId, this.tableName)
           }
         }
+        this.getFlowInsightData()
         this.getApiData()
       },
       deep: true
@@ -932,6 +953,46 @@ export default {
   },
 
   methods: {
+    getFlowInsightData() {
+      this.getTwoRadio(this.dataOverviewAll, 'screening', true)
+      this.getSpeed(this.isThroughputAll, this.throughputTime, true)
+      this.getTime(this.transfTime, 'transf', true)
+      this.getTime(this.replicateTime, 'replicate', true)
+    },
+    // 通过api获取数据
+    getDataByApi(params, type) {
+      params['dataFlowId'] = this.flow.id
+      if (this.stageId !== 'all') {
+        params['stageId'] = this.stageId
+      }
+      if (type === this.inputOutputObj.type) {
+        this.inputOutputObj.loading = true
+      } else if (type === this.transfObj.type) {
+        this.transfObj.loading = true
+      } else if (type === this.replicateObj.type) {
+        this.replicateObj.loading = true
+      }
+      params.granularity &&
+        DataFlowInsights.runtimeMonitor(params)
+          .then(res => {
+            let data = res.data?.[0]
+            this.resultObj.createTime = data.createTime
+            this.resultObj.dataFlowId = data.dataFlowId
+            this.resultObj.statsData[params.statsType] = data?.statsData || []
+            this.storeData = this.resultObj.statsData
+            this.dataProcessing(this.resultObj, type)
+          })
+          .finally(() => {
+            if (type === this.inputOutputObj.type) {
+              this.inputOutputObj.loading = false
+            } else if (type === this.transfObj.type) {
+              this.transfObj.loading = false
+            } else if (type === this.replicateObj.type) {
+              this.replicateObj.loading = false
+            }
+          })
+    },
+
     // 复制命令行
     onCopy() {
       this.showTooltip = true
@@ -954,7 +1015,7 @@ export default {
     // 获取节点名称
     getNodeName() {
       if (this.flow.stages && this.flow.stages.length) {
-        this.flow.stages.forEach((item) => {
+        this.flow.stages.forEach(item => {
           if (item.id === this.stageId) {
             this.tableName = item.name
           }
@@ -983,16 +1044,25 @@ export default {
       if (this.stageId != 'all') {
         msg['stageId'] = this.stageId
       }
-      ws.ready(() => {
-        ws.send(msg)
-      })
+      // 设置默认值
+      this.resultObj.granularity = msg.granularity
+      for (let key in this.resultObj.granularity) {
+        this.resultObj.statsData[key] = []
+      }
+      let msgStr = JSON.stringify(msg)
+      if (lastMsg !== msgStr) {
+        ws.ready(() => {
+          lastMsg = msgStr
+          ws.send(msg)
+        })
+      }
     },
 
     // 获取所有节点
     getAllCellsNode(queryString) {
       let dataCells = this.editor.getAllCells()
       let dataCellName = []
-      dataCells.forEach((cell) => {
+      dataCells.forEach(cell => {
         let formData =
           typeof cell.getFormData === 'function' ? cell.getFormData() : null
         let tableName = { value: formData.tableName, cell: cell }
@@ -1007,7 +1077,7 @@ export default {
     },
 
     createFilter(queryString) {
-      return (restaurant) => {
+      return restaurant => {
         return (
           restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
           0
@@ -1034,7 +1104,7 @@ export default {
     // },
 
     // 输入输出获取数据
-    getSpeed(data, time) {
+    getSpeed(data, time, isFirst) {
       this.isThroughputAll = data
       this.throughputTime = time
       switch (time) {
@@ -1051,18 +1121,35 @@ export default {
           this.intervalThroughputpop = 86400000
           break
       }
-      this.getApiData()
+      // api请求
+      let params = {
+        statsType: 'throughput',
+        granularity: this.selectFlow + time
+      }
+      this.getDataByApi(params, 'throughput', data)
+      if (!isFirst) {
+        this.getApiData()
+      }
     },
 
     // 获取返回的单位
-    getTwoRadio(data, type) {
+    getTwoRadio(data, type, isFirst) {
       this.dataOverviewType = type
       this.dataOverviewAll = data
-      this.getApiData()
+      // api请求
+      let params = {
+        statsType: 'data_overview',
+        granularity: data
+      }
+      this.getDataByApi(params, type, data)
+      if (!isFirst) {
+        this.getApiData()
+      }
     },
 
     // 获取返回的时间
-    getTime(data, type) {
+    getTime(data, type, isFirst) {
+      let params = {}
       if (type === 'transf') {
         this.transfType = type
         this.transfTime = data
@@ -1079,6 +1166,10 @@ export default {
           case 'day':
             this.intervalTransf = 86400000
             break
+        }
+        params = {
+          statsType: 'trans_time',
+          granularity: this.selectFlow + data
         }
       } else if (type === 'replicate') {
         switch (data) {
@@ -1097,12 +1188,20 @@ export default {
         }
         this.replicateType = type
         this.replicateTime = data
+        params = {
+          statsType: 'repl_lag',
+          granularity: this.selectFlow + data
+        }
       }
-      this.getApiData()
+      // api请求
+      this.getDataByApi(params, type, data)
+      if (!isFirst) {
+        this.getApiData()
+      }
     },
 
     // 数据处理
-    dataProcessing(data) {
+    dataProcessing(data, type) {
       let timeList = [],
         ttimeList = [],
         rttimeList = [],
@@ -1113,7 +1212,7 @@ export default {
         dataList = [],
         tdataList = []
       function ptime(type) {
-        data.statsData[type].forEach((time) => {
+        data.statsData[type].forEach(time => {
           switch (data.granularity[type].split('_')[1]) {
             case 'second':
               time.t = time.t.substring(11, 19)
@@ -1132,48 +1231,56 @@ export default {
       ptime('repl_lag')
       ptime('trans_time')
       ptime('throughput')
-      let time = data.statsData.data_overview.t
-      let overView = data.statsData.data_overview
-      let statisticsData = [
-        overView.outputCount,
-        overView.inputCount,
-        overView.insertCount,
-        overView.updateCount,
-        overView.deleteCount
-      ]
-      this.getScreening(time, statisticsData)
-
-      data.statsData.throughput.forEach((item) => {
-        timeList.push(item.t) // 时间
-        inputSizeList.push(item.inputSize)
-        outputSizeList.push(item.outputSize)
-        inputCountList.push(item.inputCount)
-        outputCountList.push(item.outputCount)
-      })
-
-      if (this.isThroughputAll === 'qps') {
-        this.dpx = 'QPS'
-        this.inputAverage = inputCountList[inputCountList.length - 1]
-        this.outputAverage = outputCountList[outputCountList.length - 1]
-        this.getThroughputEchart(timeList, inputCountList, outputCountList)
-      } else {
-        this.dpx = 'KB'
-        this.inputAverage = inputSizeList[inputSizeList.length - 1]
-        this.outputAverage = outputSizeList[outputSizeList.length - 1]
-        this.getThroughputEchart(timeList, inputSizeList, outputSizeList)
+      if (!type || type === 'screening') {
+        let time = data.statsData.data_overview.t
+        let overView = data.statsData.data_overview
+        let statisticsData = [
+          overView.outputCount,
+          overView.inputCount,
+          overView.insertCount,
+          overView.updateCount,
+          overView.deleteCount
+        ]
+        this.getScreening(time, statisticsData)
       }
-      data.statsData.trans_time.forEach((item) => {
-        ttimeList.push(item.t) // 时间
-        dataList.push(item.d)
-      })
-      this.currentTime = dataList[dataList.length - 1]
-      this.getTransTime(ttimeList, dataList)
-      data.statsData.repl_lag.forEach((item) => {
-        rttimeList.push(item.t) // 时间
-        tdataList.push(item.d)
-      })
-      this.ransfTime = dataList[tdataList.length - 1]
-      this.getReplicateTime(rttimeList, tdataList)
+      if (!type || type === 'throughput') {
+        data.statsData.throughput.forEach(item => {
+          timeList.push(item.t) // 时间
+          inputSizeList.push(item.inputSize)
+          outputSizeList.push(item.outputSize)
+          inputCountList.push(item.inputCount)
+          outputCountList.push(item.outputCount)
+        })
+      }
+      if (!type || type === 'throughput') {
+        if (this.isThroughputAll === 'qps') {
+          this.dpx = 'QPS'
+          this.inputAverage = inputCountList[inputCountList.length - 1]
+          this.outputAverage = outputCountList[outputCountList.length - 1]
+          this.getThroughputEchart(timeList, inputCountList, outputCountList)
+        } else {
+          this.dpx = 'KB'
+          this.inputAverage = inputSizeList[inputSizeList.length - 1]
+          this.outputAverage = outputSizeList[outputSizeList.length - 1]
+          this.getThroughputEchart(timeList, inputSizeList, outputSizeList)
+        }
+      }
+      if (!type || type === 'transf') {
+        data.statsData.trans_time.forEach(item => {
+          ttimeList.push(item.t) // 时间
+          dataList.push(item.d)
+        })
+        this.currentTime = dataList[dataList.length - 1]
+        this.getTransTime(ttimeList, dataList)
+      }
+      if (!type || type === 'replicate') {
+        data.statsData.repl_lag.forEach(item => {
+          rttimeList.push(item.t) // 时间
+          tdataList.push(item.d)
+        })
+        this.ransfTime = dataList[tdataList.length - 1] || 0
+        this.getReplicateTime(rttimeList, tdataList)
+      }
     },
 
     getScreening(time, seriesData) {
@@ -1295,7 +1402,7 @@ export default {
       // debugger;
       connectionApi
         .customQuery([id], { tableName: tableName })
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             this.stage = res.data
             this.stage.nodeName = currentStageData.name
@@ -1313,7 +1420,7 @@ export default {
         .get([this.flow.id], {
           fields: ['validateBatchId', 'validateStatus', 'validateFailedMSG']
         })
-        .then((res) => {
+        .then(res => {
           this.loading = false
           if (
             Object.keys(res.data).length === 0 ||

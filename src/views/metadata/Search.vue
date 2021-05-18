@@ -190,7 +190,7 @@ export default {
       this.loading = true
       this.$api('MetadataInstances')
         .search(params)
-        .then((result) => {
+        .then(result => {
           let data = result.data.records || []
           this.noMore = false
           if (data.data.length === 0 || data.data.length < data.pageSize) {
@@ -203,7 +203,7 @@ export default {
           this.searchData = this.searchData.concat(resultData)
           this.lastId = this.searchData[this.searchData.length - 1].id
         })
-        .catch((err) => {
+        .catch(err => {
           if (err && err.response) {
             this.$message.error(err.response.msg)
           }
@@ -224,7 +224,7 @@ export default {
     handleKeywords(data) {
       let targetData = data || []
       if (targetData.length === 0) return
-      targetData.forEach((item) => {
+      targetData.forEach(item => {
         if (item.table) {
           item.table.name = this.markKeyword(this.keyword, item.table.name)
           item.table.original_name = this.markKeyword(
@@ -238,7 +238,7 @@ export default {
             )
         }
         if (item.columns && item.columns.length > 0) {
-          item.columns.forEach((field) => {
+          item.columns.forEach(field => {
             field.field_name = this.markKeyword(this.keyword, field.field_name)
             field.original_field_name = this.markKeyword(
               this.keyword,

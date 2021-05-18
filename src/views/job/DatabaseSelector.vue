@@ -103,6 +103,7 @@ export default {
               'sybase ase'
             ]
           },
+          'source.user_id': this.$cookie.get('user_id'),
           is_deleted: false
         },
         order: 'original_name ASC',
@@ -124,11 +125,11 @@ export default {
       }
       self.loading = true
       MetadataInstances.get(params)
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             // self.data.splice(0, self.data.length);
             self.data = []
-            res.data.forEach((record) => {
+            res.data.forEach(record => {
               self.data.push({
                 id: record.id,
                 label: record.name || record.original_name,

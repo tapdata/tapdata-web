@@ -190,12 +190,12 @@ export default {
       this.mergedSchema = cell.getOutputSchema()
       let formDatas = cell.graph
         .getConnectedLinks(cell, { inbound: true })
-        .map((link) => link.getSourceCell().getFormData())
+        .map(link => link.getSourceCell().getFormData())
       // let schema = mergeJoinTablesToTargetSchema(null, inputSchemas);
       if (this.mergedSchema && this.mergedSchema.fields) {
         //过滤被删除的字段
         this.mergedSchema.fields = removeDeleted(this.mergedSchema.fields)
-        this.mergedSchema.fields.forEach((field) => {
+        this.mergedSchema.fields.forEach(field => {
           this.$set(field, 'required', false)
           this.$set(field, 'query', false)
           this.$set(field, 'visible', true)
@@ -207,13 +207,13 @@ export default {
       if (data) {
         for (let i = 0; i < this.form.paths.fields.length; i++) {
           let item = this.form.paths.fields[i]
-          data.paths.availableQueryField.forEach((field) => {
+          data.paths.availableQueryField.forEach(field => {
             if (item.field_name === field) {
               item.query = true
             }
           })
 
-          data.paths.requiredQueryField.forEach((field) => {
+          data.paths.requiredQueryField.forEach(field => {
             if (item.field_name === field) {
               item.required = true
             }
@@ -230,7 +230,7 @@ export default {
         data.paths.availableQueryField = []
         data.fields = []
         data.paths.path = ''
-        data.paths.fields.forEach((item) => {
+        data.paths.fields.forEach(item => {
           if (item.required) {
             data.paths.requiredQueryField.push(item.field_name)
           } else {

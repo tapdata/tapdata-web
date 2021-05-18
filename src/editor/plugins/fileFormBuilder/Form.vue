@@ -381,13 +381,13 @@ export default {
       schema = null,
       templeSchema = []
     ws.ready(() => {
-      ws.on('execute_load_schema_result', (res) => {
+      ws.on('execute_load_schema_result', res => {
         this.reloadingSchema = false
         if (res.status === 'SUCCESS' && res.result) {
           this.$message.success(this.$t('message.reloadSchemaSuccess'))
           templeSchema = res.result
           if (templeSchema && templeSchema.length) {
-            templeSchema.forEach((item) => {
+            templeSchema.forEach(item => {
               if (item.connId === this.model.connectionId) {
                 schema = item.schema
                 if (!this.model.tableName || this.model.tableName === '') {
@@ -431,7 +431,7 @@ export default {
         let config = func(this)
         let items = config.items || []
         let fileProperty = this.model.fileProperty
-        items.forEach((it) => {
+        items.forEach(it => {
           let value = fileProperty[it.field]
           if (!value && value !== 0) {
             value = ''
@@ -439,7 +439,7 @@ export default {
           this.$set(this.model.fileProperty, it.field, value)
           if (it.type === 'field') {
             let options = []
-            fields.forEach((f) => {
+            fields.forEach(f => {
               if (f.field_name) {
                 options.push({
                   label: f.field_name,
@@ -490,7 +490,7 @@ export default {
       })
       this.fileConfig.loading = false
       if (result.data) {
-        this.fileConfig.options = result.data.map((item) => {
+        this.fileConfig.options = result.data.map(item => {
           return {
             id: item.id,
             name: item.name,
@@ -499,7 +499,7 @@ export default {
             value: item.id
           }
         })
-        result.data.map((s) => (fieldsNamesMap[s.id] = s.schema))
+        result.data.map(s => (fieldsNamesMap[s.id] = s.schema))
       }
     },
     loadDataModels(connectionId) {
@@ -508,7 +508,7 @@ export default {
       }
       this.$api('connections')
         .get([connectionId])
-        .then((result) => {
+        .then(result => {
           if (result.data && result.data.schema) {
             //console.log(result.data);
           }

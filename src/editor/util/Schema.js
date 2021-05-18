@@ -69,9 +69,7 @@ export const /**
 
       let root = {}
       let fields = schema.fields || []
-      fields = _.sortBy(fields, [
-        (field) => field.table_name + field.field_name
-      ])
+      fields = _.sortBy(fields, [field => field.table_name + field.field_name])
       for (let i = 0; i < fields.length; i++) {
         let field = fields[i]
         if (field && field.field_name && field.original_field_name) {
@@ -103,11 +101,11 @@ export const /**
       let re = function (field, count) {
         if (field && field.children) {
           count++
-          field.children = Object.values(field.children).map((it) => {
+          field.children = Object.values(field.children).map(it => {
             it.level = count
             return it
           })
-          field.children.forEach((it) => {
+          field.children.forEach(it => {
             re(it, count)
           })
         }
@@ -160,9 +158,9 @@ export const mergeSchema = function (targetSchema, sourceSchema, mergeOpts) {
   // targetSchema.table_name = targetSchema.table_name || sourceSchema.table_name || '';
   targetSchema.fields = targetSchema.fields || []
   Object.keys(sourceSchema)
-    .filter((key) => !['fields'].includes(key))
+    .filter(key => !['fields'].includes(key))
     .forEach(
-      (key) => (targetSchema[key] = targetSchema[key] || sourceSchema[key])
+      key => (targetSchema[key] = targetSchema[key] || sourceSchema[key])
     )
 
   let sourceSchemaFields = _.cloneDeep(sourceSchema.fields) || []
@@ -171,13 +169,13 @@ export const mergeSchema = function (targetSchema, sourceSchema, mergeOpts) {
   } else {
     let joinFieldName = []
 
-    joinPath.split('.').forEach((fieldName) => {
+    joinPath.split('.').forEach(fieldName => {
       joinFieldName.push(fieldName)
       let currentFieldName = joinFieldName.join('.')
       let currentFieldType
 
       let existsField = targetSchema.fields.filter(
-        (field) => field.field_name === currentFieldName
+        field => field.field_name === currentFieldName
       )
       if (existsField && existsField.length > 0) {
         existsField[0].javaType =
@@ -199,7 +197,7 @@ export const mergeSchema = function (targetSchema, sourceSchema, mergeOpts) {
         primary_key_position: 0
       })
     })
-    sourceSchemaFields.forEach((field) => {
+    sourceSchemaFields.forEach(field => {
       if (field) {
         targetSchema.fields.push(
           Object.assign(field, {
@@ -211,7 +209,7 @@ export const mergeSchema = function (targetSchema, sourceSchema, mergeOpts) {
     })
   }
 
-  targetSchema.fields.forEach((field) => {
+  targetSchema.fields.forEach(field => {
     field.fromDB = field.fromDB || []
     field.fromDB.push({
       id: field.id,
@@ -250,7 +248,7 @@ export const mergeSourceSchema = function (sourceSchemas) {
 
   sourceSchemas = Array.isArray(sourceSchemas) ? sourceSchemas : [sourceSchemas]
 
-  sourceSchemas.forEach((schema) => {
+  sourceSchemas.forEach(schema => {
     if (!schema) return
 
     if (!source) {

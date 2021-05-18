@@ -170,6 +170,7 @@ export default {
               like: self.filterText,
               options: 'i'
             },
+            'source.user_id': this.$cookie.get('user_id'),
             is_deleted: false
           },
           fields: {
@@ -191,11 +192,11 @@ export default {
         }
         self.loading = true
         MetadataInstances.get(params)
-          .then((res) => {
+          .then(res => {
             if (res.data) {
               // self.data.splice(0, self.data.length);
               self.data = []
-              res.data.forEach((record) => {
+              res.data.forEach(record => {
                 let node = {
                   id: record.id,
                   label: record.name || record.original_name,
@@ -230,11 +231,11 @@ export default {
         }
         self.loading = true
         MetadataInstances.tableConnection(params)
-          .then((res) => {
+          .then(res => {
             if (res.data) {
               // self.data.splice(0, self.data.length);
               self.data = []
-              res.data.forEach((record) => {
+              res.data.forEach(record => {
                 let node = {
                   id: record.id,
                   label: record.name || record.original_name,
@@ -295,11 +296,11 @@ export default {
       }
       self.loading = true
       MetadataInstances.get(params)
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             // self.data.splice(0, self.data.length);
             self.data = []
-            res.data.forEach((record) => {
+            res.data.forEach(record => {
               self.data.push({
                 id: record.id,
                 label: record.name || record.original_name,
@@ -373,10 +374,10 @@ export default {
       let params = {
         filter: JSON.stringify(filter)
       }
-      MetadataInstances.get(params).then((res) => {
+      MetadataInstances.get(params).then(res => {
         if (res.data) {
           let childNodes = []
-          res.data.forEach((record) => {
+          res.data.forEach(record => {
             childNodes.push({
               id: record.id,
               _id: record.source._id,
@@ -390,7 +391,7 @@ export default {
               fields: record.fields
             })
           })
-          childNodes.filter((node) => node.original_name !== '')
+          childNodes.filter(node => node.original_name !== '')
           resolve(childNodes)
           log('childNodes', childNodes)
         }
@@ -467,7 +468,7 @@ export default {
           // 	.join(',');
 
           data.fields.forEach(
-            (item) =>
+            item =>
               (item.original_field_name =
                 item.original_field_name || item.field_name)
           )

@@ -49,7 +49,7 @@ export default {
     formatLog(item) {
       let keyword = this.keyword
       let log_message = item.message
-        ? item.message.replace(/[<">']/g, (reg) => {
+        ? item.message.replace(/[<">']/g, reg => {
             return {
               '<': '&lt;',
               '"': '&quot;',
@@ -99,7 +99,7 @@ export default {
       }
       if (logs && logs.length) {
         doms = logs
-          .map((item) => {
+          .map(item => {
             return this.formatLog(item)
           })
           .join('')

@@ -12,7 +12,8 @@ const childRoutes = [
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: () => import('@/views/dashboard/DFSDashboard')
+    component: () => import('@/views/dashboard/Dashboard'),
+    meta: { title: i18n.t('tap.home'), isCollapse: false }
   },
   {
     path: '/connections',
@@ -99,18 +100,19 @@ const childRoutes = [
   {
     path: '/dataQuality',
     name: 'dataQuality',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/dataQuality/DataQuality'),
     meta: {
       code: 'data_quality_menu',
       url: '/old/index.html#/dataQuality',
       title: i18n.t('tap.dataQuality'),
-      isCollapse: false
+      isCollapse: true,
+      types: ['collection']
     }
   },
   {
     path: '/dataQuality/:id',
     name: 'dataQualityDetail',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/dataQuality/DataQualityDetail'),
     meta: {
       code: 'data_quality_edition',
       title: i18n.t('tap.dataQuality'),
@@ -120,10 +122,11 @@ const childRoutes = [
   {
     path: '/ttl',
     name: 'timeToLive',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/TimeToLive/List'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'time_to_live_menu',
-      url: '/old/index.html#/ttl',
+      // url: '/old/index.html#/ttl',
       title: i18n.t('tap.TimeToLive'),
       isCollapse: false
     }
@@ -257,10 +260,11 @@ const childRoutes = [
   {
     path: '/tasks',
     name: 'tasks',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/process/List'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'schedule_jobs_menu',
-      url: '/old/index.html#/tasks',
+      // url: '/old/index.html#/tasks',
       title: i18n.t('tap.jobSchedule'),
       isCollapse: false
     }
@@ -279,10 +283,11 @@ const childRoutes = [
   {
     path: '/agents',
     name: 'agents',
-    component: () => import('@/views/ExternalLink'),
+    // component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/process/List'),
     meta: {
       code: 'agents_menu',
-      url: '/old/index.html#/agents',
+      // url: '/old/index.html#/agents',
       title: i18n.t('tap.agentManagement'),
       isCollapse: false
     }
@@ -353,10 +358,11 @@ const childRoutes = [
   {
     path: '/settings',
     name: 'settings',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/setting/Setting'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'system_settings_menu',
-      url: '/old/index.html#/settings',
+      // url: '/old/index.html#/settings',
       title: i18n.t('tap.systemSettings'),
       isCollapse: false
     }
@@ -723,7 +729,7 @@ router.beforeEach(async (to, from, next) => {
     //判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
     let matched = true
     if (to.meta.code && !window.getSettingByKey('DFS_IGNORE_PERMISSION')) {
-      matched = permissions.some((p) => p.code === to.meta.code)
+      matched = permissions.some(p => p.code === to.meta.code)
     }
     if (matched) {
       // if (showGuide) {

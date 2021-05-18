@@ -38,7 +38,7 @@ export default {
         },
         on: self.on
       },
-      config.options.map((opt) => {
+      config.options.map(opt => {
         return h(
           config.button ? 'ElRadioButton' : 'ElRadio',
           {
@@ -114,6 +114,7 @@ export default {
     display: block;
     .fb-radio-option {
       width: 100%;
+      max-width: none;
       max-width: unset;
       flex: unset;
       margin-right: 0;

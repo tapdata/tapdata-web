@@ -313,7 +313,7 @@ export default {
     getDataApi(type) {
       let that = this
       let params = {}
-      cluster.get(params).then((res) => {
+      cluster.get(params).then(res => {
         if (res.data) {
           if (type === 'firstAgent') {
             that.lastDataNum = res.data.length || 0

@@ -75,7 +75,7 @@
       </el-row>
       <el-col :span="21" class="aggregateName">
         <el-form-item
-          :label="'Oracle' + $t('editor.cell.data_node.logminer.logSaveTime')"
+          :label="$t('editor.cell.data_node.logminer.logSaveTime')"
           required
         >
           <el-select
@@ -303,7 +303,7 @@ export default {
     changeConnectionId(data) {
       this.loadDataModels([data.connectionId])
       let arr = []
-      this.model.logCollectorSettings.forEach((item) => {
+      this.model.logCollectorSettings.forEach(item => {
         arr.push(item.connectionId)
       })
       if (new Set(arr).size !== arr.length) {
@@ -319,7 +319,7 @@ export default {
       let includeArr = []
       let selectTables = data.selectTables.split(',') || []
       if (data.selectType === 'exclusionTable') {
-        includeArr = data.includeTablesList.filter((item) => {
+        includeArr = data.includeTablesList.filter(item => {
           return selectTables.indexOf(item) == -1
         })
         data.includeTables = includeArr
@@ -337,7 +337,7 @@ export default {
       let result = await connectionApi.get({
         filter: JSON.stringify({
           where: {
-            database_type: { in: ['oracle'] }
+            database_type: { in: ['oracle', 'mongodb'] }
           },
           fields: {
             name: 1,
@@ -351,7 +351,7 @@ export default {
 
       // this.databaseSelectConfig.loading = false;
       if (result.data) {
-        this.connectionList = result.data.map((item) => {
+        this.connectionList = result.data.map(item => {
           return {
             id: item.id,
             name: item.name,
@@ -370,7 +370,7 @@ export default {
       let self = this,
         includeTablesList = []
 
-      connectionApi.get(ids).then((result) => {
+      connectionApi.get(ids).then(result => {
         if (result.data) {
           let schemas = (result.data.schema && result.data.schema.tables) || []
           if (schemas.length) {
@@ -381,11 +381,11 @@ export default {
                 ? 0
                 : -1
             )
-            tempSchemas.forEach((item) => {
+            tempSchemas.forEach(item => {
               includeTablesList.push(item.table_name)
             })
             // self.includeTablesList = [...new Set(self.includeTablesList)];
-            self.model.logCollectorSettings.forEach((i) => {
+            self.model.logCollectorSettings.forEach(i => {
               if (i.connectionId === ids[0]) {
                 i.includeTablesList = includeTablesList
                 if (i.selectType === 'allTables') {
@@ -430,7 +430,7 @@ export default {
         timeZone = '+' + -timeZone
       }
       this.model = {
-        name: 'Oracle' + this.$t('editor.cell.data_node.logminer.name'),
+        name: this.$t('editor.cell.data_node.logminer.name'),
         syncPoint: {
           type: 'localTZ',
           timezone: timeZone,
@@ -461,7 +461,7 @@ export default {
         this.model.logCollectorSettings.map((item, index) => {
           if (item.selectType === 'exclusionTable') {
             item.selectTables = item.includeTablesList
-              .filter((table) => {
+              .filter(table => {
                 return item.includeTables.indexOf(table) == -1
               })
               .join(',')

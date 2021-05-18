@@ -175,9 +175,9 @@ export default {
     },
     checkHandler(data, { checkedKeys }) {
       let checked = checkedKeys.includes(data.id)
-      let setChecked = (arr) => {
+      let setChecked = arr => {
         if (arr && arr.length) {
-          arr.forEach((node) => {
+          arr.forEach(node => {
             this.$refs.tree.setChecked(node, checked, true)
             setChecked(node.children)
           })
@@ -198,7 +198,7 @@ export default {
     getData(cb) {
       let where = {}
       if (this.types.length) {
-        where.or = this.types.map((t) => ({ item_type: t }))
+        where.or = this.types.map(t => ({ item_type: t }))
       }
       let filter = {
         where
@@ -206,11 +206,11 @@ export default {
       if (this.types[0] === 'user') {
         this.$api('UserGroup')
           .get({})
-          .then((res) => {
+          .then(res => {
             if (res.data) {
               let treeData = []
               if (res.data && res.data.length) {
-                treeData = res.data.map((item) => ({
+                treeData = res.data.map(item => ({
                   value: item.name,
                   name: item.name,
                   id: item.id,
@@ -227,7 +227,7 @@ export default {
       } else {
         MetadataDefinitions.get({
           filter: JSON.stringify(filter)
-        }).then((res) => {
+        }).then(res => {
           if (res.data) {
             this.treeData = this.formatData(res.data)
             cb && cb(res.data)
@@ -242,11 +242,11 @@ export default {
       if (this.types[0] === 'user') {
         this.$api('UserGroup')
           .get({})
-          .then((res) => {
+          .then(res => {
             if (res.data) {
               let treeData = []
               if (res.data && res.data.length) {
-                treeData = res.data.map((item) => ({
+                treeData = res.data.map(item => ({
                   value: item.name,
                   id: item.id,
                   gid: item.gid,
@@ -260,7 +260,7 @@ export default {
             }
           })
       } else {
-        MetadataDefinitions.get(params).then((res) => {
+        MetadataDefinitions.get(params).then(res => {
           if (res.data) {
             // this.treeData = this.formatData(res.data);
             cb && cb(res.data)
@@ -274,7 +274,7 @@ export default {
         let map = {}
         let nodes = []
         //遍历第一次， 先把所有子类按照id分成若干数组
-        items.forEach((it) => {
+        items.forEach(it => {
           if (it.parent_id) {
             let children = map[it.parent_id] || []
             children.push(it)
@@ -284,8 +284,8 @@ export default {
           }
         })
         //接着从没有子类的数据开始递归，将之前分好的数组分配给每一个类目
-        let checkChildren = (nodes) => {
-          return nodes.map((it) => {
+        let checkChildren = nodes => {
+          return nodes.map(it => {
             let children = map[it.id]
             if (children) {
               it.children = checkChildren(children)
@@ -370,7 +370,7 @@ export default {
         }
         this.$api('UserGroup')
           [method](params)
-          .then((res) => {
+          .then(res => {
             let self = this
             if (res.data) {
               self.getData(() => {
@@ -381,7 +381,7 @@ export default {
               self.hideDialog()
             }
           })
-          .catch((e) => {
+          .catch(e => {
             this.$message.error('MetadataInstances error' + e)
           })
       } else {
@@ -396,7 +396,7 @@ export default {
           params.parent_id = id
         }
         MetadataDefinitions[method](params)
-          .then((res) => {
+          .then(res => {
             let self = this
             if (res.data) {
               self.getData(() => {
@@ -407,7 +407,7 @@ export default {
               self.hideDialog()
             }
           })
-          .catch((e) => {
+          .catch(e => {
             this.$message.error('MetadataInstances error' + e)
           })
       }
@@ -419,7 +419,7 @@ export default {
         cancelButtonText: this.$t('message.cancel'),
         type: 'warning',
         closeOnClickModal: false
-      }).then((resFlag) => {
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -453,14 +453,14 @@ export default {
       })
     },
     checkName(value) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         if (this.types[0] === 'user') {
-          this.getDataAll((items) => {
-            resolve(items.find((it) => it.name === value))
+          this.getDataAll(items => {
+            resolve(items.find(it => it.name === value))
           })
         } else {
-          this.getDataAll((items) => {
-            resolve(items.find((it) => it.value === value))
+          this.getDataAll(items => {
+            resolve(items.find(it => it.value === value))
           })
         }
       })

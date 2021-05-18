@@ -179,6 +179,22 @@
           }}</el-checkbox>
         </el-form-item>
         <el-form-item
+          :label="$t('dataFlow.shareCdcMode')"
+          v-show="formData.sync_type !== 'initial_sync'"
+        >
+          <el-select
+            v-model="formData.readShareLogMode"
+            size="mini"
+            :placeholder="$t('message.placeholderSelect')"
+            class="dataWrite-list"
+          >
+            <el-option :label="$t('dataFlow.streaming')" value="STREAMING">
+            </el-option>
+            <el-option :label="$t('dataFlow.polling')" value="POLLING">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
           :label="$t('dataFlow.run_custom_sql')"
           v-show="formData.sync_type === 'initial_sync'"
         >
@@ -254,6 +270,7 @@
           <el-input-number
             v-model="formData.processorConcurrency"
             :min="1"
+            :max="100"
             size="mini"
           ></el-input-number>
         </el-form-item>
@@ -265,6 +282,7 @@
           <el-input-number
             v-model="formData.transformerConcurrency"
             :min="1"
+            :max="100"
             size="mini"
           ></el-input-number>
         </el-form-item>
@@ -347,7 +365,7 @@ import * as moment from 'moment'
 import factory from '../../api/factory'
 const connections = factory('connections')
 export default {
-  name: 'Setting.vue',
+  name: 'Setting',
   data() {
     return {
       conncetionStage: [],
@@ -441,7 +459,7 @@ export default {
     getData() {
       let result = _.cloneDeep(this.formData)
       if (result.syncPoints) {
-        result.syncPoints.forEach((point) => {
+        result.syncPoints.forEach(point => {
           point.date = point.date
             ? moment(point.date).format('YYYY-MM-DD HH:mm:ss')
             : ''
@@ -491,7 +509,7 @@ export default {
       let targetCell = this.editor.getSinks()
       let targetCellIds = []
       if (targetCell && targetCell.length > 0) {
-        targetCell.forEach((cell) => {
+        targetCell.forEach(cell => {
           let formData =
             typeof cell.getFormData === 'function' ? cell.getFormData() : null
           targetCellIds.push(formData.connectionId)
@@ -499,7 +517,7 @@ export default {
       }
       if (dataCells && dataCells.length > 0) {
         return dataCells
-          .map((cell) => {
+          .map(cell => {
             let formData =
               typeof cell.getFormData === 'function' ? cell.getFormData() : null
             let index = targetCellIds.indexOf(formData.connectionId)
@@ -510,7 +528,7 @@ export default {
               return formData.connectionId
             }
           })
-          .filter((v) => !!v)
+          .filter(v => !!v)
       }
     },
     // 获取节点里面有聚合设置的值
@@ -518,7 +536,7 @@ export default {
       let dataCells = this.editor.getAllCells()
       if (dataCells && dataCells.length > 0) {
         let connectionName = []
-        dataCells.forEach((cell) => {
+        dataCells.forEach(cell => {
           let formData =
             typeof cell.getFormData === 'function' ? cell.getFormData() : null
           if (formData.collectionAggregate) {
@@ -546,8 +564,8 @@ export default {
         })
       })
       if (result.data && result.data.length > 0) {
-        result.data.forEach((name) => {
-          this.formData.syncPoints.forEach((point) => {
+        result.data.forEach(name => {
+          this.formData.syncPoints.forEach(point => {
             if (name.id === point.connectionId) {
               point.name = name.name
             }
@@ -562,14 +580,14 @@ export default {
         this.getAllConnectionName(connectionIds)
           .then(() => {})
           .catch(() => {})
-        syncPoints = syncPoints.filter((point) =>
+        syncPoints = syncPoints.filter(point =>
           connectionIds.includes(point.connectionId)
         )
         let map = {}
         // connectionId -> syncPoint
-        syncPoints.forEach((s) => (map[s.connectionId] = s))
+        syncPoints.forEach(s => (map[s.connectionId] = s))
 
-        connectionIds.forEach((connectionId) => {
+        connectionIds.forEach(connectionId => {
           if (!map[connectionId]) {
             map[connectionId] = {
               connectionId: connectionId,
@@ -681,6 +699,9 @@ export default {
   }
   .el-form-item {
     margin-bottom: 10px;
+    .e-input {
+      width: 230px;
+    }
     .el-form-item__content .el-input-group {
       vertical-align: middle;
     }

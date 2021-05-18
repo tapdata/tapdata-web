@@ -98,13 +98,13 @@ export default {
       this.tableMap = {}
       if (schema && schema.fields && this.filterFields) {
         let checkedKeys = []
-        schema.fields.forEach((f) => {
+        schema.fields.forEach(f => {
           checkedKeys.push(f[this.nodeKey])
         })
         this.$refs.tree.setCheckedKeys(checkedKeys)
         this.$nextTick(() => {
           this.defaultChecked = this.$refs.tree.getCheckedKeys()
-          this.filterFields.forEach((f) => {
+          this.filterFields.forEach(f => {
             this.$refs.tree.setChecked(f[this.nodeKey], false)
           })
         })
@@ -166,7 +166,7 @@ export default {
     },
     getCheckedKeys(fields) {
       let ids = []
-      fields.forEach((f) => {
+      fields.forEach(f => {
         ids.push(f[this.nodeKey])
         if (f.children) {
           ids.push(...this.getCheckedKeys(f.children))
@@ -176,13 +176,13 @@ export default {
     },
     isRemove(id) {
       let ops = this.operations
-        ? this.operations.filter((v) => v.id === id && v.op === 'DELETE')
+        ? this.operations.filter(v => v.id === id && v.op === 'DELETE')
         : []
       return ops && ops.length > 0
     },
     isRetained(id) {
       let ops = this.operations
-        ? this.operations.filter((v) => v.id === id && v.op === 'RETAINED')
+        ? this.operations.filter(v => v.id === id && v.op === 'RETAINED')
         : []
       return ops && ops.length > 0
     },

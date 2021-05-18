@@ -113,7 +113,7 @@ export default {
                 if (cache) {
                   let settings = cache.cacheKeys
                     .split(',')
-                    .map((it) => ({ cacheKey: it, sourceKey: '' }))
+                    .map(it => ({ cacheKey: it, sourceKey: '' }))
                   self.$set(self.model, 'joinSettings', settings)
                 }
                 self.showMapping()
@@ -165,7 +165,7 @@ export default {
       let cells = editor.getAllCells()
       let cacheList = []
       let map = {}
-      cells.forEach((cell) => {
+      cells.forEach(cell => {
         let attr = cell.attributes
         if (attr.type === 'app.MemCache') {
           let formData = attr.form_data
@@ -179,12 +179,12 @@ export default {
         }
       })
       this.cacheMap = map
-      this.config.items.find((it) => it.field === 'cacheId').options = cacheList
+      this.config.items.find(it => it.field === 'cacheId').options = cacheList
     },
     getSourceFields(schema) {
       let fields = schema.fields || []
       let sourceFields = []
-      fields.forEach((f) => {
+      fields.forEach(f => {
         if (f.field_name) {
           sourceFields.push(f.field_name)
         }
@@ -221,8 +221,8 @@ export default {
           mergedTargetSchema &&
           mergedTargetSchema.fields
         ) {
-          let removeIds = this.model.removeFields.map((f) => f.id)
-          mergedTargetSchema.fields = mergedTargetSchema.fields.filter((f) => {
+          let removeIds = this.model.removeFields.map(f => f.id)
+          mergedTargetSchema.fields = mergedTargetSchema.fields.filter(f => {
             return !removeIds.includes(f.id)
           })
         }
@@ -233,9 +233,9 @@ export default {
     checkHandler(checkedArr) {
       let cacheCell = this.cacheMap[this.model.cacheId]
       let cacheOutputSchema = cacheCell.cell.getInputSchema()[0].sourceSchema
-      let checkedIds = checkedArr.map((it) => it.id)
+      let checkedIds = checkedArr.map(it => it.id)
       let removeFields = []
-      cacheOutputSchema.fields.forEach((f) => {
+      cacheOutputSchema.fields.forEach(f => {
         if (!checkedIds.includes(f.id) && f.field_name) {
           removeFields.push(f)
         }
@@ -252,7 +252,7 @@ export default {
 
       //如果源表的类型是关系型表，则不允许填写写入路径，无法内嵌字段
       if (schema.meta_type === 'table') {
-        this.config.items.find((it) => it.field === 'joinKey').show = false
+        this.config.items.find(it => it.field === 'joinKey').show = false
       }
 
       this.getCacheList(vueAdapter.editor)
@@ -266,18 +266,18 @@ export default {
       if (
         !cacheId ||
         !joinSettings.length ||
-        joinSettings.some((it) => !it.sourceKey)
+        joinSettings.some(it => !it.sourceKey)
       ) {
         return ''
       }
       let cacheCell = this.cacheMap[cacheId]
 
       let sourceFieldStr = joinSettings
-        .map((it) => 'record.' + it.sourceKey)
+        .map(it => 'record.' + it.sourceKey)
         .join(',')
 
       let removeFieldsStr = removeFields
-        .map((f) => {
+        .map(f => {
           return `MapUtils.removeKey(cachedRow, '${f.field_name}');`
         })
         .join('')

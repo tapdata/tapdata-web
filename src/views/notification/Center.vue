@@ -42,7 +42,7 @@ export default {
     }
   },
   computed: mapState({
-    unRead: (state) => state.notification.unRead
+    unRead: state => state.notification.unRead
   }),
   watch: {
     $route(route) {

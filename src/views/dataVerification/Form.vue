@@ -487,10 +487,10 @@ export default {
               }
             })
           })
-          .then((res) => {
+          .then(res => {
             let data = res.data
             if (data) {
-              data.tasks = data.tasks.map((t) => {
+              data.tasks = data.tasks.map(t => {
                 t.sourceTable = [t.source.connectionId, t.source.table]
                 t.targetTable = [t.target.connectionId, t.target.table]
                 t.source = Object.assign({}, TABLE_PARAMS, t.source)
@@ -523,7 +523,7 @@ export default {
             order: 'createTime DESC'
           })
         })
-        .then((res) => {
+        .then(res => {
           this.flowOptions = res.data || []
           this.getData(this.$route.params.id)
         })
@@ -551,7 +551,7 @@ export default {
             }
           })
         })
-        .then((res) => {
+        .then(res => {
           let flowData = res.data
           this.flowStages = []
           this.isDbClone = flowData.mappingTemplate === 'cluster-clone'
@@ -565,16 +565,16 @@ export default {
           this.loading = false
         })
       let flow =
-        this.flowOptions.find((item) => item.id === this.form.flowId) || {}
+        this.flowOptions.find(item => item.id === this.form.flowId) || {}
       this.form.name = this.form.name || flow.name
       this.form['dataFlowName'] = flow.name
     },
     //处理db克隆的情况
     dealDBFlow(flowData, callback) {
-      let dbStages = flowData.stages.filter((stg) =>
+      let dbStages = flowData.stages.filter(stg =>
         ['database'].includes(stg.type)
       )
-      let connectionIds = dbStages.map((stg) => stg.connectionId)
+      let connectionIds = dbStages.map(stg => stg.connectionId)
       if (connectionIds.length) {
         this.$api('MetadataInstances')
           .get({
@@ -590,13 +590,13 @@ export default {
               fields: META_INSTANCE_FIELDS
             })
           })
-          .then((res) => {
+          .then(res => {
             let tables = res.data || []
             this.stageMap = {}
-            dbStages.forEach((stage) => {
+            dbStages.forEach(stage => {
               if (stage.outputLanes.length) {
                 let targetDBStage = dbStages.find(
-                  (stg) => stg.id === stage.outputLanes[0]
+                  stg => stg.id === stage.outputLanes[0]
                 )
                 this.getTreeForDBFlow('source', tables, stage, targetDBStage)
               }
@@ -613,14 +613,14 @@ export default {
     },
     //处理普通表同步的情况
     dealCustomFlow(flowData, callback) {
-      let flowStages = flowData.stages.filter((stg) =>
+      let flowStages = flowData.stages.filter(stg =>
         ['table', 'collection'].includes(stg.type)
       )
       this.flowStages = flowStages
       this.allStages = flowData.stages
       let connectionIds = []
       let tableNames = []
-      flowStages.forEach((stg) => {
+      flowStages.forEach(stg => {
         connectionIds.push(stg.connectionId)
         tableNames.push(stg.tableName)
       })
@@ -642,11 +642,11 @@ export default {
               fields: META_INSTANCE_FIELDS
             })
           })
-          .then((res) => {
+          .then(res => {
             let tables = res.data || []
             flowStages.forEach((stg, index) => {
               let table = tables.find(
-                (tb) =>
+                tb =>
                   tb.source.id === stg.connectionId &&
                   tb.original_name === stg.tableName
               )
@@ -672,7 +672,7 @@ export default {
     },
     //获取源表和目标表数据
     getTree(tree, stage = {}) {
-      let parent = tree.find((c) => c.value === stage.connectionId)
+      let parent = tree.find(c => c.value === stage.connectionId)
       if (!parent) {
         parent = {
           label: stage.connectionName,
@@ -682,7 +682,7 @@ export default {
         }
         tree.push(parent)
       }
-      if (parent.children.every((t) => t.value !== stage.tableName)) {
+      if (parent.children.every(t => t.value !== stage.tableName)) {
         parent.children.push({
           label: stage.tableName,
           value: stage.tableName,
@@ -693,9 +693,9 @@ export default {
     getTreeForDBFlow(type, tables, stage, targetStage) {
       let includeTableNames = []
       let getTableNames = (objects, prefix = '', suffix = '') => {
-        let obj = objects.find((obj) => obj.type === 'table')
+        let obj = objects.find(obj => obj.type === 'table')
         if (obj) {
-          includeTableNames = obj.objectNames.map((tName) => {
+          includeTableNames = obj.objectNames.map(tName => {
             return prefix + tName + suffix
           })
         }
@@ -706,7 +706,7 @@ export default {
       if (type === 'target' && stage.syncObjects) {
         getTableNames(stage.syncObjects, stage.table_prefix, stage.table_suffix)
       }
-      let includeTables = tables.filter((tb) => {
+      let includeTables = tables.filter(tb => {
         let flag = true
         if (includeTableNames.length) {
           flag = includeTableNames.includes(tb.original_name)
@@ -724,14 +724,14 @@ export default {
         children: []
       }
       let index = this[type + 'Tree'].findIndex(
-        (it) => it.value === stage.connectionId
+        it => it.value === stage.connectionId
       )
       if (index >= 0) {
         parent = this[type + 'Tree'].splice(index, 1)[0]
       }
-      includeTables.forEach((table) => {
+      includeTables.forEach(table => {
         if (
-          !parent.children.find((child) => child.value === table.original_name)
+          !parent.children.find(child => child.value === table.original_name)
         ) {
           parent.children.push({
             label: table.original_name,
@@ -763,10 +763,10 @@ export default {
     },
     //获取表的连线关系
     getStageMap(stages) {
-      let checkOutputLanes = (lanes) => {
+      let checkOutputLanes = lanes => {
         let result = []
-        lanes.forEach((stgId) => {
-          let targetStg = this.allStages.find((it) => it.id === stgId)
+        lanes.forEach(stgId => {
+          let targetStg = this.allStages.find(it => it.id === stgId)
           if (targetStg.outputLanes.length) {
             result.push(...checkOutputLanes(targetStg.outputLanes))
           } else {
@@ -777,7 +777,7 @@ export default {
       }
       let map = {}
       let sMap = {}
-      stages.forEach((stg) => {
+      stages.forEach(stg => {
         if (stg.outputLanes.length) {
           let stage = sMap[stg.connectionId + stg.tableName] || {}
           let stgId = stage.id || stg.id
@@ -804,7 +804,7 @@ export default {
               stageKey = sourceTable.join('')
             } else {
               let stage = stages.find(
-                (stg) =>
+                stg =>
                   stg.connectionId === sourceTable[0] &&
                   stg.tableName === sourceTable[1]
               )
@@ -816,8 +816,8 @@ export default {
               let outputLanes = map[stageKey]
               if (outputLanes && outputLanes.length) {
                 let tree = []
-                outputLanes.forEach((id) => {
-                  let stg = stages.find((stg) => stg.id === id)
+                outputLanes.forEach(id => {
+                  let stg = stages.find(stg => stg.id === id)
                   this.getTree(tree, stg)
                 })
                 targetTree = tree
@@ -837,9 +837,9 @@ export default {
       this.$nextTick(() => {
         for (const key in map) {
           const lanes = map[key]
-          let stg = stages.find((stg) => stg.id === key)
-          lanes.forEach((id) => {
-            let targetStage = stages.find((it) => it.id === id)
+          let stg = stages.find(stg => stg.id === key)
+          lanes.forEach(id => {
+            let targetStage = stages.find(it => it.id === id)
             let task = {
               source: this.setTable(stg),
               target: Object.assign({}, TABLE_PARAMS),
@@ -864,7 +864,7 @@ export default {
       let source = task.source
       if (source && source.connectionId) {
         let sourceStage = stages.find(
-          (stg) =>
+          stg =>
             stg.connectionId === source.connectionId &&
             stg.tableName === source.table
         )
@@ -873,12 +873,12 @@ export default {
           task.targetTable = [targetStage.connectionId, targetStage.tableName]
           if (targetStage.joinTables) {
             let joinTable = targetStage.joinTables.find(
-              (ts) => ts.stageId === sourceStage.id
+              ts => ts.stageId === sourceStage.id
             )
             if (joinTable) {
               let sourceSortColumn = []
               let targetSortColumn = []
-              joinTable.joinKeys.forEach((obj) => {
+              joinTable.joinKeys.forEach(obj => {
                 sourceSortColumn.push(obj.source)
                 targetSortColumn.push(obj.target)
               })
@@ -892,7 +892,7 @@ export default {
     setTable(stage) {
       let sortColumn = ''
       if (stage && stage.fields && stage.fields.length) {
-        let pkField = stage.fields.find((f) => f.primary_key_position > 0)
+        let pkField = stage.fields.find(f => f.primary_key_position > 0)
         if (pkField) {
           sortColumn = pkField.field_name
         }
@@ -932,7 +932,7 @@ export default {
       let values = item[type + 'Table']
       if (values && values.length) {
         let sourceStage = stages.find(
-          (stg) => stg.connectionId === values[0] && stg.tableName === values[1]
+          stg => stg.connectionId === values[0] && stg.tableName === values[1]
         )
         if (sourceStage) {
           item[type] = this.setTable(sourceStage)
@@ -949,7 +949,7 @@ export default {
                   targetTree[0].children.length === 1
                 ) {
                   let targetStage = stages.find(
-                    (stg) =>
+                    stg =>
                       stg.connectionId === targetTree[0].value &&
                       stg.tableName === targetTree[0].children[0].value
                   )
@@ -978,7 +978,7 @@ export default {
         {
           type: 'warning'
         }
-      ).then((resFlag) => {
+      ).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -1006,7 +1006,7 @@ export default {
         {
           type: 'warning'
         }
-      ).then((resFlag) => {
+      ).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -1014,7 +1014,7 @@ export default {
       })
     },
     nextStep() {
-      this.$refs.baseForm.validate((valid) => {
+      this.$refs.baseForm.validate(valid => {
         if (valid) {
           let tasks = this.form.tasks
           let index = 0
@@ -1065,11 +1065,11 @@ export default {
             return this.$message.error(this.$t('dataVerification.tasksAmount'))
           }
           if (this.form.inspectMethod === 'jointField') {
-            tasks.forEach((item) => {
+            tasks.forEach(item => {
               item['fullMatch'] = false
             })
           } else {
-            tasks.forEach((item) => {
+            tasks.forEach(item => {
               item['fullMatch'] = true
             })
           }
@@ -1107,12 +1107,12 @@ export default {
                 )
               })
             )
-            .then((res) => {
+            .then(res => {
               if (res.data) {
                 this.$router.back()
               }
             })
-            .catch((err) => {
+            .catch(err => {
               if (err.response.msg === 'duplication for names') {
                 this.$message.error(this.$t('message.exists_name'))
               }

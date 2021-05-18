@@ -95,50 +95,7 @@ export default function () {
           },
           stroke: 'gray'
         }
-      },
-      labels: [
-        {
-          markup: [
-            {
-              tagName: 'rect',
-              selector: 'labelBody'
-            },
-            {
-              tagName: 'text',
-              selector: 'labelText'
-            }
-          ],
-          attrs: {
-            labelText: {
-              fill: '#7c68fc',
-              fontSize: 10,
-              textAnchor: 'middle',
-              textVerticalAnchor: 'middle'
-            },
-            labelBody: {
-              ref: 'labelText',
-              refX: -2,
-              refY: -2,
-              refWidth: '100%',
-              refHeight: '100%',
-              refWidth2: 3,
-              refHeight2: 2,
-              stroke: '#7c68fc',
-              fill: 'white',
-              strokeWidth: 1,
-              rx: 2,
-              ry: 2
-            }
-          },
-          position: {
-            distance: 0.5,
-            args: {
-              keepGradient: true,
-              ensureLegibility: true
-            }
-          }
-        }
-      ]
+      }
     })
 
     joint.shapes.standard.HeaderedRecord.define(
@@ -160,7 +117,7 @@ export default function () {
             ry: 3
           },
           headerLabel: {
-            fontSize: 14,
+            fontSize: 12,
             textWrap: {
               ellipsis: true,
               height: 19
@@ -195,6 +152,11 @@ export default function () {
             stroke: '#48b6e2',
             rx: 3,
             ry: 3
+          },
+
+          itemTitle: {
+            text: 'text',
+            label: 'label'
           }
         }
       },
@@ -202,6 +164,11 @@ export default function () {
         setName: function (name, opt) {
           this.attr(['headerLabel', 'textWrap', 'text'], name, opt)
         },
+
+        setTitle(id, title) {
+          this.attr([`itemLabel_${id}`, 'title'], title)
+        },
+
         getDefaultItem: function () {
           return {
             id: util.uuid(),
@@ -246,6 +213,9 @@ export default function () {
             }
           }
         }
+      },
+      {
+        // attributes: {}
       }
     )
 

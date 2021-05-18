@@ -4,16 +4,20 @@
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve --open",
+    "start:ws": "cross-env VUE_APP_WS=true npm run start",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:e2e": "vue-cli-service test:e2e",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "fix": "vue-cli-service lint --fix",
+    "mock": "nodemon ./mock/mock.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
     "backbone": "^1.4.0",
     "bootstrap": "^5.0.0-beta3",
     "core-js": "^3.6.5",
+    "cross-env": "^7.0.3",
     "crypto": "^1.0.1",
     "crypto-js": "^4.0.0",
     "dagre": "^0.8.5",
@@ -28,7 +32,7 @@
     "markdown-loader": "^6.0.0",
     "mavon-editor": "^2.9.0",
     "moment": "^2.24.0",
-    "monaco-editor": "^0.23.0",
+    "monaco-editor": "0.18.1",
     "vue": "^2.6.11",
     "vue-bus": "^1.2.1",
     "vue-clipboard2": "^0.3.1",
@@ -54,6 +58,7 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^6.2.2",
     "lint-staged": "^9.5.0",
+    "mockjs": "^1.1.0",
     "monaco-editor-webpack-plugin": "^3.0.1",
     "prettier": "^2.2.1",
     "sass": "^1.32.8",

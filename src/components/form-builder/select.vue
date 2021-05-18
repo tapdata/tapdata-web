@@ -25,7 +25,7 @@ export default {
   render(h) {
     let self = this
     let config = Object.assign(this.defaultConfig, self.config)
-    let options = this.filterList.map((opt) => {
+    let options = this.filterList.map(opt => {
       return h('ElOption', {
         props: {
           label: opt.label,
@@ -50,11 +50,11 @@ export default {
             {
               props: { value: this.value.length === this.filterList.length },
               on: {
-                input: (val) => {
+                input: val => {
                   if (val) {
                     this.$emit(
                       'input',
-                      this.filterList.map((opt) => opt.value)
+                      this.filterList.map(opt => opt.value)
                     )
                   } else {
                     this.$emit('input', [])
@@ -114,7 +114,7 @@ export default {
       keyword = keyword.toLowerCase()
       let reg = new RegExp(keyword, 'ig')
       this.filterList = this.config.options
-        .filter((d) => d.label.match(reg))
+        .filter(d => d.label.match(reg))
         .sort((a, b) => {
           if (a.label.toLowerCase() === keyword) {
             return -1

@@ -9,10 +9,10 @@ export default function (vm) {
       let vm = this
       let val = vm.model.connection_type
       let databaseDatetypeWithoutTimezone = vm.config.items.find(
-        (item) => item.field === 'database_datetype_without_timezone'
+        item => item.field === 'database_datetype_without_timezone'
       )
       let supportUpdatePk = vm.config.items.find(
-        (item) => item.field === 'supportUpdatePk'
+        item => item.field === 'supportUpdatePk'
       )
       vm.$nextTick(() => {
         if (databaseDatetypeWithoutTimezone) {
@@ -79,7 +79,7 @@ export default function (vm) {
             }
           }
         ],
-        appendSlot: (h) => {
+        appendSlot: h => {
           return h('FbInput', {
             props: {
               value: vm.model['database_port'],

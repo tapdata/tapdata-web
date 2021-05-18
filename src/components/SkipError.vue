@@ -100,7 +100,7 @@ export default {
     skipErrorData() {
       if (this.checkedData.length > 0) {
         let data = []
-        this.checkedData.forEach((item) => {
+        this.checkedData.forEach(item => {
           data.push(this.errorEvents[item])
         })
         this.checkedData = data

@@ -96,7 +96,7 @@ export default class Tab extends Component {
         .find(`>.e-tab-content>.e-tab[data-value=${id}]`)
         .addClass('active')
     }
-    this.childs.forEach((child) => (child.selected = child === tab))
+    this.childs.forEach(child => (child.selected = child === tab))
     this.emit(EditorEventType.SELECTED, tab)
   }
 

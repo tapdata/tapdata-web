@@ -3,7 +3,7 @@
  * @date 2/29/20
  * @description
  */
-export default (joint) => {
+export default joint => {
   const util = joint.util
 
   joint.shapes.app.NavigatorElementView = joint.dia.ElementView.extend({

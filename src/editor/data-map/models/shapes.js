@@ -3,7 +3,7 @@
  * @date 5/30/20
  * @description
  */
-export default (joint) => {
+export default joint => {
   joint.shapes.standard.Rectangle.define(
     'dataMap.Tapdata',
     {

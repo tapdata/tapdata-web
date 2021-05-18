@@ -300,7 +300,7 @@ export default {
       })
     },
     async getApiData() {
-      await modules.getApiDocument(this.apiId).then((res) => {
+      await modules.getApiDocument(this.apiId).then(res => {
         if (res.data) {
           this.apiData = res.data
         }
