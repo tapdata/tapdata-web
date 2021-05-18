@@ -189,7 +189,11 @@
               <span slot="title">{{ menu.label }}</span>
             </el-menu-item>
           </template>
-          <el-submenu v-if="favMenus.length" index="favorite">
+          <el-submenu
+            v-if="favMenus.length"
+            index="favorite"
+            class="el-menu-item"
+          >
             <template slot="title">
               <i class="iconfont icon-shoucang"></i>
               <span slot="title">{{ $t('app.menu.favorite') }}</span>
@@ -636,6 +640,9 @@ export default {
 .layout-container {
   height: 100%;
   background: rgba(250, 250, 250, 1);
+  .el-submenu__title {
+    font-size: 12px;
+  }
   .layout-header {
     display: flex;
     align-items: center;

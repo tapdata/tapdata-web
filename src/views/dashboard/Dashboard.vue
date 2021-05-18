@@ -18,11 +18,11 @@
           <ul class="jobList">
             <li
               v-for="task in migrationTaskList"
-              :key="task.name"
-              @click="handleMigrationStatus(task.name)"
+              :key="task.label"
+              @click="handleMigrationStatus(task.label)"
             >
-              <span class="text" :style="`color: ${colorMap[task.name]};`">{{
-                $t('dataFlow.status.' + task.name)
+              <span class="text" :style="`color: ${colorMap[task.label]};`">{{
+                $t('dataFlow.status.' + task.label)
               }}</span
               ><span>{{ task.value }}</span>
             </li>
@@ -87,11 +87,11 @@
           <ul class="jobList">
             <li
               v-for="task in syncTaskList"
-              :key="task.name"
-              @click="handleSncyStatus(task.name)"
+              :key="task.label"
+              @click="handleSncyStatus(task.label)"
             >
-              <span class="text" :style="`color: ${colorMap[task.name]};`">{{
-                $t('dataFlow.status.' + task.name)
+              <span class="text" :style="`color: ${colorMap[task.label]};`">{{
+                $t('dataFlow.status.' + task.label)
               }}</span
               ><span>{{ task.value }}</span>
             </li>
@@ -182,6 +182,7 @@
             :data="serverProcess.tableData"
             :height="transfer.height"
             style="width: 100%"
+            class="dashboard-table"
           >
             <el-table-column
               prop="systemInfo.ip"
@@ -737,13 +738,18 @@ export default {
         a._id > b._id ? 1 : a._id === b._id ? 0 : -1
       )
       dataItem.statusCount.forEach(element => {
-        statusItem.unshift({ name: element._id, value: element.count })
+        statusItem.unshift({
+          name: this.$t('dataFlow.status.' + element._id),
+          label: element._id,
+          value: element.count
+        })
       })
       statusItem.filter((item, index) => {
         if (item.name === 'stopping' || item.name === 'scheduled') {
           statusItem.splice(index, 1)
         }
       })
+      console.log(statusItem)
       return statusItem
     },
 
@@ -1041,6 +1047,16 @@ export default {
   .taskNameStyle {
     color: #48b6e2;
     cursor: pointer;
+  }
+}
+</style>
+<style lang="scss">
+.dashboard {
+  .dashboard-table {
+    .el-table__body-wrapper {
+      height: calc(100% - 120px) !important;
+      overflow: auto;
+    }
   }
 }
 </style>
