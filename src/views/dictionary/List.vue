@@ -546,7 +546,7 @@ export default {
 
     // 保存模板
     saveSubmit() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           const id = this.createForm.id
           const method = id ? 'patch' : 'post'

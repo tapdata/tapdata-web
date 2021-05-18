@@ -25,9 +25,7 @@ const config = {
     proxy: {
       '/api/': proxy,
       '/oauth/': proxy,
-      '/old/': {
-        target: 'http://192.168.1.101:8081/'
-      },
+      '/old/': proxy,
       '/ws/': {
         ...proxy,
         ws: true,

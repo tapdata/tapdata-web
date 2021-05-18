@@ -59,7 +59,7 @@
       </div>
       <div slot="operation">
         <el-button
-          v-readonlybtn="'new_model_creation'"
+          v-readonlybtn="'time_to_live_management'"
           class="btn btn-create"
           size="mini"
           @click="openCreateDialog"

@@ -1,9 +1,9 @@
 <template>
-  <section class="process-list-wrap">
+  <section class="dataRule-list-wrap">
     <TablePage
       ref="table"
       row-key="id"
-      class="process-list"
+      class="dataRule-list"
       :title="$t('app.menu.' + $route.name)"
       :remoteMethod="getData"
       @sort-change="handleSortTable"
@@ -11,28 +11,29 @@
       <div slot="search">
         <ul class="search-bar">
           <li>
-            <el-select
-              v-model="searchParams.state"
-              size="mini"
-              @input="table.fetch(1, 800)"
-              :placeholder="$t('process.state')"
-            >
-              <el-option :label="$t('process.all')" value="all"></el-option>
-              <el-option
-                :label="$t('process.online')"
-                value="online"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
             <el-input
               clearable
               class="input-with-select"
               size="mini"
               v-model="searchParams.keyword"
-              :placeholder="$t('process.name')"
+              :placeholder="$t('dictionary.name')"
               @input="table.fetch(1, 800)"
             >
+              <el-select
+                style="width: 120px"
+                slot="prepend"
+                v-model="searchParams.isFuzzy"
+                @input="table.fetch(1)"
+              >
+                <el-option
+                  :label="$t('connection.fuzzyQuery')"
+                  :value="true"
+                ></el-option>
+                <el-option
+                  :label="$t('connection.PreciseQuery')"
+                  :value="false"
+                ></el-option>
+              </el-select>
             </el-input>
           </li>
 
@@ -49,72 +50,93 @@
           </li>
         </ul>
       </div>
+
       <el-table-column
-        :label="$t('process.worker_ip')"
-        prop="worker_ip"
-        sortable="worker_ip"
+        :label="$t('task.task_name')"
+        prop="task_name"
+        sortable="task_name"
+        :show-overflow-tooltip="true"
       ></el-table-column>
       <el-table-column
-        :label="$t('process.version')"
-        prop="version"
-        sortable="version"
+        :label="$t('task.task_type')"
+        prop="task_type"
+        sortable="task_type"
+        :show-overflow-tooltip="true"
       ></el-table-column>
       <el-table-column
-        :label="$t('process.start_time')"
-        prop="start_time"
-        sortable="start_time"
+        :label="$t('task.agent_id')"
+        prop="agent_id"
+        sortable="agent_id"
+        :show-overflow-tooltip="true"
+      ></el-table-column>
+      <el-table-column
+        :label="$t('task.statusText')"
+        prop="status"
+        sortable="status"
       >
         <template slot-scope="scope">
-          {{ $moment(scope.row.start_time).format('YYYY-MM-DD HH:mm:ss') }}
+          {{ $t('task.status.' + scope.row.status) }}
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('process.ping_time')"
+        :label="$t('task.last_updated')"
+        prop="last_updated"
+        sortable="last_updated"
+      >
+        <template slot-scope="scope">
+          {{
+            scope.row.last_updated
+              ? $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              : ''
+          }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('task.ping_time')"
         prop="ping_time"
         sortable="ping_time"
       >
         <template slot-scope="scope">
-          {{ $moment(scope.row.ping_time).format('YYYY-MM-DD HH:mm:ss') }}
+          {{
+            scope.row.ping_time
+              ? $moment(scope.row.ping_time).format('YYYY-MM-DD HH:mm:ss')
+              : ''
+          }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('process.worker_type')"
-        prop="worker_type"
-        sortable="worker_type"
-      >
-      </el-table-column>
-      <el-table-column
-        :label="$t('process.running_thread')"
-        prop="running_thread"
-        sortable="running_thread"
-      >
-      </el-table-column>
-      <el-table-column
-        :label="$t('process.total_thread')"
-        prop="total_thread"
-        sortable="total_thread"
-      >
-      </el-table-column>
-      <el-table-column
-        :label="$t('process.job_ids')"
-        prop="job_ids"
-        width="200"
-      >
+
+      <el-table-column :label="$t('message.operator')" width="120">
         <template slot-scope="scope">
-          <!-- <div v-for="item in scope.row.job_ids" :key="item"> -->
-          <template v-if="scope.row.job_ids">
-            <div v-html="scope.row.job_ids"></div>
-          </template>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('process.state')"
-        prop="state"
-        sortable="state"
-        width="80"
-      >
-        <template slot-scope="scope">
-          {{ $t('process.' + scope.row.state) }}
+          <el-button
+            v-readonlybtn="'schedule_jobs_management'"
+            v-if="scope.row.status === 'paused'"
+            size="mini"
+            type="text"
+            @click="doUpdate(scope.row, 'waiting')"
+            >{{ $t('task.start') }}</el-button
+          >
+          <el-button
+            v-readonlybtn="'schedule_jobs_management'"
+            v-else
+            size="mini"
+            type="text"
+            @click="doUpdate(scope.row, 'stopping')"
+            >{{ $t('task.paused') }}</el-button
+          >
+          <el-button
+            size="mini"
+            type="text"
+            @click="
+              $router.push({
+                name: 'taskHistories',
+                query: {
+                  taskId: scope.row.id,
+                  task_name: scope.row.task_name
+                }
+              })
+            "
+            >{{ $t('task.ahistory') }}</el-button
+          >
         </template>
       </el-table-column>
     </TablePage>
@@ -124,7 +146,6 @@
 <script>
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
-const MINUTE = 1 * 60 * 1000
 export default {
   components: {
     TablePage
@@ -133,10 +154,12 @@ export default {
     return {
       searchParams: {
         keyword: '',
-        state: 'all'
+        isFuzzy: true
       },
-      order: 'start_time DESC',
-      list: null
+      order: 'ping_time DESC',
+      list: null,
+      createDialogVisible: false,
+      createForm: null
     }
   },
   created() {},
@@ -148,6 +171,13 @@ export default {
       return this.$refs.table
     }
   },
+  // watch: {
+  //   'createForm.dataType'() {
+  //     this.$nextTick(() => {
+  //       this.$refs.form.clearValidate()
+  //     })
+  //   }
+  // },
   methods: {
     // 重置
     reset(name) {
@@ -161,78 +191,52 @@ export default {
     },
     // 获取数据
     getData({ page }) {
+      let _this = this
       let { current, size } = page
-      let { state, keyword } = this.searchParams
-      let where = {
-        ping_time: {
-          gte: '$serverDate',
-          gte_offset: 60000
-        }
-      }
-
-      if (state !== 'all') {
-        where.worker_type = {
-          in: ['connector', 'transformer', 'api-server', 'tapdata-manager']
-        }
-      }
+      let { isFuzzy, keyword } = this.searchParams
+      let where = {}
+      _this.classificationArr = []
       if (keyword && keyword.trim()) {
-        where.worker_type = { like: toRegExp(keyword), options: 'i' }
+        let filterObj = isFuzzy
+          ? { like: toRegExp(keyword), options: 'i' }
+          : keyword
+        where.or = [{ name: filterObj }]
       }
       let filter = {
-        order: this.order,
+        order: _this.order,
         limit: size,
         skip: (current - 1) * size,
         where
       }
       return Promise.all([
-        this.$api('Workers').count({ where: where }),
-        this.$api('Workers').get({
+        _this.$api('ScheduleTasks').count({ where: where }),
+        _this.$api('ScheduleTasks').get({
           filter: JSON.stringify(filter)
         })
       ]).then(([countRes, res]) => {
-        res.data.forEach(item => {
-          if (item.job_ids) {
-            let job_ids = item.job_ids.map(val => {
-              if (item.jobs) {
-                let jobs = item.jobs.filter(v => v.id === val)
-                if (jobs && jobs.length > 0) {
-                  // return jobs
-                  return `<a href="el/#/job?id=${val}" target="_blank">${jobs[0]['name']}</a></br>`
-                }
-              }
-              // return val
-              return `<a href="el/#/job?id=${val}" target="_blank">${val}</a></br>`
-            })
-            item.job_ids = job_ids.join(' ')
-          } else if (item.worker_status) {
-            item.job_ids = ''
-            if (item.worker_status.status) {
-              item.job_ids += `<div>${this.$t(
-                'process.processState'
-              )}: &nbsp;&nbsp;<span style="">${
-                item.worker_status.status
-              }</span></div>`
-            }
-
-            if (item.worker_status.worker_process_start_time) {
-              item.job_ids += `<div>${this.$t(
-                'process.start_time'
-              )}: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="">${this.$moment(
-                item.worker_status.worker_process_start_time
-              ).format('YYYY/MM/DD HH:mm:ss')}</span></div>`
-            }
-          }
-          if (item.serverDate - item.ping_time > MINUTE) {
-            item.state = 'offline'
-          } else {
-            item.state = 'online'
-          }
-        })
         return {
           total: countRes.data.count,
           data: res.data
         }
       })
+    },
+
+    // 启动 暂停
+    doUpdate(item, status) {
+      let parmas = {
+        status: status,
+        id: item.id,
+        task_name: item.task_name
+      }
+      this.$api('ScheduleTasks')
+        .patch(parmas)
+        .then(() => {
+          this.table.fetch()
+          this.$message.success(this.$t('message.saveOK'))
+        })
+        .catch(() => {
+          this.$message.error(this.$t('message.saveFail'))
+        })
     },
 
     handleSortTable({ order, prop }) {
@@ -245,7 +249,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.process-list-wrap {
+.dataRule-list-wrap {
   height: 100%;
 
   .tapNav {
@@ -310,7 +314,7 @@ export default {
 }
 </style>
 <style lang="scss">
-.process-list-wrap {
+.dataRule-list-wrap {
   .table-page-container {
     .table-page-body {
       box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
@@ -319,7 +323,6 @@ export default {
         background-color: #fff;
       }
       .el-table {
-        padding: 0 10px;
         box-sizing: border-box;
       }
       .table-page-pagination {
@@ -328,6 +331,11 @@ export default {
         background-color: #fff;
         box-sizing: border-box;
       }
+    }
+  }
+  .el-dialog__wrapper {
+    // overflow: hidden;
+    .el-dialog__body {
     }
   }
 }

@@ -377,7 +377,7 @@ export default {
       this.$emit('update:createDialogVisible', false)
     },
     saveSubmit() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           const id = this.createForm.id
           const method = id ? 'patch' : 'post'
