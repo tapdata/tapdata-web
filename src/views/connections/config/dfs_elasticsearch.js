@@ -13,7 +13,7 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.$t('dataForm.form.connectionType') + '没错是我',
+        label: vm.$t('dataForm.form.connectionType'),
         options: [
           {
             label: vm.$t('dataForm.form.options.target'),

@@ -1175,7 +1175,7 @@
 		{
 			"category": "Frontend",
 			"key": "ALLOW_CONNECTION_TYPE",
-			"value": "mysql,oracle,sqlserver,mongodb,postgres,redis",
+			"value": "mysql,oracle,sqlserver,mongodb,postgres,redis,elasticsearch",
 			"id": "604f4b80e1ca905fa7545302",
 			"isArray": true
 		},
@@ -1189,7 +1189,7 @@
 		{
 			"category": "Frontend",
 			"key": "COMING_ONLINE_CONNECTION_TYPE",
-			"value": "db2,sybase ase,elasticsearch,kafka,gbase-8s",
+			"value": "db2,sybase ase,kafka,gbase-8s",
 			"id": "607ea59663681154b4a30481",
 			"isArray": true
 		}
