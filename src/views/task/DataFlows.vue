@@ -37,6 +37,23 @@
               </ElOption>
             </ElSelect>
           </li>
+          <li v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'">
+            <el-select
+              v-model="searchParams.progress"
+              size="small"
+              clearable
+              :placeholder="$t('dataFlow.taskSettingPlaceholder')"
+              style="width: 160px"
+              @input="table.fetch(1)"
+            >
+              <el-option
+                v-for="item in progressOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </li>
           <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
             <el-select
               v-model="searchParams.executionStatus"
@@ -266,6 +283,7 @@
         <div slot="header">
           {{ $t('dataFlow.syncType') }}
           <TableFilter
+            v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'"
             v-model="searchParams.syncType"
             :options="syncType"
             @input="table.fetch(1)"
