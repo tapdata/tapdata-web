@@ -9,8 +9,6 @@ import log from '../log'
 import factory from './factory'
 import WSMock from './wsMock'
 
-import 'socket.io/client-dist/socket.io.js'
-
 const workerApi = factory('Workers')
 
 class WSClient extends EventEmitter {
