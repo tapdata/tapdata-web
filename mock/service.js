@@ -1764,5 +1764,14 @@ module.exports = {
     ],
     code: 'ok',
     msg: 'ok'
+  },
+  '/api/tcm/agent/agentCount': {
+    reqId: '77006b00-0afb-4ed5-acf4-916655e83e93',
+    code: 'ok',
+    data: {
+      agentTotalCount: 4,
+      agentRunningCount: 1,
+      twoWayAgentRunningCount: 0
+    }
   }
 }
