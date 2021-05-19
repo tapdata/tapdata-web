@@ -370,11 +370,21 @@
                               v-model="header.value"
                             ></el-input>
                             <i
-                              class="iconfont icon-jia add-btn-icon rest-api-margin"
+                              class="
+                                iconfont
+                                icon-jia
+                                add-btn-icon
+                                rest-api-margin
+                              "
                               @click="addHeader(parentIndex)"
                             ></i>
                             <i
-                              class="iconfont icon-quxiao add-btn-icon rest-api-margin"
+                              class="
+                                iconfont
+                                icon-quxiao
+                                add-btn-icon
+                                rest-api-margin
+                              "
                               v-show="item.headerArray.length > 1"
                               @click="removeHeader(parentIndex, headerIndex)"
                             ></i>
@@ -403,11 +413,21 @@
                               v-model="parameter.value"
                             ></el-input>
                             <i
-                              class="iconfont icon-jia add-btn-icon rest-api-margin"
+                              class="
+                                iconfont
+                                icon-jia
+                                add-btn-icon
+                                rest-api-margin
+                              "
                               @click="addParameter(parentIndex)"
                             ></i>
                             <i
-                              class="iconfont icon-quxiao add-btn-icon rest-api-margin"
+                              class="
+                                iconfont
+                                icon-quxiao
+                                add-btn-icon
+                                rest-api-margin
+                              "
                               v-show="item.parameterArray.length > 1"
                               @click="
                                 removeParameter(parentIndex, parameterIndex)

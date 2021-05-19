@@ -429,8 +429,9 @@ export default {
       let permissions = sessionStorage.getItem('tapdata_permissions')
       permissions = permissions ? JSON.parse(permissions) : []
       let routerMap = {}
-      let routes = this.$router.options.routes.find(r => r.name === 'layout')
-        .children
+      let routes = this.$router.options.routes.find(
+        r => r.name === 'layout'
+      ).children
       routes.forEach(r => {
         routerMap[r.name] = r
       })

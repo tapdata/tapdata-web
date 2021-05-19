@@ -107,6 +107,16 @@
             <el-button
               class="btn-step"
               v-if="
+                $window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs' &&
+                [2].includes(steps[activeStep].index)
+              "
+              @click="goBackList()"
+            >
+              取消
+            </el-button>
+            <el-button
+              class="btn-step"
+              v-else-if="
                 [2, 4].includes(steps[activeStep].index) ||
                 (steps[activeStep].index === 3 && !id)
               "

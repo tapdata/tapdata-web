@@ -424,13 +424,8 @@ export default {
     getData({ page, tags }) {
       let region = this.$route.query.region
       let { current, size } = page
-      let {
-        keyword,
-        databaseType,
-        databaseModel,
-        status,
-        sourceType
-      } = this.searchParams
+      let { keyword, databaseType, databaseModel, status, sourceType } =
+        this.searchParams
       let where = {}
       let fields = {
         name: true,
