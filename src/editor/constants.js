@@ -129,6 +129,12 @@ export const FORM_DATA_KEY = 'form_data',
       name: 'MariaDB',
       shapeImage: 'static/editor/o-maria.svg',
       stencilImage: 'static/editor/maria.svg'
+    },
+    redis: {
+      type: 'redis',
+      name: 'Redis',
+      shapeImage: 'static/editor/o-redis.svg',
+      stencilImage: 'static/editor/redis.svg'
     }
   },
   FILE_TYPE_MAPPING = {
