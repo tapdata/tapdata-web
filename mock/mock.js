@@ -265,9 +265,7 @@ for (const url in service) {
           .end(JSON.stringify(Mock.mock(list[url][req.query?.statsType])))
         break
       case '/api/Settings':
-        res
-          .status(200)
-          .end(JSON.stringify(Mock.mock(mockData)))
+        res.status(200).end(JSON.stringify(Mock.mock(mockData)))
         break
       default:
         res.status(200).end(JSON.stringify(Mock.mock(mockData)))

@@ -374,7 +374,7 @@ export default {
             })
           }
         }
-        this.getConnection(this.getWhere('source'), 'source_connectionId')
+        this.getConnection(this.getWhere('source'), 'source_connectionId', true)
       }
       if (field === 'target_databaseType') {
         // dfs修改源端
@@ -399,7 +399,7 @@ export default {
               })
           }
         }
-        this.getConnection(this.getWhere('target'), 'target_connectionId')
+        this.getConnection(this.getWhere('target'), 'target_connectionId', true)
       }
     },
     getSteps() {
@@ -577,7 +577,7 @@ export default {
       return where
     },
     //获取数据源
-    getConnection(where, type) {
+    getConnection(where, type, reset = false) {
       //接口请求之前 loading = true
       let items = this.config.items
       let option = items.find(it => it.field === type)
@@ -607,11 +607,11 @@ export default {
           })
         })
         .then(data => {
-          this.changeConfig(data.data || [], type)
+          this.changeConfig(data.data || [], type, reset)
         })
     },
     //change config
-    changeConfig(data, type) {
+    changeConfig(data, type, reset = false) {
       let items = this.config.items
       switch (type) {
         case 'region': {
@@ -647,6 +647,9 @@ export default {
           break
         }
         case 'source_connectionId': {
+          if (reset) {
+            this.dataSourceModel.source_connectionId = ''
+          }
           // 第二步 数据源连接ID
           let source_connectionId = items.find(
             it => it.field === 'source_connectionId'
@@ -670,6 +673,9 @@ export default {
           break
         }
         case 'target_connectionId': {
+          if (reset) {
+            this.dataSourceModel.target_connectionId = ''
+          }
           let target_connectionId = items.find(
             it => it.field === 'target_connectionId'
           )
