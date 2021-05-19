@@ -7,9 +7,6 @@ import EventEmitter from '../editor/lib/EventEmitter'
 import Cookie from 'tiny-cookie'
 import log from '../log'
 import factory from './factory'
-import WSMock from './wsMock'
-
-import 'socket.io/client-dist/socket.io.js'
 
 const workerApi = factory('Workers')
 
@@ -252,8 +249,7 @@ class WSClient extends EventEmitter {
   }
 }
 
-const wsClient =
-  process.env.VUE_APP_WS === 'true' ? new WSMock() : new WSClient()
+const wsClient = new WSClient()
 wsClient.connect()
 
 export default wsClient
@@ -262,7 +258,3 @@ export const EventName = {
   EXECUTE_SCRIPT_RESULT: 'execute_script_result',
   PIPE: 'pipe'
 }
-
-/*wsClient.on("execute_script", (msg) => {
-	// process msg
-});*/
