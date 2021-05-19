@@ -780,7 +780,11 @@ export default {
     }
   },
   mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+    let cacheParams = this.table.getCache()
+    let params = this.searchParams
+    for (const key in params) {
+      params[key] = params[key] || cacheParams[key]
+    }
   },
   beforeDestroy() {
     ws.off('watch', this.dataflowChange)
