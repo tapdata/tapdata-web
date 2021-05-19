@@ -133,24 +133,24 @@ export default function (vm) {
         label: vm.$t('dataForm.form.databaseOwner'),
         required: true
       },
-      {
-        type: 'switch',
-        field: 'schemaAutoUpdate',
-        label: vm.$t('dataForm.form.ReloadSchema')
-      },
-      {
-        type: 'input',
-        field: 'table_filter',
-        label: vm.$t('dataForm.form.tableFilter'),
-        tips: vm.$t('dataForm.form.tableFilterTips'),
-        maxlength: 500,
-        showWordLimit: true
-      },
-      {
-        type: 'input',
-        field: 'additionalString',
-        label: vm.$t('dataForm.form.additionalString')
-      },
+      // {
+      //   type: 'switch',
+      //   field: 'schemaAutoUpdate',
+      //   label: vm.$t('dataForm.form.ReloadSchema')
+      // },
+      // {
+      //   type: 'input',
+      //   field: 'table_filter',
+      //   label: vm.$t('dataForm.form.tableFilter'),
+      //   tips: vm.$t('dataForm.form.tableFilterTips'),
+      //   maxlength: 500,
+      //   showWordLimit: true
+      // },
+      // {
+      //   type: 'input',
+      //   field: 'additionalString',
+      //   label: vm.$t('dataForm.form.additionalString')
+      // },
       {
         type: 'select',
         field: 'database_datetype_without_timezone',
