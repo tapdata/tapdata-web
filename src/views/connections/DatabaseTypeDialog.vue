@@ -23,17 +23,7 @@
           <div class="img-box position-relative">
             <img :src="getImgByType(item)" />
             <div
-              class="
-                img-box__mask
-                flex
-                justify-center
-                align-center
-                position-absolute
-                top-0
-                bottom-0
-                start-0
-                end-0
-              "
+              class="img-box__mask flex justify-center align-center position-absolute top-0 bottom-0 start-0 end-0"
             >
               <span class="mask-text">即将上线</span>
             </div>

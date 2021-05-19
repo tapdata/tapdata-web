@@ -833,10 +833,9 @@ export default {
     },
     // 按类型给字段赋值
     setType(fieldName, value) {
-      let fieldDef =
-        this.fieldsDef[
-          this.fieldsDef.findIndex(it => it.field_name == fieldName)
-        ]
+      let fieldDef = this.fieldsDef[
+        this.fieldsDef.findIndex(it => it.field_name == fieldName)
+      ]
       if (['Short', 'Integer', 'Long'].includes(fieldDef.java_type))
         return Number(value) ? parseInt(value) : Number(value)
       else if (['Float', 'BigDecimal', 'Double'].includes(fieldDef.java_type))
