@@ -22,7 +22,7 @@
             size="small"
             @input="table.fetch(1)"
           >
-            <ElOption label="全部状态" value=""></ElOption>
+            <ElOption :label="$t('connection.status.all')" value=""></ElOption>
             <ElOption
               v-for="item in databaseStatusOptions"
               :key="item.value"
@@ -206,7 +206,7 @@
         :label="$t('connection.lastUpdateTime')"
         width="160"
         prop="last_updated"
-        sortable="custom"
+        sortable="last_updated"
       >
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}

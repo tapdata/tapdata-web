@@ -244,26 +244,25 @@ export default {
   methods: {
     getData() {
       let where = {}
-      where = {
-        filter: {
-          where: {},
-          order: 'createTime DESC',
-          limit: this.pagesize,
-          skip: (this.currentPage - 1) * this.pagesize
-        }
-      }
       if (!this.read) {
-        where.filter.where['read'] = false
+        where.read = false
       }
       if (this.search || this.search !== '') {
-        where.filter.where['level'] = this.search
+        where.level = this.search
       }
       if (this.msg || this.msg !== '') {
-        where.filter.where['msg'] = this.msg
+        where.msg = this.msg
       }
+      let filter = {
+        where,
+        order: 'createTime DESC',
+        limit: this.pagesize,
+        skip: (this.currentPage - 1) * this.pagesize
+      }
+
       this.loading = true
       notification
-        .get(where)
+        .get({ filter: JSON.stringify(filter) })
         .then(res => {
           if (res.data) {
             this.listData = res.data
@@ -291,20 +290,18 @@ export default {
       this.getData()
     },
     getCount(read) {
-      let where = {
-        where: {}
-      }
+      let where = {}
       if (read === false) {
-        where.where['read'] = false
+        where.read = false
       }
       if (this.search || this.search !== '') {
-        where.where['level'] = this.search
+        where.level = this.search
       }
       if (this.msg || this.msg !== '') {
-        where.where['msg'] = this.msg
+        where.msg = this.msg
       }
       notification
-        .count(where)
+        .count({ where: JSON.stringify(where) })
         .then(res => {
           if (res.data) {
             this.total = res.data.count

@@ -774,6 +774,7 @@ const tc = {
     rename: '改名',
     testConnection: '連接測試',
     status: {
+      all: '全部狀態',
       testing: '測試中',
       invalid: '無效',
       ready: '有效'
@@ -2730,6 +2731,44 @@ const tc = {
     process_id: '進程 ID',
     processState: '工作進程狀態'
   },
+  timeToLive: {
+    header: {
+      indexName: '索引名稱',
+      indexFields: '時間字段',
+      indexStatus: '狀態',
+      indexCreate_by: '創建用戶',
+      operate: '操作',
+      database: '數據庫名稱',
+      tableName: '數據表名稱',
+      expire: '過期時間'
+    },
+    form: {
+      databaseTypes: '數據庫類型',
+      database: '數據庫',
+      tableName: '表名稱',
+      fieldName: '字段名稱',
+      expire: '過期時間'
+    },
+    creatTtl: '創建生命週期',
+    searchtext: '數據庫名稱/數據表名稱/索引名稱',
+    Settinglife: '設置生命週期',
+    m: '分鐘',
+    h: '小時',
+    d: '天',
+    s: '秒',
+    w: '週',
+    mo: '月',
+    y: '年',
+    failed: '當前數據庫的表，沒有發現時間字段，無法創建生命週期',
+    create_by_user: '平台用戶',
+    create_by_dba: '數據庫管理員',
+    status_creating: '正在創建',
+    status_created: '創建完成',
+    status_creation_failed: '創建失敗',
+    status_deleted: '已經刪除',
+    filedGetFailed: '當前數據庫的表，沒有發現時間字段，無法創建生命週期',
+    index_exists: '索引已經存在'
+  },
   setting: {
     email_template: '郵件模板',
     connect_and_test: '連接測試',
@@ -2885,7 +2924,7 @@ const tc = {
     creatDuplicateSource: ' 允許創建重複數據源',
     requestFailed: '請求處理失敗',
     Mongodb_will_use_this_sample_size_when_load_schema:
-      '加載架構時，Mongodb將使用此樣本大小',
+      'Mongodb will use this sample size when load schema 當MongoDB連接加載模型時，會使用該配置進行採樣加載',
     Switch_to_batch_insert_mode_interval__s__in_cdc_:
       '切換到cdc中的批量插入模式間隔。 '
   },
@@ -3010,6 +3049,7 @@ const tc = {
     start: '啟動',
     paused: '暫停',
     status: {
+      done: 'done',
       waiting: '等待中',
       scheduling: '正在執行',
       paused: '暫停',

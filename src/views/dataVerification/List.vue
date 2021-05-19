@@ -3,7 +3,7 @@
     <TablePage
       ref="table"
       row-key="id"
-      :title="$t('connection.databaseTittle')"
+      :title="$t('app.menu.dataVerification')"
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
       @sort-change="handleSortTable"
@@ -207,13 +207,17 @@
             <i class="data-verify__icon el-icon-error"></i>
             <span>Error</span>
           </div>
-          <div v-else class="data-verify__status">
+          <div
+            v-else-if="scope.row.status !== 'done'"
+            class="data-verify__status"
+          >
             <img
               style="width: 26px; vertical-align: middle"
               :src="$window._TAPDATA_OPTIONS_.loadingImg"
             />
             <span>{{ statusMap[scope.row.status] }}</span>
           </div>
+          <div v-else>-</div>
         </template>
       </el-table-column>
       <el-table-column
@@ -450,9 +454,9 @@ export default {
               targetTotal = result.target_total
               diffNum = Math.abs(targetTotal - sourceTotal)
             }
-            item.lastStartTime = this.$moment(item.lastStartTime).format(
-              'YYYY-MM-DD HH:mm:ss'
-            )
+            item.lastStartTime = item.lastStartTime
+              ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
+              : '-'
             item.sourceTotal = sourceTotal
             item.targetTotal = targetTotal
             item.diffNum = diffNum
