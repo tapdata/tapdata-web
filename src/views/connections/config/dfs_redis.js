@@ -66,11 +66,11 @@ export default function (vm) {
         label: vm.$t('dataForm.form.databaseName'),
         required: true
       },
-      {
-        type: 'input',
-        field: 'database_username',
-        label: vm.$t('dataForm.form.userName')
-      },
+      // {
+      //   type: 'input',
+      //   field: 'database_username',
+      //   label: vm.$t('dataForm.form.userName')
+      // },
       {
         type: 'input',
         field: 'plain_password',
