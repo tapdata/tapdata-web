@@ -906,7 +906,14 @@ export default {
         'db2',
         'kafka',
         'mariadb',
-        'mysql pxc'
+        'mysql pxc',
+        'gbase-8s',
+        'sybase ase',
+        'gaussdb200',
+        'dummy db',
+        'rest api',
+        'custom_connection',
+        'gridfs'
       ],
       model: '',
       config: {
