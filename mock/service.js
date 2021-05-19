@@ -619,6 +619,11 @@ module.exports = {
     msg: 'ok'
   },
   '/api/DataFlows/count': { data: { count: 41 }, code: 'ok', msg: 'ok' },
+  '/api/DataFlows/:id/reset': {
+    code: 'ok',
+    msg: 'ok',
+    data: {}
+  },
   '/api/DataFlows': {
     'data|0-30': [
       {

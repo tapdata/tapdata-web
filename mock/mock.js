@@ -252,20 +252,15 @@ const list = {
   }
 }
 
-const argv = process.argv
-
 for (const url in service) {
-  let mockData = service[url]
+  let mockData = list[url] ?? service[url]
   app.all(url, (req, res) => {
     // 根据参入参数，处理
     switch (url) {
       case '/api/DataFlowInsights/runtimeMonitor':
         res
           .status(200)
-          .end(JSON.stringify(Mock.mock(list[url][req.query?.statsType])))
-        break
-      case '/api/Settings':
-        res.status(200).end(JSON.stringify(Mock.mock(mockData)))
+          .end(JSON.stringify(Mock.mock(mockData[req.query?.statsType])))
         break
       default:
         res.status(200).end(JSON.stringify(Mock.mock(mockData)))

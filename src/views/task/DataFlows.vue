@@ -502,6 +502,7 @@
                 slot="dropdown"
               >
                 <el-dropdown-item
+                  v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs'"
                   command="validate"
                   v-readonlybtn="'Data_verify'"
                   >{{ $t('dataVerify.dataVerify') }}</el-dropdown-item
