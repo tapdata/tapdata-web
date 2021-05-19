@@ -392,8 +392,9 @@ export default {
         }
       }
       if (this.source.tableName && this.source.tableName !== '') {
-        whereFailedRow.filter.where['sourceStage.tableName'] =
-          this.source.tableName
+        whereFailedRow.filter.where[
+          'sourceStage.tableName'
+        ] = this.source.tableName
       }
       this.failRowLoading = true
       ValidationResults.get(whereFailedRow).then(res => {

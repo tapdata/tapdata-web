@@ -166,8 +166,9 @@ export default class {
   }
 
   async getHeaders(collectionName, operationName) {
-    let collection =
-      this.collections[collectionName || this.collection.collection]
+    let collection = this.collections[
+      collectionName || this.collection.collection
+    ]
     let properties = collection['properties']
     let headers = []
     let fields = Object.keys(properties || {})
@@ -207,8 +208,9 @@ export default class {
   async exportData(params) {
     const token = await this.getAPIServerToken()
     params = params || {}
-    let url =
-      this.collections[this.collection.collection]['api']['findPage']['url']
+    let url = this.collections[this.collection.collection]['api']['findPage'][
+      'url'
+    ]
     let fileExp = params.type === 'excel' ? 'xlsx' : params.type || 'json'
     let queryString = []
     Object.keys(params || {}).forEach(v => {
@@ -222,8 +224,9 @@ export default class {
 
   async downloadById(item) {
     const token = await this.getAPIServerToken()
-    let url =
-      this.collections[this.collection.collection]['api']['downloadById']['url']
+    let url = this.collections[this.collection.collection]['api'][
+      'downloadById'
+    ]['url']
     url = url.replace('{id}', item._id)
     url = url + '?access_token=' + token
     window.open(url, '__target')
@@ -256,10 +259,9 @@ export default class {
           this.collection.operationName || 'findPage_post'
         ]
       ) {
-        url =
-          this.collections[this.collection.collection]['api'][
-            this.collection.operationName || 'findPage_post'
-          ]['url']
+        url = this.collections[this.collection.collection]['api'][
+          this.collection.operationName || 'findPage_post'
+        ]['url']
       }
       if (!url) {
         return {
@@ -302,8 +304,9 @@ export default class {
       const request = axios.create({
         headers: { access_token: await this.getAPIServerToken() }
       })
-      let url =
-        this.collections[this.collection.collection]['api']['create']['url']
+      let url = this.collections[this.collection.collection]['api']['create'][
+        'url'
+      ]
       const response = await request.post(url, doc)
       if (response.statusText === 'OK') {
         return {
@@ -332,8 +335,9 @@ export default class {
       const request = axios.create({
         headers: { access_token: await this.getAPIServerToken() }
       })
-      let url =
-        this.collections[this.collection.collection]['api']['updateById']['url']
+      let url = this.collections[this.collection.collection]['api'][
+        'updateById'
+      ]['url']
       url = url.replace('{id}', id)
       const response = await request.patch(url, doc)
       if (response.statusText === 'OK') {
@@ -362,8 +366,9 @@ export default class {
       const request = axios.create({
         headers: { access_token: await this.getAPIServerToken() }
       })
-      let url =
-        this.collections[this.collection.collection]['api']['updateById']['url']
+      let url = this.collections[this.collection.collection]['api'][
+        'updateById'
+      ]['url']
       url = url.replace('{id}', id)
       const response = await request.patch(url, doc)
       if (response.statusText === 'OK') {
@@ -392,8 +397,9 @@ export default class {
       const request = axios.create({
         headers: { access_token: await this.getAPIServerToken() }
       })
-      let url =
-        this.collections[this.collection.collection]['api']['deleteById']['url']
+      let url = this.collections[this.collection.collection]['api'][
+        'deleteById'
+      ]['url']
       url = url.replace('{id}', id)
       const response = await request.delete(url)
 
@@ -425,8 +431,9 @@ export default class {
       const request = axios.create({
         headers: { access_token: await this.getAPIServerToken() }
       })
-      let url =
-        this.collections[this.collection.collection]['api']['updateAll']['url']
+      let url = this.collections[this.collection.collection]['api'][
+        'updateAll'
+      ]['url']
       let querys = []
       Object.keys(where).forEach(key => {
         querys.push(`${key}=${where[key]}`)
