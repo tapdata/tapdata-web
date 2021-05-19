@@ -42,7 +42,8 @@ export default function (vm) {
           },
           {
             label: vm.$t('dataForm.form.options.standardMode'),
-            tip: '此模式将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
+            tip:
+              '此模式将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
             value: false,
             disabled: false
           }

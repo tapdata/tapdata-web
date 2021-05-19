@@ -892,8 +892,9 @@ export default {
     handleScript(node, data) {
       let self = this
 
-      let fieldName = (self.scriptDialog.fieldName =
-        self.getParentFieldName(node))
+      let fieldName = (self.scriptDialog.fieldName = self.getParentFieldName(
+        node
+      ))
       let tableName = (self.scriptDialog.tableName = data.table_name)
       let id = data.id
 
