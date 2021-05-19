@@ -5,17 +5,17 @@
   <el-divider direction="vertical"/>
   <section>
     <el-table :data="statisticData">
-      <el-table-column label="近一个月" align="center">
-        <el-table-column label="新增（条）" align="center" prop="monthCreate"></el-table-column>
-        <el-table-column label="新增（修改）" align="center" prop="monthUpdate"></el-table-column>
+      <el-table-column :label="$t('dkDashboard.month')" align="center">
+        <el-table-column :label="$t('dkDashboard.create')" align="center" prop="monthCreate"></el-table-column>
+        <el-table-column :label="$t('dkDashboard.update')" align="center" prop="monthUpdate"></el-table-column>
       </el-table-column>
-      <el-table-column label="昨日" align="center">
-        <el-table-column label="新增（条）" align="center" prop="yesterdayCreate"></el-table-column>
-        <el-table-column label="新增（修改）" align="center" prop="yesterdayUpdate"></el-table-column>
+      <el-table-column :label="$t('dkDashboard.yesterday')" align="center">
+        <el-table-column :label="$t('dkDashboard.create')" align="center" prop="yesterdayCreate"></el-table-column>
+        <el-table-column :label="$t('dkDashboard.update')" align="center" prop="yesterdayUpdate"></el-table-column>
       </el-table-column>
-      <el-table-column label="今日" align="center">
-        <el-table-column label="新增（条）" align="center" prop="todayCreate"></el-table-column>
-        <el-table-column label="新增（修改）" align="center" prop="todayUpdate"></el-table-column>
+      <el-table-column :label="$t('dkDashboard.today')" align="center">
+        <el-table-column :label="$t('dkDashboard.create')" align="center" prop="todayCreate"></el-table-column>
+        <el-table-column :label="$t('dkDashboard.update')" align="center" prop="todayUpdate"></el-table-column>
       </el-table-column>
     </el-table>
   </section>
@@ -39,7 +39,7 @@ export default {
     trendOptions() {
       return {
         title: {
-          text: '数据增量',
+          text: this.$t('dkDashboard.dataIncrement'),
           left: 'center',
           textStyle: {
             color: '#666',
@@ -66,7 +66,7 @@ export default {
           }
         },
         yAxis: {
-          name: '占用空间（条）',
+          name: this.$t('dkDashboard.spaceUsage2'),
           nameGap: 80,
           nameLocation: 'middle',
           nameTextStyle: {

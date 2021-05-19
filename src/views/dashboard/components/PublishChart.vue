@@ -26,7 +26,7 @@ export default {
     trendOptions() {
       return {
         title: {
-          text: '发布数据增量趋势',
+          text: this.$t('dkDashboard.trendData'),
           left: 'center',
           textStyle: {
             color: '#666',
@@ -53,7 +53,7 @@ export default {
           }
         },
         yAxis: {
-          name: '占用空间（GB）',
+          name: this.$t('dkDashboard.spaceUsage'),
           nameGap: 50,
           nameLocation: 'middle',
           nameTextStyle: {
@@ -88,7 +88,7 @@ export default {
     topOptions() {
       return {
         title: {
-          text: '发布数据前10分布（条）',
+          text: this.$t('dkDashboard.topRelease'),
           left: 'center',
           textStyle: {
             color: '#666',

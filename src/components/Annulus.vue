@@ -70,13 +70,13 @@ export default {
       } else { // 处理成万、亿、兆的单位
         if (num) {
           if (num > 1000000000000) {
-            return parseInt((num / 1000000000000) * 10) / 10 + '兆'
+            return parseInt((num / 1000000000000) * 10) / 10 + this.$t('dkDashboard.zhao')
           }
           if (num > 100000000) {
-            return parseInt((num / 100000000) * 10) / 10 + '亿'
+            return parseInt((num / 100000000) * 10) / 10 + this.$t('dkDashboard.yi')
           }
           if (num > 10000) {
-            return parseInt((num / 10000) * 10) / 10 + '万'
+            return parseInt((num / 10000) * 10) / 10 + this.$t('dkDashboard.wan')
           }
           return num
         } else {

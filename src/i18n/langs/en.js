@@ -3165,6 +3165,35 @@ const en = {
       paused: 'Paused',
       stopping: 'Stopping'
     }
+  },
+  dkDashboard: {
+    dataCount: 'Overview',
+    trendCount: 'Data increment trend statistics',
+    typeCount: 'Number of optional data types',
+    annulusTitle1: 'Published data (pieces)',
+    annulusTitle2: 'Published data size',
+    annulusTitle3: 'Data types available (number)',
+    annulusTitle4: 'Published data (number)',
+    trendData: 'Publish incremental trends in data',
+    spaceUsage: 'Take up the space(GB)',
+    topRelease: 'Top 10 distribution of released data (pieces)',
+    month: 'Nearly a month',
+    yesterday: 'Yesterday',
+    today: 'Today',
+    create: 'New (number)',
+    update: 'New (Modified)',
+    dataIncrement: 'The incremental data',
+    spaceUsage2:'Take up the space(number)',
+    from: 'source',
+    unknown: 'unknown',
+    record: 'Historical records (number)',
+    dataSize: 'Data size',
+    outCount: 'Violations(number)',
+    outRate: 'Percent of Violations',
+    gather: 'Summary',
+    zhao: 'M',
+    yi: '*10000W',
+    wan: 'W'
   }
 }
 

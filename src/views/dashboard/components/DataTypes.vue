@@ -5,27 +5,27 @@
       max-height="480"
       v-loading="loading"
       :data="list">
-      <el-table-column label="来源地">
+      <el-table-column :label="$t('dkDashboard.from')">
         <template slot-scope="scope">
-          <span>{{scope.row.data.name || '未知'}}</span>
+          <span>{{scope.row.data.name || $t('dkDashboard.unknown')}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="历史总记录数（条）">
+      <el-table-column :label="$t('dkDashboard.record')">
         <template slot-scope="scope">
           <span>{{formatNum(scope.row.data.total_record) || 0}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="当前数据大小">
+      <el-table-column :label="$t('dkDashboard.dataSize')">
         <template slot-scope="scope">
           <span>{{handleSize(scope.row.data.total_data_size)}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="违规总数（条）">
+      <el-table-column :label="$t('dkDashboard.outCount')">
         <template slot-scope="scope">
           <span>{{formatNum(scope.row.data.total_violation) || 0}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="违规占比">
+      <el-table-column :label="$t('dkDashboard.outRate')">
         <template slot-scope="scope">
           <span>{{handleDecimals(scope.row.data.total_violation / scope.row.data.total_record)}}%</span>
         </template>
@@ -91,7 +91,7 @@
           // 添加当页汇总数据
           if (list.length) {
             let total = {
-              name: '汇总',
+              name: this.$t('dkDashboard.gather'),
               total_data_size: 0,
               total_record: 0,
               total_violation: 0

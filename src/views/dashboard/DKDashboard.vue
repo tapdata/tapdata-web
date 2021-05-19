@@ -4,14 +4,14 @@
     <div class="panel">
       <div class="panel-title">
         <img :src="require('@/assets/icons/dashboard1.png')" alt="">
-        <span>数据概览</span>
+        <span>{{$t('dkDashboard.dataCount')}}</span>
       </div>      
       <div class="panel-content">
         <section class="count" v-loading="countLoading">
-          <Annulus :number="countInfo.total_records || 0" color="#3ae698" :text="'已发布的总数据量（条）'"/>
-          <Annulus :number="countInfo.total_data_size" :isCapacity="true" color="#686be8" :text="'已发布的总数据大小'"/>
-          <Annulus :number="countInfo.total_types || 0" color="#2db3ff" :text="'可选数据种类数（个）'"/>
-          <Annulus :number="countInfo.published_types || 0" color="#fcbc5e" :text="'已发布数据种类（个）'"/>          
+          <Annulus :number="countInfo.total_records || 0" color="#3ae698" :text="$t('dkDashboard.annulusTitle1')"/>
+          <Annulus :number="countInfo.total_data_size" :isCapacity="true" color="#686be8" :text="$t('dkDashboard.annulusTitle2')"/>
+          <Annulus :number="countInfo.total_types || 0" color="#2db3ff" :text="$t('dkDashboard.annulusTitle3')"/>
+          <Annulus :number="countInfo.published_types || 0" color="#fcbc5e" :text="$t('dkDashboard.annulusTitle4')"/>          
         </section>
         <el-divider/>
         <PublishChart/>
@@ -21,7 +21,7 @@
     <div class="panel">
       <div class="panel-title">
         <img :src="require('@/assets/icons/dashboard2.png')" alt="">
-        <span>数据增量趋势统计</span>
+        <span>{{$t('dkDashboard.trendCount')}}</span>
       </div>
       <DataTrend/>
     </div>
@@ -29,7 +29,7 @@
     <div class="panel">
       <div class="panel-title">
         <img :src="require('@/assets/icons/dashboard3.png')" alt="">
-        <span>可选数据种类数</span>
+        <span>{{$t('dkDashboard.typeCount')}}</span>
       </div>
       <DataTypes/>
     </div>
@@ -89,7 +89,7 @@ export default {
     }      
   }
   .el-pagination.is-background {
-    padding: 20px 10px;
+    padding: 20px 10px 10px;
     text-align: right;
     .el-pagination__total, .el-pagination__sizes {
       float: left;
