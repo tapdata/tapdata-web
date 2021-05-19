@@ -3,7 +3,22 @@
 <div class="data-trend">
   <section v-loading="trendLoading"><div ref="trendChart"></div></section>
   <el-divider direction="vertical"/>
-  <section><div></div></section>
+  <section>
+    <el-table :data="statisticData">
+      <el-table-column label="近一个月" align="center">
+        <el-table-column label="新增（条）" align="center" prop="monthCreate"></el-table-column>
+        <el-table-column label="新增（修改）" align="center" prop="monthUpdate"></el-table-column>
+      </el-table-column>
+      <el-table-column label="昨日" align="center">
+        <el-table-column label="新增（条）" align="center" prop="yesterdayCreate"></el-table-column>
+        <el-table-column label="新增（修改）" align="center" prop="yesterdayUpdate"></el-table-column>
+      </el-table-column>
+      <el-table-column label="今日" align="center">
+        <el-table-column label="新增（条）" align="center" prop="todayCreate"></el-table-column>
+        <el-table-column label="新增（修改）" align="center" prop="todayUpdate"></el-table-column>
+      </el-table-column>
+    </el-table>
+  </section>
 </div>
 </template>
 
@@ -16,6 +31,7 @@ export default {
       trendChart: null, // 增量趋势图表实例
       trendData: [], // 增量趋势数据 每一项label表示标签， value表示值
       trendLoading: false, // 增量趋势图表加载中
+      statisticData: [], // 增量统计数据
     }
   },
   computed: {
@@ -89,13 +105,26 @@ export default {
     },
     // 增量表格数据请求Promise
     trendPromise(start, end) {
-      return this.$api('insights').get({
-        'filter[skip]': 0,
-        //'filter[order]': 'stats_time asc',
-        'filter[where][stats_name]': 'trend_stats_increment',
-        'filter[where][stats_granularity]': 'minute',
-        'filter[where][and][0][stats_time][gte]': start,
-        'filter[where][and][1][stats_time][lt]': end
+      return new Promise((resolve, reject) => {
+        this.$api('insights').get({
+          'filter[skip]': 0,
+          //'filter[order]': 'stats_time asc',
+          'filter[where][stats_name]': 'trend_stats_increment',
+          'filter[where][stats_granularity]': 'minute',
+          'filter[where][and][0][stats_time][gte]': start,
+          'filter[where][and][1][stats_time][lt]': end
+        }).then(({data}) => {
+          let list = data || []
+          // 合并所查询的数据
+          let result = { create: 0, update: 0 }
+          list.forEach(v => {
+            result.create += v.data && v.data.create ? v.data.create : 0;
+            result.update += v.data && v.data.update ? v.data.update : 0;
+          })
+          resolve(result)
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
     // 获取表格增量统计数据
@@ -121,11 +150,15 @@ export default {
         this.trendPromise(...month), 
         this.trendPromise(...yesterday),
         this.trendPromise(...today)
-      ]).then(([{data: monthData}, {data: yesterdayData}, {data: today}]) => {
-        console.log(monthData, yesterdayData, today)
-        // let list = data || []
-        // this.trendData = list
-        // this.trendChart.setOption(this.trendOptions)
+      ]).then(result => {
+        this.statisticData = [{
+          monthCreate: result[0].create,
+          monthUpdate: result[0].update,
+          yesterdayCreate: result[1].create,
+          yesterdayUpdate: result[1].update,
+          todayCreate: result[2].create,
+          todayUpdate: result[2].update,
+        }]
       }).finally(() => {
         this.trendLoading = false
       })
@@ -162,6 +195,7 @@ export default {
 
     // 获取数据
     this.getTrendData()
+    this.getStatisticData()
 
     // 窗口变化重绘图表
     window.addEventListener('resize', this.resizeFn)
@@ -183,6 +217,10 @@ export default {
   }
   div {
     height: 100%;
+    &.el-table {
+      width: 99%;
+      height: auto;
+    }
   }
 }
 </style>

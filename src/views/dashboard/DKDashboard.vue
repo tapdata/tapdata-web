@@ -31,6 +31,7 @@
         <img :src="require('@/assets/icons/dashboard3.png')" alt="">
         <span>可选数据种类数</span>
       </div>
+      <DataTypes/>
     </div>
   </div>
 </template>
@@ -39,12 +40,14 @@
 import Annulus from '@/components/Annulus.vue';
 import PublishChart from './components/PublishChart.vue';
 import DataTrend from './components/DataTrend.vue';
+import DataTypes from './components/DataTypes.vue';
 
 export default {
   components: {
     Annulus,
     PublishChart,
-    DataTrend
+    DataTrend,
+    DataTypes
   },
   data() {
     return {
@@ -74,6 +77,26 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.dk-dashboard {
+  .el-table.el-table--border {
+    th.is-leaf {
+      border-bottom: 1px solid #EBEEF5;
+    }
+    td {
+      border-bottom: 1px solid #EBEEF5;
+    }      
+  }
+  .el-pagination.is-background {
+    padding: 20px 10px;
+    text-align: right;
+    .el-pagination__total, .el-pagination__sizes {
+      float: left;
+    }
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 .dk-dashboard {
