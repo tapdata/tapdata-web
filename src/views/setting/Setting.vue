@@ -53,7 +53,11 @@
                         (childItem.key_label || '').split(' ').join('_')
                     ) || childItem.key_label
                   }}</span>
-                  <el-tooltip effect="dark" placement="top">
+                  <el-tooltip
+                    effect="dark"
+                    placement="top"
+                    v-if="childItem.documentation"
+                  >
                     <div style="max-width: 300px" slot="content">
                       {{
                         $t(

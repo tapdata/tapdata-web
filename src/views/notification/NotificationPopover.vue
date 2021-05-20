@@ -177,6 +177,9 @@ export default {
       let msg = {
         type: 'notification'
       }
+      if (!parseInt(this.$cookie.get('isAdmin'))) {
+        msg.userId = this.$cookie.get('user_id')
+      }
       this.getUnReadNum()
       ws.on('notification', data => {
         if (data.data && data.data.length > 0) {

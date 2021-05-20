@@ -776,6 +776,7 @@ const cn = {
     rename: '改名',
     testConnection: '连接测试',
     status: {
+      all: '全部状态',
       testing: '测试中',
       invalid: '无效',
       ready: '有效'
@@ -2893,6 +2894,7 @@ const cn = {
     server_oversee_url: ' 运维运控URL',
     system: ' 系统全局',
     licenseNoticeDays: ' license 到期提醒',
+    newMongodbChangeStream: '111111',
     flow_engine_version: ' 流程引擎版本',
     tapdata_agent_version: ' tapdata agent版本',
     doc_base_url: ' 帮助文档URL',
@@ -2931,7 +2933,7 @@ const cn = {
     creatDuplicateSource: ' 允许创建重复数据源',
     requestFailed: '请求处理失败',
     Mongodb_will_use_this_sample_size_when_load_schema:
-      '加载架构时，Mongodb将使用此样本大小',
+      'Mongodb will use this sample size when load schema 当MongoDB连接加载模型时，会使用该配置进行采样加载',
     Switch_to_batch_insert_mode_interval__s__in_cdc_:
       '切换到cdc中的批量插入模式间隔。'
   },
@@ -3056,11 +3058,41 @@ const cn = {
     start: '启动',
     paused: '暂停',
     status: {
+      done: 'done',
       waiting: '等待中',
       scheduling: '正在执行',
       paused: '暂停',
       stopping: '正在停止'
     }
+  },
+  dkDashboard: {
+    dataCount: '数据概览',
+    trendCount: '数据增量趋势统计',
+    typeCount: '可选数据种类数',
+    annulusTitle1: '已发布的总数据量（条）',
+    annulusTitle2: '已发布的总数据大小',
+    annulusTitle3: '可选数据种类数（个）',
+    annulusTitle4: '已发布数据种类（个）',
+    trendData: '发布数据增量趋势',
+    spaceUsage: '占用空间（GB）',
+    topRelease: '发布数据前10分布（条）',
+    month: '近一个月',
+    yesterday: '昨日',
+    today: '今日',
+    create: '新增（条）',
+    update: '新增（修改）',
+    dataIncrement: '数据增量',
+    spaceUsage2:'占用空间（条）',
+    from: '来源地',
+    unknown: '未知',
+    record: '历史总记录数（条）',
+    dataSize: '当前数据大小',
+    outCount: '违规总数（条）',
+    outRate: '违规占比',
+    gather: '汇总',
+    zhao: '兆',
+    yi: '亿',
+    wan: '万'
   }
 }
 
