@@ -204,12 +204,10 @@ export default {
     },
     getUnReadNum() {
       let where = {
-        where: {
-          read: false
-        }
+        read: false
       }
       this.$api('notification')
-        .count(where)
+        .count({ where: JSON.stringify(where) })
         .then(res => {
           if (res.data) {
             this.$store.commit('notification', {
