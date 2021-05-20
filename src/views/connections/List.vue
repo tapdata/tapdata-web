@@ -269,7 +269,7 @@ import TableFilter from '@/components/TableFilter'
 
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
-import { verify, desensitization } from './util'
+import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
 
 let timeout = null
@@ -735,11 +735,14 @@ export default {
       if (item.database_type === 'mongodb') {
         item.database_uri = ''
       }
-      this.testData = item
+      this.testData = Object.assign({}, item, defaultModel['default'])
       this.$api('connections')
-        .updateById(item.id, {
-          status: 'testing'
-        })
+        .updateById(
+          item.id,
+          Object.assign({}, item, {
+            status: 'testing'
+          })
+        )
         .then(() => {
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
             this.dialogTestVisible = true

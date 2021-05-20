@@ -3056,6 +3056,35 @@ const tc = {
       paused: '暫停',
       stopping: '正在停止'
     }
+  },
+  dkDashboard: {
+    dataCount: '數據概覽',
+    trendCount: '數據增量趨勢統計',
+    typeCount: '可選數據種類數',
+    annulusTitle1: '已發布的總數據量（條）',
+    annulusTitle2: '已發布的總數據大小',
+    annulusTitle3: '可選數據種類數（個）',
+    annulusTitle4: '已發布數據種類（個）',
+    trendData: '發布數據增量趨勢',
+    spaceUsage: '占用空間（GB）',
+    topRelease: '發布數據前10分布（條）',
+    month: '近一個月',
+    yesterday: '昨日',
+    today: '今日',
+    create: '新增（條）',
+    update: '新增（修改）',
+    dataIncrement: '數據增量',
+    spaceUsage2: '占用空間（條）',
+    from: '來源地',
+    unknown: '未知',
+    record: '歷史總記錄數（條）',
+    dataSize: '當前數據大小',
+    outCount: '違規總數（條）',
+    outRate: '違規占比',
+    gather: '匯總',
+    zhao: '兆',
+    yi: '億',
+    wan: '萬'
   }
 }
 
