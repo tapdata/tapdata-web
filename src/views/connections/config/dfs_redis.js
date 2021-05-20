@@ -8,19 +8,19 @@ export default function (vm) {
       connection_type: 'target'
     },
     items: [
-      {
-        type: 'radio',
-        field: 'connection_type',
-        label: vm.$t('dataForm.form.connectionType'),
-        options: [
-          {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
-            value: 'target'
-          }
-        ],
-        required: true
-      },
+      // {
+      //   type: 'radio',
+      //   field: 'connection_type',
+      //   label: vm.$t('dataForm.form.connectionType'),
+      //   options: [
+      //     {
+      //       label: vm.$t('dataForm.form.options.target'),
+      //       tip: vm.$t('dataForm.form.options.targetTips'),
+      //       value: 'target'
+      //     }
+      //   ],
+      //   required: true
+      // },
       {
         type: 'input',
         field: 'database_host',
@@ -66,11 +66,11 @@ export default function (vm) {
         label: vm.$t('dataForm.form.databaseName'),
         required: true
       },
-      {
-        type: 'input',
-        field: 'database_username',
-        label: vm.$t('dataForm.form.userName')
-      },
+      // {
+      //   type: 'input',
+      //   field: 'database_username',
+      //   label: vm.$t('dataForm.form.userName')
+      // },
       {
         type: 'input',
         field: 'plain_password',

@@ -1,25 +1,49 @@
 <!-- 数据增量趋势统计（1、数据增量折线图 2、增量统计表格） -->
 <template>
-<div class="data-trend">
-  <section v-loading="trendLoading"><div ref="trendChart"></div></section>
-  <el-divider direction="vertical"/>
-  <section>
-    <el-table :data="statisticData">
-      <el-table-column :label="$t('dkDashboard.month')" align="center">
-        <el-table-column :label="$t('dkDashboard.create')" align="center" prop="monthCreate"></el-table-column>
-        <el-table-column :label="$t('dkDashboard.update')" align="center" prop="monthUpdate"></el-table-column>
-      </el-table-column>
-      <el-table-column :label="$t('dkDashboard.yesterday')" align="center">
-        <el-table-column :label="$t('dkDashboard.create')" align="center" prop="yesterdayCreate"></el-table-column>
-        <el-table-column :label="$t('dkDashboard.update')" align="center" prop="yesterdayUpdate"></el-table-column>
-      </el-table-column>
-      <el-table-column :label="$t('dkDashboard.today')" align="center">
-        <el-table-column :label="$t('dkDashboard.create')" align="center" prop="todayCreate"></el-table-column>
-        <el-table-column :label="$t('dkDashboard.update')" align="center" prop="todayUpdate"></el-table-column>
-      </el-table-column>
-    </el-table>
-  </section>
-</div>
+  <div class="data-trend">
+    <section v-loading="trendLoading"><div ref="trendChart"></div></section>
+    <el-divider direction="vertical" />
+    <section>
+      <el-table :data="statisticData">
+        <el-table-column :label="$t('dkDashboard.month')" align="center">
+          <el-table-column
+            :label="$t('dkDashboard.create')"
+            align="center"
+            prop="monthCreate"
+          ></el-table-column>
+          <el-table-column
+            :label="$t('dkDashboard.update')"
+            align="center"
+            prop="monthUpdate"
+          ></el-table-column>
+        </el-table-column>
+        <el-table-column :label="$t('dkDashboard.yesterday')" align="center">
+          <el-table-column
+            :label="$t('dkDashboard.create')"
+            align="center"
+            prop="yesterdayCreate"
+          ></el-table-column>
+          <el-table-column
+            :label="$t('dkDashboard.update')"
+            align="center"
+            prop="yesterdayUpdate"
+          ></el-table-column>
+        </el-table-column>
+        <el-table-column :label="$t('dkDashboard.today')" align="center">
+          <el-table-column
+            :label="$t('dkDashboard.create')"
+            align="center"
+            prop="todayCreate"
+          ></el-table-column>
+          <el-table-column
+            :label="$t('dkDashboard.update')"
+            align="center"
+            prop="todayUpdate"
+          ></el-table-column>
+        </el-table-column>
+      </el-table>
+    </section>
+  </div>
 </template>
 
 <script>
@@ -31,7 +55,7 @@ export default {
       trendChart: null, // 增量趋势图表实例
       trendData: [], // 增量趋势数据 每一项label表示标签， value表示值
       trendLoading: false, // 增量趋势图表加载中
-      statisticData: [], // 增量统计数据
+      statisticData: [] // 增量统计数据
     }
   },
   computed: {
@@ -106,25 +130,28 @@ export default {
     // 增量表格数据请求Promise
     trendPromise(start, end) {
       return new Promise((resolve, reject) => {
-        this.$api('insights').get({
-          'filter[skip]': 0,
-          //'filter[order]': 'stats_time asc',
-          'filter[where][stats_name]': 'trend_stats_increment',
-          'filter[where][stats_granularity]': 'minute',
-          'filter[where][and][0][stats_time][gte]': start,
-          'filter[where][and][1][stats_time][lt]': end
-        }).then(({data}) => {
-          let list = data || []
-          // 合并所查询的数据
-          let result = { create: 0, update: 0 }
-          list.forEach(v => {
-            result.create += v.data && v.data.create ? v.data.create : 0;
-            result.update += v.data && v.data.update ? v.data.update : 0;
+        this.$api('insights')
+          .get({
+            'filter[skip]': 0,
+            //'filter[order]': 'stats_time asc',
+            'filter[where][stats_name]': 'trend_stats_increment',
+            'filter[where][stats_granularity]': 'minute',
+            'filter[where][and][0][stats_time][gte]': start,
+            'filter[where][and][1][stats_time][lt]': end
           })
-          resolve(result)
-        }).catch(err => {
-          reject(err)
-        })
+          .then(({ data }) => {
+            let list = data || []
+            // 合并所查询的数据
+            let result = { create: 0, update: 0 }
+            list.forEach(v => {
+              result.create += v.data && v.data.create ? v.data.create : 0
+              result.update += v.data && v.data.update ? v.data.update : 0
+            })
+            resolve(result)
+          })
+          .catch(err => {
+            reject(err)
+          })
       })
     },
     // 获取表格增量统计数据
@@ -132,7 +159,7 @@ export default {
       // 1个月
       const month = [
         this.$moment().subtract(30, 'days').format('YYYYMMDD000000'),
-        this.$moment().format('YYYYMMDD235959')     
+        this.$moment().format('YYYYMMDD235959')
       ]
       // 昨天
       const yesterday = [
@@ -142,51 +169,62 @@ export default {
       // 今天
       const today = [
         this.$moment().format('YYYYMMDD000000'),
-        this.$moment().format('YYYYMMDD235959')        
+        this.$moment().format('YYYYMMDD235959')
       ]
 
       this.trendLoading = true
       Promise.all([
-        this.trendPromise(...month), 
+        this.trendPromise(...month),
         this.trendPromise(...yesterday),
         this.trendPromise(...today)
-      ]).then(result => {
-        this.statisticData = [{
-          monthCreate: result[0].create,
-          monthUpdate: result[0].update,
-          yesterdayCreate: result[1].create,
-          yesterdayUpdate: result[1].update,
-          todayCreate: result[2].create,
-          todayUpdate: result[2].update,
-        }]
-      }).finally(() => {
-        this.trendLoading = false
-      })
+      ])
+        .then(result => {
+          this.statisticData = [
+            {
+              monthCreate: result[0].create,
+              monthUpdate: result[0].update,
+              yesterdayCreate: result[1].create,
+              yesterdayUpdate: result[1].update,
+              todayCreate: result[2].create,
+              todayUpdate: result[2].update
+            }
+          ]
+        })
+        .finally(() => {
+          this.trendLoading = false
+        })
     },
     // 获取增量趋势图表数据
     getTrendData() {
       this.trendLoading = true
-      this.$api('insights').get({
-        'filter[order]': 'stats_time desc',
-        'filter[where][stats_name]': 'trend_stats',
-        'filter[where][stats_granularity]': 'minute',
-        'filter[where][stats_time][gt]': this.$moment().subtract(5, 'days').format('YYYYMMDD000000')
-      }).then(({data}) => {
-        let list = data || []
-        this.trendData = list.map(v => {
-          let year = v.stats_time.substring(0, 4)
-          let month = v.stats_time.substring(4, 6)
-          let day = v.stats_time.substring(6, 8)
-          let hours = v.stats_time.substring(8, 10)
-          let minute = v.stats_time.substring(10, 12)
-          v.label = `${year}-${month}-${day} ${hours}:${minute}`
-          v.value = v.data.create
-          return v
-        }).reverse()
-        this.trendChart.setOption(this.trendOptions)
-      }).finally(() => {
-        this.trendLoading = false
-      })
+      this.$api('insights')
+        .get({
+          'filter[order]': 'stats_time desc',
+          'filter[where][stats_name]': 'trend_stats',
+          'filter[where][stats_granularity]': 'minute',
+          'filter[where][stats_time][gt]': this.$moment()
+            .subtract(5, 'days')
+            .format('YYYYMMDD000000')
+        })
+        .then(({ data }) => {
+          let list = data || []
+          this.trendData = list
+            .map(v => {
+              let year = v.stats_time.substring(0, 4)
+              let month = v.stats_time.substring(4, 6)
+              let day = v.stats_time.substring(6, 8)
+              let hours = v.stats_time.substring(8, 10)
+              let minute = v.stats_time.substring(10, 12)
+              v.label = `${year}-${month}-${day} ${hours}:${minute}`
+              v.value = v.data.create
+              return v
+            })
+            .reverse()
+          this.trendChart.setOption(this.trendOptions)
+        })
+        .finally(() => {
+          this.trendLoading = false
+        })
     }
   },
   mounted() {
@@ -212,7 +250,7 @@ export default {
   height: 400px;
   display: flex;
   padding: 20px 0;
-  >section {
+  > section {
     flex: 1;
   }
   div {

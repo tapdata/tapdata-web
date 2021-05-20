@@ -306,7 +306,7 @@
 			</el-col> -->
     </el-row>
   </section>
-  <DKDashboard v-else/>
+  <DKDashboard v-else />
 </template>
 
 <script>

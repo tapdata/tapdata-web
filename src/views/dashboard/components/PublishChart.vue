@@ -1,10 +1,10 @@
 <!-- 发布数据统计展示（1、增量趋势折线图 2、发布top10柱状图） -->
 <template>
-<div class="publish-chart">
-  <section v-loading="trendLoading"><div ref="trendChart"></div></section>
-  <el-divider direction="vertical"/>
-  <section v-loading="topLoading"><div ref="topChart"></div></section>
-</div>
+  <div class="publish-chart">
+    <section v-loading="trendLoading"><div ref="trendChart"></div></section>
+    <el-divider direction="vertical" />
+    <section v-loading="topLoading"><div ref="topChart"></div></section>
+  </div>
 </template>
 
 <script>
@@ -18,7 +18,7 @@ export default {
       topChart: null, // 前十发布图表实例
       topData: [], // 前十发布数据 每一项label表示标签， value表示值
       trendLoading: false, // 增量趋势图表加载中
-      topLoading: false, // 前十发布图表加载中
+      topLoading: false // 前十发布图表加载中
     }
   },
   computed: {
@@ -115,11 +115,11 @@ export default {
             color: '#666',
             formatter: val => {
               if (val >= 100000000) {
-                return Math.round(val * 100) / 10000000000 + '亿';
+                return Math.round(val * 100) / 10000000000 + '亿'
               } else if (val >= 10000) {
-                return (Math.round(val * 100) / 1000000) + '万';
+                return Math.round(val * 100) / 1000000 + '万'
               } else {
-                return val;
+                return val
               }
             }
           }
@@ -165,51 +165,65 @@ export default {
     // 增量趋势数据
     getTrendData() {
       this.trendLoading = true
-      this.$api('insights').get({
-        'filter[limit]': 15,
-        'filter[skip]': 0,
-        'filter[order]': 'stats_time desc',
-        'filter[where][stats_name]': 'total_publish_stats',
-        'filter[where][stats_granularity]': 'daily',
-        'filter[where][and][0][stats_time][gte]': this.$moment().subtract(15, 'days').format('YYYYMMDD000000'),
-        'filter[where][and][1][stats_time][lte]': this.$moment().format('YYYYMMDD000000')
-      }).then(({data}) => {
-        let list = data || []
-        this.trendData = list.map(v => {
-          let year = v.stats_time.substring(0, 4)
-          let month = v.stats_time.substring(4, 6)
-          let day = v.stats_time.substring(6, 8)
-          v.label = `${year}-${month}-${day}`
-          v.value = Number(v.data.total_data_size/1024/1024/1024).toFixed(2)
-          return v
-        }).sort((a, b) => a.stats_time - b.stats_time)
+      this.$api('insights')
+        .get({
+          'filter[limit]': 15,
+          'filter[skip]': 0,
+          'filter[order]': 'stats_time desc',
+          'filter[where][stats_name]': 'total_publish_stats',
+          'filter[where][stats_granularity]': 'daily',
+          'filter[where][and][0][stats_time][gte]': this.$moment()
+            .subtract(15, 'days')
+            .format('YYYYMMDD000000'),
+          'filter[where][and][1][stats_time][lte]':
+            this.$moment().format('YYYYMMDD000000')
+        })
+        .then(({ data }) => {
+          let list = data || []
+          this.trendData = list
+            .map(v => {
+              let year = v.stats_time.substring(0, 4)
+              let month = v.stats_time.substring(4, 6)
+              let day = v.stats_time.substring(6, 8)
+              v.label = `${year}-${month}-${day}`
+              v.value = Number(
+                v.data.total_data_size / 1024 / 1024 / 1024
+              ).toFixed(2)
+              return v
+            })
+            .sort((a, b) => a.stats_time - b.stats_time)
 
-        this.trendChart.setOption(this.trendOptions)
-      }).finally(() => {
-        this.trendLoading = false
-      })
+          this.trendChart.setOption(this.trendOptions)
+        })
+        .finally(() => {
+          this.trendLoading = false
+        })
     },
     // 处理前十top数据
     getTopData() {
       this.topLoading = true
-      this.$api('insights').get({
-        'filter[limit]': 10,
-        'filter[skip]': 0,
-        'filter[order]': 'data.total_records desc',
-        'filter[where][stats_name]': 'publish_stats',
-        'filter[where][stats_granularity]': 'daily',
-        'filter[where][and][0][stats_time]': this.$moment().format('YYYYMMDD000000'),
-        //'filter[where][and][1][stats_time][lte]': this.$moment().format('YYYYMMDD000000')
-      }).then(({data}) => {
-        let list = data || []
-        this.topData = list.map(v => ({
-          label: v.data.api_name,
-          value: v.data.total_records
-        }))
-        this.topChart.setOption(this.topOptions)
-      }).finally(() => {
-        this.topLoading = false
-      })
+      this.$api('insights')
+        .get({
+          'filter[limit]': 10,
+          'filter[skip]': 0,
+          'filter[order]': 'data.total_records desc',
+          'filter[where][stats_name]': 'publish_stats',
+          'filter[where][stats_granularity]': 'daily',
+          'filter[where][and][0][stats_time]':
+            this.$moment().format('YYYYMMDD000000')
+          //'filter[where][and][1][stats_time][lte]': this.$moment().format('YYYYMMDD000000')
+        })
+        .then(({ data }) => {
+          let list = data || []
+          this.topData = list.map(v => ({
+            label: v.data.api_name,
+            value: v.data.total_records
+          }))
+          this.topChart.setOption(this.topOptions)
+        })
+        .finally(() => {
+          this.topLoading = false
+        })
     }
   },
   mounted() {
@@ -236,7 +250,7 @@ export default {
   height: 400px;
   display: flex;
   padding-bottom: 20px;
-  >section {
+  > section {
     flex: 1;
   }
   div {
