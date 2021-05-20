@@ -31,7 +31,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'collection_name',
-        label: '集合名称',
+        label: vm.$t('dataForm.form.restApi.collection_name'),
         required: true,
         show: false,
         dependOn: [
@@ -51,7 +51,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'unique_keys',
-        label: '唯一主键联合主键使用，拆分',
+        label: vm.$t('dataForm.form.custom_connection.unique_keys'),
         required: true,
         show: false,
         dependOn: [
@@ -71,18 +71,18 @@ export default function (vm) {
       {
         type: 'select',
         field: 'custom_type',
-        label: '同步方式',
+        label: vm.$t('dataForm.form.custom_connection.sync_type'),
         options: [
           {
-            label: '历史数据',
+            label: vm.$t('dataForm.form.custom_connection.history_data'),
             value: 'initial_sync'
           },
           {
-            label: '增量数据',
+            label: vm.$t('dataForm.form.custom_connection.increamental_data'),
             value: 'cdc'
           },
           {
-            label: '历史数据和增量数据',
+            label: vm.$t('dataForm.form.custom_connection.history_increamental_data'),
             value: 'initial_sync+cdc'
           }
         ],

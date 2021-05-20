@@ -31,13 +31,13 @@ export default function (vm) {
       {
         type: 'input',
         field: 'initialReadSize',
-        label: '初始化数据大小',
+        label: vm.$t('dataForm.form.initialReadSize'),
         required: true
       },
       {
         type: 'input',
         field: 'increamentalTps',
-        label: '测试速率',
+        label: vm.$t('dataForm.form.incrementalTps'),
         required: true
       }
     ]
