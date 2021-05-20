@@ -3082,7 +3082,7 @@ const cn = {
     create: '新增（条）',
     update: '新增（修改）',
     dataIncrement: '数据增量',
-    spaceUsage2:'占用空间（条）',
+    spaceUsage2: '占用空间（条）',
     from: '来源地',
     unknown: '未知',
     record: '历史总记录数（条）',

@@ -3073,7 +3073,7 @@ const tc = {
     create: '新增（條）',
     update: '新增（修改）',
     dataIncrement: '數據增量',
-    spaceUsage2:'占用空間（條）',
+    spaceUsage2: '占用空間（條）',
     from: '來源地',
     unknown: '未知',
     record: '歷史總記錄數（條）',

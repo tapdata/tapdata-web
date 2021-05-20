@@ -3183,7 +3183,7 @@ const en = {
     create: 'New (number)',
     update: 'New (Modified)',
     dataIncrement: 'The incremental data',
-    spaceUsage2:'Take up the space(number)',
+    spaceUsage2: 'Take up the space(number)',
     from: 'source',
     unknown: 'unknown',
     record: 'Historical records (number)',
