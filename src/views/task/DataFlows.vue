@@ -27,7 +27,7 @@
               size="small"
               @input="table.fetch(1)"
             >
-              <ElOption label="全部状态" value=""></ElOption>
+              <ElOption :label="$t('dataFlow.status.all')" value=""></ElOption>
               <ElOption
                 v-for="(value, label) in statusOptions"
                 :key="value"

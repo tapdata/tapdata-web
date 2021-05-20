@@ -243,19 +243,10 @@
                 <el-col :span="10">
                   <el-form-item
                     :prop="'numberarr.' + index + '.key'"
-                    :rules="[
-                      {
-                        required: true,
-                        message: $t('dictionary.isInitialvalue')
-                      },
-                      {
-                        type: 'number',
-                        message: $t('dictionary.initialNum')
-                      }
-                    ]"
+                    :rules="rule.numberRules"
                   >
                     <el-input
-                      v-model.number="item.key"
+                      v-model="item.key"
                       size="mini"
                       :placeholder="$t('dictionary.initialNum')"
                     ></el-input>
@@ -358,6 +349,13 @@ export default {
     TablePage
   },
   data() {
+    // let doubleRules = (rule, value, callback) => {
+    //   if (!value) {
+    //     callback(new Error(this.$t('dictionary.isInitialvalue')))
+    //   } else if (!/^[0-9]*$/.test(value)) {
+    //     callback(new Error(this.$t('dictionary.initialNum')))
+    //   }
+    // }
     return {
       searchParams: {
         keyword: '',
@@ -377,6 +375,20 @@ export default {
         boolarr: [
           { key: 'true', value: '' },
           { key: 'false', value: '' }
+        ]
+      },
+      rule: {
+        numberRules: [
+          {
+            required: true,
+            message: this.$t('dictionary.isInitialvalue'),
+            trigger: 'blur'
+          },
+          {
+            pattern: /^(-?\d+)(\.\d+)?$/,
+            message: this.$t('dictionary.initialNum'),
+            trigger: 'blur'
+          }
         ]
       }
     }

@@ -107,6 +107,7 @@
       ref="createForm"
       :formData="createForm"
       :createDialogVisible="createDialogVisible"
+      :classification="classificationArr"
       @createDialogVisible="handleDialogVisible"
       v-if="createDialogVisible"
     ></Form>
@@ -209,8 +210,8 @@ export default {
       ]).then(([countRes, res]) => {
         if (res.data && res.data.length) {
           res.data.filter(item => {
-            if (item.type) {
-              _this.classificationArr.push(item.type)
+            if (item.classification) {
+              _this.classificationArr.push(item.classification)
             }
           })
         }
@@ -291,16 +292,19 @@ export default {
       }
 
       let rules = JSON.parse(item.rules)
-      if (rules.hasOwnProperty('exists')) { // eslint-disable-line
+      if (rules && rules.hasOwnProperty('exists')) { // eslint-disable-line
         this.createForm.ruleType = 'exists'
         rule.checked = rules.exists
-      } else if (rules.hasOwnProperty('type')) { // eslint-disable-line
+      } else if (rules.hasOwnProperty('nullable')) { // eslint-disable-line
+        this.createForm.ruleType = 'nullable'
+        this.createForm.checked = rules.nullable
+      } else if (rules && rules.hasOwnProperty('type')) { // eslint-disable-line
         this.createForm.ruleType = 'type'
         rule.dataType = rules.type
-      } else if (rules.hasOwnProperty('regex')) { // eslint-disable-line
+      } else if (rules && rules.hasOwnProperty('regex')) { // eslint-disable-line
         this.createForm.ruleType = 'regex'
         rule.dataRegex = rules.regex
-      } else if (rules.hasOwnProperty('range')) { // eslint-disable-line
+      } else if (rules && rules.hasOwnProperty('range')) { // eslint-disable-line
         this.createForm.ruleType = 'range'
         let range = rules.range
         if (range.hasOwnProperty('lt')) { // eslint-disable-line

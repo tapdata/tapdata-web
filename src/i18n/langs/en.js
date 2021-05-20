@@ -558,7 +558,8 @@ const en = {
       cdc: 'CDC',
       initializing: 'Initializing',
       initialized: 'Initialized',
-      Lag: 'Lag'
+      Lag: 'Lag',
+      all: 'All'
     },
     lag: 'lag',
     executionStatus: 'Execution status',

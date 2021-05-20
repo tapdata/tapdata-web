@@ -541,7 +541,8 @@ const tc = {
       cdc: '增量中',
       initializing: '初始化中',
       initialized: '初始化完成',
-      Lag: '增量滯後'
+      Lag: '增量滯後',
+      all: '全部狀態'
     },
     lag: '滯後',
     executionStatus: '執行狀態',
@@ -2719,7 +2720,7 @@ const tc = {
     name: '名稱/worker 類型',
     worker_ip: '地址',
     version: '版本',
-    online: '線上',
+    online: '在線',
     all: '所有',
     state: '狀態',
     job_ids: '明細',

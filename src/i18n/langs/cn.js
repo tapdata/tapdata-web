@@ -544,7 +544,8 @@ const cn = {
       cdc: '增量中',
       initializing: '初始化中',
       initialized: '初始化完成',
-      Lag: '增量滞后'
+      Lag: '增量滞后',
+      all: '全部状态'
     },
     lag: '滞后',
     executionStatus: '执行状态',
@@ -2727,7 +2728,7 @@ const cn = {
     name: '名称/worker 类型',
     worker_ip: '地址',
     version: '版本',
-    online: '线上',
+    online: '在线',
     all: '所有',
     state: '状态',
     job_ids: '明细',
