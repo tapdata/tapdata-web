@@ -98,7 +98,7 @@
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('role.operate')" width="300">
+      <el-table-column :label="$t('role.operate')" width="310">
         <template slot-scope="scope">
           <el-button
             type="text"
@@ -136,6 +136,7 @@
           </el-button>
           <el-button
             type="text"
+            style="color: #f56c6c"
             @click="handleDelete(scope.row)"
             :disabled="
               $disabledByPermission(

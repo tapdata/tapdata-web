@@ -558,7 +558,8 @@ const en = {
       cdc: 'CDC',
       initializing: 'Initializing',
       initialized: 'Initialized',
-      Lag: 'Lag'
+      Lag: 'Lag',
+      all: 'All'
     },
     lag: 'lag',
     executionStatus: 'Execution status',
@@ -798,6 +799,7 @@ const en = {
     rename: 'Rename',
     testConnection: 'Test connection',
     status: {
+      all: 'All',
       testing: 'testing',
       invalid: 'invalid',
       ready: 'ready'
@@ -2886,6 +2888,46 @@ const en = {
     process_id: 'Process ID',
     processState: 'Working process state'
   },
+  timeToLive: {
+    header: {
+      indexName: 'Index name',
+      indexFields: 'Time Field',
+      indexStatus: 'Status',
+      indexCreate_by: 'Create user',
+      operate: 'Operation',
+      database: 'Database name',
+      tableName: 'Data table name',
+      expire: 'Expiration time'
+    },
+    form: {
+      databaseTypes: 'Database Type',
+      database: 'Database',
+      tableName: 'table name',
+      fieldName: 'Field name',
+      expire: 'Expiration time'
+    },
+    creatTtl: 'Create life cycle',
+    searchtext: 'Database name/Data table name/Index name',
+    Settinglife: 'Set life cycle',
+    m: 'minute',
+    h: 'hour',
+    d: 'day',
+    s: 'second',
+    w: 'week',
+    mo: 'month',
+    y: 'year',
+    failed:
+      'The current database table, no time field was found, and the life cycle could not be created',
+    create_by_user: 'Platform user',
+    create_by_dba: 'Database Administrator',
+    status_creating: 'Creating',
+    status_created: 'Create complete',
+    status_creation_failed: 'Creation failed',
+    status_deleted: 'Deleted',
+    filedGetFailed:
+      'The current database table, no time field was found, and the life cycle could not be created',
+    index_exists: 'Index already exists'
+  },
   setting: {
     email_template: 'Email template',
     connect_and_test: 'Connection test',
@@ -3054,7 +3096,9 @@ const en = {
     creatDuplicateSource: 'Allow the creation of duplicate data sources',
     requestFailed: 'Request processing failed',
     Mongodb_will_use_this_sample_size_when_load_schema:
-      'When loading the schema, Mongodb will use this sample size'
+      'Mongodb will use this sample size when load schema When MongoDB connects to load the model, this configuration will be used for sample loading',
+    Switch_to_batch_insert_mode_interval__s__in_cdc_:
+      'Switch to batch insert mode interval in cdc. '
   },
   dataQuality: {
     title: 'Data Quality',
@@ -3177,11 +3221,41 @@ const en = {
     start: 'Start',
     paused: 'Pause',
     status: {
+      done: 'done',
       waiting: 'Waiting',
       scheduling: 'Scheduling',
       paused: 'Paused',
       stopping: 'Stopping'
     }
+  },
+  dkDashboard: {
+    dataCount: 'Overview',
+    trendCount: 'Data increment trend statistics',
+    typeCount: 'Number of optional data types',
+    annulusTitle1: 'Published data (pieces)',
+    annulusTitle2: 'Published data size',
+    annulusTitle3: 'Data types available (number)',
+    annulusTitle4: 'Published data (number)',
+    trendData: 'Publish incremental trends in data',
+    spaceUsage: 'Take up the space(GB)',
+    topRelease: 'Top 10 distribution of released data (pieces)',
+    month: 'Nearly a month',
+    yesterday: 'Yesterday',
+    today: 'Today',
+    create: 'New (number)',
+    update: 'New (Modified)',
+    dataIncrement: 'The incremental data',
+    spaceUsage2: 'Take up the space(number)',
+    from: 'source',
+    unknown: 'unknown',
+    record: 'Historical records (number)',
+    dataSize: 'Data size',
+    outCount: 'Violations(number)',
+    outRate: 'Percent of Violations',
+    gather: 'Summary',
+    zhao: 'M',
+    yi: '*10000W',
+    wan: 'W'
   }
 }
 

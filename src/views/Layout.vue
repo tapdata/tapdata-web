@@ -690,6 +690,9 @@ export default {
           border: none;
         }
       }
+      .iconfont {
+        font-size: 18px;
+      }
     }
   }
   .layout-aside {

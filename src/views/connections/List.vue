@@ -22,7 +22,7 @@
             size="small"
             @input="table.fetch(1)"
           >
-            <ElOption label="全部状态" value=""></ElOption>
+            <ElOption :label="$t('connection.status.all')" value=""></ElOption>
             <ElOption
               v-for="item in databaseStatusOptions"
               :key="item.value"
@@ -197,7 +197,7 @@
         :label="$t('connection.lastUpdateTime')"
         width="160"
         prop="last_updated"
-        sortable="custom"
+        sortable="last_updated"
       >
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
@@ -269,7 +269,7 @@ import TableFilter from '@/components/TableFilter'
 
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
-import { verify, desensitization } from './util'
+import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
 
 let timeout = null
@@ -735,11 +735,14 @@ export default {
       if (item.database_type === 'mongodb') {
         item.database_uri = ''
       }
-      this.testData = item
+      this.testData = Object.assign({}, item, defaultModel['default'])
       this.$api('connections')
-        .updateById(item.id, {
-          status: 'testing'
-        })
+        .updateById(
+          item.id,
+          Object.assign({}, item, {
+            status: 'testing'
+          })
+        )
         .then(() => {
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
             this.dialogTestVisible = true

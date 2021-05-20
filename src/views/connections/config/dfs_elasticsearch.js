@@ -10,19 +10,19 @@ export default function (vm) {
       supportUpdatePk: false
     },
     items: [
-      {
-        type: 'radio',
-        field: 'connection_type',
-        label: vm.$t('dataForm.form.connectionType'),
-        options: [
-          {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
-            value: 'target'
-          }
-        ],
-        required: true
-      },
+      // {
+      //   type: 'radio',
+      //   field: 'connection_type',
+      //   label: vm.$t('dataForm.form.connectionType'),
+      //   options: [
+      //     {
+      //       label: vm.$t('dataForm.form.options.target'),
+      //       tip: vm.$t('dataForm.form.options.targetTips'),
+      //       value: 'target'
+      //     }
+      //   ],
+      //   required: true
+      // },
       // {
       // 	type: 'input',
       // 	field: 'database_host',

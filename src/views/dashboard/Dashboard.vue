@@ -306,15 +306,11 @@
 			</el-col> -->
     </el-row>
   </section>
-  <iframe
-    v-else
-    src="/old/index.html#/dashboard"
-    frameborder="0"
-    style="height: 100%; width: 100%"
-  ></iframe>
+  <DKDashboard v-else />
 </template>
 
 <script>
+import DKDashboard from './DKDashboard'
 import echartHead from './components/echartHead'
 // import elTables from './components/elTables';
 import shaftlessEchart from '../../components/shaftlessEchart'
@@ -327,7 +323,7 @@ const DataFlows = factory('DataFlows')
 // import echartsCompinent from '../../components/echartsCompinent';
 
 export default {
-  components: { echartHead, pieChart, shaftlessEchart },
+  components: { echartHead, pieChart, shaftlessEchart, DKDashboard },
   data() {
     return {
       loading: false,
@@ -371,7 +367,7 @@ export default {
       validList: [
         { name: this.$t('app.Home.allValid'), value: 'total' },
         { name: this.$t('app.Home.checkSame'), value: 'passed' },
-        { name: this.$t('app.Home.countDifference'), value: 'row_count' },
+        { name: this.$t('app.Home.countDifference'), value: 'countDiff' },
         { name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
         { name: 'ERROR', value: 'error' }
       ],
