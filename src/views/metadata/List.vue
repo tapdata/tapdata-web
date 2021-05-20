@@ -427,7 +427,7 @@ export default {
         where
       }
       return Promise.all([
-        this.$api('MetadataInstances').count({ where: where }),
+        this.$api('MetadataInstances').count({ where: JSON.stringify(where) }),
         this.$api('MetadataInstances').get({
           filter: JSON.stringify(filter)
         })

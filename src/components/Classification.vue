@@ -171,7 +171,7 @@ export default {
       this.isExpand = !this.isExpand
     },
     clear() {
-      this.$refs.tree.setCheckedNodes([])
+      this.$refs.tree && this.$refs.tree.setCheckedNodes([])
     },
     checkHandler(data, { checkedKeys }) {
       let checked = checkedKeys.includes(data.id)
