@@ -604,6 +604,7 @@ const cn = {
 		send_email_when_replication: '几秒后重新发送',
 		send_email_at_most_one_replication: '超过多少秒取消发送',
 		read_cdc_interval: '增量同步间隔',
+		cdc_concurrency: '增量同步并发写入',
 		read_batch_size: '每次读取数量',
 		cdcDataProcess: '增量数据处理机制',
 		batch: '批量',

@@ -42,6 +42,7 @@ export const FORM_DATA_KEY = 'form_data',
 		isSchedule: false,
 		cronExpression: '',
 		isOpenAutoDDL: false,
+		cdcConcurrency: true,
 		emailWaring: {
 			edited: false,
 			started: false,
