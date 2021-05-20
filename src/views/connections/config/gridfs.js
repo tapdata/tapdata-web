@@ -241,19 +241,19 @@ export default function (vm) {
       {
         type: 'input',
         field: 'prefix',
-        label: '集合前缀'
+        label: vm.$t('dataForm.form.gridfs.gridfs_prefix')
       },
       {
         type: 'select',
         field: 'gridfsReadMode',
-        label: '读取模式',
+        label: vm.$t('dataForm.form.gridfs.gridfs_prefix'),
         options: [
           {
-            label: '解析成数据',
+            label: vm.$t('dataForm.form.gridfs.gridfs_data'),
             value: 'data'
           },
           {
-            label: '二进制传输',
+            label: vm.$t('dataForm.form.gridfs.gridfs_binary'),
             value: 'binary'
           }
         ],
@@ -293,7 +293,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'include_filename',
-        label: '包含的文件（正则表达式）',
+        label: vm.$t('dataForm.form.gridfs.include_filename'),
         show: false,
         dependOn: [
           {
@@ -312,7 +312,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'exclude_filename',
-        label: '不包含的文件（正则表达式）',
+        label:  vm.$t('dataForm.form.gridfs.exclude_filename'),
         show: false,
         dependOn: [
           {
@@ -331,7 +331,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'file_schema',
-        label: '目标数据集（如果匹配的文件具有相同的结构，请指定一个通用名）',
+        label: vm.$t('dataForm.form.gridfs.file_schema'),
         show: false,
         dependOn: [
           {
@@ -354,7 +354,7 @@ export default function (vm) {
       {
         type: 'select',
         field: 'file_type',
-        label: '文件类型',
+        label: vm.$t('dataForm.form.gridfs.file_type'),
         options: [
           {
             label: 'CSV/TXT',
@@ -396,7 +396,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'seperate',
-        label: '分隔符',
+        label: vm.$t('dataForm.form.gridfs.separator'),
         show: false,
         dependOn: [
           {
@@ -423,7 +423,7 @@ export default function (vm) {
       {
         type: 'select',
         field: 'json_type',
-        label: 'Json类型',
+        label: vm.$t('dataForm.form.gridfs.json_type'),
         options: [
           {
             label: 'ArrayBegin',
@@ -461,7 +461,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'data_content_xpath',
-        label: '数据记录的XPath(/RootTag/Students/Student)*',
+        label: vm.$t('dataForm.form.gridfs.xpath')+'(/RootTag/Students/Student)*',
         show: false,
         dependOn: [
           {
@@ -488,7 +488,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'tags_filter',
-        label: '过滤标签（tag1,tag2）',
+        label: vm.$t('dataForm.form.gridfs.gridfs_tag_filter')+'（tag1,tag2）',
         show: false,
         dependOn: [
           {
@@ -507,7 +507,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'tags_filter',
-        label: 'Grid上传文件大小',
+        label: vm.$t('dataForm.form.gridfs.gridfs_upload_chunk_size'),
         show: false,
         dependOn: [
           {
@@ -526,14 +526,14 @@ export default function (vm) {
       {
         type: 'select',
         field: 'file_upload_mode',
-        label: '上传模式',
+        label: vm.$t('dataForm.form.gridfs.file_upload_mode'),
         options: [
           {
-            label: '流式',
+            label: vm.$t('dataForm.form.gridfs.file_upload_stream'),
             value: 'stream'
           },
           {
-            label: '内存读取（有内存溢出风险）',
+            label: vm.$t('dataForm.form.gridfs.file_upload_memory'),
             value: 'memory'
           }
         ],

@@ -182,7 +182,7 @@
                   ['source'].includes(model.connection_type)
                 "
               >
-                <div class="custom-connection-label">增量数据脚本</div>
+                <div class="custom-connection-label">{{ $t('dataForm.form.custom_connection.cdc_custom_code') }}</div>
                 <div class="custom-connection-main">
                   <div>function requestData(ctx) {</div>
                   <JsEditor
@@ -201,7 +201,7 @@
                   ) && ['source'].includes(model.connection_type)
                 "
               >
-                <div class="custom-connection-label">历史数据脚本</div>
+                <div class="custom-connection-label">{{ $t('dataForm.form.custom_connection.history_custom_code') }}</div>
                 <div class="custom-connection-main">
                   <div>function requestData() {</div>
                   <JsEditor
@@ -216,9 +216,9 @@
                 class="custom-connection-box"
                 v-if="['target'].includes(model.connection_type)"
               >
-                <div class="custom-connection-label">目标数据处理脚本</div>
+                <div class="custom-connection-label">{{ $t('dataForm.form.custom_connection.on_data_code') }}</div>
                 <div class="custom-connection-main">
-                  <div style="margin-top: 10px; font-size: 14px">参数说明</div>
+                  <div style="margin-top: 10px; font-size: 14px">Info</div>
                   <div>
                     data = [{
                     <span style="color: #998; font-style: italic">
@@ -303,7 +303,7 @@
                         type="flex"
                         :gutter="20"
                       >
-                        <el-form-item label="请求方法" :prop="item.method">
+                        <el-form-item  :label="$t('dataForm.form.restApi.url_info_method')" :prop="item.method">
                           <el-select
                             v-model="item.method"
                             class="min-input"
@@ -337,7 +337,7 @@
                       </el-col>
                       <el-col :span="24" class="fromLoopBox">
                         <el-form-item
-                          label="增量起始值"
+                          :label="$t('dataForm.form.restApi.url_info_initial_offset')"
                           :prop="item.offset_field"
                           v-if="
                             model.data_sync_mode === 'INCREMENTAL_SYNC' ||
@@ -358,13 +358,13 @@
                             class="rest-api-Array"
                           >
                             <el-input
-                              placeholder="请求头名称"
+                              :placeholder="$t('dataForm.form.restApi.url_info_header_name')"
                               class="medium-input"
                               size="mini"
                               v-model="header.name"
                             ></el-input>
                             <el-input
-                              placeholder="请求头值"
+                              :placeholder="$t('dataForm.form.restApi.url_info_header_value')"
                               class="medium-input rest-api-margin"
                               size="mini"
                               v-model="header.value"
@@ -401,13 +401,13 @@
                             class="rest-api-Array"
                           >
                             <el-input
-                              placeholder="参数名称"
+                              :placeholder="$t('dataForm.form.restApi.url_info_parameter_name')"
                               class="medium-input"
                               size="mini"
                               v-model="parameter.name"
                             ></el-input>
                             <el-input
-                              placeholder="参数值"
+                              :placeholder="$t('dataForm.form.restApi.url_info_parameter_value')"
                               class="medium-input rest-api-margin"
                               size="mini"
                               v-model="parameter.value"
@@ -1182,7 +1182,9 @@ export default {
     checkDataTypeOptions(type) {
       this.model.database_type = type
       this.getFormConfig()
-      this.getInstanceRegion()
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+        this.getInstanceRegion()
+      }
     },
     initTimezones() {
       let timezones = [{ label: '(Database Timezone)', value: '' }]
