@@ -189,11 +189,7 @@
               <span slot="title">{{ menu.label }}</span>
             </el-menu-item>
           </template>
-          <el-submenu
-            v-if="favMenus.length"
-            index="favorite"
-            class="el-menu-item"
-          >
+          <el-submenu v-if="favMenus.length" index="favorite">
             <template slot="title">
               <i class="iconfont icon-shoucang"></i>
               <span slot="title">{{ $t('app.menu.favorite') }}</span>
