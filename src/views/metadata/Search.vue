@@ -85,7 +85,7 @@
           {{ $t('metadata.metadataSearch.noResult') }}
         </div>
         <div ref="searchResult" class="search-result" v-else>
-          <ul class="table">
+          <ul class="metadata-table">
             <li class="table-li" v-for="item in searchData" :key="item.id">
               <div
                 class="table-box-wrap"
@@ -151,6 +151,7 @@ export default {
   data() {
     return {
       meta_type: 'table',
+      first: true,
       keyword: '',
       showNoSearch: true,
       noMore: false,
@@ -193,7 +194,7 @@ export default {
         .then(result => {
           let data = result.data.records || []
           this.noMore = false
-          if (data.data.length === 0 || data.data.length < data.pageSize) {
+          if (data.data.length === 0 || (data.data.length < data.pageSize && !this.first)) {
             this.noMore = true
             return
           }
@@ -202,6 +203,7 @@ export default {
           this.handleKeywords(resultData || [])
           this.searchData = this.searchData.concat(resultData)
           this.lastId = this.searchData[this.searchData.length - 1].id
+          this.first = false //不是第一次请求
         })
         .catch(err => {
           if (err && err.response) {
@@ -377,7 +379,7 @@ export default {
       margin-top: 5px;
       margin-bottom: 10px;
     }
-    .table {
+    .metadata-table {
       li {
         box-sizing: border-box;
         .table-box-wrap {
