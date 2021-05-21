@@ -216,7 +216,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.opera')">
+      <el-table-column :label="$t('user.opera')" width="160">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'user_edition'"

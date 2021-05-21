@@ -25,7 +25,7 @@ export default function (vm) {
       {
         type: 'select',
         field: 'auth_type',
-        label: '认证类型',
+        label: vm.$t('dataForm.form.restApi.auth_type'),
         options: [
           {
             label: 'None',
@@ -40,7 +40,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'request_interval',
-        label: '同步间隔(秒)',
+        label: vm.$t('dataForm.form.restApi.request_interval_tip'),
         required: true,
         rules: [
           {
@@ -60,40 +60,40 @@ export default function (vm) {
       {
         type: 'input',
         field: 'collection_name',
-        label: '集合名称',
+        label: vm.$t('dataForm.form.restApi.collection_name'),
         required: true
       },
       {
         type: 'input',
         field: 'unique_keys',
-        label: '唯一主键联合主键使用，拆分',
+        label: vm.$t('dataForm.form.restApi.unique_keys'),
         required: true
       },
       {
         type: 'slot',
         slot: 'req_pre_process',
-        label: '请求预处理脚本'
+        label: vm.$t('dataForm.form.restApi.req_pre_process')
       },
       {
         type: 'slot',
         slot: 'resp_pre_process',
-        label: '响应预处理脚本'
+        label: vm.$t('dataForm.form.restApi.resp_pre_process')
       },
       {
         type: 'select',
         field: 'data_sync_mode',
-        label: '数据同步模式',
+        label: vm.$t('dataForm.form.restApi.data_sync_mode'),
         options: [
           {
-            label: '同步实时数据',
+            label: vm.$t('dataForm.form.restApi.url_info_INCREMENTAL_SYNC'),
             value: 'INCREMENTAL_SYNC'
           },
           {
-            label: '同步历史数据',
+            label: vm.$t('dataForm.form.restApi.url_info_INITIAL_SYNC'),
             value: 'INITIAL_SYNC'
           },
           {
-            label: '同步实时数据和同步历史数据',
+            label: vm.$t('dataForm.form.restApi.url_info_INITIAL_INCREMENTAL_SYNC'),
             value: 'INITIAL_INCREMENTAL_SYNC'
           }
         ],

@@ -381,12 +381,12 @@ export default {
     },
     // 批量导出
     handleExport() {
+      let ids = this.multipleSelection.map(item => item.id)
       let where = {
         _id: {
-          in: this.multipleSelection
+          in: ids
         }
       }
-
       this.$api('MetadataInstances').download(where, 'Inspect')
     },
     handleSelectionChange(val) {

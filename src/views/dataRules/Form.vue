@@ -254,6 +254,9 @@ export default {
     },
     formData: {
       value: Object
+    },
+    classification: {
+      value: Array
     }
   },
   data() {
@@ -369,6 +372,7 @@ export default {
     if (this.formData && this.formData.id) {
       this.createForm = Object.assign({}, this.formData)
     }
+    this.classificationArr = this.classification
   },
   methods: {
     handleClose() {
@@ -377,58 +381,59 @@ export default {
       this.$emit('update:createDialogVisible', false)
     },
     saveSubmit() {
-      this.$refs.form.validate(valid => {
+      let _this = this
+      _this.$refs.form.validate(valid => {
         if (valid) {
-          const id = this.createForm.id
+          const id = _this.createForm.id
           const method = id ? 'patch' : 'post'
           let rule = {}
 
           if (
-            this.createForm.ruleType === 'exists' ||
-            this.createForm.ruleType === 'nullable'
+            _this.createForm.ruleType === 'exists' ||
+            _this.createForm.ruleType === 'nullable'
           ) {
             rule.rules = {
-              [this.createForm.ruleType]: this.createForm.rule.checked
+              [_this.createForm.ruleType]: _this.createForm.rule.checked
             }
           }
-          if (this.createForm.ruleType === 'type') {
-            rule.rules = { type: this.createForm.rule.dataType }
+          if (_this.createForm.ruleType === 'type') {
+            rule.rules = { type: _this.createForm.rule.dataType }
           }
 
-          if (rule.ruleType === 'regex') {
-            rule.rules = { regex: this.createForm.rule.dataRegex }
+          if (_this.createForm.ruleType === 'regex') {
+            rule.rules = { regex: _this.createForm.rule.dataRegex }
           }
 
-          if (this.createForm.ruleType === 'range') {
-            if (this.createForm.rule.gt === this.createForm.rule.lt) {
-              this.$message.error(this.$t('dataRule.gt_lt_none'))
+          if (_this.createForm.ruleType === 'range') {
+            if (_this.createForm.rule.gt === _this.createForm.rule.lt) {
+              _this.$message.error(_this.$t('dataRule.gt_lt_none'))
               return false
             }
-            this.createForm.gtData =
-              this.createForm.rule.gt === 'none'
+            _this.createForm.gtData =
+              _this.createForm.rule.gt === 'none'
                 ? '0'
-                : this.createForm.rule.gtData
-            this.createForm.rule.ltData =
-              this.createForm.rule.lt === 'none'
+                : _this.createForm.rule.gtData
+            _this.createForm.rule.ltData =
+              _this.createForm.rule.lt === 'none'
                 ? '0'
-                : this.createForm.rule.ltData
+                : _this.createForm.rule.ltData
             rule.rules = {
               range: {
-                [this.createForm.rule.gt]: this.createForm.rule.gtData,
-                [this.createForm.rule.lt]: this.createForm.rule.ltData
+                [_this.createForm.rule.gt]: _this.createForm.rule.gtData,
+                [_this.createForm.rule.lt]: _this.createForm.rule.ltData
               }
             }
           }
-          if (this.createForm.ruleType === 'enum') {
+          if (_this.createForm.ruleType === 'enum') {
             rule.rules = { enum: this.createForm.rule.enumData.split(',') }
           }
 
           let rules = JSON.stringify(rule.rules)
-          rule.name = this.createForm.name.trim()
-          rule.classification = this.createForm.classification.trim()
+          rule.name = _this.createForm.name.trim()
+          rule.classification = _this.createForm.classification.trim()
           rule.rules = rules
-          if (this.createForm.id) {
-            rule.id = this.createForm.id
+          if (_this.createForm.id) {
+            rule.id = _this.createForm.id
           }
 
           this.$api('DataRule')
