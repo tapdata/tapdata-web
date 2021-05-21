@@ -730,12 +730,17 @@ export default {
         }
       }
     },
-    testConnection(item) {
+    async testConnection(item) {
+      let result = await this.$api('Workers').getAvailableAgent()
+      if (!result.data.result || result.data.result.length === 0) {
+        this.$message.error(this.$t('dataForm.form.agentMsg'))
+        return
+      }
       let loading = this.$loading()
       if (item.database_type === 'mongodb') {
         item.database_uri = ''
       }
-      this.testData = Object.assign({}, item, defaultModel['default'])
+      this.testData = Object.assign({}, defaultModel['default'], item)
       this.$api('connections')
         .updateById(
           item.id,

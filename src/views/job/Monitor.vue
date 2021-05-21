@@ -488,6 +488,7 @@ export default {
   },
 
   data() {
+    let $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
     return {
       tooltipFlag: false,
       apiLoading: false,
@@ -577,8 +578,14 @@ export default {
           },
           axisLabel: {
             formatter: function (value) {
-              if (value >= 10000) {
-                value = value / 10000 + 'W'
+              if ($PLATFORM === 'dfs') {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+              } else {
+                if (value >= 10000) {
+                  value = value / 10000 + 'W'
+                }
               }
               return value
             }
@@ -647,8 +654,14 @@ export default {
           },
           axisLabel: {
             formatter: function (value) {
-              if (value >= 10000) {
-                value = value / 10000 + 'W'
+              if ($PLATFORM === 'dfs') {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+              } else {
+                if (value >= 10000) {
+                  value = value / 10000 + 'W'
+                }
               }
               return value
             }
@@ -702,8 +715,14 @@ export default {
           },
           axisLabel: {
             formatter: function (value) {
-              if (value >= 10000) {
-                value = value / 10000 + 'W'
+              if ($PLATFORM === 'dfs') {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+              } else {
+                if (value >= 10000) {
+                  value = value / 10000 + 'W'
+                }
               }
               return value
             }

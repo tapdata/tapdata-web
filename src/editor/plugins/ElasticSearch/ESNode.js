@@ -10,7 +10,7 @@ export const esNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-es.svg'
+          xlinkHref: 'static/editor/o-elasticsearch.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.es.name')
