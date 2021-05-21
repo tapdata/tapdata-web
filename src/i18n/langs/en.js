@@ -625,6 +625,7 @@ const en = {
     send_email_when_replication: 'Resend in a few seconds',
     send_email_at_most_one_replication: 'Cancel sending in more than seconds',
     read_cdc_interval: ' CDC interval',
+	  cdc_concurrency: ' CDC concurrency',
     read_batch_size: 'Read-amount/time',
     cdcDataProcess: 'CDC data process',
     batch: 'Batch process',

@@ -180,7 +180,16 @@
 						size="mini"
 					></el-input-number>
 				</el-form-item>
-				<el-form-item :label="$t('dataFlow.transformerConcurrency')" v-show="formData.sync_type !== 'cdc'">
+				<el-form-item :label="$t('dataFlow.cdc_concurrency')" v-show="formData.sync_type !== 'initial_sync'">
+					<!-- 是否开启增量并发写入 -->
+					<el-switch
+						v-model="formData.cdcConcurrency"
+						:active-text="formData.cdcConcurrency ? $t('dataFlow.yes') : $t('dataFlow.no')"
+					></el-switch>
+				</el-form-item>
+				<el-form-item :label="$t('dataFlow.transformerConcurrency')"
+							  v-show="formData.sync_type !== 'cdc' || (formData.cdcConcurrency === true && formData.sync_type === 'cdc')"
+				>
 					<!-- 目标写入线程 -->
 					<el-input-number
 						v-model="formData.transformerConcurrency"

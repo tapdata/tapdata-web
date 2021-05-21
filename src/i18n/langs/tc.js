@@ -601,6 +601,7 @@ const tc = {
 		send_email_when_replication: '幾秒後重新發送',
 		send_email_at_most_one_replication: '超過多少秒取消發送',
 		read_cdc_interval: '增量同步間隔',
+		cdc_concurrency: '增量同步並發寫入',
 		read_batch_size: '每次讀取數量',
 		cdcDataProcess: '增量數據處理機制',
 		batch: '批量',
