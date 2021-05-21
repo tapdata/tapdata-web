@@ -741,6 +741,8 @@ export default {
         item.database_uri = ''
       }
       this.testData = Object.assign({}, defaultModel['default'], item)
+      delete this.testData['database_password']
+      delete this.testData['plain_password']
       this.$api('connections')
         .updateById(
           item.id,
