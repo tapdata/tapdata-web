@@ -217,14 +217,13 @@ export default {
     this.id = this.$route.params.id
     this.getSteps()
     this.getAgentCount()
-    this.getFormConfig()
     if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
       this.dataSourceModel = _.cloneDeep(DFSDATASOURCE_MODEL)
+      this.getFormConfig()
       this.allowDatabaseType()
-      this.getConnection(this.getWhere('source'), 'source_connectionId')
-      this.getConnection(this.getWhere('target'), 'target_connectionId')
     } else {
       this.getInstanceRegion()
+      this.getFormConfig()
     }
     if (this.id) {
       this.intiData(this.id)
