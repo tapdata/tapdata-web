@@ -207,6 +207,7 @@
         <template slot-scope="scope">
           <ElLink type="primary" @click="testConnection(scope.row)"
             >{{ $t('connection.testConnection') }}
+            <i class="el-icon-loading el-icon--right" v-if="testBtnLoading"></i>
           </ElLink>
           <ElLink
             v-readonlybtn="'datasource_edition'"
@@ -280,6 +281,7 @@ export default {
     return {
       user_id: this.$cookie.get('user_id'),
       dialogDatabaseTypeVisible: false,
+      testBtnLoading: false,
       previewVisible: false,
       multipleSelection: [],
       tableData: [],
@@ -730,12 +732,19 @@ export default {
         }
       }
     },
-    testConnection(item) {
+    async testConnection(item) {
+      this.testBtnLoading = true
+      let result = await this.$api('Workers').getAvailableAgent()
+      if (!result.data.result || result.data.result.length === 0) {
+        this.$message.error(this.$t('dataForm.form.agentMsg'))
+        this.testBtnLoading = false
+        return
+      }
       let loading = this.$loading()
       if (item.database_type === 'mongodb') {
         item.database_uri = ''
       }
-      this.testData = Object.assign({}, item, defaultModel['default'])
+      this.testData = Object.assign({}, defaultModel['default'], item)
       this.$api('connections')
         .updateById(
           item.id,
@@ -751,6 +760,7 @@ export default {
           this.table.fetch()
         })
         .finally(() => {
+          this.testBtnLoading = false
           loading.close()
         })
     },
