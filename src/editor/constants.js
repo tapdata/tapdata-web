@@ -135,6 +135,12 @@ export const FORM_DATA_KEY = 'form_data',
       name: 'Redis',
       shapeImage: 'static/editor/o-redis.svg',
       stencilImage: 'static/editor/redis.svg'
+    },
+    elasticsearch: {
+      type: 'elasticsearch',
+      name: 'Elasticsearch',
+      shapeImage: 'static/editor/o-elasticsearch.svg',
+      stencilImage: 'static/editor/elasticsearch.svg'
     }
   },
   FILE_TYPE_MAPPING = {
