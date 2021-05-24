@@ -724,8 +724,7 @@ export default {
         this.$has('SYNC_job_export') ||
         this.$has('SYNC_job_operation') ||
         this.$has('SYNC_job_delete'),
-      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year'],
-      tempList: []
+      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
     }
   },
   computed: {
@@ -747,34 +746,10 @@ export default {
     }
   },
   created() {
-    // window.windows = [];
     this.mappingTemplate = this.$route.query.mapping
     this.searchParams.agentId = this.$route.query.agentId
     this.searchParams.status = this.$route.query.status || ''
     ws.on('watch', this.dataflowChange)
-    interval = setInterval(() => {
-      let tempList = this.tempList
-      tempList.forEach(item => {
-        let list = this.table.list
-        let index = list.findIndex(it => it.name === item.name)
-        if (item.children && !item.children.length) {
-          delete item.children
-        }
-        if (index >= 0) {
-          this.table.$set(
-            list,
-            index,
-            Object.assign(list[index], this.cookRecord(item))
-          )
-          let handleItem = this.cookRecord(item)
-          if (handleItem.children && !handleItem.children.length) {
-            delete handleItem.children
-          }
-          this.table.$set(list, index, Object.assign(list[index], handleItem))
-        }
-      })
-      this.tempList = []
-    }, 5000)
     if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
       this.getAgentOptions()
     }
@@ -783,7 +758,7 @@ export default {
     let cacheParams = this.table.getCache()
     let params = this.searchParams
     for (const key in params) {
-      params[key] = params[key] || cacheParams[key]
+      params[key] = params[key] || cacheParams[key] || ''
     }
   },
   beforeDestroy() {
@@ -792,6 +767,13 @@ export default {
   },
   watch: {
     '$route.query'(query) {
+      if (this.mappingTemplate !== query.mapping) {
+        let cacheParams = this.table.getCache()
+        let params = this.searchParams
+        for (const key in params) {
+          params[key] = cacheParams[key] || ''
+        }
+      }
       this.mappingTemplate = query.mapping
       this.table.fetch(1)
     }
@@ -819,7 +801,23 @@ export default {
             agentName: opt?.label
           }
         }
-        this.tempList.push(data.data.fullDocument)
+        let list = this.table.list
+        let index = list.findIndex(it => it.name === dataflow.name)
+        if (dataflow.children && !dataflow.children.length) {
+          delete dataflow.children
+        }
+        if (index >= 0) {
+          this.table.$set(
+            list,
+            index,
+            Object.assign(list[index], this.cookRecord(dataflow))
+          )
+          let handleItem = this.cookRecord(dataflow)
+          if (handleItem.children && !handleItem.children.length) {
+            delete handleItem.children
+          }
+          this.table.$set(list, index, Object.assign(list[index], handleItem))
+        }
       }
     },
     watchDataflowList(ids) {
