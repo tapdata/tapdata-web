@@ -614,7 +614,7 @@ module.exports = Object.assign({}, dataflow, {
         mode: 'manual',
         name: '@name',
         ping_time: 1619339601803,
-        result: 'failed',
+        'result|1': ['failed', 'passed'],
         scheduleTime: 1619339546690,
         scheduleTimes: 1,
         'status|1': ['waiting', 'scheduling', 'error', 'done', 'running'],

@@ -297,7 +297,7 @@ export default {
         rule.checked = rules.exists
       } else if (rules.hasOwnProperty('nullable')) { // eslint-disable-line
         this.createForm.ruleType = 'nullable'
-        this.createForm.checked = rules.nullable
+        rule.checked = rules.nullable
       } else if (rules && rules.hasOwnProperty('type')) { // eslint-disable-line
         this.createForm.ruleType = 'type'
         rule.dataType = rules.type

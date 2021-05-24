@@ -181,7 +181,7 @@
             </el-form-item>
             <el-form-item class="setting-item">
               <label class="item-label">{{
-                $t('dataVerification.inconsistent')
+                $t('dataVerification.inconsistentCount')
               }}</label>
               <el-select
                 class="item-select"
