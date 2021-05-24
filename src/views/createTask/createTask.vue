@@ -235,18 +235,6 @@ export default {
       if (!this.id) {
         this.platformInfo.zone = ''
       }
-    },
-    'dataSourceModel.source_sourceType'() {
-      this.getConnection(this.getWhere('source'), 'source_connectionId')
-      if (!this.id) {
-        this.dataSourceModel.source_connectionId = ''
-      }
-    },
-    'dataSourceModel.target_sourceType'() {
-      this.getConnection(this.getWhere('target'), 'target_connectionId')
-      if (!this.id) {
-        this.dataSourceModel.target_connectionId = ''
-      }
     }
   },
   methods: {
