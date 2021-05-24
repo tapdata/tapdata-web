@@ -468,10 +468,18 @@ export default {
 
     backDataFlow() {
       let mapping = this.$route.query.mapping
-      if (!this.dataChangeFalg || window.getSettingByKey('DFS_TCM_PLATFORM')) {
-        this.$router.push({
-          path: '/dataFlows?mapping=' + mapping
-        })
+      const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
+      if (!this.dataChangeFalg || $PLATFORM) {
+        if ($PLATFORM === 'dfs') {
+          window.open(
+            window.location.href?.split('/tm')?.[0] + '/#/dataflow',
+            '_self'
+          )
+        } else {
+          this.$router.push({
+            path: '/dataFlows?mapping=' + mapping
+          })
+        }
       } else {
         this.$confirm(
           this.$t('dataFlow.saveReminder'),
