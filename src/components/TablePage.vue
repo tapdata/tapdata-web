@@ -140,13 +140,23 @@ export default {
         return {}
       }
       let params = this.$cache.get('TABLE_PAGE_PARAMS') || {}
-      return params[this.$route.name] || {}
+      let key = this.$route.name
+      // TODO 暂时针对dataflow页面做区分，后续将迁移和同步分为不同路由后去掉该代码块
+      if (key === 'dataFlows') {
+        key = key + this.$route.query['mapping']
+      }
+      return params[key] || {}
     },
     setCache(cache) {
       let params = this.$cache.get('TABLE_PAGE_PARAMS') || {}
-      let pageParams = params[this.$route.name] || {}
+      let key = this.$route.name
+      // TODO 暂时针对dataflow页面做区分，后续将迁移和同步分为不同路由后去掉该代码块
+      if (key === 'dataFlows') {
+        key = key + this.$route.query['mapping']
+      }
+      let pageParams = params[key] || {}
       pageParams = Object.assign({}, pageParams, cache)
-      params[this.$route.name] = pageParams
+      params[key] = pageParams
       this.$cache.set('TABLE_PAGE_PARAMS', params)
     },
     fetch(pageNum, debounce = 0, hideLoading) {

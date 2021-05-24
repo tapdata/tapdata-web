@@ -654,9 +654,13 @@ router.afterEach(() => {
 })
 let isFirst = true
 router.beforeEach(async (to, from, next) => {
-  window.parent &&
-    window.parent.emitRouteChange &&
-    window.parent.emitRouteChange(to)
+  let flag = false
+  if (window.parent && window.parent.emitRouteChange) {
+    flag = window.parent.emitRouteChange(to)
+  }
+  if (flag) {
+    return
+  }
   if (!to.matched.length) {
     Message.error({
       message: 'Page not found!'
