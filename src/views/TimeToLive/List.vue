@@ -150,7 +150,7 @@
     <el-dialog
       width="600px"
       custom-class="create-dialog"
-      :title="$t('metadata.createNewModel')"
+      :title="$t('timeToLive.creatTtl')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
@@ -225,21 +225,24 @@ export default {
             label: this.$t('timeToLive.form.database'),
             field: 'database',
             options: [],
-            required: true
+            required: true,
+            filterable: true
           },
           {
             type: 'select',
             label: this.$t('timeToLive.form.tableName'),
             field: 'tableName',
             options: [],
-            required: true
+            required: true,
+            filterable: true
           },
           {
             type: 'select',
             label: this.$t('timeToLive.form.fieldName'),
             field: 'filed',
             options: [],
-            required: true
+            required: true,
+            filterable: true
           },
           {
             type: 'input',
