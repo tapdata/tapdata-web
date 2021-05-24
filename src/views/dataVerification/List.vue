@@ -182,8 +182,12 @@
               class="data-verify__status error"
             >
               <i class="data-verify__icon el-icon-error"></i>
-              <span>
+              <span v-if="scope.row.inspectMethod === 'row_count'">
                 {{ $t('dataVerification.inconsistent') }}
+              </span>
+              <span v-else>
+                {{ $t('dataVerification.contConsistent')
+                }}{{ scope.row.difference_number }}
               </span>
             </div>
             <div v-else class="data-verify__status success">
@@ -411,10 +415,13 @@ export default {
         } else if (result === 'row_count') {
           where.status = { neq: 'error' }
           where.result = 'failed'
-          where.inspectMethod = 'row_count'
+          inspectMethod = this.searchParams.inspectMethod = 'row_count'
         } else {
           where.status = { neq: 'error' }
           where.result = 'failed'
+          if (inspectMethod === 'row_count') {
+            inspectMethod = this.searchParams.inspectMethod = ''
+          }
           where.inspectMethod = { neq: 'row_count' }
         }
       }

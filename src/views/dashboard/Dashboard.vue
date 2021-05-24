@@ -633,9 +633,13 @@ export default {
   methods: {
     // 跳转数据校验
     jumpCheck(val) {
+      let executionStatus = ''
+      if (val !== 'total') {
+        executionStatus = val === 'countDiff' ? 'row_count' : val
+      }
       let routeUrl = this.$router.resolve({
         path: 'dataVerification',
-        query: { executionStatus: val === 'total' ? '' : val }
+        query: { executionStatus: executionStatus }
       })
 
       window.open(routeUrl.href)
