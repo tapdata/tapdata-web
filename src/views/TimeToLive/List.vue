@@ -106,8 +106,8 @@
       </el-table-column>
       <el-table-column :label="$t('timeToLive.header.expire')" prop="expire">
         <template slot-scope="scope">
-          {{ scope.row.type_data }}
-          {{ $t('timeToLive.' + scope.row.data_type) }}
+          <!-- {{ scope.row.type_data }} -- -->
+          {{ getTimeScale(scope.row.type_data) }}
         </template>
       </el-table-column>
       <el-table-column
@@ -350,6 +350,28 @@ export default {
       }
 
       this.table.fetch(1)
+    },
+    // 根据秒数获取最大刻度的数值
+    getTimeScale(seconds) {
+      let val = ''
+      if (seconds && Number(seconds) && seconds > 0) {
+        if (seconds % (86400 * 360) === 0) {
+          val = seconds / (86400 * 360) + this.$t('timeToLive.y')
+        } else if (seconds % (86400 * 30) === 0) {
+          val = seconds / (86400 * 30) + this.$t('timeToLive.mo')
+        } else if (seconds % (86400 * 7) === 0) {
+          val = seconds / (86400 * 7) + this.$t('timeToLive.w')
+        } else if (seconds % 86400 === 0) {
+          val = seconds / 86400 + this.$t('timeToLive.d')
+        } else if (seconds % 3600 === 0) {
+          val = seconds / 3600 + this.$t('timeToLive.h')
+        } else if (seconds % 60 === 0) {
+          val = seconds / 60 + this.$t('timeToLive.m')
+        } else {
+          val = seconds + this.$t('timeToLive.s')
+        }
+      }
+      return val
     },
     // 获取列表数据
     getData({ page, tags }) {
@@ -662,6 +684,29 @@ export default {
               return false
             }
           }
+          let typeData = ''
+          switch (data_type) {
+            case 'm':
+              typeData = expire * 60
+              break
+            case 'h':
+              typeData = expire * 60 * 60
+              break
+            case 'd':
+              typeData = expire * 60 * 60 * 24
+              break
+            case 'w':
+              typeData = expire * 60 * 60 * 24 * 7
+              break
+            case 'mo':
+              typeData = expire * 60 * 60 * 24 * 30
+              break
+            case 'y':
+              typeData = expire * 60 * 60 * 24 * 300
+              break
+            default:
+              typeData = expire
+          }
           let params = {
             task_name: 'mongodb_create_index',
             task_type: 'MONGODB_CREATE_INDEX',
@@ -669,12 +714,12 @@ export default {
             task_data: {
               collection_name: collection.original_name,
               data_type: data_type,
-              expireAfterSeconds: expire,
+              expireAfterSeconds: typeData,
               meta_id: tableName,
               key: JSON.stringify(key),
               name: '',
               ttl: true,
-              type_data: expire,
+              type_data: typeData,
               unique: false,
               uri: collection.source ? collection.source.database_uri : ''
             }
