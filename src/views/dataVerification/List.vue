@@ -183,16 +183,7 @@
             >
               <i class="data-verify__icon el-icon-error"></i>
               <span>
-                {{
-                  scope.row.inspectMethod === 'row_count'
-                    ? $t('dataVerification.rowConsistent')
-                    : $t('dataVerification.contConsistent')
-                }}
-                {{
-                  scope.row.inspectMethod === 'row_count'
-                    ? scope.row.diffNum
-                    : scope.row.difference_number
-                }}
+                {{ $t('dataVerification.inconsistent') }}
               </span>
             </div>
             <div v-else class="data-verify__status success">
