@@ -32,6 +32,38 @@
             </ElOption>
           </ElSelect>
         </li>
+        <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')" class="item">
+          <el-select
+            v-model="searchParams.databaseModel"
+            clearable
+            size="small"
+            @input="table.fetch(1)"
+          >
+            <el-option
+              v-for="item in databaseModelOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </li>
+        <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')" class="item">
+          <el-select
+            v-model="searchParams.databaseType"
+            clearable
+            size="small"
+            @input="table.fetch(1)"
+          >
+            <el-option
+              v-for="item in databaseTypeOptions"
+              :key="item.type"
+              :label="item.name"
+              :value="item.type"
+            >
+            </el-option>
+          </el-select>
+        </li>
         <li class="item">
           <ElInput
             v-model="searchParams.keyword"
@@ -44,38 +76,6 @@
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </ElInput>
         </li>
-        <!-- <li class="item">
-          <el-select
-            v-model="searchParams.databaseModel"
-            clearable
-            size="mini"
-            @input="table.fetch(1)"
-          >
-            <el-option
-              v-for="item in databaseModelOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </li>
-        <li class="item">
-          <el-select
-            v-model="searchParams.databaseType"
-            clearable
-            size="mini"
-            @input="table.fetch(1)"
-          >
-            <el-option
-              v-for="item in databaseTypeOptions"
-              :key="item.type"
-              :label="item.name"
-              :value="item.type"
-            >
-            </el-option>
-          </el-select>
-        </li> -->
         <li class="item">
           <ElButton
             plain
@@ -126,14 +126,14 @@
             <div class="database-text">
               <!-- TODO: 缺少分类tag -->
               <!-- <span class="name" @click="preview(scope.row.id, scope.row.database_type)"
-                >{{ scope.row.name }}
-                <span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
-                  formatterListTags(scope.row)
-                }}</span></span
-              > -->
+								>{{ scope.row.name }}
+								<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
+									formatterListTags(scope.row)
+								}}</span></span
+							> -->
               <!-- <div class="user" v-if="scope.row.database_uri">
-                {{ formatterDatabaseType(scope.row) }}
-              </div> -->
+								{{ formatterDatabaseType(scope.row) }}
+							</div> -->
               <ElLink
                 type="primary"
                 style="display: block; line-height: 20px"
@@ -178,6 +178,15 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="connection_type"
+        :label="$t('connection.connectionType')"
+        width="160"
+      >
+        <template slot-scope="scope">
+          {{ $t('connection.type.' + scope.row.connection_type) }}
+        </template>
+      </el-table-column>
+      <el-table-column
         v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
         width="160"
       >
@@ -197,7 +206,7 @@
         :label="$t('connection.lastUpdateTime')"
         width="160"
         prop="last_updated"
-        sortable="last_updated"
+        sortable="custom"
       >
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
