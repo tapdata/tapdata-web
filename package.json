@@ -2,6 +2,7 @@
   "name": "tapdaas",
   "version": "1.0.0",
   "private": true,
+  "license": "UNLICENSED",
   "scripts": {
     "start": "nodemon mock/mock.js & vue-cli-service serve --open",
     "start:dev": "cross-env SERVE_ENV=dev vue-cli-service serve --open",
@@ -25,6 +26,7 @@
     "github-markdown-css": "^4.0.0",
     "graphlib": "^2.1.8",
     "jquery": "^3.4.1",
+    "jsplumb": "^2.15.5",
     "leader-line": "^1.0.5",
     "lodash": "^4.17.15",
     "mavon-editor": "^2.9.0",

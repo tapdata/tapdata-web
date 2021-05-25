@@ -6028,6 +6028,11 @@ jsonfile@^4.0.0:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
+jsplumb@^2.15.5:
+  version "2.15.5"
+  resolved "https://registry.npmjs.org/jsplumb/-/jsplumb-2.15.5.tgz#50be0c58fe5e840aa76bd332fda379b6f4e9b7b7"
+  integrity sha512-yFaePzsFaAEsSb5s5e+JVRuunI9tS7mhjVg/A/CimYHEjVWVpbWfeFXz/xkW1Xq02Iblu8vnADObxuMs1IWOEw==
+
 jsprim@^1.2.2:
   version "1.4.1"
   resolved "https://r.cnpmjs.org/jsprim/download/jsprim-1.4.1.tgz#313e66bc1e5cc06e438bc1b7499c2e5c56acb6a2"

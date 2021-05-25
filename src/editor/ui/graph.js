@@ -93,9 +93,8 @@ export default class Graph extends Component {
     )
 
     this.commandManager = new joint.dia.CommandManager({
-      graph: graph,
-      cmdBeforeAdd: function (cmdName, cell, graph, options) {
-        log('cmdBeforeAdd', cmdName, options)
+      graph,
+      cmdBeforeAdd: function (cmdName) {
         // 忽略不需要回退的操作
         return ![
           'change:ports',

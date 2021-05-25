@@ -624,6 +624,12 @@ const router = new Router({
       meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
     },
     {
+      path: '/job-refactor',
+      name: 'dataFlowEditor',
+      component: () => import('@/views/data-flow/Editor'),
+      meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
+    },
+    {
       path: '/createTask/create',
       name: 'createTask',
       component: () => import('@/views/createTask/createTask')

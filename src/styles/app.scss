@@ -1,4 +1,15 @@
+$variable-prefix: '';
+$primary: #1890ff;
 @import 'utilities';
+@import '~bootstrap/scss/root';
 // 暂时注释掉，部分reboot会和现有样式冲突
-//@import '~bootstrap/scss/root';
 //@import '~bootstrap/scss/reboot';
+
+:root {
+  --primary-hover: #40a9ff;
+  --primary-hover-l: #f0f7ff;
+}
+
+body {
+  font-family: $font-family-base;
+}

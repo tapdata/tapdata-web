@@ -93,3 +93,65 @@ export const getImgByType = function (type) {
   }
   return require(`@/assets/images/types/${type.toLowerCase()}.png`)
 }
+
+const CLASSTYPES = [
+  'String',
+  'Number',
+  'BigInt',
+  'Boolean',
+  'Symbol',
+  'Function',
+  'Array',
+  'Date',
+  'RegExp',
+  'Object',
+  'Error'
+]
+
+const CLASS2TYPE = CLASSTYPES.reduce(
+  (obj, t) => ((obj[`[object ${t}]`] = t.toLowerCase()), obj),
+  {}
+)
+
+export function getClassType(obj) {
+  return obj == null
+    ? String(obj)
+    : CLASS2TYPE[{}.toString.call(obj)] || 'object'
+}
+
+export function isObject(obj) {
+  return getClassType(obj) === 'object'
+}
+
+export function isString(obj) {
+  return getClassType(obj) === 'string'
+}
+
+export function isFunction(func) {
+  return typeof func === 'function' || getClassType(func) === 'function'
+}
+
+/**
+ * 按key给数组分组
+ * @param data
+ * @param key
+ * @returns {*}
+ */
+export function groupBy(data, key) {
+  return data.reduce((storage, item) => {
+    const g = item[key]
+    storage[g] = storage[g] || []
+    storage[g].push(item)
+    return storage
+  }, {})
+}
+
+export const uuid = function () {
+  // credit: http://stackoverflow.com/posts/2117523/revisions
+
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    let r = (Math.random() * 16) | 0
+    let v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}

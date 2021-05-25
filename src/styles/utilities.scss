@@ -34,20 +34,6 @@ $utilities: map-merge(
           class: ''
         )
       ),
-    'justify-content':
-      map-merge(
-        map-get($utilities, 'justify-content'),
-        (
-          class: 'justify'
-        )
-      ),
-    'align-items':
-      map-merge(
-        map-get($utilities, 'align-items'),
-        (
-          class: 'align'
-        )
-      ),
     'margin-start':
       map-merge(
         map-get($utilities, 'margin-start'),
@@ -94,3 +80,33 @@ $utilities: map-merge(
 );
 
 @import '~bootstrap/scss/utilities/api';
+
+.justify-center {
+  justify-content: center !important;
+}
+
+.align-center {
+  align-items: center !important;
+}
+
+.grabbable {
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.cursor {
+  &-pointer {
+    cursor: pointer;
+  }
+  &-col-resize {
+    cursor: col-resize;
+  }
+  &-row-resize {
+    cursor: row-resize;
+  }
+  &-grabbing {
+    cursor: grabbing;
+  }
+}
