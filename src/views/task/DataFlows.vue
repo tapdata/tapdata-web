@@ -746,9 +746,11 @@ export default {
     }
   },
   created() {
-    this.mappingTemplate = this.$route.query.mapping
-    this.searchParams.agentId = this.$route.query.agentId
-    this.searchParams.status = this.$route.query.status || ''
+    let { mapping, agentId, status, executionStatus } = this.$route.query
+    this.mappingTemplate = mapping ?? ''
+    this.searchParams.agentId = agentId ?? ''
+    this.searchParams.status = status ?? ''
+    this.searchParams.executionStatus = executionStatus ?? ''
     ws.on('watch', this.dataflowChange)
     if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
       this.getAgentOptions()
