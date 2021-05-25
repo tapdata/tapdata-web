@@ -510,7 +510,7 @@ const cn = {
     taskDetail: '任务详情',
     nodeDetail: '节点信息',
     timePoint: '增量所处时间点',
-    dataScreening: '数据统计',
+    dataScreening: '事件统计',
     unit: '单位',
     article: '条',
     secondUnit: '秒',
