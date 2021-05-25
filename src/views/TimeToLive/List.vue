@@ -329,7 +329,7 @@ export default {
         }
       })
 
-      if (includesTimeField.length === 0) {
+      if (this.createForm.tableName && includesTimeField.length === 0) {
         this.createForm.filed = ''
         // this.indexDefinition = [{ key: '', value: 1 }]
         this.$message.error(this.$t('timeToLive.filedGetFailed'))
