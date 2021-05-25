@@ -522,7 +522,7 @@ export default {
               item.connectionUrl +=
                 item.database_host + ':' + item.database_port
             } else {
-              item.connectionUrl = item.database_uri
+              item.connectionUrl = item.database_uri || item.connection_name
             }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = this.$moment(item.last_updated).format(
@@ -750,10 +750,10 @@ export default {
       if (item.database_type === 'mongodb') {
         item.database_uri = ''
       }
-      if (item.database_type !== 'redis') {
-        delete item.database_password
-      }
       this.testData = Object.assign({}, defaultModel['default'], item)
+      if (item.database_type !== 'redis') {
+        delete this.testData['database_password']
+      }
       this.$api('connections')
         .updateById(
           item.id,
