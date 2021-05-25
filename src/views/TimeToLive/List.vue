@@ -316,7 +316,12 @@ export default {
       this.createFormConfig.items[3].options = []
       this.createForm.filed = ''
       schemaField.forEach(v => {
-        if (v.data_type == 'DATE_TIME' || v.data_type == 'DATETIME') {
+        if (
+          v.data_type == 'DATE_TIME' ||
+          v.data_type == 'DATETIME' ||
+          v.data_type == 'DATE' ||
+          v.data_type == 'date'
+        ) {
           includesTimeField.push(v.field_name)
           if (v.field_name == '__tapd8.ts') {
             this.createForm.filed = v.field_name
