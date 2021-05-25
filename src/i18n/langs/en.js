@@ -522,7 +522,7 @@ const en = {
     inputOutput: 'Throughput',
     transf: 'Transmission Time',
     timePoint: 'CDC timepoint',
-    dataScreening: 'Statistics',
+    dataScreening: 'Event statistics',
     taskDetail: 'Task Details',
     nodeDetail: 'Node Information',
     unit: 'Unit',

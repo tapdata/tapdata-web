@@ -506,7 +506,7 @@ const tc = {
     transf: '傳輸耗時',
     taskDetail: '任務詳情',
     nodeDetail: '節點信息',
-    dataScreening: '數據統計',
+    dataScreening: '事件統計',
     timePoint: '增量所處時間點',
     unit: '單位',
     article: '條',
