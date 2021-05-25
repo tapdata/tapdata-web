@@ -356,9 +356,9 @@ export default {
           isFuzzy: true
         }
       }
-
       this.table.fetch(1)
     },
+
     // 根据秒数获取最大刻度的数值
     getTimeScale(seconds) {
       let val = ''
@@ -381,6 +381,7 @@ export default {
       }
       return val
     },
+
     // 获取列表数据
     getData({ page, tags }) {
       let tableArrData = []
@@ -546,6 +547,7 @@ export default {
         }
       }
     },
+
     // 获取数据库
     getDbOptions() {
       let filter = {
@@ -584,6 +586,7 @@ export default {
           this.createFormConfig.items[1].options = options
         })
     },
+
     // 获取表
     loadCollections(databaseId) {
       let filter = {
@@ -627,6 +630,7 @@ export default {
           this.createFormConfig.items[2].options = options
         })
     },
+
     // 表格排序
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${
@@ -634,10 +638,12 @@ export default {
       }`
       this.table.fetch(1)
     },
+
     // 分类选择
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+
     // 选中分类返回数据
     handleOperationClassify(classifications) {
       this.$api('MetadataInstances')
@@ -653,6 +659,7 @@ export default {
           this.table.fetch()
         })
     },
+
     // 创建生命周期弹窗开启
     openCreateDialog() {
       this.createDialogVisible = true
@@ -668,6 +675,7 @@ export default {
         expire: ''
       }
     },
+
     // 保存新建生命周期
     createNewTtl() {
       let _this = this
@@ -683,6 +691,7 @@ export default {
           let collection = selectTable.record || {}
           if (collection.indexes) {
             let _keyJson = JSON.stringify(key)
+            debugger
             let existsIndexes = collection.indexes.filter(
               v => _keyJson === JSON.stringify(v.key)
             )
