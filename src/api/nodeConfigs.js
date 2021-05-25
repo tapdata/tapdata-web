@@ -4,10 +4,10 @@
  * @description
  */
 // import axios from 'axios';
-import PublicAPI from './publicApi';
+import PublicAPI from './publicApi'
 
 export default class NodeConfigs extends PublicAPI {
-	constructor() {
-		super('/api/nodeConfigs');
-	}
+  constructor() {
+    super('/api/nodeConfigs')
+  }
 }

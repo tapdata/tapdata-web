@@ -3,10 +3,10 @@
  * @date 3/2/20
  * @description
  */
-import PublicAPI from './publicApi';
+import PublicAPI from './publicApi'
 
 export default class Permissions extends PublicAPI {
-	constructor() {
-		super('/api/Permissions');
-	}
+  constructor() {
+    super('/api/Permissions')
+  }
 }

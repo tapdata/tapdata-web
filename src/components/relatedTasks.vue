@@ -1,96 +1,111 @@
 <template>
-	<div class="relatedTasks">
-		<el-popover placement="top" width="400" popper-class="taskLink-popover" trigger="click">
-			<template v-if="taskList.length > 0">
-				<div v-for="item in taskList" :key="item.id" class="text item" @click="handleTask(item)">
-					{{ item.name }}
-				</div>
-			</template>
+  <div class="relatedTasks">
+    <el-popover
+      placement="top"
+      width="400"
+      popper-class="taskLink-popover"
+      trigger="click"
+    >
+      <template v-if="taskList.length > 0">
+        <div
+          v-for="item in taskList"
+          :key="item.id"
+          class="text item"
+          @click="handleTask(item)"
+        >
+          {{ item.name }}
+        </div>
+      </template>
 
-			<div v-else class="noData">{{ $t('message.noRelatedTask') }}</div>
+      <div v-else class="noData">{{ $t('message.noRelatedTask') }}</div>
 
-			<el-button class="e-button" slot="reference">{{ $t('message.clickRelatedTasks') }}</el-button>
-		</el-popover>
-	</div>
+      <el-button class="e-button" slot="reference">{{
+        $t('message.clickRelatedTasks')
+      }}</el-button>
+    </el-popover>
+  </div>
 </template>
 <script>
-import factory from '../api/factory';
+import factory from '../api/factory'
 
-const dataFlowApi = factory('DataFlows');
+const dataFlowApi = factory('DataFlows')
 export default {
-	props: {
-		taskData: {
-			type: Object
-		}
-	},
-	data() {
-		return {
-			taskList: []
-		};
-	},
+  props: {
+    taskData: {
+      type: Object
+    }
+  },
+  data() {
+    return {
+      taskList: []
+    }
+  },
 
-	mounted() {
-		this.$nextTick(() => {
-			this.getTaskData();
-		});
-	},
+  mounted() {
+    this.$nextTick(() => {
+      this.getTaskData()
+    })
+  },
 
-	watch: {
-		taskData: {
-			handler() {
-				this.getTaskData();
-			},
-			deep: true
-		}
-	},
+  watch: {
+    taskData: {
+      handler() {
+        this.getTaskData()
+      },
+      deep: true
+    }
+  },
 
-	methods: {
-		getTaskData() {
-			let params = {
-				connectionID: this.taskData.id,
-				tableName: this.taskData.tableName
-			};
-			dataFlowApi.relatedDataFlows(params).then(res => {
-				if (res.data && res.data.length > 0) {
-					this.taskList = res.data;
-				}
-			});
-		},
-		/***
-		 * 选择任务
-		 */
-		handleTask(data) {
-			if (this.taskData.id !== data.id) {
-				window.open(window.location.href.split('=')[0] + '=' + data.id, 'monitor_' + data.id);
-			}
-		}
-	}
-};
+  methods: {
+    getTaskData() {
+      let params = {
+        connectionID: this.taskData.id,
+        tableName: this.taskData.tableName
+      }
+      dataFlowApi.relatedDataFlows(params).then(res => {
+        if (res.data && res.data.length > 0) {
+          this.taskList = res.data
+        }
+      })
+    },
+    /***
+     * 选择任务
+     */
+    handleTask(data) {
+      if (this.taskData.id !== data.id) {
+        window.open(
+          window.location.href.split('=')[0] + '=' + data.id,
+          'monitor_' + data.id
+        )
+      }
+    }
+  }
+}
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
 .relatedTasks {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	.e-button {
-		width: 100%;
-	}
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  .e-button {
+    width: 100%;
+  }
 }
 </style>
-<style lang="less">
+<style lang="scss">
 .taskLink-popover {
-	min-width: 500px !important;
-	max-height: 300px;
-	overflow: auto;
-	.item {
-		padding: 0 0 10px 20px;
-		cursor: pointer;
-	}
-	.item:hover {
-		color: #48b6e2;
-	}
-	.noData {
-		text-align: center;
-	}
+  min-width: 500px !important;
+  max-height: 300px;
+  overflow: auto;
+  .item {
+    padding: 0 0 10px 20px;
+    cursor: pointer;
+  }
+  .item:hover {
+    color: #48b6e2;
+  }
+  .noData {
+    text-align: center;
+  }
 }
 </style>

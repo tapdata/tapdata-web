@@ -4,45 +4,45 @@
  * @description
  */
 export const FORM_DATA_KEY = 'form_data',
-	SCHEMA_DATA_KEY = 'schema',
-	OUTPUT_SCHEMA_DATA_KEY = 'outputSchema',
-	DATA_FLOW_SETTING_DATA_KEY = 'settingData',
-	JOIN_TABLE_TPL = {
-		tableName: '',
-		joinType: 'upsert',
-		joinPath: '',
-		manyOneUpsert: false,
-		joinKeys: [
-			{
-				source: '',
-				target: ''
-			}
-		],
-		// primaryKeys: '',
-		stageId: '',
-		isArray: false,
-		// fieldProcesses: [],
-		arrayUniqueKey: ''
-	},
-	DEFAULT_SETTING = {
-		isSerialMode: false,
-		sync_type: 'initial_sync+cdc',
-		readBatchSize: 1000,
-		notificationWindow: 0,
-		notificationInterval: 300,
-		readCdcInterval: 500,
-		maxTransactionLength: 12,
-		description: '',
-		cdcFetchSize: 1,
-		distinctWriteType: 'intellect',
-		drop_target: false,
-		run_custom_sql: false,
-		needToCreateIndex: true,
-		increment: false,
-		isSchedule: false,
-		cronExpression: '',
-		isOpenAutoDDL: false,
-		cdcConcurrency: true,
+  SCHEMA_DATA_KEY = 'schema',
+  OUTPUT_SCHEMA_DATA_KEY = 'outputSchema',
+  DATA_FLOW_SETTING_DATA_KEY = 'settingData',
+  JOIN_TABLE_TPL = {
+    tableName: '',
+    joinType: 'upsert',
+    joinPath: '',
+    manyOneUpsert: false,
+    joinKeys: [
+      {
+        source: '',
+        target: ''
+      }
+    ],
+    // primaryKeys: '',
+    stageId: '',
+    isArray: false,
+    // fieldProcesses: [],
+    arrayUniqueKey: ''
+  },
+  DEFAULT_SETTING = {
+    isSerialMode: false,
+    sync_type: 'initial_sync+cdc',
+    readBatchSize: 1000,
+    notificationWindow: 0,
+    notificationInterval: 300,
+    readCdcInterval: 500,
+    maxTransactionLength: 12,
+    description: '',
+    cdcFetchSize: 1,
+    distinctWriteType: 'intellect',
+    drop_target: false,
+    run_custom_sql: false,
+    needToCreateIndex: true,
+    increment: false,
+    isSchedule: false,
+    cronExpression: '',
+    isOpenAutoDDL: false,
+    cdcConcurrency: true,
 		emailWaring: {
 			edited: false,
 			started: false,
@@ -125,36 +125,48 @@ export const FORM_DATA_KEY = 'form_data',
 			shapeImage: 'static/editor/o-kafka-q.svg',
 			stencilImage: 'static/editor/wKafka.svg'
 		},
-		mariaDB: {
-			type: 'mariadb',
-			name: 'MariaDB',
-			shapeImage: 'static/editor/o-maria.svg',
-			stencilImage: 'static/editor/maria.svg'
-		}
-	},
-	FILE_TYPE_MAPPING = {
-		xml: {
-			type: 'xml',
-			name: 'XML',
-			shapeImage: 'static/editor/o-xml.svg',
-			stencilImage: 'static/editor/xml.svg'
-		},
-		excel: {
-			type: 'excel',
-			name: 'EXCEL',
-			shapeImage: 'static/editor/o-excel.svg',
-			stencilImage: 'static/editor/excel.svg'
-		},
-		csv: {
-			type: 'csv',
-			name: 'CSV',
-			shapeImage: 'static/editor/o-csv.svg',
-			stencilImage: 'static/editor/csv.svg'
-		},
-		json: {
-			type: 'json',
-			name: 'JSON',
-			shapeImage: 'static/editor/o-json.svg',
-			stencilImage: 'static/editor/json.svg'
-		}
-	};
+		mariadb: {
+      type: 'mariadb',
+      name: 'MariaDB',
+      shapeImage: 'static/editor/o-maria.svg',
+      stencilImage: 'static/editor/maria.svg'
+    },
+    redis: {
+      type: 'redis',
+      name: 'Redis',
+      shapeImage: 'static/editor/o-redis.svg',
+      stencilImage: 'static/editor/redis.svg'
+    },
+    elasticsearch: {
+      type: 'elasticsearch',
+      name: 'Elasticsearch',
+      shapeImage: 'static/editor/o-elasticsearch.svg',
+      stencilImage: 'static/editor/elasticsearch.svg'
+    }
+  },
+  FILE_TYPE_MAPPING = {
+    xml: {
+      type: 'xml',
+      name: 'XML',
+      shapeImage: 'static/editor/o-xml.svg',
+      stencilImage: 'static/editor/xml.svg'
+    },
+    excel: {
+      type: 'excel',
+      name: 'EXCEL',
+      shapeImage: 'static/editor/o-excel.svg',
+      stencilImage: 'static/editor/excel.svg'
+    },
+    csv: {
+      type: 'csv',
+      name: 'CSV',
+      shapeImage: 'static/editor/o-csv.svg',
+      stencilImage: 'static/editor/csv.svg'
+    },
+    json: {
+      type: 'json',
+      name: 'JSON',
+      shapeImage: 'static/editor/o-json.svg',
+      stencilImage: 'static/editor/json.svg'
+    }
+  }

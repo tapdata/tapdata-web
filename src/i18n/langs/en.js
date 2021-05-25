@@ -31,6 +31,7 @@ const en = {
     serversOversee: 'Tapdata-ServersOversee',
     journal: 'Tapdata-Journal',
     apiInfo: 'Tapdata-APIInfo',
+    taskHistories: 'Tapdata-Scheduling History',
     agentdownload: 'Tapdata-Agentdownload',
     dataCollect: 'Tapdata-DataCollect',
     upload: 'Tapdata-Upload',
@@ -168,6 +169,7 @@ const en = {
       dataCollect: 'Data Collect(Old)',
       system: 'System',
       tasks: 'Schedule Tasks',
+      taskHistories: 'Scheduling History',
       agentdownload: 'Agent Download',
       clusterManagement: 'Cluster management',
       agentManagement: 'Agent management',
@@ -377,13 +379,16 @@ const en = {
     details: 'Details',
     more: 'More',
     edit: 'Edit',
-    query: 'Query'
+    query: 'Query',
+    all: 'All'
   },
   dataFlow: {
     leave: 'Leave',
     backlistText: 'Back to sync job list page',
     saveReminder:
       'This jobhas not been saved yet, If you leave this page, the job configuration will be lost. Are you sure to leave ?',
+    saveFail:
+      'Failed to save the task, please check the configuration and ensure that the data source status is valid.',
     aggregateNotDataNode:
       'The first target data node of aggregation node can only be COLLECTION',
     batchSortOperation: 'Batch sort operation',
@@ -459,7 +464,8 @@ const en = {
     submitConfirmation: 'Submit Confirmation',
     SyncPoint: 'CDC start timepoint',
     cdcLabel: 'Data source:',
-    syncType: 'Sync Type',
+    syncType: ' Type',
+    belongAgent: 'Agent',
     SyncInfo: {
       localTZ:
         'Local Timezone CDC Time: custom a point of  CDC time，in local time zone',
@@ -516,7 +522,7 @@ const en = {
     inputOutput: 'Throughput',
     transf: 'Transmission Time',
     timePoint: 'CDC timepoint',
-    dataScreening: 'Statistics',
+    dataScreening: 'Event statistics',
     taskDetail: 'Task Details',
     nodeDetail: 'Node Information',
     unit: 'Unit',
@@ -536,11 +542,11 @@ const en = {
     category: 'Category',
     replicate: 'Replicate Lag',
     throughputpop:
-      'The read speed from source node and the write speed to the target node, larger number is better',
+      'Throughput:The read speed from source node and the write speed to the target node, larger number is better',
     transtime_pop:
-      'The time lapsed from the data record is read from the source node until the data is written into target node',
+      'Transmission Time:The time lapsed from the data record is read from the source node until the data is written into target node',
     replicate_pop:
-      'The time gap between source node last update time and target node last update time',
+      'Replicate Lag:The time gap between source node last update time and target node last update time',
     status: {
       running: 'Running',
       paused: 'Paused',
@@ -552,11 +558,13 @@ const en = {
       cdc: 'CDC',
       initializing: 'Initializing',
       initialized: 'Initialized',
-      Lag: 'Lag'
+      Lag: 'Lag',
+      all: 'All'
     },
     lag: 'lag',
     executionStatus: 'Execution status',
-    searchPlaceholder: 'Task name / Node name / Library table name',
+    searchPlaceholder: 'Task name / Node name / DB name',
+    searchAgent: 'Agent name',
     dataRange: 'Date range',
     startTime: 'Start time',
     endTime: 'End time',
@@ -690,6 +698,34 @@ const en = {
       file_create_time_ondisk: 'File Create Time',
       file_path: 'File Path'
     },
+    delete_confirm_Title: 'Delete the task? ',
+    delete_confirm_Message:
+      'After deleting task XXX, this task cannot be restored',
+    bulk_delete_confirm_Title: 'Delete tasks in batch? ',
+    bulk_delete_confirm_Message:
+      'After deleting tasks in batch, tasks cannot be restored',
+
+    stop_confirm_title: 'Do you want to suspend this task? ',
+    stop_confirm_message:
+      'After the task xxx is suspended, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
+    bulk_stop_confirm_title: 'Do you want to pause tasks in bulk? ',
+    bulk_stop_confirm_message:
+      'After the task is paused in batch, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
+
+    force_stop_confirm_title: 'Do you want to force stop this task? ',
+    force_stop_confirm_message:
+      'Forcibly stop the task xxx will immediately interrupt the data transmission, force the task to stop quickly, and reset the task',
+    bulk_force_stop_confirm_title:
+      'Do you want to force stop tasks in batches? ',
+    bulk_force_stop_confirm_message:
+      'The batch forced stop task will immediately interrupt the data transmission to force the task to stop quickly and reset the task',
+
+    initialize_confirm_title: 'Do you want to reset this task? ',
+    initialize_confirm_message:
+      'Resetting task xxx will clear the task synchronization progress and the task will be executed again',
+    bulk_initialize_confirm_title: 'Do you want to reset tasks in bulk? ',
+    bulk_initialize_confirm_message:
+      'Resetting the task in batches will clear the task synchronization progress, and the task will be executed again',
     importantReminder: 'Important notice',
     modifyEditText: ' If you edited the',
     nodeLayoutProcess: ' node arrangement',
@@ -717,8 +753,7 @@ const en = {
     skipError: {
       title: 'Skip Error Settings',
       skipErrorSettings: 'Data Processing Error Handling',
-      tip:
-        'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip errors, continue to start" button.  ',
+      tip: 'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip errors, continue to start" button.  ',
       attention:
         'WARNING: If you chose to skip the errors, the relevant data may be discarded. ',
       startJob: 'Skip errors, continue to start',
@@ -727,14 +762,17 @@ const en = {
     }
   },
   connection: {
-    dataBaseName: 'Database name',
+    dataBaseName: 'Connection name',
     dataBaseHost: 'Database host',
     dataBaseClassify: 'Category',
     dataBaseType: 'Database type',
     dataBaseStatus: 'Status',
-    dataBaseSearch: 'Name/Host',
+    dataBaseSearch: 'Search by connection name',
     loadSchema: 'Reload schema periodically',
     connectionType: 'Connection type',
+    connectionInfo: 'Connection info',
+    connectionSource: 'Connection source',
+    lastUpdateTime: 'Update time',
     operate: 'Operation',
     fuzzyQuery: 'Fuzzy query',
     PreciseQuery: 'Precise query',
@@ -748,10 +786,10 @@ const en = {
     reloadOK: 'reloading schema',
     reloadFail: 'Failed to schema',
     reloadTittle: 'Reload schema',
-    desc:
-      'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
-    deteleDatabaseTittle: 'Delete database',
-    deteleDatabaseMsg: 'This will permanently delete the database ',
+    desc: 'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
+    deteleDatabaseTittle: 'Do you want to delete the connection?',
+    deteleDatabaseMsg:
+      'After deleting connection XXX, this connection cannot be restored. ',
     reloadMsg:
       'It may take a long time to reload schema, are you sure to reload the schema of the database',
     checkMsg:
@@ -762,6 +800,7 @@ const en = {
     rename: 'Rename',
     testConnection: 'Test connection',
     status: {
+      all: 'All',
       testing: 'testing',
       invalid: 'invalid',
       ready: 'ready'
@@ -945,8 +984,7 @@ const en = {
             },
             maximum_transaction: {
               label: 'Max Transaction Length',
-              tip:
-                'Time in hours to wait for commit for a transaction. Enter the longest period of time that you expect a transaction to require.Default is 12 hours'
+              tip: 'Time in hours to wait for commit for a transaction. Enter the longest period of time that you expect a transaction to require.Default is 12 hours'
             }
           }
         },
@@ -1249,8 +1287,7 @@ const en = {
               label: 'Example expression',
               labelTip:
                 'Expressions can use comparison and calculation operators in JavaScript',
-              tip:
-                'Select men over 50 years old or people over 30 years old with income below 10,000, the expression is as follows:'
+              tip: 'Select men over 50 years old or people over 30 years old with income below 10,000, the expression is as follows:'
             },
             symbol: {
               label: 'Supported symbols',
@@ -1553,8 +1590,7 @@ const en = {
     all: 'All',
     setting: {
       title: 'Verify default settings',
-      text:
-        'The verification setting is the global verification setting, the priority of the advanced setting in the created verification task is higher than the setting here. ',
+      text: 'The verification setting is the global verification setting, the priority of the advanced setting in the created verification task is higher than the setting here. ',
       keepTimeLabel:
         'Retention time of verification historical results and detailed information',
       errorSaveSumLable:
@@ -1630,11 +1666,13 @@ const en = {
     saveFail: 'Save failed.',
     primaryTest:
       'Starting connection test service, please wait for a while ...',
-
+    testing: 'Testing, please wait for a while ...',
     submit: 'Submit',
     cancel: 'Cancel',
     backDetection: 'backstage testing',
     test: {
+      testResultFail: 'Connection test failed',
+      testResultSuccess: 'Connection test successful',
       testResult: 'Test connection result: ',
       success: 'Pass',
       fail: 'Failed',
@@ -1679,7 +1717,7 @@ const en = {
       supportUpdatePk: 'Support Update Primary Key',
       indexPrefix: 'Index prefix',
       agentMsg:
-        'The test connection service is not available, please check if the Data Synchronization Agent is started correctly.',
+        'Agent current state exception cannot create connection, please check.',
       multiTenant: 'Multi-tenant',
       uriTips: {
         label: 'Example',
@@ -1721,6 +1759,8 @@ const en = {
       guide:
         'For data connection configuration, please refer to the guide documenton the right side. For more information about data connection settings, instructions or other information, please click',
       guideDoc: 'guide document',
+      initialReadSize: 'Initial record size',
+      incrementalTps: 'CUD TPS',
       response_body: {
         CHECK_CONNECT: 'Check the connection is available',
         CHECK_AUTH:
@@ -1835,6 +1875,68 @@ const en = {
         kafkaAcks1: 'Write to master partition only',
         kafkaAcks_1: 'Write to most ISR partitions',
         kafkaAcksAll: 'Write to all ISR partitions'
+      },
+      custom_connection: {
+        history_custom_code: 'History Data Javascript',
+        cdc_custom_code: 'Increamental Javascript',
+        on_data_code: 'On Data javascript',
+        sync_type: 'Sync Type',
+        history_data: 'History data',
+        unique_keys: 'Unique primary key',
+        unique_keys_label: 'Comma-delimited list of joint primary key',
+        increamental_data: 'Increamental data',
+        history_increamental_data: 'History and increamental data'
+      },
+      restApi: {
+        auth_type: 'Auth Type',
+        request_interval: 'Synchronization interval',
+        request_interval_tip: 'Synchronization interval (second)',
+        collection_name: 'Collection Name',
+        unique_keys: 'Unique primary key',
+        unique_keys_label: 'Comma-delimited list of joint primary key',
+        req_pre_process: 'Request preprocessing script',
+        resp_pre_process: 'Response preprocessing script',
+        data_sync_mode: 'Data synchronize mode',
+        url_info: 'Urls',
+        url_info_url_invalid:
+          'Invalid URL, url example: http://127.0.0.1:8080/api/xxx?param=value',
+        url_info_method: 'Method',
+        url_info_url_type: 'URL Type',
+        url_info_ONLY: 'Fetch Data URL',
+        url_info_INITIAL_SYNC: 'Synchronize historical data',
+        url_info_INCREMENTAL_SYNC: 'Synchronize real-time data',
+        url_info_INITIAL_INCREMENTAL_SYNC:
+          'Synchronize historical and real-time data',
+        url_info_GET_TOKEN: 'Authenticate URL',
+        url_info_header_name: 'Header name',
+        url_info_header_value: 'Header value',
+        url_info_parameter_name: 'Parameter name',
+        url_info_parameter_value: 'Parameter value',
+        url_info_offset_field: 'Incremental field',
+        url_info_initial_offset: 'Incremental start value',
+        url_info_content_type: 'Content Type'
+      },
+      gridfs: {
+        gridfs_prefix: 'Bucket Name',
+        gridfs_prefixDir: 'Include Dir path',
+        gridfs_tag_filter: 'Tag Filter',
+        data_regex: 'Data regex',
+        gridfs_mode: 'Read Mode',
+        gridfs_data: 'Parse Into Data',
+        gridfs_binary: 'Binary Transmission',
+        include_filename: 'Include filename',
+        exclude_filename: 'Exclude filename',
+        file_schema: 'Target Collection',
+        file_schema_tip:
+          'If files are of same type, please specify a common name.',
+        file_type: 'File type',
+        separator: 'Separator',
+        json_type: 'Json type',
+        xpath: 'Select record data XPath',
+        gridfs_upload_chunk_size: 'Gridfs Upload Chunk Size(Byte)',
+        file_upload_mode: 'File Upload Mode',
+        file_upload_stream: 'Stream',
+        file_upload_memory: 'Memory(May be cause OOM)(有内存溢出风险)'
       }
     },
     error: {
@@ -2056,8 +2158,7 @@ const en = {
     },
     metadataSearch: {
       title: 'Metadata retrieval',
-      desc:
-        'Metadata retrieval provides search functions for the names, aliases, descriptions of tables and fields, please select the search table/field first, then enter the content, and click the search button to search',
+      desc: 'Metadata retrieval provides search functions for the names, aliases, descriptions of tables and fields, please select the search table/field first, then enter the content, and click the search button to search',
       table: 'Search table',
       column: 'Search field',
       search: 'Search',
@@ -2131,8 +2232,7 @@ const en = {
     settingCenter: 'Setting center',
     systemSetting: 'System setting',
     noticeSetting: 'Notice setting',
-    tip:
-      'The notice setting here is the system global notification setting. The priority of the notification setting of Data flow job page is higher than the global notification setting here',
+    tip: 'The notice setting here is the system global notification setting. The priority of the notification setting of Data flow job page is higher than the global notification setting here',
     jobOperationNotice: 'Job operation notice',
     emailNotice: ' Email notice',
     jobStarted: 'Job started',
@@ -2208,8 +2308,7 @@ const en = {
       headInterpretation:
         'Tapdata DFS Cloud have to install Agent at local server to ensure databases connection and transmission services normally',
       downloadInstall: 'Download and install',
-      text:
-        'First, a JAVA runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
+      text: 'First, a JAVA runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
       copy: 'Copy command',
       copied: 'copied',
       refresh: 'Refresh',
@@ -2316,6 +2415,7 @@ const en = {
     contentVerify: 'Content verify',
     singleVerify: 'Single verify',
     repeatingVerify: 'Repeating verify',
+    inconsistent: 'Inconsistent',
     consistent: 'Consistent',
     toBeVerified: 'To be verified',
     verifying: 'Verifying',
@@ -2343,12 +2443,13 @@ const en = {
     LastTime: 'Stop time',
     startAndStopTime: 'Start and stop time',
     verifyInterval: 'Verify interval',
-    inconsistent: 'Inconsistent data to be saved',
+    inconsistentCount: 'Inconsistent data to be saved',
     table: 'Table',
     addTable: 'Add table',
     automaticallyAdd: 'Automatically add',
     enable: 'Enable',
     disable: 'Disable',
+    isEnabled: 'Is Enabled',
     newVerify: 'New Verify',
     edit: 'Edit',
     clickVerified: 'Click the bottons below to add tables to be verified',
@@ -2390,7 +2491,11 @@ const en = {
     configurationTip: 'Configuration',
     deleteTip: 'Delete',
     checkStatusPre: 'The job status is ',
-    checkStatusSuffix: ' , cannot modify configuration'
+    checkStatusSuffix: ' , cannot modify configuration',
+    backConfirmMessage:
+      'This operation will lose the verification task currently being created (edited)',
+    backConfirmTitle:
+      'Would you give up creating (editing) verification tasks? '
   },
   queryBuilder: {
     addCond: 'field Cond'
@@ -2656,6 +2761,7 @@ const en = {
 
     emptyText:
       'The job has not been started or has been reset, so there is no running milestone data.',
+    status_paused: 'paused',
     status_waiting: 'Waiting',
     status_running: 'Running',
     status_error: 'Error',
@@ -2713,8 +2819,7 @@ const en = {
     clickText: 'The process has been restarted? Please click'
   },
   user: {
-    des:
-      'The user management page provides functions to create, edit, delete, and status settings for users',
+    des: 'The user management page provides functions to create, edit, delete, and status settings for users',
     all: 'All',
     inactivated: 'Not activated',
     unverified: 'Unverified',
@@ -2772,48 +2877,391 @@ const en = {
     checkError: 'Verification failed',
     alreadyExists: 'User name cannot be repeated'
   },
-	dataQuality: {
-		title: 'Data Quality',
-		desc:
-			'The data quality page shows the summary of the table data that violates the data rules, and the user can correct the data that violates the rules on this page.',
-		keywordTip: 'Please search for table name/field name',
-		sourceName: 'Name/Origin',
-		totalDocs: 'Total',
-		violatedDocs: 'Violated',
-		violatePercentage: 'Percentage',
-		createTime: 'Create time',
-		actions: 'Actions',
-		view: 'view',
-		btnFilter: 'Column Filter',
-		btnBatch: 'Bulk Changes',
-		save: 'save',
-		cancel: 'cancel',
-		viewDetail: 'details',
-		del: 'delete',
-		fieldFilter: 'Field filter',
-		allCheck: 'select all',
-		fieldName: 'The field name',
-		show: 'show',
-		hide: 'hide',
-		json: 'Business data',
-		verifyRuleTip: 'Select the quality rule to be violated',
-		verifyContentTip: 'Please enter what you want to modify',
-		verifyContentLength: 'The length cannot exceed 100',
-		msgPostApi: 'Please first publish an API based on this table',
-		msgNoValidApi: 'No API server is available',
-		msgNotStartApi: 'No API service enabled?',
-		ifDel: 'Do you want to delete the current row?',
-		unlikeAjv: 'The input does not match the data rule',
-		allUpdateSuccessTip1: 'Operation successful, A total of',
-		allUpdateSuccessTip2: 'pieces of data have been modified',
-		updateFail: 'Update failed',
-		dataTypeError: 'Data type conversion failed, expected==>',
-		columnTip: 'Please select at least one column',
-		countTitle: 'Recount',
-		connectTip: 'Select at least one data source',
-		countTip: 'Statistic in progress, please hold on',
-		errCheck: 'Display error columns'
-	}
+  process: {
+    name: 'Name/worker type',
+    worker_ip: 'Address',
+    version: 'Version',
+    online: 'Online',
+    all: 'All',
+    state: 'State',
+    job_ids: 'Detail',
+    running_thread: 'Running thread',
+    total_thread: 'Number of threads',
+    worker_type: 'Worker type',
+    ping_time: 'Ping time',
+    start_time: 'Start time',
+    process_id: 'Process ID',
+    processState: 'Working process state'
+  },
+  timeToLive: {
+    header: {
+      indexName: 'Index name',
+      indexFields: 'Time Field',
+      indexStatus: 'Status',
+      indexCreate_by: 'Create user',
+      operate: 'Operation',
+      database: 'Database name',
+      tableName: 'Data table name',
+      expire: 'Expiration time'
+    },
+    form: {
+      databaseTypes: 'Database Type',
+      database: 'Database',
+      tableName: 'table name',
+      fieldName: 'Field name',
+      expire: 'Expiration time'
+    },
+    creatTtl: 'Create life cycle',
+    searchtext: 'Database name/Data table name/Index name',
+    Settinglife: 'Set life cycle',
+    m: 'minute',
+    h: 'hour',
+    d: 'day',
+    s: 'second',
+    w: 'week',
+    mo: 'month',
+    y: 'year',
+    failed:
+      'The current database table, no time field was found, and the life cycle could not be created',
+    create_by_user: 'Platform user',
+    create_by_dba: 'Database Administrator',
+    status_creating: 'Creating',
+    status_created: 'Create complete',
+    status_creation_failed: 'Creation failed',
+    status_deleted: 'Deleted',
+    filedGetFailed:
+      'The current database table, no time field was found, and the life cycle could not be created',
+    index_exists: 'Index already exists'
+  },
+  setting: {
+    email_template: 'Email template',
+    connect_and_test: 'Connection test',
+    saveSuccess: 'Save successfully, take effect in one minute',
+    nameserver: 'Server name',
+    Log: 'Log',
+    SMTP: 'SMTP',
+    Job: 'Task',
+    license: 'License Control',
+    expiredate: 'Expiration time',
+    import: 'Import',
+    apply: 'Apply for license',
+    license_expire_date: 'License expiration time',
+    Worker: 'Process',
+    Download: 'Download',
+    Log_level: 'Log level',
+    maxCpuUsage: 'Maximum CPU usage (value range 0.1 ~ 1)',
+    maxHeapMemoryUsage: 'Maximum heap memory usage (value range 0.1 ~ 1)',
+    switch_insert_mode_interval:
+      'Interval time for switching to batch insert mode in incremental mode (unit: second)',
+    Email_Communication_Protocol: 'Encryption Method',
+    SMTP_Server_Port: 'SMTP service port',
+    SMTP_Server_User: 'SMTP service account',
+    SMTP_Server_password: 'SMTP service password',
+    Email_Receivers: 'Email receiving email address',
+    Email_Send_Address: 'Email sending email address',
+    SMTP_Server_Host: 'SMTP Service Host',
+    Send_Email_Title_Prefix: 'Send Email title prefix (optional)',
+    Email_Template_Running: 'Task start notification',
+    Email_Template_Paused: 'Task Paused Notification',
+    Email_Template_Error: 'Task error notification',
+    Email_Template_Draft: 'Notification of task being edited',
+    Email_Template_CDC: 'Task Incremental Delay Notification',
+    Email_Template_DDL: 'DDL error notification',
+    Clean_Message_Time: 'Clear message time',
+    Keep_Alive_Message: 'Keep online message',
+    Sample_Rate: 'Sampling rate',
+    ApiServer: 'API distribution settings',
+    Default_Limit: 'The number of rows returned by the default query',
+    Max_Limit: 'Maximum number of rows returned by the query',
+    Send_batch_size: 'Number of packed data',
+    hint_Send_batch_size: 'Number of packed data',
+    Mongodb_target_create_date:
+      'Whether to add the creation time to the target data set',
+    Mongodb_target_create_date_docs:
+      'Whether to add the creation time to the target data set',
+    System: 'System Resource Monitoring',
+    Collect_system_info_interval:
+      'System resource monitoring collection frequency (seconds)',
+    Interval_to_collect_system_info:
+      'System resource information (CPU, memory, hard disk usage) monitoring collection frequency',
+    Job_Sync_Mode: 'Task synchronization mode',
+    Worker_Threshold: 'Process Threshold',
+    Worker_Heartbeat_Expire: 'Process heartbeat period time (seconds)',
+    License_Key: 'Certificate Key',
+    Enter_jobs_log_level__error_warn_info_debug_trace:
+      'Enter task log level: error/warn/info/debug/trace',
+    Email_Receivers_Multiple_separated_by_semicolons:
+      'Mail recipients, you can enter multiple, separated by commas',
+
+    Keep_recent_n_hours_message_before_the_last_processed_message_s_time_:
+      'Keep the last n hours news',
+    Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
+      'Cache a copy of the current overall data and merge it into the target data set',
+    Store_before_field_as_embedded_document_in_target_collection_before_update_operation:
+      'Cache a copy of the overall data before modification and merge it into the target data set',
+    Store_job_script_processor_log_to_cloud:
+      'Whether to transfer task logs to the cloud',
+    Validator_to_validate_data__s_sample_rate: 'Validation data sampling rate',
+    Process_message_mode__consistency_fast:
+      'Message processing mode consistency/fast',
+    Worker_can_execute_the_nums_of_Jobs:
+      'The process can perform multiple tasks',
+    Worker_heartbeat_expire_time: 'Process heartbeat period time',
+    Users: 'User',
+    Show_Page: 'Show download page',
+    User_Registery: 'User registration management',
+    hint_Show_Page: 'Show download page',
+    hint_User_Registery:
+      'User registration type settings. The value is set to "disabled": registration is prohibited; the value is set to "self-signup" to enable user self-registration; the value is set to "manual-approval" to allow user registration, but requires administrator approval. ',
+    DR_Rehearsal: 'Disaster preparedness drill',
+    Mongod_path: 'Mongod path',
+    SSH_User: 'SSH username',
+    SSH_Port: 'SSH Port',
+    hint_Mongod_path: 'Mongod path',
+    hint_SSH_User: 'SSH username, used to connect to the host of Mongod',
+    hint_SSH_Port: 'SSH port, used to connect to the host of Mongod',
+    Enable_DR_Rehearsal: 'Allow disaster recovery exercises',
+    hint_Enable_DR_Rehearsal:
+      'Disaster recovery rehearsal switch, true means on, false means off',
+    Download_Agent_Page: 'Agent Download Page',
+    Background_Analytics: 'Background analysis',
+    Data_quality_analysis_frequency: 'Data quality analysis interval (seconds)',
+    Dashboard_data_analysis_frequency: 'Panel data analysis interval (seconds)',
+    dashboard_Analysis_Interval: 'Panel data analysis interval (seconds)',
+    quality_Analysis_Interval: 'Data quality analysis interval (seconds)',
+    Log_filter_interval: 'Log filtering interval (seconds)',
+    Filter_the_interval_between_duplicate_logs__seconds__:
+      'The same log appears only once within a specified time (valid after 1 minute)',
+    _DK36: 'File download',
+    File_Down_Base_Url: 'Address',
+    Set_the_average_number_of_events_per_second_to_allow:
+      'Log settings allow the average number of events per second',
+    Log_Filter_Rate: 'Log output frequency (line/sec)',
+    Connections: 'Connection Settings',
+    Mongodb_Load_Schema_Sample_Size: 'Mongodb load model sample records (rows)',
+    hint_Mongodb_Load_Schema_Sample_Size:
+      'When MongoDB connects to load the model, this configuration will be used for sampling and loading',
+    Enable_API_Stats_Batch_Report: 'Enable API Statistics',
+    Header: 'UDP header information',
+    hint_Header: 'UDP header information',
+    Size_Of_Trigger_API_Stats_Report: 'Maximum number of API request cache',
+    hint_Size_Of_Trigger_API_Stats_Report:
+      'When the number of API request records reaches the specified number, batches are sent to the management end',
+    Time_Span_Of_Trigger_API_Stats_Report:
+      'API request report frequency (seconds)',
+    hint_Time_Span_Of_Trigger_API_Stats_Report:
+      'The API request is cached and sent to the management end at the specified time',
+    save: 'Save successfully, take effect in one minute',
+    Logout_forward_to_this_url: 'Logout forwarding address',
+    Check_devices: 'Important device detection',
+    ops: 'Operation and maintenance display',
+    server_oversee_url: 'O&M operation control URL',
+    system: 'System global',
+    licenseNoticeDays: 'license expiration reminder',
+    flow_engine_version: 'Flow engine version',
+    tapdata_agent_version: 'tapdata agent version',
+    doc_base_url: 'Help document URL',
+    help: 'Help document',
+    Ip_addresses: 'Ipv4 addresses (separated by multiple commas)',
+    hint_Ip_addresses:
+      'The ipv4 address of the device to be detected, for example: 127.0.0.1, 192.168.0.1',
+    PingTimeout: 'Detection timeout (milliseconds)',
+    hint_PingTimeout:
+      'When this setting is exceeded, it is considered that the device cannot be connected',
+    Job_field_replacement: 'Illegal characters replaced with',
+    A_replacement_for_the_invalid_field_name:
+      'Some databases have special requirements for field names, tapdata will automatically replace illegal characters during synchronization. MongoDB[Contains ".", "$" as the beginning]',
+    true__store_log_to_cloud__false__only_store_to_local_log_file_:
+      'true: store log to cloud, false: only store to local log file.',
+    When_one_document_may_be_updated_frequently_within_very_short_period_a_few_updates_within_one_second__for_instance___the_change_stream_event_received_by_downstream_processor_may_return_the__fullDocument__that_is_inconsistent_with_the_actual_version_when_the_update_was_applied_to_that_document__To_avoid_this_inconsistency__enable_this_option_to_store_the_full_document_along_with_the_update_operation__This_will_at_the_expense_of_additional_storage_and_degraded_performance_:
+      'When a document may be frequently updated in a very short time (for example, several updates within a second), the change stream event received by the downstream processor may return "fullDocument" that is inconsistent with the actual version ( Inconsistent with the actual version) the file. To avoid this inconsistency, please enable this option to store the complete document with the update operation. This will be at the expense of increased storage space and reduced performance. ',
+    the_before_field_contains_a_field_for_each_table_column_and_the_value_that_was_in_that_column_before_the_update_operation_:
+      'the before field contains a field for each table column and the value that was in that column before the update operation.',
+    Job_heart_timeout: 'Synchronization task heartbeat timeout (milliseconds)',
+    job_cdc_share_mode: 'Incremental synchronization task sharing mode',
+    job_cdc_share_mode_doc:
+      'In the incremental synchronization phase, the sharing mode will be automatically adopted according to whether the log collection task is available. Affected database: Oracle',
+    job_cdc_share_only: 'Incremental tasks are forced to use shared mode',
+    job_cdc_share_only_doc:
+      'When the incremental synchronization task sharing mode is turned on and a sharable log cannot be found, the task will be stopped',
+    test_email_success:
+      'The test email has been sent, please log in to the receiving mailbox to check it',
+    test_email_countdown:
+      'The operation is too frequent, please try again later',
+    email_template_from: 'From',
+    email_template_to: 'Recipient',
+    email_template_subject: 'Subject',
+    job_cdc_record: 'Automatically save incremental events',
+    job_cdc_record_doc: 'Automatically save incremental events',
+    job_cdc_record_ttl: 'Incremental event save time (days)',
+    job_cdc_record_ttl_doc: 'Incremental event save time (days)',
+    connection_schema_update_hour: 'Data source schema update time',
+    connection_schema_update_interval:
+      'Data source schema update interval (days)',
+    creatDuplicateSource: 'Allow the creation of duplicate data sources',
+    requestFailed: 'Request processing failed',
+    Mongodb_will_use_this_sample_size_when_load_schema:
+      'Mongodb will use this sample size when load schema When MongoDB connects to load the model, this configuration will be used for sample loading',
+    Switch_to_batch_insert_mode_interval__s__in_cdc_:
+      'Switch to batch insert mode interval in cdc. '
+  },
+  dataQuality: {
+    title: 'Data Quality',
+    desc: 'The data quality page shows the summary of the table data that violates the data rules, and the user can correct the data that violates the rules on this page.',
+    keywordTip: 'Please search for table name/field name',
+    sourceName: 'Name/Origin',
+    totalDocs: 'Total',
+    violatedDocs: 'Violated',
+    violatePercentage: 'Percentage',
+    createTime: 'Create time',
+    actions: 'Actions',
+    view: 'view',
+    btnFilter: 'Column Filter',
+    btnBatch: 'Bulk Changes',
+    save: 'save',
+    cancel: 'cancel',
+    viewDetail: 'details',
+    del: 'delete',
+    fieldFilter: 'Field filter',
+    allCheck: 'select all',
+    fieldName: 'The field name',
+    show: 'show',
+    hide: 'hide',
+    json: 'Business data',
+    verifyRuleTip: 'Select the quality rule to be violated',
+    verifyContentTip: 'Please enter what you want to modify',
+    verifyContentLength: 'The length cannot exceed 100',
+    msgPostApi: 'Please first publish an API based on this table',
+    msgNoValidApi: 'No API server is available',
+    msgNotStartApi: 'No API service enabled?',
+    ifDel: 'Do you want to delete the current row?',
+    unlikeAjv: 'The input does not match the data rule',
+    allUpdateSuccessTip1: 'Operation successful, A total of',
+    allUpdateSuccessTip2: 'pieces of data have been modified',
+    updateFail: 'Update failed',
+    dataTypeError: 'Data type conversion failed, expected==>',
+    columnTip: 'Please select at least one column',
+    countTitle: 'Recount',
+    connectTip: 'Select at least one data source',
+    countTip: 'Statistic in progress, please hold on',
+    errCheck: 'Display error columns'
+  },
+  dictionary: {
+    creatDictionary: 'Create a dictionary template',
+    editDictionary: 'Edit dictionary template',
+    classification: 'Classification',
+    name: 'Name',
+    data_type: 'Data Type',
+    isdatatype: 'Dictionary template details',
+    baseFloating: 'Floating point number',
+    baseString: 'String',
+    baseBoolean: 'Boolean value',
+    template: 'Template',
+    pleaseSelect: 'Please select',
+    pleaseInput: 'Please input',
+    mapping: 'Mapping value',
+    initial: 'Initial value',
+    initialNum: 'Initial value can only enter numbers',
+    isMappedvalue: 'The mapped value cannot be empty',
+    isInitialvalue: 'Initial value cannot be empty',
+    titlenametips: 'The name cannot be repeated, please modify it again',
+    nameCheck: 'Name cannot be empty',
+    alreadyExists: 'Rule name already exists'
+  },
+  dataRule: {
+    creatRule: 'Create rule',
+    editRule: 'Edit Rule',
+    classification: 'Classification',
+    name: 'Name',
+    pleaseSelect: 'Please select',
+    pleaseInput: 'Please input',
+    nameCheck: 'The name cannot be empty',
+    rule: 'Rule',
+    data_type: 'Field Type',
+    precision: 'Accuracy',
+    data_Nullable: 'Nullable',
+    scale: 'Number length',
+    data_Range: 'Range',
+    data_Enum: 'Enumeration',
+    data_Regex: 'Regex',
+    greater_that: 'greater than',
+    less_that: 'less than',
+    required: 'Cannot be empty',
+    enum_required: 'Enum value is required',
+    gt_lt_none: 'The range boundary cannot be none at the same time',
+    data_type_required: 'Data type is required',
+    data_regex_required: 'Data regex is required',
+    correct_rules: 'Please enter the correct rules',
+    pleaseNum: 'Please enter a number',
+    dataType: {
+      baseFloating: 'Float',
+      baseObject: 'Object',
+      baseBinarydata: 'Binarydata',
+      baseString: 'String',
+      baseArray: 'Array',
+      baseUndefined: 'Undefined',
+      baseBoolean: 'Booleanvalue',
+      basedate: 'Date',
+      baseNull: 'Null',
+      baseRegularexpression: 'Regularexpression',
+      baseShorttype: 'Shorttype',
+      baseTimestamp: 'Timestamp',
+      baseLonginteger: 'Longinteger'
+    }
+  },
+  task: {
+    task_name: 'Task name',
+    task_type: 'Task Type',
+    statusText: 'Status',
+    cron_expression: 'Cron expression',
+    agent_id: 'Run Agent Id',
+    last_updated: 'Last update time',
+    task_result_code: 'Task Result Code',
+    task_result: 'Task Result',
+    task_duration: 'Task Duration(ms)',
+    task_start_time: 'Task Start Time',
+    ahistory: 'Scheduling History',
+    apitest: 'API Documentation And Testing',
+    ping_time: 'Ping time',
+    start: 'Start',
+    paused: 'Pause',
+    status: {
+      done: 'done',
+      waiting: 'Waiting',
+      scheduling: 'Scheduling',
+      paused: 'Paused',
+      stopping: 'Stopping'
+    }
+  },
+  dkDashboard: {
+    dataCount: 'Overview',
+    trendCount: 'Data increment trend statistics',
+    typeCount: 'Number of optional data types',
+    annulusTitle1: 'Published data (pieces)',
+    annulusTitle2: 'Published data size',
+    annulusTitle3: 'Data types available (number)',
+    annulusTitle4: 'Published data (number)',
+    trendData: 'Publish incremental trends in data',
+    spaceUsage: 'Take up the space(GB)',
+    topRelease: 'Top 10 distribution of released data (pieces)',
+    month: 'Nearly a month',
+    yesterday: 'Yesterday',
+    today: 'Today',
+    create: 'New (number)',
+    update: 'New (Modified)',
+    dataIncrement: 'The incremental data',
+    spaceUsage2: 'Take up the space(number)',
+    from: 'source',
+    unknown: 'unknown',
+    record: 'Historical records (number)',
+    dataSize: 'Data size',
+    outCount: 'Violations(number)',
+    outRate: 'Percent of Violations',
+    gather: 'Summary',
+    zhao: 'M',
+    yi: '*10000W',
+    wan: 'W'
+  }
 }
 
 export default en

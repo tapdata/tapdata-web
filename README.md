@@ -1,30 +1,65 @@
 # tapdaas
 
-> A Vue.js project
+> Data as a service
 
-## Build Setup
+## 快速开始
 
+1. **安装依赖**
 ``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
+yarn install
+```
+2. **启动应用**
+```bash
+yarn start 启动并打开应用
+// or
+yarn start --dev 开启dev环境的接口代理
+yarn start:ws --dev 开启dev环境的接口代理,ws表示模拟websocket数据
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+3. **打包**
+```bash
+yarn build
+```
+
+4. **开启mock**
+```bash
+yarn mock  开启daas的mock
+yarn mock -- --dfs 开启dfs的mock
+```
+
+### 项目结构
+```
+.
+├── README.md
+├── babel.config.js
+├── package.json
+├── public
+│   ├── editor
+│   ├── index.html
+│   └── js
+├── src
+│   ├── App.vue
+│   ├── api
+│   ├── assets
+│   ├── components
+│   ├── directives
+│   ├── editor
+│   ├── i18n
+│   ├── log.js
+│   ├── main.js
+│   ├── plugins
+│   ├── router
+│   ├── styles
+│   ├── theme
+│   ├── utils
+│   ├── views
+│   └── vuex
+├── templateSetting.js
+├── test
+│   ├── e2e
+│   └── unit
+├── text.md
+├── vue.config.js
+└── yarn.lock
+
+```

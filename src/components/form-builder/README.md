@@ -1,7 +1,7 @@
 自定义节点
 ========
 
-```js
+```javascript
 {
 	//自定节点配置节点配置
 	nodeConfig: {
