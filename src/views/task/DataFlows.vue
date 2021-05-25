@@ -747,7 +747,7 @@ export default {
   },
   created() {
     let { mapping, agentId, status, executionStatus } = this.$route.query
-    this.mappingTemplate = mapping ?? ''
+    this.mappingTemplate = mapping ?? 'cluster-clone'
     this.searchParams.agentId = agentId ?? ''
     this.searchParams.status = status ?? ''
     this.searchParams.executionStatus = executionStatus ?? ''
