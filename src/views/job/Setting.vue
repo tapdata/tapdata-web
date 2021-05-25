@@ -99,7 +99,7 @@
           placeholder="请选择"
           class="dataWrite-list"
         >
-          <el-option :label="$t('dataFlow.batch')" :value="false"> </el-option>
+          <el-option :label="$t('dataFlow.batch')" :value="false"></el-option>
           <el-option :label="$t('dataFlow.onebyone')" :value="true">
           </el-option>
         </el-select>
@@ -139,7 +139,7 @@
           <el-select
             v-model="formData.distinctWriteType"
             size="mini"
-            placeholder="请选择"
+            :placeholder="$t('message.placeholderSelect')"
             class="dataWrite-list"
           >
             <el-option
@@ -275,8 +275,23 @@
           ></el-input-number>
         </el-form-item>
         <el-form-item
+          :label="$t('dataFlow.cdc_concurrency')"
+          v-show="formData.sync_type !== 'initial_sync'"
+        >
+          <!-- 是否开启增量并发写入 -->
+          <el-switch
+            v-model="formData.cdcConcurrency"
+            :active-text="
+              formData.cdcConcurrency ? $t('dataFlow.yes') : $t('dataFlow.no')
+            "
+          ></el-switch>
+        </el-form-item>
+        <el-form-item
           :label="$t('dataFlow.transformerConcurrency')"
-          v-show="formData.sync_type !== 'cdc'"
+          v-show="
+            formData.sync_type !== 'cdc' ||
+            (formData.cdcConcurrency === true && formData.sync_type === 'cdc')
+          "
         >
           <!-- 目标写入线程 -->
           <el-input-number
@@ -363,6 +378,7 @@ import { DEFAULT_SETTING } from '../../editor/constants'
 import _ from 'lodash'
 import * as moment from 'moment'
 import factory from '../../api/factory'
+
 const connections = factory('connections')
 export default {
   name: 'Setting',

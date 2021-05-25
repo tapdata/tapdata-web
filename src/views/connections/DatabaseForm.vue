@@ -182,7 +182,9 @@
                   ['source'].includes(model.connection_type)
                 "
               >
-                <div class="custom-connection-label">{{ $t('dataForm.form.custom_connection.cdc_custom_code') }}</div>
+                <div class="custom-connection-label">
+                  {{ $t('dataForm.form.custom_connection.cdc_custom_code') }}
+                </div>
                 <div class="custom-connection-main">
                   <div>function requestData(ctx) {</div>
                   <JsEditor
@@ -201,7 +203,11 @@
                   ) && ['source'].includes(model.connection_type)
                 "
               >
-                <div class="custom-connection-label">{{ $t('dataForm.form.custom_connection.history_custom_code') }}</div>
+                <div class="custom-connection-label">
+                  {{
+                    $t('dataForm.form.custom_connection.history_custom_code')
+                  }}
+                </div>
                 <div class="custom-connection-main">
                   <div>function requestData() {</div>
                   <JsEditor
@@ -216,7 +222,9 @@
                 class="custom-connection-box"
                 v-if="['target'].includes(model.connection_type)"
               >
-                <div class="custom-connection-label">{{ $t('dataForm.form.custom_connection.on_data_code') }}</div>
+                <div class="custom-connection-label">
+                  {{ $t('dataForm.form.custom_connection.on_data_code') }}
+                </div>
                 <div class="custom-connection-main">
                   <div style="margin-top: 10px; font-size: 14px">Info</div>
                   <div>
@@ -303,7 +311,10 @@
                         type="flex"
                         :gutter="20"
                       >
-                        <el-form-item  :label="$t('dataForm.form.restApi.url_info_method')" :prop="item.method">
+                        <el-form-item
+                          :label="$t('dataForm.form.restApi.url_info_method')"
+                          :prop="item.method"
+                        >
                           <el-select
                             v-model="item.method"
                             class="min-input"
@@ -337,7 +348,9 @@
                       </el-col>
                       <el-col :span="24" class="fromLoopBox">
                         <el-form-item
-                          :label="$t('dataForm.form.restApi.url_info_initial_offset')"
+                          :label="
+                            $t('dataForm.form.restApi.url_info_initial_offset')
+                          "
                           :prop="item.offset_field"
                           v-if="
                             model.data_sync_mode === 'INCREMENTAL_SYNC' ||
@@ -358,13 +371,19 @@
                             class="rest-api-Array"
                           >
                             <el-input
-                              :placeholder="$t('dataForm.form.restApi.url_info_header_name')"
+                              :placeholder="
+                                $t('dataForm.form.restApi.url_info_header_name')
+                              "
                               class="medium-input"
                               size="mini"
                               v-model="header.name"
                             ></el-input>
                             <el-input
-                              :placeholder="$t('dataForm.form.restApi.url_info_header_value')"
+                              :placeholder="
+                                $t(
+                                  'dataForm.form.restApi.url_info_header_value'
+                                )
+                              "
                               class="medium-input rest-api-margin"
                               size="mini"
                               v-model="header.value"
@@ -401,13 +420,21 @@
                             class="rest-api-Array"
                           >
                             <el-input
-                              :placeholder="$t('dataForm.form.restApi.url_info_parameter_name')"
+                              :placeholder="
+                                $t(
+                                  'dataForm.form.restApi.url_info_parameter_name'
+                                )
+                              "
                               class="medium-input"
                               size="mini"
                               v-model="parameter.name"
                             ></el-input>
                             <el-input
-                              :placeholder="$t('dataForm.form.restApi.url_info_parameter_value')"
+                              :placeholder="
+                                $t(
+                                  'dataForm.form.restApi.url_info_parameter_value'
+                                )
+                              "
                               class="medium-input rest-api-margin"
                               size="mini"
                               v-model="parameter.value"

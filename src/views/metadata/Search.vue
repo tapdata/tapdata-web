@@ -194,7 +194,10 @@ export default {
         .then(result => {
           let data = result.data.records || []
           this.noMore = false
-          if (data.data.length === 0 || (data.data.length < data.pageSize && !this.first)) {
+          if (
+            data.data.length === 0 ||
+            (data.data.length < data.pageSize && !this.first)
+          ) {
             this.noMore = true
             return
           }

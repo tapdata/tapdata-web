@@ -93,7 +93,9 @@ export default function (vm) {
             value: 'INITIAL_SYNC'
           },
           {
-            label: vm.$t('dataForm.form.restApi.url_info_INITIAL_INCREMENTAL_SYNC'),
+            label: vm.$t(
+              'dataForm.form.restApi.url_info_INITIAL_INCREMENTAL_SYNC'
+            ),
             value: 'INITIAL_INCREMENTAL_SYNC'
           }
         ],

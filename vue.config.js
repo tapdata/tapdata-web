@@ -1,7 +1,6 @@
 const URL = {
-  // dev: 'http://192.168.1.181:30300',
-  dev: 'http://localhost:30300',
-  pro: 'http://backend:3030'
+  uat: 'http://192.168.1.181:30300',
+  dev: 'http://localhost:30300'
 }
 let baseUrl
 const argv = process.argv

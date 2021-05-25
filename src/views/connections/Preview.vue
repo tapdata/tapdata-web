@@ -176,7 +176,7 @@
 </template>
 
 <script>
-  import {getImgByType, TYPEMAPCONFIG} from './util'
+import { getImgByType, TYPEMAPCONFIG } from './util'
 import formConfig from './config'
 import Test from './Test'
 

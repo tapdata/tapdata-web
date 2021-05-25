@@ -82,7 +82,9 @@ export default function (vm) {
             value: 'cdc'
           },
           {
-            label: vm.$t('dataForm.form.custom_connection.history_increamental_data'),
+            label: vm.$t(
+              'dataForm.form.custom_connection.history_increamental_data'
+            ),
             value: 'initial_sync+cdc'
           }
         ],

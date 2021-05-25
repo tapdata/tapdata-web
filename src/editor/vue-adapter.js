@@ -11,7 +11,7 @@ import log from '../log'
 import { FORM_DATA_KEY } from './constants'
 import i18n from '@/i18n'
 
-export const vueAdapter = {}
+export const vvueAdapter = {}
 // const privateMap = new WeakMap();
 
 export class VueAdapter extends BaseObject {
