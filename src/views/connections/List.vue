@@ -750,6 +750,9 @@ export default {
       if (item.database_type === 'mongodb') {
         item.database_uri = ''
       }
+      if (item.database_type !== 'redis') {
+        delete item.database_password
+      }
       this.testData = Object.assign({}, defaultModel['default'], item)
       this.$api('connections')
         .updateById(
