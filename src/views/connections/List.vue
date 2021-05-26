@@ -741,7 +741,6 @@ export default {
       }
     },
     async testConnection(item) {
-      console.log(item)
       let result = await this.$api('Workers').getAvailableAgent();
       if (!result.data.result || result.data.result.length === 0) {
         this.$message.error(this.$t('dataForm.form.agentMsg'));
@@ -756,7 +755,6 @@ export default {
       if (item.database_type !== 'redis') {
         delete this.testData['database_password']
       }
-      console.log(this.testData)
       this.$api('connections')
         .updateById(
           item.id,
