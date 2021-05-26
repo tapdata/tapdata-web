@@ -45,6 +45,7 @@
                 {{ $t('dataForm.form.guide') }}
                 <a
                   class="color-primary"
+                  target="_blank"
                   href="https://docs.tapdata.net/data-source"
                   >{{ $t('dataForm.form.guideDoc') }}</a
                 >
