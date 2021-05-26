@@ -1,21 +1,27 @@
-const URL = {
-  uat: 'http://192.168.1.181:30300',
-  dev: 'http://localhost:30300'
-}
-let baseUrl
-const argv = process.argv
-let hostArgIndex = argv.indexOf('--origin')
-if (hostArgIndex >= 0) {
-  baseUrl = argv[hostArgIndex + 1] || 'http://backend:3030'
-}
-const proxy = {
-  target: baseUrl || URL['dev'],
-  changeOrigin: false
-}
 const { resolve } = require('path')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
-const config = {
+const serveUrlMap = {
+  mock: 'http://localhost:30300',
+  dev: 'http://backend:3030',
+  test: 'http://192.168.1.181:30300'
+}
+let origin
+const { argv } = process
+const { SERVE_ENV = 'mock' } = process.env
+
+// 通过origin参数注入服务代理，优先级最高
+if (~argv.indexOf('--origin')) {
+  origin = argv[argv.indexOf('--origin') + 1]
+  origin && (origin = origin.replace(/^(?!http)/, 'http://'))
+}
+
+const proxy = {
+  target: origin || serveUrlMap[SERVE_ENV],
+  changeOrigin: false
+}
+
+module.exports = {
   assetsDir: 'static',
   lintOnSave: true,
   productionSourceMap: false,
@@ -97,5 +103,3 @@ const config = {
     ]
   }
 }
-
-module.exports = config

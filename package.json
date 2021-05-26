@@ -3,19 +3,20 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "vue-cli-service serve --open",
-    "serve": "vue-cli-service serve",
+    "start": "nodemon mock/mock.js & vue-cli-service serve --open",
+    "start:dev": "cross-env SERVE_ENV=dev vue-cli-service serve --open",
+    "start:test": "cross-env SERVE_ENV=test vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
-    "fix": "vue-cli-service lint --fix",
-    "mock": "nodemon ./mock/mock.js"
+    "mock": "nodemon mock/mock.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
     "backbone": "^1.4.0",
     "bootstrap": "^5.0.0-beta3",
     "core-js": "^3.6.5",
+    "cross-env": "^7.0.3",
     "crypto": "^1.0.1",
     "crypto-js": "^4.0.0",
     "dagre": "^0.8.5",
