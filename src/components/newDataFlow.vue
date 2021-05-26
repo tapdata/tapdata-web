@@ -171,6 +171,7 @@ export default {
     // 跳转数据源
     handleConnection() {
       this.dialogDatabaseTypeVisible = true
+      this.handleClose()
       // let routeUrl = this.$router.resolve({
       // 	path: '/connections?noviceGuide=true'
       // });
