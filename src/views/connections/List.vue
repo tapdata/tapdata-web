@@ -741,20 +741,22 @@ export default {
       }
     },
     async testConnection(item) {
+      console.log(item)
       let result = await this.$api('Workers').getAvailableAgent();
       if (!result.data.result || result.data.result.length === 0) {
         this.$message.error(this.$t('dataForm.form.agentMsg'));
         return
       }
-      let loading = this.$loading();
+      let loading = this.$loading()
+      this.testData = Object.assign({}, defaultModel['default'], item)
       if (['gridfs', 'mongodb'].includes(item.database_type)) {
-        item.database_uri = '';
-        item.isUrl = false
+        this.testData.database_uri = ''
+        this.testData.isUrl = false
       }
-      this.testData = Object.assign({}, defaultModel['default'], item);
       if (item.database_type !== 'redis') {
         delete this.testData['database_password']
       }
+      console.log(this.testData)
       this.$api('connections')
         .updateById(
           item.id,
