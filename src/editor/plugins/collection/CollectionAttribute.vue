@@ -641,6 +641,7 @@ export default {
         placeholder: this.$t('editor.cell.data_node.database.form.placeholder'),
         loading: false,
         filterable: true,
+        clearable: true,
         on: {
           change() {
             self.handlerConnectionChange()
@@ -952,10 +953,11 @@ export default {
       this.databaseSelectConfig.loading = false
       if (result.data) {
         this.databaseSelectConfig.options = result.data.map(item => {
+          let statusName = this.$t(`connection.status.${item.status}`)
           return {
             id: item.id,
             name: item.name,
-            label: `${item.name} (${item.status})`,
+            label: `${item.name} (${statusName})`,
             value: item.id
           }
         })

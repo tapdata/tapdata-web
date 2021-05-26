@@ -595,11 +595,12 @@ export default {
       this.databaseSelectConfig.loading = false
       if (result.data) {
         this.databaseSelectConfig.options = result.data.map(item => {
+          let statusName = this.$t(`connection.status.${item.status}`)
           return {
             id: item.id,
             name: item.name,
             database_type: item.database_type,
-            label: `${item.name} (${item.status})`,
+            label: `${item.name} (${statusName})`,
             value: item.id
           }
         })
