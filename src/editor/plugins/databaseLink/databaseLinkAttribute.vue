@@ -601,7 +601,7 @@ export default {
     .el-transfer {
       height: 640px;
       .el-transfer-panel {
-        width: 298px;
+        width: 284px;
         .el-transfer-panel__body {
           .box {
             display: inline-block;
@@ -638,6 +638,7 @@ export default {
         }
         .el-transfer__button {
           border-radius: 3px;
+          padding: 12px !important;
         }
         .el-transfer__button.is-disabled,
         .el-transfer__button.is-disabled:hover {
@@ -657,7 +658,10 @@ export default {
         }
       }
       .el-transfer__buttons {
-        padding: 0 20px;
+        padding: 0 12px;
+        .el-button {
+          padding: 12px;
+        }
       }
     }
     .el-transfer-panel__item:hover {
@@ -665,6 +669,7 @@ export default {
     }
     .transfer {
       height: calc(100% - 32px) !important;
+      white-space: nowrap;
       overflow: auto;
     }
     .el-transfer,
