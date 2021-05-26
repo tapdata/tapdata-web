@@ -105,6 +105,7 @@ export default {
       if (this.types.length) {
         where.or = this.types.map(t => ({ item_type: t }))
       }
+
       let filter = {
         where
       }

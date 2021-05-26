@@ -117,6 +117,12 @@
       >
         <template slot-scope="scope">
           {{ $t('timeToLive.status_' + scope.row.status) || scope.row.status }}
+          <el-popover placement="top-start" trigger="hover" width="800">
+            <div style="word-break: break-word; text-align: left">
+              {{ scope.row.error_msg }}
+            </div>
+            <span class="icon iconfont icon-tishi1" slot="reference"></span>
+          </el-popover>
         </template>
       </el-table-column>
       <el-table-column
@@ -134,6 +140,7 @@
             v-if="scope.row.status === 'created'"
             size="mini"
             type="text"
+            style="color: #f56c6c"
             :disabled="
               $disabledByPermission(
                 'time_to_live_management_all_data',
@@ -142,6 +149,20 @@
             "
             @click="remove(scope.row)"
             >{{ $t('button.delete') }}</el-button
+          >
+          <el-button
+            v-readonlybtn="'time_to_live_management'"
+            v-if="scope.row.status === 'creation_failed'"
+            size="mini"
+            type="text"
+            :disabled="
+              $disabledByPermission(
+                'time_to_live_management_all_data',
+                scope.row.source ? scope.row.source.user_id : ''
+              )
+            "
+            @click="resetTtl(scope.row)"
+            >{{ $t('button.reset') }}</el-button
           >
         </template>
       </el-table-column>
@@ -622,7 +643,7 @@ export default {
           let options = []
           tables.forEach(item => {
             options.push({
-              label: item.name,
+              label: item.original_name || item.name,
               value: item.id,
               record: item
             })
@@ -763,7 +784,7 @@ export default {
       let params = {
         task_name: 'mongodb_drop_index',
         task_type: 'MONGODB_DROP_INDEX',
-        status: 'waiting',
+        status: 'deleting',
         task_data: {
           collection_name: item.original_name,
           meta_id: item.meta_id,
@@ -795,6 +816,35 @@ export default {
           }
         }
       })
+    },
+
+    // 重置生命周期
+    resetTtl(item) {
+      console.log(item)
+      let params = {
+        task_name: 'mongodb_create_index',
+        task_type: 'MONGODB_CREATE_INDEX',
+        status: 'waiting',
+        task_data: {
+          collection_name: item.original_name,
+          data_type: item.data_type,
+          expireAfterSeconds: item.expireAfterSeconds,
+          meta_id: item.meta_id,
+          key: item.key,
+          name: item.name,
+          ttl: item.ttl,
+          type_data: item.type_data,
+          unique: item.unique,
+          uri: item.uri
+        }
+      }
+      this.$api('ScheduleTasks')
+        .updateById(item.id, params)
+        .then(() => {
+          this.createDialogVisible = false
+          this.table.fetch()
+          // this.toDetails(res.data);
+        })
     }
   }
 }
