@@ -823,7 +823,7 @@ export default {
       console.log(item)
       let params = {
         task_name: 'mongodb_create_index',
-        task_type: 'MONGODB_CREATE_INDEX',
+        task_type: 'MONGODB_UPDATE_INDEX',
         status: 'waiting',
         task_data: {
           collection_name: item.original_name,
@@ -839,7 +839,7 @@ export default {
         }
       }
       this.$api('ScheduleTasks')
-        .updateById(item.id, params)
+        .post(params)
         .then(() => {
           this.createDialogVisible = false
           this.table.fetch()

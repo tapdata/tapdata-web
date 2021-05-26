@@ -502,17 +502,13 @@ export default {
   methods: {
     // 获取最大cpu、内存使用率
     getUsageRate(processId) {
-      let parmas = {
-        filter: {
-          where: {
-            process_id: {
-              inq: processId
-            }
-          }
+      let where = {
+        process_id: {
+          inq: processId
         }
       }
       this.$api('Workers')
-        .get(parmas)
+        .get({ filter: JSON.stringify({ where: where }) })
         .then(res => {
           if (res && res.data && res.data.length) {
             let metricValuesData = []
@@ -809,6 +805,7 @@ export default {
               }
             })
           }
+
           // 获取最大内存、cpu使用率
           this.getUsageRate(processId)
           //自动升级
