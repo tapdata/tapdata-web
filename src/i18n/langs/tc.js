@@ -2830,7 +2830,7 @@ const tc = {
     status_creating: '正在創建',
     status_created: '創建完成',
     status_creation_failed: '創建失敗',
-    status_deleted: '已經刪除',
+    status_deleted: '刪除中',
     filedGetFailed: '當前數據庫的表，沒有發現時間字段，無法創建生命週期',
     index_exists: '索引已經存在'
   },

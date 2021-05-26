@@ -2838,7 +2838,7 @@ const cn = {
     status_creating: '正在创建',
     status_created: '创建完成',
     status_creation_failed: '创建失败',
-    status_deleted: '已经删除',
+    status_deleted: '删除中',
     filedGetFailed: '当前数据库的表，没有发现时间字段，无法创建生命周期',
     index_exists: '索引已经存在'
   },

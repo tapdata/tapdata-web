@@ -2928,7 +2928,7 @@ const en = {
     status_creating: 'Creating',
     status_created: 'Create complete',
     status_creation_failed: 'Creation failed',
-    status_deleted: 'Deleted',
+    status_deleted: 'Deleting',
     filedGetFailed:
       'The current database table, no time field was found, and the life cycle could not be created',
     index_exists: 'Index already exists'

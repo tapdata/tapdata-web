@@ -38,6 +38,7 @@
             clearable
             size="small"
             @input="table.fetch(1)"
+            :placeholder="$t('connection.connectionType')"
           >
             <el-option
               v-for="item in databaseModelOptions"
@@ -54,6 +55,7 @@
             clearable
             size="small"
             @input="table.fetch(1)"
+            :placeholder="$t('connection.dataBaseType')"
           >
             <el-option
               v-for="item in databaseTypeOptions"
