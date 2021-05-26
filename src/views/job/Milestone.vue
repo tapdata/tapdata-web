@@ -164,13 +164,23 @@ export default {
       display: flex;
       align-items: center;
       height: 40px;
-      line-height: 40px;
+      //line-height: 40px;
       background: #f2f2f2;
       border-radius: 3px;
       color: #666;
       font-size: 12px;
       .label {
         flex: 1;
+        span {
+          word-break: break-word;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          display: inline-block;
+          white-space: normal;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+        }
         .btn-error {
           margin-left: 10px;
         }
