@@ -1066,7 +1066,7 @@ export default {
                   value
                 )
               ) {
-                callback('连接名称不符合规则')
+                callback('连接名称中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格')
               } else {
                 callback()
               }
