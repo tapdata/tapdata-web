@@ -601,7 +601,7 @@ export default {
     .el-transfer {
       height: 640px;
       .el-transfer-panel {
-        width: 298px;
+        width: 278px;
         .el-transfer-panel__body {
           .box {
             display: inline-block;
@@ -657,7 +657,10 @@ export default {
         }
       }
       .el-transfer__buttons {
-        padding: 0 20px;
+        padding: 0 12px;
+        .el-button {
+          padding: 12px;
+        }
       }
     }
     .el-transfer-panel__item:hover {
