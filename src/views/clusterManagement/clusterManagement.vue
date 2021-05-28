@@ -1008,7 +1008,7 @@ export default {
 
         .info {
           .usageRate {
-            padding-right: 10px;
+            padding-left: 12px;
             font-size: 12px;
             color: #999;
           }
