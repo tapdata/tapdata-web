@@ -87,6 +87,29 @@
                 >
                   自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作
                 </div>
+                <template slot="syncPoints" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
+                  <el-row v-for="item in settingModel.syncPoints" :key="item.name" style="margin-bottom: 10px">
+                    <el-col :span="8" style="margin-right: 10px">
+                      <el-select v-model="item.type" placeholder="请选择">
+                        <el-option
+                          v-for="op in options"
+                          :key="op.value"
+                          :label="op.label"
+                          :value="op.value"
+                        >
+                        </el-option>
+                      </el-select>
+                    </el-col>
+                    <el-col :span="12" v-if="item.type !== 'current'">
+                      <el-date-picker
+                        format="yyyy-MM-dd HH:mm:ss"
+                        v-model="item.date"
+                        type="datetime"
+                        :disabled="item.type === 'current'"
+                      ></el-date-picker>
+                    </el-col>
+                  </el-row>
+                </template>
               </form-builder>
             </div>
             <!-- 步骤4 -->
@@ -173,6 +196,7 @@ import {
 } from './util'
 import { uuid } from '../../editor/util/Schema'
 import { TYPEMAP } from '../connections/util'
+import * as moment from "moment";
 
 export default {
   components: { Transfer, DatabaseTypeDialog },
@@ -210,7 +234,22 @@ export default {
       dataSourceMock: [],
       dialogDatabaseTypeVisible: false,
       allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE'),
-      supportTwoWay: false
+      supportTwoWay: false,
+      systemTimeZone: '',
+      options: [
+        {
+          label: this.$t('dataFlow.SyncInfo.localTZType'),
+          value: 'localTZ'
+        },
+        {
+          label: this.$t('dataFlow.SyncInfo.connTZType'),
+          value: 'connTZ'
+        },
+        {
+          label: this.$t('dataFlow.SyncInfo.currentType'),
+          value: 'current'
+        }
+      ]
     }
   },
   created() {
@@ -227,6 +266,14 @@ export default {
     }
     if (this.id) {
       this.intiData(this.id)
+    }
+  },
+  mounted() {
+    let timeZone = new Date().getTimezoneOffset() / 60
+    if (timeZone > 0) {
+      this.systemTimeZone = 0 - timeZone
+    } else {
+      this.systemTimeZone = '+' + -timeZone
     }
   },
   watch: {
@@ -341,9 +388,20 @@ export default {
         if (target && value === 'compel') {
           target.show = false
           this.settingModel.bidirectional = false
+          //重写模式 syncPoints 还原初始化状态
+          this.primarySyncPoints()
         } else if (target && value !== 'compel' && this.supportTwoWay) {
           target.show = true
+          if (this.settingModel.sync_type === 'cdc') {
+            this.addSyncPoints()
+          }
         }
+      }
+      //只有增量模式下才有同步时间
+      if (field === 'sync_type') {
+        if (value === 'cdc' && this.supportTwoWay && this.settingModel.distinctWriteType !== 'compel') {
+          this.addSyncPoints()
+        } else this.primarySyncPoints()
       }
     },
     formChange(data) {
@@ -354,6 +412,30 @@ export default {
       if (field === 'target_databaseType') {
         this.getConnection(this.getWhere('target'), 'target_connectionId', true)
       }
+    },
+    addSyncPoints() {
+      this.primarySyncPoints() //先初始化再push
+      let syncPoints = {
+        connectionId: this.dataSourceModel.target_connectionId, //双向模式下 有两个源节点
+        type: 'current', // localTZ: 本地时区； connTZ：连接时区
+        time: '',
+        date: '',
+        name: '',
+        timezone: this.systemTimeZone // 当type为localTZ时有该字段
+      }
+      this.settingModel.syncPoints.push(syncPoints)
+    },
+    primarySyncPoints() {
+      this.settingModel.syncPoints = [
+        {
+          connectionId: this.dataSourceModel.source_connectionId,
+          type: 'current', // localTZ: 本地时区； connTZ：连接时区
+          time: '',
+          date: '',
+          name: '',
+          timezone: this.systemTimeZone // 当type为localTZ时有该字段
+        }
+      ]
     },
     getSteps() {
       const steps = [
@@ -476,6 +558,9 @@ export default {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')
           }
+          //初始化同步时间 针对于数组0
+          this.settingModel.syncPoints[0].connectionId = this.dataSourceModel['source_connectionId']
+          this.settingModel.syncPoints[0].timezone = this.systemTimeZone // 当type为localTZ时有该字段
           break
         }
         case 'mapping': {
@@ -720,25 +805,14 @@ export default {
       }
       let source = this.dataSourceModel
       let target = this.dataSourceModel
-      //设置为增量模式
-      let timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = ''
-      if (timeZone > 0) {
-        systemTimeZone = 0 - timeZone
-      } else {
-        systemTimeZone = '+' + -timeZone
+      //日期转换
+      if (this.settingModel.syncPoints) {
+        this.settingModel.syncPoints.forEach(point => {
+          point.date = point.date
+            ? moment(point.date).format('YYYY-MM-DD HH:mm:ss')
+            : ''
+        })
       }
-      let syncPoints = [
-        {
-          connectionId: source.source_connectionId,
-          type: 'current', // localTZ: 本地时区； connTZ：连接时区
-          time: '',
-          date: '',
-          name: '',
-          timezone: systemTimeZone // 当type为localTZ时有该字段
-        }
-      ]
-      this.settingModel['syncPoints'] = syncPoints
       let postData = {
         name: this.settingModel.name,
         description: '',
