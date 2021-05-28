@@ -25,7 +25,7 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: true,
   productionSourceMap: false,
-  publicPath: './',
+  publicPath: '',
   devServer: {
     proxy: {
       '/api/': proxy,
