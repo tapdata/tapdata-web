@@ -87,8 +87,15 @@
                 >
                   自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作
                 </div>
-                <template slot="syncPoints" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
-                  <el-row v-for="item in settingModel.syncPoints" :key="item.name" style="margin-bottom: 10px">
+                <template
+                  slot="syncPoints"
+                  v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
+                >
+                  <el-row
+                    v-for="item in settingModel.syncPoints"
+                    :key="item.name"
+                    style="margin-bottom: 10px"
+                  >
                     <el-col :span="8" style="margin-right: 10px">
                       <el-select v-model="item.type" placeholder="请选择">
                         <el-option
@@ -196,7 +203,7 @@ import {
 } from './util'
 import { uuid } from '../../editor/util/Schema'
 import { TYPEMAP } from '../connections/util'
-import * as moment from "moment";
+import * as moment from 'moment'
 
 export default {
   components: { Transfer, DatabaseTypeDialog },
@@ -209,6 +216,7 @@ export default {
       activeStep: 0,
       errorMsg: '',
       showConnectDialog: false,
+      showSysncTableTip: false, //dfs 同库不同表提示
       twoWayAgentRunningCount: '',
       platformInfo: _.cloneDeep(INSTANCE_MODEL),
       dataSourceModel: _.cloneDeep(DATASOURCE_MODEL),
@@ -399,7 +407,11 @@ export default {
       }
       //只有增量模式下才有同步时间
       if (field === 'sync_type') {
-        if (value === 'cdc' && this.supportTwoWay && this.settingModel.distinctWriteType !== 'compel') {
+        if (
+          value === 'cdc' &&
+          this.supportTwoWay &&
+          this.settingModel.distinctWriteType !== 'compel'
+        ) {
           this.addSyncPoints()
         } else this.primarySyncPoints()
       }
@@ -469,8 +481,16 @@ export default {
             //源端目标端不可选择相同库 规则: id一致
             if (
               this.dataSourceModel.source_connectionId ===
-              this.dataSourceModel.target_connectionId
+                this.dataSourceModel.target_connectionId &&
+              window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'
             ) {
+              this.showSysncTableTip = true // dfs 仅提示
+            } else if (
+              this.dataSourceModel.source_connectionId ===
+                this.dataSourceModel.target_connectionId &&
+              window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+            ) {
+              this.showSysncTableTip = false
               this.$message.error('源端连接与目标端连接不能选择相同的连接')
               return
             }
@@ -484,7 +504,16 @@ export default {
               'target_connectionId'
             )
             //source.id/target.id = host + port + username
-            if (source.id === target.id) {
+            if (
+              source.id === target.id &&
+              window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'
+            ) {
+              this.showSysncTableTip = true // dfs 仅提示
+            } else if (
+              source.id === target.id &&
+              window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+            ) {
+              this.showSysncTableTip = false
               this.$message.error('源端连接与目标端连接不能选择相同的连接')
               return
             }
@@ -502,6 +531,11 @@ export default {
           if (valid) {
             this.activeStep += 1
             this.getFormConfig()
+            if (this.showSysncTableTip) {
+              this.$message.warning(
+                '温馨提示：您选择了同一数据源作为源和目标，为了保证您的任务可以顺利执行，请修改目标表名与原表不一致。'
+              )
+            }
           }
         })
       }
@@ -559,7 +593,8 @@ export default {
             this.changeConfig([], 'setting_twoWay')
           }
           //初始化同步时间 针对于数组0
-          this.settingModel.syncPoints[0].connectionId = this.dataSourceModel['source_connectionId']
+          this.settingModel.syncPoints[0].connectionId =
+            this.dataSourceModel['source_connectionId']
           this.settingModel.syncPoints[0].timezone = this.systemTimeZone // 当type为localTZ时有该字段
           break
         }
