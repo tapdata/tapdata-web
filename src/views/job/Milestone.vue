@@ -3,7 +3,7 @@
     <ul class="milestone-list">
       <li class="milestone-item" v-for="(item, index) in list" :key="index">
         <div class="label">
-          <span>{{ item.label }}</span>
+          <span :title="item.label">{{ item.label }}</span>
           <el-button
             v-if="item.status === 'error'"
             class="btn-error"
