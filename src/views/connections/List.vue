@@ -283,7 +283,7 @@ import Preview from './Preview'
 import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
 
-let timeout = null
+let timeout = null;
 
 export default {
   components: { TablePage, TableFilter, DatabaseTypeDialog, Preview, Test },
@@ -385,20 +385,20 @@ export default {
     }
   },
   created() {
-    this.getDatabaseType()
+    this.getDatabaseType();
     //header
     let guideDoc =
       ' <a target="_blank" style="color: #48B6E2" href="https://docs.tapdata.net/data-source">' +
       this.$t('dataForm.form.guideDoc') +
-      '</a>'
-    this.description = this.$t('connection.desc') + guideDoc
+      '</a>';
+    this.description = this.$t('connection.desc') + guideDoc;
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 10000)
   },
   mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+    this.searchParams = Object.assign(this.searchParams, this.table.getCache());
     if (this.$route.query.step) {
       this.handleGuide()
     }
@@ -412,32 +412,32 @@ export default {
       let item = {
         visible: true,
         step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0
-      }
+      };
       window.parent &&
         window.parent.noviceGuideChange &&
-        window.parent.noviceGuideChange(item)
+        window.parent.noviceGuideChange(item);
       this.$router.push('/connections')
     },
     //筛选条件
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'createTime'} ${
         order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      }`;
       this.table.fetch(1)
     },
     async getDatabaseType() {
-      let filter = {}
+      let filter = {};
       let databaseTypes = await this.$api('DatabaseTypes').get({
         filter: JSON.stringify(filter)
-      })
+      });
       databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt))
     },
     getData({ page, tags }) {
-      let region = this.$route.query.region
-      let { current, size } = page
+      let region = this.$route.query.region;
+      let { current, size } = page;
       let { keyword, databaseType, databaseModel, status, sourceType } =
-        this.searchParams
-      let where = {}
+        this.searchParams;
+      let where = {};
       let fields = {
         name: true,
         user_id: true,
@@ -470,7 +470,7 @@ export default {
         sslKey: true,
         sslValidate: false,
         sslCA: true //MongoDB
-      }
+      };
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
         // let filterObj = { like: verify(keyword), options: 'i' };
@@ -479,45 +479,45 @@ export default {
       }
       where.database_type = {
         in: this.whiteList
-      }
-      region && (where['platformInfo.region'] = region)
-      databaseType && (where.database_type = databaseType)
+      };
+      region && (where['platformInfo.region'] = region);
+      databaseType && (where.database_type = databaseType);
       // if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
       // 	where.search_databaseType = databaseType;
       // 	where.database_type = 'mysql';
       // }
-      databaseModel && (where.connection_type = databaseModel)
-      sourceType && (where.sourceType = sourceType)
+      databaseModel && (where.connection_type = databaseModel);
+      sourceType && (where.sourceType = sourceType);
       if (tags && tags.length) {
         where['listtags.id'] = {
           in: tags
         }
       }
-      status && (where.status = status)
+      status && (where.status = status);
       let filter = {
         order: this.order,
         limit: size,
         fields: fields,
         skip: (current - 1) * size,
         where
-      }
+      };
       return Promise.all([
         this.$api('connections').count({ where: where }),
         this.$api('connections').get({
           filter: JSON.stringify(filter)
         })
       ]).then(([countRes, res]) => {
-        let list = res.data
+        let list = res.data;
         return {
           total: countRes.data.count,
           data: list.map(item => {
-            let platformInfo = item.platformInfo
+            let platformInfo = item.platformInfo;
             if (platformInfo && platformInfo.regionName) {
               item.regionInfo =
                 platformInfo.regionName + ' ' + platformInfo.zoneName
             }
             if (item.database_type !== 'mongodb') {
-              item.connectionUrl = ''
+              item.connectionUrl = '';
               if (item.database_username) {
                 item.connectionUrl += item.database_username + ':***@'
               }
@@ -526,10 +526,10 @@ export default {
             } else {
               item.connectionUrl = item.database_uri || item.connection_name
             }
-            item.connectionSource = this.sourceTypeMapping[item.sourceType]
+            item.connectionSource = this.sourceTypeMapping[item.sourceType];
             item.lastUpdateTime = this.$moment(item.last_updated).format(
               'YYYY-MM-DD HH:mm:ss'
-            )
+            );
             return item
           })
         }
@@ -546,12 +546,12 @@ export default {
       this.multipleSelection = val
     },
     preview(id, type) {
-      this.id = id
-      this.databaseType = type
+      this.id = id;
+      this.databaseType = type;
       if (this.whiteList.includes(type)) {
         this.previewVisible = true
       } else {
-        top.location.href = '/#/connection/' + id
+        top.location.href = '/#/connection/' + id;
         localStorage.setItem('connectionDatabaseType', type)
       }
     },
@@ -565,12 +565,12 @@ export default {
         }
         this.$router.push('connections/' + id + '/edit?databaseType=' + type)
       } else {
-        top.location.href = '/#/connection/' + id
+        top.location.href = '/#/connection/' + id;
         localStorage.setItem('connectionDatabaseType', type)
       }
     },
     copy(data) {
-      let headersName = { 'lconname-name': data.name }
+      let headersName = { 'lconname-name': data.name };
       // return false;
       this.$api('connections')
         .copy(
@@ -583,7 +583,7 @@ export default {
         )
         .then(res => {
           if (res && res.data) {
-            this.table.fetch()
+            this.table.fetch();
             this.$message.success(this.$t('connection.copyMsg'))
           }
         })
@@ -596,8 +596,8 @@ export default {
         })
     },
     remove(data) {
-      const h = this.$createElement
-      let strArr = this.$t('connection.deteleDatabaseMsg').split('xxx')
+      const h = this.$createElement;
+      let strArr = this.$t('connection.deteleDatabaseMsg').split('xxx');
       let msg = h('p', null, [
         strArr[0],
         h(
@@ -608,7 +608,7 @@ export default {
           data.name
         ),
         strArr[1]
-      ])
+      ]);
       this.$confirm(msg, this.$t('connection.deteleDatabaseTittle'), {
         type: 'warning'
       }).then(resFlag => {
@@ -618,17 +618,17 @@ export default {
         this.$api('connections')
           .deleteConnection(data.id, data.name)
           .then(res => {
-            let jobs = res.jobs || []
-            let modules = res.modules || []
+            let jobs = res.jobs || [];
+            let modules = res.modules || [];
             if (jobs.length > 0 || modules.length > 0) {
               this.$message.error(this.$t('connection.checkMsg'))
             } else {
-              this.$message.success(this.$t('message.deleteOK'))
+              this.$message.success(this.$t('message.deleteOK'));
               this.table.fetch()
             }
           })
           .catch(({ response }) => {
-            let msg = response && response.msg
+            let msg = response && response.msg;
             if (msg && (msg.jobs || msg.modules)) {
               this.$message.error(this.$t('connection.cannot_delete_remind'))
               // const h = this.$createElement;
@@ -664,19 +664,19 @@ export default {
     formatterConnectionType(row) {
       switch (row.connection_type) {
         case 'target':
-          return 'Target'
+          return 'Target';
         case 'source':
-          return 'Source'
+          return 'Source';
         case 'source_and_target':
           return 'Source | Target'
       }
     },
     formatterListTags(row) {
-      let listTags = row.listtags || []
+      let listTags = row.listtags || [];
       return listTags.map(tag => tag.value).join(',')
     },
     formatterDatabaseType(row) {
-      let url = null
+      let url = null;
       if (['mongodb', 'gridfs'].includes(row.database_type)) {
         url = desensitization(row.database_uri)
       } else {
@@ -685,21 +685,21 @@ export default {
       return url
     },
     handleSelectTag() {
-      let tagList = {}
+      let tagList = {};
       this.multipleSelection.forEach(row => {
         if (row.listtags && row.listtags.length > 0) {
           tagList[row.listtags[0].id] = {
             value: row.listtags[0].value
           }
         }
-      })
+      });
       return tagList
     },
     handleOperationClassify(listtags) {
       let attributes = {
         id: this.multipleSelection.map(r => r.id),
         listtags
-      }
+      };
       this.$api('connections')
         .batchUpdateListtags(attributes)
         .then(() => {
@@ -711,11 +711,11 @@ export default {
       this.dialogDatabaseTypeVisible = false
     },
     handleDatabaseType(type) {
-      this.handleDialogDatabaseTypeVisible()
+      this.handleDialogDatabaseTypeVisible();
       if (this.whiteList.includes(type)) {
         this.$router.push('connections/create?databaseType=' + type)
       } else {
-        top.location.href = '/#/connection'
+        top.location.href = '/#/connection';
         localStorage.setItem('connectionDatabaseType', type)
       }
     },
@@ -723,14 +723,14 @@ export default {
     async checkTestConnectionAvailable() {
       //drs 检查实例是否可用 dfs 检查agent是否可用
       if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
-        let result = await this.$api('Workers').getAvailableAgent()
+        let result = await this.$api('Workers').getAvailableAgent();
         if (!result.data.result || result.data.result.length === 0) {
           this.$message.error(this.$t('dataForm.form.agentMsg'))
         } else {
           this.dialogDatabaseTypeVisible = true
         }
       } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        let result = await this.$api('tcm').getAgentCount()
+        let result = await this.$api('tcm').getAgentCount();
         if (
           !result.data ||
           !result.data.agentTotalCount ||
@@ -743,16 +743,17 @@ export default {
       }
     },
     async testConnection(item) {
-      let result = await this.$api('Workers').getAvailableAgent()
+      let result = await this.$api('Workers').getAvailableAgent();
       if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
+        this.$message.error(this.$t('dataForm.form.agentMsg'));
         return
       }
-      let loading = this.$loading()
-      this.testData = Object.assign({}, defaultModel['default'], item)
+      let loading = this.$loading();
+      this.testData = Object.assign({}, defaultModel['default'], item);
       if (['gridfs', 'mongodb'].includes(item.database_type)) {
-        this.testData.database_uri = ''
-        this.testData.isUrl = false
+        this.testData.database_uri = '';
+        this.testData.isUrl = true;
+        this.testData.justTest = true
       }
       if (item.database_type !== 'redis') {
         delete this.testData['database_password']
@@ -760,7 +761,7 @@ export default {
       this.$api('connections')
         .updateById(
           item.id,
-          Object.assign({}, item, {
+          Object.assign({}, {
             status: 'testing'
           })
         )
@@ -768,7 +769,7 @@ export default {
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
             this.dialogTestVisible = true
           }
-          this.$refs.test.start()
+          this.$refs.test.start();
           this.table.fetch()
         })
         .finally(() => {
@@ -776,8 +777,8 @@ export default {
         })
     },
     returnTestData(data) {
-      if (!data.status || data.status === null) return
-      let status = data.status
+      if (!data.status || data.status === null) return;
+      let status = data.status;
       if (status === 'ready') {
         this.$message.success(
           this.$t('connection.testConnection') +
