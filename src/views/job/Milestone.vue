@@ -3,7 +3,18 @@
     <ul class="milestone-list">
       <li class="milestone-item" v-for="(item, index) in list" :key="index">
         <div class="label">
-          <span :title="item.label">{{ item.label }}</span>
+          <el-tooltip
+            :content="item.label"
+            :disabled="item.tipDisabled"
+            class="item"
+            effect="dark"
+            placement="top"
+          >
+            <span @mouseenter="isShowTooltip(item, $event)">{{
+              item.label
+            }}</span>
+          </el-tooltip>
+
           <el-button
             v-if="item.status === 'error'"
             class="btn-error"
@@ -77,6 +88,11 @@ export default {
     ws.off('watch', event)
   },
   methods: {
+    isShowTooltip(item, e) {
+      let clientHeight = e.target.clientHeight
+      let scrollHeight = e.target.scrollHeight
+      item.tipDisabled = clientHeight >= scrollHeight
+    },
     checkError(msg) {
       const h = this.$createElement
       this.$msgbox({
@@ -129,7 +145,8 @@ export default {
           label: this.$t(`milestone.${m.code}`),
           status: m.status,
           fromNow: time || '-',
-          errorMessage: m.errorMessage
+          errorMessage: m.errorMessage,
+          tipDisabled: true
         }
       })
     }
