@@ -29,6 +29,7 @@
             :loading="databaseLoading"
             v-model="model.connectionId"
             :placeholder="$t('message.placeholderSelect') + 'kafka'"
+            :clearable="true"
           >
             <el-option
               v-for="(item, idx) in databases"

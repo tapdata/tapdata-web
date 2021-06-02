@@ -330,6 +330,7 @@ export default {
         placeholder: this.$t('editor.fileFormBuilder.fileSourcePlaceholder'),
         loading: false,
         filterable: true,
+        clearable: true,
         options: []
       },
       fileNames: '',

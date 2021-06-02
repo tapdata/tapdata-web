@@ -29,6 +29,7 @@
             :loading="databaseLoading"
             v-model="model.connectionId"
             :placeholder="$t('editor.cell.data_node.api.chooseApiName')"
+            :clearable="true"
           >
             <el-option
               v-for="(item, idx) in databases"

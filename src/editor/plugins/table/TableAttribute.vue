@@ -395,6 +395,7 @@ export default {
         placeholder: this.$t('editor.cell.data_node.database.form.placeholder'),
         loading: false,
         filterable: true,
+        clearable: true,
         on: {
           change() {
             self.handlerConnectionChange()

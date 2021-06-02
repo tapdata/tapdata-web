@@ -30,6 +30,7 @@
             :loading="databaseLoading"
             v-model="model.connectionId"
             :placeholder="$t('editor.cell.data_node.gridfs.chooseGridFsName')"
+            :clearable="true"
           >
             <el-option
               v-for="(item, idx) in databases"

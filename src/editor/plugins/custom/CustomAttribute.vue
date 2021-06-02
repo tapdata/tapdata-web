@@ -29,6 +29,7 @@
             :loading="databaseLoading"
             v-model="model.connectionId"
             :placeholder="$t('editor.cell.data_node.custom.chooseCustomName')"
+            :clearable="true"
             @change="handlerConnectionChange"
           >
             <el-option
