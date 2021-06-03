@@ -806,7 +806,7 @@ export default {
                 done()
               })
               .catch(() => {
-                this.$message.info(this.$t('message.deleteFail'))
+                this.$message.info(this.$t('timeToLive.status_deleted'))
               })
               .finally(() => {
                 instance.confirmButtonLoading = false
