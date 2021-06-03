@@ -16,7 +16,9 @@
       <span v-if="data.type !== 'replicate'"
         >{{ $t('dataFlow.unit') }} : ms / {{ $t('dataFlow.article') }}</span
       >
-      <span v-else>{{ $t('dataFlow.unit') }} : {{ $t('dataFlow.min') }}</span>
+      <span v-else
+        >{{ $t('dataFlow.unit') }} : {{ $t('dataFlow.second') }}</span
+      >
     </div>
     <el-radio-group
       v-if="data.isScreeing"
