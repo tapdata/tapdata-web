@@ -712,7 +712,6 @@ export default {
           let collection = selectTable.record || {}
           if (collection.indexes) {
             let _keyJson = JSON.stringify(key)
-            debugger
             let existsIndexes = collection.indexes.filter(
               v => _keyJson === JSON.stringify(v.key)
             )
@@ -740,7 +739,7 @@ export default {
               typeData = expire * 60 * 60 * 24 * 30
               break
             case 'y':
-              typeData = expire * 60 * 60 * 24 * 300
+              typeData = expire * 60 * 60 * 24 * 360
               break
             default:
               typeData = expire
