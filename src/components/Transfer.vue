@@ -18,6 +18,14 @@
       @change="handleChangeTransfer"
       @right-check-change="handleSelectTable"
     >
+      <span slot-scope="{ option }">
+        <span> {{ option.label }}</span>
+        <span
+          v-if="selectSourceArr.includes(option.key)"
+          @click.stop.prevent="handleFiled(option.key)"
+          class="el-icon-setting"
+        ></span>
+      </span>
     </el-transfer>
     <el-dialog
       :title="$t('editor.cell.link.batchRename')"
