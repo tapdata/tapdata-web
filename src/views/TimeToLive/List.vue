@@ -801,12 +801,12 @@ export default {
             this.$api('ScheduleTasks')
               .post(params)
               .then(() => {
-                this.$message.success(this.$t('message.deleteOK'))
+                this.$message.success(this.$t('timeToLive.status_deleted'))
                 this.table.fetch()
                 done()
               })
               .catch(() => {
-                this.$message.info(this.$t('timeToLive.status_deleted'))
+                this.$message.info(this.$t('message.deleteFail'))
               })
               .finally(() => {
                 instance.confirmButtonLoading = false
