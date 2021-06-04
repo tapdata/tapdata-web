@@ -223,7 +223,7 @@ const en = {
       incrementalLag: 'CDC Lag',
       allValid: 'All verification tasks',
       checkSame: 'Check the same',
-      countDifference: 'Count difference',
+      countDifference: 'Count inconsistent',
       contentDifference: 'Content difference'
     }
   },

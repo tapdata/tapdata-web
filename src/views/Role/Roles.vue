@@ -158,7 +158,7 @@
       :visible.sync="dialogFormVisible"
       width="600px"
     >
-      <el-form :model="form" ref="form" label-width="115px">
+      <el-form :model="form" ref="form" label-width="120px">
         <el-form-item
           :label="$t('role.roleName')"
           prop="name"
