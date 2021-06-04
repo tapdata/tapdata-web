@@ -328,7 +328,8 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira'
+        'jira',
+        'dameng'
       ], //目前白名单,
       searchParams: {
         databaseType: '',

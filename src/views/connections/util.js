@@ -7,6 +7,9 @@ export const getImgByType = function (type) {
   if (!type || type === 'jira') {
     type = 'default'
   }
+  if (type === 'dameng') {
+    type = 'mysql'
+  }
   return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)
 }
 
@@ -76,7 +79,8 @@ export const TYPEMAP = {
   kafka: 'Kafka',
   mariadb: 'MariaDB',
   'mysql pxc': 'MySQL PXC',
-  jira: 'jira'
+  jira: 'jira',
+  dameng: 'dameng'
 }
 
 //数据源基础字段
@@ -112,7 +116,8 @@ export const defaultModel = {
     sslCA: '',
     sslCAFile: null,
     sslKeyFile: null,
-    search_databaseType: ''
+    search_databaseType: '',
+    schema: ''
   },
   kafka: {
     id: '',

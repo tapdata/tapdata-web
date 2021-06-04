@@ -406,7 +406,8 @@ export default {
         'db2',
         'kafka',
         'mariadb',
-        'mysql pxc'
+        'mysql pxc',
+        'dameng'
       ],
       model: '',
       config: {
