@@ -384,7 +384,9 @@ const META_INSTANCE_FIELDS = {
   fields: true,
   'fields.id': true,
   'fields.field_name': true,
-  'fields.primary_key_position': true
+  'fields.primary_key_position': true,
+  databaseId: true,
+  meta_type: true
 }
 import MultiSelection from './MultiSelection.vue'
 import JsEditor from '@/components/JsEditor'
@@ -869,7 +871,7 @@ export default {
             stg.tableName === source.table
         )
         if (sourceStage) {
-          task.target = this.setTable(targetStage)
+          task.target = this.setTable(targetStage, source)
           task.targetTable = [targetStage.connectionId, targetStage.tableName]
           if (targetStage.joinTables) {
             let joinTable = targetStage.joinTables.find(
@@ -889,16 +891,23 @@ export default {
         }
       }
     },
-    setTable(stage) {
+    setTable(stage, source) {
       let sortColumn = ''
+      let sortField = list => {
+        return list.sort((a, b) => {
+          return a.field_name > b.field_name ? -1 : 1
+        })
+      }
       if (stage && stage.fields && stage.fields.length) {
-        let pkFieldNameArr = stage.fields
-          .filter(f => f.primary_key_position > 0)
-          .map(f => {
-            return f.field_name
-          })
-        if (pkFieldNameArr.length) {
-          sortColumn = pkFieldNameArr.join(',')
+        if (source && source.sortColumn) {
+          sortColumn = source.sortColumn
+        } else {
+          let pkList = stage.fields.filter(f => f.primary_key_position > 0)
+          if (pkList.length) {
+            sortColumn = sortField(pkList)
+              .map(it => it.field_name)
+              .join(',')
+          }
         }
       }
       return {
@@ -906,7 +915,7 @@ export default {
         connectionName: stage.connectionName,
         table: stage.tableName,
         sortColumn,
-        fields: stage.fields
+        fields: sortField(stage.fields)
       }
     },
     addTable() {
