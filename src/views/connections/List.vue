@@ -510,7 +510,6 @@ export default {
         })
       ]).then(([countRes, res]) => {
         let list = res.data
-        console.log('kai', list)
         return {
           total: countRes.data.count,
           data: list.map(item => {
