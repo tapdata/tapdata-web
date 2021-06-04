@@ -76,11 +76,6 @@ export default function(vm) {
         required: true
       },
       {
-        type: 'switch',
-        field: 'schemaAutoUpdate',
-        label: vm.$t('dataForm.form.ReloadSchema')
-      },
-      {
         type: 'slot',
         slot: 'tableFilter'
       },
