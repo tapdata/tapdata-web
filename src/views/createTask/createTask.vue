@@ -743,7 +743,12 @@ export default {
           }
           let target = items.find(it => it.field === 'target_databaseType')
           if (target) {
-            target.options = data.map(item => {
+            // drs目标端不支持 db2
+            let options = data
+            if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+              options = data.filter(item => item !== 'db2')
+            }
+            target.options = options.map(item => {
               return {
                 label: TYPEMAP[item],
                 value: item
