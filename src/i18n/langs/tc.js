@@ -220,7 +220,7 @@ const tc = {
       incrementalLag: '增量滯後',
       allValid: '全部校驗任務',
       checkSame: '校驗一致',
-      countDifference: 'Count差異',
+      countDifference: 'Count不一致',
       contentDifference: '內容差異'
     }
   },

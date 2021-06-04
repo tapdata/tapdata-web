@@ -221,7 +221,7 @@ const cn = {
       incrementalLag: '增量滞后',
       allValid: '全部校验任务',
       checkSame: '校验一致',
-      countDifference: 'Count差异',
+      countDifference: 'Count不一致',
       contentDifference: '内容差异'
     }
   },
