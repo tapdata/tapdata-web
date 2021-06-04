@@ -892,9 +892,13 @@ export default {
     setTable(stage) {
       let sortColumn = ''
       if (stage && stage.fields && stage.fields.length) {
-        let pkField = stage.fields.find(f => f.primary_key_position > 0)
-        if (pkField) {
-          sortColumn = pkField.field_name
+        let pkFieldNameArr = stage.fields
+          .filter(f => f.primary_key_position > 0)
+          .map(f => {
+            return f.field_name
+          })
+        if (pkFieldNameArr.length) {
+          sortColumn = pkFieldNameArr.join(',')
         }
       }
       return {

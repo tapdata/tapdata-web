@@ -397,16 +397,24 @@ export default {
           target.show = false
           this.settingModel.bidirectional = false
           //重写模式 syncPoints 还原初始化状态
-          this.primarySyncPoints()
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+            this.primarySyncPoints()
+          }
         } else if (target && value !== 'compel' && this.supportTwoWay) {
           target.show = true
-          if (this.settingModel.sync_type === 'cdc') {
+          if (
+            this.settingModel.sync_type === 'cdc' &&
+            window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+          ) {
             this.addSyncPoints()
           }
         }
       }
       //只有增量模式下才有同步时间
-      if (field === 'sync_type') {
+      if (
+        field === 'sync_type' &&
+        window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+      ) {
         if (
           value === 'cdc' &&
           this.supportTwoWay &&
@@ -593,9 +601,11 @@ export default {
             this.changeConfig([], 'setting_twoWay')
           }
           //初始化同步时间 针对于数组0
-          this.settingModel.syncPoints[0].connectionId =
-            this.dataSourceModel['source_connectionId']
-          this.settingModel.syncPoints[0].timezone = this.systemTimeZone // 当type为localTZ时有该字段
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+            this.settingModel.syncPoints[0].connectionId =
+              this.dataSourceModel['source_connectionId']
+            this.settingModel.syncPoints[0].timezone = this.systemTimeZone // 当type为localTZ时有该字段
+          }
           break
         }
         case 'mapping': {
@@ -841,13 +851,35 @@ export default {
       let source = this.dataSourceModel
       let target = this.dataSourceModel
       //日期转换
-      if (this.settingModel.syncPoints) {
+      if (
+        this.settingModel.syncPoints &&
+        window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+      ) {
         this.settingModel.syncPoints.forEach(point => {
           point.date = point.date
             ? moment(point.date).format('YYYY-MM-DD HH:mm:ss')
             : ''
         })
       }
+      //设置为增量模式
+      let timeZone = new Date().getTimezoneOffset() / 60
+      let systemTimeZone = ''
+      if (timeZone > 0) {
+        systemTimeZone = 0 - timeZone
+      } else {
+        systemTimeZone = '+' + -timeZone
+      }
+      let syncPoints = [
+        {
+          connectionId: source.source_connectionId,
+          type: 'current', // localTZ: 本地时区； connTZ：连接时区
+          time: '',
+          date: '',
+          name: '',
+          timezone: systemTimeZone // 当type为localTZ时有该字段
+        }
+      ]
+      this.settingModel['syncPoints'] = syncPoints
       let postData = {
         name: this.settingModel.name,
         description: '',
