@@ -9,40 +9,193 @@ export default function(vm) {
     },
     items: [
       {
-        type: 'radio',
-        field: 'connection_type',
-        label: vm.$t('dataForm.form.connectionType'),
-        options: [
+        type: 'slot',
+        slot: 'name'
+      },
+      {
+        type: 'select',
+        field: 'region',
+        label: '选择实例所在区域',
+        options: [],
+        required: true
+      },
+      {
+        type: 'select',
+        field: 'zone',
+        label: '选择实例所在可用区',
+        options: [],
+        dependOn: [
           {
-            label: vm.$t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
-            value: 'source_and_target'
-          },
-          {
-            label: vm.$t('dataForm.form.options.source'),
-            tip: vm.$t('dataForm.form.options.sourceTips'),
-            value: 'source'
-          },
-          {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
-            value: 'target'
+            triggerOptions: [
+              {
+                field: 'region',
+                value: ''
+              }
+            ],
+            triggerConfig: {
+              value: ''
+            }
           }
         ],
         required: true
       },
       {
+        type: 'radio',
+        field: 'sourceType',
+        label: '连接来源',
+        options: [
+          // {
+          //   label: 'ECS自建库',
+          //   tip: '创建移动云内ECS自建库内的数据库为来源的连接，开通网络策略',
+          //   value: 'ecs'
+          // },
+          {
+            label: '云外自建库',
+            tip: '创建来自移动云外部的用户自建数据库连接',
+            value: 'selfDB'
+          }
+        ],
+        required: true
+      },
+      {
+        type: 'select',
+        field: 's_region',
+        label: 'RDS地域',
+        options: [],
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sourceType',
+                value: 'selfDB'
+              }
+            ],
+            triggerConfig: {
+              show: false,
+              value: ''
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'sourceType',
+                value: 'ecs'
+              }
+            ],
+            triggerConfig: {
+              label: 'ECS地域'
+            }
+          }
+        ],
+        required: true
+      },
+      {
+        type: 'select',
+        field: 's_zone',
+        label: 'RDS可用区',
+        options: [],
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sourceType',
+                value: 'selfDB'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 's_region',
+                value: ''
+              }
+            ],
+            triggerConfig: {
+              value: ''
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'sourceType',
+                value: 'ecs'
+              }
+            ],
+            triggerConfig: {
+              label: 'ECS可用区'
+            }
+          }
+        ],
+        required: true
+      },
+      {
+        type: 'slot',
+        slot: 'ecsList',
+        name: '选择ECS',
+        show: false,
+        required: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sourceType',
+                value: 'ecs'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'slot',
+        slot: 'vpc-setting',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sourceType',
+                value: 'ecs'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
         type: 'input',
         field: 'database_host',
         label: vm.$t('dataForm.form.host'),
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sourceType',
+                value: 'ecs'
+              }
+            ],
+            triggerConfig: {
+              disabled: true
+            }
+          }
+        ],
         rules: [
           {
             required: true,
             validator(rule, value, callback) {
               if (!value || !value.trim()) {
-                callback(new Error(vm.$t('dataForm.error.noneHost')));
+                callback(new Error(vm.$t('dataForm.error.noneHost')))
               } else {
-                callback();
+                callback()
               }
             }
           }
@@ -98,15 +251,6 @@ export default function(vm) {
         type: 'switch',
         field: 'schemaAutoUpdate',
         label: vm.$t('dataForm.form.ReloadSchema')
-      },
-      {
-        type: 'input',
-        field: 'table_filter',
-        domType: 'textarea',
-        label: vm.$t('dataForm.form.tableFilter'),
-        //tips: vm.$t('dataForm.form.tableFilterTips'),
-        maxlength: 500,
-        showWordLimit: true
       },
       {
         type: 'slot',
