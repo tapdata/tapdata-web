@@ -451,6 +451,15 @@
           <div class="table-box" v-if="activePanel == 'relations'">
             <Relations :tableId="metadataDataObj.qualified_name"></Relations>
           </div>
+          <div class="table-box" v-if="activePanel == 'version'">
+            <VersionList :histories="metadataDataObj"></VersionList>
+          </div>
+          <div class="table-box" v-if="activePanel == 'indexes'">
+            <IndexManager :indexData="metadataDataObj"></IndexManager>
+          </div>
+          <div class="table-box" v-if="activePanel == 'validation'">
+            <Validation :validaData="metadataDataObj"></Validation>
+          </div>
         </div>
       </el-main>
     </el-container>
@@ -562,14 +571,18 @@
   </section>
 </template>
 <script>
-// import TablePage from '@/components/TablePage';
+import VersionList from './versionList'
 import FormPage from './Form'
 import Relations from '../relations/relations.vue'
+import IndexManager from './IndexManager.vue'
+import Validation from './Validation.vue'
 export default {
   components: {
-    // TablePage,
+    VersionList,
     Relations,
-    FormPage
+    FormPage,
+    IndexManager,
+    Validation
   },
   data() {
     return {
@@ -580,6 +593,22 @@ export default {
       activePanel: 'model',
       menuList: [
         { name: this.$t('metadata.details.model'), key: 'model' },
+        {
+          name: this.$t('metadata.details.version.version_control'),
+          key: 'version'
+        },
+        {
+          name: this.$t('metadata.details.index.title'),
+          key: 'indexes'
+        },
+        {
+          name: this.$t('metadata.details.validation.title'),
+          key: 'validation'
+        },
+        {
+          name: this.$t('metadata.details.preview.title'),
+          key: 'preview'
+        },
         { name: this.$t('relations.blood'), key: 'relations' }
       ],
       description: '',
@@ -710,6 +739,7 @@ export default {
       ])
         .then(res => {
           this.metadataDataObj = res[0].data
+
           this.pageTotal =
             (res[0].data.fields && res[0].data.fields.length) || 0
           this.setCurrentPageData(this.metadataDataObj.fields || [])
@@ -1109,8 +1139,8 @@ export default {
             // box-shadow: 0 -1px 10px 0px rgba(0, 0, 0, 0.15);
             li {
               float: left;
-              width: 100px;
               height: 28px;
+              padding: 0 15px;
               color: #666;
               text-align: center;
               border-right: 1px solid #dedee4;
@@ -1124,6 +1154,7 @@ export default {
               border-radius: 3px 3px 0px 0px;
               background-color: #fff;
               border-right: 0;
+              border-left: 0;
               // box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
             }
           }
@@ -1131,7 +1162,7 @@ export default {
 
         .table-box {
           height: calc(100% - 28px);
-          padding: 10px 20px 0;
+          padding: 10px 20px;
           background-color: #fff;
           box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
           box-sizing: border-box;
@@ -1292,7 +1323,6 @@ export default {
     overflow: hidden;
     box-sizing: border-box;
     .table-page-table {
-      border: 0;
       th {
         padding: 0;
         background-color: #eff1f4 !important;

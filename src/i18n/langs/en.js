@@ -2077,6 +2077,16 @@ const en = {
       clickAddDes: 'Click to add a description',
       propertyDetails: 'Property Details',
       name: 'Name',
+      comment: 'Description',
+      data_type: 'Field Type',
+      precision: 'Precision',
+      columnSize: 'Column size',
+      scale: 'Scale',
+      autoincrement: 'Autoincrement',
+      primary_key_position: 'Primary key',
+      foreign_key_position: 'Foreign key',
+      is_nullable: 'Not Null',
+      unique: 'Unique',
       originalTableName: 'Original name',
       typesOf: 'Type',
       owningConnection: 'Connection',
@@ -2154,7 +2164,35 @@ const en = {
       attrKey: 'Property value',
       editAliasNameTitle: 'Edit alias',
       editCommentTitle: 'Edit description',
-      uniquelyIdentifies: 'Qualified Name'
+      uniquelyIdentifies: 'Qualified Name',
+      version: {
+        version: 'Version',
+        version_control: 'Version Control Mode',
+        version_control_required: 'Version Control Mode is required',
+        lastVersion:
+          'This metadata is already the latest version, the historical version records saved in the past will be saved in the list below',
+        versionNum: 'Version number',
+        versionComparison: 'Version comparison',
+        compared: 'Compared',
+        currentVersion: 'Current version',
+        updateTime: 'Update Time',
+        operator: 'Operator',
+        modifyDescription: 'Modify Description'
+      },
+      Modify: {
+        property: 'Modify property',
+        field: 'Modify field property'
+      },
+      Add: {
+        property: 'Add property',
+        new: {
+          field: 'Add new field in schema'
+        }
+      },
+      Remove: {
+        property: 'Remove property',
+        field: 'Remove field from schema'
+      }
     },
     metadataSearch: {
       title: 'Metadata retrieval',

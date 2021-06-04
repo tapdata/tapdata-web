@@ -150,7 +150,7 @@ export default {
         keyword: '',
         isFuzzy: true
       },
-      order: 'start_time DESC',
+      order: 'name DESC',
       list: null,
       createDialogVisible: false,
       createForm: null

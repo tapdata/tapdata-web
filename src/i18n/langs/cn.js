@@ -2010,7 +2010,17 @@ const cn = {
       clickAddDes: '点击添加描述',
       propertyDetails: '属性详情',
       name: '名称',
+      comment: '描述',
       originalTableName: '原表名',
+      data_type: '数据类型',
+      precision: '精确度',
+      columnSize: '字段长度',
+      scale: '数字长度',
+      autoincrement: '自增',
+      primary_key_position: '主键',
+      foreign_key_position: '外键',
+      is_nullable: '非空',
+      unique: '唯一',
       typesOf: '类型',
       owningConnection: '所属连接',
       primaryKey: '主键',
@@ -2087,7 +2097,74 @@ const cn = {
       attrKey: '属性值',
       editAliasNameTitle: '编辑别名',
       editCommentTitle: '编辑描述',
-      uniquelyIdentifies: '唯一标识'
+      uniquelyIdentifies: '唯一标识',
+      version: {
+        version: '版本',
+        version_control: '版本管理',
+        version_control_required: '版本管理不能为空',
+        lastVersion:
+          '此元数据已是最新版本，过往保存的历史版本记录将保存在下面列表中',
+        versionNum: '版本号',
+        versionComparison: '版本比对',
+        compared: '对比',
+        currentVersion: '当前版本',
+        updateTime: '更新时间',
+        operator: '操作人',
+        modifyDescription: '修改说明'
+      },
+      Modify: {
+        property: '修改属性',
+        field: '修改字段'
+      },
+      Add: {
+        property: '新增属性',
+        new: {
+          field: '新增字段'
+        }
+      },
+      Remove: {
+        property: '移除属性',
+        field: '移除字段'
+      },
+      index: {
+        title: '索引',
+        name: '索引名称',
+        create: '创建索引',
+        fields: '时间字段',
+        unique: '唯一约束',
+        status: '状态',
+        create_by: '创建用户',
+        background: '后台',
+        properties: '属性',
+        definition: '字段名称',
+        options: '选项',
+        build_in_background: '在后台构建索引',
+        create_unique: '创建唯一索引',
+        create_ttl: '创建TTL索引',
+        name_exists: '索引名称必须唯一',
+        index_exists: '索引已经存在',
+        create_by_user: ' 平台用户',
+        create_by_dba: ' 数据库管理员',
+        status_creating: ' 正在创建',
+        status_created: ' 创建完成',
+        status_creation_failed: ' 创建失败',
+        status_deleted: ' 已经删除',
+        drop_index: ' 正在删除索引',
+        unique_true: ' 唯一',
+        unique_false: ' 不唯一'
+      },
+      validation: {
+        title: '数据验证',
+        field_name: '字段名称',
+        rule: '规则',
+        ruleTem: '规则模板',
+        select_rule: '选择规则',
+        ungrouped: '未分组',
+        create: '创建数据校验'
+      },
+      preview: {
+        title: '数据预览'
+      }
     },
     metadataSearch: {
       title: '元数据检索',

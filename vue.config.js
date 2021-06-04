@@ -1,6 +1,7 @@
 const URL = {
-  uat: 'http://192.168.1.181:30300',
-  dev: 'http://localhost:30300'
+  uat: 'http://localhost:3030',
+  // serve: 'http://192.168.1.179:30300',
+  dev: 'http://192.168.1.179:30300'
 }
 let baseUrl
 const argv = process.argv

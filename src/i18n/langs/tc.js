@@ -2005,7 +2005,17 @@ const tc = {
       clickAddDes: '點擊添加描述',
       propertyDetails: '屬性詳情',
       name: '名稱',
+      comment: '描述',
       originalTableName: '原表名',
+      data_type: '數據類型',
+      precision: '精確度',
+      columnSize: '字段長度',
+      scale: '數字長度',
+      autoincrement: '自增',
+      primary_key_position: '主鍵',
+      foreign_key_position: '外鍵',
+      is_nullable: '非空',
+      unique: '唯一',
       typesOf: '類型',
       owningConnection: '所屬連接',
       primaryKey: '主鍵',
@@ -2082,7 +2092,35 @@ const tc = {
       attrKey: '屬性值',
       editAliasNameTitle: '編輯別名',
       editCommentTitle: '編輯描述',
-      uniquelyIdentifies: '唯一標識'
+      uniquelyIdentifies: '唯一標識',
+      version: {
+        version: '版本',
+        version_control: '版本管理',
+        version_control_required: '版本管理不能為空',
+        lastVersion:
+          '此元數據已是最新版本，過往保存的歷史版本記錄將保存在下面列表中',
+        versionNum: '版本號',
+        versionComparison: '版本比對',
+        compared: '對比',
+        currentVersion: '當前版本',
+        updateTime: '更新時間',
+        operator: '操作人',
+        modifyDescription: '修改說明'
+      },
+      Modify: {
+        property: '修改屬性',
+        field: '修改字段'
+      },
+      Add: {
+        property: '新增屬性',
+        new: {
+          field: '新增字段'
+        }
+      },
+      Remove: {
+        property: '移除屬性',
+        field: '移除字段'
+      }
     },
     metadataSearch: {
       title: '元數據檢索',
