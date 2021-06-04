@@ -523,6 +523,10 @@ export default {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')
           }
+          //db2 作为源 不能是增量模式
+          if (['db2'].includes(this.dataSourceModel.source_databaseType)) {
+            this.changeConfig([], 'setting_sync_type')
+          }
           break
         }
         case 'mapping': {
@@ -703,6 +707,20 @@ export default {
           //映射是否双向同步
           let op = items.find(it => it.field === 'bidirectional')
           op.show = !!this.supportTwoWay
+          break
+        }
+        case 'setting_sync_type': {
+          //db2作为源只可以全量同步
+          let op = items.find(it => it.field === 'sync_type')
+          if (op) {
+            op.options = [
+              {
+                label: '全量同步',
+                tip: '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
+                value: 'initial_sync'
+              }
+            ]
+          }
           break
         }
         case 'databaseType': {
