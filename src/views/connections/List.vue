@@ -159,24 +159,26 @@
         width="100"
       >
         <template slot-scope="scope">
-          <span class="error" v-if="['invalid'].includes(scope.row.status)">
-            <i class="connections-status__icon el-icon-error"></i>
-            <span>
-              {{ $t('connection.status.invalid') }}
+          <div>
+            <span class="error" v-if="['invalid'].includes(scope.row.status)">
+              <i class="connections-status__icon el-icon-error"></i>
+              <span>
+                {{ $t('connection.status.invalid') }}
+              </span>
             </span>
-          </span>
-          <span class="success" v-if="['ready'].includes(scope.row.status)">
-            <i class="connections-status__icon el-icon-success"></i>
-            <span>
-              {{ $t('connection.status.ready') }}
+            <span class="success" v-if="['ready'].includes(scope.row.status)">
+              <i class="connections-status__icon el-icon-success"></i>
+              <span>
+                {{ $t('connection.status.ready') }}
+              </span>
             </span>
-          </span>
-          <span class="warning" v-if="['testing'].includes(scope.row.status)">
-            <i class="connections-status__icon el-icon-loading"></i>
-            <span>
-              {{ $t('connection.status.testing') }}
+            <span class="warning" v-if="['testing'].includes(scope.row.status)">
+              <i class="connections-status__icon el-icon-loading"></i>
+              <span>
+                {{ $t('connection.status.testing') }}
+              </span>
             </span>
-          </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column
@@ -508,6 +510,7 @@ export default {
         })
       ]).then(([countRes, res]) => {
         let list = res.data
+        console.log('kai', list)
         return {
           total: countRes.data.count,
           data: list.map(item => {
