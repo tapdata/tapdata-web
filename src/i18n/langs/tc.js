@@ -2629,7 +2629,7 @@ const tc = {
     roleManagement: '角色管理',
     preciseMatching: '精準匹配',
     fuzzyMatching: '模糊匹配',
-    selectRoleName: '請選擇角色名',
+    selectRoleName: '請輸入角色名',
     selectDesc: '請輸入角色描述',
     selectUser: '請選擇用戶名',
     description: '角色描述',

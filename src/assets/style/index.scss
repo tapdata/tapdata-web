@@ -23,6 +23,12 @@ table{border-collapse:collapse;border-spacing:0;}
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
+textarea, button, input, select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
 .text-lf{
   text-align: left;
 }
