@@ -731,6 +731,9 @@ export default {
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
               options = data.filter(item => item !== 'redis')
             }
+            if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+              options = data.filter(item => item !== 'dameng')
+            }
             source.options = options.map(item => {
               return {
                 label: TYPEMAP[item],
