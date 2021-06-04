@@ -7,9 +7,6 @@ export const getImgByType = function (type) {
   if (!type || type === 'jira') {
     type = 'default'
   }
-  if (type === 'dameng') {
-    type = 'mysql'
-  }
   return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)
 }
 
