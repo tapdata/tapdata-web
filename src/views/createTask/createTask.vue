@@ -402,13 +402,19 @@ export default {
           }
         } else if (target && value !== 'compel' && this.supportTwoWay) {
           target.show = true
-          if (this.settingModel.sync_type === 'cdc' && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+          if (
+            this.settingModel.sync_type === 'cdc' &&
+            window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+          ) {
             this.addSyncPoints()
           }
         }
       }
       //只有增量模式下才有同步时间
-      if (field === 'sync_type' && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+      if (
+        field === 'sync_type' &&
+        window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+      ) {
         if (
           value === 'cdc' &&
           this.supportTwoWay &&
@@ -845,7 +851,10 @@ export default {
       let source = this.dataSourceModel
       let target = this.dataSourceModel
       //日期转换
-      if (this.settingModel.syncPoints && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+      if (
+        this.settingModel.syncPoints &&
+        window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+      ) {
         this.settingModel.syncPoints.forEach(point => {
           point.date = point.date
             ? moment(point.date).format('YYYY-MM-DD HH:mm:ss')
