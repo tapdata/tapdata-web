@@ -441,8 +441,8 @@ export default {
           field_process.table_id = this.currentTableId
           field_process.table_name = this.currentTableName
           field_process.operations = this.operations
-        }
-      }else this.field_process.push(field_process)
+        }else this.field_process.push(field_process)
+      }
       console.log(this.field_process)
     },
     cancelFileOperations() {
