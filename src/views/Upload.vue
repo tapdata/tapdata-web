@@ -219,12 +219,12 @@ export default {
   line-height: 43px;
   margin-top: 20px;
   a {
-    color: #48b6e2;
+    color: #409eff;
   }
 }
 .classify {
   display: inline-block;
-  color: #48b6e2;
+  color: #409eff;
   font-size: 12px;
   cursor: pointer;
 }

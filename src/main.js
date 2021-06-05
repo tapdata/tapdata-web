@@ -17,7 +17,7 @@ import '@/components/form-builder'
 import '@/directives'
 import 'github-markdown-css'
 import '@/assets/style/index.scss'
-import '@/assets/theme/drs/index.scss'
+// import '@/assets/theme/drs/index.scss'
 import LoadMore from '@/utils/loadMore'
 
 import '@/styles/app.scss'
@@ -70,6 +70,9 @@ window.getSettingByKey = key => {
 }
 let init = settings => {
   window.__settings__ = settings
+  if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
+    require('@/assets/theme/drs/index.scss')
+  }
   let lang = localStorage.getItem('tapdata_localize_lang')
   if (!lang) {
     lang = window.getSettingByKey('DEFAULT_LANGUAGE')

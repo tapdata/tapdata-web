@@ -376,10 +376,10 @@ export default {
         paused: '#FDB01C',
         draft: '#CCC',
         error: '#F97066',
-        stopping: '#48b6e2'
+        stopping: '#409EFF'
       },
       colorServeMap: {
-        starting: '#48B6E2',
+        starting: '#409EFF',
         running: '#8DC47A',
         stopping: '#F97066',
         stopped: '#FDB01C'
@@ -404,7 +404,7 @@ export default {
           bottom: '1%'
         },
 
-        color: ['#8DC47A', '#FDB01C', '#F97066', '#CCC', '#48b6e2'],
+        color: ['#8DC47A', '#FDB01C', '#F97066', '#CCC', '#409EFF'],
         series: [
           {
             // name: this.$t('dataFlow.status.running'),
@@ -513,7 +513,7 @@ export default {
                 color: function (params) {
                   var colorList = [
                     '#7ba75d',
-                    '#48b6e2',
+                    '#409EFF',
                     '#d9742c',
                     '#e6b451',
                     '#e06c6c'
@@ -975,7 +975,7 @@ export default {
             div {
               padding-top: 30px;
               font-size: 60px;
-              color: #48b6e2;
+              color: #409eff;
               cursor: pointer;
             }
             .lagColor {
@@ -1007,7 +1007,7 @@ export default {
       .number {
         padding-top: 30px;
         font-size: 60px;
-        color: #48b6e2;
+        color: #409eff;
       }
     }
     .jobList {
@@ -1045,7 +1045,7 @@ export default {
     }
   }
   .taskNameStyle {
-    color: #48b6e2;
+    color: #409eff;
     cursor: pointer;
   }
 }

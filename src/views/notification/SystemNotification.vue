@@ -41,7 +41,7 @@
         }}</span>
         <span v-readonlybtn="'home_notice_settings'">
           <router-link to="/settingCenter/notificationSetting"
-            ><span style="color: #48b6e2">{{
+            ><span style="color: #409eff">{{
               $t('notification.setting')
             }}</span></router-link
           >
@@ -78,7 +78,7 @@
                 item.mappingTemplate
               "
             >
-              <span style="color: #48b6e2">
+              <span style="color: #409eff">
                 {{ `${item.serverName} , ` }}
               </span>
             </router-link>
@@ -108,7 +108,7 @@
               >【{{ item.level }}】</span
             >
             <span>{{ systemMap[item.system] }}</span>
-            <span style="color: #48b6e2" @click="handleGo(item)">
+            <span style="color: #409eff" @click="handleGo(item)">
               {{ item.serverName }}
             </span>
             <span>{{ typeMap[item.msg] }}</span>
@@ -158,7 +158,7 @@ export default {
       colorMap: {
         ERROR: 'red',
         WARN: 'orangered',
-        INFO: '#48b6e2'
+        INFO: '#409EFF'
       },
       systemMap: {
         sync: this.$t('notification.sync'),
@@ -449,7 +449,7 @@ $unreadColor: #ee5353;
     justify-content: space-between;
     align-items: center;
     font-size: 12px;
-    color: #48b6e2;
+    color: #409eff;
     padding: 20px 20px 20px 0;
     .title {
       font-size: 18px;

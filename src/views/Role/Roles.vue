@@ -248,7 +248,7 @@
         {{ $t('role.delete_remind') }}
         <span
           @click="delLinkRole(deleteObj.id)"
-          style="color: #48b6e2; cursor: pointer"
+          style="color: #409eff; cursor: pointer"
         >
           {{ deleteObj.name }}</span
         >

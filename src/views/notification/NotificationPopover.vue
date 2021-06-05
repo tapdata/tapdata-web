@@ -38,7 +38,7 @@
                       item.mappingTemplate
                     "
                   >
-                    <span style="color: #48b6e2">
+                    <span style="color: #409eff">
                       {{ `${item.serverName} , ` }}
                     </span>
                   </router-link>
@@ -70,7 +70,7 @@
                     item.level
                   }}</span>
                   <span>{{ systemMap[item.system] }}</span>
-                  <span style="color: #48b6e2" @click="handleGo(item)">
+                  <span style="color: #409eff" @click="handleGo(item)">
                     {{ item.serverName }}
                   </span>
                   <span>{{ typeMap[item.msg] }}</span>
@@ -151,7 +151,7 @@ export default {
       colorMap: {
         ERROR: 'red',
         WARN: 'orangered',
-        INFO: '#48b6e2'
+        INFO: '#409EFF'
       },
       typeMap: TYPEMAP,
       systemMap: {

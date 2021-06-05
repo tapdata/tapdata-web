@@ -2,7 +2,7 @@
   <div class="fieldProcess">
     <div v-show="showErrorOperationTip" class="error-operation-tip">
       {{ $t('editor.cell.processor.field.form.errorOperationTipBefore')
-      }}<span style="color: #48b6e2; cursor: pointer" @click="openErrorList">{{
+      }}<span style="color: #409eff; cursor: pointer" @click="openErrorList">{{
         $t('editor.cell.processor.field.form.errorOperationTipAfter')
       }}</span>
     </div>
@@ -1297,7 +1297,7 @@ export default {
 $color: #71c179;
 .operation-area {
   text-align: right;
-  color: #48b6e2;
+  color: #409eff;
   cursor: pointer;
   font-size: 12px;
   span {
@@ -1455,7 +1455,7 @@ $color: #71c179;
     width: 100px;
   }
   .active {
-    color: #48b6e2;
+    color: #409eff;
   }
   .js {
     display: inline-block;
@@ -1472,12 +1472,12 @@ $color: #71c179;
   cursor: pointer;
   margin-bottom: 10px;
   &：hover {
-    color: #48b6e2;
+    color: #409eff;
   }
 }
 </style>
 <style lang="scss">
-$color: #48b6e2; //更改颜色
+$color: #409eff; //更改颜色
 $colorborder: #71c179;
 .fieldProcess {
   .e-schema-editor {

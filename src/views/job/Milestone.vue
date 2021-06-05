@@ -223,7 +223,7 @@ export default {
           display: inline-block;
         }
         &.running {
-          color: #48b6e2;
+          color: #409eff;
         }
         &.error {
           color: #f56c6c;

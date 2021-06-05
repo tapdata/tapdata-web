@@ -132,7 +132,7 @@ export default {
       width: 6px;
       height: 13px;
       vertical-align: middle;
-      background-color: #48b6e2;
+      background-color: #409eff;
       border-radius: 1px;
     }
     span {
@@ -142,7 +142,7 @@ export default {
     .downLoadText {
       color: #9a9a9a;
       i {
-        color: #48b6e2;
+        color: #409eff;
       }
     }
   }
@@ -159,7 +159,7 @@ export default {
       border: 1px solid #eee;
     }
     .active {
-      border: 1px solid #48b6e2;
+      border: 1px solid #409eff;
       .choose {
         display: block;
         position: absolute;
@@ -167,7 +167,7 @@ export default {
         bottom: -13px;
         width: 32px;
         height: 26px;
-        background: #48b6e2;
+        background: #409eff;
         text-align: center;
         transform: rotate(-40deg);
         box-shadow: 0 1px 1px #ccc;
@@ -187,7 +187,7 @@ export default {
     color: #666;
     .operaKey {
       padding: 0 10px;
-      color: #48b6e2;
+      color: #409eff;
       cursor: pointer;
     }
     div {

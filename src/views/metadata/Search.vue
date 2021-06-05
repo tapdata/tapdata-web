@@ -273,13 +273,13 @@ export default {
 <style lang="scss">
 .metadata-search-wrap {
   .el-input-group__append {
-    background: #48b6e2;
+    background: #409eff;
     color: #fff;
   }
   .no-search-box {
     .el-input-group__prepend {
       background: #fff;
-      color: #48b6e2;
+      color: #409eff;
     }
   }
   .search-box {
@@ -416,7 +416,7 @@ export default {
     .info-box {
       margin-left: 10px;
       .title {
-        color: #48b6e2;
+        color: #409eff;
       }
     }
     .more {

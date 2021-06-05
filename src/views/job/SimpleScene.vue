@@ -248,8 +248,8 @@ export default {
       .el-checkbox__label {
         .stepNum {
           color: #fff;
-          background-color: #48b6e2;
-          border: 1px solid #48b6e2;
+          background-color: #409eff;
+          border: 1px solid #409eff;
         }
       }
     }
@@ -267,7 +267,7 @@ export default {
   }
 
   .e-btnv {
-    background: #48b6e2;
+    background: #409eff;
     color: #fff;
     border-radius: 5px;
   }

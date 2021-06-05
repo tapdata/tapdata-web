@@ -1130,24 +1130,24 @@ export default {
             h('span', null, this.$t('dataFlow.modifyEditText')),
             h(
               'span',
-              { style: 'color: #48b6e2' },
+              { style: 'color: #409EFF' },
               this.$t('dataFlow.nodeLayoutProcess')
             ),
             h('span', null, '、'),
             h(
               'span',
-              { style: 'color: #48b6e2' },
+              { style: 'color: #409EFF' },
               this.$t('dataFlow.nodeAttributes')
             ),
             h('span', null, '、'),
             h(
               'span',
-              { style: 'color: #48b6e2' },
+              { style: 'color: #409EFF' },
               this.$t('dataFlow.matchingRelationship')
             ),
             h('span', null, '，'),
             h('span', null, this.$t('dataFlow.afterSubmission')),
-            h('span', { style: 'color: #48b6e2' }, this.$t('dataFlow.reset')),
+            h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
             h('span', null, this.$t('dataFlow.runNomally')),
             h('span', null, this.$t('dataFlow.editLayerTip'))
           ]),
@@ -1261,7 +1261,7 @@ export default {
         // 			this.$confirm(
         // 				h('p', [
         // 					arr[0] + '(',
-        // 					h('span', { style: { color: '#48b6e2' } }, node.name),
+        // 					h('span', { style: { color: '#409EFF' } }, node.name),
         // 					')' + arr[1]
         // 				]),
         // 				this.$t('dataFlow.importantReminder'),
@@ -1308,7 +1308,7 @@ export default {
             let arr = this.$t('message.stopAggregation_message').split('XXX')
             message = h('p', [
               arr[0] + '(',
-              h('span', { style: { color: '#48b6e2' } }, node.name),
+              h('span', { style: { color: '#409EFF' } }, node.name),
               ')' + arr[1]
             ])
             title = this.$t('dataFlow.importantReminder')
@@ -1549,7 +1549,7 @@ export default {
       }
       .name {
         &:not(.has-children) {
-          color: #48b6e2;
+          color: #409eff;
           cursor: pointer;
           text-decoration: underline;
         }

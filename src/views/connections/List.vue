@@ -390,7 +390,7 @@ export default {
     this.getDatabaseType()
     //header
     let guideDoc =
-      ' <a target="_blank" style="color: #48B6E2" href="https://docs.tapdata.net/data-source">' +
+      ' <a target="_blank" style="color: #409EFF" href="https://docs.tapdata.net/data-source">' +
       this.$t('dataForm.form.guideDoc') +
       '</a>'
     this.description = this.$t('connection.desc') + guideDoc
@@ -845,7 +845,7 @@ export default {
     margin-left: 10px;
 
     .name {
-      color: #48b6e2;
+      color: #409eff;
       cursor: pointer;
     }
 
@@ -872,7 +872,7 @@ export default {
   }
 
   .btn-text {
-    // color: #48b6e2;
+    // color: #409EFF;
     font-size: 12px;
     padding-right: 5px;
   }

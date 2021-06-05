@@ -227,7 +227,7 @@ export default class Graph extends Component {
         this._curMag = event.target.getAttribute('port')
         this._curCell = cellView
         cellView.model.portProp(this._curMag, 'attrs/circle/fill', '#CAE8F4')
-        cellView.model.portProp(this._curMag, 'attrs/circle/stroke', '#48b6e2')
+        cellView.model.portProp(this._curMag, 'attrs/circle/stroke', '#409EFF')
         cellView.model.portProp(this._curMag, 'attrs/circle/stroke-width', 2)
         cellView.model.portProp(this._curMag, 'attrs/circle/r', 7)
       } else if (
@@ -287,7 +287,7 @@ export default class Graph extends Component {
         //padding: 2,
         attrs: {
           'stroke-width': 2,
-          stroke: '#48b6e2',
+          stroke: '#409EFF',
           fill: '#CAE8F4'
         }
       }

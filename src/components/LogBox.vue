@@ -130,7 +130,7 @@ export default {
     }
     .clickLoad {
       cursor: pointer;
-      color: #48b6e2;
+      color: #409eff;
     }
   }
 }

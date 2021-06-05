@@ -125,7 +125,7 @@ export default {
     }
   }
   .el-radio.is-checked {
-    border: 2px solid #48b6e2;
+    border: 2px solid #409eff;
   }
 }
 </style>

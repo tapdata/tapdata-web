@@ -938,7 +938,7 @@ export default {
 $color: #71c179;
 .operation-area {
   text-align: right;
-  color: #48b6e2;
+  color: #409eff;
   cursor: pointer;
   font-size: 12px;
   span {

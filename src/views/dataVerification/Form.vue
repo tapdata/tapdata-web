@@ -9,7 +9,7 @@
               : $t('dataVerification.newVerify')
           }}</span>
           <div style="font-size: 12px" v-show="form.mode === 'cron'">
-            <span style="color: #48b6e2" v-show="form.enabled">{{
+            <span style="color: #409eff" v-show="form.enabled">{{
               $t('dataVerification.enable')
             }}</span>
             <span style="color: #9a9a9a" v-show="!form.enabled">{{

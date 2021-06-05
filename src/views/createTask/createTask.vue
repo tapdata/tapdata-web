@@ -1080,12 +1080,12 @@ export default {
     .step-box {
       li {
         &.active {
-          color: #48b6e2;
+          color: #409eff;
           &::before {
-            background: #48b6e2;
+            background: #409eff;
           }
           .step-index {
-            background: #48b6e2;
+            background: #409eff;
           }
         }
       }

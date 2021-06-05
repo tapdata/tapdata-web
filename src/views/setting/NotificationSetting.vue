@@ -230,7 +230,7 @@ $unreadColor: #ee5353;
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
-  color: #48b6e2;
+  color: #409eff;
   padding: 20px 20px 20px 0;
   .title {
     font-size: 18px;
@@ -281,7 +281,7 @@ $unreadColor: #ee5353;
     .block {
       width: 11px;
       height: 14px;
-      background: #48b6e2;
+      background: #409eff;
       display: inline-block;
       margin-right: 10px;
     }

@@ -565,7 +565,7 @@ export default {
 
       .list:hover {
         .tableName {
-          color: #48b6e2;
+          color: #409eff;
         }
 
         background-color: #e7f5fa;

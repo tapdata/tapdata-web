@@ -1314,7 +1314,7 @@ export default {
       .head {
         padding-bottom: 10px;
         .databaseColor {
-          color: #48b6e2;
+          color: #409eff;
           cursor: pointer;
         }
       }

@@ -533,7 +533,7 @@ export default {
         font-size: 16px;
         color: #666;
         &:hover {
-          color: #48b6e2;
+          color: #409eff;
         }
       }
     }
@@ -602,7 +602,7 @@ export default {
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
-      // color: #48b6e2;
+      // color: #409EFF;
       color: #edc958;
     }
     .table-label {
@@ -622,7 +622,7 @@ export default {
   .create {
     padding: 20px 10px;
     font-size: 12px;
-    color: #48b6e2;
+    color: #409eff;
     cursor: pointer;
   }
 }

@@ -588,7 +588,7 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#48b6e2' } }, item.original_name)
+        h('span', { style: { color: '#409EFF' } }, item.original_name)
       ])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning',
@@ -646,7 +646,7 @@ export default {
     }
     .metadata-name {
       .name {
-        color: #48b6e2;
+        color: #409eff;
         a {
           color: inherit;
           cursor: pointer;

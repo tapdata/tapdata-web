@@ -416,7 +416,7 @@ export default {
       targetDatabase: [],
       formData: _.cloneDeep(DEFAULT_DATAVERIFY),
       colorMap: {
-        row: '#48B6E2',
+        row: '#409EFF',
         hash: '#62A569',
         advance: '#9889D8'
       },
@@ -815,7 +815,7 @@ export default {
   margin: 0 auto;
   text-align: center;
   display: inline-block;
-  background: #48b6e2;
+  background: #409eff;
   border-radius: 50%;
 }
 .back-btn-box {
@@ -835,7 +835,7 @@ export default {
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
-  background: #48b6e2;
+  background: #409eff;
   border: 0;
   color: red;
   -webkit-appearance: none;

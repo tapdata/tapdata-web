@@ -65,7 +65,7 @@ $color: #999999;
   width: 100%;
   height: 100%;
   .dashboard-guide-item__icon {
-    color: #48b6e2;
+    color: #409eff;
     font-size: 30px;
   }
 }
@@ -81,14 +81,14 @@ $color: #999999;
     display: flex;
   }
   &:hover {
-    border-color: #48b6e2;
+    border-color: #409eff;
   }
 }
 .dashboard-guide-item__content {
   margin-left: 10px;
 }
 .dashboard-guide-item__title {
-  color: #48b6e2;
+  color: #409eff;
   font-size: 16px;
   font-weight: bold;
   line-height: 30px;

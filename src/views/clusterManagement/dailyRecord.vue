@@ -273,7 +273,7 @@ export default {
   }
   .serviceCluMangeBtn {
     font-size: 14px;
-    color: #48b6e2;
+    color: #409eff;
     cursor: pointer;
     float: right;
     font-weight: normal;

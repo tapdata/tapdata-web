@@ -602,7 +602,7 @@ export default {
     border: 1px solid #ec8205;
     background-color: rgb(255, 233, 207);
     span {
-      color: #48b6e2;
+      color: #409eff;
       cursor: pointer;
     }
     .close {
@@ -732,7 +732,7 @@ export default {
           background: rgba(241, 241, 241, 1);
         }
         &.is-active {
-          color: #48b6e2;
+          color: #409eff;
           background: rgba(241, 241, 241, 1);
         }
       }

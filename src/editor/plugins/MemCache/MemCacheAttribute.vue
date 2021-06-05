@@ -319,7 +319,7 @@ export default {
       overflow-x: auto;
       white-space: nowrap;
       .color-primary {
-        color: #48b6e2;
+        color: #409eff;
       }
       .color-danger {
         color: #ee5353;
