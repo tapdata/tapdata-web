@@ -547,23 +547,24 @@ export default {
         })
       ]).then(([countRes, res]) => {
         this.getCount()
-        res.data.forEach(item => {
-          if (!item.emailVerified) {
-            this.$set(item, 'status', 'notVerified')
-          } else {
-            if (item.account_status === 1) {
-              this.$set(item, 'status', 'activated')
-            } else {
-              this.$set(item, 'status', 'notActivated')
-            }
-          }
-          if (item.account_status === 0) {
-            this.$set(item, 'status', 'rejected')
-          }
-        })
+        let list = res.data || []
         return {
           total: countRes.data.count,
-          data: res.data
+          data: list.map(item => {
+            if (!item.emailVerified) {
+              item.status = 'notVerified'
+            } else {
+              if (item.account_status === 1) {
+                item.status = 'activated'
+              } else {
+                item.status = 'notActivated'
+              }
+            }
+            if (item.account_status === 0) {
+              item.status = 'rejected'
+            }
+            return item
+          })
         }
       })
     },
