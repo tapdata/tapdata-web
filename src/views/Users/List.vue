@@ -218,63 +218,77 @@
       </el-table-column>
       <el-table-column :label="$t('user.opera')" width="160">
         <template slot-scope="scope">
-          <el-button
-            v-readonlybtn="'user_edition'"
-            size="mini"
-            type="text"
-            v-if="['rejected', 'notActivated'].includes(scope.row.status)"
-            :disabled="
-              $disabledByPermission('user_edition_all_data', scope.row.user_id)
-            "
-            @click="handleActive(scope.row)"
-          >
-            {{ $t('user.activation') }}
-          </el-button>
-          <el-button
-            v-readonlybtn="'user_edition'"
-            size="mini"
-            type="text"
-            v-if="!['rejected'].includes(scope.row.status)"
-            :disabled="
-              $disabledByPermission('user_edition_all_data', scope.row.user_id)
-            "
-            @click="handleFreeze(scope.row)"
-          >
-            {{ $t('user.freeze') }}
-          </el-button>
-          <el-button
-            v-readonlybtn="'user_edition'"
-            size="mini"
-            type="text"
-            v-if="['notVerified'].includes(scope.row.status)"
-            :disabled="
-              $disabledByPermission('user_edition_all_data', scope.row.user_id)
-            "
-            @click="handleCheck(scope.row)"
-            >{{ $t('user.check') }}</el-button
-          >
-          <el-button
-            v-readonlybtn="'user_edition'"
-            size="mini"
-            type="text"
-            v-if="['activated', 'rejected'].includes(scope.row.status)"
-            :disabled="
-              $disabledByPermission('user_edition_all_data', scope.row.user_id)
-            "
-            @click="edit(scope.row)"
-            >{{ $t('user.edit') }}</el-button
-          >
-          <el-button
-            v-readonlybtn="'user_delete'"
-            size="mini"
-            type="text"
-            style="color: #f56c6c"
-            :disabled="
-              $disabledByPermission('user_delete_all_data', scope.row.user_id)
-            "
-            @click="remove(scope.row)"
-            >{{ $t('user.delete') }}</el-button
-          >
+          <div>
+            <el-button
+              v-readonlybtn="'user_edition'"
+              size="mini"
+              type="text"
+              v-if="['rejected', 'notActivated'].includes(scope.row.status)"
+              :disabled="
+                $disabledByPermission(
+                  'user_edition_all_data',
+                  scope.row.user_id
+                )
+              "
+              @click="handleActive(scope.row)"
+            >
+              {{ $t('user.activation') }}
+            </el-button>
+            <el-button
+              v-readonlybtn="'user_edition'"
+              size="mini"
+              type="text"
+              v-if="!['rejected'].includes(scope.row.status)"
+              :disabled="
+                $disabledByPermission(
+                  'user_edition_all_data',
+                  scope.row.user_id
+                )
+              "
+              @click="handleFreeze(scope.row)"
+            >
+              {{ $t('user.freeze') }}
+            </el-button>
+            <el-button
+              v-readonlybtn="'user_edition'"
+              size="mini"
+              type="text"
+              v-if="['notVerified'].includes(scope.row.status)"
+              :disabled="
+                $disabledByPermission(
+                  'user_edition_all_data',
+                  scope.row.user_id
+                )
+              "
+              @click="handleCheck(scope.row)"
+              >{{ $t('user.check') }}</el-button
+            >
+            <el-button
+              v-readonlybtn="'user_edition'"
+              size="mini"
+              type="text"
+              v-if="['activated', 'rejected'].includes(scope.row.status)"
+              :disabled="
+                $disabledByPermission(
+                  'user_edition_all_data',
+                  scope.row.user_id
+                )
+              "
+              @click="edit(scope.row)"
+              >{{ $t('user.edit') }}</el-button
+            >
+            <el-button
+              v-readonlybtn="'user_delete'"
+              size="mini"
+              type="text"
+              style="color: #f56c6c"
+              :disabled="
+                $disabledByPermission('user_delete_all_data', scope.row.user_id)
+              "
+              @click="remove(scope.row)"
+              >{{ $t('user.delete') }}</el-button
+            >
+          </div>
         </template>
       </el-table-column>
     </TablePage>
