@@ -2636,7 +2636,7 @@ const cn = {
     roleManagement: '角色管理',
     preciseMatching: '精准匹配',
     fuzzyMatching: '模糊匹配',
-    selectRoleName: '请选择角色名',
+    selectRoleName: '请输入角色名',
     selectDesc: '请输入角色描述',
     selectUser: '请选择用户名',
     description: '角色描述',
