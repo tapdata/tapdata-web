@@ -8,7 +8,7 @@
     <div class="skip-tip">{{ $t('dataFlow.skipError.attention') }}</div>
     <div class="skip-name">
       {{ `${$t('dataFlow.skipError.taskName')}:` }}
-      <span style="color: #48b6e2">{{ task.name }}</span>
+      <span style="color: #409eff">{{ task.name }}</span>
     </div>
     <ul class="error-list">
       <span class="check-all"

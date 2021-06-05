@@ -577,12 +577,12 @@ $margin: 10px;
         margin: 20% auto;
         i {
           font-size: 36px;
-          color: #48b6e2;
+          color: #409eff;
         }
       }
       .title {
         font-weight: bold;
-        color: #48b6e2;
+        color: #409eff;
         padding-left: $margin;
         margin: 20px 0 0 0;
       }
@@ -757,7 +757,7 @@ $margin: 10px;
       line-height: 1;
       white-space: nowrap;
       cursor: pointer;
-      background: #48b6e2;
+      background: #409eff;
       border: 0;
       -webkit-appearance: none;
       text-align: center;

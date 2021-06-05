@@ -100,7 +100,9 @@ export default {
       if (!form.email || !form.email.trim()) {
         message = this.$t('app.signIn.email_require')
         // eslint-disable-next-line
-      } else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
+      } else if (
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
+      ) {
         message = this.$t('app.signIn.email_invalid')
       } else if (!form.password || form.password.length < 5) {
         message = this.$t('app.signIn.password_invalid')
@@ -264,7 +266,7 @@ export default {
           padding-top: 16px;
           font-size: 12px;
           text-align: right;
-          color: #48b6e2;
+          color: #409eff;
           cursor: pointer;
         }
       }
@@ -317,7 +319,7 @@ export default {
       .remember {
         padding-top: 16px;
         font-size: 12px;
-        color: #48b6e2;
+        color: #409eff;
         span {
           cursor: pointer;
         }

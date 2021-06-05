@@ -656,7 +656,7 @@ export default {
     border: 0;
     border-radius: 0;
     box-sizing: border-box;
-    background: #48b6e2;
+    background: #409eff;
     transition: 0.1s;
     -webkit-appearance: none;
     -webkit-box-sizing: border-box;

@@ -58,7 +58,7 @@
               <span
                 class="info-text"
                 @click="handTableName(stage)"
-                style="color: #48b6e2; cursor: pointer"
+                style="color: #409eff; cursor: pointer"
                 >{{ stage.nodeName }}</span
               >
             </el-tooltip>
@@ -85,7 +85,7 @@
               <span
                 class="info-text"
                 @click="handDatabaseName(stage)"
-                style="color: #48b6e2; cursor: pointer"
+                style="color: #409eff; cursor: pointer"
                 >{{ stage.name }}</span
               >
             </el-tooltip>
@@ -273,7 +273,7 @@
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
             <el-tooltip :content="flow.name" placement="bottom-start">
-              <span class="info-text" style="color: #48b6e2">{{
+              <span class="info-text" style="color: #409eff">{{
                 flow.name
               }}</span>
             </el-tooltip>
@@ -413,7 +413,7 @@
         ></EchartHeader>
         <div class="floatLayer">
           <span
-            style="background-color: rgba(72, 182, 226, 0.3); color: #48b6e2"
+            style="background-color: rgba(72, 182, 226, 0.3); color: #409eff"
             >{{ $t('dataFlow.input') }}:{{ this.inputAverage }}</span
           >
           <span
@@ -564,7 +564,7 @@ export default {
         xAxis: {
           axisLine: {
             lineStyle: {
-              color: '#48b6e2',
+              color: '#409EFF',
               width: 2 // 这里是为了突出显示加上的
             }
           },
@@ -573,7 +573,7 @@ export default {
         yAxis: {
           axisLine: {
             lineStyle: {
-              color: '#48b6e2'
+              color: '#409EFF'
             }
           },
           axisLabel: {
@@ -1367,7 +1367,7 @@ export default {
                 color: function (params) {
                   var colorList = [
                     '#7ba75d',
-                    '#48b6e2',
+                    '#409EFF',
                     '#d9742c',
                     '#e6b451',
                     '#e06c6c'

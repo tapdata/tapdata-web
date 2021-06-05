@@ -556,7 +556,7 @@ export default {
 
 .filter-icon {
   font-size: 14px;
-  color: #48b6e2;
+  color: #409eff;
 }
 
 .filter-icon-table {
@@ -705,7 +705,7 @@ export default {
     }
     .clickLoad {
       cursor: pointer;
-      color: #48b6e2;
+      color: #409eff;
     }
   }
 }

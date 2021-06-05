@@ -92,7 +92,7 @@ export default {
   }
 
   span:hover {
-    color: #48b6e2;
+    color: #409eff;
   }
 
   .arrow {
@@ -136,9 +136,9 @@ export default {
   .screeningColor,
   .putColor {
     .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-      background-color: #48b6e2;
-      border-color: #48b6e2;
-      box-shadow: -1px 0 0 0 #48b6e2;
+      background-color: #409eff;
+      border-color: #409eff;
+      box-shadow: -1px 0 0 0 #409eff;
     }
   }
   .unit {

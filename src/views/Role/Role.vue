@@ -3,7 +3,7 @@
     <head class="head">
       <i
         class="iconfont icon-left-circle back-btn-icon"
-        style="color: #48b6e2; cursor: pointer"
+        style="color: #409eff; cursor: pointer"
         @click="back"
       ></i>
       <h1>{{ $t('role.settingTitle') }}</h1>

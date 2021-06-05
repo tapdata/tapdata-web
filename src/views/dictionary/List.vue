@@ -467,7 +467,7 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#48b6e2' } }, item.name)
+        h('span', { style: { color: '#409EFF' } }, item.name)
       ])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning',

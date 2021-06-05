@@ -404,7 +404,7 @@ export default {
                       v
                     )
                   ) {
-										// eslint-disable-line
+                    // eslint-disable-line
                     return callback(new Error(this.$t('user.email_must_valid')))
                   } else {
                     return callback()
@@ -826,7 +826,7 @@ export default {
           },
           [
             this.$t('user.delUser') + ' ',
-            h('span', { style: { color: '#48b6e2' } }, item.username),
+            h('span', { style: { color: '#409EFF' } }, item.username),
             this.$t('user.deluserLast')
           ]
         )
@@ -887,7 +887,7 @@ export default {
           },
           [
             this.$t('user.activetionUser') + ' ',
-            h('span', { style: { color: '#48b6e2' } }, item.username),
+            h('span', { style: { color: '#409EFF' } }, item.username),
             this.$t('user.activetionUserLast')
           ]
         )
@@ -936,7 +936,7 @@ export default {
           },
           [
             this.$t('user.freezeUser') + ' ',
-            h('span', { style: { color: '#48b6e2' } }, item.username),
+            h('span', { style: { color: '#409EFF' } }, item.username),
             this.$t('user.freezeUserLast')
           ]
         )
@@ -981,7 +981,7 @@ export default {
           },
           [
             this.$t('user.checkUser') + ' ',
-            h('span', { style: { color: '#48b6e2' } }, item.username),
+            h('span', { style: { color: '#409EFF' } }, item.username),
             this.$t('user.checkUserLast')
           ]
         )
@@ -1167,7 +1167,7 @@ export default {
     }
     .metadata-name {
       .name {
-        color: #48b6e2;
+        color: #409eff;
         a {
           color: inherit;
           cursor: pointer;

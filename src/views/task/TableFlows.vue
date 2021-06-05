@@ -612,7 +612,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-$primaryColor: #48b6e2;
+$primaryColor: #409eff;
 $darkColor: #aaaaaa;
 .ellipsis {
   white-space: nowrap;
@@ -652,7 +652,7 @@ $darkColor: #aaaaaa;
         }
       }
       .panelBtn:hover {
-        color: #48b6e2;
+        color: #409eff;
       }
       .el-form-item {
         margin-bottom: 0;
@@ -689,7 +689,7 @@ $darkColor: #aaaaaa;
           padding: 5px;
           cursor: pointer;
           &:hover {
-            color: #48b6e2;
+            color: #409eff;
           }
         }
         .el-button + .el-button {

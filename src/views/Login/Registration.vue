@@ -149,15 +149,17 @@ export default {
       if (!form.email || !form.email.trim()) {
         message = this.$t('app.signIn.email_require')
         // eslint-disable-next-line
-			} else if (!form.inviteCode) {
+      } else if (!form.inviteCode) {
         message = this.$t('app.signIn.inviteCode_require')
         // eslint-disable-next-line
-			} else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
+      } else if (
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
+      ) {
         message = this.$t('app.signIn.email_invalid')
       } else if (!form.password || form.password.length < 5) {
         message = this.$t('app.signIn.password_invalid')
         // eslint-disable-next-line
-			} else if (/[\s\u4E00-\u9FA5]/.test(form.password)) {
+      } else if (/[\s\u4E00-\u9FA5]/.test(form.password)) {
         message = this.$t('account.passwordNotCN')
       } else {
         message = ''
@@ -350,7 +352,7 @@ export default {
         color: #666;
         user-select: none;
         span {
-          color: #48b6e2;
+          color: #409eff;
           cursor: pointer;
         }
       }

@@ -3,7 +3,7 @@
     <header class="header">
       <span
         @click="$router.push({ name: 'metadata' })"
-        style="color: #48b6e2; cursor: pointer"
+        style="color: #409eff; cursor: pointer"
       >
         {{ $t('metadata.details.dataDirectory') }}
       </span>
@@ -730,7 +730,7 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#48b6e2' } }, item.field_name)
+        h('span', { style: { color: '#409EFF' } }, item.field_name)
       ])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning',
@@ -832,7 +832,7 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#48b6e2' } }, key)
+        h('span', { style: { color: '#409EFF' } }, key)
       ])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning',
@@ -1055,7 +1055,7 @@ export default {
               .delete {
                 display: inline-block;
                 cursor: pointer;
-                color: #48b6e2;
+                color: #409eff;
               }
             }
           }
@@ -1070,7 +1070,7 @@ export default {
               .delete {
                 display: inline-block;
                 cursor: pointer;
-                color: #48b6e2;
+                color: #409eff;
               }
             }
           }

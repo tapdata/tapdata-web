@@ -165,7 +165,7 @@ export default {
       .image {
         padding: 2px 20px 0 0;
         font-size: 30px;
-        color: #48b6e2;
+        color: #409eff;
       }
       .errorIcon {
         color: #f00 !important;
@@ -181,13 +181,13 @@ export default {
           user-select: none;
           padding-bottom: 6px;
           i {
-            color: #48b6e2;
+            color: #409eff;
           }
         }
         div {
           text-align: left;
           span {
-            color: #48b6e2;
+            color: #409eff;
             cursor: pointer;
             i {
               color: #666;

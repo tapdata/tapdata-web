@@ -327,7 +327,7 @@ export default {
 
           .nameStyle {
             display: none;
-            color: #48b6e2;
+            color: #409eff;
             float: right;
             font-size: 12px;
             padding-left: 10px;

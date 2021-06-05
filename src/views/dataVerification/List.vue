@@ -464,7 +464,7 @@ export default {
       })
     },
     toTableInfo(id, resultId, type, name) {
-      this.$router.push({
+      let route = this.$router.resolve({
         path: '/dataVerifyResult',
         query: {
           id: resultId,
@@ -473,14 +473,16 @@ export default {
           name: name
         }
       })
+      window.open(route.href, '_blank')
     },
     toTableHistory(id) {
-      this.$router.push({
+      let route = this.$router.resolve({
         path: '/dataVerifyHistory',
         query: {
           inspectId: id
         }
       })
+      window.open(route.href, '_blank')
     },
     startTask(id) {
       let multipleSelection = id ? [id] : this.multipleSelection
@@ -524,7 +526,8 @@ export default {
         .getId(flowId)
         .then(res => {
           if (['running', 'paused', 'error'].includes(res.data.status)) {
-            this.$router.push('dataVerification/' + id + '/edit')
+            let route = this.$router.resolve('dataVerification/' + id + '/edit')
+            window.open(route.href, '_blank')
           } else {
             this.$message.info(
               this.$t('dataVerification.checkStatusPre') +

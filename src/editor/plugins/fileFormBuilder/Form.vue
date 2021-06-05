@@ -28,7 +28,7 @@
             }}
             {{ $t('editor.fileFormBuilder.guideDoc') }}
             <a
-              style="color: #48b6e2"
+              style="color: #409eff"
               href="https://docs.tapdata.net/data-source/about-dbs/files"
               >{{ $t('dataForm.form.guideDoc') }}</a
             >
@@ -579,7 +579,7 @@ export default {
       }
       .content-box {
         .addBtn {
-          color: #48b6e2;
+          color: #409eff;
           cursor: pointer;
           font-size: 12px;
           margin-top: 5px;

@@ -230,7 +230,7 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#48b6e2' } }, item.name)
+        h('span', { style: { color: '#409EFF' } }, item.name)
       ])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning',
@@ -292,38 +292,48 @@ export default {
       }
 
       let rules = JSON.parse(item.rules)
-      if (rules && rules.hasOwnProperty('exists')) { // eslint-disable-line
+      if (rules && rules.hasOwnProperty('exists')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'exists'
         rule.checked = rules.exists
-      } else if (rules.hasOwnProperty('nullable')) { // eslint-disable-line
+      } else if (rules.hasOwnProperty('nullable')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'nullable'
         rule.checked = rules.nullable
-      } else if (rules && rules.hasOwnProperty('type')) { // eslint-disable-line
+      } else if (rules && rules.hasOwnProperty('type')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'type'
         rule.dataType = rules.type
-      } else if (rules && rules.hasOwnProperty('regex')) { // eslint-disable-line
+      } else if (rules && rules.hasOwnProperty('regex')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'regex'
         rule.dataRegex = rules.regex
-      } else if (rules && rules.hasOwnProperty('range')) { // eslint-disable-line
+      } else if (rules && rules.hasOwnProperty('range')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'range'
         let range = rules.range
-        if (range.hasOwnProperty('lt')) { // eslint-disable-line
+        if (range.hasOwnProperty('lt')) {
+          // eslint-disable-line
           rule.lt = 'lt'
         }
-        if (range.hasOwnProperty('lte')) { // eslint-disable-line
+        if (range.hasOwnProperty('lte')) {
+          // eslint-disable-line
           rule.lt = 'lte'
         }
-        if (range.hasOwnProperty('gt')) { // eslint-disable-line
+        if (range.hasOwnProperty('gt')) {
+          // eslint-disable-line
           rule.gt = 'gt'
         }
-        if (range.hasOwnProperty('gte')) { // eslint-disable-line
+        if (range.hasOwnProperty('gte')) {
+          // eslint-disable-line
           rule.gt = 'gte'
         }
         rule.ltData =
           parseFloat(range.lt) || parseFloat(range.lte) || range.none
         rule.gtData =
           parseFloat(range.gt) || parseFloat(range.gte) || range.none
-      } else if (rules.hasOwnProperty('enum')) { // eslint-disable-line
+      } else if (rules.hasOwnProperty('enum')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'enum'
         rule.enumData = rules.enum.join(',')
       }

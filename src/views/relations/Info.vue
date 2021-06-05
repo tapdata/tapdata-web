@@ -513,7 +513,7 @@ export default {
       line-height: 1;
       white-space: nowrap;
       cursor: pointer;
-      background: #48b6e2;
+      background: #409eff;
       border: 0;
       -webkit-appearance: none;
       text-align: center;

@@ -112,7 +112,7 @@ export default function () {
           },
           header: {
             fill: '#f5f6fa',
-            stroke: '#48b6e2',
+            stroke: '#409EFF',
             rx: 3,
             ry: 3
           },
@@ -149,7 +149,7 @@ export default function () {
             cursor: 'not-allowed'
           },
           body: {
-            stroke: '#48b6e2',
+            stroke: '#409EFF',
             rx: 3,
             ry: 3
           },

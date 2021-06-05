@@ -319,7 +319,7 @@ export default {
   .more {
     padding-left: 20px;
     font-size: 12px;
-    color: #48b6e2;
+    color: #409eff;
     cursor: pointer;
   }
   .monaco {

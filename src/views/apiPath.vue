@@ -379,7 +379,7 @@ export default {
 
 .filter-icon {
   font-size: 12px;
-  color: #48b6e2;
+  color: #409eff;
 }
 
 .filter-icon-table {

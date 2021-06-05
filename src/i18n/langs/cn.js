@@ -221,7 +221,7 @@ const cn = {
       incrementalLag: '增量滞后',
       allValid: '全部校验任务',
       checkSame: '校验一致',
-      countDifference: 'Count差异',
+      countDifference: 'Count不一致',
       contentDifference: '内容差异'
     }
   },
@@ -2636,7 +2636,7 @@ const cn = {
     roleManagement: '角色管理',
     preciseMatching: '精准匹配',
     fuzzyMatching: '模糊匹配',
-    selectRoleName: '请选择角色名',
+    selectRoleName: '请输入角色名',
     selectDesc: '请输入角色描述',
     selectUser: '请选择用户名',
     description: '角色描述',

@@ -428,7 +428,7 @@
     >
       <p>
         {{ $t('cluster.delMessage') }}
-        <span style="color: #48b6e2; cursor: pointer">
+        <span style="color: #409eff; cursor: pointer">
           {{ delData.agentName }}
         </span>
         ?
@@ -902,7 +902,7 @@ export default {
     }
     .logBtn {
       font-size: 14px;
-      color: #48b6e2;
+      color: #409eff;
       cursor: pointer;
       float: right;
     }
@@ -959,7 +959,7 @@ export default {
             .name {
               margin: 0;
               font-size: 18px;
-              color: #48b6e2;
+              color: #409eff;
               white-space: nowrap;
               text-overflow: ellipsis;
               overflow: hidden;
@@ -1035,7 +1035,7 @@ export default {
         background-color: #ee5353 !important;
       }
       .green {
-        color: #48b6e2;
+        color: #409eff;
       }
       .bggreen {
         background-color: #71c179 !important;
@@ -1047,7 +1047,7 @@ export default {
     height: calc(100% - 60px);
     align-items: center;
     justify-content: center;
-    color: #48b6e2;
+    color: #409eff;
     font-size: 16px;
     background-color: #fff;
   }
@@ -1055,7 +1055,7 @@ export default {
     .restBtn {
       display: inline-block;
       margin-left: 10px;
-      color: #48b6e2;
+      color: #409eff;
       cursor: pointer;
     }
     .ipTip {

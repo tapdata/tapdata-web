@@ -732,13 +732,13 @@ export default {
         display: flex;
         align-items: center;
         &.active {
-          color: #48b6e2;
+          color: #409eff;
           &::before {
-            background: #48b6e2;
+            background: #409eff;
           }
           .step-index {
             border-color: #fff;
-            background: #48b6e2;
+            background: #409eff;
             color: #fff;
           }
         }
@@ -884,7 +884,7 @@ export default {
         width: 260px;
         font-family: Roboto;
         &.active {
-          color: #48b6e2;
+          color: #409eff;
           border-color: #c8e9f6;
           background-color: #edf8fc;
         }

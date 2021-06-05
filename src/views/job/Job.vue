@@ -1191,7 +1191,7 @@ export default {
         // 	const h = this.$createElement;
         // 	let arr = this.$t('message.startAggregation_message').split('XXX');
         // 	this.$confirm(
-        // 		h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, data.name), ')' + arr[1]]),
+        // 		h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, data.name), ')' + arr[1]]),
         // 		this.$t('dataFlow.importantReminder'),
         // 		{
         // 			type: 'warning',
@@ -1231,7 +1231,7 @@ export default {
         let arr = self.$t('message.stopAggregation_message').split('XXX')
         message = h('p', [
           arr[0] + '(',
-          h('span', { style: { color: '#48b6e2' } }, self.dataFlow.name),
+          h('span', { style: { color: '#409EFF' } }, self.dataFlow.name),
           ')' + arr[1]
         ])
       }
@@ -1816,7 +1816,7 @@ export default {
     text-align: center;
     color: #fff;
     cursor: pointer;
-    background-color: #48b6e2;
+    background-color: #409eff;
   }
   .backIcon:hover {
     background-color: #6dc5e8;

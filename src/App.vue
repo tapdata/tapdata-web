@@ -99,7 +99,7 @@ export default {
     margin: 8px 0;
   }
   blockquote {
-    border-color: #48b6e2;
+    border-color: #409eff;
   }
   table {
     display: table;

@@ -257,12 +257,12 @@ $color: #999999;
         display: inline-block;
         font-size: 30px;
         margin-right: 10px;
-        color: #48b6e2;
+        color: #409eff;
       }
       .tag {
         display: block;
         font-size: 16px;
-        color: #48b6e2;
+        color: #409eff;
         font-weight: 400;
         margin-bottom: 10px;
       }

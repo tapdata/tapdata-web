@@ -158,7 +158,7 @@
       :visible.sync="dialogFormVisible"
       width="600px"
     >
-      <el-form :model="form" ref="form" label-width="115px">
+      <el-form :model="form" ref="form" label-width="120px">
         <el-form-item
           :label="$t('role.roleName')"
           prop="name"
@@ -248,7 +248,7 @@
         {{ $t('role.delete_remind') }}
         <span
           @click="delLinkRole(deleteObj.id)"
-          style="color: #48b6e2; cursor: pointer"
+          style="color: #409eff; cursor: pointer"
         >
           {{ deleteObj.name }}</span
         >

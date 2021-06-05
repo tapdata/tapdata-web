@@ -577,7 +577,7 @@ export default {
           color: #606266;
         }
         .box-btn {
-          color: #48b6e2;
+          color: #409eff;
           cursor: pointer;
           .e-button {
             padding: 4px 10px;
@@ -607,7 +607,7 @@ export default {
             display: inline-block;
             .nameStyle {
               display: none;
-              color: #48b6e2;
+              color: #409eff;
               float: right;
               font-size: 12px;
               padding-left: 10px;

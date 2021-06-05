@@ -829,7 +829,7 @@
 		>
 			<p>
 				{{ $t('dataForm.error.sourceNameExist') }}
-				<span @click="clickLinkSource" style="color:#48B6E2;cursor: pointer">
+				<span @click="clickLinkSource" style="color:#409EFF;cursor: pointer">
 					{{ connectionObj.name }}</span
 				>
 				{{ $t('dataForm.error.noCreate') }}

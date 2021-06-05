@@ -223,7 +223,7 @@ const en = {
       incrementalLag: 'CDC Lag',
       allValid: 'All verification tasks',
       checkSame: 'Check the same',
-      countDifference: 'Count difference',
+      countDifference: 'Count inconsistent',
       contentDifference: 'Content difference'
     }
   },
@@ -2716,7 +2716,7 @@ const en = {
     roleManagement: 'Role Management',
     preciseMatching: 'precise matching',
     fuzzyMatching: 'Fuzzy matching',
-    selectRoleName: 'Please select a role name',
+    selectRoleName: 'Please enter the role name',
     selectDesc: 'Please enter a role description',
     selectUser: 'Please select a user name',
     description: 'Role Description',

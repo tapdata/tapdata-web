@@ -102,7 +102,7 @@ export default {
     cursor: pointer;
   }
   .item:hover {
-    color: #48b6e2;
+    color: #409eff;
   }
   .noData {
     text-align: center;
