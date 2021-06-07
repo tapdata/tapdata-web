@@ -226,7 +226,6 @@ export default {
               this.selectSourceArr = this.transferData.selectSourceArr
               this.field_process = this.transferData.field_process
             }
-            console.log(this.field_process, 'kkkkkkkkkkkkkkkkkkkk')
             if (
               bidirectional &&
               (this.transferData.table_prefix !== '' ||
@@ -254,8 +253,9 @@ export default {
     //点开字段处理
     handleFiled(option) {
       this.currentTableId = option.id
-      this.currentTableName = option.label
+      this.currentTableName = option.key
       this.dialogFileVisible = true
+      this.operations = [] //上一次的操作先清空
       this.getSchema(option.id)
     },
     //请求files
