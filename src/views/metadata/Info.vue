@@ -1014,6 +1014,7 @@ export default {
       display: flex;
       flex-direction: row;
       padding: 10px 0 0;
+      overflow: hidden;
       .metadata-aside {
         width: 360px;
         height: 100%;
@@ -1296,6 +1297,19 @@ export default {
         padding: 0;
         background-color: #eff1f4 !important;
       }
+      td,
+      .is-scrolling-left ~ .el-table__fixed {
+        border-right: 0;
+      }
+      th {
+        border-right: 1px solid #dcdfe6;
+      }
+    }
+    .table-page-pagination {
+      padding-top: 5px;
+      box-sizing: border-box;
+      border-top: 1px solid #ddd;
+      background-color: #fff;
       td,
       .is-scrolling-left ~ .el-table__fixed {
         border-right: 0;

@@ -42,12 +42,14 @@ export const FORM_DATA_KEY = 'form_data',
     isSchedule: false,
     cronExpression: '',
     isOpenAutoDDL: false,
+    cdcConcurrency: true,
     emailWaring: {
       edited: false,
       started: false,
       error: false,
       paused: false
     },
+    readShareLogMode: 'STREAMING',
     stopOnError: true,
     syncPoints: [
       {
@@ -134,6 +136,18 @@ export const FORM_DATA_KEY = 'form_data',
       name: 'MariaDB',
       shapeImage: 'static/editor/o-maria.svg',
       stencilImage: 'static/editor/maria.svg'
+    },
+    redis: {
+      type: 'redis',
+      name: 'Redis',
+      shapeImage: 'static/editor/o-redis.svg',
+      stencilImage: 'static/editor/redis.svg'
+    },
+    elasticsearch: {
+      type: 'elasticsearch',
+      name: 'Elasticsearch',
+      shapeImage: 'static/editor/o-elasticsearch.svg',
+      stencilImage: 'static/editor/elasticsearch.svg'
     }
   },
   FILE_TYPE_MAPPING = {

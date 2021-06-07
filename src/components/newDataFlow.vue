@@ -68,7 +68,7 @@
             >
           </div>
         </li>
-        <template v-if="!$window.getSettingByKey('HIDE_FOR_CLOUD')">
+        <template v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
           <li
             class="marTop25"
             @click="handleModules"
@@ -121,7 +121,22 @@ export default {
   },
   data() {
     return {
-      dialogDatabaseTypeVisible: false
+      dialogDatabaseTypeVisible: false,
+      whiteList: [
+        'mysql',
+        'oracle',
+        'mongodb',
+        'sqlserver',
+        'postgres',
+        'elasticsearch',
+        'redis',
+        'file',
+        'db2',
+        'kafka',
+        'mariadb',
+        'mysql pxc',
+        'jira'
+      ] //目前白名单,
     }
   },
 
@@ -156,6 +171,7 @@ export default {
     // 跳转数据源
     handleConnection() {
       this.dialogDatabaseTypeVisible = true
+      this.handleClose()
       // let routeUrl = this.$router.resolve({
       // 	path: '/connections?noviceGuide=true'
       // });
@@ -187,9 +203,12 @@ export default {
     },
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
-      let href = '/#/connections/create?databaseType=' + type
-      window.open(href)
-      // this.$router.push('connections/create?databaseType=' + type);
+      if (this.whiteList.includes(type)) {
+        this.$router.push('connections/create?databaseType=' + type)
+      } else {
+        top.location.href = '/#/connection'
+        localStorage.setItem('connectionDatabaseType', type)
+      }
     }
   }
 }

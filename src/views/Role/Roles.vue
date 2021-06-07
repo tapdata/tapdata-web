@@ -1,183 +1,156 @@
 <template>
-  <div class="roles">
-    <div class="roles-box">
-      <!-- <SubHead :tittle="headTitle"></SubHead> -->
-      <div class="mappingTemplate">{{ $t('role.roleManagement') }}</div>
-      <div class="topbar">
-        <!-- <div class="panelBtn"></div> -->
+  <section class="roles-list-wrap">
+    <TablePage
+      ref="table"
+      row-key="id"
+      class="roles-list"
+      :title="$t('app.menu.' + $route.name)"
+      :remoteMethod="getData"
+      @sort-change="handleSortTable"
+    >
+      <div slot="search">
         <ul class="search-bar">
-          <li class="item">
+          <li>
             <el-input
-              :placeholder="$t('role.selectRoleName')"
-              v-model="searchNav.keyword"
-              size="mini"
+              clearable
               class="input-with-select"
-              suffix-icon="el-icon-search"
+              size="mini"
+              v-model="searchParams.keyword"
+              :placeholder="$t('role.selectRoleName')"
+              @input="table.fetch(1, 800)"
             >
               <el-select
-                v-model="searchNav.selectedSeachType"
+                style="width: 120px"
                 slot="prepend"
-                size="mini"
+                v-model="searchParams.isFuzzy"
+                @input="table.fetch(1)"
               >
                 <el-option
                   :label="$t('role.fuzzyMatching')"
-                  value="0"
+                  :value="true"
                 ></el-option>
                 <el-option
                   :label="$t('role.preciseMatching')"
-                  value="1"
+                  :value="false"
                 ></el-option>
               </el-select>
             </el-input>
           </li>
-          <li class="item" v-if="searchNav.keyword">
-            <el-button size="mini" type="text" @click="reset()">{{
-              $t('button.query')
-            }}</el-button>
+          <li v-if="searchParams.keyword">
+            <el-button size="mini" type="text" @click="reset()"
+              >{{ $t('button.query') }}
+            </el-button>
           </li>
-          <li class="item" v-if="searchNav.keyword">
-            <el-button
-              type="text"
-              class="restBtn"
-              size="mini"
-              @click="reset('reset')"
-            >
-              {{ $t('dataFlow.reset') }}
+
+          <li v-if="searchParams.keyword">
+            <el-button size="mini" type="text" @click="reset('reset')"
+              >{{ $t('button.reset') }}
             </el-button>
           </li>
         </ul>
-        <div class="topbar-buttons">
+      </div>
+      <div slot="operation">
+        <el-button
+          v-readonlybtn="'role_creation'"
+          class="btn btn-create"
+          size="mini"
+          @click="openCreateDialog()"
+        >
+          <i class="iconfont icon-jia add-btn-icon"></i>
+          <span>{{ $t('role.create') }}</span>
+        </el-button>
+      </div>
+      <el-table-column
+        :label="$t('role.roleName')"
+        :show-overflow-tooltip="true"
+      >
+        <template slot-scope="scope">
+          <div>{{ scope.row.name }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('role.description')"
+        :show-overflow-tooltip="true"
+      >
+        <template slot-scope="scope">
+          <div>{{ scope.row.description }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('role.associatUsers')" width="100">
+        <template slot-scope="scope">
+          <span>{{ scope.row.userCount }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('role.founder')">
+        <template slot-scope="scope">
+          <div>
+            {{ scope.row.userEmail }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('role.defaultRole')" width="90">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.register_user_default"
+            :disabled="!$has('role_edition')"
+            @change="changeRowDefault(scope.row)"
+          >
+          </el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('role.operate')" width="310">
+        <template slot-scope="scope">
           <el-button
-            class="btn btn-create"
-            v-readonlybtn="'role_creation'"
-            size="mini"
-            icon="el-icon-plus"
-            @click="createRole()"
-            >{{ $t('role.create') }}</el-button
+            type="text"
+            v-readonlybtn="'role_edition'"
+            :disabled="
+              $disabledByPermission('role_edition_all_data', scope.row.user_id)
+            "
+            @click="handleSettingPermissions(scope.row.id, scope.row.name)"
           >
-        </div>
-      </div>
-      <div class="table-box">
-        <el-table
-          v-loading="loading"
-          :element-loading-text="$t('dataFlow.dataLoading')"
-          :data="tableData"
-          height="100%"
-          style="border: 1px solid #dedee4"
-          class="role-table"
-          row-key="id"
-          border
-        >
-          <el-table-column
-            :label="$t('role.roleName')"
-            :show-overflow-tooltip="true"
-          >
-            <template slot-scope="scope">
-              <div>{{ scope.row.name }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('role.description')"
-            :show-overflow-tooltip="true"
-          >
-            <template slot-scope="scope">
-              <div>{{ scope.row.description }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('role.associatUsers')" width="100">
-            <template slot-scope="scope">
-              <span>{{ scope.row.userCount }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('role.founder')">
-            <template slot-scope="scope">
-              <div>
-                {{ scope.row.userEmail }}
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('role.defaultRole')" width="90">
-            <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.register_user_default"
-                :disabled="!$has('role_edition')"
-                @change="changeRowDefault(scope.row)"
-              >
-              </el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('role.operate')" width="300">
-            <template slot-scope="scope">
-              <el-button
-                type="text"
-                v-readonlybtn="'role_edition'"
-                :disabled="
-                  $disabledByPermission(
-                    'role_edition_all_data',
-                    scope.row.user_id
-                  )
-                "
-                @click="handleSettingPermissions(scope.row.id, scope.row.name)"
-              >
-                {{ $t('role.settingPermissions') }}
-              </el-button>
+            {{ $t('role.settingPermissions') }}
+          </el-button>
 
-              <el-button
-                type="text"
-                @click="handleAssociatUsers(scope.row.id)"
-                :disabled="
-                  $disabledByPermission(
-                    'role_edition_all_data',
-                    scope.row.user_id
-                  ) || scope.row.name === 'admin'
-                "
-                v-readonlybtn="'role_edition'"
-              >
-                {{ $t('role.associatUsers') }}
-              </el-button>
-              <el-button
-                type="text"
-                v-readonlybtn="'role_edition'"
-                :disabled="
-                  $disabledByPermission(
-                    'role_edition_all_data',
-                    scope.row.user_id
-                  )
-                "
-                @click="createRole(scope.row.id, scope.row)"
-              >
-                {{ $t('role.edit') }}
-              </el-button>
-              <el-button
-                type="text"
-                @click="handleDelete(scope.row)"
-                :disabled="
-                  $disabledByPermission(
-                    'role_delete_all_data',
-                    scope.row.user_id
-                  ) || scope.row.name === 'admin'
-                "
-                v-readonlybtn="'role_delete'"
-              >
-                {{ $t('role.delete') }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination
-          class="pagination"
-          background
-          layout="prev, pager, next,sizes,total"
-          :page-sizes="[20, 30, 50, 100]"
-          :page-size="pagesize"
-          :total="totalNum"
-          :current-page.sync="currentPage"
-          @current-change="handleCurrentChange"
-          @size-change="handleSizeChange"
-        >
-        </el-pagination>
-      </div>
-    </div>
+          <el-button
+            type="text"
+            @click="handleAssociatUsers(scope.row.id)"
+            :disabled="
+              $disabledByPermission(
+                'role_edition_all_data',
+                scope.row.user_id
+              ) || scope.row.name === 'admin'
+            "
+            v-readonlybtn="'role_edition'"
+          >
+            {{ $t('role.associatUsers') }}
+          </el-button>
+          <el-button
+            type="text"
+            v-readonlybtn="'role_edition'"
+            :disabled="
+              $disabledByPermission('role_edition_all_data', scope.row.user_id)
+            "
+            @click="openCreateDialog(scope.row.id, scope.row)"
+          >
+            {{ $t('role.edit') }}
+          </el-button>
+          <el-button
+            type="text"
+            style="color: #f56c6c"
+            @click="handleDelete(scope.row)"
+            :disabled="
+              $disabledByPermission(
+                'role_delete_all_data',
+                scope.row.user_id
+              ) || scope.row.name === 'admin'
+            "
+            v-readonlybtn="'role_delete'"
+          >
+            {{ $t('role.delete') }}
+          </el-button>
+        </template>
+      </el-table-column>
+    </TablePage>
     <!-- 创建角色 -->
     <el-dialog
       :title="$t('role.createRole')"
@@ -219,12 +192,12 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogFormVisible = false">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button size="mini" type="primary" @click="createSave">{{
-          $t('message.confirm')
-        }}</el-button>
+        <el-button size="mini" @click="dialogFormVisible = false"
+          >{{ $t('message.cancel') }}
+        </el-button>
+        <el-button size="mini" type="primary" @click="createSave"
+          >{{ $t('message.confirm') }}
+        </el-button>
       </div>
     </el-dialog>
 
@@ -290,24 +263,25 @@
         </el-button>
       </span>
     </el-dialog>
-  </div>
+  </section>
 </template>
+
 <script>
-// import SubHead from '@/components/SubHead';
-import factory from '@/api/factory'
-const rolesModel = factory('role')
-const usersModel = factory('users')
-const roleMappingModel = factory('roleMapping')
+import TablePage from '@/components/TablePage'
+import { toRegExp } from '@/utils/util'
+
 export default {
-  name: 'Roles',
-  // components: { SubHead },
+  components: {
+    TablePage
+  },
   data() {
     return {
-      headTitle: this.$t('role.roleManagement'),
-      searchNav: {
-        selectedSeachType: '0',
-        keyword: ''
+      searchParams: {
+        keyword: '',
+        isFuzzy: true
+        // time: ''
       },
+      order: 'last_updated DESC',
       tableData: [],
       roleusers: [],
       userGroup: [],
@@ -333,60 +307,85 @@ export default {
     }
   },
   created() {
-    this.handleDataApi()
     this.getUserData()
+    // this.getDbOptions();
+    // this.getCount();
   },
-  watch: {
-    'searchNav.keyword'() {
-      this.handleDataApi()
-    },
-    'searchNav.selectedSeachType'() {
-      this.handleDataApi()
+  mounted() {
+    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+  },
+  computed: {
+    table() {
+      return this.$refs.table
     }
   },
   methods: {
-    // 获取角色列表
-    async handleDataApi(params) {
-      // let { sortBy, descending, page, rowsPerPage } = this.pagination;
-      let where = {}
-      let order = 'createTime DESC'
-      if (this.order) {
-        order = this.order
-      }
-
-      let searchkw = this.searchNav.keyword
-      if (searchkw && this.searchNav.selectedSeachType === '0') {
-        where.name = { like: searchkw, options: 'i' }
-      } else if (searchkw && this.searchNav.selectedSeachType === '1') {
-        where.name = searchkw
-      }
-
-      let _params = Object.assign(
-        {
-          filter: JSON.stringify({
-            where: where,
-            order: order,
-            limit: this.pagesize,
-            skip: (this.currentPage - 1) * this.pagesize
-          })
-        },
-        params
-      )
-
-      await usersModel.role(_params).then(res => {
-        if (res && res.data) {
-          this.tableData = res.data
+    // 重置
+    reset(name) {
+      if (name === 'reset') {
+        this.searchParams = {
+          keyword: '',
+          isFuzzy: true
         }
-      })
-      await rolesModel.count(_params).then(res => {
-        if (res && res.data) {
-          this.totalNum = res.data.count
+      }
+      this.table.fetch(1)
+    },
+    // 获取数据
+    getData({ page }) {
+      let { current, size } = page
+      let { isFuzzy, keyword } = this.searchParams
+      let where = {}
+      if (keyword && keyword.trim()) {
+        let filterObj = isFuzzy
+          ? { like: toRegExp(keyword), options: 'i' }
+          : keyword
+        where.or = [{ name: filterObj }]
+      }
+      let filter = {
+        order: this.order,
+        limit: size,
+        skip: (current - 1) * size,
+        where
+      }
+      return Promise.all([
+        this.$api('role').count({ where: where }),
+        this.$api('users').role({
+          filter: JSON.stringify(filter)
+        })
+      ]).then(([countRes, res]) => {
+        return {
+          total: countRes.data.count,
+          data: res.data
         }
       })
     },
-
+    // 获取角色下拉值
+    // getDbOptions() {
+    // 	this.$api('role')
+    // 		.get({})
+    // 		.then(res => {
+    // 			if (res.data && res.data.length) {
+    // 				let options = [];
+    // 				res.data.forEach(db => {
+    // 					if (db.name !== 'admin') {
+    // 						options.push({
+    // 							label: db.name,
+    // 							value: db.id
+    // 						});
+    // 					}
+    // 				});
+    // 				this.createFormConfig.items[3].options = options;
+    // 			}
+    // 		});
+    // },
+    handleSortTable({ order, prop }) {
+      this.order = `${order ? prop : 'last_updated'} ${
+        order === 'ascending' ? 'ASC' : 'DESC'
+      }`
+      this.table.fetch(1)
+    },
     // 新建角色(弹窗开关)
-    createRole(id, item) {
+    openCreateDialog(id, item) {
       this.dialogFormVisible = true
       if (id) {
         this.roleId = id
@@ -409,32 +408,12 @@ export default {
               this.permissions = res.data
             }
           })
+        this.table.fetch()
       }
     },
-
     // 设置权限
     handleSettingPermissions(id, name) {
       this.$router.push({ name: 'role', query: { id: id, name: name } })
-    },
-
-    // 已关联用户
-    async handleAssociatUsers(id) {
-      this.dialogUserVisible = true
-      this.roleId = id
-      let _this = this
-      _this.roleusers = []
-      _this.oldUser = []
-
-      await roleMappingModel.get({ 'filter[where][roleId]': id }).then(res => {
-        if (res && res.data) {
-          res.data.forEach(roleMapping => {
-            if (roleMapping.principalType === 'USER') {
-              _this.roleusers.push(roleMapping.principalId)
-              _this.oldUser.push(roleMapping)
-            }
-          })
-        }
-      })
     },
 
     // 删除角色
@@ -448,11 +427,11 @@ export default {
 
     // 确认删除角色
     async confirmDelete() {
-      rolesModel
+      this.$api('role')
         .delete(this.deleteObj.id, this.deleteObj.name)
         .then(res => {
           if (res && res.data) {
-            this.handleDataApi()
+            this.table.fetch()
             this.$message.success(this.$t('role.delete_success'))
           }
         })
@@ -463,8 +442,7 @@ export default {
           this.deleteDialogVisible = false
         })
     },
-
-    // 删除角色权限查看
+    // 查看删除角色权限
     delLinkRole(id) {
       this.$router.push({ name: 'role', query: { id } })
     },
@@ -485,10 +463,10 @@ export default {
           }
           let newRoleMappings = []
 
-          rolesModel[method](record)
+          this.$api('role')
+            [method](record)
             .then(res => {
               if (res && res.data) {
-                self.handleDataApi()
                 if (method === 'post') {
                   this.permissions.forEach(selectPermission => {
                     if (
@@ -512,7 +490,10 @@ export default {
                         this.$message.success(this.$t('message.saveOK'))
                       }
                     })
+                } else {
+                  this.$message.success(this.$t('message.saveOK'))
                 }
+                this.table.fetch()
               }
             })
             .catch(e => {
@@ -533,24 +514,50 @@ export default {
       })
     },
 
-    // 获取用户列表
-    async getUserData() {
-      await usersModel.get({}).then(res => {
-        if (res && res.data) {
-          res.data.forEach(item => {
-            if (!item.role) {
-              this.userGroup.push(item)
-            }
-          })
-        }
-      })
+    // 已关联用户
+    async handleAssociatUsers(id) {
+      this.dialogUserVisible = true
+      this.roleId = id
+      let _this = this
+      _this.roleusers = []
+      _this.oldUser = []
+      await this.$api('roleMapping')
+        .get({ 'filter[where][roleId]': id })
+        .then(res => {
+          if (res && res.data) {
+            res.data.forEach(roleMapping => {
+              if (
+                roleMapping.principalType === 'USER' &&
+                this.userGroup.find(v => v.id === roleMapping.principalId)
+              ) {
+                _this.roleusers.push(roleMapping.principalId)
+                _this.oldUser.push(roleMapping)
+              }
+            })
+          }
+        })
     },
 
-    // 保存用户
+    // 获取用户列表
+    async getUserData() {
+      await this.$api('users')
+        .get({})
+        .then(res => {
+          if (res && res.data) {
+            res.data.forEach(item => {
+              if (!item.role) {
+                this.userGroup.push(item)
+              }
+            })
+          }
+        })
+    },
+
+    // 保存关联用户
     saveUser() {
       let newRoleMappings = []
       this.oldUser.forEach(delRolemapping => {
-        roleMappingModel.delete(delRolemapping.id)
+        this.$api('roleMapping').delete(delRolemapping.id)
       })
       // _this.oldUser
       this.roleusers.forEach(roleuser => {
@@ -562,14 +569,16 @@ export default {
           })
         }
       })
-      roleMappingModel
+      this.$api('roleMapping')
         .post(newRoleMappings)
         .then(res => {
           if (res && res.data) {
+            this.roleusers = []
             res.data.forEach(item => {
               this.roleusers.push(item.principalId)
             })
-            this.handleDataApi()
+
+            this.table.fetch()
             this.$message.success(this.$t('message.saveOK'))
           }
         })
@@ -584,19 +593,6 @@ export default {
         })
       this.dialogUserVisible = false
     },
-
-    // 重置
-    reset(name) {
-      if (name === 'reset') {
-        this.searchNav = {
-          selectedSeachType: '0',
-          keyword: ''
-        }
-      }
-
-      this.handleDataApi()
-    },
-
     // 改变列表默认值val
     changeRowDefault(data) {
       const record = {
@@ -606,24 +602,13 @@ export default {
         register_user_default: data.register_user_default
       }
 
-      rolesModel.patch(record).then(res => {
-        if (res && res.data) {
-          this.handleDataApi()
-        }
-      })
-    },
-
-    // 分页
-    handleCurrentChange(cpage) {
-      this.currentPage = cpage
-      this.handleDataApi()
-    },
-
-    // 分页
-    handleSizeChange(psize) {
-      this.pagesize = psize
-      localStorage.setItem('flowPagesize', psize)
-      this.handleDataApi()
+      this.$api('role')
+        .patch(record)
+        .then(res => {
+          if (res && res.data) {
+            this.table.fetch()
+          }
+        })
     }
   }
 }
@@ -633,138 +618,88 @@ export default {
   display: flex;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
-  .roles-box {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: #fafafa;
-    overflow: hidden;
-    .mappingTemplate {
-      height: 60px;
-      line-height: 60px;
-      padding-left: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      color: #333;
-      box-sizing: border-box;
-      border-bottom: 1px solid #dedee4;
-      background-color: #fff;
-      box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
-    }
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 10px;
 
-      .search-bar {
-        display: flex;
-        align-items: center;
-        height: 50px;
-        .item {
-          margin-right: 10px;
-        }
-      }
-      // .el-button {
-      // 	padding: 4px 15px;
-      // }
-    }
-    .table-box {
-      flex: 1;
-      overflow: hidden;
-      padding: 0 10px 10px 10px;
+  .roles-list {
+    background-color: rgba(239, 241, 244, 100);
+
+    .search-bar {
       display: flex;
-      flex-direction: column;
-      font-size: 12px;
-      .role-table {
-        flex: 1;
-        overflow: hidden;
-        .name {
-          color: #48b6e2;
-          cursor: pointer;
-        }
-        .name:hover {
-          text-decoration: underline;
-        }
+
+      li + li {
+        margin-left: 10px;
       }
-      .el-button.is-disabled {
-        color: #c0c4cc;
+    }
+
+    .btn + .btn {
+      margin-left: 5px;
+    }
+
+    .btn {
+      padding: 7px;
+      background: #f5f5f5;
+
+      i.iconfont {
+        font-size: 12px;
       }
-      // .el-button--text {
-      // 	padding-left: 10px;
-      // 	// color: #606266;
-      // }
-      .el-button + .el-button {
-        margin-left: 12px;
+
+      &.btn-dropdowm {
+        margin-left: 5px;
       }
-      .el-pagination {
-        width: 100%;
-        padding-top: 10px;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        text-align: right;
-        overflow: hidden;
-        z-index: 999;
+
+      &.btn-create {
+        margin-left: 5px;
       }
     }
   }
 }
 </style>
 <style lang="scss">
-.roles {
-  .topbar-buttons {
-    .el-button {
-      font-size: 12px;
-      color: #666;
-      background-color: #f5f5f5;
-    }
-  }
-  .search-bar {
-    .input-with-select {
-      .el-select .el-input {
-        width: 100px;
-      }
-    }
-  }
-  .table-box {
-    .role-table {
-      color: #333;
-      th {
-        padding: 2px 0;
-        background: #f5f5f5;
-      }
-      th,
-      td {
-        &:first-child {
-          padding-left: 10px;
-        }
-      }
-    }
-    .el-table--border td {
-      border-right: 0;
-    }
-    .el-table--border th {
-      border-right: 1px solid #dcdfe6;
-    }
+.roles-list-wrap {
+  height: 100%;
+  .table-page-container {
+    .table-page-body {
+      box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
 
-    .el-button {
-      font-size: 12px;
+      .table-page-topbar {
+        padding: 10px 10px 0 10px;
+        background-color: #fff;
+      }
+
+      .el-table {
+        // padding: 0 10px;
+        box-sizing: border-box;
+        // border-top: 0;
+        // .has-gutter {
+        // 	th {
+        // 		background-color: #eff1f4 !important;
+        // 	}
+        // }
+      }
+
+      .table-page-pagination {
+        margin-top: 0;
+        padding: 5px 20px;
+        background-color: #fff;
+        box-sizing: border-box;
+      }
     }
   }
+
   .userBox {
     .el-select,
     .el-input {
       width: 100%;
     }
+
     .num {
       padding-top: 10px;
     }
   }
+
   .el-dialog__body {
     padding: 30px;
   }
+
   .dialog-footer {
     .el-button {
       width: 80px;

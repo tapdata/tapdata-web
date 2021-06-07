@@ -79,6 +79,14 @@ export const TYPEMAP = {
   jira: 'jira',
   dameng: 'Dameng'
 }
+//特殊数据源
+export const TYPEMAPCONFIG = {
+  'gbase-8s': 'gbase8s',
+  'sybase ase': 'sybasease',
+  'dummy db': 'dummydb',
+  'mysql pxc': 'mysqlpxc',
+  'rest api': 'restapi'
+}
 
 //数据源基础字段
 export const defaultModel = {
@@ -115,6 +123,9 @@ export const defaultModel = {
     sslKeyFile: null,
     search_databaseType: '',
     schema: ''
+    search_databaseType: '',
+    increamentalTps: 100, //dummy
+    initialReadSize: 100000 //dummy
   },
   kafka: {
     id: '',
@@ -166,6 +177,74 @@ export const defaultModel = {
     jiraUrl: '',
     jiraUsername: '',
     jiraPassword: ''
+  },
+  restApi: {
+    name: '',
+    auth_type: '',
+    request_interval: '',
+    collection_name: '',
+    unique_keys: '',
+    req_pre_process:
+      " // Build-in function's MD5/SHA1/SHA256\n" +
+      '    // example:\n' +
+      "    // request_params.sign = MD5(request_params.id+request_params_name+'secret_key');",
+    resp_pre_process:
+      "// result: {'tapdata_offset': offset, 'response':<API RESPONSE>}",
+    data_sync_mode: 'INCREMENTAL_SYNC',
+    url_info: [
+      {
+        url: '',
+        method: 'GET',
+        url_type: 'INCREMENTAL_SYNC',
+        headers: {},
+        headerArray: [{ name: '', value: '' }],
+        parameterArray: [{ name: '', value: '' }],
+        request_parameters: {},
+        offset_field: '',
+        initial_offset: '',
+        content_type: ''
+      }
+    ]
+  },
+  custom_connection: {
+    name: '',
+    connection_type: '',
+    custom_type: '',
+    collection_name: '',
+    unique_keys: '',
+    custom_ondata_script: '',
+    custom_cdc_script: '',
+    custom_initial_script: ''
+  },
+  gridfs: {
+    connection_type: 'source',
+    prefix: 'fs',
+    database_uri: '',
+    _password_for_url: '',
+    plain_password: '',
+    include_filename: '',
+    exclude_filename: '',
+    file_schema: '',
+    file_type: 'csv',
+    seperate: ',',
+    gridfs_header_type: 'specified_line',
+    gridfs_header_config: '',
+    data_content_xpath: '',
+    gridfsReadMode: 'data',
+    json_type: 'ArrayBegin',
+    tags_filter: '',
+    gridfs_upload_chunk_size: '',
+    file_upload_chunk_size: 261120,
+    file_upload_mode: 'stream',
+    project: '',
+    projects: '',
+    sheet_start: 1,
+    sheet_end: 1,
+    excel_header_type: 'index',
+    excel_header_start: 'A1',
+    excel_header_end: 'Z1',
+    excel_value_start: '',
+    excel_value_end: ''
   }
 }
 export const defaultCloudModel = {

@@ -117,6 +117,11 @@ export default function () {
           }
         ],
       }
+      // {
+      //   type: 'slot',
+      //   slot: 'syncPoints',
+      //   label: '增量采集开始时刻'
+      // }
     ]
   }
 }

@@ -27,7 +27,7 @@
               size="small"
               @input="table.fetch(1)"
             >
-              <ElOption label="全部状态" value=""></ElOption>
+              <ElOption :label="$t('dataFlow.status.all')" value=""></ElOption>
               <ElOption
                 v-for="(value, label) in statusOptions"
                 :key="value"
@@ -37,16 +37,39 @@
               </ElOption>
             </ElSelect>
           </li>
-          <li>
-            <el-input
-              v-model="searchParams.keyword"
-              clearable
+          <li v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'">
+            <el-select
+              v-model="searchParams.progress"
               size="small"
-              :placeholder="$t('dataFlow.searchPlaceholder')"
-              @input="table.fetch(1, 800)"
+              clearable
+              :placeholder="$t('dataFlow.taskSettingPlaceholder')"
+              style="width: 160px"
+              @input="table.fetch(1)"
             >
-              <i slot="prefix" class="el-input__icon el-icon-search"></i>
-            </el-input>
+              <el-option
+                v-for="item in progressOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </li>
+          <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+            <el-select
+              v-model="searchParams.executionStatus"
+              size="small"
+              clearable
+              :placeholder="$t('dataFlow.executionStatus')"
+              style="width: 160px"
+              @input="table.fetch(1)"
+            >
+              <el-option
+                v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
+                :key="opt"
+                :label="$t('dataFlow.status.' + opt)"
+                :value="opt"
+              ></el-option>
+            </el-select>
           </li>
           <li v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')">
             <ElSelect
@@ -64,40 +87,17 @@
               ></ElOption>
             </ElSelect>
           </li>
-          <!-- <li>
-						<el-select
-							v-model="searchParams.progress"
-							size="mini"
-							clearable
-							:placeholder="$t('dataFlow.taskSettingPlaceholder')"
-							style="width:160px"
-							@input="table.fetch(1)"
-						>
-							<el-option
-								v-for="item in progressOptions"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
-							></el-option>
-						</el-select>
-					</li>
-					<li>
-						<el-select
-							v-model="searchParams.executionStatus"
-							size="mini"
-							clearable
-							:placeholder="$t('dataFlow.executionStatus')"
-							style="width:160px"
-							@input="table.fetch(1)"
-						>
-							<el-option
-								v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
-								:key="opt"
-								:label="$t('dataFlow.status.' + opt)"
-								:value="opt"
-							></el-option>
-						</el-select>
-					</li> -->
+          <li>
+            <el-input
+              v-model="searchParams.keyword"
+              clearable
+              size="small"
+              :placeholder="$t('dataFlow.searchPlaceholder')"
+              @input="table.fetch(1, 800)"
+            >
+              <i slot="prefix" class="el-input__icon el-icon-search"></i>
+            </el-input>
+          </li>
           <li>
             <ElButton class="btn-refresh" size="small" @click="table.fetch()">
               <i class="el-icon-refresh"></i>
@@ -109,7 +109,7 @@
         <el-button
           v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'SYNC_category_application'"
-          size="mini"
+          size="small"
           class="btn"
           v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
@@ -118,10 +118,11 @@
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
         </el-button>
         <el-dropdown
+          class="btn"
           @command="handleCommand($event)"
           v-show="multipleSelection.length > 0 && bulkOperation"
         >
-          <el-button class="btn btn-dropdowm" size="small">
+          <el-button class="btn-dropdowm" size="small">
             <i class="iconfont icon-piliang back-btn-icon"></i>
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
           </el-button>
@@ -129,7 +130,7 @@
             <el-dropdown-item
               command="export"
               v-readonlybtn="'SYNC_job_export'"
-              v-if="!$window.getSettingByKey('HIDE_EXPORT')"
+              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
               >{{ $t('dataFlow.bulkExport') }}</el-dropdown-item
             >
             <el-dropdown-item
@@ -153,19 +154,19 @@
           </el-dropdown-menu>
         </el-dropdown>
         <el-button
+          v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
           v-readonlybtn="'SYNC_Function_management'"
           size="small"
           class="btn"
           @click="handleGoFunction"
-          v-if="!$window.getSettingByKey('HIDE_FUNCTION_BUTTON')"
         >
           <i class="iconfont icon-hanshu back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkFx') }}</span>
         </el-button>
         <el-button
-          v-if="!$window.getSettingByKey('HIDE_IMPORT')"
+          v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
           v-readonlybtn="'SYNC_job_import'"
-          size="mini"
+          size="small"
           class="btn"
           @click="handleImport"
         >
@@ -282,6 +283,7 @@
         <div slot="header">
           {{ $t('dataFlow.syncType') }}
           <TableFilter
+            v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'"
             v-model="searchParams.syncType"
             :options="syncType"
             @input="table.fetch(1)"
@@ -373,7 +375,7 @@
       </el-table-column>
       <el-table-column
         :label="$t('dataFlow.operate')"
-        width="250"
+        width="280"
         fixed="right"
       >
         <template slot-scope="scope">
@@ -469,7 +471,7 @@
               {{ $t('button.edit') }}
             </ElLink>
             <ElLink
-              v-if="!$window.getSettingByKey('HIDE_SCHEDULE')"
+              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
               type="primary"
@@ -500,12 +502,13 @@
                 slot="dropdown"
               >
                 <el-dropdown-item
+                  v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs'"
                   command="validate"
                   v-readonlybtn="'Data_verify'"
                   >{{ $t('dataVerify.dataVerify') }}</el-dropdown-item
                 >
                 <el-dropdown-item
-                  v-if="!$window.getSettingByKey('HIDE_EXPORT')"
+                  v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
                   command="export"
                   v-readonlybtn="'SYNC_job_export'"
                   >{{ $t('dataFlow.dataFlowExport') }}</el-dropdown-item
@@ -654,7 +657,10 @@ export default {
           icon: 'icon-yunhangzhong'
         },
         paused: {
-          label: this.$t('dataFlow.status.draft'),
+          label: this.$t(
+            'dataFlow.status.' +
+              (window.getSettingByKey('DFS_TCM_PLATFORM') ? 'draft' : 'paused')
+          ),
           icon: 'icon-daiqidong'
         },
         error: {
@@ -718,8 +724,7 @@ export default {
         this.$has('SYNC_job_export') ||
         this.$has('SYNC_job_operation') ||
         this.$has('SYNC_job_delete'),
-      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year'],
-      tempList: []
+      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
     }
   },
   computed: {
@@ -741,30 +746,22 @@ export default {
     }
   },
   created() {
-    // window.windows = [];
-    this.mappingTemplate = this.$route.query.mapping
-    this.searchParams.agentId = this.$route.query.agentId
-    this.searchParams.status = this.$route.query.status
+    let { mapping, agentId, status, executionStatus } = this.$route.query
+    this.mappingTemplate = mapping ?? 'cluster-clone'
+    this.searchParams.agentId = agentId ?? ''
+    this.searchParams.status = status ?? ''
+    this.searchParams.executionStatus = executionStatus ?? ''
     ws.on('watch', this.dataflowChange)
-    interval = setInterval(() => {
-      let tempList = this.tempList
-      tempList.forEach(item => {
-        let list = this.table.list
-        let index = list.findIndex(it => it.name === item.name)
-        if (index >= 0) {
-          this.table.$set(
-            list,
-            index,
-            Object.assign(list[index], this.cookRecord(item))
-          )
-        }
-      })
-      this.tempList = []
-    }, 5000)
-    this.getAgentOptions()
+    if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
+      this.getAgentOptions()
+    }
   },
   mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+    let cacheParams = this.table.getCache()
+    let params = this.searchParams
+    for (const key in params) {
+      params[key] = params[key] || cacheParams[key] || ''
+    }
   },
   beforeDestroy() {
     ws.off('watch', this.dataflowChange)
@@ -772,6 +769,13 @@ export default {
   },
   watch: {
     '$route.query'(query) {
+      if (this.mappingTemplate !== query.mapping) {
+        let cacheParams = this.table.getCache()
+        let params = this.searchParams
+        for (const key in params) {
+          params[key] = cacheParams[key] || ''
+        }
+      }
       this.mappingTemplate = query.mapping
       this.table.fetch(1)
     }
@@ -799,7 +803,23 @@ export default {
             agentName: opt?.label
           }
         }
-        this.tempList.push(data.data.fullDocument)
+        let list = this.table.list
+        let index = list.findIndex(it => it.name === dataflow.name)
+        if (dataflow.children && !dataflow.children.length) {
+          delete dataflow.children
+        }
+        if (index >= 0) {
+          this.table.$set(
+            list,
+            index,
+            Object.assign(list[index], this.cookRecord(dataflow))
+          )
+          let handleItem = this.cookRecord(dataflow)
+          if (handleItem.children && !handleItem.children.length) {
+            delete handleItem.children
+          }
+          this.table.$set(list, index, Object.assign(list[index], handleItem))
+        }
       }
     },
     watchDataflowList(ids) {
@@ -816,7 +836,7 @@ export default {
             'fullDocument.executeMode': true,
             'fullDocument.stopOnError': true,
             'fullDocument.last_updated': true,
-            'fullDocument.createTime': true,
+            'fullDocument.startTime': true,
             'fullDocument.children': true,
             'fullDocument.stats': true,
             'fullDocument.stages.id': true,
@@ -839,6 +859,8 @@ export default {
         timeData: '',
         syncType: ''
       }
+
+      this.multipleSelection = []
       this.table.fetch(1)
     },
     getData({ page, tags }) {

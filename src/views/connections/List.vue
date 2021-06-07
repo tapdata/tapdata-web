@@ -1,4 +1,5 @@
 <template>
+  <!--TODO 代码合并遇到冲突过多，留意此文件出现的问题！！！-->
   <section class="connection-list-wrap">
     <TablePage
       ref="table"
@@ -21,7 +22,7 @@
             size="small"
             @input="table.fetch(1)"
           >
-            <ElOption label="全部状态" value=""></ElOption>
+            <ElOption :label="$t('connection.status.all')" value=""></ElOption>
             <ElOption
               v-for="item in databaseStatusOptions"
               :key="item.value"
@@ -30,6 +31,40 @@
             >
             </ElOption>
           </ElSelect>
+        </li>
+        <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')" class="item">
+          <el-select
+            v-model="searchParams.databaseModel"
+            clearable
+            size="small"
+            @input="table.fetch(1)"
+            :placeholder="$t('connection.connectionType')"
+          >
+            <el-option
+              v-for="item in databaseModelOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </li>
+        <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')" class="item">
+          <el-select
+            v-model="searchParams.databaseType"
+            clearable
+            size="small"
+            @input="table.fetch(1)"
+            :placeholder="$t('connection.dataBaseType')"
+          >
+            <el-option
+              v-for="item in databaseTypeOptions"
+              :key="item.type"
+              :label="item.name"
+              :value="item.type"
+            >
+            </el-option>
+          </el-select>
         </li>
         <li class="item">
           <ElInput
@@ -43,38 +78,6 @@
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </ElInput>
         </li>
-        <!-- <li class="item">
-          <el-select
-            v-model="searchParams.databaseModel"
-            clearable
-            size="mini"
-            @input="table.fetch(1)"
-          >
-            <el-option
-              v-for="item in databaseModelOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </li>
-        <li class="item">
-          <el-select
-            v-model="searchParams.databaseType"
-            clearable
-            size="mini"
-            @input="table.fetch(1)"
-          >
-            <el-option
-              v-for="item in databaseTypeOptions"
-              :key="item.type"
-              :label="item.name"
-              :value="item.type"
-            >
-            </el-option>
-          </el-select>
-        </li> -->
         <li class="item">
           <ElButton
             plain
@@ -125,14 +128,14 @@
             <div class="database-text">
               <!-- TODO: 缺少分类tag -->
               <!-- <span class="name" @click="preview(scope.row.id, scope.row.database_type)"
-                >{{ scope.row.name }}
-                <span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
-                  formatterListTags(scope.row)
-                }}</span></span
-              > -->
+								>{{ scope.row.name }}
+								<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
+									formatterListTags(scope.row)
+								}}</span></span
+							> -->
               <!-- <div class="user" v-if="scope.row.database_uri">
-                {{ formatterDatabaseType(scope.row) }}
-              </div> -->
+								{{ formatterDatabaseType(scope.row) }}
+							</div> -->
               <ElLink
                 type="primary"
                 style="display: block; line-height: 20px"
@@ -174,6 +177,15 @@
               {{ $t('connection.status.testing') }}
             </span>
           </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="connection_type"
+        :label="$t('connection.connectionType')"
+        width="160"
+      >
+        <template slot-scope="scope">
+          {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
       </el-table-column>
       <el-table-column
@@ -268,7 +280,7 @@ import TableFilter from '@/components/TableFilter'
 
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
-import { verify, desensitization } from './util'
+import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
 
 let timeout = null
@@ -408,13 +420,7 @@ export default {
       this.table.fetch(1)
     },
     async getDatabaseType() {
-      let filter = {
-        where: {
-          type: {
-            in: this.whiteList
-          }
-        }
-      }
+      let filter = {}
       let databaseTypes = await this.$api('DatabaseTypes').get({
         filter: JSON.stringify(filter)
       })
@@ -448,6 +454,7 @@ export default {
         platformInfo: true,
         last_updated: true,
         additionalString: true,
+        database_password: true,
         fill: true,
         sslCert: true,
         ssl: true,
@@ -511,7 +518,7 @@ export default {
               item.connectionUrl +=
                 item.database_host + ':' + item.database_port
             } else {
-              item.connectionUrl = item.database_uri
+              item.connectionUrl = item.database_uri || item.connection_name
             }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = this.$moment(item.last_updated).format(
@@ -709,7 +716,7 @@ export default {
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
       //drs 检查实例是否可用 dfs 检查agent是否可用
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
         let result = await this.$api('Workers').getAvailableAgent()
         if (!result.data.result || result.data.result.length === 0) {
           this.$message.error(this.$t('dataForm.form.agentMsg'))
@@ -729,16 +736,28 @@ export default {
         }
       }
     },
-    testConnection(item) {
-      let loading = this.$loading()
-      if (item.database_type === 'mongodb') {
-        item.database_uri = ''
+    async testConnection(item) {
+      let result = await this.$api('Workers').getAvailableAgent()
+      if (!result.data.result || result.data.result.length === 0) {
+        this.$message.error(this.$t('dataForm.form.agentMsg'))
+        return
       }
-      this.testData = item
+      let loading = this.$loading()
+      this.testData = Object.assign({}, defaultModel['default'], item)
+      if (['gridfs', 'mongodb'].includes(item.database_type)) {
+        this.testData.database_uri = ''
+        this.testData.isUrl = false
+      }
+      if (item.database_type !== 'redis') {
+        delete this.testData['database_password']
+      }
       this.$api('connections')
-        .updateById(item.id, {
-          status: 'testing'
-        })
+        .updateById(
+          item.id,
+          Object.assign({}, item, {
+            status: 'testing'
+          })
+        )
         .then(() => {
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
             this.dialogTestVisible = true

@@ -31,7 +31,7 @@ export default class Sidebar extends Component {
     this.el = $(
       `<div class="e-sidebar e-sidebar-${
         this.opts.region
-      }"><div class="e-sidebar-content" style="${
+      }" tabindex="-1"><div class="e-sidebar-content" style="${
         this.opts.bodyStyle || ''
       }"></div></div>`
     )

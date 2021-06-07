@@ -1175,7 +1175,7 @@
 		{
 			"category": "Frontend",
 			"key": "ALLOW_CONNECTION_TYPE",
-			"value": "mysql,oracle,sqlserver,mongodb,postgres,redis",
+			"value": "mysql,oracle,sqlserver,mongodb,postgres,redis,elasticsearch",
 			"id": "604f4b80e1ca905fa7545302",
 			"isArray": true
 		},
@@ -1183,37 +1183,13 @@
 		{ "category": "Frontend", "key": "SHOW_DATA_TRACE", "value": 0, "id": "604f4b80e1ca905fa7545306" },
 		{ "category": "Frontend", "key": "SHOW_CLUSTER_OR_AGENT", "value": "agent", "id": "604f4b80e1ca905fa7545308" },
 		{ "category": "Frontend", "key": "SHOW_SIMPLE_SCENE", "value": 0, "id": "604f4b80e1ca905fa754530a" },
-		{ "category": "Frontend", "key": "SHOW_CLASSIFY", "value": 0, "id": "604f4b80e1ca905fa754530c" },
+		{ "category": "Frontend", "key": "SHOW_CLASSIFY", "value": 1, "id": "604f4b80e1ca905fa754530c" },
 		{ "category": "Frontend", "key": "CREATE_DATAFLOW_BY_FORM", "value": 1, "id": "604f4b80e1ca905fa754530e" },
-		{ "category": "Frontend", "key": "HIDE_FUNCTION_BUTTON", "value": 1, "id": "604f4b80e1ca905fa7545310" },
-		{ "category": "Frontend", "key": "SUPPORT_RDS", "value": 1, "id": "604f4b80e1ca905fa7545312" },
-		{ "category": "Frontend", "key": "HIDE_MENU", "value": 1, "id": "604f4b80e1ca905fa7545314" },
-		{ "category": "Frontend", "key": "HIDE_TOPBAR", "value": 1, "id": "604f4b80e1ca905fa7545316" },
-		{ "category": "Frontend", "key": "HIDE_TABLE_TITLE", "value": 1, "id": "604f4b80e1ca905fa7545318" },
-		{ "category": "Frontend", "key": "HIDE_CONNECTION_OUTSIDE_PART", "value": 1, "id": "604f4b80e1ca905fa754531a" },
-		{ "category": "Frontend", "key": "SHOW_THEME_CSS", "value": 1, "id": "604f4b80e1ca905fa754531c" },
-		{ "category": "Frontend", "key": "HIDE_EXPORT", "value": 1, "id": "604f4b80e1ca905fa754531e" },
-		{ "category": "Frontend", "key": "HIDE_IMPORT", "value": 1, "id": "604f4b80e1ca905fa7545320" },
-		{ "category": "Frontend", "key": "HIDE_SCHEDULE", "value": 1, "id": "604f4b80e1ca905fa7545322" },
 		{ "category": "Frontend", "key": "HAVE_INSTANCE", "value": 1, "id": "604f4b80e1ca905fa7545324" },
-		{ "category": "Frontend", "key": "SHOW_REGION_AND_ZONE", "value": 1, "id": "604f4b80e1ca905fa7545326" },
-		{ "category": "Frontend", "key": "SHOW_DATAFLOW_LOG", "value": 1, "id": "604f4b80e1ca905fa7545328" },
-		{ "category": "Frontend", "key": "SHOW_DATAFLOW_SETTING", "value": 1, "id": "604f4b80e1ca905fa754532a" },
-		{ "category": "Frontend", "key": "SHOW_DATAFLOW_LOG_CANCEL_BUTTON", "value": 1, "id": "604f4b80e1ca905fa754532c" },
-		{ "category": "Frontend", "key": "HIDE_DATAFLOW_EDIT_BUTTON", "value": 1, "id": "604f4b80e1ca905fa754532e" },
-		{
-			"category": "Frontend",
-			"key": "SHOW_DATAFLOW_RELOADSCHEMA_BUTTON",
-			"value": 1,
-			"id": "604f4b80e1ca905fa7545330"
-		},
-		{ "category": "Frontend", "key": "SHOW_DATAFLOW_CELL_BUTTON", "value": 1, "id": "604f4b80e1ca905fa7545332" },
-		{ "category": "Frontend", "key": "HIDE_HOT_KEY_BUTTON", "value": 1, "id": "604f4b80e1ca905fa7545334" },
-		{ "category": "Frontend", "key": "HIDE_FOR_CLOUD", "value": 1, "id": "604f4b80e1ca905fa7545336" },
 		{
 			"category": "Frontend",
 			"key": "COMING_ONLINE_CONNECTION_TYPE",
-			"value": "db2,sybase ase,elasticsearch,kafka,gbase-8s",
+			"value": "db2,sybase ase,kafka,gbase-8s",
 			"id": "607ea59663681154b4a30481",
 			"isArray": true
 		}

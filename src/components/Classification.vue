@@ -171,7 +171,7 @@ export default {
       this.isExpand = !this.isExpand
     },
     clear() {
-      this.$refs.tree.setCheckedNodes([])
+      this.$refs.tree && this.$refs.tree.setCheckedNodes([])
     },
     checkHandler(data, { checkedKeys }) {
       let checked = checkedKeys.includes(data.id)
@@ -200,6 +200,8 @@ export default {
       if (this.types.length) {
         where.or = this.types.map(t => ({ item_type: t }))
       }
+      if (!parseInt(this.$cookie.get('isAdmin')))
+        where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` }
       let filter = {
         where
       }

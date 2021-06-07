@@ -93,6 +93,9 @@ export default {
     clearValidate() {
       return this.$refs.form && this.$refs.form.clearValidate()
     },
+    resetFields() {
+      return this.$refs.form && this.$refs.form.resetFields()
+    },
     getFormItem(h, itemConfig, formConfig, index) {
       let self = this
       let config = Object.assign({}, this.defaultFormItemConfig, itemConfig)

@@ -21,9 +21,9 @@
             <el-col class="e-col borderRight" :span="21">
               {{ $t('role.choosePage') }}
             </el-col>
-            <el-col class="e-col" :span="3">{{
-              $t('role.bulkOperate')
-            }}</el-col>
+            <el-col class="e-col" :span="3"
+              >{{ $t('role.bulkOperate') }}
+            </el-col>
           </el-row>
         </li>
         <li v-for="item in dataList" :key="item.id">
@@ -70,9 +70,9 @@
             <el-col class="e-col borderLeft" :span="18">
               {{ $t('role.functionDataPermission') }}
             </el-col>
-            <el-col class="e-col borderLeft" :span="3">{{
-              $t('role.bulkOperate')
-            }}</el-col>
+            <el-col class="e-col borderLeft" :span="3"
+              >{{ $t('role.bulkOperate') }}
+            </el-col>
           </el-row>
         </li>
         <li class="module-style">
@@ -257,16 +257,16 @@
       </ul>
     </div>
     <div class="btn">
-      <el-button size="mini" @click="back">{{
-        $t('dataVerify.back')
-      }}</el-button>
+      <el-button size="mini" @click="back"
+        >{{ $t('dataVerify.back') }}
+      </el-button>
       <el-button
         size="mini"
         type="primary"
         :loading="saveloading"
         @click="saveSubmit('ruleForm')"
-        >{{ $t('app.save') }}</el-button
-      >
+        >{{ $t('app.save') }}
+      </el-button>
     </div>
   </div>
 </template>
@@ -434,8 +434,8 @@ let moduleMapping = [
   },
   {
     name: 'API_data_explorer',
-    children: [
-      { name: 'API_data_explorer', allName: 'API_data_explorer_all_data' },
+    functional: [
+      { name: 'API_data_explorer' },
       { name: 'API_data_creation' },
       { name: 'API_data_explorer_deleting' },
       { name: 'API_data_explorer_export' },
@@ -860,10 +860,10 @@ export default {
         this.$set(item, 'checked', true)
       }
 
-      if (!event) {
-        second.checkAllData = false
-        item.checkedAllData = false
-      }
+      // if (!event) {
+      // 	second.checkAllData = false;
+      // 	item.checkedAllData = false;
+      // }
 
       let checkedCount = children.filter(el => {
         return el.checked
@@ -900,8 +900,8 @@ export default {
               this.$set(children[i], 'checked', false)
             }
 
-            this.$set(children[i], 'checkAllData', false)
-            this.$set(item, 'checkedAllData', false)
+            // this.$set(children[i], 'checkAllData', false);
+            // this.$set(item, 'checkedAllData', false);
           }
         }
       }
@@ -1163,7 +1163,7 @@ export default {
           .e-col {
             padding-top: 0 !important;
             line-height: 34px;
-            height: 40px;
+            min-height: 40px;
 
             .checkbox-radio {
               vertical-align: middle;

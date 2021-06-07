@@ -2,7 +2,7 @@
   <div class="table-page-container">
     <div
       class="table-page-header"
-      v-if="!$window.getSettingByKey('HIDE_TABLE_TITLE') && title"
+      v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM') && title"
     >
       <slot name="header">
         <div class="page-header-title">{{ title }}</div>
@@ -13,7 +13,9 @@
     <div class="table-page-main">
       <div
         class="table-page-left"
-        v-if="classify && $window.getSettingByKey('SHOW_CLASSIFY')"
+        v-if="
+          classify && !hideClassify && $window.getSettingByKey('SHOW_CLASSIFY')
+        "
       >
         <Classification
           :authority="classify.authority"
@@ -87,6 +89,11 @@ export default {
       type: Number,
       default: 20
     },
+    hideClassify: {
+      // 是否隐藏左侧栏
+      type: Boolean,
+      default: false
+    },
     classify: {
       type: Object
     },
@@ -108,29 +115,48 @@ export default {
       classifyDialogVisible: false
     }
   },
-  created() {
+  mounted() {
+    // 获取缓存的每页条数
+    let cachePageSize = this.$cache.get('TABLE_PAGE_SIZE')
+    if (cachePageSize && cachePageSize[this.$route.name]) {
+      this.page.size = cachePageSize[this.$route.name]
+    }
+
     this.fetch(1)
   },
-  watch: {
-    classify: function (_new, _old) {
-      if (_new.toString() !== _old.toString()) {
-        this.tags = []
-      }
-    }
-  },
+  // created() {
+  //   this.fetch(1)
+  // },
+  // watch: {
+  //   classify: function (_new, _old) {
+  //     if (_new.toString() !== _old.toString()) {
+  //       this.tags = []
+  //     }
+  //   }
+  // },
   methods: {
     getCache() {
       if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
         return {}
       }
       let params = this.$cache.get('TABLE_PAGE_PARAMS') || {}
-      return params[this.$route.name] || {}
+      let key = this.$route.name
+      // TODO 暂时针对dataflow页面做区分，后续将迁移和同步分为不同路由后去掉该代码块
+      if (key === 'dataFlows') {
+        key = key + this.$route.query['mapping']
+      }
+      return params[key] || {}
     },
     setCache(cache) {
       let params = this.$cache.get('TABLE_PAGE_PARAMS') || {}
-      let pageParams = params[this.$route.name] || {}
+      let key = this.$route.name
+      // TODO 暂时针对dataflow页面做区分，后续将迁移和同步分为不同路由后去掉该代码块
+      if (key === 'dataFlows') {
+        key = key + this.$route.query['mapping']
+      }
+      let pageParams = params[key] || {}
       pageParams = Object.assign({}, pageParams, cache)
-      params[this.$route.name] = pageParams
+      params[key] = pageParams
       this.$cache.set('TABLE_PAGE_PARAMS', params)
     },
     fetch(pageNum, debounce = 0, hideLoading) {
@@ -151,6 +177,12 @@ export default {
                 this.cache = null
                 this.page.total = total
                 this.list = data || []
+
+                // 缓存每页条数
+                let pageData = {}
+                pageData[this.$route.name] = this.page.size
+                this.$cache.set('TABLE_PAGE_SIZE', pageData)
+
                 if (total > 0 && (!data || !data.length)) {
                   setTimeout(() => {
                     this.fetch(this.page.current - 1)
@@ -198,6 +230,10 @@ export default {
       font-size: 16px;
       color: #333;
       font-weight: 600;
+      &.link {
+        color: rgb(72, 182, 226);
+        cursor: pointer;
+      }
     }
     .page-header-desc {
       margin-top: 10px;

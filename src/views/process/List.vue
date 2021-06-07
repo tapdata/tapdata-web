@@ -49,7 +49,6 @@
           </li>
         </ul>
       </div>
-      <div slot="operation"></div>
       <el-table-column
         :label="$t('process.worker_ip')"
         prop="worker_ip"
@@ -198,11 +197,11 @@ export default {
                 let jobs = item.jobs.filter(v => v.id === val)
                 if (jobs && jobs.length > 0) {
                   // return jobs
-                  return `<a href="el/#/job?id=${val}" target="_blank">${jobs[0]['name']}</a></br>`
+                  return `<a href="/#/job?id=${val}" class="database-link" target="_blank">${jobs[0]['name']}</a></br>`
                 }
               }
               // return val
-              return `<a href="el/#/job?id=${val}" target="_blank">${val}</a></br>`
+              return `<a href="/#/job?id=${val}" class="database-link" target="_blank">${val}</a></br>`
             })
             item.job_ids = job_ids.join(' ')
           } else if (item.worker_status) {
@@ -311,7 +310,8 @@ export default {
 }
 </style>
 <style lang="scss">
-.user-list-wrap {
+$color: #337dff;
+.process-list-wrap {
   .table-page-container {
     .table-page-body {
       box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
@@ -322,6 +322,9 @@ export default {
       .el-table {
         padding: 0 10px;
         box-sizing: border-box;
+        .database-link {
+          color: $color;
+        }
       }
       .table-page-pagination {
         margin-top: 0;

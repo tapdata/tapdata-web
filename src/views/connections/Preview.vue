@@ -176,7 +176,7 @@
 </template>
 
 <script>
-import { getImgByType } from './util'
+import { getImgByType, TYPEMAPCONFIG } from './util'
 import formConfig from './config'
 import Test from './Test'
 
@@ -287,9 +287,7 @@ export default {
           this.reloadApi()
         }
         let type = this.type
-        if (type === 'mysql pxc') {
-          type = 'mysqlpxc'
-        }
+        type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
         if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
           type = 'drs_' + type
         }

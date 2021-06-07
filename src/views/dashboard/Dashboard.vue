@@ -18,11 +18,11 @@
           <ul class="jobList">
             <li
               v-for="task in migrationTaskList"
-              :key="task.name"
-              @click="handleMigrationStatus(task.name)"
+              :key="task.label"
+              @click="handleMigrationStatus(task.label)"
             >
-              <span class="text" :style="`color: ${colorMap[task.name]};`">{{
-                $t('dataFlow.status.' + task.name)
+              <span class="text" :style="`color: ${colorMap[task.label]};`">{{
+                $t('dataFlow.status.' + task.label)
               }}</span
               ><span>{{ task.value }}</span>
             </li>
@@ -87,11 +87,11 @@
           <ul class="jobList">
             <li
               v-for="task in syncTaskList"
-              :key="task.name"
-              @click="handleSncyStatus(task.name)"
+              :key="task.label"
+              @click="handleSncyStatus(task.label)"
             >
-              <span class="text" :style="`color: ${colorMap[task.name]};`">{{
-                $t('dataFlow.status.' + task.name)
+              <span class="text" :style="`color: ${colorMap[task.label]};`">{{
+                $t('dataFlow.status.' + task.label)
               }}</span
               ><span>{{ task.value }}</span>
             </li>
@@ -182,6 +182,7 @@
             :data="serverProcess.tableData"
             :height="transfer.height"
             style="width: 100%"
+            class="dashboard-table"
           >
             <el-table-column
               prop="systemInfo.ip"
@@ -305,15 +306,11 @@
 			</el-col> -->
     </el-row>
   </section>
-  <iframe
-    v-else
-    src="/old/index.html#/dashboard"
-    frameborder="0"
-    style="height: 100%; width: 100%"
-  ></iframe>
+  <DKDashboard v-else />
 </template>
 
 <script>
+import DKDashboard from './DKDashboard'
 import echartHead from './components/echartHead'
 // import elTables from './components/elTables';
 import shaftlessEchart from '../../components/shaftlessEchart'
@@ -326,7 +323,7 @@ const DataFlows = factory('DataFlows')
 // import echartsCompinent from '../../components/echartsCompinent';
 
 export default {
-  components: { echartHead, pieChart, shaftlessEchart },
+  components: { echartHead, pieChart, shaftlessEchart, DKDashboard },
   data() {
     return {
       loading: false,
@@ -370,7 +367,7 @@ export default {
       validList: [
         { name: this.$t('app.Home.allValid'), value: 'total' },
         { name: this.$t('app.Home.checkSame'), value: 'passed' },
-        { name: this.$t('app.Home.countDifference'), value: 'row_count' },
+        { name: this.$t('app.Home.countDifference'), value: 'countDiff' },
         { name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
         { name: 'ERROR', value: 'error' }
       ],
@@ -636,9 +633,13 @@ export default {
   methods: {
     // 跳转数据校验
     jumpCheck(val) {
+      let executionStatus = ''
+      if (val !== 'total') {
+        executionStatus = val === 'countDiff' ? 'row_count' : val
+      }
       let routeUrl = this.$router.resolve({
         path: 'dataVerification',
-        query: { executionStatus: val === 'total' ? '' : val }
+        query: { executionStatus: executionStatus }
       })
 
       window.open(routeUrl.href)
@@ -667,7 +668,7 @@ export default {
     handleSncyStatus(status) {
       let routeUrl = this.$router.resolve({
         path: '/dataFlows?mapping=custom',
-        query: { dataFlowStatus: status }
+        query: { status: status }
       })
 
       window.open(routeUrl.href)
@@ -677,7 +678,7 @@ export default {
     handleMigrationStatus(status) {
       let routeUrl = this.$router.resolve({
         path: '/dataFlows?mapping=cluster-clone',
-        query: { dataFlowStatus: status }
+        query: { status: status }
       })
       window.open(routeUrl.href)
     },
@@ -737,13 +738,18 @@ export default {
         a._id > b._id ? 1 : a._id === b._id ? 0 : -1
       )
       dataItem.statusCount.forEach(element => {
-        statusItem.unshift({ name: element._id, value: element.count })
+        statusItem.unshift({
+          name: this.$t('dataFlow.status.' + element._id),
+          label: element._id,
+          value: element.count
+        })
       })
       statusItem.filter((item, index) => {
         if (item.name === 'stopping' || item.name === 'scheduled') {
           statusItem.splice(index, 1)
         }
       })
+      console.log(statusItem)
       return statusItem
     },
 
@@ -1041,6 +1047,16 @@ export default {
   .taskNameStyle {
     color: #48b6e2;
     cursor: pointer;
+  }
+}
+</style>
+<style lang="scss">
+.dashboard {
+  .dashboard-table {
+    .el-table__body-wrapper {
+      height: calc(100% - 120px) !important;
+      overflow: auto;
+    }
   }
 }
 </style>

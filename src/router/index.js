@@ -12,7 +12,8 @@ const childRoutes = [
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: () => import('@/views/dashboard/DFSDashboard')
+    component: () => import('@/views/dashboard/Dashboard'),
+    meta: { title: i18n.t('tap.home'), isCollapse: false }
   },
   {
     path: '/connections',
@@ -99,18 +100,19 @@ const childRoutes = [
   {
     path: '/dataQuality',
     name: 'dataQuality',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/dataQuality/DataQuality'),
     meta: {
       code: 'data_quality_menu',
       url: '/old/index.html#/dataQuality',
       title: i18n.t('tap.dataQuality'),
-      isCollapse: false
+      isCollapse: true,
+      types: ['collection']
     }
   },
   {
     path: '/dataQuality/:id',
     name: 'dataQualityDetail',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/dataQuality/DataQualityDetail'),
     meta: {
       code: 'data_quality_edition',
       title: i18n.t('tap.dataQuality'),
@@ -132,10 +134,11 @@ const childRoutes = [
   {
     path: '/dataRules',
     name: 'dataRules',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/dataRules/List'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'data_rules_menu',
-      url: '/old/index.html#/dataRules',
+      // url: '/old/index.html#/dataRules',
       title: i18n.t('tap.dataRules'),
       isCollapse: false
     }
@@ -154,10 +157,11 @@ const childRoutes = [
   {
     path: '/dictionary',
     name: 'dictionary',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/dictionary/List'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'dictionary_menu',
-      url: '/old/index.html#/dictionary',
+      // url: '/old/index.html#/dictionary',
       title: i18n.t('tap.dictionary'),
       isCollapse: false
     }
@@ -258,12 +262,24 @@ const childRoutes = [
   {
     path: '/tasks',
     name: 'tasks',
-    component: () => import('@/views/process/List'),
+    component: () => import('@/views/tasks/List'),
     // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'schedule_jobs_menu',
       // url: '/old/index.html#/tasks',
       title: i18n.t('tap.jobSchedule'),
+      isCollapse: false
+    }
+  },
+  {
+    path: '/taskHistories',
+    name: 'taskHistories',
+    component: () => import('@/views/tasks/Histories'),
+    // component: () => import('@/views/ExternalLink'),
+    meta: {
+      code: 'schedule_jobs_menu',
+      // url: '/old/index.html#/tasks',
+      title: i18n.t('tap.taskHistories'),
       isCollapse: false
     }
   },
@@ -638,9 +654,13 @@ router.afterEach(() => {
 })
 let isFirst = true
 router.beforeEach(async (to, from, next) => {
-  window.parent &&
-    window.parent.emitRouteChange &&
-    window.parent.emitRouteChange(to)
+  let flag = false
+  if (window.parent && window.parent.emitRouteChange) {
+    flag = window.parent.emitRouteChange(to)
+  }
+  if (flag) {
+    return
+  }
   if (!to.matched.length) {
     Message.error({
       message: 'Page not found!'

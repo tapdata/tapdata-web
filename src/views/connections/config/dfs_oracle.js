@@ -71,6 +71,12 @@ export default function (vm) {
         showPassword: true
       },
       {
+        type: 'input',
+        field: 'database_owner',
+        label: vm.$t('dataForm.form.databaseOwner'),
+        required: true
+      },
+      {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),

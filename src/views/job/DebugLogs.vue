@@ -66,7 +66,7 @@ export default {
         type: 'logs',
         filter: {
           where: { 'contextMap.dataFlowId': { eq: this.dataFlow.id } },
-          order: 'millis DESC',
+          order: 'id DESC',
           limit: 20
         }
       },
@@ -133,7 +133,7 @@ export default {
             eq: this.dataFlow.id
           }
         },
-        order: 'millis DESC',
+        order: 'id DESC',
         limit: 20
       }
       this.addFilter(filter)

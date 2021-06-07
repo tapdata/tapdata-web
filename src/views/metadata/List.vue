@@ -318,7 +318,7 @@ export default {
                       new Error(this.$t('metadata.form.none_table_name'))
                     )
                   }
-									const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v); // eslint-disable-line
+                  const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
                   if (v.split('.')[0] == 'system' || !flag) {
                     return callback(
                       new Error(this.$t('dialog.placeholderTable'))
@@ -338,6 +338,9 @@ export default {
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+    let cache = this.table.getCache()
+    cache.isFuzzy = cache.isFuzzy === true
+    this.searchParams = cache
   },
   computed: {
     table() {
@@ -424,7 +427,7 @@ export default {
         where
       }
       return Promise.all([
-        this.$api('MetadataInstances').count({ where: where }),
+        this.$api('MetadataInstances').count({ where: JSON.stringify(where) }),
         this.$api('MetadataInstances').get({
           filter: JSON.stringify(filter)
         })
@@ -554,7 +557,7 @@ export default {
     },
     changeName(item) {
       this.$prompt('', this.$t('connection.rename'), {
-				inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
+        inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
         inputErrorMessage: this.$t('dialog.placeholderTable'),
         inputValue: item.name || item.original_name,
         beforeClose: (action, instance, done) => {

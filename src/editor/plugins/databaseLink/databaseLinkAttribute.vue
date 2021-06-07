@@ -296,7 +296,6 @@ export default {
         if (targetCell && this.model.selectSourceArr.length === 0) {
           let targetFormData = targetCell.getFormData()
           let selectTargetType = []
-          debugger
           this.model.table_prefix = targetFormData.table_prefix
           this.model.table_suffix = targetFormData.table_suffix
           if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
@@ -562,26 +561,29 @@ export default {
     height: calc(100% - 30px);
     overflow: hidden;
   }
-  .database-tableBox {
-    padding-top: 10px;
-    height: 640px;
-    box-sizing: border-box;
-    .box-text {
-      display: flex;
-      padding-bottom: 10px;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #333;
-      h3 {
-        color: #606266;
-      }
-      .box-btn {
-        color: #48b6e2;
-        cursor: pointer;
-        .e-button {
-          padding: 4px 10px;
-          color: #666;
-          background-color: #f5f5f5;
+  .e-form {
+    height: 100%;
+    .database-tableBox {
+      padding-top: 10px;
+      height: calc(100% - 140px);
+      box-sizing: border-box;
+      .box-text {
+        display: flex;
+        padding-bottom: 10px;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #333;
+        h3 {
+          color: #606266;
+        }
+        .box-btn {
+          color: #48b6e2;
+          cursor: pointer;
+          .e-button {
+            padding: 4px 10px;
+            color: #666;
+            background-color: #f5f5f5;
+          }
         }
       }
     }
@@ -597,9 +599,9 @@ export default {
       padding-right: 6px;
     }
     .el-transfer {
-      height: 100%;
+      height: 640px;
       .el-transfer-panel {
-        width: 298px;
+        width: 278px;
         .el-transfer-panel__body {
           .box {
             display: inline-block;
@@ -655,7 +657,10 @@ export default {
         }
       }
       .el-transfer__buttons {
-        padding: 0 20px;
+        padding: 0 12px;
+        .el-button {
+          padding: 12px;
+        }
       }
     }
     .el-transfer-panel__item:hover {
@@ -663,6 +668,7 @@ export default {
     }
     .transfer {
       height: calc(100% - 32px) !important;
+      overflow: auto;
     }
     .el-transfer,
     .el-transfer-panel {

@@ -59,7 +59,7 @@
       </div>
       <div slot="operation">
         <el-button
-          v-readonlybtn="'new_model_creation'"
+          v-readonlybtn="'time_to_live_management'"
           class="btn btn-create"
           size="mini"
           @click="openCreateDialog"
@@ -106,8 +106,8 @@
       </el-table-column>
       <el-table-column :label="$t('timeToLive.header.expire')" prop="expire">
         <template slot-scope="scope">
-          {{ scope.row.type_data }}
-          {{ $t('timeToLive.' + scope.row.data_type) }}
+          <!-- {{ scope.row.type_data }} -- -->
+          {{ getTimeScale(scope.row.type_data) }}
         </template>
       </el-table-column>
       <el-table-column
@@ -117,6 +117,12 @@
       >
         <template slot-scope="scope">
           {{ $t('timeToLive.status_' + scope.row.status) || scope.row.status }}
+          <el-popover placement="top-start" trigger="hover" width="800">
+            <div style="word-break: break-word; text-align: left">
+              {{ scope.row.error_msg }}
+            </div>
+            <span class="icon iconfont icon-tishi1" slot="reference"></span>
+          </el-popover>
         </template>
       </el-table-column>
       <el-table-column
@@ -134,6 +140,7 @@
             v-if="scope.row.status === 'created'"
             size="mini"
             type="text"
+            style="color: #f56c6c"
             :disabled="
               $disabledByPermission(
                 'time_to_live_management_all_data',
@@ -143,6 +150,20 @@
             @click="remove(scope.row)"
             >{{ $t('button.delete') }}</el-button
           >
+          <el-button
+            v-readonlybtn="'time_to_live_management'"
+            v-if="scope.row.status === 'creation_failed'"
+            size="mini"
+            type="text"
+            :disabled="
+              $disabledByPermission(
+                'time_to_live_management_all_data',
+                scope.row.source ? scope.row.source.user_id : ''
+              )
+            "
+            @click="resetTtl(scope.row)"
+            >{{ $t('button.reset') }}</el-button
+          >
         </template>
       </el-table-column>
     </TablePage>
@@ -150,7 +171,7 @@
     <el-dialog
       width="600px"
       custom-class="create-dialog"
-      :title="$t('metadata.createNewModel')"
+      :title="$t('timeToLive.creatTtl')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
@@ -225,21 +246,24 @@ export default {
             label: this.$t('timeToLive.form.database'),
             field: 'database',
             options: [],
-            required: true
+            required: true,
+            filterable: true
           },
           {
             type: 'select',
             label: this.$t('timeToLive.form.tableName'),
             field: 'tableName',
             options: [],
-            required: true
+            required: true,
+            filterable: true
           },
           {
             type: 'select',
             label: this.$t('timeToLive.form.fieldName'),
             field: 'filed',
             options: [],
-            required: true
+            required: true,
+            filterable: true
           },
           {
             type: 'input',
@@ -313,7 +337,12 @@ export default {
       this.createFormConfig.items[3].options = []
       this.createForm.filed = ''
       schemaField.forEach(v => {
-        if (v.data_type == 'DATE_TIME' || v.data_type == 'DATETIME') {
+        if (
+          v.data_type == 'DATE_TIME' ||
+          v.data_type == 'DATETIME' ||
+          v.data_type == 'DATE' ||
+          v.data_type == 'date'
+        ) {
           includesTimeField.push(v.field_name)
           if (v.field_name == '__tapd8.ts') {
             this.createForm.filed = v.field_name
@@ -326,7 +355,7 @@ export default {
         }
       })
 
-      if (includesTimeField.length === 0) {
+      if (this.createForm.tableName && includesTimeField.length === 0) {
         this.createForm.filed = ''
         // this.indexDefinition = [{ key: '', value: 1 }]
         this.$message.error(this.$t('timeToLive.filedGetFailed'))
@@ -348,9 +377,32 @@ export default {
           isFuzzy: true
         }
       }
-
       this.table.fetch(1)
     },
+
+    // 根据秒数获取最大刻度的数值
+    getTimeScale(seconds) {
+      let val = ''
+      if (seconds && Number(seconds) && seconds > 0) {
+        if (seconds % (86400 * 360) === 0) {
+          val = seconds / (86400 * 360) + this.$t('timeToLive.y')
+        } else if (seconds % (86400 * 30) === 0) {
+          val = seconds / (86400 * 30) + this.$t('timeToLive.mo')
+        } else if (seconds % (86400 * 7) === 0) {
+          val = seconds / (86400 * 7) + this.$t('timeToLive.w')
+        } else if (seconds % 86400 === 0) {
+          val = seconds / 86400 + this.$t('timeToLive.d')
+        } else if (seconds % 3600 === 0) {
+          val = seconds / 3600 + this.$t('timeToLive.h')
+        } else if (seconds % 60 === 0) {
+          val = seconds / 60 + this.$t('timeToLive.m')
+        } else {
+          val = seconds + this.$t('timeToLive.s')
+        }
+      }
+      return val
+    },
+
     // 获取列表数据
     getData({ page, tags }) {
       let tableArrData = []
@@ -516,6 +568,7 @@ export default {
         }
       }
     },
+
     // 获取数据库
     getDbOptions() {
       let filter = {
@@ -554,6 +607,7 @@ export default {
           this.createFormConfig.items[1].options = options
         })
     },
+
     // 获取表
     loadCollections(databaseId) {
       let filter = {
@@ -589,7 +643,7 @@ export default {
           let options = []
           tables.forEach(item => {
             options.push({
-              label: item.name,
+              label: item.original_name || item.name,
               value: item.id,
               record: item
             })
@@ -597,6 +651,7 @@ export default {
           this.createFormConfig.items[2].options = options
         })
     },
+
     // 表格排序
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${
@@ -604,10 +659,12 @@ export default {
       }`
       this.table.fetch(1)
     },
+
     // 分类选择
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+
     // 选中分类返回数据
     handleOperationClassify(classifications) {
       this.$api('MetadataInstances')
@@ -623,6 +680,7 @@ export default {
           this.table.fetch()
         })
     },
+
     // 创建生命周期弹窗开启
     openCreateDialog() {
       this.createDialogVisible = true
@@ -638,6 +696,7 @@ export default {
         expire: ''
       }
     },
+
     // 保存新建生命周期
     createNewTtl() {
       let _this = this
@@ -653,6 +712,7 @@ export default {
           let collection = selectTable.record || {}
           if (collection.indexes) {
             let _keyJson = JSON.stringify(key)
+            debugger
             let existsIndexes = collection.indexes.filter(
               v => _keyJson === JSON.stringify(v.key)
             )
@@ -662,6 +722,29 @@ export default {
               return false
             }
           }
+          let typeData = ''
+          switch (data_type) {
+            case 'm':
+              typeData = expire * 60
+              break
+            case 'h':
+              typeData = expire * 60 * 60
+              break
+            case 'd':
+              typeData = expire * 60 * 60 * 24
+              break
+            case 'w':
+              typeData = expire * 60 * 60 * 24 * 7
+              break
+            case 'mo':
+              typeData = expire * 60 * 60 * 24 * 30
+              break
+            case 'y':
+              typeData = expire * 60 * 60 * 24 * 300
+              break
+            default:
+              typeData = expire
+          }
           let params = {
             task_name: 'mongodb_create_index',
             task_type: 'MONGODB_CREATE_INDEX',
@@ -669,12 +752,12 @@ export default {
             task_data: {
               collection_name: collection.original_name,
               data_type: data_type,
-              expireAfterSeconds: expire,
+              expireAfterSeconds: typeData,
               meta_id: tableName,
               key: JSON.stringify(key),
               name: '',
               ttl: true,
-              type_data: expire,
+              type_data: typeData,
               unique: false,
               uri: collection.source ? collection.source.database_uri : ''
             }
@@ -701,7 +784,7 @@ export default {
       let params = {
         task_name: 'mongodb_drop_index',
         task_type: 'MONGODB_DROP_INDEX',
-        status: 'waiting',
+        status: 'deleting',
         task_data: {
           collection_name: item.original_name,
           meta_id: item.meta_id,
@@ -733,6 +816,35 @@ export default {
           }
         }
       })
+    },
+
+    // 重置生命周期
+    resetTtl(item) {
+      console.log(item)
+      let params = {
+        task_name: 'mongodb_create_index',
+        task_type: 'MONGODB_UPDATE_INDEX',
+        status: 'waiting',
+        task_data: {
+          collection_name: item.original_name,
+          data_type: item.data_type,
+          expireAfterSeconds: item.expireAfterSeconds,
+          meta_id: item.meta_id,
+          key: item.key,
+          name: item.name,
+          ttl: item.ttl,
+          type_data: item.type_data,
+          unique: item.unique,
+          uri: item.uri
+        }
+      }
+      this.$api('ScheduleTasks')
+        .post(params)
+        .then(() => {
+          this.createDialogVisible = false
+          this.table.fetch()
+          // this.toDetails(res.data);
+        })
     }
   }
 }

@@ -16,7 +16,7 @@
     <el-header
       class="layout-header"
       height="48px"
-      v-if="!$window.getSettingByKey('HIDE_TOPBAR')"
+      v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
     >
       <a class="logo" href="/">
         <img :src="logoUrl" />
@@ -150,7 +150,7 @@
       <el-aside
         class="layout-aside"
         width="auto"
-        v-if="!$window.getSettingByKey('HIDE_MENU')"
+        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
       >
         <el-menu
           class="menu"
@@ -637,6 +637,9 @@ export default {
 .layout-container {
   height: 100%;
   background: rgba(250, 250, 250, 1);
+  .el-submenu__title {
+    font-size: 12px;
+  }
   .layout-header {
     display: flex;
     align-items: center;
@@ -683,6 +686,9 @@ export default {
           border: none;
         }
       }
+      .iconfont {
+        font-size: 18px;
+      }
     }
   }
   .layout-aside {
@@ -695,7 +701,7 @@ export default {
     }
     .menu {
       width: 260px;
-      flex: 1;
+      //flex: 1;
       padding-bottom: 48px;
       background: rgba(250, 250, 250, 1);
       .iconfont {

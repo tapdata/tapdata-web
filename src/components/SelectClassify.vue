@@ -105,6 +105,10 @@ export default {
       if (this.types.length) {
         where.or = this.types.map(t => ({ item_type: t }))
       }
+
+      if (!parseInt(this.$cookie.get('isAdmin')))
+        where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` }
+
       let filter = {
         where
       }

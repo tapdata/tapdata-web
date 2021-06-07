@@ -130,6 +130,16 @@
             <el-button
               class="btn-step"
               v-if="
+                $window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs' &&
+                [2].includes(steps[activeStep].index)
+              "
+              @click="goBackList()"
+            >
+              取消
+            </el-button>
+            <el-button
+              class="btn-step"
+              v-else-if="
                 [2, 4].includes(steps[activeStep].index) ||
                 (steps[activeStep].index === 3 && !id)
               "
@@ -199,6 +209,7 @@ export default {
       activeStep: 0,
       errorMsg: '',
       showConnectDialog: false,
+      showSysncTableTip: false, //dfs 同库不同表提示
       twoWayAgentRunningCount: '',
       platformInfo: _.cloneDeep(INSTANCE_MODEL),
       dataSourceModel: _.cloneDeep(DATASOURCE_MODEL),
@@ -246,14 +257,13 @@ export default {
     this.id = this.$route.params.id
     this.getSteps()
     this.getAgentCount()
-    this.getFormConfig()
     if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
       this.dataSourceModel = _.cloneDeep(DFSDATASOURCE_MODEL)
+      this.getFormConfig()
       this.allowDatabaseType()
-      this.getConnection(this.getWhere('source'), 'source_connectionId')
-      this.getConnection(this.getWhere('target'), 'target_connectionId')
     } else {
       this.getInstanceRegion()
+      this.getFormConfig()
     }
     if (this.id) {
       this.intiData(this.id)
@@ -272,18 +282,6 @@ export default {
       this.changeInstanceRegion() //第一步实例change
       if (!this.id) {
         this.platformInfo.zone = ''
-      }
-    },
-    'dataSourceModel.source_sourceType'() {
-      this.getConnection(this.getWhere('source'), 'source_connectionId')
-      if (!this.id) {
-        this.dataSourceModel.source_connectionId = ''
-      }
-    },
-    'dataSourceModel.target_sourceType'() {
-      this.getConnection(this.getWhere('target'), 'target_connectionId')
-      if (!this.id) {
-        this.dataSourceModel.target_connectionId = ''
       }
     }
   },
@@ -333,6 +331,7 @@ export default {
             this.transferData = {
               table_prefix: stages[1].table_prefix,
               table_suffix: stages[1].table_suffix,
+              field_process: stages[0].field_process,
               selectSourceArr: stages[1].syncObjects[0]
                 ? stages[1].syncObjects[0].objectNames
                 : []
@@ -410,57 +409,37 @@ export default {
       }
     },
     formChange(data) {
-      // 不支持 mongodb 到 oracle 的同步
       let field = data.field || '' // 源端 | 目标端
-      let value = data.value
-      let items = this.config.items
       if (field === 'source_databaseType') {
-        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-          // dfs修改目标端
-          let target = items.find(it => it.field === 'target_databaseType')
-          if (target) {
-            target.options = target.options.map(item => {
-              if (value === 'mongodb') {
-                // mongodb 时，禁用目标端的 oracle
-                if (item.value === 'oracle') {
-                  item.disabled = true
-                }
-                return item
-              } else {
-                // 不是 mongodb，则恢复正常
-                item.disabled = false
-                return item
-              }
-            })
-          }
-        }
-        this.getConnection(this.getWhere('source'), 'source_connectionId')
+        this.getConnection(this.getWhere('source'), 'source_connectionId', true)
       }
       if (field === 'target_databaseType') {
-        // dfs修改源端
-        let source = items.find(it => it.field === 'source_databaseType')
-        if (source) {
-          // dfs源端不支持 redis
-          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-            source.options = source.options
-              .filter(item => item.value !== 'redis')
-              .map(item => {
-                if (value === 'oracle') {
-                  // oracle 时，禁用目标端的 oracle
-                  if (item.value === 'mongodb') {
-                    item.disabled = true
-                  }
-                  return item
-                } else {
-                  // 不是 oracle，则恢复正常
-                  item.disabled = false
-                  return item
-                }
-              })
-          }
-        }
-        this.getConnection(this.getWhere('target'), 'target_connectionId')
+        this.getConnection(this.getWhere('target'), 'target_connectionId', true)
       }
+    },
+    addSyncPoints() {
+      this.primarySyncPoints() //先初始化再push
+      let syncPoints = {
+        connectionId: this.dataSourceModel.target_connectionId, //双向模式下 有两个源节点
+        type: 'current', // localTZ: 本地时区； connTZ：连接时区
+        time: '',
+        date: '',
+        name: '',
+        timezone: this.systemTimeZone // 当type为localTZ时有该字段
+      }
+      this.settingModel.syncPoints.push(syncPoints)
+    },
+    primarySyncPoints() {
+      this.settingModel.syncPoints = [
+        {
+          connectionId: this.dataSourceModel.source_connectionId,
+          type: 'current', // localTZ: 本地时区； connTZ：连接时区
+          time: '',
+          date: '',
+          name: '',
+          timezone: this.systemTimeZone // 当type为localTZ时有该字段
+        }
+      ]
     },
     addSyncPoints() {
       this.primarySyncPoints() //先初始化再push
@@ -518,8 +497,16 @@ export default {
             //源端目标端不可选择相同库 规则: id一致
             if (
               this.dataSourceModel.source_connectionId ===
-              this.dataSourceModel.target_connectionId
+                this.dataSourceModel.target_connectionId &&
+              window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'
             ) {
+              this.showSysncTableTip = true // dfs 仅提示
+            } else if (
+              this.dataSourceModel.source_connectionId ===
+                this.dataSourceModel.target_connectionId &&
+              window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+            ) {
+              this.showSysncTableTip = false
               this.$message.error('源端连接与目标端连接不能选择相同的连接')
               return
             }
@@ -533,7 +520,16 @@ export default {
               'target_connectionId'
             )
             //source.id/target.id = host + port + username
-            if (source.id === target.id) {
+            if (
+              source.id === target.id &&
+              window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'
+            ) {
+              this.showSysncTableTip = true // dfs 仅提示
+            } else if (
+              source.id === target.id &&
+              window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+            ) {
+              this.showSysncTableTip = false
               this.$message.error('源端连接与目标端连接不能选择相同的连接')
               return
             }
@@ -551,6 +547,11 @@ export default {
           if (valid) {
             this.activeStep += 1
             this.getFormConfig()
+            if (this.showSysncTableTip) {
+              this.$message.warning(
+                '温馨提示：您选择了同一数据源作为源和目标，为了保证您的任务可以顺利执行，请修改目标表名与原表不一致。'
+              )
+            }
           }
         })
       }
@@ -671,7 +672,7 @@ export default {
       return where
     },
     //获取数据源
-    getConnection(where, type) {
+    getConnection(where, type, reset = false) {
       //接口请求之前 loading = true
       let items = this.config.items
       let option = items.find(it => it.field === type)
@@ -701,11 +702,11 @@ export default {
           })
         })
         .then(data => {
-          this.changeConfig(data.data || [], type)
+          this.changeConfig(data.data || [], type, reset)
         })
     },
     //change config
-    changeConfig(data, type) {
+    changeConfig(data, type, reset = false) {
       let items = this.config.items
       switch (type) {
         case 'region': {
@@ -741,6 +742,9 @@ export default {
           break
         }
         case 'source_connectionId': {
+          if (reset) {
+            this.dataSourceModel.source_connectionId = ''
+          }
           // 第二步 数据源连接ID
           let source_connectionId = items.find(
             it => it.field === 'source_connectionId'
@@ -764,6 +768,9 @@ export default {
           break
         }
         case 'target_connectionId': {
+          if (reset) {
+            this.dataSourceModel.target_connectionId = ''
+          }
           let target_connectionId = items.find(
             it => it.field === 'target_connectionId'
           )
@@ -816,10 +823,11 @@ export default {
         case 'databaseType': {
           let source = items.find(it => it.field === 'source_databaseType')
           if (source) {
-            // dfs源端不支持 redis
+            // dfs源端不支持 redis elasticsearch
             let options = data
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-              options = data.filter(item => item !== 'redis')
+              let filterArr = ['redis', 'elasticsearch']
+              options = data.filter(item => filterArr.indexOf(item) === -1)
             }
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
               options = data.filter(item => item !== 'dameng')
@@ -964,7 +972,8 @@ export default {
           database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
           dropType: 'no_drop',
           readBatchSize: 1000,
-          readCdcInterval: 500
+          readCdcInterval: 500,
+          field_process: this.transferData.field_process, //字段处理器 源
         }),
         Object.assign({}, stageDefault, {
           id: targetIdB,
@@ -1006,6 +1015,7 @@ export default {
         window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
       ) {
         postData.stages[1]['outputLanes'] = [sourceIdC]
+        postData.stages[1]['outputLanes'] = this.transferData.field_process //字段处理器 中间有属于源
         postData.stages.push(node)
       }
       let promise = null

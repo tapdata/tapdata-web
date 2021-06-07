@@ -177,6 +177,9 @@ export default {
       let msg = {
         type: 'notification'
       }
+      if (!parseInt(this.$cookie.get('isAdmin'))) {
+        msg.userId = this.$cookie.get('user_id')
+      }
       this.getUnReadNum()
       ws.on('notification', data => {
         if (data.data && data.data.length > 0) {
@@ -201,12 +204,10 @@ export default {
     },
     getUnReadNum() {
       let where = {
-        where: {
-          read: false
-        }
+        read: false
       }
       this.$api('notification')
-        .count(where)
+        .count({ where: JSON.stringify(where) })
         .then(res => {
           if (res.data) {
             this.$store.commit('notification', {

@@ -471,7 +471,7 @@ import factory from '../../api/factory'
 import { EditorEventType } from '../../editor/lib/events'
 import i18n from '@/i18n'
 import ws from '../../api/ws'
-import _ from "lodash";
+// import _ from "lodash";
 const dataFlows = factory('DataFlows')
 const connectionApi = factory('connections')
 const DataFlowInsights = factory('DataFlowInsights')
@@ -488,6 +488,7 @@ export default {
   },
 
   data() {
+    let $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
     return {
       tooltipFlag: false,
       apiLoading: false,
@@ -577,8 +578,14 @@ export default {
           },
           axisLabel: {
             formatter: function (value) {
-              if (value >= 10000) {
-                value = value / 10000 + 'W'
+              if ($PLATFORM === 'dfs') {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+              } else {
+                if (value >= 10000) {
+                  value = value / 10000 + 'W'
+                }
               }
               return value
             }
@@ -647,8 +654,14 @@ export default {
           },
           axisLabel: {
             formatter: function (value) {
-              if (value >= 10000) {
-                value = value / 10000 + 'W'
+              if ($PLATFORM === 'dfs') {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+              } else {
+                if (value >= 10000) {
+                  value = value / 10000 + 'W'
+                }
               }
               return value
             }
@@ -702,8 +715,14 @@ export default {
           },
           axisLabel: {
             formatter: function (value) {
-              if (value >= 10000) {
-                value = value / 10000 + 'W'
+              if ($PLATFORM === 'dfs') {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+              } else {
+                if (value >= 10000) {
+                  value = value / 10000 + 'W'
+                }
               }
               return value
             }

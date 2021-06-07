@@ -10,6 +10,13 @@ import file from './file'
 import kafka from './kafka'
 import mariadb from './maria'
 import mysqlpxc from './mysqlpxc'
+import sybasease from './sybasease'
+import gbase8s from './gbase8s'
+import gaussdb200 from './gaussdb200'
+import restapi from './restapi'
+import custom_connection from './custom_connection'
+import gridfs from './gridfs'
+import dummydb from './dummydb'
 import jira from './jira'
 import drs_mysql from './drs_mysql'
 import drs_mariadb from './drs_maria'
@@ -30,6 +37,7 @@ import dfs_sqlserver from './dfs_sqlserver'
 import dfs_redis from './dfs_redis'
 import drs_dameng from './drs_dameng'
 import dfs_dameng from './dfs_dameng'
+import dfs_elasticsearch from './dfs_elasticsearch'
 
 export default {
   mysql,
@@ -63,5 +71,13 @@ export default {
   dfs_db2,
   dfs_mongodb,
   dfs_sqlserver,
-  dfs_redis
+  dfs_redis,
+  dfs_elasticsearch,
+  sybasease,
+  gbase8s,
+  gaussdb200,
+  dummydb,
+  restapi,
+  custom_connection,
+  gridfs
 }

@@ -3,7 +3,7 @@
     <TablePage
       ref="table"
       row-key="id"
-      :title="$t('connection.databaseTittle')"
+      :title="$t('app.menu.dataVerification')"
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
       @sort-change="handleSortTable"
@@ -182,17 +182,12 @@
               class="data-verify__status error"
             >
               <i class="data-verify__icon el-icon-error"></i>
-              <span>
-                {{
-                  scope.row.inspectMethod === 'row_count'
-                    ? $t('dataVerification.rowConsistent')
-                    : $t('dataVerification.contConsistent')
-                }}
-                {{
-                  scope.row.inspectMethod === 'row_count'
-                    ? scope.row.diffNum
-                    : scope.row.difference_number
-                }}
+              <span v-if="scope.row.inspectMethod === 'row_count'">
+                {{ $t('dataVerification.inconsistent') }}
+              </span>
+              <span v-else>
+                {{ $t('dataVerification.contConsistent')
+                }}{{ scope.row.difference_number }}
               </span>
             </div>
             <div v-else class="data-verify__status success">
@@ -207,13 +202,17 @@
             <i class="data-verify__icon el-icon-error"></i>
             <span>Error</span>
           </div>
-          <div v-else class="data-verify__status">
+          <div
+            v-else-if="scope.row.status !== 'done'"
+            class="data-verify__status"
+          >
             <img
               style="width: 26px; vertical-align: middle"
               :src="$window._TAPDATA_OPTIONS_.loadingImg"
             />
             <span>{{ statusMap[scope.row.status] }}</span>
           </div>
+          <div v-else>-</div>
         </template>
       </el-table-column>
       <el-table-column
@@ -377,12 +376,12 @@ export default {
     },
     // 批量导出
     handleExport() {
+      let ids = this.multipleSelection.map(item => item.id)
       let where = {
         _id: {
-          in: this.multipleSelection
+          in: ids
         }
       }
-
       this.$api('MetadataInstances').download(where, 'Inspect')
     },
     handleSelectionChange(val) {
@@ -416,10 +415,13 @@ export default {
         } else if (result === 'row_count') {
           where.status = { neq: 'error' }
           where.result = 'failed'
-          where.inspectMethod = 'row_count'
+          inspectMethod = this.searchParams.inspectMethod = 'row_count'
         } else {
           where.status = { neq: 'error' }
           where.result = 'failed'
+          if (inspectMethod === 'row_count') {
+            inspectMethod = this.searchParams.inspectMethod = ''
+          }
           where.inspectMethod = { neq: 'row_count' }
         }
       }
@@ -450,9 +452,9 @@ export default {
               targetTotal = result.target_total
               diffNum = Math.abs(targetTotal - sourceTotal)
             }
-            item.lastStartTime = this.$moment(item.lastStartTime).format(
-              'YYYY-MM-DD HH:mm:ss'
-            )
+            item.lastStartTime = item.lastStartTime
+              ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
+              : '-'
             item.sourceTotal = sourceTotal
             item.targetTotal = targetTotal
             item.diffNum = diffNum

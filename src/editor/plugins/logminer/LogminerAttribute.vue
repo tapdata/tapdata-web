@@ -75,7 +75,7 @@
       </el-row>
       <el-col :span="21" class="aggregateName">
         <el-form-item
-          :label="'Oracle' + $t('editor.cell.data_node.logminer.logSaveTime')"
+          :label="$t('editor.cell.data_node.logminer.logSaveTime')"
           required
         >
           <el-select
@@ -337,7 +337,7 @@ export default {
       let result = await connectionApi.get({
         filter: JSON.stringify({
           where: {
-            database_type: { in: ['oracle'] }
+            database_type: { in: ['oracle', 'mongodb'] }
           },
           fields: {
             name: 1,
@@ -430,7 +430,7 @@ export default {
         timeZone = '+' + -timeZone
       }
       this.model = {
-        name: 'Oracle' + this.$t('editor.cell.data_node.logminer.name'),
+        name: this.$t('editor.cell.data_node.logminer.name'),
         syncPoint: {
           type: 'localTZ',
           timezone: timeZone,

@@ -216,7 +216,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.opera')">
+      <el-table-column :label="$t('user.opera')" width="160">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'user_edition'"
@@ -1196,7 +1196,7 @@ export default {
         background-color: #fff;
       }
       .el-table {
-        padding: 0 10px;
+        // padding: 0 10px;
         box-sizing: border-box;
         // border-top: 0;
         // .has-gutter {

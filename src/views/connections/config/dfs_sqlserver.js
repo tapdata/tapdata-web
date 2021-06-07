@@ -8,29 +8,29 @@ export default function (vm) {
       connection_type: 'source_and_target'
     },
     items: [
-      {
-        type: 'radio',
-        field: 'connection_type',
-        label: vm.$t('dataForm.form.connectionType'),
-        options: [
-          {
-            label: vm.$t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
-            value: 'source_and_target'
-          },
-          {
-            label: vm.$t('dataForm.form.options.source'),
-            tip: vm.$t('dataForm.form.options.sourceTips'),
-            value: 'source'
-          },
-          {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
-            value: 'target'
-          }
-        ],
-        required: true
-      },
+      // {
+      //   type: 'radio',
+      //   field: 'connection_type',
+      //   label: vm.$t('dataForm.form.connectionType'),
+      //   options: [
+      //     {
+      //       label: vm.$t('dataForm.form.options.sourceAndTarget'),
+      //       tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+      //       value: 'source_and_target'
+      //     },
+      //     {
+      //       label: vm.$t('dataForm.form.options.source'),
+      //       tip: vm.$t('dataForm.form.options.sourceTips'),
+      //       value: 'source'
+      //     },
+      //     {
+      //       label: vm.$t('dataForm.form.options.target'),
+      //       tip: vm.$t('dataForm.form.options.targetTips'),
+      //       value: 'target'
+      //     }
+      //   ],
+      //   required: true
+      // },
       {
         type: 'input',
         field: 'database_host',
@@ -133,24 +133,24 @@ export default function (vm) {
         label: vm.$t('dataForm.form.databaseOwner'),
         required: true
       },
-      {
-        type: 'switch',
-        field: 'schemaAutoUpdate',
-        label: vm.$t('dataForm.form.ReloadSchema')
-      },
-      {
-        type: 'input',
-        field: 'table_filter',
-        label: vm.$t('dataForm.form.tableFilter'),
-        tips: vm.$t('dataForm.form.tableFilterTips'),
-        maxlength: 500,
-        showWordLimit: true
-      },
-      {
-        type: 'input',
-        field: 'additionalString',
-        label: vm.$t('dataForm.form.additionalString')
-      },
+      // {
+      //   type: 'switch',
+      //   field: 'schemaAutoUpdate',
+      //   label: vm.$t('dataForm.form.ReloadSchema')
+      // },
+      // {
+      //   type: 'input',
+      //   field: 'table_filter',
+      //   label: vm.$t('dataForm.form.tableFilter'),
+      //   tips: vm.$t('dataForm.form.tableFilterTips'),
+      //   maxlength: 500,
+      //   showWordLimit: true
+      // },
+      // {
+      //   type: 'input',
+      //   field: 'additionalString',
+      //   label: vm.$t('dataForm.form.additionalString')
+      // },
       {
         type: 'select',
         field: 'database_datetype_without_timezone',

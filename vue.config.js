@@ -1,22 +1,27 @@
-const { npm_config_argv } = process.env
-const URL = {
-  local: 'http://localhost:30300',
-  dev: 'http://192.168.1.181:30300',
-  pro: 'http://backend:3030'
-}
-let ENV
-if (npm_config_argv) {
-  const argv = JSON.parse(process.env.npm_config_argv).original
-  ENV = Object.keys(URL).find(k => argv.includes('--' + k))
-}
-const proxy = {
-  target: URL[ENV || 'dev'],
-  changeOrigin: false
-}
 const { resolve } = require('path')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
-const config = {
+const serveUrlMap = {
+  mock: 'http://localhost:30300',
+  dev: 'http://backend:3030',
+  test: 'http://192.168.1.181:30300'
+}
+let origin
+const { argv } = process
+const { SERVE_ENV = 'mock' } = process.env
+
+// 通过origin参数注入服务代理，优先级最高
+if (~argv.indexOf('--origin')) {
+  origin = argv[argv.indexOf('--origin') + 1]
+  origin && (origin = origin.replace(/^(?!http)/, 'http://'))
+}
+
+const proxy = {
+  target: origin || serveUrlMap[SERVE_ENV],
+  changeOrigin: false
+}
+
+module.exports = {
   assetsDir: 'static',
   lintOnSave: true,
   productionSourceMap: false,
@@ -25,8 +30,13 @@ const config = {
     proxy: {
       '/api/': proxy,
       '/oauth/': proxy,
-      '/old/': {
-        target: 'http://192.168.1.101:8081/'
+      '/old/': { target: 'http://localhost:8081' },
+      '/ws/': {
+        ...proxy,
+        ws: true,
+        secure: false,
+        logLevel: 'debug',
+        target: proxy.target.replace(/^https?/, 'ws')
       }
     }
   },
@@ -77,7 +87,7 @@ const config = {
             name: 'removeAttrs',
             active: true,
             params: {
-              attrs: ['class', 'p-id']
+              attrs: ['class', 'p-id', 'fill']
             }
           }
         ]
@@ -93,17 +103,3 @@ const config = {
     ]
   }
 }
-
-if (ENV !== 'local') {
-  config.devServer.proxy['/ws/'] = {
-    ...proxy,
-    ws: true,
-    secure: false,
-    logLevel: 'debug',
-    target: proxy.target.replace(/^https?/, 'ws')
-  }
-} else {
-  config.publicPath = './'
-}
-
-module.exports = config
