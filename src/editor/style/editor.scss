@@ -302,6 +302,9 @@ $selectedColor: #d3d3d3;
           justify-content: flex-start;
           align-items: center;
           background-color: #eff1f4;
+          &:not(.drs) {
+            display: flex !important;
+          }
           .e-tab-title {
             line-height: 30px;
             padding: 0 30px;

@@ -304,7 +304,9 @@ export default class Editor extends BaseObject {
     $('.e-tab-panel')
       .last()
       .prepend(
-        `<div class="monitorTab"><div class="e-tab-title active">${tapTitle}</div></div>`
+        `<div class="monitorTab ${window.getSettingByKey(
+          'DFS_TCM_PLATFORM'
+        )}"><div class="e-tab-title active">${tapTitle}</div></div>`
       )
   }
 
