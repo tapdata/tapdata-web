@@ -331,7 +331,7 @@ export default {
             this.transferData = {
               table_prefix: stages[1].table_prefix,
               table_suffix: stages[1].table_suffix,
-              field_process: stages[0].field_process,
+              field_process: stages[0].field_process || [],
               selectSourceArr: stages[1].syncObjects[0]
                 ? stages[1].syncObjects[0].objectNames
                 : []

@@ -21,7 +21,7 @@
       <span slot-scope="{ option }">
         <span> {{ option.label }}</span>
         <span
-          v-if="selectSourceArr.includes(option.key)"
+          v-if="selectSourceArr.includes(option.key) && $window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
           @click.stop.prevent="handleFiled(option)"
           class="el-icon-setting field-transfer__icon"
         ></span>
@@ -196,7 +196,7 @@ export default {
   methods: {
     //获取左边数据
     getTable(id, bidirectional) {
-      console.log(id, bidirectional)
+      console.log(id, bidirectional, 'Transfer')
       this.transferLoading = true
       this.$api('connections')
         .customQuery([id], { schema: true })
@@ -282,7 +282,8 @@ export default {
               primary_key_position: field.primary_key_position,
               showInput: false
             }))
-            //初始化所有字段都映射 自取顶级字段
+            // 初始化所有字段都映射 只取顶级字段
+            fields = fields.filter(field => field.field_name.indexOf('.') === -1)
             this.selectSourceFileArr = fields.map(field => field.field_name)
             //初始化已有字段处理
             let field_process = this.field_process.filter(process => process.table_id === id)
@@ -306,7 +307,6 @@ export default {
                 })
               }
             })
-            console.log(this.selectSourceFileArr)
           }
         })
     },
@@ -443,7 +443,6 @@ export default {
           field_process.operations = this.operations
         } else this.field_process.push(field_process)
       } else this.field_process.push(field_process)
-      console.log(this.field_process)
     },
     cancelFileOperations() {
       this.dialogFileVisible = false
@@ -452,7 +451,6 @@ export default {
       this.currentTableId = ''
       this.currentTableName = ''
       this.selectSourceFileArr = []
-      console.log(this.operations)
     },
     // 穿梭框搜索
     filterMethod(query, item) {
@@ -532,7 +530,7 @@ export default {
         selectSourceArr: this.selectSourceArr,
         table_prefix: this.formData.table_prefix,
         table_suffix: this.formData.table_suffix,
-        field_process: this.field_process
+        field_process: this.field_process || []
       }
     }
   }
