@@ -124,6 +124,10 @@ export const defaultModel = {
     increamentalTps: 100, //dummy
     initialReadSize: 100000 //dummy
   },
+  oracle: {
+    multiTenant: '',
+    pdb: ''
+  },
   kafka: {
     id: '',
     name: '',
