@@ -1,6 +1,5 @@
 const path = require('path')
 const resolve = path.resolve
-const webpack = require('webpack')
 
 let baseUrl = 'localhost:3000'
 if (process.env.npm_config_argv) {
@@ -64,12 +63,6 @@ module.exports = {
   },
   chainWebpack(config) {
     const iconDir = resolve('src/assets/icons/svg')
-
-    config.plugin('provide').use(webpack.ProvidePlugin, [
-      {
-        introJs: ['intro.js']
-      }
-    ])
 
     // svg loader排除 icon 目录
     config.module

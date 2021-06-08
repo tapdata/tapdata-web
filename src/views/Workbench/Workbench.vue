@@ -138,8 +138,6 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import introJs from 'intro.js'
-import 'intro.js/introjs.css'
 
 export default {
   name: 'Workbench',
@@ -237,7 +235,6 @@ export default {
   methods: {
     init() {
       this.loadData()
-      this.isGuide && this.guide()
     },
     loadData() {
       this.notices = [
@@ -248,35 +245,6 @@ export default {
           time: '2021-05-28'
         }
       ]
-    },
-    guide() {
-      let steps = [
-        {
-          element: '.step_1',
-          intro: '步骤1：对应class为.step_1的元素进行选择提示。',
-          position: 'right'
-        },
-        {
-          element: '#step_2',
-          intro: '步骤2：对应Id为#step_2的元素进行选择提示。',
-          position: 'left'
-        }
-      ]
-      this.$intro()
-        .setOptions({
-          prevLabel: '上一步',
-          nextLabel: '下一步',
-          skipLabel: '跳过',
-          doneLabel: '完成',
-          steps: steps
-        })
-        .oncomplete(() => {
-          //点击结束按钮后执行的事件
-        })
-        .onexit(() => {
-          //点击跳过按钮后执行的事件
-        })
-        .start()
     },
     getIconSrc(icon) {
       return require(`../../assets/image/workbench/${icon}.png`)

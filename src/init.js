@@ -6,9 +6,6 @@ import VueRouter from 'vue-router'
 import Moment from 'moment'
 import './assets/app.scss'
 import VueClipboard from 'vue-clipboard2'
-import VueIntro from 'vue-introjs'
-import 'intro.js/introjs.css'
-Vue.use(VueIntro)
 
 if (process.env.VUE_APP_THEME) {
   require('./assets/theme/' + process.env.VUE_APP_THEME + '/index.scss')
