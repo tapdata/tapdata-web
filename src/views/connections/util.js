@@ -116,6 +116,8 @@ export const defaultModel = {
     sslKey: '',
     sslPass: '',
     schemaAutoUpdate: false,
+    multiTenant: false,
+    pdb: '',
     sslValidate: false,
     sslCA: '',
     sslCAFile: null,
@@ -123,10 +125,6 @@ export const defaultModel = {
     search_databaseType: '',
     increamentalTps: 100, //dummy
     initialReadSize: 100000 //dummy
-  },
-  oracle: {
-    multiTenant: '',
-    pdb: ''
   },
   kafka: {
     id: '',
