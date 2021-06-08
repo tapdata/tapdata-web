@@ -1,0 +1,99 @@
+$spacer: 1rem;
+$spacers: ();
+$enable-negative-margins: true; // 开启负数margin
+@for $i from 0 through 16 {
+	$spacers: map-merge(
+			$spacers,
+			(
+				$i:
+				$spacer *
+        (
+          $i/4
+        )
+			)
+	);
+}
+$enable-negative-margins: true;
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/helpers";
+
+$utilities: map-merge(
+	$utilities,
+	(
+		"display":
+			map-merge(
+				map-get($utilities, "display"),
+				(
+					class: ""
+				)
+			),
+		"justify-content":
+			map-merge(
+				map-get($utilities, "justify-content"),
+				(
+					class: "justify"
+				)
+			),
+		"align-items":
+			map-merge(
+				map-get($utilities, "align-items"),
+				(
+					class: "align"
+				)
+			),
+		"margin-start":
+			map-merge(
+				map-get($utilities, "margin-start"),
+				(
+					class: ml
+				)
+			),
+		"margin-end":
+			map-merge(
+				map-get($utilities, "margin-end"),
+				(
+					class: mr
+				)
+			),
+		"negative-margin-start":
+			map-merge(
+				map-get($utilities, "negative-margin-start"),
+				(
+					class: ml
+				)
+			),
+		"negative-margin-end":
+			map-merge(
+				map-get($utilities, "negative-margin-end"),
+				(
+					class: mr
+				)
+			),
+		"padding-start":
+			map-merge(
+				map-get($utilities, "padding-start"),
+				(
+					class: pl
+				)
+			),
+		"padding-end":
+			map-merge(
+				map-get($utilities, "padding-end"),
+				(
+					class: pr
+				)
+			)
+	)
+);
+
+.fs-7 {
+	font-size: 0.875rem!important;
+}
+.fs-8 {
+	font-size: 0.75rem!important;
+}
+
+@import "~bootstrap/scss/utilities/api";

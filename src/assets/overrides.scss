@@ -1,0 +1,26 @@
+html,
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	background: rgba(239, 241, 244, 1);
+	color: #333;
+}
+p {
+	margin: 0;
+}
+ul {
+	margin: 0;
+	padding: 0;
+}
+li {
+	list-style: none;
+}
+th {
+	font-weight: normal;
+}
+.ellipsis {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
