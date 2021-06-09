@@ -1,5 +1,4 @@
 import Layout from '../views/Layout.vue'
-import DrsDashboard from '../views/Dashboard/DRS.vue'
 import DfsDashboard from '../views/Dashboard/DFS.vue'
 import Workbench from '../views/Workbench/Workbench.vue'
 import Iframe from '../views/Iframe.vue'
@@ -18,37 +17,46 @@ const routes = [
       {
         path: '/',
         name: 'Home',
-        component:
-          process.env.VUE_APP_PLATFORM === 'dfs' ? DfsDashboard : DrsDashboard,
         meta: {
           title: '首页'
         },
-        redirect:
-          process.env.VUE_APP_PLATFORM === 'dfs'
-            ? { name: 'Workbench' }
-            : { name: 'Dashboard' },
+        redirect: { name: 'Workbench' },
         hidden: true
+      },
+      {
+        path: '/workbench',
+        name: 'Workbench',
+        component: () => import('../views/Workbench/Workbench.vue'),
+        meta: {
+          title: '工作台',
+          icon: 'workbench'
+        },
+        children: [
+          {
+            path: 'notice',
+            name: 'WorkbenchNotice',
+            component: () => import('../views/Workbench/Notice.vue'),
+            meta: {
+              title: '公告通知'
+            }
+          }
+        ]
       },
       {
         path: '/dashboard',
         name: 'Dashboard',
-        component:
-          process.env.VUE_APP_PLATFORM === 'dfs' ? DfsDashboard : DrsDashboard,
+        component: DfsDashboard,
         meta: {
-          title: process.env.VUE_APP_PLATFORM === 'dfs' ? '运行概览' : '概览',
+          title: '运行概览',
           icon: 'dashboard'
         }
       },
       {
         path: '/instance',
         name: 'Instance',
-        component: () =>
-          import(
-            /* webpackChunkName: "instance" */ '../views/Instance/Instance.vue'
-          ),
+        component: () => import('../views/Instance/Instance.vue'),
         meta: {
-          title:
-            process.env.VUE_APP_PLATFORM === 'dfs' ? 'Agent管理' : '实例管理',
+          title: 'Agent管理',
           showRegion: true,
           icon: 'agent'
         },
@@ -56,13 +64,7 @@ const routes = [
           {
             path: ':id',
             name: 'InstanceDetails',
-            // route level code-splitting
-            // this generates a separate chunk (about.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () =>
-              import(
-                /* webpackChunkName: "instance-details" */ '../views/Instance/Details.vue'
-              ),
+            component: () => import('../views/Instance/Details.vue'),
             meta: {
               title: '实例详情'
             }
@@ -74,8 +76,7 @@ const routes = [
         name: 'Dataflow',
         component: Iframe,
         meta: {
-          title:
-            process.env.VUE_APP_PLATFORM === 'dfs' ? '任务管理' : '同步任务',
+          title: '任务管理',
           link: './tm/#/dataFlows',
           showRegion: true,
           icon: 'task'
@@ -245,35 +246,14 @@ const routes = [
     }
   }
 ]
-// dfs内容
-if (process.env.VUE_APP_PLATFORM === 'dfs') {
-  routes?.[0].children.unshift({
-    path: '/workbench',
-    name: 'Workbench',
-    component: () => import('../views/Workbench/Workbench.vue'),
-    meta: {
-      title: '工作台',
-      icon: 'workbench'
-    },
-    children: [
-      {
-        path: 'notice',
-        name: 'WorkbenchNotice',
-        component: () => import('../views/Workbench/Notice.vue'),
-        meta: {
-          title: '公告通知'
-        }
-      }
-    ]
+
+// 不隐藏实例订购
+if (process.env.VUE_APP_HIDE_INSTANCE_BTN !== 'true') {
+  routes.push({
+    path: '/Purchase',
+    name: 'Purchase',
+    component: Purchase
   })
-  // 不隐藏实例订购
-  if (process.env.VUE_APP_HIDE_INSTANCE_BTN !== 'true') {
-    routes.push({
-      path: '/Purchase',
-      name: 'Purchase',
-      component: Purchase
-    })
-  }
 }
 
 export default routes

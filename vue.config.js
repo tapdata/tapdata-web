@@ -18,10 +18,7 @@ if (process.env.VUE_APP_THEME) {
 let pages = {
   index: {
     entry: 'src/pages/main.js',
-    title:
-      process.env.VUE_APP_PLATFORM === 'dfs'
-        ? 'Tapdata Cloud'
-        : '数据库复制 DRS',
+    title: 'Tapdata Cloud',
     header: process.env.VUE_APP_HEADER
   }
 }

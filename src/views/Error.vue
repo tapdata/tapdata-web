@@ -1,11 +1,11 @@
 <template>
   <section
     class="error-page-wrap"
-    :class="[{ 'error-page-purchase': $route.meta.isPurchase }, $PLATFORM]"
+    :class="[{ 'error-page-purchase': $route.meta.isPurchase }]"
   >
     <TheHeader></TheHeader>
     <div class="header">
-      {{ $PLATFORM === 'dfs' ? 'Tapdata Cloud' : '数据库复制DRS' }}
+      Tapdata Cloud
     </div>
     <div class="body">
       <div v-if="$route.path === '/500'" class="box">
@@ -74,9 +74,6 @@ export default {
   min-height: 600px;
   min-width: 800px;
   overflow: auto;
-  &.drs {
-    padding-top: 50px;
-  }
   .header {
     padding: 0 20px;
     line-height: 60px;

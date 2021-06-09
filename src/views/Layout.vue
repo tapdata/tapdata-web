@@ -1,10 +1,10 @@
 <template>
-  <ElContainer :class="['layout-wrap', $PLATFORM]">
+  <ElContainer :class="['layout-wrap']">
     <TheHeader ref="theHeader"></TheHeader>
     <ElAside class="left-aside" width="200px">
       <ElMenu :default-active="activeMenu" @select="menuTrigger">
         <ElMenuItem v-for="m in menus" :key="m.name" :index="m.path">
-          <span class="mr-4" slot v-if="$PLATFORM === 'dfs' && m.meta.icon"
+          <span class="mr-4" slot v-if="m.meta.icon"
             ><VIcon class="v-icon" size="12">{{ m.meta.icon }}</VIcon></span
           >
           <span slot="title">{{ m.meta.title }}</span>
@@ -141,25 +141,6 @@ export default {
 .layout-wrap {
   height: 100%;
   padding-top: 68px;
-  &.drs {
-    padding-top: 50px;
-  }
-  //&.dfs {
-  //	.left-aside {
-  //		background-color: rgba(0, 0, 0, 0.05);
-  //		.el-menu {
-  //			background-color: unset;
-  //		}
-  //		.el-menu-item {
-  //			border-left: 3px solid transparent;
-  //			&.is-active {
-  //				color: #337dff;
-  //				border-color: #337dff;
-  //				background-color: #fff;
-  //			}
-  //		}
-  //	}
-  //}
   .left-aside {
     border-right: 1px solid #f2f4f6;
     background: #fff;

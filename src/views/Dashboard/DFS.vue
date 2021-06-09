@@ -69,38 +69,6 @@
         </div>
       </div>
     </ElCard>
-    <ElCard v-if="$PLATFORM !== 'dfs'">
-      <div slot="header" class="card-title">
-        <span>Agent状态</span>
-      </div>
-      <div class="info">
-        <div>
-          <span @click="jump()">
-            <span class="title">总数：</span
-            ><span class="blue">{{ agentStatus.total || 0 }}</span>
-          </span>
-        </div>
-        <div>
-          <span @click="jump()">
-            <span class="title">运行：</span
-            ><span class="blue">{{ agentStatus.running || 0 }}</span>
-          </span>
-        </div>
-        <div>
-          <span @click="jump()">
-            <span class="title">停止：</span
-            ><span class="blue">{{ agentStatus.stopped || 0 }}</span>
-          </span>
-        </div>
-        <div>
-          <span @click="jump()">
-            <span class="title">离线：</span
-            ><span class="orange">{{ agentStatus.down || 0 }}</span>
-          </span>
-        </div>
-        <div></div>
-      </div>
-    </ElCard>
     <ElCard>
       <div slot="header" class="card-title">
         <span>传输总览（事件统计）</span>

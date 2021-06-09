@@ -1,5 +1,5 @@
 <template>
-  <section :class="['agent-page', $PLATFORM]">
+  <section :class="['agent-page']">
     <TheHeader></TheHeader>
     <div class="agent-body">
       <div class="agent-main">
@@ -78,9 +78,6 @@ export default {
   padding-top: 68px;
   overflow: hidden;
   box-sizing: border-box;
-  &.drs {
-    padding-top: 50px;
-  }
   .agent-body {
     display: flex;
     flex: 1;

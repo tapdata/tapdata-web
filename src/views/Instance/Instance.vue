@@ -130,32 +130,8 @@
           </template>
         </ElTableColumn>
         <ElTableColumn label="操作" width="120" fixed="right">
-          <template slot-scope="scope">
-            <ElTooltip
-              v-if="$PLATFORM !== 'dfs'"
-              effect="dark"
-              placement="top"
-              popper-class="tooltip--notenter"
-              :enterable="false"
-              :content="temList[scope.$index].restartTips"
-              :disabled="!temList[scope.$index].restartTips"
-            >
-              <ElLink
-                type="primary"
-                popper-class="tooltip--notenter"
-                :disabled="!!temList[scope.$index].restartTips"
-                @click="restart(scope.row)"
-                >重启</ElLink
-              >
-            </ElTooltip>
-            <ElLink
-              v-if="$PLATFORM === 'dfs'"
-              type="primary"
-              class="mr-2"
-              @click="toDeploy"
-              >部署</ElLink
-            >
-            <!--						<ElLink v-if="$PLATFORM === 'dfs'" type="primary" :disabled="true">停止</ElLink>-->
+          <template>
+            <ElLink type="primary" class="mr-2" @click="toDeploy">部署</ElLink>
           </template>
         </ElTableColumn>
         <div class="instance-table__empty" slot="empty">

@@ -363,8 +363,10 @@ export default {
         })
     },
     loadConection() {
+      let agentList = this.agentList
       this.$axios.get('tm/api/Connections/count').then(res => {
         console.log('res', res)
+        agentList[1].value = res?.count
       })
     },
     loadTask() {
@@ -377,9 +379,9 @@ export default {
           (chart4.initialized || 0) +
           (chart4.cdc || 0)
         agentList[2].value = chart4.total
-        agentList[2].list[0].value = chart4.initializing || 1
-        agentList[2].list[1].value = chart4.cdc || 2
-        agentList[2].list[1].value = chart4.initialized || 3
+        agentList[2].list[0].value = chart4.initializing
+        agentList[2].list[1].value = chart4.cdc
+        agentList[2].list[1].value = chart4.initialized
       })
     },
     loadNotices() {
