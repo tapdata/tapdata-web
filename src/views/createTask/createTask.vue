@@ -416,6 +416,12 @@ export default {
       if (field === 'target_databaseType') {
         this.getConnection(this.getWhere('target'), 'target_connectionId', true)
       }
+      if (field === 'source_sourceType') {
+        this.getConnection(this.getWhere('source'), 'source_connectionId', true)
+      }
+      if (field === 'target_sourceType') {
+        this.getConnection(this.getWhere('target'), 'target_connectionId', true)
+      }
     },
     addSyncPoints() {
       this.primarySyncPoints() //先初始化再push
@@ -823,7 +829,7 @@ export default {
         case 'databaseType': {
           let source = items.find(it => it.field === 'source_databaseType')
           if (source) {
-            // dfs源端不支持 redis elasticsearch
+            // dameng源端不支持 redis elasticsearch
             let options = data
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
               let filterArr = ['redis', 'elasticsearch']
