@@ -501,9 +501,16 @@ export default {
       height: auto !important;
     }
     border-bottom: 1px solid #ebeef5;
+    td,
+    th {
+      padding: 3px 0;
+    }
     td {
       border-right: 1px solid #ebeef5 !important;
       border-bottom: 1px solid #ebeef5;
+      .cell {
+        min-height: 23px;
+      }
       .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
         border-color: #337dff;
         background-color: #337dff;

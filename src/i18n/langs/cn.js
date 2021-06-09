@@ -276,6 +276,7 @@ const cn = {
     copySuccess: '复制成功',
     deleteOK: '删除成功',
     deleteFail: '删除失败',
+    deleting: '删除中',
     reloadOK: '正在重新加载',
     stopFail: '停止失败',
     taskStart: '任务启动中',
@@ -2003,6 +2004,9 @@ const cn = {
     },
     details: {
       model: '模型',
+      collection: '数据集',
+      collectionName: '数据集名称',
+      createCollection: '创建数据集',
       dataDirectory: '数据目录',
       dataDetails: '数据详情',
       basicAttributes: '基础属性',
@@ -2064,6 +2068,7 @@ const cn = {
       manyone: '多对一',
       addRelatedTable: '新增关联表',
       enter: '请输入',
+      select: '请选择',
       filedAliasName: '字段名/别名',
       Float: '浮点数',
       String: '字符串',
@@ -2098,6 +2103,7 @@ const cn = {
       editAliasNameTitle: '编辑别名',
       editCommentTitle: '编辑描述',
       uniquelyIdentifies: '唯一标识',
+      query: '查询',
       version: {
         version: '版本',
         version_control: '版本管理',
@@ -2164,6 +2170,20 @@ const cn = {
       },
       preview: {
         title: '数据预览'
+      },
+      pipeline: {
+        title: '管道',
+        collection: '数据表',
+        pipeline: 'MongoDB Pipeline',
+        viewStatus: '视图状态',
+        FailedMessage: '失败详情',
+        penpinSave:
+          '点击下方保存按钮仅保存到系统，点击更新按钮将应用到此数据所在的数据库',
+        apply: '应用',
+        cnot_Empty: '不能为空',
+        view_tip: '操作将覆盖同名的视图，是否创建视图',
+        success: '应用成功',
+        failed: '应用失败'
       }
     },
     metadataSearch: {

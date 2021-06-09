@@ -1,19 +1,14 @@
 <template>
   <section class="validation-list-wrap">
-    <div>
-      <el-button
-        v-readonlybtn="'new_model_creation'"
-        class="btn btn-create"
-        size="mini"
-        @click="openCreateDialog"
-      >
+    <div class="table-page-operation-bar">
+      <el-button class="btn btn-create" size="mini" @click="openCreateDialog">
         <i class="iconfont icon-jia add-btn-icon"></i>
         <span>{{ $t('metadata.details.validation.create') }}</span>
       </el-button>
     </div>
 
     <!-- 数据验证表格 start -->
-    <el-table ref="table" class="metadata-list" :data="validationTableData">
+    <el-table ref="table" class="table-page-table" :data="validationTableData">
       <el-table-column
         :label="$t('metadata.details.validation.field_name')"
         prop="field_name"
@@ -35,9 +30,13 @@
       <el-table-column :label="$t('metadata.details.opera')" width="120">
         <template slot-scope="scope">
           <!-- v-if="scope.row.name !== '_id_' && scope.row.status === 'created'" -->
-          <el-button size="mini" type="text" @click="remove(scope.row)">{{
-            $t('button.delete')
-          }}</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            style="color: #f56c6c"
+            @click="remove(scope.row)"
+            >{{ $t('button.delete') }}</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -46,12 +45,11 @@
     <el-dialog
       width="660px"
       custom-class="create-dialog"
-      :title="$t('metadata.createNewModel')"
+      :title="$t('metadata.details.validation.create')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
       <!-- 数据验证弹窗表单 start -->
-      {{ createForm.rule.lt }}--{{ createForm.ruleType }}
       <el-form ref="form" :model="createForm" class="dataRule-form">
         <el-form-item :label="$t('metadata.details.validation.field_name')">
           <el-select
@@ -427,7 +425,8 @@ export default {
     }
   },
   created() {
-    this.validationTableData = this.validaData.data_rules.rules
+    this.validationTableData =
+      this.validaData.data_rules && this.validaData.data_rules.rules
     this.validationLevel = this.validaData.validationLevel || 'off'
   },
   mounted() {
@@ -665,10 +664,39 @@ export default {
 <style lang="scss" scoped>
 .validation-list-wrap {
   height: 100%;
+  .table-page-operation-bar {
+    margin-bottom: 10px;
+    overflow: hidden;
+    .btn-create {
+      float: right;
+      padding: 7px;
+      background: #f5f5f5;
+      i.iconfont {
+        font-size: 12px;
+      }
+      &.btn-create {
+        margin-left: 5px;
+      }
+    }
+  }
 }
 </style>
 <style lang="scss">
 .validation-list-wrap {
+  .table-page-table {
+    th {
+      padding: 0;
+      line-height: 30px;
+      background-color: #eff1f4 !important;
+    }
+    td,
+    .is-scrolling-left ~ .el-table__fixed {
+      border-right: 0;
+    }
+    th {
+      border-right: 1px solid #dcdfe6;
+    }
+  }
   .create-dialog {
     .el-dialog__body {
       padding: 30px;

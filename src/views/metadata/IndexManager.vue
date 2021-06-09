@@ -1,6 +1,7 @@
 <template>
+  <!-- 索引 -->
   <section class="index-list-wrap">
-    <div>
+    <div class="table-page-operation-bar">
       <el-button
         v-readonlybtn="'new_model_creation'"
         class="btn btn-create"
@@ -11,7 +12,8 @@
         <span>{{ $t('metadata.details.index.create') }}</span>
       </el-button>
     </div>
-    <el-table ref="table" class="metadata-list" :data="indexTableData">
+    <!-- 索引表格 start -->
+    <el-table ref="table" class="table-page-table" :data="indexTableData">
       <el-table-column :label="$t('metadata.details.index.name')" prop="name">
       </el-table-column>
       <el-table-column :label="$t('metadata.details.index.fields')" prop="key">
@@ -58,6 +60,7 @@
           <el-button
             size="mini"
             type="text"
+            style="color: #f56c6c"
             @click="remove(scope.row)"
             v-if="scope.row.name !== '_id_' && scope.row.status === 'created'"
             >{{ $t('button.delete') }}</el-button
@@ -65,18 +68,125 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 索引表格 end -->
+    <!-- 创建索引弹窗 start -->
     <el-dialog
       width="600px"
       custom-class="create-dialog"
-      :title="$t('dataRule.creatRule')"
+      :title="$t('metadata.details.index.create')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
-      <FormBuilder
-        ref="form"
-        v-model="createForm"
-        :config="createFormConfig"
-      ></FormBuilder>
+      <el-form ref="form" :model="createForm" class="dataRule-form">
+        <el-form-item :label="$t('metadata.details.index.name')">
+          <el-input
+            type="text"
+            size="mini"
+            v-model="createForm.task_data.name"
+            :placeholder="
+              $t('dataRule.pleaseSelect') + $t('metadata.details.index.name')
+            "
+          ></el-input>
+        </el-form-item>
+        <el-row
+          type="flex"
+          :gutter="20"
+          class="loopFrom"
+          v-for="(item, index) in createForm.indexDefinition"
+          :key="index"
+        >
+          <el-col :span="21" class="fromLoopBox">
+            <el-row :gutter="10">
+              <el-col :span="16">
+                <el-form-item
+                  :label="$t('metadata.details.index.definition')"
+                  :prop="'indexDefinition.' + index + '.key'"
+                  filterable
+                  allow-create
+                  default-first-option
+                >
+                  <el-select v-model="item.key" size="mini">
+                    <el-option
+                      v-for="fieldsItem in fieldsArr"
+                      :key="fieldsItem"
+                      :label="fieldsItem"
+                      :value="fieldsItem"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-select v-model="item.value" size="mini">
+                  <el-option
+                    v-for="unitItem in [
+                      { name: '1(asc)', value: 1 },
+                      { name: '-1(desc)', value: -1 },
+                      { name: '2dsphere', value: '2dsphere' },
+                      { name: '2d', value: '2d' }
+                    ]"
+                    :key="unitItem.value"
+                    :label="unitItem.name"
+                    :value="unitItem.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-col>
+            </el-row>
+          </el-col>
+          <el-col :span="4" class="loop-btn">
+            <el-button
+              plain
+              style="padding: 0; color: red"
+              type="text"
+              @click="removeRow(item, index)"
+              v-if="createForm.indexDefinition.length > 1"
+            >
+              {{ $t('message.delete') }}
+            </el-button>
+            <el-button
+              plain
+              style="padding: 0"
+              type="text"
+              @click="addRow"
+              v-if="index === createForm.indexDefinition.length - 1"
+            >
+              {{ $t('relations.add') }}
+            </el-button>
+          </el-col>
+        </el-row>
+        <el-form-item :label="$t('metadata.details.index.options')">
+          <el-checkbox v-model="createForm.task_data.background">{{
+            $t('metadata.details.index.build_in_background')
+          }}</el-checkbox>
+          <el-checkbox v-model="createForm.task_data.unique">{{
+            $t('metadata.details.index.create_unique')
+          }}</el-checkbox>
+          <el-checkbox v-model="createForm.task_data.ttl">{{
+            $t('metadata.details.index.create_ttl')
+          }}</el-checkbox>
+        </el-form-item>
+        <el-form-item v-if="createForm.task_data.ttl">
+          <el-col :span="16">
+            <el-input
+              type="text"
+              size="mini"
+              v-model="createForm.task_data.expireAfterSeconds"
+            ></el-input>
+          </el-col>
+          <el-col :span="6" class="fr">
+            <el-select v-model="createForm.task_data.data_type" size="mini">
+              <el-option
+                v-for="item in dataTypeList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="createDialogVisible = false" size="small">{{
           $t('message.cancel')
@@ -86,6 +196,7 @@
         }}</el-button>
       </span>
     </el-dialog>
+    <!-- 创建索引弹窗 end -->
   </section>
 </template>
 
@@ -100,62 +211,51 @@ export default {
   data() {
     return {
       indexTableData: [],
+      fieldsArr: [],
       createDialogVisible: false,
-      createFormConfig: {
-        form: {
-          labelPosition: 'right',
-          labelWidth: '100px'
-        },
-        items: [
+
+      rulesArr: [],
+      createForm: {
+        task_name: 'mongodb_create_index',
+        task_type: 'MONGODB_CREATE_INDEX',
+        status: 'waiting',
+        indexDefinition: [
           {
-            type: 'select',
-            label: this.$t('metadata.form.type'),
-            field: 'model_type',
-            options: ['collection', 'mongo_view'].map(t => ({
-              label: this.$t('metadata.metaType.' + t),
-              value: t
-            })),
-            required: true
-          },
-          {
-            type: 'select',
-            label: this.$t('metadata.form.database'),
-            field: 'database',
-            options: [],
-            required: true
-          },
-          {
-            type: 'input',
-            label: this.$t('metadata.form.tableName'),
-            field: 'tableName',
-            rules: [
-              {
-                required: true,
-                validator: (rule, v, callback) => {
-                  if (!v || !v.trim()) {
-                    return callback(
-                      new Error(this.$t('metadata.form.none_table_name'))
-                    )
-                  }
-                  const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
-                  if (v.split('.')[0] == 'system' || !flag) {
-                    return callback(
-                      new Error(this.$t('dialog.placeholderTable'))
-                    )
-                  }
-                  return callback()
-                }
-              }
-            ]
+            key: '',
+            value: 1
           }
-        ]
-      }
+        ],
+        task_data: {
+          name: '',
+          key: {},
+          unique: false,
+          expireAfterSeconds: '',
+          collection_name: '',
+          background: true,
+          uri: '',
+          ttl: false,
+          type_data: '',
+          data_type: 's'
+        }
+      },
+      dataTypeList: [
+        { label: this.$t('timeToLive.s'), value: 's' },
+        { label: this.$t('timeToLive.m'), value: 'm' },
+        { label: this.$t('timeToLive.h'), value: 'h' },
+        { label: this.$t('timeToLive.d'), value: 'd' },
+        { label: this.$t('timeToLive.w'), value: 'w' },
+        { label: this.$t('timeToLive.mo'), value: 'mo' },
+        { label: this.$t('timeToLive.y'), value: 'y' }
+      ]
     }
   },
   created() {
     this.getData()
   },
-  mounted() {},
+  mounted() {
+    if (this.indexData.fields)
+      this.fieldsArr = this.indexData.fields.map(item => item.field_name)
+  },
   computed: {
     table() {
       return this.$refs.table
@@ -177,76 +277,10 @@ export default {
           this.indexTableData.push(Object.assign({ properties: props }, item))
         })
     },
-    getDbOptions() {
-      let filter = {
-        fields: {
-          name: true,
-          id: true,
-          database_type: true,
-          connection_type: true,
-          status: true
-        }
-      }
-      this.$api('connections')
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          let dbOptions = res.data
-          this.dbOptions = dbOptions
-          let options = []
-          dbOptions.forEach(db => {
-            if (
-              db.database_type === 'mongodb' &&
-              ['target', 'source_and_target'].includes(db.connection_type)
-            ) {
-              options.push({
-                label: db.name,
-                value: db.id
-              })
-            }
-          })
-          this.createFormConfig.items[1].options = options
-        })
-    },
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${
         order === 'ascending' ? 'ASC' : 'DESC'
       }`
-      this.table.fetch(1)
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-    handleSelectTag() {
-      let tagList = {}
-      this.multipleSelection.forEach(row => {
-        if (row.classifications && row.classifications.length > 0) {
-          tagList[row.classifications[0].id] = {
-            value: row.classifications[0].value
-          }
-        }
-      })
-      return tagList
-    },
-    handleOperationClassify(classifications) {
-      this.$api('MetadataInstances')
-        .classification({
-          metadatas: this.multipleSelection.map(it => {
-            return {
-              id: it.id,
-              classifications: classifications
-            }
-          })
-        })
-        .then(() => {
-          this.table.fetch()
-        })
-    },
-    metaTypeChange(val) {
-      if (!this.whiteList.includes(val)) {
-        this.searchParams.dbId = ''
-      }
       this.table.fetch(1)
     },
     openCreateDialog() {
@@ -255,36 +289,110 @@ export default {
         this.$refs.form.clearValidate()
       })
       this.createForm = {
-        model_type: 'collection',
-        database: '',
-        tableName: ''
+        task_name: 'mongodb_create_index',
+        task_type: 'MONGODB_CREATE_INDEX',
+        status: 'waiting',
+        indexDefinition: [
+          {
+            key: '',
+            value: 1
+          }
+        ],
+        task_data: {
+          name: '',
+          key: {},
+          unique: false,
+          expireAfterSeconds: '',
+          collection_name: '',
+          background: true,
+          uri: '',
+          ttl: false,
+          type_data: '',
+          data_type: 's'
+        }
       }
     },
+    // 保存
     createNewModel() {
+      let _this = this
       this.$refs.form.validate(valid => {
         if (valid) {
-          let { model_type, database, tableName } = this.createForm
-          let db = this.dbOptions.find(it => it.id === database)
-          let params = {
-            connectionId: db.id,
-            original_name: tableName,
-            is_deleted: false,
-            meta_type: model_type,
-            create_source: 'manual',
-            databaseId: db.id,
-            classifications: db.classifications,
-            alias_name: '',
-            comment: ''
+          let { name, background, unique, ttl, expireAfterSeconds, data_type } =
+            _this.createForm.task_data
+          let existsIndexes = _this.indexTableData.filter(
+            it => it.name === name
+          )
+          if (existsIndexes && existsIndexes.length > 0) {
+            this.$message.error(this.$t('metadata.details.index.name_exists'))
+            return false
           }
-          this.$api('MetadataInstances')
+          let key = {}
+          _this.createForm.indexDefinition.forEach(v => (key[v.key] = v.value))
+          let _keyJson = JSON.stringify(key)
+          existsIndexes = _this.indexTableData.find(
+            v => _keyJson === JSON.stringify(v.key)
+          )
+          if (existsIndexes) {
+            this.$message.error(this.$t('metadata.details.index.index_exists'))
+            return false
+          }
+          let typeData = ''
+          switch (data_type) {
+            case 'm':
+              typeData = expireAfterSeconds * 60
+              break
+            case 'h':
+              typeData = expireAfterSeconds * 60 * 60
+              break
+            case 'd':
+              typeData = expireAfterSeconds * 60 * 60 * 24
+              break
+            case 'w':
+              typeData = expireAfterSeconds * 60 * 60 * 24 * 7
+              break
+            case 'mo':
+              typeData = expireAfterSeconds * 60 * 60 * 24 * 30
+              break
+            case 'y':
+              typeData = expireAfterSeconds * 60 * 60 * 24 * 300
+              break
+            default:
+              typeData = expireAfterSeconds
+          }
+          let params = {
+            task_name: 'mongodb_create_index',
+            task_type: 'MONGODB_CREATE_INDEX',
+            status: 'waiting',
+            task_data: {
+              collection_name: _this.indexData.original_name,
+              data_type: data_type,
+              expireAfterSeconds: typeData,
+              meta_id: _this.$route.query.id,
+              key: JSON.stringify(key),
+              name: name,
+              ttl: ttl,
+              type_data: typeData,
+              unique: unique,
+              background: background,
+              uri: _this.indexData.source
+                ? _this.indexData.source.database_uri
+                : ''
+            }
+          }
+          this.$api('ScheduleTasks')
             .post(params)
             .then(() => {
               this.createDialogVisible = false
+              this.$message.success(this.$t('message.saveOK'))
               // this.toDetails(res.data);
+            })
+            .catch(() => {
+              this.$message.error(this.$t('message.saveFail'))
             })
         }
       })
     },
+    // 删除索引
     remove(item) {
       const h = this.$createElement
       let _this = this
@@ -292,7 +400,6 @@ export default {
         this.$t('message.deleteOrNot') + ' ',
         h('span', { style: { color: '#48b6e2' } }, item.name)
       ])
-      debugger
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning',
         closeOnClickModal: false,
@@ -310,12 +417,12 @@ export default {
                     : '',
                   name: item.name,
                   ns: item.ns,
-                  meta_id: _this.$route.params.id
+                  meta_id: _this.$route.query.id
                 }
               })
               .then(() => {
                 done()
-                this.$message.success(this.$t('message.deleteOK'))
+                this.$message.success(this.$t('message.deleting'))
               })
               .catch(() => {
                 this.$message.info(this.$t('message.deleteFail'))
@@ -325,71 +432,111 @@ export default {
           }
         }
       })
+    },
+    // 添加索引字段
+    addRow() {
+      this.createForm.indexDefinition.push({
+        key: '',
+        value: '1'
+      })
+    },
+    // 删除索引字段
+    removeRow(item, index) {
+      this.createForm.indexDefinition.splice(index, 1)
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-.metadata-list-wrap {
+.index-list-wrap {
   height: 100%;
-  .metadata-list {
-    .search-bar {
-      display: flex;
-      li + li {
-        margin-left: 10px;
-      }
-    }
-    .btn + .btn {
-      margin-left: 5px;
-    }
-    .btn {
+  .table-page-operation-bar {
+    margin-bottom: 10px;
+    overflow: hidden;
+    .btn-create {
+      float: right;
       padding: 7px;
       background: #f5f5f5;
       i.iconfont {
         font-size: 12px;
       }
-      &.btn-dropdowm {
-        margin-left: 5px;
-      }
       &.btn-create {
         margin-left: 5px;
       }
     }
-    .metadata-name {
-      .name {
-        color: #48b6e2;
-        a {
-          color: inherit;
-          cursor: pointer;
-        }
-      }
-      .name:hover {
-        text-decoration: underline;
-      }
-      .tag {
-        margin-left: 5px;
-        color: #999999;
-        background: #f5f5f5;
-        border: 1px solid #dedee4;
-      }
-      .parent {
-        color: #cccccc;
-      }
-    }
+  }
+
+  .fr {
+    float: right;
   }
 }
 </style>
 <style lang="scss">
-.metadata-list-wrap {
+.index-list-wrap {
+  .table-page-table {
+    th {
+      padding: 0;
+      line-height: 30px;
+      background-color: #eff1f4 !important;
+    }
+    td,
+    .is-scrolling-left ~ .el-table__fixed {
+      border-right: 0;
+    }
+    th {
+      border-right: 1px solid #dcdfe6;
+    }
+  }
   .create-dialog {
     .el-dialog__body {
       padding: 30px;
-      .el-form {
+      .dataRule-form {
         .el-form-item {
-          margin-bottom: 12px;
+          margin-bottom: 5px;
           .el-form-item__label {
+            width: 100px;
+            font-size: 14px;
             text-align: left;
           }
+          .el-form-item__content {
+            margin-left: 100px;
+            .el-row {
+              display: flex;
+              justify-content: left;
+            }
+            .el-select {
+              width: 100%;
+            }
+            .el-form-item__error {
+              top: 82%;
+            }
+            .template-box {
+              padding: 5px 0 8px;
+              max-height: 350px;
+              min-height: 50px;
+              overflow-y: auto;
+              .el-row {
+                padding-bottom: 5px;
+              }
+              .el-form-item__content {
+                line-height: initial;
+                margin: 0;
+                .el-form-item__error {
+                  top: 100%;
+                }
+              }
+            }
+          }
+        }
+        .fromLoopBox {
+          .el-row {
+            .el-col {
+              line-height: 40px;
+            }
+          }
+        }
+        .loop-btn {
+          line-height: 40px;
         }
       }
     }
