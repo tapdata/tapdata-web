@@ -42,6 +42,12 @@ export default {
             val = Number(val)
           }
           self.on.input(val)
+        },
+        change: val => {
+          if (config.trim) {
+            val = val?.trim()
+          }
+          self.on.input(val)
         }
       })
     })
