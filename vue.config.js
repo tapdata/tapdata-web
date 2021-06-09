@@ -37,10 +37,10 @@ module.exports = {
 			// 		'^/tm': '/'
 			// 	}
 			// },
-			// '/tm/api': {
-			// 	target: 'http://' + baseUrl,
-			// 	changeOrigin: true
-			// },
+			'/tm/api': {
+				target: 'http://' + baseUrl,
+				changeOrigin: true
+			},
 			'/api/tcm': {
 				target: 'http://' + baseUrl,
 				changeOrigin: true
