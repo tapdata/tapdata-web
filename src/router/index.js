@@ -221,34 +221,22 @@ const routes = [
 	{
 		path: '/500',
 		name: '500',
-		component: Error,
-		meta: {
-			isErrorPage: true
-		}
+		component: Error
 	},
 	{
 		path: '/invalid',
 		name: 'Invalid',
-		component: Error,
-		meta: {
-			isErrorPage: true
-		}
+		component: Error
 	},
 	{
 		path: '/freeze',
 		name: 'Freeze',
-		component: Error,
-		meta: {
-			isErrorPage: true
-		}
+		component: Error
 	},
 	{
 		path: '/off',
 		name: 'Off',
-		component: Error,
-		meta: {
-			isErrorPage: true
-		}
+		component: Error
 	}
 ]
 if (process.env.VUE_APP_HIDE_INSTANCE_BTN !== 'true') {
