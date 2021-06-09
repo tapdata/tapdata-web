@@ -1,5 +1,5 @@
 import Layout from '../views/Layout.vue'
-import Dashboard from '../views/Dashboard/DFS.vue'
+// import Dashboard from '../views/Dashboard/DFS.vue'
 import Iframe from '../views/Iframe.vue'
 import Error from '../views/Error.vue'
 import AgentDownload from '@/views/AgentDownload/AgentPage.vue'
