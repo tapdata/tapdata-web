@@ -447,30 +447,6 @@ export default {
         }
       ]
     },
-    addSyncPoints() {
-      this.primarySyncPoints() //先初始化再push
-      let syncPoints = {
-        connectionId: this.dataSourceModel.target_connectionId, //双向模式下 有两个源节点
-        type: 'current', // localTZ: 本地时区； connTZ：连接时区
-        time: '',
-        date: '',
-        name: '',
-        timezone: this.systemTimeZone // 当type为localTZ时有该字段
-      }
-      this.settingModel.syncPoints.push(syncPoints)
-    },
-    primarySyncPoints() {
-      this.settingModel.syncPoints = [
-        {
-          connectionId: this.dataSourceModel.source_connectionId,
-          type: 'current', // localTZ: 本地时区； connTZ：连接时区
-          time: '',
-          date: '',
-          name: '',
-          timezone: this.systemTimeZone // 当type为localTZ时有该字段
-        }
-      ]
-    },
     getSteps() {
       const steps = [
         { index: 1, text: '选择实例', type: 'instance' },
