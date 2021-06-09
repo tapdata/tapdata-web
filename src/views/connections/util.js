@@ -124,7 +124,8 @@ export const defaultModel = {
     sslKeyFile: null,
     search_databaseType: '',
     increamentalTps: 100, //dummy
-    initialReadSize: 100000 //dummy
+    initialReadSize: 100000, //dummy
+    schema: ''
   },
   kafka: {
     id: '',

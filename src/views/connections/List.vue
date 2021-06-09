@@ -342,7 +342,8 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira'
+        'jira',
+        'dameng'
         // 'gbase-8s',
         // 'sybase ase',
         // 'gaussdb200',
