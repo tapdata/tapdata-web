@@ -1,6 +1,7 @@
 const Mock = require('mockjs')
 const Random = Mock.Random
 const product = require('./ecloud_product.json')
+const settings = require('./settings.json')
 
 const agent = {
 	id: '@guid',
@@ -225,5 +226,6 @@ module.exports = {
 				}
 			]
 		}
-	}
+	},
+	'/tm/api/Settings': settings
 }

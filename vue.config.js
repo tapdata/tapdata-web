@@ -11,15 +11,11 @@ if (process.env.npm_config_argv) {
 }
 console.log('代理地址：http://' + baseUrl)
 //如果环境变量中主题参数存在，则嵌入主题中相关的标量
-let varUrl = '~@/assets/var.scss'
-if (process.env.VUE_APP_THEME) {
-	varUrl = '~@/assets/theme/' + process.env.VUE_APP_THEME + '/var.scss'
-}
+let varUrl = '~@/assets/theme/dfs/var.scss'
 let pages = {
 	index: {
 		entry: 'src/pages/main.js',
-		title: process.env.VUE_APP_PLATFORM === 'dfs' ? 'Tapdata Cloud' : '数据库复制 DRS',
-		header: process.env.VUE_APP_HEADER
+		title: 'Tapdata Cloud'
 	}
 }
 

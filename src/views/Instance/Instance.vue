@@ -47,9 +47,7 @@
 			>
 				<ElTableColumn min-width="200px" label="实例ID/名称">
 					<template slot-scope="scope">
-						<ElLink :class="['agent-link', $PLATFORM]" type="primary" @click="clickAgent(scope.row)">{{
-							scope.row.id
-						}}</ElLink>
+						<ElLink class="agent-link" type="primary">{{ scope.row.id }}</ElLink>
 						<ClipButton :value="scope.row.id"></ClipButton>
 						<InlineInput
 							style="display: block;"
@@ -95,31 +93,13 @@
 					</template>
 				</ElTableColumn>
 				<ElTableColumn label="操作" width="120" fixed="right">
-					<template slot-scope="scope">
-						<ElTooltip
-							v-if="$PLATFORM !== 'dfs'"
-							effect="dark"
-							placement="top"
-							popper-class="tooltip--notenter"
-							:enterable="false"
-							:content="temList[scope.$index].restartTips"
-							:disabled="!temList[scope.$index].restartTips"
-						>
-							<ElLink
-								type="primary"
-								popper-class="tooltip--notenter"
-								:disabled="!!temList[scope.$index].restartTips"
-								@click="restart(scope.row)"
-								>重启</ElLink
-							>
-						</ElTooltip>
-						<ElLink v-if="$PLATFORM === 'dfs'" type="primary" class="mr-2" @click="toDeploy">部署</ElLink>
-						<!--						<ElLink v-if="$PLATFORM === 'dfs'" type="primary" :disabled="true">停止</ElLink>-->
+					<template>
+						<ElLink type="primary" class="mr-2" @click="toDeploy">部署</ElLink>
 					</template>
 				</ElTableColumn>
 				<div class="instance-table__empty" slot="empty">
 					<i class="el-icon-folder-opened"></i>
-					<span class="ml-1" v-if="!searchParams.keyword && !searchParams.status && !searchParams.zone">暂无数据</span>
+					<span class="ml-1" v-if="!searchParams.keyword && !searchParams.status">暂无数据</span>
 					<span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
 				</div>
 			</El-table>
@@ -141,7 +121,7 @@
 </template>
 
 <script>
-import { delayTrigger, formatAgent } from '../../util'
+import { delayTrigger } from '../../util'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
@@ -155,15 +135,12 @@ export default {
 	},
 	data() {
 		return {
-			isInternet: window.__USER_INFO__.isInternet,
 			loading: true,
 			searchParams: {
 				status: '',
-				keyword: '',
-				zone: ''
+				keyword: ''
 			},
 			list: [],
-			temList: [],
 			page: {
 				current: 0,
 				size: 10,
@@ -171,7 +148,6 @@ export default {
 			},
 			order: 'createAt desc',
 			statusMap: STATUS_MAP,
-			zoneOptions: [],
 			VUE_APP_HIDE_INSTANCE_BTN: process.env.VUE_APP_HIDE_INSTANCE_BTN
 		}
 	},
@@ -186,12 +162,8 @@ export default {
 				if (options[item.text]) {
 					value = options[item.text] + ',' + value
 				}
-				if (this.$PLATFORM === 'dfs') {
-					// dfs只保留 运行中、已停止、异常 Running Stopped Error
-					if (dfsFilter.indexOf(value) > -1) {
-						options[item.text] = value
-					}
-				} else {
+				// dfs只保留 运行中、已停止、异常 Running Stopped Error
+				if (dfsFilter.indexOf(value) > -1) {
 					options[item.text] = value
 				}
 			}
@@ -199,22 +171,15 @@ export default {
 		}
 	},
 	watch: {
-		'$route.query'(query, oldQuery) {
-			if (oldQuery.region !== query.region) {
-				this.searchParams.zone = ''
-				this.getZoneOptions()
-			}
+		'$route.query'(query) {
 			this.searchParams.status = query.status || ''
-			this.searchParams.zone = query.zone || ''
 			this.fetch(1)
 		}
 	},
 	created() {
 		let query = this.$route.query
 		this.searchParams.status = query.status || ''
-		this.searchParams.zone = query.zone || ''
 		this.fetch()
-		this.getZoneOptions()
 		timer = setInterval(() => {
 			if (!this || this._isDestroyed) {
 				clearInterval(timer)
@@ -231,16 +196,11 @@ export default {
 		}
 	},
 	methods: {
-		clickAgent(row) {
-			this.$PLATFORM !== 'dfs' && this.$router.push('instance/' + row.id)
-		},
 		search() {
-			let { status, zone } = this.searchParams
+			let { status } = this.searchParams
 			this.$router.replace({
 				name: 'Instance',
 				query: {
-					region: this.$route.query.region,
-					zone,
 					status
 				}
 			})
@@ -250,15 +210,12 @@ export default {
 				if (!hideLoading) {
 					this.loading = true
 				}
-				let region = this.$route.query.region
 				let current = pageNum || this.page.current
-				let { keyword, status, zone } = this.searchParams
+				let { keyword, status } = this.searchParams
 				let where = {}
 				if (keyword && keyword.trim()) {
 					where.$or = [{ name: { $regex: keyword, $options: 'i' } }, { clusterId: { $regex: keyword, $options: 'i' } }]
 				}
-				region && (where.region = region)
-				zone && (where.zone = zone)
 				if (status) {
 					where.status = {
 						$in: status.split(',')
@@ -274,25 +231,8 @@ export default {
 					.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
 					.then(data => {
 						let list = data.items || []
-						this.list = list.map(formatAgent)
+						this.list = list
 						this.page.total = data.total
-						this.temList = list.map((it, idx) => {
-							let restartTips = ''
-							if (it.metric && it.metric.runningTaskNum) {
-								restartTips = '实例下无运行的任务才能重启'
-							}
-							return Object.assign(
-								{
-									loading: false,
-									modifyTips: '',
-									cancelTips: '',
-									renewTips: '',
-									restartTips: restartTips || '',
-									orderTips: ''
-								},
-								this.temList[idx]
-							)
-						})
 						if (!list.length && data.total > 0) {
 							setTimeout(() => {
 								this.fetch(this.page.current - 1)
@@ -306,140 +246,9 @@ export default {
 					})
 			}, debounce)
 		},
-		getZoneOptions() {
-			let { poolList, regionMap, zoneMap } = window.__REGION__
-			let region = this.$route.query.region
-			if (region) {
-				let regionInfo = poolList.find(p => p.poolId === region) || {}
-				let zoneInfo = regionInfo.zoneInfo || []
-				this.zoneOptions.splice(0, this.zoneOptions.length)
-				this.zoneOptions.push(
-					...zoneInfo.map(z => {
-						return {
-							label: regionInfo.poolName + ' | ' + z.zoneName,
-							value: z.zoneCode
-						}
-					})
-				)
-			} else {
-				let options = []
-				for (const key in zoneMap) {
-					let keyArr = key.split('-')
-					let regionKey = keyArr.splice(0, keyArr.length - 1)
-					options.push({
-						label: regionMap[regionKey.join('-')] + ' | ' + zoneMap[key],
-						value: key
-					})
-				}
-				this.zoneOptions = options
-			}
-		},
 		sortChange({ column, prop, order }) {
 			this.order = `${order ? prop : 'createAt'} ${order === 'ascending' ? 'asc' : 'desc'}`
 			this.fetch(1)
-		},
-		handleMore(comand, item, index) {
-			switch (comand) {
-				case 'cancel':
-					this.toCancel(item, index)
-					break
-				case 'modify':
-					this.toModify(item, index)
-					break
-				case 'order':
-					this.toOrder(item, index)
-					break
-				case 'renew':
-					this.toRenew(item, index)
-					break
-				default:
-					// this.toOrder(item);
-					break
-			}
-		},
-		restart(item) {
-			this.$confirm(
-				'重启实例 ' + item.name + ' 的所有进程将会关闭并重新启动，导致业务中断，请谨慎操作',
-				'是否重启该实例？',
-				{
-					type: 'warning'
-				}
-			).then(res => {
-				if (!res) {
-					return
-				}
-				this.loading = true
-				this.$axios
-					.post('api/tcm/agent/restart?agentId=' + item.id)
-					.then(() => {
-						this.$message.success('重启操作成功')
-						this.fetch()
-					})
-					.catch(() => {
-						this.loading = false
-					})
-			})
-		},
-		stop(item) {
-			console.log('stop', item)
-		},
-		toOrder(item) {
-			this.loading = true
-			this.$axios
-				.get(`api/tcm/orders/${item.id}`)
-				.then(data => {
-					let orderId = data.id
-					if (orderId) {
-						window.open(process.env.VUE_APP_BASE_URL + `/usercenter/mop/order/orderdetail/${orderId}`, '_blank')
-					} else {
-						this.$message.warning('订单创建中，请稍后再试')
-					}
-				})
-				.finally(() => {
-					this.loading = false
-				})
-		},
-		toRenew(item, index) {
-			if (this.temList[index].renewTips) {
-				return
-			}
-			window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PURCHASE_PATH + '#/renew/' + item.id, '_blank')
-		},
-		toModify(item, index) {
-			if (this.temList[index].modifyTips) {
-				return
-			}
-			window.open(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PURCHASE_PATH + '#/modify/' + item.id, '_blank')
-		},
-		toCancel(item, index) {
-			if (this.temList[index].cancelTips) {
-				return
-			}
-			if (item.metric && item.metric.runningTaskNum) {
-				return this.$alert('该实例已创建了同步任务或数据源，请先删除同步任务和数据源再进行退订操作', {
-					type: 'warning',
-					customClass: 'el-message-box--alert'
-				})
-			}
-			this.$confirm('实例 ' + item.name + ' 退订后不能恢复，且账号不再对该实例计费', '是否退订该实例', {
-				type: 'warning'
-			}).then(res => {
-				if (!res) {
-					return
-				}
-				this.loading = true
-				this.$axios
-					.post('api/tcm/orders/cancel', {
-						instanceId: item.id
-					})
-					.then(() => {
-						this.$message.success('退订操作成功')
-						this.fetch()
-					})
-					.catch(() => {
-						this.loading = false
-					})
-			})
 		},
 		toOldPurchase() {
 			this.$confirm('确认后跳转订购托管实例页面', '是否确认订购托管实例？', {
@@ -493,62 +302,9 @@ export default {
 		reset() {
 			this.searchParams = {
 				status: '',
-				keyword: '',
-				zone: ''
+				keyword: ''
 			}
 			this.fetch(1)
-		},
-		dropdownVisibleChange(flag, id, userId) {
-			if (flag) {
-				let index = this.list.findIndex(it => it.id === id)
-				let item = this.temList[index]
-				let itemData = this.list[index]
-				let user = window.__USER_INFO__ || {}
-				if (user.id !== itemData.createBy) {
-					item.modifyTips = `请使用账号 ${itemData.createUser} 操作规格变更`
-					item.cancelTips = `请使用账号 ${itemData.createUser} 操作退订`
-					item.renewTips = `请使用账号 ${itemData.createUser} 操作续订`
-					item.orderTips = `请使用账号 ${itemData.createUser} 操作查看订单`
-					this.$set(this.temList, index, item)
-					return
-				}
-				if (itemData.metric && itemData.metric.runningTaskNum) {
-					let msg = '实例下无运行的任务才能'
-					item.modifyTips = msg + '变更规格'
-					item.cancelTips = msg + '退订'
-					this.$set(this.temList, index, item)
-					return
-				}
-				item.loading = true
-				this.$set(this.temList, index, item)
-				this.$axios
-					.get(`api/tcm/agent/${id}/auth`)
-					.then(data => {
-						let statusMessage = '当前实例状态不允许此操作'
-						item.modifyTips =
-							data.change.supportFlag === 'ALLOW'
-								? ['Running', 'Error'].includes(itemData.status)
-									? ''
-									: statusMessage
-								: data.change.message
-						item.cancelTips =
-							data.cancel.supportFlag === 'ALLOW'
-								? ['Running', 'Error'].includes(itemData.status)
-									? ''
-									: statusMessage
-								: data.cancel.message
-						item.renewTips =
-							data.renew.supportFlag === 'ALLOW'
-								? ['Running', 'Error', 'Freeze'].includes(itemData.status)
-									? ''
-									: statusMessage
-								: data.renew.message
-					})
-					.finally(() => {
-						item.loading = false
-						this.$set(this.temList, index, item)
-					})
-			}
 		},
 		toDataFlow(id) {
 			this.$router.push({
@@ -599,10 +355,8 @@ export default {
 		overflow: auto;
 		border-bottom: none;
 		.agent-link {
-			&.dfs {
-				color: unset;
-				cursor: unset;
-			}
+			color: unset;
+			cursor: unset;
 		}
 	}
 	.instance-table__empty {

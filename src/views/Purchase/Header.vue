@@ -1,21 +1,16 @@
 <template>
 	<div>
-		<orderHeader v-if="isShowDrsHeader" :env="env" />
 		<div class="purcahse-header">
 			<span>
 				数据库复制DRS&nbsp;
 				<span>{{ operationMap[action] }}</span>
 			</span>
 			<ul class="links">
-				<li>
-					<ElLink class="slight" style="font-size: 12px" @click="toHistory()">购买历史</ElLink>
-				</li>
+				<li><ElLink class="slight" style="font-size: 12px" @click="toHistory()">购买历史</ElLink></li>
 				<li>
 					<ElLink class="slight" style="font-size: 12px" @click="toProduct()">查看产品详情</ElLink>
 				</li>
-				<li>
-					<ElLink class="slight" style="font-size: 12px" @click="toHelp()">帮助文档</ElLink>
-				</li>
+				<li><ElLink class="slight" style="font-size: 12px" @click="toHelp()">帮助文档</ElLink></li>
 			</ul>
 		</div>
 	</div>
@@ -28,9 +23,6 @@ export default {
 	},
 	data() {
 		return {
-			isShowDrsHeader: false,
-			env: process.env.VUE_APP_ENV,
-
 			operationMap: {
 				Purchase: '实例订购',
 				Renew: '续订',

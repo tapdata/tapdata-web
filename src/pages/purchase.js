@@ -4,8 +4,6 @@ import Purchase from '../views/Purchase/Purchase.vue'
 import Result from '../views/Purchase/Result.vue'
 import Error from '../views/Error.vue'
 
-window.__API_PRE_URL__ = process.env.VUE_APP_API_PATH
-
 const routes = [
 	{
 		path: '/',

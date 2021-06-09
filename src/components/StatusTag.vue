@@ -24,10 +24,7 @@ export default {
 	},
 	computed: {
 		statusObj() {
-			if (this.$PLATFORM === 'dfs') {
-				return STATUS_MAP[this.status === 'Running' ? 'Running' : 'Offline']
-			}
-			return STATUS_MAP[this.status]
+			return STATUS_MAP[this.status === 'Running' ? 'Running' : 'Offline']
 		}
 	}
 }

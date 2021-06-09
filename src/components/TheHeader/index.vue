@@ -1,5 +1,5 @@
 <template>
-	<Header ref="dfsHeader"></Header>
+	<Header ref="header"></Header>
 </template>
 
 <script>

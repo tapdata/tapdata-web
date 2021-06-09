@@ -143,7 +143,7 @@ export default {
 					customClass: 'el-message-box--alert'
 				})
 			}
-			location.href = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PURCHASE_PATH + '#/modify/' + item.id
+			location.href = process.env.VUE_APP_BASE_URL + '/#/modify/' + item.id
 		},
 		//打开切换版本
 		handleOpen() {

@@ -77,7 +77,7 @@ export default {
 	},
 	methods: {
 		toDashboard() {
-			location.href = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CONSOLE_PATH
+			location.href = process.env.VUE_APP_BASE_URL + '/'
 		},
 		toOrder() {
 			let orderId = this.result.orderId
@@ -94,7 +94,7 @@ export default {
 				Modify: 'modify/' + id,
 				Renew: 'renew/' + id
 			}
-			location.href = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PURCHASE_PATH + '#/' + map[this.result.action]
+			location.href = process.env.VUE_APP_BASE_URL + '/#/' + map[this.result.action]
 		}
 	}
 }

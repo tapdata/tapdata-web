@@ -7,10 +7,7 @@ import Moment from 'moment'
 import './assets/app.scss'
 import VueClipboard from 'vue-clipboard2'
 
-if (process.env.VUE_APP_THEME) {
-	require('./assets/theme/' + process.env.VUE_APP_THEME + '/index.scss')
-}
-Vue.prototype.$PLATFORM = process.env.VUE_APP_PLATFORM
+require('./assets/theme/dfs/index.scss')
 
 Vue.config.productionTip = false
 Vue.prototype.$moment = Moment
@@ -55,9 +52,7 @@ export default function({ routes }) {
 							}
 						).then(flag => {
 							if (flag) {
-								let downloadUrl = window.App.$router.resolve({
-									name: 'FastDownload'
-								})
+								let downloadUrl = window.App.$router.resolve({ name: 'FastDownload' })
 								window.open(downloadUrl.href, '_blank')
 							}
 						})

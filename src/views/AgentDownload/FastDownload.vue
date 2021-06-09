@@ -1,5 +1,5 @@
 <template>
-	<section :class="['fast-download', 'down-page', $PLATFORM]">
+	<section :class="['fast-download', 'down-page']">
 		<TheHeader></TheHeader>
 		<main class="page-main block">
 			<div class="title">Agent 下载与安装</div>
@@ -273,11 +273,7 @@ export default {
 			this.showTooltip = true
 		},
 		handleNextSetp() {
-			if (this.$PLATFORM === 'dfs') {
-				this.$router.push({ name: 'Instance' })
-			} else {
-				this.$router.push({ name: 'Dashboard' })
-			}
+			this.$router.push({ name: 'Instance' })
 		}
 	}
 }
@@ -293,9 +289,6 @@ export default {
 	overflow: hidden;
 	background-color: #fff;
 	box-sizing: border-box;
-	&.drs {
-		padding-top: 50px;
-	}
 	.page-main {
 		width: 100%;
 		height: calc(100% - 80px);
