@@ -21,49 +21,7 @@ export default function({ routes }) {
 	})
 	let loading = null
 	router.beforeEach((to, from, next) => {
-		if (to.meta.isErrorPage) {
-			return next()
-		}
-		let userInfo = window.__USER_INFO__ || {}
-		let authoritys = userInfo.authoritys || []
-		if (userInfo.isInternet) {
-			return next('/invalid')
-		}
-		if (process.env.VUE_APP_GRAY === 'true' && !authoritys.includes('ECLOUD_DRS_TEST')) {
-			return next('/invalid')
-		}
-		if (
-			['Dataflow', 'DataflowCreate', 'Connection', 'ConnectionCreate', 'Verification', 'VerificationCreate'].includes(
-				to.name
-			)
-		) {
-			loading = window.loading({ fullscreen: true })
-			window.axios
-				.get('api/tcm/agent/agentCount')
-				.then(data => {
-					next()
-					if (!data.agentTotalCount || data.agentTotalCount <= 0) {
-						window.App.$confirm(
-							'创建任务要先订购同步实例，同步任务的服务进程环境要在实例中运行，实例的链路与性能影响同步任务的运行效率。',
-							'您尚未订购同步实例，请先订购实例',
-							{
-								type: 'warning',
-								confirmButtonText: '订购实例'
-							}
-						).then(flag => {
-							if (flag) {
-								let downloadUrl = window.App.$router.resolve({ name: 'FastDownload' })
-								window.open(downloadUrl.href, '_blank')
-							}
-						})
-					}
-				})
-				.finally(() => {
-					loading.close()
-				})
-		} else {
-			next()
-		}
+		next()
 	})
 	loading = window.loading({ fullscreen: true })
 	let count = 0
@@ -125,13 +83,3 @@ export default function({ routes }) {
 	}
 	getData()
 }
-sessionStorage.setItem(
-	'TM_CONFIG',
-	JSON.stringify({
-		DFS_IGNORE_PERMISSION: true,
-		DFS_TM_API_PRE_URL: process.env.VUE_APP_TM_PUBLIC_PATH,
-		DFS_TCM_API_PRE_URL: process.env.VUE_APP_API_PATH,
-		DFS_TCM_PLATFORM: process.env.VUE_APP_PLATFORM,
-		DFS_TM_WS_HOST: process.env.VUE_APP_WS_HOST
-	})
-)
