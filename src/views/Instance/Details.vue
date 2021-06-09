@@ -14,9 +14,6 @@
 				<div class="title">
 					<i class="el-icon-notebook-2"></i>
 					<span style="margin-left: 1px">实例信息</span>
-					<el-button class="changeAgent" size="mini" type="primary" v-if="$PLATFORM === 'drs'" @click="handleOpen"
-						>切换实例版本</el-button
-					>
 				</div>
 				<ul class="info">
 					<li class="info-item">
@@ -144,7 +141,7 @@ export default {
 					customClass: 'el-message-box--alert'
 				})
 			}
-			location.href = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PURCHASE_PATH + '#/modify/' + item.id
+			location.href = process.env.VUE_APP_BASE_URL + '/#/modify/' + item.id
 		},
 		//打开切换版本
 		handleOpen() {

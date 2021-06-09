@@ -7,10 +7,7 @@ import Moment from 'moment'
 import './assets/app.scss'
 import VueClipboard from 'vue-clipboard2'
 
-if (process.env.VUE_APP_THEME) {
-	require('./assets/theme/' + process.env.VUE_APP_THEME + '/index.scss')
-}
-Vue.prototype.$PLATFORM = process.env.VUE_APP_PLATFORM
+require('./assets/theme/dfs/index.scss')
 
 Vue.config.productionTip = false
 Vue.prototype.$moment = Moment
@@ -18,18 +15,6 @@ Vue.use(VueClipboard)
 
 Vue.use(VueRouter)
 
-if (process.env.VUE_APP_PLATFORM === 'drs') {
-	let iframe = document.createElement('iframe')
-	iframe.src = 'https://console-wuxi-1.cmecloud.cn:8443/api/web/user'
-	// iframe.style = 'width: 1px; height: 1px; position: fixed; top: -10px; left: -10px'
-	iframe.style.width = '1px'
-	iframe.style.height = '1px'
-	iframe.style.position = 'fixed'
-	iframe.style.top = '-10px'
-	iframe.style.left = '-10px'
-
-	document.body.appendChild(iframe)
-}
 export default function({ routes }) {
 	const router = new VueRouter({
 		routes
@@ -46,9 +31,6 @@ export default function({ routes }) {
 		}
 		if (process.env.VUE_APP_GRAY === 'true' && !authoritys.includes('ECLOUD_DRS_TEST')) {
 			return next('/invalid')
-		}
-		if (process.env.VUE_APP_PLATFORM === 'drs' && userInfo.userStatus != 1) {
-			return next('/freeze')
 		}
 		if (
 			['Dataflow', 'DataflowCreate', 'Connection', 'ConnectionCreate', 'Verification', 'VerificationCreate'].includes(
@@ -70,12 +52,8 @@ export default function({ routes }) {
 							}
 						).then(flag => {
 							if (flag) {
-								if (process.env.VUE_APP_PLATFORM === 'drs') {
-									location.href = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PURCHASE_PATH
-								} else {
-									let downloadUrl = window.App.$router.resolve({ name: 'FastDownload' })
-									window.open(downloadUrl.href, '_blank')
-								}
+								let downloadUrl = window.App.$router.resolve({ name: 'FastDownload' })
+								window.open(downloadUrl.href, '_blank')
 							}
 						})
 					}
@@ -151,9 +129,6 @@ sessionStorage.setItem(
 	'TM_CONFIG',
 	JSON.stringify({
 		DFS_IGNORE_PERMISSION: true,
-		DFS_TM_API_PRE_URL: process.env.VUE_APP_TM_PUBLIC_PATH,
-		DFS_TCM_API_PRE_URL: process.env.VUE_APP_API_PATH,
-		DFS_TCM_PLATFORM: process.env.VUE_APP_PLATFORM,
-		DFS_TM_WS_HOST: process.env.VUE_APP_WS_HOST
+		DFS_TM_API_PRE_URL: process.env.VUE_APP_TM_PUBLIC_PATH
 	})
 )

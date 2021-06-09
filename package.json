@@ -1,59 +1,58 @@
 {
-  "name": "drs",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "drs": "vue-cli-service serve --mode drs_dev --open",
-    "dfs": "vue-cli-service serve --mode dfs_dev --open",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint --fix",
-    "mock": "nodemon ./mock/mock.js"
-  },
-  "dependencies": {
-    "axios": "^0.21.1",
-    "bootstrap": "^5.0.0-beta3",
-    "core-js": "^3.6.5",
-    "echarts": "^5.0.2",
-    "element-ui": "^2.15.1",
-    "jsonwebtoken": "^8.5.1",
-    "moment": "^2.29.1",
-    "nodemon": "^2.0.7",
-    "vue": "^2.6.11",
-    "vue-clipboard2": "^0.3.1",
-    "vue-cookies": "^1.7.4",
-    "vue-router": "^3.2.0"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/eslint-config-prettier": "^6.0.0",
-    "babel-eslint": "^10.1.0",
-    "babel-plugin-component": "^1.1.1",
-    "eslint": "^6.7.2",
-    "eslint-plugin-prettier": "^3.1.3",
-    "eslint-plugin-vue": "^6.2.2",
-    "husky": "^4.3.8",
-    "lint-staged": "^10.5.3",
-    "mockjs": "^1.1.0",
-    "prettier": "^1.19.1",
-    "sass": "^1.32.8",
-    "sass-loader": "^10.1.1",
-    "svg-sprite-loader": "^6.0.2",
-    "svgo-loader": "^3.0.0",
-    "vue-cli-plugin-element": "^1.0.1",
-    "vue-template-compiler": "^2.6.11",
-    "vue-clipboard2": "^0.3.1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,vue,jsx}": [
-      "vue-cli-service lint"
-    ]
-  }
+	"name": "dfs",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"serve": "vue-cli-service serve --mode dev --open",
+		"build": "vue-cli-service build",
+		"lint": "vue-cli-service lint --fix",
+		"mock": "nodemon ./mock/mock.js"
+	},
+	"dependencies": {
+		"axios": "^0.21.1",
+		"bootstrap": "^5.0.0-beta3",
+		"core-js": "^3.6.5",
+		"echarts": "^5.0.2",
+		"element-ui": "^2.15.1",
+		"jsonwebtoken": "^8.5.1",
+		"moment": "^2.29.1",
+		"nodemon": "^2.0.7",
+		"vue": "^2.6.11",
+		"vue-clipboard2": "^0.3.1",
+		"vue-cookies": "^1.7.4",
+		"vue-router": "^3.2.0"
+	},
+	"devDependencies": {
+		"@vue/cli-plugin-babel": "~4.5.0",
+		"@vue/cli-plugin-eslint": "~4.5.0",
+		"@vue/cli-plugin-router": "~4.5.0",
+		"@vue/cli-service": "~4.5.0",
+		"@vue/eslint-config-prettier": "^6.0.0",
+		"babel-eslint": "^10.1.0",
+		"babel-plugin-component": "^1.1.1",
+		"eslint": "^6.7.2",
+		"eslint-plugin-prettier": "^3.1.3",
+		"eslint-plugin-vue": "^6.2.2",
+		"husky": "^4.3.8",
+		"lint-staged": "^10.5.3",
+		"mockjs": "^1.1.0",
+		"prettier": "^1.19.1",
+		"sass": "^1.32.8",
+		"sass-loader": "^10.1.1",
+		"svg-sprite-loader": "^6.0.2",
+		"svgo-loader": "^3.0.0",
+		"vue-cli-plugin-element": "^1.0.1",
+		"vue-template-compiler": "^2.6.11",
+		"vue-clipboard2": "^0.3.1"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,vue,jsx}": [
+			"vue-cli-service lint"
+		]
+	}
 }

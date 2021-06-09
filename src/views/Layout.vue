@@ -1,11 +1,10 @@
 <template>
-	<ElContainer :class="['layout-wrap', $PLATFORM]">
+	<ElContainer class="layout-wrap">
 		<TheHeader ref="theHeader"></TheHeader>
 		<ElAside class="left-aside" width="200px">
-			<div class="product-name" v-if="$PLATFORM === 'drs'">数据库复制DRS</div>
 			<ElMenu :default-active="activeMenu" @select="menuTrigger">
 				<ElMenuItem v-for="m in menus" :key="m.name" :index="m.path">
-					<span class="mr-4" slot v-if="$PLATFORM === 'dfs' && m.meta.icon"
+					<span class="mr-4" slot v-if="m.meta.icon"
 						><VIcon class="v-icon" size="12">{{ m.meta.icon }}</VIcon></span
 					>
 					<span slot="title">{{ m.meta.title }}</span>
@@ -29,17 +28,6 @@
 				</ElBreadcrumb>
 			</ElHeader>
 			<ElMain class="main">
-				<div v-if="$PLATFORM === 'drs' && $route.meta.showRegion" class="mb-5" style="padding: 20px;background: #fff;">
-					<ElRadioGroup :value="$route.query.region || ''" @input="regionChange">
-						<ElRadioButton label="">全部</ElRadioButton>
-						<template v-for="(opt, index) in regionCount">
-							<ElRadioButton :key="opt.value" :label="opt.value" :class="{ 'second-line': index > 5 }">{{
-								opt.label
-							}}</ElRadioButton>
-							<br :key="'br' + index" v-if="(index + 1) % 6 === 0" />
-						</template>
-					</ElRadioGroup>
-				</div>
 				<RouterView @show-guide="showGuide" @create-task="createTask"></RouterView>
 			</ElMain>
 		</ElContainer>
@@ -66,13 +54,9 @@ export default {
 	created() {
 		this.activeMenu = this.$route.path
 		let menus = this.$router.options.routes.find(r => r.path === '/').children?.filter(item => !item.hidden)
-		if (this.$PLATFORM === 'dfs') {
-			this.menus = this.dfsMenus.map(name => {
-				return menus.find(item => item.name === name)
-			})
-		} else {
-			this.menus = menus
-		}
+		this.menus = this.dfsMenus.map(name => {
+			return menus.find(item => item.name === name)
+		})
 		this.getBreadcrumb(this.$route)
 		this.getRegionCount()
 	},
@@ -125,14 +109,6 @@ export default {
 			}
 			this.regionCount = arr
 		},
-		regionChange(v) {
-			this.$router.replace({
-				name: this.$route.name,
-				query: {
-					region: v
-				}
-			})
-		},
 		back() {
 			this.$router.back()
 		}
@@ -144,9 +120,6 @@ export default {
 .layout-wrap {
 	height: 100%;
 	padding-top: 68px;
-	&.drs {
-		padding-top: 50px;
-	}
 	//&.dfs {
 	//	.left-aside {
 	//		background-color: rgba(0, 0, 0, 0.05);

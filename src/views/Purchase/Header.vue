@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<orderHeader v-if="isShowDrsHeader" :env="env" />
 		<div class="purcahse-header">
 			<span>
 				数据库复制DRS&nbsp;
@@ -24,9 +23,6 @@ export default {
 	},
 	data() {
 		return {
-			isShowDrsHeader: process.env.VUE_APP_HEADER === 'drs',
-			env: process.env.VUE_APP_ENV,
-
 			operationMap: {
 				Purchase: '实例订购',
 				Renew: '续订',

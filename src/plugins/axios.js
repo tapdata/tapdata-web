@@ -5,12 +5,12 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 
 // Full config:  https://github.com/axios/axios#request-config
-// axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
+// axios.defaults.baseURL = process.env.baseURL ||  '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 let config = {
-	// baseURL: process.env.baseURL || process.env.apiUrl || ''
+	baseURL: process.env.VUE_APP_BASE_URL || ''
 	// timeout: 60 * 1000, // Timeout
 	// withCredentials: true, // Check cross-site Access-Control
 }
@@ -45,12 +45,6 @@ _axios.interceptors.request.use(function(config) {
 	let user = window.__USER_INFO__
 	if (user) {
 		config.headers['X-Token'] = user.token
-	}
-	if (process.env.VUE_APP_PLATFORM === 'drs') {
-		config.headers['Pool-Id'] = 'CIDC-RP-25'
-	}
-	if (window.__API_PRE_URL__) {
-		config.url = window.__API_PRE_URL__ + '/' + config.url
 	}
 	config.headers['x-requested-with'] = 'XMLHttpRequest'
 	let cancelFunc = null
