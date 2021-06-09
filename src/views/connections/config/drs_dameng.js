@@ -44,6 +44,11 @@ export default function(vm) {
         field: 'sourceType',
         label: '连接来源',
         options: [
+          {
+            label: 'RDS实例',
+            tip: '创建移动云内的RDS实例为来源的连接',
+            value: 'rds'
+          },
           // {
           //   label: 'ECS自建库',
           //   tip: '创建移动云内ECS自建库内的数据库为来源的连接，开通网络策略',
