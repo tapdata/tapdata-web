@@ -1,7 +1,5 @@
 import Layout from '../views/Layout.vue'
-import DrsDashboard from '../views/Dashboard/DRS.vue'
-import DfsDashboard from '../views/Dashboard/DFS.vue'
-import Workbench from '../views/Workbench/Workbench.vue'
+import Dashboard from '../views/Dashboard/DFS.vue'
 import Iframe from '../views/Iframe.vue'
 import Error from '../views/Error.vue'
 import AgentDownload from '@/views/AgentDownload/AgentPage.vue'
@@ -15,6 +13,15 @@ const routes = [
 		component: Layout,
 		meta: {},
 		children: [
+			{
+				path: '/',
+				name: 'Home',
+				meta: {
+					title: '首页'
+				},
+				redirect: { name: 'Workbench' },
+				hidden: true
+			},
 			{
 				path: '/workbench',
 				name: 'Workbench',
@@ -34,32 +41,21 @@ const routes = [
 					}
 				]
 			},
-			{
-				path: '/',
-				name: 'Home',
-				component: DfsDashboard,
-				meta: {
-					title: '首页'
-				},
-				redirect: { name: 'Workbench' },
-				hidden: true
-			},
-			{
-				path: '/dashboard',
-				name: 'Dashboard',
-				component: DfsDashboard,
-				meta: {
-					title: '运行概览',
-					icon: 'dashboard'
-				}
-			},
+			// {
+			// 	path: '/dashboard',
+			// 	name: 'Dashboard',
+			// 	component: Dashboard,
+			// 	meta: {
+			// 		title: '运行概览',
+			// 		icon: 'dashboard'
+			// 	}
+			// },
 			{
 				path: '/instance',
 				name: 'Instance',
 				component: () => import(/* webpackChunkName: "instance" */ '../views/Instance/Instance.vue'),
 				meta: {
 					title: 'Agent管理',
-					showRegion: true,
 					icon: 'agent'
 				},
 				children: [
@@ -83,7 +79,6 @@ const routes = [
 				meta: {
 					title: '任务管理',
 					link: './tm/#/dataFlows',
-					showRegion: true,
 					icon: 'task'
 				},
 				children: [
@@ -114,7 +109,6 @@ const routes = [
 				meta: {
 					title: '连接管理',
 					link: './tm/#/connections',
-					showRegion: true,
 					icon: 'connection'
 				},
 				children: [
@@ -134,51 +128,6 @@ const routes = [
 						meta: {
 							title: '编辑连接',
 							link: './tm/#/connections/:id/edit'
-						}
-					}
-				]
-			},
-			{
-				path: '/verification',
-				name: 'Verification',
-				component: Iframe,
-				meta: {
-					title: '数据校验',
-					link: './tm/#/dataVerification'
-				},
-				children: [
-					{
-						path: 'create',
-						name: 'VerificationCreate',
-						component: Iframe,
-						meta: {
-							title: '创建校验任务',
-							link: './tm/#/dataVerification/create'
-						}
-					},
-					{
-						path: 'result',
-						name: 'VerificationResult',
-						meta: {
-							title: '校验结果',
-							link: './tm/#/dataVerifyResult'
-						}
-					},
-					{
-						path: 'history',
-						name: 'VerificationHistory',
-						meta: {
-							title: '校验历史',
-							link: './tm/#/dataVerifyHistory'
-						}
-					},
-					{
-						path: ':id',
-						name: 'VerificationEdit',
-						component: Iframe,
-						meta: {
-							title: '编辑校验任务',
-							link: './tm/#/dataVerification/:id/edit'
 						}
 					}
 				]
@@ -221,34 +170,22 @@ const routes = [
 	{
 		path: '/500',
 		name: '500',
-		component: Error,
-		meta: {
-			isErrorPage: true
-		}
+		component: Error
 	},
 	{
 		path: '/invalid',
 		name: 'Invalid',
-		component: Error,
-		meta: {
-			isErrorPage: true
-		}
+		component: Error
 	},
 	{
 		path: '/freeze',
 		name: 'Freeze',
-		component: Error,
-		meta: {
-			isErrorPage: true
-		}
+		component: Error
 	},
 	{
 		path: '/off',
 		name: 'Off',
-		component: Error,
-		meta: {
-			isErrorPage: true
-		}
+		component: Error
 	}
 ]
 if (process.env.VUE_APP_HIDE_INSTANCE_BTN !== 'true') {

@@ -30,33 +30,23 @@ const routes = [
 		name: 'Error',
 		component: Error,
 		meta: {
-			isPurchase: true,
-			isErrorPage: true
+			isPurchase: true
 		}
 	},
 	{
 		path: '/invalid',
 		name: 'Invalid',
-		component: Error,
-		meta: {
-			isErrorPage: true
-		}
+		component: Error
 	},
 	{
 		path: '/freeze',
 		name: 'Freeze',
-		component: Error,
-		meta: {
-			isErrorPage: true
-		}
+		component: Error
 	},
 	{
 		path: '/off',
 		name: 'Off',
-		component: Error,
-		meta: {
-			isErrorPage: true
-		}
+		component: Error
 	}
 ]
 init({
