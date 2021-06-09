@@ -1847,8 +1847,6 @@ export default {
         let result = await this.$api('Workers').getAvailableAgent()
         if (!result.data.result || result.data.result.length === 0) {
           this.$message.error(this.$t('dataForm.form.agentMsg'))
-        } else {
-          this.dialogDatabaseTypeVisible = true
         }
       } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
         let result = await this.$api('tcm').getAgentCount()
@@ -1858,8 +1856,6 @@ export default {
           result.data.agentTotalCount <= 0
         ) {
           this.$message.error('您尚未订购同步实例，请先订购实例')
-        } else {
-          this.dialogDatabaseTypeVisible = true
         }
       }
     },
