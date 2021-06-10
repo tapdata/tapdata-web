@@ -73,12 +73,11 @@ const routes = [
 				]
 			},
 			{
-				path: '/dataflow',
-				name: 'Dataflow',
-				component: Iframe,
+				path: '/task',
+				name: 'Task',
+				component: () => import(/* webpackChunkName: "task-migration" */ '../views/Task/Migration.vue'),
 				meta: {
 					title: '任务管理',
-					link: './tm/#/dataFlows',
 					icon: 'task'
 				},
 				children: [

@@ -59,6 +59,14 @@ export function toDecimal2(x) {
 	}
 	return s
 }
+export function toRegExp(word) {
+	let arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
+	for (let i = 0; i < arr.length; i++) {
+		let str = '\\' + arr[i]
+		word = word.replace(new RegExp(str, 'g'), '\\' + arr[i])
+	}
+	return word
+}
 // 支持的数据源 'mysql','mariadb','mysql pxc','mongodb','postgres','oracle','sqlserver','redis'
 // 不支持 'rest api','db2','sybase','gbase','gaussdb200','kafka','elasticsearch'
 export const TYPEMAP = {

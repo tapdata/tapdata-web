@@ -1,7 +1,7 @@
 const Mock = require('mockjs')
 const Random = Mock.Random
-const product = require('./ecloud_product.json')
 const settings = require('./settings.json')
+const dataflow = require('./dataflow.js')
 
 const agent = {
 	id: '@guid',
@@ -61,7 +61,7 @@ const agent = {
 		agentId: '@id'
 	}
 }
-module.exports = {
+module.exports = Object.assign({}, dataflow, {
 	'/api/tcm/user': {
 		code: 'ok',
 		message: '获取用户信息失败',
@@ -144,15 +144,6 @@ module.exports = {
 			]
 		}
 	},
-	'/api/tcm/product/status': {
-		code: 'ok',
-		data: '7'
-	},
-	'/api/tcm/product/:id': {
-		code: 'ok',
-		message: '系统错误',
-		data: product
-	},
 	'/api/tcm/agent/regionCount': {
 		code: 'ok',
 		data: () => {
@@ -227,5 +218,27 @@ module.exports = {
 			]
 		}
 	},
+	'/tm/api/Workers/availableAgent': {
+		data: {
+			result: [
+				{
+					process_id: '1d5bc63c-94da-4d52-87a3-b6ef49dec278',
+					ping_time: 1620390172519,
+					worker_type: 'connector',
+					version: 'v1.19.0-216-g54d4110e9',
+					hostname: 'tapdaas-test-tapdaas-84b6db7bd6-rgmg2'
+				},
+				{
+					process_id: '1d5bc63c-94da-4d52-87a3-b6ef49dec278',
+					ping_time: 1620390172520,
+					worker_type: 'transformer',
+					version: 'v1.19.0-216-g54d4110e9',
+					hostname: 'tapdaas-test-tapdaas-84b6db7bd6-rgmg2'
+				}
+			]
+		},
+		code: 'ok',
+		msg: 'ok'
+	},
 	'/tm/api/Settings': settings
-}
+})

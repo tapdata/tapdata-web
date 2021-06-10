@@ -2,29 +2,42 @@
 	<span class="td-status-tag">
 		<ElTag :type="statusObj.type" v-if="type === 'tag'">{{ statusObj.text }}</ElTag>
 		<span style="display:flex;align-items:center;" v-else>
-			<img v-if="statusObj.icon === 'loading'" class="td-status-tag__icon" src="../assets/icons/loading.gif" />
-			<i class="iconfont td-icon-yunhangzhong td-status-tag__icon" v-if="statusObj.icon === 'running'"></i>
-			<i class="iconfont td-icon-yichang td-status-tag__icon" v-if="statusObj.icon === 'warning'"></i>
+			<VIcon v-if="statusObj.icon === 'loading'" style="font-size: 18px;margin: 0 4px;" color="#10C038">loading</VIcon>
+			<i
+				v-if="statusObj.icon === 'running'"
+				class="iconfont td-status-tag__icon td-icon-yunhangzhong color-success"
+			></i>
+			<i v-if="statusObj.icon === 'warning'" class="iconfont td-status-tag__icon td-icon-yichang color-warning"></i>
+			<i v-if="statusObj.icon === 'waiting'" class="iconfont td-status-tag__icon td-icon-daiqidong color-primary"></i>
 			<span class="td-status-tag__text">{{ statusObj.text }}</span>
 		</span>
 	</span>
 </template>
 
 <script>
-import { STATUS_MAP } from '../const'
+import VIcon from '@/components/VIcon'
+import { INSTANCE_STATUS_MAP, TASK_STATUS_MAP } from '../const'
 export default {
+	components: { VIcon },
 	props: {
 		type: {
 			type: String,
 			default: 'tag'
 		},
 		status: {
+			type: String,
+			default: 'instance'
+		},
+		target: {
 			type: String
 		}
 	},
 	computed: {
+		map() {
+			return { instance: INSTANCE_STATUS_MAP, task: TASK_STATUS_MAP }[this.target]
+		},
 		statusObj() {
-			return STATUS_MAP[this.status === 'Running' ? 'Running' : 'Offline']
+			return this.map[this.status]
 		}
 	}
 }
