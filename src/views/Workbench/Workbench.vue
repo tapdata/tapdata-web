@@ -68,7 +68,9 @@
 							<div v-for="(detail, dIndex) in item.list" :key="dIndex" class="agent-list__status">
 								<span>{{ detail.label }}</span>
 								<span>:</span>
-								<span :class="['ml-1', { status: ['正常'].indexOf(detail.value) > -1 }]">{{ detail.value }}</span>
+								<span :class="['ml-1', { success: detail.value === '运行中' }, { error: detail.value === '离线' }]">{{
+									detail.value
+								}}</span>
 							</div>
 						</div>
 					</li>
@@ -196,34 +198,34 @@ export default {
 				{
 					name: '连接',
 					icon: 'connection',
-					value: 1,
+					value: 0,
 					list: [
 						{
 							label: '有效连接',
-							value: 10
+							value: 0
 						},
 						{
 							label: '无效连接',
-							value: 10
+							value: 0
 						}
 					]
 				},
 				{
 					name: '任务',
 					icon: 'task',
-					value: 1,
+					value: 0,
 					list: [
 						{
 							label: '全量',
-							value: 10
+							value: 0
 						},
 						{
 							label: '增量',
-							value: 10
+							value: 0
 						},
 						{
 							label: '全量增量',
-							value: 10
+							value: 0
 						}
 					]
 				}
@@ -278,52 +280,32 @@ export default {
 	},
 	methods: {
 		init() {
-			this.loadAgent()
-			this.loadConection()
-			this.loadTask()
+			this.loadAgent() // agent
+			this.loadConnection() // 连接、任务
 			this.loadNotices() // 通知公告
 		},
 		loadAgent() {
-			// agent列表
 			let agentList = this.agentList
-			this.$axios
-				.get('tm/api/clusterStates')
-				.then(data => {
-					// this.agentList = data || []
-
-					// agent状态
-					let obj = {
-						total: data.length,
-						running: 0,
-						stopped: 0,
-						down: 0
-					}
-					data.forEach(v => {
-						if (v.engine && v.engine.status) {
-							obj[v.engine.status] = obj[v.engine.status] + 1
-						}
-					})
-					agentList[0].value = obj.total
-				})
-				.finally(() => {
-					this.transferLoading = false
-				})
-		},
-		loadConection() {
-			this.$axios.get('tm/api/Connections/count').then(res => {
-				console.log('res', res)
+			this.$axios.get('tm/api/clusterStates').then(data => {
+				agentList[0].value = data.length
+				agentList[0].list[0].value = data?.engine?.status === 'running' ? '离线' : '运行中'
 			})
 		},
-		loadTask() {
+		loadConnection() {
 			let agentList = this.agentList
 			this.$axios.get('tm/api/DataFlows/chart').then(data => {
-				// 运行任务状态
-				const chart4 = data.chart4 || {}
-				chart4.total = (chart4.initializing || 0) + (chart4.initialized || 0) + (chart4.cdc || 0)
-				agentList[2].value = chart4.total
-				agentList[2].list[0].value = chart4.initializing || 1
-				agentList[2].list[1].value = chart4.cdc || 2
-				agentList[2].list[1].value = chart4.initialized || 3
+				// 连接
+				const chart8 = data.chart8 ?? {}
+				agentList[1].value = chart8.total
+				agentList[1].list[0].value = chart8.invalid
+				agentList[1].list[1].value = chart8.ready
+
+				// 任务
+				const chart9 = data.chart9 ?? {}
+				agentList[2].value = chart9.total
+				agentList[2].list[0].value = chart9.initial_sync
+				agentList[2].list[1].value = chart9.cdc
+				agentList[2].list[1].value = chart9['initial_sync+cdc']
 			})
 		},
 		loadNotices() {
@@ -338,7 +320,6 @@ export default {
 		},
 		getIconSrc(icon) {
 			return require(`../../assets/image/workbench/${icon}.png`)
-			// return require(`../../../public/images/${src}`)
 		},
 		showGuide(key) {
 			this.$emit('show-guide', key)
@@ -429,8 +410,11 @@ export default {
 		.agent-list__detail {
 			background-color: #fafafb;
 			color: rgba(0, 0, 0, 0.5);
-			.status {
+			.success {
 				color: #599f3f;
+			}
+			.error {
+				color: #f7a237;
 			}
 		}
 	}
