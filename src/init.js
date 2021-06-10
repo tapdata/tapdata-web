@@ -83,3 +83,11 @@ export default function({ routes }) {
 	}
 	getData()
 }
+sessionStorage.setItem(
+	'TM_CONFIG',
+	JSON.stringify({
+		DFS_IGNORE_PERMISSION: true,
+		DFS_TM_API_PRE_URL: process.env.VUE_APP_TM_PUBLIC_PATH,
+		DFS_TCM_API_PRE_URL: process.env.VUE_APP_API_PATH
+	})
+)

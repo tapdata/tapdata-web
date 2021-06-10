@@ -191,7 +191,7 @@ export default {
 					list: [
 						{
 							label: 'Agent状态',
-							value: '正常'
+							value: '离线'
 						}
 					]
 				},
