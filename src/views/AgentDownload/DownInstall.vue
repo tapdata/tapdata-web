@@ -53,7 +53,9 @@
 			<p v-if="type === 'Docker'" class="pt-8">
 				在确认 docker 镜像包含 java 环境后，即可开始安装 Tapdata agent
 			</p>
-			<p v-else class="pt-8">在本地 java 环境安装完毕后，即可开始安装 Tapdata agent</p>
+			<p v-else class="pt-8">
+				在本地 java 环境安装完毕后，即可开始安装 Tapdata agent
+			</p>
 		</main>
 		<footer class="footer">
 			<ElButton @click="cancel()">取消</ElButton>

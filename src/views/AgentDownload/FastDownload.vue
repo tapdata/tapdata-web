@@ -54,7 +54,9 @@
 			<template v-if="downLoadType === 'Linux'">
 				<ul class="pt-5 ul-style">
 					<li>1. 部署前请确认你的本地环境中已安装 java</li>
-					<li>2. 请复制下方命令并在本地部署环境执行，其包含 Tapdata Agent 的下载、自动部署及启动</li>
+					<li>
+						2. 请复制下方命令并在本地部署环境执行，其包含 Tapdata Agent 的下载、自动部署及启动
+					</li>
 					<li>3. 下载、部署 Tapdata Agent 无需 root 权限</li>
 					<li>4. 我们非常建议在一个独立、干净的文件夹内部署 Tapdata Agent</li>
 					<li>
@@ -124,11 +126,17 @@
 				<p class="pt-1">./tapdata status</p>
 			</div>
 			<div class="box mt-5" v-if="downLoadType === 'Docker'">
-				<div class="text-style">#关闭 Tapdata Agent ,需要通过 docker exec 进入容器对应目录并执行</div>
+				<div class="text-style">
+					#关闭 Tapdata Agent ,需要通过 docker exec 进入容器对应目录并执行
+				</div>
 				<p class="pt-1">./tapdata stop</p>
-				<div class="text-style pt-5">#启动 Tapdata Agent,需要通过 docker exec 进入容器对应目录并执行</div>
+				<div class="text-style pt-5">
+					#启动 Tapdata Agent,需要通过 docker exec 进入容器对应目录并执行
+				</div>
 				<p class="pt-1">./tapdata start backend</p>
-				<div class="text-style pt-5">#查看 Tapdata Agent 状态,需要通过 docker exec 进入容器对应目录并执行</div>
+				<div class="text-style pt-5">
+					#查看 Tapdata Agent 状态,需要通过 docker exec 进入容器对应目录并执行
+				</div>
 				<p class="pt-1">./tapdata status</p>
 			</div>
 			<div class="box line">

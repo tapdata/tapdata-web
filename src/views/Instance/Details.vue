@@ -62,7 +62,9 @@
 					</li>
 					<li class="info-item">
 						<div class="label">创建时间</div>
-						<div class="value">{{ $moment(agent.createAt).format('YYYY-MM-DD HH:mm:ss') }}</div>
+						<div class="value">
+							{{ $moment(agent.createAt).format('YYYY-MM-DD HH:mm:ss') }}
+						</div>
 					</li>
 					<li class="info-item" v-if="isInternet && isMonth">
 						<div class="label">到期时间</div>

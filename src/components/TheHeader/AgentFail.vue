@@ -13,7 +13,9 @@
 
 		<div class="dialogBox">
 			<h3>异常原因:</h3>
-			<p>{{ !agentEngineVisible ? 'Agnet 进程所在环境断开连接' : 'Agnet 服务进程被干掉' }}</p>
+			<p>
+				{{ !agentEngineVisible ? 'Agnet 进程所在环境断开连接' : 'Agnet 服务进程被干掉' }}
+			</p>
 			<h3>解决方案:</h3>
 			<p>
 				{{ !agentEngineVisible ? 'WINDOWS：启动服务器并执行命令' : 'WINDOWS：在安装Agent环境下执行命令' }}

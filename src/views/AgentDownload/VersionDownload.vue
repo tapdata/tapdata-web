@@ -33,7 +33,9 @@
 					<li class="box title-text">{{ windowLink }}</li>
 					<li class="mt-3">3. 下载、部署 Tapdata agent 无需管理员权限</li>
 					<li>4. 我们非常建议在一个独立、干净的文件夹内部署 tapdata agnet</li>
-					<li>5. 上方命令执行完毕后，tapdata agent 会处于启动状态，我们可以通过以下命令对 agent 进行管理</li>
+					<li>
+						5. 上方命令执行完毕后，tapdata agent 会处于启动状态，我们可以通过以下命令对 agent 进行管理
+					</li>
 				</ul>
 			</template>
 			<template v-if="type === 'Linux'">
@@ -62,8 +64,12 @@
 					<li>
 						2. 下载、部署 Tapdata agent 无需 root 权限
 					</li>
-					<li class="mt-5">3. 我们非常建议在一个独立、干净的文件夹内部署 Tapdata agnet</li>
-					<li>4. 上方命令执行完毕后，Tapdata agent 会处于启动状态，你可以通过以下命令对 agent 进行管理</li>
+					<li class="mt-5">
+						3. 我们非常建议在一个独立、干净的文件夹内部署 Tapdata agnet
+					</li>
+					<li>
+						4. 上方命令执行完毕后，Tapdata agent 会处于启动状态，你可以通过以下命令对 agent 进行管理
+					</li>
 				</ul>
 			</template>
 
@@ -97,7 +103,9 @@
 						2. 下载、部署 Tapdata agent 无需 root 权限
 					</li>
 					<li>3. 下我们非常建议在一个独立、干净的文件夹内部署 Tapdata agnet</li>
-					<li>4. 上方命令执行完毕后，Tapdata agent 会处于启动状态，你可以通过以下命令对 agent 进行管理</li>
+					<li>
+						4. 上方命令执行完毕后，Tapdata agent 会处于启动状态，你可以通过以下命令对 agent 进行管理
+					</li>
 				</ul>
 			</template>
 			<div class="box mt-20" v-if="downLoadType !== 'Docker'">
@@ -109,11 +117,17 @@
 				<p class="pt-5">./tapdata status</p>
 			</div>
 			<div class="box mt-20" v-else>
-				<div class="text-style">#关闭 agent ,需要通过 docker exec 进入容器对应目录并执行</div>
+				<div class="text-style">
+					#关闭 agent ,需要通过 docker exec 进入容器对应目录并执行
+				</div>
 				<p class="pt-5">./tapdata stop</p>
-				<div class="text-style pt-20">#启动 agent,需要通过 docker exec 进入容器对应目录并执行</div>
+				<div class="text-style pt-20">
+					#启动 agent,需要通过 docker exec 进入容器对应目录并执行
+				</div>
 				<p class="pt-5">./tapdata start</p>
-				<div class="text-style pt-20">#查看 agent 状态,需要通过 docker exec 进入容器对应目录并执行</div>
+				<div class="text-style pt-20">
+					#查看 agent 状态,需要通过 docker exec 进入容器对应目录并执行
+				</div>
 				<p class="pt-5">./tapdata status</p>
 			</div>
 			<div class="box line">

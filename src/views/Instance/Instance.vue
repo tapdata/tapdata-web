@@ -27,7 +27,7 @@
 						</li>
 					</ul>
 				</div>
-				<div v-if="VUE_APP_HIDE_INSTANCE_BTN !== 'true'" class="instance-operation-right">
+				<div v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'" class="instance-operation-right">
 					<ElButton type="primary" @click="toOldPurchase">
 						<i class="iconfont td-icon-dinggou mr-1"></i>
 						<span>订购托管实例</span>
