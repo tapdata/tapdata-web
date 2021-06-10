@@ -257,10 +257,10 @@ export default {
     this.id = this.$route.params.id
     this.getSteps()
     this.getAgentCount()
+    this.allowDatabaseType()
     if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
       this.dataSourceModel = _.cloneDeep(DFSDATASOURCE_MODEL)
       this.getFormConfig()
-      this.allowDatabaseType()
     } else {
       this.getInstanceRegion()
       this.getFormConfig()
@@ -805,7 +805,7 @@ export default {
         case 'databaseType': {
           let source = items.find(it => it.field === 'source_databaseType')
           if (source) {
-            // dameng源端不支持 redis elasticsearch
+            // 源端不支持 dameng
             let options = data
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
               let filterArr = ['redis', 'elasticsearch']
@@ -823,11 +823,7 @@ export default {
           }
           let target = items.find(it => it.field === 'target_databaseType')
           if (target) {
-            // drs目标端不支持 db2
             let options = data
-            if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-              options = data.filter(item => item !== 'db2')
-            }
             target.options = options.map(item => {
               return {
                 label: TYPEMAP[item],
