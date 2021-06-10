@@ -141,6 +141,7 @@
 
 <script>
 let selectKeepArr = []
+import _ from 'lodash'
 export default {
   props: ['transferData'],
   data() {
@@ -288,7 +289,7 @@ export default {
             //初始化已有字段处理
             let field_process = this.field_process.filter(process => process.table_id === id)
             if (field_process.length > 0) {
-              this.operations = field_process[0].operations || []
+              this.operations = _.cloneDeep(field_process[0].operations) || []
             }
             //解析operations
             if (this.operations.length === 0) return
