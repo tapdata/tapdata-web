@@ -547,9 +547,7 @@ export default {
       this.activeStep -= 1
       this.getFormConfig()
       // 重置 数据源类型列表
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-        this.allowDatabaseType()
-      }
+      this.allowDatabaseType()
     },
     // 根据步骤获取不同的表单项目
     async getFormConfig() {
@@ -803,7 +801,12 @@ export default {
           break
         }
         case 'databaseType': {
-          let source = items.find(it => it.field === 'source_databaseType')
+          let source = []
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+            source = items.find(it => it.field === 'source_sourceType')
+          } else {
+            source = items.find(it => it.field === 'source_databaseType')
+          }
           if (source) {
             // 源端不支持 dameng
             let options = data
@@ -821,9 +824,17 @@ export default {
               }
             })
           }
-          let target = items.find(it => it.field === 'target_databaseType')
+          let target = []
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+            target = items.find(it => it.field === 'target_sourceType')
+          } else {
+            target = items.find(it => it.field === 'target_databaseType')
+          }
           if (target) {
             let options = data
+            if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+              options = data.filter(item => item !== 'db2')
+            }
             target.options = options.map(item => {
               return {
                 label: TYPEMAP[item],
