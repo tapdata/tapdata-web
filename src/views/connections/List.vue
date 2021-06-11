@@ -539,7 +539,7 @@ export default {
       })
     },
     getImgByType(type) {
-      if (!type || type === 'jira' || type === 'mq') {
+      if (!type || type === 'jira') {
         type = 'default'
       }
       return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)

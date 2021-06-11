@@ -83,6 +83,12 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-ora.svg',
       stencilImage: 'static/editor/ora2.svg'
     },
+    mq: {
+      type: 'mq',
+      name: 'MQ',
+      shapeImage: 'static/editor/o-mq.svg',
+      stencilImage: 'static/editor/mq.svg'
+    },
     mongodb: {
       type: 'mongodb',
       name: 'MongoDB',
