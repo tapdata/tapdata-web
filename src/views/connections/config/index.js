@@ -36,6 +36,7 @@ import dfs_mongodb from './dfs_mongodb'
 import dfs_sqlserver from './dfs_sqlserver'
 import dfs_redis from './dfs_redis'
 import dfs_elasticsearch from './dfs_elasticsearch'
+import mq from './mq'
 
 export default {
   mysql,
@@ -75,5 +76,6 @@ export default {
   dummydb,
   restapi,
   custom_connection,
-  gridfs
+  gridfs,
+  mq
 }

@@ -89,7 +89,8 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira'
+        'jira',
+        'mq'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: [

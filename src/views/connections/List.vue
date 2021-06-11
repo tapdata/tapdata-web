@@ -342,7 +342,8 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira'
+        'jira',
+        'mq'
         // 'gbase-8s',
         // 'sybase ase',
         // 'gaussdb200',
@@ -538,7 +539,7 @@ export default {
       })
     },
     getImgByType(type) {
-      if (!type || type === 'jira') {
+      if (!type || type === 'jira' || type === 'mq') {
         type = 'default'
       }
       return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)

@@ -1867,6 +1867,16 @@ const tc = {
         file_upload_mode: '文件上傳模式',
         file_upload_stream: '流式',
         file_upload_memory: '內存讀取(有內存溢出風險)'
+      },
+      mq: {
+        mqType: 'MQ類型',
+        mqQueueSet: '隊列名集合',
+        mqTopicSet: '主題名稱',
+        brokerURL: 'MQ連接串',
+        database_host: 'MQ地址',
+        database_port: 'MQ端口',
+        routeKeyField: '消息路由',
+        virtualHost: '虛擬主機'
       }
     },
     error: {

@@ -1872,6 +1872,16 @@ const cn = {
         file_upload_mode: '文件上传模式',
         file_upload_stream: '流式',
         file_upload_memory: '内存读取(有内存溢出风险)'
+      },
+      mq: {
+        mqType: 'MQ类型',
+        mqQueueSet: '队列名集合',
+        mqTopicSet: '主题名称',
+        brokerURL: 'MQ连接串',
+        database_host: 'MQ地址',
+        database_port: 'MQ端口',
+        routeKeyField: '消息路由',
+        virtualHost: '虚拟主机'
       }
     },
     error: {

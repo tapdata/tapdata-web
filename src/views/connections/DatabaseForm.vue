@@ -935,7 +935,8 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira'
+        'jira',
+        'mq'
         // 'gbase-8s',
         // 'sybase ase',
         // 'gaussdb200',
@@ -1034,6 +1035,9 @@ export default {
         break
       case 'custom_connection':
         this.model = Object.assign({}, defaultModel['custom_connection'])
+        break
+      case 'mq':
+        this.model = Object.assign({}, defaultModel['mq'])
         break
       case 'gridfs':
         this.model = Object.assign(
@@ -1254,6 +1258,7 @@ export default {
     },
     // 按照数据库类型获取表单配置规则
     getFormConfig() {
+      debugger
       let type = this.model.database_type
       type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
