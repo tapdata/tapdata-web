@@ -240,5 +240,78 @@ module.exports = Object.assign({}, dataflow, {
 		code: 'ok',
 		msg: 'ok'
 	},
+	'/tm/api/clusterStates': {
+		'data|0-10': [
+			{
+				id: '@id',
+				systemInfo: {
+					hostname: '@name',
+					uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
+					ip: '10.233.67.116',
+					ips: ['10.233.67.116'],
+					time: 1620812073175,
+					accessCode: '<ACCESS_CODE>',
+					username: '',
+					process_id: '1d5bc63c-94da-4d52-87a3-b6ef49dec278'
+				},
+				reportInterval: 20000,
+				engine: { processID: ' 10491', 'status|1': ['running', 'stopped'] },
+				management: { processID: ' 10484', 'status|1': ['running', 'stopped'] },
+				apiServer: { processID: ' 10493', 'status|1': ['running', 'stopped'] },
+				customMonitorStatus: [
+					{
+						uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
+						id: '@id',
+						name: '@name',
+						command: '7',
+						arguments: '',
+						'status|1': ['stopped', 'running']
+					}
+				],
+				uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
+				'status|1': ['running', 'down'],
+				insertTime: '2021-05-12T09:34:33.176Z',
+				ttl: '2021-05-12T09:35:13.176Z',
+				last_updated: '2021-05-12T09:34:33.177Z',
+				createTime: '2021-01-28T08:59:46.302Z',
+				agentName: 'tapdaas-test2',
+				custIP: '10.233.67.191',
+				customMonitor: [
+					{
+						uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
+						id: '601a1434aa4cc500b3adf9cb',
+						name: '7',
+						command: '7',
+						arguments: ''
+					}
+				],
+				updateTime: '2021-03-25T08:47:29.245Z',
+				managementOperation: {
+					_id: '60786d75252a040057bfaf10',
+					status: 4,
+					msg: '执行超时',
+					operation: 'restart',
+					ttl: 1618505127738
+				},
+				apiServerOperation: {
+					_id: '604b3cf1fb4a8302ffe5e510',
+					status: 4,
+					msg: '执行超时',
+					operation: 'start',
+					ttl: 1615543576247
+				},
+				engineOperation: {
+					_id: '6084e3b958c76a2315177468',
+					status: 2,
+					msg: '',
+					operation: 'start',
+					ttl: 1619321840158
+				}
+			}
+		],
+		code: 'ok',
+		msg: 'ok'
+	},
+	'/tm/api/Connections/count': { data: { count: 232 }, code: 'ok', msg: 'ok' },
 	'/tm/api/Settings': settings
 })
