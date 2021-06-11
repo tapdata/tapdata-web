@@ -16,11 +16,11 @@ export default {
 	methods: {
 		showGuide(key) {
 			this.$nextTick(() => {
-				this.$refs.dfsHeader?.showGuide?.(key)
+				this.$refs.header?.showGuide?.(key)
 			})
 		},
 		createTask() {
-			this.$refs.dfsHeader?.createTask?.()
+			this.$refs.header?.createTask?.()
 		}
 	}
 }

@@ -212,10 +212,18 @@ export default {
 			if (!type) {
 				type = 'default'
 			}
-			return require(`../../../public/images/guide/${type.toLowerCase()}.png`)
+			try {
+				return require(`../../../public/images/guide/${type.toLowerCase()}.png`)
+			} catch (e) {
+				console.log(e)
+			}
 		},
 		getImgSrc(src) {
-			return require(`../../../public/images/${src}`)
+			try {
+				return require(`../../../public/images/${src}`)
+			} catch (e) {
+				console.log(e)
+			}
 		},
 		next(type) {
 			switch (type) {

@@ -5,10 +5,10 @@
 			<div class="main flex flex-column flex-grow-1">
 				<div class="main-header flex py-6">
 					<div class="main-title mr-4 fs-6 fw-bolder">快速开始</div>
-					<div class="main-subtitle py-1 px-4 fs-8 pointer" @click="showGuide">
-						<VIcon class="icon mr-1" size="9">arrow_right</VIcon>
-						<span>新手引导</span>
-					</div>
+					<!--					<div class="main-subtitle py-1 px-4 fs-8 pointer" @click="showGuide">-->
+					<!--						<VIcon class="icon mr-1" size="9">arrow_right</VIcon>-->
+					<!--						<span>新手引导</span>-->
+					<!--					</div>-->
 				</div>
 				<ul class="create-list__list flex-grow-1 flex justify-between">
 					<li v-for="(item, index) in createList" :key="index" class="create-list__item flex p-6 ml-10">
@@ -55,7 +55,7 @@
 				<div class="main-header py-6">
 					<div class="main-title mr-4 fs-6 fw-bolder">概览</div>
 				</div>
-				<ul class="agent-list__list flex justify-between">
+				<ul class="agent-list__list flex-grow-1 flex justify-evenly">
 					<li v-for="(item, index) in agentList" :key="index" class="agent-list__item p-6 ml-10">
 						<div class="agent-list__name flex align-center justify-center mx-auto mb-3">
 							<VIcon size="12" class="icon" color="#888">{{ item.icon }}</VIcon>
@@ -287,8 +287,8 @@ export default {
 		loadAgent() {
 			let agentList = this.agentList
 			this.$axios.get('tm/api/clusterStates').then(data => {
-				agentList[0].value = data.length
-				agentList[0].list[0].value = data?.engine?.status === 'running' ? '离线' : '运行中'
+				// agentList[0].value = data.length
+				agentList[0].list[0].value = data?.[0]?.engine?.status === 'running' ? '运行中' : '离线'
 			})
 		},
 		loadConnection() {
@@ -370,6 +370,7 @@ export default {
 		}
 		.create-list__item {
 			background-color: #fff;
+			min-width: 200px;
 			&:first-child {
 				margin-left: 0 !important;
 			}
@@ -397,7 +398,10 @@ export default {
 			background-color: #fff;
 		}
 		.agent-list__item {
-			width: 240px;
+			min-width: 200px;
+			&:first-child {
+				margin-left: 0 !important;
+			}
 		}
 		.agent-list__name {
 			.vicon {
