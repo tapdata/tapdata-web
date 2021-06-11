@@ -48,7 +48,7 @@
         <span slot-scope="{ option }">
           <span v-show="!option.showInput"> {{ option.label }}</span>
           <span v-show="option.showInput" class="field-transfer__input">
-            <el-input v-model="option.label" autofocus="autofocus"></el-input>
+            <el-input v-model="option.label" autofocus @keyup.enter.native="checkInput(option)" :ref="option.id" @blur="blurFileOperations(option.showInput)"></el-input>
             <i class="el-icon-close" @click.stop.prevent="closeInput(option)"></i>
             <i class="el-icon-check" @click.stop.prevent="checkInput(option)"></i>
           </span>
@@ -318,6 +318,10 @@ export default {
           file.showInput = true
         }
       })
+      //将输入框自动获取焦点
+      this.$nextTick(() => {
+        this.$refs[option.id].focus()
+      })
     },
     closeInput(option) {
       this.sourceFileData.forEach(file => {
@@ -428,7 +432,17 @@ export default {
       })
       this.preFixSuffixData()
     },
+    blurFileOperations(status) {
+      if (status) {
+        this.$message.info('字段改名操作还未完成哦')
+      }
+    },
     saveFileOperations() {
+      //如果右边为空  则提示不可以保存
+      if (this.selectSourceFileArr.length === 0) {
+        this.$message.error('映射字段不能为空')
+        return
+      }
       this.dialogFileVisible = false
       let field_process = {
         table_id: this.currentTableId,
