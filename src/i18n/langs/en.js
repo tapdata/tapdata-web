@@ -1937,6 +1937,16 @@ const en = {
         file_upload_mode: 'File Upload Mode',
         file_upload_stream: 'Stream',
         file_upload_memory: 'Memory(May be cause OOM)(有内存溢出风险)'
+      },
+      mq: {
+        mqType: 'MQ Type',
+        mqQueueSet: 'Queue name',
+        mqTopicSet: 'Topic Name',
+        brokerURL: 'Broker URL',
+        database_host: 'MQ Host',
+        database_port: 'MQ Port',
+        routeKeyField: 'Message routing',
+        virtualHost: 'Virtual host'
       }
     },
     error: {
