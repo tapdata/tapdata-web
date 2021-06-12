@@ -102,12 +102,12 @@ export default function (vm) {
           }
         ]
       },
-      {
-        type: 'input',
-        field: 'database_name',
-        label: vm.$t('dataForm.form.indexPrefix'),
-        required: true
-      },
+      // {
+      //   type: 'input',
+      //   field: 'database_name',
+      //   label: vm.$t('dataForm.form.indexPrefix'),
+      //   required: true
+      // },
       {
         type: 'input',
         field: 'database_username',

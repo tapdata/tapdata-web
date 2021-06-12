@@ -41,6 +41,16 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item :required="true" :label="$t('editor.cell.data_node.es.chunkSize')">
+          <el-input-number size="mini" v-model="model.chunkSize" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item :required="true" :label="$t('editor.cell.data_node.es.index')">
+          <el-input
+            v-model.trim="model.index"
+            size="mini"
+            :placeholder="$t('editor.cell.data_node.es.chooseIndex')"
+          ></el-input>
+        </el-form-item>
       </el-form>
       <div class="e-entity-wrap" style="text-align: center">
         <entity
@@ -86,7 +96,9 @@ export default {
       },
       model: {
         connectionId: '',
-        type: 'elasticsearch'
+        type: 'elasticsearch',
+        chunkSize: 3,
+        index: ''
       },
       mergedSchema: null
     }
