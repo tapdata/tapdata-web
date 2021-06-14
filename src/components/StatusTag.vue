@@ -25,11 +25,11 @@ export default {
 			default: 'tag'
 		},
 		status: {
-			type: String,
-			default: 'instance'
+			type: String
 		},
 		target: {
-			type: String
+			type: String,
+			default: 'instance'
 		}
 	},
 	computed: {
