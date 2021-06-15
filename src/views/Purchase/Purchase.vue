@@ -319,7 +319,7 @@ export default {
 	computed: {
 		price() {
 			let product = this.getProductInfo()
-			let price = product ? product.price : 0
+			let price = product?.price ?? 0
 			return toDecimal2(price * this.form.duration)
 		},
 		unit() {
@@ -488,12 +488,13 @@ export default {
 				for (let j = 0; j < configList.length; j++) {
 					let config = configList[j]
 					let key = configMap[config.configId]
-					if (key) {
+					if (key && !item[key]) {
 						item[key] = config.configValue
 					}
 				}
 				item['chargingMode'] = pay.measureType
 				item['periodType'] = pay.measureUnit
+				item['specType'] = pay.chaGroupName?.split('-')?.[1]
 				let para = pay.paraList.find(it => it.paraType === '1')
 				if (para) {
 					productMap[getProductKey(item)] = {
@@ -516,7 +517,7 @@ export default {
 					chargingMode: form.chargingMode,
 					periodType: form.periodType
 				})
-				return this.productMap[key] || {}
+				return this.productMap[key.replace('（同区域）', '') + '（同区域）'] || {}
 			}
 			return {}
 		},
