@@ -19,7 +19,7 @@ export default function (vm) {
         label: vm.$t('dataForm.form.mq.mqType'),
         options: [
           {
-            label: 'ActiveMQ',
+            label: 'BrokerURL',
             value: '0'
           },
           {
@@ -60,7 +60,7 @@ export default function (vm) {
         type: 'input',
         field: 'mqQueueSet',
         label: vm.$t('dataForm.form.mq.mqQueueSet'),
-        required: true,
+        required: true
       },
       {
         type: 'input',
@@ -164,7 +164,7 @@ export default function (vm) {
       },
       {
         type: 'input',
-        field: 'plain_password',
+        field: 'mqPassword',
         label: vm.$t('dataForm.form.password'),
         domType: 'password',
         showPassword: true
