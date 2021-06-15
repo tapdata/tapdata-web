@@ -91,13 +91,12 @@
                   slot="syncPoints"
                   v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
                 >
-                  <el-row
-                    v-for="item in settingModel.syncPoints[0]"
-                    :key="item.name"
-                    style="margin-bottom: 10px"
-                  >
+                  <el-row style="margin-bottom: 10px">
                     <el-col :span="8" style="margin-right: 10px">
-                      <el-select v-model="item.type" placeholder="请选择">
+                      <el-select
+                        v-model="settingModel.syncPoints[0].type"
+                        placeholder="请选择"
+                      >
                         <el-option
                           v-for="op in options"
                           :key="op.value"
@@ -107,12 +106,17 @@
                         </el-option>
                       </el-select>
                     </el-col>
-                    <el-col :span="12" v-if="item.type !== 'current'">
+                    <el-col
+                      :span="12"
+                      v-if="settingModel.syncPoints[0].type !== 'current'"
+                    >
                       <el-date-picker
                         format="yyyy-MM-dd HH:mm:ss"
-                        v-model="item.date"
+                        v-model="settingModel.syncPoints[0].date"
                         type="datetime"
-                        :disabled="item.type === 'current'"
+                        :disabled="
+                          settingModel.syncPoints[0].type === 'current'
+                        "
                       ></el-date-picker>
                     </el-col>
                   </el-row>
