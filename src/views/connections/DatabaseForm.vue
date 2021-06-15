@@ -1187,11 +1187,7 @@ export default {
           editData = await this.$api('connections').get([this.$route.params.id])
         }
 
-        if (
-          editData.data.database_type === 'mq' &&
-          (typeof editData.data.mqQueueSet === 'string' ||
-            typeof editData.data.mqTopicSet === 'string')
-        ) {
+        if (editData.data.database_type === 'mq') {
           let mqQueueSet = editData.data.mqQueueSet.join(',')
           let mqTopicSet = editData.data.mqTopicSet.join(',')
           editData.data.mqQueueSet = mqQueueSet
@@ -1682,7 +1678,11 @@ export default {
         return
       }
       let data = Object.assign({}, this.model)
-      if (this.model.database_type === 'mq') {
+      if (
+        this.model.database_type === 'mq' &&
+        (typeof this.model.mqQueueSet === 'string' ||
+          typeof this.model.mqTopicSet === 'string')
+      ) {
         data.mqQueueSet = this.model.mqQueueSet.split(',')
         data.mqTopicSet = this.model.mqTopicSet.split(',')
       }
