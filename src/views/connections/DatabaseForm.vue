@@ -1258,7 +1258,6 @@ export default {
     },
     // 按照数据库类型获取表单配置规则
     getFormConfig() {
-      debugger
       let type = this.model.database_type
       type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
