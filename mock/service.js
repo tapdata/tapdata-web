@@ -202,29 +202,122 @@ module.exports = Object.assign({}, dataflow, {
 		data: agent
 	},
 	'/api/tcm/product/:id': {
-		reqId: 'c38049c9-4ab5-4ddd-8d34-fdd79df7a431',
+		reqId: '4821e342-f229-49f7-acc9-b0a0ea11c57a',
 		code: 'ok',
-		data: {
-			poolList: [
-				{
-					poolId: 'CIDC-RP-33',
-					poolName: '华东-上海1',
-					productType: 'eclouddrs',
-					poolArea: '华东',
-					zoneInfo: [{ zoneId: '2008051157510052', zoneName: '可用区一', zoneCode: 'CIDC-RP-33-574' }]
-				},
-				{
-					poolId: 'CIDC-RP-25',
-					poolName: '华东-苏州',
-					productType: 'eclouddrs',
-					poolArea: '华东',
-					zoneInfo: [
-						{ zoneId: '2008051157510043', zoneName: '可用区一', zoneCode: 'CIDC-RP-25-57' },
-						{ zoneId: '2008051157510056', zoneName: '可用区二', zoneCode: 'CIDC-RP-25-58' }
-					]
-				}
-			]
-		}
+		'data|1-20': [
+			{
+				ebossOfferChaList: [
+					{ canEmpty: '0', canModify: '1', characterId: '0000000030', characterName: '资源池', characterValue: '' },
+					{
+						canEmpty: '1',
+						canModify: '0',
+						characterId: '0000000021',
+						characterName: '审批流程实例ID',
+						characterValue: ''
+					},
+					{
+						canEmpty: '0',
+						canModify: '1',
+						characterId: '0000000001',
+						characterName: '基础产品订购实例ID',
+						characterValue: ''
+					},
+					{
+						canEmpty: '1',
+						canModify: '1',
+						characterId: '0000000019',
+						characterName: '移动云子账号',
+						characterValue: ''
+					},
+					{
+						canEmpty: '1',
+						canModify: '0',
+						characterId: '0000000022',
+						characterName: '移动云产品订购实例ID',
+						characterValue: ''
+					}
+				],
+				pays: [
+					{
+						chaGroupId: '2102011537363073',
+						chaGroupName: '单向同步-小规格',
+						chargeType: '2',
+						configList: [
+							{ configCode: 'memory', configId: '2000000077', configName: '内存', configValue: '4' },
+							{
+								configCode: 'drsNodeCpu',
+								configId: '2000001012',
+								configName: '传输方式',
+								configValue: '单向同步（同区域）'
+							},
+							{
+								configCode: 'nodeKernelSpecification',
+								configId: '2000002188',
+								configName: 'CPU核数',
+								configValue: '2'
+							},
+							{ configCode: 'productOrderNum', configId: '2000002310', configName: '数量 x ', configValue: '1' }
+						],
+						ladderList: [{ templateCode: '7000000028', templateId: '3100001313', templateName: '单向同步-小规格' }],
+						measureDesc: '单向同步-小规格按周期收费-',
+						measureId: '9202059001',
+						measureName: '单向同步-小规格按周期收费',
+						measureType: '1',
+						measureUnit: 'month',
+						paraList: [
+							{
+								defaultValue: '0',
+								paraCode: '陆超超 import',
+								paraDesc: '收费金额（元）',
+								paraId: '31000013130001',
+								paraKind: 'F',
+								paraName: '收费金额（元）',
+								paraRemark: '单向同步-小规格',
+								paraType: '1',
+								paraUnit: '元/月',
+								paraValue: '400',
+								tempId: 3.100001313e9,
+								templateParaNumber: '90000101'
+							},
+							{
+								defaultValue: '0',
+								paraDesc: '收费周期',
+								paraId: '31000013130002',
+								paraKind: '',
+								paraName: '收费周期',
+								paraRemark: '单向同步-小规格',
+								paraType: '',
+								paraUnit: '',
+								paraValue: '1',
+								tempId: 3.100001313e9,
+								templateParaNumber: '90000102'
+							},
+							{
+								defaultValue: '0',
+								paraCode: '陆超超 import',
+								paraDesc: '折扣（%）',
+								paraId: '30032',
+								paraKind: 'D',
+								paraName: '折扣（%）',
+								paraRemark: '单向同步-小规格',
+								paraType: '2',
+								paraUnit: '%',
+								paraValue: '100',
+								tempId: 3.100001313e9,
+								templateParaNumber: '90000103'
+							}
+						],
+						templateList: []
+					}
+				],
+				poolId: 'CIDC-RP-33',
+				poolName: 'CIDC-RP-33=华东-上海1',
+				productType: 'eclouddrs',
+				serviceId: '45f68fcf61034d1d82f72b37251d4642',
+				serviceListId: '',
+				serviceName: '数据库复制DRS'
+			}
+		]
 	},
 	'/api/tcm/productRelease/': {
 		code: 'ok',
