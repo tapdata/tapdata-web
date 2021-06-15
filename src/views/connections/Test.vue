@@ -163,6 +163,12 @@ export default {
       }
     }
   },
+  created() {
+    if (this.formData.database_type === 'mq') {
+      this.formData.mqQueueSet = this.formData.mqQueueSet.split(',')
+      this.formData.mqTopicSet = this.formData.mqTopicSet.split(',')
+    }
+  },
   mounted() {
     this.handleWS()
   },
