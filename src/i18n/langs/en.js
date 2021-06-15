@@ -1946,7 +1946,9 @@ const en = {
         database_host: 'MQ Host',
         database_port: 'MQ Port',
         routeKeyField: 'Message routing',
-        virtualHost: 'Virtual host'
+        virtualHost: 'Virtual host',
+        QueueSetTip: 'multiple queue separated by commas ',
+        TopicSetTip: 'Multiple topics separated by commas'
       }
     },
     error: {

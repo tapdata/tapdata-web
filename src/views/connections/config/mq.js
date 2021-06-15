@@ -63,10 +63,18 @@ export default function (vm) {
         required: true
       },
       {
+        type: 'slot',
+        slot: 'queueTip'
+      },
+      {
         type: 'input',
         field: 'mqTopicSet',
         label: vm.$t('dataForm.form.mq.mqTopicSet'),
         required: true
+      },
+      {
+        type: 'slot',
+        slot: 'topicTip'
       },
       {
         type: 'input',

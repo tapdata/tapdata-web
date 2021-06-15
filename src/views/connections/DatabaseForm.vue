@@ -143,6 +143,12 @@
               <div class="url-tip" slot="pushErrorTip">
                 {{ $t('dataForm.form.kafka.pushErrorTip') }}
               </div>
+              <div class="url-tip" slot="queueTip">
+                {{ $t('dataForm.form.mq.queueSetTip') }}
+              </div>
+              <div class="url-tip" slot="topicTip">
+                {{ $t('dataForm.form.mq.topicSetTip') }}
+              </div>
               <!-- rest api -->
               <div class="url-tip" slot="req_pre_process">
                 <div>
@@ -1180,6 +1186,14 @@ export default {
         } else {
           editData = await this.$api('connections').get([this.$route.params.id])
         }
+
+        if (editData.data.database_type === 'mq') {
+          let mqQueueSet = editData.data.mqQueueSet.join(',')
+          let mqTopicSet = editData.data.mqTopicSet.join(',')
+          editData.data.mqQueueSet = mqQueueSet
+          editData.data.mqTopicSet = mqTopicSet
+        }
+        debugger
         this.model = Object.assign(this.model, editData.data)
         if (this.model.sourceType === 'ecs') {
           this.getEcsList()
@@ -1664,6 +1678,11 @@ export default {
         this.$message.error('请"点击开通"开通网络策略')
         return
       }
+      let data = Object.assign({}, this.model)
+      if (this.model.database_type === 'mq') {
+        data.mqQueueSet = this.model.mqQueueSet.split(',')
+        data.mqTopicSet = this.model.mqTopicSet.split(',')
+      }
 
       // if (this.model.database_type === 'mysqlpxc') {
       // 	// this.model.search_databaseType = this.model.database_type;
@@ -1684,7 +1703,7 @@ export default {
               project: '',
               submit: true
             },
-            this.model
+            data
           )
           params['sslCert'] = this.model.sslKey
           delete params.sslKeyFile

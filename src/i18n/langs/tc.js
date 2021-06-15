@@ -1876,7 +1876,9 @@ const tc = {
         database_host: 'MQ地址',
         database_port: 'MQ端口',
         routeKeyField: '消息路由',
-        virtualHost: '虛擬主機'
+        virtualHost: '虛擬主機',
+        queueSetTip: '多個集合用逗號隔開',
+        topicSetTip: '多個主題用逗號隔開'
       }
     },
     error: {

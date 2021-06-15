@@ -1881,7 +1881,9 @@ const cn = {
         database_host: 'MQ地址',
         database_port: 'MQ端口',
         routeKeyField: '消息路由',
-        virtualHost: '虚拟主机'
+        virtualHost: '虚拟主机',
+        queueSetTip: '多个集合用逗号隔开',
+        topicSetTip: '多个主题用逗号隔开'
       }
     },
     error: {
