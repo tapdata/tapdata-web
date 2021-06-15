@@ -43,7 +43,7 @@
 							<div class="notice-list__name flex-grow-1 ellipsis pointer" @click="toNotice">
 								{{ item.name }}
 							</div>
-							<div class="notice-list__time">{{ item.time }}</div>
+							<div class="notice-list__time">{{ formatFromNow(item.time) }}</div>
 						</li>
 					</ul>
 				</div>
@@ -345,6 +345,9 @@ export default {
 		},
 		clickGuide(item) {
 			window.open(item.url, '_blank')
+		},
+		formatFromNow(date) {
+			return this.$moment(date)?.fromNow()
 		}
 	}
 }

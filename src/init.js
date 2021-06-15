@@ -1,16 +1,15 @@
 import Vue from 'vue'
 import './plugins/axios'
 import './plugins/element'
+import './plugins/monent'
 import App from './App.vue'
 import VueRouter from 'vue-router'
-import Moment from 'moment'
 import './assets/app.scss'
 import VueClipboard from 'vue-clipboard2'
 
 require('./assets/theme/dfs/index.scss')
 
 Vue.config.productionTip = false
-Vue.prototype.$moment = Moment
 Vue.use(VueClipboard)
 
 Vue.use(VueRouter)
