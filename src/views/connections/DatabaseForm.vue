@@ -1273,6 +1273,10 @@ export default {
         if (item) {
           item.options = this.timezones
         }
+        let databaseName = items.find(it => it.field === 'database_name')
+        if (databaseName) {
+          databaseName.allowSpace = false
+        }
         let itemIsUrl = items.find(it => it.field === 'isUrl')
         let sslKey = items.find(it => it.field === 'sslKeyFile')
         let sslCA = items.find(it => it.field === 'sslCAFile')
