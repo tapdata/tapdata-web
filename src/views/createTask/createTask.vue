@@ -900,7 +900,7 @@ export default {
       //   }
       // ]
       // this.settingModel['syncPoints'] = syncPoints
-      if (this.settingModel.sync_type === 'cdc' && window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+      if ( this.settingModel.sync_type === 'cdc' && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs' && this.supportTwoWay) {
         this.addSyncPoints()
       }
       let postData = {
