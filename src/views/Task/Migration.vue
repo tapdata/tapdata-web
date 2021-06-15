@@ -225,7 +225,7 @@ export default {
 			},
 			order: 'createTime desc',
 
-			VUE_APP_HIDE_INSTANCE_BTN: process.env.VUE_APP_HIDE_INSTANCE_BTN,
+			VUE_APP_INSTANCE_TEST_BTN: process.env.VUE_APP_INSTANCE_TEST_BTN,
 			statusMap: TASK_STATUS_MAP,
 			statusBtMap: {
 				// scheduled, draft, running, stopping, error, paused, force stopping

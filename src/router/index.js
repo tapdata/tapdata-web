@@ -188,7 +188,7 @@ const routes = [
 		component: Error
 	}
 ]
-if (process.env.VUE_APP_HIDE_INSTANCE_BTN !== 'true') {
+if (process.env.VUE_APP_INSTANCE_TEST_BTN === 'true') {
 	routes.push({
 		path: '/Purchase',
 		name: 'Purchase',
