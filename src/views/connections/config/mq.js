@@ -19,7 +19,7 @@ export default function (vm) {
         label: vm.$t('dataForm.form.mq.mqType'),
         options: [
           {
-            label: 'BrokerURL',
+            label: 'ActiveMQ',
             value: '0'
           },
           {
@@ -71,7 +71,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'brokerURL',
-        label: vm.$t('dataForm.form.mq.brokerURL'),
+        label: 'BrokerURL',
         required: true,
         show: false,
         dependOn: [
@@ -88,6 +88,7 @@ export default function (vm) {
           }
         ]
       },
+
       {
         type: 'input',
         field: 'database_host',
