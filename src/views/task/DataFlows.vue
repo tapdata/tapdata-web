@@ -174,7 +174,7 @@
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
         <el-button
-          v-if="!$window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')"
+          v-if="$window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')"
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"

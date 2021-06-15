@@ -21,7 +21,7 @@
       <span slot-scope="{ option }">
         <span> {{ option.label }}</span>
         <span
-          v-if="selectSourceArr.includes(option.key) && $window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
+          v-if="selectSourceArr.includes(option.key) && $window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs' && !supportTwoWay"
           @click.stop.prevent="handleFiled(option)"
           class="el-icon-setting field-transfer__icon"
         ></span>
@@ -143,7 +143,7 @@
 let selectKeepArr = []
 import _ from 'lodash'
 export default {
-  props: ['transferData'],
+  props: ['transferData', 'supportTwoWay'],
   data() {
     var validatePrefix = (rule, value, callback) => {
       if (value === '') {
@@ -191,7 +191,7 @@ export default {
       currentTableId: '',
       currentTableName: '',
       operations: [], //存储字段改名操作,
-      field_process: []
+      field_process: [],
     }
   },
   methods: {
@@ -413,11 +413,16 @@ export default {
       this.closeInput(option)
     },
     handleChangeFileTransfer(keys, direction, checkData) {
-      this.sourceFileData.forEach(v => {
+      this.sourceFileData.forEach((v, index) => {
         checkData.forEach(file => {
           if (v.key === file && direction === 'left') {
             this.remove(v)
-          } else if(v.key === file && direction === 'right') {
+          } else if (v.key === file && direction === 'right') {
+            //当前选中的值与右边的比较 重名则不允许移动
+            if (v.label === file) {
+              this.$message.error(file + '与右边的字段有重复名称，不允许再移动')
+              this.selectSourceFileArr.splice(index, 1) //再将值塞回去
+            }
             this.cancelRemove(v)
           }
         })

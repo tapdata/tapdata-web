@@ -88,7 +88,7 @@
                   自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作
                 </div>
                 <template slot="syncPoints" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
-                  <el-row v-for="item in settingModel.syncPoints" :key="item.name" style="margin-bottom: 10px">
+                  <el-row v-for="item in settingModel.syncPoints[0]" :key="item.name" style="margin-bottom: 10px">
                     <el-col :span="8" style="margin-right: 10px">
                       <el-select v-model="item.type" placeholder="请选择">
                         <el-option
@@ -122,6 +122,7 @@
                 <Transfer
                   ref="transfer"
                   :transferData="transferData"
+                  :supportTwoWay="supportTwoWay"
                 ></Transfer>
               </div>
             </div>
@@ -396,16 +397,11 @@ export default {
           }
         } else if (target && value !== 'compel' && this.supportTwoWay) {
           target.show = true
-          if (this.settingModel.sync_type === 'cdc' && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-            this.addSyncPoints()
-          }
         }
       }
       //只有增量模式下才有同步时间
       if (field === 'sync_type') {
-        if (value === 'cdc' && this.supportTwoWay && this.settingModel.distinctWriteType !== 'compel') {
-          this.addSyncPoints()
-        } else this.primarySyncPoints()
+        this.primarySyncPoints()
       }
     },
     formChange(data) {
@@ -424,12 +420,11 @@ export default {
       }
     },
     addSyncPoints() {
-      this.primarySyncPoints() //先初始化再push
       let syncPoints = {
         connectionId: this.dataSourceModel.target_connectionId, //双向模式下 有两个源节点
-        type: 'current', // localTZ: 本地时区； connTZ：连接时区
+        type: this.settingModel.syncPoints[0].type, // localTZ: 本地时区； connTZ：连接时区
         time: '',
-        date: '',
+        date: this.settingModel.syncPoints[0].date,
         name: '',
         timezone: this.systemTimeZone // 当type为localTZ时有该字段
       }
@@ -527,6 +522,11 @@ export default {
       if (type === 'setting') {
         this.$refs.setting.validate(valid => {
           if (valid) {
+            //设置同步时间 必须填写时间
+            if (this.settingModel.syncPoints[0].type !== 'current' && this.settingModel.syncPoints[0].date === '') {
+              this.$message.error('设置同步时间不能为空')
+              return
+            }
             this.activeStep += 1
             this.getFormConfig()
             if (this.showSysncTableTip) {
@@ -900,6 +900,9 @@ export default {
       //   }
       // ]
       // this.settingModel['syncPoints'] = syncPoints
+      if (this.settingModel.sync_type === 'cdc' && window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+        this.addSyncPoints()
+      }
       let postData = {
         name: this.settingModel.name,
         description: '',
@@ -1004,7 +1007,6 @@ export default {
         window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
       ) {
         postData.stages[1]['outputLanes'] = [sourceIdC]
-        postData.stages[1]['outputLanes'] = this.transferData.field_process //字段处理器 中间有属于源
         postData.stages.push(node)
       }
       let promise = null
