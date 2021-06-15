@@ -65,7 +65,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.849Z',
         createTime: '2021-05-06T13:27:26.849Z'
@@ -91,7 +92,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.864Z',
         createTime: '2021-05-06T13:27:26.864Z'
@@ -117,7 +119,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.871Z',
         createTime: '2021-05-06T13:27:26.871Z'
@@ -143,7 +146,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.877Z',
         createTime: '2021-05-06T13:27:26.877Z'
@@ -169,7 +173,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.883Z',
         createTime: '2021-05-06T13:27:26.883Z'
@@ -195,7 +200,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.890Z',
         createTime: '2021-05-06T13:27:26.890Z'
@@ -230,7 +236,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.902Z',
         createTime: '2021-05-06T13:27:26.902Z'
@@ -256,7 +263,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.910Z',
         createTime: '2021-05-06T13:27:26.910Z'
@@ -282,7 +290,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.922Z',
         createTime: '2021-05-06T13:27:26.922Z'
@@ -450,6 +459,15 @@ module.exports = Object.assign({}, dataflow, {
         name: 'Redis',
         buildProfiles: null,
         supportTargetDatabaseType: ['dummy db', 'bitsflow'],
+        last_updated: '2021-05-06T13:27:26.978Z',
+        createTime: '2021-05-06T13:27:26.978Z'
+      },
+      {
+        id: '6093eebec51425290fec3d35',
+        type: 'mq',
+        name: 'mq',
+        buildProfiles: null,
+        supportTargetDatabaseType: ['dummy db', 'bitsflow', 'mysql'],
         last_updated: '2021-05-06T13:27:26.978Z',
         createTime: '2021-05-06T13:27:26.978Z'
       }
