@@ -4,11 +4,18 @@
 		<span style="display:flex;align-items:center;" v-else>
 			<VIcon v-if="statusObj.icon === 'loading'" style="font-size: 18px;margin: 0 4px;" color="#10C038">loading</VIcon>
 			<i
-				v-if="statusObj.icon === 'running'"
+				v-else-if="statusObj.icon === 'running'"
 				class="iconfont td-status-tag__icon td-icon-yunhangzhong color-success"
 			></i>
-			<i v-if="statusObj.icon === 'warning'" class="iconfont td-status-tag__icon td-icon-yichang color-warning"></i>
-			<i v-if="statusObj.icon === 'waiting'" class="iconfont td-status-tag__icon td-icon-daiqidong color-primary"></i>
+			<i
+				v-else-if="statusObj.icon === 'warning'"
+				class="iconfont td-status-tag__icon td-icon-yichang color-warning"
+			></i>
+			<i
+				v-else-if="statusObj.icon === 'waiting'"
+				class="iconfont td-status-tag__icon td-icon-daiqidong color-primary"
+			></i>
+			<i v-else :class="'td-status-tag__icon el-icon-' + statusObj.icon + ' color-' + statusObj.type"></i>
 			<span class="td-status-tag__text">{{ statusObj.text }}</span>
 		</span>
 	</span>
@@ -16,7 +23,7 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import { INSTANCE_STATUS_MAP, TASK_STATUS_MAP } from '../const'
+import { CONNECTION_STATUS_MAP, INSTANCE_STATUS_MAP, TASK_STATUS_MAP } from '../const'
 export default {
 	components: { VIcon },
 	props: {
@@ -34,7 +41,7 @@ export default {
 	},
 	computed: {
 		map() {
-			return { instance: INSTANCE_STATUS_MAP, task: TASK_STATUS_MAP }[this.target]
+			return { instance: INSTANCE_STATUS_MAP, task: TASK_STATUS_MAP, connection: CONNECTION_STATUS_MAP }[this.target]
 		},
 		statusObj() {
 			return this.map[this.status]

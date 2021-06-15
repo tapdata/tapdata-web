@@ -223,7 +223,7 @@ export default {
 				size: 10,
 				total: 0
 			},
-			order: 'createAt desc',
+			order: 'createTime desc',
 
 			VUE_APP_HIDE_INSTANCE_BTN: process.env.VUE_APP_HIDE_INSTANCE_BTN,
 			statusMap: TASK_STATUS_MAP,
@@ -264,7 +264,7 @@ export default {
 	},
 	created() {
 		let query = this.$route.query
-		this.searchParams.status = query.status ?? ''
+		this.searchParams = Object.assign(this.searchParams, query)
 		this.fetch()
 	},
 	methods: {
@@ -369,7 +369,7 @@ export default {
 			return item
 		},
 		sortChange({ column, prop, order }) {
-			this.order = `${order ? prop : 'createAt'} ${order === 'ascending' ? 'asc' : 'desc'}`
+			this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'asc' : 'desc'}`
 			this.fetch(1)
 		},
 		reset() {

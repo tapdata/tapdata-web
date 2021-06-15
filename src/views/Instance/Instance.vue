@@ -120,9 +120,7 @@ import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
 import { INSTANCE_STATUS_MAP } from '../../const'
-import ws from '../../plugins/ws'
 
-let timer = null
 export default {
 	components: {
 		InlineInput,
@@ -173,24 +171,9 @@ export default {
 		}
 	},
 	created() {
-		ws.ready(() => {})
 		let query = this.$route.query
 		this.searchParams.status = query.status || ''
 		this.fetch()
-		timer = setInterval(() => {
-			if (!this || this._isDestroyed) {
-				clearInterval(timer)
-				timer = null
-				return
-			}
-			this.fetch(this.page.current, 0, true)
-		}, 10000)
-	},
-	destroyed() {
-		if (timer) {
-			clearInterval(timer)
-			timer = null
-		}
 	},
 	methods: {
 		search() {

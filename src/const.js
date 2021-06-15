@@ -35,6 +35,11 @@ export const TOPOLOGY_MAP = topologyMap,
 		stopping: { text: '停止中', icon: 'loading' },
 		'force stopping': { text: '强制停止中', icon: 'loading' }
 	},
+	CONNECTION_STATUS_MAP = {
+		ready: { text: '有效', icon: 'success', type: 'success' },
+		invalid: { text: '失效', icon: 'error', type: 'danger' },
+		testing: { text: '测试中', icon: 'loading', type: 'info' }
+	},
 	SPEC_MAP = {
 		micro: '小规格',
 		small: '标准规格',
@@ -44,4 +49,27 @@ export const TOPOLOGY_MAP = topologyMap,
 	CHARGE_MAP = {
 		'1,month': '包月计费',
 		'2,1': '按量计费'
-	}
+	},
+	SUPPORT_DB = [
+		'mysql',
+		'oracle',
+		'mongodb',
+		'sqlserver',
+		'postgres',
+		'elasticsearch',
+		'redis',
+		'file',
+		'db2',
+		'kafka',
+		'mariadb',
+		'mysql pxc',
+		'jira',
+		'dameng'
+		// 'gbase-8s',
+		// 'sybase ase',
+		// 'gaussdb200',
+		// 'dummy db',
+		// 'rest api',
+		// 'custom_connection',
+		// 'gridfs'
+	] //目前白名单,
