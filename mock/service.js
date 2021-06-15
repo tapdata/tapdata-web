@@ -201,6 +201,31 @@ module.exports = Object.assign({}, dataflow, {
 		code: 'ok',
 		data: agent
 	},
+	'/api/tcm/product/:id': {
+		reqId: 'c38049c9-4ab5-4ddd-8d34-fdd79df7a431',
+		code: 'ok',
+		data: {
+			poolList: [
+				{
+					poolId: 'CIDC-RP-33',
+					poolName: '华东-上海1',
+					productType: 'eclouddrs',
+					poolArea: '华东',
+					zoneInfo: [{ zoneId: '2008051157510052', zoneName: '可用区一', zoneCode: 'CIDC-RP-33-574' }]
+				},
+				{
+					poolId: 'CIDC-RP-25',
+					poolName: '华东-苏州',
+					productType: 'eclouddrs',
+					poolArea: '华东',
+					zoneInfo: [
+						{ zoneId: '2008051157510043', zoneName: '可用区一', zoneCode: 'CIDC-RP-25-57' },
+						{ zoneId: '2008051157510056', zoneName: '可用区二', zoneCode: 'CIDC-RP-25-58' }
+					]
+				}
+			]
+		}
+	},
 	'/api/tcm/productRelease/': {
 		code: 'ok',
 		data: {

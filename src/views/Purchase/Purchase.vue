@@ -516,8 +516,9 @@ export default {
 					chargingMode: form.chargingMode,
 					periodType: form.periodType
 				})
-				return this.productMap[key]
+				return this.productMap[key] || {}
 			}
+			return {}
 		},
 		handlerModeChange(val) {
 			let values = val.split(',')
