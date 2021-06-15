@@ -163,12 +163,6 @@ export default {
       }
     }
   },
-  created() {
-    if (this.formData.database_type === 'mq') {
-      this.formData.mqQueueSet = this.formData.mqQueueSet.split(',')
-      this.formData.mqTopicSet = this.formData.mqTopicSet.split(',')
-    }
-  },
   mounted() {
     this.handleWS()
   },
@@ -231,6 +225,10 @@ export default {
       })
     },
     start(updateSchema, editTest) {
+      if (this.formData.database_type === 'mq') {
+        this.formData.mqQueueSet = this.formData.mqQueueSet.split(',')
+        this.formData.mqTopicSet = this.formData.mqTopicSet.split(',')
+      }
       let data = Object.assign({}, this.formData)
       delete data.schema
       delete data.response_body
