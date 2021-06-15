@@ -488,7 +488,6 @@ module.exports = Object.assign({}, dataflow, {
       'items|10': [{}]
     }
   },
-  '/api/tcm/agent/regionZone': { code: 'ok', msg: 'ok' },
   '/api/tcm/product/vip': { code: 'ok', msg: 'ok' },
   '/api/Connections/:id/copy': {
     code: 'ok',

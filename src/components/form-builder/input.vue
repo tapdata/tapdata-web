@@ -40,6 +40,8 @@ export default {
         input: val => {
           if (config.domType === 'number' && val) {
             val = Number(val)
+          } else {
+            val = val.trim()
           }
           self.on.input(val)
         }

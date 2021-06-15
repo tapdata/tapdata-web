@@ -51,6 +51,7 @@ export default {
         domType: 'text',
         required: false,
         clearable: true,
+        allowSpace: true,
         on: {}
       },
       form: null,
@@ -230,6 +231,9 @@ export default {
                 throw new Error(
                   `The field "${config.field}" of the model is not defined!`
                 )
+              }
+              if (!config.allowSpace) {
+                val = val.replace(/\s+/g, '')
               }
               self.value[config.field] = val
               let influences = config.influences
