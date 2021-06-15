@@ -6,6 +6,7 @@ import App from './App.vue'
 import VueRouter from 'vue-router'
 import './assets/app.scss'
 import VueClipboard from 'vue-clipboard2'
+import { Message } from 'element-ui'
 
 require('./assets/theme/dfs/index.scss')
 
@@ -13,6 +14,16 @@ Vue.config.productionTip = false
 Vue.use(VueClipboard)
 
 Vue.use(VueRouter)
+
+Vue.prototype.$checkAgentStatus = callback => {
+	window.axios.get('tm/api/Workers/availableAgent').then(data => {
+		if (data.result) {
+			callback && callback()
+		} else {
+			Message.error('Agent当前状态异常，请检查')
+		}
+	})
+}
 
 export default function({ routes }) {
 	const router = new VueRouter({
@@ -25,12 +36,8 @@ export default function({ routes }) {
 	loading = window.loading({ fullscreen: true })
 	let count = 0
 	let getData = () => {
-		Promise.all([
-			window.axios.get('api/tcm/user'),
-			window.axios.get('api/tcm/region'),
-			window.axios.get('api/tcm/product/status')
-		])
-			.then(([user, region, status]) => {
+		Promise.all([window.axios.get('api/tcm/user')])
+			.then(([user]) => {
 				let userInfo = user
 				//移动云DRS环境代码 ---
 				if (userInfo.customerType) {
@@ -39,21 +46,7 @@ export default function({ routes }) {
 				// ----
 				window.__USER_INFO__ = userInfo
 
-				let poolList = region.poolList
-				let regionMap = {}
-				let zoneMap = {}
-				poolList.forEach(item => {
-					regionMap[item.poolId] = item.poolName
-					item.zoneInfo.forEach(zone => {
-						zoneMap[zone.zoneCode] = zone.zoneName
-					})
-				})
-				window.__REGION__ = {
-					poolList,
-					regionMap,
-					zoneMap
-				}
-				if (location.href.includes('purchase.html') && !['3', '4', '8'].includes(status)) {
+				if (location.href.includes('purchase.html')) {
 					location.href = location.href.split('#/')[0] + '#/off'
 				}
 				setTimeout(() => {

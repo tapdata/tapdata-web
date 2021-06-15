@@ -46,9 +46,8 @@ export default {
 		return {
 			activeMenu: '',
 			menus: [],
-			dfsMenus: ['Workbench', 'Instance', 'Connection', 'Dataflow'],
-			breadcrumbData: [],
-			regionCount: {}
+			dfsMenus: ['Workbench', 'Instance', 'Connection', 'Task'],
+			breadcrumbData: []
 		}
 	},
 	created() {
@@ -58,12 +57,6 @@ export default {
 			return menus.find(item => item.name === name)
 		})
 		this.getBreadcrumb(this.$route)
-		this.getRegionCount()
-	},
-	computed: {
-		regionMap() {
-			return window.__REGION__.regionMap
-		}
 	},
 	watch: {
 		$route(route) {
@@ -98,16 +91,6 @@ export default {
 				})
 			}
 			this.breadcrumbData = data
-		},
-		getRegionCount() {
-			let arr = []
-			for (const key in this.regionMap) {
-				arr.push({
-					label: this.regionMap[key],
-					value: key
-				})
-			}
-			this.regionCount = arr
 		},
 		back() {
 			this.$router.back()

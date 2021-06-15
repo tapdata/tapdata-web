@@ -45,13 +45,13 @@
 </template>
 
 <script>
-import { STATUS_MAP } from '../../const'
+import { INSTANCE_STATUS_MAP } from '../../const'
 export default {
 	data() {
 		return {
 			loading: false,
 			regions: null,
-			statusMap: STATUS_MAP
+			statusMap: INSTANCE_STATUS_MAP
 		}
 	},
 	created() {
@@ -65,7 +65,7 @@ export default {
 		},
 		getRegion(regionMap) {
 			let { poolList } = window.__REGION__
-			let statusList = Object.keys(STATUS_MAP)
+			let statusList = Object.keys(INSTANCE_STATUS_MAP)
 			let list = []
 			poolList.forEach(item => {
 				let zoneMap = regionMap[item.poolId]
@@ -81,8 +81,8 @@ export default {
 								let num = statusMap[s] || 0
 								total += num
 								if (num) {
-									let n = map[STATUS_MAP[s].text] || 0
-									map[STATUS_MAP[s].text] = n + num
+									let n = map[INSTANCE_STATUS_MAP[s].text] || 0
+									map[INSTANCE_STATUS_MAP[s].text] = n + num
 								}
 							})
 							zones.push({
@@ -109,8 +109,8 @@ export default {
 		toInstance(query) {
 			let status = query.status
 			if (status) {
-				for (let key in STATUS_MAP) {
-					let item = STATUS_MAP[key]
+				for (let key in INSTANCE_STATUS_MAP) {
+					let item = INSTANCE_STATUS_MAP[key]
 					if (item.text === status) {
 						status = key
 						break

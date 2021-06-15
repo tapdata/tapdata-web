@@ -8,7 +8,7 @@ for (const dKey in directionMap) {
 	topologyMap[dKey] = `${dValue}`
 }
 export const TOPOLOGY_MAP = topologyMap,
-	STATUS_MAP = {
+	INSTANCE_STATUS_MAP = {
 		// Approving: { text: '创建中', icon: 'loading', type: 'info' },
 		Creating: { text: '创建中', icon: 'loading', type: 'info' },
 		Running: { text: '运行中', icon: 'running', type: 'success' },
@@ -26,6 +26,20 @@ export const TOPOLOGY_MAP = topologyMap,
 		Offline: { text: '离线', icon: 'warning', type: 'info' }
 		// WaitingDelete: { text: '退订中', icon: 'loading', type: 'info' }
 	},
+	TASK_STATUS_MAP = {
+		running: { text: '运行中', icon: 'running' },
+		paused: { text: '待启动', icon: 'waiting' },
+		error: { text: '错误', icon: 'warning' },
+		draft: { text: '待启动', icon: 'waiting' },
+		scheduled: { text: '启动中', icon: 'loading' },
+		stopping: { text: '停止中', icon: 'loading' },
+		'force stopping': { text: '强制停止中', icon: 'loading' }
+	},
+	CONNECTION_STATUS_MAP = {
+		ready: { text: '有效', icon: 'success', type: 'success' },
+		invalid: { text: '失效', icon: 'error', type: 'danger' },
+		testing: { text: '测试中', icon: 'loading', type: 'info' }
+	},
 	SPEC_MAP = {
 		micro: '小规格',
 		small: '标准规格',
@@ -35,4 +49,27 @@ export const TOPOLOGY_MAP = topologyMap,
 	CHARGE_MAP = {
 		'1,month': '包月计费',
 		'2,1': '按量计费'
-	}
+	},
+	SUPPORT_DB = [
+		'mysql',
+		'oracle',
+		'mongodb',
+		'sqlserver',
+		'postgres',
+		'elasticsearch',
+		'redis',
+		'file',
+		'db2',
+		'kafka',
+		'mariadb',
+		'mysql pxc',
+		'jira',
+		'dameng'
+		// 'gbase-8s',
+		// 'sybase ase',
+		// 'gaussdb200',
+		// 'dummy db',
+		// 'rest api',
+		// 'custom_connection',
+		// 'gridfs'
+	] //目前白名单,

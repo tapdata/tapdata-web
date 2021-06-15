@@ -10,7 +10,7 @@
 								<ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"></ElOption>
 							</ElSelect>
 						</li>
-						<li style="margin-left: 10px;">
+						<li class="ml-3">
 							<ElInput
 								width="200"
 								v-model="searchParams.keyword"
@@ -20,31 +20,25 @@
 								<i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
 							</ElInput>
 						</li>
-						<li style="margin-left: 10px;">
+						<li class="ml-3">
 							<ElButton plain class="btn-refresh" @click="fetch()">
 								<i class="iconfont td-icon-shuaxin"></i>
 							</ElButton>
 						</li>
 					</ul>
 				</div>
-				<div v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'" class="instance-operation-right">
+				<div v-if="VUE_APP_HIDE_INSTANCE_BTN === 'true'" class="instance-operation-right">
 					<ElButton type="primary" @click="toOldPurchase">
-						<i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
+						<i class="iconfont td-icon-dinggou mr-1"></i>
 						<span>订购托管实例</span>
 					</ElButton>
 					<ElButton type="primary" @click="toPurchase">
-						<i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
+						<i class="iconfont td-icon-dinggou mr-1"></i>
 						<span>实例订购</span>
 					</ElButton>
 				</div>
 			</div>
-			<El-table
-				class="instance-table  table-border"
-				style="margin-top: 10px;"
-				height="100%"
-				:data="list"
-				@sort-change="sortChange"
-			>
+			<El-table class="instance-table  table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
 				<ElTableColumn min-width="200px" label="实例ID/名称">
 					<template slot-scope="scope">
 						<ElLink class="agent-link" type="primary">{{ scope.row.id }}</ElLink>
@@ -105,7 +99,7 @@
 			</El-table>
 			<ElPagination
 				background
-				style="margin-top: 10px;"
+				class="mt-3"
 				layout="total, sizes, ->, prev, pager, next, jumper"
 				:current-page.sync="page.current"
 				:page-sizes="[10, 20, 50, 100]"
@@ -125,8 +119,8 @@ import { delayTrigger } from '../../util'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
-import { STATUS_MAP } from '../../const'
-let timer = null
+import { INSTANCE_STATUS_MAP } from '../../const'
+
 export default {
 	components: {
 		InlineInput,
@@ -147,8 +141,8 @@ export default {
 				total: 0
 			},
 			order: 'createAt desc',
-			statusMap: STATUS_MAP,
-			VUE_APP_INSTANCE_TEST_BTN: process.env.VUE_APP_INSTANCE_TEST_BTN
+			statusMap: INSTANCE_STATUS_MAP,
+			VUE_APP_HIDE_INSTANCE_BTN: process.env.VUE_APP_HIDE_INSTANCE_BTN
 		}
 	},
 	computed: {
@@ -180,20 +174,6 @@ export default {
 		let query = this.$route.query
 		this.searchParams.status = query.status || ''
 		this.fetch()
-		timer = setInterval(() => {
-			if (!this || this._isDestroyed) {
-				clearInterval(timer)
-				timer = null
-				return
-			}
-			this.fetch(this.page.current, 0, true)
-		}, 10000)
-	},
-	destroyed() {
-		if (timer) {
-			clearInterval(timer)
-			timer = null
-		}
 	},
 	methods: {
 		search() {
@@ -231,7 +211,10 @@ export default {
 					.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
 					.then(data => {
 						let list = data.items || []
-						this.list = list
+						this.list = list.map(item => {
+							item.status = item.status === 'Running' ? 'Running' : 'Offline'
+							return item
+						})
 						this.page.total = data.total
 						if (!list.length && data.total > 0) {
 							setTimeout(() => {
