@@ -306,7 +306,12 @@ export default {
 		},
 		goCreateTask() {
 			this.show = false
-			this.$router.push('/dataflow/create?step=' + this.getListIndexByKey('dataSource_1'))
+			this.$router.push({
+				name: 'DataflowCreate',
+				query: {
+					step: this.getListIndexByKey('dataSource_1')
+				}
+			})
 		},
 		goDashboard() {
 			this.show = false
@@ -314,7 +319,9 @@ export default {
 		},
 		goDataFlowList() {
 			this.show = false
-			this.$router.push('/dataflow')
+			this.$router.push({
+				name: 'Task'
+			})
 		},
 		changeStep() {
 			this.$nextTick(() => {
