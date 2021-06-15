@@ -1023,6 +1023,10 @@ const tc = {
           name: 'ES',
           tip: 'Elastic search節點',
           configurationES: '配置Elastic search',
+          chunkSize: '分片數量',
+          index: '索引',
+          chooseChunkSize: '請輸入分片數量',
+          chooseIndex: '請輸入索引',
           chooseESName: '請選擇Elastic search',
           es_isNull: 'Elastic search不能為空'
         },

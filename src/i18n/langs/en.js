@@ -1053,6 +1053,10 @@ const en = {
           name: 'ES',
           tip: 'Elastic search node',
           configurationES: 'Configure Elastic search',
+          chunkSize: 'Number of shards',
+          index: 'Index',
+          chooseChunkSize: 'Please enter the number of shards',
+          chooseIndex: 'Please enter the index',
           chooseESName: 'Please select Elastic search',
           es_isNull: 'Elastic search cannot be empty'
         },

@@ -1026,6 +1026,10 @@ const cn = {
           name: 'ES',
           tip: 'Elastic search节点',
           configurationES: '配置Elastic search',
+          chunkSize: '分片数量',
+          index: '索引',
+          chooseChunkSize: '请输入分片数量',
+          chooseIndex: '请输入索引',
           chooseESName: '请选择Elastic search',
           es_isNull: 'Elastic search不能为空'
         },
