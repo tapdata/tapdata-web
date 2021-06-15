@@ -540,6 +540,9 @@ export default {
             } else {
               item.connectionUrl = item.database_uri || item.connection_name
             }
+            if (item.database_type === 'mq') {
+              item.connectionUrl = item.brokerURL
+            }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = this.$moment(item.last_updated).format(
               'YYYY-MM-DD HH:mm:ss'
