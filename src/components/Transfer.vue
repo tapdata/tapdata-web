@@ -21,7 +21,11 @@
       <span slot-scope="{ option }">
         <span> {{ option.label }}</span>
         <span
-          v-if="selectSourceArr.includes(option.key) && $window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs' && !supportTwoWay"
+          v-if="
+            selectSourceArr.includes(option.key) &&
+            $window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs' &&
+            !supportTwoWay
+          "
           @click.stop.prevent="handleFiled(option)"
           class="el-icon-setting field-transfer__icon"
         ></span>
@@ -48,9 +52,21 @@
         <span slot-scope="{ option }">
           <span v-show="!option.showInput"> {{ option.label }}</span>
           <span v-show="option.showInput" class="field-transfer__input">
-            <el-input v-model="option.label" autofocus @keyup.enter.native="checkInput(option)" :ref="option.id" @blur="blurFileOperations(option.showInput)"></el-input>
-            <i class="el-icon-close" @click.stop.prevent="closeInput(option)"></i>
-            <i class="el-icon-check" @click.stop.prevent="checkInput(option)"></i>
+            <el-input
+              v-model="option.label"
+              autofocus
+              @keyup.enter.native="checkInput(option)"
+              :ref="option.id"
+              @blur="blurFileOperations(option.showInput)"
+            ></el-input>
+            <i
+              class="el-icon-close"
+              @click.stop.prevent="closeInput(option)"
+            ></i>
+            <i
+              class="el-icon-check"
+              @click.stop.prevent="checkInput(option)"
+            ></i>
           </span>
           <span
             v-if="selectSourceFileArr.includes(option.key)"
@@ -191,7 +207,7 @@ export default {
       currentTableId: '',
       currentTableName: '',
       operations: [], //存储字段改名操作,
-      field_process: [],
+      field_process: []
     }
   },
   methods: {
@@ -274,6 +290,10 @@ export default {
         .then(res => {
           if (res.data) {
             let fields = res.data.records[0].schema.tables[0].fields
+            // 初始化所有字段都映射 只取顶级字段
+            fields = fields.filter(
+              field => field.field_name.indexOf('.') === -1
+            )
             this.sourceFileData = fields.map(field => ({
               label: field.field_name,
               key: field.field_name,
@@ -283,11 +303,11 @@ export default {
               primary_key_position: field.primary_key_position,
               showInput: false
             }))
-            // 初始化所有字段都映射 只取顶级字段
-            fields = fields.filter(field => field.field_name.indexOf('.') === -1)
             this.selectSourceFileArr = fields.map(field => field.field_name)
             //初始化已有字段处理
-            let field_process = this.field_process.filter(process => process.table_id === id)
+            let field_process = this.field_process.filter(
+              process => process.table_id === id
+            )
             if (field_process.length > 0) {
               this.operations = _.cloneDeep(field_process[0].operations) || []
             }
@@ -302,7 +322,7 @@ export default {
                 })
               } else {
                 this.selectSourceFileArr.forEach((check, index) => {
-                  if(check === operand.field){
+                  if (check === operand.field) {
                     this.selectSourceFileArr.splice(index, 1)
                   }
                 })
@@ -368,9 +388,7 @@ export default {
     handleExistsName(option) {
       // 改名前查找同级中是否重名，若有则return且还原改动并提示
       let exist = false
-      let filterData = this.sourceFileData.filter(
-        v => option.label === v.label
-      )
+      let filterData = this.sourceFileData.filter(v => option.label === v.label)
       if (filterData.length > 1) {
         this.$message.error(option.label + this.$t('message.exists_name'))
         exist = true
@@ -455,7 +473,9 @@ export default {
         operations: this.operations
       }
       if (this.field_process && this.field_process.length > 0) {
-        let process = this.field_process.filter(fields => fields.table_id === this.currentTableId)
+        let process = this.field_process.filter(
+          fields => fields.table_id === this.currentTableId
+        )
         if (process.length > 0) {
           field_process = process[0]
           field_process.table_id = this.currentTableId
@@ -574,7 +594,7 @@ export default {
     font-size: 12px;
     margin-bottom: 10px;
   }
-  .field-transfer__icon{
+  .field-transfer__icon {
     display: inline-block;
     margin-left: 15px;
   }
@@ -592,14 +612,14 @@ export default {
     right: 10px;
     top: 10px;
   }
-  .field-transfer__icon{
+  .field-transfer__icon {
     display: inline-block;
     margin-left: 15px;
   }
 }
 </style>
 <style lang="scss">
-.tapdata-transfer-wrap{
+.tapdata-transfer-wrap {
   height: 100%;
 
   .el-transfer-panel
@@ -773,7 +793,7 @@ export default {
         background-color: #f5f5f5;
       }
     }
-    .field-transfer__input{
+    .field-transfer__input {
       .el-input__inner {
         height: 22px;
         line-height: 22px;

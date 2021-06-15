@@ -1,4 +1,4 @@
-export default function(vm) {
+export default function (vm) {
   return {
     form: {
       labelPosition: 'right',
@@ -39,13 +39,13 @@ export default function(vm) {
             required: true,
             validator(rule, value, callback) {
               if (!value) {
-                callback(new Error(vm.$t('dataForm.error.nonePort')));
+                callback(new Error(vm.$t('dataForm.error.nonePort')))
               } else if (!/^\d+$/.test(value)) {
-                callback(new Error(vm.$t('dataForm.error.portNumber')));
+                callback(new Error(vm.$t('dataForm.error.portNumber')))
               } else if (value < 1 || value > 65535) {
-                callback(new Error(vm.$t('dataForm.error.portRange')));
+                callback(new Error(vm.$t('dataForm.error.portRange')))
               } else {
-                callback();
+                callback()
               }
             }
           }
@@ -98,5 +98,5 @@ export default function(vm) {
         show: true
       }
     ]
-  };
+  }
 }

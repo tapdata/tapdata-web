@@ -87,8 +87,15 @@
                 >
                   自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作
                 </div>
-                <template slot="syncPoints" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
-                  <el-row v-for="item in settingModel.syncPoints[0]" :key="item.name" style="margin-bottom: 10px">
+                <template
+                  slot="syncPoints"
+                  v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
+                >
+                  <el-row
+                    v-for="item in settingModel.syncPoints[0]"
+                    :key="item.name"
+                    style="margin-bottom: 10px"
+                  >
                     <el-col :span="8" style="margin-right: 10px">
                       <el-select v-model="item.type" placeholder="请选择">
                         <el-option
@@ -197,7 +204,7 @@ import {
 } from './util'
 import { uuid } from '../../editor/util/Schema'
 import { TYPEMAP } from '../connections/util'
-import * as moment from "moment";
+import * as moment from 'moment'
 
 export default {
   components: { Transfer, DatabaseTypeDialog },
@@ -523,7 +530,10 @@ export default {
         this.$refs.setting.validate(valid => {
           if (valid) {
             //设置同步时间 必须填写时间
-            if (this.settingModel.syncPoints[0].type !== 'current' && this.settingModel.syncPoints[0].date === '') {
+            if (
+              this.settingModel.syncPoints[0].type !== 'current' &&
+              this.settingModel.syncPoints[0].date === ''
+            ) {
               this.$message.error('设置同步时间不能为空')
               return
             }
@@ -874,7 +884,10 @@ export default {
       let source = this.dataSourceModel
       let target = this.dataSourceModel
       //日期转换
-      if (this.settingModel.syncPoints && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+      if (
+        this.settingModel.syncPoints &&
+        window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
+      ) {
         this.settingModel.syncPoints.forEach(point => {
           point.date = point.date
             ? moment(point.date).format('YYYY-MM-DD HH:mm:ss')
@@ -900,7 +913,11 @@ export default {
       //   }
       // ]
       // this.settingModel['syncPoints'] = syncPoints
-      if ( this.settingModel.sync_type === 'cdc' && window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs' && this.supportTwoWay) {
+      if (
+        this.settingModel.sync_type === 'cdc' &&
+        window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs' &&
+        this.supportTwoWay
+      ) {
         this.addSyncPoints()
       }
       let postData = {
@@ -965,7 +982,7 @@ export default {
           dropType: 'no_drop',
           readBatchSize: 1000,
           readCdcInterval: 500,
-          field_process: this.transferData.field_process, //字段处理器 源
+          field_process: this.transferData.field_process //字段处理器 源
         }),
         Object.assign({}, stageDefault, {
           id: targetIdB,

@@ -712,7 +712,6 @@ export default {
           let collection = selectTable.record || {}
           if (collection.indexes) {
             let _keyJson = JSON.stringify(key)
-            debugger
             let existsIndexes = collection.indexes.filter(
               v => _keyJson === JSON.stringify(v.key)
             )

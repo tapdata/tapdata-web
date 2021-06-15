@@ -115,7 +115,7 @@ export default function () {
               show: true
             }
           }
-        ],
+        ]
       }
       // {
       //   type: 'slot',
