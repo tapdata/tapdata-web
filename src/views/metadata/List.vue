@@ -174,7 +174,7 @@
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column :label="$t('metadata.details.opera')">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'data_catalog_edition'"

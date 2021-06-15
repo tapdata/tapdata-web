@@ -16,6 +16,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
+        trim: true,
         label: vm.$t('dataForm.form.host'),
         rules: [
           {

@@ -77,6 +77,12 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-mysqlpxc.svg',
       stencilImage: 'static/editor/mysqlpxc.svg'
     },
+    dameng: {
+      name: 'DaMeng',
+      type: 'dameng',
+      shapeImage: 'static/editor/o-dameng.svg',
+      stencilImage: 'static/editor/dameng.svg'
+    },
     oracle: {
       type: 'oracle',
       name: 'Oracle',
