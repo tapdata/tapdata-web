@@ -1871,13 +1871,13 @@ const tc = {
       mq: {
         mqType: 'MQ類型',
         mqQueueSet: '隊列名集合',
-        mqTopicSet: '主題名稱',
+        mqTopicSet: '主題名集合',
         brokerURL: 'MQ連接串',
         database_host: 'MQ地址',
         database_port: 'MQ端口',
         routeKeyField: '消息路由',
         virtualHost: '虛擬主機',
-        queueSetTip: '多個集合用逗號隔開',
+        queueSetTip: '多個隊列用逗號隔開',
         topicSetTip: '多個主題用逗號隔開'
       }
     },

@@ -1876,13 +1876,13 @@ const cn = {
       mq: {
         mqType: 'MQ类型',
         mqQueueSet: '队列名集合',
-        mqTopicSet: '主题名称',
+        mqTopicSet: '主题名集合',
         brokerURL: 'MQ连接串',
         database_host: 'MQ地址',
         database_port: 'MQ端口',
         routeKeyField: '消息路由',
         virtualHost: '虚拟主机',
-        queueSetTip: '多个集合用逗号隔开',
+        queueSetTip: '多个队列用逗号隔开',
         topicSetTip: '多个主题用逗号隔开'
       }
     },
