@@ -19,6 +19,7 @@ import gridfs from './gridfs'
 import dummydb from './dummydb'
 import jira from './jira'
 import dameng from './dameng'
+import tcp from './tcp'
 import drs_mysql from './drs_mysql'
 import drs_mariadb from './drs_maria'
 import drs_oracle from './drs_oracle'
@@ -77,5 +78,6 @@ export default {
   restapi,
   custom_connection,
   gridfs,
-  dameng
+  dameng,
+  tcp
 }

@@ -76,7 +76,8 @@ export const TYPEMAP = {
   kafka: 'Kafka',
   mariadb: 'MariaDB',
   'mysql pxc': 'MySQL PXC',
-  jira: 'jira'
+  jira: 'jira',
+  tcp: 'TCP/IP'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {

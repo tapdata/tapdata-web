@@ -1942,6 +1942,10 @@ const en = {
         file_upload_mode: 'File Upload Mode',
         file_upload_stream: 'Stream',
         file_upload_memory: 'Memory(May be cause OOM)(有内存溢出风险)'
+      },
+      tcp: {
+        AgreementType: 'Protocol type ',
+        TargetAddr: 'Target address'
       }
     },
     error: {

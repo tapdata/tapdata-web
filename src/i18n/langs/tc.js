@@ -1872,6 +1872,10 @@ const tc = {
         file_upload_mode: '文件上傳模式',
         file_upload_stream: '流式',
         file_upload_memory: '內存讀取(有內存溢出風險)'
+      },
+      tcp: {
+        agreementType: '协议类型',
+        targetAddr: '目标地址'
       }
     },
     error: {

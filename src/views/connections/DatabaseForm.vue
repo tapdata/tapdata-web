@@ -936,7 +936,8 @@ export default {
         'mariadb',
         'mysql pxc',
         'jira',
-        'dameng'
+        'dameng',
+        'tcp'
         // 'gbase-8s',
         // 'sybase ase',
         // 'gaussdb200',

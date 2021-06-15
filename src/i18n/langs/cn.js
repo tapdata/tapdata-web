@@ -1877,6 +1877,10 @@ const cn = {
         file_upload_mode: '文件上传模式',
         file_upload_stream: '流式',
         file_upload_memory: '内存读取(有内存溢出风险)'
+      },
+      tcp: {
+        agreementType: '协议类型',
+        targetAddr: '目标地址'
       }
     },
     error: {
