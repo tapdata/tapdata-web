@@ -2,7 +2,7 @@
 	<div v-if="$route.name === 'Workbench'" class="workbench-container flex flex-column">
 		<!--  快速开始  -->
 		<div class="workbench-start workbench-section flex">
-			<div class="main flex flex-column flex-grow-1">
+			<div class="main flex flex-column">
 				<div class="main-header flex py-6">
 					<div class="main-title mr-4 fs-6 fw-bolder">快速开始</div>
 					<!--					<div class="main-subtitle py-1 px-4 fs-8 pointer" @click="showGuide">-->
@@ -51,7 +51,7 @@
 		</div>
 		<!--  概览  -->
 		<div class="workbench-overview workbench-section flex">
-			<div class="main flex-grow-1">
+			<div class="main">
 				<div class="main-header py-6">
 					<div class="main-title mr-4 fs-6 fw-bolder">概览</div>
 				</div>
@@ -357,8 +357,9 @@ export default {
 .workbench-container {
 	height: 100%;
 	min-height: 610px;
-	min-width: 1060px;
+	min-width: 1110px;
 	.main {
+		flex: 1;
 		.main-header {
 			.main-title {
 				height: 24px;
@@ -374,6 +375,7 @@ export default {
 		.create-list__item {
 			background-color: #fff;
 			min-width: 200px;
+			box-sizing: border-box;
 			&:first-child {
 				margin-left: 0 !important;
 			}
@@ -390,7 +392,7 @@ export default {
 			color: #000;
 		}
 		.create-list__desc {
-			height: 95px;
+			height: 110px;
 			color: rgba(0, 0, 0, 0.49);
 		}
 		.create-list__btn {
@@ -402,6 +404,7 @@ export default {
 		}
 		.agent-list__item {
 			min-width: 200px;
+			box-sizing: border-box;
 			&:first-child {
 				margin-left: 0 !important;
 			}
