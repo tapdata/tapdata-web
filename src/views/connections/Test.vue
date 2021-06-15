@@ -225,7 +225,11 @@ export default {
       })
     },
     start(updateSchema, editTest) {
-      if (this.formData.database_type === 'mq') {
+      if (
+        this.formData.database_type === 'mq' &&
+        (typeof this.formData.mqQueueSet === 'string' ||
+          typeof this.formData.mqTopicSet === 'string')
+      ) {
         this.formData.mqQueueSet = this.formData.mqQueueSet.split(',')
         this.formData.mqTopicSet = this.formData.mqTopicSet.split(',')
       }

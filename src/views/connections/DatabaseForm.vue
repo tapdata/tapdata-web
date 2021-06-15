@@ -1187,7 +1187,11 @@ export default {
           editData = await this.$api('connections').get([this.$route.params.id])
         }
 
-        if (editData.data.database_type === 'mq') {
+        if (
+          editData.data.database_type === 'mq' &&
+          (typeof editData.data.mqQueueSet === 'string' ||
+            typeof editData.data.mqTopicSet === 'string')
+        ) {
           let mqQueueSet = editData.data.mqQueueSet.join(',')
           let mqTopicSet = editData.data.mqTopicSet.join(',')
           editData.data.mqQueueSet = mqQueueSet
