@@ -253,6 +253,7 @@ const STEPS = [
 		title: {
 			text: '请在下方选择你要添加的数据连接类型'
 		},
+		contentClass: 'overflow-auto',
 		imgList: {
 			class: 'img-list-inline text-start pt-5 flex-wrap mx-auto inline-flex',
 			isSelected: true, // 是否可以选中
