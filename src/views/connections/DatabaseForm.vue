@@ -1193,7 +1193,6 @@ export default {
           editData.data.mqQueueSet = mqQueueSet
           editData.data.mqTopicSet = mqTopicSet
         }
-        debugger
         this.model = Object.assign(this.model, editData.data)
         if (this.model.sourceType === 'ecs') {
           this.getEcsList()
@@ -1792,10 +1791,15 @@ export default {
       } else {
         this.$refs.form.validate(valid => {
           if (valid) {
+            let data = Object.assign({}, this.model)
+            if (this.model.database_type === 'mq') {
+              data.mqQueueSet = this.model.mqQueueSet.split(',')
+              data.mqTopicSet = this.model.mqTopicSet.split(',')
+            }
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
               this.model['platformInfo'] = Object.assign(
                 this.model['platformInfo'],
-                this.handlePlatformInfo(this.model)
+                this.handlePlatformInfo(data)
               )
             }
             this.dialogTestVisible = true
