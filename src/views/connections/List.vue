@@ -472,7 +472,15 @@ export default {
         sslKeyFile: true,
         sslKey: true,
         sslValidate: false,
-        sslCA: true //MongoDB
+        sslCA: true, //MongoDB
+        mqType: true,
+        brokerURL: true, // mq start
+        mqUserName: true,
+        mqPassword: true,
+        mqQueueSet: true,
+        mqTopicSet: true,
+        routeKeyField: true,
+        virtualHost: true // mq end
       }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
