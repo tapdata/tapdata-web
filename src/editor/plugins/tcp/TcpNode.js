@@ -10,7 +10,7 @@ export const TcpNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/0-API-target1.svg'
+          xlinkHref: 'static/editor/o-tcp.svg'
         },
         label: {
           text: 'TCP/IP'
@@ -226,7 +226,7 @@ export const TcpNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/API-target1.svg',
+        xlinkHref: 'static/editor/tcp.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',
