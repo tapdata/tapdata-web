@@ -56,7 +56,9 @@ module.exports = {
 				countDiff: Random.integer(0, 100),
 				valueDiff: Random.integer(0, 100),
 				error: Random.integer(0, 100)
-			}
+			},
+			chart8: { total: 0, invalid: 0, ready: 0 },
+			chart9: { total: 0, 'initial_sync+cdc': 0, initial_sync: 0, cdc: 0 }
 		},
 		code: 'ok',
 		msg: 'ok'
