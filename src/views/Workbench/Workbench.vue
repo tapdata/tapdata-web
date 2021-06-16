@@ -55,7 +55,7 @@
 				<div class="main-header py-6">
 					<div class="main-title mr-4 fs-6 fw-bolder">概览</div>
 				</div>
-				<ul class="agent-list__list flex-grow-1 flex justify-evenly">
+				<ul class="agent-list__list flex-grow-1 flex justify-around">
 					<li v-for="(item, index) in agentList" :key="index" class="agent-list__item p-6 ml-10">
 						<div class="agent-list__name flex align-center justify-center mx-auto mb-3">
 							<VIcon size="12" class="icon" color="#888">{{ item.icon }}</VIcon>
@@ -64,7 +64,7 @@
 						<div class="agent-list__value text-center fs-1">
 							{{ item.value }}
 						</div>
-						<div class="agent-list__detail flex justify-around mt-3 py-2">
+						<div class="agent-list__detail flex flex-wrap justify-around mt-3 py-2 px-1">
 							<div v-for="(detail, dIndex) in item.list" :key="dIndex" class="agent-list__status">
 								<span>{{ detail.label }}</span>
 								<span>:</span>
@@ -403,7 +403,7 @@ export default {
 			background-color: #fff;
 		}
 		.agent-list__item {
-			min-width: 200px;
+			min-width: 250px;
 			box-sizing: border-box;
 			&:first-child {
 				margin-left: 0 !important;
@@ -420,6 +420,9 @@ export default {
 		.agent-list__detail {
 			background-color: #fafafb;
 			color: rgba(0, 0, 0, 0.5);
+			.agent-list__status {
+				white-space: nowrap;
+			}
 			.success {
 				color: #599f3f;
 			}
@@ -429,7 +432,7 @@ export default {
 		}
 	}
 	.aside {
-		width: 392px;
+		width: 250px;
 		.aside-header {
 			.aside-title {
 				height: 24px;
