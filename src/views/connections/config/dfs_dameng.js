@@ -51,12 +51,12 @@ export default function (vm) {
           }
         ]
       },
-      {
-        type: 'input',
-        field: 'database_name',
-        label: vm.$t('dataForm.form.databaseName'),
-        required: true
-      },
+      // {
+      //   type: 'input',
+      //   field: 'database_name',
+      //   label: vm.$t('dataForm.form.databaseName'),
+      //   required: true
+      // },
       {
         type: 'input',
         field: 'database_username',
