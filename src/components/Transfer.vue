@@ -388,7 +388,7 @@ export default {
     handleExistsName(option) {
       // 改名前查找同级中是否重名，若有则return且还原改动并提示
       let exist = false
-      let filterData = this.sourceFileData.filter(v => option.label === v.label)
+      let filterData = this.sourceFileData.filter(v => option.label === v.label && this.selectSourceFileArr.includes(v.key))
       if (filterData.length > 1) {
         this.$message.error(option.label + this.$t('message.exists_name'))
         exist = true
@@ -431,20 +431,29 @@ export default {
       this.closeInput(option)
     },
     handleChangeFileTransfer(keys, direction, checkData) {
-      this.sourceFileData.forEach((v, index) => {
-        checkData.forEach(file => {
+      checkData.forEach(file => {
+        this.sourceFileData.forEach(v => {
           if (v.key === file && direction === 'left') {
             this.remove(v)
           } else if (v.key === file && direction === 'right') {
             //当前选中的值与右边的比较 重名则不允许移动
-            if (v.label === file) {
+            let result = this.checkLeftFile(file)
+            if (result) {
               this.$message.error(file + '与右边的字段有重复名称，不允许再移动')
-              this.selectSourceFileArr.splice(index, 1) //再将值塞回去
-            }
-            this.cancelRemove(v)
+              this.selectSourceFileArr.splice(this.selectSourceFileArr.findIndex(item =>item === file), 1) //再将值塞回去
+            } else this.cancelRemove(v)
           }
         })
       })
+    },
+    //左边过滤字段是否与右边重名（右边重名过）
+    checkLeftFile(file) {
+      let result = false
+      let targetFile = this.sourceFileData.filter(v => v.key !== file && v.label === file)
+      if (targetFile.length > 0) {
+        result = true
+      }
+      return result
     },
     // 穿梭框值改变的时候 (重命名 或者还原)
     handleChangeTransfer() {
