@@ -816,6 +816,8 @@ const cn = {
       data_node: {
         kafkaText: 'kafka节点',
         kafkaName_isNull: 'kafka不能为空',
+        tcpTip:
+          '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
         database: {
           name: '数据库',
           tip: '任意类型数据库',

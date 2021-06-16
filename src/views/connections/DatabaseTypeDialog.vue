@@ -9,9 +9,6 @@
     <div class="database">
       <span class="title" v-if="database && database.length > 0">Database</span>
       <ul class="item clearfix">
-        {{
-          database
-        }}
         <li v-for="item in database" :key="item" @click="databaseType(item)">
           <div class="img-box">
             <img :src="getImgByType(item)" />

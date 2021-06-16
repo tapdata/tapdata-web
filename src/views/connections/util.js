@@ -246,6 +246,14 @@ export const defaultModel = {
     excel_header_end: 'Z1',
     excel_value_start: '',
     excel_value_end: ''
+  },
+  tcp: {
+    name: '',
+    database_type: '',
+    connection_type: 'target',
+    database_host: '',
+    database_port: '',
+    tcpUdpType: 'TCP'
   }
 }
 export const defaultCloudModel = {

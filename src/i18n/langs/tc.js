@@ -815,6 +815,8 @@ const tc = {
       data_node: {
         kafkaText: 'kafka節點',
         kafkaName_isNull: 'kafka不能為空',
+        tcpTip:
+          '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
         database: {
           name: '數據庫',
           tip: '任意類型數據庫',

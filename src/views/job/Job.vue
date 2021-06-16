@@ -86,6 +86,7 @@
               $disabledByPermission('SYNC_job_operation_all_data', creatUserId)
             "
             v-if="
+              statusBtMap[status] &&
               !statusBtMap[status].reloadSchema &&
               !$window.getSettingByKey('DFS_TCM_PLATFORM')
             "
@@ -179,8 +180,10 @@
                   : ''
             }"
             >{{ $t('dataFlow.state') }}:
-            {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}</span
-          >
+            <template v-if="status">
+              {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}
+            </template>
+          </span>
         </el-tag>
 
         <el-button-group
@@ -192,7 +195,8 @@
               $disabledByPermission(
                 'SYNC_job_operation_all_data',
                 creatUserId
-              ) || statusBtMap[status].start
+              ) ||
+              (statusBtMap[status] && statusBtMap[status].start)
             "
             class="action-btn btn-operatiton"
             size="mini"
@@ -206,7 +210,8 @@
               $disabledByPermission(
                 'SYNC_job_operation_all_data',
                 creatUserId
-              ) || statusBtMap[status].stop
+              ) ||
+              (statusBtMap[status] && statusBtMap[status].stop)
             "
             class="action-btn btn-operatiton"
             size="mini"
@@ -220,7 +225,8 @@
               $disabledByPermission(
                 'SYNC_job_operation_all_data',
                 creatUserId
-              ) || statusBtMap[status].reset
+              ) ||
+              (statusBtMap[status] && statusBtMap[status].reset)
             "
             class="action-btn btn-operatiton"
             size="mini"
@@ -234,7 +240,8 @@
               $disabledByPermission(
                 'SYNC_job_operation_all_data',
                 creatUserId
-              ) || statusBtMap[status].forceStop
+              ) ||
+              (statusBtMap[status] && statusBtMap[status].forceStop)
             "
             class="action-btn btn-operatiton"
             size="mini"
@@ -251,6 +258,7 @@
             $disabledByPermission('SYNC_job_edition_all_data', creatUserId)
           "
           v-if="
+            statusBtMap[status] &&
             !statusBtMap[status].edit &&
             !editable &&
             !$window.getSettingByKey('DFS_TCM_PLATFORM')
@@ -683,13 +691,19 @@ export default {
         if (self.executeMode !== dat.executeMode)
           self.executeMode = dat.executeMode
 
-        if (!self.statusBtMap[self.status].start) {
+        if (
+          self.statusBtMap[self.status] &&
+          !self.statusBtMap[self.status].start
+        ) {
           self.executeMode = 'normal'
         }
-        delete self.dataFlow.validateBatchId
-        delete self.dataFlow.validateStatus
-        delete self.dataFlow.validationSettings
-        Object.assign(self.dataFlow, dat)
+        if (self.dataFlow) {
+          delete self.dataFlow.validateBatchId
+          delete self.dataFlow.validateStatus
+          delete self.dataFlow.validationSettings
+          Object.assign(self.dataFlow, dat)
+        }
+
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
       })
     },

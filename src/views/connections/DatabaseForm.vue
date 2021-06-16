@@ -1044,6 +1044,9 @@ export default {
           defaultModel['gridfs']
         )
         break
+      case 'tcp':
+        this.model = Object.assign({}, defaultModel['tcp'])
+        break
     }
     this.getDT(this.databaseType)
     this.initTimezones()

@@ -839,6 +839,8 @@ const en = {
       data_node: {
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
+        tcpTip:
+'Important: TCP/IP data sources output JSON packets by default without additional packet conversion processing nodes ',
         database: {
           name: 'Database',
           tip: 'Any Database',

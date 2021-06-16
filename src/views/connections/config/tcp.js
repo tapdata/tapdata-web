@@ -23,7 +23,7 @@ export default function (vm) {
       },
       {
         type: 'radio',
-        field: 'connection_type',
+        field: 'tcpUdpType',
         label: vm.$t('dataForm.form.tcp.agreementType'),
         options: [
           {
