@@ -60,6 +60,12 @@ export default function (vm) {
       },
       {
         type: 'input',
+        field: 'database_owner',
+        label: vm.$t('dataForm.form.databaseOwner'),
+        required: true
+      },
+      {
+        type: 'input',
         field: 'database_username',
         label: vm.$t('dataForm.form.userName')
       },
