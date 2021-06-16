@@ -57,7 +57,6 @@
               autofocus
               @keyup.enter.native="checkInput(option)"
               :ref="option.id"
-              @blur="blurFileOperations(option.showInput)"
             ></el-input>
             <i
               class="el-icon-close"
@@ -471,11 +470,6 @@ export default {
         }
       })
       this.preFixSuffixData()
-    },
-    blurFileOperations(status) {
-      if (status) {
-        this.$message.info('字段改名操作还未完成哦')
-      }
     },
     saveFileOperations() {
       //如果右边为空  则提示不可以保存

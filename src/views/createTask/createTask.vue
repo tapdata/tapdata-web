@@ -269,10 +269,10 @@ export default {
     this.id = this.$route.params.id
     this.getSteps()
     this.getAgentCount()
-    this.allowDatabaseType()
     if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
       this.dataSourceModel = _.cloneDeep(DFSDATASOURCE_MODEL)
       this.getFormConfig()
+      this.allowDatabaseType()
     } else {
       this.getInstanceRegion()
       this.getFormConfig()
@@ -647,6 +647,11 @@ export default {
         }
       } else {
         if (type === 'source') {
+          // dameng 不可以做源
+          this.allowDataType.splice(
+            this.allowDataType.findIndex(item => item === 'dameng'),
+            1
+          )
           where = {
             database_type: { in: this.allowDataType },
             sourceType: this.dataSourceModel.source_sourceType,
@@ -654,6 +659,11 @@ export default {
             'platformInfo.zone': this.platformInfo.zone
           }
         } else {
+          // db2 不可以做目标端
+          this.allowDataType.splice(
+            this.allowDataType.findIndex(item => item === 'db2'),
+            1
+          )
           where = {
             database_type: { in: this.allowDataType },
             sourceType: this.dataSourceModel.target_sourceType,
@@ -814,21 +824,12 @@ export default {
           break
         }
         case 'databaseType': {
-          let source = []
-          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-            source = items.find(it => it.field === 'source_sourceType')
-          } else {
-            source = items.find(it => it.field === 'source_databaseType')
-          }
+          let source = items.find(it => it.field === 'source_databaseType')
           if (source) {
-            // 源端不支持 dameng
             let options = data
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
               let filterArr = ['redis', 'elasticsearch']
               options = data.filter(item => filterArr.indexOf(item) === -1)
-            }
-            if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-              options = data.filter(item => item !== 'dameng')
             }
             source.options = options.map(item => {
               return {
@@ -837,18 +838,9 @@ export default {
               }
             })
           }
-          let target = []
-          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-            target = items.find(it => it.field === 'target_sourceType')
-          } else {
-            target = items.find(it => it.field === 'target_databaseType')
-          }
+          let target = items.find(it => it.field === 'target_databaseType')
           if (target) {
-            let options = data
-            if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-              options = data.filter(item => item !== 'db2')
-            }
-            target.options = options.map(item => {
+            target.options = data.map(item => {
               return {
                 label: TYPEMAP[item],
                 value: item
