@@ -8,8 +8,31 @@
         $t('editor.cell.link.mappingRelations')
       }}</span>
     </header>
-    <div class="attr-panel-body">
+    <div class="attr-panel-body overflow-auto">
       <ElForm
+        v-if="form"
+        class="e-form flex flex-column h-auto"
+        label-position="top"
+        label-width="160px"
+      >
+        <FormProvider :form="form">
+          <SchemaField
+            :schema="schema"
+            :scope="{
+              getDropOptions,
+              useAsyncDataSource,
+              loadDatabaseInfo,
+              sourceConnectionId: sourceNode.connectionId
+            }"
+          />
+          <!--<FormConsumer>
+            <template #default="{ form }">
+              {{ form.values }}
+            </template>
+          </FormConsumer>-->
+        </FormProvider>
+      </ElForm>
+      <!--<ElForm
         :disabled="disabled"
         class="e-form flex flex-column"
         label-position="top"
@@ -149,7 +172,7 @@
             </ElTransfer>
           </div>
         </div>
-      </ElForm>
+      </ElForm>-->
     </div>
     <el-dialog
       :title="$t('editor.cell.link.batchRename')"
@@ -206,14 +229,71 @@ import log from '@/log'
 import factory from '@/api/factory'
 import { mapGetters, mapMutations } from 'vuex'
 import VIcon from '@/components/VIcon'
+import { createForm } from '@formily/core'
+import { action } from '@formily/reactive'
+import { FormProvider, FormConsumer, createSchemaField } from '@formily/vue'
+import { components } from '@/components/form'
+import { CheckboxGroup } from '@/components/form/CheckboxGroup'
+
+const { SchemaField } = createSchemaField({
+  components
+})
+
 let connections = factory('connections')
 let editorMonitor = null
 let selectKeepArr = []
 export default {
   name: 'DatabaseLinkAttribute',
-  components: { VIcon },
+  components: { CheckboxGroup, VIcon, FormProvider, FormConsumer, SchemaField },
   data() {
     return {
+      form: null,
+      schema: {
+        type: 'object',
+        properties: {
+          dropType: {
+            type: 'string',
+            title: '对目标端已存在的结构和数据的处理',
+            'x-decorator': 'ElFormItem',
+            'x-component': 'Select',
+            'x-reactions': ['{{getDropOptions}}']
+          },
+          syncObjects: {
+            type: 'array',
+            default: [
+              {
+                type: 'table'
+              }
+            ],
+            enum: [
+              {
+                label: 'Table',
+                value: 'table',
+                tooltip: 'editor.cell.link.tableTip',
+                disabled: true
+              },
+              {
+                label: 'View',
+                value: 'view',
+                tooltip: 'editor.cell.link.viewTip'
+              },
+              {
+                label: 'Function',
+                value: 'function'
+              },
+              {
+                label: 'Procedure',
+                value: 'procedure'
+              }
+            ],
+            'x-component': 'SyncObjects',
+            'x-reactions': [
+              '{{useAsyncDataSource(loadDatabaseInfo, sourceConnectionId)}}'
+            ]
+          }
+        }
+      },
+
       transferLoading: false,
       currentName: null,
       databaseName: '',
@@ -280,8 +360,14 @@ export default {
     }
   },
 
-  mounted() {
-    const { syncObjects } = this.node
+  async mounted() {
+    await this.$nextTick()
+    this.form = createForm({
+      values: this.node
+    })
+    // this.form.setValues(this.node)
+
+    /*const { syncObjects } = this.node
     if (syncObjects?.length) {
       this.syncTypes.push(...syncObjects.map(item => item.type))
       const item = syncObjects.find(item => item.type === 'table')
@@ -290,7 +376,7 @@ export default {
       console.warn('syncObjects 至少要有一项，默认是table')
     }
 
-    this.loadDataModels(this.sourceNode.connectionId)
+    this.loadDataModels(this.sourceNode.connectionId)*/
   },
 
   methods: {
@@ -299,6 +385,48 @@ export default {
       'setNodeValue',
       'setNodeValueByPath'
     ]),
+
+    useAsyncDataSource(service, ...args) {
+      return field => {
+        field.loading = true
+        service(field, ...args).then(
+          action(data => {
+            field.data = data
+            field.loading = false
+            console.log('useAsyncDataSource-Action', field)
+          })
+        )
+      }
+    },
+
+    async loadDatabaseInfo(field, id) {
+      const connectionId = id || field.query('connectionId').get('value')
+      if (!connectionId) return
+      let result = await connections.customQuery([connectionId], {
+        schema: true
+      })
+      return result.data
+    },
+
+    getDropOptions(field) {
+      const options = [
+        {
+          label: this.$t('editor.cell.link.existingSchema.keepSchema'),
+          value: 'no_drop'
+        },
+        {
+          label: this.$t('editor.cell.link.existingSchema.keepExistedData'),
+          value: 'drop_data'
+        }
+      ]
+      if (field.form.values.database_type === 'mongodb') {
+        options.push({
+          label: this.$t('editor.cell.link.existingSchema.removeSchema'),
+          value: 'drop_schema'
+        })
+      }
+      field.dataSource = options
+    },
 
     setData(data, cell, isSourceDataNode, vueAdapter) {
       if (data) {
@@ -365,7 +493,7 @@ export default {
       let result = JSON.parse(JSON.stringify(this.model))
 
       let includeTables = []
-      for (let i = 0; i < this.sourceData.length; i++) {
+      for (let i = 0; i < this.length; i++) {
         for (let j = 0; j < this.model.selectSourceArr.length; j++) {
           if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
             includeTables.push(this.sourceData[i].key)

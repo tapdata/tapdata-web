@@ -18,7 +18,7 @@ const store = new Vuex.Store({
         removeItem: () => {}
       },
       filter({ type }) {
-        return !type.startsWith('dataflow/')
+        return !type.startsWith('dataflow')
       }
     })
   ],

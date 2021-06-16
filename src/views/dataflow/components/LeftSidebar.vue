@@ -63,7 +63,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['allNodeTypes'])
+    ...mapGetters('dataflow', ['allNodeTypes', 'getCtor'])
   },
 
   created() {
@@ -123,15 +123,22 @@ export default {
       x -= bound.x
       y -= bound.y
 
-      const __ins = new item.__class()
-
-      this.addNode({
+      const Ctor = this.getCtor(item.constructor)
+      const ins = new Ctor(item)
+      const node = {
         id: uuid(),
         name: item.name,
+        type: item.type,
         position: [x, y],
-        __ins,
-        ..._.cloneDeep(__ins.attr)
+        ...ins.getExtraAttr() // 附加属性
+      }
+
+      Object.defineProperty(node, '__Ctor', {
+        value: ins,
+        enumerable: false
       })
+
+      this.addNode(node)
     }
   }
 }

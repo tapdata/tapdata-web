@@ -10,7 +10,7 @@
           contenteditable="true"
           @keydown.enter.prevent
         >
-          标题名称
+          Dataflow 任务名称
         </div>
       </div>
     </div>
@@ -148,18 +148,20 @@
         effect="plain"
         class="flex align-center mx-3 border-0"
       >
-        <span class="flex align-center px-1">
+        <span v-if="status === 'running'" class="flex align-center px-1">
           <el-image
             style="width: 15px; height: 15px"
             src="static/editor/running.svg"
           ></el-image>
+        </span>
+        <span v-else-if="status === 'stopping'" class="flex align-center px-1">
           <el-image
-            v-if="status === 'stopping'"
             style="width: 15px; height: 15px"
             src="static/editor/stopping.svg"
           ></el-image>
+        </span>
+        <span v-else-if="status === 'scheduled'" class="flex align-center px-1">
           <el-image
-            v-if="status === 'scheduled'"
             style="width: 15px; height: 15px"
             src="static/editor/scheduled.svg"
           ></el-image>
@@ -226,7 +228,7 @@
         </ElButton>
       </ElButtonGroup>
 
-      <ElButton
+      <!--<ElButton
         v-readonlybtn="'SYNC_job_edition'"
         :disabled="
           $disabledByPermission('SYNC_job_edition_all_data', creatUserId)
@@ -238,7 +240,7 @@
       >
         <i class="mr-1 iconfont icon-bianji2"></i>
         <span>{{ $t('dataFlow.edit') }}</span>
-      </ElButton>
+      </ElButton>-->
     </div>
   </header>
 </template>

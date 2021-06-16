@@ -49,7 +49,7 @@ axios.interceptors.request.use(
     })
     if (pending.includes(key)) {
       console.log('Cancel request:', JSON.parse(key)) //eslint-disable-line
-      cancelFunc()
+      // cancelFunc()
     } else {
       pending.push(key)
     }

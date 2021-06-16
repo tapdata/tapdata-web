@@ -1,4 +1,5 @@
 const { resolve } = require('path')
+const chalk = require('chalk')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 const serveUrlMap = {
@@ -20,6 +21,8 @@ const proxy = {
   target: origin || serveUrlMap[SERVE_ENV],
   changeOrigin: false
 }
+
+console.log(chalk.green(`🪜  代理地址：${proxy.target}`))
 
 module.exports = {
   assetsDir: 'static',

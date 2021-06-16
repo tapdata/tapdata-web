@@ -57,18 +57,18 @@
 <script>
 import jsPlumbIns from './instance'
 import { mapGetters } from 'vuex'
-import { nodeTypes } from '@/nodes/loader/index'
+import { ctorTypes, nodeTypes } from '@/nodes/loader/index'
 import { statusBtMap } from '@/editor/states'
 import factory from '@/api/factory'
-import LeftSidebar from '@/views/data-flow/components/LeftSidebar'
+import LeftSidebar from '@/views/dataflow/components/LeftSidebar'
 import { mapMutations } from 'vuex'
-import DFNode from '@/views/data-flow/components/DFNode'
-import RightSidebar from '@/views/data-flow/components/RightSidebar'
+import DFNode from '@/views/dataflow/components/DFNode'
+import RightSidebar from '@/views/dataflow/components/RightSidebar'
 import { off, on } from '@/utils/dom'
 import deviceSupportHelpers from '@/mixins/deviceSupportHelpers'
-import { connectorActiveStyle } from '@/views/data-flow/style'
-import { NODE_PREFIX } from '@/views/data-flow/constants'
-import TopHeader from '@/views/data-flow/components/TopHeader'
+import { connectorActiveStyle } from '@/views/dataflow/style'
+import { NODE_PREFIX } from '@/views/dataflow/constants'
+import TopHeader from '@/views/dataflow/components/TopHeader'
 
 const dataFlowsApi = factory('DataFlows')
 // const Setting = factory('Setting')
@@ -166,6 +166,7 @@ export default {
 
   created() {
     this.setNodeTypes(nodeTypes)
+    this.setCtorTypes(ctorTypes)
   },
 
   mounted() {
@@ -186,6 +187,7 @@ export default {
   methods: {
     ...mapMutations('dataflow', [
       'setNodeTypes',
+      'setCtorTypes',
       'updateNodeProperties',
       'setActiveNode',
       'setActiveConnection',
@@ -625,7 +627,7 @@ export default {
 
     mouseUpMouseSelect() {
       off(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
-
+      console.log('mouseUpMouseSelect')
       this.deselectAllNodes()
 
       if (this.showSelectBox) {
@@ -672,7 +674,7 @@ export default {
       this.isSaving = true
 
       let params = {
-        name: 'demo ' + new Date().toLocaleTimeString(),
+        name: 'dataflow ' + new Date().toLocaleTimeString(),
         description: '',
         status: 'draft',
         executeMode: 'normal',
@@ -727,10 +729,12 @@ export default {
         }
       }
 
-      let result = await dataFlowsApi.draft(params)
+      console.log('params', params)
+
+      /*let result = await dataFlowsApi.draft(params)
       this.isSaving = false
 
-      console.log('save', result)
+      console.log('save', result)*/
     },
 
     handleDelete() {

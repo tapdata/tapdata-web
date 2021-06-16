@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { sourceEndpoint, targetEndpoint } from '@/views/data-flow/style'
+import { sourceEndpoint, targetEndpoint } from '@/views/dataflow/style'
 import { mapGetters, mapMutations } from 'vuex'
 import deviceSupportHelpers from '@/mixins/deviceSupportHelpers'
 
@@ -54,7 +54,7 @@ export default {
     },
 
     ins() {
-      return this.data.__ins
+      return this.data.__Ctor
     },
 
     nodeClass() {

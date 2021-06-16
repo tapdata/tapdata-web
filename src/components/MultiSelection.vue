@@ -17,6 +17,7 @@
         :key="opt"
         :label="opt"
         :value="opt"
+        p
       >
       </el-option>
     </el-select>

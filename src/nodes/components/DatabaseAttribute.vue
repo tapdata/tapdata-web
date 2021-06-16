@@ -1,7 +1,21 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body">
-      <ElForm
+      <ElForm class="flex flex-column h-100">
+        <FormProvider :form="form">
+          <SchemaField
+            :schema="schema"
+            :scope="{ useAsyncDataSource, loadDatabase, loadDatabaseInfo }"
+          />
+          <!--<FormConsumer>
+            <template #default="{ form }">
+              {{ form.values }}
+            </template>
+          </FormConsumer>-->
+        </FormProvider>
+      </ElForm>
+
+      <!--<ElForm
         class="e-form"
         label-position="top"
         label-width="160px"
@@ -17,11 +31,11 @@
           required
         >
           <div style="display: flex">
-            <FbSelect
+            &lt;!&ndash;<FbSelect
               :value="node.connectionId"
               :config="databaseSelectConfig"
               @change="valueChanged"
-            ></FbSelect>
+            ></FbSelect>&ndash;&gt;
             <ElButton
               size="mini"
               icon="el-icon-plus"
@@ -30,52 +44,16 @@
               @click="creatDatabase"
               >{{ $t('dataFlow.createNew') }}</ElButton
             >
-            <!-- @click="$refs.databaseForm.show()" -->
-            <!-- <DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm> -->
+            &lt;!&ndash; @click="$refs.databaseForm.show()" &ndash;&gt;
+            &lt;!&ndash; <DatabaseForm ref="databaseForm" @success="loadDataSource"></DatabaseForm> &ndash;&gt;
           </div>
         </ElFormItem>
-      </ElForm>
+      </ElForm>-->
 
-      <div
+      <!--<div
         class="database-info flex flex-column flex-grow-1 overflow-hidden"
         v-if="node.connectionId"
       >
-        <ul class="info-box flex-shrink-0">
-          <li>
-            <span class="label"
-              >{{ $t('editor.cell.data_node.database.type') }}:</span
-            >
-            <span class="text">{{ databaseInfo.database_type }}</span>
-          </li>
-          <li>
-            <span class="label">Host/Port:</span>
-            <span class="text" v-if="databaseInfo.database_host">
-              <span>{{ databaseInfo.database_host }}</span>
-              <span v-if="databaseInfo.database_type !== 'mongodb'"
-                >:{{ databaseInfo.database_port }}</span
-              >
-            </span>
-          </li>
-          <li>
-            <span class="label">
-              {{ $t('editor.cell.data_node.database.databaseName') }}:
-            </span>
-            <span class="text">{{ databaseInfo.database_name }}</span>
-          </li>
-          <li>
-            <span class="label">
-              {{ $t('editor.cell.data_node.database.account') }}:
-            </span>
-            <span class="text">{{ databaseInfo.database_username }}</span>
-          </li>
-          <li v-if="databaseInfo.database_owner">
-            <span class="label">
-              {{ $t('editor.cell.data_node.database.attributionAccount') }}:
-            </span>
-            <span class="text">{{ databaseInfo.database_owner }}</span>
-          </li>
-        </ul>
-
         <div class="info-table flex flex-column overflow-hidden">
           <div class="info-table-header">
             {{ $t('editor.cell.data_node.database.includeTable') }}
@@ -93,7 +71,7 @@
             <EmptyItem small v-if="!databaseTables.length"></EmptyItem>
           </ul>
         </div>
-      </div>
+      </div>-->
     </div>
   </div>
 </template>
@@ -103,14 +81,69 @@ import factory from '@/api/factory'
 import _ from 'lodash'
 import { mapGetters, mapMutations } from 'vuex'
 import EmptyItem from '@/components/EmptyItem'
+import { createForm } from '@formily/core'
+import { action } from '@formily/reactive'
+import { FormProvider, FormConsumer, createSchemaField } from '@formily/vue'
+import { components } from '@/components/form'
+
+const { SchemaField } = createSchemaField({
+  components
+})
 
 let connections = factory('connections')
 
 export default {
   name: 'DatabaseAttribute',
-  components: { EmptyItem },
+
+  components: { FormProvider, FormConsumer, SchemaField },
+
   data() {
     return {
+      form: createForm({
+        // display: 'hidden'
+      }),
+      schema: {
+        type: 'object',
+        properties: {
+          datasource: {
+            title: '数据库',
+            type: 'void',
+            'x-decorator': 'ElFormItem',
+            'x-decorator-props': {
+              asterisk: true,
+              feedbackLayout: 'none'
+            },
+            'x-component': 'Row',
+            'x-component-props': {
+              type: 'flex',
+              gap: '8px'
+            },
+            properties: {
+              connectionId: {
+                type: 'string',
+                required: true,
+                'x-decorator': 'Col',
+                'x-decorator-props': { flex: 1 },
+                'x-component': 'ComboSelect',
+                'x-component-props': {
+                  config: { placeholder: '请选择数据库' }
+                },
+                'x-reactions': ['{{useAsyncDataSource(loadDatabase)}}']
+              },
+              connectionBtn: {
+                type: 'void',
+                'x-component': 'AddDatabaseBtn'
+              }
+            }
+          },
+          datasourceInfo: {
+            type: 'object',
+            'x-component': 'DatabaseInfo',
+            'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo)}}']
+          }
+        }
+      },
+
       tableLoading: false,
       disabled: false,
       activeName: '0',
@@ -174,22 +207,108 @@ export default {
     //   // 数据库类型发生改变，重新加载数据源
     //   this.loadDataSource()
     // },
-    async 'node.id'() {
+    /*async 'node.id'() {
       await this.$nextTick()
       this.$refs.form.clearValidate()
       // FIXME 加载逻辑有待调整
       await this.loadDataSource()
-    }
+    }*/
   },
 
   created() {
-    this.loadDataSource()
+    // this.loadDataSource()
   },
 
-  mounted() {},
+  async mounted() {
+    await this.$nextTick()
+    this.form.setState({
+      display: 'visible',
+      values: this.node
+    })
+    // this.form = createForm({
+    //   values: this.node
+    // })
+    // setTimeout(() => {
+    //   console.log(this.form.getState())
+    // }, 3000)
+  },
 
   methods: {
     ...mapMutations('dataflow', ['setNodeValue']),
+
+    useAsyncDataSource(service) {
+      return field => {
+        field.loading = true
+        service(field).then(
+          action(data => {
+            field.dataSource = data
+            field.loading = false
+          })
+        )
+      }
+    },
+
+    async loadDatabase(field) {
+      let database_type = field.form.values.database_type
+      try {
+        let result = await connections.get({
+          filter: JSON.stringify({
+            where: {
+              database_type: database_type
+                ? { in: [database_type] }
+                : {
+                    nin: [
+                      'file',
+                      'dummy',
+                      'gridfs',
+                      'rest api',
+                      'custom_connection'
+                    ]
+                  }
+            },
+            fields: {
+              name: 1,
+              id: 1,
+              database_type: 1,
+              connection_type: 1,
+              status: 1
+            },
+            order: ['status DESC', 'name ASC']
+          })
+        })
+        return result.data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            label: `${item.name} (${
+              this.$t('connection.status.' + item.status) || item.status
+            })`,
+            value: item.id
+          }
+        })
+      } catch (e) {
+        console.log('catch', e)
+        return [
+          {
+            label: 'AAA',
+            value: 'aaa'
+          },
+          {
+            label: 'BBB',
+            value: 'ccc'
+          }
+        ]
+      }
+    },
+
+    async loadDatabaseInfo(field) {
+      const connectionId = field.query('connectionId').get('value')
+      if (!connectionId) return
+      let result = await connections.customQuery([connectionId], {
+        schema: true
+      })
+      return result.data
+    },
 
     creatDatabase() {
       let database_type = this.model.database_type || this.model.databaseType
@@ -521,84 +640,84 @@ $radius: 4px;
 
     .el-form-item {
       position: relative;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
+    }
+
+    .database-info {
+      .info-box {
+        padding: 10px 20px;
+        box-sizing: border-box;
+        overflow: hidden;
+        font-size: 12px;
+        color: #666;
+        border: 1px solid #dedee4;
+        li {
+          padding-bottom: 8px;
+        }
+        .label {
+          display: inline-block;
+          width: 100px;
+          text-align: right;
+          color: #999;
+        }
+        .text {
+          padding-left: 10px;
+        }
+      }
+      .info-table {
+        margin-top: 10px;
+        border: 1px solid #dedee4;
+        &-header {
+          height: 28px;
+          padding: 0 10px;
+          line-height: 28px;
+          font-size: 12px;
+          color: #333;
+          border-bottom: 1px solid #dedee4;
+          background-color: #f5f5f5;
+          span {
+            color: #999;
+          }
+        }
+        .table-box {
+          overflow-y: auto;
+        }
+        .list-item {
+          width: 100%;
+          height: 36px;
+          line-height: 36px;
+          margin: 0 !important;
+          padding: 0 15px;
+          font-size: 12px;
+          overflow: hidden;
+          box-sizing: border-box;
+          .iconfont {
+            color: #4aaf47;
+          }
+
+          &:hover {
+            background-color: var(--primary-hover-l);
+
+            .list-item-text {
+              color: var(--primary);
+            }
+
+            .el-checkbox {
+              opacity: 1;
+              visibility: visible;
+            }
+
+            .el-button--text {
+              opacity: 1;
+              visibility: visible;
+            }
+          }
+        }
+      }
     }
   }
 
   &-body {
-  }
-
-  .database-info {
-    .info-box {
-      padding: 10px 20px;
-      box-sizing: border-box;
-      overflow: hidden;
-      font-size: 12px;
-      color: #666;
-      border: 1px solid #dedee4;
-      li {
-        padding-bottom: 8px;
-      }
-      .label {
-        display: inline-block;
-        width: 100px;
-        text-align: right;
-        color: #999;
-      }
-      .text {
-        padding-left: 10px;
-      }
-    }
-    .info-table {
-      margin-top: 10px;
-      border: 1px solid #dedee4;
-      &-header {
-        height: 28px;
-        padding: 0 10px;
-        line-height: 28px;
-        font-size: 12px;
-        color: #333;
-        border-bottom: 1px solid #dedee4;
-        background-color: #f5f5f5;
-        span {
-          color: #999;
-        }
-      }
-      .table-box {
-        overflow-y: auto;
-      }
-      .list-item {
-        width: 100%;
-        height: 36px;
-        line-height: 36px;
-        margin: 0 !important;
-        padding: 0 15px;
-        font-size: 12px;
-        overflow: hidden;
-        box-sizing: border-box;
-        .iconfont {
-          color: #4aaf47;
-        }
-
-        &:hover {
-          background-color: var(--primary-hover-l);
-
-          .list-item-text {
-            color: var(--primary);
-          }
-
-          .el-checkbox {
-            opacity: 1;
-            visibility: visible;
-          }
-
-          .el-button--text {
-            opacity: 1;
-            visibility: visible;
-          }
-        }
-      }
-    }
   }
 }
 </style>

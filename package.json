@@ -5,7 +5,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "start": "nodemon mock/mock.js & vue-cli-service serve --open",
-    "start:dev": "cross-env SERVE_ENV=dev vue-cli-service serve --open",
+    "start:dev": "cross-env SERVE_ENV=dev vue-cli-service serve",
     "start:test": "cross-env SERVE_ENV=test vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "test:e2e": "vue-cli-service test:e2e",
@@ -13,6 +13,14 @@
     "mock": "nodemon mock/mock.js"
   },
   "dependencies": {
+    "@formily/core": "^2.0.0-beta.65",
+    "@formily/reactive": "^2.0.0-beta.65",
+    "@formily/vue": "^2.0.0-beta.65",
+    "@vue/babel-helper-vue-jsx-merge-props": "^1.2.1",
+    "@vue/babel-preset-jsx": "^1.2.4",
+    "@vue/composition-api": "^1.0.0-rc.10",
+    "ant-design-vue": "^1.7.5",
+    "async-validator": "^3.5.2",
     "axios": "^0.21.1",
     "backbone": "^1.4.0",
     "bootstrap": "^5.0.0-beta3",

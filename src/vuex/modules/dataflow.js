@@ -32,6 +32,7 @@ const findByCod = (arr, cond) => {
 const state = () => ({
   stateIsDirty: false, // 状态是否被污染，标识数据改变
   nodeTypes: [], // 所有节点类型
+  ctorTypes: {}, // 所有节点构造类型
   activeNode: null, // 当前激活的节点ID
   activeConnection: null, // 当前激活的连接
   activeActions: [], // 激活的动作
@@ -92,7 +93,10 @@ const getters = {
   // 获取选中的节点
   getSelectedNodes: state => {
     return state.selectedNodes
-  }
+  },
+
+  // 获取节点构造类
+  getCtor: state => type => state.ctorTypes[type]
 }
 
 // actions
@@ -128,6 +132,10 @@ const mutations = {
     Vue.set(state, 'nodeTypes', nodeTypes)
   },
 
+  setCtorTypes(state, ctorTypes) {
+    Vue.set(state, 'ctorTypes', ctorTypes)
+  },
+
   // 设置激活节点
   setActiveNode(state, nodeId) {
     console.log('setActiveNode', nodeId)
@@ -143,6 +151,8 @@ const mutations = {
   addNode(state, nodeData) {
     state.dataflow.nodes.push(nodeData)
   },
+
+  addNodeByAttr(state, attr) {},
 
   // 更新节点属性
   updateNodeProperties(state, updateInformation) {
@@ -227,6 +237,8 @@ const mutations = {
     state.stateIsDirty = true
     Vue.set(node, updateInformation.key, updateInformation.value)
   },
+
+  setNodeProperty(state) {},
 
   // 添加连接，设置input、output
   addConnection(state, connection) {
