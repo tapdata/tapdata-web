@@ -485,18 +485,15 @@ export default {
             //源端目标端不可选择相同库 规则: id一致
             if (
               this.dataSourceModel.source_connectionId ===
-                this.dataSourceModel.target_connectionId &&
-              window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'
+              this.dataSourceModel.target_connectionId
             ) {
-              this.showSysncTableTip = true // dfs 仅提示
-            } else if (
-              this.dataSourceModel.source_connectionId ===
-                this.dataSourceModel.target_connectionId &&
-              window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
-            ) {
-              this.showSysncTableTip = false
-              this.$message.error('源端连接与目标端连接不能选择相同的连接')
-              return
+              if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+                this.showSysncTableTip = true // dfs 仅提示
+              } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+                this.showSysncTableTip = false
+                this.$message.error('源端连接与目标端连接不能选择相同的连接')
+                return
+              }
             }
             //数据源名称
             let source = this.handleConnectionName(
@@ -561,7 +558,9 @@ export default {
       this.activeStep -= 1
       this.getFormConfig()
       // 重置 数据源类型列表
-      this.allowDatabaseType()
+      this.$nextTick(() => {
+        this.allowDatabaseType()
+      })
     },
     // 根据步骤获取不同的表单项目
     async getFormConfig() {
