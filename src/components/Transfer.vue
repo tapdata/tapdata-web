@@ -24,7 +24,7 @@
           v-if="
             selectSourceArr.includes(option.key) &&
             $window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs' &&
-            !supportTwoWay
+            !isTwoWay
           "
           @click.stop.prevent="handleFiled(option)"
           class="el-icon-setting field-transfer__icon"
@@ -159,7 +159,7 @@
 let selectKeepArr = []
 import _ from 'lodash'
 export default {
-  props: ['transferData', 'supportTwoWay'],
+  props: ['transferData', 'isTwoWay'],
   data() {
     var validatePrefix = (rule, value, callback) => {
       if (value === '') {

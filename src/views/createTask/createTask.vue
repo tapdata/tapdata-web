@@ -133,7 +133,7 @@
                 <Transfer
                   ref="transfer"
                   :transferData="transferData"
-                  :supportTwoWay="supportTwoWay"
+                  :isTwoWay="settingModel.bidirectional"
                 ></Transfer>
               </div>
             </div>
