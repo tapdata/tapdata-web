@@ -1,5 +1,5 @@
 <template>
-	<section class="iframe-wrap" v-if="!$route.children">
+	<section class="iframe-wrap main-container" v-if="!$route.children">
 		<iframe v-if="link" :ref="'frame'" :src="link" frameborder="0" style="width: 100%; height: 100%"></iframe>
 	</section>
 	<RouterView v-else></RouterView>
