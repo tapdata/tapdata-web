@@ -292,39 +292,45 @@ export default {
       }
 
       let rules = JSON.parse(item.rules)
-      if (rules && rules.hasOwnProperty('exists')) {
+      if (rules && Object.prototype.hasOwnProperty.call(rules, 'exists')) {
         // eslint-disable-line
         this.createForm.ruleType = 'exists'
         rule.checked = rules.exists
-      } else if (rules.hasOwnProperty('nullable')) {
+      } else if (Object.prototype.hasOwnProperty.call(rules, 'nullable')) {
         // eslint-disable-line
         this.createForm.ruleType = 'nullable'
         rule.checked = rules.nullable
-      } else if (rules && rules.hasOwnProperty('type')) {
+      } else if (rules && Object.prototype.hasOwnProperty.call(rules, 'type')) {
         // eslint-disable-line
         this.createForm.ruleType = 'type'
         rule.dataType = rules.type
-      } else if (rules && rules.hasOwnProperty('regex')) {
+      } else if (
+        rules &&
+        Object.prototype.hasOwnProperty.call(rules, 'regex')
+      ) {
         // eslint-disable-line
         this.createForm.ruleType = 'regex'
         rule.dataRegex = rules.regex
-      } else if (rules && rules.hasOwnProperty('range')) {
+      } else if (
+        rules &&
+        Object.prototype.hasOwnProperty.call(rules, 'range')
+      ) {
         // eslint-disable-line
         this.createForm.ruleType = 'range'
         let range = rules.range
-        if (range.hasOwnProperty('lt')) {
+        if (Object.prototype.hasOwnProperty.call(range, 'lt')) {
           // eslint-disable-line
           rule.lt = 'lt'
         }
-        if (range.hasOwnProperty('lte')) {
+        if (Object.prototype.hasOwnProperty.call(range, 'lte')) {
           // eslint-disable-line
           rule.lt = 'lte'
         }
-        if (range.hasOwnProperty('gt')) {
+        if (Object.prototype.hasOwnProperty.call(range, 'gt')) {
           // eslint-disable-line
           rule.gt = 'gt'
         }
-        if (range.hasOwnProperty('gte')) {
+        if (Object.prototype.hasOwnProperty.call(range, 'gte')) {
           // eslint-disable-line
           rule.gt = 'gte'
         }
@@ -332,7 +338,7 @@ export default {
           parseFloat(range.lt) || parseFloat(range.lte) || range.none
         rule.gtData =
           parseFloat(range.gt) || parseFloat(range.gte) || range.none
-      } else if (rules.hasOwnProperty('enum')) {
+      } else if (Object.prototype.hasOwnProperty.call(rules, 'enum')) {
         // eslint-disable-line
         this.createForm.ruleType = 'enum'
         rule.enumData = rules.enum.join(',')
@@ -434,10 +440,10 @@ export default {
       }
     }
   }
-  .el-dialog__wrapper {
-    // overflow: hidden;
-    .el-dialog__body {
-    }
-  }
+  // .el-dialog__wrapper {
+  //   // overflow: hidden;
+  //   .el-dialog__body {
+  //   }
+  // }
 }
 </style>

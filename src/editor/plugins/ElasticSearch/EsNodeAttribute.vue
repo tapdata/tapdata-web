@@ -41,10 +41,20 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :required="true" :label="$t('editor.cell.data_node.es.chunkSize')">
-          <el-input-number size="mini" v-model="model.chunkSize" :min="1"></el-input-number>
+        <el-form-item
+          :required="true"
+          :label="$t('editor.cell.data_node.es.chunkSize')"
+        >
+          <el-input-number
+            size="mini"
+            v-model="model.chunkSize"
+            :min="1"
+          ></el-input-number>
         </el-form-item>
-        <el-form-item :required="true" :label="$t('editor.cell.data_node.es.index')">
+        <el-form-item
+          :required="true"
+          :label="$t('editor.cell.data_node.es.index')"
+        >
           <el-input
             v-model.trim="model.index"
             size="mini"
