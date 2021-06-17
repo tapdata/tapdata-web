@@ -90,7 +90,8 @@ export default {
         'mariadb',
         'mysql pxc',
         'jira',
-        'dameng'
+        'dameng',
+        'hive'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: [

@@ -77,7 +77,8 @@ export const TYPEMAP = {
   mariadb: 'MariaDB',
   'mysql pxc': 'MySQL PXC',
   jira: 'jira',
-  dameng: 'DM DB'
+  dameng: 'DM DB',
+  hive: 'Hive'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
