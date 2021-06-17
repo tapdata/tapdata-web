@@ -1,5 +1,5 @@
 <template>
-	<div class="notice fs-8">
+	<div class="notice main-container fs-8">
 		<div class="notice-header p-6">
 			<div class="notice-header__title fw-bolder fs-7">
 				<span>新手必看 ！如何玩转 Tapdata Cloud 数据同步功能</span>
@@ -106,6 +106,7 @@ export default {
 
 <style lang="scss" scoped>
 .notice {
+	padding-top: 0;
 }
 .notice-header {
 	background: url('../../../public/images/workbench/notice_title.png') no-repeat 100% / cover;

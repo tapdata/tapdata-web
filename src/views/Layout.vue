@@ -12,16 +12,8 @@
 			</ElMenu>
 		</ElAside>
 		<ElContainer direction="vertical">
-			<ElHeader class="header">
-				<ElButton
-					class="btn-back"
-					style="margin-right: 10px;"
-					size="mini"
-					icon="iconfont td-icon-fanhui"
-					v-if="breadcrumbData.length > 1"
-					@click="back()"
-				></ElButton>
-				<ElBreadcrumb class="breadcrumb">
+			<ElHeader class="header" v-if="breadcrumbData.length > 1">
+				<ElBreadcrumb class="breadcrumb" separator-class="el-icon-arrow-right">
 					<ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
 						{{ item.name }}
 					</ElBreadcrumbItem>
@@ -144,12 +136,13 @@ export default {
 		display: flex;
 		align-items: center;
 		font-size: 14px;
-		background: #fff;
 	}
 	.main {
 		display: flex;
 		flex-direction: column;
 		flex-basis: 0%;
+		margin: 0;
+		padding: 0;
 	}
 	.breadcrumb {
 		line-height: 60px;

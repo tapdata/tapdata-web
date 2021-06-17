@@ -1,5 +1,5 @@
 <template>
-	<section class="instance-wrapper" v-loading="loading" v-if="$route.name === 'Instance'">
+	<section class="instance-wrapper main-container" v-loading="loading" v-if="$route.name === 'Instance'">
 		<div class="main">
 			<div class="instance-operation">
 				<div class="instance-operation-left">
@@ -309,6 +309,7 @@ export default {
 	height: 100%;
 	flex-direction: column;
 	overflow: hidden;
+	box-sizing: border-box;
 	.btn-refresh {
 		padding: 0;
 		height: 32px;

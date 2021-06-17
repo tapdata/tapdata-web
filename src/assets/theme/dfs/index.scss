@@ -273,10 +273,13 @@
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   background-color: map-get($color, primary);
 }
-.el-breadcrumb__inner a,
-.el-breadcrumb__inner.is-link {
+.el-breadcrumb__inner a{
   font-weight: normal;
   color: map-get($color, primary);
+}
+.el-breadcrumb__inner.is-link {
+	font-weight: normal;
+	color: rgba(0, 0, 0, 0.43);
 }
 .el-breadcrumb__inner a:hover,
 .el-breadcrumb__inner.is-link:hover {
@@ -286,7 +289,8 @@
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
-  color: map-get($fontColor, normal);
+  //color: map-get($fontColor, normal);
+	color: rgba(0, 0, 0, 0.65);
 }
 .el-tag--small {
   border-radius: $borderRadius;
@@ -354,4 +358,8 @@
     color: #333;
     font-size: 12px;
   }
+}
+
+.main-container {
+	padding: 20px;
 }

@@ -1,5 +1,5 @@
 <template>
-	<div v-if="$route.name === 'Workbench'" class="workbench-container flex flex-column p-3">
+	<div v-if="$route.name === 'Workbench'" class="workbench-container flex flex-column px-8">
 		<!--	快速开始	-->
 		<div class="workbench-start workbench-section">
 			<el-row :gutter="40" class="section-header py-6">
@@ -307,7 +307,7 @@ export default {
 .workbench-container {
 	height: 100%;
 	min-height: 610px;
-	min-width: 1110px;
+	min-width: 1100px;
 	.pointer {
 		cursor: pointer;
 	}
@@ -383,9 +383,10 @@ export default {
 	background: #f7f8f9;
 }
 .notice-list__name {
-	&:hover {
-		color: map-get($color, primary);
-	}
+	color: map-get($color, primary);
+	//&:hover {
+	//	color: map-get($color, primary);
+	//}
 }
 .notice-list__time {
 	color: rgba(0, 0, 0, 0.5);
