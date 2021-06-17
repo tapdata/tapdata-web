@@ -631,7 +631,6 @@ export default {
         this.$t('message.deleteOrNot') + ' ',
         h('span', { style: { color: '#48b6e2' } }, item.field_name)
       ])
-      debugger
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning',
         closeOnClickModal: false,
