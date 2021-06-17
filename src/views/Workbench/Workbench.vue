@@ -1,5 +1,5 @@
 <template>
-	<div v-if="$route.name === 'Workbench'" class="workbench-container flex flex-column px-8">
+	<div v-if="$route.name === 'Workbench'" class="workbench-container px-8">
 		<!--	快速开始	-->
 		<div class="workbench-start workbench-section">
 			<el-row :gutter="40" class="section-header py-6">
@@ -308,6 +308,7 @@ export default {
 	height: 100%;
 	min-height: 610px;
 	min-width: 1100px;
+	box-sizing: border-box;
 	.pointer {
 		cursor: pointer;
 	}
@@ -319,7 +320,7 @@ export default {
 // 快速开始
 .create-list__item {
 	background-color: #fff;
-	min-width: 200px;
+	//min-width: 200px;
 	height: 213px;
 	box-sizing: border-box;
 }
@@ -329,6 +330,9 @@ export default {
 	color: map-get($color, primary);
 	border: 1px solid map-get($color, primary);
 	border-radius: 50%;
+}
+.create-list__main {
+	flex: 1;
 }
 .create-list__name {
 	color: #000;
@@ -349,7 +353,7 @@ export default {
 	background-color: #fff;
 }
 .agent-list__item {
-	min-width: 250px;
+	//min-width: 250px;
 	height: 190px;
 	box-sizing: border-box;
 	background-color: #fff;
