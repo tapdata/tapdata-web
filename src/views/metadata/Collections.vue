@@ -182,7 +182,12 @@ export default {
           }
           params.qualified_name = params.source.database_uri + '_' + params.name
           params.qualified_name = params.qualified_name
+<<<<<<< HEAD
             .split(/\/|\.|@|&|:|\?|%|=/)
+=======
+            // eslint-disable-next-line
+            .split(/\/|\.|@|\&|:|\?|%|=/)
+>>>>>>> 75d194e2d (fix: 执行lint命令格式化)
             .join('_')
           this.$api('MetadataInstances')
             .post(params)
