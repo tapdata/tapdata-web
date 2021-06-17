@@ -2,10 +2,7 @@ import { options } from '../../lib/rappid/config'
 import HiveAttribute from './HiveAttribute'
 import { FORM_DATA_KEY } from '../../constants'
 import i18n from '@/i18n'
-// type: 'hive',
-//       name: 'Hive',
-//       shapeImage: 'static/editor/o-elasticsearch.svg',
-//       stencilImage: 'static/editor/elasticsearch.svg'
+
 export const HiveNodeConfig = {
   type: 'app.HiveNode',
   shape: {
@@ -44,17 +41,6 @@ export const HiveNodeConfig = {
        */
       allowTarget() {
         return false
-        // return ![
-        //   'app.Database',
-        //   'app.FileNode',
-        //   'app.GridFSNode',
-        //   'app.Logminer',
-        //   'app.Dummy',
-        //   'app.ApiNode',
-        //   'app.CustomNode',
-        //   'app.Logminer',
-        //   'app.FileFormBuilder'
-        // ].includes(targetCell.get('type'))
       },
 
       /**
@@ -64,45 +50,11 @@ export const HiveNodeConfig = {
        */
       allowSource() {
         return true
-        // return ![
-        //   'app.Database',
-        //   'app.FileNode',
-        //   'app.GridFSNode',
-        //   'app.Logminer',
-        //   'app.Dummy',
-        //   'app.ApiNode',
-        //   'app.CustomNode',
-        //   'app.Logminer',
-        //   'app.FileFormBuilder'
-        // ].includes(sourceCell.get('type'))
       },
-
-      /**
-       * validate this allow connect to target
-       * @param targetCell
-       * @return {boolean}
-       */
-      // allowTarget(targetCell) {
-      // 	return !['app.FileNode', 'app.Database', 'app.GridFSNode'].includes(targetCell.get('type'));
-      // },
-
-      /**
-       * validate accept source connection
-       * @param sourceCell
-       * @return {boolean}
-       */
-      // allowSource() {
-      // 	return false;
-      // },
 
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        // if (!data)
-        //   throw new Error(
-        //     `${name}: ${i18n.t('editor.cell.data_node.kafkaName_isNull')}`
-        //   )
-
         if (!data.connectionId)
           throw new Error(
             `${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`
@@ -111,8 +63,6 @@ export const HiveNodeConfig = {
           throw new Error(
             `${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`
           )
-        // if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_pk')}`);
-
         return true
       }
     }
@@ -135,11 +85,7 @@ export const HiveNodeConfig = {
             unit: 'px',
             label: 'Font size',
             group: 'text',
-            when: {
-              ne: {
-                'attrs/label/text': ''
-              }
-            },
+            when: { ne: { 'attrs/label/text': '' } },
             index: 2
           },
           fontFamily: {
@@ -147,11 +93,7 @@ export const HiveNodeConfig = {
             options: options.fontFamily,
             label: 'Font family',
             group: 'text',
-            when: {
-              ne: {
-                'attrs/label/text': ''
-              }
-            },
+            when: { ne: { 'attrs/label/text': '' } },
             index: 3
           },
           fontWeight: {
@@ -159,11 +101,7 @@ export const HiveNodeConfig = {
             options: options.fontWeight,
             label: 'Font thickness',
             group: 'text',
-            when: {
-              ne: {
-                'attrs/label/text': ''
-              }
-            },
+            when: { ne: { 'attrs/label/text': '' } },
             index: 4
           },
           fill: {
@@ -171,11 +109,7 @@ export const HiveNodeConfig = {
             options: options.colorPalette,
             label: 'Fill',
             group: 'text',
-            when: {
-              ne: {
-                'attrs/label/text': ''
-              }
-            },
+            when: { ne: { 'attrs/label/text': '' } },
             index: 5
           }
         },
@@ -203,11 +137,7 @@ export const HiveNodeConfig = {
             unit: 'px',
             label: 'Outline thickness',
             group: 'presentation',
-            when: {
-              ne: {
-                'attrs/body/stroke': 'transparent'
-              }
-            },
+            when: { ne: { 'attrs/body/stroke': 'transparent' } },
             index: 3
           },
           strokeDasharray: {
@@ -217,16 +147,8 @@ export const HiveNodeConfig = {
             group: 'presentation',
             when: {
               and: [
-                {
-                  ne: {
-                    'attrs/body/stroke': 'transparent'
-                  }
-                },
-                {
-                  ne: {
-                    'attrs/body/strokeWidth': 0
-                  }
-                }
+                { ne: { 'attrs/body/stroke': 'transparent' } },
+                { ne: { 'attrs/body/strokeWidth': 0 } }
               ]
             },
             index: 4
@@ -258,12 +180,9 @@ export const HiveNodeConfig = {
     /**
      * 界面显示的分组名称
      */
-    // groupLabel: '',
+    //groupLabel: '',
 
-    size: {
-      width: 5,
-      height: 4
-    },
+    size: { width: 5, height: 4 },
     attrs: {
       root: {
         dataTooltip: i18n.t('editor.cell.data_node.hiveText'),
@@ -279,7 +198,7 @@ export const HiveNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/elasticsearch.svg',
+        xlinkHref: 'static/editor/elastic-search-clust.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',
