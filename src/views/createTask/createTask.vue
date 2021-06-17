@@ -539,7 +539,7 @@ export default {
               return
             }
             if (this.dataSourceModel['source_databaseType'] === 'db2') {
-              this.settingModel.sync_type = 'cdc' //db2为源端 默认选中增量同步
+              this.settingModel.sync_type = 'initial_sync' //db2为源端 默认选中全量同步
             }
             this.activeStep += 1
             this.getFormConfig()
