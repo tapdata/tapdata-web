@@ -1,17 +1,14 @@
 <template>
-	<div v-if="$route.name === 'Workbench'" class="workbench-container flex flex-column">
-		<!--  快速开始  -->
-		<div class="workbench-start workbench-section flex">
-			<div class="main flex flex-column">
-				<div class="main-header flex py-6">
-					<div class="main-title mr-4 fs-6 fw-bolder">快速开始</div>
-					<!--					<div class="main-subtitle py-1 px-4 fs-8 pointer" @click="showGuide">-->
-					<!--						<VIcon class="icon mr-1" size="9">arrow_right</VIcon>-->
-					<!--						<span>新手引导</span>-->
-					<!--					</div>-->
-				</div>
-				<ul class="create-list__list flex-grow-1 flex justify-between">
-					<li v-for="(item, index) in createList" :key="index" class="create-list__item flex p-6 ml-10">
+	<div v-if="$route.name === 'Workbench'" class="workbench-container flex flex-column p-3">
+		<!--	快速开始	-->
+		<div class="workbench-start workbench-section">
+			<el-row :gutter="40" class="section-header py-6">
+				<el-col :span="18" class="main-title fs-6 fw-bolder">快速开始</el-col>
+				<el-col :span="6" class="aside-title fs-6 fw-bolder">公告通知</el-col>
+			</el-row>
+			<el-row :gutter="40" class="section-body">
+				<el-col :span="6" v-for="(item, index) in createList" :key="index">
+					<div class="create-list__item flex p-6">
 						<div class="create-list__index block flex justify-center align-center flex-shrink-0">
 							{{ index + 1 }}
 						</div>
@@ -23,81 +20,11 @@
 								<VIcon class="ml-2" size="12">arrowright</VIcon>
 							</div>
 						</div>
-					</li>
-				</ul>
-			</div>
-			<div class="aside flex flex-column ml-6 flex-shrink-0">
-				<div class="aside-header flex py-6 fs-6 fw-bolder">
-					<div class="aside-title">公告通知</div>
-				</div>
-				<div class="aside-main notice-list flex-grow-1 p-6">
-					<ul class="notice-list__list">
-						<li
-							v-for="(item, index) in notices.slice(0, 5)"
-							:key="index"
-							class="notice-list__item flex align-center py-3 px-1 pointer"
-						>
-							<div v-if="item.type" class="notice-list__type mr-4 p-1">
-								{{ item.type }}
-							</div>
-							<div class="notice-list__name flex-grow-1 ellipsis pointer" @click="toNotice">
-								{{ item.name }}
-							</div>
-							<div class="notice-list__time">{{ formatFromNow(item.time) }}</div>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<!--  概览  -->
-		<div class="workbench-overview workbench-section flex">
-			<div class="main">
-				<div class="main-header py-6">
-					<div class="main-title mr-4 fs-6 fw-bolder">概览</div>
-				</div>
-				<ul class="agent-list__list flex-grow-1 flex justify-around">
-					<li v-for="(item, index) in agentList" :key="index" class="agent-list__item p-6 ml-10">
-						<div class="agent-list__name flex align-center justify-center mx-auto mb-3">
-							<VIcon size="12" class="icon" color="#888">{{ item.icon }}</VIcon>
-							<span class="ml-1 fs-7">{{ item.name }}</span>
-						</div>
-						<div class="agent-list__value text-center fs-1">
-							{{ item.value }}
-						</div>
-						<div class="agent-list__detail flex flex-wrap justify-around mt-3 py-2 px-1">
-							<div v-for="(detail, dIndex) in item.list" :key="dIndex" class="agent-list__status">
-								<span>{{ detail.label }}</span>
-								<span>:</span>
-								<span :class="['ml-1', { success: detail.value === '运行中' }, { error: detail.value === '离线' }]">{{
-									detail.value
-								}}</span>
-							</div>
-						</div>
-					</li>
-				</ul>
-			</div>
-			<div class="aside flex flex-column ml-6 flex-shrink-0">
-				<div class="aside-header flex py-6 fs-6 fw-bolder">
-					<div class="aside-title">新手入门</div>
-				</div>
-				<div class="aside-main flex-grow-1 p-6">
-					<ul class="guide-list__list pt-3">
-						<li
-							v-for="(item, index) in guides"
-							:key="index"
-							class="guide-list__item flex mb-4 pointer"
-							@click="clickGuide(item)"
-						>
-							<div class="guide-list__name">
-								{{ item.name }}
-							</div>
-						</li>
-					</ul>
-				</div>
-				<div class="notice mb-6 none">
-					<div class="notice-header fs-7 fw-bolder p-6">公告通知</div>
-					<div class="notice-list px-5">
-						<ul class="notice-list__list pt-3">
+					</div>
+				</el-col>
+				<el-col :span="6">
+					<div class="aside-main notice-list flex-grow-1 p-6">
+						<ul class="notice-list__list">
 							<li
 								v-for="(item, index) in notices.slice(0, 5)"
 								:key="index"
@@ -109,18 +36,44 @@
 								<div class="notice-list__name flex-grow-1 ellipsis pointer" @click="toNotice">
 									{{ item.name }}
 								</div>
-								<div class="notice-list__time">{{ item.time }}</div>
+								<div class="notice-list__time">{{ formatFromNow(item.time) }}</div>
 							</li>
 						</ul>
 					</div>
-					<div class="notice-footer p-6">
-						<span v-if="notices.length > 5" class="color-primary pointer" @click="toNotice">更多</span>
-					</div>
-				</div>
-
-				<div class="guide flex-grow-1 none">
-					<div class="guide-header fs-7 fw-bolder p-6">新手入门</div>
-					<div class="guide-list px-5">
+				</el-col>
+			</el-row>
+		</div>
+		<!--	概览	-->
+		<div class="workbench-overview workbench-section">
+			<el-row :gutter="40" class="section-header py-6">
+				<el-col :span="18" class="main-title fs-6 fw-bolder">概览</el-col>
+				<el-col :span="6" class="aside-title fs-6 fw-bolder">新手入门</el-col>
+			</el-row>
+			<el-row :gutter="40" class="section-body">
+				<el-col :span="18">
+					<ul class="agent-list__list flex-grow-1 flex justify-around">
+						<li v-for="(item, index) in agentList" :key="index" class="agent-list__item p-6">
+							<div class="agent-list__name flex align-center justify-center mx-auto mb-3">
+								<VIcon size="12" class="icon" color="#888">{{ item.icon }}</VIcon>
+								<span class="ml-1 fs-7">{{ item.name }}</span>
+							</div>
+							<div class="agent-list__value text-center fs-1">
+								{{ item.value }}
+							</div>
+							<div class="agent-list__detail flex flex-wrap justify-around mt-3 py-2 px-1">
+								<div v-for="(detail, dIndex) in item.list" :key="dIndex" class="agent-list__status mr-2">
+									<span>{{ detail.label }}</span>
+									<span>:</span>
+									<span :class="['ml-1', { success: detail.value === '运行中' }, { error: detail.value === '离线' }]">{{
+										detail.value
+									}}</span>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</el-col>
+				<el-col :span="6">
+					<div class="aside-main guide-list flex-grow-1 p-6">
 						<ul class="guide-list__list pt-3">
 							<li
 								v-for="(item, index) in guides"
@@ -128,17 +81,14 @@
 								class="guide-list__item flex mb-4 pointer"
 								@click="clickGuide(item)"
 							>
-								<div class="guide-list__icon">
-									<img :src="getIconSrc(item.icon)" alt="" />
-								</div>
-								<div class="guide-list__name ml-4 flex align-center">
+								<div class="guide-list__name">
 									{{ item.name }}
 								</div>
 							</li>
 						</ul>
 					</div>
-				</div>
-			</div>
+				</el-col>
+			</el-row>
 		</div>
 	</div>
 	<router-view v-else></router-view>
@@ -280,8 +230,8 @@ export default {
 	},
 	methods: {
 		init() {
-			this.loadAgent() // agent
-			this.loadConnection() // 连接、任务
+			// this.loadAgent() // agent
+			// this.loadConnection() // 连接、任务
 			this.loadNotices() // 通知公告
 		},
 		loadAgent() {
@@ -358,125 +308,95 @@ export default {
 	height: 100%;
 	min-height: 610px;
 	min-width: 1110px;
-	.main {
-		flex: 1;
-		.main-header {
-			.main-title {
-				height: 24px;
-				line-height: 24px;
-			}
-			.main-subtitle {
-				background-color: #dfe8ee;
-				.icon {
-					color: map-get($color, primary);
-				}
-			}
-		}
-		.create-list__item {
-			background-color: #fff;
-			min-width: 200px;
-			box-sizing: border-box;
-			&:first-child {
-				margin-left: 0 !important;
-			}
-		}
-		// 快速开始
-		.create-list__index {
-			width: 22px;
-			height: 22px;
-			color: map-get($color, primary);
-			border: 1px solid map-get($color, primary);
-			border-radius: 50%;
-		}
-		.create-list__name {
-			color: #000;
-		}
-		.create-list__desc {
-			height: 110px;
-			color: rgba(0, 0, 0, 0.49);
-		}
-		.create-list__btn {
-			color: map-get($color, primary);
-		}
-		// 概览
-		.agent-list__list {
-			background-color: #fff;
-		}
-		.agent-list__item {
-			min-width: 250px;
-			box-sizing: border-box;
-			&:first-child {
-				margin-left: 0 !important;
-			}
-		}
-		.agent-list__name {
-			.vicon {
-				color: #888;
-			}
-		}
-		.agent-list__value {
-			color: map-get($color, primary);
-		}
-		.agent-list__detail {
-			background-color: #fafafb;
-			color: rgba(0, 0, 0, 0.5);
-			.agent-list__status {
-				white-space: nowrap;
-			}
-			.success {
-				color: #599f3f;
-			}
-			.error {
-				color: #f7a237;
-			}
-		}
-	}
-	.aside {
-		width: 250px;
-		.aside-header {
-			.aside-title {
-				height: 24px;
-				line-height: 24px;
-			}
-		}
-		.aside-main {
-			background-color: #fff;
-		}
-		.guide-list__name {
-			color: map-get($color, primary);
-		}
-		//> div {
-		//  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
-		//  border-radius: 4px;
-		//  background: #fff;
-		//}
-	}
-	.notice {
-		.notice-list {
-			height: 200px;
-		}
-		.notice-list__list {
-			height: 213px;
-			box-sizing: border-box;
-			border-top: 1px solid #f2f2f2;
-		}
-		.notice-list__type {
-			background: #f7f8f9;
-		}
-		.notice-list__name {
-			&:hover {
-				color: map-get($color, primary);
-			}
-		}
-		.notice-list__time {
-			color: rgba(0, 0, 0, 0.5);
-		}
-		.notice-footer {
-			color: map-get($color, primary);
-		}
-	}
 	.pointer {
 		cursor: pointer;
 	}
+}
+.main-title {
+	height: 24px;
+	line-height: 24px;
+}
+// 快速开始
+.create-list__item {
+	background-color: #fff;
+	min-width: 200px;
+	height: 213px;
+	box-sizing: border-box;
+}
+.create-list__index {
+	width: 22px;
+	height: 22px;
+	color: map-get($color, primary);
+	border: 1px solid map-get($color, primary);
+	border-radius: 50%;
+}
+.create-list__name {
+	color: #000;
+}
+.create-list__desc {
+	height: 110px;
+	color: rgba(0, 0, 0, 0.49);
+}
+.create-list__btn {
+	color: map-get($color, primary);
+}
+.aside-main {
+	height: 213px;
+	background-color: #fff;
+	box-sizing: border-box;
+}
+.agent-list__list {
+	background-color: #fff;
+}
+.agent-list__item {
+	min-width: 250px;
+	height: 190px;
+	box-sizing: border-box;
+	background-color: #fff;
+}
+.agent-list__name {
+	.vicon {
+		color: #888;
+	}
+}
+.agent-list__value {
+	color: map-get($color, primary);
+}
+.agent-list__detail {
+	background-color: #fafafb;
+	color: rgba(0, 0, 0, 0.5);
+	.agent-list__status {
+		white-space: nowrap;
+		&:last-child {
+			margin-right: 0 !important;
+		}
+	}
+	.success {
+		color: #599f3f;
+	}
+	.error {
+		color: #f7a237;
+	}
+}
+// 通知公告
+.notice-list__type {
+	background: #f7f8f9;
+}
+.notice-list__name {
+	&:hover {
+		color: map-get($color, primary);
+	}
+}
+.notice-list__time {
+	color: rgba(0, 0, 0, 0.5);
+}
+.notice-footer {
+	color: map-get($color, primary);
+}
+.guide-list {
+	height: 190px;
+}
+.guide-list__name {
+	color: map-get($color, primary);
 }
 </style>

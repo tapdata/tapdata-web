@@ -120,7 +120,7 @@
 	</ElDialog>
 </template>
 <script>
-import { getConst } from './const'
+import getConst from './const'
 export default {
 	props: {
 		value: Boolean,
@@ -131,7 +131,7 @@ export default {
 			show: this.value,
 			step: 0, // 步骤
 			agentEngineVisible: false,
-			list: [],
+			list: getConst,
 			selectImg: '',
 			database: [
 				'mysql',
@@ -200,9 +200,6 @@ export default {
 	},
 	methods: {
 		async init() {
-			await getConst().then(data => {
-				this.list = data
-			})
 			this.changeStep()
 		},
 		resetStep(value = 0) {

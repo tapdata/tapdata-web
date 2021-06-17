@@ -9,6 +9,9 @@ import { TYPEMAP } from '../../util'
 let allowDataType = ['mysql', 'oracle', 'sqlserver', 'mongodb', 'postgres', 'redis', 'elasticsearch']
 // 即将上线的数据类型
 let comingAllowDataType = ['db2', 'sybase ase', 'kafka', 'gbase-8s']
+
+allowDataType = ['mysql', 'oracle', 'sqlserver', 'mongodb', 'postgres', 'elasticsearch']
+comingAllowDataType = ['db2', 'sybase ase', 'kafka', 'gbase-8s']
 // 格式化成 “已支持”，“即将上线”的格式
 function getDataTypeItems(arr, arr2) {
 	return arr.concat(arr2).map(item => {
@@ -26,7 +29,7 @@ function getDataTypeItems(arr, arr2) {
 	})
 }
 
-const STEPS = [
+export default [
 	{
 		key: 'home',
 		title: {
@@ -424,23 +427,3 @@ const STEPS = [
 		}
 	}
 ]
-
-export async function getConst() {
-	return await window.axios
-		.get('tm/api/Settings')
-		.then(data => {
-			// 支持的数据类型
-			allowDataType = data.find(item => item.key === 'ALLOW_CONNECTION_TYPE')?.value?.split(',') || []
-			// 不支持的数据类型
-			comingAllowDataType = data.find(item => item.key === 'COMING_ONLINE_CONNECTION_TYPE')?.value?.split(',') || []
-			STEPS.forEach(el => {
-				if (el.key === 'dataSource_select') {
-					el.imgList.items = getDataTypeItems(allowDataType, comingAllowDataType)
-				}
-			})
-			return STEPS
-		})
-		.catch(() => {
-			return STEPS
-		})
-}

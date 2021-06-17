@@ -32,7 +32,9 @@ import {
 	Message,
 	MessageBox,
 	Loading,
-	Dialog
+	Dialog,
+	Row,
+	Col
 } from 'element-ui'
 
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
@@ -93,3 +95,5 @@ Vue.use(Tag)
 Vue.use(Breadcrumb)
 Vue.use(BreadcrumbItem)
 Vue.use(Dialog)
+Vue.component(Row.name, Row)
+Vue.component(Col.name, Col)
