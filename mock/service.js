@@ -38,6 +38,28 @@ module.exports = Object.assign({}, dataflow, {
       }
     ]
   },
+  '/api/Settings/findOne': {
+    data: {
+      category: 'notification',
+      key: 'notification',
+      value:
+        '{"runNotification":[{"label":"jobStarted","notice":true,"email":false},{"label":"jobPaused","notice":true,"email":false},{"label":"jobDeleted","notice":true,"email":false},{"label":"jobStateError","notice":true,"email":false},{"label":"jobEncounterError","notice":true,"email":true,"noticeInterval":"noticeInterval","Interval":"1","util":"hour"},{"label":"CDCLagTime","notice":true,"email":true,"lagTime":"lagTime","lagTimeInterval":"20","lagTimeUtil":"second","noticeInterval":"noticeInterval","noticeIntervalInterval":"4","noticeIntervalUtil":"hour"},{"label":"inspectCount","notice":true,"email":false},{"label":"inspectValue","notice":true,"email":false},{"label":"inspectDelete","notice":true,"email":false},{"label":"inspectError","notice":true,"email":false}],"systemNotification":[],"agentNotification":[{"label":"serverDisconnected","notice":true,"email":true},{"label":"agentStarted","notice":true,"email":false},{"label":"agentStopped","notice":true,"email":true},{"label":"agentCreated","notice":true,"email":false},{"label":"agentDeleted","notice":true,"email":true}]}',
+      default_value: '',
+      documentation: 'Notification Setting',
+      last_update: 0,
+      last_update_by: '',
+      scope: 'global',
+      sort: 1,
+      category_sort: 4,
+      key_label: 'Notification Setting',
+      user_visible: false,
+      hot_reloading: true,
+      id: '76',
+      last_updated: '2021-06-16T09:43:53.468Z'
+    },
+    code: 'ok',
+    msg: 'ok'
+  },
   '/api/Settings': settings,
   '/api/timeStamp': { data: '1620388869929', code: 'ok', msg: 'ok' },
   '/api/users/login': { data: '1620388869929', code: 'ok', msg: 'ok' },

@@ -837,6 +837,7 @@ const en = {
         acyclic: 'The graph cannot have cyclic'
       },
       data_node: {
+        hiveText: 'Hive Node',
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
         database: {

@@ -814,6 +814,7 @@ const cn = {
         acyclic: '数据处理流程不能有循环'
       },
       data_node: {
+        hiveText: 'hive节点',
         kafkaText: 'kafka节点',
         kafkaName_isNull: 'kafka不能为空',
         database: {

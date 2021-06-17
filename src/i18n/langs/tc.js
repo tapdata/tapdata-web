@@ -813,6 +813,7 @@ const tc = {
         acyclic: '數據處理流程不能有循環'
       },
       data_node: {
+        hiveText: 'hive節點',
         kafkaText: 'kafka節點',
         kafkaName_isNull: 'kafka不能為空',
         database: {
