@@ -807,6 +807,7 @@ export default {
     },
     // 删除字段
     remove(item, index) {
+      let primary_key_position_mum = item.primary_key_position
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
@@ -824,6 +825,13 @@ export default {
 
             if (fields && fields.length) {
               fields.forEach(field => {
+                if (
+                  // 主键值减1
+                  field.primary_key_position * 1 >
+                  primary_key_position_mum * 1
+                ) {
+                  field.primary_key_position = field.primary_key_position - 1
+                }
                 field.relation &&
                   field.relation.length &&
                   field.relation.forEach(item => {

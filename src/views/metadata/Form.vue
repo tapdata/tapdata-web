@@ -77,7 +77,7 @@
           <el-checkbox v-model="form.autoincrement">{{
             $t('metadata.details.selfIncreasing')
           }}</el-checkbox>
-          <el-checkbox v-model="form.primary_key_position">{{
+          <el-checkbox v-model="form.primary_key">{{
             $t('metadata.details.primaryKey')
           }}</el-checkbox>
         </el-form-item>
@@ -316,6 +316,7 @@ export default {
         java_type: 'String',
         is_auto_allowed: false,
         autoincrement: 0,
+        primary_key: false,
         primary_key_position: 0,
         columnSize: 0,
         precision: 0,
@@ -596,14 +597,36 @@ export default {
       if (this.metadata.fields.includes(this.form.field_name)) {
         falg = true
       }
+      let maxNum = Math.max.apply(
+        Math,
+        this.metadata.fields.map(field => {
+          return field.primary_key_position
+        })
+      )
+      // 主键值修改
+      let primary_key_position_mum = this.form.primary_key_position
+      if (this.form.primary_key) {
+        this.form.primary_key_position = maxNum + 1
+      } else {
+        this.form.primary_key_position = 0
+      }
+
       if (!this.data.id) {
         this.metadata.fields.push(this.form)
       }
+
       let fields = this.metadata.fields
 
       if (fields && fields.length) {
         fields.forEach(field => {
-          fieldsArr.push(field.field_name)
+          if (!this.form.primary_key) {
+            if (field.primary_key_position * 1 > primary_key_position_mum * 1) {
+              field.primary_key_position = field.primary_key_position - 1
+            }
+          }
+          if (field.primary_key) {
+            fieldsArr.push(field.field_name)
+          }
           field.relation &&
             field.relation.length &&
             field.relation.forEach(item => {
@@ -628,7 +651,6 @@ export default {
             })
         })
       }
-
       let relation = Object.values(groupRelation)
 
       this.$refs.form.validate(async valid => {
