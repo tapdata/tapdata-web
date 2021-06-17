@@ -538,9 +538,6 @@ export default {
               this.$message.error('设置同步时间不能为空')
               return
             }
-            if (this.dataSourceModel['source_databaseType'] === 'db2') {
-              this.settingModel.sync_type = 'initial_sync' //db2为源端 默认选中全量同步
-            }
             this.activeStep += 1
             this.getFormConfig()
             if (this.showSysncTableTip) {
@@ -609,6 +606,7 @@ export default {
           //db2 作为源 不能是增量模式
           if (['db2'].includes(this.dataSourceModel.source_databaseType)) {
             this.changeConfig([], 'setting_sync_type')
+            this.settingModel.sync_type = 'initial_sync' //db2为源端 默认选中全量同步
           }
           //初始化同步时间 针对于数组0
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {

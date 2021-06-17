@@ -55,6 +55,8 @@
             <el-input
               v-model="option.label"
               autofocus
+              maxlength="50"
+              minlength="1"
               @keyup.enter.native="checkInput(option)"
               :ref="option.id"
             ></el-input>
@@ -355,6 +357,11 @@ export default {
       let existsName = this.handleExistsName(option) //检查是否重名
       if (existsName) {
         this.closeInput()
+        return
+      }
+      //字段名限制
+      if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(option.label)) {
+        this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
         return
       }
       //rename类型
