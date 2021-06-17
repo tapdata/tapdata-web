@@ -558,9 +558,11 @@ export default {
       this.activeStep -= 1
       this.getFormConfig()
       // 重置 数据源类型列表
-      this.$nextTick(() => {
-        this.allowDatabaseType()
-      })
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+        this.$nextTick(() => {
+          this.allowDatabaseType()
+        })
+      }
     },
     // 根据步骤获取不同的表单项目
     async getFormConfig() {
@@ -648,24 +650,26 @@ export default {
       } else {
         if (type === 'source') {
           // dameng 不可以做源
-          this.allowDataType.splice(
-            this.allowDataType.findIndex(item => item === 'dameng'),
-            1
-          )
+          let allowDataType = _.cloneDeep(this.allowDataType)
+          let index = allowDataType.findIndex(item => item === 'dameng')
+          if (index !== -1) {
+            allowDataType.splice(index, 1)
+          }
           where = {
-            database_type: { in: this.allowDataType },
+            database_type: { in: allowDataType },
             sourceType: this.dataSourceModel.source_sourceType,
             'platformInfo.region': this.platformInfo.region,
             'platformInfo.zone': this.platformInfo.zone
           }
         } else {
           // db2 不可以做目标端
-          this.allowDataType.splice(
-            this.allowDataType.findIndex(item => item === 'db2'),
-            1
-          )
+          let allowDataType = _.cloneDeep(this.allowDataType)
+          let index = allowDataType.findIndex(item => item === 'db2')
+          if (index !== -1) {
+            allowDataType.splice(index, 1)
+          }
           where = {
-            database_type: { in: this.allowDataType },
+            database_type: { in: allowDataType },
             sourceType: this.dataSourceModel.target_sourceType,
             'platformInfo.region': this.platformInfo.region,
             'platformInfo.zone': this.platformInfo.zone
