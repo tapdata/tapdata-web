@@ -1,0 +1,323 @@
+<template>
+  <!-- 数据集 -->
+  <section class="collection-list-wrap">
+    <!-- <TablePage
+      ref="table"
+      row-key="id"
+      class="metadata-list"
+      :remoteMethod="getData"
+      @sort-change="handleSortTable"
+    > -->
+    <div class="collection-box">
+      <div class="table-page-operation-bar">
+        <el-button
+          v-readonlybtn="'new_model_creation'"
+          class="btn btn-create"
+          size="mini"
+          @click="openCreateDialog"
+        >
+          <i class="iconfont icon-jia add-btn-icon"></i>
+          <span>{{ $t('metadata.details.createCollection') }}</span>
+        </el-button>
+      </div>
+      <!-- 索引表格 start -->
+      <el-table
+        ref="table"
+        class="table-page-table"
+        height="100%"
+        border
+        v-loading="loading"
+        :data="collectionTableData"
+      >
+        <el-table-column
+          :label="$t('metadata.details.collectionName')"
+          prop="name"
+        >
+          <template slot-scope="scope">
+            <el-button
+              type="text"
+              @click="handleJumpTable(scope.row)"
+              style="padding: 0 10px"
+              >{{ scope.row.name }}</el-button
+            >
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('metadata.details.opera')" width="120">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              style="color: #f56c6c"
+              @click="remove(scope.row)"
+              >{{ $t('button.delete') }}</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        class="table-page-pagination"
+        layout="total, sizes, ->, prev, pager, next, jumper"
+        :current-page.sync="pageCurrent"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size.sync="pageSize"
+        :total="pageTotal"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      >
+      </el-pagination>
+      <!-- </TablePage> -->
+      <!-- 索引表格 end -->
+    </div>
+
+    <!-- 创建索引弹窗 start -->
+    <el-dialog
+      width="600px"
+      custom-class="create-dialog"
+      :title="$t('metadata.details.createCollection')"
+      :close-on-click-modal="false"
+      :visible.sync="createDialogVisible"
+    >
+      <el-form ref="form" :model="createForm" class="dataRule-form">
+        <el-form-item
+          :label="$t('metadata.details.collectionName')"
+          props="name"
+        >
+          <el-input
+            type="text"
+            size="mini"
+            v-model="createForm.name"
+            :placeholder="
+              $t('dataRule.pleaseSelect') +
+              $t('metadata.details.collectionName')
+            "
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="createDialogVisible = false" size="small">{{
+          $t('message.cancel')
+        }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="small">{{
+          $t('message.confirm')
+        }}</el-button>
+      </span>
+    </el-dialog>
+    <!-- 创建索引弹窗 end -->
+  </section>
+</template>
+
+<script>
+// import TablePage from '@/components/TablePage'
+export default {
+  // components: {
+  //   TablePage
+  // },
+  props: {
+    collectionData: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      createDialogVisible: false,
+      collectionTableData: [],
+      rulesArr: [],
+      pageSize: 20,
+      pageCurrent: 1,
+      pageTotal: 0,
+      createForm: {
+        name: ''
+      }
+    }
+  },
+  created() {
+    this.getData()
+  },
+  methods: {
+    // 获取表格数据
+    getData() {
+      this.$api('MetadataInstances')
+        .get([this.$route.query.id])
+        .then(res => {
+          if (res) {
+            this.collectionTableData = res.data.collections
+            this.pageTotal = this.collectionTableData.length
+            this.setCurrentPageData(res.data.collections || [])
+          }
+        })
+    },
+    openCreateDialog() {
+      this.createDialogVisible = true
+      this.$nextTick(() => {
+        this.$refs.form.clearValidate()
+      })
+      this.createForm = {
+        name: ''
+      }
+    },
+    // 跳转表
+    handleJumpTable(data) {
+      // location.reload()
+      this.$router.push({ name: 'metadataDetails', query: { id: data.id } })
+      this.$nextTick(() => {
+        location.reload()
+      })
+    },
+    // 保存数据集
+    createNewModel() {
+      let _this = this
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          let params = {
+            meta_type: 'collection',
+            original_id: _this.collectionData.id,
+            original_name: _this.createForm.name,
+            qualified_name: '',
+            source: _this.collectionData.source,
+            is_deleted: false,
+            databaseId: _this.collectionData.id,
+            name: _this.createForm.name
+          }
+          params.qualified_name = params.source.database_uri + '_' + params.name
+          params.qualified_name = params.qualified_name
+            .split(/\/|\.|@|&|:|\?|%|=/)
+            .join('_')
+          this.$api('MetadataInstances')
+            .post(params)
+            .then(() => {
+              this.createDialogVisible = false
+              let page = {
+                current: 1,
+                size: 20
+              }
+              this.getData(page)
+              this.$message.success(this.$t('message.saveOK'))
+            })
+            .catch(() => {
+              this.$message.error(this.$t('message.saveFail'))
+            })
+        }
+      })
+    },
+    // 删除数据集
+    remove(item) {
+      const h = this.$createElement
+      let message = h('p', [
+        this.$t('message.deleteOrNot') + ' ',
+        h('span', { style: { color: '#48b6e2' } }, item.name)
+      ])
+      this.$confirm(message, this.$t('message.prompt'), {
+        type: 'warning',
+        closeOnClickModal: false,
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            this.$api('MetadataInstances')
+              .delete(item.id)
+              .then(() => {
+                done()
+                this.getData()
+                this.$message.success(this.$t('message.deleteOK'))
+              })
+              .catch(() => {
+                this.$message.info(this.$t('message.deleteFail'))
+              })
+          } else {
+            done()
+          }
+        }
+      })
+    },
+    // 分页数据处理
+    setCurrentPageData(tableData) {
+      let begin = (this.pageCurrent - 1) * this.pageSize
+      let end = this.pageCurrent * this.pageSize
+      this.collectionTableData = tableData.slice(begin, end)
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.getData()
+      this.setCurrentPageData(this.collectionTableData)
+    },
+    handleCurrentChange(val) {
+      this.pageCurrent = val
+      this.getData()
+      this.setCurrentPageData(this.collectionTableData)
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.collection-list-wrap {
+  height: 100%;
+  .collection-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 28px);
+    padding: 10px 20px;
+    background-color: #fff;
+    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+    overflow: hidden;
+    .table-page-operation-bar {
+      margin-bottom: 10px;
+      overflow: hidden;
+      .btn-create {
+        float: right;
+        padding: 7px;
+        background: #f5f5f5;
+        i.iconfont {
+          font-size: 12px;
+        }
+        &.btn-create {
+          margin-left: 5px;
+        }
+      }
+    }
+  }
+  .btn-create {
+    float: right;
+  }
+  .fr {
+    float: right;
+  }
+}
+</style>
+<style lang="scss">
+.collection-list-wrap {
+  .create-dialog {
+    .el-dialog__body {
+      padding: 30px;
+    }
+  }
+  .table-page-table {
+    th {
+      padding: 0;
+      line-height: 30px;
+      background-color: #eff1f4 !important;
+    }
+    td,
+    .is-scrolling-left ~ .el-table__fixed {
+      border-right: 0;
+    }
+    th {
+      border-right: 1px solid #dcdfe6;
+    }
+  }
+  .table-page-pagination {
+    padding-top: 5px;
+    box-sizing: border-box;
+    border-top: 1px solid #ddd;
+    background-color: #fff;
+    td,
+    .is-scrolling-left ~ .el-table__fixed {
+      border-right: 0;
+    }
+    th {
+      border-right: 1px solid #dcdfe6;
+    }
+  }
+}
+</style>

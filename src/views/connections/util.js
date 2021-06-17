@@ -77,7 +77,8 @@ export const TYPEMAP = {
   mariadb: 'MariaDB',
   'mysql pxc': 'MySQL PXC',
   jira: 'jira',
-  mq: 'MQ'
+  mq: 'MQ',
+  dameng: 'DM DB'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
@@ -117,13 +118,16 @@ export const defaultModel = {
     sslKey: '',
     sslPass: '',
     schemaAutoUpdate: false,
+    multiTenant: false,
+    pdb: '',
     sslValidate: false,
     sslCA: '',
     sslCAFile: null,
     sslKeyFile: null,
     search_databaseType: '',
     increamentalTps: 100, //dummy
-    initialReadSize: 100000 //dummy
+    initialReadSize: 100000, //dummy
+    schema: ''
   },
   kafka: {
     id: '',

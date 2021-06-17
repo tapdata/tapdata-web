@@ -343,7 +343,8 @@ export default {
         'mariadb',
         'mysql pxc',
         'jira',
-        'mq'
+        'mq',
+        'dameng'
         // 'gbase-8s',
         // 'sybase ase',
         // 'gaussdb200',
@@ -396,9 +397,11 @@ export default {
       '</a>'
     this.description = this.$t('connection.desc') + guideDoc
     //定时轮询
-    timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
-    }, 10000)
+    if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs') {
+      timeout = setInterval(() => {
+        this.table.fetch(null, 0, true)
+      }, 10000)
+    }
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())

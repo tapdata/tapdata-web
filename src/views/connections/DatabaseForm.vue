@@ -942,7 +942,8 @@ export default {
         'mariadb',
         'mysql pxc',
         'jira',
-        'mq'
+        'mq',
+        'dameng'
         // 'gbase-8s',
         // 'sybase ase',
         // 'gaussdb200',
@@ -1288,6 +1289,10 @@ export default {
         )
         if (item) {
           item.options = this.timezones
+        }
+        let databaseName = items.find(it => it.field === 'database_name')
+        if (databaseName) {
+          databaseName.allowSpace = false
         }
         let itemIsUrl = items.find(it => it.field === 'isUrl')
         let sslKey = items.find(it => it.field === 'sslKeyFile')

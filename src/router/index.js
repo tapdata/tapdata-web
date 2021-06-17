@@ -67,17 +67,27 @@ const childRoutes = [
       isCollapse: true
     }
   },
-  {
-    path: '/metadataDefinition',
-    name: 'metadataDefinition',
-    component: () => import('@/views/ExternalLink'),
-    meta: {
-      code: 'data_catalog_menu',
-      url: '/old/index.html#/metadataDefinition',
-      title: i18n.t('tap.metadata'),
-      isCollapse: false
-    }
-  },
+  // {
+  //   path: '/metadataDefinition',
+  //   name: 'metadataDefinition',
+  //   component: () => import('@/views/ExternalLink'),
+  //   meta: {
+  //     code: 'data_catalog_menu',
+  //     url: '/old/index.html#/metadataDefinition',
+  //     title: i18n.t('tap.metadata'),
+  //     isCollapse: false
+  //   }
+  // },
+  // {
+  //   path: '/metadataInstances/:id',
+  //   name: 'metadataInstances',
+  //   component: () => import('@/views/ExternalLink'),
+  //   meta: {
+  //     code: 'data_catalog_edition',
+  //     title: i18n.t('tap.metadataInstances'),
+  //     isCollapse: true
+  //   }
+  // },
   {
     path: '/metadataSearch',
     name: 'metadataSearch',
@@ -88,15 +98,39 @@ const childRoutes = [
     }
   },
   {
-    path: '/metadataInstances/:id',
-    name: 'metadataInstances',
-    component: () => import('@/views/ExternalLink'),
+    path: '/metadataDefinition',
+    name: 'metadataDefinition',
+    component: () => import('@/views/metadata/List'),
     meta: {
-      code: 'data_catalog_edition',
-      title: i18n.t('tap.metadataInstances'),
+      code: 'data_catalog_menu',
+      title: i18n.t('tap.dataCatalog'),
+      isCollapse: true,
+      types: [
+        'table',
+        'view',
+        'collection',
+        'mongo_view',
+        'database',
+        'job',
+        'dataflow',
+        'api',
+        'directory',
+        'ftp',
+        'apiendpoint'
+      ]
+    }
+  },
+  {
+    path: '/metadataDetails',
+    name: 'metadataDetails',
+    component: () => import('@/views/metadata/Info'),
+    meta: {
+      code: 'data_catalog_menu',
+      title: i18n.t('tap.dataCatalog'),
       isCollapse: true
     }
   },
+
   {
     path: '/dataQuality',
     name: 'dataQuality',
