@@ -350,7 +350,7 @@ export default {
         'dummy db',
         'rest api',
         'custom_connection',
-        'gridfs'
+        'gridfs',
         'tcp'
       ], //目前白名单,
       searchParams: {

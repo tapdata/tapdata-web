@@ -943,7 +943,7 @@ export default {
         'dummy db',
         'rest api',
         'custom_connection',
-        'gridfs'
+        'gridfs',
         'tcp'
       ],
       model: '',
