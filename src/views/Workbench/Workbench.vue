@@ -323,6 +323,10 @@ export default {
 	//min-width: 200px;
 	height: 213px;
 	box-sizing: border-box;
+	border-radius: 4px;
+	&:hover {
+		box-shadow: 0 2px 11px 8px #e0e2e7;
+	}
 }
 .create-list__index {
 	width: 22px;
@@ -348,9 +352,11 @@ export default {
 	height: 213px;
 	background-color: #fff;
 	box-sizing: border-box;
+	border-radius: 4px;
 }
 .agent-list__list {
 	background-color: #fff;
+	border-radius: 4px;
 }
 .agent-list__item {
 	//min-width: 250px;
