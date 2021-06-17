@@ -451,7 +451,9 @@ export default {
           return
         }
         this.loadData()
-        this.wsWatch()
+        if (this.$route.query.id) {
+          this.wsWatch()
+        }
         this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
           this.draftSave()
         })
