@@ -75,11 +75,12 @@ export default function({ routes }) {
 	}
 	getData()
 }
+console.log('process.env.VUE_APP_API_PATH', process.env.VUE_APP_TM_PUBLIC_PATH)
 sessionStorage.setItem(
 	'TM_CONFIG',
 	JSON.stringify({
 		DFS_IGNORE_PERMISSION: true,
-		DFS_TM_API_PRE_URL: process.env.VUE_APP_TM_PUBLIC_PATH,
+		DFS_TM_API_PRE_URL: '/tm',
 		DFS_TCM_API_PRE_URL: process.env.VUE_APP_API_PATH,
 		DFS_CREATE_DATAFLOW_BY_FORM: 1
 	})
