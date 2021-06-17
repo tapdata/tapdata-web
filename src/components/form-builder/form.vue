@@ -101,22 +101,6 @@ export default {
       let self = this
       let config = Object.assign({}, this.defaultFormItemConfig, itemConfig)
       let rules = config.rules || []
-      //改变必填项的默认提示
-      if (config.required && !rules.find(r => r.required)) {
-        rules.push({
-          required: true,
-          validator(rule, value, callback) {
-            if ((!value && value !== 0) || (value && !(value + '').trim())) {
-              callback(
-                new Error(`${config.label}` + self.$t('formBuilder.noneText'))
-              )
-            } else {
-              callback()
-            }
-          }
-        })
-      }
-
       let dependOn = config.dependOn
       if (dependOn && dependOn.length) {
         /**
@@ -142,6 +126,22 @@ export default {
           }
         })
       }
+      //改变必填项的默认提示
+      if (config.required && !rules.find(r => r.required)) {
+        rules.push({
+          required: true,
+          validator(rule, value, callback) {
+            if ((!value && value !== 0) || (value && !(value + '').trim())) {
+              callback(
+                new Error(`${config.label}` + self.$t('formBuilder.noneText'))
+              )
+            } else {
+              callback()
+            }
+          }
+        })
+      }
+
       let item = h(
         'ElFormItem',
         {

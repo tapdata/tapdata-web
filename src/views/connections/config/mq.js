@@ -60,7 +60,20 @@ export default function (vm) {
         type: 'input',
         field: 'mqQueueSet',
         label: vm.$t('dataForm.form.mq.mqQueueSet'),
-        required: true
+        required: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '2'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
       },
       {
         type: 'slot',
@@ -69,7 +82,32 @@ export default function (vm) {
       {
         type: 'input',
         field: 'mqTopicSet',
-        label: vm.$t('dataForm.form.mq.mqTopicSet')
+        show: true,
+        label: vm.$t('dataForm.form.mq.mqTopicSet'),
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '1'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '2'
+              }
+            ],
+            triggerConfig: {
+              required: true
+            }
+          }
+        ]
       },
       {
         type: 'slot',
@@ -95,7 +133,26 @@ export default function (vm) {
           }
         ]
       },
-
+      {
+        type: 'input',
+        field: 'nameSrvAddr',
+        label: 'nameSrvAddr',
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '2'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
       {
         type: 'input',
         field: 'database_host',
@@ -112,17 +169,17 @@ export default function (vm) {
             }
           }
         ],
-        show: true,
+        show: false,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '0'
+                value: '1'
               }
             ],
             triggerConfig: {
-              show: false
+              show: true
             }
           }
         ]
@@ -148,17 +205,17 @@ export default function (vm) {
             }
           }
         ],
-        show: true,
+        show: false,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '0'
+                value: '1'
               }
             ],
             triggerConfig: {
-              show: false
+              show: true
             }
           }
         ]
