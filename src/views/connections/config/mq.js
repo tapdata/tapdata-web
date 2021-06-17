@@ -69,8 +69,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'mqTopicSet',
-        label: vm.$t('dataForm.form.mq.mqTopicSet'),
-        required: true
+        label: vm.$t('dataForm.form.mq.mqTopicSet')
       },
       {
         type: 'slot',
