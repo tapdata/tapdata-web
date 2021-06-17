@@ -950,6 +950,7 @@ const cn = {
             },
             table: {
               label: '表',
+              labelTips: '（如为空则创建新表）',
               placeholder: '请选择表,区分大小写'
             },
             custom_sql: {

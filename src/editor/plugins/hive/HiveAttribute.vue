@@ -43,7 +43,10 @@
         </el-form-item>
 
         <el-form-item
-          :label="$t('editor.cell.data_node.table.form.table.label')"
+          :label="
+            $t('editor.cell.data_node.table.form.table.label') +
+            $t('editor.cell.data_node.table.form.table.labelTips')
+          "
           prop="tableName"
           :rules="rules"
           required
