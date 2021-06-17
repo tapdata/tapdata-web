@@ -174,7 +174,7 @@
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
         <el-button
-          v-if="!$window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')"
+          v-if="!$window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')"
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
@@ -1161,7 +1161,7 @@ export default {
           if (!resFlag) {
             return
           }
-          if (window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')) {
+          if (window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
             this.$router.push({
               path: '/createTask/' + id + '/edit'
             })

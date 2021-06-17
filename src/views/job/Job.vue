@@ -1450,7 +1450,7 @@ export default {
     setEditable(editable) {
       log('Job.setEditable', editable, this.dataFlow)
       this.editable = editable
-      if (editable && window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')) {
+      if (editable && window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
         this.$router.push({
           path: '/createTask/' + this.dataFlow.id + '/edit'
         })

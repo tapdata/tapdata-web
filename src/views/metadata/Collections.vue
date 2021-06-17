@@ -20,47 +20,54 @@
           <span>{{ $t('metadata.details.createCollection') }}</span>
         </el-button>
       </div>
-    <!-- 索引表格 start -->
-    <el-table ref="table" class="table-page-table"  height="100%" border v-loading="loading" :data="collectionTableData">
-      <el-table-column
-        :label="$t('metadata.details.collectionName')"
-        prop="name"
+      <!-- 索引表格 start -->
+      <el-table
+        ref="table"
+        class="table-page-table"
+        height="100%"
+        border
+        v-loading="loading"
+        :data="collectionTableData"
       >
-        <template slot-scope="scope">
-          <el-button
+        <el-table-column
+          :label="$t('metadata.details.collectionName')"
+          prop="name"
+        >
+          <template slot-scope="scope">
+            <el-button
               type="text"
               @click="handleJumpTable(scope.row)"
               style="padding: 0 10px"
-              >{{scope.row.name}}</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('metadata.details.opera')" width="120">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            style="color: #f56c6c"
-            @click="remove(scope.row)"
-
-            >{{ $t('button.delete') }}</el-button
-          >
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      background
-      class="table-page-pagination"
-      layout="total, sizes, ->, prev, pager, next, jumper"
-      :current-page.sync="pageCurrent"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size.sync="pageSize"
-      :total="pageTotal"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    >
-    </el-pagination>
-    <!-- </TablePage> -->
-    <!-- 索引表格 end -->
+              >{{ scope.row.name }}</el-button
+            >
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('metadata.details.opera')" width="120">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              style="color: #f56c6c"
+              @click="remove(scope.row)"
+              >{{ $t('button.delete') }}</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        class="table-page-pagination"
+        layout="total, sizes, ->, prev, pager, next, jumper"
+        :current-page.sync="pageCurrent"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size.sync="pageSize"
+        :total="pageTotal"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      >
+      </el-pagination>
+      <!-- </TablePage> -->
+      <!-- 索引表格 end -->
     </div>
 
     <!-- 创建索引弹窗 start -->
@@ -131,13 +138,15 @@ export default {
   methods: {
     // 获取表格数据
     getData() {
-        this.$api('MetadataInstances').get([this.$route.query.id]).then( res => {
+      this.$api('MetadataInstances')
+        .get([this.$route.query.id])
+        .then(res => {
           if (res) {
             this.collectionTableData = res.data.collections
             this.pageTotal = this.collectionTableData.length
             this.setCurrentPageData(res.data.collections || [])
           }
-      })
+        })
     },
     openCreateDialog() {
       this.createDialogVisible = true
@@ -152,9 +161,9 @@ export default {
     handleJumpTable(data) {
       // location.reload()
       this.$router.push({ name: 'metadataDetails', query: { id: data.id } })
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         location.reload()
-      });
+      })
     },
     // 保存数据集
     createNewModel() {
@@ -169,20 +178,24 @@ export default {
             source: _this.collectionData.source,
             is_deleted: false,
             databaseId: _this.collectionData.id,
-            name:_this.createForm.name
+            name: _this.createForm.name
           }
           params.qualified_name = params.source.database_uri + '_' + params.name
-          params.qualified_name = params.qualified_name.split(/\/|\.|@|\&|:|\?|%|=/).join('_')
+          params.qualified_name = params.qualified_name
+            .split(/\/|\.|@|&|:|\?|%|=/)
+            .join('_')
           this.$api('MetadataInstances')
             .post(params)
             .then(() => {
               this.createDialogVisible = false
               let page = {
-                current: 1, size: 20
+                current: 1,
+                size: 20
               }
               this.getData(page)
               this.$message.success(this.$t('message.saveOK'))
-            }) .catch(() => {
+            })
+            .catch(() => {
               this.$message.error(this.$t('message.saveFail'))
             })
         }
@@ -191,7 +204,6 @@ export default {
     // 删除数据集
     remove(item) {
       const h = this.$createElement
-      let _this = this
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
         h('span', { style: { color: '#48b6e2' } }, item.name)
@@ -232,7 +244,7 @@ export default {
       this.pageCurrent = val
       this.getData()
       this.setCurrentPageData(this.collectionTableData)
-    },
+    }
   }
 }
 </script>

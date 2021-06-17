@@ -1184,7 +1184,6 @@
 		{ "category": "Frontend", "key": "SHOW_CLUSTER_OR_AGENT", "value": "agent", "id": "604f4b80e1ca905fa7545308" },
 		{ "category": "Frontend", "key": "SHOW_SIMPLE_SCENE", "value": 0, "id": "604f4b80e1ca905fa754530a" },
 		{ "category": "Frontend", "key": "SHOW_CLASSIFY", "value": 1, "id": "604f4b80e1ca905fa754530c" },
-		{ "category": "Frontend", "key": "CREATE_DATAFLOW_BY_FORM", "value": 1, "id": "604f4b80e1ca905fa754530e" },
 		{ "category": "Frontend", "key": "HAVE_INSTANCE", "value": 1, "id": "604f4b80e1ca905fa7545324" },
 		{
 			"category": "Frontend",
