@@ -44,4 +44,7 @@ export default class MetadataInstancesAPI extends PublicApi {
   search(params) {
     return axios.get(this.url + '/search', { params })
   }
+  compareHistory(id, params) {
+    return axios.get(this.url + '/compareHistory?id=' + id, params)
+  }
 }

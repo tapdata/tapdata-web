@@ -274,6 +274,7 @@ const tc = {
     copySuccess: '複製成功',
     deleteOK: '刪除成功',
     deleteFail: '刪除失敗',
+    deleting: '刪除中',
     stopFail: '停止失敗',
     taskStart: '任務啟動中',
     selectTime: '選擇時間',
@@ -1022,6 +1023,10 @@ const tc = {
           name: 'ES',
           tip: 'Elastic search節點',
           configurationES: '配置Elastic search',
+          chunkSize: '分片數量',
+          index: '索引',
+          chooseChunkSize: '請輸入分片數量',
+          chooseIndex: '請輸入索引',
           chooseESName: '請選擇Elastic search',
           es_isNull: 'Elastic search不能為空'
         },
@@ -1998,6 +2003,9 @@ const tc = {
     },
     details: {
       model: '模型',
+      collection: '數據集',
+      collectionName: '數據集名稱',
+      createCollection: '創建數據集',
       dataDirectory: '數據目錄',
       dataDetails: '數據詳情',
       basicAttributes: '基礎屬性',
@@ -2005,7 +2013,17 @@ const tc = {
       clickAddDes: '點擊添加描述',
       propertyDetails: '屬性詳情',
       name: '名稱',
+      comment: '描述',
       originalTableName: '原表名',
+      data_type: '數據類型',
+      precision: '精確度',
+      columnSize: '字段長度',
+      scale: '數字長度',
+      autoincrement: '自增',
+      primary_key_position: '主鍵',
+      foreign_key_position: '外鍵',
+      is_nullable: '非空',
+      unique: '唯一',
       typesOf: '類型',
       owningConnection: '所屬連接',
       primaryKey: '主鍵',
@@ -2049,6 +2067,7 @@ const tc = {
       manyone: '多對一',
       addRelatedTable: '新增關聯表',
       enter: '請輸入',
+      select: '請選擇',
       filedAliasName: '字段名/別名',
       Float: '浮點數',
       String: '字符串',
@@ -2082,7 +2101,89 @@ const tc = {
       attrKey: '屬性值',
       editAliasNameTitle: '編輯別名',
       editCommentTitle: '編輯描述',
-      uniquelyIdentifies: '唯一標識'
+      uniquelyIdentifies: '唯一標識',
+      query: '查詢',
+      version: {
+        version: '版本',
+        version_control: '版本管理',
+        version_control_required: '版本管理不能為空',
+        lastVersion:
+          '此元數據已是最新版本，過往保存的歷史版本記錄將保存在下面列表中',
+        versionNum: '版本號',
+        versionComparison: '版本比對',
+        compared: '對比',
+        currentVersion: '當前版本',
+        updateTime: '更新時間',
+        operator: '操作人',
+        modifyDescription: '修改說明'
+      },
+      Modify: {
+        property: '修改屬性',
+        field: '修改字段'
+      },
+      Add: {
+        property: '新增屬性',
+        new: {
+          field: '新增字段'
+        }
+      },
+      Remove: {
+        property: '移除屬性',
+        field: '移除字段'
+      },
+      index: {
+        title: '索引',
+        name: '索引名稱',
+        create: '創建索引',
+        fields: '時間字段',
+        unique: '唯一約束',
+        status: '狀態',
+        create_by: '創建用戶',
+        background: '後台',
+        properties: '屬性',
+        definition: '字段名稱',
+        options: '選項',
+        build_in_background: '在後台構建索引',
+        create_unique: '創建唯一索引',
+        create_ttl: '創建TTL索引',
+        name_exists: '索引名稱必須唯一',
+        index_exists: '索引已經存在',
+        create_by_user: ' 平台用戶',
+        create_by_dba: ' 數據庫管理員',
+        status_creating: ' 正在創建',
+        status_created: ' 創建完成',
+        status_creation_failed: ' 創建失敗',
+        status_deleted: ' 已經刪除',
+        drop_index: ' 正在刪除索引',
+        unique_true: ' 唯一',
+        unique_false: ' 不唯一'
+      },
+      validation: {
+        title: '數據驗證',
+        field_name: '字段名稱',
+        rule: '規則',
+        ruleTem: '規則模板',
+        select_rule: '選擇規則',
+        ungrouped: '未分組',
+        create: '創建數據校驗'
+      },
+      preview: {
+        title: '數據預覽'
+      },
+      pipeline: {
+        title: '管道',
+        collection: '數據表',
+        pipeline: 'MongoDB Pipeline',
+        viewStatus: '視圖狀態',
+        FailedMessage: '失敗詳情',
+        penpinSave:
+          '點擊下方保存按鈕僅保存到系統，點擊更新按鈕將應用到此數據所在的數據庫',
+        apply: '應用',
+        cnot_Empty: '不能為空',
+        view_tip: '操作將覆蓋同名的視圖，是否創建視圖',
+        success: '應用成功',
+        failed: '應用失敗'
+      }
     },
     metadataSearch: {
       title: '元數據檢索',

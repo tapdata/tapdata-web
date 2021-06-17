@@ -279,6 +279,7 @@ const en = {
     copySuccess: 'Copy successfully',
     deleteOK: 'Successfully deleted',
     deleteFail: 'Failed to delete',
+    deleting: 'Deleting',
     taskStart: 'Job is getting started',
     selectTime: 'Select time',
     selectDate: 'Select date',
@@ -1052,6 +1053,10 @@ const en = {
           name: 'ES',
           tip: 'Elastic search node',
           configurationES: 'Configure Elastic search',
+          chunkSize: 'Number of shards',
+          index: 'Index',
+          chooseChunkSize: 'Please enter the number of shards',
+          chooseIndex: 'Please enter the index',
           chooseESName: 'Please select Elastic search',
           es_isNull: 'Elastic search cannot be empty'
         },
@@ -2070,6 +2075,9 @@ const en = {
     },
     details: {
       model: 'Model',
+      collection: 'Collection',
+      collectionName: 'Collection name',
+      createCollection: 'Create collection',
       dataDirectory: 'Data Directory',
       dataDetails: 'Data Details',
       basicAttributes: 'Basic Properties',
@@ -2077,6 +2085,16 @@ const en = {
       clickAddDes: 'Click to add a description',
       propertyDetails: 'Property Details',
       name: 'Name',
+      comment: 'Description',
+      data_type: 'Field Type',
+      precision: 'Precision',
+      columnSize: 'Column size',
+      scale: 'Scale',
+      autoincrement: 'Autoincrement',
+      primary_key_position: 'Primary key',
+      foreign_key_position: 'Foreign key',
+      is_nullable: 'Not Null',
+      unique: 'Unique',
       originalTableName: 'Original name',
       typesOf: 'Type',
       owningConnection: 'Connection',
@@ -2121,6 +2139,7 @@ const en = {
       manyone: 'many to one',
       addRelatedTable: 'Create new',
       enter: 'Please enter',
+      select: 'Please select',
       filedAliasName: 'Field name/Alias',
       Float: 'Floating point number',
       String: 'String',
@@ -2154,7 +2173,90 @@ const en = {
       attrKey: 'Property value',
       editAliasNameTitle: 'Edit alias',
       editCommentTitle: 'Edit description',
-      uniquelyIdentifies: 'Qualified Name'
+      uniquelyIdentifies: 'Qualified Name',
+      query: 'Query',
+      version: {
+        version: 'Version',
+        version_control: 'Version Control Mode',
+        version_control_required: 'Version Control Mode is required',
+        lastVersion:
+          'This metadata is already the latest version, the historical version records saved in the past will be saved in the list below',
+        versionNum: 'Version number',
+        versionComparison: 'Version comparison',
+        compared: 'Compared',
+        currentVersion: 'Current version',
+        updateTime: 'Update Time',
+        operator: 'Operator',
+        modifyDescription: 'Modify Description'
+      },
+      Modify: {
+        property: 'Modify property',
+        field: 'Modify field property'
+      },
+      Add: {
+        property: 'Add property',
+        new: {
+          field: 'Add new field in schema'
+        }
+      },
+      Remove: {
+        property: 'Remove property',
+        field: 'Remove field from schema'
+      },
+      index: {
+        title: 'Index',
+        name: 'Index name',
+        create: 'Create index',
+        fields: 'Time fields',
+        unique: 'Unique constraint',
+        status: 'Status',
+        create_by: 'Create user',
+        background: 'Background',
+        properties: 'Properties',
+        definition: 'Field name',
+        options: 'Options',
+        build_in_background: 'Build index in the background',
+        create_unique: 'Create unique index',
+        create_ttl: 'Create TTL',
+        name_exists: 'Index name must be unique',
+        index_exists: 'Index already exists',
+        create_by_user: 'Platform user',
+        create_by_dba: 'Database Administrator',
+        status_creating: 'Creating',
+        status_created: 'Create complete',
+        status_creation_failed: 'Creation failed',
+        status_deleted: 'Deleted',
+        drop_index: 'Deleting index',
+        unique_true: 'Unique',
+        unique_false: 'not unique'
+      },
+      validation: {
+        title: 'Data verification',
+        field_name: 'Field name',
+        rule: 'Rule',
+        ruleTem: 'Rule Template',
+        select_rule: 'Selection rules',
+        ungrouped: 'Ungrouped',
+        create: 'Create data verification'
+      },
+      preview: {
+        title: 'Data Preview'
+      },
+      pipeline: {
+        title: 'Pipeline',
+        collection: 'Data table',
+        pipeline: 'MongoDB Pipeline',
+        viewStatus: 'View Status',
+        FailedMessage: 'Failed details',
+        penpinSave:
+          'Click the save button below to only save to the system, click the update button to apply to the database where this data is located',
+        apply: 'Apply',
+        cnot_Empty: 'Cannot be empty',
+        view_tip:
+          'The operation will overwrite the view with the same name, whether to create a view',
+        success: 'Apply successful',
+        failed: 'Application failed'
+      }
     },
     metadataSearch: {
       title: 'Metadata retrieval',

@@ -58,6 +58,10 @@ export const esNodeConfig = {
           throw new Error(
             `${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`
           )
+        if (!data.index || data.index === '')
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.es.chooseIndex')}`
+          )
         return true
       }
     }
