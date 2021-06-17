@@ -538,6 +538,9 @@ export default {
               this.$message.error('设置同步时间不能为空')
               return
             }
+            if (this.dataSourceModel['source_databaseType'] === 'db2') {
+              this.settingModel.sync_type = 'cdc' //db2为源端 默认选中增量同步
+            }
             this.activeStep += 1
             this.getFormConfig()
             if (this.showSysncTableTip) {
