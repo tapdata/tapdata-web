@@ -973,6 +973,7 @@ const en = {
             },
             table: {
               label: 'Table',
+              labelTips: '（If it is empty, create a new table）',
               placeholder: 'Please select table,Case sensitive'
             },
             custom_sql: {

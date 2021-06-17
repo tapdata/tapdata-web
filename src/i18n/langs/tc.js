@@ -946,6 +946,7 @@ const tc = {
             },
             table: {
               label: '表',
+              labelTips: '（如為空則創建新表）',
               placeholder: '請選擇表，區分大小寫'
             },
             custom_sql: {
