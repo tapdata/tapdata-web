@@ -338,11 +338,7 @@ export default {
           parseFloat(range.lt) || parseFloat(range.lte) || range.none
         rule.gtData =
           parseFloat(range.gt) || parseFloat(range.gte) || range.none
-<<<<<<< HEAD
-      } else if (this.hasOwnPropertyFnc(rules, 'enum')) {
-=======
       } else if (Object.prototype.hasOwnProperty.call(rules, 'enum')) {
->>>>>>> 75d194e2d (fix: 执行lint命令格式化)
         // eslint-disable-line
         this.createForm.ruleType = 'enum'
         rule.enumData = rules.enum.join(',')
