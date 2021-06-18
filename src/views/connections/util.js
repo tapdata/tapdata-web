@@ -78,7 +78,8 @@ export const TYPEMAP = {
   'mysql pxc': 'MySQL PXC',
   jira: 'jira',
   dameng: 'DM DB',
-  hive: 'Hive'
+  hive: 'Hive',
+  tcp_udp: 'TCP/IP'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
@@ -247,6 +248,15 @@ export const defaultModel = {
     excel_header_end: 'Z1',
     excel_value_start: '',
     excel_value_end: ''
+  },
+  tcp: {
+    name: '',
+    database_type: 'tcp_udp',
+    connection_type: 'target',
+    database_host: '',
+    database_port: '',
+    tcpUdpType: 'TCP',
+    root_name: ''
   }
 }
 export const defaultCloudModel = {

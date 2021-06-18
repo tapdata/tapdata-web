@@ -817,6 +817,8 @@ const cn = {
         hiveText: 'hive节点',
         kafkaText: 'kafka节点',
         kafkaName_isNull: 'kafka不能为空',
+        tcpTip:
+          '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
         database: {
           name: '数据库',
           tip: '任意类型数据库',
@@ -1651,6 +1653,7 @@ const cn = {
       port: '端口',
       databaseName: '数据库名称',
       databaseSchema: '数据库模式',
+      rootName: '根节点名称',
       userName: '账号',
       password: '密码',
       nodeName: '编目节点名称',
@@ -1879,6 +1882,10 @@ const cn = {
         file_upload_mode: '文件上传模式',
         file_upload_stream: '流式',
         file_upload_memory: '内存读取(有内存溢出风险)'
+      },
+      tcp: {
+        agreementType: '协议类型',
+        targetAddr: '目标地址'
       }
     },
     error: {

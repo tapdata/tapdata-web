@@ -816,6 +816,8 @@ const tc = {
         hiveText: 'hive節點',
         kafkaText: 'kafka節點',
         kafkaName_isNull: 'kafka不能為空',
+        tcpTip:
+          '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
         database: {
           name: '數據庫',
           tip: '任意類型數據庫',
@@ -1647,6 +1649,7 @@ const tc = {
       port: '端口',
       databaseName: '數據庫名稱',
       databaseSchema: '數據庫模式',
+      rootName: '根節點名稱',
       userName: '帳號',
       password: '密碼',
       nodeName: '編目節點名稱',
@@ -1874,6 +1877,10 @@ const tc = {
         file_upload_mode: '文件上傳模式',
         file_upload_stream: '流式',
         file_upload_memory: '內存讀取(有內存溢出風險)'
+      },
+      tcp: {
+        agreementType: '协议类型',
+        targetAddr: '目标地址'
       }
     },
     error: {

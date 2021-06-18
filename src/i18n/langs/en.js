@@ -840,6 +840,8 @@ const en = {
         hiveText: 'Hive Node',
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
+        tcpTip:
+'Important: TCP/IP data sources output JSON packets by default without additional packet conversion processing nodes ',
         database: {
           name: 'Database',
           tip: 'Any Database',
@@ -1699,6 +1701,7 @@ const en = {
       port: 'Port',
       databaseName: 'DB Name',
       databaseSchema: 'Database Schema',
+      rootName: 'Root name',
       userName: 'User Name',
       password: 'Password',
       nodeName: 'Catalog Node Name',
@@ -1944,6 +1947,10 @@ const en = {
         file_upload_mode: 'File Upload Mode',
         file_upload_stream: 'Stream',
         file_upload_memory: 'Memory(May be cause OOM)(有内存溢出风险)'
+      },
+      tcp: {
+        AgreementType: 'Protocol type ',
+        TargetAddr: 'Target address'
       }
     },
     error: {

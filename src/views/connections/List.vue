@@ -351,7 +351,8 @@ export default {
         'dummy db',
         'rest api',
         'custom_connection',
-        'gridfs'
+        'gridfs',
+        'tcp_udp'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -475,7 +476,9 @@ export default {
         sslKeyFile: true,
         sslKey: true,
         sslValidate: false,
-        sslCA: true //MongoDB
+        sslCA: true, //MongoDB
+        tcpUdpType: true, // TCP
+        root_name: true
       }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {

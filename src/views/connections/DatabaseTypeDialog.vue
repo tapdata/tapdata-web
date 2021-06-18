@@ -91,7 +91,8 @@ export default {
         'mysql pxc',
         'jira',
         'dameng',
-        'hive'
+        'hive',
+        'tcp_udp'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: [
