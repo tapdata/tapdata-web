@@ -17,7 +17,7 @@ export const TcpNodeConfig = {
         }
       },
       [FORM_DATA_KEY]: {
-        type: 'tcp',
+        type: 'tcp_udp',
         connectionId: ''
       }
     },

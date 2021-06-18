@@ -80,7 +80,7 @@ export default {
       },
       model: {
         connectionId: '',
-        type: 'tcp'
+        type: 'tcp_udp'
       },
       schemas: [],
       schemasLoading: false,
@@ -93,7 +93,7 @@ export default {
     let result = await connections.get({
       filter: JSON.stringify({
         where: {
-          database_type: 'tcp'
+          database_type: 'tcp_udp'
         },
         fields: {
           name: 1,
