@@ -230,8 +230,8 @@ export default {
 	},
 	methods: {
 		init() {
-			// this.loadAgent() // agent
-			// this.loadConnection() // 连接、任务
+			this.loadAgent() // agent
+			this.loadConnection() // 连接、任务
 			this.loadNotices() // 通知公告
 		},
 		loadAgent() {
