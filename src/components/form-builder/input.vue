@@ -44,9 +44,7 @@ export default {
           self.on.input(val)
         },
         change: val => {
-          if (config.trim) {
-            val = val?.trim()
-          }
+          val = val?.trim()
           self.on.input(val)
         }
       })

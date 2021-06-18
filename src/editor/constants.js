@@ -78,7 +78,7 @@ export const FORM_DATA_KEY = 'form_data',
       stencilImage: 'static/editor/mysqlpxc.svg'
     },
     dameng: {
-      name: 'DaMeng',
+      name: 'DM DB',
       type: 'dameng',
       shapeImage: 'static/editor/o-dameng.svg',
       stencilImage: 'static/editor/dameng.svg'

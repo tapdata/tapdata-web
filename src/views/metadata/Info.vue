@@ -1,10 +1,7 @@
 <template>
   <section class="metadata-info">
     <header class="header">
-      <span
-        @click="$router.push({ name: 'metadata' })"
-        style="color: #409eff; cursor: pointer"
-      >
+      <span @click="back" style="color: #409eff; cursor: pointer">
         {{ $t('metadata.details.dataDirectory') }}
       </span>
       / {{ $t('metadata.details.dataDetails') }}
@@ -254,22 +251,6 @@
                       style="width: 160px"
                     ></el-input>
                   </li>
-                  <!-- <li class="item">
-										<el-select
-											v-model="searchParams.source"
-											:placeholder="$t('metadata.details.selsectSource')"
-											clearable
-											size="mini"
-										>
-											<el-option
-												v-for="item in databaseModelOptions"
-												:key="item.value"
-												:label="item.label"
-												:value="item.value"
-											>
-											</el-option>
-										</el-select>
-									</li> -->
                   <li class="item">
                     <el-button
                       type="text"
@@ -382,7 +363,9 @@
                 width="100"
               >
                 <template slot-scope="scope">
-                  <div>{{ $t('metadata.details.' + scope.row.java_type) }}</div>
+                  <div>
+                    {{ $t('metadata.details.' + scope.row.java_type) }}
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -429,6 +412,7 @@
               @current-change="handleCurrentChange"
             >
             </el-pagination>
+
             <!-- 模型 end -->
           </div>
           <!-- 表链路图 start-->
@@ -618,7 +602,7 @@ export default {
       loading: false,
       asideFalg: true,
       activeNames: ['1', '2'],
-      activePanel: 'model',
+      activePanel: 'version',
       menuList: [
         {
           name: this.$t('metadata.details.model'),
@@ -627,7 +611,19 @@ export default {
         },
         {
           name: this.$t('metadata.details.version.version_control'),
-          mateTypes: ['collection', 'table', 'mongo_view', 'api','database'],
+          mateTypes: [
+            'collection',
+            'table',
+            'mongo_view',
+            'api',
+            'database',
+            'dataflow',
+            'view',
+            'job',
+            'directory',
+            'ftp',
+            'apiendpoint'
+          ],
           key: 'version'
         },
         {
@@ -1021,6 +1017,11 @@ export default {
         .finally(() => {
           this.editCommentDialogVisible = false
         })
+    },
+    // 返回上一页
+    back() {
+      this.$router.go(-1)
+      // $router.push({ name: 'metadata' })
     }
   }
 }

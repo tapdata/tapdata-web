@@ -937,14 +937,14 @@ export default {
         'mysql pxc',
         'jira',
         'dameng',
+        'gbase-8s',
+        'sybase ase',
+        'gaussdb200',
+        'dummy db',
+        'rest api',
+        'custom_connection',
+        'gridfs',
         'tcp_udp'
-        // 'gbase-8s',
-        // 'sybase ase',
-        // 'gaussdb200',
-        // 'dummy db',
-        // 'rest api',
-        // 'custom_connection',
-        // 'gridfs'
       ],
       model: '',
       config: {
@@ -1276,6 +1276,10 @@ export default {
         )
         if (item) {
           item.options = this.timezones
+        }
+        let databaseName = items.find(it => it.field === 'database_name')
+        if (databaseName) {
+          databaseName.allowSpace = false
         }
         let itemIsUrl = items.find(it => it.field === 'isUrl')
         let sslKey = items.find(it => it.field === 'sslKeyFile')

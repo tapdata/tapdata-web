@@ -1019,14 +1019,14 @@ export default {
 
     // 点击节点跳转到表
     handTableName(data) {
-      if (!window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')) {
+      if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
         window.open('/#/metadataInstances/' + data.tableMetadataInstanceId)
       }
     },
 
     // 跳转到所属库
     handDatabaseName(data) {
-      if (!window.getSettingByKey('CREATE_DATAFLOW_BY_FORM')) {
+      if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
         window.open('/#/metadataInstances/' + data.connMetadataInstanceId)
       }
     },

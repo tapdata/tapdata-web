@@ -343,14 +343,15 @@ export default {
         'mariadb',
         'mysql pxc',
         'jira',
+        'dameng',
+        'gbase-8s',
+        'sybase ase',
+        'gaussdb200',
+        'dummy db',
+        'rest api',
+        'custom_connection',
+        'gridfs',
         'tcp_udp'
-        // 'gbase-8s',
-        // 'sybase ase',
-        // 'gaussdb200',
-        // 'dummy db',
-        // 'rest api',
-        // 'custom_connection',
-        // 'gridfs'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -396,9 +397,11 @@ export default {
       '</a>'
     this.description = this.$t('connection.desc') + guideDoc
     //定时轮询
-    timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
-    }, 10000)
+    if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs') {
+      timeout = setInterval(() => {
+        this.table.fetch(null, 0, true)
+      }, 10000)
+    }
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -726,25 +729,25 @@ export default {
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
       //drs 检查实例是否可用 dfs 检查agent是否可用
-      // if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
-      // let result = await this.$api('Workers').getAvailableAgent()
-      // if (!result.data.result || result.data.result.length === 0) {
-      //   this.$message.error(this.$t('dataForm.form.agentMsg'))
-      // } else {
-      //   this.dialogDatabaseTypeVisible = true
-      // }
-      // } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-      //   let result = await this.$api('tcm').getAgentCount()
-      //   if (
-      //     !result.data ||
-      //     !result.data.agentTotalCount ||
-      //     result.data.agentTotalCount <= 0
-      //   ) {
-      //     this.$message.error('您尚未订购同步实例，请先订购实例')
-      //   } else {
-      this.dialogDatabaseTypeVisible = true
-      //   }
-      // }
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
+        let result = await this.$api('Workers').getAvailableAgent()
+        if (!result.data.result || result.data.result.length === 0) {
+          this.$message.error(this.$t('dataForm.form.agentMsg'))
+        } else {
+          this.dialogDatabaseTypeVisible = true
+        }
+      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+        let result = await this.$api('tcm').getAgentCount()
+        if (
+          !result.data ||
+          !result.data.agentTotalCount ||
+          result.data.agentTotalCount <= 0
+        ) {
+          this.$message.error('您尚未订购同步实例，请先订购实例')
+        } else {
+          this.dialogDatabaseTypeVisible = true
+        }
+      }
     },
     async testConnection(item) {
       let result = await this.$api('Workers').getAvailableAgent()
