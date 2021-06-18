@@ -10,7 +10,7 @@ export const HiveNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-elasticsearch.svg'
+          xlinkHref: 'static/editor/o-hive.svg'
         },
         label: {
           text: 'hive'
@@ -198,7 +198,7 @@ export const HiveNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/elastic-search-clust.svg',
+        xlinkHref: 'static/editor/hive.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',
