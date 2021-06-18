@@ -343,7 +343,7 @@ export default {
         'mariadb',
         'mysql pxc',
         'jira',
-        'tcp'
+        'tcp_udp'
         // 'gbase-8s',
         // 'sybase ase',
         // 'gaussdb200',

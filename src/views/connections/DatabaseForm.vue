@@ -937,7 +937,7 @@ export default {
         'mysql pxc',
         'jira',
         'dameng',
-        'tcp'
+        'tcp_udp'
         // 'gbase-8s',
         // 'sybase ase',
         // 'gaussdb200',
@@ -1044,7 +1044,7 @@ export default {
           defaultModel['gridfs']
         )
         break
-      case 'tcp':
+      case 'tcp_udp':
         this.model = Object.assign({}, defaultModel['tcp'])
         break
     }

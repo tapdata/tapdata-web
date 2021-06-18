@@ -77,7 +77,7 @@ export const TYPEMAP = {
   mariadb: 'MariaDB',
   'mysql pxc': 'MySQL PXC',
   jira: 'jira',
-  tcp: 'TCP/IP'
+  tcp_udp: 'TCP/IP'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
@@ -249,7 +249,7 @@ export const defaultModel = {
   },
   tcp: {
     name: '',
-    database_type: '',
+    database_type: 'tcp_udp',
     connection_type: 'target',
     database_host: '',
     database_port: '',
