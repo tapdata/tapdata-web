@@ -145,8 +145,9 @@ export default {
 		padding: 0;
 	}
 	.breadcrumb {
-		padding-top: 16px;
+		padding-top: 20px;
 		height: 40px;
+		box-sizing: border-box;
 	}
 	.btn-back {
 		padding: 0;
