@@ -1699,6 +1699,7 @@ const en = {
       port: 'Port',
       databaseName: 'DB Name',
       databaseSchema: 'Database Schema',
+      rootName: 'Root name',
       userName: 'User Name',
       password: 'Password',
       nodeName: 'Catalog Node Name',

@@ -1651,6 +1651,7 @@ const cn = {
       port: '端口',
       databaseName: '数据库名称',
       databaseSchema: '数据库模式',
+      rootName: '根节点名称',
       userName: '账号',
       password: '密码',
       nodeName: '编目节点名称',

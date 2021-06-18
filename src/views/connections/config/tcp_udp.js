@@ -76,6 +76,26 @@ export default function (vm) {
             }
           }
         ]
+      },
+      {
+        type: 'input',
+        field: 'root_name',
+        label: vm.$t('dataForm.form.rootName'),
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'tcpUdpType',
+                value: 'UDP'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }

@@ -1647,6 +1647,7 @@ const tc = {
       port: '端口',
       databaseName: '數據庫名稱',
       databaseSchema: '數據庫模式',
+      rootName: '根節點名稱',
       userName: '帳號',
       password: '密碼',
       nodeName: '編目節點名稱',
