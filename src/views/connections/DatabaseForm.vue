@@ -943,7 +943,9 @@ export default {
         'dummy db',
         'rest api',
         'custom_connection',
-        'gridfs'
+        'gridfs',
+        'hive',
+        'tcp_udp'
       ],
       model: '',
       config: {
@@ -1042,6 +1044,9 @@ export default {
           defaultModel['default'],
           defaultModel['gridfs']
         )
+        break
+      case 'tcp_udp':
+        this.model = Object.assign({}, defaultModel['tcp'])
         break
     }
     this.getDT(this.databaseType)

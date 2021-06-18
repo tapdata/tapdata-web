@@ -105,7 +105,8 @@ export default {
       mapping: {
         collection: 'app.Collection',
         table: 'app.Table',
-        database: 'app.Database'
+        database: 'app.Database',
+        hive: 'app.HiveNode'
       },
       listdata: [],
       checkAll: [],

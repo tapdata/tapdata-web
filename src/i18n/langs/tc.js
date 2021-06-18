@@ -813,8 +813,11 @@ const tc = {
         acyclic: '數據處理流程不能有循環'
       },
       data_node: {
+        hiveText: 'hive節點',
         kafkaText: 'kafka節點',
         kafkaName_isNull: 'kafka不能為空',
+        tcpTip:
+          '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
         database: {
           name: '數據庫',
           tip: '任意類型數據庫',
@@ -945,6 +948,7 @@ const tc = {
             },
             table: {
               label: '表',
+              labelTips: '（如為空則創建新表）',
               placeholder: '請選擇表，區分大小寫'
             },
             custom_sql: {
@@ -1645,6 +1649,7 @@ const tc = {
       port: '端口',
       databaseName: '數據庫名稱',
       databaseSchema: '數據庫模式',
+      rootName: '根節點名稱',
       userName: '帳號',
       password: '密碼',
       nodeName: '編目節點名稱',
@@ -1872,6 +1877,10 @@ const tc = {
         file_upload_mode: '文件上傳模式',
         file_upload_stream: '流式',
         file_upload_memory: '內存讀取(有內存溢出風險)'
+      },
+      tcp: {
+        agreementType: '协议类型',
+        targetAddr: '目标地址'
       }
     },
     error: {

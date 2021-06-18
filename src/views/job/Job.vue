@@ -86,6 +86,7 @@
               $disabledByPermission('SYNC_job_operation_all_data', creatUserId)
             "
             v-if="
+              statusBtMap[status] &&
               !statusBtMap[status].reloadSchema &&
               !$window.getSettingByKey('DFS_TCM_PLATFORM')
             "
@@ -179,8 +180,10 @@
                   : ''
             }"
             >{{ $t('dataFlow.state') }}:
-            {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}</span
-          >
+            <template v-if="status">
+              {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}
+            </template>
+          </span>
         </el-tag>
 
         <el-button-group
@@ -192,7 +195,8 @@
               $disabledByPermission(
                 'SYNC_job_operation_all_data',
                 creatUserId
-              ) || statusBtMap[status].start
+              ) ||
+              (statusBtMap[status] && statusBtMap[status].start)
             "
             class="action-btn btn-operatiton"
             size="mini"
@@ -206,7 +210,8 @@
               $disabledByPermission(
                 'SYNC_job_operation_all_data',
                 creatUserId
-              ) || statusBtMap[status].stop
+              ) ||
+              (statusBtMap[status] && statusBtMap[status].stop)
             "
             class="action-btn btn-operatiton"
             size="mini"
@@ -220,7 +225,8 @@
               $disabledByPermission(
                 'SYNC_job_operation_all_data',
                 creatUserId
-              ) || statusBtMap[status].reset
+              ) ||
+              (statusBtMap[status] && statusBtMap[status].reset)
             "
             class="action-btn btn-operatiton"
             size="mini"
@@ -234,7 +240,8 @@
               $disabledByPermission(
                 'SYNC_job_operation_all_data',
                 creatUserId
-              ) || statusBtMap[status].forceStop
+              ) ||
+              (statusBtMap[status] && statusBtMap[status].forceStop)
             "
             class="action-btn btn-operatiton"
             size="mini"
@@ -251,6 +258,7 @@
             $disabledByPermission('SYNC_job_edition_all_data', creatUserId)
           "
           v-if="
+            statusBtMap[status] &&
             !statusBtMap[status].edit &&
             !editable &&
             !$window.getSettingByKey('DFS_TCM_PLATFORM')
@@ -451,7 +459,9 @@ export default {
           return
         }
         this.loadData()
-        this.wsWatch()
+        if (this.$route.query.id) {
+          this.wsWatch()
+        }
         this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
           this.draftSave()
         })
@@ -683,13 +693,19 @@ export default {
         if (self.executeMode !== dat.executeMode)
           self.executeMode = dat.executeMode
 
-        if (!self.statusBtMap[self.status].start) {
+        if (
+          self.statusBtMap[self.status] &&
+          !self.statusBtMap[self.status].start
+        ) {
           self.executeMode = 'normal'
         }
-        delete self.dataFlow.validateBatchId
-        delete self.dataFlow.validateStatus
-        delete self.dataFlow.validationSettings
-        Object.assign(self.dataFlow, dat)
+        if (self.dataFlow) {
+          delete self.dataFlow.validateBatchId
+          delete self.dataFlow.validateStatus
+          delete self.dataFlow.validationSettings
+          Object.assign(self.dataFlow, dat)
+        }
+
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
       })
     },
@@ -912,7 +928,12 @@ export default {
             readBatchSize: 1000
           })
         } else if (
-          ['app.Table', 'app.Collection', 'app.ESNode'].includes(cell.type)
+          [
+            'app.Table',
+            'app.Collection',
+            'app.ESNode',
+            'app.HiveNode'
+          ].includes(cell.type)
         ) {
           postData.mappingTemplate = 'custom'
 
@@ -1506,7 +1527,8 @@ export default {
         js_processor: 'app.Script',
         row_filter_processor: 'app.DataFilter',
         java_processor: 'app.FieldProcess',
-        redis: 'app.Redis'
+        redis: 'app.Redis',
+        hive: 'app.HiveNode'
       }
       if (data) {
         let stageMap = {}
@@ -1517,7 +1539,11 @@ export default {
           let formData = _.cloneDeep(v)
           delete formData.inputLanes
           delete formData.outputLanes
-          if (['table', 'view', 'collection', 'mongo_view'].includes(v.type)) {
+          if (
+            ['table', 'view', 'collection', 'mongo_view', 'hive'].includes(
+              v.type
+            )
+          ) {
             let node = {
               type: mapping[v.type],
               id: v.id,
