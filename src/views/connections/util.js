@@ -254,7 +254,8 @@ export const defaultModel = {
     connection_type: 'target',
     database_host: '',
     database_port: '',
-    tcpUdpType: 'TCP'
+    tcpUdpType: 'TCP',
+    root_name: ''
   }
 }
 export const defaultCloudModel = {
