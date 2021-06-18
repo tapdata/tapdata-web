@@ -476,7 +476,8 @@ export default {
         sslKey: true,
         sslValidate: false,
         sslCA: true, //MongoDB
-        tcpUdpType: true // TCP
+        tcpUdpType: true, // TCP
+        root_name: true
       }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
