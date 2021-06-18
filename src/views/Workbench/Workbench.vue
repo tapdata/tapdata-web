@@ -272,9 +272,6 @@ export default {
 				}
 			]
 		},
-		getIconSrc(icon) {
-			return require(`../../assets/image/workbench/${icon}.png`)
-		},
 		showGuide(key) {
 			this.$emit('show-guide', key)
 		},
