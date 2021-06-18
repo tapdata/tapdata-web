@@ -48,7 +48,6 @@
 <script>
 import '@/directives/resize/index.scss'
 import resize from '@/directives/resize'
-import { nodeComs } from '@/nodes/loader'
 import { mapGetters, mapMutations } from 'vuex'
 import {
   createForm,
@@ -78,14 +77,22 @@ export default {
       form: createForm({
         effects: () => {
           onFormValuesChange(form => {
-            console.log('onFormValuesChange', form.values)
+            console.log(
+              'onFormValuesChange',
+              JSON.parse(JSON.stringify(form.values))
+            )
           })
+          const filterProps = ['position', 'id'] // 排除属性的更新
           onFormInputChange(form => {
-            console.log('onFormInputChange', form.values)
-
-            this.updateNodeProperties({
-              id: this.node.id,
-              properties: JSON.parse(JSON.stringify(form.values))
+            this.$nextTick(() => {
+              this.updateNodeProperties({
+                id: this.node.id,
+                properties: JSON.parse(
+                  JSON.stringify(form.values, (key, value) =>
+                    filterProps.includes(key) ? undefined : value
+                  )
+                )
+              })
             })
           })
         }
@@ -95,13 +102,12 @@ export default {
     }
   },
 
-  components: { VIcon, ...nodeComs, FormProvider, FormConsumer, SchemaField },
+  components: { VIcon, FormProvider, FormConsumer, SchemaField },
 
   computed: {
     ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection']),
 
     node() {
-      console.log('comp', this.activeConnection, this.activeNode)
       return this.activeConnection
         ? this.nodeById(this.activeConnection.targetId)
         : this.activeNode

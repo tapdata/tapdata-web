@@ -69,6 +69,8 @@ import deviceSupportHelpers from '@/mixins/deviceSupportHelpers'
 import { connectorActiveStyle } from '@/views/dataflow/style'
 import { NODE_PREFIX } from '@/views/dataflow/constants'
 import TopHeader from '@/views/dataflow/components/TopHeader'
+import { titleChange } from '@/mixins/titleChange'
+import { showMessage } from '@/mixins/showMessage'
 
 const dataFlowsApi = factory('DataFlows')
 // const Setting = factory('Setting')
@@ -76,7 +78,7 @@ const dataFlowsApi = factory('DataFlows')
 export default {
   name: 'Editor',
 
-  mixins: [deviceSupportHelpers],
+  mixins: [deviceSupportHelpers, titleChange, showMessage],
 
   components: {
     TopHeader,
@@ -88,49 +90,14 @@ export default {
   data() {
     return {
       NODE_PREFIX,
-      downLoadNum: 0,
-      reloadSchemaDialog: false,
-      dialogFormVisible: false,
-      form: {
-        taskName: '',
-        type:
-          this.$t('dataFlow.button.quantitative') +
-          '+' +
-          this.$t('dataFlow.button.increment')
-      },
-
-      dataFlowId: null,
-      tempDialogVisible: false,
-      tempKey: 0,
-      tempId: false,
-      tempData: [],
       status: 'draft',
-      executeMode: 'normal',
-      isPreview: false, //只有这一个场景需要切换编辑状态
-
       loading: true,
-      cells: [],
-      state1: '',
       editable: false,
       isMoniting: false,
       isSimple: false,
-      newDataFlowV: false,
       isSaving: false,
       sync_type: 'initial_sync+cdc',
-      settingList: [
-        {
-          type: 'initial_sync+cdc',
-          name: this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
-        },
-        { type: 'initial_sync', name: this.$t('dataFlow.initial_sync') },
-        { type: 'cdc', name: this.$t('dataFlow.cdc') }
-      ],
-      flowDataName: '',
-      mappingTemplate: '',
-      creatUserId: '',
-      dataChangeFalg: false,
       statusBtMap,
-
       jsPlumbIns,
       nodeMap: {},
       navLines: [],
@@ -144,7 +111,8 @@ export default {
     ...mapGetters('dataflow', {
       nodes: 'allNodes',
       isActionActive: 'isActionActive',
-      nodeById: 'nodeById'
+      nodeById: 'nodeById',
+      stateIsDirty: 'getStateIsDirty'
     }),
 
     selectBoxStyle() {
@@ -164,6 +132,10 @@ export default {
     }
   },
 
+  watch: {
+    $route: 'initView'
+  },
+
   created() {
     this.setNodeTypes(nodeTypes)
     this.setCtorTypes(ctorTypes)
@@ -173,11 +145,7 @@ export default {
     this.jsPlumbIns.ready(async () => {
       try {
         this.initNodeView()
-        this.$api('nodeConfigs')
-          .get()
-          .then(({ data }) => {
-            console.log('nodeConfigs', data)
-          })
+        await this.initView()
       } catch (error) {
         console.error(error)
       }
@@ -186,6 +154,10 @@ export default {
 
   methods: {
     ...mapMutations('dataflow', [
+      'setStateDirty',
+      'setDataflowId',
+      'setDataflowName',
+      'setDataflowSettings',
       'setNodeTypes',
       'setCtorTypes',
       'updateNodeProperties',
@@ -196,11 +168,58 @@ export default {
       'addConnection',
       'removeConnection',
       'removeNode',
-      'removeNodeFromSelection'
+      'removeNodeFromSelection',
+      'removeAllNodes',
+      'addNode'
     ]),
 
-    getRealId(str) {
-      return str.replace(new RegExp(`^${NODE_PREFIX}`), '')
+    async confirmMessage(
+      message,
+      headline,
+      type,
+      confirmButtonText,
+      cancelButtonText
+    ) {
+      try {
+        await this.$confirm(message, headline, {
+          confirmButtonText,
+          cancelButtonText,
+          type,
+          dangerouslyUseHTMLString: true
+        })
+        return true
+      } catch (e) {
+        return false
+      }
+    },
+
+    async initView() {
+      if (this.$route.params.action === 'dataflowSave') {
+        // In case the workflow got saved we do not have to run init
+        // as only the route changed but all the needed data is already loaded
+        this.setStateDirty(false)
+        return Promise.resolve()
+      }
+
+      if (this.stateIsDirty) {
+        const importConfirm = await this.confirmMessage(
+          `当您切换数据流时，您当前的数据流更改将丢失。`,
+          '确定切换？',
+          'warning',
+          '确定（不保存）'
+        )
+        if (importConfirm === false) {
+          return Promise.resolve()
+        }
+      }
+
+      let dataflowId
+      if (this.$route.params.id) {
+        dataflowId = this.$route.params.id
+        await this.openDataflow(dataflowId)
+      } else {
+        this.newDataflow()
+      }
     },
 
     initNodeView() {
@@ -357,6 +376,77 @@ export default {
           this.getRealId(e.targetId)
         )
       })*/
+    },
+
+    async openDataflow(dataflowId) {
+      this.resetWorkspace()
+
+      let result
+      try {
+        result = await dataFlowsApi.get([dataflowId])
+      } catch (e) {
+        this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
+        return
+      }
+
+      const { data } = result
+
+      this.setDataflowId(dataflowId)
+      this.setDataflowName({ newName: data.name, setStateDirty: false })
+      this.setDataflowSettings(data.settings)
+      this.addNodes(data.stages)
+
+      this.setStateDirty(false)
+    },
+
+    newDataflow() {
+      this.resetWorkspace()
+      this.setDataflowName({
+        newName: 'dataflow@' + new Date().toLocaleTimeString()
+      })
+    },
+
+    async addNodes(nodes) {
+      if (!nodes || !nodes.length) return
+      const { getters } = this.$store
+      // const allNodes = getters['dataflow/allNodeTypes']
+      const getNodeType = getters['dataflow/nodeType']
+      const getCtor = getters['dataflow/getCtor']
+
+      let nodeType
+      nodes.forEach(node => {
+        nodeType = getNodeType(node)
+
+        if (nodeType !== null) {
+          const Ctor = getCtor(nodeType.constructor)
+          const ins = new Ctor(nodeType)
+
+          Object.defineProperty(node, '__Ctor', {
+            value: ins,
+            enumerable: false
+          })
+
+          this.addNode(node)
+        }
+      })
+
+      await this.$nextTick()
+
+      this.nodes.forEach(node => {
+        let t = NODE_PREFIX + node.id + '_target',
+          tp = this.jsPlumbIns.getEndpoint(t)
+        if (node.inputLanes && node.inputLanes.length) {
+          node.inputLanes.forEach(nid => {
+            let s = NODE_PREFIX + nid + '_source',
+              sp = this.jsPlumbIns.getEndpoint(s)
+            this.jsPlumbIns.connect({ source: sp, target: tp })
+          })
+        }
+      })
+    },
+
+    getRealId(str) {
+      return str.replace(new RegExp(`^${NODE_PREFIX}`), '')
     },
 
     onNodeDragStart() {
@@ -638,11 +728,6 @@ export default {
       this.hideSelectBox()
     },
 
-    // showSelectBox(e) {
-    //   this.mouseClickPosition = this.getMousePositionWithinNodeView(e)
-    //   this.selectActive = true
-    // },
-
     hideSelectBox() {
       this.selectActive = false
       this.showSelectBox = false
@@ -670,11 +755,12 @@ export default {
       })
     },
 
-    async save() {
-      this.isSaving = true
-
-      let params = {
-        name: 'dataflow ' + new Date().toLocaleTimeString(),
+    getDataflowDataToSave() {
+      const { getters } = this.$store
+      const name = getters['dataflow/dataflowName']
+      const settings = getters['dataflow/dataflowSettings']
+      const data = {
+        name,
         description: '',
         status: 'draft',
         executeMode: 'normal',
@@ -688,53 +774,48 @@ export default {
           paused: false
         },
         stages: this.nodes,
-        setting: {
-          isSerialMode: false,
-          sync_type: 'initial_sync',
-          readBatchSize: 1000,
-          notificationWindow: 0,
-          notificationInterval: 300,
-          readCdcInterval: 500,
-          maxTransactionLength: 12,
-          description: '',
-          cdcFetchSize: 1,
-          distinctWriteType: 'intellect',
-          drop_target: false,
-          run_custom_sql: false,
-          needToCreateIndex: true,
-          increment: false,
-          isSchedule: false,
-          cronExpression: '',
-          isOpenAutoDDL: false,
-          emailWaring: {
-            edited: false,
-            started: false,
-            error: false,
-            paused: false
-          },
-          stopOnError: true,
-          syncPoints: [
-            {
-              connectionId: '',
-              type: 'current',
-              time: '',
-              date: '',
-              name: '',
-              timezone: '+8'
-            }
-          ],
-          processorConcurrency: 1,
-          transformerConcurrency: 8,
-          editDisable: false
-        }
+        setting: settings
       }
 
-      console.log('params', params)
+      const dataflowId = this.$store.getters['dataflow/dataflowId']
 
-      /*let result = await dataFlowsApi.draft(params)
+      if (dataflowId) {
+        data.id = dataflowId
+      }
+
+      return data
+    },
+
+    async save() {
+      const currentDataflow = this.$route.params.id
+      if (!currentDataflow) {
+        return this.saveAsNewDataflow()
+      }
+      this.isSaving = true
+
+      const data = this.getDataflowDataToSave()
+
+      let result = await dataFlowsApi.draft(data)
+
       this.isSaving = false
 
-      console.log('save', result)*/
+      console.log('save', result)
+    },
+
+    async saveAsNewDataflow() {
+      try {
+        this.isSaving = true
+        const data = this.getDataflowDataToSave()
+        const { data: dataflow } = await dataFlowsApi.draft(data)
+        this.isSaving = false
+        this.$message.success(this.$t('message.saveOK'))
+        this.$router.push({
+          name: 'DataflowEdit',
+          params: { id: dataflow.id, action: 'dataflowSave' }
+        })
+      } catch (e) {
+        this.$showError(e, '数据流保存出错', '出现的问题:')
+      }
     },
 
     handleDelete() {
@@ -774,6 +855,21 @@ export default {
         if (flag || this.isParent(id, targetId)) return true
       }
       return flag
+    },
+
+    resetWorkspace() {
+      // Reset nodes
+      if (this.jsPlumbIns) {
+        // On first load it does not exist
+        this.jsPlumbIns.deleteEveryEndpoint()
+      }
+
+      this.removeAllNodes()
+      this.setActiveNode(null)
+      this.setDataflowId(null)
+      this.setDataflowName({ newName: '', setStateDirty: false })
+      this.setDataflowSettings({})
+      this.resetSelectedNodes()
     }
   }
 }

@@ -1,11 +1,5 @@
-/*
-export class Database {
+export class Table {
   group = 'data'
-
-  // 附加到节点上的属性
-  attr = {
-    type: 'database'
-  }
 
   formSchema = {
     type: 'object',
@@ -42,7 +36,7 @@ export class Database {
         }
       },
       datasourceInfo: {
-        type: 'object',
+        type: 'string',
         'x-component': 'DatabaseInfo',
         'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo)}}']
       }
@@ -55,6 +49,7 @@ export class Database {
       dropType: {
         type: 'string',
         title: '对目标端已存在的结构和数据的处理',
+        default: 'no_drop',
         'x-decorator': 'ElFormItem',
         'x-component': 'Select',
         'x-reactions': ['{{getDropOptions}}']
@@ -89,38 +84,44 @@ export class Database {
         ],
         'x-component': 'SyncObjects',
         'x-reactions': [
-          '{{useAsyncDataSource(loadDatabaseInfo, sourceConnectionId)}}'
+          '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
         ]
       }
     }
   }
 
-  constructor(name, icon, type) {
-    this.icon = icon
-    this.name = name
-    this.tip = name
+  constructor(node) {
+    this.icon = node.icon
+    this.name = node.name
+    this.tip = node.name
+    const attr = (this.attr = node.attr) || {}
 
-    Object.assign(this.attr, {
-      database_type: type
-    })
+    if (attr.formSchema) this.formSchema = attr.formSchema
+    if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
+  }
+
+  /**
+   * 获取额外添加到节点上的属性
+   */
+  getExtraAttr() {
+    return {}
   }
 
   execute() {
     // 节点功能实现
   }
 
-  /!**
+  /**
    * 验证此允许连接到目标
-   *!/
+   */
   allowTarget() {
     return true
   }
 
-  /!**
+  /**
    * 验证接受源连接
-   *!/
+   */
   allowSource() {
     return true
   }
 }
-*/

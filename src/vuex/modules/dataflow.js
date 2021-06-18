@@ -38,6 +38,48 @@ const state = () => ({
   activeActions: [], // 激活的动作
   selectedNodes: [], // 选中的节点
   dataflow: {
+    id: '',
+    name: '',
+    settings: {
+      isSerialMode: false,
+      sync_type: 'initial_sync+cdc',
+      readBatchSize: 1000,
+      notificationWindow: 0,
+      notificationInterval: 300,
+      readCdcInterval: 500,
+      maxTransactionLength: 12,
+      description: '',
+      cdcFetchSize: 1,
+      distinctWriteType: 'intellect',
+      drop_target: false,
+      run_custom_sql: false,
+      needToCreateIndex: true,
+      increment: false,
+      isSchedule: false,
+      cronExpression: '',
+      isOpenAutoDDL: false,
+      cdcConcurrency: true,
+      emailWaring: {
+        edited: false,
+        started: false,
+        error: false,
+        paused: false
+      },
+      readShareLogMode: 'STREAMING',
+      stopOnError: true,
+      syncPoints: [
+        {
+          connectionId: '',
+          type: 'current', // localTZ: 本地时区； connTZ：连接时区
+          time: '',
+          date: '',
+          name: '',
+          timezone: '+08:00' // 当type为localTZ时有该字段
+        }
+      ],
+      processorConcurrency: 1,
+      transformerConcurrency: 8
+    },
     // 编辑器配置
     nodes: [] // 画布上的所有节点
   }
@@ -45,6 +87,25 @@ const state = () => ({
 
 // getters
 const getters = {
+  getStateIsDirty: state => {
+    return state.stateIsDirty
+  },
+
+  dataflowName: state => {
+    return state.dataflow.name
+  },
+
+  dataflowId: state => {
+    return state.dataflow.id
+  },
+
+  dataflowSettings: state => {
+    if (state.dataflow.settings === undefined) {
+      return {}
+    }
+    return state.dataflow.settings
+  },
+
   // 判断action是否被标记
   isActionActive: state => action => {
     return state.activeActions.includes(action)
@@ -53,6 +114,24 @@ const getters = {
   // 获取所有节点类型
   allNodeTypes: state => {
     return state.nodeTypes
+  },
+
+  nodeType: state => node => {
+    const nodeType = node.type
+    let foundType
+    if (nodeType === 'database') {
+      const dbType = node.databaseType
+      foundType = state.nodeTypes.find(
+        typeData =>
+          typeData.type === nodeType && typeData.attr.databaseType === dbType
+      )
+    } else {
+      foundType = state.nodeTypes.find(typeData => typeData.type === nodeType)
+    }
+
+    if (foundType === undefined) return null
+
+    return foundType
   },
 
   // 获取画布所有节点
@@ -105,6 +184,33 @@ const actions = {}
 // mutations
 const mutations = {
   /**
+   * 设置数据脏状态
+   * @param state
+   * @param dirty
+   */
+  setStateDirty(state, dirty) {
+    state.stateIsDirty = dirty
+  },
+
+  // Id
+  setDataflowId(state, id) {
+    state.dataflow.id = id
+  },
+
+  // Name
+  setDataflowName(state, data) {
+    if (data.setStateDirty === true) {
+      state.stateIsDirty = true
+    }
+    state.dataflow.name = data.newName
+  },
+
+  // Settings
+  setDataflowSettings(state, dataflowSettings) {
+    Vue.set(state.dataflow, 'settings', dataflowSettings)
+  },
+
+  /**
    * 标记action
    * @param state
    * @param action
@@ -156,6 +262,7 @@ const mutations = {
 
   // 更新节点属性
   updateNodeProperties(state, updateInformation) {
+    console.log('updateInformation', updateInformation)
     const node = state.dataflow.nodes.find(node => {
       return node.id === updateInformation.id
     })
@@ -314,8 +421,10 @@ const mutations = {
   },
 
   // 移除所有节点
-  removeAllNodes(state) {
-    state.stateIsDirty = true
+  removeAllNodes(state, data) {
+    if (data?.setStateDirty === true) {
+      state.stateIsDirty = true
+    }
     state.dataflow.nodes.splice(0, state.dataflow.nodes.length)
   }
 }

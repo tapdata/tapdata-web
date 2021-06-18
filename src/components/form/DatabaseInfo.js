@@ -46,7 +46,6 @@ export const DatabaseInfo = connect(
 
         const databaseTables = [...new Set(tables)]
 
-        console.log('databaseInfo', databaseInfo)
         return (
           <div class="database-info flex flex-column flex-grow-1 overflow-hidden">
             <ul class="info-box flex-shrink-0">

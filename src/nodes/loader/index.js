@@ -1,5 +1,4 @@
 const nodeContext = require.context('@/nodes/', false, /\.js$/)
-const comContext = require.context('@/nodes/components', false, /\.vue$/)
 
 const requireAllNode = requireContext => {
   return requireContext.keys().reduce((map, name) => {
@@ -9,17 +8,7 @@ const requireAllNode = requireContext => {
   }, {})
 }
 
-const requireAllCom = requireContext => {
-  return requireContext.keys().reduce((obj, name) => {
-    const com = requireContext(name).default
-    obj[com.name] = com
-    return obj
-  }, {})
-}
-
 export const ctorTypes = requireAllNode(nodeContext)
-
-export const nodeComs = requireAllCom(comContext)
 
 export const nodeTypes = [
   {
@@ -109,5 +98,12 @@ export const nodeTypes = [
     type: 'database',
     constructor: 'Database',
     attr: { databaseType: 'sybase ase' }
+  },
+  {
+    name: '表',
+    icon: 'table',
+    group: 'data',
+    type: 'table',
+    constructor: 'Table'
   }
 ]

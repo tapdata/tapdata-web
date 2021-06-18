@@ -1,11 +1,6 @@
 export class Database {
   group = 'data'
 
-  // 附加到节点上的属性
-  attr = {
-    type: 'database'
-  }
-
   formSchema = {
     type: 'object',
     properties: {
@@ -37,6 +32,16 @@ export class Database {
           connectionBtn: {
             type: 'void',
             'x-component': 'AddDatabaseBtn'
+          }
+        }
+      },
+      name: {
+        type: 'string',
+        'x-display': 'hidden',
+        'x-reactions': {
+          dependencies: ['connectionId'],
+          fulfill: {
+            run: '{{$self.value = $form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.name}}'
           }
         }
       },
@@ -101,8 +106,8 @@ export class Database {
     this.tip = node.name
     const attr = (this.attr = node.attr)
 
-    if (attr.formSchema) this.formSchema = attr.formSchema
-    if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
+    if (attr?.formSchema) this.formSchema = attr.formSchema
+    if (attr?.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
   }
 
   /**

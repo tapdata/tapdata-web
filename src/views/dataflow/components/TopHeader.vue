@@ -4,14 +4,13 @@
       <div class="nav-icon flex align-center justify-center">
         <VIcon color="#fff" size="24">left</VIcon>
       </div>
-      <div class="title-input-wrap flex align-center mx-2">
-        <div
-          class="title-input overflow-hidden text-nowrap"
-          contenteditable="true"
-          @keydown.enter.prevent
-        >
-          Dataflow 任务名称
-        </div>
+      <div class="title-input-wrap inline-grid mx-2" :data-value="hiddenValue">
+        <input
+          ref="nameInput"
+          v-model="name"
+          class="title-input"
+          @blur="onNameInputBlur"
+        />
       </div>
     </div>
     <div class="flex align-center flex-grow-1 pr-3">
@@ -248,6 +247,10 @@
 <script>
 import VIcon from '@/components/VIcon'
 import VDivider from '@/components/VDivider'
+import { mapGetters, mapMutations } from 'vuex'
+import DataflowApi from '@/api/DataFlows'
+
+const dataflowApi = new DataflowApi()
 export default {
   name: 'TopHeader',
 
@@ -261,7 +264,54 @@ export default {
     sync_type: String
   },
 
-  components: { VDivider, VIcon }
+  components: { VDivider, VIcon },
+
+  data() {
+    return {
+      name: ''
+    }
+  },
+
+  computed: {
+    ...mapGetters('dataflow', ['dataflowId', 'dataflowName']),
+
+    hiddenValue() {
+      let value = this.name.replace(/\s/g, '.')
+      return `${value}`
+    }
+  },
+
+  watch: {
+    dataflowName(v) {
+      this.name = v
+    }
+  },
+
+  mounted() {
+    this.name = this.dataflowName
+  },
+
+  methods: {
+    ...mapMutations('dataflow', ['setDataflowName']),
+
+    onNameInputBlur() {
+      this.setDataflowName({ newName: this.name })
+      if (this.dataflowId) {
+        dataflowApi.patchId(this.dataflowId, {
+          name: this.name
+        })
+      }
+    },
+
+    updateInputWidth() {
+      this.$nextTick(() => {
+        let namePre = this.$refs.namePre
+        namePre.style.display = 'inline-block'
+        this.inputWidth = Math.max(this.$refs.namePre.offsetWidth, 8) + 'px'
+        namePre.removeAttribute('style')
+      })
+    }
+  }
 }
 </script>
 
@@ -320,12 +370,23 @@ $sidebarBg: #fff;
   }
 
   .title-input-wrap {
+    display: inline-grid;
     flex: 1;
     width: 0;
     font-size: 13px;
     line-height: 18px;
+    padding: 10px 0;
 
-    .title-input {
+    &::after {
+      grid-area: 1/1;
+      content: attr(data-value) ' ';
+      visibility: hidden;
+      white-space: nowrap;
+      overflow: hidden;
+      padding: 0 2px;
+    }
+
+    /*.title-input {
       color: #1f2d3d;
       max-width: 100%;
       position: relative;
@@ -339,6 +400,28 @@ $sidebarBg: #fff;
       &:focus {
         border-color: rgba(0, 0, 0, 0.8);
       }
+    }*/
+
+    .title-input {
+      grid-area: 1/1;
+      color: #1f2d3d;
+      max-width: 100%;
+      position: relative;
+      outline: none;
+      border: none;
+      box-shadow: none;
+      background: 0 0;
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.22);
+      padding: 0 2px;
+
+      &:focus {
+        border-color: rgba(0, 0, 0, 0.8);
+      }
+    }
+    .title-pre {
+      display: none;
+      visibility: hidden;
+      padding: 0 2px;
     }
   }
 

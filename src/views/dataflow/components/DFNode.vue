@@ -12,7 +12,7 @@
         :src="`static/editor/o-${ins.icon}.svg`"
       ></ElImage>
     </div>
-    <div class="df-node-text ml-2 lh-1">{{ data.name }}</div>
+    <div class="df-node-text text-truncate mx-2 lh-1">{{ data.name }}</div>
     <div class="df-node-action"></div>
   </div>
 </template>
@@ -140,7 +140,7 @@ export default {
     },
 
     mouseClick(e) {
-      console.log('DFNode.mouseClick', this.isActionActive('dragActive'))
+      // console.log('DFNode.mouseClick', this.isActionActive('dragActive'))
       if (this.isActionActive('dragActive')) {
         this.removeActiveAction('dragActive')
       } else {
@@ -184,6 +184,11 @@ export default {
   }
 
   &-text {
+    //display: -webkit-box;
+    //-webkit-box-orient: vertical;
+    //-webkit-line-clamp: 2;
+    //overflow: hidden;
+    //word-break: break-all; // 暂时封印，英文换行看起来有点怪
     font-size: 12px;
   }
 

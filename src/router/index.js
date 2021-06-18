@@ -624,8 +624,14 @@ const router = new Router({
       meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
     },
     {
-      path: '/job-refactor',
-      name: 'dataFlowEditor',
+      path: '/dataflow/editor',
+      name: 'DataflowNew',
+      component: () => import('@/views/dataflow/Editor'),
+      meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
+    },
+    {
+      path: '/dataflow/editor/:id',
+      name: 'DataflowEdit',
       component: () => import('@/views/dataflow/Editor'),
       meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
     },
