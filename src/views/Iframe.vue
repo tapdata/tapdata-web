@@ -45,7 +45,7 @@ export default {
 				let result = null
 				for (let i = 0; i < list.length; i++) {
 					let route = list[i]
-					if (route.meta.link === './tm/#' + path) {
+					if (route?.meta?.link === './tm/#' + path) {
 						result = route
 					} else if (route.children) {
 						result = findRoute(route.children, path)

@@ -304,10 +304,7 @@ export default {
 		goCreateTask() {
 			this.show = false
 			this.$router.push({
-				name: 'DataflowCreate',
-				query: {
-					step: this.getListIndexByKey('dataSource_1')
-				}
+				name: 'DataflowCreate'
 			})
 		},
 		goDashboard() {
