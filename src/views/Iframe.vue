@@ -29,7 +29,7 @@ export default {
 			handler(route) {
 				this.link = ''
 				this.$nextTick(() => {
-					this.link = getLink(route.params, route.meta.link) + queryParams(route.query, true)
+					this.link = getLink(route.params, route?.meta?.link) + queryParams(route.query, true)
 				})
 			}
 		}
@@ -60,7 +60,7 @@ export default {
 				window.emitRouteChange = to => {
 					if (to.matched.length) {
 						let path = to.matched[to.matched.length - 1].path
-						if (this.$route.meta.link === './tm/#' + path || this.link === './tm/#' + to.fullPath) {
+						if (this.$route?.meta?.link === './tm/#' + path || this.link === './tm/#' + to.fullPath) {
 							return
 						}
 						let route = findRoute(routes, path)
