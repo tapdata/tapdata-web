@@ -120,7 +120,15 @@ export const databaseConfig = {
        * @param targetCell
        * @return {boolean}
        */
-      allowTarget(targetCell) {
+      allowTarget(targetCell, sourceCell) {
+        if (
+          sourceCell?.attributes?.form_data?.database_type === 'elasticsearch'
+        ) {
+          return ['kafka'].includes(
+            targetCell?.attributes?.form_data?.database_type
+          )
+        }
+
         return (
           ['app.Database'].includes(targetCell.get('type')) &&
           targetCell.graph.getConnectedLinks(this, {
