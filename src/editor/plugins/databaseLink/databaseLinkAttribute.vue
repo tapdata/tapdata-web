@@ -112,6 +112,7 @@
           <div class="transfer">
             <el-transfer
               filterable
+              v-if="!transferFlag"
               :titles="titles"
               :filter-method="filterMethod"
               :filter-placeholder="$t('editor.cell.link.searchContent')"
@@ -132,6 +133,55 @@
 							}}</span> -->
               </span>
             </el-transfer>
+            <!-- MQ穿梭框 start -->
+            <template v-else>
+              <!-- <el-transfer
+                filterable
+                class="topic-transfer"
+                :titles="topicTitles"
+                :filter-method="filterMethod"
+                :filter-placeholder="$t('editor.cell.link.searchContent')"
+                v-model="model.topicData"
+                :data="sourceData"
+                :left-default-checked="topicSelected"
+                @change="handleChangeTopic"
+                @right-check-change="handleSelectTopic"
+              >
+                <span class="box" slot-scope="{ option }">
+                  <span
+                    class="text"
+                    :title="option.label"
+                    :class="[{ active: option.label !== option.key }, 'text']"
+                    >{{ option.label }}</span
+                  >
+                </span>
+              </el-transfer> -->
+              <el-tabs v-model="seletecTab" type="border-card">
+                <el-tab-pane label="topic" name="topic">Topic</el-tab-pane>
+                <el-tab-pane label="queue" name="queue">Queue</el-tab-pane>
+              </el-tabs>
+              <el-transfer
+                filterable
+                class="queue-transfer"
+                :titles="seletecTab === 'topic' ? topicTitles : queueTitles"
+                :filter-method="filterMethod"
+                :filter-placeholder="$t('editor.cell.link.searchContent')"
+                v-model="mq[seletecTab].value"
+                :data="mq[seletecTab].list"
+                @change="handleChangeQueueData"
+                @left-check-change="handleLeftTable"
+                @right-check-change="handleSelectQueue"
+              >
+                <span class="box" slot-scope="{ option }">
+                  <span
+                    class="text"
+                    :title="option.label"
+                    :class="[{ active: option.label !== option.key }, 'text']"
+                    >{{ option.label }}</span
+                  >
+                </span>
+              </el-transfer>
+            </template>
           </div>
         </div>
       </el-form>
@@ -230,6 +280,17 @@ export default {
 
       configJoinTable: false,
       sourceData: [],
+      seletecTab: 'topic',
+      mq: {
+        topic: {
+          list: [],
+          value: []
+        },
+        queue: {
+          list: [],
+          value: []
+        }
+      },
       targetDatabaseType: '',
       model: {
         // label: '',
@@ -238,6 +299,8 @@ export default {
         dropType: 'no_drop',
         type: 'databaseLink',
         selectSourceArr: [],
+        topicData: [],
+        queueData: [],
         selectSourceDatabase: {
           table: true,
           view: false,
@@ -246,10 +309,16 @@ export default {
         }
       },
 
+      transferFlag: false,
+
+      topicSelected: [],
+
       titles: [
         this.$t('editor.cell.link.migrationObjece'),
         this.$t('editor.cell.link.chosen')
-      ]
+      ],
+      topicTitles: [this.$t('editor.cell.link.migrationObjece'), 'Topic'],
+      queueTitles: [this.$t('editor.cell.link.migrationObjece'), 'Queue']
     }
   },
 
@@ -296,6 +365,15 @@ export default {
         if (targetCell && this.model.selectSourceArr.length === 0) {
           let targetFormData = targetCell.getFormData()
           let selectTargetType = []
+
+          if (
+            targetFormData.database_type === 'mq' &&
+            targetFormData.mqType === '0'
+          ) {
+            this.transferFlag = true
+          }
+          debugger
+
           this.model.table_prefix = targetFormData.table_prefix
           this.model.table_suffix = targetFormData.table_suffix
           if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
@@ -314,7 +392,6 @@ export default {
             })
           }
         }
-
         this.loadDataModels(connectionId)
       }
 
@@ -360,6 +437,7 @@ export default {
           }
         }
       }
+      console.log(result)
 
       return result
     },
@@ -401,6 +479,25 @@ export default {
       })
       this.preFixSuffixData()
     },
+    handleLeftTable(data) {
+      this.topicSelected = data
+      console.log(this.sourceData)
+      debugger
+    },
+    handleChangeTopic() {},
+    // handleChangeQueueData(val) {
+    //   this.mq[this.selectedTab].list.forEach(el => {
+    //     if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
+    //       el.label = el.key
+    //     }
+    //   })
+    //   this.preFixSuffixData()
+    //   let anotherName = this.selectedTab === 'topic' ? 'queue' : 'topic'
+    // },
+    // handleSelectTopic() {},
+    // handleSelectQueue(data) {
+    //   selectKeepArr = data
+    // },
 
     // 穿梭框搜索
     filterMethod(query, item) {
@@ -425,7 +522,11 @@ export default {
 
     // 添加前后缀数据处理
     preFixSuffixData() {
-      if (this.sourceData.length && this.model.selectSourceArr.length) {
+      if (
+        this.sourceData &&
+        this.sourceData.length &&
+        this.model.selectSourceArr.length
+      ) {
         let selectSourceArr = []
         this.model.selectSourceArr = Array.from(
           new Set(this.model.selectSourceArr)
@@ -438,12 +539,7 @@ export default {
           })
         })
         this.model.selectSourceArr = selectSourceArr
-      }
-      if (
-        this.sourceData &&
-        this.sourceData.length &&
-        this.model.selectSourceArr.length
-      ) {
+
         for (let i = 0; i < this.sourceData.length; i++) {
           for (let j = 0; j < this.model.selectSourceArr.length; j++) {
             if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
@@ -501,16 +597,39 @@ export default {
             )
 
             if (tables && tables.length) {
-              this.sourceData = tables.map(table => ({
+              self.sourceData = tables.map(table => ({
                 label: table.table_name,
                 key: table.table_name,
                 // value: table.table_name,
                 disabled: this.disabled
               }))
-              if (this.sourceData.length) {
+              if (self.sourceData.length) {
+                self.mq.topic.list = []
+                self.mq.queue.list = []
                 this.preFixSuffixData()
+
+                self.sourceData.forEach(item => {
+                  if (
+                    self.mq.queue.value.length &&
+                    !self.mq.queue.value.includes(item.key)
+                  ) {
+                    self.mq.topic.list.push(item)
+                  } else {
+                    self.mq.topic.list = self.sourceData
+                  }
+
+                  if (
+                    self.mq.topic.value.length &&
+                    !self.mq.topic.value.includes(item.key)
+                  ) {
+                    self.mq.queue.list.push(item)
+                  } else {
+                    self.mq.queue.list = self.sourceData
+                  }
+                })
               }
             }
+            debugger
             self.$forceUpdate()
           }
         })
@@ -668,26 +787,60 @@ export default {
       color: #666 !important;
     }
     .transfer {
+      position: relative;
       height: calc(100% - 32px) !important;
       white-space: nowrap;
       overflow: auto;
-    }
-    .el-transfer,
-    .el-transfer-panel {
-      height: 100% !important;
-    }
-    .el-transfer-panel__body {
-      height: calc(100% - 38px) !important;
-    }
-    .el-checkbox-group {
-      height: calc(100% - 32px);
-      padding-bottom: 5px;
-      box-sizing: border-box;
-    }
-    .el-transfer-panel__item {
-      width: 100%;
-      margin-right: 10px !important;
-      box-sizing: border-box;
+      .el-transfer,
+      .el-transfer-panel {
+        height: 100% !important;
+      }
+      .el-transfer-panel__body {
+        height: calc(100% - 38px) !important;
+      }
+      .el-checkbox-group {
+        height: calc(100% - 32px);
+        padding-bottom: 5px;
+        box-sizing: border-box;
+      }
+      .el-transfer-panel__item {
+        width: 100%;
+        margin-right: 10px !important;
+        box-sizing: border-box;
+      }
+      // .topic-transfer,
+      // .queue-transfer {
+      //   & > div:last-child {
+      //     position: absolute;
+      //     height: 48% !important;
+      //   }
+      // }
+      // .topic-transfer {
+      //   & > div:last-child {
+      //     top: 0;
+      //   }
+      //   .el-transfer__buttons {
+      //     padding-top: 100px;
+      //     vertical-align: top;
+      //   }
+      // }
+      // .queue-transfer {
+      //   position: absolute;
+      //   top: 0;
+      //   width: 0;
+      //   // display: inherit;
+      //   // height: auto !important;
+      //   // & > div:first-child {
+      //   //   display: none;
+      //   // }
+      //   & > div:last-child {
+      //     bottom: 0;
+      //   }
+      //   .el-transfer__buttons {
+      //     padding-bottom: 100px;
+      //     vertical-align: bottom;
+      //   }
+      // }
     }
   }
   .aggtip {

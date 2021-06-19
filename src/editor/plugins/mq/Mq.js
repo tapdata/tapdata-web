@@ -15,7 +15,7 @@ export const mqConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-table.svg'
+          xlinkHref: 'static/editor/o-mq-o.svg'
         },
         label: {
           text: 'Mq'
@@ -208,7 +208,7 @@ export const mqConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/table.svg',
+        xlinkHref: 'static/editor/mq.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

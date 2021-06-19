@@ -839,6 +839,8 @@ const en = {
       data_node: {
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
+        mqTableType: 'New table type',
+        mqTableTypeTip: 'Please select the table type topic or queue',
         database: {
           name: 'Database',
           tip: 'Any Database',

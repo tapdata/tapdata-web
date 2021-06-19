@@ -816,6 +816,8 @@ const cn = {
       data_node: {
         kafkaText: 'kafka节点',
         kafkaName_isNull: 'kafka不能为空',
+        mqTableType: '新建表类型',
+        mqTableTypeTip: '请选择表类型topic或者queue',
         database: {
           name: '数据库',
           tip: '任意类型数据库',

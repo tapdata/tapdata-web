@@ -71,6 +71,20 @@
             </el-tooltip>
           </div>
         </el-form-item>
+        <el-form-item
+          v-if="mqType === '0'"
+          :label="$t('editor.cell.data_node.mqTableType')"
+          prop="table_type"
+          required
+        >
+          <el-select
+            v-model="model.table_type"
+            placeholder="$t('editor.cell.data_node.mqTableTypeTip')"
+          >
+            <el-option label="topic" value="topic"> </el-option>
+            <el-option label="queue" value="queue"> </el-option>
+          </el-select>
+        </el-form-item>
         <!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
 					<el-input
 						v-model="model.primaryKeys"
@@ -140,9 +154,11 @@ export default {
       model: {
         connectionId: '',
         type: 'mq',
-        tableName: ''
+        tableName: '',
+        table_type: 'topic'
         // primaryKeys: ''
       },
+      mqType: '',
       databaseSelectConfig: {
         size: 'mini',
         placeholder: this.$t('editor.cell.data_node.database.form.placeholder'),
@@ -225,6 +241,12 @@ export default {
     'model.tableName': {
       immediate: true,
       handler() {
+        // 截取表类型
+        let reg = /\([^\)]+\)/g
+        let table_type = this.model.tableName.match(reg)[0]
+        table_type = table_type.substring(1, table_type.length - 1)
+        this.model.table_type = table_type
+
         if (this.schemas.length > 0) {
           if (this.model.tableName) {
             let schema = this.schemaSelectConfig.options.filter(
@@ -239,6 +261,7 @@ export default {
                     meta_type: 'mq',
                     fields: []
                   }
+
             this.$emit('schemaChange', _.cloneDeep(schema))
           }
         }
@@ -302,10 +325,17 @@ export default {
         .then(result => {
           if (result.data) {
             let schemas = []
-            if (result.data.mqType === '0') {
+            this.mqType = result.data.mqType
+            if (this.mqType === '0') {
+              result.data.mqQueueSet = result.data.mqQueueSet.map(
+                item => item + '(queue)'
+              )
+              result.data.mqTopicSet = result.data.mqTopicSet.map(
+                item => item + '(topic)'
+              )
               let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
               schemas = [...new Set(data)]
-            } else if (result.data.mqType === '1') {
+            } else if (this.mqType === '1') {
               schemas = result.data.mqQueueSet
             } else {
               schemas = result.data.mqTopicSet
@@ -313,7 +343,7 @@ export default {
             schemas = schemas.sort((t1, t2) =>
               t1 > t2 ? 1 : t1 === t2 ? 0 : -1
             )
-            // self.schemas = schemas
+            self.schemas = schemas
             self.schemaSelectConfig.options = schemas.map(item => ({
               label: item,
               value: item
