@@ -423,11 +423,11 @@ export default {
         }
       })
       flag &&
-        this.table.fetch(null, 0, true, value => {
-          setTimeout(() => {
+        setTimeout(() => {
+          this.table.fetch(null, 0, true, value => {
             this.reloadDataOnTesting(value)
-          }, 3000)
-        })
+          })
+        }, 3000)
     },
     //兼容新手引导
     handleGuide() {
