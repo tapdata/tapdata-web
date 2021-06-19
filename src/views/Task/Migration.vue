@@ -394,10 +394,12 @@ export default {
 				status
 			}
 			errorEvents && (attributes.errorEvents = errorEvents)
-			this.$axios.post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where))).then(data => {
-				this.fetch()
-				this.responseHandler(data, '操作成功')
-			})
+			this.$axios
+				.post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
+				.then(data => {
+					this.fetch()
+					this.responseHandler(data, '操作成功')
+				})
 		},
 		responseHandler(data, msg) {
 			let failList = data.fail || []
