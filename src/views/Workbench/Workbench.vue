@@ -236,9 +236,14 @@ export default {
 		},
 		loadAgent() {
 			let agentList = this.agentList
-			this.$axios.get('tm/api/clusterStates').then(data => {
-				// agentList[0].value = data.length
-				agentList[0].list[0].value = data?.[0]?.engine?.status === 'running' ? '运行中' : '离线'
+			let filter = {
+				where: {},
+				size: 1,
+				page: 0,
+				sort: ['createAt desc']
+			}
+			this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
+				agentList[0].list[0].value = data?.items?.[0]?.status === 'Running' ? '运行中' : '离线'
 			})
 		},
 		loadConnection() {
