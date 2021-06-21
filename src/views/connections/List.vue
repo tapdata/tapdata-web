@@ -501,7 +501,6 @@ export default {
         mqTopicSet: true,
         routeKeyField: true,
         virtualHost: true, // mq end
-        sslCA: true, //MongoDB
         tcpUdpType: true, // TCP
         root_name: true
       }
