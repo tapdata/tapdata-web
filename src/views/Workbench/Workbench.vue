@@ -52,7 +52,7 @@
 			<el-row :gutter="40" class="section-body">
 				<el-col :span="18">
 					<ul class="agent-list__list flex-grow-1 flex justify-around">
-						<li v-for="(item, index) in agentList" :key="index" class="agent-list__item p-6">
+						<li v-for="(item, index) in agentList" :key="index" class="agent-list__item p-6" :ref="item.key">
 							<div class="agent-list__name flex align-center justify-center mx-auto mb-3">
 								<VIcon size="12" class="icon" color="#888">{{ item.icon }}</VIcon>
 								<span class="ml-1 fs-7">{{ item.name }}</span>
@@ -136,6 +136,7 @@ export default {
 			agentList: [
 				{
 					name: 'Agent',
+					key: 'agent',
 					icon: 'agent',
 					value: 1,
 					list: [
@@ -147,6 +148,7 @@ export default {
 				},
 				{
 					name: '连接',
+					key: 'connection',
 					icon: 'connection',
 					value: 0,
 					list: [
@@ -162,6 +164,7 @@ export default {
 				},
 				{
 					name: '任务',
+					key: 'task',
 					icon: 'task',
 					value: 0,
 					list: [
