@@ -9,7 +9,7 @@
       @sort-change="handleSortTable"
     >
       <div slot="search">
-        <ul class="search-bar">
+        <ul class="search-bar flex">
           <li>
             <el-input
               clearable
@@ -37,13 +37,13 @@
             </el-input>
           </li>
 
-          <li v-if="searchParams.keyword">
+          <li class="ml-2" v-if="searchParams.keyword">
             <el-button size="mini" type="text" @click="reset()">{{
               $t('button.query')
             }}</el-button>
           </li>
 
-          <li v-if="searchParams.keyword">
+          <li class="ml-2" v-if="searchParams.keyword">
             <el-button size="mini" type="text" @click="reset('reset')">{{
               $t('button.reset')
             }}</el-button>
