@@ -368,7 +368,7 @@ export default {
   },
   methods: {
     inspectMethodChange(val) {
-      if (!val) {
+      if (val !== 'row_count' && this.searchParams.result === 'row_count') {
         this.searchParams.result = ''
       }
       this.table.fetch(1)
