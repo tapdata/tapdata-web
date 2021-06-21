@@ -152,8 +152,8 @@ export const FORM_DATA_KEY = 'form_data',
     hive: {
       type: 'hive',
       name: 'Hive',
-      shapeImage: 'static/editor/o-elasticsearch.svg',
-      stencilImage: 'static/editor/elasticsearch.svg'
+      shapeImage: 'static/editor/o-hive.svg',
+      stencilImage: 'static/editor/hive.svg'
     }
   },
   FILE_TYPE_MAPPING = {
