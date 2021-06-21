@@ -445,8 +445,8 @@ export default {
               targetFormData.database_type === 'mq' &&
               targetFormData.mqType === '0'
             ) {
-              result.topicData = this.mqActiveData.topicData
-              result.queueData = this.mqActiveData.queueData
+              targetFormData.topicData = this.mqActiveData.topicData
+              targetFormData.queueData = this.mqActiveData.queueData
             }
           }
         }
