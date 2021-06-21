@@ -112,7 +112,7 @@
           <div class="transfer">
             <el-transfer
               filterable
-              v-if="!transferFlag"
+              v-if="!model.transferFlag"
               :titles="titles"
               :filter-method="filterMethod"
               :filter-placeholder="$t('editor.cell.link.searchContent')"
@@ -303,6 +303,8 @@ export default {
         selectSourceArr: [],
         topicData: [],
         queueData: [],
+        transferFlag: false,
+
         selectSourceDatabase: {
           table: true,
           view: false,
@@ -311,7 +313,6 @@ export default {
         }
       },
 
-      transferFlag: false,
 
       topicSelected: [],
 
@@ -377,7 +378,7 @@ export default {
             targetFormData.database_type === 'mq' &&
             targetFormData.mqType === '0'
           ) {
-            this.transferFlag = true
+            this.model.transferFlag = true
             this.mqActiveData.topicData = data.topicData
             this.mqActiveData.queueData = data.queueData
           }
@@ -430,23 +431,32 @@ export default {
             targetFormData.table_prefix = this.model.table_prefix
             targetFormData.table_suffix = this.model.table_suffix
             targetFormData.syncObjects = []
-            if (this.model.selectSourceDatabase) {
-              Object.keys(this.model.selectSourceDatabase).forEach(key => {
-                if (this.model.selectSourceDatabase[key]) {
-                  targetFormData.syncObjects.push({
-                    type: key,
-                    objectNames:
-                      key === 'table' ? this.model.selectSourceArr : []
-                  })
-                }
-              })
-            }
             if (
               targetFormData.database_type === 'mq' &&
               targetFormData.mqType === '0'
             ) {
-              targetFormData.topicData = this.mqActiveData.topicData
-              targetFormData.queueData = this.mqActiveData.queueData
+              targetFormData.syncObjects = [
+                {
+                  type: 'queue',
+                  objectNames: this.mqActiveData.queueData
+                },
+                {
+                  type: 'topic',
+                  objectNames: this.mqActiveData.topicData
+                }
+              ]
+            } else {
+              if (this.model.selectSourceDatabase) {
+                Object.keys(this.model.selectSourceDatabase).forEach(key => {
+                  if (this.model.selectSourceDatabase[key]) {
+                    targetFormData.syncObjects.push({
+                      type: key,
+                      objectNames:
+                        key === 'table' ? this.model.selectSourceArr : []
+                    })
+                  }
+                })
+              }
             }
           }
         }
