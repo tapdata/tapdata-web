@@ -1207,6 +1207,24 @@ module.exports = Object.assign({}, dataflow, {
     code: 'ok',
     msg: 'ok'
   },
+  '/api/ScheduleTasks': {
+    'data|10': [
+      {
+        id: '@id',
+        task_type: 'CLEAR_PG_SLOT',
+        period: 3600000,
+        status: 'scheduling',
+        task_name: '@name',
+        task_profile: 'DEFAULT',
+        agent_id: 'daaf405f-3d4c-4584-8087-bdc014966376',
+        last_updated: '2021-06-21T07:33:59.956Z',
+        ping_time: 1624260839953
+      }
+    ],
+    code: 'ok',
+    msg: 'ok'
+  },
+  '/api/ScheduleTasks/count': { data: { count: 6 }, code: 'ok', msg: 'ok' },
   '/api/DataFlowInsights/runtimeMonitor': ({ req }) => {
     let data = {
       throughput: {
