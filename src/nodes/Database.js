@@ -1,8 +1,8 @@
-export class Database {
+import { NodeType } from '@/nodes/extends/NodeType'
+
+export class Database extends NodeType {
   constructor(node) {
-    this.icon = node.icon
-    this.name = node.name
-    this.tip = node.name
+    super(node)
 
     if (node.attr) {
       const attr = Object.assign(this.attr, node.attr)
@@ -120,23 +120,5 @@ export class Database {
     return {
       databaseType: this.attr.databaseType
     }
-  }
-
-  execute() {
-    // 节点功能实现
-  }
-
-  /**
-   * 验证此允许连接到目标
-   */
-  allowTarget() {
-    return true
-  }
-
-  /**
-   * 验证接受源连接
-   */
-  allowSource() {
-    return true
   }
 }

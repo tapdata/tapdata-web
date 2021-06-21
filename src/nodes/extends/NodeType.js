@@ -1,15 +1,8 @@
 export class NodeType {
-  attr = {}
   constructor(node) {
     this.icon = node.icon
     this.name = node.name
     this.tip = node.name
-
-    if (node.attr) {
-      const attr = Object.assign(this.attr, node.attr)
-      if (attr.formSchema) this.formSchema = attr.formSchema
-      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-    }
   }
 
   /**

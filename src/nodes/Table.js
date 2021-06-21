@@ -1,8 +1,8 @@
-export class Table {
+import { NodeType } from '@/nodes/extends/NodeType'
+
+export class Table extends NodeType {
   constructor(node) {
-    this.icon = node.icon
-    this.name = node.name
-    this.tip = node.name
+    super(node)
 
     if (node.attr) {
       const attr = Object.assign(this.attr, node.attr)
@@ -145,12 +145,5 @@ export class Table {
         ]
       }
     }
-  }
-
-  /**
-   * 获取额外添加到节点上的属性
-   */
-  getExtraAttr() {
-    return {}
   }
 }
