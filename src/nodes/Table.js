@@ -1,4 +1,18 @@
 export class Table {
+  constructor(node) {
+    this.icon = node.icon
+    this.name = node.name
+    this.tip = node.name
+
+    if (node.attr) {
+      const attr = Object.assign(this.attr, node.attr)
+      if (attr.formSchema) this.formSchema = attr.formSchema
+      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
+    }
+  }
+
+  attr = {}
+
   group = 'data'
 
   formSchema = {
@@ -9,8 +23,7 @@ export class Table {
         type: 'void',
         'x-decorator': 'ElFormItem',
         'x-decorator-props': {
-          asterisk: true,
-          feedbackLayout: 'none'
+          asterisk: true
         },
         'x-component': 'Row',
         'x-component-props': {
@@ -27,7 +40,9 @@ export class Table {
             'x-component-props': {
               config: { placeholder: '请选择数据库' }
             },
-            'x-reactions': ['{{useAsyncDataSource(loadDatabase)}}']
+            'x-reactions': [
+              '{{useAsyncDataSource(loadDatabase, "dataSource", ["mysql","mysql pxc","oracle","sqlserver","sybase ase","gbase-8s","db2","gaussdb200","postgres","mariadb"])}}'
+            ]
           },
           connectionBtn: {
             type: 'void',
@@ -35,10 +50,52 @@ export class Table {
           }
         }
       },
-      datasourceInfo: {
-        type: 'string',
-        'x-component': 'DatabaseInfo',
-        'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo)}}']
+      switchSpace: {
+        type: 'void',
+        title: '启用自定义初始化顺序',
+        properties: {
+          enableInitialOrder: {
+            type: 'boolean',
+            required: true,
+            'x-component': 'Switch',
+            'x-component-props': {
+              // activeText: '开启'
+            },
+            'x-reactions': {
+              target: 'initialSyncOrder',
+              fulfill: {
+                state: {
+                  visible: '{{!!$self.value}}'
+                }
+              }
+            }
+          },
+
+          initialSyncOrder: {
+            type: 'number',
+            required: true,
+            'x-component': 'InputNumber',
+            'x-component-props': {
+              min: 1,
+              size: 'mini'
+            }
+          }
+        },
+        'x-decorator': 'ElFormItem',
+        'x-decorator-props': {
+          asterisk: true
+        },
+        'x-component': 'Space',
+        'x-component-props': {
+          size: 'middle'
+        }
+      },
+      isFilter: {
+        type: 'boolean',
+        title: '过滤设置',
+        required: true,
+        'x-decorator': 'ElFormItem',
+        'x-component': 'Switch'
       }
     }
   }
@@ -90,38 +147,10 @@ export class Table {
     }
   }
 
-  constructor(node) {
-    this.icon = node.icon
-    this.name = node.name
-    this.tip = node.name
-    const attr = (this.attr = node.attr) || {}
-
-    if (attr.formSchema) this.formSchema = attr.formSchema
-    if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-  }
-
   /**
    * 获取额外添加到节点上的属性
    */
   getExtraAttr() {
     return {}
-  }
-
-  execute() {
-    // 节点功能实现
-  }
-
-  /**
-   * 验证此允许连接到目标
-   */
-  allowTarget() {
-    return true
-  }
-
-  /**
-   * 验证接受源连接
-   */
-  allowSource() {
-    return true
   }
 }

@@ -636,6 +636,12 @@ const router = new Router({
       meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
     },
     {
+      path: '/dataflow/node/add',
+      name: 'DataflowNodeAdd',
+      component: () => import('@/views/dataflow/AddNode'),
+      meta: { code: 'Data_SYNC', title: '新增节点' }
+    },
+    {
       path: '/createTask/create',
       name: 'createTask',
       component: () => import('@/views/createTask/createTask')

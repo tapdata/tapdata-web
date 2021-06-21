@@ -786,7 +786,6 @@ export default {
       // editor = vueAdapter.editor;
     },
     getData() {
-      debugger
       if (this.model.isFilter)
         if (this.model.custSql.filterType === 'field')
           this.model.sql = this.model.custSql.cSql

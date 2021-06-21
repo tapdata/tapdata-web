@@ -798,8 +798,7 @@ export default {
       let result = await dataFlowsApi.draft(data)
 
       this.isSaving = false
-
-      console.log('save', result)
+      this.$message.success(this.$t('message.saveOK'))
     },
 
     async saveAsNewDataflow() {

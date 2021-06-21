@@ -22,7 +22,6 @@
       <div class="attr-panel-body overflow-auto">
         <ElForm class="flex flex-column" label-position="top">
           <FormProvider :form="form">
-            <!--<SchemaField :schema="schema"> sss </SchemaField>-->
             <SchemaField
               :schema="schema"
               :scope="{
@@ -59,6 +58,7 @@ import { FormProvider, FormConsumer, createSchemaField } from '@formily/vue'
 import { components } from '@/components/form'
 import factory from '@/api/factory'
 import VIcon from '@/components/VIcon'
+import '@/components/form/styles/index.scss'
 
 const { SchemaField } = createSchemaField({
   components
@@ -285,14 +285,18 @@ export default {
       }
     },
 
-    async loadDatabase(field) {
-      let databaseType = field.form.values.databaseType
+    async loadDatabase(field, databaseType = field.form.values.databaseType) {
+      // let databaseType = databaseType ? field.form.values.databaseType || ''
       try {
         let result = await connections.get({
           filter: JSON.stringify({
             where: {
               database_type: databaseType
-                ? { in: [databaseType] }
+                ? {
+                    in: Array.isArray(databaseType)
+                      ? databaseType
+                      : [databaseType]
+                  }
                 : {
                     nin: [
                       'file',

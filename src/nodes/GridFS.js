@@ -1,17 +1,9 @@
-export class Database {
+import { NodeType } from '@/nodes/extends/NodeType'
+
+export class GridFS extends NodeType {
   constructor(node) {
-    this.icon = node.icon
-    this.name = node.name
-    this.tip = node.name
-
-    if (node.attr) {
-      const attr = Object.assign(this.attr, node.attr)
-      if (attr.formSchema) this.formSchema = attr.formSchema
-      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-    }
+    super(node)
   }
-
-  attr = {}
 
   group = 'data'
 
@@ -23,7 +15,8 @@ export class Database {
         type: 'void',
         'x-decorator': 'ElFormItem',
         'x-decorator-props': {
-          asterisk: true
+          asterisk: true,
+          feedbackLayout: 'none'
         },
         'x-component': 'Row',
         'x-component-props': {
@@ -45,16 +38,6 @@ export class Database {
           connectionBtn: {
             type: 'void',
             'x-component': 'AddDatabaseBtn'
-          }
-        }
-      },
-      name: {
-        type: 'string',
-        'x-display': 'hidden',
-        'x-reactions': {
-          dependencies: ['connectionId'],
-          fulfill: {
-            run: '{{$self.value = $form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.name}}'
           }
         }
       },
@@ -111,32 +94,5 @@ export class Database {
         ]
       }
     }
-  }
-
-  /**
-   * 获取额外添加到节点上的属性
-   */
-  getExtraAttr() {
-    return {
-      databaseType: this.attr.databaseType
-    }
-  }
-
-  execute() {
-    // 节点功能实现
-  }
-
-  /**
-   * 验证此允许连接到目标
-   */
-  allowTarget() {
-    return true
-  }
-
-  /**
-   * 验证接受源连接
-   */
-  allowSource() {
-    return true
   }
 }

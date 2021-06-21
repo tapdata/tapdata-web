@@ -26,9 +26,12 @@ import { Row } from './Row'
 import { Col } from './Col'
 import { AddDatabaseBtn } from './AddDatabaseBtn'
 import { DatabaseInfo } from './DatabaseInfo'
+import { Switch } from './Switch'
 import { FormLabel } from './FormLabel'
 import { Transfer } from './Transfer'
 import { SyncObjects } from './SyncObjects'
+import { InputNumber } from './InputNumber'
+import { Space } from './Space'
 
 export const components = {
   Checkbox,
@@ -48,5 +51,8 @@ export const components = {
   DatabaseInfo,
   FormLabel,
   Transfer,
-  SyncObjects
+  Switch,
+  SyncObjects,
+  InputNumber,
+  Space
 }

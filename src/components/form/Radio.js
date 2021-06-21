@@ -43,7 +43,8 @@ const RadioGroupOption = {
         props: {
           value: props.value || [],
           props
-        }
+        },
+        on: this.$listeners
       },
       children
     )
