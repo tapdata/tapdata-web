@@ -135,6 +135,12 @@
             </el-transfer>
             <!-- MQ穿梭框 start -->
             <template v-else>
+              <MqTransfer
+                v-model="mqActiveData"
+                :source="sourceData"
+                :table_prefix="model.table_prefix"
+                :table_suffix="model.table_suffix"
+              ></MqTransfer>
               <!-- <el-transfer
                 filterable
                 class="topic-transfer"
@@ -156,7 +162,7 @@
                   >
                 </span>
               </el-transfer> -->
-              <el-tabs v-model="seletecTab" type="border-card">
+              <!-- <el-tabs v-model="seletecTab" type="border-card">
                 <el-tab-pane label="topic" name="topic">Topic</el-tab-pane>
                 <el-tab-pane label="queue" name="queue">Queue</el-tab-pane>
               </el-tabs>
@@ -180,7 +186,7 @@
                     >{{ option.label }}</span
                   >
                 </span>
-              </el-transfer>
+              </el-transfer> -->
             </template>
           </div>
         </div>
@@ -260,12 +266,13 @@
 import _ from 'lodash'
 import log from '../../../log'
 import factory from '../../../api/factory'
+import MqTransfer from './mqTransfer'
 let connections = factory('connections')
 let editorMonitor = null
 let selectKeepArr = []
 export default {
   name: 'databaseLink',
-
+  components: { MqTransfer },
   data() {
     return {
       mysqlDisable: false,
@@ -280,16 +287,11 @@ export default {
 
       configJoinTable: false,
       sourceData: [],
-      seletecTab: 'topic',
-      mq: {
-        topic: {
-          list: [],
-          value: []
-        },
-        queue: {
-          list: [],
-          value: []
-        }
+      mqActiveData: {
+        topicData: [],
+        queueData: [],
+        table_prefix: '',
+        table_suffix: ''
       },
       targetDatabaseType: '',
       model: {
@@ -316,13 +318,18 @@ export default {
       titles: [
         this.$t('editor.cell.link.migrationObjece'),
         this.$t('editor.cell.link.chosen')
-      ],
-      topicTitles: [this.$t('editor.cell.link.migrationObjece'), 'Topic'],
-      queueTitles: [this.$t('editor.cell.link.migrationObjece'), 'Queue']
+      ]
     }
   },
 
   watch: {
+    mqActiveData: {
+      deep: true,
+      handler() {
+        this.model.topicData = this.mqActiveData.topicData
+        this.model.queueData = this.mqActiveData.queueData
+      }
+    },
     model: {
       deep: true,
       handler() {
@@ -371,11 +378,12 @@ export default {
             targetFormData.mqType === '0'
           ) {
             this.transferFlag = true
+            this.mqActiveData.topicData = data.topicData
+            this.mqActiveData.queueData = data.queueData
           }
-          debugger
-
           this.model.table_prefix = targetFormData.table_prefix
           this.model.table_suffix = targetFormData.table_suffix
+
           if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
             targetFormData.syncObjects.forEach(item => {
               selectTargetType.push(item.type)
@@ -403,7 +411,7 @@ export default {
 
     getData() {
       let result = JSON.parse(JSON.stringify(this.model))
-
+      console.log(this.model)
       let includeTables = []
       for (let i = 0; i < this.sourceData.length; i++) {
         for (let j = 0; j < this.model.selectSourceArr.length; j++) {
@@ -412,7 +420,6 @@ export default {
           }
         }
       }
-
       if (this.cell) {
         let targetCell = this.cell.getTargetCell()
         if (targetCell && targetCell.getFormData()) {
@@ -434,10 +441,16 @@ export default {
                 }
               })
             }
+            if (
+              targetFormData.database_type === 'mq' &&
+              targetFormData.mqType === '0'
+            ) {
+              result.topicData = this.mqActiveData.topicData
+              result.queueData = this.mqActiveData.queueData
+            }
           }
         }
       }
-      console.log(result)
 
       return result
     },
@@ -479,25 +492,6 @@ export default {
       })
       this.preFixSuffixData()
     },
-    handleLeftTable(data) {
-      this.topicSelected = data
-      console.log(this.sourceData)
-      debugger
-    },
-    handleChangeTopic() {},
-    // handleChangeQueueData(val) {
-    //   this.mq[this.selectedTab].list.forEach(el => {
-    //     if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
-    //       el.label = el.key
-    //     }
-    //   })
-    //   this.preFixSuffixData()
-    //   let anotherName = this.selectedTab === 'topic' ? 'queue' : 'topic'
-    // },
-    // handleSelectTopic() {},
-    // handleSelectQueue(data) {
-    //   selectKeepArr = data
-    // },
 
     // 穿梭框搜索
     filterMethod(query, item) {
@@ -551,12 +545,16 @@ export default {
           }
         }
       }
+      this.mqActiveData.table_prefix = this.model.table_prefix
+      this.mqActiveData.table_suffix = this.model.table_suffix
     },
 
     // 还原
     handleReduction() {
       this.model.table_suffix = ''
       this.model.table_prefix = ''
+      this.mqActiveData.table_prefix = ''
+      this.mqActiveData.table_suffix = ''
       if (this.sourceData.length) {
         for (let i = 0; i < this.sourceData.length; i++) {
           // for (let j = 0; j < selectKeepArr.length; j++) {
@@ -603,33 +601,7 @@ export default {
                 // value: table.table_name,
                 disabled: this.disabled
               }))
-              if (self.sourceData.length) {
-                self.mq.topic.list = []
-                self.mq.queue.list = []
-                this.preFixSuffixData()
-
-                self.sourceData.forEach(item => {
-                  if (
-                    self.mq.queue.value.length &&
-                    !self.mq.queue.value.includes(item.key)
-                  ) {
-                    self.mq.topic.list.push(item)
-                  } else {
-                    self.mq.topic.list = self.sourceData
-                  }
-
-                  if (
-                    self.mq.topic.value.length &&
-                    !self.mq.topic.value.includes(item.key)
-                  ) {
-                    self.mq.queue.list.push(item)
-                  } else {
-                    self.mq.queue.list = self.sourceData
-                  }
-                })
-              }
             }
-            debugger
             self.$forceUpdate()
           }
         })

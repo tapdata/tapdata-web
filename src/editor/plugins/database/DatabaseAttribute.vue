@@ -446,7 +446,6 @@ export default {
 
     getData() {
       let result = _.cloneDeep(this.model)
-      debugger
       if (result.connectionId) {
         let database = this.databaseSelectConfig.options || []
         database = database.filter(db => db.id === result.connectionId)
