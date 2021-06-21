@@ -25,7 +25,7 @@
             clearable
             size="small"
             :placeholder="$t('dataVerification.verifyType')"
-            @input="table.fetch(1)"
+            @input="inspectMethodChange"
           >
             <ElOption
               :label="$t('dataVerification.rowVerify')"
@@ -367,6 +367,12 @@ export default {
     clearInterval(timeout)
   },
   methods: {
+    inspectMethodChange(val) {
+      if (!val) {
+        this.searchParams.result = ''
+      }
+      this.table.fetch(1)
+    },
     // 批量导入
     handleImport() {
       let routeUrl = this.$router.resolve({
