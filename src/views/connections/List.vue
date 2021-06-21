@@ -343,15 +343,17 @@ export default {
         'mariadb',
         'mysql pxc',
         'jira',
-        'mq',
-        'dameng'
-        // 'gbase-8s',
-        // 'sybase ase',
-        // 'gaussdb200',
-        // 'dummy db',
-        // 'rest api',
-        // 'custom_connection',
-        // 'gridfs'
+        'dameng',
+        'hive',
+        'gbase-8s',
+        'sybase ase',
+        'gaussdb200',
+        'dummy db',
+        'rest api',
+        'custom_connection',
+        'gridfs',
+        'tcp_udp',
+        'mq'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -413,6 +415,21 @@ export default {
     clearInterval(timeout)
   },
   methods: {
+    // 存在测试中，重新加载数据
+    reloadDataOnTesting(data) {
+      let flag = false
+      data.forEach(el => {
+        if (el.status === 'testing') {
+          flag = true
+        }
+      })
+      flag &&
+        setTimeout(() => {
+          this.table.fetch(null, 0, true, value => {
+            this.reloadDataOnTesting(value)
+          })
+        }, 3000)
+    },
     //兼容新手引导
     handleGuide() {
       let item = {
@@ -483,7 +500,10 @@ export default {
         mqQueueSet: true,
         mqTopicSet: true,
         routeKeyField: true,
-        virtualHost: true // mq end
+        virtualHost: true, // mq end
+        sslCA: true, //MongoDB
+        tcpUdpType: true, // TCP
+        root_name: true
       }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
@@ -522,6 +542,10 @@ export default {
         })
       ]).then(([countRes, res]) => {
         let list = res.data
+        // dfs添加检测方法：测试中
+        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+          this.reloadDataOnTesting(list)
+        }
         return {
           total: countRes.data.count,
           data: list.map(item => {

@@ -67,7 +67,7 @@ axios.interceptors.response.use(
       let index = pending.findIndex(it => it === key)
       pending.splice(index, 1)
       let data = response.data
-      if (data || data.code === 'ok') {
+      if (data.code === 'ok') {
         return resolve({
           data: data.data || data || {},
           response: response

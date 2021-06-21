@@ -814,10 +814,13 @@ const cn = {
         acyclic: '数据处理流程不能有循环'
       },
       data_node: {
+        hiveText: 'hive节点',
         kafkaText: 'kafka节点',
         kafkaName_isNull: 'kafka不能为空',
         mqTableType: '新建表类型',
         mqTableTypeTip: '请选择表类型topic或者queue',
+        tcpTip:
+          '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
         database: {
           name: '数据库',
           tip: '任意类型数据库',
@@ -951,6 +954,7 @@ const cn = {
             },
             table: {
               label: '表',
+              labelTips: '（如为空则创建新表）',
               placeholder: '请选择表,区分大小写'
             },
             custom_sql: {
@@ -1651,6 +1655,7 @@ const cn = {
       port: '端口',
       databaseName: '数据库名称',
       databaseSchema: '数据库模式',
+      rootName: '根节点名称',
       userName: '账号',
       password: '密码',
       nodeName: '编目节点名称',
@@ -1891,6 +1896,10 @@ const cn = {
         virtualHost: '虚拟主机',
         queueSetTip: '多个队列用逗号隔开',
         topicSetTip: '多个主题用逗号隔开'
+      },
+      tcp: {
+        agreementType: '协议类型',
+        targetAddr: '目标地址'
       }
     },
     error: {

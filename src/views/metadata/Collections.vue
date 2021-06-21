@@ -182,7 +182,8 @@ export default {
           }
           params.qualified_name = params.source.database_uri + '_' + params.name
           params.qualified_name = params.qualified_name
-            .split(/\/|\.|@|&|:|\?|%|=/)
+            // eslint-disable-next-line
+            .split(/\/|\.|@|\&|:|\?|%|=/)
             .join('_')
           this.$api('MetadataInstances')
             .post(params)

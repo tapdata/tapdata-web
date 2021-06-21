@@ -9,44 +9,22 @@
       @sort-change="handleSortTable"
     >
       <div slot="search">
-        <ul class="search-bar">
+        <ul class="search-bar flex">
           <li>
             <el-input
               clearable
               class="input-with-select"
-              size="mini"
+              size="small"
               v-model="searchParams.keyword"
               :placeholder="$t('dictionary.name')"
               @input="table.fetch(1, 800)"
             >
-              <el-select
-                style="width: 120px"
-                slot="prepend"
-                v-model="searchParams.isFuzzy"
-                @input="table.fetch(1)"
-              >
-                <el-option
-                  :label="$t('connection.fuzzyQuery')"
-                  :value="true"
-                ></el-option>
-                <el-option
-                  :label="$t('connection.PreciseQuery')"
-                  :value="false"
-                ></el-option>
-              </el-select>
             </el-input>
           </li>
-
-          <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset()">{{
-              $t('button.query')
-            }}</el-button>
-          </li>
-
-          <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset('reset')">{{
-              $t('button.reset')
-            }}</el-button>
+          <li>
+            <ElButton class="btn-refresh" size="small" @click="table.fetch()">
+              <i class="el-icon-refresh"></i>
+            </ElButton>
           </li>
         </ul>
       </div>
@@ -153,8 +131,7 @@ export default {
   data() {
     return {
       searchParams: {
-        keyword: '',
-        isFuzzy: true
+        keyword: ''
       },
       order: 'ping_time DESC',
       list: null,
@@ -193,14 +170,11 @@ export default {
     getData({ page }) {
       let _this = this
       let { current, size } = page
-      let { isFuzzy, keyword } = this.searchParams
+      let { keyword } = this.searchParams
       let where = {}
       _this.classificationArr = []
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy
-          ? { like: toRegExp(keyword), options: 'i' }
-          : keyword
-        where.or = [{ name: filterObj }]
+        where.or = [{ task_name: { like: toRegExp(keyword), options: 'i' } }]
       }
       let filter = {
         order: _this.order,
@@ -286,12 +260,19 @@ export default {
       }
     }
   }
-  .process-list {
+  .dataRule-list {
     background-color: rgba(239, 241, 244, 100);
     .search-bar {
       display: flex;
       li + li {
         margin-left: 10px;
+      }
+      .btn-refresh {
+        padding: 0;
+        height: 32px;
+        line-height: 32px;
+        width: 32px;
+        font-size: 16px;
       }
     }
     .btn + .btn {
@@ -319,7 +300,6 @@ export default {
     .table-page-body {
       box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
       .table-page-topbar {
-        padding: 10px 10px 0 10px;
         background-color: #fff;
       }
       .el-table {
@@ -331,11 +311,6 @@ export default {
         background-color: #fff;
         box-sizing: border-box;
       }
-    }
-  }
-  .el-dialog__wrapper {
-    // overflow: hidden;
-    .el-dialog__body {
     }
   }
 }
