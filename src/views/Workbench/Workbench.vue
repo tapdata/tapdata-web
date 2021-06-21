@@ -52,7 +52,7 @@
 			<el-row :gutter="40" class="section-body">
 				<el-col :span="18">
 					<ul class="agent-list__list flex-grow-1 flex justify-around">
-						<li v-for="(item, index) in agentList" :key="index" class="agent-list__item p-6">
+						<li v-for="(item, index) in agentList" :key="index" class="agent-list__item p-6" :ref="item.key">
 							<div class="agent-list__name flex align-center justify-center mx-auto mb-3">
 								<VIcon size="12" class="icon" color="#888">{{ item.icon }}</VIcon>
 								<span class="ml-1 fs-7">{{ item.name }}</span>
@@ -136,6 +136,7 @@ export default {
 			agentList: [
 				{
 					name: 'Agent',
+					key: 'agent',
 					icon: 'agent',
 					value: 1,
 					list: [
@@ -147,6 +148,7 @@ export default {
 				},
 				{
 					name: '连接',
+					key: 'connection',
 					icon: 'connection',
 					value: 0,
 					list: [
@@ -162,6 +164,7 @@ export default {
 				},
 				{
 					name: '任务',
+					key: 'task',
 					icon: 'task',
 					value: 0,
 					list: [
@@ -238,34 +241,54 @@ export default {
 			let agentList = this.agentList
 			let filter = {
 				where: {},
-				size: 1,
+				size: 10,
 				page: 0,
 				sort: ['createAt desc']
 			}
-			this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-				agentList[0].list[0].value = data?.items?.[0]?.status === 'Running' ? '运行中' : '离线'
+			const loading = this.$loading({
+				target: this.$refs.agent?.[0]
 			})
+			this.$axios
+				.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
+				.then(data => {
+					agentList[0].list[0].value = data?.items?.[0]?.status === 'Running' ? '运行中' : '离线'
+				})
+				.finally(() => {
+					loading.close()
+				})
 		},
 		loadConnection() {
 			let agentList = this.agentList
-			this.$axios.get('tm/api/DataFlows/chart').then(data => {
-				// 连接
-				const chart8 = data.chart8
-				if (chart8) {
-					agentList[1].value = chart8.total
-					agentList[1].list[0].value = chart8.invalid
-					agentList[1].list[1].value = chart8.ready
-				}
-
-				// 任务
-				const chart9 = data.chart9
-				if (chart9) {
-					agentList[2].value = chart9.total
-					agentList[2].list[0].value = chart9.initial_sync
-					agentList[2].list[1].value = chart9.cdc
-					agentList[2].list[1].value = chart9['initial_sync+cdc']
-				}
+			const connectionLoading = this.$loading({
+				target: this.$refs.connection?.[0]
 			})
+			const taskLoading = this.$loading({
+				target: this.$refs.task?.[0]
+			})
+			this.$axios
+				.get('tm/api/DataFlows/chart')
+				.then(data => {
+					// 连接
+					const chart8 = data.chart8
+					if (chart8) {
+						agentList[1].value = chart8.total
+						agentList[1].list[0].value = chart8.invalid
+						agentList[1].list[1].value = chart8.ready
+					}
+
+					// 任务
+					const chart9 = data.chart9
+					if (chart9) {
+						agentList[2].value = chart9.total
+						agentList[2].list[0].value = chart9.initial_sync
+						agentList[2].list[1].value = chart9.cdc
+						agentList[2].list[1].value = chart9['initial_sync+cdc']
+					}
+				})
+				.finally(() => {
+					connectionLoading.close()
+					taskLoading.close()
+				})
 		},
 		loadNotices() {
 			this.notices = [
