@@ -554,6 +554,10 @@ export default {
             } else {
               item.connectionUrl = item.database_uri || item.connection_name
             }
+            // 不存在uri 和 port === 0
+            if (!item.database_uri && !item.database_port) {
+              item.connectionUrl = ''
+            }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = this.$moment(item.last_updated).format(
               'YYYY-MM-DD HH:mm:ss'
