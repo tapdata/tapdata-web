@@ -2,11 +2,5 @@
   "packages": ["packages/*"],
   "version": "independent",
   "npmClient": "yarn",
-  "useWorkspaces": true,
-  "command": {
-    "publish": {
-      "registry": "https://tapdata-npm.pkg.coding.net/tapdata/npm/",
-      "verifyAccess": false
-    }
-  }
+  "useWorkspaces": true
 }
