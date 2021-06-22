@@ -1,6 +1,6 @@
 {
   "name": "tapdata-web-core",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
   "keywords": [],
   "author": "Payne <payne@tapdata.io>",
@@ -20,5 +20,5 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "gitHead": "be8b96249ae77eaef639efe698ad3e505c372020"
+  "gitHead": "d8ec6ce98c6eda1d2149683c37b59c99b6447940"
 }
