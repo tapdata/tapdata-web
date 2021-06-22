@@ -798,8 +798,13 @@ export default {
     async testConnection(item) {
       let result = await this.$api('Workers').getAvailableAgent()
       if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-        return
+        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+          this.$message.error(this.$t('dataForm.form.agentConnectionMsg'))
+          return
+        } else {
+          this.$message.error(this.$t('dataForm.form.agentMsg'))
+          return
+        }
       }
       let loading = this.$loading()
       this.testData = Object.assign({}, defaultModel['default'], item)

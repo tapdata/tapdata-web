@@ -1728,6 +1728,8 @@ const en = {
       indexPrefix: 'Index prefix',
       agentMsg:
         'Agent current state exception cannot create connection, please check.',
+      agentConnectionMsg:
+        'Agent current state is abnormal, cannot to test connection, please check.',
       multiTenant: 'Multi-tenant',
       uriTips: {
         label: 'Example',

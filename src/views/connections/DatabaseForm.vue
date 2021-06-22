@@ -1784,7 +1784,11 @@ export default {
     async startTest() {
       let result = await this.$api('Workers').getAvailableAgent()
       if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
+        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+          this.$message.error(this.$t('dataForm.form.agentConnectionMsg'))
+        } else {
+          this.$message.error(this.$t('dataForm.form.agentMsg'))
+        }
       } else {
         this.$refs.form.validate(valid => {
           if (valid) {
