@@ -1194,7 +1194,11 @@ export default {
           editData = await this.$api('connections').get([this.$route.params.id])
         }
 
-        if (editData.data.database_type === 'mq') {
+        if (
+          editData.data.database_type === 'mq' &&
+          (typeof editData.data.mqQueueSet === 'object' ||
+            typeof editData.data.mqTopicSet === 'object')
+        ) {
           let mqQueueSet = editData.data.mqQueueSet.join(',')
           let mqTopicSet = editData.data.mqTopicSet.join(',')
           editData.data.mqQueueSet = mqQueueSet
@@ -1690,19 +1694,18 @@ export default {
       }
       let data = Object.assign({}, this.model)
       if (
-        this.model.database_type === 'mq' &&
-        (typeof this.model.mqQueueSet === 'string' ||
-          typeof this.model.mqTopicSet === 'string')
+        data.database_type === 'mq' &&
+        (typeof data.mqQueueSet === 'string' ||
+          typeof data.mqTopicSet === 'string')
       ) {
-        data.mqQueueSet = this.model.mqQueueSet.split(',')
-        data.mqTopicSet = this.model.mqTopicSet.split(',')
+        data.mqQueueSet = data.mqQueueSet.split(',')
+        data.mqTopicSet = data.mqTopicSet.split(',')
       }
 
       // if (this.model.database_type === 'mysqlpxc') {
       // 	// this.model.search_databaseType = this.model.database_type;
       // 	this.model.database_type = 'mysql pxc';
       // }
-
       this.$refs.form.validate(valid => {
         if (valid && flag) {
           let params = Object.assign(
@@ -1717,7 +1720,7 @@ export default {
               project: '',
               submit: true
             },
-            this.model
+            data
           )
           params['sslCert'] = this.model.sslKey
           delete params.sslKeyFile
@@ -1807,7 +1810,11 @@ export default {
         this.$refs.form.validate(valid => {
           if (valid) {
             let data = Object.assign({}, this.model)
-            if (this.model.database_type === 'mq') {
+            if (
+              this.model.database_type === 'mq' &&
+              (typeof this.model.mqQueueSet === 'string' ||
+                typeof this.model.mqTopicSet === 'string')
+            ) {
               data.mqQueueSet = this.model.mqQueueSet.split(',')
               data.mqTopicSet = this.model.mqTopicSet.split(',')
             }

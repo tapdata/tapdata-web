@@ -225,15 +225,15 @@ export default {
       })
     },
     start(updateSchema, editTest) {
-      if (
-        this.formData.database_type === 'mq' &&
-        (typeof this.formData.mqQueueSet === 'string' ||
-          typeof this.formData.mqTopicSet === 'string')
-      ) {
-        this.formData.mqQueueSet = this.formData.mqQueueSet.split(',')
-        this.formData.mqTopicSet = this.formData.mqTopicSet.split(',')
-      }
       let data = Object.assign({}, this.formData)
+      if (
+        data.database_type === 'mq' &&
+        (typeof data.mqQueueSet === 'string' ||
+          typeof data.mqTopicSet === 'string')
+      ) {
+        data.mqQueueSet = data.mqQueueSet.split(',')
+        data.mqTopicSet = data.mqTopicSet.split(',')
+      }
       delete data.schema
       delete data.response_body
       let msg = {
