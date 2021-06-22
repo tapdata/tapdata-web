@@ -1199,8 +1199,12 @@ export default {
           (typeof editData.data.mqQueueSet === 'object' ||
             typeof editData.data.mqTopicSet === 'object')
         ) {
-          let mqQueueSet = editData.data.mqQueueSet.join(',')
-          let mqTopicSet = editData.data.mqTopicSet.join(',')
+          let mqQueueSet = editData.data.mqQueueSet.length
+            ? editData.data.mqQueueSet.join(',')
+            : ''
+          let mqTopicSet = editData.data.mqTopicSet.length
+            ? editData.data.mqTopicSet.join(',')
+            : ''
           editData.data.mqQueueSet = mqQueueSet
           editData.data.mqTopicSet = mqTopicSet
         }
@@ -1698,8 +1702,8 @@ export default {
         (typeof data.mqQueueSet === 'string' ||
           typeof data.mqTopicSet === 'string')
       ) {
-        data.mqQueueSet = data.mqQueueSet.split(',')
-        data.mqTopicSet = data.mqTopicSet.split(',')
+        data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
+        data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
       }
 
       // if (this.model.database_type === 'mysqlpxc') {
