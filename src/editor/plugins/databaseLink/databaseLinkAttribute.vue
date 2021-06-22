@@ -312,8 +312,6 @@ export default {
           procedure: false
         }
       },
-
-
       topicSelected: [],
 
       titles: [
@@ -594,8 +592,30 @@ export default {
         .customQuery([connectionId], { schema: true })
         .then(result => {
           if (result.data) {
+            let tables = []
+            // 数据库为mq
+            if (result.data.database_type === 'mq') {
+              this.model.mqType = result.data.mqType
+
+              let tableData = []
+              if (result.data.mqType === '0') {
+                let data = [
+                  ...result.data.mqQueueSet,
+                  ...result.data.mqTopicSet
+                ]
+                tableData = [...new Set(data)]
+              } else if (result.data.mqType === '1') {
+                tableData = result.data.mqQueueSet
+              } else {
+                tableData = result.data.mqTopicSet
+              }
+              tables = tableData.map(item => {
+                return { table_name: item }
+              })
+            } else {
+              tables = (result.data.schema && result.data.schema.tables) || []
+            }
             self.databaseInfo = result.data
-            let tables = (result.data.schema && result.data.schema.tables) || []
             tables = tables.sort((t1, t2) =>
               t1.table_name > t2.table_name
                 ? 1
