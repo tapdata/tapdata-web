@@ -6,8 +6,7 @@
   "command": {
     "publish": {
       "registry": "https://tapdata-npm.pkg.coding.net/tapdata/npm/",
-      "verifyAccess": false,
-      "ignoreChanges": ["*.md"]
+      "verifyAccess": false
     }
   }
 }
