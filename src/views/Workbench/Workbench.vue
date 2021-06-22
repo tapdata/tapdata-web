@@ -282,7 +282,7 @@ export default {
 						agentList[2].value = chart9.total
 						agentList[2].list[0].value = chart9.initial_sync
 						agentList[2].list[1].value = chart9.cdc
-						agentList[2].list[1].value = chart9['initial_sync+cdc']
+						agentList[2].list[2].value = chart9['initial_sync+cdc']
 					}
 				})
 				.finally(() => {
