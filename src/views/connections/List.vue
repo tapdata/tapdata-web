@@ -567,9 +567,6 @@ export default {
             if (item.database_type === 'mq') {
               if (item.mqType === '0') {
                 item.connectionUrl = item.brokerURL
-              } else if (item.mqType === '1') {
-                item.connectionUrl +=
-                  item.database_host + ':' + item.database_port
               } else if (item.mqType === '2') {
                 item.connectionUrl = item.nameSrvAddr
               }
