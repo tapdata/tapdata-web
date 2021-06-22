@@ -107,31 +107,32 @@ export default {
   methods: {
     getData() {
       this.tableData = []
-      this.histories.histories.forEach(item => {
-        let version_description = item.version_description
-        let descriptionArr = version_description.split(';')
-        let localizeDescriptionArr = []
-        version_description = ''
-        descriptionArr.forEach(desc => {
-          if (desc) {
-            localizeDescriptionArr.push(
-              desc ? this.$t('metadata.details.' + desc) : ''
-            )
+      if (this.histories.histories)
+        this.histories.histories.forEach(item => {
+          let version_description = item.version_description
+          let descriptionArr = version_description.split(';')
+          let localizeDescriptionArr = []
+          version_description = ''
+          descriptionArr.forEach(desc => {
+            if (desc) {
+              localizeDescriptionArr.push(
+                desc ? this.$t('metadata.details.' + desc) : ''
+              )
+            }
+          })
+          if (localizeDescriptionArr && localizeDescriptionArr.length > 0) {
+            version_description = localizeDescriptionArr.join(', ')
           }
+          this.tableData.unshift({
+            id: this.histories.id,
+            version: item.version,
+            version_user_id: item.version_user_id,
+            version_user_name: item.version_user_name,
+            version_time: item.version_time,
+            version_description: version_description
+          })
+          this.currentVersion = this.histories.version
         })
-        if (localizeDescriptionArr && localizeDescriptionArr.length > 0) {
-          version_description = localizeDescriptionArr.join(', ')
-        }
-        this.tableData.unshift({
-          id: this.histories.id,
-          version: item.version,
-          version_user_id: item.version_user_id,
-          version_user_name: item.version_user_name,
-          version_time: item.version_time,
-          version_description: version_description
-        })
-        this.currentVersion = this.histories.version
-      })
     },
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${

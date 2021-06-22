@@ -944,14 +944,16 @@ export default {
         'mysql pxc',
         'jira',
         'mq',
-        'dameng'
-        // 'gbase-8s',
-        // 'sybase ase',
-        // 'gaussdb200',
-        // 'dummy db',
-        // 'rest api',
-        // 'custom_connection',
-        // 'gridfs'
+        'dameng',
+        'gbase-8s',
+        'sybase ase',
+        'gaussdb200',
+        'dummy db',
+        'rest api',
+        'custom_connection',
+        'gridfs',
+        'hive',
+        'tcp_udp'
       ],
       model: '',
       config: {
@@ -1053,6 +1055,9 @@ export default {
           defaultModel['default'],
           defaultModel['gridfs']
         )
+        break
+      case 'tcp_udp':
+        this.model = Object.assign({}, defaultModel['tcp'])
         break
     }
     this.getDT(this.databaseType)
@@ -1712,7 +1717,7 @@ export default {
               project: '',
               submit: true
             },
-            data
+            this.model
           )
           params['sslCert'] = this.model.sslKey
           delete params.sslKeyFile
@@ -1809,7 +1814,7 @@ export default {
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
               this.model['platformInfo'] = Object.assign(
                 this.model['platformInfo'],
-                this.handlePlatformInfo(data)
+                this.handlePlatformInfo(this.model)
               )
             }
             this.dialogTestVisible = true

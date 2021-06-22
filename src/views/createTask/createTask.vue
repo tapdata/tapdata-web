@@ -314,15 +314,6 @@ export default {
         this.dialogDatabaseTypeVisible = true
       }
     },
-    handleTaskEnd() {
-      let item = {
-        visible: true,
-        step: -1
-      }
-      window.parent &&
-        window.parent.noviceGuideChange &&
-        window.parent.noviceGuideChange(item)
-    },
     //初始化数据 编辑跳转
     intiData(id) {
       this.$api('DataFlows')
@@ -995,13 +986,9 @@ export default {
       this.loading = true
       promise
         .then(() => {
-          if (this.$route.query.step) {
-            this.handleTaskEnd()
-          } else {
-            this.$router.push({
-              path: '/dataFlows?mapping=cluster-clone'
-            })
-          }
+          this.$router.push({
+            path: '/dataFlows?mapping=cluster-clone'
+          })
         })
         .catch(e => {
           if (e.response.msg === 'duplication for names') {

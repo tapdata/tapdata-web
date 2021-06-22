@@ -1,23 +1,23 @@
 import { options } from '../../lib/rappid/config'
-import CustomAttribute from './CustomAttribute'
+import TcpAttribute from './TcpAttribute'
 import { FORM_DATA_KEY } from '../../constants'
 import i18n from '@/i18n'
 
-export const customNodeConfig = {
-  type: 'app.CustomNode',
+export const TcpNodeConfig = {
+  type: 'app.TcpNode',
   shape: {
     extends: 'app.BaseElement',
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-custom.svg'
+          xlinkHref: 'static/editor/o-tcp.svg'
         },
         label: {
-          text: i18n.t('editor.cell.data_node.custom.name')
+          text: 'TCP/IP'
         }
       },
       [FORM_DATA_KEY]: {
-        type: 'custom_connection',
+        type: 'tcp_udp',
         connectionId: ''
       }
     },
@@ -39,7 +39,7 @@ export const customNodeConfig = {
        * @return {boolean}
        */
       allowTarget() {
-        return true
+        return false
       },
 
       /**
@@ -47,22 +47,19 @@ export const customNodeConfig = {
        * @param sourceCell
        * @return {boolean}
        */
-      allowSource(sourceCell) {
-        return [
-          'app.Dummy',
-          'app.Collection',
-          'app.Table',
-          'app.HiveNode'
-        ].includes(sourceCell.get('type'))
+      allowSource() {
+        return true
       },
 
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data)
+        if (!data.connectionId)
           throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.custom.none_fileName')}`
+            `${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`
           )
+        // if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_pk')}`);
+
         return true
       }
     }
@@ -85,7 +82,11 @@ export const customNodeConfig = {
             unit: 'px',
             label: 'Font size',
             group: 'text',
-            when: { ne: { 'attrs/label/text': '' } },
+            when: {
+              ne: {
+                'attrs/label/text': ''
+              }
+            },
             index: 2
           },
           fontFamily: {
@@ -93,7 +94,11 @@ export const customNodeConfig = {
             options: options.fontFamily,
             label: 'Font family',
             group: 'text',
-            when: { ne: { 'attrs/label/text': '' } },
+            when: {
+              ne: {
+                'attrs/label/text': ''
+              }
+            },
             index: 3
           },
           fontWeight: {
@@ -101,7 +106,11 @@ export const customNodeConfig = {
             options: options.fontWeight,
             label: 'Font thickness',
             group: 'text',
-            when: { ne: { 'attrs/label/text': '' } },
+            when: {
+              ne: {
+                'attrs/label/text': ''
+              }
+            },
             index: 4
           },
           fill: {
@@ -109,7 +118,11 @@ export const customNodeConfig = {
             options: options.colorPalette,
             label: 'Fill',
             group: 'text',
-            when: { ne: { 'attrs/label/text': '' } },
+            when: {
+              ne: {
+                'attrs/label/text': ''
+              }
+            },
             index: 5
           }
         },
@@ -137,7 +150,11 @@ export const customNodeConfig = {
             unit: 'px',
             label: 'Outline thickness',
             group: 'presentation',
-            when: { ne: { 'attrs/body/stroke': 'transparent' } },
+            when: {
+              ne: {
+                'attrs/body/stroke': 'transparent'
+              }
+            },
             index: 3
           },
           strokeDasharray: {
@@ -147,8 +164,16 @@ export const customNodeConfig = {
             group: 'presentation',
             when: {
               and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
+                {
+                  ne: {
+                    'attrs/body/stroke': 'transparent'
+                  }
+                },
+                {
+                  ne: {
+                    'attrs/body/strokeWidth': 0
+                  }
+                }
               ]
             },
             index: 4
@@ -182,10 +207,13 @@ export const customNodeConfig = {
      */
     // groupLabel: '',
 
-    size: { width: 5, height: 3 },
+    size: {
+      width: 5,
+      height: 4
+    },
     attrs: {
       root: {
-        dataTooltip: i18n.t('editor.cell.data_node.custom.tip'),
+        dataTooltip: i18n.t('editor.cell.data_node.api.tip'),
         dataTooltipPosition: 'left',
         dataTooltipPositionSelector: '.joint-stencil'
       },
@@ -198,14 +226,14 @@ export const customNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/custom.svg',
+        xlinkHref: 'static/editor/tcp.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',
         refY: '0%'
       },
       label: {
-        text: i18n.t('editor.cell.data_node.custom.name'),
+        text: 'TCP/IP',
         textAnchor: 'middle',
         fill: '#666',
         fontFamily: 'Roboto Condensed',
@@ -214,7 +242,7 @@ export const customNodeConfig = {
         strokeWidth: 0,
         refX: '75%',
         refY: '40%',
-        x: -35,
+        x: -32,
         y: 27
       }
     }
@@ -225,6 +253,6 @@ export const customNodeConfig = {
    * @type {null}
    */
   settingFormConfig: {
-    component: CustomAttribute
+    component: TcpAttribute
   }
 }

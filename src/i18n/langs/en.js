@@ -837,10 +837,13 @@ const en = {
         acyclic: 'The graph cannot have cyclic'
       },
       data_node: {
+        hiveText: 'Hive Node',
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
         mqTableType: 'New table type',
         mqTableTypeTip: 'Please select the table type topic or queue',
+        tcpTip:
+          'Important: TCP/IP data sources output JSON packets by default without additional packet conversion processing nodes ',
         database: {
           name: 'Database',
           tip: 'Any Database',
@@ -974,6 +977,7 @@ const en = {
             },
             table: {
               label: 'Table',
+              labelTips: '（If it is empty, create a new table）',
               placeholder: 'Please select table,Case sensitive'
             },
             custom_sql: {
@@ -1699,6 +1703,7 @@ const en = {
       port: 'Port',
       databaseName: 'DB Name',
       databaseSchema: 'Database Schema',
+      rootName: 'Root name',
       userName: 'User Name',
       password: 'Password',
       nodeName: 'Catalog Node Name',
@@ -1956,6 +1961,10 @@ const en = {
         virtualHost: 'Virtual host',
         QueueSetTip: 'Multiple queues are separated by commas',
         TopicSetTip: 'Multiple topics separated by commas'
+      },
+      tcp: {
+        AgreementType: 'Protocol type ',
+        TargetAddr: 'Target address'
       }
     },
     error: {

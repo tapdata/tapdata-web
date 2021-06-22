@@ -159,7 +159,7 @@ export default {
       params[key] = pageParams
       this.$cache.set('TABLE_PAGE_PARAMS', params)
     },
-    fetch(pageNum, debounce = 0, hideLoading) {
+    fetch(pageNum, debounce = 0, hideLoading, callback) {
       this.page.current = pageNum || this.page.current
       this.$nextTick(() => {
         delayTrigger(() => {
@@ -191,6 +191,7 @@ export default {
               })
               .finally(() => {
                 this.loading = false
+                callback?.(this.getData())
               })
         }, debounce)
       })
@@ -205,6 +206,9 @@ export default {
     },
     showClassify(tagList) {
       this.$refs.classify.show(tagList)
+    },
+    getData() {
+      return this.list
     }
   }
 }

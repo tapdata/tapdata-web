@@ -19,6 +19,8 @@ import gridfs from './gridfs'
 import dummydb from './dummydb'
 import jira from './jira'
 import dameng from './dameng'
+import hive from './hive'
+import tcp_udp from './tcp_udp'
 import drs_mysql from './drs_mysql'
 import drs_mariadb from './drs_maria'
 import drs_oracle from './drs_oracle'
@@ -53,6 +55,7 @@ export default {
   mariadb,
   mysqlpxc,
   jira,
+  hive,
   drs_mysql,
   drs_mariadb,
   drs_oracle,
@@ -79,5 +82,6 @@ export default {
   custom_connection,
   gridfs,
   mq,
-  dameng
+  dameng,
+  tcp_udp
 }

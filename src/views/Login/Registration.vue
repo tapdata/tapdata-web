@@ -151,8 +151,8 @@ export default {
         // eslint-disable-next-line
       } else if (!form.inviteCode) {
         message = this.$t('app.signIn.inviteCode_require')
-        // eslint-disable-next-line
       } else if (
+        // eslint-disable-next-line
         !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
       ) {
         message = this.$t('app.signIn.email_invalid')

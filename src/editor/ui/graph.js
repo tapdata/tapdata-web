@@ -188,7 +188,7 @@ export default class Graph extends Component {
         // source don't allow connect to target
         if (
           typeof sourceView.model.allowTarget === 'function' &&
-          !sourceView.model.allowTarget(targetView.model)
+          !sourceView.model.allowTarget(targetView.model, sourceView.model)
         )
           return false
         try {
