@@ -622,6 +622,7 @@ const cn = {
     cdc_concurrency: '增量同步并发写入',
     read_batch_size: '每次读取数量',
     cdcDataProcess: '增量数据处理机制',
+    cdcShareFilterOnServer: '启用服务端过滤共享日志',
     batch: '批量',
     onebyone: '逐条',
     mission: '描述',
