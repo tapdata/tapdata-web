@@ -14,7 +14,6 @@ export default {
   render(h) {
     let self = this
     let config = self.config
-
     return h('ElInput', {
       attrs: {
         maxlength: config.maxlength,
