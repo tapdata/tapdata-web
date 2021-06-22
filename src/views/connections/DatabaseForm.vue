@@ -1567,7 +1567,9 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$router.push('/connections')
+        this.$router.push({
+          name: 'connections'
+        })
       })
     },
     handleName(ops) {
@@ -1740,9 +1742,16 @@ export default {
             .then(() => {
               this.$message.success(this.$t('message.saveOK'))
               if (this.$route.query.step) {
-                this.$router.push('/connections?step=' + this.$route.query.step)
+                this.$router.push({
+                  name: 'connections',
+                  query: {
+                    step: this.$route.query.step
+                  }
+                })
               } else {
-                this.$router.push('/connections')
+                this.$router.push({
+                  name: 'connections'
+                })
               }
             })
             .catch(err => {
@@ -1868,7 +1877,7 @@ export default {
       this.dialogDatabaseTypeVisible = false
       if (this.whiteList.includes(type)) {
         this.$router.push({
-          path: '/connections/create',
+          name: 'connectionsCreate',
           query: {
             databaseType: type
           }

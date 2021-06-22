@@ -137,7 +137,7 @@ export default {
     // 去登录
     goLogin() {
       this.$router.push({
-        path: '/login',
+        name: 'login',
         query: { email: this.email }
       })
     }

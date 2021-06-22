@@ -987,7 +987,10 @@ export default {
       promise
         .then(() => {
           this.$router.push({
-            path: '/dataFlows?mapping=cluster-clone'
+            name: 'dataFlows',
+            query: {
+              mapping: 'cluster-clone'
+            }
           })
         })
         .catch(e => {
@@ -1010,7 +1013,10 @@ export default {
           return
         }
         this.$router.push({
-          path: '/dataFlows?mapping=cluster-clone'
+          name: 'dataFlows',
+          query: {
+            mapping: 'cluster-clone'
+          }
         })
       })
     },
@@ -1020,7 +1026,12 @@ export default {
     },
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
-      this.$router.push('/connections/create?databaseType=' + type)
+      this.$router.push({
+        name: 'connectionsCreate',
+        query: {
+          databaseType: type
+        }
+      })
     }
   }
 }

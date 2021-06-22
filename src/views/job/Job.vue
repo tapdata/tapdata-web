@@ -487,7 +487,10 @@ export default {
           )
         } else {
           this.$router.push({
-            path: '/dataFlows?mapping=' + mapping
+            name: 'dataFlows',
+            query: {
+              mapping: mapping
+            }
           })
         }
       } else {
@@ -505,7 +508,10 @@ export default {
           }
           this.dataChangeFalg = false
           this.$router.push({
-            path: '/dataFlows?mapping=' + mapping
+            name: 'dataFlows',
+            query: {
+              mapping: mapping
+            }
           })
         })
       }
@@ -764,7 +770,7 @@ export default {
               self.dataFlow = dataFlow
               if (!self.$route.query || !self.$route.query.id) {
                 self.$router.push({
-                  path: '/job',
+                  name: 'job',
                   query: {
                     id: dataFlow.id,
                     mapping: this.mappingTemplate
@@ -1044,7 +1050,7 @@ export default {
                 .then(() => {
                   if (!self.$route.query || !self.$route.query.id) {
                     self.$router.push({
-                      path: '/job',
+                      name: 'job',
                       query: {
                         id: dataFlow.id,
                         mapping: this.mappingTemplate
@@ -1196,7 +1202,7 @@ export default {
             } else {
               this.$message.success(this.$t('message.taskStart'))
               this.$router.push({
-                path: '/job',
+                name: 'job',
                 query: {
                   id: rest.id,
                   isMoniting: true,
@@ -1473,13 +1479,16 @@ export default {
       this.editable = editable
       if (editable && window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
         this.$router.push({
-          path: '/createTask/' + this.dataFlow.id + '/edit'
+          name: 'editTask',
+          params: {
+            id: this.dataFlow.id
+          }
         })
         return
       }
       if (editable && this.$route.query.isMoniting) {
         this.$router.push({
-          path: '/job',
+          name: 'job',
           query: {
             id: this.dataFlow.id,
             mapping: this.mappingTemplate

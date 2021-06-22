@@ -86,7 +86,7 @@ export default {
 				<g joint-selector="layers" class="joint-layers" transform="matrix(1,0,0,1,1638,444)">
 				<g joint-selector="cells" class="joint-cells-layer joint-viewport">` +
         this.cellHtml +
-        `<!--z-index:3--><!--z-index:4--></g><g joint-selector="tools" class="joint-tools-layer"></g></g></svg></div>`
+        `</g><g joint-selector="tools" class="joint-tools-layer"></g></g></svg></div>`
     },
     nextStep() {
       if (this.isSetting) {

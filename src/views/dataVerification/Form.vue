@@ -1023,7 +1023,9 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$router.push('/dataVerification')
+        this.$router.push({
+          name: 'dataVerification'
+        })
       })
     },
     nextStep() {

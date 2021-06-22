@@ -442,7 +442,9 @@ export default {
       window.parent &&
         window.parent.noviceGuideChange &&
         window.parent.noviceGuideChange(item)
-      this.$router.push('/connections')
+      this.$router.push({
+        name: 'connections'
+      })
     },
     //筛选条件
     handleSortTable({ order, prop }) {
@@ -599,7 +601,15 @@ export default {
         if (item.search_databaseType) {
           type = item.search_databaseType
         }
-        this.$router.push('connections/' + id + '/edit?databaseType=' + type)
+        this.$router.push({
+          name: 'connectionsEdit',
+          params: {
+            id: id
+          },
+          query: {
+            databaseType: type
+          }
+        })
       } else {
         top.location.href = '/#/connection/' + id
         localStorage.setItem('connectionDatabaseType', type)
@@ -749,7 +759,12 @@ export default {
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
       if (this.whiteList.includes(type)) {
-        this.$router.push('connections/create?databaseType=' + type)
+        this.$router.push({
+          name: 'connectionsCreate',
+          query: {
+            databaseType: type
+          }
+        })
       } else {
         top.location.href = '/#/connection'
         localStorage.setItem('connectionDatabaseType', type)

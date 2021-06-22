@@ -513,7 +513,15 @@ export default {
           'mysql pxc'
         ].includes(type)
       ) {
-        this.$router.push('connections/' + id + '/edit?databaseType=' + type)
+        this.$router.push({
+          name: 'connectionsEdit',
+          params: {
+            id: id
+          },
+          query: {
+            databaseType: type
+          }
+        })
       } else {
         top.location.href = '/#/connection/' + id
         localStorage.setItem('connectionDatabaseType', type)

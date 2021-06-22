@@ -1109,7 +1109,7 @@ export default {
     },
     create() {
       let routeUrl = this.$router.resolve({
-        path: '/job',
+        name: 'job',
         query: { mapping: this.mappingTemplate }
       })
       window.open(routeUrl.href, '_blank')
@@ -1118,7 +1118,7 @@ export default {
     },
     async creatText() {
       this.$router.push({
-        path: '/createTask/create'
+        name: 'createTask'
       })
     },
     handleDetail(id, type, mappingTemplate, hasChildren) {
@@ -1166,12 +1166,15 @@ export default {
           }
           if (window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
             this.$router.push({
-              path: '/createTask/' + id + '/edit'
+              name: 'editTask',
+              params: {
+                id: id
+              }
             })
             return
           }
           let routeUrl = this.$router.resolve({
-            path: '/job',
+            name: 'job',
             query: { id: id, mapping: mappingTemplate }
           })
           setTimeout(() => {
@@ -1193,7 +1196,7 @@ export default {
           )
         } else {
           let routeUrl = this.$router.resolve({
-            path: '/job',
+            name: 'job',
             query: { id: id, isMoniting: true, mapping: mappingTemplate }
           })
           window.open(routeUrl.href, 'monitor_' + id)

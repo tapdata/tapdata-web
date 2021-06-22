@@ -215,11 +215,13 @@ export default {
       this.changeInspectResult(row.id, row.inspect_id)
     },
     GoBack() {
-      this.$router.push('/dataVerification')
+      this.$router.push({
+        name: 'dataVerification'
+      })
     },
     changeInspectResult(id, inspect_id) {
       this.$router.push({
-        path: '/dataVerifyResult',
+        name: 'dataVerifyResult',
         query: {
           id: id,
           inspectId: inspect_id

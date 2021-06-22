@@ -264,7 +264,12 @@ export default {
       return text
     },
     goMetaInfo(id) {
-      this.$router.push('/metadataDetails?id=' + id)
+      this.$router.push({
+        name: 'metadataDetails',
+        query: {
+          id: id
+        }
+      })
     }
   }
 }

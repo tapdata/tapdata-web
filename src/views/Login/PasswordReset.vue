@@ -133,7 +133,7 @@ export default {
     // 跳转登录
     backLogin() {
       this.$router.push({
-        path: '/login',
+        name: 'login',
         query: { email: this.form.email }
       })
     }

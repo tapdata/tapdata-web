@@ -596,16 +596,6 @@ const childRoutes = [
       isCollapse: true,
       types: ['table', 'view', 'collection', 'mongo_view']
     }
-  },
-  {
-    path: '/metadataDetails',
-    name: 'metadataDetails',
-    component: () => import('@/views/metadata/Info'),
-    meta: {
-      code: 'data_catalog_menu',
-      title: i18n.t('tap.dataCatalog'),
-      isCollapse: true
-    }
   }
 ]
 

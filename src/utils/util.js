@@ -25,7 +25,9 @@ export function signOut() {
   cookie.delete('email')
   cookie.delete('username')
   cookie.delete('isReadonly')
-  window.App.$router.push('/login')
+  window.App.$router.push({
+    name: 'login'
+  })
   if (window !== top) {
     top.window.location.href = '/login'
   }

@@ -146,7 +146,7 @@ export default {
     },
     db2db() {
       let routeUrl = this.$router.resolve({
-        path: '/job',
+        name: 'job',
         query: { isSimple: true, mapping: 'cluster-clone' }
       })
       window.open(routeUrl.href, '_blank')
@@ -154,7 +154,7 @@ export default {
     },
     goNew() {
       let routeUrl = this.$router.resolve({
-        path: '/job',
+        name: 'job',
         query: { mapping: 'cluster-clone' }
       })
       window.open(routeUrl.href, '_blank')
@@ -162,7 +162,7 @@ export default {
     },
     goNewCust() {
       let routeUrl = this.$router.resolve({
-        path: '/job',
+        name: 'job',
         query: { mapping: 'custom' }
       })
       window.open(routeUrl.href, '_blank')
@@ -204,7 +204,12 @@ export default {
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
       if (this.whiteList.includes(type)) {
-        this.$router.push('connections/create?databaseType=' + type)
+        this.$router.push({
+          name: 'connectionsCreate',
+          query: {
+            databaseType: type
+          }
+        })
       } else {
         top.location.href = '/#/connection'
         localStorage.setItem('connectionDatabaseType', type)
