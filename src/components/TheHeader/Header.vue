@@ -186,28 +186,6 @@ export default {
 					if (key) {
 						this.$refs.noviceGuide?.nextFnc?.(key)
 					}
-					// this.btnLoading = true
-					// this.axios
-					// 	.get('api/tcm/agent/agentCount')
-					// 	.then(data => {
-					// 		if (data.agentTotalCount && data.agentTotalCount > 0) {
-					// 			this.guideVisible = true // 显示指引窗
-					// 		} else {
-					// 			window.App.$confirm(
-					// 				'创建任务/数据源要先订购同步实例，同步任务的服务进程环境要在实例中运行，实例的链路与性能影响同步任务的运行效率。',
-					// 				'您尚未订购同步实例，请先订购实例',
-					// 				{
-					// 					type: 'warning',
-					// 					confirmButtonText: '订购实例'
-					// 				}
-					// 			).then(() => {
-					// 				this.$router.push('/instance')
-					// 			})
-					// 		}
-					// 	})
-					// 	.finally(() => {
-					// 		this.btnLoading = false
-					// 	})
 					break
 				case 'toCommunity':
 					window.open('https://ask.tapdata.net/', '_blank')

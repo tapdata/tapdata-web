@@ -294,7 +294,13 @@ export default {
 						this.$message.error('Agent当前状态异常无法创建连接，请检查')
 					} else {
 						this.show = false
-						this.$router.push('/connection/create?step=' + this.step + '&databaseType=' + databaseType)
+						this.$router.push({
+							name: 'ConnectionCreate',
+							query: {
+								step: this.step,
+								databaseType: databaseType
+							}
+						})
 					}
 				})
 				.catch(error => {
