@@ -1679,6 +1679,7 @@ const cn = {
       supportUpdatePk: '支持同步时更新主键',
       indexPrefix: '索引前缀',
       agentMsg: 'Agent当前状态异常无法创建连接，请检查',
+      agentConnectionMsg: 'Agent当前状态异常，无法测试连接，请检查Agent',
       multiTenant: '多租户模式',
       uriTips: {
         label: '示例',

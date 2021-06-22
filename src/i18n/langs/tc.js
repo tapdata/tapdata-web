@@ -1675,6 +1675,7 @@ const tc = {
       supportUpdatePk: '支持同步時更新主鍵',
       indexPrefix: '索引前綴',
       agentMsg: 'Agent當前狀態异常無法創建連接，請檢查',
+      agentConnectionMsg: 'Agent當前狀態异常，無法測試連接，請檢查Agent',
       multiTenant: '多租戶模式',
       uriTips: {
         label: '示例',
