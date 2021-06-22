@@ -1,4 +1,4 @@
-export default function () {
+export default function (vm) {
   return {
     form: {
       labelPosition: 'right',
@@ -8,14 +8,6 @@ export default function () {
       connection_type: 'target'
     },
     items: [
-      {
-        type: 'input',
-        field: 'name',
-        label: '任务名称',
-        maxlength: 300,
-        showWordLimit: true,
-        required: true
-      },
       {
         type: 'radio',
         field: 'sync_type',

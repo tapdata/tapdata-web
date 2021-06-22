@@ -204,7 +204,7 @@ import {
 import { uuid } from '../../editor/util/Schema'
 import { TYPEMAP } from '../connections/util'
 import * as moment from 'moment'
-
+let defaultConfig = []
 export default {
   components: { Transfer, DatabaseTypeDialog },
   data() {
@@ -264,6 +264,45 @@ export default {
     this.id = this.$route.params.id
     this.getSteps()
     this.getAgentCount()
+    defaultConfig = [{
+        type: 'input',
+        field: 'name',
+        label: '任务名称',
+        maxlength: 300,
+        showWordLimit: true,
+        required: true,
+        rules: [
+        {
+          required: true,
+          trigger: 'blur',
+          validator: (rule, value, callback) => {
+            if (!value || !value.trim()) {
+              callback(new Error('任务名称不能为空'))
+            } else if (value && value.trim()) {
+              let filter = {
+                where: {
+                  name: value
+                },
+                fields: {
+                  name: 1
+                },
+                limit: 1
+              }
+              this.$api('DataFlows').get({
+                filter: JSON.stringify(filter)
+              }).then( res => {
+                if(res.data && res.data.length !== 0){
+                  console.log(res.data)
+                  callback(new Error('任务名称已存在'))
+                } else callback()
+              })
+            } else {
+              callback()
+            }
+          }
+        }
+      ]
+    }]
     if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
       this.dataSourceModel = _.cloneDeep(DFSDATASOURCE_MODEL)
       this.getFormConfig()
@@ -478,6 +517,7 @@ export default {
         this.$refs.dataSource.validate(valid => {
           if (valid) {
             //源端目标端不可选择相同库 规则: id一致
+            this.showSysncTableTip = false
             if (
               this.dataSourceModel.source_connectionId ===
                 this.dataSourceModel.target_connectionId &&
@@ -535,6 +575,10 @@ export default {
                 '温馨提示：您选择了同一数据源作为源和目标，为了保证您的任务可以顺利执行，请修改目标表名与原表不一致。'
               )
             }
+          } else {
+            this.$message.error(
+              '表单校验不通过'
+            )
           }
         })
       }
@@ -565,6 +609,9 @@ export default {
       if (func) {
         let config = func(this)
         this.config = config
+        if (type === 'setting') {
+          this.config.items = defaultConfig.concat(config.items)
+        }
       }
       switch (type) {
         case 'instance': {

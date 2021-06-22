@@ -8,7 +8,7 @@ export default function (vm) {
       connection_type: 'source_and_target',
       thin_type: 'SID',
       supportUpdatePk: false,
-      plugin_name: 'wal2json_streaming'
+      pgsql_log_decorder_plugin_name: 'wal2json_streaming'
     },
     items: [
       {

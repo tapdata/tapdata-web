@@ -5,7 +5,8 @@ export default function (vm) {
       labelWidth: '200px'
     },
     defaultModel: {
-      connection_type: 'source_and_target'
+      connection_type: 'source_and_target',
+      thin_type: 'SID',
     },
     items: [
       {
@@ -30,6 +31,16 @@ export default function (vm) {
             }
           }
         ]
+      },
+      {
+        type: 'radio',
+        field: 'thin_type',
+        label: vm.$t('dataForm.form.connectionMode'),
+        options: [
+          { label: 'SID', value: 'SID' },
+          { label: 'SERVICE NAME', value: 'SERVICE_NAME' }
+        ],
+        required: true
       },
       {
         type: 'input',
@@ -57,7 +68,20 @@ export default function (vm) {
         type: 'input',
         field: 'database_name',
         label: vm.$t('dataForm.form.databaseName'),
-        required: true
+        required: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'thin_type',
+                value: 'SERVICE_NAME'
+              }
+            ],
+            triggerConfig: {
+              label: vm.$t('dataForm.form.serviceName')
+            }
+          }
+        ]
       },
       {
         type: 'input',
