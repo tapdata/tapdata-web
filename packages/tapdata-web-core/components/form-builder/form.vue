@@ -68,7 +68,6 @@ export default {
       model: this.value
     })
     let formItems = this.itemsConfig || []
-
     let el = h(
       'ElForm',
       {
