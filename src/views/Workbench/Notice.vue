@@ -105,9 +105,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.notice {
-	padding-top: 0;
-}
 .notice-header {
 	background: url('../../../public/images/workbench/notice_title.png') no-repeat 100% / cover;
 	.notice-header__title {

@@ -1,5 +1,5 @@
 <template>
-	<section class="iframe-wrap" v-if="!$route.children">
+	<section class="iframe-wrap main-container" v-if="!$route.children">
 		<iframe v-if="link" :ref="'frame'" :src="link" frameborder="0" style="width: 100%; height: 100%"></iframe>
 	</section>
 	<RouterView v-else></RouterView>
@@ -29,7 +29,7 @@ export default {
 			handler(route) {
 				this.link = ''
 				this.$nextTick(() => {
-					this.link = getLink(route.params, route.meta.link) + queryParams(route.query, true)
+					this.link = getLink(route.params, route?.meta?.link) + queryParams(route.query, true)
 				})
 			}
 		}
@@ -45,7 +45,7 @@ export default {
 				let result = null
 				for (let i = 0; i < list.length; i++) {
 					let route = list[i]
-					if (route.meta.link === './tm/#' + path) {
+					if (route?.meta?.link === './tm/#' + path) {
 						result = route
 					} else if (route.children) {
 						result = findRoute(route.children, path)
@@ -60,7 +60,7 @@ export default {
 				window.emitRouteChange = to => {
 					if (to.matched.length) {
 						let path = to.matched[to.matched.length - 1].path
-						if (this.$route.meta.link === './tm/#' + path || this.link === './tm/#' + to.fullPath) {
+						if (this.$route?.meta?.link === './tm/#' + path || this.link === './tm/#' + to.fullPath) {
 							return
 						}
 						let route = findRoute(routes, path)

@@ -20,7 +20,7 @@
 				<ElButton class="mt-5" type="primary" @click="toHome()">返回首页</ElButton>
 			</div>
 			<div v-if="$route.path === '/off'" class="box">
-				<img class="img" src="../assets/icons/off_shelf.png" />
+				<img class="img" src="../assets/image/off_shelf.png" />
 				<p class="label">产品已下架</p>
 				<p class="text">非常抱歉，产品已下架</p>
 				<ElButton class="mt-5" type="primary" @click="toHome()">返回首页</ElButton>

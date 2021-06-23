@@ -12,7 +12,7 @@
 			</ElMenu>
 		</ElAside>
 		<ElContainer direction="vertical">
-			<ElHeader class="header" v-if="breadcrumbData.length > 1">
+			<ElHeader class="header" v-if="breadcrumbData.length > 1" height="40px">
 				<ElBreadcrumb class="breadcrumb" separator-class="el-icon-arrow-right">
 					<ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
 						{{ item.name }}
@@ -145,7 +145,9 @@ export default {
 		padding: 0;
 	}
 	.breadcrumb {
-		line-height: 60px;
+		padding-top: 20px;
+		height: 40px;
+		box-sizing: border-box;
 	}
 	.btn-back {
 		padding: 0;

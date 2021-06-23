@@ -1,5 +1,5 @@
 <template>
-	<section class="migration-wrapper" v-loading="loading" v-if="$route.name === 'Task'">
+	<section class="migration-wrapper main-container" v-loading="loading" v-if="$route.name === 'Task'">
 		<div class="main">
 			<div class="migration-operation">
 				<div class="migration-operation-left">
@@ -34,7 +34,7 @@
 				</div>
 				<div class="migration-operation-right">
 					<ElButton type="primary" @click="createTask">
-						<i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
+						<i class="el-icon-plus" style="margin-right: 5px;"></i>
 						<span>创建任务</span>
 					</ElButton>
 				</div>
@@ -224,8 +224,6 @@ export default {
 				total: 0
 			},
 			order: 'createTime desc',
-
-			VUE_APP_INSTANCE_TEST_BTN: process.env.VUE_APP_INSTANCE_TEST_BTN,
 			statusMap: TASK_STATUS_MAP,
 			statusBtMap: {
 				// scheduled, draft, running, stopping, error, paused, force stopping
@@ -396,10 +394,12 @@ export default {
 				status
 			}
 			errorEvents && (attributes.errorEvents = errorEvents)
-			this.$axios.post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where))).then(data => {
-				this.fetch()
-				this.responseHandler(data, '操作成功')
-			})
+			this.$axios
+				.post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
+				.then(data => {
+					this.fetch()
+					this.responseHandler(data, '操作成功')
+				})
 		},
 		responseHandler(data, msg) {
 			let failList = data.fail || []
