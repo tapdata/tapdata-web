@@ -120,7 +120,7 @@
 								<ElDropdownItem command="reset" :disabled="!statusBtMap['reset'][scope.row.status]">
 									重置
 								</ElDropdownItem>
-								<ElDropdownItem command="delete" :disabled="!statusBtMap['delete'][scope.row.status]">
+								<ElDropdownItem command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
 									<span class="color-danger">删除</span>
 								</ElDropdownItem>
 							</ElDropdownMenu>
@@ -502,6 +502,44 @@ export default {
 			}).then(resFlag => {
 				if (resFlag) {
 					this.changeStatus(ids, { status: 'force stopping' })
+				}
+			})
+		},
+		copy(ids, node) {
+			this.$axios
+				.post(`tm/api/DataFlows/${node.id}/copy`)
+				.then(() => {
+					this.fetch()
+					this.$message.success('复制成功')
+				})
+				.catch(() => {
+					this.$message.error('复制失败')
+				})
+		},
+		del(ids, item = {}) {
+			let where = {
+				_id: {
+					inq: ids
+				}
+			}
+			let msgObj = this.getConfirmMessage('delete', item.name)
+			this.$confirm(msgObj.msg, msgObj.title, {
+				type: 'warning'
+			}).then(resFlag => {
+				if (resFlag) {
+					this.$axios
+						.post(`tm/api/DataFlows/removeAll?where=` + encodeURIComponent(JSON.stringify(where)))
+						.then(data => {
+							if (data?.success) {
+								this.fetch()
+								this.responseHandler(data, '删除成功')
+							} else if (data?.fail) {
+								this.$message.error('删除失败')
+							}
+						})
+						.catch(() => {
+							this.$message.error('删除失败')
+						})
 				}
 			})
 		},
