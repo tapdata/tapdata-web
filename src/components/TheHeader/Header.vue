@@ -11,7 +11,6 @@
 					文档中心
 				</div>
 				<div class="flex align-center mr-6 pointer" @click="command('contact-us')">
-					<!--					<img class="img mr-2" src="../../assets/icons/send.png" alt="" />-->
 					<VIcon class="mr-2" size="17">send</VIcon>
 					<span>联系我们</span>
 				</div>
@@ -71,7 +70,6 @@
 					<!--						{{ user.username }}-->
 					<!--					</el-button>-->
 					<div class="username flex align-center">
-						<!--						<img class="img mr-2" src="../../assets/icons/account.png" alt="" />-->
 						<VIcon class="mr-2" size="17">account</VIcon>
 						<span>{{ user.username || user.nickname || user.phone || user.email }}</span>
 					</div>
