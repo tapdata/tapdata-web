@@ -635,7 +635,7 @@ const en = {
     send_email_at_most_one_replication: 'Cancel sending in more than seconds',
     read_cdc_interval: ' CDC interval',
     cdc_concurrency: ' CDC concurrency',
-    cdcShareFilterOnServer: 'CDC share filter on server',
+    cdcShareFilterOnServer: 'Filter CDC shared log',
     read_batch_size: 'Read-amount/time',
     cdcDataProcess: 'CDC data process',
     batch: 'Batch process',
