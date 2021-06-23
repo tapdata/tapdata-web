@@ -9,7 +9,7 @@
 			</div>
 
 			<div class="contact-body-img mx-auto px-1">
-				<img src="../assets/icons/glasses.gif" alt="" />
+				<img src="../assets/image/glasses.gif" alt="" />
 			</div>
 			<div class="contact-body p-4 m-n4">
 				<div class="contact-content">
