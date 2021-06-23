@@ -79,7 +79,6 @@
 					<ElDropdownMenu slot="dropdown">
 						<!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
 						<ElDropdownItem command="home"> 官网 </ElDropdownItem>
-						<ElDropdownItem command="guide"> 新手教程 </ElDropdownItem>
 						<ElDropdownItem command="signOut"> 退出登录 </ElDropdownItem>
 					</ElDropdownMenu>
 				</ElDropdown>
@@ -192,8 +191,6 @@ export default {
 					break
 				case 'source-center':
 					window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
-					break
-				case 'guide':
 					break
 			}
 		}
