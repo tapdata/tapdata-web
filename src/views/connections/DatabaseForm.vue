@@ -793,11 +793,7 @@
     >
       <el-form :rules="renameRules" ref="renameForm">
         <el-form-item prop="rename">
-          <el-input
-            v-model="rename"
-            maxlength="100"
-            show-word-limit
-          ></el-input>
+          <el-input v-model="rename" maxlength="100" show-word-limit></el-input>
         </el-form-item>
         <span
           style="
@@ -921,12 +917,18 @@ export default {
         callback(
           new Error(
             this.$t('dataForm.form.connectionName') +
-            this.$t('formBuilder.noneText')
+              this.$t('formBuilder.noneText')
           )
         )
-      } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.rename)) {
+      } else if (
+        !/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
+          this.rename
+        )
+      ) {
         callback(
-          new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格')
+          new Error(
+            '名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'
+          )
         )
       }
     }
@@ -1094,9 +1096,13 @@ export default {
                 callback(
                   '连接名称中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'
                 )
-              } else if (value && value.trim() && /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
-                value
-              )) {
+              } else if (
+                value &&
+                value.trim() &&
+                /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
+                  value
+                )
+              ) {
                 let filter = {
                   where: {
                     name: this.model.name
@@ -1106,14 +1112,16 @@ export default {
                   },
                   limit: 1
                 }
-                this.$api('connections').get({
-                  filter: JSON.stringify(filter)
-                }).then( res => {
-                  if(res.data && res.data.length !== 0){
-                    console.log(res.data)
-                    callback(new Error('名称已存在'))
-                  } else callback()
-                })
+                this.$api('connections')
+                  .get({
+                    filter: JSON.stringify(filter)
+                  })
+                  .then(res => {
+                    if (res.data && res.data.length !== 0) {
+                      console.log(res.data)
+                      callback(new Error('名称已存在'))
+                    } else callback()
+                  })
               } else {
                 callback()
               }
@@ -1606,7 +1614,9 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$router.push('/connections')
+        this.$router.push({
+          name: 'connections'
+        })
       })
     },
     handleName(ops) {
@@ -1779,9 +1789,16 @@ export default {
             .then(() => {
               this.$message.success(this.$t('message.saveOK'))
               if (this.$route.query.step) {
-                this.$router.push('/connections?step=' + this.$route.query.step)
+                this.$router.push({
+                  name: 'connections',
+                  query: {
+                    step: this.$route.query.step
+                  }
+                })
               } else {
-                this.$router.push('/connections')
+                this.$router.push({
+                  name: 'connections'
+                })
               }
             })
             .catch(err => {
@@ -1899,7 +1916,7 @@ export default {
       this.dialogDatabaseTypeVisible = false
       if (this.whiteList.includes(type)) {
         this.$router.push({
-          path: '/connections/create',
+          name: 'connectionsCreate',
           query: {
             databaseType: type
           }

@@ -130,7 +130,7 @@
           class="btn btn-create"
           type="primary"
           size="small"
-          @click="$router.push('dataVerification/create')"
+          @click="$router.push({ name: 'dataVerificationCreate' })"
         >
           <i class="iconfont icon-jia add-btn-icon"></i>
           <span> {{ $t('dataVerification.addVerifyTip') }}</span>
@@ -471,7 +471,7 @@ export default {
     },
     toTableInfo(id, resultId, type, name) {
       let route = this.$router.resolve({
-        path: '/dataVerifyResult',
+        name: 'dataVerifyResult',
         query: {
           id: resultId,
           inspectId: id,

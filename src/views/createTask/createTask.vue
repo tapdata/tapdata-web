@@ -264,7 +264,8 @@ export default {
     this.id = this.$route.params.id
     this.getSteps()
     this.getAgentCount()
-    defaultConfig = [{
+    defaultConfig = [
+      {
         type: 'input',
         field: 'name',
         label: '任务名称',
@@ -272,37 +273,40 @@ export default {
         showWordLimit: true,
         required: true,
         rules: [
-        {
-          required: true,
-          trigger: 'blur',
-          validator: (rule, value, callback) => {
-            if (!value || !value.trim()) {
-              callback(new Error('任务名称不能为空'))
-            } else if (value && value.trim()) {
-              let filter = {
-                where: {
-                  name: value
-                },
-                fields: {
-                  name: 1
-                },
-                limit: 1
+          {
+            required: true,
+            trigger: 'blur',
+            validator: (rule, value, callback) => {
+              if (!value || !value.trim()) {
+                callback(new Error('任务名称不能为空'))
+              } else if (value && value.trim()) {
+                let filter = {
+                  where: {
+                    name: value
+                  },
+                  fields: {
+                    name: 1
+                  },
+                  limit: 1
+                }
+                this.$api('DataFlows')
+                  .get({
+                    filter: JSON.stringify(filter)
+                  })
+                  .then(res => {
+                    if (res.data && res.data.length !== 0) {
+                      console.log(res.data)
+                      callback(new Error('任务名称已存在'))
+                    } else callback()
+                  })
+              } else {
+                callback()
               }
-              this.$api('DataFlows').get({
-                filter: JSON.stringify(filter)
-              }).then( res => {
-                if(res.data && res.data.length !== 0){
-                  console.log(res.data)
-                  callback(new Error('任务名称已存在'))
-                } else callback()
-              })
-            } else {
-              callback()
             }
           }
-        }
-      ]
-    }]
+        ]
+      }
+    ]
     if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
       this.dataSourceModel = _.cloneDeep(DFSDATASOURCE_MODEL)
       this.getFormConfig()
@@ -576,9 +580,7 @@ export default {
               )
             }
           } else {
-            this.$message.error(
-              '表单校验不通过'
-            )
+            this.$message.error('表单校验不通过')
           }
         })
       }
@@ -1034,7 +1036,10 @@ export default {
       promise
         .then(() => {
           this.$router.push({
-            path: '/dataFlows?mapping=cluster-clone'
+            name: 'dataFlows',
+            query: {
+              mapping: 'cluster-clone'
+            }
           })
         })
         .catch(e => {
@@ -1057,7 +1062,10 @@ export default {
           return
         }
         this.$router.push({
-          path: '/dataFlows?mapping=cluster-clone'
+          name: 'dataFlows',
+          query: {
+            mapping: 'cluster-clone'
+          }
         })
       })
     },
@@ -1067,7 +1075,12 @@ export default {
     },
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
-      this.$router.push('/connections/create?databaseType=' + type)
+      this.$router.push({
+        name: 'connectionsCreate',
+        query: {
+          databaseType: type
+        }
+      })
     }
   }
 }

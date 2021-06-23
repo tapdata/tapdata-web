@@ -119,7 +119,11 @@
         :reserve-selection="true"
       >
       </el-table-column>
-      <el-table-column prop="name" :label="$t('connection.dataBaseName')">
+      <el-table-column
+        prop="name"
+        :label="$t('connection.dataBaseName')"
+        :show-overflow-tooltip="true"
+      >
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
@@ -438,7 +442,9 @@ export default {
       window.parent &&
         window.parent.noviceGuideChange &&
         window.parent.noviceGuideChange(item)
-      this.$router.push('/connections')
+      this.$router.push({
+        name: 'connections'
+      })
     },
     //筛选条件
     handleSortTable({ order, prop }) {
@@ -595,7 +601,15 @@ export default {
         if (item.search_databaseType) {
           type = item.search_databaseType
         }
-        this.$router.push('connections/' + id + '/edit?databaseType=' + type)
+        this.$router.push({
+          name: 'connectionsEdit',
+          params: {
+            id: id
+          },
+          query: {
+            databaseType: type
+          }
+        })
       } else {
         top.location.href = '/#/connection/' + id
         localStorage.setItem('connectionDatabaseType', type)
@@ -745,7 +759,12 @@ export default {
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
       if (this.whiteList.includes(type)) {
-        this.$router.push('connections/create?databaseType=' + type)
+        this.$router.push({
+          name: 'connectionsCreate',
+          query: {
+            databaseType: type
+          }
+        })
       } else {
         top.location.href = '/#/connection'
         localStorage.setItem('connectionDatabaseType', type)
@@ -754,13 +773,8 @@ export default {
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
       //drs 检查实例是否可用 dfs 检查agent是否可用
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
-        let result = await this.$api('Workers').getAvailableAgent()
-        if (!result.data.result || result.data.result.length === 0) {
-          this.$message.error(this.$t('dataForm.form.agentMsg'))
-        } else {
-          this.dialogDatabaseTypeVisible = true
-        }
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+        this.dialogDatabaseTypeVisible = true
       } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
         let result = await this.$api('tcm').getAgentCount()
         if (
@@ -769,6 +783,13 @@ export default {
           result.data.agentTotalCount <= 0
         ) {
           this.$message.error('您尚未订购同步实例，请先订购实例')
+        } else {
+          this.dialogDatabaseTypeVisible = true
+        }
+      } else {
+        let result = await this.$api('Workers').getAvailableAgent()
+        if (!result.data.result || result.data.result.length === 0) {
+          this.$message.error(this.$t('dataForm.form.agentMsg'))
         } else {
           this.dialogDatabaseTypeVisible = true
         }

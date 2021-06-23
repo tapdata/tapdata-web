@@ -473,7 +473,7 @@ export default {
           break
         case 'verifySetting':
           this.$router.push({
-            path: '/dataVerification/setting'
+            name: 'dataVerifySetting'
           })
           break
         case 'newDataFlow':

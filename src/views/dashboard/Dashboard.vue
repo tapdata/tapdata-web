@@ -667,8 +667,11 @@ export default {
     // 点击同步运行状态跳转到任务列表
     handleSncyStatus(status) {
       let routeUrl = this.$router.resolve({
-        path: '/dataFlows?mapping=custom',
-        query: { status: status }
+        name: 'dataFlows',
+        query: {
+          mapping: 'custom',
+          status: status
+        }
       })
 
       window.open(routeUrl.href)
@@ -677,8 +680,8 @@ export default {
     // 点击迁移运行状态跳转到任务列表
     handleMigrationStatus(status) {
       let routeUrl = this.$router.resolve({
-        path: '/dataFlows?mapping=cluster-clone',
-        query: { status: status }
+        name: 'dataFlows',
+        query: { mapping: 'cluster-clone', status: status }
       })
       window.open(routeUrl.href)
     },
@@ -784,12 +787,12 @@ export default {
     // 	let routeUrl = null;
     // 	if (data.status === 'running') {
     // 		routeUrl = this.$router.resolve({
-    // 			path: '/job',
+    // 			name: 'job',
     // 			query: { id: data.id, isMoniting: true }
     // 		});
     // 	} else {
     // 		routeUrl = this.$router.resolve({
-    // 			path: '/job',
+    // 			name: 'job',
     // 			query: { id: data.id }
     // 		});
     // 	}
@@ -811,17 +814,23 @@ export default {
       switch (data.type) {
         case 'serverProcess':
           this.$router.push({
-            path: '/clusterManagement'
+            name: 'clusterManagement'
           })
           break
         case 'syncJobs':
           this.$router.push({
-            path: '/dataFlows?mapping=custom'
+            name: 'dataFlows',
+            query: {
+              mapping: 'custom'
+            }
           })
           break
         case 'migrationJobs':
           this.$router.push({
-            path: '/dataFlows?mapping=cluster-clone'
+            name: 'dataFlows',
+            query: {
+              mapping: 'cluster-clone'
+            }
           })
           break
       }

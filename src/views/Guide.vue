@@ -392,7 +392,7 @@ export default {
           let stages = this.getStages()
 
           let routeUrl = this.$router.resolve({
-            path: '/job',
+            name: 'job',
             query: { mapping: this.taskType }
           })
           let _window = window.open(routeUrl.href, '_blank')

@@ -873,7 +873,9 @@ export default {
     },
     //运行日志
     goDailyRecord() {
-      this.$router.push('/dailyRecord')
+      this.$router.push({
+        name: 'dailyRecord'
+      })
     }
   },
   destroyed() {

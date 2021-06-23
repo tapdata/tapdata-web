@@ -1,4 +1,4 @@
-export default function (vm) {
+export default function () {
   return {
     form: {
       labelPosition: 'right',

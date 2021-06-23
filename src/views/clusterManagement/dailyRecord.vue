@@ -250,7 +250,9 @@ export default {
     },
     //运行日志
     goClusterManagement() {
-      this.$router.push('/clusterManagement')
+      this.$router.push({
+        name: 'clusterManagement'
+      })
     }
   }
 }

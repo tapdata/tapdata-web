@@ -425,7 +425,9 @@ export default {
       this.changeInspectResult(1, row.taskId)
     },
     GoBack() {
-      this.$router.push('/dataVerification')
+      this.$router.push({
+        name: 'dataVerification'
+      })
     },
     changeInspectResult(pageNum, taskId) {
       if (!taskId) {

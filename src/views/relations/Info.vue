@@ -427,7 +427,7 @@ export default {
       if (result.data) {
         let isMoniting = !this.statusBtMap['edit'][result.data.status]
         let routeUrl = this.$router.resolve({
-          path: '/job',
+          name: 'job',
           query: {
             id: id,
             isMoniting: isMoniting,
@@ -440,7 +440,9 @@ export default {
       }
     },
     goConnection() {
-      this.$router.push('/connections')
+      this.$router.push({
+        name: 'connections'
+      })
     },
 
     // 打开所有菜单
