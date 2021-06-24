@@ -6,53 +6,12 @@
     width="770px"
     :before-close="handleClose"
   >
-    <div class="database">
-      <span class="title" v-if="database && database.length > 0">Database</span>
-      <ul class="item clearfix">
-        <li v-for="item in database" :key="item" @click="databaseType(item)">
-          <div class="img-box">
-            <img :src="getImgByType(item)" />
-          </div>
-          <div class="content">{{ typeMap[item] }}</div>
-        </li>
-        <li
-          v-for="item in comingAllowDatabase"
-          :key="item"
-          class="item--disabled"
-        >
-          <div class="img-box position-relative">
-            <img :src="getImgByType(item)" />
-            <div
-              class="
-                img-box__mask
-                flex
-                justify-center
-                align-center
-                position-absolute
-                top-0
-                bottom-0
-                start-0
-                end-0
-              "
-            >
-              <span class="mask-text">即将上线</span>
-            </div>
-          </div>
-          <div class="content">{{ typeMap[item] }}</div>
-        </li>
-      </ul>
-      <span class="title" v-if="otherType && otherType.length > 0"
-        >Other Type</span
-      >
-      <ul class="item clearfix">
-        <li v-for="item in otherType" :key="item" @click="databaseType(item)">
-          <div class="img-box">
-            <img :src="getImgByType(item)" />
-          </div>
-          <div class="content">{{ typeMap[item] }}</div>
-        </li>
-      </ul>
-    </div>
+    <ConnectionTypeSelector
+      :types="database"
+      :commingTypes="comingAllowDatabase"
+      :otherTypes="otherType"
+      @select="databaseType"
+    ></ConnectionTypeSelector>
   </el-dialog>
 </template>
 
