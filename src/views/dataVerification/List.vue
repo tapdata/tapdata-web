@@ -532,8 +532,7 @@ export default {
         .getId(flowId)
         .then(res => {
           if (['running', 'paused', 'error'].includes(res.data.status)) {
-            let route = this.$router.resolve('dataVerification/' + id + '/edit')
-            window.open(route.href, '_blank')
+            this.$router.push('dataVerification/' + id + '/edit')
           } else {
             this.$message.info(
               this.$t('dataVerification.checkStatusPre') +
