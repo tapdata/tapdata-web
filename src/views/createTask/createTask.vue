@@ -129,6 +129,7 @@
                 <Transfer
                   ref="transfer"
                   :transferData="transferData"
+                  :isTwoWay="settingModel.bidirectional"
                 ></Transfer>
               </div>
             </div>
@@ -329,6 +330,7 @@ export default {
             this.transferData = {
               table_prefix: stages[1].table_prefix,
               table_suffix: stages[1].table_suffix,
+              field_process: stages[0].field_process,
               selectSourceArr: stages[1].syncObjects[0]
                 ? stages[1].syncObjects[0].objectNames
                 : []
@@ -932,7 +934,8 @@ export default {
           database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
           dropType: 'no_drop',
           readBatchSize: 1000,
-          readCdcInterval: 500
+          readCdcInterval: 500,
+          field_process: this.transferData.field_process //字段处理器 源
         }),
         Object.assign({}, stageDefault, {
           id: targetIdB,
