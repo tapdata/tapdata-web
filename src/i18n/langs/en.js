@@ -572,6 +572,7 @@ const en = {
     separator: 'to',
     dataPlaceholder: 'Select time range',
     taskStatus: 'Status',
+    maxLagTime: 'Max lag time',
     taskStatusPlaceholder: 'Select task status',
     taskSettingPlaceholder: 'Select Sync type',
     updateTime: 'Update time',
