@@ -840,7 +840,7 @@ const en = {
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
         tcpTip:
-'Important: TCP/IP data sources output JSON packets by default without additional packet conversion processing nodes ',
+          'Important: TCP/IP data sources output JSON packets by default without additional packet conversion processing nodes ',
         database: {
           name: 'Database',
           tip: 'Any Database',
@@ -1348,6 +1348,18 @@ const en = {
           title: 'Field _id conflict',
           message:
             '"_id" field exists in target model, and system will remove the duplicated field “_id”, if you wanna keep it, please use the field processor to rename the "_id" field before continue.'
+        },
+        pcb: {
+          Label: 'protocol type',
+          Placeholder: 'please select a protocol type',
+          Fieldsselected: 'field to be selected',
+          Selectedfield: 'selected field',
+          Moveup: 'move up',
+          Movedown: 'move down',
+          Notmoveuptip: 'there is no room to move up',
+          Notmovedowntip: 'there is no room to move down',
+          Onlyonepiece:
+            'only one piece of data can be selected to move up and down'
         },
         form: {
           label: {

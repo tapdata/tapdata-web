@@ -1311,6 +1311,17 @@ const tc = {
           message:
             '目標數據模型已存在 _id 字段，系統默認會移除已重複的_id字段，如想保留，請使用字段處理器對源錶的 _id 進行重命名！'
         },
+        pcb: {
+          label: '協定類型',
+          placeholder: '請選擇協定類型',
+          fieldsSelected: '待選欄位',
+          selectedField: '已選欄位',
+          moveUp: '上移',
+          moveDown: '下移',
+          notMoveUpTip: '沒有上移的空間了',
+          notMoveDownTip: '沒有下移的空間了',
+          onlyOnePiece: '只能選擇一條數據進行上下移動'
+        },
         form: {
           label: {
             label: '標籤',
