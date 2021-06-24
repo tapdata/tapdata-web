@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "index.js",
   "files": [
-    "lib"
+    "conponents"
   ],
   "publishConfig": {
     "access": "public",
