@@ -558,6 +558,7 @@ const cn = {
     separator: '至',
     dataPlaceholder: '选择时间范围',
     taskStatus: '任务状态',
+    maxLagTime: '最大增量滞后时间',
     taskStatusPlaceholder: '请选择任务状态',
     taskSettingPlaceholder: '请选择任务同步类型',
     updateTime: '更新时间',

@@ -547,6 +547,7 @@ const tc = {
     },
     lag: '滯後',
     executionStatus: '執行狀態',
+    maxLagTime: '最大增量滯後時間',
     searchPlaceholder: '任務名稱/節點名/庫名稱',
     searchAgent: '實例名稱',
     dataRange: '創建日期範圍',
