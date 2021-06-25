@@ -795,7 +795,9 @@ const cn = {
       source_and_target: '源头和目标'
     },
     cannot_delete_remind:
-      '当前连接正在被一个或多个任务或API使用中，请删除任务或API后重试。'
+      '当前连接正在被一个或多个任务或API使用中，请删除任务或API后重试。',
+    dfs_cannot_delete_remind:
+      '当前连接正在被一个或多个任务中，请删除任务后重试。'
   },
   editor: {
     nodeSettings: '节点设置',

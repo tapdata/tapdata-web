@@ -798,13 +798,10 @@
       :visible.sync="dialogEditNameVisible"
       width="30%"
     >
-      <span>
-        <el-input
-          v-model="rename"
-          maxlength="100"
-          show-word-limit
-          clearable
-        ></el-input>
+      <el-form :rules="renameRules" ref="renameForm">
+        <el-form-item prop="rename">
+          <el-input v-model="rename" maxlength="100" show-word-limit></el-input>
+        </el-form-item>
         <span
           style="
             color: #ccc;
@@ -814,7 +811,7 @@
           "
           >中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格</span
         >
-      </span>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleCancelRename" size="mini">{{
           $t('dataForm.cancel')
@@ -922,6 +919,26 @@ export default {
         )
       }
     }
+    let validateRename = (rule, value, callback) => {
+      if (!this.rename || !this.rename.trim()) {
+        callback(
+          new Error(
+            this.$t('dataForm.form.connectionName') +
+              this.$t('formBuilder.noneText')
+          )
+        )
+      } else if (
+        !/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
+          this.rename
+        )
+      ) {
+        callback(
+          new Error(
+            '名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'
+          )
+        )
+      }
+    }
     return {
       // modelForm: {},
       rules: [],
@@ -1013,6 +1030,9 @@ export default {
             trigger: 'blur'
           }
         ]
+      },
+      renameRules: {
+        rename: [{ validator: validateRename, trigger: 'blur' }]
       }
     }
   },
@@ -1075,9 +1095,10 @@ export default {
         rules: [
           {
             required: true,
+            trigger: 'blur',
             validator: (rule, value, callback) => {
               if (!value || !value.trim()) {
-                callback('连接名称不能为空')
+                callback(new Error('连接名称不能为空'))
               } else if (
                 !/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
                   value
@@ -1086,6 +1107,32 @@ export default {
                 callback(
                   '连接名称中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'
                 )
+              } else if (
+                value &&
+                value.trim() &&
+                /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
+                  value
+                )
+              ) {
+                let filter = {
+                  where: {
+                    name: this.model.name
+                  },
+                  fields: {
+                    name: 1
+                  },
+                  limit: 1
+                }
+                this.$api('connections')
+                  .get({
+                    filter: JSON.stringify(filter)
+                  })
+                  .then(res => {
+                    if (res.data && res.data.length !== 0) {
+                      console.log(res.data)
+                      callback(new Error('名称已存在'))
+                    } else callback()
+                  })
               } else {
                 callback()
               }
@@ -1858,8 +1905,9 @@ export default {
     },
     //取消
     handleCancelRename() {
-      this.dialogEditNameVisible = false
       this.rename = this.model.name
+      this.$refs['renameForm'].clearValidate()
+      this.dialogEditNameVisible = false
     },
     //保存名字
     submitEdit() {
@@ -1867,21 +1915,7 @@ export default {
       if (this.rename === '') {
         this.editBtnLoading = false
         this.rename = this.model.name
-        this.$message.error(
-          this.$t('dataForm.form.connectionName') +
-            this.$t('formBuilder.noneText')
-        )
-        return
-      }
-      if (
-        !/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
-          this.rename
-        )
-      ) {
-        this.editBtnLoading = false
-        this.$message.error(
-          '名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'
-        )
+        this.$refs['renameForm'].clearValidate()
         return
       }
       this.model.name = this.rename
@@ -1889,6 +1923,7 @@ export default {
         name: this.model.name,
         id: this.model.id
       }
+      this.$refs['renameForm'].clearValidate()
       this.$api('connections')
         .patchId(params)
         .then(() => {
