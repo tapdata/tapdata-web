@@ -226,6 +226,14 @@ export default {
     },
     start(updateSchema, editTest) {
       let data = Object.assign({}, this.formData)
+      if (
+        data.database_type === 'mq' &&
+        (typeof data.mqQueueSet === 'string' ||
+          typeof data.mqTopicSet === 'string')
+      ) {
+        data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
+        data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
+      }
       delete data.schema
       delete data.response_body
       let msg = {

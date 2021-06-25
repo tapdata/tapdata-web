@@ -143,6 +143,13 @@
               <div class="url-tip" slot="pushErrorTip">
                 {{ $t('dataForm.form.kafka.pushErrorTip') }}
               </div>
+
+              <div class="url-tip" slot="queueTip" v-if="model.mqType !== '2'">
+                {{ $t('dataForm.form.mq.queueSetTip') }}
+              </div>
+              <div class="url-tip" slot="topicTip" v-if="model.mqType !== '1'">
+                {{ $t('dataForm.form.mq.topicSetTip') }}
+              </div>
               <!-- rest api -->
               <div class="url-tip" slot="req_pre_process">
                 <div>
@@ -936,6 +943,7 @@ export default {
         'mariadb',
         'mysql pxc',
         'jira',
+        'mq',
         'dameng',
         'gbase-8s',
         'sybase ase',
@@ -1037,6 +1045,9 @@ export default {
         break
       case 'custom_connection':
         this.model = Object.assign({}, defaultModel['custom_connection'])
+        break
+      case 'mq':
+        this.model = Object.assign({}, defaultModel['mq'])
         break
       case 'gridfs':
         this.model = Object.assign(
@@ -1181,6 +1192,21 @@ export default {
           ])
         } else {
           editData = await this.$api('connections').get([this.$route.params.id])
+        }
+
+        if (
+          editData.data.database_type === 'mq' &&
+          (typeof editData.data.mqQueueSet === 'object' ||
+            typeof editData.data.mqTopicSet === 'object')
+        ) {
+          let mqQueueSet = editData.data.mqQueueSet.length
+            ? editData.data.mqQueueSet.join(',')
+            : ''
+          let mqTopicSet = editData.data.mqTopicSet.length
+            ? editData.data.mqTopicSet.join(',')
+            : ''
+          editData.data.mqQueueSet = mqQueueSet
+          editData.data.mqTopicSet = mqTopicSet
         }
         this.model = Object.assign(this.model, editData.data)
         if (this.model.sourceType === 'ecs') {
@@ -1670,12 +1696,20 @@ export default {
         this.$message.error('请"点击开通"开通网络策略')
         return
       }
+      let data = Object.assign({}, this.model)
+      if (
+        data.database_type === 'mq' &&
+        (typeof data.mqQueueSet === 'string' ||
+          typeof data.mqTopicSet === 'string')
+      ) {
+        data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
+        data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
+      }
 
       // if (this.model.database_type === 'mysqlpxc') {
       // 	// this.model.search_databaseType = this.model.database_type;
       // 	this.model.database_type = 'mysql pxc';
       // }
-
       this.$refs.form.validate(valid => {
         if (valid && flag) {
           let params = Object.assign(
@@ -1690,7 +1724,7 @@ export default {
               project: '',
               submit: true
             },
-            this.model
+            data
           )
           params['sslCert'] = this.model.sslKey
           delete params.sslKeyFile
@@ -1779,6 +1813,15 @@ export default {
       } else {
         this.$refs.form.validate(valid => {
           if (valid) {
+            let data = Object.assign({}, this.model)
+            if (
+              this.model.database_type === 'mq' &&
+              (typeof this.model.mqQueueSet === 'string' ||
+                typeof this.model.mqTopicSet === 'string')
+            ) {
+              data.mqQueueSet = this.model.mqQueueSet.split(',')
+              data.mqTopicSet = this.model.mqTopicSet.split(',')
+            }
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
               this.model['platformInfo'] = Object.assign(
                 this.model['platformInfo'],

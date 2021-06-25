@@ -617,6 +617,7 @@ const tc = {
     send_email_at_most_one_replication: '超過多少秒取消發送',
     read_cdc_interval: '增量同步間隔',
     cdc_concurrency: '增量同步並發寫入',
+    cdcShareFilterOnServer: '共享挖掘日誌過濾',
     read_batch_size: '每次讀取數量',
     cdcDataProcess: '增量數據處理機制',
     batch: '批量',
@@ -816,6 +817,8 @@ const tc = {
         hiveText: 'hive節點',
         kafkaText: 'kafka節點',
         kafkaName_isNull: 'kafka不能為空',
+        mqTableType: '新建表類型',
+        mqTableTypeTip: '請選擇表類型topic或者queue',
         tcpTip:
           '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
         database: {
@@ -1877,6 +1880,18 @@ const tc = {
         file_upload_mode: '文件上傳模式',
         file_upload_stream: '流式',
         file_upload_memory: '內存讀取(有內存溢出風險)'
+      },
+      mq: {
+        mqType: 'MQ類型',
+        mqQueueSet: '隊列名集合',
+        mqTopicSet: '主題名集合',
+        brokerURL: 'MQ連接串',
+        database_host: 'MQ地址',
+        database_port: 'MQ端口',
+        routeKeyField: '消息路由',
+        virtualHost: '虛擬主機',
+        queueSetTip: '多個隊列用逗號隔開',
+        topicSetTip: '多個主題用逗號隔開'
       },
       tcp: {
         agreementType: '协议类型',

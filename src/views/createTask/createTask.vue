@@ -129,6 +129,7 @@
                 <Transfer
                   ref="transfer"
                   :transferData="transferData"
+                  :isTwoWay="settingModel.bidirectional"
                 ></Transfer>
               </div>
             </div>
@@ -329,6 +330,7 @@ export default {
             this.transferData = {
               table_prefix: stages[1].table_prefix,
               table_suffix: stages[1].table_suffix,
+              field_process: stages[0].field_process,
               selectSourceArr: stages[1].syncObjects[0]
                 ? stages[1].syncObjects[0].objectNames
                 : []
@@ -932,7 +934,8 @@ export default {
           database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
           dropType: 'no_drop',
           readBatchSize: 1000,
-          readCdcInterval: 500
+          readCdcInterval: 500,
+          field_process: this.transferData.field_process //字段处理器 源
         }),
         Object.assign({}, stageDefault, {
           id: targetIdB,
@@ -986,9 +989,7 @@ export default {
       this.loading = true
       promise
         .then(() => {
-          this.$router.push({
-            path: '/dataFlows?mapping=cluster-clone'
-          })
+          this.routerBack()
         })
         .catch(e => {
           if (e.response.msg === 'duplication for names') {
@@ -1001,6 +1002,17 @@ export default {
           this.loading = false
         })
     },
+    routerBack() {
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+        window.parent.App.$router.push({
+          name: 'Task'
+        })
+      } else {
+        this.$router.push({
+          path: '/dataFlows?mapping=cluster-clone'
+        })
+      }
+    },
     //返回任务列表
     goBackList() {
       this.$confirm('此操作会丢失当前正在创建的任务', '是否放弃创建该任务', {
@@ -1009,9 +1021,7 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$router.push({
-          path: '/dataFlows?mapping=cluster-clone'
-        })
+        this.routerBack()
       })
     },
     //选择创建类型

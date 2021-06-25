@@ -352,7 +352,8 @@ export default {
         'rest api',
         'custom_connection',
         'gridfs',
-        'tcp_udp'
+        'tcp_udp',
+        'mq'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -492,6 +493,15 @@ export default {
         sslKey: true,
         sslValidate: false,
         sslCA: true, //MongoDB
+        mqType: true,
+        brokerURL: true, // mq start
+        nameSrvAddr: true,
+        mqUserName: true,
+        mqPassword: true,
+        mqQueueSet: true,
+        mqTopicSet: true,
+        routeKeyField: true,
+        virtualHost: true, // mq end
         tcpUdpType: true, // TCP
         root_name: true
       }
@@ -553,6 +563,17 @@ export default {
                 item.database_host + ':' + item.database_port
             } else {
               item.connectionUrl = item.database_uri || item.connection_name
+            }
+            if (item.database_type === 'mq') {
+              if (item.mqType === '0') {
+                item.connectionUrl = item.brokerURL
+              } else if (item.mqType === '2') {
+                item.connectionUrl = item.nameSrvAddr
+              }
+            }
+            // 不存在uri 和 port === 0
+            if (!item.database_uri && !item.database_port) {
+              item.connectionUrl = ''
             }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = this.$moment(item.last_updated).format(

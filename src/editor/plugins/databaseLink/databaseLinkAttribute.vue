@@ -112,6 +112,7 @@
           <div class="transfer">
             <el-transfer
               filterable
+              v-if="!model.transferFlag"
               :titles="titles"
               :filter-method="filterMethod"
               :filter-placeholder="$t('editor.cell.link.searchContent')"
@@ -132,6 +133,61 @@
 							}}</span> -->
               </span>
             </el-transfer>
+            <!-- MQ穿梭框 start -->
+            <template v-else>
+              <MqTransfer
+                v-model="mqActiveData"
+                :source="sourceData"
+                :table_prefix="model.table_prefix"
+                :table_suffix="model.table_suffix"
+              ></MqTransfer>
+              <!-- <el-transfer
+                filterable
+                class="topic-transfer"
+                :titles="topicTitles"
+                :filter-method="filterMethod"
+                :filter-placeholder="$t('editor.cell.link.searchContent')"
+                v-model="model.topicData"
+                :data="sourceData"
+                :left-default-checked="topicSelected"
+                @change="handleChangeTopic"
+                @right-check-change="handleSelectTopic"
+              >
+                <span class="box" slot-scope="{ option }">
+                  <span
+                    class="text"
+                    :title="option.label"
+                    :class="[{ active: option.label !== option.key }, 'text']"
+                    >{{ option.label }}</span
+                  >
+                </span>
+              </el-transfer> -->
+              <!-- <el-tabs v-model="seletecTab" type="border-card">
+                <el-tab-pane label="topic" name="topic">Topic</el-tab-pane>
+                <el-tab-pane label="queue" name="queue">Queue</el-tab-pane>
+              </el-tabs>
+              <el-transfer
+                filterable
+                class="queue-transfer"
+                :titles="seletecTab === 'topic' ? topicTitles : queueTitles"
+                :filter-method="filterMethod"
+                :filter-placeholder="$t('editor.cell.link.searchContent')"
+                v-model="mq[seletecTab].value"
+                :data="mq[seletecTab].list"
+                @change="handleChangeQueueData"
+                @left-check-change="handleLeftTable"
+                @right-check-change="handleSelectQueue"
+              >
+                <span class="box" slot-scope="{ option }">
+                  <span
+                    class="text"
+                    :title="option.label"
+                    :class="[{ active: option.label !== option.key }, 'text']"
+                    >{{ option.label }}</span
+                  >
+                </span>
+              </el-transfer> -->
+            </template>
           </div>
         </div>
       </el-form>
@@ -210,12 +266,13 @@
 import _ from 'lodash'
 import log from '../../../log'
 import factory from '../../../api/factory'
+import MqTransfer from './mqTransfer'
 let connections = factory('connections')
 let editorMonitor = null
 let selectKeepArr = []
 export default {
   name: 'databaseLink',
-
+  components: { MqTransfer },
   data() {
     return {
       mysqlDisable: false,
@@ -230,6 +287,12 @@ export default {
 
       configJoinTable: false,
       sourceData: [],
+      mqActiveData: {
+        topicData: [],
+        queueData: [],
+        table_prefix: '',
+        table_suffix: ''
+      },
       targetDatabaseType: '',
       model: {
         // label: '',
@@ -238,6 +301,10 @@ export default {
         dropType: 'no_drop',
         type: 'databaseLink',
         selectSourceArr: [],
+        topicData: [],
+        queueData: [],
+        transferFlag: false,
+
         selectSourceDatabase: {
           table: true,
           view: false,
@@ -245,6 +312,7 @@ export default {
           procedure: false
         }
       },
+      topicSelected: [],
 
       titles: [
         this.$t('editor.cell.link.migrationObjece'),
@@ -254,6 +322,13 @@ export default {
   },
 
   watch: {
+    mqActiveData: {
+      deep: true,
+      handler() {
+        this.model.topicData = this.mqActiveData.topicData
+        this.model.queueData = this.mqActiveData.queueData
+      }
+    },
     model: {
       deep: true,
       handler() {
@@ -296,8 +371,18 @@ export default {
         if (targetCell && this.model.selectSourceArr.length === 0) {
           let targetFormData = targetCell.getFormData()
           let selectTargetType = []
+
+          if (
+            targetFormData.database_type === 'mq' &&
+            targetFormData.mqType === '0'
+          ) {
+            this.model.transferFlag = true
+            this.mqActiveData.topicData = data.topicData
+            this.mqActiveData.queueData = data.queueData
+          }
           this.model.table_prefix = targetFormData.table_prefix
           this.model.table_suffix = targetFormData.table_suffix
+
           if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
             targetFormData.syncObjects.forEach(item => {
               selectTargetType.push(item.type)
@@ -314,7 +399,6 @@ export default {
             })
           }
         }
-
         this.loadDataModels(connectionId)
       }
 
@@ -326,7 +410,7 @@ export default {
 
     getData() {
       let result = JSON.parse(JSON.stringify(this.model))
-
+      console.log(this.model)
       let includeTables = []
       for (let i = 0; i < this.sourceData.length; i++) {
         for (let j = 0; j < this.model.selectSourceArr.length; j++) {
@@ -335,7 +419,6 @@ export default {
           }
         }
       }
-
       if (this.cell) {
         let targetCell = this.cell.getTargetCell()
         if (targetCell && targetCell.getFormData()) {
@@ -346,16 +429,32 @@ export default {
             targetFormData.table_prefix = this.model.table_prefix
             targetFormData.table_suffix = this.model.table_suffix
             targetFormData.syncObjects = []
-            if (this.model.selectSourceDatabase) {
-              Object.keys(this.model.selectSourceDatabase).forEach(key => {
-                if (this.model.selectSourceDatabase[key]) {
-                  targetFormData.syncObjects.push({
-                    type: key,
-                    objectNames:
-                      key === 'table' ? this.model.selectSourceArr : []
-                  })
+            if (
+              targetFormData.database_type === 'mq' &&
+              targetFormData.mqType === '0'
+            ) {
+              targetFormData.syncObjects = [
+                {
+                  type: 'queue',
+                  objectNames: this.mqActiveData.queueData
+                },
+                {
+                  type: 'topic',
+                  objectNames: this.mqActiveData.topicData
                 }
-              })
+              ]
+            } else {
+              if (this.model.selectSourceDatabase) {
+                Object.keys(this.model.selectSourceDatabase).forEach(key => {
+                  if (this.model.selectSourceDatabase[key]) {
+                    targetFormData.syncObjects.push({
+                      type: key,
+                      objectNames:
+                        key === 'table' ? this.model.selectSourceArr : []
+                    })
+                  }
+                })
+              }
             }
           }
         }
@@ -425,7 +524,11 @@ export default {
 
     // 添加前后缀数据处理
     preFixSuffixData() {
-      if (this.sourceData.length && this.model.selectSourceArr.length) {
+      if (
+        this.sourceData &&
+        this.sourceData.length &&
+        this.model.selectSourceArr.length
+      ) {
         let selectSourceArr = []
         this.model.selectSourceArr = Array.from(
           new Set(this.model.selectSourceArr)
@@ -438,12 +541,7 @@ export default {
           })
         })
         this.model.selectSourceArr = selectSourceArr
-      }
-      if (
-        this.sourceData &&
-        this.sourceData.length &&
-        this.model.selectSourceArr.length
-      ) {
+
         for (let i = 0; i < this.sourceData.length; i++) {
           for (let j = 0; j < this.model.selectSourceArr.length; j++) {
             if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
@@ -455,12 +553,16 @@ export default {
           }
         }
       }
+      this.mqActiveData.table_prefix = this.model.table_prefix
+      this.mqActiveData.table_suffix = this.model.table_suffix
     },
 
     // 还原
     handleReduction() {
       this.model.table_suffix = ''
       this.model.table_prefix = ''
+      this.mqActiveData.table_prefix = ''
+      this.mqActiveData.table_suffix = ''
       if (this.sourceData.length) {
         for (let i = 0; i < this.sourceData.length; i++) {
           // for (let j = 0; j < selectKeepArr.length; j++) {
@@ -490,8 +592,30 @@ export default {
         .customQuery([connectionId], { schema: true })
         .then(result => {
           if (result.data) {
+            let tables = []
+            // 数据库为mq
+            if (result.data.database_type === 'mq') {
+              this.model.mqType = result.data.mqType
+
+              let tableData = []
+              if (result.data.mqType === '0') {
+                let data = [
+                  ...result.data.mqQueueSet,
+                  ...result.data.mqTopicSet
+                ]
+                tableData = [...new Set(data)]
+              } else if (result.data.mqType === '1') {
+                tableData = result.data.mqQueueSet
+              } else {
+                tableData = result.data.mqTopicSet
+              }
+              tables = tableData.map(item => {
+                return { table_name: item }
+              })
+            } else {
+              tables = (result.data.schema && result.data.schema.tables) || []
+            }
             self.databaseInfo = result.data
-            let tables = (result.data.schema && result.data.schema.tables) || []
             tables = tables.sort((t1, t2) =>
               t1.table_name > t2.table_name
                 ? 1
@@ -501,15 +625,12 @@ export default {
             )
 
             if (tables && tables.length) {
-              this.sourceData = tables.map(table => ({
+              self.sourceData = tables.map(table => ({
                 label: table.table_name,
                 key: table.table_name,
                 // value: table.table_name,
                 disabled: this.disabled
               }))
-              if (this.sourceData.length) {
-                this.preFixSuffixData()
-              }
             }
             self.$forceUpdate()
           }
@@ -668,26 +789,60 @@ export default {
       color: #666 !important;
     }
     .transfer {
+      position: relative;
       height: calc(100% - 32px) !important;
       white-space: nowrap;
       overflow: auto;
-    }
-    .el-transfer,
-    .el-transfer-panel {
-      height: 100% !important;
-    }
-    .el-transfer-panel__body {
-      height: calc(100% - 38px) !important;
-    }
-    .el-checkbox-group {
-      height: calc(100% - 32px);
-      padding-bottom: 5px;
-      box-sizing: border-box;
-    }
-    .el-transfer-panel__item {
-      width: 100%;
-      margin-right: 10px !important;
-      box-sizing: border-box;
+      .el-transfer,
+      .el-transfer-panel {
+        height: 100% !important;
+      }
+      .el-transfer-panel__body {
+        height: calc(100% - 38px) !important;
+      }
+      .el-checkbox-group {
+        height: calc(100% - 32px);
+        padding-bottom: 5px;
+        box-sizing: border-box;
+      }
+      .el-transfer-panel__item {
+        width: 100%;
+        margin-right: 10px !important;
+        box-sizing: border-box;
+      }
+      // .topic-transfer,
+      // .queue-transfer {
+      //   & > div:last-child {
+      //     position: absolute;
+      //     height: 48% !important;
+      //   }
+      // }
+      // .topic-transfer {
+      //   & > div:last-child {
+      //     top: 0;
+      //   }
+      //   .el-transfer__buttons {
+      //     padding-top: 100px;
+      //     vertical-align: top;
+      //   }
+      // }
+      // .queue-transfer {
+      //   position: absolute;
+      //   top: 0;
+      //   width: 0;
+      //   // display: inherit;
+      //   // height: auto !important;
+      //   // & > div:first-child {
+      //   //   display: none;
+      //   // }
+      //   & > div:last-child {
+      //     bottom: 0;
+      //   }
+      //   .el-transfer__buttons {
+      //     padding-bottom: 100px;
+      //     vertical-align: bottom;
+      //   }
+      // }
     }
   }
   .aggtip {

@@ -334,6 +334,17 @@
           </el-row>
         </el-form-item>
         <el-form-item
+          :label="$t('dataFlow.cdcShareFilterOnServer')"
+        >
+          <!-- 是否启用服务端过滤共享日志 -->
+          <el-switch
+            v-model="formData.cdcShareFilterOnServer"
+            :active-text="
+              formData.cdcShareFilterOnServer ? $t('dataFlow.yes') : $t('dataFlow.no')
+            "
+          ></el-switch>
+        </el-form-item>
+        <el-form-item
           :label="
             $t('editor.cell.data_node.table.form.maximum_transaction.label')
           "

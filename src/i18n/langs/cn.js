@@ -622,6 +622,7 @@ const cn = {
     cdc_concurrency: '增量同步并发写入',
     read_batch_size: '每次读取数量',
     cdcDataProcess: '增量数据处理机制',
+    cdcShareFilterOnServer: '共享挖掘日志过滤',
     batch: '批量',
     onebyone: '逐条',
     mission: '描述',
@@ -817,6 +818,8 @@ const cn = {
         hiveText: 'hive节点',
         kafkaText: 'kafka节点',
         kafkaName_isNull: 'kafka不能为空',
+        mqTableType: '新建表类型',
+        mqTableTypeTip: '请选择表类型topic或者queue',
         tcpTip:
           '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
         database: {
@@ -1882,6 +1885,18 @@ const cn = {
         file_upload_mode: '文件上传模式',
         file_upload_stream: '流式',
         file_upload_memory: '内存读取(有内存溢出风险)'
+      },
+      mq: {
+        mqType: 'MQ类型',
+        mqQueueSet: '队列名集合',
+        mqTopicSet: '主题名集合',
+        brokerURL: 'MQ连接串',
+        database_host: 'MQ地址',
+        database_port: 'MQ端口',
+        routeKeyField: '消息路由',
+        virtualHost: '虚拟主机',
+        queueSetTip: '多个队列用逗号隔开',
+        topicSetTip: '多个主题用逗号隔开'
       },
       tcp: {
         agreementType: '协议类型',
