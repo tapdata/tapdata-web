@@ -79,7 +79,8 @@ export const TYPEMAP = {
   jira: 'jira',
   dameng: 'DM DB',
   hive: 'Hive',
-  tcp_udp: 'TCP/IP'
+  tcp_udp: 'TCP/IP',
+  mq: 'MQ'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
@@ -257,6 +258,22 @@ export const defaultModel = {
     database_port: '',
     tcpUdpType: 'TCP',
     root_name: ''
+  },
+  mq: {
+    name: '',
+    database_type: '',
+    connection_type: '',
+    database_host: '',
+    database_port: '',
+    mqType: '', //MQ类型
+    brokerURL: '', //MQ连接串
+    mqUserName: '',
+    mqPassword: '',
+    mqQueueSet: '', //队列名集合
+    mqTopicSet: '', //主题名称
+    routeKeyField: '', //消息路由
+    virtualHost: '', //虚拟主机
+    nameSrvAddr: ''
   }
 }
 export const defaultCloudModel = {

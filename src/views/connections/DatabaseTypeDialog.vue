@@ -49,6 +49,7 @@ export default {
         'mariadb',
         'mysql pxc',
         'jira',
+        'mq',
         'dameng',
         'hive',
         'tcp_udp'

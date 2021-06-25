@@ -840,6 +840,8 @@ const en = {
         hiveText: 'Hive Node',
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
+        mqTableType: 'New table type',
+        mqTableTypeTip: 'Please select the table type topic or queue',
         tcpTip:
           'Important: TCP/IP data sources output JSON packets by default without additional packet conversion processing nodes ',
         database: {
@@ -1949,6 +1951,18 @@ const en = {
         file_upload_mode: 'File Upload Mode',
         file_upload_stream: 'Stream',
         file_upload_memory: 'Memory(May be cause OOM)(有内存溢出风险)'
+      },
+      mq: {
+        mqType: 'MQ Type',
+        mqQueueSet: 'Queue name',
+        mqTopicSet: 'Topic Name',
+        brokerURL: 'Broker URL',
+        database_host: 'MQ Host',
+        database_port: 'MQ Port',
+        routeKeyField: 'Message routing',
+        virtualHost: 'Virtual host',
+        QueueSetTip: 'Multiple queues are separated by commas',
+        TopicSetTip: 'Multiple topics separated by commas'
       },
       tcp: {
         AgreementType: 'Protocol type ',

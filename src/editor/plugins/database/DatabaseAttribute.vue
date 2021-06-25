@@ -166,7 +166,8 @@ export default {
         table_suffix: '',
         dropType: 'no_drop',
         syncObjects: [],
-        type: 'postgres'
+        type: 'postgres',
+        mqType: ''
       },
       databaseInfo: {
         connection_type: '',
@@ -242,7 +243,8 @@ export default {
             id: 1,
             database_type: 1,
             connection_type: 1,
-            status: 1
+            status: 1,
+            mqType: 1
           },
           order: ['status DESC', 'name ASC']
         })
@@ -315,9 +317,32 @@ export default {
         .customQuery([connectionId], { schema: true })
         .then(result => {
           if (result.data) {
+            let tables = []
+            // 数据库为mq
+            if (result.data.database_type === 'mq') {
+              this.model.mqType = result.data.mqType
+
+              let tableData = []
+              if (result.data.mqType === '0') {
+                let data = [
+                  ...result.data.mqQueueSet,
+                  ...result.data.mqTopicSet
+                ]
+                tableData = [...new Set(data)]
+              } else if (result.data.mqType === '1') {
+                tableData = result.data.mqQueueSet
+              } else {
+                tableData = result.data.mqTopicSet
+              }
+              tables = tableData.map(item => {
+                return { table_name: item }
+              })
+            } else {
+              tables = (result.data.schema && result.data.schema.tables) || []
+            }
             self.databaseInfo = result.data
             self.model.database_type = self.databaseInfo.database_type
-            let tables = (result.data.schema && result.data.schema.tables) || []
+
             tables = tables.sort((t1, t2) =>
               t1.table_name > t2.table_name
                 ? 1
@@ -560,6 +585,9 @@ export default {
         box-sizing: border-box;
         .iconfont {
           color: #4aaf47;
+        }
+        .tableName {
+          padding-left: 5px;
         }
       }
 

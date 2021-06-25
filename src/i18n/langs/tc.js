@@ -816,6 +816,8 @@ const tc = {
         hiveText: 'hive節點',
         kafkaText: 'kafka節點',
         kafkaName_isNull: 'kafka不能為空',
+        mqTableType: '新建表類型',
+        mqTableTypeTip: '請選擇表類型topic或者queue',
         tcpTip:
           '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
         database: {
@@ -1878,6 +1880,18 @@ const tc = {
         file_upload_mode: '文件上傳模式',
         file_upload_stream: '流式',
         file_upload_memory: '內存讀取(有內存溢出風險)'
+      },
+      mq: {
+        mqType: 'MQ類型',
+        mqQueueSet: '隊列名集合',
+        mqTopicSet: '主題名集合',
+        brokerURL: 'MQ連接串',
+        database_host: 'MQ地址',
+        database_port: 'MQ端口',
+        routeKeyField: '消息路由',
+        virtualHost: '虛擬主機',
+        queueSetTip: '多個隊列用逗號隔開',
+        topicSetTip: '多個主題用逗號隔開'
       },
       tcp: {
         agreementType: '协议类型',
