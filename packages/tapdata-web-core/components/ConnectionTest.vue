@@ -38,7 +38,7 @@
         <div class="test-status" v-if="!['ready', 'invalid'].includes(status)">
           <el-image
             style="width: 20px; height: 20px; vertical-align: bottom"
-            :src="require('@/assets/icons/loading.svg')"
+            :src="require('../assets/icons/loading.svg')"
           ></el-image>
           <span v-if="testData.testLogs.length === 0">{{
             t('dataForm.primaryTest')
@@ -80,7 +80,7 @@
           >
             <el-image
               style="width: 20px; height: 20px; vertical-align: bottom"
-              :src="require('@/assets/icons/loading.svg')"
+              :src="require('../assets/icons/loading.svg')"
             ></el-image>
             {{ statusMap[scope.row.status] }}
           </span>
