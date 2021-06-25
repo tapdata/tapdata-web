@@ -5,7 +5,7 @@
 import EventEmitter from './event'
 
 class WSClient extends EventEmitter {
-  constructor(opts = {}) {
+  constructor(url, protocols, opts = {}) {
     super()
 
     const defaultOptions = {
@@ -14,16 +14,21 @@ class WSClient extends EventEmitter {
       retryTimes: 5,
       retryInterval: 5000
     }
-    this.options = Object.assign({}, defaultOptions, opts)
+    this.options = Object.assign({}, defaultOptions, opts, {
+      url,
+      protocols
+    })
     this.ws = null
     this.retryCount = 0
+    this.connect()
   }
   connect() {
     if (this.ws) {
       this.disconnect()
     }
+    let opts = this.options
     try {
-      this.ws = new WebSocket(this.url, this.protocols)
+      this.ws = new WebSocket(opts.url, opts.protocols)
       this.retryCount = 0
       this.__bindEvent()
     } catch (e) {
@@ -37,6 +42,7 @@ class WSClient extends EventEmitter {
     if (this.retryCount < opts.retryTimes) {
       this.retryCount++
       setTimeout(() => {
+        console.log('websocket 尝试第' + this.retryCount + '次重连')
         this.connect()
       }, opts.retryInterval)
     } else {
@@ -48,8 +54,8 @@ class WSClient extends EventEmitter {
   disconnect() {
     let ws = this.ws
     if (ws) {
-      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(this.ws.readyState))
-        this.ws.close(1, null)
+      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(ws.readyState))
+        ws.close()
     }
   }
 

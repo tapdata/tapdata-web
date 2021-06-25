@@ -9,7 +9,8 @@
   "files": [
     "assets",
     "components",
-    "plugins"
+    "plugins",
+    "locale"
   ],
   "publishConfig": {
     "access": "public",

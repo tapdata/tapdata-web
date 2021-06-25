@@ -27,7 +27,13 @@ Vue.use(VueCookie)
 Vue.use(VueBus)
 Vue.use(VueClipboard)
 Vue.use(LoadMore)
-Vue.use(TapdataWebCore)
+Vue.use(TapdataWebCore, {
+  lang: {
+    sc: 'zh-CN',
+    tc: 'zh-TW',
+    en: 'en'
+  }[localStorage.getItem('tapdata_localize_lang')]
+})
 
 Vue.prototype.$moment = moment
 Vue.prototype.$api = factory
