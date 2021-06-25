@@ -38,6 +38,28 @@ module.exports = Object.assign({}, dataflow, {
       }
     ]
   },
+  '/api/Settings/findOne': {
+    data: {
+      category: 'notification',
+      key: 'notification',
+      value:
+        '{"runNotification":[{"label":"jobStarted","notice":true,"email":false},{"label":"jobPaused","notice":true,"email":false},{"label":"jobDeleted","notice":true,"email":false},{"label":"jobStateError","notice":true,"email":false},{"label":"jobEncounterError","notice":true,"email":true,"noticeInterval":"noticeInterval","Interval":"1","util":"hour"},{"label":"CDCLagTime","notice":true,"email":true,"lagTime":"lagTime","lagTimeInterval":"20","lagTimeUtil":"second","noticeInterval":"noticeInterval","noticeIntervalInterval":"4","noticeIntervalUtil":"hour"},{"label":"inspectCount","notice":true,"email":false},{"label":"inspectValue","notice":true,"email":false},{"label":"inspectDelete","notice":true,"email":false},{"label":"inspectError","notice":true,"email":false}],"systemNotification":[],"agentNotification":[{"label":"serverDisconnected","notice":true,"email":true},{"label":"agentStarted","notice":true,"email":false},{"label":"agentStopped","notice":true,"email":true},{"label":"agentCreated","notice":true,"email":false},{"label":"agentDeleted","notice":true,"email":true}]}',
+      default_value: '',
+      documentation: 'Notification Setting',
+      last_update: 0,
+      last_update_by: '',
+      scope: 'global',
+      sort: 1,
+      category_sort: 4,
+      key_label: 'Notification Setting',
+      user_visible: false,
+      hot_reloading: true,
+      id: '76',
+      last_updated: '2021-06-16T09:43:53.468Z'
+    },
+    code: 'ok',
+    msg: 'ok'
+  },
   '/api/Settings': settings,
   '/api/timeStamp': { data: '1620388869929', code: 'ok', msg: 'ok' },
   '/api/users/login': { data: '1620388869929', code: 'ok', msg: 'ok' },
@@ -65,7 +87,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.849Z',
         createTime: '2021-05-06T13:27:26.849Z'
@@ -91,7 +114,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.864Z',
         createTime: '2021-05-06T13:27:26.864Z'
@@ -117,7 +141,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.871Z',
         createTime: '2021-05-06T13:27:26.871Z'
@@ -143,7 +168,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.877Z',
         createTime: '2021-05-06T13:27:26.877Z'
@@ -169,7 +195,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.883Z',
         createTime: '2021-05-06T13:27:26.883Z'
@@ -195,7 +222,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.890Z',
         createTime: '2021-05-06T13:27:26.890Z'
@@ -230,7 +258,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.902Z',
         createTime: '2021-05-06T13:27:26.902Z'
@@ -256,7 +285,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.910Z',
         createTime: '2021-05-06T13:27:26.910Z'
@@ -282,7 +312,8 @@ module.exports = Object.assign({}, dataflow, {
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
+          'mq'
         ],
         last_updated: '2021-05-06T13:27:26.922Z',
         createTime: '2021-05-06T13:27:26.922Z'
@@ -450,6 +481,15 @@ module.exports = Object.assign({}, dataflow, {
         name: 'Redis',
         buildProfiles: null,
         supportTargetDatabaseType: ['dummy db', 'bitsflow'],
+        last_updated: '2021-05-06T13:27:26.978Z',
+        createTime: '2021-05-06T13:27:26.978Z'
+      },
+      {
+        id: '6093eebec51425290fec3d35',
+        type: 'mq',
+        name: 'mq',
+        buildProfiles: null,
+        supportTargetDatabaseType: ['dummy db', 'bitsflow', 'mysql'],
         last_updated: '2021-05-06T13:27:26.978Z',
         createTime: '2021-05-06T13:27:26.978Z'
       }
@@ -1185,6 +1225,24 @@ module.exports = Object.assign({}, dataflow, {
     code: 'ok',
     msg: 'ok'
   },
+  '/api/ScheduleTasks': {
+    'data|10': [
+      {
+        id: '@id',
+        task_type: 'CLEAR_PG_SLOT',
+        period: 3600000,
+        status: 'scheduling',
+        task_name: '@name',
+        task_profile: 'DEFAULT',
+        agent_id: 'daaf405f-3d4c-4584-8087-bdc014966376',
+        last_updated: '2021-06-21T07:33:59.956Z',
+        ping_time: 1624260839953
+      }
+    ],
+    code: 'ok',
+    msg: 'ok'
+  },
+  '/api/ScheduleTasks/count': { data: { count: 6 }, code: 'ok', msg: 'ok' },
   '/api/DataFlowInsights/runtimeMonitor': ({ req }) => {
     let data = {
       throughput: {

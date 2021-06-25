@@ -459,7 +459,9 @@ export default {
           return
         }
         this.loadData()
-        this.wsWatch()
+        if (this.$route.query.id) {
+          this.wsWatch()
+        }
         this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
           this.draftSave()
         })
@@ -926,7 +928,12 @@ export default {
             readBatchSize: 1000
           })
         } else if (
-          ['app.Table', 'app.Collection', 'app.ESNode'].includes(cell.type)
+          [
+            'app.Table',
+            'app.Collection',
+            'app.ESNode',
+            'app.HiveNode'
+          ].includes(cell.type)
         ) {
           postData.mappingTemplate = 'custom'
 
@@ -1520,7 +1527,8 @@ export default {
         js_processor: 'app.Script',
         row_filter_processor: 'app.DataFilter',
         java_processor: 'app.FieldProcess',
-        redis: 'app.Redis'
+        redis: 'app.Redis',
+        hive: 'app.HiveNode'
       }
       if (data) {
         let stageMap = {}
@@ -1531,7 +1539,11 @@ export default {
           let formData = _.cloneDeep(v)
           delete formData.inputLanes
           delete formData.outputLanes
-          if (['table', 'view', 'collection', 'mongo_view'].includes(v.type)) {
+          if (
+            ['table', 'view', 'collection', 'mongo_view', 'hive'].includes(
+              v.type
+            )
+          ) {
             let node = {
               type: mapping[v.type],
               id: v.id,

@@ -635,6 +635,7 @@ const en = {
     send_email_at_most_one_replication: 'Cancel sending in more than seconds',
     read_cdc_interval: ' CDC interval',
     cdc_concurrency: ' CDC concurrency',
+    cdcShareFilterOnServer: 'Filter CDC shared log',
     read_batch_size: 'Read-amount/time',
     cdcDataProcess: 'CDC data process',
     batch: 'Batch process',
@@ -837,8 +838,11 @@ const en = {
         acyclic: 'The graph cannot have cyclic'
       },
       data_node: {
+        hiveText: 'Hive Node',
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
+        mqTableType: 'New table type',
+        mqTableTypeTip: 'Please select the table type topic or queue',
         tcpTip:
           'Important: TCP/IP data sources output JSON packets by default without additional packet conversion processing nodes ',
         database: {
@@ -974,6 +978,7 @@ const en = {
             },
             table: {
               label: 'Table',
+              labelTips: '（If it is empty, create a new table）',
               placeholder: 'Please select table,Case sensitive'
             },
             custom_sql: {
@@ -1957,6 +1962,18 @@ const en = {
         file_upload_mode: 'File Upload Mode',
         file_upload_stream: 'Stream',
         file_upload_memory: 'Memory(May be cause OOM)(有内存溢出风险)'
+      },
+      mq: {
+        mqType: 'MQ Type',
+        mqQueueSet: 'Queue name',
+        mqTopicSet: 'Topic Name',
+        brokerURL: 'Broker URL',
+        database_host: 'MQ Host',
+        database_port: 'MQ Port',
+        routeKeyField: 'Message routing',
+        virtualHost: 'Virtual host',
+        QueueSetTip: 'Multiple queues are separated by commas',
+        TopicSetTip: 'Multiple topics separated by commas'
       },
       tcp: {
         AgreementType: 'Protocol type ',

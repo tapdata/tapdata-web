@@ -19,6 +19,7 @@ import gridfs from './gridfs'
 import dummydb from './dummydb'
 import jira from './jira'
 import dameng from './dameng'
+import hive from './hive'
 import tcp_udp from './tcp_udp'
 import drs_mysql from './drs_mysql'
 import drs_mariadb from './drs_maria'
@@ -38,6 +39,7 @@ import dfs_mongodb from './dfs_mongodb'
 import dfs_sqlserver from './dfs_sqlserver'
 import dfs_redis from './dfs_redis'
 import dfs_elasticsearch from './dfs_elasticsearch'
+import mq from './mq'
 
 export default {
   mysql,
@@ -53,6 +55,7 @@ export default {
   mariadb,
   mysqlpxc,
   jira,
+  hive,
   drs_mysql,
   drs_mariadb,
   drs_oracle,
@@ -78,6 +81,7 @@ export default {
   restapi,
   custom_connection,
   gridfs,
+  mq,
   dameng,
   tcp_udp
 }

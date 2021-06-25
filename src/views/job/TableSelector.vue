@@ -422,7 +422,8 @@ export default {
         file: 'app.FileNode',
         gridfs: 'app.GridFSNode',
         'rest api': 'app.ApiNode',
-        custom_connection: 'app.CustomNode'
+        custom_connection: 'app.CustomNode',
+        hive: 'app.HiveNode'
       }
 
       let formData = {}
@@ -458,7 +459,9 @@ export default {
           type: data.source.database_type
         }
       } else if (
-        ['table', 'view', 'collection', 'mongo_view'].includes(data.meta_type)
+        ['table', 'view', 'collection', 'mongo_view', 'hive'].includes(
+          data.meta_type
+        )
       ) {
         // let primaryKeys = '';
         if (data.fields) {

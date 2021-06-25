@@ -1,90 +1,32 @@
 /**
  * @author lg<lirufei0808@gmail.com>
- * @date 3/4/20
+ * @date 3/5/20
  * @description
  */
 import { options } from '../../lib/rappid/config'
-import DatabaseAttribute from './DatabaseAttribute'
+import MqAttribute from './MqAttribute'
 import i18n from '@/i18n'
 import { FORM_DATA_KEY } from '../../constants'
 
-export const databaseConfig = {
-  /**
-   * the name of the subtype class.
-   *
-   */
-  type: 'app.Database',
-
-  /**
-   * define shape
-   * docs see https://github.com/clientIO/joint/blob/master/tutorials/custom-elements.html
-   * @type {object}
-   */
+export const mqConfig = {
+  type: 'app.Mq',
   shape: {
-    /**
-     * extends exists shape
-     */
     extends: 'app.BaseElement',
-
-    /**
-     * object that contains properties to be assigned to every constructed instance of the subtype.
-     *
-     * @example <pre>
-     *     {
-     *        attrs: {
-     *           body: {
-     *              refWidth: '100%',
-     *              refHeight: '100%',
-     *              strokeWidth: 2,
-     *              stroke: '#000000',
-     *              fill: '#FFFFFF'
-     *           },
-     *           label: {
-     *              textVerticalAnchor: 'middle',
-     *              textAnchor: 'middle',
-     *              refX: '50%',
-     *              refY: '50%',
-     *              fontSize: 14,
-     *              fill: '#333333'
-     *           }
-     *        }
-     *     }
-     * </pre>
-     */
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-DB.svg'
+          xlinkHref: 'static/editor/o-mq-o.svg'
         },
         label: {
-          text: i18n.t('editor.cell.data_node.database.name')
+          text: 'Mq'
         }
       },
       [FORM_DATA_KEY]: {
         connectionId: '',
-        includeTables: [],
-        dropTable: false,
-        type: 'database'
+        tableName: ''
+        // primaryKeys: ''
       }
     },
-    /**
-     * object that contains properties to be assigned on the subtype prototype.
-     * Intended for properties intrinsic to the subtype, not usually modified.
-     *
-     * @example <pre>
-     *
-     * {
-     *     markup: [{
-     *          tagName: 'rect',
-     *          selector: 'body',
-     *     }, {
-     *          tagName: 'text',
-     *          selector: 'label'
-     *     }]
-     * }
-     *
-     * </pre>
-     */
     prototypeProperties: {
       portLabelMarkup: [
         {
@@ -95,7 +37,6 @@ export const databaseConfig = {
       isDataNode() {
         return true
       },
-
       /**
        * validate user-filled data
        * @param data
@@ -104,14 +45,15 @@ export const databaseConfig = {
       validate: function (data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
-          )
         if (!data.connectionId)
           throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.database.none_database')}`
+            `${name}: ${i18n.t('editor.cell.data_node.table.none_database')}`
           )
+        if (!data.tableName)
+          throw new Error(
+            `${name}: ${i18n.t('editor.cell.data_node.table.none_table')}`
+          )
+        // if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_pk')}`);
         return true
       },
 
@@ -120,21 +62,8 @@ export const databaseConfig = {
        * @param targetCell
        * @return {boolean}
        */
-      allowTarget(targetCell, sourceCell) {
-        if (
-          sourceCell?.attributes?.form_data?.database_type === 'elasticsearch'
-        ) {
-          return ['kafka'].includes(
-            targetCell?.attributes?.form_data?.database_type
-          )
-        }
-
-        return (
-          ['app.Database'].includes(targetCell.get('type')) &&
-          targetCell.graph.getConnectedLinks(this, {
-            inbound: true
-          }).length < 1
-        )
+      allowTarget(targetCell) {
+        return !['app.Database'].includes(targetCell.get('type'))
       },
 
       /**
@@ -143,20 +72,12 @@ export const databaseConfig = {
        * @return {boolean}
        */
       allowSource(sourceCell) {
-        return ['app.Database'].includes(sourceCell.get('type'))
+        return !['app.Database'].includes(sourceCell.get('type'))
       }
     }
-    /**
-     * object that contains properties to be assigned on the subtype constructor.
-     */
     // staticProperties: {}
   },
 
-  /**
-   * 图形(Element子类
-   * )样式表单配置
-   * @type {object}
-   */
   styleFormConfig: {
     inputs: {
       attrs: {
@@ -274,7 +195,7 @@ export const databaseConfig = {
     size: { width: 5, height: 4 },
     attrs: {
       root: {
-        dataTooltip: i18n.t('editor.cell.data_node.database.tip'),
+        dataTooltip: 'Mq',
         dataTooltipPosition: 'left',
         dataTooltipPositionSelector: '.joint-stencil'
       },
@@ -287,14 +208,14 @@ export const databaseConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/database2.svg',
+        xlinkHref: 'static/editor/mq.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',
         refY: '0%'
       },
       label: {
-        text: i18n.t('editor.cell.data_node.database.name'),
+        text: 'Mq',
         textAnchor: 'middle',
         fill: '#666',
         fontFamily: 'Roboto Condensed',
@@ -305,6 +226,9 @@ export const databaseConfig = {
         refY: '40%',
         x: -32,
         y: 27
+      },
+      ports: {
+        items: []
       }
     }
   },
@@ -314,9 +238,6 @@ export const databaseConfig = {
    * @type {null}
    */
   settingFormConfig: {
-    component: DatabaseAttribute
-    /* props: {
-			connection_type: 'source'
-		}, */
+    component: MqAttribute
   }
 }

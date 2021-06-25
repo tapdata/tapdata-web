@@ -344,6 +344,7 @@ export default {
         'mysql pxc',
         'jira',
         'dameng',
+        'hive',
         'gbase-8s',
         'sybase ase',
         'gaussdb200',
@@ -351,7 +352,8 @@ export default {
         'rest api',
         'custom_connection',
         'gridfs',
-        'tcp_udp'
+        'tcp_udp',
+        'mq'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -413,6 +415,21 @@ export default {
     clearInterval(timeout)
   },
   methods: {
+    // 存在测试中，重新加载数据
+    reloadDataOnTesting(data) {
+      let flag = false
+      data.forEach(el => {
+        if (el.status === 'testing') {
+          flag = true
+        }
+      })
+      flag &&
+        setTimeout(() => {
+          this.table.fetch(null, 0, true, value => {
+            this.reloadDataOnTesting(value)
+          })
+        }, 3000)
+    },
     //兼容新手引导
     handleGuide() {
       let item = {
@@ -476,6 +493,15 @@ export default {
         sslKey: true,
         sslValidate: false,
         sslCA: true, //MongoDB
+        mqType: true,
+        brokerURL: true, // mq start
+        nameSrvAddr: true,
+        mqUserName: true,
+        mqPassword: true,
+        mqQueueSet: true,
+        mqTopicSet: true,
+        routeKeyField: true,
+        virtualHost: true, // mq end
         tcpUdpType: true, // TCP
         root_name: true
       }
@@ -516,6 +542,10 @@ export default {
         })
       ]).then(([countRes, res]) => {
         let list = res.data
+        // dfs添加检测方法：测试中
+        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+          this.reloadDataOnTesting(list)
+        }
         return {
           total: countRes.data.count,
           data: list.map(item => {
@@ -533,6 +563,17 @@ export default {
                 item.database_host + ':' + item.database_port
             } else {
               item.connectionUrl = item.database_uri || item.connection_name
+            }
+            if (item.database_type === 'mq') {
+              if (item.mqType === '0') {
+                item.connectionUrl = item.brokerURL
+              } else if (item.mqType === '2') {
+                item.connectionUrl = item.nameSrvAddr
+              }
+            }
+            // 不存在uri 和 port === 0
+            if (!item.database_uri && !item.database_port) {
+              item.connectionUrl = ''
             }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = this.$moment(item.last_updated).format(
