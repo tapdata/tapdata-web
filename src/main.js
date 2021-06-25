@@ -9,11 +9,11 @@ import VueBus from 'vue-bus'
 import VueClipboard from 'vue-clipboard2'
 import factory from '@/api/factory'
 import Cache from '@/utils/cache'
+import TapdataWebCore from 'tapdata-web-core'
 
 import '@/plugins/element'
 import '@/plugins/icon'
 import 'element-ui/lib/theme-chalk/index.css'
-import 'tapdata-web-core'
 import '@/directives'
 import 'github-markdown-css'
 import '@/assets/style/index.scss'
@@ -27,6 +27,7 @@ Vue.use(VueCookie)
 Vue.use(VueBus)
 Vue.use(VueClipboard)
 Vue.use(LoadMore)
+Vue.use(TapdataWebCore)
 
 Vue.prototype.$moment = moment
 Vue.prototype.$api = factory
