@@ -693,7 +693,11 @@ export default {
           .catch(({ response }) => {
             let msg = response && response.msg
             if (msg && (msg.jobs || msg.modules)) {
-              this.$message.error(this.$t('connection.cannot_delete_remind'))
+              if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+                this.$message.error(this.$t('connection.dfs_cannot_delete_remind'))
+              } else {
+                this.$message.error(this.$t('connection.cannot_delete_remind'))
+              }
               // const h = this.$createElement;
               // this.$message.error(
               // 	h('div', {}, [

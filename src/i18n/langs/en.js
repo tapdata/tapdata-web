@@ -817,7 +817,9 @@ const en = {
       source_and_target: 'Source&Target'
     },
     cannot_delete_remind:
-      'Connection is currently being used by one or more jobs and apis. Please delete the jobs or apis then try again.'
+      'Connection is currently being used by one or more jobs and apis. Please delete the jobs or apis then try again.',
+    dfs_cannot_delete_remind:
+      'Connection is currently being used by one or more jobs. Please delete the jobs then try again.'
   },
   editor: {
     nodeSettings: 'Node Settings',
