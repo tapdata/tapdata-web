@@ -1,8 +1,8 @@
 /* eslint-disable */
-import ConnectionTypeSelector from './component/ConnectionTypeSelector'
-import FormBuilder from './component/FormBuilder'
+import ConnectionTypeSelector from './components/connection-type-selector'
+import FormBuilder from './components/form-builder'
 
-import WSClient from './lib/WSClient'
+import WSClient from './plugins/ws-client'
 
 const components = [ConnectionTypeSelector]
 

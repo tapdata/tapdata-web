@@ -1,3 +1,7 @@
+/**
+ * 表单生成器
+ */
+
 import Form from './form.vue'
 import Input from './input.vue'
 import Select from './select.vue'

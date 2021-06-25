@@ -103,7 +103,7 @@ export default {
       if (!type) {
         type = 'default'
       }
-      return require(`./images/${type.toLowerCase()}.png`)
+      return require(`../../assets/images/connection-type/${type.toLowerCase()}.png`)
     }
   }
 }

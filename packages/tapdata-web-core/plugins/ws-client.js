@@ -1,4 +1,8 @@
-import EventEmitter from './EventEmitter'
+/**
+ * websocket 封装类
+ */
+
+import EventEmitter from './event'
 
 class WSClient extends EventEmitter {
   constructor(opts = {}) {

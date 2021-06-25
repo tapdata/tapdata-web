@@ -1,8 +1,3 @@
-/**
- * @author lg<lirufei0808@gmail.com>
- * @date 2/26/20
- * @description
- */
 const privateMap = new WeakMap()
 
 // For making private properties.
