@@ -740,7 +740,9 @@ const cn = {
         '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
       startJob: '跳过错误，启动任务',
       cancel: '取消',
-      taskName: '任务名'
+      taskName: '任务名',
+      errorTotal: '共 XX 条,已选择',
+      strip: '条'
     }
   },
   connection: {

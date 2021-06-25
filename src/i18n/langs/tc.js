@@ -738,7 +738,9 @@ const tc = {
         '注意：若導致錯誤的數​​據未被處理，跳過錯誤可能導致這條數據被丟棄。 ',
       startJob: '跳過錯誤，啟動任務',
       cancel: '取消',
-      taskName: '任務名'
+      taskName: '任務名',
+      errorTotal: '共XX條，已選擇',
+      strip: '條'
     }
   },
   connection: {

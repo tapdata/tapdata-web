@@ -760,7 +760,9 @@ const en = {
         'WARNING: If you chose to skip the errors, the relevant data may be discarded. ',
       startJob: 'Skip errors, continue to start',
       cancel: 'Cancel',
-      taskName: 'Task name'
+      taskName: 'Task name',
+      Errortotal: 'total XX, selected',
+      Strip: 'row'
     }
   },
   connection: {
