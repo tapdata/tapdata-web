@@ -1,0 +1,3 @@
+[submodule "packages/tapdata-web-core"]
+	path = packages/tapdata-web-core
+	url = git@e.coding.net:tapdata/tapdata/tapdata-web-core.git
