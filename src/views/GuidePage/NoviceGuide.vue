@@ -285,27 +285,34 @@ export default {
 			}
 			let databaseType = item.type
 			// if (!['mysql', 'oracle', 'sqlserver', 'mongodb', 'db2', 'postgres'].includes(databaseType)) return
-
+			this.show = false
+			this.$router.push({
+				name: 'ConnectionCreate',
+				query: {
+					// step: this.step,
+					databaseType: databaseType
+				}
+			})
 			//检测agent 是否可用
-			this.$axios
-				.get('tm/api/Workers//availableAgent')
-				.then(res => {
-					if (!res.result || res.result.length === 0) {
-						this.$message.error('Agent当前状态异常无法创建连接，请检查')
-					} else {
-						this.show = false
-						this.$router.push({
-							name: 'ConnectionCreate',
-							query: {
-								step: this.step,
-								databaseType: databaseType
-							}
-						})
-					}
-				})
-				.catch(error => {
-					console.log('error', error)
-				})
+			// this.$axios
+			// 	.get('tm/api/Workers//availableAgent')
+			// 	.then(res => {
+			// 		if (!res.result || res.result.length === 0) {
+			// 			this.$message.error('Agent当前状态异常无法创建连接，请检查')
+			// 		} else {
+			// 			this.show = false
+			// 			this.$router.push({
+			// 				name: 'ConnectionCreate',
+			// 				query: {
+			// 					step: this.step,
+			// 					databaseType: databaseType
+			// 				}
+			// 			})
+			// 		}
+			// 	})
+			// 	.catch(error => {
+			// 		console.log('error', error)
+			// 	})
 		},
 		goCreateTask() {
 			this.show = false
