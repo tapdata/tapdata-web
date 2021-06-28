@@ -78,7 +78,19 @@
 				</ElTableColumn>
 				<ElTableColumn label="版本" width="180">
 					<template slot-scope="scope">
-						<span>{{ scope.row.spec && scope.row.spec.version }}</span>
+						<div class="flex align-center">
+							<span>{{ scope.row.spec && scope.row.spec.version }}</span>
+							<ElTooltip
+								v-if="scope.row.spec && version && scope.row.spec.version !== version"
+								class="ml-1"
+								effect="dark"
+								content="Agent版本有更新，点击升级。"
+								placement="top-start"
+							>
+								<VIcon v-if="false" class="pointer" size="20" @click="showUpgradeDialogFnc(scope.row)">upgrade</VIcon>
+								<img class="upgrade-img pointer" :src="upgradeImg" alt="" @click="showUpgradeDialogFnc(scope.row)" />
+							</ElTooltip>
+						</div>
 					</template>
 				</ElTableColumn>
 				<ElTableColumn prop="createAt" sortable="custom" label="创建时间" width="150">
@@ -109,6 +121,22 @@
 				@current-change="fetch"
 			>
 			</ElPagination>
+			<ElDialog :visible.sync="upgradeDialog" width="450px" top="30vh" center>
+				<div class="dialog-content">
+					Agent版本有更新，您可以通过以下方式将您的Agent升级到最新版本。升级过程中将无法运行任务。
+				</div>
+				<div class="dialog-btn flex justify-evenly mt-6">
+					<div class="text-center">
+						<ElButton type="primary" :disabled="agentStatus !== 'running'" @click="autoUpgradeFnc">自动升级</ElButton>
+						<div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
+							(Agent离线时无法使用自动升级)
+						</div>
+					</div>
+					<div>
+						<ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
+					</div>
+				</div>
+			</ElDialog>
 		</div>
 	</section>
 	<RouterView v-else></RouterView>
@@ -119,13 +147,17 @@ import { delayTrigger } from '../../util'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
+import VIcon from '../../components/VIcon'
 import { INSTANCE_STATUS_MAP } from '../../const'
+import upgradeSvg from '@/assets/icons/svg-colorful/upgrade.svg'
+import upgradeImg from '../../assets/image/upgrade.png'
 
 export default {
 	components: {
 		InlineInput,
 		StatusTag,
-		ClipButton
+		ClipButton,
+		VIcon
 	},
 	data() {
 		return {
@@ -142,7 +174,14 @@ export default {
 			},
 			order: 'createAt desc',
 			statusMap: INSTANCE_STATUS_MAP,
-			VUE_APP_INSTANCE_TEST_BTN: process.env.VUE_APP_INSTANCE_TEST_BTN
+			VUE_APP_INSTANCE_TEST_BTN: process.env.VUE_APP_INSTANCE_TEST_BTN,
+			upgradeDialog: false,
+			selectedRow: {},
+			agentStatus: 'stop',
+			version: '',
+			upgradeList: [], // 升级列表
+			upgradeSvg,
+			upgradeImg
 		}
 	},
 	computed: {
@@ -176,6 +215,13 @@ export default {
 		this.fetch()
 	},
 	methods: {
+		async getVersion(id) {
+			return this.$axios.get('api/tcm/config/version/latest/' + id)
+		},
+		// async getUpgradeList() {
+		// 	return await this.$axios.get('api/tcm/getUpgradeList').then(data => {
+		// 	})
+		// },
 		search() {
 			let { status } = this.searchParams
 			this.$router.replace({
@@ -186,7 +232,7 @@ export default {
 			})
 		},
 		fetch(pageNum, debounce, hideLoading) {
-			delayTrigger(() => {
+			delayTrigger(async () => {
 				if (!hideLoading) {
 					this.loading = true
 				}
@@ -207,14 +253,24 @@ export default {
 					page: current,
 					sort: [this.order]
 				}
+
+				// 升级状态
+				// let getUpgradeList = await this.getUpgradeList()
 				this.$axios
 					.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
-					.then(data => {
+					.then(async data => {
 						let list = data.items || []
 						this.list = list.map(item => {
 							item.status = item.status === 'Running' ? 'Running' : 'Offline'
+							item.updataStatus = ''
 							return item
 						})
+						// 不存在版本号
+						if (!this.version) {
+							let getVersion = await this.getVersion(this.list[0]?.id)
+							this.version = getVersion?.version
+						}
+
 						this.page.total = data.total
 						if (!list.length && data.total > 0) {
 							setTimeout(() => {
@@ -297,6 +353,21 @@ export default {
 					status: 'running'
 				}
 			})
+		},
+		showUpgradeDialogFnc(row) {
+			// this.upgradeDialog = true
+			// this.selectedRow = row
+			this.manualUpgradeFnc(row)
+		},
+		autoUpgradeFnc() {},
+		manualUpgradeFnc(row) {
+			let routeUrl = this.$router.resolve({
+				name: 'UpgradeVersion',
+				query: {
+					agentId: row.id
+				}
+			})
+			window.open(routeUrl.href, '_blank')
 		}
 	}
 }
@@ -310,12 +381,19 @@ export default {
 	flex-direction: column;
 	overflow: hidden;
 	box-sizing: border-box;
+	.pointer {
+		cursor: pointer;
+	}
 	.btn-refresh {
 		padding: 0;
 		height: 32px;
 		line-height: 32px;
 		width: 32px;
 		font-size: 16px;
+	}
+	.upgrade-img {
+		width: 20px;
+		height: 20px;
 	}
 	.main {
 		padding: 20px;

@@ -35,7 +35,8 @@ const agent = {
 		'region|1': ['same', 'different'], // 同地域是否相同：same-同资源池；different-跨资源池
 		'specType|1': ['micro', 'small', 'medium', 'large'], // micro-微小，small-小，medium-中，large-大，self-自定义
 		cpu: 2, // CPU 个数
-		memory: 4 // 内存大小，单位 G
+		memory: 4, // 内存大小，单位 G
+		version: 'dfs-v1.0.1-6-dev'
 	},
 
 	orderInfo: {
@@ -59,7 +60,8 @@ const agent = {
 		]
 	},
 	tmInfo: {
-		agentId: '@id'
+		agentId: '@id',
+		token: '@guid'
 	}
 }
 module.exports = Object.assign({}, dataflow, connection, {
@@ -189,8 +191,8 @@ module.exports = Object.assign({}, dataflow, connection, {
 	'/api/tcm/agent': {
 		code: 'ok',
 		data: {
-			total: 100,
-			'items|10': [agent]
+			total: 1,
+			items: [agent]
 		}
 	},
 	'/api/tcm/agent/agentCount': {
