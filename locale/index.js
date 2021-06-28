@@ -6,7 +6,7 @@ const langs = {
 
 let lang = 'zh-CN'
 
-export const t = function (path) {
+export const t = function(path) {
   let value = ''
   const array = path.split('.')
   let current = langs[lang]
@@ -21,7 +21,7 @@ export const t = function (path) {
   return ''
 }
 
-export const use = function (l) {
+export const use = function(l) {
   lang = l || lang
 }
 

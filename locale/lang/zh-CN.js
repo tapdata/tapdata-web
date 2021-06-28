@@ -728,7 +728,8 @@ export default {
     skipError: {
       title: '跳过错误设置',
       skipErrorSettings: '任务错误处理',
-      tip: '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
+      tip:
+        '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
       attention:
         '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
       startJob: '跳过错误，启动任务',
@@ -752,7 +753,8 @@ export default {
     fuzzyQuery: '模糊匹配',
     PreciseQuery: '精确匹配',
     databaseTittle: '数据源管理',
-    desc: '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
+    desc:
+      '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
     createNewDataSource: '创建连接',
     info: '数据源详情',
     copyMsg: '复制成功',
@@ -962,7 +964,8 @@ export default {
             },
             maximum_transaction: {
               label: '事务最大时长(小时)',
-              tip: '等待事务提交的时间(小时)。输入您期望事务需要的最长时间。默认为12小时'
+              tip:
+                '等待事务提交的时间(小时)。输入您期望事务需要的最长时间。默认为12小时'
             }
           }
         },
@@ -1259,7 +1262,8 @@ export default {
             expressionExample: {
               label: '表达式示例',
               labelTip: '表达式可以使用JavaScript中的比较符和计算符',
-              tip: '筛选出50岁以上的男性或者收入一万以下的30岁以上的人,表达式如下：'
+              tip:
+                '筛选出50岁以上的男性或者收入一万以下的30岁以上的人,表达式如下：'
             },
             symbol: {
               label: '支持的符号',
@@ -1553,7 +1557,8 @@ export default {
 
     setting: {
       title: '校验默认设置',
-      text: '校验设置为全局的校验设置，创建的校验任务里的高级设置的优先级高于此处的设置。',
+      text:
+        '校验设置为全局的校验设置，创建的校验任务里的高级设置的优先级高于此处的设置。',
       keepTimeLabel: '校验历史结果和详情信息保留时间',
       errorSaveSumLable: '校验出每张表的错误信息保存数量限制',
       errorDifferenceResult: '校验结果允许的差异数据容错量',
@@ -2210,7 +2215,8 @@ export default {
     },
     metadataSearch: {
       title: '元数据检索',
-      desc: '元数据检索提供对表、字段的名称、别名、描述等内容的搜索功能，请先选择搜索表/字段，再输入内容，点击搜索按钮进行搜索',
+      desc:
+        '元数据检索提供对表、字段的名称、别名、描述等内容的搜索功能，请先选择搜索表/字段，再输入内容，点击搜索按钮进行搜索',
       table: '搜索表',
       column: '搜索字段',
       search: '搜索',
@@ -2238,7 +2244,8 @@ export default {
       headInterpretation:
         'Tapdata DFS云版需要在本地安装 Agent 以确保连接数据库和传输服务正常运行',
       downloadInstall: '下载安装',
-      text: '首先，在环境中配置好 JAVA 运行环境，然后使用以下命令下载和启动 Agent',
+      text:
+        '首先，在环境中配置好 JAVA 运行环境，然后使用以下命令下载和启动 Agent',
       copy: '复制命令',
       refresh: '刷新',
       copied: '已复制',
@@ -2368,7 +2375,8 @@ export default {
     settingCenter: '设置中心',
     systemSetting: '系统设置',
     noticeSetting: '通知设置',
-    tip: '此处通知设置为系统全局通知的设置，任务编排页的通知设置的其优先级高于此处的全局通知设置',
+    tip:
+      '此处通知设置为系统全局通知的设置，任务编排页的通知设置的其优先级高于此处的全局通知设置',
     jobOperationNotice: '任务运行通知',
     emailNotice: '邮件通知',
     jobStarted: '任务被启动',
@@ -3123,7 +3131,8 @@ export default {
   },
   dataQuality: {
     title: '数据质量',
-    desc: '数据质量页面展示出的是对违反数据规则的表数据汇总的页面，用户可以在此页面对违反规则的数据进行修正',
+    desc:
+      '数据质量页面展示出的是对违反数据规则的表数据汇总的页面，用户可以在此页面对违反规则的数据进行修正',
     keywordTip: '请搜索表名/字段名',
     sourceName: '表名/连接名',
     totalDocs: '总记录数',

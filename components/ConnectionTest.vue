@@ -14,8 +14,8 @@
       <div
         v-if="
           testData.testLogs &&
-          testData.testLogs.length === 0 &&
-          wsError === 'ERROR'
+            testData.testLogs.length === 0 &&
+            wsError === 'ERROR'
         "
         style="color: #d54e21"
       >

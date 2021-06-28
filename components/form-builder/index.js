@@ -11,7 +11,7 @@ import File from './file.vue'
 import _Array from './array.vue'
 import Group from './group.vue'
 
-const install = function (Vue) {
+const install = function(Vue) {
   ;[Form, Input, Select, Radio, Switch, File, _Array, Group].map(c =>
     Vue.component(c.name, c)
   )

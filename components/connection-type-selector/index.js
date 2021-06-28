@@ -5,7 +5,7 @@
  */
 
 import ConnectionTypeSelector from './main.vue'
-ConnectionTypeSelector.install = function (Vue) {
+ConnectionTypeSelector.install = function(Vue) {
   Vue.component(ConnectionTypeSelector.name, ConnectionTypeSelector)
 }
 export default ConnectionTypeSelector
