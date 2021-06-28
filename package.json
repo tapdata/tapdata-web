@@ -57,5 +57,8 @@
 		"*.{js,vue,jsx}": [
 			"vue-cli-service lint"
 		]
-	}
+	},
+	"workspaces": [
+		"packages/*"
+	]
 }
