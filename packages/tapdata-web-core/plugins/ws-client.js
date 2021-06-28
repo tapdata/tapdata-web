@@ -32,6 +32,9 @@ class WSClient extends EventEmitter {
       this.retryCount = 0
       this.__bindEvent()
     } catch (e) {
+      if (!this.retryCount) {
+        console.log('websocket 连接失败，准备尝试重连', e)
+      }
       this.reconnect()
       return
     }
