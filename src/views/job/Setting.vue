@@ -707,6 +707,7 @@ export default {
     color: #fff;
   }
   .back-btn-text {
+    padding-left: 10px;
     font-size: 12px;
   }
   .e-form {
