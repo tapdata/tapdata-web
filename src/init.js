@@ -42,7 +42,7 @@ export default function({ routes }) {
 			wsUrl = 'wss://'
 		}
 		let preUrl = process.env.VUE_APP_API_PATH || ''
-		wsUrl = wsUrl + window.location.host + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__.token}`
+		wsUrl = wsUrl + loc.host + loc.pathname + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__.token}`
 		window.App = new Vue({
 			router,
 			wsOptions: {
