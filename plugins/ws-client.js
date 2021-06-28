@@ -57,8 +57,7 @@ class WSClient extends EventEmitter {
   disconnect() {
     let ws = this.ws
     if (ws) {
-      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(ws.readyState))
-        ws.close()
+      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(ws.readyState)) ws.close()
     }
   }
 
