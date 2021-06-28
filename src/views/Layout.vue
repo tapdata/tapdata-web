@@ -20,9 +20,20 @@
 				</ElBreadcrumb>
 			</ElHeader>
 			<ElMain class="main">
-				<RouterView @show-guide="showGuide" @create-task="createTask"></RouterView>
+				<RouterView
+					@show-guide="showGuide"
+					@create-task="createTask"
+					@select-connection-type="selectConnectionType"
+				></RouterView>
 			</ElMain>
 		</ElContainer>
+		<ElDialog title="选择数据源类型" :visible.sync="dialogVisible">
+			<ConnectionTypeSelector
+				:types="['mysql', 'oracle', 'sqlserver', 'mongodb', 'postgres', 'elasticsearch']"
+				:comingTypes="['db2', 'sybase ase', 'kafka', 'gbase-8s']"
+				@select="createConnection"
+			></ConnectionTypeSelector>
+		</ElDialog>
 	</ElContainer>
 </template>
 
@@ -38,7 +49,9 @@ export default {
 		return {
 			activeMenu: '',
 			menus: [],
-			breadcrumbData: []
+			dfsMenus: ['Workbench', 'Instance', 'Connection', 'Task'],
+			breadcrumbData: [],
+			dialogVisible: false
 		}
 	},
 	created() {
@@ -54,6 +67,13 @@ export default {
 		}
 	},
 	methods: {
+		createConnection(type) {
+			this.dialogVisible = false
+			this.$router.push({ name: 'ConnectionCreate', query: { databaseType: type } })
+		},
+		selectConnectionType() {
+			this.dialogVisible = true
+		},
 		showGuide(key) {
 			this.$refs.theHeader?.showGuide?.(key)
 		},

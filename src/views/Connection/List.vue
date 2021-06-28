@@ -1,5 +1,5 @@
 <template>
-	<section class="connection-wrapper" v-loading="loading" v-if="$route.name === 'Connection'">
+	<section class="connection-wrapper main-container" v-loading="loading" v-if="$route.name === 'Connection'">
 		<div class="main">
 			<div class="connection-operation">
 				<div class="connection-operation-left">
@@ -36,7 +36,28 @@
 				:data="list"
 				@sort-change="sortChange"
 			>
-				<ElTableColumn label="连接名" prop="name" min-width="150"></ElTableColumn>
+				<ElTableColumn label="连接名" prop="name" min-width="150">
+					<template slot-scope="scope">
+						<div class="flex flex-row align-center p-2">
+							<img
+								class="mr-2"
+								style="width: 24px;height: 24px;"
+								:src="
+									require('tapdata-web-core/assets/images/connection-type/' +
+										scope.row.database_type.toLowerCase() +
+										'.png')
+								"
+							/>
+							<ElLink
+								type="primary"
+								style="display: block; line-height: 20px"
+								@click="preview(scope.row.id, scope.row.database_type)"
+							>
+								{{ scope.row.name }}
+							</ElLink>
+						</div>
+					</template>
+				</ElTableColumn>
 				<ElTableColumn show-overflow-tooltip label="连接信息" prop="database_uri" min-width="150"></ElTableColumn>
 				<ElTableColumn label="状态">
 					<template slot-scope="scope">
@@ -52,7 +73,7 @@
 						}[scope.row.connection_type]
 					}}</template>
 				</ElTableColumn>
-				<ElTableColumn label="修改时间" prop="lastUpdateTime" sortable="custom">
+				<ElTableColumn label="修改时间" prop="lastUpdateTime" width="180" sortable="custom">
 					<template slot-scope="scope">{{ $moment(scope.row.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss') }}</template>
 				</ElTableColumn>
 				<ElTableColumn label="操作" width="180">
@@ -81,6 +102,8 @@
 				@current-change="fetch"
 			>
 			</ElPagination>
+			<ConnectionTest ref="test" @recieve="recieveTestData"></ConnectionTest>
+			<Preview ref="preview"></Preview>
 		</div>
 	</section>
 	<RouterView v-else></RouterView>
@@ -134,9 +157,10 @@
 import { delayTrigger, toRegExp } from '../../util'
 import { CONNECTION_STATUS_MAP, SUPPORT_DB } from '../../const'
 import StatusTag from '../../components/StatusTag'
+import Preview from './Preview.vue'
 
 export default {
-	components: { StatusTag },
+	components: { StatusTag, Preview },
 	data() {
 		return {
 			loading: true,
@@ -267,11 +291,8 @@ export default {
 			this.fetch(1)
 		},
 		create() {
-			this.$router.push({
-				path: '/connection/create'
-			})
+			this.$emit('select-connection-type')
 		},
-		test() {},
 		edit(item) {
 			this.$router.push({
 				path: `connection/${item.id}?databaseType=${item.search_databaseType || item.database_type}`
@@ -306,6 +327,84 @@ export default {
 					}
 				}
 			})
+		},
+		test(item) {
+			this.$checkAgentStatus(async () => {
+				let loading = this.$loading()
+				let data = Object.assign(
+					{},
+					{
+						id: '',
+						name: '',
+						database_type: '',
+						connection_type: '',
+						database_host: '',
+						database_port: '',
+						database_name: '',
+						database_username: '',
+						database_password: '',
+						plain_password: '',
+						table_filter: '',
+						additionalString: '',
+						thin_type: '',
+						database_owner: '',
+						node_name: '',
+						database_schema: '',
+						plugin_name: '',
+						pgsql_log_decorder_plugin_name: '',
+						database_datetype_without_timezone: '',
+						supportUpdatePk: false,
+						isUrl: true,
+						database_uri: '',
+						ssl: false,
+						sslKey: '',
+						sslPass: '',
+						schemaAutoUpdate: false,
+						multiTenant: false,
+						pdb: '',
+						sslValidate: false,
+						sslCA: '',
+						sslCAFile: null,
+						sslKeyFile: null,
+						search_databaseType: '',
+						increamentalTps: 100, //dummy
+						initialReadSize: 100000, //dummy
+						schema: ''
+					},
+					item
+				)
+				if (['gridfs', 'mongodb'].includes(item.database_type)) {
+					data.database_uri = ''
+					data.isUrl = true
+					data.justTest = true
+				}
+				if (item.database_type !== 'redis') {
+					delete data['database_password']
+				}
+				try {
+					await this.$axios.patch(`tm/api/Connections/${item.id}`, {
+						status: 'testing'
+					})
+					this.$refs.test.start(data)
+					this.fetch()
+				} catch (error) {
+					this.$message.error(error?.response?.msg || '测试连接失败')
+				}
+				loading.close()
+			})
+		},
+		recieveTestData(data) {
+			if (!data.status || data.status === null) return
+			let status = data.status
+			if (status === 'ready') {
+				this.$message.success('连接测试有效')
+			} else {
+				this.$message.error('连接测试无效')
+			}
+			this.fetch()
+		},
+		preview(id, type) {
+			this.$refs.preview.open(id, type)
 		}
 	}
 }

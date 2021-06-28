@@ -8,9 +8,11 @@ import {
 	Menu,
 	MenuItem,
 	Button,
+	Drawer,
 	Form,
 	FormItem,
 	Checkbox,
+	Image,
 	Radio,
 	RadioGroup,
 	RadioButton,
@@ -69,12 +71,14 @@ Vue.use(Container)
 Vue.use(Header)
 Vue.use(Main)
 Vue.use(Aside)
+Vue.use(Drawer)
 Vue.use(Menu)
 Vue.use(MenuItem)
 Vue.use(Button)
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Checkbox)
+Vue.use(Image)
 Vue.use(Radio)
 Vue.use(RadioGroup)
 Vue.use(RadioButton)

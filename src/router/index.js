@@ -76,8 +76,8 @@ const routes = [
 			{
 				path: '/connection',
 				name: 'Connection',
-				component: Iframe,
-				// component: () => import(/* webpackChunkName: "connection-list" */ '../views/Connection/List.vue'),
+				// component: Iframe,
+				component: () => import(/* webpackChunkName: "connection-list" */ '../views/Connection/List.vue'),
 				meta: {
 					title: '连接管理',
 					link: './tm/#/connections',

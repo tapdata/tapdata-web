@@ -1,15 +1,24 @@
-const path = require('path')
-const resolve = path.resolve
+const { resolve } = require('path')
 
-let baseUrl = 'localhost:3000'
-if (process.env.npm_config_argv) {
-	let args = JSON.parse(process.env.npm_config_argv).original
-	let ip = args[2]
-	if (ip) {
-		baseUrl = ip.replace('--', '') + '/'
-	}
+const serveUrlMap = {
+	mock: 'http://localhost:3000',
+	dev: 'http://backend:3030',
+	test: 'http://test.cloud.tapdata.net'
 }
-console.log('代理地址：http://' + baseUrl)
+let origin
+const { argv } = process
+const { SERVE_ENV = 'mock' } = process.env
+
+// 通过origin参数注入服务代理，优先级最高
+if (~argv.indexOf('--origin')) {
+	origin = argv[argv.indexOf('--origin') + 1]
+	origin && (origin = origin.replace(/^(?!http)/, 'http://'))
+}
+const proxy = {
+	target: origin || serveUrlMap[SERVE_ENV],
+	changeOrigin: false
+}
+
 //如果环境变量中主题参数存在，则嵌入主题中相关的标量
 let varUrl = '~@/assets/theme/dfs/var.scss'
 let pages = {
@@ -18,35 +27,24 @@ let pages = {
 		title: 'Tapdata Cloud'
 	}
 }
-
 module.exports = {
 	pages,
+	lintOnSave: true,
 	publicPath: '',
 	productionSourceMap: false,
 
 	devServer: {
 		proxy: {
-			// '/api/tcm/user': {
-			// 	target: 'http://localhost:3030',
-			// 	changeOrigin: true
-			// },
-			// '/tm/api/tcm': {
-			// 	target: 'http://' + baseUrl,
-			// 	changeOrigin: true,
-			// 	pathRewrite: {
-			// 		'^/tm': '/'
-			// 	}
-			// },
-			'/tm/api': {
-				target: 'http://' + baseUrl,
-				changeOrigin: true
+			'/api/tcm/': proxy,
+			'/ws/': {
+				...proxy,
+				ws: true,
+				secure: false,
+				logLevel: 'debug',
+				target: proxy.target.replace(/^https?/, 'ws')
 			},
-			'/api/tcm': {
-				target: 'http://' + baseUrl,
-				changeOrigin: true
-			},
-			'/tm': {
-				target: 'http://localhost:8081/',
+			'/tm/': {
+				target: 'http://localhost:8081',
 				changeOrigin: true,
 				pathRewrite: {
 					'^/tm': '/'
@@ -93,12 +91,6 @@ module.exports = {
 				]
 			})
 			.end()
-	},
-	configureWebpack: {
-		externals: {
-			consoleHeader: 'consoleHeader',
-			orderHeader: 'orderHeader'
-		}
 	},
 	css: {
 		loaderOptions: {
