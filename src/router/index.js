@@ -296,7 +296,7 @@ const childRoutes = [
   {
     path: '/tasks',
     name: 'tasks',
-    component: () => import('@/views/tasks/List'),
+    component: () => import('@/views/scheduleTasks/List'),
     // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'schedule_jobs_menu',
@@ -308,7 +308,7 @@ const childRoutes = [
   {
     path: '/taskHistories',
     name: 'taskHistories',
-    component: () => import('@/views/tasks/Histories'),
+    component: () => import('@/views/scheduleTasks/Histories'),
     // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'schedule_jobs_menu',
