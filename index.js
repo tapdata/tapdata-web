@@ -22,11 +22,7 @@ const install = function(Vue, opts = {}) {
       let wsOptions = this.$options.wsOptions
       // 根实例才有ws
       if (wsOptions) {
-        Vue.prototype.$ws = new WSClient(
-          wsOptions.url,
-          wsOptions.protocols,
-          wsOptions
-        )
+        Vue.prototype.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
       }
     },
     methods: {
@@ -40,7 +36,7 @@ const install = function(Vue, opts = {}) {
 if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
-
+console.log(111)
 export default {
   install,
   locale: use,
