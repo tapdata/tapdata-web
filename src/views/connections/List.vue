@@ -694,7 +694,9 @@ export default {
             let msg = response && response.msg
             if (msg && (msg.jobs || msg.modules)) {
               if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-                this.$message.error(this.$t('connection.dfs_cannot_delete_remind'))
+                this.$message.error(
+                  this.$t('connection.dfs_cannot_delete_remind')
+                )
               } else {
                 this.$message.error(this.$t('connection.cannot_delete_remind'))
               }

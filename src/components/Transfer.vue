@@ -21,10 +21,7 @@
       <span slot-scope="{ option }">
         <span> {{ option.label }}</span>
         <span
-          v-if="
-            selectSourceArr.includes(option.key) &&
-            !isTwoWay
-          "
+          v-if="selectSourceArr.includes(option.key) && !isTwoWay"
           @click.stop.prevent="handleFiled(option)"
           class="el-icon-setting field-transfer__icon"
         ></span>
@@ -360,7 +357,9 @@ export default {
       }
       //字段名限制
       if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(option.label)) {
-        this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
+        this.$message.error(
+          '以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符'
+        )
         return
       }
       //rename类型
