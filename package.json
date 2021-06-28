@@ -1,0 +1,27 @@
+{
+  "name": "tapdata-web-core",
+  "version": "1.0.22",
+  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
+  "keywords": [],
+  "author": "Payne <payne@tapdata.io>",
+  "license": "MIT",
+  "main": "index.js",
+  "files": [
+    "assets",
+    "components",
+    "plugins",
+    "locale"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://tapdata-npm.pkg.coding.net/tapdata/npm/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@e.coding.net:tapdata/tapdata/daas.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "gitHead": "a91537b11497659a5a1dcb9de5b14277aac99b6b"
+}
