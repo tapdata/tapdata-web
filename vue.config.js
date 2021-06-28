@@ -35,7 +35,7 @@ module.exports = {
 
 	devServer: {
 		proxy: {
-			'/api/': proxy,
+			'/api/tcm/': proxy,
 			'/ws/': {
 				...proxy,
 				ws: true,
@@ -43,7 +43,13 @@ module.exports = {
 				logLevel: 'debug',
 				target: proxy.target.replace(/^https?/, 'ws')
 			},
-			'/tm/': { target: 'http://localhost:8081' }
+			'/tm/': {
+				target: 'http://localhost:8081',
+				changeOrigin: true,
+				pathRewrite: {
+					'^/tm': '/'
+				}
+			}
 		}
 	},
 	chainWebpack(config) {

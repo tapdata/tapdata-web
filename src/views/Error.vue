@@ -38,7 +38,8 @@ export default {
 	},
 	methods: {
 		toHome() {
-			location.href = process.env.VUE_APP_BASE_URL + '/'
+			let baseUrl = process.env.VUE_APP_BASE_URL || ''
+			location.href = baseUrl + '/'
 		}
 	}
 }
