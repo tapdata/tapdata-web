@@ -11,23 +11,7 @@ export const getImgByType = function (type) {
 }
 
 export const verify = function (value) {
-  var arr = [
-    '\\',
-    '$',
-    '(',
-    ')',
-    '*',
-    '+',
-    '.',
-    '[',
-    ']',
-    '?',
-    '^',
-    '{',
-    '}',
-    '|',
-    '-'
-  ]
+  var arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
   for (var i = 0; i < arr.length; i++) {
     var str = '\\' + arr[i]
     value = value.replace(new RegExp(str, 'g'), '\\' + arr[i])
@@ -192,8 +176,7 @@ export const defaultModel = {
       " // Build-in function's MD5/SHA1/SHA256\n" +
       '    // example:\n' +
       "    // request_params.sign = MD5(request_params.id+request_params_name+'secret_key');",
-    resp_pre_process:
-      "// result: {'tapdata_offset': offset, 'response':<API RESPONSE>}",
+    resp_pre_process: "// result: {'tapdata_offset': offset, 'response':<API RESPONSE>}",
     data_sync_mode: 'INCREMENTAL_SYNC',
     url_info: [
       {

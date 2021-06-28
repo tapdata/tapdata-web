@@ -10,12 +10,7 @@
     > -->
     <div class="collection-box">
       <div class="table-page-operation-bar">
-        <el-button
-          v-readonlybtn="'new_model_creation'"
-          class="btn btn-create"
-          size="mini"
-          @click="openCreateDialog"
-        >
+        <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
           <i class="iconfont icon-jia add-btn-icon"></i>
           <span>{{ $t('metadata.details.createCollection') }}</span>
         </el-button>
@@ -29,28 +24,18 @@
         v-loading="loading"
         :data="collectionTableData"
       >
-        <el-table-column
-          :label="$t('metadata.details.collectionName')"
-          prop="name"
-        >
+        <el-table-column :label="$t('metadata.details.collectionName')" prop="name">
           <template slot-scope="scope">
-            <el-button
-              type="text"
-              @click="handleJumpTable(scope.row)"
-              style="padding: 0 10px"
-              >{{ scope.row.name }}</el-button
-            >
+            <el-button type="text" @click="handleJumpTable(scope.row)" style="padding: 0 10px">{{
+              scope.row.name
+            }}</el-button>
           </template>
         </el-table-column>
         <el-table-column :label="$t('metadata.details.opera')" width="120">
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              style="color: #f56c6c"
-              @click="remove(scope.row)"
-              >{{ $t('button.delete') }}</el-button
-            >
+            <el-button size="mini" type="text" style="color: #f56c6c" @click="remove(scope.row)">{{
+              $t('button.delete')
+            }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -79,28 +64,18 @@
       :visible.sync="createDialogVisible"
     >
       <el-form ref="form" :model="createForm" class="dataRule-form">
-        <el-form-item
-          :label="$t('metadata.details.collectionName')"
-          props="name"
-        >
+        <el-form-item :label="$t('metadata.details.collectionName')" props="name">
           <el-input
             type="text"
             size="mini"
             v-model="createForm.name"
-            :placeholder="
-              $t('dataRule.pleaseSelect') +
-              $t('metadata.details.collectionName')
-            "
+            :placeholder="$t('dataRule.pleaseSelect') + $t('metadata.details.collectionName')"
           ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="createNewModel()" size="small">{{
-          $t('message.confirm')
-        }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
     <!-- 创建索引弹窗 end -->

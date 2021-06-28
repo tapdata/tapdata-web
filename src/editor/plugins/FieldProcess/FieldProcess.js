@@ -65,10 +65,7 @@ export const fieldProcessConfig = {
         if (!outputSchema || !data || !outputSchema.fields) return outputSchema
 
         //查找是否有被删除的字段且operation有操作
-        let temporary = handleOperation(
-          outputSchema.fields,
-          _.cloneDeep(data.operations)
-        )
+        let temporary = handleOperation(outputSchema.fields, _.cloneDeep(data.operations))
         temporary.map(item => {
           let targetIndex = outputSchema.fields.findIndex(n => n.id === item.id)
           if (targetIndex === -1 && item.op !== 'CREATE') {
@@ -91,8 +88,7 @@ export const fieldProcessConfig = {
             // change children field name
             outputSchema.fields.forEach(field => {
               if (field.field_name.startsWith(name + '.')) {
-                field.field_name =
-                  newNameStr + field.field_name.substring(name.length)
+                field.field_name = newNameStr + field.field_name.substring(name.length)
               }
             })
           } else if (item.op === 'CREATE') {
@@ -111,9 +107,7 @@ export const fieldProcessConfig = {
               autoincrement: false
             }
             if (triggerFieldId) {
-              let triggerFieldIndex = outputSchema.fields.findIndex(
-                f => f.id === triggerFieldId
-              )
+              let triggerFieldIndex = outputSchema.fields.findIndex(f => f.id === triggerFieldId)
               outputSchema.fields.splice(triggerFieldIndex + 1, 0, newField)
             } else outputSchema.fields.push(newField)
           }
@@ -151,28 +145,18 @@ export const fieldProcessConfig = {
       validate: function (data) {
         let origin
         if (!data) {
-          origin =
-            mergeJoinTablesToTargetSchema(null, this.getInputSchema()) || []
+          origin = mergeJoinTablesToTargetSchema(null, this.getInputSchema()) || []
         }
         data = data || this.getFormData()
         if (!origin) {
           origin = data.originalSchema
         }
         let name = this.attr('label/text')
-        if (!data)
-          throw new Error(
-            `${name}:${i18n.t(
-              'editor.cell.processor.field.form.errorOperationSaveTip'
-            )}`
-          )
+        if (!data) throw new Error(`${name}:${i18n.t('editor.cell.processor.field.form.errorOperationSaveTip')}`)
         let isMoniting = getUrlSearch('isMoniting') || false
         let validate = isValidate(data.operations, origin).isValidate
         if (!validate && !isMoniting)
-          throw new Error(
-            `${name}:${i18n.t(
-              'editor.cell.processor.field.form.errorOperationSaveTip'
-            )}`
-          )
+          throw new Error(`${name}:${i18n.t('editor.cell.processor.field.form.errorOperationSaveTip')}`)
         return true
       }
     }
@@ -257,10 +241,7 @@ export const fieldProcessConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

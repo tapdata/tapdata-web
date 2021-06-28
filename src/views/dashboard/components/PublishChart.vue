@@ -172,11 +172,8 @@ export default {
           'filter[order]': 'stats_time desc',
           'filter[where][stats_name]': 'total_publish_stats',
           'filter[where][stats_granularity]': 'daily',
-          'filter[where][and][0][stats_time][gte]': this.$moment()
-            .subtract(15, 'days')
-            .format('YYYYMMDD000000'),
-          'filter[where][and][1][stats_time][lte]':
-            this.$moment().format('YYYYMMDD000000')
+          'filter[where][and][0][stats_time][gte]': this.$moment().subtract(15, 'days').format('YYYYMMDD000000'),
+          'filter[where][and][1][stats_time][lte]': this.$moment().format('YYYYMMDD000000')
         })
         .then(({ data }) => {
           let list = data || []
@@ -186,9 +183,7 @@ export default {
               let month = v.stats_time.substring(4, 6)
               let day = v.stats_time.substring(6, 8)
               v.label = `${year}-${month}-${day}`
-              v.value = Number(
-                v.data.total_data_size / 1024 / 1024 / 1024
-              ).toFixed(2)
+              v.value = Number(v.data.total_data_size / 1024 / 1024 / 1024).toFixed(2)
               return v
             })
             .sort((a, b) => a.stats_time - b.stats_time)
@@ -209,8 +204,7 @@ export default {
           'filter[order]': 'data.total_records desc',
           'filter[where][stats_name]': 'publish_stats',
           'filter[where][stats_granularity]': 'daily',
-          'filter[where][and][0][stats_time]':
-            this.$moment().format('YYYYMMDD000000')
+          'filter[where][and][0][stats_time]': this.$moment().format('YYYYMMDD000000')
           //'filter[where][and][1][stats_time][lte]': this.$moment().format('YYYYMMDD000000')
         })
         .then(({ data }) => {

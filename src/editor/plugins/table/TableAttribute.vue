@@ -7,14 +7,7 @@
 				</el-button>
 			</div> -->
 
-      <el-form
-        class="e-form"
-        label-position="top"
-        label-width="160px"
-        :disabled="disabled"
-        :model="model"
-        ref="form"
-      >
+      <el-form class="e-form" label-position="top" label-width="160px" :disabled="disabled" :model="model" ref="form">
         <el-form-item
           :label="$t('editor.cell.data_node.table.form.database.label')"
           prop="connectionId"
@@ -22,10 +15,7 @@
           required
         >
           <div style="display: flex">
-            <FbSelect
-              v-model="model.connectionId"
-              :config="databaseSelectConfig"
-            ></FbSelect>
+            <FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
             <el-tooltip
               class="item"
               effect="light"
@@ -79,11 +69,7 @@
           required
         >
           <div class="flex-block">
-            <FbSelect
-              class="e-select"
-              v-model="model.tableName"
-              :config="schemaSelectConfig"
-            ></FbSelect>
+            <FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect>
             <el-tooltip
               class="item"
               effect="light"
@@ -137,9 +123,7 @@
 				</el-form-item> -->
         <el-form-item
           required
-          :label="
-            $t('editor.cell.data_node.collection.form.initialSyncOrder.keep')
-          "
+          :label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
           v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
         >
           <div class="flex-block">
@@ -149,12 +133,8 @@
               inactive-color="#dcdfe6"
               :active-text="
                 model.enableInitialOrder
-                  ? $t(
-                      'editor.cell.data_node.collection.form.initialSyncOrder.open'
-                    )
-                  : $t(
-                      'editor.cell.data_node.collection.form.initialSyncOrder.close'
-                    )
+                  ? $t('editor.cell.data_node.collection.form.initialSyncOrder.open')
+                  : $t('editor.cell.data_node.collection.form.initialSyncOrder.close')
               "
               @change="model.initialSyncOrder = 0"
             ></el-switch>
@@ -170,9 +150,7 @@
 
         <el-form-item
           required
-          :label="
-            $t('editor.cell.data_node.collection.form.filter.fiflterSetting')
-          "
+          :label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')"
           v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
         >
           <div class="flex-block">
@@ -181,12 +159,8 @@
               inactive-color="#dcdfe6"
               :active-text="
                 model.isFilter
-                  ? $t(
-                      'editor.cell.data_node.collection.form.filter.openFiflter'
-                    )
-                  : $t(
-                      'editor.cell.data_node.collection.form.filter.closeFiflter'
-                    )
+                  ? $t('editor.cell.data_node.collection.form.filter.openFiflter')
+                  : $t('editor.cell.data_node.collection.form.filter.closeFiflter')
               "
               style="margin-right: 20px"
             ></el-switch>
@@ -194,9 +168,7 @@
         </el-form-item>
 
         <queryBuilder
-          v-if="
-            (dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter
-          "
+          v-if="(dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter"
           v-model="model.custSql"
           v-bind:initialOffset.sync="model.initialOffset"
           :primaryKeyOptions="primaryKeyOptions"
@@ -214,18 +186,8 @@
           v-if="dataNodeInfo.isTarget"
         >
           <el-select v-model="model.dropTable" size="mini">
-            <el-option
-              :label="
-                $t('editor.cell.data_node.collection.form.dropTable.keep')
-              "
-              :value="false"
-            ></el-option>
-            <el-option
-              :label="
-                $t('editor.cell.data_node.collection.form.dropTable.remove')
-              "
-              :value="true"
-            ></el-option>
+            <el-option :label="$t('editor.cell.data_node.collection.form.dropTable.keep')" :value="false"></el-option>
+            <el-option :label="$t('editor.cell.data_node.collection.form.dropTable.remove')" :value="true"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -238,45 +200,23 @@
               @click="hanlderLoadSchema"
             >
               <i class="el-icon-loading" v-if="reloadModelLoading"></i>
-              <span v-if="reloadModelLoading">{{
-                $t('dataFlow.loadingText')
-              }}</span>
+              <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
               <span v-else>{{ $t('dataFlow.updateModel') }}</span>
             </el-button>
           </div>
         </el-form-item>
       </el-form>
       <div class="e-entity-wrap" style="text-align: center">
-        <entity
-          :schema="convertSchemaToTreeData(mergedSchema)"
-          :editable="false"
-        ></entity>
+        <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
       </div>
     </div>
-    <CreateTable
-      v-if="addtableFalg"
-      :dialog="dialogData"
-      @handleTable="getAddTableName"
-    ></CreateTable>
-    <relatedTasks
-      :taskData="taskData"
-      v-if="disabled"
-      v-loading="databaseSelectConfig.loading"
-    ></relatedTasks>
-    <el-dialog
-      :title="$t('message.prompt')"
-      :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
-      width="30%"
-    >
+    <CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
+    <relatedTasks :taskData="taskData" v-if="disabled" v-loading="databaseSelectConfig.loading"></relatedTasks>
+    <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
       <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="confirmDialog">{{
-          $t('message.confirm')
-        }}</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -354,11 +294,7 @@ export default {
     },
     mergedSchema: {
       handler() {
-        if (
-          this.mergedSchema &&
-          this.mergedSchema.fields &&
-          this.mergedSchema.fields.length > 0
-        ) {
+        if (this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0) {
           let fields = this.mergedSchema.fields
           //过滤被删除的字段
           if (fields) {
@@ -406,9 +342,7 @@ export default {
 
       schemaSelectConfig: {
         size: 'mini',
-        placeholder: this.$t(
-          'editor.cell.data_node.table.form.table.placeholder'
-        ),
+        placeholder: this.$t('editor.cell.data_node.table.form.table.placeholder'),
         loading: false,
         filterable: true,
         on: {
@@ -638,11 +572,7 @@ export default {
             return it
           })
           tempSchemas = schemas.sort((t1, t2) =>
-            t1.table_name > t2.table_name
-              ? 1
-              : t1.table_name === t2.table_name
-              ? 0
-              : -1
+            t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
           )
           self.schemaSelectConfig.options = tempSchemas.map(item => ({
             label: item.table_name,
@@ -671,9 +601,7 @@ export default {
       this.model.cSql = ''
       let self = this
       if (tempSchemas.length > 0) {
-        let schemas = tempSchemas.filter(
-          s => s.table_name === this.model.tableName
-        )
+        let schemas = tempSchemas.filter(s => s.table_name === this.model.tableName)
         if (schemas && schemas.length > 0) {
           this.model.tableId = schemas[0].id
         } else {
@@ -710,10 +638,7 @@ export default {
             // 	self.model.primaryKeys = '';
             // }
             this.loadSchema = res.data.records[0].schema.tables[0]
-            self.$emit(
-              'schemaChange',
-              _.cloneDeep(res.data.records[0].schema.tables[0])
-            )
+            self.$emit('schemaChange', _.cloneDeep(res.data.records[0].schema.tables[0]))
           }
         })
       } else {
@@ -745,19 +670,13 @@ export default {
           delete data.custSql.conditions
         }
         _.merge(this.model, data)
-        if (
-          this.model.custSql &&
-          this.model.custSql.conditions &&
-          conds &&
-          conds.length > 0
-        )
+        if (this.model.custSql && this.model.custSql.conditions && conds && conds.length > 0)
           conds.forEach(it => {
             this.model.custSql.conditions.push(it)
           })
         if (
           data.sql &&
-          (!Object.hasOwnProperty.call(data, 'isFilter') ||
-            Object.hasOwnProperty.call(data, 'sqlNotFromCust'))
+          (!Object.hasOwnProperty.call(data, 'isFilter') || Object.hasOwnProperty.call(data, 'sqlNotFromCust'))
         ) {
           this.model.custSql.editSql = data.sql
           this.model.custSql.filterType = 'sql'
@@ -788,8 +707,7 @@ export default {
     },
     getData() {
       if (this.model.isFilter)
-        if (this.model.custSql.filterType === 'field')
-          this.model.sql = this.model.custSql.cSql
+        if (this.model.custSql.filterType === 'field') this.model.sql = this.model.custSql.cSql
         else this.model.sql = this.model.custSql.editSql
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Table'
@@ -842,10 +760,7 @@ export default {
         this.reloadModelLoading = false
         if (templeSchema && templeSchema.length) {
           templeSchema.forEach(item => {
-            if (
-              item.connId === this.model.connectionId &&
-              item.tableName === this.model.tableName
-            ) {
+            if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
               schema = item.schema
             }
           })

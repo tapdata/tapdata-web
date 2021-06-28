@@ -225,12 +225,7 @@ export default {
       metadataInstances
         .dataMap(params)
         .then(result => {
-          if (
-            result &&
-            result.data &&
-            result.data.records &&
-            result.data.records.length > 0
-          ) {
+          if (result && result.data && result.data.records && result.data.records.length > 0) {
             let cells = result.data.records
             self.dataMap.graph.renderCells(self.level, cells)
           } else {

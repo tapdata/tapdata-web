@@ -155,9 +155,7 @@ Object.defineProperty(Array.prototype, 'findWhere', {
 })
 
 // 判断浏览器是否为IE
-const isIE =
-  /MSIE (\d+\.\d+);/.test(navigator.userAgent) ||
-  ~navigator.userAgent.indexOf('Trident/')
+const isIE = /MSIE (\d+\.\d+);/.test(navigator.userAgent) || ~navigator.userAgent.indexOf('Trident/')
 
 // 兼容ie iframe切换路由不生效
 if (isIE) {

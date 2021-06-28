@@ -104,14 +104,8 @@ export const databaseConfig = {
       validate: function (data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
-          )
-        if (!data.connectionId)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.database.none_database')}`
-          )
+        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
+        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.database.none_database')}`)
         return true
       },
 
@@ -121,12 +115,8 @@ export const databaseConfig = {
        * @return {boolean}
        */
       allowTarget(targetCell, sourceCell) {
-        if (
-          sourceCell?.attributes?.form_data?.database_type === 'elasticsearch'
-        ) {
-          return ['kafka'].includes(
-            targetCell?.attributes?.form_data?.database_type
-          )
+        if (sourceCell?.attributes?.form_data?.database_type === 'elasticsearch') {
+          return ['kafka'].includes(targetCell?.attributes?.form_data?.database_type)
         }
 
         return (
@@ -235,10 +225,7 @@ export const databaseConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

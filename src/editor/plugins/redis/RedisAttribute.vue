@@ -10,18 +10,10 @@
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div> -->
-      <el-form
-        class="e-form"
-        label-position="top"
-        :model="model"
-        :disabled="disabled"
-        ref="form"
-      >
+      <el-form class="e-form" label-position="top" :model="model" :disabled="disabled" ref="form">
         <!-- <span class="addTxt">+新建文件</span> -->
         <el-form-item
-          :label="
-            $t('editor.choose') + ' ' + $t('editor.cell.data_node.redis.name')
-          "
+          :label="$t('editor.choose') + ' ' + $t('editor.cell.data_node.redis.name')"
           prop="connectionId"
           :rules="rules"
           required
@@ -35,42 +27,28 @@
           >
             <el-option
               v-for="(item, idx) in databases"
-              :label="`${item.name} (${
-                $t('connection.status.' + item.status) || item.status
-              })`"
+              :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
               :value="item.id"
               v-bind:key="idx"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item
-          :label="$t('editor.cell.data_node.redis.cacheKey')"
-          prop="redisKey"
-          :rules="rules"
-          required
-        >
+        <el-form-item :label="$t('editor.cell.data_node.redis.cacheKey')" prop="redisKey" :rules="rules" required>
           <MultiSelection
             v-model="model.redisKey"
             :options="redisKeyOptions"
-            :placeholder="
-              $t('editor.cell.data_node.redis.cacheKey_placeholder')
-            "
+            :placeholder="$t('editor.cell.data_node.redis.cacheKey_placeholder')"
           ></MultiSelection>
         </el-form-item>
         <el-form-item :label="$t('editor.cell.data_node.redis.prefixKey')">
           <el-input
             v-model="model.redisKeyPrefix"
-            :placeholder="
-              $t('editor.cell.data_node.redis.prefixKey_placeholder')
-            "
+            :placeholder="$t('editor.cell.data_node.redis.prefixKey_placeholder')"
           ></el-input>
         </el-form-item>
       </el-form>
       <div class="e-entity-wrap" style="text-align: center">
-        <entity
-          :schema="convertSchemaToTreeData(mergedSchema)"
-          :editable="false"
-        ></entity>
+        <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
       </div>
     </div>
   </div>
@@ -112,9 +90,7 @@ export default {
           {
             required: true,
             trigger: 'blur',
-            message: this.$t(
-              'editor.cell.data_node.redis.prefixKey_placeholder'
-            )
+            message: this.$t('editor.cell.data_node.redis.prefixKey_placeholder')
           }
         ]
       },
@@ -162,11 +138,7 @@ export default {
     },
     mergedSchema: {
       handler() {
-        if (
-          this.mergedSchema &&
-          this.mergedSchema.fields &&
-          this.mergedSchema.fields.length > 0
-        ) {
+        if (this.mergedSchema && this.mergedSchema.fields && this.mergedSchema.fields.length > 0) {
           let fields = this.mergedSchema.fields
           if (fields) {
             fields = removeDeleted(fields)
@@ -175,9 +147,7 @@ export default {
           let redisKey = []
           if (this.model.redisKey) {
             this.model.redisKey = this.model.redisKey.split(',') //转化为数组
-            redisKey = this.model.redisKey.filter(it =>
-              this.redisKeyOptions.includes(it)
-            )
+            redisKey = this.model.redisKey.filter(it => this.redisKeyOptions.includes(it))
           }
           if (redisKey.length > 0) {
             redisKey = redisKey.join(',')
@@ -223,11 +193,7 @@ export default {
         if (result.data) {
           let schemas = (result.data.schema && result.data.schema.tables) || []
           schemas = schemas.sort((t1, t2) =>
-            t1.table_name > t2.table_name
-              ? 1
-              : t1.table_name === t2.table_name
-              ? 0
-              : -1
+            t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
           )
           self.schemas = schemas
         }
@@ -255,11 +221,7 @@ export default {
       this.sourceList =
         this.mergedSchema && this.mergedSchema.fields
           ? this.mergedSchema.fields.sort((v1, v2) =>
-              v1.field_name > v2.field_name
-                ? 1
-                : v1.field_name === v2.field_name
-                ? 0
-                : -1
+              v1.field_name > v2.field_name ? 1 : v1.field_name === v2.field_name ? 0 : -1
             )
           : []
 
@@ -269,9 +231,7 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       if (result.connectionId) {
-        let database = this.databases.filter(
-          db => db.id === result.connectionId
-        )
+        let database = this.databases.filter(db => db.id === result.connectionId)
         if (database && database.length > 0) {
           result.name = database[0].name
         }

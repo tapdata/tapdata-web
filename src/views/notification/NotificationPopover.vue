@@ -5,52 +5,26 @@
         <i class="iconfont icon-lingdang"></i>
       </el-badge>
     </div>
-    <el-tabs
-      stretch
-      class="notification-popover-wrap"
-      v-model="activeTab"
-      type="border-card"
-      @tab-click="tabHandler"
-    >
-      <el-tab-pane
-        class="tab-item"
-        :label="$t('notification.systemNotice')"
-        name="system"
-      >
+    <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" type="border-card" @tab-click="tabHandler">
+      <el-tab-pane class="tab-item" :label="$t('notification.systemNotice')" name="system">
         <div class="tab-item-container">
           <ul class="tab-list cuk-list">
-            <li
-              class="list-item"
-              v-for="(item, index) in listData"
-              :key="index"
-              @click="handleRead(item.id)"
-            >
+            <li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
               <div class="list-item-content" v-if="item.msg === 'JobDDL'">
                 <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
                 <div class="list-item-desc">
-                  <span :style="`color: ${colorMap[item.level]};`">{{
-                    item.level
-                  }}</span>
+                  <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
                   <span>{{ systemMap[item.system] }}</span>
-                  <router-link
-                    :to="
-                      `/job?id=${item.sourceId}&isMoniting=true&mapping=` +
-                      item.mappingTemplate
-                    "
-                  >
+                  <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
                     <span style="color: #409eff">
                       {{ `${item.serverName} , ` }}
                     </span>
                   </router-link>
                   <span class="list-item-platform">
                     {{
-                      `${$t('notification.sourceName')} : ${
-                        item.sourceName
-                      } , ${$t('notification.databaseName')} : ${
+                      `${$t('notification.sourceName')} : ${item.sourceName} , ${$t('notification.databaseName')} : ${
                         item.databaseName
-                      } , ${$t('notification.schemaName')} : ${
-                        item.schemaName
-                      } ,`
+                      } , ${$t('notification.schemaName')} : ${item.schemaName} ,`
                     }}
                   </span>
                   <el-tooltip :content="item.sql" placement="top">
@@ -66,9 +40,7 @@
               <div class="list-item-content" v-else>
                 <div class="unread-1zPaAXtSu"></div>
                 <div class="list-item-desc">
-                  <span :style="`color: ${colorMap[item.level]};`">{{
-                    item.level
-                  }}</span>
+                  <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
                   <span>{{ systemMap[item.system] }}</span>
                   <span style="color: #409eff" @click="handleGo(item)">
                     {{ item.serverName }}
@@ -100,19 +72,10 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane
-        class="tab-item"
-        :label="$t('notification.userNotice')"
-        name="user"
-        v-loading="loading"
-      >
+      <el-tab-pane class="tab-item" :label="$t('notification.userNotice')" name="user" v-loading="loading">
         <div class="tab-item-container">
           <ul class="tab-list notification-list">
-            <li
-              class="notification-item"
-              v-for="record in userOperations"
-              :key="record.id"
-            >
+            <li class="notification-item" v-for="record in userOperations" :key="record.id">
               <UserOperation :record="record"></UserOperation>
               <div class="item-time">
                 {{ $moment(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
@@ -189,9 +152,7 @@ export default {
         //格式化日期
         if (this.listData && this.listData.length > 0) {
           this.listData.map(item => {
-            item['createTime'] = item.createTime
-              ? this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              : ''
+            item['createTime'] = item.createTime ? this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
           })
         }
       })

@@ -5,18 +5,9 @@
     <newDataFlow v-if="newDataFlowV" ref="newDataFlowV"></newDataFlow>
     <div
       class="action-buttons"
-      style="
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-right: 10px;
-      "
+      style="display: flex; align-items: center; justify-content: space-between; padding-right: 10px"
     >
-      <i
-        @click="backDataFlow"
-        :title="$t('dataFlow.backlistText')"
-        class="iconfont icon-sanheng backIcon"
-      ></i>
+      <i @click="backDataFlow" :title="$t('dataFlow.backlistText')" class="iconfont icon-sanheng backIcon"></i>
       <div class="flex-center">
         <el-button
           v-if="isEditable() && !isMoniting"
@@ -26,11 +17,7 @@
           @click="draftSave"
         >
           <i class="iconfont icon-baocun"></i>
-          <span>{{
-            isSaving
-              ? $t('dataFlow.button.saveing')
-              : $t('dataFlow.button.save')
-          }}</span>
+          <span>{{ isSaving ? $t('dataFlow.button.saveing') : $t('dataFlow.button.save') }}</span>
         </el-button>
 
         <el-autocomplete
@@ -48,16 +35,11 @@
 
         <el-button-group class="action-btn-group">
           <el-button
-            v-if="
-              ['scheduled', 'running'].includes(status) &&
-              executeMode === 'running_debug'
-            "
+            v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
             class="action-btn"
             size="mini"
             @click="stopCapture"
-            :disabled="
-              $disabledByPermission('SYNC_job_operation_all_data', creatUserId)
-            "
+            :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
             v-readonlybtn="'SYNC_job_operation'"
           >
             <i class="iconfont icon-zanting3"></i>
@@ -65,13 +47,9 @@
           </el-button>
           <el-button
             v-readonlybtn="'SYNC_job_operation'"
-            :disabled="
-              $disabledByPermission('SYNC_job_operation_all_data', creatUserId)
-            "
+            :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
             v-if="
-              ['running'].includes(status) &&
-              executeMode === 'normal' &&
-              $window.getSettingByKey('SHOW_DATA_TRACE')
+              ['running'].includes(status) && executeMode === 'normal' && $window.getSettingByKey('SHOW_DATA_TRACE')
             "
             class="action-btn"
             size="mini"
@@ -82,13 +60,9 @@
           </el-button>
           <el-button
             v-readonlybtn="'SYNC_job_operation'"
-            :disabled="
-              $disabledByPermission('SYNC_job_operation_all_data', creatUserId)
-            "
+            :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
             v-if="
-              statusBtMap[status] &&
-              !statusBtMap[status].reloadSchema &&
-              !$window.getSettingByKey('DFS_TCM_PLATFORM')
+              statusBtMap[status] && !statusBtMap[status].reloadSchema && !$window.getSettingByKey('DFS_TCM_PLATFORM')
             "
             class="action-btn"
             size="mini"
@@ -99,9 +73,7 @@
           </el-button>
           <el-button
             v-readonlybtn="'SYNC_job_operation'"
-            :disabled="
-              $disabledByPermission('SYNC_job_operation_all_data', creatUserId)
-            "
+            :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
             v-if="isEditable() && $window.getSettingByKey('SHOW_DATA_TRACE')"
             class="action-btn"
             size="mini"
@@ -130,8 +102,7 @@
           <i class="iconfont icon-shezhi1"></i>
           <span class="btn-setting-text">{{
             {
-              'initial_sync+cdc':
-                $t('dataFlow.initial_sync') + '+' + $t('dataFlow.cdc'),
+              'initial_sync+cdc': $t('dataFlow.initial_sync') + '+' + $t('dataFlow.cdc'),
               initial_sync: $t('dataFlow.initial_sync'),
               cdc: $t('dataFlow.cdc')
             }[sync_type]
@@ -141,13 +112,7 @@
       <div class="flex-center">
         <el-tag
           :type="
-            status === 'running'
-              ? 'success'
-              : status === 'error'
-              ? 'danger'
-              : status === 'paused'
-              ? 'warning'
-              : 'info'
+            status === 'running' ? 'success' : status === 'error' ? 'danger' : status === 'paused' ? 'warning' : 'info'
           "
           effect="plain"
           size="mini"
@@ -172,12 +137,7 @@
           </span>
           <span
             :style="{
-              color:
-                status === 'scheduled'
-                  ? '#b0e58c'
-                  : status === 'stopping'
-                  ? '#fccd85'
-                  : ''
+              color: status === 'scheduled' ? '#b0e58c' : status === 'stopping' ? '#fccd85' : ''
             }"
             >{{ $t('dataFlow.state') }}:
             <template v-if="status">
@@ -186,16 +146,10 @@
           </span>
         </el-tag>
 
-        <el-button-group
-          class="action-btn-group"
-          v-readonlybtn="'SYNC_job_operation'"
-        >
+        <el-button-group class="action-btn-group" v-readonlybtn="'SYNC_job_operation'">
           <el-button
             :disabled="
-              $disabledByPermission(
-                'SYNC_job_operation_all_data',
-                creatUserId
-              ) ||
+              $disabledByPermission('SYNC_job_operation_all_data', creatUserId) ||
               (statusBtMap[status] && statusBtMap[status].start)
             "
             class="action-btn btn-operatiton"
@@ -207,10 +161,7 @@
           </el-button>
           <el-button
             :disabled="
-              $disabledByPermission(
-                'SYNC_job_operation_all_data',
-                creatUserId
-              ) ||
+              $disabledByPermission('SYNC_job_operation_all_data', creatUserId) ||
               (statusBtMap[status] && statusBtMap[status].stop)
             "
             class="action-btn btn-operatiton"
@@ -222,10 +173,7 @@
           </el-button>
           <el-button
             :disabled="
-              $disabledByPermission(
-                'SYNC_job_operation_all_data',
-                creatUserId
-              ) ||
+              $disabledByPermission('SYNC_job_operation_all_data', creatUserId) ||
               (statusBtMap[status] && statusBtMap[status].reset)
             "
             class="action-btn btn-operatiton"
@@ -237,10 +185,7 @@
           </el-button>
           <el-button
             :disabled="
-              $disabledByPermission(
-                'SYNC_job_operation_all_data',
-                creatUserId
-              ) ||
+              $disabledByPermission('SYNC_job_operation_all_data', creatUserId) ||
               (statusBtMap[status] && statusBtMap[status].forceStop)
             "
             class="action-btn btn-operatiton"
@@ -254,9 +199,7 @@
 
         <el-button
           v-readonlybtn="'SYNC_job_edition'"
-          :disabled="
-            $disabledByPermission('SYNC_job_edition_all_data', creatUserId)
-          "
+          :disabled="$disabledByPermission('SYNC_job_edition_all_data', creatUserId)"
           v-if="
             statusBtMap[status] &&
             !statusBtMap[status].edit &&
@@ -284,31 +227,17 @@
     >
       <el-form :model="form" label-position="left">
         <el-form-item :label="$t('dataFlow.taskName')">
-          <el-input
-            class="e-input"
-            v-model="form.taskName"
-            autocomplete="off"
-          ></el-input>
+          <el-input class="e-input" v-model="form.taskName" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item :label="$t('dataFlow.implementationModalities')">
           <el-select v-model="sync_type" size="mini" disabled>
-            <el-option
-              v-for="item in settingList"
-              :key="item.type"
-              :label="item.name"
-              :value="item.type"
-            >
-            </el-option>
+            <el-option v-for="item in settingList" :key="item.type" :label="item.name" :value="item.type"> </el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="e-button" @click="dialogFormVisible = false">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button class="e-button" type="primary" @click="start">{{
-          $t('dataFlow.submitExecute')
-        }}</el-button>
+        <el-button class="e-button" @click="dialogFormVisible = false">{{ $t('message.cancel') }}</el-button>
+        <el-button class="e-button" type="primary" @click="start">{{ $t('dataFlow.submitExecute') }}</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -319,24 +248,12 @@
     >
       <span>{{ $t('editor.ui.allNodeLoadSchemaDiaLog') }}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="reloadSchemaDialog = false">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="confirmReloadSchemaDialog">{{
-          $t('message.confirm')
-        }}</el-button>
+        <el-button @click="reloadSchemaDialog = false">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" @click="confirmReloadSchemaDialog">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
-    <AddBtnTip
-      v-if="
-        !loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')
-      "
-    ></AddBtnTip>
-    <DownAgent
-      ref="agentDialog"
-      type="taskRunning"
-      @closeAgentDialog="closeAgentDialog"
-    ></DownAgent>
+    <AddBtnTip v-if="!loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')"></AddBtnTip>
+    <DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
   </div>
 </template>
@@ -354,11 +271,7 @@ import AddBtnTip from './addBtnTip'
 import simpleScene from './SimpleScene'
 import newDataFlow from '@/components/newDataflowName'
 import DownAgent from '../downAgent/agentDown'
-import {
-  FORM_DATA_KEY,
-  JOIN_TABLE_TPL,
-  DATABASE_TYPE_MAPPING
-} from '../../editor/constants'
+import { FORM_DATA_KEY, JOIN_TABLE_TPL, DATABASE_TYPE_MAPPING } from '../../editor/constants'
 import { EditorEventType } from '../../editor/lib/events'
 import _ from 'lodash'
 import SkipError from '../../components/SkipError'
@@ -380,10 +293,7 @@ export default {
       dialogFormVisible: false,
       form: {
         taskName: '',
-        type:
-          this.$t('dataFlow.button.quantitative') +
-          '+' +
-          this.$t('dataFlow.button.increment')
+        type: this.$t('dataFlow.button.quantitative') + '+' + this.$t('dataFlow.button.increment')
       },
 
       dataFlowId: null,
@@ -481,10 +391,7 @@ export default {
       const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
       if (!this.dataChangeFalg || $PLATFORM) {
         if ($PLATFORM === 'dfs') {
-          window.open(
-            window.location.href?.split('/tm')?.[0] + '/#/dataflow',
-            '_self'
-          )
+          window.open(window.location.href?.split('/tm')?.[0] + '/#/dataflow', '_self')
         } else {
           this.$router.push({
             name: 'dataFlows',
@@ -494,15 +401,11 @@ export default {
           })
         }
       } else {
-        this.$confirm(
-          this.$t('dataFlow.saveReminder'),
-          this.$t('dataFlow.backlistText'),
-          {
-            type: 'warning',
-            confirmButtonText: this.$t('dataFlow.leave'),
-            closeOnClickModal: false
-          }
-        ).then(resFlag => {
+        this.$confirm(this.$t('dataFlow.saveReminder'), this.$t('dataFlow.backlistText'), {
+          type: 'warning',
+          confirmButtonText: this.$t('dataFlow.leave'),
+          closeOnClickModal: false
+        }).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -528,9 +431,7 @@ export default {
         this.onGraphChanged()
         this.setEditable(true)
         this.creatUserId = this.$cookie.get('user_id')
-        this.editor.ui.setName(
-          this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7)
-        )
+        this.editor.ui.setName(this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7))
         // if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
       }
       this.setSelector(this.$route.query.mapping)
@@ -554,11 +455,7 @@ export default {
           if (ele.$el) ele.$el.hide()
         })
         try {
-          if (
-            this.editor.graph.graph
-              .getCells()
-              [self.$refs.simpleScene.activeStep - 1].validate()
-          )
+          if (this.editor.graph.graph.getCells()[self.$refs.simpleScene.activeStep - 1].validate())
             self.$refs.simpleScene.stepValid()
         } catch (e) {
           log(e.message)
@@ -569,8 +466,7 @@ export default {
       let self = this
       if (step == 4) {
         this.newDataFlowV = true
-        if (this.$refs.newDataFlowV)
-          this.$refs.newDataFlowV.dialogVisibleSetting = true
+        if (this.$refs.newDataFlowV) this.$refs.newDataFlowV.dialogVisibleSetting = true
         return
       } else this.newDataFlowV = false
       this.editor.graph.selectCell(this.editor.graph.graph.getCells()[step - 1])
@@ -581,9 +477,7 @@ export default {
     initSimple() {
       let self = this
       this.editor.graph.isSimple = true
-      document.body.getElementsByClassName(
-        'e-sidebar-right'
-      )[0].style.zIndex = 2000
+      document.body.getElementsByClassName('e-sidebar-right')[0].style.zIndex = 2000
       this.editor.graph.selectCell(this.editor.graph.graph.getCells()[0])
       setTimeout(() => {
         self.simpleRefresh()
@@ -599,8 +493,7 @@ export default {
       }
       this.dataFlow = dataFlow
       if (!dataFlow.name) {
-        dataFlow.name =
-          this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7)
+        dataFlow.name = this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7)
       }
       document.title = dataFlow.name
       // 管理端api创建任务来源以及editorData 数据丢失情况
@@ -619,8 +512,7 @@ export default {
       } else {
         this.editor.setData(dataFlow)
       }
-      if (this.statusBtMap[this.status].start || this.isMoniting)
-        this.setEditable(false)
+      if (this.statusBtMap[this.status].start || this.isMoniting) this.setEditable(false)
       else this.setEditable(true)
       if (this.executeMode !== 'normal') this.showCapture()
 
@@ -671,8 +563,7 @@ export default {
         let dat = data.data.fullDocument
         self.status = dat.status
 
-        if (self.executeMode !== dat.executeMode)
-          self.executeMode = dat.executeMode
+        if (self.executeMode !== dat.executeMode) self.executeMode = dat.executeMode
 
         if (!self.statusBtMap[self.status].start) {
           self.executeMode = 'normal'
@@ -696,13 +587,9 @@ export default {
         let dat = result?.data || {}
         self.status = dat.status
 
-        if (self.executeMode !== dat.executeMode)
-          self.executeMode = dat.executeMode
+        if (self.executeMode !== dat.executeMode) self.executeMode = dat.executeMode
 
-        if (
-          self.statusBtMap[self.status] &&
-          !self.statusBtMap[self.status].start
-        ) {
+        if (self.statusBtMap[self.status] && !self.statusBtMap[self.status].start) {
           self.executeMode = 'normal'
         }
         if (self.dataFlow) {
@@ -814,15 +701,9 @@ export default {
             self.initData(result.data)
             // 删除旧缓存
             Object.keys(localStorage).forEach(key => {
-              if (
-                key.startsWith('tapdata.dataflow.$$$') &&
-                key.split('$$$')[2] == result.data.name
-              )
+              if (key.startsWith('tapdata.dataflow.$$$') && key.split('$$$')[2] == result.data.name)
                 try {
-                  if (
-                    JSON.parse(localStorage.getItem(key)).id == result.data.id
-                  )
-                    localStorage.removeItem(key)
+                  if (JSON.parse(localStorage.getItem(key)).id == result.data.id) localStorage.removeItem(key)
                 } catch (e) {
                   localStorage.removeItem(key)
                 }
@@ -861,21 +742,13 @@ export default {
       settingData.notificationInterval = settingData.notificationInterval
         ? Number(settingData.notificationInterval)
         : 300
-      settingData.notificationWindow = settingData.notificationWindow
-        ? Number(settingData.notificationWindow)
-        : 0
-      settingData.readBatchSize = settingData.readBatchSize
-        ? Number(settingData.readBatchSize)
-        : 1000
-      settingData.readCdcInterval = settingData.readCdcInterval
-        ? Number(settingData.readCdcInterval)
-        : 500
+      settingData.notificationWindow = settingData.notificationWindow ? Number(settingData.notificationWindow) : 0
+      settingData.readBatchSize = settingData.readBatchSize ? Number(settingData.readBatchSize) : 1000
+      settingData.readCdcInterval = settingData.readCdcInterval ? Number(settingData.readCdcInterval) : 500
       settingData.transformerConcurrency = settingData.transformerConcurrency
         ? Number(settingData.transformerConcurrency)
         : 8
-      settingData.processorConcurrency = settingData.processorConcurrency
-        ? Number(settingData.processorConcurrency)
-        : 1
+      settingData.processorConcurrency = settingData.processorConcurrency ? Number(settingData.processorConcurrency) : 1
       let distanceForSink = editorData.distanceForSink || {}
 
       let cells = graphData.cells ? graphData.cells : []
@@ -933,14 +806,7 @@ export default {
             readCdcInterval: 500,
             readBatchSize: 1000
           })
-        } else if (
-          [
-            'app.Table',
-            'app.Collection',
-            'app.ESNode',
-            'app.HiveNode'
-          ].includes(cell.type)
-        ) {
+        } else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode'].includes(cell.type)) {
           postData.mappingTemplate = 'custom'
 
           Object.assign(stage, {
@@ -955,10 +821,8 @@ export default {
         if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
           let sourceId = cell.source.id
           let targetId = cell.target.id
-          if (sourceId && stages[sourceId])
-            stages[sourceId].outputLanes.push(targetId)
-          if (targetId && stages[targetId])
-            stages[targetId].inputLanes.push(sourceId)
+          if (sourceId && stages[sourceId]) stages[sourceId].outputLanes.push(targetId)
+          if (targetId && stages[targetId]) stages[targetId].inputLanes.push(sourceId)
         }
       })
       postData.stages = Object.values(stages)
@@ -1002,10 +866,7 @@ export default {
               if (cell.id == jt.id) finded = true
             })
             try {
-              if (!finded)
-                cells
-                  .filter(cell => cell.id == stage.id)[0]
-                  .updateOutputSchema()
+              if (!finded) cells.filter(cell => cell.id == stage.id)[0].updateOutputSchema()
             } catch (e) {
               alert('jointables stageid chaeck failed===>>' + stage.id)
               valid = false
@@ -1025,9 +886,7 @@ export default {
       if (!this.checkJoinTableStageId()) return
       localStorage.removeItem(this.tempId)
       const _doSave = function () {
-        let promise = data.id
-          ? dataFlowsApi.patch(data)
-          : dataFlowsApi.post(data)
+        let promise = data.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
 
         promise
           .then(result => {
@@ -1092,9 +951,7 @@ export default {
           .count({ where: JSON.stringify(params) })
           .then(result => {
             if (result && result.data && result.data.count > 0) {
-              this.$message.error(
-                `${self.$t('message.exists_name')}: ${data.name}`
-              )
+              this.$message.error(`${self.$t('message.exists_name')}: ${data.name}`)
               self.loading = false
             } else {
               _doSave()
@@ -1143,20 +1000,15 @@ export default {
       if (this.$refs.agentDialog.checkAgent()) {
         let id = this.$route.query.id
         let doStart = () => {
-          let data = this.$route.query.isMoniting
-            ? this.dataFlow
-            : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
+          let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
           if (data) {
             this.doSaveStartDataFlow(data)
           }
         }
         if (this.$route.query && id) {
-          this.$refs.errorHandler.checkError(
-            { id, status: this.status },
-            () => {
-              doStart()
-            }
-          )
+          this.$refs.errorHandler.checkError({ id, status: this.status }, () => {
+            doStart()
+          })
         } else {
           doStart()
         }
@@ -1256,18 +1108,11 @@ export default {
       if (self.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
         const h = self.$createElement
         let arr = self.$t('message.stopAggregation_message').split('XXX')
-        message = h('p', [
-          arr[0] + '(',
-          h('span', { style: { color: '#409EFF' } }, self.dataFlow.name),
-          ')' + arr[1]
-        ])
+        message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, self.dataFlow.name), ')' + arr[1]])
       }
       self
         .$confirm(message, self.$t('dataFlow.importantReminder'), {
-          confirmButtonText:
-            forceStop === true
-              ? self.$t('dataFlow.button.force_stop')
-              : self.$t('message.confirm'),
+          confirmButtonText: forceStop === true ? self.$t('dataFlow.button.force_stop') : self.$t('message.confirm'),
           type: 'warning',
           closeOnClickModal: false
         })
@@ -1294,9 +1139,7 @@ export default {
           if (data.id) {
             data = {
               id: data.id,
-              status: ['scheduled', 'running', 'stopping'].includes(data.status)
-                ? data.status
-                : 'scheduled',
+              status: ['scheduled', 'running', 'stopping'].includes(data.status) ? data.status : 'scheduled',
               executeMode: 'editing_debug'
             }
           } else {
@@ -1378,16 +1221,12 @@ export default {
 
       if (data && data.id) {
         self
-          .$confirm(
-            self.$t('message.resetMessage'),
-            self.$t('dataFlow.importantReminder'),
-            {
-              confirmButtonText: self.$t('dataFlow.button.reset'),
-              cancelButtonText: self.$t('message.cancel'),
-              closeOnClickModal: false,
-              type: 'warning'
-            }
-          )
+          .$confirm(self.$t('message.resetMessage'), self.$t('dataFlow.importantReminder'), {
+            confirmButtonText: self.$t('dataFlow.button.reset'),
+            cancelButtonText: self.$t('message.cancel'),
+            closeOnClickModal: false,
+            type: 'warning'
+          })
           .then(flag => {
             if (!flag) {
               return
@@ -1548,11 +1387,7 @@ export default {
           let formData = _.cloneDeep(v)
           delete formData.inputLanes
           delete formData.outputLanes
-          if (
-            ['table', 'view', 'collection', 'mongo_view', 'hive'].includes(
-              v.type
-            )
-          ) {
+          if (['table', 'view', 'collection', 'mongo_view', 'hive'].includes(v.type)) {
             let node = {
               type: mapping[v.type],
               id: v.id,
@@ -1562,26 +1397,13 @@ export default {
               outputSchema: null,
               attrs: {
                 label: {
-                  text:
-                    v.tableName !== '' && v.tableName
-                      ? breakText.breakText(v.tableName, 125)
-                      : v.type
+                  text: v.tableName !== '' && v.tableName ? breakText.breakText(v.tableName, 125) : v.type
                 }
               },
               angle: 0
             }
             cells.push(node)
-          } else if (
-            v.type &&
-            [
-              'dummy db',
-              'gridfs',
-              'file',
-              'elasticsearch',
-              'rest api',
-              'redis'
-            ].includes(v.type)
-          ) {
+          } else if (v.type && ['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'redis'].includes(v.type)) {
             let node = {
               type: mapping[v.type],
               id: v.id,
@@ -1590,10 +1412,7 @@ export default {
               outputSchema: null,
               attrs: {
                 label: {
-                  text:
-                    v.name !== '' && v.name
-                      ? breakText.breakText(v.name, 125)
-                      : v.type
+                  text: v.name !== '' && v.name ? breakText.breakText(v.name, 125) : v.type
                 }
               },
               form_data: formData
@@ -1610,10 +1429,7 @@ export default {
               outputSchema: null,
               attrs: {
                 label: {
-                  text:
-                    v.name !== '' && v.name
-                      ? breakText.breakText(v.name, 125)
-                      : v.type
+                  text: v.name !== '' && v.name ? breakText.breakText(v.name, 125) : v.type
                 },
                 image: {
                   xlinkHref: map[v.database_type].shapeImage
@@ -1639,10 +1455,7 @@ export default {
               outputSchema: null,
               attrs: {
                 label: {
-                  text:
-                    v.name !== '' && v.name
-                      ? breakText.breakText(v.name, 95)
-                      : v.type
+                  text: v.name !== '' && v.name ? breakText.breakText(v.name, 95) : v.type
                 }
               }
             }
@@ -1730,9 +1543,7 @@ export default {
             let cell = graph.getCell(stage.id)
             graph.getConnectedLinks(cell, { inbound: true }).forEach(link => {
               let sourceCell = link.getSourceCell()
-              let sourceDataCells = sourceCell
-                .getFirstDataNode()
-                .filter(cell => !!joinTables[cell.id])
+              let sourceDataCells = sourceCell.getFirstDataNode().filter(cell => !!joinTables[cell.id])
               if (sourceDataCells && sourceDataCells.length > 0) {
                 let formData = link.getFormData()
                 formData.joinTable = joinTables[sourceDataCells[0].id]
@@ -1746,8 +1557,7 @@ export default {
       let dataCells = this.editor.getAllCells()
       let dataCellName = []
       dataCells.forEach(cell => {
-        let formData =
-          typeof cell.getFormData === 'function' ? cell.getFormData() : null
+        let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null
         let tableName = {
           value: formData.tableName || formData.name || '',
           cell: cell
@@ -1755,18 +1565,13 @@ export default {
         dataCellName.push(tableName)
       })
       var restaurants = dataCellName
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
     createFilter(queryString) {
       return restaurant => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        )
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
       }
     },
     handleSearchNode(item) {

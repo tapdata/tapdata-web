@@ -55,31 +55,11 @@ export const jointCacheConfig = {
         data = data || this.getFormData()
         let name = this.attr('label/text')
         log('JointCache Formdata')
-        if (!data)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
-          )
-        if (!data.name)
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.processor.jointCache.form.name.none'
-            )}`
-          )
-        if (!data.cacheId)
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.processor.jointCache.form.cacheId.none'
-            )}`
-          )
-        if (
-          !data.joinSettings.length ||
-          data.joinSettings.some(it => !it.sourceKey)
-        )
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.processor.jointCache.form.joinSettings.none'
-            )}`
-          )
+        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
+        if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.name.none')}`)
+        if (!data.cacheId) throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.cacheId.none')}`)
+        if (!data.joinSettings.length || data.joinSettings.some(it => !it.sourceKey))
+          throw new Error(`${name}: ${i18n.t('editor.cell.processor.jointCache.form.joinSettings.none')}`)
         return true
       },
 
@@ -186,10 +166,7 @@ export const jointCacheConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

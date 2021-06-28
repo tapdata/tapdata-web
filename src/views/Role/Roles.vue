@@ -19,59 +19,33 @@
               :placeholder="$t('role.selectRoleName')"
               @input="table.fetch(1, 800)"
             >
-              <el-select
-                style="width: 120px"
-                slot="prepend"
-                v-model="searchParams.isFuzzy"
-                @input="table.fetch(1)"
-              >
-                <el-option
-                  :label="$t('role.fuzzyMatching')"
-                  :value="true"
-                ></el-option>
-                <el-option
-                  :label="$t('role.preciseMatching')"
-                  :value="false"
-                ></el-option>
+              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
+                <el-option :label="$t('role.fuzzyMatching')" :value="true"></el-option>
+                <el-option :label="$t('role.preciseMatching')" :value="false"></el-option>
               </el-select>
             </el-input>
           </li>
           <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset()"
-              >{{ $t('button.query') }}
-            </el-button>
+            <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }} </el-button>
           </li>
 
           <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset('reset')"
-              >{{ $t('button.reset') }}
-            </el-button>
+            <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }} </el-button>
           </li>
         </ul>
       </div>
       <div slot="operation">
-        <el-button
-          v-readonlybtn="'role_creation'"
-          class="btn btn-create"
-          size="mini"
-          @click="openCreateDialog()"
-        >
+        <el-button v-readonlybtn="'role_creation'" class="btn btn-create" size="mini" @click="openCreateDialog()">
           <i class="iconfont icon-jia add-btn-icon"></i>
           <span>{{ $t('role.create') }}</span>
         </el-button>
       </div>
-      <el-table-column
-        :label="$t('role.roleName')"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column :label="$t('role.roleName')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div>{{ scope.row.name }}</div>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('role.description')"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column :label="$t('role.description')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div>{{ scope.row.description }}</div>
         </template>
@@ -103,9 +77,7 @@
           <el-button
             type="text"
             v-readonlybtn="'role_edition'"
-            :disabled="
-              $disabledByPermission('role_edition_all_data', scope.row.user_id)
-            "
+            :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="handleSettingPermissions(scope.row.id, scope.row.name)"
           >
             {{ $t('role.settingPermissions') }}
@@ -114,12 +86,7 @@
           <el-button
             type="text"
             @click="handleAssociatUsers(scope.row.id)"
-            :disabled="
-              $disabledByPermission(
-                'role_edition_all_data',
-                scope.row.user_id
-              ) || scope.row.name === 'admin'
-            "
+            :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id) || scope.row.name === 'admin'"
             v-readonlybtn="'role_edition'"
           >
             {{ $t('role.associatUsers') }}
@@ -127,9 +94,7 @@
           <el-button
             type="text"
             v-readonlybtn="'role_edition'"
-            :disabled="
-              $disabledByPermission('role_edition_all_data', scope.row.user_id)
-            "
+            :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="openCreateDialog(scope.row.id, scope.row)"
           >
             {{ $t('role.edit') }}
@@ -138,12 +103,7 @@
             type="text"
             style="color: #f56c6c"
             @click="handleDelete(scope.row)"
-            :disabled="
-              $disabledByPermission(
-                'role_delete_all_data',
-                scope.row.user_id
-              ) || scope.row.name === 'admin'
-            "
+            :disabled="$disabledByPermission('role_delete_all_data', scope.row.user_id) || scope.row.name === 'admin'"
             v-readonlybtn="'role_delete'"
           >
             {{ $t('role.delete') }}
@@ -162,15 +122,9 @@
         <el-form-item
           :label="$t('role.roleName')"
           prop="name"
-          :rules="[
-            { required: true, message: $t('role.role_null'), trigger: 'blur' }
-          ]"
+          :rules="[{ required: true, message: $t('role.role_null'), trigger: 'blur' }]"
         >
-          <el-input
-            v-model="form.name"
-            :placeholder="$t('role.selectRoleName')"
-            size="small"
-          ></el-input>
+          <el-input v-model="form.name" :placeholder="$t('role.selectRoleName')" size="small"></el-input>
         </el-form-item>
         <el-form-item :label="$t('role.roleDesc')" style="margin-bottom: 10px">
           <el-input
@@ -184,20 +138,14 @@
           <el-switch
             v-model="form.register_user_default"
             inactive-color="#dcdfe6"
-            :active-text="
-              form.register_user_default ? $t('role.yes') : $t('role.no')
-            "
+            :active-text="form.register_user_default ? $t('role.yes') : $t('role.no')"
             style="margin-right: 20px"
           ></el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogFormVisible = false"
-          >{{ $t('message.cancel') }}
-        </el-button>
-        <el-button size="mini" type="primary" @click="createSave"
-          >{{ $t('message.confirm') }}
-        </el-button>
+        <el-button size="mini" @click="dialogFormVisible = false">{{ $t('message.cancel') }} </el-button>
+        <el-button size="mini" type="primary" @click="createSave">{{ $t('message.confirm') }} </el-button>
       </div>
     </el-dialog>
 
@@ -209,31 +157,14 @@
       width="600px"
     >
       <div class="userBox">
-        <el-select
-          v-model="roleusers"
-          filterable
-          multiple
-          :placeholder="$t('role.selectUser')"
-        >
-          <el-option
-            v-for="item in userGroup"
-            :key="item.id"
-            :label="item.email"
-            :value="item.id"
-          >
-          </el-option>
+        <el-select v-model="roleusers" filterable multiple :placeholder="$t('role.selectUser')">
+          <el-option v-for="item in userGroup" :key="item.id" :label="item.email" :value="item.id"> </el-option>
         </el-select>
-        <div class="num">
-          {{ $t('role.connected') }}: {{ roleusers.length }}
-        </div>
+        <div class="num">{{ $t('role.connected') }}: {{ roleusers.length }}</div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogUserVisible = false">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button size="mini" type="primary" @click="saveUser">{{
-          $t('dataForm.submit')
-        }}</el-button>
+        <el-button size="mini" @click="dialogUserVisible = false">{{ $t('message.cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="saveUser">{{ $t('dataForm.submit') }}</el-button>
       </span>
     </el-dialog>
 
@@ -246,18 +177,11 @@
     >
       <p>
         {{ $t('role.delete_remind') }}
-        <span
-          @click="delLinkRole(deleteObj.id)"
-          style="color: #409eff; cursor: pointer"
-        >
-          {{ deleteObj.name }}</span
-        >
+        <span @click="delLinkRole(deleteObj.id)" style="color: #409eff; cursor: pointer"> {{ deleteObj.name }}</span>
         ?
       </p>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="deleteDialogVisible = false">{{
-          $t('message.cancel')
-        }}</el-button>
+        <el-button size="mini" @click="deleteDialogVisible = false">{{ $t('message.cancel') }}</el-button>
         <el-button size="mini" type="primary" @click="confirmDelete">
           {{ $t('classification.deleteNode') }}
         </el-button>
@@ -336,9 +260,7 @@ export default {
       let { isFuzzy, keyword } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy
-          ? { like: toRegExp(keyword), options: 'i' }
-          : keyword
+        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
         where.or = [{ name: filterObj }]
       }
       let filter = {
@@ -379,9 +301,7 @@ export default {
     // 		});
     // },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     // 新建角色(弹窗开关)
@@ -469,10 +389,7 @@ export default {
               if (res && res.data) {
                 if (method === 'post') {
                   this.permissions.forEach(selectPermission => {
-                    if (
-                      selectPermission.type === 'read' &&
-                      !selectPermission.isMenu
-                    )
+                    if (selectPermission.type === 'read' && !selectPermission.isMenu)
                       newRoleMappings.push({
                         principalType: 'PERMISSION',
                         principalId: selectPermission.name,
@@ -526,10 +443,7 @@ export default {
         .then(res => {
           if (res && res.data) {
             res.data.forEach(roleMapping => {
-              if (
-                roleMapping.principalType === 'USER' &&
-                this.userGroup.find(v => v.id === roleMapping.principalId)
-              ) {
+              if (roleMapping.principalType === 'USER' && this.userGroup.find(v => v.id === roleMapping.principalId)) {
                 _this.roleusers.push(roleMapping.principalId)
                 _this.oldUser.push(roleMapping)
               }

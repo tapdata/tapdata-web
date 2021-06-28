@@ -38,13 +38,7 @@
                 />
               </el-input>
             </el-form-item>
-            <el-button
-              class="btn-sign-in"
-              type="primary"
-              size="medium"
-              :loading="loading"
-              @click="submit"
-            >
+            <el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
               {{ $t('app.signIn.nextStep') }}
             </el-button>
           </el-form>

@@ -55,32 +55,22 @@ export default {
         'tcp_udp'
       ],
       comingAllowDatabase: [], // 即将上线
-      otherType: [
-        'gridfs',
-        'dummy db',
-        'rest api',
-        'custom_connection',
-        'file'
-      ],
+      otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
       typeMap: TYPEMAP
     }
   },
   created() {
     let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || []
-    let comingAllowDataType =
-      window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
+    let comingAllowDataType = window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
     let allwoType = this.allwoType
     if (allwoType && allwoType.length) {
       allowDataType = allowDataType.filter(val => {
         return this.allwoType.includes(val)
       })
     }
-    this.comingAllowDatabase =
-      comingAllowDataType.filter(type => this.database.includes(type)) || []
-    this.database =
-      allowDataType.filter(type => this.database.includes(type)) || []
-    this.otherType =
-      allowDataType.filter(type => this.otherType.includes(type)) || []
+    this.comingAllowDatabase = comingAllowDataType.filter(type => this.database.includes(type)) || []
+    this.database = allowDataType.filter(type => this.database.includes(type)) || []
+    this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
   },
   methods: {
     getImgByType,

@@ -6,63 +6,33 @@
 			</el-button>
 		</div> -->
     <form-builder ref="form" v-model="model" :config="config">
-      <el-table
-        border
-        size="mini"
-        slot="joinSettings"
-        :data="model.joinSettings"
-      >
+      <el-table border size="mini" slot="joinSettings" :data="model.joinSettings">
         <el-table-column
-          :label="
-            $t('editor.cell.processor.jointCache.form.joinSettings.cacheKey')
-          "
+          :label="$t('editor.cell.processor.jointCache.form.joinSettings.cacheKey')"
           prop="cacheKey"
         ></el-table-column>
-        <el-table-column
-          :label="
-            $t(
-              'editor.cell.processor.jointCache.form.joinSettings.sourceKey.label'
-            )
-          "
-        >
+        <el-table-column :label="$t('editor.cell.processor.jointCache.form.joinSettings.sourceKey.label')">
           <template slot-scope="scope">
             <el-select
               class="source-key-selection"
               v-model="scope.row.sourceKey"
-              :placeholder="
-                $t(
-                  'editor.cell.processor.jointCache.form.joinSettings.sourceKey.placeholder'
-                )
-              "
+              :placeholder="$t('editor.cell.processor.jointCache.form.joinSettings.sourceKey.placeholder')"
             >
-              <el-option
-                v-for="name in sourceFields"
-                :key="name"
-                :label="name"
-                :value="name"
-              ></el-option>
+              <el-option v-for="name in sourceFields" :key="name" :label="name" :value="name"></el-option>
             </el-select>
           </template>
         </el-table-column>
       </el-table>
     </form-builder>
     <div class="schema-mapping">
-      <Mapping
-        ref="mappingComp"
-        :filterFields="model.removeFields"
-        @check="checkHandler"
-      ></Mapping>
+      <Mapping ref="mappingComp" :filterFields="model.removeFields" @check="checkHandler"></Mapping>
     </div>
   </section>
 </template>
 
 <script>
 import Mapping from '../link/Mapping'
-import {
-  mergeJoinTablesToTargetSchema,
-  mergeSchema,
-  removeDeleted
-} from '../../util/Schema'
+import { mergeJoinTablesToTargetSchema, mergeSchema, removeDeleted } from '../../util/Schema'
 // import log from '../../../log';
 import _ from 'lodash'
 // let editorMonitor = null;
@@ -90,20 +60,14 @@ export default {
             type: 'input',
             field: 'name',
             label: this.$t('editor.cell.processor.jointCache.form.name.label'),
-            placeholder: this.$t(
-              'editor.cell.processor.jointCache.form.name.placeholder'
-            ),
+            placeholder: this.$t('editor.cell.processor.jointCache.form.name.placeholder'),
             required: true
           },
           {
             type: 'select',
             field: 'cacheId',
-            label: this.$t(
-              'editor.cell.processor.jointCache.form.cacheId.label'
-            ),
-            placeholder: this.$t(
-              'editor.cell.processor.jointCache.form.cacheId.placeholder'
-            ),
+            label: this.$t('editor.cell.processor.jointCache.form.cacheId.label'),
+            placeholder: this.$t('editor.cell.processor.jointCache.form.cacheId.placeholder'),
             required: true,
             options: [],
             clearable: false,
@@ -111,9 +75,7 @@ export default {
               change(val) {
                 let cache = self.cacheMap[val]
                 if (cache) {
-                  let settings = cache.cacheKeys
-                    .split(',')
-                    .map(it => ({ cacheKey: it, sourceKey: '' }))
+                  let settings = cache.cacheKeys.split(',').map(it => ({ cacheKey: it, sourceKey: '' }))
                   self.$set(self.model, 'joinSettings', settings)
                 }
                 self.showMapping()
@@ -122,22 +84,16 @@ export default {
           },
           {
             type: 'slot',
-            label: this.$t(
-              'editor.cell.processor.jointCache.form.joinSettings.label'
-            ),
+            label: this.$t('editor.cell.processor.jointCache.form.joinSettings.label'),
             required: true,
             field: 'joinSettings',
             slot: 'joinSettings'
           },
           {
             type: 'input',
-            label: this.$t(
-              'editor.cell.processor.jointCache.form.joinKey.label'
-            ),
+            label: this.$t('editor.cell.processor.jointCache.form.joinKey.label'),
             field: 'joinKey',
-            placeholder: this.$t(
-              'editor.cell.processor.jointCache.form.joinKey.placeholder'
-            ),
+            placeholder: this.$t('editor.cell.processor.jointCache.form.joinKey.placeholder'),
             on: {
               change() {
                 self.showMapping()
@@ -204,23 +160,15 @@ export default {
         }
         let cacheOutputSchema = cacheCell.cell.getInputSchema()[0].sourceSchema
         let joinPath = this.model.joinKey.trim()
-        let mergedTargetSchema = mergeSchema(
-          _.cloneDeep(this.inputSchema),
-          cacheOutputSchema,
-          {
-            joinType: joinPath ? 'merge_embed' : 'upsert',
-            joinPath
-          }
-        )
+        let mergedTargetSchema = mergeSchema(_.cloneDeep(this.inputSchema), cacheOutputSchema, {
+          joinType: joinPath ? 'merge_embed' : 'upsert',
+          joinPath
+        })
         //过滤删除的字段
         if (mergedTargetSchema && mergedTargetSchema.fields) {
           mergedTargetSchema.fields = removeDeleted(mergedTargetSchema.fields)
         }
-        if (
-          this.model.removeFields.length &&
-          mergedTargetSchema &&
-          mergedTargetSchema.fields
-        ) {
+        if (this.model.removeFields.length && mergedTargetSchema && mergedTargetSchema.fields) {
           let removeIds = this.model.removeFields.map(f => f.id)
           mergedTargetSchema.fields = mergedTargetSchema.fields.filter(f => {
             return !removeIds.includes(f.id)
@@ -263,18 +211,12 @@ export default {
     },
     getScript() {
       let { cacheId, joinSettings, joinKey, removeFields } = this.model
-      if (
-        !cacheId ||
-        !joinSettings.length ||
-        joinSettings.some(it => !it.sourceKey)
-      ) {
+      if (!cacheId || !joinSettings.length || joinSettings.some(it => !it.sourceKey)) {
         return ''
       }
       let cacheCell = this.cacheMap[cacheId]
 
-      let sourceFieldStr = joinSettings
-        .map(it => 'record.' + it.sourceKey)
-        .join(',')
+      let sourceFieldStr = joinSettings.map(it => 'record.' + it.sourceKey).join(',')
 
       let removeFieldsStr = removeFields
         .map(f => {

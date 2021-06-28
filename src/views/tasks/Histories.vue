@@ -19,36 +19,15 @@
         prop="task_result_code"
         sortable="task_result_code"
       ></el-table-column>
-      <el-table-column
-        :label="$t('task.task_result')"
-        prop="task_result"
-        sortable="task_result"
-      ></el-table-column>
-      <el-table-column
-        :label="$t('task.task_duration')"
-        prop="task_duration"
-        sortable="task_duration"
-      >
+      <el-table-column :label="$t('task.task_result')" prop="task_result" sortable="task_result"></el-table-column>
+      <el-table-column :label="$t('task.task_duration')" prop="task_duration" sortable="task_duration">
       </el-table-column>
-      <el-table-column
-        :label="$t('task.task_start_time')"
-        prop="task_start_time"
-        sortable="task_start_time"
-      >
+      <el-table-column :label="$t('task.task_start_time')" prop="task_start_time" sortable="task_start_time">
         <template slot-scope="scope">
-          {{
-            scope.row.task_start_time
-              ? $moment(scope.row.task_start_time).format('YYYY-MM-DD HH:mm:ss')
-              : ''
-          }}
+          {{ scope.row.task_start_time ? $moment(scope.row.task_start_time).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('task.agent_id')"
-        prop="agent_id"
-        sortable="agent_id"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column :label="$t('task.agent_id')" prop="agent_id" sortable="agent_id" :show-overflow-tooltip="true">
       </el-table-column>
     </TablePage>
   </section>
@@ -127,9 +106,7 @@ export default {
       })
     },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'task_start_time'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'task_start_time'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     }
   }

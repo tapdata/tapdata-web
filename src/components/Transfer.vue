@@ -1,9 +1,7 @@
 <template>
   <section class="tapdata-transfer-wrap">
     <div class="box-btn" v-show="!showOperationBtn">
-      <el-button class="e-button" size="mini" @click="dialogVisible = true"
-        >{{ $t('dataFlow.changeName') }}
-      </el-button>
+      <el-button class="e-button" size="mini" @click="dialogVisible = true">{{ $t('dataFlow.changeName') }} </el-button>
       <el-button size="mini" class="e-button" @click="handleReduction"
         >{{ $t('editor.cell.link.reduction') }}
       </el-button>
@@ -56,14 +54,8 @@
               @keyup.enter.native="checkInput(option)"
               :ref="option.id"
             ></el-input>
-            <i
-              class="el-icon-close"
-              @click.stop.prevent="closeInput(option)"
-            ></i>
-            <i
-              class="el-icon-check"
-              @click.stop.prevent="checkInput(option)"
-            ></i>
+            <i class="el-icon-close" @click.stop.prevent="closeInput(option)"></i>
+            <i class="el-icon-check" @click.stop.prevent="checkInput(option)"></i>
           </span>
           <span
             v-if="selectSourceFileArr.includes(option.key)"
@@ -73,12 +65,8 @@
         </span>
       </el-transfer>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelFileOperations">{{
-          $t('dataVerify.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="saveFileOperations">{{
-          $t('dataVerify.confirm')
-        }}</el-button>
+        <el-button @click="cancelFileOperations">{{ $t('dataVerify.cancel') }}</el-button>
+        <el-button type="primary" @click="saveFileOperations">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -91,10 +79,7 @@
       <el-form :rules="rules" ref="form" :model="formData">
         <el-row :gutter="80" class="e-row">
           <el-col :span="12">
-            <el-form-item
-              :label="$t('editor.cell.link.prefixPlaceholder')"
-              prop="table_prefix"
-            >
+            <el-form-item :label="$t('editor.cell.link.prefixPlaceholder')" prop="table_prefix">
               <el-input
                 v-model="formData.table_prefix"
                 autocomplete="off"
@@ -105,17 +90,12 @@
               ></el-input>
             </el-form-item>
             <div class="tip">
-              <span
-                >以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span
-              >
+              <span>以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
               <div>前缀不允许以 system 开头</div>
             </div>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              :label="$t('editor.cell.link.suffixPlaceholder')"
-              prop="table_suffix"
-            >
+            <el-form-item :label="$t('editor.cell.link.suffixPlaceholder')" prop="table_suffix">
               <el-input
                 v-model="formData.table_suffix"
                 autocomplete="off"
@@ -126,27 +106,17 @@
               ></el-input>
             </el-form-item>
             <div class="tip">
-              <span
-                >以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span
-              >
+              <span>以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
             </div>
           </el-col>
         </el-row>
       </el-form>
       <div class="text">
-        {{
-          `${$t('editor.cell.link.tableNameExample')}: ${
-            formData.table_prefix
-          }tablename${formData.table_suffix}`
-        }}
+        {{ `${$t('editor.cell.link.tableNameExample')}: ${formData.table_prefix}tablename${formData.table_suffix}` }}
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel"
-          >{{ $t('dataVerify.cancel') }}
-        </el-button>
-        <el-button type="primary" @click="changeName"
-          >{{ $t('dataVerify.confirm') }}
-        </el-button>
+        <el-button @click="handleCancel">{{ $t('dataVerify.cancel') }} </el-button>
+        <el-button type="primary" @click="changeName">{{ $t('dataVerify.confirm') }} </el-button>
       </div>
     </el-dialog>
   </section>
@@ -183,10 +153,7 @@ export default {
       showOperationBtn: false,
       sourceData: [],
       selectSourceArr: [],
-      titles: [
-        this.$t('editor.cell.link.migrationObjece'),
-        this.$t('editor.cell.link.chosen')
-      ],
+      titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
       formData: {
         table_prefix: '',
         table_suffix: ''
@@ -218,11 +185,7 @@ export default {
           if (result.data) {
             let tables = (result.data.schema && result.data.schema.tables) || []
             tables = tables.sort((t1, t2) =>
-              t1.table_name > t2.table_name
-                ? 1
-                : t1.table_name === t2.table_name
-                ? 0
-                : -1
+              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
             if (tables && tables.length) {
               this.sourceData = tables.map(table => ({
@@ -240,11 +203,7 @@ export default {
               this.selectSourceArr = this.transferData.selectSourceArr
               this.field_process = this.transferData.field_process
             }
-            if (
-              bidirectional &&
-              (this.transferData.table_prefix !== '' ||
-                this.transferData.table_suffix !== '')
-            ) {
+            if (bidirectional && (this.transferData.table_prefix !== '' || this.transferData.table_suffix !== '')) {
               //true 表示 双向且有修改过前后缀
               this.formData.table_prefix = ''
               this.formData.table_suffix = ''
@@ -288,9 +247,7 @@ export default {
           if (res.data) {
             let fields = res.data.records[0].schema.tables[0].fields
             // 初始化所有字段都映射 只取顶级字段
-            fields = fields.filter(
-              field => field.field_name.indexOf('.') === -1
-            )
+            fields = fields.filter(field => field.field_name.indexOf('.') === -1)
             this.sourceFileData = fields.map(field => ({
               label: field.field_name,
               key: field.field_name,
@@ -302,9 +259,7 @@ export default {
             }))
             this.selectSourceFileArr = fields.map(field => field.field_name)
             //初始化已有字段处理
-            let field_process = this.field_process.filter(
-              process => process.table_id === id
-            )
+            let field_process = this.field_process.filter(process => process.table_id === id)
             if (field_process.length > 0) {
               this.operations = _.cloneDeep(field_process[0].operations) || []
             }
@@ -357,9 +312,7 @@ export default {
       }
       //字段名限制
       if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(option.label)) {
-        this.$message.error(
-          '以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符'
-        )
+        this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
         return
       }
       //rename类型
@@ -373,9 +326,7 @@ export default {
         primary_key_position: option.primary_key_position,
         label: option.label
       }
-      let ops = this.operations.filter(
-        v => v.id === option.id && v.op === 'RENAME'
-      )
+      let ops = this.operations.filter(v => v.id === option.id && v.op === 'RENAME')
       if (ops.length === 0) {
         this.operations.push(op)
       } else {
@@ -393,8 +344,7 @@ export default {
       // 改名前查找同级中是否重名，若有则return且还原改动并提示
       let exist = false
       let filterData = this.sourceFileData.filter(
-        v =>
-          option.label === v.label && this.selectSourceFileArr.includes(v.key)
+        v => option.label === v.label && this.selectSourceFileArr.includes(v.key)
       )
       if (filterData.length > 1) {
         this.$message.error(option.label + this.$t('message.exists_name'))
@@ -459,9 +409,7 @@ export default {
     //左边过滤字段是否与右边重名（右边重名过）
     checkLeftFile(file) {
       let result = false
-      let targetFile = this.sourceFileData.filter(
-        v => v.key !== file && v.label === file
-      )
+      let targetFile = this.sourceFileData.filter(v => v.key !== file && v.label === file)
       if (targetFile.length > 0) {
         result = true
       }
@@ -489,9 +437,7 @@ export default {
         operations: this.operations
       }
       if (this.field_process && this.field_process.length > 0) {
-        let process = this.field_process.filter(
-          fields => fields.table_id === this.currentTableId
-        )
+        let process = this.field_process.filter(fields => fields.table_id === this.currentTableId)
         if (process.length > 0) {
           field_process = process[0]
           field_process.table_id = this.currentTableId
@@ -510,10 +456,7 @@ export default {
     },
     // 穿梭框搜索
     filterMethod(query, item) {
-      if (
-        !!~item.label.indexOf(query) ||
-        !!~item.label.toUpperCase().indexOf(query.toUpperCase())
-      ) {
+      if (!!~item.label.indexOf(query) || !!~item.label.toUpperCase().indexOf(query.toUpperCase())) {
         return true
       }
       //return item.label.indexOf(query) > -1
@@ -564,18 +507,12 @@ export default {
         })
         this.selectSourceArr = selectSourceArr
       }
-      if (
-        this.sourceData &&
-        this.sourceData.length &&
-        this.selectSourceArr.length
-      ) {
+      if (this.sourceData && this.sourceData.length && this.selectSourceArr.length) {
         for (let i = 0; i < this.sourceData.length; i++) {
           for (let j = 0; j < this.selectSourceArr.length; j++) {
             if (this.sourceData[i].key === this.selectSourceArr[j]) {
               this.sourceData[i].label =
-                this.formData.table_prefix +
-                this.sourceData[i].key +
-                this.formData.table_suffix
+                this.formData.table_prefix + this.sourceData[i].key + this.formData.table_suffix
             }
           }
         }
@@ -638,10 +575,7 @@ export default {
 .tapdata-transfer-wrap {
   height: 100%;
 
-  .el-transfer-panel
-    .el-transfer-panel__header
-    .el-checkbox
-    .el-checkbox__label {
+  .el-transfer-panel .el-transfer-panel__header .el-checkbox .el-checkbox__label {
     height: 30px;
     font-size: 12px;
     padding-right: 6px;

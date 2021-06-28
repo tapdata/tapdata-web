@@ -793,15 +793,7 @@ router.beforeEach(async (to, from, next) => {
       next(false)
     }
   } else {
-    if (
-      [
-        'login',
-        'registry',
-        'passwordReset',
-        'verificationEmail',
-        'registyResult'
-      ].includes(to.name)
-    ) {
+    if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name)) {
       next()
     } else {
       next('/login')

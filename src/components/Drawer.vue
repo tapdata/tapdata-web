@@ -72,8 +72,7 @@ export default {
   },
   methods: {
     resize() {
-      let eSideBarRight =
-        document.body.getElementsByClassName('e-sidebar-right')[0]
+      let eSideBarRight = document.body.getElementsByClassName('e-sidebar-right')[0]
       this.$nextTick(() => {
         this.sliderWidth = eSideBarRight.clientWidth
       })

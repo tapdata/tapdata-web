@@ -28,42 +28,18 @@ export const TYPEMAP = {
   SYNCSeverStopFailed: i18n.t('notification.SYNCSeverStopFailed'),
   APISeverAbnormallyStopped: i18n.t('notification.APISeverAbnormallyStopped'),
   SYNCSeverAbnormallyStopped: i18n.t('notification.SYNCSeverAbnormallyStopped'),
-  manageSeverAbnormallyStopped: i18n.t(
-    'notification.manageSeverAbnormallyStopped'
-  ),
-  manageSeverStartedSuccessfully: i18n.t(
-    'notification.manageSeverStartedSuccessfully'
-  ),
-  APISeverStartedSuccessfully: i18n.t(
-    'notification.APISeverStartedSuccessfully'
-  ),
-  SYNCSeverStartedSuccessfully: i18n.t(
-    'notification.SYNCSeverStartedSuccessfully'
-  ),
-  manageSeverStoppedSuccessfully: i18n.t(
-    'notification.manageSeverStoppedSuccessfully'
-  ),
-  APISeverStoppedSuccessfully: i18n.t(
-    'notification.APISeverStoppedSuccessfully'
-  ),
-  SYNCSeverStoppedSuccessfully: i18n.t(
-    'notification.SYNCSeverStoppedSuccessfully'
-  ),
-  manageSeverRestartedSuccessfully: i18n.t(
-    'notification.manageSeverRestartedSuccessfully'
-  ),
-  APISeverRestartedSuccessfully: i18n.t(
-    'notification.APISeverRestartedSuccessfully'
-  ),
-  SYNCSeverRestartedSuccessfully: i18n.t(
-    'notification.SYNCSeverRestartedSuccessfully'
-  ),
-  newSeverCreatedSuccessfully: i18n.t(
-    'notification.newSeverCreatedSuccessfully'
-  ),
-  newSeverDeletedSuccessfully: i18n.t(
-    'notification.newSeverDeletedSuccessfully'
-  ),
+  manageSeverAbnormallyStopped: i18n.t('notification.manageSeverAbnormallyStopped'),
+  manageSeverStartedSuccessfully: i18n.t('notification.manageSeverStartedSuccessfully'),
+  APISeverStartedSuccessfully: i18n.t('notification.APISeverStartedSuccessfully'),
+  SYNCSeverStartedSuccessfully: i18n.t('notification.SYNCSeverStartedSuccessfully'),
+  manageSeverStoppedSuccessfully: i18n.t('notification.manageSeverStoppedSuccessfully'),
+  APISeverStoppedSuccessfully: i18n.t('notification.APISeverStoppedSuccessfully'),
+  SYNCSeverStoppedSuccessfully: i18n.t('notification.SYNCSeverStoppedSuccessfully'),
+  manageSeverRestartedSuccessfully: i18n.t('notification.manageSeverRestartedSuccessfully'),
+  APISeverRestartedSuccessfully: i18n.t('notification.APISeverRestartedSuccessfully'),
+  SYNCSeverRestartedSuccessfully: i18n.t('notification.SYNCSeverRestartedSuccessfully'),
+  newSeverCreatedSuccessfully: i18n.t('notification.newSeverCreatedSuccessfully'),
+  newSeverDeletedSuccessfully: i18n.t('notification.newSeverDeletedSuccessfully'),
   databaseDDLChanged: i18n.t('notification.databaseDDLChanged'),
   inspectCount: i18n.t('notification.inspectVerifyJobCount'),
   inspectValue: i18n.t('notification.inspectVerifyJobValue'),

@@ -64,20 +64,9 @@
               :placeholder="$t('user.userNameEmail')"
               @input="table.fetch(1, 800)"
             >
-              <el-select
-                style="width: 120px"
-                slot="prepend"
-                v-model="searchParams.isFuzzy"
-                @input="table.fetch(1)"
-              >
-                <el-option
-                  :label="$t('connection.fuzzyQuery')"
-                  :value="true"
-                ></el-option>
-                <el-option
-                  :label="$t('connection.PreciseQuery')"
-                  :value="false"
-                ></el-option>
+              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
+                <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
+                <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
               </el-select>
             </el-input>
           </li>
@@ -95,15 +84,11 @@
 					</li> -->
 
           <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset()">{{
-              $t('button.query')
-            }}</el-button>
+            <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
           </li>
 
           <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset('reset')">{{
-              $t('button.reset')
-            }}</el-button>
+            <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
           </li>
         </ul>
       </div>
@@ -129,29 +114,18 @@
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item
-              command="activated"
-              v-readonlybtn="'user_edition'"
-              >{{ $t('user.bulkActivation') }}</el-dropdown-item
-            >
-            <el-dropdown-item
-              command="rejected"
-              v-readonlybtn="'user_edition'"
-              >{{ $t('user.bulkFreeze') }}</el-dropdown-item
-            >
-            <el-dropdown-item
-              command="notActivated"
-              v-readonlybtn="'user_edition'"
-              >{{ $t('user.bulkCheck') }}</el-dropdown-item
-            >
+            <el-dropdown-item command="activated" v-readonlybtn="'user_edition'">{{
+              $t('user.bulkActivation')
+            }}</el-dropdown-item>
+            <el-dropdown-item command="rejected" v-readonlybtn="'user_edition'">{{
+              $t('user.bulkFreeze')
+            }}</el-dropdown-item>
+            <el-dropdown-item command="notActivated" v-readonlybtn="'user_edition'">{{
+              $t('user.bulkCheck')
+            }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button
-          v-readonlybtn="'new_model_creation'"
-          class="btn btn-create"
-          size="mini"
-          @click="openCreateDialog"
-        >
+        <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
           <i class="iconfont icon-jia add-btn-icon"></i>
           <span>{{ $t('user.creatUser') }}</span>
         </el-button>
@@ -163,11 +137,7 @@
         :reserve-selection="true"
       >
       </el-table-column>
-      <el-table-column
-        :label="$t('user.userName')"
-        prop="username"
-        sortable="username"
-      >
+      <el-table-column :label="$t('user.userName')" prop="username" sortable="username">
         <template slot-scope="scope">
           <div class="metadata-name">
             <p>{{ scope.row.username }}</p>
@@ -182,11 +152,7 @@
           {{ permissionsmethod(scope.row.roleMappings) }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('user.changeTime')"
-        prop="last_updated"
-        sortable="last_updated"
-      >
+      <el-table-column :label="$t('user.changeTime')" prop="last_updated" sortable="last_updated">
         <template slot-scope="scope">
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
@@ -196,11 +162,7 @@
           {{ scope.row.source ? $t('user.' + scope.row.source) : '' }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('user.status')"
-        prop="status"
-        sortable="status"
-      >
+      <el-table-column :label="$t('user.status')" prop="status" sortable="status">
         <template slot-scope="scope">
           <span
             :style="`color: ${
@@ -224,12 +186,7 @@
               size="mini"
               type="text"
               v-if="['rejected', 'notActivated'].includes(scope.row.status)"
-              :disabled="
-                $disabledByPermission(
-                  'user_edition_all_data',
-                  scope.row.user_id
-                )
-              "
+              :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleActive(scope.row)"
             >
               {{ $t('user.activation') }}
@@ -239,12 +196,7 @@
               size="mini"
               type="text"
               v-if="!['rejected'].includes(scope.row.status)"
-              :disabled="
-                $disabledByPermission(
-                  'user_edition_all_data',
-                  scope.row.user_id
-                )
-              "
+              :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleFreeze(scope.row)"
             >
               {{ $t('user.freeze') }}
@@ -254,12 +206,7 @@
               size="mini"
               type="text"
               v-if="['notVerified'].includes(scope.row.status)"
-              :disabled="
-                $disabledByPermission(
-                  'user_edition_all_data',
-                  scope.row.user_id
-                )
-              "
+              :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleCheck(scope.row)"
               >{{ $t('user.check') }}</el-button
             >
@@ -268,12 +215,7 @@
               size="mini"
               type="text"
               v-if="['activated', 'rejected'].includes(scope.row.status)"
-              :disabled="
-                $disabledByPermission(
-                  'user_edition_all_data',
-                  scope.row.user_id
-                )
-              "
+              :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="edit(scope.row)"
               >{{ $t('user.edit') }}</el-button
             >
@@ -282,9 +224,7 @@
               size="mini"
               type="text"
               style="color: #f56c6c"
-              :disabled="
-                $disabledByPermission('user_delete_all_data', scope.row.user_id)
-              "
+              :disabled="$disabledByPermission('user_delete_all_data', scope.row.user_id)"
               @click="remove(scope.row)"
               >{{ $t('user.delete') }}</el-button
             >
@@ -299,19 +239,11 @@
       :visible.sync="createDialogVisible"
       custom-class="creatDialog"
     >
-      <FormBuilder
-        ref="form"
-        v-model="createForm"
-        :config="createFormConfig"
-      ></FormBuilder>
+      <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
       <div>
         <span class="label">{{ $t('user.activationCode') }}</span>
-        <span style="padding-right: 30px">{{
-          createForm.accesscode || '-'
-        }}</span>
-        <el-button @click="resetAccesCode" type="text" size="mini">{{
-          $t('button.reset')
-        }}</el-button>
+        <span style="padding-right: 30px">{{ createForm.accesscode || '-' }}</span>
+        <el-button @click="resetAccesCode" type="text" size="mini">{{ $t('button.reset') }}</el-button>
         <el-tooltip
           placement="top"
           manual
@@ -326,19 +258,13 @@
             v-clipboard:success="onCopy"
             @mouseleave="showTooltip = false"
           >
-            <el-button type="text" size="mini">{{
-              $t('message.copy')
-            }}</el-button>
+            <el-button type="text" size="mini">{{ $t('message.copy') }}</el-button>
           </span>
         </el-tooltip>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="mini">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="createNewUser()" size="mini">{{
-          $t('message.save')
-        }}</el-button>
+        <el-button @click="createDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" @click="createNewUser()" size="mini">{{ $t('message.save') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -413,11 +339,7 @@ export default {
                 validator: (rule, v, callback) => {
                   if (!v || !v.trim()) {
                     return callback(new Error(this.$t('user.emailNull')))
-                  } else if (
-                    !/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/.test(
-                      v
-                    )
-                  ) {
+                  } else if (!/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/.test(v)) {
                     // eslint-disable-line
                     return callback(new Error(this.$t('user.email_must_valid')))
                   } else {
@@ -523,9 +445,7 @@ export default {
       let { isFuzzy, keyword } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy
-          ? { like: toRegExp(keyword), options: 'i' }
-          : keyword
+        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
         where.or = [{ username: filterObj }, { email: filterObj }]
       }
       if (this.activePanel !== 'all') {
@@ -622,9 +542,7 @@ export default {
       this.table.fetch(1)
     },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     // 选中数据
@@ -828,11 +746,7 @@ export default {
               verticalAlign: 'text-top'
             }
           }),
-          h(
-            'span',
-            { style: { color: '#333', fontSize: '16px' } },
-            this.$t('user.delUserTitle')
-          )
+          h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.delUserTitle'))
         ]),
         h(
           'p',
@@ -889,11 +803,7 @@ export default {
               verticalAlign: 'text-top'
             }
           }),
-          h(
-            'span',
-            { style: { color: '#333', fontSize: '16px' } },
-            this.$t('user.activationUserTitle')
-          )
+          h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.activationUserTitle'))
         ]),
         h(
           'p',
@@ -913,15 +823,7 @@ export default {
       }
       let successMsg = this.$t('user.activetionSuccess')
       let errorMsg = this.$t('user.activetionError')
-      this.$confirm(
-        message,
-        this.handleStatus(
-          params,
-          successMsg,
-          errorMsg,
-          this.$t('user.activation')
-        )
-      )
+      this.$confirm(message, this.handleStatus(params, successMsg, errorMsg, this.$t('user.activation')))
     },
     // 冻结
     handleFreeze(item) {
@@ -938,11 +840,7 @@ export default {
               verticalAlign: 'text-top'
             }
           }),
-          h(
-            'span',
-            { style: { color: '#333', fontSize: '16px' } },
-            this.$t('user.freezeUserTitle')
-          )
+          h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.freezeUserTitle'))
         ]),
         h(
           'p',
@@ -983,11 +881,7 @@ export default {
               verticalAlign: 'text-top'
             }
           }),
-          h(
-            'span',
-            { style: { color: '#333', fontSize: '16px' } },
-            this.$t('user.checkUserTitle')
-          )
+          h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.checkUserTitle'))
         ]),
         h(
           'p',
@@ -1010,12 +904,7 @@ export default {
       this.$confirm(
         message,
 
-        this.handleStatus(
-          params,
-          successMsg,
-          errorMsg,
-          this.$t('user.checkSuccess')
-        )
+        this.handleStatus(params, successMsg, errorMsg, this.$t('user.checkSuccess'))
       )
     },
     // 改变状态提示
@@ -1094,20 +983,7 @@ export default {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
       }
       const NewGuid = function () {
-        return (
-          S4() +
-          S4() +
-          '' +
-          S4() +
-          '' +
-          S4() +
-          '' +
-          S4() +
-          '' +
-          S4() +
-          S4() +
-          S4()
-        )
+        return S4() + S4() + '' + S4() + '' + S4() + '' + S4() + '' + S4() + S4() + S4()
       }
       this.createForm.accesscode = NewGuid()
     },

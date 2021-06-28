@@ -183,10 +183,7 @@ export default class Editor extends BaseObject {
 
   setSelector(type) {
     let leftSidebar = this.getLeftSidebar()
-    leftSidebar
-      .getContentEl()
-      .find('[data-name=tableSelector] .elements>*')
-      .remove()
+    leftSidebar.getContentEl().find('[data-name=tableSelector] .elements>*').remove()
     if (type === 'cluster-clone') {
       let databaseVueComponent = new VueComponent({
         name: 'databaseVueComponent',
@@ -204,10 +201,7 @@ export default class Editor extends BaseObject {
         editor: this,
         component: TableSelector
       })
-      leftSidebar
-        .getContentEl()
-        .find('[data-name=tableSelector] .elements')
-        .prepend(tableVueComponent.getContentEl())
+      leftSidebar.getContentEl().find('[data-name=tableSelector] .elements').prepend(tableVueComponent.getContentEl())
     }
   }
 
@@ -505,18 +499,12 @@ export default class Editor extends BaseObject {
     let dat = JSON.parse(dataFlow.editorData)
     dat.cells.forEach(cell => {
       //处理不是从面板拖过来的场景
-      if (
-        cell.form_data &&
-        ['database', 'gridfs', 'file'].includes(cell.form_data.type)
-      )
+      if (cell.form_data && ['database', 'gridfs', 'file'].includes(cell.form_data.type))
         if (
-          (cell.form_data &&
-            cell.form_data.database_type &&
-            !cell.attrs.image) ||
+          (cell.form_data && cell.form_data.database_type && !cell.attrs.image) ||
           (cell.form_data && cell.form_data.databaseType && !cell.attrs.image)
         ) {
-          let dataType =
-            cell.form_data.databaseType || cell.form_data.database_type
+          let dataType = cell.form_data.databaseType || cell.form_data.database_type
           cell.attrs.image = {
             mysql: { xlinkHref: 'static/editor/o-mysql.svg' },
             oracle: { xlinkHref: 'static/editor/o-ora.svg' },
@@ -561,13 +549,10 @@ export default class Editor extends BaseObject {
 
     let predecessors = function (node, distance) {
       if (Object.prototype.hasOwnProperty.call(distanceResult, node))
-        distanceResult[node] =
-          distanceResult[node] >= distance ? distanceResult[node] : distance
+        distanceResult[node] = distanceResult[node] >= distance ? distanceResult[node] : distance
       else distanceResult[node] = distance
 
-      graphLib
-        .predecessors(node)
-        .forEach(node => predecessors(node, distance + 1))
+      graphLib.predecessors(node).forEach(node => predecessors(node, distance + 1))
     }
     graphLib.sinks().forEach(node => predecessors(node, 0))
 
@@ -633,11 +618,7 @@ export default class Editor extends BaseObject {
     graph.getCells().forEach(cell => {
       if (cell.isLink()) {
         linkCount++
-      } else if (
-        cell.isElement() &&
-        typeof cell.isDataNode === 'function' &&
-        cell.isDataNode()
-      ) {
+      } else if (cell.isElement() && typeof cell.isDataNode === 'function' && cell.isDataNode()) {
         dataNodeCount++
       }
     })
@@ -647,10 +628,7 @@ export default class Editor extends BaseObject {
 
     let sources = graph.getSources() || []
     let processorSources = sources.filter(
-      cell =>
-        cell.isElement() &&
-        typeof cell.isProcess === 'function' &&
-        cell.isProcess()
+      cell => cell.isElement() && typeof cell.isProcess === 'function' && cell.isProcess()
     )
     if (processorSources.length > 0) {
       this.graph.selectCell(processorSources)
@@ -676,18 +654,14 @@ export default class Editor extends BaseObject {
     let dataCells = self.graph.graph
       .getCells() // .filter(cell => cell.isDataNode && cell.isDataNode())
       .filter(cell => {
-        let formData =
-          typeof cell.getFormData === 'function' ? cell.getFormData() : null
+        let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null
         let type = cell.get('type')
         let connectionIdFieldName = self.mapping[type]
-        return (
-          formData && connectionIdFieldName && formData[connectionIdFieldName]
-        )
+        return formData && connectionIdFieldName && formData[connectionIdFieldName]
       })
     let dataCellIds = []
     dataCells.forEach(cell => {
-      let formData =
-        typeof cell.getFormData === 'function' ? cell.getFormData() : null
+      let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null
       let type = cell.get('type')
       let connectionIdFieldName = self.mapping[type]
       let connectionId = formData[connectionIdFieldName]
@@ -722,9 +696,7 @@ export default class Editor extends BaseObject {
           result.data.forEach(connection => {
             if (connection.schema && connection.schema.tables) {
               let tables = {}
-              connection.schema.tables.forEach(
-                table => (tables[table.table_name] = table)
-              )
+              connection.schema.tables.forEach(table => (tables[table.table_name] = table))
               connectionSchemaData[connection.id] = tables
             }
           })
@@ -732,10 +704,7 @@ export default class Editor extends BaseObject {
           // 3. 分别更新对应节点schema
           if (dataCells) {
             dataCells.map(cell => {
-              let formData =
-                typeof cell.getFormData === 'function'
-                  ? cell.getFormData()
-                  : null
+              let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null
               if (!formData) return
 
               let type = cell.get('type')
@@ -743,18 +712,14 @@ export default class Editor extends BaseObject {
               let connectionId = formData[connectionIdFieldName]
               let tableName = formData.tableName
 
-              let schema =
-                connectionSchemaData[connectionId] &&
-                connectionSchemaData[connectionId][tableName]
+              let schema = connectionSchemaData[connectionId] && connectionSchemaData[connectionId][tableName]
 
               if (!connectionId || !tableName || !schema) return
               cell.setSchema(schema, false)
             })
 
             // 4. 更新所有节点的schema
-            self.graph.graph
-              .getSources()
-              .forEach(cell => cell.updateOutputSchema())
+            self.graph.graph.getSources().forEach(cell => cell.updateOutputSchema())
           }
         }
         // Message.success({
@@ -771,8 +736,7 @@ export default class Editor extends BaseObject {
     let dataCells = this.graph.graph
       .getCells() // .filter(cell => cell.isDataNode && cell.isDataNode())
       .filter(cell => {
-        let formData =
-          typeof cell.getFormData === 'function' ? cell.getFormData() : null
+        let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null
         let type = cell.get('type')
         return formData && type !== 'app.Link'
       })

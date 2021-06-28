@@ -462,8 +462,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'data_content_xpath',
-        label:
-          vm.$t('dataForm.form.gridfs.xpath') + '(/RootTag/Students/Student)*',
+        label: vm.$t('dataForm.form.gridfs.xpath') + '(/RootTag/Students/Student)*',
         show: false,
         dependOn: [
           {
@@ -490,8 +489,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'tags_filter',
-        label:
-          vm.$t('dataForm.form.gridfs.gridfs_tag_filter') + '（tag1,tag2）',
+        label: vm.$t('dataForm.form.gridfs.gridfs_tag_filter') + '（tag1,tag2）',
         show: false,
         dependOn: [
           {

@@ -1,11 +1,7 @@
 <template>
   <div class="databaseFrom">
     <header class="header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
-      {{
-        $route.params.id
-          ? $t('connection.editDataSource')
-          : $t('connection.createNewDataSource')
-      }}
+      {{ $route.params.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
     </header>
     <div class="databaseFrom-body">
       <main class="databaseFrom-main">
@@ -15,10 +11,7 @@
               <img :src="getImgByType(databaseType)" />
             </div>
             <div class="content">{{ model.name }}</div>
-            <div
-              class="addBtn color-primary"
-              @click="dialogEditNameVisible = true"
-            >
+            <div class="addBtn color-primary" @click="dialogEditNameVisible = true">
               {{ $t('connection.rename') }}
             </div>
           </div>
@@ -31,29 +24,17 @@
             <div class="content-box">
               <div class="content">
                 {{ typeMap[databaseType] }}
-                <div
-                  class="addBtn color-primary"
-                  @click="dialogDatabaseTypeVisible = true"
-                >
+                <div class="addBtn color-primary" @click="dialogDatabaseTypeVisible = true">
                   {{ $t('connection.change') }}
                 </div>
               </div>
-              <div
-                class="tip"
-                v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-              >
+              <div class="tip" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
                 {{ $t('dataForm.form.guide') }}
-                <a
-                  class="color-primary"
-                  target="_blank"
-                  href="https://docs.tapdata.net/data-source"
-                  >{{ $t('dataForm.form.guideDoc') }}</a
-                >
+                <a class="color-primary" target="_blank" href="https://docs.tapdata.net/data-source">{{
+                  $t('dataForm.form.guideDoc')
+                }}</a>
               </div>
-              <div
-                class="tip"
-                v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')"
-              >
+              <div class="tip" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')">
                 请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
               </div>
             </div>
@@ -61,20 +42,11 @@
         </header>
         <div class="form-wrap">
           <div class="form">
-            <form-builder
-              ref="form"
-              v-model="model"
-              :config="config"
-              @value-change="formChange"
-            >
+            <form-builder ref="form" v-model="model" :config="config" @value-change="formChange">
               <div class="url-tip" slot="name" v-if="!$route.params.id">
                 中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
               </div>
-              <div
-                class="url-tip"
-                slot="ecsList"
-                v-if="model.sourceType === 'ecs'"
-              >
+              <div class="url-tip" slot="ecsList" v-if="model.sourceType === 'ecs'">
                 <el-select
                   v-model="model.ecs"
                   clearable
@@ -83,33 +55,15 @@
                   style="width: 100%; margin-top: 10px"
                   @change="handleEcsList"
                 >
-                  <el-option
-                    v-for="item in ecsList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  >
-                  </el-option>
+                  <el-option v-for="item in ecsList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
-                <el-select
-                  v-model="model.vpc"
-                  clearable
-                  placeholder="请选择"
-                  style="width: 100%; margin-top: 10px"
-                >
-                  <el-option
-                    v-for="item in vpcList"
-                    :key="item.portId"
-                    :label="item.vpcName"
-                    :value="item.portId"
-                  >
+                <el-select v-model="model.vpc" clearable placeholder="请选择" style="width: 100%; margin-top: 10px">
+                  <el-option v-for="item in vpcList" :key="item.portId" :label="item.vpcName" :value="item.portId">
                   </el-option>
                 </el-select>
               </div>
               <div class="url-tip" slot="vpc-setting" v-if="model.ecs">
-                <el-checkbox v-model="model.checkedVpc"
-                  >授权允许数据同步服务访问您的ECS实例</el-checkbox
-                >
+                <el-checkbox v-model="model.checkedVpc">授权允许数据同步服务访问您的ECS实例</el-checkbox>
                 <span v-if="model.checkedVpc">
                   <el-link
                     v-if="!model.platformInfo.strategyExistence"
@@ -122,12 +76,7 @@
                   <span v-else>已开通</span>
                 </span>
               </div>
-              <div
-                class="url-tip"
-                slot="urlTip"
-                v-if="model.isUrl"
-                v-html="$t('dataForm.form.uriTips.content')"
-              ></div>
+              <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
               <div class="url-tip" slot="tableFilter">
                 {{ $t('dataForm.form.tableFilterTips') }}
               </div>
@@ -152,32 +101,14 @@
               </div>
               <!-- rest api -->
               <div class="url-tip" slot="req_pre_process">
-                <div>
-                  function request_process(url, headers, request_params, offset)
-                  {
-                </div>
-                <el-input
-                  type="textarea"
-                  :rows="5"
-                  v-model="model.req_pre_process"
-                ></el-input>
-                <div>
-                  return {'url': url,
-                  'headers':headers,'request_params':request_params, 'offset':
-                  offset};}
-                </div>
+                <div>function request_process(url, headers, request_params, offset) {</div>
+                <el-input type="textarea" :rows="5" v-model="model.req_pre_process"></el-input>
+                <div>return {'url': url, 'headers':headers,'request_params':request_params, 'offset': offset};}</div>
               </div>
               <div class="url-tip" slot="resp_pre_process">
                 <div>function response_process(result) {</div>
-                <div>
-                  var tapdata_result = { data_rows:[], access_token:null,
-                  'tapdata_offset': offset }
-                </div>
-                <el-input
-                  type="textarea"
-                  :rows="5"
-                  v-model="model.resp_pre_process"
-                ></el-input>
+                <div>var tapdata_result = { data_rows:[], access_token:null, 'tapdata_offset': offset }</div>
+                <el-input type="textarea" :rows="5" v-model="model.resp_pre_process"></el-input>
                 <div>return tapdata_result; }</div>
               </div>
             </form-builder>
@@ -186,8 +117,7 @@
               <div
                 class="custom-connection-box"
                 v-if="
-                  ['cdc', 'initial_sync+cdc'].includes(model.custom_type) &&
-                  ['source'].includes(model.connection_type)
+                  ['cdc', 'initial_sync+cdc'].includes(model.custom_type) && ['source'].includes(model.connection_type)
                 "
               >
                 <div class="custom-connection-label">
@@ -195,26 +125,19 @@
                 </div>
                 <div class="custom-connection-main">
                   <div>function requestData(ctx) {</div>
-                  <JsEditor
-                    :code.sync="model.custom_cdc_script"
-                    ref="jsCdcEditor"
-                    :width.sync="width"
-                  ></JsEditor>
+                  <JsEditor :code.sync="model.custom_cdc_script" ref="jsCdcEditor" :width.sync="width"></JsEditor>
                   <div>}</div>
                 </div>
               </div>
               <div
                 class="custom-connection-box"
                 v-if="
-                  ['initial_sync', 'initial_sync+cdc'].includes(
-                    model.custom_type
-                  ) && ['source'].includes(model.connection_type)
+                  ['initial_sync', 'initial_sync+cdc'].includes(model.custom_type) &&
+                  ['source'].includes(model.connection_type)
                 "
               >
                 <div class="custom-connection-label">
-                  {{
-                    $t('dataForm.form.custom_connection.history_custom_code')
-                  }}
+                  {{ $t('dataForm.form.custom_connection.history_custom_code') }}
                 </div>
                 <div class="custom-connection-main">
                   <div>function requestData() {</div>
@@ -226,10 +149,7 @@
                   <div>}</div>
                 </div>
               </div>
-              <div
-                class="custom-connection-box"
-                v-if="['target'].includes(model.connection_type)"
-              >
+              <div class="custom-connection-box" v-if="['target'].includes(model.connection_type)">
                 <div class="custom-connection-label">
                   {{ $t('dataForm.form.custom_connection.on_data_code') }}
                 </div>
@@ -237,43 +157,23 @@
                   <div style="margin-top: 10px; font-size: 14px">Info</div>
                   <div>
                     data = [{
-                    <span style="color: #998; font-style: italic">
-                      // data is an array</span
-                    >
+                    <span style="color: #998; font-style: italic"> // data is an array</span>
                   </div>
                   <div style="margin-left: 30px">
                     op : " i ",
-                    <span style="color: #998; font-style: italic">
-                      // i - insert, u - update, d - delete</span
-                    >
+                    <span style="color: #998; font-style: italic"> // i - insert, u - update, d - delete</span>
                   </div>
                   <div style="margin-left: 30px">
                     from : " ",
-                    <span style="color: #998; font-style: italic">
-                      // source table name</span
-                    >
+                    <span style="color: #998; font-style: italic"> // source table name</span>
                   </div>
                   <div style="margin-left: 30px">
                     data : { },
-                    <span style="color: #998; font-style: italic">
-                      // master data</span
-                    >
+                    <span style="color: #998; font-style: italic"> // master data</span>
                   </div>
                   <div>}]</div>
-                  <div
-                    style="
-                      padding-bottom: 5px;
-                      margin-top: 10px;
-                      font-weight: bold;
-                    "
-                  >
-                    function onData(data) {
-                  </div>
-                  <JsEditor
-                    :code.sync="model.custom_ondata_script"
-                    ref="jsOndataEditor"
-                    :width.sync="width"
-                  ></JsEditor>
+                  <div style="padding-bottom: 5px; margin-top: 10px; font-weight: bold">function onData(data) {</div>
+                  <JsEditor :code.sync="model.custom_ondata_script" ref="jsOndataEditor" :width.sync="width"></JsEditor>
                   <div>}</div>
                 </div>
               </div>
@@ -283,22 +183,10 @@
               <div class="rest-api-box">
                 <div class="rest-api-label">URL</div>
                 <div class="url-tip rest-api-url">
-                  <el-form
-                    :model="model"
-                    ref="urlInfoForm"
-                    label-width="104px"
-                    class="urlInfoForm"
-                  >
-                    <el-row
-                      v-for="(item, parentIndex) in model.url_info"
-                      :key="parentIndex"
-                    >
+                  <el-form :model="model" ref="urlInfoForm" label-width="104px" class="urlInfoForm">
+                    <el-row v-for="(item, parentIndex) in model.url_info" :key="parentIndex">
                       <div class="rest-api-row">
-                        {{
-                          model.data_sync_mode === 'INITIAL_INCREMENTAL_SYNC'
-                            ? item.url_type
-                            : model.data_sync_mode
-                        }}
+                        {{ model.data_sync_mode === 'INITIAL_INCREMENTAL_SYNC' ? item.url_type : model.data_sync_mode }}
                       </div>
                       <el-col :span="24" class="fromLoopBox">
                         <el-form-item
@@ -313,40 +201,18 @@
                           <el-input v-model="item.url" size="mini"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col
-                        :span="12"
-                        class="fromLoopBox"
-                        type="flex"
-                        :gutter="20"
-                      >
-                        <el-form-item
-                          :label="$t('dataForm.form.restApi.url_info_method')"
-                          :prop="item.method"
-                        >
-                          <el-select
-                            v-model="item.method"
-                            class="min-input"
-                            size="mini"
-                          >
+                      <el-col :span="12" class="fromLoopBox" type="flex" :gutter="20">
+                        <el-form-item :label="$t('dataForm.form.restApi.url_info_method')" :prop="item.method">
+                          <el-select v-model="item.method" class="min-input" size="mini">
                             <el-option label="GET" value="GET"></el-option>
                             <el-option label="POST" value="POST"></el-option>
                           </el-select>
                         </el-form-item>
                       </el-col>
                       <el-col :span="12" class="fromLoopBox">
-                        <el-form-item
-                          label="Content Type"
-                          :prop="item.content_type"
-                        >
-                          <el-select
-                            v-model="item.content_type"
-                            class="small-input"
-                            size="mini"
-                          >
-                            <el-option
-                              label="form-data"
-                              value="application/form-data"
-                            ></el-option>
+                        <el-form-item label="Content Type" :prop="item.content_type">
+                          <el-select v-model="item.content_type" class="small-input" size="mini">
+                            <el-option label="form-data" value="application/form-data"></el-option>
                             <el-option
                               label="x-www-form-urlencoded"
                               value="application/x-www-form-urlencoded;charset=UTF-8"
@@ -356,19 +222,11 @@
                       </el-col>
                       <el-col :span="24" class="fromLoopBox">
                         <el-form-item
-                          :label="
-                            $t('dataForm.form.restApi.url_info_initial_offset')
-                          "
+                          :label="$t('dataForm.form.restApi.url_info_initial_offset')"
                           :prop="item.offset_field"
-                          v-if="
-                            model.data_sync_mode === 'INCREMENTAL_SYNC' ||
-                            item.url_type === 'INCREMENTAL_SYNC'
-                          "
+                          v-if="model.data_sync_mode === 'INCREMENTAL_SYNC' || item.url_type === 'INCREMENTAL_SYNC'"
                         >
-                          <el-input
-                            v-model="item.offset_field"
-                            size="mini"
-                          ></el-input>
+                          <el-input v-model="item.offset_field" size="mini"></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="24" class="fromLoopBox">
@@ -379,39 +237,23 @@
                             class="rest-api-Array"
                           >
                             <el-input
-                              :placeholder="
-                                $t('dataForm.form.restApi.url_info_header_name')
-                              "
+                              :placeholder="$t('dataForm.form.restApi.url_info_header_name')"
                               class="medium-input"
                               size="mini"
                               v-model="header.name"
                             ></el-input>
                             <el-input
-                              :placeholder="
-                                $t(
-                                  'dataForm.form.restApi.url_info_header_value'
-                                )
-                              "
+                              :placeholder="$t('dataForm.form.restApi.url_info_header_value')"
                               class="medium-input rest-api-margin"
                               size="mini"
                               v-model="header.value"
                             ></el-input>
                             <i
-                              class="
-                                iconfont
-                                icon-jia
-                                add-btn-icon
-                                rest-api-margin
-                              "
+                              class="iconfont icon-jia add-btn-icon rest-api-margin"
                               @click="addHeader(parentIndex)"
                             ></i>
                             <i
-                              class="
-                                iconfont
-                                icon-quxiao
-                                add-btn-icon
-                                rest-api-margin
-                              "
+                              class="iconfont icon-quxiao add-btn-icon rest-api-margin"
                               v-show="item.headerArray.length > 1"
                               @click="removeHeader(parentIndex, headerIndex)"
                             ></i>
@@ -421,52 +263,30 @@
                       <el-col :span="24" class="fromLoopBox">
                         <el-form-item label="Parameters" prop="parameters">
                           <div
-                            v-for="(
-                              parameter, parameterIndex
-                            ) in item.parameterArray"
+                            v-for="(parameter, parameterIndex) in item.parameterArray"
                             :key="parameterIndex"
                             class="rest-api-Array"
                           >
                             <el-input
-                              :placeholder="
-                                $t(
-                                  'dataForm.form.restApi.url_info_parameter_name'
-                                )
-                              "
+                              :placeholder="$t('dataForm.form.restApi.url_info_parameter_name')"
                               class="medium-input"
                               size="mini"
                               v-model="parameter.name"
                             ></el-input>
                             <el-input
-                              :placeholder="
-                                $t(
-                                  'dataForm.form.restApi.url_info_parameter_value'
-                                )
-                              "
+                              :placeholder="$t('dataForm.form.restApi.url_info_parameter_value')"
                               class="medium-input rest-api-margin"
                               size="mini"
                               v-model="parameter.value"
                             ></el-input>
                             <i
-                              class="
-                                iconfont
-                                icon-jia
-                                add-btn-icon
-                                rest-api-margin
-                              "
+                              class="iconfont icon-jia add-btn-icon rest-api-margin"
                               @click="addParameter(parentIndex)"
                             ></i>
                             <i
-                              class="
-                                iconfont
-                                icon-quxiao
-                                add-btn-icon
-                                rest-api-margin
-                              "
+                              class="iconfont icon-quxiao add-btn-icon rest-api-margin"
                               v-show="item.parameterArray.length > 1"
-                              @click="
-                                removeParameter(parentIndex, parameterIndex)
-                              "
+                              @click="removeParameter(parentIndex, parameterIndex)"
                             ></i>
                           </div>
                         </el-form-item>
@@ -486,18 +306,9 @@
               "
             >
               <div class="gridfs-box">
-                <el-form
-                  label-width="200px"
-                  label-position="right"
-                  :rules="gridFSrules"
-                  :model="model"
-                  ref="excelForm"
-                >
+                <el-form label-width="200px" label-position="right" :rules="gridFSrules" :model="model" ref="excelForm">
                   <!--工作页 -->
-                  <el-form-item
-                    :label="$t('editor.fileFormBuilder.sheet_range')"
-                    prop="sheet_start"
-                  >
+                  <el-form-item :label="$t('editor.fileFormBuilder.sheet_range')" prop="sheet_start">
                     <el-input
                       v-model.number="model.sheet_start"
                       maxlength="3"
@@ -523,43 +334,29 @@
                     prop="excel_header_start"
                   >
                     <div>
-                      <el-radio-group
-                        v-model="model.gridfs_header_type"
-                        @change="changeHeaderType"
-                      >
+                      <el-radio-group v-model="model.gridfs_header_type" @change="changeHeaderType">
                         <el-radio label="specified_line">{{
                           $t('editor.fileFormBuilder.excel_header_coordinate')
                         }}</el-radio>
-                        <el-radio label="custom">{{
-                          $t('editor.fileFormBuilder.excel_header_range')
-                        }}</el-radio>
+                        <el-radio label="custom">{{ $t('editor.fileFormBuilder.excel_header_range') }}</el-radio>
                       </el-radio-group>
                       <el-input
                         v-model="model.gridfs_header_config"
                         size="mini"
-                        :placeholder="
-                          $t('editor.fileFormBuilder.header_type_custom_label')
-                        "
+                        :placeholder="$t('editor.fileFormBuilder.header_type_custom_label')"
                         v-show="model.gridfs_header_type === 'custom'"
                       ></el-input>
-                      <div
-                        v-show="model.gridfs_header_type !== 'custom'"
-                        class="excel_header_start"
-                      >
+                      <div v-show="model.gridfs_header_type !== 'custom'" class="excel_header_start">
                         <el-input
                           v-model="model.excel_header_start"
                           size="mini"
-                          :placeholder="
-                            $t('editor.fileFormBuilder.excel_header_start')
-                          "
+                          :placeholder="$t('editor.fileFormBuilder.excel_header_start')"
                         ></el-input>
                         <span class="separate"> ~ </span>
                         <el-input
                           v-model="model.excel_header_end"
                           size="mini"
-                          :placeholder="
-                            $t('editor.fileFormBuilder.excel_header_end')
-                          "
+                          :placeholder="$t('editor.fileFormBuilder.excel_header_end')"
                         ></el-input>
                       </div>
                     </div>
@@ -570,17 +367,10 @@
                     </div></el-form-item
                   >
                   <!--字段获取方式 -->
-                  <el-form-item
-                    :label="$t('editor.fileFormBuilder.header_mapping')"
-                    class="excelHeaderType"
-                  >
+                  <el-form-item :label="$t('editor.fileFormBuilder.header_mapping')" class="excelHeaderType">
                     <el-radio-group v-model="model.excel_header_type">
-                      <el-radio label="value">{{
-                        $t('editor.fileFormBuilder.header_mapping_value')
-                      }}</el-radio>
-                      <el-radio label="index">{{
-                        $t('editor.fileFormBuilder.header_mapping_index')
-                      }}</el-radio>
+                      <el-radio label="value">{{ $t('editor.fileFormBuilder.header_mapping_value') }}</el-radio>
+                      <el-radio label="index">{{ $t('editor.fileFormBuilder.header_mapping_index') }}</el-radio>
                     </el-radio-group>
                   </el-form-item>
                   <!-- 内容 -->
@@ -595,9 +385,7 @@
                       show-word-limit
                       size="mini"
                       onkeyup="model.excel_value_start = model.excel_value_start.replace(/[^\d.]/g,'');"
-                      :placeholder="
-                        $t('editor.fileFormBuilder.excel_value_start')
-                      "
+                      :placeholder="$t('editor.fileFormBuilder.excel_value_start')"
                     ></el-input>
                     <span class="separate"> ~ </span>
                     <el-input
@@ -606,9 +394,7 @@
                       show-word-limit
                       size="mini"
                       onkeyup="model.excel_value_end = model.excel_value_end.replace(/[^\d.]/g,'');"
-                      :placeholder="
-                        $t('editor.fileFormBuilder.excel_value_end')
-                      "
+                      :placeholder="$t('editor.fileFormBuilder.excel_value_end')"
                     ></el-input>
                   </el-form-item>
                   <el-form-item
@@ -620,12 +406,7 @@
               </div>
             </template>
             <!-- 文件数据库 -->
-            <template
-              v-if="
-                model.database_type === 'file' &&
-                model.connection_type === 'source'
-              "
-            >
+            <template v-if="model.database_type === 'file' && model.connection_type === 'source'">
               <div class="fileBox">
                 <div class="file-label">
                   {{ $t('dataForm.form.file.fileUrl') }}
@@ -660,54 +441,35 @@
                           <el-input
                             v-model="item.path"
                             size="mini"
-                            :placeholder="
-                              $t('dataForm.form.file.pathPlaceholder')
-                            "
+                            :placeholder="$t('dataForm.form.file.pathPlaceholder')"
                           ></el-input>
                         </el-form-item>
-                        <el-form-item
-                          :label="$t('dataForm.form.file.recursive')"
-                          prop="path"
-                        >
+                        <el-form-item :label="$t('dataForm.form.file.recursive')" prop="path">
                           <el-switch v-model="item.recursive"></el-switch>
                         </el-form-item>
-                        <el-form-item
-                          :label="$t('dataForm.form.file.csvFijlter')"
-                        >
+                        <el-form-item :label="$t('dataForm.form.file.csvFijlter')">
                           <el-select
                             v-model="item.selectFileType"
                             size="mini"
                             style="width: 100%"
-                            @change="
-                              changeFileInclude(item, item.selectFileType)
-                            "
+                            @change="changeFileInclude(item, item.selectFileType)"
                           >
-                            <el-option
-                              :label="$t('dataForm.form.file.include_filename')"
-                              value="include"
-                            ></el-option>
-                            <el-option
-                              :label="$t('dataForm.form.file.exclude_filename')"
-                              value="exclude"
-                            ></el-option>
+                            <el-option :label="$t('dataForm.form.file.include_filename')" value="include"></el-option>
+                            <el-option :label="$t('dataForm.form.file.exclude_filename')" value="exclude"></el-option>
                           </el-select>
                         </el-form-item>
                         <el-form-item v-if="item.selectFileType === 'include'">
                           <el-input
                             v-model="item.include_filename"
                             size="mini"
-                            :placeholder="
-                              $t('dataForm.form.file.includePlaceholder')
-                            "
+                            :placeholder="$t('dataForm.form.file.includePlaceholder')"
                           ></el-input>
                         </el-form-item>
                         <el-form-item v-else>
                           <el-input
                             v-model="item.exclude_filename"
                             size="mini"
-                            :placeholder="
-                              $t('dataForm.form.file.excludePlaceholder')
-                            "
+                            :placeholder="$t('dataForm.form.file.excludePlaceholder')"
                           ></el-input>
                         </el-form-item>
                         <p style="font-size: 12px; color: #666">
@@ -715,33 +477,21 @@
                         </p>
                       </el-col>
                       <el-col :span="2" style="margin-right: -40px">
-                        <el-button
-                          plain
-                          style="padding: 0"
-                          @click="removeRow(item, index)"
-                        >
+                        <el-button plain style="padding: 0" @click="removeRow(item, index)">
                           <i class="iconfont icon-quxiao remove"></i>
                         </el-button>
                       </el-col>
                     </el-row>
-                    <el-button
-                      type="text"
-                      style="padding: 0"
-                      @click="addPathRow()"
-                    >
+                    <el-button type="text" style="padding: 0" @click="addPathRow()">
                       {{ $t('dataForm.form.file.addPath') }}
                     </el-button>
                   </el-form>
                 </div>
               </div>
             </template>
-            <el-button
-              type="primary"
-              size="mini"
-              class="test"
-              @click="startTest()"
-              >{{ $t('connection.testConnection') }}</el-button
-            >
+            <el-button type="primary" size="mini" class="test" @click="startTest()">{{
+              $t('connection.testConnection')
+            }}</el-button>
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
                 <i class="el-icon-error"></i>
@@ -766,15 +516,8 @@
         </div>
         <footer slot="footer" class="footer">
           <div class="footer-btn">
-            <el-button size="mini" @click="goBack()">{{
-              $t('dataForm.cancel')
-            }}</el-button>
-            <el-button
-              size="mini"
-              type="primary"
-              :loading="submitBtnLoading"
-              @click="submit"
-            >
+            <el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
+            <el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
               {{ $t('dataForm.submit') }}
             </el-button>
           </div>
@@ -802,27 +545,15 @@
         <el-form-item prop="rename">
           <el-input v-model="rename" maxlength="100" show-word-limit></el-input>
         </el-form-item>
-        <span
-          style="
-            color: #ccc;
-            margin-top: 5px;
-            font-size: 12px;
-            display: inline-block;
-          "
+        <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block"
           >中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格</span
         >
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelRename" size="mini">{{
-          $t('dataForm.cancel')
+        <el-button @click="handleCancelRename" size="mini">{{ $t('dataForm.cancel') }}</el-button>
+        <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
+          $t('message.confirm')
         }}</el-button>
-        <el-button
-          @click="submitEdit()"
-          size="mini"
-          type="primary"
-          :loading="editBtnLoading"
-          >{{ $t('message.confirm') }}</el-button
-        >
       </span>
     </el-dialog>
     <!-- <el-dialog
@@ -851,13 +582,7 @@ import formConfig from './config'
 import gitbook from './GitBook'
 import JsEditor from '@/components/JsEditor'
 import Test from './Test'
-import {
-  getImgByType,
-  TYPEMAP,
-  TYPEMAPCONFIG,
-  defaultModel,
-  defaultCloudModel
-} from './util'
+import { getImgByType, TYPEMAP, TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 
 const databaseTypesModel = factory('DatabaseTypes')
@@ -872,27 +597,12 @@ export default {
       let end = this.model.excel_header_end
       let config = this.model.gridfs_header_config
       if (start === '') {
-        callback(
-          new Error(
-            this.$t('editor.fileFormBuilder.excel_header_start') +
-              this.$t('formBuilder.noneText')
-          )
-        )
+        callback(new Error(this.$t('editor.fileFormBuilder.excel_header_start') + this.$t('formBuilder.noneText')))
       } else if (end === '') {
-        callback(
-          new Error(
-            this.$t('editor.fileFormBuilder.excel_header_end') +
-              this.$t('formBuilder.noneText')
-          )
-        )
+        callback(new Error(this.$t('editor.fileFormBuilder.excel_header_end') + this.$t('formBuilder.noneText')))
       } else if (config === '' && this.model.gridfs_header_type === 'custom') {
-        callback(
-          new Error(this.$t('editor.fileFormBuilder.header_type_required'))
-        )
-      } else if (
-        (!/^[A-Z]+[1-9]+$/.test(start) && start !== '') ||
-        (!/^[A-Z]+[1-9]+$/.test(end) && end !== '')
-      ) {
+        callback(new Error(this.$t('editor.fileFormBuilder.header_type_required')))
+      } else if ((!/^[A-Z]+[1-9]+$/.test(start) && start !== '') || (!/^[A-Z]+[1-9]+$/.test(end) && end !== '')) {
         callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_tip')))
       }
     }
@@ -900,43 +610,18 @@ export default {
       let start = this.model.sheet_start
       let end = this.model.sheet_end
       if (start === '') {
-        callback(
-          new Error(
-            this.$t('editor.fileFormBuilder.sheet_start') +
-              this.$t('formBuilder.noneText')
-          )
-        )
+        callback(new Error(this.$t('editor.fileFormBuilder.sheet_start') + this.$t('formBuilder.noneText')))
       } else if (end === '') {
-        callback(
-          new Error(
-            this.$t('editor.fileFormBuilder.sheet_end') +
-              this.$t('formBuilder.noneText')
-          )
-        )
+        callback(new Error(this.$t('editor.fileFormBuilder.sheet_end') + this.$t('formBuilder.noneText')))
       } else if (start > end) {
-        callback(
-          new Error(this.$t('editor.fileFormBuilder.excel_value_end_gt_start'))
-        )
+        callback(new Error(this.$t('editor.fileFormBuilder.excel_value_end_gt_start')))
       }
     }
     let validateRename = (rule, value, callback) => {
       if (!this.rename || !this.rename.trim()) {
-        callback(
-          new Error(
-            this.$t('dataForm.form.connectionName') +
-              this.$t('formBuilder.noneText')
-          )
-        )
-      } else if (
-        !/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
-          this.rename
-        )
-      ) {
-        callback(
-          new Error(
-            '名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'
-          )
-        )
+        callback(new Error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText')))
+      } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.rename)) {
+        callback(new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'))
       }
     }
     return {
@@ -1037,16 +722,10 @@ export default {
     }
   },
   created() {
-    this.databaseType =
-      this.$route.query.databaseType ||
-      this.$store.state.createConnection.databaseType
+    this.databaseType = this.$route.query.databaseType || this.$store.state.createConnection.databaseType
     //确认类型 按照type 初始化变量
     if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-      this.model = Object.assign(
-        {},
-        defaultCloudModel['default'],
-        defaultCloudModel['drs']
-      )
+      this.model = Object.assign({}, defaultCloudModel['default'], defaultCloudModel['drs'])
     } else {
       this.model = Object.assign({}, defaultModel['default'])
     }
@@ -1070,11 +749,7 @@ export default {
         this.model = Object.assign({}, defaultModel['mq'])
         break
       case 'gridfs':
-        this.model = Object.assign(
-          {},
-          defaultModel['default'],
-          defaultModel['gridfs']
-        )
+        this.model = Object.assign({}, defaultModel['default'], defaultModel['gridfs'])
         break
       case 'tcp_udp':
         this.model = Object.assign({}, defaultModel['tcp'])
@@ -1099,20 +774,12 @@ export default {
             validator: (rule, value, callback) => {
               if (!value || !value.trim()) {
                 callback(new Error('连接名称不能为空'))
-              } else if (
-                !/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
-                  value
-                )
-              ) {
-                callback(
-                  '连接名称中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'
-                )
+              } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)) {
+                callback('连接名称中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格')
               } else if (
                 value &&
                 value.trim() &&
-                /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
-                  value
-                )
+                /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)
               ) {
                 let filter = {
                   where: {
@@ -1221,12 +888,9 @@ export default {
         this.model.custom_ondata_script = ''
         this.model.custom_cdc_script = ''
         this.model.custom_initial_script = ''
-        if (this.$refs.jsCdcEditor)
-          this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
-        if (this.$refs.jsInitialEditor)
-          this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
-        if (this.$refs.jsOndataEditor)
-          this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
+        if (this.$refs.jsCdcEditor) this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
+        if (this.$refs.jsInitialEditor) this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
+        if (this.$refs.jsOndataEditor) this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
       }
     },
     async initData(data) {
@@ -1234,24 +898,17 @@ export default {
       this.checkTestConnectionAvailable() //先检测agent
       if (this.$route.params.id) {
         if (this.model.database_type === 'mongodb') {
-          editData = await this.$api('connections').customQuery([
-            this.$route.params.id
-          ])
+          editData = await this.$api('connections').customQuery([this.$route.params.id])
         } else {
           editData = await this.$api('connections').get([this.$route.params.id])
         }
 
         if (
           editData.data.database_type === 'mq' &&
-          (typeof editData.data.mqQueueSet === 'object' ||
-            typeof editData.data.mqTopicSet === 'object')
+          (typeof editData.data.mqQueueSet === 'object' || typeof editData.data.mqTopicSet === 'object')
         ) {
-          let mqQueueSet = editData.data.mqQueueSet.length
-            ? editData.data.mqQueueSet.join(',')
-            : ''
-          let mqTopicSet = editData.data.mqTopicSet.length
-            ? editData.data.mqTopicSet.join(',')
-            : ''
+          let mqQueueSet = editData.data.mqQueueSet.length ? editData.data.mqQueueSet.join(',') : ''
+          let mqTopicSet = editData.data.mqTopicSet.length ? editData.data.mqTopicSet.join(',') : ''
           editData.data.mqQueueSet = mqQueueSet
           editData.data.mqTopicSet = mqTopicSet
         }
@@ -1282,12 +939,9 @@ export default {
     },
     //手动更新JSEditor
     updateJsEditor() {
-      if (this.$refs.jsCdcEditor)
-        this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
-      if (this.$refs.jsInitialEditor)
-        this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
-      if (this.$refs.jsOndataEditor)
-        this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
+      if (this.$refs.jsCdcEditor) this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
+      if (this.$refs.jsInitialEditor) this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
+      if (this.$refs.jsOndataEditor) this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
     },
     checkDataTypeOptions(type) {
       this.model.database_type = type
@@ -1345,9 +999,7 @@ export default {
       if (func) {
         let config = func(this)
         let items = defaultConfig.concat(config.items)
-        let item = items.find(
-          it => it.field === 'database_datetype_without_timezone'
-        )
+        let item = items.find(it => it.field === 'database_datetype_without_timezone')
         if (item) {
           item.options = this.timezones
         }
@@ -1358,32 +1010,16 @@ export default {
         let itemIsUrl = items.find(it => it.field === 'isUrl')
         let sslKey = items.find(it => it.field === 'sslKeyFile')
         let sslCA = items.find(it => it.field === 'sslCAFile')
-        if (
-          this.model.database_type === 'mongodb' &&
-          this.$route.params.id &&
-          itemIsUrl
-        ) {
+        if (this.model.database_type === 'mongodb' && this.$route.params.id && itemIsUrl) {
           itemIsUrl.options[0].disabled = true //编辑模式下mongodb不支持URL模式
-        } else if (
-          this.model.database_type === 'mongodb' &&
-          !this.$route.params.id &&
-          itemIsUrl
-        ) {
+        } else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
           itemIsUrl.options[1].disabled = true
         }
         ////编辑模式下mongodb 不校验证书
-        if (
-          this.model.database_type === 'mongodb' &&
-          this.$route.params.id &&
-          sslKey
-        ) {
+        if (this.model.database_type === 'mongodb' && this.$route.params.id && sslKey) {
           sslKey.rules = []
         }
-        if (
-          this.model.database_type === 'mongodb' &&
-          this.$route.params.id &&
-          sslCA
-        ) {
+        if (this.model.database_type === 'mongodb' && this.$route.params.id && sslCA) {
           sslCA.rules = []
         }
         if (this.$route.params.id) {
@@ -1419,9 +1055,7 @@ export default {
         })
     },
     changeInstanceRegion() {
-      let zone = this.instanceMock.filter(
-        item => item.code === this.model.region
-      )
+      let zone = this.instanceMock.filter(item => item.code === this.model.region)
       if (zone.length > 0) {
         this.model.zone = this.model.zone || zone[0].zones[0].code
         this.instanceModelZone = zone[0].zones
@@ -1451,9 +1085,7 @@ export default {
         }) //华东上海
     },
     changeDataSourceRegion() {
-      let zone = this.dataSourceMock.filter(
-        item => item.poolId === this.model.s_region
-      )
+      let zone = this.dataSourceMock.filter(item => item.poolId === this.model.s_region)
       if (zone.length > 0) {
         this.model.s_zone = this.model.s_zone || zone[0].zoneInfo[0].zoneCode
         this.dataSourceZone = zone[0].zoneInfo
@@ -1468,16 +1100,9 @@ export default {
       if (!this.dataSourceZone || this.dataSourceZone.length === 0) {
         return
       }
-      let currentZone = this.dataSourceZone.filter(
-        item => item.zoneCode === this.model.s_zone
-      )
-      if (
-        currentZone.length > 0 &&
-        this.model.sourceType === 'rds' &&
-        this.model.s_zone !== ''
-      ) {
-        this.model.database_host =
-          currentZone[0].ipv4 || currentZone[0].ipv6 || ''
+      let currentZone = this.dataSourceZone.filter(item => item.zoneCode === this.model.s_zone)
+      if (currentZone.length > 0 && this.model.sourceType === 'rds' && this.model.s_zone !== '') {
+        this.model.database_host = currentZone[0].ipv4 || currentZone[0].ipv6 || ''
       }
     },
     //change config
@@ -1586,8 +1211,7 @@ export default {
     handleStrategy() {
       let currentData = this.ecsList.filter(item => item.id === this.model.ecs)
       if (currentData.length === 0) return
-      this.model.platformInfo.strategyExistence =
-        currentData[0].strategyExistence
+      this.model.platformInfo.strategyExistence = currentData[0].strategyExistence
       if (this.model.platformInfo.strategyExistence) {
         this.createStrategy()
       }
@@ -1595,9 +1219,7 @@ export default {
     //创建网络策略
     createStrategy() {
       this.createStrategyDisabled = true
-      let currentData = this.vpcList.filter(
-        item => item.portId === this.model.vpc
-      )
+      let currentData = this.vpcList.filter(item => item.portId === this.model.vpc)
       if (currentData.length === 0) return
       let params = {
         userId: this.$cookie.get('user_id'),
@@ -1626,12 +1248,8 @@ export default {
         })
     },
     goBack() {
-      let tip = this.$route.params.id
-        ? '此操作会丢失当前修改编辑内容'
-        : '此操作会丢失当前正在创建的连接'
-      let title = this.$route.params.id
-        ? '是否放弃修改内容？'
-        : '是否放弃创建该连接？'
+      let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
+      let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
       this.$confirm(tip, title, {
         confirmButtonText: '放弃',
         cancelButtonText: '取消',
@@ -1706,10 +1324,7 @@ export default {
       this.submitBtnLoading = true
       let flag = true
       this.model.search_databaseType = ''
-      if (
-        this.model.database_type === 'file' &&
-        this.model.connection_type === 'source'
-      ) {
+      if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
         this.$refs.fileForm.validate(valid => {
           if (!valid) {
             flag = false
@@ -1723,10 +1338,7 @@ export default {
           }
         })
       }
-      if (
-        this.model.database_type === 'gridfs' &&
-        this.model.file_type === 'excel'
-      ) {
+      if (this.model.database_type === 'gridfs' && this.model.file_type === 'excel') {
         this.$refs.excelForm.validate(valid => {
           if (!valid) {
             flag = false
@@ -1737,20 +1349,12 @@ export default {
         this.$message.error('请授权允许数据同步服务访问您的ECS实例')
         return
       }
-      if (
-        this.model.platformInfo &&
-        !this.model.platformInfo.strategyExistence &&
-        this.model.sourceType === 'ecs'
-      ) {
+      if (this.model.platformInfo && !this.model.platformInfo.strategyExistence && this.model.sourceType === 'ecs') {
         this.$message.error('请"点击开通"开通网络策略')
         return
       }
       let data = Object.assign({}, this.model)
-      if (
-        data.database_type === 'mq' &&
-        (typeof data.mqQueueSet === 'string' ||
-          typeof data.mqTopicSet === 'string')
-      ) {
+      if (data.database_type === 'mq' && (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string')) {
         data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
         data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
       }
@@ -1808,10 +1412,7 @@ export default {
             })
           }
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-            params['platformInfo'] = Object.assign(
-              params['platformInfo'],
-              this.handlePlatformInfo(params)
-            )
+            params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params))
             if (params.sourceType === 'selfDB') {
               delete params.DRS_region
               delete params.DRS_zone
@@ -1838,9 +1439,7 @@ export default {
             .catch(err => {
               if (err && err.response) {
                 if (err.response.msg.indexOf('duplication for names') > -1) {
-                  this.$message.error(
-                    this.$t('dataForm.error.connectionNameExist')
-                  )
+                  this.$message.error(this.$t('dataForm.error.connectionNameExist'))
                 } else if (err.response.msg.indexOf('duplicate source') > -1) {
                   // this.connectionObj.name = err.response.data.name;
                   // this.connectionObj.id = err.response.data.id;
@@ -1876,8 +1475,7 @@ export default {
             let data = Object.assign({}, this.model)
             if (
               this.model.database_type === 'mq' &&
-              (typeof this.model.mqQueueSet === 'string' ||
-                typeof this.model.mqTopicSet === 'string')
+              (typeof this.model.mqQueueSet === 'string' || typeof this.model.mqTopicSet === 'string')
             ) {
               data.mqQueueSet = this.model.mqQueueSet.split(',')
               data.mqTopicSet = this.model.mqTopicSet.split(',')
@@ -1994,9 +1592,7 @@ export default {
 
     // 文件保留丢弃字段
     changeFileInclude(item, val) {
-      val === 'include'
-        ? (item.exclude_filename = '')
-        : (item.include_filename = '')
+      val === 'include' ? (item.exclude_filename = '') : (item.include_filename = '')
     },
     //rest api
     addHeader(index) {
