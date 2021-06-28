@@ -38,16 +38,13 @@ export default {
 		return {
 			activeMenu: '',
 			menus: [],
-			dfsMenus: ['Workbench', 'Instance', 'Connection', 'Task'],
 			breadcrumbData: []
 		}
 	},
 	created() {
 		this.activeMenu = this.$route.path
 		let menus = this.$router.options.routes.find(r => r.path === '/').children?.filter(item => !item.hidden)
-		this.menus = this.dfsMenus.map(name => {
-			return menus.find(item => item.name === name)
-		})
+		this.menus = menus
 		this.getBreadcrumb(this.$route)
 	},
 	watch: {

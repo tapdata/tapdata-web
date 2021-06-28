@@ -4,6 +4,7 @@ import Iframe from '../views/Iframe.vue'
 import Error from '../views/Error.vue'
 import AgentDownload from '@/views/AgentDownload/AgentPage.vue'
 import FastDownload from '@/views/AgentDownload/FastDownload.vue'
+import UpgradeVersion from '@/views/AgentDownload/UpgradeVersion.vue'
 import ContactUs from '@/views/ContactUs'
 import Purchase from '@/views/Purchase/Purchase'
 
@@ -131,6 +132,15 @@ const routes = [
 						}
 					}
 				]
+			},
+			{
+				path: '/operationLog',
+				name: 'OperationLog',
+				component: () => import(/* webpackChunkName: "instance" */ '../views/OperationLog/List.vue'),
+				meta: {
+					title: '操作日志',
+					icon: 'operationLog'
+				}
 			}
 		]
 	},
@@ -148,6 +158,14 @@ const routes = [
 		component: FastDownload,
 		meta: {
 			title: 'Agent 立即下载'
+		}
+	},
+	{
+		path: '/upgradeVersion',
+		name: 'UpgradeVersion',
+		component: UpgradeVersion,
+		meta: {
+			title: 'Agent 升级'
 		}
 	},
 	{
