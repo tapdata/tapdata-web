@@ -40,7 +40,6 @@ const install = function(Vue, opts = {}) {
 if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
-console.log(111)
 
 export default {
   install,
