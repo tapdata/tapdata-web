@@ -18,63 +18,63 @@ Vue.use(VueRouter)
 Vue.use(TapdataWebCore)
 
 Vue.prototype.$checkAgentStatus = callback => {
-	window.axios.get('tm/api/Workers/availableAgent').then(data => {
-		if (data.result) {
-			callback && callback()
-		} else {
-			Message.error('Agent当前状态异常，请检查')
-		}
-	})
+  window.axios.get('tm/api/Workers/availableAgent').then(data => {
+    if (data.result) {
+      callback && callback()
+    } else {
+      Message.error('Agent当前状态异常，请检查')
+    }
+  })
 }
 
 export default function({ routes }) {
-	const router = new VueRouter({
-		routes
-	})
-	let loading = null
-	router.beforeEach((to, from, next) => {
-		next()
-	})
-	const init = () => {
-		var loc = window.location,
-			wsUrl = 'ws://'
-		if (loc.protocol === 'https:') {
-			wsUrl = 'wss://'
-		}
-		let preUrl = process.env.VUE_APP_API_PATH || ''
-		wsUrl = wsUrl + window.location.host + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__.token}`
-		window.App = new Vue({
-			router,
-			wsOptions: {
-				url: wsUrl
-			},
-			render: h => h(App)
-		}).$mount('#app')
-	}
-	loading = window.loading({ fullscreen: true })
-	let count = 0
-	let getData = () => {
-		Promise.all([window.axios.get('api/tcm/user')])
-			.then(([user]) => {
-				let userInfo = user
-				window.__USER_INFO__ = userInfo
-				loading.close()
-				init()
-			})
-			.catch(() => {
-				if (count < 4) {
-					setTimeout(() => {
-						count++
-						getData()
-					}, 3000)
-				} else {
-					loading.close()
-					init()
-					location.replace(location.href.split('#/')[0] + '#/500')
-				}
-			})
-	}
-	getData()
+  const router = new VueRouter({
+    routes
+  })
+  let loading = null
+  router.beforeEach((to, from, next) => {
+    next()
+  })
+  const init = () => {
+    var loc = window.location,
+      wsUrl = 'ws://'
+    if (loc.protocol === 'https:') {
+      wsUrl = 'wss://'
+    }
+    let preUrl = process.env.VUE_APP_API_PATH || ''
+    wsUrl = wsUrl + window.location.host + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__.token}`
+    window.App = new Vue({
+      router,
+      wsOptions: {
+        url: wsUrl
+      },
+      render: h => h(App)
+    }).$mount('#app')
+  }
+  loading = window.loading({ fullscreen: true })
+  let count = 0
+  let getData = () => {
+    Promise.all([window.axios.get('api/tcm/user')])
+      .then(([user]) => {
+        let userInfo = user
+        window.__USER_INFO__ = userInfo
+        loading.close()
+        init()
+      })
+      .catch(() => {
+        if (count < 4) {
+          setTimeout(() => {
+            count++
+            getData()
+          }, 3000)
+        } else {
+          loading.close()
+          init()
+          location.replace(location.href.split('#/')[0] + '#/500')
+        }
+      })
+  }
+  getData()
 }
 console.log('process.env.VUE_APP_API_PATH', process.env.VUE_APP_TM_PUBLIC_PATH)
 sessionStorage.setItem('TM_CONFIG', JSON.stringify(settings))

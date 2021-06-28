@@ -1,42 +1,42 @@
 import Vue from 'vue'
 import {
-	Card,
-	Container,
-	Header,
-	Main,
-	Aside,
-	Menu,
-	MenuItem,
-	Button,
-	Drawer,
-	Form,
-	FormItem,
-	Checkbox,
-	Image,
-	Radio,
-	RadioGroup,
-	RadioButton,
-	Select,
-	Option,
-	OptionGroup,
-	Input,
-	Tooltip,
-	Link,
-	Table,
-	TableColumn,
-	Dropdown,
-	DropdownMenu,
-	DropdownItem,
-	Pagination,
-	Tag,
-	Breadcrumb,
-	BreadcrumbItem,
-	Message,
-	MessageBox,
-	Loading,
-	Dialog,
-	Row,
-	Col
+  Card,
+  Container,
+  Header,
+  Main,
+  Aside,
+  Menu,
+  MenuItem,
+  Button,
+  Drawer,
+  Form,
+  FormItem,
+  Checkbox,
+  Image,
+  Radio,
+  RadioGroup,
+  RadioButton,
+  Select,
+  Option,
+  OptionGroup,
+  Input,
+  Tooltip,
+  Link,
+  Table,
+  TableColumn,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+  Pagination,
+  Tag,
+  Breadcrumb,
+  BreadcrumbItem,
+  Message,
+  MessageBox,
+  Loading,
+  Dialog,
+  Row,
+  Col
 } from 'element-ui'
 
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
@@ -47,17 +47,17 @@ Vue.prototype.$alert = MessageBox.alert
 
 // 封装确认弹窗
 Vue.prototype.$confirm = (param1, param2, param3 = { type: 'warning' }) => {
-	return new Promise((resolve, reject) => {
-		MessageBox.confirm(param1, param2, param3)
-			.then(() => {
-				resolve(true)
-			})
-			.catch(() => {
-				reject(false)
-			})
-	}).catch(() => {
-		// TODO error
-	})
+  return new Promise((resolve, reject) => {
+    MessageBox.confirm(param1, param2, param3)
+      .then(() => {
+        resolve(true)
+      })
+      .catch(() => {
+        reject(false)
+      })
+  }).catch(() => {
+    // TODO error
+  })
 }
 
 Vue.prototype.$prompt = MessageBox.prompt
