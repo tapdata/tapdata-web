@@ -8837,10 +8837,10 @@ tapable@^1.0.0, tapable@^1.1.3:
   resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/__tarballs/tapable/1.1.3/__path/npm/tapable/-/tapable-1.1.3/a1fccc06b58db61fd7a45da2da44f5f3a3e67ba2.tgz#a1fccc06b58db61fd7a45da2da44f5f3a3e67ba2"
   integrity sha512-4WK/bYZmj8xLr+HUCODHGF1ZFzsYffasLUgEiMBY4fgtltdO6B4WJtlSbPaDTLpYTcGVwM2qLnFTICEcNxs3kA==
 
-tapdata-web-core@^1.0.13:
-  version "1.0.13"
-  resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/tapdata-web-core/-/tapdata-web-core-1.0.13/8b109fc6b3e61506c051fce7631c103282dd9d63.tgz#8b109fc6b3e61506c051fce7631c103282dd9d63"
-  integrity sha512-QGBdB/GhXyJiDMwOOjOsbfU939zwQERZfx4VsqrBICxtVu0l+H+3seSkw1SOosR6qOfye66dDjTbiu3Y2Inowg==
+tapdata-web-core@^1.0.22:
+  version "1.0.22"
+  resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/tapdata-web-core/-/tapdata-web-core-1.0.22/5ecc1182c8eba5d9c3d83dabb1ae0bebc39985af.tgz#5ecc1182c8eba5d9c3d83dabb1ae0bebc39985af"
+  integrity sha512-QEAAx9J6d34SFusM+2UANJIHivNNPEF3lIrP5RVzCsf7+ovm4zUj14drJT0IUj8tsuMtiLSuG43KStjWn0u+NQ==
 
 term-size@^2.1.0:
   version "2.2.1"

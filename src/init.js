@@ -8,13 +8,14 @@ import './assets/app.scss'
 import VueClipboard from 'vue-clipboard2'
 import { Message } from 'element-ui'
 import settings from './settings'
+import TapdataWebCore from 'tapdata-web-core'
 
 require('./assets/theme/dfs/index.scss')
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
-
 Vue.use(VueRouter)
+Vue.use(TapdataWebCore)
 
 Vue.prototype.$checkAgentStatus = callback => {
 	window.axios.get('tm/api/Workers/availableAgent').then(data => {
@@ -34,29 +35,31 @@ export default function({ routes }) {
 	router.beforeEach((to, from, next) => {
 		next()
 	})
+	const init = () => {
+		var loc = window.location,
+			wsUrl = 'ws://'
+		if (loc.protocol === 'https:') {
+			wsUrl = 'wss://'
+		}
+		let preUrl = process.env.VUE_APP_API_PATH || ''
+		wsUrl = wsUrl + window.location.host + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__.token}`
+		window.App = new Vue({
+			router,
+			wsOptions: {
+				url: wsUrl
+			},
+			render: h => h(App)
+		}).$mount('#app')
+	}
 	loading = window.loading({ fullscreen: true })
 	let count = 0
 	let getData = () => {
 		Promise.all([window.axios.get('api/tcm/user')])
 			.then(([user]) => {
 				let userInfo = user
-				//移动云DRS环境代码 ---
-				if (userInfo.customerType) {
-					userInfo.isInternet = userInfo.customerType.includes('互联网')
-				}
-				// ----
 				window.__USER_INFO__ = userInfo
-
-				if (location.href.includes('purchase.html')) {
-					location.href = location.href.split('#/')[0] + '#/off'
-				}
-				setTimeout(() => {
-					window.App = new Vue({
-						router,
-						render: h => h(App)
-					}).$mount('#app')
-				}, 0)
 				loading.close()
+				init()
 			})
 			.catch(() => {
 				if (count < 4) {
@@ -66,10 +69,7 @@ export default function({ routes }) {
 					}, 3000)
 				} else {
 					loading.close()
-					window.App = new Vue({
-						router,
-						render: h => h(App)
-					}).$mount('#app')
+					init()
 					location.replace(location.href.split('#/')[0] + '#/500')
 				}
 			})

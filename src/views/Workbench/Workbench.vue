@@ -300,9 +300,6 @@ export default {
 				}
 			]
 		},
-		showGuide(key) {
-			this.$emit('show-guide', key)
-		},
 		createAgent() {
 			let downloadUrl = window.App.$router.resolve({
 				name: 'FastDownload'
@@ -314,7 +311,7 @@ export default {
 			this.$emit('create-task')
 		},
 		createConnection() {
-			this.showGuide('dataSource_select')
+			this.$emit('select-connection-type')
 		},
 		toNotice() {
 			this.$router.push({ name: 'WorkbenchNotice' })

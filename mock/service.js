@@ -2,6 +2,7 @@ const Mock = require('mockjs')
 const Random = Mock.Random
 const settings = require('./settings.json')
 const dataflow = require('./dataflow.js')
+const connection = require('./connection.js')
 
 const agent = {
 	id: '@guid',
@@ -61,7 +62,7 @@ const agent = {
 		agentId: '@id'
 	}
 }
-module.exports = Object.assign({}, dataflow, {
+module.exports = Object.assign({}, dataflow, connection, {
 	'/api/tcm/user': {
 		code: 'ok',
 		message: '获取用户信息失败',
@@ -2751,40 +2752,6 @@ module.exports = Object.assign({}, dataflow, {
 		],
 		code: 'ok',
 		msg: 'ok'
-	},
-	'/tm/api/Connections/count': { data: { count: 232 }, code: 'ok', msg: 'ok' },
-	'/tm/api/Connections': {
-		code: 'ok',
-		msg: 'ok',
-		'data|1-30': [
-			{
-				name: '@name',
-				connection_type: 'target',
-				'database_type|1': ['mysql', 'oracle', 'mongodb'],
-				database_host: '',
-				database_username: '',
-				database_port: Random.integer(0, 5000),
-				database_uri: 'mongodb://192.168.1.191:27017/tapdata_test',
-				database_name: '',
-				id: '@id',
-				sslCert: '',
-				additionalString: '',
-				'ssl|1': Boolean,
-				sslKey: '',
-				sslPass: '',
-				'schemaAutoUpdate|1': Boolean,
-				sslCA: '',
-				search_databaseType: '',
-				status: 'ready',
-				fill: 'uri',
-				user_id: '@id',
-				last_updated: Random.datetime(),
-				loadCount: Random.integer(0, 100),
-				'loadFieldsStatus|1': ['loading', 'finished'],
-				tableCount: Random.integer(0, 100),
-				username: '@name'
-			}
-		]
 	},
 	'/tm/api/Settings': settings
 })
