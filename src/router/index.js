@@ -74,35 +74,6 @@ const routes = [
         ]
       },
       {
-        path: '/task',
-        name: 'Task',
-        component: () => import(/* webpackChunkName: "task-migration" */ '../views/Task/Migration.vue'),
-        meta: {
-          title: '任务管理',
-          icon: 'task'
-        },
-        children: [
-          {
-            path: 'create',
-            name: 'DataflowCreate',
-            component: Iframe,
-            meta: {
-              title: '创建任务',
-              link: './tm/#/createTask/create'
-            }
-          },
-          {
-            path: ':id',
-            name: 'DataflowEdit',
-            component: Iframe,
-            meta: {
-              title: '编辑任务',
-              link: './tm/#/createTask/:id/edit'
-            }
-          }
-        ]
-      },
-      {
         path: '/connection',
         name: 'Connection',
         // component: Iframe,
@@ -133,6 +104,36 @@ const routes = [
           }
         ]
       },
+      {
+        path: '/task',
+        name: 'Task',
+        component: () => import(/* webpackChunkName: "task-migration" */ '../views/Task/Migration.vue'),
+        meta: {
+          title: '任务管理',
+          icon: 'task'
+        },
+        children: [
+          {
+            path: 'create',
+            name: 'DataflowCreate',
+            component: Iframe,
+            meta: {
+              title: '创建任务',
+              link: './tm/#/createTask/create'
+            }
+          },
+          {
+            path: ':id',
+            name: 'DataflowEdit',
+            component: Iframe,
+            meta: {
+              title: '编辑任务',
+              link: './tm/#/createTask/:id/edit'
+            }
+          }
+        ]
+      },
+
       {
         path: '/operationLog',
         name: 'OperationLog',
