@@ -647,6 +647,8 @@ const cn = {
     nameTip:
       '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
     enterFilterTable: '请输入过滤表内容',
+    lagTime: '增量滞后判断时间设置',
+    lagTimeTip: '当增量任务延迟大于该值时，则认为任务增量滞后，默认值为0',
     button: {
       submit: '提交执行',
       viewConfig: '查看节点配置',
@@ -3120,6 +3122,7 @@ const cn = {
     job_cdc_record_doc: ' 自动保存增量事件',
     job_cdc_record_ttl: ' 增量事件保存时长(天)',
     job_cdc_record_ttl_doc: ' 增量事件保存时长(天)',
+    lagTime: '增量滞后判定时间(秒)',
     connection_schema_update_hour: '数据源schema更新时间',
     connection_schema_update_interval: '数据源schema更新周期（天）',
     creatDuplicateSource: ' 允许创建重复数据源',
