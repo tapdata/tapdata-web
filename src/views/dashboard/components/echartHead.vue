@@ -74,7 +74,7 @@ export default {
 <style lang="scss" scoped>
 .echartHead {
   height: 38px;
-  line-height: 38px;
+  line-height: 37px;
   padding: 0 10px;
   border-bottom: 1px solid #dcdfe6;
   background-color: #fafafa;
@@ -144,6 +144,10 @@ export default {
   .unit {
     .el-button span {
       font-size: 12px;
+      color: #333;
+      &:hover {
+        color: #409eff;
+      }
     }
   }
 

@@ -273,8 +273,13 @@ export default {
 <style lang="scss">
 .metadata-search-wrap {
   .el-input-group__append {
-    background: #409eff;
+    background-color: #409eff;
+    border-color: #409eff;
     color: #fff;
+    .el-button {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
   }
   .no-search-box {
     .el-input-group__prepend {
@@ -341,7 +346,7 @@ export default {
       width: 100%;
     }
     .search-result {
-      isplay: flex;
+      display: flex;
       flex: 1;
     }
     .keyword {
@@ -383,6 +388,7 @@ export default {
       margin-bottom: 10px;
     }
     .metadata-table {
+      width: 100%;
       li {
         box-sizing: border-box;
         .table-box-wrap {

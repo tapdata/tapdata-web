@@ -1,7 +1,7 @@
 <template>
   <section class="metadata-info">
     <header class="header">
-      <span @click="back" style="color: #409eff; cursor: pointer">
+      <span @click="back">
         {{ $t('metadata.details.dataDirectory') }}
       </span>
       / {{ $t('metadata.details.dataDetails') }}
@@ -1042,17 +1042,23 @@ export default {
   height: 100%;
   background-color: rgba(239, 241, 244, 100);
   .header {
+    position: relative;
     height: 50px;
     line-height: 50px;
     padding-left: 20px;
     background-color: rgba(250, 250, 250, 100);
     color: rgba(51, 51, 51, 100);
-    font-size: 18px;
+    font-size: 16px;
     text-align: left;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(222, 222, 228, 100);
     border-left: none;
-    position: relative;
+    font-size: 16px;
+    font-weight: 600;
+    & > span {
+      color: #409eff;
+      cursor: pointer;
+    }
   }
   .metadata-content {
     padding: 10px;
@@ -1354,6 +1360,11 @@ export default {
         height: 32px;
         line-height: 32px;
         padding: 0;
+        font-size: 12px;
+        color: #333;
+        &:hover {
+          color: #409eff;
+        }
       }
     }
     .el-collapse-item__header {
