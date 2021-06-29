@@ -8,6 +8,26 @@
       :remoteMethod="getData"
       @sort-change="handleSortTable"
     >
+      <div slot="search">
+        <ul class="search-bar flex">
+          <li>
+            <el-input
+              clearable
+              class="input-with-select"
+              size="small"
+              v-model="searchParams.keyword"
+              :placeholder="$t('dictionary.name')"
+              @input="table.fetch(1, 800)"
+            >
+            </el-input>
+          </li>
+          <li>
+            <ElButton class="btn-refresh" size="small" @click="table.fetch()">
+              <i class="el-icon-refresh"></i>
+            </ElButton>
+          </li>
+        </ul>
+      </div>
       <el-table-column
         :label="$t('task.task_name')"
         prop="task_name"
@@ -56,6 +76,7 @@
 
 <script>
 import TablePage from '@/components/TablePage'
+import { toRegExp } from '../../utils/util'
 export default {
   components: {
     TablePage
@@ -63,8 +84,7 @@ export default {
   data() {
     return {
       searchParams: {
-        keyword: '',
-        isFuzzy: true
+        keyword: ''
       },
       order: 'task_start_time DESC',
       list: null,
@@ -102,10 +122,14 @@ export default {
     // 获取数据
     getData({ page }) {
       let _this = this
+      let { keyword } = this.searchParams
       let { current, size } = page
       let taskId = this.$route.query.taskId || ''
       let where = {
         task_id: { regexp: `^${taskId}$` }
+      }
+      if (keyword && keyword.trim()) {
+        where.or = [{ task_name: { like: toRegExp(keyword), options: 'i' } }]
       }
 
       let filter = {
