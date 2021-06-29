@@ -8,7 +8,7 @@ import WSClient from './plugins/ws-client'
 
 const components = [ConnectionTypeSelector, ConnectionTest]
 
-const install = function(Vue, opts = {}) {
+const install = function (Vue, opts = {}) {
   use(opts.lang)
   Vue.use(FormBuilder)
 
@@ -44,4 +44,5 @@ export default {
   ConnectionTest,
   WSClient
 }
-console.log(111)
+
+console.log(222)
