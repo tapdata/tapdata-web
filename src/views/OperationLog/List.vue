@@ -1,5 +1,5 @@
 <template>
-  <section class="instance-wrapper main-container" v-loading="loading" v-if="$route.name === 'OperationLog'">
+  <section class="operation-logs-wrapper main-container" v-loading="loading" v-if="$route.name === 'OperationLog'">
     <div class="main">
       <div class="list-operation">
         <div class="list-operation-left">
@@ -73,9 +73,9 @@
             <div>{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="操作对象" width="350">
+        <ElTableColumn show-overflow-tooltip label="操作对象" width="350">
           <template slot-scope="scope">
-            <div>{{ scope.row.parameter1 }}</div>
+            <div class="ellipsis">{{ scope.row.parameter1 }}</div>
           </template>
         </ElTableColumn>
         <ElTableColumn label="操作类型" width="120">
@@ -83,7 +83,7 @@
             <div>{{ getTypeText(scope.row) }}</div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="操作描述">
+        <ElTableColumn label="操作描述" min-width="300">
           <template slot-scope="scope">
             <span>{{ getDescFnc(scope.row) }}</span>
             <span v-if="scope.row.parameter1"
@@ -402,10 +402,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.instance-wrapper {
+.operation-logs-wrapper {
   display: flex;
   width: 100%;
   height: 100%;
+  min-width: 1260px;
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
