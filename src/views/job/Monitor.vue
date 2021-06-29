@@ -47,7 +47,9 @@
               'excel',
               'csv',
               'xml',
-              'database'
+              'database',
+              'hive',
+              'mq'
             ].includes(stageType)
           "
           v-loading="apiLoading"
@@ -958,7 +960,9 @@ export default {
               'xml',
               'kafka',
               'mariadb',
-              'mysql pxc'
+              'mysql pxc',
+              'hive',
+              'mq'
             ].includes(this.stageType)
           ) {
             this.getStageDataApi(currentStageData.connectionId, this.tableName)

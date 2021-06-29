@@ -275,7 +275,7 @@ export default {
         self.timer = setTimeout(() => {
           if (self.isTimeout) {
             self.wsError = 'ERROR'
-            self.wsErrorMsg = self.$t('dataForm.test.retryBtn')
+            self.wsErrorMsg = self.$t('dataForm.test.retryTest')
             let testData = {
               wsError: 'ERROR'
             }
