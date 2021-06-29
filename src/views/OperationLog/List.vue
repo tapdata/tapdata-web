@@ -57,7 +57,7 @@
           </ul>
         </div>
       </div>
-      <El-table class="operation-logs-table  table-border mt-3" height="100%" :data="list">
+      <El-table class="operation-logs-table  table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
         <ElTableColumn label="用户名" width="200">
           <template slot-scope="scope">
             <div>{{ scope.row.username }}</div>
@@ -68,7 +68,7 @@
         <!--            <div>{{ scope.row.username }}</div>-->
         <!--          </template>-->
         <!--        </ElTableColumn>-->
-        <ElTableColumn label="操作时间" width="200">
+        <ElTableColumn label="操作时间" prop="createTime" sortable="custom" width="200">
           <template slot-scope="scope">
             <div>{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
           </template>
