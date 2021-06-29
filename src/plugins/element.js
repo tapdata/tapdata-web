@@ -36,7 +36,8 @@ import {
   Loading,
   Dialog,
   Row,
-  Col
+  Col,
+  DatePicker
 } from 'element-ui'
 
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
@@ -101,3 +102,4 @@ Vue.use(BreadcrumbItem)
 Vue.use(Dialog)
 Vue.use(Row)
 Vue.use(Col)
+Vue.use(DatePicker)
