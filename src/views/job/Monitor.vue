@@ -30,7 +30,7 @@
         <EchartHeader :data="stageType ? nodeDetailsObj : taskDetailsObj"></EchartHeader>
         <div
           class="info fl"
-          v-if="['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database'].includes(stageType)"
+          v-if="['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database','hive','mq'].includes(stageType)"
           v-loading="apiLoading"
         >
           <div class="info-list">
@@ -859,11 +859,10 @@ export default {
             }
           })
           this.stageType = currentStageData.type
-
           if (this.stageType === 'database') {
             this.getStageDataApi(currentStageData.connectionId, '')
           } else if (
-            ['table', 'collection', 'json', 'excel', 'csv', 'xml', 'kafka', 'mariadb', 'mysql pxc'].includes(
+            ['table', 'collection', 'json', 'excel', 'csv', 'xml', 'kafka', 'mariadb', 'mysql pxc','hive','mq'].includes(
               this.stageType
             )
           ) {
