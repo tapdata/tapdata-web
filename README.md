@@ -1,6 +1,8 @@
-# demo-project
+# dfs-web
 
 ## 初始化项目
+
+项目引入了 tapdata-web-core 核心子模块
 
 克隆项目
 
@@ -12,49 +14,57 @@ git clone git@e.coding.net:tapdata/dfs/dfs-web.git --recurse-submodules
 
 ```
 git submodule init
-git submodule update --remote
+git submodule update
 ```
 
-## Project setup
+更新子模块
+
+注意： 若子模块有改动，请 commit 之后再执行此操作，并留意可能导致的冲突（跟维护另一个仓库的规则一致）
 
 ```
-npm install
+git submodule update --remote --merge
+//或者
+git submodule foreach git pull
 ```
 
-### Compiles and hot-reloads for development
+发布子模块
 
 ```
-npm run serve
+git submodule foreach git add .
+git submodule foreach git commit -m "xxxxxx"
+git submodule foreach git push
 ```
 
-### Compiles and minifies for production
+## 命令说明
+
+### 安装依赖
 
 ```
-npm run build
+yarn
 ```
 
-### Lints and fixes files
+### 启动本地服务
 
 ```
-npm run lint
+yarn serve
 ```
 
-### Run Mock
+### 构建生产环境代码
 
 ```
-npm run mock
+yarn build
 ```
 
-### Run drs Dev
+### eslint 检查项目代码并修复
 
 ```
-npm run drs
+yarn lint
 ```
 
-### Run dfs Dev
+### 启动 mock 服务
 
 ```
-npm run dfs
+yarn mock
 ```
 
 ### Customize configuration
@@ -73,6 +83,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 |-- package.json                 依赖包
 |-- public                       静态资源
 |-- mock                         模拟数据
+|-- packages                     子模块
+    |-- tapdata-web-core         前端核心模块
 |-- src
     |-- components               公用的vue插件
     |-- pages                    多页面，定义对应页面的路由
