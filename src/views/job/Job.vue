@@ -870,6 +870,9 @@ export default {
       settingData.processorConcurrency = settingData.processorConcurrency
         ? Number(settingData.processorConcurrency)
         : 1
+      settingData.userSetLagTime = settingData.userSetLagTime
+        ? Number(settingData.userSetLagTime)
+        : 0
       let distanceForSink = editorData.distanceForSink || {}
 
       let cells = graphData.cells ? graphData.cells : []

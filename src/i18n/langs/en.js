@@ -611,6 +611,9 @@ const en = {
     error: 'task error',
     edited: 'task edited',
     started: 'task started',
+    sharecdcmode: 'shared incremental read mode',
+    streaming: 'streaming read',
+    polling: 'polling read',
     drop_target_before_start:
       'Whether the target table is deleted before starting the task',
     run_custom_sql: 'Repeat custom SQL',
@@ -659,6 +662,9 @@ const en = {
     aggrCleanSecond: 'Time to clean up old version data',
     aggrFullSyncSecond: 'Full synchronization time',
     enterFilterTable: 'Please enter the filter table content',
+    lagTime: 'incremental lag time setting',
+    lagTimeTip:
+      'when the incremental task delay is greater than this value, the incremental task delay is considered, and the default value is 0',
     aggregatePrompt:
       'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
     nameTip:
@@ -738,6 +744,7 @@ const en = {
     runNomally: 'to make sure the job running correctly;',
     editLayerTip: 'otherwise the job will be abnormal, continue？',
     continueEditing: 'Still Edit',
+    NumberType: 'must be a number and cannot be less than 0',
     setting: {
       distinctWriteType: 'De-rewrite mode',
       intellect: 'Intelligent de-rewrite',
@@ -3224,6 +3231,7 @@ const en = {
     job_cdc_record_doc: 'Automatically save incremental events',
     job_cdc_record_ttl: 'Incremental event save time (days)',
     job_cdc_record_ttl_doc: 'Incremental event save time (days)',
+    Lagtime: 'incremental lag decision time (seconds)',
     connection_schema_update_hour: 'Data source schema update time',
     connection_schema_update_interval:
       'Data source schema update interval (days)',
