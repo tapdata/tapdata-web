@@ -9,7 +9,7 @@ import VueBus from 'vue-bus'
 import VueClipboard from 'vue-clipboard2'
 import factory from '@/api/factory'
 import Cache from '@/utils/cache'
-import TapdataWebCore from 'tapdata-web-core'
+import TapdataWebCore from '../packages/tapdata-web-core'
 
 import '@/plugins/element'
 import '@/plugins/icon'
