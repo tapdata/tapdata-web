@@ -41,8 +41,8 @@ export default function({ routes }) {
     if (loc.protocol === 'https:') {
       wsUrl = 'wss://'
     }
-    let preUrl = process.env.VUE_APP_API_PATH || ''
-    wsUrl = wsUrl + loc.host + loc.pathname + preUrl + `ws/agent?X-Token=${window.__USER_INFO__.token}`
+    let preUrl = process.env.VUE_APP_TM_PUBLIC_PATH || ''
+    wsUrl = wsUrl + loc.host + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__.token}`
     window.App = new Vue({
       router,
       wsOptions: {
@@ -76,5 +76,4 @@ export default function({ routes }) {
   }
   getData()
 }
-console.log('process.env.VUE_APP_API_PATH', process.env.VUE_APP_TM_PUBLIC_PATH)
 sessionStorage.setItem('TM_CONFIG', JSON.stringify(settings))

@@ -36,6 +36,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api/tcm/': proxy,
+      '/tm/api/': proxy,
       '/ws/': {
         ...proxy,
         ws: true,
