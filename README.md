@@ -8,11 +8,11 @@
 git clone git@e.coding.net:tapdata/dfs/dfs-web.git --recurse-submodules
 ```
 
-初始化项目
+初始化子模块
 
 ```
 git submodule init
-git submodule update
+git submodule update --remote
 ```
 
 ## Project setup
