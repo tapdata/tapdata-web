@@ -25,6 +25,4 @@ export const use = function(l) {
   lang = l || lang
 }
 
-console.log('1111')
-
 export default { use, t }
