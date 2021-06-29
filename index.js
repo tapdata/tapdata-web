@@ -44,5 +44,3 @@ export default {
   ConnectionTest,
   WSClient
 }
-
-console.log(222)
