@@ -722,6 +722,7 @@ const cn = {
     runNomally: '才能正常运行',
     editLayerTip: ' 否则可能导致异常错误，请问您要继续编辑吗?',
     continueEditing: '继续编辑',
+    numberType: '必须为数字且不能小于0',
     setting: {
       distinctWriteType: '去重写入机制',
       intellect: '智能去重写入',

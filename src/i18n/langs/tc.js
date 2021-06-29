@@ -720,6 +720,7 @@ const tc = {
     runNomally: '才能正常運行',
     editLayerTip: ' 否則可能導致異常錯誤，請問您要繼續編輯嗎?',
     continueEditing: '繼續編輯',
+    numberType: '必須為數位且不能小於0',
     setting: {
       distinctWriteType: '去重寫入機制',
       intellect: '智能去重寫入',

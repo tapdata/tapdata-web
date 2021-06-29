@@ -920,12 +920,13 @@ export default {
       syncType && (where['setting.sync_type'] = syncType)
       if (executionStatus) {
         if (executionStatus === 'Lag') {
-          where['stats.stagesMetrics'] = {
-            $elemMatch: {
-              status: 'cdc',
-              replicationLag: { $gt: 0 }
-            }
-          }
+          // where['stats.stagesMetrics'] = {
+          //   $elemMatch: {
+          //     status: 'cdc',
+          //     replicationLag: { $gt: 0 }
+          //   }
+          // }
+          where.Lag = true
         } else if (executionStatus === 'initialized') {
           where.and = [
             {

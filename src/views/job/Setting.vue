@@ -380,13 +380,16 @@
           {{ $t('dataFlow.closeSetting') }}
         </div>
       </el-form-item>
-      <el-form-item :label="$t('dataFlow.lagTime')">
+      <el-form-item
+        :label="$t('dataFlow.lagTime')"
+        prop="userSetLagTime"
+        v-show="formData.sync_type !== 'initial_sync'"
+      >
         <!-- 增量滞后判定事件 -->
         <el-switch
           v-model="formData.lagTimeFalg"
-          v-show="formData.sync_type !== 'initial_sync'"
           :active-text="
-            formData.increment ? $t('dataFlow.yes') : $t('dataFlow.no')
+            formData.lagTimeFalg ? $t('dataFlow.yes') : $t('dataFlow.no')
           "
         ></el-switch>
         <el-input
@@ -439,6 +442,19 @@ export default {
               let value = this.formData.cronExpression
               if (!value || !value.trim()) {
                 callback(this.$t('dataFlow.cronExpression'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        userSetLagTime: [
+          {
+            validator: (rule, v, callback) => {
+              let value = this.formData.userSetLagTime
+              if (!/^\d+$/.test(value) || value < 0) {
+                callback(this.$t('dataFlow.numberType'))
               } else {
                 callback()
               }

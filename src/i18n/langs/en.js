@@ -743,6 +743,7 @@ const en = {
     runNomally: 'to make sure the job running correctly;',
     editLayerTip: 'otherwise the job will be abnormal, continue？',
     continueEditing: 'Still Edit',
+    NumberType: 'must be a number and cannot be less than 0',
     setting: {
       distinctWriteType: 'De-rewrite mode',
       intellect: 'Intelligent de-rewrite',
