@@ -16,6 +16,11 @@
               </ElSelect>
             </li>
             <li class="ml-3">
+              <ElInput v-model="searchParams.parameter1" placeholder="操作对象" @input="search()">
+                <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
+              </ElInput>
+            </li>
+            <li class="ml-3">
               <ElDatePicker
                 v-model="searchParams.start"
                 type="datetime"
@@ -38,6 +43,11 @@
                   @change="search"
                 ></ElDatePicker>
               </ElTooltip>
+            </li>
+            <li class="ml-3">
+              <ElInput v-model="searchParams.username" placeholder="用户名" @input="search()">
+                <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
+              </ElInput>
             </li>
             <li class="ml-3">
               <ElButton plain class="btn-refresh" @click="fetch()">
@@ -102,8 +112,7 @@
 </template>
 
 <script>
-import { delayTrigger } from '../../util'
-import { INSTANCE_STATUS_MAP } from '../../const'
+import { delayTrigger, toRegExp } from '../../util'
 
 export default {
   data() {
@@ -111,8 +120,10 @@ export default {
       loading: true,
       searchParams: {
         operationType: '',
+        parameter1: '',
         start: '',
-        end: ''
+        end: '',
+        username: ''
       },
       source: [], // 所有数据
       list: [], // 展示的数据
@@ -121,8 +132,7 @@ export default {
         size: 10,
         total: 0
       },
-      order: 'createAt desc',
-      statusMap: INSTANCE_STATUS_MAP,
+      order: 'createTime desc',
       VUE_APP_INSTANCE_TEST_BTN: process.env.VUE_APP_INSTANCE_TEST_BTN,
       upgradeDialog: false,
       selectedRow: {},
@@ -131,7 +141,7 @@ export default {
       upgradeList: [], // 升级列表
       modularMap: {
         connection: '连接',
-        sync: '任务'
+        migration: '任务'
       },
       operationMap: {
         create: '创建',
@@ -156,7 +166,7 @@ export default {
         },
         {
           label: '任务',
-          value: 'sync',
+          value: 'migration',
           items: {
             create: '创建',
             start: '启动',
@@ -225,15 +235,21 @@ export default {
   methods: {
     init() {
       let searchParams = this.searchParams
-      let { modular, operation, start, end } = this.$route.query || {}
+      let { modular, operation, parameter1, start, end, username } = this.$route.query || {}
       if (modular && operation) {
         searchParams.operationType = this.formatOperationType(modular, operation)
+      }
+      if (parameter1) {
+        searchParams.parameter1 = parameter1
       }
       if (start) {
         searchParams.start = this.getDate(start)
       }
       if (end) {
         searchParams.end = this.getDate(end)
+      }
+      if (username) {
+        searchParams.username = username
       }
       this.fetch()
     },
@@ -255,17 +271,23 @@ export default {
     },
     search() {
       let query = {}
-      let { operationType, start, end } = this.searchParams
+      let { operationType, parameter1, start, end, username } = this.searchParams
       if (operationType) {
-        let [modular, operation] = operationType.split('_')
+        let [operation, modular] = operationType.split('_')
         query.modular = modular
         query.operation = operation
+      }
+      if (parameter1) {
+        query.parameter1 = parameter1
       }
       if (start) {
         query.start = this.getTimeStamp(start)
       }
       if (end) {
         query.end = this.getTimeStamp(end)
+      }
+      if (username) {
+        query.username = username
       }
       this.$router.replace({
         name: 'OperationLog',
@@ -281,7 +303,7 @@ export default {
         }
         this.page.current = pageNum
         let current = this.page.current
-        let { operationType, start, end } = this.searchParams
+        let { operationType, parameter1, start, end, username } = this.searchParams
         let where = {
           type: 'userOperation' // 默认用户操作
         }
@@ -290,6 +312,13 @@ export default {
           let [operation, modular] = operationType?.split('_')
           where['modular'] = modular
           where['operation'] = operation
+        }
+        // 操作对象
+        if (parameter1) {
+          where['parameter1'] = { like: toRegExp(parameter1), options: 'i' }
+        }
+        if (username) {
+          where['username'] = { like: toRegExp(username), options: 'i' }
         }
         // 开始时间
         if (start) {
@@ -320,7 +349,7 @@ export default {
       }, debounce)
     },
     sortChange({ prop, order }) {
-      this.order = `${order ? prop : 'createAt'} ${order === 'ascending' ? 'asc' : 'desc'}`
+      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'asc' : 'desc'}`
       this.fetch(1)
     },
     changePage() {
@@ -347,7 +376,7 @@ export default {
     toGoList(row) {
       let { modular, parameter1 } = row
       // 任务
-      if (modular === 'sync') {
+      if (modular === 'migration') {
         this.$router.push({
           name: 'Task',
           query: {
