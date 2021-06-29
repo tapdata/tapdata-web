@@ -1,44 +1,68 @@
 # demo-project
 
+## 初始化项目
+
+克隆项目
+
+```
+git clone git@e.coding.net:tapdata/dfs/dfs-web.git --recurse-submodules
+```
+
+初始化项目
+
+```
+git submodule init
+git submodule update
+```
+
 ## Project setup
+
 ```
 npm install
 ```
 
 ### Compiles and hot-reloads for development
+
 ```
 npm run serve
 ```
 
 ### Compiles and minifies for production
+
 ```
 npm run build
 ```
 
 ### Lints and fixes files
+
 ```
 npm run lint
 ```
 
 ### Run Mock
+
 ```
 npm run mock
 ```
 
 ### Run drs Dev
+
 ```
 npm run drs
 ```
 
 ### Run dfs Dev
+
 ```
 npm run dfs
 ```
 
 ### Customize configuration
+
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### 目录
+
 ```
 |-- README.md                    说明
 |-- vue.config.js                webpack配置
