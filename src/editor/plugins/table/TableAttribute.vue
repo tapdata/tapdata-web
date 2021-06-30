@@ -350,6 +350,16 @@ export default {
       handler() {
         this.tableIsLink()
         this.handlerSchemaChange()
+        //切换table 才清空过滤
+        if (this.schemaSelectConfig.options.length > 0 && this.model.tableName) {
+          this.model.custFields.length = 0
+          this.model.custSql.selectedFields.length = 0
+          this.model.custSql.conditions.length = 0
+          this.model.custSql.limitLines = ''
+          this.model.cSql = ''
+          this.model.custSql.fieldFilterType = 'keepAllFields'
+          this.model.custSql.editSql = ''
+        }
       }
     },
     mergedSchema: {
@@ -664,11 +674,6 @@ export default {
       }
     },
     handlerSchemaChange() {
-      this.model.custFields.length = 0
-      this.model.custSql.selectedFields.length = 0
-      this.model.custSql.conditions.length = 0
-      this.model.custSql.limitLines = ''
-      this.model.cSql = ''
       let self = this
       if (tempSchemas.length > 0) {
         let schemas = tempSchemas.filter(
@@ -699,11 +704,6 @@ export default {
             // 	.join(',');
             self.primaryKeyOptions = fields.map(f => f.field_name)
             self.model.custSql.custFields = fields.map(f => f.field_name)
-            self.model.custSql.conditions.length = 0
-            self.model.custSql.fieldFilterType = 'keepAllFields'
-            self.model.custSql.cSql = ''
-            self.model.custSql.editSql = ''
-            self.model.custSql.selectedFields.length = 0
             // if (primaryKeys) {
             // 	self.model.primaryKeys = primaryKeys;
             // } else {

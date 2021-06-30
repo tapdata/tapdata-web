@@ -112,33 +112,33 @@ export default {
       //过滤被删除的数据
       if (schema && schema.fields) {
         schema.fields = removeDeleted(schema.fields)
-        //延时加载
-        let fields = schema.fields
-        let total = fields.length
-        let size = total < 5 ? total : 10
-        let index = 0
-        this.fields = []
-        let interval = this.interval
-        if (interval) {
-          clearInterval(interval)
-          this.interval = null
-        }
-        this.$nextTick(() => {
-          let load = () => {
-            this.fields.push(
-              ...fields.slice((index + 0) * size, (index + 1) * size)
-            )
-            index++
-          }
-          this.interval = setInterval(() => {
-            if (index * size < total) {
-              load()
-            } else {
-              clearInterval(this.interval)
-              this.interval = null
-            }
-          }, 500)
-        })
+        //延时加载TODO 字段过多注意渲染问题，注释内容严重影响table节点schema渲染
+        this.fields = schema.fields
+        // let total = fields.length
+        // let size = total < 5 ? total : 10
+        // let index = 0
+        // this.fields = []
+        // let interval = this.interval
+        // if (interval) {
+        //   clearInterval(interval)
+        //   this.interval = null
+        // }
+        // this.$nextTick(() => {
+        //   let load = () => {
+        //     this.fields.push(
+        //       ...fields.slice((index + 0) * size, (index + 1) * size)
+        //     )
+        //     index++
+        //   }
+        //   this.interval = setInterval(() => {
+        //     if (index * size < total) {
+        //       load()
+        //     } else {
+        //       clearInterval(this.interval)
+        //       this.interval = null
+        //     }
+        //   }, 500)
+        // })
       } else {
         this.fields = []
       }

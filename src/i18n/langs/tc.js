@@ -547,6 +547,7 @@ const tc = {
     },
     lag: '滯後',
     executionStatus: '執行狀態',
+    maxLagTime: '最大增量滯後時間',
     searchPlaceholder: '任務名稱/節點名/庫名稱',
     searchAgent: '實例名稱',
     dataRange: '創建日期範圍',
@@ -640,6 +641,8 @@ const tc = {
     aggrCleanSecond: '清理舊版本數據時間',
     aggrFullSyncSecond: '全量同步時間',
     enterFilterTable: '請輸入過濾表內容',
+    lagTime: '增量滯後判斷時間設定',
+    lagTimeTip: '當增量任務延遲大於該值時，則認為任務增量滯後，預設值為0',
     aggregatePrompt:
       '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
     nameTip:
@@ -718,6 +721,7 @@ const tc = {
     runNomally: '才能正常運行',
     editLayerTip: ' 否則可能導致異常錯誤，請問您要繼續編輯嗎?',
     continueEditing: '繼續編輯',
+    numberType: '必須為數位且不能小於0',
     setting: {
       distinctWriteType: '去重寫入機制',
       intellect: '智能去重寫入',
@@ -738,7 +742,9 @@ const tc = {
         '注意：若導致錯誤的數​​據未被處理，跳過錯誤可能導致這條數據被丟棄。 ',
       startJob: '跳過錯誤，啟動任務',
       cancel: '取消',
-      taskName: '任務名'
+      taskName: '任務名',
+      errorTotal: '共XX條，已選擇',
+      strip: '條'
     }
   },
   connection: {
@@ -3120,6 +3126,7 @@ const tc = {
     job_cdc_record_doc: ' 自動保存增量事件',
     job_cdc_record_ttl: ' 增量事件保存時長(天)',
     job_cdc_record_ttl_doc: ' 增量事件保存時長(天)',
+    lagTime: '增量滯後判定時間(秒)',
     connection_schema_update_hour: '數據源schema更新時間',
     connection_schema_update_interval: '數據源schema更新周期（天）',
     creatDuplicateSource: ' 允許創建重複數據源',

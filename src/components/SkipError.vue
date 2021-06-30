@@ -36,6 +36,10 @@
         </li>
       </el-checkbox-group>
     </ul>
+    <div class="total">
+      {{ errorTotal }} {{ checkedData.length }}
+      {{ $t('dataFlow.skipError.strip') }}
+    </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="dialogVisible = false" size="mini">{{
         $t('dataFlow.skipError.cancel')
@@ -57,7 +61,8 @@ export default {
       isIndeterminate: true,
       checkAll: false,
       checkedData: [],
-      task: {}
+      task: {},
+      errorTotal: this.$t('dataFlow.skipError.errorTotal')
     }
   },
   methods: {
@@ -76,6 +81,10 @@ export default {
           this.task = data
           errorEvents = data.errorEvents
           this.errorEvents = errorEvents
+          this.errorTotal = this.errorTotal.replace(
+            'XX',
+            this.errorEvents.length
+          )
           return
         }
       }
@@ -167,5 +176,9 @@ export default {
 .skip-tip {
   font-size: 12px;
   color: #999;
+}
+.total {
+  padding-top: 5px;
+  font-size: 12px;
 }
 </style>

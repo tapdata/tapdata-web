@@ -300,6 +300,13 @@
         </template>
       </el-table-column>
       <el-table-column
+        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+        prop="lag"
+        :label="$t('dataFlow.maxLagTime')"
+        width="180"
+        sortable="custom"
+      ></el-table-column>
+      <el-table-column
         prop="status"
         :label="$t('dataFlow.taskStatus')"
         width="180"
@@ -920,12 +927,13 @@ export default {
       syncType && (where['setting.sync_type'] = syncType)
       if (executionStatus) {
         if (executionStatus === 'Lag') {
-          where['stats.stagesMetrics'] = {
-            $elemMatch: {
-              status: 'cdc',
-              replicationLag: { $gt: 0 }
-            }
-          }
+          // where['stats.stagesMetrics'] = {
+          //   $elemMatch: {
+          //     status: 'cdc',
+          //     replicationLag: { $gt: 0 }
+          //   }
+          // }
+          where.Lag = true
         } else if (executionStatus === 'initialized') {
           where.and = [
             {
@@ -1000,22 +1008,30 @@ export default {
       }
       item.statusLabel = this.statusMap[item.status].label
       // let statusMap = {}
-      // let getLag = (lag) => {
-      //   let r = '0s'
-      //   if (lag) {
-      //     let m = this.$moment.duration(lag, 'seconds')
-      //     if (m.days()) {
-      //       r = m.days() + 'd'
-      //     } else if (m.hours()) {
-      //       r = m.hours() + 'h'
-      //     } else if (m.minutes()) {
-      //       r = m.minutes() + 'm'
-      //     } else {
-      //       r = lag + 's'
-      //     }
-      //   }
-      //   return r
-      // }
+      let getLag = (lag) => {
+        let r = ''
+        if (lag) {
+          let m = this.$moment.duration(lag)
+          if (m.days()) {
+            r = m.days() + 'd'
+          } else if (m.hours()) {
+            r = m.hours() + 'h'
+          } else if (m.minutes()) {
+            r = m.minutes() + 'min'
+          } else if (m.seconds()) {
+            r = m.seconds() + 's'
+          } else {
+            r = lag + 'ms'
+          }
+        }
+        return r
+      }
+      item['lag'] = '-'
+      if (item.stats && !window.getSettingByKey('DFS_TCM_PLATFORM')) { //企业版增加增量lag
+        if (item.stats.replicationLag && item.stats.replicationLag !== 0 ) {
+          item['lag'] = getLag(item.stats.replicationLag)
+        }
+      }
       if (item.stats && window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
         item.hasChildren = false
         // let children = item.stages
@@ -1432,6 +1448,9 @@ export default {
       this.changeStatus([id], { status: 'scheduled', errorEvents })
     },
     handleSortTable({ order, prop }) {
+      if (prop === 'lag') {
+        prop = 'stats.replicationLag'
+      }
       this.order = `${order ? prop : 'last_updated'} ${
         order === 'ascending' ? 'ASC' : 'DESC'
       }`

@@ -333,14 +333,14 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item
-          :label="$t('dataFlow.cdcShareFilterOnServer')"
-        >
+        <el-form-item :label="$t('dataFlow.cdcShareFilterOnServer')">
           <!-- 是否启用服务端过滤共享日志 -->
           <el-switch
             v-model="formData.cdcShareFilterOnServer"
             :active-text="
-              formData.cdcShareFilterOnServer ? $t('dataFlow.yes') : $t('dataFlow.no')
+              formData.cdcShareFilterOnServer
+                ? $t('dataFlow.yes')
+                : $t('dataFlow.no')
             "
           ></el-switch>
         </el-form-item>
@@ -357,7 +357,7 @@
               :max="720"
               size="mini"
             >
-              <template slot="append">Hours</template>
+              <template slot="append">{{ $t('dataFlow.hour') }}</template>
             </el-input>
             <el-popover
               popper-class="setting-popper"
@@ -379,6 +379,36 @@
         <div v-if="showMore" @click="showMore = false" class="advance-setting">
           {{ $t('dataFlow.closeSetting') }}
         </div>
+      </el-form-item>
+      <el-form-item
+        :label="$t('dataFlow.lagTime')"
+        prop="userSetLagTime"
+        v-show="formData.sync_type !== 'initial_sync'"
+      >
+        <!-- 增量滞后判定事件 -->
+        <el-switch
+          v-model="formData.lagTimeFalg"
+          :active-text="
+            formData.lagTimeFalg ? $t('dataFlow.yes') : $t('dataFlow.no')
+          "
+        ></el-switch>
+        <el-input
+          class="input-box"
+          v-model="formData.userSetLagTime"
+          v-show="formData.lagTimeFalg"
+          :min="0"
+          size="mini"
+        >
+          <template slot="append">{{ $t('dataFlow.second') }}</template>
+        </el-input>
+        <el-popover
+          popper-class="setting-popper"
+          placement="top-start"
+          trigger="hover"
+        >
+          <span>{{ $t('dataFlow.lagTimeTip') }}</span>
+          <span class="icon iconfont icon-tishi1" slot="reference"></span>
+        </el-popover>
       </el-form-item>
     </el-form>
   </div>
@@ -412,6 +442,19 @@ export default {
               let value = this.formData.cronExpression
               if (!value || !value.trim()) {
                 callback(this.$t('dataFlow.cronExpression'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        userSetLagTime: [
+          {
+            validator: (rule, v, callback) => {
+              let value = this.formData.userSetLagTime
+              if (!/^\d+$/.test(value) || value < 0) {
+                callback(this.$t('dataFlow.numberType'))
               } else {
                 callback()
               }
@@ -680,6 +723,7 @@ export default {
     color: #fff;
   }
   .back-btn-text {
+    padding-left: 10px;
     font-size: 12px;
   }
   .e-form {
@@ -741,6 +785,12 @@ export default {
     }
     .jobSchedule {
       width: 70%;
+    }
+    .input-box {
+      padding-left: 10px;
+    }
+    .el-popover__reference-wrapper {
+      padding-left: 10px;
     }
   }
 }
