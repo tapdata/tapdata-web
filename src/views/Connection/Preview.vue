@@ -11,11 +11,9 @@
     <div class="connection-drawer-wrap" v-loading="previewLoading" v-if="visible">
       <div class="bar">
         <button type="button" class="el-button back-btn-icon-box el-button--default" @click="handleClose">
-          <span>
-            <i class="iconfont icon-you2 back-btn-icon"></i>
-          </span>
+          <i class="el-icon-arrow-left"></i>
         </button>
-        <span class="back-btn-text">{{ t('connection.info') }}</span>
+        <span class="ml-2 back-btn-text">{{ t('connection.info') }}</span>
       </div>
       <header class="header">
         <div class="tab">
