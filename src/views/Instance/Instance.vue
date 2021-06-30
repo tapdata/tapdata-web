@@ -76,7 +76,7 @@
             </ElTooltip>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="版本" width="180">
+        <ElTableColumn label="版本" width="200">
           <template slot-scope="scope">
             <div class="flex align-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
