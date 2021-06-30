@@ -61,7 +61,8 @@ const agent = {
   },
   tmInfo: {
     agentId: '@id',
-    token: '@guid'
+    token: '@guid',
+    downloadUrl: 'http://resource.tapdata.net/package/feagent/v1.0.2/'
   }
 }
 module.exports = Object.assign({}, dataflow, connection, {
@@ -2759,6 +2760,11 @@ module.exports = Object.assign({}, dataflow, connection, {
   '/api/tcm/config/version/latest/:id': {
     reqId: '064b73bf-639a-440b-a930-8b30d38febc3',
     code: 'ok',
-    data: { version: 'v1.0.7-cloud-dev', tmServerUrl: 'http://192.168.1.182:30104/tm/api/', token: '@guid' }
+    data: {
+      version: 'v1.0.7-cloud-dev',
+      tmServerUrl: 'http://192.168.1.182:30104/tm/api/',
+      token: '@guid',
+      downloadUrl: 'http://resource.tapdata.net/package/feagent/v1.0.2/'
+    }
   }
 })
