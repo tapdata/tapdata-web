@@ -252,7 +252,7 @@ export default {
           where,
           limit: this.page.size,
           skip: (current - 1) * this.page.size,
-          sort: [this.order]
+          order: this.order
         }
         Promise.all([
           this.$axios.get('tm/api/Connections/count?where=' + encodeURIComponent(JSON.stringify(where))),

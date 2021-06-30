@@ -334,9 +334,9 @@ export default {
         let filter = {
           fields,
           where,
-          size: this.page.size,
-          page: current,
-          sort: [this.order]
+          limit: this.page.size,
+          skip: (current - 1) * this.page.size,
+          order: this.order
         }
         Promise.all([
           this.$axios.get('tm/api/DataFlows/count?where=' + encodeURIComponent(JSON.stringify(where))),
