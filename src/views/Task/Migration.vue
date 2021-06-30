@@ -121,7 +121,7 @@
                   重置
                 </ElDropdownItem>
                 <ElDropdownItem command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
-                  <span class="color-danger">删除</span>
+                  <span :class="{ 'color-danger': statusBtMap['delete'][scope.row.status] }">删除</span>
                 </ElDropdownItem>
               </ElDropdownMenu>
             </ElDropdown>

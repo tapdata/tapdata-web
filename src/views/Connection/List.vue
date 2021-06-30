@@ -250,8 +250,8 @@ export default {
         let filter = {
           fields,
           where,
-          size: this.page.size,
-          page: current,
+          limit: this.page.size,
+          skip: (current - 1) * this.page.size,
           sort: [this.order]
         }
         Promise.all([
