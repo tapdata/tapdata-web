@@ -325,6 +325,7 @@ export default {
   width: 440px;
   overflow: hidden;
   position: relative;
+  border-radius: 3px;
   .notice-footer {
     display: flex;
     justify-content: space-between;
@@ -361,6 +362,9 @@ export default {
         border-bottom: 1px solid #dedee4;
         padding: 0 5px 5px 0;
         cursor: pointer;
+        &:hover {
+          background-color: #ecf5ff;
+        }
         .list-item-content {
           position: relative;
           height: 40px;
@@ -409,6 +413,9 @@ export default {
         border-bottom: 1px solid #dedee4;
         font-size: 12px;
         color: #666;
+        &:hover {
+          background-color: #ecf5ff;
+        }
         &:last-child {
           border: none;
         }

@@ -510,7 +510,8 @@ export default {
           'file',
           'kafka',
           'mariadb',
-          'mysql pxc'
+          'mysql pxc',
+          'tcp_udp'
         ].includes(type)
       ) {
         this.$router.push('connections/' + id + '/edit?databaseType=' + type)
@@ -706,7 +707,7 @@ export default {
     display: inline-block;
     width: 110px;
     margin-right: 15px;
-    text-align: right;
+    text-align: left;
   }
   .value {
     width: 62%;
@@ -776,6 +777,7 @@ export default {
     color: #fff;
   }
   .back-btn-text {
+    padding-left: 10px;
     font-size: 12px;
   }
 }

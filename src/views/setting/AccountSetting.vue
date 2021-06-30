@@ -38,7 +38,6 @@
             <i
               slot="suffix"
               :class="['iconfont', oldFlag ? 'icon-openeye' : 'icon-closeeye']"
-              style="margin-top: 8px; font-size: 18px"
               autocomplete="auto"
               class="eye"
               @click="changeEye('old')"
@@ -454,19 +453,19 @@ $unreadColor: #ee5353;
 }
 </style>
 <style lang="scss">
-.settingCenter {
+.account {
   .form {
-    .el-input__inner {
-      border: 0;
-      border-radius: 0;
-      border-bottom: 1px solid #666;
-    }
     .eye {
       cursor: pointer;
-      margin-top: 8px;
       font-size: 18px;
     }
+    // .el-input__inner {
+    //   border: 0;
+    //   border-radius: 0;
+    //   border-bottom: 1px solid #d9d9d9;
+    // }
   }
+
   .el-button {
     padding: 12px 30px;
   }

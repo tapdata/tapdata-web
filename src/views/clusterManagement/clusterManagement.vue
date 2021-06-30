@@ -889,7 +889,7 @@ export default {
   height: 100%;
   background: #fafafa;
   .header {
-    padding: 15px 10px;
+    padding: 15px 20px;
     background: #ffffff;
     overflow: hidden;
     border-bottom: 1px solid #dedee4;
@@ -915,6 +915,7 @@ export default {
     flex-direction: column;
     .search-bar {
       display: flex;
+      padding-left: 10px;
       li + li {
         margin-left: 10px;
       }

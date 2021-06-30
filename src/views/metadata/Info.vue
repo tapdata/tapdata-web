@@ -1,7 +1,7 @@
 <template>
   <section class="metadata-info">
     <header class="header">
-      <span @click="back" style="color: #409eff; cursor: pointer">
+      <span @click="back">
         {{ $t('metadata.details.dataDirectory') }}
       </span>
       / {{ $t('metadata.details.dataDetails') }}
@@ -1042,17 +1042,23 @@ export default {
   height: 100%;
   background-color: rgba(239, 241, 244, 100);
   .header {
+    position: relative;
     height: 50px;
     line-height: 50px;
     padding-left: 20px;
     background-color: rgba(250, 250, 250, 100);
     color: rgba(51, 51, 51, 100);
-    font-size: 18px;
+    font-size: 16px;
     text-align: left;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(222, 222, 228, 100);
     border-left: none;
-    position: relative;
+    font-size: 16px;
+    font-weight: 600;
+    & > span {
+      color: #409eff;
+      cursor: pointer;
+    }
   }
   .metadata-content {
     padding: 10px;
@@ -1225,7 +1231,7 @@ export default {
 
         .table-box {
           height: calc(100% - 28px);
-          padding: 10px 20px;
+          padding: 10px 15px;
           background-color: #fff;
           box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
           box-sizing: border-box;
@@ -1326,8 +1332,11 @@ export default {
     }
     .iconBox {
       width: 100%;
-
+      height: 28px;
+      line-height: 28px;
       .header-icon {
+        float: left;
+        margin-top: 8px;
         // padding-right: 12px;
         // vertical-align: middle;
         transition: -webkit-transform 0.3s;
@@ -1340,20 +1349,27 @@ export default {
       span {
         display: inline-block;
         padding-left: 12px;
-        height: 30px;
-        line-height: 30px;
+        height: 28px;
+        line-height: 28px;
       }
       .iconfont {
         display: inline-block;
         float: right;
-        padding-top: 3px;
         cursor: pointer;
+        &:hover {
+          color: #409eff;
+        }
       }
       .el-button {
         float: right;
         height: 32px;
         line-height: 32px;
         padding: 0;
+        font-size: 12px;
+        color: #333;
+        &:hover {
+          color: #409eff;
+        }
       }
     }
     .el-collapse-item__header {
@@ -1361,7 +1377,7 @@ export default {
     }
     .el-collapse-item__header.is-active {
       .header-icon {
-        margin-top: 12px;
+        margin-top: 8px;
         transform: rotate(90deg);
       }
     }
@@ -1385,6 +1401,7 @@ export default {
     flex-direction: column;
     overflow: hidden;
     box-sizing: border-box;
+    border-radius: 3px;
     .table-page-table {
       th {
         padding: 0;

@@ -960,7 +960,8 @@ export default {
           flex: auto;
           height: calc(100% - 40px);
           align-items: center;
-          justify-content: center;
+          justify-content: left;
+          overflow-x: auto;
           li {
             display: inline-block;
             padding: 0 30px;
@@ -971,6 +972,7 @@ export default {
               color: #666;
               text-align: center;
               user-select: none;
+              white-space: nowrap;
             }
             div {
               padding-top: 30px;
@@ -1017,6 +1019,7 @@ export default {
       li {
         padding-bottom: 10px;
         cursor: pointer;
+        white-space: nowrap;
         span {
           display: inline-block;
           width: 50px;
@@ -1028,7 +1031,7 @@ export default {
     .chart {
       float: left;
       width: 50%;
-      height: 300px;
+      height: 280px;
     }
     .charts-box {
       height: calc(100% - 40px);

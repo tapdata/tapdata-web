@@ -484,7 +484,7 @@ export default {
   background: #fff;
   border-radius: 3px;
   overflow: hidden;
-  box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
+  // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
   .btn-expand {
     padding: 2px 3px;
     color: #666;
@@ -496,12 +496,19 @@ export default {
   &.expand {
     height: 100%;
     width: 100%;
-    border: 1px solid #dedee4;
+    border: 1px solid #ebeef5;
     .btn-expand {
       position: absolute;
       top: 5px;
       right: 8px;
       transform: rotate(180deg);
+      .icon-zhankai2 {
+        font-size: 16px;
+        color: #666;
+        &:hover {
+          color: #409eff;
+        }
+      }
     }
     .btn-addIcon {
       position: absolute;
@@ -524,6 +531,9 @@ export default {
         border-top-width: 1px;
         border-radius: 3px;
         cursor: pointer;
+        &:hover {
+          color: #409eff;
+        }
       }
     }
     .btn-query {
@@ -546,7 +556,7 @@ export default {
     font-size: 12px;
     line-height: 31px;
     display: flex;
-    width: 213px;
+    width: 214px;
     flex-direction: column;
     .title {
       display: flex;

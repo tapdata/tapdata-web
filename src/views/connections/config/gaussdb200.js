@@ -90,10 +90,6 @@ export default function (vm) {
         showPassword: true
       },
       {
-        type: 'slot',
-        slot: 'tableFilter'
-      },
-      {
         type: 'input',
         field: 'database_owner',
         label: vm.$t('dataForm.form.databaseOwner'),
@@ -107,6 +103,10 @@ export default function (vm) {
         //tips: vm.$t('dataForm.form.tableFilterTips'),
         maxlength: 500,
         showWordLimit: true
+      },
+      {
+        type: 'slot',
+        slot: 'tableFilter'
       },
       {
         type: 'input',

@@ -282,7 +282,7 @@ $unreadColor: #ee5353;
       width: 11px;
       height: 14px;
       background: #409eff;
-      display: inline-block;
+      display: inline-block !important;
       margin-right: 10px;
     }
     .run-notification {
@@ -295,7 +295,7 @@ $unreadColor: #ee5353;
         margin-bottom: 20px;
       }
       ul {
-        margin-left: 20px;
+        // margin-left: 0;
         margin-top: 20px;
       }
       ul li {

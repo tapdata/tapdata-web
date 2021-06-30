@@ -147,7 +147,7 @@
       <!--			</el-pagination>-->
     </div>
     <div
-      class="panel-main"
+      class="panel-main panel-box"
       v-if="type !== 'row_count'"
       v-loading="detailsLoading"
     >
@@ -534,11 +534,17 @@ $margin: 10px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    &.panel-box {
+      margin-bottom: 10px;
+      border-left: 1px solid #dedee4;
+      border-bottom: 1px solid #dedee4;
+    }
     .tip {
       height: 30px;
       font-size: 12px;
       background: #f5f5f5;
       border: 1px solid #dedee4;
+      border-left: 0;
       line-height: 30px;
     }
     .main {
@@ -741,9 +747,9 @@ $margin: 10px;
         }
       }
     }
-    .main-border {
-      border-right: 1px solid #dedee4;
-    }
+    // .main-border {
+    //   border-right: 1px solid #dedee4;
+    // }
     .pagination {
       border-top: 1px solid #dedee4;
       border-right: 1px solid #dedee4;
