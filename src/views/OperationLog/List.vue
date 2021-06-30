@@ -331,7 +331,7 @@ export default {
           where,
           size: this.page.size,
           page: current,
-          sort: [this.order]
+          order: [this.order]
         }
         this.$axios
           .get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
