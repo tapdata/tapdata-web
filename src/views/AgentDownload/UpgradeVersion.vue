@@ -63,6 +63,7 @@
       <!--   Docker   -->
       <div v-else-if="downLoadType === 'Docker'" class="content-container">
         <div class="py-2 text-style">升级步骤</div>
+        <Highlight language="bash" code="Tapdata-MacBook:~ tapdata$ docker ps -a|grep tapdata" />
         <div>1.进入原Agent的docker容器内</div>
         <div class="box">
           <div>#1.找到原Agent的docker容器ID</div>
@@ -101,9 +102,15 @@
 </template>
 <script>
 import TheHeader from '@/components/TheHeader'
+import Highlight from '../../components/Highlight'
+import hljs from 'highlight.js/lib/core'
+import bash from 'highlight.js/lib/languages/bash'
+import 'highlight.js/styles/github.css' // 主题样式文件可查看styles文件夹
+hljs.registerLanguage('bash', bash)
+
 export default {
   name: 'UpgradeVersion',
-  components: { TheHeader },
+  components: { TheHeader, Highlight },
   data() {
     return {
       downLoadType: 'windows',
@@ -114,29 +121,19 @@ export default {
       ],
       showTooltip: false,
       agentId: '',
-      version: '',
+      downloadUrl: '',
       token: ''
       // user: window.__USER_INFO__ || {}
     }
   },
   computed: {
     comUrl() {
-      let version = this.version
       let token = this.token
+      let downloadUrl = (this.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
       let map = {
-        windows:
-          './tapdata start backend --downloadUrl ' +
-          `http://resource.tapdata.net/package/feagent/${version}/ --token ` +
-          token,
-        Linux:
-          './tapdata start backend --downloadUrl ' +
-          `http://resource.tapdata.net/package/feagent/${version}/ --token ` +
-          token,
-        Docker:
-          './tapdata start backend --downloadUrl ' +
-          `http://resource.tapdata.net/package/feagent/${version}/ --token ` +
-          token +
-          `'`
+        windows: `./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+        Linux: `./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+        Docker: `./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`
       }
       return map[this.downLoadType]
     }
@@ -148,8 +145,8 @@ export default {
     loadData() {
       let agentId = this.$route.query.agentId
       this.$axios.get('api/tcm/config/version/latest/' + agentId).then(data => {
-        this.version = data.version
         this.token = data.token
+        this.downloadUrl = data.downloadUrl
       })
     },
     // 选择下载安装类型

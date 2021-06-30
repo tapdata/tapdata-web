@@ -174,7 +174,7 @@ export default {
       windowLink: '',
       LinuxLink: '',
       dockerLink: '',
-      windowVersion: '',
+      downloadUrl: '',
       agentId: ''
       // user: window.__USER_INFO__ || {}
     }
@@ -237,32 +237,28 @@ export default {
       if (!data || !spec) {
         return
       }
-      this.windowVersion = spec.version
-      this.windowLink =
-        'tapdata start backend --downloadUrl ' +
-        `http://resource.tapdata.net/package/feagent/${spec.version}/ --token ` +
-        data.token
+      let downloadUrl = (data.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
+      this.downloadUrl = downloadUrl
+      this.windowLink = 'tapdata start backend --downloadUrl ' + `${downloadUrl} --token ` + data.token
       this.LinuxLink =
         'wget "' +
-        `http://resource.tapdata.net/package/feagent/${spec.version}/tapdata` +
+        `${downloadUrl}tapdata` +
         '" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
-        `http://resource.tapdata.net/package/feagent/${spec.version}/ --token ` +
+        `${downloadUrl} --token ` +
         data.token
       this.dockerLink =
         'docker run -itd ' +
         `ccr.ccs.tencentyun.com/tapdata/flow-engine:0.1 '` +
         'wget "' +
-        `http://resource.tapdata.net/package/feagent/${spec.version}/tapdata` +
+        `${downloadUrl}tapdata` +
         '" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
-        `http://resource.tapdata.net/package/feagent/${spec.version}/ --token ` +
+        `${downloadUrl} --token ` +
         data.token +
         `'`
     },
     // windows下载
     handleDownLoad() {
-      // window.location = this.windowDownloadUrl
-      // let version = ' window._TAPDATA_OPTIONS_.version';
-      window.location = `https://resource.tapdata.net/package/feagent/${this.windowVersion}/tapdata.exe`
+      window.location = `${this.downloadUrl}tapdata.exe`
     },
     // 选择下载安装类型
     chooseDownLoadType(val) {
