@@ -510,7 +510,8 @@ export default {
           'file',
           'kafka',
           'mariadb',
-          'mysql pxc'
+          'mysql pxc',
+          'tcp_udp'
         ].includes(type)
       ) {
         this.$router.push('connections/' + id + '/edit?databaseType=' + type)
