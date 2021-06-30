@@ -63,19 +63,15 @@
       <!--   Docker   -->
       <div v-else-if="downLoadType === 'Docker'" class="content-container">
         <div class="py-2 text-style">升级步骤</div>
-        <Highlight language="bash" code="Tapdata-MacBook:~ tapdata$ docker ps -a|grep tapdata" />
         <div>1.进入原Agent的docker容器内</div>
         <div class="box">
-          <div>#1.找到原Agent的docker容器ID</div>
-          <div>Tapdata-MacBook:~ tapdata$ docker ps -a|grep tapdata</div>
-          <div>9a8a9a2ffa75 ccr.ccs.tencentyun.com/tapdata/flow-engine:0.1</div>
+          <div>#1.找到原Agent的docker容器CONTAINER ID</div>
+          <div>docker ps -a|grep tapdata|awk -F' ' '{print $1}</div>
           <div>#2.通过容器ID进入容器</div>
-          <div>Tapdata-MacBook:~ tapdata$ docker exec -it 9a8a9a2ffa75 bash</div>
-          <div>root@9a8a9a2ffa75:/#</div>
+          <div>docker exec -it 容器ID bash</div>
           <div>#3.如果容器已停止运行，可以先启动容器再进入容器进行升级</div>
-          <div>Tapdata-MacBook:~ tapdata$ docker start 9a8a9a2ffa75</div>
-          <div>Tapdata-MacBook:~ tapdata$ docker exec -it 9a8a9a2ffa75 bash</div>
-          <div>root@9a8a9a2ffa75:/#</div>
+          <div>docker start 容器ID</div>
+          <div>docker exec -it 容器ID bash</div>
         </div>
         <div>
           2.复制下方的升级命令直接在容器内执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本
@@ -105,15 +101,10 @@
 </template>
 <script>
 import TheHeader from '@/components/TheHeader'
-import Highlight from '../../components/Highlight'
-import hljs from 'highlight.js/lib/core'
-import bash from 'highlight.js/lib/languages/bash'
-import 'highlight.js/styles/github.css' // 主题样式文件可查看styles文件夹
-hljs.registerLanguage('bash', bash)
 
 export default {
   name: 'UpgradeVersion',
-  components: { TheHeader, Highlight },
+  components: { TheHeader },
   data() {
     return {
       downLoadType: 'windows',
