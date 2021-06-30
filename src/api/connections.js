@@ -42,4 +42,8 @@ export default class Connections extends PublicAPI {
       params
     )
   }
+  getNoSchema(id) {
+    let url = `${this.url}/${id}` + '?noSchema=1'
+    return axios.get(url)
+  }
 }
