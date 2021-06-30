@@ -84,7 +84,7 @@
                 v-if="scope.row.spec && version && scope.row.spec.version !== version"
                 class="ml-1"
                 effect="dark"
-                content="Agent版本有更新，点击升级。"
+                content="点击升级到最新版本"
                 placement="top-start"
               >
                 <VIcon v-if="false" class="pointer" size="20" @click="showUpgradeDialogFnc(scope.row)">upgrade</VIcon>
