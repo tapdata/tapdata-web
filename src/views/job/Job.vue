@@ -389,9 +389,11 @@ export default {
     backDataFlow() {
       let mapping = this.$route.query.mapping
       const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
-      if (!this.dataChangeFalg || $PLATFORM) {
+      const backToList = () => {
         if ($PLATFORM === 'dfs') {
-          window.open(window.location.href?.split('/tm')?.[0] + '/#/dataflow', '_self')
+          top.window.App.$router.push({
+            name: 'Task'
+          })
         } else {
           this.$router.push({
             name: 'dataFlows',
@@ -400,6 +402,9 @@ export default {
             }
           })
         }
+      }
+      if (!this.dataChangeFalg || $PLATFORM) {
+        backToList()
       } else {
         this.$confirm(this.$t('dataFlow.saveReminder'), this.$t('dataFlow.backlistText'), {
           type: 'warning',
@@ -410,12 +415,7 @@ export default {
             return
           }
           this.dataChangeFalg = false
-          this.$router.push({
-            name: 'dataFlows',
-            query: {
-              mapping: mapping
-            }
-          })
+          backToList()
         })
       }
     },
