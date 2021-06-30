@@ -917,12 +917,7 @@ export default {
       this.loading = true
       promise
         .then(() => {
-          this.$router.push({
-            name: 'dataFlows',
-            query: {
-              mapping: 'cluster-clone'
-            }
-          })
+          this.routerBack()
         })
         .catch(e => {
           if (e.response.msg === 'duplication for names') {
@@ -935,6 +930,17 @@ export default {
           this.loading = false
         })
     },
+    routerBack() {
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+        window.parent.App.$router.push({
+          name: 'Task'
+        })
+      } else {
+        this.$router.push({
+          path: '/dataFlows?mapping=cluster-clone'
+        })
+      }
+    },
     //返回任务列表
     goBackList() {
       this.$confirm('此操作会丢失当前正在创建的任务', '是否放弃创建该任务', {
@@ -943,12 +949,7 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$router.push({
-          name: 'dataFlows',
-          query: {
-            mapping: 'cluster-clone'
-          }
-        })
+        this.routerBack()
       })
     },
     //选择创建类型
