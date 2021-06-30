@@ -1,8 +1,4 @@
 import { connect, mapProps } from '@formily/vue'
-import { getComponentByTag } from './utils/util'
-
-const ElSelect = getComponentByTag('el-select')
-const ElOption = getComponentByTag('el-option')
 
 const SelectOption = {
   render(h) {
@@ -14,16 +10,16 @@ const SelectOption = {
         ? options.map(option => {
             if (typeof option === 'string') {
               return h(
-                ElOption,
+                'el-option',
                 { props: { label: option, value: option } },
                 {}
               )
             } else {
-              return h(ElOption, { props: option }, {})
+              return h('el-option', { props: option }, {})
             }
           })
         : slots
-    return h(ElSelect, { props, on: this.$listeners }, children)
+    return h('el-select', { props, on: this.$listeners }, children)
   }
 }
 

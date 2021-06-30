@@ -772,8 +772,8 @@ export default {
       this.dataNodeInfo = dataNodeInfo || {}
 
       this.loadDataModels(this.model.connectionId)
-
       let ouputSchema = cell.getOutputSchema()
+      console.log('ouputSchema', ouputSchema)
       if (this.model.connectionId && this.model.tableName && !ouputSchema) {
         this.handlerSchemaChange()
       } else {

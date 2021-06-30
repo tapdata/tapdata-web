@@ -12,6 +12,7 @@ export * from './Row'
 export * from './Col'
 export * from './AddDatabaseBtn'
 export * from './DatabaseInfo'
+export * from './FormTab'
 
 import { FormGrid, FormGridColumn } from './FormGrid'
 import { ElForm } from './ElForm'
@@ -32,6 +33,18 @@ import { Transfer } from './Transfer'
 import { SyncObjects } from './SyncObjects'
 import { InputNumber } from './InputNumber'
 import { Space } from './Space'
+import { FormTab, FormTabPane } from './FormTab'
+import {
+  ArrayBase,
+  ArrayBaseItem,
+  ArrayAddition,
+  ArrayMoveDown,
+  ArrayMoveUp,
+  ArrayRemove
+} from './ArrayBase'
+import { ArrayItems, ArrayHeader } from './ArrayItems'
+import { FilterConditions } from './FilterConditions'
+import { PreviewSql } from './PreviewSql'
 
 export const components = {
   Checkbox,
@@ -54,5 +67,17 @@ export const components = {
   Switch,
   SyncObjects,
   InputNumber,
-  Space
+  Space,
+  FormTab,
+  FormTabPane,
+  ArrayBase,
+  ArrayBaseItem,
+  ArrayAddition,
+  ArrayMoveDown,
+  ArrayMoveUp,
+  ArrayRemove,
+  ArrayItems,
+  FilterConditions,
+  ArrayHeader,
+  PreviewSql
 }

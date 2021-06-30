@@ -29,6 +29,9 @@
                 loadDatabase,
                 loadDatabaseInfo,
                 getDropOptions,
+                loadDatabaseTable,
+                loadTableField,
+                loadTableInfo,
                 sourceConnectionId: sourceNode ? sourceNode.connectionId : null
               }"
             />
@@ -55,15 +58,18 @@ import {
 } from '@formily/core'
 import { action } from '@formily/reactive'
 import { FormProvider, FormConsumer, createSchemaField } from '@formily/vue'
-import { components } from '@/components/form'
-import factory from '@/api/factory'
+import { components, createFormTab } from '@/components/form'
 import VIcon from '@/components/VIcon'
 import '@/components/form/styles/index.scss'
+import ConnectionsApi from '@/api/connections'
+import MetadataApi from '@/api/MetadataInstances'
 
 const { SchemaField } = createSchemaField({
   components
 })
-const connections = factory('connections')
+
+const connections = new ConnectionsApi()
+const metadataApi = new MetadataApi()
 
 export default {
   name: 'RightSidebar',
@@ -127,6 +133,7 @@ export default {
       return !!this.node
     },
 
+    // 联合唯一key
     uniteKey() {
       return `${this.node?.id || ''}_${this.activeConnection?.sourceId || ''}`
     }
@@ -143,125 +150,18 @@ export default {
   },
 
   watch: {
-    /*show(v) {
-      if (v) {
-        this.form.reset()
-        console.log('watch:show', this.node)
-        this.form.setValues(this.node)
-      }
-    },*/
-    'node.id'() {
-      if (this.show) {
-        /*this.form.reset()
-        this.form.setValues(this.node)
-        this.schema = {}
-        this.$nextTick(() => {
-          this.schema = !this.activeConnection
-            ? this.ins.formSchema
-            : this.ins.linkFormSchema
-        })*/
-      }
-    },
-
     uniteKey(v) {
       if (this.show) {
         console.log('watch:uniteKey', v)
 
         this.form.reset()
-        this.form.setValues(this.node)
         this.schema = {}
         this.$nextTick(() => {
           this.schema = !this.activeConnection
             ? this.ins.formSchema
             : this.ins.linkFormSchema
+          this.form.setValues(this.node)
         })
-      }
-    },
-
-    'sourceNode.id'(v) {
-      console.log('watch:sourceNodeId', v)
-      /*if (v) {
-        this.form.reset()
-        this.form.setValues(this.node)
-        this.schema = {}
-        this.$nextTick(() => {
-          this.schema = !this.activeConnection
-            ? this.ins.formSchema
-            : this.ins.linkFormSchema
-        })
-      }*/
-    },
-
-    show(v) {
-      console.log('show', v)
-      if (v) {
-        /*this.schema = {
-          type: 'object',
-          properties: {
-            input0: {
-              title: '输入框0',
-              type: 'string',
-              'x-component': 'Input'
-            }
-          }
-        }*/
-        /*setTimeout(() => {
-          console.log('linkFormSchema', this.ins.linkFormSchema)
-          this.schema = {
-            type: 'object',
-            properties: {
-              input1: {
-                title: '输入框1',
-                type: 'string',
-                'x-decorator': 'ElFormItem',
-                'x-decorator-props': {
-                  asterisk: true,
-                  feedbackLayout: 'none'
-                },
-                'x-component': 'Input'
-              },
-              input2: {
-                title: '输入框2',
-                type: 'string',
-                'x-decorator': 'ElFormItem',
-                'x-decorator-props': {
-                  asterisk: true,
-                  feedbackLayout: 'none'
-                },
-                'x-component': 'Input'
-              }
-            }
-          }
-          console.log('this.schema', this.schema)
-        }, 3000)*/
-        /*setTimeout(() => {
-          this.schema = {
-            type: 'object',
-            properties: {
-              input0: {
-                title: '输入框0',
-                type: 'string',
-                'x-component': 'Select'
-              }
-            }
-          }
-
-          console.log('this.schema', this.schema)
-        }, 6000)*/
-        /*setTimeout(() => {
-          this.schema = {
-            type: 'object',
-            properties: {
-              input22: {
-                title: '输入框22',
-                type: 'string',
-                'x-component': 'Input'
-              }
-            }
-          }
-
-          console.log('this.schema', this.schema)
-        }, 9000)*/
       }
     }
   },
@@ -278,7 +178,10 @@ export default {
         field.loading = true
         service(field, ...args).then(
           action(data => {
-            field[fieldName] = data
+            if (fieldName === 'value') {
+              field.setValue(data)
+              console.log('field.setValue', field)
+            } else field[fieldName] = data
             field.loading = false
           })
         )
@@ -286,7 +189,6 @@ export default {
     },
 
     async loadDatabase(field, databaseType = field.form.values.databaseType) {
-      // let databaseType = databaseType ? field.form.values.databaseType || ''
       try {
         let result = await connections.get({
           filter: JSON.stringify({
@@ -349,6 +251,66 @@ export default {
         schema: true
       })
       return result.data
+    },
+
+    async loadDatabaseTable(
+      field,
+      connectionId = field.query('connectionId').get('value')
+    ) {
+      if (!connectionId) return
+      const params = {
+        filter: JSON.stringify({
+          where: {
+            'source.id': connectionId,
+            meta_type: {
+              in: ['collection', 'table', 'view'] //,
+            },
+            is_deleted: false
+          },
+          fields: {
+            id: true,
+            original_name: true
+          }
+        })
+      }
+      let { data: tables } = await metadataApi.get(params)
+      tables = tables.map(item => ({
+        label: item.original_name,
+        value: item.id
+      }))
+      return tables
+    },
+
+    async loadTableInfo(field, id = field.query('tableId').get('value')) {
+      if (!id) return
+      console.log('loadTableInfo', field, id)
+      const params = {
+        filter: JSON.stringify({
+          where: {
+            id,
+            is_deleted: false
+          }
+        })
+      }
+      const { data } = await metadataApi.schema(params)
+      return data.records[0].schema.tables[0]
+    },
+
+    async loadTableField(field, id = field.query('tableId').get('value')) {
+      if (!id) return
+      console.log('loadTableField', field, id)
+      const params = {
+        filter: JSON.stringify({
+          where: {
+            id,
+            is_deleted: false
+          }
+        })
+      }
+      const { data } = await metadataApi.schema(params)
+      return data.records[0].schema.tables[0].fields.map(
+        item => item.field_name
+      )
     },
 
     getDropOptions(field) {

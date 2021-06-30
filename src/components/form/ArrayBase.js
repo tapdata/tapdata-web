@@ -9,9 +9,7 @@ import {
 } from 'vue-demi'
 import { FragmentComponent, useField, useFieldSchema, h } from '@formily/vue'
 import { isValid, uid } from '@formily/shared'
-import { getComponentByTag } from '../shared'
-
-const ElButton = getComponentByTag('el-button')
+import { Space } from '@/components/form/Space'
 
 const ArrayBaseSymbol = Symbol('ArrayBaseContext')
 const ItemSymbol = Symbol('ItemContext')
@@ -70,12 +68,12 @@ export const ArrayAddition = defineComponent({
     return () => {
       if (array?.field.value.pattern !== 'editable') return null
       return h(
-        ElButton,
+        'ElButton',
         {
           class: `${prefixCls}-addition`,
           attrs: {
             type: 'ghost',
-            icon: 'qax-icon-Alone-Plus',
+            icon: 'el-icon-plus',
             ...attrs
           },
           on: {
@@ -109,14 +107,16 @@ export const ArrayRemove = defineComponent({
     const base = useArray()
     const prefixCls = `form-array-base`
     return () => {
+      console.log('ArrayRemove', base)
       if (base?.field.value.pattern !== 'editable') return null
+      console.log('ArrayRemove-after', base)
       return h(
-        ElButton,
+        'el-button',
         {
           class: `${prefixCls}-remove`,
           attrs: {
             type: 'text',
-            icon: props.title ? undefined : 'qax-icon-Trash',
+            icon: props.title ? undefined : 'el-icon-delete',
             ...attrs
           },
           on: {
@@ -143,7 +143,7 @@ export const ArrayMoveDown = defineComponent({
     return () => {
       if (base?.field.value.pattern !== 'editable') return null
       return h(
-        ElButton,
+        'ElButton',
         {
           class: `${prefixCls}-move-down`,
           attrs: {
@@ -175,7 +175,7 @@ export const ArrayMoveUp = defineComponent({
     return () => {
       if (base?.field.value.pattern !== 'editable') return null
       return h(
-        ElButton,
+        'ElButton',
         {
           class: `${prefixCls}-move-up`,
           attrs: {

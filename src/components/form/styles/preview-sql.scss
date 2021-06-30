@@ -1,0 +1,27 @@
+.sql-text {
+  font-size: 12px;
+
+  pre {
+    padding: 0.88889em;
+    margin: 0;
+    word-break: normal;
+    word-wrap: normal;
+    white-space: pre;
+    overflow: auto;
+    background: #f6f6f6;
+    border-radius: 4px;
+  }
+
+  .hljs {
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier,
+      monospace !important;
+  }
+
+  .hljs-keyword {
+    color: #06f;
+  }
+
+  .hljs-operator {
+    color: #c2a469;
+  }
+}

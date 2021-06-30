@@ -22,24 +22,22 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item
-          v-if="value.fieldFilterType !== 'keepAllFields'"
-          :placeholder="
-            value.fieldFilterType === 'retainedField'
-              ? $t(
-                  'editor.cell.data_node.collection.form.fieldFilter.placeholderKeep'
-                )
-              : $t(
-                  'editor.cell.data_node.collection.form.fieldFilter.placeholderDelete'
-                )
-          "
-        >
+        <el-form-item v-if="value.fieldFilterType !== 'keepAllFields'">
           <el-select
             size="mini"
             v-model="value.selectedFields"
             multiple
             filterable
             default-first-option
+            :placeholder="
+              value.fieldFilterType === 'retainedField'
+                ? $t(
+                    'editor.cell.data_node.collection.form.fieldFilter.placeholderKeep'
+                  )
+                : $t(
+                    'editor.cell.data_node.collection.form.fieldFilter.placeholderDelete'
+                  )
+            "
             @change="handleFilterChange()"
           >
             <el-option
@@ -412,6 +410,7 @@ export default {
       }
     },
     toSqlWhere(conditions) {
+      console.log('mergedSchema', this.mergedSchema, this.custFields)
       if (!this.mergedSchema) return
       let res = ''
       conditions.forEach(cond => {
