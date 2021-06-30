@@ -627,6 +627,7 @@ export default {
     return {
       // modelForm: {},
       rules: [],
+      id: '',
       visible: false,
       createStrategyDisabled: false,
       timezones: [],
@@ -722,6 +723,7 @@ export default {
     }
   },
   created() {
+    this.id = this.$route.params.id || ''
     this.databaseType = this.$route.query.databaseType || this.$store.state.createConnection.databaseType
     //确认类型 按照type 初始化变量
     if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
@@ -783,7 +785,8 @@ export default {
               ) {
                 let filter = {
                   where: {
-                    name: this.model.name
+                    name: this.model.name,
+                    id: { neq: this.id }
                   },
                   fields: {
                     name: 1
@@ -796,7 +799,6 @@ export default {
                   })
                   .then(res => {
                     if (res.data && res.data.length !== 0) {
-                      console.log(res.data)
                       callback(new Error('名称已存在'))
                     } else callback()
                   })

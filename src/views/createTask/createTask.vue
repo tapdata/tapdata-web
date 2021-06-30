@@ -229,7 +229,8 @@ export default {
               } else if (value && value.trim()) {
                 let filter = {
                   where: {
-                    name: value
+                    name: value,
+                    id: { neq: this.id }
                   },
                   fields: {
                     name: 1
@@ -242,7 +243,6 @@ export default {
                   })
                   .then(res => {
                     if (res.data && res.data.length !== 0) {
-                      console.log(res.data)
                       callback(new Error('任务名称已存在'))
                     } else callback()
                   })
