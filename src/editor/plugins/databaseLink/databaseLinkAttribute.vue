@@ -411,7 +411,7 @@ export default {
 
     getData() {
       let result = JSON.parse(JSON.stringify(this.model))
-      console.log(this.model)
+      // console.log(this.model)
       // let includeTables = []
       // for (let i = 0; i < this.sourceData.length; i++) {
       //   for (let j = 0; j < this.model.selectSourceArr.length; j++) {

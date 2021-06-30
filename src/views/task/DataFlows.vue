@@ -1007,7 +1007,7 @@ export default {
       }
       item.statusLabel = this.statusMap[item.status].label
       // let statusMap = {}
-      let getLag = (lag) => {
+      let getLag = lag => {
         let r = ''
         if (lag) {
           let m = this.$moment.duration(lag)
@@ -1026,8 +1026,9 @@ export default {
         return r
       }
       item['lag'] = '-'
-      if (item.stats && !window.getSettingByKey('DFS_TCM_PLATFORM')) { //企业版增加增量lag
-        if (item.stats.replicationLag && item.stats.replicationLag !== 0 ) {
+      if (item.stats && !window.getSettingByKey('DFS_TCM_PLATFORM')) {
+        //企业版增加增量lag
+        if (item.stats.replicationLag && item.stats.replicationLag !== 0) {
           item['lag'] = getLag(item.stats.replicationLag)
         }
       }
@@ -1269,6 +1270,7 @@ export default {
       MetadataInstance.download(where, 'DataFLow')
     },
     run(ids) {
+      let _this = this
       if (this.$refs.agentDialog.checkAgent()) {
         // if (node) {
         // 	this.$refs.errorHandler.checkError(node, () => {
@@ -1302,8 +1304,31 @@ export default {
         // 		}
         // 	});
         // } else {
-        this.changeStatus(ids, { status: 'scheduled' })
-        // }
+        let id = ids[0]
+        let filter = {
+          where: {
+            'contextMap.dataFlowId': {
+              eq: id
+            },
+            level: 'ERROR'
+          }
+        }
+
+        _this
+          .$api('logs')
+          .get({ filter: JSON.stringify(filter) })
+          .then(res => {
+            if (res.data?.length) {
+              _this.$refs.errorHandler.checkError(
+                { id, status: 'error' },
+                () => {
+                  _this.changeStatus(ids, { status: 'scheduled' })
+                }
+              )
+            } else {
+              _this.changeStatus(ids, { status: 'scheduled' })
+            }
+          })
       }
     },
     stop(ids, item = {}) {
