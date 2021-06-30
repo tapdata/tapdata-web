@@ -476,7 +476,8 @@ export default {
       let filter = {
         order: this.order,
         limit: size,
-        fields: fields,
+        noSchema: 1,
+        //fields: fields, //传noSchema 过滤schema
         skip: (current - 1) * size,
         where
       }
