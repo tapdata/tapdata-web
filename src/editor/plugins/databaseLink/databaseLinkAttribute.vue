@@ -119,15 +119,16 @@
               v-model="model.selectSourceArr"
               :data="sourceData"
               @change="handleChangeTransfer"
-              @right-check-change="handleSelectTable"
             >
               <span class="box" slot-scope="{ option }">
-                <span
-                  class="text"
-                  :title="option.label"
-                  :class="[{ active: option.label !== option.key }, 'text']"
-                  >{{ option.label }}</span
-                >
+                <span v-if="model.selectSourceArr.includes(option.label)">{{
+                  model.table_prefix
+                }}</span>
+                <!-- :class="[{ active: option.label !== option.key }, 'text']" -->
+                <span :title="option.label">{{ option.label }}</span>
+                <span v-if="model.selectSourceArr.includes(option.label)">{{
+                  model.table_suffix
+                }}</span>
                 <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span> -->
@@ -269,7 +270,6 @@ import factory from '../../../api/factory'
 import MqTransfer from './mqTransfer'
 let connections = factory('connections')
 let editorMonitor = null
-let selectKeepArr = []
 export default {
   name: 'databaseLink',
   components: { MqTransfer },
@@ -382,6 +382,7 @@ export default {
           }
           this.model.table_prefix = targetFormData.table_prefix
           this.model.table_suffix = targetFormData.table_suffix
+          debugger
 
           if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
             targetFormData.syncObjects.forEach(item => {
@@ -411,14 +412,14 @@ export default {
     getData() {
       let result = JSON.parse(JSON.stringify(this.model))
       console.log(this.model)
-      let includeTables = []
-      for (let i = 0; i < this.sourceData.length; i++) {
-        for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-          if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-            includeTables.push(this.sourceData[i].key)
-          }
-        }
-      }
+      // let includeTables = []
+      // for (let i = 0; i < this.sourceData.length; i++) {
+      //   for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+      //     if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
+      //       includeTables.push(this.sourceData[i].key)
+      //     }
+      //   }
+      // }
       if (this.cell) {
         let targetCell = this.cell.getTargetCell()
         if (targetCell && targetCell.getFormData()) {
@@ -493,12 +494,12 @@ export default {
 
     // 穿梭框值改变的时候
     handleChangeTransfer() {
-      this.sourceData.forEach(el => {
-        if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
-          el.label = el.key
-        }
-      })
-      this.preFixSuffixData()
+      // this.sourceData.forEach(el => {
+      //   if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
+      //     el.label = el.key
+      //   }
+      // })
+      // this.preFixSuffixData()
     },
 
     // 穿梭框搜索
@@ -507,9 +508,9 @@ export default {
     },
 
     // 已选择的表
-    handleSelectTable(data) {
-      selectKeepArr = data
-    },
+    // handleSelectTable(data) {
+    //   selectKeepArr = data
+    // },
 
     // 添加前后缀弹窗开关
     handDialog() {
@@ -524,35 +525,35 @@ export default {
 
     // 添加前后缀数据处理
     preFixSuffixData() {
-      if (
-        this.sourceData &&
-        this.sourceData.length &&
-        this.model.selectSourceArr.length
-      ) {
-        let selectSourceArr = []
-        this.model.selectSourceArr = Array.from(
-          new Set(this.model.selectSourceArr)
-        )
-        this.sourceData.forEach(sourceName => {
-          this.model.selectSourceArr.map(k => {
-            if (k == sourceName.key) {
-              selectSourceArr.push(k)
-            }
-          })
-        })
-        this.model.selectSourceArr = selectSourceArr
+      // if (
+      //   this.sourceData &&
+      //   this.sourceData.length &&
+      //   this.model.selectSourceArr.length
+      // ) {
+      //   let selectSourceArr = []
+      //   this.model.selectSourceArr = Array.from(
+      //     new Set(this.model.selectSourceArr)
+      //   )
+      //   this.sourceData.forEach(sourceName => {
+      //     this.model.selectSourceArr.map(k => {
+      //       if (k == sourceName.key) {
+      //         selectSourceArr.push(k)
+      //       }
+      //     })
+      //   })
+      //   this.model.selectSourceArr = selectSourceArr
 
-        for (let i = 0; i < this.sourceData.length; i++) {
-          for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-            if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-              this.sourceData[i].label =
-                this.model.table_prefix +
-                this.sourceData[i].key +
-                this.model.table_suffix
-            }
-          }
-        }
-      }
+      //   for (let i = 0; i < this.sourceData.length; i++) {
+      //     for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+      //       if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
+      //         this.sourceData[i].label =
+      //           this.model.table_prefix +
+      //           this.sourceData[i].key +
+      //           this.model.table_suffix
+      //       }
+      //     }
+      //   }
+      // }
       this.mqActiveData.table_prefix = this.model.table_prefix
       this.mqActiveData.table_suffix = this.model.table_suffix
     },
@@ -563,22 +564,15 @@ export default {
       this.model.table_prefix = ''
       this.mqActiveData.table_prefix = ''
       this.mqActiveData.table_suffix = ''
-      if (this.sourceData.length) {
-        for (let i = 0; i < this.sourceData.length; i++) {
-          // for (let j = 0; j < selectKeepArr.length; j++) {
-          for (let k = 0; k < this.model.selectSourceArr.length; k++) {
-            if (
-              // this.sourceData[i].label === selectKeepArr[j] &&
-              this.sourceData[i].key === this.model.selectSourceArr[k]
-            ) {
-              this.sourceData[i].label = this.sourceData[i].key
-              // this.sourceData[i].key = this.sourceData[i].label;
-              // this.model.selectSourceArr[k] = this.sourceData[i].value;
-            }
-            // 	}
-          }
-        }
-      }
+      // if (this.sourceData.length) {
+      //   for (let i = 0; i < this.sourceData.length; i++) {
+      //     for (let k = 0; k < this.model.selectSourceArr.length; k++) {
+      //       if (this.sourceData[i].key === this.model.selectSourceArr[k]) {
+      //         this.sourceData[i].label = this.sourceData[i].key
+      //       }
+      //     }
+      //   }
+      // }
     },
 
     // 获取表名称
