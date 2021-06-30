@@ -818,7 +818,7 @@ export default {
           )
         )
         .then(() => {
-          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') { //企业版跟DFS都有弹出框
             this.dialogTestVisible = true
           }
           this.$refs.test.start()
