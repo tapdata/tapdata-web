@@ -98,6 +98,9 @@
         <div>3.待升级命令执行完毕后，出现如下所示则代表Agent升级成功：Update finished.</div>
       </div>
     </main>
+    <footer class="footer">
+      <ElButton type="primary" @click="goBack()">完成</ElButton>
+    </footer>
   </section>
 </template>
 <script>
@@ -156,6 +159,9 @@ export default {
     // 复制命令行
     onCopy() {
       this.showTooltip = true
+    },
+    goBack() {
+      this.$router.push({ name: 'Instance' })
     }
   }
 }
@@ -175,7 +181,7 @@ export default {
     width: 100%;
     //height: calc(100% - 80px);
     margin: 0 auto;
-    padding: 0 20% 20px;
+    padding: 0 20% 90px;
     box-sizing: border-box;
     overflow: auto;
 
