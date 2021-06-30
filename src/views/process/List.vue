@@ -283,7 +283,7 @@ export default {
     }
   }
   .process-list {
-    background-color: rgba(239, 241, 244, 100);
+    background-color: #fafafa;
     .search-bar {
       display: flex;
       li + li {
@@ -320,7 +320,6 @@ $color: #337dff;
         background-color: #fff;
       }
       .el-table {
-        padding: 0 10px;
         box-sizing: border-box;
         .database-link {
           color: $color;

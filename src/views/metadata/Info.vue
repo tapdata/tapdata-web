@@ -1231,7 +1231,7 @@ export default {
 
         .table-box {
           height: calc(100% - 28px);
-          padding: 10px 20px;
+          padding: 10px 15px;
           background-color: #fff;
           box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
           box-sizing: border-box;
@@ -1332,8 +1332,11 @@ export default {
     }
     .iconBox {
       width: 100%;
-
+      height: 28px;
+      line-height: 28px;
       .header-icon {
+        float: left;
+        margin-top: 8px;
         // padding-right: 12px;
         // vertical-align: middle;
         transition: -webkit-transform 0.3s;
@@ -1346,14 +1349,16 @@ export default {
       span {
         display: inline-block;
         padding-left: 12px;
-        height: 30px;
-        line-height: 30px;
+        height: 28px;
+        line-height: 28px;
       }
       .iconfont {
         display: inline-block;
         float: right;
-        padding-top: 3px;
         cursor: pointer;
+        &:hover {
+          color: #409eff;
+        }
       }
       .el-button {
         float: right;
@@ -1372,7 +1377,7 @@ export default {
     }
     .el-collapse-item__header.is-active {
       .header-icon {
-        margin-top: 12px;
+        margin-top: 8px;
         transform: rotate(90deg);
       }
     }
@@ -1396,6 +1401,7 @@ export default {
     flex-direction: column;
     overflow: hidden;
     box-sizing: border-box;
+    border-radius: 3px;
     .table-page-table {
       th {
         padding: 0;
