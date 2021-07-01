@@ -1530,7 +1530,7 @@ export default {
             return
           }
           let params = {
-            name: this.renameData.name,
+            name: this.renameData.rename,
             id: this.model.id,
             submit: true
           }
