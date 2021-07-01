@@ -1530,8 +1530,9 @@ export default {
             return
           }
           let params = {
-            name: this.model.name,
-            id: this.model.id
+            name: this.renameData.name,
+            id: this.model.id,
+            submit: true
           }
           this.$api('connections')
             .patchId(params)
