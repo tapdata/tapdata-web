@@ -264,6 +264,7 @@ export default {
     let query = this.$route.query
     this.searchParams = Object.assign(this.searchParams, query)
     this.fetch()
+    this.getAgent()
   },
   methods: {
     async getAgent() {
