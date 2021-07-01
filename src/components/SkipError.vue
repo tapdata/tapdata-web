@@ -152,8 +152,9 @@ export default {
       font-size: 12px;
       display: inline-block;
       line-height: 20px;
-      word-break: break-all;
+      word-break: normal;
       white-space: normal;
+      user-select: text;
     }
   }
   li:last-child {

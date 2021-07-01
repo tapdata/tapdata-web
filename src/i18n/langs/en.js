@@ -744,7 +744,7 @@ const en = {
     runNomally: 'to make sure the job running correctly;',
     editLayerTip: 'otherwise the job will be abnormal, continue？',
     continueEditing: 'Still Edit',
-    NumberType: 'must be a number and cannot be less than 0',
+    numberType: 'must be a number and cannot be less than 0',
     setting: {
       distinctWriteType: 'De-rewrite mode',
       intellect: 'Intelligent de-rewrite',
@@ -769,8 +769,8 @@ const en = {
       startJob: 'Skip errors, continue to start',
       cancel: 'Cancel',
       taskName: 'Task name',
-      Errortotal: 'total XX, selected',
-      Strip: 'row'
+      errorTotal: 'Total XX, selected',
+      strip: 'row'
     }
   },
   connection: {
