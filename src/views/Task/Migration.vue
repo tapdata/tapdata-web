@@ -219,7 +219,7 @@ export default {
 
       list: [],
       page: {
-        current: 0,
+        current: 1,
         size: 10,
         total: 0
       },
@@ -264,6 +264,7 @@ export default {
     let query = this.$route.query
     this.searchParams = Object.assign(this.searchParams, query)
     this.fetch()
+    this.getAgent()
   },
   methods: {
     async getAgent() {

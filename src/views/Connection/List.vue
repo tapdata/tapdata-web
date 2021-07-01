@@ -171,7 +171,7 @@ export default {
 
       list: [],
       page: {
-        current: 0,
+        current: 1,
         size: 10,
         total: 0
       },
@@ -248,7 +248,8 @@ export default {
         }
         status && (where.status = status)
         let filter = {
-          fields,
+         // fields, noSchema:1 不加载schema
+          noSchema: 1,
           where,
           limit: this.page.size,
           skip: (current - 1) * this.page.size,
