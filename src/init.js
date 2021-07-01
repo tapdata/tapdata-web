@@ -8,7 +8,7 @@ import './assets/app.scss'
 import VueClipboard from 'vue-clipboard2'
 import { Message } from 'element-ui'
 import settings from './settings'
-import TapdataWebCore from 'tapdata-web-core'
+import TapdataWebCore from '../packages/tapdata-web-core'
 
 require('./assets/theme/dfs/index.scss')
 

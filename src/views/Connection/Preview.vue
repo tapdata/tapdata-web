@@ -175,7 +175,7 @@ export default {
       if (!type) {
         type = 'default'
       }
-      return require(`tapdata-web-core/assets/images/connection-type/${type.toLowerCase()}.png`)
+      return require(`../../../packages/tapdata-web-core/assets/images/connection-type/${type.toLowerCase()}.png`)
     },
     recieveTestData(data) {
       if (!data.status || data.status === null) return

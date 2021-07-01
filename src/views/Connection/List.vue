@@ -43,7 +43,7 @@
                 class="mr-2"
                 style="width: 24px;height: 24px;"
                 :src="
-                  require('tapdata-web-core/assets/images/connection-type/' +
+                  require('../../../packages/tapdata-web-core/assets/images/connection-type/' +
                     scope.row.database_type.toLowerCase() +
                     '.png')
                 "
@@ -209,6 +209,39 @@ export default {
         this.loading = true
         let current = pageNum || this.page.current
         let { keyword, status } = this.searchParams
+        // let fields = {
+        //   name: true,
+        //   user_id: true,
+        //   connection_type: true,
+        //   database_type: true,
+        //   search_databaseType: true,
+        //   database_host: true,
+        //   database_uri: true,
+        //   database_username: true,
+        //   database_port: true,
+        //   database_name: true,
+        //   sourceType: true,
+        //   status: true,
+        //   id: true,
+        //   listtags: true,
+        //   tableCount: true,
+        //   loadCount: true,
+        //   loadFieldsStatus: true,
+        //   schemaAutoUpdate: true,
+        //   platformInfo: true,
+        //   last_updated: true,
+        //   additionalString: true,
+        //   database_password: true,
+        //   fill: true,
+        //   sslCert: true,
+        //   ssl: true,
+        //   sslCAFile: true,
+        //   sslPass: true,
+        //   sslKeyFile: true,
+        //   sslKey: true,
+        //   sslValidate: false,
+        //   sslCA: true //MongoDB
+        // }
         let where = {}
         if (keyword && keyword.trim()) {
           where.name = { like: toRegExp(keyword), options: 'i' }
