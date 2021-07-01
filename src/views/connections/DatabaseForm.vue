@@ -1002,7 +1002,7 @@ export default {
       type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
         type = 'drs_' + type
-      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs') {
+      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
         type = 'dfs_' + type
       }
       let func = formConfig[type]
