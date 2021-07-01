@@ -16,7 +16,7 @@
               </ElSelect>
             </li>
             <li class="ml-3">
-              <ElInput v-model="searchParams.parameter1" placeholder="操作对象" @input="search()">
+              <ElInput v-model="searchParams.parameter1" placeholder="操作对象" clearable @input="search()">
                 <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
               </ElInput>
             </li>
@@ -45,7 +45,7 @@
               </ElTooltip>
             </li>
             <li class="ml-3">
-              <ElInput v-model="searchParams.username" placeholder="用户名" @input="search()">
+              <ElInput v-model="searchParams.username" placeholder="用户名" clearable @input="search()">
                 <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
               </ElInput>
             </li>
@@ -302,7 +302,7 @@ export default {
       // this.fetch()
     },
 
-    fetch(pageNum = 1, debounce, hideLoading) {
+    fetch(pageNum = 1, debounce = 200, hideLoading) {
       delayTrigger(async () => {
         if (!hideLoading) {
           this.loading = true
@@ -369,11 +369,11 @@ export default {
     },
     getDescFnc(row) {
       let allTypeMap = this.allTypeMap
-      let { modular, operation, rename, oldName, parameter1 } = row
+      let { modular, operation, rename, parameter1, parameter2 } = row
       let result
       // 修改连接 -- 更名
       if (modular === 'connection' && operation === 'update' && rename) {
-        result = `将连接名称由【${oldName}】修改为`
+        result = `将连接名称由【${parameter2}】修改为`
       } else if (operation === 'copy') {
         result = `${allTypeMap[operation]}了${allTypeMap[modular]}[${parameter1}]为`
       } else {
