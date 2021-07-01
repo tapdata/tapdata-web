@@ -1600,7 +1600,9 @@ export default {
       result: '結果',
       information: '說明',
       unTest: '待測試... ',
-      error: '測試服務請求超時，請關閉重試'
+      error: '測試服務請求超時，請關閉重試',
+      retryBtn: '重試',
+      retryTest: '連接測試服務啟動失敗，請點擊重試'
     },
     form: {
       connectionName: '連接名稱',
