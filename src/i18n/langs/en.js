@@ -3233,7 +3233,7 @@ const en = {
     job_cdc_record_doc: 'Automatically save incremental events',
     job_cdc_record_ttl: 'Incremental event save time (days)',
     job_cdc_record_ttl_doc: 'Incremental event save time (days)',
-    Lagtime: 'incremental lag decision time (seconds)',
+    lagTime: 'incremental lag decision time (seconds)',
     connection_schema_update_hour: 'Data source schema update time',
     connection_schema_update_interval:
       'Data source schema update interval (days)',
