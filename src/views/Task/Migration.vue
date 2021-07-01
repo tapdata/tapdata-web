@@ -219,7 +219,7 @@ export default {
 
       list: [],
       page: {
-        current: 0,
+        current: 1,
         size: 10,
         total: 0
       },
