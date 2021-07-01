@@ -265,15 +265,14 @@ export const defaultModel = {
     connection_type: '',
     database_host: '',
     database_port: '',
-    mqType: '', //MQ类型
+    mqType: '0', //MQ类型
     brokerURL: '', //MQ连接串
     mqUserName: '',
     mqPassword: '',
     mqQueueSet: '', //队列名集合
     mqTopicSet: '', //主题名称
     routeKeyField: '', //消息路由
-    virtualHost: '', //虚拟主机
-    nameSrvAddr: ''
+    virtualHost: '' //虚拟主机
   }
 }
 export const defaultCloudModel = {

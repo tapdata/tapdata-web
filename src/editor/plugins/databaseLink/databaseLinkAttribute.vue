@@ -604,8 +604,6 @@ export default {
                   ...result.data.mqTopicSet
                 ]
                 tableData = [...new Set(data)]
-              } else if (result.data.mqType === '1') {
-                tableData = result.data.mqQueueSet
               } else {
                 tableData = result.data.mqTopicSet
               }

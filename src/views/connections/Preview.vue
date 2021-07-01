@@ -358,6 +358,24 @@ export default {
             })
           }
 
+          // MQ类型
+          if (data.database_type === 'mq') {
+            items.forEach(el => {
+              if (el.field === 'mqType') {
+                switch (el.value) {
+                  case '0':
+                    el.value = 'ActiveMQ'
+                    break
+                  case '1':
+                    el.value = 'RabbitMQ'
+                    break
+                  default:
+                    el.value = 'RocketMQ'
+                }
+              }
+            })
+          }
+
           // 文件预览显示
           if (data.database_type === 'file') {
             items.forEach(el => {
@@ -510,7 +528,19 @@ export default {
           'file',
           'kafka',
           'mariadb',
-          'mysql pxc'
+          'mysql pxc',
+          'jira',
+          'dameng',
+          'hive',
+          'gbase-8s',
+          'sybase ase',
+          'gaussdb200',
+          'dummy db',
+          'rest api',
+          'custom_connection',
+          'gridfs',
+          'mq',
+          'tcp_udp'
         ].includes(type)
       ) {
         this.$router.push('connections/' + id + '/edit?databaseType=' + type)

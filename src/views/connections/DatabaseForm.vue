@@ -144,11 +144,18 @@
                 {{ $t('dataForm.form.kafka.pushErrorTip') }}
               </div>
 
-              <div class="url-tip" slot="queueTip" v-if="model.mqType !== '2'">
+              <div class="url-tip" slot="queueTip" v-if="model.mqType === '0'">
                 {{ $t('dataForm.form.mq.queueSetTip') }}
               </div>
-              <div class="url-tip" slot="topicTip" v-if="model.mqType !== '1'">
+              <div class="url-tip" slot="topicTip">
                 {{ $t('dataForm.form.mq.topicSetTip') }}
+              </div>
+              <div
+                class="url-tip"
+                slot="brokerUrlTip"
+                v-if="model.mqType === '0'"
+              >
+                {{ $t('dataForm.form.mq.brokerUrlTip') }}
               </div>
               <!-- rest api -->
               <div class="url-tip" slot="req_pre_process">

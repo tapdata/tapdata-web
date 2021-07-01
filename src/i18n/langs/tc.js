@@ -1897,7 +1897,9 @@ const tc = {
         routeKeyField: '消息路由',
         virtualHost: '虛擬主機',
         queueSetTip: '多個隊列用逗號隔開',
-        topicSetTip: '多個主題用逗號隔開'
+        topicSetTip: '多個主題用逗號隔開',
+        brokerUrl: 'MQ連接串',
+        brokerUrlTip: '示例tcp://127.0.0.1：61616，支持tcp,nio,udp,ssl,http(s)'
       },
       tcp: {
         agreementType: '协议类型',

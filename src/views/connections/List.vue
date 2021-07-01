@@ -564,15 +564,15 @@ export default {
             } else {
               item.connectionUrl = item.database_uri || item.connection_name
             }
-            if (item.database_type === 'mq') {
-              if (item.mqType === '0') {
-                item.connectionUrl = item.brokerURL
-              } else if (item.mqType === '2') {
-                item.connectionUrl = item.nameSrvAddr
-              }
+            if (item.database_type === 'mq' && item.mqType === '0') {
+              item.connectionUrl = item.brokerURL
             }
             // 不存在uri 和 port === 0
-            if (!item.database_uri && !item.database_port) {
+            if (
+              !item.database_uri &&
+              !item.database_port &&
+              item.mqType !== '0'
+            ) {
               item.connectionUrl = ''
             }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]

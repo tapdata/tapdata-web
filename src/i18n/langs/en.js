@@ -1970,12 +1970,15 @@ const en = {
         database_port: 'MQ Port',
         routeKeyField: 'Message routing',
         virtualHost: 'Virtual host',
-        QueueSetTip: 'Multiple queues are separated by commas',
-        TopicSetTip: 'Multiple topics separated by commas'
+        queueSetTip: 'Multiple queues are separated by commas',
+        topicSetTip: 'Multiple topics separated by commas',
+        brokerUrl: 'MQ connection string',
+        brokerUrlTip:
+          'example tcp://127.0.0.1 : 61616, support TCP, NiO, UDP, SSL, HTTP (s) '
       },
       tcp: {
-        AgreementType: 'Protocol type ',
-        TargetAddr: 'Target address'
+        agreementType: 'Protocol type ',
+        targetAddr: 'Target address'
       }
     },
     error: {

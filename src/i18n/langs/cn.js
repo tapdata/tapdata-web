@@ -1894,15 +1894,17 @@ const cn = {
       },
       mq: {
         mqType: 'MQ类型',
-        mqQueueSet: '队列名集合',
-        mqTopicSet: '主题名集合',
+        mqQueueSet: '队列名称',
+        mqTopicSet: '主题名称',
         brokerURL: 'MQ连接串',
         database_host: 'MQ地址',
         database_port: 'MQ端口',
         routeKeyField: '消息路由',
         virtualHost: '虚拟主机',
         queueSetTip: '多个队列用逗号隔开',
-        topicSetTip: '多个主题用逗号隔开'
+        topicSetTip: '多个主题用逗号隔开',
+        brokerUrl: 'MQ连接串',
+        brokerUrlTip: '示例tcp://127.0.0.1:61616,支持tcp,nio,udp,ssl,http(s)'
       },
       tcp: {
         agreementType: '协议类型',

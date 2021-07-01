@@ -135,7 +135,18 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira'
+        'jira',
+        'dameng',
+        'hive',
+        'gbase-8s',
+        'sybase ase',
+        'gaussdb200',
+        'dummy db',
+        'rest api',
+        'custom_connection',
+        'gridfs',
+        'mq',
+        'tcp_udp'
       ] //目前白名单,
     }
   },
