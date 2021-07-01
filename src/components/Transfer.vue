@@ -23,6 +23,7 @@
         <span
           v-if="
             selectSourceArr.includes(option.key) &&
+            $window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs' &&
             !isTwoWay
           "
           @click.stop.prevent="handleFiled(option)"

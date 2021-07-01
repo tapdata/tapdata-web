@@ -127,6 +127,7 @@ export const defaultModel = {
     sslCAFile: null,
     sslKeyFile: null,
     search_databaseType: '',
+    schema: '',
     increamentalTps: 100, //dummy
     initialReadSize: 100000, //dummy
     schema: ''

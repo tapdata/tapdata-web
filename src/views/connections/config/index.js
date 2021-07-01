@@ -38,6 +38,8 @@ import dfs_db2 from './dfs_db2'
 import dfs_mongodb from './dfs_mongodb'
 import dfs_sqlserver from './dfs_sqlserver'
 import dfs_redis from './dfs_redis'
+import drs_dameng from './drs_dameng'
+import dfs_dameng from './dfs_dameng'
 import dfs_elasticsearch from './dfs_elasticsearch'
 import mq from './mq'
 
@@ -62,6 +64,8 @@ export default {
   drs_mysqlpxc,
   drs_postgres,
   drs_db2,
+  drs_dameng,
+  dfs_dameng,
   drs_mongodb,
   drs_sqlserver,
   dfs_mysql,

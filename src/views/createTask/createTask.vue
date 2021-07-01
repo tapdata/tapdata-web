@@ -91,13 +91,12 @@
                   slot="syncPoints"
                   v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
                 >
-                  <el-row
-                    v-for="item in settingModel.syncPoints"
-                    :key="item.name"
-                    style="margin-bottom: 10px"
-                  >
+                  <el-row style="margin-bottom: 10px">
                     <el-col :span="8" style="margin-right: 10px">
-                      <el-select v-model="item.type" placeholder="请选择">
+                      <el-select
+                        v-model="settingModel.syncPoints[0].type"
+                        placeholder="请选择"
+                      >
                         <el-option
                           v-for="op in options"
                           :key="op.value"
@@ -107,12 +106,17 @@
                         </el-option>
                       </el-select>
                     </el-col>
-                    <el-col :span="12" v-if="item.type !== 'current'">
+                    <el-col
+                      :span="12"
+                      v-if="settingModel.syncPoints[0].type !== 'current'"
+                    >
                       <el-date-picker
                         format="yyyy-MM-dd HH:mm:ss"
-                        v-model="item.date"
+                        v-model="settingModel.syncPoints[0].date"
                         type="datetime"
-                        :disabled="item.type === 'current'"
+                        :disabled="
+                          settingModel.syncPoints[0].type === 'current'
+                        "
                       ></el-date-picker>
                     </el-col>
                   </el-row>
@@ -330,7 +334,7 @@ export default {
             this.transferData = {
               table_prefix: stages[1].table_prefix,
               table_suffix: stages[1].table_suffix,
-              field_process: stages[0].field_process,
+              field_process: stages[0].field_process || [],
               selectSourceArr: stages[1].syncObjects[0]
                 ? stages[1].syncObjects[0].objectNames
                 : []
@@ -425,14 +429,19 @@ export default {
       if (field === 'target_databaseType') {
         this.getConnection(this.getWhere('target'), 'target_connectionId', true)
       }
+      if (field === 'source_sourceType') {
+        this.getConnection(this.getWhere('source'), 'source_connectionId', true)
+      }
+      if (field === 'target_sourceType') {
+        this.getConnection(this.getWhere('target'), 'target_connectionId', true)
+      }
     },
     addSyncPoints() {
-      this.primarySyncPoints() //先初始化再push
       let syncPoints = {
         connectionId: this.dataSourceModel.target_connectionId, //双向模式下 有两个源节点
-        type: 'current', // localTZ: 本地时区； connTZ：连接时区
+        type: this.settingModel.syncPoints[0].type, // localTZ: 本地时区； connTZ：连接时区
         time: '',
-        date: '',
+        date: this.settingModel.syncPoints[0].date,
         name: '',
         timezone: this.systemTimeZone // 当type为localTZ时有该字段
       }
@@ -482,18 +491,15 @@ export default {
             //源端目标端不可选择相同库 规则: id一致
             if (
               this.dataSourceModel.source_connectionId ===
-                this.dataSourceModel.target_connectionId &&
-              window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'
+              this.dataSourceModel.target_connectionId
             ) {
-              this.showSysncTableTip = true // dfs 仅提示
-            } else if (
-              this.dataSourceModel.source_connectionId ===
-                this.dataSourceModel.target_connectionId &&
-              window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
-            ) {
-              this.showSysncTableTip = false
-              this.$message.error('源端连接与目标端连接不能选择相同的连接')
-              return
+              if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+                this.showSysncTableTip = true // dfs 仅提示
+              } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+                this.showSysncTableTip = false
+                this.$message.error('源端连接与目标端连接不能选择相同的连接')
+                return
+              }
             }
             //数据源名称
             let source = this.handleConnectionName(
@@ -530,6 +536,14 @@ export default {
       if (type === 'setting') {
         this.$refs.setting.validate(valid => {
           if (valid) {
+            //设置同步时间 必须填写时间
+            if (
+              this.settingModel.syncPoints[0].type !== 'current' &&
+              this.settingModel.syncPoints[0].date === ''
+            ) {
+              this.$message.error('设置同步时间不能为空')
+              return
+            }
             this.activeStep += 1
             this.getFormConfig()
             if (this.showSysncTableTip) {
@@ -551,7 +565,9 @@ export default {
       this.getFormConfig()
       // 重置 数据源类型列表
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-        this.allowDatabaseType()
+        this.$nextTick(() => {
+          this.allowDatabaseType()
+        })
       }
     },
     // 根据步骤获取不同的表单项目
@@ -592,6 +608,11 @@ export default {
           ) {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')
+          }
+          //db2 作为源 不能是增量模式
+          if (['db2'].includes(this.dataSourceModel.source_databaseType)) {
+            this.changeConfig([], 'setting_sync_type')
+            this.settingModel.sync_type = 'initial_sync' //db2为源端 默认选中全量同步
           }
           //初始化同步时间 针对于数组0
           if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
@@ -635,15 +656,27 @@ export default {
         }
       } else {
         if (type === 'source') {
+          // dameng 不可以做源
+          let allowDataType = _.cloneDeep(this.allowDataType)
+          let index = allowDataType.findIndex(item => item === 'dameng')
+          if (index !== -1) {
+            allowDataType.splice(index, 1)
+          }
           where = {
-            database_type: { in: this.allowDataType },
+            database_type: { in: allowDataType },
             sourceType: this.dataSourceModel.source_sourceType,
             'platformInfo.region': this.platformInfo.region,
             'platformInfo.zone': this.platformInfo.zone
           }
         } else {
+          // db2 不可以做目标端
+          let allowDataType = _.cloneDeep(this.allowDataType)
+          let index = allowDataType.findIndex(item => item === 'db2')
+          if (index !== -1) {
+            allowDataType.splice(index, 1)
+          }
           where = {
-            database_type: { in: this.allowDataType },
+            database_type: { in: allowDataType },
             sourceType: this.dataSourceModel.target_sourceType,
             'platformInfo.region': this.platformInfo.region,
             'platformInfo.zone': this.platformInfo.zone
@@ -787,10 +820,23 @@ export default {
           op.show = !!this.supportTwoWay
           break
         }
+        case 'setting_sync_type': {
+          //db2作为源只可以全量同步
+          let op = items.find(it => it.field === 'sync_type')
+          if (op) {
+            op.options = [
+              {
+                label: '全量同步',
+                tip: '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
+                value: 'initial_sync'
+              }
+            ]
+          }
+          break
+        }
         case 'databaseType': {
           let source = items.find(it => it.field === 'source_databaseType')
           if (source) {
-            // dfs源端不支持 redis elasticsearch
             let options = data
             if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
               let filterArr = ['redis', 'elasticsearch']
@@ -854,25 +900,32 @@ export default {
             : ''
         })
       }
-      //设置为增量模式
-      let timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = ''
-      if (timeZone > 0) {
-        systemTimeZone = 0 - timeZone
-      } else {
-        systemTimeZone = '+' + -timeZone
+      // //设置为增量模式
+      // let timeZone = new Date().getTimezoneOffset() / 60
+      // let systemTimeZone = ''
+      // if (timeZone > 0) {
+      //   systemTimeZone = 0 - timeZone
+      // } else {
+      //   systemTimeZone = '+' + -timeZone
+      // }
+      // let syncPoints = [
+      //   {
+      //     connectionId: source.source_connectionId,
+      //     type: 'current', // localTZ: 本地时区； connTZ：连接时区
+      //     time: '',
+      //     date: '',
+      //     name: '',
+      //     timezone: systemTimeZone // 当type为localTZ时有该字段
+      //   }
+      // ]
+      // this.settingModel['syncPoints'] = syncPoints
+      if (
+        this.settingModel.sync_type === 'cdc' &&
+        window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs' &&
+        this.supportTwoWay
+      ) {
+        this.addSyncPoints()
       }
-      let syncPoints = [
-        {
-          connectionId: source.source_connectionId,
-          type: 'current', // localTZ: 本地时区； connTZ：连接时区
-          time: '',
-          date: '',
-          name: '',
-          timezone: systemTimeZone // 当type为localTZ时有该字段
-        }
-      ]
-      this.settingModel['syncPoints'] = syncPoints
       let postData = {
         name: this.settingModel.name,
         description: '',
