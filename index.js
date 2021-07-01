@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { t, use } from './locale'
 import FormBuilder from './components/form-builder'
 import ConnectionTypeSelector from './components/connection-type-selector'
@@ -32,7 +31,6 @@ const install = function(Vue, opts = {}) {
     }
   })
 }
-
 if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
