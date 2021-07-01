@@ -321,6 +321,7 @@ export default {
         if (agentId) {
           where['agentId'] = agentId
           status = status || 'running'
+          this.searchParams.status = status
         }
         syncType && (where['setting.sync_type'] = syncType)
         if (status) {
