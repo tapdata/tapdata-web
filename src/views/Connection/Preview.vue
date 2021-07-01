@@ -426,7 +426,7 @@ export default {
         .then(data => {
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (type === 'first') {
-            this.$refs.test.start(this.data, true, true)
+            this.$refs.test.start(true)
           }
           if (data.loadFieldsStatus === 'finished') {
             this.progress = 100
