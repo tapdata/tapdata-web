@@ -2766,5 +2766,10 @@ module.exports = Object.assign({}, dataflow, connection, {
       token: '@guid',
       downloadUrl: 'http://resource.tapdata.net/package/feagent/v1.0.2/'
     }
+  },
+  '/api/tcm/productRelease/:id': {
+    reqId: '40948acc-789d-4da6-865f-985163bb01e8',
+    code: 'ok',
+    data: 'http://resource.tapdata.net/package/feagent/dfs-v1.19.0-543-g14662271f-test/'
   }
 })

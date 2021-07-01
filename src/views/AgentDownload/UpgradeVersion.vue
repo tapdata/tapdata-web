@@ -142,7 +142,9 @@ export default {
       let agentId = this.$route.query.agentId
       this.$axios.get('api/tcm/config/version/latest/' + agentId).then(data => {
         this.token = data.token
-        this.downloadUrl = data.downloadUrl
+        this.$axios.get(`api/tcm/productRelease/${data.version}`).then(downloadUrl => {
+          this.downloadUrl = downloadUrl
+        })
       })
     },
     // 选择下载安装类型

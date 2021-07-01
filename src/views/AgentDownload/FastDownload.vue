@@ -186,15 +186,20 @@ export default {
       page: 0,
       sort: ['createAt desc']
     }
-    this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
+    this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(async data => {
       if (data.items && data.items.length) {
-        this.handleGetUrl(data.items[0].tmInfo, data.items[0].spec)
+        let version = data.items[0].spec?.version
+        this.downloadUrl = await this.getDownloadUrl(version)
+        this.handleGetUrl(data.items[0].tmInfo)
       } else {
         this.getOrders()
       }
     })
   },
   methods: {
+    getDownloadUrl(version) {
+      return this.$axios.get(`api/tcm/productRelease/${version}`)
+    },
     // 获取agent
     getOrders() {
       this.$axios
@@ -219,7 +224,7 @@ export default {
       let filter = {
         where
       }
-      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
+      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(async data => {
         if (data) {
           let tmInfo = '',
             spec = ''
@@ -227,17 +232,18 @@ export default {
             tmInfo = data.items[0].tmInfo
             spec = data.items[0].spec
           }
-
-          this.handleGetUrl(tmInfo, spec)
+          let version = spec?.version
+          this.downloadUrl = await this.getDownloadUrl(version)
+          this.handleGetUrl(tmInfo)
         }
       })
     },
     // 获取路径地址
-    handleGetUrl(data, spec) {
-      if (!data || !spec) {
+    handleGetUrl(data) {
+      if (!data) {
         return
       }
-      let downloadUrl = (data.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
+      let downloadUrl = (this.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
       this.downloadUrl = downloadUrl
       this.windowLink = 'tapdata start backend --downloadUrl ' + `${downloadUrl} --token ` + data.token
       this.LinuxLink =
