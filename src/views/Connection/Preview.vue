@@ -594,7 +594,7 @@ export default {
     line-height: 1;
     font-weight: normal;
     font-size: 14px;
-    color: red;
+    color: white;
     text-align: center;
     white-space: nowrap;
     cursor: pointer;
