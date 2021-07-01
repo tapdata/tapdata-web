@@ -65,14 +65,14 @@
         <div class="py-2 text-style">升级步骤</div>
         <div>1.进入原Agent的docker容器内</div>
         <div class="box docker-command">
-          <div class="desc">#1.找到原Agent的docker容器CONTAINER ID</div>
-          <div>docker ps -a|grep tapdata|awk -F' ' '{print $1}</div>
-          <div class="desc">#2.通过容器ID进入容器</div>
+          <div class="desc">(1)找到原Agent的docker容器CONTAINER ID</div>
+          <div>docker ps -a|grep tapdata|awk -F' ' '{print $1}'</div>
+          <div class="desc">(2)通过容器ID进入容器</div>
           <div>docker exec -it 容器ID bash</div>
-          <div class="desc">#3.如果容器已停止运行，可以先启动容器再进入容器进行升级</div>
-          <div class="desc">##启动容器</div>
+          <div class="desc">(3)如果容器已停止运行，可以先启动容器再进入容器进行升级</div>
+          <div class="desc">启动容器</div>
           <div>docker start 容器ID</div>
-          <div class="desc">##进入容器</div>
+          <div class="desc">进入容器</div>
           <div>docker exec -it 容器ID bash</div>
         </div>
         <div>
