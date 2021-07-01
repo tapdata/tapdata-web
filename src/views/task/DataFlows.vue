@@ -1008,7 +1008,7 @@ export default {
       }
       item.statusLabel = this.statusMap[item.status].label
       // let statusMap = {}
-      let getLag = (lag) => {
+      let getLag = lag => {
         let r = ''
         if (lag) {
           let m = this.$moment.duration(lag)
@@ -1018,17 +1018,18 @@ export default {
             r = m.hours() + 'h'
           } else if (m.minutes()) {
             r = m.minutes() + 'min'
-          } else if (m.seconds()) {
-            r = m.seconds() + 's'
+            // } else if (m.seconds()) {
+            //   r = m.seconds() + 's'
           } else {
-            r = lag + 'ms'
+            r = lag + 's'
           }
         }
         return r
       }
       item['lag'] = '-'
-      if (item.stats && !window.getSettingByKey('DFS_TCM_PLATFORM')) { //企业版增加增量lag
-        if (item.stats.replicationLag && item.stats.replicationLag !== 0 ) {
+      if (item.stats && !window.getSettingByKey('DFS_TCM_PLATFORM')) {
+        //企业版增加增量lag
+        if (item.stats.replicationLag && item.stats.replicationLag !== 0) {
           item['lag'] = getLag(item.stats.replicationLag)
         }
       }
