@@ -13,8 +13,13 @@ git clone git@e.coding.net:tapdata/dfs/dfs-web.git --recurse-submodules
 初始化子模块
 
 ```
+git config submodule.recurse true    // git pull 默认不拉取子模块，需要submodule.recurse设置为true
+git config status.submodulesummary 1 // git status 默认不展开子模块的变更信息，需要status.submodulesummary设置为1
+git config push.recurseSubmodules on-demand  // git push 默认不推送子模块，需要设置该项开启子模块推送
 git submodule init
 git submodule update
+git submodule foreach git checkout -b stable
+git submodule update --remote --merge
 ```
 
 更新子模块
@@ -23,8 +28,6 @@ git submodule update
 
 ```
 git submodule update --remote --merge
-//或者
-git submodule foreach git pull
 ```
 
 发布子模块
@@ -33,6 +36,13 @@ git submodule foreach git pull
 git submodule foreach git add .
 git submodule foreach git commit -m "xxxxxx"
 git submodule foreach git push
+```
+
+若子模块仓库地址变了需要执行以下操作
+
+```
+git submodule sync --recursive  // 将新的 URL 复制到本地配置中
+git submodule update --init --recursive
 ```
 
 ## 命令说明
