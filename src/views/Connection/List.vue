@@ -323,6 +323,7 @@ export default {
           try {
             await this.$axios.delete(`tm/api/Connections/${item.id}?name=${item.name}`)
             this.$message.success('删除成功')
+            this.fetch()
           } catch (error) {
             this.$message.error(error?.response.msg || '删除失败')
           }

@@ -11,7 +11,7 @@
     <div class="connection-drawer-wrap" v-loading="previewLoading" v-if="visible">
       <div class="bar">
         <button type="button" class="el-button back-btn-icon-box el-button--default" @click="handleClose">
-          <i class="el-icon-arrow-left"></i>
+          <i class="el-icon-arrow-right"></i>
         </button>
         <span class="ml-2 back-btn-text">{{ t('connection.info') }}</span>
       </div>
