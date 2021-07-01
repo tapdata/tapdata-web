@@ -26,15 +26,15 @@ git config status.submodulesummary 1
 # 设置别名，执行git sdiff 查看子模块差异
 git config alias.sdiff '!'"git diff && git submodule foreach 'git diff'"
 # 设置别名，执行git sstatus 查看子模块状态
-git config alias.sstatus 'submodule foreach git status'
+git config alias.sstatus "submodule foreach git status"
 # 设置别名，执行git sadd 暂存子模块代码
-git config alias.sadd 'submodule foreach git add'
+git config alias.sadd "submodule foreach git add"
 # 设置别名，执行git scommit 提交子模块代码
-git config alias.scommit 'submodule foreach git commit'
+git config alias.scommit "submodule foreach git commit"
 # 设置别名，执行git scommit 更新子模块代码
-git config alias.spull 'submodule update --remote --merge'
+git config alias.spull "submodule update --remote --merge"
 # 设置别名，执行git spush 发布子模块代码
-git config alias.spush 'submodule foreach git push origin HEAD:release'
+git config alias.spush "submodule foreach git push origin HEAD:release"
 
 # 创建本地修改的分支，以便做修改提交，只存在本地，不存在远端，不要把该分支推送到远端
 git submodule foreach git checkout -b stable
