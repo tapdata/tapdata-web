@@ -86,7 +86,13 @@
         <ElTableColumn label="操作描述" min-width="300">
           <template slot-scope="scope">
             <span>{{ getDescFnc(scope.row) }}</span>
-            <span v-if="scope.row.parameter1"
+            <!--  复制连接、复制任务  -->
+            <span v-if="scope.row.operation === 'copy'">
+              【
+              <ElLink type="primary" @click="toGoList(scope.row)">{{ scope.row.parameter2 }}</ElLink>
+              】
+            </span>
+            <span v-else-if="scope.row.parameter1"
               >【
               <ElLink type="primary" @click="toGoList(scope.row)">{{ scope.row.parameter1 }}</ElLink>
               】</span
@@ -363,11 +369,13 @@ export default {
     },
     getDescFnc(row) {
       let allTypeMap = this.allTypeMap
-      let { modular, operation, rename, oldName } = row
+      let { modular, operation, rename, oldName, parameter1 } = row
       let result
       // 修改连接 -- 更名
       if (modular === 'connection' && operation === 'update' && rename) {
         result = `将连接名称由【${oldName}】修改为`
+      } else if (operation === 'copy') {
+        result = `${allTypeMap[operation]}了${allTypeMap[modular]}[${parameter1}]为`
       } else {
         result = `${allTypeMap[operation]}了${allTypeMap[modular]}`
       }
