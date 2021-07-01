@@ -176,6 +176,7 @@ export default {
     }
     this.testData.testLogs = []
     this.status = ''
+    //清除定时器
     if (this.timer) {
       clearTimeout(this.timer)
       this.timer = null
