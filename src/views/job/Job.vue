@@ -1137,6 +1137,7 @@ export default {
      * start button handler
      */
     async start() {
+      let _this = this
       if (this.$refs.agentDialog.checkAgent()) {
         let id = this.$route.query.id
         let doStart = () => {
@@ -1147,16 +1148,39 @@ export default {
             this.doSaveStartDataFlow(data)
           }
         }
-        if (this.$route.query && id) {
-          this.$refs.errorHandler.checkError(
-            { id, status: this.status },
-            () => {
+        let filter = {
+          where: {
+            'contextMap.dataFlowId': {
+              eq: id
+            },
+            level: 'ERROR'
+          }
+        }
+        _this
+          .$api('logs')
+          .get({ filter: JSON.stringify(filter) })
+          .then(res => {
+            if (res.data?.length && this.$route.query && id) {
+              _this.$refs.errorHandler.checkError(
+                { id, status: this.status },
+                () => {
+                  doStart()
+                }
+              )
+            } else {
               doStart()
             }
-          )
-        } else {
-          doStart()
-        }
+          })
+        // if (this.$route.query && id) {
+        //   this.$refs.errorHandler.checkError(
+        //     { id, status: this.status },
+        //     () => {
+        //       doStart()
+        //     }
+        //   )
+        // } else {
+        //   doStart()
+        // }
       }
     },
     //保存逻辑启动

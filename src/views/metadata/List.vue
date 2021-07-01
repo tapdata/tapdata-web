@@ -220,6 +220,7 @@
         </template>
       </el-table-column>
     </TablePage>
+    <!-- 创建模型 -->
     <el-dialog
       width="600px"
       custom-class="create-dialog"
@@ -559,6 +560,7 @@ export default {
       this.$prompt('', this.$t('connection.rename'), {
         inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
         inputErrorMessage: this.$t('dialog.placeholderTable'),
+        customClass: 'changeName-prompt',
         inputValue: item.name || item.original_name,
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
@@ -681,6 +683,14 @@ export default {
           }
         }
       }
+    }
+  }
+}
+.changeName-prompt {
+  .el-message-box__header {
+    padding: 15px 15px 0;
+    .el-message-box__title {
+      padding-left: 0;
     }
   }
 }

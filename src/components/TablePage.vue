@@ -225,6 +225,7 @@ export default {
   width: 100%;
   .table-page-header {
     padding: 15px 10px;
+    padding-left: 20px;
     background: #ffffff;
     overflow: hidden;
     border-bottom: 1px solid #dedee4;
@@ -277,6 +278,7 @@ export default {
       flex: 1;
       overflow: auto;
       border-bottom: none;
+      border-radius: 3px;
       background: #fff;
     }
     .el-table--border td,

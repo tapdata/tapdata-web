@@ -1651,7 +1651,9 @@ const cn = {
       result: '状态',
       information: '说明',
       unTest: '待测试 ... ',
-      error: '测试服务请求超时，请关闭重试'
+      error: '测试服务请求超时，请关闭重试',
+      retryBtn: '重试',
+      retryTest: '连接测试服务启动失败，请点击重试'
     },
     form: {
       connectionName: '连接名称',

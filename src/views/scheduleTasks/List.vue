@@ -261,7 +261,7 @@ export default {
     }
   }
   .dataRule-list {
-    background-color: rgba(239, 241, 244, 100);
+    background-color: #fafafa;
     .search-bar {
       display: flex;
       li + li {
