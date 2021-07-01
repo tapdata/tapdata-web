@@ -73,8 +73,8 @@
             }[scope.row.connection_type]
           }}</template>
         </ElTableColumn>
-        <ElTableColumn label="修改时间" prop="lastUpdateTime" width="180" sortable="custom">
-          <template slot-scope="scope">{{ $moment(scope.row.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss') }}</template>
+        <ElTableColumn label="修改时间" prop="last_updated" width="180" sortable="custom">
+          <template slot-scope="scope">{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</template>
         </ElTableColumn>
         <ElTableColumn label="操作" width="180">
           <template slot-scope="scope">
