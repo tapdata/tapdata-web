@@ -785,13 +785,15 @@ export default {
               ) {
                 let filter = {
                   where: {
-                    name: this.model.name,
-                    id: { neq: this.id }
+                    name: this.model.name
                   },
                   fields: {
                     name: 1
                   },
                   limit: 1
+                }
+                if (this.id) {
+                  filter.where['id'] = { neq: this.id }
                 }
                 this.$api('connections')
                   .get({

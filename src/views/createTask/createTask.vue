@@ -126,7 +126,7 @@
               type="primary"
               class="btn-step"
               :loading="loading"
-              @click="next()"
+              @mousedown.native.prevent="next()"
             >
               <span>{{ $t('guide.btn_next') }}</span>
             </el-button>
@@ -229,13 +229,15 @@ export default {
               } else if (value && value.trim()) {
                 let filter = {
                   where: {
-                    name: value,
-                    id: { neq: this.id }
+                    name: value
                   },
                   fields: {
                     name: 1
                   },
                   limit: 1
+                }
+                if (this.id) {
+                  filter.where['id'] = { neq: this.id }
                 }
                 this.$api('DataFlows')
                   .get({
