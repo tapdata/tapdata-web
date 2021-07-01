@@ -17,7 +17,7 @@ import '@/components/form-builder'
 import '@/directives'
 import 'github-markdown-css'
 import '@/assets/style/index.scss'
-import '@/assets/theme/drs/index.scss'
+// import '@/assets/theme/drs/index.scss'
 import LoadMore from '@/utils/loadMore'
 
 import '@/styles/app.scss'

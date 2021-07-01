@@ -44,6 +44,16 @@ export class Table extends NodeType {
               '{{useAsyncDataSource(loadDatabase, "dataSource", ["mysql","mysql pxc","oracle","sqlserver","sybase ase","gbase-8s","db2","gaussdb200","postgres","mariadb"])}}'
             ]
           },
+          databaseType: {
+            type: 'string',
+            'x-display': 'hidden',
+            'x-reactions': {
+              dependencies: ['connectionId'],
+              fulfill: {
+                run: '{{$self.value = $form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.databaseType}}'
+              }
+            }
+          },
           connectionBtn: {
             type: 'void',
             'x-component': 'AddDatabaseBtn'
@@ -163,7 +173,7 @@ export class Table extends NodeType {
         }
       },
       custSql: {
-        type: 'void',
+        type: 'object',
         'x-component': 'FormTab',
         'x-component-props': {},
         properties: {
@@ -195,7 +205,7 @@ export class Table extends NodeType {
                 'x-decorator': 'ElFormItem',
                 'x-component': 'Select',
                 'x-reactions': {
-                  target: 'selectedFields',
+                  target: 'custSql.selectedFields',
                   fulfill: {
                     state: {
                       visible: '{{$self.value !== "keepAllFields"}}'
@@ -209,6 +219,7 @@ export class Table extends NodeType {
                 'x-decorator': 'ElFormItem',
                 'x-component': 'Select',
                 'x-component-props': {
+                  size: 'mini',
                   multiple: true,
                   filterable: true,
                   defaultFirstOption: true
@@ -218,7 +229,7 @@ export class Table extends NodeType {
                   fulfill: {
                     state: {
                       dataSource:
-                        '{{$deps[0].fields.map(item => item.field_name)}}'
+                        '{{$deps[0] && $deps[0].fields.map(item => item.field_name)}}'
                     }
                   }
                 }
