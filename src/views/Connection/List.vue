@@ -209,46 +209,13 @@ export default {
         this.loading = true
         let current = pageNum || this.page.current
         let { keyword, status } = this.searchParams
-        let fields = {
-          name: true,
-          user_id: true,
-          connection_type: true,
-          database_type: true,
-          search_databaseType: true,
-          database_host: true,
-          database_uri: true,
-          database_username: true,
-          database_port: true,
-          database_name: true,
-          sourceType: true,
-          status: true,
-          id: true,
-          listtags: true,
-          tableCount: true,
-          loadCount: true,
-          loadFieldsStatus: true,
-          schemaAutoUpdate: true,
-          platformInfo: true,
-          last_updated: true,
-          additionalString: true,
-          database_password: true,
-          fill: true,
-          sslCert: true,
-          ssl: true,
-          sslCAFile: true,
-          sslPass: true,
-          sslKeyFile: true,
-          sslKey: true,
-          sslValidate: false,
-          sslCA: true //MongoDB
-        }
         let where = {}
         if (keyword && keyword.trim()) {
           where.name = { like: toRegExp(keyword), options: 'i' }
         }
         status && (where.status = status)
         let filter = {
-         // fields, noSchema:1 不加载schema
+          // fields, noSchema:1 不加载schema
           noSchema: 1,
           where,
           limit: this.page.size,
@@ -332,48 +299,7 @@ export default {
     test(item) {
       this.$checkAgentStatus(async () => {
         let loading = this.$loading()
-        let data = Object.assign(
-          {},
-          {
-            id: '',
-            name: '',
-            database_type: '',
-            connection_type: '',
-            database_host: '',
-            database_port: '',
-            database_name: '',
-            database_username: '',
-            database_password: '',
-            plain_password: '',
-            table_filter: '',
-            additionalString: '',
-            thin_type: '',
-            database_owner: '',
-            node_name: '',
-            database_schema: '',
-            plugin_name: '',
-            pgsql_log_decorder_plugin_name: '',
-            database_datetype_without_timezone: '',
-            supportUpdatePk: false,
-            isUrl: true,
-            database_uri: '',
-            ssl: false,
-            sslKey: '',
-            sslPass: '',
-            schemaAutoUpdate: false,
-            multiTenant: false,
-            pdb: '',
-            sslValidate: false,
-            sslCA: '',
-            sslCAFile: null,
-            sslKeyFile: null,
-            search_databaseType: '',
-            increamentalTps: 100, //dummy
-            initialReadSize: 100000, //dummy
-            schema: ''
-          },
-          item
-        )
+        let data = item
         if (['gridfs', 'mongodb'].includes(item.database_type)) {
           data.database_uri = ''
           data.isUrl = true
