@@ -73,8 +73,8 @@
             }[scope.row.connection_type]
           }}</template>
         </ElTableColumn>
-        <ElTableColumn label="修改时间" prop="lastUpdateTime" width="180" sortable="custom">
-          <template slot-scope="scope">{{ $moment(scope.row.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss') }}</template>
+        <ElTableColumn label="修改时间" prop="last_updated" width="180" sortable="custom">
+          <template slot-scope="scope">{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</template>
         </ElTableColumn>
         <ElTableColumn label="操作" width="180">
           <template slot-scope="scope">
@@ -332,48 +332,7 @@ export default {
     test(item) {
       this.$checkAgentStatus(async () => {
         let loading = this.$loading()
-        let data = Object.assign(
-          {},
-          {
-            id: '',
-            name: '',
-            database_type: '',
-            connection_type: '',
-            database_host: '',
-            database_port: '',
-            database_name: '',
-            database_username: '',
-            database_password: '',
-            plain_password: '',
-            table_filter: '',
-            additionalString: '',
-            thin_type: '',
-            database_owner: '',
-            node_name: '',
-            database_schema: '',
-            plugin_name: '',
-            pgsql_log_decorder_plugin_name: '',
-            database_datetype_without_timezone: '',
-            supportUpdatePk: false,
-            isUrl: true,
-            database_uri: '',
-            ssl: false,
-            sslKey: '',
-            sslPass: '',
-            schemaAutoUpdate: false,
-            multiTenant: false,
-            pdb: '',
-            sslValidate: false,
-            sslCA: '',
-            sslCAFile: null,
-            sslKeyFile: null,
-            search_databaseType: '',
-            increamentalTps: 100, //dummy
-            initialReadSize: 100000, //dummy
-            schema: ''
-          },
-          item
-        )
+        let data = item
         if (['gridfs', 'mongodb'].includes(item.database_type)) {
           data.database_uri = ''
           data.isUrl = true

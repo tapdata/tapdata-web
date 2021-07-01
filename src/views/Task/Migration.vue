@@ -55,7 +55,7 @@
           </template>
         </ElTableColumn>
         <ElTableColumn label="启动时间" prop="startTime" sortable="custom">
-          <template slot-scope="scope">{{ $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss') }}</template>
+          <template slot-scope="scope">{{ scope.row.startTimeFmt }}</template>
         </ElTableColumn>
         <ElTableColumn label="操作" width="240">
           <template slot-scope="scope">
@@ -321,6 +321,7 @@ export default {
         if (agentId) {
           where['agentId'] = agentId
           status = status || 'running'
+          this.searchParams.status = status
         }
         syncType && (where['setting.sync_type'] = syncType)
         if (status) {
@@ -365,6 +366,7 @@ export default {
       let statusInfo = TASK_STATUS_MAP[item.status] || {}
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
+      item.startTimeFmt = item.startTime ? this.$moment(item.startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       return item
     },
     sortChange({ prop, order }) {
