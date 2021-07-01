@@ -907,7 +907,6 @@ export default {
     },
     async initData(data) {
       let editData = null
-      this.checkTestConnectionAvailable() //先检测agent
       if (this.$route.params.id) {
         if (this.model.database_type === 'mongodb') {
           editData = await this.$api('connections').customQuery([this.$route.params.id])
@@ -1564,13 +1563,6 @@ export default {
     // 跳转到重复数据源
     clickLinkSource() {
       window.open('/#/connection/' + this.connectionObj.id, '_blank')
-    },
-    //检测agent 是否可用
-    async checkTestConnectionAvailable() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      }
     },
     handleDatabaseType(type) {
       this.dialogDatabaseTypeVisible = false
