@@ -541,9 +541,9 @@
       :visible.sync="dialogEditNameVisible"
       width="30%"
     >
-      <el-form :rules="renameRules" ref="renameForm">
+      <el-form :model="renameData" :rules="renameRules" ref="renameForm" @submit.native.prevent>
         <el-form-item prop="rename">
-          <el-input v-model="rename" maxlength="100" show-word-limit></el-input>
+          <el-input v-model="renameData.rename" maxlength="100" show-word-limit></el-input>
         </el-form-item>
         <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block"
           >中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格</span
@@ -604,6 +604,8 @@ export default {
         callback(new Error(this.$t('editor.fileFormBuilder.header_type_required')))
       } else if ((!/^[A-Z]+[1-9]+$/.test(start) && start !== '') || (!/^[A-Z]+[1-9]+$/.test(end) && end !== '')) {
         callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_tip')))
+      } else {
+        callback()
       }
     }
     let validateSheet = (rule, value, callback) => {
@@ -615,13 +617,17 @@ export default {
         callback(new Error(this.$t('editor.fileFormBuilder.sheet_end') + this.$t('formBuilder.noneText')))
       } else if (start > end) {
         callback(new Error(this.$t('editor.fileFormBuilder.excel_value_end_gt_start')))
+      } else {
+        callback()
       }
     }
     let validateRename = (rule, value, callback) => {
-      if (!this.rename || !this.rename.trim()) {
+      if (!this.renameData.rename || !this.renameData.rename.trim()) {
         callback(new Error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText')))
-      } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.rename)) {
+      } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.renameData.rename)) {
         callback(new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'))
+      }else {
+        callback()
       }
     }
     return {
@@ -674,7 +680,9 @@ export default {
       editBtnLoading: false,
       connectionTypeOption: '',
       isUrlOption: '',
-      rename: '',
+      renameData:{
+        rename: '',
+      },
       kafka: {
         id: '',
         name: '',
@@ -920,7 +928,7 @@ export default {
         if (this.model.sourceType === 'ecs') {
           this.getEcsList()
         }
-        this.rename = this.model.name
+        this.renameData.rename = this.model.name
         this.model.isUrl = false
       } else {
         this.model = Object.assign(this.model, data, { name: this.model.name })
@@ -995,7 +1003,7 @@ export default {
       type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
         type = 'drs_' + type
-      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs') {
         type = 'dfs_' + type
       }
       let func = formConfig[type]
@@ -1507,44 +1515,51 @@ export default {
     },
     //取消
     handleCancelRename() {
-      this.rename = this.model.name
+      this.renameData.rename = this.model.name
       this.$refs['renameForm'].clearValidate()
       this.dialogEditNameVisible = false
     },
     //保存名字
     submitEdit() {
-      this.editBtnLoading = true
-      if (this.rename === '') {
-        this.editBtnLoading = false
-        this.rename = this.model.name
-        this.$refs['renameForm'].clearValidate()
-        return
-      }
-      this.model.name = this.rename
-      let params = {
-        name: this.model.name,
-        id: this.model.id
-      }
-      this.$refs['renameForm'].clearValidate()
-      this.$api('connections')
-        .patchId(params)
-        .then(() => {
-          this.editBtnLoading = false
-          this.$message.success(this.$t('message.saveOK'))
-          this.dialogEditNameVisible = false
-        })
-        .catch(err => {
-          this.editBtnLoading = false
-          if (err && err.response) {
-            if (err.response.msg.indexOf('duplication for names') > -1) {
-              this.$message.error(this.$t('dataForm.error.connectionNameExist'))
-            } else {
-              this.$message.error(err.response.msg)
-            }
-          } else {
-            this.$message.error(this.$t('dataForm.saveFail'))
+      this.$refs['renameForm'].validate(valid => {
+        if (valid) {
+          this.editBtnLoading = true
+          if (this.renameData.rename === '') {
+            this.editBtnLoading = false
+            this.renameData.rename = this.model.name
+            this.$refs['renameForm'].clearValidate()
+            return
           }
-        })
+          let params = {
+            name: this.model.name,
+            id: this.model.id
+          }
+          this.$api('connections')
+            .patchId(params)
+            .then(() => {
+              this.editBtnLoading = false
+              this.model.name = this.renameData.rename
+              this.$refs['renameForm'].clearValidate()
+              this.$message.success(this.$t('message.saveOK'))
+              this.dialogEditNameVisible = false
+            })
+            .catch(err => {
+              console.log('333')
+              this.renameData.rename = this.model.name
+              this.$refs['renameForm'].clearValidate()
+              this.editBtnLoading = false
+              if (err && err.response) {
+                if (err.response.msg.indexOf('duplication for names') > -1) {
+                  this.$message.error(this.$t('dataForm.error.connectionNameExist'))
+                } else {
+                  this.$message.error(err.response.msg)
+                }
+              } else {
+                this.$message.error(this.$t('dataForm.saveFail'))
+              }
+            })
+        }
+      })
     },
     // 跳转到重复数据源
     clickLinkSource() {
