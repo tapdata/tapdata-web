@@ -1018,10 +1018,10 @@ export default {
             r = m.hours() + 'h'
           } else if (m.minutes()) {
             r = m.minutes() + 'min'
-          } else if (m.seconds()) {
-            r = m.seconds() + 's'
+            // } else if (m.seconds()) {
+            //   r = m.seconds() + 's'
           } else {
-            r = lag + 'ms'
+            r = lag + 's'
           }
         }
         return r
