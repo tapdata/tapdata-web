@@ -35,7 +35,6 @@ const install = function(Vue, opts = {}) {
 if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
-
 export default {
   install,
   locale: use,
