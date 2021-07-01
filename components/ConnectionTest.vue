@@ -176,7 +176,10 @@ export default {
     }
     this.testData.testLogs = []
     this.status = ''
-    this.clearInterval(this.timer)
+    if (this.timer) {
+      clearTimeout(this.timer)
+      this.timer = null
+    }
   },
   methods: {
     rowStyleHandler({ row }) {
@@ -277,7 +280,6 @@ export default {
           let testData = {
             wsError: 'ERROR'
           }
-          console.log("zhixiangl")
           self.$emit('receive', testData)
         }
       },800)
