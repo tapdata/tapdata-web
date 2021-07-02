@@ -347,7 +347,7 @@ export default {
     },
     toDataFlow(id) {
       this.$router.push({
-        name: 'Dataflow',
+        name: 'Task',
         query: {
           agentId: id,
           status: 'running'
