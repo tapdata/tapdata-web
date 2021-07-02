@@ -65,14 +65,23 @@
                 >:{{ databaseInfo.database_port }}</span
               >
             </span>
+            <span class="text" v-if="databaseInfo.brokerURL">
+              <span>{{ databaseInfo.brokerURL }}</span>
+            </span>
           </li>
-          <li>
+          <li v-if="databaseInfo.database_name">
             <span class="label">
               {{ $t('editor.cell.data_node.database.databaseName') }}:
             </span>
             <span class="text">{{ databaseInfo.database_name }}</span>
           </li>
-          <li>
+          <li v-if="databaseInfo.mqUserName">
+            <span class="label">
+              {{ $t('editor.cell.data_node.database.account') }}:
+            </span>
+            <span class="text">{{ databaseInfo.mqUserName }}</span>
+          </li>
+          <li v-if="databaseInfo.database_username">
             <span class="label">
               {{ $t('editor.cell.data_node.database.account') }}:
             </span>
@@ -339,6 +348,7 @@ export default {
               tables = (result.data.schema && result.data.schema.tables) || []
             }
             self.databaseInfo = result.data
+            
             self.model.database_type = self.databaseInfo.database_type
 
             tables = tables.sort((t1, t2) =>
