@@ -296,10 +296,15 @@ export default {
       })
     },
     closeInput(option) {
+      //是否改过名 在operations 查找
+      let ops = []
+      if (this.operations && this.operations.length > 0) {
+        ops = this.operations.filter(v => v.id === option.id && v.op === 'RENAME')
+      }
       this.sourceFileData.forEach(file => {
         if (file.id === option.id) {
           file.showInput = false
-          file.label = option.key
+          file.label = ops.length > 0 ? ops[0].operand : option.key
         }
       })
     },
@@ -320,7 +325,7 @@ export default {
         op: 'RENAME',
         id: option.id,
         field: option.key,
-        operand: option.label,
+        operand: option.label, //改过名的字段
         table_name: option.table_name,
         type: option.type,
         primary_key_position: option.primary_key_position,
