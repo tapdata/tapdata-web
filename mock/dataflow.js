@@ -205,6 +205,14 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
+  '/tm/api/DataFlows/resetAll': {
+    data: {
+      success: [{ id: '6098e7a2c66ab70010981c53', code: 1, msg: 'ok' }],
+      fail: []
+    },
+    code: 'ok',
+    msg: 'ok'
+  },
   '/tm/api/DataFlows/:id': {
     data: {
       createTime: '2021-04-28T11:10:57.691Z',
@@ -551,14 +559,6 @@ module.exports = {
       scheduleTimes: 1,
       pingTime: 1620633379338,
       stats: {}
-    },
-    code: 'ok',
-    msg: 'ok'
-  },
-  '/tm/api/DataFlows/resetAll': {
-    data: {
-      success: [{ id: '6098e7a2c66ab70010981c53', code: 1, msg: 'ok' }],
-      fail: []
     },
     code: 'ok',
     msg: 'ok'

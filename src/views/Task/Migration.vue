@@ -117,7 +117,7 @@
               </ElLink>
               <ElDropdownMenu slot="dropdown">
                 <ElDropdownItem command="copy">复制</ElDropdownItem>
-                <ElDropdownItem command="reset" :disabled="!statusBtMap['reset'][scope.row.status]">
+                <ElDropdownItem command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
                   重置
                 </ElDropdownItem>
                 <ElDropdownItem command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
@@ -379,6 +379,32 @@ export default {
         keyword: ''
       }
       this.fetch(1)
+    },
+    // 重置任务
+    resetAll(ids) {
+      this.$confirm('是否重置该任务？', '重置', {
+        type: 'warning',
+        dangerouslyUseHTMLString: true
+      }).then(flag => {
+        if (!flag) {
+          return
+        }
+        this.$axios
+          .post('tm/api/DataFlows/resetAll', {
+            id: ids
+          })
+          .then(data => {
+            if (data.success.length > 0) {
+              this.$message.success('重置成功')
+              this.reset()
+            } else {
+              this.$message.success('重置失败')
+            }
+          })
+          .catch(() => {
+            this.$message.success('重置失败')
+          })
+      })
     },
     createTask() {
       this.$router.push({
