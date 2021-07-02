@@ -382,7 +382,6 @@ export default {
           }
           this.model.table_prefix = targetFormData.table_prefix
           this.model.table_suffix = targetFormData.table_suffix
-          debugger
 
           if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
             targetFormData.syncObjects.forEach(item => {
