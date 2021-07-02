@@ -949,7 +949,10 @@ export default {
           this.stageType = currentStageData.type
 
           if (this.stageType === 'database') {
-            this.getStageDataApi(currentStageData.connectionId, '')
+            this.getStageDataApi(
+              currentStageData.connectionId,
+              currentStageData.name
+            )
           } else if (
             [
               'table',
@@ -1024,7 +1027,11 @@ export default {
     // 点击节点跳转到表
     handTableName(data) {
       if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-        window.open('/#/metadataDetails?id=' + data.tableMetadataInstanceId)
+        if (this.stageType === 'database') {
+          window.open('/#/metadataDetails?id=' + data.connMetadataInstanceId)
+        } else {
+          window.open('/#/metadataDetails?id=' + data.tableMetadataInstanceId)
+        }
       }
     },
 
