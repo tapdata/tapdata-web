@@ -15,10 +15,23 @@
         ref="form"
         action="javascript:void(0);"
       >
-        <el-form-item :label="$t('editor.cell.link.form.label.label')">
+        <el-form-item
+          :label="$t('editor.cell.link.form.label.label')"
+          v-if="!isTargetTypeTcpFalg"
+        >
           <el-input
             v-model="model.label"
-            :placeholder="$t('editor.cell.link.form.label.placeholder')"
+            :placeholder="$t('editor.cell.link.form.placeholder')"
+            size="mini"
+            maxlength="50"
+            show-word-limit
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item :label="$t('editor.cell.link.pcb.label')" v-else>
+          <el-input
+            v-model="model.tcp.protocolType"
+            :placeholder="$t('editor.cell.link.pcb.label.placeholder')"
             size="mini"
             maxlength="50"
             show-word-limit
@@ -35,6 +48,7 @@
         :model="model"
         ref="form"
         v-show="configJoinTable"
+        v-if="!isTargetTypeTcpFalg"
         action="javascript:void(0);"
       >
         <el-form-item
@@ -189,6 +203,38 @@
           </table>
         </el-form-item>
       </el-form>
+      <!-- tcp报文配置 -->
+      <div class="transfer" v-else>
+        <el-transfer
+          v-model="model.tcp.includeField"
+          :data="fieldsData"
+          :titles="[
+            $t('editor.cell.link.pcb.fieldsSelected'),
+            $t('editor.cell.link.pcb.selectedField')
+          ]"
+          filterable=""
+          target-order="push"
+          @change="handleFieldChange"
+          @right-check-change="handleChooseField"
+        >
+          <el-button
+            class="transfer-footer"
+            slot="right-footer"
+            size="mini"
+            type="primary"
+            @click="handleUp"
+            >{{ $t('editor.cell.link.pcb.moveUp') }}</el-button
+          >
+          <el-button
+            class="transfer-footer"
+            slot="right-footer"
+            size="mini"
+            type="primary"
+            @click="handleDown"
+            >{{ $t('editor.cell.link.pcb.moveDown') }}</el-button
+          >
+        </el-transfer>
+      </div>
     </div>
 
     <!--
@@ -258,8 +304,15 @@ export default {
       model: {
         label: '',
         joinTable: _.cloneDeep(JOIN_TABLE_TPL),
-        type: 'link'
-      }
+        type: 'link',
+        tcp: {
+          protocolType: '',
+          includeField: []
+        }
+      },
+      fieldsData: [],
+      chooseField: '',
+      isTargetTypeTcpFalg: false
     }
   },
 
@@ -395,13 +448,21 @@ export default {
         _.merge(this.model, data)
       }
       this.cell = cell
-
       // this.model.joinTable.joinKeys = [];
 
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
 
-      if (!this.configJoinTable) return
-
+      if (!this.configJoinTable) {
+        let targetCell = cell.getTargetCell()
+        let targetData = targetCell && targetCell.getFormData()
+        if (targetData.type !== 'tcp_udp') {
+          return
+        } else {
+          this.isTargetTypeTcpFalg = true
+          this.model.tcp.includeField =
+            targetData.tcp && targetData.tcp.includeField
+        }
+      }
       if (cell.getSourceCell()) {
         let sourceCell = cell.getSourceCell(),
           targetCell = cell.getTargetCell(),
@@ -506,6 +567,12 @@ export default {
         joinKeys.forEach((item, index) => {
           this.$set(this.model.joinTable.joinKeys, index, item)
         })
+
+        this.fieldsData = sourceList.map(field => ({
+          label: field.field_name,
+          key: field.field_name,
+          disabled: this.disabled
+        }))
       }
 
       this.$emit(EditorEventType.RESIZE)
@@ -523,6 +590,18 @@ export default {
     },
     getData() {
       let data = JSON.parse(JSON.stringify(this.model))
+
+      if (this.cell) {
+        // tcp报文数据传输到目标节点
+        let targetCell = this.cell.getTargetCell()
+        let targetData = targetCell && targetCell.getFormData()
+        if (targetData.type !== 'tcp_udp') {
+          delete data.tcp
+        } else {
+          targetData.tcp = data.tcp
+        }
+      }
+
       /* if( data.joinTable.joinKeys.length > 0 ){
 					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);
 					data.joinTable.joinKeys = joinKeys;
@@ -612,6 +691,64 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+
+    // tcp选中字段
+    handleFieldChange() {},
+    // tcp报文 右侧框选中字段
+    handleChooseField(value) {
+      this.chooseField = value
+    },
+    handleUp(item, index) {
+      let _this = this
+      item = _this.chooseField
+      if (item.length == 1) {
+        _this.model.tcp.includeField.find((fieldItem, fieldIndex) => {
+          if (fieldItem === item[0]) {
+            index = fieldIndex
+          }
+        })
+        if (index == 0) {
+          //当选择的项的下标为0，即第一个，则提醒没有上移的空间，选择其他项进行上移
+          _this.$message.error(this.$t('editor.cell.link.pcb.notMoveUpTip'))
+          return
+        } // 上移-改变的数组（项和下标同时改变）
+
+        let changeItem = JSON.parse(
+          JSON.stringify(_this.model.tcp.includeField[index - 1])
+        )
+        _this.model.tcp.includeField.splice(index - 1, 1)
+        _this.model.tcp.includeField.splice(index, 0, changeItem)
+      } else {
+        _this.$message.error(this.$t('editor.cell.link.pcb.onlyOnePiece'))
+        return
+      }
+    },
+    // 下移
+    handleDown(item, index) {
+      let _this = this
+      item = _this.chooseField
+      if (item.length == 1) {
+        _this.model.tcp.includeField.find((fieldItem, fieldIndex) => {
+          if (fieldItem === item[0]) {
+            index = fieldIndex
+          }
+        })
+
+        if (index == _this.model.tcp.includeField.length - 1) {
+          _this.$message.error(this.$t('editor.cell.link.pcb.notMoveDownTip'))
+          return
+        }
+
+        let changeItem = JSON.parse(
+          JSON.stringify(_this.model.tcp.includeField[index])
+        )
+        _this.model.tcp.includeField.splice(index, 1)
+        _this.model.tcp.includeField.splice(index + 1, 0, changeItem)
+      } else {
+        _this.$message.error(this.$t('editor.cell.link.pcb.onlyOnePiece'))
+        return
+      }
     }
 
     // seeMonitor() {
@@ -641,13 +778,56 @@ export default {
   padding: 10px;
   box-sizing: border-box;
   overflow: auto;
-  // .e-form {
-  // 	.el-input,
-  // 	.el-select {
-  // 		// max-width: 400px;
-  // 		// width: 80%;
-  // 	}
-  // }
+  .nodeBody {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    height: 100%;
+    ::v-deep {
+      .transfer {
+        height: 100%;
+        .el-transfer {
+          height: 100%;
+          white-space: nowrap;
+          overflow: auto;
+          .el-transfer-panel {
+            width: 278px;
+            .el-transfer-panel__header .el-checkbox .el-checkbox__label {
+              font-size: 14px;
+            }
+            .el-transfer-panel__filter .el-input__inner {
+              border-radius: 3px;
+            }
+          }
+          .el-transfer__buttons {
+            padding: 0 12px;
+            .el-button {
+              padding: 12px;
+            }
+          }
+          & > :first-child,
+          & > :last-child {
+            height: 100%;
+            .el-transfer-panel__body {
+              height: calc(100% - 38px) !important;
+            }
+
+            .el-checkbox-group {
+              height: 100%;
+            }
+          }
+          & > :last-child {
+            .el-checkbox-group {
+              height: calc(100% - 100px);
+            }
+            .el-transfer-panel__footer {
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+  }
 
   .e-table {
     display: inline-block;

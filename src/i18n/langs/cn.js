@@ -1327,6 +1327,17 @@ const cn = {
           message:
             '目标数据模型已存在 _id 字段，系统默认会移除已重复的_id字段，如想保留，请使用字段处理器对源表的 _id 进行重命名！'
         },
+        pcb: {
+          label: '协议类型',
+          placeholder: '请选择协议类型',
+          fieldsSelected: '待选字段',
+          selectedField: '已选字段',
+          moveUp: '上移',
+          moveDown: '下移',
+          notMoveUpTip: '没有上移的空间了',
+          notMoveDownTip: '没有下移的空间了',
+          onlyOnePiece: '只能选择一条数据进行上下移动'
+        },
         form: {
           label: {
             label: '标签',
