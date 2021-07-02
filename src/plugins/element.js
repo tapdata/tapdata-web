@@ -37,7 +37,8 @@ import {
   Dialog,
   Row,
   Col,
-  DatePicker
+  DatePicker,
+  Progress
 } from 'element-ui'
 
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
@@ -103,3 +104,4 @@ Vue.use(Dialog)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(DatePicker)
+Vue.use(Progress)
