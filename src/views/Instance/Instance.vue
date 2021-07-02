@@ -357,7 +357,11 @@ export default {
     showUpgradeDialogFnc(row) {
       // this.upgradeDialog = true
       // this.selectedRow = row
-      this.manualUpgradeFnc(row)
+      if (row.metric?.runningTaskNum) {
+        this.$alert('检测到您有任务正在运行，请先停止所有任务再进行升级操作!')
+      } else {
+        this.manualUpgradeFnc(row)
+      }
     },
     autoUpgradeFnc() {},
     manualUpgradeFnc(row) {
