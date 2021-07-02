@@ -9,7 +9,7 @@ import VueClipboard from 'vue-clipboard2'
 import { Message } from 'element-ui'
 import settings from './settings'
 import TapdataWebCore from '../packages/tapdata-web-core'
-
+import AuthingSSO from '@authing/sso'
 require('./assets/theme/dfs/index.scss')
 
 Vue.config.productionTip = false
@@ -26,6 +26,13 @@ Vue.prototype.$checkAgentStatus = callback => {
     }
   })
 }
+
+// authing登录实例
+Vue.prototype.$auth = new AuthingSSO({
+  appId: '60bdeeba133a34c50739bf8c',
+  appDomain: 'tapdata-test.authing.cn/oidc'
+})
+console.log('Vue.prototype.$auth', Vue.prototype.$auth)
 
 export default function({ routes }) {
   const router = new VueRouter({
