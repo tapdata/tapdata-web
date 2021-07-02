@@ -80,18 +80,20 @@
         </ElTableColumn>
         <ElTableColumn label="操作类型" width="120">
           <template slot-scope="scope">
-            <div>{{ getTypeText(scope.row) }}</div>
+            <div>{{ getOperationTypeLabel(scope.row) }}</div>
           </template>
         </ElTableColumn>
         <ElTableColumn label="操作描述" min-width="300">
           <template slot-scope="scope">
-            <span>{{ getDescFnc(scope.row) }}</span>
+            <span>{{ getDesc(scope.row) }}</span>
             <!--  复制连接、复制任务  -->
             <span v-if="scope.row.operation === 'copy'">
               【
               <ElLink type="primary" @click="toGoList(scope.row)">{{ scope.row.parameter2 }}</ElLink>
               】
             </span>
+            <!--  agent升级  -->
+            <span v-else-if="scope.row.modular === 'agent' && scope.row.operation === 'update'"></span>
             <span v-else-if="scope.row.parameter1"
               >【
               <ElLink type="primary" @click="toGoList(scope.row)">{{ scope.row.parameter1 }}</ElLink>
@@ -139,87 +141,41 @@ export default {
         total: 0
       },
       order: 'createTime desc',
-      VUE_APP_INSTANCE_TEST_BTN: process.env.VUE_APP_INSTANCE_TEST_BTN,
-      upgradeDialog: false,
-      selectedRow: {},
-      agentStatus: 'stop',
-      version: '',
-      upgradeList: [], // 升级列表
       modularMap: {
         connection: '连接',
-        migration: '任务'
+        migration: '任务',
+        agent: 'Agent'
       },
       operationMap: {
         create: '创建',
+        start: '启动',
         update: '编辑',
         copy: '复制',
-        delete: '删除',
-        start: '启动',
         reset: '重置',
+        delete: '删除',
         stop: '停止',
-        forceStop: '强制停止'
+        forceStop: '强制停止',
+        rename: '改名'
       },
-      operationTypeItems: [
-        {
-          label: '连接',
-          value: 'connection',
-          items: {
-            create: '创建',
-            update: '编辑',
-            copy: '复制',
-            delete: '删除'
-          }
-        },
-        {
-          label: '任务',
-          value: 'migration',
-          items: {
-            create: '创建',
-            start: '启动',
-            update: '编辑',
-            copy: '复制',
-            reset: '重置',
-            delete: '删除',
-            stop: '停止',
-            forceStop: '强制停止'
-          }
-        },
-        {
-          label: '系统',
-          value: 'system',
-          hiddenSelected: true, // 不显示在选择框中
-          items: {
-            login: '登录'
-          }
-        }
+      operationTypeOptions: [
+        { label: '创建连接', value: 'connection_create' },
+        { label: '编辑连接', value: 'connection_update' },
+        { label: '复制连接', value: 'connection_copy' },
+        { label: '删除连接', value: 'connection_delete' },
+        { label: '创建任务', value: 'migration_create' },
+        { label: '启动任务', value: 'migration_start' },
+        { label: '编辑任务', value: 'migration_update' },
+        { label: '复制任务', value: 'migration_copy' },
+        { label: '重置任务', value: 'migration_reset' },
+        { label: '删除任务', value: 'migration_delete' },
+        { label: '停止任务', value: 'migration_stop' },
+        { label: '强制停止任务', value: 'migration_forceStop' },
+        { label: 'Agent修改名称', value: 'agent_rename' },
+        { label: 'Agent升级', value: 'agent_update' }
       ]
     }
   },
   computed: {
-    operationTypeOptions() {
-      let result = []
-      this.operationTypeItems.forEach(el => {
-        if (!el.hiddenSelected) {
-          for (let key in el.items) {
-            result.push({
-              label: el.items[key] + el.label,
-              value: key + '_' + el.value
-            })
-          }
-        }
-      })
-      return result
-    },
-    allTypeMap() {
-      let obj = {}
-      this.operationTypeItems.forEach(el => {
-        obj[el.value] = el.label
-        for (let key in el.items) {
-          obj[key] = el.items[key]
-        }
-      })
-      return obj
-    },
     // 检查开始时间是否小于结束时间
     checkStartAndEndTime() {
       let flag = false
@@ -243,7 +199,7 @@ export default {
       let searchParams = this.searchParams
       let { modular, operation, parameter1, start, end, username } = this.$route.query || {}
       if (modular && operation) {
-        searchParams.operationType = this.formatOperationType(modular, operation)
+        searchParams.operationType = this.getOperationTypeValue(modular, operation)
       }
       if (parameter1) {
         searchParams.parameter1 = parameter1
@@ -259,8 +215,12 @@ export default {
       }
       this.fetch()
     },
-    formatOperationType(modular, operation) {
-      return (operation ?? '') + '_' + (modular ?? '')
+    getOperationTypeValue(modular, operation) {
+      return (modular ?? '') + '_' + (operation ?? '')
+    },
+    getModularAndOperation(operationType) {
+      let [modular, operation] = operationType.split('_')
+      return { modular, operation }
     },
     getTimeStamp(value) {
       let date = this.getDate(value)
@@ -279,7 +239,7 @@ export default {
       let query = {}
       let { operationType, parameter1, start, end, username } = this.searchParams
       if (operationType) {
-        let [operation, modular] = operationType.split('_')
+        let { modular, operation } = this.getModularAndOperation(operationType)
         query.modular = modular
         query.operation = operation
       }
@@ -299,7 +259,6 @@ export default {
         name: 'OperationLog',
         query: query
       })
-      // this.fetch()
     },
 
     fetch(pageNum = 1, debounce = 200, hideLoading) {
@@ -315,7 +274,7 @@ export default {
         }
         // 操作类型
         if (operationType) {
-          let [operation, modular] = operationType?.split('_')
+          let { modular, operation } = this.getModularAndOperation(operationType)
           where['modular'] = modular
           where['operation'] = operation
         }
@@ -363,21 +322,26 @@ export default {
       let current = this.page.current
       this.list = this.source.slice((current - 1) * size, current * size)
     },
-    getTypeText(row) {
-      return this.operationTypeOptions.find(item => item.value === this.formatOperationType(row.modular, row.operation))
-        ?.label
+    getOperationTypeLabel(row) {
+      return this.operationTypeOptions.find(
+        item => item.value === this.getOperationTypeValue(row.modular, row.operation)
+      )?.label
     },
-    getDescFnc(row) {
-      let allTypeMap = this.allTypeMap
+    getDesc(row) {
+      let { modularMap, operationMap } = this
       let { modular, operation, rename, parameter1, parameter2 } = row
       let result
       // 修改连接 -- 更名
       if (modular === 'connection' && operation === 'update' && rename) {
-        result = `将连接名称由【${parameter2}】修改为`
+        result = `将连接名称由[${parameter2}]修改为`
+      } else if (modular === 'agent' && operation === 'update') {
+        result = `进行了Agent升级`
+      } else if (modular === 'agent' && operation === 'rename') {
+        result = `将Agent名称由[${parameter2}]修改为`
       } else if (operation === 'copy') {
-        result = `${allTypeMap[operation]}了${allTypeMap[modular]}[${parameter1}]为`
+        result = `${operationMap[operation]}了${modularMap[modular]}[${parameter1}]为`
       } else {
-        result = `${allTypeMap[operation]}了${allTypeMap[modular]}`
+        result = `${operationMap[operation]}了${modularMap[modular]}`
       }
       return result
     },

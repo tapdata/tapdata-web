@@ -570,5 +570,26 @@ module.exports = {
     },
     code: 'ok',
     msg: 'ok'
+  },
+  '/tm/api/UserLogs': {
+    code: 'ok',
+    msg: 'ok',
+    'data|10-100': [
+      {
+        createTime: '2021-06-18T07:25:46.688Z',
+        id: '@guid',
+        last_updated: '2021-06-18T07:25:46.688Z',
+        'modular|1': ['connection', 'migration', 'agent'],
+        'operation|1': ['create', 'update', 'copy', 'delete', 'start', 'reset', 'stop', 'forceStop', 'rename'],
+        parameter1: '@name',
+        parameter2: '@name',
+        parameter3: '',
+        rename: Boolean,
+        oldName: '@name', //原名称
+        type: 'userOperation',
+        user_id: '60cc0c5887e32100106b6a17',
+        username: '@name'
+      }
+    ]
   }
 }
