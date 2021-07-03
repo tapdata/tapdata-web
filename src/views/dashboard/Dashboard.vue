@@ -153,7 +153,7 @@
             :data="dataValidationObj"
             @getUnit="getUnit"
           ></echart-head>
-          <ul class="status-box">
+          <ul class="status-box" style="justify-content: left">
             <li v-for="item in validList" :key="item.value">
               <p>{{ item.name }}</p>
               <div
@@ -749,7 +749,6 @@ export default {
           statusItem.splice(index, 1)
         }
       })
-      console.log(statusItem)
       return statusItem
     },
 
@@ -960,7 +959,7 @@ export default {
           flex: auto;
           height: calc(100% - 40px);
           align-items: center;
-          justify-content: left;
+          justify-content: center;
           overflow-x: auto;
           li {
             display: inline-block;
