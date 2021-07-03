@@ -115,14 +115,7 @@ export default {
   // 	this.handleWS();
   // 	this.handleAgentData();
   // },
-  mounted() {
-    this.checkLoginStatus()
-  },
   methods: {
-    async checkLoginStatus() {
-      let res = await this.$auth.trackSession()
-      console.log('res', res)
-    },
     // // 第一次获取Agent数据
     // handleAgentData() {
     // 	this.$axios.get('tm/api/clusterStates').then(res => {
