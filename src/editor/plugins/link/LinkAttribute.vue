@@ -21,7 +21,7 @@
         >
           <el-input
             v-model="model.label"
-            :placeholder="$t('editor.cell.link.form.placeholder')"
+            :placeholder="$t('editor.cell.link.form.label.placeholder')"
             size="mini"
             maxlength="50"
             show-word-limit
@@ -31,7 +31,7 @@
         <el-form-item :label="$t('editor.cell.link.pcb.label')" v-else>
           <el-input
             v-model="model.tcp.protocolType"
-            :placeholder="$t('editor.cell.link.pcb.label.placeholder')"
+            :placeholder="$t('editor.cell.link.pcb.placeholder')"
             size="mini"
             maxlength="50"
             show-word-limit
