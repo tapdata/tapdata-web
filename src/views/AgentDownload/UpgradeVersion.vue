@@ -18,6 +18,14 @@
       </div>
       <!--	windowns  -->
       <div v-if="downLoadType === 'windows'" class="content-container">
+        <div class="py-2 text-style">升级前</div>
+        <div>1.备份现有程序的tapdata.exe</div>
+        <div>
+          2.下载新版的tapdata.exe程序放到程序目录<ElLink class="ml-3" type="primary" @click="handleDownLoad"
+            >点击下载</ElLink
+          >
+        </div>
+        <div>3.按照升级步骤操作</div>
         <div class="py-2 text-style">升级步骤</div>
         <div>1.打开cmd窗口，进入原Agent安装目录</div>
         <div>2.复制下方的升级命令并在目录下执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本</div>
@@ -118,18 +126,19 @@ export default {
       showTooltip: false,
       agentId: '',
       downloadUrl: '',
-      token: ''
+      token: '',
+      version: ''
       // user: window.__USER_INFO__ || {}
     }
   },
   computed: {
     comUrl() {
-      let token = this.token
+      let { token } = this
       let downloadUrl = (this.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
       let map = {
         windows: `tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
-        Linux: `./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
-        Docker: `./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`
+        Linux: `mv tapdata tapdata-v1.0.1 && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+        Docker: `mv tapdata tapdata-v1.0.1 && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`
       }
       return map[this.downLoadType]
     }
@@ -142,6 +151,7 @@ export default {
       let agentId = this.$route.query.agentId
       this.$axios.get('api/tcm/config/version/latest/' + agentId).then(data => {
         this.token = data.token
+        this.version = data.version
         this.$axios.get(`api/tcm/productRelease/${data.version}`).then(downloadUrl => {
           this.downloadUrl = downloadUrl
         })
@@ -157,6 +167,12 @@ export default {
     },
     goBack() {
       this.$router.push({ name: 'Instance' })
+    },
+    // windows下载
+    handleDownLoad() {
+      let version = this.version
+      window.open(`https://resource.tapdata.net/package/feagent/${version}/tapdata.exe`, '_blank')
+      // window.location = `https://resource.tapdata.net/package/feagent/${version}/tapdata.exe`
     }
   }
 }
