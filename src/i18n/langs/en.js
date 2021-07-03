@@ -810,7 +810,7 @@ const en = {
       'Copy failed, reason:  The setting item "Connections - create  duplicate source" need to be set to "false"',
     change: 'Change',
     rename: 'Rename',
-    testConnection: 'Test connection',
+    testConnection: 'Test connection ',
     status: {
       all: 'All',
       testing: 'testing',
