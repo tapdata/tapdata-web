@@ -31,7 +31,7 @@
       :modal-append-to-body="true"
       custom-class="databaseLinkDialog"
       :close-on-click-modal="false"
-      width="65%"
+      width="70%"
     >
       <el-transfer
         filterable
