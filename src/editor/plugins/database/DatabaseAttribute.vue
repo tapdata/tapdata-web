@@ -81,6 +81,28 @@
             </span>
             <span class="text">{{ databaseInfo.mqUserName }}</span>
           </li>
+          <li v-if="databaseInfo.mqType">
+            <span class="label"> {{ $t('dataForm.form.mq.mqType') }}: </span>
+            <span class="text">{{
+              databaseInfo.mqType === '0'
+                ? 'ActiveMQ'
+                : databaseInfo.mqType === '1'
+                ? 'RabbitMQ'
+                : 'RocketMQ'
+            }}</span>
+          </li>
+          <li v-if="databaseInfo.mqTopicSet.length">
+            <span class="label">
+              {{ $t('dataForm.form.mq.mqTopicSet') }}:
+            </span>
+            <span class="text">{{ databaseInfo.mqTopicSet }}</span>
+          </li>
+          <li v-if="databaseInfo.mqQueueSet.length">
+            <span class="label">
+              {{ $t('dataForm.form.mq.mqQueueSet') }}:
+            </span>
+            <span class="text">{{ databaseInfo.mqQueueSet }}</span>
+          </li>
           <li v-if="databaseInfo.database_username">
             <span class="label">
               {{ $t('editor.cell.data_node.database.account') }}:
@@ -348,7 +370,7 @@ export default {
               tables = (result.data.schema && result.data.schema.tables) || []
             }
             self.databaseInfo = result.data
-            
+
             self.model.database_type = self.databaseInfo.database_type
 
             tables = tables.sort((t1, t2) =>

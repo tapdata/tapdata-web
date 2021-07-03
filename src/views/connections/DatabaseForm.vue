@@ -959,7 +959,7 @@ export default {
         'rest api',
         'custom_connection',
         'gridfs',
-        'hive',
+        // 'hive',
         'tcp_udp'
       ],
       model: '',
