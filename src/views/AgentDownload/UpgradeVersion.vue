@@ -170,8 +170,9 @@ export default {
     },
     // windows下载
     handleDownLoad() {
-      let version = this.version
-      window.open(`https://resource.tapdata.net/package/feagent/${version}/tapdata.exe`, '_blank')
+      // let version = this.version
+      let downloadUrl = (this.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
+      window.open(`${downloadUrl}tapdata.exe`, '_blank')
       // window.location = `https://resource.tapdata.net/package/feagent/${version}/tapdata.exe`
     }
   }
