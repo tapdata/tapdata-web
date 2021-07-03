@@ -41,7 +41,7 @@ export default function({ routes }) {
       wsUrl = 'wss://'
     }
     let preUrl = process.env.VUE_APP_TM_PUBLIC_PATH || ''
-    wsUrl = wsUrl + loc.host + process.env.VUE_APP_BASE_URL + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__.token}`
+    wsUrl = wsUrl + loc.host + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__.token}`
     window.App = new Vue({
       router,
       wsOptions: {
