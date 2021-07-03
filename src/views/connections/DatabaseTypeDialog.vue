@@ -92,7 +92,7 @@ export default {
         'jira',
         'mq',
         'dameng',
-        'hive',
+        // 'hive',
         'tcp_udp'
       ],
       comingAllowDatabase: [], // 即将上线
