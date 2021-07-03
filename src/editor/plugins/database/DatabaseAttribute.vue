@@ -91,13 +91,13 @@
                 : 'RocketMQ'
             }}</span>
           </li>
-          <li v-if="databaseInfo.mqTopicSet.length">
+          <li v-if="databaseInfo.mqTopicSet&&databaseInfo.mqTopicSet.length">
             <span class="label">
               {{ $t('dataForm.form.mq.mqTopicSet') }}:
             </span>
             <span class="text">{{ databaseInfo.mqTopicSet }}</span>
           </li>
-          <li v-if="databaseInfo.mqQueueSet.length">
+          <li v-if="databaseInfo.mqQueueSet&&databaseInfo.mqQueueSet.length">
             <span class="label">
               {{ $t('dataForm.form.mq.mqQueueSet') }}:
             </span>
