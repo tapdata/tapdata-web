@@ -225,7 +225,7 @@
               </span>
             </el-tooltip>
           </div>
-          <div class="info-list">
+          <div class="info-list" v-if="stage.mqType">
             <span class="info-label">{{ $t('dataForm.form.mq.mqType') }}:</span>
             <span class="info-text">{{
               stage.mqType === '0'
@@ -246,7 +246,7 @@
           </div>
           <div
             class="info-list"
-            v-if="stage.mqTopicSet && stage.mqTopicSet.length"
+            v-if="stage.mqQueueSet && stage.mqQueueSet.length"
           >
             <span class="info-label"
               >{{ $t('dataForm.form.mq.mqQueueSet') }}:</span
