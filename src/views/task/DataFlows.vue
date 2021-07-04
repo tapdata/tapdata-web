@@ -1298,6 +1298,15 @@ export default {
     },
     run(ids) {
       let _this = this
+      let id = ids[0]
+      let filter = {
+        where: {
+          'contextMap.dataFlowId': {
+            eq: id
+          },
+          level: 'ERROR'
+        }
+      }
       if (this.$refs.agentDialog.checkAgent()) {
         // if (node) {
         // 	this.$refs.errorHandler.checkError(node, () => {
@@ -1331,15 +1340,6 @@ export default {
         // 		}
         // 	});
         // } else {
-        let id = ids[0]
-        let filter = {
-          where: {
-            'contextMap.dataFlowId': {
-              eq: id
-            },
-            level: 'ERROR'
-          }
-        }
 
         _this
           .$api('logs')
