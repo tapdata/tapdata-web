@@ -12,11 +12,7 @@
       <el-header class="step-header" height="42px">
         <span>{{ $t('guide.guide_title') }}</span>
         <ul class="step-box">
-          <li
-            v-for="(step, index) in steps"
-            :key="index"
-            :class="{ active: activeStep >= index }"
-          >
+          <li v-for="(step, index) in steps" :key="index" :class="{ active: activeStep >= index }">
             <span class="step-index">{{ index + 1 }}</span>
             <span>{{ step.text }}</span>
           </li>
@@ -43,9 +39,7 @@
                 <el-select
                   class="select-connection"
                   popper-class="select-connection-popper"
-                  :value="
-                    stepMap[steps[activeStep].index].selectedConnection.id
-                  "
+                  :value="stepMap[steps[activeStep].index].selectedConnection.id"
                   placeholder="Choose a source connection"
                   @input="handleConnectionSelect"
                 >
@@ -60,26 +54,16 @@
                     </div>
                   </el-option>
                   <el-option
-                    v-for="opt in stepMap[steps[activeStep].index]
-                      .connectionList"
+                    v-for="opt in stepMap[steps[activeStep].index].connectionList"
                     :key="opt.id"
                     :value="opt.id"
-                    :label="
-                      opt.name +
-                      ' (' +
-                      $t('connection.status.' + opt.status) +
-                      ')'
-                    "
+                    :label="opt.name + ' (' + $t('connection.status.' + opt.status) + ')'"
                   >
                     <div class="select-connection-option">
                       <div class="img">
                         <img :src="getImgByType(opt.database_type)" />
                       </div>
-                      <div class="name">
-                        {{ opt.name }} ({{
-                          $t('connection.status.' + opt.status)
-                        }})
-                      </div>
+                      <div class="name">{{ opt.name }} ({{ $t('connection.status.' + opt.status) }})</div>
                     </div>
                   </el-option>
                 </el-select>
@@ -95,21 +79,11 @@
                   <div class="database-name">
                     {{ typeMap[selectedDatabaseType] }}
                   </div>
-                  <el-button
-                    class="btn-change"
-                    type="text"
-                    size="mini"
-                    @click="showConnectDialog = true"
-                  >
+                  <el-button class="btn-change" type="text" size="mini" @click="showConnectDialog = true">
                     {{ $t('connection.change') }}
                   </el-button>
                 </div>
-                <FormBuilder
-                  class="create-form"
-                  ref="form"
-                  v-model="connectionForm"
-                  :config="config"
-                ></FormBuilder>
+                <FormBuilder class="create-form" ref="form" v-model="connectionForm" :config="config"></FormBuilder>
                 <div class="btn-test">
                   <el-button size="mini" @click="startTest()">
                     {{ $t('connection.testConnection') }}
@@ -127,11 +101,7 @@
             <div class="body step-3" v-if="steps[activeStep].index === 4">
               <div class="title">{{ $t('guide.step_4_title') }}</div>
               <div class="desc">{{ $t('guide.step_4_desc') }}</div>
-              <FbRadio
-                class="task-type-radio"
-                v-model="taskType"
-                :config="taskTypeConfig"
-              ></FbRadio>
+              <FbRadio class="task-type-radio" v-model="taskType" :config="taskTypeConfig"></FbRadio>
             </div>
           </el-main>
           <el-footer class="guide-footer" height="80px">
@@ -149,18 +119,10 @@
               :loading="loading"
               @click="next()"
             >
-              <span v-show="selectedDatabaseType">{{
-                $t('guide.btn_save')
-              }}</span>
+              <span v-show="selectedDatabaseType">{{ $t('guide.btn_save') }}</span>
               <span>{{ $t('guide.btn_next') }}</span>
             </el-button>
-            <el-button
-              v-else
-              type="primary"
-              class="btn-step"
-              :loading="loading"
-              @click="next()"
-            >
+            <el-button v-else type="primary" class="btn-step" :loading="loading" @click="next()">
               {{ $t('guide.btn_to_dataflow') }}
               <el-button class="btn-pass" type="text" @click="toDashboard()">
                 {{ $t('guide.btn_to_dashboard') }}
@@ -170,10 +132,7 @@
         </el-container>
         <el-aside class="right-aside" width="600px">
           <div class="markdown-body-wrap">
-            <div
-              class="markdown-body"
-              v-html="selectedDatabaseType ? mdHtml : steps[activeStep].md"
-            ></div>
+            <div class="markdown-body" v-html="selectedDatabaseType ? mdHtml : steps[activeStep].md"></div>
           </div>
         </el-aside>
       </el-container>
@@ -376,15 +335,10 @@ export default {
               this.createConnection()
             }
           })
-        } else if (
-          this.stepMap[this.steps[this.activeStep].index].selectedConnection.id
-        ) {
+        } else if (this.stepMap[this.steps[this.activeStep].index].selectedConnection.id) {
           this.activeStep += 1
         } else {
-          let msg = this.$t(
-            'guide.not_' +
-              (this.steps[this.activeStep].index === 2 ? 'source' : 'target')
-          )
+          let msg = this.$t('guide.not_' + (this.steps[this.activeStep].index === 2 ? 'source' : 'target'))
           this.errorMsg = msg
         }
       } else {
@@ -392,7 +346,7 @@ export default {
           let stages = this.getStages()
 
           let routeUrl = this.$router.resolve({
-            path: '/job',
+            name: 'job',
             query: { mapping: this.taskType }
           })
           let _window = window.open(routeUrl.href, '_blank')
@@ -515,8 +469,7 @@ export default {
       if (v === '0') {
         this.showConnectDialog = true
       } else {
-        this.stepMap[this.steps[this.activeStep].index].selectedConnection =
-          this.connectionList.find(c => c.id === v)
+        this.stepMap[this.steps[this.activeStep].index].selectedConnection = this.connectionList.find(c => c.id === v)
       }
       this.errorMsg = ''
     },
@@ -530,14 +483,12 @@ export default {
       this.mdHtml = require(`@/assets/md/connection/${type.toLowerCase()}.md`)
     },
     signOut() {
-      this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut')).then(
-        resFlag => {
-          if (!resFlag) {
-            return
-          }
-          signOut()
+      this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut')).then(resFlag => {
+        if (!resFlag) {
+          return
         }
-      )
+        signOut()
+      })
     },
     // 按照数据库类型获取表单配置规则
     getFormConfig() {
@@ -567,12 +518,7 @@ export default {
           if (
             ((it.rules && it.rules.some(r => r.required === true)) ||
               it.required ||
-              [
-                'isUrl',
-                'database_username',
-                'database_password',
-                'plain_password'
-              ].includes(it.field)) &&
+              ['isUrl', 'database_username', 'database_password', 'plain_password'].includes(it.field)) &&
             it.field !== 'connection_type'
           ) {
             items.push(it)
@@ -605,8 +551,7 @@ export default {
         .post(params)
         .then(res => {
           let connection = res.data || {}
-          this.stepMap[this.steps[this.activeStep].index].selectedConnection =
-            connection
+          this.stepMap[this.steps[this.activeStep].index].selectedConnection = connection
           this.selectedDatabaseType = null
           this.activeStep += 1
           this.errorMsg = ''

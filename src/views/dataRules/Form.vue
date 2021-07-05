@@ -3,11 +3,7 @@
     width="600px"
     custom-class="create-dialog"
     :before-close="handleClose"
-    :title="
-      createForm && createForm.id
-        ? $t('dataRule.editRule')
-        : $t('dataRule.creatRule')
-    "
+    :title="createForm && createForm.id ? $t('dataRule.editRule') : $t('dataRule.creatRule')"
     :close-on-click-modal="false"
     :append-to-body="true"
     :visible.sync="dialogVisible"
@@ -20,16 +16,9 @@
           filterable
           allow-create
           default-first-option
-          :placeholder="
-            $t('dataRule.pleaseSelect') + $t('dataRule.classification')
-          "
+          :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.classification')"
         >
-          <el-option
-            v-for="item in classificationArr"
-            :key="item"
-            :label="item"
-            :value="item"
-          ></el-option>
+          <el-option v-for="item in classificationArr" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item
@@ -62,9 +51,7 @@
                 <el-select
                   v-model="createForm.ruleType"
                   size="mini"
-                  :placeholder="
-                    $t('dataRule.pleaseSelect') + $t('dataRule.classification')
-                  "
+                  :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.classification')"
                 >
                   <el-option
                     v-for="item in ruleTypes"
@@ -76,12 +63,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="1"></el-col>
-            <template
-              v-if="
-                createForm.ruleType === 'exists' ||
-                createForm.ruleType === 'nullable'
-              "
-            >
+            <template v-if="createForm.ruleType === 'exists' || createForm.ruleType === 'nullable'">
               <el-col :span="17">
                 <el-form-item
                   prop="rule.checked"
@@ -108,10 +90,7 @@
                   <el-select
                     v-model="createForm.rule.dataType"
                     size="mini"
-                    :placeholder="
-                      $t('dataRule.pleaseSelect') +
-                      $t('dataRule.classification')
-                    "
+                    :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.classification')"
                   >
                     <el-option
                       v-for="item in dataTypes"
@@ -136,9 +115,7 @@
                   <el-input
                     v-model="createForm.rule.dataRegex"
                     size="mini"
-                    :placeholder="
-                      $t('dataRule.pleaseInput') + $t('dataRule.data_Regex')
-                    "
+                    :placeholder="$t('dataRule.pleaseInput') + $t('dataRule.data_Regex')"
                   ></el-input>
                 </el-form-item>
               </el-col>
@@ -156,9 +133,7 @@
                   <el-input
                     v-model="createForm.rule.enumData"
                     size="mini"
-                    :placeholder="
-                      $t('dataRule.pleaseInput') + $t('dataRule.data_Enum')
-                    "
+                    :placeholder="$t('dataRule.pleaseInput') + $t('dataRule.data_Enum')"
                   ></el-input>
                 </el-form-item>
               </el-col>
@@ -176,9 +151,7 @@
                   <el-select
                     v-model="createForm.rule.gt"
                     size="mini"
-                    :placeholder="
-                      $t('dataRule.pleaseSelect') + $t('dataRule.greater_that')
-                    "
+                    :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.greater_that')"
                   >
                     <el-option label=">" value="gt"></el-option>
                     <el-option label=">=" value="gte"></el-option>
@@ -209,9 +182,7 @@
                   <el-select
                     v-model="createForm.rule.lt"
                     size="mini"
-                    :placeholder="
-                      $t('dataRule.pleaseSelect') + $t('dataRule.less_that')
-                    "
+                    :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.less_that')"
                   >
                     <el-option label="<" value="lt"></el-option>
                     <el-option label="<=" value="lte"></el-option>
@@ -235,12 +206,8 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="handleClose" size="small">{{
-        $t('message.cancel')
-      }}</el-button>
-      <el-button type="primary" @click="saveSubmit()" size="small">{{
-        $t('message.confirm')
-      }}</el-button>
+      <el-button @click="handleClose" size="small">{{ $t('message.cancel') }}</el-button>
+      <el-button type="primary" @click="saveSubmit()" size="small">{{ $t('message.confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -262,20 +229,14 @@ export default {
   data() {
     // 范围校验
     let validateisGt = (rule, value, callback) => {
-      if (
-        value === 'none' ||
-        parseFloat(value) > parseFloat(this.createForm.rule.ltData)
-      ) {
+      if (value === 'none' || parseFloat(value) > parseFloat(this.createForm.rule.ltData)) {
         callback(new Error(this.$t('dataRule.correct_rules')))
       } else {
         callback()
       }
     }
     let validateisLt = (rule, value, callback) => {
-      if (
-        value === 'none' ||
-        parseFloat(this.createForm.rule.gtData) > parseFloat(value)
-      ) {
+      if (value === 'none' || parseFloat(this.createForm.rule.gtData) > parseFloat(value)) {
         callback(new Error(this.$t('dataRule.correct_rules')))
       } else {
         callback()
@@ -388,10 +349,7 @@ export default {
           const method = id ? 'patch' : 'post'
           let rule = {}
 
-          if (
-            _this.createForm.ruleType === 'exists' ||
-            _this.createForm.ruleType === 'nullable'
-          ) {
+          if (_this.createForm.ruleType === 'exists' || _this.createForm.ruleType === 'nullable') {
             rule.rules = {
               [_this.createForm.ruleType]: _this.createForm.rule.checked
             }
@@ -409,14 +367,8 @@ export default {
               _this.$message.error(_this.$t('dataRule.gt_lt_none'))
               return false
             }
-            _this.createForm.gtData =
-              _this.createForm.rule.gt === 'none'
-                ? '0'
-                : _this.createForm.rule.gtData
-            _this.createForm.rule.ltData =
-              _this.createForm.rule.lt === 'none'
-                ? '0'
-                : _this.createForm.rule.ltData
+            _this.createForm.gtData = _this.createForm.rule.gt === 'none' ? '0' : _this.createForm.rule.gtData
+            _this.createForm.rule.ltData = _this.createForm.rule.lt === 'none' ? '0' : _this.createForm.rule.ltData
             rule.rules = {
               range: {
                 [_this.createForm.rule.gt]: _this.createForm.rule.gtData,

@@ -12,36 +12,18 @@
     </div>
     <!-- 数据校验表格 start -->
     <el-table border :data="tableData" class="table-page-table" height="100%">
-      <el-table-column
-        :label="$t('metadata.details.version.versionNum')"
-        prop="version"
-      >
-      </el-table-column>
-      <el-table-column
-        :label="$t('metadata.details.version.updateTime')"
-        prop="version_time"
-      >
+      <el-table-column :label="$t('metadata.details.version.versionNum')" prop="version"> </el-table-column>
+      <el-table-column :label="$t('metadata.details.version.updateTime')" prop="version_time">
         <template slot-scope="scope">
           {{ $moment(scope.row.version_time).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('metadata.details.version.operator')"
-        prop="version_user_name"
-      ></el-table-column>
-      <el-table-column
-        :label="$t('metadata.details.version.modifyDescription')"
-        prop="version_description"
-      >
+      <el-table-column :label="$t('metadata.details.version.operator')" prop="version_user_name"></el-table-column>
+      <el-table-column :label="$t('metadata.details.version.modifyDescription')" prop="version_description">
       </el-table-column>
       <el-table-column :label="$t('message.operator')" width="80">
         <template slot-scope="scope">
-          <el-button
-            v-readonlybtn="'data_catalog_edition'"
-            size="mini"
-            type="text"
-            @click="toDetails(scope.row)"
-          >
+          <el-button v-readonlybtn="'data_catalog_edition'" size="mini" type="text" @click="toDetails(scope.row)">
             {{ $t('metadata.details.version.compared') }}
           </el-button>
         </template>
@@ -115,9 +97,7 @@ export default {
           version_description = ''
           descriptionArr.forEach(desc => {
             if (desc) {
-              localizeDescriptionArr.push(
-                desc ? this.$t('metadata.details.' + desc) : ''
-              )
+              localizeDescriptionArr.push(desc ? this.$t('metadata.details.' + desc) : '')
             }
           })
           if (localizeDescriptionArr && localizeDescriptionArr.length > 0) {
@@ -135,9 +115,7 @@ export default {
         })
     },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
 

@@ -36,8 +36,7 @@ const getColor = function (tableName) {
   let color = tableColors[tableName]
   if (color) return color
   else {
-    tableColors[tableName] =
-      allColorList[Object.keys(tableColors).length % allColorList.length]
+    tableColors[tableName] = allColorList[Object.keys(tableColors).length % allColorList.length]
     return tableColors[tableName]
   }
 }
@@ -78,9 +77,10 @@ export const /**
           let treeItem = {
             id:
               field.id ||
-              `${field.table_name}${
-                field.original_field_name ? '_' + field.original_field_name : ''
-              }`.replace(/\./g, '_'),
+              `${field.table_name}${field.original_field_name ? '_' + field.original_field_name : ''}`.replace(
+                /\./g,
+                '_'
+              ),
             label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
             type: field.javaType || field.java_type,
             color: getColor(field.tableId || field.table_name),
@@ -114,13 +114,7 @@ export const /**
 
       let sort = function (node) {
         if (node.children && node.children.length > 0) {
-          node.children.sort((c1, c2) =>
-            c1.table_name > c2.table_name
-              ? 1
-              : c1.table_name === c2.table_name
-              ? 0
-              : -1
-          )
+          node.children.sort((c1, c2) => (c1.table_name > c2.table_name ? 1 : c1.table_name === c2.table_name ? 0 : -1))
           node.children.forEach(sort)
         }
       }
@@ -141,12 +135,7 @@ export const /**
  */
 export const mergeSchema = function (targetSchema, sourceSchema, mergeOpts) {
   log('Schema.mergeSchema', arguments)
-  if (
-    !sourceSchema ||
-    !sourceSchema.table_name ||
-    !sourceSchema.fields ||
-    sourceSchema.fields.length === 0
-  )
+  if (!sourceSchema || !sourceSchema.table_name || !sourceSchema.fields || sourceSchema.fields.length === 0)
     return targetSchema
 
   targetSchema = targetSchema || {}
@@ -159,9 +148,7 @@ export const mergeSchema = function (targetSchema, sourceSchema, mergeOpts) {
   targetSchema.fields = targetSchema.fields || []
   Object.keys(sourceSchema)
     .filter(key => !['fields'].includes(key))
-    .forEach(
-      key => (targetSchema[key] = targetSchema[key] || sourceSchema[key])
-    )
+    .forEach(key => (targetSchema[key] = targetSchema[key] || sourceSchema[key]))
 
   let sourceSchemaFields = _.cloneDeep(sourceSchema.fields) || []
   if (['append'].includes(joinType) || targetSchema.meta_type === 'table') {
@@ -174,16 +161,12 @@ export const mergeSchema = function (targetSchema, sourceSchema, mergeOpts) {
       let currentFieldName = joinFieldName.join('.')
       let currentFieldType
 
-      let existsField = targetSchema.fields.filter(
-        field => field.field_name === currentFieldName
-      )
+      let existsField = targetSchema.fields.filter(field => field.field_name === currentFieldName)
       if (existsField && existsField.length > 0) {
-        existsField[0].javaType =
-          existsField[0].javaType === 'Array' ? 'Array' : 'Map'
+        existsField[0].javaType = existsField[0].javaType === 'Array' ? 'Array' : 'Map'
         return
       } else if (!currentFieldType) {
-        if (joinPath === currentFieldName)
-          currentFieldType = joinType === 'merge_embed' ? 'Array' : 'Map'
+        if (joinPath === currentFieldName) currentFieldType = joinType === 'merge_embed' ? 'Array' : 'Map'
         else currentFieldType = 'Map'
       }
 
@@ -222,8 +205,7 @@ export const mergeSchema = function (targetSchema, sourceSchema, mergeOpts) {
   for (let i = 0; i < targetSchema.fields.length; i++) {
     let field = targetSchema.fields[i]
     if (existsField[field.field_name]) {
-      existsField[field.field_name].fromDB =
-        existsField[field.field_name].fromDB || []
+      existsField[field.field_name].fromDB = existsField[field.field_name].fromDB || []
       existsField[field.field_name].fromDB.push({
         id: field.id,
         table_name: field.table_name,
@@ -269,18 +251,11 @@ export const mergeSourceSchema = function (sourceSchemas) {
  * @param joinTables
  * @return {*}
  */
-export const mergeJoinTablesToTargetSchema = function (
-  targetSchema,
-  joinTables
-) {
+export const mergeJoinTablesToTargetSchema = function (targetSchema, joinTables) {
   let mergedTargetSchema = targetSchema || {}
   const mergeTargetSchema = function (jt) {
     if (jt && (jt.sourceSchemas || jt.sourceSchema)) {
-      mergeSchema(
-        mergedTargetSchema,
-        mergeSourceSchema(jt.sourceSchemas || jt.sourceSchema),
-        jt
-      )
+      mergeSchema(mergedTargetSchema, mergeSourceSchema(jt.sourceSchemas || jt.sourceSchema), jt)
     }
   }
   if (joinTables) joinTables.forEach(mergeTargetSchema)

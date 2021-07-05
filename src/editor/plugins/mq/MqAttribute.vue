@@ -10,13 +10,7 @@
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div> -->
-      <el-form
-        class="e-form"
-        label-position="top"
-        :model="model"
-        ref="form"
-        :disabled="disabled"
-      >
+      <el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
         <!-- <span class="addTxt">+新建文件</span> -->
         <el-form-item
           :label="$t('editor.cell.data_node.table.form.database.label')"
@@ -25,24 +19,13 @@
           required
         >
           <div style="display: flex">
-            <FbSelect
-              v-model="model.connectionId"
-              :config="databaseSelectConfig"
-            ></FbSelect>
+            <FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
           </div>
         </el-form-item>
 
-        <el-form-item
-          :label="$t('editor.cell.data_node.table.form.table.label')"
-          prop="tableName"
-          required
-        >
+        <el-form-item :label="$t('editor.cell.data_node.table.form.table.label')" prop="tableName" required>
           <div class="flex-block">
-            <FbSelect
-              class="e-select"
-              v-model="model.tableName"
-              :config="schemaSelectConfig"
-            ></FbSelect>
+            <FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect>
             <el-tooltip
               class="item"
               effect="light"
@@ -71,16 +54,8 @@
             </el-tooltip>
           </div>
         </el-form-item>
-        <el-form-item
-          v-if="mqType === '0'"
-          :label="$t('editor.cell.data_node.mqTableType')"
-          prop="table_type"
-          required
-        >
-          <el-select
-            v-model="model.table_type"
-            placeholder="$t('editor.cell.data_node.mqTableTypeTip')"
-          >
+        <el-form-item v-if="mqType === '0'" :label="$t('editor.cell.data_node.mqTableType')" prop="table_type" required>
+          <el-select v-model="model.table_type" placeholder="$t('editor.cell.data_node.mqTableTypeTip')">
             <el-option label="topic" value="topic"> </el-option>
             <el-option label="queue" value="queue"> </el-option>
           </el-select>
@@ -95,16 +70,9 @@
       </el-form>
     </div>
     <div class="e-entity-wrap" style="text-align: center; overflow: auto">
-      <entity
-        :schema="convertSchemaToTreeData(mergedSchema)"
-        :editable="false"
-      ></entity>
+      <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
-    <CreateTable
-      v-if="addtableFalg"
-      :dialog="dialogData"
-      @handleTable="getAddTableName"
-    ></CreateTable>
+    <CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
   </div>
 </template>
 <script>
@@ -174,9 +142,7 @@ export default {
       },
       schemaSelectConfig: {
         size: 'mini',
-        placeholder: this.$t(
-          'editor.cell.data_node.table.form.table.placeholder'
-        ),
+        placeholder: this.$t('editor.cell.data_node.table.form.table.placeholder'),
         loading: false,
         filterable: true,
         options: [],
@@ -242,16 +208,14 @@ export default {
       immediate: true,
       handler() {
         // 截取表类型
-        let reg = /\([^\)]+\)/g
+        let reg = /\([^\)]+\)/g // eslint-disable-line
         let table_type = this.model.tableName.match(reg)[0]
         table_type = table_type.substring(1, table_type.length - 1)
         this.model.table_type = table_type
 
         if (this.schemas.length > 0) {
           if (this.model.tableName) {
-            let schema = this.schemaSelectConfig.options.filter(
-              s => s === this.model.tableName
-            )
+            let schema = this.schemaSelectConfig.options.filter(s => s === this.model.tableName)
             schema =
               schema && schema.length > 0
                 ? schema[0]
@@ -327,20 +291,14 @@ export default {
             let schemas = []
             this.mqType = result.data.mqType
             if (this.mqType === '0') {
-              result.data.mqQueueSet = result.data.mqQueueSet.map(
-                item => item + '(queue)'
-              )
-              result.data.mqTopicSet = result.data.mqTopicSet.map(
-                item => item + '(topic)'
-              )
+              result.data.mqQueueSet = result.data.mqQueueSet.map(item => item + '(queue)')
+              result.data.mqTopicSet = result.data.mqTopicSet.map(item => item + '(topic)')
               let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
               schemas = [...new Set(data)]
             } else {
               schemas = result.data.mqTopicSet
             }
-            schemas = schemas.sort((t1, t2) =>
-              t1 > t2 ? 1 : t1 === t2 ? 0 : -1
-            )
+            schemas = schemas.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
             self.schemas = schemas
             self.schemaSelectConfig.options = schemas.map(item => ({
               label: item,

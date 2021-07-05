@@ -2,53 +2,32 @@
   <!-- 索引 -->
   <section class="index-list-wrap">
     <div class="table-page-operation-bar">
-      <el-button
-        v-readonlybtn="'new_model_creation'"
-        class="btn btn-create"
-        size="mini"
-        @click="openCreateDialog"
-      >
+      <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
         <i class="iconfont icon-jia add-btn-icon"></i>
         <span>{{ $t('metadata.details.index.create') }}</span>
       </el-button>
     </div>
     <!-- 索引表格 start -->
     <el-table ref="table" class="table-page-table" :data="indexTableData">
-      <el-table-column :label="$t('metadata.details.index.name')" prop="name">
-      </el-table-column>
+      <el-table-column :label="$t('metadata.details.index.name')" prop="name"> </el-table-column>
       <el-table-column :label="$t('metadata.details.index.fields')" prop="key">
         <template slot-scope="scope">
           <div v-for="(value, key) in scope.row.key" :key="key">
-            {{ key }}&nbsp;:&nbsp;&nbsp;{{
-              value === 1 ? 'ASC(1)' : value === -1 ? 'DESC(-1)' : value
-            }}
+            {{ key }}&nbsp;:&nbsp;&nbsp;{{ value === 1 ? 'ASC(1)' : value === -1 ? 'DESC(-1)' : value }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('metadata.details.index.unique')"
-        prop="unique"
-      >
+      <el-table-column :label="$t('metadata.details.index.unique')" prop="unique">
         <template slot-scope="scope">
-          <span>{{
-            $t('metadata.details.index.unique_' + !!scope.row.unique)
-          }}</span>
+          <span>{{ $t('metadata.details.index.unique_' + !!scope.row.unique) }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('metadata.details.index.status')"
-        prop="status"
-      >
+      <el-table-column :label="$t('metadata.details.index.status')" prop="status">
         <template slot-scope="scope">
-          <span>{{
-            $t('metadata.details.index.status_' + scope.row.status)
-          }}</span>
+          <span>{{ $t('metadata.details.index.status_' + scope.row.status) }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('metadata.details.index.create_by')"
-        prop="create_by"
-      >
+      <el-table-column :label="$t('metadata.details.index.create_by')" prop="create_by">
         <!-- <template slot-scope="scope">
           <span>{{
             $t('metadata.details.index.create_by_' + scope.row.create_by)
@@ -83,9 +62,7 @@
             type="text"
             size="mini"
             v-model="createForm.task_data.name"
-            :placeholder="
-              $t('dataRule.pleaseSelect') + $t('metadata.details.index.name')
-            "
+            :placeholder="$t('dataRule.pleaseSelect') + $t('metadata.details.index.name')"
           ></el-input>
         </el-form-item>
         <el-row
@@ -162,38 +139,23 @@
           <el-checkbox v-model="createForm.task_data.unique">{{
             $t('metadata.details.index.create_unique')
           }}</el-checkbox>
-          <el-checkbox v-model="createForm.task_data.ttl">{{
-            $t('metadata.details.index.create_ttl')
-          }}</el-checkbox>
+          <el-checkbox v-model="createForm.task_data.ttl">{{ $t('metadata.details.index.create_ttl') }}</el-checkbox>
         </el-form-item>
         <el-form-item v-if="createForm.task_data.ttl">
           <el-col :span="16">
-            <el-input
-              type="text"
-              size="mini"
-              v-model="createForm.task_data.expireAfterSeconds"
-            ></el-input>
+            <el-input type="text" size="mini" v-model="createForm.task_data.expireAfterSeconds"></el-input>
           </el-col>
           <el-col :span="6" class="fr">
             <el-select v-model="createForm.task_data.data_type" size="mini">
-              <el-option
-                v-for="item in dataTypeList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
+              <el-option v-for="item in dataTypeList" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-col>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="createNewModel()" size="small">{{
-          $t('message.confirm')
-        }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
     <!-- 创建索引弹窗 end -->
@@ -253,8 +215,7 @@ export default {
     this.getData()
   },
   mounted() {
-    if (this.indexData.fields)
-      this.fieldsArr = this.indexData.fields.map(item => item.field_name)
+    if (this.indexData.fields) this.fieldsArr = this.indexData.fields.map(item => item.field_name)
   },
   computed: {
     table() {
@@ -278,9 +239,7 @@ export default {
         })
     },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     openCreateDialog() {
@@ -317,11 +276,8 @@ export default {
       let _this = this
       this.$refs.form.validate(valid => {
         if (valid) {
-          let { name, background, unique, ttl, expireAfterSeconds, data_type } =
-            _this.createForm.task_data
-          let existsIndexes = _this.indexTableData.filter(
-            it => it.name === name
-          )
+          let { name, background, unique, ttl, expireAfterSeconds, data_type } = _this.createForm.task_data
+          let existsIndexes = _this.indexTableData.filter(it => it.name === name)
           if (existsIndexes && existsIndexes.length > 0) {
             this.$message.error(this.$t('metadata.details.index.name_exists'))
             return false
@@ -329,9 +285,7 @@ export default {
           let key = {}
           _this.createForm.indexDefinition.forEach(v => (key[v.key] = v.value))
           let _keyJson = JSON.stringify(key)
-          existsIndexes = _this.indexTableData.find(
-            v => _keyJson === JSON.stringify(v.key)
-          )
+          existsIndexes = _this.indexTableData.find(v => _keyJson === JSON.stringify(v.key))
           if (existsIndexes) {
             this.$message.error(this.$t('metadata.details.index.index_exists'))
             return false
@@ -374,9 +328,7 @@ export default {
               type_data: typeData,
               unique: unique,
               background: background,
-              uri: _this.indexData.source
-                ? _this.indexData.source.database_uri
-                : ''
+              uri: _this.indexData.source ? _this.indexData.source.database_uri : ''
             }
           }
           this.$api('ScheduleTasks')
@@ -412,9 +364,7 @@ export default {
                 status: 'waiting',
                 task_data: {
                   collection_name: _this.indexData.original_name,
-                  uri: _this.indexData.source
-                    ? _this.indexData.source.database_uri
-                    : '',
+                  uri: _this.indexData.source ? _this.indexData.source.database_uri : '',
                   name: item.name,
                   ns: item.ns,
                   meta_id: _this.$route.query.id

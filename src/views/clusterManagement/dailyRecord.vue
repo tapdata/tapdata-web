@@ -1,11 +1,6 @@
 <template>
   <section class="clusterManagement-wrap">
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="clusterManagement-list"
-      :remoteMethod="getDataApi"
-    >
+    <TablePage ref="table" row-key="id" class="clusterManagement-list" :remoteMethod="getDataApi">
       <div class="header" slot="header">
         <div class="page-header-title">
           <span class="title">{{ $t('cluster.statusLog') }}</span>
@@ -34,12 +29,7 @@
               :placeholder="$t('cluster.placeholderSelect')"
               @input="table.fetch(1)"
             >
-              <el-option
-                v-for="item in ipList"
-                :label="item.value"
-                :value="item.value"
-                :key="item.value"
-              ></el-option>
+              <el-option v-for="item in ipList" :label="item.value" :value="item.value" :key="item.value"></el-option>
             </el-select>
           </li>
           <li>
@@ -85,40 +75,16 @@
         :formatter="dateFormat"
         width="260"
       ></el-table-column>
-      <el-table-column
-        prop="hostname"
-        :label="$t('cluster.hostName')"
-        :show-overflow-tooltip="true"
-      ></el-table-column>
-      <el-table-column
-        prop="ip"
-        :label="$t('cluster.ipAddress')"
-        width="150"
-      ></el-table-column>
-      <el-table-column
-        prop="uuid"
-        :label="$t('cluster.uniqueEncode')"
-        :show-overflow-tooltip="true"
-      ></el-table-column>
-      <el-table-column
-        prop="threadName"
-        :label="$t('cluster.serviceType')"
-        width="100"
-      ></el-table-column>
+      <el-table-column prop="hostname" :label="$t('cluster.hostName')" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="ip" :label="$t('cluster.ipAddress')" width="150"></el-table-column>
+      <el-table-column prop="uuid" :label="$t('cluster.uniqueEncode')" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="threadName" :label="$t('cluster.serviceType')" width="100"></el-table-column>
       <el-table-column prop="level" :label="$t('cluster.level')" width="100">
         <template slot-scope="scope">
-          <span
-            :class="scope.row.level === 'ERROR' ? 'red' : ''"
-            disable-transitions
-            >{{ scope.row.level }}</span
-          >
+          <span :class="scope.row.level === 'ERROR' ? 'red' : ''" disable-transitions>{{ scope.row.level }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="message"
-        :label="$t('cluster.logs')"
-        :show-overflow-tooltip="true"
-      ></el-table-column>
+      <el-table-column prop="message" :label="$t('cluster.logs')" :show-overflow-tooltip="true"></el-table-column>
     </TablePage>
   </section>
 </template>
@@ -250,7 +216,9 @@ export default {
     },
     //运行日志
     goClusterManagement() {
-      this.$router.push('/clusterManagement')
+      this.$router.push({
+        name: 'clusterManagement'
+      })
     }
   }
 }

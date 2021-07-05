@@ -20,9 +20,7 @@ export default class MetadataInstancesAPI extends PublicApi {
   }
   download(where, type) {
     if (typeof where === 'object') where = JSON.stringify(where)
-    window.open(
-      this.url + `/download?where=${encodeURIComponent(where)}&type=${type}`
-    )
+    window.open(this.url + `/download?where=${encodeURIComponent(where)}&type=${type}`)
     // return axios.get(this.url + '/download?where=' + where);
   }
 
@@ -36,10 +34,7 @@ export default class MetadataInstancesAPI extends PublicApi {
     return axios.get(this.url + '/tableConnection', { params })
   }
   upload(upsert, type, listtags, params) {
-    return axios.post(
-      `${this.url}/upload?upsert=${upsert}&type=${type}&listtags=${listtags}`,
-      params
-    )
+    return axios.post(`${this.url}/upload?upsert=${upsert}&type=${type}&listtags=${listtags}`, params)
   }
   search(params) {
     return axios.get(this.url + '/search', { params })

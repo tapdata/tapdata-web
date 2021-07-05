@@ -41,10 +41,7 @@ export default {
     }
   },
   mounted() {
-    this.isActive =
-      this.$route.params && this.$route.params.type
-        ? this.$route.params.type
-        : 'notification'
+    this.isActive = this.$route.params && this.$route.params.type ? this.$route.params.type : 'notification'
   },
   methods: {
     changeName(data) {

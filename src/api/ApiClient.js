@@ -57,11 +57,7 @@ export default class {
     clientInfo = clientInfo.data[0] || {}
     // let scope = clientInfo.scopes && clientInfo.scopes[0] ? clientInfo.scopes[0] : 'All_publish_data'
     // let username = decodeURIComponent(document.cookie.match(/(^|)email=([^;]*)(;|$)/)[2])
-    let data =
-      'grant_type=client_credentials&client_id=' +
-      clientInfo.id +
-      '&client_secret=' +
-      clientInfo.clientSecret
+    let data = 'grant_type=client_credentials&client_id=' + clientInfo.id + '&client_secret=' + clientInfo.clientSecret
 
     const result = await axios.create().post('/oauth/token', data)
 
@@ -143,18 +139,14 @@ export default class {
             if (
               operationName === 'findPage' ||
               operationName === 'findPage_post' ||
-              (operationName !== 'findPage_post' &&
-                operationName.startsWith('findPage_'))
+              (operationName !== 'findPage_post' && operationName.startsWith('findPage_'))
             ) {
               let $ref =
-                methodDesc['responses']['200']['content']['application/json'][
-                  'schema'
-                ]['properties']['data']['items']['$ref']
-              let modelPath = $ref.split('/')
-              let model =
-                openAPI['components']['schemas'][
-                  modelPath[modelPath.length - 1]
+                methodDesc['responses']['200']['content']['application/json']['schema']['properties']['data']['items'][
+                  '$ref'
                 ]
+              let modelPath = $ref.split('/')
+              let model = openAPI['components']['schemas'][modelPath[modelPath.length - 1]]
               collections[collection]['properties'] = model.properties
             }
           }
@@ -166,8 +158,7 @@ export default class {
   }
 
   async getHeaders(collectionName, operationName) {
-    let collection =
-      this.collections[collectionName || this.collection.collection]
+    let collection = this.collections[collectionName || this.collection.collection]
     let properties = collection['properties']
     let headers = []
     let fields = Object.keys(properties || {})
@@ -182,10 +173,7 @@ export default class {
     })
     let showFields = {}
     if (operationName) {
-      showFields =
-        (collection.api[operationName] &&
-          collection.api[operationName]['fields']) ||
-        {}
+      showFields = (collection.api[operationName] && collection.api[operationName]['fields']) || {}
       if (showFields && Object.keys(showFields || {}).length > 0) {
         headers = headers.filter(v => !!showFields[v.value])
       }
@@ -207,8 +195,7 @@ export default class {
   async exportData(params) {
     const token = await this.getAPIServerToken()
     params = params || {}
-    let url =
-      this.collections[this.collection.collection]['api']['findPage']['url']
+    let url = this.collections[this.collection.collection]['api']['findPage']['url']
     let fileExp = params.type === 'excel' ? 'xlsx' : params.type || 'json'
     let queryString = []
     Object.keys(params || {}).forEach(v => {
@@ -222,8 +209,7 @@ export default class {
 
   async downloadById(item) {
     const token = await this.getAPIServerToken()
-    let url =
-      this.collections[this.collection.collection]['api']['downloadById']['url']
+    let url = this.collections[this.collection.collection]['api']['downloadById']['url']
     url = url.replace('{id}', item._id)
     url = url + '?access_token=' + token
     window.open(url, '__target')
@@ -252,14 +238,10 @@ export default class {
       if (
         this.collections[this.collection.collection] &&
         this.collections[this.collection.collection]['api'] &&
-        this.collections[this.collection.collection]['api'][
-          this.collection.operationName || 'findPage_post'
-        ]
+        this.collections[this.collection.collection]['api'][this.collection.operationName || 'findPage_post']
       ) {
         url =
-          this.collections[this.collection.collection]['api'][
-            this.collection.operationName || 'findPage_post'
-          ]['url']
+          this.collections[this.collection.collection]['api'][this.collection.operationName || 'findPage_post']['url']
       }
       if (!url) {
         return {
@@ -270,11 +252,7 @@ export default class {
       }
       const response = await request.post(url, params)
       if (response.statusText === 'OK') {
-        if (
-          response.data &&
-          response.data.data &&
-          response.data.data.length > 0
-        ) {
+        if (response.data && response.data.data && response.data.data.length > 0) {
           response.data.data.forEach(doc => pretreatment(doc))
         }
         return {
@@ -302,8 +280,7 @@ export default class {
       const request = axios.create({
         headers: { access_token: await this.getAPIServerToken() }
       })
-      let url =
-        this.collections[this.collection.collection]['api']['create']['url']
+      let url = this.collections[this.collection.collection]['api']['create']['url']
       const response = await request.post(url, doc)
       if (response.statusText === 'OK') {
         return {
@@ -332,8 +309,7 @@ export default class {
       const request = axios.create({
         headers: { access_token: await this.getAPIServerToken() }
       })
-      let url =
-        this.collections[this.collection.collection]['api']['updateById']['url']
+      let url = this.collections[this.collection.collection]['api']['updateById']['url']
       url = url.replace('{id}', id)
       const response = await request.patch(url, doc)
       if (response.statusText === 'OK') {
@@ -362,8 +338,7 @@ export default class {
       const request = axios.create({
         headers: { access_token: await this.getAPIServerToken() }
       })
-      let url =
-        this.collections[this.collection.collection]['api']['updateById']['url']
+      let url = this.collections[this.collection.collection]['api']['updateById']['url']
       url = url.replace('{id}', id)
       const response = await request.patch(url, doc)
       if (response.statusText === 'OK') {
@@ -392,8 +367,7 @@ export default class {
       const request = axios.create({
         headers: { access_token: await this.getAPIServerToken() }
       })
-      let url =
-        this.collections[this.collection.collection]['api']['deleteById']['url']
+      let url = this.collections[this.collection.collection]['api']['deleteById']['url']
       url = url.replace('{id}', id)
       const response = await request.delete(url)
 
@@ -425,8 +399,7 @@ export default class {
       const request = axios.create({
         headers: { access_token: await this.getAPIServerToken() }
       })
-      let url =
-        this.collections[this.collection.collection]['api']['updateAll']['url']
+      let url = this.collections[this.collection.collection]['api']['updateAll']['url']
       let querys = []
       Object.keys(where).forEach(key => {
         querys.push(`${key}=${where[key]}`)

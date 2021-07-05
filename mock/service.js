@@ -1488,5 +1488,35 @@ module.exports = Object.assign({}, dataflow, {
       }
     }
     return data[req.query?.statsType]
+  },
+  '/api/UserLogs': {
+    code: 'ok',
+    msg: 'ok',
+    'data|10-100': [
+      {
+        createTime: '2021-06-18T07:25:46.688Z',
+        id: '@guid',
+        last_updated: '2021-06-18T07:25:46.688Z',
+        'modular|1': ['connection', 'sync'],
+        'operation|1': [
+          'create',
+          'update',
+          'copy',
+          'delete',
+          'start',
+          'reset',
+          'stop',
+          'forceStop'
+        ],
+        parameter1: '@name',
+        parameter2: '',
+        parameter3: '',
+        rename: Boolean,
+        oldName: '@name', //原名称
+        type: 'userOperation',
+        user_id: '60cc0c5887e32100106b6a17',
+        username: '@name'
+      }
+    ]
   }
 })

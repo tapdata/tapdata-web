@@ -9,34 +9,19 @@
 
     <!-- 数据验证表格 start -->
     <el-table ref="table" class="table-page-table" :data="validationTableData">
-      <el-table-column
-        :label="$t('metadata.details.validation.field_name')"
-        prop="field_name"
-      >
-      </el-table-column>
-      <el-table-column
-        :label="$t('metadata.details.validation.rule')"
-        prop="rule"
-      >
+      <el-table-column :label="$t('metadata.details.validation.field_name')" prop="field_name"> </el-table-column>
+      <el-table-column :label="$t('metadata.details.validation.rule')" prop="rule">
         <template slot-scope="scope">
-          {{
-            scope.row.rule_def && scope.row.rule_def.rules
-              ? scope.row.rule_def.rules
-              : ''
-          }}
+          {{ scope.row.rule_def && scope.row.rule_def.rules ? scope.row.rule_def.rules : '' }}
         </template>
       </el-table-column>
 
       <el-table-column :label="$t('metadata.details.opera')" width="120">
         <template slot-scope="scope">
           <!-- v-if="scope.row.name !== '_id_' && scope.row.status === 'created'" -->
-          <el-button
-            size="mini"
-            type="text"
-            style="color: #f56c6c"
-            @click="remove(scope.row)"
-            >{{ $t('button.delete') }}</el-button
-          >
+          <el-button size="mini" type="text" style="color: #f56c6c" @click="remove(scope.row)">{{
+            $t('button.delete')
+          }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -58,17 +43,9 @@
             filterable
             allow-create
             default-first-option
-            :placeholder="
-              $t('dataRule.pleaseSelect') +
-              $t('metadata.details.validation.field_name')
-            "
+            :placeholder="$t('dataRule.pleaseSelect') + $t('metadata.details.validation.field_name')"
           >
-            <el-option
-              v-for="item in fieldsArr"
-              :key="item.value"
-              :label="item.name"
-              :value="item.value"
-            ></el-option>
+            <el-option v-for="item in fieldsArr" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('metadata.details.validation.ruleTem')">
@@ -78,22 +55,10 @@
             filterable
             default-first-option
             clearable
-            :placeholder="
-              $t('dataRule.pleaseSelect') +
-              $t('metadata.details.validation.ruleTem')
-            "
+            :placeholder="$t('dataRule.pleaseSelect') + $t('metadata.details.validation.ruleTem')"
           >
-            <el-option-group
-              v-for="group in rulesArr"
-              :key="group.label"
-              :label="group.label"
-            >
-              <el-option
-                v-for="item in group.rulesData"
-                :key="item.name"
-                :label="item.name"
-                :value="item.name"
-              >
+            <el-option-group v-for="group in rulesArr" :key="group.label" :label="group.label">
+              <el-option v-for="item in group.rulesData" :key="item.name" :label="item.name" :value="item.name">
               </el-option>
             </el-option-group>
           </el-select>
@@ -114,10 +79,7 @@
                     v-model="createForm.ruleType"
                     clearable
                     size="mini"
-                    :placeholder="
-                      $t('dataRule.pleaseSelect') +
-                      $t('dataRule.classification')
-                    "
+                    :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.classification')"
                   >
                     <el-option
                       v-for="item in ruleTypes"
@@ -129,12 +91,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="1"></el-col>
-              <template
-                v-if="
-                  createForm.ruleType === 'exists' ||
-                  createForm.ruleType === 'nullable'
-                "
-              >
+              <template v-if="createForm.ruleType === 'exists' || createForm.ruleType === 'nullable'">
                 <el-col :span="17">
                   <el-form-item
                     prop="rule.checked"
@@ -144,9 +101,7 @@
                       trigger: 'blur'
                     }"
                   >
-                    <el-checkbox
-                      v-model="createForm.rule.checked"
-                    ></el-checkbox>
+                    <el-checkbox v-model="createForm.rule.checked"></el-checkbox>
                   </el-form-item>
                 </el-col>
               </template>
@@ -163,10 +118,7 @@
                     <el-select
                       v-model="createForm.rule.dataType"
                       size="mini"
-                      :placeholder="
-                        $t('dataRule.pleaseSelect') +
-                        $t('dataRule.classification')
-                      "
+                      :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.classification')"
                     >
                       <el-option
                         v-for="item in dataTypes"
@@ -191,9 +143,7 @@
                     <el-input
                       v-model="createForm.rule.dataRegex"
                       size="mini"
-                      :placeholder="
-                        $t('dataRule.pleaseInput') + $t('dataRule.data_Regex')
-                      "
+                      :placeholder="$t('dataRule.pleaseInput') + $t('dataRule.data_Regex')"
                     ></el-input>
                   </el-form-item>
                 </el-col>
@@ -211,9 +161,7 @@
                     <el-input
                       v-model="createForm.rule.enumData"
                       size="mini"
-                      :placeholder="
-                        $t('dataRule.pleaseInput') + $t('dataRule.data_Enum')
-                      "
+                      :placeholder="$t('dataRule.pleaseInput') + $t('dataRule.data_Enum')"
                     ></el-input>
                   </el-form-item>
                 </el-col>
@@ -231,10 +179,7 @@
                     <el-select
                       v-model="createForm.rule.gt"
                       size="mini"
-                      :placeholder="
-                        $t('dataRule.pleaseSelect') +
-                        $t('dataRule.greater_that')
-                      "
+                      :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.greater_that')"
                     >
                       <el-option label=">" value="gt"></el-option>
                       <el-option label=">=" value="gte"></el-option>
@@ -265,9 +210,7 @@
                     <el-select
                       v-model="createForm.rule.lt"
                       size="mini"
-                      :placeholder="
-                        $t('dataRule.pleaseSelect') + $t('dataRule.less_that')
-                      "
+                      :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.less_that')"
                     >
                       <el-option label="<" value="lt"></el-option>
                       <el-option label="<=" value="lte"></el-option>
@@ -292,12 +235,8 @@
       </el-form>
       <!-- 数据验证弹窗表单 end -->
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="createNewModel()" size="small">{{
-          $t('message.confirm')
-        }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
     <!-- 数据验证弹窗 end -->
@@ -315,20 +254,14 @@ export default {
   data() {
     // 范围校验
     let validateisGt = (rule, value, callback) => {
-      if (
-        value === 'none' ||
-        parseFloat(value) > parseFloat(this.createForm.rule.ltData)
-      ) {
+      if (value === 'none' || parseFloat(value) > parseFloat(this.createForm.rule.ltData)) {
         callback(new Error(this.$t('dataRule.correct_rules')))
       } else {
         callback()
       }
     }
     let validateisLt = (rule, value, callback) => {
-      if (
-        value === 'none' ||
-        parseFloat(this.createForm.rule.gtData) > parseFloat(value)
-      ) {
+      if (value === 'none' || parseFloat(this.createForm.rule.gtData) > parseFloat(value)) {
         callback(new Error(this.$t('dataRule.correct_rules')))
       } else {
         callback()
@@ -425,8 +358,7 @@ export default {
     }
   },
   created() {
-    this.validationTableData =
-      (this.validaData.data_rules && this.validaData.data_rules.rules) || []
+    this.validationTableData = (this.validaData.data_rules && this.validaData.data_rules.rules) || []
     this.validationLevel = this.validaData.validationLevel || 'off'
   },
   mounted() {
@@ -506,10 +438,7 @@ export default {
         if (valid) {
           let rule = {}
 
-          if (
-            _this.createForm.ruleType === 'exists' ||
-            _this.createForm.ruleType === 'nullable'
-          ) {
+          if (_this.createForm.ruleType === 'exists' || _this.createForm.ruleType === 'nullable') {
             rule.rules = {
               [_this.createForm.ruleType]: _this.createForm.rule.checked
             }
@@ -527,14 +456,8 @@ export default {
               _this.$message.error(_this.$t('dataRule.gt_lt_none'))
               return false
             }
-            _this.createForm.gtData =
-              _this.createForm.rule.gt === 'none'
-                ? '0'
-                : _this.createForm.rule.gtData
-            _this.createForm.rule.ltData =
-              _this.createForm.rule.lt === 'none'
-                ? '0'
-                : _this.createForm.rule.ltData
+            _this.createForm.gtData = _this.createForm.rule.gt === 'none' ? '0' : _this.createForm.rule.gtData
+            _this.createForm.rule.ltData = _this.createForm.rule.lt === 'none' ? '0' : _this.createForm.rule.ltData
             rule.rules = {
               range: {
                 [_this.createForm.rule.gt]: _this.createForm.rule.gtData,
@@ -566,12 +489,9 @@ export default {
     },
 
     async doSave() {
-      let result = await this.$api('MetadataInstances').patch(
-        this.validaData.id,
-        {
-          data_rules: { rules: this.validationTableData }
-        }
-      )
+      let result = await this.$api('MetadataInstances').patch(this.validaData.id, {
+        data_rules: { rules: this.validationTableData }
+      })
       return result
     },
 
@@ -615,10 +535,8 @@ export default {
         if (range.hasOwnProperty('gte')) { // eslint-disable-line
           rule.gt = 'gte'
         }
-        rule.ltData =
-          parseFloat(range.lt) || parseFloat(range.lte) || range.none
-        rule.gtData =
-          parseFloat(range.gt) || parseFloat(range.gte) || range.none
+        rule.ltData = parseFloat(range.lt) || parseFloat(range.lte) || range.none
+        rule.gtData = parseFloat(range.gt) || parseFloat(range.gte) || range.none
       } else if (rules.hasOwnProperty('enum')) { // eslint-disable-line
         this.createForm.ruleType = 'enum'
         rule.enumData = rules.enum.join(',')

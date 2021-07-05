@@ -17,9 +17,7 @@
       </li>
       <br />
       <li>
-        <a href="http://vuejs-templates.github.io/webpack/" target="_blank">
-          Docs for This Template
-        </a>
+        <a href="http://vuejs-templates.github.io/webpack/" target="_blank"> Docs for This Template </a>
       </li>
     </ul>
     <h2>Ecosystem</h2>
@@ -34,9 +32,7 @@
         <a href="http://vue-loader.vuejs.org/" target="_blank"> vue-loader </a>
       </li>
       <li>
-        <a href="https://github.com/vuejs/awesome-vue" target="_blank">
-          awesome-vue
-        </a>
+        <a href="https://github.com/vuejs/awesome-vue" target="_blank"> awesome-vue </a>
       </li>
     </ul>
   </div>

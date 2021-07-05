@@ -123,9 +123,7 @@ export default {
       this.table_prefix = this.value?.table_prefix || ''
       this.table_suffix = this.value?.table_suffix || ''
       if (this.queueData.length) {
-        let items = this.data.filter(
-          item => this.queueData.indexOf(item.key) === -1
-        )
+        let items = this.data.filter(item => this.queueData.indexOf(item.key) === -1)
         this.data1 = [...items]
       } else {
         this.data1 = [...this.data]
@@ -148,15 +146,11 @@ export default {
         // 减少 源数据
         let items = this.data1.filter(item => value.indexOf(item.key) === -1)
         this.data1 = [...items]
-        this.topicData = this.topicData.filter(
-          item => value.indexOf(item) === -1
-        )
+        this.topicData = this.topicData.filter(item => value.indexOf(item) === -1)
       } else {
         // 左移
         // 添加左移的数据
-        let items = this.data.filter(
-          item => secondRightCheckedArr.indexOf(item.key) > -1
-        ) // 正在穿梭数据的源数据
+        let items = this.data.filter(item => secondRightCheckedArr.indexOf(item.key) > -1) // 正在穿梭数据的源数据
         this.data1 = this.data1.concat(items)
       }
     },

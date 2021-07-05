@@ -11,61 +11,34 @@
           <img :src="getImgByType(model.database_type)" />
         </div>
         <div class="content-box">
-          <div class="content" v-if="model.database_type === 'csv'">
-            CSV/TXT
-          </div>
+          <div class="content" v-if="model.database_type === 'csv'">CSV/TXT</div>
           <div v-else>
-            {{
-              model.database_type
-                ? model.database_type.toUpperCase()
-                : model.database_type
-            }}
+            {{ model.database_type ? model.database_type.toUpperCase() : model.database_type }}
           </div>
           <div class="tip">
             {{ $t('editor.fileFormBuilder.guideDocPrefix') }}
-            {{
-              model.database_type === 'csv' ? 'csv/txt' : model.database_type
-            }}
+            {{ model.database_type === 'csv' ? 'csv/txt' : model.database_type }}
             {{ $t('editor.fileFormBuilder.guideDoc') }}
-            <a
-              style="color: #409eff"
-              href="https://docs.tapdata.net/data-source/about-dbs/files"
-              >{{ $t('dataForm.form.guideDoc') }}</a
-            >
+            <a style="color: #409eff" href="https://docs.tapdata.net/data-source/about-dbs/files">{{
+              $t('dataForm.form.guideDoc')
+            }}</a>
           </div>
         </div>
       </header>
       <div class="form-builder">
-        <label class="file-source-label">{{
-          $t('editor.fileFormBuilder.fileSource')
-        }}</label>
-        <FbSelect
-          v-model="model.connectionId"
-          :config="fileConfig"
-          style="margin-bottom: 10px"
-        ></FbSelect>
-        <label class="file-source-label">{{
-          $t('editor.fileFormBuilder.tableName')
-        }}</label>
+        <label class="file-source-label">{{ $t('editor.fileFormBuilder.fileSource') }}</label>
+        <FbSelect v-model="model.connectionId" :config="fileConfig" style="margin-bottom: 10px"></FbSelect>
+        <label class="file-source-label">{{ $t('editor.fileFormBuilder.tableName') }}</label>
         <el-input
           v-model="model.tableName"
           size="mini"
           :disabled="disabled"
-          :placeholder="
-            $t('formBuilder.input.placeholderPrefix') +
-            $t('editor.fileFormBuilder.tableName')
-          "
+          :placeholder="$t('formBuilder.input.placeholderPrefix') + $t('editor.fileFormBuilder.tableName')"
         ></el-input>
-        <form-builder
-          ref="form"
-          v-model="model.fileProperty"
-          :config="config"
-        ></form-builder>
-        <label
-          class="file-source-label"
-          v-if="model.database_type === 'excel'"
-          >{{ $t('editor.fileFormBuilder.excelValue') }}</label
-        >
+        <form-builder ref="form" v-model="model.fileProperty" :config="config"></form-builder>
+        <label class="file-source-label" v-if="model.database_type === 'excel'">{{
+          $t('editor.fileFormBuilder.excelValue')
+        }}</label>
         <div class="form-excel-wrap" v-if="model.database_type === 'excel'">
           <el-form
             label-width="145px"
@@ -76,10 +49,7 @@
             ref="excelForm"
           >
             <!--工作页 -->
-            <el-form-item
-              :label="$t('editor.fileFormBuilder.sheet_range')"
-              prop="sheet_start"
-            >
+            <el-form-item :label="$t('editor.fileFormBuilder.sheet_range')" prop="sheet_start">
               <el-input
                 v-model.number="model.fileProperty.sheet_start"
                 maxlength="3"
@@ -105,35 +75,21 @@
               prop="excel_header_start"
             >
               <div>
-                <el-radio-group
-                  v-model="model.fileProperty.gridfs_header_type"
-                  @change="changeHeaderType"
-                >
-                  <el-radio label="specified_line">{{
-                    $t('editor.fileFormBuilder.excel_header_coordinate')
-                  }}</el-radio>
-                  <el-radio label="custom">{{
-                    $t('editor.fileFormBuilder.excel_header_range')
-                  }}</el-radio>
+                <el-radio-group v-model="model.fileProperty.gridfs_header_type" @change="changeHeaderType">
+                  <el-radio label="specified_line">{{ $t('editor.fileFormBuilder.excel_header_coordinate') }}</el-radio>
+                  <el-radio label="custom">{{ $t('editor.fileFormBuilder.excel_header_range') }}</el-radio>
                 </el-radio-group>
                 <el-input
                   v-model="model.fileProperty.gridfs_header_config"
                   size="mini"
-                  :placeholder="
-                    $t('editor.fileFormBuilder.header_type_custom_label')
-                  "
+                  :placeholder="$t('editor.fileFormBuilder.header_type_custom_label')"
                   v-show="model.fileProperty.gridfs_header_type === 'custom'"
                 ></el-input>
-                <div
-                  v-show="model.fileProperty.gridfs_header_type !== 'custom'"
-                  class="excel_header_start"
-                >
+                <div v-show="model.fileProperty.gridfs_header_type !== 'custom'" class="excel_header_start">
                   <el-input
                     v-model="model.fileProperty.excel_header_start"
                     size="mini"
-                    :placeholder="
-                      $t('editor.fileFormBuilder.excel_header_start')
-                    "
+                    :placeholder="$t('editor.fileFormBuilder.excel_header_start')"
                   ></el-input>
                   <span class="separate"> ~ </span>
                   <el-input
@@ -144,24 +100,16 @@
                 </div>
               </div>
             </el-form-item>
-            <el-form-item
-              v-show="model.fileProperty.gridfs_header_type !== 'custom'"
+            <el-form-item v-show="model.fileProperty.gridfs_header_type !== 'custom'"
               ><div style="color: #999">
                 {{ $t('editor.fileFormBuilder.excel_cell_point') }}
               </div></el-form-item
             >
             <!--字段获取方式 -->
-            <el-form-item
-              :label="$t('editor.fileFormBuilder.header_mapping')"
-              class="excelHeaderType"
-            >
+            <el-form-item :label="$t('editor.fileFormBuilder.header_mapping')" class="excelHeaderType">
               <el-radio-group v-model="model.fileProperty.excel_header_type">
-                <el-radio label="value">{{
-                  $t('editor.fileFormBuilder.header_mapping_value')
-                }}</el-radio>
-                <el-radio label="index">{{
-                  $t('editor.fileFormBuilder.header_mapping_index')
-                }}</el-radio>
+                <el-radio label="value">{{ $t('editor.fileFormBuilder.header_mapping_value') }}</el-radio>
+                <el-radio label="index">{{ $t('editor.fileFormBuilder.header_mapping_index') }}</el-radio>
               </el-radio-group>
             </el-form-item>
             <!-- 内容 -->
@@ -221,11 +169,7 @@
 import _ from 'lodash'
 import formConfigs from './config'
 import Entity from '../link/Entity'
-import {
-  mergeJoinTablesToTargetSchema,
-  convertSchemaToTreeData,
-  removeDeleted
-} from '../../util/Schema'
+import { mergeJoinTablesToTargetSchema, convertSchemaToTreeData, removeDeleted } from '../../util/Schema'
 import ws from '../../../api/ws'
 // let editorMonitor = null;
 let fieldsNamesMap = {}
@@ -238,30 +182,12 @@ export default {
       let end = this.model.fileProperty.excel_header_end
       let config = this.model.fileProperty.gridfs_header_config
       if (start === '') {
-        callback(
-          new Error(
-            this.$t('editor.fileFormBuilder.excel_header_start') +
-              this.$t('formBuilder.noneText')
-          )
-        )
+        callback(new Error(this.$t('editor.fileFormBuilder.excel_header_start') + this.$t('formBuilder.noneText')))
       } else if (end === '') {
-        callback(
-          new Error(
-            this.$t('editor.fileFormBuilder.excel_header_end') +
-              this.$t('formBuilder.noneText')
-          )
-        )
-      } else if (
-        config === '' &&
-        this.model.fileProperty.gridfs_header_type === 'custom'
-      ) {
-        callback(
-          new Error(this.$t('editor.fileFormBuilder.header_type_required'))
-        )
-      } else if (
-        (!/^[A-Z]+[1-9]+$/.test(start) && start !== '') ||
-        (!/^[A-Z]+[1-9]+$/.test(end) && end !== '')
-      ) {
+        callback(new Error(this.$t('editor.fileFormBuilder.excel_header_end') + this.$t('formBuilder.noneText')))
+      } else if (config === '' && this.model.fileProperty.gridfs_header_type === 'custom') {
+        callback(new Error(this.$t('editor.fileFormBuilder.header_type_required')))
+      } else if ((!/^[A-Z]+[1-9]+$/.test(start) && start !== '') || (!/^[A-Z]+[1-9]+$/.test(end) && end !== '')) {
         callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_tip')))
       }
     }
@@ -269,23 +195,11 @@ export default {
       let start = this.model.fileProperty.sheet_start
       let end = this.model.fileProperty.sheet_end
       if (start === '') {
-        callback(
-          new Error(
-            this.$t('editor.fileFormBuilder.sheet_start') +
-              this.$t('formBuilder.noneText')
-          )
-        )
+        callback(new Error(this.$t('editor.fileFormBuilder.sheet_start') + this.$t('formBuilder.noneText')))
       } else if (end === '') {
-        callback(
-          new Error(
-            this.$t('editor.fileFormBuilder.sheet_end') +
-              this.$t('formBuilder.noneText')
-          )
-        )
+        callback(new Error(this.$t('editor.fileFormBuilder.sheet_end') + this.$t('formBuilder.noneText')))
       } else if (start > end) {
-        callback(
-          new Error(this.$t('editor.fileFormBuilder.excel_value_end_gt_start'))
-        )
+        callback(new Error(this.$t('editor.fileFormBuilder.excel_value_end_gt_start')))
       }
     }
     return {
@@ -416,10 +330,7 @@ export default {
       }
       this.model.fileProperty['file_type'] = this.model.database_type
       // editorMonitor = vueAdapter.editor;
-      this.schema = mergeJoinTablesToTargetSchema(
-        cell.getSchema(),
-        cell.getInputSchema()
-      )
+      this.schema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema())
       let fields = this.schema.fields || []
       if (fields.length) {
         fields = removeDeleted(fields)

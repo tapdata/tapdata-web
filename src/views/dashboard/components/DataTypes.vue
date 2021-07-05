@@ -23,13 +23,7 @@
       </el-table-column>
       <el-table-column :label="$t('dkDashboard.outRate')">
         <template slot-scope="scope">
-          <span
-            >{{
-              handleDecimals(
-                scope.row.data.total_violation / scope.row.data.total_record
-              )
-            }}%</span
-          >
+          <span>{{ handleDecimals(scope.row.data.total_violation / scope.row.data.total_record) }}%</span>
         </template>
       </el-table-column>
     </el-table>
@@ -94,10 +88,7 @@ export default {
       }
 
       this.loading = true
-      Promise.all([
-        this.$api('insights').get(params),
-        this.$api('insights').count({ where: params.filter.where })
-      ])
+      Promise.all([this.$api('insights').get(params), this.$api('insights').count({ where: params.filter.where })])
         .then(([{ data: data1 }, { data: data2 }]) => {
           this.pagination.total = data2.count || 0
           let list = data1 || []

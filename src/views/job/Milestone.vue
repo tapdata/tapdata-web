@@ -3,16 +3,8 @@
     <ul class="milestone-list">
       <li class="milestone-item" v-for="(item, index) in list" :key="index">
         <div class="label">
-          <el-tooltip
-            :content="item.label"
-            :disabled="item.tipDisabled"
-            class="item"
-            effect="dark"
-            placement="top"
-          >
-            <span @mouseenter="isShowTooltip(item, $event)">{{
-              item.label
-            }}</span>
+          <el-tooltip :content="item.label" :disabled="item.tipDisabled" class="item" effect="dark" placement="top">
+            <span @mouseenter="isShowTooltip(item, $event)">{{ item.label }}</span>
           </el-tooltip>
 
           <el-button
@@ -25,11 +17,7 @@
             {{ $t('milestone.btn_check_error') }}
           </el-button>
         </div>
-        <div
-          v-if="
-            ['error'].includes(dataFlow.status) && item.status === 'running'
-          "
-        >
+        <div v-if="['error'].includes(dataFlow.status) && item.status === 'running'">
           <div class="status paused">
             <span class="milestone-icon-wrap">
               <i class="milestone-status__icon el-icon-video-pause"></i>

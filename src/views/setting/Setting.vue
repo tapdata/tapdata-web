@@ -6,41 +6,21 @@
           <span class="title">{{ $t('setting.' + item.category) }}</span>
           <span class="btns" v-if="item.category === 'SMTP'">
             <a @click="checkTemplate()">{{ $t('setting.email_template') }}</a>
-            <a @click="connectAndTest()">{{
-              $t('setting.connect_and_test')
-            }}</a>
+            <a @click="connectAndTest()">{{ $t('setting.connect_and_test') }}</a>
           </span>
         </template>
 
-        <div
-          class="box"
-          v-for="(childItem, childIndex) in item.items"
-          :key="childIndex"
-        >
+        <div class="box" v-for="(childItem, childIndex) in item.items" :key="childIndex">
           <div v-if="item.category === 'license'">
-            <div
-              class="license"
-              v-for="(licenseItem, licenseIndex) in item.liceseItems"
-              :key="licenseIndex"
-            >
+            <div class="license" v-for="(licenseItem, licenseIndex) in item.liceseItems" :key="licenseIndex">
               {{ $t('setting.nameserver') }}: {{ licenseItem.hostname }}
             </div>
             <div>
               {{ $t('setting.expiredate') }}:
-              {{
-                licenseItem.authorization
-                  ? $moment(
-                      licenseItem.authorization.validity_period.expires_on || ''
-                    )
-                  : ''
-              }}
+              {{ licenseItem.authorization ? $moment(licenseItem.authorization.validity_period.expires_on || '') : '' }}
             </div>
-            <el-button @click="importlicense(licenseItem)">{{
-              $t('setting.import')
-            }}</el-button>
-            <el-button @click="hrefApply(licenseItem)">{{
-              $t('setting.apply')
-            }}</el-button>
+            <el-button @click="importlicense(licenseItem)">{{ $t('setting.import') }}</el-button>
+            <el-button @click="hrefApply(licenseItem)">{{ $t('setting.apply') }}</el-button>
           </div>
 
           <el-row v-else>
@@ -48,16 +28,9 @@
               <el-form-item>
                 <span slot="label">
                   <span>{{
-                    $t(
-                      'setting.' +
-                        (childItem.key_label || '').split(' ').join('_')
-                    ) || childItem.key_label
+                    $t('setting.' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
                   }}</span>
-                  <el-tooltip
-                    effect="dark"
-                    placement="top"
-                    v-if="childItem.documentation"
-                  >
+                  <el-tooltip effect="dark" placement="top" v-if="childItem.documentation">
                     <div style="max-width: 300px" slot="content">
                       {{
                         $t(
@@ -87,11 +60,7 @@
                     </div>
                     <span
                       class="icon iconfont icon-tishi1"
-                      style="
-                        vertical-align: bottom;
-                        padding-left: 10px;
-                        font-size: 18px;
-                      "
+                      style="vertical-align: bottom; padding-left: 10px; font-size: 18px"
                     ></span>
                   </el-tooltip>
                 </span>
@@ -102,12 +71,7 @@
                   :disabled="item.category === 'license'"
                   :mask="childItem.mask"
                   size="mini"
-                  :label="
-                    $t(
-                      'Settings.' +
-                        (childItem.key_label || '').split(' ').join('_')
-                    ) || childItem.key_label
-                  "
+                  :label="$t('Settings.' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label"
                 >
                 </el-input>
 
@@ -159,30 +123,20 @@
               {{ SMTP['Email_Receivers'] }}
             </p>
             <p>
-              {{ $t('setting.email_template_subject') }} :
-              {{ SMTP['Send_Email_Title_Prefix'] }} Tapdata Notification:
-              <span v-show="activeTab <= 4"
-                >Job {{ emailTabs[activeTab].status }}</span
-              >
-              <span v-show="activeTab > 4"
-                >DDL Warn, please perform DDL operation manually.</span
-              >
+              {{ $t('setting.email_template_subject') }} : {{ SMTP['Send_Email_Title_Prefix'] }} Tapdata Notification:
+              <span v-show="activeTab <= 4">Job {{ emailTabs[activeTab].status }}</span>
+              <span v-show="activeTab > 4">DDL Warn, please perform DDL operation manually.</span>
             </p>
             <p class="paragraph">Hello there,</p>
             <p class="paragraph" v-show="activeTab <= 3">
               <span>Job_name XXX was modified</span><br />
               <span
-                >Status:
-                <span style="color: #f56c6c">{{
-                  emailTabs[activeTab].status
-                }}</span></span
+                >Status: <span style="color: #f56c6c">{{ emailTabs[activeTab].status }}</span></span
               >
             </p>
             <p class="paragraph" v-show="activeTab == 4">
               <span>Job_name XXX was CDC lag</span><br />
-              <span
-                >Node lag time: <span style="color: #f56c6c">XXXX s</span></span
-              >
+              <span>Node lag time: <span style="color: #f56c6c">XXXX s</span></span>
             </p>
             <p class="paragraph" v-show="activeTab == 5">
               <span>Job: job_name xxx</span><br />
@@ -193,8 +147,7 @@
               <span>Notification DDLs:</span><br />
               <span>
                 No. <span style="color: #f56c6c">xxx</span>&nbsp;&nbsp; Scn:
-                <span style="color: #f56c6c">xxx</span>&nbsp;&nbsp; At:
-                <span style="color: #f56c6c">xxx</span><br />
+                <span style="color: #f56c6c">xxx</span>&nbsp;&nbsp; At: <span style="color: #f56c6c">xxx</span><br />
                 DDL sql: <span style="color: #f56c6c">xxx</span>
               </span>
             </p>
@@ -203,12 +156,9 @@
         </el-col>
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button
-          size="mini"
-          type="primary"
-          @click="emailTemplateDialog = false"
-          >{{ $t('message.confirm') }}</el-button
-        >
+        <el-button size="mini" type="primary" @click="emailTemplateDialog = false">{{
+          $t('message.confirm')
+        }}</el-button>
       </div>
     </el-dialog>
   </section>
@@ -328,11 +278,7 @@ export default {
             return Object.assign(value, item)
           })
           vals.sort((a, b) => {
-            return a.category_sort > b.category_sort
-              ? 1
-              : a.category_sort < b.category_sort
-              ? -1
-              : 0
+            return a.category_sort > b.category_sort ? 1 : a.category_sort < b.category_sort ? -1 : 0
           })
 
           this.formData.items = vals
@@ -374,10 +320,7 @@ export default {
       let duration = Math.floor((now - lastTime) / 1000)
       if (lastTime && duration < 60) {
         return this.snackbarfun(
-          this.$message.success(this.$t('setting.test_email_countdown')) +
-            '(' +
-            (60 - duration) +
-            's)',
+          this.$message.success(this.$t('setting.test_email_countdown')) + '(' + (60 - duration) + 's)',
           2
         )
       }

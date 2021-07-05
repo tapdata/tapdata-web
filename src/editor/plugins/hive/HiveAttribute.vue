@@ -10,20 +10,9 @@
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div> -->
-      <el-form
-        class="e-form"
-        label-position="top"
-        :model="model"
-        ref="form"
-        :disabled="disabled"
-      >
+      <el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
         <!-- <span class="addTxt">+新建文件</span> -->
-        <el-form-item
-          :label="$t('editor.choose') + ' hive'"
-          prop="connectionId"
-          :rules="rules"
-          required
-        >
+        <el-form-item :label="$t('editor.choose') + ' hive'" prop="connectionId" :rules="rules" required>
           <el-select
             :filterable="!databaseLoading"
             :loading="databaseLoading"
@@ -33,9 +22,7 @@
           >
             <el-option
               v-for="(item, idx) in databases"
-              :label="`${item.name} (${
-                $t('connection.status.' + item.status) || item.status
-              })`"
+              :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
               :value="item.id"
               v-bind:key="idx"
             ></el-option>
@@ -44,8 +31,7 @@
 
         <el-form-item
           :label="
-            $t('editor.cell.data_node.table.form.table.label') +
-            $t('editor.cell.data_node.table.form.table.labelTips')
+            $t('editor.cell.data_node.table.form.table.label') + $t('editor.cell.data_node.table.form.table.labelTips')
           "
           prop="tableName"
           :rules="rules"
@@ -59,11 +45,7 @@
               :loading="schemasLoading"
               default-first-option
               clearable
-              :placeholder="
-                $t(
-                  'editor.cell.data_node.collection.form.collection.placeholder'
-                )
-              "
+              :placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
               size="mini"
             >
               <el-option
@@ -146,32 +128,16 @@
         <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
         <span v-else>{{ $t('dataFlow.updateModel') }}</span>
       </el-button>
-      <entity
-        :schema="convertSchemaToTreeData(mergedSchema)"
-        :editable="false"
-      ></entity>
+      <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
-    <el-dialog
-      :title="$t('message.prompt')"
-      :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
-      width="30%"
-    >
+    <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
       <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false" size="mini">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" size="mini" @click="confirmDialog">{{
-          $t('message.confirm')
-        }}</el-button>
+        <el-button @click="dialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" size="mini" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
-    <CreateTable
-      v-if="addtableFalg"
-      :dialog="dialogData"
-      @handleTable="getAddTableName"
-    ></CreateTable>
+    <CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
   </div>
 </template>
 <script>
@@ -277,9 +243,7 @@ export default {
       handler() {
         if (this.schemas.length > 0) {
           if (this.model.tableName) {
-            let schema = this.schemas.filter(
-              s => s.table_name === this.model.tableName
-            )
+            let schema = this.schemas.filter(s => s.table_name === this.model.tableName)
             schema =
               schema && schema.length > 0
                 ? schema[0]
@@ -333,14 +297,9 @@ export default {
         .get([connectionId])
         .then(result => {
           if (result.data) {
-            let schemas =
-              (result.data.schema && result.data.schema.tables) || []
+            let schemas = (result.data.schema && result.data.schema.tables) || []
             schemas = schemas.sort((t1, t2) =>
-              t1.table_name > t2.table_name
-                ? 1
-                : t1.table_name === t2.table_name
-                ? 0
-                : -1
+              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
             self.schemas = schemas.filter(item => {
               if (item.table_name) {
@@ -408,10 +367,7 @@ export default {
         this.reloadModelLoading = false
         if (templeSchema && templeSchema.length) {
           templeSchema.forEach(item => {
-            if (
-              item.connId === this.model.connectionId &&
-              item.tableName === this.model.tableName
-            ) {
+            if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
               schema = item.schema
             }
           })

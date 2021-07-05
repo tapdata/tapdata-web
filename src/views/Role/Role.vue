@@ -1,11 +1,7 @@
 <template>
   <div class="role" v-loading="loading">
     <head class="head">
-      <i
-        class="iconfont icon-left-circle back-btn-icon"
-        style="color: #409eff; cursor: pointer"
-        @click="back"
-      ></i>
+      <i class="iconfont icon-left-circle back-btn-icon" style="color: #409eff; cursor: pointer" @click="back"></i>
       <h1>{{ $t('role.settingTitle') }}</h1>
       <span>{{ $t('role.currentRole') }}: {{ roleName }}</span>
     </head>
@@ -21,9 +17,7 @@
             <el-col class="e-col borderRight" :span="21">
               {{ $t('role.choosePage') }}
             </el-col>
-            <el-col class="e-col" :span="3"
-              >{{ $t('role.bulkOperate') }}
-            </el-col>
+            <el-col class="e-col" :span="3">{{ $t('role.bulkOperate') }} </el-col>
           </el-row>
         </li>
         <li v-for="item in dataList" :key="item.id">
@@ -44,11 +38,7 @@
               </template>
             </el-col>
             <el-col class="e-col" :span="3">
-              <el-checkbox
-                v-model="item.checked"
-                @change="handleAllCheck($event, item)"
-                v-cloak
-              >
+              <el-checkbox v-model="item.checked" @change="handleAllCheck($event, item)" v-cloak>
                 <span>
                   {{ $t('role.allCheck') }}
                 </span>
@@ -70,9 +60,7 @@
             <el-col class="e-col borderLeft" :span="18">
               {{ $t('role.functionDataPermission') }}
             </el-col>
-            <el-col class="e-col borderLeft" :span="3"
-              >{{ $t('role.bulkOperate') }}
-            </el-col>
+            <el-col class="e-col borderLeft" :span="3">{{ $t('role.bulkOperate') }} </el-col>
           </el-row>
         </li>
         <li class="module-style">
@@ -90,39 +78,17 @@
                     v-model="second.checked"
                     v-show="second.id"
                     :disabled="second.type === 'read'"
-                    @change="
-                      handleOneCheckAll(
-                        $event,
-                        item,
-                        item.children,
-                        second,
-                        'children'
-                      )
-                    "
-                    :class="[
-                      { 'checkbox-position': !second.allName },
-                      'checkbox-radio'
-                    ]"
+                    @change="handleOneCheckAll($event, item, item.children, second, 'children')"
+                    :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
                     v-cloak
                   >
                     <div>{{ $t('role.roleNavName.' + second.name) }}</div>
                     <el-checkbox
                       class="e-checkbox"
                       v-show="second.allName"
-                      :disabled="
-                        !second.checked ||
-                        second.allName === 'data_catalog_all_data'
-                      "
+                      :disabled="!second.checked || second.allName === 'data_catalog_all_data'"
                       v-model="second.checkAllData"
-                      @change="
-                        handleOneAllData(
-                          $event,
-                          item,
-                          item.children,
-                          second,
-                          'children'
-                        )
-                      "
+                      @change="handleOneAllData($event, item, item.children, second, 'children')"
                       v-cloak
                     >
                       <div>{{ $t('role.allData') }}</div>
@@ -132,9 +98,7 @@
                 <el-col :span="4" v-if="item.children" style="padding-top: 8px">
                   <el-checkbox
                     v-model="item.checkAll"
-                    @change="
-                      handleAuthoritySelectAll($event, item, item.children)
-                    "
+                    @change="handleAuthoritySelectAll($event, item, item.children)"
                     v-cloak
                   >
                     <div>{{ $t('role.chooseAllFunction') }}</div>
@@ -149,10 +113,7 @@
                   </el-checkbox>
                 </el-col>
               </el-row>
-              <div
-                class="line"
-                v-if="item.children && item.classification"
-              ></div>
+              <div class="line" v-if="item.children && item.classification"></div>
               <!-- 分类权限 -->
               <el-row class="box heightStyle" v-if="item.classification">
                 <el-col class="e-col" :span="20">
@@ -162,19 +123,8 @@
                     v-model="second.checked"
                     v-show="second.id"
                     :disabled="second.type === 'read'"
-                    @change="
-                      handleOneCheckAll(
-                        $event,
-                        item,
-                        item.classification,
-                        second,
-                        'classify'
-                      )
-                    "
-                    :class="[
-                      { 'checkbox-position': !second.allName },
-                      'checkbox-radio'
-                    ]"
+                    @change="handleOneCheckAll($event, item, item.classification, second, 'classify')"
+                    :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
                     v-cloak
                   >
                     <div>{{ $t('role.roleNavName.' + second.name) }}</div>
@@ -194,23 +144,14 @@
                   <el-checkbox
                     class="checkbox-radio checkbox-position"
                     v-model="item.classifiyCheckAll"
-                    @change="
-                      handleAuthoritySelectAll(
-                        $event,
-                        item,
-                        item.classification
-                      )
-                    "
+                    @change="handleAuthoritySelectAll($event, item, item.classification)"
                     v-cloak
                   >
                     <div>{{ $t('role.chooseAllFunction') }}</div>
                   </el-checkbox>
                 </el-col>
               </el-row>
-              <div
-                class="line"
-                v-if="item.classification && item.functional"
-              ></div>
+              <div class="line" v-if="item.classification && item.functional"></div>
               <!-- 导入导出 -->
               <el-row class="box heightStyle" v-if="item.functional">
                 <el-col class="e-col" :span="20">
@@ -220,19 +161,8 @@
                     v-show="second.id"
                     :disabled="second.type === 'read'"
                     v-model="second.checked"
-                    @change="
-                      handleOneCheckAll(
-                        $event,
-                        item,
-                        item.functional,
-                        second,
-                        'functional'
-                      )
-                    "
-                    :class="[
-                      { 'checkbox-position': !second.allName },
-                      'checkbox-radio'
-                    ]"
+                    @change="handleOneCheckAll($event, item, item.functional, second, 'functional')"
+                    :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
                     v-cloak
                   >
                     <div>{{ $t('role.roleNavName.' + second.name) }}</div>
@@ -242,9 +172,7 @@
                   <el-checkbox
                     class="checkbox-radio checkbox-position"
                     v-model="item.functionCheckAll"
-                    @change="
-                      handleAuthoritySelectAll($event, item, item.functional)
-                    "
+                    @change="handleAuthoritySelectAll($event, item, item.functional)"
                     v-cloak
                   >
                     <div>{{ $t('role.chooseAllFunction') }}</div>
@@ -257,14 +185,8 @@
       </ul>
     </div>
     <div class="btn">
-      <el-button size="mini" @click="back"
-        >{{ $t('dataVerify.back') }}
-      </el-button>
-      <el-button
-        size="mini"
-        type="primary"
-        :loading="saveloading"
-        @click="saveSubmit('ruleForm')"
+      <el-button size="mini" @click="back">{{ $t('dataVerify.back') }} </el-button>
+      <el-button size="mini" type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')"
         >{{ $t('app.save') }}
       </el-button>
     </div>
@@ -331,10 +253,7 @@ let moduleMapping = [
       { name: 'datasource_edition', allName: 'datasource_edition_all_data' },
       { name: 'datasource_delete', allName: 'datasource_delete_all_data' }
     ],
-    classification: [
-      { name: 'datasource_category_management' },
-      { name: 'datasource_category_application' }
-    ]
+    classification: [{ name: 'datasource_category_management' }, { name: 'datasource_category_application' }]
   },
   {
     name: 'Data_SYNC',
@@ -345,10 +264,7 @@ let moduleMapping = [
       { name: 'SYNC_job_delete', allName: 'SYNC_job_delete_all_data' },
       { name: 'SYNC_job_operation', allName: 'SYNC_job_operation_all_data' }
     ],
-    classification: [
-      { name: 'SYNC_category_management' },
-      { name: 'SYNC_category_application' }
-    ],
+    classification: [{ name: 'SYNC_category_management' }, { name: 'SYNC_category_application' }],
     functional: [{ name: 'SYNC_job_import' }, { name: 'SYNC_job_export' }]
   },
   {
@@ -367,10 +283,7 @@ let moduleMapping = [
   },
   {
     name: 'data_government',
-    classification: [
-      { name: 'data_catalog_category_application' },
-      { name: 'data_catalog_category_management' }
-    ]
+    classification: [{ name: 'data_catalog_category_application' }, { name: 'data_catalog_category_management' }]
   },
   {
     name: 'data_catalog',
@@ -426,10 +339,7 @@ let moduleMapping = [
       { name: 'API_delete', allName: 'API_delete_all_data' },
       { name: 'API_publish', allName: 'API_publish_all_data' }
     ],
-    classification: [
-      { name: 'API_category_application' },
-      { name: 'API_category_management' }
-    ],
+    classification: [{ name: 'API_category_application' }, { name: 'API_category_management' }],
     functional: [{ name: 'API_import' }, { name: 'API_export' }]
   },
   {
@@ -441,10 +351,7 @@ let moduleMapping = [
       { name: 'API_data_explorer_export' },
       { name: 'API_data_download' }
     ],
-    classification: [
-      { name: 'API_data_explorer_tagging' },
-      { name: 'API_data_time_zone_editing' }
-    ]
+    classification: [{ name: 'API_data_explorer_tagging' }, { name: 'API_data_time_zone_editing' }]
   },
   {
     name: 'API_doc_test',
@@ -469,10 +376,7 @@ let moduleMapping = [
 
   {
     name: 'schedule_jobs',
-    functional: [
-      { name: 'schedule_jobs' },
-      { name: 'schedule_jobs_management' }
-    ]
+    functional: [{ name: 'schedule_jobs' }, { name: 'schedule_jobs_management' }]
   },
   {
     name: 'Cluster_management',
@@ -494,10 +398,7 @@ let moduleMapping = [
       { name: 'user_edition', allName: 'user_edition_all_data' },
       { name: 'user_delete', allName: 'user_delete_all_data' }
     ],
-    classification: [
-      { name: 'user_category_management' },
-      { name: 'user_category_application' }
-    ]
+    classification: [{ name: 'user_category_management' }, { name: 'user_category_application' }]
   },
   {
     name: 'role_management',
@@ -510,11 +411,7 @@ let moduleMapping = [
   },
   {
     name: 'system_settings',
-    functional: [
-      { name: 'system_settings' },
-      { name: 'system_settings_modification' },
-      { name: 'notice_settings' }
-    ]
+    functional: [{ name: 'system_settings' }, { name: 'system_settings_modification' }, { name: 'notice_settings' }]
   }
 ]
 export default {
@@ -560,9 +457,7 @@ export default {
                 this.roleusers.push(item.principalId)
               }
               if (item.principalType === 'PERMISSION') {
-                let selected = this.permissionList.filter(
-                  v => v.name === item.principalId
-                )
+                let selected = this.permissionList.filter(v => v.name === item.principalId)
                 if (selected && selected.length > 0) {
                   selected[0].self_only = item.self_only
                   this.selectRole.push(selected[0].name)
@@ -577,11 +472,7 @@ export default {
                     let checkedCount = [],
                       pageLength = []
                     item.children.filter(childItem => {
-                      this.$set(
-                        childItem,
-                        'checkAll',
-                        this.selectRole.includes(childItem.name)
-                      )
+                      this.$set(childItem, 'checkAll', this.selectRole.includes(childItem.name))
                       if (childItem.checkAll) {
                         checkedCount.push(childItem)
                       }
@@ -589,11 +480,7 @@ export default {
                         pageLength.push(childItem)
                       }
                     })
-                    this.$set(
-                      item,
-                      'checked',
-                      checkedCount.length === pageLength.length
-                    )
+                    this.$set(item, 'checked', checkedCount.length === pageLength.length)
                   }
                 }
               })
@@ -674,17 +561,9 @@ export default {
                     let checkedCount = [],
                       allCheckedCount = []
                     item.children.filter(childItem => {
-                      this.$set(
-                        childItem,
-                        'checkAllData',
-                        this.selectRole.includes(childItem.allName)
-                      )
+                      this.$set(childItem, 'checkAllData', this.selectRole.includes(childItem.allName))
 
-                      this.$set(
-                        childItem,
-                        'checked',
-                        this.selectRole.includes(childItem.name)
-                      )
+                      this.$set(childItem, 'checked', this.selectRole.includes(childItem.name))
                       if (childItem.checked) {
                         checkedCount.push(childItem)
                       }
@@ -696,52 +575,28 @@ export default {
                       return el.allName
                     })
 
-                    this.$set(
-                      item,
-                      'checkAll',
-                      checkedCount.length === item.children.length
-                    )
-                    this.$set(
-                      item,
-                      'checkedAllData',
-                      allCheckedCount.length === allData.length
-                    )
+                    this.$set(item, 'checkAll', checkedCount.length === item.children.length)
+                    this.$set(item, 'checkedAllData', allCheckedCount.length === allData.length)
                   }
                   if (item.classification && item.classification.length) {
                     let checkedCount = []
                     item.classification.filter(classify => {
-                      this.$set(
-                        classify,
-                        'checked',
-                        this.selectRole.includes(classify.name)
-                      )
+                      this.$set(classify, 'checked', this.selectRole.includes(classify.name))
                       if (classify.checked) {
                         checkedCount.push(classify)
                       }
                     })
-                    this.$set(
-                      item,
-                      'classifiyCheckAll',
-                      checkedCount.length === item.classification.length
-                    )
+                    this.$set(item, 'classifiyCheckAll', checkedCount.length === item.classification.length)
                   }
                   if (item.functional && item.functional.length) {
                     let checkedCount = []
                     item.functional.filter(fun => {
-                      this.$set(
-                        fun,
-                        'checked',
-                        this.selectRole.includes(fun.name)
-                      )
+                      this.$set(fun, 'checked', this.selectRole.includes(fun.name))
                       if (fun.checked) {
                         checkedCount.push(fun)
                       }
                     })
-                    this.$set(
-                      item,
-                      'functionCheckAll',
-                      checkedCount.length === item.functional.length
-                    )
+                    this.$set(item, 'functionCheckAll', checkedCount.length === item.functional.length)
                   }
                 }
               })
@@ -925,8 +780,7 @@ export default {
       let allDataCount = children.filter(el => {
         return el.allName
       })
-      item.checkedAllData =
-        checkedCount.length === allDataCount.length ? true : false
+      item.checkedAllData = checkedCount.length === allDataCount.length ? true : false
     },
 
     // 权限全部数据全选
@@ -996,13 +850,7 @@ export default {
           })
       })
 
-      let saveRoleArr = [
-        ...pageArr,
-        ...childreArr,
-        ...childreArrAll,
-        ...classifyArr,
-        ...functionalArr
-      ]
+      let saveRoleArr = [...pageArr, ...childreArr, ...childreArrAll, ...classifyArr, ...functionalArr]
 
       let newRoleMappings = []
 
