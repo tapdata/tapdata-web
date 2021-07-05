@@ -40,7 +40,7 @@ export const HiveNodeConfig = {
        * @return {boolean}
        */
       allowTarget() {
-        return false
+        return true
       },
 
       /**
@@ -49,7 +49,7 @@ export const HiveNodeConfig = {
        * @return {boolean}
        */
       allowSource() {
-        return true
+        return false
       },
 
       validate(data) {

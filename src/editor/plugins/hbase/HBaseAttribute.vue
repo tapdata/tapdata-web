@@ -19,7 +19,7 @@
       >
         <!-- <span class="addTxt">+新建文件</span> -->
         <el-form-item
-          :label="$t('editor.choose') + ' hive'"
+          :label="$t('editor.choose') + ' HBase'"
           prop="connectionId"
           :rules="rules"
           required
@@ -28,7 +28,7 @@
             :filterable="!databaseLoading"
             :loading="databaseLoading"
             v-model="model.connectionId"
-            :placeholder="$t('message.placeholderSelect') + 'hive'"
+            :placeholder="$t('message.placeholderSelect') + 'HBase'"
             :clearable="true"
           >
             <el-option
@@ -336,7 +336,7 @@ export default {
 
     getData() {
       let result = _.cloneDeep(this.model)
-      result.name = result.tableName || 'hive'
+      result.name = result.tableName || 'HBase'
       return result
     },
 
