@@ -123,6 +123,7 @@ export default {
       allowDataType.filter(type => this.database.includes(type)) || []
     this.otherType =
       allowDataType.filter(type => this.otherType.includes(type)) || []
+    this.database.push('hbase') //临时代码
   },
   methods: {
     getImgByType,
