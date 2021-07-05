@@ -4,7 +4,12 @@ const SelectOption = {
   render(h) {
     const props = this.$attrs
     const slots = this.$slots
-    const options = props.options || []
+    const {
+      options = [],
+      itemLabel = 'label',
+      itemValue = 'value',
+      itemDisabled = 'disabled'
+    } = props
     const children =
       options.length !== 0
         ? options.map(option => {
@@ -15,7 +20,17 @@ const SelectOption = {
                 {}
               )
             } else {
-              return h('el-option', { props: option }, {})
+              return h(
+                'el-option',
+                {
+                  props: {
+                    label: option[itemLabel],
+                    value: option[itemValue],
+                    disabled: option[itemDisabled]
+                  }
+                },
+                {}
+              )
             }
           })
         : slots

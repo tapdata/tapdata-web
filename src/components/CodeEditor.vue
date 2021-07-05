@@ -68,7 +68,7 @@ export default {
       typeof this.value === 'object'
         ? JSON.stringify(this.value, null, 2)
         : this.value
-    editor.setValue(val, 1)
+    editor.setValue(val || '', 1)
 
     if (this.options) {
       session.setUseWrapMode(this.options.useWrapMode) // 自动换行

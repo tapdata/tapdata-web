@@ -3,48 +3,65 @@ import { NodeType } from '@/nodes/extends/NodeType'
 export class Redis extends NodeType {
   constructor(node) {
     super(node)
+
+    if (node.attr) {
+      const attr = Object.assign(this.attr, node.attr)
+      if (attr.formSchema) this.formSchema = attr.formSchema
+      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
+    }
   }
+
+  attr = {}
 
   group = 'data'
 
   formSchema = {
     type: 'object',
     properties: {
-      datasource: {
-        title: '数据库',
-        type: 'void',
+      connectionId: {
+        title: '选择Redis',
+        type: 'string',
+        required: true,
         'x-decorator': 'ElFormItem',
-        'x-decorator-props': {
-          asterisk: true,
-          feedbackLayout: 'none'
-        },
-        'x-component': 'Row',
+        'x-component': 'Select',
         'x-component-props': {
-          type: 'flex',
-          gap: '8px'
+          placeholder: '请选择Redis'
         },
-        properties: {
-          connectionId: {
-            type: 'string',
-            required: true,
-            'x-decorator': 'Col',
-            'x-decorator-props': { flex: 1 },
-            'x-component': 'ComboSelect',
-            'x-component-props': {
-              config: { placeholder: '请选择数据库' }
-            },
-            'x-reactions': ['{{useAsyncDataSource(loadDatabase)}}']
-          },
-          connectionBtn: {
-            type: 'void',
-            'x-component': 'AddDatabaseBtn'
+        'x-reactions': [
+          '{{useAsyncDataSource(loadDatabase, "dataSource", ["redis"])}}'
+        ]
+      },
+      name: {
+        type: 'string',
+        'x-display': 'hidden',
+        'x-reactions': {
+          dependencies: ['connectionId'],
+          fulfill: {
+            run: '{{$self.value = $form.query("connectionId").get("dataSource")?.find(item=>item.value===$deps[0])?.label || $self.value}}'
           }
         }
       },
-      datasourceInfo: {
+      redisKey: {
+        title: '设置缓存键',
+        type: 'array',
+        required: true,
+        'x-decorator': 'ElFormItem',
+        'x-component': 'Select',
+        'x-component-props': {
+          placeholder: '请选择或输入缓存键',
+          allowCreate: true,
+          multiple: true,
+          filterable: true
+        }
+      },
+      redisKeyPrefix: {
+        title: '缓存键前缀',
         type: 'string',
-        'x-component': 'DatabaseInfo',
-        'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo)}}']
+        'x-decorator': 'ElFormItem',
+        'x-component': 'Input',
+        'x-component-props': {
+          placeholder: '请输入缓存键前缀'
+        }
       }
     }
   }

@@ -1,6 +1,20 @@
 .filter-conditions {
   font-size: 12px;
 
+  .cond-item-wrap + .cond-item-wrap {
+    margin-top: 8px;
+  }
+
+  .cond-item-wrap {
+    .cond-operator:first-child {
+      margin-top: 0;
+    }
+  }
+
+  .cond-operator {
+    margin: 8px 0;
+  }
+
   .child-cond {
     padding: 8px;
     border: 1px solid #dee2e6;

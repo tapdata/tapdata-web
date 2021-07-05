@@ -32,6 +32,7 @@
                 loadDatabaseTable,
                 loadTableField,
                 loadTableInfo,
+                loadCollections,
                 sourceConnectionId: sourceNode ? sourceNode.connectionId : null
               }"
             />
@@ -80,29 +81,7 @@ export default {
 
   data() {
     return {
-      form: createForm({
-        effects: () => {
-          onFormValuesChange(form => {
-            console.log(
-              'onFormValuesChange',
-              JSON.parse(JSON.stringify(form.values))
-            )
-          })
-          const filterProps = ['position', 'id'] // 排除属性的更新
-          onFormInputChange(form => {
-            this.$nextTick(() => {
-              this.updateNodeProperties({
-                id: this.node.id,
-                properties: JSON.parse(
-                  JSON.stringify(form.values, (key, value) =>
-                    filterProps.includes(key) ? undefined : value
-                  )
-                )
-              })
-            })
-          })
-        }
-      }),
+      form: createForm(),
 
       schema: null
     }
@@ -137,30 +116,26 @@ export default {
     uniteKey() {
       return `${this.node?.id || ''}_${this.activeConnection?.sourceId || ''}`
     }
-
-    /*schema() {
-      const { ins } = this
-      console.log('computed:schema', ins)
-      return ins
-        ? this.activeConnection
-          ? ins.linkFormSchema
-          : ins.formSchema
-        : {}
-    }*/
   },
 
   watch: {
-    uniteKey(v) {
+    async uniteKey(v) {
       if (this.show) {
-        console.log('watch:uniteKey', v)
-
-        this.form.reset()
+        console.log('watch:uniteKey', v, 'forceClear')
         this.schema = {}
         this.$nextTick(() => {
+          /*this.form.reset('*', {
+            forceClear: true
+          })*/
           this.schema = !this.activeConnection
             ? this.ins.formSchema
             : this.ins.linkFormSchema
-          this.form.setValues(this.node)
+
+          // schema改变，之前的form状态可以丢弃，重新创建新表单
+          this.form = createForm({
+            values: this.node,
+            effects: this.useEffects
+          })
         })
       }
     }
@@ -172,6 +147,32 @@ export default {
 
   methods: {
     ...mapMutations('dataflow', ['setNodeValue', 'updateNodeProperties']),
+
+    updateNodeProps(form) {
+      const filterProps = ['position', 'id'] // 排除属性的更新
+      this.updateNodeProperties({
+        id: this.node.id,
+        properties: JSON.parse(
+          JSON.stringify(form.values, (key, value) =>
+            filterProps.includes(key) ? undefined : value
+          )
+        )
+      })
+    },
+
+    useEffects() {
+      onFormValuesChange(form => {
+        console.log(
+          'onFormValuesChange',
+          JSON.parse(JSON.stringify(form.values))
+        )
+      })
+      onFormInputChange(form => {
+        this.$nextTick(() => {
+          this.updateNodeProps(form)
+        })
+      })
+    },
 
     useAsyncDataSource(service, fieldName = 'dataSource', ...args) {
       return field => {
@@ -232,16 +233,7 @@ export default {
         })
       } catch (e) {
         console.log('catch', e)
-        return [
-          {
-            label: 'AAA',
-            value: 'aaa'
-          },
-          {
-            label: 'BBB',
-            value: 'ccc'
-          }
-        ]
+        return []
       }
     },
 
@@ -312,6 +304,16 @@ export default {
       return data.records[0].schema.tables[0].fields.map(
         item => item.field_name
       )
+    },
+
+    async loadCollections(
+      field,
+      connectionId = field.query('connectionId').get('value')
+    ) {
+      if (!connectionId) return
+      let result = await connections.get([connectionId])
+      const tables = result.data?.schema?.tables || []
+      return tables
     },
 
     getDropOptions(field) {

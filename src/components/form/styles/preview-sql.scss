@@ -1,12 +1,11 @@
 .sql-text {
   font-size: 12px;
+  line-height: 1.6;
 
   pre {
     padding: 0.88889em;
     margin: 0;
-    word-break: normal;
-    word-wrap: normal;
-    white-space: pre;
+    white-space: pre-wrap;
     overflow: auto;
     background: #f6f6f6;
     border-radius: 4px;
@@ -15,13 +14,26 @@
   .hljs {
     font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier,
       monospace !important;
-  }
 
-  .hljs-keyword {
-    color: #06f;
-  }
+    &.sql {
+      .hljs-keyword {
+        color: #06f;
+      }
 
-  .hljs-operator {
-    color: #c2a469;
+      .hljs-operator {
+        color: #c2a469;
+      }
+    }
+
+    &.json {
+      .hljs-attr,
+      .hljs-number,
+      .hljs-boolean {
+        color: #f36;
+      }
+      .hljs-punctuation {
+        color: #999;
+      }
+    }
   }
 }

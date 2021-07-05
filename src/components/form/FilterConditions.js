@@ -5,7 +5,7 @@ import VIcon from '@/components/VIcon'
 
 const Conditions = observer(
   defineComponent({
-    props: ['conditions', 'options'],
+    props: ['conditions', 'options', 'databaseType'],
 
     data() {
       return {
@@ -17,16 +17,16 @@ const Conditions = observer(
       const { conditions } = this
       console.log('conditions', this.conditions)
       return (
-        <div>
+        <div class="cond-list">
           {conditions.map((cond, ci) => {
             return (
-              <div key={ci}>
+              <div class="cond-item-wrap" key={ci}>
                 {((cond.type === 'group' &&
                   ci > 0 &&
                   cond.operator &&
                   ci > 0) ||
                   (cond.type !== 'group' && cond.operator && ci > 0)) && (
-                  <div class="cond-operator my-2">{cond.operator}</div>
+                  <div class="cond-operator">{cond.operator}</div>
                 )}
                 {cond.type === 'group' ? (
                   cond.conditions.length > 0 && (
@@ -34,6 +34,8 @@ const Conditions = observer(
                       class="child-cond"
                       conditions={cond.conditions}
                       options={this.options}
+                      databaseType={this.databaseType}
+                      onRemove={() => this.removeCond(ci)}
                     />
                   )
                 ) : (
@@ -96,7 +98,7 @@ const Conditions = observer(
                     <VIcon
                       class="clickable"
                       color="#000"
-                      onClick={this.removeCond}
+                      onClick={() => this.removeCond(ci)}
                       small
                     >
                       delete
@@ -144,6 +146,7 @@ const Conditions = observer(
 
       removeCond(index) {
         this.conditions.splice(index, 1)
+        if (!this.conditions.length) this.$emit('remove')
       },
 
       handleCommand(command, index) {
@@ -185,10 +188,36 @@ export const FilterConditions = connect(
 
       data() {
         return {
-          databaseType: '',
           conditions: [],
           calculationList: ['=', '<>', '>', '<', '>=', '<=', 'like']
         }
+      },
+
+      watch: {
+        conditions: {
+          deep: true,
+          handler(v) {
+            this.$emit('change', v)
+            console.log('changeConditions', v)
+          }
+        },
+
+        value(v) {
+          console.log('watch:value', v)
+          // this.conditions = v
+        }
+      },
+
+      setup() {
+        const formRef = useForm()
+        const form = formRef.value
+        return {
+          databaseType: form.values.databaseType
+        }
+      },
+
+      mounted() {
+        this.conditions = this.value
       },
 
       methods: {
@@ -217,99 +246,39 @@ export const FilterConditions = connect(
             }
           }
           this.conditions.push(cond)
-        },
-
-        genSql() {
-          let res = 'SELECT ',
-            custSql = this.value
-          if (!this.sqlWhere) this.sqlWhere = ''
-          while (this.custFields.length > 0) this.custFields.pop()
-          if (
-            this.value.selectedFields.length > 0 &&
-            custSql.fieldFilterType == 'retainedField'
-          )
-            this.value.selectedFields.forEach(it => this.custFields.push(it))
-          else if (
-            this.value.selectedFields.length > 0 &&
-            custSql.fieldFilterType == 'deleteField'
-          ) {
-            this.primaryKeyOptions
-              .filter(it => !this.value.selectedFields.includes(it))
-              .forEach(it => this.custFields.push(it))
-          }
-
-          if (
-            this.custFields.length > 0 &&
-            this.custFields.length != this.primaryKeyOptions.length
-          )
-            res += this.custFields.join(',')
-          else res += '* '
-          res += ' FROM ' + this.tableName + ' '
-          if (
-            (this.sqlWhere && this.sqlWhere.length > 0) ||
-            (custSql.limitLines &&
-              custSql.limitLines != 'all' &&
-              this.databaseType == 'oracle')
-          )
-            res += ' WHERE '
-          res += this.sqlWhere
-          if (custSql.limitLines && custSql.limitLines != 'all') {
-            if (this.databaseType == 'mysql')
-              res += ' limit ' + custSql.limitLines
-            if (this.databaseType == 'sqlserver')
-              res = res.replace(
-                'SELECT ',
-                'SELECT top ' + custSql.limitLines + ' '
-              )
-            if (this.databaseType == 'oracle') {
-              if (res.indexOf('WHERE ') < res.length - 6) res += ' AND '
-              res += ' ROWNUM < ' + custSql.limitLines
-            }
-            if (this.databaseType == 'db2')
-              res += '  fetch first ' + custSql.limitLines + ' rows only'
-          }
-          this.value.cSql = res
         }
       },
 
       render() {
         const $t = this.$t.bind(this)
         const { conditions } = this
-        return (
-          <Space direction="vertical" class="filter-conditions">
-            {conditions.length > 0 ? (
-              <Space>
-                <el-button
-                  plain
-                  size="mini"
-                  onClick={() => this.addCond('cond', 'and')}
-                >
-                  + and
-                </el-button>
-                <el-button
-                  plain
-                  size="mini"
-                  onClick={() => this.addCond('cond', 'or')}
-                >
-                  + or
-                </el-button>
-                <el-button
-                  plain
-                  size="mini"
-                  onClick={() => this.addCond('group', 'and')}
-                >
-                  + and()
-                </el-button>
-                <el-button
-                  plain
-                  size="mini"
-                  onClick={() => this.addCond('group', 'or')}
-                >
-                  + or()
-                </el-button>
-              </Space>
-            ) : (
-              <Space>
+
+        let btns
+
+        console.log('databaseType', this.databaseType)
+
+        if (this.databaseType === 'mongodb') {
+          if (!conditions.length) {
+            btns = [
+              <el-button
+                plain
+                size="mini"
+                onClick={() => this.addCond('group', 'and')}
+              >
+                + and()
+              </el-button>,
+              <el-button
+                plain
+                size="mini"
+                onClick={() => this.addCond('group', 'or')}
+              >
+                + or()
+              </el-button>
+            ]
+          }
+        } else {
+          btns = !conditions.length
+            ? [
                 <el-button
                   plain
                   size="mini"
@@ -317,7 +286,7 @@ export const FilterConditions = connect(
                   onClick={() => this.addCond('cond')}
                 >
                   {$t('queryBuilder.addCond')}
-                </el-button>
+                </el-button>,
                 <el-button
                   plain
                   size="mini"
@@ -326,10 +295,48 @@ export const FilterConditions = connect(
                 >
                   ({$t('queryBuilder.addCond')})
                 </el-button>
-              </Space>
-            )}
+              ]
+            : [
+                <el-button
+                  plain
+                  size="mini"
+                  onClick={() => this.addCond('cond', 'and')}
+                >
+                  + and
+                </el-button>,
+                <el-button
+                  plain
+                  size="mini"
+                  onClick={() => this.addCond('cond', 'or')}
+                >
+                  + or
+                </el-button>,
+                <el-button
+                  plain
+                  size="mini"
+                  onClick={() => this.addCond('group', 'and')}
+                >
+                  + and()
+                </el-button>,
+                <el-button
+                  plain
+                  size="mini"
+                  onClick={() => this.addCond('group', 'or')}
+                >
+                  + or()
+                </el-button>
+              ]
+        }
+
+        return (
+          <Space direction="vertical" class="filter-conditions">
+            {!!btns && <Space>{btns}</Space>}
             {conditions?.length > 0 && (
-              <Conditions options={this.options} conditions={conditions} />
+              <Conditions
+                options={this.options}
+                conditions={conditions}
+                databaseType={this.databaseType}
+              />
             )}
           </Space>
         )

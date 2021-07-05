@@ -86,21 +86,9 @@ export class Table extends NodeType {
           },
           table: {
             type: 'object',
-            // 'x-visible': false,
             'x-display': 'hidden',
             'x-reactions': ['{{useAsyncDataSource(loadTableInfo, "value")}}']
           },
-          /*tableName: {
-            type: 'string',
-            required: true,
-            'x-decorator': 'Col',
-            'x-decorator-props': { flex: 1 },
-            'x-component': 'ComboSelect',
-            'x-component-props': {
-              config: { placeholder: '请选择表，区分大小写' }
-            },
-            'x-reactions': ['{{useAsyncDataSource(loadDatabaseTable)}}']
-          },*/
           connectionBtn: {
             type: 'void',
             'x-component': 'AddDatabaseBtn'
@@ -113,7 +101,7 @@ export class Table extends NodeType {
         'x-reactions': {
           dependencies: ['tableId'],
           fulfill: {
-            run: '{{$self.value = $form.query("tableId").get("dataSource")?.find(item=>item.value===$deps[0])?.label}}'
+            run: '{{$self.value = $form.query("tableId").get("dataSource")?.find(item=>item.value===$deps[0])?.label || $self.value}}'
           }
         }
       },
@@ -261,119 +249,17 @@ export class Table extends NodeType {
                 'x-component': 'FilterConditions',
                 'x-component-props': {},
                 'x-reactions': {
-                  dependencies: ['selectedFields'],
+                  dependencies: ['custSql.selectedFields'],
                   fulfill: {
-                    run: '{{$self.dataSource = $form.query("selectedFields").get("dataSource")}}'
+                    run: '{{$self.dataSource = $form.query("custSql.selectedFields").get("dataSource")}}'
                   }
                 }
-                // 'x-reactions': ['{{useAsyncDataSource(loadTableField)}}']
               },
-              sql: {
+              previewSql: {
                 type: 'string',
                 'x-component': 'PreviewSql',
-                'x-component-props': {},
-                'x-reactions': {
-                  dependencies: ['selectedFields'],
-                  fulfill: {
-                    run: '{{$self.dataSource = $form.query("selectedFields").get("dataSource")}}'
-                  }
-                }
+                'x-component-props': {}
               }
-
-              /*conditions: {
-                type: 'array',
-                'x-component': 'ArrayItems',
-                'x-decorator': 'ElFormItem',
-                items: {
-                  type: 'object',
-                  properties: {
-                    space: {
-                      type: 'void',
-                      'x-component': 'Space',
-                      'x-component-props': {
-                        size: 'middle'
-                      },
-                      properties: {
-                        field: {
-                          type: 'string',
-                          enum: [
-                            { label: '选项1', value: 1 },
-                            { label: '选项2', value: 2 }
-                          ],
-                          'x-decorator': 'ElFormItem',
-                          'x-component': 'Select',
-                          'x-component-props': {
-                            placeholder: 'select field'
-                          }
-                        },
-                        command: {
-                          type: 'string',
-                          enum: ['=', '<>', '>', '<', '>=', '<=', 'like'],
-                          'x-decorator': 'ElFormItem',
-                          'x-component': 'Select',
-                          'x-component-props': {
-                            placeholder: 'select op'
-                          }
-                        },
-                        value: {
-                          type: 'string',
-                          'x-decorator': 'ElFormItem',
-                          'x-component': 'Input',
-                          'x-component-props': {
-                            placeholder: 'enter value'
-                          }
-                        },
-                        remove: {
-                          type: 'void',
-                          'x-decorator': 'ElFormItem',
-                          'x-component': 'ArrayRemove'
-                        }
-                      }
-                    },
-                    conditions: {}
-                  }
-                },
-                properties: {
-                  header: {
-                    type: 'void',
-                    'x-component': 'ArrayHeader',
-                    properties: {
-                      addAnd: {
-                        type: 'void',
-                        title: 'and',
-                        'x-component': 'ArrayAddition',
-                        'x-component-props': {
-                          size: 'mini'
-                        }
-                      },
-                      addOr: {
-                        type: 'void',
-                        title: 'or',
-                        'x-component': 'ArrayAddition',
-                        'x-component-props': {
-                          size: 'mini'
-                        }
-                      },
-                      addAndGroup: {
-                        type: 'void',
-                        title: 'and()',
-                        'x-component': 'ArrayAddition',
-                        'x-component-props': {
-                          size: 'mini'
-                        }
-                      },
-                      addOrGroup: {
-                        type: 'void',
-                        title: 'or()',
-                        'x-component': 'ArrayAddition',
-                        'x-component-props': {
-                          size: 'mini'
-                        }
-                      }
-                    }
-                  }
-                }
-              }*/
             }
           },
           tab2: {
@@ -383,12 +269,23 @@ export class Table extends NodeType {
               tab: 'SQL模式'
             },
             properties: {
-              bbb: {
+              editSql: {
                 type: 'string',
-                title: 'BBB',
                 'x-decorator': 'ElFormItem',
-                required: true,
-                'x-component': 'Input'
+                'x-component': 'SqlEditor',
+                'x-component-props': {
+                  options: { showPrintMargin: false, useWrapMode: true }
+                }
+              },
+              // TODO 这个属性原来的层级是顶层，现在放在了custSql下，注意和后端沟通支持
+              initialOffset: {
+                type: 'string',
+                title: '自定义SQL增量条件',
+                'x-decorator': 'ElFormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入自定义SQL增量条件'
+                }
               }
             }
           }
