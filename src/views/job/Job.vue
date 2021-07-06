@@ -1196,7 +1196,8 @@ export default {
         }
         // 数据库节点连线至少保留一张表开始
         let objectNamesList = [],
-          stageTypeFalg = false
+          stageTypeFalg = false,
+          checkSetting = true
         if (data && data.stages && data.stages.length) {
           stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
@@ -1210,6 +1211,15 @@ export default {
               }
             })
           }
+          data.stages.forEach(item => {
+            if (item.type === 'hbase' && this.sync_type !== 'initial_sync') {
+              checkSetting = false
+            }
+          })
+        }
+        if (!checkSetting) {
+          this.$message.error(this.$t('editor.cell.data_node.hbase_check'))
+          return
         }
         if (stageTypeFalg && objectNamesList.length === 0) {
           this.$message.error(this.$t('editor.cell.link.chooseATableTip'))

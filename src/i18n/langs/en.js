@@ -849,6 +849,8 @@ const en = {
       },
       data_node: {
         hiveText: 'Hive Node',
+        hbaseText: 'HBase Node',
+        hbase_check: 'HBase only supports INITIAL SYNC tasks',
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
         mqTableType: 'New table type',
