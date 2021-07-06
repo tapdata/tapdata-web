@@ -184,6 +184,26 @@
             </el-tooltip>
           </div>
           <div class="info-list">
+            <span class="info-label">{{ $t('dataForm.form.host') }}:</span>
+            <span class="info-text">{{ stage.brokerURL }}</span>
+            <el-tooltip
+              placement="top"
+              manual
+              :content="$t('dialog.downAgent.copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="stage.brokerURL"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                {{ $t('dataFlow.copy') }}
+              </span>
+            </el-tooltip>
+          </div>
+          <div class="info-list">
             <span class="info-label"
               >{{ $t('dataForm.form.databaseType') }}:</span
             >
@@ -204,6 +224,34 @@
                 {{ $t('dataFlow.copy') }}
               </span>
             </el-tooltip>
+          </div>
+          <div class="info-list" v-if="stage.mqType">
+            <span class="info-label">{{ $t('dataForm.form.mq.mqType') }}:</span>
+            <span class="info-text">{{
+              stage.mqType === '0'
+                ? 'ActiveMQ'
+                : stage.mqType === '1'
+                ? 'RabbitMQ'
+                : 'RocketMQ'
+            }}</span>
+          </div>
+          <div
+            class="info-list"
+            v-if="stage.mqTopicSet && stage.mqTopicSet.length"
+          >
+            <span class="info-label"
+              >{{ $t('dataForm.form.mq.mqTopicSet') }}:</span
+            >
+            <span class="info-text">{{ stage.mqTopicSet }}</span>
+          </div>
+          <div
+            class="info-list"
+            v-if="stage.mqQueueSet && stage.mqQueueSet.length"
+          >
+            <span class="info-label"
+              >{{ $t('dataForm.form.mq.mqQueueSet') }}:</span
+            >
+            <span class="info-text">{{ stage.mqQueueSet }}</span>
           </div>
           <div
             class="info-list"
@@ -543,7 +591,9 @@ export default {
         database_type: '',
         name: '',
         tableMetadataInstanceId: '',
-        connMetadataInstanceId: ''
+        connMetadataInstanceId: '',
+        mqQueueSet: [],
+        mqTopicSet: []
       },
       throughputData: {
         tooltip: {
@@ -949,7 +999,10 @@ export default {
           this.stageType = currentStageData.type
 
           if (this.stageType === 'database') {
-            this.getStageDataApi(currentStageData.connectionId, '')
+            this.getStageDataApi(
+              currentStageData.connectionId,
+              currentStageData.name
+            )
           } else if (
             [
               'table',
@@ -1024,14 +1077,18 @@ export default {
     // 点击节点跳转到表
     handTableName(data) {
       if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-        window.open('/#/metadataInstances/' + data.tableMetadataInstanceId)
+        if (this.stageType === 'database') {
+          window.open('/#/metadataDetails?id=' + data.connMetadataInstanceId)
+        } else {
+          window.open('/#/metadataDetails?id=' + data.tableMetadataInstanceId)
+        }
       }
     },
 
     // 跳转到所属库
     handDatabaseName(data) {
       if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-        window.open('/#/metadataInstances/' + data.connMetadataInstanceId)
+        window.open('/#/metadataDetails?id=' + data.connMetadataInstanceId)
       }
     },
 

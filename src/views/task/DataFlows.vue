@@ -1011,18 +1011,44 @@ export default {
       let getLag = lag => {
         let r = ''
         if (lag) {
-          let m = this.$moment.duration(lag)
-          if (m.days()) {
-            r = m.days() + 'd'
-          } else if (m.hours()) {
-            r = m.hours() + 'h'
-          } else if (m.minutes()) {
-            r = m.minutes() + 'min'
-          } else if (m.seconds()) {
-            r = m.seconds() + 's'
-          } else {
-            r = lag + 'ms'
+          let s = parseInt(lag),
+            m = 0,
+            h = 0,
+            d = 0
+          if (s > 60) {
+            m = parseInt(s / 60)
+            s = parseInt(s % 60)
+            if (m > 60) {
+              h = parseInt(m / 60)
+              m = parseInt(m % 60)
+              if (h > 24) {
+                d = parseInt(h / 24)
+                h = parseInt(h % 24)
+              }
+            }
           }
+          r = parseInt(s) + this.$t('timeToLive.s')
+          if (m > 0) {
+            r = parseInt(m) + this.$t('timeToLive.m') + r
+          }
+          if (h > 0) {
+            r = parseInt(h) + this.$t('timeToLive.h') + r
+          }
+          if (d > 0) {
+            r = parseInt(d) + this.$t('timeToLive.d') + r
+          }
+          // let m = this.$moment.duration(lag)
+          // if (m.days()) {
+          //   r = m.days() + 'd'
+          // } else if (m.hours()) {
+          //   r = m.hours() + 'h'
+          // } else if (m.minutes()) {
+          //   r = m.minutes() + 'min'
+          //   // } else if (m.seconds()) {
+          //   //   r = m.seconds() + 's'
+          // } else {
+          //   r = lag + 's'
+          // }
         }
         return r
       }
@@ -1272,6 +1298,15 @@ export default {
     },
     run(ids) {
       let _this = this
+      let id = ids[0]
+      let filter = {
+        where: {
+          'contextMap.dataFlowId': {
+            eq: id
+          },
+          level: 'ERROR'
+        }
+      }
       if (this.$refs.agentDialog.checkAgent()) {
         // if (node) {
         // 	this.$refs.errorHandler.checkError(node, () => {
@@ -1305,15 +1340,6 @@ export default {
         // 		}
         // 	});
         // } else {
-        let id = ids[0]
-        let filter = {
-          where: {
-            'contextMap.dataFlowId': {
-              eq: id
-            },
-            level: 'ERROR'
-          }
-        }
 
         _this
           .$api('logs')

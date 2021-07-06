@@ -78,7 +78,7 @@ export const TYPEMAP = {
   'mysql pxc': 'MySQL PXC',
   jira: 'jira',
   dameng: 'DM DB',
-  hive: 'Hive',
+  // hive: 'Hive',
   tcp_udp: 'TCP/IP',
   mq: 'MQ'
 }

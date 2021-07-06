@@ -531,7 +531,7 @@ export default {
           'mysql pxc',
           'jira',
           'dameng',
-          'hive',
+          // 'hive',
           'gbase-8s',
           'sybase ase',
           'gaussdb200',

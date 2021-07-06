@@ -62,6 +62,7 @@ export default function (vm) {
         field: 'mqTopicSet',
         show: true,
         label: vm.$t('dataForm.form.mq.mqTopicSet'),
+        required: true,
         dependOn: [
           // {
           //   triggerOptions: [
@@ -78,30 +79,22 @@ export default function (vm) {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '1'
-              },
-              {
-                field: 'connection_type',
-                value: 'source'
+                value: '0'
               }
             ],
             triggerConfig: {
-              required: true
+              required: false
             }
           },
           {
             triggerOptions: [
               {
-                field: 'mqType',
-                value: '2'
-              },
-              {
                 field: 'connection_type',
-                value: 'source'
+                value: 'target'
               }
             ],
             triggerConfig: {
-              required: true
+              required: false
             }
           }
         ]
@@ -227,9 +220,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'mqUserName',
-        label: vm.$t('dataForm.form.userName'),
-        domType: 'password',
-        showPassword: true
+        label: vm.$t('dataForm.form.userName')
       },
       {
         type: 'input',

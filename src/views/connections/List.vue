@@ -344,7 +344,7 @@ export default {
         'mysql pxc',
         'jira',
         'dameng',
-        'hive',
+        // 'hive',
         'gbase-8s',
         'sybase ase',
         'gaussdb200',
@@ -461,50 +461,50 @@ export default {
       let { keyword, databaseType, databaseModel, status, sourceType } =
         this.searchParams
       let where = {}
-      let fields = {
-        name: true,
-        user_id: true,
-        connection_type: true,
-        database_type: true,
-        search_databaseType: true,
-        database_host: true,
-        database_uri: true,
-        database_username: true,
-        database_port: true,
-        database_name: true,
-        sourceType: true,
-        status: true,
-        id: true,
-        listtags: true,
-        tableCount: true,
-        loadCount: true,
-        loadFieldsStatus: true,
-        schemaAutoUpdate: true,
-        platformInfo: true,
-        last_updated: true,
-        additionalString: true,
-        database_password: true,
-        fill: true,
-        sslCert: true,
-        ssl: true,
-        sslCAFile: true,
-        sslPass: true,
-        sslKeyFile: true,
-        sslKey: true,
-        sslValidate: false,
-        sslCA: true, //MongoDB
-        mqType: true,
-        brokerURL: true, // mq start
-        nameSrvAddr: true,
-        mqUserName: true,
-        mqPassword: true,
-        mqQueueSet: true,
-        mqTopicSet: true,
-        routeKeyField: true,
-        virtualHost: true, // mq end
-        tcpUdpType: true, // TCP
-        root_name: true
-      }
+      // let fields = {
+      //   name: true,
+      //   user_id: true,
+      //   connection_type: true,
+      //   database_type: true,
+      //   search_databaseType: true,
+      //   database_host: true,
+      //   database_uri: true,
+      //   database_username: true,
+      //   database_port: true,
+      //   database_name: true,
+      //   sourceType: true,
+      //   status: true,
+      //   id: true,
+      //   listtags: true,
+      //   tableCount: true,
+      //   loadCount: true,
+      //   loadFieldsStatus: true,
+      //   schemaAutoUpdate: true,
+      //   platformInfo: true,
+      //   last_updated: true,
+      //   additionalString: true,
+      //   database_password: true,
+      //   fill: true,
+      //   sslCert: true,
+      //   ssl: true,
+      //   sslCAFile: true,
+      //   sslPass: true,
+      //   sslKeyFile: true,
+      //   sslKey: true,
+      //   sslValidate: false,
+      //   sslCA: true, //MongoDB
+      //   mqType: true,
+      //   brokerURL: true, // mq start
+      //   nameSrvAddr: true,
+      //   mqUserName: true,
+      //   mqPassword: true,
+      //   mqQueueSet: true,
+      //   mqTopicSet: true,
+      //   routeKeyField: true,
+      //   virtualHost: true, // mq end
+      //   tcpUdpType: true, // TCP
+      //   root_name: true
+      // }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
         // let filterObj = { like: verify(keyword), options: 'i' };
@@ -531,7 +531,8 @@ export default {
       let filter = {
         order: this.order,
         limit: size,
-        fields: fields,
+        noSchema: 1,
+        //fields: fields,
         skip: (current - 1) * size,
         where
       }

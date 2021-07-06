@@ -744,7 +744,7 @@ const en = {
     runNomally: 'to make sure the job running correctly;',
     editLayerTip: 'otherwise the job will be abnormal, continue？',
     continueEditing: 'Still Edit',
-    NumberType: 'must be a number and cannot be less than 0',
+    numberType: 'must be a number and cannot be less than 0',
     setting: {
       distinctWriteType: 'De-rewrite mode',
       intellect: 'Intelligent de-rewrite',
@@ -769,8 +769,8 @@ const en = {
       startJob: 'Skip errors, continue to start',
       cancel: 'Cancel',
       taskName: 'Task name',
-      Errortotal: 'total XX, selected',
-      Strip: 'row'
+      errorTotal: 'Total XX, selected',
+      strip: 'row'
     }
   },
   connection: {
@@ -810,7 +810,7 @@ const en = {
       'Copy failed, reason:  The setting item "Connections - create  duplicate source" need to be set to "false"',
     change: 'Change',
     rename: 'Rename',
-    testConnection: 'Test connection',
+    testConnection: 'Test connection ',
     status: {
       all: 'All',
       testing: 'testing',
@@ -1363,6 +1363,18 @@ const en = {
           title: 'Field _id conflict',
           message:
             '"_id" field exists in target model, and system will remove the duplicated field “_id”, if you wanna keep it, please use the field processor to rename the "_id" field before continue.'
+        },
+        pcb: {
+          Label: 'protocol type',
+          Placeholder: 'please select a protocol type',
+          Fieldsselected: 'field to be selected',
+          Selectedfield: 'selected field',
+          Moveup: 'move up',
+          Movedown: 'move down',
+          Notmoveuptip: 'there is no room to move up',
+          Notmovedowntip: 'there is no room to move down',
+          Onlyonepiece:
+            'only one piece of data can be selected to move up and down'
         },
         form: {
           label: {

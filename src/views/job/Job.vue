@@ -1138,8 +1138,9 @@ export default {
      */
     async start() {
       let _this = this
+      let id = this.$route.query.id
+
       if (this.$refs.agentDialog.checkAgent()) {
-        let id = this.$route.query.id
         let doStart = () => {
           let data = this.$route.query.isMoniting
             ? this.dataFlow
@@ -1156,21 +1157,25 @@ export default {
             level: 'ERROR'
           }
         }
-        _this
-          .$api('logs')
-          .get({ filter: JSON.stringify(filter) })
-          .then(res => {
-            if (res.data?.length && this.$route.query && id) {
-              _this.$refs.errorHandler.checkError(
-                { id, status: this.status },
-                () => {
-                  doStart()
-                }
-              )
-            } else {
-              doStart()
-            }
-          })
+        if (id) {
+          _this
+            .$api('logs')
+            .get({ filter: JSON.stringify(filter) })
+            .then(res => {
+              if (res.data?.length && this.$route.query && id) {
+                _this.$refs.errorHandler.checkError(
+                  { id, status: this.status },
+                  () => {
+                    doStart()
+                  }
+                )
+              } else {
+                doStart()
+              }
+            })
+        } else {
+          doStart()
+        }
         // if (this.$route.query && id) {
         //   this.$refs.errorHandler.checkError(
         //     { id, status: this.status },

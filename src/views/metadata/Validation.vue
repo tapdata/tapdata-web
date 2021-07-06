@@ -426,7 +426,7 @@ export default {
   },
   created() {
     this.validationTableData =
-      this.validaData.data_rules && this.validaData.data_rules.rules
+      (this.validaData.data_rules && this.validaData.data_rules.rules) || []
     this.validationLevel = this.validaData.validationLevel || 'off'
   },
   mounted() {
@@ -552,10 +552,11 @@ export default {
             rule_def: Object.assign({}, this.createForm.rule, { rules: rules })
             //nullable: this.nullable
           }
-          this.validationTableData.push(data)
+          _this.validationTableData.push(data)
 
           let result = this.doSave()
           if (result) {
+            this.createDialogVisible = false
             this.$message.success(this.$t('message.saveOK'))
           } else {
             this.$message.error(this.$t('message.saveFail'))

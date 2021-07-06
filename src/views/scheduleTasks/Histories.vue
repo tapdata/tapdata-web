@@ -1,5 +1,5 @@
 <template>
-  <section class="dataRule-list-wrap">
+  <section class="schedule-list-wrap">
     <TablePage
       ref="table"
       row-key="id"
@@ -160,66 +160,29 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.dataRule-list-wrap {
+.schedule-list-wrap {
   height: 100%;
-
-  .tapNav {
-    height: 28px;
-    background-color: rgba(239, 241, 244, 100);
-    .mune {
-      display: inline-block;
-      height: 28px;
-      line-height: 25px;
-      font-size: 12px;
-      border-radius: 0px 3px 0px 0px;
-      background-color: rgba(244, 245, 247, 100);
-      box-shadow: 0 -1px 10px 0px rgba(0, 0, 0, 0.15);
-      li {
-        float: left;
-        width: 100px;
-        height: 28px;
-        color: #666;
-        cursor: pointer;
-        text-align: center;
-        border-right: 1px solid #dedee4;
-
-        &:last-child {
-          border-right: 0;
-        }
-      }
-      li.active {
-        height: 29px;
-        border-radius: 3px 3px 0px 0px;
-        background-color: #fff;
-        border-right: 0;
-        border-left: 0;
-        // box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
-      }
+  background-color: rgba(239, 241, 244, 100);
+  .search-bar {
+    display: flex;
+    li + li {
+      margin-left: 10px;
     }
   }
-  .process-list {
-    background-color: rgba(239, 241, 244, 100);
-    .search-bar {
-      display: flex;
-      li + li {
-        margin-left: 10px;
-      }
+  .btn + .btn {
+    margin-left: 5px;
+  }
+  .btn {
+    padding: 7px;
+    background: #f5f5f5;
+    i.iconfont {
+      font-size: 12px;
     }
-    .btn + .btn {
+    &.btn-dropdowm {
       margin-left: 5px;
     }
-    .btn {
-      padding: 7px;
-      background: #f5f5f5;
-      i.iconfont {
-        font-size: 12px;
-      }
-      &.btn-dropdowm {
-        margin-left: 5px;
-      }
-      &.btn-create {
-        margin-left: 5px;
-      }
+    &.btn-create {
+      margin-left: 5px;
     }
   }
 }
