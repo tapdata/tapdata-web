@@ -849,6 +849,7 @@ const en = {
       },
       data_node: {
         hiveText: 'Hive Node',
+        hbaseText: 'HBase Node',
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
         mqTableType: 'New table type',

@@ -822,6 +822,7 @@ const cn = {
       },
       data_node: {
         hiveText: 'hive节点',
+        hbaseText: 'HBase节点',
         kafkaText: 'kafka节点',
         kafkaName_isNull: 'kafka不能为空',
         mqTableType: '新建表类型',

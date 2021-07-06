@@ -3,7 +3,7 @@ import HBaseAttribute from './HBaseAttribute'
 import { FORM_DATA_KEY } from '../../constants'
 import i18n from '@/i18n'
 
-export const HiveNodeConfig = {
+export const HBaseNodeConfig = {
   type: 'app.HBaseNode',
   shape: {
     extends: 'app.BaseElement',
@@ -185,7 +185,7 @@ export const HiveNodeConfig = {
     size: { width: 5, height: 4 },
     attrs: {
       root: {
-        dataTooltip: i18n.t('editor.cell.data_node.hiveText'),
+        dataTooltip: i18n.t('editor.cell.data_node.hbaseText'),
         dataTooltipPosition: 'left',
         dataTooltipPositionSelector: '.joint-stencil'
       },
@@ -205,7 +205,7 @@ export const HiveNodeConfig = {
         refY: '0%'
       },
       label: {
-        text: 'hive',
+        text: 'Hbase',
         textAnchor: 'middle',
         fill: '#666',
         fontFamily: 'Roboto Condensed',
