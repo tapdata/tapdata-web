@@ -393,46 +393,65 @@ export const nodeTypes = [
       linkFormSchema: {
         type: 'object',
         properties: {
-          dropType: {
-            type: 'string',
-            title: '对目标端已存在的结构和数据的处理',
-            default: 'no_drop',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Select',
-            'x-reactions': ['{{getDropOptions}}']
-          },
-          syncObjects: {
+          array: {
             type: 'array',
-            default: [
-              {
-                type: 'table'
+            'x-decorator': 'ElFormItem',
+            'x-component': 'ArrayTable',
+            'x-component-props': {
+              fit: false,
+              autoWidth: true,
+              size: 'small'
+            },
+            items: {
+              type: 'object',
+              properties: {
+                column1: {
+                  type: 'void',
+                  'x-component': 'ArrayTableColumn',
+                  'x-component-props': {
+                    width: 174,
+                    title: '源字段',
+                    align: 'center'
+                  },
+                  properties: {
+                    source: {
+                      type: 'string',
+                      required: true,
+                      'x-decorator': 'ElFormItem',
+                      'x-component': 'Select'
+                    }
+                  }
+                },
+                column2: {
+                  type: 'void',
+                  'x-component': 'ArrayTableColumn',
+                  'x-component-props': {
+                    width: 174,
+                    title: '目标字段',
+                    align: 'center'
+                  },
+                  properties: {
+                    target: {
+                      type: 'string',
+                      required: true,
+                      'x-decorator': 'ElFormItem',
+                      'x-component': 'Select'
+                    }
+                  }
+                }
               }
-            ],
-            enum: [
-              {
-                label: 'Table',
-                value: 'table',
-                tooltip: 'editor.cell.link.tableTip',
-                disabled: true
-              },
-              {
-                label: 'View',
-                value: 'view',
-                tooltip: 'editor.cell.link.viewTip'
-              },
-              {
-                label: 'Function',
-                value: 'function'
-              },
-              {
-                label: 'Procedure',
-                value: 'procedure'
+            },
+            properties: {
+              add: {
+                title: '添加字段',
+                type: 'void',
+                'x-component': 'ArrayAddition',
+                'x-component-props': {
+                  size: 'small',
+                  style: 'width: 348px'
+                }
               }
-            ],
-            'x-component': 'SyncObjects',
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-            ]
+            }
           }
         }
       }
@@ -1321,6 +1340,34 @@ export const nodeTypes = [
               '{{useAsyncDataSource(loadDatabase, "dataSource", ["custom_connection"])}}'
             ]
           },
+          tableName: {
+            title: '表',
+            type: 'string',
+            required: true,
+            'x-decorator': 'ElFormItem',
+            'x-component': 'Select',
+            'x-component-props': {
+              placeholder: '请选择表，区分大小写',
+              clearable: true,
+              filterable: true,
+              itemLabel: 'table_name',
+              itemValue: 'table_name'
+            },
+            'x-reactions': ['{{useAsyncDataSource(loadCollections)}}']
+          },
+          table: {
+            type: 'object',
+            'x-display': 'hidden',
+            'x-reactions': {
+              dependencies: ['tableName'],
+              fulfill: {
+                state: {
+                  value:
+                    '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
+                }
+              }
+            }
+          },
           name: {
             type: 'string',
             'x-display': 'hidden',
@@ -1338,6 +1385,43 @@ export const nodeTypes = [
             type: 'string',
             default: 'custom_connection',
             'x-display': 'hidden'
+          },
+          switchSpace: {
+            type: 'void',
+            title: '启用自定义初始化顺序',
+            properties: {
+              enableInitialOrder: {
+                type: 'boolean',
+                required: true,
+                'x-component': 'Switch',
+                'x-component-props': {},
+                'x-reactions': {
+                  target: 'initialSyncOrder',
+                  fulfill: {
+                    state: {
+                      visible: '{{!!$self.value}}'
+                    }
+                  }
+                }
+              },
+              initialSyncOrder: {
+                type: 'number',
+                required: true,
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 1,
+                  size: 'mini'
+                }
+              }
+            },
+            'x-decorator': 'ElFormItem',
+            'x-decorator-props': {
+              asterisk: true
+            },
+            'x-component': 'Space',
+            'x-component-props': {
+              size: 'middle'
+            }
           }
         }
       },

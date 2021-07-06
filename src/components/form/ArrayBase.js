@@ -1,16 +1,8 @@
-import {
-  defineComponent,
-  provide,
-  InjectionKey,
-  Ref,
-  inject,
-  toRefs,
-  ref
-} from 'vue-demi'
+import { defineComponent, provide, inject, toRefs, ref } from 'vue-demi'
 import { FragmentComponent, useField, useFieldSchema, h } from '@formily/vue'
 import { isValid, uid } from '@formily/shared'
-import { Space } from '@/components/form/Space'
 
+const stylePrefix = 'el'
 const ArrayBaseSymbol = Symbol('ArrayBaseContext')
 const ItemSymbol = Symbol('ItemContext')
 
@@ -64,7 +56,7 @@ export const ArrayAddition = defineComponent({
   setup(props, { attrs, listeners }) {
     const self = useField()
     const array = useArray()
-    const prefixCls = `form-array-base`
+    const prefixCls = `${stylePrefix}-form-array-base`
     return () => {
       if (array?.field.value.pattern !== 'editable') return null
       return h(

@@ -46,6 +46,7 @@ import { ArrayItems, ArrayHeader } from './ArrayItems'
 import { FilterConditions } from './FilterConditions'
 import { PreviewSql } from './PreviewSql'
 import { SqlEditor } from './SqlEditor'
+import { ArrayTable, ArrayTableColumn } from './ArrayTable'
 
 export const components = {
   Checkbox,
@@ -81,5 +82,7 @@ export const components = {
   FilterConditions,
   ArrayHeader,
   PreviewSql,
-  SqlEditor
+  SqlEditor,
+  ArrayTable,
+  ArrayTableColumn
 }

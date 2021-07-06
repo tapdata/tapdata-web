@@ -5,6 +5,17 @@ $array-table-prefix-cls: '#{$formily-prefix}-form-array-table';
     margin-bottom: 0 !important;
   }
 
+  .auto-width {
+    display: inline-block;
+    width: auto;
+
+    & + .#{$formily-prefix}-form-array-base-addition {
+      display: block;
+      margin-top: 0;
+      width: auto;
+    }
+  }
+
   .#{$formily-prefix}-form-array-base-addition {
     margin-top: 8px;
     width: 100%;
