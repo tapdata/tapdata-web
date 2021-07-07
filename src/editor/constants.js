@@ -27,7 +27,7 @@ export const FORM_DATA_KEY = 'form_data',
   DEFAULT_SETTING = {
     isSerialMode: false,
     sync_type: 'initial_sync+cdc',
-    readBatchSize: 1000,
+    readBatchSize: 100,
     notificationWindow: 0,
     notificationInterval: 300,
     readCdcInterval: 500,
