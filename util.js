@@ -1,3 +1,4 @@
+//
 export const uuid = function() {
   // credit: http://stackoverflow.com/posts/2117523/revisions
 
