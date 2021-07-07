@@ -98,6 +98,12 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-mq.svg',
       stencilImage: 'static/editor/mq.svg'
     },
+    hbase: {
+      type: 'hbase',
+      name: 'HBase',
+      shapeImage: 'static/editor/o-hbase.svg',
+      stencilImage: 'static/editor/hbase.svg'
+    },
     mongodb: {
       type: 'mongodb',
       name: 'MongoDB',

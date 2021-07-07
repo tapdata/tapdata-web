@@ -1,5 +1,5 @@
 <template>
-  <div class="mqNode nodeStyle">
+  <div class="hiveNode nodeStyle">
     <head>
       <span class="headIcon iconfont icon-you2" type="primary"></span>
       <span class="txt">{{ $t('editor.nodeSettings') }}</span>
@@ -19,30 +19,60 @@
       >
         <!-- <span class="addTxt">+新建文件</span> -->
         <el-form-item
-          :label="$t('editor.cell.data_node.table.form.database.label')"
+          :label="$t('editor.choose') + ' HBase'"
           prop="connectionId"
           :rules="rules"
           required
         >
-          <div style="display: flex">
-            <FbSelect
-              v-model="model.connectionId"
-              :config="databaseSelectConfig"
-            ></FbSelect>
-          </div>
+          <el-select
+            :filterable="!databaseLoading"
+            :loading="databaseLoading"
+            v-model="model.connectionId"
+            :placeholder="$t('message.placeholderSelect') + 'HBase'"
+            :clearable="true"
+          >
+            <el-option
+              v-for="(item, idx) in databases"
+              :label="`${item.name} (${
+                $t('connection.status.' + item.status) || item.status
+              })`"
+              :value="item.id"
+              v-bind:key="idx"
+            ></el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item
-          :label="$t('editor.cell.data_node.table.form.table.label')"
+          :label="
+            $t('editor.cell.data_node.table.form.table.label') +
+            $t('editor.cell.data_node.table.form.table.labelTips')
+          "
           prop="tableName"
+          :rules="rules"
           required
         >
           <div class="flex-block">
-            <FbSelect
-              class="e-select"
+            <!-- <FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect> -->
+            <el-select
               v-model="model.tableName"
-              :config="schemaSelectConfig"
-            ></FbSelect>
+              :filterable="!schemasLoading"
+              :loading="schemasLoading"
+              default-first-option
+              clearable
+              :placeholder="
+                $t(
+                  'editor.cell.data_node.collection.form.collection.placeholder'
+                )
+              "
+              size="mini"
+            >
+              <el-option
+                v-for="(item, idx) in schemas"
+                :label="`${item.table_name}`"
+                :value="item.table_name"
+                v-bind:key="idx"
+              ></el-option>
+            </el-select>
             <el-tooltip
               class="item"
               effect="light"
@@ -71,35 +101,41 @@
             </el-tooltip>
           </div>
         </el-form-item>
-        <el-form-item
-          v-if="mqType === '0'"
-          :label="$t('editor.cell.data_node.mqTableType')"
-          prop="table_type"
-          required
-        >
-          <el-select
-            v-model="model.table_type"
-            placeholder="$t('editor.cell.data_node.mqTableTypeTip')"
-          >
-            <el-option label="topic" value="topic"> </el-option>
-            <el-option label="queue" value="queue"> </el-option>
-          </el-select>
-        </el-form-item>
-        <!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
-					<el-input
-						v-model="model.primaryKeys"
-						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-						size="mini"
-					></el-input>
-				</el-form-item> -->
       </el-form>
     </div>
     <div class="e-entity-wrap" style="text-align: center; overflow: auto">
+      <el-button
+        class="fr marR20"
+        type="success"
+        size="mini"
+        v-if="model.connectionId && model.tableName"
+        @click="hanlderLoadSchema"
+      >
+        <i class="el-icon-loading" v-if="reloadModelLoading"></i>
+        <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+        <span v-else>{{ $t('dataFlow.updateModel') }}</span>
+      </el-button>
       <entity
         :schema="convertSchemaToTreeData(mergedSchema)"
         :editable="false"
       ></entity>
     </div>
+    <el-dialog
+      :title="$t('message.prompt')"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      width="30%"
+    >
+      <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false" size="mini">{{
+          $t('message.cancel')
+        }}</el-button>
+        <el-button type="primary" size="mini" @click="confirmDialog">{{
+          $t('message.confirm')
+        }}</el-button>
+      </span>
+    </el-dialog>
     <CreateTable
       v-if="addtableFalg"
       :dialog="dialogData"
@@ -111,23 +147,27 @@
 import _ from 'lodash'
 import factory from '../../../api/factory'
 import Entity from '../link/Entity'
+import { convertSchemaToTreeData } from '../../util/Schema'
 import ClipButton from '@/components/ClipButton'
 import CreateTable from '@/components/dialog/createTable'
-import { convertSchemaToTreeData } from '../../util/Schema'
-let connections = factory('connections')
+
+import ws from '@/api/ws'
+const connections = factory('connections')
 
 // let editorMonitor = null;
 export default {
   name: 'ApiNode',
   components: { Entity, ClipButton, CreateTable },
   data() {
-    let self = this
     return {
-      addtableFalg: false,
-      dialogData: null,
       disabled: false,
       databases: [],
       databaseLoading: false,
+      reloadModelLoading: false,
+      dialogVisible: false,
+      addtableFalg: false,
+      dialogData: null,
+      schemas: [],
       rules: {
         connectionId: [
           {
@@ -153,38 +193,9 @@ export default {
       },
       model: {
         connectionId: '',
-        type: 'mq',
-        tableName: '',
-        table_type: 'topic'
-        // primaryKeys: ''
+        type: 'hbase',
+        tableName: ''
       },
-      mqType: '',
-      databaseSelectConfig: {
-        size: 'mini',
-        placeholder: this.$t('editor.cell.data_node.database.form.placeholder'),
-        loading: false,
-        filterable: true,
-        clearable: true,
-        on: {
-          change() {
-            self.handlerConnectionChange()
-          }
-        },
-        options: []
-      },
-      schemaSelectConfig: {
-        size: 'mini',
-        placeholder: this.$t(
-          'editor.cell.data_node.table.form.table.placeholder'
-        ),
-        loading: false,
-        filterable: true,
-        options: [],
-        allowCreate: false,
-        defaultFirstOption: false,
-        clearable: true
-      },
-      schemas: [],
       schemasLoading: false,
       mergedSchema: null
     }
@@ -195,7 +206,7 @@ export default {
     let result = await connections.get({
       filter: JSON.stringify({
         where: {
-          database_type: 'mq'
+          database_type: 'hbase'
         },
         fields: {
           name: 1,
@@ -204,23 +215,14 @@ export default {
           connection_type: 1,
           status: 1,
           schema: 1
-        }
+        },
+        order: 'name ASC'
       })
     })
 
     this.databaseLoading = false
     if (result.data) {
-      // this.databases = result.data
-      this.databaseSelectConfig.options = result.data.map(item => {
-        let statusName = this.$t(`connection.status.${item.status}`)
-        return {
-          id: item.id,
-          name: item.name,
-          database_type: item.database_type,
-          label: `${item.name} (${statusName})`,
-          value: item.id
-        }
-      })
+      this.databases = result.data
     }
   },
 
@@ -241,16 +243,10 @@ export default {
     'model.tableName': {
       immediate: true,
       handler() {
-        // 截取表类型
-        let reg = /\([^)]+\)/g
-        let table_type = this.model.tableName.match(reg)[0]
-        table_type = table_type.substring(1, table_type.length - 1)
-        this.model.table_type = table_type
-
         if (this.schemas.length > 0) {
           if (this.model.tableName) {
-            let schema = this.schemaSelectConfig.options.filter(
-              s => s === this.model.tableName
+            let schema = this.schemas.filter(
+              s => s.table_name === this.model.tableName
             )
             schema =
               schema && schema.length > 0
@@ -258,33 +254,15 @@ export default {
                 : {
                     table_name: this.model.tableName,
                     cdc_enabled: true,
-                    meta_type: 'mq',
+                    meta_type: 'hbase',
                     fields: []
                   }
-
             this.$emit('schemaChange', _.cloneDeep(schema))
+            this.mergedSchema = schema
           }
         }
       }
     }
-    // mergedSchema: {
-    // 	handler() {
-    // 		if (
-    // 			!this.model.primaryKeys &&
-    // 			this.mergedSchema &&
-    // 			this.mergedSchema.fields &&
-    // 			this.mergedSchema.fields.length > 0
-    // 		) {
-    // 			let primaryKeys = this.mergedSchema.fields
-    // 				.filter(f => f.primary_key_position > 0)
-    // 				.map(f => f.field_name);
-    // 			let unique = {};
-    // 			primaryKeys.forEach(key => (unique[key] = 1));
-    // 			primaryKeys = Object.keys(unique);
-    // 			if (primaryKeys.length > 0) this.model.primaryKeys = primaryKeys.join(',');
-    // 		}
-    // 	}
-    // }
   },
 
   methods: {
@@ -294,7 +272,7 @@ export default {
     addNewTable() {
       this.addtableFalg = true
       this.dialogData = {
-        type: 'mq',
+        type: 'table',
         title: this.$t('dialog.createTable'),
         placeholder: this.$t('dialog.placeholderTable'),
         visible: this.addtableFalg
@@ -306,14 +284,13 @@ export default {
       this.model.tableName = val
       this.mergedSchema = null
       let schema = {
-        meta_type: 'mq',
-        table_name: this.model.tableName,
+        meta_type: 'table',
+        table_name: val,
         fields: []
       }
       this.$emit('schemaChange', _.cloneDeep(schema))
     },
 
-    // 获取表
     loadDataModels(connectionId) {
       if (!connectionId) {
         return
@@ -324,38 +301,25 @@ export default {
         .get([connectionId])
         .then(result => {
           if (result.data) {
-            let schemas = []
-            this.mqType = result.data.mqType
-            if (this.mqType === '0') {
-              result.data.mqQueueSet = result.data.mqQueueSet.map(
-                item => item + '(queue)'
-              )
-              result.data.mqTopicSet = result.data.mqTopicSet.map(
-                item => item + '(topic)'
-              )
-              let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
-              schemas = [...new Set(data)]
-            } else {
-              schemas = result.data.mqTopicSet
-            }
+            let schemas =
+              (result.data.schema && result.data.schema.tables) || []
             schemas = schemas.sort((t1, t2) =>
-              t1 > t2 ? 1 : t1 === t2 ? 0 : -1
+              t1.table_name > t2.table_name
+                ? 1
+                : t1.table_name === t2.table_name
+                ? 0
+                : -1
             )
-            self.schemas = schemas
-            self.schemaSelectConfig.options = schemas.map(item => ({
-              label: item,
-              value: item
-            }))
+            self.schemas = schemas.filter(item => {
+              if (item.table_name) {
+                return item
+              }
+            })
           }
         })
         .finally(() => {
           this.schemasLoading = false
         })
-    },
-
-    // 切换数据源清空表
-    handlerConnectionChange() {
-      this.model.tableName = ''
     },
 
     setData(data, cell) {
@@ -372,14 +336,63 @@ export default {
 
     getData() {
       let result = _.cloneDeep(this.model)
-      result.name = result.tableName || 'Mq'
-      // if (result.connectionId) {
-      // 	let database = this.databases.filter(db => db.id === result.connectionId);
-      // 	if (database && database.length > 0) {
-      // 		result.name = database[0].name;
-      // 	}
-      // }
+      result.name = result.tableName || 'HBase'
       return result
+    },
+
+    // 更新模型点击弹窗
+    hanlderLoadSchema() {
+      this.dialogVisible = true
+    },
+
+    // 确定更新模型弹窗
+    confirmDialog() {
+      this.reloadModelLoading = true
+      let params = {
+        type: 'reloadSchema',
+        data: {
+          tables: [
+            {
+              connId: this.model.connectionId,
+              tableName: this.model.tableName
+              // userId: this.$cookie.get('user_id')
+            }
+          ]
+        }
+      }
+
+      ws.send(params)
+      let self = this,
+        schema = null,
+        templeSchema = []
+
+      ws.on('execute_load_schema_result', res => {
+        if (res.status === 'SUCCESS' && res.result && res.result.length) {
+          templeSchema = res.result
+          this.reloadModelLoading = false
+        } else {
+          self.$message.error(this.$t('message.reloadSchemaError'))
+        }
+        this.reloadModelLoading = false
+        if (templeSchema && templeSchema.length) {
+          templeSchema.forEach(item => {
+            if (
+              item.connId === this.model.connectionId &&
+              item.tableName === this.model.tableName
+            ) {
+              schema = item.schema
+            }
+          })
+        }
+        self.$nextTick(() => {
+          if (schema) {
+            self.$emit('schemaChange', _.cloneDeep(schema))
+            this.mergedSchema = schema
+            self.$message.success(this.$t('message.reloadSchemaSuccess'))
+          }
+        })
+      })
+      this.dialogVisible = false
     },
 
     setDisabled(disabled) {
@@ -393,13 +406,16 @@ export default {
 }
 </script>
 <style lang="scss">
-.mqNode {
+.hiveNode {
   .el-form-item {
     margin-bottom: 10px;
-    .flex-block {
-      display: flex;
-      align-items: center;
-    }
+  }
+  .flex-block {
+    display: flex;
+    align-items: center;
+  }
+  .marR20 {
+    margin-right: 20px;
   }
 }
 </style>

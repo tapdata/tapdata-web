@@ -301,7 +301,8 @@ export default {
         'custom_connection',
         'gridfs',
         'tcp_udp',
-        'mq'
+        'mq',
+        'hbase'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -780,7 +781,8 @@ export default {
           )
         )
         .then(() => {
-          if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') { //企业版跟DFS都有弹出框
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
+            //企业版跟DFS都有弹出框
             this.dialogTestVisible = true
           }
           this.$refs.test.start()
