@@ -447,7 +447,7 @@ export default {
             validator: (rule, value, callback) => {
               if (!value || !value.trim()) {
                 callback(new Error('任务名称不能为空'))
-              } else if (value && value.trim()) {
+              } else {
                 let filter = {
                   where: {
                     name: value
@@ -460,17 +460,11 @@ export default {
                 if (this.id) {
                   filter.where['id'] = { neq: this.id }
                 }
-                this.$api('DataFlows')
-                  .get({
-                    filter: JSON.stringify(filter)
-                  })
-                  .then(res => {
-                    if (res.data && res.data.length !== 0) {
-                      callback(new Error('任务名称已存在'))
-                    } else callback()
-                  })
-              } else {
-                callback()
+                this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
+                  if (data && data.length !== 0) {
+                    callback(new Error('任务名称已存在'))
+                  } else callback()
+                })
               }
             }
           }

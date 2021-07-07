@@ -39,7 +39,8 @@ import {
   Col,
   DatePicker,
   Progress,
-  Footer
+  Footer,
+  Switch
 } from 'element-ui'
 
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
@@ -107,3 +108,4 @@ Vue.use(Col)
 Vue.use(DatePicker)
 Vue.use(Progress)
 Vue.use(Footer)
+Vue.use(Switch)

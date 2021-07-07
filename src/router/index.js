@@ -115,7 +115,7 @@ const routes = [
           {
             path: 'create',
             name: 'DataflowCreate',
-            component: () => import('../views/Task/Create.vue'),
+            component: () => import('../views/Task/Form.vue'),
             meta: {
               title: '创建任务',
               link: './tm/#/createTask/create'
@@ -124,10 +124,9 @@ const routes = [
           {
             path: ':id',
             name: 'DataflowEdit',
-            component: Iframe,
+            component: () => import('../views/Task/Form.vue'),
             meta: {
-              title: '编辑任务',
-              link: './tm/#/createTask/:id/edit'
+              title: '编辑任务'
             }
           }
         ]
