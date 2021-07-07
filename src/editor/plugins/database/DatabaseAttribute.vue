@@ -11,14 +11,7 @@
 				</el-button>
 			</div> -->
 
-      <el-form
-        class="e-form"
-        label-position="top"
-        label-width="160px"
-        :model="model"
-        ref="form"
-        :disabled="disabled"
-      >
+      <el-form class="e-form" label-position="top" label-width="160px" :model="model" ref="form" :disabled="disabled">
         <el-form-item
           class="e-form"
           :label="$t('editor.cell.data_node.database.form.label')"
@@ -27,10 +20,7 @@
           required
         >
           <div style="display: flex">
-            <FbSelect
-              v-model="model.connectionId"
-              :config="databaseSelectConfig"
-            ></FbSelect>
+            <FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
             <el-button
               size="mini"
               icon="el-icon-plus"
@@ -52,36 +42,57 @@
 						<span class="text">{{ databaseInfo.connection_type }}</span>
 					</li> -->
           <li>
-            <span class="label"
-              >{{ $t('editor.cell.data_node.database.type') }}:</span
-            >
+            <span class="label">{{ $t('editor.cell.data_node.database.type') }}:</span>
             <span class="text">{{ databaseInfo.database_type }}</span>
           </li>
           <li>
             <span class="label">Host/Port:</span>
             <span class="text" v-if="databaseInfo.database_host">
               <span>{{ databaseInfo.database_host }}</span>
-              <span v-if="databaseInfo.database_type !== 'mongodb'"
-                >:{{ databaseInfo.database_port }}</span
-              >
+              <span v-if="databaseInfo.database_type !== 'mongodb'">:{{ databaseInfo.database_port }}</span>
+            </span>
+            <span class="text" v-if="databaseInfo.brokerURL">
+              <span>{{ databaseInfo.brokerURL }}</span>
             </span>
           </li>
-          <li>
-            <span class="label">
-              {{ $t('editor.cell.data_node.database.databaseName') }}:
-            </span>
+          <li v-if="databaseInfo.database_name">
+            <span class="label"> {{ $t('editor.cell.data_node.database.databaseName') }}: </span>
             <span class="text">{{ databaseInfo.database_name }}</span>
           </li>
-          <li>
+          <li v-if="databaseInfo.mqUserName">
             <span class="label">
               {{ $t('editor.cell.data_node.database.account') }}:
             </span>
+            <span class="text">{{ databaseInfo.mqUserName }}</span>
+          </li>
+          <li v-if="databaseInfo.mqType">
+            <span class="label"> {{ $t('dataForm.form.mq.mqType') }}: </span>
+            <span class="text">{{
+              databaseInfo.mqType === '0'
+                ? 'ActiveMQ'
+                : databaseInfo.mqType === '1'
+                ? 'RabbitMQ'
+                : 'RocketMQ'
+            }}</span>
+          </li>
+          <li v-if="databaseInfo.mqTopicSet && databaseInfo.mqTopicSet.length">
+            <span class="label">
+              {{ $t('dataForm.form.mq.mqTopicSet') }}:
+            </span>
+            <span class="text">{{ databaseInfo.mqTopicSet }}</span>
+          </li>
+          <li v-if="databaseInfo.mqQueueSet && databaseInfo.mqQueueSet.length">
+            <span class="label">
+              {{ $t('dataForm.form.mq.mqQueueSet') }}:
+            </span>
+            <span class="text">{{ databaseInfo.mqQueueSet }}</span>
+          </li>
+          <li v-if="databaseInfo.database_username">
+            <span class="label"> {{ $t('editor.cell.data_node.database.account') }}: </span>
             <span class="text">{{ databaseInfo.database_username }}</span>
           </li>
           <li v-if="databaseInfo.database_owner">
-            <span class="label">
-              {{ $t('editor.cell.data_node.database.attributionAccount') }}:
-            </span>
+            <span class="label"> {{ $t('editor.cell.data_node.database.attributionAccount') }}: </span>
             <span class="text">{{ databaseInfo.database_owner }}</span>
           </li>
         </ul>
@@ -229,13 +240,7 @@ export default {
             database_type: database_type
               ? { in: [database_type] }
               : {
-                  nin: [
-                    'file',
-                    'dummy',
-                    'gridfs',
-                    'rest api',
-                    'custom_connection'
-                  ]
+                  nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
                 }
           },
           fields: {
@@ -256,9 +261,7 @@ export default {
           return {
             id: item.id,
             name: item.name,
-            label: `${item.name} (${
-              self.$t('connection.status.' + item.status) || item.status
-            })`,
+            label: `${item.name} (${self.$t('connection.status.' + item.status) || item.status})`,
             value: item.id
           }
         })
@@ -271,32 +274,28 @@ export default {
       this.databaseTables = []
       this.lookupDatabaseType()
 
-      this.cell.graph
-        .getConnectedLinks(this.cell, { outbound: true })
-        .forEach(link => {
-          let orignData = link.getFormData()
-          if (orignData) {
-            orignData.selectSourceDatabase = {
-              table: true,
-              view: false,
-              function: false,
-              procedure: false
-            }
-            orignData.table_prefix = ''
-            orignData.table_suffix = ''
-            orignData.dropType = 'no_drop'
-            orignData.table_prefix = ''
-            orignData.selectSourceArr = []
+      this.cell.graph.getConnectedLinks(this.cell, { outbound: true }).forEach(link => {
+        let orignData = link.getFormData()
+        if (orignData) {
+          orignData.selectSourceDatabase = {
+            table: true,
+            view: false,
+            function: false,
+            procedure: false
           }
-          link.setFormData(orignData)
-        })
+          orignData.table_prefix = ''
+          orignData.table_suffix = ''
+          orignData.dropType = 'no_drop'
+          orignData.table_prefix = ''
+          orignData.selectSourceArr = []
+        }
+        link.setFormData(orignData)
+      })
     },
 
     lookupDatabaseType() {
       if (!this.model.connectionId) return
-      let selectedDbs = this.databaseSelectConfig.options.filter(
-        db => db.id === this.model.connectionId
-      )
+      let selectedDbs = this.databaseSelectConfig.options.filter(db => db.id === this.model.connectionId)
       if (selectedDbs && selectedDbs.length > 0) {
         this.database_type = selectedDbs[0].database_type
       }
@@ -324,13 +323,8 @@ export default {
 
               let tableData = []
               if (result.data.mqType === '0') {
-                let data = [
-                  ...result.data.mqQueueSet,
-                  ...result.data.mqTopicSet
-                ]
+                let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
                 tableData = [...new Set(data)]
-              } else if (result.data.mqType === '1') {
-                tableData = result.data.mqQueueSet
               } else {
                 tableData = result.data.mqTopicSet
               }
@@ -341,14 +335,11 @@ export default {
               tables = (result.data.schema && result.data.schema.tables) || []
             }
             self.databaseInfo = result.data
+
             self.model.database_type = self.databaseInfo.database_type
 
             tables = tables.sort((t1, t2) =>
-              t1.table_name > t2.table_name
-                ? 1
-                : t1.table_name === t2.table_name
-                ? 0
-                : -1
+              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
             if (!(this.firstRound && this.databaseTables.length > 0)) {
               let tablesArr = tables.filter(item => {
@@ -356,9 +347,7 @@ export default {
                   return item.table_name
                 }
               })
-              this.databaseTables = [
-                ...new Set(tablesArr.map(item => item.table_name))
-              ]
+              this.databaseTables = [...new Set(tablesArr.map(item => item.table_name))]
             }
 
             this.handleIncludeTable()
@@ -373,25 +362,19 @@ export default {
     },
     // 获取保留表数据
     handleIncludeTable() {
-      this.cell.graph
-        .getConnectedLinks(this.cell, { inbound: true })
-        .forEach(link => {
-          let orignData = link.getFormData()
-          let includeTable = [],
-            databaseTables = []
-          if (
-            orignData &&
-            orignData.selectSourceArr &&
-            orignData.selectSourceArr.length
-          ) {
-            includeTable = orignData.selectSourceArr.map(item => {
-              return orignData.table_prefix + item + orignData.table_suffix
-            })
+      this.cell.graph.getConnectedLinks(this.cell, { inbound: true }).forEach(link => {
+        let orignData = link.getFormData()
+        let includeTable = [],
+          databaseTables = []
+        if (orignData && orignData.selectSourceArr && orignData.selectSourceArr.length) {
+          includeTable = orignData.selectSourceArr.map(item => {
+            return orignData.table_prefix + item + orignData.table_suffix
+          })
 
-            databaseTables = this.databaseTables.concat(includeTable)
-            this.databaseTables = [...new Set(databaseTables)]
-          }
-        })
+          databaseTables = this.databaseTables.concat(includeTable)
+          this.databaseTables = [...new Set(databaseTables)]
+        }
+      })
     },
     getMongoDBData(connectionId) {
       if (!connectionId) {

@@ -49,18 +49,9 @@ export const tableConfig = {
       validate: function (data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
-          )
-        if (!data.connectionId)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.table.none_database')}`
-          )
-        if (!data.tableName)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.table.none_table')}`
-          )
+        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
+        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_database')}`)
+        if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_table')}`)
         // if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.table.none_pk')}`);
         return true
       },
@@ -164,10 +155,7 @@ export const tableConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

@@ -4,22 +4,14 @@
       <i class="iconfont icon-zhankai2"></i>
     </el-button>
     <el-button class="btn-addIcon" size="mini" type="text">
-      <i
-        class="iconfont icon-jia"
-        v-readonlybtn="authority"
-        @click="showDialog()"
-      ></i>
+      <i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i>
     </el-button>
     <el-button class="btn-query" size="mini" type="text">
       <i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
     </el-button>
     <div class="classification-header">
       <div class="title">
-        <span>{{
-          types[0] === 'user'
-            ? $t('classification.userTitle')
-            : $t('classification.title')
-        }}</span>
+        <span>{{ types[0] === 'user' ? $t('classification.userTitle') : $t('classification.title') }}</span>
       </div>
       <div class="search-box" v-if="searchFalg">
         <el-input class="search" size="mini" v-model="filterText">
@@ -48,47 +40,23 @@
           <span class="iconfont icon-Folder-closed icon-folder"></span>
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
           <span class="table-label">{{ data.value }}</span>
-          <el-dropdown
-            class="btn-menu"
-            size="mini"
-            @command="handleRowCommand($event, node)"
-            v-readonlybtn="authority"
-          >
-            <el-button type="text"
-              ><i class="iconfont icon-gengduo3 task-list-icon"></i
-            ></el-button>
+          <el-dropdown class="btn-menu" size="mini" @command="handleRowCommand($event, node)" v-readonlybtn="authority">
+            <el-button type="text"><i class="iconfont icon-gengduo3 task-list-icon"></i></el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="add">
                 {{ $t('classification.addChildernNode') }}
               </el-dropdown-item>
-              <el-dropdown-item command="edit">{{
-                $t('classification.editNode')
-              }}</el-dropdown-item>
-              <el-dropdown-item command="delete">{{
-                $t('classification.deleteNode')
-              }}</el-dropdown-item>
+              <el-dropdown-item command="edit">{{ $t('classification.editNode') }}</el-dropdown-item>
+              <el-dropdown-item command="delete">{{ $t('classification.deleteNode') }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </span>
       </el-tree>
-      <span
-        v-else
-        v-readonlybtn="authority"
-        @click="showDialog()"
-        class="create"
-      >
-        {{
-          types[0] === 'user'
-            ? $t('classification.creatUserGroup')
-            : $t('classification.creatDataClassification')
-        }}
+      <span v-else v-readonlybtn="authority" @click="showDialog()" class="create">
+        {{ types[0] === 'user' ? $t('classification.creatUserGroup') : $t('classification.creatDataClassification') }}
       </span>
     </div>
-    <el-dialog
-      :visible.sync="dialogConfig.visible"
-      width="30%"
-      :close-on-click-modal="false"
-    >
+    <el-dialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
       <el-input
         size="mini"
@@ -98,9 +66,7 @@
         show-word-limit
       ></el-input>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="hideDialog()">{{
-          $t('message.cancel')
-        }}</el-button>
+        <el-button size="mini" @click="hideDialog()">{{ $t('message.cancel') }}</el-button>
         <el-button size="mini" type="primary" @click="dialogSubmit()">
           {{ $t('message.confirm') }}
         </el-button>
@@ -200,8 +166,7 @@ export default {
       if (this.types.length) {
         where.or = this.types.map(t => ({ item_type: t }))
       }
-      if (!parseInt(this.$cookie.get('isAdmin')))
-        where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` }
+      if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` }
       let filter = {
         where
       }
@@ -484,7 +449,7 @@ export default {
   background: #fff;
   border-radius: 3px;
   overflow: hidden;
-  box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
+  // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
   .btn-expand {
     padding: 2px 3px;
     color: #666;
@@ -496,12 +461,19 @@ export default {
   &.expand {
     height: 100%;
     width: 100%;
-    border: 1px solid #dedee4;
+    border: 1px solid #ebeef5;
     .btn-expand {
       position: absolute;
       top: 5px;
       right: 8px;
       transform: rotate(180deg);
+      .icon-zhankai2 {
+        font-size: 16px;
+        color: #666;
+        &:hover {
+          color: #409eff;
+        }
+      }
     }
     .btn-addIcon {
       position: absolute;
@@ -524,6 +496,9 @@ export default {
         border-top-width: 1px;
         border-radius: 3px;
         cursor: pointer;
+        &:hover {
+          color: #409eff;
+        }
       }
     }
     .btn-query {
@@ -546,7 +521,7 @@ export default {
     font-size: 12px;
     line-height: 31px;
     display: flex;
-    width: 213px;
+    width: 214px;
     flex-direction: column;
     .title {
       display: flex;

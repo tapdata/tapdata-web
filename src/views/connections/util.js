@@ -11,23 +11,7 @@ export const getImgByType = function (type) {
 }
 
 export const verify = function (value) {
-  var arr = [
-    '\\',
-    '$',
-    '(',
-    ')',
-    '*',
-    '+',
-    '.',
-    '[',
-    ']',
-    '?',
-    '^',
-    '{',
-    '}',
-    '|',
-    '-'
-  ]
+  var arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
   for (var i = 0; i < arr.length; i++) {
     var str = '\\' + arr[i]
     value = value.replace(new RegExp(str, 'g'), '\\' + arr[i])
@@ -78,9 +62,10 @@ export const TYPEMAP = {
   'mysql pxc': 'MySQL PXC',
   jira: 'jira',
   dameng: 'DM DB',
-  hive: 'Hive',
+  // hive: 'Hive',
   tcp_udp: 'TCP/IP',
-  mq: 'MQ'
+  mq: 'MQ',
+  hbase: 'HBase'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
@@ -192,8 +177,7 @@ export const defaultModel = {
       " // Build-in function's MD5/SHA1/SHA256\n" +
       '    // example:\n' +
       "    // request_params.sign = MD5(request_params.id+request_params_name+'secret_key');",
-    resp_pre_process:
-      "// result: {'tapdata_offset': offset, 'response':<API RESPONSE>}",
+    resp_pre_process: "// result: {'tapdata_offset': offset, 'response':<API RESPONSE>}",
     data_sync_mode: 'INCREMENTAL_SYNC',
     url_info: [
       {
@@ -265,15 +249,14 @@ export const defaultModel = {
     connection_type: '',
     database_host: '',
     database_port: '',
-    mqType: '', //MQ类型
+    mqType: '0', //MQ类型
     brokerURL: '', //MQ连接串
     mqUserName: '',
     mqPassword: '',
     mqQueueSet: '', //队列名集合
     mqTopicSet: '', //主题名称
     routeKeyField: '', //消息路由
-    virtualHost: '', //虚拟主机
-    nameSrvAddr: ''
+    virtualHost: '' //虚拟主机
   }
 }
 export const defaultCloudModel = {

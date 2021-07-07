@@ -4,15 +4,8 @@
       <el-form-item class="e-form-item">
         <el-col :span="16">
           <el-select v-model="stageId" size="mini">
-            <el-option key="all" :label="$t('dataFlow.allNode')" value="all">
-            </el-option>
-            <el-option
-              v-for="item in flow.stages"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
+            <el-option key="all" :label="$t('dataFlow.allNode')" value="all"> </el-option>
+            <el-option v-for="item in flow.stages" :key="item.id" :label="item.name" :value="item.id"> </el-option>
           </el-select>
         </el-col>
         <!-- <el-col :span="8" style="text-align: right;">
@@ -34,9 +27,7 @@
     </el-form>
     <div class="echartMain">
       <div class="echartlist">
-        <EchartHeader
-          :data="stageType ? nodeDetailsObj : taskDetailsObj"
-        ></EchartHeader>
+        <EchartHeader :data="stageType ? nodeDetailsObj : taskDetailsObj"></EchartHeader>
         <div
           class="info fl"
           v-if="
@@ -47,7 +38,9 @@
               'excel',
               'csv',
               'xml',
-              'database'
+              'database',
+              'hive',
+              'mq'
             ].includes(stageType)
           "
           v-loading="apiLoading"
@@ -55,12 +48,9 @@
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.nodeName') }}:</span>
             <el-tooltip :content="stage.nodeName" placement="bottom-start">
-              <span
-                class="info-text"
-                @click="handTableName(stage)"
-                style="color: #409eff; cursor: pointer"
-                >{{ stage.nodeName }}</span
-              >
+              <span class="info-text" @click="handTableName(stage)" style="color: #409eff; cursor: pointer">{{
+                stage.nodeName
+              }}</span>
             </el-tooltip>
             <el-tooltip
               placement="top"
@@ -82,12 +72,9 @@
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.ownedLibrary') }}:</span>
             <el-tooltip :content="stage.name" placement="bottom-start">
-              <span
-                class="info-text"
-                @click="handDatabaseName(stage)"
-                style="color: #409eff; cursor: pointer"
-                >{{ stage.name }}</span
-              >
+              <span class="info-text" @click="handDatabaseName(stage)" style="color: #409eff; cursor: pointer">{{
+                stage.name
+              }}</span>
             </el-tooltip>
             <el-tooltip
               placement="top"
@@ -128,15 +115,8 @@
               </span>
             </el-tooltip>
           </div>
-          <div
-            class="info-list"
-            v-if="
-              !['file'].includes(stage.database_type) && stage.database_name
-            "
-          >
-            <span class="info-label"
-              >{{ $t('dataForm.form.databaseName') }}:</span
-            >
+          <div class="info-list" v-if="!['file'].includes(stage.database_type) && stage.database_name">
+            <span class="info-label">{{ $t('dataForm.form.databaseName') }}:</span>
             <span class="info-text">{{ stage.database_name }}</span>
             <el-tooltip
               placement="top"
@@ -155,13 +135,7 @@
               </span>
             </el-tooltip>
           </div>
-          <div
-            class="info-list"
-            v-if="
-              !['mongodb', 'file'].includes(stage.database_type) &&
-              stage.database_owner
-            "
-          >
+          <div class="info-list" v-if="!['mongodb', 'file'].includes(stage.database_type) && stage.database_owner">
             <span class="info-label">{{ $t('dataFlow.ownedUser') }}:</span>
             <span class="info-text">{{ stage.database_owner }}</span>
             <el-tooltip
@@ -182,9 +156,27 @@
             </el-tooltip>
           </div>
           <div class="info-list">
-            <span class="info-label"
-              >{{ $t('dataForm.form.databaseType') }}:</span
+            <span class="info-label">{{ $t('dataForm.form.host') }}:</span>
+            <span class="info-text">{{ stage.brokerURL }}</span>
+            <el-tooltip
+              placement="top"
+              manual
+              :content="$t('dialog.downAgent.copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
             >
+              <span
+                class="operaKey"
+                v-clipboard:copy="stage.brokerURL"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                {{ $t('dataFlow.copy') }}
+              </span>
+            </el-tooltip>
+          </div>
+          <div class="info-list">
+            <span class="info-label">{{ $t('dataForm.form.databaseType') }}:</span>
             <span class="info-text">{{ stage.database_type }}</span>
             <el-tooltip
               placement="top"
@@ -203,10 +195,35 @@
               </span>
             </el-tooltip>
           </div>
+          <div class="info-list" v-if="stage.mqType">
+            <span class="info-label">{{ $t('dataForm.form.mq.mqType') }}:</span>
+            <span class="info-text">{{
+              stage.mqType === '0'
+                ? 'ActiveMQ'
+                : stage.mqType === '1'
+                ? 'RabbitMQ'
+                : 'RocketMQ'
+            }}</span>
+          </div>
           <div
             class="info-list"
-            v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
+            v-if="stage.mqTopicSet && stage.mqTopicSet.length"
           >
+            <span class="info-label"
+              >{{ $t('dataForm.form.mq.mqTopicSet') }}:</span
+            >
+            <span class="info-text">{{ stage.mqTopicSet }}</span>
+          </div>
+          <div
+            class="info-list"
+            v-if="stage.mqQueueSet && stage.mqQueueSet.length"
+          >
+            <span class="info-label"
+              >{{ $t('dataForm.form.mq.mqQueueSet') }}:</span
+            >
+            <span class="info-text">{{ stage.mqQueueSet }}</span>
+          </div>
+          <div class="info-list" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
             <span class="info-label">实例地域:</span>
             <span class="info-text">
               {{ stage.platformInfo ? stage.platformInfo.regionName : '' }} |
@@ -273,9 +290,7 @@
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.taskName') }}:</span>
             <el-tooltip :content="flow.name" placement="bottom-start">
-              <span class="info-text" style="color: #409eff">{{
-                flow.name
-              }}</span>
+              <span class="info-text" style="color: #409eff">{{ flow.name }}</span>
             </el-tooltip>
             <el-tooltip
               placement="top"
@@ -318,9 +333,7 @@
           </div>
           <div class="info-list" v-if="flow.startTime">
             <span class="info-label">{{ $t('dataFlow.executionTime') }}:</span>
-            <span class="info-text">{{
-              $moment(flow.startTime).format('YYYY-MM-DD HH:mm:ss')
-            }}</span>
+            <span class="info-text">{{ $moment(flow.startTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
             <el-tooltip
               placement="top"
               manual
@@ -340,23 +353,15 @@
           </div>
           <div v-if="flow.finishTime" class="info-list">
             <span class="info-label">{{ $t('dataFlow.finishTime') }}:</span>
-            <span class="info-text">{{
-              $moment(flow.finishTime).format('YYYY-MM-DD HH:mm:ss')
-            }}</span>
+            <span class="info-text">{{ $moment(flow.finishTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </div>
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.totalOutput') }}:</span>
-            <span class="info-text">
-              {{
-                flow.stats && flow.stats.output ? flow.stats.output.rows : ''
-              }}</span
-            >
+            <span class="info-text"> {{ flow.stats && flow.stats.output ? flow.stats.output.rows : '' }}</span>
           </div>
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.totalInput') }}:</span>
-            <span class="info-text">{{
-              flow.stats && flow.stats.input ? flow.stats.input.rows : ''
-            }}</span>
+            <span class="info-text">{{ flow.stats && flow.stats.input ? flow.stats.input.rows : '' }}</span>
           </div>
           <div class="info-list">
             <span class="info-label">{{ $t('dataFlow.timePoint') }}:</span>
@@ -365,17 +370,8 @@
                 <span>{{ $t('dataFlow.sourceLibrary') }}: </span>
                 <span> {{ item.sourceConnectionName }} </span>
                 <ul class="cdcTarget">
-                  <li
-                    v-for="(childerItem, childerIndex) in item.targetList"
-                    :key="childerIndex"
-                  >
-                    <span class="cdcTime"
-                      >{{
-                        $moment(childerItem.cdcTime).format(
-                          'YYYY-MM-DD HH:mm:ss'
-                        )
-                      }}
-                    </span>
+                  <li v-for="(childerItem, childerIndex) in item.targetList" :key="childerIndex">
+                    <span class="cdcTime">{{ $moment(childerItem.cdcTime).format('YYYY-MM-DD HH:mm:ss') }} </span>
                     <span
                       >{{ $t('dataFlow.targetLibrary') }}:
                       {{ childerItem.targetConnectionName }}
@@ -388,14 +384,8 @@
         </div>
       </div>
 
-      <div
-        v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
-        class="echartlist"
-      >
-        <EchartHeader
-          :data="screeningObj"
-          @twoRadio="getTwoRadio"
-        ></EchartHeader>
+      <div v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'" class="echartlist">
+        <EchartHeader :data="screeningObj" @twoRadio="getTwoRadio"></EchartHeader>
         <shaftless-echart
           :sliderBar="sliderBar"
           class="fr echartMain"
@@ -407,17 +397,12 @@
       </div>
 
       <div class="echartlist">
-        <EchartHeader
-          :data="inputOutputObj"
-          @getSpeed="getSpeed"
-        ></EchartHeader>
+        <EchartHeader :data="inputOutputObj" @getSpeed="getSpeed"></EchartHeader>
         <div class="floatLayer">
-          <span
-            style="background-color: rgba(72, 182, 226, 0.3); color: #409eff"
+          <span style="background-color: rgba(72, 182, 226, 0.3); color: #409eff"
             >{{ $t('dataFlow.input') }}:{{ this.inputAverage }}</span
           >
-          <span
-            style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
+          <span style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
             >{{ $t('dataFlow.output') }}:{{ this.outputAverage }}</span
           >
         </div>
@@ -447,8 +432,7 @@
       <div class="echartlist">
         <EchartHeader :data="replicateObj" @getTime="getTime"></EchartHeader>
         <div class="floatLayer">
-          <span
-            style="background-color: rgba(7245, 108, 108, 0.3); color: #f56c6c"
+          <span style="background-color: rgba(7245, 108, 108, 0.3); color: #f56c6c"
             >{{ $t('dataFlow.current') }}:{{ this.ransfTime }}</span
           >
         </div>
@@ -541,7 +525,9 @@ export default {
         database_type: '',
         name: '',
         tableMetadataInstanceId: '',
-        connMetadataInstanceId: ''
+        connMetadataInstanceId: '',
+        mqQueueSet: [],
+        mqTopicSet: []
       },
       throughputData: {
         tooltip: {
@@ -866,8 +852,7 @@ export default {
     // 	: '';
     this.flow.username = ''
     if (this.dataFlow.user) {
-      this.flow.username =
-        this.dataFlow.user.username || this.dataFlow.user.email
+      this.flow.username = this.dataFlow.user.username || this.dataFlow.user.email
     }
     let self = this
     ws.on('dataFlowInsight', function (data) {
@@ -888,19 +873,12 @@ export default {
     dataFlow: {
       handler(val) {
         this.flow = val
-        this.flow.createTime = val.createTime
-          ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss')
-          : ''
-        this.flow.startTime = val.startTime
-          ? this.$moment(val.startTime).format('YYYY-MM-DD HH:mm:ss')
-          : ''
-        this.flow.finishTime = val.finishTime
-          ? this.$moment(val.finishTime).format('YYYY-MM-DD HH:mm:ss')
-          : ''
+        this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
+        this.flow.startTime = val.startTime ? this.$moment(val.startTime).format('YYYY-MM-DD HH:mm:ss') : ''
+        this.flow.finishTime = val.finishTime ? this.$moment(val.finishTime).format('YYYY-MM-DD HH:mm:ss') : ''
 
         if (this.dataFlow.user) {
-          this.flow.username =
-            this.dataFlow.user.username || this.dataFlow.user.email
+          this.flow.username = this.dataFlow.user.username || this.dataFlow.user.email
         }
         this.flow.status = val.status
         if (this.flow.status === 'force stopping') {
@@ -910,9 +888,7 @@ export default {
         let cdcList = []
         if (this.flow.cdcLastTimes && this.flow.cdcLastTimes.length) {
           this.flow.cdcLastTimes.forEach(item => {
-            let flag = cdcList.find(
-              ele => ele.sourceConnectionId === item.sourceConnectionId
-            )
+            let flag = cdcList.find(ele => ele.sourceConnectionId === item.sourceConnectionId)
             if (!flag) {
               cdcList.push({
                 sourceConnectionName: item.sourceConnectionName,
@@ -945,9 +921,11 @@ export default {
             }
           })
           this.stageType = currentStageData.type
-
           if (this.stageType === 'database') {
-            this.getStageDataApi(currentStageData.connectionId, '')
+            this.getStageDataApi(
+              currentStageData.connectionId,
+              currentStageData.name
+            )
           } else if (
             [
               'table',
@@ -958,7 +936,9 @@ export default {
               'xml',
               'kafka',
               'mariadb',
-              'mysql pxc'
+              'mysql pxc',
+              'hive',
+              'mq'
             ].includes(this.stageType)
           ) {
             this.getStageDataApi(currentStageData.connectionId, this.tableName)
@@ -1020,14 +1000,18 @@ export default {
     // 点击节点跳转到表
     handTableName(data) {
       if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-        window.open('/#/metadataInstances/' + data.tableMetadataInstanceId)
+        if (this.stageType === 'database') {
+          window.open('/#/metadataDetails?id=' + data.connMetadataInstanceId)
+        } else {
+          window.open('/#/metadataDetails?id=' + data.tableMetadataInstanceId)
+        }
       }
     },
 
     // 跳转到所属库
     handDatabaseName(data) {
       if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-        window.open('/#/metadataInstances/' + data.connMetadataInstanceId)
+        window.open('/#/metadataDetails?id=' + data.connMetadataInstanceId)
       }
     },
 
@@ -1082,25 +1066,19 @@ export default {
       let dataCells = this.editor.getAllCells()
       let dataCellName = []
       dataCells.forEach(cell => {
-        let formData =
-          typeof cell.getFormData === 'function' ? cell.getFormData() : null
+        let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null
         let tableName = { value: formData.tableName, cell: cell }
         dataCellName.push(tableName)
       })
       var restaurants = dataCellName
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
       // 调用 callback 返回建议列表的数据
       return results
     },
 
     createFilter(queryString) {
       return restaurant => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        )
+        return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
       }
     },
 
@@ -1365,13 +1343,7 @@ export default {
             itemStyle: {
               normal: {
                 color: function (params) {
-                  var colorList = [
-                    '#7ba75d',
-                    '#409EFF',
-                    '#d9742c',
-                    '#e6b451',
-                    '#e06c6c'
-                  ]
+                  var colorList = ['#7ba75d', '#409EFF', '#d9742c', '#e6b451', '#e06c6c']
                   return colorList[params.dataIndex]
                 },
                 label: {
@@ -1381,9 +1353,7 @@ export default {
                   distance: 10,
                   formatter: function (value) {
                     if (value.data / (1000 * 1000 * 1000) > 1) {
-                      return (
-                        (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
-                      )
+                      return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
                     } else if (value.data / (1000 * 1000) > 1) {
                       return (value.data / (1000 * 1000)).toFixed(1) + ' M'
                     } else if (value.data / 1000 > 1) {
@@ -1441,10 +1411,7 @@ export default {
         })
         .then(res => {
           this.loading = false
-          if (
-            Object.keys(res.data).length === 0 ||
-            (res.data.validateBatchId && res.data.validateBatchId === '')
-          ) {
+          if (Object.keys(res.data).length === 0 || (res.data.validateBatchId && res.data.validateBatchId === '')) {
             this.editor.showDataVerify()
           } else {
             this.editor.showResult()

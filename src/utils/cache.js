@@ -27,9 +27,7 @@ export default class Cache {
     if (isForUser) {
       let userId = window.VueCookie.get('user_id')
       if (!userId) {
-        throw new Error(
-          'Getting cache error, cant not found user id from cookie'
-        )
+        throw new Error('Getting cache error, cant not found user id from cookie')
       }
       scopeCache = cache[userId] || {}
     }
@@ -41,9 +39,7 @@ export default class Cache {
     if (isForUser) {
       let userId = window.VueCookie.get('user_id')
       if (!userId) {
-        throw new Error(
-          'Getting cache error, cant not found user id from cookie'
-        )
+        throw new Error('Getting cache error, cant not found user id from cookie')
       }
       scope = userId
     }

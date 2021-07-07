@@ -9,11 +9,11 @@ import VueBus from 'vue-bus'
 import VueClipboard from 'vue-clipboard2'
 import factory from '@/api/factory'
 import Cache from '@/utils/cache'
+import TapdataWebCore from '../packages/tapdata-web-core'
 
 import '@/plugins/element'
 import '@/plugins/icon'
 import 'element-ui/lib/theme-chalk/index.css'
-import '@/components/form-builder'
 import '@/directives'
 import 'github-markdown-css'
 import '@/assets/style/index.scss'
@@ -27,6 +27,13 @@ Vue.use(VueCookie)
 Vue.use(VueBus)
 Vue.use(VueClipboard)
 Vue.use(LoadMore)
+Vue.use(TapdataWebCore, {
+  lang: {
+    sc: 'zh-CN',
+    tc: 'zh-TW',
+    en: 'en'
+  }[localStorage.getItem('tapdata_localize_lang')]
+})
 
 Vue.prototype.$moment = moment
 Vue.prototype.$api = factory
@@ -148,9 +155,7 @@ Object.defineProperty(Array.prototype, 'findWhere', {
 })
 
 // 判断浏览器是否为IE
-const isIE =
-  /MSIE (\d+\.\d+);/.test(navigator.userAgent) ||
-  ~navigator.userAgent.indexOf('Trident/')
+const isIE = /MSIE (\d+\.\d+);/.test(navigator.userAgent) || ~navigator.userAgent.indexOf('Trident/')
 
 // 兼容ie iframe切换路由不生效
 if (isIE) {

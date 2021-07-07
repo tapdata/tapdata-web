@@ -229,13 +229,8 @@ export default function (vm) {
             validator: (rule, value, callback) => {
               if (!value || !/^\d+$/.test(value)) {
                 callback(new Error(vm.$t('dataForm.form.file.input_number')))
-              } else if (
-                !value ||
-                !(parseInt(value) > 0 && parseInt(value) <= 5256000)
-              ) {
-                callback(
-                  new Error(vm.$t('dataForm.form.file.greaterZero_less5256000'))
-                )
+              } else if (!value || !(parseInt(value) > 0 && parseInt(value) <= 5256000)) {
+                callback(new Error(vm.$t('dataForm.form.file.greaterZero_less5256000')))
               } else {
                 callback()
               }
@@ -267,13 +262,8 @@ export default function (vm) {
             validator: (rule, value, callback) => {
               if (!value || !/^\d+$/.test(value)) {
                 callback(new Error(vm.$t('dataForm.form.file.input_number')))
-              } else if (
-                !value ||
-                !(parseInt(value) > 0 && parseInt(value) <= 5256000)
-              ) {
-                callback(
-                  new Error(vm.$t('dataForm.form.file.greaterZero_less5256000'))
-                )
+              } else if (!value || !(parseInt(value) > 0 && parseInt(value) <= 5256000)) {
+                callback(new Error(vm.$t('dataForm.form.file.greaterZero_less5256000')))
               } else {
                 callback()
               }

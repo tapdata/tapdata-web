@@ -48,22 +48,9 @@ export const collectionConfig = {
       validate: function (data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
-          )
-        if (!data.connectionId)
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.data_node.collection.none_database'
-            )}`
-          )
-        if (!data.tableName)
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.data_node.collection.none_collection'
-            )}`
-          )
+        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
+        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_database')}`)
+        if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_collection')}`)
         // if (!data.primaryKeys)
         // 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.collection.none_pk')}`);
         return true
@@ -75,8 +62,7 @@ export const collectionConfig = {
         let fieldFilter = data.fieldFilter ? data.fieldFilter.split(',') : []
         if (fieldFilter.length === 0) return outputSchema
         let defaultFields = outputSchema.fields
-        let newSchema =
-          data.fieldFilterType === 'retainedField' ? [] : defaultFields
+        let newSchema = data.fieldFilterType === 'retainedField' ? [] : defaultFields
         fieldFilter.forEach(filedName => {
           let index = defaultFields.findIndex(f => filedName === f.field_name)
           if (index >= 0) {
@@ -218,10 +204,7 @@ export const collectionConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

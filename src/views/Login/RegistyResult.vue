@@ -9,22 +9,14 @@
             <p>
               {{ $t('app.signIn.account') }}
               <i>{{ email }}</i>
-              {{
-                type === 'registy'
-                  ? $t('app.signIn.accountSuccess')
-                  : $t('app.signIn.resetAccountSuccess')
-              }}
+              {{ type === 'registy' ? $t('app.signIn.accountSuccess') : $t('app.signIn.resetAccountSuccess') }}
             </p>
             <p v-if="type === 'registy'">{{ $t('app.signIn.clickBtn') }}</p>
             <p v-else>{{ $t('app.signIn.resetClickBtn') }}</p>
 
-            <el-button
-              class="btn"
-              type="primary"
-              size="mini"
-              @click="goLogin"
-              >{{ $t('app.signIn.goLogin') }}</el-button
-            >
+            <el-button class="btn" type="primary" size="mini" @click="goLogin">{{
+              $t('app.signIn.goLogin')
+            }}</el-button>
           </div>
         </template>
 
@@ -33,18 +25,12 @@
           <div class="text">
             <p>
               {{ $t('app.signIn.account') }}<i>{{ email }}</i
-              >{{
-                type === 'registy'
-                  ? $t('app.signIn.connectionFailed')
-                  : $t('app.signIn.resetConnectionFailed')
-              }}
+              >{{ type === 'registy' ? $t('app.signIn.connectionFailed') : $t('app.signIn.resetConnectionFailed') }}
             </p>
             <div style="font-size: 18px">
               {{ $t('app.signIn.confirmEmail')
               }}<span @click="backRegisty">{{
-                type === 'registy'
-                  ? $t('app.signIn.registered')
-                  : $t('app.signIn.modifyPassword')
+                type === 'registy' ? $t('app.signIn.registered') : $t('app.signIn.modifyPassword')
               }}</span>
             </div>
           </div>
@@ -137,7 +123,7 @@ export default {
     // 去登录
     goLogin() {
       this.$router.push({
-        path: '/login',
+        name: 'login',
         query: { email: this.email }
       })
     }

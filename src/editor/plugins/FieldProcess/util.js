@@ -60,10 +60,7 @@ export const handleOperation = function (fields, operations) {
   if (temporary.length > 0) {
     for (let i = 0; i < temporary.length; i++) {
       let indexOf = fieldNameIndex(temporary[i].field) || -1
-      if (
-        fieldOriginalIsDeleted.includes(temporary[i].id) &&
-        !temporary[i]['keep']
-      ) {
+      if (fieldOriginalIsDeleted.includes(temporary[i].id) && !temporary[i]['keep']) {
         temporary.splice(i, 1)
         i--
         continue

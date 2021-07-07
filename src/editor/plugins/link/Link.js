@@ -152,10 +152,7 @@ export const link = {
       },
 
       getMarkerWidth: function (type) {
-        let d =
-          type === 'source'
-            ? this.attr('line/sourceMarker/d')
-            : this.attr('line/targetMarker/d')
+        let d = type === 'source' ? this.attr('line/sourceMarker/d') : this.attr('line/targetMarker/d')
         return this.getDataWidth(d)
       },
 
@@ -175,12 +172,7 @@ export const link = {
           targetCell &&
           targetCell.isDataNode &&
           targetCell.isDataNode() &&
-          [
-            'app.Table',
-            'app.Collection',
-            'app.ESNode',
-            'app.HiveNode'
-          ].includes(targetCell.get('type'))
+          ['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode'].includes(targetCell.get('type'))
         )
       },
 
@@ -197,8 +189,7 @@ export const link = {
 
         if (data && configJoinTable) {
           let joinTable = data.joinTable
-          if (!joinTable)
-            throw new Error(`${i18n.t('editor.cell.validate.none_setting')}`)
+          if (!joinTable) throw new Error(`${i18n.t('editor.cell.validate.none_setting')}`)
           /* if( !joinTable.tableName)
 						throw new Error('Table name cannot be empty.');
 					if( !joinTable.primaryKeys)
@@ -208,9 +199,7 @@ export const link = {
           if (joinTable.joinType !== 'append') {
             if (!joinTable.joinKeys || joinTable.joinKeys.length === 0)
               throw new Error(`${i18n.t('editor.cell.link.none_join_key')}`)
-            let errorJoinKeys = joinTable.joinKeys.filter(
-              v => !v.source || !v.target
-            )
+            let errorJoinKeys = joinTable.joinKeys.filter(v => !v.source || !v.target)
             if (errorJoinKeys && errorJoinKeys.length > 0) {
               throw new Error(`${i18n.t('editor.cell.link.none_join_key')}`)
             }
@@ -220,10 +209,7 @@ export const link = {
 							throw new Error(`${i18n.t('editor.cell.link.none_join_path')}`);
 					} */
           if (joinTable.joinType === 'merge_embed') {
-            if (!joinTable.arrayUniqueKey)
-              throw new Error(
-                `${i18n.t('editor.cell.link.none_array_unique_key')}`
-              )
+            if (!joinTable.arrayUniqueKey) throw new Error(`${i18n.t('editor.cell.link.none_array_unique_key')}`)
           }
         }
         return true
@@ -241,15 +227,7 @@ export const link = {
         if (modelType.indexOf('uml') === 0) opt.selector = 'root'
         // taking the border stroke-width into account
         if (modelType === 'standard.InscribedImage') opt.selector = 'border'
-        return joint.connectionPoints.boundary.call(
-          this,
-          line,
-          view,
-          magnet,
-          opt,
-          type,
-          linkView
-        )
+        return joint.connectionPoints.boundary.call(this, line, view, magnet, opt, type, linkView)
       }
     }
   },
@@ -337,10 +315,7 @@ export const link = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

@@ -1,5 +1,5 @@
 <template>
-  <section class="dataRule-list-wrap">
+  <section class="schedule-list-wrap">
     <TablePage
       ref="table"
       row-key="id"
@@ -39,36 +39,15 @@
         prop="task_result_code"
         sortable="task_result_code"
       ></el-table-column>
-      <el-table-column
-        :label="$t('task.task_result')"
-        prop="task_result"
-        sortable="task_result"
-      ></el-table-column>
-      <el-table-column
-        :label="$t('task.task_duration')"
-        prop="task_duration"
-        sortable="task_duration"
-      >
+      <el-table-column :label="$t('task.task_result')" prop="task_result" sortable="task_result"></el-table-column>
+      <el-table-column :label="$t('task.task_duration')" prop="task_duration" sortable="task_duration">
       </el-table-column>
-      <el-table-column
-        :label="$t('task.task_start_time')"
-        prop="task_start_time"
-        sortable="task_start_time"
-      >
+      <el-table-column :label="$t('task.task_start_time')" prop="task_start_time" sortable="task_start_time">
         <template slot-scope="scope">
-          {{
-            scope.row.task_start_time
-              ? $moment(scope.row.task_start_time).format('YYYY-MM-DD HH:mm:ss')
-              : ''
-          }}
+          {{ scope.row.task_start_time ? $moment(scope.row.task_start_time).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('task.agent_id')"
-        prop="agent_id"
-        sortable="agent_id"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column :label="$t('task.agent_id')" prop="agent_id" sortable="agent_id" :show-overflow-tooltip="true">
       </el-table-column>
     </TablePage>
   </section>
@@ -151,75 +130,36 @@ export default {
       })
     },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'task_start_time'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'task_start_time'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-.dataRule-list-wrap {
+.schedule-list-wrap {
   height: 100%;
-
-  .tapNav {
-    height: 28px;
-    background-color: rgba(239, 241, 244, 100);
-    .mune {
-      display: inline-block;
-      height: 28px;
-      line-height: 25px;
-      font-size: 12px;
-      border-radius: 0px 3px 0px 0px;
-      background-color: rgba(244, 245, 247, 100);
-      box-shadow: 0 -1px 10px 0px rgba(0, 0, 0, 0.15);
-      li {
-        float: left;
-        width: 100px;
-        height: 28px;
-        color: #666;
-        cursor: pointer;
-        text-align: center;
-        border-right: 1px solid #dedee4;
-
-        &:last-child {
-          border-right: 0;
-        }
-      }
-      li.active {
-        height: 29px;
-        border-radius: 3px 3px 0px 0px;
-        background-color: #fff;
-        border-right: 0;
-        border-left: 0;
-        // box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
-      }
+  background-color: rgba(239, 241, 244, 100);
+  .search-bar {
+    display: flex;
+    li + li {
+      margin-left: 10px;
     }
   }
-  .process-list {
-    background-color: rgba(239, 241, 244, 100);
-    .search-bar {
-      display: flex;
-      li + li {
-        margin-left: 10px;
-      }
+  .btn + .btn {
+    margin-left: 5px;
+  }
+  .btn {
+    padding: 7px;
+    background: #f5f5f5;
+    i.iconfont {
+      font-size: 12px;
     }
-    .btn + .btn {
+    &.btn-dropdowm {
       margin-left: 5px;
     }
-    .btn {
-      padding: 7px;
-      background: #f5f5f5;
-      i.iconfont {
-        font-size: 12px;
-      }
-      &.btn-dropdowm {
-        margin-left: 5px;
-      }
-      &.btn-create {
-        margin-left: 5px;
-      }
+    &.btn-create {
+      margin-left: 5px;
     }
   }
 }

@@ -13,22 +13,13 @@
 		</el-popover>
 		<i class="el-icon-loading" v-if="data && data.loading"></i> -->
     <div class="rightOpt fr" v-if="textObj.overviewFalg">
-      <el-radio-group
-        v-model="num"
-        size="mini"
-        :class="selectColor"
-        @change="changeUnit"
-      >
-        <el-radio-button label="flow">{{
-          $t('dataFlow.rowCount')
-        }}</el-radio-button>
+      <el-radio-group v-model="num" size="mini" :class="selectColor" @change="changeUnit">
+        <el-radio-button label="flow">{{ $t('dataFlow.rowCount') }}</el-radio-button>
         <el-radio-button label="stage">KB</el-radio-button>
       </el-radio-group>
     </div>
     <div class="unit fr" v-if="textObj.allFalg">
-      <el-button type="text" @click="handleAll(data)">{{
-        $t('app.Home.all')
-      }}</el-button>
+      <el-button type="text" @click="handleAll(data)">{{ $t('app.Home.all') }}</el-button>
     </div>
   </div>
 </template>
@@ -74,7 +65,7 @@ export default {
 <style lang="scss" scoped>
 .echartHead {
   height: 38px;
-  line-height: 38px;
+  line-height: 37px;
   padding: 0 10px;
   border-bottom: 1px solid #dcdfe6;
   background-color: #fafafa;
@@ -144,6 +135,10 @@ export default {
   .unit {
     .el-button span {
       font-size: 12px;
+      color: #333;
+      &:hover {
+        color: #409eff;
+      }
     }
   }
 

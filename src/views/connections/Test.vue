@@ -19,10 +19,12 @@
         style="color: #d54e21"
       >
         <i class="el-icon-warning" style="color: #d54e21"></i>
-        <span class="test-title">{{ $t('dataForm.test.error') }}</span>
+        <span class="test-title">{{
+          wsErrorMsg ? wsErrorMsg : $t('dataForm.test.error')
+        }}</span>
       </div>
       <div v-else>
-        <div class="test-status" v-if="['invalid'].includes(status)">
+        <div class="test-status" v-if="['invalid', 'ERROR'].includes(status)">
           <i class="el-icon-error" :style="{ color: colorMap[status] }"></i>
           <span class="test-title">{{
             $t('dataForm.test.testResultFail')
@@ -34,7 +36,10 @@
             $t('dataForm.test.testResultSuccess')
           }}</span>
         </div>
-        <div class="test-status" v-if="!['ready', 'invalid'].includes(status)">
+        <div
+          class="test-status"
+          v-if="!['ready', 'invalid', 'ERROR'].includes(status)"
+        >
           <el-image
             style="width: 20px; height: 20px; vertical-align: bottom"
             :src="require('@/assets/icons/loading-drs.gif')"
@@ -98,7 +103,16 @@
         width="308"
       ></el-table-column>
     </el-table>
+    <!--    <span v-show="testData.testLogs && testData.testLogs.length > 0">ERROR: {{ wsErrorMsg }}</span>-->
     <span slot="footer" class="dialog-footer">
+      <el-button
+        size="mini"
+        @click="start()"
+        v-if="
+          isTimeout && $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'
+        "
+        >{{ $t('dataForm.test.retryBtn') }}</el-button
+      >
       <el-button size="mini" type="primary" @click="handleClose()">{{
         $t('dataForm.close')
       }}</el-button>
@@ -130,8 +144,10 @@ export default {
         progress: 0
       },
       wsError: '',
+      wsErrorMsg: '',
       status: '',
       timer: null,
+      isTimeout: true,
       // hideTableInfo: false,
       colorMap: {
         passed: '#70AD47',
@@ -180,8 +196,10 @@ export default {
       ws.ready(() => {
         //接收数据
         ws.on('testConnectionResult', data => {
+          this.isTimeout = false //有回调
           let result = data.result || []
           this.wsError = data.status
+          this.wsErrorMsg = data.error
           let testData = {
             wsError: data.status
           }
@@ -209,14 +227,26 @@ export default {
             })
             this.testData.testLogs = logs
             testData['testLogs '] = logs
-            testData['status'] = result.status
-            this.status = result.status
+            testData['status'] = data.status
+            this.status = data.status
+            this.wsError = data.status
+            //this.wsErrorMsg = data.error
           }
           this.$emit('returnTestData', testData)
         })
         //长连接失败
         ws.on('testConnection', data => {
           this.wsError = data.status
+          this.wsErrorMsg = data.error
+          let testData = {
+            wsError: data.status
+          }
+          this.$emit('returnTestData', testData)
+        })
+        //长连接失败
+        ws.on('pipe', data => {
+          this.wsError = data.status
+          this.wsErrorMsg = data.error
           let testData = {
             wsError: data.status
           }
@@ -250,8 +280,21 @@ export default {
       if (editTest) {
         msg.data['editTest'] = editTest //是否编辑测试
       }
+      let self = this
+      this.isTimeout = true //重置
       ws.ready(() => {
         ws.send(msg)
+        self.timer = setTimeout(() => {
+          if (self.isTimeout) {
+            self.wsError = 'ERROR'
+            self.wsErrorMsg = self.$t('dataForm.test.retryTest')
+            let testData = {
+              wsError: 'ERROR'
+            }
+            console.log('zhixingl')
+            self.$emit('returnTestData', testData)
+          }
+        }, 800)
       })
     },
     clearInterval() {

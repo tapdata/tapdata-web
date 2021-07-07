@@ -67,8 +67,7 @@ const tc = {
     customerService: {
       technicalSupport: '技術支持',
       technicalSupportText: '在使用過程中，有任何問題，請在',
-      technicalSupportText1:
-        '留言，（用戶支持的賬戶和密碼，與cloud.tapdata.net中的相同），我們會盡快答复。',
+      technicalSupportText1: '留言，（用戶支持的賬戶和密碼，與cloud.tapdata.net中的相同），我們會盡快答复。',
       userSupport: '用戶支持',
       otherDmands: '其他需求',
       otherDmandsText: '其他需求，請掃描下方企業微信二維碼。'
@@ -101,14 +100,11 @@ const tc = {
       haveAccpunt: '已有賬號?',
       backLogin: '返回登錄',
       email_existed: 'Email 地址已被註冊',
-      registry_sucess:
-        '登錄前請檢查你的郵件並點擊驗證鏈接，將在5秒後轉跳到登錄頁面。 ',
-      registry_sucess_wait_approval:
-        '登錄前等待管理員審批，將在5秒後轉跳到登錄頁面。 ',
+      registry_sucess: '登錄前請檢查你的郵件並點擊驗證鏈接，將在5秒後轉跳到登錄頁面。 ',
+      registry_sucess_wait_approval: '登錄前等待管理員審批，將在5秒後轉跳到登錄頁面。 ',
       userPplicy_message: '請選擇用戶政策',
       modifyPassword: '修改密碼',
-      newPasswordTip:
-        '輸入您註冊的郵箱和新密碼，我們將向您發送用於重置密碼的鏈接',
+      newPasswordTip: '輸入您註冊的郵箱和新密碼，我們將向您發送用於重置密碼的鏈接',
       newpassword_placeholder: '請設置新密碼',
       rememberPasswords: '想起密碼?',
       Registration: '註冊賬號',
@@ -296,13 +292,10 @@ const tc = {
     deteleMessage: '刪除任務將無法恢復, 確定刪除任務',
     deteleJobMessage: '刪除任務將無法恢復, 確定刪除?',
     forceStoppingMessage: '強制停止將立即中斷數據傳輸，是否繼續執行?',
-    stopInitial_syncMessage:
-      '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
+    stopInitial_syncMessage: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
     stopMessage: '確定要暫停任務嗎?',
-    stopAggregation_message:
-      '任務XXX中含有聚合處理節點，任務停止後再次啟動，任務會先進行重置，確定停止？',
-    startAggregation_message:
-      '任務XXX中含有聚合處理節點，任務啟動後會先進行重置，確定啟動？',
+    stopAggregation_message: '任務XXX中含有聚合處理節點，任務停止後再次啟動，任務會先進行重置，確定停止？',
+    startAggregation_message: '任務XXX中含有聚合處理節點，任務啟動後會先進行重置，確定啟動？',
     cancelReset: '已取消重置',
     resetOk: '重置成功',
     resetFailed: '重置失敗',
@@ -423,8 +416,7 @@ const tc = {
     dataValidation: '數據校驗',
     sourceDescription:
       '數據源是創建傳輸任務的前提，任務中所有的數據庫和表等數據節點都來自數據源。數據源包含數據庫, File, GridFS, Rest API, View, Udp, Custom connection等',
-    apiDescription:
-      'API即數據發布，可以根據現有collection或者通過同步任務創建新的collection對外發布的API',
+    apiDescription: 'API即數據發布，可以根據現有collection或者通過同步任務創建新的collection對外發布的API',
     datavaliDescription:
       '數據校驗可對遷移同步任務的數據源與目標之間的數據進行比對校驗，校驗功能包含快速count校驗，全表字段值校驗，關聯字段值校驗，定時自動校驗等。 ',
     multiError: {
@@ -525,12 +517,10 @@ const tc = {
     totalDelete: '總刪除',
     category: '類別',
     replicate: '數據同步差距',
-    throughputpop:
-      '輸入輸出統計: 平均每秒源端數據採集的速度以及目標端寫入的速度，數值越大越好',
+    throughputpop: '輸入輸出統計: 平均每秒源端數據採集的速度以及目標端寫入的速度，數值越大越好',
     transtime_pop:
       '傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。節點間統計：事件從進入節點到輸出到所消耗的時間。任務流統計：所有節點耗時相加，數值越小越好',
-    replicate_pop:
-      '數據同步差距: 源庫和目標庫數據最後更新時間的差距，數值越小越好',
+    replicate_pop: '數據同步差距: 源庫和目標庫數據最後更新時間的差距，數值越小越好',
     status: {
       running: '運行中',
       paused: '已暫停',
@@ -643,10 +633,8 @@ const tc = {
     enterFilterTable: '請輸入過濾表內容',
     lagTime: '增量滯後判斷時間設定',
     lagTimeTip: '當增量任務延遲大於該值時，則認為任務增量滯後，預設值為0',
-    aggregatePrompt:
-      '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
-    nameTip:
-      '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
+    aggregatePrompt: '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
+    nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
     button: {
       submit: '提交執行',
       viewConfig: '查看節點配置',
@@ -692,25 +680,19 @@ const tc = {
     bulk_delete_confirm_message: '批量刪除任務後，任務將無法恢復',
 
     stop_confirm_title: '是否暫停該任務？',
-    stop_confirm_message:
-      '暫停任務 xxx 後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
+    stop_confirm_message: '暫停任務 xxx 後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
     bulk_stop_confirm_title: '是否批量暫停任務？',
-    bulk_stop_confirm_message:
-      '批量暫停任務後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
+    bulk_stop_confirm_message: '批量暫停任務後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
 
     force_stop_confirm_title: '是否強制停止該任務？',
-    force_stop_confirm_message:
-      '強制停止任務 xxx 將立即中斷數據傳輸強制任務快速停止，並重置該任務',
+    force_stop_confirm_message: '強制停止任務 xxx 將立即中斷數據傳輸強制任務快速停止，並重置該任務',
     bulk_force_stop_confirm_title: '是否批量強制停止任務？',
-    bulk_force_stop_confirm_message:
-      '批量強制停止任務將立即中斷數據傳輸強制任務快速停止，並重置該任務',
+    bulk_force_stop_confirm_message: '批量強制停止任務將立即中斷數據傳輸強制任務快速停止，並重置該任務',
 
     initialize_confirm_title: '是否重置該任務？',
-    initialize_confirm_message:
-      '重置任務 xxx 將清除任務同步進度，任務將重新執行',
+    initialize_confirm_message: '重置任務 xxx 將清除任務同步進度，任務將重新執行',
     bulk_initialize_confirm_title: '是否批量重置任務？',
-    bulk_initialize_confirm_message:
-      '批量重置任務將清除任務同步進度，任務將重新執行',
+    bulk_initialize_confirm_message: '批量重置任務將清除任務同步進度，任務將重新執行',
 
     importantReminder: '重要提醒',
     modifyEditText: '編輯任務如果修改了',
@@ -726,10 +708,8 @@ const tc = {
       distinctWriteType: '去重寫入機制',
       intellect: '智能去重寫入',
       compel: '強制去重寫入',
-      intellectTip:
-        '智能去重寫入：對目標已有數據進行智能檢測，去重的同時能極大提升傳輸性能',
-      compelTip:
-        '強制去重寫入：對目標已有數據進行強制去重檢測，嚴格保證精準度但傳輸性能較低',
+      intellectTip: '智能去重寫入：對目標已有數據進行智能檢測，去重的同時能極大提升傳輸性能',
+      compelTip: '強制去重寫入：對目標已有數據進行強制去重檢測，嚴格保證精準度但傳輸性能較低',
       batchTip: '批量：對監測到的增量數據進行批量傳輸處理，性能較高',
       onebyoneTip: '逐行：對監測到的增量數據進行逐條處理，性能較差',
       sync_type_tip: '關閉數據集節點的聚合設置才能修改傳輸類型，已開啟節點:'
@@ -738,8 +718,7 @@ const tc = {
       title: '跳過錯誤設置',
       skipErrorSettings: '任務錯誤處理',
       tip: '任務上次停止時發生了以下數據相關的錯誤，請確認這些錯誤已經被處理。如果希望跳過這些錯誤，請勾選相應的錯誤項並點擊“跳過錯誤，啟動任務” 。 ',
-      attention:
-        '注意：若導致錯誤的數​​據未被處理，跳過錯誤可能導致這條數據被丟棄。 ',
+      attention: '注意：若導致錯誤的數​​據未被處理，跳過錯誤可能導致這條數據被丟棄。 ',
       startJob: '跳過錯誤，啟動任務',
       cancel: '取消',
       taskName: '任務名',
@@ -775,11 +754,9 @@ const tc = {
     deteleDatabaseTittle: '是否刪除該連接？',
     deteleDatabaseMsg: '刪除連接 xxx 後，此連接將無法恢復',
     desc: '數據源包括數據庫，結構化文件，應用程序RESTful API，自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除基礎的配置項之外，數據源還有定期/手動加載數據庫結構 ，設置時區，表過濾設置等功能。更多配置說明，請點擊',
-    reloadMsg:
-      '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',
+    reloadMsg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',
     checkMsg: '此數據源被傳輸任務或API所佔用，無法刪除',
-    copyFailedMsg:
-      '複製失敗，原因：系統設置中 "連接設置 - 允許創建重複數據源" 被設置為 "false"',
+    copyFailedMsg: '複製失敗，原因：系統設置中 "連接設置 - 允許創建重複數據源" 被設置為 "false"',
     change: '更換',
     rename: '改名',
     testConnection: '連接測試',
@@ -799,8 +776,8 @@ const tc = {
       target: '目標',
       source_and_target: '源頭和目標'
     },
-    cannot_delete_remind:
-      '當前連接正在被一個或多個任務或API使用中，請刪除任務或API後重試。'
+    cannot_delete_remind: '當前連接正在被一個或多個任務或API使用中，請刪除任務或API後重試。',
+    dfs_cannot_delete_remind: '當前連接正在被一個或多個任務使用中，請刪除任務後重試。'
   },
   editor: {
     nodeSettings: '節點設置',
@@ -821,12 +798,13 @@ const tc = {
       },
       data_node: {
         hiveText: 'hive節點',
+        hbaseText: 'HBase節點',
+        hbase_check: 'HBase僅支持全量任務',
         kafkaText: 'kafka節點',
         kafkaName_isNull: 'kafka不能為空',
         mqTableType: '新建表類型',
         mqTableTypeTip: '請選擇表類型topic或者queue',
-        tcpTip:
-          '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
+        tcpTip: '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
         database: {
           name: '數據庫',
           tip: '任意類型數據庫',
@@ -887,10 +865,8 @@ const tc = {
             fieldFilterTip: {
               label: '字段過濾',
               keepAllFields: '不過濾字段：保留此數據集的全部字段',
-              retainedField:
-                '保留字段：選擇此項操作，將保留所選擇的字段，捨棄其它字段全部.',
-              deleteField:
-                '删除字段：選擇此項操作，將刪除所選擇的字段，保留其它全部字段.'
+              retainedField: '保留字段：選擇此項操作，將保留所選擇的字段，捨棄其它字段全部.',
+              deleteField: '删除字段：選擇此項操作，將刪除所選擇的字段，保留其它全部字段.'
             },
             dropTable: {
               label: '已存在的數據',
@@ -935,8 +911,7 @@ const tc = {
               preview: '預覽',
               previewSampleData: '採樣數據預覽',
               addTextTip: '沒有預覽樣本數據',
-              addTextTip1:
-                '請輸入MongoDB聚合代碼，然後重定向“預覽”以在此處預覽樣本數據',
+              addTextTip1: '請輸入MongoDB聚合代碼，然後重定向“預覽”以在此處預覽樣本數據',
               filterAggreTip: '聚合設置與過濾設置不可同時開啟',
               seetingAggreTip: '此功能僅在初始化任務下可用'
             }
@@ -1138,14 +1113,11 @@ const tc = {
           name_notRepeated: '子處理名稱不能重複',
           returnExample: '返回示例',
           school_name: 'school_name: "第一實驗小學"',
-          idComment:
-            '// "students_sum" 自定義的子處理名稱，多個子處理名稱不可重複',
-          countComment:
-            '// COUNT為選擇的函數, 132為函數值；如果函數是MAX, 則名稱為MAX',
+          idComment: '// "students_sum" 自定義的子處理名稱，多個子處理名稱不可重複',
+          countComment: '// COUNT為選擇的函數, 132為函數值；如果函數是MAX, 則名稱為MAX',
           school_nameComment: ' // 分組匯總的欄位名，如果不填寫則不顯示',
           aggregateSizeLabel: '聚合結果緩存條數',
-          aggregateSizeTips:
-            '聚合結果在設置的條數範圍內存在緩存里，超出的數據會被存入目標庫。',
+          aggregateSizeTips: '聚合結果在設置的條數範圍內存在緩存里，超出的數據會被存入目標庫。',
           allAggregateSize: '全部存入緩存',
           customAggregateSize: '自定義緩存條數',
           cleanSecondTimeLess3600: '清理舊版本數據時間不能替換3600',
@@ -1191,11 +1163,9 @@ const tc = {
             scriptDialogTitle: '設置字段腳本',
             expression: '請輸入表達式',
             example: '示例',
-            exampleRow1:
-              'var result = "a" + "b" // 字符串拼接, result的結果為 "ab"',
+            exampleRow1: 'var result = "a" + "b" // 字符串拼接, result的結果為 "ab"',
             exampleRow2: 'var result = 1 + 2 // 數字計算, result 的結果為 3',
-            exampleRow3:
-              'var result = fn("1") // 調用自定義函數或內置函數, result的結果為 fn 函數的返回值',
+            exampleRow3: 'var result = fn("1") // 調用自定義函數或內置函數, result的結果為 fn 函數的返回值',
             exampleRow4:
               'var result = record.isTrue ? true : false // 三元表達式, result的值根據判斷表達式（record.isTrue）的結果為 true 或 false'
           }
@@ -1209,8 +1179,7 @@ const tc = {
           none_script: '腳本必填.',
 
           debug_button_label: '調試腳本',
-          warning_for_not_save:
-            '當前任務未保存，無法進行連接測試，請保存之後再嘗試',
+          warning_for_not_save: '當前任務未保存，無法進行連接測試，請保存之後再嘗試',
           connect_server_fail: '連接服務器失敗',
 
           debug: {
@@ -1460,10 +1429,8 @@ const tc = {
           tip: '切換全屏'
         }
       },
-      nodeLoadSchemaDiaLog:
-        '如果數據源有更新，此操作會更新此例程的模型，是否繼續？',
-      allNodeLoadSchemaDiaLog:
-        '如果數據源有更新，此操作會更新各例程的模型，是否繼續？'
+      nodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更新此例程的模型，是否繼續？',
+      allNodeLoadSchemaDiaLog: '如果數據源有更新，此操作會更新各例程的模型，是否繼續？'
     },
     preview: {
       stage: '節點',
@@ -1502,14 +1469,12 @@ const tc = {
       excel_cell_point: 'EXCEL的坐標範圍，"第1行第1列" 可以輸入為 "A1"',
       excel_cell_tip: '字段範圍必須為大寫字母+數字',
       excel_value_end_gt_start: '結束行必須大於等於開始行',
-      excel_value_range:
-        'EXCEL 橫坐標範圍, "取第2行至第10行" 可輸入："2" ~ "10"',
+      excel_value_range: 'EXCEL 橫坐標範圍, "取第2行至第10行" 可輸入："2" ~ "10"',
       fileFilter: '文件過濾',
       include: '包含文件',
       exclude: '捨棄文件',
       loadSchema: '加載模型',
-      loadSchemaTip:
-        '配置完上述配置項後請點擊“加載模型”按鈕以更新文件的模型，沒有文件模型無法執行同步傳輸',
+      loadSchemaTip: '配置完上述配置項後請點擊“加載模型”按鈕以更新文件的模型，沒有文件模型無法執行同步傳輸',
       xpath: '數據記錄的XPath',
       tableName: '模型名'
     }
@@ -1556,8 +1521,7 @@ const tc = {
     exampleMQL: '示例: db.collection_1.count({ field_2:A })',
     exampleHashSQL:
       '請輸入 SELECT 查詢語句 哈希校驗下SQL僅支持select查詢語句, 不支持count/sum/avg/max等查詢 示例: select field_1 from tablename_1 where field__2 > A；',
-    exampleHashMQL:
-      '請輸入MQL查詢語句 示例: db.collection_1.find ({ field_2:A },{ field_1:1 })',
+    exampleHashMQL: '請輸入MQL查詢語句 示例: db.collection_1.find ({ field_2:A },{ field_1:1 })',
     exampleJS: '请输入JS代码, 高级校验JS必须返回return值, 具体请查看示例',
     showResult: '顯示數據校驗結果',
     verifyRunningInfo: '後台運行',
@@ -1658,7 +1622,9 @@ const tc = {
       result: '結果',
       information: '說明',
       unTest: '待測試... ',
-      error: '測試服務請求超時，請關閉重試'
+      error: '測試服務請求超時，請關閉重試',
+      retryBtn: '重試',
+      retryTest: '連接測試服務啟動失敗，請點擊重試'
     },
     form: {
       connectionName: '連接名稱',
@@ -1689,12 +1655,12 @@ const tc = {
       timeZone: '時間類型的時區',
       ReloadSchema: '定期加載schema',
       clusterName: '集群名稱',
-      databaseHostPlaceholder:
-        '數據庫地址（127.0.0.1/Domain:{端口}，多個地址請用，分開）',
+      databaseHostPlaceholder: '數據庫地址（127.0.0.1/Domain:{端口}，多個地址請用，分開）',
       plugin_name: '日誌解碼器',
       supportUpdatePk: '支持同步時更新主鍵',
       indexPrefix: '索引前綴',
       agentMsg: 'Agent當前狀態异常無法創建連接，請檢查',
+      agentConnectionMsg: 'Agent當前狀態异常，無法測試連接，請檢查Agent',
       multiTenant: '多租戶模式',
       uriTips: {
         label: '示例',
@@ -1719,17 +1685,14 @@ const tc = {
         URIMode: 'URI模式',
         URIModeTips: '以URI方式配置MongoDB數據庫，支持批量輸入',
         standardMode: '標準模式',
-        standardModeTips:
-          '按照Host,port,賬號，密碼的方式配置MongoDB數據庫，支持批量輸入',
+        standardModeTips: '按照Host,port,賬號，密碼的方式配置MongoDB數據庫，支持批量輸入',
         sslTSL: 'TSL/SSL連接',
         sslTSLTip:
           'Tapdata 將連接奧網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
         sslTop: '直接連接',
-        sslTopTips:
-          'Tapdata 將直接連接到數據庫，您可以要創建一個安全規則以允許系統訪問，這是簡單直接的方法'
+        sslTopTips: 'Tapdata 將直接連接到數據庫，您可以要創建一個安全規則以允許系統訪問，這是簡單直接的方法'
       },
-      guide:
-        '數據源配置請參考頁面右側連接配置幫助文檔，想了解更多數據源連接置、使用說明或其他信息請點擊',
+      guide: '數據源配置請參考頁面右側連接配置幫助文檔，想了解更多數據源連接置、使用說明或其他信息請點擊',
       guideDoc: '幫助文檔',
       response_body: {
         CHECK_CONNECT: '檢查服務連接是否可用',
@@ -1773,11 +1736,9 @@ const tc = {
         shared: '共享文件夾',
         sharedTip: '以地址、賬號、密碼等共享文件夾的形式添加文件',
         activeConnectionMode: '主動連接模式',
-        activeConnectionModeTip:
-          '服務端主動發送建立數據連接的請求，性能高，如果有防火牆可能會連接失敗。',
+        activeConnectionModeTip: '服務端主動發送建立數據連接的請求，性能高，如果有防火牆可能會連接失敗。',
         passiveConnectionMode: '被動連接模式',
-        passiveConnectionModeTip:
-          '連接和數據連接都由客戶端提交到服務端，可以解決連接請求被防火牆過濾掉的問題。',
+        passiveConnectionModeTip: '連接和數據連接都由客戶端提交到服務端，可以解決連接請求被防火牆過濾掉的問題。',
         input_number: '請輸入數字',
         greaterZero_less5256000: '必須大於等於零,小於等於5256000',
         path: '設置路徑',
@@ -1816,8 +1777,7 @@ const tc = {
         lonoreFormat: '忽略非JSON對象格式消息',
         lonoreFormatTip: '如果開啟則遇到解析異常會忽略該消息，否則停止拉取消息',
         directlyNameTip: '直接輸入主體名稱，多個主題以逗號相連',
-        kafkaPatternTopicsTip:
-          '按照主機，端口，帳戶，密碼的方式配置MongoDB數據庫，支持批量輸入',
+        kafkaPatternTopicsTip: '按照主機，端口，帳戶，密碼的方式配置MongoDB數據庫，支持批量輸入',
         hostPlaceHolder: '輸入IP / host：port，多個地址以逗號替換',
         requestTimeout: '按下請求超時時間（毫秒）',
         transactionMessage: '事務消息',
@@ -1831,8 +1791,7 @@ const tc = {
         kafkaCompressionType: '消息壓縮類型',
         kafkaPartitionKey: '分區鍵分割名',
         kafkaIgnorePushError: '忽略推理消息異常',
-        pushErrorTip:
-          '如果開啟則忽略該次推送的消息（存在消息丟失），否則停止推送消息',
+        pushErrorTip: '如果開啟則忽略該次推送的消息（存在消息丟失），否則停止推送消息',
         kafkaAcks0: '不確認',
         kafkaAcks1: '僅寫入主分區',
         kafkaAcks_1: '寫入大多數ISR分區',
@@ -1860,8 +1819,7 @@ const tc = {
         resp_pre_process: '響應預處理腳本',
         data_sync_mode: '數據同步模式',
         url_info: 'URL',
-        url_info_url_invalid:
-          '無效的URL，URL示例：http：//127.0.0.1：8080/api/xxx？param=value',
+        url_info_url_invalid: '無效的URL，URL示例：http：//127.0.0.1：8080/api/xxx？param=value',
         url_info_method: '請求方法',
         url_info_url_type: 'URL類型',
         url_info_ONLY: '獲取數據URL',
@@ -1908,7 +1866,9 @@ const tc = {
         routeKeyField: '消息路由',
         virtualHost: '虛擬主機',
         queueSetTip: '多個隊列用逗號隔開',
-        topicSetTip: '多個主題用逗號隔開'
+        topicSetTip: '多個主題用逗號隔開',
+        brokerUrl: 'MQ連接串',
+        brokerUrlTip: '示例tcp://127.0.0.1：61616，支持tcp,nio,udp,ssl,http(s)'
       },
       tcp: {
         agreementType: '协议类型',
@@ -1967,8 +1927,7 @@ const tc = {
     refreshStatus: '上次刷新',
     lastTimeConsume: '上次耗時',
     allProgress: '解析任務總數',
-    refreshMsg:
-      '開始對所有同步任務進行解析，並生產溯源圖形，耗時可能比較久，點擊“是”開始執行',
+    refreshMsg: '開始對所有同步任務進行解析，並生產溯源圖形，耗時可能比較久，點擊“是”開始執行',
     refreshTitle: '同步任務解析',
     yes: '是',
     no: '否',
@@ -2148,8 +2107,7 @@ const tc = {
         version: '版本',
         version_control: '版本管理',
         version_control_required: '版本管理不能為空',
-        lastVersion:
-          '此元數據已是最新版本，過往保存的歷史版本記錄將保存在下面列表中',
+        lastVersion: '此元數據已是最新版本，過往保存的歷史版本記錄將保存在下面列表中',
         versionNum: '版本號',
         versionComparison: '版本比對',
         compared: '對比',
@@ -2217,8 +2175,7 @@ const tc = {
         pipeline: 'MongoDB Pipeline',
         viewStatus: '視圖狀態',
         FailedMessage: '失敗詳情',
-        penpinSave:
-          '點擊下方保存按鈕僅保存到系統，點擊更新按鈕將應用到此數據所在的數據庫',
+        penpinSave: '點擊下方保存按鈕僅保存到系統，點擊更新按鈕將應用到此數據所在的數據庫',
         apply: '應用',
         cnot_Empty: '不能為空',
         view_tip: '操作將覆蓋同名的視圖，是否創建視圖',
@@ -2364,19 +2321,15 @@ const tc = {
   },
   dialog: {
     createTable: '創建新表',
-    placeholderTable:
-      '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
+    placeholderTable: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
     createCollection: '創建新數據集 ',
-    placeholderCollection:
-      '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
-    tableValidateTip:
-      '新建表名稱僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
+    placeholderCollection: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
+    tableValidateTip: '新建表名稱僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
     collectionValidateTip:
       '新建數據集名稱僅支持英文、數字、下劃線下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
     downAgent: {
       headTitle: 'Agent下載與安裝',
-      headInterpretation:
-        'Tapdata DFS雲版需要在本地安裝 Agent 以確保連接數據庫和傳輸服務正常運行',
+      headInterpretation: 'Tapdata DFS雲版需要在本地安裝 Agent 以確保連接數據庫和傳輸服務正常運行',
       downloadInstall: '下載安裝',
       text: '首先，在環境中配置好 JAVA 運行環境，然後使用以下命令下載和啟動 Agent',
       copy: '複製命令',
@@ -2384,25 +2337,19 @@ const tc = {
       copied: '已復制',
       downloadInstallInstructions: '下載安裝說明',
       linuxInstructionsText1: '· 首先，需要確保環境中安裝了 JAVA 運行環境',
-      linuxInstructionsText2:
-        '· 在環境中執行以上命令，將會自動下載和​​啟動 Agent',
-      linuxInstructionsText3:
-        '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止 Agent',
+      linuxInstructionsText2: '· 在環境中執行以上命令，將會自動下載和​​啟動 Agent',
+      linuxInstructionsText3: '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止 Agent',
       waitingInstall: '等待安裝',
       agentInstallation: 'Agent 已經安裝',
       agentNum: 'Agent 已安裝數',
       downLoadAgent: '下載 Agent',
-      windowsText:
-        '首先，在環境中配置好 JAVA 運行環境，下載之後，在存放下載文件的目錄下使用以下命令安裝和啟動 Agent',
+      windowsText: '首先，在環境中配置好 JAVA 運行環境，下載之後，在存放下載文件的目錄下使用以下命令安裝和啟動 Agent',
       windowsInstructionsText1: '· 首先，需要確保環境中安裝了 JAVA 運行環境',
       windowsInstructionsText2: '· 其次，下載文件，並存放在某個目錄中',
-      windowsInstructionsText3:
-        '· 最後，進入目錄，執行命令後系統將自動安裝並啟動 Agent',
+      windowsInstructionsText3: '· 最後，進入目錄，執行命令後系統將自動安裝並啟動 Agent',
       windowsInstructionsText4: '· Tapdata 雲版一個賬號下只能安裝一個 Agent',
-      windowsInstructionsText5:
-        '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止 Agent',
-      dockerText:
-        '首先，在環境中配置好 Docker 運行環境，之後使用以下命令安裝和啟動 Agent ',
+      windowsInstructionsText5: '· 在 Agent 安裝後，可通過 tapdata start/stop backend 啟動和停止 Agent',
+      dockerText: '首先，在環境中配置好 Docker 運行環境，之後使用以下命令安裝和啟動 Agent ',
       dockerText1: '· 首先，需要確保環境中安裝了 Docker 運行環境',
       dockerText2: '· 執行命令後系統將自動安裝並啟動 Agent',
       important: '注意：',
@@ -2420,8 +2367,7 @@ const tc = {
     },
     library: '此庫',
     sameTable: '以下表存在重名：',
-    repeatTip:
-      '點擊數據庫名對重名的表在數據目錄頁面進行處理，以確保此庫下表名的唯一性',
+    repeatTip: '點擊數據庫名對重名的表在數據目錄頁面進行處理，以確保此庫下表名的唯一性',
     jobSchedule: {
       jobSecheduleSetting: '任務調度設置',
       job: '任務：',
@@ -2515,19 +2461,15 @@ const tc = {
     returnMsg: '返回的message',
     returnedData: '返回的data',
     sourceTableData: '源表數據',
-    fastCountTip:
-      '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體字段內容。 ',
-    contentVerifyTip:
-      '全表字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。 ',
-    jointFieldTip:
-      '關聯鍵校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式.',
+    fastCountTip: '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體字段內容。 ',
+    contentVerifyTip: '全表字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。 ',
+    jointFieldTip: '關聯鍵校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式.',
     waiting: '待校驗',
     scheduling: '校驗啟動中',
     error: 'Error',
     done: '校驗結束',
     running: '校驗中',
-    success:
-      '恭喜~~~~校驗結果源表與目標表內容完全一致，沒恭喜~~~~校驗結果源表與目標表內容完全一致，沒有錯誤記錄',
+    success: '恭喜~~~~校驗結果源表與目標表內容完全一致，沒恭喜~~~~校驗結果源表與目標表內容完全一致，沒有錯誤記錄',
     verifyProgress: '校验进度',
     tasksTime: '請選擇起止時間',
     tasksDataFlow: '請選擇任務',
@@ -2827,12 +2769,10 @@ const tc = {
     step_1_desc:
       'Tapdata DFS雲版需要先在本地安裝agent以確保連接數據庫和數據傳輸服務的正常運行，您可以根據要安裝伺服器的類型在下方選擇相應的類型進行下載安裝',
     step_2_title: '創建數據源連接',
-    step_2_desc:
-      '數據源連接指的是可以作為源的數據庫類型的數據連接,必須先創建數據源才能創建遷移或同步任務',
+    step_2_desc: '數據源連接指的是可以作為源的數據庫類型的數據連接,必須先創建數據源才能創建遷移或同步任務',
     step_2_btn_label: '創建新的源連接',
     step_3_title: '創建目標連接',
-    step_3_desc:
-      '目標連接指的是可以作為數據傳輸目標的數據庫類型的連接,  必須先創建目標連接才能創建遷移或同步任務',
+    step_3_desc: '目標連接指的是可以作為數據傳輸目標的數據庫類型的連接,  必須先創建目標連接才能創建遷移或同步任務',
     step_3_btn_label: '創建新的目標連接',
     step_4_title: '選擇任務類型',
     step_4_desc:
@@ -2994,8 +2934,7 @@ const tc = {
     Log_level: '日誌等級',
     maxCpuUsage: '最大CPU使用率(取值範圍 0.1 ~ 1)',
     maxHeapMemoryUsage: '最大堆內存使用率(取值範圍 0.1 ~ 1)',
-    switch_insert_mode_interval:
-      ' 增量模式下切換到批量插入模式間隔時間（單位：秒）',
+    switch_insert_mode_interval: ' 增量模式下切換到批量插入模式間隔時間（單位：秒）',
     Email_Communication_Protocol: ' 加密方式',
     SMTP_Server_Port: 'SMTP 服務端口',
     SMTP_Server_User: 'SMTP 服務賬號',
@@ -3022,19 +2961,15 @@ const tc = {
     Mongodb_target_create_date_docs: '是否在目標端數據集添加創建時間',
     System: '系統資源監控',
     Collect_system_info_interval: '系統資源監控採集頻率(秒)',
-    Interval_to_collect_system_info:
-      '系統資源信息（CPU，內存，硬盤使用率）監控採集頻率',
+    Interval_to_collect_system_info: '系統資源信息（CPU，內存，硬盤使用率）監控採集頻率',
     Job_Sync_Mode: '任務同步模式',
     Worker_Threshold: '進程閾值',
     Worker_Heartbeat_Expire: '進程心跳過期時間(秒)',
     License_Key: '證書秘鑰',
-    Enter_jobs_log_level__error_warn_info_debug_trace:
-      '輸入任務日誌等級: error/warn/info/debug/trace',
-    Email_Receivers_Multiple_separated_by_semicolons:
-      '郵件接受者,可輸入多個，通過逗號分隔',
+    Enter_jobs_log_level__error_warn_info_debug_trace: '輸入任務日誌等級: error/warn/info/debug/trace',
+    Email_Receivers_Multiple_separated_by_semicolons: '郵件接受者,可輸入多個，通過逗號分隔',
 
-    Keep_recent_n_hours_message_before_the_last_processed_message_s_time_:
-      '保持最近n小時消息',
+    Keep_recent_n_hours_message_before_the_last_processed_message_s_time_: '保持最近n小時消息',
     Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
       '緩存一份當前整體數據，合併到目標數據集中',
     Store_before_field_as_embedded_document_in_target_collection_before_update_operation:
@@ -3066,26 +3001,21 @@ const tc = {
     dashboard_Analysis_Interval: '面板數據分析間隔(秒)',
     quality_Analysis_Interval: '數據質量分析間隔(秒)',
     Log_filter_interval: '日誌過濾間隔(秒)',
-    Filter_the_interval_between_duplicate_logs__seconds__:
-      '相同日誌在指定時間內只出現一次（1分鐘後生效）',
+    Filter_the_interval_between_duplicate_logs__seconds__: '相同日誌在指定時間內只出現一次（1分鐘後生效）',
     _DK36: '文件下載',
     File_Down_Base_Url: '地址',
-    Set_the_average_number_of_events_per_second_to_allow:
-      '日誌設置每秒允許的事件平均數量',
+    Set_the_average_number_of_events_per_second_to_allow: '日誌設置每秒允許的事件平均數量',
     Log_Filter_Rate: '日誌輸出頻率(行/秒)',
     Connections: '連接設置',
     Mongodb_Load_Schema_Sample_Size: 'Mongodb加載模型採樣記錄數(行)',
-    hint_Mongodb_Load_Schema_Sample_Size:
-      '當MongoDB連接加載模型時，會使用該配置進行採樣加載',
+    hint_Mongodb_Load_Schema_Sample_Size: '當MongoDB連接加載模型時，會使用該配置進行採樣加載',
     Enable_API_Stats_Batch_Report: ' 啟用 API 統計',
     Header: ' UDP 頭信息',
     hint_Header: ' UDP 頭信息',
     Size_Of_Trigger_API_Stats_Report: ' API 請求緩存最大個數',
-    hint_Size_Of_Trigger_API_Stats_Report:
-      ' API 請求記錄數到達指定個數時批量發送到管理端',
+    hint_Size_Of_Trigger_API_Stats_Report: ' API 請求記錄數到達指定個數時批量發送到管理端',
     Time_Span_Of_Trigger_API_Stats_Report: ' API 請求匯報頻率(秒)',
-    hint_Time_Span_Of_Trigger_API_Stats_Report:
-      ' API 請求緩存到指定時間發送到管理端',
+    hint_Time_Span_Of_Trigger_API_Stats_Report: ' API 請求緩存到指定時間發送到管理端',
     save: ' 保存成功，一分鐘後生效',
     Logout_forward_to_this_url: ' 登出跳轉地址',
     Check_devices: ' 重要設備檢測',
@@ -3112,11 +3042,9 @@ const tc = {
       'before字段包含每個表列的字段以及更新操作之前該列中的值。 ',
     Job_heart_timeout: '同步任務心跳超時（毫秒）',
     job_cdc_share_mode: '增量同步任務共享模式',
-    job_cdc_share_mode_doc:
-      '在增量同步階段，會根據日誌採集任務是否可用，自動採用共享模式。影響的數據庫：Oracle',
+    job_cdc_share_mode_doc: '在增量同步階段，會根據日誌採集任務是否可用，自動採用共享模式。影響的數據庫：Oracle',
     job_cdc_share_only: '增量任務強制使用共享模式',
-    job_cdc_share_only_doc:
-      '當增量同步任務共享模式開啟，並且無法找到一個可共享的日誌，將會停止任務',
+    job_cdc_share_only_doc: '當增量同步任務共享模式開啟，並且無法找到一個可共享的日誌，將會停止任務',
     test_email_success: '測試郵件已發送，請登錄接收郵箱查收',
     test_email_countdown: '操作太頻繁了，請稍後重試',
     email_template_from: '發件人',
@@ -3133,8 +3061,7 @@ const tc = {
     requestFailed: '請求處理失敗',
     Mongodb_will_use_this_sample_size_when_load_schema:
       'Mongodb will use this sample size when load schema 當MongoDB連接加載模型時，會使用該配置進行採樣加載',
-    Switch_to_batch_insert_mode_interval__s__in_cdc_:
-      '切換到cdc中的批量插入模式間隔。 '
+    Switch_to_batch_insert_mode_interval__s__in_cdc_: '切換到cdc中的批量插入模式間隔。 '
   },
   dataQuality: {
     title: '數據質量',

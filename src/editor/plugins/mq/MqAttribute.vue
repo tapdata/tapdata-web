@@ -242,7 +242,7 @@ export default {
       immediate: true,
       handler() {
         // 截取表类型
-        let reg = /\([^\)]+\)/g
+        let reg = /\([^)]+\)/g
         let table_type = this.model.tableName.match(reg)[0]
         table_type = table_type.substring(1, table_type.length - 1)
         this.model.table_type = table_type
@@ -335,8 +335,6 @@ export default {
               )
               let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
               schemas = [...new Set(data)]
-            } else if (this.mqType === '1') {
-              schemas = result.data.mqQueueSet
             } else {
               schemas = result.data.mqTopicSet
             }

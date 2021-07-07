@@ -1,11 +1,6 @@
 <template>
   <div class="fixBtn">
-    <el-popover
-      popper-class="popperFixbtn"
-      placement="top"
-      width="400"
-      trigger="hover"
-    >
+    <el-popover popper-class="popperFixbtn" placement="top" width="400" trigger="hover">
       <div class="btnList">
         <span>
           {{ $t('dataFlow.button.save') }}
@@ -47,11 +42,7 @@
           <i>Shift+{{ $t('dataFlow.mouseDrag') }}</i>
         </span>
       </div>
-      <el-button
-        circle
-        class="iconfont icon-jianpan"
-        slot="reference"
-      ></el-button>
+      <el-button circle class="iconfont icon-jianpan" slot="reference"></el-button>
     </el-popover>
   </div>
 </template>

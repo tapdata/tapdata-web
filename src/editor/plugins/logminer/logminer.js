@@ -89,24 +89,13 @@ export const logminerConfig = {
         data = data || this.getFormData()
         let name = this.attr('label/text')
 
-        if (!data.name)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.logminer.validate.name')}`
-          )
+        if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.logminer.validate.name')}`)
         if (data.logCollectorSettings && data.logCollectorSettings.length > 0) {
           data.logCollectorSettings.forEach(item => {
             if (!item.connectionId)
-              throw new Error(
-                `${name}: ${i18n.t(
-                  'editor.cell.data_node.logminer.validate.source'
-                )}`
-              )
+              throw new Error(`${name}: ${i18n.t('editor.cell.data_node.logminer.validate.source')}`)
             if (item.selectType !== 'allTables' && !item.includeTables)
-              throw new Error(
-                `${name}: ${i18n.t(
-                  'editor.cell.data_node.logminer.validate.table'
-                )}`
-              )
+              throw new Error(`${name}: ${i18n.t('editor.cell.data_node.logminer.validate.table')}`)
           })
         }
         return true
@@ -192,10 +181,7 @@ export const logminerConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

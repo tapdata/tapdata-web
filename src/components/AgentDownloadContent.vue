@@ -21,22 +21,15 @@
       </div>
     </div>
     <div class="prompt">
-      <span
-        style="word-break: break-word"
-        v-show="osList[activeOS].key === 'linux'"
-        >{{ $t('dialog.downAgent.text') }}</span
-      >
-      <span
-        v-show="osList[activeOS].key === 'windows'"
-        @click="downLoadWindows"
-      >
+      <span style="word-break: break-word" v-show="osList[activeOS].key === 'linux'">{{
+        $t('dialog.downAgent.text')
+      }}</span>
+      <span v-show="osList[activeOS].key === 'windows'" @click="downLoadWindows">
         <span class="operaKey">
           <i class="iconfont icon-xiazai clickIcont"></i>
           {{ $t('dialog.downAgent.downLoadAgent') }}</span
         >
-        <span style="word-break: break-word">{{
-          $t('dialog.downAgent.windowsText')
-        }}</span>
+        <span style="word-break: break-word">{{ $t('dialog.downAgent.windowsText') }}</span>
       </span>
       <el-tooltip
         placement="top"
@@ -52,8 +45,7 @@
           @click.stop="() => {}"
           @mouseleave="showTooltip = false"
         >
-          <i class="iconfont icon-fuzhi1 clickIcont"></i
-          >{{ $t('dialog.downAgent.copy') }}
+          <i class="iconfont icon-fuzhi1 clickIcont"></i>{{ $t('dialog.downAgent.copy') }}
         </span>
       </el-tooltip>
     </div>

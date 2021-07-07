@@ -18,10 +18,7 @@
               :placeholder="$t('process.state')"
             >
               <el-option :label="$t('process.all')" value="all"></el-option>
-              <el-option
-                :label="$t('process.online')"
-                value="online"
-              ></el-option>
+              <el-option :label="$t('process.online')" value="online"></el-option>
             </el-select>
           </li>
           <li>
@@ -37,69 +34,32 @@
           </li>
 
           <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset()">{{
-              $t('button.query')
-            }}</el-button>
+            <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
           </li>
 
           <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset('reset')">{{
-              $t('button.reset')
-            }}</el-button>
+            <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
           </li>
         </ul>
       </div>
-      <el-table-column
-        :label="$t('process.worker_ip')"
-        prop="worker_ip"
-        sortable="worker_ip"
-      ></el-table-column>
-      <el-table-column
-        :label="$t('process.version')"
-        prop="version"
-        sortable="version"
-      ></el-table-column>
-      <el-table-column
-        :label="$t('process.start_time')"
-        prop="start_time"
-        sortable="start_time"
-      >
+      <el-table-column :label="$t('process.worker_ip')" prop="worker_ip" sortable="worker_ip"></el-table-column>
+      <el-table-column :label="$t('process.version')" prop="version" sortable="version"></el-table-column>
+      <el-table-column :label="$t('process.start_time')" prop="start_time" sortable="start_time">
         <template slot-scope="scope">
           {{ $moment(scope.row.start_time).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('process.ping_time')"
-        prop="ping_time"
-        sortable="ping_time"
-      >
+      <el-table-column :label="$t('process.ping_time')" prop="ping_time" sortable="ping_time">
         <template slot-scope="scope">
           {{ $moment(scope.row.ping_time).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('process.worker_type')"
-        prop="worker_type"
-        sortable="worker_type"
-      >
+      <el-table-column :label="$t('process.worker_type')" prop="worker_type" sortable="worker_type"> </el-table-column>
+      <el-table-column :label="$t('process.running_thread')" prop="running_thread" sortable="running_thread">
       </el-table-column>
-      <el-table-column
-        :label="$t('process.running_thread')"
-        prop="running_thread"
-        sortable="running_thread"
-      >
+      <el-table-column :label="$t('process.total_thread')" prop="total_thread" sortable="total_thread">
       </el-table-column>
-      <el-table-column
-        :label="$t('process.total_thread')"
-        prop="total_thread"
-        sortable="total_thread"
-      >
-      </el-table-column>
-      <el-table-column
-        :label="$t('process.job_ids')"
-        prop="job_ids"
-        width="200"
-      >
+      <el-table-column :label="$t('process.job_ids')" prop="job_ids" width="200">
         <template slot-scope="scope">
           <!-- <div v-for="item in scope.row.job_ids" :key="item"> -->
           <template v-if="scope.row.job_ids">
@@ -107,12 +67,7 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('process.state')"
-        prop="state"
-        sortable="state"
-        width="80"
-      >
+      <el-table-column :label="$t('process.state')" prop="state" sortable="state" width="80">
         <template slot-scope="scope">
           {{ $t('process.' + scope.row.state) }}
         </template>
@@ -207,9 +162,7 @@ export default {
           } else if (item.worker_status) {
             item.job_ids = ''
             if (item.worker_status.status) {
-              item.job_ids += `<div>${this.$t(
-                'process.processState'
-              )}: &nbsp;&nbsp;<span style="">${
+              item.job_ids += `<div>${this.$t('process.processState')}: &nbsp;&nbsp;<span style="">${
                 item.worker_status.status
               }</span></div>`
             }
@@ -236,9 +189,7 @@ export default {
     },
 
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     }
   }
@@ -283,7 +234,7 @@ export default {
     }
   }
   .process-list {
-    background-color: rgba(239, 241, 244, 100);
+    background-color: #fafafa;
     .search-bar {
       display: flex;
       li + li {
@@ -320,7 +271,6 @@ $color: #337dff;
         background-color: #fff;
       }
       .el-table {
-        padding: 0 10px;
         box-sizing: border-box;
         .database-link {
           color: $color;

@@ -54,10 +54,7 @@ export const TcpNodeConfig = {
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data.connectionId)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`
-          )
+        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`)
         // if (!data.primaryKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_pk')}`);
 
         return true

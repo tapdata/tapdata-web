@@ -25,20 +25,9 @@
               :placeholder="$t('metadata.namePlaceholder')"
               @input="table.fetch(1, 800)"
             >
-              <el-select
-                style="width: 120px"
-                slot="prepend"
-                v-model="searchParams.isFuzzy"
-                @input="table.fetch(1)"
-              >
-                <el-option
-                  :label="$t('connection.fuzzyQuery')"
-                  :value="true"
-                ></el-option>
-                <el-option
-                  :label="$t('connection.PreciseQuery')"
-                  :value="false"
-                ></el-option>
+              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
+                <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
+                <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
               </el-select>
             </el-input>
           </li>
@@ -67,28 +56,15 @@
               :placeholder="$t('metadata.databasePlaceholder')"
               @input="table.fetch(1)"
             >
-              <el-option
-                v-for="opt in dbOptions"
-                :key="opt.id"
-                :label="opt.name"
-                :value="opt.id"
-              ></el-option>
+              <el-option v-for="opt in dbOptions" :key="opt.id" :label="opt.name" :value="opt.id"></el-option>
             </el-select>
           </li>
-          <template
-            v-if="
-              searchParams.keyword || searchParams.metaType || searchParams.dbId
-            "
-          >
+          <template v-if="searchParams.keyword || searchParams.metaType || searchParams.dbId">
             <li>
-              <el-button size="mini" type="text" @click="reset()">{{
-                $t('button.query')
-              }}</el-button>
+              <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
             </li>
             <li>
-              <el-button size="mini" type="text" @click="reset('reset')">{{
-                $t('button.reset')
-              }}</el-button>
+              <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
             </li>
           </template>
         </ul>
@@ -105,12 +81,7 @@
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
         </el-button>
-        <el-button
-          v-readonlybtn="'new_model_creation'"
-          class="btn btn-create"
-          size="mini"
-          @click="openCreateDialog"
-        >
+        <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
           <i class="iconfont icon-jia add-btn-icon"></i>
           <span>{{ $t('metadata.createModel') }}</span>
         </el-button>
@@ -122,11 +93,7 @@
         :reserve-selection="true"
       >
       </el-table-column>
-      <el-table-column
-        :label="$t('metadata.header.name')"
-        prop="name"
-        sortable="custom"
-      >
+      <el-table-column :label="$t('metadata.header.name')" prop="name" sortable="custom">
         <template slot-scope="scope">
           <div class="metadata-name">
             <div class="name ellipsis">
@@ -134,9 +101,7 @@
                 {{ scope.row.name || scope.row.original_name }}
               </a>
               <el-tag
-                v-if="
-                  scope.row.classifications && scope.row.classifications.length
-                "
+                v-if="scope.row.classifications && scope.row.classifications.length"
                 class="tag"
                 type="info"
                 effect="dark"
@@ -151,11 +116,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('metadata.header.meta_type')"
-        prop="meta_type"
-        sortable="custom"
-      >
+      <el-table-column :label="$t('metadata.header.meta_type')" prop="meta_type" sortable="custom">
         <template slot-scope="scope">
           {{ $t('metadata.metaType.' + scope.row.meta_type) }}
         </template>
@@ -165,11 +126,7 @@
         prop="username"
         sortable="custom"
       ></el-table-column>
-      <el-table-column
-        :label="$t('metadata.header.last_updated')"
-        prop="last_updated"
-        sortable="custom"
-      >
+      <el-table-column :label="$t('metadata.header.last_updated')" prop="last_updated" sortable="custom">
         <template slot-scope="scope">
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
@@ -181,10 +138,7 @@
             size="mini"
             type="text"
             :disabled="
-              $disabledByPermission(
-                'data_catalog_edition_all_data',
-                scope.row.source ? scope.row.source.user_id : ''
-              )
+              $disabledByPermission('data_catalog_edition_all_data', scope.row.source ? scope.row.source.user_id : '')
             "
             @click="toDetails(scope.row)"
           >
@@ -195,10 +149,7 @@
             size="mini"
             type="text"
             :disabled="
-              $disabledByPermission(
-                'data_catalog_edition_all_data',
-                scope.row.source ? scope.row.source.user_id : ''
-              )
+              $disabledByPermission('data_catalog_edition_all_data', scope.row.source ? scope.row.source.user_id : '')
             "
             @click="changeName(scope.row)"
           >
@@ -209,10 +160,7 @@
             size="mini"
             type="text"
             :disabled="
-              $disabledByPermission(
-                'meta_data_deleting_all_data',
-                scope.row.source ? scope.row.source.user_id : ''
-              )
+              $disabledByPermission('meta_data_deleting_all_data', scope.row.source ? scope.row.source.user_id : '')
             "
             @click="remove(scope.row)"
             >{{ $t('button.delete') }}</el-button
@@ -220,6 +168,7 @@
         </template>
       </el-table-column>
     </TablePage>
+    <!-- 创建模型 -->
     <el-dialog
       width="600px"
       custom-class="create-dialog"
@@ -227,18 +176,10 @@
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
-      <FormBuilder
-        ref="form"
-        v-model="createForm"
-        :config="createFormConfig"
-      ></FormBuilder>
+      <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="createNewModel()" size="small">{{
-          $t('message.confirm')
-        }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -255,9 +196,7 @@ export default {
   data() {
     let types =
       this.$route.meta.types ||
-      'database|job|dataflow|api|table|view|collection|mongo_view|directory|ftp|apiendpoint'.split(
-        '|'
-      )
+      'database|job|dataflow|api|table|view|collection|mongo_view|directory|ftp|apiendpoint'.split('|')
     return {
       whiteList: ['table', 'collection', 'mongo_view', 'view'],
       searchParams: {
@@ -314,15 +253,11 @@ export default {
                 required: true,
                 validator: (rule, v, callback) => {
                   if (!v || !v.trim()) {
-                    return callback(
-                      new Error(this.$t('metadata.form.none_table_name'))
-                    )
+                    return callback(new Error(this.$t('metadata.form.none_table_name')))
                   }
                   const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
                   if (v.split('.')[0] == 'system' || !flag) {
-                    return callback(
-                      new Error(this.$t('dialog.placeholderTable'))
-                    )
+                    return callback(new Error(this.$t('dialog.placeholderTable')))
                   }
                   return callback()
                 }
@@ -395,14 +330,8 @@ export default {
         databaseId: true
       }
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy
-          ? { like: toRegExp(keyword), options: 'i' }
-          : keyword
-        where.or = [
-          { name: filterObj },
-          { original_name: filterObj },
-          { 'source.name': filterObj }
-        ]
+        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
+        where.or = [{ name: filterObj }, { original_name: filterObj }, { 'source.name': filterObj }]
       }
 
       if (tags && tags.length) {
@@ -463,10 +392,7 @@ export default {
           this.dbOptions = dbOptions
           let options = []
           dbOptions.forEach(db => {
-            if (
-              db.database_type === 'mongodb' &&
-              ['target', 'source_and_target'].includes(db.connection_type)
-            ) {
+            if (db.database_type === 'mongodb' && ['target', 'source_and_target'].includes(db.connection_type)) {
               options.push({
                 label: db.name,
                 value: db.id
@@ -477,9 +403,7 @@ export default {
         })
     },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     handleSelectionChange(val) {
@@ -559,6 +483,7 @@ export default {
       this.$prompt('', this.$t('connection.rename'), {
         inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
         inputErrorMessage: this.$t('dialog.placeholderTable'),
+        customClass: 'changeName-prompt',
         inputValue: item.name || item.original_name,
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
@@ -681,6 +606,14 @@ export default {
           }
         }
       }
+    }
+  }
+}
+.changeName-prompt {
+  .el-message-box__header {
+    padding: 15px 15px 0;
+    .el-message-box__title {
+      padding-left: 0;
     }
   }
 }

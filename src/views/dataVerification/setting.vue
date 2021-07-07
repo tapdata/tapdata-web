@@ -8,26 +8,13 @@
       </div>
       <el-form class="e-form" label-position="top" :data="formData">
         <el-form-item :label="$t('dataVerify.setting.keepTimeLabel')">
-          <el-select
-            v-model="formData.retentionTime"
-            size="mini"
-            class="dataWrite-list"
-          >
-            <el-option
-              v-for="item in dataWriteList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+          <el-select v-model="formData.retentionTime" size="mini" class="dataWrite-list">
+            <el-option v-for="item in dataWriteList" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('dataVerify.setting.errorSaveSumLable')">
-          <el-select
-            v-model="formData.reservedQuantityPerTable"
-            size="mini"
-            class="dataWrite-list"
-          >
+          <el-select v-model="formData.reservedQuantityPerTable" size="mini" class="dataWrite-list">
             <el-option label="100" value="100"></el-option>
             <el-option label="1000" value="1000"></el-option>
           </el-select>
@@ -50,11 +37,7 @@
             onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
             onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
           >
-            <el-select
-              v-model="formData.rowInspectUtil"
-              slot="append"
-              placeholder="请选择"
-            >
+            <el-select v-model="formData.rowInspectUtil" slot="append" placeholder="请选择">
               <el-option label="hour" value="min"></el-option>
               <el-option label="second" value="hour"></el-option>
             </el-select>
@@ -69,11 +52,7 @@
             onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
             onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
           >
-            <el-select
-              v-model="formData.rowInspectContinuedUtil"
-              slot="append"
-              placeholder="请选择"
-            >
+            <el-select v-model="formData.rowInspectContinuedUtil" slot="append" placeholder="请选择">
               <el-option label="hour" value="hour"></el-option>
               <el-option label="second" value="day"></el-option>
             </el-select>
@@ -88,11 +67,7 @@
             onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
             onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
           >
-            <el-select
-              v-model="formData.contentInspectUtil"
-              slot="append"
-              placeholder="请选择"
-            >
+            <el-select v-model="formData.contentInspectUtil" slot="append" placeholder="请选择">
               <el-option label="minute" value="minute"></el-option>
               <el-option label="hour" value="hour"></el-option>
               <el-option label="second" value="day"></el-option>
@@ -108,39 +83,20 @@
             onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
             onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
           >
-            <el-select
-              v-model="formData.contentInspectContinuedUtil"
-              slot="append"
-              placeholder="请选择"
-            >
+            <el-select v-model="formData.contentInspectContinuedUtil" slot="append" placeholder="请选择">
               <el-option label="hour" value="hour"></el-option>
               <el-option label="second" value="day"></el-option>
             </el-select>
           </el-input>
         </el-form-item>
         <el-form-item :label="$t('dataVerify.setting.verifyStartTime')">
-          <el-select
-            v-model="formData.contentInspectStartTime"
-            size="mini"
-            class="dataWrite-list"
-          >
-            <el-option
-              v-for="item in dataTimeList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+          <el-select v-model="formData.contentInspectStartTime" size="mini" class="dataWrite-list">
+            <el-option v-for="item in dataTimeList" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
       </el-form>
-      <el-button
-        size="mini"
-        type="primary"
-        @click="submit"
-        style="width: 80px"
-        >{{ $t('dataForm.submit') }}</el-button
-      >
+      <el-button size="mini" type="primary" @click="submit" style="width: 80px">{{ $t('dataForm.submit') }}</el-button>
     </div>
   </div>
 </template>

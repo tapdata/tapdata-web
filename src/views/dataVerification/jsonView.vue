@@ -17,9 +17,7 @@
       </div>
     </section>
     <span slot="footer" class="dialog-footer">
-      <el-button size="mini" type="primary" @click="handleClose()">{{
-        $t('dataForm.close')
-      }}</el-button>
+      <el-button size="mini" type="primary" @click="handleClose()">{{ $t('dataForm.close') }}</el-button>
     </span>
   </el-dialog>
 </template>

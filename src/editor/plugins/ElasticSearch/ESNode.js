@@ -54,14 +54,9 @@ export const esNodeConfig = {
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`
-          )
+        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`)
         if (!data.index || data.index === '')
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.es.chooseIndex')}`
-          )
+          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.es.chooseIndex')}`)
         return true
       }
     }
@@ -145,10 +140,7 @@ export const esNodeConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

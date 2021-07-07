@@ -1,11 +1,7 @@
 <template>
   <div class="database-link nodeStyle">
     <head class="head">
-      <span
-        @click="hanleClose"
-        class="headIcon iconfont icon-you2"
-        type="primary"
-      ></span>
+      <span @click="hanleClose" class="headIcon iconfont icon-you2" type="primary"></span>
       <span class="txt">{{ $t('editor.cell.link.mappingRelations') }}</span>
     </head>
     <div class="nodeBody">
@@ -25,15 +21,8 @@
       >
         <el-form-item>
           <div class="e-label">
-            <label class="el-form-item__label">{{
-              $t('editor.cell.link.copySourceDatabase')
-            }}</label>
-            <el-popover
-              class="aggtip"
-              placement="top-start"
-              width="400"
-              trigger="hover"
-            >
+            <label class="el-form-item__label">{{ $t('editor.cell.link.copySourceDatabase') }}</label>
+            <el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
               <span>{{ $t('editor.cell.link.formTip') }}</span>
               <span class="icon iconfont icon-tishi1" slot="reference"></span>
             </el-popover>
@@ -47,10 +36,7 @@
             </el-popover>
           </el-checkbox>
 
-          <el-checkbox
-            v-model="model.selectSourceDatabase.view"
-            :disabled="mysqlDisable"
-            @change="changeView"
+          <el-checkbox v-model="model.selectSourceDatabase.view" :disabled="mysqlDisable" @change="changeView"
             >View
             <el-popover placement="top-start" width="400" trigger="hover">
               <span>{{ $t('editor.cell.link.viewTip') }}</span>
@@ -58,27 +44,13 @@
             </el-popover>
           </el-checkbox>
 
-          <el-checkbox
-            v-model="model.selectSourceDatabase.function"
-            :disabled="mysqlDisable"
-            >Function</el-checkbox
-          >
-          <el-checkbox
-            v-model="model.selectSourceDatabase.procedure"
-            :disabled="mysqlDisable"
-            >Procedure</el-checkbox
-          >
+          <el-checkbox v-model="model.selectSourceDatabase.function" :disabled="mysqlDisable">Function</el-checkbox>
+          <el-checkbox v-model="model.selectSourceDatabase.procedure" :disabled="mysqlDisable">Procedure</el-checkbox>
         </el-form-item>
         <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
           <el-select v-model="model.dropType" size="mini">
-            <el-option
-              :label="$t('editor.cell.link.existingSchema.keepSchema')"
-              value="no_drop"
-            ></el-option>
-            <el-option
-              :label="$t('editor.cell.link.existingSchema.keepExistedData')"
-              value="drop_data"
-            ></el-option>
+            <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
+            <el-option :label="$t('editor.cell.link.existingSchema.keepExistedData')" value="drop_data"></el-option>
             <el-option
               v-if="targetDatabaseType === 'mongodb'"
               :label="$t('editor.cell.link.existingSchema.removeSchema')"
@@ -88,18 +60,11 @@
         </el-form-item>
         <div class="database-tableBox" v-loading="transferLoading">
           <div class="box-text">
-            <h3>
-              {{ $t('editor.cell.link.migrationSetting')
-              }}<i style="color: red"> *</i>
-            </h3>
+            <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
-              <el-button
-                class="e-button"
-                size="mini"
-                :disabled="model.selectSourceDatabase.view"
-                @click="handDialog"
-                >{{ $t('dataFlow.changeName') }}</el-button
-              >
+              <el-button class="e-button" size="mini" :disabled="model.selectSourceDatabase.view" @click="handDialog">{{
+                $t('dataFlow.changeName')
+              }}</el-button>
               <el-button
                 size="mini"
                 class="e-button"
@@ -119,15 +84,16 @@
               v-model="model.selectSourceArr"
               :data="sourceData"
               @change="handleChangeTransfer"
-              @right-check-change="handleSelectTable"
             >
               <span class="box" slot-scope="{ option }">
-                <span
-                  class="text"
-                  :title="option.label"
-                  :class="[{ active: option.label !== option.key }, 'text']"
-                  >{{ option.label }}</span
-                >
+                <span v-if="model.selectSourceArr.includes(option.label)">{{
+                  model.table_prefix
+                }}</span>
+                <!-- :class="[{ active: option.label !== option.key }, 'text']" -->
+                <span :title="option.label">{{ option.label }}</span>
+                <span v-if="model.selectSourceArr.includes(option.label)">{{
+                  model.table_suffix
+                }}</span>
                 <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span> -->
@@ -226,16 +192,11 @@
         </el-row>
       </el-form>
       <div class="text">
-        {{ $t('editor.cell.link.tableNameExample') }}: {{ model.table_prefix
-        }}{{ exampleName }}{{ model.table_suffix }}
+        {{ $t('editor.cell.link.tableNameExample') }}: {{ model.table_prefix }}{{ exampleName }}{{ model.table_suffix }}
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{
-          $t('dataVerify.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="confirm">{{
-          $t('dataVerify.confirm')
-        }}</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('dataVerify.cancel') }}</el-button>
+        <el-button type="primary" @click="confirm">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
     </el-dialog>
     <!-- <el-dialog
@@ -269,7 +230,6 @@ import factory from '../../../api/factory'
 import MqTransfer from './mqTransfer'
 let connections = factory('connections')
 let editorMonitor = null
-let selectKeepArr = []
 export default {
   name: 'databaseLink',
   components: { MqTransfer },
@@ -314,10 +274,7 @@ export default {
       },
       topicSelected: [],
 
-      titles: [
-        this.$t('editor.cell.link.migrationObjece'),
-        this.$t('editor.cell.link.chosen')
-      ]
+      titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')]
     }
   },
 
@@ -350,15 +307,10 @@ export default {
           targetCell = this.cell.getTargetCell(),
           sourceDatabaseType = sourceCell.getFormData().database_type,
           targetDatabaseType =
-            targetCell && targetCell.getFormData().database_type
-              ? targetCell.getFormData().database_type
-              : '',
+            targetCell && targetCell.getFormData().database_type ? targetCell.getFormData().database_type : '',
           connectionId = sourceCell.getFormData().connectionId
         this.targetDatabaseType = targetDatabaseType
-        this.mysqlDisable =
-          sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql'
-            ? false
-            : true
+        this.mysqlDisable = sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql' ? false : true
         if (this.mysqlDisable) {
           this.model.selectSourceDatabase = {
             table: true,
@@ -372,10 +324,7 @@ export default {
           let targetFormData = targetCell.getFormData()
           let selectTargetType = []
 
-          if (
-            targetFormData.database_type === 'mq' &&
-            targetFormData.mqType === '0'
-          ) {
+          if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
             this.model.transferFlag = true
             this.mqActiveData.topicData = data.topicData
             this.mqActiveData.queueData = data.queueData
@@ -394,8 +343,7 @@ export default {
 
           if (selectTargetType.length) {
             Object.keys(this.model.selectSourceDatabase).forEach(key => {
-              this.model.selectSourceDatabase[key] =
-                selectTargetType.includes(key)
+              this.model.selectSourceDatabase[key] = selectTargetType.includes(key)
             })
           }
         }
@@ -410,15 +358,15 @@ export default {
 
     getData() {
       let result = JSON.parse(JSON.stringify(this.model))
-      console.log(this.model)
-      let includeTables = []
-      for (let i = 0; i < this.sourceData.length; i++) {
-        for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-          if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-            includeTables.push(this.sourceData[i].key)
-          }
-        }
-      }
+      // console.log(this.model)
+      // let includeTables = []
+      // for (let i = 0; i < this.sourceData.length; i++) {
+      //   for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+      //     if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
+      //       includeTables.push(this.sourceData[i].key)
+      //     }
+      //   }
+      // }
       if (this.cell) {
         let targetCell = this.cell.getTargetCell()
         if (targetCell && targetCell.getFormData()) {
@@ -429,10 +377,7 @@ export default {
             targetFormData.table_prefix = this.model.table_prefix
             targetFormData.table_suffix = this.model.table_suffix
             targetFormData.syncObjects = []
-            if (
-              targetFormData.database_type === 'mq' &&
-              targetFormData.mqType === '0'
-            ) {
+            if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
               targetFormData.syncObjects = [
                 {
                   type: 'queue',
@@ -449,8 +394,7 @@ export default {
                   if (this.model.selectSourceDatabase[key]) {
                     targetFormData.syncObjects.push({
                       type: key,
-                      objectNames:
-                        key === 'table' ? this.model.selectSourceArr : []
+                      objectNames: key === 'table' ? this.model.selectSourceArr : []
                     })
                   }
                 })
@@ -493,12 +437,12 @@ export default {
 
     // 穿梭框值改变的时候
     handleChangeTransfer() {
-      this.sourceData.forEach(el => {
-        if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
-          el.label = el.key
-        }
-      })
-      this.preFixSuffixData()
+      // this.sourceData.forEach(el => {
+      //   if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
+      //     el.label = el.key
+      //   }
+      // })
+      // this.preFixSuffixData()
     },
 
     // 穿梭框搜索
@@ -507,9 +451,9 @@ export default {
     },
 
     // 已选择的表
-    handleSelectTable(data) {
-      selectKeepArr = data
-    },
+    // handleSelectTable(data) {
+    //   selectKeepArr = data
+    // },
 
     // 添加前后缀弹窗开关
     handDialog() {
@@ -524,35 +468,35 @@ export default {
 
     // 添加前后缀数据处理
     preFixSuffixData() {
-      if (
-        this.sourceData &&
-        this.sourceData.length &&
-        this.model.selectSourceArr.length
-      ) {
-        let selectSourceArr = []
-        this.model.selectSourceArr = Array.from(
-          new Set(this.model.selectSourceArr)
-        )
-        this.sourceData.forEach(sourceName => {
-          this.model.selectSourceArr.map(k => {
-            if (k == sourceName.key) {
-              selectSourceArr.push(k)
-            }
-          })
-        })
-        this.model.selectSourceArr = selectSourceArr
+      // if (
+      //   this.sourceData &&
+      //   this.sourceData.length &&
+      //   this.model.selectSourceArr.length
+      // ) {
+      //   let selectSourceArr = []
+      //   this.model.selectSourceArr = Array.from(
+      //     new Set(this.model.selectSourceArr)
+      //   )
+      //   this.sourceData.forEach(sourceName => {
+      //     this.model.selectSourceArr.map(k => {
+      //       if (k == sourceName.key) {
+      //         selectSourceArr.push(k)
+      //       }
+      //     })
+      //   })
+      //   this.model.selectSourceArr = selectSourceArr
 
-        for (let i = 0; i < this.sourceData.length; i++) {
-          for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-            if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-              this.sourceData[i].label =
-                this.model.table_prefix +
-                this.sourceData[i].key +
-                this.model.table_suffix
-            }
-          }
-        }
-      }
+      //   for (let i = 0; i < this.sourceData.length; i++) {
+      //     for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+      //       if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
+      //         this.sourceData[i].label =
+      //           this.model.table_prefix +
+      //           this.sourceData[i].key +
+      //           this.model.table_suffix
+      //       }
+      //     }
+      //   }
+      // }
       this.mqActiveData.table_prefix = this.model.table_prefix
       this.mqActiveData.table_suffix = this.model.table_suffix
     },
@@ -563,22 +507,15 @@ export default {
       this.model.table_prefix = ''
       this.mqActiveData.table_prefix = ''
       this.mqActiveData.table_suffix = ''
-      if (this.sourceData.length) {
-        for (let i = 0; i < this.sourceData.length; i++) {
-          // for (let j = 0; j < selectKeepArr.length; j++) {
-          for (let k = 0; k < this.model.selectSourceArr.length; k++) {
-            if (
-              // this.sourceData[i].label === selectKeepArr[j] &&
-              this.sourceData[i].key === this.model.selectSourceArr[k]
-            ) {
-              this.sourceData[i].label = this.sourceData[i].key
-              // this.sourceData[i].key = this.sourceData[i].label;
-              // this.model.selectSourceArr[k] = this.sourceData[i].value;
-            }
-            // 	}
-          }
-        }
-      }
+      // if (this.sourceData.length) {
+      //   for (let i = 0; i < this.sourceData.length; i++) {
+      //     for (let k = 0; k < this.model.selectSourceArr.length; k++) {
+      //       if (this.sourceData[i].key === this.model.selectSourceArr[k]) {
+      //         this.sourceData[i].label = this.sourceData[i].key
+      //       }
+      //     }
+      //   }
+      // }
     },
 
     // 获取表名称
@@ -599,13 +536,8 @@ export default {
 
               let tableData = []
               if (result.data.mqType === '0') {
-                let data = [
-                  ...result.data.mqQueueSet,
-                  ...result.data.mqTopicSet
-                ]
+                let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
                 tableData = [...new Set(data)]
-              } else if (result.data.mqType === '1') {
-                tableData = result.data.mqQueueSet
               } else {
                 tableData = result.data.mqTopicSet
               }
@@ -617,11 +549,7 @@ export default {
             }
             self.databaseInfo = result.data
             tables = tables.sort((t1, t2) =>
-              t1.table_name > t2.table_name
-                ? 1
-                : t1.table_name === t2.table_name
-                ? 0
-                : -1
+              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
 
             if (tables && tables.length) {

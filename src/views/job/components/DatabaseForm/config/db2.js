@@ -8,9 +8,7 @@ export default function (vm) {
         type: 'radio',
         field: 'connection_type',
         label: vm.$t('dataForm.form.connectionType'),
-        options: [
-          { label: vm.$t('dataForm.form.options.source'), value: 'source' }
-        ],
+        options: [{ label: vm.$t('dataForm.form.options.source'), value: 'source' }],
         required: true
       },
       {

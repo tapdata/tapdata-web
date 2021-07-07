@@ -4,7 +4,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://backend:3030',
-  test: 'http://192.168.1.179:30300'
+  test: 'http://192.168.1.181:30300'
 }
 let origin
 const { argv } = process
@@ -58,13 +58,7 @@ module.exports = {
       .end()
 
     // svg loader排除 icon 目录
-    config.module
-      .rule('svg')
-      .exclude.add(resolve(iconDir))
-      .end()
-      .use('svgo-loader')
-      .loader('svgo-loader')
-      .end()
+    config.module.rule('svg').exclude.add(resolve(iconDir)).end().use('svgo-loader').loader('svgo-loader').end()
 
     // svg-sprite-loader打包svg
     config.module

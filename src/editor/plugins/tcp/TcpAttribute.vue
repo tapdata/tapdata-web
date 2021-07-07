@@ -10,20 +10,9 @@
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div> -->
-      <el-form
-        class="e-form"
-        label-position="top"
-        :model="model"
-        ref="form"
-        :disabled="disabled"
-      >
+      <el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
         <!-- <span class="addTxt">+新建文件</span> -->
-        <el-form-item
-          :label="$t('editor.choose') + ' TCP/IP'"
-          prop="connectionId"
-          :rules="rules"
-          required
-        >
+        <el-form-item :label="$t('editor.choose') + ' TCP/IP'" prop="connectionId" :rules="rules" required>
           <el-select
             :filterable="!databaseLoading"
             :loading="databaseLoading"
@@ -33,16 +22,13 @@
           >
             <el-option
               v-for="(item, idx) in databases"
-              :label="`${item.name} (${
-                $t('connection.status.' + item.status) || item.status
-              })`"
+              :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
               :value="item.id"
               v-bind:key="idx"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('editor.cell.data_node.tcpTip')" required>
-        </el-form-item>
+        <el-form-item :label="$t('editor.cell.data_node.tcpTip')" required> </el-form-item>
       </el-form>
     </div>
     <!-- <div class="e-entity-wrap" style="text-align: center; overflow: auto">
@@ -143,14 +129,9 @@ export default {
         .get([connectionId])
         .then(result => {
           if (result.data) {
-            let schemas =
-              (result.data.schema && result.data.schema.tables) || []
+            let schemas = (result.data.schema && result.data.schema.tables) || []
             schemas = schemas.sort((t1, t2) =>
-              t1.table_name > t2.table_name
-                ? 1
-                : t1.table_name === t2.table_name
-                ? 0
-                : -1
+              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
             self.schemas = schemas
           }

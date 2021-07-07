@@ -36,10 +36,10 @@ export default class Connections extends PublicAPI {
     return axios.patch(`${this.url}/${id}`, params)
   }
   update(params) {
-    return axios.post(
-      `${this.url}/update?where=` +
-        encodeURIComponent(JSON.stringify({ _id: params.id })),
-      params
-    )
+    return axios.post(`${this.url}/update?where=` + encodeURIComponent(JSON.stringify({ _id: params.id })), params)
+  }
+  getNoSchema(id) {
+    let url = `${this.url}/${id}` + '?noSchema=1'
+    return axios.get(url)
   }
 }

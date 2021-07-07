@@ -17,18 +17,9 @@
     >
       <ul class="search-bar" slot="search">
         <li class="item">
-          <ElSelect
-            v-model="searchParams.status"
-            size="small"
-            @input="table.fetch(1)"
-          >
+          <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
             <ElOption :label="$t('connection.status.all')" value=""></ElOption>
-            <ElOption
-              v-for="item in databaseStatusOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+            <ElOption v-for="item in databaseStatusOptions" :key="item.value" :label="item.label" :value="item.value">
             </ElOption>
           </ElSelect>
         </li>
@@ -40,12 +31,7 @@
             @input="table.fetch(1)"
             :placeholder="$t('connection.connectionType')"
           >
-            <el-option
-              v-for="item in databaseModelOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+            <el-option v-for="item in databaseModelOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </li>
@@ -57,12 +43,7 @@
             @input="table.fetch(1)"
             :placeholder="$t('connection.dataBaseType')"
           >
-            <el-option
-              v-for="item in databaseTypeOptions"
-              :key="item.type"
-              :label="item.name"
-              :value="item.type"
-            >
+            <el-option v-for="item in databaseTypeOptions" :key="item.type" :label="item.name" :value="item.type">
             </el-option>
           </el-select>
         </li>
@@ -79,12 +60,7 @@
           </ElInput>
         </li>
         <li class="item">
-          <ElButton
-            plain
-            class="btn-refresh"
-            size="small"
-            @click="table.fetch()"
-          >
+          <ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
             <i class="el-icon-refresh"></i>
           </ElButton>
         </li>
@@ -119,7 +95,7 @@
         :reserve-selection="true"
       >
       </el-table-column>
-      <el-table-column prop="name" :label="$t('connection.dataBaseName')">
+      <el-table-column prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
@@ -153,11 +129,7 @@
           {{ scope.row.connectionUrl }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="status"
-        :label="$t('connection.dataBaseStatus')"
-        width="100"
-      >
+      <el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
         <template slot-scope="scope">
           <div>
             <span class="error" v-if="['invalid'].includes(scope.row.status)">
@@ -181,19 +153,12 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="connection_type"
-        :label="$t('connection.connectionType')"
-        width="160"
-      >
+      <el-table-column prop="connection_type" :label="$t('connection.connectionType')" width="160">
         <template slot-scope="scope">
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
       </el-table-column>
-      <el-table-column
-        v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
-        width="160"
-      >
+      <el-table-column v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'" width="160">
         <div slot="header">
           {{ $t('connection.connectionSource') }}
           <TableFilter
@@ -206,31 +171,19 @@
           {{ scope.row.connectionSource }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('connection.lastUpdateTime')"
-        width="160"
-        prop="last_updated"
-        sortable="custom"
-      >
+      <el-table-column :label="$t('connection.lastUpdateTime')" width="160" prop="last_updated" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('connection.operate')" width="220">
         <template slot-scope="scope">
-          <ElLink type="primary" @click="testConnection(scope.row)"
-            >{{ $t('connection.testConnection') }}
-          </ElLink>
+          <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection.testConnection') }} </ElLink>
           <ElLink
             v-readonlybtn="'datasource_edition'"
             style="margin-left: 10px"
             type="primary"
-            :disabled="
-              $disabledByPermission(
-                'datasource_edition_all_data',
-                scope.row.user_id
-              )
-            "
+            :disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
             @click="edit(scope.row.id, scope.row.database_type, scope.row)"
             >{{ $t('message.edit') }}
           </ElLink>
@@ -245,12 +198,7 @@
             v-readonlybtn="'datasource_delete'"
             style="margin-left: 10px"
             type="primary"
-            :disabled="
-              $disabledByPermission(
-                'datasource_delete_all_data',
-                scope.row.user_id
-              )
-            "
+            :disabled="$disabledByPermission('datasource_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row)"
             >{{ $t('message.delete') }}
           </ElLink>
@@ -344,7 +292,7 @@ export default {
         'mysql pxc',
         'jira',
         'dameng',
-        'hive',
+        // 'hive',
         'gbase-8s',
         'sybase ase',
         'gaussdb200',
@@ -353,7 +301,8 @@ export default {
         'custom_connection',
         'gridfs',
         'tcp_udp',
-        'mq'
+        'mq',
+        'hbase'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -436,16 +385,14 @@ export default {
         visible: true,
         step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0
       }
-      window.parent &&
-        window.parent.noviceGuideChange &&
-        window.parent.noviceGuideChange(item)
-      this.$router.push('/connections')
+      window.parent && window.parent.noviceGuideChange && window.parent.noviceGuideChange(item)
+      this.$router.push({
+        name: 'connections'
+      })
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'createTime'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     async getDatabaseType() {
@@ -458,53 +405,52 @@ export default {
     getData({ page, tags }) {
       let region = this.$route.query.region
       let { current, size } = page
-      let { keyword, databaseType, databaseModel, status, sourceType } =
-        this.searchParams
+      let { keyword, databaseType, databaseModel, status, sourceType } = this.searchParams
       let where = {}
-      let fields = {
-        name: true,
-        user_id: true,
-        connection_type: true,
-        database_type: true,
-        search_databaseType: true,
-        database_host: true,
-        database_uri: true,
-        database_username: true,
-        database_port: true,
-        database_name: true,
-        sourceType: true,
-        status: true,
-        id: true,
-        listtags: true,
-        tableCount: true,
-        loadCount: true,
-        loadFieldsStatus: true,
-        schemaAutoUpdate: true,
-        platformInfo: true,
-        last_updated: true,
-        additionalString: true,
-        database_password: true,
-        fill: true,
-        sslCert: true,
-        ssl: true,
-        sslCAFile: true,
-        sslPass: true,
-        sslKeyFile: true,
-        sslKey: true,
-        sslValidate: false,
-        sslCA: true, //MongoDB
-        mqType: true,
-        brokerURL: true, // mq start
-        nameSrvAddr: true,
-        mqUserName: true,
-        mqPassword: true,
-        mqQueueSet: true,
-        mqTopicSet: true,
-        routeKeyField: true,
-        virtualHost: true, // mq end
-        tcpUdpType: true, // TCP
-        root_name: true
-      }
+      // let fields = {
+      //   name: true,
+      //   user_id: true,
+      //   connection_type: true,
+      //   database_type: true,
+      //   search_databaseType: true,
+      //   database_host: true,
+      //   database_uri: true,
+      //   database_username: true,
+      //   database_port: true,
+      //   database_name: true,
+      //   sourceType: true,
+      //   status: true,
+      //   id: true,
+      //   listtags: true,
+      //   tableCount: true,
+      //   loadCount: true,
+      //   loadFieldsStatus: true,
+      //   schemaAutoUpdate: true,
+      //   platformInfo: true,
+      //   last_updated: true,
+      //   additionalString: true,
+      //   database_password: true,
+      //   fill: true,
+      //   sslCert: true,
+      //   ssl: true,
+      //   sslCAFile: true,
+      //   sslPass: true,
+      //   sslKeyFile: true,
+      //   sslKey: true,
+      //   sslValidate: false,
+      //   sslCA: true, //MongoDB
+      //   mqType: true,
+      //   brokerURL: true, // mq start
+      //   nameSrvAddr: true,
+      //   mqUserName: true,
+      //   mqPassword: true,
+      //   mqQueueSet: true,
+      //   mqTopicSet: true,
+      //   routeKeyField: true,
+      //   virtualHost: true, // mq end
+      //   tcpUdpType: true, // TCP
+      //   root_name: true
+      // }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
         // let filterObj = { like: verify(keyword), options: 'i' };
@@ -531,7 +477,8 @@ export default {
       let filter = {
         order: this.order,
         limit: size,
-        fields: fields,
+        noSchema: 1,
+        //fields: fields, //传noSchema 过滤schema
         skip: (current - 1) * size,
         where
       }
@@ -551,34 +498,30 @@ export default {
           data: list.map(item => {
             let platformInfo = item.platformInfo
             if (platformInfo && platformInfo.regionName) {
-              item.regionInfo =
-                platformInfo.regionName + ' ' + platformInfo.zoneName
+              item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
             }
             if (item.database_type !== 'mongodb') {
               item.connectionUrl = ''
               if (item.database_username) {
                 item.connectionUrl += item.database_username + ':***@'
               }
-              item.connectionUrl +=
-                item.database_host + ':' + item.database_port
+              item.connectionUrl += item.database_host + ':' + item.database_port
             } else {
               item.connectionUrl = item.database_uri || item.connection_name
             }
-            if (item.database_type === 'mq') {
-              if (item.mqType === '0') {
-                item.connectionUrl = item.brokerURL
-              } else if (item.mqType === '2') {
-                item.connectionUrl = item.nameSrvAddr
-              }
+            if (item.database_type === 'mq' && item.mqType === '0') {
+              item.connectionUrl = item.brokerURL
             }
             // 不存在uri 和 port === 0
-            if (!item.database_uri && !item.database_port) {
+            if (
+              !item.database_uri &&
+              !item.database_port &&
+              item.mqType !== '0'
+            ) {
               item.connectionUrl = ''
             }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
-            item.lastUpdateTime = this.$moment(item.last_updated).format(
-              'YYYY-MM-DD HH:mm:ss'
-            )
+            item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
             return item
           })
         }
@@ -612,7 +555,15 @@ export default {
         if (item.search_databaseType) {
           type = item.search_databaseType
         }
-        this.$router.push('connections/' + id + '/edit?databaseType=' + type)
+        this.$router.push({
+          name: 'connectionsEdit',
+          params: {
+            id: id
+          },
+          query: {
+            databaseType: type
+          }
+        })
       } else {
         top.location.href = '/#/connection/' + id
         localStorage.setItem('connectionDatabaseType', type)
@@ -679,7 +630,11 @@ export default {
           .catch(({ response }) => {
             let msg = response && response.msg
             if (msg && (msg.jobs || msg.modules)) {
-              this.$message.error(this.$t('connection.cannot_delete_remind'))
+              if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+                this.$message.error(this.$t('connection.dfs_cannot_delete_remind'))
+              } else {
+                this.$message.error(this.$t('connection.cannot_delete_remind'))
+              }
               // const h = this.$createElement;
               // this.$message.error(
               // 	h('div', {}, [
@@ -762,7 +717,12 @@ export default {
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
       if (this.whiteList.includes(type)) {
-        this.$router.push('connections/create?databaseType=' + type)
+        this.$router.push({
+          name: 'connectionsCreate',
+          query: {
+            databaseType: type
+          }
+        })
       } else {
         top.location.href = '/#/connection'
         localStorage.setItem('connectionDatabaseType', type)
@@ -771,21 +731,19 @@ export default {
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
       //drs 检查实例是否可用 dfs 检查agent是否可用
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
-        let result = await this.$api('Workers').getAvailableAgent()
-        if (!result.data.result || result.data.result.length === 0) {
-          this.$message.error(this.$t('dataForm.form.agentMsg'))
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+        this.dialogDatabaseTypeVisible = true
+      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+        let result = await this.$api('tcm').getAgentCount()
+        if (!result.data || !result.data.agentTotalCount || result.data.agentTotalCount <= 0) {
+          this.$message.error('您尚未订购同步实例，请先订购实例')
         } else {
           this.dialogDatabaseTypeVisible = true
         }
-      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        let result = await this.$api('tcm').getAgentCount()
-        if (
-          !result.data ||
-          !result.data.agentTotalCount ||
-          result.data.agentTotalCount <= 0
-        ) {
-          this.$message.error('您尚未订购同步实例，请先订购实例')
+      } else {
+        let result = await this.$api('Workers').getAvailableAgent()
+        if (!result.data.result || result.data.result.length === 0) {
+          this.$message.error(this.$t('dataForm.form.agentMsg'))
         } else {
           this.dialogDatabaseTypeVisible = true
         }
@@ -794,8 +752,13 @@ export default {
     async testConnection(item) {
       let result = await this.$api('Workers').getAvailableAgent()
       if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-        return
+        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+          this.$message.error(this.$t('dataForm.form.agentConnectionMsg'))
+          return
+        } else {
+          this.$message.error(this.$t('dataForm.form.agentMsg'))
+          return
+        }
       }
       let loading = this.$loading()
       this.testData = Object.assign({}, defaultModel['default'], item)
@@ -818,7 +781,8 @@ export default {
           )
         )
         .then(() => {
-          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
+            //企业版跟DFS都有弹出框
             this.dialogTestVisible = true
           }
           this.$refs.test.start()
@@ -832,17 +796,9 @@ export default {
       if (!data.status || data.status === null) return
       let status = data.status
       if (status === 'ready') {
-        this.$message.success(
-          this.$t('connection.testConnection') +
-            this.$t('connection.status.ready'),
-          false
-        )
+        this.$message.success(this.$t('connection.testConnection') + this.$t('connection.status.ready'), false)
       } else {
-        this.$message.error(
-          this.$t('connection.testConnection') +
-            this.$t('connection.status.invalid'),
-          false
-        )
+        this.$message.error(this.$t('connection.testConnection') + this.$t('connection.status.invalid'), false)
       }
       this.table.fetch()
     }

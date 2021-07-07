@@ -56,55 +56,45 @@ export default function (vm) {
         ],
         required: true
       },
-      {
-        type: 'input',
-        field: 'mqQueueSet',
-        label: vm.$t('dataForm.form.mq.mqQueueSet'),
-        required: true,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'mqType',
-                value: '2'
-              }
-            ],
-            triggerConfig: {
-              show: false
-            }
-          }
-        ]
-      },
-      {
-        type: 'slot',
-        slot: 'queueTip'
-      },
+
       {
         type: 'input',
         field: 'mqTopicSet',
         show: true,
         label: vm.$t('dataForm.form.mq.mqTopicSet'),
+        required: true,
         dependOn: [
+          // {
+          //   triggerOptions: [
+          //     {
+          //       field: 'mqType',
+          //       value: '1'
+          //     }
+          //   ],
+          //   triggerConfig: {
+          //     show: false
+          //   }
+          // }
           {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '1'
+                value: '0'
               }
             ],
             triggerConfig: {
-              show: false
+              required: false
             }
           },
           {
             triggerOptions: [
               {
-                field: 'mqType',
-                value: '2'
+                field: 'connection_type',
+                value: 'target'
               }
             ],
             triggerConfig: {
-              required: true
+              required: false
             }
           }
         ]
@@ -115,8 +105,31 @@ export default function (vm) {
       },
       {
         type: 'input',
+        field: 'mqQueueSet',
+        label: vm.$t('dataForm.form.mq.mqQueueSet'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '0'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'slot',
+        slot: 'queueTip'
+      },
+      {
+        type: 'input',
         field: 'brokerURL',
-        label: 'BrokerURL',
+        label: vm.$t('dataForm.form.mq.brokerUrl'),
         required: true,
         show: false,
         dependOn: [
@@ -134,24 +147,8 @@ export default function (vm) {
         ]
       },
       {
-        type: 'input',
-        field: 'nameSrvAddr',
-        label: 'nameSrvAddr',
-        required: true,
-        show: false,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'mqType',
-                value: '2'
-              }
-            ],
-            triggerConfig: {
-              show: true
-            }
-          }
-        ]
+        type: 'slot',
+        slot: 'brokerUrlTip'
       },
       {
         type: 'input',
@@ -169,17 +166,17 @@ export default function (vm) {
             }
           }
         ],
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '1'
+                value: '0'
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ]
@@ -205,17 +202,17 @@ export default function (vm) {
             }
           }
         ],
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '1'
+                value: '0'
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ]
@@ -223,9 +220,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'mqUserName',
-        label: vm.$t('dataForm.form.userName'),
-        domType: 'password',
-        showPassword: true
+        label: vm.$t('dataForm.form.userName')
       },
       {
         type: 'input',
@@ -238,7 +233,6 @@ export default function (vm) {
         type: 'input',
         field: 'routeKeyField',
         label: vm.$t('dataForm.form.mq.routeKeyField'),
-        required: true,
         show: false,
         dependOn: [
           {

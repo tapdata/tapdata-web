@@ -2,30 +2,17 @@
   <el-container class="api-info">
     <el-row class="e-row">
       <el-col :span="3" class="e-col">
-        <apiPath
-          :selectNodeId="classificationId"
-          @backApiData="getCurrentApiData"
-        ></apiPath>
+        <apiPath :selectNodeId="classificationId" @backApiData="getCurrentApiData"></apiPath>
       </el-col>
       <el-col :span="18" class="e-col">
         <div class="api-content api-main">
           <el-header class="e-height">
             <h1>{{ apiData.name }}</h1>
             <div class="operating">
-              <el-tooltip
-                class="job-head-title"
-                effect="dark"
-                :content="$t('dataFlow.edit')"
-                placement="bottom"
-              >
+              <el-tooltip class="job-head-title" effect="dark" :content="$t('dataFlow.edit')" placement="bottom">
                 <i class="iconfont icon-bibianji" @click="handleEdit"></i>
               </el-tooltip>
-              <el-tooltip
-                class="job-head-title"
-                effect="dark"
-                :content="$t('apiInfo.apiTest')"
-                placement="bottom"
-              >
+              <el-tooltip class="job-head-title" effect="dark" :content="$t('apiInfo.apiTest')" placement="bottom">
                 <i class="iconfont icon-debug-" @click="hanleTest"></i>
               </el-tooltip>
               <el-tooltip
@@ -68,18 +55,12 @@
                 </el-col>
                 <el-col :span="12">
                   {{ $t('apiInfo.modifyTime') }}:
-                  <span>{{
-                    $moment(apiData.last_updated).format('YYYY-MM-DD HH:mm:ss')
-                  }}</span>
+                  <span>{{ $moment(apiData.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</span>
                 </el-col>
               </el-row>
             </div>
             <el-tabs type="border-card">
-              <el-tab-pane
-                v-for="(item, index) in apiData.paths"
-                :key="index"
-                :label="item.method"
-              >
+              <el-tab-pane v-for="(item, index) in apiData.paths" :key="index" :label="item.method">
                 <div class="api-path">
                   <span class="methodStyle">{{ item.method }}</span>
                   <span>{{ item.path }}</span>
@@ -102,28 +83,10 @@
                       hasChildren: 'hasChildren'
                     }"
                   >
-                    <el-table-column
-                      prop="field_name"
-                      :label="$t('apiInfo.parameter')"
-                      width="180"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="field_type"
-                      :label="$t('apiInfo.typesof')"
-                      width="180"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="required"
-                      :label="$t('apiInfo.is_required')"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="example"
-                      :label="$t('apiInfo.examples')"
-                    >
-                    </el-table-column>
+                    <el-table-column prop="field_name" :label="$t('apiInfo.parameter')" width="180"> </el-table-column>
+                    <el-table-column prop="field_type" :label="$t('apiInfo.typesof')" width="180"> </el-table-column>
+                    <el-table-column prop="required" :label="$t('apiInfo.is_required')"> </el-table-column>
+                    <el-table-column prop="example" :label="$t('apiInfo.examples')"> </el-table-column>
                   </el-table>
                 </div>
 
@@ -139,47 +102,21 @@
                       hasChildren: 'hasChildren'
                     }"
                   >
-                    <el-table-column
-                      prop="field_name"
-                      :label="$t('apiInfo.parameter')"
-                      width="180"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="field_type"
-                      :label="$t('apiInfo.typesof')"
-                      width="180"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="required"
-                      :label="$t('apiInfo.is_required')"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="example"
-                      :label="$t('apiInfo.examples')"
-                    >
-                    </el-table-column>
+                    <el-table-column prop="field_name" :label="$t('apiInfo.parameter')" width="180"> </el-table-column>
+                    <el-table-column prop="field_type" :label="$t('apiInfo.typesof')" width="180"> </el-table-column>
+                    <el-table-column prop="required" :label="$t('apiInfo.is_required')"> </el-table-column>
+                    <el-table-column prop="example" :label="$t('apiInfo.examples')"> </el-table-column>
                   </el-table>
                 </div>
 
                 <div class="api-content">
                   <h3>{{ $t('apiInfo.requestExample') }}（JSON）</h3>
-                  <el-input
-                    type="textarea"
-                    v-model="item.requestExample"
-                    class="e-textarea"
-                  ></el-input>
+                  <el-input type="textarea" v-model="item.requestExample" class="e-textarea"></el-input>
                 </div>
 
                 <div class="api-content">
                   <h3>{{ $t('apiInfo.backExamples') }}（JSON）</h3>
-                  <el-input
-                    type="textarea"
-                    v-model="item.backExamples"
-                    class="e-textarea"
-                  ></el-input>
+                  <el-input type="textarea" v-model="item.backExamples" class="e-textarea"></el-input>
                 </div>
               </el-tab-pane>
             </el-tabs>

@@ -98,6 +98,12 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-mq.svg',
       stencilImage: 'static/editor/mq.svg'
     },
+    hbase: {
+      type: 'hbase',
+      name: 'HBase',
+      shapeImage: 'static/editor/o-hbase.svg',
+      stencilImage: 'static/editor/hbase.svg'
+    },
     mongodb: {
       type: 'mongodb',
       name: 'MongoDB',
@@ -157,13 +163,13 @@ export const FORM_DATA_KEY = 'form_data',
       name: 'Elasticsearch',
       shapeImage: 'static/editor/o-elasticsearch.svg',
       stencilImage: 'static/editor/elasticsearch.svg'
-    },
-    hive: {
-      type: 'hive',
-      name: 'Hive',
-      shapeImage: 'static/editor/o-hive.svg',
-      stencilImage: 'static/editor/hive.svg'
     }
+    // hive: {
+    //   type: 'hive',
+    //   name: 'Hive',
+    //   shapeImage: 'static/editor/o-hive.svg',
+    //   stencilImage: 'static/editor/hive.svg'
+    // }
   },
   FILE_TYPE_MAPPING = {
     xml: {
