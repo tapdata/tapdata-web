@@ -21,7 +21,7 @@
         >
           <el-input
             v-model="model.label"
-            :placeholder="$t('editor.cell.link.form.placeholder')"
+            :placeholder="$t('editor.cell.link.form.label.placeholder')"
             size="mini"
             maxlength="50"
             show-word-limit
@@ -31,7 +31,7 @@
         <el-form-item :label="$t('editor.cell.link.pcb.label')" v-else>
           <el-input
             v-model="model.tcp.protocolType"
-            :placeholder="$t('editor.cell.link.pcb.label.placeholder')"
+            :placeholder="$t('editor.cell.link.pcb.placeholder')"
             size="mini"
             maxlength="50"
             show-word-limit
@@ -204,8 +204,9 @@
         </el-form-item>
       </el-form>
       <!-- tcp报文配置 -->
-      <div class="transfer" v-else>
-        <el-transfer
+      <!-- <div class="transfer" v-else>
+        <Message :fieldsData="fieldsData"></Message> -->
+        <!-- <el-transfer
           v-model="model.tcp.includeField"
           :data="fieldsData"
           :titles="[
@@ -233,8 +234,8 @@
             @click="handleDown"
             >{{ $t('editor.cell.link.pcb.moveDown') }}</el-button
           >
-        </el-transfer>
-      </div>
+        </el-transfer> -->
+      <!-- </div> -->
     </div>
 
     <!--
@@ -276,6 +277,7 @@
 import _ from 'lodash'
 import { EditorEventType } from '../../lib/events'
 import Mapping from './Mapping'
+// import Message from './Message'
 import log from '../../../log'
 import { JOIN_TABLE_TPL } from '../../constants'
 import ClipButton from '@/components/ClipButton'
@@ -455,7 +457,8 @@ export default {
       if (!this.configJoinTable) {
         let targetCell = cell.getTargetCell()
         let targetData = targetCell && targetCell.getFormData()
-        if (targetData.type !== 'tcp_udp') {
+        // isShowMessage 是否显示报文 Whether to display the message
+        if (targetData.isShowMessage) {
           return
         } else {
           this.isTargetTypeTcpFalg = true
@@ -567,10 +570,10 @@ export default {
         joinKeys.forEach((item, index) => {
           this.$set(this.model.joinTable.joinKeys, index, item)
         })
-
-        this.fieldsData = sourceList.map(field => ({
+        this.fieldsData = sourceSchema.fields.map(field => ({
           label: field.field_name,
           key: field.field_name,
+          javaType: field.javaType,
           disabled: this.disabled
         }))
       }
@@ -595,7 +598,7 @@ export default {
         // tcp报文数据传输到目标节点
         let targetCell = this.cell.getTargetCell()
         let targetData = targetCell && targetCell.getFormData()
-        if (targetData.type !== 'tcp_udp') {
+        if (targetData.isShowMessage) {
           delete data.tcp
         } else {
           targetData.tcp = data.tcp
