@@ -470,24 +470,43 @@ export default {
       })
     },
     toTableInfo(id, resultId, type, name) {
-      let route = this.$router.resolve({
-        path: '/dataVerifyResult',
-        query: {
-          id: resultId,
-          inspectId: id,
-          type: type,
-          name: name
-        }
-      })
+      let route = ''
+      let query = {
+        id: resultId,
+        inspectId: id,
+        type: type,
+        name: name
+      }
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+        route = top.App.$router.resolve({
+          name: 'VerificationResult',
+          query
+        })
+      } else {
+        route = this.$router.resolve({
+          path: '/dataVerifyResult',
+          query
+        })
+      }
       window.open(route.href, '_blank')
     },
     toTableHistory(id) {
-      let route = this.$router.resolve({
-        path: '/dataVerifyHistory',
-        query: {
-          inspectId: id
-        }
-      })
+      let route = ''
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+        route = top.App.$router.resolve({
+          name: 'VerificationHistory',
+          query: {
+            inspectId: id
+          }
+        })
+      } else {
+        route = this.$router.resolve({
+          path: '/dataVerifyHistory',
+          query: {
+            inspectId: id
+          }
+        })
+      }
       window.open(route.href, '_blank')
     },
     startTask(id) {
