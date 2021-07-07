@@ -540,7 +540,8 @@ export default {
           'custom_connection',
           'gridfs',
           'mq',
-          'tcp_udp'
+          'tcp_udp',
+          'hbase'
         ].includes(type)
       ) {
         this.$router.push('connections/' + id + '/edit?databaseType=' + type)
