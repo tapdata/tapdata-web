@@ -51,8 +51,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged",
-      "post-merge": "git spull"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
