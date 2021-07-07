@@ -1,4 +1,5 @@
 export default {
+  aaa: '111',
   tap: {
     login: 'Tapdata-登录',
     registry: 'Tapdata-注册',
