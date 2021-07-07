@@ -12,6 +12,7 @@ import TapdataWebCore from '../packages/tapdata-web-core'
 require('./assets/theme/dfs/index.scss')
 
 Vue.config.productionTip = false
+Vue.prototype.$settings = settings
 Vue.use(VueClipboard)
 Vue.use(VueRouter)
 Vue.use(TapdataWebCore)
@@ -40,7 +41,7 @@ export default function({ routes }) {
     if (loc.protocol === 'https:') {
       wsUrl = 'wss://'
     }
-    let preUrl = process.env.VUE_APP_TM_PUBLIC_PATH || ''
+    let preUrl = settings.DFS_TM_API_PRE_URL || ''
     wsUrl = wsUrl + loc.host + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__.token}`
     window.App = new Vue({
       router,

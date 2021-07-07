@@ -13,21 +13,21 @@ export default function(vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.t('dataForm.form.connectionType'),
+        label: vm.$t('dataForm.form.connectionType'),
         options: [
           {
-            label: vm.t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.t('dataForm.form.options.sourceAndTargetTips'),
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
             value: 'source_and_target'
           },
           {
-            label: vm.t('dataForm.form.options.source'),
-            tip: vm.t('dataForm.form.options.sourceTips'),
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
             value: 'source'
           },
           {
-            label: vm.t('dataForm.form.options.target'),
-            tip: vm.t('dataForm.form.options.targetTips'),
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
             value: 'target'
           }
         ],
@@ -36,13 +36,13 @@ export default function(vm) {
       {
         type: 'input',
         field: 'kafkaBootstrapServers',
-        label: vm.t('dataForm.form.host'),
+        label: vm.$t('dataForm.form.host'),
         required: true,
         rules: [
           {
             validator(rule, value, callback) {
               if (!value || !value.trim()) {
-                callback(new Error(vm.t('dataForm.error.noneHost')))
+                callback(new Error(vm.$t('dataForm.error.noneHost')))
               } else {
                 callback()
               }
@@ -57,7 +57,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'kafkaPatternTopics',
-        label: vm.t('dataForm.form.kafka.topicExpression'),
+        label: vm.$t('dataForm.form.kafka.topicExpression'),
         show: true,
         required: true
       },
@@ -65,7 +65,7 @@ export default function(vm) {
       {
         type: 'switch', // 忽略非JSON Object格式消息
         field: 'kafkaIgnoreInvalidRecord',
-        label: vm.t('dataForm.form.kafka.lonoreFormat'),
+        label: vm.$t('dataForm.form.kafka.lonoreFormat'),
         show: true,
         dependOn: [
           {
@@ -102,13 +102,13 @@ export default function(vm) {
       {
         type: 'select', //ACK确认机制
         field: 'kafkaAcks',
-        label: vm.t('dataForm.form.kafka.kafkaAcks'),
+        label: vm.$t('dataForm.form.kafka.kafkaAcks'),
         show: true,
         options: [
-          { label: vm.t('dataForm.form.kafka.kafkaAcks0'), value: '0' },
-          { label: vm.t('dataForm.form.kafka.kafkaAcks1'), value: '1' },
-          { label: vm.t('dataForm.form.kafka.kafkaAcks_1'), value: '-1' },
-          { label: vm.t('dataForm.form.kafka.kafkaAcksAll'), value: 'all' }
+          { label: vm.$t('dataForm.form.kafka.kafkaAcks0'), value: '0' },
+          { label: vm.$t('dataForm.form.kafka.kafkaAcks1'), value: '1' },
+          { label: vm.$t('dataForm.form.kafka.kafkaAcks_1'), value: '-1' },
+          { label: vm.$t('dataForm.form.kafka.kafkaAcksAll'), value: 'all' }
         ],
         dependOn: [
           {
@@ -127,7 +127,7 @@ export default function(vm) {
       {
         type: 'select', //消息压缩类型
         field: 'kafkaCompressionType',
-        label: vm.t('dataForm.form.kafka.kafkaCompressionType'),
+        label: vm.$t('dataForm.form.kafka.kafkaCompressionType'),
         show: true,
         options: [
           { label: 'gzip', value: 'gzip' },
@@ -152,7 +152,7 @@ export default function(vm) {
       {
         type: 'switch', //是否忽略推送消息异常,
         field: 'kafkaIgnorePushError',
-        label: vm.t('dataForm.form.kafka.kafkaIgnorePushError'),
+        label: vm.$t('dataForm.form.kafka.kafkaIgnorePushError'),
         show: true,
         dependOn: [
           {
@@ -188,16 +188,16 @@ export default function(vm) {
       // {
       // 	type: 'radio',
       // 	field: 'kafkaSelectTopics',
-      // 	label: vm.t('dataForm.form.kafka.chooseTheme'),
+      // 	label: vm.$t('dataForm.form.kafka.chooseTheme'),
       // 	options: [
       // 		{
-      // 			label: vm.t('dataForm.form.kafka.topicName'),
-      // 			tip: vm.t('dataForm.form.kafka.directlyNameTip'),
+      // 			label: vm.$t('dataForm.form.kafka.topicName'),
+      // 			tip: vm.$t('dataForm.form.kafka.directlyNameTip'),
       // 			value: 'kafkaRawTopics'
       // 		},
       // 		{
-      // 			label: vm.t('dataForm.form.kafka.topicExpression'),
-      // 			tip: vm.t('dataForm.form.kafka.hostPlaceHolder'),
+      // 			label: vm.$t('dataForm.form.kafka.topicExpression'),
+      // 			tip: vm.$t('dataForm.form.kafka.hostPlaceHolder'),
       // 			value: 'kafkaPatternTopics'
       // 		}
       // 	],
@@ -206,7 +206,7 @@ export default function(vm) {
       // {
       // 	type: 'input',
       // 	field: 'kafkaRawTopics',
-      // 	label: vm.t('dataForm.form.kafka.topicName'),
+      // 	label: vm.$t('dataForm.form.kafka.topicName'),
       // 	show: false,
       // 	dependOn: [
       // 		{
@@ -225,7 +225,7 @@ export default function(vm) {
       // {
       // 	type: 'input', //拉取请求超时时间
       // 	field: 'kafkaConsumerRequestTimeout',
-      // 	label: vm.t('dataForm.form.kafka.requestTimeoutPeriod'),
+      // 	label: vm.$t('dataForm.form.kafka.requestTimeoutPeriod'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -244,7 +244,7 @@ export default function(vm) {
       // {
       // 	type: 'switch', // 消息提交读隔离级别
       // 	field: 'kafkaConsumerUseTransactional',
-      // 	label: vm.t('dataForm.form.kafka.readIsolationLevel'),
+      // 	label: vm.$t('dataForm.form.kafka.readIsolationLevel'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -263,7 +263,7 @@ export default function(vm) {
       // {
       // 	type: 'input', //单次poll消息最大返回记录数
       // 	field: 'kafkaMaxPollRecords',
-      // 	label: vm.t('dataForm.form.kafka.maximumNumber'),
+      // 	label: vm.$t('dataForm.form.kafka.maximumNumber'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -282,7 +282,7 @@ export default function(vm) {
       // {
       // 	type: 'input',
       // 	field: 'kafkaPollTimeoutMS', // 单次poll消息阻塞超时时间
-      // 	label: vm.t('dataForm.form.kafka.blockingTimeoutTime'),
+      // 	label: vm.$t('dataForm.form.kafka.blockingTimeoutTime'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -301,7 +301,7 @@ export default function(vm) {
       // {
       // 	type: 'input', // 单次fetch消息最大字节数
       // 	field: 'kafkaMaxFetchBytes',
-      // 	label: vm.t('dataForm.form.kafka.fetchMaximumNumber'),
+      // 	label: vm.$t('dataForm.form.kafka.fetchMaximumNumber'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -320,7 +320,7 @@ export default function(vm) {
       // {
       // 	type: 'input', // 单次fetch消息阻塞超时时间
       // 	field: 'kafkaMaxFetchWaitMS',
-      // 	label: vm.t('dataForm.form.kafka.fetchBlockTime'),
+      // 	label: vm.$t('dataForm.form.kafka.fetchBlockTime'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -339,7 +339,7 @@ export default function(vm) {
       // {
       // 	type: 'input', //推送请求超时时间
       // 	field: 'kafkaProducerRequestTimeout',
-      // 	label: vm.t('dataForm.form.kafka.requestTimeoutPeriod'),
+      // 	label: vm.$t('dataForm.form.kafka.requestTimeoutPeriod'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -358,7 +358,7 @@ export default function(vm) {
       // {
       // 	type: 'input', //使用事务消息
       // 	field: 'kafkaProducerUseTransactional',
-      // 	label: vm.t('dataForm.form.kafka.transactionMessage'),
+      // 	label: vm.$t('dataForm.form.kafka.transactionMessage'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -377,7 +377,7 @@ export default function(vm) {
       // {
       // 	type: 'input', //请求重试次数
       // 	field: 'kafkaRetries',
-      // 	label: vm.t('dataForm.form.kafka.kafkaRetries'),
+      // 	label: vm.$t('dataForm.form.kafka.kafkaRetries'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -396,7 +396,7 @@ export default function(vm) {
       // {
       // 	type: 'input', //分区消息批次字节数
       // 	field: 'kafkaBatchSize',
-      // 	label: vm.t('dataForm.form.kafka.kafkaBatchSize'),
+      // 	label: vm.$t('dataForm.form.kafka.kafkaBatchSize'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -416,7 +416,7 @@ export default function(vm) {
       // {
       // 	type: 'input', //分区消息批次最大等待时间
       // 	field: 'kafkaLingerMS	',
-      // 	label: vm.t('dataForm.form.kafka.kafkaLingerMS	'),
+      // 	label: vm.$t('dataForm.form.kafka.kafkaLingerMS	'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -435,7 +435,7 @@ export default function(vm) {
       // {
       // 	type: 'input', //消息传输超时时间
       // 	field: 'kafkaDeliveryTimeoutMS',
-      // 	label: vm.t('dataForm.form.kafka.kafkaDeliveryTimeoutMS'),
+      // 	label: vm.$t('dataForm.form.kafka.kafkaDeliveryTimeoutMS'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -454,7 +454,7 @@ export default function(vm) {
       // {
       // 	type: 'input', //请求最大字节数
       // 	field: 'kafkaMaxRequestSize',
-      // 	label: vm.t('dataForm.form.kafka.kafkaMaxRequestSize'),
+      // 	label: vm.$t('dataForm.form.kafka.kafkaMaxRequestSize'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -473,7 +473,7 @@ export default function(vm) {
       // {
       // 	type: 'input', //缓存消息字节数
       // 	field: 'kafkaBufferMemory',
-      // 	label: vm.t('dataForm.form.kafka.kafkaBufferMemory'),
+      // 	label: vm.$t('dataForm.form.kafka.kafkaBufferMemory'),
       // 	show: true,
       // 	dependOn: [
       // 		{
@@ -493,7 +493,7 @@ export default function(vm) {
       // {
       // 	type: 'input', //分区键字段名
       // 	field: 'kafkaPartitionKey',
-      // 	label: vm.t('dataForm.form.kafka.kafkaPartitionKey'),
+      // 	label: vm.$t('dataForm.form.kafka.kafkaPartitionKey'),
       // 	show: true,
       // 	dependOn: [
       // 		{

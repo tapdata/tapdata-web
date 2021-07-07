@@ -3,7 +3,7 @@
     class="connection-drawer top-drawer"
     ref="drawer"
     :visible.sync="visible"
-    :title="t('dataForm.title')"
+    :title="$t('dataForm.title')"
     size="40%"
     :withHeader="false"
     :before-close="handleClose"
@@ -13,7 +13,7 @@
         <button type="button" class="el-button back-btn-icon-box el-button--default" @click="handleClose">
           <i class="el-icon-arrow-right"></i>
         </button>
-        <span class="ml-2 back-btn-text">{{ t('connection.info') }}</span>
+        <span class="ml-2 back-btn-text">{{ $t('connection.info') }}</span>
       </div>
       <header class="header">
         <div class="tab">
@@ -26,23 +26,23 @@
               <span class="error" v-if="['invalid'].includes(status)">
                 <i class="el-icon-error"></i>
                 <span>
-                  {{ t('connection.status.invalid') }}
+                  {{ $t('connection.status.invalid') }}
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
                 <i class="el-icon-success"></i>
                 <span>
-                  {{ t('connection.status.ready') }}
+                  {{ $t('connection.status.ready') }}
                 </span>
               </span>
               <span class="warning" v-if="['testing'].includes(status)">
                 <i class="el-icon-warning"></i>
                 <span>
-                  {{ t('connection.status.testing') }}
+                  {{ $t('connection.status.testing') }}
                 </span>
               </span>
               <span class="schema-load"
-                >{{ t('connection.preview.reloadName') }} :
+                >{{ $t('connection.preview.reloadName') }} :
                 {{ data.last_updated ? $moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss') : '' }}</span
               >
             </div>
@@ -50,18 +50,18 @@
               <ul>
                 <li class="item">
                   <el-button class="btn" size="mini" @click="edit()">
-                    <i class="iconfont icon-edit"> {{ t('connection.preview.edit') }}</i>
+                    <i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
                   </el-button>
                 </li>
                 <li class="item">
                   <el-button class="btn" size="mini" @click="reload()">
-                    <i class="iconfont icon-kujitongbucopy">{{ t('connection.preview.reloadName') }}</i>
+                    <i class="iconfont icon-kujitongbucopy">{{ $t('connection.preview.reloadName') }}</i>
                   </el-button>
                 </li>
                 <li class="item">
                   <el-button class="btn" size="mini" @click="beforeTest(id)">
                     <i class="iconfont icon-lianjie1">
-                      {{ t('connection.preview.test') }}
+                      {{ $t('connection.preview.test') }}
                     </i>
                   </el-button>
                 </li>
@@ -86,7 +86,7 @@
           }}</span>
         </li>
         <!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
-					<span class="label">{{ t('dataForm.form.port') }}</span>
+					<span class="label">{{ $t('dataForm.form.port') }}</span>
 					<span class="value align-center"> {{ data.database_port }}</span>
 				</li> -->
         <div
@@ -100,11 +100,11 @@
           "
         >
           <li>
-            <span class="label">{{ t('dataForm.form.file.fileUrl') + (index + 1) }}</span>
+            <span class="label">{{ $t('dataForm.form.file.fileUrl') + (index + 1) }}</span>
             <span class="value align-center"> {{ item.path }}</span>
           </li>
           <li>
-            <span class="label">{{ t('dataForm.form.file.recursive') }}</span>
+            <span class="label">{{ $t('dataForm.form.file.recursive') }}</span>
             <span class="value align-center"> {{ item.recursive }}</span>
           </li>
         </div>
@@ -139,10 +139,10 @@ export default {
       previewLoading: false,
       userId: '',
       kafkaACK: [
-        { label: this.t('dataForm.form.kafka.kafkaAcks0'), value: '0' },
-        { label: this.t('dataForm.form.kafka.kafkaAcks1'), value: '1' },
-        { label: this.t('dataForm.form.kafka.kafkaAcks_1'), value: '-1' },
-        { label: this.t('dataForm.form.kafka.kafkaAcksAll'), value: 'all' }
+        { label: this.$t('dataForm.form.kafka.kafkaAcks0'), value: '0' },
+        { label: this.$t('dataForm.form.kafka.kafkaAcks1'), value: '1' },
+        { label: this.$t('dataForm.form.kafka.kafkaAcks_1'), value: '-1' },
+        { label: this.$t('dataForm.form.kafka.kafkaAcksAll'), value: 'all' }
       ],
       sourceType: {
         rds: 'RDS实例',
@@ -390,10 +390,10 @@ export default {
     async reload() {
       this.$checkAgentStatus(() => {
         let config = {
-          title: this.t('connection.reloadTittle'),
-          Message: this.t('connection.reloadMsg'),
-          confirmButtonText: this.t('message.confirm'),
-          cancelButtonText: this.t('message.cancel'),
+          title: this.$t('connection.reloadTittle'),
+          Message: this.$t('connection.reloadMsg'),
+          confirmButtonText: this.$t('message.confirm'),
+          cancelButtonText: this.$t('message.cancel'),
           name: this.data.name,
           id: this.data.id
         }
@@ -443,7 +443,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$message.error(this.t('connection.reloadFail'))
+          this.$message.error(this.$t('connection.reloadFail'))
           this.showProgress = false
           this.progress = 0 //加载完成
         })

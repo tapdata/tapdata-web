@@ -11,21 +11,21 @@ export default function(vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.t('dataForm.form.connectionType'),
+        label: vm.$t('dataForm.form.connectionType'),
         options: [
           {
-            label: vm.t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.t('dataForm.form.options.sourceAndTargetTips'),
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
             value: 'source_and_target'
           },
           {
-            label: vm.t('dataForm.form.options.source'),
-            tip: vm.t('dataForm.form.options.sourceTips'),
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
             value: 'source'
           },
           {
-            label: vm.t('dataForm.form.options.target'),
-            tip: vm.t('dataForm.form.options.targetTips'),
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
             value: 'target'
           }
         ],
@@ -40,12 +40,12 @@ export default function(vm) {
       {
         type: 'input',
         field: 'jiraUsername',
-        label: vm.t('dataForm.form.userName')
+        label: vm.$t('dataForm.form.userName')
       },
       {
         type: 'input',
         field: 'jiraPassword',
-        label: vm.t('dataForm.form.password'),
+        label: vm.$t('dataForm.form.password'),
         domType: 'password',
         showPassword: true
       }

@@ -18,13 +18,13 @@ export default function(vm) {
         field: 'database_host',
 
         disabled: false,
-        label: vm.t('dataForm.form.host'),
+        label: vm.$t('dataForm.form.host'),
         rules: [
           {
             required: true,
             validator(rule, value, callback) {
               if (!value || !value.trim()) {
-                callback(new Error(vm.t('dataForm.error.noneHost')))
+                callback(new Error(vm.$t('dataForm.error.noneHost')))
               } else {
                 callback()
               }
@@ -35,7 +35,7 @@ export default function(vm) {
       {
         type: 'radio',
         field: 'thin_type',
-        label: vm.t('dataForm.form.connectionMode'),
+        label: vm.$t('dataForm.form.connectionMode'),
         options: [
           { label: 'SID', value: 'SID' },
           { label: 'SERVICE NAME', value: 'SERVICE_NAME' }
@@ -45,18 +45,18 @@ export default function(vm) {
       {
         type: 'input',
         field: 'database_port',
-        label: vm.t('dataForm.form.port'),
+        label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
           {
             required: true,
             validator(rule, value, callback) {
               if (!value) {
-                callback(new Error(vm.t('dataForm.error.nonePort')))
+                callback(new Error(vm.$t('dataForm.error.nonePort')))
               } else if (!/^\d+$/.test(value)) {
-                callback(new Error(vm.t('dataForm.error.portNumber')))
+                callback(new Error(vm.$t('dataForm.error.portNumber')))
               } else if (value < 1 || value > 65535) {
-                callback(new Error(vm.t('dataForm.error.portRange')))
+                callback(new Error(vm.$t('dataForm.error.portRange')))
               } else {
                 callback()
               }
@@ -67,7 +67,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'database_name',
-        label: vm.t('dataForm.form.databaseName'),
+        label: vm.$t('dataForm.form.databaseName'),
         required: true,
         dependOn: [
           {
@@ -78,7 +78,7 @@ export default function(vm) {
               }
             ],
             triggerConfig: {
-              label: vm.t('dataForm.form.serviceName')
+              label: vm.$t('dataForm.form.serviceName')
             }
           }
         ]
@@ -86,26 +86,26 @@ export default function(vm) {
       {
         type: 'input',
         field: 'database_username',
-        label: vm.t('dataForm.form.userName')
+        label: vm.$t('dataForm.form.userName')
       },
       {
         type: 'input',
         field: 'plain_password',
-        label: vm.t('dataForm.form.password'),
+        label: vm.$t('dataForm.form.password'),
         domType: 'password',
         showPassword: true
       },
       {
         type: 'input',
         field: 'database_owner',
-        label: vm.t('dataForm.form.databaseOwner'),
+        label: vm.$t('dataForm.form.databaseOwner'),
         required: true
       },
       {
         type: 'select',
         field: 'database_datetype_without_timezone',
-        label: vm.t('dataForm.form.timeZone'),
-        //tips: vm.t('dataForm.form.timeZoneTips'),
+        label: vm.$t('dataForm.form.timeZone'),
+        //tips: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
         show: true
       },

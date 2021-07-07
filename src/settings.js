@@ -2,6 +2,6 @@ module.exports = {
   DFS_TCM_PLATFORM: 'dfs',
   DFS_IGNORE_PERMISSION: true,
   DFS_TM_API_PRE_URL: '/tm',
-  DFS_TCM_API_PRE_URL: process.env.VUE_APP_API_PATH,
-  DFS_CREATE_DATAFLOW_BY_FORM: 1
+  DFS_CREATE_DATAFLOW_BY_FORM: 1,
+  ALLOW_CONNECTION_TYPE: ['mysql', 'oracle', 'mongodb']
 }

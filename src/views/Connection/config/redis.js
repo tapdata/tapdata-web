@@ -11,11 +11,11 @@ export default function(vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.t('dataForm.form.connectionType'),
+        label: vm.$t('dataForm.form.connectionType'),
         options: [
           {
-            label: vm.t('dataForm.form.options.target'),
-            tip: vm.t('dataForm.form.options.targetTips'),
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
             value: 'target'
           }
         ],
@@ -25,13 +25,13 @@ export default function(vm) {
         type: 'input',
         field: 'database_host',
 
-        label: vm.t('dataForm.form.host'),
+        label: vm.$t('dataForm.form.host'),
         rules: [
           {
             required: true,
             validator(rule, value, callback) {
               if (!value || !value.trim()) {
-                callback(new Error(vm.t('dataForm.error.noneHost')))
+                callback(new Error(vm.$t('dataForm.error.noneHost')))
               } else {
                 callback()
               }
@@ -42,18 +42,18 @@ export default function(vm) {
       {
         type: 'input',
         field: 'database_port',
-        label: vm.t('dataForm.form.port'),
+        label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
           {
             required: true,
             validator(rule, value, callback) {
               if (!value) {
-                callback(new Error(vm.t('dataForm.error.nonePort')))
+                callback(new Error(vm.$t('dataForm.error.nonePort')))
               } else if (!/^\d+$/.test(value)) {
-                callback(new Error(vm.t('dataForm.error.portNumber')))
+                callback(new Error(vm.$t('dataForm.error.portNumber')))
               } else if (value < 1 || value > 65535) {
-                callback(new Error(vm.t('dataForm.error.portRange')))
+                callback(new Error(vm.$t('dataForm.error.portRange')))
               } else {
                 callback()
               }
@@ -64,20 +64,20 @@ export default function(vm) {
       // {
       // 	type: 'input',
       // 	field: 'database_host',
-      // 	label: vm.t('dataForm.form.host'),
+      // 	label: vm.$t('dataForm.form.host'),
       // 	rules: [
       // 		{
       // 			required: true,
       // 			validator: (rule, value, callback) => {
       // 				let port = vm.model['database_port'];
       // 				if (!value || !value.trim()) {
-      // 					callback(new Error(vm.t('dataForm.error.noneHost')));
+      // 					callback(new Error(vm.$t('dataForm.error.noneHost')));
       // 				} else if (!port) {
-      // 					callback(new Error(vm.t('dataForm.error.nonePort')));
+      // 					callback(new Error(vm.$t('dataForm.error.nonePort')));
       // 				} else if (!/^(0|\+?[1-9][0-9]*)$/.test(port)) {
-      // 					callback(new Error(vm.t('dataForm.error.portNumber')));
+      // 					callback(new Error(vm.$t('dataForm.error.portNumber')));
       // 				} else if (port < 1 || port > 65535) {
-      // 					callback(new Error(vm.t('dataForm.error.portRange')));
+      // 					callback(new Error(vm.$t('dataForm.error.portRange')));
       // 				} else {
       // 					callback();
       // 				}
@@ -89,7 +89,7 @@ export default function(vm) {
       // 			props: {
       // 				value: vm.model['database_port'],
       // 				config: {
-      // 					placeholder: vm.t('dataForm.form.port')
+      // 					placeholder: vm.$t('dataForm.form.port')
       // 				}
       // 			},
       // 			on: {
@@ -103,18 +103,18 @@ export default function(vm) {
       {
         type: 'input',
         field: 'database_name',
-        label: vm.t('dataForm.form.databaseName'),
+        label: vm.$t('dataForm.form.databaseName'),
         required: true
       },
       {
         type: 'input',
         field: 'database_username',
-        label: vm.t('dataForm.form.userName')
+        label: vm.$t('dataForm.form.userName')
       },
       {
         type: 'input',
         field: 'plain_password',
-        label: vm.t('dataForm.form.password'),
+        label: vm.$t('dataForm.form.password'),
         domType: 'password'
       }
     ]

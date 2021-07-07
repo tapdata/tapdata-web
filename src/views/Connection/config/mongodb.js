@@ -26,21 +26,21 @@ export default function(vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.t('dataForm.form.connectionType'),
+        label: vm.$t('dataForm.form.connectionType'),
         options: [
           {
-            label: vm.t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.t('dataForm.form.options.sourceAndTargetTips'),
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
             value: 'source_and_target'
           },
           {
-            label: vm.t('dataForm.form.options.source'),
-            tip: vm.t('dataForm.form.options.sourceTips'),
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
             value: 'source'
           },
           {
-            label: vm.t('dataForm.form.options.target'),
-            tip: vm.t('dataForm.form.options.targetTips'),
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
             value: 'target'
           }
         ],
@@ -49,17 +49,17 @@ export default function(vm) {
       {
         type: 'radio',
         field: 'isUrl',
-        label: vm.t('dataForm.form.options.connectionMode'),
+        label: vm.$t('dataForm.form.options.connectionMode'),
         options: [
           {
-            label: vm.t('dataForm.form.options.URIMode'),
-            tip: vm.t('dataForm.form.options.URIModeTips'),
+            label: vm.$t('dataForm.form.options.URIMode'),
+            tip: vm.$t('dataForm.form.options.URIModeTips'),
             value: true,
             disabled: false
           },
           {
-            label: vm.t('dataForm.form.options.standardMode'),
-            tip: vm.t('dataForm.form.options.standardModeTips'),
+            label: vm.$t('dataForm.form.options.standardMode'),
+            tip: vm.$t('dataForm.form.options.standardModeTips'),
             value: false,
             disabled: false
           }
@@ -100,7 +100,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'database_uri',
-        label: vm.t('dataForm.form.databaseUri'),
+        label: vm.$t('dataForm.form.databaseUri'),
         domType: 'textarea',
         required: true,
         show: false,
@@ -126,14 +126,14 @@ export default function(vm) {
         type: 'input',
         field: 'database_host',
 
-        label: vm.t('dataForm.form.host'),
-        placeholder: vm.t('dataForm.form.databaseHostPlaceholder'),
+        label: vm.$t('dataForm.form.host'),
+        placeholder: vm.$t('dataForm.form.databaseHostPlaceholder'),
         rules: [
           {
             required: true,
             validator: (rule, value, callback) => {
               if (!value || !value.trim()) {
-                callback(new Error(vm.t('dataForm.error.noneHost')))
+                callback(new Error(vm.$t('dataForm.error.noneHost')))
               } else {
                 callback()
               }
@@ -158,7 +158,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'database_name',
-        label: vm.t('dataForm.form.databaseName'),
+        label: vm.$t('dataForm.form.databaseName'),
         required: true,
         show: true,
         dependOn: [
@@ -178,7 +178,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'database_username',
-        label: vm.t('dataForm.form.userName'),
+        label: vm.$t('dataForm.form.userName'),
         show: true,
         dependOn: [
           {
@@ -197,7 +197,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'plain_password',
-        label: vm.t('dataForm.form.password'),
+        label: vm.$t('dataForm.form.password'),
         domType: 'password',
         show: true,
         dependOn: [
@@ -218,7 +218,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'additionalString',
-        label: vm.t('dataForm.form.additionalString'),
+        label: vm.$t('dataForm.form.additionalString'),
         show: true,
         dependOn: [
           {
@@ -237,16 +237,16 @@ export default function(vm) {
       {
         type: 'radio',
         field: 'ssl',
-        label: vm.t('dataForm.form.ssl'),
+        label: vm.$t('dataForm.form.ssl'),
         options: [
           {
-            label: vm.t('dataForm.form.options.sslTSL'),
-            tip: vm.t('dataForm.form.options.sslTSLTip'),
+            label: vm.$t('dataForm.form.options.sslTSL'),
+            tip: vm.$t('dataForm.form.options.sslTSLTip'),
             value: true
           },
           {
-            label: vm.t('dataForm.form.options.sslTop'),
-            tip: vm.t('dataForm.form.options.sslTopTips'),
+            label: vm.$t('dataForm.form.options.sslTop'),
+            tip: vm.$t('dataForm.form.options.sslTopTips'),
             value: false
           }
         ],
@@ -266,7 +266,7 @@ export default function(vm) {
       {
         type: 'file',
         field: 'sslKeyFile',
-        label: vm.t('dataForm.form.sslKey'),
+        label: vm.$t('dataForm.form.sslKey'),
         show: false,
         dependOn: [
           {
@@ -291,7 +291,7 @@ export default function(vm) {
                 if (v) {
                   callback()
                 }
-                callback(new Error(vm.t('dataForm.error.noneSslKey')))
+                callback(new Error(vm.$t('dataForm.error.noneSslKey')))
               } else {
                 callback()
               }
@@ -307,7 +307,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'sslPass',
-        label: vm.t('dataForm.form.sslPass'),
+        label: vm.$t('dataForm.form.sslPass'),
         show: false,
         dependOn: [
           {
@@ -326,7 +326,7 @@ export default function(vm) {
       {
         type: 'switch',
         field: 'sslValidate',
-        label: vm.t('dataForm.form.sslValidate'),
+        label: vm.$t('dataForm.form.sslValidate'),
         show: false,
         dependOn: [
           {
@@ -352,7 +352,7 @@ export default function(vm) {
       {
         type: 'file',
         field: 'sslCAFile',
-        label: vm.t('dataForm.form.sslCA'),
+        label: vm.$t('dataForm.form.sslCA'),
         show: false,
         dependOn: [
           {
@@ -377,7 +377,7 @@ export default function(vm) {
             validator: (rule, v, callback) => {
               let ssl = vm.model.sslValidate
               if (ssl && !v) {
-                callback(new Error(vm.t('dataForm.error.noneSslCA')))
+                callback(new Error(vm.$t('dataForm.error.noneSslCA')))
               } else {
                 callback()
               }
@@ -393,14 +393,14 @@ export default function(vm) {
       {
         type: 'switch',
         field: 'schemaAutoUpdate',
-        label: vm.t('dataForm.form.ReloadSchema')
+        label: vm.$t('dataForm.form.ReloadSchema')
       },
       {
         type: 'input',
         field: 'table_filter',
         domType: 'textarea',
-        label: vm.t('dataForm.form.tableFilter'),
-        //tips: vm.t('dataForm.form.tableFilterTips'),
+        label: vm.$t('dataForm.form.tableFilter'),
+        //tips: vm.$t('dataForm.form.tableFilterTips'),
         maxlength: 500,
         showWordLimit: true
       },

@@ -21,6 +21,7 @@
     "vue": "^2.6.11",
     "vue-clipboard2": "^0.3.1",
     "vue-cookies": "^1.7.4",
+    "vue-i18n": "^8.24.5",
     "vue-router": "^3.2.0"
   },
   "devDependencies": {
@@ -57,8 +58,5 @@
     "*.{js,vue,jsx}": [
       "vue-cli-service lint"
     ]
-  },
-  "workspaces": [
-    "packages/*"
-  ]
+  }
 }

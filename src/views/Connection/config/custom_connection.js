@@ -13,16 +13,16 @@ export default function(vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.t('dataForm.form.connectionType'),
+        label: vm.$t('dataForm.form.connectionType'),
         options: [
           {
-            label: vm.t('dataForm.form.options.source'),
-            tip: vm.t('dataForm.form.options.sourceTips'),
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
             value: 'source'
           },
           {
-            label: vm.t('dataForm.form.options.target'),
-            tip: vm.t('dataForm.form.options.targetTips'),
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
             value: 'target'
           }
         ],
@@ -31,7 +31,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'collection_name',
-        label: vm.t('dataForm.form.restApi.collection_name'),
+        label: vm.$t('dataForm.form.restApi.collection_name'),
         required: true,
         show: false,
         dependOn: [
@@ -51,7 +51,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'unique_keys',
-        label: vm.t('dataForm.form.custom_connection.unique_keys'),
+        label: vm.$t('dataForm.form.custom_connection.unique_keys'),
         required: true,
         show: false,
         dependOn: [
@@ -71,18 +71,18 @@ export default function(vm) {
       {
         type: 'select',
         field: 'custom_type',
-        label: vm.t('dataForm.form.custom_connection.sync_type'),
+        label: vm.$t('dataForm.form.custom_connection.sync_type'),
         options: [
           {
-            label: vm.t('dataForm.form.custom_connection.history_data'),
+            label: vm.$t('dataForm.form.custom_connection.history_data'),
             value: 'initial_sync'
           },
           {
-            label: vm.t('dataForm.form.custom_connection.increamental_data'),
+            label: vm.$t('dataForm.form.custom_connection.increamental_data'),
             value: 'cdc'
           },
           {
-            label: vm.t('dataForm.form.custom_connection.history_increamental_data'),
+            label: vm.$t('dataForm.form.custom_connection.history_increamental_data'),
             value: 'initial_sync+cdc'
           }
         ],

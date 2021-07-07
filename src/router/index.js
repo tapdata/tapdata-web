@@ -1,5 +1,4 @@
 import Layout from '../views/Layout.vue'
-// import Dashboard from '../views/Dashboard/DFS.vue'
 import Iframe from '../views/Iframe.vue'
 import Error from '../views/Error.vue'
 import AgentDownload from '@/views/AgentDownload/AgentPage.vue'
@@ -116,7 +115,7 @@ const routes = [
           {
             path: 'create',
             name: 'DataflowCreate',
-            component: Iframe,
+            component: () => import('../views/Task/Create.vue'),
             meta: {
               title: '创建任务',
               link: './tm/#/createTask/create'

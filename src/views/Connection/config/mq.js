@@ -16,7 +16,7 @@ export default function(vm) {
       {
         type: 'select',
         field: 'mqType',
-        label: vm.t('dataForm.form.mq.mqType'),
+        label: vm.$t('dataForm.form.mq.mqType'),
         options: [
           {
             label: 'ActiveMQ',
@@ -36,21 +36,21 @@ export default function(vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.t('dataForm.form.connectionType'),
+        label: vm.$t('dataForm.form.connectionType'),
         options: [
           {
-            label: vm.t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.t('dataForm.form.options.sourceAndTargetTips'),
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
             value: 'source_and_target'
           },
           {
-            label: vm.t('dataForm.form.options.source'),
-            tip: vm.t('dataForm.form.options.sourceTips'),
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
             value: 'source'
           },
           {
-            label: vm.t('dataForm.form.options.target'),
-            tip: vm.t('dataForm.form.options.targetTips'),
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
             value: 'target'
           }
         ],
@@ -59,7 +59,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'mqQueueSet',
-        label: vm.t('dataForm.form.mq.mqQueueSet'),
+        label: vm.$t('dataForm.form.mq.mqQueueSet'),
         required: true,
         dependOn: [
           {
@@ -83,7 +83,7 @@ export default function(vm) {
         type: 'input',
         field: 'mqTopicSet',
         show: true,
-        label: vm.t('dataForm.form.mq.mqTopicSet'),
+        label: vm.$t('dataForm.form.mq.mqTopicSet'),
         dependOn: [
           {
             triggerOptions: [
@@ -156,13 +156,13 @@ export default function(vm) {
       {
         type: 'input',
         field: 'database_host',
-        label: vm.t('dataForm.form.mq.database_host'),
+        label: vm.$t('dataForm.form.mq.database_host'),
         rules: [
           {
             required: true,
             validator(rule, value, callback) {
               if (!value || !value.trim()) {
-                callback(new Error(vm.t('dataForm.error.noneHost')))
+                callback(new Error(vm.$t('dataForm.error.noneHost')))
               } else {
                 callback()
               }
@@ -187,18 +187,18 @@ export default function(vm) {
       {
         type: 'input',
         field: 'database_port',
-        label: vm.t('dataForm.form.mq.database_port'),
+        label: vm.$t('dataForm.form.mq.database_port'),
         required: true,
         rules: [
           {
             required: true,
             validator(rule, value, callback) {
               if (!value) {
-                callback(new Error(vm.t('dataForm.error.nonePort')))
+                callback(new Error(vm.$t('dataForm.error.nonePort')))
               } else if (!/^\d+$/.test(value)) {
-                callback(new Error(vm.t('dataForm.error.portNumber')))
+                callback(new Error(vm.$t('dataForm.error.portNumber')))
               } else if (value < 1 || value > 65535) {
-                callback(new Error(vm.t('dataForm.error.portRange')))
+                callback(new Error(vm.$t('dataForm.error.portRange')))
               } else {
                 callback()
               }
@@ -223,21 +223,21 @@ export default function(vm) {
       {
         type: 'input',
         field: 'mqUserName',
-        label: vm.t('dataForm.form.userName'),
+        label: vm.$t('dataForm.form.userName'),
         domType: 'password',
         showPassword: true
       },
       {
         type: 'input',
         field: 'mqPassword',
-        label: vm.t('dataForm.form.password'),
+        label: vm.$t('dataForm.form.password'),
         domType: 'password',
         showPassword: true
       },
       {
         type: 'input',
         field: 'routeKeyField',
-        label: vm.t('dataForm.form.mq.routeKeyField'),
+        label: vm.$t('dataForm.form.mq.routeKeyField'),
         required: true,
         show: false,
         dependOn: [
@@ -257,7 +257,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'virtualHost',
-        label: vm.t('dataForm.form.mq.virtualHost'),
+        label: vm.$t('dataForm.form.mq.virtualHost'),
         show: false,
         dependOn: [
           {

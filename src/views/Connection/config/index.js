@@ -21,14 +21,6 @@ import jira from './jira'
 import dameng from './dameng'
 import hive from './hive'
 import tcp_udp from './tcp_udp'
-import drs_mysql from './drs_mysql'
-import drs_mariadb from './drs_maria'
-import drs_oracle from './drs_oracle'
-import drs_mysqlpxc from './drs_mysqlpxc'
-import drs_postgres from './drs_postgres'
-import drs_db2 from './drs_db2'
-import drs_mongodb from './drs_mongodb'
-import drs_sqlserver from './drs_sqlserver'
 import dfs_mysql from './dfs_mysql'
 import dfs_mariadb from './dfs_maria'
 import dfs_oracle from './dfs_oracle'
@@ -56,14 +48,6 @@ export default {
   mysqlpxc,
   jira,
   hive,
-  drs_mysql,
-  drs_mariadb,
-  drs_oracle,
-  drs_mysqlpxc,
-  drs_postgres,
-  drs_db2,
-  drs_mongodb,
-  drs_sqlserver,
   dfs_mysql,
   dfs_mariadb,
   dfs_oracle,

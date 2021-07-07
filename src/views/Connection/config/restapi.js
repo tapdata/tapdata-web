@@ -12,11 +12,11 @@ export default function(vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.t('dataForm.form.connectionType'),
+        label: vm.$t('dataForm.form.connectionType'),
         options: [
           {
-            label: vm.t('dataForm.form.options.source'),
-            tip: vm.t('dataForm.form.options.sourceTips'),
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
             value: 'source'
           }
         ],
@@ -25,7 +25,7 @@ export default function(vm) {
       {
         type: 'select',
         field: 'auth_type',
-        label: vm.t('dataForm.form.restApi.auth_type'),
+        label: vm.$t('dataForm.form.restApi.auth_type'),
         options: [
           {
             label: 'None',
@@ -40,7 +40,7 @@ export default function(vm) {
       {
         type: 'input',
         field: 'request_interval',
-        label: vm.t('dataForm.form.restApi.request_interval_tip'),
+        label: vm.$t('dataForm.form.restApi.request_interval_tip'),
         required: true,
         rules: [
           {
@@ -60,40 +60,40 @@ export default function(vm) {
       {
         type: 'input',
         field: 'collection_name',
-        label: vm.t('dataForm.form.restApi.collection_name'),
+        label: vm.$t('dataForm.form.restApi.collection_name'),
         required: true
       },
       {
         type: 'input',
         field: 'unique_keys',
-        label: vm.t('dataForm.form.restApi.unique_keys'),
+        label: vm.$t('dataForm.form.restApi.unique_keys'),
         required: true
       },
       {
         type: 'slot',
         slot: 'req_pre_process',
-        label: vm.t('dataForm.form.restApi.req_pre_process')
+        label: vm.$t('dataForm.form.restApi.req_pre_process')
       },
       {
         type: 'slot',
         slot: 'resp_pre_process',
-        label: vm.t('dataForm.form.restApi.resp_pre_process')
+        label: vm.$t('dataForm.form.restApi.resp_pre_process')
       },
       {
         type: 'select',
         field: 'data_sync_mode',
-        label: vm.t('dataForm.form.restApi.data_sync_mode'),
+        label: vm.$t('dataForm.form.restApi.data_sync_mode'),
         options: [
           {
-            label: vm.t('dataForm.form.restApi.url_info_INCREMENTAL_SYNC'),
+            label: vm.$t('dataForm.form.restApi.url_info_INCREMENTAL_SYNC'),
             value: 'INCREMENTAL_SYNC'
           },
           {
-            label: vm.t('dataForm.form.restApi.url_info_INITIAL_SYNC'),
+            label: vm.$t('dataForm.form.restApi.url_info_INITIAL_SYNC'),
             value: 'INITIAL_SYNC'
           },
           {
-            label: vm.t('dataForm.form.restApi.url_info_INITIAL_INCREMENTAL_SYNC'),
+            label: vm.$t('dataForm.form.restApi.url_info_INITIAL_INCREMENTAL_SYNC'),
             value: 'INITIAL_INCREMENTAL_SYNC'
           }
         ],
