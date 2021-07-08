@@ -7,3 +7,6 @@ export const uuid = function() {
     return v.toString(16)
   })
 }
+export const getConnectionTypeImg = function(type) {
+  return require(`./assets/images/connection-type/${type}.png`)
+}
