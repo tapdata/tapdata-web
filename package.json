@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "submodule": "node ./init_submodule.js",
     "serve": "vue-cli-service serve --open",
     "test": "vue-cli-service serve --mode testing --open",
     "build": "vue-cli-service build",
