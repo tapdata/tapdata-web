@@ -50,7 +50,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "post-merge": "git submodule update"
     }
   },
   "lint-staged": {
