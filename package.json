@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "submodule": "node ./init_submodule.js",
     "start": "nodemon mock/mock.js & vue-cli-service serve --open",
     "start:dev": "cross-env SERVE_ENV=dev vue-cli-service serve --open",
     "start:test": "cross-env SERVE_ENV=test vue-cli-service serve --open",
