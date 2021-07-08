@@ -798,6 +798,7 @@ const tc = {
       },
       data_node: {
         hiveText: 'hive節點',
+        kuduText: 'KUDU節點',
         hbaseText: 'HBase節點',
         hbase_check: 'HBase僅支持全量任務',
         kafkaText: 'kafka節點',

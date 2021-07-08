@@ -41,6 +41,7 @@ import dfs_redis from './dfs_redis'
 import dfs_elasticsearch from './dfs_elasticsearch'
 import mq from './mq'
 import hbase from './hbase'
+import kudu from './kudu'
 
 export default {
   mysql,
@@ -85,5 +86,6 @@ export default {
   mq,
   dameng,
   tcp_udp,
-  hbase
+  hbase,
+  kudu
 }

@@ -665,7 +665,9 @@ export default {
         'custom_connection',
         'gridfs',
         // 'hive',
-        'tcp_udp'
+        'tcp_udp',
+        'hbase',
+        'kudu'
       ],
       model: '',
       config: {

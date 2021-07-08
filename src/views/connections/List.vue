@@ -302,7 +302,8 @@ export default {
         'gridfs',
         'tcp_udp',
         'mq',
-        'hbase'
+        'hbase',
+        'kudu'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -479,7 +480,7 @@ export default {
       })
     },
     getImgByType(type) {
-      if (!type || type === 'jira') {
+      if (!type || type === 'jira' || type ==='kudu') {
         type = 'default'
       }
       return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)

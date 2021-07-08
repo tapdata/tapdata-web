@@ -53,7 +53,8 @@ export default {
         'dameng',
         // 'hive',
         'tcp_udp',
-        'hbase'
+        'hbase',
+        'kudu'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
