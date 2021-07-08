@@ -749,9 +749,7 @@ export default {
         ? Number(settingData.transformerConcurrency)
         : 8
       settingData.processorConcurrency = settingData.processorConcurrency ? Number(settingData.processorConcurrency) : 1
-      settingData.userSetLagTime = settingData.userSetLagTime
-        ? Number(settingData.userSetLagTime)
-        : 0
+      settingData.userSetLagTime = settingData.userSetLagTime ? Number(settingData.userSetLagTime) : 0
       let distanceForSink = editorData.distanceForSink || {}
 
       let cells = graphData.cells ? graphData.cells : []
@@ -1024,12 +1022,9 @@ export default {
             .get({ filter: JSON.stringify(filter) })
             .then(res => {
               if (res.data?.length && this.$route.query && id) {
-                _this.$refs.errorHandler.checkError(
-                  { id, status: this.status },() => {
-
-                    doStart()
-                  }
-                )
+                _this.$refs.errorHandler.checkError({ id, status: this.status }, () => {
+                  doStart()
+                })
               } else {
                 doStart()
               }

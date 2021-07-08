@@ -99,11 +99,7 @@
               <div class="url-tip" slot="topicTip">
                 {{ $t('dataForm.form.mq.topicSetTip') }}
               </div>
-              <div
-                class="url-tip"
-                slot="brokerUrlTip"
-                v-if="model.mqType === '0'"
-              >
+              <div class="url-tip" slot="brokerUrlTip" v-if="model.mqType === '0'">
                 {{ $t('dataForm.form.mq.brokerUrlTip') }}
               </div>
               <!-- rest api -->
@@ -633,7 +629,7 @@ export default {
         callback(new Error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText')))
       } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.renameData.rename)) {
         callback(new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'))
-      }else {
+      } else {
         callback()
       }
     }
@@ -687,8 +683,8 @@ export default {
       editBtnLoading: false,
       connectionTypeOption: '',
       isUrlOption: '',
-      renameData:{
-        rename: '',
+      renameData: {
+        rename: ''
       },
       kafka: {
         id: '',

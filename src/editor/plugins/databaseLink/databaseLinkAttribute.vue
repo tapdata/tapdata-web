@@ -86,14 +86,10 @@
               @change="handleChangeTransfer"
             >
               <span class="box" slot-scope="{ option }">
-                <span v-if="model.selectSourceArr.includes(option.label)">{{
-                  model.table_prefix
-                }}</span>
+                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
                 <!-- :class="[{ active: option.label !== option.key }, 'text']" -->
                 <span :title="option.label">{{ option.label }}</span>
-                <span v-if="model.selectSourceArr.includes(option.label)">{{
-                  model.table_suffix
-                }}</span>
+                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span>
                 <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span> -->

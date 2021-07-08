@@ -15,10 +15,7 @@
         ref="form"
         action="javascript:void(0);"
       >
-        <el-form-item
-          :label="$t('editor.cell.link.form.label.label')"
-          v-if="!isTargetTypeTcpFalg"
-        >
+        <el-form-item :label="$t('editor.cell.link.form.label.label')" v-if="!isTargetTypeTcpFalg">
           <el-input
             v-model="model.label"
             :placeholder="$t('editor.cell.link.form.label.placeholder')"
@@ -180,31 +177,18 @@
         <el-transfer
           v-model="model.tcp.includeField"
           :data="fieldsData"
-          :titles="[
-            $t('editor.cell.link.pcb.fieldsSelected'),
-            $t('editor.cell.link.pcb.selectedField')
-          ]"
+          :titles="[$t('editor.cell.link.pcb.fieldsSelected'), $t('editor.cell.link.pcb.selectedField')]"
           filterable=""
           target-order="push"
           @change="handleFieldChange"
           @right-check-change="handleChooseField"
         >
-          <el-button
-            class="transfer-footer"
-            slot="right-footer"
-            size="mini"
-            type="primary"
-            @click="handleUp"
-            >{{ $t('editor.cell.link.pcb.moveUp') }}</el-button
-          >
-          <el-button
-            class="transfer-footer"
-            slot="right-footer"
-            size="mini"
-            type="primary"
-            @click="handleDown"
-            >{{ $t('editor.cell.link.pcb.moveDown') }}</el-button
-          >
+          <el-button class="transfer-footer" slot="right-footer" size="mini" type="primary" @click="handleUp">{{
+            $t('editor.cell.link.pcb.moveUp')
+          }}</el-button>
+          <el-button class="transfer-footer" slot="right-footer" size="mini" type="primary" @click="handleDown">{{
+            $t('editor.cell.link.pcb.moveDown')
+          }}</el-button>
         </el-transfer>
       </div>
     </div>
@@ -423,8 +407,7 @@ export default {
           return
         } else {
           this.isTargetTypeTcpFalg = true
-          this.model.tcp.includeField =
-            targetData.tcp && targetData.tcp.includeField
+          this.model.tcp.includeField = targetData.tcp && targetData.tcp.includeField
         }
       }
       if (cell.getSourceCell()) {
@@ -641,9 +624,7 @@ export default {
           return
         } // 上移-改变的数组（项和下标同时改变）
 
-        let changeItem = JSON.parse(
-          JSON.stringify(_this.model.tcp.includeField[index - 1])
-        )
+        let changeItem = JSON.parse(JSON.stringify(_this.model.tcp.includeField[index - 1]))
         _this.model.tcp.includeField.splice(index - 1, 1)
         _this.model.tcp.includeField.splice(index, 0, changeItem)
       } else {
@@ -667,9 +648,7 @@ export default {
           return
         }
 
-        let changeItem = JSON.parse(
-          JSON.stringify(_this.model.tcp.includeField[index])
-        )
+        let changeItem = JSON.parse(JSON.stringify(_this.model.tcp.includeField[index]))
         _this.model.tcp.includeField.splice(index, 1)
         _this.model.tcp.includeField.splice(index + 1, 0, changeItem)
       } else {

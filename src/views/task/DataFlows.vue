@@ -1186,12 +1186,9 @@ export default {
           .get({ filter: JSON.stringify(filter) })
           .then(res => {
             if (res.data?.length) {
-              _this.$refs.errorHandler.checkError(
-                { id, status: 'error' },
-                () => {
-                  _this.changeStatus(ids, { status: 'scheduled' })
-                }
-              )
+              _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
+                _this.changeStatus(ids, { status: 'scheduled' })
+              })
             } else {
               _this.changeStatus(ids, { status: 'scheduled' })
             }

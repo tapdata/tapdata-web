@@ -30,19 +30,7 @@
         <EchartHeader :data="stageType ? nodeDetailsObj : taskDetailsObj"></EchartHeader>
         <div
           class="info fl"
-          v-if="
-            [
-              'table',
-              'collection',
-              'json',
-              'excel',
-              'csv',
-              'xml',
-              'database',
-              'hive',
-              'mq'
-            ].includes(stageType)
-          "
+          v-if="['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database', 'hive', 'mq'].includes(stageType)"
           v-loading="apiLoading"
         >
           <div class="info-list">
@@ -198,29 +186,15 @@
           <div class="info-list" v-if="stage.mqType">
             <span class="info-label">{{ $t('dataForm.form.mq.mqType') }}:</span>
             <span class="info-text">{{
-              stage.mqType === '0'
-                ? 'ActiveMQ'
-                : stage.mqType === '1'
-                ? 'RabbitMQ'
-                : 'RocketMQ'
+              stage.mqType === '0' ? 'ActiveMQ' : stage.mqType === '1' ? 'RabbitMQ' : 'RocketMQ'
             }}</span>
           </div>
-          <div
-            class="info-list"
-            v-if="stage.mqTopicSet && stage.mqTopicSet.length"
-          >
-            <span class="info-label"
-              >{{ $t('dataForm.form.mq.mqTopicSet') }}:</span
-            >
+          <div class="info-list" v-if="stage.mqTopicSet && stage.mqTopicSet.length">
+            <span class="info-label">{{ $t('dataForm.form.mq.mqTopicSet') }}:</span>
             <span class="info-text">{{ stage.mqTopicSet }}</span>
           </div>
-          <div
-            class="info-list"
-            v-if="stage.mqQueueSet && stage.mqQueueSet.length"
-          >
-            <span class="info-label"
-              >{{ $t('dataForm.form.mq.mqQueueSet') }}:</span
-            >
+          <div class="info-list" v-if="stage.mqQueueSet && stage.mqQueueSet.length">
+            <span class="info-label">{{ $t('dataForm.form.mq.mqQueueSet') }}:</span>
             <span class="info-text">{{ stage.mqQueueSet }}</span>
           </div>
           <div class="info-list" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
@@ -922,10 +896,7 @@ export default {
           })
           this.stageType = currentStageData.type
           if (this.stageType === 'database') {
-            this.getStageDataApi(
-              currentStageData.connectionId,
-              currentStageData.name
-            )
+            this.getStageDataApi(currentStageData.connectionId, currentStageData.name)
           } else if (
             [
               'table',

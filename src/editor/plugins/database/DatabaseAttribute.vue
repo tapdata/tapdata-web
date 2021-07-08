@@ -60,31 +60,21 @@
             <span class="text">{{ databaseInfo.database_name }}</span>
           </li>
           <li v-if="databaseInfo.mqUserName">
-            <span class="label">
-              {{ $t('editor.cell.data_node.database.account') }}:
-            </span>
+            <span class="label"> {{ $t('editor.cell.data_node.database.account') }}: </span>
             <span class="text">{{ databaseInfo.mqUserName }}</span>
           </li>
           <li v-if="databaseInfo.mqType">
             <span class="label"> {{ $t('dataForm.form.mq.mqType') }}: </span>
             <span class="text">{{
-              databaseInfo.mqType === '0'
-                ? 'ActiveMQ'
-                : databaseInfo.mqType === '1'
-                ? 'RabbitMQ'
-                : 'RocketMQ'
+              databaseInfo.mqType === '0' ? 'ActiveMQ' : databaseInfo.mqType === '1' ? 'RabbitMQ' : 'RocketMQ'
             }}</span>
           </li>
-          <li v-if="databaseInfo.mqTopicSet&&databaseInfo.mqTopicSet.length">
-            <span class="label">
-              {{ $t('dataForm.form.mq.mqTopicSet') }}:
-            </span>
+          <li v-if="databaseInfo.mqTopicSet && databaseInfo.mqTopicSet.length">
+            <span class="label"> {{ $t('dataForm.form.mq.mqTopicSet') }}: </span>
             <span class="text">{{ databaseInfo.mqTopicSet }}</span>
           </li>
-          <li v-if="databaseInfo.mqQueueSet&&databaseInfo.mqQueueSet.length">
-            <span class="label">
-              {{ $t('dataForm.form.mq.mqQueueSet') }}:
-            </span>
+          <li v-if="databaseInfo.mqQueueSet && databaseInfo.mqQueueSet.length">
+            <span class="label"> {{ $t('dataForm.form.mq.mqQueueSet') }}: </span>
             <span class="text">{{ databaseInfo.mqQueueSet }}</span>
           </li>
           <li v-if="databaseInfo.database_username">

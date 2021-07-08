@@ -128,7 +128,7 @@ export default {
       }
       gData.stageId = cell.id
       gData.dataFlowId = arguments[3].editor.scope.dataFlowId
-     // if (this.$refs.jsEditor) this.$refs.jsEditor.init(this.model.script) 这行代码会把键盘事件变为double 一次性删除两个字符 去掉测试发现没有什么问题 待观察
+      // if (this.$refs.jsEditor) this.$refs.jsEditor.init(this.model.script) 这行代码会把键盘事件变为double 一次性删除两个字符 去掉测试发现没有什么问题 待观察
       // editorMonitor = vueAdapter.editor;
     },
     getData() {

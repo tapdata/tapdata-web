@@ -512,11 +512,7 @@ export default {
               item.connectionUrl = item.brokerURL
             }
             // 不存在uri 和 port === 0
-            if (
-              !item.database_uri &&
-              !item.database_port &&
-              item.mqType !== '0'
-            ) {
+            if (!item.database_uri && !item.database_port && item.mqType !== '0') {
               item.connectionUrl = ''
             }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
@@ -780,7 +776,8 @@ export default {
           )
         )
         .then(() => {
-          if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') { //企业版跟DFS都有弹出框
+          if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
+            //企业版跟DFS都有弹出框
             this.dialogTestVisible = true
           }
           this.$refs.test.start()

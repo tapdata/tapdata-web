@@ -1331,8 +1331,7 @@ const en = {
           Movedown: 'move down',
           Notmoveuptip: 'there is no room to move up',
           Notmovedowntip: 'there is no room to move down',
-          Onlyonepiece:
-            'only one piece of data can be selected to move up and down'
+          Onlyonepiece: 'only one piece of data can be selected to move up and down'
         },
         form: {
           label: {
@@ -1912,8 +1911,7 @@ const en = {
         queueSetTip: 'Multiple queues are separated by commas',
         topicSetTip: 'Multiple topics separated by commas',
         brokerUrl: 'MQ connection string',
-        brokerUrlTip:
-          'example tcp://127.0.0.1 : 61616, support TCP, NiO, UDP, SSL, HTTP (s) '
+        brokerUrlTip: 'example tcp://127.0.0.1 : 61616, support TCP, NiO, UDP, SSL, HTTP (s) '
       },
       tcp: {
         agreementType: 'Protocol type ',

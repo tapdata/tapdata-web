@@ -212,11 +212,7 @@
           <!-- 是否启用服务端过滤共享日志 -->
           <el-switch
             v-model="formData.cdcShareFilterOnServer"
-            :active-text="
-              formData.cdcShareFilterOnServer
-                ? $t('dataFlow.yes')
-                : $t('dataFlow.no')
-            "
+            :active-text="formData.cdcShareFilterOnServer ? $t('dataFlow.yes') : $t('dataFlow.no')"
           ></el-switch>
         </el-form-item>
         <el-form-item
@@ -250,9 +246,7 @@
         <!-- 增量滞后判定事件 -->
         <el-switch
           v-model="formData.lagTimeFalg"
-          :active-text="
-            formData.lagTimeFalg ? $t('dataFlow.yes') : $t('dataFlow.no')
-          "
+          :active-text="formData.lagTimeFalg ? $t('dataFlow.yes') : $t('dataFlow.no')"
         ></el-switch>
         <el-input
           class="input-box"
@@ -263,11 +257,7 @@
         >
           <template slot="append">{{ $t('dataFlow.second') }}</template>
         </el-input>
-        <el-popover
-          popper-class="setting-popper"
-          placement="top-start"
-          trigger="hover"
-        >
+        <el-popover popper-class="setting-popper" placement="top-start" trigger="hover">
           <span>{{ $t('dataFlow.lagTimeTip') }}</span>
           <span class="icon iconfont icon-tishi1" slot="reference"></span>
         </el-popover>

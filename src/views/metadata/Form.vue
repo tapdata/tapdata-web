@@ -40,11 +40,7 @@
           </el-input>
         </el-form-item>
         <el-form-item :label="$t('metadata.details.fieldType')" prop="java_type" required>
-          <el-select
-            v-model="form.java_type"
-            :disabled="fieldNameDisabled"
-            size="mini"
-          >
+          <el-select v-model="form.java_type" :disabled="fieldNameDisabled" size="mini">
             <el-option v-for="item in dataType_list" :label="item.name" :value="item.type" :key="item.type"></el-option>
           </el-select>
         </el-form-item>
