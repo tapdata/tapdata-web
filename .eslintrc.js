@@ -10,9 +10,6 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-async-promise-executor': 'off',
-    'no-misleading-character-class': 'off',
-    'no-useless-catch': 'off',
 
     'prettier/prettier': [
       'error',
@@ -30,7 +27,7 @@ module.exports = {
         // 统一换行符为\n
         endOfLine: 'lf',
         // 为了便于阅读，每一行建议不要使用超过80个字符
-        printWidth: 80,
+        printWidth: 120,
         // 箭头函数参数只有一个时省略括号
         arrowParens: 'avoid'
       }

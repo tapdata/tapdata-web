@@ -1,9 +1,5 @@
 <template>
-  <el-dialog
-    :title="$t('dataFlow.skipError.title')"
-    :visible.sync="dialogVisible"
-    width="60%"
-  >
+  <el-dialog :title="$t('dataFlow.skipError.title')" :visible.sync="dialogVisible" width="60%">
     <div class="skip-tip">{{ $t('dataFlow.skipError.tip') }}</div>
     <div class="skip-tip">{{ $t('dataFlow.skipError.attention') }}</div>
     <div class="skip-name">
@@ -12,25 +8,15 @@
     </div>
     <ul class="error-list">
       <span class="check-all"
-        ><el-checkbox
-          :indeterminate="isIndeterminate"
-          v-model="checkAll"
-          @change="handleCheckAllChange"
-          >{{ $t('dataFlow.selectAll') }}</el-checkbox
-        ></span
+        ><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
+          $t('dataFlow.selectAll')
+        }}</el-checkbox></span
       >
-      <el-checkbox-group
-        v-model="checkedData"
-        @change="handleCheckedDataChange"
-        class="list-box"
-      >
+      <el-checkbox-group v-model="checkedData" @change="handleCheckedDataChange" class="list-box">
         <li v-for="(item, index) in errorEvents" :key="item.index">
           <el-checkbox :label="index">
             <div class="error-content">
-              <span class="error-msg"
-                ><span style="color: red">[ERROR]</span>
-                {{ item.message }}</span
-              >
+              <span class="error-msg"><span style="color: red">[ERROR]</span> {{ item.message }}</span>
             </div>
           </el-checkbox>
         </li>
@@ -41,12 +27,8 @@
       {{ $t('dataFlow.skipError.strip') }}
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false" size="mini">{{
-        $t('dataFlow.skipError.cancel')
-      }}</el-button>
-      <el-button type="primary" size="mini" @click="skipErrorData">{{
-        $t('dataFlow.skipError.startJob')
-      }}</el-button>
+      <el-button @click="dialogVisible = false" size="mini">{{ $t('dataFlow.skipError.cancel') }}</el-button>
+      <el-button type="primary" size="mini" @click="skipErrorData">{{ $t('dataFlow.skipError.startJob') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -71,12 +53,7 @@ export default {
       if (!task.status || task.status === 'error') {
         let res = await this.$api('DataFlows').get([task.id])
         let data = res ? res.data : {}
-        if (
-          data.status === 'error' &&
-          data.setting.stopOnError &&
-          data.errorEvents &&
-          data.errorEvents.length > 0
-        ) {
+        if (data.status === 'error' && data.setting.stopOnError && data.errorEvents && data.errorEvents.length > 0) {
           this.dialogVisible = true
           this.task = data
           errorEvents = data.errorEvents
@@ -102,8 +79,7 @@ export default {
     handleCheckedDataChange(value) {
       let checkedCount = value.length
       this.checkAll = checkedCount === this.errorEvents.length
-      this.isIndeterminate =
-        checkedCount > 0 && checkedCount < this.errorEvents.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.errorEvents.length
       this.checkedData = value
     },
     skipErrorData() {

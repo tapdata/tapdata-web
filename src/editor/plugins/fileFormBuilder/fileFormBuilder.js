@@ -65,53 +65,23 @@ export const fileFormConfig = {
         data = data || this.getFormData()
         let fileProperty = data.fileProperty || ''
         let name = this.attr('label/text')
-        if (!data.connectionId)
+        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`)
+        if (fileProperty.excel_header_start === '' && fileProperty.gridfs_header_type !== 'custom') {
           throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`
+            `${name}: ` + i18n.t('editor.fileFormBuilder.excel_header_start') + i18n.t('formBuilder.noneText')
           )
-        if (
-          fileProperty.excel_header_start === '' &&
-          fileProperty.gridfs_header_type !== 'custom'
-        ) {
+        } else if (fileProperty.excel_header_end === '' && fileProperty.gridfs_header_type !== 'custom') {
           throw new Error(
-            `${name}: ` +
-              i18n.t('editor.fileFormBuilder.excel_header_start') +
-              i18n.t('formBuilder.noneText')
+            `${name}: ` + i18n.t('editor.fileFormBuilder.excel_header_end') + i18n.t('formBuilder.noneText')
           )
-        } else if (
-          fileProperty.excel_header_end === '' &&
-          fileProperty.gridfs_header_type !== 'custom'
-        ) {
-          throw new Error(
-            `${name}: ` +
-              i18n.t('editor.fileFormBuilder.excel_header_end') +
-              i18n.t('formBuilder.noneText')
-          )
-        } else if (
-          fileProperty.gridfs_header_config === '' &&
-          fileProperty.gridfs_header_type === 'custom'
-        ) {
-          throw new Error(
-            `${name}: ` + i18n.t('editor.fileFormBuilder.header_type_required')
-          )
+        } else if (fileProperty.gridfs_header_config === '' && fileProperty.gridfs_header_type === 'custom') {
+          throw new Error(`${name}: ` + i18n.t('editor.fileFormBuilder.header_type_required'))
         } else if (fileProperty.sheet_start === '') {
-          throw new Error(
-            `${name}: ` +
-              i18n.t('editor.fileFormBuilder.sheet_start') +
-              i18n.t('formBuilder.noneText')
-          )
+          throw new Error(`${name}: ` + i18n.t('editor.fileFormBuilder.sheet_start') + i18n.t('formBuilder.noneText'))
         } else if (fileProperty.sheet_end === '') {
-          throw new Error(
-            `${name}: ` +
-              i18n.t('editor.fileFormBuilder.sheet_end') +
-              i18n.t('formBuilder.noneText')
-          )
+          throw new Error(`${name}: ` + i18n.t('editor.fileFormBuilder.sheet_end') + i18n.t('formBuilder.noneText'))
         } else if (data.tableName === '') {
-          throw new Error(
-            `${name}: ` +
-              i18n.t('editor.fileFormBuilder.tableName') +
-              i18n.t('formBuilder.noneText')
-          )
+          throw new Error(`${name}: ` + i18n.t('editor.fileFormBuilder.tableName') + i18n.t('formBuilder.noneText'))
         }
         return true
       }
@@ -196,10 +166,7 @@ export const fileFormConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

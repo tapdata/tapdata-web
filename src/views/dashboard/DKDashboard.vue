@@ -8,27 +8,15 @@
       </div>
       <div class="panel-content">
         <section class="count" v-loading="countLoading">
-          <Annulus
-            :number="countInfo.total_records || 0"
-            color="#3ae698"
-            :text="$t('dkDashboard.annulusTitle1')"
-          />
+          <Annulus :number="countInfo.total_records || 0" color="#3ae698" :text="$t('dkDashboard.annulusTitle1')" />
           <Annulus
             :number="countInfo.total_data_size"
             :isCapacity="true"
             color="#686be8"
             :text="$t('dkDashboard.annulusTitle2')"
           />
-          <Annulus
-            :number="countInfo.total_types || 0"
-            color="#2db3ff"
-            :text="$t('dkDashboard.annulusTitle3')"
-          />
-          <Annulus
-            :number="countInfo.published_types || 0"
-            color="#fcbc5e"
-            :text="$t('dkDashboard.annulusTitle4')"
-          />
+          <Annulus :number="countInfo.total_types || 0" color="#2db3ff" :text="$t('dkDashboard.annulusTitle3')" />
+          <Annulus :number="countInfo.published_types || 0" color="#fcbc5e" :text="$t('dkDashboard.annulusTitle4')" />
         </section>
         <el-divider />
         <PublishChart />

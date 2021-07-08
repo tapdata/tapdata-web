@@ -1,11 +1,7 @@
 <template>
   <el-drawer
     class="connection-drawer"
-    :class="
-      $window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'
-        ? 'no-top-drawer'
-        : 'top-drawer'
-    "
+    :class="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs' ? 'no-top-drawer' : 'top-drawer'"
     ref="drawer"
     :visible.sync="visible"
     :title="$t('dataForm.title')"
@@ -15,11 +11,7 @@
   >
     <div class="connection-drawer-wrap" v-loading="previewLoading">
       <div class="bar">
-        <button
-          type="button"
-          class="el-button back-btn-icon-box el-button--default"
-          @click="handleClose"
-        >
+        <button type="button" class="el-button back-btn-icon-box el-button--default" @click="handleClose">
           <span>
             <i class="iconfont icon-you2 back-btn-icon"></i>
           </span>
@@ -54,11 +46,7 @@
               </span>
               <span class="schema-load"
                 >{{ $t('connection.preview.reloadName') }} :
-                {{
-                  data.last_updated
-                    ? $moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
-                    : ''
-                }}</span
+                {{ data.last_updated ? $moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss') : '' }}</span
               >
             </div>
             <div class="panelBtn">
@@ -68,17 +56,10 @@
                     class="btn"
                     size="mini"
                     v-readonlybtn="'datasource_edition'"
-                    :disabled="
-                      $disabledByPermission(
-                        'datasource_edition_all_data',
-                        userId
-                      )
-                    "
+                    :disabled="$disabledByPermission('datasource_edition_all_data', userId)"
                     @click="edit(id, type)"
                   >
-                    <i class="iconfont icon-edit">
-                      {{ $t('connection.preview.edit') }}</i
-                    >
+                    <i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
                   </el-button>
                 </li>
                 <li class="item">
@@ -88,15 +69,10 @@
                     v-readonlybtn="'datasource_edition'"
                     @click="reload()"
                     :disabled="
-                      $disabledByPermission(
-                        'datasource_edition_all_data',
-                        userId
-                      ) || !['ready'].includes(this.status)
+                      $disabledByPermission('datasource_edition_all_data', userId) || !['ready'].includes(this.status)
                     "
                   >
-                    <i class="iconfont icon-kujitongbucopy">{{
-                      $t('connection.preview.reloadName')
-                    }}</i>
+                    <i class="iconfont icon-kujitongbucopy">{{ $t('connection.preview.reloadName') }}</i>
                   </el-button>
                 </li>
                 <li class="item">
@@ -104,12 +80,7 @@
                     class="btn"
                     size="mini"
                     v-readonlybtn="'datasource_edition'"
-                    :disabled="
-                      $disabledByPermission(
-                        'datasource_edition_all_data',
-                        userId
-                      )
-                    "
+                    :disabled="$disabledByPermission('datasource_edition_all_data', userId)"
                     @click="beforeTest(id)"
                   >
                     <i class="iconfont icon-lianjie1">
@@ -133,11 +104,9 @@
       <ul class="info-list">
         <li v-for="item in form" :key="item.label" v-show="item.show">
           <span class="label">{{ item.label }}</span>
-          <span
-            class="value align-center"
-            :class="{ 'align-top': item.label && item.label.length > 15 }"
-            >{{ item.value }}</span
-          >
+          <span class="value align-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
+            item.value
+          }}</span>
         </li>
         <!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
 					<span class="label">{{ $t('dataForm.form.port') }}</span>
@@ -154,9 +123,7 @@
           "
         >
           <li>
-            <span class="label">{{
-              $t('dataForm.form.file.fileUrl') + (index + 1)
-            }}</span>
+            <span class="label">{{ $t('dataForm.form.file.fileUrl') + (index + 1) }}</span>
             <span class="value align-center"> {{ item.path }}</span>
           </li>
           <li>
@@ -270,19 +237,12 @@ export default {
         let data = result.data
         this.data = result.data
         this.name = data.name
-        this.type = data.search_databaseType
-          ? data.search_databaseType
-          : data.database_type
+        this.type = data.search_databaseType ? data.search_databaseType : data.database_type
         this.status = data.status
         this.userId = data.user_id
         this.loadFieldsStatus = data.loadFieldsStatus
-        if (
-          ['ready'].includes(this.status) &&
-          data.loadFieldsStatus !== 'finished' &&
-          data.tableCount
-        ) {
-          this.progress =
-            Math.round((data.loadCount / data.tableCount) * 10000) / 100
+        if (['ready'].includes(this.status) && data.loadFieldsStatus !== 'finished' && data.tableCount) {
+          this.progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
           this.showProgress = true
           this.reloadApi()
         }
@@ -443,12 +403,7 @@ export default {
               } else {
                 if (data.file_source_protocol === 'localFile') {
                   if (
-                    ![
-                      'file_source_protocol',
-                      'fileDefaultCharset',
-                      'connection_type',
-                      'vc_mode'
-                    ].includes(el.field)
+                    !['file_source_protocol', 'fileDefaultCharset', 'connection_type', 'vc_mode'].includes(el.field)
                   ) {
                     el.show = false
                   }
@@ -544,7 +499,15 @@ export default {
           'hbase'
         ].includes(type)
       ) {
-        this.$router.push('connections/' + id + '/edit?databaseType=' + type)
+        this.$router.push({
+          name: 'connectionsEdit',
+          params: {
+            id: id
+          },
+          query: {
+            databaseType: type
+          }
+        })
       } else {
         top.location.href = '/#/connection/' + id
         localStorage.setItem('connectionDatabaseType', type)
@@ -614,8 +577,7 @@ export default {
                 this.progress = 0 //加载完成
               }, 800)
             } else {
-              let progress =
-                Math.round((data.loadCount / data.tableCount) * 10000) / 100
+              let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
               this.progress = progress ? progress : 0
               this.timer = setInterval(() => {
                 this.reloadApi()

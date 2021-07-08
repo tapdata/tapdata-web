@@ -10,20 +10,13 @@
     >
       <!-- 面包屑 -->
       <div slot="header">
-        <a
-          class="page-header-title link"
-          @click="$router.push({ name: 'dataQuality' })"
-        >
+        <a class="page-header-title link" @click="$router.push({ name: 'dataQuality' })">
           {{ $t('dataQuality.title') }}
         </a>
         /
         <span class="page-header-title">
           {{ $route.query.collection_name }}
-          <span
-            v-if="
-              $route.query.asset_desc &&
-              $route.query.asset_desc !== $route.query.collection_name
-            "
+          <span v-if="$route.query.asset_desc && $route.query.asset_desc !== $route.query.collection_name"
             >({{ $route.query.asset_desc }})</span
           >
         </span>
@@ -50,9 +43,7 @@
             </el-select>
           </li>
           <li>
-            <el-button size="mini" type="text" @click="reset('reset')">{{
-              $t('button.reset')
-            }}</el-button>
+            <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
           </li>
         </ul>
       </div>
@@ -65,12 +56,7 @@
             <span>{{ $t('dataQuality.btnFilter') }}</span>
           </el-button>
 
-          <el-button
-            v-readonlybtn="'new_model_creation'"
-            class="action-btn"
-            size="mini"
-            @click="batchOpen"
-          >
+          <el-button v-readonlybtn="'new_model_creation'" class="action-btn" size="mini" @click="batchOpen">
             <i class="iconfont icon-daoru back-btn-icon" />
             <span>{{ $t('dataQuality.btnBatch') }}</span>
           </el-button>
@@ -78,11 +64,7 @@
       </div>
 
       <!-- 列表项 -->
-      <el-table-column
-        v-for="(item, index) in headers.filter(v => v.visible)"
-        :key="index"
-        min-width="120"
-      >
+      <el-table-column v-for="(item, index) in headers.filter(v => v.visible)" :key="index" min-width="120">
         <template slot="header">
           <span :title="item.text">{{ item.text }}</span>
         </template>
@@ -107,12 +89,7 @@
                 >
                   {{ $t('dataQuality.save') }}
                 </el-button>
-                <el-button
-                  @click="editCancel"
-                  class="btn-text"
-                  type="text"
-                  size="small"
-                >
+                <el-button @click="editCancel" class="btn-text" type="text" size="small">
                   {{ $t('dataQuality.cancel') }}
                 </el-button>
               </div>
@@ -121,19 +98,12 @@
               v-else
               :title="scope.row.wrongFields[item.text]"
               @dblclick="editItem(scope.row, item.text)"
-              style="
-                color: #f15e5e;
-                border: 1px solid #f15e5e;
-                padding-left: 5px;
-                min-height: 32px;
-              "
+              style="color: #f15e5e; border: 1px solid #f15e5e; padding-left: 5px; min-height: 32px"
             >
               {{
                 item.format === 'date-time'
                   ? scope.row[item.text]
-                    ? $moment(scope.row[item.text]).format(
-                        'YYYY-MM-DD HH:mm:ss'
-                      )
+                    ? $moment(scope.row[item.text]).format('YYYY-MM-DD HH:mm:ss')
                     : ''
                   : scope.row[item.text] || scope.row[item.text] === 0
                   ? scope.row[item.text]
@@ -147,8 +117,7 @@
                 ? scope.row[item.text]
                   ? $moment(scope.row[item.text]).format('YYYY-MM-DD HH:mm:ss')
                   : ''
-                : scope.row[item.text] ||
-                  (scope.row[item.text] === 0 ? scope.row[item.text] : '')
+                : scope.row[item.text] || (scope.row[item.text] === 0 ? scope.row[item.text] : '')
             }}
           </div>
         </template>
@@ -160,21 +129,11 @@
         fixed="right"
       >
         <template slot-scope="scope">
-          <el-button
-            class="btn-text"
-            type="text"
-            size="small"
-            @click="detailOpen(scope.row)"
-          >
+          <el-button class="btn-text" type="text" size="small" @click="detailOpen(scope.row)">
             {{ $t('dataQuality.viewDetail') }}
           </el-button>
 
-          <el-button
-            class="btn-text"
-            type="text"
-            size="small"
-            @click="remove(scope.row)"
-          >
+          <el-button class="btn-text" type="text" size="small" @click="remove(scope.row)">
             {{ $t('dataQuality.del') }}
           </el-button>
         </template>
@@ -188,23 +147,14 @@
       :close-on-click-modal="false"
       :visible.sync="batchVisible"
     >
-      <FormBuilder
-        ref="batchForm"
-        v-model="batchForm"
-        :config="batchFormConfig"
-      />
+      <FormBuilder ref="batchForm" v-model="batchForm" :config="batchFormConfig" />
 
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="batchCancel">
           {{ $t('message.cancel') }}
         </el-button>
 
-        <el-button
-          size="mini"
-          type="primary"
-          :loading="batchLoading"
-          @click="batchOk"
-        >
+        <el-button size="mini" type="primary" :loading="batchLoading" @click="batchOk">
           {{ $t('message.confirm') }}
         </el-button>
       </span>
@@ -226,15 +176,9 @@
       </div>
 
       <el-table :data="filterArr" height="350" class="filter-table">
-        <el-table-column
-          prop="date"
-          :label="$t('dataQuality.fieldName')"
-          width="330"
-        >
+        <el-table-column prop="date" :label="$t('dataQuality.fieldName')" width="330">
           <template slot-scope="scope">
-            <div
-              :style="{ color: errorObj[scope.row.text] ? 'red' : undefined }"
-            >
+            <div :style="{ color: errorObj[scope.row.text] ? 'red' : undefined }">
               {{ scope.row.text }}
             </div>
           </template>
@@ -243,11 +187,7 @@
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.visible"
-              :active-text="
-                scope.row.visible
-                  ? $t('dataQuality.show')
-                  : $t('dataQuality.hide')
-              "
+              :active-text="scope.row.visible ? $t('dataQuality.show') : $t('dataQuality.hide')"
             >
             </el-switch>
           </template>
@@ -255,12 +195,8 @@
       </el-table>
 
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="filterVisible = false">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button size="small" type="primary" @click="filterOk">{{
-          $t('message.save')
-        }}</el-button>
+        <el-button size="small" @click="filterVisible = false">{{ $t('message.cancel') }}</el-button>
+        <el-button size="small" type="primary" @click="filterOk">{{ $t('message.save') }}</el-button>
       </div>
     </el-dialog>
 
@@ -332,9 +268,7 @@ export default {
     // 是否全选字段
     all: {
       get() {
-        return (
-          this.filterArr.filter(v => v.visible).length === this.filterArr.length
-        )
+        return this.filterArr.filter(v => v.visible).length === this.filterArr.length
       },
       set(val) {
         this.filterArr = this.filterArr.map(v => ({
@@ -371,9 +305,7 @@ export default {
               label: v.displayName,
               value: v.displayName
             })),
-            rules: [
-              { required: true, message: this.$t('dataQuality.verifyRuleTip') }
-            ]
+            rules: [{ required: true, message: this.$t('dataQuality.verifyRuleTip') }]
           },
           {
             type: 'input',
@@ -510,8 +442,7 @@ export default {
         where
       }
 
-      if (!this.apiClient)
-        return new Promise(resolve => resolve({ total: 0, data: [] }))
+      if (!this.apiClient) return new Promise(resolve => resolve({ total: 0, data: [] }))
 
       return this.apiClient
         .find(filter)
@@ -521,20 +452,13 @@ export default {
             resdata.map(record => {
               // 根据实际数据补充表格头部字段
               for (let i in record) {
-                if (
-                  i !== '__tapd8' &&
-                  !this.headers.filter(v => v.text === i).length
-                ) {
+                if (i !== '__tapd8' && !this.headers.filter(v => v.text === i).length) {
                   this.headers.push({ text: i, visible: true, format: '' })
                 }
               }
 
               let obj = {}
-              if (
-                record.__tapd8 &&
-                record.__tapd8.hitRules &&
-                record.__tapd8.hitRules.length
-              ) {
+              if (record.__tapd8 && record.__tapd8.hitRules && record.__tapd8.hitRules.length) {
                 record.__tapd8.hitRules.forEach(v => {
                   obj[v.fieldName] = v.rules
                 })
@@ -627,10 +551,7 @@ export default {
         }
         this.batchLoading = true
         // 发起修改请求
-        let result = await this.apiClient.updateAll(
-          { where: JSON.stringify(where) },
-          params
-        )
+        let result = await this.apiClient.updateAll({ where: JSON.stringify(where) }, params)
         if (result.success) {
           // 修改没有违反规则的行的状态
           await this.apiClient.updateAll(
@@ -707,8 +628,7 @@ export default {
       if (saveItem[key] !== saveItem[key]) {
         this.$message.warning(
           this.$t('dataQuality.dataTypeError') +
-            this.fieldsDef[this.fieldsDef.findIndex(it => it.field_name == key)]
-              .java_type
+            this.fieldsDef[this.fieldsDef.findIndex(it => it.field_name == key)].java_type
         )
         return
       }
@@ -721,10 +641,7 @@ export default {
       let vschema = this.buildAjvSchema(key, eval('(' + hitRule.rules + ')'))
 
       if (this.ajv.validate(vschema, params)) {
-        saveItem.__tapd8.hitRules.splice(
-          saveItem.__tapd8.hitRules.indexOf(hitRule),
-          1
-        )
+        saveItem.__tapd8.hitRules.splice(saveItem.__tapd8.hitRules.indexOf(hitRule), 1)
         saveItem.wrongFields[key] = undefined
 
         if (saveItem.__tapd8.hitRules.length == 0) {
@@ -770,22 +687,12 @@ export default {
         })
       } else {
         let msg = result.msg
-        if (
-          result.response &&
-          result.response.data &&
-          result.response.data.error &&
-          result.response.data.error
-        ) {
+        if (result.response && result.response.data && result.response.data.error && result.response.data.error) {
           let thisErr = result.response.data.error
           if (thisErr.code) {
             msg = thisErr.code
           }
-          if (
-            thisErr.details &&
-            thisErr.details.length &&
-            thisErr.details[0] &&
-            thisErr.details[0].message
-          ) {
+          if (thisErr.details && thisErr.details.length && thisErr.details[0] && thisErr.details[0].message) {
             msg = thisErr.details[0].message
           }
         }
@@ -825,24 +732,17 @@ export default {
       this.showTable = true
       // 初始化缓存搜索参数
       this.$nextTick(() => {
-        this.searchParams = Object.assign(
-          this.searchParams,
-          this.$refs.table.getCache()
-        )
+        this.searchParams = Object.assign(this.searchParams, this.$refs.table.getCache())
       })
     },
     // 按类型给字段赋值
     setType(fieldName, value) {
-      let fieldDef =
-        this.fieldsDef[
-          this.fieldsDef.findIndex(it => it.field_name == fieldName)
-        ]
+      let fieldDef = this.fieldsDef[this.fieldsDef.findIndex(it => it.field_name == fieldName)]
       if (['Short', 'Integer', 'Long'].includes(fieldDef.java_type))
         return Number(value) ? parseInt(value) : Number(value)
       else if (['Float', 'BigDecimal', 'Double'].includes(fieldDef.java_type))
         return Number(value) ? parseFloat(value) : Number(value)
-      else if (fieldDef.java_type == 'Boolean')
-        return value.toLowerCase().startsWith('t')
+      else if (fieldDef.java_type == 'Boolean') return value.toLowerCase().startsWith('t')
       else if (fieldDef.java_type == 'String') return value + ''
       else return value
     },

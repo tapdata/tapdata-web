@@ -1,27 +1,15 @@
 <template>
   <div class="relatedTasks">
-    <el-popover
-      placement="top"
-      width="400"
-      popper-class="taskLink-popover"
-      trigger="click"
-    >
+    <el-popover placement="top" width="400" popper-class="taskLink-popover" trigger="click">
       <template v-if="taskList.length > 0">
-        <div
-          v-for="item in taskList"
-          :key="item.id"
-          class="text item"
-          @click="handleTask(item)"
-        >
+        <div v-for="item in taskList" :key="item.id" class="text item" @click="handleTask(item)">
           {{ item.name }}
         </div>
       </template>
 
       <div v-else class="noData">{{ $t('message.noRelatedTask') }}</div>
 
-      <el-button class="e-button" slot="reference">{{
-        $t('message.clickRelatedTasks')
-      }}</el-button>
+      <el-button class="e-button" slot="reference">{{ $t('message.clickRelatedTasks') }}</el-button>
     </el-popover>
   </div>
 </template>
@@ -73,10 +61,7 @@ export default {
      */
     handleTask(data) {
       if (this.taskData.id !== data.id) {
-        window.open(
-          window.location.href.split('=')[0] + '=' + data.id,
-          'monitor_' + data.id
-        )
+        window.open(window.location.href.split('=')[0] + '=' + data.id, 'monitor_' + data.id)
       }
     }
   }

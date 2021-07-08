@@ -4,11 +4,7 @@
       ref="table"
       row-key="id"
       class="data-flow-list"
-      :title="
-        mappingTemplate === 'custom'
-          ? $t('dataFlow.custom')
-          : $t('dataFlow.clusterClone')
-      "
+      :title="mappingTemplate === 'custom' ? $t('dataFlow.custom') : $t('dataFlow.clusterClone')"
       :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
       :remoteMethod="getData"
       @selection-change="
@@ -22,19 +18,9 @@
       <template slot="search">
         <ul class="search-bar">
           <li>
-            <ElSelect
-              v-model="searchParams.status"
-              size="small"
-              @input="table.fetch(1)"
-            >
+            <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
               <ElOption :label="$t('dataFlow.status.all')" value=""></ElOption>
-              <ElOption
-                v-for="(value, label) in statusOptions"
-                :key="value"
-                :label="label"
-                :value="value"
-              >
-              </ElOption>
+              <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"> </ElOption>
             </ElSelect>
           </li>
           <li v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'">
@@ -79,12 +65,7 @@
               :placeholder="$t('dataFlow.searchAgent')"
               @input="table.fetch(1)"
             >
-              <ElOption
-                v-for="opt in agentOptions"
-                :key="opt.value"
-                :label="opt.label"
-                :value="opt.value"
-              ></ElOption>
+              <ElOption v-for="opt in agentOptions" :key="opt.value" :label="opt.label" :value="opt.value"></ElOption>
             </ElSelect>
           </li>
           <li>
@@ -133,24 +114,18 @@
               v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
               >{{ $t('dataFlow.bulkExport') }}</el-dropdown-item
             >
-            <el-dropdown-item
-              command="run"
-              v-readonlybtn="'SYNC_job_operation'"
-              >{{ $t('dataFlow.bulkScheuled') }}</el-dropdown-item
-            >
-            <el-dropdown-item
-              command="stop"
-              v-readonlybtn="'SYNC_job_operation'"
-              >{{ $t('dataFlow.bulkStopping') }}</el-dropdown-item
-            >
+            <el-dropdown-item command="run" v-readonlybtn="'SYNC_job_operation'">{{
+              $t('dataFlow.bulkScheuled')
+            }}</el-dropdown-item>
+            <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'">{{
+              $t('dataFlow.bulkStopping')
+            }}</el-dropdown-item>
             <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'">{{
               $t('dataFlow.batchDelete')
             }}</el-dropdown-item>
-            <el-dropdown-item
-              command="initialize"
-              v-readonlybtn="'SYNC_job_operation'"
-              >{{ $t('dataFlow.batchRest') }}</el-dropdown-item
-            >
+            <el-dropdown-item command="initialize" v-readonlybtn="'SYNC_job_operation'">{{
+              $t('dataFlow.batchRest')
+            }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         <el-button
@@ -199,11 +174,7 @@
       <el-table-column
         type="selection"
         width="45"
-        :selectable="
-          row =>
-            !row.hasChildren &&
-            !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)
-        "
+        :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
       >
       </el-table-column>
       <el-table-column
@@ -216,30 +187,15 @@
           <div class="region-info">{{ scope.row.regionInfo }}</div>
         </template>
       </el-table-column>
-      <el-table-column
-        v-else
-        min-width="200"
-        :label="$t('dataFlow.taskName')"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column v-else min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span class="dataflow-name">
             <span
               :class="['name', { 'has-children': scope.row.hasChildren }]"
               @click="
                 scope.row.status === 'draft'
-                  ? handleDetail(
-                      scope.row.id,
-                      'edit',
-                      scope.row.mappingTemplate,
-                      scope.row.hasChildren
-                    )
-                  : handleDetail(
-                      scope.row.id,
-                      'detail',
-                      scope.row.mappingTemplate,
-                      scope.row.hasChildren
-                    )
+                  ? handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate, scope.row.hasChildren)
+                  : handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate, scope.row.hasChildren)
               "
               >{{ scope.row.name }}</span
             >
@@ -272,10 +228,7 @@
       >
         <template slot-scope="scope">
           <div style="display: flex; align-items: center">
-            <span>{{
-              scope.row.tcm &&
-              (scope.row.tcm.agentName || scope.row.tcm.agentId || '-')
-            }}</span>
+            <span>{{ scope.row.tcm && (scope.row.tcm.agentName || scope.row.tcm.agentId || '-') }}</span>
           </div>
         </template>
       </el-table-column>
@@ -291,11 +244,7 @@
         </div>
         <template slot-scope="scope">
           <span>
-            {{
-              scope.row.setting && scope.row.setting.sync_type
-                ? syncType[scope.row.setting.sync_type]
-                : ''
-            }}
+            {{ scope.row.setting && scope.row.setting.sync_type ? syncType[scope.row.setting.sync_type] : '' }}
           </span>
         </template>
       </el-table-column>
@@ -306,11 +255,7 @@
         width="180"
         sortable="custom"
       ></el-table-column>
-      <el-table-column
-        prop="status"
-        :label="$t('dataFlow.taskStatus')"
-        width="180"
-      >
+      <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
         <template slot-scope="scope">
           <div style="display: flex; align-items: center">
             <template v-if="statusMap[scope.row.status]">
@@ -319,38 +264,24 @@
                 style="width: 26px; vertical-align: middle"
                 :src="$window._TAPDATA_OPTIONS_.loadingImg"
               />
-              <i
-                v-else
-                :class="
-                  'dataflow-table__icon iconfont ' +
-                  statusMap[scope.row.status].icon
-                "
-              ></i>
+              <i v-else :class="'dataflow-table__icon iconfont ' + statusMap[scope.row.status].icon"></i>
             </template>
             <span>{{ scope.row.statusLabel }}</span>
             <span
               style="color: #999"
-              v-if="
-                !scope.row.hasChildren &&
-                scope.row.statusList &&
-                scope.row.statusList.length
-              "
+              v-if="!scope.row.hasChildren && scope.row.statusList && scope.row.statusList.length"
             >
               (
               <span v-for="(key, index) in scope.row.statusList" :key="key">
                 {{ $t('dataFlow.status.' + key) }}
-                <span v-if="index < scope.row.statusList.length - 1"
-                  >&nbsp;</span
-                >
+                <span v-if="index < scope.row.statusList.length - 1">&nbsp;</span>
               </span>
               )
             </span>
           </div>
           <div
             v-if="
-              $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs' &&
-              scope.row.status === 'running' &&
-              scope.row.tcm
+              $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs' && scope.row.status === 'running' && scope.row.tcm
             "
           >
             {{ scope.row.tcm.agentName }}
@@ -366,34 +297,19 @@
           {{ scope.row.user ? scope.row.user.username : '-' }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="startTime"
-        :label="$t('dataFlow.creationTime')"
-        width="170"
-        sortable="custom"
-      >
+      <el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="170" sortable="custom">
         <template slot-scope="scope">
-          {{
-            scope.row.startTime
-              ? $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss')
-              : ''
-          }}
+          {{ scope.row.startTime ? $moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('dataFlow.operate')"
-        width="280"
-        fixed="right"
-      >
+      <el-table-column :label="$t('dataFlow.operate')" width="280" fixed="right">
         <template slot-scope="scope">
           <div class="table-operations" v-if="!scope.row.hasChildren">
             <el-tooltip
               v-if="!['running', 'stopping'].includes(scope.row.status)"
               effect="dark"
               :content="$t('dataFlow.draftNotStart')"
-              :manual="
-                !(scope.row.status === 'draft' && scope.row.checked === false)
-              "
+              :manual="!(scope.row.status === 'draft' && scope.row.checked === false)"
               placement="top-start"
             >
               <span>
@@ -401,13 +317,9 @@
                   v-readonlybtn="'SYNC_job_operation'"
                   type="primary"
                   :disabled="
-                    $disabledByPermission(
-                      'SYNC_job_operation_all_data',
-                      scope.row.user_id
-                    ) ||
+                    $disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
                     !statusBtMap['run'][scope.row.status] ||
-                    (scope.row.status === 'draft' &&
-                      scope.row.checked === false)
+                    (scope.row.status === 'draft' && scope.row.checked === false)
                   "
                   @click="run([scope.row.id], scope.row)"
                 >
@@ -420,10 +332,8 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="
-                $disabledByPermission(
-                  'SYNC_job_operation_all_data',
-                  scope.row.user_id
-                ) || !statusBtMap['stop'][scope.row.status]
+                $disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
+                !statusBtMap['stop'][scope.row.status]
               "
               @click="stop([scope.row.id])"
               >{{ $t('dataFlow.stop') }}</ElLink
@@ -433,10 +343,8 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="
-                $disabledByPermission(
-                  'SYNC_job_operation_all_data',
-                  scope.row.user_id
-                ) || !statusBtMap['forceStop'][scope.row.status]
+                $disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
+                !statusBtMap['forceStop'][scope.row.status]
               "
               @click="forceStop([scope.row.id])"
             >
@@ -445,14 +353,7 @@
             <ElLink
               style="margin-left: 10px"
               type="primary"
-              @click="
-                handleDetail(
-                  scope.row.id,
-                  'detail',
-                  scope.row.mappingTemplate,
-                  scope.row.hasChildren
-                )
-              "
+              @click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
               {{ $t('dataFlow.runningMonitor') }}
             </ElLink>
@@ -461,19 +362,10 @@
               style="margin-left: 10px"
               type="primary"
               :disabled="
-                $disabledByPermission(
-                  'SYNC_job_edition_all_data',
-                  scope.row.user_id
-                ) || !statusBtMap['edit'][scope.row.status]
+                $disabledByPermission('SYNC_job_edition_all_data', scope.row.user_id) ||
+                !statusBtMap['edit'][scope.row.status]
               "
-              @click="
-                handleDetail(
-                  scope.row.id,
-                  'edit',
-                  scope.row.mappingTemplate,
-                  scope.row.hasChildren
-                )
-              "
+              @click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
               {{ $t('button.edit') }}
             </ElLink>
@@ -483,10 +375,7 @@
               style="margin-left: 10px"
               type="primary"
               :disabled="
-                $disabledByPermission(
-                  'SYNC_job_edition_all_data',
-                  scope.row.user_id
-                ) ||
+                $disabledByPermission('SYNC_job_edition_all_data', scope.row.user_id) ||
                 scope.row.setting.sync_type !== 'initial_sync' ||
                 scope.row.status === 'running'
               "
@@ -504,10 +393,7 @@
                 {{ $t('button.more') }}
                 <i class="el-icon-arrow-down"></i>
               </ElLink>
-              <el-dropdown-menu
-                class="dataflow-table-more-dropdown-menu"
-                slot="dropdown"
-              >
+              <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item
                   v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs'"
                   command="validate"
@@ -520,17 +406,13 @@
                   v-readonlybtn="'SYNC_job_export'"
                   >{{ $t('dataFlow.dataFlowExport') }}</el-dropdown-item
                 >
-                <el-dropdown-item
-                  command="copy"
-                  v-readonlybtn="'SYNC_job_creation'"
+                <el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
                   >{{ $t('dataFlow.copy') }}
                 </el-dropdown-item>
                 <el-dropdown-item
                   :disabled="
-                    $disabledByPermission(
-                      'SYNC_job_operation_all_data',
-                      scope.row.user_id
-                    ) || !statusBtMap['reset'][scope.row.status]
+                    $disabledByPermission('SYNC_job_operation_all_data', scope.row.user_id) ||
+                    !statusBtMap['reset'][scope.row.status]
                   "
                   command="initialize"
                   v-readonlybtn="'SYNC_job_operation'"
@@ -548,10 +430,8 @@
                   class="btn-delete"
                   command="del"
                   :disabled="
-                    $disabledByPermission(
-                      'SYNC_job_delete_all_data',
-                      scope.row.user_id
-                    ) || !statusBtMap['delete'][scope.row.status]
+                    $disabledByPermission('SYNC_job_delete_all_data', scope.row.user_id) ||
+                    !statusBtMap['delete'][scope.row.status]
                   "
                   v-readonlybtn="'SYNC_job_delete'"
                 >
@@ -577,14 +457,8 @@
         <el-form-item :label="$t('dialog.jobSchedule.sync')">
           <el-switch v-model="formSchedule.isSchedule"> </el-switch>
         </el-form-item>
-        <el-form-item
-          :label="$t('dialog.jobSchedule.expression')"
-          v-if="formSchedule.isSchedule"
-        >
-          <el-input
-            v-model="formSchedule.cronExpression"
-            :placeholder="$t('dialog.jobSchedule.expressionPlaceholder')"
-          >
+        <el-form-item :label="$t('dialog.jobSchedule.expression')" v-if="formSchedule.isSchedule">
+          <el-input v-model="formSchedule.cronExpression" :placeholder="$t('dialog.jobSchedule.expressionPlaceholder')">
           </el-input>
         </el-form-item>
       </el-form>
@@ -602,12 +476,8 @@
         <p>0 0 2 * * ? * // {{ $t('dialog.jobSchedule.runDay') }}</p>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="taskSettingsDialog = false">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="saveTaskSetting">{{
-          $t('app.save')
-        }}</el-button>
+        <el-button @click="taskSettingsDialog = false">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" @click="saveTaskSetting">{{ $t('app.save') }}</el-button>
       </span>
     </el-dialog>
     <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
@@ -664,10 +534,7 @@ export default {
           icon: 'icon-yunhangzhong'
         },
         paused: {
-          label: this.$t(
-            'dataFlow.status.' +
-              (window.getSettingByKey('DFS_TCM_PLATFORM') ? 'draft' : 'paused')
-          ),
+          label: this.$t('dataFlow.status.' + (window.getSettingByKey('DFS_TCM_PLATFORM') ? 'draft' : 'paused')),
           icon: 'icon-daiqidong'
         },
         error: {
@@ -700,8 +567,7 @@ export default {
       syncType: {
         initial_sync: this.$t('dataFlow.initial_sync'),
         cdc: this.$t('dataFlow.cdc'),
-        'initial_sync+cdc':
-          this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
+        'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
       },
       statusBtMap: {
         // scheduled, draft, running, stopping, error, paused, force stopping
@@ -727,10 +593,7 @@ export default {
         this.$has('SYNC_job_creation') ||
         this.$has('SYNC_job_operation') ||
         this.$has('SYNC_category_application'),
-      bulkOperation:
-        this.$has('SYNC_job_export') ||
-        this.$has('SYNC_job_operation') ||
-        this.$has('SYNC_job_delete'),
+      bulkOperation: this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
       timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
     }
   },
@@ -816,11 +679,7 @@ export default {
           delete dataflow.children
         }
         if (index >= 0) {
-          this.table.$set(
-            list,
-            index,
-            Object.assign(list[index], this.cookRecord(dataflow))
-          )
+          this.table.$set(list, index, Object.assign(list[index], this.cookRecord(dataflow)))
           let handleItem = this.cookRecord(dataflow)
           if (handleItem.children && !handleItem.children.length) {
             delete handleItem.children
@@ -873,15 +732,7 @@ export default {
     getData({ page, tags }) {
       let region = this.$route.query.region
       let { current, size } = page
-      let {
-        keyword,
-        status,
-        progress,
-        executionStatus,
-        timeData,
-        syncType,
-        agentId
-      } = this.searchParams
+      let { keyword, status, progress, executionStatus, timeData, syncType, agentId } = this.searchParams
 
       let where = {
         mappingTemplate: this.mappingTemplate
@@ -1152,7 +1003,7 @@ export default {
     },
     create() {
       let routeUrl = this.$router.resolve({
-        path: '/job',
+        name: 'job',
         query: { mapping: this.mappingTemplate }
       })
       window.open(routeUrl.href, '_blank')
@@ -1161,7 +1012,7 @@ export default {
     },
     async creatText() {
       this.$router.push({
-        path: '/createTask/create'
+        name: 'createTask'
       })
     },
     handleDetail(id, type, mappingTemplate, hasChildren) {
@@ -1174,23 +1025,11 @@ export default {
         this.$confirm(
           h('p', null, [
             h('span', null, this.$t('dataFlow.modifyEditText')),
-            h(
-              'span',
-              { style: 'color: #409EFF' },
-              this.$t('dataFlow.nodeLayoutProcess')
-            ),
+            h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
             h('span', null, '、'),
-            h(
-              'span',
-              { style: 'color: #409EFF' },
-              this.$t('dataFlow.nodeAttributes')
-            ),
+            h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
             h('span', null, '、'),
-            h(
-              'span',
-              { style: 'color: #409EFF' },
-              this.$t('dataFlow.matchingRelationship')
-            ),
+            h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
             h('span', null, '，'),
             h('span', null, this.$t('dataFlow.afterSubmission')),
             h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
@@ -1209,12 +1048,15 @@ export default {
           }
           if (window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
             this.$router.push({
-              path: '/createTask/' + id + '/edit'
+              name: 'editTask',
+              params: {
+                id: id
+              }
             })
             return
           }
           let routeUrl = this.$router.resolve({
-            path: '/job',
+            name: 'job',
             query: { id: id, mapping: mappingTemplate }
           })
           setTimeout(() => {
@@ -1229,14 +1071,12 @@ export default {
       } else {
         if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
           window.open(
-            `${
-              location.href.split('/tm/')[0]
-            }/#/monitor?id=${id}&isMoniting=true&mapping=${mappingTemplate}`,
+            `${location.href.split('/tm/')[0]}/#/monitor?id=${id}&isMoniting=true&mapping=${mappingTemplate}`,
             'monitor_' + id
           )
         } else {
           let routeUrl = this.$router.resolve({
-            path: '/job',
+            name: 'job',
             query: { id: id, isMoniting: true, mapping: mappingTemplate }
           })
           window.open(routeUrl.href, 'monitor_' + id)
@@ -1346,12 +1186,9 @@ export default {
           .get({ filter: JSON.stringify(filter) })
           .then(res => {
             if (res.data?.length) {
-              _this.$refs.errorHandler.checkError(
-                { id, status: 'error' },
-                () => {
-                  _this.changeStatus(ids, { status: 'scheduled' })
-                }
-              )
+              _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
+                _this.changeStatus(ids, { status: 'scheduled' })
+              })
             } else {
               _this.changeStatus(ids, { status: 'scheduled' })
             }
@@ -1370,17 +1207,10 @@ export default {
             message = this.$t('message.stopInitial_syncMessage')
             title = this.$t('dataFlow.importantReminder')
           }
-          if (
-            node.stages &&
-            node.stages.find(s => s.type === 'aggregation_processor')
-          ) {
+          if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
             const h = this.$createElement
             let arr = this.$t('message.stopAggregation_message').split('XXX')
-            message = h('p', [
-              arr[0] + '(',
-              h('span', { style: { color: '#409EFF' } }, node.name),
-              ')' + arr[1]
-            ])
+            message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
             title = this.$t('dataFlow.importantReminder')
           }
         }
@@ -1395,11 +1225,7 @@ export default {
       })
     },
     forceStop(ids, item = {}) {
-      let msgObj = this.getConfirmMessage(
-        'force_stop',
-        ids.length > 1,
-        item.name
-      )
+      let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
       }).then(resFlag => {
@@ -1433,11 +1259,7 @@ export default {
       })
     },
     initialize(ids, item = {}) {
-      let msgObj = this.getConfirmMessage(
-        'initialize',
-        ids.length > 1,
-        item.name
-      )
+      let msgObj = this.getConfirmMessage('initialize', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
       }).then(resFlag => {
@@ -1502,9 +1324,7 @@ export default {
       if (prop === 'lag') {
         prop = 'stats.replicationLag'
       }
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     responseHandler(data, msg) {
@@ -1526,9 +1346,7 @@ export default {
             .map(item => {
               return `<div style="line-height: 24px;"><span style="color: #409EFF">${
                 nameMapping[item.id]
-              }</span> : <span style="color: #F56C6C">${
-                msgMapping[item.code]
-              }</span></div>`
+              }</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`
             })
             .join('')
         })

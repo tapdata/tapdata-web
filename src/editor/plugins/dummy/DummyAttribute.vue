@@ -10,20 +10,9 @@
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div> -->
-      <el-form
-        class="e-form"
-        label-position="top"
-        :model="model"
-        ref="form"
-        :disabled="disabled"
-      >
+      <el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
         <!-- <span class="addTxt">+新建文件</span> -->
-        <el-form-item
-          :label="$t('editor.choose') + ' Dummy'"
-          prop="connectionId"
-          :rules="rules"
-          required
-        >
+        <el-form-item :label="$t('editor.choose') + ' Dummy'" prop="connectionId" :rules="rules" required>
           <el-select
             :filterable="!databaseLoading"
             :loading="databaseLoading"
@@ -33,19 +22,13 @@
           >
             <el-option
               v-for="(item, idx) in databases"
-              :label="`${item.name} (${
-                $t('connection.status.' + item.status) || item.status
-              })`"
+              :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
               :value="item.id"
               v-bind:key="idx"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item
-          :label="$t('editor.cell.data_node.collection.form.collection.label')"
-          prop="tableName"
-          required
-        >
+        <el-form-item :label="$t('editor.cell.data_node.collection.form.collection.label')" prop="tableName" required>
           <el-select
             v-model="model.tableName"
             :filterable="!schemaLoading"
@@ -53,9 +36,7 @@
             allow-create
             default-first-option
             clearable
-            :placeholder="
-              $t('editor.cell.data_node.collection.form.collection.placeholder')
-            "
+            :placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
             size="mini"
           >
             <el-option
@@ -92,26 +73,14 @@
 				<span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
 				<span v-else>{{ $t('dataFlow.updateModel') }}</span>
 			</el-button> -->
-      <entity
-        :schema="convertSchemaToTreeData(mergedSchema)"
-        :editable="false"
-      ></entity>
+      <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
     <relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
-    <el-dialog
-      :title="$t('message.prompt')"
-      :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
-      width="30%"
-    >
+    <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
       <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="confirmDialog">{{
-          $t('message.confirm')
-        }}</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -219,9 +188,7 @@ export default {
       handler() {
         if (this.schemas.length > 0) {
           if (this.model.tableName) {
-            let schema = this.schemas.filter(
-              s => s.table_name === this.model.tableName
-            )
+            let schema = this.schemas.filter(s => s.table_name === this.model.tableName)
             schema =
               schema && schema.length > 0
                 ? schema[0]
@@ -269,14 +236,9 @@ export default {
         .get([connectionId])
         .then(result => {
           if (result.data) {
-            let schemas =
-              (result.data.schema && result.data.schema.tables) || []
+            let schemas = (result.data.schema && result.data.schema.tables) || []
             schemas = schemas.sort((t1, t2) =>
-              t1.table_name > t2.table_name
-                ? 1
-                : t1.table_name === t2.table_name
-                ? 0
-                : -1
+              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
             self.schemas = schemas
           }
@@ -301,9 +263,7 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       if (result.connectionId) {
-        let database = this.databases.filter(
-          db => db.id === result.connectionId
-        )
+        let database = this.databases.filter(db => db.id === result.connectionId)
         if (database && database.length > 0) {
           result.name = database[0].name
         }
@@ -356,10 +316,7 @@ export default {
         this.reloadModelLoading = false
         if (templeSchema && templeSchema.length) {
           templeSchema.forEach(item => {
-            if (
-              item.connId === this.model.connectionId &&
-              item.tableName === this.model.tableName
-            ) {
+            if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
               schema = item.schema
             }
           })

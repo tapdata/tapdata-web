@@ -78,5 +78,8 @@
       "vue-cli-service lint",
       "git add"
     ]
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

@@ -40,9 +40,7 @@ export const fileNodeConfig = {
        */
       allowTarget(targetCell) {
         // log("FileNode.allowTarget", targetCell, ['app.GridFSNode'].includes(targetCell.get('type')));
-        return ['app.GridFSNode', 'app.FileNode'].includes(
-          targetCell.get('type')
-        )
+        return ['app.GridFSNode', 'app.FileNode'].includes(targetCell.get('type'))
       },
 
       /**
@@ -52,18 +50,13 @@ export const fileNodeConfig = {
        */
       allowSource(sourceCell) {
         // log("FileNode.allowSource", sourceCell, ['app.GridFSNode'].includes(sourceCell.get('type')));
-        return ['app.GridFSNode', 'app.FileNode'].includes(
-          sourceCell.get('type')
-        )
+        return ['app.GridFSNode', 'app.FileNode'].includes(sourceCell.get('type'))
       },
 
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data.connectionId)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`
-          )
+        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`)
         return true
       }
     }
@@ -147,10 +140,7 @@ export const fileNodeConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

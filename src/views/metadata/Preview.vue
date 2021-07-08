@@ -1,12 +1,6 @@
 <template>
   <section class="preview-list-wrap">
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="metadata-list"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
+    <TablePage ref="table" row-key="id" class="metadata-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <div slot="operation">
         <el-button class="btn btn-create" size="mini" @click="handleQuery">
           <span>{{ $t('metadata.details.query') }}</span>
@@ -92,12 +86,8 @@ export default {
       let header = {}
       if (this.validaData.fields) {
         for (let i = 0; i < this.validaData.fields.length; i++) {
-          if (
-            this.validaData.fields[i].alias_name &&
-            this.validaData.fields[i].alias_name !== ''
-          ) {
-            header[this.validaData.fields[i].field_name] =
-              this.validaData.fields[i].alias_name
+          if (this.validaData.fields[i].alias_name && this.validaData.fields[i].alias_name !== '') {
+            header[this.validaData.fields[i].field_name] = this.validaData.fields[i].alias_name
           }
         }
       }
@@ -106,20 +96,16 @@ export default {
         limit: size,
         skip: (current - 1) * size
       }
-      return Promise.all([this.$api('PreviewData').post(where)]).then(
-        ([res]) => {
-          this.tableHeader = res.data.head
-          return {
-            total: res.data.total,
-            data: res.data.items
-          }
+      return Promise.all([this.$api('PreviewData').post(where)]).then(([res]) => {
+        this.tableHeader = res.data.head
+        return {
+          total: res.data.total,
+          data: res.data.items
         }
-      )
+      })
     },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     }
   }

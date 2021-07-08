@@ -7,13 +7,7 @@
           <span class="label">{{ item.label }}</span>
           <span class="text"> {{ item.value }} </span>
           <i
-            :class="[
-              'iconfont',
-              item.icon,
-              rotateFlag && item.key == 'accesscode'
-                ? 'rotateActive'
-                : 'backActive'
-            ]"
+            :class="['iconfont', item.icon, rotateFlag && item.key == 'accesscode' ? 'rotateActive' : 'backActive']"
             v-if="item.key !== 'email'"
             @click="handleChange(item.key)"
           ></i>
@@ -69,10 +63,7 @@
           >
             <i
               slot="suffix"
-              :class="[
-                'iconfont',
-                comfirFlag ? 'icon-openeye' : 'icon-closeeye'
-              ]"
+              :class="['iconfont', comfirFlag ? 'icon-openeye' : 'icon-closeeye']"
               autocomplete="auto"
               class="eye"
               @click="changeEye()"
@@ -93,25 +84,14 @@
     >
       <el-form :model="form" class="form">
         <el-form-item>
-          <el-input
-            v-model="form.newEmail"
-            :placeholder="$t('account.enterMailbox')"
-            autocomplete="off"
-            min
-          ></el-input>
+          <el-input v-model="form.newEmail" :placeholder="$t('account.enterMailbox')" autocomplete="off" min></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input
-            v-model="form.password"
-            :placeholder="$t('account.enterNewMailbox')"
-            autocomplete="off"
-          ></el-input>
+          <el-input v-model="form.password" :placeholder="$t('account.enterNewMailbox')" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="send">{{
-          $t('account.sendEmail')
-        }}</el-button>
+        <el-button type="primary" @click="send">{{ $t('account.sendEmail') }}</el-button>
       </div>
     </el-dialog>
     <!-- 用户名称 -->
@@ -133,9 +113,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirm">{{
-          $t('dialog.downAgent.ok')
-        }}</el-button>
+        <el-button type="primary" @click="confirm">{{ $t('dialog.downAgent.ok') }}</el-button>
       </div>
     </el-dialog>
   </div>

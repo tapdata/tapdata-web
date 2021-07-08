@@ -71,8 +71,7 @@ const en = {
         'The account and password of Support Forum is same as cloud.tapdata.net.We will response you as soon as possible.',
       userSupport: 'Support Forum',
       otherDmands: 'Other Requirements',
-      otherDmandsText:
-        'Any requirement, please contact us by scanning WeChat QR below.'
+      otherDmandsText: 'Any requirement, please contact us by scanning WeChat QR below.'
     },
 
     signIn: {
@@ -88,15 +87,12 @@ const en = {
       inviteCode_invalid: 'invite code must be valid.',
       email_invalid: 'E-mail must be valid.',
       password_invalid: 'Password at least 5 characters.',
-      account_waiting_approve:
-        'Your account is waiting administrator to approve.',
+      account_waiting_approve: 'Your account is waiting administrator to approve.',
       account_disabled: 'Your account is disabled by administrator.',
       permission_denied: 'Permission denied.',
       signInFail: "The email and password didn't work.",
-      watingApprove:
-        'This account is not approved, please wait for contact email.',
-      accountDisabled:
-        'Your account has been frozen, if you have any questions, please contact customer service. ',
+      watingApprove: 'This account is not approved, please wait for contact email.',
+      accountDisabled: 'Your account has been frozen, if you have any questions, please contact customer service. ',
       hasVerified: 'The email has not been verified',
       registry: 'Registration',
       registry_tip: 'I agree with',
@@ -121,8 +117,7 @@ const en = {
       orClick: 'or click',
       account: 'Account',
       accountSuccess: 'has been successfully registered~',
-      clickBtn:
-        'Click the button below to enjoy the journey of data transmission',
+      clickBtn: 'Click the button below to enjoy the journey of data transmission',
       resetClickBtn: 'Click the button below to log in',
       goLogin: 'Go login',
       connectionFailed: 'registration confirmation link is invalid',
@@ -296,12 +291,10 @@ const en = {
     startupAfter_add: 'Please add after startup',
     noData: 'NO DATA ',
     prompt: 'Prompt',
-    resetMessage:
-      'This will cause the job to be rerun from the beginning, continue?',
+    resetMessage: 'This will cause the job to be rerun from the beginning, continue?',
     deteleMessage: 'This will permanently delete the job',
     deteleJobMessage: 'This will permanently delete the choosed jobs ?',
-    forceStoppingMessage:
-      'This will interrupt the data transfer immediately, continue?',
+    forceStoppingMessage: 'This will interrupt the data transfer immediately, continue?',
     stopInitial_syncMessage:
       'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
     stopMessage: 'Are you sure to pause the mission?',
@@ -318,8 +311,7 @@ const en = {
     clickRelatedTasks: 'Click to view related tasks',
     currentTaskOpen: 'The current task has been opened',
     noRelatedTask: 'No related tasks',
-    loadingSchema:
-      'Schema of source database has not finished loading yet, please wait',
+    loadingSchema: 'Schema of source database has not finished loading yet, please wait',
     reloadSchemaSuccess: 'Model update successfully',
     reloadSchemaError: 'Model update failed'
   },
@@ -390,8 +382,7 @@ const en = {
       'This jobhas not been saved yet, If you leave this page, the job configuration will be lost. Are you sure to leave ?',
     saveFail:
       'Failed to save the task, please check the configuration and ensure that the data source status is valid.',
-    aggregateNotDataNode:
-      'The first target data node of aggregation node can only be COLLECTION',
+    aggregateNotDataNode: 'The first target data node of aggregation node can only be COLLECTION',
     batchSortOperation: 'Batch sort operation',
     selectRowdata: 'Please select row data',
     clusterClone: 'Database Migration',
@@ -404,8 +395,7 @@ const en = {
     dataMigrationHead: 'Data Sync',
     databseFreedomHead: 'Custom Data Sync',
     createNew: 'Create New',
-    DissedNoAction:
-      'oops~ The banned node/Connecting line can not be deleted and connected',
+    DissedNoAction: 'oops~ The banned node/Connecting line can not be deleted and connected',
     notCopy: 'The banned node cannot be copied ',
     guidingMode: 'Guiding mode',
     advancedMode: 'Standard mode',
@@ -440,8 +430,7 @@ const en = {
     datavaliDescription:
       'Data verification has the function of count verify, content verify, and joint field value verify which can verify the consistency of source and target.',
     multiError: {
-      allSelectionError:
-        'The status of selected job does not allow this operation.',
+      allSelectionError: 'The status of selected job does not allow this operation.',
       notFound: 'This job does not existed.',
       statusError: 'Job status does not allow to do this operation.',
       otherError: 'Operation failed, please try it again.'
@@ -451,8 +440,7 @@ const en = {
     Disable: 'Disable',
     draftNotStart: 'Configuration is not complete,  cannot be started',
     systemHint: 'System prompt',
-    systemText:
-      'The system detected that the following tasks were not saved， keep editing?',
+    systemText: 'The system detected that the following tasks were not saved， keep editing?',
     stystemOpen: 'Open',
     stystemOpenAll: 'Open all',
     stystemDeleteAll: 'Delete all',
@@ -468,11 +456,9 @@ const en = {
     syncType: ' Type',
     belongAgent: 'Agent',
     SyncInfo: {
-      localTZ:
-        'Local Timezone CDC Time: custom a point of  CDC time，in local time zone',
+      localTZ: 'Local Timezone CDC Time: custom a point of  CDC time，in local time zone',
       current: 'Current Time：Current DB Time',
-      connTZ:
-        'DB Timezone CDC Time: custom a point of  CDC time，in the time zone of a specific server',
+      connTZ: 'DB Timezone CDC Time: custom a point of  CDC time，in the time zone of a specific server',
       localTZType: 'Local Timezone CDC Time',
       currentType: 'Current Time',
       connTZType: 'DB Timezone CDC Time'
@@ -500,8 +486,7 @@ const en = {
     skipData: 'Skip existing data',
     loadingError: 'Loading failed, please',
     dataLoading: 'Data Loding ...',
-    loadLogTip:
-      'Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...',
+    loadLogTip: 'Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...',
     noLogTip: 'No data',
     clickLoadTxt: 'Click to load',
     average: 'Average',
@@ -546,8 +531,7 @@ const en = {
       'Throughput:The read speed from source node and the write speed to the target node, larger number is better',
     transtime_pop:
       'Transmission Time:The time lapsed from the data record is read from the source node until the data is written into target node',
-    replicate_pop:
-      'Replicate Lag:The time gap between source node last update time and target node last update time',
+    replicate_pop: 'Replicate Lag:The time gap between source node last update time and target node last update time',
     status: {
       running: 'Running',
       paused: 'Paused',
@@ -614,8 +598,7 @@ const en = {
     sharecdcmode: 'shared incremental read mode',
     streaming: 'streaming read',
     polling: 'polling read',
-    drop_target_before_start:
-      'Whether the target table is deleted before starting the task',
+    drop_target_before_start: 'Whether the target table is deleted before starting the task',
     run_custom_sql: 'Repeat custom SQL',
     stop_on_error: 'Stop when error',
     need_to_create_Index: 'Auto-create index',
@@ -624,8 +607,7 @@ const en = {
     data_quality_tag: 'Add data quality tag',
     notification_lag: 'Notification',
     isOpenAutoDDL: 'Auto-DDL operation',
-    ddlTip:
-      'Warn: Automatic DDL does not support JS processor and field processor',
+    ddlTip: 'Warn: Automatic DDL does not support JS processor and field processor',
     transformerConcurrency: 'Transformer Concurrency',
     processorConcurrency: 'Processor Concurrency',
     cdcEngineFilter: 'Enable Engine Filtering',
@@ -665,8 +647,7 @@ const en = {
     lagTime: 'incremental lag time setting',
     lagTimeTip:
       'when the incremental task delay is greater than this value, the incremental task delay is considered, and the default value is 0',
-    aggregatePrompt:
-      'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
+    aggregatePrompt: 'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
     nameTip:
       'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',
     button: {
@@ -708,11 +689,9 @@ const en = {
       file_path: 'File Path'
     },
     delete_confirm_Title: 'Delete the task? ',
-    delete_confirm_Message:
-      'After deleting task XXX, this task cannot be restored',
+    delete_confirm_Message: 'After deleting task XXX, this task cannot be restored',
     bulk_delete_confirm_Title: 'Delete tasks in batch? ',
-    bulk_delete_confirm_Message:
-      'After deleting tasks in batch, tasks cannot be restored',
+    bulk_delete_confirm_Message: 'After deleting tasks in batch, tasks cannot be restored',
 
     stop_confirm_title: 'Do you want to suspend this task? ',
     stop_confirm_message:
@@ -724,8 +703,7 @@ const en = {
     force_stop_confirm_title: 'Do you want to force stop this task? ',
     force_stop_confirm_message:
       'Forcibly stop the task xxx will immediately interrupt the data transmission, force the task to stop quickly, and reset the task',
-    bulk_force_stop_confirm_title:
-      'Do you want to force stop tasks in batches? ',
+    bulk_force_stop_confirm_title: 'Do you want to force stop tasks in batches? ',
     bulk_force_stop_confirm_message:
       'The batch forced stop task will immediately interrupt the data transmission to force the task to stop quickly and reset the task',
 
@@ -753,19 +731,15 @@ const en = {
         "Intelligent deduplication: intelligent detection of the target's existing data, deduplication can greatly improve transmission performance",
       compelTip:
         "Forced deduplication: Perform mandatory deduplication detection on the target's existing data, strictly guarantee accuracy but low transmission performance",
-      batchTip:
-        'Batch:  Batch processing and transmission of CDC data with high performance.',
-      onebyoneTip:
-        'Row by row: Processing and transmission of CDC data row by row',
-      sync_type_tip:
-        'Transmission type can be changed after disable aggregation settings of collection node: '
+      batchTip: 'Batch:  Batch processing and transmission of CDC data with high performance.',
+      onebyoneTip: 'Row by row: Processing and transmission of CDC data row by row',
+      sync_type_tip: 'Transmission type can be changed after disable aggregation settings of collection node: '
     },
     skipError: {
       title: 'Skip Error Settings',
       skipErrorSettings: 'Data Processing Error Handling',
       tip: 'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip errors, continue to start" button.  ',
-      attention:
-        'WARNING: If you chose to skip the errors, the relevant data may be discarded. ',
+      attention: 'WARNING: If you chose to skip the errors, the relevant data may be discarded. ',
       startJob: 'Skip errors, continue to start',
       cancel: 'Cancel',
       taskName: 'Task name',
@@ -800,12 +774,9 @@ const en = {
     reloadTittle: 'Reload schema',
     desc: 'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
     deteleDatabaseTittle: 'Do you want to delete the connection?',
-    deteleDatabaseMsg:
-      'After deleting connection XXX, this connection cannot be restored. ',
-    reloadMsg:
-      'It may take a long time to reload schema, are you sure to reload the schema of the database',
-    checkMsg:
-      'This data source is used by transmission job or API, cannot be deleted',
+    deteleDatabaseMsg: 'After deleting connection XXX, this connection cannot be restored. ',
+    reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
+    checkMsg: 'This data source is used by transmission job or API, cannot be deleted',
     copyFailedMsg:
       'Copy failed, reason:  The setting item "Connections - create  duplicate source" need to be set to "false"',
     change: 'Change',
@@ -828,7 +799,9 @@ const en = {
       source_and_target: 'Source&Target'
     },
     cannot_delete_remind:
-      'Connection is currently being used by one or more jobs and apis. Please delete the jobs or apis then try again.'
+      'Connection is currently being used by one or more jobs and apis. Please delete the jobs or apis then try again.',
+    dfs_cannot_delete_remind:
+      'Connection is currently being used by one or more jobs. Please delete the jobs then try again.'
   },
   editor: {
     nodeSettings: 'Node Settings',
@@ -916,12 +889,10 @@ const en = {
             },
             fieldFilterTip: {
               label: 'Field filter',
-              keepAllFields:
-                'Keep all fields: Keep all fields of this collection.',
+              keepAllFields: 'Keep all fields: Keep all fields of this collection.',
               retainedField:
                 'Retained field: the selected fields will be retained and all other fields will be discarded.',
-              deleteField:
-                'Delete field: the selected fields will be deleted and all other fields will be retained.'
+              deleteField: 'Delete field: the selected fields will be deleted and all other fields will be retained.'
             },
             dropTable: {
               label: 'Existing data',
@@ -968,8 +939,7 @@ const en = {
               addTextTip: 'No preview sample data',
               addTextTip1:
                 'Please enter the MongoDB aggregation code, and then click "Preview" to preview the sample data here',
-              filterAggreTip:
-                'Aggregation settings and filtering settings cannot be enabled at same time.',
+              filterAggreTip: 'Aggregation settings and filtering settings cannot be enabled at same time.',
               seetingAggreTip: 'This function only available under initial job'
             }
           }
@@ -1057,16 +1027,13 @@ const en = {
           table_type: 'Type',
           table_setting: 'Settings',
           publishName: 'Publish API',
-          enterPublishApiName:
-            'Please enter the name of the data publishing API',
-          enterNewlyReleasedApi:
-            'Please enter a description of the newly released API',
+          enterPublishApiName: 'Please enter the name of the data publishing API',
+          enterNewlyReleasedApi: 'Please enter a description of the newly released API',
           enterEndUrl: 'Please enter the URL end path name',
           required: 'Required',
           availableQueries: 'Query',
           publishApi_path: 'API path is not empty',
-          variable_name:
-            'Can only contain letters, numbers, underscores and dollar signs, and numbers cannot start'
+          variable_name: 'Can only contain letters, numbers, underscores and dollar signs, and numbers cannot start'
         },
         es: {
           name: 'ES',
@@ -1175,15 +1142,13 @@ const en = {
             '// "students_sum" is the Sub-process name, and the names between sub-processes cannot be repeated',
           countComment:
             '// COUNT is the Polymerization function and 132 is the value; if the function is MAX, it will show MAX here',
-          school_nameComment:
-            '// Grouping summary field names, no display if dont filling out',
+          school_nameComment: '// Grouping summary field names, no display if dont filling out',
           aggregateSizeLabel: 'Number of cached aggregation result',
           aggregateSizeTips:
             'Put in the range of cached aggregation result, the excess data will be stored in target database.',
           allAggregateSize: 'All data write in cache',
           customAggregateSize: 'Custom the cache range',
-          cleanSecondTimeLess3600:
-            'The time to clean up old version data cannot be less than 3600',
+          cleanSecondTimeLess3600: 'The time to clean up old version data cannot be less than 3600',
           fullSyncSecondTimeLess3600: 'Full sync time cannot be less than 3600'
         },
         field: {
@@ -1204,10 +1169,8 @@ const en = {
             originalType: 'Original type: ',
             errorUndefined:
               'The model of the source node has changed, so that the field processor does not work, please click the UPDATE MODEL button in the configuration panel of the upper node to handle this issue',
-            errorOperationSaveTip:
-              'The field processor node has conflict to be handled',
-            errorOperationTipBefore:
-              'Conflict between field processing operation and source model',
+            errorOperationSaveTip: 'The field processor node has conflict to be handled',
+            errorOperationTipBefore: 'Conflict between field processing operation and source model',
             errorOperationTipAfter: ' click to handle',
             errorOperationDrop:
               'The following processing operation is detected to conflict with the source model. Please select the operation mode for the following fields. Drop / Keep: Drop / Keep the process of the field',
@@ -1231,12 +1194,9 @@ const en = {
             scriptDialogTitle: 'Set Script',
             expression: 'Please enter an expression',
             example: 'Example',
-            exampleRow1:
-              'var result = "a" + "b"  // String concatenation, the result of result is "ab"',
-            exampleRow2:
-              'var result = 1 + 2 // Digital calculation, the result of result is 3',
-            exampleRow3:
-              'var result = fn("1") // Call function, the result is the return value of the fn function.',
+            exampleRow1: 'var result = "a" + "b"  // String concatenation, the result of result is "ab"',
+            exampleRow2: 'var result = 1 + 2 // Digital calculation, the result of result is 3',
+            exampleRow3: 'var result = fn("1") // Call function, the result is the return value of the fn function.',
             exampleRow4:
               'var result = record.isTrue ? true : false // Ternary expression, The value of result is true or false based on the result of the judgment expression (record.isTrue)'
           }
@@ -1299,8 +1259,7 @@ const en = {
             expression: {
               label: 'Conditional expression',
               placeholder: 'Please enter an expression',
-              labelTip:
-                'Expressions can use comparison and calculation operators in JavaScript'
+              labelTip: 'Expressions can use comparison and calculation operators in JavaScript'
             },
             action: {
               label: 'Execute action',
@@ -1309,8 +1268,7 @@ const en = {
             },
             expressionExample: {
               label: 'Example expression',
-              labelTip:
-                'Expressions can use comparison and calculation operators in JavaScript',
+              labelTip: 'Expressions can use comparison and calculation operators in JavaScript',
               tip: 'Select men over 50 years old or people over 30 years old with income below 10,000, the expression is as follows:'
             },
             symbol: {
@@ -1375,8 +1333,7 @@ const en = {
           Movedown: 'move down',
           Notmoveuptip: 'there is no room to move up',
           Notmovedowntip: 'there is no room to move down',
-          Onlyonepiece:
-            'only one piece of data can be selected to move up and down'
+          Onlyonepiece: 'only one piece of data can be selected to move up and down'
         },
         form: {
           label: {
@@ -1442,10 +1399,8 @@ const en = {
         tableNameExample: 'Table name example',
         copySourceDatabase: 'Source database schema to be copied',
         tableTip: 'Table does not support foreign key copy',
-        viewTip:
-          'Copy view does not support table rename, if check this box rename function will be disabled',
-        formTip:
-          'The function of copy view, function, procedure only support MySQL to MySQL',
+        viewTip: 'Copy view does not support table rename, if check this box rename function will be disabled',
+        formTip: 'The function of copy view, function, procedure only support MySQL to MySQL',
         chooseATableTip: 'At least select one object to be copied'
       }
     },
@@ -1546,13 +1501,11 @@ const en = {
       excel_value_start: 'Enter the starting abscissa',
       excel_value_end: 'Enter the ending abscissa',
       excel_number: 'Sheet range should be number',
-      excel_cell_point:
-        'Enter the coordinates of Excel, "row 1 and column 1" can be entered as "A1"',
+      excel_cell_point: 'Enter the coordinates of Excel, "row 1 and column 1" can be entered as "A1"',
       excel_cell_tip: 'The field range must be uppercase letter + number',
       excel_value_end_gt_start:
         'The number of ending page must be greater than or equal to the number of starting page',
-      excel_value_range:
-        'Enter the abscissa range of Excel, "line 2 to line 100", can be entered as: "2" ~ "10"',
+      excel_value_range: 'Enter the abscissa range of Excel, "line 2 to line 100", can be entered as: "2" ~ "10"',
       fileFilter: 'File filter',
       include: 'Include file',
       exclude: 'Discard file',
@@ -1607,32 +1560,23 @@ const en = {
     exampleMQL: 'e.g.: db.collection_1.count({ field_2:A })',
     exampleHashSQL:
       "Please enter SELECT query statement Hash verify only supports SELECT query statement, but doesn't support such as count/sum/avg/max,etc. e.g.: select field_1 from tablename_1 where field__2 = A;",
-    exampleHashMQL:
-      'Please enter MQL query statement. e.g.: db.collection_1.find ({ field_2:A },{ field_1:1 })',
+    exampleHashMQL: 'Please enter MQL query statement. e.g.: db.collection_1.find ({ field_2:A },{ field_1:1 })',
     verifyRunningInfo: 'Keep verifying in background',
-    verifyStatusWaiting:
-      'Verifying phase 1-3:  verification job queuing, please wait....   Click',
-    verifyStatusDraft:
-      'Verifying phase 2-3:  verification job scheduling, please wait...   Click',
-    verifyStatusValidating:
-      'Verifying phase 3-3:  verification job executing, please wait...   Click',
-    verifyStatusInterrupted:
-      'Verification job being stopped，please wait...   Click',
+    verifyStatusWaiting: 'Verifying phase 1-3:  verification job queuing, please wait....   Click',
+    verifyStatusDraft: 'Verifying phase 2-3:  verification job scheduling, please wait...   Click',
+    verifyStatusValidating: 'Verifying phase 3-3:  verification job executing, please wait...   Click',
+    verifyStatusInterrupted: 'Verification job being stopped，please wait...   Click',
     verifyStatusStop: 'Stop verification',
-    verifyStatusCompleted:
-      'Verification result loading , please wait for a while',
+    verifyStatusCompleted: 'Verification result loading , please wait for a while',
     or: 'or',
     psc: 'pcs',
     all: 'All',
     setting: {
       title: 'Verify default settings',
       text: 'The verification setting is the global verification setting, the priority of the advanced setting in the created verification task is higher than the setting here. ',
-      keepTimeLabel:
-        'Retention time of verification historical results and detailed information',
-      errorSaveSumLable:
-        'Check out the limit of the number of error messages saved for each table',
-      errorDifferenceResult:
-        'The error tolerance of the difference data allowed by the verification result',
+      keepTimeLabel: 'Retention time of verification historical results and detailed information',
+      errorSaveSumLable: 'Check out the limit of the number of error messages saved for each table',
+      errorDifferenceResult: 'The error tolerance of the difference data allowed by the verification result',
       lineNumberFrequency: 'Line number verification interval frequency',
       lineNumVerfyDuration: 'Line number verification duration',
       intervalFrequency: 'Content verification interval frequency',
@@ -1655,8 +1599,7 @@ const en = {
     infoSource: 'SOURCE',
     infoDAAS: 'DAAS',
     infoAPI: 'API',
-    dblclickDataModel:
-      'Please double-click the data model to open the field mapping',
+    dblclickDataModel: 'Please double-click the data model to open the field mapping',
     properties: {
       name: 'Name',
       type: 'Classification',
@@ -1700,8 +1643,7 @@ const en = {
     title: 'Create Database',
     saveSuccess: 'Test and save success.',
     saveFail: 'Save failed.',
-    primaryTest:
-      'Starting connection test service, please wait for a while ...',
+    primaryTest: 'Starting connection test service, please wait for a while ...',
     testing: 'Testing, please wait for a while ...',
     submit: 'Submit',
     cancel: 'Cancel',
@@ -1719,8 +1661,7 @@ const en = {
       information: 'Information',
       error: 'The test service request timed out, please close and try again.',
       retryBtn: 'Retry',
-      retryTest:
-        'The connection test service failed to start, please click Retry'
+      retryTest: 'The connection test service failed to start, please click Retry'
     },
     form: {
       connectionName: 'Connection Name',
@@ -1751,13 +1692,12 @@ const en = {
       timeZone: 'Date Type Timezone',
       ReloadSchema: 'Reload schema periodically',
       clusterName: 'Cluster Name',
-      databaseHostPlaceholder:
-        'Database Host(127.0.0.1/Domain:{Port},Please use multiple addresses , separate)',
+      databaseHostPlaceholder: 'Database Host(127.0.0.1/Domain:{Port},Please use multiple addresses , separate)',
       plugin_name: 'Log decoder plugin name',
       supportUpdatePk: 'Support Update Primary Key',
       indexPrefix: 'Index prefix',
-      agentMsg:
-        'Agent current state exception cannot create connection, please check.',
+      agentMsg: 'Agent current state exception cannot create connection, please check.',
+      agentConnectionMsg: 'Agent current state is abnormal, cannot to test connection, please check.',
       multiTenant: 'Multi-tenant',
       uriTips: {
         label: 'Example',
@@ -1769,23 +1709,18 @@ const en = {
           `<b>Sharded Cluste :</b> mongodb://192.168.0.100:27017/mydb<br>` +
           `<b>Sharded Cluster with multiple mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`
       },
-      tableFilterTips:
-        'Comma-delimited list of expression, use * to represent any character of any length.',
+      tableFilterTips: 'Comma-delimited list of expression, use * to represent any character of any length.',
       timeZoneTips: 'Impact Type: DATE',
       options: {
         sourceAndTarget: 'SOURCE AND TARGET',
         source: 'SOURCE',
         target: 'TARGET',
-        sourceAndTargetTips:
-          'This data connection can be used as both source and target in Tapdata',
-        sourceTips:
-          'This data connection can only be used as source in Tapdata, but not as target',
-        targetTips:
-          'This data connection can only be used as target in Tapdata, but not as source ',
+        sourceAndTargetTips: 'This data connection can be used as both source and target in Tapdata',
+        sourceTips: 'This data connection can only be used as source in Tapdata, but not as target',
+        targetTips: 'This data connection can only be used as target in Tapdata, but not as source ',
         connectionMode: 'Connection mode',
         URIMode: 'URI mode',
-        URIModeTips:
-          'Configure MongoDB database in URI mode. Batch input is supported',
+        URIModeTips: 'Configure MongoDB database in URI mode. Batch input is supported',
         standardMode: 'Standard mode',
         standardModeTips:
           'Configure MongoDB database according to Host/IP, port, account and password. Batch input is supported',
@@ -1803,8 +1738,7 @@ const en = {
       incrementalTps: 'CUD TPS',
       response_body: {
         CHECK_CONNECT: 'Check the connection is available',
-        CHECK_AUTH:
-          'Checks if the username,password and database are available',
+        CHECK_AUTH: 'Checks if the username,password and database are available',
         CHECK_VERSION: 'Checks if the version information is available',
         LOAD_SCHEMA: 'Load schema model',
         CHECK_CDC_PERMISSION: 'Check if cdc permissions are granted',
@@ -1838,11 +1772,9 @@ const en = {
         agreementType: 'Agreement Type',
         agentLocationFile: 'Agent location file',
         agentLocationFileTip: 'Add files at the server where Agent is located.',
-        ftpTip:
-          'Add files according to FTP such as address, port, account, password, etc. ',
+        ftpTip: 'Add files according to FTP such as address, port, account, password, etc. ',
         shared: 'Shared folder',
-        sharedTip:
-          'Add files according to shared folders such as address, account, password, etc.',
+        sharedTip: 'Add files according to shared folders such as address, account, password, etc.',
         activeConnectionMode: 'FTP port mode',
         activeConnectionModeTip:
           'The server initiatively sends a request to establish a connection with high performance. If there is a firewall, the request may fail. ',
@@ -1850,8 +1782,7 @@ const en = {
         passiveConnectionModeTip:
           'The connection and data connection are submitted by the client to the server, which can solve the problem that the request is filtered out by the firewall.',
         input_number: 'Please enter a number',
-        greaterZero_less5256000:
-          'Must be greater than or equal to zero and less than or equal to 5256000',
+        greaterZero_less5256000: 'Must be greater than or equal to zero and less than or equal to 5256000',
         path: 'Set path',
         recursive: 'Recursive path',
         include_filename: 'Keep file',
@@ -1881,28 +1812,23 @@ const en = {
         topicExpression: 'topic expression',
         requestTimeoutPeriod: 'Pull request timeout period',
         readIsolationLevel: 'Message submission read isolation level',
-        maximumNumber:
-          'The maximum number of records returned in a single poll message',
+        maximumNumber: 'The maximum number of records returned in a single poll message',
         blockingTimeoutTime: 'Single poll message blocking timeout time',
-        fetchMaximumNumber:
-          'The maximum number of bytes in a single fetch message',
+        fetchMaximumNumber: 'The maximum number of bytes in a single fetch message',
         fetchBlockTime: 'Single fetch message blocking timeout time',
         lonoreFormat: 'Ignore non-JSON Object format messages',
         lonoreFormatTip:
           'If it is turned on, it will ignore the message if it encounters a parsing exception, otherwise it will stop pulling the message',
-        directlyNameTip:
-          'Enter the subject name directly, separate multiple subjects with commas',
+        directlyNameTip: 'Enter the subject name directly, separate multiple subjects with commas',
         kafkaPatternTopicsTip:
           'Configure the MongoDB database according to Host, port, account, and password, and support batch input',
-        hostPlaceHolder:
-          'Enter IP/host:port, separate multiple addresses with commas',
+        hostPlaceHolder: 'Enter IP/host:port, separate multiple addresses with commas',
         requestTimeout: 'Push request timeout (ms)',
         transactionMessage: 'Transaction Message',
         kafkaRetries: 'Request retry times',
         kafkaBatchSize: 'Partition message batch bytes',
         kafkaAcks: 'ACK confirmation mechanism',
-        kafkaLingerMS:
-          'Maximum waiting time for partition message batch (milliseconds)',
+        kafkaLingerMS: 'Maximum waiting time for partition message batch (milliseconds)',
         kafkaDeliveryTimeoutMS: 'Message transmission timeout time',
         kafkaMaxRequestSize: 'Request maximum number of bytes',
         kafkaBufferMemory: 'Buffer message bytes',
@@ -1938,15 +1864,13 @@ const en = {
         resp_pre_process: 'Response preprocessing script',
         data_sync_mode: 'Data synchronize mode',
         url_info: 'Urls',
-        url_info_url_invalid:
-          'Invalid URL, url example: http://127.0.0.1:8080/api/xxx?param=value',
+        url_info_url_invalid: 'Invalid URL, url example: http://127.0.0.1:8080/api/xxx?param=value',
         url_info_method: 'Method',
         url_info_url_type: 'URL Type',
         url_info_ONLY: 'Fetch Data URL',
         url_info_INITIAL_SYNC: 'Synchronize historical data',
         url_info_INCREMENTAL_SYNC: 'Synchronize real-time data',
-        url_info_INITIAL_INCREMENTAL_SYNC:
-          'Synchronize historical and real-time data',
+        url_info_INITIAL_INCREMENTAL_SYNC: 'Synchronize historical and real-time data',
         url_info_GET_TOKEN: 'Authenticate URL',
         url_info_header_name: 'Header name',
         url_info_header_value: 'Header value',
@@ -1967,8 +1891,7 @@ const en = {
         include_filename: 'Include filename',
         exclude_filename: 'Exclude filename',
         file_schema: 'Target Collection',
-        file_schema_tip:
-          'If files are of same type, please specify a common name.',
+        file_schema_tip: 'If files are of same type, please specify a common name.',
         file_type: 'File type',
         separator: 'Separator',
         json_type: 'Json type',
@@ -1990,8 +1913,7 @@ const en = {
         queueSetTip: 'Multiple queues are separated by commas',
         topicSetTip: 'Multiple topics separated by commas',
         brokerUrl: 'MQ connection string',
-        brokerUrlTip:
-          'example tcp://127.0.0.1 : 61616, support TCP, NiO, UDP, SSL, HTTP (s) '
+        brokerUrlTip: 'example tcp://127.0.0.1 : 61616, support TCP, NiO, UDP, SSL, HTTP (s) '
       },
       tcp: {
         agreementType: 'Protocol type ',
@@ -2043,8 +1965,7 @@ const en = {
     editNode: 'Edit',
     deleteNode: 'Delete',
     nodeName: 'Please enter classification',
-    deteleMessage:
-      'This operation will delete all subclasses existing in this category, whether to delete it'
+    deteleMessage: 'This operation will delete all subclasses existing in this category, whether to delete it'
   },
   relations: {
     blood: 'Table Tracing',
@@ -2055,8 +1976,7 @@ const en = {
     refreshMsg:
       'All synchronous tasks will be analyzed and lineage graph will be generated. It may take a long time, click "YES" to confirm',
     refreshTitle: 'Synchronous tasks analysis',
-    refreshStatusMsg:
-      'Syncing graphics data, graphics may be missing, please refresh later and try again',
+    refreshStatusMsg: 'Syncing graphics data, graphics may be missing, please refresh later and try again',
     second: ' Second',
     minute: ' Minute',
     hours: ' Hours',
@@ -2306,8 +2226,7 @@ const en = {
           'Click the save button below to only save to the system, click the update button to apply to the database where this data is located',
         apply: 'Apply',
         cnot_Empty: 'Cannot be empty',
-        view_tip:
-          'The operation will overwrite the view with the same name, whether to create a view',
+        view_tip: 'The operation will overwrite the view with the same name, whether to create a view',
         success: 'Apply successful',
         failed: 'Application failed'
       }
@@ -2450,8 +2369,7 @@ const en = {
   },
   dialog: {
     createTable: 'Create New Table',
-    placeholderTable:
-      'Only supports English, numbers, underscores, minus signs, dots, and starts with English letter',
+    placeholderTable: 'Only supports English, numbers, underscores, minus signs, dots, and starts with English letter',
     createCollection: ' Create New Collection ',
     placeholderCollection:
       'Only support English, numbers, underscores, minus signs, dots, and starts with English letter, and cannot start with "system"',
@@ -2473,8 +2391,7 @@ const en = {
         '· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
       linuxInstructionsText2:
         '· Execute the above command in install environment, Agent will download and start automatically ',
-      linuxInstructionsText3:
-        '· You can start and stop Agent by executing the command "tapdata start/stop backend".',
+      linuxInstructionsText3: '· You can start and stop Agent by executing the command "tapdata start/stop backend".',
       waitingInstall: 'Waiting installation',
       agentInstallation: 'Agent has been installed',
       agentNum: 'Agents installed',
@@ -2483,29 +2400,23 @@ const en = {
         'First, a JAVA runtime environment is required in the installation environment. After download, you can install and start Agent by using the following command in the directory where the Agent Installation package stored.',
       windowsInstructionsText1:
         '· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
-      windowsInstructionsText2:
-        '· Second, download the installation file and store it in a directory.',
+      windowsInstructionsText2: '· Second, download the installation file and store it in a directory.',
       windowsInstructionsText3:
         '· Third, enter the directory, and execute the command to install and start Agent automatically. ',
-      windowsInstructionsText4:
-        '· Only one Agent can be installed under an account of Tapdata cloud.',
-      windowsInstructionsText5:
-        '· You can start and stop Agent by executing the command "tapdata start/stop backend".',
+      windowsInstructionsText4: '· Only one Agent can be installed under an account of Tapdata cloud.',
+      windowsInstructionsText5: '· You can start and stop Agent by executing the command "tapdata start/stop backend".',
       dockerText:
         'First, a Docker runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
       dockerText1:
         '· First, ensure that the Docker runtime environment is installed in the installation target environment.',
-      dockerText2:
-        '· After executing the command, the Agent will be automatically installed and started.',
+      dockerText2: '· After executing the command, the Agent will be automatically installed and started.',
 
       important: 'Important: ',
-      noAgent:
-        'You have not installed Agent yet, and cannot execute the transmission jobs. Please ',
+      noAgent: 'You have not installed Agent yet, and cannot execute the transmission jobs. Please ',
       clickDownLoad: ' click to download and install',
       dfsSuccessText: 'DFS Agent installed successfully,',
       dfsSuccessText1: 'Or click',
-      dfsSuccessText2:
-        'Create a data transfer task and experience the Tapdata DFS rapid data transfer function',
+      dfsSuccessText2: 'Create a data transfer task and experience the Tapdata DFS rapid data transfer function',
       dfsSuccessText3: 'DFS Agent installed successfully, job',
       dfsSuccessText4: 'is running',
       creatTask: 'Create new',
@@ -2523,8 +2434,7 @@ const en = {
       sync: 'Sync:',
       expression: 'Expression:',
       expressionPlaceholder: 'Please enter cron expression',
-      explanation:
-        'You can set cron expression to schedule tasks at fixed time, date, or interval',
+      explanation: 'You can set cron expression to schedule tasks at fixed time, date, or interval',
       grammar: 'Grammar:',
       second: 'second',
       minute: 'minute',
@@ -2633,8 +2543,7 @@ const en = {
     tasksVerifyInterval: 'Please choose data verify interval',
     lackSource: 'Lack source or target table in verify condition',
     lackIndex: 'Lack index field of source or target table in verify condition',
-    tasksAmount:
-      'The amount of index field of source table does not equal to target table in verify condition',
+    tasksAmount: 'The amount of index field of source table does not equal to target table in verify condition',
     uniqueField: 'Unique field inconsistent ',
     otherField: 'Other field inconsistent',
     back: 'Back',
@@ -2648,10 +2557,8 @@ const en = {
     deleteTip: 'Delete',
     checkStatusPre: 'The job status is ',
     checkStatusSuffix: ' , cannot modify configuration',
-    backConfirmMessage:
-      'This operation will lose the verification task currently being created (edited)',
-    backConfirmTitle:
-      'Would you give up creating (editing) verification tasks? '
+    backConfirmMessage: 'This operation will lose the verification task currently being created (edited)',
+    backConfirmTitle: 'Would you give up creating (editing) verification tasks? '
   },
   queryBuilder: {
     addCond: 'field Cond'
@@ -2694,11 +2601,9 @@ const en = {
     samePawTip: 'The new password cannot be the same as the original password!',
     newPawInconsistent: 'Inconsistent with the new password!',
     pawSaveSuccess: 'Password saved successfully',
-    currerPawErrorTip:
-      'The current password is incorrect, please enter the correct password',
+    currerPawErrorTip: 'The current password is incorrect, please enter the correct password',
     nameModifySuccess: 'Name modified successfully',
-    passwordNotCN:
-      'Only alphanumeric characters and hyphens are allowed in password',
+    passwordNotCN: 'Only alphanumeric characters and hyphens are allowed in password',
     user_null: "That username's been taken",
     has_username: 'Username already exists',
     editFail: 'User name modification failed'
@@ -2712,8 +2617,7 @@ const en = {
     funcPermission: 'Function permission settings',
     currentRole: 'Current role',
     pageVisible: 'Page permission settings',
-    pageShowTip:
-      'Checked means navigation and page are visible to the current character, unchecked will not display',
+    pageShowTip: 'Checked means navigation and page are visible to the current character, unchecked will not display',
     choosePage: 'Select Page permission',
     bulkOperate: 'Select all',
     allCheck: 'Select all',
@@ -2895,28 +2799,22 @@ const en = {
     INIT_DATAFLOW: '【Preparation】Analyze the DAG and create sub job(s)',
     CONNECT_TO_SOURCE: '【Preparation】Connecto to source',
     CONNECT_TO_TARGET: '【Preparation】Connect to target',
-    INIT_CONNECTOR:
-      '【Preparation】Scan source information and initialize the source collector',
-    INIT_TRANSFORMER:
-      '【Preparation】Scan target information and initialize the target handler',
-    READ_SOURCE_DDL:
-      '【Preparation】Read source DDL information(Database Migration)',
+    INIT_CONNECTOR: '【Preparation】Scan source information and initialize the source collector',
+    INIT_TRANSFORMER: '【Preparation】Scan target information and initialize the target handler',
+    READ_SOURCE_DDL: '【Preparation】Read source DDL information(Database Migration)',
     DROP_TARGET_SCHEMA: '【Preparation】Drop target schema',
     CLEAR_TARGET_DATA: '【Preparation】Empty the target data',
     CREATE_TARGET_TABLE: '【Preparation】Automatically create target table',
     CREATE_TARGET_INDEX: '【Preparation】Automatically create target index',
     CREATE_TARGET_VIEW: '【Preparation】Automatically create target view',
-    CREATE_TARGET_FUNCTION:
-      '【Preparation】Automatically create target function',
-    CREATE_TARGET_PROCEDURE:
-      '【Preparation】Automatically create target procedure',
+    CREATE_TARGET_FUNCTION: '【Preparation】Automatically create target function',
+    CREATE_TARGET_PROCEDURE: '【Preparation】Automatically create target procedure',
     READ_SNAPSHOT: '【Data transfer】Read the source snapshot',
     WRITE_SNAPSHOT: '【Data transfer】Write the snapshot into target',
     READ_CDC_EVENT: '【Data transfer】Source enters incremental read mode',
     WRITE_CDC_EVENT: '【Data transfer】Target enters incremental write mode',
 
-    emptyText:
-      'The job has not been started or has been reset, so there is no running milestone data.',
+    emptyText: 'The job has not been started or has been reset, so there is no running milestone data.',
     status_paused: 'paused',
     status_waiting: 'Waiting',
     status_running: 'Running',
@@ -2950,8 +2848,7 @@ const en = {
     task_type_custom: 'Data synchronization',
     task_type_custom_tips:
       "Data synchronization focuses on table-level data processing and transmission, to meet the needs of users to achieve multi-table (data set), multi-table integration between multi-level data, data splitting, association mapping, field increase and decrease merge, content filtering, Real-time data synchronization is realized at the same time in the case of aggregate processing JS processing and other functions. Without affecting the user's business, it meets the user's needs for various business scenarios such as remote or local data disaster recovery, cross-instance data synchronization, query and report distribution, and real-time data warehouse management. ",
-    agent_not_install:
-      'The system detects that the Agent is not installed, please download and install and try again',
+    agent_not_install: 'The system detects that the Agent is not installed, please download and install and try again',
     btn_back: 'Previous step',
     btn_save: 'Save,',
     btn_next: 'Next',
@@ -2963,8 +2860,7 @@ const en = {
 
     agentServiceTitle: 'Agent service status is abnormal',
     abnormalText: 'abnormal reason',
-    abnormal:
-      'The environment where the Agnet process is located is disconnected',
+    abnormal: 'The environment where the Agnet process is located is disconnected',
     abnormal1: 'Agnet service process was killed',
     solutionText: 'Solution',
     windowsSolution: 'WINDOWS: Start the server and execute commands',
@@ -3015,12 +2911,10 @@ const en = {
     checkUserLast: ' after the mailbox, this user can be activated',
     activationUserTitle: 'Do you want to activate this user ? ',
     activetionUser: 'Activation User',
-    activetionUserLast:
-      ' after that, this user will be able to use the TAPDATA system',
+    activetionUserLast: ' after that, this user will be able to use the TAPDATA system',
     freezeUserTitle: 'Do you want to freeze this user ? ',
     freezeUser: 'Freeze user',
-    freezeUserLast:
-      ' after this user will not be able to use the TAPDATA system',
+    freezeUserLast: ' after this user will not be able to use the TAPDATA system',
     startTime: 'Start Time',
     endTime: 'End Time',
     emailNull: 'Email cannot be empty',
@@ -3077,16 +2971,14 @@ const en = {
     w: 'week',
     mo: 'month',
     y: 'year',
-    failed:
-      'The current database table, no time field was found, and the life cycle could not be created',
+    failed: 'The current database table, no time field was found, and the life cycle could not be created',
     create_by_user: 'Platform user',
     create_by_dba: 'Database Administrator',
     status_creating: 'Creating',
     status_created: 'Create complete',
     status_creation_failed: 'Creation failed',
     status_deleted: 'Deleting',
-    filedGetFailed:
-      'The current database table, no time field was found, and the life cycle could not be created',
+    filedGetFailed: 'The current database table, no time field was found, and the life cycle could not be created',
     index_exists: 'Index already exists'
   },
   setting: {
@@ -3107,8 +2999,7 @@ const en = {
     Log_level: 'Log level',
     maxCpuUsage: 'Maximum CPU usage (value range 0.1 ~ 1)',
     maxHeapMemoryUsage: 'Maximum heap memory usage (value range 0.1 ~ 1)',
-    switch_insert_mode_interval:
-      'Interval time for switching to batch insert mode in incremental mode (unit: second)',
+    switch_insert_mode_interval: 'Interval time for switching to batch insert mode in incremental mode (unit: second)',
     Email_Communication_Protocol: 'Encryption Method',
     SMTP_Server_Port: 'SMTP service port',
     SMTP_Server_User: 'SMTP service account',
@@ -3131,37 +3022,28 @@ const en = {
     Max_Limit: 'Maximum number of rows returned by the query',
     Send_batch_size: 'Number of packed data',
     hint_Send_batch_size: 'Number of packed data',
-    Mongodb_target_create_date:
-      'Whether to add the creation time to the target data set',
-    Mongodb_target_create_date_docs:
-      'Whether to add the creation time to the target data set',
+    Mongodb_target_create_date: 'Whether to add the creation time to the target data set',
+    Mongodb_target_create_date_docs: 'Whether to add the creation time to the target data set',
     System: 'System Resource Monitoring',
-    Collect_system_info_interval:
-      'System resource monitoring collection frequency (seconds)',
+    Collect_system_info_interval: 'System resource monitoring collection frequency (seconds)',
     Interval_to_collect_system_info:
       'System resource information (CPU, memory, hard disk usage) monitoring collection frequency',
     Job_Sync_Mode: 'Task synchronization mode',
     Worker_Threshold: 'Process Threshold',
     Worker_Heartbeat_Expire: 'Process heartbeat period time (seconds)',
     License_Key: 'Certificate Key',
-    Enter_jobs_log_level__error_warn_info_debug_trace:
-      'Enter task log level: error/warn/info/debug/trace',
-    Email_Receivers_Multiple_separated_by_semicolons:
-      'Mail recipients, you can enter multiple, separated by commas',
+    Enter_jobs_log_level__error_warn_info_debug_trace: 'Enter task log level: error/warn/info/debug/trace',
+    Email_Receivers_Multiple_separated_by_semicolons: 'Mail recipients, you can enter multiple, separated by commas',
 
-    Keep_recent_n_hours_message_before_the_last_processed_message_s_time_:
-      'Keep the last n hours news',
+    Keep_recent_n_hours_message_before_the_last_processed_message_s_time_: 'Keep the last n hours news',
     Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
       'Cache a copy of the current overall data and merge it into the target data set',
     Store_before_field_as_embedded_document_in_target_collection_before_update_operation:
       'Cache a copy of the overall data before modification and merge it into the target data set',
-    Store_job_script_processor_log_to_cloud:
-      'Whether to transfer task logs to the cloud',
+    Store_job_script_processor_log_to_cloud: 'Whether to transfer task logs to the cloud',
     Validator_to_validate_data__s_sample_rate: 'Validation data sampling rate',
-    Process_message_mode__consistency_fast:
-      'Message processing mode consistency/fast',
-    Worker_can_execute_the_nums_of_Jobs:
-      'The process can perform multiple tasks',
+    Process_message_mode__consistency_fast: 'Message processing mode consistency/fast',
+    Worker_can_execute_the_nums_of_Jobs: 'The process can perform multiple tasks',
     Worker_heartbeat_expire_time: 'Process heartbeat period time',
     Users: 'User',
     Show_Page: 'Show download page',
@@ -3177,8 +3059,7 @@ const en = {
     hint_SSH_User: 'SSH username, used to connect to the host of Mongod',
     hint_SSH_Port: 'SSH port, used to connect to the host of Mongod',
     Enable_DR_Rehearsal: 'Allow disaster recovery exercises',
-    hint_Enable_DR_Rehearsal:
-      'Disaster recovery rehearsal switch, true means on, false means off',
+    hint_Enable_DR_Rehearsal: 'Disaster recovery rehearsal switch, true means on, false means off',
     Download_Agent_Page: 'Agent Download Page',
     Background_Analytics: 'Background analysis',
     Data_quality_analysis_frequency: 'Data quality analysis interval (seconds)',
@@ -3190,8 +3071,7 @@ const en = {
       'The same log appears only once within a specified time (valid after 1 minute)',
     _DK36: 'File download',
     File_Down_Base_Url: 'Address',
-    Set_the_average_number_of_events_per_second_to_allow:
-      'Log settings allow the average number of events per second',
+    Set_the_average_number_of_events_per_second_to_allow: 'Log settings allow the average number of events per second',
     Log_Filter_Rate: 'Log output frequency (line/sec)',
     Connections: 'Connection Settings',
     Mongodb_Load_Schema_Sample_Size: 'Mongodb load model sample records (rows)',
@@ -3203,8 +3083,7 @@ const en = {
     Size_Of_Trigger_API_Stats_Report: 'Maximum number of API request cache',
     hint_Size_Of_Trigger_API_Stats_Report:
       'When the number of API request records reaches the specified number, batches are sent to the management end',
-    Time_Span_Of_Trigger_API_Stats_Report:
-      'API request report frequency (seconds)',
+    Time_Span_Of_Trigger_API_Stats_Report: 'API request report frequency (seconds)',
     hint_Time_Span_Of_Trigger_API_Stats_Report:
       'The API request is cached and sent to the management end at the specified time',
     save: 'Save successfully, take effect in one minute',
@@ -3219,11 +3098,9 @@ const en = {
     doc_base_url: 'Help document URL',
     help: 'Help document',
     Ip_addresses: 'Ipv4 addresses (separated by multiple commas)',
-    hint_Ip_addresses:
-      'The ipv4 address of the device to be detected, for example: 127.0.0.1, 192.168.0.1',
+    hint_Ip_addresses: 'The ipv4 address of the device to be detected, for example: 127.0.0.1, 192.168.0.1',
     PingTimeout: 'Detection timeout (milliseconds)',
-    hint_PingTimeout:
-      'When this setting is exceeded, it is considered that the device cannot be connected',
+    hint_PingTimeout: 'When this setting is exceeded, it is considered that the device cannot be connected',
     Job_field_replacement: 'Illegal characters replaced with',
     A_replacement_for_the_invalid_field_name:
       'Some databases have special requirements for field names, tapdata will automatically replace illegal characters during synchronization. MongoDB[Contains ".", "$" as the beginning]',
@@ -3240,10 +3117,8 @@ const en = {
     job_cdc_share_only: 'Incremental tasks are forced to use shared mode',
     job_cdc_share_only_doc:
       'When the incremental synchronization task sharing mode is turned on and a sharable log cannot be found, the task will be stopped',
-    test_email_success:
-      'The test email has been sent, please log in to the receiving mailbox to check it',
-    test_email_countdown:
-      'The operation is too frequent, please try again later',
+    test_email_success: 'The test email has been sent, please log in to the receiving mailbox to check it',
+    test_email_countdown: 'The operation is too frequent, please try again later',
     email_template_from: 'From',
     email_template_to: 'Recipient',
     email_template_subject: 'Subject',
@@ -3253,14 +3128,12 @@ const en = {
     job_cdc_record_ttl_doc: 'Incremental event save time (days)',
     lagTime: 'incremental lag decision time (seconds)',
     connection_schema_update_hour: 'Data source schema update time',
-    connection_schema_update_interval:
-      'Data source schema update interval (days)',
+    connection_schema_update_interval: 'Data source schema update interval (days)',
     creatDuplicateSource: 'Allow the creation of duplicate data sources',
     requestFailed: 'Request processing failed',
     Mongodb_will_use_this_sample_size_when_load_schema:
       'Mongodb will use this sample size when load schema When MongoDB connects to load the model, this configuration will be used for sample loading',
-    Switch_to_batch_insert_mode_interval__s__in_cdc_:
-      'Switch to batch insert mode interval in cdc. '
+    Switch_to_batch_insert_mode_interval__s__in_cdc_: 'Switch to batch insert mode interval in cdc. '
   },
   dataQuality: {
     title: 'Data Quality',

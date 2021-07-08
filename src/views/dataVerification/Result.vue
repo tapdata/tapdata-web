@@ -12,11 +12,7 @@
         <div class="text" v-if="type === 'jointField'">
           {{ $t('dataVerification.jointVerify') }}
         </div>
-        <div
-          class="error-band"
-          style="width: 96.5%"
-          v-if="errorMsg && type === 'row_count'"
-        >
+        <div class="error-band" style="width: 96.5%" v-if="errorMsg && type === 'row_count'">
           <i class="iconfont icon-warning-circle"></i>
           <span>{{ errorMsg }}</span>
         </div>
@@ -55,45 +51,26 @@
           </el-table-column>
           <el-table-column :label="$t('dataVerification.sourceRows')">
             <template slot-scope="scope">
-              <span>{{
-                scope.row.source_total ? scope.row.source_total : 0
-              }}</span>
+              <span>{{ scope.row.source_total ? scope.row.source_total : 0 }}</span>
               <div>
                 {{ scope.row.target_total ? scope.row.target_total : 0 }}
               </div>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="progress"
-            :label="$t('dataVerification.verifyProgress')"
-            width="80px"
-          >
+          <el-table-column prop="progress" :label="$t('dataVerification.verifyProgress')" width="80px">
             <template slot-scope="scope">
               <div>
                 <span>{{
-                  `${
-                    Math.round(scope.row.progress * 10000) / 100
-                      ? Math.round(scope.row.progress * 10000) / 100
-                      : 0
-                  }%`
+                  `${Math.round(scope.row.progress * 10000) / 100 ? Math.round(scope.row.progress * 10000) / 100 : 0}%`
                 }}</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="status"
-            :label="$t('dataVerification.verifyResult')"
-          >
-            <template
-              slot-scope="scope"
-              v-if="['waiting', 'done'].includes(scope.row.status)"
-            >
+          <el-table-column prop="status" :label="$t('dataVerification.verifyResult')">
+            <template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
               <div class="inspect-result-status">
                 <div v-if="scope.row.result === 'failed'">
-                  <span
-                    class="error"
-                    v-if="scope.row.target_total - scope.row.source_total !== 0"
-                  >
+                  <span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
                     <i class="el-icon-error"></i>
                     <span>{{
                       $t('dataVerification.rowConsistent') +
@@ -104,10 +81,7 @@
                 </div>
                 <div
                   v-if="
-                    scope.row.source_only +
-                      scope.row.target_only +
-                      scope.row.row_failed !==
-                      0 &&
+                    scope.row.source_only + scope.row.target_only + scope.row.row_failed !== 0 &&
                     type !== 'row_count' &&
                     scope.row.result === 'failed'
                   "
@@ -116,11 +90,7 @@
                     <i class="el-icon-error"></i>
                     <span>
                       {{ $t('dataVerification.contConsistent') + ' : ' }}
-                      {{
-                        scope.row.source_only +
-                        scope.row.target_only +
-                        scope.row.row_failed
-                      }}
+                      {{ scope.row.source_only + scope.row.target_only + scope.row.row_failed }}
                     </span>
                   </span>
                 </div>
@@ -146,19 +116,12 @@
       <!--			>-->
       <!--			</el-pagination>-->
     </div>
-    <div
-      class="panel-main panel-box"
-      v-if="type !== 'row_count'"
-      v-loading="detailsLoading"
-    >
+    <div class="panel-main panel-box" v-if="type !== 'row_count'" v-loading="detailsLoading">
       <div class="tip" style="padding-left: 10px">
         {{ $t('dataVerification.verifyDetail') }}
       </div>
       <div class="main">
-        <ul
-          class="inspect-result"
-          v-if="resultData && resultData[0] && resultData[0].status"
-        >
+        <ul class="inspect-result" v-if="resultData && resultData[0] && resultData[0].status">
           <li>
             <span>
               {{
@@ -188,9 +151,7 @@
             </span>
           </li>
           <li>
-            <span>{{
-              $t('dataVerification.verifyResult') + ' : ' + resultData[0].result
-            }}</span>
+            <span>{{ $t('dataVerification.verifyResult') + ' : ' + resultData[0].result }}</span>
           </li>
           <li v-if="resultData[0].result !== 'passed'">
             <span>{{
@@ -201,42 +162,22 @@
           </li>
           <li v-if="resultData[0].result !== 'passed'">
             <span>{{ $t('dataVerification.contConsistent') + ' : ' }}</span>
-            <span>{{
-              resultData[0].source_only +
-              resultData[0].target_only +
-              resultData[0].row_failed
-            }}</span>
+            <span>{{ resultData[0].source_only + resultData[0].target_only + resultData[0].row_failed }}</span>
           </li>
         </ul>
-        <div
-          class="success-band"
-          v-if="
-            resultData && resultData[0] && resultData[0].result === 'passed'
-          "
-        >
+        <div class="success-band" v-if="resultData && resultData[0] && resultData[0].result === 'passed'">
           <i class="iconfont icon-zhuhe"></i>
           <span>{{ $t('dataVerification.success') }}</span>
         </div>
-        <div
-          class="error-band"
-          v-if="resultData && resultData[0] && resultData[0].status === 'error'"
-        >
+        <div class="error-band" v-if="resultData && resultData[0] && resultData[0].status === 'error'">
           <i class="iconfont icon-warning-circle"></i>
           <span>{{ resultData[0].errorMsg }}</span>
         </div>
         <div
           class="inspect-result-box"
-          v-if="
-            resultData[0] &&
-            resultData[0].result !== 'passed' &&
-            !showAdvancedVerification
-          "
+          v-if="resultData[0] && resultData[0].result !== 'passed' && !showAdvancedVerification"
         >
-          <div
-            v-for="item in inspectResult"
-            :key="item.id"
-            class="inspect-details"
-          >
+          <div v-for="item in inspectResult" :key="item.id" class="inspect-details">
             <ul class="father-table">
               <li>{{ $t('dataVerification.inconsistentType') }}</li>
               <li>{{ $t('dataVerification.sourceFieldName') }}</li>
@@ -244,16 +185,10 @@
               <li>{{ $t('dataVerification.targetFieldName') }}</li>
               <li>{{ $t('dataVerification.Value') }}</li>
             </ul>
-            <ul
-              class="sub-table"
-              v-for="detail in item.details"
-              :key="detail.id"
-            >
+            <ul class="sub-table" v-for="detail in item.details" :key="detail.id">
               <li>
                 {{
-                  detail.type === 'uniqueField'
-                    ? $t('dataVerification.uniqueField')
-                    : $t('dataVerification.otherField')
+                  detail.type === 'uniqueField' ? $t('dataVerification.uniqueField') : $t('dataVerification.otherField')
                 }}
               </li>
               <li>{{ detail.source.key }}</li>
@@ -269,20 +204,12 @@
         </div>
         <div
           class="inspect-ad-box"
-          v-if="
-            resultData[0] &&
-            resultData[0].result !== 'passed' &&
-            showAdvancedVerification
-          "
+          v-if="resultData[0] && resultData[0].result !== 'passed' && showAdvancedVerification"
         >
           <div class="title-box">
             <div>{{ $t('dataVerification.verifyResult') }}</div>
           </div>
-          <div
-            v-for="item in inspectResult"
-            :key="item.id"
-            class="inspect-details"
-          >
+          <div v-for="item in inspectResult" :key="item.id" class="inspect-details">
             <div class="message-box">
               <span>{{ $t('dataVerification.returnMsg') }}</span>
               <div>{{ item.message }}</div>
@@ -294,9 +221,7 @@
             <ul class="sub-table">
               <li><JsonViewer :value="item.source"></JsonViewer></li>
               <li>
-                <JsonViewer
-                  :value="item.target ? item.target.data : ''"
-                ></JsonViewer>
+                <JsonViewer :value="item.target ? item.target.data : ''"></JsonViewer>
               </li>
             </ul>
           </div>
@@ -391,18 +316,13 @@ export default {
         .then(([countRes, res]) => {
           if (res.data) {
             this.loading = false
-            this.type = res.data[0].inspect
-              ? res.data[0].inspect.inspectMethod
-              : ''
+            this.type = res.data[0].inspect ? res.data[0].inspect.inspectMethod : ''
             this.name = res.data[0].inspect ? res.data[0].inspect.name : ''
             this.tableData = res.data[0].stats
             this.tasks = res.data[0].inspect ? res.data[0].inspect.tasks : ''
             if (this.tableData.length > 0) {
               this.taskId = this.tableData[0].taskId
-              this.errorMsg =
-                res.data[0].status === 'error'
-                  ? res.data[0].errorMsg
-                  : undefined
+              this.errorMsg = res.data[0].status === 'error' ? res.data[0].errorMsg : undefined
               this.changeInspectResult(1, this.tableData[0].taskId)
             }
             this.tableCurrentPage = currentPage
@@ -425,7 +345,9 @@ export default {
       this.changeInspectResult(1, row.taskId)
     },
     GoBack() {
-      this.$router.push('/dataVerification')
+      this.$router.push({
+        name: 'dataVerification'
+      })
     },
     changeInspectResult(pageNum, taskId) {
       if (!taskId) {
@@ -433,13 +355,10 @@ export default {
       }
       this.detailsLoading = true
       let findAdVance = this.tasks?.filter(item => item.taskId === taskId) || []
-      if (findAdVance.length > 0)
-        this.showAdvancedVerification = findAdVance[0].showAdvancedVerification
+      if (findAdVance.length > 0) this.showAdvancedVerification = findAdVance[0].showAdvancedVerification
       this.taskId = taskId
       let currentPage = pageNum || this.inspectResultCurrentPage + 1
-      this.resultData = this.tableData.filter(
-        item => item.taskId === this.taskId
-      )
+      this.resultData = this.tableData.filter(item => item.taskId === this.taskId)
       let where = {
         where: {
           taskId: this.taskId,
@@ -448,9 +367,7 @@ export default {
         },
         order: 'createTime DESC',
         limit: this.showAdvancedVerification ? 1 : this.inspectPageSize,
-        skip:
-          (currentPage - 1) *
-          (this.showAdvancedVerification ? 1 : this.inspectPageSize)
+        skip: (currentPage - 1) * (this.showAdvancedVerification ? 1 : this.inspectPageSize)
       }
       Promise.all([
         this.$api('InspectDetails').count(where),

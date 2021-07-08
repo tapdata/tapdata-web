@@ -47,39 +47,19 @@
         sortable="agent_id"
         :show-overflow-tooltip="true"
       ></el-table-column>
-      <el-table-column
-        :label="$t('task.statusText')"
-        prop="status"
-        sortable="status"
-      >
+      <el-table-column :label="$t('task.statusText')" prop="status" sortable="status">
         <template slot-scope="scope">
           {{ $t('task.status.' + scope.row.status) }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('task.last_updated')"
-        prop="last_updated"
-        sortable="last_updated"
-      >
+      <el-table-column :label="$t('task.last_updated')" prop="last_updated" sortable="last_updated">
         <template slot-scope="scope">
-          {{
-            scope.row.last_updated
-              ? $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss')
-              : ''
-          }}
+          {{ scope.row.last_updated ? $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('task.ping_time')"
-        prop="ping_time"
-        sortable="ping_time"
-      >
+      <el-table-column :label="$t('task.ping_time')" prop="ping_time" sortable="ping_time">
         <template slot-scope="scope">
-          {{
-            scope.row.ping_time
-              ? $moment(scope.row.ping_time).format('YYYY-MM-DD HH:mm:ss')
-              : ''
-          }}
+          {{ scope.row.ping_time ? $moment(scope.row.ping_time).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
 
@@ -214,9 +194,7 @@ export default {
     },
 
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     }
   }

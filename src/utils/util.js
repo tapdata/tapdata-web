@@ -25,30 +25,16 @@ export function signOut() {
   cookie.delete('email')
   cookie.delete('username')
   cookie.delete('isReadonly')
-  window.App.$router.push('/login')
+  window.App.$router.push({
+    name: 'login'
+  })
   if (window !== top) {
     top.window.location.href = '/login'
   }
 }
 
 export function toRegExp(word) {
-  let arr = [
-    '\\',
-    '$',
-    '(',
-    ')',
-    '*',
-    '+',
-    '.',
-    '[',
-    ']',
-    '?',
-    '^',
-    '{',
-    '}',
-    '|',
-    '-'
-  ]
+  let arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
   for (let i = 0; i < arr.length; i++) {
     let str = '\\' + arr[i]
     word = word.replace(new RegExp(str, 'g'), '\\' + arr[i])

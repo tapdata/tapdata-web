@@ -48,11 +48,7 @@
       </div>
       <ul class="classify-ul">
         <!-- <el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange" class="list-box"> -->
-        <li
-          v-for="item in listdata"
-          :key="item.id"
-          @click="handClickApiData(item)"
-        >
+        <li v-for="item in listdata" :key="item.id" @click="handClickApiData(item)">
           <!-- <el-checkbox :label="item.id"> -->
           <span class="iconfont icon-table2 icon-color"></span>
           <span>{{ item.tablename }}_{{ item.apiVersion }}</span>

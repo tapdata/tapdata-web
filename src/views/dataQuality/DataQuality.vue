@@ -23,20 +23,9 @@
               :placeholder="$t('dataQuality.sourceName')"
               @input="table.fetch(1, 800)"
             >
-              <el-select
-                style="width: 120px"
-                slot="prepend"
-                v-model="searchParams.isFuzzy"
-                @input="table.fetch(1)"
-              >
-                <el-option
-                  :label="$t('connection.fuzzyQuery')"
-                  :value="true"
-                ></el-option>
-                <el-option
-                  :label="$t('connection.PreciseQuery')"
-                  :value="false"
-                ></el-option>
+              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
+                <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
+                <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
               </el-select>
             </el-input>
           </li>
@@ -45,9 +34,7 @@
 							<el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
 						</li> -->
             <li>
-              <el-button size="mini" type="text" @click="reset('reset')">{{
-                $t('button.reset')
-              }}</el-button>
+              <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
             </li>
           </template>
         </ul>
@@ -55,12 +42,7 @@
 
       <!-- 操作项 -->
       <div slot="operation" class="operation">
-        <el-button
-          @click="countVisible = true"
-          v-readonlybtn="'new_model_creation'"
-          class="btn btn-create"
-          size="mini"
-        >
+        <el-button @click="countVisible = true" v-readonlybtn="'new_model_creation'" class="btn btn-create" size="mini">
           <i class="iconfont icon-tongji" style="font-size: 12px"></i>
           <span>{{ $t('dataQuality.countTitle') }}</span>
         </el-button>
@@ -70,11 +52,7 @@
       <el-table-column :label="$t('dataQuality.sourceName')" prop="name">
         <template slot-scope="scope">
           {{ scope.row.collection }}
-          <span
-            v-if="
-              scope.row.asset_desc &&
-              scope.row.asset_desc !== scope.row.collection
-            "
+          <span v-if="scope.row.asset_desc && scope.row.asset_desc !== scope.row.collection"
             >（{{ scope.row.asset_desc }}）</span
           >
           <div class="gray">
@@ -87,31 +65,18 @@
           {{ scope.row.total_docs }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('dataQuality.violatedDocs')"
-        prop="violated_docs"
-      >
+      <el-table-column :label="$t('dataQuality.violatedDocs')" prop="violated_docs">
         <template slot-scope="scope">
-          <a
-            target="_blank"
-            :class="{ link: scope.row.violated_docs }"
-            @click="violationData(scope.row)"
-          >
+          <a target="_blank" :class="{ link: scope.row.violated_docs }" @click="violationData(scope.row)">
             {{ scope.row.violated_docs }}
           </a>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('dataQuality.violatePercentage')"
-        prop="violate_percentage"
-      >
+      <el-table-column :label="$t('dataQuality.violatePercentage')" prop="violate_percentage">
         <template slot-scope="scope">
           {{
             scope.row.total_docs && scope.row.violated_docs
-              ? (
-                  (scope.row.violated_docs / scope.row.total_docs) *
-                  100
-                ).toFixed(2)
+              ? ((scope.row.violated_docs / scope.row.total_docs) * 100).toFixed(2)
               : 0
           }}
           %
@@ -140,13 +105,7 @@
         filterable
         :placeholder="$t('message.placeholderSelect')"
       >
-        <el-option
-          v-for="item in connections"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        >
-        </el-option>
+        <el-option v-for="item in connections" :key="item.id" :label="item.name" :value="item.id"> </el-option>
       </el-select>
 
       <span slot="footer" class="dialog-footer">
@@ -154,12 +113,7 @@
           {{ $t('message.cancel') }}
         </el-button>
 
-        <el-button
-          size="mini"
-          type="primary"
-          :loading="countLoading"
-          @click="countOk"
-        >
+        <el-button size="mini" type="primary" :loading="countLoading" @click="countOk">
           {{ $t('message.confirm') }}
         </el-button>
       </span>
@@ -216,9 +170,7 @@ export default {
       let where = { violated_docs: { gt: 0 } } // 查询条件
 
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy
-          ? { like: toRegExp(keyword), options: 'i' }
-          : keyword
+        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
         where.or = [{ 'source.name': filterObj }, { collection: filterObj }]
       }
 

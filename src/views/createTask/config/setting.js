@@ -9,14 +9,6 @@ export default function () {
     },
     items: [
       {
-        type: 'input',
-        field: 'name',
-        label: '任务名称',
-        maxlength: 300,
-        showWordLimit: true,
-        required: true
-      },
-      {
         type: 'radio',
         field: 'sync_type',
         label: '同步类型',

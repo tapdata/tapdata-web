@@ -10,43 +10,25 @@
     :close-on-press-escape="false"
   >
     <div class="test-result">
-      <div
-        v-if="
-          testData.testLogs &&
-          testData.testLogs.length === 0 &&
-          wsError === 'ERROR'
-        "
-        style="color: #d54e21"
-      >
+      <div v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'" style="color: #d54e21">
         <i class="el-icon-warning" style="color: #d54e21"></i>
-        <span class="test-title">{{
-          wsErrorMsg ? wsErrorMsg : $t('dataForm.test.error')
-        }}</span>
+        <span class="test-title">{{ wsErrorMsg ? wsErrorMsg : $t('dataForm.test.error') }}</span>
       </div>
       <div v-else>
         <div class="test-status" v-if="['invalid', 'ERROR'].includes(status)">
           <i class="el-icon-error" :style="{ color: colorMap[status] }"></i>
-          <span class="test-title">{{
-            $t('dataForm.test.testResultFail')
-          }}</span>
+          <span class="test-title">{{ $t('dataForm.test.testResultFail') }}</span>
         </div>
         <div class="test-status" v-if="['ready'].includes(status)">
           <i class="el-icon-success" :style="{ color: colorMap[status] }"></i>
-          <span class="test-title">{{
-            $t('dataForm.test.testResultSuccess')
-          }}</span>
+          <span class="test-title">{{ $t('dataForm.test.testResultSuccess') }}</span>
         </div>
-        <div
-          class="test-status"
-          v-if="!['ready', 'invalid', 'ERROR'].includes(status)"
-        >
+        <div class="test-status" v-if="!['ready', 'invalid', 'ERROR'].includes(status)">
           <el-image
             style="width: 20px; height: 20px; vertical-align: bottom"
             :src="require('@/assets/icons/loading-drs.gif')"
           ></el-image>
-          <span v-if="testData.testLogs.length === 0">{{
-            $t('dataForm.primaryTest')
-          }}</span>
+          <span v-if="testData.testLogs.length === 0">{{ $t('dataForm.primaryTest') }}</span>
           <span v-else>{{ $t('dataForm.testing') }}</span>
         </div>
       </div>
@@ -60,28 +42,16 @@
     >
       <el-table-column prop="show_msg" :label="$t('dataForm.test.items')">
         <template slot-scope="scope">
-          <span>{{
-            $t(`dataForm.form.response_body.${scope.row.show_msg}`)
-          }}</span>
+          <span>{{ $t(`dataForm.form.response_body.${scope.row.show_msg}`) }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="status"
-        :label="$t('dataForm.test.result')"
-        width="150"
-      >
+      <el-table-column prop="status" :label="$t('dataForm.test.result')" width="150">
         <template slot-scope="scope">
-          <span
-            v-if="scope.row.status === 'failed' && !scope.row.required"
-            :style="`color: ${colorMap['warning']};`"
-          >
+          <span v-if="scope.row.status === 'failed' && !scope.row.required" :style="`color: ${colorMap['warning']};`">
             <i class="el-icon-warning" :style="{ color: colorMap[status] }"></i>
             {{ statusMap[scope.row.status] }}
           </span>
-          <span
-            v-else-if="scope.row.status === 'unTest'"
-            :style="`color: ${colorMap[scope.row.status]};`"
-          >
+          <span v-else-if="scope.row.status === 'unTest'" :style="`color: ${colorMap[scope.row.status]};`">
             <el-image
               style="width: 20px; height: 20px; vertical-align: bottom"
               :src="require('@/assets/icons/loading-drs.gif')"
@@ -89,33 +59,22 @@
             {{ statusMap[scope.row.status] }}
           </span>
           <span v-else :style="`color: ${colorMap[scope.row.status]};`">
-            <i
-              :class="iconMap[scope.row.status]"
-              :style="{ color: colorMap[scope.row.status] }"
-            ></i>
+            <i :class="iconMap[scope.row.status]" :style="{ color: colorMap[scope.row.status] }"></i>
             {{ statusMap[scope.row.status] }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="fail_message"
-        :label="$t('dataForm.test.information')"
-        width="308"
-      ></el-table-column>
+      <el-table-column prop="fail_message" :label="$t('dataForm.test.information')" width="308"></el-table-column>
     </el-table>
     <!--    <span v-show="testData.testLogs && testData.testLogs.length > 0">ERROR: {{ wsErrorMsg }}</span>-->
     <span slot="footer" class="dialog-footer">
       <el-button
         size="mini"
         @click="start()"
-        v-if="
-          isTimeout && $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'
-        "
+        v-if="isTimeout && $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
         >{{ $t('dataForm.test.retryBtn') }}</el-button
       >
-      <el-button size="mini" type="primary" @click="handleClose()">{{
-        $t('dataForm.close')
-      }}</el-button>
+      <el-button size="mini" type="primary" @click="handleClose()">{{ $t('dataForm.close') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -256,11 +215,7 @@ export default {
     },
     start(updateSchema, editTest) {
       let data = Object.assign({}, this.formData)
-      if (
-        data.database_type === 'mq' &&
-        (typeof data.mqQueueSet === 'string' ||
-          typeof data.mqTopicSet === 'string')
-      ) {
+      if (data.database_type === 'mq' && (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string')) {
         data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
         data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
       }

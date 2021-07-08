@@ -51,34 +51,13 @@ export const memCacheConfig = {
         data = data || this.getFormData()
         let name = this.attr('label/text')
         log('MemCache Formdata')
-        if (!data)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
-          )
-        if (!data.cacheName)
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.data_node.memCache.form.cacheName.none'
-            )}`
-          )
-        if (!data.cacheKeys)
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.data_node.memCache.form.cacheKeys.none'
-            )}`
-          )
+        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
+        if (!data.cacheName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.cacheName.none')}`)
+        if (!data.cacheKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.cacheKeys.none')}`)
         if (data.maxSize !== 0 && !data.maxSize)
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.data_node.memCache.form.maxSize.none'
-            )}`
-          )
+          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.maxSize.none')}`)
         if (data.maxRows !== 0 && !data.maxRows)
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.data_node.memCache.form.maxRows.none'
-            )}`
-          )
+          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.maxRows.none')}`)
         return true
       },
 
@@ -98,9 +77,7 @@ export const memCacheConfig = {
        */
       allowSource(sourceCell) {
         return (
-          ['app.Collection', 'app.KafkaNode'].includes(
-            sourceCell.get('type')
-          ) &&
+          ['app.Collection', 'app.KafkaNode'].includes(sourceCell.get('type')) &&
           sourceCell.graph.getConnectedLinks(this, {
             inbound: true
           }).length < 1

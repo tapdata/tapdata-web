@@ -33,21 +33,14 @@
           :placeholder="$t('notification.placeholder.user')"
           @change="getData(1)"
         >
-          <el-option
-            v-for="user in userOptions"
-            :key="user.id"
-            :value="user.id"
-            :label="user.username"
-          ></el-option>
+          <el-option v-for="user in userOptions" :key="user.id" :value="user.id" :label="user.username"></el-option>
         </el-select>
       </div>
     </div>
     <ul class="list">
       <li class="item" v-for="record in list" :key="record._id">
         <UserOperation :record="record"></UserOperation>
-        <span class="item-time">{{
-          $moment(record.createTime).format('YYYY-MM-DD HH:mm:ss')
-        }}</span>
+        <span class="item-time">{{ $moment(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
       </li>
     </ul>
     <el-pagination
@@ -123,10 +116,7 @@ export default {
       // 	};
       // }
       if (range && range.length) {
-        where.and = [
-          { createTime: { gte: range[0].toISOString() } },
-          { createTime: { lte: range[1].toISOString() } }
-        ]
+        where.and = [{ createTime: { gte: range[0].toISOString() } }, { createTime: { lte: range[1].toISOString() } }]
       }
       let filter = {
         order: 'createTime DESC',

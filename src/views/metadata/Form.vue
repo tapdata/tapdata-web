@@ -6,25 +6,12 @@
     :visible.sync="dialogFormVisible"
     custom-class="dialogInfo-form"
   >
-    <el-form
-      :model="form"
-      :rules="rules"
-      ref="form"
-      label-width="120"
-      class="e-form"
-      label-position="left"
-    >
+    <el-form :model="form" :rules="rules" ref="form" label-width="120" class="e-form" label-position="left">
       <div class="box">
-        <el-form-item
-          :label="$t('metadata.details.filedName')"
-          prop="field_name"
-          required
-        >
+        <el-form-item :label="$t('metadata.details.filedName')" prop="field_name" required>
           <el-input
             v-model="form.field_name"
-            :placeholder="
-              $t('metadata.details.enter') + $t('metadata.details.filedName')
-            "
+            :placeholder="$t('metadata.details.enter') + $t('metadata.details.filedName')"
             autocomplete="off"
             :disabled="fieldNameDisabled"
             size="mini"
@@ -35,9 +22,7 @@
         <el-form-item :label="$t('metadata.details.alias')">
           <el-input
             v-model="form.alias_name"
-            :placeholder="
-              $t('metadata.details.enter') + $t('metadata.details.alias')
-            "
+            :placeholder="$t('metadata.details.enter') + $t('metadata.details.alias')"
             autocomplete="off"
             size="mini"
             maxlength="50"
@@ -47,96 +32,48 @@
         <el-form-item :label="$t('metadata.details.description')">
           <el-input
             type="textarea"
-            :placeholder="
-              $t('metadata.details.enter') + $t('metadata.details.description')
-            "
+            :placeholder="$t('metadata.details.enter') + $t('metadata.details.description')"
             v-model="form.comment"
             maxlength="50"
             show-word-limit
           >
           </el-input>
         </el-form-item>
-        <el-form-item
-          :label="$t('metadata.details.fieldType')"
-          prop="java_type"
-          required
-        >
-          <el-select
-            v-model="form.java_type"
-            :disabled="fieldNameDisabled"
-            size="mini"
-          >
-            <el-option
-              v-for="item in dataType_list"
-              :label="item.name"
-              :value="item.type"
-              :key="item.type"
-            ></el-option>
+        <el-form-item :label="$t('metadata.details.fieldType')" prop="java_type" required>
+          <el-select v-model="form.java_type" :disabled="fieldNameDisabled" size="mini">
+            <el-option v-for="item in dataType_list" :label="item.name" :value="item.type" :key="item.type"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item style="margin-left: 100px">
-          <el-checkbox v-model="form.is_auto_allowed">{{
-            $t('metadata.details.allowOverwrite')
-          }}</el-checkbox>
-          <el-checkbox v-model="form.autoincrement">{{
-            $t('metadata.details.selfIncreasing')
-          }}</el-checkbox>
-          <el-checkbox v-model="form.primary_key">{{
-            $t('metadata.details.primaryKey')
-          }}</el-checkbox>
+          <el-checkbox v-model="form.is_auto_allowed">{{ $t('metadata.details.allowOverwrite') }}</el-checkbox>
+          <el-checkbox v-model="form.autoincrement">{{ $t('metadata.details.selfIncreasing') }}</el-checkbox>
+          <el-checkbox v-model="form.primary_key">{{ $t('metadata.details.primaryKey') }}</el-checkbox>
         </el-form-item>
         <el-form-item :label="$t('metadata.details.fieldLength')">
-          <el-input-number
-            v-model="form.columnSize"
-            :min="0"
-            size="mini"
-          ></el-input-number>
+          <el-input-number v-model="form.columnSize" :min="0" size="mini"></el-input-number>
         </el-form-item>
         <el-form-item :label="$t('metadata.details.accuracy')">
-          <el-input-number
-            v-model="form.precision"
-            :min="0"
-            size="mini"
-          ></el-input-number>
+          <el-input-number v-model="form.precision" :min="0" size="mini"></el-input-number>
         </el-form-item>
         <el-form-item :label="$t('metadata.details.numberLength')">
-          <el-input-number
-            v-model="form.scale"
-            :min="0"
-            size="mini"
-          ></el-input-number>
+          <el-input-number v-model="form.scale" :min="0" size="mini"></el-input-number>
         </el-form-item>
       </div>
       <!-- 字典模板 -->
       <div class="box">
         <h2>{{ $t('metadata.details.dictionarySettings') }}</h2>
-        <el-table
-          :data="form.dictionary"
-          border
-          class="e-table"
-          style="width: 100%"
-        >
-          <el-table-column
-            prop="key"
-            :label="$t('metadata.details.initialValue')"
-          >
+        <el-table :data="form.dictionary" border class="e-table" style="width: 100%">
+          <el-table-column prop="key" :label="$t('metadata.details.initialValue')">
             <template slot-scope="scope">
               <el-input v-model="scope.row.key" size="mini"> </el-input>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="value"
-            :label="$t('metadata.details.mappedValue')"
-          >
+          <el-table-column prop="value" :label="$t('metadata.details.mappedValue')">
             <template slot-scope="scope">
               <el-input v-model="scope.row.value" size="mini"> </el-input>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="address"
-            :label="$t('metadata.details.opera')"
-            width="60"
-          >
+          <el-table-column prop="address" :label="$t('metadata.details.opera')" width="60">
             <template slot-scope="scope">
               <el-button
                 @click="delDictionary(scope.$index, 0)"
@@ -148,33 +85,17 @@
           </el-table-column>
         </el-table>
         <div class="addBtn">
-          <el-button @click="addDictionary" size="mini"
-            >+ {{ $t('metadata.details.newMapping') }}</el-button
-          >
-          <el-button @click="handleSelectTemplate" size="mini">{{
-            $t('metadata.details.chooseTemplate')
-          }}</el-button>
+          <el-button @click="addDictionary" size="mini">+ {{ $t('metadata.details.newMapping') }}</el-button>
+          <el-button @click="handleSelectTemplate" size="mini">{{ $t('metadata.details.chooseTemplate') }}</el-button>
         </div>
       </div>
       <!-- 外键设置 -->
       <div class="box">
         <h2>{{ $t('metadata.details.foreignKeySetting') }}</h2>
-        <el-table
-          :data="form.relation"
-          border
-          class="e-table"
-          style="width: 100%"
-        >
-          <el-table-column
-            prop="table_name"
-            :label="$t('metadata.details.associationTable')"
-          >
+        <el-table :data="form.relation" border class="e-table" style="width: 100%">
+          <el-table-column prop="table_name" :label="$t('metadata.details.associationTable')">
             <template slot-scope="scope">
-              <el-select
-                v-model="scope.row.table_name"
-                @change="changeRecordTable($event)"
-                size="mini"
-              >
+              <el-select v-model="scope.row.table_name" @change="changeRecordTable($event)" size="mini">
                 <el-option
                   v-for="item in getAvailableTable(scope.$index)"
                   :label="item.original_name"
@@ -184,16 +105,9 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="field_name"
-            :label="$t('metadata.details.associationField')"
-          >
+          <el-table-column prop="field_name" :label="$t('metadata.details.associationField')">
             <template slot-scope="scope">
-              <el-select
-                v-model="scope.row.field_name"
-                @focus="changeRecordTable(scope.row.table_name)"
-                size="mini"
-              >
+              <el-select v-model="scope.row.field_name" @focus="changeRecordTable(scope.row.table_name)" size="mini">
                 <el-option
                   v-for="item in fieldList"
                   :label="item.field_name"
@@ -203,10 +117,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="rel"
-            :label="$t('metadata.details.connectionRelation')"
-          >
+          <el-table-column prop="rel" :label="$t('metadata.details.connectionRelation')">
             <template slot-scope="scope">
               <el-select v-model="scope.row.rel" size="mini">
                 <el-option
@@ -218,11 +129,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="address"
-            :label="$t('metadata.details.opera')"
-            width="60"
-          >
+          <el-table-column prop="address" :label="$t('metadata.details.opera')" width="60">
             <template slot-scope="scope">
               <el-button
                 @click="delRelation(scope.$index, 0)"
@@ -244,9 +151,7 @@
       <el-button class="cancel" @click="handleClose()" size="small">
         {{ $t('message.cancel') }}
       </el-button>
-      <el-button type="primary" @click="save()" size="small">{{
-        $t('message.save')
-      }}</el-button>
+      <el-button type="primary" @click="save()" size="small">{{ $t('message.save') }}</el-button>
     </div>
     <el-dialog
       :title="$t('metadata.details.chooseTemplate')"
@@ -256,11 +161,7 @@
       custom-class="dialogDictionary"
     >
       <el-radio-group v-model="selectDictionaryTem">
-        <el-radio
-          v-for="item in dictionaryList"
-          :key="item.id"
-          :label="item.name"
-        ></el-radio>
+        <el-radio v-for="item in dictionaryList" :key="item.id" :label="item.name"></el-radio>
       </el-radio-group>
       <!-- <ul>
 				<li
@@ -273,18 +174,10 @@
 				</li>
 			</ul> -->
       <div slot="footer" class="dialog-footer">
-        <el-button
-          class="cancel"
-          @click="dialogDictionaryVisible = false"
-          size="small"
-          >{{ $t('message.cancel') }}</el-button
-        >
-        <el-button
-          type="primary"
-          @click="handleSelectDictionary"
-          size="small"
-          >{{ $t('message.confirm') }}</el-button
-        >
+        <el-button class="cancel" @click="dialogDictionaryVisible = false" size="small">{{
+          $t('message.cancel')
+        }}</el-button>
+        <el-button type="primary" @click="handleSelectDictionary" size="small">{{ $t('message.confirm') }}</el-button>
       </div>
     </el-dialog>
   </el-dialog>
@@ -307,9 +200,7 @@ export default {
   },
   data() {
     return {
-      title: this.data.id
-        ? this.$t('metadata.details.editFild')
-        : this.$t('metadata.details.createFiled'),
+      title: this.data.id ? this.$t('metadata.details.editFild') : this.$t('metadata.details.createFiled'),
       dialogFormVisible: this.dialogVisible,
       selectDictionaryTem: '',
       fieldNameDisabled: false,
@@ -463,9 +354,7 @@ export default {
         let fieldsList = []
         for (let i = 0; i < _this.form.relation.length; i++) {
           if (_this.form.relation[i].table_name) {
-            let index = relationName.data.original_name.indexOf(
-              _this.form.relation[i].table_name
-            )
+            let index = relationName.data.original_name.indexOf(_this.form.relation[i].table_name)
             if (index > -1) {
               relationName.data.fields.forEach(field => fieldsList.push(field))
               fieldsList.map(item => {
@@ -486,16 +375,9 @@ export default {
     async handleSelectTemplate(item) {
       let that = this
       if (
-        [
-          'String',
-          'Integer',
-          'Boolean',
-          'Short',
-          'Long',
-          'Float',
-          'Double',
-          'BigDecimal'
-        ].includes(that.form.java_type) &&
+        ['String', 'Integer', 'Boolean', 'Short', 'Long', 'Float', 'Double', 'BigDecimal'].includes(
+          that.form.java_type
+        ) &&
         this.form.field_name
       ) {
         that.dialogDictionaryVisible = true
@@ -540,16 +422,9 @@ export default {
     // 新增字典模板
     addDictionary() {
       if (
-        [
-          'String',
-          'Integer',
-          'Boolean',
-          'Short',
-          'Long',
-          'Float',
-          'Double',
-          'BigDecimal'
-        ].includes(this.form.java_type) &&
+        ['String', 'Integer', 'Boolean', 'Short', 'Long', 'Float', 'Double', 'BigDecimal'].includes(
+          this.form.java_type
+        ) &&
         this.form.field_name
       ) {
         this.form.dictionary.push({
@@ -680,9 +555,7 @@ export default {
               .then(() => {
                 this.dialogFormVisible = false
                 this.$emit('dialogVisible', false)
-                this.$message.success(
-                  this.$t('metadata.details.success_Release')
-                )
+                this.$message.success(this.$t('metadata.details.success_Release'))
               })
               .catch(() => {
                 this.$message.error(this.$t('message.saveFail'))

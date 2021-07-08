@@ -596,16 +596,6 @@ const childRoutes = [
       isCollapse: true,
       types: ['table', 'view', 'collection', 'mongo_view']
     }
-  },
-  {
-    path: '/metadataDetails',
-    name: 'metadataDetails',
-    component: () => import('@/views/metadata/Info'),
-    meta: {
-      code: 'data_catalog_menu',
-      title: i18n.t('tap.dataCatalog'),
-      isCollapse: true
-    }
   }
 ]
 
@@ -803,15 +793,7 @@ router.beforeEach(async (to, from, next) => {
       next(false)
     }
   } else {
-    if (
-      [
-        'login',
-        'registry',
-        'passwordReset',
-        'verificationEmail',
-        'registyResult'
-      ].includes(to.name)
-    ) {
+    if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name)) {
       next()
     } else {
       next('/login')

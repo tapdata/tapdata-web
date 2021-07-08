@@ -2,11 +2,7 @@
   <!-- mogo视图 start -->
   <section class="pipeline-list-wrap">
     <el-form :model="model" :rules="rules" ref="form" label-position="top">
-      <el-form-item
-        :label="$t('metadata.details.pipeline.collection')"
-        prop="collection"
-        required
-      >
+      <el-form-item :label="$t('metadata.details.pipeline.collection')" prop="collection" required>
         <el-select v-model="model.collection" size="mini">
           <el-option
             v-for="item in collections"
@@ -26,19 +22,12 @@
           "
         ></el-input> -->
       </el-form-item>
-      <el-form-item
-        :label="$t('metadata.details.pipeline.pipeline')"
-        prop="pipeline"
-        required
-      >
+      <el-form-item :label="$t('metadata.details.pipeline.pipeline')" prop="pipeline" required>
         <el-input
           type="textarea"
           size="mini"
           v-model="model.pipeline"
-          :placeholder="
-            $t('metadata.details.enter') +
-            $t('metadata.details.pipeline.pipeline')
-          "
+          :placeholder="$t('metadata.details.enter') + $t('metadata.details.pipeline.pipeline')"
         ></el-input>
       </el-form-item>
       <el-form-item>
@@ -57,9 +46,7 @@
           <el-button type="primary" @click="applicationBtn" size="mini">{{
             $t('metadata.details.pipeline.apply')
           }}</el-button>
-          <el-button type="primary" @click="saveSubmit" size="mini">{{
-            $t('message.save')
-          }}</el-button>
+          <el-button type="primary" @click="saveSubmit" size="mini">{{ $t('message.save') }}</el-button>
         </div>
       </el-form-item>
     </el-form>
@@ -89,18 +76,14 @@ export default {
           {
             required: true,
             trigger: 'blur',
-            message:
-              this.$t('metadata.details.pipeline.collection') +
-              this.$t('metadata.details.pipeline.cnot_Empty')
+            message: this.$t('metadata.details.pipeline.collection') + this.$t('metadata.details.pipeline.cnot_Empty')
           }
         ],
         pipeline: [
           {
             required: true,
             trigger: 'blur',
-            message:
-              this.$t('metadata.details.pipeline.pipeline') +
-              this.$t('metadata.details.pipeline.cnot_Empty')
+            message: this.$t('metadata.details.pipeline.pipeline') + this.$t('metadata.details.pipeline.cnot_Empty')
           }
         ]
       }
@@ -178,9 +161,7 @@ export default {
             .then(res => {
               this.isApplication = res.data.task_data.isApplication
               this.pipelineData.pipline.isApplication = this.isApplication
-              this.$message.success(
-                this.$t('metadata.details.pipeline.success')
-              )
+              this.$message.success(this.$t('metadata.details.pipeline.success'))
             })
             .catch(() => {
               this.$message.error(this.$t('metadata.details.pipeline.failed'))

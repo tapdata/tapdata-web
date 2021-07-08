@@ -152,10 +152,7 @@ export const databaseLink = {
       },
 
       getMarkerWidth: function (type) {
-        let d =
-          type === 'source'
-            ? this.attr('line/sourceMarker/d')
-            : this.attr('line/targetMarker/d')
+        let d = type === 'source' ? this.attr('line/sourceMarker/d') : this.attr('line/targetMarker/d')
         return this.getDataWidth(d)
       },
 
@@ -210,15 +207,7 @@ export const databaseLink = {
         if (modelType.indexOf('uml') === 0) opt.selector = 'root'
         // taking the border stroke-width into account
         if (modelType === 'standard.InscribedImage') opt.selector = 'border'
-        return joint.connectionPoints.boundary.call(
-          this,
-          line,
-          view,
-          magnet,
-          opt,
-          type,
-          linkView
-        )
+        return joint.connectionPoints.boundary.call(this, line, view, magnet, opt, type, linkView)
       }
     }
   },
@@ -306,10 +295,7 @@ export const databaseLink = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

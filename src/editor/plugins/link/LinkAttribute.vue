@@ -51,10 +51,7 @@
         v-if="!isTargetTypeTcpFalg"
         action="javascript:void(0);"
       >
-        <el-form-item
-          :label="$t('editor.cell.link.form.joinType.label')"
-          required
-        >
+        <el-form-item :label="$t('editor.cell.link.form.joinType.label')" required>
           <el-select
             v-model="model.joinTable.joinType"
             :placeholder="$t('editor.cell.link.form.joinType.placeholder')"
@@ -78,9 +75,7 @@
           <div class="flex-block">
             <el-input
               v-model="model.joinTable.arrayUniqueKey"
-              :placeholder="
-                $t('editor.cell.link.form.arrayUniqueKey.placeholder')
-              "
+              :placeholder="$t('editor.cell.link.form.arrayUniqueKey.placeholder')"
               size="mini"
             ></el-input>
             <ClipButton :value="model.joinTable.arrayUniqueKey"></ClipButton>
@@ -88,12 +83,7 @@
         </el-form-item>
         <el-form-item
           :label="$t('editor.cell.link.form.joinPath.label')"
-          v-if="
-            supportEmbedArray() &&
-            ['upsert', 'update', 'merge_embed'].includes(
-              model.joinTable.joinType
-            )
-          "
+          v-if="supportEmbedArray() && ['upsert', 'update', 'merge_embed'].includes(model.joinTable.joinType)"
         >
           <div class="flex-block">
             <el-input
@@ -126,12 +116,7 @@
             :placeholder="$t('editor.cell.link.form.joinMethod.placeholder')"
             size="mini"
           >
-            <el-option
-              v-for="(item, idx) in methodList"
-              :label="item.label"
-              :value="item.value"
-              :key="idx"
-            ></el-option>
+            <el-option v-for="(item, idx) in methodList" :label="item.label" :value="item.value" :key="idx"></el-option>
           </el-select>
         </el-form-item>
 
@@ -148,17 +133,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(item, idx) in model.joinTable.joinKeys"
-                v-bind:key="idx"
-              >
+              <tr v-for="(item, idx) in model.joinTable.joinKeys" v-bind:key="idx">
                 <td>
-                  <el-select
-                    v-model="item.source"
-                    filterable
-                    allow-create
-                    default-first-option
-                  >
+                  <el-select v-model="item.source" filterable allow-create default-first-option>
                     <el-option
                       v-for="(item, idx) in sourceList"
                       :value="item.field_name"
@@ -168,12 +145,7 @@
                   </el-select>
                 </td>
                 <td>
-                  <el-select
-                    v-model="item.target"
-                    filterable
-                    allow-create
-                    default-first-option
-                  >
+                  <el-select v-model="item.target" filterable allow-create default-first-option>
                     <el-option
                       v-for="(item, idx) in targetList"
                       :value="item.field_name"
@@ -331,8 +303,7 @@ export default {
               sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null
             let sourcePKs = this.getPKsFromSchema(sourceSchema)
             if (sourcePKs && sourcePKs.length > 0) {
-              this.model.joinTable.arrayUniqueKey =
-                sourcePKs[0].field_name || sourcePKs[0].original_field_name
+              this.model.joinTable.arrayUniqueKey = sourcePKs[0].field_name || sourcePKs[0].original_field_name
             }
           }
         } else {
@@ -363,8 +334,7 @@ export default {
     ]
     let self = this
     self.$on(EditorEventType.RESIZE, () => {
-      self.$refs.mappingComp &&
-        self.$refs.mappingComp.$emit(EditorEventType.RESIZE)
+      self.$refs.mappingComp && self.$refs.mappingComp.$emit(EditorEventType.RESIZE)
     })
 
     this.$on(EditorEventType.HIDE, () => {
@@ -406,9 +376,7 @@ export default {
           fields = removeDeleted(fields)
         }
         const h = self.$createElement
-        let messageArr = self
-          .$t('editor.cell.link.repeatId.message')
-          .split('_id')
+        let messageArr = self.$t('editor.cell.link.repeatId.message').split('_id')
         let msgNode = []
         messageArr.forEach((m, i) => {
           msgNode.push(m)
@@ -417,11 +385,7 @@ export default {
           }
         })
         fields.forEach(field => {
-          if (
-            field.fromDB &&
-            field.field_name === '_id' &&
-            field.fromDB.length > 2
-          ) {
+          if (field.fromDB && field.field_name === '_id' && field.fromDB.length > 2) {
             self.$notify({
               title: self.$t('editor.cell.link.repeatId.title'),
               message: h('i', {}, msgNode),
@@ -469,16 +433,10 @@ export default {
           sourceSchema = sourceCell ? sourceCell.getOutputSchema() : null,
           // targetSchema = targetCell ? targetCell.getSchema() : null,
           mergedTargetSchema =
-            targetCell && typeof targetCell.getOutputSchema === 'function'
-              ? targetCell.getOutputSchema()
-              : null
+            targetCell && typeof targetCell.getOutputSchema === 'function' ? targetCell.getOutputSchema() : null
 
-        let firstDataNode =
-          typeof sourceCell.getFirstDataNode === 'function'
-            ? sourceCell.getFirstDataNode()
-            : []
-        this.model.joinTable.stageId =
-          firstDataNode.length > 0 ? firstDataNode[0].id : ''
+        let firstDataNode = typeof sourceCell.getFirstDataNode === 'function' ? sourceCell.getFirstDataNode() : []
+        this.model.joinTable.stageId = firstDataNode.length > 0 ? firstDataNode[0].id : ''
         // this.model.joinTable.stageId = cell.getSourceCell().id;
         //过滤已被删除的字段
         if (mergedTargetSchema && mergedTargetSchema.fields) {
@@ -490,42 +448,27 @@ export default {
         let sourceList =
           sourceSchema && sourceSchema.fields
             ? sourceSchema.fields.sort((v1, v2) =>
-                v1.field_name > v2.field_name
-                  ? 1
-                  : v1.field_name === v2.field_name
-                  ? 0
-                  : -1
+                v1.field_name > v2.field_name ? 1 : v1.field_name === v2.field_name ? 0 : -1
               )
             : []
 
         let targetList =
           mergedTargetSchema && mergedTargetSchema.fields
             ? mergedTargetSchema.fields.sort((v1, v2) =>
-                v1.field_name > v2.field_name
-                  ? 1
-                  : v1.field_name === v2.field_name
-                  ? 0
-                  : -1
+                v1.field_name > v2.field_name ? 1 : v1.field_name === v2.field_name ? 0 : -1
               )
             : []
-        this.sourceList =
-          (sourceList && sourceList.filter(item => item.field_name !== '')) ||
-          []
-        this.targetList =
-          (targetList && targetList.filter(item => item.field_name !== '')) ||
-          []
+        this.sourceList = (sourceList && sourceList.filter(item => item.field_name !== '')) || []
+        this.targetList = (targetList && targetList.filter(item => item.field_name !== '')) || []
 
         let joinKeys = this.model.joinTable.joinKeys
         // 关联字段自动填充
         if (
           joinKeys.length === 0 ||
-          (joinKeys.length === 1 &&
-            (joinKeys[0].source === '' || joinKeys[0].target === ''))
+          (joinKeys.length === 1 && (joinKeys[0].source === '' || joinKeys[0].target === ''))
         ) {
           if (this.model.joinTable.joinType === 'upsert') {
-            let sourcePKs = this.getPKsFromSchema(sourceSchema).sort((v1, v2) =>
-              v1 > v2 ? 1 : v1 === v2 ? 0 : -1
-            )
+            let sourcePKs = this.getPKsFromSchema(sourceSchema).sort((v1, v2) => (v1 > v2 ? 1 : v1 === v2 ? 0 : -1))
             let mergeFields = []
             if (mergedTargetSchema && mergedTargetSchema.fields) {
               mergeFields = mergedTargetSchema.fields
@@ -543,9 +486,7 @@ export default {
                 let source = field.field_name
                 let target = ''
                 if (mergeFields && mergeFields.length) {
-                  let pk = mergeFields.find(
-                    tField => tField.field_name === field.field_name
-                  )
+                  let pk = mergeFields.find(tField => tField.field_name === field.field_name)
                   if (pk) {
                     target = pk.field_name
                   }
@@ -625,9 +566,7 @@ export default {
       if (this.supportEmbedArray()) {
         this.WRITE_MODELS.forEach(model => this.writeModels.push(model))
       } else {
-        this.WRITE_MODELS.filter(
-          model => model.value !== 'merge_embed'
-        ).forEach(model => this.writeModels.push(model))
+        this.WRITE_MODELS.filter(model => model.value !== 'merge_embed').forEach(model => this.writeModels.push(model))
       }
 
       this.unwatch = this.$watch(
@@ -654,34 +593,22 @@ export default {
 							meta_type: this.targetCell.get('type') === 'app.Collection' ? 'collection' : 'table'
 						} */
         let mergedTargetSchema =
-          targetCell && typeof targetCell.getOutputSchema === 'function'
-            ? targetCell.getOutputSchema()
-            : null // mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
+          targetCell && typeof targetCell.getOutputSchema === 'function' ? targetCell.getOutputSchema() : null // mergeJoinTablesToTargetSchema(targetSchema, targetInputSchema);
         //过滤被删除的字段
         if (mergedTargetSchema && mergedTargetSchema.fields) {
           mergedTargetSchema.fields = removeDeleted(mergedTargetSchema.fields)
         }
-        let targetSchemaFields =
-          (mergedTargetSchema && mergedTargetSchema.fields) || []
-        let targetJoinFields = targetSchemaFields.filter(
-          field => field.field_name === this.model.joinTable.joinPath
-        )
-        let isArray =
-          targetJoinFields &&
-          targetJoinFields.length > 0 &&
-          targetJoinFields[0].javaType === 'Array'
-        if (this.model.joinTable.isArray !== isArray)
-          this.model.joinTable.isArray = isArray
+        let targetSchemaFields = (mergedTargetSchema && mergedTargetSchema.fields) || []
+        let targetJoinFields = targetSchemaFields.filter(field => field.field_name === this.model.joinTable.joinPath)
+        let isArray = targetJoinFields && targetJoinFields.length > 0 && targetJoinFields[0].javaType === 'Array'
+        if (this.model.joinTable.isArray !== isArray) this.model.joinTable.isArray = isArray
         this.$refs.mappingComp.setSchema(sourceSchema, mergedTargetSchema)
         log('Link.renderSchema', sourceSchema, mergedTargetSchema)
       }
     },
 
     handlerJoinTypeChanged() {
-      if (
-        !this.model.joinTable.joinPath &&
-        ['merge_embed', 'update'].includes(this.model.joinTable.joinType)
-      ) {
+      if (!this.model.joinTable.joinPath && ['merge_embed', 'update'].includes(this.model.joinTable.joinType)) {
         this.model.joinTable.joinPath = this.model.joinTable.tableName
       }
       this.$refs.mappingComp.$emit(EditorEventType.RESIZE)
