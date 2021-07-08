@@ -953,48 +953,48 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@formily/core@2.0.0-beta.71", "@formily/core@^2.0.0-beta.71":
-  version "2.0.0-beta.71"
-  resolved "https://registry.nlark.com/@formily/core/download/@formily/core-2.0.0-beta.71.tgz#44e042b3ed5df343ddeee0b42945ef0d314f1f1e"
-  integrity sha1-ROBCs+1d80Pd7uC0KUXvDTFPHx4=
+"@formily/core@2.0.0-beta.76", "@formily/core@^2.0.0-beta.76":
+  version "2.0.0-beta.76"
+  resolved "https://registry.nlark.com/@formily/core/download/@formily/core-2.0.0-beta.76.tgz#b062e38dc15bb3ec7108a08b089eb59b5dd36deb"
+  integrity sha1-sGLjjcFbs+xxCKCLCJ61m13Tbes=
   dependencies:
-    "@formily/reactive" "2.0.0-beta.71"
-    "@formily/shared" "2.0.0-beta.71"
-    "@formily/validator" "2.0.0-beta.71"
+    "@formily/reactive" "2.0.0-beta.76"
+    "@formily/shared" "2.0.0-beta.76"
+    "@formily/validator" "2.0.0-beta.76"
 
-"@formily/json-schema@2.0.0-beta.71":
-  version "2.0.0-beta.71"
-  resolved "https://registry.nlark.com/@formily/json-schema/download/@formily/json-schema-2.0.0-beta.71.tgz#18093569a7094a4fbbd92f5100da57e9298355e9"
-  integrity sha1-GAk1aacJSk+72S9RANpX6SmDVek=
+"@formily/json-schema@2.0.0-beta.76":
+  version "2.0.0-beta.76"
+  resolved "https://registry.nlark.com/@formily/json-schema/download/@formily/json-schema-2.0.0-beta.76.tgz#a5a038e1f735697ab44e718fb679e002d9a41837"
+  integrity sha1-paA44fc1aXq0TnGPtnngAtmkGDc=
   dependencies:
-    "@formily/core" "2.0.0-beta.71"
-    "@formily/reactive" "2.0.0-beta.71"
-    "@formily/shared" "2.0.0-beta.71"
+    "@formily/core" "2.0.0-beta.76"
+    "@formily/reactive" "2.0.0-beta.76"
+    "@formily/shared" "2.0.0-beta.76"
 
-"@formily/path@2.0.0-beta.71":
-  version "2.0.0-beta.71"
-  resolved "https://registry.nlark.com/@formily/path/download/@formily/path-2.0.0-beta.71.tgz#382af24433a6f8679f4620d940f1b650cb8bfaee"
-  integrity sha1-OCryRDOm+GefRiDZQPG2UMuL+u4=
+"@formily/path@2.0.0-beta.76":
+  version "2.0.0-beta.76"
+  resolved "https://registry.nlark.com/@formily/path/download/@formily/path-2.0.0-beta.76.tgz#98b05d80040c865b3c9146c74d5c8dd64aa27575"
+  integrity sha1-mLBdgAQMhls8kUbHTVyN1kqidXU=
 
-"@formily/reactive-vue@2.0.0-beta.71":
-  version "2.0.0-beta.71"
-  resolved "https://registry.nlark.com/@formily/reactive-vue/download/@formily/reactive-vue-2.0.0-beta.71.tgz#b93f73a8602d6e3abb27464dcfbd0a07769049e1"
-  integrity sha1-uT9zqGAtbjq7J0ZNz70KB3aQSeE=
+"@formily/reactive-vue@2.0.0-beta.76", "@formily/reactive-vue@^2.0.0-beta.76":
+  version "2.0.0-beta.76"
+  resolved "https://registry.nlark.com/@formily/reactive-vue/download/@formily/reactive-vue-2.0.0-beta.76.tgz#66cb310750f3af07d60723ebe2f78905317c767b"
+  integrity sha1-ZssxB1DzrwfWByPr4veJBTF8dns=
   dependencies:
-    "@formily/reactive" "2.0.0-beta.71"
+    "@formily/reactive" "2.0.0-beta.76"
     vue-demi "^0.9.0"
 
-"@formily/reactive@2.0.0-beta.71", "@formily/reactive@^2.0.0-beta.71":
-  version "2.0.0-beta.71"
-  resolved "https://registry.nlark.com/@formily/reactive/download/@formily/reactive-2.0.0-beta.71.tgz#5872dc18114acbfa056814e26d5b3b61046f82b8"
-  integrity sha1-WHLcGBFKy/oFaBTibVs7YQRvgrg=
+"@formily/reactive@2.0.0-beta.76", "@formily/reactive@^2.0.0-beta.76":
+  version "2.0.0-beta.76"
+  resolved "https://registry.nlark.com/@formily/reactive/download/@formily/reactive-2.0.0-beta.76.tgz#ce2278040a164c1cdb639d92d680ed9f729df5a1"
+  integrity sha1-ziJ4BAoWTBzbY52S1oDtn3Kd9aE=
 
-"@formily/shared@2.0.0-beta.71":
-  version "2.0.0-beta.71"
-  resolved "https://registry.nlark.com/@formily/shared/download/@formily/shared-2.0.0-beta.71.tgz#1c8b2b840b13ac6fcd639e23bda1d47bcc9d6900"
-  integrity sha1-HIsrhAsTrG/NY54jvaHUe8ydaQA=
+"@formily/shared@2.0.0-beta.76":
+  version "2.0.0-beta.76"
+  resolved "https://registry.nlark.com/@formily/shared/download/@formily/shared-2.0.0-beta.76.tgz#f6c5175595a95179298b70b3275e24b3d61b95e8"
+  integrity sha1-9sUXVZWpUXkpi3CzJ14ks9Ybleg=
   dependencies:
-    "@formily/path" "2.0.0-beta.71"
+    "@formily/path" "2.0.0-beta.76"
     camel-case "^4.1.1"
     lower-case "^2.0.1"
     no-case "^3.0.4"
@@ -1002,24 +1002,25 @@
     pascal-case "^3.1.1"
     upper-case "^2.0.1"
 
-"@formily/validator@2.0.0-beta.71":
-  version "2.0.0-beta.71"
-  resolved "https://registry.nlark.com/@formily/validator/download/@formily/validator-2.0.0-beta.71.tgz#bfb472621c62f08c9c536173982a4e96bc0d9755"
-  integrity sha1-v7RyYhxi8IycU2FzmCpOlrwNl1U=
+"@formily/validator@2.0.0-beta.76":
+  version "2.0.0-beta.76"
+  resolved "https://registry.nlark.com/@formily/validator/download/@formily/validator-2.0.0-beta.76.tgz#6f3e7443358ea8657684a89016fa451a0bd9d573"
+  integrity sha1-bz50QzWOqGV2hKiQFvpFGgvZ1XM=
   dependencies:
-    "@formily/shared" "2.0.0-beta.71"
+    "@formily/shared" "2.0.0-beta.76"
 
-"@formily/vue@^2.0.0-beta.71":
-  version "2.0.0-beta.71"
-  resolved "https://registry.nlark.com/@formily/vue/download/@formily/vue-2.0.0-beta.71.tgz#caa900a51debbb98bb4f4855d0af9777f3210534"
-  integrity sha1-yqkApR3ru5i7T0hV0K+Xd/MhBTQ=
+"@formily/vue@^2.0.0-beta.76":
+  version "2.0.0-beta.76"
+  resolved "https://registry.nlark.com/@formily/vue/download/@formily/vue-2.0.0-beta.76.tgz#ecb57a49ce24b17e0f79967cc72f1534ba6387f5"
+  integrity sha1-7LV6Sc4ksX4PeZZ8xy8VNLpjh/U=
   dependencies:
-    "@formily/core" "2.0.0-beta.71"
-    "@formily/json-schema" "2.0.0-beta.71"
-    "@formily/reactive" "2.0.0-beta.71"
-    "@formily/reactive-vue" "2.0.0-beta.71"
-    "@formily/shared" "2.0.0-beta.71"
-    "@formily/validator" "2.0.0-beta.71"
+    "@formily/core" "2.0.0-beta.76"
+    "@formily/json-schema" "2.0.0-beta.76"
+    "@formily/reactive" "2.0.0-beta.76"
+    "@formily/reactive-vue" "2.0.0-beta.76"
+    "@formily/shared" "2.0.0-beta.76"
+    "@formily/validator" "2.0.0-beta.76"
+    "@type-helper/vue2" "npm:vue@2"
     "@type-helper/vue3" "npm:vue@3"
     vue-demi "^0.9.0"
     vue-frag "^1.1.4"
@@ -1145,6 +1146,11 @@
   version "0.1.1"
   resolved "https://r.cnpmjs.org/@trysound/sax/download/@trysound/sax-0.1.1.tgz#3348564048e7a2d7398c935d466c0414ebb6a669"
   integrity sha1-M0hWQEjnotc5jJNdRmwEFOu2pmk=
+
+"@type-helper/vue2@npm:vue@2":
+  version "2.6.14"
+  resolved "https://registry.nlark.com/vue/download/vue-2.6.14.tgz#e51aa5250250d569a3fbad3a8a5a687d6036e235"
+  integrity sha1-5RqlJQJQ1Wmj+606ilpofWA24jU=
 
 "@type-helper/vue3@npm:vue@3":
   version "3.0.11"

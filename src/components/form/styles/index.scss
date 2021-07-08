@@ -1,4 +1,4 @@
-$formily-prefix: 'el';
+$formily-prefix: 'formily-element';
 $namespace: 'el';
 @import '~element-ui/packages/theme-chalk/src/common/var.scss';
 
@@ -17,7 +17,7 @@ $namespace: 'el';
 @import './space.scss';
 @import './filter-conditions';
 @import './preview-sql';
-//@import './array-base.scss';
+@import './array-base.scss';
 @import './array-table.scss';
-//@import './form-grid.scss';
-//@import './form-item/index.scss';
+@import './form-grid.scss';
+@import './form-item/index.scss';

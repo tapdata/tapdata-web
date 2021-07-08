@@ -258,8 +258,6 @@ const mutations = {
     state.dataflow.nodes.push(nodeData)
   },
 
-  addNodeByAttr(state, attr) {},
-
   // 更新节点属性
   updateNodeProperties(state, updateInformation) {
     console.log('updateInformation', updateInformation)
@@ -344,8 +342,6 @@ const mutations = {
     state.stateIsDirty = true
     Vue.set(node, updateInformation.key, updateInformation.value)
   },
-
-  setNodeProperty(state) {},
 
   // 添加连接，设置input、output
   addConnection(state, connection) {

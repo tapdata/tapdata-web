@@ -90,6 +90,9 @@ export default {
     __init() {
       const { id, nodeId } = this
 
+      this.jsPlumbIns.makeSource(id, targetEndpoint)
+      this.jsPlumbIns.makeTarget(id, sourceEndpoint)
+
       this.jsPlumbIns.draggable(this.$el, {
         containment: 'parent',
         start: params => {

@@ -1,4 +1,5 @@
-import { connect, mapProps, useForm, observer } from '@formily/vue'
+import { connect, mapProps, useForm } from '@formily/vue'
+import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from '@/components/VIcon'
 

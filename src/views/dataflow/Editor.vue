@@ -1,5 +1,5 @@
 <template>
-  <section class="dataflow-editor flex flex-column vh-100">
+  <section class="dataflow-editor layout-wrap vh-100">
     <!--头部-->
     <TopHeader
       :is-saving="isSaving"
@@ -12,7 +12,7 @@
       @delete="handleDelete"
     ></TopHeader>
 
-    <section class="flex flex-grow-1">
+    <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
       <LeftSidebar></LeftSidebar>
       <!--内容体-->
@@ -252,6 +252,7 @@ export default {
           'Label',
           {
             id: 'remove-connection',
+            location: 0.25,
             label:
               '<div class="remove-connection-btn" title="删除连接"></span>',
             cssClass: 'remove-connection-label cursor-pointer',
@@ -276,7 +277,7 @@ export default {
       })
 
       // 连接线拖动结束事件
-      jsPlumbIns.bind('connectionDragStop', (conn, event) => {
+      /*jsPlumbIns.bind('connectionDragStop', (conn, event) => {
         console.log('connectionDragStopEvent', conn)
         let $node = this.$refs.layoutContent.querySelector('.df-node')
         if (!$node) return
@@ -297,7 +298,12 @@ export default {
               ) {
                 jsPlumbIns.connect({
                   source: jsPlumbIns.getEndpoint(conn.sourceId + '_source'),
-                  target: jsPlumbIns.getEndpoint(NODE_PREFIX + n.id + '_target')
+                  target: jsPlumbIns.getEndpoint(
+                    NODE_PREFIX + n.id + '_target'
+                  ),
+                  overlays: [
+                    ['Label', { label: '🐶🐶🐶', location: 0.5, id: 'myLabel' }]
+                  ]
                 })
                 isConnected = true
               }
@@ -314,7 +320,7 @@ export default {
           })
           console.log('没有连接')
         }
-      })
+      })*/
 
       // 连线移动到其他节点
       jsPlumbIns.bind('connectionMoved', info => {
@@ -326,13 +332,14 @@ export default {
       })
 
       // 在target的Endpoint上面drop会触发该事件
-      // jsPlumbIns.bind('beforeDrop', e => {
-      //   console.log('beforeDrop')
-      //   // return this.isParent(
-      //   //   this.getRealId(e.sourceId),
-      //   //   this.getRealId(e.targetId)
-      //   // )
-      // })
+      jsPlumbIns.bind('beforeDrop', e => {
+        console.log('beforeDrop')
+        return true
+        // return this.isParent(
+        //   this.getRealId(e.sourceId),
+        //   this.getRealId(e.targetId)
+        // )
+      })
 
       /*this.conSelections = []
 
@@ -795,7 +802,7 @@ export default {
 
       const data = this.getDataflowDataToSave()
 
-      let result = await dataFlowsApi.draft(data)
+      await dataFlowsApi.draft(data)
 
       this.isSaving = false
       this.$message.success(this.$t('message.saveOK'))
@@ -887,9 +894,21 @@ $sidebarBg: #fff;
   width: $sidebarW;
   height: 100%;
   background-color: $sidebarBg;
+  overflow: auto;
 
   &.--right {
     width: 726px;
+  }
+}
+
+.layout-wrap {
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+  min-height: 0;
+
+  &.layout-has-sider {
+    flex-direction: row;
   }
 }
 

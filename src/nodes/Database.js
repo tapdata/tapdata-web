@@ -75,7 +75,7 @@ export class Database extends NodeType {
         default: 'no_drop',
         'x-decorator': 'ElFormItem',
         'x-component': 'Select',
-        'x-reactions': ['{{getDropOptions}}']
+        'x-reactions': ['{{loadDropOptions}}']
       },
       syncObjects: {
         type: 'array',

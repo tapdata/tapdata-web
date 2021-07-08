@@ -1,8 +1,8 @@
 import { defineComponent, provide, inject, toRefs, ref } from 'vue-demi'
 import { FragmentComponent, useField, useFieldSchema, h } from '@formily/vue'
 import { isValid, uid } from '@formily/shared'
+import { stylePrefix } from './configs'
 
-const stylePrefix = 'el'
 const ArrayBaseSymbol = Symbol('ArrayBaseContext')
 const ItemSymbol = Symbol('ItemContext')
 
@@ -97,11 +97,9 @@ export const ArrayRemove = defineComponent({
   setup(props, { attrs, listeners }) {
     const indexRef = useIndex(props.index)
     const base = useArray()
-    const prefixCls = `form-array-base`
+    const prefixCls = `${stylePrefix}-form-array-base`
     return () => {
-      console.log('ArrayRemove', base)
       if (base?.field.value.pattern !== 'editable') return null
-      console.log('ArrayRemove-after', base)
       return h(
         'el-button',
         {
@@ -110,6 +108,9 @@ export const ArrayRemove = defineComponent({
             type: 'text',
             icon: props.title ? undefined : 'el-icon-delete',
             ...attrs
+          },
+          props: {
+            disabled: attrs.disabled
           },
           on: {
             ...listeners,
@@ -131,7 +132,7 @@ export const ArrayMoveDown = defineComponent({
   setup(props, { attrs, listeners }) {
     const indexRef = useIndex(props.index)
     const base = useArray()
-    const prefixCls = `form-array-base`
+    const prefixCls = `${stylePrefix}-form-array-base`
     return () => {
       if (base?.field.value.pattern !== 'editable') return null
       return h(
@@ -140,7 +141,7 @@ export const ArrayMoveDown = defineComponent({
           class: `${prefixCls}-move-down`,
           attrs: {
             type: 'text',
-            icon: props.title ? undefined : 'qax-icon-Angle-down',
+            icon: props.title ? undefined : 'el-icon-arrow-down',
             ...attrs
           },
           on: {
@@ -163,7 +164,7 @@ export const ArrayMoveUp = defineComponent({
   setup(props, { attrs, listeners }) {
     const indexRef = useIndex(props.index)
     const base = useArray()
-    const prefixCls = `form-array-base`
+    const prefixCls = `${stylePrefix}-form-array-base`
     return () => {
       if (base?.field.value.pattern !== 'editable') return null
       return h(
@@ -172,7 +173,7 @@ export const ArrayMoveUp = defineComponent({
           class: `${prefixCls}-move-up`,
           attrs: {
             type: 'text',
-            icon: props.title ? undefined : 'qax-icon-Angle-up',
+            icon: props.title ? undefined : 'el-icon-arrow-up',
             ...attrs
           },
           on: {

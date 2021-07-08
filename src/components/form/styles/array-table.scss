@@ -1,7 +1,8 @@
 $array-table-prefix-cls: '#{$formily-prefix}-form-array-table';
 
 .#{$array-table-prefix-cls} {
-  .#{$formily-prefix}-form-item:not(.#{$formily-prefix}-form-item-feedback-layout-popover) {
+  .#{$formily-prefix}-form-item:not(.#{$formily-prefix}-form-item-feedback-layout-popover),
+  .#{$namespace}-form-item {
     margin-bottom: 0 !important;
   }
 

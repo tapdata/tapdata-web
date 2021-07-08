@@ -1,8 +1,3 @@
-import { connect, mapProps } from '@formily/vue'
-import { getComponentByTag } from './utils/util'
-
-// const ElRow = getComponentByTag('el-row')
-
 const ElRow = {
   functional: true,
   props: ['gap'],

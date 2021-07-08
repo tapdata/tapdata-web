@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { mapGetters, mapMutations } from 'vuex'
 import { groupBy, uuid } from '@/utils/util'
 import mouseDrag from '@/directives/mousedrag'

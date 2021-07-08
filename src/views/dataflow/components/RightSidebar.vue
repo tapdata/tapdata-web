@@ -20,19 +20,21 @@
         }}</span>
       </header>
       <div class="attr-panel-body overflow-auto">
-        <ElForm class="flex flex-column" label-position="top">
+        <ElForm class="flex flex-column" label-position="top" size="mini">
           <FormProvider :form="form">
             <SchemaField
+              v-if="schema"
               :schema="schema"
               :scope="{
                 useAsyncDataSource,
                 loadDatabase,
                 loadDatabaseInfo,
-                getDropOptions,
                 loadDatabaseTable,
                 loadTableField,
                 loadTableInfo,
                 loadCollections,
+                loadDropOptions,
+                loadWriteModelOptions,
                 sourceConnectionId: sourceNode ? sourceNode.connectionId : null
               }"
             />
@@ -58,8 +60,8 @@ import {
   onFormInputChange
 } from '@formily/core'
 import { action } from '@formily/reactive'
-import { FormProvider, FormConsumer, createSchemaField } from '@formily/vue'
-import { components, createFormTab } from '@/components/form'
+import { FormProvider, /*FormConsumer,*/ createSchemaField } from '@formily/vue'
+import { components } from '@/components/form'
 import VIcon from '@/components/VIcon'
 import '@/components/form/styles/index.scss'
 import ConnectionsApi from '@/api/connections'
@@ -87,7 +89,7 @@ export default {
     }
   },
 
-  components: { VIcon, FormProvider, FormConsumer, SchemaField },
+  components: { VIcon, FormProvider, /*FormConsumer,*/ SchemaField },
 
   computed: {
     ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection']),
@@ -119,24 +121,20 @@ export default {
   },
 
   watch: {
+    // 切换节点和连线的FormSchema
     async uniteKey(v) {
       if (this.show) {
         console.log('watch:uniteKey', v, 'forceClear')
-        this.schema = {}
-        this.$nextTick(() => {
-          /*this.form.reset('*', {
-            forceClear: true
-          })*/
-          this.schema = !this.activeConnection
-            ? this.ins.formSchema
-            : this.ins.linkFormSchema
-
-          // schema改变，之前的form状态可以丢弃，重新创建新表单
-          this.form = createForm({
-            values: this.node,
-            effects: this.useEffects
-          })
+        this.schema = null
+        await this.$nextTick()
+        this.form = createForm({
+          values: this.node,
+          effects: this.useEffects
         })
+
+        this.schema = !this.activeConnection
+          ? this.ins.formSchema
+          : this.ins.linkFormSchema
       }
     }
   },
@@ -181,7 +179,6 @@ export default {
           action(data => {
             if (fieldName === 'value') {
               field.setValue(data)
-              console.log('field.setValue', field)
             } else field[fieldName] = data
             field.loading = false
           })
@@ -316,7 +313,11 @@ export default {
       return tables
     },
 
-    getDropOptions(field) {
+    /**
+     * 对目标端已存在的结构和数据的处理，下拉选项
+     * @param field
+     */
+    loadDropOptions(field) {
       const options = [
         {
           label: this.$t('editor.cell.link.existingSchema.keepSchema'),
@@ -331,6 +332,35 @@ export default {
         options.push({
           label: this.$t('editor.cell.link.existingSchema.removeSchema'),
           value: 'drop_schema'
+        })
+      }
+      field.dataSource = options
+    },
+
+    /**
+     * 数据写入模式
+     * @param field
+     */
+    loadWriteModelOptions(field) {
+      const options = [
+        {
+          label: this.$t('editor.cell.link.writeMode.append'),
+          value: 'append' // insert				{source: ''} + {target: ''}  =  {source: '', target: ''}
+        },
+        {
+          label: this.$t('editor.cell.link.writeMode.upsert'),
+          value: 'upsert' // OneOne				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
+        },
+        {
+          label: this.$t('editor.cell.link.writeMode.update'),
+          value: 'update' // OneMany				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
+        }
+      ]
+      if (field.form.values.type !== 'table') {
+        // SupportEmbedArray
+        options.push({
+          label: this.$t('editor.cell.link.writeMode.merge_embed'),
+          value: 'merge_embed' // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
         })
       }
       field.dataSource = options

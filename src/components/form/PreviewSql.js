@@ -1,4 +1,5 @@
-import { connect, mapProps, observer, useForm } from '@formily/vue'
+import { connect, mapProps, useForm } from '@formily/vue'
+import { observer } from '@formily/reactive-vue'
 import { defineComponent, h } from 'vue-demi'
 import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'

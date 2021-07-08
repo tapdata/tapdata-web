@@ -10,7 +10,7 @@ const requireAllNode = requireContext => {
 
 export const ctorTypes = requireAllNode(nodeContext)
 
-let _nodeTypes = localStorage['store.nodeTypes']
+// let _nodeTypes = localStorage['store.nodeTypes']
 
 export const nodeTypes = [
   {
@@ -393,7 +393,141 @@ export const nodeTypes = [
       linkFormSchema: {
         type: 'object',
         properties: {
-          array: {
+          label: {
+            title: '标签',
+            type: 'string',
+            'x-decorator': 'ElFormItem',
+            'x-component': 'Input',
+            'x-component-props': {
+              maxlength: 50,
+              showWordLimit: true
+            }
+          },
+          joinTable: {
+            type: 'object',
+            default: {
+              tableName: '',
+              joinType: 'upsert',
+              joinPath: '',
+              manyOneUpsert: false,
+              joinKeys: [
+                {
+                  source: '',
+                  target: ''
+                }
+              ],
+              stageId: '',
+              isArray: false,
+              arrayUniqueKey: ''
+            },
+            properties: {
+              joinType: {
+                title: '数据写入模式',
+                type: 'string',
+                required: true,
+                'x-decorator': 'ElFormItem',
+                'x-component': 'Select',
+                'x-reactions': ['{{loadWriteModelOptions}}']
+              },
+              joinKeys: {
+                title: '关联条件',
+                type: 'array',
+                'x-decorator': 'ElFormItem',
+                'x-decorator-props': {
+                  asterisk: true
+                },
+                'x-component': 'ArrayTable',
+                'x-component-props': {
+                  fit: false,
+                  autoWidth: true,
+                  size: 'small'
+                },
+                items: {
+                  type: 'object',
+                  properties: {
+                    column1: {
+                      type: 'void',
+                      'x-component': 'ArrayTableColumn',
+                      'x-component-props': {
+                        width: 174,
+                        title: '源字段',
+                        align: 'center'
+                      },
+                      properties: {
+                        source: {
+                          type: 'string',
+                          required: true,
+                          default: '',
+                          'x-decorator': 'ElFormItem',
+                          'x-component': 'Select'
+                        }
+                      }
+                    },
+                    column2: {
+                      type: 'void',
+                      'x-component': 'ArrayTableColumn',
+                      'x-component-props': {
+                        width: 174,
+                        title: '目标字段',
+                        align: 'center'
+                      },
+                      properties: {
+                        target: {
+                          type: 'string',
+                          required: true,
+                          default: '',
+                          'x-decorator': 'ElFormItem',
+                          'x-component': 'Select'
+                        }
+                      }
+                    },
+                    column3: {
+                      type: 'void',
+                      'x-component': 'ArrayTableColumn',
+                      'x-component-props': {
+                        width: 40,
+                        align: 'left'
+                      },
+                      properties: {
+                        delete: {
+                          type: 'void',
+                          'x-component': 'ArrayRemove',
+                          'x-reactions': {
+                            dependencies: ['joinTable.joinKeys'],
+                            fulfill: {
+                              schema: {
+                                'x-component-props.disabled':
+                                  '{{$deps[0].length < 2}}'
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                properties: {
+                  add: {
+                    title: '添加字段',
+                    type: 'void',
+                    'x-component': 'ArrayAddition',
+                    'x-component-props': {
+                      size: 'small',
+                      style: 'width: 348px'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      /*linkFormSchema: {
+        type: 'object',
+        properties: {
+          /!*joinKeys: {
+            title: '关联条件',
             type: 'array',
             'x-decorator': 'ElFormItem',
             'x-component': 'ArrayTable',
@@ -438,6 +572,20 @@ export const nodeTypes = [
                       'x-component': 'Select'
                     }
                   }
+                },
+                column3: {
+                  type: 'void',
+                  'x-component': 'ArrayTableColumn',
+                  'x-component-props': {
+                    width: 40,
+                    align: 'left'
+                  },
+                  properties: {
+                    delete: {
+                      type: 'void',
+                      'x-component': 'ArrayRemove'
+                    }
+                  }
                 }
               }
             },
@@ -452,9 +600,106 @@ export const nodeTypes = [
                 }
               }
             }
-          }
+          }*!/
+          /!*joinTable: {
+            type: 'void',
+            /!*default: {
+              tableName: '',
+              joinType: 'upsert',
+              joinPath: '',
+              manyOneUpsert: false,
+              joinKeys: [
+                {
+                  source: '',
+                  target: ''
+                }
+              ],
+              // primaryKeys: '',
+              stageId: '',
+              isArray: false,
+              // fieldProcesses: [],
+              arrayUniqueKey: ''
+            },*!/
+            properties: {
+              joinKeys: {
+                title: '关联条件',
+                type: 'array',
+                'x-decorator': 'ElFormItem',
+                'x-component': 'ArrayTable',
+                'x-component-props': {
+                  fit: false,
+                  autoWidth: true,
+                  size: 'small'
+                },
+                items: {
+                  type: 'object',
+                  properties: {
+                    column1: {
+                      type: 'void',
+                      'x-component': 'ArrayTableColumn',
+                      'x-component-props': {
+                        width: 174,
+                        title: '源字段',
+                        align: 'center'
+                      },
+                      properties: {
+                        source: {
+                          type: 'string',
+                          required: true,
+                          'x-decorator': 'ElFormItem',
+                          'x-component': 'Select'
+                        }
+                      }
+                    },
+                    column2: {
+                      type: 'void',
+                      'x-component': 'ArrayTableColumn',
+                      'x-component-props': {
+                        width: 174,
+                        title: '目标字段',
+                        align: 'center'
+                      },
+                      properties: {
+                        target: {
+                          type: 'string',
+                          required: true,
+                          'x-decorator': 'ElFormItem',
+                          'x-component': 'Select'
+                        }
+                      }
+                    },
+                    column3: {
+                      type: 'void',
+                      'x-component': 'ArrayTableColumn',
+                      'x-component-props': {
+                        width: 40,
+                        align: 'left'
+                      },
+                      properties: {
+                        delete: {
+                          type: 'void',
+                          'x-component': 'ArrayRemove'
+                        }
+                      }
+                    }
+                  }
+                },
+                properties: {
+                  add: {
+                    title: '添加字段',
+                    type: 'void',
+                    'x-component': 'ArrayAddition',
+                    'x-component-props': {
+                      size: 'small',
+                      style: 'width: 348px'
+                    }
+                  }
+                }
+              }
+            }
+          }*!/
         }
-      }
+      }*/
     }
   },
   {
@@ -728,7 +973,7 @@ export const nodeTypes = [
             default: 'no_drop',
             'x-decorator': 'ElFormItem',
             'x-component': 'Select',
-            'x-reactions': ['{{getDropOptions}}']
+            'x-reactions': ['{{loadDropOptions}}']
           },
           syncObjects: {
             type: 'array',
@@ -833,7 +1078,7 @@ export const nodeTypes = [
             default: 'no_drop',
             'x-decorator': 'ElFormItem',
             'x-component': 'Select',
-            'x-reactions': ['{{getDropOptions}}']
+            'x-reactions': ['{{loadDropOptions}}']
           },
           syncObjects: {
             type: 'array',
@@ -951,7 +1196,7 @@ export const nodeTypes = [
             default: 'no_drop',
             'x-decorator': 'ElFormItem',
             'x-component': 'Select',
-            'x-reactions': ['{{getDropOptions}}']
+            'x-reactions': ['{{loadDropOptions}}']
           },
           syncObjects: {
             type: 'array',
@@ -1069,7 +1314,7 @@ export const nodeTypes = [
             default: 'no_drop',
             'x-decorator': 'ElFormItem',
             'x-component': 'Select',
-            'x-reactions': ['{{getDropOptions}}']
+            'x-reactions': ['{{loadDropOptions}}']
           },
           syncObjects: {
             type: 'array',
@@ -1187,7 +1432,7 @@ export const nodeTypes = [
             default: 'no_drop',
             'x-decorator': 'ElFormItem',
             'x-component': 'Select',
-            'x-reactions': ['{{getDropOptions}}']
+            'x-reactions': ['{{loadDropOptions}}']
           },
           syncObjects: {
             type: 'array',
@@ -1278,7 +1523,7 @@ export const nodeTypes = [
             default: 'no_drop',
             'x-decorator': 'ElFormItem',
             'x-component': 'Select',
-            'x-reactions': ['{{getDropOptions}}']
+            'x-reactions': ['{{loadDropOptions}}']
           },
           syncObjects: {
             type: 'array',
@@ -1434,7 +1679,7 @@ export const nodeTypes = [
             default: 'no_drop',
             'x-decorator': 'ElFormItem',
             'x-component': 'Select',
-            'x-reactions': ['{{getDropOptions}}']
+            'x-reactions': ['{{loadDropOptions}}']
           },
           syncObjects: {
             type: 'array',
@@ -1473,7 +1718,7 @@ export const nodeTypes = [
       }
     }
   }
-].concat(
+] /*.concat(
   // 演示新增节点
   _nodeTypes
     ? JSON.parse(_nodeTypes).map(item => {
@@ -1486,4 +1731,4 @@ export const nodeTypes = [
         return item
       })
     : []
-)
+)*/

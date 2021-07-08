@@ -1,11 +1,6 @@
 import { defineComponent } from 'vue-demi'
-import {
-  useField,
-  useFieldSchema,
-  RecursionField,
-  h,
-  observer
-} from '@formily/vue'
+import { useField, useFieldSchema, RecursionField, h } from '@formily/vue'
+import { observer } from '@formily/reactive-vue'
 import { ArrayBase, ArrayBaseItem } from '@/components/form/ArrayBase'
 import { Space } from '@/components/form/Space'
 

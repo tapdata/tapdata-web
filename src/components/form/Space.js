@@ -3,7 +3,7 @@
 import { defineComponent } from 'vue-demi'
 import { h } from '@formily/vue'
 
-const stylePrefix = 'el'
+import { stylePrefix } from './configs'
 
 const spaceSize = {
   small: 8,

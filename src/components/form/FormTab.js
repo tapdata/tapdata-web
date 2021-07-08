@@ -1,11 +1,6 @@
 import { model } from '@formily/reactive'
-import {
-  useField,
-  observer,
-  useFieldSchema,
-  RecursionField,
-  h
-} from '@formily/vue'
+import { useField, useFieldSchema, RecursionField, h } from '@formily/vue'
+import { observer } from '@formily/reactive-vue'
 import { defineComponent, ref, toRefs } from 'vue-demi'
 
 const useTabs = () => {

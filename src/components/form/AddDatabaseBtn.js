@@ -1,4 +1,5 @@
-import { observer, useForm } from '@formily/vue'
+import { useForm } from '@formily/vue'
+import { observer } from '@formily/reactive-vue'
 import { getComponentByTag } from './utils/util'
 
 const ElButton = getComponentByTag('el-button')

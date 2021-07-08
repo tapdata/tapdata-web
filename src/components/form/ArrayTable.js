@@ -1,19 +1,13 @@
 import { defineComponent } from 'vue-demi'
-import {
-  useField,
-  observer,
-  useFieldSchema,
-  RecursionField as _RecursionField,
-  h
-} from '@formily/vue'
-import { isArr, uid } from '@formily/shared'
+import { useField, useFieldSchema, RecursionField, h } from '@formily/vue'
+import { observer } from '@formily/reactive-vue'
+import { isArr, isObj, uid, shallowClone } from '@formily/shared'
 import { ArrayBase, ArrayBaseItem, useArray } from './ArrayBase'
 import { getComponentByTag } from './utils/util'
+import { stylePrefix } from './configs'
 
-const stylePrefix = 'el'
 const ElTable = getComponentByTag('el-table')
 const ElTableColumn = getComponentByTag('el-table-column')
-const RecursionField = _RecursionField
 
 const isColumnComponent = schema => {
   return schema['x-component']?.indexOf('Column') > -1
@@ -158,8 +152,12 @@ const ArrayTableInner = observer(
       const prefixCls = `${stylePrefix}-form-array-table-inner`
       return () => {
         const field = fieldRef.value
+        console.log('ArrayTableInner:field', field)
         const sources = getArrayTableSources(fieldRef, schemaRef)
-        const dataSource = Array.isArray(field.value) ? field.value.slice() : []
+        // Item Maybe is Proxy
+        const dataSource = Array.isArray(field.value)
+          ? field.value.slice().map(item => shallowClone(item))
+          : []
         const columns = getArrayTableColumns(dataSource, sources)
         const defaultRowKey = record => {
           if (!array?.keyMap.has(record)) {
@@ -199,7 +197,6 @@ const ArrayTableInner = observer(
               children
             )
           })
-        console.log('renderTable!!!!', attrs)
         return h(
           ElTable,
           {

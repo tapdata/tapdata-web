@@ -1,4 +1,5 @@
-import { connect, observer, useForm, mapProps } from '@formily/vue'
+import { connect, useForm, mapProps } from '@formily/vue'
+import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import EmptyItem from '@/components/EmptyItem'
 

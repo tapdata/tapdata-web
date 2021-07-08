@@ -4,84 +4,15 @@ import {
   ref,
   onMounted,
   onBeforeUnmount,
-  InjectionKey,
-  Ref,
   inject
 } from 'vue-demi'
 import { isValid, isNum, isBool, isEqual } from '@formily/shared'
 import { h } from '@formily/vue'
 import ResizeObserver from 'resize-observer-polyfill'
 
-const stylePrefix = ''
-
-// interface FormGridContext {
-//   colWrap?: boolean
-//   columns?: number
-//   clientWidth?: number
-//   maxWidth?: number
-//   minWidth?: number
-//   maxColumns?: number
-//     [key: string]: any
-// }
+import { stylePrefix } from './configs'
 
 const FormGridSymbol = Symbol('FormGridContext')
-
-// interface Layout {
-//   ref: Ref<HTMLDivElement | undefined>
-//   layoutParams: Ref<{
-//     minWidth?: number
-//     columns?: number
-//     colWrap?: boolean
-//     maxWidth?: number
-//     minColumns?: number
-//     maxColumns?: number
-//   }>
-//   styles: Ref<Record<string, any>>
-// }
-
-// interface LayoutProps {
-//   minWidth: number[]
-//   maxWidth: number[]
-//   minColumns: number[]
-//   maxColumns: number[]
-//   intervals: Array<number[]>
-//   colWrap: boolean[]
-//   columnGap: number
-//   rowGap: number
-// }
-
-// interface FormGridProps {
-//   minWidth?: number | number[]
-//   maxWidth?: number | number[]
-//   minColumns?: number | number[]
-//   maxColumns?: number | number[]
-//   colWrap?: boolean | boolean[]
-//   breakpoints?: number[]
-//   columnGap: number
-//   rowGap: number
-// }
-
-// interface Style {
-//   [key: string]: string
-// }
-
-// interface StyleProps extends FormGridProps {
-//   layoutParams: {
-//     columns?: number
-//     colWrap?: boolean
-//     minWidth: number
-//     maxWidth: number
-//     clientWidth: number
-//     maxColumns?: number
-//     minColumns: number
-//   }
-//   ref: Ref<HTMLDivElement | undefined>
-// }
-
-// interface GridColumnProps {
-//   gridSpan: number
-// }
-
 const S = 720
 const MD = 1280
 const LG = 1920
