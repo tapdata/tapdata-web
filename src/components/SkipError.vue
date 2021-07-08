@@ -58,10 +58,7 @@ export default {
           this.task = data
           errorEvents = data.errorEvents
           this.errorEvents = errorEvents
-          this.errorTotal = this.errorTotal.replace(
-            'XX',
-            this.errorEvents.length
-          )
+          this.errorTotal = this.errorTotal.replace('XX', this.errorEvents.length)
           return
         }
       }

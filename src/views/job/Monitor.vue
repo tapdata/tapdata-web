@@ -896,10 +896,7 @@ export default {
           })
           this.stageType = currentStageData.type
           if (this.stageType === 'database') {
-            this.getStageDataApi(
-              currentStageData.connectionId,
-              currentStageData.name
-            )
+            this.getStageDataApi(currentStageData.connectionId, currentStageData.name)
           } else if (
             [
               'table',
