@@ -228,6 +228,7 @@ export default {
       }
     },
     verifyConfirm: 'Are you sure to delete JS verify logic',
+    deleteMessageFieldConfirm: 'Are you sure you want to delete the custom field? After deletion, it cannot be restored',
     comfirm: 'Are you sure you want to ',
     operationSuccuess: 'Operation succuess.',
     modifyName: 'Modify name',
