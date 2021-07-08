@@ -478,13 +478,13 @@ export default {
         name: name
       }
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        route = top.App.$router.resolve({
+        let route = top.App.$router.resolve({
           name: 'VerificationResult',
           query
         })
         url = top.location.href.split('#/')[0] + route.href
       } else {
-        route = this.$router.resolve({
+        let route = this.$router.resolve({
           path: '/dataVerifyResult',
           query
         })
