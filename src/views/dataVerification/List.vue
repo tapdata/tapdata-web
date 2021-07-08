@@ -470,7 +470,7 @@ export default {
       })
     },
     toTableInfo(id, resultId, type, name) {
-      let route = ''
+      let url = ''
       let query = {
         id: resultId,
         inspectId: id,
@@ -482,32 +482,36 @@ export default {
           name: 'VerificationResult',
           query
         })
+        url = top.location.href.split('#/')[0] + route.href
       } else {
         route = this.$router.resolve({
           path: '/dataVerifyResult',
           query
         })
+        url = route.href
       }
-      window.open(route.href, '_blank')
+      window.open(url, '_blank')
     },
     toTableHistory(id) {
-      let route = ''
+      let url = ''
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        route = top.App.$router.resolve({
+        let route = top.App.$router.resolve({
           name: 'VerificationHistory',
           query: {
             inspectId: id
           }
         })
+        url = top.location.href.split('#/')[0] + route.href
       } else {
-        route = this.$router.resolve({
+        let route = this.$router.resolve({
           path: '/dataVerifyHistory',
           query: {
             inspectId: id
           }
         })
+        url = route.href
       }
-      window.open(route.href, '_blank')
+      window.open(url, '_blank')
     },
     startTask(id) {
       let multipleSelection = id ? [id] : this.multipleSelection
