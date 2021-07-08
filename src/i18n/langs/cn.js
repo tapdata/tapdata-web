@@ -233,6 +233,7 @@ const cn = {
       }
     },
     verifyConfirm: '确定要删除自定义JS校验逻辑吗',
+    deleteMessageFieldConfirm: '确定要删除自定义字段吗？删除后，不可恢复',
     comfirm: '你确定要',
     operationSuccuess: '操作成功',
     modifyName: '修改名称',

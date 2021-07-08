@@ -1,25 +1,12 @@
 <template>
   <div class="link-message nodeStyle">
     <div class="nodeBody">
-      <el-form
-        class="e-form"
-        label-position="top"
-        label-width="130px"
-        :model="model"
-        :disabled="disabled"
-        ref="form"
-      >
-        <el-form-item
-          :required="true"
-          :label="$t('editor.cell.processor.script.form.name.label')"
-          size="mini"
-        >
+      <el-form class="e-form" label-position="top" label-width="130px" :model="model" :disabled="disabled" ref="form">
+        <el-form-item :required="true" :label="$t('editor.cell.processor.script.form.name.label')" size="mini">
           <el-input
             v-model="model.name"
             class="form-item-width"
-            :placeholder="
-              $t('editor.cell.processor.script.form.name.placeholder')
-            "
+            :placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -31,8 +18,8 @@
       <div class="box">
         <!-- lazy -->
         <!-- :lazyFn="lazyFn" -->
-        <el-button size="medium" @click="handleDraggable()">是否拖拽</el-button>
-        <el-button size="medium" @click="addChecked()">添加字段</el-button>
+        <el-button size="medium" @click="handleDraggable">是否拖拽</el-button>
+        <el-button size="medium" @click="addChecked">添加字段</el-button>
         <tree-transfer
           ref="wl-tree-transfer"
           filter
@@ -57,11 +44,7 @@
             <span class="field-name" :title="data.name">{{ data.name }}</span>
 
             <div class="transfer-btn">
-              <span
-                class="box"
-                :title="$t('dataFlow.edit')"
-                @click="handleEdit(node, data)"
-              >
+              <span class="box" :title="$t('dataFlow.edit')" @click="handleEdit(node, data)">
                 <i class="icon-margin-right-5 iconfont icon-bianji3"></i>
               </span>
               <span class="box" @click="handleDel(node, data)">
@@ -98,9 +81,7 @@
             size="small"
             >{{ $t('message.cancel') }}</el-button
           >
-          <el-button type="primary" @click="createMessage()" size="small">{{
-            $t('message.confirm')
-          }}</el-button>
+          <el-button type="primary" @click="createMessage()" size="small">{{ $t('message.confirm') }}</el-button>
         </span>
       </el-dialog>
     </div>
@@ -115,6 +96,7 @@ export default {
   data() {
     return {
       // mode: "transfer", // transfer addressList
+      $btnRight: null,
       defaultProps: {
         label: 'name',
         children: 'children'
@@ -123,13 +105,16 @@ export default {
         }, */
       },
       title: ['字段名', '消息体'],
+      sourceData: [], // 源数据，不做修改
       fromData: [], // 穿梭框 - 源数据 - 树形
       toData: [], // 穿梭框 - 目标数据 - 树形
       fromArray: [],
       toArray: [],
       defaultCheckedKeys: [], // 左侧默认选中数据
       rightCheckedKeys: null, //右侧选中数据
-
+      rightCheckAll: false,
+      leftTreeObj: null, // 左树选中
+      rightTreeObj: null, // 右树选中
       createDialogVisible: false,
       disabled: false,
       fieldsData: [],
@@ -147,15 +132,27 @@ export default {
     }
   },
   created() {
-    this.fromData = this.fieldsData.map(item => {
-      return {
-        pid: 0,
-        name: item.label,
-        key: item.key,
-        type: item.javaType
-      }
+    // this.fromData = this.fieldsData.map(item => {
+    //   return {
+    //     pid: 0,
+    //     name: item.label,
+    //     key: item.key,
+    //     type: item.javaType,
+    //     label: item.label
+    //   }
+    // })
+    // this.sourceData = [...this.fromData]
+    // console.log('3333', this.fromData)
+    // console.log('STR', JSON.stringify(this.fromData))
+  },
+  mounted() {
+    this.$nextTick(() => {
+      let treeTrans = this.$refs['wl-tree-transfer']
+      console.log(treeTrans.$el)
+      let $transferCenter = treeTrans.$el?.getElementsByClassName('transfer-center')
+      let $transferBtns = $transferCenter?.[0].getElementsByClassName('el-button')
+      this.$btnRight = $transferBtns?.[1]
     })
-    console.log('3333', this.fromData)
   },
   components: { treeTransfer },
 
@@ -172,16 +169,19 @@ export default {
         // targetSchema = targetCell ? targetCell.getSchema() : null,
         if (sourceField.length) {
           _this.fieldsData = sourceSchema.fields.map(field => ({
+            pid: 0,
             label: 'required',
             name: field.field_name,
             key: field.field_name,
             type: field.javaType,
-            disabled: this.disabled
+            disabled: this.disabled,
+            children: []
           }))
         }
       }
       this.fromData = _this.fieldsData
       console.log(_this.fieldsData)
+      console.log('STR', JSON.stringify(this.fromData))
     },
     getData() {
       // return JSON.parse(JSON.stringify(this.model));
@@ -251,54 +251,137 @@ export default {
       console.log('fromData:', fromData)
       console.log('toData:', toData)
       console.log('obj:', obj)
-      if (this.rightCheckedKeys) {
-        // let children = []
+      let node = this.rightTreeObj?.node
+      let checkedKeys = this.rightTreeObj?.checkedKeys
+      // let node = rightTreeObj.node
+      if (node?.message && !!checkedKeys.length && checkedKeys?.includes(node?.key)) {
         obj.nodes.forEach(item => {
-          item.pid = this.rightCheckedKeys.name
-          this.rightCheckedKeys.children.push(item)
+          // item.pid = node.name
+          item.pid = node.key
+          if (!node.children) {
+            // node.children = []
+            // this.$set(this.rightCheckedKeys, 'children', [])
+            this.$set(node, 'children', [])
+          }
+          node.children.push(item)
           toData.forEach((el, index) => {
             if (item.name === el.name) {
               toData.splice(index, 1)
             }
           })
         })
-
-        this.rightCheckedKeys = null
       }
-      debugger
+      // if (this.rightCheckedKeys) {
+      //   // let children = []
+      //   obj.nodes.forEach(item => {
+      //     item.pid = this.rightCheckedKeys.name
+      //     this.rightCheckedKeys.children.push(item)
+      //     toData.forEach((el, index) => {
+      //       if (item.name === el.name) {
+      //         toData.splice(index, 1)
+      //       }
+      //     })
+      //   })
+      //
+      //   // this.rightCheckedKeys = null
+      // }
+      // debugger
+    },
+    findFieldInTree(tree = [], result = []) {
+      tree.forEach(el => {
+        if (!el.message) {
+          result.push(el)
+        }
+        if (el.pid !== 0) {
+          el.pid = 0
+        }
+        if (el.children?.length) {
+          this.findFieldInTree(el.children, result)
+        }
+      })
     },
     // 移除按钮
     remove(fromData, toData, obj) {
+      console.log('remove', fromData, toData, obj)
+      console.log('arg', arguments)
       // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
       // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
-      if (this.rightCheckedKeys.message) {
-        console.log('该节点不撤回')
-      }
+      // if (this.rightCheckedKeys.message) {
+      //   console.log('该节点不撤回')
+      // }
+      let result = []
+      this.findFieldInTree(fromData, result)
+      console.log('result', result)
+      this.fromData = result
+      // if (this.rightTreeObj?.node?.message) {
+      //   this.$confirm(this.$t('message.deleteMessageFieldConfirm'), this.$t('message.delete'), {
+      //     type: 'warning'
+      //   }).then(resFlag => {
+      //     // 否，恢复
+      //     if (!resFlag) {
+      //       this.createMessage(true)
+      //       return
+      //     }
+      //     // TODO 移到左侧
+      //   })
+      //   // console.log('该节点不撤回')
+      //   // return false
+      // }
+      // if (this.rightCheckedKeys.message) {
+      //   console.log('该节点不撤回')
+      // }
       console.log('fromData:', fromData)
       console.log('toData:', toData)
       console.log('obj:', obj)
     },
     // 左侧源数据选中事件
     leftCheckChange(nodeObj, treeObj, checkAll) {
-      console.log(nodeObj)
-      console.log(treeObj)
-      console.log(checkAll)
+      // console.log(nodeObj)
+      // console.log(treeObj)
+      // console.log(checkAll)
+      this.leftTreeObj = {
+        node: nodeObj,
+        checkAll: checkAll,
+        ...treeObj
+      }
+      console.log('this.leftTreeObj', this.leftTreeObj)
     },
     // 右侧目标数据选中事件
     rightCheckChange(nodeObj, treeObj, checkAll) {
-      if (nodeObj.message) {
-        this.rightCheckedKeys = nodeObj
-        // 选中信息体是否有children
-        if (!this.rightCheckedKeys.children) {
-          this.$set(this.rightCheckedKeys, 'children', [])
-        }
-      } else {
-        this.rightCheckedKeys = null
+      this.rightTreeObj = {
+        node: nodeObj,
+        checkAll: checkAll,
+        ...treeObj
       }
-      rightCheck = checkAll
-      console.log('right', nodeObj)
-      console.log('right', treeObj)
-      console.log('right', checkAll)
+      console.log('this.rightTreeObj', this.rightTreeObj)
+      let flag = false
+      this.rightTreeObj.checkedNodes.forEach(el => {
+        if (el.message) {
+          flag = true
+        }
+      })
+      // this.$btnRight.disabled = flag
+      if (flag) {
+        // this.$btnRight.disabled = true
+        this.$btnRight.style.visibility = 'hidden'
+      } else {
+        // this.$btnRight.disabled = false
+        this.$btnRight.style.visibility = 'inherit'
+      }
+      // if (nodeObj.message) {
+      //   this.rightCheckedKeys = nodeObj
+      //   // 选中信息体是否有children
+      //   if (!this.rightCheckedKeys.children) {
+      //     this.$set(this.rightCheckedKeys, 'children', [])
+      //   }
+      // } else {
+      //   this.rightCheckedKeys = null
+      // }
+      // // rightCheck = checkAll
+      // this.rightCheckAll = checkAll
+      // console.log('right', nodeObj)
+      // console.log('right', treeObj)
+      // console.log('right', checkAll)
     },
     // 自定义节点 仅树形结构支持
     renderContent(h, { node, data, store }) {
@@ -306,18 +389,10 @@ export default {
         <span class="custom-tree-node">
           <span>{node.label}</span>
           <span>
-            <el-button
-              size="mini"
-              type="text"
-              on-click={() => this.append(data)}
-            >
+            <el-button size="mini" type="text" on-click={() => this.append(data)}>
               Append
             </el-button>
-            <el-button
-              size="mini"
-              type="text"
-              on-click={() => this.remove(node, data)}
-            >
+            <el-button size="mini" type="text" on-click={() => this.remove(node, data)}>
               Delete
             </el-button>
           </span>
@@ -334,6 +409,7 @@ export default {
       this.createDialogVisible = true
       this.createForm = {
         name: '',
+        key: '',
         pid: 0,
         message: true,
         label: 'required',
@@ -359,18 +435,35 @@ export default {
     createMessage() {
       let _this = this
       this.createDialogVisible = false
-
+      // 新增
       if (this.createForm.message) {
-        if (this.rightCheckedKeys) {
-          if (!this.rightCheckedKeys.children) {
-            this.$set(this.rightCheckedKeys, 'children', [])
+        console.log('新增message')
+        let rightTreeObj = this.rightTreeObj
+        let node = rightTreeObj?.node
+        let checkedKeys = rightTreeObj?.checkedKeys
+        if (node?.message && !!checkedKeys.length && checkedKeys?.includes(node.key)) {
+          if (!node.children) {
+            this.$set(node, 'children', [])
           }
-          this.createForm.pid = this.rightCheckedKeys.name
-          this.rightCheckedKeys.children.push(this.createForm)
+          this.createForm.pid = node.key || 0
+          this.createForm.key = this.createForm.name
+          node.children.push({ ...this.createForm })
         } else {
           this.toData.push(this.createForm)
         }
+
+        // if (this.rightCheckedKeys) {
+        //   if (!this.rightCheckedKeys.children) {
+        //     this.$set(this.rightCheckedKeys, 'children', [])
+        //   }
+        //   this.createForm.pid = this.rightCheckedKeys.name
+        //   this.rightCheckedKeys.children.push(this.createForm)
+        // } else {
+        //   this.toData.push(this.createForm)
+        // }
       } else {
+        // 编辑
+        console.log('编辑message')
         const parent = this.editData.parent
         const children = parent.data.children || parent.data
 
@@ -388,29 +481,53 @@ export default {
     },
     // 删除消息体数据
     handleDel(node, data) {
-      const parent = node.parent
-      const children = parent.data.children || parent.data
-
-      // 获取当前删除数据
-      let backchild = []
-      // 获取所有的叶子节点
-      function getLeaf(childrenData) {
-        for (var i = 0; i < childrenData.length; i++) {
-          let currentChild = childrenData[i].children || []
-          if (currentChild.length == 0) {
-            backchild.push(childrenData[i])
-          } else {
-            getLeaf(currentChild)
-          }
+      this.$confirm(this.$t('message.deleteMessageFieldConfirm'), this.$t('message.delete'), {
+        type: 'warning'
+      }).then(resFlag => {
+        if (!resFlag) {
+          this.createMessage(true)
+          return
         }
-        return backchild
-      }
-      getLeaf(children)
+        // TODO 删除
+        const parent = node.parent
+        const index = children.findIndex(d => d.key === data.key)
+        let children = parent.data.children || parent.data
+        // 自定义字段
+        if (data.message) {
+          let result = []
+          this.findFieldInTree(children, result)
+          this.fromData = [...this.fromData, ...result]
+          children.splice(index, 1)
+        } else {
+          // 系统字段
+          children.splice(index, 1)
+        }
+      })
 
-      const index = children.findIndex(d => d.key === data.key)
-      children.splice(index, 1)
-
-      this.fromData = [...this.fromData, ...backchild]
+      // const parent = node.parent
+      // const children = parent.data.children || parent.data
+      //
+      // // 获取当前删除数据
+      // let backchild = []
+      // // 获取所有的叶子节点
+      // function getLeaf(childrenData) {
+      //   for (var i = 0; i < childrenData.length; i++) {
+      //     let currentChild = childrenData[i].children || []
+      //     if (currentChild.length == 0) {
+      //       backchild.push(childrenData[i])
+      //     } else {
+      //       getLeaf(currentChild)
+      //     }
+      //   }
+      //   return backchild
+      // }
+      // getLeaf(children)
+      // console.log('backchild', backchild)
+      //
+      // const index = children.findIndex(d => d.key === data.key)
+      // children.splice(index, 1)
+      //
+      // this.fromData = [...this.fromData, ...backchild]
     },
 
     // 是否拖拽

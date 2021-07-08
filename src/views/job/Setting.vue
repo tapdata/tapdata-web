@@ -435,7 +435,7 @@ export default {
     },
     getAllConnectionIds() {
       //获取所有节点的collectionId ;
-      debugger
+      // debugger
       let dataCells = this.editor.getAllCells()
       let targetCell = this.editor.getSinks()
       let targetCellIds = []

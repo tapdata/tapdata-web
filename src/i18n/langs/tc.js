@@ -229,6 +229,7 @@ const tc = {
       }
     },
     verifyConfirm: '確定要刪除自定義JS校驗邏輯嗎',
+    deleteMessageFieldConfirm: '確定要删除自定義欄位嗎？删除後，不可恢復',
     comfirm: '您確定要',
     operationSuccuess: '操作成功',
     modifyName: '修改名稱',

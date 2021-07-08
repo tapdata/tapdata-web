@@ -3402,9 +3402,9 @@ date-fns@^1.27.2:
   integrity sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==
 
 dayjs@^1.8.25:
-  version "1.10.5"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.5.tgz#5600df4548fc2453b3f163ebb2abbe965ccfb986"
-  integrity sha512-BUFis41ikLz+65iH6LHQCDm4YPMj5r1YFLdupPIyM4SGcXMmtiLQ7U37i+hGS8urIuqe7I/ou3IS1jVc4nbN4g==
+  version "1.10.6"
+  resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/__tarballs/dayjs/1.10.6/__path/npm/dayjs/-/dayjs-1.10.6/288b2aa82f2d8418a6c9d4df5898c0737ad02a63.tgz#288b2aa82f2d8418a6c9d4df5898c0737ad02a63"
+  integrity sha512-AztC/IOW4L1Q41A86phW5Thhcrco3xuAA+YX/BLpLWWjRcTj5TOt/QImBLmCKlrF7u7k47arTnOyL6GnbG8Hvw==
 
 de-indent@^1.0.2:
   version "1.0.2"
@@ -3823,7 +3823,7 @@ ejs@^2.6.1:
 
 el-tree-transfer@^2.4.7:
   version "2.4.7"
-  resolved "https://registry.yarnpkg.com/el-tree-transfer/-/el-tree-transfer-2.4.7.tgz#d0050dc0cbf21dc8a5601a07a0e9ea3c21df7cca"
+  resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/__tarballs/el-tree-transfer/2.4.7/__path/npm/el-tree-transfer/-/el-tree-transfer-2.4.7/d0050dc0cbf21dc8a5601a07a0e9ea3c21df7cca.tgz#d0050dc0cbf21dc8a5601a07a0e9ea3c21df7cca"
   integrity sha512-wcjQyqzmiJMDhF3qHR1NcqXp27Q65Td1EsMOVkqqOo9Z2mkVC+cGJEu3V4L90x8c1XgEciQL7tMuSjCP7/8G4g==
   dependencies:
     lodash "^4.17.20"
@@ -10411,7 +10411,7 @@ widest-line@^3.1.0:
 
 wl-core@^1.1.4:
   version "1.1.9"
-  resolved "https://registry.yarnpkg.com/wl-core/-/wl-core-1.1.9.tgz#b2b38d8e59be60fe156ebf27297f0ff2abaa3a14"
+  resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/__tarballs/wl-core/1.1.9/__path/npm/wl-core/-/wl-core-1.1.9/b2b38d8e59be60fe156ebf27297f0ff2abaa3a14.tgz#b2b38d8e59be60fe156ebf27297f0ff2abaa3a14"
   integrity sha512-7L83qEnrVW3YmPVqSwnlagoWJyVq/uSXkCFzND64nwtSdDm7o1RZQWiVgQcEilZxE0qLrRQKmjuAihNT6fWCjA==
   dependencies:
     big.js "^5.2.2"
