@@ -81,4 +81,7 @@ export default class DataFlows extends PublicAPI {
   batchUpdateListtags(params) {
     return axios.patch(`${this.url}/batchUpdateListtags`, params)
   }
+  getOverview(params) {
+    return axios.patch(`${this.url}/overview`, params)
+  }
 }

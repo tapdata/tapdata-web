@@ -2,6 +2,26 @@ const Mock = require('mockjs')
 const Random = Mock.Random
 
 module.exports = {
+  '/api/DataFlows/overview': {
+    data: {
+      stats: {
+        overview: {
+          sourceName: '@name',
+          sourceType: '@name',
+          targetName: '@name',
+          targatType: '@name',
+          sourceTableNum: Random.integer(0, 100),
+          sourceRowNum: Random.integer(0, 100),
+          targetTableNum: Random.integer(0, 100),
+          targatRowNum: Random.integer(0, 100),
+          spendTime: Random.integer(0, 100),
+          waitingForSyecTableNums: Random.integer(0, 100)
+        }
+      }
+    },
+    code: 'ok',
+    msg: 'ok'
+  },
   '/api/DataFlows/chart': {
     data: {
       chart1: {
@@ -74,15 +94,7 @@ module.exports = {
         last_updated: '2021-04-28T13:03:49.326Z',
         id: '@id',
         name: '@name',
-        'status|1': [
-          'running',
-          'paused',
-          'error',
-          'draft',
-          'scheduled',
-          'stopping',
-          'force stopping'
-        ],
+        'status|1': ['running', 'paused', 'error', 'draft', 'scheduled', 'stopping', 'force stopping'],
         executeMode: 'normal',
         category: '数据库克隆',
         'stopOnError|1': Boolean,

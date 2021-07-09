@@ -15,6 +15,7 @@ import Capture from '../views/job/Preview'
 import Setting from '../views/job/Setting'
 import DebugLogs from '../views/job/DebugLogs'
 import Milestone from '../views/job/Milestone'
+import TaskProgress from '../views/job/TaskProgress'
 import DataVerify from '../views/job/DataVerify/List'
 import DVResult from '../views/job/DataVerify/Result'
 
@@ -251,6 +252,9 @@ export default class Editor extends BaseObject {
 
     self.initMonitor(dataFlow)
     self.showLogs(dataFlow, true)
+    if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
+      self.showTaskProgress(dataFlow, true)
+    }
   }
 
   /**
@@ -391,6 +395,32 @@ export default class Editor extends BaseObject {
       this.getBottomTabPanel().select(milestone)
       this.getBottomSidebar().show()
     }
+  }
+
+  /**
+   * show Task Progress
+   * @param dataFlow
+   */
+  showTaskProgress(dataFlow, isShow) {
+    let progress = this.getBottomTabPanel().getChildByName('progress')
+    if (!progress) {
+      progress = new VueComponent({
+        title: i18n.t('editor.ui.sidebar.progress'),
+        name: 'progress',
+        editor: this,
+        propsData: {
+          dataFlow: dataFlow
+        },
+        component: TaskProgress
+      })
+      this.getBottomTabPanel().add(progress)
+    } else {
+      if (progress.vm && typeof progress.vm.setData === 'function') {
+        progress.vm.setData(dataFlow)
+      }
+    }
+    this.getBottomTabPanel().select(progress)
+    this.getBottomSidebar().show()
   }
 
   /**
