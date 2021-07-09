@@ -1355,6 +1355,7 @@ export default {
         node_setting: '節點屬性',
         statistics: '統計',
         milestone: '任務里程碑',
+        progress: '任務進度',
         logs: '日誌',
         capture: '抓取數據',
         style: '樣式',

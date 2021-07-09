@@ -1387,6 +1387,7 @@ export default {
         statistics: 'Statistics',
         logs: 'Running Logs',
         milestone: 'Task Milestone',
+        progress: 'Task Progress',
         capture: 'Capture',
         style: 'Style',
         config: 'Config',
