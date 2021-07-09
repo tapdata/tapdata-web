@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "submodule": "node ./init_submodule.js",
     "serve": "vue-cli-service serve --open",
     "test": "vue-cli-service serve --mode testing --open",
     "build": "vue-cli-service build",
@@ -37,7 +38,6 @@
     "eslint-plugin-vue": "^6.2.2",
     "express-ws": "^5.0.2",
     "husky": "^4.3.8",
-    "lerna": "^3.22.0",
     "lint-staged": "^10.5.3",
     "mockjs": "^1.1.0",
     "prettier": "^1.19.1",
@@ -52,7 +52,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "post-merge": "git spull"
+      "post-merge": "git submodule update"
     }
   },
   "lint-staged": {
