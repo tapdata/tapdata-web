@@ -84,4 +84,7 @@ export default class DataFlows extends PublicAPI {
   getOverview(params) {
     return axios.patch(`${this.url}/overview`, params)
   }
+  getInsight(params) {
+    return axios.patch(`${this.url}/insight`, params)
+  }
 }

@@ -22,6 +22,29 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
+  '/api/DataFlows/insight': {
+    data: {
+      dataFlowId: '',
+      statsType: 'dataFlowDetailsStats',
+      createTime: new Date(),
+      last_updated: new Date(),
+      statsData: {
+        sourceConnectionId: '@guid',
+        sourceConnectionName: '@name',
+        targetConnectionId: '@guid',
+        targetConnectionName: '@name',
+        sourceTableName: '@name',
+        sourceRowNum: Random.integer(0, 100),
+        targetTableName: '',
+        targetRowNum: Random.integer(0, 100),
+        status: '', //done running waiting,
+        cdcRowNum: Random.integer(0, 100),
+        lag: Random.integer(0, 100)
+      }
+    },
+    code: 'ok',
+    msg: 'ok'
+  },
   '/api/DataFlows/chart': {
     data: {
       chart1: {
