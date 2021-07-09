@@ -1,199 +1,201 @@
 <template>
   <div class="task-progress">
-    <!--  全量+增量  -->
-    <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
-      <div class="progress-container__header flex justify-between">
-        <div class="fw-bolder">任务进度概览</div>
-      </div>
-      <div class="progress-container__body flex">
-        <div class="progress-container__img">图片</div>
-        <div class="progress-container__overview ml-6">
-          <el-row>
-            <el-col :span="24" class="flex"
-              ><span>全量+增量同步任务进度：</span><el-progress class="el-progress" :percentage="50"></el-progress>
+    <template v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'">
+      <!--  全量+增量  -->
+      <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
+        <div class="progress-container__header flex justify-between">
+          <div class="fw-bolder">任务进度概览</div>
+        </div>
+        <div class="progress-container__body flex">
+          <div class="progress-container__img">图片</div>
+          <div class="progress-container__overview ml-6">
+            <el-row>
+              <el-col :span="24" class="flex"
+                ><span>全量+增量同步任务进度：</span><el-progress class="el-progress" :percentage="50"></el-progress>
+              </el-col>
+            </el-row>
+            <el-row class="mt-3">
+              <el-col :span="12">
+                <span>预计全量完成还需时间：</span>
+                <span class="ml-3 color-green">全量已完成</span>
+              </el-col>
+              <el-col :span="12">
+                <span>增量状态：</span>
+                <span class="ml-3 color-green">进行中</span>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+        <div class="progress-container__footer mt-border">
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">源库名称：</span>
+              <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
+            </el-col>
+            <el-col :span="12">
+              <span class="footer-item__name">目标库名称：</span>
+              <span class="footer-item__value">{{ overviewStats.targetName }}</span>
             </el-col>
           </el-row>
-          <el-row class="mt-3">
-            <el-col :span="12">
-              <span>预计全量完成还需时间：</span>
-              <span class="ml-3 color-green">全量已完成</span>
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">源库类型：</span>
+              <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
             </el-col>
             <el-col :span="12">
-              <span>增量状态：</span>
-              <span class="ml-3 color-green">进行中</span>
+              <span class="footer-item__name">目标库类型：</span>
+              <span class="footer-item__value">{{ overviewStats.targatType }}</span>
+            </el-col>
+          </el-row>
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">待迁移表总数：</span>
+              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
+            </el-col>
+            <el-col :span="12">
+              <span class="footer-item__name">已完成迁移表数：</span>
+              <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
+            </el-col>
+          </el-row>
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">总数据量（行）：</span>
+              <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
+            </el-col>
+            <el-col :span="12">
+              <span class="footer-item__name">已迁移数据量（行）：</span>
+              <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
+            </el-col>
+          </el-row>
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">增量所处时间点：</span>
+              <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
+            </el-col>
+            <el-col :span="12">
+              <span class="footer-item__name">增量延迟：</span>
+              <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
             </el-col>
           </el-row>
         </div>
       </div>
-      <div class="progress-container__footer mt-border">
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">源库名称：</span>
-            <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">目标库名称：</span>
-            <span class="footer-item__value">{{ overviewStats.targetName }}</span>
-          </el-col>
-        </el-row>
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">源库类型：</span>
-            <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">目标库类型：</span>
-            <span class="footer-item__value">{{ overviewStats.targatType }}</span>
-          </el-col>
-        </el-row>
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">待迁移表总数：</span>
-            <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">已完成迁移表数：</span>
-            <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
-          </el-col>
-        </el-row>
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">总数据量（行）：</span>
-            <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">已迁移数据量（行）：</span>
-            <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
-          </el-col>
-        </el-row>
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">增量所处时间点：</span>
-            <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">增量延迟：</span>
-            <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
-          </el-col>
-        </el-row>
-      </div>
-    </div>
-    <!--  全量  -->
-    <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'initial_sync'">
-      <div class="progress-container__header flex justify-between">
-        <div class="fw-bolder">任务进度概览</div>
-      </div>
-      <div class="progress-container__body flex">
-        <div class="progress-container__img">图片</div>
-        <div class="progress-container__overview ml-6">
-          <el-row>
-            <el-col :span="24" class="flex"
-            ><span>全量+增量同步任务进度：</span><el-progress class="el-progress" :percentage="50"></el-progress>
+      <!--  全量  -->
+      <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'initial_sync'">
+        <div class="progress-container__header flex justify-between">
+          <div class="fw-bolder">任务进度概览</div>
+        </div>
+        <div class="progress-container__body flex">
+          <div class="progress-container__img">图片</div>
+          <div class="progress-container__overview ml-6">
+            <el-row>
+              <el-col :span="24" class="flex"
+                ><span>全量+增量同步任务进度：</span><el-progress class="el-progress" :percentage="50"></el-progress>
+              </el-col>
+            </el-row>
+            <el-row class="mt-3">
+              <el-col :span="12">
+                <span>预计全量完成还需时间：</span>
+                <span class="ml-3 color-green">全量已完成</span>
+              </el-col>
+              <el-col :span="12">
+                <span>增量状态：</span>
+                <span class="ml-3 color-green">进行中</span>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+        <div class="progress-container__footer mt-border">
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">源库名称：</span>
+              <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
+            </el-col>
+            <el-col :span="12">
+              <span class="footer-item__name">目标库名称：</span>
+              <span class="footer-item__value">{{ overviewStats.targetName }}</span>
             </el-col>
           </el-row>
-          <el-row class="mt-3">
-            <el-col :span="12">
-              <span>预计全量完成还需时间：</span>
-              <span class="ml-3 color-green">全量已完成</span>
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">源库类型：</span>
+              <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
             </el-col>
             <el-col :span="12">
-              <span>增量状态：</span>
-              <span class="ml-3 color-green">进行中</span>
+              <span class="footer-item__name">目标库类型：</span>
+              <span class="footer-item__value">{{ overviewStats.targatType }}</span>
+            </el-col>
+          </el-row>
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">待迁移表总数：</span>
+              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
+            </el-col>
+            <el-col :span="12">
+              <span class="footer-item__name">已完成迁移表数：</span>
+              <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
+            </el-col>
+          </el-row>
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">总数据量（行）：</span>
+              <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
+            </el-col>
+            <el-col :span="12">
+              <span class="footer-item__name">已迁移数据量（行）：</span>
+              <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
             </el-col>
           </el-row>
         </div>
       </div>
-      <div class="progress-container__footer mt-border">
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">源库名称：</span>
-            <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">目标库名称：</span>
-            <span class="footer-item__value">{{ overviewStats.targetName }}</span>
-          </el-col>
-        </el-row>
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">源库类型：</span>
-            <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">目标库类型：</span>
-            <span class="footer-item__value">{{ overviewStats.targatType }}</span>
-          </el-col>
-        </el-row>
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">待迁移表总数：</span>
-            <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">已完成迁移表数：</span>
-            <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
-          </el-col>
-        </el-row>
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">总数据量（行）：</span>
-            <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">已迁移数据量（行）：</span>
-            <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
-          </el-col>
-        </el-row>
+      <!--  增量  -->
+      <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'cdc'">
+        <div class="progress-container__header flex justify-between">
+          <div class="fw-bolder">任务进度概览</div>
+        </div>
+        <div class="progress-container__footer mt-border">
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">源库名称：</span>
+              <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
+            </el-col>
+            <el-col :span="12">
+              <span class="footer-item__name">目标库名称：</span>
+              <span class="footer-item__value">{{ overviewStats.targetName }}</span>
+            </el-col>
+          </el-row>
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">源库类型：</span>
+              <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
+            </el-col>
+            <el-col :span="12">
+              <span class="footer-item__name">目标库类型：</span>
+              <span class="footer-item__value">{{ overviewStats.targatType }}</span>
+            </el-col>
+          </el-row>
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">待迁移表总数：</span>
+              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
+            </el-col>
+            <el-col :span="12">
+              <span class="footer-item__name">已完成迁移表数：</span>
+              <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
+            </el-col>
+          </el-row>
+          <el-row class="footer-line">
+            <el-col class="footer-item" :span="12">
+              <span class="footer-item__name">总数据量（行）：</span>
+              <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
+            </el-col>
+            <el-col :span="12">
+              <span class="footer-item__name">已迁移数据量（行）：</span>
+              <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
+            </el-col>
+          </el-row>
+        </div>
       </div>
-    </div>
-    <!--  增量  -->
-    <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'cdc'">
-      <div class="progress-container__header flex justify-between">
-        <div class="fw-bolder">任务进度概览</div>
-      </div>
-      <div class="progress-container__footer mt-border">
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">源库名称：</span>
-            <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">目标库名称：</span>
-            <span class="footer-item__value">{{ overviewStats.targetName }}</span>
-          </el-col>
-        </el-row>
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">源库类型：</span>
-            <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">目标库类型：</span>
-            <span class="footer-item__value">{{ overviewStats.targatType }}</span>
-          </el-col>
-        </el-row>
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">待迁移表总数：</span>
-            <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">已完成迁移表数：</span>
-            <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
-          </el-col>
-        </el-row>
-        <el-row class="footer-line">
-          <el-col class="footer-item" :span="12">
-            <span class="footer-item__name">总数据量（行）：</span>
-            <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
-          </el-col>
-          <el-col :span="12">
-            <span class="footer-item__name">已迁移数据量（行）：</span>
-            <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
-          </el-col>
-        </el-row>
-      </div>
-    </div>
+    </template>
   </div>
 </template>
 <script>
