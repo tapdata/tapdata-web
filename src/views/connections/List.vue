@@ -480,7 +480,7 @@ export default {
       })
     },
     getImgByType(type) {
-      if (!type || type === 'jira' || type ==='kudu') {
+      if (!type || type === 'jira') {
         type = 'default'
       }
       return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)

@@ -1669,6 +1669,7 @@ const en = {
       databaseType: 'DB type',
       connectionType: 'Connection Type',
       host: 'DB Host',
+      kuduhost: 'IP:port,support multiple, separated by ","',
       agentAddr: 'Agent address',
       port: 'Port',
       databaseName: 'DB Name',

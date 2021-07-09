@@ -107,8 +107,8 @@ export const FORM_DATA_KEY = 'form_data',
     kudu: {
       type: 'kudu',
       name: 'KUDU',
-      shapeImage: 'static/editor/o-hbase.svg',
-      stencilImage: 'static/editor/hbase.svg'
+      shapeImage: 'static/editor/o-kudu.svg',
+      stencilImage: 'static/editor/kudu.svg'
     },
     mongodb: {
       type: 'mongodb',

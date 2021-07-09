@@ -30,7 +30,7 @@ export default function (vm) {
         type: 'input',
         field: 'database_host',
 
-        label: vm.$t('dataForm.form.host'),
+        label: vm.$t('dataForm.form.kuduhost'),
         rules: [
           {
             required: true,
@@ -46,31 +46,15 @@ export default function (vm) {
       },
       {
         type: 'input',
-        field: 'database_port',
-        label: vm.$t('dataForm.form.port'),
-        required: true,
-        rules: [
-          {
-            required: true,
-            validator(rule, value, callback) {
-              if (!value) {
-                callback(new Error(vm.$t('dataForm.error.nonePort')))
-              } else if (!/^\d+$/.test(value)) {
-                callback(new Error(vm.$t('dataForm.error.portNumber')))
-              } else if (value < 1 || value > 65535) {
-                callback(new Error(vm.$t('dataForm.error.portRange')))
-              } else {
-                callback()
-              }
-            }
-          }
-        ]
+        field: 'database_username',
+        label: vm.$t('dataForm.form.userName')
       },
       {
         type: 'input',
-        field: 'database_name',
-        label: vm.$t('dataForm.form.databaseName'),
-        required: true
+        field: 'plain_password',
+        label: vm.$t('dataForm.form.password'),
+        domType: 'password',
+        showPassword: true
       }
     ]
   }

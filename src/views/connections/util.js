@@ -65,7 +65,8 @@ export const TYPEMAP = {
   // hive: 'Hive',
   tcp_udp: 'TCP/IP',
   mq: 'MQ',
-  hbase: 'HBase'
+  hbase: 'HBase',
+  kudu: 'KUDU'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
