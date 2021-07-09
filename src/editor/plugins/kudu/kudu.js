@@ -40,7 +40,7 @@ export const KUDUNodeConfig = {
        * @return {boolean}
        */
       allowTarget() {
-        return true
+        return false
       },
 
       /**
@@ -49,7 +49,7 @@ export const KUDUNodeConfig = {
        * @return {boolean}
        */
       allowSource() {
-        return false
+        return true
       },
 
       validate(data) {
@@ -189,7 +189,7 @@ export const KUDUNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/hbase.svg',
+        xlinkHref: 'static/editor/kudu.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',
