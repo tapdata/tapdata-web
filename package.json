@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "submodule": "node ./init_submodule.js",
     "start": "nodemon mock/mock.js & vue-cli-service serve --open",
     "start:dev": "cross-env SERVE_ENV=dev vue-cli-service serve --open",
     "start:test": "cross-env SERVE_ENV=test vue-cli-service serve --open",
@@ -71,15 +72,13 @@
     "vue-template-compiler": "^2.6.11"
   },
   "gitHooks": {
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "post-merge": "git submodule update"
   },
   "lint-staged": {
     "*.{js,jsx,vue}": [
       "vue-cli-service lint",
       "git add"
     ]
-  },
-  "workspaces": [
-    "packages/*"
-  ]
+  }
 }
