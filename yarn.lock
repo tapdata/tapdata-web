@@ -1066,6 +1066,18 @@
     cssnano-preset-default "^4.0.0"
     postcss "^7.0.0"
 
+"@jsplumb/browser-ui@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/@jsplumb/browser-ui/-/browser-ui-4.0.0.tgz#a9352d4565207f712628f630af5c0c93d2af8d17"
+  integrity sha512-toV80wYdeoIhbpYzmH+lJQcOe+ybjoOk52VIw3GstB0FhwnxLevPm/RlyNapzhkN6XdTRGGdHiyw2gMqmpRb+A==
+  dependencies:
+    "@jsplumb/core" "4.0.0"
+
+"@jsplumb/core@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/@jsplumb/core/-/core-4.0.0.tgz#9a40943a00ee29721bba5353257f73f2b30b7ff9"
+  integrity sha512-8S8KTWzrW7VomfzFQ86DIqWiaxbkdjoQljnW7n1VpluoqDfaDeIc5hAvAlYVc4CKJCZKrbTwls+GOvO5CFBpcQ==
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://r.cnpmjs.org/@mrmlnc/readdir-enhanced/download/@mrmlnc/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"

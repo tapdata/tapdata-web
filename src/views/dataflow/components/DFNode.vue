@@ -90,10 +90,10 @@ export default {
     __init() {
       const { id, nodeId } = this
 
-      this.jsPlumbIns.makeSource(id, targetEndpoint)
-      this.jsPlumbIns.makeTarget(id, sourceEndpoint)
+      // this.jsPlumbIns.makeSource(id, targetEndpoint)
+      // this.jsPlumbIns.makeTarget(id, sourceEndpoint)
 
-      this.jsPlumbIns.draggable(this.$el, {
+      /*this.jsPlumbIns.draggable(this.$el, {
         containment: 'parent',
         start: params => {
           // console.log('node-drag-start', params.pos)
@@ -126,20 +126,20 @@ export default {
           })
           this.$emit('drag-stop', params)
         }
-      })
+      })*/
 
-      this.jsPlumbIns.addEndpoint(id, targetEndpoint, {
+      this.jsPlumbIns.addEndpoint(this.$el, targetEndpoint, {
         uuid: id + '_target'
       })
 
-      this.jsPlumbIns.addEndpoint(id, sourceEndpoint, {
+      this.jsPlumbIns.addEndpoint(this.$el, sourceEndpoint, {
         uuid: id + '_source'
       })
     },
 
     mouseDown() {
-      // console.log('DFNode.mouseDown')
-      return true
+      // this.addActiveAction('dragActive')
+      console.log('DFNode.mouseDown')
     },
 
     mouseClick(e) {

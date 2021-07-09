@@ -17,6 +17,7 @@
     "@formily/reactive": "^2.0.0-beta.76",
     "@formily/reactive-vue": "^2.0.0-beta.76",
     "@formily/vue": "^2.0.0-beta.76",
+    "@jsplumb/browser-ui": "^4.0.0",
     "@vue/composition-api": "^1.0.0-rc.10",
     "ace-builds": "^1.4.12",
     "ant-design-vue": "^1.7.5",
