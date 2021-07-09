@@ -29,8 +29,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
-
-        label: vm.$t('dataForm.form.kuduhost'),
+        label: vm.$t('dataForm.form.host'),
         rules: [
           {
             required: true,
@@ -43,6 +42,10 @@ export default function (vm) {
             }
           }
         ]
+      },
+      {
+        type: 'slot',
+        slot: 'kududatabase'
       },
       {
         type: 'input',
