@@ -15,11 +15,14 @@
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div> -->
-      <div class="box">
+      <div class="box box-content">
         <!-- lazy -->
         <!-- :lazyFn="lazyFn" -->
-        <el-button size="medium" @click="handleDraggable">是否拖拽</el-button>
-        <el-button size="medium" @click="addChecked">添加字段</el-button>
+        <div class="btn-line mb-3">
+          <el-button size="mini" :type="draggable ? 'primary' : 'default'" @click="handleDraggable">是否拖拽</el-button>
+          <el-button size="mini" @click="addChecked">添加字段</el-button>
+        </div>
+
         <tree-transfer
           ref="wl-tree-transfer"
           filter
@@ -60,9 +63,9 @@
         :close-on-click-modal="false"
         :visible.sync="createDialogVisible"
       >
-        <el-form ref="form" :model="createForm" class="dataRule-form">
+        <el-form ref="form" :model="createForm" class="dataRule-form" @submit.native.prevent>
           <el-form-item label="名称">
-            <el-input v-model="createForm.name"></el-input>
+            <el-input size="mini" v-model="createForm.name"></el-input>
           </el-form-item>
           <el-form-item label="限定修饰符">
             <el-radio-group v-model="createForm.label">
@@ -182,7 +185,9 @@ export default {
     },
     getData() {
       // return JSON.parse(JSON.stringify(this.model));
-      return _.cloneDeep(this.model)
+      // return _.cloneDeep(this.model)
+      let result = _.cloneDeep(this.model)
+      result.name = result.tableName || 'TCP'
     },
 
     // setDisabled(disabled) {
@@ -528,7 +533,7 @@ export default {
 
     // 是否拖拽
     handleDraggable() {
-      this.draggable = true
+      this.draggable = !this.draggable
     },
     getTreeMapping(tree, result = {}, pre = []) {
       pre.push(tree.key)
@@ -677,6 +682,8 @@ export default {
   height: 100%;
   .nodeBody {
     height: 100%;
+    display: flex;
+    flex-direction: column;
   }
   .box,
   .transfer {
@@ -699,6 +706,11 @@ export default {
         }
       }
     }
+  }
+  .box-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>
