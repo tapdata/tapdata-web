@@ -148,7 +148,6 @@ export default {
   mounted() {
     this.$nextTick(() => {
       let treeTrans = this.$refs['wl-tree-transfer']
-      console.log(treeTrans.$el)
       let $transferCenter = treeTrans.$el?.getElementsByClassName('transfer-center')
       let $transferBtns = $transferCenter?.[0].getElementsByClassName('el-button')
       this.$btnRight = $transferBtns?.[1]
@@ -180,8 +179,6 @@ export default {
         }
       }
       this.fromData = _this.fieldsData
-      console.log(_this.fieldsData)
-      console.log('STR', JSON.stringify(this.fromData))
     },
     getData() {
       // return JSON.parse(JSON.stringify(this.model));
@@ -212,7 +209,6 @@ export default {
     },
     // 自定义筛选函数
     filterNode(value, data, where) {
-      console.log(value, data, where)
       if (!value) return true
       return data[this.defaultProps.label].indexOf(value) !== -1
     },
@@ -441,12 +437,12 @@ export default {
         let rightTreeObj = this.rightTreeObj
         let node = rightTreeObj?.node
         let checkedKeys = rightTreeObj?.checkedKeys
+        this.createForm.key = this.createForm.name
         if (node?.message && !!checkedKeys.length && checkedKeys?.includes(node.key)) {
           if (!node.children) {
             this.$set(node, 'children', [])
           }
           this.createForm.pid = node.key || 0
-          this.createForm.key = this.createForm.name
           node.children.push({ ...this.createForm })
         } else {
           this.toData.push(this.createForm)
@@ -533,6 +529,144 @@ export default {
     // 是否拖拽
     handleDraggable() {
       this.draggable = true
+    },
+    getTreeMapping(tree, result = {}, pre = []) {
+      pre.push(tree.key)
+      if (tree.children?.length) {
+        tree.children.forEach(el => {
+          this.getTreeMapping(el, result, pre)
+        })
+      } else if (!tree.message) {
+        result[pre.join('.')] = tree.key
+      }
+    },
+    getMapping(tree, result = {}) {
+      if (tree.message) {
+        if (tree.children?.length) {
+          tree.children.forEach(el => {
+            this.getMapping(el, result)
+          })
+        }
+      } else {
+        result[tree.mapping.join('.')] = tree.key
+      }
+      return result
+    },
+    getSchema(node) {
+      let obj = {}
+      obj.name = node.key
+      obj.label = node.label
+      obj.type = node.type
+      obj.nestedList = []
+      obj.propertyList = []
+      if (node.children?.length) {
+        let nestedIndex = 0
+        let propertyIndex = 0
+        node.children.forEach(el => {
+          if (el.message) {
+            nestedIndex++
+            if (el.children?.length) {
+              obj.nestedList.push(
+                Object.assign({}, this.getSchema(el), {
+                  number: nestedIndex
+                })
+              )
+            } else {
+              obj.nestedList.push({
+                label: el.label,
+                key: el.key,
+                name: el.name,
+                number: nestedIndex,
+                type: el.type
+              })
+            }
+          } else {
+            propertyIndex++
+            obj.propertyList.push({
+              label: el.label,
+              key: el.key,
+              name: el.name,
+              number: propertyIndex,
+              type: el.type
+            })
+          }
+        })
+      }
+      return obj
+    },
+    formatMappingTree(tree, parent) {
+      // 继承父节点的mapping
+      if (parent) {
+        tree.mapping = [...parent.mapping, tree.key]
+      } else {
+        tree.mapping = [tree.key]
+      }
+      if (tree.children?.length) {
+        tree.children.forEach(el => {
+          this.formatMappingTree(el, tree)
+        })
+      }
+      console.log('formatMappingTree', tree)
+      return tree
+    },
+    transToData(tree) {
+      // disabled: false
+      // key: "VREMARKS"
+      // label: "required"
+      // name: "VREMARKS"
+      // pid: 0
+      // type: "String"
+      // children: Array(0)
+      let obj = {}
+      obj.name = tree.name
+      obj.key = tree.key || tree.name
+      obj.type = tree.type
+      obj.disabled = false
+      obj.label = tree.label
+      obj.pid = ''
+      obj.children = []
+      //nestedList propertyList
+      // 系统字段
+      if (tree.propertyList?.length) {
+        tree.propertyList.forEach(el => {
+          obj.children.push({
+            name: el.name,
+            key: el.key || el.name,
+            type: el.type,
+            disabled: false,
+            label: el.label,
+            pid: tree.key,
+            children: []
+          })
+        })
+      }
+      // 自定义字段
+      if (tree.nestedList?.length) {
+        tree.nestedList.forEach(el => {
+          obj.children.push(
+            Object.assign({}, this.transToData(el), {
+              message: true,
+              type: el.type,
+              label: el.label,
+              pid: tree.key
+            })
+          )
+        })
+      }
+      return obj
+    },
+    formatToData() {
+      // let { toData } = this
+      // let tree = this.formatMappingTree({
+      //   key: 'Unit',
+      //   name: 'Unit',
+      //   message: true,
+      //   pid: -1,
+      //   children: [...toData]
+      // })
+      // let getMapping = this.getMapping({ ...tree })
+      // let getSchema = this.getSchema({ ...tree })
+      // let transToData = this.transToData({ ...getSchema })
     }
   }
 }
