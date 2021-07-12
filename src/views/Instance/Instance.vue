@@ -353,7 +353,7 @@ export default {
         if (res) {
           this.$axios
             .patch('api/tcm/agent/stop', {
-              id: row.id
+              agentId: row.id
             })
             .then(() => {
               this.$message.success('Agent 已停止')
@@ -374,7 +374,7 @@ export default {
         if (res) {
           this.$axios
             .patch('api/tcm/agent/delete', {
-              id: row.id
+              agentId: row.id
             })
             .then(() => {
               this.$message.success('Agent 删除成功')
