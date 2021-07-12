@@ -318,7 +318,7 @@ export default {
         this.$axios
           .get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
           .then(async data => {
-            let list = data.items.slice(0, 1) || []
+            let list = data.items || []
             this.list = list.map(item => {
               item.status = item.status === 'Running' ? 'Running' : 'Offline'
               item.deployDisable = item.tmInfo.pingTime || false
