@@ -73,7 +73,8 @@
   },
   "gitHooks": {
     "pre-commit": "lint-staged",
-    "post-merge": "git submodule update"
+    "post-merge": "git submodule update",
+    "post-checkout": "git submodule update"
   },
   "lint-staged": {
     "*.{js,jsx,vue}": [
