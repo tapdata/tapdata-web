@@ -18,139 +18,119 @@
           <span>{{ down.name }}</span>
         </div>
       </div>
-      <div class="text-style">安装方法</div>
+      <div class="text-style">安装前准备</div>
       <template v-if="downLoadType === 'windows'">
         <ul class="pt-5 ul-style">
-          <li>1. 部署前请确认你的本地环境中已安装 java</li>
-          <li>2. 请先点击下方的按钮下载 Tapdata Agent 至本地部署环境</li>
+          <li class="flex">
+            <span>1. 安装前请确认您的部署环境中已安装Java1.8版本并正确配置环境变量。</span>
+            <ElLink class="ml-3" type="primary" @click="windowsToJava">点击查看Java1.8安装和配置方式</ElLink>
+          </li>
+          <li>2.点击下方的下载按钮将Tapdata Agent安装包下载到本地环境。</li>
           <li>
             <ElButton class="mt-5" type="primary" @click="handleDownLoad">点击下载 Tapdata Agent</ElButton>
           </li>
-          <li class="mt-5">
-            3. 在 Tapdata Agent 下载完毕后，请将其放入任意目录并执行下方命令即可实现 Tapdata Agent 的自动部署及启动
+          <li>
+            <div class="my-5 text-style">开始安装</div>
           </li>
           <li>
-            <h4 class="s-title">
-              <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
-                <span
-                  class="operaKey"
-                  v-clipboard:copy="windowLink"
-                  v-clipboard:success="onCopy"
-                  @mouseleave="showTooltip = false"
-                >
-                  <i class="click-style">复制</i>
-                </span>
-              </ElTooltip>
-            </h4>
+            1. 将下载好的Tapdata Agent放入要安装Agent的目录，并通过cmd窗口在目录下执行下方命令即可实现Tapdata
+            Agent的自动部署及启动
           </li>
-          <li class="box title-text">{{ windowLink }}</li>
-          <li class="mt-3">4. 下载、部署 Tapdata Agent 无需管理员权限</li>
-          <li>5. 我们非常建议在一个独立、干净的文件夹内部署 Tapdata Agent</li>
-          <li>
-            6. 待上方命令执行完毕后，Tapdata Agent 会处于启动状态，你可以通过以下命令对 Tapdata Agent 进行管理
+          <li class="box title-text mt-2">
+            {{ windowLink }}
+            <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
+              <span
+                class="operaKey"
+                v-clipboard:copy="windowLink"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                <i class="click-style">复制</i>
+              </span>
+            </ElTooltip>
+          </li>
+          <li class="mt-3">
+            <span>2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：</span>
+            <img class="mt-2" :src="getImg('downloadWindows')" alt="" />
+          </li>
+          <li class="flex">
+            <span>3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
+            <ElLink type="primary" @click="windowsToAgent">《Agent基本操作》</ElLink>
           </li>
         </ul>
       </template>
       <template v-if="downLoadType === 'Linux'">
         <ul class="pt-5 ul-style">
-          <li>1. 部署前请确认你的本地环境中已安装 java</li>
           <li>
-            2. 请复制下方命令并在本地部署环境执行，其包含 Tapdata Agent 的下载、自动部署及启动
+            <span>1.安装前请确认您的部署环境中已安装Java1.8版本并正确配置环境变量。</span>
+            <ElLink type="primary" @click="linuxToJava">点击查看Java1.8安装和配置方式</ElLink>
           </li>
-          <li>3. 下载、部署 Tapdata Agent 无需 root 权限</li>
-          <li>4. 我们非常建议在一个独立、干净的文件夹内部署 Tapdata Agent</li>
+          <li>2.我们非常建议在一个独立、干净的文件夹内部署 Tapdata Agent</li>
+          <li>3.下载、部署 Tapdata Agent 无需 root 权限，只需要对部署目录具备读写权限即可</li>
           <li>
-            <h4 class="s-title">
-              <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
-                <span
-                  class="operaKey"
-                  v-clipboard:copy="LinuxLink"
-                  v-clipboard:success="onCopy"
-                  @mouseleave="showTooltip = false"
-                >
-                  <i class="click-style">复制</i>
-                </span>
-              </ElTooltip>
-            </h4>
+            <div class="my-5 text-style">开始安装</div>
           </li>
-          <li class="box title-text">{{ LinuxLink }}</li>
-
+          <li>1.请复制下方命令并在本地部署环境执行，其包含 Tapdata Agent 的下载、自动部署及启动</li>
+          <li class="box title-text my-2">
+            <span>{{ LinuxLink }}</span>
+            <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
+              <span
+                class="operaKey"
+                v-clipboard:copy="LinuxLink"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                <i class="click-style">复制</i>
+              </span>
+            </ElTooltip>
+          </li>
           <li>
-            5. 待上方命令执行完毕后，Tapdata Agent 会处于启动状态，你可以通过以下命令对 Tapdata Agent 进行管理
+            <span>2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：</span>
+            <img class="mt-2" :src="getImg('downloadLinux')" alt="" />
+          </li>
+          <li>
+            <span>4.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
+            <ElLink type="primary" @click="linuxToAgent">《Agent基本操作》</ElLink>
           </li>
         </ul>
       </template>
       <template v-if="downLoadType === 'Docker'">
         <ul class="pt-5 ul-style">
-          <li>1. 我们提供了包含 Tapdata Agent 运行所需环境的镜像</li>
+          <li>1.我们提供了包含 Tapdata Agent 运行所需环境的镜像</li>
           <li>
-            2. 请复制下方命令并在本地部署环境执行，其包含镜像的下载及运行，Tapdata Agent 的下载、自动部署及启动
+            <span>2.首先您的部署环境必须已经安装Docker才可使用Docker方式安装，如未安装可参考</span>
+            <ElLink type="primary" @click="dockerToInstall">《Docker安装》</ElLink>
+            <span>进行安装</span>
           </li>
-          <li>3. 下载、部署 Tapdata Agent 无需 root 权限</li>
-          <li>4. 我们非常建议在一个独立、干净的文件夹内部署 Tapdata Agent</li>
           <li>
-            <h4 class="s-title">
-              <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
-                <span
-                  class="operaKey"
-                  v-clipboard:copy="dockerLink"
-                  v-clipboard:success="onCopy"
-                  @mouseleave="showTooltip = false"
-                >
-                  <i class="click-style">复制</i>
-                </span>
-              </ElTooltip>
-            </h4>
+            <div class="my-5 text-style">开始安装</div>
           </li>
-          <li class="box title-text">{{ dockerLink }}</li>
-
+          <li>1.请复制下方命令并在部署环境执行，其包含镜像的下载及运行，Tapdata Agent 的下载、自动部署及启动</li>
+          <li class="box title-text">
+            <span>{{ dockerLink }}</span>
+            <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
+              <span
+                class="operaKey"
+                v-clipboard:copy="dockerLink"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                <i class="click-style">复制</i>
+              </span>
+            </ElTooltip>
+          </li>
           <li>
-            5. 待上方命令执行完毕后，Tapdata Agent 会处于启动状态，你可以通过以下命令对 Tapdata Agent 进行管理
+            <span
+              >2.docker安装成功后，会自动输出已安装Agent的容器ID，您可以通过docker ps命令来查看正在运行的docker</span
+            >
+            <img class="mt-2" :src="getImg('downloadDocker')" alt="" />
+          </li>
+          <li class="flex">
+            <span>3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
+            <ElLink type="primary" @click="dockerToAgent">《Agent基本操作》</ElLink>
           </li>
         </ul>
       </template>
-      <div class="box mt-5" v-if="downLoadType === 'windows'">
-        <div class="text-style">#关闭 Tapdata Agent</div>
-        <p class="pt-1">tapdata stop</p>
-        <div class="text-style pt-5">#启动 Tapdata Agent</div>
-        <p class="pt-1">tapdata start backend</p>
-        <div class="text-style pt-5">#查看 Tapdata Agent 状态</div>
-        <p class="pt-1">tapdata status</p>
-      </div>
-      <div class="box mt-5" v-if="downLoadType === 'Linux'">
-        <div class="text-style">#关闭 Tapdata Agent</div>
-        <p class="pt-1">./tapdata stop</p>
-        <div class="text-style pt-5">#启动 Tapdata Agent</div>
-        <p class="pt-1">./tapdata start backend</p>
-        <div class="text-style pt-5">#查看 Tapdata Agent 状态</div>
-        <p class="pt-1">./tapdata status</p>
-      </div>
-      <div class="box mt-5" v-if="downLoadType === 'Docker'">
-        <div class="text-style">
-          #关闭 Tapdata Agent ,需要通过 docker exec 进入容器对应目录并执行
-        </div>
-        <p class="pt-1">./tapdata stop</p>
-        <div class="text-style pt-5">
-          #启动 Tapdata Agent,需要通过 docker exec 进入容器对应目录并执行
-        </div>
-        <p class="pt-1">./tapdata start backend</p>
-        <div class="text-style pt-5">
-          #查看 Tapdata Agent 状态,需要通过 docker exec 进入容器对应目录并执行
-        </div>
-        <p class="pt-1">./tapdata status</p>
-      </div>
-      <div class="box line">
-        <div class="text-style">注意</div>
-        <p style="line-height: 28px">
-          Tapdata Agent 运行后会在 Tapdata 官网 Agent
-          管理页面自动注册，此时你可通过管理页面对其进行管控，也可在本地使用命令行方式对其进行管控，如果你的本地部署环境无法连通公网，那么你可能无法在
-          Agent 管理页面看到对应 Tapdata Agent
-        </p>
-      </div>
-      <div class="box line">
-        <div class="text-style">注意</div>
-        <p>每个免费用户同一时刻只可运行一个Tapdata Agent</p>
-      </div>
     </main>
     <footer class="footer">
       <ElButton type="primary" @click="handleNextSetp()">完成</ElButton>
@@ -276,6 +256,42 @@ export default {
     },
     handleNextSetp() {
       this.$router.push({ name: 'Instance' })
+    },
+    getImg(name) {
+      return require(`../../../public/images/agent/${name}.png`)
+    },
+    windowsToJava() {
+      window.open(
+        'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_windows-huan-jing-xia-zai-yu-an-zhuang#MjqcX',
+        '_blank'
+      )
+    },
+    windowsToAgent() {
+      window.open(
+        'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_windows-huan-jing-xia-zai-yu-an-zhuang#Fh83z',
+        '_blank'
+      )
+    },
+    linuxToJava() {
+      window.open(
+        'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_linux-huan-jing-xia-zai-yu-an-zhuang#46215ffa',
+        '_blank'
+      )
+    },
+    linuxToAgent() {
+      window.open(
+        'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_linux-huan-jing-xia-zai-yu-an-zhuang#uQUK8',
+        '_blank'
+      )
+    },
+    dockerToInstall() {
+      window.open('https://docs.docker.com/get-docker/', '_blank')
+    },
+    dockerToAgent() {
+      window.open(
+        'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_docker-huan-jing-xia-zai-yu-an-zhuang#DLjwF',
+        '_blank'
+      )
     }
   }
 }
@@ -317,7 +333,6 @@ export default {
       font-weight: bold;
     }
     .ul-style {
-      padding-left: 10px;
       li {
         padding: 3px 0;
         overflow-x: auto;
@@ -344,7 +359,7 @@ export default {
       font-weight: bold;
     }
     .down-type {
-      padding: 50px 0;
+      padding: 30px 0;
       div {
         position: relative;
         display: inline-block;
