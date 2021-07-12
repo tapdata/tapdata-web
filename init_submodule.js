@@ -2,10 +2,15 @@ const { join } = require('path')
 const fs = require('fs')
 const cp = require('child_process')
 
-cp.exec('git submodule update --init --recursive', function (err) {
-  if (err) throw err
-  console.log('执行命令: git submodule update --init --recursive')
-})
+cp.exec(
+  `git submodule update --init --recursive & git config submodule.recurse true & git config status.submodulesummary 1`,
+  function (err) {
+    if (err) throw err
+    console.log(
+      '执行命令: git submodule update --init --recursive & git config submodule.recurse true & git config status.submodulesummary 1'
+    )
+  }
+)
 
 fs.readFile(join(__dirname, '../.git/config'), 'utf8', function (err, data) {
   if (err) throw err
