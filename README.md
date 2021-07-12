@@ -34,8 +34,6 @@ git config alias.spull "submodule update --remote --merge"
 # 设置别名，执行git spush 发布子模块代码
 git config alias.spush "submodule foreach git push origin HEAD:release"
 
-# 创建本地修改的分支，以便做修改提交，只存在本地，不存在远端，不要把该分支推送到远端
-git submodule foreach git checkout -b stable
 
 # 同步最新的代码(注意： 若子模块有改动，请 commit 之后再执行此操作，并留意可能导致的冲突（跟维护另一个仓库的规则一致）)
 git spull

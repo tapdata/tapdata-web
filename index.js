@@ -2,13 +2,14 @@ import VueI18n from 'vue-i18n'
 import langs from './locale'
 import FormBuilder from './components/form-builder'
 import ConnectionTypeSelector from './components/connection-type-selector'
+import ConnectionFormSelector from './components/connection-form'
 import ConnectionTest from './components/connection-test'
 
 import WSClient from './plugins/ws-client'
 import * as _util from './util'
 import * as _const from './const'
 
-const components = [ConnectionTypeSelector, ConnectionTest]
+const components = [ConnectionTypeSelector, ConnectionTest, ConnectionFormSelector]
 
 const install = function(Vue, opts = {}) {
   Vue.prototype.$util = _util
@@ -46,6 +47,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 export default {
   install,
   ConnectionTypeSelector,
+  ConnectionFormSelector,
   ConnectionTest,
   WSClient
 }
