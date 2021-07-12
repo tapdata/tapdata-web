@@ -134,6 +134,20 @@ export default {
       }
     }
   },
+  watch: {
+    model: {
+      deep: true,
+      handler() {
+        this.$emit('dataChanged', this.getData())
+      }
+    },
+    toData: {
+      deep: true,
+      handler() {
+        this.model.Unit = this.formatToData()
+      }
+    }
+  },
   created() {
     // this.fromData = this.fieldsData.map(item => {
     //   return {
@@ -181,13 +195,24 @@ export default {
           }))
         }
       }
-      this.fromData = _this.fieldsData
+      // toData
+      if (this.model.Unit?.schema) {
+        this.toData = this.transToData({ ...this.model.Unit?.schema })
+        // 过滤下 formdata
+        this.fromData = _this.fieldsData
+      } else {
+        // 过滤下 formdata
+        this.fromData = _this.fieldsData
+      }
+
     },
     getData() {
       // return JSON.parse(JSON.stringify(this.model));
       // return _.cloneDeep(this.model)
+      // let result = _.cloneDeep(this.model)
+      // result.name = result.tableName || 'TCP'
       let result = _.cloneDeep(this.model)
-      result.name = result.tableName || 'TCP'
+      result.name = result.name || 'Message'
     },
 
     // setDisabled(disabled) {
@@ -661,16 +686,20 @@ export default {
       return obj
     },
     formatToData() {
-      // let { toData } = this
-      // let tree = this.formatMappingTree({
-      //   key: 'Unit',
-      //   name: 'Unit',
-      //   message: true,
-      //   pid: -1,
-      //   children: [...toData]
-      // })
-      // let getMapping = this.getMapping({ ...tree })
-      // let getSchema = this.getSchema({ ...tree })
+      let { toData } = this
+      let tree = this.formatMappingTree({
+        key: 'Unit',
+        name: 'Unit',
+        message: true,
+        pid: -1,
+        children: [...toData]
+      })
+      let getMapping = this.getMapping({ ...tree })
+      let getSchema = this.getSchema({ ...tree })
+      return {
+        mapping: getMapping,
+        schema: getSchema
+      }
       // let transToData = this.transToData({ ...getSchema })
     }
   }
