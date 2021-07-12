@@ -217,7 +217,7 @@ export default {
     },
     getImgSrc(src) {
       try {
-        return require(`../../packages/tapdata-web-core/assets/images/${src}`)
+        return require(`../../../packages/tapdata-web-core/assets/images/${src}`)
       } catch (e) {
         console.log(e)
       }
