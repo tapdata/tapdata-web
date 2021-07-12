@@ -14,57 +14,6 @@
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>联系我们</span>
         </div>
-        <!--				<ElButton class="btn-create" type="primary" size="mini" :loading="btnLoading" @click="command('create')">-->
-        <!--					<i class="el-icon-plus"></i>-->
-        <!--					<span>创建</span>-->
-        <!--				</ElButton>-->
-        <!-- <div class="agent-status" @click="handleCluster">
-          <i class="status-color" :style="{ backgroundColor: agentVisible ? '#88E368' : '#F56C6C' }"></i>
-          <span>{{ agentVisible ? 'Agent 正常' : 'Agent 异常' }}</span>
-        </div> -->
-        <!-- <ElDropdown class="btn" placement="bottom" @command="command">
-          <i class="iconfont td-icon-shangchuan-copy"></i>
-          <ElDropdownMenu slot="dropdown">
-            <ElDropdownItem command="download"> 下载 Agent </ElDropdownItem>
-            <ElDropdownItem command="fastdownload"> 快速下载 Agent </ElDropdownItem>
-            <ElDropdownItem>操作引导</ElDropdownItem>
-          </ElDropdownMenu>
-        </ElDropdown> -->
-        <!--				<ElDropdown class="btn" placement="bottom" @command="command">-->
-        <!--					<i class="el-icon-question"></i>-->
-        <!--					<ElDropdownMenu slot="dropdown">-->
-        <!--						<ElDropdownItem command="help"> 帮助 </ElDropdownItem>-->
-        <!--						<ElDropdownItem command="question"> 用户支持 </ElDropdownItem>-->
-        <!--					</ElDropdownMenu>-->
-        <!--				</ElDropdown>-->
-        <!-- <ElDropdown class="btn" placement="bottom" @command="command">
-          <i class="el-icon-s-tools"></i>
-          <ElDropdownMenu slot="dropdown">
-            <ElDropdownItem command="settings"> 系统设置 </ElDropdownItem>
-            <ElDropdownItem command="setting"> 通知设置 </ElDropdownItem>
-          </ElDropdownMenu>
-        </ElDropdown> -->
-        <!-- <ElDropdown
-          v-if="$window.getSettingByKey('SHOW_LANGUAGE')"
-          class="btn"
-          placement="bottom"
-          @command="changeLanguage"
-        >
-          <i
-            class="iconfont"
-            :class="{
-              'icon-zhongwen1': lang === 'sc',
-              'icon-yingwen1': lang === 'en',
-              'icon-fanti': lang === 'tc'
-            }"
-            style="font-size: 18px"
-          ></i>
-          <ElDropdownMenu slot="dropdown">
-            <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
-              {{ value }}
-            </ElDropdownItem>
-          </ElDropdownMenu>
-        </ElDropdown> -->
         <ElDropdown class="menu-user" placement="bottom" @command="command">
           <!--					<el-button class="menu-button" size="mini">-->
           <!--						{{ user.username }}-->
@@ -105,40 +54,12 @@ export default {
     return {
       user: window.__USER_INFO__ || {},
       isShowCustomerService: false,
-      // agentVisible: false,
       guideVisible: false, // 指引窗
       isClose: false,
       btnLoading: false
     }
   },
-  // created() {
-  // 	this.handleWS();
-  // 	this.handleAgentData();
-  // },
   methods: {
-    // // 第一次获取Agent数据
-    // handleAgentData() {
-    // 	this.$axios.get('tm/api/clusterStates').then(res => {
-    // 		if (res && res.data && res.data.length) {
-    // 			this.agentVisible = res.data[0].status === 'running' ? true : false;
-    // 		}
-    // 	});
-    // },
-    // 获取Agent长链接数据
-    // handleWS() {
-    // 	let parmas = {
-    // 		user_id: this.user.userId,
-    // 		type: 'watch',
-    // 		collection: 'clusterState'
-    // 	};
-    // 	this.$nextTick(() => {
-    // 		ws.send(parmas);
-    // 	});
-    // },
-    // // 跳转集群列表
-    // handleCluster() {
-    // 	this.$router.push({ name: 'Instance' });
-    // },
     showGuide(key) {
       this.command('create', key)
     },
@@ -160,14 +81,6 @@ export default {
         case 'home':
           window.open('https://cloud.tapdata.net/', '_blank')
           break
-        // case 'download':
-        // 	downloadUrl = this.$router.resolve({ name: 'AgentDownload' });
-        // 	window.open(downloadUrl.href, '_blank');
-        // 	break;
-        // case 'fastdownload':
-        // 	downloadUrl = this.$router.resolve({ name: 'FastDownload' });
-        // 	window.open(downloadUrl.href, '_blank');
-        // 	break;
         case 'signOut':
           this.$confirm('您确定要退出登录吗？', '退出登录', {
             type: 'warning'
@@ -200,9 +113,6 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  //display: flex;
-  //align-items: center;
-  //justify-content: space-between;
   width: 100%;
   height: 68px !important;
   padding: 0 7px;

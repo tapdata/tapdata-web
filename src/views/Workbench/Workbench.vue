@@ -313,7 +313,7 @@ export default {
       this.$emit('create-task')
     },
     createConnection() {
-      this.$emit('select-connection-type')
+      this.$root.$emit('select-connection-type')
     },
     toNotice() {
       this.$router.push({ name: 'WorkbenchNotice' })

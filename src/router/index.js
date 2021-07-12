@@ -7,6 +7,9 @@ import UpgradeVersion from '@/views/AgentDownload/UpgradeVersion.vue'
 import ContactUs from '@/views/ContactUs'
 import Purchase from '@/views/Purchase/Purchase'
 
+const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/Task/Form.vue')
+// const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/Connection/Form.vue')
+
 const routes = [
   {
     path: '/',
@@ -86,6 +89,7 @@ const routes = [
           {
             path: 'create',
             name: 'ConnectionCreate',
+            // component: ConnectionForm,
             component: Iframe,
             meta: {
               title: '创建连接',
@@ -95,6 +99,7 @@ const routes = [
           {
             path: ':id',
             name: 'ConnectionEdit',
+            // component: ConnectionForm,
             component: Iframe,
             meta: {
               title: '编辑连接',
@@ -115,7 +120,7 @@ const routes = [
           {
             path: 'create',
             name: 'DataflowCreate',
-            component: () => import('../views/Task/Form.vue'),
+            component: TaskForm,
             meta: {
               title: '创建任务',
               link: './tm/#/createTask/create'
@@ -124,7 +129,7 @@ const routes = [
           {
             path: ':id',
             name: 'DataflowEdit',
-            component: () => import('../views/Task/Form.vue'),
+            component: TaskForm,
             meta: {
               title: '编辑任务'
             }

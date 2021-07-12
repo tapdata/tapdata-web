@@ -3,7 +3,6 @@
 import Vue from 'vue'
 import axios from 'axios'
 import { Message } from 'element-ui'
-import Cookie from 'vue-cookies'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL ||  '';
@@ -47,16 +46,6 @@ _axios.interceptors.request.use(function(config) {
   if (user) {
     config.headers['X-Token'] = user.token
   }
-  let accessToken = Cookie.get('token')
-  if (accessToken) {
-    if (~config.url.indexOf('?')) {
-      if (!~config.url.indexOf('access_token')) {
-        config.url = `${config.url}&access_token=${accessToken}`
-      }
-    } else {
-      config.url = `${config.url}?access_token=${accessToken}`
-    }
-  }
   config.withCredentials = true
   config.headers['x-requested-with'] = 'XMLHttpRequest'
   let cancelFunc = null
@@ -65,7 +54,7 @@ _axios.interceptors.request.use(function(config) {
   })
   let key = JSON.stringify(config)
   if (pending.includes(key)) {
-		console.log('Cancel request:', config) //eslint-disable-line
+    console.log('Cancel request:', config) //eslint-disable-line
     cancelFunc('cancel')
   } else {
     pending.push(key)
