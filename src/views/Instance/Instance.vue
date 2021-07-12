@@ -27,13 +27,11 @@
             </li>
           </ul>
         </div>
-        <div class="instance-operation-right">
+        <div v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'" class="instance-operation-right">
           <ElButton type="primary" @click="createAgent">
             <i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
             <span>创建 Agent</span>
           </ElButton>
-        </div>
-        <div v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'" class="instance-operation-right">
           <ElButton type="primary" @click="toOldPurchase">
             <i class="iconfont td-icon-dinggou mr-1"></i>
             <span>订购托管实例</span>
@@ -400,7 +398,7 @@ export default {
       }).then(res => {
         if (res) {
           this.$axios
-            .post('api/tcm/agent/stop', {
+            .patch('api/tcm/agent/stop', {
               id: row.id
             })
             .then(() => {
@@ -421,7 +419,7 @@ export default {
       }).then(res => {
         if (res) {
           this.$axios
-            .post('api/tcm/agent/delete', {
+            .patch('api/tcm/agent/delete', {
               id: row.id
             })
             .then(() => {
