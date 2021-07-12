@@ -83,20 +83,20 @@
               <template v-if="scope.row.spec && version && scope.row.spec.version !== version">
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
                   <img
-                    v-if="!scope.row.updataStatus || scope.row.updataStatus === 'done'"
+                    v-if="!scope.row.tmInfo.updataStatus || scope.row.tmInfo.updataStatus === 'done'"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeSvg"
                     alt=""
                     @click="showUpgradeDialogFnc(scope.row)"
                   />
                   <img
-                    v-else-if="['preparing', 'downloading', 'upgrading'].includes(scope.row.updataStatus)"
+                    v-else-if="['preparing', 'downloading', 'upgrading'].includes(scope.row.tmInfo.updataStatus)"
                     class="upgrade-img cursor-not-allowed"
                     :src="upgradeLoadingSvg"
                     alt=""
                   />
                   <img
-                    v-else-if="scope.row.updataStatus === 'fail'"
+                    v-else-if="scope.row.tmInfo.updataStatus === 'fail'"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeErrorSvg"
                     alt=""
@@ -239,7 +239,7 @@ export default {
     haveStateLoadingFlag() {
       let flag = false
       this.list.forEach(el => {
-        if (['preparing', 'downloading', 'upgrading'].includes(el.updataStatus)) {
+        if (['preparing', 'downloading', 'upgrading'].includes(el.tmInfo.updataStatus)) {
           flag = true
         }
       })
@@ -305,7 +305,10 @@ export default {
             let list = data.items.slice(0, 1) || []
             this.list = list.map(item => {
               item.status = item.status === 'Running' ? 'Running' : 'Offline'
-              item.updataStatus = ''
+              // item.updataStatus = ''
+              if (!item.tmInfo) {
+                item.tmInfo = {}
+              }
               return item
             })
             // 不存在版本号
@@ -453,7 +456,7 @@ export default {
     },
     getTiptoolContent(row) {
       let result
-      switch (row.updataStatus) {
+      switch (row.tmInfo.updataStatus) {
         case 'preparing':
           result = 'Agent版本有更新，点击升级'
           break
