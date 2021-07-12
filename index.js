@@ -3,12 +3,13 @@ import langs from './locale'
 import FormBuilder from './components/form-builder'
 import ConnectionTypeSelector from './components/connection-type-selector'
 import ConnectionTest from './components/connection-test'
+import JsEditor from './components/js-editor.vue'
 
 import WSClient from './plugins/ws-client'
 import * as _util from './util'
 import * as _const from './const'
 
-const components = [ConnectionTypeSelector, ConnectionTest]
+const components = [ConnectionTypeSelector, ConnectionTest, JsEditor]
 
 const install = function(Vue, opts = {}) {
   Vue.prototype.$util = _util
@@ -47,5 +48,6 @@ export default {
   install,
   ConnectionTypeSelector,
   ConnectionTest,
+  JsEditor,
   WSClient
 }
