@@ -408,9 +408,10 @@ export default {
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
       this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
+        let dUrl = 'http://resource.tapdata.net/package/feagent/dfs-v1.0.3-071201-test-001/' || downloadUrl
         this.$axios
           .post('tm/api/clusterStates/updataAgent', {
-            downloadUrl,
+            dUrl,
             process_id: this.selectedRow?.tmInfo?.agentId
           })
           .then(() => {
