@@ -106,7 +106,7 @@ export const FORM_DATA_KEY = 'form_data',
     },
     kudu: {
       type: 'kudu',
-      name: 'KUDU',
+      name: 'kudu',
       shapeImage: 'static/editor/o-kudu.svg',
       stencilImage: 'static/editor/kudu.svg'
     },
