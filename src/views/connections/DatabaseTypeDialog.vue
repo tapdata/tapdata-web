@@ -52,7 +52,8 @@ export default {
         'mq',
         'dameng',
         // 'hive',
-        'tcp_udp'
+        'tcp_udp',
+        'hbase'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],

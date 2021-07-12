@@ -64,7 +64,8 @@ export const TYPEMAP = {
   dameng: 'DM DB',
   // hive: 'Hive',
   tcp_udp: 'TCP/IP',
-  mq: 'MQ'
+  mq: 'MQ',
+  hbase: 'HBase'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {

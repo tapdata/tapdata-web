@@ -822,6 +822,8 @@ const en = {
       },
       data_node: {
         hiveText: 'Hive Node',
+        hbaseText: 'HBase Node',
+        hbase_check: 'HBase only supports INITIAL SYNC tasks',
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
         mqTableType: 'New table type',
@@ -1660,7 +1662,8 @@ const en = {
       information: 'Information',
       error: 'The test service request timed out, please close and try again.',
       retryBtn: 'Retry',
-      retryTest: 'The connection test service failed to start, please click Retry'
+      retryTest:
+        'The connection test service failed to start, please click Retry'
     },
     form: {
       connectionName: 'Connection Name',

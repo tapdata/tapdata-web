@@ -802,6 +802,8 @@ const cn = {
       },
       data_node: {
         hiveText: 'hive节点',
+        hbaseText: 'HBase节点',
+        hbase_check: 'HBase仅支持全量任务',
         kafkaText: 'kafka节点',
         kafkaName_isNull: 'kafka不能为空',
         mqTableType: '新建表类型',

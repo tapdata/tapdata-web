@@ -425,6 +425,7 @@ export default {
     },
     getAllConnectionIds() {
       //获取所有节点的collectionId ;
+      debugger
       let dataCells = this.editor.getAllCells()
       let targetCell = this.editor.getSinks()
       let targetCellIds = []
@@ -435,6 +436,14 @@ export default {
         })
       }
       if (dataCells && dataCells.length > 0) {
+        dataCells.forEach(cell => {
+          let formData =
+            typeof cell.getFormData === 'function' ? cell.getFormData() : null
+          if (['hbase'].includes(formData.type) || ['hbase'].includes(formData.database_type)) {
+            this.sync_typeFalg = true
+            this.formData.sync_type = 'initial_sync'
+          }
+        })
         return dataCells
           .map(cell => {
             let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null

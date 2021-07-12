@@ -40,6 +40,7 @@ import dfs_sqlserver from './dfs_sqlserver'
 import dfs_redis from './dfs_redis'
 import dfs_elasticsearch from './dfs_elasticsearch'
 import mq from './mq'
+import hbase from './hbase'
 
 export default {
   mysql,
@@ -83,5 +84,6 @@ export default {
   gridfs,
   mq,
   dameng,
-  tcp_udp
+  tcp_udp,
+  hbase
 }

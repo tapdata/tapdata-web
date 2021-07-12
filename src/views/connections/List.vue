@@ -301,7 +301,8 @@ export default {
         'custom_connection',
         'gridfs',
         'tcp_udp',
-        'mq'
+        'mq',
+        'hbase'
       ], //目前白名单,
       searchParams: {
         databaseType: '',

@@ -914,7 +914,9 @@ export default {
         if (this.model.database_type === 'mongodb') {
           editData = await this.$api('connections').customQuery([this.$route.params.id])
         } else {
-          editData = await this.$api('connections').getNoSchema(this.$route.params.id)
+          editData = await this.$api('connections').getNoSchema(
+            this.$route.params.id
+          )
         }
 
         if (
