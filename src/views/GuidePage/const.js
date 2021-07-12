@@ -19,7 +19,7 @@ function getDataTypeItems(arr, arr2) {
       key: item,
       name: TYPEMAP[item],
       type: item,
-      src: 'connection-type/' + item + '.png'
+      src: 'databaseType/' + item + '.png'
     }
     if (arr2.indexOf(item) > -1) {
       obj.disabled = true

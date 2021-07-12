@@ -210,7 +210,7 @@ export default {
         type = 'default'
       }
       try {
-        return require(`../../../public/images/guide/${type.toLowerCase()}.png`)
+        return require(`../../../packages/tapdata-web-core/assets/images/guide/${type.toLowerCase()}.png`)
       } catch (e) {
         console.log(e)
       }

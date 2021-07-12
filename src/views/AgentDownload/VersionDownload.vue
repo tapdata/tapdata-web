@@ -159,26 +159,13 @@ export default {
   },
   created() {
     let version = window._TAPDATA_OPTIONS_.version
-    let token = this.user.token
-    let user_id = this.user.userId
-    // let version = 'v1.17.1.0006-18-ga3aaee234';
-    // let token = '111111';
-    // let user_id = '222222222';
-    // console.log('------', this);
     this.windowLink =
-      'tapdata start backend --downloadUrl ' +
-      `http://resource.tapdata.net/package/feagent/${version}/ --token ` +
-      token +
-      ' ' +
-      user_id
+      'tapdata start backend --downloadUrl ' + `http://resource.tapdata.net/package/feagent/${version}/ --token`
     this.LinuxLink =
       'wget "' +
       `http://resource.tapdata.net/package/feagent/${version}/tapdata` +
       '" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
-      `http://resource.tapdata.net/package/feagent/${version}/ --token ` +
-      token +
-      ' ' +
-      user_id
+      `http://resource.tapdata.net/package/feagent/${version}/ --token `
     this.dockerLink =
       'docker run -itd ' +
       `ccr.ccs.tencentyun.com/tapdata/flow-engine:${version} '` +
@@ -186,9 +173,6 @@ export default {
       `http://resource.tapdata.net/package/feagent/${version}/tapdata` +
       '" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
       `http://resource.tapdata.net/package/feagent/${version}/ --token ` +
-      token +
-      ' ' +
-      user_id +
       `'`
   },
   methods: {

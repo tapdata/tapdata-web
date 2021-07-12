@@ -178,11 +178,13 @@ export default {
     getTable(id, bidirectional) {
       console.log(id, bidirectional, 'Transfer')
       this.transferLoading = true
-      this.$api('connections')
-        .customQuery([id], { schema: true })
-        .then(result => {
-          if (result.data) {
-            let tables = (result.data.schema && result.data.schema.tables) || []
+      this.$axios
+        .get(`tm/api/Connections/${id}/customQuery`, {
+          params: { schema: true }
+        })
+        .then(data => {
+          if (data) {
+            let tables = data?.schema?.tables || []
             tables = tables.sort((t1, t2) =>
               t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
@@ -240,11 +242,13 @@ export default {
           }
         })
       }
-      this.$api('MetadataInstances')
-        .schema(params)
-        .then(res => {
-          if (res.data) {
-            let fields = res.data.records[0].schema.tables[0].fields
+      this.$axios
+        .get('tm/api/MetadataInstances/schema', {
+          params
+        })
+        .then(data => {
+          if (data) {
+            let fields = data.records[0].schema.tables[0].fields
             // 初始化所有字段都映射 只取顶级字段
             fields = fields.filter(field => field.field_name.indexOf('.') === -1)
             this.sourceFileData = fields.map(field => ({

@@ -20,11 +20,7 @@
         </ElBreadcrumb>
       </ElHeader>
       <ElMain class="main">
-        <RouterView
-          @show-guide="showGuide"
-          @create-task="createTask"
-          @select-connection-type="selectConnectionType"
-        ></RouterView>
+        <RouterView @show-guide="showGuide" @create-task="createTask"></RouterView>
       </ElMain>
     </ElContainer>
     <ElDialog title="选择数据源类型" :visible.sync="dialogVisible">
@@ -59,6 +55,7 @@ export default {
     let menus = this.$router.options.routes.find(r => r.path === '/').children?.filter(item => !item.hidden)
     this.menus = menus
     this.getBreadcrumb(this.$route)
+    this.$root.$on('select-connection-type', this.selectConnectionType)
   },
   watch: {
     $route(route) {

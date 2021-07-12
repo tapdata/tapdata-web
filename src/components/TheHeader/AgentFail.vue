@@ -28,7 +28,7 @@
     </div>
     <div slot="footer" class="dialog-footer">
       <span class="text">进程已重启？请点击</span>
-      <el-button type="primary" size="small" @click="handleAgent()">刷新</el-button>
+      <el-button type="primary" size="small">刷新</el-button>
     </div>
   </ElDialog>
 </template>
@@ -48,25 +48,6 @@ export default {
       if (!val) {
         this.$emit('input', false)
       }
-    }
-  },
-  methods: {
-    handleAgent() {
-      // 	let params = {};
-      // 	params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
-      // 	this.$api('cluster')
-      // 		.get(params)
-      // 		.then(res => {
-      // 			if (res.data.length && res.data[0].status !== 'running') {
-      // 				if (res.data[0].engine.status !== 'running') {
-      // 					this.agentEngineVisible = true;
-      // 				} else {
-      // 					this.agentEngineVisible = false;
-      // 				}
-      // 			} else {
-      // 				this.$emit('input', false);
-      // 			}
-      // 		});
     }
   }
 }
