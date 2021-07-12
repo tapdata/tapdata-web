@@ -1,6 +1,7 @@
 import { TOPOLOGY_MAP } from './const'
 import moment from 'moment'
 
+//
 let timeout = null
 export function delayTrigger(func, t) {
   if (t) {
