@@ -127,7 +127,7 @@ export default {
       model: {
         type: 'protobuf_convert_processor',
         name: '',
-        Unit: {
+        pbProcessorConfig: {
           mapping: {},
           schema: {}
         }
@@ -152,7 +152,7 @@ export default {
     toData: {
       deep: true,
       handler() {
-        this.model.Unit = this.formatToData()
+        this.model.pbProcessorConfig = this.formatToData()
       }
     }
   },
@@ -196,12 +196,8 @@ export default {
         }
       }
       // toData
-      if (this.model.Unit?.schema) {
-        console.log(
-          'this.transToData({ ...this.model.Unit?.schema })',
-          this.transToData({ ...this.model.Unit?.schema })
-        )
-        this.toData = this.transToData({ ...this.model.Unit?.schema })?.children ?? []
+      if (this.model.pbProcessorConfig?.schema) {
+        this.toData = this.transToData({ ...this.model.pbProcessorConfig?.schema })?.children ?? []
         // 过滤下 fromdata
         this.fromData = _this.fieldsData
       } else {
@@ -411,7 +407,7 @@ export default {
       // console.log('right', checkAll)
     },
     // 自定义节点 仅树形结构支持
-    renderContent(h, { node, data, store }) {
+    renderContent(h, { node, data }) {
       return (
         <span class="custom-tree-node">
           <span>{node.label}</span>
@@ -697,8 +693,8 @@ export default {
     formatToData() {
       let { toData } = this
       let tree = this.formatMappingTree({
-        key: 'Unit',
-        name: 'Unit',
+        key: 'pbProcessorConfig',
+        name: 'pbProcessorConfig',
         message: true,
         pid: -1,
         children: [...toData]
