@@ -148,6 +148,12 @@ export default {
       handler() {
         this.$emit('dataChanged', this.getData())
       }
+    },
+    toData: {
+      deep: true,
+      handler() {
+        this.model.Unit = this.formatToData()
+      }
     }
   },
   // methods: {
