@@ -63,7 +63,6 @@ export default {
       let where = {
         dataFlowId: this.$route.query.id
       }
-      debugger
       if (keyword && keyword.trim()) {
         let filterObj = keyword
         where.or = [{ sourceConnectionName: filterObj }, { targetConnectionName: filterObj }]
