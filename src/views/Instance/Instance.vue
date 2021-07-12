@@ -212,7 +212,8 @@ export default {
       upgradeList: [], // 升级列表
       upgradeSvg,
       upgradeLoadingSvg,
-      upgradeErrorSvg
+      upgradeErrorSvg,
+      timer: null
       // upgradeImg
     }
   },
@@ -233,6 +234,16 @@ export default {
         }
       }
       return options
+    },
+    // 存在进行中的状态
+    haveStateLoadingFlag() {
+      let flag = false
+      this.list.forEach(el => {
+        if (['preparing', 'downloading', 'upgrading'].includes(el.updataStatus)) {
+          flag = true
+        }
+      })
+      return flag
     }
   },
   watch: {
@@ -291,7 +302,7 @@ export default {
         this.$axios
           .get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
           .then(async data => {
-            let list = data.items || []
+            let list = data.items.slice(0, 1) || []
             this.list = list.map(item => {
               item.status = item.status === 'Running' ? 'Running' : 'Offline'
               item.updataStatus = ''
@@ -403,9 +414,18 @@ export default {
             process_id: this.selectedRow?.tmInfo?.agentId
           })
           .then(() => {
-            this.$message.success('升级成功')
+            this.$message.success('开始升级')
+            this.clearTimer()
+            this.timer = setInterval(() => {
+              if (this.haveStateLoadingFlag) {
+                this.fetch()
+              }
+            }, 5000)
           })
       })
+    },
+    clearTimer() {
+      this.timer && clearInterval(this.timer)
     },
     manualUpgradeFnc() {
       let row = this.selectedRow
