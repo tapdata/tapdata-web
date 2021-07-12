@@ -197,6 +197,10 @@ export default {
       }
       // toData
       if (this.model.Unit?.schema) {
+        console.log(
+          'this.transToData({ ...this.model.Unit?.schema })',
+          this.transToData({ ...this.model.Unit?.schema })
+        )
         this.toData = this.transToData({ ...this.model.Unit?.schema })?.children ?? []
         // 过滤下 fromdata
         this.fromData = _this.fieldsData
@@ -513,14 +517,14 @@ export default {
         }
         // TODO 删除
         const parent = node.parent
-        const index = children.findIndex(d => d.key === data.key)
+        const index = children?.findIndex(d => d.key === data.key)
         let children = parent.data.children || parent.data
         // 自定义字段
         if (data.message) {
           let result = []
           this.findFieldInTree(children, result)
           this.fromData = [...this.fromData, ...result]
-          children.splice(index, 1)
+          !!index && children.splice(index, 1)
         } else {
           // 系统字段
           children.splice(index, 1)
@@ -607,16 +611,15 @@ export default {
                 type: el.type
               })
             }
-          } else {
-            propertyIndex++
-            obj.propertyList.push({
-              label: el.label,
-              key: el.key,
-              name: el.name,
-              number: propertyIndex,
-              type: el.type
-            })
           }
+          propertyIndex++
+          obj.propertyList.push({
+            label: el.label,
+            key: el.key,
+            name: el.name,
+            number: propertyIndex,
+            type: el.type
+          })
         })
       }
       return obj
@@ -653,31 +656,40 @@ export default {
       obj.pid = ''
       obj.children = []
       //nestedList propertyList
-      // 系统字段
+      // 系统字段 + 自定义字段
       if (tree.propertyList?.length) {
         tree.propertyList.forEach(el => {
-          obj.children.push({
+          let nodeObj = {
             name: el.name,
             key: el.key || el.name,
             type: el.type,
             disabled: false,
             label: el.label,
             pid: tree.key,
-            children: []
-          })
+            children: [],
+            message: !!tree.nestedList.find(item => {
+              item.key === el.key
+            })
+          }
+          let findOne = tree.nestedList.find(item => item.key === el.key)
+          if (findOne) {
+            nodeObj.children.push(this.transToData(findOne))
+          }
+          obj.children.push(nodeObj)
         })
       }
       // 自定义字段
       if (tree.nestedList?.length) {
         tree.nestedList.forEach(el => {
-          obj.children.push(
-            Object.assign({}, this.transToData(el), {
-              message: true,
-              type: el.type,
-              label: el.label,
-              pid: tree.key
-            })
-          )
+          this.transToData(el)
+          // obj.children.push(
+          //   Object.assign({}, this.transToData(el), {
+          //     message: true,
+          //     type: el.type,
+          //     label: el.label,
+          //     pid: tree.key
+          //   })
+          // )
         })
       }
       return obj
