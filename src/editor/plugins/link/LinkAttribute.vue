@@ -511,7 +511,7 @@ export default {
         joinKeys.forEach((item, index) => {
           this.$set(this.model.joinTable.joinKeys, index, item)
         })
-        this.fieldsData = sourceSchema.fields.map(field => ({
+        this.fieldsData = sourceList.map(field => ({
           label: field.field_name,
           key: field.field_name,
           javaType: field.javaType,
@@ -534,7 +534,7 @@ export default {
     },
     getData() {
       let data = JSON.parse(JSON.stringify(this.model))
-
+      console.log('link-data', data)
       if (this.cell) {
         // tcp报文数据传输到目标节点
         let targetCell = this.cell.getTargetCell()

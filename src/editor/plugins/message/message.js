@@ -4,9 +4,10 @@
  * @description
  */
 import { options } from '../../lib/rappid/config'
-import Message from './Message'
+import messageAttituer from './messageAttituer'
 import { FORM_DATA_KEY } from '../../constants'
-// import i18n from '@/i18n'
+import i18n from '@/i18n'
+
 export const messageProcessConfig = {
   type: 'app.Message',
   shape: {
@@ -38,7 +39,7 @@ export const messageProcessConfig = {
       },
 
       [FORM_DATA_KEY]: {
-        name: '',
+        name: 'message',
         type: 'protobuf_convert_processor',
         Unit: {
           mapping: {},
@@ -64,21 +65,10 @@ export const messageProcessConfig = {
        */
       validate: function (data) {
         data = data || this.getFormData()
-        // let name = this.attr('label/text')
-        // if (!data)
-        //   throw new Error(
-        //     `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
-        //   )
-        // if (!data.type)
-        //   throw new Error(
-        //     `${name}: ${i18n.t(
-        //       'editor.cell.processor.script.none_script_type'
-        //     )}`
-        //   )
-        // if (!data.script)
-        //   throw new Error(
-        //     `${name}: ${i18n.t('editor.cell.processor.script.none_script')}`
-        //   )
+        let name = this.attr('label/text')
+        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
+        if (!data.type) throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script_type')}`)
+        if (!data.script) throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script')}`)
         return true
       },
 
@@ -88,7 +78,7 @@ export const messageProcessConfig = {
        * @return {boolean}
        */
       allowTarget(targetCell) {
-        return ['app.TcpNode'].includes(targetCell.get('type'))
+        return !['app.Database'].includes(targetCell.get('type'))
       },
 
       /**
@@ -181,10 +171,7 @@ export const messageProcessConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }
@@ -220,7 +207,7 @@ export const messageProcessConfig = {
     size: { width: 5, height: 4 },
     attrs: {
       root: {
-        dataTooltip: 'MessageName',
+        dataTooltip: i18n.t('editor.cell.processor.script.tip'),
         dataTooltipPosition: 'left',
         dataTooltipPositionSelector: '.joint-stencil'
       },
@@ -260,6 +247,6 @@ export const messageProcessConfig = {
    * @type {null}
    */
   settingFormConfig: {
-    component: Message
+    component: messageAttituer
   }
 }

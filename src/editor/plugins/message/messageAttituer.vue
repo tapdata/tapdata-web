@@ -10,11 +10,6 @@
           ></el-input>
         </el-form-item>
       </el-form>
-      <!-- <div class="head-btns">
-				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t('dataFlow.button.viewMonitoring') }}
-				</el-button>
-			</div> -->
       <div class="box box-content">
         <!-- lazy -->
         <!-- :lazyFn="lazyFn" -->
@@ -92,10 +87,12 @@
 </template>
 
 <script>
-import treeTransfer from 'el-tree-transfer'
 import _ from 'lodash'
+import treeTransfer from 'el-tree-transfer'
+
 export default {
-  name: 'Message',
+  name: 'message',
+  components: { treeTransfer },
   data() {
     return {
       // mode: "transfer", // transfer addressList
@@ -137,35 +134,6 @@ export default {
       }
     }
   },
-  watch: {
-    model: {
-      deep: true,
-      handler() {
-        console.log('dataChanged', this.model)
-        this.$emit('dataChanged', this.getData())
-      }
-    },
-    toData: {
-      deep: true,
-      handler() {
-        this.model.Unit = this.formatToData()
-      }
-    }
-  },
-  created() {
-    // this.fromData = this.fieldsData.map(item => {
-    //   return {
-    //     pid: 0,
-    //     name: item.label,
-    //     key: item.key,
-    //     type: item.javaType,
-    //     label: item.label
-    //   }
-    // })
-    // this.sourceData = [...this.fromData]
-    // console.log('3333', this.fromData)
-    // console.log('STR', JSON.stringify(this.fromData))
-  },
   mounted() {
     this.$nextTick(() => {
       let treeTrans = this.$refs['wl-tree-transfer']
@@ -174,14 +142,36 @@ export default {
       this.$btnRight = $transferBtns?.[1]
     })
   },
-  components: { treeTransfer },
-
+  watch: {
+    model: {
+      deep: true,
+      handler() {
+        this.$emit('dataChanged', this.getData())
+      }
+    }
+  },
+  // methods: {
+  //   setData(data) {
+  //     if (data) {
+  //       _.merge(this.model, data)
+  //     }
+  //   },
+  //   getData() {
+  //     // return JSON.parse(JSON.stringify(this.model));
+  //     return _.cloneDeep(this.model)
+  //   },
+  //
+  //   setDisabled(disabled) {
+  //     this.disabled = disabled
+  //   }
+  // }
   methods: {
     setData(data, cell) {
       let _this = this
       if (data) {
         _.merge(this.model, data)
       }
+      console.log('setData', this.model, data)
       this.cell = cell
       if (cell && cell.getOutputSchema()) {
         let sourceSchema = cell.getOutputSchema() || null,
@@ -202,21 +192,18 @@ export default {
       // toData
       if (this.model.Unit?.schema) {
         this.toData = this.transToData({ ...this.model.Unit?.schema })?.children ?? []
-        // 过滤下 formdata
+        // 过滤下 fromdata
         this.fromData = _this.fieldsData
       } else {
-        // 过滤下 formdata
+        // 过滤下 fromdata
         this.fromData = _this.fieldsData
       }
-
     },
     getData() {
-      // return JSON.parse(JSON.stringify(this.model));
-      // return _.cloneDeep(this.model)
-      // let result = _.cloneDeep(this.model)
-      // result.name = result.tableName || 'TCP'
       let result = _.cloneDeep(this.model)
       result.name = result.name || 'Message'
+      console.log('result', result)
+      return result
     },
 
     // setDisabled(disabled) {
