@@ -516,8 +516,8 @@ export default {
     overflow: auto;
     border-bottom: none;
     .agent-link {
-      color: unset;
-      cursor: unset;
+      // color: unset;
+      // cursor: unset;
     }
   }
   .instance-table__empty {

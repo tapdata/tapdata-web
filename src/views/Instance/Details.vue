@@ -33,25 +33,25 @@
           <li class="info-item">
             <div class="label">宿主机IP：</div>
             <div class="value">
-              {{ comSpecType }}
+              {{ agent.ips }}
             </div>
           </li>
           <li class="info-item">
             <div class="label">宿主机CPU数量：</div>
             <div class="value">
-              {{ agent.spec ? agent.spec.version : '' }}
+              {{ agent.cpus }}
             </div>
           </li>
           <li class="info-item">
             <div class="label">宿主机内存大小：</div>
             <div class="value">
-              {{ agent.spec ? agent.spec.version : '' }}
+              {{ agent.totalmem }}
             </div>
           </li>
           <li class="info-item">
             <div class="label">安装目录：</div>
             <div class="value">
-              {{ agent.spec ? agent.spec.version : '' }}
+              {{ agent.installationDirectory }}
             </div>
           </li>
         </ul>
@@ -102,6 +102,28 @@ export default {
         .then(data => {
           // this.agent = formatAgent(data)
           this.agent = data
+          if (this.agent?.metric?.systemInfo) {
+            this.agent.cpus = this.agent.metric.systemInfo.cpus || ''
+            this.agent.installationDirectory = this.agent.metric.systemInfo.installationDirectory || ''
+            this.agent.ips = this.agent.metric.systemInfo.ips || ''
+
+            let num = Number(this.agent.metric.systemInfo.totalmem) || 0
+            let size = ''
+            if (num < 0.1 * 1024) {
+              //小于0.1KB，则转化成B
+              size = num.toFixed(2) + 'B'
+            } else if (num < 0.1 * 1024 * 1024) {
+              //小于0.1MB，则转化成KB
+              size = (num / 1024).toFixed(2) + 'KB'
+            } else if (num < 0.1 * 1024 * 1024 * 1024) {
+              //小于0.1GB，则转化成MB
+              size = (num / (1024 * 1024)).toFixed(2) + 'MB'
+            } else {
+              //其他转化成GB
+              size = (num / (1024 * 1024 * 1024)).toFixed(2) + 'GB'
+            }
+            this.agent.totalmem = size
+          }
         })
         .finally(() => {
           this.loading = false
