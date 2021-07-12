@@ -418,18 +418,18 @@ export default {
 
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
 
-      if (!this.configJoinTable) {
-        let targetCell = cell.getTargetCell()
-        let targetData = targetCell && targetCell.getFormData()
-        // isShowMessage 是否显示报文 Whether to display the message
-        if (targetData.isShowMessage) {
-          return
-        } else {
-          this.isTargetTypeTcpFalg = true
-          this.model.tcp.includeField =
-            targetData.tcp && targetData.tcp.includeField
-        }
-      }
+      // if (!this.configJoinTable) {
+      //   let targetCell = cell.getTargetCell()
+      //   let targetData = targetCell && targetCell.getFormData()
+      //   // isShowMessage 是否显示报文 Whether to display the message
+      //   if (targetData.isShowMessage) {
+      //     return
+      //   } else {
+      //     this.isTargetTypeTcpFalg = true
+      //     this.model.tcp.includeField =
+      //       targetData.tcp && targetData.tcp.includeField
+      //   }
+      // }
       if (cell.getSourceCell()) {
         let sourceCell = cell.getSourceCell(),
           targetCell = cell.getTargetCell(),

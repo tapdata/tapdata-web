@@ -130,7 +130,10 @@ export default {
       model: {
         type: 'protobuf_convert_processor',
         name: '',
-        Unit: null
+        Unit: {
+          mapping: {},
+          schema: {}
+        }
       }
     }
   },
@@ -138,6 +141,7 @@ export default {
     model: {
       deep: true,
       handler() {
+        console.log('dataChanged', this.model)
         this.$emit('dataChanged', this.getData())
       }
     },
@@ -197,7 +201,7 @@ export default {
       }
       // toData
       if (this.model.Unit?.schema) {
-        this.toData = this.transToData({ ...this.model.Unit?.schema })
+        this.toData = this.transToData({ ...this.model.Unit?.schema })?.children ?? []
         // 过滤下 formdata
         this.fromData = _this.fieldsData
       } else {
