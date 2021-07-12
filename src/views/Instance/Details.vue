@@ -11,65 +11,47 @@
         </div>
       </div>
       <div class="panel mt-5">
-        <div class="title">
+        <!-- <div class="title">
           <i class="el-icon-notebook-2"></i>
           <span style="margin-left: 1px">实例信息</span>
-        </div>
+        </div> -->
         <ul class="info">
           <li class="info-item">
-            <div class="label">实例ID</div>
+            <div class="label">Agent ID：</div>
             <div class="value">{{ agent.id }}</div>
           </li>
           <li class="info-item">
-            <div class="label">地域及可用区</div>
+            <div class="label">Agent 版本：</div>
             <div class="value">
-              {{ agent.regionFmt }}
+              {{ agent.spec.version }}
             </div>
           </li>
           <li class="info-item">
-            <div class="label">同步拓扑</div>
-            <div class="value">{{ agent.topology }}</div>
+            <div class="label">Agent 创建时间：</div>
+            <div class="value">{{ agent.createAt }}</div>
           </li>
           <li class="info-item">
-            <div class="label">实例规格</div>
+            <div class="label">宿主机IP：</div>
             <div class="value">
               {{ comSpecType }}
             </div>
           </li>
           <li class="info-item">
-            <div class="label">版本</div>
+            <div class="label">宿主机CPU数量：</div>
             <div class="value">
               {{ agent.spec ? agent.spec.version : '' }}
             </div>
           </li>
-        </ul>
-      </div>
-      <div class="panel mt-20">
-        <div class="title">
-          <i class="el-icon-money"></i>
-          <span style="margin-left: 1px">计费信息</span>
-        </div>
-        <ul class="info">
           <li class="info-item">
-            <div class="label">计费模式</div>
+            <div class="label">宿主机内存大小：</div>
             <div class="value">
-              {{ chargeMap[agent.orderInfo.chargingMode + ',' + agent.orderInfo.periodType] }}
+              {{ agent.spec ? agent.spec.version : '' }}
             </div>
           </li>
-          <li class="info-item" v-if="isMonth">
-            <div class="label">订购时长</div>
-            <div class="value">{{ agent.orderInfo.duration }}个月</div>
-          </li>
           <li class="info-item">
-            <div class="label">创建时间</div>
+            <div class="label">安装目录：</div>
             <div class="value">
-              {{ $moment(agent.createAt).format('YYYY-MM-DD HH:mm:ss') }}
-            </div>
-          </li>
-          <li class="info-item" v-if="isInternet && isMonth">
-            <div class="label">到期时间</div>
-            <div class="value">
-              {{ agent.endTimeStr }}
+              {{ agent.spec ? agent.spec.version : '' }}
             </div>
           </li>
         </ul>
@@ -81,7 +63,7 @@
 
 <script>
 import { SPEC_MAP, CHARGE_MAP } from '../../const'
-import { formatAgent } from '../../util'
+// import { formatAgent } from '../../util'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ChangeInstance from '../../components/ChangeInstance'
@@ -116,9 +98,10 @@ export default {
     fetch() {
       this.loading = true
       this.$axios
-        .get('api/tcm/agent/' + this.$route.params.id)
+        .get('api/tcm/agent/' + this.$route.query.id)
         .then(data => {
-          this.agent = formatAgent(data)
+          // this.agent = formatAgent(data)
+          this.agent = data
         })
         .finally(() => {
           this.loading = false
@@ -161,6 +144,7 @@ export default {
 <style lang="scss" scoped>
 .agent-details-wrap {
   height: 100%;
+  padding: 10px 20px;
   .panel {
     position: relative;
     background: #fff;
@@ -177,11 +161,11 @@ export default {
       display: flex;
       flex-wrap: wrap;
       .info-item {
-        margin-top: 20px;
+        margin: 30px 0;
         display: flex;
         width: 30%;
         .label {
-          width: 75px;
+          width: 100px;
           text-align: right;
           color: map-get($fontColor, slight);
         }
@@ -192,7 +176,7 @@ export default {
     }
   }
   .header {
-    border-left: 3px solid map-get($color, primary);
+    // border-left: 3px solid map-get($color, primary);
     .lignt {
       color: map-get($fontColor, slight);
     }
