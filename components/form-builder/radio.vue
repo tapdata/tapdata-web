@@ -118,6 +118,7 @@ export default {
       max-width: unset;
       flex: unset;
       margin-right: 0;
+      height: 100%;
     }
     .el-radio.is-bordered + .el-radio.is-bordered {
       margin-top: 16px;
