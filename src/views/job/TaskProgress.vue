@@ -1,10 +1,12 @@
 <template>
   <div class="task-progress">
-    <template v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'">
+    <!-- v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'" -->
+    <template>
       <!--  全量+增量  -->
       <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
+          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>
         </div>
         <div class="progress-container__body flex">
           <div class="progress-container__img">图片</div>
@@ -32,7 +34,7 @@
               <span class="footer-item__name">源库名称：</span>
               <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">目标库名称：</span>
               <span class="footer-item__value">{{ overviewStats.targetName }}</span>
             </el-col>
@@ -42,7 +44,7 @@
               <span class="footer-item__name">源库类型：</span>
               <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">目标库类型：</span>
               <span class="footer-item__value">{{ overviewStats.targatType }}</span>
             </el-col>
@@ -52,7 +54,7 @@
               <span class="footer-item__name">待迁移表总数：</span>
               <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">已完成迁移表数：</span>
               <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
             </el-col>
@@ -62,7 +64,7 @@
               <span class="footer-item__name">总数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">已迁移数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
             </el-col>
@@ -72,7 +74,7 @@
               <span class="footer-item__name">增量所处时间点：</span>
               <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">增量延迟：</span>
               <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
             </el-col>
@@ -83,6 +85,7 @@
       <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'initial_sync'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
+          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>
         </div>
         <div class="progress-container__body flex">
           <div class="progress-container__img">图片</div>
@@ -110,7 +113,7 @@
               <span class="footer-item__name">源库名称：</span>
               <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">目标库名称：</span>
               <span class="footer-item__value">{{ overviewStats.targetName }}</span>
             </el-col>
@@ -120,7 +123,7 @@
               <span class="footer-item__name">源库类型：</span>
               <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">目标库类型：</span>
               <span class="footer-item__value">{{ overviewStats.targatType }}</span>
             </el-col>
@@ -130,7 +133,7 @@
               <span class="footer-item__name">待迁移表总数：</span>
               <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">已完成迁移表数：</span>
               <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
             </el-col>
@@ -140,7 +143,7 @@
               <span class="footer-item__name">总数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">已迁移数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
             </el-col>
@@ -151,14 +154,15 @@
       <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'cdc'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
+          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>
         </div>
-        <div class="progress-container__footer mt-border">
+        <div class="progress-container__footer">
           <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
               <span class="footer-item__name">源库名称：</span>
               <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">目标库名称：</span>
               <span class="footer-item__value">{{ overviewStats.targetName }}</span>
             </el-col>
@@ -168,7 +172,7 @@
               <span class="footer-item__name">源库类型：</span>
               <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">目标库类型：</span>
               <span class="footer-item__value">{{ overviewStats.targatType }}</span>
             </el-col>
@@ -178,7 +182,7 @@
               <span class="footer-item__name">待迁移表总数：</span>
               <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">已完成迁移表数：</span>
               <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
             </el-col>
@@ -188,7 +192,7 @@
               <span class="footer-item__name">总数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
             </el-col>
-            <el-col :span="12">
+            <el-col class="footer-item" :span="12">
               <span class="footer-item__name">已迁移数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
             </el-col>
@@ -243,6 +247,18 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    // 跳转详情
+    handleInfo() {
+      console.log(this.dataFlow, this.$router)
+      // let route = this.$router.resolve({
+      //   name: 'taskProgressInfo',
+      //   query: {
+      //     id: this.dataFlow.id
+      //   }
+      // })
+      window.open('/#/taskProgressInfo?id=' + this.dataFlow.id, '_blank')
+      // window.open(route.href, '_blank')
     }
   }
 }
@@ -260,11 +276,15 @@ export default {
   background: #fafafa;
   border-bottom: 1px solid #d3d3d3;
 }
+.progress-header_btn {
+  padding: 0;
+}
 .progress-container__body {
   padding: 24px 16px;
 }
 .progress-container__overview {
   flex: 1;
+  font-size: 12px;
   .el-progress {
     flex: 1;
   }
@@ -274,7 +294,7 @@ export default {
   background-color: darkgreen;
 }
 .progress-container__footer {
-  margin: 0 16px;
+  margin: 0 16px 20px;
   padding: 8px;
   &.mt-border {
     border-top: 1px solid #d3d3d3;
@@ -289,8 +309,10 @@ export default {
   display: inline-block;
   color: #9c9c9c;
   width: 200px;
+  font-size: 12px;
 }
 .footer-item__value {
+  color: #000;
 }
 .color-green {
   color: rgba(58, 132, 63, 1);

@@ -596,6 +596,11 @@ const childRoutes = [
       isCollapse: true,
       types: ['table', 'view', 'collection', 'mongo_view']
     }
+  },
+  {
+    path: '/taskProgressInfo',
+    name: 'taskProgressInfo',
+    component: () => import('@/views/job/TaskProgressInfo')
   }
 ]
 
