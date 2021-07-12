@@ -80,16 +80,30 @@
           <template slot-scope="scope">
             <div class="flex align-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
-              <ElTooltip
-                v-if="scope.row.spec && version && scope.row.spec.version !== version"
-                class="ml-1"
-                effect="dark"
-                content="点击升级到最新版本"
-                placement="top-start"
-              >
-                <VIcon v-if="false" class="pointer" size="20" @click="showUpgradeDialogFnc(scope.row)">upgrade</VIcon>
-                <img class="upgrade-img pointer" :src="upgradeImg" alt="" @click="showUpgradeDialogFnc(scope.row)" />
-              </ElTooltip>
+              <template v-if="scope.row.spec && version && scope.row.spec.version !== version">
+                <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
+                  <img
+                    v-if="!scope.row.updataStatus || scope.row.updataStatus === 'done'"
+                    class="upgrade-img cursor-pointer"
+                    :src="upgradeSvg"
+                    alt=""
+                    @click="showUpgradeDialogFnc(scope.row)"
+                  />
+                  <img
+                    v-else-if="['preparing', 'downloading', 'upgrading'].includes(scope.row.updataStatus)"
+                    class="upgrade-img cursor-not-allowed"
+                    :src="upgradeLoadingSvg"
+                    alt=""
+                  />
+                  <img
+                    v-else-if="scope.row.updataStatus === 'fail'"
+                    class="upgrade-img cursor-pointer"
+                    :src="upgradeErrorSvg"
+                    alt=""
+                    @click="showUpgradeErrorDialogFnc(scope.row)"
+                  />
+                </ElTooltip>
+              </template>
             </div>
           </template>
         </ElTableColumn>
@@ -128,9 +142,23 @@
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center">
             <ElButton type="primary" :disabled="agentStatus !== 'running'" @click="autoUpgradeFnc">自动升级</ElButton>
-            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
+            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">
               (Agent离线时无法使用自动升级)
             </div>
+          </div>
+          <div>
+            <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
+          </div>
+        </div>
+      </ElDialog>
+      <!--   升级失败   -->
+      <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
+        <div class="dialog-content text-center">
+          自动升级失败，请尝试手动升级。
+        </div>
+        <div class="dialog-btn flex justify-evenly mt-6">
+          <div class="text-center">
+            <ElButton type="primary" @click="cancelUpgradeFnc">取消升级</ElButton>
           </div>
           <div>
             <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
@@ -147,17 +175,18 @@ import { delayTrigger } from '../../util'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
-import VIcon from '../../components/VIcon'
 import { INSTANCE_STATUS_MAP } from '../../const'
-import upgradeSvg from '@/assets/icons/svg-colorful/upgrade.svg'
-import upgradeImg from '../../assets/image/upgrade.png'
+// import upgradeSvg from '../../assets/icons/svg-colorful/upgrade.svg'
+import upgradeSvg from '../../../public/images/agent/upgrade.svg'
+import upgradeLoadingSvg from '../../../public/images/agent/upgrade-loading.svg'
+import upgradeErrorSvg from '../../../public/images/agent/upgrade-error.svg'
+// import upgradeImg from '../../assets/image/upgrade.png'
 
 export default {
   components: {
     InlineInput,
     StatusTag,
-    ClipButton,
-    VIcon
+    ClipButton
   },
   data() {
     return {
@@ -176,12 +205,15 @@ export default {
       statusMap: INSTANCE_STATUS_MAP,
       VUE_APP_INSTANCE_TEST_BTN: process.env.VUE_APP_INSTANCE_TEST_BTN,
       upgradeDialog: false,
+      upgradeErrorDialog: false,
       selectedRow: {},
       agentStatus: 'stop',
       version: '',
       upgradeList: [], // 升级列表
       upgradeSvg,
-      upgradeImg
+      upgradeLoadingSvg,
+      upgradeErrorSvg
+      // upgradeImg
     }
   },
   computed: {
@@ -355,23 +387,69 @@ export default {
       })
     },
     showUpgradeDialogFnc(row) {
-      // this.upgradeDialog = true
-      // this.selectedRow = row
+      this.upgradeDialog = true
+      this.selectedRow = row
+    },
+    showUpgradeErrorDialogFnc(row) {
+      this.upgradeErrorDialog = true
+      this.selectedRow = row
+    },
+    autoUpgradeFnc() {
+      this.closeDialog() // 关闭升级方式选择窗口
+      this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
+        this.$axios
+          .post('tm/api/clusterStates/updataAgent', {
+            downloadUrl,
+            process_id: this.selectedRow?.tmInfo?.agentId
+          })
+          .then(() => {
+            this.$message.success('升级成功')
+          })
+      })
+    },
+    manualUpgradeFnc() {
+      let row = this.selectedRow
+      this.closeDialog() // 关闭升级方式选择窗口
       if (row.metric?.runningTaskNum) {
         this.$alert('检测到您有任务正在运行，请先停止所有任务再进行升级操作!')
       } else {
-        this.manualUpgradeFnc(row)
+        let routeUrl = this.$router.resolve({
+          name: 'UpgradeVersion',
+          query: {
+            agentId: row.id
+          }
+        })
+        window.open(routeUrl.href, '_blank')
       }
     },
-    autoUpgradeFnc() {},
-    manualUpgradeFnc(row) {
-      let routeUrl = this.$router.resolve({
-        name: 'UpgradeVersion',
-        query: {
-          agentId: row.id
-        }
-      })
-      window.open(routeUrl.href, '_blank')
+    closeDialog() {
+      this.upgradeDialog = false
+      this.upgradeErrorDialog = false
+    },
+    // 取消升级
+    cancelUpgradeFnc() {
+      this.closeDialog() // 关闭升级方式选择窗口
+    },
+    getTiptoolContent(row) {
+      let result
+      switch (row.updataStatus) {
+        case 'preparing':
+          result = 'Agent版本有更新，点击升级'
+          break
+        case 'downloading':
+          result = '自动升级中'
+          break
+        case 'upgrading':
+          result = '自动升级中'
+          break
+        case 'fail':
+          result = '自动升级失败，请手动升级'
+          break
+        default:
+          result = 'Agent版本有更新，点击升级'
+          break
+      }
+      return result
     }
   }
 }
@@ -385,9 +463,6 @@ export default {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
-  .pointer {
-    cursor: pointer;
-  }
   .btn-refresh {
     padding: 0;
     height: 32px;
