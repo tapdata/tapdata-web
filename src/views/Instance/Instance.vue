@@ -411,7 +411,7 @@ export default {
         let dUrl = 'http://resource.tapdata.net/package/feagent/dfs-v1.0.3-071201-test-001/' || downloadUrl
         this.$axios
           .post('tm/api/clusterStates/updataAgent', {
-            dUrl,
+            downloadUrl: dUrl,
             process_id: this.selectedRow?.tmInfo?.agentId
           })
           .then(() => {
