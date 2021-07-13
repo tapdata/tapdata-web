@@ -171,7 +171,11 @@ export default {
   },
 
   created() {
-    this.setNodeTypes(nodeTypes)
+    let _nodeTypes = nodeTypes
+    if (this.$route.query?.mapping === 'cluster-clone') {
+      _nodeTypes = _nodeTypes.filter(item => item.type === 'database')
+    }
+    this.setNodeTypes(_nodeTypes)
     this.setCtorTypes(ctorTypes)
   },
 
