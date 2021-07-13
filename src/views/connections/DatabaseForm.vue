@@ -105,6 +105,9 @@
               <div class="url-tip" slot="brokerUrlTip" v-if="model.mqType === '0'">
                 {{ $t('dataForm.form.mq.brokerUrlTip') }}
               </div>
+              <div class="url-tip" slot="file_schema_tip">
+                <div>{{ $t('dataForm.form.gridfs.file_schema_tip') }}</div>
+              </div>
               <!-- rest api -->
               <div class="url-tip" slot="req_pre_process">
                 <div>function request_process(url, headers, request_params, offset) {</div>
@@ -215,7 +218,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="12" class="fromLoopBox">
+                      <el-col :span="12" class="fromLoopBox" v-show="item.method === 'POST'">
                         <el-form-item label="Content Type" :prop="item.content_type">
                           <el-select v-model="item.content_type" class="small-input" size="mini">
                             <el-option label="form-data" value="application/form-data"></el-option>
