@@ -139,7 +139,7 @@ export default {
       model: {
         type: 'protobuf_convert_processor',
         name: '',
-        pbProcessorConfig: {
+        Unit: {
           mapping: {},
           schema: {}
         }
@@ -184,7 +184,7 @@ export default {
     toData: {
       deep: true,
       handler() {
-        this.model.pbProcessorConfig = this.formatToData()
+        this.model.Unit = this.formatToData()
       }
     }
   },
@@ -228,6 +228,8 @@ export default {
             }
             if (obj.type === 'Date') {
               obj.type = 'string'
+            } else if (obj.type === 'integer') {
+              obj.type = 'int32'
             }
             obj.type = obj.type.toLowerCase()
             return obj
@@ -236,10 +238,10 @@ export default {
         console.log('_this.fieldsData', _this.fieldsData)
       }
       // toData
-      if (this.model.pbProcessorConfig?.schema) {
-        let result = this.transToData({ ...this.model.pbProcessorConfig?.schema })?.children ?? []
+      if (this.model.Unit?.schema) {
+        let result = this.transToData({ ...this.model.Unit?.schema })?.children ?? []
         console.log('setData result', result)
-        let genTree = this.genTree({ ...this.model.pbProcessorConfig?.schema })
+        let genTree = this.genTree({ ...this.model.Unit?.schema })
         console.log('genTree', genTree)
         // this.toData = result
         // TODO 删除右侧已存在的key
@@ -273,7 +275,11 @@ export default {
     },
     // 获取图片
     getImgByType(type) {
-      return require(`@/assets/images/types/${type.toLowerCase()}.png`)
+      let dType = type.toLowerCase()
+      if (dType === 'int32') {
+        dType = 'integer'
+      }
+      return require(`@/assets/images/types/${dType}.png`)
     },
     // 获取选中
     getChecked() {
@@ -583,14 +589,15 @@ export default {
             if (el.children?.length) {
               obj.nestedList.push(
                 Object.assign({}, this.getSchema(el), {
-                  number: nestedIndex
+                  number: nestedIndex,
+                  name: el.key
                 })
               )
             } else {
               obj.nestedList.push({
                 label: el.label,
                 key: el.key,
-                name: el.name,
+                name: el.key,
                 number: nestedIndex,
                 type: el.type
               })
@@ -662,8 +669,8 @@ export default {
     formatToData() {
       let { toData } = this
       let tree = this.formatMappingTree({
-        key: 'pbProcessorConfig',
-        name: 'pbProcessorConfig',
+        key: 'Unit',
+        name: 'Unit',
         message: true,
         pid: -1,
         children: [...toData]

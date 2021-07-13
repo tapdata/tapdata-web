@@ -41,7 +41,7 @@ export const messageProcessConfig = {
       [FORM_DATA_KEY]: {
         name: 'message',
         type: 'protobuf_convert_processor',
-        pbProcessorConfig: {
+        Unit: {
           mapping: {},
           schema: {}
         }
