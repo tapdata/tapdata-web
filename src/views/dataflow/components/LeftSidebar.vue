@@ -114,9 +114,7 @@ export default {
       // console.log('onMove')
     },
     onDrop(item, position) {
-      const bound = document
-        .getElementById('dfEditorContent')
-        .getBoundingClientRect()
+      const bound = document.getElementById('node-view').getBoundingClientRect()
 
       let [x, y] = position
       x -= bound.x

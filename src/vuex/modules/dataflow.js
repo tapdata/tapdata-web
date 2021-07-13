@@ -32,6 +32,8 @@ const findByCod = (arr, cond) => {
 const state = () => ({
   stateIsDirty: false, // 状态是否被污染，标识数据改变
   nodeTypes: [], // 所有节点类型
+  nodeViewOffsetPosition: [0, 0],
+  nodeViewMoveInProgress: false,
   ctorTypes: {}, // 所有节点构造类型
   activeNode: null, // 当前激活的节点ID
   activeConnection: null, // 当前激活的连接
@@ -175,7 +177,15 @@ const getters = {
   },
 
   // 获取节点构造类
-  getCtor: state => type => state.ctorTypes[type]
+  getCtor: state => type => state.ctorTypes[type],
+
+  getNodeViewOffsetPosition: state => {
+    return state.nodeViewOffsetPosition
+  },
+
+  isNodeViewMoveInProgress: state => {
+    return state.nodeViewMoveInProgress
+  }
 }
 
 // actions
@@ -231,6 +241,14 @@ const mutations = {
     if (~actionIndex) {
       state.activeActions.splice(actionIndex, 1)
     }
+  },
+
+  setNodeViewMoveInProgress(state, value) {
+    state.nodeViewMoveInProgress = value
+  },
+
+  setNodeViewOffsetPosition(state, data) {
+    state.nodeViewOffsetPosition = data.newOffset
   },
 
   // 加载所有节点类型

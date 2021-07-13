@@ -21,20 +21,29 @@
         ref="layoutContent"
         class="layout-content flex-grow-1"
         @mousedown="mouseDown"
+        @wheel="wheelScroll"
       >
-        <DFNode
-          v-for="n in nodes"
-          :key="n.id"
-          :node-id="n.id"
-          :id="NODE_PREFIX + n.id"
-          :js-plumb-ins="jsPlumbIns"
-          @drag-start="onNodeDragStart"
-          @drag-move="onNodeDragMove"
-          @drag-stop="onNodeDragStop"
-          @deselectAllNodes="deselectAllNodes"
-          @deselectNode="nodeDeselectedById"
-          @nodeSelected="nodeSelectedById"
-        ></DFNode>
+        <div
+          id="node-view-background"
+          class="node-view-background"
+          :style="backgroundStyle"
+        ></div>
+
+        <div id="node-view" class="node-view" :style="dataflowStyle">
+          <DFNode
+            v-for="n in nodes"
+            :key="n.id"
+            :node-id="n.id"
+            :id="NODE_PREFIX + n.id"
+            :js-plumb-ins="jsPlumbIns"
+            @drag-start="onNodeDragStart"
+            @drag-move="onNodeDragMove"
+            @drag-stop="onNodeDragStop"
+            @deselectAllNodes="deselectAllNodes"
+            @deselectNode="nodeDeselectedById"
+            @nodeSelected="nodeSelectedById"
+          ></DFNode>
+        </div>
 
         <div
           v-show="showSelectBox"
@@ -55,8 +64,6 @@
 </template>
 
 <script>
-import { ready, newInstance } from '@jsplumb/browser-ui'
-
 import jsPlumbIns from './instance'
 import { mapGetters } from 'vuex'
 import { ctorTypes, nodeTypes } from '@/nodes/loader/index'
@@ -73,7 +80,7 @@ import { NODE_PREFIX } from '@/views/dataflow/constants'
 import TopHeader from '@/views/dataflow/components/TopHeader'
 import { titleChange } from '@/mixins/titleChange'
 import { showMessage } from '@/mixins/showMessage'
-import jsplumbConfig from './config'
+import moveDataflow from './mixins/moveDataflow'
 
 const dataFlowsApi = factory('DataFlows')
 // const Setting = factory('Setting')
@@ -81,7 +88,7 @@ const dataFlowsApi = factory('DataFlows')
 export default {
   name: 'Editor',
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, moveDataflow],
 
   components: {
     TopHeader,
@@ -101,12 +108,13 @@ export default {
       isSaving: false,
       sync_type: 'initial_sync+cdc',
       statusBtMap,
-      jsPlumbIns: null,
+      jsPlumbIns,
       nodeMap: {},
       navLines: [],
       selectBoxAttr: null,
       selectActive: false,
-      showSelectBox: false
+      showSelectBox: false,
+      nodeViewScale: 1
     }
   },
 
@@ -116,8 +124,24 @@ export default {
       isActionActive: 'isActionActive',
       nodeById: 'nodeById',
       stateIsDirty: 'getStateIsDirty',
-      isNodeSelected: 'isNodeSelected'
+      nodeViewOffsetPosition: 'getNodeViewOffsetPosition'
     }),
+
+    dataflowStyle() {
+      const offsetPosition = this.nodeViewOffsetPosition
+      return {
+        left: offsetPosition[0] + 'px',
+        top: offsetPosition[1] + 'px'
+      }
+    },
+
+    backgroundStyle() {
+      const offsetPosition = this.nodeViewOffsetPosition
+      return {
+        transform: `scale(${this.nodeViewScale})`,
+        'background-position': `right ${-offsetPosition[0]}px bottom ${-offsetPosition[1]}px`
+      }
+    },
 
     selectBoxStyle() {
       let attr = this.selectBoxAttr
@@ -146,27 +170,7 @@ export default {
   },
 
   mounted() {
-    ready(async () => {
-      this.jsPlumbIns = newInstance({
-        container: this.$refs.layoutContent,
-        enablePan: true,
-        anchor: { type: 'Perimeter', options: { shape: 'Dot' } },
-        connector: {
-          type: 'Flowchart',
-          options: { cornerRadius: 8, gap: 5 }
-        },
-        dragOptions: { cursor: 'pointer', zIndex: 2000 },
-        connectionOverlays: [
-          {
-            type: 'PlainArrow',
-            options: {
-              location: 1,
-              width: 10,
-              length: 10
-            }
-          }
-        ]
-      })
+    this.jsPlumbIns.ready(async () => {
       try {
         this.initNodeView()
         await this.initView()
@@ -174,15 +178,6 @@ export default {
         console.error(error)
       }
     })
-    console.log('jsPlumbIns', this.jsPlumbIns)
-    /*this.jsPlumbIns.ready(async () => {
-      try {
-        this.initNodeView()
-        await this.initView()
-      } catch (error) {
-        console.error(error)
-      }
-    })*/
   },
 
   methods: {
@@ -203,8 +198,7 @@ export default {
       'removeNode',
       'removeNodeFromSelection',
       'removeAllNodes',
-      'addNode',
-      'addActiveAction'
+      'addNode'
     ]),
 
     async confirmMessage(
@@ -259,114 +253,59 @@ export default {
     initNodeView() {
       // let container = this.$refs.layoutContent
       const { jsPlumbIns } = this
-      // jsPlumbIns.setContainer(container)
+      jsPlumbIns.setContainer('#node-view')
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
 
-      jsPlumbIns.batch(() => {
-        jsPlumbIns.bind('connection', info => {
-          console.log('connectionEvent', info)
-          const { sourceId: source, targetId: target } = info
-          const sourceId = this.getRealId(source)
-          const targetId = this.getRealId(target)
+      jsPlumbIns.bind('connection', info => {
+        console.log('connectionEvent', info)
+        const { sourceId: source, targetId: target } = info
+        const sourceId = this.getRealId(source)
+        const targetId = this.getRealId(target)
 
-          info.connection.bind('click', conn => {
-            console.log('connectionClickEvent', conn)
-            // 设置按钮可见
-            info.connection.showOverlay('remove-connection')
-            // 高亮连接
-            info.connection.addClass('connection-selected')
+        info.connection.bind('click', conn => {
+          console.log('connectionClickEvent', conn)
+          // 设置按钮可见
+          info.connection.showOverlay('remove-connection')
+          // 高亮连接
+          info.connection.addClass('connection-selected')
 
-            this.setActiveConnection({
-              sourceId,
-              targetId
-            })
-          })
-
-          // 添加删除按钮，并且绑定事件，默认不可见
-          info.connection.addOverlay([
-            'Label',
-            {
-              id: 'remove-connection',
-              location: 0.25,
-              label:
-                '<div class="remove-connection-btn" title="删除连接"></span>',
-              cssClass: 'remove-connection-label cursor-pointer',
-              visible: false,
-              events: {
-                mousedown: () => {
-                  this.removeConnection(source, target)
-                }
-              }
-            }
-          ])
-
-          console.log('连接状态', this.isConnected(sourceId, targetId))
-
-          // this.setDependsOn(info.sourceId, info.targetId)
-          // this.checkConnect()
-          // this.checkOutputStep()
-          this.addConnection({
+          this.setActiveConnection({
             sourceId,
             targetId
           })
         })
-        // 连线移动到其他节点
-        jsPlumbIns.bind('connectionMoved', info => {
-          console.log('connectionMoved', info)
-        })
-        // 连线移动到其他节点
-        jsPlumbIns.bind('connectionDetached', info => {
-          console.log('connectionDetachedEvent', info)
-        })
-        // 在target的Endpoint上面drop会触发该事件
-        jsPlumbIns.bind('beforeDrop', e => {
-          console.log('beforeDrop')
-          return true
-          // return this.isParent(
-          //   this.getRealId(e.sourceId),
-          //   this.getRealId(e.targetId)
-          // )
-        })
 
-        jsPlumbIns.bind('drag:start', info => {
-          console.log('drag:start', info)
-          this.addActiveAction('dragActive')
-          this.hideSelectBox()
-          const nodeId = this.getRealId(info.el.id)
-
-          if (info.e && !this.isNodeSelected(nodeId)) {
-            // 只有直接拖动的节点params才会有事件
-            // 检查当前拖动的节点是否被选中，如果未选中则clearDragSelection
-            this.jsPlumbIns.clearDragSelection()
-            this.resetSelectedNodes()
-          }
-
-          this.onNodeDragStart()
-        })
-
-        jsPlumbIns.bind('drag:move', info => {
-          console.log('drag:move', info)
-          info.id = this.getRealId(info.el.id) // 增加id参数
-          this.isDrag = true // 拖动标记
-          this.onNodeDragMove(info)
-        })
-
-        jsPlumbIns.bind('drag:stop', info => {
-          console.log('drag:stop', info)
-          const nodeId = this.getRealId(info.el.id)
-          // 更新节点坐标
-          this.updateNodeProperties({
-            id: nodeId,
-            properties: {
-              position: [info.pos.x, info.pos.y]
+        // 添加删除按钮，并且绑定事件，默认不可见
+        info.connection.addOverlay([
+          'Label',
+          {
+            id: 'remove-connection',
+            location: 0.25,
+            label:
+              '<div class="remove-connection-btn" title="删除连接"></span>',
+            cssClass: 'remove-connection-label cursor-pointer',
+            visible: false,
+            events: {
+              mousedown: () => {
+                this.removeConnection(source, target)
+              }
             }
-          })
-          this.onNodeDragStop(info)
+          }
+        ])
+
+        console.log('连接状态', this.isConnected(sourceId, targetId))
+
+        // this.setDependsOn(info.sourceId, info.targetId)
+        // this.checkConnect()
+        // this.checkOutputStep()
+        this.addConnection({
+          sourceId,
+          targetId
         })
       })
 
       // 连接线拖动结束事件
-      /*jsPlumbIns.bind('connectionDragStop', (conn, event) => {
+      jsPlumbIns.bind('connectionDragStop', (conn, event) => {
         console.log('connectionDragStopEvent', conn)
         let $node = this.$refs.layoutContent.querySelector('.df-node')
         if (!$node) return
@@ -387,12 +326,7 @@ export default {
               ) {
                 jsPlumbIns.connect({
                   source: jsPlumbIns.getEndpoint(conn.sourceId + '_source'),
-                  target: jsPlumbIns.getEndpoint(
-                    NODE_PREFIX + n.id + '_target'
-                  ),
-                  overlays: [
-                    ['Label', { label: '🐶🐶🐶', location: 0.5, id: 'myLabel' }]
-                  ]
+                  target: jsPlumbIns.getEndpoint(NODE_PREFIX + n.id + '_target')
                 })
                 isConnected = true
               }
@@ -409,7 +343,26 @@ export default {
           })
           console.log('没有连接')
         }
-      })*/
+      })
+
+      // 连线移动到其他节点
+      jsPlumbIns.bind('connectionMoved', info => {
+        console.log('connectionMoved', info)
+      })
+      // 连线移动到其他节点
+      jsPlumbIns.bind('connectionDetached', info => {
+        console.log('connectionDetachedEvent', info)
+      })
+
+      // 在target的Endpoint上面drop会触发该事件
+      jsPlumbIns.bind('beforeDrop', e => {
+        console.log('beforeDrop')
+        return true
+        // return this.isParent(
+        //   this.getRealId(e.sourceId),
+        //   this.getRealId(e.targetId)
+        // )
+      })
 
       /*this.conSelections = []
 
@@ -548,8 +501,8 @@ export default {
       this.nodes.forEach(item => {
         if (item.id !== id) {
           let [x, y] = item.position
-          let _x = x - pos.x
-          let _y = y - pos.y
+          let _x = x - pos[0]
+          let _y = y - pos[1]
           if (Math.abs(_x) <= Math.abs(rangeX)) {
             if (_x === rangeX) {
               verArr.push(y)
@@ -571,24 +524,24 @@ export default {
         }
       })
 
-      pos.x += diffPos.x
-      pos.y += diffPos.y
+      pos[0] += diffPos.x
+      pos[1] += diffPos.y
 
       this.updateNodeProperties({
         id,
         properties: {
-          position: [pos[0], pos[1]]
+          position: [...pos]
         }
       })
 
-      param.el.style.left = pos.x + 'px'
-      param.el.style.top = pos.y + 'px'
+      param.el.style.left = pos[0] + 'px'
+      param.el.style.top = pos[1] + 'px'
       this.jsPlumbIns.revalidate(param.el) // 重绘
 
-      let t = pos.y,
-        b = pos.y + nh,
-        l = pos.x,
-        r = pos.x + nw
+      let t = pos[1],
+        b = pos[1] + nh,
+        l = pos[0],
+        r = pos[0] + nw
       verArr.forEach(y => {
         t = Math.min(y + nh, t)
         b = Math.max(y, b)
@@ -599,67 +552,67 @@ export default {
       })
       // 组装导航线
       let lines = []
-      if (t < pos.y) {
+      if (t < pos[1]) {
         let top = t + 'px',
-          height = pos.y - t + 'px'
+          height = pos[1] - t + 'px'
         lines.push(
           {
             top,
-            left: pos.x + 'px',
+            left: pos[0] + 'px',
             height
           },
           {
             top,
-            left: pos.x + nw + 'px',
+            left: pos[0] + nw + 'px',
             height
           }
         )
       }
-      if (b > pos.y + nh) {
-        let top = pos.y + nh + 'px',
-          height = b - pos.y - nh + 'px'
+      if (b > pos[1] + nh) {
+        let top = pos[1] + nh + 'px',
+          height = b - pos[1] - nh + 'px'
         lines.push(
           {
             top,
-            left: pos.x + 'px',
+            left: pos[0] + 'px',
             height
           },
           {
             top,
-            left: pos.x + nw + 'px',
+            left: pos[0] + nw + 'px',
             height
           }
         )
       }
 
-      if (l < pos.x) {
+      if (l < pos[0]) {
         let left = l + 'px',
-          width = pos.x - l + 'px'
+          width = pos[0] - l + 'px'
         lines.push(
           {
-            top: pos.y + 'px',
+            top: pos[1] + 'px',
             left,
             width
           },
           {
-            top: pos.y + nh + 'px',
+            top: pos[1] + nh + 'px',
             left,
             width
           }
         )
       }
 
-      if (r > pos.x + nw) {
-        let left = pos.x + nw + 'px',
-          width = r - pos.x - nw + 'px'
+      if (r > pos[0] + nw) {
+        let left = pos[0] + nw + 'px',
+          width = r - pos[0] - nw + 'px'
         lines.push(
           {
-            top: pos.y + 'px',
+            top: pos[1] + 'px',
             left,
             width
           },
           {
-            top: pos.y + nh + 'px',
+            top: pos[1] + nh + 'px',
             left,
             width
           }
@@ -687,7 +640,7 @@ export default {
 
     nodeSelected(node) {
       this.addSelectedNode(node)
-      const nodeElement = document.getElementById(`node-${node.id}`)
+      const nodeElement = `node-${node.id}`
       this.jsPlumbIns.addToDragSelection(nodeElement)
     },
 
@@ -803,6 +756,21 @@ export default {
       }
 
       this.hideSelectBox()
+    },
+
+    wheelScroll(e) {
+      //* Control + scroll zoom
+      if (e.ctrlKey) {
+        if (e.deltaY > 0) {
+          this.zoomOut()
+        } else {
+          this.zoomIn()
+        }
+
+        e.preventDefault()
+        return
+      }
+      this.wheelMoveDataflow(e)
     },
 
     hideSelectBox() {
@@ -937,7 +905,7 @@ export default {
       // Reset nodes
       if (this.jsPlumbIns) {
         // On first load it does not exist
-        this.jsPlumbIns.reset()
+        this.jsPlumbIns.deleteEveryEndpoint()
       }
 
       this.removeAllNodes()
@@ -1037,5 +1005,20 @@ $sidebarBg: #fff;
   position: absolute;
   background: rgba(215, 215, 215, 0.2);
   border: 1px solid #b2b2b3;
+}
+
+.node-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: 0 0;
+}
+
+.node-view-background {
+  position: absolute;
+  width: 10000px;
+  height: 10000px;
+  top: -5000px;
+  left: -5000px;
 }
 </style>

@@ -350,9 +350,12 @@ $sidebarBg: #fff;
 }
 
 .layout-header {
+  position: relative;
+  z-index: 1;
   display: flex;
   width: 100%;
   flex: 0 0 40px;
+  background-color: #fff;
 
   .title-wrap {
     width: $sidebarW;

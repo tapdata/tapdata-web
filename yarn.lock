@@ -1066,18 +1066,6 @@
     cssnano-preset-default "^4.0.0"
     postcss "^7.0.0"
 
-"@jsplumb/browser-ui@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.npmjs.org/@jsplumb/browser-ui/-/browser-ui-4.0.0.tgz#a9352d4565207f712628f630af5c0c93d2af8d17"
-  integrity sha512-toV80wYdeoIhbpYzmH+lJQcOe+ybjoOk52VIw3GstB0FhwnxLevPm/RlyNapzhkN6XdTRGGdHiyw2gMqmpRb+A==
-  dependencies:
-    "@jsplumb/core" "4.0.0"
-
-"@jsplumb/core@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.npmjs.org/@jsplumb/core/-/core-4.0.0.tgz#9a40943a00ee29721bba5353257f73f2b30b7ff9"
-  integrity sha512-8S8KTWzrW7VomfzFQ86DIqWiaxbkdjoQljnW7n1VpluoqDfaDeIc5hAvAlYVc4CKJCZKrbTwls+GOvO5CFBpcQ==
-
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://r.cnpmjs.org/@mrmlnc/readdir-enhanced/download/@mrmlnc/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -6361,10 +6349,10 @@ jsonfile@^4.0.0:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-jsplumb@^2.15.5:
-  version "2.15.5"
-  resolved "https://registry.npmjs.org/jsplumb/-/jsplumb-2.15.5.tgz#50be0c58fe5e840aa76bd332fda379b6f4e9b7b7"
-  integrity sha512-yFaePzsFaAEsSb5s5e+JVRuunI9tS7mhjVg/A/CimYHEjVWVpbWfeFXz/xkW1Xq02Iblu8vnADObxuMs1IWOEw==
+jsplumb@^2.15.6:
+  version "2.15.6"
+  resolved "https://registry.npmjs.org/jsplumb/-/jsplumb-2.15.6.tgz#16d97a195a52cc8e4227d9e29971ff82b83e8faf"
+  integrity sha512-sIpbpz5eMVM+vV+MQzFCidlaa1RsknrQs6LOTKYDjYUDdTAi2AN2bFi94TxB33TifcIsRNV1jebcaxg0tCoPzg==
 
 jsprim@^1.2.2:
   version "1.4.1"
@@ -7370,7 +7358,7 @@ normalize-url@^4.1.0:
 
 normalize-wheel@^1.0.1:
   version "1.0.1"
-  resolved "https://r.cnpmjs.org/normalize-wheel/download/normalize-wheel-1.0.1.tgz#aec886affdb045070d856447df62ecf86146ec45"
+  resolved "https://registry.npmjs.org/normalize-wheel/-/normalize-wheel-1.0.1.tgz#aec886affdb045070d856447df62ecf86146ec45"
   integrity sha1-rsiGr/2wRQcNhWRH32Ls+GFG7EU=
 
 npm-run-path@^2.0.0:
