@@ -34,7 +34,7 @@ cp.exec(`git config --remove-section alias`, function () {
       '\tscommit = submodule foreach git commit',
       '\tspull = submodule update --remote --merge',
       '\tspush = submodule foreach git push origin HEAD:release',
-      '\tupdate = submodule update'
+      '\tsu = submodule update'
     )
     lines.push('\n')
     fs.writeFile(join(__dirname, '../.git/config'), lines.join('\n'), function (err) {
