@@ -243,13 +243,28 @@ export default {
         let genTree = this.genTree({ ...this.model.pbProcessorConfig?.schema })
         console.log('genTree', genTree)
         // this.toData = result
+        // TODO 删除右侧已存在的key
         this.toData = genTree
+        let getRightFields = this.getRightFields(this.toData)
+        let getRightFieldsKeys = getRightFields.map(item => item.key)
+        console.log('getRightFields', getRightFields, getRightFieldsKeys)
         // 过滤下 fromdata
-        this.fromData = _this.fieldsData
+        this.fromData = _this.fieldsData.filter(item => !getRightFieldsKeys.includes(item.key))
       } else {
         // 过滤下 fromdata
         this.fromData = _this.fieldsData
       }
+    },
+    getRightFields(data, result = []) {
+      data.forEach(el => {
+        if (!el.message) {
+          result.push(el)
+        }
+        if (el.children?.length) {
+          this.getRightFields(el.children, result)
+        }
+      })
+      return result
     },
     getData() {
       let result = _.cloneDeep(this.model)
@@ -336,8 +351,8 @@ export default {
         })
       }
     },
-    findFieldInTree(tree = [], result = []) {
-      tree.forEach(el => {
+    findFieldInTree(data = [], result = []) {
+      data.forEach(el => {
         if (!el.message) {
           result.push(el)
         }
@@ -490,25 +505,31 @@ export default {
         }
         // TODO 删除
         const parent = node.parent
+        let children = parent.data?.children || []
+        let getIndex = children?.findIndex(d => {
+          return d.key === data.key
+        })
+
         console.log('删除')
         // 自定义字段
         if (data.message) {
-          let result = []
-          let children = parent.data.children || []
-          this.findFieldInTree(children, result)
-          this.fromData = [...this.fromData, ...result]
-          let getIndex = children?.findIndex(d => {
-            return d.key === data.key
-          })
+          // let result = []
+          let getRightFields = this.getRightFields(data.children)
+          console.log('getRightFields', getRightFields)
+          // this.fromData = [...this.fromData, ...result]
+          // let getIndex = children?.findIndex(d => {
+          //   return d.key === data.key
+          // })
+          this.fromData = [...this.fromData, ...getRightFields]
           !!getIndex && children.splice(getIndex, 1)
         } else {
           // 系统字段
-          let parentData = parent.data || []
-          let getIndex = parentData?.findIndex(d => {
-            return d.key === data.key
-          })
+          // let getIndex = children?.findIndex(d => {
+          //   return d.key === data.key
+          // })
           console.log('index', getIndex)
-          parentData.splice(getIndex, 1)
+          this.fromData.push(data)
+          children.splice(getIndex, 1)
         }
       })
     },
@@ -592,7 +613,6 @@ export default {
           this.formatMappingTree(el, tree)
         })
       }
-      console.log('formatMappingTree', tree)
       return tree
     },
     genTree(schema) {
