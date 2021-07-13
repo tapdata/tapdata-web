@@ -53,6 +53,7 @@
         </tree-transfer>
       </div>
       <el-dialog
+        :title="createForm.openType === 'edit' ? '编辑' : '新增'"
         width="600px"
         custom-class="create-dialog"
         :close-on-click-modal="false"
@@ -62,6 +63,17 @@
           <el-form-item label="名称">
             <el-input size="mini" v-model="createForm.name"></el-input>
           </el-form-item>
+          <el-form-item label="类型">
+            <el-input v-if="createForm.message" size="mini" v-model="createForm.type"></el-input>
+            <el-select v-else v-model="createForm.type" size="mini">
+              <el-option
+                v-for="(item, index) in typeOptions"
+                :key="index"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="限定修饰符">
             <el-radio-group v-model="createForm.label">
               <el-radio label="required"> Required </el-radio>
@@ -70,6 +82,7 @@
             </el-radio-group>
           </el-form-item>
         </el-form>
+        {{ createForm }}
         <span slot="footer" class="dialog-footer">
           <el-button
             @click="
@@ -131,7 +144,25 @@ export default {
           mapping: {},
           schema: {}
         }
-      }
+      },
+      typeOptions: [
+        { label: 'bool', value: 'bool' },
+        { label: 'double', value: 'double' },
+        { label: 'float', value: 'float' },
+        { label: 'int32', value: 'int32' },
+        { label: 'int64', value: 'int64' },
+        { label: 'unit32', value: 'unit32' },
+        { label: 'unit64', value: 'unit64' },
+        { label: 'sint32', value: 'sint32' },
+        { label: 'sint64', value: 'sint64' },
+        { label: 'fixed32', value: 'fixed32' },
+        { label: 'fixed64', value: 'fixed64' },
+        { label: 'sfixed32', value: 'sfixed32' },
+        { label: 'sfixed64', value: 'sfixed64' },
+        { label: 'string', value: 'string' },
+        { label: 'bytes', value: 'bytes' },
+        { label: 'enum', value: 'enum' }
+      ]
     }
   },
   mounted() {
@@ -146,7 +177,9 @@ export default {
     model: {
       deep: true,
       handler() {
-        this.$emit('dataChanged', this.getData())
+        let data = this.getData()
+        console.log('$emit-data', data)
+        this.$emit('dataChanged', data)
       }
     },
     toData: {
@@ -184,20 +217,33 @@ export default {
           sourceField = sourceSchema ? sourceSchema.fields : []
         // targetSchema = targetCell ? targetCell.getSchema() : null,
         if (sourceField.length) {
-          _this.fieldsData = sourceSchema.fields.map(field => ({
-            pid: 0,
-            label: 'required',
-            name: field.field_name,
-            key: field.field_name,
-            type: field.javaType,
-            disabled: this.disabled,
-            children: []
-          }))
+          _this.fieldsData = sourceSchema.fields.map(field => {
+            let obj = {
+              pid: 0,
+              label: 'required',
+              name: field.field_name,
+              key: field.field_name,
+              type: field.javaType,
+              disabled: this.disabled,
+              children: []
+            }
+            if (obj.type === 'Date') {
+              obj.type = 'string'
+            }
+            obj.type = obj.type.toLowerCase()
+            return obj
+          })
         }
+        console.log('_this.fieldsData', _this.fieldsData)
       }
       // toData
       if (this.model.pbProcessorConfig?.schema) {
-        this.toData = this.transToData({ ...this.model.pbProcessorConfig?.schema })?.children ?? []
+        let result = this.transToData({ ...this.model.pbProcessorConfig?.schema })?.children ?? []
+        console.log('setData result', result)
+        let genTree = this.genTree({ ...this.model.pbProcessorConfig?.schema })
+        console.log('genTree', genTree)
+        // this.toData = result
+        this.toData = genTree
         // 过滤下 fromdata
         this.fromData = _this.fieldsData
       } else {
@@ -211,11 +257,6 @@ export default {
       console.log('result', result)
       return result
     },
-
-    // setDisabled(disabled) {
-    //   this.disabled = disabled
-    // },
-
     // 获取图片
     getImgByType(type) {
       return require(`@/assets/images/types/${type.toLowerCase()}.png`)
@@ -261,7 +302,7 @@ export default {
     },
     // 切换模式 现有树形穿梭框模式transfer 和通讯录模式addressList
     changeMode() {
-      if (this.mode == 'transfer') {
+      if (this.mode === 'transfer') {
         this.mode = 'addressList'
       } else {
         this.mode = 'transfer'
@@ -294,21 +335,6 @@ export default {
           })
         })
       }
-      // if (this.rightCheckedKeys) {
-      //   // let children = []
-      //   obj.nodes.forEach(item => {
-      //     item.pid = this.rightCheckedKeys.name
-      //     this.rightCheckedKeys.children.push(item)
-      //     toData.forEach((el, index) => {
-      //       if (item.name === el.name) {
-      //         toData.splice(index, 1)
-      //       }
-      //     })
-      //   })
-      //
-      //   // this.rightCheckedKeys = null
-      // }
-      // debugger
     },
     findFieldInTree(tree = [], result = []) {
       tree.forEach(el => {
@@ -327,41 +353,16 @@ export default {
     remove(fromData, toData, obj) {
       console.log('remove', fromData, toData, obj)
       console.log('arg', arguments)
-      // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
-      // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
-      // if (this.rightCheckedKeys.message) {
-      //   console.log('该节点不撤回')
-      // }
       let result = []
       this.findFieldInTree(fromData, result)
       console.log('result', result)
       this.fromData = result
-      // if (this.rightTreeObj?.node?.message) {
-      //   this.$confirm(this.$t('message.deleteMessageFieldConfirm'), this.$t('message.delete'), {
-      //     type: 'warning'
-      //   }).then(resFlag => {
-      //     // 否，恢复
-      //     if (!resFlag) {
-      //       this.createMessage(true)
-      //       return
-      //     }
-      //     // TODO 移到左侧
-      //   })
-      //   // console.log('该节点不撤回')
-      //   // return false
-      // }
-      // if (this.rightCheckedKeys.message) {
-      //   console.log('该节点不撤回')
-      // }
       console.log('fromData:', fromData)
       console.log('toData:', toData)
       console.log('obj:', obj)
     },
     // 左侧源数据选中事件
     leftCheckChange(nodeObj, treeObj, checkAll) {
-      // console.log(nodeObj)
-      // console.log(treeObj)
-      // console.log(checkAll)
       this.leftTreeObj = {
         node: nodeObj,
         checkAll: checkAll,
@@ -391,20 +392,6 @@ export default {
         // this.$btnRight.disabled = false
         this.$btnRight.style.visibility = 'inherit'
       }
-      // if (nodeObj.message) {
-      //   this.rightCheckedKeys = nodeObj
-      //   // 选中信息体是否有children
-      //   if (!this.rightCheckedKeys.children) {
-      //     this.$set(this.rightCheckedKeys, 'children', [])
-      //   }
-      // } else {
-      //   this.rightCheckedKeys = null
-      // }
-      // // rightCheck = checkAll
-      // this.rightCheckAll = checkAll
-      // console.log('right', nodeObj)
-      // console.log('right', treeObj)
-      // console.log('right', checkAll)
     },
     // 自定义节点 仅树形结构支持
     renderContent(h, { node, data }) {
@@ -459,7 +446,7 @@ export default {
       let _this = this
       this.createDialogVisible = false
       // 新增
-      if (this.createForm.message) {
+      if (this.createForm.openType === 'add') {
         console.log('新增message')
         let rightTreeObj = this.rightTreeObj
         let node = rightTreeObj?.node
@@ -474,16 +461,6 @@ export default {
         } else {
           this.toData.push(this.createForm)
         }
-
-        // if (this.rightCheckedKeys) {
-        //   if (!this.rightCheckedKeys.children) {
-        //     this.$set(this.rightCheckedKeys, 'children', [])
-        //   }
-        //   this.createForm.pid = this.rightCheckedKeys.name
-        //   this.rightCheckedKeys.children.push(this.createForm)
-        // } else {
-        //   this.toData.push(this.createForm)
-        // }
       } else {
         // 编辑
         console.log('编辑message')
@@ -513,44 +490,27 @@ export default {
         }
         // TODO 删除
         const parent = node.parent
-        const index = children?.findIndex(d => d.key === data.key)
-        let children = parent.data.children || parent.data
+        console.log('删除')
         // 自定义字段
         if (data.message) {
           let result = []
+          let children = parent.data.children || []
           this.findFieldInTree(children, result)
           this.fromData = [...this.fromData, ...result]
-          !!index && children.splice(index, 1)
+          let getIndex = children?.findIndex(d => {
+            return d.key === data.key
+          })
+          !!getIndex && children.splice(getIndex, 1)
         } else {
           // 系统字段
-          children.splice(index, 1)
+          let parentData = parent.data || []
+          let getIndex = parentData?.findIndex(d => {
+            return d.key === data.key
+          })
+          console.log('index', getIndex)
+          parentData.splice(getIndex, 1)
         }
       })
-
-      // const parent = node.parent
-      // const children = parent.data.children || parent.data
-      //
-      // // 获取当前删除数据
-      // let backchild = []
-      // // 获取所有的叶子节点
-      // function getLeaf(childrenData) {
-      //   for (var i = 0; i < childrenData.length; i++) {
-      //     let currentChild = childrenData[i].children || []
-      //     if (currentChild.length == 0) {
-      //       backchild.push(childrenData[i])
-      //     } else {
-      //       getLeaf(currentChild)
-      //     }
-      //   }
-      //   return backchild
-      // }
-      // getLeaf(children)
-      // console.log('backchild', backchild)
-      //
-      // const index = children.findIndex(d => d.key === data.key)
-      // children.splice(index, 1)
-      //
-      // this.fromData = [...this.fromData, ...backchild]
     },
 
     // 是否拖拽
@@ -590,6 +550,14 @@ export default {
         let nestedIndex = 0
         let propertyIndex = 0
         node.children.forEach(el => {
+          propertyIndex++
+          obj.propertyList.push({
+            label: el.label,
+            key: el.key,
+            name: el.name,
+            number: propertyIndex,
+            type: el.type
+          })
           if (el.message) {
             nestedIndex++
             if (el.children?.length) {
@@ -608,14 +576,6 @@ export default {
               })
             }
           }
-          propertyIndex++
-          obj.propertyList.push({
-            label: el.label,
-            key: el.key,
-            name: el.name,
-            number: propertyIndex,
-            type: el.type
-          })
         })
       }
       return obj
@@ -635,26 +595,30 @@ export default {
       console.log('formatMappingTree', tree)
       return tree
     },
+    genTree(schema) {
+      schema.nestedList?.forEach(item => {
+        let target = schema.propertyList.find(_item => _item.key === item.name)
+        target.children = this.genTree(item) ?? []
+        target.message = true
+      })
+      return schema.propertyList
+    },
     transToData(tree) {
-      // disabled: false
-      // key: "VREMARKS"
-      // label: "required"
-      // name: "VREMARKS"
-      // pid: 0
-      // type: "String"
-      // children: Array(0)
       let obj = {}
       obj.name = tree.name
       obj.key = tree.key || tree.name
       obj.type = tree.type
       obj.disabled = false
-      obj.label = tree.label
+      obj.label = tree.label || tree.name
       obj.pid = ''
       obj.children = []
       //nestedList propertyList
       // 系统字段 + 自定义字段
       if (tree.propertyList?.length) {
         tree.propertyList.forEach(el => {
+          let findOne = tree.nestedList.find(item => {
+            return (item.key && item.key === el.key) || (!item.key && item.name === el.key)
+          })
           let nodeObj = {
             name: el.name,
             key: el.key || el.name,
@@ -663,29 +627,15 @@ export default {
             label: el.label,
             pid: tree.key,
             children: [],
-            message: !!tree.nestedList.find(item => {
-              item.key === el.key
-            })
+            message: !!findOne
           }
-          let findOne = tree.nestedList.find(item => item.key === el.key)
           if (findOne) {
-            nodeObj.children.push(this.transToData(findOne))
+            let result = this.transToData(findOne, nodeObj)
+            nodeObj.children.push(result)
+            obj.children.push(nodeObj)
+          } else {
+            obj.children.push(nodeObj)
           }
-          obj.children.push(nodeObj)
-        })
-      }
-      // 自定义字段
-      if (tree.nestedList?.length) {
-        tree.nestedList.forEach(el => {
-          this.transToData(el)
-          // obj.children.push(
-          //   Object.assign({}, this.transToData(el), {
-          //     message: true,
-          //     type: el.type,
-          //     label: el.label,
-          //     pid: tree.key
-          //   })
-          // )
         })
       }
       return obj
@@ -701,11 +651,14 @@ export default {
       })
       let getMapping = this.getMapping({ ...tree })
       let getSchema = this.getSchema({ ...tree })
+      let transToData = this.transToData({ ...getSchema })
+      console.log('getMapping', getMapping)
+      console.log('getSchema', getSchema)
+      console.log('transToData', transToData)
       return {
         mapping: getMapping,
         schema: getSchema
       }
-      // let transToData = this.transToData({ ...getSchema })
     }
   }
 }
