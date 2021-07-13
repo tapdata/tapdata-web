@@ -93,7 +93,8 @@
           <div class="progress-container__overview ml-6">
             <el-row>
               <el-col :span="24" class="flex"
-                ><span>全量+增量同步任务进度：</span><el-progress class="el-progress" :percentage="50"></el-progress>
+                ><span>全量+增量同步任务进度：</span
+                ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
               </el-col>
             </el-row>
             <el-row class="mt-3">
@@ -204,9 +205,9 @@
   </div>
 </template>
 <script>
-import factory from '@/api/factory'
+// import factory from '@/api/factory'
 
-const dataFlowsAPI = factory('DataFlows')
+// const dataFlowsAPI = factory('DataFlows')
 
 export default {
   name: 'TaskProgress',
@@ -232,14 +233,13 @@ export default {
     dataFlow: {
       deep: true,
       handler(data) {
-        this.overviewStats = data.overview
         this.handleData(data)
       }
     }
   },
   mounted() {
     // this.init()
-    this.overviewStats = this.dataFlow.overview
+    // this.overviewStats = this.dataFlow.overview
     this.handleData(this.dataFlow)
   },
 
@@ -269,14 +269,13 @@ export default {
     //     })
     // },
     handleData(data) {
-      if (data?.overview) {
-        // data.overview.waitingForSyecTableNums = 2
-        // data.overview.sourceTableNum = 10
+      if (data?.stats?.overview) {
+        let overview = data.stats.overview
 
-        data.overview.waitingForSyecTableNums = data.overview.sourceTableNum - data.overview.waitingForSyecTableNums
-        let num =
-          (data.overview.waitingForSyecTableNums / (data.overview.sourceTableNum + data.overview.sourceTableNum)) * 100
+        overview.waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
+        let num = (overview.waitingForSyecTableNums / (overview.sourceTableNum + overview.sourceTableNum)) * 100
         this.progressBar = num.toFixed(0)
+        this.overviewStats = overview
       }
     },
     // 跳转详情
