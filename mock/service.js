@@ -196,7 +196,7 @@ module.exports = Object.assign({}, dataflow, connection, {
     code: 'ok',
     data: {
       total: 1,
-      items: [agent]
+      'items|1-20': [agent]
     }
   },
   '/api/tcm/agent/agentCount': {

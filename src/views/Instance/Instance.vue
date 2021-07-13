@@ -174,7 +174,7 @@
         </div>
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center">
-            <ElButton type="primary" :disabled="selectedRow && selectedRow.status !== 'running'" @click="autoUpgradeFnc"
+            <ElButton type="primary" :disabled="selectedRow && selectedRow.status !== 'Running'" @click="autoUpgradeFnc"
               >自动升级</ElButton
             >
             <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
