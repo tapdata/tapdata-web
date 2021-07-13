@@ -27,11 +27,15 @@
           </el-select>
         </li>
       </ul>
-      <el-table-column label="源表名" prop="sourceConnectionName" sortable="sourceConnectionName"> </el-table-column>
+      <el-table-column label="源表名" prop="sourceTableName" sortable="sourceTableName"> </el-table-column>
       <el-table-column label="总数据量（行）" prop="sourceRowNum" sortable="sourceRowNum"> </el-table-column>
-      <el-table-column label="目标表名" prop="targetConnectionName" sortable="targetConnectionName"></el-table-column>
-      <el-table-column label="已迁移数据量" prop="cdcRowNum" sortable="cdcRowNum"> </el-table-column>
-      <el-table-column label="全量迁移进度" prop="cdcRowNum" sortable="cdcRowNum"></el-table-column>
+      <el-table-column label="目标表名" prop="targetTableName" sortable="targetTableName"></el-table-column>
+      <el-table-column label="已迁移数据量" prop="targetRowNum" sortable="targetRowNum"> </el-table-column>
+      <el-table-column label="全量迁移进度" prop="status" sortable="status">
+        <template slot-scope="scope">
+          {{ scope.row.status === 'done' ? '完成' : scope.row.status === 'running' ? '运行中' : '等待中' }}
+        </template>
+      </el-table-column>
     </TablePage>
   </div>
 </template>

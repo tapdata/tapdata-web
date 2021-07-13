@@ -13,7 +13,8 @@
           <div class="progress-container__overview ml-6">
             <el-row>
               <el-col :span="24" class="flex"
-                ><span>全量+增量同步任务进度：</span><el-progress class="el-progress" :percentage="50"></el-progress>
+                ><span>全量+增量同步任务进度：</span
+                ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
               </el-col>
             </el-row>
             <el-row class="mt-3">
@@ -29,7 +30,7 @@
           </div>
         </div>
         <div class="progress-container__footer mt-border">
-          <el-row class="footer-line">
+          <!-- <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
               <span class="footer-item__name">源库名称：</span>
               <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
@@ -48,15 +49,15 @@
               <span class="footer-item__name">目标库类型：</span>
               <span class="footer-item__value">{{ overviewStats.targatType }}</span>
             </el-col>
-          </el-row>
+          </el-row> -->
           <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
               <span class="footer-item__name">待迁移表总数：</span>
-              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
+              <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
             </el-col>
             <el-col class="footer-item" :span="12">
               <span class="footer-item__name">已完成迁移表数：</span>
-              <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
+              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
             </el-col>
           </el-row>
           <el-row class="footer-line">
@@ -69,7 +70,7 @@
               <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
             </el-col>
           </el-row>
-          <el-row class="footer-line">
+          <!-- <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
               <span class="footer-item__name">增量所处时间点：</span>
               <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
@@ -78,7 +79,7 @@
               <span class="footer-item__name">增量延迟：</span>
               <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
             </el-col>
-          </el-row>
+          </el-row> -->
         </div>
       </div>
       <!--  全量  -->
@@ -108,7 +109,7 @@
           </div>
         </div>
         <div class="progress-container__footer mt-border">
-          <el-row class="footer-line">
+          <!-- <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
               <span class="footer-item__name">源库名称：</span>
               <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
@@ -127,15 +128,15 @@
               <span class="footer-item__name">目标库类型：</span>
               <span class="footer-item__value">{{ overviewStats.targatType }}</span>
             </el-col>
-          </el-row>
+          </el-row> -->
           <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
               <span class="footer-item__name">待迁移表总数：</span>
-              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
+              <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
             </el-col>
             <el-col class="footer-item" :span="12">
               <span class="footer-item__name">已完成迁移表数：</span>
-              <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
+              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
             </el-col>
           </el-row>
           <el-row class="footer-line">
@@ -157,7 +158,7 @@
           <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>
         </div>
         <div class="progress-container__footer">
-          <el-row class="footer-line">
+          <!-- <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
               <span class="footer-item__name">源库名称：</span>
               <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
@@ -176,15 +177,15 @@
               <span class="footer-item__name">目标库类型：</span>
               <span class="footer-item__value">{{ overviewStats.targatType }}</span>
             </el-col>
-          </el-row>
+          </el-row> -->
           <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
               <span class="footer-item__name">待迁移表总数：</span>
-              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
+              <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
             </el-col>
             <el-col class="footer-item" :span="12">
               <span class="footer-item__name">已完成迁移表数：</span>
-              <span class="footer-item__value">{{ overviewStats.targetTableNum }}</span>
+              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
             </el-col>
           </el-row>
           <el-row class="footer-line">
@@ -218,6 +219,7 @@ export default {
   data() {
     return {
       loading: false,
+      progressBar: 0,
       overviewStats: {}
     }
   },
@@ -226,27 +228,56 @@ export default {
       return this.dataFlow?.setting ?? {}
     }
   },
+  watch: {
+    dataFlow: {
+      deep: true,
+      handler(data) {
+        this.overviewStats = data.overview
+        this.handleData(data)
+      }
+    }
+  },
   mounted() {
-    this.init()
+    // this.init()
+    this.overviewStats = this.dataFlow.overview
+    this.handleData(this.dataFlow)
   },
 
   methods: {
-    init() {
-      this.loadData()
-    },
-    loadData() {
-      this.loading = true
-      dataFlowsAPI
-        .getOverview()
-        .then(res => {
-          console.log('res', res)
-          if (res?.data) {
-            this.overviewStats = res.data?.stats?.overview
-          }
-        })
-        .finally(() => {
-          this.loading = false
-        })
+    // init() {
+    //   this.loadData()
+    // },
+    // loadData() {
+    //   this.loading = true
+    //   let id = this.dataFlow.id
+    //   console.log('[this.dataFlow.id]', this.dataFlow)
+    //   this.overviewStats = this.dataFlow.overview
+    //   dataFlowsAPI
+    //     .get([id])
+    //     .then(res => {
+    //       debugger
+    //       console.log('res', res)
+    //       if (res?.data) {
+    //         this.overviewStats = res.data?.stats?.overview
+    //       }
+    //     })
+    //     .catch(e => {
+    //       console.log(e, '#####')
+    //     })
+    //     .finally(() => {
+    //       this.loading = false
+    //     })
+    // },
+    handleData(data) {
+      if (data?.overview) {
+        // data.overview.waitingForSyecTableNums = 2
+        // data.overview.sourceTableNum = 10
+
+        data.overview.waitingForSyecTableNums = data.overview.sourceTableNum - data.overview.waitingForSyecTableNums
+        let num =
+          (data.overview.waitingForSyecTableNums / (data.overview.sourceTableNum + data.overview.sourceTableNum)) * 100
+        this.progressBar = num.toFixed(0)
+      }
     },
     // 跳转详情
     handleInfo() {
