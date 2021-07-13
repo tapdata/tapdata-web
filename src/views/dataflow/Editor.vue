@@ -8,7 +8,9 @@
       :status="status"
       :status-bt-map="statusBtMap"
       :sync_type="sync_type"
+      :creat-user-id="creatUserId"
       @save="save"
+      @start="start"
       @delete="handleDelete"
     ></TopHeader>
 
@@ -76,11 +78,13 @@ import RightSidebar from '@/views/dataflow/components/RightSidebar'
 import { off, on } from '@/utils/dom'
 import deviceSupportHelpers from '@/mixins/deviceSupportHelpers'
 import { connectorActiveStyle } from '@/views/dataflow/style'
-import { NODE_PREFIX } from '@/views/dataflow/constants'
+import { NODE_PREFIX, DEFAULT_SETTINGS } from '@/views/dataflow/constants'
 import TopHeader from '@/views/dataflow/components/TopHeader'
 import { titleChange } from '@/mixins/titleChange'
 import { showMessage } from '@/mixins/showMessage'
 import moveDataflow from './mixins/moveDataflow'
+import ws from '@/api/ws'
+// import _ from 'lodash'
 
 const dataFlowsApi = factory('DataFlows')
 // const Setting = factory('Setting')
@@ -107,6 +111,7 @@ export default {
       isSimple: false,
       isSaving: false,
       sync_type: 'initial_sync+cdc',
+      creatUserId: '',
       statusBtMap,
       jsPlumbIns,
       nodeMap: {},
@@ -120,6 +125,7 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', {
+      dataflowId: 'dataflowId',
       nodes: 'allNodes',
       isActionActive: 'isActionActive',
       nodeById: 'nodeById',
@@ -310,6 +316,9 @@ export default {
         let $node = this.$refs.layoutContent.querySelector('.df-node')
         if (!$node) return
         const pos = this.getMousePositionWithinNodeView(event)
+        console.log({ ...pos }, [...this.nodeViewOffsetPosition])
+        pos.x -= this.nodeViewOffsetPosition[0]
+        pos.y -= this.nodeViewOffsetPosition[1]
         let sourceId = this.getRealId(conn.sourceId)
         let nw = $node.offsetWidth
         let nh = $node.offsetHeight
@@ -318,6 +327,7 @@ export default {
         for (let n of this.nodes) {
           if (n.id !== sourceId) {
             const [x, y] = n.position
+            console.log([x, y], pos)
             if (pos.x > x && pos.x < x + nw && pos.y > y && pos.y < y + nh) {
               console.log('in Node')
               if (
@@ -414,6 +424,7 @@ export default {
       let result
       try {
         result = await dataFlowsApi.get([dataflowId])
+        this.creatUserId = result.data.user_id
       } catch (e) {
         this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
         return
@@ -421,15 +432,17 @@ export default {
 
       const { data } = result
 
+      this.status = data.status
       this.setDataflowId(dataflowId)
       this.setDataflowName({ newName: data.name, setStateDirty: false })
       this.setDataflowSettings(data.settings)
-      this.addNodes(data.stages)
+      await this.addNodes(data.stages)
 
       this.setStateDirty(false)
     },
 
     newDataflow() {
+      this.creatUserId = this.$cookie.get('user_id')
       this.resetWorkspace()
       this.setDataflowName({
         newName: 'dataflow@' + new Date().toLocaleTimeString()
@@ -550,52 +563,54 @@ export default {
         l = Math.min(x + nw, l)
         r = Math.max(x, r)
       })
+
+      const offsetPosition = this.nodeViewOffsetPosition
       // 组装导航线
       let lines = []
       if (t < pos[1]) {
-        let top = t + 'px',
+        let top = t + offsetPosition[1] + 'px',
           height = pos[1] - t + 'px'
         lines.push(
           {
             top,
-            left: pos[0] + 'px',
+            left: pos[0] + offsetPosition[0] + 'px',
             height
           },
           {
             top,
-            left: pos[0] + nw + 'px',
+            left: pos[0] + nw + offsetPosition[0] + 'px',
             height
           }
         )
       }
       if (b > pos[1] + nh) {
-        let top = pos[1] + nh + 'px',
+        let top = pos[1] + nh + offsetPosition[1] + 'px',
           height = b - pos[1] - nh + 'px'
         lines.push(
           {
             top,
-            left: pos[0] + 'px',
+            left: pos[0] + offsetPosition[0] + 'px',
             height
           },
           {
             top,
-            left: pos[0] + nw + 'px',
+            left: pos[0] + nw + offsetPosition[0] + 'px',
             height
           }
         )
       }
 
       if (l < pos[0]) {
-        let left = l + 'px',
+        let left = l + offsetPosition[0] + 'px',
           width = pos[0] - l + 'px'
         lines.push(
           {
-            top: pos[1] + 'px',
+            top: pos[1] + offsetPosition[1] + 'px',
             left,
             width
           },
           {
-            top: pos[1] + nh + 'px',
+            top: pos[1] + nh + offsetPosition[1] + 'px',
             left,
             width
           }
@@ -603,16 +618,16 @@ export default {
       }
 
       if (r > pos[0] + nw) {
-        let left = pos[0] + nw + 'px',
+        let left = pos[0] + nw + offsetPosition[0] + 'px',
           width = r - pos[0] - nw + 'px'
         lines.push(
           {
-            top: pos[1] + 'px',
+            top: pos[1] + offsetPosition[1] + 'px',
             left,
             width
           },
           {
-            top: pos[1] + nh + 'px',
+            top: pos[1] + nh + offsetPosition[1] + 'px',
             left,
             width
           }
@@ -684,13 +699,20 @@ export default {
       let nw = $node.offsetWidth
       let nh = $node.offsetHeight
       let { x, y, bottom, right } = this.selectBoxAttr
-      return this.nodes.filter(
-        ({ position }) =>
+      const nodeViewOffset = this.nodeViewOffsetPosition
+      x -= nodeViewOffset[0]
+      right -= nodeViewOffset[0]
+      y -= nodeViewOffset[1]
+      bottom -= nodeViewOffset[1]
+      return this.nodes.filter(({ position }) => {
+        console.log('position', position, { x, y, bottom, right })
+        return (
           position[0] + nw > x &&
           position[0] < right &&
           bottom > position[1] &&
           y < position[1] + nh
-      )
+        )
+      })
     },
 
     mouseDown(e) {
@@ -780,8 +802,14 @@ export default {
     },
 
     getMousePositionWithinNodeView(e) {
+      const nodeViewScale = this.nodeViewScale
+      const nodeViewOffset = this.nodeViewOffsetPosition
+      // const [x, y] = this.nodeViewOffsetPosition
       let { x, y } = this.$refs.layoutContent.getBoundingClientRect()
-      return { x: e.pageX - x, y: e.pageY - y }
+      return {
+        x: (e.pageX - x) / nodeViewScale,
+        y: (e.pageY - y) / nodeViewScale
+      }
     },
 
     removeConnection(source, target) {
@@ -862,6 +890,143 @@ export default {
       }
     },
 
+    async start() {
+      const { dataflowId } = this
+      const data = this.getDataflowDataToSave()
+      data.status = 'scheduled'
+      data.executeMode = 'normal'
+
+      const fetch = dataflowId
+        ? dataFlowsApi.patch(data)
+        : dataFlowsApi.post(data)
+
+      const result = await fetch
+
+      const dataflow = result.data
+
+      await dataFlowsApi.saveStage(data.stages)
+
+      this.$router.push({
+        path: '/job',
+        query: {
+          id: dataflow.id,
+          isMoniting: true,
+          mapping: 'cluster-clone'
+        }
+      })
+
+      // this.wsWatch()
+      // this.wsSend()
+    },
+
+    wsSend() {
+      if (this.dataFlowId) {
+        let msg = {
+          type: 'watch',
+          collection: 'DataFlows',
+          filter: {
+            where: { 'fullDocument._id': { $in: [this.dataFlowId] } }, //查询条件
+            fields: {
+              'fullDocument.id': true,
+              'fullDocument.name': true,
+              'fullDocument.status': true,
+              'fullDocument.executeMode': true,
+              'fullDocument.stopOnError': true,
+              'fullDocument.last_updated': true,
+              'fullDocument.createTime': true,
+              'fullDocument.children': true,
+              'fullDocument.stats': true,
+              'fullDocument.setting': true,
+              'fullDocument.cdcLastTimes': true,
+              'fullDocument.listtags': true,
+              'fullDocument.finishTime': true,
+              'fullDocument.startTime': true,
+              'fullDocument.errorEvents': true,
+              'fullDocument.milestones': true
+            }
+          }
+        }
+        ws.ready(() => {
+          ws.send(msg)
+        }, true)
+      }
+    },
+
+    wsWatch() {
+      ws.on('watch', data => {
+        const info = data.data.fullDocument
+        this.status = info.status
+
+        if (this.executeMode !== info.executeMode)
+          this.executeMode = info.executeMode
+
+        if (!this.statusBtMap[this.status].start) {
+          this.executeMode = 'normal'
+        }
+        // Object.assign(self.dataFlow, dat)
+        // self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
+      })
+
+      // if (timer) return
+      // timer = setInterval(() => {
+      //   self.updateDataFlow()
+      // }, 5000)
+    },
+
+    doSaveStartDataFlow(data) {
+      if (data) {
+        if (this.form.taskName) {
+          data.name = this.form.taskName
+        }
+
+        let start = () => {
+          data.status = 'scheduled'
+          data.executeMode = 'normal'
+          this.doSave(data, (err, rest) => {
+            if (err) {
+              if (err.response.msg === 'Error: Loading data source schema') {
+                this.$message.error(this.$t('message.loadingSchema'))
+              } else {
+                this.$message.error(err.response.msg)
+              }
+            } else {
+              this.$message.success(this.$t('message.taskStart'))
+              this.$router.push({
+                path: '/job',
+                query: {
+                  id: rest.id,
+                  isMoniting: true,
+                  mapping: this.mappingTemplate
+                }
+              })
+              this.$message.success(this.$t('message.taskStart'))
+              location.reload()
+            }
+          })
+        }
+        // if (data.id && this.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
+        // 	const h = this.$createElement;
+        // 	let arr = this.$t('message.startAggregation_message').split('XXX');
+        // 	this.$confirm(
+        // 		h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, data.name), ')' + arr[1]]),
+        // 		this.$t('dataFlow.importantReminder'),
+        // 		{
+        // 			type: 'warning',
+        // 			closeOnClickModal: false
+        // 		}
+        // 	).then(() => {
+        // 		//若任务内存在聚合处理器，启动前先重置
+        // 		dataFlowsApi.reset(data.id).then(() => {
+        // 			start();
+        // 		});
+        // 	});
+        // } else {
+        start()
+        // }
+      }
+      this.dialogFormVisible = false
+    },
+
     handleDelete() {
       const selectNodes = this.$store.getters['dataflow/getSelectedNodes']
 
@@ -908,11 +1073,12 @@ export default {
         this.jsPlumbIns.deleteEveryEndpoint()
       }
 
+      this.status = 'draft'
       this.removeAllNodes()
       this.setActiveNode(null)
       this.setDataflowId(null)
       this.setDataflowName({ newName: '', setStateDirty: false })
-      this.setDataflowSettings({})
+      this.setDataflowSettings(DEFAULT_SETTINGS)
       this.resetSelectedNodes()
     }
   }

@@ -179,9 +179,9 @@
           {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}</span
         >
       </ElTag>
-
       <ElButtonGroup class="flex" v-readonlybtn="'SYNC_job_operation'">
         <ElButton
+          @click="$emit('start')"
           :disabled="
             $disabledByPermission('SYNC_job_operation_all_data', creatUserId) ||
             statusBtMap[status].start

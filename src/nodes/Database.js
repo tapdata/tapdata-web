@@ -77,6 +77,16 @@ export class Database extends NodeType {
         'x-component': 'Select',
         'x-reactions': ['{{loadDropOptions}}']
       },
+      table_prefix: {
+        type: 'string',
+        default: '',
+        'x-display': 'hidden'
+      },
+      table_suffix: {
+        type: 'string',
+        default: '',
+        'x-display': 'hidden'
+      },
       syncObjects: {
         type: 'array',
         default: [
@@ -118,7 +128,9 @@ export class Database extends NodeType {
    */
   getExtraAttr() {
     return {
-      databaseType: this.attr.databaseType
+      databaseType: this.attr.databaseType,
+      inputLanes: [],
+      outputLanes: []
     }
   }
 }

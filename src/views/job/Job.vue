@@ -1183,7 +1183,7 @@ export default {
                 }
               })
               this.$message.success(this.$t('message.taskStart'))
-              location.reload()
+              // location.reload()
             }
           })
         }
@@ -1581,7 +1581,7 @@ export default {
                       : v.type
                 },
                 image: {
-                  xlinkHref: map[v.database_type].shapeImage
+                  xlinkHref: map[v.database_type || v.databaseType].shapeImage
                 }
               }
             }
