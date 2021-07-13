@@ -65,10 +65,9 @@ export const messageProcessConfig = {
        */
       validate: function (data) {
         data = data || this.getFormData()
-        let name = this.attr('label/text')
+        let name = data?.name
         if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
         if (!data.type) throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script_type')}`)
-        if (!data.script) throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script')}`)
         return true
       },
 

@@ -82,7 +82,6 @@
             </el-radio-group>
           </el-form-item>
         </el-form>
-        {{ createForm }}
         <span slot="footer" class="dialog-footer">
           <el-button
             @click="
