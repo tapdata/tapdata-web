@@ -22,18 +22,40 @@
         </li>
         <li class="item">
           全量迁移进度筛选：
-          <el-select clearable size="mini" v-model="searchParams.metaType" @input="metaTypeChange">
+          <el-select clearable size="mini" v-model="searchParams.metaType" @input="table.fetch(1)">
             <el-option v-for="opt in typeList" :key="opt.value" :label="opt.label" :value="opt.value"></el-option>
           </el-select>
         </li>
       </ul>
-      <el-table-column label="源表名" prop="sourceTableName" sortable="sourceTableName"> </el-table-column>
-      <el-table-column label="总数据量（行）" prop="sourceRowNum" sortable="sourceRowNum"> </el-table-column>
-      <el-table-column label="目标表名" prop="targetTableName" sortable="targetTableName"></el-table-column>
-      <el-table-column label="已迁移数据量" prop="targetRowNum" sortable="targetRowNum"> </el-table-column>
+      <el-table-column label="源表名" prop="sourceTableName" sortable="sourceTableName">
+        <template slot-scope="scope">
+          {{ scope.row.statsData.sourceTableName }}
+        </template>
+      </el-table-column>
+      <el-table-column label="总数据量（行）" prop="sourceRowNum" sortable="sourceRowNum">
+        <template slot-scope="scope">
+          {{ scope.row.statsData.sourceRowNum }}
+        </template>
+      </el-table-column>
+      <el-table-column label="目标表名" prop="targetTableName" sortable="targetTableName">
+        <template slot-scope="scope">
+          {{ scope.row.statsData.targetTableName }}
+        </template>
+      </el-table-column>
+      <el-table-column label="已迁移数据量" prop="targetRowNum" sortable="targetRowNum">
+        <template slot-scope="scope">
+          {{ scope.row.statsData.targetRowNum }}
+        </template>
+      </el-table-column>
       <el-table-column label="全量迁移进度" prop="status" sortable="status">
         <template slot-scope="scope">
-          {{ scope.row.status === 'done' ? '完成' : scope.row.status === 'running' ? '运行中' : '等待中' }}
+          {{
+            scope.row.statsData.status === 'done'
+              ? '完成'
+              : scope.row.statsData.status === 'running'
+              ? '运行中'
+              : '等待中'
+          }}
         </template>
       </el-table-column>
     </TablePage>
@@ -41,6 +63,8 @@
 </template>
 <script>
 import TablePage from '@/components/TablePage'
+import { toRegExp } from '@/utils/util'
+
 export default {
   name: 'TaskProgressInfo',
   components: {
@@ -50,15 +74,19 @@ export default {
     return {
       searchParams: {
         keyword: '',
-        metaType: ''
+        metaType: 'all'
       },
-      typeList: [{ label: '全部', value: 'all' }]
+      typeList: [
+        { label: '全部', value: 'all' },
+        { label: '运行中', value: 'running' },
+        { label: '等待中', value: 'done' }
+      ]
     }
   },
   computed: {
-    // table() {
-    //   return this.$refs.table
-    // }
+    table() {
+      return this.$refs.table
+    }
   },
   methods: {
     getData({ page }) {
@@ -71,16 +99,11 @@ export default {
         statsType: 'dataFlowDetailsStats'
       }
       if (keyword && keyword.trim()) {
-        let filterObj = keyword
-        where.or = [{ sourceConnectionName: filterObj }, { targetConnectionName: filterObj }]
+        let filterObj = { like: toRegExp(keyword) }
+        where.or = [{ 'statsData.sourceTableName': filterObj }, { 'statsData.targetTableName': filterObj }]
       }
-      let types = this.$route.meta.types
-      if (metaType) {
-        where.meta_type = metaType
-      } else if (types) {
-        where.meta_type = {
-          in: types
-        }
+      if (metaType !== 'all') {
+        where['statsData.meta_type'] = metaType
       }
 
       let filter = {
@@ -95,19 +118,15 @@ export default {
           filter: JSON.stringify(filter)
         })
       ]).then(([countRes, res]) => {
-        this.table.setCache({
-          keyword,
-          metaType
-        })
         return {
           total: countRes.data.count,
-          data: res.data.statsData
+          data: res.data
         }
       })
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'sourceConnectionName'} ${order === 'sourceConnectionName' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'sourceTableName'} ${order === 'sourceTableName' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     }
   }
