@@ -214,6 +214,10 @@ export default {
           }
           let version = spec?.version
           this.downloadUrl = await this.getDownloadUrl(version)
+          // dev环境特殊处理
+          if (location.href.includes('dev.')) {
+            this.downloadUrl = `http://resource.tapdata.net/package/feagent/dfs-v1.0.3-071201-test-001/`
+          }
           this.handleGetUrl(tmInfo)
         }
       })

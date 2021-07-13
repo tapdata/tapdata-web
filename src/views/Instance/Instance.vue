@@ -184,6 +184,20 @@
           </div>
         </div>
       </ElDialog>
+      <!--   升级失败   -->
+      <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
+        <div class="dialog-content text-center">
+          自动升级失败，请尝试手动升级。
+        </div>
+        <div class="dialog-btn flex justify-evenly mt-6">
+          <div class="text-center">
+            <ElButton type="primary" @click="cancelUpgradeFnc">取消升级</ElButton>
+          </div>
+          <div>
+            <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
+          </div>
+        </div>
+      </ElDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -224,6 +238,7 @@ export default {
       statusMap: INSTANCE_STATUS_MAP,
       VUE_APP_INSTANCE_TEST_BTN: process.env.VUE_APP_INSTANCE_TEST_BTN,
       upgradeDialog: false,
+      upgradeErrorDialog: false,
       selectedRow: {},
       agentStatus: 'stop',
       version: '',
@@ -452,23 +467,73 @@ export default {
       })
     },
     showUpgradeDialogFnc(row) {
-      // this.upgradeDialog = true
-      // this.selectedRow = row
+      this.upgradeDialog = true
+      this.selectedRow = row
+    },
+    showUpgradeErrorDialogFnc(row) {
+      this.upgradeErrorDialog = true
+      this.selectedRow = row
+    },
+    autoUpgradeFnc() {
+      this.closeDialog() // 关闭升级方式选择窗口
+      this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
+        // dev环境特殊处理
+        if (location.href.includes('dev.')) {
+          downloadUrl = `http://resource.tapdata.net/package/feagent/dfs-v1.0.3-071201-test-001/`
+        }
+        this.$axios
+          .post('tm/api/clusterStates/updataAgent', {
+            downloadUrl,
+            process_id: this.selectedRow?.tmInfo?.agentId
+          })
+          .then(() => {
+            this.$message.success('升级成功')
+          })
+      })
+    },
+    manualUpgradeFnc() {
+      let row = this.selectedRow
+      this.closeDialog() // 关闭升级方式选择窗口
       if (row.metric?.runningTaskNum) {
         this.$alert('检测到您有任务正在运行，请先停止所有任务再进行升级操作!')
       } else {
-        this.manualUpgradeFnc(row)
+        let routeUrl = this.$router.resolve({
+          name: 'UpgradeVersion',
+          query: {
+            agentId: row.id
+          }
+        })
+        window.open(routeUrl.href, '_blank')
       }
     },
-    autoUpgradeFnc() {},
-    manualUpgradeFnc(row) {
-      let routeUrl = this.$router.resolve({
-        name: 'UpgradeVersion',
-        query: {
-          agentId: row.id
-        }
-      })
-      window.open(routeUrl.href, '_blank')
+    closeDialog() {
+      this.upgradeDialog = false
+      this.upgradeErrorDialog = false
+    },
+    // 取消升级
+    cancelUpgradeFnc() {
+      this.closeDialog() // 关闭升级方式选择窗口
+    },
+    getTiptoolContent(row) {
+      let result
+      switch (row.updataStatus) {
+        case 'preparing':
+          result = 'Agent版本有更新，点击升级'
+          break
+        case 'downloading':
+          result = '自动升级中'
+          break
+        case 'upgrading':
+          result = '自动升级中'
+          break
+        case 'fail':
+          result = '自动升级失败，请手动升级'
+          break
+        default:
+          result = 'Agent版本有更新，点击升级'
+          break
+      }
+      return result
     },
     // agent详情
     handleDetails(data) {
@@ -510,9 +575,6 @@ export default {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
-  .pointer {
-    cursor: pointer;
-  }
   .btn-refresh {
     padding: 0;
     height: 32px;
