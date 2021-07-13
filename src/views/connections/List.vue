@@ -302,7 +302,8 @@ export default {
         'gridfs',
         'tcp_udp',
         'mq',
-        'hbase'
+        'hbase',
+        'kudu'
       ], //目前白名单,
       searchParams: {
         databaseType: '',

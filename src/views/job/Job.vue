@@ -807,7 +807,7 @@ export default {
             readCdcInterval: 500,
             readBatchSize: 1000
           })
-        } else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode'].includes(cell.type)) {
+        } else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode'].includes(cell.type)) {
           postData.mappingTemplate = 'custom'
 
           Object.assign(stage, {

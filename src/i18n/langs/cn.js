@@ -803,6 +803,7 @@ const cn = {
       },
       data_node: {
         hiveText: 'hive节点',
+        kuduText: 'KUDU 节点',
         hbaseText: 'HBase节点',
         hbase_check: 'HBase仅支持全量任务',
         kafkaText: 'kafka节点',
@@ -1638,6 +1639,7 @@ const cn = {
       databaseType: '数据库类型',
       connectionType: '连接类型',
       host: '数据库地址',
+      kuduhost: 'IP地址:端口，支持多个,用","分割',
       agentAddr: '代理地址',
       port: '端口',
       databaseName: '数据库名称',

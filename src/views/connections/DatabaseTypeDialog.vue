@@ -53,7 +53,8 @@ export default {
         'dameng',
         // 'hive',
         'tcp_udp',
-        'hbase'
+        'hbase',
+        'kudu'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
@@ -72,6 +73,7 @@ export default {
     this.comingAllowDatabase = comingAllowDataType.filter(type => this.database.includes(type)) || []
     this.database = allowDataType.filter(type => this.database.includes(type)) || []
     this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
+    this.database.push('kudu')
   },
   methods: {
     getImgByType,

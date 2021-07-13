@@ -799,6 +799,7 @@ const tc = {
       },
       data_node: {
         hiveText: 'hive節點',
+        kuduText: 'KUDU節點',
         hbaseText: 'HBase節點',
         hbase_check: 'HBase僅支持全量任務',
         kafkaText: 'kafka節點',
@@ -1632,6 +1633,7 @@ const tc = {
       databaseType: '數據庫類型',
       connectionType: '連接類型',
       host: '數據庫地址',
+      kuduhost: 'IP地址:端口，支持多個,用","分割',
       agentAddr: '代理地址',
       port: '端口',
       databaseName: '數據庫名稱',
