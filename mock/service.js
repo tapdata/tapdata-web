@@ -62,7 +62,10 @@ const agent = {
   tmInfo: {
     agentId: '@id',
     token: '@guid',
-    downloadUrl: 'http://resource.tapdata.net/package/feagent/v1.0.2/'
+    downloadUrl: 'http://resource.tapdata.net/package/feagent/v1.0.2/',
+    'updataStatus|1': ['preparing', 'downloading', 'upgrading', 'done', 'fail'],
+    updateMsg: '',
+    updateTime: ''
   }
 }
 module.exports = Object.assign({}, dataflow, connection, {
