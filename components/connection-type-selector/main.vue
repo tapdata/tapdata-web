@@ -4,26 +4,14 @@
     <ul class="item clearfix">
       <li v-for="item in types" :key="item" @click="$emit('select', item)">
         <div class="img-box">
-          <img :src="getImgByType(item)" />
+          <img :src="$util.getConnectionTypeImg(item)" />
         </div>
         <div class="content">{{ typeMap[item] }}</div>
       </li>
       <li v-for="item in comingTypes" :key="item" class="item--disabled">
         <div class="img-box position-relative">
-          <img :src="getImgByType(item)" />
-          <div
-            class="
-              img-box__mask
-              flex
-              justify-center
-              align-center
-              position-absolute
-              top-0
-              bottom-0
-              start-0
-              end-0
-            "
-          >
+          <img :src="$util.getConnectionTypeImg(item)" />
+          <div class="img-box__mask flex justify-center align-center position-absolute top-0 bottom-0 start-0 end-0">
             <span class="mask-text">即将上线</span>
           </div>
         </div>
@@ -34,7 +22,7 @@
     <ul class="item clearfix">
       <li v-for="item in otherTypes" :key="item" @click="$emit('select', item)">
         <div class="img-box">
-          <img :src="getImgByType(item)" />
+          <img :src="$util.getConnectionTypeImg(item)" />
         </div>
         <div class="content">{{ typeMap[item] }}</div>
       </li>
@@ -43,7 +31,6 @@
 </template>
 
 <script>
-import { TYPEMAP } from '../../const.js'
 export default {
   name: 'ConnectionTypeSelector',
   props: {
@@ -68,15 +55,7 @@ export default {
   },
   data() {
     return {
-      typeMap: TYPEMAP
-    }
-  },
-  methods: {
-    getImgByType(type) {
-      if (!type) {
-        type = 'default'
-      }
-      return require(`../../assets/images/connection-type/${type.toLowerCase()}.png`)
+      typeMap: this.$const.TYPEMAP
     }
   }
 }
