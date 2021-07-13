@@ -1793,6 +1793,7 @@ const tc = {
         kafkaBufferMemory: '緩存消息字節數',
         kafkaCompressionType: '消息壓縮類型',
         kafkaPartitionKey: '分區鍵分割名',
+        kafkaPartitionKeyTip: '多個字段名請用逗號隔開',
         kafkaIgnorePushError: '忽略推理消息異常',
         pushErrorTip: '如果開啟則忽略該次推送的消息（存在消息丟失），否則停止推送消息',
         kafkaAcks0: '不確認',
