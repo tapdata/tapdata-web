@@ -246,12 +246,12 @@ export default {
               disabled: this.disabled,
               children: []
             }
-            if (obj.type === 'Date') {
+            obj.type = obj.type.toLowerCase()
+            if (obj.type === 'date') {
               obj.type = 'string'
             } else if (obj.type === 'integer') {
               obj.type = 'int32'
             }
-            obj.type = obj.type.toLowerCase()
             return obj
           })
         }
