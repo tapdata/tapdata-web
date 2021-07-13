@@ -299,7 +299,44 @@ export default {
       if (dType === 'int32') {
         dType = 'integer'
       }
-      return require(`@/assets/images/types/${dType}.png`)
+      let pngList = [
+        'array',
+        'bigdecimal',
+        'boolean',
+        'byte',
+        'bytes',
+        'date',
+        'datetime',
+        'Default',
+        'double',
+        'enum',
+        'file',
+        'fixed',
+        'float',
+        'int',
+        'integer',
+        'login',
+        'long',
+        'map',
+        'null',
+        'obj',
+        'objects',
+        'PK',
+        'sfixed',
+        'short',
+        'sint',
+        'string',
+        'time',
+        'uint',
+        'Unrecognized',
+        'unsupported'
+      ]
+      if (pngList.includes(dType)) {
+        return require(`@/assets/images/types/${dType}.png`)
+      } else {
+        return require(`@/assets/images/types/Default.png`)
+      }
+      // return `../../../assets/images/types/${dType}.png`
     },
     // 获取选中
     getChecked() {
