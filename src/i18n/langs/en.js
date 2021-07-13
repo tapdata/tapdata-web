@@ -602,6 +602,7 @@ const en = {
     run_custom_sql: 'Repeat custom SQL',
     stop_on_error: 'Stop when error',
     need_to_create_Index: 'Auto-create index',
+    noPrimaryKey: 'Supported no primary key',
     is_schedule: 'Regular job schedul',
     cron_expression: 'Scheduling cron expression',
     data_quality_tag: 'Add data quality tag',

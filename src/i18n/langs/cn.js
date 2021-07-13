@@ -597,6 +597,7 @@ const cn = {
     run_custom_sql: '重复自定义SQL',
     stop_on_error: '遇到错误停止',
     need_to_create_Index: '自动创建索引',
+    noPrimaryKey: '支持无主键同步',
     is_schedule: '定期调度任务',
     cron_expression: '调度cron表达式',
     data_quality_tag: '添加数据质量标签',

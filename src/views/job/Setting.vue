@@ -57,6 +57,15 @@
           <span class="icon iconfont icon-tishi1" slot="reference"></span>
         </el-popover>
       </el-form-item>
+
+      <el-form-item :label="$t('dataFlow.noPrimaryKey')">
+        <!-- 自动创建目标索引 -->
+        <el-switch
+          v-model="formData.noPrimaryKey"
+          :active-text="formData.noPrimaryKey ? $t('dataFlow.yes') : $t('dataFlow.no')"
+        ></el-switch>
+      </el-form-item>
+
       <el-form-item :label="$t('dataFlow.cdcDataProcess')" v-show="formData.sync_type !== 'initial_sync'">
         <el-select v-model="formData.isSerialMode" size="mini" placeholder="请选择" class="dataWrite-list">
           <el-option :label="$t('dataFlow.batch')" :value="false"></el-option>
