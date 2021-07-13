@@ -43,7 +43,7 @@
 							:loading="schemasLoading"
 							default-first-option
 							clearable
-							:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
+							:placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
 							size="mini"
 						>
 							<el-option
