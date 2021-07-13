@@ -15,10 +15,7 @@
         ref="form"
         action="javascript:void(0);"
       >
-        <el-form-item
-          :label="$t('editor.cell.link.form.label.label')"
-          v-if="!isTargetTypeTcpFalg"
-        >
+        <el-form-item :label="$t('editor.cell.link.form.label.label')" v-if="!isTargetTypeTcpFalg">
           <el-input
             v-model="model.label"
             :placeholder="$t('editor.cell.link.form.label.placeholder')"
@@ -178,7 +175,7 @@
       <!-- tcp报文配置 -->
       <!-- <div class="transfer" v-else>
         <Message :fieldsData="fieldsData"></Message> -->
-        <!-- <el-transfer
+      <!-- <el-transfer
           v-model="model.tcp.includeField"
           :data="fieldsData"
           :titles="[
@@ -535,16 +532,16 @@ export default {
     getData() {
       let data = JSON.parse(JSON.stringify(this.model))
       console.log('link-data', data)
-      if (this.cell) {
-        // tcp报文数据传输到目标节点
-        let targetCell = this.cell.getTargetCell()
-        let targetData = targetCell && targetCell.getFormData()
-        if (targetData.isShowMessage) {
-          delete data.tcp
-        } else {
-          targetData.tcp = data.tcp
-        }
-      }
+      // if (this.cell) {
+      //   // tcp报文数据传输到目标节点
+      //   let targetCell = this.cell.getTargetCell()
+      //   let targetData = targetCell && targetCell.getFormData()
+      //   if (targetData.isShowMessage) {
+      //     delete data.tcp
+      //   } else {
+      //     targetData.tcp = data.tcp
+      //   }
+      // }
 
       /* if( data.joinTable.joinKeys.length > 0 ){
 					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);
@@ -565,6 +562,9 @@ export default {
     showMapping() {
       this.targetCell = this.cell.getTargetCell()
       this.targetCellType = this.targetCell.get('type')
+      if (this.targetCell) {
+        this.targetCellType = this.targetCell.get('type')
+      }
       this.writeModels.splice(0, this.writeModels.length)
       if (this.supportEmbedArray()) {
         this.WRITE_MODELS.forEach(model => this.writeModels.push(model))
@@ -644,9 +644,7 @@ export default {
           return
         } // 上移-改变的数组（项和下标同时改变）
 
-        let changeItem = JSON.parse(
-          JSON.stringify(_this.model.tcp.includeField[index - 1])
-        )
+        let changeItem = JSON.parse(JSON.stringify(_this.model.tcp.includeField[index - 1]))
         _this.model.tcp.includeField.splice(index - 1, 1)
         _this.model.tcp.includeField.splice(index, 0, changeItem)
       } else {
@@ -670,9 +668,7 @@ export default {
           return
         }
 
-        let changeItem = JSON.parse(
-          JSON.stringify(_this.model.tcp.includeField[index])
-        )
+        let changeItem = JSON.parse(JSON.stringify(_this.model.tcp.includeField[index]))
         _this.model.tcp.includeField.splice(index, 1)
         _this.model.tcp.includeField.splice(index + 1, 0, changeItem)
       } else {

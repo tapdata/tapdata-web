@@ -216,7 +216,7 @@ export default {
         let sourceSchema = cell.getOutputSchema() || null,
           sourceField = sourceSchema ? sourceSchema.fields : []
         // targetSchema = targetCell ? targetCell.getSchema() : null,
-        if (sourceField.length) {
+        if (sourceField) {
           _this.fieldsData = sourceSchema.fields.map(field => {
             let obj = {
               pid: 0,
