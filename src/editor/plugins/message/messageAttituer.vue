@@ -652,14 +652,14 @@ export default {
               obj.nestedList.push(
                 Object.assign({}, this.getSchema(el), {
                   number: nestedIndex,
-                  name: el.key
+                  name: el.type
                 })
               )
             } else {
               obj.nestedList.push({
                 label: el.label,
                 key: el.key,
-                name: el.key,
+                name: el.type,
                 number: nestedIndex,
                 type: el.type
               })
