@@ -27,6 +27,12 @@
             </li>
           </ul>
         </div>
+        <div class="instance-operation-right">
+          <ElButton type="primary" @click="createAgent">
+            <i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
+            <span>创建 Agent</span>
+          </ElButton>
+        </div>
         <div v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'" class="instance-operation-right">
           <ElButton type="primary" @click="createAgent">
             <i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
@@ -165,6 +171,9 @@ import VIcon from '../../components/VIcon'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import upgradeSvg from '@/assets/icons/svg-colorful/upgrade.svg'
 import upgradeImg from '../../assets/image/upgrade.png'
+// import upgradeLoadingSvg from '../../../public/images/agent/upgrade-loading.svg'
+// import upgradeErrorSvg from '../../../public/images/agent/upgrade-error.svg'
+// import upgradeImg from '../../assets/image/upgrade.png'
 
 export default {
   components: {
