@@ -26,6 +26,7 @@
           <span class="icon iconfont icon-tishi1 icontip" slot="reference"></span>
         </el-popover>
       </el-form-item>
+      <!-- 启用引擎过滤 -->
       <el-form-item :label="$t('dataFlow.cdcEngineFilter')">
         <el-switch
           v-model="formData.cdcEngineFilter"
@@ -59,13 +60,13 @@
       </el-form-item>
 
       <el-form-item :label="$t('dataFlow.noPrimaryKey')">
-        <!-- 自动创建目标索引 -->
+        <!-- 支持无主键同步 -->
         <el-switch
           v-model="formData.noPrimaryKey"
           :active-text="formData.noPrimaryKey ? $t('dataFlow.yes') : $t('dataFlow.no')"
         ></el-switch>
       </el-form-item>
-
+      <!-- 增量数据处理机制 -->
       <el-form-item :label="$t('dataFlow.cdcDataProcess')" v-show="formData.sync_type !== 'initial_sync'">
         <el-select v-model="formData.isSerialMode" size="mini" placeholder="请选择" class="dataWrite-list">
           <el-option :label="$t('dataFlow.batch')" :value="false"></el-option>
@@ -77,6 +78,7 @@
           <span class="icon iconfont icon-tishi1" slot="reference"></span>
         </el-popover>
       </el-form-item>
+      <!-- 增量批次读取条数 -->
       <el-form-item :label="$t('dataFlow.cdcFetchSize')" v-show="formData.sync_type !== 'initial_sync'">
         <el-input-number v-model="formData.cdcFetchSize" :min="1" :max="1000" size="mini"></el-input-number>
         <el-popover popper-class="setting-popper" placement="top-start" trigger="hover">
@@ -86,6 +88,7 @@
           <span class="icon iconfont icon-tishi1" slot="reference"></span>
         </el-popover>
       </el-form-item>
+      <!-- 去重写入机制 -->
       <div v-show="showMore">
         <el-form-item :label="$t('dataFlow.setting.distinctWriteType')">
           <el-select
@@ -107,12 +110,14 @@
             <span class="icon iconfont icon-tishi1" slot="reference"></span>
           </el-popover>
         </el-form-item>
+        <!-- 发送邮件 -->
         <el-form-item :label="$t('dataFlow.send_email')">
           <el-checkbox v-model="formData.emailWaring.paused">{{ $t('dataFlow.stopped') }}</el-checkbox>
           <el-checkbox v-model="formData.emailWaring.error">{{ $t('dataFlow.error') }}</el-checkbox>
           <el-checkbox v-model="formData.emailWaring.edited">{{ $t('dataFlow.edited') }}</el-checkbox>
           <el-checkbox v-model="formData.emailWaring.started">{{ $t('dataFlow.started') }}</el-checkbox>
         </el-form-item>
+        <!-- 共享增量读取的模式 -->
         <el-form-item :label="$t('dataFlow.shareCdcMode')" v-show="formData.sync_type !== 'initial_sync'">
           <el-select
             v-model="formData.readShareLogMode"
@@ -384,6 +389,9 @@ export default {
       if (map) {
         this.formData.syncPoints = Object.values(map)
       }
+      if (window.App.$route.query.mapping === 'cluster-clone') {
+        this.formData.noPrimaryKey = true
+      }
 
       this.getAllAggregate()
     },
@@ -434,7 +442,6 @@ export default {
     },
     getAllConnectionIds() {
       //获取所有节点的collectionId ;
-      debugger
       let dataCells = this.editor.getAllCells()
       let targetCell = this.editor.getSinks()
       let targetCellIds = []
