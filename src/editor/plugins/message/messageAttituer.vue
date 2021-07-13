@@ -244,7 +244,7 @@ export default {
         console.log('genTree', genTree)
         // this.toData = result
         // TODO 删除右侧已存在的key
-        this.toData = genTree
+        this.toData = genTree || []
         let getRightFields = this.getRightFields(this.toData)
         let getRightFieldsKeys = getRightFields.map(item => item.key)
         console.log('getRightFields', getRightFields, getRightFieldsKeys)
