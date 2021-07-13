@@ -119,7 +119,7 @@
 
         <el-form-item
           :label="$t('editor.cell.link.form.joinKeys.label')"
-          required
+          :required="model.joinTableRequired"
           v-if="!['append'].includes(model.joinTable.joinType)"
         >
           <table class="e-table">
@@ -264,7 +264,8 @@ export default {
         tcp: {
           protocolType: '',
           includeField: []
-        }
+        },
+        joinTableRequired: true,
       },
       fieldsData: [],
       chooseField: '',
@@ -399,6 +400,8 @@ export default {
       // this.model.joinTable.joinKeys = [];
 
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
+      let settingData = vueAdapter.editor.getData().settingData
+      this.model.joinTableRequired = !(settingData.noPrimaryKey && ['upsert'].includes(this.model.joinTable.joinType))
 
       if (!this.configJoinTable) {
         let targetCell = cell.getTargetCell()
