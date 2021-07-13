@@ -38,7 +38,7 @@
           node_key="key"
         >
           <template #content-right="{ node, data }">
-            <img :src="getImgByType(data.type) || getImgByType('Default')" />
+            <img :src="getImgByType(data.type) || getImgByType('Default')" :onerror="errorImage" />
             <span class="field-name" :title="data.name">{{ data.name }}</span>
 
             <div class="transfer-btn">
@@ -59,11 +59,11 @@
         :close-on-click-modal="false"
         :visible.sync="createDialogVisible"
       >
-        <el-form ref="form" :model="createForm" class="dataRule-form" @submit.native.prevent>
-          <el-form-item label="名称" required>
+        <el-form ref="createForm" :model="createForm" :rules="rules" class="dataRule-form" @submit.native.prevent>
+          <el-form-item label="名称" required prop="name">
             <el-input size="mini" v-model="createForm.name"></el-input>
           </el-form-item>
-          <el-form-item label="类型" required>
+          <el-form-item label="类型" required prop="type">
             <el-input v-if="createForm.message" size="mini" v-model="createForm.type"></el-input>
             <el-select v-else v-model="createForm.type" size="mini">
               <el-option
@@ -106,6 +106,20 @@ export default {
   name: 'message',
   components: { treeTransfer },
   data() {
+    const validateName = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('名称不能为空'))
+      } else {
+        callback()
+      }
+    }
+    const validateType = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('类型不能为空'))
+      } else {
+        callback()
+      }
+    }
     return {
       // mode: "transfer", // transfer addressList
       $btnRight: null,
@@ -134,12 +148,17 @@ export default {
       editData: null, // 编辑数据
       createForm: {
         name: '',
+        type: '',
         label: 'required'
+      },
+      rules: {
+        name: [{ validator: validateName, trigger: 'blur' }],
+        type: [{ validator: validateType, trigger: 'blur' }]
       },
       model: {
         type: 'protobuf_convert_processor',
         name: '',
-        Unit: {
+        pbProcessorConfig: {
           mapping: {},
           schema: {}
         }
@@ -161,7 +180,8 @@ export default {
         { label: 'string', value: 'string' },
         { label: 'bytes', value: 'bytes' },
         { label: 'enum', value: 'enum' }
-      ]
+      ],
+      errorImage: this.getImgByType('Default')
     }
   },
   mounted() {
@@ -184,7 +204,7 @@ export default {
     toData: {
       deep: true,
       handler() {
-        this.model.Unit = this.formatToData()
+        this.model.pbProcessorConfig = this.formatToData()
       }
     }
   },
@@ -238,10 +258,10 @@ export default {
         console.log('_this.fieldsData', _this.fieldsData)
       }
       // toData
-      if (this.model.Unit?.schema) {
-        let result = this.transToData({ ...this.model.Unit?.schema })?.children ?? []
+      if (this.model.pbProcessorConfig?.schema) {
+        let result = this.transToData({ ...this.model.pbProcessorConfig?.schema })?.children ?? []
         console.log('setData result', result)
-        let genTree = this.genTree({ ...this.model.Unit?.schema })
+        let genTree = this.genTree({ ...this.model.pbProcessorConfig?.schema })
         console.log('genTree', genTree)
         // this.toData = result
         // TODO 删除右侧已存在的key
@@ -463,41 +483,46 @@ export default {
     },
     // 创建消息体
     createMessage() {
-      let _this = this
-      this.createDialogVisible = false
-      // 新增
-      if (this.createForm.openType === 'add') {
-        console.log('新增message')
-        let rightTreeObj = this.rightTreeObj
-        let node = rightTreeObj?.node
-        let checkedKeys = rightTreeObj?.checkedKeys
-        this.createForm.key = this.createForm.name
-        if (node?.message && !!checkedKeys.length && checkedKeys?.includes(node.key)) {
-          if (!node.children) {
-            this.$set(node, 'children', [])
-          }
-          this.createForm.pid = node.key || 0
-          node.children.push({ ...this.createForm })
-        } else {
-          this.toData.push(this.createForm)
+      this.$refs['createForm'].validate(valid => {
+        if (!valid) {
+          return
         }
-      } else {
-        // 编辑
-        console.log('编辑message')
-        const parent = this.editData.parent
-        const children = parent.data.children || parent.data
-
-        if (children.length) {
-          children.forEach(item => {
-            if (item.key === _this.createForm.key) {
-              item.name = _this.createForm.name
-              item.label = _this.createForm.label
+        let _this = this
+        this.createDialogVisible = false
+        // 新增
+        if (this.createForm.openType === 'add') {
+          console.log('新增message')
+          let rightTreeObj = this.rightTreeObj
+          let node = rightTreeObj?.node
+          let checkedKeys = rightTreeObj?.checkedKeys
+          this.createForm.key = this.createForm.name
+          if (node?.message && !!checkedKeys.length && checkedKeys?.includes(node.key)) {
+            if (!node.children) {
+              this.$set(node, 'children', [])
             }
-          })
-        }
-      }
+            this.createForm.pid = node.key || 0
+            node.children.push({ ...this.createForm })
+          } else {
+            this.toData.push(this.createForm)
+          }
+        } else {
+          // 编辑
+          console.log('编辑message')
+          const parent = this.editData.parent
+          const children = parent.data.children || parent.data
 
-      this.$refs.form.resetFields()
+          if (children.length) {
+            children.forEach(item => {
+              if (item.key === _this.createForm.key) {
+                item.name = _this.createForm.name
+                item.label = _this.createForm.label
+              }
+            })
+          }
+        }
+
+        this.$refs.form.resetFields()
+      })
     },
     // 删除消息体数据
     handleDel(node, data) {
