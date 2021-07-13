@@ -1837,6 +1837,7 @@ const en = {
         kafkaBufferMemory: 'Buffer message bytes',
         kafkaCompressionType: 'Message compression type',
         kafkaPartitionKey: 'Partition key field name',
+        kafkaPartitionKeyTip: 'Please separate multiple field names with commas',
         kafkaIgnorePushError: 'Ignore push message exception',
         pushErrorTip:
           'If it is enabled, ignore the message pushed this time (there is a message loss), otherwise stop pushing the message',

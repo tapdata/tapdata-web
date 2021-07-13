@@ -389,11 +389,9 @@ export default {
       if (map) {
         this.formData.syncPoints = Object.values(map)
       }
-      // if (window.App.$route.query.mapping === 'custom') {
-      //   this.formData.noPrimaryKey = true
-      // } else {
-
-      // }
+      if (window.App.$route.query.mapping === 'cluster-clone') {
+        this.formData.noPrimaryKey = true
+      }
 
       this.getAllAggregate()
     },
