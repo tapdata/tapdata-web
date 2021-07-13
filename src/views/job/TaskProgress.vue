@@ -403,12 +403,12 @@ export default {
     }
   },
   watch: {
-    // dataFlow: {
-    //   deep: true,
-    //   handler(data) {
-    //     this.handleData(data)
-    //   }
-    // }
+    dataFlow: {
+      deep: true,
+      handler(data) {
+        this.handleData(data)
+      }
+    }
   },
   mounted() {
     // this.init()
@@ -455,15 +455,7 @@ export default {
     },
     // 跳转详情
     handleInfo() {
-      // console.log(this.dataFlow, this.$router)
-      // let route = this.$router.resolve({
-      //   name: 'taskProgressInfo',
-      //   query: {
-      //     id: this.dataFlow.id
-      //   }
-      // })
       window.open('/#/taskProgressInfo?id=' + this.dataFlow.id, '_blank')
-      // window.open(route.href, '_blank')
     }
   }
 }
