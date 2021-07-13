@@ -195,10 +195,10 @@ import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
 import { INSTANCE_STATUS_MAP } from '../../const'
-import upgradeSvg from '@/assets/icons/svg-colorful/upgrade.svg'
+import upgradeSvg from '../../../public/images/agent/upgrade.svg'
 import upgradeImg from '../../assets/image/upgrade.png'
-// import upgradeLoadingSvg from '../../../public/images/agent/upgrade-loading.svg'
-// import upgradeErrorSvg from '../../../public/images/agent/upgrade-error.svg'
+import upgradeLoadingSvg from '../../../public/images/agent/upgrade-loading.svg'
+import upgradeErrorSvg from '../../../public/images/agent/upgrade-error.svg'
 // import upgradeImg from '../../assets/image/upgrade.png'
 
 export default {
@@ -229,7 +229,9 @@ export default {
       version: '',
       upgradeList: [], // 升级列表
       upgradeSvg,
-      upgradeImg
+      upgradeImg,
+      upgradeLoadingSvg,
+      upgradeErrorSvg
     }
   },
   computed: {
