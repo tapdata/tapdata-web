@@ -27,6 +27,12 @@
             </li>
           </ul>
         </div>
+        <div class="instance-operation-right">
+          <ElButton type="primary" @click="createAgent">
+            <i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
+            <span>创建 Agent</span>
+          </ElButton>
+        </div>
         <div v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'" class="instance-operation-right">
           <ElButton type="primary" @click="createAgent">
             <i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
@@ -169,23 +175,9 @@
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center">
             <ElButton type="primary" :disabled="agentStatus !== 'running'" @click="autoUpgradeFnc">自动升级</ElButton>
-            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">
+            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
               (Agent离线时无法使用自动升级)
             </div>
-          </div>
-          <div>
-            <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
-          </div>
-        </div>
-      </ElDialog>
-      <!--   升级失败   -->
-      <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
-        <div class="dialog-content text-center">
-          自动升级失败，请尝试手动升级。
-        </div>
-        <div class="dialog-btn flex justify-evenly mt-6">
-          <div class="text-center">
-            <ElButton type="primary" @click="cancelUpgradeFnc">取消升级</ElButton>
           </div>
           <div>
             <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
@@ -203,9 +195,10 @@ import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
 import { INSTANCE_STATUS_MAP } from '../../const'
-import upgradeSvg from '../../../public/images/agent/upgrade.svg'
-import upgradeLoadingSvg from '../../../public/images/agent/upgrade-loading.svg'
-import upgradeErrorSvg from '../../../public/images/agent/upgrade-error.svg'
+import upgradeSvg from '@/assets/icons/svg-colorful/upgrade.svg'
+import upgradeImg from '../../assets/image/upgrade.png'
+// import upgradeLoadingSvg from '../../../public/images/agent/upgrade-loading.svg'
+// import upgradeErrorSvg from '../../../public/images/agent/upgrade-error.svg'
 // import upgradeImg from '../../assets/image/upgrade.png'
 
 export default {
@@ -231,16 +224,12 @@ export default {
       statusMap: INSTANCE_STATUS_MAP,
       VUE_APP_INSTANCE_TEST_BTN: process.env.VUE_APP_INSTANCE_TEST_BTN,
       upgradeDialog: false,
-      upgradeErrorDialog: false,
       selectedRow: {},
       agentStatus: 'stop',
       version: '',
       upgradeList: [], // 升级列表
       upgradeSvg,
-      upgradeLoadingSvg,
-      upgradeErrorSvg,
-      timer: null
-      // upgradeImg
+      upgradeImg
     }
   },
   computed: {
@@ -260,16 +249,6 @@ export default {
         }
       }
       return options
-    },
-    // 存在进行中的状态
-    haveStateLoadingFlag() {
-      let flag = false
-      this.list.forEach(el => {
-        if (['preparing', 'downloading', 'upgrading'].includes(el.tmInfo.updataStatus)) {
-          flag = true
-        }
-      })
-      return flag
     }
   },
   watch: {
@@ -331,11 +310,8 @@ export default {
             let list = data.items || []
             this.list = list.map(item => {
               item.status = item.status === 'Running' ? 'Running' : 'Offline'
+              item.updataStatus = ''
               item.deployDisable = item.tmInfo.pingTime || false
-              // item.updataStatus = ''
-              if (!item.tmInfo) {
-                item.tmInfo = {}
-              }
               return item
             })
             // 不存在版本号
@@ -410,9 +386,7 @@ export default {
       }).then(res => {
         if (res) {
           this.$axios
-            .patch('api/tcm/agent/stop', {
-              agentId: row.id
-            })
+            .patch('api/tcm/agent/stop/' + row.id)
             .then(() => {
               this.$message.success('Agent 已停止')
               this.fetch()
@@ -431,9 +405,7 @@ export default {
       }).then(res => {
         if (res) {
           this.$axios
-            .patch('api/tcm/agent/delete', {
-              agentId: row.id
-            })
+            .patch('api/tcm/agent/delete/' + row.id)
             .then(() => {
               this.$message.success('Agent 删除成功')
               this.fetch()
@@ -478,79 +450,32 @@ export default {
       })
     },
     showUpgradeDialogFnc(row) {
-      this.upgradeDialog = true
-      this.selectedRow = row
-    },
-    showUpgradeErrorDialogFnc(row) {
-      this.upgradeErrorDialog = true
-      this.selectedRow = row
-    },
-    autoUpgradeFnc() {
-      this.closeDialog() // 关闭升级方式选择窗口
-      this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
-        let dUrl = 'http://resource.tapdata.net/package/feagent/dfs-v1.0.3-071201-test-001/' || downloadUrl
-        this.$axios
-          .post('tm/api/clusterStates/updataAgent', {
-            downloadUrl: dUrl,
-            process_id: this.selectedRow?.tmInfo?.agentId
-          })
-          .then(() => {
-            this.$message.success('开始升级')
-            this.clearTimer()
-            this.timer = setInterval(() => {
-              if (this.haveStateLoadingFlag) {
-                this.fetch()
-              }
-            }, 5000)
-          })
-      })
-    },
-    clearTimer() {
-      this.timer && clearInterval(this.timer)
-    },
-    manualUpgradeFnc() {
-      let row = this.selectedRow
-      this.closeDialog() // 关闭升级方式选择窗口
+      // this.upgradeDialog = true
+      // this.selectedRow = row
       if (row.metric?.runningTaskNum) {
         this.$alert('检测到您有任务正在运行，请先停止所有任务再进行升级操作!')
       } else {
-        let routeUrl = this.$router.resolve({
-          name: 'UpgradeVersion',
-          query: {
-            agentId: row.id
-          }
-        })
-        window.open(routeUrl.href, '_blank')
+        this.manualUpgradeFnc(row)
       }
     },
-    closeDialog() {
-      this.upgradeDialog = false
-      this.upgradeErrorDialog = false
+    autoUpgradeFnc() {},
+    manualUpgradeFnc(row) {
+      let routeUrl = this.$router.resolve({
+        name: 'UpgradeVersion',
+        query: {
+          agentId: row.id
+        }
+      })
+      window.open(routeUrl.href, '_blank')
     },
-    // 取消升级
-    cancelUpgradeFnc() {
-      this.closeDialog() // 关闭升级方式选择窗口
-    },
-    getTiptoolContent(row) {
-      let result
-      switch (row.tmInfo.updataStatus) {
-        case 'preparing':
-          result = 'Agent版本有更新，点击升级'
-          break
-        case 'downloading':
-          result = '自动升级中'
-          break
-        case 'upgrading':
-          result = '自动升级中'
-          break
-        case 'fail':
-          result = '自动升级失败，请手动升级'
-          break
-        default:
-          result = 'Agent版本有更新，点击升级'
-          break
-      }
-      return result
+    // agent详情
+    handleDetails(data) {
+      this.$router.push({
+        name: 'InstanceDetails',
+        query: {
+          id: data.id
+        }
+      })
     },
     // 创建Agent
     createAgent() {
@@ -570,14 +495,6 @@ export default {
             })
         }
       })
-    },
-    handleDetails(data) {
-      this.$router.push({
-        name: 'InstanceDetails',
-        query: {
-          id: data.id
-        }
-      })
     }
   }
 }
@@ -591,6 +508,9 @@ export default {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
+  .pointer {
+    cursor: pointer;
+  }
   .btn-refresh {
     padding: 0;
     height: 32px;

@@ -243,8 +243,8 @@ export default {
       let agentList = this.agentList
       let filter = {
         where: {},
-        size: 1,
-        page: 0,
+        // size: 1,
+        // page: 0,
         sort: ['createAt desc']
       }
       const loading = this.$loading({
