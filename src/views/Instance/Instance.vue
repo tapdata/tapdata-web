@@ -84,7 +84,20 @@
           <template slot-scope="scope">
             <div class="flex align-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
-              <template v-if="scope.row.spec && version && scope.row.spec.version !== version">
+              <img
+                class="upgrade-img cursor-pointer"
+                :src="upgradeSvg"
+                alt=""
+                @click="showUpgradeDialogFnc(scope.row)"
+              />
+              <img class="upgrade-img cursor-not-allowed" :src="upgradeLoadingSvg" alt="" />
+              <img
+                class="upgrade-img cursor-pointer"
+                :src="upgradeErrorSvg"
+                alt=""
+                @click="showUpgradeErrorDialogFnc(scope.row)"
+              />
+              <template v-if="false && scope.row.spec && version && scope.row.spec.version !== version">
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
                   <img
                     v-if="!scope.row.tmInfo.updataStatus || scope.row.tmInfo.updataStatus === 'done'"
