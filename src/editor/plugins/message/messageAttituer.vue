@@ -60,10 +60,10 @@
         :visible.sync="createDialogVisible"
       >
         <el-form ref="form" :model="createForm" class="dataRule-form" @submit.native.prevent>
-          <el-form-item label="名称">
+          <el-form-item label="名称" required>
             <el-input size="mini" v-model="createForm.name"></el-input>
           </el-form-item>
-          <el-form-item label="类型">
+          <el-form-item label="类型" required>
             <el-input v-if="createForm.message" size="mini" v-model="createForm.type"></el-input>
             <el-select v-else v-model="createForm.type" size="mini">
               <el-option
@@ -437,7 +437,7 @@ export default {
         pid: 0,
         message: true,
         label: 'required',
-        type: 'Login',
+        type: '',
         openType: 'add'
       }
     },
@@ -555,7 +555,7 @@ export default {
           })
         }
       } else {
-        result[tree.mapping.join('.')] = tree.key
+        result[tree.mapping.join('#')] = tree.key
       }
       return result
     },
