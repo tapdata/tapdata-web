@@ -558,7 +558,7 @@ export default {
           }
         }
 
-        this.$refs.form.resetFields()
+        this.$refs['createForm'].resetFields()
       })
     },
     // 删除消息体数据
@@ -685,7 +685,7 @@ export default {
     },
     genTree(schema) {
       schema.nestedList?.forEach(item => {
-        let target = schema.propertyList.find(_item => _item.key === item.name)
+        let target = schema.propertyList.find(_item => _item.key === item.name) ?? {}
         target.children = this.genTree(item) ?? []
         target.message = true
       })
