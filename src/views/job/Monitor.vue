@@ -30,7 +30,7 @@
         <EchartHeader :data="stageType ? nodeDetailsObj : taskDetailsObj"></EchartHeader>
         <div
           class="info fl"
-          v-if="['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database', 'hive', 'mq'].includes(stageType)"
+          v-if="['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database', 'hive', 'mq','hbase','kudu'].includes(stageType)"
           v-loading="apiLoading"
         >
           <div class="info-list">
@@ -909,7 +909,9 @@ export default {
               'mariadb',
               'mysql pxc',
               'hive',
-              'mq'
+              'mq',
+              'hbase',
+              'kudu'
             ].includes(this.stageType)
           ) {
             this.getStageDataApi(currentStageData.connectionId, this.tableName)

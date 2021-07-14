@@ -73,7 +73,6 @@ export default {
     this.comingAllowDatabase = comingAllowDataType.filter(type => this.database.includes(type)) || []
     this.database = allowDataType.filter(type => this.database.includes(type)) || []
     this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
-    this.database.push('kudu')
   },
   methods: {
     getImgByType,

@@ -24,6 +24,11 @@ export default function (vm) {
             label: vm.$t('dataForm.form.options.target'),
             tip: vm.$t('dataForm.form.options.targetTips'),
             value: 'target'
+          },
+          {
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+            value: 'source_and_target'
           }
         ],
         required: true
