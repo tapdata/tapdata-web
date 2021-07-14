@@ -324,11 +324,11 @@ export default {
           this.completeTime = '全量已完成'
         }
 
-        overview.status ===
-        (overview.sourceTableNum === overview.waitingForSyecTableNums &&
-          overview.sourceRowNum === overview.targatRowNum)
-          ? '已完成'
-          : '进行中'
+        overview.status =
+          overview.sourceTableNum === overview.waitingForSyecTableNums &&
+          overview.sourceRowNum === overview.targatRowNum
+            ? '已完成'
+            : '进行中'
         this.overviewStats = overview
       }
     },
