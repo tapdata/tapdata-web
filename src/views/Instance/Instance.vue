@@ -158,7 +158,9 @@
         </div>
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center">
-            <ElButton type="primary" :disabled="agentStatus !== 'running'" @click="autoUpgradeFnc">自动升级</ElButton>
+            <ElButton type="primary" :disabled="selectedRow && selectedRow.status !== 'Running'" @click="autoUpgradeFnc"
+              >自动升级</ElButton
+            >
             <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
               (Agent离线时无法使用自动升级)
             </div>
@@ -460,10 +462,6 @@ export default {
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
       this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
-        // dev环境特殊处理
-        if (location.href.includes('dev.')) {
-          downloadUrl = `http://resource.tapdata.net/package/feagent/dfs-v1.0.3-071201-test-001/`
-        }
         this.$axios
           .post('tm/api/clusterStates/updataAgent', {
             downloadUrl,
