@@ -27,19 +27,21 @@
             </li>
           </ul>
         </div>
-        <div v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'" class="instance-operation-right">
+        <div class="instance-operation-right">
           <ElButton type="primary" @click="createAgent">
             <i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
             <span>创建 Agent</span>
           </ElButton>
-          <ElButton type="primary" @click="toOldPurchase">
-            <i class="iconfont td-icon-dinggou mr-1"></i>
-            <span>订购托管实例</span>
-          </ElButton>
-          <ElButton type="primary" @click="toPurchase">
-            <i class="iconfont td-icon-dinggou mr-1"></i>
-            <span>实例订购</span>
-          </ElButton>
+          <template v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'">
+            <ElButton type="primary" @click="toOldPurchase">
+              <i class="iconfont td-icon-dinggou mr-1"></i>
+              <span>订购托管实例</span>
+            </ElButton>
+            <ElButton type="primary" @click="toPurchase">
+              <i class="iconfont td-icon-dinggou mr-1"></i>
+              <span>实例订购</span>
+            </ElButton>
+          </template>
         </div>
       </div>
       <El-table class="instance-table  table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
