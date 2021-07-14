@@ -291,8 +291,18 @@ export default {
             let schemas = []
             this.mqType = result.data.mqType
             if (this.mqType === '0') {
-              result.data.mqQueueSet = result.data.mqQueueSet.map(item => item + '(queue)')
-              result.data.mqTopicSet = result.data.mqTopicSet.map(item => item + '(topic)')
+              result.data.mqQueueSet = result.data.mqQueueSet.map(item => {
+                return {
+                  label: item + '(queue)',
+                  value: item
+                }
+              })
+              result.data.mqTopicSet = result.data.mqTopicSet.map(item => {
+                return {
+                  label: item + '(topic)',
+                  value: item
+                }
+              })
               let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
               schemas = [...new Set(data)]
             } else {
@@ -300,9 +310,10 @@ export default {
             }
             schemas = schemas.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
             self.schemas = schemas
+
             self.schemaSelectConfig.options = schemas.map(item => ({
-              label: item,
-              value: item
+              label: item.label || item,
+              value: item.value || item
             }))
           }
         })
