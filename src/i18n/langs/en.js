@@ -812,7 +812,7 @@ const en = {
     cell: {
       validate: {
         empty_name: 'Name is required.',
-
+        empty_message_field_type: 'Type is required..',
         none_setting: 'Settings cannot be none.',
         none_stage: 'Must have one stage.',
         none_data_node: 'At least 2 data node in graph',

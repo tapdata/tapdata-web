@@ -42,7 +42,15 @@
             <span class="field-name" :title="data.name">{{ data.name }}</span>
 
             <div class="transfer-btn">
-              <span class="box" :title="$t('dataFlow.edit')" @click="handleEdit(node, data)">
+              <!--              <span v-if="!data.type" class="error-tip">请选择类型</span>-->
+              <!--              <el-tooltip v-if="!data.type" placement="top" manual content="请选择类型">-->
+              <!--                <i type="error" class="el-icon-warning"></i>-->
+              <!--              </el-tooltip>-->
+              <span
+                :class="['box', { 'error-tip': !data.type }]"
+                :title="!data.type ? '请选择类型' : $t('dataFlow.edit')"
+                @click="handleEdit(node, data)"
+              >
                 <i class="icon-margin-right-5 iconfont icon-bianji3"></i>
               </span>
               <span class="box" @click="handleDel(node, data)">
@@ -64,8 +72,8 @@
             <el-input size="mini" v-model="createForm.name"></el-input>
           </el-form-item>
           <el-form-item label="类型" required prop="type">
-            <el-input v-if="createForm.message" size="mini" v-model="createForm.type"></el-input>
-            <el-select v-else v-model="createForm.type" size="mini">
+            <el-input v-if="createForm.message" size="mini" v-model="createForm.type" style="width: 100%"></el-input>
+            <el-select v-else v-model="createForm.type" size="mini" style="width: 100%">
               <el-option
                 v-for="(item, index) in typeOptions"
                 :key="index"
@@ -181,6 +189,18 @@ export default {
         { label: 'bytes', value: 'bytes' },
         { label: 'enum', value: 'enum' }
       ],
+      suportTypeMap: {
+        boolean: 'bool',
+        bytes: 'bytes',
+        double: 'double',
+        float: 'float',
+        int: 'int32',
+        integer: 'int32',
+        long: 'int64',
+        short: 'int32',
+        sint: 'sint32',
+        string: 'string'
+      },
       errorImage: this.getImgByType('Default')
     }
   },
@@ -247,11 +267,23 @@ export default {
               children: []
             }
             obj.type = obj.type.toLowerCase()
-            if (obj.type === 'date') {
-              obj.type = 'string'
-            } else if (obj.type === 'integer') {
-              obj.type = 'int32'
-            }
+            // 处理类型映射
+            // if (obj.type === 'date') {
+            //   obj.type = 'string'
+            // } else if (obj.type === 'integer') {
+            //   obj.type = 'int32'
+            // }
+            obj.type = this.suportTypeMap[obj.type] ?? ''
+            // switch (obj.type) {
+            //   case 'date':
+            //     obj.type = 'string'
+            //     break
+            //   case 'integer':
+            //     obj.type = 'int32'
+            //     break
+            //   default:
+            //     break
+            // }
             return obj
           })
         }
@@ -778,6 +810,9 @@ export default {
         .transfer-btn {
           float: right;
           color: #666;
+          .error-tip {
+            color: orangered;
+          }
         }
       }
     }

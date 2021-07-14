@@ -789,7 +789,7 @@ const tc = {
     cell: {
       validate: {
         empty_name: '名稱必填.',
-
+        empty_message_field_type: '類型必填.',
         none_setting: '設置不能為空.',
         none_stage: '至少由一個節點.',
         none_data_node: '至少有兩個數據節點',

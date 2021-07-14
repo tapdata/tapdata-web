@@ -66,9 +66,30 @@ export const messageProcessConfig = {
       validate: function (data) {
         data = data || this.getFormData()
         let name = data?.name
+        console.log('data', data)
         if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
         if (!data.type) throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script_type')}`)
+        let flag = this.schemaFieldTypeValidate(data.pbProcessorConfig.schema)
+        if (flag) throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_message_field_type')}`)
+
         return true
+      },
+
+      /**
+       * validate user-filled data
+       * @param schema
+       * @param flag
+       *
+       */
+      schemaFieldTypeValidate: function (schema = {}, flag = false) {
+        if (!schema.type) {
+          flag = true
+          return flag
+        }
+        schema.propertyList.concat(schema.nestedList).forEach(el => {
+          this.schemaFieldTypeValidate(el)
+        })
+        return flag
       },
 
       /**
