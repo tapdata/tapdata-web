@@ -588,7 +588,7 @@ export default {
         }
         // TODO 删除
         const parent = node.parent
-        let children = parent.data?.children || []
+        let children = parent.data instanceof Array ? parent.data : parent.data?.children || []
         let getIndex = children?.findIndex(d => {
           return d.key === data.key
         })
