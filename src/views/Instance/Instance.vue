@@ -28,6 +28,10 @@
           </ul>
         </div>
         <div v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'" class="instance-operation-right">
+          <ElButton type="primary" @click="createAgent">
+            <i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
+            <span>创建 Agent</span>
+          </ElButton>
           <ElButton type="primary" @click="toOldPurchase">
             <i class="iconfont td-icon-dinggou mr-1"></i>
             <span>订购托管实例</span>
@@ -41,7 +45,7 @@
       <El-table class="instance-table  table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
         <ElTableColumn min-width="200px" label="实例ID/名称">
           <template slot-scope="scope">
-            <ElLink class="agent-link" type="primary">{{ scope.row.id }}</ElLink>
+            <ElLink class="agent-link" type="primary" @click="handleDetails(scope.row)">{{ scope.row.id }}</ElLink>
             <ClipButton :value="scope.row.id"></ClipButton>
             <InlineInput
               style="display: block;"
@@ -83,20 +87,20 @@
               <template v-if="scope.row.spec && version && scope.row.spec.version !== version">
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
                   <img
-                    v-if="!scope.row.updataStatus || scope.row.updataStatus === 'done'"
+                    v-if="!scope.row.tmInfo.updataStatus || scope.row.tmInfo.updataStatus === 'done'"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeSvg"
                     alt=""
                     @click="showUpgradeDialogFnc(scope.row)"
                   />
                   <img
-                    v-else-if="['preparing', 'downloading', 'upgrading'].includes(scope.row.updataStatus)"
+                    v-else-if="['preparing', 'downloading', 'upgrading'].includes(scope.row.tmInfo.updataStatus)"
                     class="upgrade-img cursor-not-allowed"
                     :src="upgradeLoadingSvg"
                     alt=""
                   />
                   <img
-                    v-else-if="scope.row.updataStatus === 'fail'"
+                    v-else-if="scope.row.tmInfo.updataStatus === 'fail'"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeErrorSvg"
                     alt=""
@@ -113,8 +117,18 @@
           </template>
         </ElTableColumn>
         <ElTableColumn label="操作" width="120" fixed="right">
-          <template>
-            <ElLink type="primary" class="mr-2" @click="toDeploy">部署</ElLink>
+          <template slot-scope="scope">
+            <ElLink type="primary" class="mr-2" :disabled="scope.row.deployDisable" @click="toDeploy">部署</ElLink>
+            <ElLink
+              type="primary"
+              class="mr-2"
+              :disabled="scope.row.status !== 'Running'"
+              @click="handleStop(scope.row)"
+              >停止</ElLink
+            >
+            <ElLink type="danger" class="mr-2" @click="handleDel(scope.row)" :disabled="scope.row.status !== 'Offline'"
+              >删除</ElLink
+            >
           </template>
         </ElTableColumn>
         <div class="instance-table__empty" slot="empty">
@@ -141,8 +155,10 @@
         </div>
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center">
-            <ElButton type="primary" :disabled="agentStatus !== 'running'" @click="autoUpgradeFnc">自动升级</ElButton>
-            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">
+            <ElButton type="primary" :disabled="selectedRow && selectedRow.status !== 'Running'" @click="autoUpgradeFnc"
+              >自动升级</ElButton
+            >
+            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
               (Agent离线时无法使用自动升级)
             </div>
           </div>
@@ -176,8 +192,8 @@ import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
 import { INSTANCE_STATUS_MAP } from '../../const'
-// import upgradeSvg from '../../assets/icons/svg-colorful/upgrade.svg'
 import upgradeSvg from '../../../public/images/agent/upgrade.svg'
+import upgradeImg from '../../assets/image/upgrade.png'
 import upgradeLoadingSvg from '../../../public/images/agent/upgrade-loading.svg'
 import upgradeErrorSvg from '../../../public/images/agent/upgrade-error.svg'
 // import upgradeImg from '../../assets/image/upgrade.png'
@@ -211,8 +227,10 @@ export default {
       version: '',
       upgradeList: [], // 升级列表
       upgradeSvg,
+      upgradeImg,
       upgradeLoadingSvg,
-      upgradeErrorSvg
+      upgradeErrorSvg,
+      timer: null
       // upgradeImg
     }
   },
@@ -233,6 +251,16 @@ export default {
         }
       }
       return options
+    },
+    // 存在进行中的状态
+    haveStateLoadingFlag() {
+      let flag = false
+      this.list.forEach(el => {
+        if (['preparing', 'downloading', 'upgrading'].includes(el.tmInfo.updataStatus)) {
+          flag = true
+        }
+      })
+      return flag
     }
   },
   watch: {
@@ -294,7 +322,11 @@ export default {
             let list = data.items || []
             this.list = list.map(item => {
               item.status = item.status === 'Running' ? 'Running' : 'Offline'
-              item.updataStatus = ''
+              item.deployDisable = item.tmInfo.pingTime || false
+              // item.updataStatus = ''
+              if (!item.tmInfo) {
+                item.tmInfo = {}
+              }
               return item
             })
             // 不存在版本号
@@ -309,6 +341,8 @@ export default {
                 this.fetch(this.page.current - 1)
               }, 0)
             }
+            this.clearTimer()
+            this.setTimer()
           })
           .finally(() => {
             if (!hideLoading) {
@@ -355,6 +389,52 @@ export default {
 
       window.open(downloadUrl.href, '_blank')
     },
+    // 停止
+    handleStop(row) {
+      let flag = false
+      if (row.metric?.runningTaskNum) {
+        flag = true
+      }
+      let message = flag
+        ? '当前Agent有任务正在运行，强行停止Agent可能会导致任务出现异常，是否要强行停止！'
+        : 'Agent停止后将无法再继续运行任务，您需要去Agent安装目录下才能再次启动Agent，是否确认停止？'
+      this.$confirm(message, '是否停止', {
+        type: 'warning'
+      }).then(res => {
+        if (res) {
+          this.$axios
+            .patch('api/tcm/agent/stop/' + row.id)
+            .then(() => {
+              this.$message.success('Agent 已停止')
+              this.fetch()
+            })
+            .catch(() => {
+              this.$message.error('Agent 停止失败')
+              this.loading = false
+            })
+        }
+      })
+    },
+    // 删除
+    handleDel(row) {
+      this.$confirm('删除后该Agent将无法再继续使用，是否确认删除？', '是否删除', {
+        type: 'warning'
+      }).then(res => {
+        if (res) {
+          this.$axios
+            .patch('api/tcm/agent/delete/' + row.id)
+            .then(() => {
+              this.$message.success('Agent 删除成功')
+              this.fetch()
+            })
+            .catch(() => {
+              this.$message.error('Agent 删除失败')
+              this.loading = false
+            })
+        }
+      })
+    },
+
     updateName(val, id) {
       this.loading = true
       this.$axios
@@ -403,9 +483,22 @@ export default {
             process_id: this.selectedRow?.tmInfo?.agentId
           })
           .then(() => {
-            this.$message.success('升级成功')
+            this.$message.success('开始升级')
+            this.fetch()
           })
       })
+    },
+    setTimer() {
+      this.timer = setInterval(() => {
+        if (this.haveStateLoadingFlag) {
+          this.fetch(null, null, true)
+        } else {
+          this.clearTimer()
+        }
+      }, 10000)
+    },
+    clearTimer() {
+      this.timer && clearInterval(this.timer)
     },
     manualUpgradeFnc() {
       let row = this.selectedRow
@@ -432,7 +525,7 @@ export default {
     },
     getTiptoolContent(row) {
       let result
-      switch (row.updataStatus) {
+      switch (row.tmInfo.updataStatus) {
         case 'preparing':
           result = 'Agent版本有更新，点击升级'
           break
@@ -450,6 +543,34 @@ export default {
           break
       }
       return result
+    },
+    // agent详情
+    handleDetails(data) {
+      this.$router.push({
+        name: 'InstanceDetails',
+        query: {
+          id: data.id
+        }
+      })
+    },
+    // 创建Agent
+    createAgent() {
+      this.$confirm('是否创建 Agent？', '创建 Agent', {
+        type: 'warning'
+      }).then(res => {
+        if (res) {
+          this.$axios
+            .post('api/tcm/orders', {
+              agentType: 'Local'
+            })
+            .then(() => {
+              this.fetch()
+            })
+            .catch(() => {
+              this.$router.replace('/500')
+            })
+        }
+      })
     }
   }
 }

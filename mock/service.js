@@ -63,7 +63,10 @@ const agent = {
   tmInfo: {
     agentId: '@id',
     token: '@guid',
-    downloadUrl: 'http://resource.tapdata.net/package/feagent/v1.0.2/'
+    downloadUrl: 'http://resource.tapdata.net/package/feagent/v1.0.2/',
+    'updataStatus|1': ['preparing', 'downloading', 'upgrading', 'done', 'fail'],
+    updateMsg: '',
+    updateTime: ''
   }
 }
 module.exports = Object.assign({}, dataflow, connection, {
@@ -194,7 +197,7 @@ module.exports = Object.assign({}, dataflow, connection, {
     code: 'ok',
     data: {
       total: 1,
-      items: [agent]
+      'items|1-20': [agent]
     }
   },
   '/api/tcm/agent/agentCount': {
@@ -246,6 +249,13 @@ module.exports = Object.assign({}, dataflow, connection, {
           hostname: 'tapdaas-test-tapdaas-84b6db7bd6-rgmg2'
         }
       ]
+    },
+    code: 'ok',
+    msg: 'ok'
+  },
+  '/tm/api/clusterStates/updataAgent': {
+    data: {
+      status: '1'
     },
     code: 'ok',
     msg: 'ok'
