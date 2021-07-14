@@ -310,7 +310,7 @@ export default {
           id: 0,
           type: '',
           name: 'Tapdata Cloud上线公测',
-          time: '2021-05-28'
+          time: '2021-07-01'
         }
       ]
     },

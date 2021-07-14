@@ -546,6 +546,7 @@ export default {
     },
     // agent详情
     handleDetails(data) {
+      this.clearTimer()
       this.$router.push({
         name: 'InstanceDetails',
         query: {
