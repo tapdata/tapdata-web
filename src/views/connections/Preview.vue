@@ -496,7 +496,8 @@ export default {
           'gridfs',
           'mq',
           'tcp_udp',
-          'hbase'
+          'hbase',
+          'kudu'
         ].includes(type)
       ) {
         this.$router.push({

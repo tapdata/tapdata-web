@@ -472,6 +472,9 @@ export default {
             if (!item.database_uri && !item.database_port && item.mqType !== '0') {
               item.connectionUrl = ''
             }
+            if (item.database_type === 'kudu') {
+              item.connectionUrl = item.database_host
+            }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
             return item
