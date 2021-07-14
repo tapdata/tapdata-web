@@ -11,47 +11,65 @@
         </div>
       </div>
       <div class="panel mt-5">
-        <!-- <div class="title">
+        <div class="title">
           <i class="el-icon-notebook-2"></i>
           <span style="margin-left: 1px">实例信息</span>
-        </div> -->
+        </div>
         <ul class="info">
           <li class="info-item">
-            <div class="label">Agent ID：</div>
+            <div class="label">实例ID</div>
             <div class="value">{{ agent.id }}</div>
           </li>
           <li class="info-item">
-            <div class="label">Agent 版本：</div>
+            <div class="label">地域及可用区</div>
             <div class="value">
-              {{ agent.spec.version }}
+              {{ agent.regionFmt }}
             </div>
           </li>
           <li class="info-item">
-            <div class="label">Agent 创建时间：</div>
-            <div class="value">{{ agent.createAt }}</div>
+            <div class="label">同步拓扑</div>
+            <div class="value">{{ agent.topology }}</div>
           </li>
           <li class="info-item">
-            <div class="label">宿主机IP：</div>
+            <div class="label">实例规格</div>
             <div class="value">
-              {{ agent.ips }}
+              {{ comSpecType }}
             </div>
           </li>
           <li class="info-item">
-            <div class="label">宿主机CPU数量：</div>
+            <div class="label">版本</div>
             <div class="value">
-              {{ agent.cpus }}
+              {{ agent.spec ? agent.spec.version : '' }}
             </div>
           </li>
+        </ul>
+      </div>
+      <div class="panel mt-20">
+        <div class="title">
+          <i class="el-icon-money"></i>
+          <span style="margin-left: 1px">计费信息</span>
+        </div>
+        <ul class="info">
           <li class="info-item">
-            <div class="label">宿主机内存大小：</div>
+            <div class="label">计费模式</div>
             <div class="value">
-              {{ agent.totalmem }}
+              {{ chargeMap[agent.orderInfo.chargingMode + ',' + agent.orderInfo.periodType] }}
             </div>
           </li>
+          <li class="info-item" v-if="isMonth">
+            <div class="label">订购时长</div>
+            <div class="value">{{ agent.orderInfo.duration }}个月</div>
+          </li>
           <li class="info-item">
-            <div class="label">安装目录：</div>
+            <div class="label">创建时间</div>
             <div class="value">
-              {{ agent.installationDirectory }}
+              {{ $moment(agent.createAt).format('YYYY-MM-DD HH:mm:ss') }}
+            </div>
+          </li>
+          <li class="info-item" v-if="isInternet && isMonth">
+            <div class="label">到期时间</div>
+            <div class="value">
+              {{ agent.endTimeStr }}
             </div>
           </li>
         </ul>
@@ -63,7 +81,6 @@
 
 <script>
 import { SPEC_MAP, CHARGE_MAP } from '../../const'
-// import { formatAgent } from '../../util'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ChangeInstance from '../../components/ChangeInstance'
@@ -100,7 +117,6 @@ export default {
       this.$axios
         .get('api/tcm/agent/' + this.$route.params.id)
         .then(data => {
-          // this.agent = formatAgent(data)
           this.agent = data
           this.agentInfo.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
           if (this.agent?.metric?.systemInfo) {
@@ -167,7 +183,6 @@ export default {
 <style lang="scss" scoped>
 .agent-details-wrap {
   height: 100%;
-  padding: 10px 20px;
   .panel {
     position: relative;
     background: #fff;
@@ -184,11 +199,11 @@ export default {
       display: flex;
       flex-wrap: wrap;
       .info-item {
-        margin: 30px 0;
+        margin-top: 20px;
         display: flex;
         width: 30%;
         .label {
-          width: 100px;
+          width: 75px;
           text-align: right;
           color: map-get($fontColor, slight);
         }
@@ -199,7 +214,7 @@ export default {
     }
   }
   .header {
-    // border-left: 3px solid map-get($color, primary);
+    border-left: 3px solid map-get($color, primary);
     .lignt {
       color: map-get($fontColor, slight);
     }
