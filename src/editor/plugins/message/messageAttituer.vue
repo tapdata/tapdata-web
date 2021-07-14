@@ -12,7 +12,7 @@
       </el-form>
       <div class="box box-content">
         <!-- lazy -->
-        <div class="btn-line mb-3">
+        <div class="btn-line mb-3 text-rf">
           <el-button size="mini" :type="draggable ? 'primary' : 'default'" @click="handleDraggable">是否拖拽</el-button>
           <el-button size="mini" @click="addChecked">添加字段</el-button>
         </div>
