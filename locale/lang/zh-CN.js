@@ -1,5 +1,6 @@
-export default {
-  aaa: '111',
+import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
+const cn = {
+  ...zhLocale,
   tap: {
     login: 'Tapdata-登录',
     registry: 'Tapdata-注册',
@@ -526,6 +527,8 @@ export default {
     replicate_pop: '数据同步差距: 源库和目标库数据最后更新时间的差距，数值越小越好',
     status: {
       running: '运行中',
+      paused: '已暂停',
+      draft: '编辑中',
       scheduled: '启动中',
       stopping: '停止中',
       error: '错误',
@@ -546,6 +549,7 @@ export default {
     separator: '至',
     dataPlaceholder: '选择时间范围',
     taskStatus: '任务状态',
+    maxLagTime: '最大增量滞后时间',
     taskStatusPlaceholder: '请选择任务状态',
     taskSettingPlaceholder: '请选择任务同步类型',
     updateTime: '更新时间',
@@ -591,6 +595,7 @@ export default {
     run_custom_sql: '重复自定义SQL',
     stop_on_error: '遇到错误停止',
     need_to_create_Index: '自动创建索引',
+    noPrimaryKey: '支持无主键同步',
     is_schedule: '定期调度任务',
     cron_expression: '调度cron表达式',
     data_quality_tag: '添加数据质量标签',
@@ -610,6 +615,7 @@ export default {
     cdc_concurrency: '增量同步并发写入',
     read_batch_size: '每次读取数量',
     cdcDataProcess: '增量数据处理机制',
+    cdcShareFilterOnServer: '共享挖掘日志过滤',
     batch: '批量',
     onebyone: '逐条',
     mission: '描述',
@@ -632,6 +638,8 @@ export default {
     aggregatePrompt: '提示：使用聚合处理节点后，此任务停止后再次启动，任务将会重置',
     nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
     enterFilterTable: '请输入过滤表内容',
+    lagTime: '增量滞后判断时间设置',
+    lagTimeTip: '当增量任务延迟大于该值时，则认为任务增量滞后，默认值为0',
     button: {
       submit: '提交执行',
       viewConfig: '查看节点配置',
@@ -699,6 +707,7 @@ export default {
     runNomally: '才能正常运行',
     editLayerTip: ' 否则可能导致异常错误，请问您要继续编辑吗?',
     continueEditing: '继续编辑',
+    numberType: '必须为数字且不能小于0',
     setting: {
       distinctWriteType: '去重写入机制',
       intellect: '智能去重写入',
@@ -712,12 +721,13 @@ export default {
     skipError: {
       title: '跳过错误设置',
       skipErrorSettings: '任务错误处理',
-      tip:
-        '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
+      tip: '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
       attention: '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
       startJob: '跳过错误，启动任务',
       cancel: '取消',
-      taskName: '任务名'
+      taskName: '任务名',
+      errorTotal: '共 XX 条,已选择',
+      strip: '条'
     }
   },
   connection: {
@@ -736,8 +746,7 @@ export default {
     fuzzyQuery: '模糊匹配',
     PreciseQuery: '精确匹配',
     databaseTittle: '数据源管理',
-    desc:
-      '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
+    desc: '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
     createNewDataSource: '创建连接',
     info: '数据源详情',
     copyMsg: '复制成功',
@@ -771,7 +780,8 @@ export default {
       target: '目标',
       source_and_target: '源头和目标'
     },
-    cannot_delete_remind: '当前连接正在被一个或多个任务或API使用中，请删除任务或API后重试。'
+    cannot_delete_remind: '当前连接正在被一个或多个任务或API使用中，请删除任务或API后重试。',
+    dfs_cannot_delete_remind: '当前连接正在被一个或多个任务中，请删除任务后重试。'
   },
   editor: {
     nodeSettings: '节点设置',
@@ -791,6 +801,9 @@ export default {
       },
       data_node: {
         hiveText: 'hive节点',
+        kuduText: 'KUDU 节点',
+        hbaseText: 'HBase节点',
+        hbase_check: 'HBase仅支持全量任务',
         kafkaText: 'kafka节点',
         kafkaName_isNull: 'kafka不能为空',
         mqTableType: '新建表类型',
@@ -1286,6 +1299,17 @@ export default {
           message:
             '目标数据模型已存在 _id 字段，系统默认会移除已重复的_id字段，如想保留，请使用字段处理器对源表的 _id 进行重命名！'
         },
+        pcb: {
+          label: '协议类型',
+          placeholder: '请选择协议类型',
+          fieldsSelected: '待选字段',
+          selectedField: '已选字段',
+          moveUp: '上移',
+          moveDown: '下移',
+          notMoveUpTip: '没有上移的空间了',
+          notMoveDownTip: '没有下移的空间了',
+          onlyOnePiece: '只能选择一条数据进行上下移动'
+        },
         form: {
           label: {
             label: '标签',
@@ -1613,6 +1637,7 @@ export default {
       databaseType: '数据库类型',
       connectionType: '连接类型',
       host: '数据库地址',
+      kuduhost: 'IP地址:端口，支持多个,用","分割',
       agentAddr: '代理地址',
       port: '端口',
       databaseName: '数据库名称',
@@ -1774,6 +1799,7 @@ export default {
         kafkaBufferMemory: '缓存消息字节数',
         kafkaCompressionType: '消息压缩类型',
         kafkaPartitionKey: '分区键字段名',
+        kafkaPartitionKeyTip: '多个字段名请用逗号隔开',
         kafkaIgnorePushError: '忽略推送消息异常',
         pushErrorTip: ' 如果开启则忽略该次推送的消息(存在消息丢失)，否则停止推送消息',
         kafkaAcks0: '不确认',
@@ -1842,15 +1868,17 @@ export default {
       },
       mq: {
         mqType: 'MQ类型',
-        mqQueueSet: '队列名集合',
-        mqTopicSet: '主题名集合',
+        mqQueueSet: '队列名称',
+        mqTopicSet: '主题名称',
         brokerURL: 'MQ连接串',
         database_host: 'MQ地址',
         database_port: 'MQ端口',
         routeKeyField: '消息路由',
         virtualHost: '虚拟主机',
         queueSetTip: '多个队列用逗号隔开',
-        topicSetTip: '多个主题用逗号隔开'
+        topicSetTip: '多个主题用逗号隔开',
+        brokerUrl: 'MQ连接串',
+        brokerUrlTip: '示例tcp://127.0.0.1:61616,支持tcp,nio,udp,ssl,http(s)'
       },
       tcp: {
         agreementType: '协议类型',
@@ -2167,8 +2195,7 @@ export default {
     },
     metadataSearch: {
       title: '元数据检索',
-      desc:
-        '元数据检索提供对表、字段的名称、别名、描述等内容的搜索功能，请先选择搜索表/字段，再输入内容，点击搜索按钮进行搜索',
+      desc: '元数据检索提供对表、字段的名称、别名、描述等内容的搜索功能，请先选择搜索表/字段，再输入内容，点击搜索按钮进行搜索',
       table: '搜索表',
       column: '搜索字段',
       search: '搜索',
@@ -3041,6 +3068,7 @@ export default {
     job_cdc_record_doc: ' 自动保存增量事件',
     job_cdc_record_ttl: ' 增量事件保存时长(天)',
     job_cdc_record_ttl_doc: ' 增量事件保存时长(天)',
+    lagTime: '增量滞后判定时间(秒)',
     connection_schema_update_hour: '数据源schema更新时间',
     connection_schema_update_interval: '数据源schema更新周期（天）',
     creatDuplicateSource: ' 允许创建重复数据源',
@@ -3207,3 +3235,5 @@ export default {
     wan: '万'
   }
 }
+
+export default cn
