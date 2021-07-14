@@ -165,6 +165,7 @@
 </style>
 <style lang="scss" scoped>
 .CT-task-wrap {
+  padding: 0 20px;
   height: 100%;
   background: rgba(250, 250, 250, 1);
   .step-header {
