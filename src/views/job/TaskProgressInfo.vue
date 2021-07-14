@@ -94,7 +94,8 @@ export default {
       let { keyword, metaType } = this.searchParams
       let where = {
         dataFlowId: {
-          like: this.$route.query.id
+          like: this.$route.query.id,
+          options: 'i'
         },
         statsType: 'dataFlowDetailsStats'
       }

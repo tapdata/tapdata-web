@@ -22,7 +22,7 @@
             <el-row class="mt-3">
               <el-col :span="12">
                 <span>预计全量完成还需时间：</span>
-                <span class="ml-3 color-green">全量已完成</span>
+                <span class="ml-3 color-green">{{ completeTime }}</span>
               </el-col>
               <el-col :span="12">
                 <span>全量状态：</span>
@@ -104,7 +104,7 @@
             <el-row class="mt-3">
               <el-col :span="12">
                 <span>预计全量完成还需时间：</span>
-                <span class="ml-3 color-green">全量已完成</span>
+                <span class="ml-3 color-green">{{ completeTime }}</span>
               </el-col>
               <el-col :span="12">
                 <span>全量状态：</span>
@@ -212,7 +212,7 @@
 // import factory from '@/api/factory'
 
 // const dataFlowsAPI = factory('DataFlows')
-let timer = null
+// let timer = null
 export default {
   name: 'TaskProgress',
   props: {
@@ -225,6 +225,7 @@ export default {
     return {
       loading: false,
       progressBar: 0,
+      completeTime: '',
       overviewStats: {}
     }
   },
@@ -278,6 +279,7 @@ export default {
     //     })
     // },
     handleData(data) {
+      let inputCount = data?.stats?.throughput?.inputCount
       if (data?.stats?.overview) {
         let overview = data.stats.overview
 
@@ -285,7 +287,48 @@ export default {
         let num = (overview.targatRowNum / overview.sourceRowNum) * 100
         this.progressBar = num.toFixed(0) * 1
 
-        overview.status === 'done' ? '已完成' : '进行中'
+        let time = (overview.sourceRowNum - overview.targatRowNum) / inputCount
+        let r = ''
+        if (time) {
+          let s = parseInt(time),
+            m = 0,
+            h = 0,
+            d = 0
+          if (s > 60) {
+            m = parseInt(s / 60)
+            s = parseInt(s % 60)
+            if (m > 60) {
+              h = parseInt(m / 60)
+              m = parseInt(m % 60)
+              if (h > 24) {
+                d = parseInt(h / 24)
+                h = parseInt(h % 24)
+              }
+            }
+          }
+          if (m === 0 && h == 0 && d === 0 && s < 60 && s > 0) {
+            r = 1 + '分钟'
+          }
+          // r = parseInt(s) + this.$t('timeToLive.s')
+          if (m > 0) {
+            r = parseInt(m) + '分钟'
+          }
+          if (h > 0) {
+            r = parseInt(h) + '小时' + r
+          }
+          if (d > 0) {
+            r = parseInt(d) + '天' + r
+          }
+          this.completeTime = r
+        } else {
+          this.completeTime = '全量已完成'
+        }
+
+        overview.status ===
+        (overview.sourceTableNum === overview.waitingForSyecTableNums &&
+          overview.sourceRowNum === overview.targatRowNum)
+          ? '已完成'
+          : '进行中'
         this.overviewStats = overview
       }
     },
