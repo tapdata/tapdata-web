@@ -41,7 +41,10 @@ import {
   Progress,
   Footer,
   Switch,
-  Popover
+  Popover,
+  Tabs,
+  TabPane,
+  Transfer
 } from 'element-ui'
 
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
@@ -111,3 +114,6 @@ Vue.use(Progress)
 Vue.use(Footer)
 Vue.use(Switch)
 Vue.use(Popover)
+Vue.use(Tabs)
+Vue.use(TabPane)
+Vue.use(Transfer)
