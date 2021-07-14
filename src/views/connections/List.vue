@@ -475,6 +475,9 @@ export default {
             if (item.database_type === 'kudu') {
               item.connectionUrl = item.database_host
             }
+            if (item.database_type === 'kafka') {
+              item.connectionUrl = item.kafkaBootstrapServers
+            }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
             return item

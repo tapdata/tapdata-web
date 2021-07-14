@@ -30,7 +30,22 @@
         <EchartHeader :data="stageType ? nodeDetailsObj : taskDetailsObj"></EchartHeader>
         <div
           class="info fl"
-          v-if="['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database', 'hive', 'mq','hbase','kudu'].includes(stageType)"
+          v-if="
+            [
+              'table',
+              'collection',
+              'json',
+              'excel',
+              'csv',
+              'xml',
+              'database',
+              'hive',
+              'mq',
+              'hbase',
+              'kudu',
+              'kafka'
+            ].includes(stageType)
+          "
           v-loading="apiLoading"
         >
           <div class="info-list">
@@ -143,7 +158,28 @@
               </span>
             </el-tooltip>
           </div>
-          <div class="info-list">
+
+          <div class="info-list" v-if="stage.kafkaBootstrapServers">
+            <span class="info-label">{{ $t('dataForm.form.host') }}:</span>
+            <span class="info-text">{{ stage.kafkaBootstrapServers }}</span>
+            <el-tooltip
+              placement="top"
+              manual
+              :content="$t('dialog.downAgent.copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="stage.kafkaBootstrapServers"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                {{ $t('dataFlow.copy') }}
+              </span>
+            </el-tooltip>
+          </div>
+          <div class="info-list" v-if="stage.brokerURL">
             <span class="info-label">{{ $t('dataForm.form.host') }}:</span>
             <span class="info-text">{{ stage.brokerURL }}</span>
             <el-tooltip
