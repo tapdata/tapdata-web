@@ -64,11 +64,16 @@
               </div>
               <div class="agent-list__detail flex flex-wrap justify-around mt-3 py-2 px-1">
                 <div v-for="(detail, dIndex) in item.list" :key="dIndex" class="agent-list__status mr-2">
-                  <span>{{ detail.label }}</span>
-                  <span>:</span>
-                  <span :class="['ml-1', { success: detail.value === '运行中' }, { error: detail.value === '离线' }]">{{
-                    detail.value
-                  }}</span>
+                  <template v-if="detail.key === 'agent'">
+                    <span>{{ detail.label }}</span>
+                    <span class="success ml-2">运行中：{{ detail.running }}</span>
+                    <span class="error ml-2">离线：{{ detail.offline }}</span>
+                  </template>
+                  <template v-else>
+                    <span>{{ detail.label }}</span>
+                    <span>:</span>
+                    <span :class="['ml-1']">{{ detail.value }}</span>
+                  </template>
                 </div>
               </div>
             </li>
@@ -144,7 +149,9 @@ export default {
           list: [
             {
               label: 'Agent状态',
-              value: '离线'
+              key: 'agent',
+              running: 0,
+              offline: 0
             }
           ]
         },
@@ -254,7 +261,11 @@ export default {
         .get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
         .then(data => {
           agentList[0].value = data?.total
-          agentList[0].list[0].value = data?.items?.[0]?.status === 'Running' ? '运行中' : '离线'
+          let total = data?.total
+          let runningCount = agentList.filter(item => item.status === 'Running')?.length ?? 0
+          let offlineCount = total - runningCount
+          agentList[0].list[0].running = runningCount
+          agentList[0].list[0].offline = offlineCount
         })
         .finally(() => {
           loading.close()
