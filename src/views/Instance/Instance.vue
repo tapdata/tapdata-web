@@ -90,20 +90,7 @@
           <template slot-scope="scope">
             <div class="flex align-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
-              <img
-                class="upgrade-img cursor-pointer"
-                :src="upgradeSvg"
-                alt=""
-                @click="showUpgradeDialogFnc(scope.row)"
-              />
-              <img class="upgrade-img cursor-not-allowed" :src="upgradeLoadingSvg" alt="" />
-              <img
-                class="upgrade-img cursor-pointer"
-                :src="upgradeErrorSvg"
-                alt=""
-                @click="showUpgradeErrorDialogFnc(scope.row)"
-              />
-              <template v-if="false && scope.row.spec && version && scope.row.spec.version !== version">
+              <template v-if="scope.row.spec && version && scope.row.spec.version !== version">
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
                   <img
                     v-if="!scope.row.tmInfo.updataStatus || scope.row.tmInfo.updataStatus === 'done'"
@@ -248,7 +235,9 @@ export default {
       upgradeSvg,
       upgradeImg,
       upgradeLoadingSvg,
-      upgradeErrorSvg
+      upgradeErrorSvg,
+      timer: null
+      // upgradeImg
     }
   },
   computed: {
@@ -268,6 +257,16 @@ export default {
         }
       }
       return options
+    },
+    // 存在进行中的状态
+    haveStateLoadingFlag() {
+      let flag = false
+      this.list.forEach(el => {
+        if (['preparing', 'downloading', 'upgrading'].includes(el.tmInfo.updataStatus)) {
+          flag = true
+        }
+      })
+      return flag
     }
   },
   watch: {
@@ -329,8 +328,11 @@ export default {
             let list = data.items || []
             this.list = list.map(item => {
               item.status = item.status === 'Running' ? 'Running' : 'Offline'
-              item.updataStatus = ''
               item.deployDisable = item.tmInfo.pingTime || false
+              // item.updataStatus = ''
+              if (!item.tmInfo) {
+                item.tmInfo = {}
+              }
               return item
             })
             // 不存在版本号
@@ -345,6 +347,8 @@ export default {
                 this.fetch(this.page.current - 1)
               }, 0)
             }
+            this.clearTimer()
+            this.setTimer()
           })
           .finally(() => {
             if (!hideLoading) {
@@ -485,9 +489,22 @@ export default {
             process_id: this.selectedRow?.tmInfo?.agentId
           })
           .then(() => {
-            this.$message.success('升级成功')
+            this.$message.success('开始升级')
+            this.fetch()
           })
       })
+    },
+    setTimer() {
+      this.timer = setInterval(() => {
+        if (this.haveStateLoadingFlag) {
+          this.fetch()
+        } else {
+          this.clearTimer()
+        }
+      }, 5000)
+    },
+    clearTimer() {
+      this.timer && clearInterval(this.timer)
     },
     manualUpgradeFnc() {
       let row = this.selectedRow
@@ -514,7 +531,7 @@ export default {
     },
     getTiptoolContent(row) {
       let result
-      switch (row.updataStatus) {
+      switch (row.tmInfo.updataStatus) {
         case 'preparing':
           result = 'Agent版本有更新，点击升级'
           break
