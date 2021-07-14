@@ -794,7 +794,7 @@ const cn = {
     cell: {
       validate: {
         empty_name: '名称必填.',
-        empty_message_field_type: '类型必填.',
+        empty_message_field_type: '消息体字段类型必填.',
         none_setting: '设置不能为空.',
         none_stage: '至少有一个节点.',
         none_data_node: '至少有两个数据节点',
