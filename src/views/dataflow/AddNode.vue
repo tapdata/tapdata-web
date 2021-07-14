@@ -5,29 +5,14 @@
         <el-col :span="12">
           <el-card class="node-form-card">
             <div slot="header" class="clearfix">
-              <div class="flex align-center">
-                新增节点 <el-tag class="ml-2" size="small">Alpha</el-tag>
-              </div>
+              <div class="flex align-center">新增节点 <el-tag class="ml-2" size="small">Alpha</el-tag></div>
             </div>
-            <el-form
-              label-position="left"
-              label-width="100px"
-              :model="form"
-              :rules="rules"
-              ref="form"
-            >
+            <el-form label-position="left" label-width="100px" :model="form" :rules="rules" ref="form">
               <el-form-item prop="name" required label="节点名称">
-                <el-input
-                  v-model="form.name"
-                  placeholder="请输入名称"
-                ></el-input>
+                <el-input v-model="form.name" placeholder="请输入名称"></el-input>
               </el-form-item>
               <el-form-item prop="icon" required label="节点图标">
-                <el-select
-                  v-model="form.icon"
-                  placeholder="请选择图标"
-                  class="icon-select"
-                >
+                <el-select v-model="form.icon" placeholder="请选择图标" class="icon-select">
                   <template #prefix v-if="form.icon">
                     <div class="flex align-center h-100">
                       <ElImage
@@ -38,11 +23,7 @@
                       ></ElImage>
                     </div>
                   </template>
-                  <el-option
-                    v-for="(item, i) in iconOptions"
-                    :key="i"
-                    :value="item.value"
-                  >
+                  <el-option v-for="(item, i) in iconOptions" :key="i" :value="item.value">
                     <div class="flex align-center h-100">
                       <ElImage
                         draggable="false"
@@ -65,12 +46,7 @@
                   <el-option label="数据库" value="database"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item
-                prop="attr.databaseType"
-                required
-                v-if="form.type === 'database'"
-                label="数据库类型"
-              >
+              <el-form-item prop="attr.databaseType" required v-if="form.type === 'database'" label="数据库类型">
                 <el-select
                   v-model="form.attr.databaseType"
                   filterable

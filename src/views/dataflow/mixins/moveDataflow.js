@@ -10,17 +10,9 @@ export default {
   methods: {
     getMousePosition(e) {
       const x =
-        e.pageX !== undefined
-          ? e.pageX
-          : e.touches && e.touches[0] && e.touches[0].pageX
-          ? e.touches[0].pageX
-          : 0
+        e.pageX !== undefined ? e.pageX : e.touches && e.touches[0] && e.touches[0].pageX ? e.touches[0].pageX : 0
       const y =
-        e.pageY !== undefined
-          ? e.pageY
-          : e.touches && e.touches[0] && e.touches[0].pageY
-          ? e.touches[0].pageY
-          : 0
+        e.pageY !== undefined ? e.pageY : e.touches && e.touches[0] && e.touches[0].pageY ? e.touches[0].pageY : 0
 
       return {
         x,
@@ -29,15 +21,12 @@ export default {
     },
 
     moveDataflow(e) {
-      const offsetPosition =
-        this.$store.getters['dataflow/getNodeViewOffsetPosition']
+      const offsetPosition = this.$store.getters['dataflow/getNodeViewOffsetPosition']
 
       const position = this.getMousePosition(e)
 
-      const nodeViewOffsetPositionX =
-        offsetPosition[0] + (position.x - this.moveLastPosition[0])
-      const nodeViewOffsetPositionY =
-        offsetPosition[1] + (position.y - this.moveLastPosition[1])
+      const nodeViewOffsetPositionX = offsetPosition[0] + (position.x - this.moveLastPosition[0])
+      const nodeViewOffsetPositionY = offsetPosition[1] + (position.y - this.moveLastPosition[1])
       this.$store.commit('dataflow/setNodeViewOffsetPosition', {
         newOffset: [nodeViewOffsetPositionX, nodeViewOffsetPositionY]
       })
@@ -105,12 +94,9 @@ export default {
 
     wheelMoveDataflow(e) {
       const normalized = normalizeWheel(e)
-      const offsetPosition =
-        this.$store.getters['dataflow/getNodeViewOffsetPosition']
-      const nodeViewOffsetPositionX =
-        offsetPosition[0] - (e.shiftKey ? normalized.pixelY : normalized.pixelX)
-      const nodeViewOffsetPositionY =
-        offsetPosition[1] - (e.shiftKey ? normalized.pixelX : normalized.pixelY)
+      const offsetPosition = this.$store.getters['dataflow/getNodeViewOffsetPosition']
+      const nodeViewOffsetPositionX = offsetPosition[0] - (e.shiftKey ? normalized.pixelY : normalized.pixelX)
+      const nodeViewOffsetPositionY = offsetPosition[1] - (e.shiftKey ? normalized.pixelX : normalized.pixelY)
       this.$store.commit('dataflow/setNodeViewOffsetPosition', {
         newOffset: [nodeViewOffsetPositionX, nodeViewOffsetPositionY]
       })

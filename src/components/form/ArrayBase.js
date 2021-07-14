@@ -17,8 +17,7 @@ const useIndex = index => {
 
 const getDefaultValue = (defaultValue, schema) => {
   if (isValid(defaultValue)) return defaultValue
-  if (Array.isArray(schema?.items))
-    return getDefaultValue(defaultValue, schema.items[0])
+  if (Array.isArray(schema?.items)) return getDefaultValue(defaultValue, schema.items[0])
   if (schema?.items?.type === 'array') return []
   if (schema?.items?.type === 'boolean') return true
   if (schema?.items?.type === 'date') return ''
@@ -71,10 +70,7 @@ export const ArrayAddition = defineComponent({
           on: {
             ...listeners,
             click: () => {
-              const defaultValue = getDefaultValue(
-                attrs.defaultValue,
-                array?.schema.value
-              )
+              const defaultValue = getDefaultValue(attrs.defaultValue, array?.schema.value)
               if (props.method === 'unshift') {
                 array?.field?.value.unshift(defaultValue)
               } else {

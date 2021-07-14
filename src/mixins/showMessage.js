@@ -31,10 +31,7 @@ export const showMessage = {
     collapsableDetails({ description, node }) {
       if (!description) return ''
 
-      const errorDescription =
-        description.length > 500
-          ? `${description.slice(0, 500)}...`
-          : description
+      const errorDescription = description.length > 500 ? `${description.slice(0, 500)}...` : description
 
       return `
 				<br>

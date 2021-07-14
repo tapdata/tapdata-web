@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue-demi'
 import { useField, useFieldSchema, RecursionField, h } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
-import { isArr, isObj, uid, shallowClone } from '@formily/shared'
+import { isArr, uid, shallowClone } from '@formily/shared'
 import { ArrayBase, ArrayBaseItem, useArray } from './ArrayBase'
 import { getComponentByTag } from './utils/util'
 import { stylePrefix } from './configs'
@@ -24,17 +24,12 @@ const isAdditionComponent = schema => {
 const getArrayTableSources = (arrayFieldRef, schemaRef) => {
   const arrayField = arrayFieldRef.value
   const parseSources = schema => {
-    if (
-      isColumnComponent(schema) ||
-      isOperationsComponent(schema) ||
-      isAdditionComponent(schema)
-    ) {
+    if (isColumnComponent(schema) || isOperationsComponent(schema) || isAdditionComponent(schema)) {
       if (!schema['x-component-props']?.['prop'] && !schema['name']) return []
       const name = schema['x-component-props']?.['prop'] || schema['name']
       const field = arrayField.query(arrayField.address.concat(name)).take()
       const fieldProps = field?.props || schema.toFieldProps()
-      const columnProps =
-        field?.component?.[1] || schema['x-component-props'] || {}
+      const columnProps = field?.component?.[1] || schema['x-component-props'] || {}
       const display = field?.display || schema['x-display']
       const required = schema.reduceProperties((required, property) => {
         if (required) {
@@ -81,47 +76,44 @@ const getArrayTableSources = (arrayFieldRef, schemaRef) => {
 }
 
 const getArrayTableColumns = (dataSource, sources) => {
-  return sources.reduce(
-    (buf, { name, columnProps, schema, display, required }, key) => {
-      const { title, asterisk, ...props } = columnProps
-      if (display !== 'visible') return buf
-      if (!isColumnComponent(schema)) return buf
-      const render =
-        columnProps?.type && columnProps?.type !== 'default'
-          ? undefined
-          : props => {
-              const index = props.$index
-              const children = h(
-                ArrayBaseItem,
-                { props: { index } },
-                {
-                  default: () =>
-                    h(
-                      RecursionField,
-                      {
-                        props: {
-                          schema,
-                          name: index,
-                          onlyRenderProperties: true
-                        }
-                      },
-                      {}
-                    )
-                }
-              )
-              return children
-            }
-      return buf.concat({
-        ...props,
-        key,
-        prop: name,
-        label: title,
-        asterisk: asterisk ?? required,
-        render
-      })
-    },
-    []
-  )
+  return sources.reduce((buf, { name, columnProps, schema, display, required }, key) => {
+    const { title, asterisk, ...props } = columnProps
+    if (display !== 'visible') return buf
+    if (!isColumnComponent(schema)) return buf
+    const render =
+      columnProps?.type && columnProps?.type !== 'default'
+        ? undefined
+        : props => {
+            const index = props.$index
+            const children = h(
+              ArrayBaseItem,
+              { props: { index } },
+              {
+                default: () =>
+                  h(
+                    RecursionField,
+                    {
+                      props: {
+                        schema,
+                        name: index,
+                        onlyRenderProperties: true
+                      }
+                    },
+                    {}
+                  )
+              }
+            )
+            return children
+          }
+    return buf.concat({
+      ...props,
+      key,
+      prop: name,
+      label: title,
+      asterisk: asterisk ?? required,
+      render
+    })
+  }, [])
 }
 
 const renderAddition = () => {
@@ -155,9 +147,7 @@ const ArrayTableInner = observer(
         console.log('ArrayTableInner:field', field)
         const sources = getArrayTableSources(fieldRef, schemaRef)
         // Item Maybe is Proxy
-        const dataSource = Array.isArray(field.value)
-          ? field.value.slice().map(item => shallowClone(item))
-          : []
+        const dataSource = Array.isArray(field.value) ? field.value.slice().map(item => shallowClone(item)) : []
         const columns = getArrayTableColumns(dataSource, sources)
         const defaultRowKey = record => {
           if (!array?.keyMap.has(record)) {
@@ -178,11 +168,7 @@ const ArrayTableInner = observer(
                   {},
                   {
                     default: () => [
-                      h(
-                        'span',
-                        { class: `${prefixCls}-asterisk` },
-                        { default: () => ['*'] }
-                      ),
+                      h('span', { class: `${prefixCls}-asterisk` }, { default: () => ['*'] }),
                       column.label
                     ]
                   }
@@ -253,11 +239,7 @@ export const ArrayTable = observer(
                 ArrayBase,
                 {},
                 {
-                  default: () => [
-                    h(ArrayTableInner, { attrs }, {}),
-                    renderStateManager(),
-                    renderAddition()
-                  ]
+                  default: () => [h(ArrayTableInner, { attrs }, {}), renderStateManager(), renderAddition()]
                 }
               )
           }

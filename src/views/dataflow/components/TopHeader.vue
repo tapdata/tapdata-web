@@ -5,12 +5,7 @@
         <VIcon color="#fff" size="24">left</VIcon>
       </div>
       <div class="title-input-wrap inline-grid mx-2" :data-value="hiddenValue">
-        <input
-          ref="nameInput"
-          v-model="name"
-          class="title-input"
-          @blur="onNameInputBlur"
-        />
+        <input ref="nameInput" v-model="name" class="title-input" @blur="onNameInputBlur" />
       </div>
     </div>
     <div class="flex align-center flex-grow-1 pr-3">
@@ -37,12 +32,7 @@
       </button>
       <VDivider class="mx-3" vertical></VDivider>
 
-      <ElButton
-        @click="$emit('save')"
-        class="btn-base mr-3"
-        size="mini"
-        :loading="isSaving"
-      >
+      <ElButton @click="$emit('save')" class="btn-base mr-3" size="mini" :loading="isSaving">
         <VIcon size="12" class="mr-1">save</VIcon>
         <span>{{ $t('dataFlow.button.save') }}</span>
       </ElButton>
@@ -59,15 +49,10 @@
 
       <ElButtonGroup class="flex mr-3">
         <ElButton
-          v-if="
-            ['scheduled', 'running'].includes(status) &&
-            executeMode === 'running_debug'
-          "
+          v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
           class="btn-base"
           size="mini"
-          :disabled="
-            $disabledByPermission('SYNC_job_operation_all_data', creatUserId)
-          "
+          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
           v-readonlybtn="'SYNC_job_operation'"
         >
           <VIcon class="mr-1" size="12">zanting3</VIcon>
@@ -75,14 +60,8 @@
         </ElButton>
         <ElButton
           v-readonlybtn="'SYNC_job_operation'"
-          :disabled="
-            $disabledByPermission('SYNC_job_operation_all_data', creatUserId)
-          "
-          v-if="
-            ['running'].includes(status) &&
-            executeMode === 'normal' &&
-            $window.getSettingByKey('SHOW_DATA_TRACE')
-          "
+          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
+          v-if="['running'].includes(status) && executeMode === 'normal' && $window.getSettingByKey('SHOW_DATA_TRACE')"
           class="btn-base"
           size="mini"
         >
@@ -91,9 +70,7 @@
         </ElButton>
         <ElButton
           v-readonlybtn="'SYNC_job_operation'"
-          :disabled="
-            $disabledByPermission('SYNC_job_operation_all_data', creatUserId)
-          "
+          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
           class="btn-base"
           size="mini"
         >
@@ -102,9 +79,7 @@
         </ElButton>
         <ElButton
           v-readonlybtn="'SYNC_job_operation'"
-          :disabled="
-            $disabledByPermission('SYNC_job_operation_all_data', creatUserId)
-          "
+          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
           v-if="isEditable && $window.getSettingByKey('SHOW_DATA_TRACE')"
           class="btn-base"
           size="mini"
@@ -124,8 +99,7 @@
         </span>
         <span class="btn-setting-text">{{
           {
-            'initial_sync+cdc':
-              $t('dataFlow.initial_sync') + '+' + $t('dataFlow.cdc'),
+            'initial_sync+cdc': $t('dataFlow.initial_sync') + '+' + $t('dataFlow.cdc'),
             initial_sync: $t('dataFlow.initial_sync'),
             cdc: $t('dataFlow.cdc')
           }[sync_type]
@@ -136,56 +110,32 @@
 
       <ElTag
         :type="
-          status === 'running'
-            ? 'success'
-            : status === 'error'
-            ? 'danger'
-            : status === 'paused'
-            ? 'warning'
-            : 'info'
+          status === 'running' ? 'success' : status === 'error' ? 'danger' : status === 'paused' ? 'warning' : 'info'
         "
         effect="plain"
         class="flex align-center mx-3 border-0"
       >
         <span v-if="status === 'running'" class="flex align-center px-1">
-          <el-image
-            style="width: 15px; height: 15px"
-            src="static/editor/running.svg"
-          ></el-image>
+          <el-image style="width: 15px; height: 15px" src="static/editor/running.svg"></el-image>
         </span>
         <span v-else-if="status === 'stopping'" class="flex align-center px-1">
-          <el-image
-            style="width: 15px; height: 15px"
-            src="static/editor/stopping.svg"
-          ></el-image>
+          <el-image style="width: 15px; height: 15px" src="static/editor/stopping.svg"></el-image>
         </span>
         <span v-else-if="status === 'scheduled'" class="flex align-center px-1">
-          <el-image
-            style="width: 15px; height: 15px"
-            src="static/editor/scheduled.svg"
-          ></el-image>
+          <el-image style="width: 15px; height: 15px" src="static/editor/scheduled.svg"></el-image>
         </span>
         <span
           class="lh-1"
           :style="{
-            color:
-              status === 'scheduled'
-                ? '#b0e58c'
-                : status === 'stopping'
-                ? '#fccd85'
-                : ''
+            color: status === 'scheduled' ? '#b0e58c' : status === 'stopping' ? '#fccd85' : ''
           }"
-          >{{ $t('dataFlow.state') }}:
-          {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}</span
+          >{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}</span
         >
       </ElTag>
       <ElButtonGroup class="flex" v-readonlybtn="'SYNC_job_operation'">
         <ElButton
           @click="$emit('start')"
-          :disabled="
-            $disabledByPermission('SYNC_job_operation_all_data', creatUserId) ||
-            statusBtMap[status].start
-          "
+          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId) || statusBtMap[status].start"
           class="btn-base btn-operation"
           size="mini"
         >
@@ -193,10 +143,7 @@
           <span>{{ $t('dataFlow.button.start') }}</span>
         </ElButton>
         <ElButton
-          :disabled="
-            $disabledByPermission('SYNC_job_operation_all_data', creatUserId) ||
-            statusBtMap[status].stop
-          "
+          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId) || statusBtMap[status].stop"
           class="btn-base btn-operation"
           size="mini"
         >
@@ -204,10 +151,7 @@
           <span>{{ $t('dataFlow.button.stop') }}</span>
         </ElButton>
         <ElButton
-          :disabled="
-            $disabledByPermission('SYNC_job_operation_all_data', creatUserId) ||
-            statusBtMap[status].reset
-          "
+          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId) || statusBtMap[status].reset"
           class="btn-base btn-operation"
           size="mini"
         >
@@ -215,10 +159,7 @@
           <span>{{ $t('dataFlow.button.reset') }}</span>
         </ElButton>
         <ElButton
-          :disabled="
-            $disabledByPermission('SYNC_job_operation_all_data', creatUserId) ||
-            statusBtMap[status].forceStop
-          "
+          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId) || statusBtMap[status].forceStop"
           class="btn-base btn-operation"
           size="mini"
         >

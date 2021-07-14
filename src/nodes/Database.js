@@ -116,9 +116,7 @@ export class Database extends NodeType {
           }
         ],
         'x-component': 'SyncObjects',
-        'x-reactions': [
-          '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-        ]
+        'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
       }
     }
   }

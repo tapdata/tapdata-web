@@ -1,12 +1,7 @@
 <template>
   <aside class="layout-sidebar --left border-end">
     <ElCollapse v-model="activeGroups">
-      <ElCollapseItem
-        v-for="(g, gi) in groups"
-        :key="gi"
-        :title="g.name"
-        :name="`${gi}`"
-      >
+      <ElCollapseItem v-for="(g, gi) in groups" :key="gi" :title="g.name" :name="`${gi}`">
         <ElRow class="node-list flex-wrap p-2" :gutter="0" type="flex">
           <ElCol :span="8" v-for="(n, ni) in g.nodes" :key="ni" class="p-2">
             <div
@@ -18,20 +13,9 @@
                 onMove,
                 onDrop
               }"
-              class="
-                node-item
-                flex flex-column
-                align-center
-                py-1
-                grabbable
-                user-select-none
-              "
+              class="node-item flex flex-column align-center py-1 grabbable user-select-none"
             >
-              <ElImage
-                draggable="false"
-                class="node-item-img"
-                :src="`static/editor/${n.icon}.svg`"
-              ></ElImage>
+              <ElImage draggable="false" class="node-item-img" :src="`static/editor/${n.icon}.svg`"></ElImage>
               <div class="node-item-txt mt-1">{{ n.name }}</div>
             </div>
           </ElCol>

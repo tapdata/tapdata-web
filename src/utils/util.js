@@ -94,15 +94,10 @@ const CLASSTYPES = [
   'Error'
 ]
 
-const CLASS2TYPE = CLASSTYPES.reduce(
-  (obj, t) => ((obj[`[object ${t}]`] = t.toLowerCase()), obj),
-  {}
-)
+const CLASS2TYPE = CLASSTYPES.reduce((obj, t) => ((obj[`[object ${t}]`] = t.toLowerCase()), obj), {})
 
 export function getClassType(obj) {
-  return obj == null
-    ? String(obj)
-    : CLASS2TYPE[{}.toString.call(obj)] || 'object'
+  return obj == null ? String(obj) : CLASS2TYPE[{}.toString.call(obj)] || 'object'
 }
 
 export function isObject(obj) {

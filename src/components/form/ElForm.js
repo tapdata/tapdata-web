@@ -12,9 +12,7 @@ export const ElForm = {
       onAutoSubmit = context.listeners?.autoSubmit,
       ...props
     } = context.props
-    const submitHandler = Array.isArray(onAutoSubmit)
-      ? onAutoSubmit[0]
-      : onAutoSubmit
+    const submitHandler = Array.isArray(onAutoSubmit) ? onAutoSubmit[0] : onAutoSubmit
 
     return h(FormProvider, { props: { form } }, [
       h(

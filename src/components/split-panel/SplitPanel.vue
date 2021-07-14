@@ -1,48 +1,28 @@
 <template>
   <div ref="outerWrapper" :class="wrapperClasses">
     <div v-if="isHorizontal" :class="`${prefix}-horizontal`">
-      <div
-        :style="{ right: `${anotherOffset}%` }"
-        :class="[`${prefix}-pane`, 'left-pane']"
-      >
+      <div :style="{ right: `${anotherOffset}%` }" :class="[`${prefix}-pane`, 'left-pane']">
         <slot name="left" />
       </div>
-      <div
-        :class="`${prefix}-trigger-con`"
-        :style="{ left: `${offset}%` }"
-        @mousedown="handleMousedown"
-      >
+      <div :class="`${prefix}-trigger-con`" :style="{ left: `${offset}%` }" @mousedown="handleMousedown">
         <slot name="trigger">
           <trigger mode="vertical" />
         </slot>
       </div>
-      <div
-        :style="{ left: `${offset}%` }"
-        :class="[`${prefix}-pane`, 'right-pane']"
-      >
+      <div :style="{ left: `${offset}%` }" :class="[`${prefix}-pane`, 'right-pane']">
         <slot name="right" />
       </div>
     </div>
     <div v-else :class="`${prefix}-vertical`">
-      <div
-        :style="{ bottom: `${anotherOffset}%` }"
-        :class="[`${prefix}-pane`, 'top-pane']"
-      >
+      <div :style="{ bottom: `${anotherOffset}%` }" :class="[`${prefix}-pane`, 'top-pane']">
         <slot name="top" />
       </div>
-      <div
-        :class="`${prefix}-trigger-con`"
-        :style="{ top: `${offset}%` }"
-        @mousedown="handleMousedown"
-      >
+      <div :class="`${prefix}-trigger-con`" :style="{ top: `${offset}%` }" @mousedown="handleMousedown">
         <slot name="trigger">
           <trigger mode="horizontal" />
         </slot>
       </div>
-      <div
-        :style="{ top: `${offset}%` }"
-        :class="[`${prefix}-pane`, 'bottom-pane']"
-      >
+      <div :style="{ top: `${offset}%` }" :class="[`${prefix}-pane`, 'bottom-pane']">
         <slot name="bottom" />
       </div>
     </div>
@@ -122,29 +102,20 @@ export default {
     },
     getComputedThresholdValue(type) {
       let size = this.$refs.outerWrapper[this.offsetSize]
-      if (this.valueIsPx)
-        return typeof this[type] === 'string' ? this[type] : size * this[type]
-      else
-        return typeof this[type] === 'string'
-          ? this.px2percent(this[type], size)
-          : this[type]
+      if (this.valueIsPx) return typeof this[type] === 'string' ? this[type] : size * this[type]
+      else return typeof this[type] === 'string' ? this.px2percent(this[type], size) : this[type]
     },
     getMin(value1, value2) {
-      if (this.valueIsPx)
-        return `${Math.min(parseFloat(value1), parseFloat(value2))}px`
+      if (this.valueIsPx) return `${Math.min(parseFloat(value1), parseFloat(value2))}px`
       else return Math.min(value1, value2)
     },
     getMax(value1, value2) {
-      if (this.valueIsPx)
-        return `${Math.max(parseFloat(value1), parseFloat(value2))}px`
+      if (this.valueIsPx) return `${Math.max(parseFloat(value1), parseFloat(value2))}px`
       else return Math.max(value1, value2)
     },
     getAnotherOffset(value) {
       let res = 0
-      if (this.valueIsPx)
-        res = `${
-          this.$refs.outerWrapper[this.offsetSize] - parseFloat(value)
-        }px`
+      if (this.valueIsPx) res = `${this.$refs.outerWrapper[this.offsetSize] - parseFloat(value)}px`
       else res = 1 - value
       return res
     },
@@ -156,17 +127,13 @@ export default {
         ? `${parseFloat(this.oldOffset) + offset}px`
         : this.px2percent(outerWidth * this.oldOffset + offset, outerWidth)
       let anotherValue = this.getAnotherOffset(value)
-      if (parseFloat(value) <= parseFloat(this.computedMin))
-        value = this.getMax(value, this.computedMin)
+      if (parseFloat(value) <= parseFloat(this.computedMin)) value = this.getMax(value, this.computedMin)
       if (parseFloat(anotherValue) <= parseFloat(this.computedMax))
-        value = this.getAnotherOffset(
-          this.getMax(anotherValue, this.computedMax)
-        )
+        value = this.getAnotherOffset(this.getMax(anotherValue, this.computedMax))
       e.atMin = this.value === this.computedMin
       e.atMax = this.valueIsPx
         ? this.getAnotherOffset(this.value) === this.computedMax
-        : this.getAnotherOffset(this.value).toFixed(5) ===
-          this.computedMax.toFixed(5)
+        : this.getAnotherOffset(this.value).toFixed(5) === this.computedMax.toFixed(5)
       this.$emit('input', value)
       this.$emit('on-moving', e)
     },
@@ -188,12 +155,7 @@ export default {
   watch: {
     value() {
       this.offset =
-        ((this.valueIsPx
-          ? this.px2percent(
-              this.value,
-              this.$refs.outerWrapper[this.offsetSize]
-            )
-          : this.value) *
+        ((this.valueIsPx ? this.px2percent(this.value, this.$refs.outerWrapper[this.offsetSize]) : this.value) *
           10000) /
         100
     }
@@ -201,12 +163,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.offset =
-        ((this.valueIsPx
-          ? this.px2percent(
-              this.value,
-              this.$refs.outerWrapper[this.offsetSize]
-            )
-          : this.value) *
+        ((this.valueIsPx ? this.px2percent(this.value, this.$refs.outerWrapper[this.offsetSize]) : this.value) *
           10000) /
         100
     })

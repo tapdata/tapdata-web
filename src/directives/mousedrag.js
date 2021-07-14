@@ -18,16 +18,7 @@ export default {
     // 事件名
     let eventsFor = EVENT.mouse
     let $drag
-    const {
-      item,
-      onStart,
-      onMove,
-      onStop,
-      onDrop,
-      box = [],
-      domHtml,
-      container
-    } = binding.value
+    const { item, onStart, onMove, onStop, onDrop, box = [], domHtml, container } = binding.value
     const [t = 0, r = 0, b = 0, l = 0] = box
 
     const handleStart = (el._handleStart = event => {
@@ -52,10 +43,8 @@ export default {
 
       const { width, height } = $drag.getBoundingClientRect()
 
-      let posX =
-        (event.touches ? event.touches[0].pageX : event.pageX) - width / 2
-      let posY =
-        (event.touches ? event.touches[0].pageY : event.pageY) - height / 2
+      let posX = (event.touches ? event.touches[0].pageX : event.pageX) - width / 2
+      let posY = (event.touches ? event.touches[0].pageY : event.pageY) - height / 2
 
       posX = Math.max(posX, l)
       posX = Math.min(posX, document.documentElement.clientWidth - width - r)
@@ -84,12 +73,7 @@ export default {
           const $con = document.querySelector(container)
           if ($con) {
             const bound = $con.getBoundingClientRect()
-            if (
-              posX > bound.left &&
-              posX < bound.right &&
-              posY > bound.top &&
-              posY < bound.bottom
-            ) {
+            if (posX > bound.left && posX < bound.right && posY > bound.top && posY < bound.bottom) {
               onDrop?.(item, [posX - width / 2, posY - height / 2])
             }
           }

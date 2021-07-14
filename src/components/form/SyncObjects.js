@@ -20,10 +20,7 @@ const SyncObjectItem = observer(
         syncTypes: [],
         sourceData: [],
         tables: [],
-        titles: [
-          this.$t('editor.cell.link.migrationObjece'),
-          this.$t('editor.cell.link.chosen')
-        ],
+        titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
 
         transferLoading: false,
         currentName: null,
@@ -88,9 +85,7 @@ const SyncObjectItem = observer(
         <div class="sync-object-item-wrap">
           <el-form-item>
             <div class="e-label">
-              <label class="el-form-item__label">
-                {$t('editor.cell.link.copySourceDatabase')}
-              </label>
+              <label class="el-form-item__label">{$t('editor.cell.link.copySourceDatabase')}</label>
               <el-popover
                 class="align-middle"
                 placement="top-start"
@@ -103,16 +98,9 @@ const SyncObjectItem = observer(
                 <span>{$t('editor.cell.link.formTip')}</span>
               </el-popover>
             </div>
-            <el-checkbox-group
-              v-model={this.syncTypes}
-              on={{ change: this.syncTypesChanged }}
-            >
+            <el-checkbox-group v-model={this.syncTypes} on={{ change: this.syncTypesChanged }}>
               {this.options.map((option, i) => (
-                <el-checkbox
-                  key={i}
-                  label={option.value}
-                  disabled={option.disabled}
-                >
+                <el-checkbox key={i} label={option.value} disabled={option.disabled}>
                   {option.label}
                   {option.tooltip && (
                     <el-popover
@@ -133,9 +121,7 @@ const SyncObjectItem = observer(
           </el-form-item>
           <el-form-item class="transfer-item">
             <div class="el-form-item is-required flex">
-              <label class="el-form-item__label flex-grow-1">
-                {$t('editor.cell.link.migrationSetting')}
-              </label>
+              <label class="el-form-item__label flex-grow-1">{$t('editor.cell.link.migrationSetting')}</label>
               <el-button
                 class="e-button"
                 size="mini"
@@ -162,20 +148,12 @@ const SyncObjectItem = observer(
                 v-model={this.tables}
                 data={this.sourceData}
                 on={{
-                  change: this.handleChangeTransfer,
-                  'right-check-change': this.handleSelectTable
+                  change: this.handleChangeTransfer
                 }}
                 scopedSlots={{
                   default: ({ option }) => (
                     <span class="box" slot-scope="{ option }">
-                      <span
-                        title={option.label}
-                        class={[
-                          'text',
-                          { active: option.label !== option.key },
-                          'text'
-                        ]}
-                      >
+                      <span title={option.label} class={['text', { active: option.label !== option.key }, 'text']}>
                         {this.getTransferLabel(option)}
                       </span>
                     </span>
@@ -197,9 +175,7 @@ const SyncObjectItem = observer(
               <el-form props={{ model: this.model }} disabled={this.disabled}>
                 <el-row gutter={80} class="e-row">
                   <el-col span={12}>
-                    <el-form-item
-                      label={$t('editor.cell.link.prefixPlaceholder')}
-                    >
+                    <el-form-item label={$t('editor.cell.link.prefixPlaceholder')}>
                       <el-input
                         v-model={this.model.table_prefix}
                         autocomplete="off"
@@ -210,9 +186,7 @@ const SyncObjectItem = observer(
                     </el-form-item>
                   </el-col>
                   <el-col span={12}>
-                    <el-form-item
-                      label={$t('editor.cell.link.suffixPlaceholder')}
-                    >
+                    <el-form-item label={$t('editor.cell.link.suffixPlaceholder')}>
                       <el-input
                         v-model={this.model.table_suffix}
                         autocomplete="off"
@@ -226,15 +200,12 @@ const SyncObjectItem = observer(
               </el-form>
             }
             <div class="text">
-              {$t('editor.cell.link.tableNameExample')}:{' '}
-              {this.model.table_prefix}
+              {$t('editor.cell.link.tableNameExample')}: {this.model.table_prefix}
               {this.exampleName}
               {this.table_suffix}
             </div>
             <div slot="footer" class="dialog-footer">
-              <el-button on={{ click: () => (this.dialogVisible = false) }}>
-                {$t('dataVerify.cancel')}
-              </el-button>
+              <el-button on={{ click: () => (this.dialogVisible = false) }}>{$t('dataVerify.cancel')}</el-button>
               <el-button type="primary" onClick={this.confirm}>
                 {$t('dataVerify.confirm')}
               </el-button>
@@ -247,9 +218,7 @@ const SyncObjectItem = observer(
     methods: {
       getTransferLabel(option) {
         const { table_prefix, table_suffix } = this
-        return this.tables.includes(option.key)
-          ? `${table_prefix}${option.label}${table_suffix}`
-          : option.label
+        return this.tables.includes(option.key) ? `${table_prefix}${option.label}${table_suffix}` : option.label
       },
       valueChanged() {
         this.$emit(
@@ -305,13 +274,13 @@ const SyncObjectItem = observer(
         return item.label.indexOf(query) > -1
       },
 
-      // 已选择的表
+      /*// 已选择的表
       handleSelectTable(data) {
         // selectKeepArr = data
-      },
+      },*/
 
       // 穿梭框值改变的时候
-      handleChangeTransfer(tables) {
+      handleChangeTransfer() {
         // this.sourceData.forEach(el => {
         //   if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
         //     el.label = el.key
@@ -357,13 +326,7 @@ const SyncObjectItem = observer(
 
       initTables() {
         let tables = this.data.schema?.tables || []
-        tables = tables.sort((t1, t2) =>
-          t1.table_name > t2.table_name
-            ? 1
-            : t1.table_name === t2.table_name
-            ? 0
-            : -1
-        )
+        tables = tables.sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1))
 
         if (tables && tables.length) {
           this.sourceData = tables.map(table => ({
@@ -381,7 +344,4 @@ const SyncObjectItem = observer(
   })
 )
 
-export const SyncObjects = connect(
-  SyncObjectItem,
-  mapProps({ dataSource: 'options', data: true, loading: true })
-)
+export const SyncObjects = connect(SyncObjectItem, mapProps({ dataSource: 'options', data: true, loading: true }))

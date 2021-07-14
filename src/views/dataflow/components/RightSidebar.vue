@@ -8,16 +8,11 @@
     class="layout-sidebar --right border-start"
   >
     <div class="attr-panel">
-      <header
-        v-if="sourceNode && sourceNode.type === 'database'"
-        class="attr-panel-header"
-      >
+      <header v-if="sourceNode && sourceNode.type === 'database'" class="attr-panel-header">
         <div @click="$emit('deselectConnection')" class="header-icon">
           <VIcon>right-circle</VIcon>
         </div>
-        <span class="header-txt pl-2">{{
-          $t('editor.cell.link.mappingRelations')
-        }}</span>
+        <span class="header-txt pl-2">{{ $t('editor.cell.link.mappingRelations') }}</span>
       </header>
       <div class="attr-panel-body overflow-auto">
         <ElForm class="flex flex-column" label-position="top" size="mini">
@@ -54,11 +49,7 @@
 import '@/directives/resize/index.scss'
 import resize from '@/directives/resize'
 import { mapGetters, mapMutations } from 'vuex'
-import {
-  createForm,
-  onFormValuesChange,
-  onFormInputChange
-} from '@formily/core'
+import { createForm, onFormValuesChange, onFormInputChange } from '@formily/core'
 import { action } from '@formily/reactive'
 import { FormProvider, /*FormConsumer,*/ createSchemaField } from '@formily/vue'
 import { components } from '@/components/form'
@@ -95,15 +86,11 @@ export default {
     ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection']),
 
     node() {
-      return this.activeConnection
-        ? this.nodeById(this.activeConnection.targetId)
-        : this.activeNode
+      return this.activeConnection ? this.nodeById(this.activeConnection.targetId) : this.activeNode
     },
 
     sourceNode() {
-      return this.activeConnection
-        ? this.nodeById(this.activeConnection.sourceId)
-        : null
+      return this.activeConnection ? this.nodeById(this.activeConnection.sourceId) : null
     },
 
     ins() {
@@ -132,9 +119,7 @@ export default {
           effects: this.useEffects
         })
 
-        this.schema = !this.activeConnection
-          ? this.ins.formSchema
-          : this.ins.linkFormSchema
+        this.schema = !this.activeConnection ? this.ins.formSchema : this.ins.linkFormSchema
       }
     }
   },
@@ -151,19 +136,14 @@ export default {
       this.updateNodeProperties({
         id: this.node.id,
         properties: JSON.parse(
-          JSON.stringify(form.values, (key, value) =>
-            filterProps.includes(key) ? undefined : value
-          )
+          JSON.stringify(form.values, (key, value) => (filterProps.includes(key) ? undefined : value))
         )
       })
     },
 
     useEffects() {
       onFormValuesChange(form => {
-        console.log(
-          'onFormValuesChange',
-          JSON.parse(JSON.stringify(form.values))
-        )
+        console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values)))
       })
       onFormInputChange(form => {
         this.$nextTick(() => {
@@ -193,18 +173,10 @@ export default {
             where: {
               database_type: databaseType
                 ? {
-                    in: Array.isArray(databaseType)
-                      ? databaseType
-                      : [databaseType]
+                    in: Array.isArray(databaseType) ? databaseType : [databaseType]
                   }
                 : {
-                    nin: [
-                      'file',
-                      'dummy',
-                      'gridfs',
-                      'rest api',
-                      'custom_connection'
-                    ]
+                    nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
                   }
             },
             fields: {
@@ -221,9 +193,7 @@ export default {
           return {
             id: item.id,
             name: item.name,
-            label: `${item.name} (${
-              this.$t('connection.status.' + item.status) || item.status
-            })`,
+            label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
             value: item.id,
             databaseType: item.database_type
           }
@@ -243,10 +213,7 @@ export default {
       return result.data
     },
 
-    async loadDatabaseTable(
-      field,
-      connectionId = field.query('connectionId').get('value')
-    ) {
+    async loadDatabaseTable(field, connectionId = field.query('connectionId').get('value')) {
       if (!connectionId) return
       const params = {
         filter: JSON.stringify({
@@ -298,15 +265,10 @@ export default {
         })
       }
       const { data } = await metadataApi.schema(params)
-      return data.records[0].schema.tables[0].fields.map(
-        item => item.field_name
-      )
+      return data.records[0].schema.tables[0].fields.map(item => item.field_name)
     },
 
-    async loadCollections(
-      field,
-      connectionId = field.query('connectionId').get('value')
-    ) {
+    async loadCollections(field, connectionId = field.query('connectionId').get('value')) {
       if (!connectionId) return
       let result = await connections.get([connectionId])
       const tables = result.data?.schema?.tables || []

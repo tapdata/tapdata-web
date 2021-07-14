@@ -21,8 +21,7 @@ export const AddDatabaseBtn = {
         on: {
           click: () => {
             console.log('AddDatabaseBtn', form.values)
-            let href =
-              '/#/connections/create?databaseType=' + form.values.database_type
+            let href = '/#/connections/create?databaseType=' + form.values.database_type
             window.open(href, '_blank')
           }
         }

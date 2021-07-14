@@ -58,8 +58,7 @@ export const ArrayItems = observer(
                     header,
                     dataSource?.map((item, index) => {
                       const items = Array.isArray(schemaRef.value.items)
-                        ? schemaRef.value.items[index] ||
-                          schemaRef.value.items[0]
+                        ? schemaRef.value.items[index] || schemaRef.value.items[0]
                         : schemaRef.value.items
 
                       return h(

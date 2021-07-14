@@ -84,10 +84,7 @@ const getters = {
     let foundType
     if (nodeType === 'database') {
       const dbType = node.databaseType
-      foundType = state.nodeTypes.find(
-        typeData =>
-          typeData.type === nodeType && typeData.attr.databaseType === dbType
-      )
+      foundType = state.nodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
     } else {
       foundType = state.nodeTypes.find(typeData => typeData.type === nodeType)
     }
@@ -272,9 +269,7 @@ const mutations = {
 
   // 针对数组，修改某个项的值
   setNodeValueByConditions(state, updateInformation) {
-    const node = state.dataflow.nodes.find(
-      node => node.id === updateInformation.id
-    )
+    const node = state.dataflow.nodes.find(node => node.id === updateInformation.id)
     const nameParts = updateInformation.key.split('.')
     const key = nameParts[nameParts.length - 1]
     const { conditions } = updateInformation
@@ -291,9 +286,7 @@ const mutations = {
 
   // 通过Path[k1.k2]更新节点
   setNodeValueByPath(state, updateInformation) {
-    const node = state.dataflow.nodes.find(
-      node => node.id === updateInformation.id
-    )
+    const node = state.dataflow.nodes.find(node => node.id === updateInformation.id)
     const nameParts = updateInformation.path.split('.')
     const key = nameParts.pop()
     const { conditions = [] } = updateInformation
@@ -310,9 +303,7 @@ const mutations = {
 
   // 更新节点value
   setNodeValue(state, updateInformation) {
-    const node = state.dataflow.nodes.find(
-      node => node.id === updateInformation.id
-    )
+    const node = state.dataflow.nodes.find(node => node.id === updateInformation.id)
 
     if (node === undefined || node === null) {
       throw new Error('未找到节点')

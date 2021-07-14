@@ -1801,7 +1801,7 @@ const cn = {
         kafkaBufferMemory: '缓存消息字节数',
         kafkaCompressionType: '消息压缩类型',
         kafkaPartitionKey: '分区键字段名',
-		kafkaPartitionKeyTip: '多个字段名请用逗号隔开',
+        kafkaPartitionKeyTip: '多个字段名请用逗号隔开',
         kafkaIgnorePushError: '忽略推送消息异常',
         pushErrorTip: ' 如果开启则忽略该次推送的消息(存在消息丢失)，否则停止推送消息',
         kafkaAcks0: '不确认',

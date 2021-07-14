@@ -216,8 +216,7 @@ export class Table extends NodeType {
                   dependencies: ['table'],
                   fulfill: {
                     state: {
-                      dataSource:
-                        '{{$deps[0] && $deps[0].fields.map(item => item.field_name)}}'
+                      dataSource: '{{$deps[0] && $deps[0].fields.map(item => item.field_name)}}'
                     }
                   }
                 }
@@ -334,9 +333,7 @@ export class Table extends NodeType {
           }
         ],
         'x-component': 'SyncObjects',
-        'x-reactions': [
-          '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-        ]
+        'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
       }
     }
   }

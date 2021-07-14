@@ -30,7 +30,11 @@
         <EchartHeader :data="stageType ? nodeDetailsObj : taskDetailsObj"></EchartHeader>
         <div
           class="info fl"
-          v-if="['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database', 'hive', 'mq','hbase'].includes(stageType)"
+          v-if="
+            ['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database', 'hive', 'mq', 'hbase'].includes(
+              stageType
+            )
+          "
           v-loading="apiLoading"
         >
           <div class="info-list">

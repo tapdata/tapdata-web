@@ -65,9 +65,7 @@ const VIcon = {
 
       const explicitSize = Object.keys(sizes).find(key => sizes[key])
 
-      return (
-        (explicitSize && SIZE_MAP[explicitSize]) || convertToUnit(this.size)
-      )
+      return (explicitSize && SIZE_MAP[explicitSize]) || convertToUnit(this.size)
     },
 
     getDefaultData() {
@@ -139,8 +137,7 @@ export default {
 
     // 支持 v-text 和 v-html
     if (data.domProps) {
-      iconName =
-        data.domProps.textContent || data.domProps.innerHTML || iconName
+      iconName = data.domProps.textContent || data.domProps.innerHTML || iconName
       delete data.domProps.textContent
       delete data.domProps.innerHTML
     }

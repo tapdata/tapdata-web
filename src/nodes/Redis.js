@@ -27,9 +27,7 @@ export class Redis extends NodeType {
         'x-component-props': {
           placeholder: '请选择Redis'
         },
-        'x-reactions': [
-          '{{useAsyncDataSource(loadDatabase, "dataSource", ["redis"])}}'
-        ]
+        'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource", ["redis"])}}']
       },
       name: {
         type: 'string',
@@ -106,9 +104,7 @@ export class Redis extends NodeType {
           }
         ],
         'x-component': 'SyncObjects',
-        'x-reactions': [
-          '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-        ]
+        'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
       }
     }
   }

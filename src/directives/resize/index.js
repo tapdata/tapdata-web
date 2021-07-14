@@ -14,10 +14,7 @@ const EVENT = {
 }
 
 function initEvent($el, position, options) {
-  let $trigger = appendHtml(
-    $el,
-    `<div class="resize-trigger --${position}"></div>`
-  )
+  let $trigger = appendHtml($el, `<div class="resize-trigger --${position}"></div>`)
   const isHorizontal = position === 'left' || position === 'right'
   const num = position === 'left' || position === 'top' ? 1 : -1
   let initOffset, oldVal, xOry, attr, cls

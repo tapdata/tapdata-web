@@ -22,10 +22,7 @@ const Conditions = observer(
           {conditions.map((cond, ci) => {
             return (
               <div class="cond-item-wrap" key={ci}>
-                {((cond.type === 'group' &&
-                  ci > 0 &&
-                  cond.operator &&
-                  ci > 0) ||
+                {((cond.type === 'group' && ci > 0 && cond.operator && ci > 0) ||
                   (cond.type !== 'group' && cond.operator && ci > 0)) && (
                   <div class="cond-operator">{cond.operator}</div>
                 )}
@@ -41,35 +38,18 @@ const Conditions = observer(
                   )
                 ) : (
                   <Space>
-                    <el-select
-                      v-model={cond.field}
-                      filterable
-                      size="mini"
-                      placeholder="select field"
-                    >
+                    <el-select v-model={cond.field} filterable size="mini" placeholder="select field">
                       {this.options.map(item => (
                         <el-option key={item} label={item} value={item} />
                       ))}
                     </el-select>
-                    <el-select
-                      v-model={cond.command}
-                      size="mini"
-                      placeholder="select op"
-                    >
+                    <el-select v-model={cond.command} size="mini" placeholder="select op">
                       {this.calculationList.map(item => (
                         <el-option label={item} value={item} key={item} />
                       ))}
                     </el-select>
-                    <el-input
-                      v-model={cond.value}
-                      placeholder="enter value"
-                      type="text"
-                      size="mini"
-                    />
-                    <el-dropdown
-                      size="mini"
-                      onCommand={event => this.handleCommand(event, ci)}
-                    >
+                    <el-input v-model={cond.value} placeholder="enter value" type="text" size="mini" />
+                    <el-dropdown size="mini" onCommand={event => this.handleCommand(event, ci)}>
                       <div>
                         <VIcon class="clickable" color="#000" size="20">
                           xinzeng
@@ -78,30 +58,17 @@ const Conditions = observer(
                       <el-dropdown-menu slot="dropdown">
                         {this.databaseType !== 'mongodb' ? (
                           [
-                            <el-dropdown-item command="and">
-                              + and
-                            </el-dropdown-item>,
-                            <el-dropdown-item command="or">
-                              + or
-                            </el-dropdown-item>
+                            <el-dropdown-item command="and">+ and</el-dropdown-item>,
+                            <el-dropdown-item command="or">+ or</el-dropdown-item>
                           ]
                         ) : (
                           <el-dropdown-item command="cond">+</el-dropdown-item>
                         )}
-                        <el-dropdown-item command="andQ">
-                          + and()
-                        </el-dropdown-item>
-                        <el-dropdown-item command="orQ">
-                          + or()
-                        </el-dropdown-item>
+                        <el-dropdown-item command="andQ">+ and()</el-dropdown-item>
+                        <el-dropdown-item command="orQ">+ or()</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
-                    <VIcon
-                      class="clickable"
-                      color="#000"
-                      onClick={() => this.removeCond(ci)}
-                      small
-                    >
+                    <VIcon class="clickable" color="#000" onClick={() => this.removeCond(ci)} small>
                       delete
                     </VIcon>
                   </Space>
@@ -261,18 +228,10 @@ export const FilterConditions = connect(
         if (this.databaseType === 'mongodb') {
           if (!conditions.length) {
             btns = [
-              <el-button
-                plain
-                size="mini"
-                onClick={() => this.addCond('group', 'and')}
-              >
+              <el-button plain size="mini" onClick={() => this.addCond('group', 'and')}>
                 + and()
               </el-button>,
-              <el-button
-                plain
-                size="mini"
-                onClick={() => this.addCond('group', 'or')}
-              >
+              <el-button plain size="mini" onClick={() => this.addCond('group', 'or')}>
                 + or()
               </el-button>
             ]
@@ -280,50 +239,24 @@ export const FilterConditions = connect(
         } else {
           btns = !conditions.length
             ? [
-                <el-button
-                  plain
-                  size="mini"
-                  icon="el-icon-plus"
-                  onClick={() => this.addCond('cond')}
-                >
+                <el-button plain size="mini" icon="el-icon-plus" onClick={() => this.addCond('cond')}>
                   {$t('queryBuilder.addCond')}
                 </el-button>,
-                <el-button
-                  plain
-                  size="mini"
-                  icon="el-icon-plus"
-                  onClick={() => this.addCond('group')}
-                >
+                <el-button plain size="mini" icon="el-icon-plus" onClick={() => this.addCond('group')}>
                   ({$t('queryBuilder.addCond')})
                 </el-button>
               ]
             : [
-                <el-button
-                  plain
-                  size="mini"
-                  onClick={() => this.addCond('cond', 'and')}
-                >
+                <el-button plain size="mini" onClick={() => this.addCond('cond', 'and')}>
                   + and
                 </el-button>,
-                <el-button
-                  plain
-                  size="mini"
-                  onClick={() => this.addCond('cond', 'or')}
-                >
+                <el-button plain size="mini" onClick={() => this.addCond('cond', 'or')}>
                   + or
                 </el-button>,
-                <el-button
-                  plain
-                  size="mini"
-                  onClick={() => this.addCond('group', 'and')}
-                >
+                <el-button plain size="mini" onClick={() => this.addCond('group', 'and')}>
                   + and()
                 </el-button>,
-                <el-button
-                  plain
-                  size="mini"
-                  onClick={() => this.addCond('group', 'or')}
-                >
+                <el-button plain size="mini" onClick={() => this.addCond('group', 'or')}>
                   + or()
                 </el-button>
               ]
@@ -333,11 +266,7 @@ export const FilterConditions = connect(
           <Space direction="vertical" class="filter-conditions">
             {!!btns && <Space>{btns}</Space>}
             {conditions?.length > 0 && (
-              <Conditions
-                options={this.options}
-                conditions={conditions}
-                databaseType={this.databaseType}
-              />
+              <Conditions options={this.options} conditions={conditions} databaseType={this.databaseType} />
             )}
           </Space>
         )

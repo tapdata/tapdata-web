@@ -30,9 +30,7 @@ export default {
     highlighted() {
       // no idea what language to use, return raw code
       if (!this.autoDetect && !hljs.getLanguage(this.language)) {
-        console.warn(
-          `The language "${this.language}" you specified could not be found.`
-        )
+        console.warn(`The language "${this.language}" you specified could not be found.`)
         this.unknownLanguage = true
         return escapeHTML(this.code)
       }

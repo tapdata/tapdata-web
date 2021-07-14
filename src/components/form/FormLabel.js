@@ -4,9 +4,7 @@ export const FormLabel = {
   render() {
     return (
       <div class="e-label">
-        <label class="el-form-item__label">
-          {this.$t('editor.cell.link.copySourceDatabase')}
-        </label>
+        <label class="el-form-item__label">{this.$t('editor.cell.link.copySourceDatabase')}</label>
         <el-popover
           class="align-middle lh-1"
           placement="top-start"

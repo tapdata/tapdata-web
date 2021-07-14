@@ -15,11 +15,7 @@ const RadioGroupOption = {
             default: () =>
               options.map(option => {
                 if (typeof option === 'string') {
-                  return h(
-                    ElRadio,
-                    { props: { label: option } },
-                    { default: () => [option] }
-                  )
+                  return h(ElRadio, { props: { label: option } }, { default: () => [option] })
                 } else {
                   return h(
                     ElRadio,
@@ -51,8 +47,5 @@ const RadioGroupOption = {
   }
 }
 
-export const RadioGroup = connect(
-  RadioGroupOption,
-  mapProps({ dataSource: 'options' })
-)
+export const RadioGroup = connect(RadioGroupOption, mapProps({ dataSource: 'options' }))
 export const Radio = ElRadio

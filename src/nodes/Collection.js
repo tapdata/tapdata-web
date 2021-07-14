@@ -40,9 +40,7 @@ export class Collection extends NodeType {
             'x-component-props': {
               config: { placeholder: '请选择数据库' }
             },
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabase, "dataSource", ["mongodb"])}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource", ["mongodb"])}}']
           },
           databaseType: {
             type: 'string',
@@ -90,8 +88,7 @@ export class Collection extends NodeType {
               dependencies: ['tableName'],
               fulfill: {
                 state: {
-                  value:
-                    '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
+                  value: '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
                 }
               }
             }
@@ -159,8 +156,7 @@ export class Collection extends NodeType {
           dependencies: ['table'],
           fulfill: {
             state: {
-              dataSource:
-                '{{$deps[0] && $deps[0].fields ? $deps[0].fields.map(item => item.field_name) : []}}'
+              dataSource: '{{$deps[0] && $deps[0].fields ? $deps[0].fields.map(item => item.field_name) : []}}'
             }
           }
         }
@@ -311,9 +307,7 @@ export class Collection extends NodeType {
           }
         ],
         'x-component': 'SyncObjects',
-        'x-reactions': [
-          '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-        ]
+        'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
       }
     }
   }

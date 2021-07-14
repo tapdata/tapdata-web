@@ -25,11 +25,7 @@
         @mousedown="mouseDown"
         @wheel="wheelScroll"
       >
-        <div
-          id="node-view-background"
-          class="node-view-background"
-          :style="backgroundStyle"
-        ></div>
+        <div id="node-view-background" class="node-view-background" :style="backgroundStyle"></div>
 
         <div id="node-view" class="node-view" :style="dataflowStyle">
           <DFNode
@@ -47,17 +43,8 @@
           ></DFNode>
         </div>
 
-        <div
-          v-show="showSelectBox"
-          class="select-box"
-          :style="selectBoxStyle"
-        ></div>
-        <div
-          class="nav-line"
-          v-for="(l, i) in navLines"
-          :key="`l-${i}`"
-          :style="l"
-        ></div>
+        <div v-show="showSelectBox" class="select-box" :style="selectBoxStyle"></div>
+        <div class="nav-line" v-for="(l, i) in navLines" :key="`l-${i}`" :style="l"></div>
       </main>
       <!--右侧边栏-->
       <RightSidebar @deselectConnection="deselectConnection"></RightSidebar>
@@ -211,13 +198,7 @@ export default {
       'addNode'
     ]),
 
-    async confirmMessage(
-      message,
-      headline,
-      type,
-      confirmButtonText,
-      cancelButtonText
-    ) {
+    async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {
       try {
         await this.$confirm(message, headline, {
           confirmButtonText,
@@ -291,8 +272,7 @@ export default {
           {
             id: 'remove-connection',
             location: 0.25,
-            label:
-              '<div class="remove-connection-btn" title="删除连接"></span>',
+            label: '<div class="remove-connection-btn" title="删除连接"></span>',
             cssClass: 'remove-connection-label cursor-pointer',
             visible: false,
             events: {
@@ -334,10 +314,7 @@ export default {
             console.log([x, y], pos)
             if (pos.x > x && pos.x < x + nw && pos.y > y && pos.y < y + nh) {
               console.log('in Node')
-              if (
-                !this.isConnected(sourceId, n.id) &&
-                !this.isParent(sourceId, n.id)
-              ) {
+              if (!this.isConnected(sourceId, n.id) && !this.isParent(sourceId, n.id)) {
                 jsPlumbIns.connect({
                   source: jsPlumbIns.getEndpoint(conn.sourceId + '_source'),
                   target: jsPlumbIns.getEndpoint(NODE_PREFIX + n.id + '_target')
@@ -369,7 +346,7 @@ export default {
       })
 
       // 在target的Endpoint上面drop会触发该事件
-      jsPlumbIns.bind('beforeDrop', e => {
+      jsPlumbIns.bind('beforeDrop', () => {
         console.log('beforeDrop')
         return true
         // return this.isParent(
@@ -710,12 +687,7 @@ export default {
       bottom -= nodeViewOffset[1]
       return this.nodes.filter(({ position }) => {
         console.log('position', position, { x, y, bottom, right })
-        return (
-          position[0] + nw > x &&
-          position[0] < right &&
-          bottom > position[1] &&
-          y < position[1] + nh
-        )
+        return position[0] + nw > x && position[0] < right && bottom > position[1] && y < position[1] + nh
       })
     },
 
@@ -807,7 +779,7 @@ export default {
 
     getMousePositionWithinNodeView(e) {
       const nodeViewScale = this.nodeViewScale
-      const nodeViewOffset = this.nodeViewOffsetPosition
+      // const nodeViewOffset = this.nodeViewOffsetPosition
       // const [x, y] = this.nodeViewOffsetPosition
       let { x, y } = this.$refs.layoutContent.getBoundingClientRect()
       return {
@@ -900,9 +872,7 @@ export default {
       data.status = 'scheduled'
       data.executeMode = 'normal'
 
-      const fetch = dataflowId
-        ? dataFlowsApi.patch(data)
-        : dataFlowsApi.post(data)
+      const fetch = dataflowId ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
 
       const result = await fetch
 
@@ -961,8 +931,7 @@ export default {
         const info = data.data.fullDocument
         this.status = info.status
 
-        if (this.executeMode !== info.executeMode)
-          this.executeMode = info.executeMode
+        if (this.executeMode !== info.executeMode) this.executeMode = info.executeMode
 
         if (!this.statusBtMap[this.status].start) {
           this.executeMode = 'normal'
@@ -1052,9 +1021,7 @@ export default {
     isConnected(s, t) {
       s = NODE_PREFIX + s
       t = NODE_PREFIX + t
-      return this.jsPlumbIns
-        .getConnections('*')
-        .some(c => `${c.sourceId}` === s && `${c.targetId}` === t)
+      return this.jsPlumbIns.getConnections('*').some(c => `${c.sourceId}` === s && `${c.targetId}` === t)
     },
 
     // 循环检查target是否是source的上级

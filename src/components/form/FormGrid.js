@@ -1,11 +1,4 @@
-import {
-  defineComponent,
-  provide,
-  ref,
-  onMounted,
-  onBeforeUnmount,
-  inject
-} from 'vue-demi'
+import { defineComponent, provide, ref, onMounted, onBeforeUnmount, inject } from 'vue-demi'
 import { isValid, isNum, isBool, isEqual } from '@formily/shared'
 import { h } from '@formily/vue'
 import ResizeObserver from 'resize-observer-polyfill'
@@ -30,9 +23,7 @@ const getStyle = props => {
         minmax = `minmax(0px,${maxWidth}px)`
       }
     } else {
-      minmax = `minmax(${minWidth}px,${
-        isValid(maxWidth) ? `${maxWidth}px` : '1fr'
-      })`
+      minmax = `minmax(${minWidth}px,${isValid(maxWidth) ? `${maxWidth}px` : '1fr'})`
     }
     return minmax
   }
@@ -63,26 +54,14 @@ const getStyle = props => {
   }
 
   const style = {
-    gridTemplateColumns: `repeat(${finalColumns}, ${getMinMax(
-      layoutParams.minWidth,
-      layoutParams.maxWidth
-    )})`,
+    gridTemplateColumns: `repeat(${finalColumns}, ${getMinMax(layoutParams.minWidth, layoutParams.maxWidth)})`,
     gridGap: `${rowGap}px ${columnGap}px`
   }
   return style
 }
 
 const useLayout = props => {
-  const {
-    intervals,
-    minColumns,
-    maxColumns,
-    minWidth,
-    maxWidth,
-    colWrap,
-    columnGap,
-    rowGap
-  } = props
+  const { intervals, minColumns, maxColumns, minWidth, maxWidth, colWrap, columnGap, rowGap } = props
   const $ref = ref()
   const layoutParams = ref({})
   const styles = ref({})
@@ -100,23 +79,13 @@ const useLayout = props => {
         minWidth: isValid(minWidth)
           ? minWidth[index]
           : isValid(maxColumns[index])
-          ? Math.floor(
-              (clientWidth - (maxColumns[index] - 1) * props.columnGap) /
-                maxColumns[index]
-            )
+          ? Math.floor((clientWidth - (maxColumns[index] - 1) * props.columnGap) / maxColumns[index])
           : 0,
         maxWidth: isValid(maxWidth)
           ? maxWidth[index]
-          : Infinity ===
-            Math.floor(
-              (clientWidth - (minColumns[index] - 1) * props.columnGap) /
-                minColumns[index]
-            )
+          : Infinity === Math.floor((clientWidth - (minColumns[index] - 1) * props.columnGap) / minColumns[index])
           ? clientWidth
-          : Math.floor(
-              (clientWidth - (minColumns[index] - 1) * props.columnGap) /
-                minColumns[index]
-            ),
+          : Math.floor((clientWidth - (minColumns[index] - 1) * props.columnGap) / minColumns[index]),
         columns: target.childNodes.length,
         colWrap: colWrap[index],
         minColumns: minColumns ? minColumns[index] : 1,
@@ -129,23 +98,13 @@ const useLayout = props => {
       return {
         maxWidth: isValid(maxWidth)
           ? maxWidth[index]
-          : Infinity ===
-            Math.floor(
-              (clientWidth - (minColumns[index] - 1) * props.columnGap) /
-                minColumns[index]
-            )
+          : Infinity === Math.floor((clientWidth - (minColumns[index] - 1) * props.columnGap) / minColumns[index])
           ? clientWidth
-          : Math.floor(
-              (clientWidth - (minColumns[index] - 1) * props.columnGap) /
-                minColumns[index]
-            ),
+          : Math.floor((clientWidth - (minColumns[index] - 1) * props.columnGap) / minColumns[index]),
         minWidth: isValid(minWidth)
           ? minWidth[index]
           : isValid(maxColumns[index])
-          ? Math.floor(
-              (clientWidth - (maxColumns[index] - 1) * props.columnGap) /
-                maxColumns[index]
-            )
+          ? Math.floor((clientWidth - (maxColumns[index] - 1) * props.columnGap) / maxColumns[index])
           : 0,
         minColumns: minColumns ? minColumns[index] : 1,
         maxColumns: maxColumns ? maxColumns[index] : undefined,
@@ -201,14 +160,7 @@ const useGridSpan = gridSpan => {
   if (!isValid(params)) {
     return gridSpan
   }
-  const {
-    colWrap,
-    columns = 0,
-    clientWidth,
-    minWidth,
-    columnGap,
-    maxColumns
-  } = params
+  const { colWrap, columns = 0, clientWidth, minWidth, columnGap, maxColumns } = params
   const calc = Math.floor((clientWidth + columnGap) / (minWidth + columnGap)) // 算出实际一行最多能塞进的格子数
   if (colWrap === true) {
     if (Math.min(calc, columns) >= gridSpan) {
@@ -311,11 +263,7 @@ export const FormGrid = defineComponent({
       }
     }
     const normalizedProps = normalizeProps(props)
-    const {
-      ref: layoutRef,
-      layoutParams,
-      styles: styleRef
-    } = useLayout(normalizedProps)
+    const { ref: layoutRef, layoutParams, styles: styleRef } = useLayout(normalizedProps)
     provide(FormGridSymbol, {
       columnGap: props.columnGap,
       ...layoutParams.value

@@ -7,10 +7,7 @@
     @click="mouseClick"
   >
     <div class="df-node-icon ml-2">
-      <ElImage
-        draggable="false"
-        :src="`static/editor/o-${ins.icon}.svg`"
-      ></ElImage>
+      <ElImage draggable="false" :src="`static/editor/o-${ins.icon}.svg`"></ElImage>
     </div>
     <div class="df-node-text text-truncate mx-2 lh-1">{{ data.name }}</div>
     <div class="df-node-action"></div>
@@ -42,12 +39,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', [
-      'nodeById',
-      'isActionActive',
-      'isNodeActive',
-      'isNodeSelected'
-    ]),
+    ...mapGetters('dataflow', ['nodeById', 'isActionActive', 'isNodeActive', 'isNodeSelected']),
 
     data() {
       return this.nodeById(this.nodeId)

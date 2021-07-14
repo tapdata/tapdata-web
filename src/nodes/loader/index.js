@@ -182,9 +182,7 @@ export const nodeTypes = [
               table: {
                 type: 'object',
                 'x-display': 'hidden',
-                'x-reactions': [
-                  '{{useAsyncDataSource(loadTableInfo, "value")}}'
-                ]
+                'x-reactions': ['{{useAsyncDataSource(loadTableInfo, "value")}}']
               },
               connectionBtn: {
                 type: 'void',
@@ -313,8 +311,7 @@ export const nodeTypes = [
                       dependencies: ['table'],
                       fulfill: {
                         state: {
-                          dataSource:
-                            '{{$deps[0] && $deps[0].fields.map(item => item.field_name)}}'
+                          dataSource: '{{$deps[0] && $deps[0].fields.map(item => item.field_name)}}'
                         }
                       }
                     }
@@ -496,8 +493,7 @@ export const nodeTypes = [
                             dependencies: ['joinTable.joinKeys'],
                             fulfill: {
                               schema: {
-                                'x-component-props.disabled':
-                                  '{{$deps[0].length < 2}}'
+                                'x-component-props.disabled': '{{$deps[0].length < 2}}'
                               }
                             }
                           }
@@ -734,9 +730,7 @@ export const nodeTypes = [
                 'x-component-props': {
                   config: { placeholder: '请选择数据库' }
                 },
-                'x-reactions': [
-                  '{{useAsyncDataSource(loadDatabase, "dataSource", ["mongodb"])}}'
-                ]
+                'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource", ["mongodb"])}}']
               },
               databaseType: {
                 type: 'string',
@@ -784,8 +778,7 @@ export const nodeTypes = [
                   dependencies: ['tableName'],
                   fulfill: {
                     state: {
-                      value:
-                        '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
+                      value: '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
                     }
                   }
                 }
@@ -853,8 +846,7 @@ export const nodeTypes = [
               dependencies: ['table'],
               fulfill: {
                 state: {
-                  dataSource:
-                    '{{$deps[0] && $deps[0].fields ? $deps[0].fields.map(item => item.field_name) : []}}'
+                  dataSource: '{{$deps[0] && $deps[0].fields ? $deps[0].fields.map(item => item.field_name) : []}}'
                 }
               }
             }
@@ -1004,9 +996,7 @@ export const nodeTypes = [
               }
             ],
             'x-component': 'SyncObjects',
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
           }
         }
       }
@@ -1031,9 +1021,7 @@ export const nodeTypes = [
             'x-component-props': {
               placeholder: '请选择Redis'
             },
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabase, "dataSource", ["redis"])}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource", ["redis"])}}']
           },
           name: {
             type: 'string',
@@ -1109,9 +1097,7 @@ export const nodeTypes = [
               }
             ],
             'x-component': 'SyncObjects',
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
           }
         }
       }
@@ -1136,9 +1122,7 @@ export const nodeTypes = [
             'x-component-props': {
               placeholder: '请选择GridFS'
             },
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabase, "dataSource", ["gridfs"])}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource", ["gridfs"])}}']
           },
           tableName: {
             title: '请选择数据集',
@@ -1162,8 +1146,7 @@ export const nodeTypes = [
               dependencies: ['tableName'],
               fulfill: {
                 state: {
-                  value:
-                    '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
+                  value: '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
                 }
               }
             }
@@ -1227,9 +1210,7 @@ export const nodeTypes = [
               }
             ],
             'x-component': 'SyncObjects',
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
           }
         }
       }
@@ -1254,9 +1235,7 @@ export const nodeTypes = [
             'x-component-props': {
               placeholder: '请选择Dummy'
             },
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabase, "dataSource", ["dummy db"])}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource", ["dummy db"])}}']
           },
           tableName: {
             title: '请选择数据集',
@@ -1280,8 +1259,7 @@ export const nodeTypes = [
               dependencies: ['tableName'],
               fulfill: {
                 state: {
-                  value:
-                    '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
+                  value: '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
                 }
               }
             }
@@ -1345,9 +1323,7 @@ export const nodeTypes = [
               }
             ],
             'x-component': 'SyncObjects',
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
           }
         }
       }
@@ -1372,9 +1348,7 @@ export const nodeTypes = [
             'x-component-props': {
               placeholder: '请选择API'
             },
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabase, "dataSource", ["rest api"])}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource", ["rest api"])}}']
           },
           tableName: {
             title: '请选择数据集',
@@ -1398,8 +1372,7 @@ export const nodeTypes = [
               dependencies: ['tableName'],
               fulfill: {
                 state: {
-                  value:
-                    '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
+                  value: '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
                 }
               }
             }
@@ -1463,9 +1436,7 @@ export const nodeTypes = [
               }
             ],
             'x-component': 'SyncObjects',
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
           }
         }
       }
@@ -1490,9 +1461,7 @@ export const nodeTypes = [
             'x-component-props': {
               placeholder: '请选择Elastic search'
             },
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabase, "dataSource", ["elasticsearch"])}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource", ["elasticsearch"])}}']
           },
           name: {
             type: 'string',
@@ -1501,8 +1470,7 @@ export const nodeTypes = [
               dependencies: ['connectionId'],
               fulfill: {
                 state: {
-                  value:
-                    '{{$form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.name}}'
+                  value: '{{$form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.name}}'
                 }
               }
             }
@@ -1554,9 +1522,7 @@ export const nodeTypes = [
               }
             ],
             'x-component': 'SyncObjects',
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
           }
         }
       }
@@ -1581,9 +1547,7 @@ export const nodeTypes = [
             'x-component-props': {
               placeholder: '请选择Custom'
             },
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabase, "dataSource", ["custom_connection"])}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource", ["custom_connection"])}}']
           },
           tableName: {
             title: '表',
@@ -1607,8 +1571,7 @@ export const nodeTypes = [
               dependencies: ['tableName'],
               fulfill: {
                 state: {
-                  value:
-                    '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
+                  value: '{{$form.query("tableName").get("dataSource")?.find(item=>item.table_name===$deps[0])}}'
                 }
               }
             }
@@ -1620,8 +1583,7 @@ export const nodeTypes = [
               dependencies: ['connectionId'],
               fulfill: {
                 state: {
-                  value:
-                    '{{$form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.name}}'
+                  value: '{{$form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.name}}'
                 }
               }
             }
@@ -1710,9 +1672,7 @@ export const nodeTypes = [
               }
             ],
             'x-component': 'SyncObjects',
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
           }
         }
       }

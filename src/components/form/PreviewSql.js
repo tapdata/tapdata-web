@@ -36,35 +36,18 @@ export const PreviewSql = connect(
             const fieldFilterType = form.values.custSql.fieldFilterType
             const conditions = form.values.custSql.conditions || []
             const selectedFields = form.values.custSql.selectedFields || []
-            const fieldOptions =
-              form.query('selectedFields').get('dataSource') || []
+            const fieldOptions = form.query('selectedFields').get('dataSource') || []
             const sqlWhere = genSqlWhere(conditions) || ''
             let custFields = []
-            if (
-              selectedFields.length > 0 &&
-              fieldFilterType === 'retainedField'
-            )
-              custFields = [...selectedFields]
-            else if (
-              selectedFields.length > 0 &&
-              fieldFilterType === 'deleteField'
-            ) {
-              custFields = [
-                fieldOptions.filter(it => !selectedFields.includes(it))
-              ]
+            if (selectedFields.length > 0 && fieldFilterType === 'retainedField') custFields = [...selectedFields]
+            else if (selectedFields.length > 0 && fieldFilterType === 'deleteField') {
+              custFields = [fieldOptions.filter(it => !selectedFields.includes(it))]
             }
 
-            if (
-              custFields.length > 0 &&
-              custFields.length !== fieldOptions.length
-            )
-              res += custFields.join(',')
+            if (custFields.length > 0 && custFields.length !== fieldOptions.length) res += custFields.join(',')
             else res += '* '
             res += ' FROM ' + table.table_name + ' '
-            if (
-              (sqlWhere && sqlWhere.length > 0) ||
-              (limitLines && limitLines !== 'all' && databaseType === 'oracle')
-            )
+            if ((sqlWhere && sqlWhere.length > 0) || (limitLines && limitLines !== 'all' && databaseType === 'oracle'))
               res += ' WHERE '
             res += sqlWhere
             if (limitLines && limitLines !== 'all') {
@@ -91,33 +74,17 @@ export const PreviewSql = connect(
             let res = ''
             conditions.forEach(cond => {
               if (cond.field || cond.type === 'group') {
-                if (cond.type === 'group')
-                  res +=
-                    ' ' +
-                    cond.operator +
-                    ' (' +
-                    genSqlWhere(cond.conditions) +
-                    ')'
+                if (cond.type === 'group') res += ' ' + cond.operator + ' (' + genSqlWhere(cond.conditions) + ')'
                 else {
                   let quota = ['String', 'Date'].includes(
-                      table.fields.find(it => it.field_name === cond.field)
-                        .javaType
+                      table.fields.find(it => it.field_name === cond.field).javaType
                     )
                       ? "'"
                       : '',
                     percent = cond.command === 'like' ? '%' : ''
                   if (quota === '' && percent === '%') quota = "'"
                   if (res.length > 1) res += ' ' + cond.operator + ' '
-                  res +=
-                    cond.field +
-                    ' ' +
-                    cond.command +
-                    ' ' +
-                    quota +
-                    percent +
-                    cond.value +
-                    percent +
-                    quota
+                  res += cond.field + ' ' + cond.command + ' ' + quota + percent + cond.value + percent + quota
                 }
               }
             })
@@ -154,12 +121,7 @@ export const PreviewSql = connect(
             } else if (condition.type === 'condition' && condition.field) {
               let val = condition.value
               console.log('table.fields', table.fields, val)
-              if (
-                !['String', 'Date'].includes(
-                  table.fields.find(it => it.field_name === condition.field)
-                    .javaType
-                )
-              )
+              if (!['String', 'Date'].includes(table.fields.find(it => it.field_name === condition.field).javaType))
                 val = parseFloat(val)
               if (condition.command === 'eq') {
                 return {

@@ -23,13 +23,7 @@ export const DatabaseInfo = connect(
         if (!databaseInfo) return
         let tables = databaseInfo.schema?.tables || []
         tables = tables
-          .sort((t1, t2) =>
-            t1.table_name > t2.table_name
-              ? 1
-              : t1.table_name === t2.table_name
-              ? 0
-              : -1
-          )
+          .sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1))
           .filter(item => item.table_name)
           .map(item => item.table_name)
 
@@ -51,9 +45,7 @@ export const DatabaseInfo = connect(
           <div class="database-info flex flex-column flex-grow-1 overflow-hidden">
             <ul class="info-box flex-shrink-0">
               <li>
-                <span class="label">
-                  {this.$t('editor.cell.data_node.database.type')}:
-                </span>
+                <span class="label">{this.$t('editor.cell.data_node.database.type')}:</span>
                 <span class="text">{databaseInfo.database_type}</span>
               </li>
               <li>
@@ -61,32 +53,21 @@ export const DatabaseInfo = connect(
                 {databaseInfo.database_host && (
                   <span class="text">
                     <span>{databaseInfo.database_host}</span>
-                    {databaseInfo.database_type !== 'mongodb' && (
-                      <span>:{databaseInfo.database_port}</span>
-                    )}
+                    {databaseInfo.database_type !== 'mongodb' && <span>:{databaseInfo.database_port}</span>}
                   </span>
                 )}
               </li>
               <li>
-                <span class="label">
-                  {this.$t('editor.cell.data_node.database.databaseName')}:
-                </span>
+                <span class="label">{this.$t('editor.cell.data_node.database.databaseName')}:</span>
                 <span class="text">{databaseInfo.database_name}</span>
               </li>
               <li>
-                <span class="label">
-                  {this.$t('editor.cell.data_node.database.account')}:
-                </span>
+                <span class="label">{this.$t('editor.cell.data_node.database.account')}:</span>
                 <span class="text">{databaseInfo.database_username}</span>
               </li>
               {databaseInfo.database_owner && (
                 <li>
-                  <span class="label">
-                    {this.$t(
-                      'editor.cell.data_node.database.attributionAccount'
-                    )}
-                    :
-                  </span>
+                  <span class="label">{this.$t('editor.cell.data_node.database.attributionAccount')}:</span>
                   <span class="text">{databaseInfo.database_owner}</span>
                 </li>
               )}

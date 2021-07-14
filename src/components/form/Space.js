@@ -39,8 +39,7 @@ export const Space = defineComponent({
         return null
       }
 
-      const mergedAlign =
-        align === undefined && direction === 'horizontal' ? 'center' : align
+      const mergedAlign = align === undefined && direction === 'horizontal' ? 'center' : align
 
       const someSpaceClass = {
         [prefixCls]: true,
@@ -61,12 +60,8 @@ export const Space = defineComponent({
               i === len - 1
                 ? {}
                 : {
-                    [direction === 'vertical'
-                      ? 'marginBottom'
-                      : marginDirection]:
-                      typeof size === 'string'
-                        ? `${spaceSize[size]}px`
-                        : `${size}px`
+                    [direction === 'vertical' ? 'marginBottom' : marginDirection]:
+                      typeof size === 'string' ? `${spaceSize[size]}px` : `${size}px`
                   }
           },
           { default: () => [child] }

@@ -64,10 +64,7 @@ export default {
     session.setMode(`ace/mode/${lang}`)
     session.setTabSize(2)
 
-    let val =
-      typeof this.value === 'object'
-        ? JSON.stringify(this.value, null, 2)
-        : this.value
+    let val = typeof this.value === 'object' ? JSON.stringify(this.value, null, 2) : this.value
     editor.setValue(val || '', 1)
 
     if (this.options) {

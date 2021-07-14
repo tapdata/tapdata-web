@@ -265,7 +265,7 @@ export default {
           protocolType: '',
           includeField: []
         },
-        joinTableRequired: true,
+        joinTableRequired: true
       },
       fieldsData: [],
       chooseField: '',

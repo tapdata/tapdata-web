@@ -34,14 +34,7 @@ import { SyncObjects } from './SyncObjects'
 import { InputNumber } from './InputNumber'
 import { Space } from './Space'
 import { FormTab, FormTabPane } from './FormTab'
-import {
-  ArrayBase,
-  ArrayBaseItem,
-  ArrayAddition,
-  ArrayMoveDown,
-  ArrayMoveUp,
-  ArrayRemove
-} from './ArrayBase'
+import { ArrayBase, ArrayBaseItem, ArrayAddition, ArrayMoveDown, ArrayMoveUp, ArrayRemove } from './ArrayBase'
 import { ArrayItems, ArrayHeader } from './ArrayItems'
 import { FilterConditions } from './FilterConditions'
 import { PreviewSql } from './PreviewSql'

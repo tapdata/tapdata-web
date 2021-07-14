@@ -1,5 +1,5 @@
 import { isVoidField } from '@formily/core'
-import { connect, createForm, FormProvider, mapProps } from '@formily/vue'
+import { connect, mapProps } from '@formily/vue'
 import { getComponentByTag } from './utils/util'
 
 const ElFormItemComponent = getComponentByTag('el-form-item')
@@ -16,10 +16,6 @@ export const ElFormItem = connect(
     }
   },
   mapProps({ title: 'label', required: true }, (props, field) => ({
-    error: !isVoidField(field)
-      ? field.errors.length
-        ? field.errors.join('，')
-        : undefined
-      : undefined
+    error: !isVoidField(field) ? (field.errors.length ? field.errors.join('，') : undefined) : undefined
   }))
 )

@@ -1,8 +1,5 @@
 import { connect, mapProps } from '@formily/vue'
-import { getComponentByTag } from './utils/util'
 import VIcon from '@/components/VIcon'
-
-const ElCheckbox = getComponentByTag('el-checkbox')
 
 const CheckboxOption = {
   props: ['option'],

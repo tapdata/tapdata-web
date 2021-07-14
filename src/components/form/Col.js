@@ -5,11 +5,7 @@ const ElCol = {
   props: ['flex'],
   render(h, context) {
     const data = context.data
-    return h(
-      'el-col',
-      { ...data, style: { flex: context.props.flex } },
-      context.children
-    )
+    return h('el-col', { ...data, style: { flex: context.props.flex } }, context.children)
   }
 }
 
