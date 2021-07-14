@@ -40,7 +40,10 @@ import {
   DatePicker,
   Progress,
   Footer,
-  Switch
+  Switch,
+  Tabs,
+  TabPane,
+  Transfer
 } from 'element-ui'
 
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
@@ -109,3 +112,6 @@ Vue.use(DatePicker)
 Vue.use(Progress)
 Vue.use(Footer)
 Vue.use(Switch)
+Vue.use(Tabs)
+Vue.use(TabPane)
+Vue.use(Transfer)
