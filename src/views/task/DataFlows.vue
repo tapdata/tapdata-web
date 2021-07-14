@@ -1003,7 +1003,7 @@ export default {
     },
     create() {
       let routeUrl = this.$router.resolve({
-        name: 'job',
+        name: 'DataflowNew',
         query: { mapping: this.mappingTemplate }
       })
       window.open(routeUrl.href, '_blank')

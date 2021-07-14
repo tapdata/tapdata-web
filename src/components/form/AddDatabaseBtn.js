@@ -1,5 +1,4 @@
 import { useForm } from '@formily/vue'
-import { observer } from '@formily/reactive-vue'
 import { getComponentByTag } from './utils/util'
 
 const ElButton = getComponentByTag('el-button')
@@ -21,7 +20,7 @@ export const AddDatabaseBtn = {
         on: {
           click: () => {
             console.log('AddDatabaseBtn', form.values)
-            let href = '/#/connections/create?databaseType=' + form.values.database_type
+            let href = '/#/connections/create?databaseType=' + form.values.databaseType
             window.open(href, '_blank')
           }
         }

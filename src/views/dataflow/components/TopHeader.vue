@@ -1,7 +1,7 @@
 <template>
   <header class="layout-header border-bottom">
     <div class="title-wrap flex flex-shrink-0">
-      <div class="nav-icon flex align-center justify-center">
+      <div @click="back" class="nav-icon flex align-center justify-center">
         <VIcon color="#fff" size="24">left</VIcon>
       </div>
       <div class="title-input-wrap inline-grid mx-2" :data-value="hiddenValue">
@@ -251,6 +251,41 @@ export default {
         this.inputWidth = Math.max(this.$refs.namePre.offsetWidth, 8) + 'px'
         namePre.removeAttribute('style')
       })
+    },
+
+    back() {
+      let mapping = this.$route.query.mapping
+      const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
+      const backToList = () => {
+        if ($PLATFORM === 'dfs') {
+          top.window.App.$router.push({
+            name: 'Task'
+          })
+        } else {
+          this.$router.push({
+            name: 'dataFlows',
+            query: {
+              mapping: mapping
+            }
+          })
+        }
+      }
+      backToList()
+      /*if (!this.dataChangeFalg || $PLATFORM) {
+        backToList()
+      } else {
+        this.$confirm(this.$t('dataFlow.saveReminder'), this.$t('dataFlow.backlistText'), {
+          type: 'warning',
+          confirmButtonText: this.$t('dataFlow.leave'),
+          closeOnClickModal: false
+        }).then(resFlag => {
+          if (!resFlag) {
+            return
+          }
+          this.dataChangeFalg = false
+          backToList()
+        })
+      }*/
     }
   }
 }
