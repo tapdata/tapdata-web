@@ -102,7 +102,7 @@ export default {
         .then(data => {
           // this.agent = formatAgent(data)
           this.agent = data
-          this.agentInfo.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
+          this.agent.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
           if (this.agent?.metric?.systemInfo) {
             this.agent.cpus = this.agent.metric.systemInfo.cpus || ''
             this.agent.installationDirectory = this.agent.metric.systemInfo.installationDirectory || ''
