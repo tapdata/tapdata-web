@@ -16,7 +16,7 @@ export const messageProcessConfig = {
       size: { width: 120, height: 28 },
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-js.svg',
+          xlinkHref: 'static/editor/o-transform.svg',
           refWidth: '25%',
           refHeight: '84%',
           refX: '-8%',
@@ -39,7 +39,7 @@ export const messageProcessConfig = {
       },
 
       [FORM_DATA_KEY]: {
-        name: 'Message',
+        name: 'Transform',
         type: 'protobuf_convert_processor',
         pbProcessorConfig: {
           mapping: {},
@@ -240,7 +240,7 @@ export const messageProcessConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/js.svg',
+        xlinkHref: 'static/editor/transform.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

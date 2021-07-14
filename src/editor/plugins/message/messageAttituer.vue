@@ -38,24 +38,23 @@
           node_key="key"
         >
           <template #content-right="{ node, data }">
-            <img :src="getImgByType(data.type) || getImgByType('Default')" :onerror="errorImage" />
-            <span class="field-name" :title="data.name">{{ data.name }}</span>
-
-            <div class="transfer-btn">
-              <!--              <span v-if="!data.type" class="error-tip">请选择类型</span>-->
-              <!--              <el-tooltip v-if="!data.type" placement="top" manual content="请选择类型">-->
-              <!--                <i type="error" class="el-icon-warning"></i>-->
-              <!--              </el-tooltip>-->
-              <span
-                :class="['box', { 'error-tip': !data.type }]"
-                :title="!data.type ? '请选择类型' : $t('dataFlow.edit')"
-                @click="handleEdit(node, data)"
-              >
-                <i class="icon-margin-right-5 iconfont icon-bianji3"></i>
-              </span>
-              <span class="box" @click="handleDel(node, data)">
-                <i class="icon-margin-right-5 iconfont icon-shanchu"></i>
-              </span>
+            <div class="flex justify-between">
+              <div class="transfer-item-content flex">
+                <img :src="getImgByType(data.type) || getImgByType('Default')" :onerror="errorImage" />
+                <span class="field-name" :title="data.name">{{ data.name }}</span>
+              </div>
+              <div class="transfer-btn">
+                <span
+                  :class="['box', { 'error-tip': !data.type }]"
+                  :title="!data.type ? '请选择类型' : $t('dataFlow.edit')"
+                  @click="handleEdit(node, data)"
+                >
+                  <i class="icon-margin-right-5 iconfont icon-bianji3"></i>
+                </span>
+                <span class="box" @click="handleDel(node, data)">
+                  <i class="icon-margin-right-5 iconfont icon-shanchu"></i>
+                </span>
+              </div>
             </div>
           </template>
         </tree-transfer>
@@ -267,23 +266,7 @@ export default {
               children: []
             }
             obj.type = obj.type.toLowerCase()
-            // 处理类型映射
-            // if (obj.type === 'date') {
-            //   obj.type = 'string'
-            // } else if (obj.type === 'integer') {
-            //   obj.type = 'int32'
-            // }
             obj.type = this.suportTypeMap[obj.type] ?? ''
-            // switch (obj.type) {
-            //   case 'date':
-            //     obj.type = 'string'
-            //     break
-            //   case 'integer':
-            //     obj.type = 'int32'
-            //     break
-            //   default:
-            //     break
-            // }
             return obj
           })
         }
@@ -552,32 +535,32 @@ export default {
     },
     // 创建消息体
     createMessage() {
-      this.$refs['createForm'].validate(valid => {
+      let _this = this
+      _this.$refs['createForm'].validate(valid => {
         if (!valid) {
           return
         }
-        let _this = this
-        this.createDialogVisible = false
+        _this.createDialogVisible = false
         // 新增
-        if (this.createForm.openType === 'add') {
+        if (_this.createForm.openType === 'add') {
           console.log('新增message')
-          let rightTreeObj = this.rightTreeObj
+          let rightTreeObj = _this.rightTreeObj
           let node = rightTreeObj?.node
           let checkedKeys = rightTreeObj?.checkedKeys
-          this.createForm.key = this.createForm.name
+          _this.createForm.key = _this.createForm.name
           if (node?.message && !!checkedKeys.length && checkedKeys?.includes(node.key)) {
             if (!node.children) {
-              this.$set(node, 'children', [])
+              _this.$set(node, 'children', [])
             }
-            this.createForm.pid = node.key || 0
-            node.children.push({ ...this.createForm })
+            _this.createForm.pid = node.key || 0
+            node.children.push({ ..._this.createForm })
           } else {
-            this.toData.push(this.createForm)
+            _this.toData.push({ ..._this.createForm })
           }
         } else {
           // 编辑
           console.log('编辑message')
-          const parent = this.editData.parent
+          const parent = _this.editData.parent
           const children = parent.data.children || parent.data
 
           if (children.length) {
@@ -585,12 +568,13 @@ export default {
               if (item.key === _this.createForm.key) {
                 item.name = _this.createForm.name
                 item.label = _this.createForm.label
+                item.type = _this.createForm.type
               }
             })
           }
         }
 
-        this.$refs['createForm'].resetFields()
+        _this.$refs['createForm'].resetFields()
       })
     },
     // 删除消息体数据
@@ -732,6 +716,7 @@ export default {
       obj.label = tree.label || tree.name
       obj.pid = ''
       obj.children = []
+      obj.message = tree.message
       //nestedList propertyList
       // 系统字段 + 自定义字段
       if (tree.propertyList?.length) {
@@ -771,10 +756,8 @@ export default {
       })
       let getMapping = this.getMapping({ ...tree })
       let getSchema = this.getSchema({ ...tree })
-      let transToData = this.transToData({ ...getSchema })
       console.log('getMapping', getMapping)
       console.log('getSchema', getSchema)
-      console.log('transToData', transToData)
       return {
         mapping: getMapping,
         schema: getSchema
@@ -799,9 +782,13 @@ export default {
       .custom-tree-node {
         width: 100%;
         font-size: 12px;
+        .transfer-item-content {
+          flex: 1;
+        }
         .field-name {
           display: inline-block;
           width: 100px;
+          flex: 1;
           padding-left: 3px;
           white-space: nowrap;
           overflow: hidden;
@@ -810,6 +797,7 @@ export default {
         .transfer-btn {
           float: right;
           color: #666;
+          width: 45px;
           .error-tip {
             color: orangered;
           }
