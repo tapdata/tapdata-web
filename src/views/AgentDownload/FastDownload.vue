@@ -37,7 +37,7 @@
             Agent的自动部署及启动
           </li>
           <li class="box title-text mt-2">
-            {{ windowLink }}
+            <span class="link-line">{{ windowLink }}</span>
             <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
               <span
                 class="operaKey"
@@ -72,7 +72,7 @@
           </li>
           <li>1.请复制下方命令并在本地部署环境执行，其包含 Tapdata Agent 的下载、自动部署及启动</li>
           <li class="box title-text my-2">
-            <span>{{ LinuxLink }}</span>
+            <span class="link-line">{{ LinuxLink }}</span>
             <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
               <span
                 class="operaKey"
@@ -106,8 +106,8 @@
             <div class="my-5 text-style">开始安装</div>
           </li>
           <li>1.请复制下方命令并在部署环境执行，其包含镜像的下载及运行，Tapdata Agent 的下载、自动部署及启动</li>
-          <li class="box title-text">
-            <span>{{ dockerLink }}</span>
+          <li class="box title-text my-2">
+            <span class="link-line">{{ dockerLink }}</span>
             <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
               <span
                 class="operaKey"
@@ -337,6 +337,9 @@ export default {
         padding: 3px 0;
         overflow-x: auto;
       }
+    }
+    .link-line {
+      word-break: break-all;
     }
     .box {
       padding: 10px 20px;
