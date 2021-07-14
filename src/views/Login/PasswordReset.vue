@@ -38,13 +38,7 @@
                 />
               </el-input>
             </el-form-item>
-            <el-button
-              class="btn-sign-in"
-              type="primary"
-              size="medium"
-              :loading="loading"
-              @click="submit"
-            >
+            <el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
               {{ $t('app.signIn.nextStep') }}
             </el-button>
           </el-form>
@@ -90,13 +84,15 @@ export default {
       let message = ''
       if (!form.email || !form.email.trim()) {
         message = this.$t('app.signIn.email_require')
+      } else if (
         // eslint-disable-next-line
-			} else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
+      ) {
         message = this.$t('app.signIn.email_invalid')
       } else if (!form.newPassword || form.newPassword.length < 5) {
         message = this.$t('app.signIn.password_invalid')
         // eslint-disable-next-line
-			} else if (/[\s\u4E00-\u9FA5]/.test(form.newPassword)) {
+      } else if (/[\s\u4E00-\u9FA5]/.test(form.newPassword)) {
         message = this.$t('account.passwordNotCN')
       }
       if (message) {
@@ -131,7 +127,7 @@ export default {
     // 跳转登录
     backLogin() {
       this.$router.push({
-        path: '/login',
+        name: 'login',
         query: { email: this.form.email }
       })
     }
@@ -233,7 +229,7 @@ export default {
         color: #666;
         user-select: none;
         span {
-          color: #48b6e2;
+          color: #409eff;
           cursor: pointer;
         }
       }

@@ -20,7 +20,20 @@
         :value="opt.field_name"
       >
         <span>{{ opt.field_name }}</span>
-        <span style="color: #f56c6c" v-if="opt.primary_key_position > 0"
+        <span
+          style="
+            margin-left: 5px;
+            background: rgb(245, 108, 108);
+            color: #fff;
+            border-radius: 3px;
+            display: inline-block;
+            height: 22px;
+            width: 24px;
+            text-align: center;
+            line-height: 22px;
+            font-size: 12px;
+          "
+          v-if="opt.primary_key_position > 0"
           >PK</span
         >
       </el-option>
@@ -47,10 +60,7 @@ export default {
   methods: {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
-      this.$emit(
-        'input',
-        Array.from(new Set(values.filter(v => !!v.trim()))).join(',')
-      )
+      this.$emit('input', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
     }
   }
 }

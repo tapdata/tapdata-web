@@ -6,51 +6,29 @@
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div> -->
-      <el-form
-        class="e-form"
-        label-position="top"
-        label-width="130px"
-        :disabled="disabled"
-        :model="model"
-        ref="form"
-      >
-        <el-form-item
-          :required="true"
-          :label="$t('editor.cell.data_node.memCache.form.cacheName.label')"
-        >
+      <el-form class="e-form" label-position="top" label-width="130px" :disabled="disabled" :model="model" ref="form">
+        <el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheName.label')">
           <el-input
             v-model.trim="model.cacheName"
             size="mini"
-            :placeholder="
-              $t('editor.cell.data_node.memCache.form.cacheName.placeholder')
-            "
+            :placeholder="$t('editor.cell.data_node.memCache.form.cacheName.placeholder')"
             @input="nameHandler"
           ></el-input>
         </el-form-item>
-        <el-form-item
-          :required="true"
-          :label="$t('editor.cell.data_node.memCache.form.cacheKeys.label')"
-        >
+        <el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheKeys.label')">
           <MultiSelection
             v-model="model.cacheKeys"
             :options="primaryKeyOptions"
-            :placeholder="
-              $t('editor.cell.data_node.memCache.form.cacheKeys.placeholder')
-            "
+            :placeholder="$t('editor.cell.data_node.memCache.form.cacheKeys.placeholder')"
           ></MultiSelection>
         </el-form-item>
-        <el-form-item
-          :required="true"
-          :label="$t('editor.cell.data_node.memCache.form.maxSize.label')"
-        >
+        <el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.maxSize.label')">
           <el-row :gutter="20">
             <el-col :span="12">
               <el-select
                 size="mini"
                 v-model="maxSizeLimited"
-                :placeholder="
-                  $t('editor.cell.data_node.memCache.form.maxSize.placeholder')
-                "
+                :placeholder="$t('editor.cell.data_node.memCache.form.maxSize.placeholder')"
                 @change="maxSizeLimitedHandler"
               >
                 <el-option
@@ -68,43 +46,28 @@
                 v-model="model.maxSize"
                 size="mini"
                 maxlength="8"
-                :placeholder="
-                  $t('editor.cell.data_node.memCache.form.maxSize.placeholder')
-                "
+                :placeholder="$t('editor.cell.data_node.memCache.form.maxSize.placeholder')"
               >
                 <template slot="append">M</template>
               </el-input>
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item
-          :required="true"
-          :label="$t('editor.cell.data_node.memCache.form.maxRows.label')"
-        >
+        <el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.maxRows.label')">
           <el-row :gutter="20">
             <el-col :span="12">
               <el-select
                 size="mini"
                 v-model="maxRowsLimited"
-                :placeholder="
-                  $t('editor.cell.data_node.memCache.form.maxRows.placeholder')
-                "
+                :placeholder="$t('editor.cell.data_node.memCache.form.maxRows.placeholder')"
                 @change="maxRowLimitedHancler"
               >
                 <el-option
-                  :label="
-                    $t(
-                      'editor.cell.data_node.memCache.form.maxRows.options.custom'
-                    )
-                  "
+                  :label="$t('editor.cell.data_node.memCache.form.maxRows.options.custom')"
                   :value="true"
                 ></el-option>
                 <el-option
-                  :label="
-                    $t(
-                      'editor.cell.data_node.memCache.form.maxRows.options.unlimited'
-                    )
-                  "
+                  :label="$t('editor.cell.data_node.memCache.form.maxRows.options.unlimited')"
                   :value="false"
                 ></el-option>
               </el-select>
@@ -115,55 +78,37 @@
                 type="number"
                 v-model="model.maxRows"
                 size="mini"
-                :placeholder="
-                  $t('editor.cell.data_node.memCache.form.maxRows.placeholder')
-                "
+                :placeholder="$t('editor.cell.data_node.memCache.form.maxRows.placeholder')"
               >
-                <template slot="append">{{
-                  $t('editor.cell.data_node.memCache.form.maxRows.unit')
-                }}</template>
+                <template slot="append">{{ $t('editor.cell.data_node.memCache.form.maxRows.unit') }}</template>
               </el-input>
             </el-col>
           </el-row>
         </el-form-item>
         <div class="code-template">
-          <label
-            >{{ $t('editor.cell.data_node.memCache.applicationCode') }}:</label
-          >
+          <label>{{ $t('editor.cell.data_node.memCache.applicationCode') }}:</label>
           <div class="code">
-            <span class="color-primary">var</span> cachedRow =
-            CacheService.getCache(
-            <span class="color-danger"
-              >'{{ model.cacheName || 'cachename' }}'</span
-            >
+            <span class="color-primary">var</span> cachedRow = CacheService.getCache(
+            <span class="color-danger">'{{ model.cacheName || 'cachename' }}'</span>
             <template v-if="!model.cacheKeys || !model.cacheKeys.length">
-              ,<span class="bold">record</span>.<span class="color-danger"
-                >category_code</span
-              >
+              ,<span class="bold">record</span>.<span class="color-danger">category_code</span>
             </template>
             <span v-for="key in model.cacheKeys.split(',')" :key="key">
               <template v-if="key">
-                , <span class="bold">record</span>.<span class="color-danger">{{
-                  key
-                }}</span>
+                , <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
               </template>
             </span>
             );<br />
-            <span class="bold">record</span>.category_name =
-            cachedRow.category_name;<br />
+            <span class="bold">record</span>.category_name = cachedRow.category_name;<br />
           </div>
           <span>OR</span>
           <div class="code">
-            <span class="bold">record</span>.category_name =
-            CacheService.getCacheItem(
-            <span class="color-danger"
-              >'{{ model.cacheName || 'cachename' }}'</span
-            >, <span>'category_name'</span>, defaultValue
+            <span class="bold">record</span>.category_name = CacheService.getCacheItem(
+            <span class="color-danger">'{{ model.cacheName || 'cachename' }}'</span>, <span>'category_name'</span>,
+            defaultValue
             <span v-for="key in model.cacheKeys.split(',')" :key="key">
               <template v-if="key">
-                ,<span class="bold">record</span>.<span class="color-danger">{{
-                  key
-                }}</span>
+                ,<span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
               </template>
             </span>
             );
@@ -202,15 +147,11 @@ export default {
         { label: '100G', value: 1024 * 100 },
         { label: '200G', value: 1024 * 200 },
         {
-          label: this.$t(
-            'editor.cell.data_node.memCache.form.maxSize.options.unlimited'
-          ),
+          label: this.$t('editor.cell.data_node.memCache.form.maxSize.options.unlimited'),
           value: 0
         },
         {
-          label: this.$t(
-            'editor.cell.data_node.memCache.form.maxSize.options.custom'
-          ),
+          label: this.$t('editor.cell.data_node.memCache.form.maxSize.options.custom'),
           value: -1
         }
       ],
@@ -319,7 +260,7 @@ export default {
       overflow-x: auto;
       white-space: nowrap;
       .color-primary {
-        color: #48b6e2;
+        color: #409eff;
       }
       .color-danger {
         color: #ee5353;

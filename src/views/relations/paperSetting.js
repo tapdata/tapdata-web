@@ -16,15 +16,10 @@ export default function () {
         var refPoint = ref
         if (ref instanceof Element) {
           var refView = this.paper.findView(ref)
-          refPoint = refView
-            ? refView.getNodeBBox(ref).center()
-            : new joint.g.Point()
+          refPoint = refView ? refView.getNodeBBox(ref).center() : new joint.g.Point()
         }
         refPoint.rotate(center, angle)
-        anchor =
-          refPoint.x <= bbox.x + bbox.width / 2
-            ? bbox.leftMiddle()
-            : bbox.rightMiddle()
+        anchor = refPoint.x <= bbox.x + bbox.width / 2 ? bbox.leftMiddle() : bbox.rightMiddle()
       }
       return anchor.rotate(center, -angle)
     }
@@ -112,7 +107,7 @@ export default function () {
           },
           header: {
             fill: '#f5f6fa',
-            stroke: '#48b6e2',
+            stroke: '#409EFF',
             rx: 3,
             ry: 3
           },
@@ -149,7 +144,7 @@ export default function () {
             cursor: 'not-allowed'
           },
           body: {
-            stroke: '#48b6e2',
+            stroke: '#409EFF',
             rx: 3,
             ry: 3
           },

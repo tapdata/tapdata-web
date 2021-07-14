@@ -43,44 +43,11 @@ export default function (vm) {
       },
       {
         type: 'input',
-        field: 'database_host',
-        label: vm.$t('dataForm.form.host'),
-        placeholder: vm.$t('dataForm.form.databaseHostPlaceholder'),
-        rules: [
-          {
-            required: true,
-            validator: (rule, value, callback) => {
-              if (!value || !value.trim()) {
-                callback(new Error(vm.$t('dataForm.error.noneHost')))
-              } else {
-                callback()
-              }
-            }
-          }
-        ]
-      },
-      {
-        type: 'input',
-        field: 'database_name',
-        label: vm.$t('dataForm.form.databaseName'),
-        required: true
-      },
-      {
-        type: 'input',
-        field: 'database_username',
-        label: vm.$t('dataForm.form.userName')
-      },
-      {
-        type: 'input',
-        field: 'plain_password',
-        label: vm.$t('dataForm.form.password'),
-        domType: 'password',
-        showPassword: true
-      },
-      {
-        type: 'input',
-        field: 'additionalString',
-        label: vm.$t('dataForm.form.additionalString')
+        field: 'database_uri',
+        label: vm.$t('dataForm.form.databaseUri'),
+        domType: 'textarea',
+        required: true,
+        show: true
       },
       {
         type: 'radio',
@@ -246,7 +213,7 @@ export default function (vm) {
       {
         type: 'select',
         field: 'gridfsReadMode',
-        label: vm.$t('dataForm.form.gridfs.gridfs_prefix'),
+        label: vm.$t('dataForm.form.gridfs.gridfs_mode'),
         options: [
           {
             label: vm.$t('dataForm.form.gridfs.gridfs_data'),
@@ -333,6 +300,7 @@ export default function (vm) {
         field: 'file_schema',
         label: vm.$t('dataForm.form.gridfs.file_schema'),
         show: false,
+        required: true,
         dependOn: [
           {
             triggerOptions: [
@@ -350,6 +318,10 @@ export default function (vm) {
             }
           }
         ]
+      },
+      {
+        type: 'slot',
+        slot: 'file_schema_tip'
       },
       {
         type: 'select',
@@ -461,8 +433,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'data_content_xpath',
-        label:
-          vm.$t('dataForm.form.gridfs.xpath') + '(/RootTag/Students/Student)*',
+        label: vm.$t('dataForm.form.gridfs.xpath') + '(/RootTag/Students/Student)*',
         show: false,
         dependOn: [
           {
@@ -489,8 +460,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'tags_filter',
-        label:
-          vm.$t('dataForm.form.gridfs.gridfs_tag_filter') + '（tag1,tag2）',
+        label: vm.$t('dataForm.form.gridfs.gridfs_tag_filter') + '（tag1,tag2）',
         show: false,
         dependOn: [
           {

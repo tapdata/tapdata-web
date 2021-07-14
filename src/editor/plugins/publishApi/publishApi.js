@@ -59,20 +59,9 @@ export const PublishApiConfig = {
         let regName = /^[a-zA-Z$_][a-zA-Z\d_]*$/
         // if (!data)
         // 	throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.api_isNull')}`);
-        if (!data.name)
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.data_node.api.enterPublishApiName'
-            )}`
-          )
-        if (!regName.test(data.name))
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.api.variable_name')}`
-          )
-        if (!data.paths.path)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.api.enterEndUrl')}`
-          )
+        if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.enterPublishApiName')}`)
+        if (!regName.test(data.name)) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.variable_name')}`)
+        if (!data.paths.path) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.enterEndUrl')}`)
         return true
       }
     }
@@ -156,10 +145,7 @@ export const PublishApiConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

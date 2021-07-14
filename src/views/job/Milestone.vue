@@ -3,7 +3,10 @@
     <ul class="milestone-list">
       <li class="milestone-item" v-for="(item, index) in list" :key="index">
         <div class="label">
-          <span>{{ item.label }}</span>
+          <el-tooltip :content="item.label" :disabled="item.tipDisabled" class="item" effect="dark" placement="top">
+            <span @mouseenter="isShowTooltip(item, $event)">{{ item.label }}</span>
+          </el-tooltip>
+
           <el-button
             v-if="item.status === 'error'"
             class="btn-error"
@@ -14,11 +17,7 @@
             {{ $t('milestone.btn_check_error') }}
           </el-button>
         </div>
-        <div
-          v-if="
-            ['error'].includes(dataFlow.status) && item.status === 'running'
-          "
-        >
+        <div v-if="['error'].includes(dataFlow.status) && item.status === 'running'">
           <div class="status paused">
             <span class="milestone-icon-wrap">
               <i class="milestone-status__icon el-icon-video-pause"></i>
@@ -77,6 +76,11 @@ export default {
     ws.off('watch', event)
   },
   methods: {
+    isShowTooltip(item, e) {
+      let clientHeight = e.target.clientHeight
+      let scrollHeight = e.target.scrollHeight
+      item.tipDisabled = clientHeight >= scrollHeight
+    },
     checkError(msg) {
       const h = this.$createElement
       this.$msgbox({
@@ -129,7 +133,8 @@ export default {
           label: this.$t(`milestone.${m.code}`),
           status: m.status,
           fromNow: time || '-',
-          errorMessage: m.errorMessage
+          errorMessage: m.errorMessage,
+          tipDisabled: true
         }
       })
     }
@@ -164,13 +169,23 @@ export default {
       display: flex;
       align-items: center;
       height: 40px;
-      line-height: 40px;
+      //line-height: 40px;
       background: #f2f2f2;
       border-radius: 3px;
       color: #666;
       font-size: 12px;
       .label {
         flex: 1;
+        span {
+          word-break: break-word;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          display: inline-block;
+          white-space: normal;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+        }
         .btn-error {
           margin-left: 10px;
         }
@@ -196,7 +211,7 @@ export default {
           display: inline-block;
         }
         &.running {
-          color: #48b6e2;
+          color: #409eff;
         }
         &.error {
           color: #f56c6c;

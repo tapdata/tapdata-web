@@ -18,8 +18,7 @@
           <i class="iconLable"></i>
           <span>{{ $t('dialog.downAgent.downloadInstall') }}</span>
           <span class="downLoadText"
-            >( {{ $t('dialog.downAgent.agentNum') }}:
-            <i>{{ downLoadNum }}</i> )</span
+            >( {{ $t('dialog.downAgent.agentNum') }}: <i>{{ downLoadNum }}</i> )</span
           >
         </div>
         <div class="down-type">
@@ -36,23 +35,15 @@
           </div>
         </div>
         <div class="prompt">
-          <span
-            style="word-break: break-word"
-            v-if="downLoadType === 'Linux'"
-            >{{ $t('dialog.downAgent.text') }}</span
-          >
+          <span style="word-break: break-word" v-if="downLoadType === 'Linux'">{{ $t('dialog.downAgent.text') }}</span>
           <div v-else-if="downLoadType === 'windows'" @click="handleDownLoad">
             <span class="operaKey">
               <i class="iconfont icon-xiazai clickIcont"></i>
               {{ $t('dialog.downAgent.downLoadAgent') }}</span
             >
-            <span style="word-break: break-word">{{
-              $t('dialog.downAgent.windowsText')
-            }}</span>
+            <span style="word-break: break-word">{{ $t('dialog.downAgent.windowsText') }}</span>
           </div>
-          <span v-else style="word-break: break-word">{{
-            $t('dialog.downAgent.dockerText')
-          }}</span>
+          <span v-else style="word-break: break-word">{{ $t('dialog.downAgent.dockerText') }}</span>
 
           <el-tooltip
             placement="top"
@@ -64,17 +55,12 @@
             <span
               class="operaKey"
               v-clipboard:copy="
-                downLoadType === 'Linux'
-                  ? LinuxLink
-                  : downLoadType === 'windows'
-                  ? windowLink
-                  : dockerLink
+                downLoadType === 'Linux' ? LinuxLink : downLoadType === 'windows' ? windowLink : dockerLink
               "
               v-clipboard:success="onCopy"
               @mouseleave="showTooltip = false"
             >
-              <i class="iconfont icon-fuzhi1 clickIcont"></i
-              >{{ $t('dialog.downAgent.copy') }}
+              <i class="iconfont icon-fuzhi1 clickIcont"></i>{{ $t('dialog.downAgent.copy') }}
             </span>
           </el-tooltip>
         </div>
@@ -136,10 +122,7 @@
           </el-button>
           <el-button size="mini" class="install" v-else>
             {{ $t('dialog.downAgent.waitingInstall') }}
-            <el-image
-              style="width: 32px; height: 15px"
-              src="static/editor/wating.svg"
-            ></el-image>
+            <el-image style="width: 32px; height: 15px" src="static/editor/wating.svg"></el-image>
           </el-button>
         </template>
 
@@ -159,9 +142,7 @@
         <i class="el-icon-success"></i>
         <p>
           {{ $t('dialog.downAgent.dfsSuccessText') }}
-          <span class="active" @click="handlepageJump">{{
-            $t('dialog.downAgent.clickView')
-          }}</span>
+          <span class="active" @click="handlepageJump">{{ $t('dialog.downAgent.clickView') }}</span>
         </p>
         <!-- <p>
 					{{ $t('dialog.downAgent.dfsSuccessText1') }}
@@ -175,27 +156,17 @@
 					<i class="el-icon-loading" v-else></i>
 					{{ $t('dialog.downAgent.refresh') }}
 				</span> -->
-        <el-button
-          class="e-button"
-          type="primary"
-          size="mini"
-          @click="closeSuccessDialog"
-          >{{ $t('dialog.downAgent.ok') }}</el-button
-        >
+        <el-button class="e-button" type="primary" size="mini" @click="closeSuccessDialog">{{
+          $t('dialog.downAgent.ok')
+        }}</el-button>
       </span>
     </el-dialog>
 
-    <el-dialog
-      :visible.sync="startUpTaskDialog"
-      :close-on-click-modal="false"
-      width="40%"
-      @close="closeTaskDialog"
-    >
+    <el-dialog :visible.sync="startUpTaskDialog" :close-on-click-modal="false" width="40%" @close="closeTaskDialog">
       <div class="success-main">
         <i class="el-icon-success"></i>
         <p>
-          {{ $t('dialog.downAgent.dfsSuccessText3')
-          }}{{ $t('dialog.downAgent.dfsSuccessText4') }}
+          {{ $t('dialog.downAgent.dfsSuccessText3') }}{{ $t('dialog.downAgent.dfsSuccessText4') }}
           <!-- <span class="active">{{ $t('dialog.downAgent.clickView') }}</span> -->
         </p>
         <!-- <p>
@@ -205,13 +176,9 @@
 				</p> -->
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button
-          class="e-button"
-          type="primary"
-          size="mini"
-          @click="closeTaskDialog"
-          >{{ $t('dialog.downAgent.ok') }}</el-button
-        >
+        <el-button class="e-button" type="primary" size="mini" @click="closeTaskDialog">{{
+          $t('dialog.downAgent.ok')
+        }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -372,9 +339,7 @@ export default {
       this.installSuccessDialog = false
     },
     checkAgent() {
-      let flag =
-        !this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') ||
-        this.downLoadNum
+      let flag = !this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') || this.downLoadNum
       if (!flag) {
         this.dialogVisible = true
       }
@@ -413,7 +378,7 @@ export default {
         width: 6px;
         height: 13px;
         vertical-align: middle;
-        background-color: #48b6e2;
+        background-color: #409eff;
         border-radius: 1px;
       }
       span {
@@ -423,7 +388,7 @@ export default {
       .downLoadText {
         color: #9a9a9a;
         i {
-          color: #48b6e2;
+          color: #409eff;
         }
       }
     }
@@ -440,7 +405,7 @@ export default {
         border: 1px solid #eee;
       }
       .active {
-        border: 1px solid #48b6e2;
+        border: 1px solid #409eff;
         .choose {
           display: block;
           position: absolute;
@@ -448,7 +413,7 @@ export default {
           bottom: -13px;
           width: 32px;
           height: 26px;
-          background: #48b6e2;
+          background: #409eff;
           text-align: center;
           transform: rotate(-40deg);
           box-shadow: 0 1px 1px #ccc;
@@ -468,7 +433,7 @@ export default {
       color: #666;
       .operaKey {
         padding: 0 10px;
-        color: #48b6e2;
+        color: #409eff;
         cursor: pointer;
       }
       div {
@@ -515,7 +480,7 @@ export default {
     }
 
     .active {
-      color: #48b6e2;
+      color: #409eff;
       cursor: pointer;
     }
     .dialog-footer {

@@ -1,11 +1,5 @@
 <template>
-  <el-tooltip
-    placement="top"
-    manual
-    content="已复制"
-    popper-class="copy-tooltip"
-    :value="showTooltip"
-  >
+  <el-tooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
     <i
       class="iconfont icon-fuzhi1"
       v-clipboard:copy="value"

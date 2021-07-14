@@ -9,11 +9,7 @@
   >
     <div class="creat">
       <ul class="item" v-readonlybtn="'Data_SYNC_menu'">
-        <li
-          v-if="$window.getSettingByKey('SHOW_SIMPLE_SCENE')"
-          @click="db2db"
-          v-readonlybtn="'SYNC_job_creation'"
-        >
+        <li v-if="$window.getSettingByKey('SHOW_SIMPLE_SCENE')" @click="db2db" v-readonlybtn="'SYNC_job_creation'">
           <span class="model">{{ $t('dataFlow.guidingMode') }}</span>
           <div class="content">
             <i class="iconfont icon-shujukuqianyi2"></i>
@@ -33,11 +29,7 @@
             >
           </div>
         </li>
-        <li
-          class="marTop25"
-          @click="goNewCust"
-          v-readonlybtn="'SYNC_job_creation'"
-        >
+        <li class="marTop25" @click="goNewCust" v-readonlybtn="'SYNC_job_creation'">
           <div class="content">
             <i class="iconfont icon-renwubianpai2"></i>
             <span>
@@ -55,10 +47,7 @@
           ($has('Data_verify_menu') && $has('verify_job_creation'))
         "
       >
-        <li
-          @click="handleConnection"
-          v-if="$has('datasource_menu') && $has('datasource_creation')"
-        >
+        <li @click="handleConnection" v-if="$has('datasource_menu') && $has('datasource_creation')">
           <span class="model">{{ $t('dataFlow.moreFeatures') }}</span>
           <div class="content">
             <i class="iconfont icon-database"></i>
@@ -69,11 +58,7 @@
           </div>
         </li>
         <template v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
-          <li
-            class="marTop25"
-            @click="handleModules"
-            v-if="$has('API_management_menu') && $has('API_creation')"
-          >
+          <li class="marTop25" @click="handleModules" v-if="$has('API_management_menu') && $has('API_creation')">
             <div class="content">
               <i class="iconfont icon-api2"></i>
               <span>
@@ -135,7 +120,18 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira'
+        'jira',
+        'dameng',
+        'hive',
+        'gbase-8s',
+        'sybase ase',
+        'gaussdb200',
+        'dummy db',
+        'rest api',
+        'custom_connection',
+        'gridfs',
+        'mq',
+        'tcp_udp'
       ] //目前白名单,
     }
   },
@@ -146,7 +142,7 @@ export default {
     },
     db2db() {
       let routeUrl = this.$router.resolve({
-        path: '/job',
+        name: 'job',
         query: { isSimple: true, mapping: 'cluster-clone' }
       })
       window.open(routeUrl.href, '_blank')
@@ -154,7 +150,7 @@ export default {
     },
     goNew() {
       let routeUrl = this.$router.resolve({
-        path: '/job',
+        name: 'job',
         query: { mapping: 'cluster-clone' }
       })
       window.open(routeUrl.href, '_blank')
@@ -162,7 +158,7 @@ export default {
     },
     goNewCust() {
       let routeUrl = this.$router.resolve({
-        path: '/job',
+        name: 'job',
         query: { mapping: 'custom' }
       })
       window.open(routeUrl.href, '_blank')
@@ -204,7 +200,12 @@ export default {
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
       if (this.whiteList.includes(type)) {
-        this.$router.push('connections/create?databaseType=' + type)
+        this.$router.push({
+          name: 'connectionsCreate',
+          query: {
+            databaseType: type
+          }
+        })
       } else {
         top.location.href = '/#/connection'
         localStorage.setItem('connectionDatabaseType', type)
@@ -257,12 +258,12 @@ $color: #999999;
         display: inline-block;
         font-size: 30px;
         margin-right: 10px;
-        color: #48b6e2;
+        color: #409eff;
       }
       .tag {
         display: block;
         font-size: 16px;
-        color: #48b6e2;
+        color: #409eff;
         font-weight: 400;
         margin-bottom: 10px;
       }

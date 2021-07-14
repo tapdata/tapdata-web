@@ -48,11 +48,7 @@
       </div>
       <ul class="classify-ul">
         <!-- <el-checkbox-group v-model="checkData" @change="handleCheckedCitiesChange" class="list-box"> -->
-        <li
-          v-for="item in listdata"
-          :key="item.id"
-          @click="handClickApiData(item)"
-        >
+        <li v-for="item in listdata" :key="item.id" @click="handClickApiData(item)">
           <!-- <el-checkbox :label="item.id"> -->
           <span class="iconfont icon-table2 icon-color"></span>
           <span>{{ item.tablename }}_{{ item.apiVersion }}</span>
@@ -105,7 +101,8 @@ export default {
       mapping: {
         collection: 'app.Collection',
         table: 'app.Table',
-        database: 'app.Database'
+        database: 'app.Database',
+        hive: 'app.HiveNode'
       },
       listdata: [],
       checkAll: [],
@@ -379,7 +376,7 @@ export default {
 
 .filter-icon {
   font-size: 12px;
-  color: #48b6e2;
+  color: #409eff;
 }
 
 .filter-icon-table {

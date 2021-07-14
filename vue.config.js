@@ -1,5 +1,4 @@
 const { resolve } = require('path')
-const chalk = require('chalk')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 const serveUrlMap = {
@@ -22,8 +21,6 @@ const proxy = {
   changeOrigin: false
 }
 
-console.log(chalk.green(`🪜  代理地址：${proxy.target}`))
-
 module.exports = {
   assetsDir: 'static',
   lintOnSave: true,
@@ -45,7 +42,6 @@ module.exports = {
   },
   chainWebpack(config) {
     const iconDir = resolve('src/assets/icons/svg')
-    const iconColorfulDir = resolve('src/assets/icons/svg-colorful')
 
     // 多页面时会产生多请求预加载，带宽敏感的关闭此配置
     config.plugins.delete('prefetch')
@@ -62,19 +58,12 @@ module.exports = {
       .end()
 
     // svg loader排除 icon 目录
-    config.module
-      .rule('svg')
-      .exclude.add(resolve(iconDir))
-      .add(resolve(iconColorfulDir))
-      .end()
-      .use('svgo-loader')
-      .loader('svgo-loader')
-      .end()
+    config.module.rule('svg').exclude.add(resolve(iconDir)).end().use('svgo-loader').loader('svgo-loader').end()
 
     // svg-sprite-loader打包svg
     config.module
       .rule('svg-sprite')
-      .test(/\/svg\/.*\.svg$/)
+      .test(/\.svg$/)
       .include.add(resolve(iconDir))
       .end()
       .use('svg-sprite-loader')
@@ -93,33 +82,6 @@ module.exports = {
             active: true,
             params: {
               attrs: ['class', 'p-id', 'fill']
-            }
-          }
-        ]
-      })
-      .end()
-
-    config.module
-      .rule('svg-sprite-colorful')
-      .test(/\/svg-colorful\/.*\.svg$/)
-      .include.add(resolve(iconColorfulDir))
-      .end()
-      .use('svg-sprite-loader')
-      .loader('svg-sprite-loader')
-      .options({
-        symbolId: 'icon-[name]'
-      })
-      .end()
-      .use('svgo-loader')
-      .loader('svgo-loader')
-      .options({
-        plugins: [
-          { name: 'removeStyleElement', active: true },
-          {
-            name: 'removeAttrs',
-            active: true,
-            params: {
-              attrs: ['class', 'p-id']
             }
           }
         ]

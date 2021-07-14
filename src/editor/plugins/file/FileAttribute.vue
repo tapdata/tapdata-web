@@ -10,13 +10,7 @@
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div> -->
-      <el-form
-        class="e-form"
-        label-position="top"
-        :model="model"
-        :disabled="disabled"
-        ref="form"
-      >
+      <el-form class="e-form" label-position="top" :model="model" :disabled="disabled" ref="form">
         <!-- <span class="addTxt">+新建文件</span> -->
         <el-form-item
           :label="$t('editor.cell.data_node.file.configurationFile')"
@@ -29,12 +23,11 @@
             :loading="databaseLoading"
             v-model="model.connectionId"
             :placeholder="$t('editor.cell.data_node.file.chooseFileName')"
+            :clearable="true"
           >
             <el-option
               v-for="(item, idx) in databases"
-              :label="`${item.name} (${
-                $t('connection.status.' + item.status) || item.status
-              })`"
+              :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
               :value="item.id"
               v-bind:key="idx"
             ></el-option>
@@ -124,9 +117,7 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       if (result.connectionId) {
-        let database = this.databases.filter(
-          db => db.id === result.connectionId
-        )
+        let database = this.databases.filter(db => db.id === result.connectionId)
         if (database && database.length > 0) {
           result.name = database[0].name
         }

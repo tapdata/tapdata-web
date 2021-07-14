@@ -7,30 +7,18 @@
         <i class="iconfont icon-shuaxin1" @click="getData"></i>
         <i class="iconfont icon-kujitongbucopy" @click="refreshData"></i>
       </div>
-      <span
-        class="refreshS"
-        :class="{ errorClass: !rClass, actProgress: !refreshing }"
-        @click="checkError"
-        >{{ $t('relations.refreshStatus') }}:
-        {{
-          $moment(refreshResult.finish_date).format('YYYY-MM-DD HH:mm:ss')
-        }}--{{ refreshResult.status }}
+      <span class="refreshS" :class="{ errorClass: !rClass, actProgress: !refreshing }" @click="checkError"
+        >{{ $t('relations.refreshStatus') }}: {{ $moment(refreshResult.finish_date).format('YYYY-MM-DD HH:mm:ss') }}--{{
+          refreshResult.status
+        }}
         <el-progress
           class="tool-bar-progress"
           v-if="refreshing"
-          :percentage="
-            Math.trunc(
-              (refreshResult.currProgress / refreshResult.allProgress) * 100
-            )
-          "
+          :percentage="Math.trunc((refreshResult.currProgress / refreshResult.allProgress) * 100)"
         ></el-progress>
       </span>
-      <span class="consume-time"
-        >{{ $t('relations.lastTimeConsume') }} ：{{ consumeTime }}
-      </span>
-      <span class="consume-time"
-        >{{ $t('relations.allProgress') }} ：{{ allProgress }}
-      </span>
+      <span class="consume-time">{{ $t('relations.lastTimeConsume') }} ：{{ consumeTime }} </span>
+      <span class="consume-time">{{ $t('relations.allProgress') }} ：{{ allProgress }} </span>
     </div>
     <div id="navigator-container" class="navigator-container"></div>
     <div class="center-bar">
@@ -43,20 +31,11 @@
     <div class="relation-main">
       <div id="paper" class="relation"></div>
     </div>
-    <el-dialog
-      :title="$t('message.preview')"
-      :visible.sync="errorVisible"
-      width="650px"
-    >
+    <el-dialog :title="$t('message.preview')" :visible.sync="errorVisible" width="650px">
       <span class="value align-center"> {{ refreshResult.message }}</span>
       <pre class="align-center pre"> {{ refreshResult.stack }}</pre>
     </el-dialog>
-    <Info
-      ref="info"
-      :model="model"
-      v-on:previewVisible="handlePreviewVisible"
-      v-on:handleFields="changeLevel"
-    ></Info>
+    <Info ref="info" :model="model" v-on:previewVisible="handlePreviewVisible" v-on:handleFields="changeLevel"></Info>
   </div>
 </template>
 
@@ -110,10 +89,7 @@ export default {
     }).then(res => {
       if (res.data) {
         this.refreshResult = res.data[0]
-        this.consumeTime = this.getConsumeTime(
-          this.refreshResult.start_date,
-          this.refreshResult.finish_date
-        )
+        this.consumeTime = this.getConsumeTime(this.refreshResult.start_date, this.refreshResult.finish_date)
         this.allProgress = this.refreshResult.allProgress
         if (this.refreshResult.status === 'error') this.rClass = false
         else this.rClass = true
@@ -207,16 +183,12 @@ export default {
       return returnStr
     },
     refreshData() {
-      this.$confirm(
-        this.$t('relations.refreshMsg'),
-        this.$t('relations.refreshTitle'),
-        {
-          confirmButtonText: this.$t('relations.yes'),
-          cancelButtonText: this.$t('relations.no'),
-          type: 'warning',
-          closeOnClickModal: false
-        }
-      ).then(() => {
+      this.$confirm(this.$t('relations.refreshMsg'), this.$t('relations.refreshTitle'), {
+        confirmButtonText: this.$t('relations.yes'),
+        cancelButtonText: this.$t('relations.no'),
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(() => {
         LineageGraphsAPI.refreshGraphData()
           .then(res => {
             if (res.data) {

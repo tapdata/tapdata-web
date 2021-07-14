@@ -1,56 +1,32 @@
 <template>
   <el-container class="layout-container">
-    <div
-      class="agentNot"
-      v-if="agentTipFalg && $window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')"
-    >
+    <div class="agentNot" v-if="agentTipFalg && $window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')">
       <i class="el-icon-warning"></i>
       {{ $t('dialog.downAgent.noAgent')
-      }}<span @click="downLoadInstall">{{
-        $t('dialog.downAgent.clickDownLoad')
-      }}</span>
+      }}<span @click="downLoadInstall">{{ $t('dialog.downAgent.clickDownLoad') }}</span>
       <i class="el-icon-close close" @click="agentTipFalg = false"></i>
     </div>
     <CustomerService v-model="isShowCustomerService"></CustomerService>
     <newDataFlow :dialogVisible.sync="dialogVisible"></newDataFlow>
-    <el-header
-      class="layout-header"
-      height="48px"
-      v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-    >
+    <el-header class="layout-header" height="48px" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
       <a class="logo" href="/">
         <img :src="logoUrl" />
       </a>
       <div class="button-bar">
         <span class="expire-msg" v-if="licenseExpireVisible">
           <span v-if="licenseExpire <= 1">{{
-            $t('app.menu.licenseBefore') +
-            licenseExpire +
-            $t('app.menu.licenseAfterOneDay')
+            $t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfterOneDay')
           }}</span>
           <span v-if="licenseExpire > 1">{{
-            $t('app.menu.licenseBefore') +
-            licenseExpire +
-            $t('app.menu.licenseAfter')
+            $t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfter')
           }}</span>
         </span>
-        <el-button
-          class="btn-create"
-          type="primary"
-          size="mini"
-          v-if="creatAuthority"
-          @click="command('newDataFlow')"
-        >
+        <el-button class="btn-create" type="primary" size="mini" v-if="creatAuthority" @click="command('newDataFlow')">
           <i class="el-icon-plus"></i>
           <span>{{ $t('dataFlow.createNew') }}</span>
         </el-button>
-        <NotificationPopover
-          v-if="$window.getSettingByKey('SHOW_NOTIFICATION')"
-        ></NotificationPopover>
-        <a
-          v-if="$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')"
-          class="btn"
-          @click="command('download')"
+        <NotificationPopover v-if="$window.getSettingByKey('SHOW_NOTIFICATION')"></NotificationPopover>
+        <a v-if="$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')" class="btn" @click="command('download')"
           ><i class="iconfont icon-shangchuan-copy"></i
         ></a>
         <el-dropdown
@@ -61,33 +37,23 @@
         >
           <i class="iconfont icon-bangzhu1-copy"></i>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="help">{{
-              $t('app.document')
-            }}</el-dropdown-item>
-            <el-dropdown-item command="question">{{
-              $t('app.qa')
-            }}</el-dropdown-item>
+            <el-dropdown-item command="help">{{ $t('app.document') }}</el-dropdown-item>
+            <el-dropdown-item command="question">{{ $t('app.qa') }}</el-dropdown-item>
             <!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
           </el-dropdown-menu>
         </el-dropdown>
         <el-dropdown
-          v-if="
-            $window.getSettingByKey('SHOW_SETTING_BUTTON') && settingVisibility
-          "
+          v-if="$window.getSettingByKey('SHOW_SETTING_BUTTON') && settingVisibility"
           class="btn"
           placement="bottom"
           @command="command"
         >
           <i class="iconfont icon-shezhi1"></i>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="settings" v-if="settingCode">{{
-              $t('app.menu.settings')
+            <el-dropdown-item command="settings" v-if="settingCode">{{ $t('app.menu.settings') }}</el-dropdown-item>
+            <el-dropdown-item command="setting" v-readonlybtn="'home_notice_settings'">{{
+              $t('notification.setting')
             }}</el-dropdown-item>
-            <el-dropdown-item
-              command="setting"
-              v-readonlybtn="'home_notice_settings'"
-              >{{ $t('notification.setting') }}</el-dropdown-item
-            >
             <!--						<el-dropdown-item command="verifySetting">{{-->
             <!--							$t('dataVerify.setting.verifySetting')-->
             <!--						}}</el-dropdown-item>-->
@@ -109,11 +75,7 @@
             style="font-size: 18px"
           ></i>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item
-              v-for="(value, key) in languages"
-              :key="key"
-              :command="key"
-            >
+            <el-dropdown-item v-for="(value, key) in languages" :key="key" :command="key">
               {{ value }}
             </el-dropdown-item>
             <!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
@@ -124,46 +86,22 @@
             {{ userName }}<i class="el-icon-caret-bottom el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="account">{{
-              $t('app.account')
-            }}</el-dropdown-item>
-            <el-dropdown-item command="version">{{
-              $t('app.version')
-            }}</el-dropdown-item>
-            <el-dropdown-item command="license">{{
-              $t('app.menu.license')
-            }}</el-dropdown-item>
-            <el-dropdown-item
-              v-if="$window.getSettingByKey('SHOW_HOME_BUTTON')"
-              command="home"
-            >
+            <el-dropdown-item command="account">{{ $t('app.account') }}</el-dropdown-item>
+            <el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
+            <el-dropdown-item command="license">{{ $t('app.menu.license') }}</el-dropdown-item>
+            <el-dropdown-item v-if="$window.getSettingByKey('SHOW_HOME_BUTTON')" command="home">
               {{ $t('app.home') }}
             </el-dropdown-item>
-            <el-dropdown-item command="signOut">{{
-              $t('app.signOut')
-            }}</el-dropdown-item>
+            <el-dropdown-item command="signOut">{{ $t('app.signOut') }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
     </el-header>
     <el-container style="width: 100%; flex: 1; overflow: hidden">
-      <el-aside
-        class="layout-aside"
-        width="auto"
-        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-      >
-        <el-menu
-          class="menu"
-          :default-active="activeMenu"
-          :collapse="isCollapse"
-          @select="menuHandler($event)"
-        >
+      <el-aside class="layout-aside" width="auto" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+        <el-menu class="menu" :default-active="activeMenu" :collapse="isCollapse" @select="menuHandler($event)">
           <template v-for="menu in menus">
-            <el-submenu
-              v-if="menu.children && !menu.hidden"
-              :key="menu.alias || menu.name"
-              :index="menu.name"
-            >
+            <el-submenu v-if="menu.children && !menu.hidden" :key="menu.alias || menu.name" :index="menu.name">
               <template slot="title">
                 <i :class="`iconfont icon-${menu.icon}`"></i>
                 <span slot="title">{{ menu.label }}</span>
@@ -209,10 +147,7 @@
           </el-submenu>
         </el-menu>
         <div class="menu-footer" @click="isCollapse = !isCollapse">
-          <i
-            class="el-icon-d-arrow-left btn-collapse"
-            :class="{ 'is-collapse': isCollapse }"
-          ></i>
+          <i class="el-icon-d-arrow-left btn-collapse" :class="{ 'is-collapse': isCollapse }"></i>
         </div>
       </el-aside>
       <el-main class="layout-main">
@@ -220,11 +155,7 @@
       </el-main>
     </el-container>
 
-    <DownAgent
-      type="dashboard"
-      ref="agentDialog"
-      @status-change="val => (agentTipFalg = !val)"
-    ></DownAgent>
+    <DownAgent type="dashboard" ref="agentDialog" @status-change="val => (agentTipFalg = !val)"></DownAgent>
   </el-container>
 </template>
 
@@ -329,10 +260,8 @@ export default {
       lang: localStorage.getItem('tapdata_localize_lang') || 'en',
       isCollapse: false,
       settingVisibility:
-        this.$has('home_notice_settings') ||
-        (this.$has('system_settings') && this.$has('system_settings_menu')),
-      settingCode:
-        this.$has('system_settings') && this.$has('system_settings_menu'),
+        this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu')),
+      settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
       creatAuthority:
         (this.$has('SYNC_job_creation') && this.$has('Data_SYNC_menu')) ||
         (this.$has('datasource_creation') && this.$has('datasource_menu')),
@@ -356,10 +285,7 @@ export default {
       this.getFavMenus()
     })
     if (this.$cookie.get('email')) {
-      this.userName =
-        this.$cookie.get('username') ||
-        this.$cookie.get('email').split('@')[0] ||
-        ''
+      this.userName = this.$cookie.get('username') || this.$cookie.get('email').split('@')[0] || ''
     }
 
     window.iframeRouterChange = route => {
@@ -404,30 +330,27 @@ export default {
       }
     },
     delFavMenu(idx) {
-      this.$confirm(
-        this.$t('message.comfirm') + this.$t('app.menu.delFavMenu'),
-        this.$t('app.menu.delFavMenu')
-      ).then(async resFlag => {
-        if (!resFlag) {
-          return
+      this.$confirm(this.$t('message.comfirm') + this.$t('app.menu.delFavMenu'), this.$t('app.menu.delFavMenu')).then(
+        async resFlag => {
+          if (!resFlag) {
+            return
+          }
+          this.favMenus.splice(idx, 1)
+          // this.$cookie.get('user_id'),
+          let result = await this.$api('users').updateById({
+            favorites: this.favMenus
+          })
+          if (result.status === 200) {
+            this.$message.success(this.$t('message.saveOK'))
+          }
         }
-        this.favMenus.splice(idx, 1)
-        // this.$cookie.get('user_id'),
-        let result = await this.$api('users').updateById({
-          favorites: this.favMenus
-        })
-        if (result.status === 200) {
-          this.$message.success(this.$t('message.saveOK'))
-        }
-      })
+      )
     },
     getMenus() {
       let permissions = sessionStorage.getItem('tapdata_permissions')
       permissions = permissions ? JSON.parse(permissions) : []
       let routerMap = {}
-      let routes = this.$router.options.routes.find(
-        r => r.name === 'layout'
-      ).children
+      let routes = this.$router.options.routes.find(r => r.name === 'layout').children
       routes.forEach(r => {
         routerMap[r.name] = r
       })
@@ -437,8 +360,7 @@ export default {
           let router = routerMap[item.name]
           let menu = Object.assign({}, item, router)
           menu.label = this.$t('app.menu.' + (item.alias || menu.name))
-          let matched =
-            !menu.code || permissions.some(p => p.code === menu.code)
+          let matched = !menu.code || permissions.some(p => p.code === menu.code)
           if (menu.children) {
             menu.children = formatMenu(menu.children)
             if (menu.children.every(m => m.hidden)) {
@@ -473,7 +395,7 @@ export default {
           break
         case 'verifySetting':
           this.$router.push({
-            path: '/dataVerification/setting'
+            name: 'dataVerifySetting'
           })
           break
         case 'newDataFlow':
@@ -496,22 +418,18 @@ export default {
           }
           break
         case 'license':
-          this.$message.info(
-            this.$t('app.menu.licenseDate') + ': ' + this.licenseExpireDate
-          )
+          this.$message.info(this.$t('app.menu.licenseDate') + ': ' + this.licenseExpireDate)
           break
         case 'home':
           window.open('https://tapdata.net/', '_blank')
           break
         case 'signOut':
-          this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut')).then(
-            resFlag => {
-              if (!resFlag) {
-                return
-              }
-              this.signOut()
+          this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut')).then(resFlag => {
+            if (!resFlag) {
+              return
             }
-          )
+            this.signOut()
+          })
           break
         case 'settings':
           this.$router.push({
@@ -577,9 +495,7 @@ export default {
               this.licenseExpireVisible = Number(showDay) > endTime
               this.licenseExpire = endTime
             }
-            this.licenseExpireDate = this.$moment(expires_on).format(
-              'YYYY-MM-DD HH:mm:ss'
-            )
+            this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss')
           }
         })
     }
@@ -602,7 +518,7 @@ export default {
     border: 1px solid #ec8205;
     background-color: rgb(255, 233, 207);
     span {
-      color: #48b6e2;
+      color: #409eff;
       cursor: pointer;
     }
     .close {
@@ -732,7 +648,7 @@ export default {
           background: rgba(241, 241, 241, 1);
         }
         &.is-active {
-          color: #48b6e2;
+          color: #409eff;
           background: rgba(241, 241, 241, 1);
         }
       }

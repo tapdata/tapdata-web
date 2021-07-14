@@ -2,10 +2,7 @@
   <section class="page-sign-in">
     <Header></Header>
     <main>
-      <div
-        class="body"
-        :class="{ dk: $window.getSettingByKey('SHOW_OLD_PAGE') }"
-      >
+      <div class="body" :class="{ dk: $window.getSettingByKey('SHOW_OLD_PAGE') }">
         <div class="dk-login-cover">
           <img src="../../assets/images/loginCover_dk.png" />
         </div>
@@ -15,11 +12,9 @@
         <el-card class="sign-in-panel">
           <div class="title">
             {{ $t('app.signIn.signIn') }}
-            <span
-              @click="registry"
-              v-if="$window.getSettingByKey('SHOW_REGISTER')"
-              >{{ $t('app.signIn.Registration') }}</span
-            >
+            <span @click="registry" v-if="$window.getSettingByKey('SHOW_REGISTER')">{{
+              $t('app.signIn.Registration')
+            }}</span>
           </div>
           <div class="error-tips" v-show="errorMessage">
             <i class="el-icon-warning-outline"></i>
@@ -45,20 +40,12 @@
           <el-checkbox class="keep-sign-in" v-model="keepSignIn">
             {{ $t('app.signIn.keepSignIn') }}
           </el-checkbox>
-          <el-button
-            class="btn-sign-in"
-            type="primary"
-            size="medium"
-            :loading="loading"
-            @click="submit"
-          >
+          <el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
             {{ $t('app.signIn.signIn') }}
           </el-button>
 
           <div class="remember">
-            <span @click="forgetPassword">{{
-              $t('app.signIn.forgetPassword')
-            }}</span>
+            <span @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</span>
           </div>
         </el-card>
       </div>
@@ -99,8 +86,10 @@ export default {
       let message = ''
       if (!form.email || !form.email.trim()) {
         message = this.$t('app.signIn.email_require')
+      } else if (
         // eslint-disable-next-line
-      } else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
+      ) {
         message = this.$t('app.signIn.email_invalid')
       } else if (!form.password || form.password.length < 5) {
         message = this.$t('app.signIn.password_invalid')
@@ -118,17 +107,9 @@ export default {
         //登陆密码加密
         let timeStampData = await timeStamp.get()
         this.form['stime'] = timeStampData.data
-        this.form.password = CryptoJS.RC4.encrypt(
-          this.form.password,
-          'Gotapd8'
-        ).toString()
-        let Str =
-          this.form.email + this.form.password + this.form.stime + 'Gotapd8'
-        this.form['sign'] = crypto
-          .createHash('sha1')
-          .update(Str)
-          .digest('hex')
-          .toUpperCase()
+        this.form.password = CryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString()
+        let Str = this.form.email + this.form.password + this.form.stime + 'Gotapd8'
+        this.form['sign'] = crypto.createHash('sha1').update(Str).digest('hex').toUpperCase()
         let { data } = await usersModel.login(this.form)
         // if (!data.permissions) {
         // 	this.loading = false;
@@ -148,9 +129,7 @@ export default {
         // 	return;
         // }
         setPermission(data.permissions)
-        let user = await usersModel.getUserById(
-          `/${data.userId}?access_token=${data.id}`
-        )
+        let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`)
         this.$cookie.set('email', this.form.email)
         this.$cookie.set('username', user.data.username || '')
         this.$cookie.set('login', 1)
@@ -173,10 +152,7 @@ export default {
         if (e && e.response && e.response.msg) {
           if (e.response.msg === 'WAITING_APPROVE') {
             this.errorMessage = this.$t('app.signIn.watingApprove')
-          } else if (
-            e.response.msg.indexOf('not been verified') !== -1 ||
-            e.response.msg === 'EMAIL_NON_VERIFLED'
-          ) {
+          } else if (e.response.msg.indexOf('not been verified') !== -1 || e.response.msg === 'EMAIL_NON_VERIFLED') {
             this.errorMessage = this.$t('app.signIn.hasVerified')
           } else if (e.response.msg === 'ACCOUNT_DISABLED') {
             this.errorMessage = this.$t('app.signIn.accountDisabled')
@@ -264,7 +240,7 @@ export default {
           padding-top: 16px;
           font-size: 12px;
           text-align: right;
-          color: #48b6e2;
+          color: #409eff;
           cursor: pointer;
         }
       }
@@ -317,7 +293,7 @@ export default {
       .remember {
         padding-top: 16px;
         font-size: 12px;
-        color: #48b6e2;
+        color: #409eff;
         span {
           cursor: pointer;
         }

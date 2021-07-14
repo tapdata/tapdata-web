@@ -11,23 +11,7 @@ export const getImgByType = function (type) {
 }
 
 export const verify = function (value) {
-  var arr = [
-    '\\',
-    '$',
-    '(',
-    ')',
-    '*',
-    '+',
-    '.',
-    '[',
-    ']',
-    '?',
-    '^',
-    '{',
-    '}',
-    '|',
-    '-'
-  ]
+  var arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
   for (var i = 0; i < arr.length; i++) {
     var str = '\\' + arr[i]
     value = value.replace(new RegExp(str, 'g'), '\\' + arr[i])
@@ -76,7 +60,13 @@ export const TYPEMAP = {
   kafka: 'Kafka',
   mariadb: 'MariaDB',
   'mysql pxc': 'MySQL PXC',
-  jira: 'jira'
+  jira: 'jira',
+  dameng: 'DM DB',
+  // hive: 'Hive',
+  tcp_udp: 'TCP/IP',
+  mq: 'MQ',
+  hbase: 'HBase',
+  kudu: 'KUDU'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
@@ -116,13 +106,16 @@ export const defaultModel = {
     sslKey: '',
     sslPass: '',
     schemaAutoUpdate: false,
+    multiTenant: false,
+    pdb: '',
     sslValidate: false,
     sslCA: '',
     sslCAFile: null,
     sslKeyFile: null,
     search_databaseType: '',
     increamentalTps: 100, //dummy
-    initialReadSize: 100000 //dummy
+    initialReadSize: 100000, //dummy
+    schema: ''
   },
   kafka: {
     id: '',
@@ -185,8 +178,7 @@ export const defaultModel = {
       " // Build-in function's MD5/SHA1/SHA256\n" +
       '    // example:\n' +
       "    // request_params.sign = MD5(request_params.id+request_params_name+'secret_key');",
-    resp_pre_process:
-      "// result: {'tapdata_offset': offset, 'response':<API RESPONSE>}",
+    resp_pre_process: "// result: {'tapdata_offset': offset, 'response':<API RESPONSE>}",
     data_sync_mode: 'INCREMENTAL_SYNC',
     url_info: [
       {
@@ -242,6 +234,30 @@ export const defaultModel = {
     excel_header_end: 'Z1',
     excel_value_start: '',
     excel_value_end: ''
+  },
+  tcp: {
+    name: '',
+    database_type: 'tcp_udp',
+    connection_type: 'target',
+    database_host: '',
+    database_port: '',
+    tcpUdpType: 'TCP',
+    root_name: ''
+  },
+  mq: {
+    name: '',
+    database_type: '',
+    connection_type: '',
+    database_host: '',
+    database_port: '',
+    mqType: '0', //MQ类型
+    brokerURL: '', //MQ连接串
+    mqUserName: '',
+    mqPassword: '',
+    mqQueueSet: '', //队列名集合
+    mqTopicSet: '', //主题名称
+    routeKeyField: '', //消息路由
+    virtualHost: '' //虚拟主机
   }
 }
 export const defaultCloudModel = {

@@ -1,9 +1,6 @@
 <template>
   <div class="table-page-container">
-    <div
-      class="table-page-header"
-      v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM') && title"
-    >
+    <div class="table-page-header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM') && title">
       <slot name="header">
         <div class="page-header-title">{{ title }}</div>
         <div v-if="desc" class="page-header-desc" v-html="desc"></div>
@@ -11,12 +8,7 @@
     </div>
 
     <div class="table-page-main">
-      <div
-        class="table-page-left"
-        v-if="
-          classify && !hideClassify && $window.getSettingByKey('SHOW_CLASSIFY')
-        "
-      >
+      <div class="table-page-left" v-if="classify && !hideClassify && $window.getSettingByKey('SHOW_CLASSIFY')">
         <Classification
           :authority="classify.authority"
           :types="classify.types"
@@ -159,7 +151,7 @@ export default {
       params[key] = pageParams
       this.$cache.set('TABLE_PAGE_PARAMS', params)
     },
-    fetch(pageNum, debounce = 0, hideLoading) {
+    fetch(pageNum, debounce = 0, hideLoading, callback) {
       this.page.current = pageNum || this.page.current
       this.$nextTick(() => {
         delayTrigger(() => {
@@ -191,6 +183,7 @@ export default {
               })
               .finally(() => {
                 this.loading = false
+                callback?.(this.getData())
               })
         }, debounce)
       })
@@ -205,6 +198,9 @@ export default {
     },
     showClassify(tagList) {
       this.$refs.classify.show(tagList)
+    },
+    getData() {
+      return this.list
     }
   }
 }
@@ -221,6 +217,7 @@ export default {
   width: 100%;
   .table-page-header {
     padding: 15px 10px;
+    padding-left: 20px;
     background: #ffffff;
     overflow: hidden;
     border-bottom: 1px solid #dedee4;
@@ -273,12 +270,11 @@ export default {
       flex: 1;
       overflow: auto;
       border-bottom: none;
+      border-radius: 3px;
       background: #fff;
     }
     .el-table--border td,
-    .el-table__body-wrapper
-      .el-table--border.is-scrolling-left
-      ~ .el-table__fixed {
+    .el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
       border-right: 0;
     }
     .el-table--border th {

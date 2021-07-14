@@ -67,7 +67,7 @@ export default {
   methods: {
     init(script) {
       let self = this
-      this.code = script
+      if (script) this.code = script
       self.$refs.container.innerHTML = ''
       var editor = monaco.editor.create(this.$refs.container, {
         value: this.code,

@@ -14,9 +14,7 @@ export default class Panel extends Component {
   }
 
   doInit() {
-    this.el = $(
-      `<div class="e-panel" style="${this.opts.bodyStyle || ''}"></div>`
-    )
+    this.el = $(`<div class="e-panel" style="${this.opts.bodyStyle || ''}"></div>`)
   }
 
   getContentEl() {

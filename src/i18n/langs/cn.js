@@ -106,8 +106,7 @@ const cn = {
       email_existed: 'Email 地址已被注册',
       userPplicy_message: '请选择用户政策',
       modifyPassword: '修改密码',
-      newPasswordTip:
-        '输入您注册的邮箱和新密码，我们将向您发送用于重置密码的链接',
+      newPasswordTip: '输入您注册的邮箱和新密码，我们将向您发送用于重置密码的链接',
       newpassword_placeholder: '请设置新密码',
       rememberPasswords: '想起密码?',
       Registration: '注册账号',
@@ -221,7 +220,7 @@ const cn = {
       incrementalLag: '增量滞后',
       allValid: '全部校验任务',
       checkSame: '校验一致',
-      countDifference: 'Count差异',
+      countDifference: 'Count不一致',
       contentDifference: '内容差异'
     }
   },
@@ -276,6 +275,7 @@ const cn = {
     copySuccess: '复制成功',
     deleteOK: '删除成功',
     deleteFail: '删除失败',
+    deleting: '删除中',
     reloadOK: '正在重新加载',
     stopFail: '停止失败',
     taskStart: '任务启动中',
@@ -298,13 +298,10 @@ const cn = {
     deteleMessage: '删除任务将无法恢复, 确定删除任务',
     deteleJobMessage: '删除任务将无法恢复, 确定删除?',
     forceStoppingMessage: '强制停止将立即中断数据传输，是否继续执行?',
-    stopInitial_syncMessage:
-      '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
+    stopInitial_syncMessage: '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
     stopMessage: '确定要暂停任务吗?',
-    stopAggregation_message:
-      '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？',
-    startAggregation_message:
-      '任务XXX中含有聚合处理节点，任务启动后会先进行重置，确定启动？',
+    stopAggregation_message: '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？',
+    startAggregation_message: '任务XXX中含有聚合处理节点，任务启动后会先进行重置，确定启动？',
     cancelReset: '已取消重置',
     resetOk: '重置成功',
     resetFailed: '重置失败',
@@ -425,8 +422,7 @@ const cn = {
     dataValidation: '数据校验',
     sourceDescription:
       '数据源是创建传输任务的前提，任务中所有的数据库和表等数据节点都来自数据源。数据源包含数据库, File, GridFS, Rest API, View, Udp, Custom connection等',
-    apiDescription:
-      'API即数据发布，可以根据现有collection或者通过同步任务创建新的collection对外发布的API',
+    apiDescription: 'API即数据发布，可以根据现有collection或者通过同步任务创建新的collection对外发布的API',
     datavaliDescription:
       '数据校验可对迁移同步任务的数据源与目标之间的数据进行比对校验，校验功能包含快速count校验，全表字段值校验，关联字段值校验，定时自动校验等。',
     multiError: {
@@ -527,12 +523,10 @@ const cn = {
     totalDelete: '总删除',
     category: '类别',
     replicate: '数据同步差距',
-    throughputpop:
-      '输入输出统计: 平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好',
+    throughputpop: '输入输出统计: 平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好',
     transtime_pop:
       '传输耗时: 除源节点外，事件处理完的时间减去事件的发生时间。 节点间统计:事件从进入节点到输出到所消耗的时间 任务流统计:所有节点耗时相加，数值越小越好',
-    replicate_pop:
-      '数据同步差距: 源库和目标库数据最后更新时间的差距，数值越小越好',
+    replicate_pop: '数据同步差距: 源库和目标库数据最后更新时间的差距，数值越小越好',
     status: {
       running: '运行中',
       paused: config['DFS_TCM_PLATFORM'] ? '待启动' : '已暂停',
@@ -557,6 +551,7 @@ const cn = {
     separator: '至',
     dataPlaceholder: '选择时间范围',
     taskStatus: '任务状态',
+    maxLagTime: '最大增量滞后时间',
     taskStatusPlaceholder: '请选择任务状态',
     taskSettingPlaceholder: '请选择任务同步类型',
     updateTime: '更新时间',
@@ -602,6 +597,7 @@ const cn = {
     run_custom_sql: '重复自定义SQL',
     stop_on_error: '遇到错误停止',
     need_to_create_Index: '自动创建索引',
+    noPrimaryKey: '支持无主键同步',
     is_schedule: '定期调度任务',
     cron_expression: '调度cron表达式',
     data_quality_tag: '添加数据质量标签',
@@ -621,6 +617,7 @@ const cn = {
     cdc_concurrency: '增量同步并发写入',
     read_batch_size: '每次读取数量',
     cdcDataProcess: '增量数据处理机制',
+    cdcShareFilterOnServer: '共享挖掘日志过滤',
     batch: '批量',
     onebyone: '逐条',
     mission: '描述',
@@ -640,11 +637,11 @@ const cn = {
     aggregation: '聚合处理',
     aggrCleanSecond: '清理旧版本数据时间',
     aggrFullSyncSecond: '全量同步时间',
-    aggregatePrompt:
-      '提示：使用聚合处理节点后，此任务停止后再次启动，任务将会重置',
-    nameTip:
-      '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
+    aggregatePrompt: '提示：使用聚合处理节点后，此任务停止后再次启动，任务将会重置',
+    nameTip: '后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，故不同的子处理名称不可重复。',
     enterFilterTable: '请输入过滤表内容',
+    lagTime: '增量滞后判断时间设置',
+    lagTimeTip: '当增量任务延迟大于该值时，则认为任务增量滞后，默认值为0',
     button: {
       submit: '提交执行',
       viewConfig: '查看节点配置',
@@ -689,25 +686,19 @@ const cn = {
     bulk_delete_confirm_message: '批量删除任务后，任务将无法恢复',
 
     stop_confirm_title: '是否暂停该任务？',
-    stop_confirm_message:
-      '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+    stop_confirm_message: '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
     bulk_stop_confirm_title: '是否批量暂停任务？',
-    bulk_stop_confirm_message:
-      '批量暂停任务后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+    bulk_stop_confirm_message: '批量暂停任务后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
 
     force_stop_confirm_title: '是否强制停止该任务？',
-    force_stop_confirm_message:
-      '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
+    force_stop_confirm_message: '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
     bulk_force_stop_confirm_title: '是否批量强制停止任务？',
-    bulk_force_stop_confirm_message:
-      '批量强制停止任务将立即中断数据传输强制任务快速停止，并重置该任务',
+    bulk_force_stop_confirm_message: '批量强制停止任务将立即中断数据传输强制任务快速停止，并重置该任务',
 
     initialize_confirm_title: '是否重置该任务？',
-    initialize_confirm_message:
-      '重置任务 xxx 将清除任务同步进度，任务将重新执行',
+    initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行',
     bulk_initialize_confirm_title: '是否批量重置任务？',
-    bulk_initialize_confirm_message:
-      '批量重置任务将清除任务同步进度，任务将重新执行',
+    bulk_initialize_confirm_message: '批量重置任务将清除任务同步进度，任务将重新执行',
 
     importantReminder: '重要提醒',
     modifyEditText: '编辑任务如果修改了',
@@ -718,14 +709,13 @@ const cn = {
     runNomally: '才能正常运行',
     editLayerTip: ' 否则可能导致异常错误，请问您要继续编辑吗?',
     continueEditing: '继续编辑',
+    numberType: '必须为数字且不能小于0',
     setting: {
       distinctWriteType: '去重写入机制',
       intellect: '智能去重写入',
       compel: '强制去重写入',
-      intellectTip:
-        '智能去重写入：对目标已有数据进行智能检测，去重的同时能极大提升传输性能',
-      compelTip:
-        '强制去重写入：对目标已有数据进行强制去重检测，严格保证精准度但传输性能较低',
+      intellectTip: '智能去重写入：对目标已有数据进行智能检测，去重的同时能极大提升传输性能',
+      compelTip: '强制去重写入：对目标已有数据进行强制去重检测，严格保证精准度但传输性能较低',
       batchTip: '批量：对监测到的增量数据进行批量传输处理，性能较高',
       onebyoneTip: '逐行：对监测到的增量数据进行逐条处理，性能较差',
       sync_type_tip: '关闭数据集节点的聚合设置才能修改传输类型，已开启节点:'
@@ -734,11 +724,12 @@ const cn = {
       title: '跳过错误设置',
       skipErrorSettings: '任务错误处理',
       tip: '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
-      attention:
-        '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
+      attention: '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
       startJob: '跳过错误，启动任务',
       cancel: '取消',
-      taskName: '任务名'
+      taskName: '任务名',
+      errorTotal: '共 XX 条,已选择',
+      strip: '条'
     }
   },
   connection: {
@@ -769,11 +760,9 @@ const cn = {
     reloadTittle: '重新加载 schema',
     deteleDatabaseTittle: '是否删除该连接？',
     deteleDatabaseMsg: '删除连接 xxx 后，此连接将无法恢复',
-    reloadMsg:
-      '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema : ',
+    reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema : ',
     checkMsg: '此数据源被传输任务或API所占用，无法删除',
-    copyFailedMsg:
-      '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
+    copyFailedMsg: '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
     change: '更换',
     rename: '改名',
     testConnection: '连接测试',
@@ -793,8 +782,8 @@ const cn = {
       target: '目标',
       source_and_target: '源头和目标'
     },
-    cannot_delete_remind:
-      '当前连接正在被一个或多个任务或API使用中，请删除任务或API后重试。'
+    cannot_delete_remind: '当前连接正在被一个或多个任务或API使用中，请删除任务或API后重试。',
+    dfs_cannot_delete_remind: '当前连接正在被一个或多个任务中，请删除任务后重试。'
   },
   editor: {
     nodeSettings: '节点设置',
@@ -813,8 +802,15 @@ const cn = {
         acyclic: '数据处理流程不能有循环'
       },
       data_node: {
+        hiveText: 'hive节点',
+        kuduText: 'KUDU 节点',
+        hbaseText: 'HBase节点',
+        hbase_check: 'HBase仅支持全量任务',
         kafkaText: 'kafka节点',
         kafkaName_isNull: 'kafka不能为空',
+        mqTableType: '新建表类型',
+        mqTableTypeTip: '请选择表类型topic或者queue',
+        tcpTip: '重要:不增加报文转换处理节点的情况下, TCP/IP数据源默认输出json格式报文',
         database: {
           name: '数据库',
           tip: '任意类型数据库',
@@ -878,10 +874,8 @@ const cn = {
             fieldFilterTip: {
               label: '字段过滤',
               keepAllFields: '不过滤字段：保留此数据集的全部字段',
-              retainedField:
-                '保留字段：选择此项操作，将保留所选择的字段，舍弃其它字段全部.',
-              deleteField:
-                '删除字段：选择此项操作，将删除所选择的字段，保留其它全部字段.'
+              retainedField: '保留字段：选择此项操作，将保留所选择的字段，舍弃其它字段全部.',
+              deleteField: '删除字段：选择此项操作，将删除所选择的字段，保留其它全部字段.'
             },
             dropTable: {
               label: '已存在的数据',
@@ -926,8 +920,7 @@ const cn = {
               preview: '预览',
               previewSampleData: '采样数据预览',
               addTextTip: '没有预览样本数据',
-              addTextTip1:
-                '请输入MongoDB聚合代码，然后单击“预览”以在此处预览样本数据',
+              addTextTip1: '请输入MongoDB聚合代码，然后单击“预览”以在此处预览样本数据',
               filterAggreTip: '聚合设置与过滤设置不可同时开启',
               seetingAggreTip: '此功能仅在初始化任务下可用'
             }
@@ -948,6 +941,7 @@ const cn = {
             },
             table: {
               label: '表',
+              labelTips: '（如为空则创建新表）',
               placeholder: '请选择表,区分大小写'
             },
             custom_sql: {
@@ -1025,6 +1019,10 @@ const cn = {
           name: 'ES',
           tip: 'Elastic search节点',
           configurationES: '配置Elastic search',
+          chunkSize: '分片数量',
+          index: '索引',
+          chooseChunkSize: '请输入分片数量',
+          chooseIndex: '请输入索引',
           chooseESName: '请选择Elastic search',
           es_isNull: 'Elastic search不能为空'
         },
@@ -1123,14 +1121,11 @@ const cn = {
           name_notRepeated: '子处理名称不能重复',
           returnExample: '返回示例',
           school_name: 'school_name: "第一实验小学"',
-          idComment:
-            '// "students_sum" 自定义的子处理名称，多个子处理名称不可重复',
-          countComment:
-            '// COUNT为选择的函数, 132为函数值；如果函数是MAX, 则名称为MAX',
+          idComment: '// "students_sum" 自定义的子处理名称，多个子处理名称不可重复',
+          countComment: '// COUNT为选择的函数, 132为函数值；如果函数是MAX, 则名称为MAX',
           school_nameComment: '// 分组汇总的字段名，如果不填写则不显示',
           aggregateSizeLabel: '聚合结果缓存条数',
-          aggregateSizeTips:
-            '聚合结果在设置的条数范围内存在缓存里，超出的数据会被存入目标库。',
+          aggregateSizeTips: '聚合结果在设置的条数范围内存在缓存里，超出的数据会被存入目标库。',
           allAggregateSize: '全部存入缓存',
           customAggregateSize: '自定义缓存条数',
           cleanSecondTimeLess3600: '清理旧版本数据时间不能少于3600',
@@ -1177,11 +1172,9 @@ const cn = {
             scriptDialogTitle: '设置字段脚本',
             expression: '请输入表达式',
             example: '示例',
-            exampleRow1:
-              'var result = "a" + "b" // 字符串拼接, result的结果为 "ab"',
+            exampleRow1: 'var result = "a" + "b" // 字符串拼接, result的结果为 "ab"',
             exampleRow2: 'var result = 1 + 2 // 数字计算, result 的结果为 3',
-            exampleRow3:
-              'var result = fn("1") // 调用自定义函数或内置函数, result的结果为 fn 函数的返回值',
+            exampleRow3: 'var result = fn("1") // 调用自定义函数或内置函数, result的结果为 fn 函数的返回值',
             exampleRow4:
               'var result = record.isTrue ? true : false // 三元表达式, result的值根据判断表达式（record.isTrue）的结果为 true 或 false'
           }
@@ -1195,8 +1188,7 @@ const cn = {
           none_script: '脚本必填.',
 
           debug_button_label: '调试脚本',
-          warning_for_not_save:
-            '当前任务未保存，无法进行连接测试，请保存之后再尝试',
+          warning_for_not_save: '当前任务未保存，无法进行连接测试，请保存之后再尝试',
           connect_server_fail: '连接服务器失败',
 
           debug: {
@@ -1308,6 +1300,17 @@ const cn = {
           title: '_id字段冲突',
           message:
             '目标数据模型已存在 _id 字段，系统默认会移除已重复的_id字段，如想保留，请使用字段处理器对源表的 _id 进行重命名！'
+        },
+        pcb: {
+          label: '协议类型',
+          placeholder: '请选择协议类型',
+          fieldsSelected: '待选字段',
+          selectedField: '已选字段',
+          moveUp: '上移',
+          moveDown: '下移',
+          notMoveUpTip: '没有上移的空间了',
+          notMoveDownTip: '没有下移的空间了',
+          onlyOnePiece: '只能选择一条数据进行上下移动'
         },
         form: {
           label: {
@@ -1437,10 +1440,8 @@ const cn = {
           tip: '切换全屏'
         }
       },
-      nodeLoadSchemaDiaLog:
-        '如果数据源有更新，此操作会更新此节点的模型，是否继续?',
-      allNodeLoadSchemaDiaLog:
-        '如果数据源有更新，此操作会更新各节点的模型，是否继续?'
+      nodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更新此节点的模型，是否继续?',
+      allNodeLoadSchemaDiaLog: '如果数据源有更新，此操作会更新各节点的模型，是否继续?'
     },
     preview: {
       stage: '节点',
@@ -1479,14 +1480,12 @@ const cn = {
       excel_cell_point: 'EXCEL的坐标范围，"第1行第1列" 可以输入为 "A1"',
       excel_cell_tip: '字段范围必须为大写字母+数字',
       excel_value_end_gt_start: '结束行必须大于等于开始行',
-      excel_value_range:
-        'EXCEL 横坐标范围, "取第2行至第10行" 可输入："2" ~ "10"',
+      excel_value_range: 'EXCEL 横坐标范围, "取第2行至第10行" 可输入："2" ~ "10"',
       fileFilter: '文件过滤',
       include: '包含文件',
       exclude: '舍弃文件',
       loadSchema: '加载模型',
-      loadSchemaTip:
-        '配置完上述配置项后请点击“加载模型”按钮以更新文件的模型，没有文件模型无法执行同步传输',
+      loadSchemaTip: '配置完上述配置项后请点击“加载模型”按钮以更新文件的模型，没有文件模型无法执行同步传输',
       xpath: '数据记录的XPath',
       tableName: '模型名'
     }
@@ -1527,13 +1526,11 @@ const cn = {
     sampleRate: '按百分比',
     condition: '采样范围',
     filter: '过滤',
-    exampleSQL:
-      '行数校验下仅支持 select count(*) 查询语句 示例: select count(*)  from tablename_1 where field__2 = A;',
+    exampleSQL: '行数校验下仅支持 select count(*) 查询语句 示例: select count(*)  from tablename_1 where field__2 = A;',
     exampleMQL: '示例: db.collection_1.count({ field_2:A })',
     exampleHashSQL:
       '哈希校验下SQL仅支持select查询语句, 不支持count/sum/avg/max等查询 示例: select field_1 from tablename_1 where field__2 > A；',
-    exampleHashMQL:
-      '请输入MQL查询语句 示例: db.collection_1.find ({ field_2:A },{ field_1:1 })',
+    exampleHashMQL: '请输入MQL查询语句 示例: db.collection_1.find ({ field_2:A },{ field_1:1 })',
     exampleJS: '请输入JS代码, 高级校验JS必须返回return值, 具体请查看示例',
     verifyRunningInfo: '后台运行',
     verifyStatusWaiting: '校验阶段1-3:数据校验排队中，请等待... 点击',
@@ -1633,17 +1630,21 @@ const cn = {
       result: '状态',
       information: '说明',
       unTest: '待测试 ... ',
-      error: '测试服务请求超时，请关闭重试'
+      error: '测试服务请求超时，请关闭重试',
+      retryBtn: '重试',
+      retryTest: '连接测试服务启动失败，请点击重试'
     },
     form: {
       connectionName: '连接名称',
       databaseType: '数据库类型',
       connectionType: '连接类型',
       host: '数据库地址',
+      kuduhost: 'IP地址:端口，支持多个,用","分割',
       agentAddr: '代理地址',
       port: '端口',
       databaseName: '数据库名称',
       databaseSchema: '数据库模式',
+      rootName: '根节点名称',
       userName: '账号',
       password: '密码',
       nodeName: '编目节点名称',
@@ -1663,12 +1664,12 @@ const cn = {
       timeZone: '时间类型的时区',
       ReloadSchema: '定期加载schema',
       clusterName: '集群名称',
-      databaseHostPlaceholder:
-        '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
+      databaseHostPlaceholder: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
       plugin_name: '日志解码器',
       supportUpdatePk: '支持同步时更新主键',
       indexPrefix: '索引前缀',
       agentMsg: 'Agent当前状态异常无法创建连接，请检查',
+      agentConnectionMsg: 'Agent当前状态异常，无法测试连接，请检查Agent',
       multiTenant: '多租户模式',
       uriTips: {
         label: '示例',
@@ -1700,11 +1701,9 @@ const cn = {
         sslTSLTip:
           'Tapdata 将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
         sslTop: '直接连接',
-        sslTopTips:
-          'Tapdata 将直接连接到数据库，您可以要创建一个安全规则以允许系统访问，这是简单直接的方法'
+        sslTopTips: 'Tapdata 将直接连接到数据库，您可以要创建一个安全规则以允许系统访问，这是简单直接的方法'
       },
-      guide:
-        '数据源配置请参考页面右侧连接配置帮助文档，想了解更多数据源连接置、使用说明或其他信息请点击',
+      guide: '数据源配置请参考页面右侧连接配置帮助文档，想了解更多数据源连接置、使用说明或其他信息请点击',
       guideDoc: '帮助文档',
       response_body: {
         CHECK_CONNECT: '检查服务连接是否可用',
@@ -1748,11 +1747,9 @@ const cn = {
         shared: '共享文件夹',
         sharedTip: '以地址、账号、密码等共享文件夹的形式添加文件',
         activeConnectionMode: '主动连接模式',
-        activeConnectionModeTip:
-          '服务端主动发送建立数据连接的请求，性能高，如果有防火墙可能会连接失败。',
+        activeConnectionModeTip: '服务端主动发送建立数据连接的请求，性能高，如果有防火墙可能会连接失败。',
         passiveConnectionMode: '被动连接模式',
-        passiveConnectionModeTip:
-          '连接和数据连接都由客户端提交到服务端，可以解决连接请求被防火墙过滤掉的问题。',
+        passiveConnectionModeTip: '连接和数据连接都由客户端提交到服务端，可以解决连接请求被防火墙过滤掉的问题。',
         input_number: '请输入数字',
         greaterZero_less5256000: '必须大于等于零,小于等于5256000',
         path: '设置路径',
@@ -1791,8 +1788,7 @@ const cn = {
         lonoreFormat: '忽略非JSON Object格式消息',
         lonoreFormatTip: '如果开启则遇到解析异常会忽略该消息，否则停止拉取消息',
         directlyNameTip: '直接输入主体名称，多个主题以逗号隔开',
-        kafkaPatternTopicsTip:
-          '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
+        kafkaPatternTopicsTip: '按照Host, port, 账号, 密码的方式配置MongoDB数据库，支持批量输入',
         hostPlaceHolder: '输入 IP/host:port , 多个地址以逗号隔开',
         requestTimeout: '推送请求超时时间 (毫秒)',
         transactionMessage: '事务消息',
@@ -1805,9 +1801,9 @@ const cn = {
         kafkaBufferMemory: '缓存消息字节数',
         kafkaCompressionType: '消息压缩类型',
         kafkaPartitionKey: '分区键字段名',
+		kafkaPartitionKeyTip: '多个字段名请用逗号隔开',
         kafkaIgnorePushError: '忽略推送消息异常',
-        pushErrorTip:
-          ' 如果开启则忽略该次推送的消息(存在消息丢失)，否则停止推送消息',
+        pushErrorTip: ' 如果开启则忽略该次推送的消息(存在消息丢失)，否则停止推送消息',
         kafkaAcks0: '不确认',
         kafkaAcks1: '仅写入master分区',
         kafkaAcks_1: '写入大多数ISR分区',
@@ -1835,8 +1831,7 @@ const cn = {
         resp_pre_process: '响应预处理脚本',
         data_sync_mode: '数据同步模式',
         url_info: 'URL',
-        url_info_url_invalid:
-          '无效的URL，URL示例：http：//127.0.0.1：8080/api/xxx？param=value',
+        url_info_url_invalid: '无效的URL，URL示例：http：//127.0.0.1：8080/api/xxx？param=value',
         url_info_method: '请求方法',
         url_info_url_type: 'URL类型',
         url_info_ONLY: '获取数据URL',
@@ -1872,6 +1867,24 @@ const cn = {
         file_upload_mode: '文件上传模式',
         file_upload_stream: '流式',
         file_upload_memory: '内存读取(有内存溢出风险)'
+      },
+      mq: {
+        mqType: 'MQ类型',
+        mqQueueSet: '队列名称',
+        mqTopicSet: '主题名称',
+        brokerURL: 'MQ连接串',
+        database_host: 'MQ地址',
+        database_port: 'MQ端口',
+        routeKeyField: '消息路由',
+        virtualHost: '虚拟主机',
+        queueSetTip: '多个队列用逗号隔开',
+        topicSetTip: '多个主题用逗号隔开',
+        brokerUrl: 'MQ连接串',
+        brokerUrlTip: '示例tcp://127.0.0.1:61616,支持tcp,nio,udp,ssl,http(s)'
+      },
+      tcp: {
+        agreementType: '协议类型',
+        targetAddr: '目标地址'
       }
     },
     error: {
@@ -1926,8 +1939,7 @@ const cn = {
     refreshStatus: '上次刷新',
     lastTimeConsume: '上次耗时',
     allProgress: '解析任务总数',
-    refreshMsg:
-      '开始对所有同步任务进行解析，并生产溯源图形，耗时可能比较久，点击“是”开始执行',
+    refreshMsg: '开始对所有同步任务进行解析，并生产溯源图形，耗时可能比较久，点击“是”开始执行',
     refreshTitle: '同步任务解析',
     yes: '是',
     no: '否',
@@ -2003,6 +2015,9 @@ const cn = {
     },
     details: {
       model: '模型',
+      collection: '数据集',
+      collectionName: '数据集名称',
+      createCollection: '创建数据集',
       dataDirectory: '数据目录',
       dataDetails: '数据详情',
       basicAttributes: '基础属性',
@@ -2010,7 +2025,17 @@ const cn = {
       clickAddDes: '点击添加描述',
       propertyDetails: '属性详情',
       name: '名称',
+      comment: '描述',
       originalTableName: '原表名',
+      data_type: '数据类型',
+      precision: '精确度',
+      columnSize: '字段长度',
+      scale: '数字长度',
+      autoincrement: '自增',
+      primary_key_position: '主键',
+      foreign_key_position: '外键',
+      is_nullable: '非空',
+      unique: '唯一',
       typesOf: '类型',
       owningConnection: '所属连接',
       primaryKey: '主键',
@@ -2054,6 +2079,7 @@ const cn = {
       manyone: '多对一',
       addRelatedTable: '新增关联表',
       enter: '请输入',
+      select: '请选择',
       filedAliasName: '字段名/别名',
       Float: '浮点数',
       String: '字符串',
@@ -2087,7 +2113,87 @@ const cn = {
       attrKey: '属性值',
       editAliasNameTitle: '编辑别名',
       editCommentTitle: '编辑描述',
-      uniquelyIdentifies: '唯一标识'
+      uniquelyIdentifies: '唯一标识',
+      query: '查询',
+      version: {
+        version: '版本',
+        version_control: '版本管理',
+        version_control_required: '版本管理不能为空',
+        lastVersion: '此元数据已是最新版本，过往保存的历史版本记录将保存在下面列表中',
+        versionNum: '版本号',
+        versionComparison: '版本比对',
+        compared: '对比',
+        currentVersion: '当前版本',
+        updateTime: '更新时间',
+        operator: '操作人',
+        modifyDescription: '修改说明'
+      },
+      Modify: {
+        property: '修改属性',
+        field: '修改字段'
+      },
+      Add: {
+        property: '新增属性',
+        new: {
+          field: '新增字段'
+        }
+      },
+      Remove: {
+        property: '移除属性',
+        field: '移除字段'
+      },
+      index: {
+        title: '索引',
+        name: '索引名称',
+        create: '创建索引',
+        fields: '时间字段',
+        unique: '唯一约束',
+        status: '状态',
+        create_by: '创建用户',
+        background: '后台',
+        properties: '属性',
+        definition: '字段名称',
+        options: '选项',
+        build_in_background: '在后台构建索引',
+        create_unique: '创建唯一索引',
+        create_ttl: '创建TTL索引',
+        name_exists: '索引名称必须唯一',
+        index_exists: '索引已经存在',
+        create_by_user: ' 平台用户',
+        create_by_dba: ' 数据库管理员',
+        status_creating: ' 正在创建',
+        status_created: ' 创建完成',
+        status_creation_failed: ' 创建失败',
+        status_deleted: ' 已经删除',
+        drop_index: ' 正在删除索引',
+        unique_true: ' 唯一',
+        unique_false: ' 不唯一'
+      },
+      validation: {
+        title: '数据验证',
+        field_name: '字段名称',
+        rule: '规则',
+        ruleTem: '规则模板',
+        select_rule: '选择规则',
+        ungrouped: '未分组',
+        create: '创建数据校验'
+      },
+      preview: {
+        title: '数据预览'
+      },
+      pipeline: {
+        title: '管道',
+        collection: '数据表',
+        pipeline: 'MongoDB Pipeline',
+        viewStatus: '视图状态',
+        FailedMessage: '失败详情',
+        penpinSave: '点击下方保存按钮仅保存到系统，点击更新按钮将应用到此数据所在的数据库',
+        apply: '应用',
+        cnot_Empty: '不能为空',
+        view_tip: '操作将覆盖同名的视图，是否创建视图',
+        success: '应用成功',
+        failed: '应用失败'
+      }
     },
     metadataSearch: {
       title: '元数据检索',
@@ -2105,19 +2211,14 @@ const cn = {
   },
   dialog: {
     createTable: '创建新表',
-    placeholderTable:
-      '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
+    placeholderTable: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
     createCollection: '创建新数据集 ',
-    placeholderCollection:
-      '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
-    tableValidateTip:
-      '新建表名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
-    collectionValidateTip:
-      '新建数据集名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
+    placeholderCollection: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
+    tableValidateTip: '新建表名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
+    collectionValidateTip: '新建数据集名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
     downAgent: {
       headTitle: 'Agent下载与安装',
-      headInterpretation:
-        'Tapdata DFS云版需要在本地安装 Agent 以确保连接数据库和传输服务正常运行',
+      headInterpretation: 'Tapdata DFS云版需要在本地安装 Agent 以确保连接数据库和传输服务正常运行',
       downloadInstall: '下载安装',
       text: '首先，在环境中配置好 JAVA 运行环境，然后使用以下命令下载和启动 Agent',
       copy: '复制命令',
@@ -2125,25 +2226,19 @@ const cn = {
       copied: '已复制',
       downloadInstallInstructions: '下载安装说明',
       linuxInstructionsText1: '· 首先，需要确保环境中安装了 JAVA 运行环境',
-      linuxInstructionsText2:
-        '· 在环境中执行以上命令，将会自动下载和启动 Agent',
-      linuxInstructionsText3:
-        '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent',
+      linuxInstructionsText2: '· 在环境中执行以上命令，将会自动下载和启动 Agent',
+      linuxInstructionsText3: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent',
       waitingInstall: '等待安装',
       agentNum: 'Agent 已安装数 ',
       agentInstallation: 'Agent 已经安装',
       downLoadAgent: '下载 Agent',
-      windowsText:
-        '首先，在环境中配置好 JAVA 运行环境，下载之后，在存放下载文件的目录下使用以下命令安装和启动 Agent',
+      windowsText: '首先，在环境中配置好 JAVA 运行环境，下载之后，在存放下载文件的目录下使用以下命令安装和启动 Agent',
       windowsInstructionsText1: '· 首先，需要确保环境中安装了 JAVA 运行环境',
       windowsInstructionsText2: '· 其次，下载文件，并存放在某个目录中',
-      windowsInstructionsText3:
-        '· 最后，进入目录，执行命令后系统将自动安装并启动 Agent',
+      windowsInstructionsText3: '· 最后，进入目录，执行命令后系统将自动安装并启动 Agent',
       windowsInstructionsText4: '· Tapdata 云版一个账号下只能安装一个 Agent',
-      windowsInstructionsText5:
-        '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent',
-      dockerText:
-        '首先，在环境中配置好 Docker 运行环境，之后使用以下命令安装和启动 Agent ',
+      windowsInstructionsText5: '· 在 Agent 安装后，可通过 tapdata start/stop backend 启动和停止 Agent',
+      dockerText: '首先，在环境中配置好 Docker 运行环境，之后使用以下命令安装和启动 Agent ',
       dockerText1: '· 首先，需要确保环境中安装了 Docker 运行环境',
       dockerText2: '· 执行命令后系统将自动安装并启动 Agent',
 
@@ -2162,8 +2257,7 @@ const cn = {
     },
     library: '此库',
     sameTable: '以下表存在重名：',
-    repeatTip:
-      '点击数据库名对重名的表在数据目录页面进行处理，以确保此库下表名的唯一性',
+    repeatTip: '点击数据库名对重名的表在数据目录页面进行处理，以确保此库下表名的唯一性',
 
     jobSchedule: {
       jobSecheduleSetting: '任务调度设置',
@@ -2382,12 +2476,9 @@ const cn = {
     BasicSettings: '基本设置',
     verifyCondition: '校验条件',
     clear: '清空',
-    fastCountTip:
-      '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容。',
-    contentVerifyTip:
-      '全表字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。',
-    jointFieldTip:
-      '关联键校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式.',
+    fastCountTip: '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容。',
+    contentVerifyTip: '全表字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。',
+    jointFieldTip: '关联键校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式.',
     waiting: '待校验',
     scheduling: '校验启动中',
     error: 'Error',
@@ -2636,7 +2727,7 @@ const cn = {
     roleManagement: '角色管理',
     preciseMatching: '精准匹配',
     fuzzyMatching: '模糊匹配',
-    selectRoleName: '请选择角色名',
+    selectRoleName: '请输入角色名',
     selectDesc: '请输入角色描述',
     selectUser: '请选择用户名',
     description: '角色描述',
@@ -2692,12 +2783,10 @@ const cn = {
     step_1_desc:
       'Tapdata DFS云版需要先在本地安装agent以确保连接数据库和数据传输服务的正常运行，您可以根据要安装服务器的类型在下方选择相应的类型进行下载安装',
     step_2_title: '创建数据源连接',
-    step_2_desc:
-      '数据源连接指的是可以作为源的数据库类型的数据连接,必须先创建数据源才能创建迁移或同步任务',
+    step_2_desc: '数据源连接指的是可以作为源的数据库类型的数据连接,必须先创建数据源才能创建迁移或同步任务',
     step_2_btn_label: '创建新的源连接',
     step_3_title: '创建目标连接',
-    step_3_desc:
-      '目标连接指的是可以作为数据传输目标的数据库类型的连接,  必须先创建目标连接才能创建迁移或同步任务',
+    step_3_desc: '目标连接指的是可以作为数据传输目标的数据库类型的连接,  必须先创建目标连接才能创建迁移或同步任务',
     step_3_btn_label: '创建新的目标连接',
     step_4_title: '选择任务类型',
     step_4_desc:
@@ -2838,7 +2927,7 @@ const cn = {
     status_creating: '正在创建',
     status_created: '创建完成',
     status_creation_failed: '创建失败',
-    status_deleted: '已经删除',
+    status_deleted: '删除中',
     filedGetFailed: '当前数据库的表，没有发现时间字段，无法创建生命周期',
     index_exists: '索引已经存在'
   },
@@ -2860,8 +2949,7 @@ const cn = {
     Log_level: '日志等级',
     maxCpuUsage: '最大CPU使用率(取值范围 0.1 ~ 1)',
     maxHeapMemoryUsage: '最大堆内存使用率(取值范围 0.1 ~ 1)',
-    switch_insert_mode_interval:
-      ' 增量模式下切换到批量插入模式间隔时间（单位：秒）',
+    switch_insert_mode_interval: ' 增量模式下切换到批量插入模式间隔时间（单位：秒）',
     Email_Communication_Protocol: ' 加密方式',
     SMTP_Server_Port: 'SMTP 服务端口',
     SMTP_Server_User: 'SMTP 服务账号',
@@ -2888,19 +2976,15 @@ const cn = {
     Mongodb_target_create_date_docs: '是否在目标端数据集添加创建时间',
     System: '系统资源监控',
     Collect_system_info_interval: '系统资源监控采集频率(秒)',
-    Interval_to_collect_system_info:
-      '系统资源信息（CPU，内存，硬盘使用率）监控采集频率',
+    Interval_to_collect_system_info: '系统资源信息（CPU，内存，硬盘使用率）监控采集频率',
     Job_Sync_Mode: '任务同步模式',
     Worker_Threshold: '进程阈值',
     Worker_Heartbeat_Expire: '进程心跳过期时间(秒)',
     License_Key: '证书秘钥',
-    Enter_jobs_log_level__error_warn_info_debug_trace:
-      '输入任务日志等级: error/warn/info/debug/trace',
-    Email_Receivers_Multiple_separated_by_semicolons:
-      '邮件接受者,可输入多个，通过逗号分隔',
+    Enter_jobs_log_level__error_warn_info_debug_trace: '输入任务日志等级: error/warn/info/debug/trace',
+    Email_Receivers_Multiple_separated_by_semicolons: '邮件接受者,可输入多个，通过逗号分隔',
 
-    Keep_recent_n_hours_message_before_the_last_processed_message_s_time_:
-      '保持最近n小时消息',
+    Keep_recent_n_hours_message_before_the_last_processed_message_s_time_: '保持最近n小时消息',
     Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
       '缓存一份当前整体数据，合并到目标数据集中',
     Store_before_field_as_embedded_document_in_target_collection_before_update_operation:
@@ -2932,26 +3016,21 @@ const cn = {
     dashboard_Analysis_Interval: '面板数据分析间隔(秒)',
     quality_Analysis_Interval: '数据质量分析间隔(秒)',
     Log_filter_interval: '日志过滤间隔(秒)',
-    Filter_the_interval_between_duplicate_logs__seconds__:
-      '相同日志在指定时间内只出现一次（1分钟后生效）',
+    Filter_the_interval_between_duplicate_logs__seconds__: '相同日志在指定时间内只出现一次（1分钟后生效）',
     _DK36: '文件下载',
     File_Down_Base_Url: '地址',
-    Set_the_average_number_of_events_per_second_to_allow:
-      '日志设置每秒允许的事件平均数量',
+    Set_the_average_number_of_events_per_second_to_allow: '日志设置每秒允许的事件平均数量',
     Log_Filter_Rate: '日志输出频率(行/秒)',
     Connections: '连接设置',
     Mongodb_Load_Schema_Sample_Size: 'Mongodb加载模型采样记录数(行)',
-    hint_Mongodb_Load_Schema_Sample_Size:
-      '当MongoDB连接加载模型时，会使用该配置进行采样加载',
+    hint_Mongodb_Load_Schema_Sample_Size: '当MongoDB连接加载模型时，会使用该配置进行采样加载',
     Enable_API_Stats_Batch_Report: ' 启用 API 统计',
     Header: ' UDP 头信息',
     hint_Header: ' UDP 头信息',
     Size_Of_Trigger_API_Stats_Report: ' API 请求缓存最大个数',
-    hint_Size_Of_Trigger_API_Stats_Report:
-      ' API 请求记录数到达指定个数时批量发送到管理端',
+    hint_Size_Of_Trigger_API_Stats_Report: ' API 请求记录数到达指定个数时批量发送到管理端',
     Time_Span_Of_Trigger_API_Stats_Report: ' API 请求汇报频率(秒)',
-    hint_Time_Span_Of_Trigger_API_Stats_Report:
-      ' API 请求缓存到指定时间发送到管理端',
+    hint_Time_Span_Of_Trigger_API_Stats_Report: ' API 请求缓存到指定时间发送到管理端',
     save: ' 保存成功，一分钟后生效',
     Logout_forward_to_this_url: ' 登出跳转地址',
     Check_devices: ' 重要设备检测',
@@ -2979,11 +3058,9 @@ const cn = {
       'before字段包含每个表列的字段以及更新操作之前该列中的值。',
     Job_heart_timeout: '同步任务心跳超时（毫秒）',
     job_cdc_share_mode: '增量同步任务共享模式',
-    job_cdc_share_mode_doc:
-      '在增量同步阶段，会根据日志采集任务是否可用，自动采用共享模式。影响的数据库：Oracle',
+    job_cdc_share_mode_doc: '在增量同步阶段，会根据日志采集任务是否可用，自动采用共享模式。影响的数据库：Oracle',
     job_cdc_share_only: '增量任务强制使用共享模式',
-    job_cdc_share_only_doc:
-      '当增量同步任务共享模式开启，并且无法找到一个可共享的日志，将会停止任务',
+    job_cdc_share_only_doc: '当增量同步任务共享模式开启，并且无法找到一个可共享的日志，将会停止任务',
     test_email_success: '测试邮件已发送，请登录接收邮箱查收',
     test_email_countdown: '操作太频繁了，请稍后重试',
     email_template_from: '发件人',
@@ -2993,14 +3070,14 @@ const cn = {
     job_cdc_record_doc: ' 自动保存增量事件',
     job_cdc_record_ttl: ' 增量事件保存时长(天)',
     job_cdc_record_ttl_doc: ' 增量事件保存时长(天)',
+    lagTime: '增量滞后判定时间(秒)',
     connection_schema_update_hour: '数据源schema更新时间',
     connection_schema_update_interval: '数据源schema更新周期（天）',
     creatDuplicateSource: ' 允许创建重复数据源',
     requestFailed: '请求处理失败',
     Mongodb_will_use_this_sample_size_when_load_schema:
       'Mongodb will use this sample size when load schema 当MongoDB连接加载模型时，会使用该配置进行采样加载',
-    Switch_to_batch_insert_mode_interval__s__in_cdc_:
-      '切换到cdc中的批量插入模式间隔。'
+    Switch_to_batch_insert_mode_interval__s__in_cdc_: '切换到cdc中的批量插入模式间隔。'
   },
   dataQuality: {
     title: '数据质量',

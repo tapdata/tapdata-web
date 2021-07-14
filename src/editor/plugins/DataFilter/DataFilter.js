@@ -63,22 +63,10 @@ export const DataFilterConfig = {
       validate: function (data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.validate.none_setting')}`
-          )
+        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
         if (!data.expression)
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.processor.dataFilter.validate.none_expression'
-            )}`
-          )
-        if (!data.action)
-          throw new Error(
-            `${name}: ${i18n.t(
-              'editor.cell.processor.dataFilter.validate.none_action'
-            )}`
-          )
+          throw new Error(`${name}: ${i18n.t('editor.cell.processor.dataFilter.validate.none_expression')}`)
+        if (!data.action) throw new Error(`${name}: ${i18n.t('editor.cell.processor.dataFilter.validate.none_action')}`)
         return true
       },
 
@@ -181,10 +169,7 @@ export const DataFilterConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

@@ -7,51 +7,29 @@
     @close="closeAggregationDialog"
   >
     <div slot="title">
-      <span class="text">{{
-        $t('editor.cell.data_node.collection.form.aggregation.aggregationText')
-      }}</span>
+      <span class="text">{{ $t('editor.cell.data_node.collection.form.aggregation.aggregationText') }}</span>
       <span @click="handleLearnMore" class="more">Learn more</span>
     </div>
     <div class="collection-aggregation">
       <div class="pipeline">
         <div class="title">
           Pipeline
-          <el-button
-            type="primary"
-            size="mini"
-            class="pipeline-button"
-            @click="handlePreview"
-          >
+          <el-button type="primary" size="mini" class="pipeline-button" @click="handlePreview">
             <i class="el-icon-loading" v-if="previewLoading"></i
-            >{{
-              $t('editor.cell.data_node.collection.form.aggregation.preview')
-            }}</el-button
+            >{{ $t('editor.cell.data_node.collection.form.aggregation.preview') }}</el-button
           >
         </div>
         <!-- [ <el-input class="e-textarea" type="textarea" v-model="script"></el-input>] -->
-        <JsonEditor
-          :code.sync="script"
-          ref="jsEditor"
-          :width.sync="width"
-          v-if="!disabled"
-        ></JsonEditor>
+        <JsonEditor :code.sync="script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsonEditor>
       </div>
       <div class="preview">
         <div class="title">
-          {{
-            $t(
-              'editor.cell.data_node.collection.form.aggregation.previewSampleData'
-            )
-          }}
+          {{ $t('editor.cell.data_node.collection.form.aggregation.previewSampleData') }}
         </div>
         <div class="preview-box">
           <div class="preview-main" v-if="returnFalg == 'success'">
             <template v-if="previewData.length">
-              <div
-                class="json-box"
-                v-for="(item, index) in previewData"
-                :key="index"
-              >
+              <div class="json-box" v-for="(item, index) in previewData" :key="index">
                 <!-- <pre>{{ JSON.stringify(item, null, 2) }}</pre> -->
                 <Jsonviewer :value="item"></Jsonviewer>
               </div>
@@ -67,18 +45,10 @@
             </span>
             <span class="add" v-if="returnFalg == 'add'">
               <p>
-                {{
-                  $t(
-                    'editor.cell.data_node.collection.form.aggregation.addTextTip'
-                  )
-                }}
+                {{ $t('editor.cell.data_node.collection.form.aggregation.addTextTip') }}
               </p>
               <p>
-                {{
-                  $t(
-                    'editor.cell.data_node.collection.form.aggregation.addTextTip1'
-                  )
-                }}
+                {{ $t('editor.cell.data_node.collection.form.aggregation.addTextTip1') }}
               </p>
             </span>
           </div>
@@ -86,14 +56,8 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button
-        type="primary"
-        size="mini"
-        :disabled="returnFalg == 'error' || !script"
-        @click="aggregationSave"
-      >
-        <i class="el-icon-loading" v-if="saveLoading"></i
-        >{{ $t('app.save') }}</el-button
+      <el-button type="primary" size="mini" :disabled="returnFalg == 'error' || !script" @click="aggregationSave">
+        <i class="el-icon-loading" v-if="saveLoading"></i>{{ $t('app.save') }}</el-button
       >
     </span>
   </el-dialog>
@@ -130,8 +94,7 @@ export default {
 
   created() {
     this.script =
-      this.model.collectionAggrPipeline == '[]' ||
-      this.model.collectionAggrPipeline == ''
+      this.model.collectionAggrPipeline == '[]' || this.model.collectionAggrPipeline == ''
         ? '[]'
         : this.model.collectionAggrPipeline
 
@@ -166,8 +129,7 @@ export default {
   methods: {
     // 点击aggregation弹窗跳转页面
     handleLearnMore() {
-      let href =
-        'https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/'
+      let href = 'https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/'
       window.open(href)
     },
 
@@ -319,7 +281,7 @@ export default {
   .more {
     padding-left: 20px;
     font-size: 12px;
-    color: #48b6e2;
+    color: #409eff;
     cursor: pointer;
   }
   .monaco {

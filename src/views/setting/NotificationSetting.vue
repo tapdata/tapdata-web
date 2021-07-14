@@ -9,26 +9,14 @@
           <section style="color: #999">
             {{ $t('notification.tip') }}
           </section>
-          <section
-            class="run-notification"
-            v-show="runNotification && runNotification.length > 0"
-          >
-            <span class="block"></span
-            ><span class="title">{{
-              $t('notification.jobOperationNotice')
-            }}</span>
+          <section class="run-notification" v-show="runNotification && runNotification.length > 0">
+            <span class="block"></span><span class="title">{{ $t('notification.jobOperationNotice') }}</span>
             <ul>
               <li v-for="(item, index) in runNotification" :key="index">
                 <span class="label">{{ notificationMAP[item.label] }}</span>
-                <el-checkbox class="notice" v-model="item.notice">{{
-                  $t('notification.systemNotice')
-                }}</el-checkbox>
-                <el-checkbox class="email" v-model="item.email">{{
-                  $t('notification.emailNotice')
-                }}</el-checkbox>
-                <span class="sort-label" v-if="item.lagTime">{{
-                  notificationMAP[item.lagTime]
-                }}</span>
+                <el-checkbox class="notice" v-model="item.notice">{{ $t('notification.systemNotice') }}</el-checkbox>
+                <el-checkbox class="email" v-model="item.email">{{ $t('notification.emailNotice') }}</el-checkbox>
+                <span class="sort-label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
                 <span v-if="item.label === 'CDCLagTime'">
                   <el-input
                     v-model="item.lagTimeInterval"
@@ -37,22 +25,15 @@
                     onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                     onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                   >
-                    <el-select
-                      v-model="item.lagTimeUtil"
-                      slot="append"
-                      placeholder="请选择"
-                      class="input-with-select"
-                    >
+                    <el-select v-model="item.lagTimeUtil" slot="append" placeholder="请选择" class="input-with-select">
                       <el-option label="hour" value="hour"></el-option>
                       <el-option label="second" value="second"></el-option>
                     </el-select>
                   </el-input>
                 </span>
-                <span
-                  class="sort-label"
-                  v-if="item.noticeInterval && item.email"
-                  >{{ notificationMAP[item.noticeInterval] }}</span
-                >
+                <span class="sort-label" v-if="item.noticeInterval && item.email">{{
+                  notificationMAP[item.noticeInterval]
+                }}</span>
                 <span v-if="item.label === 'CDCLagTime' && item.email">
                   <el-input
                     v-model="item.noticeIntervalInterval"
@@ -80,12 +61,7 @@
                     onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                     onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                   >
-                    <el-select
-                      v-model="item.util"
-                      slot="append"
-                      placeholder="请选择"
-                      class="input-with-select"
-                    >
+                    <el-select v-model="item.util" slot="append" placeholder="请选择" class="input-with-select">
                       <el-option label="hour" value="hour"></el-option>
                       <el-option label="second" value="second"></el-option>
                     </el-select>
@@ -94,39 +70,23 @@
               </li>
             </ul>
           </section>
-          <section
-            class="run-notification"
-            v-show="systemNotification && systemNotification.length > 0"
-          >
-            <span class="block"></span
-            ><span class="title">{{ $t('notification.systemSetting') }}</span>
+          <section class="run-notification" v-show="systemNotification && systemNotification.length > 0">
+            <span class="block"></span><span class="title">{{ $t('notification.systemSetting') }}</span>
             <ul>
               <li v-for="(item, index) in systemNotification" :key="index">
                 <span class="label">{{ notificationMAP[item.label] }}</span>
-                <el-checkbox class="notice" v-model="item.notice">{{
-                  $t('notification.systemNotice')
-                }}</el-checkbox>
-                <el-checkbox class="email" v-model="item.email">{{
-                  $t('notification.emailNotice')
-                }}</el-checkbox>
+                <el-checkbox class="notice" v-model="item.notice">{{ $t('notification.systemNotice') }}</el-checkbox>
+                <el-checkbox class="email" v-model="item.email">{{ $t('notification.emailNotice') }}</el-checkbox>
               </li>
             </ul>
           </section>
-          <section
-            class="run-notification"
-            v-show="agentNotification && agentNotification.length > 0"
-          >
-            <span class="block"></span
-            ><span class="title">{{ $t('notification.agentNotice') }}</span>
+          <section class="run-notification" v-show="agentNotification && agentNotification.length > 0">
+            <span class="block"></span><span class="title">{{ $t('notification.agentNotice') }}</span>
             <ul>
               <li v-for="(item, index) in agentNotification" :key="index">
                 <span class="label">{{ notificationMAP[item.label] }}</span>
-                <el-checkbox class="notice" v-model="item.notice">{{
-                  $t('notification.systemNotice')
-                }}</el-checkbox>
-                <el-checkbox class="email" v-model="item.email">{{
-                  $t('notification.emailNotice')
-                }}</el-checkbox>
+                <el-checkbox class="notice" v-model="item.notice">{{ $t('notification.systemNotice') }}</el-checkbox>
+                <el-checkbox class="email" v-model="item.email">{{ $t('notification.emailNotice') }}</el-checkbox>
               </li>
             </ul>
           </section>
@@ -136,9 +96,7 @@
           @click="submit"
           size="mini"
           type="primary"
-          :disabled="
-            !runNotification || !systemNotification || !agentNotification
-          "
+          :disabled="!runNotification || !systemNotification || !agentNotification"
           >{{ $t('dataForm.submit') }}</el-button
         >
       </div>
@@ -230,7 +188,7 @@ $unreadColor: #ee5353;
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
-  color: #48b6e2;
+  color: #409eff;
   padding: 20px 20px 20px 0;
   .title {
     font-size: 18px;
@@ -281,8 +239,8 @@ $unreadColor: #ee5353;
     .block {
       width: 11px;
       height: 14px;
-      background: #48b6e2;
-      display: inline-block;
+      background: #409eff;
+      display: inline-block !important;
       margin-right: 10px;
     }
     .run-notification {
@@ -295,7 +253,7 @@ $unreadColor: #ee5353;
         margin-bottom: 20px;
       }
       ul {
-        margin-left: 20px;
+        // margin-left: 0;
         margin-top: 20px;
       }
       ul li {

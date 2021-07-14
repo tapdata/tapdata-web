@@ -19,44 +19,24 @@
               :placeholder="$t('dictionary.name')"
               @input="table.fetch(1, 800)"
             >
-              <el-select
-                style="width: 120px"
-                slot="prepend"
-                v-model="searchParams.isFuzzy"
-                @input="table.fetch(1)"
-              >
-                <el-option
-                  :label="$t('connection.fuzzyQuery')"
-                  :value="true"
-                ></el-option>
-                <el-option
-                  :label="$t('connection.PreciseQuery')"
-                  :value="false"
-                ></el-option>
+              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
+                <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
+                <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
               </el-select>
             </el-input>
           </li>
 
           <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset()">{{
-              $t('button.query')
-            }}</el-button>
+            <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
           </li>
 
           <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset('reset')">{{
-              $t('button.reset')
-            }}</el-button>
+            <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
           </li>
         </ul>
       </div>
       <div slot="operation">
-        <el-button
-          v-readonlybtn="'data_rule_management'"
-          class="btn btn-create"
-          size="mini"
-          @click="openCreateDialog"
-        >
+        <el-button v-readonlybtn="'data_rule_management'" class="btn btn-create" size="mini" @click="openCreateDialog">
           <i class="iconfont icon-jia add-btn-icon"></i>
           <span>{{ $t('dataRule.creatRule') }}</span>
         </el-button>
@@ -66,23 +46,14 @@
         prop="classification"
         sortable="classification"
       ></el-table-column>
-      <el-table-column
-        :label="$t('dataRule.name')"
-        prop="name"
-        sortable="name"
-      ></el-table-column>
+      <el-table-column :label="$t('dataRule.name')" prop="name" sortable="name"></el-table-column>
       <el-table-column :label="$t('message.operator')" width="120">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'data_rule_management'"
             size="mini"
             type="text"
-            :disabled="
-              $disabledByPermission(
-                'data_rule_management_all_data',
-                scope.row.user_id
-              )
-            "
+            :disabled="$disabledByPermission('data_rule_management_all_data', scope.row.user_id)"
             @click="edit(scope.row)"
             >{{ $t('message.edit') }}</el-button
           >
@@ -91,12 +62,7 @@
             size="mini"
             type="text"
             style="color: #f56c6c"
-            :disabled="
-              $disabledByPermission(
-                'data_rule_management_all_data',
-                scope.row.user_id
-              )
-            "
+            :disabled="$disabledByPermission('data_rule_management_all_data', scope.row.user_id)"
             @click="remove(scope.row)"
             >{{ $t('message.delete') }}</el-button
           >
@@ -150,7 +116,7 @@ export default {
         keyword: '',
         isFuzzy: true
       },
-      order: 'start_time DESC',
+      order: 'name DESC',
       list: null,
       createDialogVisible: false,
       createForm: null
@@ -191,9 +157,7 @@ export default {
       let where = {}
       _this.classificationArr = []
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy
-          ? { like: toRegExp(keyword), options: 'i' }
-          : keyword
+        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
         where.or = [{ name: filterObj }]
       }
       let filter = {
@@ -215,9 +179,7 @@ export default {
             }
           })
         }
-        _this.classificationArr = _this.classificationArr.filter(
-          (item, index, self) => self.indexOf(item) === index
-        )
+        _this.classificationArr = _this.classificationArr.filter((item, index, self) => self.indexOf(item) === index)
         return {
           total: countRes.data.count,
           data: res.data
@@ -230,7 +192,7 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#48b6e2' } }, item.name)
+        h('span', { style: { color: '#409EFF' } }, item.name)
       ])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning',
@@ -292,48 +254,58 @@ export default {
       }
 
       let rules = JSON.parse(item.rules)
-      if (rules && rules.hasOwnProperty('exists')) { // eslint-disable-line
+      if (rules && Object.prototype.hasOwnProperty.call(rules, 'exists')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'exists'
         rule.checked = rules.exists
-      } else if (rules.hasOwnProperty('nullable')) { // eslint-disable-line
+      } else if (Object.prototype.hasOwnProperty.call(rules, 'nullable')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'nullable'
         rule.checked = rules.nullable
-      } else if (rules && rules.hasOwnProperty('type')) { // eslint-disable-line
+      } else if (rules && Object.prototype.hasOwnProperty.call(rules, 'type')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'type'
         rule.dataType = rules.type
-      } else if (rules && rules.hasOwnProperty('regex')) { // eslint-disable-line
+      } else if (rules && Object.prototype.hasOwnProperty.call(rules, 'regex')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'regex'
         rule.dataRegex = rules.regex
-      } else if (rules && rules.hasOwnProperty('range')) { // eslint-disable-line
+      } else if (rules && Object.prototype.hasOwnProperty.call(rules, 'range')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'range'
         let range = rules.range
-        if (range.hasOwnProperty('lt')) { // eslint-disable-line
+        if (Object.prototype.hasOwnProperty.call(range, 'lt')) {
+          // eslint-disable-line
           rule.lt = 'lt'
         }
-        if (range.hasOwnProperty('lte')) { // eslint-disable-line
+        if (Object.prototype.hasOwnProperty.call(range, 'lte')) {
+          // eslint-disable-line
           rule.lt = 'lte'
         }
-        if (range.hasOwnProperty('gt')) { // eslint-disable-line
+        if (Object.prototype.hasOwnProperty.call(range, 'gt')) {
+          // eslint-disable-line
           rule.gt = 'gt'
         }
-        if (range.hasOwnProperty('gte')) { // eslint-disable-line
+        if (Object.prototype.hasOwnProperty.call(range, 'gte')) {
+          // eslint-disable-line
           rule.gt = 'gte'
         }
-        rule.ltData =
-          parseFloat(range.lt) || parseFloat(range.lte) || range.none
-        rule.gtData =
-          parseFloat(range.gt) || parseFloat(range.gte) || range.none
-      } else if (rules.hasOwnProperty('enum')) { // eslint-disable-line
+        rule.ltData = parseFloat(range.lt) || parseFloat(range.lte) || range.none
+        rule.gtData = parseFloat(range.gt) || parseFloat(range.gte) || range.none
+      } else if (Object.prototype.hasOwnProperty.call(rules, 'enum')) {
+        // eslint-disable-line
         this.createForm.ruleType = 'enum'
         rule.enumData = rules.enum.join(',')
       }
       this.createForm.rule = rule
     },
 
+    hasOwnPropertyFnc(obj = {}, key) {
+      return Object.prototype.hasOwnProperty.call(obj, key)
+    },
+
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     }
   }
@@ -424,10 +396,10 @@ export default {
       }
     }
   }
-  .el-dialog__wrapper {
-    // overflow: hidden;
-    .el-dialog__body {
-    }
-  }
+  // .el-dialog__wrapper {
+  //   // overflow: hidden;
+  //   .el-dialog__body {
+  //   }
+  // }
 }
 </style>

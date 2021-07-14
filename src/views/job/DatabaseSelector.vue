@@ -1,23 +1,10 @@
 <template>
   <div class="box">
-    <div
-      class="treeBox"
-      v-loading="loading"
-      :element-loading-text="$t('dataFlow.dataLoading')"
-    >
+    <div class="treeBox" v-loading="loading" :element-loading-text="$t('dataFlow.dataLoading')">
       <ul>
         <li @dblclick="handleGraph(item)" v-for="item in data" :key="item.id">
-          <span
-            :class="`iconfont icon ${mapping[item.source.database_type]} ${
-              item.source.database_type
-            }`"
-          ></span>
-          <el-tooltip
-            class="table-tooltip"
-            effect="dark"
-            :content="item.label"
-            placement="right"
-          >
+          <span :class="`iconfont icon ${mapping[item.source.database_type]} ${item.source.database_type}`"></span>
+          <el-tooltip class="table-tooltip" effect="dark" :content="item.label" placement="right">
             <span class="text">{{ item.label }}</span>
           </el-tooltip>
         </li>
@@ -25,9 +12,7 @@
       <div class="noData" v-if="loadingError">
         <div>
           {{ $t('dataFlow.loadingError')
-          }}<span class="clickLoad" @click="clickLoad">{{
-            $t('dataVerify.refresh')
-          }}</span>
+          }}<span class="clickLoad" @click="clickLoad">{{ $t('dataVerify.refresh') }}</span>
         </div>
       </div>
     </div>
@@ -164,10 +149,7 @@ export default {
       let formData = {}
       let schema = {}
       if (data.meta_type === 'database') {
-        if (
-          data.source.database_type &&
-          ['gridfs', 'file'].includes(data.source.database_type)
-        ) {
+        if (data.source.database_type && ['gridfs', 'file'].includes(data.source.database_type)) {
           formData = {
             connectionId: data.source._id,
             name: data.source.name || data.label,
@@ -191,22 +173,11 @@ export default {
       this.count = this.count + 50
       let cell = ''
       if (['database', 'ftp'].includes(data.meta_type)) {
-        if (
-          data.source.database_type &&
-          ['gridfs', 'file'].includes(data.source.database_type)
-        ) {
+        if (data.source.database_type && ['gridfs', 'file'].includes(data.source.database_type)) {
           let dataType = data.source.database_type
-          cell = this.editor.graph.createCell(
-            mapping[dataType],
-            formData,
-            schema
-          )
+          cell = this.editor.graph.createCell(mapping[dataType], formData, schema)
         } else {
-          cell = this.editor.graph.createCell(
-            mapping[data.meta_type],
-            formData,
-            schema
-          )
+          cell = this.editor.graph.createCell(mapping[data.meta_type], formData, schema)
         }
       }
       let databaseShape = {
@@ -329,7 +300,7 @@ export default {
   }
   .clickLoad {
     cursor: pointer;
-    color: #48b6e2;
+    color: #409eff;
   }
 }
 </style>

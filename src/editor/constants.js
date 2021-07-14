@@ -27,7 +27,7 @@ export const FORM_DATA_KEY = 'form_data',
   DEFAULT_SETTING = {
     isSerialMode: false,
     sync_type: 'initial_sync+cdc',
-    readBatchSize: 1000,
+    readBatchSize: 100,
     notificationWindow: 0,
     notificationInterval: 300,
     readCdcInterval: 500,
@@ -42,7 +42,8 @@ export const FORM_DATA_KEY = 'form_data',
     isSchedule: false,
     cronExpression: '',
     isOpenAutoDDL: false,
-    cdcConcurrency: true,
+    cdcConcurrency: false,
+    cdcShareFilterOnServer: false,
     emailWaring: {
       edited: false,
       started: false,
@@ -62,7 +63,10 @@ export const FORM_DATA_KEY = 'form_data',
       }
     ],
     processorConcurrency: 1,
-    transformerConcurrency: 8
+    transformerConcurrency: 8,
+    lagTimeFalg: false,
+    userSetLagTime: 0,
+    noPrimaryKey: false
   },
   DATABASE_TYPE_MAPPING = {
     mysql: {
@@ -77,11 +81,35 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-mysqlpxc.svg',
       stencilImage: 'static/editor/mysqlpxc.svg'
     },
+    dameng: {
+      name: 'DM DB',
+      type: 'dameng',
+      shapeImage: 'static/editor/o-dameng.svg',
+      stencilImage: 'static/editor/dameng.svg'
+    },
     oracle: {
       type: 'oracle',
       name: 'Oracle',
       shapeImage: 'static/editor/o-ora.svg',
       stencilImage: 'static/editor/ora2.svg'
+    },
+    mq: {
+      type: 'mq',
+      name: 'MQ',
+      shapeImage: 'static/editor/o-mq.svg',
+      stencilImage: 'static/editor/mq.svg'
+    },
+    hbase: {
+      type: 'hbase',
+      name: 'HBase',
+      shapeImage: 'static/editor/o-hbase.svg',
+      stencilImage: 'static/editor/hbase.svg'
+    },
+    kudu: {
+      type: 'kudu',
+      name: 'kudu',
+      shapeImage: 'static/editor/o-kudu.svg',
+      stencilImage: 'static/editor/kudu.svg'
     },
     mongodb: {
       type: 'mongodb',
@@ -143,6 +171,12 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-elasticsearch.svg',
       stencilImage: 'static/editor/elasticsearch.svg'
     }
+    // hive: {
+    //   type: 'hive',
+    //   name: 'Hive',
+    //   shapeImage: 'static/editor/o-hive.svg',
+    //   stencilImage: 'static/editor/hive.svg'
+    // }
   },
   FILE_TYPE_MAPPING = {
     xml: {

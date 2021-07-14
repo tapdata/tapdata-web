@@ -1,11 +1,7 @@
 <template>
   <div class="database-link nodeStyle">
     <head class="head">
-      <span
-        @click="hanleClose"
-        class="headIcon iconfont icon-you2"
-        type="primary"
-      ></span>
+      <span @click="hanleClose" class="headIcon iconfont icon-you2" type="primary"></span>
       <span class="txt">{{ $t('editor.cell.link.mappingRelations') }}</span>
     </head>
     <div class="nodeBody">
@@ -25,15 +21,8 @@
       >
         <el-form-item>
           <div class="e-label">
-            <label class="el-form-item__label">{{
-              $t('editor.cell.link.copySourceDatabase')
-            }}</label>
-            <el-popover
-              class="aggtip"
-              placement="top-start"
-              width="400"
-              trigger="hover"
-            >
+            <label class="el-form-item__label">{{ $t('editor.cell.link.copySourceDatabase') }}</label>
+            <el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
               <span>{{ $t('editor.cell.link.formTip') }}</span>
               <span class="icon iconfont icon-tishi1" slot="reference"></span>
             </el-popover>
@@ -47,10 +36,7 @@
             </el-popover>
           </el-checkbox>
 
-          <el-checkbox
-            v-model="model.selectSourceDatabase.view"
-            :disabled="mysqlDisable"
-            @change="changeView"
+          <el-checkbox v-model="model.selectSourceDatabase.view" :disabled="mysqlDisable" @change="changeView"
             >View
             <el-popover placement="top-start" width="400" trigger="hover">
               <span>{{ $t('editor.cell.link.viewTip') }}</span>
@@ -58,27 +44,13 @@
             </el-popover>
           </el-checkbox>
 
-          <el-checkbox
-            v-model="model.selectSourceDatabase.function"
-            :disabled="mysqlDisable"
-            >Function</el-checkbox
-          >
-          <el-checkbox
-            v-model="model.selectSourceDatabase.procedure"
-            :disabled="mysqlDisable"
-            >Procedure</el-checkbox
-          >
+          <el-checkbox v-model="model.selectSourceDatabase.function" :disabled="mysqlDisable">Function</el-checkbox>
+          <el-checkbox v-model="model.selectSourceDatabase.procedure" :disabled="mysqlDisable">Procedure</el-checkbox>
         </el-form-item>
         <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
           <el-select v-model="model.dropType" size="mini">
-            <el-option
-              :label="$t('editor.cell.link.existingSchema.keepSchema')"
-              value="no_drop"
-            ></el-option>
-            <el-option
-              :label="$t('editor.cell.link.existingSchema.keepExistedData')"
-              value="drop_data"
-            ></el-option>
+            <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
+            <el-option :label="$t('editor.cell.link.existingSchema.keepExistedData')" value="drop_data"></el-option>
             <el-option
               v-if="targetDatabaseType === 'mongodb'"
               :label="$t('editor.cell.link.existingSchema.removeSchema')"
@@ -88,18 +60,11 @@
         </el-form-item>
         <div class="database-tableBox" v-loading="transferLoading">
           <div class="box-text">
-            <h3>
-              {{ $t('editor.cell.link.migrationSetting')
-              }}<i style="color: red"> *</i>
-            </h3>
+            <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
-              <el-button
-                class="e-button"
-                size="mini"
-                :disabled="model.selectSourceDatabase.view"
-                @click="handDialog"
-                >{{ $t('dataFlow.changeName') }}</el-button
-              >
+              <el-button class="e-button" size="mini" :disabled="model.selectSourceDatabase.view" @click="handDialog">{{
+                $t('dataFlow.changeName')
+              }}</el-button>
               <el-button
                 size="mini"
                 class="e-button"
@@ -112,26 +77,79 @@
           <div class="transfer">
             <el-transfer
               filterable
+              v-if="!model.transferFlag"
               :titles="titles"
               :filter-method="filterMethod"
               :filter-placeholder="$t('editor.cell.link.searchContent')"
               v-model="model.selectSourceArr"
               :data="sourceData"
               @change="handleChangeTransfer"
-              @right-check-change="handleSelectTable"
             >
               <span class="box" slot-scope="{ option }">
-                <span
-                  class="text"
-                  :title="option.label"
-                  :class="[{ active: option.label !== option.key }, 'text']"
-                  >{{ option.label }}</span
-                >
+                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
+                <!-- :class="[{ active: option.label !== option.key }, 'text']" -->
+                <span :title="option.label">{{ option.label }}</span>
+                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span>
                 <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span> -->
               </span>
             </el-transfer>
+            <!-- MQ穿梭框 start -->
+            <template v-else>
+              <MqTransfer
+                v-model="mqActiveData"
+                :source="sourceData"
+                :table_prefix="model.table_prefix"
+                :table_suffix="model.table_suffix"
+              ></MqTransfer>
+              <!-- <el-transfer
+                filterable
+                class="topic-transfer"
+                :titles="topicTitles"
+                :filter-method="filterMethod"
+                :filter-placeholder="$t('editor.cell.link.searchContent')"
+                v-model="model.topicData"
+                :data="sourceData"
+                :left-default-checked="topicSelected"
+                @change="handleChangeTopic"
+                @right-check-change="handleSelectTopic"
+              >
+                <span class="box" slot-scope="{ option }">
+                  <span
+                    class="text"
+                    :title="option.label"
+                    :class="[{ active: option.label !== option.key }, 'text']"
+                    >{{ option.label }}</span
+                  >
+                </span>
+              </el-transfer> -->
+              <!-- <el-tabs v-model="seletecTab" type="border-card">
+                <el-tab-pane label="topic" name="topic">Topic</el-tab-pane>
+                <el-tab-pane label="queue" name="queue">Queue</el-tab-pane>
+              </el-tabs>
+              <el-transfer
+                filterable
+                class="queue-transfer"
+                :titles="seletecTab === 'topic' ? topicTitles : queueTitles"
+                :filter-method="filterMethod"
+                :filter-placeholder="$t('editor.cell.link.searchContent')"
+                v-model="mq[seletecTab].value"
+                :data="mq[seletecTab].list"
+                @change="handleChangeQueueData"
+                @left-check-change="handleLeftTable"
+                @right-check-change="handleSelectQueue"
+              >
+                <span class="box" slot-scope="{ option }">
+                  <span
+                    class="text"
+                    :title="option.label"
+                    :class="[{ active: option.label !== option.key }, 'text']"
+                    >{{ option.label }}</span
+                  >
+                </span>
+              </el-transfer> -->
+            </template>
           </div>
         </div>
       </el-form>
@@ -170,16 +188,11 @@
         </el-row>
       </el-form>
       <div class="text">
-        {{ $t('editor.cell.link.tableNameExample') }}: {{ model.table_prefix
-        }}{{ exampleName }}{{ model.table_suffix }}
+        {{ $t('editor.cell.link.tableNameExample') }}: {{ model.table_prefix }}{{ exampleName }}{{ model.table_suffix }}
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{
-          $t('dataVerify.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="confirm">{{
-          $t('dataVerify.confirm')
-        }}</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('dataVerify.cancel') }}</el-button>
+        <el-button type="primary" @click="confirm">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
     </el-dialog>
     <!-- <el-dialog
@@ -210,12 +223,12 @@
 import _ from 'lodash'
 import log from '../../../log'
 import factory from '../../../api/factory'
+import MqTransfer from './mqTransfer'
 let connections = factory('connections')
 let editorMonitor = null
-let selectKeepArr = []
 export default {
   name: 'databaseLink',
-
+  components: { MqTransfer },
   data() {
     return {
       mysqlDisable: false,
@@ -230,6 +243,12 @@ export default {
 
       configJoinTable: false,
       sourceData: [],
+      mqActiveData: {
+        topicData: [],
+        queueData: [],
+        table_prefix: '',
+        table_suffix: ''
+      },
       targetDatabaseType: '',
       model: {
         // label: '',
@@ -238,6 +257,10 @@ export default {
         dropType: 'no_drop',
         type: 'databaseLink',
         selectSourceArr: [],
+        topicData: [],
+        queueData: [],
+        transferFlag: false,
+
         selectSourceDatabase: {
           table: true,
           view: false,
@@ -245,15 +268,20 @@ export default {
           procedure: false
         }
       },
+      topicSelected: [],
 
-      titles: [
-        this.$t('editor.cell.link.migrationObjece'),
-        this.$t('editor.cell.link.chosen')
-      ]
+      titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')]
     }
   },
 
   watch: {
+    mqActiveData: {
+      deep: true,
+      handler() {
+        this.model.topicData = this.mqActiveData.topicData
+        this.model.queueData = this.mqActiveData.queueData
+      }
+    },
     model: {
       deep: true,
       handler() {
@@ -275,15 +303,10 @@ export default {
           targetCell = this.cell.getTargetCell(),
           sourceDatabaseType = sourceCell.getFormData().database_type,
           targetDatabaseType =
-            targetCell && targetCell.getFormData().database_type
-              ? targetCell.getFormData().database_type
-              : '',
+            targetCell && targetCell.getFormData().database_type ? targetCell.getFormData().database_type : '',
           connectionId = sourceCell.getFormData().connectionId
         this.targetDatabaseType = targetDatabaseType
-        this.mysqlDisable =
-          sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql'
-            ? false
-            : true
+        this.mysqlDisable = sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql' ? false : true
         if (this.mysqlDisable) {
           this.model.selectSourceDatabase = {
             table: true,
@@ -296,8 +319,15 @@ export default {
         if (targetCell && this.model.selectSourceArr.length === 0) {
           let targetFormData = targetCell.getFormData()
           let selectTargetType = []
+
+          if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
+            this.model.transferFlag = true
+            this.mqActiveData.topicData = data.topicData
+            this.mqActiveData.queueData = data.queueData
+          }
           this.model.table_prefix = targetFormData.table_prefix
           this.model.table_suffix = targetFormData.table_suffix
+
           if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
             targetFormData.syncObjects.forEach(item => {
               selectTargetType.push(item.type)
@@ -309,12 +339,10 @@ export default {
 
           if (selectTargetType.length) {
             Object.keys(this.model.selectSourceDatabase).forEach(key => {
-              this.model.selectSourceDatabase[key] =
-                selectTargetType.includes(key)
+              this.model.selectSourceDatabase[key] = selectTargetType.includes(key)
             })
           }
         }
-
         this.loadDataModels(connectionId)
       }
 
@@ -326,16 +354,15 @@ export default {
 
     getData() {
       let result = JSON.parse(JSON.stringify(this.model))
-
-      let includeTables = []
-      for (let i = 0; i < this.sourceData.length; i++) {
-        for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-          if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-            includeTables.push(this.sourceData[i].key)
-          }
-        }
-      }
-
+      // console.log(this.model)
+      // let includeTables = []
+      // for (let i = 0; i < this.sourceData.length; i++) {
+      //   for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+      //     if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
+      //       includeTables.push(this.sourceData[i].key)
+      //     }
+      //   }
+      // }
       if (this.cell) {
         let targetCell = this.cell.getTargetCell()
         if (targetCell && targetCell.getFormData()) {
@@ -346,16 +373,28 @@ export default {
             targetFormData.table_prefix = this.model.table_prefix
             targetFormData.table_suffix = this.model.table_suffix
             targetFormData.syncObjects = []
-            if (this.model.selectSourceDatabase) {
-              Object.keys(this.model.selectSourceDatabase).forEach(key => {
-                if (this.model.selectSourceDatabase[key]) {
-                  targetFormData.syncObjects.push({
-                    type: key,
-                    objectNames:
-                      key === 'table' ? this.model.selectSourceArr : []
-                  })
+            if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
+              targetFormData.syncObjects = [
+                {
+                  type: 'queue',
+                  objectNames: this.mqActiveData.queueData
+                },
+                {
+                  type: 'topic',
+                  objectNames: this.mqActiveData.topicData
                 }
-              })
+              ]
+            } else {
+              if (this.model.selectSourceDatabase) {
+                Object.keys(this.model.selectSourceDatabase).forEach(key => {
+                  if (this.model.selectSourceDatabase[key]) {
+                    targetFormData.syncObjects.push({
+                      type: key,
+                      objectNames: key === 'table' ? this.model.selectSourceArr : []
+                    })
+                  }
+                })
+              }
             }
           }
         }
@@ -394,12 +433,12 @@ export default {
 
     // 穿梭框值改变的时候
     handleChangeTransfer() {
-      this.sourceData.forEach(el => {
-        if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
-          el.label = el.key
-        }
-      })
-      this.preFixSuffixData()
+      // this.sourceData.forEach(el => {
+      //   if (selectKeepArr.length && selectKeepArr.includes(el.key)) {
+      //     el.label = el.key
+      //   }
+      // })
+      // this.preFixSuffixData()
     },
 
     // 穿梭框搜索
@@ -408,9 +447,9 @@ export default {
     },
 
     // 已选择的表
-    handleSelectTable(data) {
-      selectKeepArr = data
-    },
+    // handleSelectTable(data) {
+    //   selectKeepArr = data
+    // },
 
     // 添加前后缀弹窗开关
     handDialog() {
@@ -425,58 +464,54 @@ export default {
 
     // 添加前后缀数据处理
     preFixSuffixData() {
-      if (this.sourceData.length && this.model.selectSourceArr.length) {
-        let selectSourceArr = []
-        this.model.selectSourceArr = Array.from(
-          new Set(this.model.selectSourceArr)
-        )
-        this.sourceData.forEach(sourceName => {
-          this.model.selectSourceArr.map(k => {
-            if (k == sourceName.key) {
-              selectSourceArr.push(k)
-            }
-          })
-        })
-        this.model.selectSourceArr = selectSourceArr
-      }
-      if (
-        this.sourceData &&
-        this.sourceData.length &&
-        this.model.selectSourceArr.length
-      ) {
-        for (let i = 0; i < this.sourceData.length; i++) {
-          for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-            if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-              this.sourceData[i].label =
-                this.model.table_prefix +
-                this.sourceData[i].key +
-                this.model.table_suffix
-            }
-          }
-        }
-      }
+      // if (
+      //   this.sourceData &&
+      //   this.sourceData.length &&
+      //   this.model.selectSourceArr.length
+      // ) {
+      //   let selectSourceArr = []
+      //   this.model.selectSourceArr = Array.from(
+      //     new Set(this.model.selectSourceArr)
+      //   )
+      //   this.sourceData.forEach(sourceName => {
+      //     this.model.selectSourceArr.map(k => {
+      //       if (k == sourceName.key) {
+      //         selectSourceArr.push(k)
+      //       }
+      //     })
+      //   })
+      //   this.model.selectSourceArr = selectSourceArr
+
+      //   for (let i = 0; i < this.sourceData.length; i++) {
+      //     for (let j = 0; j < this.model.selectSourceArr.length; j++) {
+      //       if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
+      //         this.sourceData[i].label =
+      //           this.model.table_prefix +
+      //           this.sourceData[i].key +
+      //           this.model.table_suffix
+      //       }
+      //     }
+      //   }
+      // }
+      this.mqActiveData.table_prefix = this.model.table_prefix
+      this.mqActiveData.table_suffix = this.model.table_suffix
     },
 
     // 还原
     handleReduction() {
       this.model.table_suffix = ''
       this.model.table_prefix = ''
-      if (this.sourceData.length) {
-        for (let i = 0; i < this.sourceData.length; i++) {
-          // for (let j = 0; j < selectKeepArr.length; j++) {
-          for (let k = 0; k < this.model.selectSourceArr.length; k++) {
-            if (
-              // this.sourceData[i].label === selectKeepArr[j] &&
-              this.sourceData[i].key === this.model.selectSourceArr[k]
-            ) {
-              this.sourceData[i].label = this.sourceData[i].key
-              // this.sourceData[i].key = this.sourceData[i].label;
-              // this.model.selectSourceArr[k] = this.sourceData[i].value;
-            }
-            // 	}
-          }
-        }
-      }
+      this.mqActiveData.table_prefix = ''
+      this.mqActiveData.table_suffix = ''
+      // if (this.sourceData.length) {
+      //   for (let i = 0; i < this.sourceData.length; i++) {
+      //     for (let k = 0; k < this.model.selectSourceArr.length; k++) {
+      //       if (this.sourceData[i].key === this.model.selectSourceArr[k]) {
+      //         this.sourceData[i].label = this.sourceData[i].key
+      //       }
+      //     }
+      //   }
+      // }
     },
 
     // 获取表名称
@@ -490,26 +525,36 @@ export default {
         .customQuery([connectionId], { schema: true })
         .then(result => {
           if (result.data) {
+            let tables = []
+            // 数据库为mq
+            if (result.data.database_type === 'mq') {
+              this.model.mqType = result.data.mqType
+
+              let tableData = []
+              if (result.data.mqType === '0') {
+                let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
+                tableData = [...new Set(data)]
+              } else {
+                tableData = result.data.mqTopicSet
+              }
+              tables = tableData.map(item => {
+                return { table_name: item }
+              })
+            } else {
+              tables = (result.data.schema && result.data.schema.tables) || []
+            }
             self.databaseInfo = result.data
-            let tables = (result.data.schema && result.data.schema.tables) || []
             tables = tables.sort((t1, t2) =>
-              t1.table_name > t2.table_name
-                ? 1
-                : t1.table_name === t2.table_name
-                ? 0
-                : -1
+              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
 
             if (tables && tables.length) {
-              this.sourceData = tables.map(table => ({
+              self.sourceData = tables.map(table => ({
                 label: table.table_name,
                 key: table.table_name,
                 // value: table.table_name,
                 disabled: this.disabled
               }))
-              if (this.sourceData.length) {
-                this.preFixSuffixData()
-              }
             }
             self.$forceUpdate()
           }
@@ -577,7 +622,7 @@ export default {
           color: #606266;
         }
         .box-btn {
-          color: #48b6e2;
+          color: #409eff;
           cursor: pointer;
           .e-button {
             padding: 4px 10px;
@@ -601,13 +646,13 @@ export default {
     .el-transfer {
       height: 640px;
       .el-transfer-panel {
-        width: 298px;
+        width: 278px;
         .el-transfer-panel__body {
           .box {
             display: inline-block;
             .nameStyle {
               display: none;
-              color: #48b6e2;
+              color: #409eff;
               float: right;
               font-size: 12px;
               padding-left: 10px;
@@ -638,6 +683,7 @@ export default {
         }
         .el-transfer__button {
           border-radius: 3px;
+          padding: 12px !important;
         }
         .el-transfer__button.is-disabled,
         .el-transfer__button.is-disabled:hover {
@@ -657,32 +703,70 @@ export default {
         }
       }
       .el-transfer__buttons {
-        padding: 0 20px;
+        padding: 0 12px;
+        .el-button {
+          padding: 12px;
+        }
       }
     }
     .el-transfer-panel__item:hover {
       color: #666 !important;
     }
     .transfer {
+      position: relative;
       height: calc(100% - 32px) !important;
+      white-space: nowrap;
       overflow: auto;
-    }
-    .el-transfer,
-    .el-transfer-panel {
-      height: 100% !important;
-    }
-    .el-transfer-panel__body {
-      height: calc(100% - 38px) !important;
-    }
-    .el-checkbox-group {
-      height: calc(100% - 32px);
-      padding-bottom: 5px;
-      box-sizing: border-box;
-    }
-    .el-transfer-panel__item {
-      width: 100%;
-      margin-right: 10px !important;
-      box-sizing: border-box;
+      .el-transfer,
+      .el-transfer-panel {
+        height: 100% !important;
+      }
+      .el-transfer-panel__body {
+        height: calc(100% - 38px) !important;
+      }
+      .el-checkbox-group {
+        height: calc(100% - 32px);
+        padding-bottom: 5px;
+        box-sizing: border-box;
+      }
+      .el-transfer-panel__item {
+        width: 100%;
+        margin-right: 10px !important;
+        box-sizing: border-box;
+      }
+      // .topic-transfer,
+      // .queue-transfer {
+      //   & > div:last-child {
+      //     position: absolute;
+      //     height: 48% !important;
+      //   }
+      // }
+      // .topic-transfer {
+      //   & > div:last-child {
+      //     top: 0;
+      //   }
+      //   .el-transfer__buttons {
+      //     padding-top: 100px;
+      //     vertical-align: top;
+      //   }
+      // }
+      // .queue-transfer {
+      //   position: absolute;
+      //   top: 0;
+      //   width: 0;
+      //   // display: inherit;
+      //   // height: auto !important;
+      //   // & > div:first-child {
+      //   //   display: none;
+      //   // }
+      //   & > div:last-child {
+      //     bottom: 0;
+      //   }
+      //   .el-transfer__buttons {
+      //     padding-bottom: 100px;
+      //     vertical-align: bottom;
+      //   }
+      // }
     }
   }
   .aggtip {

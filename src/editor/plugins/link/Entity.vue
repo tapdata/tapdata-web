@@ -34,34 +34,17 @@
           }"
           slot-scope="{ node, data }"
         >
-          <span
-            class="e-port e-port-in"
-            style="position: absolute; left: 0"
-            :ref="getInportRef(data)"
-          ></span>
-          <span
-            class="parent-node-icon"
-            v-for="l in data.level - 1"
-            :key="l"
-          ></span>
+          <span class="e-port e-port-in" style="position: absolute; left: 0" :ref="getInportRef(data)"></span>
+          <span class="parent-node-icon" v-for="l in data.level - 1" :key="l"></span>
           <span class="node-icon">
             <i class="icon-expand"></i>
           </span>
           <template v-if="data.type">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="data.type"
-              placement="left"
-            >
+            <el-tooltip class="item" effect="dark" :content="data.type" placement="left">
               <img :src="getImgByType(data.type) || getImgByType('Default')" />
             </el-tooltip>
           </template>
-          <img
-            class="pk"
-            v-if="data.primary_key_position > 0"
-            src="../../../assets/images/PK.png"
-          />
+          <img class="pk" v-if="data.primary_key_position > 0" src="../../../assets/images/PK.png" />
           <span class="node-label">{{ node.label }}</span>
         </div>
       </el-tree>
@@ -112,33 +95,33 @@ export default {
       //过滤被删除的数据
       if (schema && schema.fields) {
         schema.fields = removeDeleted(schema.fields)
-        //延时加载
-        let fields = schema.fields
-        let total = fields.length
-        let size = total < 5 ? total : 10
-        let index = 0
-        this.fields = []
-        let interval = this.interval
-        if (interval) {
-          clearInterval(interval)
-          this.interval = null
-        }
-        this.$nextTick(() => {
-          let load = () => {
-            this.fields.push(
-              ...fields.slice((index + 0) * size, (index + 1) * size)
-            )
-            index++
-          }
-          this.interval = setInterval(() => {
-            if (index * size < total) {
-              load()
-            } else {
-              clearInterval(this.interval)
-              this.interval = null
-            }
-          }, 500)
-        })
+        //延时加载TODO 字段过多注意渲染问题，注释内容严重影响table节点schema渲染
+        this.fields = schema.fields
+        // let total = fields.length
+        // let size = total < 5 ? total : 10
+        // let index = 0
+        // this.fields = []
+        // let interval = this.interval
+        // if (interval) {
+        //   clearInterval(interval)
+        //   this.interval = null
+        // }
+        // this.$nextTick(() => {
+        //   let load = () => {
+        //     this.fields.push(
+        //       ...fields.slice((index + 0) * size, (index + 1) * size)
+        //     )
+        //     index++
+        //   }
+        //   this.interval = setInterval(() => {
+        //     if (index * size < total) {
+        //       load()
+        //     } else {
+        //       clearInterval(this.interval)
+        //       this.interval = null
+        //     }
+        //   }, 500)
+        // })
       } else {
         this.fields = []
       }
@@ -175,27 +158,18 @@ export default {
       return ids
     },
     isRemove(id) {
-      let ops = this.operations
-        ? this.operations.filter(v => v.id === id && v.op === 'DELETE')
-        : []
+      let ops = this.operations ? this.operations.filter(v => v.id === id && v.op === 'DELETE') : []
       return ops && ops.length > 0
     },
     isRetained(id) {
-      let ops = this.operations
-        ? this.operations.filter(v => v.id === id && v.op === 'RETAINED')
-        : []
+      let ops = this.operations ? this.operations.filter(v => v.id === id && v.op === 'RETAINED') : []
       return ops && ops.length > 0
     },
     checkHandler(data, checkedInfo) {
       this.isIndeterminate =
-        this.defaultChecked.length !== checkedInfo.checkedKeys.length &&
-        checkedInfo.checkedKeys.length
-      this.isCheckAll =
-        this.defaultChecked.length === checkedInfo.checkedKeys.length
-      this.$emit(
-        'check',
-        checkedInfo.checkedNodes.concat(checkedInfo.halfCheckedNodes)
-      )
+        this.defaultChecked.length !== checkedInfo.checkedKeys.length && checkedInfo.checkedKeys.length
+      this.isCheckAll = this.defaultChecked.length === checkedInfo.checkedKeys.length
+      this.$emit('check', checkedInfo.checkedNodes.concat(checkedInfo.halfCheckedNodes))
     },
     handleCheckAllChange(val) {
       let checkKeys = val ? this.defaultChecked : []
@@ -260,39 +234,22 @@ $color: #4aaf47;
   .el-tree-node__content:hover {
     background: #fff !important;
   }
-  .el-tree
-    > .el-tree-node:nth-last-child(2)
-    > .el-tree-node__content
-    > .tree-node
-    > .node-icon::before,
-  .el-tree-node:last-child
-    > .el-tree-node__content
-    > .tree-node
-    > .node-icon::before {
+  .el-tree > .el-tree-node:nth-last-child(2) > .el-tree-node__content > .tree-node > .node-icon::before,
+  .el-tree-node:last-child > .el-tree-node__content > .tree-node > .node-icon::before {
     border: none;
     border-top: 1px solid #e1e1e1;
     left: -1px;
     height: 50%;
     background: #fff;
   }
-  .el-tree
-    > .is-expanded:nth-last-child(2)
-    > .el-tree-node__content
-    > .has-children
-    > .node-icon::before,
-  .is-expanded:last-child
-    > .el-tree-node__content
-    > .has-children
-    > .node-icon::before {
+  .el-tree > .is-expanded:nth-last-child(2) > .el-tree-node__content > .has-children > .node-icon::before,
+  .is-expanded:last-child > .el-tree-node__content > .has-children > .node-icon::before {
     border: none;
     border-bottom: 1px solid #e1e1e1;
     left: 0;
     height: 0;
   }
-  .is-expanded
-    > .el-tree-node__content
-    > .tree-node.has-children
-    .icon-expand::before {
+  .is-expanded > .el-tree-node__content > .tree-node.has-children .icon-expand::before {
     transform: translate(-50%, -50%) rotate(0);
   }
   .tree-node {

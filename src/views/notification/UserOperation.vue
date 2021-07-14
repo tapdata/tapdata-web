@@ -8,7 +8,7 @@ export default {
   },
   render(h) {
     let record = this.record
-    let activeTextStyle = 'color: #48b6e2'
+    let activeTextStyle = 'color: #409EFF'
     return h(
       'div',
       {

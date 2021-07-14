@@ -10,7 +10,17 @@ export const SETTING_MODEL = {
   stopOnError: false,
   isOpenAutoDDL: false,
   bidirectional: false,
-  readBatchSize: 1000
+  readBatchSize: 1000,
+  syncPoints: [
+    {
+      connectionId: '',
+      type: 'current', // localTZ: 本地时区； connTZ：连接时区
+      time: '',
+      date: '',
+      name: '',
+      timezone: '+08:00' // 当type为localTZ时有该字段
+    }
+  ]
 }
 
 export const DATASOURCE_MODEL = {

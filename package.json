@@ -2,25 +2,18 @@
   "name": "tapdaas",
   "version": "1.0.0",
   "private": true,
-  "license": "UNLICENSED",
   "scripts": {
+    "submodule": "node ./init_submodule.js",
     "start": "nodemon mock/mock.js & vue-cli-service serve --open",
-    "start:dev": "cross-env SERVE_ENV=dev vue-cli-service serve",
+    "start:dev": "cross-env SERVE_ENV=dev vue-cli-service serve --open",
     "start:test": "cross-env SERVE_ENV=test vue-cli-service serve --open",
+    "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
     "mock": "nodemon mock/mock.js"
   },
   "dependencies": {
-    "@formily/core": "^2.0.0-beta.76",
-    "@formily/reactive": "^2.0.0-beta.76",
-    "@formily/reactive-vue": "^2.0.0-beta.76",
-    "@formily/vue": "^2.0.0-beta.76",
-    "@vue/composition-api": "^1.0.0-rc.10",
-    "ace-builds": "^1.4.12",
-    "ant-design-vue": "^1.7.5",
-    "async-validator": "^3.5.2",
     "axios": "^0.21.1",
     "backbone": "^1.4.0",
     "bootstrap": "^5.0.0-beta3",
@@ -33,15 +26,12 @@
     "element-ui": "^2.15.1",
     "github-markdown-css": "^4.0.0",
     "graphlib": "^2.1.8",
-    "highlight.js": "^11.0.1",
     "jquery": "^3.4.1",
-    "jsplumb": "^2.15.6",
     "leader-line": "^1.0.5",
     "lodash": "^4.17.15",
     "mavon-editor": "^2.9.0",
     "moment": "^2.24.0",
-    "monaco-editor": "0.18.1",
-    "normalize-wheel": "^1.0.1",
+    "monaco-editor": "0.23.0",
     "vue": "^2.6.11",
     "vue-bus": "^1.2.1",
     "vue-clipboard2": "^0.3.1",
@@ -82,7 +72,9 @@
     "vue-template-compiler": "^2.6.11"
   },
   "gitHooks": {
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "post-merge": "git submodule update",
+    "post-checkout": "git submodule update"
   },
   "lint-staged": {
     "*.{js,jsx,vue}": [

@@ -11,11 +11,7 @@
           </div>
           <el-form ref="form" :model="form">
             <el-form-item prop="email">
-              <el-input
-                v-model="form.email"
-                type="email"
-                :placeholder="$t('app.signIn.email_placeholder')"
-              ></el-input>
+              <el-input v-model="form.email" type="email" :placeholder="$t('app.signIn.email_placeholder')"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <el-input
@@ -40,14 +36,9 @@
                 :placeholder="$t('app.signIn.inviteCode_placeholder')"
               ></el-input>
             </el-form-item>
-            <el-checkbox
-              class="keep-sign-in"
-              v-model="keepSignIn"
-              style="display: none"
-            >
+            <el-checkbox class="keep-sign-in" v-model="keepSignIn" style="display: none">
               <span style="color: #999"
-                >{{ $t('app.signIn.registry_tip') }}
-                <i>{{ $t('app.signIn.userPplicy') }}</i></span
+                >{{ $t('app.signIn.registry_tip') }} <i>{{ $t('app.signIn.userPplicy') }}</i></span
               >
             </el-checkbox>
             <el-button
@@ -71,11 +62,7 @@
           <div class="title">{{ $t('app.signIn.getCode') }}</div>
           <p>{{ $t('app.signIn.qrCodeText') }}</p>
           <div class="imageBox">
-            <el-image
-              class="image"
-              :src="require('@/assets/images/tapdateQR.png')"
-              fit="cover"
-            ></el-image>
+            <el-image class="image" :src="require('@/assets/images/tapdateQR.png')" fit="cover"></el-image>
           </div>
         </el-card>
       </div>
@@ -149,15 +136,17 @@ export default {
       if (!form.email || !form.email.trim()) {
         message = this.$t('app.signIn.email_require')
         // eslint-disable-next-line
-			} else if (!form.inviteCode) {
+      } else if (!form.inviteCode) {
         message = this.$t('app.signIn.inviteCode_require')
+      } else if (
         // eslint-disable-next-line
-			} else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
+      ) {
         message = this.$t('app.signIn.email_invalid')
       } else if (!form.password || form.password.length < 5) {
         message = this.$t('app.signIn.password_invalid')
         // eslint-disable-next-line
-			} else if (/[\s\u4E00-\u9FA5]/.test(form.password)) {
+      } else if (/[\s\u4E00-\u9FA5]/.test(form.password)) {
         message = this.$t('account.passwordNotCN')
       } else {
         message = ''
@@ -208,7 +197,7 @@ export default {
     // 跳转登录
     backLogin() {
       this.$router.push({
-        path: '/login',
+        name: 'login',
         query: { email: this.form.email }
       })
     }
@@ -350,7 +339,7 @@ export default {
         color: #666;
         user-select: none;
         span {
-          color: #48b6e2;
+          color: #409eff;
           cursor: pointer;
         }
       }

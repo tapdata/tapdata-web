@@ -26,33 +26,18 @@
               :placeholder="$t('metadata.namePlaceholder')"
               @input="table.fetch(1, 800)"
             >
-              <el-select
-                style="width: 120px"
-                slot="prepend"
-                v-model="searchParams.isFuzzy"
-                @input="table.fetch(1)"
-              >
-                <el-option
-                  :label="$t('connection.fuzzyQuery')"
-                  :value="true"
-                ></el-option>
-                <el-option
-                  :label="$t('connection.PreciseQuery')"
-                  :value="false"
-                ></el-option>
+              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
+                <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
+                <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
               </el-select>
             </el-input>
           </li>
           <template v-if="searchParams.keyword">
             <li>
-              <el-button size="mini" type="text" @click="reset()">{{
-                $t('button.query')
-              }}</el-button>
+              <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
             </li>
             <li>
-              <el-button size="mini" type="text" @click="reset('reset')">{{
-                $t('button.reset')
-              }}</el-button>
+              <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
             </li>
           </template>
         </ul>
@@ -78,11 +63,7 @@
           {{ scope.row.source.name }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('timeToLive.header.tableName')"
-        prop="tableName"
-        sortable="tableName"
-      >
+      <el-table-column :label="$t('timeToLive.header.tableName')" prop="tableName" sortable="tableName">
         <template slot-scope="scope">
           {{ scope.row.name || scope.row.original_name }}
         </template>
@@ -92,10 +73,7 @@
           {{ scope.row.indexName }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('timeToLive.header.indexFields')"
-        prop="fields"
-      >
+      <el-table-column :label="$t('timeToLive.header.indexFields')" prop="fields">
         <template slot-scope="scope">
           {{
             typeof scope.row.key === 'string'
@@ -110,19 +88,18 @@
           {{ getTimeScale(scope.row.type_data) }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('timeToLive.header.indexStatus')"
-        prop="status"
-        sortable="status"
-      >
+      <el-table-column :label="$t('timeToLive.header.indexStatus')" prop="status" sortable="status">
         <template slot-scope="scope">
           {{ $t('timeToLive.status_' + scope.row.status) || scope.row.status }}
+          <el-popover placement="top-start" trigger="hover" width="800">
+            <div style="word-break: break-word; text-align: left">
+              {{ scope.row.error_msg }}
+            </div>
+            <span class="icon iconfont icon-tishi1" slot="reference"></span>
+          </el-popover>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('timeToLive.header.indexCreate_by')"
-        prop="create_by"
-      >
+      <el-table-column :label="$t('timeToLive.header.indexCreate_by')" prop="create_by">
         <template slot-scope="scope">
           {{ scope.row.create_by }}
         </template>
@@ -134,6 +111,7 @@
             v-if="scope.row.status === 'created'"
             size="mini"
             type="text"
+            style="color: #f56c6c"
             :disabled="
               $disabledByPermission(
                 'time_to_live_management_all_data',
@@ -142,6 +120,20 @@
             "
             @click="remove(scope.row)"
             >{{ $t('button.delete') }}</el-button
+          >
+          <el-button
+            v-readonlybtn="'time_to_live_management'"
+            v-if="scope.row.status === 'creation_failed'"
+            size="mini"
+            type="text"
+            :disabled="
+              $disabledByPermission(
+                'time_to_live_management_all_data',
+                scope.row.source ? scope.row.source.user_id : ''
+              )
+            "
+            @click="resetTtl(scope.row)"
+            >{{ $t('button.reset') }}</el-button
           >
         </template>
       </el-table-column>
@@ -154,18 +146,10 @@
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
-      <FormBuilder
-        ref="form"
-        v-model="createForm"
-        :config="createFormConfig"
-      ></FormBuilder>
+      <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="createNewTtl()" size="small">{{
-          $t('message.confirm')
-        }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" @click="createNewTtl()" size="small">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -308,20 +292,12 @@ export default {
     },
     'createForm.tableName'(val) {
       let includesTimeField = []
-      let selectTable = this.createFormConfig.items[2].options.filter(
-        item => item.value === val
-      )
-      let schemaField =
-        selectTable && selectTable.length ? selectTable[0].record.fields : []
+      let selectTable = this.createFormConfig.items[2].options.filter(item => item.value === val)
+      let schemaField = selectTable && selectTable.length ? selectTable[0].record.fields : []
       this.createFormConfig.items[3].options = []
       this.createForm.filed = ''
       schemaField.forEach(v => {
-        if (
-          v.data_type == 'DATE_TIME' ||
-          v.data_type == 'DATETIME' ||
-          v.data_type == 'DATE' ||
-          v.data_type == 'date'
-        ) {
+        if (v.data_type == 'DATE_TIME' || v.data_type == 'DATETIME' || v.data_type == 'DATE' || v.data_type == 'date') {
           includesTimeField.push(v.field_name)
           if (v.field_name == '__tapd8.ts') {
             this.createForm.filed = v.field_name
@@ -418,9 +394,7 @@ export default {
         indexes: true
       }
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy
-          ? { like: toRegExp(keyword), options: 'i' }
-          : keyword
+        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
         where.or = [
           { name: filterObj },
           { original_name: filterObj },
@@ -462,9 +436,7 @@ export default {
         })
         if (res.data && res.data.length) {
           this.tableData = res.data.map(item => {
-            item.indexsFilter = item.indexes.filter(
-              idx => idx.expireAfterSeconds && idx.create_by !== 'dba'
-            )
+            item.indexsFilter = item.indexes.filter(idx => idx.expireAfterSeconds && idx.create_by !== 'dba')
             return item
           })
 
@@ -607,10 +579,7 @@ export default {
           meta_type: 'collection',
           'source.id': databaseId,
           'source.database_type': 'mongodb',
-          or: [
-            { 'source.connection_type': 'target' },
-            { 'source.connection_type': 'source_and_target' }
-          ]
+          or: [{ 'source.connection_type': 'target' }, { 'source.connection_type': 'source_and_target' }]
         }
       }
       this.$api('MetadataInstances')
@@ -622,7 +591,7 @@ export default {
           let options = []
           tables.forEach(item => {
             options.push({
-              label: item.name,
+              label: item.original_name || item.name,
               value: item.id,
               record: item
             })
@@ -633,9 +602,7 @@ export default {
 
     // 表格排序
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
 
@@ -682,19 +649,14 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           let { tableName, filed, data_type, expire } = _this.createForm
-          let selectTable = this.createFormConfig.items[2].options.find(
-            it => it.value === tableName
-          )
+          let selectTable = this.createFormConfig.items[2].options.find(it => it.value === tableName)
           let key = {}
           key[filed] = 1
           // _this.indexDefinition.forEach(v => (key[v.key] = v.value))
           let collection = selectTable.record || {}
           if (collection.indexes) {
             let _keyJson = JSON.stringify(key)
-            debugger
-            let existsIndexes = collection.indexes.filter(
-              v => _keyJson === JSON.stringify(v.key)
-            )
+            let existsIndexes = collection.indexes.filter(v => _keyJson === JSON.stringify(v.key))
 
             if (existsIndexes && existsIndexes.length > 0) {
               _this.$message.error('timeToLive.index_exists')
@@ -719,7 +681,7 @@ export default {
               typeData = expire * 60 * 60 * 24 * 30
               break
             case 'y':
-              typeData = expire * 60 * 60 * 24 * 300
+              typeData = expire * 60 * 60 * 24 * 360
               break
             default:
               typeData = expire
@@ -758,12 +720,12 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#48b6e2' } }, item.original_name)
+        h('span', { style: { color: '#409EFF' } }, item.original_name)
       ])
       let params = {
         task_name: 'mongodb_drop_index',
         task_type: 'MONGODB_DROP_INDEX',
-        status: 'waiting',
+        status: 'deleting',
         task_data: {
           collection_name: item.original_name,
           meta_id: item.meta_id,
@@ -780,7 +742,7 @@ export default {
             this.$api('ScheduleTasks')
               .post(params)
               .then(() => {
-                this.$message.success(this.$t('message.deleteOK'))
+                this.$message.success(this.$t('timeToLive.status_deleted'))
                 this.table.fetch()
                 done()
               })
@@ -795,6 +757,35 @@ export default {
           }
         }
       })
+    },
+
+    // 重置生命周期
+    resetTtl(item) {
+      console.log(item)
+      let params = {
+        task_name: 'mongodb_create_index',
+        task_type: 'MONGODB_UPDATE_INDEX',
+        status: 'waiting',
+        task_data: {
+          collection_name: item.original_name,
+          data_type: item.data_type,
+          expireAfterSeconds: item.expireAfterSeconds,
+          meta_id: item.meta_id,
+          key: item.key,
+          name: item.name,
+          ttl: item.ttl,
+          type_data: item.type_data,
+          unique: item.unique,
+          uri: item.uri
+        }
+      }
+      this.$api('ScheduleTasks')
+        .post(params)
+        .then(() => {
+          this.createDialogVisible = false
+          this.table.fetch()
+          // this.toDetails(res.data);
+        })
     }
   }
 }
@@ -827,7 +818,7 @@ export default {
     }
     .metadata-name {
       .name {
-        color: #48b6e2;
+        color: #409eff;
         a {
           color: inherit;
           cursor: pointer;

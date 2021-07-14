@@ -19,19 +19,10 @@
       >
     </div>
     <div>
-      <el-tag
-        size="mini"
-        type="info"
-        class="SelectClassify-tag"
-        v-for="item in oldTagList"
-        v-bind:key="item.value"
-        >{{ item.value }}</el-tag
-      >
-      <el-button
-        size="mini"
-        @click="handleClearOldTag"
-        round
-        v-if="Object.keys(oldTagList).length > 0"
+      <el-tag size="mini" type="info" class="SelectClassify-tag" v-for="item in oldTagList" v-bind:key="item.value">{{
+        item.value
+      }}</el-tag>
+      <el-button size="mini" @click="handleClearOldTag" round v-if="Object.keys(oldTagList).length > 0"
         >Clear</el-button
       >
     </div>
@@ -54,12 +45,8 @@
       </span>
     </el-tree>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="handleCancel" size="mini">{{
-        $t('dataForm.cancel')
-      }}</el-button>
-      <el-button type="primary" @click="handleAdd" size="mini">{{
-        $t('dataForm.submit')
-      }}</el-button>
+      <el-button @click="handleCancel" size="mini">{{ $t('dataForm.cancel') }}</el-button>
+      <el-button type="primary" @click="handleAdd" size="mini">{{ $t('dataForm.submit') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -105,6 +92,9 @@ export default {
       if (this.types.length) {
         where.or = this.types.map(t => ({ item_type: t }))
       }
+
+      if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` }
+
       let filter = {
         where
       }

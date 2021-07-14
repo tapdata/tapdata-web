@@ -5,7 +5,7 @@ export default function (vm) {
       labelWidth: '200px'
     },
     defaultModel: {
-      connection_type: 'source_and_target'
+      connection_type: 'source'
     },
     items: [
       {
@@ -14,19 +14,9 @@ export default function (vm) {
         label: vm.$t('dataForm.form.connectionType'),
         options: [
           {
-            label: vm.$t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
-            value: 'source_and_target'
-          },
-          {
             label: vm.$t('dataForm.form.options.source'),
             tip: vm.$t('dataForm.form.options.sourceTips'),
             value: 'source'
-          },
-          {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
-            value: 'target'
           }
         ],
         required: true
@@ -34,6 +24,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
+
         label: vm.$t('dataForm.form.host'),
         rules: [
           {
@@ -89,10 +80,6 @@ export default function (vm) {
         showPassword: true
       },
       {
-        type: 'slot',
-        slot: 'tableFilter'
-      },
-      {
         type: 'input',
         field: 'database_owner',
         label: vm.$t('dataForm.form.databaseOwner'),
@@ -106,6 +93,10 @@ export default function (vm) {
         //tips: vm.$t('dataForm.form.tableFilterTips'),
         maxlength: 500,
         showWordLimit: true
+      },
+      {
+        type: 'slot',
+        slot: 'tableFilter'
       },
       {
         type: 'input',

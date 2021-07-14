@@ -6,40 +6,16 @@
     <section>
       <el-table :data="statisticData">
         <el-table-column :label="$t('dkDashboard.month')" align="center">
-          <el-table-column
-            :label="$t('dkDashboard.create')"
-            align="center"
-            prop="monthCreate"
-          ></el-table-column>
-          <el-table-column
-            :label="$t('dkDashboard.update')"
-            align="center"
-            prop="monthUpdate"
-          ></el-table-column>
+          <el-table-column :label="$t('dkDashboard.create')" align="center" prop="monthCreate"></el-table-column>
+          <el-table-column :label="$t('dkDashboard.update')" align="center" prop="monthUpdate"></el-table-column>
         </el-table-column>
         <el-table-column :label="$t('dkDashboard.yesterday')" align="center">
-          <el-table-column
-            :label="$t('dkDashboard.create')"
-            align="center"
-            prop="yesterdayCreate"
-          ></el-table-column>
-          <el-table-column
-            :label="$t('dkDashboard.update')"
-            align="center"
-            prop="yesterdayUpdate"
-          ></el-table-column>
+          <el-table-column :label="$t('dkDashboard.create')" align="center" prop="yesterdayCreate"></el-table-column>
+          <el-table-column :label="$t('dkDashboard.update')" align="center" prop="yesterdayUpdate"></el-table-column>
         </el-table-column>
         <el-table-column :label="$t('dkDashboard.today')" align="center">
-          <el-table-column
-            :label="$t('dkDashboard.create')"
-            align="center"
-            prop="todayCreate"
-          ></el-table-column>
-          <el-table-column
-            :label="$t('dkDashboard.update')"
-            align="center"
-            prop="todayUpdate"
-          ></el-table-column>
+          <el-table-column :label="$t('dkDashboard.create')" align="center" prop="todayCreate"></el-table-column>
+          <el-table-column :label="$t('dkDashboard.update')" align="center" prop="todayUpdate"></el-table-column>
         </el-table-column>
       </el-table>
     </section>
@@ -167,17 +143,10 @@ export default {
         this.$moment().subtract(1, 'days').format('YYYYMMDD235959')
       ]
       // 今天
-      const today = [
-        this.$moment().format('YYYYMMDD000000'),
-        this.$moment().format('YYYYMMDD235959')
-      ]
+      const today = [this.$moment().format('YYYYMMDD000000'), this.$moment().format('YYYYMMDD235959')]
 
       this.trendLoading = true
-      Promise.all([
-        this.trendPromise(...month),
-        this.trendPromise(...yesterday),
-        this.trendPromise(...today)
-      ])
+      Promise.all([this.trendPromise(...month), this.trendPromise(...yesterday), this.trendPromise(...today)])
         .then(result => {
           this.statisticData = [
             {
@@ -202,9 +171,7 @@ export default {
           'filter[order]': 'stats_time desc',
           'filter[where][stats_name]': 'trend_stats',
           'filter[where][stats_granularity]': 'minute',
-          'filter[where][stats_time][gt]': this.$moment()
-            .subtract(5, 'days')
-            .format('YYYYMMDD000000')
+          'filter[where][stats_time][gt]': this.$moment().subtract(5, 'days').format('YYYYMMDD000000')
         })
         .then(({ data }) => {
           let list = data || []

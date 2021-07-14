@@ -67,8 +67,7 @@ class WSClient extends EventEmitter {
       this.ws.removeEventListener('error', this.__error)
       this.ws.removeEventListener('open', this.__open)
       this.ws.removeEventListener('close', this.__close)
-      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(this.ws.readyState))
-        this.ws.close(1, null)
+      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(this.ws.readyState)) this.ws.close(1, null)
     }
   }
 
@@ -207,12 +206,7 @@ class WSClient extends EventEmitter {
         .getAvailableAgent()
         .then(result => {
           log('ws.getAgentId:', result)
-          if (
-            result &&
-            result.data &&
-            result.data.result &&
-            result.data.result.length > 0
-          ) {
+          if (result && result.data && result.data.result && result.data.result.length > 0) {
             self.agentId = result.data.result[0].process_id
             cb(null, self.agentId)
           } else {
@@ -242,7 +236,7 @@ class WSClient extends EventEmitter {
     let host = window.getSettingByKey('DFS_TM_WS_HOST') || loc.host
     let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || ''
     let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || ''
-    let path = tcmApiPre + apiPre
+    let path = (tcmApiPre === '/console' ? '' : tcmApiPre) + apiPre
     new_uri += '//' + host
     new_uri += path + '/ws/agent'
     return new_uri

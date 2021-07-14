@@ -11,17 +11,13 @@ export default function (vm) {
       let databaseDatetypeWithoutTimezone = vm.config.items.find(
         item => item.field === 'database_datetype_without_timezone'
       )
-      let supportUpdatePk = vm.config.items.find(
-        item => item.field === 'supportUpdatePk'
-      )
+      let supportUpdatePk = vm.config.items.find(item => item.field === 'supportUpdatePk')
       vm.$nextTick(() => {
         if (databaseDatetypeWithoutTimezone) {
-          databaseDatetypeWithoutTimezone.show =
-            val && ['source', 'source_and_target'].includes(val)
+          databaseDatetypeWithoutTimezone.show = val && ['source', 'source_and_target'].includes(val)
         }
         if (supportUpdatePk) {
-          supportUpdatePk.show =
-            val && ['target', 'source_and_target'].includes(val)
+          supportUpdatePk.show = val && ['target', 'source_and_target'].includes(val)
         }
         vm.$refs.form.$forceUpdate()
       })
@@ -59,6 +55,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
+
         label: vm.$t('dataForm.form.host'),
         rules: [
           {

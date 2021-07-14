@@ -12,14 +12,7 @@
       @change="$emit('change', $event)"
       @input="inputHandler"
     >
-      <el-option
-        v-for="opt in options.filter(i => !!i)"
-        :key="opt"
-        :label="opt"
-        :value="opt"
-        p
-      >
-      </el-option>
+      <el-option v-for="opt in options.filter(i => !!i)" :key="opt" :label="opt" :value="opt"> </el-option>
     </el-select>
     <ClipButton :value="value" v-if="showCopyBtn"></ClipButton>
   </div>
@@ -52,10 +45,7 @@ export default {
   methods: {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
-      this.$emit(
-        'input',
-        Array.from(new Set(values.filter(v => !!v.trim()))).join(',')
-      )
+      this.$emit('input', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
     }
   }
 }

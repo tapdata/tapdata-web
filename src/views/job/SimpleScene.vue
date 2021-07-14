@@ -20,30 +20,22 @@
         <el-checkbox-group v-model="vsteps">
           <el-checkbox label="1">
             <i class="stepNum">1</i>
-            <span class="desc">{{
-              $t('dataFlow.sourceSetting')
-            }}</span></el-checkbox
+            <span class="desc">{{ $t('dataFlow.sourceSetting') }}</span></el-checkbox
           >
           <span class="space-line"></span>
           <el-checkbox label="2">
             <i class="stepNum">2</i>
-            <span class="desc">{{
-              $t('dataFlow.targetSetting')
-            }}</span></el-checkbox
+            <span class="desc">{{ $t('dataFlow.targetSetting') }}</span></el-checkbox
           >
           <span class="space-line"></span>
           <el-checkbox label="3">
             <i class="stepNum">3</i>
-            <span class="desc">{{
-              $t('dataFlow.sourceLibrarySetting')
-            }}</span></el-checkbox
+            <span class="desc">{{ $t('dataFlow.sourceLibrarySetting') }}</span></el-checkbox
           >
           <span class="space-line"></span>
           <el-checkbox label="4">
             <i class="stepNum">4</i>
-            <span class="desc">{{
-              $t('dataFlow.advancedetting')
-            }}</span></el-checkbox
+            <span class="desc">{{ $t('dataFlow.advancedetting') }}</span></el-checkbox
           >
         </el-checkbox-group>
       </div>
@@ -86,7 +78,7 @@ export default {
 				<g joint-selector="layers" class="joint-layers" transform="matrix(1,0,0,1,1638,444)">
 				<g joint-selector="cells" class="joint-cells-layer joint-viewport">` +
         this.cellHtml +
-        `<!--z-index:3--><!--z-index:4--></g><g joint-selector="tools" class="joint-tools-layer"></g></g></svg></div>`
+        `</g><g joint-selector="tools" class="joint-tools-layer"></g></g></svg></div>`
     },
     nextStep() {
       if (this.isSetting) {
@@ -95,37 +87,27 @@ export default {
       }
       if (this.activeStep == this.maxStep) return
       try {
-        if (this.activeStep)
-          this.$parent.editor.graph.graph
-            .getCells()
-            [this.activeStep - 1].validate()
+        if (this.activeStep) this.$parent.editor.graph.graph.getCells()[this.activeStep - 1].validate()
       } catch (e) {
         this.$message.error(e.message)
         return
       }
       try {
-        if (
-          this.activeStep <= 3 &&
-          !this.$parent.editor.graph.graph
-            .getCells()
-            [this.activeStep].validate()
-        )
+        if (this.activeStep <= 3 && !this.$parent.editor.graph.graph.getCells()[this.activeStep].validate())
           this.activeValid = true
       } catch (e) {
         this.activeValid = false
       }
 
       this.activeStep++
-      if (!this.vsteps.includes(this.activeStep + ''))
-        this.vsteps.push(this.activeStep + '')
+      if (!this.vsteps.includes(this.activeStep + '')) this.vsteps.push(this.activeStep + '')
       this.$parent.simpleGoNext(this.activeStep)
     },
     prevStep() {
       if (this.activeStep == 1) return
       if (this.vsteps.includes(this.activeStep + '')) this.vsteps.pop()
       this.activeStep--
-      if (this.activeStep == 2 || this.activeStep == 3)
-        this.$parent.simpleGoNext(this.activeStep - 1) //激活selection change事件
+      if (this.activeStep == 2 || this.activeStep == 3) this.$parent.simpleGoNext(this.activeStep - 1) //激活selection change事件
       this.$parent.simpleGoNext(this.activeStep)
     },
     stepValid() {
@@ -248,8 +230,8 @@ export default {
       .el-checkbox__label {
         .stepNum {
           color: #fff;
-          background-color: #48b6e2;
-          border: 1px solid #48b6e2;
+          background-color: #409eff;
+          border: 1px solid #409eff;
         }
       }
     }
@@ -267,7 +249,7 @@ export default {
   }
 
   .e-btnv {
-    background: #48b6e2;
+    background: #409eff;
     color: #fff;
     border-radius: 5px;
   }

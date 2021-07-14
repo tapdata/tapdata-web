@@ -31,6 +31,7 @@ import {
   Table,
   TableColumn,
   Option,
+  OptionGroup,
   Row,
   Col,
   Pagination,
@@ -72,10 +73,7 @@ Select.methods.handleOptionSelect = function (option, byClick) {
     var optionIndex = _this12.getValueIndex(value, option.value)
     if (optionIndex > -1 && byClick) {
       value.splice(optionIndex, 1)
-    } else if (
-      _this12.multipleLimit <= 0 ||
-      value.length < _this12.multipleLimit
-    ) {
+    } else if (_this12.multipleLimit <= 0 || value.length < _this12.multipleLimit) {
       value.push(option.value)
     }
     _this12.$emit('input', value)
@@ -126,6 +124,7 @@ Vue.component(Select.name, Select)
 Vue.component(Table.name, Table)
 Vue.component(TableColumn.name, TableColumn)
 Vue.component(Option.name, Option)
+Vue.component(OptionGroup.name, OptionGroup)
 Vue.component(Row.name, Row)
 Vue.component(Col.name, Col)
 Vue.component(Pagination.name, Pagination)

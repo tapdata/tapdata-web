@@ -6,26 +6,17 @@
         <div class="image iconfont icon-fasongyoujian"></div>
         <div class="text">
           <p>
-            {{
-              type === 'reset'
-                ? $t('app.signIn.passwordResetText')
-                : $t('app.signIn.confirmationEmail')
-            }}
+            {{ type === 'reset' ? $t('app.signIn.passwordResetText') : $t('app.signIn.confirmationEmail') }}
             <i>{{ email }}</i>
           </p>
           <p>{{ $t('app.signIn.mailbox') }}</p>
           <div>
             {{ $t('app.signIn.receiveEmail') }}
-            <span
-              @click="resetSend"
-              :class="{ noClick: time > 0 }"
-              v-if="type === 'reset'"
-              >{{ $t('app.signIn.resend') }}
-              <i v-if="time > 0">({{ time }}s)</i></span
+            <span @click="resetSend" :class="{ noClick: time > 0 }" v-if="type === 'reset'"
+              >{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }}s)</i></span
             >
             <span @click="send" :class="{ noClick: time > 0 }" v-else
-              >{{ $t('app.signIn.resend') }}
-              <i v-if="time > 0">({{ time }}s)</i></span
+              >{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }}s)</i></span
             >,
 
             {{ $t('app.signIn.orClick') }}
@@ -134,7 +125,7 @@ export default {
     // 邮件跳转登录
     backLogin() {
       this.$router.push({
-        path: '/login',
+        name: 'login',
         query: { email: this.email }
       })
     }
@@ -213,7 +204,7 @@ export default {
       .image {
         padding: 2px 20px 0 0;
         font-size: 30px;
-        color: #48b6e2;
+        color: #409eff;
       }
       .text {
         font-size: 14px;
@@ -223,13 +214,13 @@ export default {
           user-select: none;
           padding-bottom: 6px;
           i {
-            color: #48b6e2;
+            color: #409eff;
           }
         }
         div {
           padding-top: 20px;
           span {
-            color: #48b6e2;
+            color: #409eff;
             cursor: pointer;
             i {
               color: #666;

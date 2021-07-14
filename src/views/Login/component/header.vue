@@ -3,16 +3,8 @@
     <header>
       <div class="logo">
         <img :src="logoUrl" />
-        <div
-          class="switch-lang"
-          v-if="$window.getSettingByKey('SHOW_LANGUAGE')"
-        >
-          <span
-            v-for="(value, key) in languages"
-            :key="key"
-            :class="{ bold: key === lang }"
-            @click="langChange(key)"
-          >
+        <div class="switch-lang" v-if="$window.getSettingByKey('SHOW_LANGUAGE')">
+          <span v-for="(value, key) in languages" :key="key" :class="{ bold: key === lang }" @click="langChange(key)">
             {{ value }}
           </span>
         </div>

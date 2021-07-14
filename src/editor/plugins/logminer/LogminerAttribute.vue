@@ -6,37 +6,19 @@
 			</el-button>
 		</div> -->
 
-    <el-form
-      ref="model"
-      :model="model"
-      label-position="top"
-      label-width="200px"
-      :disabled="disabled"
-    >
+    <el-form ref="model" :model="model" label-position="top" label-width="200px" :disabled="disabled">
       <el-col :span="21" class="aggregateName">
         <el-form-item :label="$t('dataFlow.nodeName')" required>
-          <el-input
-            v-model="model.name"
-            maxlength="20"
-            show-word-limit
-          ></el-input>
+          <el-input v-model="model.name" maxlength="20" show-word-limit></el-input>
         </el-form-item>
       </el-col>
       <el-row :gutter="30">
         <el-col :span="11">
-          <el-form-item
-            :label="$t('editor.cell.data_node.logminer.miningLogTime')"
-            required
-          >
+          <el-form-item :label="$t('editor.cell.data_node.logminer.miningLogTime')" required>
             <!-- <el-tooltip placement="left-start">
 							<span>111111</span>
 						</el-tooltip> -->
-            <el-popover
-              class="aggtip"
-              placement="top-start"
-              width="400"
-              trigger="hover"
-            >
+            <el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
               <ul>
                 <li style="word-break: keep-all">
                   {{ $t('dataFlow.SyncInfo.localTZ') }}
@@ -51,12 +33,7 @@
               <span class="icon iconfont icon-tishi1" slot="reference"></span>
             </el-popover>
             <el-select v-model="model.syncPoint.type" @change="changeTimeZone">
-              <el-option
-                v-for="item in timeZoneList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
+              <el-option v-for="item in timeZoneList" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
@@ -74,14 +51,8 @@
         </el-col>
       </el-row>
       <el-col :span="21" class="aggregateName">
-        <el-form-item
-          :label="$t('editor.cell.data_node.logminer.logSaveTime')"
-          required
-        >
-          <el-select
-            v-model="model.logTtl"
-            @change="changeAggFunction(item, index)"
-          >
+        <el-form-item :label="$t('editor.cell.data_node.logminer.logSaveTime')" required>
+          <el-select v-model="model.logTtl" @change="changeAggFunction(item, index)">
             <el-option
               v-for="item in logSaveList"
               :key="item"
@@ -92,12 +63,7 @@
           </el-select>
         </el-form-item>
       </el-col>
-      <el-row
-        :gutter="20"
-        class="loopFrom"
-        v-for="(item, index) in model.logCollectorSettings"
-        :key="index"
-      >
+      <el-row :gutter="20" class="loopFrom" v-for="(item, index) in model.logCollectorSettings" :key="index">
         <el-col :span="21" class="fromLoopBox">
           <el-form-item
             :label="$t('editor.cell.data_node.logminer.logSourceSetting')"
@@ -107,31 +73,16 @@
             <el-select
               v-model="item.connectionId"
               filterable
-              :placeholder="
-                $t('editor.cell.data_node.logminer.tableFilter.placeSletSource')
-              "
+              :placeholder="$t('editor.cell.data_node.logminer.tableFilter.placeSletSource')"
               @change="changeConnectionId(item)"
             >
-              <el-option
-                v-for="(item, index) in connectionList"
-                :key="index"
-                :label="item.label"
-                :value="item.value"
-              >
+              <el-option v-for="(item, index) in connectionList" :key="index" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item
-            :prop="'logCollectorSettings.' + index + '.selectType'"
-            required
-          >
+          <el-form-item :prop="'logCollectorSettings.' + index + '.selectType'" required>
             <el-select v-model="item.selectType">
-              <el-option
-                v-for="item in tableTypeList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
+              <el-option v-for="item in tableTypeList" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
@@ -147,44 +98,29 @@
               :placeholder="
                 item.selectType === 'reservationTable'
                   ? $t('editor.cell.data_node.logminer.tableFilter.tableFilter')
-                  : $t(
-                      'editor.cell.data_node.logminer.tableFilter.placeholderDelete'
-                    )
+                  : $t('editor.cell.data_node.logminer.tableFilter.placeholderDelete')
               "
               @change="changeIncludeTables(item)"
             ></MultiSelection>
           </el-form-item>
         </el-col>
         <el-col :span="2" class="right">
-          <span
-            @click="removeRow(item, index)"
-            class="iconfont icon-quxiao remove"
-          ></span>
+          <span @click="removeRow(item, index)" class="iconfont icon-quxiao remove"></span>
         </el-col>
       </el-row>
       <el-form-item class="btnClass">
-        <el-button @click="addRow"
-          >+ {{ $t('editor.cell.data_node.logminer.add') }}</el-button
-        >
+        <el-button @click="addRow">+ {{ $t('editor.cell.data_node.logminer.add') }}</el-button>
       </el-form-item>
     </el-form>
     <div class="functionDescription">
       <h3>{{ $t('editor.cell.data_node.logminer.nodeFunDes') }}</h3>
       <el-row :gutter="5" class="e-row">
-        <el-col :span="4"
-          >{{ $t('editor.cell.data_node.logminer.function') }}:</el-col
-        >
-        <el-col :span="20">{{
-          $t('editor.cell.data_node.logminer.functionContent')
-        }}</el-col>
+        <el-col :span="4">{{ $t('editor.cell.data_node.logminer.function') }}:</el-col>
+        <el-col :span="20">{{ $t('editor.cell.data_node.logminer.functionContent') }}</el-col>
       </el-row>
       <el-row :gutter="5" class="e-row">
-        <el-col :span="4"
-          >{{ $t('editor.cell.data_node.logminer.connectionTarget') }}:</el-col
-        >
-        <el-col :span="20">{{
-          $t('editor.cell.data_node.logminer.connectionText')
-        }}</el-col>
+        <el-col :span="4">{{ $t('editor.cell.data_node.logminer.connectionTarget') }}:</el-col>
+        <el-col :span="20">{{ $t('editor.cell.data_node.logminer.connectionText') }}</el-col>
       </el-row>
     </div>
   </div>
@@ -308,9 +244,7 @@ export default {
       })
       if (new Set(arr).size !== arr.length) {
         data.connectionId = ''
-        this.$message.error(
-          this.$t('editor.cell.data_node.logminer.validate.sameConnection')
-        )
+        this.$message.error(this.$t('editor.cell.data_node.logminer.validate.sameConnection'))
       }
     },
 
@@ -375,11 +309,7 @@ export default {
           let schemas = (result.data.schema && result.data.schema.tables) || []
           if (schemas.length) {
             tempSchemas = schemas.sort((t1, t2) =>
-              t1.table_name > t2.table_name
-                ? 1
-                : t1.table_name === t2.table_name
-                ? 0
-                : -1
+              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
             tempSchemas.forEach(item => {
               includeTablesList.push(item.table_name)
@@ -454,8 +384,7 @@ export default {
           this.model.syncPoint.date = ''
         }
 
-        this.model.connectionId = this.model.logCollectorSettings[0]
-          .connectionId
+        this.model.connectionId = this.model.logCollectorSettings[0].connectionId
           ? this.model.logCollectorSettings[0].connectionId
           : ''
         this.model.logCollectorSettings.map((item, index) => {

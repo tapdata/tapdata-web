@@ -24,6 +24,11 @@ export default function (vm) {
             label: vm.$t('dataForm.form.options.target'),
             tip: vm.$t('dataForm.form.options.targetTips'),
             value: 'target'
+          },
+          {
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+            value: 'source_and_target'
           }
         ],
         required: true
@@ -82,9 +87,7 @@ export default function (vm) {
             value: 'cdc'
           },
           {
-            label: vm.$t(
-              'dataForm.form.custom_connection.history_increamental_data'
-            ),
+            label: vm.$t('dataForm.form.custom_connection.history_increamental_data'),
             value: 'initial_sync+cdc'
           }
         ],
