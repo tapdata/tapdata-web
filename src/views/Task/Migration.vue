@@ -557,7 +557,7 @@ export default {
           this.$axios
             .post(`tm/api/DataFlows/removeAll?where=` + encodeURIComponent(JSON.stringify(where)))
             .then(data => {
-              if (data?.success) {
+              if (data?.success?.length) {
                 this.fetch()
                 this.responseHandler(data, '删除成功')
               } else if (data?.fail) {
