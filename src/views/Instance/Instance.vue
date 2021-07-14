@@ -344,7 +344,9 @@ export default {
               }, 0)
             }
             this.clearTimer()
-            this.setTimer()
+            if (this.haveStateLoadingFlag) {
+              this.setTimer()
+            }
           })
           .finally(() => {
             if (!hideLoading) {
@@ -492,11 +494,7 @@ export default {
     },
     setTimer() {
       this.timer = setInterval(() => {
-        if (this.haveStateLoadingFlag) {
-          this.fetch(null, null, true)
-        } else {
-          this.clearTimer()
-        }
+        this.fetch(null, null, true)
       }, 10000)
     },
     clearTimer() {
