@@ -126,7 +126,7 @@
               <div
                 class="custom-connection-box"
                 v-if="
-                  ['cdc', 'initial_sync+cdc'].includes(model.custom_type) && ['source'].includes(model.connection_type)
+                  ['cdc', 'initial_sync+cdc'].includes(model.custom_type) && ['source','source_and_target'].includes(model.connection_type)
                 "
               >
                 <div class="custom-connection-label">
@@ -142,7 +142,7 @@
                 class="custom-connection-box"
                 v-if="
                   ['initial_sync', 'initial_sync+cdc'].includes(model.custom_type) &&
-                  ['source'].includes(model.connection_type)
+                  ['source','source_and_target'].includes(model.connection_type)
                 "
               >
                 <div class="custom-connection-label">
@@ -163,7 +163,6 @@
                   {{ $t('dataForm.form.custom_connection.on_data_code') }}
                 </div>
                 <div class="custom-connection-main">
-                  <div style="margin-top: 10px; font-size: 14px">Info</div>
                   <div>
                     data = [{
                     <span style="color: #998; font-style: italic"> // data is an array</span>
