@@ -137,8 +137,8 @@ export default {
       let downloadUrl = (this.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
       let map = {
         windows: `tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
-        Linux: `mv tapdata tapdata-v1.0.1 && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
-        Docker: `mv tapdata tapdata-v1.0.1 && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`
+        Linux: `./tapdata stop agent && rm -f tapdata-v1.0.2 && mv tapdata tapdata-v1.0.2 && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+        Docker: `./tapdata stop agent && rm -f tapdata-v1.0.2 && mv tapdata tapdata-v1.0.2 && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`
       }
       return map[this.downLoadType]
     }

@@ -243,8 +243,8 @@ export default {
       let agentList = this.agentList
       let filter = {
         where: {},
-        size: 1,
-        page: 0,
+        // size: 1,
+        // page: 0,
         sort: ['createAt desc']
       }
       const loading = this.$loading({
@@ -253,6 +253,7 @@ export default {
       this.$axios
         .get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
         .then(data => {
+          agentList[0].value = data?.total
           agentList[0].list[0].value = data?.items?.[0]?.status === 'Running' ? '运行中' : '离线'
         })
         .finally(() => {

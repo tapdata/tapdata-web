@@ -250,6 +250,13 @@ module.exports = Object.assign({}, dataflow, connection, {
     code: 'ok',
     msg: 'ok'
   },
+  '/tm/api/clusterStates/updataAgent': {
+    data: {
+      status: '1'
+    },
+    code: 'ok',
+    msg: 'ok'
+  },
   '/tm/api/clusterStates': {
     'data|0-10': [
       {

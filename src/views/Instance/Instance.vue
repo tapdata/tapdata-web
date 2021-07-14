@@ -28,6 +28,10 @@
           </ul>
         </div>
         <div v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'" class="instance-operation-right">
+          <ElButton type="primary" @click="createAgent">
+            <i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
+            <span>创建 Agent</span>
+          </ElButton>
           <ElButton type="primary" @click="toOldPurchase">
             <i class="iconfont td-icon-dinggou mr-1"></i>
             <span>订购托管实例</span>
@@ -80,23 +84,36 @@
           <template slot-scope="scope">
             <div class="flex align-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
-              <template v-if="scope.row.spec && version && scope.row.spec.version !== version">
+              <img
+                class="upgrade-img cursor-pointer"
+                :src="upgradeSvg"
+                alt=""
+                @click="showUpgradeDialogFnc(scope.row)"
+              />
+              <img class="upgrade-img cursor-not-allowed" :src="upgradeLoadingSvg" alt="" />
+              <img
+                class="upgrade-img cursor-pointer"
+                :src="upgradeErrorSvg"
+                alt=""
+                @click="showUpgradeErrorDialogFnc(scope.row)"
+              />
+              <template v-if="false && scope.row.spec && version && scope.row.spec.version !== version">
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
                   <img
-                    v-if="!scope.row.updataStatus || scope.row.updataStatus === 'done'"
+                    v-if="!scope.row.tmInfo.updataStatus || scope.row.tmInfo.updataStatus === 'done'"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeSvg"
                     alt=""
                     @click="showUpgradeDialogFnc(scope.row)"
                   />
                   <img
-                    v-else-if="['preparing', 'downloading', 'upgrading'].includes(scope.row.updataStatus)"
+                    v-else-if="['preparing', 'downloading', 'upgrading'].includes(scope.row.tmInfo.updataStatus)"
                     class="upgrade-img cursor-not-allowed"
                     :src="upgradeLoadingSvg"
                     alt=""
                   />
                   <img
-                    v-else-if="scope.row.updataStatus === 'fail'"
+                    v-else-if="scope.row.tmInfo.updataStatus === 'fail'"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeErrorSvg"
                     alt=""
@@ -142,7 +159,7 @@
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center">
             <ElButton type="primary" :disabled="agentStatus !== 'running'" @click="autoUpgradeFnc">自动升级</ElButton>
-            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">
+            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
               (Agent离线时无法使用自动升级)
             </div>
           </div>
@@ -176,8 +193,8 @@ import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
 import { INSTANCE_STATUS_MAP } from '../../const'
-// import upgradeSvg from '../../assets/icons/svg-colorful/upgrade.svg'
 import upgradeSvg from '../../../public/images/agent/upgrade.svg'
+import upgradeImg from '../../assets/image/upgrade.png'
 import upgradeLoadingSvg from '../../../public/images/agent/upgrade-loading.svg'
 import upgradeErrorSvg from '../../../public/images/agent/upgrade-error.svg'
 // import upgradeImg from '../../assets/image/upgrade.png'
@@ -211,9 +228,9 @@ export default {
       version: '',
       upgradeList: [], // 升级列表
       upgradeSvg,
+      upgradeImg,
       upgradeLoadingSvg,
       upgradeErrorSvg
-      // upgradeImg
     }
   },
   computed: {
@@ -355,6 +372,52 @@ export default {
 
       window.open(downloadUrl.href, '_blank')
     },
+    // 停止
+    handleStop(row) {
+      let flag = false
+      if (row.metric?.runningTaskNum) {
+        flag = true
+      }
+      let message = flag
+        ? '当前Agent有任务正在运行，强行停止Agent可能会导致任务出现异常，是否要强行停止！'
+        : 'Agent停止后将无法再继续运行任务，您需要去Agent安装目录下才能再次启动Agent，是否确认停止？'
+      this.$confirm(message, '是否停止', {
+        type: 'warning'
+      }).then(res => {
+        if (res) {
+          this.$axios
+            .patch('api/tcm/agent/stop/' + row.id)
+            .then(() => {
+              this.$message.success('Agent 已停止')
+              this.fetch()
+            })
+            .catch(() => {
+              this.$message.error('Agent 停止失败')
+              this.loading = false
+            })
+        }
+      })
+    },
+    // 删除
+    handleDel(row) {
+      this.$confirm('删除后该Agent将无法再继续使用，是否确认删除？', '是否删除', {
+        type: 'warning'
+      }).then(res => {
+        if (res) {
+          this.$axios
+            .patch('api/tcm/agent/delete/' + row.id)
+            .then(() => {
+              this.$message.success('Agent 删除成功')
+              this.fetch()
+            })
+            .catch(() => {
+              this.$message.error('Agent 删除失败')
+              this.loading = false
+            })
+        }
+      })
+    },
+
     updateName(val, id) {
       this.loading = true
       this.$axios
@@ -397,6 +460,10 @@ export default {
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
       this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
+        // dev环境特殊处理
+        if (location.href.includes('dev.')) {
+          downloadUrl = `http://resource.tapdata.net/package/feagent/dfs-v1.0.3-071201-test-001/`
+        }
         this.$axios
           .post('tm/api/clusterStates/updataAgent', {
             downloadUrl,
@@ -450,6 +517,34 @@ export default {
           break
       }
       return result
+    },
+    // agent详情
+    handleDetails(data) {
+      this.$router.push({
+        name: 'InstanceDetails',
+        query: {
+          id: data.id
+        }
+      })
+    },
+    // 创建Agent
+    createAgent() {
+      this.$confirm('是否创建 Agent？', '创建 Agent', {
+        type: 'warning'
+      }).then(res => {
+        if (res) {
+          this.$axios
+            .post('api/tcm/orders', {
+              agentType: 'Local'
+            })
+            .then(() => {
+              this.fetch()
+            })
+            .catch(() => {
+              this.$router.replace('/500')
+            })
+        }
+      })
     }
   }
 }
