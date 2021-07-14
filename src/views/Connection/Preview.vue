@@ -110,7 +110,7 @@
         </div>
       </ul>
     </div>
-    <ConnectionTest ref="test" @recieve="recieveTestData"></ConnectionTest>
+    <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
   </el-drawer>
 </template>
 
@@ -177,7 +177,7 @@ export default {
       }
       return require(`../../../packages/tapdata-web-core/assets/images/connection-type/${type.toLowerCase()}.png`)
     },
-    recieveTestData(data) {
+    receiveTestData(data) {
       if (!data.status || data.status === null) return
       this.status = data.status
     },

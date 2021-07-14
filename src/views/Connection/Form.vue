@@ -518,7 +518,7 @@
         </footer>
       </main>
     </div>
-    <ConnectionTest ref="test" @recieve="recieveTestData"></ConnectionTest>
+    <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
     <el-dialog
       :title="$t('connection.rename')"
       :close-on-click-modal="false"
@@ -1405,7 +1405,7 @@ export default {
         })
       })
     },
-    recieveTestData(data) {
+    receiveTestData(data) {
       if (!data.status || data.status === null) return
       this.status = data.status
     },
