@@ -93,9 +93,7 @@ export default {
       let { current, size } = page
       let { keyword, metaType } = this.searchParams
       let where = {
-        dataFlowId: {
-          like: this.$route.query.id
-        },
+        dataFlowId: this.$route.query.id,
         statsType: 'dataFlowDetailsStats'
       }
       if (keyword && keyword.trim()) {
