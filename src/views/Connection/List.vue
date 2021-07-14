@@ -175,7 +175,7 @@ export default {
         size: 10,
         total: 0
       },
-      order: 'createAt desc',
+      order: 'createTime desc',
 
       statusMap: CONNECTION_STATUS_MAP,
       whiteList: SUPPORT_DB
