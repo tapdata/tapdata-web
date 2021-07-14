@@ -616,10 +616,6 @@ export default {
     flex: 1;
     overflow: auto;
     border-bottom: none;
-    .agent-link {
-      color: unset;
-      cursor: unset;
-    }
   }
   .instance-table__empty {
     color: map-get($fontColor, light);
