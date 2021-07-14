@@ -102,7 +102,7 @@
         @current-change="fetch"
       >
       </ElPagination>
-      <ConnectionTest ref="test" @recieve="recieveTestData"></ConnectionTest>
+      <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
       <Preview ref="preview"></Preview>
     </div>
   </section>
@@ -321,7 +321,7 @@ export default {
         loading.close()
       })
     },
-    recieveTestData(data) {
+    receiveTestData(data) {
       if (!data.status || data.status === null) return
       let status = data.status
       if (status === 'ready') {
