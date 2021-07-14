@@ -27,6 +27,12 @@
             </li>
           </ul>
         </div>
+        <div class="instance-operation-right">
+          <ElButton type="primary" @click="createAgent">
+            <i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
+            <span>创建 Agent</span>
+          </ElButton>
+        </div>
         <div v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'" class="instance-operation-right">
           <ElButton type="primary" @click="createAgent">
             <i class="iconfont td-icon-dinggou" style="margin-right: 5px;"></i>
@@ -45,7 +51,7 @@
       <El-table class="instance-table  table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
         <ElTableColumn min-width="200px" label="实例ID/名称">
           <template slot-scope="scope">
-            <ElLink class="agent-link" type="primary">{{ scope.row.id }}</ElLink>
+            <ElLink class="agent-link" type="primary" @click="handleDetails(scope.row)">{{ scope.row.id }}</ElLink>
             <ClipButton :value="scope.row.id"></ClipButton>
             <InlineInput
               style="display: block;"
@@ -130,8 +136,18 @@
           </template>
         </ElTableColumn>
         <ElTableColumn label="操作" width="120" fixed="right">
-          <template>
-            <ElLink type="primary" class="mr-2" @click="toDeploy">部署</ElLink>
+          <template slot-scope="scope">
+            <ElLink type="primary" class="mr-2" :disabled="scope.row.deployDisable" @click="toDeploy">部署</ElLink>
+            <ElLink
+              type="primary"
+              class="mr-2"
+              :disabled="scope.row.status !== 'Running'"
+              @click="handleStop(scope.row)"
+              >停止</ElLink
+            >
+            <ElLink type="danger" class="mr-2" @click="handleDel(scope.row)" :disabled="scope.row.status !== 'Offline'"
+              >删除</ElLink
+            >
           </template>
         </ElTableColumn>
         <div class="instance-table__empty" slot="empty">
@@ -314,6 +330,7 @@ export default {
             this.list = list.map(item => {
               item.status = item.status === 'Running' ? 'Running' : 'Offline'
               item.updataStatus = ''
+              item.deployDisable = item.tmInfo.pingTime || false
               return item
             })
             // 不存在版本号
@@ -589,8 +606,8 @@ export default {
     overflow: auto;
     border-bottom: none;
     .agent-link {
-      color: unset;
-      cursor: unset;
+      // color: unset;
+      // cursor: unset;
     }
   }
   .instance-table__empty {
