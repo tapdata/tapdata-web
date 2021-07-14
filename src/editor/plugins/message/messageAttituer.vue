@@ -116,6 +116,8 @@ export default {
     const validateName = (rule, value, callback) => {
       if (!value) {
         callback(new Error('名称不能为空'))
+      } else if (this.getAllItemInTree([...this.fromData, ...this.toData]).includes(value)) {
+        callback(new Error('名称已存在'))
       } else {
         callback()
       }
@@ -306,6 +308,16 @@ export default {
       let result = _.cloneDeep(this.model)
       result.name = result.name || 'Message'
       console.log('result', result)
+      return result
+    },
+    getAllItemInTree(data, result = []) {
+      data.forEach(el => {
+        result.push(el.key)
+        let children = el.children
+        if (children?.length) {
+          this.getAllItemInTree(children, result)
+        }
+      })
       return result
     },
     // 获取图片
