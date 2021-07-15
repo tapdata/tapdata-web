@@ -262,7 +262,7 @@ export default {
         .then(data => {
           agentList[0].value = data?.total
           let total = data?.total
-          let runningCount = agentList.filter(item => item.status === 'Running')?.length ?? 0
+          let runningCount = data.items.filter(item => item.status === 'Running')?.length ?? 0
           let offlineCount = total - runningCount
           agentList[0].list[0].running = runningCount
           agentList[0].list[0].offline = offlineCount
