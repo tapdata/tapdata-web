@@ -413,8 +413,7 @@ export default {
         if (from === 'add' && findOne) {
           el.name = ''
           el.key = 'NEED_RENAME_' + new Date().getTime() + index
-        }
-        else if (!el.key?.includes('_RIGHT')) {
+        } else if (!el.key?.includes('_RIGHT')) {
           el.key = el.key + '_RIGHT'
         }
         if (el?.children?.length) {
@@ -604,7 +603,12 @@ export default {
           })
         }
       } else {
-        result[tree.mapping.join('#')?.replace(/\./g, '#').replace('_RIGHT', '')] = tree.key.replace('_RIGHT', '')
+        result[
+          tree.mapping
+            .join('#')
+            ?.replace(/\./g, '#')
+            ?.replace(/_RIGHT/g, '')
+        ] = tree.key.replace('_RIGHT', '')
       }
       return result
     },
