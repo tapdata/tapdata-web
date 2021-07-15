@@ -223,7 +223,7 @@ export default {
           sourceField = sourceSchema ? sourceSchema.fields : []
         // targetSchema = targetCell ? targetCell.getSchema() : null,
         if (sourceField) {
-          _this.fieldsData = sourceSchema.fields.map(field => {
+          _this.fieldsData = sourceSchema.fields.filter(field => !!field.field_name).map(field => {
             let obj = {
               pid: 0,
               label: 'required',

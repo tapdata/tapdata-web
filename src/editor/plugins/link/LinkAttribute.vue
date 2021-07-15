@@ -580,7 +580,7 @@ export default {
         { deep: true }
       )
 
-      this.targetCell.on('change:outputSchema', this.renderSchema, this)
+      this.targetCell?.on('change:outputSchema', this.renderSchema, this)
 
       this.renderSchema()
     },
