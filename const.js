@@ -24,5 +24,6 @@ export const TYPEMAP = {
   hive: 'Hive',
   tcp_udp: 'TCP/IP',
   kudu: 'KUDU',
-  hbase: 'HBase'
+  hbase: 'HBase',
+  mq: 'MQ'
 }
