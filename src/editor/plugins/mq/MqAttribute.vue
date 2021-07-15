@@ -214,26 +214,40 @@ export default {
     'model.tableName': {
       immediate: true,
       handler() {
-        // 截取表类型
-        let reg = /\([^)]+\)/g
-        let table_type = this.model.tableName && this.model.tableName.match(reg)[0]
-        table_type = table_type.substring(1, table_type.length - 1)
-        this.model.table_type = table_type
+        let self = this
 
-        if (this.schemas.length > 0) {
+        // 截取表类型
+        let reg = /\((.+?)\)/g
+        let tableName = ''
+        if (this.model.tableName) {
+          let table_type = this.model.tableName.match(reg)[0]
+          table_type = table_type.substring(1, table_type.length - 1)
+          this.model.table_type = table_type
+          let index = this.model.tableName.lastIndexOf('\(')
+          tableName = this.model.tableName.substring(0, index)
+        }
+
+        if (self.schemas.length > 0) {
           if (this.model.tableName) {
-            let schema = this.schemaSelectConfig.options.filter(s => s === this.model.tableName)
-            schema =
-              schema && schema.length > 0
-                ? schema[0]
-                : {
-                    table_name: this.model.tableName,
-                    cdc_enabled: true,
-                    meta_type: 'mq',
-                    fields: []
-                  }
+            let schema = tempSchemas.filter(s => s.table_name === tableName)
+            schema = schema.length
+              ? schema[0]
+              : {
+                  table_name: this.model.tableName,
+                  cdc_enabled: true,
+                  meta_type: 'mq',
+                  fields: []
+                }
             this.$emit('schemaChange', _.cloneDeep(schema))
           }
+        } else {
+          let schema = {
+            cdc_enabled: true,
+            fields: [],
+            meta_type: 'table',
+            table_name: this.model.tableName
+          }
+          self.$emit('schemaChange', _.cloneDeep(schema))
         }
       }
     }
@@ -297,32 +311,28 @@ export default {
             let schemas = []
             this.mqType = result.data.mqType
             if (this.mqType === '0') {
-              result.data.mqQueueSet = result.data.mqQueueSet.map(item => {
-                return {
-                  label: item + '(queue)',
-                  value: item
-                }
-              })
-              result.data.mqTopicSet = result.data.mqTopicSet.map(item => {
-                return {
-                  label: item + '(topic)',
-                  value: item
-                }
-              })
+              result.data.mqQueueSet = result.data.mqQueueSet.map(item => item + '(queue)')
+              result.data.mqTopicSet = result.data.mqTopicSet.map(item => item + '(topic)')
+              // result.data.mqTopicSet = result.data.mqTopicSet.map(item => {
+              //   return {
+              //     label: item + '(topic)',
+              //     value: item
+              //   }
+              // })
               let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
               schemas = [...new Set(data)]
             } else if (this.mqType === '1') {
-              schemas = result.data.mqQueueSet
+              schemas = result.data.mqQueueSet.map(item => item + '(queue)')
             } else {
-              schemas = result.data.mqTopicSet
+              schemas = result.data.mqTopicSet.map(item => item + '(topic)')
             }
-            tempSchemas = result.data.schemas
+            tempSchemas = result.data.schema.tables
             schemas = schemas.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
             self.schemas = schemas
 
             self.schemaSelectConfig.options = schemas.map(item => ({
-              label: item.label || item,
-              value: item.value || item
+              label: item,
+              value: item
             }))
           }
         })
@@ -363,64 +373,7 @@ export default {
     setDisabled(disabled) {
       this.disabled = disabled
     },
-    handlerSchemaChange() {
-      let self = this
-      if (self.schemas.length > 0) {
-        let schemas = self.schemas.filter(s => s.table_name === this.model.tableName)
-        if (schemas && schemas.length > 0) {
-          this.model.tableId = schemas[0].id
-        } else {
-          this.model.tableId = ''
-        }
-      }
-      if (this.model.tableId) {
-        let params = {
-          filter: JSON.stringify({
-            where: {
-              id: this.model.tableId,
-              is_deleted: false
-            }
-          })
-        }
-        self.loading = true
-        MetadataInstances.schema(params).then(res => {
-          if (res.data) {
-            let fields = res.data.records[0].schema.tables[0].fields
-            // let primaryKeys = fields
-            // 	.filter(f => f.primary_key_position > 0)
-            // 	.map(f => f.field_name)
-            // 	.join(',');
-            self.primaryKeyOptions = fields.map(f => f.field_name)
-            self.model.custSql.custFields = fields.map(f => f.field_name)
-            // if (primaryKeys) {
-            // 	self.model.primaryKeys = primaryKeys;
-            // } else {
-            // 	self.model.primaryKeys = '';
-            // }
-            this.loadSchema = res.data.records[0].schema.tables[0]
-            self.$emit('schemaChange', _.cloneDeep(res.data.records[0].schema.tables[0]))
-          }
-        })
-      } else {
-        let schema = {
-          cdc_enabled: true,
-          fields: [],
-          meta_type: 'table',
-          table_name: this.model.tableName
-        }
-        self.$emit('schemaChange', _.cloneDeep(schema))
-      }
-      this.taskData.tableName = this.model.tableName
-
-      // 切换清空连线关联条件的值
-      // this.cell.graph.getConnectedLinks(this.cell, { outbound: true }).forEach(link => {
-      // 	let orignData = link.getFormData();
-      // 	if (orignData) {
-      // 		orignData.joinTable.joinKeys = [];
-      // 	}
-      // 	link.setFormData(orignData);
-      // });
-    }
+    handlerSchemaChange() {}
 
     // seeMonitor() {
     // 	editorMonitor.goBackMontior();
