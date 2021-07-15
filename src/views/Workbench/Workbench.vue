@@ -262,7 +262,7 @@ export default {
         .then(data => {
           agentList[0].value = data?.total
           let total = data?.total
-          let runningCount = agentList.filter(item => item.status === 'Running')?.length ?? 0
+          let runningCount = data.items.filter(item => item.status === 'Running')?.length ?? 0
           let offlineCount = total - runningCount
           agentList[0].list[0].running = runningCount
           agentList[0].list[0].offline = offlineCount
@@ -286,8 +286,8 @@ export default {
           const chart8 = data.chart8
           if (chart8) {
             agentList[1].value = chart8.total
-            agentList[1].list[0].value = chart8.invalid
-            agentList[1].list[1].value = chart8.ready
+            agentList[1].list[0].value = chart8.ready
+            agentList[1].list[1].value = chart8.invalid
           }
 
           // 任务
