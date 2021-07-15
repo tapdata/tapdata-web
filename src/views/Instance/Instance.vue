@@ -324,7 +324,7 @@ export default {
           .then(async data => {
             let list = data.items || []
             this.list = list.map(item => {
-              item.status = item.status === 'Running' ? 'Running' : 'Offline'
+              item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
               item.deployDisable = item.tmInfo.pingTime || false
               // item.updateStatus = ''
               if (!item.tmInfo) {
