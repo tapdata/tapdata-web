@@ -246,8 +246,6 @@ export default {
       if (this.model.pbProcessorConfig?.schema) {
         let genTree = this.genTree({ ...this.model.pbProcessorConfig?.schema })
         console.log('genTree', genTree)
-        // this.toData = result
-        // TODO 删除右侧已存在的key
         this.toData = genTree || []
         let getRightFields = this.getRightFields(this.toData)
         let getRightFieldsKeys = getRightFields.map(item => item.key)
