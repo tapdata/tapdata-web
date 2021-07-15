@@ -286,8 +286,8 @@ export default {
           const chart8 = data.chart8
           if (chart8) {
             agentList[1].value = chart8.total
-            agentList[1].list[0].value = chart8.invalid
-            agentList[1].list[1].value = chart8.ready
+            agentList[1].list[0].value = chart8.ready
+            agentList[1].list[1].value = chart8.invalid
           }
 
           // 任务
