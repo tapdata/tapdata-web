@@ -9,7 +9,8 @@ import VueBus from 'vue-bus'
 import VueClipboard from 'vue-clipboard2'
 import factory from '@/api/factory'
 import Cache from '@/utils/cache'
-import TapdataWebCore from '../packages/tapdata-web-core'
+import TapdataWebCore, { langs } from '../packages/tapdata-web-core'
+import locale from 'element-ui/lib/locale'
 
 import '@/plugins/element'
 import '@/plugins/icon'
@@ -81,18 +82,22 @@ let init = settings => {
     localStorage.setItem('tapdata_localize_lang', lang || 'en')
   }
 
+  const i18n = new VueI18n({
+    locale:
+      {
+        sc: 'zh-CN',
+        tc: 'zh-TW',
+        en: 'en'
+      }[lang] || 'zh-CN',
+    messages: langs
+  })
+  locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
+
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
+
   window.App = new Vue({
     el: '#app',
-    i18n: new VueI18n({
-      locale:
-        {
-          sc: 'zh-CN',
-          tc: 'zh-TW',
-          en: 'en'
-        }[lang] || 'zh-CN',
-      messages: TapdataWebCore.locale
-    }),
+    i18n,
     router,
     store,
     render: h => h(App)
