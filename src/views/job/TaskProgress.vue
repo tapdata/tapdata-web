@@ -213,6 +213,7 @@
 
 // const dataFlowsAPI = factory('DataFlows')
 // let timer = null
+import ws from '@/api/ws'
 export default {
   name: 'TaskProgress',
   props: {
@@ -251,6 +252,10 @@ export default {
     //   self.updateDataFlow()
     // }, 5000)
     this.handleData(this.dataFlow)
+    //及时更新输入输出的数据
+    ws.on('watch', function (data) {
+      this.handleData(data)
+    })
   },
 
   methods: {

@@ -252,7 +252,7 @@ export default class Editor extends BaseObject {
 
     self.initMonitor(dataFlow)
     self.showLogs(dataFlow, true)
-    if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+    if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
       self.showTaskProgress(dataFlow, true)
     }
   }
