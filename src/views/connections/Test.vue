@@ -36,6 +36,7 @@
     <el-table
       :data="testData.testLogs"
       style="width: 100%"
+      max-height="500"
       class="test-block"
       :row-style="rowStyleHandler"
       v-show="testData.testLogs && testData.testLogs.length > 0"
@@ -242,11 +243,10 @@ export default {
         self.timer = setTimeout(() => {
           if (self.isTimeout) {
             self.wsError = 'ERROR'
-            self.wsErrorMsg = self.$t('dataForm.test.retryTest')
+            self.wsErrorMsg = self.wsErrorMsg ? self.wsErrorMsg : self.$t('dataForm.test.retryTest')
             let testData = {
               wsError: 'ERROR'
             }
-            console.log('zhixingl')
             self.$emit('returnTestData', testData)
           }
         }, 800)
