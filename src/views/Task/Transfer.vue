@@ -43,8 +43,8 @@
         @change="handleChangeFileTransfer"
         class="field-transfer"
       >
-        <span slot-scope="{ option }">
-          <span v-show="!option.showInput"> {{ option.label }}</span>
+        <span slot-scope="{ option }" class="transfer-label">
+          <span v-show="!option.showInput" class="transfer-label__span"> {{ option.label }}</span>
           <span v-show="option.showInput" class="field-transfer__input">
             <el-input
               v-model="option.label"
@@ -58,7 +58,7 @@
             <i class="el-icon-check" @click.stop.prevent="checkInput(option)"></i>
           </span>
           <span
-            v-if="selectSourceFileArr.includes(option.key)"
+            v-if="selectSourceFileArr.includes(option.key) && !option.showInput"
             @click.stop.prevent="rename(option)"
             class="el-icon-edit field-transfer__icon"
           ></span>
@@ -563,6 +563,16 @@ export default {
   }
 }
 .field-transfer {
+  .transfer-label {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .transfer-label__span {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .el-icon-close {
     display: inline-block;
     position: absolute;
@@ -758,7 +768,7 @@ export default {
         height: 22px;
         line-height: 22px;
         font-size: 12px;
-        width: 70%;
+        width: 100%;
       }
     }
   }
