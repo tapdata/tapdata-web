@@ -239,7 +239,7 @@ export default {
       self.timer = setTimeout(() => {
         if (self.isTimeout) {
           self.wsError = 'ERROR'
-          self.wsErrorMsg = self.wsErrorMsg ? self.wsErrorMsg || self.$t('dataForm.test.retryTest')
+          self.wsErrorMsg = self.wsErrorMsg ? self.wsErrorMsg : self.$t('dataForm.test.retryTest')
           let testData = {
             wsError: 'ERROR'
           }
