@@ -32,7 +32,7 @@ const install = function (Vue, opts = {}) {
   })
 
   Vue.mixin({
-    i18n,
+    // i18n, // TODO 后续用更优雅的方式引入
     created() {
       // 创建实例时传入wsOptions，即可默认开启websocket
       let wsOptions = this.$options.wsOptions
