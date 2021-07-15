@@ -1,4 +1,7 @@
-export default {
+import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
+
+const tc = {
+  ...tcLocale,
   tap: {
     login: 'Tapdata-登錄',
     registry: 'Tapdata-註冊',
@@ -534,6 +537,7 @@ export default {
     },
     lag: '滯後',
     executionStatus: '執行狀態',
+    maxLagTime: '最大增量滯後時間',
     searchPlaceholder: '任務名稱/節點名/庫名稱',
     searchAgent: '實例名稱',
     dataRange: '創建日期範圍',
@@ -587,6 +591,7 @@ export default {
     run_custom_sql: '重複運行自定義SQL',
     stop_on_error: '遇到錯誤停止',
     need_to_create_Index: '自動創建索引',
+    noPrimaryKey: '支持無主鍵同步',
     is_schedule: '定期調度任務',
     cron_expression: '調度cron表達式',
     data_quality_tag: '添加數據質量標籤',
@@ -604,6 +609,7 @@ export default {
     send_email_at_most_one_replication: '超過多少秒取消發送',
     read_cdc_interval: '增量同步間隔',
     cdc_concurrency: '增量同步並發寫入',
+    cdcShareFilterOnServer: '共享挖掘日誌過濾',
     read_batch_size: '每次讀取數量',
     cdcDataProcess: '增量數據處理機制',
     batch: '批量',
@@ -626,6 +632,8 @@ export default {
     aggrCleanSecond: '清理舊版本數據時間',
     aggrFullSyncSecond: '全量同步時間',
     enterFilterTable: '請輸入過濾表內容',
+    lagTime: '增量滯後判斷時間設定',
+    lagTimeTip: '當增量任務延遲大於該值時，則認為任務增量滯後，預設值為0',
     aggregatePrompt: '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
     nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
     button: {
@@ -696,6 +704,7 @@ export default {
     runNomally: '才能正常運行',
     editLayerTip: ' 否則可能導致異常錯誤，請問您要繼續編輯嗎?',
     continueEditing: '繼續編輯',
+    numberType: '必須為數位且不能小於0',
     setting: {
       distinctWriteType: '去重寫入機制',
       intellect: '智能去重寫入',
@@ -709,12 +718,13 @@ export default {
     skipError: {
       title: '跳過錯誤設置',
       skipErrorSettings: '任務錯誤處理',
-      tip:
-        '任務上次停止時發生了以下數據相關的錯誤，請確認這些錯誤已經被處理。如果希望跳過這些錯誤，請勾選相應的錯誤項並點擊“跳過錯誤，啟動任務” 。 ',
+      tip: '任務上次停止時發生了以下數據相關的錯誤，請確認這些錯誤已經被處理。如果希望跳過這些錯誤，請勾選相應的錯誤項並點擊“跳過錯誤，啟動任務” 。 ',
       attention: '注意：若導致錯誤的數​​據未被處理，跳過錯誤可能導致這條數據被丟棄。 ',
       startJob: '跳過錯誤，啟動任務',
       cancel: '取消',
-      taskName: '任務名'
+      taskName: '任務名',
+      errorTotal: '共XX條，已選擇',
+      strip: '條'
     }
   },
   connection: {
@@ -744,8 +754,7 @@ export default {
     reloadTittle: '重新加載 schema',
     deteleDatabaseTittle: '是否刪除該連接？',
     deteleDatabaseMsg: '刪除連接 xxx 後，此連接將無法恢復',
-    desc:
-      '數據源包括數據庫，結構化文件，應用程序RESTful API，自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除基礎的配置項之外，數據源還有定期/手動加載數據庫結構 ，設置時區，表過濾設置等功能。更多配置說明，請點擊',
+    desc: '數據源包括數據庫，結構化文件，應用程序RESTful API，自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除基礎的配置項之外，數據源還有定期/手動加載數據庫結構 ，設置時區，表過濾設置等功能。更多配置說明，請點擊',
     reloadMsg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',
     checkMsg: '此數據源被傳輸任務或API所佔用，無法刪除',
     copyFailedMsg: '複製失敗，原因：系統設置中 "連接設置 - 允許創建重複數據源" 被設置為 "false"',
@@ -768,7 +777,8 @@ export default {
       target: '目標',
       source_and_target: '源頭和目標'
     },
-    cannot_delete_remind: '當前連接正在被一個或多個任務或API使用中，請刪除任務或API後重試。'
+    cannot_delete_remind: '當前連接正在被一個或多個任務或API使用中，請刪除任務或API後重試。',
+    dfs_cannot_delete_remind: '當前連接正在被一個或多個任務使用中，請刪除任務後重試。'
   },
   editor: {
     nodeSettings: '節點設置',
@@ -789,6 +799,9 @@ export default {
       },
       data_node: {
         hiveText: 'hive節點',
+        kuduText: 'KUDU節點',
+        hbaseText: 'HBase節點',
+        hbase_check: 'HBase僅支持全量任務',
         kafkaText: 'kafka節點',
         kafkaName_isNull: 'kafka不能為空',
         mqTableType: '新建表類型',
@@ -1280,6 +1293,17 @@ export default {
           message:
             '目標數據模型已存在 _id 字段，系統默認會移除已重複的_id字段，如想保留，請使用字段處理器對源錶的 _id 進行重命名！'
         },
+        pcb: {
+          label: '協定類型',
+          placeholder: '請選擇協定類型',
+          fieldsSelected: '待選欄位',
+          selectedField: '已選欄位',
+          moveUp: '上移',
+          moveDown: '下移',
+          notMoveUpTip: '沒有上移的空間了',
+          notMoveDownTip: '沒有下移的空間了',
+          onlyOnePiece: '只能選擇一條數據進行上下移動'
+        },
         form: {
           label: {
             label: '標籤',
@@ -1609,6 +1633,7 @@ export default {
       databaseType: '數據庫類型',
       connectionType: '連接類型',
       host: '數據庫地址',
+      kuduhost: 'IP地址:端口; 支持多個; 用 , 分割',
       agentAddr: '代理地址',
       port: '端口',
       databaseName: '數據庫名稱',
@@ -1768,6 +1793,7 @@ export default {
         kafkaBufferMemory: '緩存消息字節數',
         kafkaCompressionType: '消息壓縮類型',
         kafkaPartitionKey: '分區鍵分割名',
+        kafkaPartitionKeyTip: '多個字段名請用逗號隔開',
         kafkaIgnorePushError: '忽略推理消息異常',
         pushErrorTip: '如果開啟則忽略該次推送的消息（存在消息丟失），否則停止推送消息',
         kafkaAcks0: '不確認',
@@ -1844,7 +1870,9 @@ export default {
         routeKeyField: '消息路由',
         virtualHost: '虛擬主機',
         queueSetTip: '多個隊列用逗號隔開',
-        topicSetTip: '多個主題用逗號隔開'
+        topicSetTip: '多個主題用逗號隔開',
+        brokerUrl: 'MQ連接串',
+        brokerUrlTip: '示例tcp://127.0.0.1：61616，支持tcp,nio,udp,ssl,http(s)'
       },
       tcp: {
         agreementType: '协议类型',
@@ -2161,8 +2189,7 @@ export default {
     },
     metadataSearch: {
       title: '元數據檢索',
-      desc:
-        '元數據檢索提供對錶、字段的名稱、別名、描述等內容的搜索功能，請先選擇搜索表/字段，再輸入內容，點擊搜索按鈕進行搜索',
+      desc: '元數據檢索提供對錶、字段的名稱、別名、描述等內容的搜索功能，請先選擇搜索表/字段，再輸入內容，點擊搜索按鈕進行搜索',
       table: '搜索表',
       column: '搜索字段',
       search: '搜索',
@@ -3031,6 +3058,7 @@ export default {
     job_cdc_record_doc: ' 自動保存增量事件',
     job_cdc_record_ttl: ' 增量事件保存時長(天)',
     job_cdc_record_ttl_doc: ' 增量事件保存時長(天)',
+    lagTime: '增量滯後判定時間(秒)',
     connection_schema_update_hour: '數據源schema更新時間',
     connection_schema_update_interval: '數據源schema更新周期（天）',
     creatDuplicateSource: ' 允許創建重複數據源',
@@ -3197,3 +3225,5 @@ export default {
     wan: '萬'
   }
 }
+
+export default tc

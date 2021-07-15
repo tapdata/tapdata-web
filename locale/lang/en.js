@@ -1,4 +1,7 @@
-export default {
+import enLocale from 'element-ui/lib/locale/lang/en'
+
+const en = {
+  ...enLocale,
   tap: {
     login: 'Tapdata-Login',
     registry: 'Tapdata-register',
@@ -553,6 +556,7 @@ export default {
     separator: 'to',
     dataPlaceholder: 'Select time range',
     taskStatus: 'Status',
+    maxLagTime: 'Max lag time',
     taskStatusPlaceholder: 'Select task status',
     taskSettingPlaceholder: 'Select Sync type',
     updateTime: 'Update time',
@@ -591,10 +595,14 @@ export default {
     error: 'task error',
     edited: 'task edited',
     started: 'task started',
+    sharecdcmode: 'shared incremental read mode',
+    streaming: 'streaming read',
+    polling: 'polling read',
     drop_target_before_start: 'Whether the target table is deleted before starting the task',
     run_custom_sql: 'Repeat custom SQL',
     stop_on_error: 'Stop when error',
     need_to_create_Index: 'Auto-create index',
+    noPrimaryKey: 'Supported no primary key',
     is_schedule: 'Regular job schedul',
     cron_expression: 'Scheduling cron expression',
     data_quality_tag: 'Add data quality tag',
@@ -614,6 +622,7 @@ export default {
     send_email_at_most_one_replication: 'Cancel sending in more than seconds',
     read_cdc_interval: ' CDC interval',
     cdc_concurrency: ' CDC concurrency',
+    cdcShareFilterOnServer: 'Filter CDC shared log',
     read_batch_size: 'Read-amount/time',
     cdcDataProcess: 'CDC data process',
     batch: 'Batch process',
@@ -636,6 +645,9 @@ export default {
     aggrCleanSecond: 'Time to clean up old version data',
     aggrFullSyncSecond: 'Full synchronization time',
     enterFilterTable: 'Please enter the filter table content',
+    lagTime: 'incremental lag time setting',
+    lagTimeTip:
+      'when the incremental task delay is greater than this value, the incremental task delay is considered, and the default value is 0',
     aggregatePrompt: 'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
     nameTip:
       'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',
@@ -711,6 +723,7 @@ export default {
     runNomally: 'to make sure the job running correctly;',
     editLayerTip: 'otherwise the job will be abnormal, continue？',
     continueEditing: 'Still Edit',
+    numberType: 'must be a number and cannot be less than 0',
     setting: {
       distinctWriteType: 'De-rewrite mode',
       intellect: 'Intelligent de-rewrite',
@@ -726,12 +739,13 @@ export default {
     skipError: {
       title: 'Skip Error Settings',
       skipErrorSettings: 'Data Processing Error Handling',
-      tip:
-        'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip errors, continue to start" button.  ',
+      tip: 'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip errors, continue to start" button.  ',
       attention: 'WARNING: If you chose to skip the errors, the relevant data may be discarded. ',
       startJob: 'Skip errors, continue to start',
       cancel: 'Cancel',
-      taskName: 'Task name'
+      taskName: 'Task name',
+      errorTotal: 'Total XX, selected',
+      strip: 'row'
     }
   },
   connection: {
@@ -759,8 +773,7 @@ export default {
     reloadOK: 'reloading schema',
     reloadFail: 'Failed to schema',
     reloadTittle: 'Reload schema',
-    desc:
-      'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
+    desc: 'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
     deteleDatabaseTittle: 'Do you want to delete the connection?',
     deteleDatabaseMsg: 'After deleting connection XXX, this connection cannot be restored. ',
     reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
@@ -769,7 +782,7 @@ export default {
       'Copy failed, reason:  The setting item "Connections - create  duplicate source" need to be set to "false"',
     change: 'Change',
     rename: 'Rename',
-    testConnection: 'Test connection',
+    testConnection: 'Test connection ',
     status: {
       all: 'All',
       testing: 'testing',
@@ -787,7 +800,9 @@ export default {
       source_and_target: 'Source&Target'
     },
     cannot_delete_remind:
-      'Connection is currently being used by one or more jobs and apis. Please delete the jobs or apis then try again.'
+      'Connection is currently being used by one or more jobs and apis. Please delete the jobs or apis then try again.',
+    dfs_cannot_delete_remind:
+      'Connection is currently being used by one or more jobs. Please delete the jobs then try again.'
   },
   editor: {
     nodeSettings: 'Node Settings',
@@ -808,6 +823,9 @@ export default {
       },
       data_node: {
         hiveText: 'Hive Node',
+        hbaseText: 'HBase Node',
+        kuduText: 'KUDU Node',
+        hbase_check: 'HBase only supports INITIAL SYNC tasks',
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
         mqTableType: 'New table type',
@@ -958,8 +976,7 @@ export default {
             },
             maximum_transaction: {
               label: 'Max Transaction Length',
-              tip:
-                'Time in hours to wait for commit for a transaction. Enter the longest period of time that you expect a transaction to require.Default is 12 hours'
+              tip: 'Time in hours to wait for commit for a transaction. Enter the longest period of time that you expect a transaction to require.Default is 12 hours'
             }
           }
         },
@@ -1254,8 +1271,7 @@ export default {
             expressionExample: {
               label: 'Example expression',
               labelTip: 'Expressions can use comparison and calculation operators in JavaScript',
-              tip:
-                'Select men over 50 years old or people over 30 years old with income below 10,000, the expression is as follows:'
+              tip: 'Select men over 50 years old or people over 30 years old with income below 10,000, the expression is as follows:'
             },
             symbol: {
               label: 'Supported symbols',
@@ -1309,6 +1325,17 @@ export default {
           title: 'Field _id conflict',
           message:
             '"_id" field exists in target model, and system will remove the duplicated field “_id”, if you wanna keep it, please use the field processor to rename the "_id" field before continue.'
+        },
+        pcb: {
+          Label: 'protocol type',
+          Placeholder: 'please select a protocol type',
+          Fieldsselected: 'field to be selected',
+          Selectedfield: 'selected field',
+          Moveup: 'move up',
+          Movedown: 'move down',
+          Notmoveuptip: 'there is no room to move up',
+          Notmovedowntip: 'there is no room to move down',
+          Onlyonepiece: 'only one piece of data can be selected to move up and down'
         },
         form: {
           label: {
@@ -1548,8 +1575,7 @@ export default {
     all: 'All',
     setting: {
       title: 'Verify default settings',
-      text:
-        'The verification setting is the global verification setting, the priority of the advanced setting in the created verification task is higher than the setting here. ',
+      text: 'The verification setting is the global verification setting, the priority of the advanced setting in the created verification task is higher than the setting here. ',
       keepTimeLabel: 'Retention time of verification historical results and detailed information',
       errorSaveSumLable: 'Check out the limit of the number of error messages saved for each table',
       errorDifferenceResult: 'The error tolerance of the difference data allowed by the verification result',
@@ -1644,6 +1670,7 @@ export default {
       databaseType: 'DB type',
       connectionType: 'Connection Type',
       host: 'DB Host',
+      kuduhost: 'IP:port;support multiple; separated by ,',
       agentAddr: 'Agent address',
       port: 'Port',
       databaseName: 'DB Name',
@@ -1810,6 +1837,7 @@ export default {
         kafkaBufferMemory: 'Buffer message bytes',
         kafkaCompressionType: 'Message compression type',
         kafkaPartitionKey: 'Partition key field name',
+        kafkaPartitionKeyTip: 'Please separate multiple field names with commas',
         kafkaIgnorePushError: 'Ignore push message exception',
         pushErrorTip:
           'If it is enabled, ignore the message pushed this time (there is a message loss), otherwise stop pushing the message',
@@ -1886,12 +1914,14 @@ export default {
         database_port: 'MQ Port',
         routeKeyField: 'Message routing',
         virtualHost: 'Virtual host',
-        QueueSetTip: 'Multiple queues are separated by commas',
-        TopicSetTip: 'Multiple topics separated by commas'
+        queueSetTip: 'Multiple queues are separated by commas',
+        topicSetTip: 'Multiple topics separated by commas',
+        brokerUrl: 'MQ connection string',
+        brokerUrlTip: 'example tcp://127.0.0.1 : 61616, support TCP, NiO, UDP, SSL, HTTP (s) '
       },
       tcp: {
-        AgreementType: 'Protocol type ',
-        TargetAddr: 'Target address'
+        agreementType: 'Protocol type ',
+        targetAddr: 'Target address'
       }
     },
     error: {
@@ -2207,8 +2237,7 @@ export default {
     },
     metadataSearch: {
       title: 'Metadata retrieval',
-      desc:
-        'Metadata retrieval provides search functions for the names, aliases, descriptions of tables and fields, please select the search table/field first, then enter the content, and click the search button to search',
+      desc: 'Metadata retrieval provides search functions for the names, aliases, descriptions of tables and fields, please select the search table/field first, then enter the content, and click the search button to search',
       table: 'Search table',
       column: 'Search field',
       search: 'Search',
@@ -2282,8 +2311,7 @@ export default {
     settingCenter: 'Setting center',
     systemSetting: 'System setting',
     noticeSetting: 'Notice setting',
-    tip:
-      'The notice setting here is the system global notification setting. The priority of the notification setting of Data flow job page is higher than the global notification setting here',
+    tip: 'The notice setting here is the system global notification setting. The priority of the notification setting of Data flow job page is higher than the global notification setting here',
     jobOperationNotice: 'Job operation notice',
     emailNotice: ' Email notice',
     jobStarted: 'Job started',
@@ -2358,8 +2386,7 @@ export default {
       headInterpretation:
         'Tapdata DFS Cloud have to install Agent at local server to ensure databases connection and transmission services normally',
       downloadInstall: 'Download and install',
-      text:
-        'First, a JAVA runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
+      text: 'First, a JAVA runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
       copy: 'Copy command',
       copied: 'copied',
       refresh: 'Refresh',
@@ -3103,6 +3130,7 @@ export default {
     job_cdc_record_doc: 'Automatically save incremental events',
     job_cdc_record_ttl: 'Incremental event save time (days)',
     job_cdc_record_ttl_doc: 'Incremental event save time (days)',
+    lagTime: 'incremental lag decision time (seconds)',
     connection_schema_update_hour: 'Data source schema update time',
     connection_schema_update_interval: 'Data source schema update interval (days)',
     creatDuplicateSource: 'Allow the creation of duplicate data sources',
@@ -3113,8 +3141,7 @@ export default {
   },
   dataQuality: {
     title: 'Data Quality',
-    desc:
-      'The data quality page shows the summary of the table data that violates the data rules, and the user can correct the data that violates the rules on this page.',
+    desc: 'The data quality page shows the summary of the table data that violates the data rules, and the user can correct the data that violates the rules on this page.',
     keywordTip: 'Please search for table name/field name',
     sourceName: 'Name/Origin',
     totalDocs: 'Total',
@@ -3270,3 +3297,5 @@ export default {
     wan: 'W'
   }
 }
+
+export default en

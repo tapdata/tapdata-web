@@ -1,5 +1,6 @@
 import VueI18n from 'vue-i18n'
 import langs from './locale'
+import locale from 'element-ui/lib/locale'
 import FormBuilder from './components/form-builder'
 import ConnectionTypeSelector from './components/connection-type-selector'
 //import ConnectionFormSelector from './components/connection-form'
@@ -12,7 +13,7 @@ import * as _const from './const'
 
 const components = [ConnectionTypeSelector, ConnectionTest, JsEditor]
 
-const install = function(Vue, opts = {}) {
+const install = function (Vue, opts = {}) {
   Vue.prototype.$util = _util
   Vue.prototype.$const = _const
 
@@ -23,6 +24,8 @@ const install = function(Vue, opts = {}) {
     locale: opts.lang || 'zh-CN',
     messages: langs
   })
+  // 重点：为了实现element插件的多语言切换
+  locale.i18n((key, value) => i18n.t(key, value))
 
   components.forEach(component => {
     Vue.component(component.name, component)
