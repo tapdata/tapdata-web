@@ -89,20 +89,20 @@
               <template v-if="scope.row.spec && version && scope.row.spec.version !== version">
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
                   <img
-                    v-if="!scope.row.tmInfo.updataStatus || scope.row.tmInfo.updataStatus === 'done'"
+                    v-if="!scope.row.tmInfo.updateStatus || scope.row.tmInfo.updateStatus === 'done'"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeSvg"
                     alt=""
                     @click="showUpgradeDialogFnc(scope.row)"
                   />
                   <img
-                    v-else-if="['preparing', 'downloading', 'upgrading'].includes(scope.row.tmInfo.updataStatus)"
+                    v-else-if="['preparing', 'downloading', 'upgrading'].includes(scope.row.tmInfo.updateStatus)"
                     class="upgrade-img cursor-not-allowed"
                     :src="upgradeLoadingSvg"
                     alt=""
                   />
                   <img
-                    v-else-if="scope.row.tmInfo.updataStatus === 'fail'"
+                    v-else-if="['fail', 'error'].includes(scope.row.tmInfo.updateStatus)"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeErrorSvg"
                     alt=""
@@ -157,9 +157,7 @@
         </div>
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center">
-            <ElButton type="primary" :disabled="selectedRow && selectedRow.status !== 'Running'" @click="autoUpgradeFnc"
-              >自动升级</ElButton
-            >
+            <ElButton type="primary" :disabled="disabledAuautoUpgradeBtn" @click="autoUpgradeFnc">自动升级</ElButton>
             <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
               (Agent离线时无法使用自动升级)
             </div>
@@ -258,11 +256,14 @@ export default {
     haveStateLoadingFlag() {
       let flag = false
       this.list.forEach(el => {
-        if (['preparing', 'downloading', 'upgrading'].includes(el.tmInfo.updataStatus)) {
+        if (['preparing', 'downloading', 'upgrading'].includes(el.tmInfo.updateStatus)) {
           flag = true
         }
       })
       return flag
+    },
+    disabledAuautoUpgradeBtn() {
+      return !!(this.selectedRow?.status !== 'Running')
     }
   },
   watch: {
@@ -325,7 +326,7 @@ export default {
             this.list = list.map(item => {
               item.status = item.status === 'Running' ? 'Running' : 'Offline'
               item.deployDisable = item.tmInfo.pingTime || false
-              // item.updataStatus = ''
+              // item.updateStatus = ''
               if (!item.tmInfo) {
                 item.tmInfo = {}
               }
@@ -525,7 +526,7 @@ export default {
     },
     getTiptoolContent(row) {
       let result
-      switch (row.tmInfo.updataStatus) {
+      switch (row.tmInfo.updateStatus) {
         case 'preparing':
           result = 'Agent版本有更新，点击升级'
           break
@@ -536,6 +537,9 @@ export default {
           result = '自动升级中'
           break
         case 'fail':
+          result = '自动升级失败，请手动升级'
+          break
+        case 'error':
           result = '自动升级失败，请手动升级'
           break
         default:
