@@ -2,7 +2,7 @@
   <section class="agent-details-wrap" v-loading="loading">
     <template v-if="agent">
       <div class="panel header">
-        <InlineInput class="agent-name" :value="agent.name" @save="updateName($event, $route.params.id)"></InlineInput>
+        <InlineInput class="agent-name" :value="agent.name" @save="updateName($event, agent.id)"></InlineInput>
         <div class="agent-status" style="margin-top: 10px">
           <StatusTag :status="agent.status"></StatusTag>
           <span class="lignt" style="margin-left: 5px">同步任务数：</span>
