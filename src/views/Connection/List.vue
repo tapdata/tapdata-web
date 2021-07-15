@@ -292,7 +292,15 @@ export default {
             this.$message.success('删除成功')
             this.fetch()
           } catch (error) {
-            this.$message.error(error?.response.msg || '删除失败')
+            // 删除失败
+            let errorTip = '删除失败'
+            if (error?.data?.msg) {
+              let { dataFlows, jobs, modules } = error?.data?.msg
+              if ([...dataFlows, ...jobs, ...modules].length > 0) {
+                errorTip = '此连接被任务所占用，无法删除'
+              }
+            }
+            this.$message.error(errorTip)
           }
         }
       })
