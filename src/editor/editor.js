@@ -196,12 +196,12 @@ export default class Editor extends BaseObject {
         .prepend(databaseVueComponent.getContentEl())
       leftSidebar.getContentEl().find('[data-name=processor]').remove()
     } else {
-      // let tableVueComponent = new VueComponent({
-      //   name: 'tableVueComponent',
-      //   editor: this,
-      //   component: TableSelector
-      // })
-      // leftSidebar.getContentEl().find('[data-name=tableSelector] .elements').prepend(tableVueComponent.getContentEl())
+      let tableVueComponent = new VueComponent({
+        name: 'tableVueComponent',
+        editor: this,
+        component: TableSelector
+      })
+      leftSidebar.getContentEl().find('[data-name=tableSelector] .elements').prepend(tableVueComponent.getContentEl())
     }
   }
 
