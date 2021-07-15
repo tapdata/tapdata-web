@@ -120,7 +120,7 @@
         </ElTableColumn>
         <ElTableColumn label="操作" width="120" fixed="right">
           <template slot-scope="scope">
-            <ElLink type="primary" class="mr-2" :disabled="scope.row.deployDisable" @click="toDeploy">部署</ElLink>
+            <ElLink type="primary" class="mr-2" :disabled="!!scope.row.deployDisable" @click="toDeploy">部署</ElLink>
             <ElLink
               type="primary"
               class="mr-2"
@@ -273,11 +273,22 @@ export default {
     }
   },
   created() {
-    let query = this.$route.query
-    this.searchParams.status = query.status || ''
-    this.fetch()
+    this.init()
   },
   methods: {
+    init() {
+      let query = this.$route.query
+      this.searchParams.status = query?.status || ''
+      this.fetch()
+      // 是否触发创建agent
+      if (query?.create) {
+        this.createAgent()
+        // 清除创建标记
+        this.$router.replace({
+          name: 'Instance'
+        })
+      }
+    },
     async getVersion(id) {
       return this.$axios.get('api/tcm/config/version/latest/' + id)
     },

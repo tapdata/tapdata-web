@@ -65,7 +65,6 @@
               <div class="agent-list__detail flex flex-wrap justify-around mt-3 py-2 px-1">
                 <div v-for="(detail, dIndex) in item.list" :key="dIndex" class="agent-list__status mr-2">
                   <template v-if="detail.key === 'agent'">
-                    <span>{{ detail.label }}</span>
                     <span class="success ml-2">运行中：{{ detail.running }}</span>
                     <span class="error ml-2">离线：{{ detail.offline }}</span>
                   </template>
@@ -117,7 +116,7 @@ export default {
           title: '部署Agent，并对已有Agent的状态进行查看和管理',
           desc:
             '欢迎来到Tapdata Cloud，即将开启您的实时数据同步之旅！初次使用请先安装部署Agent，不然无法创建连接和任务哦。',
-          btnName: '部署Agent',
+          btnName: '创建Agent',
           hiddenBtnIcon: true,
           action: this.createAgent
         },
@@ -315,11 +314,12 @@ export default {
       ]
     },
     createAgent() {
-      let downloadUrl = window.App.$router.resolve({
-        name: 'FastDownload'
+      this.$router.push({
+        name: 'Instance',
+        query: {
+          create: true
+        }
       })
-
-      window.open(downloadUrl.href, '_blank')
     },
     createTask() {
       this.$emit('create-task')
