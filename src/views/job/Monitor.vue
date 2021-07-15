@@ -31,9 +31,20 @@
         <div
           class="info fl"
           v-if="
-            ['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database', 'hive', 'mq', 'hbase'].includes(
-              stageType
-            )
+            [
+              'table',
+              'collection',
+              'json',
+              'excel',
+              'csv',
+              'xml',
+              'database',
+              'hive',
+              'mq',
+              'hbase',
+              'kudu',
+              'kafka'
+            ].includes(stageType)
           "
           v-loading="apiLoading"
         >
@@ -147,7 +158,28 @@
               </span>
             </el-tooltip>
           </div>
-          <div class="info-list">
+
+          <div class="info-list" v-if="stage.kafkaBootstrapServers">
+            <span class="info-label">{{ $t('dataForm.form.host') }}:</span>
+            <span class="info-text">{{ stage.kafkaBootstrapServers }}</span>
+            <el-tooltip
+              placement="top"
+              manual
+              :content="$t('dialog.downAgent.copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="stage.kafkaBootstrapServers"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                {{ $t('dataFlow.copy') }}
+              </span>
+            </el-tooltip>
+          </div>
+          <div class="info-list" v-if="stage.brokerURL">
             <span class="info-label">{{ $t('dataForm.form.host') }}:</span>
             <span class="info-text">{{ stage.brokerURL }}</span>
             <el-tooltip
@@ -914,7 +946,8 @@ export default {
               'mysql pxc',
               'hive',
               'mq',
-              'hbase'
+              'hbase',
+              'kudu'
             ].includes(this.stageType)
           ) {
             this.getStageDataApi(currentStageData.connectionId, this.tableName)

@@ -38,17 +38,17 @@ export default function (vm) {
         field: 'collection_name',
         label: vm.$t('dataForm.form.restApi.collection_name'),
         required: true,
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'connection_type',
-                value: 'source'
+                value: 'target'
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ]
@@ -58,17 +58,17 @@ export default function (vm) {
         field: 'unique_keys',
         label: vm.$t('dataForm.form.custom_connection.unique_keys'),
         required: true,
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'connection_type',
-                value: 'source'
+                value: 'target'
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ]
@@ -92,17 +92,17 @@ export default function (vm) {
           }
         ],
         required: true,
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'connection_type',
-                value: 'source'
+                value: 'target'
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ]

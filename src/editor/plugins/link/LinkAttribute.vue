@@ -15,7 +15,7 @@
         ref="form"
         action="javascript:void(0);"
       >
-        <el-form-item :label="$t('editor.cell.link.form.label.label')" v-if="!isTargetTypeTcpFalg">
+        <el-form-item :label="$t('editor.cell.link.form.label.label')">
           <el-input
             v-model="model.label"
             :placeholder="$t('editor.cell.link.form.label.placeholder')"
@@ -25,7 +25,7 @@
           >
           </el-input>
         </el-form-item>
-        <el-form-item :label="$t('editor.cell.link.pcb.label')" v-else>
+        <!-- <el-form-item :label="$t('editor.cell.link.pcb.label')" v-else>
           <el-input
             v-model="model.tcp.protocolType"
             :placeholder="$t('editor.cell.link.pcb.placeholder')"
@@ -34,7 +34,7 @@
             show-word-limit
           >
           </el-input>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
 
       <el-form
@@ -45,7 +45,6 @@
         :model="model"
         ref="form"
         v-show="configJoinTable"
-        v-if="!isTargetTypeTcpFalg"
         action="javascript:void(0);"
       >
         <el-form-item :label="$t('editor.cell.link.form.joinType.label')" required>
@@ -173,7 +172,7 @@
         </el-form-item>
       </el-form>
       <!-- tcp报文配置 -->
-      <div class="transfer" v-else>
+      <!-- <div class="transfer" v-else>
         <el-transfer
           v-model="model.tcp.includeField"
           :data="fieldsData"
@@ -189,8 +188,8 @@
           <el-button class="transfer-footer" slot="right-footer" size="mini" type="primary" @click="handleDown">{{
             $t('editor.cell.link.pcb.moveDown')
           }}</el-button>
-        </el-transfer>
-      </div>
+        </el-transfer> -->
+      <!-- </div> -->
     </div>
 
     <!--
@@ -261,15 +260,15 @@ export default {
         label: '',
         joinTable: _.cloneDeep(JOIN_TABLE_TPL),
         type: 'link',
-        tcp: {
-          protocolType: '',
-          includeField: []
-        },
+        // tcp: {
+        //   protocolType: '',
+        //   includeField: []
+        // },
         joinTableRequired: true
       },
       fieldsData: [],
-      chooseField: '',
-      isTargetTypeTcpFalg: false
+      chooseField: ''
+      // isTargetTypeTcpFalg: false
     }
   },
 
@@ -403,16 +402,16 @@ export default {
       let settingData = vueAdapter.editor.getData().settingData
       this.model.joinTableRequired = !(settingData.noPrimaryKey && ['upsert'].includes(this.model.joinTable.joinType))
 
-      if (!this.configJoinTable) {
-        let targetCell = cell.getTargetCell()
-        let targetData = targetCell && targetCell.getFormData()
-        if (targetData.type !== 'tcp_udp') {
-          return
-        } else {
-          this.isTargetTypeTcpFalg = true
-          this.model.tcp.includeField = targetData.tcp && targetData.tcp.includeField
-        }
-      }
+      // if (!this.configJoinTable) {
+      //   let targetCell = cell.getTargetCell()
+      //   let targetData = targetCell && targetCell.getFormData()
+      //   if (targetData.type !== 'tcp_udp') {
+      //     return
+      //   } else {
+      //     this.isTargetTypeTcpFalg = true
+      //     this.model.tcp.includeField = targetData.tcp && targetData.tcp.includeField
+      //   }
+      // }
       if (cell.getSourceCell()) {
         let sourceCell = cell.getSourceCell(),
           targetCell = cell.getTargetCell(),

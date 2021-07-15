@@ -96,10 +96,10 @@
                 {{ $t('dataForm.form.kafka.pushErrorTip') }}
               </div>
 
-              <div class="url-tip" slot="queueTip" v-if="model.mqType === '0'">
+              <div class="url-tip" slot="queueTip" v-if="model.mqType !== '2'">
                 {{ $t('dataForm.form.mq.queueSetTip') }}
               </div>
-              <div class="url-tip" slot="topicTip">
+              <div class="url-tip" slot="topicTip" v-if="model.mqType !== '1'">
                 {{ $t('dataForm.form.mq.topicSetTip') }}
               </div>
               <div class="url-tip" slot="brokerUrlTip" v-if="model.mqType === '0'">
@@ -126,7 +126,7 @@
               <div
                 class="custom-connection-box"
                 v-if="
-                  ['cdc', 'initial_sync+cdc'].includes(model.custom_type) && ['source'].includes(model.connection_type)
+                  ['cdc', 'initial_sync+cdc'].includes(model.custom_type) && ['source','source_and_target'].includes(model.connection_type)
                 "
               >
                 <div class="custom-connection-label">
@@ -142,7 +142,7 @@
                 class="custom-connection-box"
                 v-if="
                   ['initial_sync', 'initial_sync+cdc'].includes(model.custom_type) &&
-                  ['source'].includes(model.connection_type)
+                  ['source','source_and_target'].includes(model.connection_type)
                 "
               >
                 <div class="custom-connection-label">
@@ -163,7 +163,6 @@
                   {{ $t('dataForm.form.custom_connection.on_data_code') }}
                 </div>
                 <div class="custom-connection-main">
-                  <div style="margin-top: 10px; font-size: 14px">Info</div>
                   <div>
                     data = [{
                     <span style="color: #998; font-style: italic"> // data is an array</span>

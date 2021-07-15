@@ -27,13 +27,6 @@ Vue.use(VueCookie)
 Vue.use(VueBus)
 Vue.use(VueClipboard)
 Vue.use(LoadMore)
-Vue.use(TapdataWebCore, {
-  lang: {
-    sc: 'zh-CN',
-    tc: 'zh-TW',
-    en: 'en'
-  }[localStorage.getItem('tapdata_localize_lang')]
-})
 
 Vue.prototype.$moment = moment
 Vue.prototype.$api = factory
@@ -85,7 +78,16 @@ let init = settings => {
     lang = window.getSettingByKey('DEFAULT_LANGUAGE')
     localStorage.setItem('tapdata_localize_lang', lang || 'en')
   }
+
   i18n.locale = lang
+
+  Vue.use(TapdataWebCore, {
+    lang: {
+      sc: 'zh-CN',
+      tc: 'zh-TW',
+      en: 'en'
+    }[lang]
+  })
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
   window.App = new Vue({
     el: '#app',

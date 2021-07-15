@@ -3,9 +3,9 @@ import locale from 'element-ui/lib/locale'
 import VueI18n from 'vue-i18n'
 // import messages from './langs'
 
-import en from './langs/en'
-import sc from './langs/cn'
-import tc from './langs/tc'
+import en from './lang/en'
+import sc from './lang/cn'
+import tc from './lang/tc'
 
 Vue.use(VueI18n)
 const index = new VueI18n({
@@ -19,10 +19,10 @@ const index = new VueI18n({
 })
 
 if (module.hot) {
-  module.hot.accept(['./langs/en', './langs/cn', './langs/tc'], function () {
-    index.setLocaleMessage('en', require('./langs/en').default)
-    index.setLocaleMessage('cn', require('./langs/cn').default)
-    index.setLocaleMessage('tc', require('./langs/tc').default)
+  module.hot.accept(['./lang/en', './lang/cn', './lang/tc'], function () {
+    index.setLocaleMessage('en', require('./lang/en').default)
+    index.setLocaleMessage('cn', require('./lang/cn').default)
+    index.setLocaleMessage('tc', require('./lang/tc').default)
     // app.$i18n.setLocaleMessage('en', require('./en').default)
     // app.$i18n.setLocaleMessage('ja', require('./ja').default)
   })
