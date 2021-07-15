@@ -41,7 +41,7 @@
             <div class="flex justify-between">
               <div class="transfer-item-content flex">
                 <img :src="getImgByType(data.type, data.message)" />
-                <span class="field-name" :title="data.name">{{ data.name }}{{ data.message && '是' }}</span>
+                <span class="field-name" :title="data.name">{{ data.name }}</span>
               </div>
               <div class="transfer-btn">
                 <span
@@ -113,10 +113,14 @@ export default {
   name: 'message',
   components: { treeTransfer },
   data() {
+    const _this = this
     const validateName = (rule, value, callback) => {
       if (!value) {
         callback(new Error('名称不能为空'))
-      } else if (this.getAllItemInTree([...this.fromData, ...this.toData]).includes(value)) {
+      } else if (
+        _this.createForm.key !== value &&
+        this.getAllItemInTree([...this.fromData, ...this.toData]).includes(value)
+      ) {
         callback(new Error('名称已存在'))
       } else {
         callback()
@@ -223,22 +227,24 @@ export default {
           sourceField = sourceSchema ? sourceSchema.fields : []
         // targetSchema = targetCell ? targetCell.getSchema() : null,
         if (sourceField) {
-          _this.fieldsData = sourceSchema.fields.filter(field => !!field.field_name).map(field => {
-            let obj = {
-              pid: 0,
-              label: 'required',
-              name: field.field_name,
-              key: field.field_name,
-              type: field.javaType,
-              disabled: this.disabled,
-              // number: 0,
-              // mapping: [],
-              children: []
-            }
-            obj.type = obj.type.toLowerCase()
-            obj.type = this.suportTypeMap[obj.type] ?? ''
-            return obj
-          })
+          _this.fieldsData = sourceSchema.fields
+            .filter(field => !!field.field_name)
+            .map(field => {
+              let obj = {
+                pid: 0,
+                label: 'required',
+                name: field.field_name,
+                key: field.field_name,
+                type: field.javaType,
+                disabled: this.disabled,
+                // number: 0,
+                // mapping: [],
+                children: []
+              }
+              obj.type = obj.type.toLowerCase()
+              obj.type = this.suportTypeMap[obj.type] ?? ''
+              return obj
+            })
         }
         console.log('_this.fieldsData', _this.fieldsData)
       }
@@ -401,7 +407,7 @@ export default {
     // 左侧源数据选中事件
     leftCheckChange(nodeObj, treeObj, checkAll) {
       this.leftTreeObj = {
-        node: { ...nodeObj },
+        node: nodeObj,
         checkAll: checkAll,
         ...treeObj
       }
@@ -410,7 +416,7 @@ export default {
     // 右侧目标数据选中事件
     rightCheckChange(nodeObj, treeObj, checkAll) {
       this.rightTreeObj = {
-        node: { ...nodeObj },
+        node: nodeObj,
         checkAll: checkAll,
         ...treeObj
       }
