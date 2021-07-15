@@ -82,7 +82,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="限定修饰符">
-            <el-radio-group v-model="createForm.label">
+            <el-radio-group v-model="createForm.label" :disabled="!!createForm.flagRepeated">
               <el-radio label="required"> Required </el-radio>
               <el-radio label="optional"> Optional </el-radio>
               <el-radio label="repeated"> Repeated </el-radio>
@@ -119,7 +119,7 @@ export default {
         callback(new Error('名称不能为空'))
       } else if (
         _this.createForm.key !== value &&
-        this.getAllItemInTree([...this.fromData, ...this.toData]).includes(value)
+        this.getAllItemInTree([...this.fromData, ...this.toData], 'key').includes(value)
       ) {
         callback(new Error('名称已存在'))
       } else {
@@ -202,7 +202,8 @@ export default {
         short: 'int32',
         sint: 'sint32',
         string: 'string'
-      }
+      },
+      unitFlagRepeated: false // Unit的修饰符
     }
   },
   mounted() {
@@ -222,7 +223,7 @@ export default {
       }
       console.log('setData', this.model, data)
       this.cell = cell
-      if (cell && cell.getOutputSchema()) {
+      if (cell?.getOutputSchema()) {
         let sourceSchema = cell.getOutputSchema() || null,
           sourceField = sourceSchema ? sourceSchema.fields : []
         // targetSchema = targetCell ? targetCell.getSchema() : null,
@@ -246,7 +247,6 @@ export default {
               return obj
             })
         }
-        console.log('_this.fieldsData', _this.fieldsData)
       }
       // toData
       if (this.model.pbProcessorConfig?.schema) {
@@ -260,7 +260,7 @@ export default {
         this.fromData = _this.fieldsData.filter(item => !getRightFieldsKeys.includes(item.key))
       } else {
         // 过滤下 fromdata
-        this.fromData = _this.fieldsData
+        this.fromData = [..._this.fieldsData]
       }
     },
     getRightFields(data, result = []) {
@@ -285,12 +285,17 @@ export default {
       console.log('$emit-data', data)
       this.$emit('dataChanged', data)
     },
-    getAllItemInTree(data, result = []) {
+    // data数组，result返回的结果，field只存某个字段
+    getAllItemInTree(data, field = '', result = []) {
       data.forEach(el => {
-        result.push(el.key)
+        if (field) {
+          result.push(el[field])
+        } else {
+          result.push(el)
+        }
         let children = el.children
         if (children?.length) {
-          this.getAllItemInTree(children, result)
+          this.getAllItemInTree(children, field, result)
         }
       })
       return result
@@ -375,11 +380,37 @@ export default {
             }
           })
         })
+        this.setFileLabel(obj.nodes, node)
+      } else {
+        this.setFileLabel(obj.nodes)
       }
       // 清空右侧选中
       this.leftTreeObj = null
       this.rightTreeObj = null
       this.setConfig()
+    },
+    setFileLabel(data, node) {
+      let flagRepeated = false // 树形结构的源，需要锁定label的值
+      let fieldsData = this.cell?.getOutputSchema()?.fields ?? []
+      data.forEach(el => {
+        if (el.key.includes('.')) {
+          let pre = el.key.slice(0, el.key.lastIndexOf('.'))
+          let findOne = fieldsData.find(item => item.field_name === pre)
+          if (findOne?.javaType?.toLowerCase() === 'array') {
+            flagRepeated = true
+          }
+        }
+      })
+      // 文件夹
+      if (node) {
+        this.$set(node, 'flagRepeated', flagRepeated)
+        if (flagRepeated) {
+          node.label = 'repeated'
+        }
+      } else {
+        // 最外层的Unit
+        this.unitFlagRepeated = flagRepeated
+      }
     },
     findFieldInTree(data = [], result = []) {
       data.forEach(el => {
@@ -444,7 +475,8 @@ export default {
         key: data.key,
         type: data.type,
         message: data.message || false,
-        disabled: data.disabled
+        disabled: data.disabled,
+        flagRepeated: data.flagRepeated
       }
       this.editData = node
       this.createForm.openType = 'edit'
@@ -613,7 +645,8 @@ export default {
         name: 'Unit',
         message: true,
         pid: -1,
-        children: [...toData]
+        children: [...toData],
+        unitFlagRepeated: this.unitFlagRepeated
       })
       let getMapping = this.getMapping({ ...tree })
       let getSchema = this.getSchema({ ...tree })
