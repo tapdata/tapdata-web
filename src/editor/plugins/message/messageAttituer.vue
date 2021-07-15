@@ -115,20 +115,35 @@ export default {
   data() {
     const _this = this
     const validateName = (rule, value, callback) => {
+      let allNames = this.getAllItemInTree([...this.toData], 'name')
+      let allKeys = this.getAllItemInTree([...this.toData], 'key')
+      let allArr = [...allNames, ...allKeys]
+      let nameSameToType = value === _this.createForm.type
+      let keyArr = _this.createForm.key.split('.')
+      let newKey = keyArr[keyArr.length - 1]
       if (!value) {
         callback(new Error('名称不能为空'))
-      } else if (
-        _this.createForm.key !== value &&
-        this.getAllItemInTree([...this.fromData, ...this.toData], 'key').includes(value)
-      ) {
+      } else if (nameSameToType) {
+        callback(new Error('名称不能和类型一样'))
+      } else if (newKey !== value && allArr.includes(value)) {
         callback(new Error('名称已存在'))
       } else {
         callback()
       }
     }
     const validateType = (rule, value, callback) => {
+      let allNames = this.getAllItemInTree([...this.toData], 'name')
+      let allKeys = this.getAllItemInTree([...this.toData], 'key')
+      let allArr = [...allNames, ...allKeys]
+      let nameSameToType = value === _this.createForm.name
+      let keyArr = _this.createForm.key.split('.')
+      let newKey = keyArr[keyArr.length - 1]
       if (!value) {
         callback(new Error('类型不能为空'))
+      } else if (nameSameToType) {
+        callback(new Error('类型不能和名称一样'))
+      } else if (newKey !== value && allArr.includes(value)) {
+        callback(new Error('类型已存在'))
       } else {
         callback()
       }
@@ -263,7 +278,7 @@ export default {
         this.fromData = [..._this.fieldsData]
       }
     },
-    getRightFields(data, result = []) {
+    getRightFields(data = [], result = []) {
       data.forEach(el => {
         if (!el.message) {
           result.push(el)
@@ -393,6 +408,9 @@ export default {
       let flagRepeated = false // 树形结构的源，需要锁定label的值
       let fieldsData = this.cell?.getOutputSchema()?.fields ?? []
       data.forEach(el => {
+        let nameArr = el.name.split('.')
+        el.name = nameArr[nameArr.length - 1]
+        el.key = el.key + '_RIGHT'
         if (el.key.includes('.')) {
           let pre = el.key.slice(0, el.key.lastIndexOf('.'))
           let findOne = fieldsData.find(item => item.field_name === pre)
@@ -565,7 +583,7 @@ export default {
           })
         }
       } else {
-        result[tree.mapping.join('#')] = tree.key
+        result[tree.mapping.join('#')?.replace(/\./g, '#')] = tree.key
       }
       return result
     },
@@ -627,7 +645,7 @@ export default {
     },
     genTree(schema) {
       schema.nestedList?.forEach(item => {
-        let target = schema.propertyList.find(_item => _item.key === item.name) ?? {}
+        let target = schema.propertyList.find(_item => _item.type === item.name) ?? {}
         target.children = this.genTree(item) ?? []
         target.message = true
       })
