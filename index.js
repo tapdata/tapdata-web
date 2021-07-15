@@ -1,6 +1,4 @@
-import VueI18n from 'vue-i18n'
-import langs from './locale'
-import locale from 'element-ui/lib/locale'
+import locale from './locale'
 import FormBuilder from './components/form-builder'
 import ConnectionTypeSelector from './components/connection-type-selector'
 //import ConnectionFormSelector from './components/connection-form'
@@ -18,21 +16,12 @@ const install = function (Vue, opts = {}) {
   Vue.prototype.$const = _const
 
   Vue.use(FormBuilder)
-  Vue.use(VueI18n)
-
-  const i18n = new VueI18n({
-    locale: opts.lang || 'zh-CN',
-    messages: langs
-  })
-  // 重点：为了实现element插件的多语言切换
-  locale.i18n((key, value) => i18n.t(key, value))
 
   components.forEach(component => {
     Vue.component(component.name, component)
   })
 
   Vue.mixin({
-    i18n,
     created() {
       // 创建实例时传入wsOptions，即可默认开启websocket
       let wsOptions = this.$options.wsOptions
@@ -50,6 +39,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 export default {
   install,
+  locale,
   ConnectionTypeSelector,
   //ConnectionFormSelector,
   ConnectionTest,
