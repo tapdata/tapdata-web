@@ -561,7 +561,6 @@ export default {
      */
     showMapping() {
       this.targetCell = this.cell.getTargetCell()
-      this.targetCellType = this.targetCell.get('type')
       if (this.targetCell) {
         this.targetCellType = this.targetCell.get('type')
       }
