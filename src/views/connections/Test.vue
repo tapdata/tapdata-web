@@ -19,7 +19,9 @@
         style="color: #d54e21"
       >
         <i class="el-icon-warning" style="color: #d54e21"></i>
-        <span class="test-title">{{ wsErrorMsg ? wsErrorMsg : $t('dataForm.test.error') }}</span>
+        <span class="test-title">{{
+          wsErrorMsg ? wsErrorMsg : $t('dataForm.test.error')
+        }}</span>
       </div>
       <div v-else>
         <div class="test-status" v-if="['invalid', 'ERROR'].includes(status)">
@@ -34,7 +36,10 @@
             $t('dataForm.test.testResultSuccess')
           }}</span>
         </div>
-        <div class="test-status" v-if="!['ready', 'invalid','ERROR'].includes(status)">
+        <div
+          class="test-status"
+          v-if="!['ready', 'invalid', 'ERROR'].includes(status)"
+        >
           <el-image
             style="width: 20px; height: 20px; vertical-align: bottom"
             :src="require('@/assets/icons/loading-drs.gif')"
@@ -98,9 +103,16 @@
         width="308"
       ></el-table-column>
     </el-table>
-<!--    <span v-show="testData.testLogs && testData.testLogs.length > 0">ERROR: {{ wsErrorMsg }}</span>-->
+    <!--    <span v-show="testData.testLogs && testData.testLogs.length > 0">ERROR: {{ wsErrorMsg }}</span>-->
     <span slot="footer" class="dialog-footer">
-      <el-button size="mini" @click="start()" v-if="isTimeout && $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'">{{ $t('dataForm.test.retryBtn') }}</el-button>
+      <el-button
+        size="mini"
+        @click="start()"
+        v-if="
+          isTimeout && $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'
+        "
+        >{{ $t('dataForm.test.retryBtn') }}</el-button
+      >
       <el-button size="mini" type="primary" @click="handleClose()">{{
         $t('dataForm.close')
       }}</el-button>
@@ -282,7 +294,7 @@ export default {
             console.log('zhixingl')
             self.$emit('returnTestData', testData)
           }
-        },800)
+        }, 800)
       })
     },
     clearInterval() {

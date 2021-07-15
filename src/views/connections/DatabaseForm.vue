@@ -1198,7 +1198,9 @@ export default {
             this.$route.params.id
           ])
         } else {
-          editData = await this.$api('connections').getNoSchema(this.$route.params.id)
+          editData = await this.$api('connections').getNoSchema(
+            this.$route.params.id
+          )
         }
 
         if (

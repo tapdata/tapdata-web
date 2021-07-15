@@ -42,7 +42,7 @@
       @change="changeSpeed"
     >
       <el-radio-button label="qps">QPS</el-radio-button>
-<!--      <el-radio-button label="kbs">KB/S</el-radio-button>-->
+      <!--      <el-radio-button label="kbs">KB/S</el-radio-button>-->
     </el-radio-group>
     <el-radio-group
       v-if="data.isIput"
