@@ -28,10 +28,10 @@
           </div>
         </div>
         <el-table
+          border
           v-loading="loading"
           class="table-page-table table-border"
           height="100%"
-          border
           :element-loading-text="$t('dataFlow.dataLoading')"
           :row-key="rowKey"
           :span-method="spanMethod"
@@ -152,6 +152,10 @@ export default {
       this.$cache.set('TABLE_PAGE_PARAMS', params)
     },
     fetch(pageNum, debounce = 0, hideLoading, callback) {
+      if (pageNum === 1) {
+        this.multipleSelection = []
+        this.$emit('selection-change', [])
+      }
       this.page.current = pageNum || this.page.current
       this.$nextTick(() => {
         delayTrigger(() => {
