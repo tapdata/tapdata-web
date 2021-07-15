@@ -334,7 +334,7 @@ export default {
     },
     // 跳转详情
     handleInfo() {
-      window.open('/#/taskProgressInfo?id=' + this.dataFlow.id, '_blank')
+      window.open(location.href.split('#/')[0] + '#/taskProgressInfo?id=' + this.dataFlow.id, '_blank')
     }
   }
   // beforeDestroy() {
