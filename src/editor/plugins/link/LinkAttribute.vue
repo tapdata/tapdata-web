@@ -236,6 +236,7 @@ import { JOIN_TABLE_TPL } from '../../constants'
 import ClipButton from '@/components/ClipButton'
 import { removeDeleted } from '../../util/Schema'
 // let editorMonitor = null;
+let settingData = null
 export default {
   name: 'Link',
   components: { Mapping, ClipButton },
@@ -293,6 +294,7 @@ export default {
         } else {
           this.model.joinTable.arrayUniqueKey = ''
         }
+        this.model.joinTableRequired = !(settingData.noPrimaryKey && ['upsert'].includes(this.model.joinTable.joinType))
       }
     }
   },
@@ -399,7 +401,7 @@ export default {
       // this.model.joinTable.joinKeys = [];
 
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
-      let settingData = vueAdapter.editor.getData().settingData
+      settingData = vueAdapter.editor.getData().settingData
       this.model.joinTableRequired = !(settingData.noPrimaryKey && ['upsert'].includes(this.model.joinTable.joinType))
 
       // if (!this.configJoinTable) {
