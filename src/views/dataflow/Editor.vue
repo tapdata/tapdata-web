@@ -521,12 +521,12 @@ export default {
       pos[0] += diffPos.x
       pos[1] += diffPos.y
 
-      this.updateNodeProperties({
-        id,
-        properties: {
-          position: [...pos]
-        }
-      })
+      // this.updateNodeProperties({
+      //   id,
+      //   properties: {
+      //     position: [...pos]
+      //   }
+      // })
 
       param.el.style.left = pos[0] + 'px'
       param.el.style.top = pos[1] + 'px'
@@ -620,6 +620,13 @@ export default {
     onNodeDragStop() {
       this.ifNodeDragStart = false
       this.navLines = []
+
+      /*this.updateNodeProperties({
+        id,
+        properties: {
+          position: [...pos]
+        }
+      })*/
     },
 
     nodeSelectedById(id, setActive, deselectAllOthers) {
@@ -640,7 +647,18 @@ export default {
       this.jsPlumbIns.addToDragSelection(nodeElement)
     },
 
-    nodeDeselectedById() {},
+    nodeDeselected(node) {
+      this.removeNodeFromSelection(node)
+      const nodeElement = NODE_PREFIX + node.id
+      this.jsPlumbIns.removeFromDragSelection(nodeElement)
+    },
+
+    nodeDeselectedById(id) {
+      const node = this.nodeById(id)
+      if (node) {
+        this.nodeDeselected(node)
+      }
+    },
 
     /**
      * 取消选择所有节点

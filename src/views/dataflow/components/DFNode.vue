@@ -18,6 +18,7 @@
 import { sourceEndpoint, targetEndpoint } from '@/views/dataflow/style'
 import { mapGetters, mapMutations } from 'vuex'
 import deviceSupportHelpers from '@/mixins/deviceSupportHelpers'
+import { NODE_PREFIX } from '@/views/dataflow/constants'
 
 export default {
   name: 'DFNode',
@@ -89,14 +90,14 @@ export default {
         containment: 'parent',
         start: params => {
           // console.log('node-drag-start', params.pos)
-          this.addActiveAction('dragActive')
-
           if (params.e && !this.isNodeSelected(this.nodeId)) {
             // 只有直接拖动的节点params才会有事件
             // 检查当前拖动的节点是否被选中，如果未选中则clearDragSelection
             this.jsPlumbIns.clearDragSelection()
             this.resetSelectedNodes()
           }
+
+          this.addActiveAction('dragActive')
 
           this.$emit('drag-start', params)
           return true
@@ -108,14 +109,47 @@ export default {
           this.$emit('drag-move', params)
         },
         stop: params => {
-          // console.log('node-drag-stop', e.pos)
+          console.log('node-drag-stop', params)
           // 更新节点坐标
-          this.updateNodeProperties({
-            id: nodeId,
-            properties: {
-              position: params.pos
+          this.isNotMove = false
+          if (this.isActionActive('dragActive')) {
+            const moveNodes = this.$store.getters['dataflow/getSelectedNodes']
+            const selectedNodeNames = moveNodes.map(node => node.id)
+
+            if (!selectedNodeNames.includes(this.data.id)) {
+              moveNodes.push(this.data)
             }
-          })
+
+            let x = parseFloat(this.$el.style.left)
+            let y = parseFloat(this.$el.style.top)
+
+            if (x === this.data.position[0] && y === this.data.position[1]) {
+              // 拖拽结束后位置没有改变
+              console.log('没有移动')
+              this.isNotMove = true
+            }
+
+            let newNodePosition
+            moveNodes.forEach(node => {
+              const nodeElement = NODE_PREFIX + node.id
+              const element = document.getElementById(nodeElement)
+              if (element === null) {
+                return
+              }
+
+              newNodePosition = [parseFloat(element.style.left), parseFloat(element.style.top)]
+
+              const updateInformation = {
+                id: node.id,
+                properties: {
+                  position: newNodePosition
+                }
+              }
+
+              this.updateNodeProperties(updateInformation)
+            })
+          }
+
           this.$emit('drag-stop', params)
         }
       })
@@ -138,12 +172,14 @@ export default {
       // console.log('DFNode.mouseClick', this.isActionActive('dragActive'))
       if (this.isActionActive('dragActive')) {
         this.removeActiveAction('dragActive')
+        if (this.isNotMove) this.$emit('nodeSelected', this.nodeId, true)
       } else {
         if (this.isCtrlKeyPressed(e) === false) {
           // 如果不是多选模式则取消所有节点选中
           this.$emit('deselectAllNodes')
         }
 
+        console.log('this.isNodeSelected(this.nodeId)', this.isNodeSelected(this.nodeId))
         if (this.isNodeSelected(this.nodeId)) {
           this.$emit('deselectNode', this.nodeId)
         } else {
