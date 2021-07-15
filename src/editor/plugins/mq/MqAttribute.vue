@@ -319,7 +319,6 @@ export default {
             tempSchemas = result.data.schemas
             schemas = schemas.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
             self.schemas = schemas
-            debugger
 
             self.schemaSelectConfig.options = schemas.map(item => ({
               label: item.label || item,
