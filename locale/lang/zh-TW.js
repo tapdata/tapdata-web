@@ -1791,7 +1791,7 @@ export default {
         request_interval: '同步間隔',
         request_interval_tip: '同步間隔（秒）',
         collection_name: '集合名稱',
-        unique_keys: '唯一主鍵,',
+        unique_keys: '唯一主鍵',
         unique_keys_label: '聯合主鍵使用,拆分',
         req_pre_process: '請求預處理腳本',
         resp_pre_process: '響應預處理腳本',
