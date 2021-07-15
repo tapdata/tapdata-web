@@ -41,11 +41,11 @@
             <div class="flex justify-between">
               <div class="transfer-item-content flex">
                 <img :src="getImgByType(data.type, data.message)" />
-                <span class="field-name" :title="data.name">{{ data.name }}</span>
+                <span class="field-name" :title="data.name">{{ data.name || '重名，请重新定义名称' }}</span>
               </div>
               <div class="transfer-btn">
                 <span
-                  :class="['box', { 'error-tip': !data.type }]"
+                  :class="['box', { 'error-tip': !data.type || !data.name }]"
                   :title="!data.type ? '请选择类型' : $t('dataFlow.edit')"
                   @click="handleEdit(node, data)"
                 >
@@ -120,7 +120,7 @@ export default {
       let allArr = [...allNames, ...allKeys]
       let nameSameToType = value === _this.createForm.type
       let keyArr = _this.createForm.key.split('.')
-      let newKey = keyArr[keyArr.length - 1]
+      let newKey = keyArr[keyArr.length - 1].replace('_RIGHT', '')
       if (!value) {
         callback(new Error('名称不能为空'))
       } else if (nameSameToType) {
@@ -137,7 +137,7 @@ export default {
       let allArr = [...allNames, ...allKeys]
       let nameSameToType = value === _this.createForm.name
       let keyArr = _this.createForm.key.split('.')
-      let newKey = keyArr[keyArr.length - 1]
+      let newKey = keyArr[keyArr.length - 1].replace('_RIGHT', '')
       if (!value) {
         callback(new Error('类型不能为空'))
       } else if (nameSameToType) {
@@ -399,10 +399,28 @@ export default {
       } else {
         this.setFileLabel(obj.nodes)
       }
+      this.setRightKey(this.toData, 'add')
+      this.setConfig()
       // 清空右侧选中
       this.leftTreeObj = null
       this.rightTreeObj = null
-      this.setConfig()
+      console.log('~~~~~~~~~~~~~~~~~', this.toData)
+    },
+    setRightKey(data = [], from = '') {
+      let checkedNodes = this.leftTreeObj?.checkedNodes || []
+      data.forEach((el, index) => {
+        let findOne = checkedNodes.find(item => item.key.replace('_RIGHT') === el.key.replace('_RIGHT'))
+        if (from === 'add' && findOne) {
+          el.name = ''
+          el.key = 'NEED_RENAME_' + new Date().getTime() + index
+        }
+        else if (!el.key?.includes('_RIGHT')) {
+          el.key = el.key + '_RIGHT'
+        }
+        if (el?.children?.length) {
+          this.setRightKey(el.children)
+        }
+      })
     },
     setFileLabel(data, node) {
       let flagRepeated = false // 树形结构的源，需要锁定label的值
@@ -526,7 +544,10 @@ export default {
           // 编辑
           const parent = _this.editData.parent
           const children = parent.data.children || parent.data
-
+          if (_this.createForm.key.includes('NEED_RENAME_')) {
+            _this.createForm.key = _this.createForm.name
+            _this.editData.data.key = _this.createForm.name
+          }
           if (children.length) {
             children.forEach(item => {
               if (item.key === _this.createForm.key) {
@@ -539,7 +560,7 @@ export default {
         }
 
         _this.$refs['createForm'].resetFields()
-
+        this.setRightKey(this.toData, 'createMessage')
         _this.setConfig()
       })
     },
@@ -583,13 +604,13 @@ export default {
           })
         }
       } else {
-        result[tree.mapping.join('#')?.replace(/\./g, '#')] = tree.key
+        result[tree.mapping.join('#')?.replace(/\./g, '#').replace('_RIGHT', '')] = tree.key.replace('_RIGHT', '')
       }
       return result
     },
     getSchema(node) {
       let obj = {}
-      obj.name = node.key
+      obj.name = node.key.replace('_RIGHT', '')
       obj.label = node.label
       obj.type = node.type
       obj.nestedList = []
@@ -601,8 +622,8 @@ export default {
           propertyIndex++
           obj.propertyList.push({
             label: el.label,
-            key: el.key,
-            name: el.name,
+            key: el.key.replace('_RIGHT', ''),
+            name: el.name.replace('_RIGHT', ''),
             number: propertyIndex,
             type: el.type
           })
@@ -618,7 +639,7 @@ export default {
             } else {
               obj.nestedList.push({
                 label: el.label,
-                key: el.key,
+                key: el.key.replace('_RIGHT', ''),
                 name: el.type,
                 number: nestedIndex,
                 type: el.type
@@ -645,6 +666,7 @@ export default {
     },
     genTree(schema) {
       schema.nestedList?.forEach(item => {
+        item.key = item.key + '_RIGHT'
         let target = schema.propertyList.find(_item => _item.type === item.name) ?? {}
         target.children = this.genTree(item) ?? []
         target.message = true
@@ -653,6 +675,7 @@ export default {
         if (!item.children) {
           item.children = []
         }
+        item.key = item.key + '_RIGHT'
         return item
       })
     },
