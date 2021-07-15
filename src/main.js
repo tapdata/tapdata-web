@@ -4,6 +4,7 @@ import router, { childRoutes } from '@/router'
 import moment from 'moment' // 时间格式化
 import store from '@/vuex' // 引入全局数据控制
 import VueCookie from 'vue-cookie'
+import i18n from '@/i18n'
 import VueBus from 'vue-bus'
 import VueClipboard from 'vue-clipboard2'
 import factory from '@/api/factory'
@@ -77,6 +78,9 @@ let init = settings => {
     lang = window.getSettingByKey('DEFAULT_LANGUAGE')
     localStorage.setItem('tapdata_localize_lang', lang || 'en')
   }
+
+  i18n.locale = lang
+
   Vue.use(TapdataWebCore, {
     lang: {
       sc: 'zh-CN',
@@ -87,6 +91,7 @@ let init = settings => {
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
   window.App = new Vue({
     el: '#app',
+    i18n,
     router,
     store,
     render: h => h(App)
