@@ -311,6 +311,8 @@ export default {
               })
               let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
               schemas = [...new Set(data)]
+            } else if (this.mqType === '1') {
+              schemas = result.data.mqQueueSet
             } else {
               schemas = result.data.mqTopicSet
             }

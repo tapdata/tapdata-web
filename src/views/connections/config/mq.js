@@ -64,17 +64,17 @@ export default function (vm) {
         label: vm.$t('dataForm.form.mq.mqTopicSet'),
         required: true,
         dependOn: [
-          // {
-          //   triggerOptions: [
-          //     {
-          //       field: 'mqType',
-          //       value: '1'
-          //     }
-          //   ],
-          //   triggerConfig: {
-          //     show: false
-          //   }
-          // }
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '1'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          },
           {
             triggerOptions: [
               {
@@ -107,17 +107,29 @@ export default function (vm) {
         type: 'input',
         field: 'mqQueueSet',
         label: vm.$t('dataForm.form.mq.mqQueueSet'),
-        show: false,
+        show: true,
+        required: false,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '0'
+                value: '2'
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '1'
+              }
+            ],
+            triggerConfig: {
+              required: true
             }
           }
         ]

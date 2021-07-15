@@ -96,10 +96,10 @@
                 {{ $t('dataForm.form.kafka.pushErrorTip') }}
               </div>
 
-              <div class="url-tip" slot="queueTip" v-if="model.mqType === '0'">
+              <div class="url-tip" slot="queueTip" v-if="model.mqType !== '2'">
                 {{ $t('dataForm.form.mq.queueSetTip') }}
               </div>
-              <div class="url-tip" slot="topicTip">
+              <div class="url-tip" slot="topicTip" v-if="model.mqType !== '1'">
                 {{ $t('dataForm.form.mq.topicSetTip') }}
               </div>
               <div class="url-tip" slot="brokerUrlTip" v-if="model.mqType === '0'">
