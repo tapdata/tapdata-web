@@ -1823,7 +1823,7 @@ const cn = {
         request_interval: '同步间隔',
         request_interval_tip: '同步间隔（秒）',
         collection_name: '集合名称',
-        unique_keys: '唯一主键,',
+        unique_keys: '唯一主键',
         unique_keys_label: '联合主键使用,拆分',
         req_pre_process: '请求预处理脚本',
         resp_pre_process: '响应预处理脚本',
