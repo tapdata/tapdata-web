@@ -12,6 +12,18 @@
       :disabled="disabled"
       :rules="rules"
     >
+      <!--流引擎版本-->
+      <el-form-item :label="$t('dataFlow.flowEngineVersion')">
+        <el-select
+          v-model="formData.flowEngineVersion"
+          size="mini"
+          :placeholder="$t('message.placeholderSelect')"
+          class="dataWrite-list"
+        >
+          <el-option :label="$t('dataFlow.flowEngineV1')" value="Data_Flow_Engine_V1"> </el-option>
+          <el-option :label="$t('dataFlow.jetFlowEngineV2')" value="Jet_Flow_Engine_V2"> </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item :label="$t('dataFlow.sync_type')">
         <el-radio-group v-model="formData.sync_type" size="mini" @change="changeSyncType">
           <el-radio label="initial_sync+cdc" :disabled="sync_typeFalg"

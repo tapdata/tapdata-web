@@ -730,7 +730,8 @@ const cn = {
       taskName: '任务名',
       errorTotal: '共 XX 条,已选择',
       strip: '条'
-    }
+    },
+    flowEngineVersion: '流引擎版本'
   },
   connection: {
     dataBaseName: '连接名/连接信息',

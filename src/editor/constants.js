@@ -66,7 +66,8 @@ export const FORM_DATA_KEY = 'form_data',
     transformerConcurrency: 8,
     lagTimeFalg: false,
     userSetLagTime: 0,
-    noPrimaryKey: false
+    noPrimaryKey: false,
+    flowEngineVersion: 'Data_Flow_Engine_V1'
   },
   DATABASE_TYPE_MAPPING = {
     mysql: {

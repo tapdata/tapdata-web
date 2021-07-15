@@ -725,7 +725,8 @@ const tc = {
       taskName: '任務名',
       errorTotal: '共XX條，已選擇',
       strip: '條'
-    }
+    },
+    flowEngineVersion: '流引擎版本'
   },
   connection: {
     dataBaseName: '連接名/連接信息',
