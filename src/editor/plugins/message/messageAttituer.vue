@@ -210,7 +210,7 @@ export default {
         string: 'string'
       },
       unitFlagRepeated: false, // Unit的修饰符
-      fields: [], // 所有数据
+      sourceField: [], // 所有源数据
       leftData: [],
       rightData: [],
       draggableRight: false,
@@ -242,6 +242,7 @@ export default {
       if (cell?.getOutputSchema()) {
         let sourceSchema = cell.getOutputSchema() || null,
           sourceField = sourceSchema ? sourceSchema.fields : []
+        this.sourceField = sourceField
         // targetSchema = targetCell ? targetCell.getSchema() : null,
         if (sourceField) {
           _this.fieldsData = sourceSchema.fields
@@ -298,14 +299,24 @@ export default {
       this.formatRightDataName(data)
       this.rightData = data
     },
-    formatRightDataName(data = []) {
+    formatRightDataName(data = [], node = null) {
       data.forEach(el => {
         if (el.name.includes('.')) {
           let nameArr = el.name.split('.')
           el.name = nameArr[nameArr.length - 1]
+
+          // 检查父级是否array
+          let pre = el.key.slice(0, el.key.lastIndexOf('.'))
+          let findOne = this.sourceField.find(item => item.field_name === pre)
+          if (findOne?.javaType?.toLowerCase() === 'array') {
+            if (node) {
+              this.$set(node, 'flagRepeated', true)
+              node.label = 'repeated'
+            }
+          }
         }
         if (el.children?.length) {
-          this.formatRightDataName(el.children)
+          this.formatRightDataName(el.children, el)
         }
       })
       return data
