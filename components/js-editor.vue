@@ -54,7 +54,7 @@ export default {
     // 	'}',
     // ].join('\n'), 'ts:filename/facts.d.ts');
     let self = this
-    setTimeout(function() {
+    setTimeout(function () {
       self.init()
     }, 50)
   },
@@ -79,7 +79,7 @@ export default {
         fontSize: '12px',
         fixedOverflowWidgets: true // 超出编辑器大小的使用fixed属性显示
       })
-      editor.onDidChangeModelContent(function() {
+      editor.onDidChangeModelContent(function () {
         self.$emit('update:code', editor.getValue())
       })
     }

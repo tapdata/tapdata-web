@@ -739,8 +739,7 @@ const en = {
     skipError: {
       title: 'Skip Error Settings',
       skipErrorSettings: 'Data Processing Error Handling',
-      tip:
-        'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip errors, continue to start" button.  ',
+      tip: 'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip errors, continue to start" button.  ',
       attention: 'WARNING: If you chose to skip the errors, the relevant data may be discarded. ',
       startJob: 'Skip errors, continue to start',
       cancel: 'Cancel',
@@ -774,8 +773,7 @@ const en = {
     reloadOK: 'reloading schema',
     reloadFail: 'Failed to schema',
     reloadTittle: 'Reload schema',
-    desc:
-      'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
+    desc: 'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
     deteleDatabaseTittle: 'Do you want to delete the connection?',
     deteleDatabaseMsg: 'After deleting connection XXX, this connection cannot be restored. ',
     reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
@@ -978,8 +976,7 @@ const en = {
             },
             maximum_transaction: {
               label: 'Max Transaction Length',
-              tip:
-                'Time in hours to wait for commit for a transaction. Enter the longest period of time that you expect a transaction to require.Default is 12 hours'
+              tip: 'Time in hours to wait for commit for a transaction. Enter the longest period of time that you expect a transaction to require.Default is 12 hours'
             }
           }
         },
@@ -1274,8 +1271,7 @@ const en = {
             expressionExample: {
               label: 'Example expression',
               labelTip: 'Expressions can use comparison and calculation operators in JavaScript',
-              tip:
-                'Select men over 50 years old or people over 30 years old with income below 10,000, the expression is as follows:'
+              tip: 'Select men over 50 years old or people over 30 years old with income below 10,000, the expression is as follows:'
             },
             symbol: {
               label: 'Supported symbols',
@@ -1579,8 +1575,7 @@ const en = {
     all: 'All',
     setting: {
       title: 'Verify default settings',
-      text:
-        'The verification setting is the global verification setting, the priority of the advanced setting in the created verification task is higher than the setting here. ',
+      text: 'The verification setting is the global verification setting, the priority of the advanced setting in the created verification task is higher than the setting here. ',
       keepTimeLabel: 'Retention time of verification historical results and detailed information',
       errorSaveSumLable: 'Check out the limit of the number of error messages saved for each table',
       errorDifferenceResult: 'The error tolerance of the difference data allowed by the verification result',
@@ -2242,8 +2237,7 @@ const en = {
     },
     metadataSearch: {
       title: 'Metadata retrieval',
-      desc:
-        'Metadata retrieval provides search functions for the names, aliases, descriptions of tables and fields, please select the search table/field first, then enter the content, and click the search button to search',
+      desc: 'Metadata retrieval provides search functions for the names, aliases, descriptions of tables and fields, please select the search table/field first, then enter the content, and click the search button to search',
       table: 'Search table',
       column: 'Search field',
       search: 'Search',
@@ -2317,8 +2311,7 @@ const en = {
     settingCenter: 'Setting center',
     systemSetting: 'System setting',
     noticeSetting: 'Notice setting',
-    tip:
-      'The notice setting here is the system global notification setting. The priority of the notification setting of Data flow job page is higher than the global notification setting here',
+    tip: 'The notice setting here is the system global notification setting. The priority of the notification setting of Data flow job page is higher than the global notification setting here',
     jobOperationNotice: 'Job operation notice',
     emailNotice: ' Email notice',
     jobStarted: 'Job started',
@@ -2393,8 +2386,7 @@ const en = {
       headInterpretation:
         'Tapdata DFS Cloud have to install Agent at local server to ensure databases connection and transmission services normally',
       downloadInstall: 'Download and install',
-      text:
-        'First, a JAVA runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
+      text: 'First, a JAVA runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
       copy: 'Copy command',
       copied: 'copied',
       refresh: 'Refresh',
@@ -3149,8 +3141,7 @@ const en = {
   },
   dataQuality: {
     title: 'Data Quality',
-    desc:
-      'The data quality page shows the summary of the table data that violates the data rules, and the user can correct the data that violates the rules on this page.',
+    desc: 'The data quality page shows the summary of the table data that violates the data rules, and the user can correct the data that violates the rules on this page.',
     keywordTip: 'Please search for table name/field name',
     sourceName: 'Name/Origin',
     totalDocs: 'Total',
