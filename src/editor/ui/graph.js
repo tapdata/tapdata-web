@@ -857,7 +857,7 @@ export default class Graph extends Component {
 
     if (elementView.model.getFormData().disablChecker) {
       halo.$el.append(
-        '<button class="handle" style="top: 45px; width:53px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
+        '<button class="handle" style="top: 45px; width:53px; height:18px; right: 25px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
           i18n.t('dataFlow.Enable') +
           '</button>'
       )
@@ -868,7 +868,7 @@ export default class Graph extends Component {
       })
     } else if (!elementView.model.getFormData().disabled) {
       halo.$el.append(
-        '<button class="handle" style="top: 45px; width:53px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
+        '<button class="handle" style="top: 45px; width:53px; height:18px; right: 25px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
           i18n.t('dataFlow.Disable') +
           '</button>'
       )
