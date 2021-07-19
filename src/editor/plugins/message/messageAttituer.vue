@@ -42,7 +42,7 @@
             <div class="pr-6 transfer-btn">
               <span
                 :class="['box', { 'error-tip': !data.type || !data.name }]"
-                :title="!data.type ? '请选择类型' : $t('dataFlow.edit')"
+                :title="!data.type ? $t('dataForm.form.transform.typePlaceholder') : $t('dataFlow.edit')"
                 @click="editRight(node, data)"
               >
                 <i class="icon-margin-right-5 iconfont icon-bianji3"></i>
@@ -62,10 +62,10 @@
         :visible.sync="createDialogVisible"
       >
         <el-form ref="createForm" :model="createForm" :rules="rules" class="dataRule-form" @submit.native.prevent>
-          <el-form-item label="名称" required prop="name">
+          <el-form-item :label="$t('dataForm.form.transform.name')" required prop="name">
             <el-input size="mini" v-model="createForm.name"></el-input>
           </el-form-item>
-          <el-form-item label="类型" required prop="type">
+          <el-form-item :label="$t('dataForm.form.transform.type')" required prop="type">
             <el-input v-if="createForm.message" size="mini" v-model="createForm.type" style="width: 100%"></el-input>
             <el-select v-else v-model="createForm.type" size="mini" style="width: 100%">
               <el-option
@@ -76,7 +76,7 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="限定修饰符">
+          <el-form-item :label="$t('dataForm.form.transform.modifier')">
             <el-radio-group v-model="createForm.label" :disabled="!!createForm.flagRepeated">
               <el-radio label="optional"> Optional </el-radio>
               <el-radio label="required"> Required </el-radio>
@@ -117,13 +117,13 @@ export default {
       let keyArr = _this.createForm.key.split('.')
       let newKey = keyArr[keyArr.length - 1]
       if (!value) {
-        callback(new Error('名称不能为空'))
+        callback(new Error(this.$t('dataForm.form.transform.name') + this.$t('dataForm.form.transform.empty')))
       } else if (value.includes('.')) {
         callback(new Error('名称不允许使用特殊符号"."'))
       } else if (nameSameToType) {
-        callback(new Error('名称不能和类型一样'))
+        callback(new Error(this.$t('dataForm.form.transform.noSameNameandType')))
       } else if (newKey !== value && allArr.includes(value)) {
-        callback(new Error('名称已存在'))
+        callback(new Error(this.$t('dataForm.form.transform.name') + this.$t('dataForm.form.transform.exist')))
       } else {
         callback()
       }
@@ -136,13 +136,13 @@ export default {
       let keyArr = _this.createForm.key.split('.')
       let newKey = keyArr[keyArr.length - 1]
       if (!value) {
-        callback(new Error('类型不能为空'))
+        callback(new Error(this.$t('dataForm.form.transform.type') + this.$t('dataForm.form.transform.empty')))
       } else if (value.includes('.')) {
-        callback(new Error('类型不允许使用特殊符号"."'))
+        callback(new Error(this.$t('dataForm.form.transform.specialSymbols') + '.'))
       } else if (nameSameToType) {
-        callback(new Error('类型不能和名称一样'))
+        callback(new Error(this.$t('dataForm.form.transform.noSameNameandType')))
       } else if (newKey !== value && allArr.includes(value)) {
-        callback(new Error('类型已存在'))
+        callback(new Error(this.$t('dataForm.form.transform.type') + this.$t('dataForm.form.transform.exist')))
       } else {
         callback()
       }
@@ -298,10 +298,8 @@ export default {
           let pre = el.key.slice(0, el.key.lastIndexOf('.'))
           let findOne = this.sourceField.find(item => item.field_name === pre)
           if (findOne?.javaType?.toLowerCase() === 'array') {
-            if (node) {
-              this.$set(node, 'flagRepeated', true)
-              node.label = 'repeated'
-            }
+            el.label = 'repeated'
+            el.flagRepeated = true
           }
         }
         if (el.children?.length) {
