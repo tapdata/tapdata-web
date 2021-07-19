@@ -213,7 +213,7 @@
 
 // const dataFlowsAPI = factory('DataFlows')
 // let timer = null
-import ws from '@/api/ws'
+// import ws from '@/api/ws'
 export default {
   name: 'TaskProgress',
   props: {
@@ -236,26 +236,19 @@ export default {
     }
   },
   watch: {
-    // dataFlow: {
-    //   deep: true,
-    //   handler(data) {
-    //     this.handleData(data)
-    //   }
-    // }
+    dataFlow: {
+      deep: true,
+      handler(data) {
+        this.handleData(data)
+      }
+    }
   },
   mounted() {
-    // this.init()
-    // this.overviewStats = this.dataFlow.overview
-    // let self = this
-    // if (timer) return
-    // timer = setInterval(() => {
-    //   self.updateDataFlow()
-    // }, 5000)
     this.handleData(this.dataFlow)
     //及时更新输入输出的数据
-    ws.on('watch', function (data) {
-      this.handleData(data)
-    })
+    // ws.on('watch', function (data) {
+    //   this.handleData(data)
+    // })
   },
 
   methods: {
