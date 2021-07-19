@@ -236,12 +236,12 @@ export default {
     }
   },
   watch: {
-    dataFlow: {
-      deep: true,
-      handler(data) {
-        this.handleData(data)
-      }
-    }
+    // dataFlow: {
+    //   deep: true,
+    //   handler(data) {
+    //     this.handleData(data)
+    //   }
+    // }
   },
   mounted() {
     this.handleData(this.dataFlow)
