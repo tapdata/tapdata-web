@@ -174,7 +174,7 @@
         </div>
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center">
-            <ElButton type="primary" @click="cancelUpgradeFnc">取消升级</ElButton>
+            <ElButton type="primary" @click="cancelUpgradeFnc">取消</ElButton>
           </div>
           <div>
             <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
@@ -531,7 +531,7 @@ export default {
       this.upgradeDialog = false
       this.upgradeErrorDialog = false
     },
-    // 取消升级
+    // 取消
     cancelUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
     },
