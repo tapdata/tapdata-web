@@ -102,6 +102,11 @@ export default {
       }
       if (metaType !== 'all') {
         where['statsData.meta_type'] = metaType
+      } else {
+        where = {
+          dataFlowId: this.$route.query.id,
+          statsType: 'dataFlowDetailsStats'
+        }
       }
 
       let filter = {
