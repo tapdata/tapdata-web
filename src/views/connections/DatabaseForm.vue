@@ -191,10 +191,10 @@
               <div class="rest-api-box">
                 <div class="rest-api-label">URL</div>
                 <div class="url-tip rest-api-url">
-                  <el-form :model="model" ref="urlInfoForm" label-width="104px" class="urlInfoForm">
+                  <el-form :model="model" ref="urlInfoForm" label-width="102px" class="urlInfoForm">
                     <el-row v-for="(item, parentIndex) in model.url_info" :key="parentIndex">
                       <div class="rest-api-row">
-                        {{ model.data_sync_mode === 'INITIAL_INCREMENTAL_SYNC' ? item.url_type : model.data_sync_mode }}
+                        {{ item.url_type }}
                       </div>
                       <el-col :span="24" class="fromLoopBox">
                         <el-form-item
@@ -886,23 +886,25 @@ export default {
       //rest api
       if (filed === 'data_sync_mode') {
         if (value === 'INITIAL_INCREMENTAL_SYNC') {
-          this.model.url_info[0]['url_type'] = 'INCREMENTAL_SYNC'
-          let urlInfo = {
-            url: '',
-            method: 'GET',
-            url_type: 'INITIAL_SYNC',
-            headers: {},
-            request_parameters: {},
-            offset_field: '',
-            initial_offset: '',
-            content_type: '',
-            headerArray: [{ name: '', value: '' }],
-            parameterArray: [{ name: '', value: '' }]
+          this.model.url_info = []
+          if (this.model.auth_type === 'oauth2') {
+            this.addUrlInfo('GET_TOKEN')
           }
-          this.model.url_info.push(urlInfo)
+          this.addUrlInfo('INITIAL_SYNC')
+          this.addUrlInfo('INCREMENTAL_SYNC')
+        } else if (value === 'INITIAL_SYNC') {
+          this.addUrlInfo('INITIAL_SYNC')
+          this.removeUrlInfo('INCREMENTAL_SYNC')
         } else {
-          this.model.url_info.splice(1, 1)
-          this.model.url_info[0]['url_type'] = value
+          this.addUrlInfo('INCREMENTAL_SYNC')
+          this.removeUrlInfo('INITIAL_SYNC')
+        }
+      }
+      if (filed === 'auth_type') {
+        if (value === 'oauth2') {
+          this.addUrlInfo('GET_TOKEN')
+        } else {
+          this.removeUrlInfo('GET_TOKEN')
         }
       }
       // custom_connection
@@ -1004,6 +1006,44 @@ export default {
         })
         this.dataTypes = options
         this.checkDataTypeOptions(type)
+      }
+    },
+    //rest api addUrl
+    addUrlInfo(type) {
+      let urlInfo = {
+        url: '',
+        method: 'GET',
+        url_type: 'INITIAL_SYNC',
+        headers: {},
+        request_parameters: {},
+        offset_field: '',
+        initial_offset: '',
+        content_type: '',
+        headerArray: [{ name: '', value: '' }],
+        parameterArray: [{ name: '', value: '' }]
+      }
+      urlInfo['url_type'] = type
+      if (type === 'GET_TOKEN') {
+        urlInfo['parameterArray'] = [
+          { name:'client_id', value: ''},
+          { name:'client_secret', value: ''},
+          { name:'scope', value: ''},
+          { name:'grant_type', value: ''},
+          { name:'client_credentials', value: ''}
+        ]
+      }
+      let isExist = this.model.url_info.filter(item => item.url_type === type)
+      if (isExist.length === 0 && type !== 'GET_TOKEN') {
+        this.model.url_info.push(urlInfo)
+      } else if (isExist.length === 0 && type === 'GET_TOKEN') {
+        this.model.url_info.unshift(urlInfo)
+      }
+    },
+    //删除url
+    removeUrlInfo(type) {
+      let index = this.model.url_info.findIndex(item => item.url_type === type)
+      if (index > -1) {
+        this.model.url_info.splice(index, 1)
       }
     },
     // 按照数据库类型获取表单配置规则
