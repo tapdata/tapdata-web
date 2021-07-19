@@ -29,6 +29,7 @@
         </div>
         <el-table
           border
+          ref="table"
           v-loading="loading"
           class="table-page-table table-border"
           height="100%"
@@ -155,6 +156,7 @@ export default {
       if (pageNum === 1) {
         this.multipleSelection = []
         this.$emit('selection-change', [])
+        this.$refs?.table?.clearSelection()
       }
       this.page.current = pageNum || this.page.current
       this.$nextTick(() => {
