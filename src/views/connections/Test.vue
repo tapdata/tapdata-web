@@ -246,7 +246,6 @@ export default {
             let testData = {
               wsError: 'ERROR'
             }
-            console.log('zhixingl')
             self.$emit('returnTestData', testData)
           }
         }, 800)

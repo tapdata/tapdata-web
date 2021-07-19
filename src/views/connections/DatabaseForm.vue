@@ -1547,7 +1547,6 @@ export default {
               this.dialogEditNameVisible = false
             })
             .catch(err => {
-              console.log('333')
               this.renameData.rename = this.model.name
               this.$refs['renameForm'].clearValidate()
               this.editBtnLoading = false
