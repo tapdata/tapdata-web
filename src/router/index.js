@@ -28,7 +28,7 @@ const childRoutes = [
   {
     path: '/connections/create',
     name: 'connectionsCreate',
-    component: () => import('@/views/connections/DatabaseForm'),
+    component: () => import('@/views/connections/formbuild'),
     meta: {
       title: i18n.t('tap.connection'),
       isCollapse: true,
