@@ -401,7 +401,7 @@ export default class Editor extends BaseObject {
    * show Task Progress
    * @param dataFlow
    */
-  showTaskProgress(dataFlow, isShow) {
+  showTaskProgress(dataFlow) {
     let progress = this.getBottomTabPanel().getChildByName('progress')
     if (!progress) {
       progress = new VueComponent({

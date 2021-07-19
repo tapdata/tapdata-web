@@ -1662,8 +1662,7 @@ const en = {
       information: 'Information',
       error: 'The test service request timed out, please close and try again.',
       retryBtn: 'Retry',
-      retryTest:
-        'The connection test service failed to start, please click Retry'
+      retryTest: 'The connection test service failed to start, please click Retry'
     },
     form: {
       connectionName: 'Connection Name',

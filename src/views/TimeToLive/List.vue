@@ -761,7 +761,6 @@ export default {
 
     // 重置生命周期
     resetTtl(item) {
-      console.log(item)
       let params = {
         task_name: 'mongodb_create_index',
         task_type: 'MONGODB_UPDATE_INDEX',

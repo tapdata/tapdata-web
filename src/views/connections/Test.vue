@@ -12,9 +12,7 @@
     <div class="test-result">
       <div v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'" style="color: #d54e21">
         <i class="el-icon-warning" style="color: #d54e21"></i>
-        <span class="test-title">{{
-          wsErrorMsg ? wsErrorMsg : $t('dataForm.test.error')
-        }}</span>
+        <span class="test-title">{{ wsErrorMsg ? wsErrorMsg : $t('dataForm.test.error') }}</span>
       </div>
       <div v-else>
         <div class="test-status" v-if="['invalid', 'ERROR'].includes(status)">
@@ -25,10 +23,7 @@
           <i class="el-icon-success" :style="{ color: colorMap[status] }"></i>
           <span class="test-title">{{ $t('dataForm.test.testResultSuccess') }}</span>
         </div>
-        <div
-          class="test-status"
-          v-if="!['ready', 'invalid', 'ERROR'].includes(status)"
-        >
+        <div class="test-status" v-if="!['ready', 'invalid', 'ERROR'].includes(status)">
           <el-image
             style="width: 20px; height: 20px; vertical-align: bottom"
             :src="require('@/assets/icons/loading-drs.gif')"
@@ -251,7 +246,6 @@ export default {
             let testData = {
               wsError: 'ERROR'
             }
-            console.log('zhixingl')
             self.$emit('returnTestData', testData)
           }
         }, 800)

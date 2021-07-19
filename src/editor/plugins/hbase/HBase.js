@@ -55,14 +55,8 @@ export const HBaseNodeConfig = {
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data.connectionId)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`
-          )
-        if (!data.tableName)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`
-          )
+        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`)
+        if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`)
         return true
       }
     }
@@ -146,10 +140,7 @@ export const HBaseNodeConfig = {
             label: 'Outline style',
             group: 'presentation',
             when: {
-              and: [
-                { ne: { 'attrs/body/stroke': 'transparent' } },
-                { ne: { 'attrs/body/strokeWidth': 0 } }
-              ]
+              and: [{ ne: { 'attrs/body/stroke': 'transparent' } }, { ne: { 'attrs/body/strokeWidth': 0 } }]
             },
             index: 4
           }

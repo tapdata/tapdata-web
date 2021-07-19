@@ -229,7 +229,6 @@ export default {
         .$api('Licenses')
         .get({})
         .then(result => {
-          console.log(result, '&&&&&&')
           if (result && result.data) {
             auth_data = result.data
           }
