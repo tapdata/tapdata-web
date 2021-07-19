@@ -6,7 +6,9 @@
       <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
-          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>
+          <el-button class="progress-header_btn" type="text" @click="handleInfo" v-if="completeTime !== '全量已完成'"
+            >查看详情</el-button
+          >
         </div>
         <div class="progress-container__body flex">
           <div class="progress-container__img">
@@ -97,7 +99,7 @@
           <div class="progress-container__overview ml-6">
             <el-row>
               <el-col :span="24" class="flex"
-                ><span>全量+增量同步任务进度：</span
+                ><span>全量同步任务进度：</span
                 ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
               </el-col>
             </el-row>
@@ -106,10 +108,10 @@
                 <span>预计全量完成还需时间：</span>
                 <span class="ml-3 color-green">{{ completeTime }}</span>
               </el-col>
-              <el-col :span="12">
-                <span>全量状态：</span>
-                <span class="ml-3 color-green">{{ overviewStats.status }}</span>
-              </el-col>
+              <!--              <el-col :span="12">-->
+              <!--                <span>全量状态：</span>-->
+              <!--                <span class="ml-3 color-green">{{ overviewStats.status }}</span>-->
+              <!--              </el-col>-->
             </el-row>
           </div>
         </div>
@@ -160,7 +162,7 @@
       <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'cdc'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
-          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>
+          <!--          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>-->
         </div>
         <div class="progress-container__footer">
           <!-- <el-row class="footer-line">
@@ -236,12 +238,12 @@ export default {
     }
   },
   watch: {
-    // dataFlow: {
-    //   deep: true,
-    //   handler(data) {
-    //     this.handleData(data)
-    //   }
-    // }
+    dataFlow: {
+      deep: true,
+      handler(data) {
+        this.handleData(data)
+      }
+    }
   },
   mounted() {
     this.handleData(this.dataFlow)
@@ -278,9 +280,11 @@ export default {
     // },
     handleData(data) {
       // let currentData = data
+      let overview = null
       let inputCount = data?.stats?.throughput?.inputCount
+
       if (data?.stats?.overview) {
-        let overview = JSON.stringify(data.stats.overview)
+        overview = JSON.parse(JSON.stringify(data.stats.overview))
 
         if (overview.waitingForSyecTableNums) {
           overview.waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
@@ -292,6 +296,7 @@ export default {
         this.progressBar = num ? num.toFixed(0) * 1 : 0
 
         let time = (overview.sourceRowNum - overview.targatRowNum) / inputCount
+        let completeTime = ''
         let r = ''
         if (time) {
           let s = parseInt(time),
@@ -323,18 +328,28 @@ export default {
           if (d > 0) {
             r = parseInt(d) + '天' + r
           }
-          this.completeTime = r
+          completeTime = r
         } else {
-          this.completeTime = '全量已完成'
+          completeTime = '全量已完成'
         }
+        if (data.status === 'running') {
+          overview.status =
+            overview.sourceTableNum === overview.waitingForSyecTableNums &&
+            overview.sourceRowNum === overview.targatRowNum
+              ? '已完成'
+              : '进行中'
 
-        overview.status =
-          overview.sourceTableNum === overview.waitingForSyecTableNums &&
-          overview.sourceRowNum === overview.targatRowNum
-            ? '已完成'
-            : '进行中'
-        this.overviewStats = overview
+          this.completeTime = completeTime
+        }
+      } else {
+        overview.status = '未开始'
       }
+      if (['paused', 'error'].includes(data.status)) {
+        overview.status = '已停止'
+        this.completeTime = '任务已停止'
+      }
+
+      this.overviewStats = overview
     },
     // 跳转详情
     handleInfo() {

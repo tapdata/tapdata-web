@@ -91,6 +91,7 @@ export default {
   methods: {
     getData({ page }) {
       let { current, size } = page
+      size = 100
       let { keyword, metaType } = this.searchParams
       let where = {
         dataFlowId: this.$route.query.id,
