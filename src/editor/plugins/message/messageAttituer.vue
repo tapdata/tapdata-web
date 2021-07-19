@@ -11,53 +11,43 @@
         </el-form-item>
       </el-form>
       <div class="box box-content">
-        <!-- lazy -->
         <div class="btn-line mb-3 text-rf">
           <el-button size="mini" :type="draggable ? 'primary' : 'default'" @click="handleDraggable">是否拖拽</el-button>
-          <el-button size="mini" @click="addChecked">添加字段</el-button>
+          <el-button size="mini" @click="addFieldDialog">添加字段</el-button>
         </div>
-
-        <tree-transfer
-          ref="wl-tree-transfer"
-          filter
-          high-light
-          check-strictly
-          :title="title"
-          :to_data="toData"
-          :from_data="fromData"
-          :filterNode="filterNode"
-          :defaultProps="defaultProps"
-          :draggable="draggable"
-          :defaultCheckedKeys="defaultCheckedKeys"
-          :defaultExpandedKeys="[2, 3]"
-          @right-check-change="rightCheckChange"
-          @left-check-change="leftCheckChange"
-          @remove-btn="remove"
-          @node-drag-end="nodeDragEnd"
-          @add-btn="add"
-          node_key="key"
+        <TreeTransfer
+          ref="treeTransfer"
+          class="tree-transfer"
+          :left-data="leftData"
+          :right-data="rightData"
+          :left-title="leftTitle"
+          :right-title="rightTitle"
+          :node-key="nodeKey"
+          :to-right-key="toRightKey"
+          :draggableRight="draggableRight"
+          :filter-node-method="filterNode"
+          @change-left-data="changeLeftData"
+          @change-right-data="changeRightData"
         >
-          <template #content-right="{ node, data }">
-            <div class="flex justify-between">
-              <div class="transfer-item-content flex">
-                <img :src="getImgByType(data.type, data.message)" />
-                <span class="field-name" :title="data.name">{{ data.name || '重名，请重新定义名称' }}</span>
-              </div>
-              <div class="transfer-btn">
-                <span
-                  :class="['box', { 'error-tip': !data.type || !data.name }]"
-                  :title="!data.type ? '请选择类型' : $t('dataFlow.edit')"
-                  @click="handleEdit(node, data)"
-                >
-                  <i class="icon-margin-right-5 iconfont icon-bianji3"></i>
-                </span>
-                <span class="box" @click="handleDel(node, data)">
-                  <i class="icon-margin-right-5 iconfont icon-shanchu"></i>
-                </span>
-              </div>
+          <template v-slot:right-tree="{ node, data }">
+            <div class="transfer-item-content flex">
+              <img :src="getImgByType(data.type, data.message)" alt="" />
+              <span class="field-name ellipsis" :title="data.name">{{ data.name || '重名，请重新定义名称' }}</span>
             </div>
+            <span class="pr-6">
+              <span
+                :class="['box', { 'error-tip': !data.type || !data.name }]"
+                :title="!data.type ? '请选择类型' : $t('dataFlow.edit')"
+                @click="editRight(node, data)"
+              >
+                <i class="icon-margin-right-5 iconfont icon-bianji3"></i>
+              </span>
+              <span class="box" @click="remove(node, data)">
+                <i class="icon-margin-right-5 iconfont icon-shanchu"></i>
+              </span>
+            </span>
           </template>
-        </tree-transfer>
+        </TreeTransfer>
       </div>
       <el-dialog
         :title="createForm.openType === 'edit' ? '编辑' : '新增'"
@@ -107,22 +97,24 @@
 
 <script>
 import _ from 'lodash'
-import treeTransfer from 'el-tree-transfer'
+import TreeTransfer from './TreeTransfer'
 
 export default {
   name: 'message',
-  components: { treeTransfer },
+  components: { TreeTransfer },
   data() {
     const _this = this
     const validateName = (rule, value, callback) => {
-      let allNames = this.getAllItemInTree([...this.toData], 'name')
-      let allKeys = this.getAllItemInTree([...this.toData], 'key')
+      let allNames = this.getAllItemInTree([...this.rightData], 'name')
+      let allKeys = this.getAllItemInTree([...this.rightData], 'key')
       let allArr = [...allNames, ...allKeys]
       let nameSameToType = value === _this.createForm.type
       let keyArr = _this.createForm.key.split('.')
-      let newKey = keyArr[keyArr.length - 1].replace('_RIGHT', '')
+      let newKey = keyArr[keyArr.length - 1]
       if (!value) {
         callback(new Error('名称不能为空'))
+      } else if (value.includes('.')) {
+        callback(new Error('名称不允许使用特殊符号"."'))
       } else if (nameSameToType) {
         callback(new Error('名称不能和类型一样'))
       } else if (newKey !== value && allArr.includes(value)) {
@@ -132,14 +124,16 @@ export default {
       }
     }
     const validateType = (rule, value, callback) => {
-      let allNames = this.getAllItemInTree([...this.toData], 'name')
-      let allKeys = this.getAllItemInTree([...this.toData], 'key')
+      let allNames = this.getAllItemInTree([...this.rightData], 'name')
+      let allKeys = this.getAllItemInTree([...this.rightData], 'key')
       let allArr = [...allNames, ...allKeys]
       let nameSameToType = value === _this.createForm.name
       let keyArr = _this.createForm.key.split('.')
-      let newKey = keyArr[keyArr.length - 1].replace('_RIGHT', '')
+      let newKey = keyArr[keyArr.length - 1]
       if (!value) {
         callback(new Error('类型不能为空'))
+      } else if (value.includes('.')) {
+        callback(new Error('类型不允许使用特殊符号"."'))
       } else if (nameSameToType) {
         callback(new Error('类型不能和名称一样'))
       } else if (newKey !== value && allArr.includes(value)) {
@@ -149,16 +143,9 @@ export default {
       }
     }
     return {
-      // mode: "transfer", // transfer addressList
-      $btnRight: null,
-      defaultProps: {
-        label: 'name',
-        children: 'children'
-      },
-      title: ['字段名', '消息体'],
-      sourceData: [], // 源数据，不做修改
-      fromData: [], // 穿梭框 - 源数据 - 树形
-      toData: [], // 穿梭框 - 目标数据 - 树形
+      leftTitle: '字段名',
+      rightTitle: '消息体',
+      sourceData: [], // 源数据，不做修改穿梭框 - 源数据 - 树形
       fromArray: [],
       toArray: [],
       defaultCheckedKeys: [], // 左侧默认选中数据
@@ -218,17 +205,28 @@ export default {
         sint: 'sint32',
         string: 'string'
       },
-      unitFlagRepeated: false // Unit的修饰符
+      unitFlagRepeated: false, // Unit的修饰符
+      fields: [], // 所有数据
+      leftData: [],
+      rightData: [],
+      draggableRight: false,
+      toRightKey: 'message',
+      nodeKey: 'key'
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      let treeTrans = this.$refs['wl-tree-transfer']
-      let $transferCenter = treeTrans.$el?.getElementsByClassName('transfer-center')
-      let $transferBtns = $transferCenter?.[0].getElementsByClassName('el-button')
-      this.$btnRight = $transferBtns?.[1]
-      this.$btnRight.style.visibility = 'hidden'
-    })
+  watch: {
+    leftData: {
+      deep: true,
+      handler() {
+        this.setConfig()
+      }
+    },
+    rightData: {
+      deep: true,
+      handler() {
+        this.setConfig()
+      }
+    }
   },
   methods: {
     setData(data, cell) {
@@ -236,7 +234,6 @@ export default {
       if (data) {
         _.merge(this.model, data)
       }
-      console.log('setData', this.model, data)
       this.cell = cell
       if (cell?.getOutputSchema()) {
         let sourceSchema = cell.getOutputSchema() || null,
@@ -263,19 +260,15 @@ export default {
             })
         }
       }
-      // toData
       if (this.model.pbProcessorConfig?.schema) {
         let genTree = this.genTree({ ...this.model.pbProcessorConfig?.schema })
-        console.log('genTree', genTree)
-        this.toData = genTree || []
-        let getRightFields = this.getRightFields(this.toData)
+        this.rightData = genTree || []
+        let getRightFields = this.getRightFields(this.rightData)
         let getRightFieldsKeys = getRightFields.map(item => item.key)
-        console.log('getRightFields', getRightFields, getRightFieldsKeys)
-        // 过滤下 fromdata
-        this.fromData = _this.fieldsData.filter(item => !getRightFieldsKeys.includes(item.key))
+        this.leftData = _this.fieldsData.filter(item => !getRightFieldsKeys.includes(item.key))
       } else {
-        // 过滤下 fromdata
-        this.fromData = [..._this.fieldsData]
+        // 过滤下 leftData
+        this.leftData = [..._this.fieldsData]
       }
     },
     getRightFields(data = [], result = []) {
@@ -294,10 +287,96 @@ export default {
       result.name = result.name || 'Message'
       return result
     },
+    changeLeftData(data) {
+      this.leftData = data
+    },
+    changeRightData(data) {
+      this.formatRightDataName(data)
+      this.rightData = data
+    },
+    formatRightDataName(data = []) {
+      data.forEach(el => {
+        if (el.name.includes('.')) {
+          let nameArr = el.name.split('.')
+          el.name = nameArr[nameArr.length - 1]
+        }
+        if (el.children?.length) {
+          this.formatRightDataName(el.children)
+        }
+      })
+      return data
+    },
+    editRight(node, data) {
+      this.createDialogVisible = true
+      this.createForm = {
+        label: data.label,
+        name: data.name,
+        key: data.key,
+        type: data.type,
+        message: data.message || false,
+        disabled: data.disabled,
+        flagRepeated: data.flagRepeated
+      }
+      this.editData = { node, data }
+      this.createForm.openType = 'edit'
+    },
+    handleDraggable() {
+      this.draggableRight = !this.draggableRight
+    },
+    // 添加字段弹窗
+    addFieldDialog() {
+      this.createDialogVisible = true
+      this.createForm = {
+        name: '',
+        key: '',
+        pid: 0,
+        message: true,
+        label: 'required',
+        type: '',
+        openType: 'add'
+      }
+    },
+    closeFieldDialog() {
+      this.createDialogVisible = false
+    },
+    // 创建消息体
+    createMessage() {
+      let _this = this
+      _this.$refs['createForm'].validate(valid => {
+        if (!valid) {
+          return
+        }
+        // 编辑
+        if (_this.createForm.openType === 'edit') {
+          _this.editField()
+        } else {
+          // 新增
+          _this.addField()
+        }
+
+        _this.closeFieldDialog()
+      })
+    },
+    addField() {
+      let getCheckedNodesRight = this.$refs.treeTransfer.getCheckedNodesRight()
+      this.createForm.key = this.createForm.name
+      if (getCheckedNodesRight.length) {
+        // 在指定节点添加字段
+        this.$refs.treeTransfer.toRightNode({ ...this.createForm })
+      } else {
+        // 最外层添加字段
+        this.rightData.push({ ...this.createForm })
+      }
+    },
+    editField() {
+      const data = this.editData.data
+      for (let key in data) {
+        data[key] = this.createForm[key]
+      }
+    },
     setConfig() {
       this.model.pbProcessorConfig = this.formatToData()
       let data = this.getData()
-      console.log('$emit-data', data)
       this.$emit('dataChanged', data)
     },
     // data数组，result返回的结果，field只存某个字段
@@ -318,9 +397,6 @@ export default {
     // 获取图片
     getImgByType(type, message = false) {
       let dType = type.toLowerCase()
-      // if (dType === 'int32') {
-      //   dType = 'integer'
-      // }
       let { suportTypeMap } = this
       for (let key in suportTypeMap) {
         if (suportTypeMap[key] === dType) {
@@ -370,201 +446,11 @@ export default {
       }
     },
     // 自定义筛选函数
-    filterNode(value, data, where) {
+    filterNode(value, data) {
       if (!value) return true
-      return data[this.defaultProps.label].indexOf(value) !== -1
+      return data.name.indexOf(value) !== -1
     },
-    // 添加按钮
-    add(fromData, toData, obj) {
-      console.log('add', fromData, toData, obj)
-      let node = this.rightTreeObj?.node
-      let checkedKeys = this.rightTreeObj?.checkedKeys
-      // let node = rightTreeObj.node
-      if (node && !node.children) {
-        this.$set(node, 'children', [])
-      }
-      if (node?.message && !!checkedKeys.length && checkedKeys?.includes(node?.key)) {
-        obj.nodes.forEach(item => {
-          // item.pid = node.name
-          item.pid = node.key
-          item.disabled = false
-          node.children.push(item)
-          toData.forEach((el, index) => {
-            if (item.name === el.name) {
-              toData.splice(index, 1)
-            }
-          })
-        })
-        this.setFileLabel(obj.nodes, node)
-      } else {
-        this.setFileLabel(obj.nodes)
-      }
-      this.setRightKey(this.toData, 'add')
-      this.setConfig()
-      // 清空右侧选中
-      this.leftTreeObj = null
-      this.rightTreeObj = null
-      console.log('~~~~~~~~~~~~~~~~~', this.toData)
-    },
-    setRightKey(data = [], from = '') {
-      let checkedNodes = this.leftTreeObj?.checkedNodes || []
-      data.forEach((el, index) => {
-        let findOne = checkedNodes.find(item => item.key.replace('_RIGHT') === el.key.replace('_RIGHT'))
-        if (from === 'add' && findOne) {
-          el.name = ''
-          el.key = 'NEED_RENAME_' + new Date().getTime() + index
-        } else if (!el.key?.includes('_RIGHT')) {
-          el.key = el.key + '_RIGHT'
-        }
-        if (el?.children?.length) {
-          this.setRightKey(el.children)
-        }
-      })
-    },
-    setFileLabel(data, node) {
-      let flagRepeated = false // 树形结构的源，需要锁定label的值
-      let fieldsData = this.cell?.getOutputSchema()?.fields ?? []
-      data.forEach(el => {
-        let nameArr = el.name.split('.')
-        el.name = nameArr[nameArr.length - 1]
-        el.key = el.key + '_RIGHT'
-        if (el.key.includes('.')) {
-          let pre = el.key.slice(0, el.key.lastIndexOf('.'))
-          let findOne = fieldsData.find(item => item.field_name === pre)
-          if (findOne?.javaType?.toLowerCase() === 'array') {
-            flagRepeated = true
-          }
-        }
-      })
-      // 文件夹
-      if (node) {
-        this.$set(node, 'flagRepeated', flagRepeated)
-        if (flagRepeated) {
-          node.label = 'repeated'
-        }
-      } else {
-        // 最外层的Unit
-        this.unitFlagRepeated = flagRepeated
-      }
-    },
-    findFieldInTree(data = [], result = []) {
-      data.forEach(el => {
-        if (!el.message) {
-          result.push(el)
-        }
-        if (el.pid !== 0) {
-          el.pid = 0
-        }
-        if (el.children?.length) {
-          this.findFieldInTree(el.children, result)
-        }
-      })
-    },
-    // 移除按钮
-    remove(fromData, toData, obj) {
-      console.log('remove', fromData, toData, obj)
-      let result = []
-      this.findFieldInTree(fromData, result)
-      this.fromData = result
-    },
-    nodeDragEnd() {
-      this.setConfig()
-    },
-    // 左侧源数据选中事件
-    leftCheckChange(nodeObj, treeObj, checkAll) {
-      this.leftTreeObj = {
-        node: nodeObj,
-        checkAll: checkAll,
-        ...treeObj
-      }
-      console.log('this.leftTreeObj', this.leftTreeObj)
-    },
-    // 右侧目标数据选中事件
-    rightCheckChange(nodeObj, treeObj, checkAll) {
-      this.rightTreeObj = {
-        node: nodeObj,
-        checkAll: checkAll,
-        ...treeObj
-      }
-      console.log('this.rightTreeObj', this.rightTreeObj)
-    },
-    // 新增消息体
-    addChecked() {
-      this.createDialogVisible = true
-      this.createForm = {
-        name: '',
-        key: '',
-        pid: 0,
-        message: true,
-        label: 'required',
-        type: '',
-        openType: 'add'
-      }
-    },
-    // 编辑消息体数据
-    handleEdit(node, data) {
-      this.createDialogVisible = true
-      this.createForm = {
-        label: data.label,
-        name: data.name,
-        key: data.key,
-        type: data.type,
-        message: data.message || false,
-        disabled: data.disabled,
-        flagRepeated: data.flagRepeated
-      }
-      this.editData = node
-      this.createForm.openType = 'edit'
-    },
-    // 创建消息体
-    createMessage() {
-      let _this = this
-      _this.$refs['createForm'].validate(valid => {
-        if (!valid) {
-          return
-        }
-        _this.createDialogVisible = false
-        // 新增
-        if (_this.createForm.openType === 'add') {
-          let rightTreeObj = _this.rightTreeObj
-          let node = rightTreeObj?.node
-          let checkedKeys = rightTreeObj?.checkedKeys
-          _this.createForm.key = _this.createForm.name
-          if (node?.message && !!checkedKeys.length && checkedKeys?.includes(node.key)) {
-            if (!node.children) {
-              _this.$set(node, 'children', [])
-            }
-            _this.createForm.pid = node.key || 0
-            node.children.push({ ..._this.createForm })
-          } else {
-            _this.toData.push({ ..._this.createForm })
-          }
-        } else {
-          // 编辑
-          const parent = _this.editData.parent
-          const children = parent.data.children || parent.data
-          if (_this.createForm.key.includes('NEED_RENAME_')) {
-            _this.createForm.key = _this.createForm.name
-            _this.editData.data.key = _this.createForm.name
-          }
-          if (children.length) {
-            children.forEach(item => {
-              if (item.key === _this.createForm.key) {
-                item.name = _this.createForm.name
-                item.label = _this.createForm.label
-                item.type = _this.createForm.type
-              }
-            })
-          }
-        }
-
-        _this.$refs['createForm'].resetFields()
-        this.setRightKey(this.toData, 'createMessage')
-        _this.setConfig()
-      })
-    },
-    // 删除消息体数据
-    handleDel(node, data) {
+    remove(node, data) {
       this.$confirm(this.$t('message.deleteMessageFieldConfirm'), this.$t('message.delete'), {
         type: 'warning'
       }).then(resFlag => {
@@ -572,28 +458,45 @@ export default {
           this.createMessage(true)
           return
         }
+
         const parent = node.parent
-        let children = parent.data instanceof Array ? parent.data : parent.data?.children || []
-        let getIndex = children?.findIndex(d => {
-          return d.key === data.key
-        })
-        // 自定义字段
-        if (data.message) {
-          let getRightFields = this.getRightFields(data.children)
-          this.fromData = [...this.fromData, ...getRightFields]
-          !!getIndex && children.splice(getIndex, 1)
+        const children = parent.data.children || parent.data
+        let result = []
+        // 删除文件夹
+        if ((this.toRightKey && data[this.toRightKey]) || this.toRightKey === '') {
+          result = this.getLeftAllFields(data?.children)
         } else {
-          // 系统字段
-          this.fromData.push(data)
-          children.splice(getIndex, 1)
+          // 删除字段
+          result.push({
+            ...data,
+            ...{
+              name: data.key
+            }
+          })
         }
-        // 更新数据
-        this.setConfig()
+        // 更新左树
+        this.changeLeftData([...this.leftData, ...result])
+
+        // 更新右树
+        const index = children.findIndex(d => d[this.nodeKey] === data[this.nodeKey])
+        children.splice(index, 1)
+        this.changeRightData([...this.rightData])
       })
     },
-    // 是否拖拽
-    handleDraggable() {
-      this.draggable = !this.draggable
+    getLeftAllFields(data = [], result = []) {
+      data.forEach(el => {
+        if ((this.toRightKey && el[this.toRightKey]) || el?.children.length > 0) {
+          this.getLeftAllFields(el?.children, result)
+        } else {
+          result.push({
+            ...el,
+            ...{
+              name: el.key
+            }
+          })
+        }
+      })
+      return result
     },
     getMapping(tree, result = {}) {
       if (tree.message) {
@@ -603,18 +506,15 @@ export default {
           })
         }
       } else {
-        result[
-          tree.mapping
-            .join('#')
-            ?.replace(/\./g, '#')
-            ?.replace(/_RIGHT/g, '')
-        ] = tree.key.replace('_RIGHT', '')
+        let lastArr = tree.mapping[tree.mapping.length - 1]?.split('.')
+        let lastWord = lastArr[lastArr.length - 1]
+        result[lastWord?.replace(/\./g, '#')] = tree.key
       }
       return result
     },
     getSchema(node) {
       let obj = {}
-      obj.name = node.key.replace('_RIGHT', '')
+      obj.name = node.key
       obj.label = node.label
       obj.type = node.type
       obj.nestedList = []
@@ -624,10 +524,12 @@ export default {
         let propertyIndex = 0
         node.children.forEach(el => {
           propertyIndex++
+          let nameArr = el.name.split('.')
+          let newName = nameArr[nameArr.length - 1]
           obj.propertyList.push({
             label: el.label,
-            key: el.key.replace('_RIGHT', ''),
-            name: el.name.replace('_RIGHT', ''),
+            key: el.key,
+            name: newName,
             number: propertyIndex,
             type: el.type
           })
@@ -643,7 +545,7 @@ export default {
             } else {
               obj.nestedList.push({
                 label: el.label,
-                key: el.key.replace('_RIGHT', ''),
+                key: el.key,
                 name: el.type,
                 number: nestedIndex,
                 type: el.type
@@ -670,7 +572,6 @@ export default {
     },
     genTree(schema) {
       schema.nestedList?.forEach(item => {
-        item.key = item.key + '_RIGHT'
         let target = schema.propertyList.find(_item => _item.type === item.name) ?? {}
         target.children = this.genTree(item) ?? []
         target.message = true
@@ -679,18 +580,17 @@ export default {
         if (!item.children) {
           item.children = []
         }
-        item.key = item.key + '_RIGHT'
         return item
       })
     },
     formatToData() {
-      let { toData } = this
+      let { rightData } = this
       let tree = this.formatMappingTree({
         key: 'Unit',
         name: 'Unit',
         message: true,
         pid: -1,
-        children: [...toData],
+        children: [...rightData],
         unitFlagRepeated: this.unitFlagRepeated
       })
       let getMapping = this.getMapping({ ...tree })
@@ -741,6 +641,9 @@ export default {
         }
       }
     }
+  }
+  .tree-transfer {
+    flex: 1;
   }
   .box-content {
     flex: 1;
