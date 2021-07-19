@@ -218,20 +218,6 @@ export default {
       nodeKey: 'key'
     }
   },
-  watch: {
-    leftData: {
-      deep: true,
-      handler() {
-        this.setConfig()
-      }
-    },
-    rightData: {
-      deep: true,
-      handler() {
-        this.setConfig()
-      }
-    }
-  },
   methods: {
     setData(data, cell) {
       let _this = this
@@ -294,10 +280,12 @@ export default {
     },
     changeLeftData(data) {
       this.leftData = data
+      this.setConfig()
     },
     changeRightData(data) {
       this.formatRightDataName(data)
       this.rightData = data
+      this.setConfig()
     },
     formatRightDataName(data = [], node = null) {
       data.forEach(el => {
@@ -370,11 +358,12 @@ export default {
         }
 
         _this.closeFieldDialog()
+        _this.setConfig()
       })
     },
     addField() {
       let getCheckedNodesRight = this.$refs.treeTransfer.getCheckedNodesRight()
-      this.createForm.key = this.createForm.name
+      this.createForm.key = '_FIELD_' + this.createForm.name
       if (getCheckedNodesRight.length) {
         // 在指定节点添加字段
         this.$refs.treeTransfer.toRightNode({ ...this.createForm })
