@@ -1387,6 +1387,7 @@ const cn = {
         statistics: '统计',
         logs: '运行日志',
         milestone: '任务里程碑',
+        progress: '任务进度',
         capture: '抓取数据',
         style: '样式',
         config: '配置',
