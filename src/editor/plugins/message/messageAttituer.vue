@@ -119,7 +119,7 @@ export default {
       if (!value) {
         callback(new Error(this.$t('dataForm.form.transform.name') + this.$t('dataForm.form.transform.empty')))
       } else if (value.includes('.')) {
-        callback(new Error('名称不允许使用特殊符号"."'))
+        callback(new Error(this.$t('dataForm.form.transform.specialSymbols') + '"."'))
       } else if (nameSameToType) {
         callback(new Error(this.$t('dataForm.form.transform.noSameNameandType')))
       } else if (newKey !== value && allArr.includes(value)) {
@@ -138,7 +138,7 @@ export default {
       if (!value) {
         callback(new Error(this.$t('dataForm.form.transform.type') + this.$t('dataForm.form.transform.empty')))
       } else if (value.includes('.')) {
-        callback(new Error(this.$t('dataForm.form.transform.specialSymbols') + '.'))
+        callback(new Error(this.$t('dataForm.form.transform.specialSymbols') + '"."'))
       } else if (nameSameToType) {
         callback(new Error(this.$t('dataForm.form.transform.noSameNameandType')))
       } else if (newKey !== value && allArr.includes(value)) {
