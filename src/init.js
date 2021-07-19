@@ -7,6 +7,7 @@ import VueRouter from 'vue-router'
 import './assets/app.scss'
 import VueClipboard from 'vue-clipboard2'
 import { Message } from 'element-ui'
+import locale from 'element-ui/lib/locale'
 import settings from './settings'
 import TapdataWebCore from '../packages/tapdata-web-core'
 import VueI18n from 'vue-i18n'
@@ -25,6 +26,7 @@ const i18n = new VueI18n({
   locale: 'zh-CN',
   messages: TapdataWebCore.lang
 })
+locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
 
 Vue.prototype.$checkAgentStatus = callback => {
   window.axios.get('tm/api/Workers/availableAgent').then(data => {
