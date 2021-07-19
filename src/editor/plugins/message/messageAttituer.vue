@@ -12,8 +12,10 @@
       </el-form>
       <div class="box box-content">
         <div class="btn-line mb-3 text-rf">
-          <el-button size="mini" :type="draggable ? 'primary' : 'default'" @click="handleDraggable">是否拖拽</el-button>
-          <el-button size="mini" @click="addFieldDialog">添加字段</el-button>
+          <el-button size="mini" :type="draggable ? 'primary' : 'default'" @click="handleDraggable">{{
+            $t('dataForm.form.transform.isDrag')
+          }}</el-button>
+          <el-button size="mini" @click="addFieldDialog">{{ $t('dataForm.form.transform.addField') }}</el-button>
         </div>
         <TreeTransfer
           ref="treeTransfer"
@@ -32,7 +34,9 @@
           <template v-slot:right-tree="{ node, data }">
             <div class="transfer-item-content flex">
               <img :src="getImgByType(data.type, data.message)" alt="" />
-              <span class="field-name ellipsis" :title="data.name">{{ data.name || '重名，请重新定义名称' }}</span>
+              <span class="field-name ellipsis" :title="data.name">{{
+                data.name || $t('dataForm.form.transform.doubleName')
+              }}</span>
             </div>
             <span class="pr-6">
               <span
@@ -50,7 +54,7 @@
         </TreeTransfer>
       </div>
       <el-dialog
-        :title="createForm.openType === 'edit' ? '编辑' : '新增'"
+        :title="createForm.openType === 'edit' ? $t('dataForm.form.transform.edit') : $t('dataForm.form.transform.add')"
         width="600px"
         custom-class="create-dialog"
         :close-on-click-modal="false"
@@ -143,8 +147,8 @@ export default {
       }
     }
     return {
-      leftTitle: '字段名',
-      rightTitle: '消息体',
+      leftTitle: this.$t('dataForm.form.transform.fieldName'),
+      rightTitle: this.$t('dataForm.form.transform.messageBody'),
       sourceData: [], // 源数据，不做修改穿梭框 - 源数据 - 树形
       fromArray: [],
       toArray: [],
@@ -377,6 +381,7 @@ export default {
     setConfig() {
       this.model.pbProcessorConfig = this.formatToData()
       let data = this.getData()
+      console.log('setConfig', data)
       this.$emit('dataChanged', data)
     },
     // data数组，result返回的结果，field只存某个字段
@@ -453,9 +458,8 @@ export default {
     remove(node, data) {
       this.$confirm(this.$t('message.deleteMessageFieldConfirm'), this.$t('message.delete'), {
         type: 'warning'
-      }).then(resFlag => {
-        if (!resFlag) {
-          this.createMessage(true)
+      }).then(res => {
+        if (!res) {
           return
         }
 
@@ -506,9 +510,11 @@ export default {
           })
         }
       } else {
-        let lastArr = tree.mapping[tree.mapping.length - 1]?.split('.')
-        let lastWord = lastArr[lastArr.length - 1]
-        result[lastWord?.replace(/\./g, '#')] = tree.key
+        // let lastArr = tree.mapping[tree.mapping.length - 1]?.split('.')
+        // let lastWord = lastArr[lastArr.length - 1]
+        // result[lastWord?.replace(/\./g, '#')] = tree.key
+        console.log('tree.mapping', tree.mapping)
+        result[tree.mapping.join('.')?.replace(/\./g, '#')] = tree.key
       }
       return result
     },
@@ -556,7 +562,7 @@ export default {
       }
       return obj
     },
-    formatMappingTree(tree, parent) {
+    formatMappingTree(tree = {}, parent) {
       // 继承父节点的mapping
       if (parent) {
         tree.mapping = [...parent.mapping, tree.key]
@@ -593,6 +599,7 @@ export default {
         children: [...rightData],
         unitFlagRepeated: this.unitFlagRepeated
       })
+      console.log()
       let getMapping = this.getMapping({ ...tree })
       let getSchema = this.getSchema({ ...tree })
       return {
