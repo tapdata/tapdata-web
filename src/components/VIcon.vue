@@ -16,6 +16,7 @@ export default {
   render(h, { data, props, children }) {
     let iconName = children?.[0]?.text?.trim()
     if (!iconName) {
+      // eslint-disable-next-line
       console.error('缺少图标名称!', '<VIcon>图标名称</VIcon>')
     }
     iconName = `icon-${iconName}`

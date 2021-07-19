@@ -163,7 +163,6 @@ export default {
       }
     },
     step(val) {
-      console.log(val)
       if (val == -1) {
         this.step = this.list.length - 1
       }
@@ -212,6 +211,7 @@ export default {
       try {
         return require(`../../../packages/tapdata-web-core/assets/images/guide/${type.toLowerCase()}.png`)
       } catch (e) {
+        // eslint-disable-next-line
         console.log(e)
       }
     },
@@ -219,6 +219,7 @@ export default {
       try {
         return require(`../../../packages/tapdata-web-core/assets/images/${src}`)
       } catch (e) {
+        // eslint-disable-next-line
         console.log(e)
       }
     },

@@ -446,8 +446,7 @@ export default {
           }
           cb && cb(regionMap, zoneMap)
         })
-        .catch(e => {
-          console.error(e)
+        .catch(() => {
           this.$router.replace('/500')
         })
     },

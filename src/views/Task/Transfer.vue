@@ -176,7 +176,6 @@ export default {
   methods: {
     //获取左边数据
     getTable(id, bidirectional) {
-      console.log(id, bidirectional, 'Transfer')
       this.transferLoading = true
       this.$axios
         .get(`tm/api/Connections/${id}/customQuery`, {
@@ -198,7 +197,6 @@ export default {
             }
             //初始化数据
             if (this.transferData) {
-              console.log('TransferData', this.transferData)
               this.formData.table_prefix = this.transferData.table_prefix
               this.formData.table_suffix = this.transferData.table_suffix
               this.selectSourceArr = this.transferData.selectSourceArr
@@ -210,7 +208,6 @@ export default {
               this.formData.table_suffix = ''
               this.selectSourceArr = []
               this.field_process = []
-              console.log('TransferData.selectSourceArr', this.selectSourceArr)
             }
             this.preFixSuffixData()
             this.$forceUpdate()

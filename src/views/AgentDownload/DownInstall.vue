@@ -95,7 +95,6 @@ export default {
 
     // 下一步
     handleNextSetp() {
-      console.log(this.downLoadType)
       this.$emit('nextStep', 'downloadInstall', this.type)
     }
   }
