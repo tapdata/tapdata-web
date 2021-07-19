@@ -9,6 +9,8 @@ import VueClipboard from 'vue-clipboard2'
 import { Message } from 'element-ui'
 import settings from './settings'
 import TapdataWebCore from '../packages/tapdata-web-core'
+import VueI18n from 'vue-i18n'
+
 require('./assets/theme/dfs/index.scss')
 
 Vue.config.productionTip = false
@@ -16,6 +18,13 @@ Vue.prototype.$settings = settings
 Vue.use(VueClipboard)
 Vue.use(VueRouter)
 Vue.use(TapdataWebCore)
+Vue.use(VueI18n)
+
+const i18n = new VueI18n({
+  // locale: localStorage.lang || 'en',
+  locale: 'zh-CN',
+  messages: TapdataWebCore.lang
+})
 
 Vue.prototype.$checkAgentStatus = callback => {
   window.axios.get('tm/api/Workers/availableAgent').then(data => {
@@ -45,6 +54,7 @@ export default function({ routes }) {
     wsUrl = wsUrl + loc.host + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__.token}`
     window.App = new Vue({
       router,
+      i18n,
       wsOptions: {
         url: wsUrl
       },
