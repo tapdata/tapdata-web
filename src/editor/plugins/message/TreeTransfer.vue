@@ -89,6 +89,7 @@ export default {
       default: false
     },
     filterNodeMethod: Function,
+    toRightBefore: Function,
     leftTitle: [Number, String],
     rightTitle: [Number, String]
   },
@@ -119,6 +120,7 @@ export default {
     // 移动到右侧树
     toRightTree() {
       let getCheckedNodesLeft = this.getCheckedNodesLeft()
+      this.toRightBefore?.(getCheckedNodesLeft)
       let result = [...this.rightData, ...getCheckedNodesLeft]
       this.$emit('change-right-data', result)
     },
@@ -133,8 +135,10 @@ export default {
         }
       })
       if (data) {
+        this.toRightBefore?.([data])
         this.$refs.rightTree.append(data, parentNode)
       } else {
+        this.toRightBefore?.(getCheckedNodesLeft)
         getCheckedNodesLeft.forEach(el => {
           this.$refs.rightTree.append(el, parentNode)
         })

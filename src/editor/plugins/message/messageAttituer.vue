@@ -28,6 +28,7 @@
           :to-right-key="toRightKey"
           :draggableRight="draggableRight"
           :filter-node-method="filterNode"
+          :to-right-before="toRightBefore"
           @change-left-data="changeLeftData"
           @change-right-data="changeRightData"
         >
@@ -38,7 +39,7 @@
                 data.name || $t('dataForm.form.transform.doubleName')
               }}</span>
             </div>
-            <span class="pr-6">
+            <div class="pr-6 transfer-btn">
               <span
                 :class="['box', { 'error-tip': !data.type || !data.name }]"
                 :title="!data.type ? '请选择类型' : $t('dataFlow.edit')"
@@ -49,7 +50,7 @@
               <span class="box" @click="remove(node, data)">
                 <i class="icon-margin-right-5 iconfont icon-shanchu"></i>
               </span>
-            </span>
+            </div>
           </template>
         </TreeTransfer>
       </div>
@@ -308,6 +309,14 @@ export default {
         }
       })
       return data
+    },
+    toRightBefore(data = []) {
+      let allNames = this.getAllItemInTree([...this.rightData], 'name')
+      data.forEach(el => {
+        if (allNames.includes(el.name)) {
+          el.name = ''
+        }
+      })
     },
     editRight(node, data) {
       this.createDialogVisible = true
