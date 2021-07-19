@@ -78,8 +78,8 @@
           </el-form-item>
           <el-form-item label="限定修饰符">
             <el-radio-group v-model="createForm.label" :disabled="!!createForm.flagRepeated">
-              <el-radio label="required"> Required </el-radio>
               <el-radio label="optional"> Optional </el-radio>
+              <el-radio label="required"> Required </el-radio>
               <el-radio label="repeated"> Repeated </el-radio>
             </el-radio-group>
           </el-form-item>
@@ -166,7 +166,7 @@ export default {
       createForm: {
         name: '',
         type: '',
-        label: 'required'
+        label: 'optional'
       },
       rules: {
         name: [{ validator: validateName, trigger: 'blur' }],
@@ -237,7 +237,7 @@ export default {
             .map(field => {
               let obj = {
                 pid: 0,
-                label: 'required',
+                label: 'optional',
                 name: field.field_name,
                 key: field.field_name,
                 type: field.javaType,
@@ -343,7 +343,7 @@ export default {
         key: '',
         pid: 0,
         message: true,
-        label: 'required',
+        label: 'optional',
         type: '',
         openType: 'add'
       }
