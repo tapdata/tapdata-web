@@ -213,7 +213,7 @@
 
 // const dataFlowsAPI = factory('DataFlows')
 // let timer = null
-import ws from '@/api/ws'
+// import ws from '@/api/ws'
 export default {
   name: 'TaskProgress',
   props: {
@@ -244,18 +244,11 @@ export default {
     // }
   },
   mounted() {
-    // this.init()
-    // this.overviewStats = this.dataFlow.overview
-    // let self = this
-    // if (timer) return
-    // timer = setInterval(() => {
-    //   self.updateDataFlow()
-    // }, 5000)
     this.handleData(this.dataFlow)
     //及时更新输入输出的数据
-    ws.on('watch', function (data) {
-      this.handleData(data)
-    })
+    // ws.on('watch', function (data) {
+    //   this.handleData(data)
+    // })
   },
 
   methods: {
@@ -284,13 +277,19 @@ export default {
     //     })
     // },
     handleData(data) {
+      // let currentData = data
       let inputCount = data?.stats?.throughput?.inputCount
       if (data?.stats?.overview) {
-        let overview = data.stats.overview
+        let overview = JSON.stringify(data.stats.overview)
 
-        overview.waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
+        if (overview.waitingForSyecTableNums) {
+          overview.waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
+        } else {
+          overview.waitingForSyecTableNums = 0
+        }
+
         let num = (overview.targatRowNum / overview.sourceRowNum) * 100
-        this.progressBar = num.toFixed(0) * 1
+        this.progressBar = num ? num.toFixed(0) * 1 : 0
 
         let time = (overview.sourceRowNum - overview.targatRowNum) / inputCount
         let r = ''
@@ -311,7 +310,7 @@ export default {
               }
             }
           }
-          if (m === 0 && h == 0 && d === 0 && s < 60 && s > 0) {
+          if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
             r = 1 + '分钟'
           }
           // r = parseInt(s) + this.$t('timeToLive.s')
