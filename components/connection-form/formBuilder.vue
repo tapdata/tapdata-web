@@ -1,9 +1,7 @@
 <template>
   <ElForm class="flex flex-column" label-width="180px">
     <FormProvider :form="form">
-      <SchemaField
-        :schema="schema"
-      />
+      <SchemaField :schema="schema" />
     </FormProvider>
   </ElForm>
 </template>
@@ -24,7 +22,7 @@ export default {
   components: { FormProvider, SchemaField },
   data() {
     return {
-      form: createForm({effects: this.useEffects}),
+      form: createForm({ effects: this.useEffects }),
       schema: null
     }
   },

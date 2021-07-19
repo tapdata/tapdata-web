@@ -22,5 +22,8 @@ export const TYPEMAP = {
   jira: 'jira',
   dameng: 'DM DB',
   hive: 'Hive',
-  tcp_udp: 'TCP/IP'
+  tcp_udp: 'TCP/IP',
+  kudu: 'KUDU',
+  hbase: 'HBase',
+  mq: 'MQ'
 }

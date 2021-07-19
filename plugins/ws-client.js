@@ -1,7 +1,6 @@
 /**
  * websocket 封装类
  */
-
 import EventEmitter from './event'
 
 class WSClient extends EventEmitter {
@@ -33,6 +32,7 @@ class WSClient extends EventEmitter {
       this.__bindEvent()
     } catch (e) {
       if (!this.retryCount) {
+        // eslint-disable-next-line
         console.log('websocket 连接失败，准备尝试重连', e)
       }
       this.reconnect()
@@ -45,10 +45,12 @@ class WSClient extends EventEmitter {
     if (this.retryCount < opts.retryTimes) {
       this.retryCount++
       setTimeout(() => {
+        // eslint-disable-next-line
         console.log('websocket 尝试第' + this.retryCount + '次重连')
         this.connect()
       }, opts.retryInterval)
     } else {
+      // eslint-disable-next-line
       console.log('websocket 重连失败！')
       this.retryCount = 0
     }
@@ -64,6 +66,7 @@ class WSClient extends EventEmitter {
   __bindEvent() {
     let ws = this.ws
     ws.onopen = () => {
+      // eslint-disable-next-line
       console.log('websocket 已连接')
       this.emit('open')
     }
@@ -71,6 +74,7 @@ class WSClient extends EventEmitter {
       this.__receiveMessage(e)
     }
     ws.onerror = () => {
+      // eslint-disable-next-line
       console.log('websocket 断开连接')
       this.ws = null
       if (this.retryCount === 0) {
@@ -78,6 +82,7 @@ class WSClient extends EventEmitter {
       }
     }
     ws.onclose = () => {
+      // eslint-disable-next-line
       console.log('websocket 已关闭')
       this.ws = null
       if (this.retryCount === 0) {
@@ -107,6 +112,7 @@ class WSClient extends EventEmitter {
         throw new Error('websocket 接收消息格式错误: ' + msg)
       }
     } catch (e) {
+      // eslint-disable-next-line
       console.log('websocket 消息解析失败: ' + msg, e)
     }
   }
