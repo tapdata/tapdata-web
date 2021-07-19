@@ -232,6 +232,7 @@ const en = {
     },
     verifyConfirm: 'Are you sure to delete JS verify logic',
     comfirm: 'Are you sure you want to ',
+    deleteMessageFieldConfirm: 'Are you sure you want to delete the custom field? After deletion, it cannot be restored',
     operationSuccuess: 'Operation succuess.',
     modifyName: 'Modify name',
     ok: 'OK',
