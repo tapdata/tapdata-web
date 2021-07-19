@@ -277,9 +277,10 @@ export default {
     //     })
     // },
     handleData(data) {
+      // let currentData = data
       let inputCount = data?.stats?.throughput?.inputCount
       if (data?.stats?.overview) {
-        let overview = data.stats.overview
+        let overview = JSON.stringify(data.stats.overview)
 
         if (overview.waitingForSyecTableNums) {
           overview.waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
