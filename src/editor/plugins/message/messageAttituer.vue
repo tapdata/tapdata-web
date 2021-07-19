@@ -374,9 +374,13 @@ export default {
     },
     editField() {
       const data = this.editData.data
-      for (let key in data) {
-        data[key] = this.createForm[key]
-      }
+      const createForm = this.createForm
+      data.name = createForm.name
+      data.label = createForm.label
+      data.type = createForm.type
+      // for (let key in data) {
+      //   data[key] = this.createForm[key]
+      // }
     },
     setConfig() {
       this.model.pbProcessorConfig = this.formatToData()
@@ -513,8 +517,8 @@ export default {
         // let lastArr = tree.mapping[tree.mapping.length - 1]?.split('.')
         // let lastWord = lastArr[lastArr.length - 1]
         // result[lastWord?.replace(/\./g, '#')] = tree.key
-        console.log('tree.mapping', tree.mapping)
-        result[tree.mapping.join('.')?.replace(/\./g, '#')] = tree.key
+        // console.log('tree.mapping', tree.mapping)
+        result[tree.nameMapping.join('.')?.replace(/\./g, '#')] = tree.key
       }
       return result
     },
@@ -566,8 +570,10 @@ export default {
       // 继承父节点的mapping
       if (parent) {
         tree.mapping = [...parent.mapping, tree.key]
+        tree.nameMapping = [...parent.nameMapping, tree.name]
       } else {
         tree.mapping = [tree.key]
+        tree.nameMapping = [tree.name]
       }
       if (tree.children?.length) {
         tree.children.forEach(el => {
