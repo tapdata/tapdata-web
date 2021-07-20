@@ -120,7 +120,9 @@
         </ElTableColumn>
         <ElTableColumn label="操作" width="120" fixed="right">
           <template slot-scope="scope">
-            <ElLink type="primary" class="mr-2" :disabled="!!scope.row.deployDisable" @click="toDeploy">部署</ElLink>
+            <ElLink type="primary" class="mr-2" :disabled="!!scope.row.deployDisable" @click="toDeploy(scope.row)"
+              >部署</ElLink
+            >
             <ElLink
               type="primary"
               class="mr-2"
@@ -396,9 +398,12 @@ export default {
         window.open(downloadUrl.href, '_blank')
       })
     },
-    toDeploy() {
+    toDeploy(row) {
       let downloadUrl = window.App.$router.resolve({
-        name: 'FastDownload'
+        name: 'FastDownload',
+        query: {
+          id: row?.id
+        }
       })
 
       window.open(downloadUrl.href, '_blank')
