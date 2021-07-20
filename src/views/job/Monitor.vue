@@ -183,7 +183,7 @@
               </span>
             </el-tooltip>
           </div>
-          <div class="info-list">
+          <div class="info-list" v-if="stage.brokerURL">
             <span class="info-label">{{ $t('dataForm.form.host') }}:</span>
             <span class="info-text">{{ stage.brokerURL }}</span>
             <el-tooltip
