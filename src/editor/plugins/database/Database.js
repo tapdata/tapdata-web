@@ -133,7 +133,8 @@ export const databaseConfig = {
        * @return {boolean}
        */
       allowSource(sourceCell) {
-        return ['app.Database'].includes(sourceCell.get('type'))
+        return ['app.Database'].includes(sourceCell.get('type')) &&
+          !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type)
       }
     }
     /**
