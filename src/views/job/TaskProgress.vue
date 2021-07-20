@@ -27,7 +27,7 @@
                 <span class="ml-3 color-green">{{ completeTime }}</span>
               </el-col>
               <el-col :span="12">
-                <span>全量状态：</span>
+                <span>增量状态：</span>
                 <span class="ml-3 color-green">{{ overviewStats.currentStatus }}</span>
               </el-col>
             </el-row>
@@ -336,16 +336,8 @@ export default {
         }
 
         if (this.progressBar === 100) {
-          overview.currentStatus = '已完成'
+          overview.currentStatus = '进行中'
           completeTime = '全量已完成'
-        }
-
-        if (data.status === 'running' && overview.sourceRowNum > 0) {
-          overview.currentStatus =
-            overview.sourceTableNum === overview.waitingForSyecTableNums &&
-            overview.sourceRowNum === overview.targatRowNum
-              ? '已完成'
-              : '进行中'
         }
       } else {
         overview.currentStatus = '未开始'

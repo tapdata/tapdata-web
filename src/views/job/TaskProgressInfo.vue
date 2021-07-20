@@ -97,13 +97,14 @@ export default {
         dataFlowId: { like: this.$route.query.id },
         statsType: 'dataFlowDetailsStats'
       }
-      if (keyword && keyword.trim()) {
-        let filterObj = { like: toRegExp(keyword), options: 'i' }
-        where.or = [{ 'statsData.sourceTableName': filterObj }, { 'statsData.targetTableName': filterObj }]
-      }
       let countWhere = {
         dataFlowId: this.$route.query.id,
         statsType: 'dataFlowDetailsStats'
+      }
+      if (keyword && keyword.trim()) {
+        let filterObj = { like: toRegExp(keyword), options: 'i' }
+        where.or = [{ 'statsData.sourceTableName': filterObj }, { 'statsData.targetTableName': filterObj }]
+        countWhere.or = [{ 'statsData.sourceTableName': filterObj }, { 'statsData.targetTableName': filterObj }]
       }
       if (metaType !== 'all' && metaType) {
         where['statsData.status'] = metaType
