@@ -63,12 +63,26 @@ const agent = {
     agentId: '@id',
     token: '@guid',
     downloadUrl: 'http://resource.tapdata.net/package/feagent/v1.0.2/',
-    'updataStatus|1': ['preparing', 'downloading', 'upgrading', 'done', 'fail'],
+    'updateStatus|1': ['preparing', 'downloading', 'upgrading', 'done', 'fail'],
     updateMsg: '',
     updateTime: ''
   }
 }
 module.exports = Object.assign({}, dataflow, connection, {
+  'tm/api/users/self': {
+    code: 'ok',
+    message: '获取用户信息失败',
+    data: {
+      //mock用户
+      token:
+        'Y3VzdG9tSWQ9Q0lEQy1BLWJkMGQ1MDBkMDFkMTQ4N2JhMzk1ZDAxOTNkYWFkMjdjJnVzZXJJZD1DSURDLVUtY2Q4ZTAxYTMyNWVhNGViMGJjZjBiODNmOTczZDVkOWYmYWRtaW49MCZ1c2VybmFtZT15aXpoaWZlaWRpZTEyMw==',
+      username: 'yizhifeidie123',
+      customerType: '政企集团客户',
+      nickname: '12345678902@123.com',
+      type: 0,
+      userStatus: 1
+    }
+  },
   '/api/tcm/user': {
     code: 'ok',
     message: '获取用户信息失败',

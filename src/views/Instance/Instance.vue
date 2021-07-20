@@ -490,6 +490,10 @@ export default {
     },
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
+      if (this.selectedRow?.metric?.runningTaskNum) {
+        this.$alert('检测到您有任务正在运行，请先停止所有任务再进行升级操作!')
+        return
+      }
       this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
         this.$axios
           .post('tm/api/clusterStates/updataAgent', {
