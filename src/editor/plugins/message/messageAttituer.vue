@@ -36,7 +36,7 @@
             <div class="transfer-item-content flex">
               <img :src="getImgByType(data.type, data.message)" alt="" />
               <span class="field-name ellipsis" :title="data.name">{{
-                data.name || $t('dataForm.form.transform.doubleName')
+                data.name || $t('dataForm.form.transform.existName')
               }}</span>
             </div>
             <div class="pr-6 transfer-btn">
