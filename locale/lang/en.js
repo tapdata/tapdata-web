@@ -231,6 +231,8 @@ const en = {
       }
     },
     verifyConfirm: 'Are you sure to delete JS verify logic',
+    deleteMessageFieldConfirm:
+      'Are you sure you want to delete the custom field? After deletion, it cannot be restored',
     comfirm: 'Are you sure you want to ',
     operationSuccuess: 'Operation succuess.',
     modifyName: 'Modify name',
@@ -1923,6 +1925,25 @@ const en = {
       tcp: {
         agreementType: 'Protocol type ',
         targetAddr: 'Target address'
+      },
+      transform: {
+        fieldName: 'Field name',
+        messageBody: 'Message body',
+        isDrag: 'Is Drag it',
+        addField: 'Add Field',
+        name: 'Name',
+        existName: 'Name already exists.Redefine',
+        type: 'Type',
+        modifier: 'Modifier',
+        add: 'Add',
+        edit: 'Edit',
+        delete: 'Delete',
+        deleteFieldTip: 'Are you sure you want to delete the field? After deletion, it cannot be restored',
+        typePlaceholder: 'Please select type',
+        empty: 'Cannot be empty',
+        exist: 'Already exists',
+        noSameNameandType: 'The name cannot be the same as the type',
+        specialSymbols: 'Special symbols are not allowed'
       }
     },
     error: {

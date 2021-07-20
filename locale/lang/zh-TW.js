@@ -1878,6 +1878,25 @@ const tc = {
       tcp: {
         agreementType: '协议类型',
         targetAddr: '目标地址'
+      },
+      transform: {
+        fieldName: '欄位名',
+        messageBody: '消息體',
+        isDrag: '是否拖拽',
+        addField: '添加欄位',
+        name: '名稱',
+        existName: '名稱已存在，請重新定義',
+        type: '類型',
+        modifier: '限定修飾符',
+        add: '新增',
+        edit: '編輯',
+        delete: '删除',
+        deleteFieldTip: '確定要删除欄位嗎？删除後，不可恢復',
+        typePlaceholder: '請選擇類型',
+        empty: '不能為空',
+        exist: '已存在',
+        noSameNameandType: '名稱不能和類型一樣',
+        specialSymbols: '不允許使用特殊符號'
       }
     },
     error: {

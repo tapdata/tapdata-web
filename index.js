@@ -11,7 +11,7 @@ import * as _const from './const'
 
 const components = [ConnectionTypeSelector, ConnectionTest, JsEditor]
 
-const install = function(Vue) {
+const install = Vue => {
   Vue.prototype.$util = _util
   Vue.prototype.$const = _const
 
