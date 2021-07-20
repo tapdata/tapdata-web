@@ -6,9 +6,9 @@
       <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
-          <el-button class="progress-header_btn" type="text" @click="handleInfo" v-if="completeTime !== '全量已完成'"
-            >查看详情</el-button
-          >
+          <el-button class="progress-header_btn" type="text" @click="handleInfo" v-if="completeTime !== '全量已完成'">
+            查看详情
+          </el-button>
         </div>
         <div class="progress-container__body flex">
           <div class="progress-container__img">
@@ -28,7 +28,7 @@
               </el-col>
               <el-col :span="12">
                 <span>全量状态：</span>
-                <span class="ml-3 color-green">{{ overviewStats.status }}</span>
+                <span class="ml-3 color-green">{{ overviewStats.currentStatus }}</span>
               </el-col>
             </el-row>
           </div>
@@ -90,7 +90,9 @@
       <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'initial_sync'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
-          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>
+          <el-button class="progress-header_btn" type="text" @click="handleInfo" v-if="completeTime !== '全量已完成'"
+            >查看详情</el-button
+          >
         </div>
         <div class="progress-container__body flex">
           <div class="progress-container__img">
@@ -282,21 +284,23 @@ export default {
       // let currentData = data
       let overview = null
       let inputCount = data?.stats?.throughput?.inputCount
+      let waitingForSyecTableNums = 0
+      let completeTime = ''
 
       if (data?.stats?.overview) {
         overview = JSON.parse(JSON.stringify(data.stats.overview))
 
-        if (overview.waitingForSyecTableNums) {
-          overview.waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
+        if (overview.waitingForSyecTableNums !== undefined) {
+          waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
         } else {
-          overview.waitingForSyecTableNums = 0
+          waitingForSyecTableNums = 0
         }
-
+        overview.waitingForSyecTableNums = waitingForSyecTableNums
         let num = (overview.targatRowNum / overview.sourceRowNum) * 100
         this.progressBar = num ? num.toFixed(0) * 1 : 0
 
         let time = (overview.sourceRowNum - overview.targatRowNum) / inputCount
-        let completeTime = ''
+
         let r = ''
         if (time) {
           let s = parseInt(time),
@@ -329,25 +333,29 @@ export default {
             r = parseInt(d) + '天' + r
           }
           completeTime = r
-        } else {
+        }
+
+        if (this.progressBar === 100) {
+          overview.currentStatus = '已完成'
           completeTime = '全量已完成'
         }
-        if (data.status === 'running') {
-          overview.status =
+
+        if (data.status === 'running' && overview.sourceRowNum > 0) {
+          overview.currentStatus =
             overview.sourceTableNum === overview.waitingForSyecTableNums &&
             overview.sourceRowNum === overview.targatRowNum
               ? '已完成'
               : '进行中'
-
-          this.completeTime = completeTime
         }
       } else {
-        overview.status = '未开始'
+        overview.currentStatus = '未开始'
       }
       if (['paused', 'error'].includes(data.status)) {
-        overview.status = '已停止'
-        this.completeTime = '任务已停止'
+        overview.currentStatus = '已停止'
+        completeTime = '任务已停止'
       }
+
+      this.completeTime = completeTime
 
       this.overviewStats = overview
     },

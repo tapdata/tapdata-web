@@ -5,6 +5,7 @@
       ref="table"
       row-key="id"
       class="progressInfo-list"
+      :defaultPageSize="100"
       :remoteMethod="getData"
       @sort-change="handleSortTable"
     >
@@ -79,7 +80,7 @@ export default {
       typeList: [
         { label: '全部', value: 'all' },
         { label: '运行中', value: 'running' },
-        { label: '等待中', value: 'done' }
+        { label: '等待中', value: 'waiting' }
       ]
     }
   },
@@ -91,24 +92,25 @@ export default {
   methods: {
     getData({ page }) {
       let { current, size } = page
-      size = 100
       let { keyword, metaType } = this.searchParams
       let where = {
-        dataFlowId: this.$route.query.id,
+        dataFlowId: { like: this.$route.query.id },
         statsType: 'dataFlowDetailsStats'
       }
       if (keyword && keyword.trim()) {
         let filterObj = { like: toRegExp(keyword), options: 'i' }
         where.or = [{ 'statsData.sourceTableName': filterObj }, { 'statsData.targetTableName': filterObj }]
       }
-      if (metaType !== 'all') {
-        where['statsData.meta_type'] = metaType
-      } else {
-        where = {
-          dataFlowId: this.$route.query.id,
-          statsType: 'dataFlowDetailsStats'
-        }
+      let countWhere = {
+        dataFlowId: this.$route.query.id,
+        statsType: 'dataFlowDetailsStats'
       }
+      if (metaType !== 'all' && metaType) {
+        where['statsData.status'] = metaType
+        countWhere['statsData.status'] = metaType
+      }
+
+
 
       let filter = {
         order: this.order,
@@ -117,7 +119,7 @@ export default {
         where
       }
       return Promise.all([
-        this.$api('DataFlowInsights').count({ where: JSON.stringify(where) }),
+        this.$api('DataFlowInsights').count({ where: JSON.stringify(countWhere) }),
         this.$api('DataFlowInsights').get({
           filter: JSON.stringify(filter)
         })
@@ -148,7 +150,6 @@ export default {
     background: #f5f5f5;
     border: 1px solid #dedee4;
     border-left: 0;
-
     box-sizing: border-box;
   }
   .progressInfo-list {
