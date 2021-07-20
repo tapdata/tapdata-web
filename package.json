@@ -23,7 +23,6 @@
     "crypto-js": "^4.0.0",
     "dagre": "^0.8.5",
     "echarts": "^4.6.0",
-    "el-tree-transfer": "^2.4.7",
     "element-ui": "^2.15.1",
     "github-markdown-css": "^4.0.0",
     "graphlib": "^2.1.8",
