@@ -173,7 +173,8 @@
       </el-form>
       <!-- tcp报文配置 -->
       <!-- <div class="transfer" v-else>
-        <el-transfer
+        <Message :fieldsData="fieldsData"></Message> -->
+      <!-- <el-transfer
           v-model="model.tcp.includeField"
           :data="fieldsData"
           :titles="[$t('editor.cell.link.pcb.fieldsSelected'), $t('editor.cell.link.pcb.selectedField')]"
@@ -231,6 +232,7 @@
 import _ from 'lodash'
 import { EditorEventType } from '../../lib/events'
 import Mapping from './Mapping'
+// import Message from './Message'
 import log from '../../../log'
 import { JOIN_TABLE_TPL } from '../../constants'
 import ClipButton from '@/components/ClipButton'
@@ -495,10 +497,10 @@ export default {
         joinKeys.forEach((item, index) => {
           this.$set(this.model.joinTable.joinKeys, index, item)
         })
-
         this.fieldsData = sourceList.map(field => ({
           label: field.field_name,
           key: field.field_name,
+          javaType: field.javaType,
           disabled: this.disabled
         }))
       }
@@ -518,17 +520,17 @@ export default {
     },
     getData() {
       let data = JSON.parse(JSON.stringify(this.model))
-
-      if (this.cell) {
-        // tcp报文数据传输到目标节点
-        let targetCell = this.cell.getTargetCell()
-        let targetData = targetCell && targetCell.getFormData()
-        if (targetData.type !== 'tcp_udp') {
-          delete data.tcp
-        } else {
-          targetData.tcp = data.tcp
-        }
-      }
+      console.log('link-data', data)
+      // if (this.cell) {
+      //   // tcp报文数据传输到目标节点
+      //   let targetCell = this.cell.getTargetCell()
+      //   let targetData = targetCell && targetCell.getFormData()
+      //   if (targetData.isShowMessage) {
+      //     delete data.tcp
+      //   } else {
+      //     targetData.tcp = data.tcp
+      //   }
+      // }
 
       /* if( data.joinTable.joinKeys.length > 0 ){
 					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);
@@ -548,7 +550,9 @@ export default {
      */
     showMapping() {
       this.targetCell = this.cell.getTargetCell()
-      this.targetCellType = this.targetCell.get('type')
+      if (this.targetCell) {
+        this.targetCellType = this.targetCell.get('type')
+      }
       this.writeModels.splice(0, this.writeModels.length)
       if (this.supportEmbedArray()) {
         this.WRITE_MODELS.forEach(model => this.writeModels.push(model))
@@ -565,7 +569,7 @@ export default {
         { deep: true }
       )
 
-      this.targetCell.on('change:outputSchema', this.renderSchema, this)
+      this.targetCell?.on('change:outputSchema', this.renderSchema, this)
 
       this.renderSchema()
     },
