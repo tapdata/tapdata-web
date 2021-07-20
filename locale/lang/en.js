@@ -231,8 +231,6 @@ const en = {
       }
     },
     verifyConfirm: 'Are you sure to delete JS verify logic',
-    deleteMessageFieldConfirm:
-      'Are you sure you want to delete the custom field? After deletion, it cannot be restored',
     comfirm: 'Are you sure you want to ',
     operationSuccuess: 'Operation succuess.',
     modifyName: 'Modify name',
@@ -1943,7 +1941,8 @@ const en = {
         empty: 'Cannot be empty',
         exist: 'Already exists',
         noSameNameandType: 'The name cannot be the same as the type',
-        specialSymbols: 'Special symbols are not allowed'
+        specialSymbols: 'Special symbols are not allowed',
+        deleteFieldConfirm: 'Are you sure you want to delete the field? Cannot recover after deletion'
       }
     },
     error: {

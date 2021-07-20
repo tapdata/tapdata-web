@@ -1902,7 +1902,8 @@ const cn = {
         empty: '不能为空',
         exist: '已存在',
         noSameNameandType: '名称不能和类型一样',
-        specialSymbols: '不允许使用特殊符号'
+        specialSymbols: '不允许使用特殊符号',
+        deleteFieldConfirm: '确实要删除字段吗？删除后不能恢复'
       }
     },
     error: {

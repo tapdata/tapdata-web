@@ -1896,7 +1896,8 @@ const tc = {
         empty: '不能為空',
         exist: '已存在',
         noSameNameandType: '名稱不能和類型一樣',
-        specialSymbols: '不允許使用特殊符號'
+        specialSymbols: '不允許使用特殊符號',
+        deleteFieldConfirm: '確實要删除欄位嗎？删除後不能恢復'
       }
     },
     error: {
