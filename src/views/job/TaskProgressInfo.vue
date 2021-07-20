@@ -28,27 +28,27 @@
           </el-select>
         </li>
       </ul>
-      <el-table-column label="源表名" prop="sourceTableName" sortable="sourceTableName">
+      <el-table-column label="源表名" prop="statsData.sourceTableName" sortable>
         <template slot-scope="scope">
           {{ scope.row.statsData.sourceTableName }}
         </template>
       </el-table-column>
-      <el-table-column label="总数据量（行）" prop="sourceRowNum" sortable="sourceRowNum">
+      <el-table-column label="总数据量（行）" prop="statsData.sourceRowNum" sortable>
         <template slot-scope="scope">
           {{ scope.row.statsData.sourceRowNum }}
         </template>
       </el-table-column>
-      <el-table-column label="目标表名" prop="targetTableName" sortable="targetTableName">
+      <el-table-column label="目标表名" prop="statsData.targetTableName" sortable>
         <template slot-scope="scope">
           {{ scope.row.statsData.targetTableName }}
         </template>
       </el-table-column>
-      <el-table-column label="已迁移数据量" prop="targetRowNum" sortable="targetRowNum">
+      <el-table-column label="已迁移数据量" prop="statsData.targetRowNum" sortable>
         <template slot-scope="scope">
           {{ scope.row.statsData.targetRowNum }}
         </template>
       </el-table-column>
-      <el-table-column label="全量迁移进度" prop="status" sortable="status">
+      <el-table-column label="全量迁移进度" prop="statsData.status" sortable>
         <template slot-scope="scope">
           {{
             scope.row.statsData.status === 'done'
@@ -110,8 +110,6 @@ export default {
         countWhere['statsData.status'] = metaType
       }
 
-
-
       let filter = {
         order: this.order,
         limit: size,
@@ -132,7 +130,9 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'sourceTableName'} ${order === 'sourceTableName' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'statsData.sourceTableName'} ${
+        order === 'statsData.sourceTableName' ? 'ASC' : 'DESC'
+      }`
       this.table.fetch(1)
     }
   }
