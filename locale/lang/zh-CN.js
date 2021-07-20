@@ -1884,6 +1884,25 @@ const cn = {
       tcp: {
         agreementType: '协议类型',
         targetAddr: '目标地址'
+      },
+      transform: {
+        fieldName: '字段名',
+        messageBody: '消息体',
+        isDrag: '是否拖拽',
+        addField: '添加字段',
+        name: '名称',
+        doubleName: '重名，请重新定义名称',
+        type: '类型',
+        modifier: '限定修饰符',
+        add: '新增',
+        edit: '编辑',
+        delete: '删除',
+        deleteFieldTip: '确定要删除字段吗？删除后，不可恢复',
+        typePlaceholder: '请选择类型',
+        empty: '不能为空',
+        exist: '已存在',
+        noSameNameandType: '名称不能和类型一样',
+        specialSymbols: '不允许使用特殊符号'
       }
     },
     error: {
