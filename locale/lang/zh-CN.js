@@ -1891,7 +1891,7 @@ const cn = {
         isDrag: '是否拖拽',
         addField: '添加字段',
         name: '名称',
-        doubleName: '重名，请重新定义名称',
+        existName: '名称已存在，请重新定义',
         type: '类型',
         modifier: '限定修饰符',
         add: '新增',
