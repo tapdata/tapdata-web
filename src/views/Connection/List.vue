@@ -58,7 +58,9 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip label="连接信息" prop="database_uri" min-width="150"></ElTableColumn>
+        <ElTableColumn show-overflow-tooltip label="连接信息" prop="database_uri" min-width="150">
+          <template slot-scope="scope">{{ scope.row.connectionUrl }}</template>
+        </ElTableColumn>
         <ElTableColumn label="状态">
           <template slot-scope="scope">
             <StatusTag type="text" target="connection" :status="scope.row.status"></StatusTag>
@@ -242,9 +244,26 @@ export default {
       }, debounce)
     },
     formatData(item) {
+      console.log('formatData')
       let statusInfo = this.statusMap[item.status] || {}
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
+      if (item.database_type !== 'mongodb') {
+        item.connectionUrl = ''
+        if (item.database_username) {
+          item.connectionUrl += item.database_username + ':***@'
+        }
+        item.connectionUrl += item.database_host + ':' + item.database_port
+      } else {
+        item.connectionUrl = item.database_uri || item.connection_name
+      }
+      if (item.database_type === 'mq' && item.mqType === '0') {
+        item.connectionUrl = item.brokerURL
+      }
+      // 不存在uri 和 port === 0
+      if (!item.database_uri && !item.database_port && item.mqType !== '0') {
+        item.connectionUrl = ''
+      }
       return item
     },
     sortChange({ prop, order }) {
