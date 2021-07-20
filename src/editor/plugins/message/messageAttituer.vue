@@ -467,7 +467,7 @@ export default {
       return data.name.indexOf(value) !== -1
     },
     remove(node, data) {
-      this.$confirm(this.$t('message.deleteMessageFieldConfirm'), this.$t('message.delete'), {
+      this.$confirm(this.$t('dataForm.form.transform.deleteFieldConfirm'), this.$t('message.delete'), {
         type: 'warning'
       }).then(res => {
         if (!res) {
