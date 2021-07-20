@@ -54,10 +54,7 @@ export const esNodeConfig = {
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data)
-          throw new Error(
-            `${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`
-          )
+        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`)
         return true
       }
     }

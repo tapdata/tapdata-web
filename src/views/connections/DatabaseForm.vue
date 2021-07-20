@@ -126,7 +126,8 @@
               <div
                 class="custom-connection-box"
                 v-if="
-                  ['cdc', 'initial_sync+cdc'].includes(model.custom_type) && ['source','source_and_target'].includes(model.connection_type)
+                  ['cdc', 'initial_sync+cdc'].includes(model.custom_type) &&
+                  ['source', 'source_and_target'].includes(model.connection_type)
                 "
               >
                 <div class="custom-connection-label">
@@ -142,7 +143,7 @@
                 class="custom-connection-box"
                 v-if="
                   ['initial_sync', 'initial_sync+cdc'].includes(model.custom_type) &&
-                  ['source','source_and_target'].includes(model.connection_type)
+                  ['source', 'source_and_target'].includes(model.connection_type)
                 "
               >
                 <div class="custom-connection-label">
@@ -1025,11 +1026,11 @@ export default {
       urlInfo['url_type'] = type
       if (type === 'GET_TOKEN') {
         urlInfo['parameterArray'] = [
-          { name:'client_id', value: ''},
-          { name:'client_secret', value: ''},
-          { name:'scope', value: ''},
-          { name:'grant_type', value: ''},
-          { name:'client_credentials', value: ''}
+          { name: 'client_id', value: '' },
+          { name: 'client_secret', value: '' },
+          { name: 'scope', value: '' },
+          { name: 'grant_type', value: '' },
+          { name: 'client_credentials', value: '' }
         ]
       }
       let isExist = this.model.url_info.filter(item => item.url_type === type)

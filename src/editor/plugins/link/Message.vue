@@ -56,12 +56,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{
-          $t('message.cancel')
-        }}</el-button>
-        <el-button type="primary" @click="createMessage()" size="small">{{
-          $t('message.confirm')
-        }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
+        <el-button type="primary" @click="createMessage()" size="small">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -230,23 +226,15 @@ export default {
       console.log('right', checkAll)
     },
     // 自定义节点 仅树形结构支持
-    renderContent(h, { node, data, store }) {
+    renderContent(h, { node, data }) {
       return (
         <span class="custom-tree-node">
           <span>{node.label}</span>
           <span>
-            <el-button
-              size="mini"
-              type="text"
-              on-click={() => this.append(data)}
-            >
+            <el-button size="mini" type="text" on-click={() => this.append(data)}>
               Append
             </el-button>
-            <el-button
-              size="mini"
-              type="text"
-              on-click={() => this.remove(node, data)}
-            >
+            <el-button size="mini" type="text" on-click={() => this.remove(node, data)}>
               Delete
             </el-button>
           </span>

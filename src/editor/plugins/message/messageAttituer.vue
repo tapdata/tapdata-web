@@ -288,7 +288,7 @@ export default {
       this.rightData = data
       this.setConfig()
     },
-    formatRightDataName(data = [], node = null) {
+    formatRightDataName(data = []) {
       data.forEach(el => {
         if (el.name.includes('.')) {
           let nameArr = el.name.split('.')
