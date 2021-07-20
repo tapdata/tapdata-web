@@ -1,15 +1,15 @@
 import Vue from 'vue'
-import './plugins/axios'
 import './plugins/element'
+import './plugins/axios'
 import './plugins/monent'
 import App from './App.vue'
 import VueRouter from 'vue-router'
 import './assets/app.scss'
 import VueClipboard from 'vue-clipboard2'
 import { Message } from 'element-ui'
-import locale from 'element-ui/lib/locale'
+import ElementLocale from 'element-ui/lib/locale'
 import settings from './settings'
-import TapdataWebCore from '../packages/tapdata-web-core'
+import TapdataWebCore, { langs } from '../packages/tapdata-web-core'
 import VueI18n from 'vue-i18n'
 
 require('./assets/theme/dfs/index.scss')
@@ -20,13 +20,14 @@ Vue.use(VueClipboard)
 Vue.use(VueRouter)
 Vue.use(TapdataWebCore)
 Vue.use(VueI18n)
-
 const i18n = new VueI18n({
   // locale: localStorage.lang || 'en',
   locale: 'zh-CN',
-  messages: TapdataWebCore.lang
+  messages: langs
 })
-locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
+ElementLocale.i18n((key, value) => {
+  return i18n.t(key, value)
+}) // 重点：为了实现element插件的多语言切换
 
 Vue.prototype.$checkAgentStatus = callback => {
   window.axios.get('tm/api/Workers/availableAgent').then(data => {
@@ -38,7 +39,7 @@ Vue.prototype.$checkAgentStatus = callback => {
   })
 }
 
-export default function ({ routes }) {
+export default ({ routes }) => {
   const router = new VueRouter({
     routes
   })
