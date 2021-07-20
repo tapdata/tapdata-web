@@ -3,9 +3,7 @@
     <TheHeader></TheHeader>
     <main class="page-main block">
       <div class="title">Agent 版本升级</div>
-      <p class="title-text pt-10">
-        系统检测到您的Agent不是最新版本，请按照指引进行升级
-      </p>
+      <p class="title-text pt-10">系统检测到您的Agent不是最新版本，请按照指引进行升级</p>
       <div class="down-type">
         <div
           v-for="down in downType"

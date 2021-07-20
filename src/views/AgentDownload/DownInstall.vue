@@ -44,18 +44,12 @@
       </template>
       <template v-if="type === 'Linux'">
         <p class="pt-8">如果上方命令返回异常，则说明 java 环境可能未安装</p>
-        <div class="text-style pt-8">
-          可参考下方的命令为本地安装 java 环境（本提示中的 openjdk 版本仅用于示例）：
-        </div>
+        <div class="text-style pt-8">可参考下方的命令为本地安装 java 环境（本提示中的 openjdk 版本仅用于示例）：</div>
         <p class="box mt-5">yum -y install java-1.8.0-openjdk</p>
       </template>
 
-      <p v-if="type === 'Docker'" class="pt-8">
-        在确认 docker 镜像包含 java 环境后，即可开始安装 Tapdata agent
-      </p>
-      <p v-else class="pt-8">
-        在本地 java 环境安装完毕后，即可开始安装 Tapdata agent
-      </p>
+      <p v-if="type === 'Docker'" class="pt-8">在确认 docker 镜像包含 java 环境后，即可开始安装 Tapdata agent</p>
+      <p v-else class="pt-8">在本地 java 环境安装完毕后，即可开始安装 Tapdata agent</p>
     </main>
     <footer class="footer">
       <ElButton @click="cancel()">取消</ElButton>

@@ -41,7 +41,7 @@ const _axios = axios.create(config)
 const pending = []
 
 const CancelToken = axios.CancelToken
-_axios.interceptors.request.use(function(config) {
+_axios.interceptors.request.use(function (config) {
   let user = window.__USER_INFO__
   if (user) {
     config.headers['X-Token'] = user.token
@@ -69,7 +69,7 @@ _axios.interceptors.request.use(function(config) {
 }, errorCallback)
 
 // Add a response interceptor
-_axios.interceptors.response.use(function(response) {
+_axios.interceptors.response.use(function (response) {
   return new Promise((resolve, reject) => {
     removePending(response.config)
     let code = response.data.code
@@ -85,7 +85,7 @@ _axios.interceptors.response.use(function(response) {
 }, errorCallback)
 
 const Plugin = {}
-Plugin.install = function(Vue) {
+Plugin.install = function (Vue) {
   Vue.axios = _axios
   window.axios = _axios
   Object.defineProperties(Vue.prototype, {

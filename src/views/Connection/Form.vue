@@ -127,7 +127,7 @@
                 class="custom-connection-box"
                 v-if="
                   ['initial_sync', 'initial_sync+cdc'].includes(model.custom_type) &&
-                    ['source'].includes(model.connection_type)
+                  ['source'].includes(model.connection_type)
                 "
               >
                 <div class="custom-connection-label">
@@ -294,9 +294,9 @@
             <template
               v-if="
                 databaseType === 'gridfs' &&
-                  model.file_type === 'excel' &&
-                  model.gridfsReadMode === 'data' &&
-                  model.connection_type === 'source'
+                model.file_type === 'excel' &&
+                model.gridfsReadMode === 'data' &&
+                model.connection_type === 'source'
               "
             >
               <div class="gridfs-box">

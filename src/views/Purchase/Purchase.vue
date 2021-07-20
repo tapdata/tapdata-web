@@ -59,12 +59,8 @@
                 <ElTooltip class="icon-tips" effect="dark" placement="right">
                   <div slot="content">
                     <template v-if="isInternet">
-                      <p>
-                        包月计费：属于预付费，即在新建实例时就需要支付“包月”费用。
-                      </p>
-                      <p>
-                        按量计费：属于后付费，即按小时扣费。从创建实例开始计费，到退订实例时结束计费。
-                      </p>
+                      <p>包月计费：属于预付费，即在新建实例时就需要支付“包月”费用。</p>
+                      <p>按量计费：属于后付费，即按小时扣费。从创建实例开始计费，到退订实例时结束计费。</p>
                     </template>
                     <template v-else>
                       <p>
@@ -112,18 +108,14 @@
             </ElFormItem>
           </div>
           <div class="panel" v-if="$route.name !== 'Renew'">
-            <div class="panel-title mb-5" v-if="$route.name === 'Modify'">
-              变更配置
-            </div>
+            <div class="panel-title mb-5" v-if="$route.name === 'Modify'">变更配置</div>
             <ElFormItem label="同步拓扑">
               <ElRadioGroup class="radio-button" :value="form.spec.direction" @input="handlerSyncChange">
                 <ElRadioButton v-for="opt in topologyOptions" :key="opt.value" :label="opt.value">
                   {{ opt.label }}
                 </ElRadioButton>
               </ElRadioGroup>
-              <p class="form-item-tips">
-                双向同步仅支持 MongoDB to MongoDB 的同步
-              </p>
+              <p class="form-item-tips">双向同步仅支持 MongoDB to MongoDB 的同步</p>
             </ElFormItem>
             <ElFormItem label="实例规格">
               <ElRadioGroup class="radio-button" v-model="form.spec.specType">
@@ -244,14 +236,10 @@
             <span v-show="form.chargingMode === '2'">/小时</span>
           </div>
           <div class="agreement">
-            <ElCheckbox style="vertical-align: middle" v-model="agree">
-              我已阅读并同意
-            </ElCheckbox>
+            <ElCheckbox style="vertical-align: middle" v-model="agree"> 我已阅读并同意 </ElCheckbox>
             <ElLink size="mini" type="primary" @click="toDoc()">《移动云产品销售协议》</ElLink>
           </div>
-          <ElButton style="margin-top: 10px" type="primary" @click="submit()">
-            确认购买
-          </ElButton>
+          <ElButton style="margin-top: 10px" type="primary" @click="submit()"> 确认购买 </ElButton>
         </div>
       </template>
       <div class="footer" v-if="pageType === 'form'">

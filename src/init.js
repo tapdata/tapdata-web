@@ -38,7 +38,7 @@ Vue.prototype.$checkAgentStatus = callback => {
   })
 }
 
-export default function({ routes }) {
+export default function ({ routes }) {
   const router = new VueRouter({
     routes
   })

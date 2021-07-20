@@ -7,9 +7,7 @@
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <!--				<div class="mr-6 pointer" @click="command('toCommunity')">社区</div>-->
-        <div class="mr-6 pointer" @click="command('source-center')">
-          文档中心
-        </div>
+        <div class="mr-6 pointer" @click="command('source-center')">文档中心</div>
         <div class="flex align-center mr-6 pointer" @click="command('contact-us')">
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>联系我们</span>

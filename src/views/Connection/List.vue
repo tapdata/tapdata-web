@@ -24,14 +24,14 @@
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
-            <i class="el-icon-plus" style="margin-right: 5px;"></i>
+            <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>创建连接</span>
           </ElButton>
         </div>
       </div>
       <El-table
-        class="connection-table  table-border"
-        style="margin-top: 10px;"
+        class="connection-table table-border"
+        style="margin-top: 10px"
         height="100%"
         :data="list"
         @sort-change="sortChange"
@@ -41,7 +41,7 @@
             <div class="flex flex-row align-center p-2">
               <img
                 class="mr-2"
-                style="width: 24px;height: 24px;"
+                style="width: 24px; height: 24px"
                 :src="
                   require('../../../packages/tapdata-web-core/assets/images/connection-type/' +
                     scope.row.database_type.toLowerCase() +

@@ -2,7 +2,7 @@
   <div class="inline-input-wrap">
     <span class="inline-input-body" v-show="!editing">
       <span class="ellipsis" :title="value">{{ value }}</span>
-      <ElLink class="inline-input-link" style="margin-left: 5px;" @click="editing = true">
+      <ElLink class="inline-input-link" style="margin-left: 5px" @click="editing = true">
         <i class="iconfont td-icon-bianji"></i>
       </ElLink>
     </span>
@@ -12,7 +12,7 @@
       </ElTooltip>
       <ElButton
         class="inline-input-button"
-        style="margin-left: 10px;"
+        style="margin-left: 10px"
         type="primary"
         size="mini"
         :disabled="disabled"

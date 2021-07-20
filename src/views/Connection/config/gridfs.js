@@ -1,4 +1,4 @@
-export default function(vm) {
+export default function (vm) {
   const fileChange = (file, field) => {
     if (file) {
       let reader = new FileReader()

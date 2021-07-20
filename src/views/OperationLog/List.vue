@@ -57,7 +57,7 @@
           </ul>
         </div>
       </div>
-      <El-table class="operation-logs-table  table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
+      <El-table class="operation-logs-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
         <ElTableColumn label="用户名" width="200">
           <template slot-scope="scope">
             <div>{{ scope.row.username }}</div>

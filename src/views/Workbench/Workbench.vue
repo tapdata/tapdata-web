@@ -114,8 +114,7 @@ export default {
           // icon: 'account',
           icon: 'agent',
           title: '部署Agent，并对已有Agent的状态进行查看和管理',
-          desc:
-            '欢迎来到Tapdata Cloud，即将开启您的实时数据同步之旅！初次使用请先安装部署Agent，不然无法创建连接和任务哦。',
+          desc: '欢迎来到Tapdata Cloud，即将开启您的实时数据同步之旅！初次使用请先安装部署Agent，不然无法创建连接和任务哦。',
           btnName: '创建Agent',
           hiddenBtnIcon: true,
           action: this.createAgent
@@ -124,8 +123,7 @@ export default {
           name: '连接管理',
           icon: 'connection',
           title: '创建数据连接，并对已有数据连接的状态进行测试和管理',
-          desc:
-            '数据连接主要用来建立Agent与用户源数据库和目标数据库的连接。快来创建数据连接，并对已有数据连接的状态进行测试和管理吧。',
+          desc: '数据连接主要用来建立Agent与用户源数据库和目标数据库的连接。快来创建数据连接，并对已有数据连接的状态进行测试和管理吧。',
           btnName: '创建连接',
           action: this.createConnection
         },
@@ -133,8 +131,7 @@ export default {
           name: '任务管理',
           icon: 'task',
           title: '创建数据同步任务，并对已有数据同步任务的类型和状态进行查看和管理',
-          desc:
-            '任务管理主要用来创建同步任务并进行管理。快来创建数据同步任务，并对已有数据同步任务的类型和状态进行查看和管理吧。',
+          desc: '任务管理主要用来创建同步任务并进行管理。快来创建数据同步任务，并对已有数据同步任务的类型和状态进行查看和管理吧。',
           btnName: '创建任务',
           action: this.createTask
         }

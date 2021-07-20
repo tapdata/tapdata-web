@@ -60,7 +60,7 @@
                   class="ddl-tip"
                   v-show="
                     dataSourceModel['source_databaseType'] === 'mysql' &&
-                      dataSourceModel['target_databaseType'] === 'mysql'
+                    dataSourceModel['target_databaseType'] === 'mysql'
                   "
                 >
                   自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作

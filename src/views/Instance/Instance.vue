@@ -29,7 +29,7 @@
         </div>
         <div class="instance-operation-right">
           <ElButton type="primary" @click="createAgent">
-            <i class="el-icon-plus" style="margin-right: 5px;"></i>
+            <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>创建 Agent</span>
           </ElButton>
           <template v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'">
@@ -44,13 +44,13 @@
           </template>
         </div>
       </div>
-      <El-table class="instance-table  table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
+      <El-table class="instance-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
         <ElTableColumn min-width="200px" label="实例ID/名称">
           <template slot-scope="scope">
             <ElLink class="agent-link" type="primary" @click="handleDetails(scope.row)">{{ scope.row.id }}</ElLink>
             <ClipButton :value="scope.row.id"></ClipButton>
             <InlineInput
-              style="display: block;"
+              style="display: block"
               :value="scope.row.name"
               @save="updateName($event, scope.row.id)"
             ></InlineInput>
@@ -169,9 +169,7 @@
       </ElDialog>
       <!--   升级失败   -->
       <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
-        <div class="dialog-content text-center">
-          自动升级失败，请尝试手动升级。
-        </div>
+        <div class="dialog-content text-center">自动升级失败，请尝试手动升级。</div>
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center">
             <ElButton type="primary" @click="cancelUpgradeFnc">取消</ElButton>

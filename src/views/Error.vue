@@ -10,17 +10,13 @@
       </div>
       <div v-if="$route.path === '/invalid'" class="box">
         <img class="img" src="../assets/image/invalid.png" />
-        <p class="text">
-          账户暂无权限！您的账户权限不足，无法订购产品，请联系客户经理或客服人员：4001100868
-        </p>
+        <p class="text">账户暂无权限！您的账户权限不足，无法订购产品，请联系客户经理或客服人员：4001100868</p>
         <ElButton class="mt-5" type="primary" @click="toHome()">返回首页</ElButton>
       </div>
       <div v-if="$route.path === '/freeze'" class="box">
         <img class="img" src="../assets/image/freeze.png" />
         <p class="label">账户已被冻结</p>
-        <p class="text">
-          您的账户已被暂停，无法订购产品，请及时充值或联系客户经理。
-        </p>
+        <p class="text">您的账户已被暂停，无法订购产品，请及时充值或联系客户经理。</p>
         <ElButton class="mt-5" type="primary" @click="toHome()">返回首页</ElButton>
       </div>
       <div v-if="$route.path === '/off'" class="box">

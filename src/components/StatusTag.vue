@@ -1,8 +1,8 @@
 <template>
   <span class="td-status-tag">
     <ElTag :type="statusObj.type" v-if="type === 'tag'">{{ statusObj.text }}</ElTag>
-    <span style="display:flex;align-items:center;" v-else>
-      <VIcon v-if="statusObj.icon === 'loading'" style="font-size: 18px;margin: 0 4px;" color="#10C038">loading</VIcon>
+    <span style="display: flex; align-items: center" v-else>
+      <VIcon v-if="statusObj.icon === 'loading'" style="font-size: 18px; margin: 0 4px" color="#10C038">loading</VIcon>
       <i
         v-else-if="statusObj.icon === 'running'"
         class="iconfont td-status-tag__icon td-icon-yunhangzhong color-success"

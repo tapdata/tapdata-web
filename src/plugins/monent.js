@@ -20,7 +20,7 @@ Moment.locale('zh-cn', {
     llll: 'YYYY年M月D日dddd HH:mm'
   },
   eridiemParse: /凌晨|早上|上午|中午|下午|晚上/,
-  meridiemHour: function(hour, meridiem) {
+  meridiemHour: function (hour, meridiem) {
     if (hour === 12) {
       hour = 0
     }
@@ -33,7 +33,7 @@ Moment.locale('zh-cn', {
       return hour >= 11 ? hour : hour + 12
     }
   },
-  meridiem: function(hour, minute) {
+  meridiem: function (hour, minute) {
     const hm = hour * 100 + minute
     if (hm < 600) {
       return '凌晨'
@@ -58,7 +58,7 @@ Moment.locale('zh-cn', {
     sameElse: 'L'
   },
   dayOfMonthOrdinalParse: /\d{1,2}(日|月|周)/,
-  ordinal: function(number, period) {
+  ordinal: function (number, period) {
     switch (period) {
       case 'd':
       case 'D':

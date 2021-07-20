@@ -3,7 +3,7 @@
  * @date 2021/6/11
  * @description
  */
-export default function(vm) {
+export default function (vm) {
   return {
     form: {
       labelPosition: 'right',

@@ -31,7 +31,7 @@
       <div class="contact-footer flex justify-content-center align-center mx-auto mt-16">
         <div class="contact-footer__content">
           <div class="contact-footer__top px-6">扫码添加客服</div>
-          <div class="contact-footer__bottom  px-6">进行咨询与交流</div>
+          <div class="contact-footer__bottom px-6">进行咨询与交流</div>
         </div>
         <img class="contact-footer__logo" src="../assets/image/LarkQR.jpeg" alt="" />
       </div>

@@ -94,9 +94,9 @@
           :key="index"
           v-show="
             data.database_type === 'file' &&
-              data.connection_type === 'source' &&
-              data.file_sources &&
-              data.file_sources[0].path
+            data.connection_type === 'source' &&
+            data.file_sources &&
+            data.file_sources[0].path
           "
         >
           <li>
