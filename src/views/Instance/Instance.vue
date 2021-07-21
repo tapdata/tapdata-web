@@ -196,6 +196,8 @@ import upgradeLoadingSvg from '../../../public/images/agent/upgrade-loading.svg'
 import upgradeErrorSvg from '../../../public/images/agent/upgrade-error.svg'
 // import upgradeImg from '../../assets/image/upgrade.png'
 
+let timer = null
+
 export default {
   components: {
     InlineInput,
@@ -227,8 +229,7 @@ export default {
       upgradeSvg,
       upgradeImg,
       upgradeLoadingSvg,
-      upgradeErrorSvg,
-      timer: null
+      upgradeErrorSvg
       // upgradeImg
     }
   },
@@ -250,16 +251,6 @@ export default {
       }
       return options
     },
-    // 存在进行中的状态
-    haveStateLoadingFlag() {
-      let flag = false
-      this.list.forEach(el => {
-        if (['preparing', 'downloading', 'upgrading'].includes(el.tmInfo.updateStatus)) {
-          flag = true
-        }
-      })
-      return flag
-    },
     disabledAuautoUpgradeBtn() {
       return !!(this.selectedRow?.status !== 'Running')
     }
@@ -272,6 +263,25 @@ export default {
   },
   created() {
     this.init()
+    timer = setInterval(() => {
+      let list = this.list || []
+      let flag = false
+      list.forEach(item => {
+        if (
+          ['Stopping'].includes(item.status) ||
+          ['preparing', 'downloading', 'upgrading'].includes(item.tmInfo?.updateStatus)
+        ) {
+          flag = true
+        }
+      })
+      if (flag && this.$route.name === 'Instance') {
+        this.fetch(null, null, true)
+      }
+    }, 10000)
+  },
+  beforeDestroy() {
+    clearInterval(timer)
+    timer = null
   },
   methods: {
     init() {
@@ -352,10 +362,6 @@ export default {
               setTimeout(() => {
                 this.fetch(this.page.current - 1)
               }, 0)
-            }
-            this.clearTimer()
-            if (this.haveStateLoadingFlag) {
-              this.setTimer()
             }
           })
           .finally(() => {
@@ -502,14 +508,6 @@ export default {
           })
       })
     },
-    setTimer() {
-      this.timer = setInterval(() => {
-        this.fetch(null, null, true)
-      }, 10000)
-    },
-    clearTimer() {
-      this.timer && clearInterval(this.timer)
-    },
     manualUpgradeFnc() {
       let row = this.selectedRow
       this.closeDialog() // 关闭升级方式选择窗口
@@ -559,7 +557,6 @@ export default {
     },
     // agent详情
     handleDetails(data) {
-      this.clearTimer()
       this.$router.push({
         name: 'InstanceDetails',
         query: {

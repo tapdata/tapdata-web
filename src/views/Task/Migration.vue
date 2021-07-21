@@ -201,6 +201,8 @@ import { delayTrigger, toRegExp } from '../../util'
 import { TASK_STATUS_MAP } from '../../const'
 import StatusTag from '../../components/StatusTag'
 
+let timer = null
+
 export default {
   components: { StatusTag },
   data() {
@@ -267,8 +269,53 @@ export default {
     this.searchParams = Object.assign(this.searchParams, query)
     this.fetch()
     this.getAgent()
+    timer = setInterval(() => {
+      let list = this.list || []
+      let ids = []
+      list.forEach(item => {
+        if (['scheduled', 'stopping', 'force stopping'].includes(item.status)) {
+          ids.push(item.id)
+        }
+      })
+      if (ids.length && this.$route.name === 'Task') {
+        this.updateStatusByIds(ids)
+      }
+    }, 5000)
+  },
+  beforeDestroy() {
+    clearInterval(timer)
+    timer = null
   },
   methods: {
+    async updateStatusByIds(ids) {
+      let fields = {
+        id: true,
+        name: true,
+        status: true
+      }
+      let filter = {
+        fields,
+        where: {
+          id: {
+            $inq: ids
+          }
+        }
+      }
+      let data = await this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
+      let changeList = data || []
+      let statusMap = {}
+      changeList.forEach(item => {
+        let { statusText, statusIcon, status } = this.formatData(item)
+        statusMap[item.id] = { statusText, statusIcon, status }
+      })
+      let list = this.list || []
+      list.forEach(item => {
+        let changeParams = statusMap[item.id]
+        if (changeParams) {
+          Object.assign(item, changeParams)
+        }
+      })
+    },
     async getAgent() {
       let data = await this.$axios.get('api/tcm/agent')
       this.agentOptions = data.items.map(item => {
