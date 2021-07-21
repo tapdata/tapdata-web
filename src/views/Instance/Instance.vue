@@ -343,11 +343,9 @@ export default {
               }
               return item
             })
-            // 不存在版本号
-            if (!this.version) {
-              let getVersion = await this.getVersion(this.list[0]?.id)
-              this.version = getVersion?.version
-            }
+            // 版本号
+            let getVersion = await this.getVersion(this.list[0]?.id)
+            this.version = getVersion?.version
 
             this.page.total = data.total
             if (!list.length && data.total > 0) {
