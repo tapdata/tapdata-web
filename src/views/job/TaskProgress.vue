@@ -6,9 +6,9 @@
       <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
-          <el-button class="progress-header_btn" type="text" @click="handleInfo" v-if="completeTime !== '全量已完成'">
+          <ElLink class="progress-header_btn" type="primary" @click="handleInfo" v-if="completeTime !== '全量已完成'">
             查看详情
-          </el-button>
+          </ElLink>
         </div>
         <div class="progress-container__body flex">
           <div class="progress-container__img">
@@ -90,8 +90,8 @@
       <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'initial_sync'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
-          <el-button class="progress-header_btn" type="text" @click="handleInfo" v-if="completeTime !== '全量已完成'"
-            >查看详情</el-button
+          <ElLink class="progress-header_btn" type="primary" @click="handleInfo" v-if="completeTime !== '全量已完成'"
+            >查看详情</ElLink
           >
         </div>
         <div class="progress-container__body flex">
@@ -242,6 +242,7 @@ export default {
   watch: {
     dataFlow: {
       deep: true,
+      immediate: true,
       handler(data) {
         this.handleData(data)
       }
@@ -282,13 +283,17 @@ export default {
     // },
     handleData(data) {
       // let currentData = data
-      let overview = null
+      let overview = {}
       let inputCount = data?.stats?.throughput?.inputCount
       let waitingForSyecTableNums = 0
       let completeTime = ''
 
       if (data?.stats?.overview) {
         overview = JSON.parse(JSON.stringify(data.stats.overview))
+
+        if (overview.currentStatus === undefined) {
+          this.$set(overview, 'currentStatus', '未开始')
+        }
 
         if (overview.waitingForSyecTableNums !== undefined) {
           waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
@@ -297,7 +302,7 @@ export default {
         }
         overview.waitingForSyecTableNums = waitingForSyecTableNums
         let num = (overview.targatRowNum / overview.sourceRowNum) * 100
-        this.progressBar = num ? num.toFixed(0) * 1 : 0
+        this.progressBar = num ? num.toFixed(2) * 1 : 0
 
         let time = (overview.sourceRowNum - overview.targatRowNum) / inputCount
 
@@ -332,19 +337,24 @@ export default {
           if (d > 0) {
             r = parseInt(d) + '天' + r
           }
-          completeTime = r
+          // 全量未完成 停止任务
+          if (['paused', 'error'].includes(data.status)) {
+            completeTime = '任务已停止'
+          } else {
+            completeTime = r
+          }
         }
 
         if (this.progressBar === 100) {
           overview.currentStatus = '进行中'
           completeTime = '全量已完成'
         }
-      } else {
-        overview.currentStatus = '未开始'
-      }
-      if (['paused', 'error'].includes(data.status)) {
-        overview.currentStatus = '已停止'
-        completeTime = '任务已停止'
+        // 任务暂停、错误  增量状态都为停止
+        if (completeTime === '全量已完成') {
+          if (['paused', 'error'].includes(data.status)) {
+            overview.currentStatus = '已停止'
+          }
+        }
       }
 
       this.completeTime = completeTime
@@ -367,9 +377,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .task-progress {
+  height: 100%;
   padding: 24px;
+  box-sizing: border-box;
 }
 .progress-container {
+  height: 100%;
   border: 1px solid #d3d3d3;
   border-radius: 4px;
 }
@@ -414,7 +427,7 @@ export default {
 .footer-item__name {
   display: inline-block;
   color: #9c9c9c;
-  width: 200px;
+  width: 130px;
   font-size: 12px;
 }
 .footer-item__value {

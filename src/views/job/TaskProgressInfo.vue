@@ -50,13 +50,7 @@
       </el-table-column>
       <el-table-column label="全量迁移进度" prop="statsData.status" sortable>
         <template slot-scope="scope">
-          {{
-            scope.row.statsData.status === 'done'
-              ? '完成'
-              : scope.row.statsData.status === 'running'
-              ? '运行中'
-              : '等待中'
-          }}
+          {{ scope.row.statsData.status }}
         </template>
       </el-table-column>
     </TablePage>
@@ -88,6 +82,9 @@ export default {
     table() {
       return this.$refs.table
     }
+  },
+  created() {
+    document.title = '迁移详情'
   },
   methods: {
     getData({ page }) {
@@ -123,6 +120,18 @@ export default {
           filter: JSON.stringify(filter)
         })
       ]).then(([countRes, res]) => {
+        if (res?.data?.length) {
+          res.data.forEach(item => {
+            if (item.statsData.status === 'running') {
+              let num = (item.statsData.targetRowNum / item.statsData.sourceRowNum) * 100
+              item.statsData.status = num ? num.toFixed(2) + '%' : 0 + '%'
+            } else if (item.statsData.status === 'done') {
+              item.statsData.status = '完成'
+            } else {
+              item.statsData.status = '等待中'
+            }
+          })
+        }
         return {
           total: countRes.data.count,
           data: res.data
@@ -131,9 +140,7 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'statsData.sourceTableName'} ${
-        order === 'statsData.sourceTableName' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'statsData.status'} ${order === 'statsData.status' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     }
   }
