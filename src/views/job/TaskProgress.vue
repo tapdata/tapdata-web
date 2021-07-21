@@ -17,7 +17,7 @@
           <div class="progress-container__overview ml-6">
             <el-row>
               <el-col :span="24" class="flex"
-                ><span>全量+增量同步任务进度：</span
+                ><span>全量同步任务进度：</span
                 ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
               </el-col>
             </el-row>
