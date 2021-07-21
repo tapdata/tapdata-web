@@ -819,7 +819,8 @@ const en = {
         none_data_node: 'At least 2 data node in graph',
         none_link_node: 'At least 1 link in graph',
         start_with_data_node: 'Must start with a data node',
-        acyclic: 'The graph cannot have cyclic'
+        acyclic: 'The graph cannot have cyclic',
+        empty_message_field_name_and_type: 'Message body field name and type cannot be empty'
       },
       data_node: {
         hiveText: 'Hive Node',
@@ -1314,6 +1315,10 @@ const en = {
               placeholder: 'Enter or choose target path field.'
             }
           }
+        },
+        transform: {
+          name: 'Transform',
+          tip: 'Transform Node'
         }
       },
       link: {
