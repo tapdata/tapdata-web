@@ -6,9 +6,9 @@
       <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
-          <el-button class="progress-header_btn" type="text" @click="handleInfo" v-if="completeTime !== '全量已完成'">
+          <ElLink class="progress-header_btn" type="primary" @click="handleInfo" v-if="completeTime !== '全量已完成'">
             查看详情
-          </el-button>
+          </ElLink>
         </div>
         <div class="progress-container__body flex">
           <div class="progress-container__img">
@@ -90,8 +90,8 @@
       <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'initial_sync'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
-          <el-button class="progress-header_btn" type="text" @click="handleInfo" v-if="completeTime !== '全量已完成'"
-            >查看详情</el-button
+          <ElLink class="progress-header_btn" type="primary" @click="handleInfo" v-if="completeTime !== '全量已完成'"
+            >查看详情</ElLink
           >
         </div>
         <div class="progress-container__body flex">
@@ -350,8 +350,10 @@ export default {
           completeTime = '全量已完成'
         }
         // 任务暂停、错误  增量状态都为停止
-        if (['paused', 'error'].includes(data.status)) {
-          overview.currentStatus = '已停止'
+        if (completeTime === '全量已完成') {
+          if (['paused', 'error'].includes(data.status)) {
+            overview.currentStatus = '已停止'
+          }
         }
       }
 
