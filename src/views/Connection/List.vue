@@ -344,7 +344,6 @@ export default {
             status: 'testing'
           })
           this.$refs.test.start(data)
-          this.fetch()
         } catch (error) {
           this.$message.error(error?.response?.msg || '测试连接失败')
         }
@@ -353,12 +352,6 @@ export default {
     },
     receiveTestData(data) {
       if (!data.status || data.status === null) return
-      let status = data.status
-      if (status === 'ready') {
-        this.$message.success('连接测试有效')
-      } else {
-        this.$message.error('连接测试无效')
-      }
       this.fetch()
     },
     preview(id, type) {
