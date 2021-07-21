@@ -284,7 +284,6 @@ export default {
     handleData(data) {
       // let currentData = data
       let overview = {}
-      let inputCount = data?.stats?.throughput?.inputCount
       let waitingForSyecTableNums = 0
       let completeTime = ''
 
@@ -301,14 +300,21 @@ export default {
           waitingForSyecTableNums = 0
         }
         overview.waitingForSyecTableNums = waitingForSyecTableNums
+
         let num = (overview.targatRowNum / overview.sourceRowNum) * 100
         this.progressBar = num ? num.toFixed(2) * 1 : 0
 
-        let time = (overview.sourceRowNum - overview.targatRowNum) / inputCount
+        let now = new Date().getTime()
+        let startTime = new Date(data.runningTime).getTime(),
+          runningTime = now - startTime,
+          speed = overview.targatRowNum / runningTime
+        // lefts = Math.floor((spendTime / 1000) % 60) //计算秒数
+
+        let time = (overview.sourceRowNum - overview.targatRowNum) / speed / 1000
 
         let r = ''
         if (time) {
-          let s = parseInt(time),
+          let s = time,
             m = 0,
             h = 0,
             d = 0
