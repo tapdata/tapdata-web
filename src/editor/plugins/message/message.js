@@ -66,11 +66,10 @@ export const messageProcessConfig = {
       validate: function (data) {
         data = data || this.getFormData()
         let name = data?.name
-        console.log('data', data)
         if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
-        if (!data.type) throw new Error(`${name}: ${i18n.t('editor.cell.processor.script.none_script_type')}`)
+        if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`)
         let flag = this.schemaFieldTypeValidate(data.pbProcessorConfig.schema)
-        if (flag) throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_message_field_type')}`)
+        if (flag) throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_message_field_name_and_type')}`)
 
         return true
       },
