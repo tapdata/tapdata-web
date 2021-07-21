@@ -31,7 +31,7 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'isUrl',
-        show: false,
+        show: true,
         label: vm.$t('dataForm.form.options.connectionMode'),
         options: [
           {

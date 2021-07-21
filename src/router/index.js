@@ -8,7 +8,7 @@ import ContactUs from '@/views/ContactUs'
 import Purchase from '@/views/Purchase/Purchase'
 
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/Task/Form.vue')
-// const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/Connection/Form.vue')
+const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/Connection/Form.vue')
 
 const routes = [
   {
@@ -89,21 +89,21 @@ const routes = [
           {
             path: 'create',
             name: 'ConnectionCreate',
-            // component: ConnectionForm,
-            component: Iframe,
+            component: ConnectionForm,
+            //component: Iframe,
             meta: {
-              title: '创建连接',
-              link: './tm/#/connections/create'
+              title: '创建连接'
+              // link: './tm/#/connections/create'
             }
           },
           {
             path: ':id',
             name: 'ConnectionEdit',
-            // component: ConnectionForm,
-            component: Iframe,
+            component: ConnectionForm,
+            //component: Iframe,
             meta: {
-              title: '编辑连接',
-              link: './tm/#/connections/:id/edit'
+              title: '编辑连接'
+              //link: './tm/#/connections/:id/edit'
             }
           }
         ]
