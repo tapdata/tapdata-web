@@ -12,7 +12,7 @@
       </el-form>
       <div class="box box-content">
         <div class="btn-line mb-3 text-rf">
-          <el-button size="mini" :type="draggable ? 'primary' : 'default'" @click="handleDraggable">{{
+          <el-button size="mini" :type="draggableRight ? 'primary' : 'default'" @click="handleDraggable">{{
             $t('dataForm.form.transform.isDrag')
           }}</el-button>
           <el-button size="mini" @click="addFieldDialog">{{ $t('dataForm.form.transform.addField') }}</el-button>
@@ -110,38 +110,35 @@ export default {
   data() {
     const _this = this
     const validateName = (rule, value, callback) => {
-      let allNames = this.getAllItemInTree([...this.rightData], 'name')
-      let allKeys = this.getAllItemInTree([...this.rightData], 'key')
-      let allArr = [...allNames, ...allKeys]
       let nameSameToType = value === _this.createForm.type
-      let keyArr = _this.createForm.key.split('.')
-      let newKey = keyArr[keyArr.length - 1]
+      let allArr = this.getAllItemInTree(this.rightData)
+      let findOne = allArr?.find(item => item.name === value && item.key !== _this.createForm.key)
       if (!value) {
         callback(new Error(this.$t('dataForm.form.transform.name') + this.$t('dataForm.form.transform.empty')))
       } else if (value.includes('.')) {
         callback(new Error(this.$t('dataForm.form.transform.specialSymbols') + '"."'))
       } else if (nameSameToType) {
         callback(new Error(this.$t('dataForm.form.transform.noSameNameandType')))
-      } else if (newKey !== value && allArr.includes(value)) {
+      } else if (findOne) {
         callback(new Error(this.$t('dataForm.form.transform.name') + this.$t('dataForm.form.transform.exist')))
       } else {
         callback()
       }
     }
     const validateType = (rule, value, callback) => {
-      let allNames = this.getAllItemInTree([...this.rightData], 'name')
-      let allKeys = this.getAllItemInTree([...this.rightData], 'key')
-      let allArr = [...allNames, ...allKeys]
       let nameSameToType = value === _this.createForm.name
-      let keyArr = _this.createForm.key.split('.')
-      let newKey = keyArr[keyArr.length - 1]
+      let allArr = this.getAllItemInTree(this.rightData)
+      let typeArr = this.typeOptions.map(item => item.value)
+      let findOne = allArr?.find(
+        item => !typeArr.includes(item.type) && item.type === value && item.key !== _this.createForm.key
+      )
       if (!value) {
         callback(new Error(this.$t('dataForm.form.transform.type') + this.$t('dataForm.form.transform.empty')))
       } else if (value.includes('.')) {
         callback(new Error(this.$t('dataForm.form.transform.specialSymbols') + '"."'))
       } else if (nameSameToType) {
         callback(new Error(this.$t('dataForm.form.transform.noSameNameandType')))
-      } else if (newKey !== value && allArr.includes(value)) {
+      } else if (findOne) {
         callback(new Error(this.$t('dataForm.form.transform.type') + this.$t('dataForm.form.transform.exist')))
       } else {
         callback()
@@ -227,40 +224,38 @@ export default {
       }
       this.cell = cell
       if (cell?.getOutputSchema()) {
-        let sourceSchema = cell.getOutputSchema() || null,
-          sourceField = sourceSchema ? sourceSchema.fields : []
-        this.sourceField = sourceField
-        // targetSchema = targetCell ? targetCell.getSchema() : null,
-        if (sourceField) {
-          _this.fieldsData = sourceSchema.fields
-            .filter(field => !!field.field_name)
-            .map(field => {
-              let obj = {
-                pid: 0,
-                label: 'optional',
-                name: field.field_name,
-                key: field.field_name,
-                type: field.javaType,
-                disabled: this.disabled,
-                // number: 0,
-                // mapping: [],
-                children: []
-              }
-              obj.type = obj.type.toLowerCase()
-              obj.type = this.suportTypeMap[obj.type] ?? ''
-              return obj
-            })
+        let sourceSchema = cell.getOutputSchema() || null
+        this.sourceField = sourceSchema?.fields || []
+        if (this.sourceField) {
+          _this.fieldsData = _.cloneDeep(
+            this.sourceField
+              .filter(field => !!field.field_name)
+              .map(field => {
+                let obj = {
+                  pid: 0,
+                  label: 'optional',
+                  name: field.field_name,
+                  key: field.field_name,
+                  type: field.javaType,
+                  disabled: this.disabled,
+                  children: []
+                }
+                obj.type = obj.type.toLowerCase()
+                obj.type = this.suportTypeMap[obj.type] ?? ''
+                return obj
+              })
+          )
         }
       }
       if (this.model.pbProcessorConfig?.schema) {
         let genTree = this.genTree({ ...this.model.pbProcessorConfig?.schema })
-        this.rightData = genTree || []
+        this.rightData = _.cloneDeep(genTree || [])
         let getRightFields = this.getRightFields(this.rightData)
         let getRightFieldsKeys = getRightFields.map(item => item.key)
-        this.leftData = _this.fieldsData.filter(item => !getRightFieldsKeys.includes(item.key))
+        this.leftData = _.cloneDeep(_this.fieldsData.filter(item => !getRightFieldsKeys.includes(item.key)))
       } else {
         // 过滤下 leftData
-        this.leftData = [..._this.fieldsData]
+        this.leftData = _.cloneDeep(_this.fieldsData)
       }
     },
     getRightFields(data = [], result = []) {
@@ -280,12 +275,12 @@ export default {
       return result
     },
     changeLeftData(data) {
-      this.leftData = data
+      this.leftData = _.cloneDeep(data)
       this.setConfig()
     },
     changeRightData(data) {
       this.formatRightDataName(data)
-      this.rightData = data
+      this.rightData = _.cloneDeep(data)
       this.setConfig()
     },
     formatRightDataName(data = []) {
@@ -385,14 +380,10 @@ export default {
       data.name = createForm.name
       data.label = createForm.label
       data.type = createForm.type
-      // for (let key in data) {
-      //   data[key] = this.createForm[key]
-      // }
     },
     setConfig() {
       this.model.pbProcessorConfig = this.formatToData()
       let data = this.getData()
-      console.log('setConfig', data)
       this.$emit('dataChanged', data)
     },
     // data数组，result返回的结果，field只存某个字段
@@ -467,6 +458,7 @@ export default {
       return data.name.indexOf(value) !== -1
     },
     remove(node, data) {
+      let _this = this
       this.$confirm(this.$t('dataForm.form.transform.deleteFieldConfirm'), this.$t('message.delete'), {
         type: 'warning'
       }).then(res => {
@@ -478,17 +470,24 @@ export default {
         const children = parent.data.children || parent.data
         let result = []
         // 删除文件夹
-        if ((this.toRightKey && data[this.toRightKey]) || this.toRightKey === '') {
-          result = this.getLeftAllFields(data?.children)
+        if ((_this.toRightKey && data[_this.toRightKey]) || _this.toRightKey === '') {
+          result = _this.getLeftAllFields(data?.children)
         } else {
           // 删除字段
-          result.push({
-            ...data,
-            ...{
-              name: data.key
-            }
-          })
+          result.push(data)
         }
+
+        // 匹配源数据
+        let fieldsData = _this.fieldsData
+        result.forEach(el => {
+          let findOne = fieldsData.find(item => item.key === el.key)
+          if (findOne) {
+            el.name = findOne.key
+            el.label = findOne.label
+            el.type = findOne.type
+          }
+        })
+
         // 更新左树
         this.changeLeftData([...this.leftData, ...result])
 
@@ -503,12 +502,7 @@ export default {
         if ((this.toRightKey && el[this.toRightKey]) || el?.children.length > 0) {
           this.getLeftAllFields(el?.children, result)
         } else {
-          result.push({
-            ...el,
-            ...{
-              name: el.key
-            }
-          })
+          result.push(el)
         }
       })
       return result
@@ -521,10 +515,6 @@ export default {
           })
         }
       } else {
-        // let lastArr = tree.mapping[tree.mapping.length - 1]?.split('.')
-        // let lastWord = lastArr[lastArr.length - 1]
-        // result[lastWord?.replace(/\./g, '#')] = tree.key
-        // console.log('tree.mapping', tree.mapping)
         result[tree.nameMapping.join('.')?.replace(/\./g, '#')] = tree.key
       }
       return result
@@ -612,7 +602,6 @@ export default {
         children: [...rightData],
         unitFlagRepeated: this.unitFlagRepeated
       })
-      console.log()
       let getMapping = this.getMapping({ ...tree })
       let getSchema = this.getSchema({ ...tree })
       return {
