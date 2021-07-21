@@ -89,6 +89,9 @@ export default {
       return this.$refs.table
     }
   },
+  created() {
+    document.title = '迁移详情'
+  },
   methods: {
     getData({ page }) {
       let { current, size } = page
