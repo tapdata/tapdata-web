@@ -242,6 +242,7 @@ export default {
   watch: {
     dataFlow: {
       deep: true,
+      immediate: true,
       handler(data) {
         this.handleData(data)
       }
@@ -282,13 +283,17 @@ export default {
     // },
     handleData(data) {
       // let currentData = data
-      let overview = null
+      let overview = {}
       let inputCount = data?.stats?.throughput?.inputCount
       let waitingForSyecTableNums = 0
       let completeTime = ''
 
       if (data?.stats?.overview) {
         overview = JSON.parse(JSON.stringify(data.stats.overview))
+
+        if (overview.currentStatus === undefined) {
+          this.$set(overview, 'currentStatus', '未开始')
+        }
 
         if (overview.waitingForSyecTableNums !== undefined) {
           waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
@@ -332,6 +337,10 @@ export default {
           if (d > 0) {
             r = parseInt(d) + '天' + r
           }
+          // 全量未完成 停止任务
+          if (['paused', 'error'].includes(data.status)) {
+            completeTime = '任务已停止'
+          }
           completeTime = r
         }
 
@@ -339,12 +348,10 @@ export default {
           overview.currentStatus = '进行中'
           completeTime = '全量已完成'
         }
-      } else {
-        overview.currentStatus = '未开始'
-      }
-      if (['paused', 'error'].includes(data.status)) {
-        overview.currentStatus = '已停止'
-        completeTime = '任务已停止'
+        // 任务暂停、错误  增量状态都为停止
+        if (['paused', 'error'].includes(data.status)) {
+          overview.currentStatus = '已停止'
+        }
       }
 
       this.completeTime = completeTime
