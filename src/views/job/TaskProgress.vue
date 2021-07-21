@@ -302,7 +302,7 @@ export default {
         }
         overview.waitingForSyecTableNums = waitingForSyecTableNums
         let num = (overview.targatRowNum / overview.sourceRowNum) * 100
-        this.progressBar = num ? num.toFixed(0) * 1 : 0
+        this.progressBar = num ? num.toFixed(2) * 1 : 0
 
         let time = (overview.sourceRowNum - overview.targatRowNum) / inputCount
 
@@ -340,8 +340,9 @@ export default {
           // 全量未完成 停止任务
           if (['paused', 'error'].includes(data.status)) {
             completeTime = '任务已停止'
+          } else {
+            completeTime = r
           }
-          completeTime = r
         }
 
         if (this.progressBar === 100) {
