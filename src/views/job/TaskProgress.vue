@@ -375,9 +375,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .task-progress {
+  height: 100%;
   padding: 24px;
+  box-sizing: border-box;
 }
 .progress-container {
+  height: 100%;
   border: 1px solid #d3d3d3;
   border-radius: 4px;
 }
@@ -422,7 +425,7 @@ export default {
 .footer-item__name {
   display: inline-block;
   color: #9c9c9c;
-  width: 200px;
+  width: 130px;
   font-size: 12px;
 }
 .footer-item__value {
