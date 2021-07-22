@@ -9,9 +9,11 @@
       :status-bt-map="statusBtMap"
       :sync_type="sync_type"
       :creat-user-id="creatUserId"
+      :is-starting="isStarting"
       @save="save"
       @start="start"
       @delete="handleDelete"
+      @showSettings="handleShowSettings"
     ></TopHeader>
 
     <section class="layout-wrap layout-has-sider">
@@ -47,7 +49,7 @@
         <div class="nav-line" v-for="(l, i) in navLines" :key="`l-${i}`" :style="l"></div>
       </main>
       <!--右侧边栏-->
-      <RightSidebar @deselectConnection="deselectConnection"></RightSidebar>
+      <RightSidebar @hide="onHideSidebar"></RightSidebar>
     </section>
   </section>
 </template>
@@ -71,6 +73,8 @@ import { titleChange } from '@/mixins/titleChange'
 import { showMessage } from '@/mixins/showMessage'
 import moveDataflow from './mixins/moveDataflow'
 import ws from '@/api/ws'
+import log from '@/log'
+import i18n from '@/i18n'
 // import _ from 'lodash'
 
 const dataFlowsApi = factory('DataFlows')
@@ -97,6 +101,7 @@ export default {
       isMoniting: false,
       isSimple: false,
       isSaving: false,
+      isStarting: false,
       sync_type: 'initial_sync+cdc',
       creatUserId: '',
       statusBtMap,
@@ -106,7 +111,8 @@ export default {
       selectBoxAttr: null,
       selectActive: false,
       showSelectBox: false,
-      nodeViewScale: 1
+      nodeViewScale: 1,
+      mapping: this.$route.query?.mapping
     }
   },
 
@@ -158,12 +164,7 @@ export default {
   },
 
   created() {
-    let _nodeTypes = nodeTypes
-    if (this.$route.query?.mapping === 'cluster-clone') {
-      _nodeTypes = _nodeTypes.filter(item => item.type === 'database')
-    }
-    this.setNodeTypes(_nodeTypes)
-    this.setCtorTypes(ctorTypes)
+    this.initNodeType()
   },
 
   mounted() {
@@ -175,6 +176,10 @@ export default {
         console.error(error)
       }
     })
+  },
+
+  destroyed() {
+    this.resetWorkspace()
   },
 
   methods: {
@@ -195,7 +200,8 @@ export default {
       'removeNode',
       'removeNodeFromSelection',
       'removeAllNodes',
-      'addNode'
+      'addNode',
+      'setActiveType'
     ]),
 
     async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {
@@ -213,14 +219,22 @@ export default {
     },
 
     async initView() {
+      const mapping = this.$route.query?.mapping
+
+      if (mapping !== this.mapping) {
+        // mapping 改变 重新设置initNodeType
+        this.mapping = mapping
+        this.initNodeType()
+      }
+
       if (this.$route.params.action === 'dataflowSave') {
-        // In case the workflow got saved we do not have to run init
-        // as only the route changed but all the needed data is already loaded
+        // 保存后路由跳转
         this.setStateDirty(false)
         return Promise.resolve()
       }
 
       if (this.stateIsDirty) {
+        // 状态已被修改
         const importConfirm = await this.confirmMessage(
           `当您切换数据流时，您当前的数据流更改将丢失。`,
           '确定切换？',
@@ -232,13 +246,22 @@ export default {
         }
       }
 
-      let dataflowId
-      if (this.$route.params.id) {
-        dataflowId = this.$route.params.id
+      const dataflowId = this.$route.params.id
+
+      if (dataflowId) {
         await this.openDataflow(dataflowId)
       } else {
         this.newDataflow()
       }
+    },
+
+    initNodeType() {
+      let _nodeTypes = nodeTypes
+      if (this.mapping === 'cluster-clone') {
+        _nodeTypes = _nodeTypes.filter(item => item.type === 'database')
+      }
+      this.setNodeTypes(_nodeTypes)
+      this.setCtorTypes(ctorTypes)
     },
 
     initNodeView() {
@@ -412,11 +435,11 @@ export default {
       }
 
       const { data } = result
-
+      console.log('openDataflow', data)
       this.status = data.status
       this.setDataflowId(dataflowId)
       this.setDataflowName({ newName: data.name, setStateDirty: false })
-      this.setDataflowSettings(data.settings)
+      this.setDataflowSettings(data.setting)
       await this.addNodes(data.stages)
 
       this.setStateDirty(false)
@@ -426,7 +449,7 @@ export default {
       this.creatUserId = this.$cookie.get('user_id')
       this.resetWorkspace()
       this.setDataflowName({
-        newName: 'dataflow@' + new Date().toLocaleTimeString()
+        newName: '新任务@' + new Date().toLocaleTimeString()
       })
     },
 
@@ -692,6 +715,14 @@ export default {
       this.setActiveConnection(null)
     },
 
+    onHideSidebar() {
+      const activeType = this.$store.getters['dataflow/activeType']
+      if (activeType === 'connection') {
+        this.deselectConnection(...arguments)
+      }
+      this.setActiveType(null)
+    },
+
     getNodesInSelection() {
       let $node = this.$refs.layoutContent.querySelector('.df-node')
       if (!$node) return []
@@ -765,6 +796,8 @@ export default {
       off(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
       console.log('mouseUpMouseSelect')
       this.deselectAllNodes()
+      // 清空激活状态
+      this.setActiveType(null)
 
       if (this.showSelectBox) {
         const selectedNodes = this.getNodesInSelection()
@@ -832,14 +865,7 @@ export default {
         status: 'draft',
         executeMode: 'normal',
         category: '\u6570\u636e\u5e93\u514b\u9686',
-        stopOnError: false,
-        mappingTemplate: 'cluster-clone',
-        emailWaring: {
-          edited: true,
-          started: false,
-          error: true,
-          paused: false
-        },
+        mappingTemplate: this.mapping,
         stages: this.nodes,
         setting: settings
       }
@@ -854,10 +880,17 @@ export default {
     },
 
     async save() {
+      const errorMsg = this.getError()
+      if (errorMsg) {
+        this.$message.error(errorMsg)
+        return
+      }
+
       const currentDataflow = this.$route.params.id
       if (!currentDataflow) {
         return this.saveAsNewDataflow()
       }
+
       this.isSaving = true
 
       const data = this.getDataflowDataToSave()
@@ -875,9 +908,14 @@ export default {
         const { data: dataflow } = await dataFlowsApi.draft(data)
         this.isSaving = false
         this.$message.success(this.$t('message.saveOK'))
-        this.$router.push({
+        this.setDataflowId(dataflow.id) // 将生成的id保存到store
+
+        await this.$router.push({
           name: 'DataflowEdit',
-          params: { id: dataflow.id, action: 'dataflowSave' }
+          params: { id: dataflow.id, action: 'dataflowSave' },
+          query: {
+            mapping: this.mapping
+          }
         })
       } catch (e) {
         this.$showError(e, '数据流保存出错', '出现的问题:')
@@ -885,10 +923,21 @@ export default {
     },
 
     async start() {
+      // TODO 优化错误处理
+      const errorMsg = this.getError()
+      if (errorMsg) {
+        this.$message.error(errorMsg)
+        return
+      }
+
       const { dataflowId } = this
       const data = this.getDataflowDataToSave()
       data.status = 'scheduled'
       data.executeMode = 'normal'
+
+      this.isStarting = true
+
+      debugger
 
       const fetch = dataflowId ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
 
@@ -898,7 +947,9 @@ export default {
 
       await dataFlowsApi.saveStage(data.stages)
 
-      this.$router.push({
+      this.isStarting = false
+
+      await this.$router.push({
         path: '/job',
         query: {
           id: dataflow.id,
@@ -1030,6 +1081,17 @@ export default {
       this.resetSelectedNodes()
     },
 
+    handleShowSettings() {
+      /*const activeType = this.$store.getters['dataflow/activeType']
+      if (activeType === 'connection') {
+        this.deselectConnection(...arguments)
+      } else if (activeType === 'node') {
+        this.setActiveNode(null)
+      }*/
+      this.deselectAllNodes()
+      this.setActiveType('settings')
+    },
+
     /**
      * 判断node之间是否相连
      * @param s
@@ -1056,20 +1118,30 @@ export default {
     },
 
     resetWorkspace() {
-      // Reset nodes
       if (this.jsPlumbIns) {
-        // On first load it does not exist
         this.jsPlumbIns.deleteEveryEndpoint()
       }
 
       this.status = 'draft'
+      this.deselectAllNodes()
       this.removeAllNodes()
-      this.setActiveNode(null)
       this.setDataflowId(null)
       this.setDataflowName({ newName: '', setStateDirty: false })
       this.setDataflowSettings(DEFAULT_SETTINGS)
       this.resetSelectedNodes()
-    }
+    },
+
+    getError() {
+      if (!this.$store.getters['dataflow/dataflowName']) return i18n.t('editor.cell.validate.empty_name')
+
+      if (this.nodes.length < 2) return i18n.t('editor.cell.validate.none_data_node')
+
+      if (this.jsPlumbIns.getConnections('*').length < 1) return i18n.t('editor.cell.validate.none_link_node')
+
+      return null
+    },
+
+    validate() {}
   }
 }
 </script>

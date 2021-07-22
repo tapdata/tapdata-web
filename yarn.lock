@@ -921,48 +921,48 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@formily/core@2.0.0-beta.78", "@formily/core@^2.0.0-beta.78":
-  version "2.0.0-beta.78"
-  resolved "https://registry.npmjs.org/@formily/core/-/core-2.0.0-beta.78.tgz#e722dab0b1cd7d6136f9843b2afc5d61b4d0fa5f"
-  integrity sha512-aVJwtOI9kukUuK+tb2TpUEGCmpMeO3yXCNh7+X76nJisDxpU0PUnNjk0RQjNapFMoSCMSaf9HxhLlHfFB2xdyA==
+"@formily/core@2.0.0-beta.80", "@formily/core@^2.0.0-beta.80":
+  version "2.0.0-beta.80"
+  resolved "https://registry.npmjs.org/@formily/core/-/core-2.0.0-beta.80.tgz#771d2246b50b96e9b9aa5c5a1b161b61a5360ffa"
+  integrity sha512-wMxpVnVuxOA1k69NwDXj8TmQsoSw+0Ih5JCknUJxfAMcX33uEznVvzKTWgDm4ShCgxjbd1HfQH8yRMlYokITrw==
   dependencies:
-    "@formily/reactive" "2.0.0-beta.78"
-    "@formily/shared" "2.0.0-beta.78"
-    "@formily/validator" "2.0.0-beta.78"
+    "@formily/reactive" "2.0.0-beta.80"
+    "@formily/shared" "2.0.0-beta.80"
+    "@formily/validator" "2.0.0-beta.80"
 
-"@formily/json-schema@2.0.0-beta.78":
-  version "2.0.0-beta.78"
-  resolved "https://registry.npmjs.org/@formily/json-schema/-/json-schema-2.0.0-beta.78.tgz#9ee94292db3c5951963f9c600200c7d78bab2ae3"
-  integrity sha512-UGVbYdoCK/OZFsGGdTXmtg0dCjRXPO8ctVRSeWCScegMJ9DIDB7Pc9iADSHXzv7LZ1EJVVNu6Wt++LNZh2zWjQ==
+"@formily/json-schema@2.0.0-beta.80":
+  version "2.0.0-beta.80"
+  resolved "https://registry.npmjs.org/@formily/json-schema/-/json-schema-2.0.0-beta.80.tgz#0b23434c504208c54ba2707afcd8c348c603383c"
+  integrity sha512-rHe6ZZwj5sBPM3PBMnUT1ZzAjJ/QN7U7XrJM0ItxWSrQkjdx13eo52pGDxjnBBtJkPaBuDrjqb6LTKSiXzoRGg==
   dependencies:
-    "@formily/core" "2.0.0-beta.78"
-    "@formily/reactive" "2.0.0-beta.78"
-    "@formily/shared" "2.0.0-beta.78"
+    "@formily/core" "2.0.0-beta.80"
+    "@formily/reactive" "2.0.0-beta.80"
+    "@formily/shared" "2.0.0-beta.80"
 
-"@formily/path@2.0.0-beta.78":
-  version "2.0.0-beta.78"
-  resolved "https://registry.npmjs.org/@formily/path/-/path-2.0.0-beta.78.tgz#208136dde9cd53b348bebea7af24b244e4b36964"
-  integrity sha512-nEUiEYVfrarUbJeV5Hu+JbwK72EW8KP2GxiwATxII1o23/92dx3DIWTlFzJVUg3rMjhMcUFJEojND7uXIn06cw==
+"@formily/path@2.0.0-beta.80":
+  version "2.0.0-beta.80"
+  resolved "https://registry.npmjs.org/@formily/path/-/path-2.0.0-beta.80.tgz#1deb25fced08d0b9dfbb1cea07f039622a35ddb3"
+  integrity sha512-lod0PozrVdgi/lZhx5pBW811GrTXiXs8Je/lJengCWiNl/mCeEyF7rLuPVt54f1gtxrGTl9nJDiejN8/SwKbYw==
 
-"@formily/reactive-vue@2.0.0-beta.78", "@formily/reactive-vue@^2.0.0-beta.78":
-  version "2.0.0-beta.78"
-  resolved "https://registry.npmjs.org/@formily/reactive-vue/-/reactive-vue-2.0.0-beta.78.tgz#15806eb0a7dbd51808b5f6c1420ba2c58cbcd9dc"
-  integrity sha512-D/e5U7scUuvs3+iS+pvFIFZlCtTimQcvdCphQtZoYoTfWFWDkA0Ddvd0Gs8zpGK8YHHksvz8djudGnpCyAb8nw==
+"@formily/reactive-vue@2.0.0-beta.80", "@formily/reactive-vue@^2.0.0-beta.80":
+  version "2.0.0-beta.80"
+  resolved "https://registry.npmjs.org/@formily/reactive-vue/-/reactive-vue-2.0.0-beta.80.tgz#aafba965dcda0cff929e7c8fcec4ce286f949e35"
+  integrity sha512-/rOB1lBehuiYzpesB0fqNfzdvoBbUXzQ1aYMYsHukVg4LEvBoeUVncBt2PyoodikTq2HGPfpqSOohapu1bcQFA==
   dependencies:
-    "@formily/reactive" "2.0.0-beta.78"
+    "@formily/reactive" "2.0.0-beta.80"
     vue-demi "^0.9.0"
 
-"@formily/reactive@2.0.0-beta.78", "@formily/reactive@^2.0.0-beta.78":
-  version "2.0.0-beta.78"
-  resolved "https://registry.npmjs.org/@formily/reactive/-/reactive-2.0.0-beta.78.tgz#251939cab72ecf7d760d9a455937043d4cc217ff"
-  integrity sha512-4HQUpRuphotJDH/WQyPN6Hpbj7GAgu56/oojO524wvfO/nS8pdjagZYu7r5j/KWxHu5RrlNI8VnQ3PBGzrh80A==
+"@formily/reactive@2.0.0-beta.80", "@formily/reactive@^2.0.0-beta.80":
+  version "2.0.0-beta.80"
+  resolved "https://registry.npmjs.org/@formily/reactive/-/reactive-2.0.0-beta.80.tgz#11eab3452d49463ebdb023a4a765f3fd616def59"
+  integrity sha512-OoRjL4UwF7pfPzzM6uTwWB+5Tyl83Yy64IFk3S99fqtAjaH15V5KZf3M2BJDO4mjkEjarkN7W0OqzZF9s/JvWQ==
 
-"@formily/shared@2.0.0-beta.78":
-  version "2.0.0-beta.78"
-  resolved "https://registry.npmjs.org/@formily/shared/-/shared-2.0.0-beta.78.tgz#91bb6ca8df27d1a1c4813129540ab3f0c09baee4"
-  integrity sha512-b4PSlqOR/L9JfvquFiwoKaGfENrnfoKtsRRdMKa7vcodzcZv4q/lBYGlQx4KfNf6NejPD/DGbXFwNQf0IhQbGg==
+"@formily/shared@2.0.0-beta.80":
+  version "2.0.0-beta.80"
+  resolved "https://registry.npmjs.org/@formily/shared/-/shared-2.0.0-beta.80.tgz#2c87e539c1e329cfdf85f427ceaa8738c427d7a2"
+  integrity sha512-q1tOeH7q8WJ5Nfh3B8HwusHLtdys7b1diqXEO7BZtPxeA/oYbpMsX67Z3cXruDB3bAAb+ztRBhi3KvOh69mtog==
   dependencies:
-    "@formily/path" "2.0.0-beta.78"
+    "@formily/path" "2.0.0-beta.80"
     camel-case "^4.1.1"
     lower-case "^2.0.1"
     no-case "^3.0.4"
@@ -970,24 +970,24 @@
     pascal-case "^3.1.1"
     upper-case "^2.0.1"
 
-"@formily/validator@2.0.0-beta.78":
-  version "2.0.0-beta.78"
-  resolved "https://registry.npmjs.org/@formily/validator/-/validator-2.0.0-beta.78.tgz#706dbb1f98ac69ab5601b875cadda7cf24d08eb0"
-  integrity sha512-FEu2K/WKqS5hlRs/Bu3cCrIDTzvtorLgEaeXXqyFnWyDpa5p8kcaBNZQQjiO+U891zidPolmwaOkL3wAQg7LFQ==
+"@formily/validator@2.0.0-beta.80":
+  version "2.0.0-beta.80"
+  resolved "https://registry.npmjs.org/@formily/validator/-/validator-2.0.0-beta.80.tgz#a58dfa48873039eddcabbc1fa53a354444a3aef3"
+  integrity sha512-ocJQNAGv1tZmfV4hISVfB3/JuhnVhQxVzr4Nz19qlG0YlJMHvpehYaEQoHdAA3zd4RH41t/e5OiVTXZ8hut7Pg==
   dependencies:
-    "@formily/shared" "2.0.0-beta.78"
+    "@formily/shared" "2.0.0-beta.80"
 
-"@formily/vue@^2.0.0-beta.78":
-  version "2.0.0-beta.78"
-  resolved "https://registry.npmjs.org/@formily/vue/-/vue-2.0.0-beta.78.tgz#871fdede3aa60946cdb2902472d844ce06ce1f07"
-  integrity sha512-Arz/+iiabL3O+cCWlHLTf53X+VEIssBF9eBzocYc0Ux6vSF+vuYAnyd9XMWV7oCLTN3mTB5FisOy1lilVvxz4A==
+"@formily/vue@^2.0.0-beta.80":
+  version "2.0.0-beta.80"
+  resolved "https://registry.npmjs.org/@formily/vue/-/vue-2.0.0-beta.80.tgz#cd626573fb0af0203d36c4d2dce033a9bf074fbb"
+  integrity sha512-y5lHA/yC449viukSlcEdhQYkhUDWo2c1HsulKtJfGniMkfKeOs5PxejxiCSGVZGN8dmukswo32RClBfxQKyTJA==
   dependencies:
-    "@formily/core" "2.0.0-beta.78"
-    "@formily/json-schema" "2.0.0-beta.78"
-    "@formily/reactive" "2.0.0-beta.78"
-    "@formily/reactive-vue" "2.0.0-beta.78"
-    "@formily/shared" "2.0.0-beta.78"
-    "@formily/validator" "2.0.0-beta.78"
+    "@formily/core" "2.0.0-beta.80"
+    "@formily/json-schema" "2.0.0-beta.80"
+    "@formily/reactive" "2.0.0-beta.80"
+    "@formily/reactive-vue" "2.0.0-beta.80"
+    "@formily/shared" "2.0.0-beta.80"
+    "@formily/validator" "2.0.0-beta.80"
     "@type-helper/vue2" "npm:vue@2"
     "@type-helper/vue3" "npm:vue@3"
     vue-demi "^0.9.0"

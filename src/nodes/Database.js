@@ -1,4 +1,5 @@
 import { NodeType } from '@/nodes/extends/NodeType'
+import i18n from '@/i18n'
 
 export class Database extends NodeType {
   constructor(node) {
@@ -130,5 +131,10 @@ export class Database extends NodeType {
       inputLanes: [],
       outputLanes: []
     }
+  }
+
+  validate(data) {
+    if (!data.connectionId) throw new Error(`${data.name}: ${i18n.t('editor.cell.data_node.database.none_database')}`)
+    return true
   }
 }

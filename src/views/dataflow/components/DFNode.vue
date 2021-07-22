@@ -172,7 +172,7 @@ export default {
       // console.log('DFNode.mouseClick', this.isActionActive('dragActive'))
       if (this.isActionActive('dragActive')) {
         this.removeActiveAction('dragActive')
-        if (this.isNotMove) this.$emit('nodeSelected', this.nodeId, true)
+        // if (this.isNotMove) this.$emit('nodeSelected', this.nodeId, true) // FIXME 此处待优化
       } else {
         if (this.isCtrlKeyPressed(e) === false) {
           // 如果不是多选模式则取消所有节点选中

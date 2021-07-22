@@ -39,6 +39,7 @@ const state = () => ({
   activeConnection: null, // 当前激活的连接
   activeActions: [], // 激活的动作
   selectedNodes: [], // 选中的节点
+  activeType: null,
   dataflow: {
     id: '',
     name: '',
@@ -143,6 +144,10 @@ const getters = {
 
   isNodeViewMoveInProgress: state => {
     return state.nodeViewMoveInProgress
+  },
+
+  activeType: state => {
+    return state.activeType
   }
 }
 
@@ -176,6 +181,7 @@ const mutations = {
   // Settings
   setDataflowSettings(state, dataflowSettings) {
     Vue.set(state.dataflow, 'settings', dataflowSettings)
+    console.log('dataflow', state.dataflow)
   },
 
   /**
@@ -222,11 +228,18 @@ const mutations = {
   setActiveNode(state, nodeId) {
     console.log('setActiveNode', nodeId)
     state.activeNode = nodeId
+    state.activeType = nodeId ? 'node' : null
   },
 
   // 设置激活连接
   setActiveConnection(state, connection) {
     Vue.set(state, 'activeConnection', connection)
+    state.activeType = connection ? 'connection' : null
+  },
+
+  // 激活类型，用作判断
+  setActiveType(state, type) {
+    state.activeType = type
   },
 
   // 添加节点

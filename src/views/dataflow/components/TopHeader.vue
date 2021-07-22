@@ -93,7 +93,7 @@
         </ElButton>
       </ElButtonGroup>
 
-      <ElButton class="btn-base btn-setting" size="mini">
+      <ElButton class="btn-base btn-setting" size="mini" @click="$emit('showSettings')">
         <span class="btn-setting-icon inline-flex justify-center align-center">
           <VIcon size="12">shezhi</VIcon>
         </span>
@@ -138,6 +138,7 @@
           :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId) || statusBtMap[status].start"
           class="btn-base btn-operation"
           size="mini"
+          :loading="isStarting"
         >
           <VIcon class="mr-1" size="12">play</VIcon>
           <span>{{ $t('dataFlow.button.start') }}</span>
@@ -197,6 +198,7 @@ export default {
 
   props: {
     isSaving: Boolean,
+    isStarting: Boolean,
     isEditable: Boolean,
     editable: Boolean,
     statusBtMap: Object,
@@ -233,7 +235,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setDataflowName']),
+    ...mapMutations('dataflow', ['setDataflowName', 'setActiveType']),
 
     onNameInputBlur() {
       this.setDataflowName({ newName: this.name })

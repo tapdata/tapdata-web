@@ -3,7 +3,7 @@ export const NODE_PREFIX = 'node-'
 export const DEFAULT_SETTINGS = {
   isSerialMode: false,
   sync_type: 'initial_sync+cdc',
-  readBatchSize: 1000,
+  readBatchSize: 100,
   notificationWindow: 0,
   notificationInterval: 300,
   readCdcInterval: 500,
@@ -18,7 +18,8 @@ export const DEFAULT_SETTINGS = {
   isSchedule: false,
   cronExpression: '',
   isOpenAutoDDL: false,
-  cdcConcurrency: true,
+  cdcConcurrency: false,
+  cdcShareFilterOnServer: false,
   emailWaring: {
     edited: false,
     started: false,
@@ -38,5 +39,8 @@ export const DEFAULT_SETTINGS = {
     }
   ],
   processorConcurrency: 1,
-  transformerConcurrency: 8
+  transformerConcurrency: 8,
+  lagTimeFalg: false,
+  userSetLagTime: 0,
+  noPrimaryKey: false
 }

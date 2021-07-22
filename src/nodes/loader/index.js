@@ -10,7 +10,7 @@ const requireAllNode = requireContext => {
 
 export const ctorTypes = requireAllNode(nodeContext)
 
-// let _nodeTypes = localStorage['store.nodeTypes']
+let _nodeTypes = localStorage['store.nodeTypes']
 
 export const nodeTypes = [
   {
@@ -1678,7 +1678,7 @@ export const nodeTypes = [
       }
     }
   }
-] /*.concat(
+].concat(
   // 演示新增节点
   _nodeTypes
     ? JSON.parse(_nodeTypes).map(item => {
@@ -1691,4 +1691,4 @@ export const nodeTypes = [
         return item
       })
     : []
-)*/
+)

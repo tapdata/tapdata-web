@@ -13,6 +13,7 @@ export * from './Col'
 export * from './AddDatabaseBtn'
 export * from './DatabaseInfo'
 export * from './FormTab'
+export * from './DatePicker'
 
 import { FormGrid, FormGridColumn } from './FormGrid'
 import { ElForm } from './ElForm'
@@ -40,6 +41,7 @@ import { FilterConditions } from './FilterConditions'
 import { PreviewSql } from './PreviewSql'
 import { SqlEditor } from './SqlEditor'
 import { ArrayTable, ArrayTableColumn } from './ArrayTable'
+import { DatePicker } from './DatePicker'
 
 export const components = {
   Checkbox,
@@ -77,5 +79,6 @@ export const components = {
   PreviewSql,
   SqlEditor,
   ArrayTable,
-  ArrayTableColumn
+  ArrayTableColumn,
+  DatePicker
 }
