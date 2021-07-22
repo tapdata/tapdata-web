@@ -83,9 +83,6 @@ export default {
       return this.$refs.table
     }
   },
-  created() {
-    document.title = 'Tapdata Cloud'
-  },
   methods: {
     getData({ page }) {
       let { current, size } = page
