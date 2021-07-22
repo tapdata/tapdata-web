@@ -27,6 +27,7 @@
           :node-key="nodeKey"
           :to-right-key="toRightKey"
           :draggableRight="draggableRight"
+          :right-highlight-current="true"
           :filter-node-method="filterNode"
           :to-right-before="toRightBefore"
           @change-left-data="changeLeftData"
@@ -39,7 +40,7 @@
                 data.name || $t('dataForm.form.transform.existName')
               }}</span>
             </div>
-            <div class="pr-6 transfer-btn">
+            <div class="pr-1 transfer-btn">
               <span
                 :class="['box', { 'error-tip': !data.type || !data.name }]"
                 :title="!data.type ? $t('dataForm.form.transform.typePlaceholder') : $t('dataFlow.edit')"
@@ -364,15 +365,7 @@ export default {
       })
     },
     addField() {
-      let getCheckedNodesRight = this.$refs.treeTransfer.getCheckedNodesRight()
-      this.createForm.key = '_FIELD_' + this.createForm.name
-      if (getCheckedNodesRight.length) {
-        // 在指定节点添加字段
-        this.$refs.treeTransfer.toRightNode({ ...this.createForm })
-      } else {
-        // 最外层添加字段
-        this.rightData.push({ ...this.createForm })
-      }
+      this.$refs.treeTransfer.toRight(true, _.cloneDeep(this.createForm))
     },
     editField() {
       const data = this.editData.data

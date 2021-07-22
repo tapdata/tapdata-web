@@ -24,7 +24,7 @@
 
     <div class="opertion flex flex-column align-center justify-center mx-5">
       <div>
-        <el-button class="flex justify-center" type="primary" @click="toRight" :disabled="disabledBtnLeft">
+        <el-button class="flex justify-center" type="primary" @click="toRight()" :disabled="disabledBtnLeft">
           <i class="el-icon-right"></i>
         </el-button>
       </div>
@@ -36,7 +36,11 @@
     </div>
     <div class="tree-box">
       <div class="tree-box_title py-2 px-4">
-        <el-checkbox v-model="selectAllRight" @change="changeSelectAllRight"></el-checkbox>
+        <el-checkbox
+          v-if="!!this.rightShowCheckbox"
+          v-model="selectAllRight"
+          @change="changeSelectAllRight"
+        ></el-checkbox>
         <span class="ml-2">{{ rightTitle }}</span>
       </div>
       <el-tree
@@ -44,11 +48,13 @@
         v-bind="$attrs"
         :data="rightData"
         :node-key="nodeKey"
-        show-checkbox
+        :show-checkbox="rightShowCheckbox"
         :draggable="draggableRight"
         default-expand-all
         :expand-on-click-node="false"
+        :highlight-current="rightHighlightCurrent"
         :allow-drop="allowDropRight"
+        @node-click="nodeClickRight"
         @check-change="checkChangeRight"
       >
         <div class="custom-tree-node flex justify-between" slot-scope="{ node, data }">
@@ -91,23 +97,33 @@ export default {
     filterNodeMethod: Function,
     toRightBefore: Function,
     leftTitle: [Number, String],
-    rightTitle: [Number, String]
+    rightTitle: [Number, String],
+    rightHighlightCurrent: Boolean,
+    rightShowCheckbox: Boolean
   },
   data() {
     return {
       selectAllLeft: false, // 全选，左树
       selectAllRight: false, // 全选，右树
-      disabledBtnLeft: true
+      disabledBtnLeft: true,
+      rightTreeData: null // 右侧选中的
     }
   },
   methods: {
-    toRight() {
+    toRight(noRemove = false, data = null) {
       // 移到右侧
-      let getCheckedNodesRight = this.getCheckedNodesRight()
-      if (getCheckedNodesRight.length) {
-        this.toRightNode()
+      let getCurrentNodeRight = this.getCurrentNodeRight()
+      let currentNodeRightParent = this.rightTreeData?.node?.parent
+      if (getCurrentNodeRight?.message) {
+        this.toRightNode(data)
+      } else if (currentNodeRightParent?.parent) {
+        this.toRightNode(data, currentNodeRightParent?.data)
       } else {
-        this.toRightTree()
+        this.toRightTree(data)
+      }
+
+      if (noRemove) {
+        return
       }
 
       // 删除勾选的节点
@@ -117,23 +133,26 @@ export default {
         this.$refs.leftTree.remove(getNode)
       })
     },
+    resetRightTree() {
+      this.setCurrentKeyRight(null)
+      this.rightTreeData = null
+    },
     // 移动到右侧树
-    toRightTree() {
+    toRightTree(data = null) {
       let getCheckedNodesLeft = this.getCheckedNodesLeft()
       this.toRightBefore?.(getCheckedNodesLeft)
+      this.resetRightTree()
       let result = [...this.rightData, ...getCheckedNodesLeft]
+      if (data) {
+        result.push(data)
+      }
       this.$emit('change-right-data', result)
     },
     // 移动到右侧节点下
-    toRightNode(data = null) {
+    toRightNode(data = null, node = null) {
       let getCheckedNodesLeft = this.getCheckedNodesLeft()
-      let getCheckedNodesRight = this.getCheckedNodesRight()
-      let parentNode
-      getCheckedNodesRight.forEach(el => {
-        if (!parentNode && ((this.toRightKey && el[this.toRightKey]) || this.toRightKey === '')) {
-          parentNode = el
-        }
-      })
+      let parentNode = node || this.getCurrentNodeRight()
+
       if (data) {
         this.toRightBefore?.([data])
         this.$refs.rightTree.append(data, parentNode)
@@ -143,6 +162,7 @@ export default {
           this.$refs.rightTree.append(el, parentNode)
         })
       }
+      this.resetRightTree()
       this.$emit('change-right-data', [...this.rightData])
     },
     toLeft() {},
@@ -167,6 +187,13 @@ export default {
       let getCheckedNodesLeft = this.getCheckedNodesLeft()
       this.disabledBtnLeft = !(getCheckedNodesLeft?.length > 0)
     },
+    setCurrentKeyRight(key) {
+      this.$refs.rightTree.setCurrentKey(key)
+    },
+    // 获取当前节点-右树
+    getCurrentNodeRight() {
+      return this.$refs.rightTree.getCurrentNode()
+    },
     // 获取节点-右树
     getNodeRight(key) {
       return this.$refs.rightTree.getNode(key)
@@ -178,6 +205,13 @@ export default {
     // 设置选中的节点-左树
     setCheckedKeysRight(keys = []) {
       this.$refs.rightTree.setCheckedKeys(keys)
+    },
+    // 节点点击事件-右树
+    nodeClickRight(data, node) {
+      this.rightTreeData = {
+        data,
+        node
+      }
     },
     // 当前操作的节点-右树
     checkChangeRight() {
