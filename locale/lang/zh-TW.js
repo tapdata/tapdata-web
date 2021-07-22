@@ -795,7 +795,8 @@ const tc = {
         none_data_node: '至少有兩個數據節點',
         none_link_node: '至少有一個連線',
         start_with_data_node: '必須使用數據節點作為源',
-        acyclic: '數據處理流程不能有循環'
+        acyclic: '數據處理流程不能有循環',
+        empty_message_field_name_and_type: '消息體欄位名稱和類型不能為空'
       },
       data_node: {
         hiveText: 'hive節點',
@@ -1094,6 +1095,9 @@ const tc = {
             table: '數據表不能為空',
             sameConnection: '不能選擇相同連接'
           }
+        },
+        transform: {
+          name: ''
         }
       },
 
@@ -1281,6 +1285,10 @@ const tc = {
               placeholder: '請選擇或創建寫入路徑字段'
             }
           }
+        },
+        transform: {
+          name: '數據轉換',
+          tip: '數據轉換節點'
         }
       },
       link: {
@@ -1876,8 +1884,8 @@ const tc = {
         brokerUrlTip: '示例tcp://127.0.0.1：61616，支持tcp,nio,udp,ssl,http(s)'
       },
       tcp: {
-        agreementType: '协议类型',
-        targetAddr: '目标地址'
+        agreementType: '協定類型',
+        targetAddr: '目標地址'
       },
       transform: {
         fieldName: '欄位名',
@@ -1897,7 +1905,8 @@ const tc = {
         exist: '已存在',
         noSameNameandType: '名稱不能和類型一樣',
         specialSymbols: '不允許使用特殊符號',
-        deleteFieldConfirm: '確實要删除欄位嗎？删除後不能恢復'
+        deleteFieldConfirm: '確實要删除欄位嗎？删除後不能恢復',
+
       }
     },
     error: {

@@ -797,7 +797,8 @@ const cn = {
         none_data_node: '至少有两个数据节点',
         none_link_node: '至少有一个连线',
         start_with_data_node: '必须使用数据节点作为源',
-        acyclic: '数据处理流程不能有循环'
+        acyclic: '数据处理流程不能有循环',
+        empty_message_field_name_and_type: '消息体字段名称和类型不能为空'
       },
       data_node: {
         hiveText: 'hive节点',
@@ -1287,6 +1288,10 @@ const cn = {
               placeholder: '请选择或创建写入路径字段'
             }
           }
+        },
+        transform: {
+          name: '数据转换',
+          tip: '数据转换节点'
         }
       },
       link: {
