@@ -813,14 +813,13 @@ const en = {
     cell: {
       validate: {
         empty_name: 'Name is required.',
-
+        empty_message_field_name_and_type: 'Message body field name and type are required',
         none_setting: 'Settings cannot be none.',
         none_stage: 'Must have one stage.',
         none_data_node: 'At least 2 data node in graph',
         none_link_node: 'At least 1 link in graph',
         start_with_data_node: 'Must start with a data node',
-        acyclic: 'The graph cannot have cyclic',
-        empty_message_field_name_and_type: 'Message body field name and type cannot be empty'
+        acyclic: 'The graph cannot have cyclic'
       },
       data_node: {
         hiveText: 'Hive Node',
@@ -1932,7 +1931,7 @@ const en = {
       transform: {
         fieldName: 'Field name',
         messageBody: 'Message body',
-        isDrag: 'Is Drag it',
+        dragSort: 'Support drag sort',
         addField: 'Add Field',
         name: 'Name',
         existName: 'Name already exists.Redefine',

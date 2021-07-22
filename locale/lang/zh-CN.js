@@ -792,13 +792,13 @@ const cn = {
     cell: {
       validate: {
         empty_name: '名称必填.',
+        empty_message_field_name_and_type: '消息体字段名称和类型必填',
         none_setting: '设置不能为空.',
         none_stage: '至少有一个节点.',
         none_data_node: '至少有两个数据节点',
         none_link_node: '至少有一个连线',
         start_with_data_node: '必须使用数据节点作为源',
-        acyclic: '数据处理流程不能有循环',
-        empty_message_field_name_and_type: '消息体字段名称和类型不能为空'
+        acyclic: '数据处理流程不能有循环'
       },
       data_node: {
         hiveText: 'hive节点',
@@ -1893,7 +1893,7 @@ const cn = {
       transform: {
         fieldName: '字段名',
         messageBody: '消息体',
-        isDrag: '是否拖拽',
+        dragSort: '支持拖拽排序',
         addField: '添加字段',
         name: '名称',
         existName: '名称已存在，请重新定义',

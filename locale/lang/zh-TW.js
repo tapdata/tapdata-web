@@ -789,14 +789,13 @@ const tc = {
     cell: {
       validate: {
         empty_name: '名稱必填.',
-
+        empty_message_field_name_and_type: '消息體欄位名稱和類型必填',
         none_setting: '設置不能為空.',
         none_stage: '至少由一個節點.',
         none_data_node: '至少有兩個數據節點',
         none_link_node: '至少有一個連線',
         start_with_data_node: '必須使用數據節點作為源',
-        acyclic: '數據處理流程不能有循環',
-        empty_message_field_name_and_type: '消息體欄位名稱和類型不能為空'
+        acyclic: '數據處理流程不能有循環'
       },
       data_node: {
         hiveText: 'hive節點',
@@ -1095,9 +1094,6 @@ const tc = {
             table: '數據表不能為空',
             sameConnection: '不能選擇相同連接'
           }
-        },
-        transform: {
-          name: ''
         }
       },
 
@@ -1285,10 +1281,6 @@ const tc = {
               placeholder: '請選擇或創建寫入路徑字段'
             }
           }
-        },
-        transform: {
-          name: '數據轉換',
-          tip: '數據轉換節點'
         }
       },
       link: {
@@ -1884,13 +1876,13 @@ const tc = {
         brokerUrlTip: '示例tcp://127.0.0.1：61616，支持tcp,nio,udp,ssl,http(s)'
       },
       tcp: {
-        agreementType: '協定類型',
-        targetAddr: '目標地址'
+        agreementType: '协议类型',
+        targetAddr: '目标地址'
       },
       transform: {
         fieldName: '欄位名',
         messageBody: '消息體',
-        isDrag: '是否拖拽',
+        dragSort: '支持拖拽排序',
         addField: '添加欄位',
         name: '名稱',
         existName: '名稱已存在，請重新定義',
