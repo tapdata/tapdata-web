@@ -81,12 +81,12 @@ export const messageProcessConfig = {
        *
        */
       schemaFieldTypeValidate: function (schema = {}, flag = false) {
-        if (schema.name !== 'Unit' && !schema.type) {
+        if (schema.name !== 'Unit' && (!schema.type || !schema.name)) {
           flag = true
           return flag
         }
         schema?.propertyList?.concat(schema?.nestedList ?? []).forEach(el => {
-          this.schemaFieldTypeValidate(el)
+          flag = this.schemaFieldTypeValidate(el, flag)
         })
         return flag
       },
