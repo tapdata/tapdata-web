@@ -818,10 +818,10 @@ export default {
           key: 'name',
           label: this.$t('dataFlow.nodeName')
         },
-        {
-          key: 'tcpUdpType',
-          label: this.$t('dataForm.form.tcp.agreementType')
-        },
+        // {
+        //   key: 'tcpUdpType',
+        //   label: this.$t('dataForm.form.tcp.agreementType')
+        // },
         {
           key: 'database_host',
           label: this.$t('dataForm.form.tcp.targetAddr')
