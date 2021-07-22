@@ -12,9 +12,7 @@
       </el-form>
       <div class="box box-content">
         <div class="btn-line mb-3 text-rf">
-          <el-button size="mini" :type="draggableRight ? 'primary' : 'default'" @click="handleDraggable">{{
-            $t('dataForm.form.transform.isDrag')
-          }}</el-button>
+          <span class="mr-2" style="font-size: 12px; color: #999">{{ $t('dataForm.form.transform.isDrag') }}</span>
           <el-button size="mini" @click="addFieldDialog">{{ $t('dataForm.form.transform.addField') }}</el-button>
         </div>
         <TreeTransfer
@@ -26,7 +24,7 @@
           :right-title="rightTitle"
           :node-key="nodeKey"
           :to-right-key="toRightKey"
-          :draggableRight="draggableRight"
+          :draggableRight="true"
           :right-highlight-current="true"
           :filter-node-method="filterNode"
           :to-right-before="toRightBefore"
