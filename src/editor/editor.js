@@ -252,11 +252,11 @@ export default class Editor extends BaseObject {
 
     self.initMonitor(dataFlow)
     self.showLogs(dataFlow, true)
-    if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-      if (dataFlow.setting.sync_type !== 'cdc') {
-        self.showTaskProgress(dataFlow, true)
-      }
-    }
+    // if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+    //   if (dataFlow.setting.sync_type !== 'cdc') {
+    //     self.showTaskProgress(dataFlow, true)
+    //   }
+    // }
   }
 
   /**
@@ -387,8 +387,19 @@ export default class Editor extends BaseObject {
         },
         component: Milestone
       })
+      let progress = new VueComponent({
+        title: i18n.t('editor.ui.sidebar.progress'),
+        name: 'progress',
+        editor: this,
+        propsData: {
+          dataFlow: dataFlow
+        },
+        component: TaskProgress
+      })
+
       this.getBottomTabPanel().add(milestone)
       this.getBottomTabPanel().add(logsPanel)
+      this.getBottomTabPanel().add(progress)
     }
 
     if (this.getBottomSidebar().isShow() && milestone.selected && !isShow) {
@@ -403,27 +414,27 @@ export default class Editor extends BaseObject {
    * show Task Progress
    * @param dataFlow
    */
-  showTaskProgress(dataFlow) {
-    let progress = this.getBottomTabPanel().getChildByName('progress')
-    if (!progress) {
-      progress = new VueComponent({
-        title: i18n.t('editor.ui.sidebar.progress'),
-        name: 'progress',
-        editor: this,
-        propsData: {
-          dataFlow: dataFlow
-        },
-        component: TaskProgress
-      })
-      this.getBottomTabPanel().add(progress)
-    } else {
-      if (progress.vm && typeof progress.vm.setData === 'function') {
-        progress.vm.setData(dataFlow)
-      }
-    }
-    this.getBottomTabPanel().select(progress)
-    this.getBottomSidebar().show()
-  }
+  // showTaskProgress(dataFlow) {
+  //   let progress = this.getBottomTabPanel().getChildByName('progress')
+  //   if (!progress) {
+  //     progress = new VueComponent({
+  //       title: i18n.t('editor.ui.sidebar.progress'),
+  //       name: 'progress',
+  //       editor: this,
+  //       propsData: {
+  //         dataFlow: dataFlow
+  //       },
+  //       component: TaskProgress
+  //     })
+  //     this.getBottomTabPanel().add(progress)
+  //   } else {
+  //     if (progress.vm && typeof progress.vm.setData === 'function') {
+  //       progress.vm.setData(dataFlow)
+  //     }
+  //   }
+  //   this.getBottomTabPanel().select(progress)
+  //   this.getBottomSidebar().show()
+  // }
 
   /**
    * show capture panel
