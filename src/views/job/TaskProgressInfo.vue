@@ -84,7 +84,7 @@ export default {
     }
   },
   created() {
-    document.title = '迁移详情'
+    document.title = 'Tapdata Cloud'
   },
   methods: {
     getData({ page }) {
