@@ -51,7 +51,7 @@
           </li>
           <li class="mt-3">
             <span>2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：</span>
-            <img class="mt-2" :src="getImg('downloadWindows')" alt="" />
+            <img class="mt-2 block" :src="getImg('downloadWindows')" alt="" />
           </li>
           <li class="flex">
             <span>3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
@@ -86,7 +86,7 @@
           </li>
           <li>
             <span>2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：</span>
-            <img class="mt-2" :src="getImg('downloadLinux')" alt="" />
+            <img class="mt-2 block" :src="getImg('downloadLinux')" alt="" />
           </li>
           <li>
             <span>4.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
@@ -123,7 +123,7 @@
             <span
               >2.docker安装成功后，会自动输出已安装Agent的容器ID，您可以通过docker ps命令来查看正在运行的docker</span
             >
-            <img class="mt-2" :src="getImg('downloadDocker')" alt="" />
+            <img class="mt-2 block" :src="getImg('downloadDocker')" alt="" />
           </li>
           <li class="flex">
             <span>3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
