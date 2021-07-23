@@ -16,7 +16,13 @@ module.exports = Object.assign({}, dataflow, {
         database_host: '',
         database_username: '',
         database_port: Random.integer(0, 5000),
-        database_uri: 'mongodb://192.168.1.191:27017/tapdata_test',
+        database_uri: () => {
+          return (
+            'mongodb://192.168.1.191:' +
+            Random.integer(0, 5000) +
+            '/tapdata_test'
+          )
+        },
         database_name: '',
         id: '@id',
         sslCert: '',
