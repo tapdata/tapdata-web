@@ -1,5 +1,6 @@
 <template>
   <section class="system-notice main-containe" v-if="$route.name === 'SystemNotice'">
+    <header class="system-header">系统通知</header>
     <div class="main">
       <div class="system-operation">
         <div class="system-operation-left">通知列表</div>
@@ -30,7 +31,7 @@
               <div class="list-item-desc">
                 <span :style="`color: ${colorMap[scope.row.level]};`">【{{ scope.row.level }}】</span>
                 <span>{{ systemMap[scope.row.system] }}</span>
-                <span style="color: #409eff" @click="handleGo(scope.row)">
+                <span style="color: #409eff; cursor: pointer" @click="handleGo(scope.row)">
                   {{ scope.row.serverName }}
                 </span>
                 <span>{{ typeMap[scope.row.msg] }}</span>
@@ -160,11 +161,12 @@ export default {
     },
     handleGo(item) {
       let routeUrl = {}
+      debugger
       switch (item.system) {
         case 'dataFlow':
           routeUrl = this.$router.resolve({
             path: '/monitor',
-            query: { id: item.id, isMoniting: true, mapping: item.mappingTemplate }
+            query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
           })
           window.open(routeUrl.href, '_blank')
           // this.$router.push({
@@ -176,9 +178,16 @@ export default {
           //   }
           // })
           break
+        case 'migration':
+          routeUrl = this.$router.resolve({
+            path: '/monitor',
+            query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
+          })
+          window.open(routeUrl.href, '_blank')
+          break
         case 'agent':
           this.$router.push({
-            name: 'clusterManagement',
+            name: 'InstanceDetails',
             query: {
               id: item.id
             }
@@ -232,12 +241,19 @@ export default {
   flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
+  .system-header {
+    padding-bottom: 20px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #000;
+  }
   .main {
     padding: 20px;
     background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;
+    border-right: 3px;
     overflow: hidden;
   }
   .system-operation {

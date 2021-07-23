@@ -41,16 +41,16 @@ const routes = [
             meta: {
               title: '公告通知'
             }
-          },
-          {
-            path: '/systemNotice',
-            name: 'SystemNotice',
-            component: () => import('../views/Workbench/SystemNotice.vue'),
-            meta: {
-              title: '系统通知'
-            }
           }
         ]
+      },
+      {
+        path: '/systemNotice',
+        name: 'SystemNotice',
+        component: () => import('../views/Workbench/SystemNotice.vue'),
+        meta: {
+          title: '系统通知'
+        }
       },
       // {
       // 	path: '/dashboard',

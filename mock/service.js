@@ -3,6 +3,7 @@ const Random = Mock.Random
 const settings = require('./settings.json')
 const dataflow = require('./dataflow.js')
 const connection = require('./connection.js')
+const Messages = require('./Messages.js')
 
 const agent = {
   id: '@guid',
@@ -68,7 +69,7 @@ const agent = {
     updateTime: ''
   }
 }
-module.exports = Object.assign({}, dataflow, connection, {
+module.exports = Object.assign({}, dataflow, connection, Messages, {
   '/api/tcm/user': {
     code: 'ok',
     message: '获取用户信息失败',

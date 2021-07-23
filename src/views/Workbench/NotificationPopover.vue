@@ -10,7 +10,7 @@
         <div class="notice-header">
           <span> 通知内容 </span>
           <span class="notice-header-text">
-            <ElLink type="primary" @click="toCenter">查看所有通知</ElLink>
+            <ElLink type="primary" @click="toCenter()">查看所有通知</ElLink>
             <!--            <router-link to="/systemNotice">-->
             <!--              <span></span>-->
             <!--            </router-link>-->
@@ -50,7 +50,7 @@ export default {
   components: { VIcon },
   data() {
     return {
-      unRead: 8,
+      unRead: 0,
       loading: false,
       activeTab: 'system',
       listData: [
@@ -204,7 +204,7 @@ export default {
         case 'dataFlow':
           routeUrl = this.$router.resolve({
             path: '/monitor',
-            query: { id: item.id, isMoniting: true, mapping: item.mappingTemplate }
+            query: { id: item.sourceId, isMoniting: true, mapping: item.mappingTemplate }
           })
           window.open(routeUrl.href, '_blank')
           // this.$router.push({
@@ -215,6 +215,13 @@ export default {
           //     mapping: item.mappingTemplate
           //   }
           // })
+          break
+        case 'migration':
+          routeUrl = this.$router.resolve({
+            path: '/monitor',
+            query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
+          })
+          window.open(routeUrl.href, '_blank')
           break
 
         case 'agent':
@@ -231,7 +238,7 @@ export default {
       if (this.$route.name === 'systemNotice') {
         return
       }
-      this.$router.push({ name: 'systemNotice' })
+      this.$router.push({ name: 'SystemNotice' })
     }
   }
 }
