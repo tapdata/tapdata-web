@@ -53,8 +53,11 @@
             <span class="color-primary">Tapdata</span>
             <span class="ml-1">Cloud</span>
           </div>
-          <div class="mt-3 fs-6 text-white">我们为您准备了详细的新手引导教程，方便您更快上手哦～</div>
-          <div class="guide-operation flex justify-center mt-4">
+          <div class="mt-3 fs-6 text-white position-relative inline-block">
+            我们为您准备了详细的新手引导教程，方便您更快上手哦～
+            <el-checkbox v-model="noShow" class="no-show-checkbox text-white position-absolute">不再显示</el-checkbox>
+          </div>
+          <div class="guide-operation flex justify-center mt-8">
             <img src="../../../public/images/guide/guid_no.png" alt="" @click="closeGuideDialog" />
             <img class="ml-9" src="../../../public/images/guide/guid_yes.png" alt="" @click="toGuidePage" />
           </div>
@@ -77,10 +80,35 @@ export default {
       isShowCustomerService: false,
       guideVisible: false, // 新手指引模态窗
       isClose: false,
-      btnLoading: false
+      btnLoading: false,
+      noShow: false // 不再显示新手引导
     }
   },
+  created() {
+    this.init()
+  },
   methods: {
+    init() {
+      this.getTmUser()
+    },
+    getTmUser() {
+      this.$axios.get('tm/api/users/self').then(data => {
+        if (data) {
+          // window.tm_userId = data.id
+          window.__USER_SELF_INFO__ = {
+            id: data.id
+          }
+          this.noShow = data?.guideData?.noShow
+          // 不再显示
+          if (
+            !data?.guideData?.noShow ||
+            (new Date().getTime() - (data?.guideData?.updateTime ?? 0)) / 1000 / 3600 > 24
+          ) {
+            this.command('guide')
+          }
+        }
+      })
+    },
     createTask() {
       this.$refs.noviceGuide?.goCreateTask?.()
     },
@@ -122,18 +150,27 @@ export default {
           window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
           break
         case 'guide':
-          // TODO 新手指引
           this.guideVisible = true
           break
       }
     },
     closeGuideDialog() {
       this.guideVisible = false
+      this.updateUser()
     },
     toGuidePage() {
-      this.closeGuideDialog()
+      this.guideVisible = false
+      this.updateUser()
       this.$router.push({
         name: 'NoviceGuide'
+      })
+    },
+    updateUser() {
+      this.$axios.patch('tm/api/users/' + window.__USER_SELF_INFO__?.id, {
+        guideData: {
+          noShow: this.noShow,
+          updateTime: new Date().getTime()
+        }
       })
     }
   }
@@ -259,6 +296,10 @@ export default {
         height: 56px;
         cursor: pointer;
       }
+    }
+    .no-show-checkbox {
+      top: 30px;
+      right: 0;
     }
   }
 }

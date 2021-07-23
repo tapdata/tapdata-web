@@ -11,6 +11,19 @@
         <el-step title="创建目标连接"></el-step>
         <el-step title="配置同步任务"></el-step>
       </el-steps>
+      <!--      <ul class="step-box">-->
+      <!--        <li-->
+      <!--          v-for="(step, index) in steps"-->
+      <!--          :key="index"-->
+      <!--          :class="[{ active: activeStep >= index }, { 'color-primary': activeStep >= index }]"-->
+      <!--        >-->
+      <!--          <span class="step-index">-->
+      <!--            <i v-if="activeStep > index" class="el-icon-check"></i>-->
+      <!--            <span v-else>{{ index + 1 }}</span>-->
+      <!--          </span>-->
+      <!--          <span>{{ step.text }}</span>-->
+      <!--        </li>-->
+      <!--      </ul>-->
       <!--   第1步   -->
       <div v-if="step === 0" class="step-content mt-7">
         <div class="step-content__title fs-6 fw-bolder">安装 Agent</div>
@@ -23,8 +36,14 @@
         </div>
         <div class="agent-info flex justify-between mt-6 p-4">
           <div>
-            <div class="agent-status fs-7">{{ agentStatus }}</div>
-            <div class="agent-desc mt-4">描述：{{ agent.name || '无' }}</div>
+            <div class="agent-status fs-7 mt-4">
+              <span class="status-icon mr-2"></span>
+              <span class="fw-bolder">{{ agentStatus }}</span>
+            </div>
+            <div class="agent-desc mt-4 ml-3">描述：{{ agent.name || '无' }}</div>
+            <div class="ml-3 mt-2 text-black-50">
+              测试Agent的同步速度限制为最多200行/S，您自己部署安装的Agent不受该限制。
+            </div>
             <div class="agent-btn mt-4">
               <el-button
                 v-if="!agent.status"
@@ -123,7 +142,7 @@
       <div v-if="step === 3" class="step-content mt-7">
         <div class="step-content__title fs-6 fw-bolder">配置同步任务</div>
         <div class="flex mt-6">
-          <div class="mr-4 flex align-center">同步类型</div>
+          <div class="task-item-label mr-4 flex align-center">同步类型</div>
           <el-radio-group v-model="taskForm.type">
             <el-radio-button v-for="(item, index) in taskTypeItems" :key="index" :label="item.value">
               {{ item.label }}
@@ -131,9 +150,9 @@
           </el-radio-group>
         </div>
         <div class="flex mt-6">
-          <div class="mr-4">映射设置</div>
+          <div class="task-item-label mr-4">映射设置</div>
           <div>
-            <div class="mb-4" style="color: rgba(0, 0, 0, 0.5)">
+            <div class="mb-4 text-black-50">
               用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。
             </div>
             <el-transfer
@@ -164,14 +183,17 @@
         </div>
       </div>
       <!--   第5步   -->
-      <div v-if="step === 4" class="step-content mt-7 text-center">
+      <div v-if="step === 4" class="step-content mt-7 pt-16 text-center">
+        <div class="finish-img">
+          <img src="../../../public/images/guide/right.png" alt="" />
+        </div>
         <div class="mt-6 fs-7">恭喜您完成新手引导！</div>
-        <div class="mt-2" style="color: rgba(0, 0, 0, 0.5)">
+        <div class="mt-2 text-black-50">
           您的Agent试用状态将在24小时后失效 请您前往安装部署Agent 不然无法创建连接和任务哦
         </div>
         <div class="mt-6">
-          <el-button type="primary">安装Agent</el-button>
-          <el-button>继续使用</el-button>
+          <el-button type="primary" @click="toWorkbench">返回工作台</el-button>
+          <el-button @click="toWorkbench">继续使用</el-button>
         </div>
       </div>
     </div>
@@ -187,6 +209,12 @@ export default {
     return {
       timer: null,
       step: 0,
+      steps: [
+        { index: 0, text: '安装 Agent', type: 'agent' },
+        { index: 1, text: '创建源连接', type: 'source' },
+        { index: 2, text: '创建目标连接', type: 'target' },
+        { index: 3, text: '配置同步任务', type: 'task' }
+      ],
       agent: {},
       startAgentLoading: false, // 启动agent
       stopAgentLoading: false, // 停用agent
@@ -640,6 +668,11 @@ export default {
         var v = c === 'x' ? r : (r & 0x3) | 0x8
         return v.toString(16)
       })
+    },
+    toWorkbench() {
+      this.$router.push({
+        name: 'Workbench'
+      })
     }
   }
 }
@@ -665,10 +698,43 @@ export default {
   background: #fff;
   .el-steps {
     border-bottom: 1px solid #f2f2f2;
+    ::v-deep {
+      .el-step__head {
+        border-color: rgba(0, 0, 0, 0.25);
+        color: rgba(0, 0, 0, 0.25);
+        &.is-process,
+        &.is-success {
+          border-color: rgba(44, 101, 255, 1);
+          color: rgba(44, 101, 255, 1);
+        }
+      }
+      .el-step__title {
+        //color: rgba(0, 0, 0, 0.25);
+        font-size: 14px;
+        &.is-success {
+          color: rgba(44, 101, 255, 1);
+        }
+      }
+      //.el-step__head.is-success {
+      //  border-color: rgba(44, 101, 255, 1);
+      //}
+      //.el-step__head.is-success,
+      //.el-step__head.is-success,
+      //.el-step__title.is-success {
+      //  color: rgba(44, 101, 255, 1);
+      //}
+    }
   }
   .agent-info {
     background: rgba(44, 101, 255, 0.1);
     border-radius: 2px;
+    .status-icon {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background-color: rgba(138, 205, 84, 1);
+      border-radius: 50%;
+    }
     .el-button {
       &:hover,
       &:focus,
@@ -705,9 +771,27 @@ export default {
   }
   .el-transfer {
     ::v-deep {
-      .el-transfer-panel {
-        width: 350px;
+      .el-transfer-panel__filter {
+        width: calc(100% - 32px);
+        .el-input__inner {
+          border-radius: 2px;
+        }
       }
+
+      .el-transfer-panel {
+        //width: 350px;
+        min-width: 240px;
+      }
+    }
+  }
+  .task-item-label {
+    width: 90px;
+    flex-shrink: 0;
+  }
+  .finish-img {
+    img {
+      width: 53px;
+      height: 53px;
     }
   }
 }
