@@ -25,8 +25,8 @@
     </ElContainer>
     <ElDialog title="选择数据源类型" :visible.sync="dialogVisible">
       <ConnectionTypeSelector
-        :types="['mysql', 'oracle', 'sqlserver', 'mongodb', 'postgres', 'elasticsearch']"
-        :comingTypes="['db2', 'sybase ase', 'kafka', 'gbase-8s']"
+        :types="['mysql', 'oracle', 'sqlserver', 'mongodb', 'postgres', 'elasticsearch', 'kafka', 'dameng']"
+        :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
         @select="createConnection"
       ></ConnectionTypeSelector>
     </ElDialog>

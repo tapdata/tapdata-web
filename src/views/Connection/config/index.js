@@ -31,6 +31,8 @@ import dfs_mongodb from './dfs_mongodb'
 import dfs_sqlserver from './dfs_sqlserver'
 import dfs_redis from './dfs_redis'
 import dfs_elasticsearch from './dfs_elasticsearch'
+import dfs_dameng from './dfs_dameng'
+import dfs_kafka from './dfs_kafka'
 import mq from './mq'
 
 export default {
@@ -58,6 +60,8 @@ export default {
   dfs_sqlserver,
   dfs_redis,
   dfs_elasticsearch,
+  dfs_dameng,
+  dfs_kafka,
   sybasease,
   gbase8s,
   gaussdb200,

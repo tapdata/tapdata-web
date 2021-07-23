@@ -849,17 +849,16 @@ export default {
         } else {
           editData = await this.$axios.get(`tm/api/Connections/${id}?noSchema=1`)
         }
-
         if (
-          editData.data.database_type === 'mq' &&
-          (typeof editData.data.mqQueueSet === 'object' || typeof editData.data.mqTopicSet === 'object')
+          editData.database_type === 'mq' &&
+          (typeof editData.mqQueueSet === 'object' || typeof editData.mqTopicSet === 'object')
         ) {
-          let mqQueueSet = editData.data.mqQueueSet.length ? editData.data.mqQueueSet.join(',') : ''
-          let mqTopicSet = editData.data.mqTopicSet.length ? editData.data.mqTopicSet.join(',') : ''
-          editData.data.mqQueueSet = mqQueueSet
-          editData.data.mqTopicSet = mqTopicSet
+          let mqQueueSet = editData.mqQueueSet.length ? editData.mqQueueSet.join(',') : ''
+          let mqTopicSet = editData.mqTopicSet.length ? editData.mqTopicSet.join(',') : ''
+          editData.mqQueueSet = mqQueueSet
+          editData.mqTopicSet = mqTopicSet
         }
-        this.model = Object.assign(this.model, editData.data)
+        this.model = Object.assign(this.model, editData)
         if (this.model.sourceType === 'ecs') {
           this.getEcsList()
         }
@@ -956,9 +955,10 @@ export default {
         let id = this.$route.params.id
         if (this.model.database_type === 'mongodb' && id && itemIsUrl) {
           itemIsUrl.options[0].disabled = true //编辑模式下mongodb不支持URL模式
-        } else if (this.model.database_type === 'mongodb' && !id && itemIsUrl) {
-          itemIsUrl.options[1].disabled = true
         }
+        // } else if (this.model.database_type === 'mongodb' && !id && itemIsUrl) {
+        //   itemIsUrl.options[1].disabled = true
+        // }
         ////编辑模式下mongodb 不校验证书
         if (this.model.database_type === 'mongodb' && id && sslKey) {
           sslKey.rules = []
