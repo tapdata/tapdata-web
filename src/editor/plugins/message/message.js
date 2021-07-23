@@ -1,90 +1,52 @@
 /**
  * @author lg<lirufei0808@gmail.com>
- * @date 3/4/20
+ * @date 3/5/20
  * @description
  */
 import { options } from '../../lib/rappid/config'
-import DatabaseAttribute from './DatabaseAttribute'
-import i18n from '@/i18n'
+import messageAttituer from './messageAttituer'
 import { FORM_DATA_KEY } from '../../constants'
+import i18n from '@/i18n'
 
-export const databaseConfig = {
-  /**
-   * the name of the subtype class.
-   *
-   */
-  type: 'app.Database',
-
-  /**
-   * define shape
-   * docs see https://github.com/clientIO/joint/blob/master/tutorials/custom-elements.html
-   * @type {object}
-   */
+export const messageProcessConfig = {
+  type: 'app.Message',
   shape: {
-    /**
-     * extends exists shape
-     */
     extends: 'app.BaseElement',
-
-    /**
-     * object that contains properties to be assigned to every constructed instance of the subtype.
-     *
-     * @example <pre>
-     *     {
-     *        attrs: {
-     *           body: {
-     *              refWidth: '100%',
-     *              refHeight: '100%',
-     *              strokeWidth: 2,
-     *              stroke: '#000000',
-     *              fill: '#FFFFFF'
-     *           },
-     *           label: {
-     *              textVerticalAnchor: 'middle',
-     *              textAnchor: 'middle',
-     *              refX: '50%',
-     *              refY: '50%',
-     *              fontSize: 14,
-     *              fill: '#333333'
-     *           }
-     *        }
-     *     }
-     * </pre>
-     */
     defaultInstanceProperties: {
+      size: { width: 120, height: 28 },
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-DB.svg'
+          xlinkHref: 'static/editor/o-transform.svg',
+          refWidth: '25%',
+          refHeight: '84%',
+          refX: '-8%',
+          refY: '-28%'
+        },
+        body: {
+          rx: 14,
+          ry: 14
         },
         label: {
-          text: i18n.t('editor.cell.data_node.database.name')
+          text: 'MessageName'
+        },
+        statusImage: {
+          refWidth: '35%',
+          refHeight: -15,
+          refX: '70%',
+          y: 8,
+          visibility: 'hidden'
         }
       },
+
       [FORM_DATA_KEY]: {
-        connectionId: '',
-        includeTables: [],
-        dropTable: false,
-        type: 'database'
+        name: 'Transform',
+        type: 'protobuf_convert_processor',
+        pbProcessorConfig: {
+          mapping: {},
+          schema: {}
+        }
       }
     },
-    /**
-     * object that contains properties to be assigned on the subtype prototype.
-     * Intended for properties intrinsic to the subtype, not usually modified.
-     *
-     * @example <pre>
-     *
-     * {
-     *     markup: [{
-     *          tagName: 'rect',
-     *          selector: 'body',
-     *     }, {
-     *          tagName: 'text',
-     *          selector: 'label'
-     *     }]
-     * }
-     *
-     * </pre>
-     */
     prototypeProperties: {
       portLabelMarkup: [
         {
@@ -92,7 +54,7 @@ export const databaseConfig = {
           selector: 'portLabel'
         }
       ],
-      isDataNode() {
+      isProcess() {
         return true
       },
 
@@ -103,10 +65,30 @@ export const databaseConfig = {
        */
       validate: function (data) {
         data = data || this.getFormData()
-        let name = this.attr('label/text')
+        let name = data?.name
         if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
-        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.database.none_database')}`)
+        if (!data.name) throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_name')}`)
+        let flag = this.schemaFieldTypeValidate(data.pbProcessorConfig.schema)
+        if (flag) throw new Error(`${name}: ${i18n.t('editor.cell.validate.empty_message_field_name_and_type')}`)
+
         return true
+      },
+
+      /**
+       * validate user-filled data
+       * @param schema
+       * @param flag
+       *
+       */
+      schemaFieldTypeValidate: function (schema = {}, flag = false) {
+        if (schema.name !== 'Unit' && (!schema.type || !schema.name)) {
+          flag = true
+          return flag
+        }
+        schema?.propertyList?.concat(schema?.nestedList ?? []).forEach(el => {
+          flag = this.schemaFieldTypeValidate(el, flag)
+        })
+        return flag
       },
 
       /**
@@ -114,17 +96,8 @@ export const databaseConfig = {
        * @param targetCell
        * @return {boolean}
        */
-      allowTarget(targetCell, sourceCell) {
-        if (sourceCell?.attributes?.form_data?.database_type === 'elasticsearch') {
-          return ['kafka'].includes(targetCell?.attributes?.form_data?.database_type)
-        }
-        return (
-          ['app.Database'].includes(targetCell.get('type')) &&
-          !['hbase'].includes(targetCell?.attributes?.form_data?.database_type) &&
-          targetCell.graph.getConnectedLinks(this, {
-            inbound: true
-          }).length < 1
-        )
+      allowTarget(targetCell) {
+        return !['app.Database'].includes(targetCell.get('type'))
       },
 
       /**
@@ -133,21 +106,12 @@ export const databaseConfig = {
        * @return {boolean}
        */
       allowSource(sourceCell) {
-        return ['app.Database'].includes(sourceCell.get('type')) &&
-          !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type)
+        return !['app.Database'].includes(sourceCell.get('type'))
       }
     }
-    /**
-     * object that contains properties to be assigned on the subtype constructor.
-     */
     // staticProperties: {}
   },
 
-  /**
-   * 图形(Element子类
-   * )样式表单配置
-   * @type {object}
-   */
   styleFormConfig: {
     inputs: {
       attrs: {
@@ -251,9 +215,9 @@ export const databaseConfig = {
    */
   stencil: {
     /**
-     * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：process；标准图形：standard
+     * 左侧列表的分组名称，默认有：数据节点:data; 处理节点：processor；标准图形：standard
      */
-    group: 'data',
+    group: 'processor',
     /**
      * 界面显示的分组名称
      */
@@ -262,7 +226,7 @@ export const databaseConfig = {
     size: { width: 5, height: 4 },
     attrs: {
       root: {
-        dataTooltip: i18n.t('editor.cell.data_node.database.tip'),
+        dataTooltip: i18n.t('editor.cell.processor.script.tip'),
         dataTooltipPosition: 'left',
         dataTooltipPositionSelector: '.joint-stencil'
       },
@@ -275,14 +239,14 @@ export const databaseConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/database2.svg',
+        xlinkHref: 'static/editor/transform.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',
         refY: '0%'
       },
       label: {
-        text: i18n.t('editor.cell.data_node.database.name'),
+        text: 'MessageName',
         textAnchor: 'middle',
         fill: '#666',
         fontFamily: 'Roboto Condensed',
@@ -302,9 +266,6 @@ export const databaseConfig = {
    * @type {null}
    */
   settingFormConfig: {
-    component: DatabaseAttribute
-    /* props: {
-			connection_type: 'source'
-		}, */
+    component: messageAttituer
   }
 }

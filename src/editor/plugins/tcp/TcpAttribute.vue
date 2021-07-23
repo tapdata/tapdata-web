@@ -66,7 +66,8 @@ export default {
       },
       model: {
         connectionId: '',
-        type: 'tcp_udp'
+        type: 'tcp_udp',
+        isShowMessage: true
       },
       schemas: [],
       schemasLoading: false,

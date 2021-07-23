@@ -381,16 +381,17 @@ export default {
   methods: {
     setData(data) {
       if (data) {
+        if (window.App.$route.query.mapping === 'cluster-clone') {
+          this.formData.noPrimaryKey = true
+        }
         //Object.keys(data).forEach(key => (this.formData[key] = data[key]));
         _.merge(this.formData, data)
         if (data.editDisable) this.disabled = data.editDisable
       }
+
       let map = this.updateSyncNode(this.formData.syncPoints)
       if (map) {
         this.formData.syncPoints = Object.values(map)
-      }
-      if (window.App.$route.query.mapping === 'cluster-clone') {
-        this.formData.noPrimaryKey = true
       }
 
       this.getAllAggregate()

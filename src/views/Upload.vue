@@ -23,9 +23,14 @@
       :on-change="handleChange"
     >
       <el-button type="primary" plain slot="trigger" size="small">{{ $t('dataFlow.chooseFile') }}</el-button>
-      <el-button style="margin-left: 10px" size="small" type="success" @click="submitUpload">{{
-        $t('dataFlow.upload')
-      }}</el-button>
+      <el-button
+        style="margin-left: 10px"
+        size="small"
+        :disabled="fileList.length === 0"
+        type="success"
+        @click="submitUpload"
+        >{{ $t('dataFlow.upload') }}</el-button
+      >
     </el-upload>
     <SelectClassify ref="classify" :types="[type]" v-on:operationsClassify="handleOperationClassify"></SelectClassify>
     <div v-show="status" class="tooltip">

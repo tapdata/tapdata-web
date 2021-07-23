@@ -1069,7 +1069,7 @@ export default {
             })
           }
           data.stages.forEach(item => {
-            if (item.type === 'hbase' && this.sync_type !== 'initial_sync') {
+            if ((item.type === 'hbase' || item.database_type === 'hbase') && this.sync_type !== 'initial_sync') {
               checkSetting = false
             }
           })
