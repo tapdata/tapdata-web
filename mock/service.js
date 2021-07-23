@@ -9,21 +9,21 @@ const agent = {
   name: 'DRS_@id', // 实例名称
   region: 'CIDC-RP-@increment()', // 地域
   zone: 'CIDC-RP-@increment()-@increment()', // 可用区
-
-  'status|+1': [
-    'Creating',
-    'Running',
-    'Stopping',
-    'Stopped',
-    'Error',
-    'Freezing',
-    'Freeze',
-    'Restarting',
-    'Recovering',
-    'FreezeRecovering',
-    'Altering',
-    'WaitingAlter'
-  ], // 实例状态，参考《状态变迁》章节
+  status: 'Running',
+  // 'status|+1': [
+  //   'Creating',
+  //   'Running',
+  //   'Stopping',
+  //   'Stopped',
+  //   'Error',
+  //   'Freezing',
+  //   'Freeze',
+  //   'Restarting',
+  //   'Recovering',
+  //   'FreezeRecovering',
+  //   'Altering',
+  //   'WaitingAlter'
+  // ], // 实例状态，参考《状态变迁》章节
   freeTime: {
     // 可维护时间设置
     start: '@now',
@@ -69,6 +69,63 @@ const agent = {
   }
 }
 module.exports = Object.assign({}, dataflow, connection, {
+  '/tm/api/users/:id': {
+    code: 'ok',
+    msg: 'ok',
+    data: {}
+  },
+  '/tm/api/users/self': {
+    data: {
+      account_status: 1,
+      accesscode: '54ef0f8245fef4bec05524bc9029efb8',
+      username: '13025460560',
+      email: '60b08aaea11ba4bb3f867142@custom.com',
+      emailVerified: true,
+      id: '60bed757ad41c00010b55152',
+      userId: '60b08aaea11ba4bb3f867142',
+      customId: '60b08aaea11ba4bb3f867142',
+      isPrimary: '0',
+      role: 0,
+      user_id: '60bda0204c0811001009f41a',
+      isCompleteGuide: true,
+      last_updated: '2021-06-16T04:26:50.007Z',
+      createTime: '2021-06-08T02:35:03.116Z',
+      roleMappings: [
+        {
+          id: '60bed757ad41c00010b55153',
+          principalType: 'USER',
+          principalId: '60bed757ad41c00010b55152',
+          roleId: '5cda998c39a8c094a56811cf',
+          role: {
+            description: 'default role for cloud users',
+            name: 'cloud default',
+            register_user_default: true,
+            user_id: null,
+            id: '5cda998c39a8c094a56811cf',
+            modified: '2021-07-23T08:44:01.029Z',
+            created: '2021-07-23T08:44:01.029Z'
+          }
+        },
+        {
+          id: '60bed757ad41c00010b55154',
+          principalType: 'USER',
+          principalId: '60bed757ad41c00010b55152',
+          roleId: '5d31ae1ab953565ded04badd',
+          role: {
+            created: '2021-06-07T11:22:39.175Z',
+            description: '新注册用户的默认角色',
+            modified: '2021-07-22T07:39:42.745Z',
+            name: '新用户默认角色',
+            register_user_default: true,
+            user_id: '60bda0204c0811001009f41a',
+            id: '5d31ae1ab953565ded04badd'
+          }
+        }
+      ]
+    },
+    code: 'ok',
+    msg: 'ok'
+  },
   '/api/tcm/user': {
     code: 'ok',
     message: '获取用户信息失败',
@@ -151,6 +208,11 @@ module.exports = Object.assign({}, dataflow, connection, {
       ]
     }
   },
+  '/api/tcm/agent/stop/:id': {
+    code: 'ok',
+    data: {},
+    msg: ''
+  },
   '/api/tcm/agent/regionCount': {
     code: 'ok',
     data: () => {
@@ -196,7 +258,7 @@ module.exports = Object.assign({}, dataflow, connection, {
     code: 'ok',
     data: {
       total: Random.integer(1, 20),
-      'items|1-20': [agent]
+      'items|0-1': [agent]
     }
   },
   '/api/tcm/agent/agentCount': {
