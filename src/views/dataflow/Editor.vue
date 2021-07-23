@@ -73,12 +73,9 @@ import { titleChange } from '@/mixins/titleChange'
 import { showMessage } from '@/mixins/showMessage'
 import moveDataflow from './mixins/moveDataflow'
 import ws from '@/api/ws'
-import log from '@/log'
 import i18n from '@/i18n'
-// import _ from 'lodash'
 
 const dataFlowsApi = factory('DataFlows')
-// const Setting = factory('Setting')
 
 export default {
   name: 'Editor',

@@ -1,4 +1,4 @@
-import { connect, mapProps, mapReadPretty } from '@formily/vue'
+import { connect, mapProps } from '@formily/vue'
 import { DatePicker as ElDatePicker } from 'element-ui'
 import { getComponentByTag } from './utils/util'
 
