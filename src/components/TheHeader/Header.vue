@@ -12,6 +12,7 @@
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>联系我们</span>
         </div>
+        <NotificationPopover class="mr-6"></NotificationPopover>
         <ElDropdown class="menu-user" placement="bottom" @command="command">
           <!--					<el-button class="menu-button" size="mini">-->
           <!--						{{ user.username }}-->
@@ -43,11 +44,12 @@
 import HeaderCustomerService from './HeaderCustomerService'
 // import AgentFail from './AgentFail';
 import NoviceGuide from '../../views/GuidePage/NoviceGuide'
+import NotificationPopover from '@/views/Workbench/NotificationPopover'
 // import ws from '../../plugins/ws.js';
 import VIcon from '@/components/VIcon'
 
 export default {
-  components: { HeaderCustomerService, NoviceGuide, VIcon },
+  components: { HeaderCustomerService, NoviceGuide, VIcon, NotificationPopover },
   data() {
     return {
       user: window.__USER_INFO__ || {},

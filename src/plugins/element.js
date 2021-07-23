@@ -44,9 +44,9 @@ import {
   Popover,
   Tabs,
   TabPane,
-  Transfer
+  Transfer,
+  Badge
 } from 'element-ui'
-
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
 Vue.prototype.$message = Message
 
@@ -117,3 +117,4 @@ Vue.use(Popover)
 Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Transfer)
+Vue.use(Badge)
