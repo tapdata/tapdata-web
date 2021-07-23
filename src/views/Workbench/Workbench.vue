@@ -105,7 +105,7 @@
         </el-popover>
       </li>
       <li>
-        <el-popover placement="left" width="200" trigger="click">
+        <el-popover placement="left" width="200" trigger="hover">
           <div class="tapdata-contact__tip">
             <div class="tapdata-contact__text">微信公众号</div>
             <div class="tapdata-contact__img"><img src="../../assets/image/weiixn_larg.png" /></div>
