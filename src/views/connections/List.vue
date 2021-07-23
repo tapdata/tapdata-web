@@ -435,6 +435,7 @@ export default {
         order: this.order,
         limit: size,
         noSchema: 1,
+        //fields: fields, //传noSchema 过滤schema
         skip: (current - 1) * size,
         where
       }
@@ -471,6 +472,12 @@ export default {
             // 不存在uri 和 port === 0
             if (!item.database_uri && !item.database_port && item.mqType !== '0') {
               item.connectionUrl = ''
+            }
+            if (item.database_type === 'kudu') {
+              item.connectionUrl = item.database_host
+            }
+            if (item.database_type === 'kafka') {
+              item.connectionUrl = item.kafkaBootstrapServers
             }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')

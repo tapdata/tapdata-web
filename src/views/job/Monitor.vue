@@ -30,7 +30,22 @@
         <EchartHeader :data="stageType ? nodeDetailsObj : taskDetailsObj"></EchartHeader>
         <div
           class="info fl"
-          v-if="['table', 'collection', 'json', 'excel', 'csv', 'xml', 'database', 'hive', 'mq'].includes(stageType)"
+          v-if="
+            [
+              'table',
+              'collection',
+              'json',
+              'excel',
+              'csv',
+              'xml',
+              'database',
+              'hive',
+              'mq',
+              'hbase',
+              'kudu',
+              'kafka'
+            ].includes(stageType)
+          "
           v-loading="apiLoading"
         >
           <div class="info-list">
@@ -143,7 +158,28 @@
               </span>
             </el-tooltip>
           </div>
-          <div class="info-list">
+
+          <div class="info-list" v-if="stage.kafkaBootstrapServers">
+            <span class="info-label">{{ $t('dataForm.form.host') }}:</span>
+            <span class="info-text">{{ stage.kafkaBootstrapServers }}</span>
+            <el-tooltip
+              placement="top"
+              manual
+              :content="$t('dialog.downAgent.copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="stage.kafkaBootstrapServers"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                {{ $t('dataFlow.copy') }}
+              </span>
+            </el-tooltip>
+          </div>
+          <div class="info-list" v-if="stage.brokerURL">
             <span class="info-label">{{ $t('dataForm.form.host') }}:</span>
             <span class="info-text">{{ stage.brokerURL }}</span>
             <el-tooltip
@@ -212,6 +248,37 @@
 						<span class="info-label">{{ $t('dataFlow.outputNumber') }}:</span>
 						<span class="info-text">{{ flow.outputNumber }}</span>
 					</div> -->
+        </div>
+        <div class="info fl" v-else-if="['tcp_udp'].includes(stageType)" v-loading="apiLoading">
+          <div class="info-list" v-for="(item, index) in tcpStageArr" :key="index">
+            <span class="info-label">{{ item.label }}:</span>
+            <el-tooltip :content="'' + stage[item.key]" placement="bottom-start">
+              <span
+                v-if="item.key === 'name'"
+                class="info-text"
+                @click="handTableName(stage)"
+                style="color: #409eff; cursor: pointer"
+                >{{ stage[item.key] }}</span
+              >
+              <span v-else class="row-text fl">{{ stage[item.key] }}</span>
+            </el-tooltip>
+            <el-tooltip
+              placement="top"
+              manual
+              :content="$t('dialog.downAgent.copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="stage[item.key]"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                {{ $t('dataFlow.copy') }}
+              </span>
+            </el-tooltip>
+          </div>
         </div>
 
         <div class="info fl" v-else-if="stageType">
@@ -745,7 +812,25 @@ export default {
         granularity: {},
         statsData: {},
         type: 'dataFlowInsight'
-      } // 走api请求获取的数据
+      }, // 走api请求获取的数据
+      tcpStageArr: [
+        {
+          key: 'name',
+          label: this.$t('dataFlow.nodeName')
+        },
+        // {
+        //   key: 'tcpUdpType',
+        //   label: this.$t('dataForm.form.tcp.agreementType')
+        // },
+        {
+          key: 'database_host',
+          label: this.$t('dataForm.form.tcp.targetAddr')
+        },
+        {
+          key: 'database_port',
+          label: this.$t('dataForm.form.port')
+        }
+      ]
     }
   },
 
@@ -909,7 +994,10 @@ export default {
               'mariadb',
               'mysql pxc',
               'hive',
-              'mq'
+              'mq',
+              'hbase',
+              'kudu',
+              'tcp_udp'
             ].includes(this.stageType)
           ) {
             this.getStageDataApi(currentStageData.connectionId, this.tableName)
@@ -971,7 +1059,7 @@ export default {
     // 点击节点跳转到表
     handTableName(data) {
       if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-        if (this.stageType === 'database') {
+        if (['database', 'tcp_udp'].includes(this.stageType)) {
           window.open('/#/metadataDetails?id=' + data.connMetadataInstanceId)
         } else {
           window.open('/#/metadataDetails?id=' + data.tableMetadataInstanceId)
