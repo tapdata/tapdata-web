@@ -544,7 +544,7 @@ export default {
       let result
       switch (row.tmInfo.updateStatus) {
         case 'preparing':
-          result = 'Agent版本有更新，点击升级'
+          result = '自动升级中'
           break
         case 'downloading':
           result = '自动升级中'
