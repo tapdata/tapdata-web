@@ -63,7 +63,7 @@ const agent = {
     agentId: '@id',
     token: '@guid',
     downloadUrl: 'http://resource.tapdata.net/package/feagent/v1.0.2/',
-    'updateStatus|1': ['preparing', 'downloading', 'upgrading', 'done', 'fail'],
+    'updataStatus|1': ['preparing', 'downloading', 'upgrading', 'done', 'fail'],
     updateMsg: '',
     updateTime: ''
   }
@@ -82,6 +82,11 @@ module.exports = Object.assign({}, dataflow, connection, {
       type: 0,
       userStatus: 1
     }
+  },
+  '/tm/api/users/:id': {
+    code: 'ok',
+    msg: 'ok',
+    data: {}
   },
   '/api/tcm/user': {
     code: 'ok',
@@ -164,6 +169,11 @@ module.exports = Object.assign({}, dataflow, connection, {
         }
       ]
     }
+  },
+  '/api/tcm/agent/stop/:id': {
+    code: 'ok',
+    data: {},
+    msg: ''
   },
   '/api/tcm/agent/regionCount': {
     code: 'ok',

@@ -145,6 +145,14 @@ const routes = [
           title: '操作日志',
           icon: 'operationLog'
         }
+      },
+      {
+        path: '/noviceGuide',
+        name: 'NoviceGuide',
+        component: () => import(/* webpackChunkName: "instance" */ '../views/NoviceGuide/Index.vue'),
+        meta: {
+          title: '新手引导'
+        }
       }
     ]
   },

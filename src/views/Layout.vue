@@ -20,7 +20,7 @@
         </ElBreadcrumb>
       </ElHeader>
       <ElMain class="main">
-        <RouterView @show-guide="showGuide" @create-task="createTask"></RouterView>
+        <RouterView @create-task="createTask"></RouterView>
       </ElMain>
     </ElContainer>
     <ElDialog title="选择数据源类型" :visible.sync="dialogVisible">
@@ -45,14 +45,19 @@ export default {
     return {
       activeMenu: '',
       menus: [],
-      dfsMenus: ['Workbench', 'Instance', 'Connection', 'Task'],
+      dfsMenus: ['Workbench', 'Instance', 'Connection', 'Task', 'OperationLog'],
       breadcrumbData: [],
       dialogVisible: false
     }
   },
   created() {
     this.activeMenu = this.$route.path
-    let menus = this.$router.options.routes.find(r => r.path === '/').children?.filter(item => !item.hidden)
+    let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
+    let menus = this.dfsMenus.map(el => {
+      return children.find(item => item.name === el)
+    })
+    // let menus = this.$router.options.routes.find(r => r.path === '/').children?.filter(item => !item.hidden)
+    console.log('menus', menus)
     this.menus = menus
     this.getBreadcrumb(this.$route)
     this.$root.$on('select-connection-type', this.selectConnectionType)
@@ -73,9 +78,6 @@ export default {
     },
     selectConnectionType() {
       this.dialogVisible = true
-    },
-    showGuide(key) {
-      this.$refs.theHeader?.showGuide?.(key)
     },
     createTask() {
       this.$refs.theHeader?.createTask?.()
