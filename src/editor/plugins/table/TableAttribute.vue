@@ -255,7 +255,8 @@ export default {
           'db2',
           'gaussdb200',
           'postgres',
-          'mariadb'
+          'mariadb',
+          'greenplum'
         ]
       }
     }
@@ -291,10 +292,7 @@ export default {
         this.tableIsLink()
         this.handlerSchemaChange()
         //切换table 才清空过滤
-        if (
-          this.schemaSelectConfig.options.length > 0 &&
-          this.model.tableName
-        ) {
+        if (this.schemaSelectConfig.options.length > 0 && this.model.tableName) {
           this.model.custFields.length = 0
           this.model.custSql.selectedFields.length = 0
           this.model.custSql.conditions.length = 0

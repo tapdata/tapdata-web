@@ -170,6 +170,12 @@ export const FORM_DATA_KEY = 'form_data',
       name: 'Elasticsearch',
       shapeImage: 'static/editor/o-elasticsearch.svg',
       stencilImage: 'static/editor/elasticsearch.svg'
+    },
+    greenplum: {
+      type: 'greenplum',
+      name: 'Greenplum',
+      shapeImage: 'static/editor/o-greenplum.svg',
+      stencilImage: 'static/editor/greenplum.svg'
     }
     // hive: {
     //   type: 'hive',

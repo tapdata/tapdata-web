@@ -434,6 +434,13 @@ export default {
         if (sourceSchema && sourceSchema.fields) {
           sourceSchema.fields = removeDeleted(sourceSchema.fields)
         }
+
+        // 判断源是否为greentplum
+        let sourceData = sourceCell.getFormData()
+        if (sourceData.databaseType == 'greenplum') {
+          settingData.sync_type = 'initial_sync'
+          vueAdapter.editor.getData().settingData = settingData
+        }
         let sourceList =
           sourceSchema && sourceSchema.fields
             ? sourceSchema.fields.sort((v1, v2) =>
