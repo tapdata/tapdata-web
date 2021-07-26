@@ -161,9 +161,11 @@ export default {
     toGuidePage() {
       this.guideVisible = false
       this.updateUser()
-      this.$router.push({
-        name: 'NoviceGuide'
-      })
+      if (this.$route.name !== 'NoviceGuide') {
+        this.$router.push({
+          name: 'NoviceGuide'
+        })
+      }
     },
     updateUser() {
       this.$axios.patch('tm/api/users/' + window.__USER_SELF_INFO__?.id, {

@@ -479,7 +479,8 @@ export default {
         project: '',
         submit: true,
         isUrl: true,
-        agentType: 'Cloud'
+        agentType: 'Cloud',
+        connection_type: this.step === 2 ? 'target' : 'source'
       })
       delete params.id
       if (params.database_type === 'mongodb') {
@@ -517,7 +518,7 @@ export default {
         },
         limit: 10,
         skip: 1,
-        order: this.order
+        order: 'createTime desc'
       }
       this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
         console.log('loadConnection', data)
