@@ -179,7 +179,6 @@ if (isIE) {
           flag = true
         }
       })
-      console.log('currentPath', currentPath, window.App.$route, flag)
       if (flag && window.App.$route.fullPath !== currentPath) {
         window.App.$router.push(currentPath)
       }
