@@ -66,7 +66,8 @@ export const TYPEMAP = {
   tcp_udp: 'TCP/IP',
   mq: 'MQ',
   hbase: 'HBase',
-  kudu: 'KUDU'
+  kudu: 'KUDU',
+  greenplum: 'Greenplum'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
