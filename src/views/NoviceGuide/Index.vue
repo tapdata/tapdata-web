@@ -443,6 +443,9 @@ export default {
           }
           this.createConnection()
         })
+        .catch(() => {
+          this.initDatabaseLoading = false
+        })
     },
     createConnection() {
       let params = Object.assign({}, this.sourceForm, {
@@ -469,6 +472,7 @@ export default {
         })
         .catch(() => {
           this.$message.error('创建连接失败')
+          this.initDatabaseLoading = false
         })
     },
     resetFormField() {
@@ -491,19 +495,23 @@ export default {
         },
         limit: 10
       }
-      this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-        let sourceConnection = data?.[0]
-        if (!sourceConnection) {
-          this.sourceForm.name = '' // 标记为空
-          return
-        }
-        for (let key in this.sourceForm) {
-          if (key !== 'database_type') {
-            this.sourceForm[key] = sourceConnection[key]
+      this.$axios
+        .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(data => {
+          let sourceConnection = data?.[0]
+          if (!sourceConnection) {
+            this.sourceForm.name = '' // 标记为空
+            return
           }
-        }
-        this.initDatabaseLoading = false
-      })
+          for (let key in this.sourceForm) {
+            if (key !== 'database_type') {
+              this.sourceForm[key] = sourceConnection[key]
+            }
+          }
+        })
+        .finally(() => {
+          this.initDatabaseLoading = false
+        })
     },
     createTask() {
       let source = this.form.source
