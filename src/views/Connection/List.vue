@@ -58,7 +58,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip label="连接信息" prop="database_uri" min-width="150">
+        <ElTableColumn show-overflow-tooltip label="连接信息" prop="connectionUrl" min-width="150">
           <template slot-scope="scope">{{ scope.row.connectionUrl }}</template>
         </ElTableColumn>
         <ElTableColumn label="状态">
@@ -244,7 +244,6 @@ export default {
       }, debounce)
     },
     formatData(item) {
-      console.log('formatData')
       let statusInfo = this.statusMap[item.status] || {}
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
@@ -263,6 +262,12 @@ export default {
       // 不存在uri 和 port === 0
       if (!item.database_uri && !item.database_port && item.mqType !== '0') {
         item.connectionUrl = ''
+      }
+      if (item.database_type === 'kudu') {
+        item.connectionUrl = item.database_host
+      }
+      if (item.database_type === 'kafka') {
+        item.connectionUrl = item.kafkaBootstrapServers
       }
       return item
     },

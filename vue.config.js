@@ -45,7 +45,7 @@ module.exports = {
         logLevel: 'debug',
         target: proxy.target.replace(/^https?/, 'ws')
       },
-      '/tm/': {
+      '/tm/#/': {
         target: 'http://localhost:8081',
         changeOrigin: true,
         pathRewrite: {
