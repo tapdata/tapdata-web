@@ -56,6 +56,7 @@
         :allow-drop="allowDropRight"
         @node-click="nodeClickRight"
         @check-change="checkChangeRight"
+        @node-drag-end="nodeDragEndRight"
       >
         <div class="custom-tree-node flex justify-between" slot-scope="{ node, data }">
           <slot name="right-tree" :data="data" :node="node"></slot>
@@ -201,6 +202,9 @@ export default {
     // 获取选中的节点-右树
     getCheckedNodesRight() {
       return this.$refs.rightTree.getCheckedNodes()
+    },
+    nodeDragEndRight() {
+      this.$emit('node-drag-end-right', arguments)
     },
     // 设置选中的节点-左树
     setCheckedKeysRight(keys = []) {

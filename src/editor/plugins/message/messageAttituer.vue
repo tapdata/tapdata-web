@@ -30,6 +30,7 @@
           :to-right-before="toRightBefore"
           @change-left-data="changeLeftData"
           @change-right-data="changeRightData"
+          @node-drag-end-right="nodeDragEndRight"
         >
           <template v-slot:right-tree="{ node, data }">
             <div class="transfer-item-content flex">
@@ -280,6 +281,9 @@ export default {
     changeRightData(data) {
       this.formatRightDataName(data)
       this.rightData = _.cloneDeep(data)
+      this.setConfig()
+    },
+    nodeDragEndRight() {
       this.setConfig()
     },
     formatRightDataName(data = []) {
