@@ -96,6 +96,35 @@
         </el-col>
       </el-row>
     </div>
+    <ul class="tapdata-contact-warp">
+      <li>
+        <el-popover placement="left" width="200" trigger="hover" content="电话咨询：0755-26656080">
+          <a href="tel:0755-26656080" slot="reference">
+            <div class="tapdata-contact__icon"><img src="../../assets/image/phone.png" alt="" /></div>
+          </a>
+        </el-popover>
+      </li>
+      <li>
+        <el-popover placement="left" width="200" trigger="hover">
+          <div class="tapdata-contact__tip">
+            <div class="tapdata-contact__text">微信公众号</div>
+            <div class="tapdata-contact__img"><img src="../../assets/image/weiixn_larg.png" /></div>
+            <div class="tapdata-contact__text">扫码咨询</div>
+          </div>
+          <div class="tapdata-contact__icon" slot="reference"><img src="../../assets/image/weixin.png" alt="" /></div>
+        </el-popover>
+      </li>
+      <li>
+        <el-popover placement="left" width="200" trigger="hover">
+          <div class="tapdata-contact__tip">
+            <div class="tapdata-contact__text">微信客服</div>
+            <div class="tapdata-contact__img"><img src="../../assets/image/LarkQR.jpeg" alt="" /></div>
+            <div class="tapdata-contact__text">扫码咨询</div>
+          </div>
+          <div class="tapdata-contact__icon" slot="reference"><img src="../../assets/image/kefu.png" alt="" /></div>
+        </el-popover>
+      </li>
+    </ul>
   </div>
   <router-view v-else></router-view>
 </template>
@@ -446,5 +475,48 @@ export default {
 }
 .guide-list__name {
   color: map-get($color, primary);
+}
+</style>
+<style lang="scss" scoped>
+.tapdata-contact-warp {
+  position: fixed;
+  right: 21px;
+  bottom: 82px;
+  padding: 9px;
+  z-index: 9;
+  li {
+    width: 48px;
+    height: 48px;
+    background: #fff;
+    box-shadow: 0 0 8px 0 rgb(0 0 0 / 12%);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+    cursor: pointer;
+    position: relative;
+    color: #333;
+    .tapdata-contact__icon {
+      width: 20px;
+      height: 20px;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+.tapdata-contact__text {
+  text-align: center;
+}
+.tapdata-contact__img {
+  width: 100px;
+  height: 100px;
+  margin: 10px auto;
+  img {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

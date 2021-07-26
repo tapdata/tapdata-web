@@ -147,11 +147,11 @@ export default function (vm) {
       //   maxlength: 500,
       //   showWordLimit: true
       // },
-      // {
-      //   type: 'input',
-      //   field: 'additionalString',
-      //   label: vm.$t('dataForm.form.additionalString')
-      // },
+      {
+        type: 'input',
+        field: 'additionalString',
+        label: vm.$t('dataForm.form.additionalString')
+      },
       {
         type: 'select',
         field: 'database_datetype_without_timezone',

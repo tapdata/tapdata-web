@@ -58,7 +58,9 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip label="连接信息" prop="database_uri" min-width="150"></ElTableColumn>
+        <ElTableColumn show-overflow-tooltip label="连接信息" prop="connectionUrl" min-width="150">
+          <template slot-scope="scope">{{ scope.row.connectionUrl }}</template>
+        </ElTableColumn>
         <ElTableColumn label="状态">
           <template slot-scope="scope">
             <StatusTag type="text" target="connection" :status="scope.row.status"></StatusTag>
@@ -245,6 +247,28 @@ export default {
       let statusInfo = this.statusMap[item.status] || {}
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
+      if (item.database_type !== 'mongodb') {
+        item.connectionUrl = ''
+        if (item.database_username) {
+          item.connectionUrl += item.database_username + ':***@'
+        }
+        item.connectionUrl += item.database_host + ':' + item.database_port
+      } else {
+        item.connectionUrl = item.database_uri || item.connection_name
+      }
+      if (item.database_type === 'mq' && item.mqType === '0') {
+        item.connectionUrl = item.brokerURL
+      }
+      // 不存在uri 和 port === 0
+      if (!item.database_uri && !item.database_port && item.mqType !== '0') {
+        item.connectionUrl = ''
+      }
+      if (item.database_type === 'kudu') {
+        item.connectionUrl = item.database_host
+      }
+      if (item.database_type === 'kafka') {
+        item.connectionUrl = item.kafkaBootstrapServers
+      }
       return item
     },
     sortChange({ prop, order }) {
@@ -289,8 +313,20 @@ export default {
         if (resFlag) {
           try {
             await this.$axios.delete(`tm/api/Connections/${item.id}?name=${item.name}`)
-            this.$message.success('删除成功')
-            this.fetch()
+            if (item.agentType === 'Cloud') {
+              // 新手引导创建的连接，释放资源
+              this.$axios
+                .post('api/tcm/orders/cancel', {
+                  instanceId: item.id
+                })
+                .then(() => {
+                  this.$message.success('删除成功')
+                  this.fetch()
+                })
+            } else {
+              this.$message.success('删除成功')
+              this.fetch()
+            }
           } catch (error) {
             // 删除失败
             let errorTip = '删除失败'

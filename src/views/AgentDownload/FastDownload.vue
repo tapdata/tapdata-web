@@ -51,7 +51,7 @@
           </li>
           <li class="mt-3">
             <span>2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：</span>
-            <img class="mt-2" :src="getImg('downloadWindows')" alt="" />
+            <img class="mt-2 block" :src="getImg('downloadWindows')" alt="" />
           </li>
           <li class="flex">
             <span>3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
@@ -86,7 +86,7 @@
           </li>
           <li>
             <span>2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：</span>
-            <img class="mt-2" :src="getImg('downloadLinux')" alt="" />
+            <img class="mt-2 block" :src="getImg('downloadLinux')" alt="" />
           </li>
           <li>
             <span>4.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
@@ -123,7 +123,7 @@
             <span
               >2.docker安装成功后，会自动输出已安装Agent的容器ID，您可以通过docker ps命令来查看正在运行的docker</span
             >
-            <img class="mt-2" :src="getImg('downloadDocker')" alt="" />
+            <img class="mt-2 block" :src="getImg('downloadDocker')" alt="" />
           </li>
           <li class="flex">
             <span>3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
@@ -133,7 +133,7 @@
       </template>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="handleNextSetp()">完成</ElButton>
+      <ElButton type="primary" @click="handleNextStep()">完成</ElButton>
     </footer>
   </section>
 </template>
@@ -160,63 +160,15 @@ export default {
     }
   },
   created() {
-    let filter = {
-      where: {},
-      size: 1,
-      page: 0,
-      sort: ['createAt desc']
-    }
-    this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(async data => {
-      if (data.items && data.items.length) {
-        let version = data.items[0].spec?.version
-        this.downloadUrl = await this.getDownloadUrl(version)
-        this.handleGetUrl(data.items[0].tmInfo)
-      } else {
-        this.getOrders()
-      }
+    this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then(async data => {
+      let version = data?.spec?.version
+      this.downloadUrl = await this.getDownloadUrl(version)
+      this.handleGetUrl(data?.tmInfo)
     })
   },
   methods: {
     getDownloadUrl(version) {
       return this.$axios.get(`api/tcm/productRelease/${version}`)
-    },
-    // 获取agent
-    getOrders() {
-      this.$axios
-        .post('api/tcm/orders', {
-          agentType: 'Local'
-        })
-        .then(data => {
-          this.agentId = data.agentId
-          this.getUrlLinks(data.agentId)
-        })
-        .catch(() => {
-          this.$router.replace('/500')
-        })
-    },
-
-    // 获取下载地址
-    getUrlLinks(id) {
-      let where = {}
-      if (id) {
-        where.id = id
-      }
-      let filter = {
-        where
-      }
-      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(async data => {
-        if (data) {
-          let tmInfo = '',
-            spec = ''
-          if (data.items && data.items.length > 0) {
-            tmInfo = data.items[0].tmInfo
-            spec = data.items[0].spec
-          }
-          let version = spec?.version
-          this.downloadUrl = await this.getDownloadUrl(version)
-          this.handleGetUrl(tmInfo)
-        }
-      })
     },
     // 获取路径地址
     handleGetUrl(data) {
@@ -254,7 +206,7 @@ export default {
     onCopy() {
       this.showTooltip = true
     },
-    handleNextSetp() {
+    handleNextStep() {
       this.$router.push({ name: 'Instance' })
     },
     getImg(name) {

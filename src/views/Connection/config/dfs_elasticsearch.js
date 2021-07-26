@@ -120,6 +120,11 @@ export default function (vm) {
         label: vm.$t('dataForm.form.password'),
         domType: 'password',
         showByUrl: 2
+      },
+      {
+        type: 'input',
+        field: 'additionalString',
+        label: vm.$t('dataForm.form.additionalString')
       }
     ]
   }

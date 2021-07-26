@@ -890,7 +890,7 @@ export default {
           if (source) {
             // dfs源端不支持 redis elasticsearch
             let options = data
-            let filterArr = ['redis', 'elasticsearch']
+            let filterArr = ['redis', 'elasticsearch', 'dameng']
             options = data.filter(item => filterArr.indexOf(item) === -1)
             source.options = options.map(item => {
               return {

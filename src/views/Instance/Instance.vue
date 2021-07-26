@@ -47,13 +47,25 @@
       <El-table class="instance-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
         <ElTableColumn min-width="200px" label="实例ID/名称">
           <template slot-scope="scope">
-            <ElLink class="agent-link" type="primary" @click="handleDetails(scope.row)">{{ scope.row.id }}</ElLink>
-            <ClipButton :value="scope.row.id"></ClipButton>
-            <InlineInput
-              style="display: block"
-              :value="scope.row.name"
-              @save="updateName($event, scope.row.id)"
-            ></InlineInput>
+            <div class="flex">
+              <div>
+                <ElLink
+                  class="agent-link"
+                  :type="scope.row.agentType === 'Cloud' ? '' : 'primary'"
+                  @click="handleDetails(scope.row)"
+                  >{{ scope.row.id }}</ElLink
+                >
+                <ClipButton :value="scope.row.id"></ClipButton>
+                <InlineInput
+                  style="display: block"
+                  :value="scope.row.name"
+                  @save="updateName($event, scope.row.id)"
+                ></InlineInput>
+              </div>
+              <div class="flex align-center">
+                <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">仅供测试使用</span>
+              </div>
+            </div>
           </template>
         </ElTableColumn>
         <ElTableColumn label="状态" width="120">
@@ -120,15 +132,25 @@
         </ElTableColumn>
         <ElTableColumn label="操作" width="120" fixed="right">
           <template slot-scope="scope">
-            <ElLink type="primary" class="mr-2" :disabled="!!scope.row.deployDisable" @click="toDeploy">部署</ElLink>
             <ElLink
               type="primary"
               class="mr-2"
-              :disabled="scope.row.status !== 'Running'"
+              :disabled="scope.row.agentType === 'Cloud' || !!scope.row.deployDisable"
+              @click="toDeploy(scope.row)"
+              >部署</ElLink
+            >
+            <ElLink
+              type="primary"
+              class="mr-2"
+              :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Running'"
               @click="handleStop(scope.row)"
               >停止</ElLink
             >
-            <ElLink type="danger" class="mr-2" @click="handleDel(scope.row)" :disabled="scope.row.status !== 'Offline'"
+            <ElLink
+              type="danger"
+              class="mr-2"
+              @click="handleDel(scope.row)"
+              :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Offline'"
               >删除</ElLink
             >
           </template>
@@ -351,11 +373,9 @@ export default {
               }
               return item
             })
-            // 不存在版本号
-            if (!this.version) {
-              let getVersion = await this.getVersion(this.list[0]?.id)
-              this.version = getVersion?.version
-            }
+            // 版本号
+            let getVersion = await this.getVersion(this.list[0]?.id)
+            this.version = getVersion?.version
 
             this.page.total = data.total
             if (!list.length && data.total > 0) {
@@ -402,9 +422,12 @@ export default {
         window.open(downloadUrl.href, '_blank')
       })
     },
-    toDeploy() {
+    toDeploy(row) {
       let downloadUrl = window.App.$router.resolve({
-        name: 'FastDownload'
+        name: 'FastDownload',
+        query: {
+          id: row?.id
+        }
       })
 
       window.open(downloadUrl.href, '_blank')
@@ -496,6 +519,10 @@ export default {
     },
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
+      if (this.selectedRow?.metric?.runningTaskNum) {
+        this.$alert('检测到您有任务正在运行，请先停止所有任务再进行升级操作!')
+        return
+      }
       this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
         this.$axios
           .post('tm/api/clusterStates/updataAgent', {
@@ -535,7 +562,7 @@ export default {
       let result
       switch (row.tmInfo.updateStatus) {
         case 'preparing':
-          result = 'Agent版本有更新，点击升级'
+          result = '自动升级中'
           break
         case 'downloading':
           result = '自动升级中'
@@ -557,6 +584,10 @@ export default {
     },
     // agent详情
     handleDetails(data) {
+      if (data.agentType === 'Cloud') {
+        return
+      }
+      this.clearTimer()
       this.$router.push({
         name: 'InstanceDetails',
         query: {
@@ -627,6 +658,11 @@ export default {
     flex: 1;
     overflow: auto;
     border-bottom: none;
+    .agent-cloud {
+      color: #10c038;
+      border-color: #10c038;
+      background-color: #dbefd1;
+    }
   }
   .instance-table__empty {
     color: map-get($fontColor, light);

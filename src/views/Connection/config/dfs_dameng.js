@@ -5,18 +5,12 @@ export default function (vm) {
       labelWidth: '200px'
     },
     defaultModel: {
-      connection_type: 'source_and_target'
+      connection_type: 'target'
     },
     items: [
       {
-        type: 'slot',
-        slot: 'name'
-      },
-      {
         type: 'input',
         field: 'database_host',
-
-        disabled: false,
         label: vm.$t('dataForm.form.host'),
         rules: [
           {
@@ -55,12 +49,6 @@ export default function (vm) {
       },
       {
         type: 'input',
-        field: 'database_name',
-        label: vm.$t('dataForm.form.databaseName'),
-        required: true
-      },
-      {
-        type: 'input',
         field: 'database_username',
         label: vm.$t('dataForm.form.userName')
       },
@@ -70,6 +58,16 @@ export default function (vm) {
         label: vm.$t('dataForm.form.password'),
         domType: 'password',
         showPassword: true
+      },
+      {
+        type: 'input',
+        field: 'database_owner',
+        label: vm.$t('dataForm.form.databaseOwner'),
+        required: true
+      },
+      {
+        type: 'slot',
+        slot: 'tableFilter'
       },
       {
         type: 'input',
