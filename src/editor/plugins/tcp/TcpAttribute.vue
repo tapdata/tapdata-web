@@ -19,6 +19,7 @@
             v-model="model.connectionId"
             :placeholder="$t('message.placeholderSelect') + 'TCP/IP'"
             :clearable="true"
+            @change="changeFnc"
           >
             <el-option
               v-for="(item, idx) in databases"
@@ -65,6 +66,7 @@ export default {
         ]
       },
       model: {
+        name: '',
         connectionId: '',
         type: 'tcp_udp',
         isShowMessage: true
@@ -155,7 +157,7 @@ export default {
 
     getData() {
       let result = _.cloneDeep(this.model)
-      result.name = result.tableName || 'TCP/IP'
+      result.name = result.name || 'TCP/IP'
       // if (result.connectionId) {
       // 	let database = this.databases.filter(db => db.id === result.connectionId);
       // 	if (database && database.length > 0) {
@@ -167,6 +169,13 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+
+    changeFnc(value) {
+      let findOne = this.databases.find(item => item.id === value)
+      if (findOne) {
+        this.model.name = findOne.name
+      }
     }
   }
 }
