@@ -12,7 +12,9 @@
               </ElButton>
             </li>
             <li class="ml-3">
-              <ElButton plain class="btn-refresh" @click="handleDelete('all')"> 全部删除 </ElButton>
+              <ElButton plain class="btn-refresh" @click="handleDelete('all')" :disabled="list.length < 1">
+                全部删除
+              </ElButton>
             </li>
           </ul>
         </div>
@@ -161,7 +163,6 @@ export default {
     },
     handleGo(item) {
       let routeUrl = {}
-      debugger
       switch (item.system) {
         case 'dataFlow':
           routeUrl = this.$router.resolve({
@@ -189,7 +190,7 @@ export default {
           this.$router.push({
             name: 'InstanceDetails',
             query: {
-              id: item.id
+              id: item.agentId
             }
           })
           break
@@ -217,20 +218,22 @@ export default {
     },
     // 删除消息
     handleDelete(type) {
-      let where = []
+      let where = {}
       if (type === 'one') {
         let ids = this.multipleSelection.map(item => item.id)
-        where.id = { in: ids }
+        where.id = { inq: ids }
       } else {
         where = {}
       }
-      this.$confirm('是否删除通知？', '删除通知', {
+      let data = {
+        isDeleted: true
+      }
+      this.$confirm('是否确认删除通知？', '删除通知', {
         type: 'warning'
       }).then(res => {
         if (res) {
-          this.$axios.post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), {
-            isDeleted: true
-          })
+          this.$axios.post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), data)
+          this.fetch()
         }
       })
     }

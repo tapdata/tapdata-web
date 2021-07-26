@@ -599,7 +599,7 @@ export default {
       if (data.agentType === 'Cloud') {
         return
       }
-      this.clearTimer()
+      // this.clearTimer()  //点详情报错 暂时注释
       this.$router.push({
         name: 'InstanceDetails',
         query: {

@@ -3,6 +3,7 @@
     <div class="btn" slot="reference" @click="toCenter()">
       <ElBadge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
         <VIcon class="mr-2" size="17">lingdang</VIcon>
+        <span>通知</span>
       </ElBadge>
     </div>
     <div class="notification-popover-wrap">
@@ -195,6 +196,9 @@ export default {
 .btn {
   cursor: pointer;
   .item-badge {
+    &:hover {
+      color: #337dff;
+    }
     .el-badge__content {
       right: 18px;
       height: 15px;
