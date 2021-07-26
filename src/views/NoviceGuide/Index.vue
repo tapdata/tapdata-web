@@ -69,7 +69,9 @@
           </div>
         </div>
         <div class="operation mt-7">
-          <el-button type="primary" size="mini" :disabled="!agent.name" @click="toNext">下一步</el-button>
+          <el-button type="primary" size="mini" :disabled="agent.status !== 'Running'" @click="toNext"
+            >下一步</el-button
+          >
         </div>
       </div>
       <!--   第2步、第3步   -->
