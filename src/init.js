@@ -31,7 +31,7 @@ ElementLocale.i18n((key, value) => {
 
 Vue.prototype.$checkAgentStatus = callback => {
   window.axios.get('tm/api/Workers/availableAgent').then(data => {
-    if (data.result) {
+    if (data?.result?.length) {
       callback && callback()
     } else {
       Message.error('Agent当前状态异常，请检查')
