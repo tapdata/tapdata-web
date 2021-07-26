@@ -32,7 +32,7 @@
                 {{ $t('dataForm.form.guide') }}
                 <a class="color-primary" target="_blank" href="https://docs.tapdata.net/data-source">{{
                   $t('dataForm.form.guideDoc')
-                  }}</a>
+                }}</a>
               </div>
               <div class="tip" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')">
                 请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
@@ -43,7 +43,9 @@
         <div class="form-wrap">
           <div class="form">
             <ConnectionFormSelector ref="connectionForm"></ConnectionFormSelector>
-            <el-button type="primary" size="mini" class="test" @click="startTest()">{{ $t('connection.testConnection') }}</el-button>
+            <el-button type="primary" size="mini" class="test" @click="startTest()">{{
+              $t('connection.testConnection')
+            }}</el-button>
           </div>
         </div>
         <footer slot="footer" class="footer">
@@ -55,12 +57,18 @@
           </div>
         </footer>
       </main>
-      <ConnectionTest ref="connectionTest" :receive="receiveData"></ConnectionTest>
+      <Test
+        ref="test"
+        :dialogTestVisible.sync="dialogTestVisible"
+        :formData="model"
+        @returnTestData="receiveData"
+      ></Test>
     </div>
   </div>
 </template>
 
 <script>
+import Test from './Test'
 const TYPEMAP = {
   mysql: 'MySQL',
   oracle: 'Oracle',
@@ -89,11 +97,14 @@ const TYPEMAP = {
 }
 export default {
   name: 'formBuilder',
+  components: { Test },
   data() {
     return {
       typeMap: TYPEMAP,
       databaseType: '',
-      id: ''
+      id: '',
+      model: '',
+      dialogTestVisible: false
     }
   },
   created() {
@@ -119,17 +130,18 @@ export default {
           this.$message.error(this.$t('dataForm.form.agentMsg'))
         }
       } else {
-        this.$refs.connectionTest.start(form, true)
+        this.model = form
+        this.dialogTestVisible = true
+        if (this.$route.params.id) {
+          //编辑需要特殊标识 updateSchema = false editTest = true
+          this.$refs.test.start(false, true)
+        } else {
+          this.$refs.test.start(false)
+        }
       }
     },
     receiveData(data) {
       if (!data.status || data.status === null) return
-      let status = data.status
-      if (status === 'ready') {
-        this.$message.success('连接测试有效')
-      } else {
-        this.$message.error('连接测试无效')
-      }
       this.fetch()
     },
     getFormData() {
@@ -155,7 +167,7 @@ export default {
             nextRetry: null,
             response_body: {},
             project: '',
-            submit: true,
+            submit: true
           },
           formData
         )
@@ -184,7 +196,8 @@ export default {
             delete params.platformInfo.DRS_zone
           }
         }
-        this.$api('connections')[this.id ? 'patchId' : 'post'](params)
+        this.$api('connections')
+          [this.id ? 'patchId' : 'post'](params)
           .then(() => {
             this.$message.success(this.$t('message.saveOK'))
             if (this.$route.query.step) {
@@ -219,8 +232,23 @@ export default {
           .finally(() => {
             this.submitBtnLoading = false
           })
-        console.log(data)
       }
+    },
+    goBack() {
+      let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
+      let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
+      this.$confirm(tip, title, {
+        confirmButtonText: '放弃',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        this.$router.push({
+          name: 'connections'
+        })
+      })
     }
   }
 }
