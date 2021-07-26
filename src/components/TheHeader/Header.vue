@@ -100,7 +100,7 @@ export default {
           this.noShow = data?.guideData?.noShow
           // 不再显示
           if (
-            !data?.guideData?.noShow ||
+            !data?.guideData?.noShow &&
             (new Date().getTime() - (data?.guideData?.updateTime ?? 0)) / 1000 / 3600 > 24
           ) {
             this.command('guide')
