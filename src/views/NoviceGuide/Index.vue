@@ -293,13 +293,10 @@ export default {
   },
   watch: {
     step() {
-      console.log('step', this.step)
       this.stepFnc()
     }
   },
   created() {
-    // this.startTimer()
-    console.log('taskSetting', taskSetting())
     this.taskConfig = taskSetting()
   },
   mounted() {
@@ -393,12 +390,9 @@ export default {
         where: {
           agentType: 'Cloud'
         },
-        size: 10,
-        page: 1,
-        sort: ['createAt desc']
+        limit: 10
       }
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-        console.log('loadAgent', data)
         this.agent = data?.items?.[0] || {}
       })
     },
@@ -426,29 +420,8 @@ export default {
           this.$message.error('Agent启动失败')
         })
     },
-    stopAgent() {
-      // let message = 'Agent停止后，您需要再次启动Agent，是否确认停止？'
-      // this.$confirm(message, '是否停止', {
-      //   type: 'warning'
-      // }).then(res => {
-      //   if (res) {
-      //     this.stopAgentLoading = true
-      //     this.$axios
-      //       .patch('api/tcm/agent/stop/' + this.agent.id)
-      //       .then(() => {
-      //         this.$message.success('Agent停止中')
-      //         this.agent.name = ''
-      //         this.agent.status = 'Stopping'
-      //         this.init()
-      //       })
-      //       .catch(() => {
-      //         this.$message.error('Agent停止失败')
-      //       })
-      //   }
-      // })
-    },
+    stopAgent() {},
     initDatabase() {
-      console.log('初始化数据库')
       this.initDatabaseLoading = true
       this.$axios
         .post('api/tcm/connection/create', {
@@ -501,11 +474,8 @@ export default {
       this.sourceForm.database_type = this.databaseTypeItems[0].value
     },
     changeSourceDatabaseType(value) {
-      // this.sourceConnection = {}
-      console.log('changeSourceDatabaseType', value)
       this.resetFormField()
       this.sourceForm.database_type = value
-      console.log('this.', this.sourceForm)
       this.loadConnection()
     },
     loadConnection() {
@@ -514,14 +484,12 @@ export default {
         noSchema: 1,
         where: {
           database_type: this.sourceForm.database_type,
-          agentType: 'Cloud'
+          agentType: 'Cloud',
+          connection_type: this.step === 2 ? 'target' : 'source'
         },
-        limit: 10,
-        skip: 1,
-        order: 'createTime desc'
+        limit: 10
       }
       this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-        console.log('loadConnection', data)
         let sourceConnection = data?.[0]
         if (!sourceConnection) {
           this.sourceForm.name = '' // 标记为空

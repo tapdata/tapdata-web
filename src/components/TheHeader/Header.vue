@@ -94,7 +94,6 @@ export default {
     getTmUser() {
       this.$axios.get('tm/api/users/self').then(data => {
         if (data) {
-          // window.tm_userId = data.id
           window.__USER_SELF_INFO__ = {
             id: data.id
           }
