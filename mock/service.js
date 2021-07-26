@@ -66,14 +66,10 @@ const agent = {
     'updataStatus|1': ['preparing', 'downloading', 'upgrading', 'done', 'fail'],
     updateMsg: '',
     updateTime: ''
-  }
+  },
+  'agentType|1': ['Cloud', '']
 }
 module.exports = Object.assign({}, dataflow, connection, {
-  '/tm/api/users/:id': {
-    code: 'ok',
-    msg: 'ok',
-    data: {}
-  },
   '/tm/api/users/self': {
     data: {
       account_status: 1,
@@ -121,10 +117,19 @@ module.exports = Object.assign({}, dataflow, connection, {
             id: '5d31ae1ab953565ded04badd'
           }
         }
-      ]
+      ],
+      guideData: {
+        noShow: true,
+        updateTime: 1627288426187
+      }
     },
     code: 'ok',
     msg: 'ok'
+  },
+  '/tm/api/users/:id': {
+    code: 'ok',
+    msg: 'ok',
+    data: {}
   },
   '/api/tcm/user': {
     code: 'ok',
@@ -138,48 +143,6 @@ module.exports = Object.assign({}, dataflow, connection, {
       nickname: '12345678902@123.com',
       type: 0,
       userStatus: 1
-      //政企审批用户
-      // customerId: 'CIDC-A-33c8abc00d474d96883e682f639cbb5f',
-      // customerType: '政企集团客户',
-      // id: 'CIDC-U-dfd6ef008f3d457cb22e81599a3da8af',
-      // internetAccount: false,
-      // isCustomer: 1,
-      // nickname: 'dingyihui',
-      // org: '12507fc57b414fddbc08495fac7835b0',
-      // orgName: 'dingyihui',
-      // token:
-      // 	'Y3VzdG9tSWQ9Q0lEQy1BLTMzYzhhYmMwMGQ0NzRkOTY4ODNlNjgyZjYzOWNiYjVmJnVzZXJJZD1DSURDLVUtZGZkNmVmMDA4ZjNkNDU3Y2IyMmU4MTU5OWEzZGE4YWYmYWRtaW49MSZ1c2VybmFtZT1kaW5neWlodWlfaWFhcw==',
-      // type: 0,
-      // userStatus: '1.0',
-      // username: 'dingyihui_iaas'
-      //互联网用户1
-      // customerId: 'CIDC-A-625c42caf2e041d3a331f5c62a2e884f',
-      // customerType: '互联网客户',
-      // id: 'CIDC-U-f71329d2def04d169de790dc842e7691',
-      // internetAccount: true,
-      // isCustomer: 1,
-      // nickname: 'baomihua03@11.com',
-      // org: 'ab49c8e869354a3c8cd2670d3017509d',
-      // orgName: 'baomihua03@11.com',
-      // token:
-      // 	'Y3VzdG9tSWQ9Q0lEQy1BLTYyNWM0MmNhZjJlMDQxZDNhMzMxZjVjNjJhMmU4ODRmJnVzZXJJZD1DSURDLVUtZjcxMzI5ZDJkZWYwNGQxNjlkZTc5MGRjODQyZTc2OTEmYWRtaW49MSZ1c2VybmFtZT1iYW9taWh1YTAz',
-      // type: 0,
-      // userStatus: '1.0',
-      // username: 'baomihua03'
-      //互联网用户2
-      // customerId: 'CIDC-A-2afe6bb0272b4cf3af650a2b478ebe78',
-      // customerType: '互联网客户',
-      // id: 'CIDC-U-d8373e9390fe449e825977e17db5bdea',
-      // internetAccount: true,
-      // isCustomer: 1,
-      // nickname: '157214086882@163.com',
-      // org: '322acb4864054007aedb1ccd841b48cb',
-      // orgName: '集团',
-      // token:
-      // 	'Y3VzdG9tSWQ9Q0lEQy1BLTJhZmU2YmIwMjcyYjRjZjNhZjY1MGEyYjQ3OGViZTc4JnVzZXJJZD1DSURDLVUtZDgzNzNlOTM5MGZlNDQ5ZTgyNTk3N2UxN2RiNWJkZWEmYWRtaW49MSZ1c2VybmFtZT16aG91c2h1eXVlMTIxMDAx',
-      // type: 0,
-      // userStatus: '1.0',
-      // username: 'zhoushuyue121001'
     }
   },
   '/api/tcm/region': {
