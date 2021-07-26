@@ -306,6 +306,7 @@ export default {
   },
   methods: {
     init() {
+      this.stepFnc()
       this.startTimer()
     },
     startTimer() {
