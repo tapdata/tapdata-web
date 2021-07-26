@@ -69,9 +69,9 @@ const agent = {
   }
 }
 module.exports = Object.assign({}, dataflow, connection, {
-  'tm/api/users/self': {
+  '/tm/api/users/self': {
     code: 'ok',
-    message: '获取用户信息失败',
+    message: 'ok',
     data: {
       //mock用户
       token:
@@ -80,7 +80,11 @@ module.exports = Object.assign({}, dataflow, connection, {
       customerType: '政企集团客户',
       nickname: '12345678902@123.com',
       type: 0,
-      userStatus: 1
+      userStatus: 1,
+      guideData: {
+        noShow: true,
+        updateTime: 1627285178886
+      }
     }
   },
   '/tm/api/users/:id': {
