@@ -289,8 +289,20 @@ export default {
         if (resFlag) {
           try {
             await this.$axios.delete(`tm/api/Connections/${item.id}?name=${item.name}`)
-            this.$message.success('删除成功')
-            this.fetch()
+            if (item.agentType === 'Cloud') {
+              // 新手引导创建的连接，释放资源
+              this.$axios
+                .post('api/tcm/orders/cancel', {
+                  instanceId: item.id
+                })
+                .then(() => {
+                  this.$message.success('删除成功')
+                  this.fetch()
+                })
+            } else {
+              this.$message.success('删除成功')
+              this.fetch()
+            }
           } catch (error) {
             // 删除失败
             let errorTip = '删除失败'
