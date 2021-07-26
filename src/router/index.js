@@ -44,6 +44,14 @@ const routes = [
           }
         ]
       },
+      {
+        path: '/systemNotice',
+        name: 'SystemNotice',
+        component: () => import('../views/Workbench/SystemNotice.vue'),
+        meta: {
+          title: '系统通知'
+        }
+      },
       // {
       // 	path: '/dashboard',
       // 	name: 'Dashboard',
