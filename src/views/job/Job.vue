@@ -729,6 +729,7 @@ export default {
       // validate
       if (!autoSave) {
         this.editor.graph.unHighlightAllCells()
+
         let verified = this.editor.validate()
         if (verified !== true) {
           this.$message.error(verified)
@@ -1068,7 +1069,7 @@ export default {
             })
           }
           data.stages.forEach(item => {
-            if (item.type === 'hbase' && this.sync_type !== 'initial_sync') {
+            if ((item.type === 'hbase' || item.database_type === 'hbase') && this.sync_type !== 'initial_sync') {
               checkSetting = false
             }
           })
@@ -1102,7 +1103,7 @@ export default {
                 }
               })
               this.$message.success(this.$t('message.taskStart'))
-              location.reload()
+              // location.reload()
             }
           })
         }
@@ -1472,7 +1473,7 @@ export default {
                   text: v.name !== '' && v.name ? breakText.breakText(v.name, 125) : v.type
                 },
                 image: {
-                  xlinkHref: map[v.database_type].shapeImage
+                  xlinkHref: map[v.database_type || v.databaseType].shapeImage
                 }
               }
             }

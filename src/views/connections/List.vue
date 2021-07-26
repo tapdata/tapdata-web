@@ -95,7 +95,7 @@
         :reserve-selection="true"
       >
       </el-table-column>
-      <el-table-column prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
+      <el-table-column prop="name" min-width="160" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
@@ -129,7 +129,7 @@
           {{ scope.row.connectionUrl }}
         </template>
       </el-table-column>
-      <el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
+      <el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="80">
         <template slot-scope="scope">
           <div>
             <span class="error" v-if="['invalid'].includes(scope.row.status)">
@@ -153,7 +153,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="connection_type" :label="$t('connection.connectionType')" width="160">
+      <el-table-column prop="connection_type" :label="$t('connection.connectionType')" width="80">
         <template slot-scope="scope">
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
@@ -435,6 +435,7 @@ export default {
         order: this.order,
         limit: size,
         noSchema: 1,
+        //fields: fields, //传noSchema 过滤schema
         skip: (current - 1) * size,
         where
       }
@@ -471,6 +472,12 @@ export default {
             // 不存在uri 和 port === 0
             if (!item.database_uri && !item.database_port && item.mqType !== '0') {
               item.connectionUrl = ''
+            }
+            if (item.database_type === 'kudu') {
+              item.connectionUrl = item.database_host
+            }
+            if (item.database_type === 'kafka') {
+              item.connectionUrl = item.kafkaBootstrapServers
             }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
@@ -779,7 +786,7 @@ export default {
     vertical-align: middle;
     width: 40px;
     height: 40px;
-    background: #ffffff;
+    //background: #ffffff;
     border-radius: 3px;
     display: flex;
     justify-content: center;
@@ -797,7 +804,7 @@ export default {
     word-break: break-word;
     text-overflow: ellipsis;
     float: left;
-    margin-left: 10px;
+    margin-left: 4px;
 
     .name {
       color: #409eff;

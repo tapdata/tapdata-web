@@ -54,6 +54,9 @@
             <span class="text" v-if="databaseInfo.brokerURL">
               <span>{{ databaseInfo.brokerURL }}</span>
             </span>
+            <span class="text" v-if="databaseInfo.kafkaBootstrapServers">
+              <span>{{ databaseInfo.kafkaBootstrapServers }}</span>
+            </span>
           </li>
           <li v-if="databaseInfo.database_name">
             <span class="label"> {{ $t('editor.cell.data_node.database.databaseName') }}: </span>
@@ -315,6 +318,8 @@ export default {
               if (result.data.mqType === '0') {
                 let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
                 tableData = [...new Set(data)]
+              } else if (result.data.mqType === '1') {
+                tableData = result.data.mqQueueSet
               } else {
                 tableData = result.data.mqTopicSet
               }

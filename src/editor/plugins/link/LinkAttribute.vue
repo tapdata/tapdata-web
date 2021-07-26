@@ -15,7 +15,7 @@
         ref="form"
         action="javascript:void(0);"
       >
-        <el-form-item :label="$t('editor.cell.link.form.label.label')" v-if="!isTargetTypeTcpFalg">
+        <el-form-item :label="$t('editor.cell.link.form.label.label')">
           <el-input
             v-model="model.label"
             :placeholder="$t('editor.cell.link.form.label.placeholder')"
@@ -25,7 +25,7 @@
           >
           </el-input>
         </el-form-item>
-        <el-form-item :label="$t('editor.cell.link.pcb.label')" v-else>
+        <!-- <el-form-item :label="$t('editor.cell.link.pcb.label')" v-else>
           <el-input
             v-model="model.tcp.protocolType"
             :placeholder="$t('editor.cell.link.pcb.placeholder')"
@@ -34,7 +34,7 @@
             show-word-limit
           >
           </el-input>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
 
       <el-form
@@ -45,7 +45,6 @@
         :model="model"
         ref="form"
         v-show="configJoinTable"
-        v-if="!isTargetTypeTcpFalg"
         action="javascript:void(0);"
       >
         <el-form-item :label="$t('editor.cell.link.form.joinType.label')" required>
@@ -173,8 +172,9 @@
         </el-form-item>
       </el-form>
       <!-- tcp报文配置 -->
-      <div class="transfer" v-else>
-        <el-transfer
+      <!-- <div class="transfer" v-else>
+        <Message :fieldsData="fieldsData"></Message> -->
+      <!-- <el-transfer
           v-model="model.tcp.includeField"
           :data="fieldsData"
           :titles="[$t('editor.cell.link.pcb.fieldsSelected'), $t('editor.cell.link.pcb.selectedField')]"
@@ -189,8 +189,8 @@
           <el-button class="transfer-footer" slot="right-footer" size="mini" type="primary" @click="handleDown">{{
             $t('editor.cell.link.pcb.moveDown')
           }}</el-button>
-        </el-transfer>
-      </div>
+        </el-transfer> -->
+      <!-- </div> -->
     </div>
 
     <!--
@@ -232,11 +232,13 @@
 import _ from 'lodash'
 import { EditorEventType } from '../../lib/events'
 import Mapping from './Mapping'
+// import Message from './Message'
 import log from '../../../log'
 import { JOIN_TABLE_TPL } from '../../constants'
 import ClipButton from '@/components/ClipButton'
 import { removeDeleted } from '../../util/Schema'
 // let editorMonitor = null;
+let settingData = null
 export default {
   name: 'Link',
   components: { Mapping, ClipButton },
@@ -261,15 +263,15 @@ export default {
         label: '',
         joinTable: _.cloneDeep(JOIN_TABLE_TPL),
         type: 'link',
-        tcp: {
-          protocolType: '',
-          includeField: []
-        },
-        joinTableRequired: true,
+        // tcp: {
+        //   protocolType: '',
+        //   includeField: []
+        // },
+        joinTableRequired: true
       },
       fieldsData: [],
-      chooseField: '',
-      isTargetTypeTcpFalg: false
+      chooseField: ''
+      // isTargetTypeTcpFalg: false
     }
   },
 
@@ -294,6 +296,7 @@ export default {
         } else {
           this.model.joinTable.arrayUniqueKey = ''
         }
+        this.model.joinTableRequired = !(settingData.noPrimaryKey && ['upsert'].includes(this.model.joinTable.joinType))
       }
     }
   },
@@ -400,19 +403,19 @@ export default {
       // this.model.joinTable.joinKeys = [];
 
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
-      let settingData = vueAdapter.editor.getData().settingData
+      settingData = vueAdapter.editor.getData().settingData
       this.model.joinTableRequired = !(settingData.noPrimaryKey && ['upsert'].includes(this.model.joinTable.joinType))
 
-      if (!this.configJoinTable) {
-        let targetCell = cell.getTargetCell()
-        let targetData = targetCell && targetCell.getFormData()
-        if (targetData.type !== 'tcp_udp') {
-          return
-        } else {
-          this.isTargetTypeTcpFalg = true
-          this.model.tcp.includeField = targetData.tcp && targetData.tcp.includeField
-        }
-      }
+      // if (!this.configJoinTable) {
+      //   let targetCell = cell.getTargetCell()
+      //   let targetData = targetCell && targetCell.getFormData()
+      //   if (targetData.type !== 'tcp_udp') {
+      //     return
+      //   } else {
+      //     this.isTargetTypeTcpFalg = true
+      //     this.model.tcp.includeField = targetData.tcp && targetData.tcp.includeField
+      //   }
+      // }
       if (cell.getSourceCell()) {
         let sourceCell = cell.getSourceCell(),
           targetCell = cell.getTargetCell(),
@@ -494,10 +497,10 @@ export default {
         joinKeys.forEach((item, index) => {
           this.$set(this.model.joinTable.joinKeys, index, item)
         })
-
         this.fieldsData = sourceList.map(field => ({
           label: field.field_name,
           key: field.field_name,
+          javaType: field.javaType,
           disabled: this.disabled
         }))
       }
@@ -517,17 +520,17 @@ export default {
     },
     getData() {
       let data = JSON.parse(JSON.stringify(this.model))
-
-      if (this.cell) {
-        // tcp报文数据传输到目标节点
-        let targetCell = this.cell.getTargetCell()
-        let targetData = targetCell && targetCell.getFormData()
-        if (targetData.type !== 'tcp_udp') {
-          delete data.tcp
-        } else {
-          targetData.tcp = data.tcp
-        }
-      }
+      console.log('link-data', data)
+      // if (this.cell) {
+      //   // tcp报文数据传输到目标节点
+      //   let targetCell = this.cell.getTargetCell()
+      //   let targetData = targetCell && targetCell.getFormData()
+      //   if (targetData.isShowMessage) {
+      //     delete data.tcp
+      //   } else {
+      //     targetData.tcp = data.tcp
+      //   }
+      // }
 
       /* if( data.joinTable.joinKeys.length > 0 ){
 					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);
@@ -547,7 +550,9 @@ export default {
      */
     showMapping() {
       this.targetCell = this.cell.getTargetCell()
-      this.targetCellType = this.targetCell.get('type')
+      if (this.targetCell) {
+        this.targetCellType = this.targetCell.get('type')
+      }
       this.writeModels.splice(0, this.writeModels.length)
       if (this.supportEmbedArray()) {
         this.WRITE_MODELS.forEach(model => this.writeModels.push(model))
@@ -564,7 +569,7 @@ export default {
         { deep: true }
       )
 
-      this.targetCell.on('change:outputSchema', this.renderSchema, this)
+      this.targetCell?.on('change:outputSchema', this.renderSchema, this)
 
       this.renderSchema()
     },

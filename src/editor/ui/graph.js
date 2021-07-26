@@ -83,9 +83,8 @@ export default class Graph extends Component {
     )
 
     this.commandManager = new joint.dia.CommandManager({
-      graph: graph,
-      cmdBeforeAdd: function (cmdName, cell, graph, options) {
-        log('cmdBeforeAdd', cmdName, options)
+      graph,
+      cmdBeforeAdd: function (cmdName) {
         // 忽略不需要回退的操作
         return !['change:ports', 'change:attrs', 'change:form_data', 'change:labels'].includes(cmdName)
       }
@@ -260,7 +259,7 @@ export default class Graph extends Component {
 
     paper.on({
       'link:connect': linkView => {
-        if (linkView.targetView.model.getFormData().disabled) {
+        if (linkView.targetView?.model?.getFormData()?.disabled) {
           linkView.model.disconnect()
           linkView.hideTools()
           Message.error({
@@ -275,7 +274,7 @@ export default class Graph extends Component {
           linkView.model.disconnect()
           linkView.hideTools()
         }
-        linkView.targetView.model.portProp(
+        linkView.targetView?.model.portProp(
           linkView.targetMagnet.getAttribute('port'),
           'attrs/circle/visibility',
           'visible'
@@ -388,7 +387,7 @@ export default class Graph extends Component {
           return
         }
         // source don't allow connect to target
-        if (typeof cell.allowTarget === 'function' && !cell.allowTarget(linkView.targetView.model)) {
+        if (typeof cell.allowTarget === 'function' && !cell.allowTarget(linkView.targetView?.model)) {
           return
         }
         //from view of source
@@ -400,8 +399,8 @@ export default class Graph extends Component {
         }
         //from view of target
         if (
-          typeof linkView.targetView.model.allowSource === 'function' &&
-          !linkView.targetView.model.allowSource(cell)
+          typeof linkView.targetView?.model.allowSource === 'function' &&
+          !linkView.targetView?.model.allowSource(cell)
         ) {
           return
         }
@@ -409,12 +408,12 @@ export default class Graph extends Component {
         if (
           ['app.Database'].includes(cell.get('type')) &&
           ['app.Database'].includes(linkView.sourceView.model.get('type')) &&
-          ['app.Database'].includes(linkView.targetView.model.get('type'))
+          ['app.Database'].includes(linkView.targetView?.model.get('type'))
         ) {
           return
         }
         //if disabled, can not connect.
-        if (!linkView.targetView.model.getFormData().disabled && !linkView.sourceView.model.getFormData().disabled) {
+        if (!linkView.targetView?.model.getFormData().disabled && !linkView.sourceView.model.getFormData().disabled) {
           let preLink = null
           let afterLink = null
           if (linkView.sourceView.model.get('type') === 'app.Database') {
@@ -427,14 +426,14 @@ export default class Graph extends Component {
           preLink.addTo(this.graph)
           this.updateOutputSchema(preLink)
 
-          if (linkView.targetView.model.get('type') === 'app.Database') {
+          if (linkView.targetView?.model.get('type') === 'app.Database') {
             afterLink = new joint.shapes.app.databaseLink()
           } else {
             afterLink = new joint.shapes.app.Link()
           }
 
           afterLink.source(cell)
-          afterLink.target(linkView.targetView.model)
+          afterLink.target(linkView.targetView?.model)
           afterLink.addTo(this.graph)
           afterLink.setFormData(originalFormData)
           this.updateOutputSchema(afterLink)
@@ -857,7 +856,7 @@ export default class Graph extends Component {
 
     if (elementView.model.getFormData().disablChecker) {
       halo.$el.append(
-        '<button class="handle" style="top: 45px; width:53px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
+        '<button class="handle" style="top: 45px; width:53px; height:18px; right: 25px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
           i18n.t('dataFlow.Enable') +
           '</button>'
       )
@@ -868,7 +867,7 @@ export default class Graph extends Component {
       })
     } else if (!elementView.model.getFormData().disabled) {
       halo.$el.append(
-        '<button class="handle" style="top: 45px; width:53px; height:18px; right: -10px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
+        '<button class="handle" style="top: 45px; width:53px; height:18px; right: 25px; position: absolute;font-size: 8px; border-radius: 5px; border: none; color: rgba(0,0,0,.6); background: #e0e1e2 none;line-height: 0em;">' +
           i18n.t('dataFlow.Disable') +
           '</button>'
       )

@@ -83,8 +83,10 @@ import ClipButton from '@/components/ClipButton'
 import CreateTable from '@/components/dialog/createTable'
 import { convertSchemaToTreeData } from '../../util/Schema'
 let connections = factory('connections')
+// const MetadataInstances = factory('MetadataInstances')
 
 // let editorMonitor = null;
+let tempSchemas = []
 export default {
   name: 'ApiNode',
   components: { Entity, ClipButton, CreateTable },
@@ -148,7 +150,12 @@ export default {
         options: [],
         allowCreate: false,
         defaultFirstOption: false,
-        clearable: true
+        clearable: true,
+        on: {
+          change() {
+            self.handlerSchemaChange()
+          }
+        }
       },
       schemas: [],
       schemasLoading: false,
@@ -207,28 +214,7 @@ export default {
     'model.tableName': {
       immediate: true,
       handler() {
-        // 截取表类型
-        let reg = /\([^)]+\)/g
-        let table_type = this.model.tableName.match(reg)[0]
-        table_type = table_type.substring(1, table_type.length - 1)
-        this.model.table_type = table_type
-
-        if (this.schemas.length > 0) {
-          if (this.model.tableName) {
-            let schema = this.schemaSelectConfig.options.filter(s => s === this.model.tableName)
-            schema =
-              schema && schema.length > 0
-                ? schema[0]
-                : {
-                    table_name: this.model.tableName,
-                    cdc_enabled: true,
-                    meta_type: 'mq',
-                    fields: []
-                  }
-
-            this.$emit('schemaChange', _.cloneDeep(schema))
-          }
-        }
+        this.handleGetFiled()
       }
     }
     // mergedSchema: {
@@ -293,22 +279,74 @@ export default {
             if (this.mqType === '0') {
               result.data.mqQueueSet = result.data.mqQueueSet.map(item => item + '(queue)')
               result.data.mqTopicSet = result.data.mqTopicSet.map(item => item + '(topic)')
+              // result.data.mqTopicSet = result.data.mqTopicSet.map(item => {
+              //   return {
+              //     label: item + '(topic)',
+              //     value: item
+              //   }
+              // })
               let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
               schemas = [...new Set(data)]
+            } else if (this.mqType === '1') {
+              schemas = result.data.mqQueueSet.map(item => item + '(queue)')
             } else {
-              schemas = result.data.mqTopicSet
+              schemas = result.data.mqTopicSet.map(item => item + '(topic)')
             }
+            tempSchemas = result.data.schema.tables
             schemas = schemas.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
             self.schemas = schemas
+
             self.schemaSelectConfig.options = schemas.map(item => ({
               label: item,
               value: item
             }))
+            this.handleGetFiled()
           }
         })
         .finally(() => {
           this.schemasLoading = false
         })
+    },
+
+    // 获取字段
+    handleGetFiled() {
+      let self = this
+
+      // 截取表类型
+      let reg = /\((.+?)\)/g
+      let tableName = ''
+
+      if (this.model.tableName) {
+        let table_type = this.model.tableName.match(reg)[0]
+        table_type = table_type.substring(1, table_type.length - 1)
+        this.model.table_type = table_type
+        let index = this.model.tableName.lastIndexOf('(')
+
+        tableName = this.model.tableName.substring(0, index)
+      }
+
+      if (self.schemas.length > 0) {
+        if (this.model.tableName) {
+          let schema = tempSchemas.filter(s => s.table_name === tableName)
+          schema = schema.length
+            ? schema[0]
+            : {
+                table_name: this.model.tableName,
+                cdc_enabled: true,
+                meta_type: 'mq',
+                fields: []
+              }
+          this.$emit('schemaChange', _.cloneDeep(schema))
+        }
+      } else {
+        let schema = {
+          cdc_enabled: true,
+          fields: [],
+          meta_type: 'table',
+          table_name: tableName
+        }
+        self.$emit('schemaChange', _.cloneDeep(schema))
+      }
     },
 
     // 切换数据源清空表
@@ -320,6 +358,7 @@ export default {
       if (data) {
         _.merge(this.model, data)
       }
+
       this.mergedSchema = cell.getOutputSchema()
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
@@ -342,7 +381,8 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
-    }
+    },
+    handlerSchemaChange() {}
 
     // seeMonitor() {
     // 	editorMonitor.goBackMontior();
