@@ -53,58 +53,7 @@ export default {
       unRead: 0,
       loading: false,
       activeTab: 'system',
-      listData: [
-        {
-          id: '60f9178e94e7326360d582e8',
-          groupId: '45192760f91779be0f180057739639',
-          read: false,
-          createTime: '2021-07-22T07:27:53.916Z',
-          email: 'admin@admin.com',
-          level: 'ERROR',
-          msg: 'encounterERRORSkipped',
-          serverName: '新任务@下午2:59:28',
-          sourceId: '60f91779be0f180057739639',
-          system: 'migration',
-          time: '2021-07-22T07:28:17.458Z',
-          title: 'encounterERRORSkipped',
-          userId: '5fcf01b8f89acdf892e8bf78',
-          username: 'admin'
-        },
-        {
-          id: '60f91df9be0f18005773a7f2',
-          level: 'ERROR',
-          system: 'migration',
-          msg: 'stoppedByError',
-          title: 'stoppedByError',
-          serverName: '新任务@下午2:59:28',
-          sourceId: '60f91779be0f180057739639',
-          userId: '5fcf01b8f89acdf892e8bf78',
-          email: 'admin@admin.com',
-          username: 'admin',
-          mappingTemplate: 'cluster-clone',
-          read: false,
-          time: '2021-07-22T07:27:53.916Z',
-          last_updated: '2021-07-22T07:27:53.917Z',
-          createTime: '2021-07-22T07:27:53.917Z'
-        },
-        {
-          id: '60f91decbe0f18005773a7c4',
-          level: 'INFO',
-          system: 'migration',
-          msg: 'started',
-          title: 'started',
-          serverName: '新任务@下午2:59:28',
-          sourceId: '60f91779be0f180057739639',
-          userId: '5fcf01b8f89acdf892e8bf78',
-          email: 'admin@admin.com',
-          username: 'admin',
-          mappingTemplate: 'cluster-clone',
-          read: false,
-          time: '2021-07-22T07:27:40.935Z',
-          last_updated: '2021-07-22T07:27:40.937Z',
-          createTime: '2021-07-22T07:27:40.937Z'
-        }
-      ],
+      listData: [],
       colorMap: {
         ERROR: 'red',
         WARN: 'orangered',
@@ -115,7 +64,7 @@ export default {
         sync: '同步任务',
         migration: '迁移任务',
         dataFlow: '任务',
-        agent: '管理端',
+        agent: 'Agent',
         inspect: '校验任务',
         JobDDL: 'DDL处理'
       },
@@ -133,9 +82,8 @@ export default {
       let msg = {
         type: 'notification'
       }
-      // if (!parseInt(this.$cookie.get('isAdmin'))) {
-      //   msg.userId = this.$cookie.get('user_id')
-      // }
+      // msg.userId = this.$cookie.get('user_id')
+
       this.getUnReadNum()
       if (this.$ws) {
         this.$ws.on('notification', data => {

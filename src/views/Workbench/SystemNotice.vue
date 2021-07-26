@@ -86,7 +86,7 @@ export default {
         sync: '同步任务',
         migration: '迁移任务',
         dataFlow: '任务',
-        agent: '管理端',
+        agent: 'Agent',
         inspect: '校验任务',
         JobDDL: 'DDL处理'
       },
@@ -224,8 +224,14 @@ export default {
       } else {
         where = {}
       }
-      this.$axios.post('tm/api/Messages/upsertWithWhere?where=' + encodeURIComponent(JSON.stringify(where)), {
-        isDeleted: true
+      this.$confirm('是否删除通知？', '删除通知', {
+        type: 'warning'
+      }).then(res => {
+        if (res) {
+          this.$axios.post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), {
+            isDeleted: true
+          })
+        }
       })
     }
   }
