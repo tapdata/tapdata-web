@@ -435,12 +435,6 @@ export default {
           sourceSchema.fields = removeDeleted(sourceSchema.fields)
         }
 
-        // 判断源是否为greentplum
-        let sourceData = sourceCell.getFormData()
-        if (sourceData.databaseType == 'greenplum') {
-          settingData.sync_type = 'initial_sync'
-          vueAdapter.editor.getData().settingData = settingData
-        }
         let sourceList =
           sourceSchema && sourceSchema.fields
             ? sourceSchema.fields.sort((v1, v2) =>
@@ -644,7 +638,6 @@ export default {
         _this.model.tcp.includeField.splice(index, 0, changeItem)
       } else {
         _this.$message.error(this.$t('editor.cell.link.pcb.onlyOnePiece'))
-        return
       }
     },
     // 下移
@@ -668,10 +661,8 @@ export default {
         _this.model.tcp.includeField.splice(index + 1, 0, changeItem)
       } else {
         _this.$message.error(this.$t('editor.cell.link.pcb.onlyOnePiece'))
-        return
       }
     }
-
     // seeMonitor() {
     // 	editorMonitor.goBackMontior();
     // }

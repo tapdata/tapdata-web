@@ -1053,7 +1053,8 @@ export default {
         // 数据库节点连线至少保留一张表开始
         let objectNamesList = [],
           stageTypeFalg = false,
-          checkSetting = true
+          checkSetting = true,
+          greentplumSettingFalg = true
         if (data && data.stages && data.stages.length) {
           stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
@@ -1071,6 +1072,9 @@ export default {
             if ((item.type === 'hbase' || item.database_type === 'hbase') && this.sync_type !== 'initial_sync') {
               checkSetting = false
             }
+            if (item.outputLanes.length && item.databaseType === 'greenplum' && this.sync_type !== 'initial_sync') {
+              greentplumSettingFalg = false
+            }
           })
         }
         if (!checkSetting) {
@@ -1079,6 +1083,10 @@ export default {
         }
         if (stageTypeFalg && objectNamesList.length === 0) {
           this.$message.error(this.$t('editor.cell.link.chooseATableTip'))
+          return
+        }
+        if (!greentplumSettingFalg) {
+          this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
         let start = () => {
