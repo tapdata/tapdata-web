@@ -467,8 +467,20 @@ export default {
           this.$axios
             .patch('api/tcm/agent/delete/' + row.id)
             .then(() => {
-              this.$message.success('Agent 删除成功')
-              this.fetch()
+              if (row.agentType === 'Cloud') {
+                // 释放资源
+                this.$axios
+                  .post('api/tcm/orders/cancel', {
+                    instanceId: row.id
+                  })
+                  .then(() => {
+                    this.$message.success('Agent 删除成功')
+                    this.fetch()
+                  })
+              } else {
+                this.$message.success('Agent 删除成功')
+                this.fetch()
+              }
             })
             .catch(() => {
               this.$message.error('Agent 删除失败')
