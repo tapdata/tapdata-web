@@ -42,7 +42,7 @@
     >
       <el-table-column prop="show_msg" :label="$t('dataForm.test.items')">
         <template slot-scope="scope">
-          <span>{{ t(`dataForm.form.response_body.${scope.row.show_msg}`) }}</span>
+          <span>{{ $t(`dataForm.form.response_body.${scope.row.show_msg}`) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="status" :label="$t('dataForm.test.result')" width="150">
@@ -218,6 +218,8 @@ export default {
       if (!this.$ws) {
         throw new Error('未引入ws-client')
       }
+      this.wsErrorMsg = ''
+      this.status = ''
       this.visible = isShowDialog
       let data = formData
       if (data.database_type === 'mq' && (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string')) {
@@ -245,7 +247,7 @@ export default {
           }
           self.$emit('receive', testData)
         }
-      }, 800)
+      }, 8000)
       callback = () => {
         this.$ws.send(msg)
       }

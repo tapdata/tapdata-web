@@ -231,8 +231,6 @@ const en = {
       }
     },
     verifyConfirm: 'Are you sure to delete JS verify logic',
-    deleteMessageFieldConfirm:
-      'Are you sure you want to delete the custom field? After deletion, it cannot be restored',
     comfirm: 'Are you sure you want to ',
     operationSuccuess: 'Operation succuess.',
     modifyName: 'Modify name',
@@ -815,7 +813,7 @@ const en = {
     cell: {
       validate: {
         empty_name: 'Name is required.',
-
+        empty_message_field_name_and_type: 'Message body field name and type are required',
         none_setting: 'Settings cannot be none.',
         none_stage: 'Must have one stage.',
         none_data_node: 'At least 2 data node in graph',
@@ -1316,6 +1314,10 @@ const en = {
               placeholder: 'Enter or choose target path field.'
             }
           }
+        },
+        transform: {
+          name: 'Transform',
+          tip: 'Transform Node'
         }
       },
       link: {
@@ -1929,7 +1931,7 @@ const en = {
       transform: {
         fieldName: 'Field name',
         messageBody: 'Message body',
-        isDrag: 'Is Drag it',
+        dragSort: 'Support drag sort',
         addField: 'Add Field',
         name: 'Name',
         existName: 'Name already exists.Redefine',
@@ -1943,7 +1945,8 @@ const en = {
         empty: 'Cannot be empty',
         exist: 'Already exists',
         noSameNameandType: 'The name cannot be the same as the type',
-        specialSymbols: 'Special symbols are not allowed'
+        specialSymbols: 'Special symbols are not allowed',
+        deleteFieldConfirm: 'Are you sure you want to delete the field? Cannot recover after deletion'
       }
     },
     error: {

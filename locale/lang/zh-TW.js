@@ -789,7 +789,7 @@ const tc = {
     cell: {
       validate: {
         empty_name: '名稱必填.',
-
+        empty_message_field_name_and_type: '消息體欄位名稱和類型必填',
         none_setting: '設置不能為空.',
         none_stage: '至少由一個節點.',
         none_data_node: '至少有兩個數據節點',
@@ -1882,7 +1882,7 @@ const tc = {
       transform: {
         fieldName: '欄位名',
         messageBody: '消息體',
-        isDrag: '是否拖拽',
+        dragSort: '支持拖拽排序',
         addField: '添加欄位',
         name: '名稱',
         existName: '名稱已存在，請重新定義',
@@ -1896,7 +1896,9 @@ const tc = {
         empty: '不能為空',
         exist: '已存在',
         noSameNameandType: '名稱不能和類型一樣',
-        specialSymbols: '不允許使用特殊符號'
+        specialSymbols: '不允許使用特殊符號',
+        deleteFieldConfirm: '確實要删除欄位嗎？删除後不能恢復',
+
       }
     },
     error: {

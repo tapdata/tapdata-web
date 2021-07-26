@@ -792,6 +792,7 @@ const cn = {
     cell: {
       validate: {
         empty_name: '名称必填.',
+        empty_message_field_name_and_type: '消息体字段名称和类型必填',
         none_setting: '设置不能为空.',
         none_stage: '至少有一个节点.',
         none_data_node: '至少有两个数据节点',
@@ -1287,6 +1288,10 @@ const cn = {
               placeholder: '请选择或创建写入路径字段'
             }
           }
+        },
+        transform: {
+          name: '数据转换',
+          tip: '数据转换节点'
         }
       },
       link: {
@@ -1888,7 +1893,7 @@ const cn = {
       transform: {
         fieldName: '字段名',
         messageBody: '消息体',
-        isDrag: '是否拖拽',
+        dragSort: '支持拖拽排序',
         addField: '添加字段',
         name: '名称',
         existName: '名称已存在，请重新定义',
@@ -1902,7 +1907,8 @@ const cn = {
         empty: '不能为空',
         exist: '已存在',
         noSameNameandType: '名称不能和类型一样',
-        specialSymbols: '不允许使用特殊符号'
+        specialSymbols: '不允许使用特殊符号',
+        deleteFieldConfirm: '确实要删除字段吗？删除后不能恢复'
       }
     },
     error: {
