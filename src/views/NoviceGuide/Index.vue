@@ -240,7 +240,8 @@ export default {
         }
       ],
       sourceForm: {
-        id: '',
+        id: '', // 连接id，创建连接后才有
+        initId: '', // 初始化数据库，返回的id
         database_type: 'mysql',
         name: '',
         database_host: '',
@@ -440,7 +441,8 @@ export default {
             database_name: data.db,
             database_username: data.databaseUsername,
             database_password: data.databasePassword,
-            database_schema: data.schema
+            database_schema: data.schema,
+            initId: data.id
           }
           this.createConnection()
         })
@@ -459,7 +461,8 @@ export default {
         submit: true,
         isUrl: true,
         agentType: 'Cloud',
-        connection_type: this.step === 2 ? 'target' : 'source'
+        connection_type: this.step === 2 ? 'target' : 'source',
+        initId: this.sourceForm.initId
       })
       delete params.id
       if (params.database_type === 'mongodb') {

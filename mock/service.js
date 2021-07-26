@@ -252,6 +252,11 @@ module.exports = Object.assign({}, dataflow, connection, Messages, {
     msg: 'ok',
     data: {}
   },
+  '/api/tcm/connection/delete': {
+    code: 'ok',
+    msg: 'ok',
+    data: {}
+  },
   '/api/tcm/orders': {
     code: 'ok',
     data: {

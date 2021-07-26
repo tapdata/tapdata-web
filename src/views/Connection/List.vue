@@ -314,10 +314,11 @@ export default {
           try {
             await this.$axios.delete(`tm/api/Connections/${item.id}?name=${item.name}`)
             if (item.agentType === 'Cloud') {
-              // 新手引导创建的连接，释放资源
+              // 释放资源
               this.$axios
-                .post('api/tcm/orders/cancel', {
-                  instanceId: item.id
+                .post('api/tcm/connection/delete', {
+                  type: item.connection_type,
+                  databaseType: item.database_type
                 })
                 .then(() => {
                   this.$message.success('删除成功')
