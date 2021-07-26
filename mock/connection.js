@@ -159,7 +159,8 @@ module.exports = {
         loadCount: Random.integer(0, 100),
         'loadFieldsStatus|1': ['loading', 'finished'],
         tableCount: Random.integer(0, 100),
-        username: '@name'
+        username: '@name',
+        'agentType|1': ['Cloud', '']
       }
     ]
   },

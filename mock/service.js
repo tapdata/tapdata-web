@@ -66,26 +66,65 @@ const agent = {
     'updataStatus|1': ['preparing', 'downloading', 'upgrading', 'done', 'fail'],
     updateMsg: '',
     updateTime: ''
-  }
+  },
+  'agentType|1': ['Cloud', '']
 }
 module.exports = Object.assign({}, dataflow, connection, {
   '/tm/api/users/self': {
-    code: 'ok',
-    message: 'ok',
     data: {
-      //mock用户
-      token:
-        'Y3VzdG9tSWQ9Q0lEQy1BLWJkMGQ1MDBkMDFkMTQ4N2JhMzk1ZDAxOTNkYWFkMjdjJnVzZXJJZD1DSURDLVUtY2Q4ZTAxYTMyNWVhNGViMGJjZjBiODNmOTczZDVkOWYmYWRtaW49MCZ1c2VybmFtZT15aXpoaWZlaWRpZTEyMw==',
-      username: 'yizhifeidie123',
-      customerType: '政企集团客户',
-      nickname: '12345678902@123.com',
-      type: 0,
-      userStatus: 1,
+      account_status: 1,
+      accesscode: '54ef0f8245fef4bec05524bc9029efb8',
+      username: '13025460560',
+      email: '60b08aaea11ba4bb3f867142@custom.com',
+      emailVerified: true,
+      id: '60bed757ad41c00010b55152',
+      userId: '60b08aaea11ba4bb3f867142',
+      customId: '60b08aaea11ba4bb3f867142',
+      isPrimary: '0',
+      role: 0,
+      user_id: '60bda0204c0811001009f41a',
+      isCompleteGuide: true,
+      last_updated: '2021-06-16T04:26:50.007Z',
+      createTime: '2021-06-08T02:35:03.116Z',
+      roleMappings: [
+        {
+          id: '60bed757ad41c00010b55153',
+          principalType: 'USER',
+          principalId: '60bed757ad41c00010b55152',
+          roleId: '5cda998c39a8c094a56811cf',
+          role: {
+            description: 'default role for cloud users',
+            name: 'cloud default',
+            register_user_default: true,
+            user_id: null,
+            id: '5cda998c39a8c094a56811cf',
+            modified: '2021-07-23T08:44:01.029Z',
+            created: '2021-07-23T08:44:01.029Z'
+          }
+        },
+        {
+          id: '60bed757ad41c00010b55154',
+          principalType: 'USER',
+          principalId: '60bed757ad41c00010b55152',
+          roleId: '5d31ae1ab953565ded04badd',
+          role: {
+            created: '2021-06-07T11:22:39.175Z',
+            description: '新注册用户的默认角色',
+            modified: '2021-07-22T07:39:42.745Z',
+            name: '新用户默认角色',
+            register_user_default: true,
+            user_id: '60bda0204c0811001009f41a',
+            id: '5d31ae1ab953565ded04badd'
+          }
+        }
+      ],
       guideData: {
         noShow: true,
-        updateTime: 1627285178886
+        updateTime: 1627288426187
       }
-    }
+    },
+    code: 'ok',
+    msg: 'ok'
   },
   '/tm/api/users/:id': {
     code: 'ok',
@@ -206,6 +245,11 @@ module.exports = Object.assign({}, dataflow, connection, {
       })
       return map
     }
+  },
+  '/api/tcm/orders/cancel': {
+    code: 'ok',
+    msg: 'ok',
+    data: {}
   },
   '/api/tcm/orders': {
     code: 'ok',
