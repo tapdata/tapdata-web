@@ -254,7 +254,7 @@ export default {
       sourceConnection: {},
       taskConfig: {},
       taskForm: {
-        type: '',
+        type: 'initial_sync+cdc',
         selectSourceArr: []
       },
       taskTypeItems: [
@@ -438,8 +438,8 @@ export default {
             database_host: data.host,
             database_port: data.port,
             database_name: data.db,
-            database_username: data.username,
-            database_password: data.password,
+            database_username: data.databaseUsername,
+            database_password: data.databasePassword,
             database_schema: data.schema
           }
           this.createConnection()
