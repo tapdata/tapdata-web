@@ -25,5 +25,6 @@ export const TYPEMAP = {
   tcp_udp: 'TCP/IP',
   kudu: 'KUDU',
   hbase: 'HBase',
-  mq: 'MQ'
+  mq: 'MQ',
+  greenplum: 'Greenplum'
 }
