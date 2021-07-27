@@ -38,7 +38,7 @@
         </ul>
         <div class="connection-table__empty" v-if="listData.length < 1">
           <i class="el-icon-folder-opened"></i>
-          <span class="ml-1" v-if="!isSearching">暂无数据</span>
+          <span class="ml-1">暂无数据</span>
         </div>
       </div>
     </div>
@@ -188,9 +188,10 @@ export default {
       }
     },
     toCenter() {
-      if (this.$route.name === 'systemNotice') {
+      if (this.$route.name === 'SystemNotice') {
         return
       }
+      debugger
       this.$router.push({ name: 'SystemNotice' })
     }
   }
