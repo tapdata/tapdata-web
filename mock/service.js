@@ -66,7 +66,8 @@ const agent = {
     downloadUrl: 'http://resource.tapdata.net/package/feagent/v1.0.2/',
     'updataStatus|1': ['preparing', 'downloading', 'upgrading', 'done', 'fail'],
     updateMsg: '',
-    updateTime: ''
+    updateTime: '',
+    'pingTime|1': [1626874131176, '']
   },
   'agentType|1': ['Cloud', '']
 }
