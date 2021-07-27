@@ -44,6 +44,14 @@ const routes = [
           }
         ]
       },
+      {
+        path: '/systemNotice',
+        name: 'SystemNotice',
+        component: () => import('../views/Workbench/SystemNotice.vue'),
+        meta: {
+          title: '系统通知'
+        }
+      },
       // {
       // 	path: '/dashboard',
       // 	name: 'Dashboard',
@@ -144,6 +152,14 @@ const routes = [
         meta: {
           title: '操作日志',
           icon: 'operationLog'
+        }
+      },
+      {
+        path: '/noviceGuide',
+        name: 'NoviceGuide',
+        component: () => import(/* webpackChunkName: "instance" */ '../views/NoviceGuide/Index.vue'),
+        meta: {
+          title: '新手引导'
         }
       }
     ]

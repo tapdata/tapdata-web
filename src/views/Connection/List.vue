@@ -58,7 +58,9 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip label="连接信息" prop="connectionUrl" min-width="150"></ElTableColumn>
+        <ElTableColumn show-overflow-tooltip label="连接信息" prop="connectionUrl" min-width="150">
+          <template slot-scope="scope">{{ scope.row.connectionUrl }}</template>
+        </ElTableColumn>
         <ElTableColumn label="状态">
           <template slot-scope="scope">
             <StatusTag type="text" target="connection" :status="scope.row.status"></StatusTag>
@@ -154,7 +156,6 @@
 }
 </style>
 <script>
-import { delayTrigger, toRegExp } from '../../util'
 import { CONNECTION_STATUS_MAP, SUPPORT_DB } from '../../const'
 import StatusTag from '../../components/StatusTag'
 import Preview from './Preview.vue'
@@ -205,6 +206,7 @@ export default {
       })
     },
     fetch(pageNum, debounce) {
+      const { delayTrigger, toRegExp } = this.$util
       delayTrigger(() => {
         this.loading = true
         let current = pageNum || this.page.current
@@ -311,8 +313,21 @@ export default {
         if (resFlag) {
           try {
             await this.$axios.delete(`tm/api/Connections/${item.id}?name=${item.name}`)
-            this.$message.success('删除成功')
-            this.fetch()
+            if (item.agentType === 'Cloud') {
+              // 释放资源
+              this.$axios
+                .post('api/tcm/connection/delete', {
+                  type: item.connection_type,
+                  databaseType: item.database_type
+                })
+                .then(() => {
+                  this.$message.success('删除成功')
+                  this.fetch()
+                })
+            } else {
+              this.$message.success('删除成功')
+              this.fetch()
+            }
           } catch (error) {
             // 删除失败
             let errorTip = '删除失败'
@@ -343,6 +358,7 @@ export default {
             status: 'testing'
           })
           this.$refs.test.start(data)
+          this.fetch()
         } catch (error) {
           this.$message.error(error?.response?.msg || '测试连接失败')
         }
@@ -351,6 +367,12 @@ export default {
     },
     receiveTestData(data) {
       if (!data.status || data.status === null) return
+      let status = data.status
+      if (status === 'ready') {
+        this.$message.success('连接测试有效')
+      } else {
+        this.$message.error('连接测试无效')
+      }
       this.fetch()
     },
     preview(id, type) {

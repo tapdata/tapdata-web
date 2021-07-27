@@ -44,7 +44,10 @@ import {
   Popover,
   Tabs,
   TabPane,
-  Transfer
+  Transfer,
+  Steps,
+  Step,
+  Badge
 } from 'element-ui'
 
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
@@ -117,3 +120,6 @@ Vue.use(Popover)
 Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Transfer)
+Vue.use(Badge)
+Vue.use(Steps)
+Vue.use(Step)

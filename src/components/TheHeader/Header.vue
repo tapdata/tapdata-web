@@ -12,6 +12,7 @@
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>联系我们</span>
         </div>
+        <NotificationPopover class="mr-6"></NotificationPopover>
         <ElDropdown class="menu-user" placement="bottom" @command="command">
           <!--					<el-button class="menu-button" size="mini">-->
           <!--						{{ user.username }}-->
@@ -24,6 +25,7 @@
           <ElDropdownMenu slot="dropdown">
             <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
             <ElDropdownItem command="home"> 官网 </ElDropdownItem>
+            <ElDropdownItem command="guide"> 新手引导 </ElDropdownItem>
             <ElDropdownItem command="signOut"> 退出登录 </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
@@ -34,37 +36,84 @@
       <HeaderCustomerService v-model="isShowCustomerService"></HeaderCustomerService>
       <!-- agent断开弹窗 -->
       <!-- <AgentFail v-model="agentVisible" :isClose="isClose"></AgentFail> -->
-      <!-- 新手指引 -->
-      <NoviceGuide v-model="guideVisible" ref="noviceGuide"></NoviceGuide>
+
+      <el-dialog
+        class="novice-guide-dialog"
+        :show-close="false"
+        :close-on-click-modal="false"
+        :visible.sync="guideVisible"
+        width="50%"
+        top="30vh"
+      >
+        <div class="guide-dialog__content text-center">
+          <div class="guide-mark">
+            <img src="../../../public/images/guide/guide_mark.png" alt="" />
+          </div>
+          <div class="mt-5 fs-3 text-white">
+            <span>Hi，欢迎使用</span>
+            <span class="color-primary">Tapdata</span>
+            <span class="ml-1">Cloud</span>
+          </div>
+          <div class="mt-3 fs-6 text-white position-relative inline-block">
+            我们为您准备了详细的新手引导教程，方便您更快上手哦～
+            <el-checkbox v-model="noShow" class="no-show-checkbox text-white position-absolute">不再显示</el-checkbox>
+          </div>
+          <div class="guide-operation flex justify-center mt-8">
+            <img src="../../../public/images/guide/guid_no.png" alt="" @click="closeGuideDialog" />
+            <img class="ml-9" src="../../../public/images/guide/guid_yes.png" alt="" @click="toGuidePage" />
+          </div>
+        </div>
+      </el-dialog>
     </div>
   </ElHeader>
 </template>
 <script>
 import HeaderCustomerService from './HeaderCustomerService'
 // import AgentFail from './AgentFail';
-import NoviceGuide from '../../views/GuidePage/NoviceGuide'
+import NotificationPopover from '@/views/Workbench/NotificationPopover'
 // import ws from '../../plugins/ws.js';
 import VIcon from '@/components/VIcon'
 
 export default {
-  components: { HeaderCustomerService, NoviceGuide, VIcon },
+  components: { HeaderCustomerService, VIcon, NotificationPopover },
   data() {
     return {
       user: window.__USER_INFO__ || {},
       isShowCustomerService: false,
-      guideVisible: false, // 指引窗
+      guideVisible: false, // 新手指引模态窗
       isClose: false,
-      btnLoading: false
+      btnLoading: false,
+      noShow: false // 不再显示新手引导
     }
   },
+  created() {
+    this.init()
+  },
   methods: {
-    showGuide(key) {
-      this.command('create', key)
+    init() {
+      this.getTmUser()
+    },
+    getTmUser() {
+      this.$axios.get('tm/api/users/self').then(data => {
+        if (data) {
+          window.__USER_SELF_INFO__ = {
+            id: data.id
+          }
+          this.noShow = data?.guideData?.noShow
+          // 不再显示
+          if (
+            !data?.guideData?.noShow &&
+            (new Date().getTime() - (data?.guideData?.updateTime ?? 0)) / 1000 / 3600 > 24
+          ) {
+            this.command('guide')
+          }
+        }
+      })
     },
     createTask() {
       this.$refs.noviceGuide?.goCreateTask?.()
     },
-    command(command, key) {
+    command(command) {
       // let downloadUrl = '';
       switch (command) {
         case 'workbench':
@@ -88,20 +137,44 @@ export default {
             }
           })
           break
-        case 'create':
-          //判断是否有实例
-          this.guideVisible = true // 显示指引窗
-          if (key) {
-            this.$refs.noviceGuide?.nextFnc?.(key)
-          }
-          break
+        // case 'create':
+        //   //判断是否有实例
+        //   this.guideVisible = true // 显示指引窗
+        //   if (key) {
+        //     this.$refs.noviceGuide?.nextFnc?.(key)
+        //   }
+        //   break
         case 'toCommunity':
           window.open('https://ask.tapdata.net/', '_blank')
           break
         case 'source-center':
           window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
           break
+        case 'guide':
+          this.guideVisible = true
+          break
       }
+    },
+    closeGuideDialog() {
+      this.guideVisible = false
+      this.updateUser()
+    },
+    toGuidePage() {
+      this.guideVisible = false
+      this.updateUser()
+      if (this.$route.name !== 'NoviceGuide') {
+        this.$router.push({
+          name: 'NoviceGuide'
+        })
+      }
+    },
+    updateUser() {
+      this.$axios.patch('tm/api/users/' + window.__USER_SELF_INFO__?.id, {
+        guideData: {
+          noShow: this.noShow,
+          updateTime: new Date().getTime()
+        }
+      })
     }
   }
 }
@@ -204,5 +277,33 @@ export default {
   justify-content: space-between;
   width: 100%;
   height: 68px !important;
+}
+.dfs-header__dialog {
+  .novice-guide-dialog {
+    ::v-deep {
+      .el-dialog {
+        background-color: unset;
+        border: none;
+        box-shadow: unset;
+      }
+    }
+    .guide-mark {
+      img {
+        width: 67px;
+        height: 67px;
+      }
+    }
+    .guide-operation {
+      img {
+        width: 195px;
+        height: 56px;
+        cursor: pointer;
+      }
+    }
+    .no-show-checkbox {
+      top: 30px;
+      right: 0;
+    }
+  }
 }
 </style>

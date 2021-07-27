@@ -47,13 +47,25 @@
       <El-table class="instance-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
         <ElTableColumn min-width="200px" label="实例ID/名称">
           <template slot-scope="scope">
-            <ElLink class="agent-link" type="primary" @click="handleDetails(scope.row)">{{ scope.row.id }}</ElLink>
-            <ClipButton :value="scope.row.id"></ClipButton>
-            <InlineInput
-              style="display: block"
-              :value="scope.row.name"
-              @save="updateName($event, scope.row.id)"
-            ></InlineInput>
+            <div class="flex">
+              <div>
+                <ElLink
+                  class="agent-link"
+                  :type="scope.row.agentType === 'Cloud' ? '' : 'primary'"
+                  @click="handleDetails(scope.row)"
+                  >{{ scope.row.id }}</ElLink
+                >
+                <ClipButton :value="scope.row.id"></ClipButton>
+                <InlineInput
+                  style="display: block"
+                  :value="scope.row.name"
+                  @save="updateName($event, scope.row.id)"
+                ></InlineInput>
+              </div>
+              <div class="flex align-center">
+                <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">仅供测试使用</span>
+              </div>
+            </div>
           </template>
         </ElTableColumn>
         <ElTableColumn label="状态" width="120">
@@ -86,7 +98,7 @@
           <template slot-scope="scope">
             <div class="flex align-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
-              <template v-if="scope.row.spec && version && scope.row.spec.version !== version">
+              <template v-if="showUpgradeIcon(scope.row)">
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
                   <img
                     v-if="!scope.row.tmInfo.updateStatus || scope.row.tmInfo.updateStatus === 'done'"
@@ -120,17 +132,26 @@
         </ElTableColumn>
         <ElTableColumn label="操作" width="120" fixed="right">
           <template slot-scope="scope">
-            <ElLink type="primary" class="mr-2" :disabled="!!scope.row.deployDisable" @click="toDeploy(scope.row)"
+            <ElLink
+              type="primary"
+              class="mr-2"
+              :disabled="scope.row.agentType === 'Cloud' || !!scope.row.deployDisable"
+              @click="toDeploy(scope.row)"
               >部署</ElLink
             >
             <ElLink
               type="primary"
               class="mr-2"
-              :disabled="scope.row.status !== 'Running'"
+              :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Running'"
               @click="handleStop(scope.row)"
               >停止</ElLink
             >
-            <ElLink type="danger" class="mr-2" @click="handleDel(scope.row)" :disabled="scope.row.status !== 'Offline'"
+            <ElLink
+              type="danger"
+              class="mr-2"
+              @click="handleDel(scope.row)"
+              :loading="delLoading"
+              :disabled="delBtnDisabled(scope.row)"
               >删除</ElLink
             >
           </template>
@@ -158,7 +179,7 @@
           Agent版本有更新，您可以通过以下方式将您的Agent升级到最新版本。升级过程中将无法运行任务。
         </div>
         <div class="dialog-btn flex justify-evenly mt-6">
-          <div class="text-center">
+          <div class="text-center" v-if="showAutoUpgrade">
             <ElButton type="primary" :disabled="disabledAuautoUpgradeBtn" @click="autoUpgradeFnc">自动升级</ElButton>
             <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
               (Agent离线时无法使用自动升级)
@@ -187,7 +208,6 @@
 </template>
 
 <script>
-import { delayTrigger } from '../../util'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
@@ -209,6 +229,7 @@ export default {
   data() {
     return {
       loading: true,
+      delLoading: false,
       searchParams: {
         status: '',
         keyword: ''
@@ -255,6 +276,14 @@ export default {
     },
     disabledAuautoUpgradeBtn() {
       return !!(this.selectedRow?.status !== 'Running')
+    },
+    showAutoUpgrade() {
+      let flag = true
+      let result = ['v1.0.1-6', 'v1.0.2']
+      if (result.includes(this.selectedRow?.spec?.version)) {
+        flag = false
+      }
+      return flag
     }
   },
   watch: {
@@ -316,7 +345,7 @@ export default {
       })
     },
     fetch(pageNum, debounce, hideLoading) {
-      delayTrigger(async () => {
+      this.$util.delayTrigger(async () => {
         if (!hideLoading) {
           this.loading = true
         }
@@ -353,11 +382,9 @@ export default {
               }
               return item
             })
-            // 不存在版本号
-            if (!this.version) {
-              let getVersion = await this.getVersion(this.list[0]?.id)
-              this.version = getVersion?.version
-            }
+            // 版本号
+            let getVersion = await this.getVersion(this.list[0]?.id)
+            this.version = getVersion?.version
 
             this.page.total = data.total
             if (!list.length && data.total > 0) {
@@ -446,16 +473,36 @@ export default {
         type: 'warning'
       }).then(res => {
         if (res) {
-          this.$axios
-            .patch('api/tcm/agent/delete/' + row.id)
-            .then(() => {
-              this.$message.success('Agent 删除成功')
-              this.fetch()
-            })
-            .catch(() => {
-              this.$message.error('Agent 删除失败')
-              this.loading = false
-            })
+          if (row.agentType === 'Cloud') {
+            this.delLoading = true
+            this.$axios
+              .post('api/tcm/orders/cancel', {
+                instanceId: row.id
+              })
+              .then(() => {
+                this.$message.success('Agent 删除成功')
+                this.fetch()
+              })
+              .catch(() => {
+                this.$message.error('Agent 删除失败')
+              })
+              .finally(() => {
+                this.delLoading = false
+              })
+          } else {
+            this.$axios
+              .patch('api/tcm/agent/delete/' + row.id)
+              .then(() => {
+                this.$message.success('Agent 删除成功')
+                this.fetch()
+              })
+              .catch(() => {
+                this.$message.error('Agent 删除失败')
+              })
+              .finally(() => {
+                this.delLoading = false
+              })
+          }
         }
       })
     },
@@ -501,6 +548,10 @@ export default {
     },
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
+      if (this.selectedRow?.metric?.runningTaskNum) {
+        this.$alert('检测到您有任务正在运行，请先停止所有任务再进行升级操作!')
+        return
+      }
       this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
         this.$axios
           .post('tm/api/clusterStates/updataAgent', {
@@ -540,7 +591,7 @@ export default {
       let result
       switch (row.tmInfo.updateStatus) {
         case 'preparing':
-          result = 'Agent版本有更新，点击升级'
+          result = '自动升级中'
           break
         case 'downloading':
           result = '自动升级中'
@@ -562,6 +613,10 @@ export default {
     },
     // agent详情
     handleDetails(data) {
+      if (data.agentType === 'Cloud') {
+        return
+      }
+      // this.clearTimer()  //点详情报错 暂时注释
       this.$router.push({
         name: 'InstanceDetails',
         query: {
@@ -587,6 +642,22 @@ export default {
             })
         }
       })
+    },
+    delBtnDisabled(row) {
+      let flag = false
+      if (row.agentType === 'Cloud') {
+        flag = false
+      } else {
+        flag = row.status !== 'Offline'
+      }
+      return flag
+    },
+    showUpgradeIcon(row) {
+      let { version, agentType } = this
+      if (agentType === 'Cloud') {
+        return false
+      }
+      return !!(version && row?.tmInfo?.pingTime && row?.spec?.version !== version)
     }
   }
 }
@@ -632,6 +703,11 @@ export default {
     flex: 1;
     overflow: auto;
     border-bottom: none;
+    .agent-cloud {
+      color: #10c038;
+      border-color: #10c038;
+      background-color: #dbefd1;
+    }
   }
   .instance-table__empty {
     color: map-get($fontColor, light);
