@@ -214,6 +214,11 @@ module.exports = Object.assign({}, dataflow, connection, Messages, {
       ]
     }
   },
+  '/api/tcm/agent/delete/:id': {
+    code: 'ok',
+    data: {},
+    msg: ''
+  },
   '/api/tcm/agent/stop/:id': {
     code: 'ok',
     data: {},

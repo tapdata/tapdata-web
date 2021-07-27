@@ -632,7 +632,7 @@ export default {
     delBtnDisabled(row) {
       let flag = false
       if (row.agentType === 'Cloud') {
-        flag = true
+        flag = false
       } else {
         flag = row.status !== 'Offline'
       }
