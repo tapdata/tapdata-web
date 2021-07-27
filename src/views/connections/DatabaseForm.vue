@@ -673,7 +673,8 @@ export default {
         // 'hive',
         'tcp_udp',
         'hbase',
-        'kudu'
+        'kudu',
+        'greenplum'
       ],
       model: '',
       config: {
@@ -924,9 +925,7 @@ export default {
         if (this.model.database_type === 'mongodb') {
           editData = await this.$api('connections').customQuery([this.$route.params.id])
         } else {
-          editData = await this.$api('connections').getNoSchema(
-            this.$route.params.id
-          )
+          editData = await this.$api('connections').getNoSchema(this.$route.params.id)
         }
 
         if (
@@ -1627,11 +1626,7 @@ export default {
         }
       } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
         let result = await this.$api('tcm').getAgentCount()
-        if (
-          !result.data ||
-          !result.data.agentTotalCount ||
-          result.data.agentTotalCount <= 0
-        ) {
+        if (!result.data || !result.data.agentTotalCount || result.data.agentTotalCount <= 0) {
           this.$message.error('您尚未订购同步实例，请先订购实例')
         }
       }

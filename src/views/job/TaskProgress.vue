@@ -34,7 +34,7 @@
         <div class="progress-container__footer mt-border">
           <!-- <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">源库名称：</span>
+              <span class="footer-item__name">源库名称：</span>ya
               <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
             </el-col>
             <el-col class="footer-item" :span="12">
