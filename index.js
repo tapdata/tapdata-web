@@ -1,7 +1,7 @@
 import locale from './locale'
 import FormBuilder from './components/form-builder'
 import ConnectionTypeSelector from './components/connection-type-selector'
-//import ConnectionFormSelector from './components/connection-form'
+import ConnectionFormSelector from './components/connection-form'
 import ConnectionTest from './components/connection-test'
 import JsEditor from './components/js-editor.vue'
 
@@ -9,7 +9,7 @@ import WSClient from './plugins/ws-client'
 import * as _util from './util'
 import * as _const from './const'
 
-const components = [ConnectionTypeSelector, ConnectionTest, JsEditor]
+const components = [ConnectionTypeSelector, ConnectionFormSelector, ConnectionTest, JsEditor]
 
 const install = Vue => {
   Vue.prototype.$util = _util
@@ -40,11 +40,4 @@ const langs = locale
 export default {
   install
 }
-export {
-  langs,
-  ConnectionTypeSelector,
-  //ConnectionFormSelector,
-  ConnectionTest,
-  JsEditor,
-  WSClient
-}
+export { langs, ConnectionTypeSelector, ConnectionFormSelector, ConnectionTest, JsEditor, WSClient }

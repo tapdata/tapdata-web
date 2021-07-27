@@ -32,11 +32,22 @@ export default {
   methods: {
     getFormConfig() {
       //这里可以发请求获取到config
-      let type = 'redis'
-      let func = config[type]
-      if (func) {
-        this.schema = func(this)
+      let filter = {
+        where: {
+          databaseType: {
+            in: ['Redis']
+          }
+        }
       }
+      this.$api('ConnectionFormSchemas')
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          if (res.data) {
+            this.schema = res.data[0].obj
+          }
+        })
     },
     useEffects() {
       onFormValuesChange(form => {
