@@ -118,11 +118,29 @@
           prop="kafkaPartitionKey"
           required
         >
-          <el-input
+          <el-select
             v-model="model.kafkaPartitionKey"
+            :filterable="!schemasLoading"
+            :loading="schemasLoading"
+            default-first-option
+            clearable
+            multiple
+            allow-create
             :placeholder="$t('dataForm.form.kafka.kafkaPartitionKeyTip')"
             size="mini"
-          ></el-input>
+          >
+            <el-option
+              v-for="(item, idx) in schemas"
+              :label="`${item.table_name}`"
+              :value="item.table_name"
+              v-bind:key="idx"
+            ></el-option>
+          </el-select>
+          <!--					<el-input-->
+          <!--						v-model="model.kafkaPartitionKey"-->
+          <!--						:placeholder="$t('dataForm.form.kafka.kafkaPartitionKeyTip')"-->
+          <!--						size="mini"-->
+          <!--					></el-input>-->
         </el-form-item>
       </el-form>
     </div>
@@ -327,6 +345,9 @@ export default {
 
     setData(data, cell, dataNodeInfo) {
       if (data) {
+        if (typeof data.kafkaPartitionKey === 'string') {
+          data.kafkaPartitionKey = data.kafkaPartitionKey.split(',')
+        }
         _.merge(this.model, data)
       }
       this.mergedSchema = cell.getOutputSchema()
@@ -340,6 +361,7 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Kafka'
+      result.kafkaPartitionKey = result.kafkaPartitionKey.join(',')
       return result
     },
 
