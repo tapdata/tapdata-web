@@ -20,6 +20,7 @@ let formCheckStatus = null
 export default {
   name: 'ConnectionFormSelector',
   components: { FormProvider, SchemaField },
+  props: ['databaseType'],
   data() {
     return {
       form: createForm({ effects: this.useEffects }),
@@ -35,7 +36,7 @@ export default {
       let filter = {
         where: {
           databaseType: {
-            in: ['Redis']
+            in: [this.databaseType]
           }
         }
       }
@@ -45,9 +46,16 @@ export default {
         })
         .then(res => {
           if (res.data) {
-            this.schema = res.data[0].obj
+            this.schema = res.data[0]
+
+            this.schema.properties = this.handleFormSchema(this.schema)
           }
         })
+    },
+    handleFormSchema(schema) {
+      let func = config['defaultConfig']
+      let defaultModelConfig = func ? func(this) : ''
+      return Object.assign({}, defaultModelConfig, schema.properties)
     },
     useEffects() {
       onFormValuesChange(form => {
