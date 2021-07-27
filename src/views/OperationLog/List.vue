@@ -120,8 +120,6 @@
 </template>
 
 <script>
-import { delayTrigger, toRegExp } from '../../util'
-
 export default {
   data() {
     return {
@@ -262,6 +260,7 @@ export default {
     },
 
     fetch(pageNum = 1, debounce = 200, hideLoading) {
+      const { delayTrigger, toRegExp } = this.$util
       delayTrigger(async () => {
         if (!hideLoading) {
           this.loading = true

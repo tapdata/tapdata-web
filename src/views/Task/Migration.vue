@@ -197,7 +197,6 @@
 }
 </style>
 <script>
-import { delayTrigger, toRegExp } from '../../util'
 import { TASK_STATUS_MAP } from '../../const'
 import StatusTag from '../../components/StatusTag'
 
@@ -332,6 +331,7 @@ export default {
       })
     },
     fetch(pageNum, debounce) {
+      const { delayTrigger, toRegExp } = this.$util
       delayTrigger(() => {
         this.loading = true
         let current = pageNum || this.page.current
