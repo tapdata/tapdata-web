@@ -1072,7 +1072,7 @@ export default {
             if ((item.type === 'hbase' || item.database_type === 'hbase') && this.sync_type !== 'initial_sync') {
               checkSetting = false
             }
-            if (item.outputLanes.length && item.databaseType === 'greenplum' && this.sync_type !== 'initial_sync') {
+            if (item.outputLanes.length && (item.databaseType === 'greenplum' || item.database_type === 'greenplum') && this.sync_type !== 'initial_sync') {
               greentplumSettingFalg = false
             }
           })
