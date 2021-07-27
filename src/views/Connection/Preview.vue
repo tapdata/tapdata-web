@@ -235,6 +235,10 @@ export default {
                 node.value = 'UTC +' + timezoneNumber
               }
             }
+          } else if (node.field === 'plain_password') {
+            if (data.agentType === 'Cloud') {
+              node.value = '测试连接的密码与账号一致'
+            }
           }
           return node
         })

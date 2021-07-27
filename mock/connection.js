@@ -330,7 +330,8 @@ module.exports = {
             indices: []
           }
         ]
-      }
+      },
+      'agentType|1': ['Cloud', '']
     },
     code: 'ok',
     msg: 'ok'
