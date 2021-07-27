@@ -544,7 +544,8 @@ export default {
         kafka: this.$t('editor.cell.data_node.kafkaText'),
         mariadb: 'mariadb',
         'mysql pxc': 'mysql pxc',
-        message_processor: this.$t('editor.cell.processor.transform.tip')
+        message_processor: this.$t('editor.cell.processor.transform.tip'),
+        protobuf_convert_processor: this.$t('editor.cell.processor.transform.tip')
       },
       flow: {
         name: '',

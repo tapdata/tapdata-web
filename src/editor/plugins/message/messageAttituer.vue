@@ -7,6 +7,7 @@
             v-model="model.name"
             class="form-item-width"
             :placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
+            @change="changeNameFnc"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -603,6 +604,9 @@ export default {
         mapping: getMapping,
         schema: getSchema
       }
+    },
+    changeNameFnc() {
+      this.setConfig()
     }
   }
 }
