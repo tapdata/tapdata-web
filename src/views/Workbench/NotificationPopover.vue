@@ -191,7 +191,6 @@ export default {
       if (this.$route.name === 'SystemNotice') {
         return
       }
-      debugger
       this.$router.push({ name: 'SystemNotice' })
     }
   }
