@@ -7,6 +7,31 @@ export const uuid = function () {
     return v.toString(16)
   })
 }
+
 export const getConnectionTypeImg = function (type) {
   return require(`./assets/images/connection-type/${type}.png`)
+}
+
+let timeout = null
+export function delayTrigger(func, t) {
+  if (t) {
+    if (timeout) {
+      window.clearTimeout(timeout)
+    }
+    timeout = setTimeout(() => {
+      func && func()
+      timeout = null
+    }, t)
+  } else {
+    func && func()
+  }
+}
+
+export function toRegExp(word) {
+  let arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
+  for (let i = 0; i < arr.length; i++) {
+    let str = '\\' + arr[i]
+    word = word.replace(new RegExp(str, 'g'), '\\' + arr[i])
+  }
+  return word
 }
