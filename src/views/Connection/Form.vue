@@ -1317,7 +1317,7 @@ export default {
           }
           if (params.database_type === 'mongodb') {
             params.fill = params.isUrl ? 'uri' : ''
-            delete params.isUrl
+            //delete params.isUrl
           }
           //rest api 数据组装
           if (params.database_type === 'rest api') {
@@ -1399,6 +1399,7 @@ export default {
               //编辑需要特殊标识 updateSchema = false editTest = true
               this.$refs.test.start(data, true, false, true)
             } else {
+              delete data.id
               this.$refs.test.start(data)
             }
           }
