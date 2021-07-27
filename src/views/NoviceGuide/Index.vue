@@ -190,12 +190,9 @@
           <img src="../../../public/images/guide/right.png" alt="" />
         </div>
         <div class="mt-6 fs-7">恭喜您完成新手引导！</div>
-        <div class="mt-2 text-black-50">
-          您的Agent试用状态将在24小时后失效 请您前往安装部署Agent 不然无法创建连接和任务哦
-        </div>
         <div class="mt-6">
           <el-button type="primary" @click="toWorkbench">返回工作台</el-button>
-          <el-button @click="toWorkbench">继续使用</el-button>
+          <el-button @click="toTaskDetail">查看任务监控</el-button>
         </div>
       </div>
     </div>
@@ -222,8 +219,10 @@ export default {
       stopAgentLoading: false, // 停用agent
       createTaskLoading: false, // 创建任务
       form: {
+        agent: {},
         source: {},
-        target: {}
+        target: {},
+        task: {}
       },
       databaseTypeItems: [
         {
@@ -619,7 +618,8 @@ export default {
       this.createTaskLoading = true
       this.$axios
         .post('tm/api/DataFlows', postData)
-        .then(() => {
+        .then(data => {
+          this.form.task = data
           this.toNext()
         })
         .finally(() => {
@@ -656,6 +656,15 @@ export default {
       this.$router.push({
         name: 'Workbench'
       })
+    },
+    toTaskDetail() {
+      let id = this.form.task.id
+      let mappingTemplate = 'cluster-clone'
+      let routeUrl = this.$router.resolve({
+        path: '/monitor',
+        query: { id: id, isMoniting: true, mapping: mappingTemplate }
+      })
+      window.open(routeUrl.href, '_blank')
     }
   }
 }
