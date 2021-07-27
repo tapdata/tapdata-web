@@ -229,20 +229,7 @@ export default {
         target: {},
         task: {}
       },
-      databaseTypeItems: [
-        {
-          label: 'MySQL',
-          value: 'mysql'
-        },
-        {
-          label: 'PostgreSQL',
-          value: 'postgres'
-        },
-        {
-          label: 'MongoDB',
-          value: 'mongodb'
-        }
-      ],
+
       sourceForm: {
         id: '', // 连接id，创建连接后才有
         initId: '', // 初始化数据库，返回的id
@@ -304,6 +291,25 @@ export default {
         result = '待启动'
       } else {
         result = '启动中'
+      }
+      return result
+    },
+    databaseTypeItems() {
+      let result = [
+        {
+          label: 'MySQL',
+          value: 'mysql'
+        },
+        {
+          label: 'PostgreSQL',
+          value: 'postgres'
+        }
+      ]
+      if (this.step === 2) {
+        result.push({
+          label: 'MongoDB',
+          value: 'mongodb'
+        })
       }
       return result
     }
@@ -492,6 +498,10 @@ export default {
         connection_type: this.step === 2 ? 'target' : 'source',
         initId: this.sourceForm.initId
       })
+      if (params.database_type === 'mongodb') {
+        params.database_host += ':' + params.database_port
+        params.database_port = ''
+      }
       delete params.id
       if (params.database_type === 'mongodb') {
         params.fill = params.isUrl ? 'uri' : ''
@@ -534,6 +544,11 @@ export default {
           if (!sourceConnection) {
             this.sourceForm.name = '' // 标记为空
             return
+          }
+          if (this.sourceForm.database_type === 'mongodb') {
+            let arr = sourceConnection.database_host?.split(':')
+            sourceConnection.database_host = arr[0] ?? ''
+            sourceConnection.database_port = arr[1] ?? ''
           }
           for (let key in this.sourceForm) {
             if (key !== 'database_type') {
