@@ -40,7 +40,7 @@
               <span class="status-icon mr-2"></span>
               <span class="fw-bolder">{{ agentStatus }}</span>
             </div>
-            <div class="agent-desc mt-4 ml-3">描述：{{ agent.name || '无' }}</div>
+            <div class="agent-desc mt-4 ml-3" :class="[{ invisible: !agent.name }]">名称：{{ agent.name }}</div>
             <div class="ml-3 mt-2 text-black-50">
               测试Agent的同步速度限制为最多200行/S，您自己部署安装的Agent不受该限制。
             </div>
@@ -69,7 +69,12 @@
           </div>
         </div>
         <div class="operation mt-7">
-          <el-button type="primary" size="mini" :disabled="agent.status !== 'Running'" @click="toNext"
+          <el-button
+            type="primary"
+            size="mini"
+            :disabled="agent.status !== 'Running'"
+            :loading="agentNextLoading"
+            @click="toNext"
             >下一步</el-button
           >
         </div>
@@ -278,6 +283,16 @@ export default {
     }
   },
   computed: {
+    agentNextLoading() {
+      let { agent } = this
+      let flag = false
+      if (!agent?.status) {
+        flag = false
+      } else {
+        flag = agent?.status !== 'Running'
+      }
+      return flag
+    },
     agentStatus() {
       let result
       let { agent } = this
@@ -380,8 +395,16 @@ export default {
       if (isTimer) {
         return
       }
-      let id = this.form.source?.id
+      // let id = this.form.source?.id
+      let { id, database_username } = this.form.source ?? {}
       this.$axios.get(`tm/api/Connections/${id}/customQuery?schema=true`).then(data => {
+        this.sourceData = [
+          {
+            label: database_username,
+            key: database_username,
+            id: database_username
+          }
+        ]
         let tables = data.schema?.tables || []
         tables = tables.sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1))
         if (tables?.length) {
@@ -526,7 +549,7 @@ export default {
       let source = this.form.source
       let target = this.form.target
       let postData = {
-        name: 'task_' + new Date().getTime().toString(16),
+        name: `${source.database_type}_to_${target.database_type}_` + new Date().getTime().toString(16),
         description: '',
         status: 'paused',
         executeMode: 'normal',
@@ -747,6 +770,9 @@ export default {
         .el-progress-circle {
           width: 57px !important;
           height: 57px !important;
+        }
+        .el-progress__text {
+          font-size: 28px;
         }
       }
     }
