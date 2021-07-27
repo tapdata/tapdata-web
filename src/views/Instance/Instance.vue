@@ -146,7 +146,12 @@
               @click="handleStop(scope.row)"
               >停止</ElLink
             >
-            <ElLink type="danger" class="mr-2" @click="handleDel(scope.row)" :disabled="delBtnDisabled(scope.row)"
+            <ElLink
+              type="danger"
+              class="mr-2"
+              @click="handleDel(scope.row)"
+              :loading="delLoading"
+              :disabled="delBtnDisabled(scope.row)"
               >删除</ElLink
             >
           </template>
@@ -224,6 +229,7 @@ export default {
   data() {
     return {
       loading: true,
+      delLoading: false,
       searchParams: {
         status: '',
         keyword: ''
@@ -467,28 +473,36 @@ export default {
         type: 'warning'
       }).then(res => {
         if (res) {
-          this.$axios
-            .patch('api/tcm/agent/delete/' + row.id)
-            .then(() => {
-              if (row.agentType === 'Cloud') {
-                // 释放资源
-                this.$axios
-                  .post('api/tcm/orders/cancel', {
-                    instanceId: row.id
-                  })
-                  .then(() => {
-                    this.$message.success('Agent 删除成功')
-                    this.fetch()
-                  })
-              } else {
+          if (row.agentType === 'Cloud') {
+            this.delLoading = true
+            this.$axios
+              .post('api/tcm/orders/cancel', {
+                instanceId: row.id
+              })
+              .then(() => {
                 this.$message.success('Agent 删除成功')
                 this.fetch()
-              }
-            })
-            .catch(() => {
-              this.$message.error('Agent 删除失败')
-              this.loading = false
-            })
+              })
+              .catch(() => {
+                this.$message.error('Agent 删除失败')
+              })
+              .finally(() => {
+                this.delLoading = false
+              })
+          } else {
+            this.$axios
+              .patch('api/tcm/agent/delete/' + row.id)
+              .then(() => {
+                this.$message.success('Agent 删除成功')
+                this.fetch()
+              })
+              .catch(() => {
+                this.$message.error('Agent 删除失败')
+              })
+              .finally(() => {
+                this.delLoading = false
+              })
+          }
         }
       })
     },
