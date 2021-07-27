@@ -146,11 +146,7 @@
               @click="handleStop(scope.row)"
               >停止</ElLink
             >
-            <ElLink
-              type="danger"
-              class="mr-2"
-              @click="handleDel(scope.row)"
-              :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Offline'"
+            <ElLink type="danger" class="mr-2" @click="handleDel(scope.row)" :disabled="delBtnDisabled(scope.row)"
               >删除</ElLink
             >
           </template>
@@ -178,7 +174,7 @@
           Agent版本有更新，您可以通过以下方式将您的Agent升级到最新版本。升级过程中将无法运行任务。
         </div>
         <div class="dialog-btn flex justify-evenly mt-6">
-          <div class="text-center">
+          <div class="text-center" v-if="showAutoUpgrade">
             <ElButton type="primary" :disabled="disabledAuautoUpgradeBtn" @click="autoUpgradeFnc">自动升级</ElButton>
             <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
               (Agent离线时无法使用自动升级)
@@ -207,7 +203,6 @@
 </template>
 
 <script>
-import { delayTrigger } from '../../util'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
@@ -275,6 +270,14 @@ export default {
     },
     disabledAuautoUpgradeBtn() {
       return !!(this.selectedRow?.status !== 'Running')
+    },
+    showAutoUpgrade() {
+      let flag = true
+      let result = ['v1.0.1-6', 'v1.0.2']
+      if (result.includes(this.selectedRow?.spec?.version)) {
+        flag = false
+      }
+      return flag
     }
   },
   watch: {
@@ -336,7 +339,7 @@ export default {
       })
     },
     fetch(pageNum, debounce, hideLoading) {
-      delayTrigger(async () => {
+      this.$util.delayTrigger(async () => {
         if (!hideLoading) {
           this.loading = true
         }
@@ -625,6 +628,15 @@ export default {
             })
         }
       })
+    },
+    delBtnDisabled(row) {
+      let flag = false
+      if (row.agentType === 'Cloud') {
+        flag = false
+      } else {
+        flag = row.status !== 'Offline'
+      }
+      return flag
     }
   }
 }
