@@ -5,8 +5,7 @@ export default function (vm) {
       labelWidth: '200px'
     },
     defaultModel: {
-      connection_type: 'source',
-      sourceType: 'selfDB'
+      connection_type: 'target'
     },
     items: [
       {
@@ -45,6 +44,11 @@ export default function (vm) {
         field: 'sourceType',
         label: '连接来源',
         options: [
+          {
+            label: 'RDS实例',
+            tip: '创建移动云内的RDS实例为来源的连接',
+            value: 'rds'
+          },
           // {
           //   label: 'ECS自建库',
           //   tip: '创建移动云内ECS自建库内的数据库为来源的连接，开通网络策略',
@@ -175,7 +179,6 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
-        disabled: false,
         label: vm.$t('dataForm.form.host'),
         dependOn: [
           {
@@ -225,18 +228,12 @@ export default function (vm) {
           }
         ]
       },
-      {
-        type: 'input',
-        field: 'database_name',
-        label: vm.$t('dataForm.form.databaseName'),
-        required: true
-      },
-      {
-        type: 'input',
-        field: 'database_owner',
-        label: vm.$t('dataForm.form.databaseOwner'),
-        required: true
-      },
+      // {
+      //   type: 'input',
+      //   field: 'database_name',
+      //   label: vm.$t('dataForm.form.databaseName'),
+      //   required: true
+      // },
       {
         type: 'input',
         field: 'database_username',
@@ -248,6 +245,21 @@ export default function (vm) {
         label: vm.$t('dataForm.form.password'),
         domType: 'password',
         showPassword: true
+      },
+      {
+        type: 'input',
+        field: 'database_owner',
+        label: vm.$t('dataForm.form.databaseOwner'),
+        required: true
+      },
+      {
+        type: 'slot',
+        slot: 'tableFilter'
+      },
+      {
+        type: 'input',
+        field: 'additionalString',
+        label: vm.$t('dataForm.form.additionalString')
       },
       {
         type: 'select',

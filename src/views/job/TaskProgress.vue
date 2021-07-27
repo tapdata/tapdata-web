@@ -6,7 +6,9 @@
       <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
-          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>
+          <ElLink class="progress-header_btn" type="primary" @click="handleInfo" v-if="completeTime !== '全量已完成'">
+            查看详情
+          </ElLink>
         </div>
         <div class="progress-container__body flex">
           <div class="progress-container__img">
@@ -15,8 +17,7 @@
           <div class="progress-container__overview ml-6">
             <el-row>
               <el-col :span="24" class="flex"
-                ><span>全量+增量同步任务进度：</span
-                ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
+                ><span>全量同步进度：</span><el-progress class="el-progress" :percentage="progressBar"></el-progress>
               </el-col>
             </el-row>
             <el-row class="mt-3">
@@ -24,10 +25,10 @@
                 <span>预计全量完成还需时间：</span>
                 <span class="ml-3 color-green">{{ completeTime }}</span>
               </el-col>
-              <el-col :span="12">
-                <span>全量状态：</span>
-                <span class="ml-3 color-green">{{ overviewStats.status }}</span>
-              </el-col>
+              <!--              <el-col :span="12">-->
+              <!--                <span>增量状态：</span>-->
+              <!--                <span class="ml-3 color-green">{{ overviewStats.currentStatus }}</span>-->
+              <!--              </el-col>-->
             </el-row>
           </div>
         </div>
@@ -54,21 +55,21 @@
           </el-row> -->
           <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">待迁移表总数：</span>
+              <span class="footer-item__name">计划迁移表数量：</span>
               <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
             </el-col>
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已完成迁移表数：</span>
+              <span class="footer-item__name">已完成迁移表数量：</span>
               <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
             </el-col>
           </el-row>
           <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">总数据量（行）：</span>
+              <span class="footer-item__name">计划迁移数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
             </el-col>
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已迁移数据量（行）：</span>
+              <span class="footer-item__name">已完成迁移数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
             </el-col>
           </el-row>
@@ -88,7 +89,9 @@
       <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'initial_sync'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
-          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>
+          <ElLink class="progress-header_btn" type="primary" @click="handleInfo" v-if="completeTime !== '全量已完成'"
+            >查看详情</ElLink
+          >
         </div>
         <div class="progress-container__body flex">
           <div class="progress-container__img">
@@ -97,8 +100,7 @@
           <div class="progress-container__overview ml-6">
             <el-row>
               <el-col :span="24" class="flex"
-                ><span>全量+增量同步任务进度：</span
-                ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
+                ><span>全量同步进度：</span><el-progress class="el-progress" :percentage="progressBar"></el-progress>
               </el-col>
             </el-row>
             <el-row class="mt-3">
@@ -106,10 +108,10 @@
                 <span>预计全量完成还需时间：</span>
                 <span class="ml-3 color-green">{{ completeTime }}</span>
               </el-col>
-              <el-col :span="12">
-                <span>全量状态：</span>
-                <span class="ml-3 color-green">{{ overviewStats.status }}</span>
-              </el-col>
+              <!--              <el-col :span="12">-->
+              <!--                <span>全量状态：</span>-->
+              <!--                <span class="ml-3 color-green">{{ overviewStats.status }}</span>-->
+              <!--              </el-col>-->
             </el-row>
           </div>
         </div>
@@ -136,21 +138,21 @@
           </el-row> -->
           <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">待迁移表总数：</span>
+              <span class="footer-item__name">计划迁移表数量：</span>
               <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
             </el-col>
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已完成迁移表数：</span>
+              <span class="footer-item__name">已完成迁移表数量：</span>
               <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
             </el-col>
           </el-row>
           <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">总数据量（行）：</span>
+              <span class="footer-item__name">计划迁移数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
             </el-col>
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已迁移数据量（行）：</span>
+              <span class="footer-item__name">已完成迁移数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
             </el-col>
           </el-row>
@@ -160,7 +162,7 @@
       <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'cdc'">
         <div class="progress-container__header flex justify-between">
           <div class="fw-bolder">任务进度概览</div>
-          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>
+          <!--          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>-->
         </div>
         <div class="progress-container__footer">
           <!-- <el-row class="footer-line">
@@ -189,17 +191,17 @@
               <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
             </el-col>
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已完成迁移表数：</span>
+              <span class="footer-item__name">已完成迁移表数量：</span>
               <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
             </el-col>
           </el-row>
           <el-row class="footer-line">
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">总数据量（行）：</span>
+              <span class="footer-item__name">计划迁移数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
             </el-col>
             <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已迁移数据量（行）：</span>
+              <span class="footer-item__name">已完成迁移数据量（行）：</span>
               <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
             </el-col>
           </el-row>
@@ -213,6 +215,7 @@
 
 // const dataFlowsAPI = factory('DataFlows')
 // let timer = null
+// import ws from '@/api/ws'
 export default {
   name: 'TaskProgress',
   props: {
@@ -235,22 +238,20 @@ export default {
     }
   },
   watch: {
-    // dataFlow: {
-    //   deep: true,
-    //   handler(data) {
-    //     this.handleData(data)
-    //   }
-    // }
+    dataFlow: {
+      deep: true,
+      immediate: true,
+      handler(data) {
+        this.handleData(data)
+      }
+    }
   },
   mounted() {
-    // this.init()
-    // this.overviewStats = this.dataFlow.overview
-    // let self = this
-    // if (timer) return
-    // timer = setInterval(() => {
-    //   self.updateDataFlow()
-    // }, 5000)
     this.handleData(this.dataFlow)
+    //及时更新输入输出的数据
+    // ws.on('watch', function (data) {
+    //   this.handleData(data)
+    // })
   },
 
   methods: {
@@ -279,18 +280,39 @@ export default {
     //     })
     // },
     handleData(data) {
-      let inputCount = data?.stats?.throughput?.inputCount
+      // let currentData = data
+      let overview = {}
+      let waitingForSyecTableNums = 0
+      let completeTime = ''
+
       if (data?.stats?.overview) {
-        let overview = data.stats.overview
+        overview = JSON.parse(JSON.stringify(data.stats.overview))
 
-        overview.waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
+        if (overview.currentStatus === undefined) {
+          this.$set(overview, 'currentStatus', '未开始')
+        }
+
+        if (overview.waitingForSyecTableNums !== undefined) {
+          waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
+        } else {
+          waitingForSyecTableNums = 0
+        }
+        overview.waitingForSyecTableNums = waitingForSyecTableNums
+
         let num = (overview.targatRowNum / overview.sourceRowNum) * 100
-        this.progressBar = num.toFixed(0) * 1
+        this.progressBar = num ? num.toFixed(2) * 1 : 0
 
-        let time = (overview.sourceRowNum - overview.targatRowNum) / inputCount
+        let now = new Date().getTime()
+        let startTime = new Date(data.runningTime).getTime(),
+          runningTime = now - startTime,
+          speed = overview.targatRowNum / runningTime
+        // lefts = Math.floor((spendTime / 1000) % 60) //计算秒数
+
+        let time = (overview.sourceRowNum - overview.targatRowNum) / speed / 1000
+
         let r = ''
         if (time) {
-          let s = parseInt(time),
+          let s = time,
             m = 0,
             h = 0,
             d = 0
@@ -306,7 +328,7 @@ export default {
               }
             }
           }
-          if (m === 0 && h == 0 && d === 0 && s < 60 && s > 0) {
+          if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
             r = 1 + '分钟'
           }
           // r = parseInt(s) + this.$t('timeToLive.s')
@@ -319,22 +341,33 @@ export default {
           if (d > 0) {
             r = parseInt(d) + '天' + r
           }
-          this.completeTime = r
-        } else {
-          this.completeTime = '全量已完成'
+          // 全量未完成 停止任务
+          if (['paused', 'error'].includes(data.status)) {
+            completeTime = '任务已停止'
+          } else {
+            completeTime = r
+          }
         }
 
-        overview.status =
-          overview.sourceTableNum === overview.waitingForSyecTableNums &&
-          overview.sourceRowNum === overview.targatRowNum
-            ? '已完成'
-            : '进行中'
-        this.overviewStats = overview
+        if (this.progressBar === 100) {
+          overview.currentStatus = '进行中'
+          completeTime = '全量已完成'
+        }
+        // 任务暂停、错误  增量状态都为停止
+        if (completeTime === '全量已完成') {
+          if (['paused', 'error'].includes(data.status)) {
+            overview.currentStatus = '已停止'
+          }
+        }
       }
+
+      this.completeTime = completeTime
+
+      this.overviewStats = overview
     },
     // 跳转详情
     handleInfo() {
-      window.open('/#/taskProgressInfo?id=' + this.dataFlow.id, '_blank')
+      window.open(location.href.split('#/')[0] + '#/taskProgressInfo?id=' + this.dataFlow.id, '_blank')
     }
   }
   // beforeDestroy() {
@@ -348,9 +381,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .task-progress {
+  height: 100%;
   padding: 24px;
+  box-sizing: border-box;
 }
 .progress-container {
+  height: 100%;
   border: 1px solid #d3d3d3;
   border-radius: 4px;
 }
@@ -395,7 +431,7 @@ export default {
 .footer-item__name {
   display: inline-block;
   color: #9c9c9c;
-  width: 200px;
+  width: 150px;
   font-size: 12px;
 }
 .footer-item__value {
