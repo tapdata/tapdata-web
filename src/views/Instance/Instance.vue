@@ -146,11 +146,7 @@
               @click="handleStop(scope.row)"
               >停止</ElLink
             >
-            <ElLink
-              type="danger"
-              class="mr-2"
-              @click="handleDel(scope.row)"
-              :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Offline'"
+            <ElLink type="danger" class="mr-2" @click="handleDel(scope.row)" :disabled="delBtnDisabled(scope.row)"
               >删除</ElLink
             >
           </template>
@@ -625,6 +621,15 @@ export default {
             })
         }
       })
+    },
+    delBtnDisabled(row) {
+      let flag = false
+      if (row.agentType === 'Cloud') {
+        flag = true
+      } else {
+        flag = row.status !== 'Offline'
+      }
+      return flag
     }
   }
 }
