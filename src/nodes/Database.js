@@ -134,7 +134,24 @@ export class Database extends NodeType {
   }
 
   validate(data) {
-    if (!data.connectionId) throw new Error(`${data.name}: ${i18n.t('editor.cell.data_node.database.none_database')}`)
+    if (!data.connectionId) return `${data.name}: ${i18n.t('editor.cell.data_node.database.none_database')}`
     return true
+  }
+
+  allowTarget(target, source, instance) {
+    if (source.databaseType === 'elasticsearch') {
+      return target.databaseType === 'kafka'
+    }
+    return (
+      target.type === 'database' &&
+      target.databaseType !== 'hbase' &&
+      instance.getConnections({
+        target: target.id
+      }).length < 1
+    )
+  }
+
+  allowSource(source) {
+    return source.type === 'database' && source.databaseType !== 'kudu'
   }
 }

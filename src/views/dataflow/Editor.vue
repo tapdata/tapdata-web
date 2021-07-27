@@ -59,7 +59,6 @@ import jsPlumbIns from './instance'
 import { mapGetters } from 'vuex'
 import { ctorTypes, nodeTypes } from '@/nodes/loader/index'
 import { statusBtMap } from '@/editor/states'
-import factory from '@/api/factory'
 import LeftSidebar from '@/views/dataflow/components/LeftSidebar'
 import { mapMutations } from 'vuex'
 import DFNode from '@/views/dataflow/components/DFNode'
@@ -73,9 +72,12 @@ import { titleChange } from '@/mixins/titleChange'
 import { showMessage } from '@/mixins/showMessage'
 import moveDataflow from './mixins/moveDataflow'
 import ws from '@/api/ws'
+import DataFlows from '@/api/DataFlows'
+import FormSchemas from '@/api/FormSchemas'
 import i18n from '@/i18n'
 
-const dataFlowsApi = factory('DataFlows')
+const dataFlowsApi = new DataFlows()
+const formSchemaApi = new FormSchemas()
 
 export default {
   name: 'Editor',
@@ -173,6 +175,20 @@ export default {
         console.error(error)
       }
     })
+
+    /*formSchemaApi.post({
+      name: 'DB2',
+      icon: 'db2',
+      group: 'data',
+      type: 'database',
+      constructor: 'Database',
+      attr: {
+        databaseType: 'db2'
+      }
+    })*/
+    /*formSchemaApi.get().then(res => {
+      console.log('formSchemaApi', res)
+    })*/
   },
 
   destroyed() {
@@ -297,7 +313,7 @@ export default {
             visible: false,
             events: {
               mousedown: () => {
-                this.removeConnection(source, target)
+                this.__removeConnection(source, target)
               }
             }
           }
@@ -312,10 +328,12 @@ export default {
           sourceId,
           targetId
         })
+
+        return
       })
 
       // 连接线拖动结束事件
-      jsPlumbIns.bind('connectionDragStop', (conn, event) => {
+      /*jsPlumbIns.bind('connectionDragStop', (conn, event) => {
         console.log('connectionDragStopEvent', conn)
         let $node = this.$refs.layoutContent.querySelector('.df-node')
         if (!$node) return
@@ -354,7 +372,7 @@ export default {
           })
           console.log('没有连接')
         }
-      })
+      })*/
 
       // 连线移动到其他节点
       jsPlumbIns.bind('connectionMoved', info => {
@@ -365,10 +383,32 @@ export default {
         console.log('connectionDetachedEvent', info)
       })
 
-      // 在target的Endpoint上面drop会触发该事件
-      jsPlumbIns.bind('beforeDrop', () => {
-        console.log('beforeDrop')
-        return true
+      const _instance = {
+        getConnections(params) {
+          console.log('_instance', params)
+          if (typeof params === 'object') {
+            if (params.target) params.target = NODE_PREFIX + params.target
+            if (params.source) params.source = NODE_PREFIX + params.source
+          }
+          return jsPlumbIns.getConnections(params)
+        }
+      }
+
+      jsPlumbIns.bind('beforeDrop', info => {
+        console.log('beforeDrop', info)
+        const { sourceId, targetId } = info
+
+        const source = this.nodeById(this.getRealId(sourceId))
+        const target = this.nodeById(this.getRealId(targetId))
+
+        // target.__Ctor.allowSource(source)
+
+        if (!this.nodeELIsConnected(sourceId, targetId) && !this.isParent(source.id, target.id)) {
+          return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source, _instance)
+        }
+
+        return false
+
         // return this.isParent(
         //   this.getRealId(e.sourceId),
         //   this.getRealId(e.targetId)
@@ -836,7 +876,8 @@ export default {
       }
     },
 
-    removeConnection(source, target) {
+    __removeConnection(source, target) {
+      console.log('removeConnection', source, target)
       const connections = this.jsPlumbIns.getConnections({
         source,
         target
@@ -1098,6 +1139,10 @@ export default {
     isConnected(s, t) {
       s = NODE_PREFIX + s
       t = NODE_PREFIX + t
+      return this.nodeELIsConnected(s, t)
+    },
+
+    nodeELIsConnected(s, t) {
       return this.jsPlumbIns.getConnections('*').some(c => `${c.sourceId}` === s && `${c.targetId}` === t)
     },
 
@@ -1129,9 +1174,22 @@ export default {
     },
 
     getError() {
+      const settings = this.$store.getters['dataflow/dataflowSettings']
+
       if (!this.$store.getters['dataflow/dataflowName']) return i18n.t('editor.cell.validate.empty_name')
 
-      if (this.nodes.length < 2) return i18n.t('editor.cell.validate.none_data_node')
+      if (settings.sync_type === 'initial_sync' && settings.isSchedule && !settings.cronExpression) {
+        return i18n.t('dataFlow.cronExpression')
+      }
+
+      for (let node of this.nodes) {
+        let res = node.__Ctor.validate(node)
+        if (res !== true) return res
+      }
+
+      if (this.nodes.length < 2) {
+        return i18n.t('editor.cell.validate.none_data_node')
+      }
 
       if (this.jsPlumbIns.getConnections('*').length < 1) return i18n.t('editor.cell.validate.none_link_node')
 

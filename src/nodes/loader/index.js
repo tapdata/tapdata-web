@@ -24,6 +24,26 @@ export const nodeTypes = [
     }
   },
   {
+    name: 'DM DB',
+    icon: 'dameng',
+    group: 'data',
+    type: 'database',
+    constructor: 'Database',
+    attr: {
+      databaseType: 'dameng'
+    }
+  },
+  {
+    name: 'Elasticsearch',
+    icon: 'elasticsearch',
+    group: 'data',
+    type: 'database',
+    constructor: 'Database',
+    attr: {
+      databaseType: 'elasticsearch'
+    }
+  },
+  {
     name: 'GBase 8s',
     icon: 'gbase',
     group: 'data',
@@ -32,12 +52,28 @@ export const nodeTypes = [
     attr: { databaseType: 'gbase-8s' }
   },
   {
+    name: 'HBase',
+    icon: 'hbase',
+    group: 'data',
+    type: 'database',
+    constructor: 'Database',
+    attr: { databaseType: 'hbase' }
+  },
+  {
     name: 'Kafka',
     icon: 'wKafka',
     group: 'data',
     type: 'database',
     constructor: 'Database',
     attr: { databaseType: 'kafka' }
+  },
+  {
+    name: 'kudu',
+    icon: 'kudu',
+    group: 'data',
+    type: 'database',
+    constructor: 'Database',
+    attr: { databaseType: 'kudu' }
   },
   {
     name: 'MariaDB',
@@ -54,6 +90,14 @@ export const nodeTypes = [
     type: 'database',
     constructor: 'Database',
     attr: { databaseType: 'mongodb' }
+  },
+  {
+    name: 'MQ',
+    icon: 'mq',
+    group: 'data',
+    type: 'database',
+    constructor: 'Database',
+    attr: { databaseType: 'mq' }
   },
   {
     name: 'MySQL',
