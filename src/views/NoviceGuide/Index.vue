@@ -304,16 +304,22 @@ export default {
   mounted() {
     this.init()
   },
+  destroyed() {
+    this.clearTimer()
+  },
   methods: {
     init() {
       this.stepFnc()
       this.startTimer()
     },
     startTimer() {
-      this.timer && clearInterval(this.timer)
+      this.clearTimer()
       this.timer = setInterval(() => {
         this.stepFnc(true)
       }, 5000)
+    },
+    clearTimer() {
+      this.timer && clearInterval(this.timer)
     },
     stepFnc(isTimer = false) {
       switch (this.step) {
