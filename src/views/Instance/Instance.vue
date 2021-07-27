@@ -639,7 +639,10 @@ export default {
       return flag
     },
     showUpgradeIcon(row) {
-      let { version } = this
+      let { version, agentType } = this
+      if (agentType === 'Cloud') {
+        return false
+      }
       return !!(version && row?.tmInfo?.pingTime && row?.spec?.version !== version)
     }
   }
