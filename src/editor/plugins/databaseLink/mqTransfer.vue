@@ -112,7 +112,6 @@ export default {
   methods: {
     init() {
       this.loadData()
-      console.log('11111', this.value, this.table_prefix)
     },
     loadData() {
       this.data = [...this.source]
