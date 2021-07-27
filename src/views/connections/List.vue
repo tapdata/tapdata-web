@@ -675,17 +675,14 @@ export default {
     },
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
-      if (this.whiteList.includes(type)) {
-        this.$router.push({
-          name: 'connectionsCreate',
-          query: {
-            databaseType: type
-          }
-        })
-      } else {
-        top.location.href = '/#/connection'
-        localStorage.setItem('connectionDatabaseType', type)
-      }
+      this.$router.push({
+        name: 'connectionsCreate',
+        query: {
+          databaseType: type
+        }
+      })
+      // top.location.href = '/#/connection'
+      // localStorage.setItem('connectionDatabaseType', type)
     },
     //检测agent 是否可用
     async checkTestConnectionAvailable() {

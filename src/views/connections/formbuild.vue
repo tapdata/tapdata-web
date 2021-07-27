@@ -19,11 +19,11 @@
         <header class="edit-header-box" v-else>
           <div class="edit-header">
             <div class="img-box">
-              <img :src="getImgByType(databaseType)" />
+              <img :src="getImgByType('default')" />
             </div>
             <div class="content-box">
               <div class="content">
-                {{ typeMap[databaseType] }}
+                {{ typeMap[databaseType] ? typeMap[databaseType] : databaseType }}
                 <div class="addBtn color-primary" @click="dialogDatabaseTypeVisible = true">
                   {{ $t('connection.change') }}
                 </div>
@@ -42,7 +42,7 @@
         </header>
         <div class="form-wrap">
           <div class="form">
-            <ConnectionFormSelector ref="connectionForm"></ConnectionFormSelector>
+            <ConnectionFormSelector ref="connectionForm" :databaseType="databaseType"></ConnectionFormSelector>
             <el-button type="primary" size="mini" class="test" @click="startTest()">{{
               $t('connection.testConnection')
             }}</el-button>
@@ -173,7 +173,6 @@ export default {
         )
         //初始化
         params['database_type'] = this.databaseType
-        params['id'] = this.id
         delete params.status //编辑的情况下不传status
         if (!this.id) {
           params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
