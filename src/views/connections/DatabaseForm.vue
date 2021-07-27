@@ -1417,9 +1417,12 @@ export default {
         return
       }
       let data = Object.assign({}, this.model)
-      if (data.database_type === 'mq' && (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string')) {
-        data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
-        data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
+      if (data.database_type === 'mq') {
+        if (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string') {
+          data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
+          data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
+        }
+
         if (data.mqType === '0') {
           delete data.database_host
           delete data.database_port
