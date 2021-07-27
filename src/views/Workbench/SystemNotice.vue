@@ -31,7 +31,7 @@
           <template slot-scope="scope">
             <div class="list-item-desc">
               <div class="list-item-desc">
-                <span :style="`color: ${colorMap[scope.row.level]};`">【{{ scope.row.level }}】</span>
+                <!--                <span :style="`color: ${colorMap[scope.row.level]};`">【{{ scope.row.level }}】</span>-->
                 <span>{{ systemMap[scope.row.system] }}</span>
                 <span style="color: #409eff; cursor: pointer" @click="handleGo(scope.row)">
                   {{ scope.row.serverName }}
