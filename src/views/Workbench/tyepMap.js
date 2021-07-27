@@ -18,6 +18,7 @@ export const TYPEMAP = {
   APISeverRestartFailed: 'API服务重启失败',
   SYNCSeverRestartFailed: '同步治理服务重启失败',
   connectionInterrupted: '断开连接',
+  connected: '已经连接',
   manageSeverStartFailed: '管理端服务启动失败',
   APISeverStartFailed: 'API服务启动失败',
   SYNCSeverStartFailed: '同步治理服务启动失败',
