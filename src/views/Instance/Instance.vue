@@ -99,7 +99,6 @@
             <div class="flex align-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
-                <!--              <template v-if="scope.row.spec && version && scope.row.spec.version !== version">-->
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
                   <img
                     v-if="!scope.row.tmInfo.updateStatus || scope.row.tmInfo.updateStatus === 'done'"
