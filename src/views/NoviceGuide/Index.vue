@@ -69,7 +69,9 @@
           </div>
         </div>
         <div class="operation mt-7">
-          <el-button type="primary" size="mini" :disabled="!agent.name" @click="toNext">下一步</el-button>
+          <el-button type="primary" size="mini" :disabled="agent.status !== 'Running'" @click="toNext"
+            >下一步</el-button
+          >
         </div>
       </div>
       <!--   第2步、第3步   -->
@@ -188,12 +190,9 @@
           <img src="../../../public/images/guide/right.png" alt="" />
         </div>
         <div class="mt-6 fs-7">恭喜您完成新手引导！</div>
-        <div class="mt-2 text-black-50">
-          您的Agent试用状态将在24小时后失效 请您前往安装部署Agent 不然无法创建连接和任务哦
-        </div>
         <div class="mt-6">
           <el-button type="primary" @click="toWorkbench">返回工作台</el-button>
-          <el-button @click="toWorkbench">继续使用</el-button>
+          <el-button @click="toTaskDetail">查看任务监控</el-button>
         </div>
       </div>
     </div>
@@ -220,8 +219,10 @@ export default {
       stopAgentLoading: false, // 停用agent
       createTaskLoading: false, // 创建任务
       form: {
+        agent: {},
         source: {},
-        target: {}
+        target: {},
+        task: {}
       },
       databaseTypeItems: [
         {
@@ -238,7 +239,8 @@ export default {
         }
       ],
       sourceForm: {
-        id: '',
+        id: '', // 连接id，创建连接后才有
+        initId: '', // 初始化数据库，返回的id
         database_type: 'mysql',
         name: '',
         database_host: '',
@@ -252,7 +254,7 @@ export default {
       sourceConnection: {},
       taskConfig: {},
       taskForm: {
-        type: '',
+        type: 'initial_sync+cdc',
         selectSourceArr: []
       },
       taskTypeItems: [
@@ -304,6 +306,7 @@ export default {
   },
   methods: {
     init() {
+      this.stepFnc()
       this.startTimer()
     },
     startTimer() {
@@ -435,11 +438,15 @@ export default {
             database_host: data.host,
             database_port: data.port,
             database_name: data.db,
-            database_username: data.username,
-            database_password: data.password,
-            database_schema: data.schema
+            database_username: data.databaseUsername,
+            database_password: data.databasePassword,
+            database_schema: data.schema,
+            initId: data.id
           }
           this.createConnection()
+        })
+        .catch(() => {
+          this.initDatabaseLoading = false
         })
     },
     createConnection() {
@@ -453,7 +460,8 @@ export default {
         submit: true,
         isUrl: true,
         agentType: 'Cloud',
-        connection_type: this.step === 2 ? 'target' : 'source'
+        connection_type: this.step === 2 ? 'target' : 'source',
+        initId: this.sourceForm.initId
       })
       delete params.id
       if (params.database_type === 'mongodb') {
@@ -467,6 +475,7 @@ export default {
         })
         .catch(() => {
           this.$message.error('创建连接失败')
+          this.initDatabaseLoading = false
         })
     },
     resetFormField() {
@@ -489,19 +498,23 @@ export default {
         },
         limit: 10
       }
-      this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-        let sourceConnection = data?.[0]
-        if (!sourceConnection) {
-          this.sourceForm.name = '' // 标记为空
-          return
-        }
-        for (let key in this.sourceForm) {
-          if (key !== 'database_type') {
-            this.sourceForm[key] = sourceConnection[key]
+      this.$axios
+        .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(data => {
+          let sourceConnection = data?.[0]
+          if (!sourceConnection) {
+            this.sourceForm.name = '' // 标记为空
+            return
           }
-        }
-        this.initDatabaseLoading = false
-      })
+          for (let key in this.sourceForm) {
+            if (key !== 'database_type') {
+              this.sourceForm[key] = sourceConnection[key]
+            }
+          }
+        })
+        .finally(() => {
+          this.initDatabaseLoading = false
+        })
     },
     createTask() {
       let source = this.form.source
@@ -605,7 +618,8 @@ export default {
       this.createTaskLoading = true
       this.$axios
         .post('tm/api/DataFlows', postData)
-        .then(() => {
+        .then(data => {
+          this.form.task = data
           this.toNext()
         })
         .finally(() => {
@@ -642,6 +656,15 @@ export default {
       this.$router.push({
         name: 'Workbench'
       })
+    },
+    toTaskDetail() {
+      let id = this.form.task.id
+      let mappingTemplate = 'cluster-clone'
+      let routeUrl = this.$router.resolve({
+        path: '/monitor',
+        query: { id: id, isMoniting: true, mapping: mappingTemplate }
+      })
+      window.open(routeUrl.href, '_blank')
     }
   }
 }

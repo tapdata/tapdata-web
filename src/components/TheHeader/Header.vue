@@ -12,6 +12,7 @@
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>联系我们</span>
         </div>
+        <NotificationPopover class="mr-6"></NotificationPopover>
         <ElDropdown class="menu-user" placement="bottom" @command="command">
           <!--					<el-button class="menu-button" size="mini">-->
           <!--						{{ user.username }}-->
@@ -69,11 +70,12 @@
 <script>
 import HeaderCustomerService from './HeaderCustomerService'
 // import AgentFail from './AgentFail';
+import NotificationPopover from '@/views/Workbench/NotificationPopover'
 // import ws from '../../plugins/ws.js';
 import VIcon from '@/components/VIcon'
 
 export default {
-  components: { HeaderCustomerService, VIcon },
+  components: { HeaderCustomerService, VIcon, NotificationPopover },
   data() {
     return {
       user: window.__USER_INFO__ || {},
@@ -100,7 +102,7 @@ export default {
           this.noShow = data?.guideData?.noShow
           // 不再显示
           if (
-            !data?.guideData?.noShow ||
+            !data?.guideData?.noShow &&
             (new Date().getTime() - (data?.guideData?.updateTime ?? 0)) / 1000 / 3600 > 24
           ) {
             this.command('guide')

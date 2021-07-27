@@ -146,11 +146,7 @@
               @click="handleStop(scope.row)"
               >停止</ElLink
             >
-            <ElLink
-              type="danger"
-              class="mr-2"
-              @click="handleDel(scope.row)"
-              :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Offline'"
+            <ElLink type="danger" class="mr-2" @click="handleDel(scope.row)" :disabled="delBtnDisabled(scope.row)"
               >删除</ElLink
             >
           </template>
@@ -466,8 +462,20 @@ export default {
           this.$axios
             .patch('api/tcm/agent/delete/' + row.id)
             .then(() => {
-              this.$message.success('Agent 删除成功')
-              this.fetch()
+              if (row.agentType === 'Cloud') {
+                // 释放资源
+                this.$axios
+                  .post('api/tcm/orders/cancel', {
+                    instanceId: row.id
+                  })
+                  .then(() => {
+                    this.$message.success('Agent 删除成功')
+                    this.fetch()
+                  })
+              } else {
+                this.$message.success('Agent 删除成功')
+                this.fetch()
+              }
             })
             .catch(() => {
               this.$message.error('Agent 删除失败')
@@ -586,7 +594,7 @@ export default {
       if (data.agentType === 'Cloud') {
         return
       }
-      this.clearTimer()
+      // this.clearTimer()  //点详情报错 暂时注释
       this.$router.push({
         name: 'InstanceDetails',
         query: {
@@ -612,6 +620,15 @@ export default {
             })
         }
       })
+    },
+    delBtnDisabled(row) {
+      let flag = false
+      if (row.agentType === 'Cloud') {
+        flag = true
+      } else {
+        flag = row.status !== 'Offline'
+      }
+      return flag
     }
   }
 }

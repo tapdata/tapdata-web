@@ -3,6 +3,7 @@ const Random = Mock.Random
 const settings = require('./settings.json')
 const dataflow = require('./dataflow.js')
 const connection = require('./connection.js')
+const Messages = require('./Messages.js')
 
 const agent = {
   id: '@guid',
@@ -69,7 +70,7 @@ const agent = {
   },
   'agentType|1': ['Cloud', '']
 }
-module.exports = Object.assign({}, dataflow, connection, {
+module.exports = Object.assign({}, dataflow, connection, Messages, {
   '/tm/api/users/self': {
     data: {
       account_status: 1,
@@ -247,6 +248,11 @@ module.exports = Object.assign({}, dataflow, connection, {
     }
   },
   '/api/tcm/orders/cancel': {
+    code: 'ok',
+    msg: 'ok',
+    data: {}
+  },
+  '/api/tcm/connection/delete': {
     code: 'ok',
     msg: 'ok',
     data: {}
