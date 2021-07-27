@@ -12,7 +12,7 @@
       </el-form>
       <div class="box box-content">
         <div class="btn-line mb-3 text-rf">
-          <span class="mr-2" style="font-size: 12px; color: #999">{{ $t('dataForm.form.transform.isDrag') }}</span>
+          <span class="mr-2" style="font-size: 12px; color: #999">{{ $t('dataForm.form.transform.dragSort') }}</span>
           <el-button size="mini" @click="addFieldDialog">{{ $t('dataForm.form.transform.addField') }}</el-button>
         </div>
         <TreeTransfer
