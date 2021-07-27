@@ -73,11 +73,11 @@ import { showMessage } from '@/mixins/showMessage'
 import moveDataflow from './mixins/moveDataflow'
 import ws from '@/api/ws'
 import DataFlows from '@/api/DataFlows'
-import FormSchemas from '@/api/FormSchemas'
 import i18n from '@/i18n'
+import ConnectionFormSchemas from '@/api/ConnectionFormSchemas'
 
 const dataFlowsApi = new DataFlows()
-const formSchemaApi = new FormSchemas()
+const connFormSchemaApi = new ConnectionFormSchemas()
 
 export default {
   name: 'Editor',
