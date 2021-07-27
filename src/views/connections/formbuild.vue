@@ -155,7 +155,7 @@ export default {
       let data = this.getFormData()
       if (!data.form) return
       let form = data.form || ''
-      if (data.status) {
+      if (form) {
         let formData = JSON.parse(JSON.stringify(form.values))
         let params = Object.assign(
           {},
