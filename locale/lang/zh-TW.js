@@ -802,6 +802,7 @@ const tc = {
         kuduText: 'KUDU節點',
         hbaseText: 'HBase節點',
         hbase_check: 'HBase僅支持全量任務',
+        greentplum_check: 'Greentplum作為源僅支持全量任務',
         kafkaText: 'kafka節點',
         kafkaName_isNull: 'kafka不能為空',
         mqTableType: '新建表類型',
@@ -1897,8 +1898,7 @@ const tc = {
         exist: '已存在',
         noSameNameandType: '名稱不能和類型一樣',
         specialSymbols: '不允許使用特殊符號',
-        deleteFieldConfirm: '確實要删除欄位嗎？删除後不能恢復',
-
+        deleteFieldConfirm: '確實要删除欄位嗎？删除後不能恢復'
       }
     },
     error: {

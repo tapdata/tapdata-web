@@ -826,6 +826,7 @@ const en = {
         hbaseText: 'HBase Node',
         kuduText: 'KUDU Node',
         hbase_check: 'HBase only supports INITIAL SYNC tasks',
+        greentplum_check: 'Greentplum as a source only supports full tasks',
         kafkaText: 'Kafka Node',
         kafkaName_isNull: 'kafka cannot be empty',
         mqTableType: 'New table type',
