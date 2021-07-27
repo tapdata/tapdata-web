@@ -174,7 +174,7 @@
           Agent版本有更新，您可以通过以下方式将您的Agent升级到最新版本。升级过程中将无法运行任务。
         </div>
         <div class="dialog-btn flex justify-evenly mt-6">
-          <div class="text-center">
+          <div class="text-center" v-if="showAutoUpgrade">
             <ElButton type="primary" :disabled="disabledAuautoUpgradeBtn" @click="autoUpgradeFnc">自动升级</ElButton>
             <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
               (Agent离线时无法使用自动升级)
@@ -271,6 +271,14 @@ export default {
     },
     disabledAuautoUpgradeBtn() {
       return !!(this.selectedRow?.status !== 'Running')
+    },
+    showAutoUpgrade() {
+      let flag = true
+      let result = ['v1.0.1-6', 'v1.0.2']
+      if (result.includes(this.selectedRow?.spec?.version)) {
+        flag = false
+      }
+      return flag
     }
   },
   watch: {
