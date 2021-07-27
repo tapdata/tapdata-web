@@ -1,10 +1,12 @@
 const { resolve } = require('path')
+const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://backend:3030',
-  test: 'http://jet.devops.tapdata.net:31613'
+  test: 'http://192.168.1.181:30300'
+  // test: 'http://192.168.2.4:3030'
 }
 let origin
 const { argv } = process
@@ -88,12 +90,28 @@ module.exports = {
       })
       .end()
   },
-  configureWebpack: {
-    plugins: [
-      new MonacoWebpackPlugin({
-        languages: ['javascript', 'json'],
-        features: ['coreCommands', 'find']
-      })
-    ]
+  configureWebpack: config => {
+    if (process.env.NODE_ENV === 'production') {
+      // gzip
+      config.plugins.push(
+        new CompressionWebpackPlugin({
+          // 正在匹配需要压缩的文件后缀
+          test: /\.(js|css|svg|woff|ttf|json|html)$/,
+          // 大于10kb的会压缩
+          threshold: 10240
+          // 其余配置查看compression-webpack-plugin
+        }),
+        new MonacoWebpackPlugin({
+          languages: ['javascript', 'json'],
+          features: ['coreCommands', 'find']
+        })
+      )
+
+      config['performance'] = {
+        //打包文件大小配置
+        maxEntrypointSize: 10000000,
+        maxAssetSize: 30000000
+      }
+    }
   }
 }

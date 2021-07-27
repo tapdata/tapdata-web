@@ -515,7 +515,6 @@ export default {
       if (this.statusBtMap[this.status].start || this.isMoniting) this.setEditable(false)
       else this.setEditable(true)
       if (this.executeMode !== 'normal') this.showCapture()
-
       this.onGraphChanged()
       this.setSelector(this.$route.query.mapping)
       this.editor.graph.setSettingData(dataFlow.setting)
@@ -1164,9 +1163,12 @@ export default {
           self.doSave(data, err => {
             if (err) {
               this.$message.error(self.$t('message.stopFail'))
+            } else {
+              location.reload()
             }
           })
         })
+
       // .catch(() => {
       // 	this.$message.error(self.$t('message.stopFail'));
       // });

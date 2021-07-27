@@ -21,6 +21,8 @@
           </ElCol>
         </ElRow>
       </ElCollapseItem>
+
+      <ElCollapseItem title="插件化数据节点" name="plugin"> </ElCollapseItem>
     </ElCollapse>
   </aside>
 </template>
@@ -58,16 +60,20 @@ export default {
 
     initGroups() {
       let _group = groupBy(this.allNodeTypes, 'group')
+
       this.groups = [
         {
           name: this.$t('editor.ui.sidebar.data_nodes'),
           nodes: _group.data || []
-        },
-        {
-          name: this.$t('editor.ui.sidebar.processor'),
-          nodes: _group.processor || []
         }
       ]
+
+      _group.processor &&
+        this.groups.push({
+          name: this.$t('editor.ui.sidebar.processor'),
+          nodes: _group.processor || []
+        })
+
       this.activeGroups = Object.keys(this.groups)
     },
 
