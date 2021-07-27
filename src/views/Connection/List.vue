@@ -332,8 +332,7 @@ export default {
         let loading = this.$loading()
         let data = item
         if (['gridfs', 'mongodb'].includes(item.database_type)) {
-          data.database_uri = ''
-          data.isUrl = true
+          delete data.database_uri
           data.justTest = true
         }
         if (item.database_type !== 'redis') {
