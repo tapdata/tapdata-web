@@ -36,6 +36,10 @@
             </div>
           </li>
         </ul>
+        <div class="connection-table__empty" v-if="listData.length < 1">
+          <i class="el-icon-folder-opened"></i>
+          <span class="ml-1" v-if="!isSearching">暂无数据</span>
+        </div>
       </div>
     </div>
   </ElPopover>
@@ -322,6 +326,13 @@ export default {
         font-size: 12px;
       }
     }
+  }
+  .connection-table__empty {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>
