@@ -156,7 +156,6 @@
 }
 </style>
 <script>
-import { delayTrigger, toRegExp } from '../../util'
 import { CONNECTION_STATUS_MAP, SUPPORT_DB } from '../../const'
 import StatusTag from '../../components/StatusTag'
 import Preview from './Preview.vue'
@@ -207,6 +206,7 @@ export default {
       })
     },
     fetch(pageNum, debounce) {
+      const { delayTrigger, toRegExp } = this.$util
       delayTrigger(() => {
         this.loading = true
         let current = pageNum || this.page.current

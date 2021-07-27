@@ -207,7 +207,6 @@
 </template>
 
 <script>
-import { delayTrigger } from '../../util'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
@@ -336,7 +335,7 @@ export default {
       })
     },
     fetch(pageNum, debounce, hideLoading) {
-      delayTrigger(async () => {
+      this.$util.delayTrigger(async () => {
         if (!hideLoading) {
           this.loading = true
         }
