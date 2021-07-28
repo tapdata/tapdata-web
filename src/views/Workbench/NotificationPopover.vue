@@ -1,5 +1,5 @@
 <template>
-  <ElPopover placement="bottom" trigger="hover" @show="activeTab = 'system'">
+  <ElPopover placement="bottom" popper-class="notive-popove" trigger="hover" @show="activeTab = 'system'">
     <div class="btn" slot="reference" @click="toCenter()">
       <ElBadge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
         <VIcon class="mr-2" size="17">lingdang</VIcon>
@@ -197,142 +197,165 @@ export default {
 }
 </script>
 <style lang="scss">
-.btn {
-  cursor: pointer;
-  .item-badge {
-    &:hover {
-      color: #337dff;
-    }
-    .el-badge__content {
-      right: 18px;
-      height: 15px;
-      line-height: 13px;
-      padding: 0 5px;
-      border: none;
+.notive-popove {
+  overflow: hidden;
+  .btn {
+    cursor: pointer;
+    .item-badge {
+      &:hover {
+        color: #337dff;
+      }
+      .el-badge__content {
+        right: 18px;
+        height: 15px;
+        line-height: 13px;
+        padding: 0 5px;
+        border: none;
+      }
     }
   }
-}
 
-.notification-popover-wrap {
-  > .el-tabs__content {
-    padding: 0 !important;
-  }
-  .tab-item {
-    margin-bottom: 1px;
+  .notification-popover-wrap {
+    > .el-tabs__content {
+      padding: 0 !important;
+    }
+    .tab-item {
+      margin-bottom: 1px;
+    }
   }
 }
 </style>
 <style lang="scss" scoped>
-.notification-popover-wrap {
-  margin: -15px;
-  width: 440px;
-  overflow: hidden;
-  position: relative;
-  border-radius: 3px;
-  .notice-header {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 25px;
-    background: rgba(241, 241, 241, 1);
-    border-top: 1px solid rgba(222, 222, 228, 1);
-    .notice-header-text {
-      display: inline-block;
-      cursor: pointer;
-      //color: #666;
-    }
-  }
-  .tab-item-container {
-    display: flex;
-    flex-direction: column;
-    height: 362px;
+.notive-popove {
+  .notification-popover-wrap {
+    margin: -15px;
+    width: 440px;
     overflow: hidden;
-    margin-bottom: -1px;
-    //.tab-list {
-    //  flex: 1;
-    //  overflow-y: auto;
-    //}
-  }
-  .cuk-list {
-    font-size: 12px;
-    .list-item {
-      position: relative;
-      background: #fff;
-      border-bottom: 1px solid #dedee4;
-      padding-right: 5px;
-      cursor: pointer;
-      &:hover {
-        background-color: #ecf5ff;
+    position: relative;
+    border-radius: 3px;
+
+    .notice-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      height: 40px;
+      line-height: 40px;
+      padding: 0 25px;
+      background: rgba(241, 241, 241, 1);
+      border-top: 1px solid rgba(222, 222, 228, 1);
+
+      .notice-header-text {
+        display: inline-block;
+        cursor: pointer;
+        //color: #666;
       }
-      .list-item-content {
+    }
+
+    .tab-item-container {
+      display: flex;
+      flex-direction: column;
+      height: 362px;
+      overflow: hidden;
+      margin-bottom: -1px;
+      //.tab-list {
+      //  flex: 1;
+      //  overflow-y: auto;
+      //}
+    }
+
+    .cuk-list {
+      font-size: 12px;
+
+      .list-item {
         position: relative;
-        height: 40px;
-        line-height: 40px;
-        padding-left: 14px;
-        box-sizing: border-box;
-        overflow: hidden;
-        display: block;
-      }
-      .unread-1zPaAXtSu {
-        position: absolute;
-        top: 22px;
-        left: 8px;
-        width: 6px;
-        height: 6px;
-        background: #f81d22;
-        border-radius: 50%;
-      }
-      .list-item-desc {
-        color: #666;
-        //position: absolute;
-        //top: -5px;
-        //left: 30px;
-        //right: 20px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        span {
+        background: #fff;
+        border-bottom: 1px solid #dedee4;
+        padding-right: 5px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #ecf5ff;
+        }
+
+        .list-item-content {
+          position: relative;
+          height: 40px;
+          line-height: 40px;
+          padding-left: 14px;
+          box-sizing: border-box;
+          overflow: hidden;
+          display: block;
+        }
+
+        .unread-1zPaAXtSu {
+          position: absolute;
+          top: 22px;
+          left: 8px;
+          width: 6px;
+          height: 6px;
+          background: #f81d22;
+          border-radius: 50%;
+        }
+
+        .list-item-desc {
+          color: #666;
+          //position: absolute;
+          //top: -5px;
+          //left: 30px;
+          //right: 20px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+
+          span {
+            font-size: 12px;
+          }
+        }
+
+        .list-item-platform {
+          color: #666;
+        }
+
+        .list-item-time {
+          margin: 15px 0 0 17px;
+          color: #aaa;
           font-size: 12px;
         }
       }
-      .list-item-platform {
+    }
+
+    .notification-list {
+      box-sizing: border-box;
+
+      .notification-item {
+        padding: 5px 20px 4px 20px;
+        border-bottom: 1px solid #dedee4;
+        font-size: 12px;
         color: #666;
-      }
-      .list-item-time {
-        margin: 15px 0 0 17px;
-        color: #aaa;
-        font-size: 12px;
-      }
-    }
-  }
-  .notification-list {
-    box-sizing: border-box;
-    .notification-item {
-      padding: 5px 20px 4px 20px;
-      border-bottom: 1px solid #dedee4;
-      font-size: 12px;
-      color: #666;
-      &:hover {
-        background-color: #ecf5ff;
-      }
-      &:last-child {
-        border: none;
-      }
-      .item-time {
-        margin-top: 5px;
-        color: #aaa;
-        font-size: 12px;
+
+        &:hover {
+          background-color: #ecf5ff;
+        }
+
+        &:last-child {
+          border: none;
+        }
+
+        .item-time {
+          margin-top: 5px;
+          color: #aaa;
+          font-size: 12px;
+        }
       }
     }
-  }
-  .connection-table__empty {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
+
+    .connection-table__empty {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+    }
   }
 }
 </style>

@@ -549,6 +549,7 @@ export default {
             let arr = sourceConnection.database_host?.split(':')
             sourceConnection.database_host = arr[0] ?? ''
             sourceConnection.database_port = arr[1] ?? ''
+            sourceConnection.database_password = sourceConnection.database_username
           }
           for (let key in this.sourceForm) {
             if (key !== 'database_type') {
