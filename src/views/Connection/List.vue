@@ -55,6 +55,9 @@
               >
                 {{ scope.row.name }}
               </ElLink>
+              <div class="flex align-center">
+                <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">仅供测试使用</span>
+              </div>
             </div>
           </template>
         </ElTableColumn>
@@ -81,8 +84,12 @@
         <ElTableColumn label="操作" width="180">
           <template slot-scope="scope">
             <ElLink type="primary" class="mr-2" @click="test(scope.row)">连接测试</ElLink>
-            <ElLink type="primary" class="mr-2" @click="edit(scope.row)">编辑</ElLink>
-            <ElLink type="primary" class="mr-2" @click="copy(scope.row)">复制</ElLink>
+            <ElLink type="primary" class="mr-2" :disabled="scope.row.agentType === 'Cloud'" @click="edit(scope.row)"
+              >编辑</ElLink
+            >
+            <ElLink type="primary" class="mr-2" :disabled="scope.row.agentType === 'Cloud'" @click="copy(scope.row)"
+              >复制</ElLink
+            >
             <ElLink type="danger" @click="del(scope.row)">删除</ElLink>
           </template>
         </ElTableColumn>
@@ -148,6 +155,11 @@
     .agent-link {
       color: unset;
       cursor: unset;
+    }
+    .agent-cloud {
+      color: #10c038;
+      border-color: #10c038;
+      background-color: #dbefd1;
     }
   }
   .connection-table__empty {
@@ -294,6 +306,9 @@ export default {
       })
     },
     async copy(item) {
+      if (item.agentType === 'Cloud') {
+        return
+      }
       try {
         await this.$axios.post(`tm/api/Connections/${item.id}/copy`, {
           uri: `${item.id}/copy`,

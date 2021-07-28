@@ -122,7 +122,8 @@ module.exports = Object.assign({}, dataflow, connection, Messages, {
       ],
       guideData: {
         noShow: true,
-        updateTime: 1627288426187
+        updateTime: 1627288426187,
+        action: true
       }
     },
     code: 'ok',

@@ -49,7 +49,7 @@
             <div class="panelBtn">
               <ul>
                 <li class="item">
-                  <el-button class="btn" size="mini" @click="edit()">
+                  <el-button class="btn" size="mini" :disabled="data.agentType === 'Cloud'" @click="edit()">
                     <i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
                   </el-button>
                 </li>
@@ -381,6 +381,9 @@ export default {
       })
     },
     edit() {
+      if (this.data.agentType === 'Cloud') {
+        return
+      }
       this.$router.push({
         name: 'ConnectionEdit',
         params: {
