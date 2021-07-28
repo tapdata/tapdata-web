@@ -414,9 +414,9 @@ export default {
         // where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
         where.name = { like: verify(keyword), options: 'i' }
       }
-      where.database_type = {
-        in: this.whiteList
-      }
+      // where.database_type = {
+      //   in: this.whiteList
+      // }
       region && (where['platformInfo.region'] = region)
       databaseType && (where.database_type = databaseType)
       // if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
@@ -487,9 +487,10 @@ export default {
       })
     },
     getImgByType(type) {
-      if (!type || type === 'jira') {
-        type = 'default'
-      }
+      // if (!type || type === 'jira') {
+      //   type = 'default'
+      // }
+      type = 'default'
       return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)
     },
     //列表全选
