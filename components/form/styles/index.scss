@@ -13,6 +13,9 @@ $namespace: 'el';
   outline: 0;
   border-right-width: $--border-width-base !important;
 }
+.el-select{
+  width: 100%;
+}
 
 @import './space.scss';
 @import './filter-conditions';

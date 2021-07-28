@@ -9,8 +9,8 @@
 <script>
 import { createForm, onFormValuesChange, onFormSubmit } from '@formily/core'
 import { FormProvider, createSchemaField } from '@formily/vue'
-import { components } from './form'
-import './form/styles/index.scss'
+import { components } from '../form'
+import '../form/styles/index.scss'
 const { SchemaField } = createSchemaField({
   components
 })
