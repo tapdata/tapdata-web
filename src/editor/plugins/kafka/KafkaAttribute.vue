@@ -19,6 +19,7 @@
             v-model="model.connectionId"
             :placeholder="$t('message.placeholderSelect') + 'kafka'"
             :clearable="true"
+            @change="changeFnc"
           >
             <el-option
               v-for="(item, idx) in databases"
@@ -361,8 +362,17 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Kafka'
-      result.kafkaPartitionKey = result.kafkaPartitionKey.join(',')
+      if (result.kafkaPartitionKey instanceof Array) {
+        result.kafkaPartitionKey = result.kafkaPartitionKey.join(',')
+      }
       return result
+    },
+
+    changeFnc(value) {
+      let findOne = this.databases.find(item => item.id === value)
+      if (findOne) {
+        this.model.tableName = findOne.name
+      }
     },
 
     // 更新模型点击弹窗
