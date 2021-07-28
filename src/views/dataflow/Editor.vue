@@ -74,10 +74,10 @@ import moveDataflow from './mixins/moveDataflow'
 import ws from '@/api/ws'
 import DataFlows from '@/api/DataFlows'
 import i18n from '@/i18n'
-import ConnectionFormSchemas from '@/api/ConnectionFormSchemas'
+import DataFlowFormSchemas from '@/api/DataFlowFormSchemas'
 
 const dataFlowsApi = new DataFlows()
-const connFormSchemaApi = new ConnectionFormSchemas()
+const dataFlowFormSchemasApi = new DataFlowFormSchemas()
 
 export default {
   name: 'Editor',
@@ -214,7 +214,8 @@ export default {
       'removeNodeFromSelection',
       'removeAllNodes',
       'addNode',
-      'setActiveType'
+      'setActiveType',
+      'setFormSchema'
     ]),
 
     async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {
@@ -270,11 +271,15 @@ export default {
 
     initNodeType() {
       let _nodeTypes = nodeTypes
+      let dataFlowType
       if (this.mapping === 'cluster-clone') {
+        dataFlowType = 'database-migration' // 数据库迁移
         _nodeTypes = _nodeTypes.filter(item => item.type === 'database')
       }
       this.setNodeTypes(_nodeTypes)
       this.setCtorTypes(ctorTypes)
+
+      dataFlowType && this.setSchema(dataFlowType)
     },
 
     initNodeView() {
@@ -1196,13 +1201,26 @@ export default {
       return null
     },
 
-    validate() {}
+    async setSchema(dataFlowType) {
+      const { data } = await dataFlowFormSchemasApi.get({
+        filter: {
+          dataFlowType
+        }
+      })
+      const item = data[0]
+      if (!item) return
+      this.setFormSchema({
+        node: item.nodeSchema,
+        link: item.linkSchema
+      })
+      console.log('data', data)
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-$sidebarW: 236px;
+$sidebarW: 249px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;

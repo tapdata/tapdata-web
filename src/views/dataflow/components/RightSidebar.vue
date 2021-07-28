@@ -127,7 +127,7 @@ export default {
     // 切换节点和连线的FormSchema
     async uniteKey(v) {
       if (this.activeType) {
-        console.log('watch:uniteKey', v, 'forceClear')
+        console.log('watch:uniteKey', v, this.ins.formSchema)
 
         // this.schema = null
         // await this.$nextTick()
@@ -137,13 +137,14 @@ export default {
         })
 
         this.schema = !this.activeConnection ? this.ins.formSchema : this.ins.linkFormSchema*/
+        const formSchema = this.$store.getters['dataflow/formSchema']
 
         switch (this.activeType) {
           case 'node':
-            await this.setSchema(this.ins.formSchema)
+            await this.setSchema(this.ins.formSchema || formSchema.node)
             break
           case 'connection':
-            await this.setSchema(this.ins.linkFormSchema)
+            await this.setSchema(this.ins.linkFormSchema || formSchema.link)
             break
           case 'settings':
             await this.setSchema(this.getSettingSchema(), this.$store.getters['dataflow/dataflowSettings'])
