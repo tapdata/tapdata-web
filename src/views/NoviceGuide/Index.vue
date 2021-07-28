@@ -123,20 +123,23 @@
                 <span slot="suffix">（仅测试使用，不可编辑）</span>
               </el-input>
             </el-form-item>
-            <el-form-item label="地址/端口" prop="name" class="database-uri-port">
+            <el-form-item label="地址/端口" prop="database_host" class="database-uri-port">
               <div class="flex justify-between w-100">
                 <el-input v-model="sourceForm.database_host" class="database-uri" readonly disabled></el-input>
                 <el-input v-model="sourceForm.database_port" class="database-port ml-3" readonly disabled></el-input>
               </div>
             </el-form-item>
-            <el-form-item label="数据库名" prop="name">
+            <el-form-item label="数据库名" prop="database_name">
               <el-input v-model="sourceForm.database_name" readonly disabled></el-input>
             </el-form-item>
-            <el-form-item label="数据库账号" prop="name">
+            <el-form-item label="数据库账号" prop="database_username">
               <el-input v-model="sourceForm.database_username" readonly disabled></el-input>
             </el-form-item>
-            <el-form-item label="数据库密码" prop="name">
+            <el-form-item label="数据库密码" prop="database_password">
               <el-input v-model="sourceForm.database_password" readonly disabled></el-input>
+            </el-form-item>
+            <el-form-item v-if="sourceForm.database_type === 'postgres'" label="Schema" prop="database_owner">
+              <el-input v-model="sourceForm.database_owner" readonly disabled></el-input>
             </el-form-item>
           </template>
         </el-form>
@@ -240,7 +243,8 @@ export default {
         database_name: '',
         database_username: '',
         database_password: '',
-        database_schema: ''
+        database_schema: '',
+        database_owner: ''
       },
       initDatabaseLoading: false,
       sourceConnection: {},
@@ -476,6 +480,7 @@ export default {
             database_username: data.databaseUsername,
             database_password: data.databasePassword,
             database_schema: data.schema,
+            database_owner: data.schema,
             initId: data.id
           }
           this.createConnection()
@@ -487,7 +492,7 @@ export default {
     createConnection() {
       let params = Object.assign({}, this.sourceForm, {
         status: 'testing',
-        schema: {},
+        // schema: {},
         retry: 0,
         nextRetry: null,
         response_body: {},
@@ -501,6 +506,8 @@ export default {
       if (params.database_type === 'mongodb') {
         params.database_host += ':' + params.database_port
         params.database_port = ''
+      } else if (params.database_type === 'postgres') {
+        params.database_owner = this.sourceForm.database_owner
       }
       delete params.id
       if (params.database_type === 'mongodb') {
