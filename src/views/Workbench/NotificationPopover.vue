@@ -268,7 +268,7 @@ export default {
 
     .cuk-list {
       font-size: 12px;
-
+      overflow-y: auto;
       .list-item {
         position: relative;
         background: #fff;
