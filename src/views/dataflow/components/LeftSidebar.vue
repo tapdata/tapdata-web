@@ -45,8 +45,8 @@
 
     <div v-else-if="filteredNodeTypes.length > 0" class="overflow-auto">
       <NodeItem
-        v-for="(item, i) in filteredNodeTypes"
-        :key="i"
+        v-for="item in filteredNodeTypes"
+        :key="item.name"
         :data="item"
         v-mouse-drag="{
           item,
