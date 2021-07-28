@@ -20,11 +20,11 @@
         <ul class="tab-list cuk-list">
           <li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
             <div class="list-item-content">
-              <!--              <div class="unread-1zPaAXtSu"></div>-->
+              <div class="unread-1zPaAXtSu"></div>
               <div class="list-item-desc">
                 <!--                <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>-->
-                <span>{{ systemMap[item.system] }}</span>
-                <span style="color: #409eff" @click="handleGo(item)">
+                <span>您的{{ systemMap[item.system] }}:</span>
+                <span class="notive-item-name" @click="handleGo(item)" :title="item.serverName">
                   {{ item.serverName }}
                 </span>
                 <span>{{ typeMap[item.msg] }}</span>
@@ -37,8 +37,8 @@
           </li>
         </ul>
         <div class="connection-table__empty" v-if="listData.length < 1">
-          <i class="el-icon-folder-opened"></i>
-          <span class="ml-1">暂无数据</span>
+          <img src="../../assets/image/noNotive.png" class="code" />
+          <span>暂无通知</span>
         </div>
       </div>
     </div>
@@ -55,9 +55,9 @@ export default {
   components: { VIcon },
   data() {
     return {
-      unRead: 0,
       loading: false,
       activeTab: 'system',
+      unRead: 0,
       listData: [],
       colorMap: {
         ERROR: 'red',
@@ -76,9 +76,6 @@ export default {
       userOperations: []
     }
   },
-  // computed: mapState({
-  //   unRead: state => state.notification.unRead
-  // }),
   created() {
     this.init()
   },
@@ -117,8 +114,8 @@ export default {
         read: false
       }
       this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-        if (res.data) {
-          this.unRead = res.data.count
+        if (res) {
+          this.unRead = res.count
           // this.$store.commit('notification', {
           //   unRead: res.data.count
           // })
@@ -128,7 +125,7 @@ export default {
     // 已读消息
     handleRead(id) {
       this.$axios.patch('tm/api/Messages', { read: true, id: id }).then(res => {
-        if (res.data) {
+        if (res) {
           this.listData = []
           this.$root.$emit('notificationUpdate')
         }
@@ -199,6 +196,8 @@ export default {
 <style lang="scss">
 .notive-popove {
   overflow: hidden;
+}
+.el-popover__reference-wrapper {
   .btn {
     cursor: pointer;
     .item-badge {
@@ -206,11 +205,12 @@ export default {
         color: #337dff;
       }
       .el-badge__content {
-        right: 18px;
+        right: 30px;
         height: 15px;
-        line-height: 13px;
+        line-height: 15px;
         padding: 0 5px;
-        border: none;
+        border: 0;
+        transform: translateY(-50%) translateX(30%);
       }
     }
   }
@@ -229,7 +229,7 @@ export default {
 .notive-popove {
   .notification-popover-wrap {
     margin: -15px;
-    width: 440px;
+    width: 360px;
     overflow: hidden;
     position: relative;
     border-radius: 3px;
@@ -237,12 +237,13 @@ export default {
     .notice-header {
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
-      height: 40px;
-      line-height: 40px;
+      font-size: 14px;
+      height: 50px;
+      line-height: 50px;
       padding: 0 25px;
-      background: rgba(241, 241, 241, 1);
+      color: #000;
       border-top: 1px solid rgba(222, 222, 228, 1);
+      border-bottom: 1px solid #f2f2f2;
 
       .notice-header-text {
         display: inline-block;
@@ -254,7 +255,8 @@ export default {
     .tab-item-container {
       display: flex;
       flex-direction: column;
-      height: 362px;
+      height: 262px;
+      padding: 0 12px;
       overflow: hidden;
       margin-bottom: -1px;
       //.tab-list {
@@ -269,7 +271,7 @@ export default {
       .list-item {
         position: relative;
         background: #fff;
-        border-bottom: 1px solid #dedee4;
+        border-bottom: 1px solid #f2f2f2;
         padding-right: 5px;
         cursor: pointer;
 
@@ -281,7 +283,7 @@ export default {
           position: relative;
           height: 40px;
           line-height: 40px;
-          padding-left: 14px;
+          padding: 0 5px 0 18px;
           box-sizing: border-box;
           overflow: hidden;
           display: block;
@@ -289,7 +291,7 @@ export default {
 
         .unread-1zPaAXtSu {
           position: absolute;
-          top: 22px;
+          top: 18px;
           left: 8px;
           width: 6px;
           height: 6px;
@@ -306,8 +308,18 @@ export default {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          .notive-item-name {
+            display: inline-block;
+            max-width: 150px;
+            padding: 0 5px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            color: #409eff;
+          }
 
           span {
+            float: left;
             font-size: 12px;
           }
         }
@@ -351,10 +363,17 @@ export default {
 
     .connection-table__empty {
       display: flex;
+      flex-direction: column;
       width: 100%;
       height: 100%;
       justify-content: center;
       align-items: center;
+      span {
+        display: inline-block;
+        line-height: 20px;
+        padding-top: 10px;
+        font-size: 12px;
+      }
     }
   }
 }

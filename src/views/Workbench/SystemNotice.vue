@@ -29,10 +29,11 @@
         <ElTableColumn type="selection" width="55"></ElTableColumn>
         <ElTableColumn label="通知内容" prop="name" min-width="150">
           <template slot-scope="scope">
-            <div class="list-item-desc">
-              <div class="list-item-desc">
-                <!--                <span :style="`color: ${colorMap[scope.row.level]};`">【{{ scope.row.level }}】</span>-->
-                <span>{{ systemMap[scope.row.system] }}</span>
+            <div class="list-item-content">
+              <div class="unread-1zPaAXtSu" v-show="!scope.row.read"></div>
+              <div class="list-item-desc" @click="handleRead(scope.row.id)">
+                <!--                                <span :style="`color: ${colorMap[scope.row.level]};`">【{{ scope.row.level }}】</span>-->
+                <span>您的{{ systemMap[scope.row.system] }}:</span>
                 <span style="color: #409eff; cursor: pointer" @click="handleGo(scope.row)">
                   {{ scope.row.serverName }}
                 </span>
@@ -40,16 +41,17 @@
                 <span v-if="scope.row.CDCTime">{{ getLag(scope.row.CDCTime) }}</span>
                 <span v-if="scope.row.restDay">{{ scope.row.restDay }} 天</span>
               </div>
-              <!--              <div class="list-item-time">-->
-              <!--                <span>{{ scope.row.createTime }}</span>-->
-              <!--              </div>-->
             </div>
+            <!--              <div class="list-item-time">-->
+            <!--                <span>{{ scope.row.createTime }}</span>-->
+            <!--              </div>-->
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip label="通知时间" prop="createTime" width="150"></ElTableColumn>
         <div class="connection-table__empty" slot="empty">
-          <i class="el-icon-folder-opened"></i>
-          <span class="ml-1" v-if="!isSearching">暂无数据</span>
+          <!--          <i class="el-icon-folder-opened"></i>-->
+          <img src="../../assets/image/noData.png" class="code" />
+          <span v-if="!isSearching">暂无通知</span>
         </div>
       </El-table>
       <ElPagination
@@ -76,6 +78,8 @@ export default {
   data() {
     return {
       list: [],
+      unReadCount: 0,
+      read: true,
       typeMap: TYPEMAP,
       isSearching: false,
       multipleSelection: [],
@@ -101,6 +105,11 @@ export default {
   },
   created() {
     this.fetch()
+    this.getUnreadNum() //未读消息数量
+    this.$root.$on('notificationUpdate', () => {
+      this.getUnreadNum() //未读消息数量
+      this.fetch()
+    })
   },
   methods: {
     fetch(pageNum, debounce) {
@@ -236,12 +245,38 @@ export default {
           this.fetch()
         }
       })
+    },
+    // 已读消息
+    handleRead(id) {
+      let read = this.read
+      this.$axios.patch('tm/api/Messages', { read: true, id: id }).then(res => {
+        if (res) {
+          this.getUnreadNum() //未读消息数量
+          this.fetch()
+          this.read = read
+          this.$root.$emit('notificationUpdate')
+        }
+      })
+    },
+    // 未读消息
+    getUnreadNum() {
+      let where = {
+        where: {
+          read: false
+        }
+      }
+      this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
+        if (res) {
+          this.unReadCount = res.count
+        }
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+$unreadColor: #ee5353;
 .system-notice {
   display: flex;
   width: 100%;
@@ -275,6 +310,34 @@ export default {
     .system-operation-right {
       li {
         float: right;
+      }
+    }
+  }
+  .system-table {
+    .list-item-content {
+      position: relative;
+      box-sizing: border-box;
+      cursor: pointer;
+      display: block;
+      .unread-1zPaAXtSu {
+        position: absolute;
+        top: 13px;
+        left: -10px;
+        width: 6px;
+        height: 6px;
+        background: $unreadColor;
+        border-radius: 50%;
+      }
+    }
+    .connection-table__empty {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      span {
+        display: inline-block;
+        margin-left: -20px;
+        line-height: 20px;
       }
     }
   }
