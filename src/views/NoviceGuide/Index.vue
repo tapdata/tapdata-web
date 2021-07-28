@@ -108,7 +108,7 @@
                 </el-radio-button>
               </el-radio-group>
               <el-button
-                :disabled="!!sourceForm.name"
+                :disabled="!!sourceForm.id"
                 :loading="initDatabaseLoading"
                 type="primary"
                 size="mini"
@@ -117,7 +117,7 @@
               >
             </div>
           </el-form-item>
-          <template v-if="sourceForm.name">
+          <template v-if="sourceForm.id">
             <el-form-item label="连接名称" prop="name">
               <el-input v-model="sourceForm.name" readonly disabled>
                 <span slot="suffix">（仅测试使用，不可编辑）</span>
@@ -145,7 +145,7 @@
         </el-form>
         <div class="operation mt-7">
           <el-button v-if="step !== 0" class="mr-4" size="mini" @click="toPrev">上一步</el-button>
-          <el-button type="primary" size="mini" :disabled="!sourceForm.name" @click="toNext">下一步</el-button>
+          <el-button type="primary" size="mini" :disabled="!sourceForm.id" @click="toNext">下一步</el-button>
         </div>
       </div>
       <!--   第4步   -->
@@ -393,13 +393,11 @@ export default {
     },
     // 步骤-创建源连接
     initSource(isTimer) {
-      if (isTimer && this.sourceForm.name) {
+      if (isTimer && this.sourceForm.id) {
         return
       }
       this.loadConnection()
     },
-    // 步骤-创建目标连接
-    initTarget() {},
     // 步骤-配置同步任务
     initTask(isTimer) {
       if (isTimer) {
@@ -471,8 +469,7 @@ export default {
           databaseType: this.sourceForm.database_type
         })
         .then((data = {}) => {
-          this.sourceForm = {
-            database_type: this.sourceForm.database_type,
+          Object.assign(this.sourceForm, {
             name: this.sourceForm.database_type + '_' + new Date().getTime().toString(16),
             database_host: data.host,
             database_port: data.port,
@@ -482,7 +479,7 @@ export default {
             database_schema: data.schema,
             database_owner: data.schema,
             initId: data.id
-          }
+          })
           this.createConnection()
         })
         .catch(() => {
@@ -549,7 +546,7 @@ export default {
         .then(data => {
           let sourceConnection = data?.[0]
           if (!sourceConnection) {
-            this.sourceForm.name = '' // 标记为空
+            this.sourceForm.id = '' // 标记为空
             return
           }
           if (this.sourceForm.database_type === 'mongodb') {
@@ -699,8 +696,8 @@ export default {
     },
     uuid() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = (Math.random() * 16) | 0
-        var v = c === 'x' ? r : (r & 0x3) | 0x8
+        let r = (Math.random() * 16) | 0
+        let v = c === 'x' ? r : (r & 0x3) | 0x8
         return v.toString(16)
       })
     },
