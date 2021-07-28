@@ -1400,6 +1400,9 @@ export default {
               this.$refs.test.start(data, true, false, true)
             } else {
               delete data.id
+              if (!data.isUrl && data.database_type === 'mongodb') {
+                data.database_password = data.plain_password || ''
+              }
               this.$refs.test.start(data)
             }
           }
