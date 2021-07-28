@@ -16,7 +16,7 @@ export class Database extends NodeType {
 
   group = 'data'
 
-  formSchema = {
+  /*formSchema = {
     type: 'object',
     properties: {
       datasource: {
@@ -120,7 +120,7 @@ export class Database extends NodeType {
         'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
       }
     }
-  }
+  }*/
 
   /**
    * 获取额外添加到节点上的属性

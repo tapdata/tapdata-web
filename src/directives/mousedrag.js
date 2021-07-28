@@ -36,6 +36,7 @@ export default {
     })
 
     const handleMove = (el._handleMove = event => {
+      event.preventDefault()
       if (!$drag) {
         $drag = appendHtml(document.body, domHtml.replace(/\n/g, '').trim())
         document.body.classList.add('cursor-grabbing')

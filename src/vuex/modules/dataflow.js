@@ -40,6 +40,7 @@ const state = () => ({
   activeActions: [], // 激活的动作
   selectedNodes: [], // 选中的节点
   activeType: null,
+  formSchema: null,
   dataflow: {
     id: '',
     name: '',
@@ -148,7 +149,9 @@ const getters = {
 
   activeType: state => {
     return state.activeType
-  }
+  },
+
+  formSchema: state => state.formSchema
 }
 
 // actions
@@ -405,6 +408,11 @@ const mutations = {
       state.stateIsDirty = true
     }
     state.dataflow.nodes.splice(0, state.dataflow.nodes.length)
+  },
+
+  setFormSchema(state, schema) {
+    Vue.set(state, 'formSchema', schema)
+    console.log('state', state)
   }
 }
 
