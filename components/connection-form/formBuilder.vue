@@ -10,7 +10,6 @@
 import { createForm, onFormValuesChange, onFormSubmit } from '@formily/core'
 import { FormProvider, createSchemaField } from '@formily/vue'
 import { components } from './form'
-import config from './config'
 import './form/styles/index.scss'
 const { SchemaField } = createSchemaField({
   components
@@ -46,16 +45,26 @@ export default {
         })
         .then(res => {
           if (res.data) {
-            this.schema = res.data[0]
-
-            this.schema.properties = this.handleFormSchema(this.schema)
+            this.schema = res.data[0] || []
+            this.schema.properties = this.handleFormSchema(this.schema.properties)
           }
         })
     },
-    handleFormSchema(schema) {
-      let func = config['defaultConfig']
-      let defaultModelConfig = func ? func(this) : ''
-      return Object.assign({}, defaultModelConfig, schema.properties)
+    handleFormSchema(properties) {
+      let result = {
+        name: {
+          type: 'string',
+          title: '连接名称',
+          required: true,
+          'x-decorator': 'ElFormItem',
+          'x-component': 'Input'
+        },
+        config: {
+          properties,
+          type: 'object'
+        }
+      }
+      return result
     },
     useEffects() {
       onFormValuesChange(form => {
