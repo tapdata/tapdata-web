@@ -2,7 +2,7 @@
   <div class="node-item-wrap">
     <div class="node-item">
       <div class="node-icon">
-        <ElImage draggable="false" src="static/editor/tigerdb.svg"></ElImage>
+        <ElImage draggable="false" :src="`static/editor/${data.icon}.svg`"></ElImage>
       </div>
       <div class="node-content">
         <div class="node-title text-truncate">{{ data.name }}</div>
@@ -50,6 +50,11 @@ export default {
       height: 26px;
       margin-right: 12px;
       flex-shrink: 0;
+
+      .el-image {
+        width: 100%;
+        height: 100%;
+      }
     }
 
     .node-content {
