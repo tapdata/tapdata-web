@@ -295,13 +295,6 @@ export default {
     &.active {
       transform: scale(1);
     }
-    //::v-deep {
-    //  .el-dialog {
-    //    background-color: unset;
-    //    border: none;
-    //    box-shadow: unset;
-    //  }
-    //}
     .guide-mark {
       img {
         width: 67px;
