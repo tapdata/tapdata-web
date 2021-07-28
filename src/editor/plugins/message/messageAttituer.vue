@@ -490,6 +490,8 @@ export default {
         // 更新右树
         const index = children.findIndex(d => d[this.nodeKey] === data[this.nodeKey])
         children.splice(index, 1)
+        // 清空右侧选中
+        this.$refs.treeTransfer.resetRightTree()
         this.changeRightData([...this.rightData])
       })
     },
