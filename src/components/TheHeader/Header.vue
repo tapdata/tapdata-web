@@ -56,10 +56,10 @@
           </div>
           <div class="mt-3 fs-6 text-white position-relative inline-block">
             我们为您准备了详细的新手引导教程，方便您更快上手哦～
-            <el-checkbox v-model="noShow" class="no-show-checkbox text-white position-absolute">不再显示</el-checkbox>
+            <el-checkbox v-model="noShow" class="no-show-checkbox text-white position-absolute">不再提醒</el-checkbox>
           </div>
           <div class="guide-operation flex justify-center mt-8">
-            <img src="../../../public/images/guide/guid_no.png" alt="" @click="closeGuideDialog" />
+            <img src="../../../public/images/guide/guid_no.png" alt="" @click="leaveGuide" />
             <img class="ml-9" src="../../../public/images/guide/guid_yes.png" alt="" @click="toGuidePage" />
           </div>
         </div>
@@ -96,14 +96,20 @@ export default {
     getTmUser() {
       this.$axios.get('tm/api/users/self').then(data => {
         if (data) {
+          let guideData = data?.guideData ?? {}
           window.__USER_SELF_INFO__ = {
-            id: data.id
+            id: data.id,
+            guideData: guideData
           }
-          this.noShow = data?.guideData?.noShow
+          this.noShow = guideData?.noShow
+          if (localStorage.getItem('guideData')) {
+            guideData = JSON.parse(localStorage.getItem('guideData'))
+          }
           // 不再显示
           if (
-            !data?.guideData?.noShow &&
-            (new Date().getTime() - (data?.guideData?.updateTime ?? 0)) / 1000 / 3600 > 24
+            !guideData?.noShow &&
+            !guideData?.action &&
+            (new Date().getTime() - (guideData?.updateTime ?? 0)) / 1000 / 3600 > 24
           ) {
             this.command('guide')
           }
@@ -155,24 +161,25 @@ export default {
           break
       }
     },
-    closeGuideDialog() {
+    leaveGuide() {
       this.guideVisible = false
       this.updateUser()
     },
     toGuidePage() {
       this.guideVisible = false
-      this.updateUser()
+      this.updateUser(true)
       if (this.$route.name !== 'NoviceGuide') {
         this.$router.push({
           name: 'NoviceGuide'
         })
       }
     },
-    updateUser() {
+    updateUser(action = false) {
       this.$axios.patch('tm/api/users/' + window.__USER_SELF_INFO__?.id, {
         guideData: {
           noShow: this.noShow,
-          updateTime: new Date().getTime()
+          updateTime: new Date().getTime(),
+          action: action
         }
       })
     }

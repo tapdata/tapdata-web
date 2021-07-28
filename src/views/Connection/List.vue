@@ -81,9 +81,7 @@
         <ElTableColumn label="操作" width="180">
           <template slot-scope="scope">
             <ElLink type="primary" class="mr-2" @click="test(scope.row)">连接测试</ElLink>
-            <ElLink type="primary" class="mr-2" :disabled="scope.row.agentType === 'Cloud'" @click="edit(scope.row)"
-              >编辑</ElLink
-            >
+            <ElLink type="primary" class="mr-2" @click="edit(scope.row)">编辑</ElLink>
             <ElLink type="primary" class="mr-2" @click="copy(scope.row)">复制</ElLink>
             <ElLink type="danger" @click="del(scope.row)">删除</ElLink>
           </template>
