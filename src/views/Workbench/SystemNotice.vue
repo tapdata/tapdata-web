@@ -172,6 +172,7 @@ export default {
     },
     handleGo(item) {
       let routeUrl = {}
+      this.handleRead(item.id)
       switch (item.system) {
         case 'dataFlow':
           routeUrl = this.$router.resolve({
@@ -248,12 +249,12 @@ export default {
     },
     // 已读消息
     handleRead(id) {
-      let read = this.read
+      // let read = this.read
       this.$axios.patch('tm/api/Messages', { read: true, id: id }).then(res => {
         if (res) {
           this.getUnreadNum() //未读消息数量
           this.fetch()
-          this.read = read
+          // this.read = read
           this.$root.$emit('notificationUpdate')
         }
       })

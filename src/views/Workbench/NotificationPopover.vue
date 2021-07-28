@@ -150,6 +150,7 @@ export default {
     // 跳转消息详情
     handleGo(item) {
       let routeUrl = {}
+      this.handleRead(item.id)
       switch (item.system) {
         case 'dataFlow':
           routeUrl = this.$router.resolve({
@@ -267,7 +268,7 @@ export default {
 
     .cuk-list {
       font-size: 12px;
-
+      overflow-y: auto;
       .list-item {
         position: relative;
         background: #fff;
@@ -310,7 +311,7 @@ export default {
           white-space: nowrap;
           .notive-item-name {
             display: inline-block;
-            max-width: 150px;
+            max-width: 120px;
             padding: 0 5px;
             white-space: nowrap;
             text-overflow: ellipsis;
