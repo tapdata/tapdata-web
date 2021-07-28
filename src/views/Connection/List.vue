@@ -315,22 +315,17 @@ export default {
       }).then(async resFlag => {
         if (resFlag) {
           try {
-            await this.$axios.delete(`tm/api/Connections/${item.id}?name=${item.name}`)
             if (item.agentType === 'Cloud') {
               // 释放资源
-              this.$axios
-                .post('api/tcm/connection/delete', {
-                  type: item.connection_type,
-                  databaseType: item.database_type
-                })
-                .then(() => {
-                  this.$message.success('删除成功')
-                  this.fetch()
-                })
+              await this.$axios.post('api/tcm/connection/delete', {
+                type: item.connection_type,
+                databaseType: item.database_type
+              })
             } else {
-              this.$message.success('删除成功')
-              this.fetch()
+              await this.$axios.delete(`tm/api/Connections/${item.id}?name=${item.name}`)
             }
+            this.$message.success('删除成功')
+            this.fetch()
           } catch (error) {
             // 删除失败
             let errorTip = '删除失败'
