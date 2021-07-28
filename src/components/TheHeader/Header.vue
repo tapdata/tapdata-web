@@ -36,15 +36,7 @@
       <HeaderCustomerService v-model="isShowCustomerService"></HeaderCustomerService>
       <!-- agent断开弹窗 -->
       <!-- <AgentFail v-model="agentVisible" :isClose="isClose"></AgentFail> -->
-
-      <el-dialog
-        class="novice-guide-dialog"
-        :show-close="false"
-        :close-on-click-modal="false"
-        :visible.sync="guideVisible"
-        width="50%"
-        top="30vh"
-      >
+      <div :class="['fixed-novice-guide-dialog', { active: guideVisible }]">
         <div class="guide-dialog__content text-center">
           <div class="guide-mark">
             <img src="../../../public/images/guide/guide_mark.png" alt="" />
@@ -63,7 +55,7 @@
             <img class="ml-9" src="../../../public/images/guide/guid_yes.png" alt="" @click="toGuidePage" />
           </div>
         </div>
-      </el-dialog>
+      </div>
     </div>
   </ElHeader>
 </template>
@@ -286,14 +278,30 @@ export default {
   height: 68px !important;
 }
 .dfs-header__dialog {
-  .novice-guide-dialog {
-    ::v-deep {
-      .el-dialog {
-        background-color: unset;
-        border: none;
-        box-shadow: unset;
-      }
+  .fixed-novice-guide-dialog {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding-top: 30vh;
+    overflow: auto;
+    transform: scale(0);
+    transition: transform 0.5s;
+    transform-origin: top right;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 3004;
+    box-sizing: border-box;
+    &.active {
+      transform: scale(1);
     }
+    //::v-deep {
+    //  .el-dialog {
+    //    background-color: unset;
+    //    border: none;
+    //    box-shadow: unset;
+    //  }
+    //}
     .guide-mark {
       img {
         width: 67px;

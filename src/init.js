@@ -30,8 +30,8 @@ ElementLocale.i18n((key, value) => {
 }) // 重点：为了实现element插件的多语言切换
 
 Vue.prototype.$checkAgentStatus = callback => {
-  window.axios.get('tm/api/Workers/availableAgent').then(data => {
-    if (data?.result?.length) {
+  window.axios.get('api/tcm/agent/agentCount').then(data => {
+    if (data.agentTotalCount || data.agentTotalCount > 0) {
       callback && callback()
     } else {
       Message.error('Agent当前状态异常，请检查')

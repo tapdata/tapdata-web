@@ -25,7 +25,7 @@ module.exports = {
       database_port: 0,
       database_uri: '',
       database_name: 'test',
-      database_owner: '',
+      database_owner: 'owner_@name',
       retry: 0,
       nextRetry: null,
       id: '60d557ebd3fdfa20ea143cd8',
@@ -133,16 +133,18 @@ module.exports = {
   '/tm/api/Connections': {
     code: 'ok',
     msg: 'ok',
-    'data|0-1': [
+    'data|0-10': [
       {
         name: '@name',
         connection_type: 'target',
         'database_type|1': ['mysql', 'oracle', 'mongodb'],
-        database_host: '',
-        database_username: '',
+        database_host: '192.168.1.' + Random.integer(0, 999),
+        database_username: 'root@name',
+        database_password: '@cuid',
         database_port: Random.integer(0, 5000),
         database_uri: 'mongodb://192.168.1.191:27017/tapdata_test',
-        database_name: '',
+        database_name: 'root@name',
+        database_owner: 'owner_@name',
         id: '@id',
         sslCert: '',
         additionalString: '',
@@ -167,6 +169,7 @@ module.exports = {
   '/tm/api/Connections/:id': {
     data: {
       name: 'zed_huawei_mysql2',
+      'agentType|1': ['Cloud', ''],
       connection_type: 'source_and_target',
       database_type: 'mysql',
       database_host: '119.8.35.121',
@@ -174,7 +177,7 @@ module.exports = {
       database_port: 3307,
       database_uri: '',
       database_name: 'test',
-      database_owner: '',
+      database_owner: 'owner_@name',
       database_password: '259275a9f888a77f2acd8af488755875',
       retry: 0,
       nextRetry: null,
@@ -330,8 +333,7 @@ module.exports = {
             indices: []
           }
         ]
-      },
-      'agentType|1': ['Cloud', '']
+      }
     },
     code: 'ok',
     msg: 'ok'
