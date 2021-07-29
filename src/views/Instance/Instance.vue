@@ -114,7 +114,7 @@
                     @click="showUpgradeErrorDialogFnc(scope.row)"
                   />
                   <img
-                    v-else
+                    v-else-if="!upgradeFlag(scope.row)"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeSvg"
                     alt=""
@@ -662,12 +662,15 @@ export default {
     },
     upgradeFlag(row) {
       let { tmInfo } = row
-      return (
-        !tmInfo.updateStatus ||
-        tmInfo.updateStatus === 'done' ||
-        !tmInfo.updateVersion ||
-        (tmInfo.updateVersion && tmInfo.updateVersion !== this.version)
-      )
+      let isOvertime = (new Date().getTime() - (tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
+      // 刚完成5分钟内
+      return tmInfo.updateStatus === 'done' && !isOvertime
+      // return (
+      //   !tmInfo.updateStatus ||
+      //   tmInfo.updateStatus === 'done' ||
+      //   !tmInfo.updateVersion ||
+      //   (tmInfo.updateVersion && tmInfo.updateVersion !== this.version)
+      // )
     },
     upgradingFlag(row) {
       let { tmInfo } = row
