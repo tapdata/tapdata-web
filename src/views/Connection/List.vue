@@ -310,13 +310,13 @@ export default {
         return
       }
       try {
-        await this.$axios.post(`tm/api/Connections/${item.id}/copy`, {
+        let data = await this.$axios.post(`tm/api/Connections/${item.id}/copy`, {
           uri: `${item.id}/copy`,
           headers: { 'lconname-name': item.name }
         })
         this.fetch()
         this.$message.success('复制成功')
-        this.test(item, false)
+        this.test(data?.result, false)
       } catch (error) {
         if (error?.response?.msg === 'duplicate source') {
           this.$message.success('复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"')
