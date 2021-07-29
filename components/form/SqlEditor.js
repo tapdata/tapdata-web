@@ -1,4 +1,4 @@
-import CodeEditor from '@/components/CodeEditor'
+import CodeEditor from 'web-core/components/CodeEditor'
 
 export const SqlEditor = {
   props: {

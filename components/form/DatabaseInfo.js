@@ -1,7 +1,7 @@
 import { connect, useForm, mapProps } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
-import EmptyItem from '@/components/EmptyItem'
+import EmptyItem from 'web-core/components/EmptyItem'
 
 export const DatabaseInfo = connect(
   observer(
