@@ -58,6 +58,12 @@
       </div>
       <ChangeInstance :region="agent.region" :zone="agent.zone" :dialogVisible.sync="dialogVisible"></ChangeInstance>
     </template>
+    <template v-else>
+      <div class="agent-list__empty" v-if="!agent">
+        <img src="../../assets/image/noAgent.png" class="code" />
+        <span>您的 Agent 已不存在</span>
+      </div>
+    </template>
   </section>
 </template>
 
@@ -76,17 +82,7 @@ export default {
   data() {
     return {
       isInternet: window.__USER_INFO__.isInternet,
-      agent: {
-        id: '',
-        spec: {
-          version: ''
-        },
-        createAt: '',
-        ips: '',
-        cpus: '',
-        totalmem: '',
-        installationDirectory: ''
-      },
+      agent: null,
       specMap: SPEC_MAP,
       chargeMap: CHARGE_MAP,
       loading: false,
@@ -111,29 +107,31 @@ export default {
         .get('api/tcm/agent/' + this.$route.query.id)
         .then(data => {
           // this.agent = formatAgent(data)
-          this.agent = data
-          this.agent.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
-          if (this.agent?.metric?.systemInfo) {
-            this.agent.cpus = this.agent.metric.systemInfo.cpus || ''
-            this.agent.installationDirectory = this.agent.metric.systemInfo.installationDirectory || ''
-            this.agent.ips = this.agent.metric.systemInfo.ips || ''
+          if (data) {
+            this.agent = data
+            this.agent.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
+            if (this.agent?.metric?.systemInfo) {
+              this.agent.cpus = this.agent.metric.systemInfo.cpus || ''
+              this.agent.installationDirectory = this.agent.metric.systemInfo.installationDirectory || ''
+              this.agent.ips = this.agent.metric.systemInfo.ips || ''
 
-            let num = Number(this.agent.metric.systemInfo.totalmem) || 0
-            let size = ''
-            if (num < 0.1 * 1024) {
-              //小于0.1KB，则转化成B
-              size = num.toFixed(2) + 'B'
-            } else if (num < 0.1 * 1024 * 1024) {
-              //小于0.1MB，则转化成KB
-              size = (num / 1024).toFixed(2) + 'KB'
-            } else if (num < 0.1 * 1024 * 1024 * 1024) {
-              //小于0.1GB，则转化成MB
-              size = (num / (1024 * 1024)).toFixed(2) + 'MB'
-            } else {
-              //其他转化成GB
-              size = (num / (1024 * 1024 * 1024)).toFixed(2) + 'GB'
+              let num = Number(this.agent.metric.systemInfo.totalmem) || 0
+              let size = ''
+              if (num < 0.1 * 1024) {
+                //小于0.1KB，则转化成B
+                size = num.toFixed(2) + 'B'
+              } else if (num < 0.1 * 1024 * 1024) {
+                //小于0.1MB，则转化成KB
+                size = (num / 1024).toFixed(2) + 'KB'
+              } else if (num < 0.1 * 1024 * 1024 * 1024) {
+                //小于0.1GB，则转化成MB
+                size = (num / (1024 * 1024)).toFixed(2) + 'MB'
+              } else {
+                //其他转化成GB
+                size = (num / (1024 * 1024 * 1024)).toFixed(2) + 'GB'
+              }
+              this.agent.totalmem = size
             }
-            this.agent.totalmem = size
           }
         })
         .finally(() => {
@@ -228,6 +226,24 @@ export default {
     position: absolute;
     right: 20px;
     top: 20px;
+  }
+  .agent-list__empty {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+    span {
+      display: inline-block;
+      line-height: 20px;
+      padding-top: 10px;
+      font-size: 12px;
+      color: #000;
+    }
   }
 }
 </style>
