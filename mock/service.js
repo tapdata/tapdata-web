@@ -10,21 +10,7 @@ const agent = {
   name: 'DRS_@id', // 实例名称
   region: 'CIDC-RP-@increment()', // 地域
   zone: 'CIDC-RP-@increment()-@increment()', // 可用区
-
-  'status|+1': [
-    'Creating',
-    'Running',
-    'Stopping',
-    'Stopped',
-    'Error',
-    'Freezing',
-    'Freeze',
-    'Restarting',
-    'Recovering',
-    'FreezeRecovering',
-    'Altering',
-    'WaitingAlter'
-  ], // 实例状态，参考《状态变迁》章节
+  'status|+1': ['Creating', 'Running', 'Stopping', 'Stopped'], // 实例状态，参考《状态变迁》章节
   freeTime: {
     // 可维护时间设置
     start: '@now',
@@ -124,7 +110,7 @@ module.exports = Object.assign({}, dataflow, connection, Messages, {
       guideData: {
         noShow: true,
         updateTime: 1627288426187,
-        action: true
+        action: false
       }
     },
     code: 'ok',

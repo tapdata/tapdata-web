@@ -260,14 +260,13 @@ export default {
     statusOptions() {
       let options = {}
       let map = this.statusMap
-      let dfsFilter = ['Running', 'Stopped', 'Error']
+      let dfsFilter = ['Creating', 'Running', 'Stopped']
       for (const key in map) {
         const item = map[key]
         let value = key
         if (options[item.text]) {
           value = options[item.text] + ',' + value
         }
-        // dfs只保留 运行中、已停止、异常 Running Stopped Error
         if (dfsFilter.indexOf(value) > -1) {
           options[item.text] = value
         }
@@ -374,7 +373,7 @@ export default {
           .then(async data => {
             let list = data.items || []
             this.list = list.map(item => {
-              item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
+              // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
               item.deployDisable = item.tmInfo.pingTime || false
               // item.updateStatus = ''
               if (!item.tmInfo) {
@@ -649,7 +648,7 @@ export default {
       if (row.agentType === 'Cloud') {
         flag = false
       } else {
-        flag = row.status !== 'Offline'
+        flag = !['Creating', 'Stopped'].includes(row.status)
       }
       return flag
     },
