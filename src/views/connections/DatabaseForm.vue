@@ -1625,11 +1625,7 @@ export default {
         }
       } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
         let result = await this.$api('tcm').getAgentCount()
-        if (
-          !result.data ||
-          !result.data.agentTotalCount ||
-          result.data.agentTotalCount <= 0
-        ) {
+        if (!result.data || !result.data.agentTotalCount || result.data.agentTotalCount <= 0) {
           this.$message.error('您尚未订购同步实例，请先订购实例')
         }
       }

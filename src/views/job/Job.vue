@@ -1001,7 +1001,7 @@ export default {
             if (res?.data?.agentRunningCount > 0) {
               callback && callback()
             } else {
-              Message.error('Agent当前状态异常，请检查')
+              this.$message.error('Agent当前状态异常，请检查')
             }
           })
       } else {
