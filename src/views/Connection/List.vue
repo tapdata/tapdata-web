@@ -83,7 +83,7 @@
         </ElTableColumn>
         <ElTableColumn label="操作" width="180">
           <template slot-scope="scope">
-            <ElLink type="primary" class="mr-2" @click="test(scope.row)">连接测试</ElLink>
+            <ElLink type="primary" class="mr-2" @click="testConnection(scope.row)">连接测试</ElLink>
             <ElLink type="primary" class="mr-2" :disabled="scope.row.agentType === 'Cloud'" @click="edit(scope.row)"
               >编辑</ElLink
             >
@@ -316,6 +316,7 @@ export default {
         })
         this.fetch()
         this.$message.success('复制成功')
+        this.test(item, false)
       } catch (error) {
         if (error?.response?.msg === 'duplicate source') {
           this.$message.success('复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"')
@@ -360,28 +361,30 @@ export default {
         }
       })
     },
-    test(item) {
+    testConnection(item) {
       this.$checkAgentStatus(async () => {
         let loading = this.$loading()
-        let data = item
-        if (['gridfs', 'mongodb'].includes(item.database_type)) {
-          delete data.database_uri
-          data.justTest = true
-        }
-        if (item.database_type !== 'redis') {
-          delete data['database_password']
-        }
-        try {
-          await this.$axios.patch(`tm/api/Connections/${item.id}`, {
-            status: 'testing'
-          })
-          this.$refs.test.start(data)
-          this.fetch()
-        } catch (error) {
-          this.$message.error(error?.response?.msg || '测试连接失败')
-        }
+        this.test(item)
         loading.close()
       })
+    },
+    async test(data, isShowDialog = true) {
+      if (['gridfs', 'mongodb'].includes(data.database_type)) {
+        delete data.database_uri
+        data.justTest = true
+      }
+      if (data.database_type !== 'redis') {
+        delete data['database_password']
+      }
+      try {
+        await this.$axios.patch(`tm/api/Connections/${data.id}`, {
+          status: 'testing'
+        })
+        this.$refs.test.start(data, isShowDialog)
+        this.fetch()
+      } catch (error) {
+        this.$message.error(error?.response?.msg || '测试连接失败')
+      }
     },
     receiveTestData(data) {
       if (!data.status || data.status === null) return
