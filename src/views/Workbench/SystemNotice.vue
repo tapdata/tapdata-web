@@ -250,20 +250,31 @@ export default {
     // 已读消息
     handleRead(id) {
       // let read = this.read
-      this.$axios.patch('tm/api/Messages', { read: true, id: id }).then(res => {
-        if (res) {
-          this.getUnreadNum() //未读消息数量
-          this.fetch()
-          // this.read = read
-          this.$root.$emit('notificationUpdate')
-        }
-      })
+      this.$axios
+        .patch('tm/api/Messages', {
+          read: true,
+          id: id,
+          isDeleted: {
+            neq: true
+          }
+        })
+        .then(res => {
+          if (res) {
+            this.getUnreadNum() //未读消息数量
+            this.fetch()
+            // this.read = read
+            this.$root.$emit('notificationUpdate')
+          }
+        })
     },
     // 未读消息
     getUnreadNum() {
       let where = {
         where: {
-          read: false
+          read: false,
+          isDeleted: {
+            neq: true
+          }
         }
       }
       this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {

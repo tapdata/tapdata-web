@@ -111,7 +111,10 @@ export default {
     // 获取未读的消息数量
     getUnReadNum() {
       let where = {
-        read: false
+        read: false,
+        isDeleted: {
+          neq: true
+        }
       }
       this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
         if (res) {
