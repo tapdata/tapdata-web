@@ -100,9 +100,14 @@
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
-                  <img v-if="upgradingFlag" class="upgrade-img cursor-not-allowed" :src="upgradeLoadingSvg" alt="" />
                   <img
-                    v-else-if="upgradeFailedFlag"
+                    v-if="upgradingFlag(scope.row)"
+                    class="upgrade-img cursor-not-allowed"
+                    :src="upgradeLoadingSvg"
+                    alt=""
+                  />
+                  <img
+                    v-else-if="upgradeFailedFlag(scope.row)"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeErrorSvg"
                     alt=""
@@ -648,8 +653,8 @@ export default {
       return flag
     },
     showUpgradeIcon(row) {
-      let { version, agentType } = this
-      if (agentType === 'Cloud') {
+      let { version } = this
+      if (row.agentType === 'Cloud') {
         return false
       }
       return !!(version && row?.tmInfo?.pingTime && row?.spec?.version !== version)
