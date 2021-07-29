@@ -471,10 +471,18 @@ export default {
       if (this.delBtnDisabled(row)) {
         return
       }
-      this.$confirm('删除后该Agent将无法再继续使用，是否确认删除？', '是否删除', {
+      let runningTaskNum = row?.metric?.runningTaskNum ?? 0 // 运行中的任务数
+      let noDelFlag = runningTaskNum > 0 // 不能删除
+      let message = noDelFlag
+        ? '当前Agent上有任务正在运行，请先停止任务后再删除。'
+        : '删除后该Agent将无法再继续使用，是否确认删除？'
+      this.$confirm(message, '是否删除', {
         type: 'warning'
       }).then(res => {
         if (res) {
+          if (noDelFlag) {
+            return
+          }
           if (row.agentType === 'Cloud') {
             this.delLoading = true
             this.$axios
