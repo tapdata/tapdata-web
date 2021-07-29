@@ -556,7 +556,8 @@ export default {
         this.$axios
           .post('tm/api/clusterStates/updataAgent', {
             downloadUrl,
-            process_id: this.selectedRow?.tmInfo?.agentId
+            process_id: this.selectedRow?.tmInfo?.agentId,
+            version: this.version
           })
           .then(() => {
             this.$message.success('开始升级')
