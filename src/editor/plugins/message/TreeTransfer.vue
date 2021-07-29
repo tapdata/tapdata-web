@@ -111,16 +111,16 @@ export default {
     }
   },
   methods: {
-    toRight(noRemove = false, data = null) {
+    toRight(noRemove = false, data = null, addLeftData = true) {
       // 移到右侧
       let getCurrentNodeRight = this.getCurrentNodeRight()
       let currentNodeRightParent = this.rightTreeData?.node?.parent
       if (getCurrentNodeRight?.message) {
-        this.toRightNode(data)
+        this.toRightNode(data, null)
       } else if (currentNodeRightParent?.parent) {
         this.toRightNode(data, currentNodeRightParent?.data)
       } else {
-        this.toRightTree(data)
+        this.toRightTree(data, addLeftData)
       }
 
       if (noRemove) {
@@ -139,11 +139,14 @@ export default {
       this.rightTreeData = null
     },
     // 移动到右侧树
-    toRightTree(data = null) {
+    toRightTree(data = null, addLeftData = true) {
       let getCheckedNodesLeft = this.getCheckedNodesLeft()
       this.toRightBefore?.(getCheckedNodesLeft)
       this.resetRightTree()
-      let result = [...this.rightData, ...getCheckedNodesLeft]
+      let result = [...this.rightData]
+      if (addLeftData) {
+        result = [...this.rightData, ...getCheckedNodesLeft]
+      }
       if (data) {
         result.push(data)
       }

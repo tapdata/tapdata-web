@@ -368,7 +368,8 @@ export default {
       })
     },
     addField() {
-      this.$refs.treeTransfer.toRight(true, _.cloneDeep(this.createForm))
+      let form = Object.assign(_.cloneDeep(this.createForm), { key: '_FIELD_' + this.createForm.name })
+      this.$refs.treeTransfer.toRight(true, form, false)
     },
     editField() {
       const data = this.editData.data
