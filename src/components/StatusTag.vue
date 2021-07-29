@@ -3,6 +3,9 @@
     <ElTag :type="statusObj.type" v-if="type === 'tag'">{{ statusObj.text }}</ElTag>
     <span style="display: flex; align-items: center" v-else>
       <VIcon v-if="statusObj.icon === 'loading'" style="font-size: 18px; margin: 0 4px" color="#10C038">loading</VIcon>
+      <VIcon v-else-if="statusObj.icon === 'creating'" style="font-size: 18px; margin: 0 4px" color="#f7a237"
+        >creating</VIcon
+      >
       <i
         v-else-if="statusObj.icon === 'running'"
         class="iconfont td-status-tag__icon td-icon-yunhangzhong color-success"

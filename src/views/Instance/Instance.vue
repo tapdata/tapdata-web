@@ -260,14 +260,13 @@ export default {
     statusOptions() {
       let options = {}
       let map = this.statusMap
-      let dfsFilter = ['Running', 'Stopped', 'Error']
+      let dfsFilter = ['Creating', 'Running', 'Stopped']
       for (const key in map) {
         const item = map[key]
         let value = key
         if (options[item.text]) {
           value = options[item.text] + ',' + value
         }
-        // dfs只保留 运行中、已停止、异常 Running Stopped Error
         if (dfsFilter.indexOf(value) > -1) {
           options[item.text] = value
         }
@@ -374,7 +373,7 @@ export default {
           .then(async data => {
             let list = data.items || []
             this.list = list.map(item => {
-              item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
+              // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
               item.deployDisable = item.tmInfo.pingTime || false
               // item.updateStatus = ''
               if (!item.tmInfo) {
@@ -469,10 +468,21 @@ export default {
     },
     // 删除
     handleDel(row) {
-      this.$confirm('删除后该Agent将无法再继续使用，是否确认删除？', '是否删除', {
+      if (this.delBtnDisabled(row)) {
+        return
+      }
+      let runningTaskNum = row?.metric?.runningTaskNum ?? 0 // 运行中的任务数
+      let noDelFlag = runningTaskNum > 0 // 不能删除
+      let message = noDelFlag
+        ? '当前Agent上有任务正在运行，请先停止任务后再删除。'
+        : '删除后该Agent将无法再继续使用，是否确认删除？'
+      this.$confirm(message, '是否删除', {
         type: 'warning'
       }).then(res => {
         if (res) {
+          if (noDelFlag) {
+            return
+          }
           if (row.agentType === 'Cloud') {
             this.delLoading = true
             this.$axios
@@ -647,9 +657,11 @@ export default {
     delBtnDisabled(row) {
       let flag = false
       if (row.agentType === 'Cloud') {
-        flag = false
+        if (['Creating'].includes(row.status)) {
+          flag = true
+        }
       } else {
-        flag = row.status !== 'Offline'
+        flag = !['Creating', 'Stopped'].includes(row.status)
       }
       return flag
     },

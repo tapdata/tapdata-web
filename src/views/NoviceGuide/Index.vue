@@ -503,14 +503,13 @@ export default {
       if (params.database_type === 'mongodb') {
         params.database_host += ':' + params.database_port
         params.database_port = ''
-      } else if (params.database_type === 'postgres') {
-        params.database_owner = this.sourceForm.database_owner
-      }
-      delete params.id
-      if (params.database_type === 'mongodb') {
         params.fill = params.isUrl ? 'uri' : ''
         delete params.isUrl
+      } else if (params.database_type === 'postgres') {
+        params.database_owner = this.sourceForm.database_owner
+        params.pgsql_log_decorder_plugin_name = 'wal2json_streaming'
       }
+      delete params.id
       this.$axios
         .post('tm/api/Connections', params)
         .then(() => {
