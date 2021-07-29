@@ -111,7 +111,7 @@
         @current-change="fetch"
       >
       </ElPagination>
-      <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
+      <ConnectionTest ref="test"></ConnectionTest>
       <Preview ref="preview"></Preview>
     </div>
   </section>
@@ -172,6 +172,7 @@ import { CONNECTION_STATUS_MAP, SUPPORT_DB } from '../../const'
 import StatusTag from '../../components/StatusTag'
 import Preview from './Preview.vue'
 
+let timer = null
 export default {
   components: { StatusTag, Preview },
   data() {
@@ -209,8 +210,53 @@ export default {
     let query = this.$route.query
     this.searchParams = Object.assign(this.searchParams, query)
     this.fetch()
+    timer = setInterval(() => {
+      let list = this.list || []
+      let ids = []
+      list.forEach(item => {
+        if (['testing'].includes(item.status)) {
+          ids.push(item.id)
+        }
+      })
+      if (ids.length && this.$route.name === 'Connection') {
+        this.updateStatusByIds(ids)
+      }
+    }, 5000)
+  },
+  beforeDestroy() {
+    clearInterval(timer)
+    timer = null
   },
   methods: {
+    async updateStatusByIds(ids) {
+      let fields = {
+        id: true,
+        name: true,
+        status: true
+      }
+      let filter = {
+        fields,
+        where: {
+          id: {
+            $inq: ids
+          }
+        }
+      }
+      let data = await this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
+      let changeList = data || []
+      let statusMap = {}
+      changeList.forEach(item => {
+        let { statusText, statusIcon, status } = this.formatData(item)
+        statusMap[item.id] = { statusText, statusIcon, status }
+      })
+      let list = this.list || []
+      list.forEach(item => {
+        let changeParams = statusMap[item.id]
+        if (changeParams) {
+          Object.assign(item, changeParams)
+        }
+      })
+    },
     search() {
       this.$router.replace({
         name: 'Connection',
@@ -385,16 +431,6 @@ export default {
       } catch (error) {
         this.$message.error(error?.response?.msg || '测试连接失败')
       }
-    },
-    receiveTestData(data) {
-      if (!data.status || data.status === null) return
-      let status = data.status
-      if (status === 'ready') {
-        this.$message.success('连接测试有效')
-      } else {
-        this.$message.error('连接测试无效')
-      }
-      this.fetch()
     },
     preview(id, type) {
       this.$refs.preview.open(id, type)

@@ -68,6 +68,7 @@
               placement="top-start"
             >
               <ElLink
+                v-if="scope.row.status !== 'scheduled'"
                 type="primary"
                 :disabled="
                   !statusBtMap['run'][scope.row.status] || (scope.row.status === 'draft' && scope.row.checked === false)
@@ -87,7 +88,7 @@
               停止任务
             </ElLink>
             <ElLink
-              v-if="scope.row.status === 'stopping'"
+              v-if="['scheduled', 'stopping'].includes(scope.row.status)"
               class="mr-2"
               type="primary"
               :disabled="!statusBtMap['forceStop'][scope.row.status]"
