@@ -100,25 +100,20 @@
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
+                  <img v-if="upgradingFlag" class="upgrade-img cursor-not-allowed" :src="upgradeLoadingSvg" alt="" />
                   <img
-                    v-if="!scope.row.tmInfo.updateStatus || scope.row.tmInfo.updateStatus === 'done'"
-                    class="upgrade-img cursor-pointer"
-                    :src="upgradeSvg"
-                    alt=""
-                    @click="showUpgradeDialogFnc(scope.row)"
-                  />
-                  <img
-                    v-else-if="['preparing', 'downloading', 'upgrading'].includes(scope.row.tmInfo.updateStatus)"
-                    class="upgrade-img cursor-not-allowed"
-                    :src="upgradeLoadingSvg"
-                    alt=""
-                  />
-                  <img
-                    v-else-if="['fail', 'error'].includes(scope.row.tmInfo.updateStatus)"
+                    v-else-if="upgradeFailedFlag"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeErrorSvg"
                     alt=""
                     @click="showUpgradeErrorDialogFnc(scope.row)"
+                  />
+                  <img
+                    v-else
+                    class="upgrade-img cursor-pointer"
+                    :src="upgradeSvg"
+                    alt=""
+                    @click="showUpgradeDialogFnc(scope.row)"
                   />
                 </ElTooltip>
               </template>
@@ -658,6 +653,25 @@ export default {
         return false
       }
       return !!(version && row?.tmInfo?.pingTime && row?.spec?.version !== version)
+    },
+    upgradeFlag(row) {
+      let { tmInfo } = row
+      return (
+        !tmInfo.updateStatus ||
+        tmInfo.updateStatus === 'done' ||
+        !tmInfo.updateVersion ||
+        (tmInfo.updateVersion && tmInfo.updateVersion !== this.version)
+      )
+    },
+    upgradingFlag(row) {
+      let { tmInfo } = row
+      return ['preparing', 'downloading', 'upgrading'].includes(tmInfo.updateStatus)
+    },
+    upgradeFailedFlag(row) {
+      let { tmInfo } = row
+      return (
+        tmInfo.updateVersion && tmInfo.updateVersion === this.version && ['fail', 'error'].includes(tmInfo.updateStatus)
+      )
     }
   }
 }
