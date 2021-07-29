@@ -22,7 +22,6 @@
     "ace-builds": "^1.4.12",
     "axios": "^0.21.1",
     "backbone": "^1.4.0",
-    "bootstrap": "^5.0.0-beta3",
     "core-js": "^3.6.5",
     "crypto": "^1.0.1",
     "crypto-js": "^4.0.0",
