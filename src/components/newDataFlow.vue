@@ -131,7 +131,8 @@ export default {
         'custom_connection',
         'gridfs',
         'mq',
-        'tcp_udp'
+        'tcp_udp',
+        'greenplum'
       ] //目前白名单,
     }
   },

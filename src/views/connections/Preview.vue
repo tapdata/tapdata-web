@@ -497,7 +497,8 @@ export default {
           'mq',
           'tcp_udp',
           'hbase',
-          'kudu'
+          'kudu',
+          'greenplum'
         ].includes(type)
       ) {
         this.$router.push({
