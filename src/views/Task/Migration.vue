@@ -235,7 +235,7 @@ export default {
         delete: { draft: true, error: true, paused: true },
         edit: { draft: true, error: true, paused: true },
         reset: { draft: true, error: true, paused: true },
-        forceStop: { stopping: true }
+        forceStop: { stopping: true, scheduled: true }
       }
     }
   },

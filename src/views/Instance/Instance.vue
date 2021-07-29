@@ -101,24 +101,24 @@
               <template v-if="showUpgradeIcon(scope.row)">
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
                   <img
-                    v-if="!scope.row.tmInfo.updateStatus || scope.row.tmInfo.updateStatus === 'done'"
-                    class="upgrade-img cursor-pointer"
-                    :src="upgradeSvg"
-                    alt=""
-                    @click="showUpgradeDialogFnc(scope.row)"
-                  />
-                  <img
-                    v-else-if="['preparing', 'downloading', 'upgrading'].includes(scope.row.tmInfo.updateStatus)"
+                    v-if="upgradingFlag(scope.row)"
                     class="upgrade-img cursor-not-allowed"
                     :src="upgradeLoadingSvg"
                     alt=""
                   />
                   <img
-                    v-else-if="['fail', 'error'].includes(scope.row.tmInfo.updateStatus)"
+                    v-else-if="upgradeFailedFlag(scope.row)"
                     class="upgrade-img cursor-pointer"
                     :src="upgradeErrorSvg"
                     alt=""
                     @click="showUpgradeErrorDialogFnc(scope.row)"
+                  />
+                  <img
+                    v-else-if="!upgradeFlag(scope.row)"
+                    class="upgrade-img cursor-pointer"
+                    :src="upgradeSvg"
+                    alt=""
+                    @click="showUpgradeDialogFnc(scope.row)"
                   />
                 </ElTooltip>
               </template>
@@ -556,7 +556,8 @@ export default {
         this.$axios
           .post('tm/api/clusterStates/updataAgent', {
             downloadUrl,
-            process_id: this.selectedRow?.tmInfo?.agentId
+            process_id: this.selectedRow?.tmInfo?.agentId,
+            version: this.version
           })
           .then(() => {
             this.$message.success('开始升级')
@@ -653,11 +654,33 @@ export default {
       return flag
     },
     showUpgradeIcon(row) {
-      let { version, agentType } = this
-      if (agentType === 'Cloud') {
+      let { version } = this
+      if (row.agentType === 'Cloud') {
         return false
       }
       return !!(version && row?.tmInfo?.pingTime && row?.spec?.version !== version)
+    },
+    upgradeFlag(row) {
+      let { tmInfo } = row
+      let isOvertime = (new Date().getTime() - (tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
+      // 刚完成5分钟内
+      return tmInfo.updateStatus === 'done' && !isOvertime
+      // return (
+      //   !tmInfo.updateStatus ||
+      //   tmInfo.updateStatus === 'done' ||
+      //   !tmInfo.updateVersion ||
+      //   (tmInfo.updateVersion && tmInfo.updateVersion !== this.version)
+      // )
+    },
+    upgradingFlag(row) {
+      let { tmInfo } = row
+      return ['preparing', 'downloading', 'upgrading'].includes(tmInfo.updateStatus)
+    },
+    upgradeFailedFlag(row) {
+      let { tmInfo } = row
+      return (
+        tmInfo.updateVersion && tmInfo.updateVersion === this.version && ['fail', 'error'].includes(tmInfo.updateStatus)
+      )
     }
   }
 }
