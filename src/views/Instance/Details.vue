@@ -76,7 +76,17 @@ export default {
   data() {
     return {
       isInternet: window.__USER_INFO__.isInternet,
-      agent: null,
+      agent: {
+        id: '',
+        spec: {
+          version: ''
+        },
+        createAt: '',
+        ips: '',
+        cpus: '',
+        totalmem: '',
+        installationDirectory: ''
+      },
       specMap: SPEC_MAP,
       chargeMap: CHARGE_MAP,
       loading: false,

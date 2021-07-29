@@ -158,7 +158,7 @@ export default {
         case 'dataFlow':
           routeUrl = this.$router.resolve({
             path: '/monitor',
-            query: { id: item.sourceId, isMoniting: true, mapping: item.mappingTemplate }
+            query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
           })
           window.open(routeUrl.href, '_blank')
           // this.$router.push({
@@ -314,7 +314,7 @@ export default {
           white-space: nowrap;
           .notive-item-name {
             display: inline-block;
-            max-width: 120px;
+            max-width: 110px;
             padding: 0 5px;
             white-space: nowrap;
             text-overflow: ellipsis;
