@@ -17,7 +17,7 @@
             {{ $t('milestone.btn_check_error') }}
           </el-button>
         </div>
-        <div v-if="['error'].includes(dataFlow.status) && item.status === 'running'">
+        <div v-if="['draft', 'paused', 'error'].includes(dataFlow.status) && item.status === 'running'">
           <div class="status paused">
             <span class="milestone-icon-wrap">
               <i class="milestone-status__icon el-icon-video-pause"></i>
