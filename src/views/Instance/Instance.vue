@@ -468,6 +468,9 @@ export default {
     },
     // 删除
     handleDel(row) {
+      if (this.delBtnDisabled(row)) {
+        return
+      }
       this.$confirm('删除后该Agent将无法再继续使用，是否确认删除？', '是否删除', {
         type: 'warning'
       }).then(res => {
@@ -646,7 +649,9 @@ export default {
     delBtnDisabled(row) {
       let flag = false
       if (row.agentType === 'Cloud') {
-        flag = false
+        if (['Creating'].includes(row.status)) {
+          flag = true
+        }
       } else {
         flag = !['Creating', 'Stopped'].includes(row.status)
       }
