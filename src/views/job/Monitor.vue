@@ -1004,6 +1004,7 @@ export default {
             this.getStageDataApi(currentStageData.connectionId, this.tableName)
           }
         }
+        this.stage.nodeName = currentStageData.name
         this.getFlowInsightData()
         this.getApiData()
       },
