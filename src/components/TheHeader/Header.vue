@@ -93,10 +93,10 @@ export default {
             id: data.id,
             guideData: guideData
           }
-          this.noShow = guideData?.noShow
           if (localStorage.getItem('guideData')) {
-            guideData = JSON.parse(localStorage.getItem('guideData'))
+            Object.assign(guideData, JSON.parse(localStorage.getItem('guideData')))
           }
+          this.noShow = guideData?.noShow
           // 不再显示
           if (
             !guideData?.noShow &&
