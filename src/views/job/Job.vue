@@ -635,7 +635,17 @@ export default {
       if (result && result.data.length > 0) {
         this.flowDataName = result.data[0].name
       }
+
       log('DataFlows Draft Save Params: ', data)
+      if (data?.stages?.length) {
+        data.stages.forEach(item => {
+          // 是否有hive
+          if (item.type === 'hive') {
+            data.setting.transformerConcurrency = 1
+            data.setting.readBatchSize = 10000
+          }
+        })
+      }
       promise = dataFlowsApi.draft(data)
 
       if (promise) {
@@ -1081,6 +1091,10 @@ export default {
                     objectNamesList = childItem.objectNames
                   }
                 })
+              }
+              if (item.type === 'hive') {
+                data.setting.transformerConcurrency = 1
+                data.setting.readBatchSize = 10000
               }
             })
           }
