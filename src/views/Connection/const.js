@@ -34,8 +34,7 @@ export const DEFAULT_MODEL = {
     sslKeyFile: null,
     search_databaseType: '',
     increamentalTps: 100, //dummy
-    initialReadSize: 100000, //dummy
-    schema: ''
+    initialReadSize: 100000 //dummy
   },
   kafka: {
     id: '',
