@@ -115,6 +115,17 @@ export const databaseConfig = {
        * @return {boolean}
        */
       allowTarget(targetCell, sourceCell) {
+        /*console.log(
+          'allowTarget',
+          targetCell,
+          sourceCell,
+          this.graph.getConnectedLinks(targetCell, {
+            inbound: true
+          }).length,
+          this.graph.getConnectedLinks(sourceCell, {
+            inbound: true
+          }).length
+        )*/
         if (sourceCell?.attributes?.form_data?.database_type === 'elasticsearch') {
           return ['kafka'].includes(targetCell?.attributes?.form_data?.database_type)
         }
@@ -123,6 +134,12 @@ export const databaseConfig = {
           !['hbase'].includes(targetCell?.attributes?.form_data?.database_type) &&
           targetCell.graph.getConnectedLinks(this, {
             inbound: true
+          }).length < 1 &&
+          this.graph.getConnectedLinks(targetCell, {
+            inbound: true
+          }).length < 1 &&
+          this.graph.getConnectedLinks(targetCell, {
+            outbound: true
           }).length < 1
         )
       },
@@ -133,8 +150,17 @@ export const databaseConfig = {
        * @return {boolean}
        */
       allowSource(sourceCell) {
-        return ['app.Database'].includes(sourceCell.get('type')) &&
-          !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type)
+        const outLinks = this.graph.getConnectedLinks(sourceCell, {
+          outbound: true,
+          includeEnclosed: false
+        })
+        // sourceCell 拖动的时候会产生一条outLink,但是没有target.id，以此来限制当节点有目标时，不允许再去连接其他目标
+        return (
+          ['app.Database'].includes(sourceCell.get('type')) &&
+          !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type) &&
+          outLinks.length === 1 &&
+          !outLinks[0].attributes.target.id
+        )
       }
     }
     /**
