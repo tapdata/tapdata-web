@@ -75,7 +75,8 @@ export default {
       guideVisible: false, // 新手指引模态窗
       isClose: false,
       btnLoading: false,
-      noShow: false // 不再显示新手引导
+      noShow: false, // 不再显示新手引导
+      selfUser: {} // self用户信息
     }
   },
   created() {
@@ -89,14 +90,11 @@ export default {
       this.$axios.get('tm/api/users/self').then(data => {
         if (data) {
           let guideData = data?.guideData ?? {}
-          window.__USER_SELF_INFO__ = {
+          this.selfUser = {
             id: data.id,
             guideData: guideData
           }
-          if (localStorage.getItem('guideData')) {
-            Object.assign(guideData, JSON.parse(localStorage.getItem('guideData')))
-          }
-          this.noShow = guideData?.noShow
+          this.noShow = !!guideData?.noShow
           // 不再显示
           if (
             !guideData?.noShow &&
@@ -167,11 +165,12 @@ export default {
       }
     },
     updateUser(action = false) {
-      this.$axios.patch('tm/api/users/' + window.__USER_SELF_INFO__?.id, {
+      let selfUser = this.selfUser
+      this.$axios.patch('tm/api/users/' + selfUser?.id, {
         guideData: {
           noShow: this.noShow,
           updateTime: new Date().getTime(),
-          action: action
+          action: action || selfUser?.guideData?.action || false
         }
       })
     }

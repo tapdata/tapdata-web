@@ -297,10 +297,7 @@ export default {
       let list = this.list || []
       let flag = false
       list.forEach(item => {
-        if (
-          ['Stopping'].includes(item.status) ||
-          ['preparing', 'downloading', 'upgrading'].includes(item.tmInfo?.updateStatus)
-        ) {
+        if (['Stopping'].includes(item.status) || (this.showUpgradeIcon(item) && this.upgradingFlag(item))) {
           flag = true
         }
       })
@@ -476,8 +473,9 @@ export default {
       let message = noDelFlag
         ? '当前Agent上有任务正在运行，请先停止任务后再删除。'
         : '删除后该Agent将无法再继续使用，是否确认删除？'
-      this.$confirm(message, '是否删除', {
-        type: 'warning'
+      this.$confirm(null, message, {
+        type: 'warning',
+        customClass: 'delete-agent'
       }).then(res => {
         if (res) {
           if (noDelFlag) {
@@ -759,6 +757,17 @@ export default {
   }
   .tooltip--notenter {
     pointer-events: none;
+  }
+}
+</style>
+<style lang="scss">
+.el-message-box {
+  &.delete-agent {
+    .el-message-box__title {
+      font-weight: normal;
+      font-size: 13px;
+      color: #555;
+    }
   }
 }
 </style>

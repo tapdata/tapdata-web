@@ -30,7 +30,9 @@ export const DFSDATASOURCE_MODEL = {
   source_databaseType: 'mysql',
   target_databaseType: 'mysql',
   source_connectionId: '',
-  target_connectionId: ''
+  target_connectionId: '',
+  source_connectionName: '',
+  target_connectionName: ''
 }
 
 export const INSTANCE_MODEL = {
