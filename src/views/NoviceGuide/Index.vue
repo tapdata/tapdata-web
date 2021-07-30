@@ -210,7 +210,6 @@
 
 <script>
 let selectKeepArr = []
-import taskSetting from '@/views/Task/config/setting'
 export default {
   data() {
     return {
@@ -248,7 +247,6 @@ export default {
       },
       initDatabaseLoading: false,
       sourceConnection: {},
-      taskConfig: {},
       taskForm: {
         type: 'initial_sync+cdc',
         selectSourceArr: []
@@ -322,9 +320,6 @@ export default {
     step() {
       this.stepFnc()
     }
-  },
-  created() {
-    this.taskConfig = taskSetting()
   },
   mounted() {
     this.init()

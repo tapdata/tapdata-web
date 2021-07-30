@@ -297,10 +297,7 @@ export default {
       let list = this.list || []
       let flag = false
       list.forEach(item => {
-        if (
-          ['Stopping'].includes(item.status) ||
-          ['preparing', 'downloading', 'upgrading'].includes(item.tmInfo?.updateStatus)
-        ) {
+        if (['Stopping'].includes(item.status) || (this.showUpgradeIcon(item) && this.upgradingFlag(item))) {
           flag = true
         }
       })
