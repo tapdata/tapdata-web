@@ -156,11 +156,20 @@ export default {
       this.handleRead(item.id)
       switch (item.system) {
         case 'dataFlow':
-          routeUrl = this.$router.resolve({
-            path: '/monitor',
-            query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
-          })
-          window.open(routeUrl.href, '_blank')
+          this.$axios
+            .get('tm/api/DataFlows/' + item.sourceId)
+            .then(() => {
+              routeUrl = this.$router.resolve({
+                path: '/monitor',
+                query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
+              })
+              window.open(routeUrl.href, '_blank')
+            })
+            .catch(err => {
+              if (err?.data?.msg === 'no permission') {
+                this.$message.error('您的任务已不存在')
+              }
+            })
           // this.$router.push({
           //   name: 'job',
           //   query: {
@@ -171,11 +180,20 @@ export default {
           // })
           break
         case 'migration':
-          routeUrl = this.$router.resolve({
-            path: '/monitor',
-            query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
-          })
-          window.open(routeUrl.href, '_blank')
+          this.$axios
+            .get('tm/api/DataFlows/' + item.sourceId)
+            .then(() => {
+              routeUrl = this.$router.resolve({
+                path: '/monitor',
+                query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
+              })
+              window.open(routeUrl.href, '_blank')
+            })
+            .catch(err => {
+              if (err?.data?.msg === 'no permission') {
+                this.$message.error('您的任务已不存在')
+              }
+            })
           break
 
         case 'agent':
@@ -187,6 +205,14 @@ export default {
           })
           break
       }
+    },
+    // 获取任务数据
+    getTaskData(id) {
+      this.$axios.get('tm/api/DataFlows?id=' + id).then(res => {
+        if (res) {
+          debugger
+        }
+      })
     },
     toCenter() {
       if (this.$route.name === 'SystemNotice') {
@@ -233,7 +259,7 @@ export default {
 .notive-popove {
   .notification-popover-wrap {
     margin: -15px;
-    width: 360px;
+    width: 380px;
     overflow: hidden;
     position: relative;
     border-radius: 3px;
@@ -314,7 +340,7 @@ export default {
           white-space: nowrap;
           .notive-item-name {
             display: inline-block;
-            max-width: 110px;
+            max-width: 100px;
             padding: 0 5px;
             white-space: nowrap;
             text-overflow: ellipsis;

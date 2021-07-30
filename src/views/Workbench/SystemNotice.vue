@@ -50,7 +50,7 @@
         <ElTableColumn show-overflow-tooltip label="通知时间" prop="createTime" width="150"></ElTableColumn>
         <div class="connection-table__empty" slot="empty">
           <!--          <i class="el-icon-folder-opened"></i>-->
-          <img src="../../assets/image/noData.png" class="code" />
+          <img src="../../../../../daas/frontend-el/public/static/editor/noData.png" class="code" />
           <span v-if="!isSearching">暂无通知</span>
         </div>
       </El-table>
@@ -100,7 +100,8 @@ export default {
         current: 1,
         size: 20,
         total: 0
-      }
+      },
+      taskFalg: false
     }
   },
   created() {
@@ -175,11 +176,20 @@ export default {
       this.handleRead(item.id)
       switch (item.system) {
         case 'dataFlow':
-          routeUrl = this.$router.resolve({
-            path: '/monitor',
-            query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
-          })
-          window.open(routeUrl.href, '_blank')
+          this.$axios
+            .get('tm/api/DataFlows/' + item.sourceId)
+            .then(() => {
+              routeUrl = this.$router.resolve({
+                path: '/monitor',
+                query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
+              })
+              window.open(routeUrl.href, '_blank')
+            })
+            .catch(err => {
+              if (err?.data?.msg === 'no permission') {
+                this.$message.error('您的任务已不存在')
+              }
+            })
           // this.$router.push({
           //   name: 'job',
           //   query: {
@@ -190,11 +200,20 @@ export default {
           // })
           break
         case 'migration':
-          routeUrl = this.$router.resolve({
-            path: '/monitor',
-            query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
-          })
-          window.open(routeUrl.href, '_blank')
+          this.$axios
+            .get('tm/api/DataFlows/' + item.sourceId)
+            .then(() => {
+              routeUrl = this.$router.resolve({
+                path: '/monitor',
+                query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
+              })
+              window.open(routeUrl.href, '_blank')
+            })
+            .catch(err => {
+              if (err?.data?.msg === 'no permission') {
+                this.$message.error('您的任务已不存在')
+              }
+            })
           break
         case 'agent':
           this.$router.push({
@@ -206,6 +225,14 @@ export default {
           break
       }
     },
+    // 获取任务数据
+    // getTaskData(id) {
+    //   this.$axios.get('tm/api/DataFlows/' + id).catch(err => {
+    //     if (err?.data?.msg === 'no permission') {
+    //       this.taskFalg = true
+    //     }
+    //   })
+    // },
     getLag(lag) {
       let r = '0s'
       if (lag) {
