@@ -769,8 +769,9 @@ export default {
 .el-message-box {
   &.delete-agent {
     .el-message-box__title {
-      font-weight: 100;
+      font-weight: normal;
       font-size: 13px;
+      color: #555;
     }
   }
 }
