@@ -478,8 +478,9 @@ export default {
       let message = noDelFlag
         ? '当前Agent上有任务正在运行，请先停止任务后再删除。'
         : '删除后该Agent将无法再继续使用，是否确认删除？'
-      this.$confirm(message, '是否删除', {
-        type: 'warning'
+      this.$confirm(null, message, {
+        type: 'warning',
+        customClass: 'delete-agent'
       }).then(res => {
         if (res) {
           if (noDelFlag) {
@@ -761,6 +762,16 @@ export default {
   }
   .tooltip--notenter {
     pointer-events: none;
+  }
+}
+</style>
+<style lang="scss">
+.el-message-box {
+  &.delete-agent {
+    .el-message-box__title {
+      font-weight: 100;
+      font-size: 13px;
+    }
   }
 }
 </style>
