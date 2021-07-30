@@ -105,9 +105,9 @@ export default {
   },
   created() {
     this.fetch()
-    this.getUnreadNum() //未读消息数量
+    // this.getUnreadNum() //未读消息数量
     this.$root.$on('notificationUpdate', () => {
-      this.getUnreadNum() //未读消息数量
+      // this.getUnreadNum() //未读消息数量
       this.fetch()
     })
   },
@@ -222,7 +222,7 @@ export default {
       }
       return r
     },
-    // 选择分类
+    // 选择通知
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
@@ -253,34 +253,31 @@ export default {
       this.$axios
         .patch('tm/api/Messages', {
           read: true,
-          id: id,
-          isDeleted: {
-            neq: true
-          }
+          id: id
         })
         .then(res => {
           if (res) {
-            this.getUnreadNum() //未读消息数量
+            // this.getUnreadNum() //未读消息数量
             this.fetch()
             // this.read = read
             this.$root.$emit('notificationUpdate')
           }
         })
-    },
-    // 未读消息
-    getUnreadNum() {
-      let where = {
-        read: false,
-        isDeleted: {
-          neq: true
-        }
-      }
-      this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-        if (res) {
-          this.unReadCount = res.count
-        }
-      })
     }
+    // 未读消息
+    // getUnreadNum() {
+    //   let where = {
+    //     read: false,
+    //     isDeleted: {
+    //       neq: true
+    //     }
+    //   }
+    //   this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
+    //     if (res) {
+    //       this.unReadCount = res.count
+    //     }
+    //   })
+    // }
   }
 }
 </script>
