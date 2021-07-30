@@ -10,6 +10,7 @@
             查看详情
           </ElLink>
         </div>
+        <div class="progress-tip">*目前任务进度查看仅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB</div>
         <div class="progress-container__body flex">
           <div class="progress-container__img">
             <img :src="require('@/assets/images/tu.png')" />
@@ -93,6 +94,7 @@
             >查看详情</ElLink
           >
         </div>
+        <div class="progress-tip">*目前任务进度查看仅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB</div>
         <div class="progress-container__body flex">
           <div class="progress-container__img">
             <img :src="require('@/assets/images/tu.png')" />
@@ -394,6 +396,11 @@ export default {
   padding: 10px 16px;
   background: #fafafa;
   border-bottom: 1px solid #d3d3d3;
+}
+.progress-tip {
+  padding: 10px 16px 0;
+  font-size: 12px;
+  color: #999;
 }
 .progress-header_btn {
   padding: 0;
