@@ -352,7 +352,7 @@ export default {
       editorMonitor = vueAdapter.editor
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
 
-      if (!this.configJoinTable)
+      // if (!this.configJoinTable) return
     },
 
     getData() {
