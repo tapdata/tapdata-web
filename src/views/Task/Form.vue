@@ -372,7 +372,7 @@
 <script>
 import formConfig from './config'
 import Transfer from './Transfer'
-import { SETTING_MODEL, DATASOURCE_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from './const'
+import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from './const'
 
 let defaultConfig = []
 export default {
@@ -388,7 +388,7 @@ export default {
       showSysncTableTip: false, //dfs 同库不同表提示
       twoWayAgentRunningCount: '',
       platformInfo: JSON.parse(JSON.stringify(INSTANCE_MODEL)),
-      dataSourceModel: JSON.parse(JSON.stringify(DATASOURCE_MODEL)),
+      dataSourceModel: JSON.parse(JSON.stringify(DFSDATASOURCE_MODEL)),
       settingModel: JSON.parse(JSON.stringify(SETTING_MODEL)),
       mappingModel: {},
       config: {
@@ -657,8 +657,6 @@ export default {
             }
             this.dataSourceModel.source_connectionName = source.name
             this.dataSourceModel.target_connectionName = target.name
-            this.dataSourceModel['source_databaseType'] = source.type
-            this.dataSourceModel['target_databaseType'] = target.type
             this.activeStep += 1
             this.getFormConfig()
           }
