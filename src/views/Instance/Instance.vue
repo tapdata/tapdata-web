@@ -297,9 +297,11 @@ export default {
       let list = this.list || []
       let flag = false
       list.forEach(item => {
+        let isOvertime = (new Date().getTime() - (item.tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
         if (
           ['Stopping'].includes(item.status) ||
-          ['preparing', 'downloading', 'upgrading'].includes(item.tmInfo?.updateStatus)
+          ['preparing', 'downloading', 'upgrading'].includes(item.tmInfo?.updateStatus) ||
+          (item.tmInfo?.updateStatus === 'done' && !isOvertime) // 刚完成5分钟内
         ) {
           flag = true
         }
