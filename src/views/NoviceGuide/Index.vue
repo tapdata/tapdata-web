@@ -597,8 +597,8 @@ export default {
         },
         dataFlowType: 'normal', //区分创建方式
         dataSourceModel: {
-          source_sourceType: source.database_type,
-          target_sourceType: target.database_type,
+          source_databaseType: source.database_type,
+          target_databaseType: target.database_type,
           source_connectionId: source.id,
           target_connectionId: target.id,
           source_connectionName: source.name,
