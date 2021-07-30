@@ -1298,7 +1298,6 @@ export default {
             {},
             {
               status: 'testing',
-              schema: {},
               retry: 0,
               nextRetry: null,
               response_body: {},
