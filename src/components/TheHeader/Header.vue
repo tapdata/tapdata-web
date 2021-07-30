@@ -167,11 +167,12 @@ export default {
       }
     },
     updateUser(action = false) {
-      this.$axios.patch('tm/api/users/' + window.__USER_SELF_INFO__?.id, {
+      let selfInfo = window.__USER_SELF_INFO__
+      this.$axios.patch('tm/api/users/' + selfInfo?.id, {
         guideData: {
           noShow: this.noShow,
           updateTime: new Date().getTime(),
-          action: action
+          action: action || selfInfo?.guideData?.action || false
         }
       })
     }
