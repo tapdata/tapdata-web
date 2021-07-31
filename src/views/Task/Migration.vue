@@ -21,7 +21,7 @@
               </ElSelect>
             </li>
             <li class="ml-3">
-              <ElInput v-model="searchParams.keyword" placeholder="任务名称/节点名/库名称" @input="search()">
+              <ElInput v-model="searchParams.keyword" placeholder="任务名称/节点名/库名称" @input="search(800)">
                 <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
               </ElInput>
             </li>
@@ -324,87 +324,88 @@ export default {
         }
       })
     },
-    search() {
-      this.$router.replace({
-        name: 'Task',
-        query: this.searchParams
-      })
-    },
-    fetch(pageNum, debounce) {
-      const { delayTrigger, toRegExp } = this.$util
+    search(debounce) {
+      const { delayTrigger } = this.$util
       delayTrigger(() => {
-        this.loading = true
-        let current = pageNum || this.page.current
-        let { keyword, status, syncType, agentId } = this.searchParams
-        let fields = {
-          id: true,
-          name: true,
-          status: true,
-          executeMode: true,
-          category: true,
-          stopOnError: true,
-          last_updated: true,
-          createTime: true,
-          children: true,
-          stats: true,
-          checked: true,
-          stages: true,
-          setting: true,
-          user_id: true,
-          startTime: true,
-          listtags: true,
-          mappingTemplate: true,
-          platformInfo: true,
-          agentId: true
-        }
-        let where = {
-          mappingTemplate: 'cluster-clone'
-        }
-        if (keyword && keyword.trim()) {
-          where.or = [
-            { name: { like: toRegExp(keyword), options: 'i' } },
-            { 'stages.tableName': { like: toRegExp(keyword), options: 'i' } },
-            { 'stages.name': { like: toRegExp(keyword), options: 'i' } }
-          ]
-        }
-        if (agentId) {
-          where['agentId'] = agentId
-        }
-        syncType && (where['setting.sync_type'] = syncType)
-        if (status) {
-          if (status.includes(',')) {
-            where.status = {
-              $in: status.split(',')
-            }
-          } else {
-            where.status = status
-          }
-        }
-        let filter = {
-          fields,
-          where,
-          limit: this.page.size,
-          skip: (current - 1) * this.page.size,
-          order: this.order
-        }
-        Promise.all([
-          this.$axios.get('tm/api/DataFlows/count?where=' + encodeURIComponent(JSON.stringify(where))),
-          this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        ])
-          .then(([countData, data]) => {
-            this.page.total = countData.count
-            let list = data || []
-            this.list = list.map(this.formatData)
-            if (!list.length && data.total > 0) {
-              setTimeout(() => {
-                this.fetch(this.page.current - 1)
-              }, 0)
-            }
-          })
-          .finally(() => {
-            this.loading = false
-          })
+        this.$router.replace({
+          name: 'Task',
+          query: this.searchParams
+        })
       }, debounce)
+    },
+    fetch(pageNum) {
+      const { toRegExp } = this.$util
+      this.loading = true
+      let current = pageNum || this.page.current
+      let { keyword, status, syncType, agentId } = this.searchParams
+      let fields = {
+        id: true,
+        name: true,
+        status: true,
+        executeMode: true,
+        category: true,
+        stopOnError: true,
+        last_updated: true,
+        createTime: true,
+        children: true,
+        stats: true,
+        checked: true,
+        stages: true,
+        setting: true,
+        user_id: true,
+        startTime: true,
+        listtags: true,
+        mappingTemplate: true,
+        platformInfo: true,
+        agentId: true
+      }
+      let where = {
+        mappingTemplate: 'cluster-clone'
+      }
+      if (keyword && keyword.trim()) {
+        where.or = [
+          { name: { like: toRegExp(keyword), options: 'i' } },
+          { 'stages.tableName': { like: toRegExp(keyword), options: 'i' } },
+          { 'stages.name': { like: toRegExp(keyword), options: 'i' } }
+        ]
+      }
+      if (agentId) {
+        where['agentId'] = agentId
+      }
+      syncType && (where['setting.sync_type'] = syncType)
+      if (status) {
+        if (status.includes(',')) {
+          where.status = {
+            $in: status.split(',')
+          }
+        } else {
+          where.status = status
+        }
+      }
+      let filter = {
+        fields,
+        where,
+        limit: this.page.size,
+        skip: (current - 1) * this.page.size,
+        order: this.order
+      }
+      Promise.all([
+        this.$axios.get('tm/api/DataFlows/count?where=' + encodeURIComponent(JSON.stringify(where))),
+        this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
+      ])
+        .then(([countData, data]) => {
+          this.page.total = countData.count
+          let list = data || []
+          this.list = list.map(this.formatData)
+          if (!list.length && data.total > 0) {
+            setTimeout(() => {
+              this.fetch(this.page.current - 1)
+            }, 0)
+          }
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     formatData(item) {
       let tcmInfo = item.tcm || {}

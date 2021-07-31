@@ -16,7 +16,7 @@
               </ElSelect>
             </li>
             <li class="ml-3">
-              <ElInput v-model="searchParams.parameter1" placeholder="操作对象" clearable @input="search()">
+              <ElInput v-model="searchParams.parameter1" placeholder="操作对象" clearable @input="search(800)">
                 <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
               </ElInput>
             </li>
@@ -45,7 +45,7 @@
               </ElTooltip>
             </li>
             <li class="ml-3">
-              <ElInput v-model="searchParams.username" placeholder="用户名" clearable @input="search()">
+              <ElInput v-model="searchParams.username" placeholder="用户名" clearable @input="search(800)">
                 <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
               </ElInput>
             </li>
@@ -233,7 +233,7 @@ export default {
       }
       return new Date(Number(value))
     },
-    search() {
+    search(debounce) {
       let query = {}
       let { operationType, parameter1, start, end, username } = this.searchParams
       if (operationType) {
@@ -253,64 +253,61 @@ export default {
       if (username) {
         query.username = username
       }
-      this.$router.replace({
-        name: 'OperationLog',
-        query: query
-      })
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'OperationLog',
+          query: query
+        })
+      }, debounce)
     },
 
-    fetch(pageNum = 1, debounce = 200, hideLoading) {
-      const { delayTrigger, toRegExp } = this.$util
-      delayTrigger(async () => {
-        if (!hideLoading) {
-          this.loading = true
-        }
-        this.page.current = pageNum
-        let current = this.page.current
-        let { operationType, parameter1, start, end, username } = this.searchParams
-        let where = {
-          type: 'userOperation' // 默认用户操作
-        }
-        // 操作类型
-        if (operationType) {
-          let { modular, operation } = this.getModularAndOperation(operationType)
-          where['modular'] = modular
-          where['operation'] = operation
-        }
-        // 操作对象
-        if (parameter1) {
-          where['parameter1'] = { like: toRegExp(parameter1), options: 'i' }
-        }
-        if (username) {
-          where['username'] = { like: toRegExp(username), options: 'i' }
-        }
-        // 开始时间
-        if (start) {
-          where['start'] = this.getTimeStamp(start)
-        }
-        if (end) {
-          where['end'] = this.getTimeStamp(end)
-        }
-        let filter = {
-          where,
-          size: this.page.size,
-          page: current,
-          order: [this.order]
-        }
-        this.$axios
-          .get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
-          .then(data => {
-            this.source = data || []
-            this.page.current = 1
-            this.page.total = this.source.length
-            this.changePage()
-          })
-          .finally(() => {
-            if (!hideLoading) {
-              this.loading = false
-            }
-          })
-      }, debounce)
+    async fetch(pageNum = 1) {
+      const { toRegExp } = this.$util
+      this.loading = true
+      this.page.current = pageNum
+      let current = this.page.current
+      let { operationType, parameter1, start, end, username } = this.searchParams
+      let where = {
+        type: 'userOperation' // 默认用户操作
+      }
+      // 操作类型
+      if (operationType) {
+        let { modular, operation } = this.getModularAndOperation(operationType)
+        where['modular'] = modular
+        where['operation'] = operation
+      }
+      // 操作对象
+      if (parameter1) {
+        where['parameter1'] = { like: toRegExp(parameter1), options: 'i' }
+      }
+      if (username) {
+        where['username'] = { like: toRegExp(username), options: 'i' }
+      }
+      // 开始时间
+      if (start) {
+        where['start'] = this.getTimeStamp(start)
+      }
+      if (end) {
+        where['end'] = this.getTimeStamp(end)
+      }
+      let filter = {
+        where,
+        size: this.page.size,
+        page: current,
+        order: [this.order]
+      }
+      this.$axios
+        .get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(data => {
+          this.source = data || []
+          this.page.current = 1
+          this.page.total = this.source.length
+          this.changePage()
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     sortChange({ prop, order }) {
       this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'asc' : 'desc'}`
