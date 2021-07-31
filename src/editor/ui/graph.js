@@ -810,21 +810,21 @@ export default class Graph extends Component {
         }
         this.selectCell(cell)
       } else {
-        $('.monitorTab').html(``)
-        // $('.monitorTab').html(`<div class="e-tab-title active">${i18n.t('editor.ui.sidebar.config')}</div>`)
+        // $('.monitorTab').html(``)
+        $('.monitorTab').html(`<div class="e-tab-title active">${i18n.t('editor.ui.sidebar.config')}</div>`)
         this.selectPrimaryLink(cellView)
         // 点击连线面版是否出现
-        if (!window.getSettingByKey('DFS_TCM_PLATFORM')) {
-          $('.monitorTab').html(``)
-          setTimeout(() => {
-            let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel')
-            self.editor.getRightTabPanel().select(monitor)
-          }, 20)
-        } else {
-          // dfs 连线显示监控信息
-          // this.editor.goBackMontior()
-          // this.onClickBlank()
-        }
+        // if (!window.getSettingByKey('DFS_TCM_PLATFORM')) {
+        // $('.monitorTab').html(``)
+        setTimeout(() => {
+          let monitor = self.editor.getRightTabPanel().getChildByName('nodeSettingPanel')
+          self.editor.getRightTabPanel().select(monitor)
+        }, 20)
+        // } else {
+        // dfs 连线显示监控信息
+        // this.editor.goBackMontior()
+        // this.onClickBlank()
+        // }
       }
     }
     // this.onClickBlank()

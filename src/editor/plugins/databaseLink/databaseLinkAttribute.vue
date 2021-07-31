@@ -1,9 +1,9 @@
 <template>
   <div class="database-link nodeStyle">
-    <head class="head">
-      <span @click="hanleClose" class="headIcon iconfont icon-you2" type="primary"></span>
-      <span class="txt">{{ $t('editor.cell.link.mappingRelations') }}</span>
-    </head>
+    <!--    <head class="head">-->
+    <!--      <span @click="hanleClose" class="headIcon iconfont icon-you2" type="primary"></span>-->
+    <!--      <span class="txt">{{ $t('editor.cell.link.mappingRelations') }}</span>-->
+    <!--    </head>-->
     <div class="nodeBody">
       <!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
