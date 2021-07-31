@@ -85,7 +85,7 @@ export default {
       agent: null,
       specMap: SPEC_MAP,
       chargeMap: CHARGE_MAP,
-      loading: false,
+      loading: true,
       dialogVisible: false
     }
   },
