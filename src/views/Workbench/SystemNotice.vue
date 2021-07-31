@@ -50,7 +50,7 @@
         <ElTableColumn show-overflow-tooltip label="通知时间" prop="createTime" width="150"></ElTableColumn>
         <div class="connection-table__empty" slot="empty">
           <!--          <i class="el-icon-folder-opened"></i>-->
-          <img src="../../../../../daas/frontend-el/public/static/editor/noData.png" class="code" />
+          <img src="../../assets/image/noData.png" class="code" />
           <span v-if="!isSearching">暂无通知</span>
         </div>
       </El-table>
