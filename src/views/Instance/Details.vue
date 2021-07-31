@@ -201,7 +201,9 @@ export default {
           color: map-get($fontColor, slight);
         }
         .value {
+          flex: 1;
           margin-left: 20px;
+          box-sizing: border-box;
         }
       }
     }
