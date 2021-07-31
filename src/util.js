@@ -1,21 +1,6 @@
 import { TOPOLOGY_MAP } from './const'
 import moment from 'moment'
 
-//
-let timeout = null
-export function delayTrigger(func, t) {
-  if (t) {
-    if (timeout) {
-      window.clearTimeout(timeout)
-    }
-    timeout = setTimeout(() => {
-      func && func()
-      timeout = null
-    }, t)
-  } else {
-    func && func()
-  }
-}
 export function formatAgent(data) {
   let { regionMap, zoneMap } = window.__REGION__
   data.regionFmt = `${regionMap[data.region] || data.region} | ${zoneMap[data.zone] || data.zone}`

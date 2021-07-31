@@ -11,7 +11,7 @@
               </ElSelect>
             </li>
             <li class="ml-3">
-              <ElInput v-model="searchParams.keyword" placeholder="按连接名搜索" @input="search()">
+              <ElInput v-model="searchParams.keyword" placeholder="按连接名搜索" @input="search(800)">
                 <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
               </ElInput>
             </li>
@@ -257,49 +257,50 @@ export default {
         }
       })
     },
-    search() {
-      this.$router.replace({
-        name: 'Connection',
-        query: this.searchParams
-      })
-    },
-    fetch(pageNum, debounce) {
-      const { delayTrigger, toRegExp } = this.$util
+    search(debounce) {
+      const { delayTrigger } = this.$util
       delayTrigger(() => {
-        this.loading = true
-        let current = pageNum || this.page.current
-        let { keyword, status } = this.searchParams
-        let where = {}
-        if (keyword && keyword.trim()) {
-          where.name = { like: toRegExp(keyword), options: 'i' }
-        }
-        status && (where.status = status)
-        let filter = {
-          // fields, noSchema:1 不加载schema
-          noSchema: 1,
-          where,
-          limit: this.page.size,
-          skip: (current - 1) * this.page.size,
-          order: this.order
-        }
-        Promise.all([
-          this.$axios.get('tm/api/Connections/count?where=' + encodeURIComponent(JSON.stringify(where))),
-          this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        ])
-          .then(([countData, data]) => {
-            this.page.total = countData.count
-            let list = data || []
-            this.list = list.map(this.formatData)
-            if (!list.length && data.total > 0) {
-              setTimeout(() => {
-                this.fetch(this.page.current - 1)
-              }, 0)
-            }
-          })
-          .finally(() => {
-            this.loading = false
-          })
+        this.$router.replace({
+          name: 'Connection',
+          query: this.searchParams
+        })
       }, debounce)
+    },
+    fetch(pageNum) {
+      const { toRegExp } = this.$util
+      this.loading = true
+      let current = pageNum || this.page.current
+      let { keyword, status } = this.searchParams
+      let where = {}
+      if (keyword && keyword.trim()) {
+        where.name = { like: toRegExp(keyword), options: 'i' }
+      }
+      status && (where.status = status)
+      let filter = {
+        // fields, noSchema:1 不加载schema
+        noSchema: 1,
+        where,
+        limit: this.page.size,
+        skip: (current - 1) * this.page.size,
+        order: this.order
+      }
+      Promise.all([
+        this.$axios.get('tm/api/Connections/count?where=' + encodeURIComponent(JSON.stringify(where))),
+        this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
+      ])
+        .then(([countData, data]) => {
+          this.page.total = countData.count
+          let list = data || []
+          this.list = list.map(this.formatData)
+          if (!list.length && data.total > 0) {
+            setTimeout(() => {
+              this.fetch(this.page.current - 1)
+            }, 0)
+          }
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     formatData(item) {
       let statusInfo = this.statusMap[item.status] || {}

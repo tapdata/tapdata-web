@@ -71,7 +71,6 @@
 </template>
 
 <script>
-import { delayTrigger } from '../../util'
 import { TYPEMAP } from './tyepMap'
 
 export default {
@@ -114,6 +113,7 @@ export default {
   },
   methods: {
     fetch(pageNum, debounce) {
+      const { delayTrigger } = this.$util
       delayTrigger(() => {
         this.loading = true
         let where = {

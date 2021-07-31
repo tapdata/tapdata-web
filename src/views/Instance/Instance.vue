@@ -11,12 +11,7 @@
               </ElSelect>
             </li>
             <li class="ml-3">
-              <ElInput
-                width="200"
-                v-model="searchParams.keyword"
-                placeholder="按ID/实例名称搜索"
-                @input="fetch(1, 800)"
-              >
+              <ElInput width="200" v-model="searchParams.keyword" placeholder="按ID/实例名称搜索" @input="search(800)">
                 <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
               </ElInput>
             </li>
@@ -253,7 +248,6 @@ export default {
       upgradeImg,
       upgradeLoadingSvg,
       upgradeErrorSvg
-      // upgradeImg
     }
   },
   computed: {
@@ -302,7 +296,7 @@ export default {
         }
       })
       if (flag && this.$route.name === 'Instance') {
-        this.fetch(null, null, true)
+        this.fetch(null, true)
       }
     }, 10000)
   },
@@ -313,7 +307,7 @@ export default {
   methods: {
     init() {
       let query = this.$route.query
-      this.searchParams.status = query?.status || ''
+      this.searchParams = Object.assign(this.searchParams, query)
       this.fetch()
       // 是否触发创建agent
       if (query?.create) {
@@ -327,74 +321,68 @@ export default {
     async getVersion(id) {
       return this.$axios.get('api/tcm/config/version/latest/' + id)
     },
-    // async getUpgradeList() {
-    // 	return await this.$axios.get('api/tcm/getUpgradeList').then(data => {
-    // 	})
-    // },
-    search() {
-      let { status } = this.searchParams
-      this.$router.replace({
-        name: 'Instance',
-        query: {
-          status
-        }
-      })
-    },
-    fetch(pageNum, debounce, hideLoading) {
-      this.$util.delayTrigger(async () => {
-        if (!hideLoading) {
-          this.loading = true
-        }
-        let current = pageNum || this.page.current
-        let { keyword, status } = this.searchParams
-        let where = {}
-        if (keyword && keyword.trim()) {
-          where.$or = [{ name: { $regex: keyword, $options: 'i' } }, { clusterId: { $regex: keyword, $options: 'i' } }]
-        }
-        if (status) {
-          where.status = {
-            $in: status.split(',')
-          }
-        }
-        let filter = {
-          where,
-          size: this.page.size,
-          page: current,
-          sort: [this.order]
-        }
-
-        // 升级状态
-        // let getUpgradeList = await this.getUpgradeList()
-        this.$axios
-          .get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
-          .then(async data => {
-            let list = data.items || []
-            this.list = list.map(item => {
-              // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
-              item.deployDisable = item.tmInfo.pingTime || false
-              // item.updateStatus = ''
-              if (!item.tmInfo) {
-                item.tmInfo = {}
-              }
-              return item
-            })
-            // 版本号
-            let getVersion = await this.getVersion(this.list[0]?.id)
-            this.version = getVersion?.version
-
-            this.page.total = data.total
-            if (!list.length && data.total > 0) {
-              setTimeout(() => {
-                this.fetch(this.page.current - 1)
-              }, 0)
-            }
-          })
-          .finally(() => {
-            if (!hideLoading) {
-              this.loading = false
-            }
-          })
+    search(debounce) {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'Instance',
+          query: this.searchParams
+        })
       }, debounce)
+    },
+    fetch(pageNum, hideLoading) {
+      if (!hideLoading) {
+        this.loading = true
+      }
+      let current = pageNum || this.page.current
+      let { keyword, status } = this.searchParams
+      let where = {}
+      if (keyword && keyword.trim()) {
+        where.$or = [{ name: { $regex: keyword, $options: 'i' } }, { clusterId: { $regex: keyword, $options: 'i' } }]
+      }
+      if (status) {
+        where.status = {
+          $in: status.split(',')
+        }
+      }
+      let filter = {
+        where,
+        size: this.page.size,
+        page: current,
+        sort: [this.order]
+      }
+
+      // 升级状态
+      // let getUpgradeList = await this.getUpgradeList()
+      this.$axios
+        .get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(async data => {
+          let list = data.items || []
+          this.list = list.map(item => {
+            // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
+            item.deployDisable = item.tmInfo.pingTime || false
+            // item.updateStatus = ''
+            if (!item.tmInfo) {
+              item.tmInfo = {}
+            }
+            return item
+          })
+          // 版本号
+          let getVersion = await this.getVersion(this.list[0]?.id)
+          this.version = getVersion?.version
+
+          this.page.total = data.total
+          if (!list.length && data.total > 0) {
+            setTimeout(() => {
+              this.fetch(this.page.current - 1)
+            }, 0)
+          }
+        })
+        .finally(() => {
+          if (!hideLoading) {
+            this.loading = false
+          }
+        })
     },
     sortChange({ prop, order }) {
       this.order = `${order ? prop : 'createAt'} ${order === 'ascending' ? 'asc' : 'desc'}`
