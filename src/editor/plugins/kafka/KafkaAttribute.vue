@@ -48,7 +48,7 @@
               size="mini"
             >
               <el-option
-                v-for="(item, idx) in schemas"
+                v-for="(item, idx) in tableList"
                 :label="`${item.table_name}`"
                 :value="item.table_name"
                 v-bind:key="idx"
@@ -113,6 +113,7 @@
 						size="mini"
 					></el-input>
 				</el-form-item> -->
+
         <el-form-item
           :label="$t('dataForm.form.kafka.kafkaPartitionKey')"
           v-if="dataNodeInfo.isTarget"
@@ -194,6 +195,7 @@ export default {
       addtableFalg: false,
       dialogData: null,
       schemas: [],
+      tableList: [],
       rules: {
         connectionId: [
           {
@@ -337,6 +339,7 @@ export default {
                 return item
               }
             })
+            self.tableList = self.schemas
           }
         })
         .finally(() => {
@@ -347,7 +350,11 @@ export default {
     setData(data, cell, dataNodeInfo) {
       if (data) {
         if (typeof data.kafkaPartitionKey === 'string') {
-          data.kafkaPartitionKey = data.kafkaPartitionKey.split(',')
+          if (!data.kafkaPartitionKey) {
+            data.kafkaPartitionKey = []
+          } else {
+            data.kafkaPartitionKey = data.kafkaPartitionKey.split(',')
+          }
         }
         _.merge(this.model, data)
       }
