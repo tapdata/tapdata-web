@@ -1,6 +1,5 @@
 <template>
   <section class="dataflow-editor layout-wrap vh-100">
-    <VIcon>dog</VIcon>
     <!--头部-->
     <TopHeader
       :is-saving="isSaving"
@@ -1043,11 +1042,12 @@ export default {
       this.isStarting = false
 
       await this.$router.push({
-        path: '/job',
+        name: 'DataflowMonitor',
+        params: {
+          id: dataflow.id
+        },
         query: {
-          id: dataflow.id,
-          isMoniting: true,
-          mapping: 'cluster-clone'
+          mapping: this.mapping
         }
       })
 

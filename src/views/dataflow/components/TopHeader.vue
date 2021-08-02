@@ -5,7 +5,7 @@
         <VIcon color="#fff" size="24">left</VIcon>
       </div>
       <div class="title-input-wrap inline-grid mx-2" :data-value="hiddenValue">
-        <input ref="nameInput" v-model="name" class="title-input" @blur="onNameInputBlur" />
+        <input :readonly="!editable" ref="nameInput" v-model="name" class="title-input" @blur="onNameInputBlur" />
       </div>
     </div>
     <div class="flex align-center flex-grow-1 pr-3">
@@ -32,7 +32,7 @@
       </button>
       <VDivider class="mx-3" vertical></VDivider>
 
-      <ElButton @click="$emit('save')" class="btn-base mr-3" size="mini" :loading="isSaving">
+      <ElButton v-if="editable" @click="$emit('save')" class="btn-base mr-3" size="mini" :loading="isSaving">
         <VIcon size="12" class="mr-1">save</VIcon>
         <span>{{ $t('dataFlow.button.save') }}</span>
       </ElButton>
@@ -97,13 +97,7 @@
         <span class="btn-setting-icon inline-flex justify-center align-center">
           <VIcon size="12">shezhi</VIcon>
         </span>
-        <span class="btn-setting-text">{{
-          {
-            'initial_sync+cdc': $t('dataFlow.initial_sync') + '+' + $t('dataFlow.cdc'),
-            initial_sync: $t('dataFlow.initial_sync'),
-            cdc: $t('dataFlow.cdc')
-          }[sync_type]
-        }}</span>
+        <span class="btn-setting-text">{{ syncTxt }}</span>
       </ElButton>
 
       <div class="flex-grow-1"></div>
@@ -206,20 +200,29 @@ export default {
       type: String,
       default: ''
     },
-    creatUserId: String,
-    sync_type: String
+    creatUserId: String
   },
 
   components: { VDivider, VIcon },
 
   data() {
     return {
-      name: ''
+      name: '',
+      syncMap: {
+        'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc'),
+        initial_sync: this.$t('dataFlow.initial_sync'),
+        cdc: this.$t('dataFlow.cdc')
+      }
     }
   },
 
   computed: {
     ...mapGetters('dataflow', ['dataflowId', 'dataflowName']),
+
+    syncTxt() {
+      const settings = this.$store.getters['dataflow/dataflowSettings']
+      return this.syncMap[settings.sync_type]
+    },
 
     hiddenValue() {
       let value = this.name.replace(/\s/g, '.')

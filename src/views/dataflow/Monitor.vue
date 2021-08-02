@@ -1,6 +1,14 @@
 <template>
   <section class="layout-wrap vh-100">
-    <TopHeader :status="status"></TopHeader>
+    <TopHeader
+      :is-editable="false"
+      :editable="false"
+      :status="status"
+      :status-bt-map="statusBtMap"
+      :creat-user-id="creatUserId"
+      @showSettings="handleShowSettings"
+    ></TopHeader>
+
     <section class="layout-wrap layout-has-sider">
       <!--内容体-->
       <main class="layout-content flex flex-column">
@@ -42,7 +50,7 @@
       </main>
       <!--右侧边栏-->
       <RightSidebar is-monitor>
-        <ElTabs class="border-0" type="border-card">
+        <ElTabs class="border-0 flex flex-column h-100 absolute-fill" type="border-card">
           <ElTabPane label="统计">
             <Statistical v-if="dataflow" :dataflow="dataflow"></Statistical>
           </ElTabPane>
@@ -76,6 +84,7 @@ import { getDataflowCorners } from '@/views/dataflow/helpers'
 import RightSidebar from '@/views/dataflow/components/RightSidebar'
 import FormPanel from '@/views/dataflow/components/FormPanel'
 import DatabaseTypes from '@/api/DatabaseTypes'
+import { connectorActiveStyle } from '@/views/dataflow/style'
 
 const databaseTypesApi = new DatabaseTypes()
 const dataFlowsApi = new DataFlows()
@@ -104,7 +113,8 @@ export default {
       dataflowId: this.$route.params.id,
       dataflow: null,
       statusBtMap,
-      mapping: this.$route.query?.mapping
+      mapping: this.$route.query?.mapping,
+      creatUserId: ''
     }
   },
 
@@ -158,6 +168,7 @@ export default {
   mounted() {
     this.jsPlumbIns.ready(async () => {
       try {
+        this.initNodeView()
         await this.initView()
       } catch (error) {
         console.error(error)
@@ -198,6 +209,188 @@ export default {
         await this.initNodeType()
         await this.openDataflow(this.dataflowId)
       }
+    },
+
+    initNodeView() {
+      // let container = this.$refs.layoutContent
+      const { jsPlumbIns } = this
+      jsPlumbIns.setContainer('#node-view')
+      jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
+
+      jsPlumbIns.bind('connection', info => {
+        console.log('connectionEvent', info)
+        const { sourceId: source, targetId: target } = info
+        const sourceId = this.getRealId(source)
+        const targetId = this.getRealId(target)
+
+        info.connection.bind('click', conn => {
+          console.log('connectionClickEvent', conn)
+          // 设置按钮可见
+          // info.connection.showOverlay('remove-connection')
+          // 高亮连接
+          info.connection.addClass('connection-selected')
+
+          this.setActiveConnection({
+            sourceId,
+            targetId
+          })
+        })
+
+        // 添加删除按钮，并且绑定事件，默认不可见
+        info.connection.addOverlay([
+          'Label',
+          {
+            id: 'remove-connection',
+            location: 0.25,
+            label: '<div class="remove-connection-btn" title="删除连接"></span>',
+            cssClass: 'remove-connection-label cursor-pointer',
+            visible: false,
+            events: {
+              mousedown: () => {
+                this.__removeConnection(source, target)
+              }
+            }
+          }
+        ])
+
+        console.log('连接状态', this.isConnected(sourceId, targetId))
+
+        // this.setDependsOn(info.sourceId, info.targetId)
+        // this.checkConnect()
+        // this.checkOutputStep()
+        this.addConnection({
+          sourceId,
+          targetId
+        })
+
+        return
+      })
+
+      // 连接线拖动结束事件
+      /*jsPlumbIns.bind('connectionDragStop', (conn, event) => {
+        console.log('connectionDragStopEvent', conn)
+        let $node = this.$refs.layoutContent.querySelector('.df-node')
+        if (!$node) return
+        const pos = this.getMousePositionWithinNodeView(event)
+        console.log({ ...pos }, [...this.nodeViewOffsetPosition])
+        pos.x -= this.nodeViewOffsetPosition[0]
+        pos.y -= this.nodeViewOffsetPosition[1]
+        let sourceId = this.getRealId(conn.sourceId)
+        let nw = $node.offsetWidth
+        let nh = $node.offsetHeight
+        let isConnected = false
+
+        for (let n of this.nodes) {
+          if (n.id !== sourceId) {
+            const [x, y] = n.position
+            console.log([x, y], pos)
+            if (pos.x > x && pos.x < x + nw && pos.y > y && pos.y < y + nh) {
+              console.log('in Node')
+              if (!this.isConnected(sourceId, n.id) && !this.isParent(sourceId, n.id)) {
+                jsPlumbIns.connect({
+                  source: jsPlumbIns.getEndpoint(conn.sourceId + '_source'),
+                  target: jsPlumbIns.getEndpoint(NODE_PREFIX + n.id + '_target')
+                })
+                isConnected = true
+              }
+              break
+            }
+          }
+        }
+
+        if (!isConnected && conn.targetId) {
+          // 恢复连接
+          jsPlumbIns.connect({
+            source: jsPlumbIns.getEndpoint(conn.sourceId + '_source'),
+            target: jsPlumbIns.getEndpoint(conn.targetId + '_target')
+          })
+          console.log('没有连接')
+        }
+      })*/
+
+      // 连线移动到其他节点
+      jsPlumbIns.bind('connectionMoved', info => {
+        console.log('connectionMoved', info)
+      })
+      // 连线移动到其他节点
+      jsPlumbIns.bind('connectionDetached', info => {
+        console.log('connectionDetachedEvent', info)
+      })
+
+      const _instance = {
+        getConnections(params) {
+          console.log('_instance', params)
+          if (typeof params === 'object') {
+            if (params.target) params.target = NODE_PREFIX + params.target
+            if (params.source) params.source = NODE_PREFIX + params.source
+          }
+          return jsPlumbIns.getConnections(params)
+        }
+      }
+
+      jsPlumbIns.bind('beforeDrop', info => {
+        console.log('beforeDrop', info)
+        const { sourceId, targetId } = info
+
+        const source = this.nodeById(this.getRealId(sourceId))
+        const target = this.nodeById(this.getRealId(targetId))
+
+        // target.__Ctor.allowSource(source)
+
+        if (!this.nodeELIsConnected(sourceId, targetId) && !this.isParent(source.id, target.id)) {
+          return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source, _instance)
+        }
+
+        return false
+
+        // return this.isParent(
+        //   this.getRealId(e.sourceId),
+        //   this.getRealId(e.targetId)
+        // )
+      })
+
+      /*this.conSelections = []
+
+      jsPlumbIns.bind('click', function (conn, evt) {
+        console.log('click', conn, evt)
+      })
+
+      // 连接线开始拖动事件
+      jsPlumbIns.bind('connectionDrag', function (e) {
+        e.setHover(true)
+        _.dragPoint = e.endpoints[1].getElement()
+        _.allNodeDom = container.querySelectorAll('.flow-node')
+      })
+
+      // 连接线拖动结束事件
+      jsPlumbIns.bind('connectionDragStop', function (e) {
+        if (_.dragOverNode) {
+          let sourceNodeId = e.sourceId
+          let targetNodeId = _.dragOverNode.getAttribute('id')
+          let sourceId = sourceNodeId + '_source'
+          let targetId = targetNodeId + '_target'
+          if (
+            !_.isConnected(sourceId, targetId) &&
+            !_.isParent(_.getRealId(sourceNodeId), _.getRealId(targetNodeId))
+          ) {
+            jsPlumbIns.connect({
+              source: jsPlumbIns.getEndpoint(sourceId),
+              target: jsPlumbIns.getEndpoint(targetId)
+            })
+          }
+        }
+        e.setHover(false)
+        _.dragPoint = undefined
+        _.allNodeDom = undefined
+      })
+
+      // 在target的Endpoint上面drop会触发该事件
+      jsPlumbIns.bind('beforeDrop', e => {
+        return this.isParent(
+          this.getRealId(e.sourceId),
+          this.getRealId(e.targetId)
+        )
+      })*/
     },
 
     async initNodeType() {
@@ -479,10 +672,57 @@ export default {
       this.addSelectedNode(node)
       const nodeElement = `node-${node.id}`
       this.jsPlumbIns.addToDragSelection(nodeElement)
+    },
+
+    handleShowSettings() {
+      /*const activeType = this.$store.getters['dataflow/activeType']
+      if (activeType === 'connection') {
+        this.deselectConnection(...arguments)
+      } else if (activeType === 'node') {
+        this.setActiveNode(null)
+      }*/
+      this.deselectAllNodes()
+      this.setActiveType('settings')
     }
   }
 }
 </script>
+
+<style lang="scss">
+.connection-selected {
+  path:nth-child(2) {
+    stroke: var(--primary);
+  }
+  path:nth-child(3) {
+    fill: var(--primary);
+    stroke: var(--primary);
+  }
+}
+
+.remove-connection-label {
+  position: relative;
+  padding: 4px;
+  border-radius: 100%;
+  background-color: red;
+  box-sizing: border-box;
+
+  .remove-connection-btn {
+    width: 1em;
+    height: 1em;
+    font-size: 6px;
+    background: transparent
+      url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e")
+      center/1em auto no-repeat;
+    transition: font-size 0.15s ease-in-out;
+  }
+
+  &:hover {
+    .remove-connection-btn {
+      font-size: 10px;
+    }
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 $sidebarW: 249px;
@@ -588,7 +828,8 @@ $sidebarBg: #fff;
   top: -5000px;
   left: -5000px;
 }
-.flex .el-tabs {
+
+.flex.el-tabs {
   ::v-deep {
     .el-tabs__content {
       padding: 0;
