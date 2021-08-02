@@ -45,7 +45,7 @@ window.openDebug = () => {
 
 //因线上存在偶现bug，默认开启
 // if (process.env.NODE_ENV === 'development') {
-window.openDebug()
+// window.openDebug()
 // }
 
 window._TAPDATA_OPTIONS_ = {

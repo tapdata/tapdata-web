@@ -87,7 +87,7 @@ export default {
       this.jsPlumbIns.makeTarget(id, targetEndpoint)
 
       this.jsPlumbIns.draggable(this.$el, {
-        containment: 'parent',
+        // containment: 'parent',
         start: params => {
           // console.log('node-drag-start', params.pos)
           if (params.e && !this.isNodeSelected(this.nodeId)) {

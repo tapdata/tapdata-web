@@ -1,5 +1,6 @@
 <template>
   <section class="dataflow-editor layout-wrap vh-100">
+    <VIcon>dog</VIcon>
     <!--头部-->
     <TopHeader
       :is-saving="isSaving"
@@ -75,9 +76,16 @@ import ws from '@/api/ws'
 import DataFlows from '@/api/DataFlows'
 import i18n from '@/i18n'
 import DataFlowFormSchemas from '@/api/DataFlowFormSchemas'
+import DatabaseTypes from '@/api/DatabaseTypes'
+import { getDataflowCorners } from '@/views/dataflow/helpers'
+import VIcon from '@/components/VIcon'
 
 const dataFlowsApi = new DataFlows()
 const dataFlowFormSchemasApi = new DataFlowFormSchemas()
+const databaseTypesApi = new DatabaseTypes()
+const NODE_SIZE = 160
+const SIDEBAR_WIDTH = 0
+const HEADER_HEIGHT = 60
 
 export default {
   name: 'Editor',
@@ -85,6 +93,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, moveDataflow],
 
   components: {
+    VIcon,
     TopHeader,
     DFNode,
     LeftSidebar,
@@ -247,6 +256,8 @@ export default {
         return Promise.resolve()
       }
 
+      console.log('this.stateIsDirty', this.stateIsDirty)
+
       if (this.stateIsDirty) {
         // 状态已被修改
         const importConfirm = await this.confirmMessage(
@@ -269,17 +280,57 @@ export default {
       }
     },
 
-    initNodeType() {
+    async initNodeType() {
       let _nodeTypes = nodeTypes
       let dataFlowType
       if (this.mapping === 'cluster-clone') {
         dataFlowType = 'database-migration' // 数据库迁移
+        const dbTypes = await this.loadDatabaseTypes(nodeTypes)
         _nodeTypes = _nodeTypes.filter(item => item.type === 'database')
+        _nodeTypes.push(...dbTypes)
       }
       this.setNodeTypes(_nodeTypes)
       this.setCtorTypes(ctorTypes)
 
-      dataFlowType && this.setSchema(dataFlowType)
+      dataFlowType && (await this.setSchema(dataFlowType))
+    },
+
+    /**
+     * 加载插件化数据源节点
+     * @param allNodeTypes
+     * @returns {Promise<*>}
+     */
+    async loadDatabaseTypes(allNodeTypes) {
+      // 临时过滤本地的数据库节点
+      const localTypes = allNodeTypes.map(item => item.attr.databaseType)
+
+      const { data } = await databaseTypesApi.get({
+        filter: {
+          fields: {
+            id: 1,
+            type: 1,
+            name: 1
+          },
+          where: {
+            type: {
+              nin: localTypes
+            }
+          }
+        }
+      })
+
+      return data.map(item => {
+        return {
+          name: item.name,
+          icon: 'tigerdb',
+          group: 'plugin',
+          type: 'database',
+          constructor: 'Database',
+          attr: {
+            databaseType: item.type
+          }
+        }
+      })
     },
 
     initNodeView() {
@@ -477,7 +528,7 @@ export default {
       }
 
       const { data } = result
-      console.log('openDataflow', data)
+
       this.status = data.status
       this.setDataflowId(dataflowId)
       this.setDataflowName({ newName: data.name, setStateDirty: false })
@@ -485,6 +536,7 @@ export default {
       await this.addNodes(data.stages)
 
       this.setStateDirty(false)
+      this.zoomToFit()
     },
 
     newDataflow() {
@@ -980,8 +1032,6 @@ export default {
 
       this.isStarting = true
 
-      debugger
-
       const fetch = dataflowId ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
 
       const result = await fetch
@@ -1214,6 +1264,56 @@ export default {
         link: item.linkSchema
       })
       console.log('data', data)
+    },
+
+    zoomToFit() {
+      const nodes = this.nodes
+
+      if (nodes.length === 0) {
+        return
+      }
+
+      const { minX, minY, maxX, maxY } = getDataflowCorners(nodes)
+
+      console.log('minX, minY, maxX, maxY', minX, minY, maxX, maxY)
+
+      const PADDING = NODE_SIZE * 4
+
+      const editorWidth = window.innerWidth
+      const diffX = maxX - minX + SIDEBAR_WIDTH + PADDING
+      const scaleX = editorWidth / diffX
+
+      const editorHeight = window.innerHeight
+      const diffY = maxY - minY + HEADER_HEIGHT + PADDING
+      const scaleY = editorHeight / diffY
+
+      // const zoomLevel = Math.min(scaleX, scaleY, 1)
+      const zoomLevel = 1
+      let xOffset = minX * -1 * zoomLevel + SIDEBAR_WIDTH // find top right corner
+      xOffset += (editorWidth - SIDEBAR_WIDTH - (maxX - minX + NODE_SIZE) * zoomLevel) / 2 // add padding to center workflow
+
+      let yOffset = minY * -1 * zoomLevel + HEADER_HEIGHT // find top right corner
+      yOffset += (editorHeight - HEADER_HEIGHT - (maxY - minY + NODE_SIZE * 2) * zoomLevel) / 2 // add padding to center workflow
+
+      this.setZoomLevel(zoomLevel)
+      this.$store.commit('dataflow/setNodeViewOffsetPosition', { newOffset: [xOffset, yOffset] })
+    },
+
+    setZoomLevel(zoomLevel) {
+      this.nodeViewScale = zoomLevel // important for background
+      const element = this.jsPlumbIns.getContainer()
+
+      // https://docs.jsplumbtoolkit.com/community/current/articles/zooming.html
+      const prependProperties = ['webkit', 'moz', 'ms', 'o']
+      const scaleString = 'scale(' + zoomLevel + ')'
+
+      for (let i = 0; i < prependProperties.length; i++) {
+        // @ts-ignore
+        element.style[prependProperties[i] + 'Transform'] = scaleString
+      }
+      element.style['transform'] = scaleString
+
+      this.jsPlumbIns.setZoom(zoomLevel)
     }
   }
 }

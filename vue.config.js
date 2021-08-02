@@ -43,6 +43,7 @@ module.exports = {
   },
   chainWebpack(config) {
     const iconDir = resolve('src/assets/icons/svg')
+    const iconColorfulDir = resolve('src/assets/icons/svg-colorful')
 
     // 多页面时会产生多请求预加载，带宽敏感的关闭此配置
     config.plugins.delete('prefetch')
@@ -64,7 +65,7 @@ module.exports = {
     // svg-sprite-loader打包svg
     config.module
       .rule('svg-sprite')
-      .test(/\.svg$/)
+      .test(/\/svg\/.*\.svg$/)
       .include.add(resolve(iconDir))
       .end()
       .use('svg-sprite-loader')
@@ -83,6 +84,33 @@ module.exports = {
             active: true,
             params: {
               attrs: ['class', 'p-id', 'fill']
+            }
+          }
+        ]
+      })
+      .end()
+
+    config.module
+      .rule('svg-sprite-colorful')
+      .test(/\/svg-colorful\/.*\.svg$/)
+      .include.add(resolve(iconColorfulDir))
+      .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({
+        symbolId: 'icon-[name]'
+      })
+      .end()
+      .use('svgo-loader')
+      .loader('svgo-loader')
+      .options({
+        plugins: [
+          { name: 'removeStyleElement', active: true },
+          {
+            name: 'removeAttrs',
+            active: true,
+            params: {
+              attrs: ['class', 'p-id']
             }
           }
         ]

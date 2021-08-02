@@ -5,40 +5,41 @@
     <div v-if="searchFilter.length === 0" class="overflow-auto flex-fill">
       <ElCollapse v-model="activeGroups">
         <ElCollapseItem v-for="(g, gi) in groups" :key="gi" :title="g.name" :name="`${gi}`">
-          <ElRow class="node-list flex-wrap p-2" :gutter="0" type="flex">
-            <ElCol :span="8" v-for="(n, ni) in g.nodes" :key="ni" class="p-2">
-              <div
-                v-mouse-drag="{
-                  item: n,
-                  container: '#dfEditorContent',
-                  domHtml: getNodeHtml(n),
-                  onStart,
-                  onMove,
-                  onDrop
-                }"
-                class="node-item flex flex-column align-center py-1 grabbable user-select-none"
-              >
-                <ElImage draggable="false" class="node-item-img" :src="`static/editor/${n.icon}.svg`"></ElImage>
-                <div class="node-item-txt mt-1">{{ n.name }}</div>
-              </div>
-            </ElCol>
-          </ElRow>
-        </ElCollapseItem>
-
-        <ElCollapseItem title="插件化数据节点" name="plugin">
-          <NodeItem
-            v-for="(item, i) in connections"
-            :key="i"
-            :data="item"
-            v-mouse-drag="{
-              item,
-              container: '#dfEditorContent',
-              domHtml: getNodeHtml(item),
-              onStart,
-              onMove,
-              onDrop
-            }"
-          ></NodeItem>
+          <template v-if="g.ui === 'list'">
+            <NodeItem
+              v-for="(item, i) in g.nodes"
+              :key="i"
+              :data="item"
+              v-mouse-drag="{
+                item,
+                container: '#dfEditorContent',
+                domHtml: getNodeHtml(item),
+                onStart,
+                onMove,
+                onDrop
+              }"
+            ></NodeItem>
+          </template>
+          <template v-else>
+            <ElRow class="node-list flex-wrap p-2" :gutter="0" type="flex">
+              <ElCol :span="8" v-for="(n, ni) in g.nodes" :key="ni" class="p-2">
+                <div
+                  v-mouse-drag="{
+                    item: n,
+                    container: '#dfEditorContent',
+                    domHtml: getNodeHtml(n),
+                    onStart,
+                    onMove,
+                    onDrop
+                  }"
+                  class="node-item flex flex-column align-center py-1 grabbable user-select-none"
+                >
+                  <ElImage draggable="false" class="node-item-img" :src="`static/editor/${n.icon}.svg`"></ElImage>
+                  <div class="node-item-txt mt-1">{{ n.name }}</div>
+                </div>
+              </ElCol>
+            </ElRow>
+          </template>
         </ElCollapseItem>
       </ElCollapse>
     </div>
@@ -100,7 +101,7 @@ export default {
     },
 
     searchItems() {
-      const sorted = [...this.allNodeTypes, ...this.connections]
+      const sorted = [...this.allNodeTypes]
 
       sorted.sort((a, b) => {
         const textA = a.name.toLowerCase()
@@ -121,9 +122,15 @@ export default {
     }
   },
 
+  watch: {
+    allNodeTypes() {
+      this.initGroups()
+    }
+  },
+
   created() {
-    this.loadConnections()
-    this.initGroups()
+    // this.loadConnections()
+    // this.initGroups()
   },
 
   methods: {
@@ -132,18 +139,23 @@ export default {
     initGroups() {
       let _group = groupBy(this.allNodeTypes, 'group')
 
-      this.groups = [
+      const groups = [
         {
           name: this.$t('editor.ui.sidebar.data_nodes'),
           nodes: _group.data || []
+        },
+        {
+          name: this.$t('editor.ui.sidebar.processor'),
+          nodes: _group.processor || []
+        },
+        {
+          name: '插件化数据节点',
+          nodes: _group.plugin || [],
+          ui: 'list'
         }
       ]
 
-      _group.processor &&
-        this.groups.push({
-          name: this.$t('editor.ui.sidebar.processor'),
-          nodes: _group.processor || []
-        })
+      this.groups = groups.filter(item => item.nodes.length > 0)
 
       this.activeGroups.push(...Object.keys(this.groups))
     },

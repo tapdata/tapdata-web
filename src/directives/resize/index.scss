@@ -39,12 +39,12 @@ $selectedColor: #d3d3d3;
   }
 
   &.--top {
-    bottom: 0;
+    top: 0;
     margin-bottom: -3px;
   }
 
   &.--bottom {
-    top: 0;
+    bottom: 0;
     margin-top: -3px;
   }
 

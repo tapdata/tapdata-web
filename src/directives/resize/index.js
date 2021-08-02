@@ -100,6 +100,8 @@ export default {
     const options = binding.value
     const { left, right, top, bottom } = binding.modifiers
 
+    el.style.position = 'relative'
+
     left && initEvent(el, 'left', options)
     right && initEvent(el, 'right', options)
     top && initEvent(el, 'top', options)

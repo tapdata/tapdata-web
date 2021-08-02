@@ -202,7 +202,10 @@ export default {
     isEditable: Boolean,
     editable: Boolean,
     statusBtMap: Object,
-    status: String,
+    status: {
+      type: String,
+      default: ''
+    },
     creatUserId: String,
     sync_type: String
   },
@@ -329,7 +332,7 @@ $sidebarBg: #fff;
 
 .layout-header {
   position: relative;
-  z-index: 1;
+  z-index: 10;
   display: flex;
   width: 100%;
   flex: 0 0 40px;
