@@ -249,14 +249,19 @@ export default {
       notices: [], // 公告列表
       guides: [
         {
-          name: '快速入门',
+          name: '新手引导',
           icon: 'quick_to_start',
-          url: 'https://www.yuque.com/tapdata/cloud/kuai-su-ru-men_readme'
+          action: 'guide'
         },
         {
           name: '产品文档',
           icon: 'document',
           url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme'
+        },
+        {
+          name: '常见问题',
+          icon: 'document',
+          url: 'https://www.yuque.com/tapdata/cloud/iff88o'
         }
       ],
       isGuide: true
@@ -348,7 +353,9 @@ export default {
       })
     },
     createTask() {
-      this.$emit('create-task')
+      this.$router.push({
+        name: 'DataflowCreate'
+      })
     },
     createConnection() {
       this.$root.$emit('select-connection-type')
@@ -356,10 +363,11 @@ export default {
     toNotice() {
       this.$router.push({ name: 'WorkbenchNotice' })
     },
-    clickIntro(item) {
-      window.open(item.url, '_blank')
-    },
     clickGuide(item) {
+      if (item.action) {
+        this.$root.$emit('show-guide')
+        return
+      }
       window.open(item.url, '_blank')
     },
     formatFromNow(date) {
