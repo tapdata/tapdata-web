@@ -6,5 +6,6 @@ export default {
   file: 'FbFile',
   field: 'FbSelect',
   array: 'FbArray',
-  group: 'FbGroup'
+  group: 'FbGroup',
+  nest: 'FbNest'
 }
