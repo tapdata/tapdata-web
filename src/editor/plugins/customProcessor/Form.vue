@@ -154,6 +154,7 @@ export default {
         result = items[0]
           .map(it => {
             it[0] = `record.${it[0]}`
+            it[2] = this.getFormatValue(it[2])
             return it.join(' ')
           })
           .join(` ${opr} `)
