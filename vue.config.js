@@ -89,6 +89,8 @@ module.exports = {
         ]
       })
       .end()
+
+    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('packages/tapdata-web-core'))
   },
   configureWebpack: config => {
     if (process.env.NODE_ENV === 'production') {

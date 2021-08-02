@@ -993,6 +993,21 @@ export default {
         this.doSaveStartDataFlow(data)
       }
     },
+    checkAgentStatus(callback) {
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+        this.$api('tcm')
+          .getAgentCount()
+          .then(res => {
+            if (res?.data?.agentRunningCount > 0) {
+              callback && callback()
+            } else {
+              this.$message.error('Agent当前状态异常，请检查')
+            }
+          })
+      } else {
+        callback && callback()
+      }
+    },
     /**
      * start button handler
      */
@@ -1001,36 +1016,38 @@ export default {
       let id = this.$route.query.id
 
       if (this.$refs.agentDialog.checkAgent()) {
-        let doStart = () => {
-          let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
-          if (data) {
-            this.doSaveStartDataFlow(data)
+        this.checkAgentStatus(() => {
+          let doStart = () => {
+            let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
+            if (data) {
+              this.doSaveStartDataFlow(data)
+            }
           }
-        }
-        let filter = {
-          where: {
-            'contextMap.dataFlowId': {
-              eq: id
-            },
-            level: 'ERROR'
+          let filter = {
+            where: {
+              'contextMap.dataFlowId': {
+                eq: id
+              },
+              level: 'ERROR'
+            }
           }
-        }
-        if (id) {
-          _this
-            .$api('logs')
-            .get({ filter: JSON.stringify(filter) })
-            .then(res => {
-              if (res.data?.length && this.$route.query && id) {
-                _this.$refs.errorHandler.checkError({ id, status: this.status }, () => {
+          if (id) {
+            _this
+              .$api('logs')
+              .get({ filter: JSON.stringify(filter) })
+              .then(res => {
+                if (res.data?.length && this.$route.query && id) {
+                  _this.$refs.errorHandler.checkError({ id, status: this.status }, () => {
+                    doStart()
+                  })
+                } else {
                   doStart()
-                })
-              } else {
-                doStart()
-              }
-            })
-        } else {
-          doStart()
-        }
+                }
+              })
+          } else {
+            doStart()
+          }
+        })
         // if (this.$route.query && id) {
         //   this.$refs.errorHandler.checkError(
         //     { id, status: this.status },
