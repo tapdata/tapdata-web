@@ -1676,6 +1676,7 @@ const cn = {
       agentMsg: 'Agent当前状态异常无法创建连接，请检查',
       agentConnectionMsg: 'Agent当前状态异常，无法测试连接，请检查Agent',
       multiTenant: '多租户模式',
+      hiveType: 'hive 类型',
       uriTips: {
         label: '示例',
         content:

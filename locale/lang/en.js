@@ -1708,6 +1708,7 @@ const en = {
       agentMsg: 'Agent current state exception cannot create connection, please check.',
       agentConnectionMsg: 'Agent current state is abnormal, cannot to test connection, please check.',
       multiTenant: 'Multi-tenant',
+      hiveType: 'Hive type',
       uriTips: {
         label: 'Example',
         content:
