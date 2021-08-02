@@ -101,13 +101,13 @@ export default {
             !guideData?.action &&
             (new Date().getTime() - (guideData?.updateTime ?? 0)) / 1000 / 3600 > 24
           ) {
-            this.command('guide')
+            this.showGuide()
           }
         }
       })
     },
-    createTask() {
-      this.$refs.noviceGuide?.goCreateTask?.()
+    showGuide() {
+      this.command('guide')
     },
     command(command) {
       // let downloadUrl = '';
@@ -133,13 +133,6 @@ export default {
             }
           })
           break
-        // case 'create':
-        //   //判断是否有实例
-        //   this.guideVisible = true // 显示指引窗
-        //   if (key) {
-        //     this.$refs.noviceGuide?.nextFnc?.(key)
-        //   }
-        //   break
         case 'toCommunity':
           window.open('https://ask.tapdata.net/', '_blank')
           break

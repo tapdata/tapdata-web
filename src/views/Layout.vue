@@ -20,7 +20,7 @@
         </ElBreadcrumb>
       </ElHeader>
       <ElMain class="main">
-        <RouterView @create-task="createTask"></RouterView>
+        <RouterView></RouterView>
       </ElMain>
     </ElContainer>
     <ElDialog title="选择数据源类型" :visible.sync="dialogVisible">
@@ -61,6 +61,7 @@ export default {
     this.menus = menus
     this.getBreadcrumb(this.$route)
     this.$root.$on('select-connection-type', this.selectConnectionType)
+    this.$root.$on('show-guide', this.showGuide)
   },
   watch: {
     $route(route) {
@@ -76,11 +77,11 @@ export default {
         query: { databaseType: type }
       })
     },
+    showGuide() {
+      this.$refs.theHeader?.showGuide?.()
+    },
     selectConnectionType() {
       this.dialogVisible = true
-    },
-    createTask() {
-      this.$refs.theHeader?.createTask?.()
     },
     menuTrigger(path) {
       if (this.$route.path === path) {
