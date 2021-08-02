@@ -1092,15 +1092,15 @@ export default {
                   }
                 })
               }
-              if (item.type === 'hive') {
-                data.setting.transformerConcurrency = 1
-                data.setting.readBatchSize = 10000
-              }
             })
           }
           data.stages.forEach(item => {
             if ((item.type === 'hbase' || item.database_type === 'hbase') && this.sync_type !== 'initial_sync') {
               checkSetting = false
+            }
+            if (item.type === 'hive') {
+              data.setting.transformerConcurrency = 1
+              data.setting.readBatchSize = 10000
             }
             if (
               item.outputLanes.length &&

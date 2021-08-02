@@ -116,6 +116,7 @@ export const defaultModel = {
     search_databaseType: '',
     increamentalTps: 100, //dummy
     initialReadSize: 100000, //dummy
+    hiveConnType: 'Stream', // kafka
     schema: ''
   },
   kafka: {
