@@ -1,5 +1,5 @@
 import { connect, mapProps, h } from '@formily/vue'
-import { getComponentByTag } from './utils/util'
+import { getComponentByTag } from '../connection-form/form/utils/util'
 
 const ElRadioGroup = getComponentByTag('el-radio-group', { change: 'input' })
 const ElRadio = getComponentByTag('el-radio')
@@ -15,11 +15,7 @@ const RadioGroupOption = {
             default: () =>
               options.map(option => {
                 if (typeof option === 'string') {
-                  return h(
-                    ElRadio,
-                    { props: { label: option } },
-                    { default: () => [option] },
-                  )
+                  return h(ElRadio, { props: { label: option } }, { default: () => [option] })
                 } else {
                   return h(
                     ElRadio,
@@ -35,20 +31,18 @@ const RadioGroupOption = {
                         border: true
                       }
                     },
-                    { default: () => [
-                        h(
-                          'span',
-                          {},
-                          { default: () => [option.label] },
-                        ),
+                    {
+                      default: () => [
+                        h('span', {}, { default: () => [option.label] }),
                         h(
                           'div',
                           {
                             class: 'fb-radio-option-tip'
                           },
-                          { default: () => [option.tip] },
+                          { default: () => [option.tip] }
                         )
-                      ] },
+                      ]
+                    }
                   )
                 }
               })
@@ -61,7 +55,7 @@ const RadioGroupOption = {
         class: {
           'fb-radio': true,
           'radio-border': true,
-          'verical': true
+          verical: true
         },
         props: {
           value: props.value || [],
@@ -74,7 +68,4 @@ const RadioGroupOption = {
   }
 }
 
-export const RadioTipGroup = connect(
-  RadioGroupOption,
-  mapProps({ dataSource: 'options' })
-)
+export const RadioTipGroup = connect(RadioGroupOption, mapProps({ dataSource: 'options' }))

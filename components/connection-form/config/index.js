@@ -4,6 +4,10 @@
  * @description
  */
 import redis from './redis'
+import mysql from './mysql'
+import defaultConfig from './defaultConfig'
 export default {
-  redis
+  redis,
+  mysql,
+  defaultConfig
 }

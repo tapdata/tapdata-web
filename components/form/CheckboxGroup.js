@@ -38,7 +38,4 @@ const CheckboxGroupOption = {
   }
 }
 
-export const CheckboxGroup = connect(
-  CheckboxGroupOption,
-  mapProps({ dataSource: 'options' })
-)
+export const CheckboxGroup = connect(CheckboxGroupOption, mapProps({ dataSource: 'options' }))
