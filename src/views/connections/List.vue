@@ -511,23 +511,18 @@ export default {
       this.previewVisible = false
     },
     edit(id, type, item) {
-      if (this.whiteList.includes(type)) {
-        if (item.search_databaseType) {
-          type = item.search_databaseType
-        }
-        this.$router.push({
-          name: 'connectionsEdit',
-          params: {
-            id: id
-          },
-          query: {
-            databaseType: type
-          }
-        })
-      } else {
-        top.location.href = '/#/connection/' + id
-        localStorage.setItem('connectionDatabaseType', type)
+      if (item.search_databaseType) {
+        type = item.search_databaseType
       }
+      this.$router.push({
+        name: 'connectionsEdit',
+        params: {
+          id: id
+        },
+        query: {
+          databaseType: type
+        }
+      })
     },
     copy(data) {
       let headersName = { 'lconname-name': data.name }
