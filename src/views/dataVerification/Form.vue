@@ -723,8 +723,12 @@ export default {
               let sourceSortColumn = []
               let targetSortColumn = []
               joinTable.joinKeys.forEach(obj => {
-                sourceSortColumn.push(obj.source)
-                targetSortColumn.push(obj.target)
+                if (task.source.fields.find(f => f.field_name === obj.source)) {
+                  sourceSortColumn.push(obj.source)
+                }
+                if (task.target.fields.find(f => f.field_name === obj.source)) {
+                  targetSortColumn.push(obj.target)
+                }
               })
               task.source.sortColumn = sourceSortColumn.join(',')
               task.target.sortColumn = targetSortColumn.join(',')

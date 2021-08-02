@@ -1,28 +1,21 @@
 <template>
   <section class="custom_processor-wrap">
-    <!-- <div class="head-btns">
-			<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor()">
-				{{ $t('dataFlow.button.viewMonitoring') }}
-			</el-button>
-		</div> -->
     <main>
-      <!-- <div style="text-align: right;">
-				<el-button size="mini" type="primary">更新节点配置</el-button>
-			</div> -->
       <form-builder ref="form" v-model="model.formData" :config="formConfig"></form-builder>
-      <pre class="code-pre">{{ this.model.script }}</pre>
+      <ElLink v-show="!isShowPreview" type="primary" @click="isShowPreview = true">预览</ElLink>
+      <ElLink v-show="isShowPreview" type="primary" @click="isShowPreview = false">收起预览</ElLink>
+      <pre v-show="isShowPreview" class="code-pre">{{ this.model.script }}</pre>
+      <pre class="node-desc" v-html="nodeDesc"></pre>
     </main>
   </section>
 </template>
 <script>
-import _ from 'lodash'
 import { mergeJoinTablesToTargetSchema, removeDeleted } from '../../util/Schema'
-// import log from '../../../log';
-// let editorMonitor = null;
 export default {
   name: 'CustomProcessor',
   data() {
     return {
+      isShowPreview: false,
       disabled: false,
       model: {
         type: 'template_processor',
@@ -34,7 +27,9 @@ export default {
         form: {},
         items: []
       },
-      scriptTemplate: ''
+      nodeDesc: '',
+      scriptTemplate: '',
+      ifFields: []
     }
   },
   created() {},
@@ -57,11 +52,7 @@ export default {
       this.disabled = disabled
       this.formConfig.form.disabled = true
     },
-    // seeMonitor() {
-    // 	editorMonitor.goBackMontior();
-    // },
     setData(data, cell) {
-      // editorMonitor = vueAdapter.editor;
       if (data) {
         this.model = Object.assign(this.model, data)
       }
@@ -74,11 +65,63 @@ export default {
 
       let config = cell.getConfig()
       let formConfig = config.formConfig
+      let descStr = config.nodeConfig?.desc
+      if (descStr) {
+        descStr = descStr.replaceAll('$pre(', '<pre class="code-pre">')
+        descStr = descStr.replaceAll('$pre)', '</pre>')
+        this.nodeDesc = descStr
+      }
 
       if (formConfig && formConfig.items) {
         let items = formConfig.items || []
         let formData = this.model.formData
-        items.forEach(it => {
+        let ifFields = []
+        items.forEach((it, index) => {
+          if (it.type === 'if') {
+            let field = it.field
+            it = {
+              field,
+              type: 'nest',
+              label: '判断条件',
+              limit: 3, //最多能设置几层， 不设默认3层
+              items: [
+                {
+                  type: 'select',
+                  defaultValue: '&&',
+                  options: [
+                    { label: '&&', value: '&&' },
+                    { label: '||', value: '||' },
+                    { label: '&', value: '&' },
+                    { label: '|', value: '|' }
+                  ]
+                },
+                {
+                  type: 'array',
+                  itemConfig: {
+                    type: 'group',
+                    items: [
+                      { type: 'input', placeholder: '选择字段' },
+                      {
+                        type: 'select',
+                        defaultValue: '==',
+                        options: [
+                          { label: '=', value: '==' },
+                          { label: '!=', value: '!=' },
+                          { label: '>', value: '>' },
+                          { label: '<', value: '<' },
+                          { label: '>=', value: '>=' },
+                          { label: '<=', value: '<=' }
+                        ]
+                      },
+                      { type: 'input', placeholder: '值' }
+                    ]
+                  }
+                }
+              ]
+            }
+            ifFields.push(field)
+            formConfig.items[index] = it
+          }
           let value = formData[it.field]
           if (!value && value !== 0) {
             value = ''
@@ -97,15 +140,39 @@ export default {
             it.options = options
           }
         })
+        this.ifFields = ifFields
       }
       this.formConfig = Object.assign({}, this.formConfig, formConfig)
       this.scriptTemplate = config.scriptTemplate
+    },
+    getIfValue(value) {
+      let values = JSON.parse(JSON.stringify(value)) || ''
+      let result = ''
+      if (values) {
+        let opr = values.splice(0, 1)[0]
+        let items = values.splice(0, 1)
+        result = items[0]
+          .map(it => {
+            it[0] = `record.${it[0]}`
+            return it.join(' ')
+          })
+          .join(` ${opr} `)
+        let nestItems = values
+        if (nestItems?.length) {
+          result += ` ${opr} (`
+          result += nestItems.map(it => {
+            return this.getIfValue(it)
+          })
+          result += ') '
+        }
+      }
+      return result
     },
     getScript() {
       let { formData } = this.model
       let script = this.scriptTemplate
       for (let key in formData) {
-        let value = this.getFormatValue(formData[key])
+        let value = this.ifFields.includes(key) ? this.getIfValue(formData[key]) : this.getFormatValue(formData[key])
 
         script = script.replace('${' + key + '}', value)
       }
@@ -134,7 +201,7 @@ export default {
     },
     getData() {
       this.model.script = this.getScript()
-      return _.cloneDeep(this.model)
+      return JSON.parse(JSON.stringify(this.model))
     }
   }
 }
@@ -146,17 +213,33 @@ export default {
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
+  padding-bottom: 50px;
   main {
     height: 100%;
     box-sizing: border-box;
     .code-pre {
-      margin: 20px 0;
+      margin: 10px 0;
       padding: 15px;
       background: #fff;
       overflow: auto;
       font-size: 12px;
       color: #333;
     }
+    .node-desc {
+      font-size: 12px;
+    }
+  }
+}
+</style>
+<style lang="scss">
+.custom_processor-wrap {
+  .code-pre {
+    margin: 10px 0;
+    padding: 15px;
+    background: #fff;
+    overflow: auto;
+    font-size: 12px;
+    color: #333;
   }
 }
 </style>
