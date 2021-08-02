@@ -8,9 +8,9 @@
         <header v-if="$route.params.id" class="edit-header-box">
           <div class="edit-header">
             <div class="img-box">
-              <img :src="getImgByType(databaseType)" />
+              <img :src="getImgByType('default')" />
             </div>
-            <div class="content">{{ model.name }}</div>
+            <div class="content">{{ name }}</div>
             <div class="addBtn color-primary" @click="dialogEditNameVisible = true">
               {{ $t('connection.rename') }}
             </div>
@@ -42,7 +42,11 @@
         </header>
         <div class="form-wrap">
           <div class="form">
-            <ConnectionFormSelector ref="connectionForm" :databaseType="databaseType"></ConnectionFormSelector>
+            <ConnectionFormSelector
+              ref="connectionForm"
+              :databaseType="databaseType"
+              :formValues="formValues"
+            ></ConnectionFormSelector>
             <el-button type="primary" size="mini" class="test" @click="startTest()">{{
               $t('connection.testConnection')
             }}</el-button>
@@ -104,14 +108,31 @@ export default {
       databaseType: '',
       id: '',
       model: '',
+      formValues: {},
+      name: '',
       dialogTestVisible: false
     }
   },
   created() {
     this.databaseType = this.$route.query.databaseType || this.$store.state.createConnection.databaseType
     this.id = this.$route.params.id || ''
+    this.getFormValues()
   },
   methods: {
+    async getFormValues() {
+      if (this.$route.params.id) {
+        if (this.database_type === 'mongodb') {
+          this.formValues = this.$api('connections').customQuery([this.$route.params.id])
+        } else {
+          let result = await this.$api('connections').getNoSchema(this.$route.params.id)
+          if (result.data) {
+            this.formValues['name'] = result.data.name
+            this.name = result.data.name
+            this.formValues['config'] = result.data.config
+          }
+        }
+      }
+    },
     getImgByType(type) {
       if (!type) {
         type = 'default'
@@ -153,6 +174,7 @@ export default {
     },
     submit() {
       let data = this.getFormData()
+      if (!data.status) return //表单提交检验状态
       if (!data.form) return
       let form = data.form || ''
       if (form) {
