@@ -20,7 +20,7 @@
     </ul>
     <span class="title" v-if="otherTypes && otherTypes.length > 0">Other Type</span>
     <ul class="item clearfix">
-      <li v-for="item in otherTypes" :key="item" @click="$emit('select', item)">
+      <li v-for="(item, index) in otherTypes" :key="index" @click="$emit('select', item)">
         <div class="img-box">
           <img :src="$util.getConnectionTypeImg(item)" />
         </div>
@@ -29,7 +29,7 @@
     </ul>
     <span class="title" v-if="automationType && automationType.length > 0">Automation Type</span>
     <ul class="item clearfix">
-      <li v-for="item in automationType" :key="item" @click="$emit('select', item.type)">
+      <li v-for="(item, index) in automationType" :key="index" @click="$emit('select', item.type)">
         <div class="img-box">
           <img :src="$util.getConnectionTypeImg('default')" />
         </div>

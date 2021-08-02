@@ -14,15 +14,13 @@ import '../form/styles/index.scss'
 const { SchemaField } = createSchemaField({
   components
 })
-let formDatas = null
-let formCheckStatus = null
 export default {
   name: 'ConnectionFormSelector',
   components: { FormProvider, SchemaField },
-  props: ['databaseType'],
+  props: ['databaseType', 'formValues'],
   data() {
     return {
-      form: createForm({ effects: this.useEffects }),
+      form: '',
       schema: null
     }
   },
@@ -47,6 +45,9 @@ export default {
           if (res.data) {
             this.schema = res.data[0] || []
             this.schema.properties = this.handleFormSchema(this.schema.properties)
+            this.form = createForm({
+              values: this.formValues || ''
+            })
           }
         })
     },
@@ -66,19 +67,11 @@ export default {
       }
       return result
     },
-    useEffects() {
-      onFormValuesChange(form => {
-        formDatas = form
-      })
-      onFormSubmit(form => {
-        formCheckStatus = form.valid
-      })
-    },
     getFormData() {
-      return formDatas
+      return this.form
     },
     getFormCheckStatus() {
-      return formCheckStatus
+      return this.form.valid
     }
   }
 }
