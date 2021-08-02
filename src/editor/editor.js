@@ -402,7 +402,6 @@ export default class Editor extends BaseObject {
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
         if (dataFlow.setting.sync_type !== 'cdc') {
           this.getBottomTabPanel().add(progress)
-          // self.showTaskProgress(dataFlow, true)
         }
       }
     }
