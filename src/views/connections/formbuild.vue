@@ -174,6 +174,7 @@ export default {
     },
     submit() {
       let data = this.getFormData()
+      if (!data.status) return //表单提交检验状态
       if (!data.form) return
       let form = data.form || ''
       if (form) {
