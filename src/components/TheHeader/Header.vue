@@ -24,8 +24,8 @@
 
           <ElDropdownMenu slot="dropdown">
             <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
+            <ElDropdownItem command="userCenter"> 用户中心 </ElDropdownItem>
             <ElDropdownItem command="home"> 官网 </ElDropdownItem>
-            <ElDropdownItem command="guide"> 新手引导 </ElDropdownItem>
             <ElDropdownItem command="signOut"> 退出登录 </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
@@ -76,7 +76,8 @@ export default {
       isClose: false,
       btnLoading: false,
       noShow: false, // 不再显示新手引导
-      selfUser: {} // self用户信息
+      selfUser: {}, // self用户信息
+      VUE_APP_USER_CENTER: process.env.VUE_APP_USER_CENTER
     }
   },
   created() {
@@ -123,6 +124,9 @@ export default {
           break
         case 'home':
           window.open('https://cloud.tapdata.net/', '_blank')
+          break
+        case 'userCenter':
+          window.open(this.VUE_APP_USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
           break
         case 'signOut':
           this.$confirm('您确定要退出登录吗？', '退出登录', {
