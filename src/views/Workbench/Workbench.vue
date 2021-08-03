@@ -33,7 +33,7 @@
                 <div v-if="item.type" class="notice-list__type mr-4 p-1">
                   {{ item.type }}
                 </div>
-                <div class="notice-list__name flex-grow-1 ellipsis pointer" @click="toNotice">
+                <div class="notice-list__name flex-grow-1 ellipsis pointer" @click="toNotice(item)">
                   {{ item.name }}
                 </div>
                 <div class="notice-list__time">
@@ -341,6 +341,12 @@ export default {
           type: '',
           name: 'Tapdata Cloud上线公测',
           time: '2021-07-01'
+        },
+        {
+          id: 1,
+          type: '',
+          name: '异构数据库同步云平台 Tapdata Cloud 开启有奖公测',
+          time: '2021-07-31'
         }
       ]
     },
@@ -360,8 +366,13 @@ export default {
     createConnection() {
       this.$root.$emit('select-connection-type')
     },
-    toNotice() {
-      this.$router.push({ name: 'WorkbenchNotice' })
+    toNotice(item) {
+      this.$router.push({
+        name: 'WorkbenchNotice',
+        query: {
+          id: item?.id
+        }
+      })
     },
     clickGuide(item) {
       if (item.action) {
@@ -468,12 +479,10 @@ export default {
 }
 .notice-list__name {
   color: map-get($color, primary);
-  //&:hover {
-  //	color: map-get($color, primary);
-  //}
 }
 .notice-list__time {
   color: rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
 }
 .notice-footer {
   color: map-get($color, primary);

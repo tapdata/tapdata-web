@@ -1,5 +1,116 @@
 <template>
-  <div class="notice main-container fs-8">
+  <div class="notice main-container ws-main-container fs-8" v-if="$route.query.id == 1">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>推荐 | 异构数据库同步云平台 Tapdata Cloud 开启有奖公测</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2021-07-31</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 p-6 fs-6">
+      <div class="notice-body__content">
+        <div class="mb-10">
+          <img src="../../../public/images/notice/top.png" alt="" />
+        </div>
+        <div class="info-section mb-10">
+          <div class="info-section__header inline-block p-2">Tapdata Cloud 介绍</div>
+          <div class="info-section__body p-3 fs-7">
+            Tapdata Cloud 是 Tapdata「深圳钛铂数据有限公司 」自研的国内首个
+            <span class="fw-bolder">异构数据库实时同步云平台</span>
+            ，目前支持 Oracle、MySQL、PostgreSQL、SQL Server、MongoDB、Elasticsearch 之间的数据迁移和同步，即将支持
+            DB2、Sybase ASE、Redis、Kafka、GBase、GaussDB 等。Tapdata Cloud 将以
+            <span class="fw-bolder">永久免费</span>
+            的形式提供给所有开发者和企业使用。
+          </div>
+        </div>
+        <div class="index-section mb-3">
+          <div class="index-section__header flex">
+            <div class="index-section__number">01</div>
+            <div class="index-section__slash"></div>
+            <div class="index-section__title">
+              <div class="title-top">
+                <div class="title-top_arrow"></div>
+              </div>
+              <div class="title-bottom ml-3 fw-bolder">有奖公测活动</div>
+            </div>
+          </div>
+        </div>
+        <div class="activity-section fs-7 pb-5 px-5">
+          自开放公测以来，Tapdata Cloud 在与用户交互过程中不断升级迭代，为了回馈和鼓励用户更好地使用产品和提出宝贵建议，
+          <span class="fw-bolder">即日起至2021年10月1日，Tapdata 面向全体用户送出公测福利！</span>
+          不论您是Tapdata Cloud 的用户还是产品推荐官，都有机会赢取 AirPods
+          、Kindle、机械键盘、小爱音响、充电宝、定制保温杯和U盘等好礼！
+        </div>
+        <div class="prize-section p-4">
+          <img src="../../../public/images/notice/prize1.png" alt="" />
+          <img src="../../../public/images/notice/prize2.png" alt="" />
+        </div>
+        <div class="index-section mb-3">
+          <div class="index-section__header flex">
+            <div class="index-section__number">02</div>
+            <div class="index-section__slash"></div>
+            <div class="index-section__title">
+              <div class="title-top">
+                <div class="title-top_arrow"></div>
+              </div>
+              <div class="title-bottom ml-3 fw-bolder">活动参与方式</div>
+            </div>
+          </div>
+        </div>
+        <div class="mode-section">
+          <div class="mode-section__connect">
+            <div class="mode-section__header">方式一 ：顺利完成1个同步任务</div>
+            <div class="p-5 clear">
+              <div class="line-heiht-2">
+                活动期间顺利完成至少1个 Tapdata Cloud 数据同步任务，截图发给 Tapdata
+                服务号人工客服（通过公众号首页菜单联系客服），即可领取 64G U盘/ 充电宝 / 小爱音箱 / 保温杯 4选1！
+              </div>
+              <div class="text-center">
+                <div class="fw-bolder mb-3">Tapdata Cloud 官网↓↓</div>
+                <div class="mb-3">https://cloud.tapdata.net/</div>
+                <div class="fs-8">（执行同步任务请到PC端进行）</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mode-section">
+          <div class="mode-section__connect">
+            <div class="mode-section__header">方式二：撰写并分享产品体验博客</div>
+            <div class="p-5 clear">
+              <div class="line-heiht-2">
+                活动期间，体验 Tapdata Cloud / Tapdata Enterprise，并撰写和分享使用经验博客文章，完成后将文章链接发给
+                Tapdata 服务号人工客服，可根据内容质量获得Apple AirPods / Kindle /
+                机械键盘（文章质量越高，奖品价值越高）！
+              </div>
+              <div class="mt-6 fs-8">
+                * 内容判断维度：主题切合度，逻辑清晰度，可读性，参考价值等；本奖品也可以折合成京东购物卡兑换。
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mode-section">
+          <div class="mode-section__connect">
+            <div class="mode-section__header">方式三：成为 Tapdata 产品推荐官</div>
+            <div class="p-5 clear">
+              <div class="line-heiht-2">
+                活动期间成功邀请朋友关注 Tapdata
+                微信服务号（邀请数≥15名）的推荐官，将获得礼品盲盒1个（包括不限于机械键盘，保温杯，充电宝，Kindle， Apple
+                AirPods 等），邀请人数达标后系统将自动通知您（ps：邀请人数越多，将有机会获得更高价值的礼品）！
+              </div>
+              <div class="QR-code-section text-center">
+                <div class="mb-3">扫描识别二维码成为产品推荐官↓↓</div>
+                <img src="../../../public/images/notice/poster.png" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notice main-container fs-8" v-else>
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>新手必看 ！如何玩转 Tapdata Cloud 数据同步功能</span>
@@ -103,6 +214,9 @@ export default {
 }
 .notice-body {
   background: #fff;
+  img {
+    width: 100%;
+  }
   .notice-body__step {
     border-bottom: 1px solid #f2f2f2;
     > div {
@@ -127,6 +241,152 @@ export default {
     > img {
       width: 164px;
     }
+  }
+}
+
+.ws-main-container {
+  .notice-body__content {
+    width: 700px;
+  }
+  .line-heiht-2 {
+    line-height: 2;
+  }
+}
+.info-section__header {
+  border-radius: 12px 12px 0 0;
+  background-color: rgb(1, 121, 179);
+  color: rgb(255, 255, 255);
+}
+.info-section__body {
+  border: 1px solid rgb(1, 121, 179);
+  border-radius: 0 0 12px 12px;
+  line-height: 2;
+}
+.activity-section {
+  border-left: 2px dashed rgb(1, 121, 179);
+  line-height: 2;
+}
+.index-section {
+}
+.index-section__header {
+  flex-flow: row nowrap;
+}
+.index-section__number {
+  vertical-align: top;
+  width: auto;
+  background-color: rgb(1, 121, 179);
+  min-width: 10%;
+  max-width: 100%;
+  flex: 0 0 auto;
+  height: 40px;
+  line-height: 40px;
+  align-self: stretch;
+  z-index: 1;
+  box-sizing: border-box;
+
+  text-align: right;
+  font-size: 22px;
+  color: rgb(249, 248, 246);
+  padding-right: 9px;
+  padding-left: 9px;
+  letter-spacing: 0px;
+  //> span {
+  //  text-align: right;
+  //  font-size: 22px;
+  //  color: rgb(249, 248, 246);
+  //  padding-right: 9px;
+  //  padding-left: 9px;
+  //  line-height: 1;
+  //  letter-spacing: 0px;
+  //}
+}
+.index-section__slash {
+  display: inline-block;
+  vertical-align: top;
+  width: 14px;
+  background-image: linear-gradient(to right bottom, rgb(1, 121, 179) 50%, rgba(231, 34, 21, 0) 50%);
+  flex: 0 0 auto;
+  height: auto;
+  align-self: stretch;
+  line-height: 0;
+  z-index: 1;
+  border-width: 0px;
+  box-sizing: border-box;
+}
+.index-section__title {
+  display: inline-block;
+  vertical-align: top;
+  width: auto;
+  flex: 100 100 0%;
+  height: auto;
+  align-self: stretch;
+  background-color: rgb(229, 241, 247);
+  margin-top: 7px;
+  margin-left: -15px;
+  line-height: 1;
+  box-sizing: border-box;
+}
+.title-top {
+  text-align: left;
+  transform: translate3d(7px, 0px, 0px);
+  margin-top: -15px;
+  margin-right: 0%;
+  margin-left: 0%;
+  justify-content: flex-start;
+  height: 16px;
+  box-sizing: border-box;
+}
+.title-top_arrow {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: top;
+  overflow: hidden;
+  border-style: solid;
+  border-width: 8px;
+  border-color: rgba(255, 255, 255, 0) rgba(255, 255, 255, 0) rgb(1, 121, 179);
+  box-sizing: border-box;
+}
+.title-bottom {
+  color: rgb(1, 121, 179);
+  padding-right: 10px;
+  padding-left: 10px;
+  line-height: 2;
+  letter-spacing: 1px;
+}
+.prize-section {
+  img {
+    width: 330px;
+  }
+}
+.mode-section {
+  border-left: 1px solid rgb(1, 121, 179);
+  font-size: 14px;
+  color: #646464;
+  overflow: hidden;
+  background-image: linear-gradient(to right, rgba(255, 90, 104, 0) 0%, rgba(255, 90, 104, 0.05) 100%);
+  .mode-section__connect {
+    background: url('../../../public/images/notice/bg.png') 0 0 repeat;
+    background-size: 3.5%;
+  }
+  .clear {
+    clear: both;
+  }
+}
+.mode-section__header {
+  float: left;
+  padding: 0 8px;
+  height: 16px;
+  line-height: 16px;
+  font-weight: bolder;
+  border-left: 16px solid rgb(1, 121, 179);
+  border-right: 2px solid rgb(1, 121, 179);
+  color: #333;
+}
+.QR-code-section {
+  img {
+    width: 135px;
+    height: 135px;
   }
 }
 </style>
