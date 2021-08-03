@@ -446,10 +446,13 @@ export default {
       }
       let runningTaskNum = row?.metric?.runningTaskNum ?? 0 // 运行中的任务数
       let noDelFlag = runningTaskNum > 0 // 不能删除
-      let message = noDelFlag
-        ? '当前Agent上有任务正在运行，请先停止任务后再删除。'
-        : '删除后该Agent将无法再继续使用，是否确认删除？'
-      this.$confirm(null, message, {
+      let title = '删除后该Agent将无法再继续使用，是否确认删除？'
+      let message = null
+      if (noDelFlag) {
+        title = '删除失败'
+        message = '当前Agent上有任务正在运行，请先停止任务后再删除。'
+      }
+      this.$confirm(message, title, {
         type: 'warning',
         customClass: 'delete-agent'
       }).then(res => {
