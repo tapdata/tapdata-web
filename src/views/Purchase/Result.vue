@@ -2,7 +2,7 @@
   <section class="result-wrap">
     <Header :action="result.action"></Header>
     <div class="main">
-      <img class="result-img" :src="imgUrl" />
+      <VIcon class="result-img" size="48">{{ svgUrl }}</VIcon>
       <div class="result-text" v-if="!result.successTitle">
         {{ resultInfo.name }}{{ resultInfo.oper }}{{ isSuccess ? '成功' : '失败' }}
       </div>
@@ -21,12 +21,11 @@
 </template>
 <script>
 import Header from './Header'
-import successImg from '../../assets/icons/success.svg'
-import failImg from '../../assets/icons/fail.svg'
-import waitImg from '../../assets/icons/wait.svg'
+import VIcon from '../../components/VIcon'
 export default {
   components: {
-    Header
+    Header,
+    VIcon
   },
   data() {
     return {
@@ -65,8 +64,8 @@ export default {
     }
   },
   computed: {
-    imgUrl() {
-      return this.isSuccess ? (this.result.successTitle ? waitImg : successImg) : failImg
+    svgUrl() {
+      return this.isSuccess ? (this.result.successTitle ? 'waitFillColor' : 'successFillColor') : 'errorFillColor'
     },
     isSuccess() {
       return this.result.type === 'success'

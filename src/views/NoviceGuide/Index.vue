@@ -65,7 +65,7 @@
             </div>
           </div>
           <div v-if="agent.status === 'Running'" class="flex justify-center align-center">
-            <el-progress type="circle" :percentage="100" status="success"></el-progress>
+            <VIcon size="57" color="#8ACD54">successCircle</VIcon>
           </div>
         </div>
         <div class="operation mt-7">
@@ -101,13 +101,14 @@
 
         <el-form ref="sourceElForm" v-model="sourceForm" label-width="80px" class="source-form mt-6">
           <el-form-item label="数据库类型" prop="database_type" class="database-type">
-            <div class="flex justify-between w-100">
+            <div class="flex w-100" :class="[{ 'justify-between': databaseTypeItems.length > 2 }]">
               <el-radio-group v-model="sourceForm.database_type" @change="changeSourceDatabaseType">
                 <el-radio-button v-for="(item, index) in databaseTypeItems" :key="index" :label="item.value">
                   {{ item.label }}
                 </el-radio-button>
               </el-radio-group>
               <el-button
+                class="ml-4"
                 :disabled="!!sourceForm.id"
                 :loading="initDatabaseLoading"
                 type="primary"
@@ -161,33 +162,32 @@
         </div>
         <div class="flex mt-6">
           <div class="task-item-label mr-4">映射设置</div>
-          <div>
+          <div class="flex-grow-1 flex-shrink-1">
             <div class="mb-4 text-black-50">
               用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。
             </div>
             <el-transfer
-              filterable
+              v-model="taskForm.selectSourceArr"
               :titles="['待选择表', '已选择表']"
               :filter-method="filterMethod"
               :filter-placeholder="$t('editor.cell.link.searchContent')"
-              v-model="taskForm.selectSourceArr"
               :data="sourceData"
+              filterable
+              class="flex"
               @change="handleChangeTransfer"
               @right-check-change="handleSelectTable"
             >
-              <!--              <span slot-scope="{ option }">-->
-              <!--                <span> {{ option.label }}</span>-->
-              <!--                <span-->
-              <!--                  v-if="selectSourceArr.includes(option.key) && !isTwoWay"-->
-              <!--                  @click.stop.prevent="handleFiled(option)"-->
-              <!--                  class="el-icon-setting field-transfer__icon"-->
-              <!--                ></span>-->
-              <!--              </span>-->
             </el-transfer>
           </div>
         </div>
         <div class="operation mt-7">
-          <el-button type="primary" size="mini" :disabled="!agent.name" :loading="createTaskLoading" @click="createTask"
+          <el-button
+            type="primary"
+            size="mini"
+            :disabled="!agent.name"
+            :loading="createTaskLoading"
+            style="margin-left: 105px"
+            @click="createTask"
             >完成</el-button
           >
         </div>
@@ -195,11 +195,11 @@
       <!--   第5步   -->
       <div v-if="step === 4" class="step-content mt-7 pt-16 text-center">
         <div class="finish-img">
-          <img src="../../../public/images/guide/right.png" alt="" />
+          <VIcon size="53">successFillColor</VIcon>
         </div>
         <div class="mt-6 fs-7">恭喜您完成新手引导！</div>
         <div class="mt-6">
-          <el-button type="primary" @click="toWorkbench">返回工作台</el-button>
+          <el-button class="mr-4" type="primary" @click="toWorkbench">返回工作台</el-button>
           <el-button @click="toTaskDetail">查看任务监控</el-button>
         </div>
       </div>
@@ -209,8 +209,11 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
+
 let selectKeepArr = []
 export default {
+  components: { VIcon },
   data() {
     return {
       timer: null,
@@ -737,27 +740,64 @@ export default {
       .el-step__head {
         border-color: rgba(0, 0, 0, 0.25);
         color: rgba(0, 0, 0, 0.25);
-        &.is-process,
-        &.is-success {
+        &.is-process {
           border-color: rgba(44, 101, 255, 1);
           color: rgba(44, 101, 255, 1);
         }
-      }
-      .el-step__title {
-        //color: rgba(0, 0, 0, 0.25);
-        font-size: 14px;
         &.is-success {
+          border-color: rgba(44, 101, 255, 1);
           color: rgba(44, 101, 255, 1);
+          .el-step__line {
+            background-color: rgba(44, 101, 255, 0.05);
+          }
+        }
+        .el-step__line {
+          height: 5px;
+          top: 9px;
+          left: 57%;
+          right: -43%;
+          background-color: rgba(1, 1, 1, 0.05);
+          .el-step__line-inner {
+            display: none;
+          }
+        }
+        .el-step__icon {
+          border: 1px solid #2c65ff;
+          .el-step__icon-inner {
+            font-weight: normal;
+            color: #2c65ff;
+          }
         }
       }
-      //.el-step__head.is-success {
-      //  border-color: rgba(44, 101, 255, 1);
-      //}
-      //.el-step__head.is-success,
-      //.el-step__head.is-success,
-      //.el-step__title.is-success {
-      //  color: rgba(44, 101, 255, 1);
-      //}
+      .el-step__title {
+        font-size: 14px;
+        font-weight: normal;
+        color: #000;
+        &.is-success {
+          font-weight: 700;
+        }
+      }
+    }
+  }
+  .el-radio-group {
+    ::v-deep {
+      .el-radio-button {
+        &:first-child {
+          .el-radio-button__inner {
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+          }
+        }
+        &:last-child {
+          .el-radio-button__inner {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+          }
+        }
+        .el-radio-button__inner {
+          background-color: #fff;
+        }
+      }
     }
   }
   .agent-info {
@@ -779,17 +819,6 @@ export default {
         border-color: transparent;
       }
     }
-    .el-progress {
-      ::v-deep {
-        .el-progress-circle {
-          width: 57px !important;
-          height: 57px !important;
-        }
-        .el-progress__text {
-          font-size: 28px;
-        }
-      }
-    }
   }
   .source-form {
     width: 500px;
@@ -809,6 +838,9 @@ export default {
   }
   .el-transfer {
     ::v-deep {
+      .el-transfer-panel {
+        flex: 1;
+      }
       .el-transfer-panel__filter {
         width: calc(100% - 32px);
         .el-input__inner {
@@ -819,6 +851,28 @@ export default {
       .el-transfer-panel {
         //width: 350px;
         min-width: 240px;
+        .el-transfer-panel__header {
+          background: rgba(44, 101, 255, 0.05);
+          .el-checkbox__label {
+            margin-left: 10px;
+            border-left: 1px solid #ddd;
+            font-size: 14px;
+          }
+        }
+      }
+      .el-transfer__buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .el-button {
+          padding: 0;
+          width: 36px;
+          height: 27px;
+          &:last-child {
+            margin-left: 0;
+          }
+        }
       }
     }
   }
@@ -830,6 +884,30 @@ export default {
     img {
       width: 53px;
       height: 53px;
+    }
+  }
+}
+.operation {
+  .el-button {
+    width: 80px;
+  }
+}
+.el-button {
+  &:not(.el-button--text) {
+    border-radius: 4px;
+    border: 1px solid #2c65ff;
+    color: #2c65ff;
+  }
+  + .el-button {
+    margin-left: 0;
+  }
+  &.el-button--primary {
+    background: #2c65ff;
+    color: #fff;
+    &.is-disabled {
+      color: #bbb;
+      border-color: #d9d9d9;
+      background-color: #f5f5f5;
     }
   }
 }

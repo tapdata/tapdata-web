@@ -95,26 +95,21 @@
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
                 <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
-                  <img
-                    v-if="upgradingFlag(scope.row)"
-                    class="upgrade-img cursor-not-allowed"
-                    :src="upgradeLoadingSvg"
-                    alt=""
-                  />
-                  <img
+                  <VIcon v-if="upgradingFlag(scope.row)" size="20" class="cursor-pointer">upgradeLoadingColor</VIcon>
+                  <VIcon
                     v-else-if="upgradeFailedFlag(scope.row)"
-                    class="upgrade-img cursor-pointer"
-                    :src="upgradeErrorSvg"
-                    alt=""
+                    size="20"
+                    class="cursor-pointer"
                     @click="showUpgradeErrorDialogFnc(scope.row)"
-                  />
-                  <img
+                    >upgradeErrorColor</VIcon
+                  >
+                  <VIcon
                     v-else-if="!upgradeFlag(scope.row)"
-                    class="upgrade-img cursor-pointer"
-                    :src="upgradeSvg"
-                    alt=""
+                    size="20"
+                    class="cursor-pointer"
                     @click="showUpgradeDialogFnc(scope.row)"
-                  />
+                    >upgradeColor</VIcon
+                  >
                 </ElTooltip>
               </template>
             </div>
@@ -207,11 +202,7 @@ import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import ClipButton from '../../components/ClipButton'
 import { INSTANCE_STATUS_MAP } from '../../const'
-import upgradeSvg from '../../../public/images/agent/upgrade.svg'
-import upgradeImg from '../../assets/image/upgrade.png'
-import upgradeLoadingSvg from '../../../public/images/agent/upgrade-loading.svg'
-import upgradeErrorSvg from '../../../public/images/agent/upgrade-error.svg'
-// import upgradeImg from '../../assets/image/upgrade.png'
+import VIcon from '../../components/VIcon'
 
 let timer = null
 
@@ -219,7 +210,8 @@ export default {
   components: {
     InlineInput,
     StatusTag,
-    ClipButton
+    ClipButton,
+    VIcon
   },
   data() {
     return {
@@ -243,11 +235,7 @@ export default {
       selectedRow: {},
       agentStatus: 'stop',
       version: '',
-      upgradeList: [], // 升级列表
-      upgradeSvg,
-      upgradeImg,
-      upgradeLoadingSvg,
-      upgradeErrorSvg
+      upgradeList: [] // 升级列表
     }
   },
   computed: {

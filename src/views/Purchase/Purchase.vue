@@ -72,7 +72,7 @@
                     </template>
                     <ElLink style="font-size: 12px" type="primary" @click="toHelp()">了解更多</ElLink>
                   </div>
-                  <img class="icon" src="@/assets/icons/question.svg" />
+                  <VIcon size="16">questionCircle</VIcon>
                 </ElTooltip>
               </div>
             </ElFormItem>
@@ -99,7 +99,7 @@
                       可用区：同一地域内独立的物理区域，电力和网络均互相独立的物理数据中心，可以保障可用区间系统性故障的相互隔离
                     </p>
                   </div>
-                  <img class="icon" src="@/assets/icons/question.svg" />
+                  <VIcon size="16">questionCircle</VIcon>
                 </ElTooltip>
               </div>
               <p class="form-item-tips">
@@ -264,12 +264,15 @@
 import Header from './Header'
 import { TOPOLOGY_MAP, SPEC_MAP, CHARGE_MAP } from '../../const'
 import { toDecimal2 } from '../../util'
+import VIcon from '../../components/VIcon'
+
 const getProductKey = item => {
   return ['chargingMode', 'periodType', 'specType', 'topology'].map(key => item[key]).join('_')
 }
 export default {
   components: {
-    Header
+    Header,
+    VIcon
   },
   data() {
     return {
