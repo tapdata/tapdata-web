@@ -76,9 +76,17 @@ module.exports = {
   },
   chainWebpack(config) {
     const iconDir = resolve('src/assets/icons/svg')
+    const colorIconDir = resolve('src/assets/icons/colorSvg')
 
     // svg loader排除 icon 目录
-    config.module.rule('svg').exclude.add(resolve(iconDir)).end().use('svgo-loader').loader('svgo-loader').end()
+    config.module
+      .rule('svg')
+      .exclude.add(resolve(iconDir))
+      .add(resolve(colorIconDir))
+      .end()
+      .use('svgo-loader')
+      .loader('svgo-loader')
+      .end()
 
     // svg-sprite-loader打包svg
     config.module
@@ -102,6 +110,33 @@ module.exports = {
             active: true,
             params: {
               attrs: ['class', 'p-id', 'fill']
+            }
+          }
+        ]
+      })
+      .end()
+
+    config.module
+      .rule('color-svg-sprite')
+      .test(/\.svg$/)
+      .include.add(resolve(colorIconDir))
+      .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({
+        symbolId: 'icon-[name]'
+      })
+      .end()
+      .use('svgo-loader')
+      .loader('svgo-loader')
+      .options({
+        plugins: [
+          { name: 'removeStyleElement', active: true },
+          {
+            name: 'removeAttrs',
+            active: true,
+            params: {
+              attrs: ['class', 'p-id']
             }
           }
         ]

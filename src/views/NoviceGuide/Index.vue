@@ -65,7 +65,7 @@
             </div>
           </div>
           <div v-if="agent.status === 'Running'" class="flex justify-center align-center">
-            <VIcon size="57" color="#8ACD54">trueCircle</VIcon>
+            <VIcon size="57" color="#8ACD54">successCircle</VIcon>
           </div>
         </div>
         <div class="operation mt-7">
@@ -195,7 +195,7 @@
       <!--   第5步   -->
       <div v-if="step === 4" class="step-content mt-7 pt-16 text-center">
         <div class="finish-img">
-          <VIcon size="53">trueFillColor</VIcon>
+          <VIcon size="53">successFillColor</VIcon>
         </div>
         <div class="mt-6 fs-7">恭喜您完成新手引导！</div>
         <div class="mt-6">
