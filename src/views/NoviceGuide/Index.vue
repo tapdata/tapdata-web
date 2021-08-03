@@ -195,7 +195,7 @@
       <!--   第5步   -->
       <div v-if="step === 4" class="step-content mt-7 pt-16 text-center">
         <div class="finish-img">
-          <img src="../../../public/images/guide/trueFill.svg" alt="" />
+          <VIcon size="53">trueFillColor</VIcon>
         </div>
         <div class="mt-6 fs-7">恭喜您完成新手引导！</div>
         <div class="mt-6">
@@ -893,20 +893,22 @@ export default {
   }
 }
 .el-button {
-  border-radius: 4px;
-  border: 1px solid #2c65ff;
-  color: #2c65ff;
+  &:not(.el-button--text) {
+    border-radius: 4px;
+    border: 1px solid #2c65ff;
+    color: #2c65ff;
+  }
   + .el-button {
     margin-left: 0;
   }
-}
-.el-button--primary {
-  background: #2c65ff;
-  color: #fff;
-  &.is-disabled {
-    color: #bbb;
-    border-color: #d9d9d9;
-    background-color: #f5f5f5;
+  &.el-button--primary {
+    background: #2c65ff;
+    color: #fff;
+    &.is-disabled {
+      color: #bbb;
+      border-color: #d9d9d9;
+      background-color: #f5f5f5;
+    }
   }
 }
 </style>
