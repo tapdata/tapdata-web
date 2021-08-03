@@ -147,7 +147,8 @@ export default {
 
       this.form = createForm({
         values: values || this.node,
-        effects: this.useEffects
+        effects: this.useEffects,
+        editable: !this.isMonitor
       })
       this.schema = schema
     },

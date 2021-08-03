@@ -5,7 +5,7 @@
         <VIcon color="#fff" size="24">left</VIcon>
       </div>
       <div class="title-input-wrap inline-grid mx-2" :data-value="hiddenValue">
-        <input :readonly="!editable" ref="nameInput" v-model="name" class="title-input" @blur="onNameInputBlur" />
+        <input :readonly="isMonitor" ref="nameInput" v-model="name" class="title-input" @blur="onNameInputBlur" />
       </div>
     </div>
     <div class="flex align-center flex-grow-1 pr-3">
@@ -32,7 +32,7 @@
       </button>
       <VDivider class="mx-3" vertical></VDivider>
 
-      <ElButton v-if="editable" @click="$emit('save')" class="btn-base mr-3" size="mini" :loading="isSaving">
+      <ElButton v-if="!isMonitor" @click="$emit('save')" class="btn-base mr-3" size="mini" :loading="isSaving">
         <VIcon size="12" class="mr-1">save</VIcon>
         <span>{{ $t('dataFlow.button.save') }}</span>
       </ElButton>
@@ -194,6 +194,7 @@ export default {
     isSaving: Boolean,
     isStarting: Boolean,
     isEditable: Boolean,
+    isMonitor: Boolean,
     editable: Boolean,
     statusBtMap: Object,
     status: {

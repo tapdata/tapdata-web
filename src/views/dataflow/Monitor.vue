@@ -1,8 +1,7 @@
 <template>
   <section class="layout-wrap vh-100">
     <TopHeader
-      :is-editable="false"
-      :editable="false"
+      is-monitor
       :status="status"
       :status-bt-map="statusBtMap"
       :creat-user-id="creatUserId"
@@ -36,7 +35,7 @@
           <ElTabs class="border-0 flex flex-column h-100" type="border-card">
             <!--任务里程碑-->
             <ElTabPane :label="$t('editor.ui.sidebar.milestone')">
-              <Milestone :milestones="milestones" />
+              <Milestone v-if="dataflow" :milestones="milestones" :dataflow="dataflow" />
             </ElTabPane>
             <!--运行日志-->
             <ElTabPane :label="$t('editor.ui.sidebar.logs')">
@@ -177,6 +176,7 @@ export default {
   },
 
   destroyed() {
+    clearInterval(this.timer)
     this.resetWorkspace()
   },
 

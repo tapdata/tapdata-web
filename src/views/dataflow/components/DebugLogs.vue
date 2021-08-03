@@ -68,7 +68,7 @@ export default {
       ws.on('logs', ({ data }) => {
         if (data && data.length > 0) {
           this.$refs.log.add({ logs: data, prepend: true })
-          if (this.firstLogsId.length == 0) this.firstLogsId = data[data.length - 1].id
+          if (!this.firstLogsId || this.firstLogsId.length == 0) this.firstLogsId = data[data.length - 1].id
         }
       })
 
