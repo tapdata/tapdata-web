@@ -3233,6 +3233,43 @@ const cn = {
       stopping: '正在停止'
     }
   },
+  modules: {
+    all: '全部',
+    active: '已发布',
+    pending: '未发布',
+    header: {
+      api_name: 'API名称',
+      dataSource: '数据源',
+      tablename: '表名称',
+      status: '状态',
+      basePath: '基础路径',
+      version: '版本',
+      classifications: '分类',
+      username: '创建者',
+      last_updated: '更新时间',
+      operator: '操作'
+    },
+    status: {
+      starting: '正在启动',
+      running: '运行中',
+      restart: '更新中',
+      deploy_fail: '发布API失败',
+      exit: '已退出',
+      stop: '已停止',
+      ready: '有效',
+      invalid: '无效'
+    },
+    allacancel: '批量取消',
+    allarelease: '批量发布',
+    releasefb: '你确定要批量发布以下API吗?',
+    releasecancel: '你确定要批量取消以下API吗?',
+    apiServerStatus: 'API 服务状态',
+    create: '创建 API',
+    export: '导出',
+    import: '导入',
+    describtion: '描述',
+    set_mode: '设置方式'
+  },
   dkDashboard: {
     dataCount: '数据概览',
     trendCount: '数据增量趋势统计',
