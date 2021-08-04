@@ -25,7 +25,8 @@
                 v-model="searchParams.start"
                 type="datetime"
                 placeholder="开始时间"
-                @change="search"
+                value-format="timestamp"
+                @change="search()"
               ></ElDatePicker>
             </li>
             <li class="ml-3">
@@ -34,13 +35,14 @@
                 manual
                 content="【结束时间】不能小于【开始时间】"
                 popper-class="copy-tooltip"
-                :value="checkStartAndEndTime"
+                :value="startGreaterThanEnd"
               >
                 <ElDatePicker
                   v-model="searchParams.end"
                   type="datetime"
                   placeholder="结束时间"
-                  @change="search"
+                  value-format="timestamp"
+                  @change="search()"
                 ></ElDatePicker>
               </ElTooltip>
             </li>
@@ -174,11 +176,11 @@ export default {
     }
   },
   computed: {
-    // 检查开始时间是否小于结束时间
-    checkStartAndEndTime() {
+    // 开始时间大于结束时间
+    startGreaterThanEnd() {
       let flag = false
       let { start, end } = this.searchParams
-      if (start && end && this.getTimeStamp(start) > this.getTimeStamp(end)) {
+      if (start && end && start > end) {
         flag = true
       }
       return flag
@@ -194,64 +196,23 @@ export default {
   },
   methods: {
     init() {
-      let searchParams = this.searchParams
-      let { modular, operation, parameter1, start, end, username } = this.$route.query || {}
-      if (modular && operation) {
-        searchParams.operationType = this.getOperationTypeValue(modular, operation)
-      }
-      if (parameter1) {
-        searchParams.parameter1 = parameter1
-      }
-      if (start) {
-        searchParams.start = this.getDate(start)
-      }
-      if (end) {
-        searchParams.end = this.getDate(end)
-      }
-      if (username) {
-        searchParams.username = username
-      }
+      Object.assign(this.searchParams, this.$route.query || {})
       this.fetch()
-    },
-    getOperationTypeValue(modular, operation) {
-      return (modular ?? '') + '_' + (operation ?? '')
     },
     getModularAndOperation(operationType) {
       let [modular, operation] = operationType.split('_')
       return { modular, operation }
     },
-    getTimeStamp(value) {
-      let date = this.getDate(value)
-      if (!date) {
-        return 0
-      }
-      return new Date(value).getTime()
-    },
-    getDate(value) {
-      if (!value) {
-        return ''
-      }
-      return new Date(Number(value))
-    },
     search(debounce) {
       let query = {}
-      let { operationType, parameter1, start, end, username } = this.searchParams
-      if (operationType) {
-        let { modular, operation } = this.getModularAndOperation(operationType)
-        query.modular = modular
-        query.operation = operation
+      let { searchParams } = this
+      if (this.startGreaterThanEnd) {
+        return
       }
-      if (parameter1) {
-        query.parameter1 = parameter1
-      }
-      if (start) {
-        query.start = this.getTimeStamp(start)
-      }
-      if (end) {
-        query.end = this.getTimeStamp(end)
-      }
-      if (username) {
-        query.username = username
+      for (let key in searchParams) {
+        if (searchParams[key]) {
+          query[key] = searchParams[key]
+        }
       }
       const { delayTrigger } = this.$util
       delayTrigger(() => {
@@ -286,10 +247,10 @@ export default {
       }
       // 开始时间
       if (start) {
-        where['start'] = this.getTimeStamp(start)
+        where['start'] = start
       }
       if (end) {
-        where['end'] = this.getTimeStamp(end)
+        where['end'] = end
       }
       let filter = {
         where,
@@ -319,9 +280,7 @@ export default {
       this.list = this.source.slice((current - 1) * size, current * size)
     },
     getOperationTypeLabel(row) {
-      return this.operationTypeOptions.find(
-        item => item.value === this.getOperationTypeValue(row.modular, row.operation)
-      )?.label
+      return this.operationTypeOptions.find(item => item.value === `${row.modular}_${row.operation}`)?.label
     },
     getDesc(row) {
       let { modularMap, operationMap } = this
