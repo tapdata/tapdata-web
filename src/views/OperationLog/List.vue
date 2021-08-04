@@ -65,11 +65,6 @@
             <div>{{ scope.row.username }}</div>
           </template>
         </ElTableColumn>
-        <!--        <ElTableColumn label="用户昵称" width="120">-->
-        <!--          <template slot-scope="scope">-->
-        <!--            <div>{{ scope.row.username }}</div>-->
-        <!--          </template>-->
-        <!--        </ElTableColumn>-->
         <ElTableColumn label="操作时间" prop="createTime" sortable="custom" width="200">
           <template slot-scope="scope">
             <div>{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
@@ -204,11 +199,11 @@ export default {
       return { modular, operation }
     },
     search(debounce) {
-      let query = {}
       let { searchParams } = this
       if (this.startGreaterThanEnd) {
         return
       }
+      let query = {}
       for (let key in searchParams) {
         if (searchParams[key]) {
           query[key] = searchParams[key]
