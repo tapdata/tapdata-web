@@ -9,20 +9,18 @@
 <script>
 import { createForm, onFormValuesChange, onFormSubmit } from '@formily/core'
 import { FormProvider, createSchemaField } from '@formily/vue'
-import { components } from './form'
-import config from './config'
-import './form/styles/index.scss'
+import { components } from '../form'
+import '../form/styles/index.scss'
 const { SchemaField } = createSchemaField({
   components
 })
-let formDatas = null
-let formCheckStatus = null
 export default {
   name: 'ConnectionFormSelector',
   components: { FormProvider, SchemaField },
+  props: ['databaseType', 'formValues'],
   data() {
     return {
-      form: createForm({ effects: this.useEffects }),
+      form: '',
       schema: null
     }
   },
@@ -35,7 +33,7 @@ export default {
       let filter = {
         where: {
           databaseType: {
-            in: ['Redis']
+            in: [this.databaseType]
           }
         }
       }
@@ -45,23 +43,35 @@ export default {
         })
         .then(res => {
           if (res.data) {
-            this.schema = res.data[0].obj
+            this.schema = res.data[0] || []
+            this.schema.properties = this.handleFormSchema(this.schema.properties)
+            this.form = createForm({
+              values: this.formValues || ''
+            })
           }
         })
     },
-    useEffects() {
-      onFormValuesChange(form => {
-        formDatas = form
-      })
-      onFormSubmit(form => {
-        formCheckStatus = form.valid
-      })
+    handleFormSchema(properties) {
+      let result = {
+        name: {
+          type: 'string',
+          title: '连接名称',
+          required: true,
+          'x-decorator': 'ElFormItem',
+          'x-component': 'Input'
+        },
+        config: {
+          properties,
+          type: 'object'
+        }
+      }
+      return result
     },
     getFormData() {
-      return formDatas
+      return this.form
     },
     getFormCheckStatus() {
-      return formCheckStatus
+      return this.form.valid
     }
   }
 }

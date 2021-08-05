@@ -10,8 +10,9 @@ import Switch from './switch.vue'
 import File from './file.vue'
 import _Array from './array.vue'
 import Group from './group.vue'
+import Nest from './nest.vue'
 
 const install = function (Vue) {
-  ;[Form, Input, Select, Radio, Switch, File, _Array, Group].map(c => Vue.component(c.name, c))
+  ;[Form, Input, Select, Radio, Switch, File, _Array, Group, Nest].map(c => Vue.component(c.name, c))
 }
 export default { install }

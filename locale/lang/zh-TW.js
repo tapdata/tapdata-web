@@ -1667,6 +1667,7 @@ const tc = {
       agentMsg: 'Agent當前狀態异常無法創建連接，請檢查',
       agentConnectionMsg: 'Agent當前狀態异常，無法測試連接，請檢查Agent',
       multiTenant: '多租戶模式',
+      hiveType: 'hive 類型',
       uriTips: {
         label: '示例',
         content:

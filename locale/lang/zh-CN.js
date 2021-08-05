@@ -1676,6 +1676,7 @@ const cn = {
       agentMsg: 'Agent当前状态异常无法创建连接，请检查',
       agentConnectionMsg: 'Agent当前状态异常，无法测试连接，请检查Agent',
       multiTenant: '多租户模式',
+      hiveType: 'hive 类型',
       uriTips: {
         label: '示例',
         content:
@@ -3232,6 +3233,43 @@ const cn = {
       stopping: '正在停止'
     }
   },
+  modules: {
+    all: '全部',
+    active: '已发布',
+    pending: '未发布',
+    header: {
+      api_name: 'API名称',
+      dataSource: '数据源',
+      tablename: '表名称',
+      status: '状态',
+      basePath: '基础路径',
+      version: '版本',
+      classifications: '分类',
+      username: '创建者',
+      last_updated: '更新时间',
+      operator: '操作'
+    },
+    status: {
+      starting: '正在启动',
+      running: '运行中',
+      restart: '更新中',
+      deploy_fail: '发布API失败',
+      exit: '已退出',
+      stop: '已停止',
+      ready: '有效',
+      invalid: '无效'
+    },
+    allacancel: '批量取消',
+    allarelease: '批量发布',
+    releasefb: '你确定要批量发布以下API吗?',
+    releasecancel: '你确定要批量取消以下API吗?',
+    apiServerStatus: 'API 服务状态',
+    create: '创建 API',
+    export: '导出',
+    import: '导入',
+    describtion: '描述',
+    set_mode: '设置方式'
+  },
   dkDashboard: {
     dataCount: '数据概览',
     trendCount: '数据增量趋势统计',
@@ -3260,6 +3298,36 @@ const cn = {
     zhao: '兆',
     yi: '亿',
     wan: '万'
+  },
+  taskProgress: {
+    taskProgressOverview: '任务进度概览',
+    seeDetails: '查看详情',
+    tip: '*目前任务进度查看仅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB',
+    fullSyuncProgress: '全量同步进度',
+    takeTime: '预计全量完成还需时间',
+    planMigrationTableNum: '待迁移表总数',
+    completedMigrationTableNum: '已完成迁移表数量',
+    planMigrateData: '计划迁移数据量（行）',
+    completedMigrateData: '已完成迁移数据量（行）',
+    taskStopped: '任务已停止',
+    progress: '进行中',
+    stopped: '已停止',
+    m: '分钟',
+    h: '小时',
+    d: '天',
+    fullyCompleted: '全量已完成',
+    currentMigration: '各库当前迁移情况',
+    sourceLibraryeName: '源库名',
+    sourceType: '源库类型',
+    tableNumber: '增量表数量',
+    targetLibraryName: '目标库名',
+    targetType: '目标库类型',
+    incrementalState: '增量状态',
+    operate: '操作',
+    sourceTableName: '源表名',
+    targetTableName: '目标表名',
+    totalDataVolume: '总数据量（行）',
+    fullMigrationProgress: '全量迁移进度'
   }
 }
 

@@ -20,11 +20,20 @@
     </ul>
     <span class="title" v-if="otherTypes && otherTypes.length > 0">Other Type</span>
     <ul class="item clearfix">
-      <li v-for="item in otherTypes" :key="item" @click="$emit('select', item)">
+      <li v-for="(item, index) in otherTypes" :key="index" @click="$emit('select', item)">
         <div class="img-box">
           <img :src="$util.getConnectionTypeImg(item)" />
         </div>
         <div class="content">{{ typeMap[item] }}</div>
+      </li>
+    </ul>
+    <span class="title" v-if="automationType && automationType.length > 0">Automation Type</span>
+    <ul class="item clearfix">
+      <li v-for="(item, index) in automationType" :key="index" @click="$emit('select', item.type)">
+        <div class="img-box">
+          <img :src="$util.getConnectionTypeImg('default')" />
+        </div>
+        <div class="content">{{ item.name }}</div>
       </li>
     </ul>
   </div>
@@ -51,6 +60,12 @@ export default {
       default: () => {
         return []
       }
+    },
+    automationType: {
+      value: Array,
+      default: () => {
+        return []
+      }
     }
   },
   data() {
@@ -63,6 +78,8 @@ export default {
 
 <style scoped lang="scss">
 .database {
+  max-height: 600px;
+  overflow: auto;
   .title {
     color: #999;
     margin-left: 20px;
@@ -111,6 +128,11 @@ export default {
     .content {
       font-size: 12px;
       margin-top: 5px;
+      max-width: 124px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      word-break: break-word;
+      overflow: hidden;
     }
   }
   .clearfix:before,
