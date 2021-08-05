@@ -21,6 +21,7 @@
             :clearable="true"
             @change="changeFnc"
           >
+            <!--           -->
             <el-option
               v-for="(item, idx) in databases"
               :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
@@ -35,7 +36,7 @@
             <!-- <FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect> -->
             <el-select
               v-model="model.tableName"
-              :filterable="!schemasLoading"
+              filterable
               :loading="schemasLoading"
               default-first-option
               clearable
@@ -43,7 +44,7 @@
               size="mini"
             >
               <el-option
-                v-for="(item, idx) in tableList"
+                v-for="(item, idx) in schemas"
                 :label="`${item.table_name}`"
                 :value="item.table_name"
                 v-bind:key="idx"
@@ -128,7 +129,7 @@
         <el-form-item v-else :label="$t('dataForm.form.kafka.kafkaPartitionKey')" prop="kafkaPartitionKey" required>
           <el-select
             v-model="model.kafkaPartitionKey"
-            :filterable="!schemasLoading"
+            filterable
             :loading="schemasLoading"
             default-first-option
             clearable
@@ -138,7 +139,7 @@
             size="mini"
           >
             <el-option
-              v-for="(item, idx) in schemas"
+              v-for="(item, idx) in tableList"
               :label="`${item.table_name}`"
               :value="item.table_name"
               v-bind:key="idx"
@@ -181,7 +182,7 @@ import CreateTable from '@/components/dialog/createTable'
 
 import ws from '@/api/ws'
 const connections = factory('connections')
-
+let allschema = []
 // let editorMonitor = null;
 export default {
   name: 'ApiNode',
@@ -287,8 +288,11 @@ export default {
                     table_name: this.model.tableName,
                     cdc_enabled: true,
                     meta_type: 'kafka',
-                    fields: []
+                    fields: [],
+                    partitionSet: []
                   }
+            this.partitionSet = schema[0].partitionSet || []
+            debugger
             this.$emit('schemaChange', _.cloneDeep(schema))
             this.mergedSchema = schema
           }
@@ -341,10 +345,11 @@ export default {
               if (item.table_name) {
                 return item
               }
+              if (self.model.tableName === item.table_name) {
+                self.partitionSet = item.partitionSet
+              }
             })
-            self.tableList = self.schemas
-
-            self.partitionSet = self.schemas
+            self.tableList = self.schemas.concat()
           }
         })
         .finally(() => {
@@ -374,17 +379,19 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Kafka'
+      if (this.dataNodeInfo.isTarget) {
+        delete result.partitionId
+      } else {
+        delete result.kafkaPartitionKey
+      }
       if (result.kafkaPartitionKey instanceof Array) {
         result.kafkaPartitionKey = result.kafkaPartitionKey.join(',')
       }
       return result
     },
 
-    changeFnc(value) {
-      let findOne = this.databases.find(item => item.id === value)
-      if (findOne) {
-        this.model.tableName = findOne.name
-      }
+    changeFnc() {
+      this.model.tableName = ''
     },
 
     // 更新模型点击弹窗
@@ -425,6 +432,7 @@ export default {
           templeSchema.forEach(item => {
             if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
               schema = item.schema
+              this.partitionSet = item.partitionSet
             }
           })
         }
