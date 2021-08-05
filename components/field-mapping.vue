@@ -391,21 +391,29 @@ export default {
     },
     select(item, index) {
       this.position = '' //再次点击清空去一个样式
+      //保存上一表操作
+      if (this.operations.length > 0) {
+        //let source1 = await this.$axios.get('tm/api/MetadataInstances/60f66b33a4a85c0011ef80be')
+      }
       this.currentNav = item
       this.position = index
       this.initTableData()
+      this.getFieldProcess()
+    },
+    //获取字段处理器
+    getFieldProcess() {
+      this.operations = ''
+      let field_process = this.field_process.filter(process => process.table_id === this.currentNav.sourceQualifiedName)
+      if (field_process.length > 0) {
+        this.operations = field_process[0].operations
+          ? JSON.parse(JSON.stringify(field_process[0].operations))
+          : []
+      }
     },
     //初始化table数据
     async initTableData() {
       //let source1 = await this.$axios.get('tm/api/MetadataInstances/60f66b33a4a85c0011ef80be')
       this.fieldMappingTableData = []
-      //初始化已有字段处理
-      // let field_process = this.field_process.filter(process => process.table_id === id)
-      // if (field_process.length > 0) {
-      //   this.operations = field_process[0].operations
-      //     ? JSON.parse(JSON.stringify(field_process[0].operations))
-      //     : []
-      // }
       let source = [
         {
           "field_name": "POLICY_ID",
@@ -686,7 +694,6 @@ export default {
       })
       //触发页面重新渲染
       this.updateTableData(id, 'is_deleted', value)
-      console.log(this.target)
     },
     //目标任务 字段处理器
     //rename操作
@@ -802,19 +809,20 @@ export default {
     },
     saveFileOperations() {
       let field_process = {
-        table_id: this.currentTableId,
-        table_name: this.currentTableName,
+        table_id: this.currentNav.sourceQualifiedName,
+        table_name: this.currentNav.sourceObjectName,
         operations: this.operations
       }
       if (this.field_process && this.field_process.length > 0) {
-        let process = this.field_process.filter(fields => fields.table_id === this.currentTableId)
+        let process = this.field_process.filter(fields => fields.table_id === this.currentNav.sourceQualifiedName)
         if (process.length > 0) {
           field_process = process[0]
-          field_process.table_id = this.currentTableId
-          field_process.table_name = this.currentTableName
+          field_process.table_id = this.currentNav.sourceQualifiedName
+          field_process.table_name = this.currentNav.sourceObjectName
           field_process.operations = this.operations
         } else this.field_process.push(field_process)
       } else this.field_process.push(field_process)
+      return this.field_process
     },
     //动态样式
     tableRowClassName({ row }) {
@@ -839,7 +847,7 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: 800px;
+  height: 100%;
   overflow: hidden;
   .icon {
     color: #6dc5e8;
@@ -863,10 +871,12 @@ export default {
     display: flex;
     flex: 1;
     margin-top: 20px;
+    height: 100%;
     .nav {
       width: 293px;
       border-top: 1px solid #F2F2F2;
       border-right: 1px solid #F2F2F2;
+      overflow-y: auto;
       li {
         height: 93px;
         background: #FFFFFF;
