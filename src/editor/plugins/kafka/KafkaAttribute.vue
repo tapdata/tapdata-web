@@ -30,12 +30,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item
-          :label="$t('editor.cell.data_node.table.form.table.label')"
-          prop="tableName"
-          :rules="rules"
-          required
-        >
+        <el-form-item :label="$t('metadata.details.theme')" prop="tableName" :rules="rules" required>
           <div class="flex-block">
             <!-- <FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect> -->
             <el-select
@@ -44,7 +39,7 @@
               :loading="schemasLoading"
               default-first-option
               clearable
-              :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
+              :placeholder="$t('message.placeholderSelect') + $t('metadata.details.theme')"
               size="mini"
             >
               <el-option
@@ -113,13 +108,24 @@
 						size="mini"
 					></el-input>
 				</el-form-item> -->
+        <el-form-item label="Partition ID" v-if="!dataNodeInfo.isTarget" prop="kafkaPartitionKey" required>
+          <el-select
+            v-model="model.partitionId"
+            default-first-option
+            clearable
+            :placeholder="$t('message.placeholderSelect') + 'Partition ID'"
+            size="mini"
+          >
+            <el-option
+              v-for="(item, idx) in partitionSet"
+              :label="`${item.table_name}`"
+              :value="item.table_name"
+              v-bind:key="idx"
+            ></el-option>
+          </el-select>
+        </el-form-item>
 
-        <el-form-item
-          :label="$t('dataForm.form.kafka.kafkaPartitionKey')"
-          v-if="dataNodeInfo.isTarget"
-          prop="kafkaPartitionKey"
-          required
-        >
+        <el-form-item v-else :label="$t('dataForm.form.kafka.kafkaPartitionKey')" prop="kafkaPartitionKey" required>
           <el-select
             v-model="model.kafkaPartitionKey"
             :filterable="!schemasLoading"
@@ -138,11 +144,6 @@
               v-bind:key="idx"
             ></el-option>
           </el-select>
-          <!--					<el-input-->
-          <!--						v-model="model.kafkaPartitionKey"-->
-          <!--						:placeholder="$t('dataForm.form.kafka.kafkaPartitionKeyTip')"-->
-          <!--						size="mini"-->
-          <!--					></el-input>-->
         </el-form-item>
       </el-form>
     </div>
@@ -196,6 +197,7 @@ export default {
       dialogData: null,
       schemas: [],
       tableList: [],
+      partitionSet: [],
       rules: {
         connectionId: [
           {
@@ -223,6 +225,7 @@ export default {
         connectionId: '',
         type: 'kafka',
         tableName: '',
+        partitionId: '',
         kafkaPartitionKey: ''
         // primaryKeys: ''
       },
@@ -340,6 +343,8 @@ export default {
               }
             })
             self.tableList = self.schemas
+
+            self.partitionSet = self.schemas
           }
         })
         .finally(() => {

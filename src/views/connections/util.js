@@ -126,6 +126,8 @@ export const defaultModel = {
     connection_type: '',
     kafkaBootstrapServers: '',
     kafkaPatternTopics: '',
+    database_username: '',
+    plain_password: '',
     kafkaIgnoreInvalidRecord: false,
     kafkaAcks: '',
     kafkaCompressionType: '',
