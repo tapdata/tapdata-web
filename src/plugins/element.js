@@ -20,6 +20,7 @@ import {
   Option,
   OptionGroup,
   Input,
+  InputNumber,
   Tooltip,
   Link,
   Table,
@@ -97,6 +98,7 @@ Vue.use(Select)
 Vue.use(Option)
 Vue.use(OptionGroup)
 Vue.use(Input)
+Vue.use(InputNumber)
 Vue.use(Tooltip)
 Vue.use(Link)
 Vue.use(Table)

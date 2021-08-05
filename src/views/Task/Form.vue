@@ -19,14 +19,6 @@
       <el-container style="overflow: hidden; flex: 1">
         <el-container>
           <el-main class="CT-task-main">
-            <!-- 步骤1 -->
-            <div class="body" v-if="steps[activeStep].index === 1">
-              <div class="title">选择实例</div>
-              <div class="desc">
-                请先选择一个有实例的地域可用区，可用区下的全部实例都能运行该同步任务，可用实例越多任务运行越稳定。任务创建后不支持更换地域可用区
-              </div>
-              <form-builder ref="instance" v-model="platformInfo" :config="config"></form-builder>
-            </div>
             <!--步骤2-->
             <div class="body" v-if="steps[activeStep].index === 2">
               <div class="title">选择源端与目标端连接</div>
@@ -77,6 +69,13 @@
                 <Transfer ref="transfer" :transferData="transferData" :isTwoWay="settingModel.bidirectional"></Transfer>
               </div>
             </div>
+            <!-- 步骤5 -->
+            <div class="step-5" v-if="steps[activeStep].index === 5">
+              <FieldMapping
+                :fieldMappingNavData="fieldMappingNavData"
+                :field_process="transferData.field_process"
+              ></FieldMapping>
+            </div>
           </el-main>
           <el-footer class="CT-task-footer" height="80px">
             <el-button class="btn-step" v-if="[2].includes(steps[activeStep].index)" @click="goBackList()">
@@ -84,7 +83,7 @@
             </el-button>
             <el-button
               class="btn-step"
-              v-else-if="[2, 4].includes(steps[activeStep].index) || (steps[activeStep].index === 3 && !id)"
+              v-else-if="[2, 4, 5].includes(steps[activeStep].index) || (steps[activeStep].index === 3 && !id)"
               @click="back()"
             >
               {{ $t('guide.btn_back') }}
@@ -93,7 +92,7 @@
               取消
             </el-button>
             <el-button
-              v-if="steps[activeStep].index !== 4"
+              v-if="steps[activeStep].index !== 5"
               type="primary"
               class="btn-step"
               :loading="loading"
@@ -223,7 +222,7 @@
   }
   .CT-task-main {
     background: #fff;
-    overflow: auto;
+    overflow: hidden;
     .body {
       margin: 0 auto;
       padding-bottom: 50px;
@@ -253,6 +252,42 @@
       font-size: 16px;
       font-weight: bold;
       margin: 10px 0;
+    }
+    .step-5 {
+      height: 100%;
+      .search {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 10px;
+        .item {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          margin-right: 10px;
+          span {
+            display: inline-block;
+            width: 80px;
+          }
+        }
+      }
+      .task-form-body {
+        display: flex;
+        flex: 1;
+        margin-top: 20px;
+        .nav {
+          width: 293px;
+          border-top: 1px solid #f2f2f2;
+          border-right: 1px solid #f2f2f2;
+          background: rgba(44, 101, 255, 0.05);
+          li {
+            height: 115px;
+            background: #ffffff;
+            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+            border-radius: 4px;
+            border-bottom: 1px solid #f2f2f2;
+          }
+        }
+      }
     }
   }
   .CT-task-footer {
@@ -426,7 +461,10 @@ export default {
           label: this.$t('dataFlow.SyncInfo.currentType'),
           value: 'current'
         }
-      ]
+      ],
+      //表设置
+      fieldMappingNavData: '',
+      fieldMappingTableData: ''
     }
   },
   created() {
@@ -488,15 +526,8 @@ export default {
       this.systemTimeZone = '+' + -timeZone
     }
   },
-  watch: {
-    'platformInfo.region'() {
-      this.changeInstanceRegion() //第一步实例change
-      if (!this.id) {
-        this.platformInfo.zone = ''
-      }
-    }
-  },
   methods: {
+    //是否支持双向前提
     getAgentCount() {
       this.$axios.get('api/tcm/agent/agentCount').then(data => {
         this.twoWayAgentRunningCount = data.twoWayAgentRunningCount || 0
@@ -533,37 +564,6 @@ export default {
         this.getFormConfig()
       })
     },
-    //第一步 选择实例
-    getInstanceRegion() {
-      //接口请求之前 loading = true
-      let items = this.config.items
-      let option = items.find(it => it.field === 'region')
-      if (option) {
-        option.loading = true
-      }
-      this.$axios('api/tcm/agent/regionZone')
-        .then(data => {
-          this.instanceMock = data || []
-          if (this.platformInfo.region === '' && this.instanceMock.length > 0) {
-            this.platformInfo.region = this.instanceMock[0].code
-          }
-          this.changeConfig(this.instanceMock || [], 'region')
-          this.changeInstanceRegion()
-        })
-        .catch(() => {
-          this.$message.error('请求失败')
-        })
-    },
-    changeInstanceRegion() {
-      let zone = this.instanceMock.filter(item => item.code === this.platformInfo.region)
-      if (zone.length > 0) {
-        this.platformInfo.zone = this.platformInfo.zone || zone[0].zones[0].code
-        this.platformInfoZone = zone[0].zones
-      } else {
-        this.platformInfoZone = []
-      }
-      this.changeConfig(this.platformInfoZone, 'zone')
-    },
     //云版支持数据源
     allowDatabaseType() {
       this.changeConfig(this.allowDataType, 'databaseType')
@@ -593,43 +593,19 @@ export default {
         this.getConnection(this.getWhere('target'), 'target_connectionId', true)
       }
     },
-    addSyncPoints() {
-      this.primarySyncPoints() //先初始化再push
-      let syncPoints = {
-        connectionId: this.dataSourceModel.target_connectionId, //双向模式下 有两个源节点
-        type: 'current', // localTZ: 本地时区； connTZ：连接时区
-        time: '',
-        date: '',
-        name: '',
-        timezone: this.systemTimeZone // 当type为localTZ时有该字段
-      }
-      this.settingModel.syncPoints.push(syncPoints)
-    },
-    primarySyncPoints() {
-      this.settingModel.syncPoints = [
-        {
-          connectionId: this.dataSourceModel.source_connectionId,
-          type: 'current', // localTZ: 本地时区； connTZ：连接时区
-          time: '',
-          date: '',
-          name: '',
-          timezone: this.systemTimeZone // 当type为localTZ时有该字段
-        }
-      ]
-    },
     getSteps() {
       const steps = [
-        { index: 1, text: '选择实例', type: 'instance' },
         { index: 2, text: '选择源端与目标端连接', type: 'dataSource' },
         { index: 3, text: '任务设置', type: 'setting' },
-        { index: 4, text: '映射设置', type: 'mapping' }
+        { index: 4, text: '映射设置', type: 'mapping' },
+        { index: 5, text: '表设置', type: 'table' }
       ]
-      this.steps = steps.slice(1, 4)
-
+      this.steps = steps.slice(0, 4)
       if (this.id) {
-        this.steps = steps.slice(2, 4)
+        this.steps = steps.slice(1, 4)
       }
     },
+    //下一步
     next() {
       let type = this.steps[this.activeStep].type || 'instance'
       if (type === 'instance') {
@@ -676,6 +652,10 @@ export default {
             this.$message.error('表单校验不通过')
           }
         })
+      }
+      if (type === 'mapping') {
+        this.activeStep += 1
+        this.metaData()
       }
     },
     back() {
@@ -797,38 +777,6 @@ export default {
     changeConfig(data, type, reset = false) {
       let items = this.config.items
       switch (type) {
-        case 'region': {
-          // 第一步 选择实例 选择区域
-          let region = items.find(it => it.field === 'region')
-          if (region) {
-            region.loading = false
-            region.options = data.map(item => {
-              return {
-                id: item.code,
-                name: item.name,
-                label: item.name,
-                value: item.code
-              }
-            })
-          }
-          break
-        }
-        case 'zone': {
-          //映射可用区
-          let zone = items.find(it => it.field === 'zone')
-          if (zone) {
-            zone.loading = false
-            zone.options = this.platformInfoZone.map(item => {
-              return {
-                id: item.code,
-                name: item.name,
-                label: item.name,
-                value: item.code
-              }
-            })
-          }
-          break
-        }
         case 'source_connectionId': {
           if (reset) {
             this.dataSourceModel.source_connectionId = ''
@@ -923,16 +871,8 @@ export default {
       if (data.length === 0) return
       return data[0]
     },
-    //save
-    save() {
-      if (this.loading) {
-        return
-      }
-      this.transferData = this.$refs.transfer.returnData()
-      if (this.transferData.selectSourceArr.length === 0) {
-        this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
-        return
-      }
+    //预存数据
+    daft() {
       let source = this.dataSourceModel
       let target = this.dataSourceModel
 
@@ -1028,7 +968,19 @@ export default {
           database_type: this.dataSourceModel['target_databaseType'] || 'mysql'
         })
       ]
-
+      return postData
+    },
+    //save
+    save() {
+      if (this.loading) {
+        return
+      }
+      this.transferData = this.$refs.transfer.returnData()
+      if (this.transferData.selectSourceArr.length === 0) {
+        this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
+        return
+      }
+      let postData = this.daft()
       let promise = null
       if (this.id) {
         postData['id'] = this.id
@@ -1068,18 +1020,32 @@ export default {
         this.routerBack()
       })
     },
-    //选择创建类型
-    handleDialogDatabaseTypeVisible() {
-      this.dialogDatabaseTypeVisible = false
-    },
-    handleDatabaseType(type) {
-      this.handleDialogDatabaseTypeVisible()
-      this.$router.push({
-        name: 'connectionsCreate',
-        query: {
-          databaseType: type
+    //表设置
+    metaData() {
+      //let promise = this.$axios.patch('tm/api/DataFlows/metadata', postData)
+      let data = [
+        {
+          sourceQualifiedName: '', // MetadataInstances的唯一键，源表
+          sourceDbName: 'dbName', // 源库名
+          sourceObjectName: 'tableName', // 源表名
+          sourceFieldCount: 16, // 源表字段总数
+          sinkQulifiedName: '', // MetadataInstances的唯一键，目标表
+          sinkDbName: 'dbName', // 目标库名
+          sinkObjectName: 'tableName', // 目标表名
+          invalid: true // 是否可用(1. 有字段无法映射，置空，则需要手动处理)
+        },
+        {
+          sourceQualifiedName: '', // MetadataInstances的唯一键，源表
+          sourceDbName: 'fannie', // 源库名
+          sourceObjectName: 'fannie', // 源表名
+          sourceFieldCount: 16, // 源表字段总数
+          sinkQulifiedName: '', // MetadataInstances的唯一键，目标表
+          sinkDbName: 'fannie', // 目标库名
+          sinkObjectName: 'fannie', // 目标表名
+          invalid: true // 是否可用(1. 有字段无法映射，置空，则需要手动处理)
         }
-      })
+      ]
+      this.fieldMappingNavData = data
     }
   }
 }
