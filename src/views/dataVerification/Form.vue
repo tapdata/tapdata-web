@@ -726,7 +726,7 @@ export default {
                 if (task.source.fields.find(f => f.field_name === obj.source)) {
                   sourceSortColumn.push(obj.source)
                 }
-                if (task.target.fields.find(f => f.field_name === obj.source)) {
+                if (task.target.fields.find(f => f.field_name === obj.target)) {
                   targetSortColumn.push(obj.target)
                 }
               })
