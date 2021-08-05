@@ -198,7 +198,13 @@
           v-show="formData.sync_type !== 'cdc' || (formData.cdcConcurrency === true && formData.sync_type === 'cdc')"
         >
           <!-- 目标写入线程 -->
-          <el-input-number v-model="formData.transformerConcurrency" :min="1" :max="100" size="mini"></el-input-number>
+          <el-input-number
+            v-model="formData.transformerConcurrency"
+            :disabled="isHiveFalg"
+            :min="1"
+            :max="100"
+            size="mini"
+          ></el-input-number>
         </el-form-item>
         <el-form-item :label="$t('dataFlow.SyncPoint')" v-show="formData.sync_type === 'cdc'" size="mini">
           <el-row v-for="item in formData.syncPoints" :key="item.name">
@@ -299,6 +305,7 @@ export default {
       isSimple: false,
       showMore: true,
       sync_typeFalg: false,
+      isHiveFalg: false,
       timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year'],
       rules: {
         cronExpression: [
@@ -450,6 +457,13 @@ export default {
         targetCell.forEach(cell => {
           let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null
           targetCellIds.push(formData.connectionId)
+
+          // 是否有hive
+          if (formData.type === 'hive') {
+            this.formData.transformerConcurrency = 1
+            this.formData.readBatchSize = 10000
+            this.isHiveFalg = true
+          }
         })
       }
       if (dataCells && dataCells.length > 0) {
@@ -466,7 +480,7 @@ export default {
             let index = targetCellIds.indexOf(formData.connectionId)
             if (index >= 0) {
               targetCellIds.splice(index, 1)
-              return
+
             } else {
               return formData.connectionId
             }

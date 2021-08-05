@@ -62,7 +62,7 @@ export const TYPEMAP = {
   'mysql pxc': 'MySQL PXC',
   jira: 'jira',
   dameng: 'DM DB',
-  // hive: 'Hive',
+  hive: 'Hive',
   tcp_udp: 'TCP/IP',
   mq: 'MQ',
   hbase: 'HBase',
@@ -116,6 +116,7 @@ export const defaultModel = {
     search_databaseType: '',
     increamentalTps: 100, //dummy
     initialReadSize: 100000, //dummy
+    hiveConnType: 'Stream', // kafka
     schema: ''
   },
   kafka: {

@@ -635,7 +635,17 @@ export default {
       if (result && result.data.length > 0) {
         this.flowDataName = result.data[0].name
       }
+
       log('DataFlows Draft Save Params: ', data)
+      if (data?.stages?.length) {
+        data.stages.forEach(item => {
+          // 是否有hive
+          if (item.type === 'hive' || item.database_type === 'hive') {
+            data.setting.transformerConcurrency = 1
+            data.setting.readBatchSize = 10000
+          }
+        })
+      }
       promise = dataFlowsApi.draft(data)
 
       if (promise) {
@@ -1087,6 +1097,10 @@ export default {
           data.stages.forEach(item => {
             if ((item.type === 'hbase' || item.database_type === 'hbase') && this.sync_type !== 'initial_sync') {
               checkSetting = false
+            }
+            if (item.type === 'hive' || item.database_type === 'hive') {
+              data.setting.transformerConcurrency = 1
+              data.setting.readBatchSize = 10000
             }
             if (
               item.outputLanes.length &&
