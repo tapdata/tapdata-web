@@ -3327,7 +3327,15 @@ const cn = {
     sourceTableName: '源表名',
     targetTableName: '目标表名',
     totalDataVolume: '总数据量（行）',
-    fullMigrationProgress: '全量迁移进度'
+    fullMigrationProgress: '全量迁移进度',
+    progressScreening: '进度筛选',
+    details: '详情',
+    all: '全部',
+    running: '运行中',
+    waiting: '等待中',
+    done: '完成',
+    querySearch: '输入表名关键字查询',
+    progressInfo: '进度详情'
   }
 }
 
