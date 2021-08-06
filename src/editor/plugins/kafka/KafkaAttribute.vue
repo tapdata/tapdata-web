@@ -289,9 +289,14 @@ export default {
                     cdc_enabled: true,
                     meta_type: 'kafka',
                     fields: [],
-                    partitionSet: [0]
+                    partitionSet: [-1]
                   }
-            this.partitionSet = schema.partitionSet ? schema.partitionSet : [0]
+            if (schema.partitionSet) {
+              schema.partitionSe.unshift(-1)
+            } else {
+              schema.partitionSet = [-1]
+            }
+            this.partitionSet = schema.partitionSet
             this.$emit('schemaChange', _.cloneDeep(schema))
             this.mergedSchema = schema
           }
@@ -364,7 +369,12 @@ export default {
         }
         this.schemas.filter(item => {
           if (data.tableName === item.table_name) {
-            this.partitionSet = item.partitionSet ? item.partitionSet : [0]
+            if (item.partitionSet) {
+              item.partitionSet.unshift(-1)
+            } else {
+              item.partitionSet = [-1]
+            }
+            this.partitionSet = item.partitionSet
           }
         })
         _.merge(this.model, data)
@@ -433,7 +443,12 @@ export default {
           templeSchema.forEach(item => {
             if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
               schema = item.schema
-              this.partitionSet = item.partitionSet ? item.partitionSet : [0]
+              if (item.partitionSet) {
+                item.partitionSet.unshift(-1)
+              } else {
+                item.partitionSet = [-1]
+              }
+              this.partitionSet = item.partitionSet
             }
           })
         }
