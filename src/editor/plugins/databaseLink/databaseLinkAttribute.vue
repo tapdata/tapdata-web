@@ -238,8 +238,8 @@ import _ from 'lodash'
 import log from '../../../log'
 import factory from '../../../api/factory'
 import MqTransfer from './mqTransfer'
-let connections = factory('connections')
-let editorMonitor = null
+let connections = factory('connections');
+let editorMonitor = null;
 export default {
   name: 'databaseLink',
   components: { MqTransfer },
@@ -297,7 +297,7 @@ export default {
     mqActiveData: {
       deep: true,
       handler() {
-        this.model.topicData = this.mqActiveData.topicData
+        this.model.topicData = this.mqActiveData.topicData;
         this.model.queueData = this.mqActiveData.queueData
       }
     },
@@ -317,7 +317,7 @@ export default {
         _.merge(this.model, data)
         // this.model.selectSourceDatabase = data.selectSourceDatabase;
       }
-      this.cell = cell
+      this.cell = cell;
 
       if (cell.getSourceCell()) {
         let sourceCell = this.cell.getSourceCell(),
@@ -325,9 +325,9 @@ export default {
           sourceDatabaseType = sourceCell.getFormData().database_type,
           targetDatabaseType =
             targetCell && targetCell.getFormData().database_type ? targetCell.getFormData().database_type : '',
-          connectionId = sourceCell.getFormData().connectionId
-        this.targetDatabaseType = targetDatabaseType
-        this.mysqlDisable = sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql' ? false : true
+          connectionId = sourceCell.getFormData().connectionId;
+        this.targetDatabaseType = targetDatabaseType;
+        this.mysqlDisable = sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql' ? false : true;
         if (this.mysqlDisable) {
           this.model.selectSourceDatabase = {
             table: true,
@@ -338,20 +338,20 @@ export default {
         }
         // 获取目标节点的数据显示右侧选择表
         if (targetCell && this.model.selectSourceArr.length === 0) {
-          let targetFormData = targetCell.getFormData()
-          let selectTargetType = []
+          let targetFormData = targetCell.getFormData();
+          let selectTargetType = [];
 
           if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
-            this.model.transferFlag = true
-            this.mqActiveData.topicData = data.topicData
+            this.model.transferFlag = true;
+            this.mqActiveData.topicData = data.topicData;
             this.mqActiveData.queueData = data.queueData
           }
-          this.model.table_prefix = targetFormData.table_prefix
-          this.model.table_suffix = targetFormData.table_suffix
+          this.model.table_prefix = targetFormData.table_prefix;
+          this.model.table_suffix = targetFormData.table_suffix;
 
           if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
             targetFormData.syncObjects.forEach(item => {
-              selectTargetType.push(item.type)
+              selectTargetType.push(item.type);
               if (item.type === 'table') {
                 this.model.selectSourceArr = item.objectNames
               }
@@ -367,14 +367,14 @@ export default {
         this.loadDataModels(connectionId)
       }
 
-      editorMonitor = vueAdapter.editor
+      editorMonitor = vueAdapter.editor;
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
 
       // if (!this.configJoinTable) return
     },
 
     getData() {
-      let result = JSON.parse(JSON.stringify(this.model))
+      let result = JSON.parse(JSON.stringify(this.model));
       // console.log(this.model)
       // let includeTables = []
       // for (let i = 0; i < this.sourceData.length; i++) {
@@ -385,15 +385,15 @@ export default {
       //   }
       // }
       if (this.cell) {
-        let targetCell = this.cell.getTargetCell()
+        let targetCell = this.cell.getTargetCell();
         if (targetCell && targetCell.getFormData()) {
-          let targetFormData = targetCell.getFormData()
+          let targetFormData = targetCell.getFormData();
 
           if (targetFormData) {
-            targetFormData.dropType = this.model.dropType
-            targetFormData.table_prefix = this.model.table_prefix
-            targetFormData.table_suffix = this.model.table_suffix
-            targetFormData.syncObjects = []
+            targetFormData.dropType = this.model.dropType;
+            targetFormData.table_prefix = this.model.table_prefix;
+            targetFormData.table_suffix = this.model.table_suffix;
+            targetFormData.syncObjects = [];
             if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
               targetFormData.syncObjects = [
                 {
@@ -448,7 +448,7 @@ export default {
 
     // 修改名称
     handleChageTransfer(data) {
-      this.modifyNameDialog = true
+      this.modifyNameDialog = true;
       this.currentName = data
     },
 
@@ -479,7 +479,7 @@ export default {
 
     // 弹窗确认
     confirm() {
-      this.dialogVisible = false
+      this.dialogVisible = false;
       this.preFixSuffixData()
     },
 
@@ -514,15 +514,15 @@ export default {
       //     }
       //   }
       // }
-      this.mqActiveData.table_prefix = this.model.table_prefix
+      this.mqActiveData.table_prefix = this.model.table_prefix;
       this.mqActiveData.table_suffix = this.model.table_suffix
     },
 
     // 还原
     handleReduction() {
-      this.model.table_suffix = ''
-      this.model.table_prefix = ''
-      this.mqActiveData.table_prefix = ''
+      this.model.table_suffix = '';
+      this.model.table_prefix = '';
+      this.mqActiveData.table_prefix = '';
       this.mqActiveData.table_suffix = ''
       // if (this.sourceData.length) {
       //   for (let i = 0; i < this.sourceData.length; i++) {
@@ -539,136 +539,32 @@ export default {
       this.dialogFieldProcessVisible = true
     },
     metaData() {
-      let data = {
-        name: '新任务_1884e8c',
-        description: '',
-        status: 'draft',
-        executeMode: 'normal',
-        category: '数据库克隆',
-        stopOnError: false,
-        mappingTemplate: 'cluster-clone',
-        emailWaring: {
-          edited: true,
-          started: false,
-          error: true,
-          paused: false
-        },
-        stages: [
-          {
-            id: '7dbab696-05df-47e4-b300-6f9898375b21',
-            inputLanes: [],
-            outputLanes: ['d3d2bdce-dbd6-4e6e-92bf-f990294a3fb7'],
-            database_type: 'mysql',
-            connectionId: '60cbf6c97cdbf600571d5a6d',
-            table_prefix: '',
-            table_suffix: '',
-            dropType: 'no_drop',
-            syncObjects: [],
-            type: 'database',
-            mqType: '',
-            includeTables: [],
-            shapeImage: 'static/editor/o-mysql.svg',
-            name: 'TLL-MySQL-5-5-62',
-            removeAllTables: false,
-            readCdcInterval: 500,
-            readBatchSize: 1000
-          },
-          {
-            id: 'd3d2bdce-dbd6-4e6e-92bf-f990294a3fb7',
-            inputLanes: ['7dbab696-05df-47e4-b300-6f9898375b21'],
-            outputLanes: [],
-            database_type: 'mysql',
-            connectionId: '610750c51abf2800529878bb',
-            table_prefix: '',
-            table_suffix: '',
-            dropType: 'no_drop',
-            syncObjects: [
-              {
-                type: 'table',
-                objectNames: ['CAR_CLAIM_FROM183']
-              }
-            ],
-            type: 'database',
-            mqType: '',
-            includeTables: [],
-            dropTable: false,
-            shapeImage: 'static/editor/o-mysql.svg',
-            name: 'MySQL_从节点32531',
-            removeAllTables: false,
-            readCdcInterval: 500,
-            readBatchSize: 1000
-          }
-        ],
-        setting: {
-          isSerialMode: false,
-          sync_type: 'initial_sync+cdc',
-          readBatchSize: 100,
-          notificationWindow: 0,
-          notificationInterval: 300,
-          readCdcInterval: 500,
-          maxTransactionLength: 12,
-          description: '',
-          cdcFetchSize: 1,
-          distinctWriteType: 'intellect',
-          drop_target: false,
-          run_custom_sql: false,
-          needToCreateIndex: true,
-          increment: false,
-          isSchedule: false,
-          cronExpression: '',
-          isOpenAutoDDL: false,
-          cdcConcurrency: false,
-          cdcShareFilterOnServer: false,
-          emailWaring: {
-            edited: false,
-            started: false,
-            error: false,
-            paused: false
-          },
-          readShareLogMode: 'STREAMING',
-          stopOnError: true,
-          syncPoints: [
-            {
-              connectionId: '',
-              type: 'current',
-              time: '',
-              date: '',
-              name: '',
-              timezone: '+08:00'
-            }
-          ],
-          processorConcurrency: 1,
-          transformerConcurrency: 8,
-          lagTimeFalg: false,
-          userSetLagTime: 0,
-          noPrimaryKey: true
-        },
-        editorData:
-          '{"cells":[{"type":"app.Database","form_data":{"database_type":"mysql","connectionId":"60cbf6c97cdbf600571d5a6d","table_prefix":"","table_suffix":"","dropType":"no_drop","syncObjects":[],"type":"database","mqType":"","includeTables":[],"shapeImage":"static/editor/o-mysql.svg","name":"TLL-MySQL-5-5-62","removeAllTables":false},"freeTransform":false,"size":{"width":160,"height":36},"ports":{"groups":{"l":{"position":{"name":"left"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"r":{"position":{"name":"right"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"t":{"position":{"name":"top"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"b":{"position":{"name":"bottom"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}}},"items":[{"id":"4ef4efde-59c5-4692-9c05-41fae5412280_l","group":"l"},{"id":"4ef4efde-59c5-4692-9c05-41fae5412280_r","group":"r","attrs":{"circle":{"fill":"#fff","stroke":"#dedee4","stroke-width":1,"r":5,"visibility":"visible"}}},{"id":"4ef4efde-59c5-4692-9c05-41fae5412280_t","group":"t"},{"id":"4ef4efde-59c5-4692-9c05-41fae5412280_b","group":"b"}]},"schema":null,"outputSchema":null,"config":null,"position":{"x":-260,"y":170},"angle":0,"id":"7dbab696-05df-47e4-b300-6f9898375b21","z":1,"attrs":{"image":{"xlinkHref":"static/editor/o-mysql.svg"},"label":{"text":"TLL-MySQL-5-5-62"},"body":{"stroke":"#00bcd4"}}},{"type":"app.Database","form_data":{"database_type":"mysql","connectionId":"610750c51abf2800529878bb","table_prefix":"","table_suffix":"","dropType":"no_drop","syncObjects":[{"type":"table","objectNames":["CAR_CLAIM_FROM183"]}],"type":"database","mqType":"","includeTables":[],"dropTable":false,"shapeImage":"static/editor/o-mysql.svg","name":"MySQL_从节点32531","removeAllTables":false},"freeTransform":false,"size":{"width":160,"height":36},"ports":{"groups":{"l":{"position":{"name":"left"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"r":{"position":{"name":"right"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"t":{"position":{"name":"top"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"b":{"position":{"name":"bottom"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}}},"items":[{"id":"da082688-bc12-413a-8e10-29f75f8dd43a_l","group":"l"},{"id":"da082688-bc12-413a-8e10-29f75f8dd43a_r","group":"r","attrs":{"circle":{"visibility":"visible","fill":"#fff","stroke":"#dedee4","stroke-width":1,"r":5}}},{"id":"da082688-bc12-413a-8e10-29f75f8dd43a_t","group":"t"},{"id":"da082688-bc12-413a-8e10-29f75f8dd43a_b","group":"b"}]},"schema":null,"outputSchema":{"meta_type":"table","table_name":""},"config":null,"position":{"x":-270,"y":270},"angle":0,"id":"d3d2bdce-dbd6-4e6e-92bf-f990294a3fb7","z":2,"attrs":{"image":{"xlinkHref":"static/editor/o-mysql.svg"},"label":{"text":"MySQL_...点32531"},"body":{"stroke":"#00bcd4"}}},{"type":"app.databaseLink","router":{"name":"manhattan"},"connector":{"name":"rounded"},"labels":[],"source":{"id":"7dbab696-05df-47e4-b300-6f9898375b21","magnet":"circle","port":"4ef4efde-59c5-4692-9c05-41fae5412280_r"},"target":{"id":"d3d2bdce-dbd6-4e6e-92bf-f990294a3fb7","magnet":"circle","port":"da082688-bc12-413a-8e10-29f75f8dd43a_r"},"id":"719d914e-b974-4698-ace7-1dd1499a864d","z":3,"form_data":{"table_prefix":"","table_suffix":"","dropType":"no_drop","type":"databaseLink","selectSourceArr":["CAR_CLAIM_FROM183"],"topicData":[],"queueData":[],"transferFlag":false,"selectSourceDatabase":{"table":true,"view":false,"function":false,"procedure":false},"joinTable":{"tableName":"","joinType":"upsert","joinPath":"","manyOneUpsert":false,"joinKeys":[{"source":"","target":""}],"stageId":"7dbab696-05df-47e4-b300-6f9898375b21","isArray":false,"arrayUniqueKey":"","connectionId":""}},"attrs":{"line":{"stroke":"#8f8f8f"}}}],"settingData":{"isSerialMode":false,"sync_type":"initial_sync+cdc","readBatchSize":100,"notificationWindow":0,"notificationInterval":300,"readCdcInterval":500,"maxTransactionLength":12,"description":"","cdcFetchSize":1,"distinctWriteType":"intellect","drop_target":false,"run_custom_sql":false,"needToCreateIndex":true,"increment":false,"isSchedule":false,"cronExpression":"","isOpenAutoDDL":false,"cdcConcurrency":false,"cdcShareFilterOnServer":false,"emailWaring":{"edited":false,"started":false,"error":false,"paused":false},"readShareLogMode":"STREAMING","stopOnError":true,"syncPoints":[{"connectionId":"","type":"current","time":"","date":"","name":"","timezone":"+08:00"}],"processorConcurrency":1,"transformerConcurrency":8,"lagTimeFalg":false,"userSetLagTime":0,"noPrimaryKey":true}}'
-      }
-      let promise = this.$api('DataFlows').getMetadata(data)
-
-      //this.fieldMappingNavData = data
+      let data = {"_id":{"$oid":"610ca47cb17d6c6dfaf49b23"},"name":"新任务_41d461d","description":"","status":"draft","executeMode":"normal","category":"数据库克隆","stopOnError":false,"mappingTemplate":"custom","emailWaring":{"edited":true,"started":false,"error":true,"paused":false},"stages":[{"id":"d6bfd9c5-ba24-4459-a35b-a41bbc470ab0","inputLanes":[],"outputLanes":["68e09839-658b-475a-a47c-fa4cfd7e551d"],"connectionId":"5fcb5c875cb97e20c43888fd","databaseType":"mongodb","tableName":"AccessToken","type":"collection","isFilter":false,"sqlFromCust":true,"custSql":{"filterType":"field","noFieldFilter":true,"noLineLimit":true,"selectedFields":[],"fieldFilterType":"keepAllFields","limitLines":"","cSql":"","editSql":"","conditions":[]},"filter":"","fieldFilterType":"retainedField","fieldFilter":"_id,created,createTime,auth_type,last_updated","initialSyncOrder":0,"enableInitialOrder":false,"operations":[{"id":"5fd03dff0f087f39b9edc612","op":"RETAINED","field":"_id"},{"id":"5fd03dff0f087f39b9edc611","op":"RETAINED","field":"created"},{"id":"5fd03dff0f087f39b9edc610","op":"RETAINED","field":"createTime"},{"id":"5fd03dff0f087f39b9edc60f","op":"RETAINED","field":"auth_type"},{"id":"5fd03dff0f087f39b9edc60e","op":"RETAINED","field":"last_updated"}],"collectionAggregate":false,"collectionAggrPipeline":"","pipelineFalg":false,"name":"AccessToken","freeTransform":false,"dataQualityTag":false,"joinTables":[],"dropTable":false},{"id":"5c180f52-72d8-4259-8fb2-0a5996b978ce","inputLanes":["68e09839-658b-475a-a47c-fa4cfd7e551d"],"outputLanes":[],"connectionId":"5fcb5c875cb97e20c43888fd","databaseType":"mongodb","tableName":"AccessToken1","dropTable":false,"type":"collection","isFilter":false,"sqlFromCust":true,"custSql":{"filterType":"field","noFieldFilter":true,"noLineLimit":true,"selectedFields":[],"fieldFilterType":"keepAllFields","limitLines":"","cSql":"","editSql":"","conditions":[]},"filter":"","fieldFilterType":"keepAllFields","fieldFilter":"","initialSyncOrder":0,"enableInitialOrder":false,"operations":[],"collectionAggregate":false,"collectionAggrPipeline":"","pipelineFalg":false,"name":"AccessToken1","freeTransform":false,"dataQualityTag":false,"joinTables":[{"tableName":"AccessToken","joinType":"upsert","joinPath":"","manyOneUpsert":false,"joinKeys":[{"source":"_id","target":"_id"}],"stageId":"d6bfd9c5-ba24-4459-a35b-a41bbc470ab0","isArray":false,"arrayUniqueKey":""}]},{"id":"68e09839-658b-475a-a47c-fa4cfd7e551d","inputLanes":["d6bfd9c5-ba24-4459-a35b-a41bbc470ab0"],"outputLanes":["5c180f52-72d8-4259-8fb2-0a5996b978ce"],"operations":[{"id":"5fd03dff0f087f39b9edc60f","op":"RENAME","field":"auth_type","operand":"auth_type-AAA","table_name":"AccessToken","type":"String","primary_key_position":0,"color":"#3q55dc","label":"auth_type-AAA"}],"scripts":[],"description":"","name":"Field Process","type":"field_processor","originalSchema":{"fields":[{"id":"89a2abbc-f7c2-4a11-918f-1fadae29ee0e","field_name":"","javaType":"Map","data_type":"DOCUMENT","table_name":"AccessToken","original_field_name":"","primary_key_position":0,"fromDB":[{"id":"89a2abbc-f7c2-4a11-918f-1fadae29ee0e","table_name":"AccessToken","field_name":""}]},{"field_name":"_id","table_name":"AccessToken","data_type":"STRING","primary_key_position":1,"key":"PRI","dataType":2,"is_nullable":false,"original_field_name":"_id","original_java_type":"String","precision":0,"scale":0,"oriPrecision":null,"oriScale":null,"javaType":"String","columnSize":0,"autoincrement":"NO","id":"5fd03dff0f087f39b9edc612","is_deleted":false,"fromDB":[{"id":"5fd03dff0f087f39b9edc612","table_name":"AccessToken","field_name":"_id"}]},{"field_name":"created","table_name":"AccessToken","data_type":"DATE_TIME","primary_key_position":0,"dataType":9,"is_nullable":true,"original_field_name":"created","original_java_type":"Date","precision":0,"scale":0,"oriPrecision":null,"oriScale":null,"javaType":"Date","columnSize":0,"autoincrement":"NO","id":"5fd03dff0f087f39b9edc611","is_deleted":false,"fromDB":[{"id":"5fd03dff0f087f39b9edc611","table_name":"AccessToken","field_name":"created"}]},{"field_name":"createTime","table_name":"AccessToken","data_type":"DATE_TIME","primary_key_position":0,"dataType":9,"is_nullable":true,"original_field_name":"createTime","original_java_type":"Date","precision":0,"scale":0,"oriPrecision":null,"oriScale":null,"javaType":"Date","columnSize":0,"autoincrement":"NO","id":"5fd03dff0f087f39b9edc610","is_deleted":false,"fromDB":[{"id":"5fd03dff0f087f39b9edc610","table_name":"AccessToken","field_name":"createTime"}]},{"field_name":"auth_type","table_name":"AccessToken","data_type":"STRING","primary_key_position":0,"dataType":2,"is_nullable":true,"original_field_name":"auth_type","original_java_type":"String","precision":0,"scale":0,"oriPrecision":null,"oriScale":null,"javaType":"String","columnSize":0,"autoincrement":"NO","id":"5fd03dff0f087f39b9edc60f","is_deleted":false,"fromDB":[{"id":"5fd03dff0f087f39b9edc60f","table_name":"AccessToken","field_name":"auth_type"}]},{"field_name":"last_updated","table_name":"AccessToken","data_type":"DATE_TIME","primary_key_position":0,"dataType":9,"is_nullable":true,"original_field_name":"last_updated","original_java_type":"Date","precision":0,"scale":0,"oriPrecision":null,"oriScale":null,"javaType":"Date","columnSize":0,"autoincrement":"NO","id":"5fd03dff0f087f39b9edc60e","is_deleted":false,"fromDB":[{"id":"5fd03dff0f087f39b9edc60e","table_name":"AccessToken","field_name":"last_updated"}]}],"table_name":"AccessToken","cdc_enabled":true,"meta_type":"collection","tableId":"5fd03def0e956a39b989caf4","indices":[]},"keep":true}],"setting":{"isSerialMode":false,"sync_type":"initial_sync+cdc","readBatchSize":100,"notificationWindow":0,"notificationInterval":300,"readCdcInterval":500,"maxTransactionLength":12,"description":"","cdcFetchSize":1,"distinctWriteType":"intellect","drop_target":false,"run_custom_sql":false,"needToCreateIndex":true,"increment":false,"isSchedule":false,"cronExpression":"","isOpenAutoDDL":false,"cdcConcurrency":false,"cdcShareFilterOnServer":false,"emailWaring":{"edited":false,"started":false,"error":true,"paused":false},"readShareLogMode":"STREAMING","stopOnError":true,"syncPoints":[{"connectionId":"","type":"current","time":"","date":"","name":"","timezone":"+08:00"}],"processorConcurrency":1,"transformerConcurrency":8,"lagTimeFalg":false,"userSetLagTime":0,"noPrimaryKey":false},"editorData":"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","user_id":"5f32027814fbc2d8530c5fe3","checked":true,"operationTime":{"$date":"2021-08-06T03:33:14.058Z"},"last_updated":{"$date":"2021-08-06T03:33:14.064Z"},"createTime":{"$date":"2021-08-06T02:54:52.028Z"},"id":{"$oid":"610ca47cb17d6c6dfaf49b23"}};
+      let promise = this.$api('DataFlows').getMetadata(data);
+      const that = this;
+      promise.then(data=>{
+        that.fieldMappingNavData = data.data
+      })
     },
     // 获取表名称
     loadDataModels(connectionId) {
-      let self = this
+      let self = this;
       if (!connectionId) {
         return
       }
-      this.transferLoading = true
+      this.transferLoading = true;
       connections
         .customQuery([connectionId], { schema: true })
         .then(result => {
           if (result.data) {
-            let tables = []
+            let tables = [];
             // 数据库为mq
             if (result.data.database_type === 'mq') {
-              this.model.mqType = result.data.mqType
+              this.model.mqType = result.data.mqType;
 
-              let tableData = []
+              let tableData = [];
               if (result.data.mqType === '0') {
-                let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
+                let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet];
                 tableData = [...new Set(data)]
               } else {
                 tableData = result.data.mqTopicSet
@@ -679,10 +575,10 @@ export default {
             } else {
               tables = (result.data.schema && result.data.schema.tables) || []
             }
-            self.databaseInfo = result.data
+            self.databaseInfo = result.data;
             tables = tables.sort((t1, t2) =>
               t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-            )
+            );
 
             if (tables && tables.length) {
               self.sourceData = tables.map(table => ({
@@ -720,13 +616,13 @@ export default {
   },
 
   destroyed() {
-    log('DatabaseLink.destroyed')
-    if (this.unwatch) this.unwatch()
+    log('DatabaseLink.destroyed');
+    if (this.unwatch) this.unwatch();
     if (this.targetCell) {
       this.targetCell.off('change:outputSchema', this.renderSchema, this)
     }
-    delete this.unwatch
-    delete this.cell
+    delete this.unwatch;
+    delete this.cell;
     delete this.targetCell
   }
 }
