@@ -220,8 +220,10 @@ export default {
     async initTableData() {
       let sourceFilter = { where: { qualified_name: this.currentNav.sourceQualifiedName } }
       let source = await this.$api('MetadataInstances').get({ filter: JSON.stringify(sourceFilter) })
+      source = source ? source[0] : []
       let targetFilter = { where: { qualified_name: this.currentNav.sinkQulifiedName } }
       this.target = await this.$api('MetadataInstances').get({ filter: JSON.stringify(targetFilter) })
+      this.target = this.target ? this.target[0] : []
       this.fieldMappingTableData = []
       //源表 目标表数据组合
       source.forEach(item => {
