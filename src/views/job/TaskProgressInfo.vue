@@ -36,7 +36,7 @@
 
       <el-table-column
         :label="$t('taskProgress.sourceLibraryeName')"
-        prop="statsData.sourceTableName"
+        prop="statsData.sourceConnectionName"
         sortable
         v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
       >
@@ -46,7 +46,7 @@
       </el-table-column>
       <el-table-column
         :label="$t('taskProgress.sourceType')"
-        prop="statsData.sourceTableName"
+        prop="statsData.sourceConnectionType"
         sortable
         v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
       >
@@ -67,7 +67,7 @@
       </el-table-column>
       <el-table-column
         :label="$t('taskProgress.targetLibraryName')"
-        prop="statsData.sourceTableName"
+        prop="statsData.targetConnectionName"
         sortable
         v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
       >
@@ -77,7 +77,7 @@
       </el-table-column>
       <el-table-column
         :label="$t('taskProgress.targetType')"
-        prop="statsData.sourceTableName"
+        prop="statsData.targetConnectionType"
         sortable
         v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
       >

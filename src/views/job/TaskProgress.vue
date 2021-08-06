@@ -190,15 +190,20 @@
           <div class="fw-bolder">{{ $t('taskProgress.currentMigration') }}</div>
         </div>
         <div class="progress-container__body flex">
-          <el-table :data="tableData" height="250" border style="width: 100%" class="progress-container__table">
-            <el-table-column prop="date" :label="$t('taskProgress.sourceLibraryeName')"> </el-table-column>
-            <el-table-column prop="name" :label="$t('taskProgress.sourceType')"> </el-table-column>
-            <el-table-column prop="address" :label="$t('taskProgress.planMigrateData')"> </el-table-column>
-            <el-table-column prop="address" :label="$t('taskProgress.targetLibraryName')"> </el-table-column>
-            <el-table-column prop="address" :label="$t('taskProgress.fullMigrationProgress')"> </el-table-column>
-            <el-table-column prop="address" :label="$t('taskProgress.operate')">
+          <el-table :data="progressData" height="250" border style="width: 100%" class="progress-container__table">
+            <el-table-column prop="sourceName" :label="$t('taskProgress.sourceLibraryeName')"> </el-table-column>
+            <el-table-column prop="sourceTableNum" :label="$t('taskProgress.planMigrationTableNum')"> </el-table-column>
+            <el-table-column prop="sourceRowNum" :label="$t('taskProgress.planMigrateData')"> </el-table-column>
+            <el-table-column prop="targetName" :label="$t('taskProgress.targetLibraryName')"> </el-table-column>
+            <el-table-column prop="status" :label="$t('taskProgress.fullMigrationProgress')">
+              <template slot-scope="scope">{{ scope.row.status }} %</template>
+            </el-table-column>
+            <el-table-column :label="$t('taskProgress.operate')">
               <template slot-scope="scope">
-                <el-button type="text" @click="handleInfo(scope.row)">{{ $t('taskProgress.details ') }}</el-button>
+                <el-button type="text" @click="handleInfo(scope.row)" v-if="scope.row.status === 100">{{
+                  $t('taskProgress.details')
+                }}</el-button>
+                <div v-else>-</div>
               </template>
             </el-table-column>
           </el-table>
@@ -226,7 +231,33 @@ export default {
       loading: false,
       progressBar: 0,
       completeTime: '',
-      overviewStats: {}
+      overviewStats: {},
+      progressData: [
+        {
+          sourceName: 'mmm',
+          sourceTableNum: 60,
+          sourceRowNum: 90000,
+          targatRowNum: 4000,
+          targetName: 'ddd',
+          status: 'running'
+        },
+        {
+          sourceName: 'tt',
+          sourceTableNum: 50,
+          sourceRowNum: 70000,
+          targatRowNum: 70000,
+          targetName: 'uu',
+          status: 'running'
+        },
+        {
+          sourceName: 'yy',
+          sourceTableNum: 90,
+          sourceRowNum: 20000,
+          targatRowNum: 5000,
+          targetName: 'ii',
+          status: 'running'
+        }
+      ]
     }
   },
   computed: {
@@ -245,6 +276,12 @@ export default {
   },
   mounted() {
     this.handleData(this.dataFlow)
+    if (this.progressData?.length) {
+      this.progressData.forEach(item => {
+        let num = (item.targatRowNum / item.sourceRowNum) * 100
+        item.status = num ? num.toFixed(2) * 1 : 0
+      })
+    }
     //及时更新输入输出的数据
     // ws.on('watch', function (data) {
     //   this.handleData(data)
@@ -356,6 +393,13 @@ export default {
             overview.currentStatus = this.$t('taskProgress.stopped') // 已停止
           }
         }
+      }
+
+      if (data?.progressData?.length) {
+        data.progressData.forEach(item => {
+          let num = (item.targatRowNum / item.sourceRowNum) * 100
+          item.status = num ? num.toFixed(2) * 1 : 0
+        })
       }
 
       this.completeTime = completeTime
