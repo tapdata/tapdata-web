@@ -1,216 +1,210 @@
 <template>
-  <div class="task-progress">
-    <!-- v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'" -->
-    <template>
-      <!--  全量+增量  -->
-      <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
-        <div class="progress-container__header flex justify-between">
-          <div class="fw-bolder">任务进度概览</div>
-          <ElLink class="progress-header_btn" type="primary" @click="handleInfo" v-if="completeTime !== '全量已完成'">
-            查看详情
-          </ElLink>
+  <div class="task-main">
+    <div class="task-progress">
+      <!-- v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'" -->
+      <template>
+        <!--  全量+增量  -->
+        <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
+          <div class="progress-container__header flex justify-between">
+            <div class="fw-bolder">{{ $t('taskProgress.taskProgressOverview') }}</div>
+            <ElLink
+              class="progress-header_btn"
+              type="primary"
+              @click="handleInfo"
+              v-if="completeTime !== '全量已完成' && !$window.getSettingByKey('DFS_TCM_PLATFORM')"
+            >
+              {{ $t('taskProgress.seeDetails') }}
+            </ElLink>
+          </div>
+          <div class="progress-tip">{{ $t('taskProgress.tip') }}</div>
+          <div class="progress-container__body flex">
+            <!--          <div>*目前任务进度查看仅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB</div>-->
+            <div class="progress-container__img">
+              <img :src="require('@/assets/images/tu.png')" />
+            </div>
+            <div class="progress-container__overview ml-6">
+              <el-row>
+                <el-col :span="24" class="flex"
+                  ><span>{{ $t('taskProgress.fullSyuncProgress') }}：</span
+                  ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
+                </el-col>
+              </el-row>
+              <el-row class="mt-3">
+                <el-col :span="12">
+                  <span>{{ $t('taskProgress.takeTime') }}：</span>
+                  <span class="ml-3 color-green">{{ completeTime }}</span>
+                </el-col>
+                <!--              <el-col :span="12">-->
+                <!--                <span>增量状态：</span>-->
+                <!--                <span class="ml-3 color-green">{{ overviewStats.currentStatus }}</span>-->
+                <!--              </el-col>-->
+              </el-row>
+            </div>
+          </div>
+          <div class="progress-container__footer mt-border">
+            <!-- <el-row class="footer-line">
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">源库名称：</span>ya
+                <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
+              </el-col>
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">目标库名称：</span>
+                <span class="footer-item__value">{{ overviewStats.targetName }}</span>
+              </el-col>
+            </el-row>
+            <el-row class="footer-line">
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">源库类型：</span>
+                <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
+              </el-col>
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">目标库类型：</span>
+                <span class="footer-item__value">{{ overviewStats.targatType }}</span>
+              </el-col>
+            </el-row> -->
+            <el-row class="footer-line">
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.planMigrationTableNum') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
+              </el-col>
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.completedMigrationTableNum') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
+              </el-col>
+            </el-row>
+            <el-row class="footer-line">
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.planMigrateData') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
+              </el-col>
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.completedMigrateData') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
+              </el-col>
+            </el-row>
+            <!-- <el-row class="footer-line">
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">增量所处时间点：</span>
+                <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
+              </el-col>
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">增量延迟：</span>
+                <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
+              </el-col>
+            </el-row> -->
+          </div>
         </div>
-        <div class="progress-tip">*目前任务进度查看仅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB</div>
+        <!--  全量  -->
+        <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'initial_sync'">
+          <div class="progress-container__header flex justify-between">
+            <div class="fw-bolder">{{ $t('taskProgress.taskProgressOverview') }}</div>
+            <ElLink
+              class="progress-header_btn"
+              type="primary"
+              @click="handleInfo"
+              v-if="completeTime !== '全量已完成' && !$window.getSettingByKey('DFS_TCM_PLATFORM')"
+              >{{ $t('taskProgress.seeDetails') }}</ElLink
+            >
+          </div>
+          <div class="progress-tip">{{ $t('taskProgress.tip') }}</div>
+          <div class="progress-container__body flex">
+            <div class="progress-container__img">
+              <img :src="require('@/assets/images/tu.png')" />
+            </div>
+            <div class="progress-container__overview ml-6">
+              <el-row>
+                <el-col :span="24" class="flex"
+                  ><span>{{ $t('taskProgress.fullSyuncProgress') }}：</span
+                  ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
+                </el-col>
+              </el-row>
+              <el-row class="mt-3">
+                <el-col :span="12">
+                  <span>{{ $t('taskProgress.takeTime') }}：</span>
+                  <span class="ml-3 color-green">{{ completeTime }}</span>
+                </el-col>
+                <!--              <el-col :span="12">-->
+                <!--                <span>全量状态：</span>-->
+                <!--                <span class="ml-3 color-green">{{ overviewStats.status }}</span>-->
+                <!--              </el-col>-->
+              </el-row>
+            </div>
+          </div>
+          <div class="progress-container__footer mt-border">
+            <el-row class="footer-line">
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.planMigrationTableNum') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
+              </el-col>
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.completedMigrationTableNum') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
+              </el-col>
+            </el-row>
+            <el-row class="footer-line">
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.planMigrateData') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
+              </el-col>
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.completedMigrateData') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+        <!--  增量  -->
+        <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'cdc'">
+          <div class="progress-container__header flex justify-between">
+            <div class="fw-bolder">{{ $t('taskProgress.taskProgressOverview') }}</div>
+            <!--          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>-->
+          </div>
+          <div class="progress-container__footer">
+            <el-row class="footer-line">
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.planMigrationTableNum') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
+              </el-col>
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.completedMigrationTableNum') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
+              </el-col>
+            </el-row>
+            <el-row class="footer-line">
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.planMigrateData') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
+              </el-col>
+              <el-col class="footer-item" :span="12">
+                <span class="footer-item__name">{{ $t('taskProgress.completedMigrateData') }}：</span>
+                <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+      </template>
+    </div>
+    <div class="progress-database" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+      <div class="progress-container">
+        <div class="progress-container__header flex justify-between">
+          <div class="fw-bolder">{{ $t('taskProgress.currentMigration') }}</div>
+        </div>
         <div class="progress-container__body flex">
-          <!--          <div>*目前任务进度查看仅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB</div>-->
-          <div class="progress-container__img">
-            <img :src="require('@/assets/images/tu.png')" />
-          </div>
-          <div class="progress-container__overview ml-6">
-            <el-row>
-              <el-col :span="24" class="flex"
-                ><span>全量同步进度：</span><el-progress class="el-progress" :percentage="progressBar"></el-progress>
-              </el-col>
-            </el-row>
-            <el-row class="mt-3">
-              <el-col :span="12">
-                <span>预计全量完成还需时间：</span>
-                <span class="ml-3 color-green">{{ completeTime }}</span>
-              </el-col>
-              <!--              <el-col :span="12">-->
-              <!--                <span>增量状态：</span>-->
-              <!--                <span class="ml-3 color-green">{{ overviewStats.currentStatus }}</span>-->
-              <!--              </el-col>-->
-            </el-row>
-          </div>
-        </div>
-        <div class="progress-container__footer mt-border">
-          <!-- <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">源库名称：</span>ya
-              <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">目标库名称：</span>
-              <span class="footer-item__value">{{ overviewStats.targetName }}</span>
-            </el-col>
-          </el-row>
-          <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">源库类型：</span>
-              <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">目标库类型：</span>
-              <span class="footer-item__value">{{ overviewStats.targatType }}</span>
-            </el-col>
-          </el-row> -->
-          <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">计划迁移表数量：</span>
-              <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已完成迁移表数量：</span>
-              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
-            </el-col>
-          </el-row>
-          <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">计划迁移数据量（行）：</span>
-              <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已完成迁移数据量（行）：</span>
-              <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
-            </el-col>
-          </el-row>
-          <!-- <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">增量所处时间点：</span>
-              <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">增量延迟：</span>
-              <span class="footer-item__value">{{ overviewStats.spendTime }}</span>
-            </el-col>
-          </el-row> -->
+          <el-table :data="tableData" height="250" border style="width: 100%" class="progress-container__table">
+            <el-table-column prop="date" :label="$t('taskProgress.sourceLibraryeName')"> </el-table-column>
+            <el-table-column prop="name" :label="$t('taskProgress.sourceType')"> </el-table-column>
+            <el-table-column prop="address" :label="$t('taskProgress.planMigrateData')"> </el-table-column>
+            <el-table-column prop="address" :label="$t('taskProgress.targetLibraryName')"> </el-table-column>
+            <el-table-column prop="address" :label="$t('taskProgress.fullMigrationProgress')"> </el-table-column>
+            <el-table-column prop="address" :label="$t('taskProgress.operate')">
+              <template slot-scope="scope">
+                <el-button type="text" @click="handleInfo(scope.row)">{{ $t('taskProgress.details ') }}</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
       </div>
-      <!--  全量  -->
-      <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'initial_sync'">
-        <div class="progress-container__header flex justify-between">
-          <div class="fw-bolder">任务进度概览</div>
-          <ElLink class="progress-header_btn" type="primary" @click="handleInfo" v-if="completeTime !== '全量已完成'"
-            >查看详情</ElLink
-          >
-        </div>
-        <div class="progress-tip">*目前任务进度查看仅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB</div>
-        <div class="progress-container__body flex">
-          <div class="progress-container__img">
-            <img :src="require('@/assets/images/tu.png')" />
-          </div>
-          <div class="progress-container__overview ml-6">
-            <el-row>
-              <el-col :span="24" class="flex"
-                ><span>全量同步进度：</span><el-progress class="el-progress" :percentage="progressBar"></el-progress>
-              </el-col>
-            </el-row>
-            <el-row class="mt-3">
-              <el-col :span="12">
-                <span>预计全量完成还需时间：</span>
-                <span class="ml-3 color-green">{{ completeTime }}</span>
-              </el-col>
-              <!--              <el-col :span="12">-->
-              <!--                <span>全量状态：</span>-->
-              <!--                <span class="ml-3 color-green">{{ overviewStats.status }}</span>-->
-              <!--              </el-col>-->
-            </el-row>
-          </div>
-        </div>
-        <div class="progress-container__footer mt-border">
-          <!-- <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">源库名称：</span>
-              <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">目标库名称：</span>
-              <span class="footer-item__value">{{ overviewStats.targetName }}</span>
-            </el-col>
-          </el-row>
-          <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">源库类型：</span>
-              <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">目标库类型：</span>
-              <span class="footer-item__value">{{ overviewStats.targatType }}</span>
-            </el-col>
-          </el-row> -->
-          <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">计划迁移表数量：</span>
-              <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已完成迁移表数量：</span>
-              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
-            </el-col>
-          </el-row>
-          <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">计划迁移数据量（行）：</span>
-              <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已完成迁移数据量（行）：</span>
-              <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
-            </el-col>
-          </el-row>
-        </div>
-      </div>
-      <!--  增量  -->
-      <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'cdc'">
-        <div class="progress-container__header flex justify-between">
-          <div class="fw-bolder">任务进度概览</div>
-          <!--          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>-->
-        </div>
-        <div class="progress-container__footer">
-          <!-- <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">源库名称：</span>
-              <span class="footer-item__value">{{ overviewStats.sourceName }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">目标库名称：</span>
-              <span class="footer-item__value">{{ overviewStats.targetName }}</span>
-            </el-col>
-          </el-row>
-          <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">源库类型：</span>
-              <span class="footer-item__value">{{ overviewStats.sourceType }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">目标库类型：</span>
-              <span class="footer-item__value">{{ overviewStats.targatType }}</span>
-            </el-col>
-          </el-row> -->
-          <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">待迁移表总数：</span>
-              <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已完成迁移表数量：</span>
-              <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
-            </el-col>
-          </el-row>
-          <el-row class="footer-line">
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">计划迁移数据量（行）：</span>
-              <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
-            </el-col>
-            <el-col class="footer-item" :span="12">
-              <span class="footer-item__name">已完成迁移数据量（行）：</span>
-              <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
-            </el-col>
-          </el-row>
-        </div>
-      </div>
-    </template>
+    </div>
   </div>
 </template>
 <script>
@@ -332,34 +326,34 @@ export default {
             }
           }
           if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
-            r = 1 + '分钟'
+            r = 1 + this.$t('taskProgress.m')
           }
           // r = parseInt(s) + this.$t('timeToLive.s')
           if (m > 0) {
-            r = parseInt(m) + '分钟'
+            r = parseInt(m) + this.$t('taskProgress.m')
           }
           if (h > 0) {
-            r = parseInt(h) + '小时' + r
+            r = parseInt(h) + this.$t('taskProgress.h') + r
           }
           if (d > 0) {
-            r = parseInt(d) + '天' + r
+            r = parseInt(d) + this.$t('taskProgress.d') + r
           }
           // 全量未完成 停止任务
           if (['paused', 'error'].includes(data.status)) {
-            completeTime = '任务已停止'
+            completeTime = this.$t('taskProgress.taskStopped') // 任务已停止
           } else {
             completeTime = r
           }
         }
 
         if (this.progressBar === 100) {
-          overview.currentStatus = '进行中'
-          completeTime = '全量已完成'
+          overview.currentStatus = this.$t('taskProgress.progress') // 进行中
+          completeTime = this.$t('taskProgress.fullyCompleted') // 全量已完成
         }
         // 任务暂停、错误  增量状态都为停止
-        if (completeTime === '全量已完成') {
+        if (completeTime === this.$t('taskProgress.fullyCompleted')) {
           if (['paused', 'error'].includes(data.status)) {
-            overview.currentStatus = '已停止'
+            overview.currentStatus = this.$t('taskProgress.stopped') // 已停止
           }
         }
       }
@@ -383,10 +377,16 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.task-progress {
+.task-main {
   height: 100%;
   padding: 24px;
   box-sizing: border-box;
+  overflow-y: auto;
+}
+.task-progress,
+.progress-database {
+  margin-top: 20px;
+  overflow: auto;
 }
 .progress-container {
   height: 100%;
@@ -395,6 +395,7 @@ export default {
 }
 .progress-container__header {
   padding: 10px 16px;
+  justify-content: space-between;
   background: #fafafa;
   border-bottom: 1px solid #d3d3d3;
 }
@@ -424,6 +425,8 @@ export default {
   }
   // background-color: darkgreen;
 }
+.progress-container__table {
+}
 .progress-container__footer {
   margin: 0 16px 20px;
   padding: 8px;
@@ -450,11 +453,28 @@ export default {
 }
 </style>
 <style lang="scss">
-.task-progress {
-  .el-progress-bar {
-    width: 60%;
-    .el-progress-bar__inner {
-      background-color: #51b9e4;
+.task-main {
+  .task-progress {
+    .el-progress-bar {
+      width: 60%;
+      .el-progress-bar__inner {
+        background-color: #51b9e4;
+      }
+    }
+  }
+  .progress-database {
+    .progress-container__table {
+      th {
+        padding: 3px 0;
+        background-color: #ecf0f5;
+        .cell {
+          padding: 0 6px;
+          white-space: nowrap;
+        }
+      }
+      .el-table__header {
+        height: 32px;
+      }
     }
   }
 }
