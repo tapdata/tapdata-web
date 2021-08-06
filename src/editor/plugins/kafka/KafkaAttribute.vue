@@ -292,7 +292,6 @@ export default {
                     partitionSet: []
                   }
             this.partitionSet = schema[0].partitionSet || []
-            debugger
             this.$emit('schemaChange', _.cloneDeep(schema))
             this.mergedSchema = schema
           }
@@ -345,9 +344,6 @@ export default {
               if (item.table_name) {
                 return item
               }
-              if (self.model.tableName === item.table_name) {
-                self.partitionSet = item.partitionSet
-              }
             })
             self.tableList = self.schemas.concat()
           }
@@ -366,6 +362,11 @@ export default {
             data.kafkaPartitionKey = data.kafkaPartitionKey.split(',')
           }
         }
+        this.schemas.filter(item => {
+          if (data.tableName === item.table_name) {
+            this.partitionSet = item.partitionSet
+          }
+        })
         _.merge(this.model, data)
       }
       this.mergedSchema = cell.getOutputSchema()
