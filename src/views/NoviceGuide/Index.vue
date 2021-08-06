@@ -184,7 +184,7 @@
           <el-button
             type="primary"
             size="mini"
-            :disabled="!agent.name"
+            :disabled="createTaskDisabled"
             :loading="createTaskLoading"
             style="margin-left: 105px"
             @click="createTask"
@@ -317,6 +317,9 @@ export default {
         })
       }
       return result
+    },
+    createTaskDisabled() {
+      return !this.agent.id || !this.taskForm.selectSourceArr.length
     }
   },
   watch: {
@@ -563,6 +566,9 @@ export default {
         })
     },
     createTask() {
+      if (this.createTaskDisabled) {
+        return
+      }
       let source = this.form.source
       let target = this.form.target
       let postData = {
