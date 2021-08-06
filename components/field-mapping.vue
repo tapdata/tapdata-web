@@ -206,7 +206,9 @@ export default {
       this.currentNav = item
       this.position = index
       this.initTableData()
-      this.getFieldProcess()
+      if (this.field_process && this.field_process.length > 0) {
+        this.getFieldProcess()
+      }
     },
     //获取字段处理器
     getFieldProcess() {
@@ -220,10 +222,10 @@ export default {
     async initTableData() {
       let sourceFilter = { where: { qualified_name: this.currentNav.sourceQualifiedName } }
       let source = await this.$api('MetadataInstances').get({ filter: JSON.stringify(sourceFilter) })
-      source = source ? source[0].fields : []
+      source = source && source.length > 0 ? source[0].fields : []
       let targetFilter = { where: { qualified_name: this.currentNav.sinkQulifiedName } }
       this.target = await this.$api('MetadataInstances').get({ filter: JSON.stringify(targetFilter) })
-      this.target = this.target ? this.target[0].fields : []
+      this.target = this.target && this.target.length > 0 ? this.target[0].fields : []
       this.fieldMappingTableData = []
       //源表 目标表数据组合
       source.forEach(item => {
