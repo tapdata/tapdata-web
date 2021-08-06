@@ -87,4 +87,7 @@ export default class DataFlows extends PublicAPI {
   getInsight(params) {
     return axios.patch(`${this.url}/insight`, params)
   }
+  getMetadata(params) {
+    return axios.post(this.url + '/metadata', params)
+  }
 }

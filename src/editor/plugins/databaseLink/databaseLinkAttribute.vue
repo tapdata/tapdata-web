@@ -65,6 +65,7 @@
           <div class="box-text">
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
+              <el-button class="e-button" size="mini" @click="fieldProcess">映射配置</el-button>
               <el-button class="e-button" size="mini" :disabled="model.selectSourceDatabase.view" @click="handDialog">{{
                 $t('dataFlow.changeName')
               }}</el-button>
@@ -198,6 +199,16 @@
         <el-button type="primary" @click="confirm">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      width="85%"
+      title="映射配置"
+      :visible.sync="dialogFieldProcessVisible"
+      :modal-append-to-body="false"
+      custom-class="databaseLinkDialog"
+      :close-on-click-modal="false"
+    >
+      <FieldMapping :fieldMappingNavData="fieldMappingNavData" :field_process="field_process"></FieldMapping>
+    </el-dialog>
     <!-- <el-dialog
 			:title="$t('message.modifyName')"
 			:visible.sync="modifyNameDialog"
@@ -273,7 +284,12 @@ export default {
       },
       topicSelected: [],
 
-      titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')]
+      titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
+      //表设置
+      fieldMappingNavData: '',
+      fieldMappingTableData: '',
+      field_process: '',
+      dialogFieldProcessVisible: false
     }
   },
 
@@ -292,7 +308,9 @@ export default {
       }
     }
   },
-
+  mounted() {
+    this.metaData()
+  },
   methods: {
     setData(data, cell, isSourceDataNode, vueAdapter) {
       if (data) {
@@ -516,7 +534,122 @@ export default {
       //   }
       // }
     },
+    //表设置
+    fieldProcess() {
+      this.dialogFieldProcessVisible = true
+    },
+    metaData() {
+      let data = {
+        name: '新任务_1884e8c',
+        description: '',
+        status: 'draft',
+        executeMode: 'normal',
+        category: '数据库克隆',
+        stopOnError: false,
+        mappingTemplate: 'cluster-clone',
+        emailWaring: {
+          edited: true,
+          started: false,
+          error: true,
+          paused: false
+        },
+        stages: [
+          {
+            id: '7dbab696-05df-47e4-b300-6f9898375b21',
+            inputLanes: [],
+            outputLanes: ['d3d2bdce-dbd6-4e6e-92bf-f990294a3fb7'],
+            database_type: 'mysql',
+            connectionId: '60cbf6c97cdbf600571d5a6d',
+            table_prefix: '',
+            table_suffix: '',
+            dropType: 'no_drop',
+            syncObjects: [],
+            type: 'database',
+            mqType: '',
+            includeTables: [],
+            shapeImage: 'static/editor/o-mysql.svg',
+            name: 'TLL-MySQL-5-5-62',
+            removeAllTables: false,
+            readCdcInterval: 500,
+            readBatchSize: 1000
+          },
+          {
+            id: 'd3d2bdce-dbd6-4e6e-92bf-f990294a3fb7',
+            inputLanes: ['7dbab696-05df-47e4-b300-6f9898375b21'],
+            outputLanes: [],
+            database_type: 'mysql',
+            connectionId: '610750c51abf2800529878bb',
+            table_prefix: '',
+            table_suffix: '',
+            dropType: 'no_drop',
+            syncObjects: [
+              {
+                type: 'table',
+                objectNames: ['CAR_CLAIM_FROM183']
+              }
+            ],
+            type: 'database',
+            mqType: '',
+            includeTables: [],
+            dropTable: false,
+            shapeImage: 'static/editor/o-mysql.svg',
+            name: 'MySQL_从节点32531',
+            removeAllTables: false,
+            readCdcInterval: 500,
+            readBatchSize: 1000
+          }
+        ],
+        setting: {
+          isSerialMode: false,
+          sync_type: 'initial_sync+cdc',
+          readBatchSize: 100,
+          notificationWindow: 0,
+          notificationInterval: 300,
+          readCdcInterval: 500,
+          maxTransactionLength: 12,
+          description: '',
+          cdcFetchSize: 1,
+          distinctWriteType: 'intellect',
+          drop_target: false,
+          run_custom_sql: false,
+          needToCreateIndex: true,
+          increment: false,
+          isSchedule: false,
+          cronExpression: '',
+          isOpenAutoDDL: false,
+          cdcConcurrency: false,
+          cdcShareFilterOnServer: false,
+          emailWaring: {
+            edited: false,
+            started: false,
+            error: false,
+            paused: false
+          },
+          readShareLogMode: 'STREAMING',
+          stopOnError: true,
+          syncPoints: [
+            {
+              connectionId: '',
+              type: 'current',
+              time: '',
+              date: '',
+              name: '',
+              timezone: '+08:00'
+            }
+          ],
+          processorConcurrency: 1,
+          transformerConcurrency: 8,
+          lagTimeFalg: false,
+          userSetLagTime: 0,
+          noPrimaryKey: true
+        },
+        editorData:
+          '{"cells":[{"type":"app.Database","form_data":{"database_type":"mysql","connectionId":"60cbf6c97cdbf600571d5a6d","table_prefix":"","table_suffix":"","dropType":"no_drop","syncObjects":[],"type":"database","mqType":"","includeTables":[],"shapeImage":"static/editor/o-mysql.svg","name":"TLL-MySQL-5-5-62","removeAllTables":false},"freeTransform":false,"size":{"width":160,"height":36},"ports":{"groups":{"l":{"position":{"name":"left"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"r":{"position":{"name":"right"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"t":{"position":{"name":"top"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"b":{"position":{"name":"bottom"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}}},"items":[{"id":"4ef4efde-59c5-4692-9c05-41fae5412280_l","group":"l"},{"id":"4ef4efde-59c5-4692-9c05-41fae5412280_r","group":"r","attrs":{"circle":{"fill":"#fff","stroke":"#dedee4","stroke-width":1,"r":5,"visibility":"visible"}}},{"id":"4ef4efde-59c5-4692-9c05-41fae5412280_t","group":"t"},{"id":"4ef4efde-59c5-4692-9c05-41fae5412280_b","group":"b"}]},"schema":null,"outputSchema":null,"config":null,"position":{"x":-260,"y":170},"angle":0,"id":"7dbab696-05df-47e4-b300-6f9898375b21","z":1,"attrs":{"image":{"xlinkHref":"static/editor/o-mysql.svg"},"label":{"text":"TLL-MySQL-5-5-62"},"body":{"stroke":"#00bcd4"}}},{"type":"app.Database","form_data":{"database_type":"mysql","connectionId":"610750c51abf2800529878bb","table_prefix":"","table_suffix":"","dropType":"no_drop","syncObjects":[{"type":"table","objectNames":["CAR_CLAIM_FROM183"]}],"type":"database","mqType":"","includeTables":[],"dropTable":false,"shapeImage":"static/editor/o-mysql.svg","name":"MySQL_从节点32531","removeAllTables":false},"freeTransform":false,"size":{"width":160,"height":36},"ports":{"groups":{"l":{"position":{"name":"left"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"r":{"position":{"name":"right"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"t":{"position":{"name":"top"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}},"b":{"position":{"name":"bottom"},"attrs":{"circle":{"magnet":true,"fill":"#fff","stroke":"#dedee4","strokeWidth":1,"r":5}}}},"items":[{"id":"da082688-bc12-413a-8e10-29f75f8dd43a_l","group":"l"},{"id":"da082688-bc12-413a-8e10-29f75f8dd43a_r","group":"r","attrs":{"circle":{"visibility":"visible","fill":"#fff","stroke":"#dedee4","stroke-width":1,"r":5}}},{"id":"da082688-bc12-413a-8e10-29f75f8dd43a_t","group":"t"},{"id":"da082688-bc12-413a-8e10-29f75f8dd43a_b","group":"b"}]},"schema":null,"outputSchema":{"meta_type":"table","table_name":""},"config":null,"position":{"x":-270,"y":270},"angle":0,"id":"d3d2bdce-dbd6-4e6e-92bf-f990294a3fb7","z":2,"attrs":{"image":{"xlinkHref":"static/editor/o-mysql.svg"},"label":{"text":"MySQL_...点32531"},"body":{"stroke":"#00bcd4"}}},{"type":"app.databaseLink","router":{"name":"manhattan"},"connector":{"name":"rounded"},"labels":[],"source":{"id":"7dbab696-05df-47e4-b300-6f9898375b21","magnet":"circle","port":"4ef4efde-59c5-4692-9c05-41fae5412280_r"},"target":{"id":"d3d2bdce-dbd6-4e6e-92bf-f990294a3fb7","magnet":"circle","port":"da082688-bc12-413a-8e10-29f75f8dd43a_r"},"id":"719d914e-b974-4698-ace7-1dd1499a864d","z":3,"form_data":{"table_prefix":"","table_suffix":"","dropType":"no_drop","type":"databaseLink","selectSourceArr":["CAR_CLAIM_FROM183"],"topicData":[],"queueData":[],"transferFlag":false,"selectSourceDatabase":{"table":true,"view":false,"function":false,"procedure":false},"joinTable":{"tableName":"","joinType":"upsert","joinPath":"","manyOneUpsert":false,"joinKeys":[{"source":"","target":""}],"stageId":"7dbab696-05df-47e4-b300-6f9898375b21","isArray":false,"arrayUniqueKey":"","connectionId":""}},"attrs":{"line":{"stroke":"#8f8f8f"}}}],"settingData":{"isSerialMode":false,"sync_type":"initial_sync+cdc","readBatchSize":100,"notificationWindow":0,"notificationInterval":300,"readCdcInterval":500,"maxTransactionLength":12,"description":"","cdcFetchSize":1,"distinctWriteType":"intellect","drop_target":false,"run_custom_sql":false,"needToCreateIndex":true,"increment":false,"isSchedule":false,"cronExpression":"","isOpenAutoDDL":false,"cdcConcurrency":false,"cdcShareFilterOnServer":false,"emailWaring":{"edited":false,"started":false,"error":false,"paused":false},"readShareLogMode":"STREAMING","stopOnError":true,"syncPoints":[{"connectionId":"","type":"current","time":"","date":"","name":"","timezone":"+08:00"}],"processorConcurrency":1,"transformerConcurrency":8,"lagTimeFalg":false,"userSetLagTime":0,"noPrimaryKey":true}}'
+      }
+      let promise = this.$api('DataFlows').getMetadata(data)
 
+      //this.fieldMappingNavData = data
+    },
     // 获取表名称
     loadDataModels(connectionId) {
       let self = this
@@ -566,7 +699,6 @@ export default {
           this.transferLoading = false
         })
     }
-
     // 修改名称弹窗返回
     // confirmName() {
     // 	let self = this;
