@@ -300,6 +300,9 @@ export default {
     &.active {
       transform: scale(1);
     }
+    .text-white {
+      color: #fff;
+    }
     .guide-mark {
       img {
         width: 67px;
