@@ -94,8 +94,24 @@
             <div class="flex align-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
-                <ElTooltip class="ml-1" effect="dark" :content="getTiptoolContent(scope.row)" placement="top-start">
-                  <VIcon v-if="upgradingFlag(scope.row)" size="20" class="cursor-pointer">upgradeLoadingColor</VIcon>
+                <!--                <VIcon v-if="upgradingFlag(scope.row)" size="20" class="cursor-pointer">upgradeLoadingColor</VIcon>-->
+                <ElTooltip class="ml-1" effect="dark" :content="getTooltipContent(scope.row)" placement="top-start">
+                  <div class="upgrading-box" v-if="upgradingFlag(scope.row)">
+                    <VIcon class="v-icon" size="20">upgradeLoadingColor</VIcon>
+                    <el-progress
+                      class="upgrading-progress"
+                      type="circle"
+                      color="rgb(61, 156, 64)"
+                      :percentage="upgradingProgres(scope.row)"
+                      :show-text="false"
+                      :format="
+                        value => {
+                          return value
+                        }
+                      "
+                    ></el-progress>
+                  </div>
+                  <!--                  <VIcon v-if="upgradingFlag(scope.row)" size="20" class="cursor-pointer">upgradeLoadingColor</VIcon>-->
                   <VIcon
                     v-else-if="upgradeFailedFlag(scope.row)"
                     size="20"
@@ -170,7 +186,7 @@
         </div>
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center" v-if="showAutoUpgrade">
-            <ElButton type="primary" :disabled="disabledAuautoUpgradeBtn" @click="autoUpgradeFnc">自动升级</ElButton>
+            <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">自动升级</ElButton>
             <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
               (Agent离线时无法使用自动升级)
             </div>
@@ -255,8 +271,8 @@ export default {
       }
       return options
     },
-    disabledAuautoUpgradeBtn() {
-      return !!(this.selectedRow?.status !== 'Running')
+    disabledAutoUpgradeBtn() {
+      return this.selectedRow?.status !== 'Running'
     },
     showAutoUpgrade() {
       let flag = true
@@ -575,17 +591,13 @@ export default {
     cancelUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
     },
-    getTiptoolContent(row) {
+    getTooltipContent(row) {
       let result
       switch (row.tmInfo.updateStatus) {
         case 'preparing':
-          result = '自动升级中'
-          break
         case 'downloading':
-          result = '自动升级中'
-          break
         case 'upgrading':
-          result = '自动升级中'
+          result = `自动升级中，进度：${this.upgradingProgres(row)}%`
           break
         case 'fail':
           result = '自动升级失败，请手动升级'
@@ -654,16 +666,14 @@ export default {
       let isOvertime = (new Date().getTime() - (tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
       // 刚完成5分钟内
       return tmInfo.updateStatus === 'done' && !isOvertime
-      // return (
-      //   !tmInfo.updateStatus ||
-      //   tmInfo.updateStatus === 'done' ||
-      //   !tmInfo.updateVersion ||
-      //   (tmInfo.updateVersion && tmInfo.updateVersion !== this.version)
-      // )
     },
     upgradingFlag(row) {
       let { tmInfo } = row
       return ['preparing', 'downloading', 'upgrading'].includes(tmInfo.updateStatus)
+    },
+    upgradingProgres(row) {
+      let { tmInfo } = row
+      return tmInfo?.progres ?? 0
     },
     upgradeFailedFlag(row) {
       let { tmInfo } = row
@@ -723,6 +733,62 @@ export default {
   }
   .instance-table__empty {
     color: map-get($fontColor, light);
+  }
+}
+.upgrading-box {
+  position: relative;
+  height: 20px;
+  ::v-deep {
+    .v-icon {
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 20px;
+      -moz-animation: rotate 10s infinite linear;
+      -webkit-animation: rotate 10s infinite linear;
+      animation: rotate 10s infinite linear;
+      border-radius: 50%;
+    }
+
+    .el-progress {
+      position: relative;
+      z-index: 1;
+    }
+  }
+}
+@-moz-keyframes rotate {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes rotate {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.upgrading-progress {
+  ::v-deep {
+    .el-progress-circle {
+      width: 20px !important;
+      height: 20px !important;
+    }
+    .el-progress__text {
+      font-size: 12px !important;
+    }
   }
 }
 ::v-deep {

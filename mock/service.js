@@ -54,7 +54,8 @@ const agent = {
     updateMsg: '',
     updateTime: '',
     'pingTime|1': [1626874131176, ''],
-    updateVersion: 'v1.0.7-cloud-dev'
+    updateVersion: 'v1.0.7-cloud-dev',
+    progres: '@integer(0, 100)'
   },
   'agentType|1': ['Cloud', '']
 }
