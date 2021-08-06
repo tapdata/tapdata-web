@@ -109,7 +109,7 @@
 						size="mini"
 					></el-input>
 				</el-form-item> -->
-        <el-form-item label="Partition ID" v-if="!dataNodeInfo.isTarget" prop="kafkaPartitionKey" required>
+        <el-form-item label="Partition ID" v-if="!dataNodeInfo.isTarget" prop="kafkaPartitionKey">
           <el-select
             v-model="model.partitionId"
             default-first-option
@@ -119,8 +119,8 @@
           >
             <el-option
               v-for="(item, idx) in partitionSet"
-              :label="`${item.table_name}`"
-              :value="item.table_name"
+              :label="`${item}`"
+              :value="item"
               v-bind:key="idx"
             ></el-option>
           </el-select>
@@ -289,9 +289,9 @@ export default {
                     cdc_enabled: true,
                     meta_type: 'kafka',
                     fields: [],
-                    partitionSet: []
+                    partitionSet: [0]
                   }
-            this.partitionSet = schema[0].partitionSet || []
+            this.partitionSet = schema.partitionSet ? schema.partitionSet : [0]
             this.$emit('schemaChange', _.cloneDeep(schema))
             this.mergedSchema = schema
           }
@@ -364,7 +364,7 @@ export default {
         }
         this.schemas.filter(item => {
           if (data.tableName === item.table_name) {
-            this.partitionSet = item.partitionSet
+            this.partitionSet = item.partitionSet ? item.partitionSet : [0]
           }
         })
         _.merge(this.model, data)
@@ -433,7 +433,7 @@ export default {
           templeSchema.forEach(item => {
             if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
               schema = item.schema
-              this.partitionSet = item.partitionSet
+              this.partitionSet = item.partitionSet ? item.partitionSet : [0]
             }
           })
         }
