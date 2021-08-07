@@ -201,13 +201,27 @@ export default {
       this.position = '' //再次点击清空去一个样式
       //保存上一表操作
       if (this.operations.length > 0) {
-        //let source1 = await this.$axios.get('tm/api/MetadataInstances/60f66b33a4a85c0011ef80be')
-      }
-      this.currentNav = item
-      this.position = index
-      this.initTableData()
-      if (this.field_process && this.field_process.length > 0) {
-        this.getFieldProcess()
+        let id = this.currentNav.sinkQulifiedName
+        let data = {
+          fields: this.target
+        }
+        this.$api('MetadataInstances')
+          .patchId(id, data)
+          .then(() => {
+            this.currentNav = item
+            this.position = index
+            this.initTableData()
+            this.getTypeMapping()
+            this.getFieldProcess()
+          })
+      } else {
+        this.currentNav = item
+        this.position = index
+        this.initTableData()
+        this.getTypeMapping()
+        if (this.field_process.length > 0) {
+          this.getFieldProcess()
+        }
       }
     },
     //获取字段处理器
@@ -255,7 +269,8 @@ export default {
     },
     //初始化字段类型
     async getTypeMapping() {
-      let promise = await this.$axios.get('api/typeMappings/dataType?id=' + this.currentNav.sinkQulifiedName)
+      let promise = await this.$api('TypeMapping').get(this.currentNav.sinkQulifiedName)
+      this.typeMapping = promise.data
     },
     //字段修改统一弹窗
     edit(row, type) {
