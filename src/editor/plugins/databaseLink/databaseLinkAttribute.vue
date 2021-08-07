@@ -814,6 +814,10 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 1;
+  .el-dialog__body {
+    display: flex;
+    flex: 1;
+  }
   .e-row {
     padding: 0 50px;
   }
