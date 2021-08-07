@@ -552,15 +552,9 @@ export default {
     },
     //获取表设置
     async intiFieldMappingTableData(row) {
-      // let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
-      // source = source.data && source.data.length > 0 ? source.data[0].fields : []
-      // let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName)
-      // target = target.data && target.data.length > 0 ? target.data[0].fields : []
-      let sourceFilter = { where: { qualified_name: row.sourceQualifiedName } }
-      let source = await this.$api('MetadataInstances').get({ filter: JSON.stringify(sourceFilter) })
+      let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
-      let targetFilter = { where: { qualified_name: row.sinkQulifiedName } }
-      let target = await this.$api('MetadataInstances').get({ filter: JSON.stringify(targetFilter) })
+      let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName)
       target = target.data && target.data.length > 0 ? target.data[0].fields : []
       //源表 目标表数据组合
       let fieldMappingTableData = []
