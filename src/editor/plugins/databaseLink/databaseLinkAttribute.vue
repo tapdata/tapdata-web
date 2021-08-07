@@ -207,7 +207,14 @@
       custom-class="databaseLinkDialog"
       :close-on-click-modal="false"
     >
-      <FieldMapping :fieldMappingNavData="fieldMappingNavData" :field_process="field_process"></FieldMapping>
+      <FieldMapping
+        ref="fieldMappingDom"
+        :remoteMethod="intiFieldMappingTableData"
+        :typeMappingMethod="getTypeMapping"
+        :fieldMappingNavData="fieldMappingNavData"
+        :field_process="model.field_process"
+        @row-click="saveOperations"
+      ></FieldMapping>
     </el-dialog>
     <!-- <el-dialog
 			:title="$t('message.modifyName')"
@@ -273,6 +280,7 @@ export default {
         selectSourceArr: [],
         topicData: [],
         queueData: [],
+        field_process: [], //字段处理器
         transferFlag: false,
 
         selectSourceDatabase: {
@@ -288,7 +296,6 @@ export default {
       //表设置
       fieldMappingNavData: '',
       fieldMappingTableData: '',
-      field_process: '',
       dialogFieldProcessVisible: false,
       scope: ''
     }
@@ -537,12 +544,61 @@ export default {
     fieldProcess() {
       let data = this.scope.getDataFlowData()
       if (!data) return
-      this.dialogFieldProcessVisible = true
       let promise = this.$api('DataFlows').getMetadata(data)
-      const that = this
       promise.then(data => {
-        that.fieldMappingNavData = data.data
+        this.dialogFieldProcessVisible = true
+        this.fieldMappingNavData = data?.data
       })
+    },
+    //获取表设置
+    async intiFieldMappingTableData(row) {
+      // let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
+      // source = source.data && source.data.length > 0 ? source.data[0].fields : []
+      // let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName)
+      // target = target.data && target.data.length > 0 ? target.data[0].fields : []
+      let sourceFilter = { where: { qualified_name: row.sourceQualifiedName } }
+      let source = await this.$api('MetadataInstances').get({ filter: JSON.stringify(sourceFilter) })
+      source = source.data && source.data.length > 0 ? source.data[0].fields : []
+      let targetFilter = { where: { qualified_name: row.sinkQulifiedName } }
+      let target = await this.$api('MetadataInstances').get({ filter: JSON.stringify(targetFilter) })
+      target = target.data && target.data.length > 0 ? target.data[0].fields : []
+      //源表 目标表数据组合
+      let fieldMappingTableData = []
+      source.forEach(item => {
+        target.forEach(field => {
+          if (item.field_name === field.field_name) {
+            let node = {
+              t_id: field.id,
+              t_field_name: field.field_name,
+              t_data_type: field.data_type,
+              t_scale: field.scale,
+              t_precision: field.precision
+            }
+            fieldMappingTableData.push(Object.assign({}, item, node))
+          }
+        })
+      })
+      return {
+        data: fieldMappingTableData,
+        target: target
+      }
+    },
+    //获取typeMapping
+    async getTypeMapping(row) {
+      let promise = await this.$api('TypeMapping').getId(row.sinkDbType)
+      return promise?.data
+    },
+    //保存字段处理器
+    saveOperations(row, operations, target) {
+      if (operations.length === 0) return
+      let where = {
+        qualified_name: row.sinkQulifiedName
+      }
+      let data = {
+        fields: target
+      }
+      this.$api('MetadataInstances').update(where, data)
+      this.model.field_process = this.$refs.fieldMappingDom.saveFileOperations()
     },
     // 获取表名称
     loadDataModels(connectionId) {
