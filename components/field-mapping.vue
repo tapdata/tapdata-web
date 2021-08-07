@@ -14,15 +14,21 @@
     <div class="task-form-body">
       <div class="nav">
         <ul>
-          <li v-for="(item, index) in fieldMappingNavData" :class="{ 'active': position === index }" @click="select(item, index)">
+          <li
+            v-for="(item, index) in fieldMappingNavData"
+            :class="{ active: position === index }"
+            @click="select(item, index)"
+          >
             <div class="imgBox">
-              <img src="../assets/images/fieldMapping-table.png" alt="">
+              <img src="../assets/images/fieldMapping-table.png" alt="" />
             </div>
-           <div class="contentBox">
-             <div class="contentBox__source">{{ item.sourceObjectName }}</div>
-             <div class="contentBox__target">{{ item.sinkObjectName }}</div>
-             <div class="contentBox__select">{{ `已选中 ${position === index ? fieldCount : 0 }/${item.sourceFieldCount}`}}</div>
-           </div>
+            <div class="contentBox">
+              <div class="contentBox__source">{{ item.sourceObjectName }}</div>
+              <div class="contentBox__target">{{ item.sinkObjectName }}</div>
+              <div class="contentBox__select">
+                {{ `已选中 ${position === index ? fieldCount : 0}/${item.sourceFieldCount}` }}
+              </div>
+            </div>
           </li>
         </ul>
       </div>
@@ -32,10 +38,7 @@
         :data="fieldMappingTableData"
         :row-class-name="tableRowClassName"
       >
-        <el-table-column
-          type="index"
-          width="55">
-        </el-table-column>
+        <el-table-column type="index" width="55"> </el-table-column>
         <ElTableColumn show-overflow-tooltip label="源表名" prop="field_name" min-width="250"></ElTableColumn>
         <ElTableColumn label="源表类型" prop="data_type"></ElTableColumn>
         <ElTableColumn label="源表长度" prop="scale" width="80"></ElTableColumn>
@@ -53,10 +56,10 @@
         </ElTableColumn>
         <ElTableColumn label="目标表类型">
           <template scope="scope">
-           <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'data_type')">
-             <span>{{ scope.row.t_data_type }}</span>
-             <i class="icon el-icon-arrow-down"></i>
-           </div>
+            <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'data_type')">
+              <span>{{ scope.row.t_data_type }}</span>
+              <i class="icon el-icon-arrow-down"></i>
+            </div>
             <div v-else>
               <span>{{ scope.row.t_data_type }}</span>
             </div>
@@ -64,7 +67,7 @@
         </ElTableColumn>
         <ElTableColumn label="目标表长度">
           <template scope="scope">
-            <div v-if="scope.row.t_scale && !scope.row.is_deleted " @click="edit(scope.row, 'scale')">
+            <div v-if="scope.row.t_scale && !scope.row.is_deleted" @click="edit(scope.row, 'scale')">
               <span>{{ scope.row.t_scale }}</span>
               <i class="icon el-icon-edit-outline"></i>
             </div>
@@ -75,7 +78,7 @@
         </ElTableColumn>
         <ElTableColumn label="目标表精度">
           <template scope="scope">
-            <div v-if="scope.row.t_precision && !scope.row.is_deleted " @click="edit(scope.row, 'precision')">
+            <div v-if="scope.row.t_precision && !scope.row.is_deleted" @click="edit(scope.row, 'precision')">
               <span>{{ scope.row.t_precision }}</span>
               <i class="icon el-icon-edit-outline"></i>
             </div>
@@ -86,14 +89,11 @@
         </ElTableColumn>
         <ElTableColumn label="操作">
           <template scope="scope">
-            <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.id, true)">
-              删除
-            </ElLink>
-            <ElLink type="primary" v-else @click="del(scope.row.t_id, false)">
-              还原
-            </ElLink>
+            <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.id, true)"> 删除 </ElLink>
+            <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
           </template>
-        </ElTableColumn><div class="connection-table__empty" slot="empty">
+        </ElTableColumn>
+        <div class="connection-table__empty" slot="empty">
           <i class="el-icon-folder-opened"></i>
           <span class="ml-1">暂无数据</span>
         </div>
@@ -103,15 +103,20 @@
       :title="titleType[currentOperationType]"
       :visible.sync="dialogVisible"
       width="30%"
+      append-to-body
       :close-on-click-modal="false"
-      :before-close="handleClose">
-      <el-input v-model="editValueType[currentOperationType]" v-if="['field_name'].includes(currentOperationType)"></el-input>
-      <el-input-number v-model="editValueType[currentOperationType]" v-if="['precision','scale'].includes(currentOperationType)"></el-input-number>
+      :before-close="handleClose"
+    >
+      <el-input
+        v-model="editValueType[currentOperationType]"
+        v-if="['field_name'].includes(currentOperationType)"
+      ></el-input>
+      <el-input-number
+        v-model="editValueType[currentOperationType]"
+        v-if="['precision', 'scale'].includes(currentOperationType)"
+      ></el-input-number>
       <el-select v-model="editValueType[currentOperationType]" v-if="['data_type'].includes(currentOperationType)">
         <el-option label="VARCHAR" value="VARCHAR"></el-option>
-        <el-option label="DECLMAL" value="DECLMAL"></el-option>
-        <el-option label="OBJECT_ID" value="OBJECT_ID"></el-option>
-        <el-option label="DATETIME" value="DATETIME"></el-option>
       </el-select>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose()">取 消</el-button>
@@ -139,225 +144,28 @@ export default {
       re_field: '',
       currentOperationType: '',
       currentOperationData: '',
-      target:  [
-        {
-          "field_name": "POLICY_ID",
-          "data_type": "VARCHAR",
-          "data_code": 12,
-          "java_type": "String",
-          "primary_key_position": 1,
-          "foreign_key_position": 0,
-          "is_nullable": false,
-          "precision": 12, //精度
-          "scale": null,//长度
-          "unique": true,
-          "columnSize": 12,
-          "autoincrement": false,
-          "key": "PRI",
-          "original_field_name": "POLICY_ID",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b54d",
-          "parent": null,
-          "oriPrecision": 12,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": true,
-          "foreign_key": false
-        },
-        {
-          "field_name": "CUSTOMER_ID",
-          "data_type": "VARCHAR",
-          "data_code": 12,
-          "java_type": "String",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 12,
-          "scale": null,
-          "columnSize": 12,
-          "autoincrement": false,
-          "original_field_name": "CUSTOMER_ID",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b54e",
-          "parent": null,
-          "oriPrecision": 12,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "QUOTE_DAY",
-          "data_type": "DATETIME",
-          "data_code": 93,
-          "java_type": "Date",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 0,
-          "scale": null,
-          "columnSize": 19,
-          "autoincrement": false,
-          "original_field_name": "QUOTE_DAY",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b54f",
-          "parent": null,
-          "oriPrecision": 0,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "COVER_START",
-          "data_type": "DATETIME",
-          "data_code": 93,
-          "java_type": "Date",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 0,
-          "scale": null,
-          "columnSize": 19,
-          "autoincrement": false,
-          "original_field_name": "COVER_START",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b550",
-          "parent": null,
-          "oriPrecision": 0,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "LAST_ANN_PREMIUM_GROSS",
-          "data_type": "DECIMAL",
-          "data_code": 3,
-          "java_type": "Double",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 10,
-          "scale": 2,
-          "columnSize": 10,
-          "autoincrement": false,
-          "original_field_name": "LAST_ANN_PREMIUM_GROSS",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b551",
-          "parent": null,
-          "oriPrecision": 10,
-          "oriScale": 2,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "POLICY_STATUS",
-          "data_type": "VARCHAR",
-          "data_code": 12,
-          "java_type": "String",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 100,
-          "scale": null,
-          "columnSize": 100,
-          "autoincrement": false,
-          "original_field_name": "POLICY_STATUS",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b552",
-          "parent": null,
-          "oriPrecision": 100,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "LAST_CHANGE",
-          "data_type": "DATETIME",
-          "data_code": 93,
-          "java_type": "Date",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 0,
-          "scale": null,
-          "columnSize": 19,
-          "autoincrement": false,
-          "original_field_name": "LAST_CHANGE",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b553",
-          "parent": null,
-          "oriPrecision": 0,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "_id",
-          "data_type": "OBJECT_ID",
-          "data_code": 7,
-          "java_type": "String",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": false,
-          "parent": null,
-          "precision": null,
-          "scale": null,
-          "default_value": null,
-          "unique": true,
-          "columnSize": 64,
-          "autoincrement": "NO",
-          "key": "PRI",
-          "pk_constraint_name": "",
-          "fk_constraint_name": "",
-          "is_auto_allowed": false,
-          "source": "auto",
-          "id": "60d478c4d3fdfa20ea12b554",
-          "oriPrecision": null,
-          "oriScale": null,
-          "original_field_name": "_id",
-          "is_deleted": false,
-          "primary_key": false,
-          "foreign_key": false
-        }
-      ],
-      editValueType:{
-        "field_name": '',
-        "data_type": "",
-        "precision": "",
-        "scale": ""
+      target: [],
+      editValueType: {
+        field_name: '',
+        data_type: '',
+        precision: '',
+        scale: ''
       },
       titleType: {
-        "field_name": '修改目标表名',
-        "data_type": "修改目标表类型",
-        "precision": "修改目标长度",
-        "scale": "修改目标表精度"
+        field_name: '修改目标表名',
+        data_type: '修改目标表类型',
+        precision: '修改目标长度',
+        scale: '修改目标表精度'
       },
       operations: [] //字段操作
     }
   },
   mounted() {
-    this.initTableData()
     this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
     this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData))
+    //默认选中第一个
+    this.currentNav = this.fieldMappingNavData[0]
+    this.initTableData()
   },
   methods: {
     search(type) {
@@ -393,231 +201,50 @@ export default {
       this.position = '' //再次点击清空去一个样式
       //保存上一表操作
       if (this.operations.length > 0) {
-        //let source1 = await this.$axios.get('tm/api/MetadataInstances/60f66b33a4a85c0011ef80be')
+        let where = {
+          qualified_name: this.currentNav.sinkQulifiedName
+        }
+        let data = {
+          fields: this.target
+        }
+        this.$api('MetadataInstances')
+          .update(where, data)
+          .then(() => {
+            this.currentNav = item
+            this.position = index
+            this.initTableData()
+            this.getTypeMapping()
+            this.getFieldProcess()
+          })
+      } else {
+        this.currentNav = item
+        this.position = index
+        this.initTableData()
+        this.getTypeMapping()
+        if (this.field_process.length > 0) {
+          this.getFieldProcess()
+        }
       }
-      this.currentNav = item
-      this.position = index
-      this.initTableData()
-      this.getFieldProcess()
     },
     //获取字段处理器
     getFieldProcess() {
       this.operations = ''
       let field_process = this.field_process.filter(process => process.table_id === this.currentNav.sourceQualifiedName)
       if (field_process.length > 0) {
-        this.operations = field_process[0].operations
-          ? JSON.parse(JSON.stringify(field_process[0].operations))
-          : []
+        this.operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
       }
     },
     //初始化table数据
     async initTableData() {
-      //let source1 = await this.$axios.get('tm/api/MetadataInstances/60f66b33a4a85c0011ef80be')
+      let source = await this.$api('MetadataInstances').originalData(this.currentNav.sourceQualifiedName)
+      source = source.data && source.data.length > 0 ? source.data[0].fields : []
+      this.target = await this.$api('MetadataInstances').originalData(this.currentNav.sinkQulifiedName)
+      this.target = this.target.data && this.target.data.length > 0 ? this.target.data[0].fields : []
       this.fieldMappingTableData = []
-      let source = [
-        {
-          "field_name": "POLICY_ID",
-          "data_type": "VARCHAR",
-          "data_code": 12,
-          "java_type": "String",
-          "primary_key_position": 1,
-          "foreign_key_position": 0,
-          "is_nullable": false,
-          "precision": 12,
-          "scale": null,
-          "unique": true,
-          "columnSize": 12,
-          "autoincrement": false,
-          "key": "PRI",
-          "original_field_name": "POLICY_ID",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b54d",
-          "parent": null,
-          "oriPrecision": 12,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": true,
-          "foreign_key": false
-        },
-        {
-          "field_name": "CUSTOMER_ID",
-          "data_type": "VARCHAR",
-          "data_code": 12,
-          "java_type": "String",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 12,
-          "scale": null,
-          "columnSize": 12,
-          "autoincrement": false,
-          "original_field_name": "CUSTOMER_ID",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b54e",
-          "parent": null,
-          "oriPrecision": 12,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "QUOTE_DAY",
-          "data_type": "DATETIME",
-          "data_code": 93,
-          "java_type": "Date",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 0,
-          "scale": null,
-          "columnSize": 19,
-          "autoincrement": false,
-          "original_field_name": "QUOTE_DAY",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b54f",
-          "parent": null,
-          "oriPrecision": 0,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "COVER_START",
-          "data_type": "DATETIME",
-          "data_code": 93,
-          "java_type": "Date",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 0,
-          "scale": null,
-          "columnSize": 19,
-          "autoincrement": false,
-          "original_field_name": "COVER_START",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b550",
-          "parent": null,
-          "oriPrecision": 0,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "LAST_ANN_PREMIUM_GROSS",
-          "data_type": "DECIMAL",
-          "data_code": 3,
-          "java_type": "Double",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 10,
-          "scale": 2,
-          "columnSize": 10,
-          "autoincrement": false,
-          "original_field_name": "LAST_ANN_PREMIUM_GROSS",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b551",
-          "parent": null,
-          "oriPrecision": 10,
-          "oriScale": 2,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "POLICY_STATUS",
-          "data_type": "VARCHAR",
-          "data_code": 12,
-          "java_type": "String",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 100,
-          "scale": null,
-          "columnSize": 100,
-          "autoincrement": false,
-          "original_field_name": "POLICY_STATUS",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b552",
-          "parent": null,
-          "oriPrecision": 100,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "LAST_CHANGE",
-          "data_type": "DATETIME",
-          "data_code": 93,
-          "java_type": "Date",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": true,
-          "precision": 0,
-          "scale": null,
-          "columnSize": 19,
-          "autoincrement": false,
-          "original_field_name": "LAST_CHANGE",
-          "is_auto_allowed": false,
-          "source": "job_analyze",
-          "is_deleted": false,
-          "id": "60d478c4d3fdfa20ea12b553",
-          "parent": null,
-          "oriPrecision": 0,
-          "oriScale": null,
-          "default_value": null,
-          "primary_key": false,
-          "foreign_key": false
-        },
-        {
-          "field_name": "_id",
-          "data_type": "OBJECT_ID",
-          "data_code": 7,
-          "java_type": "String",
-          "primary_key_position": 0,
-          "foreign_key_position": 0,
-          "is_nullable": false,
-          "parent": null,
-          "precision": null,
-          "scale": null,
-          "default_value": null,
-          "unique": true,
-          "columnSize": 64,
-          "autoincrement": "NO",
-          "key": "PRI",
-          "pk_constraint_name": "",
-          "fk_constraint_name": "",
-          "is_auto_allowed": false,
-          "source": "auto",
-          "id": "60d478c4d3fdfa20ea12b554",
-          "oriPrecision": null,
-          "oriScale": null,
-          "original_field_name": "_id",
-          "is_deleted": false,
-          "primary_key": false,
-          "foreign_key": false
-        }
-      ]
       //源表 目标表数据组合
-       source.forEach( item => {
-        this.target.forEach( field => {
-          if(item.field_name === field.field_name) {
+      source.forEach(item => {
+        this.target.forEach(field => {
+          if (item.field_name === field.field_name) {
             let node = {
               t_id: field.id,
               t_field_name: field.field_name,
@@ -640,12 +267,18 @@ export default {
         }
       })
     },
+    //初始化字段类型
+    async getTypeMapping() {
+      let promise = await this.$api('TypeMapping').get(this.currentNav.sinkQulifiedName)
+      this.typeMapping = promise.data
+    },
     //字段修改统一弹窗
     edit(row, type) {
       this.dialogVisible = true
       this.editValueType[type] = row[`t_${type}`]
       this.currentOperationType = type
       this.currentOperationData = row
+      //修改类型
     },
     editSave() {
       //元数据-字段操作
@@ -659,7 +292,7 @@ export default {
         this.fieldProcessConvert(id, key, value)
       }
       this.target.forEach(field => {
-        if(field.id === id){
+        if (field.id === id) {
           field[key] = value
         }
       })
@@ -672,10 +305,10 @@ export default {
       this.currentOperationType = ''
       this.currentOperationData = ''
       this.editValueType = {
-        "field_name": '',
-        "data_type": "",
-        "precision": "",
-        "scale": ""
+        field_name: '',
+        data_type: '',
+        precision: '',
+        scale: ''
       }
     },
     //字段删除
@@ -688,7 +321,7 @@ export default {
       }
       //元数据-字段操作
       this.target.forEach(field => {
-        if(field.id === id){
+        if (field.id === id) {
           field.is_deleted = value
         }
       })
@@ -733,9 +366,7 @@ export default {
     handleExistsName(value) {
       // 改名前查找同级中是否重名，若有则return且还原改动并提示
       let exist = false
-      let filterData = this.target.filter(
-        v => value === v.field_name
-      )
+      let filterData = this.target.filter(v => value === v.field_name)
       if (filterData.length > 0) {
         this.$message.error(value + this.$t('message.exists_name'))
         exist = true
@@ -838,7 +469,7 @@ export default {
 <style lang="scss">
 .field-mapping {
   .el-table .delete-row {
-    background: #F2F2F2;
+    background: #f2f2f2;
   }
 }
 </style>
@@ -874,15 +505,15 @@ export default {
     height: 100%;
     .nav {
       width: 293px;
-      border-top: 1px solid #F2F2F2;
-      border-right: 1px solid #F2F2F2;
+      border-top: 1px solid #f2f2f2;
+      border-right: 1px solid #f2f2f2;
       overflow-y: auto;
       li {
         height: 93px;
-        background: #FFFFFF;
+        background: #ffffff;
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         border-radius: 4px;
-        border-bottom: 1px solid #F2F2F2;
+        border-bottom: 1px solid #f2f2f2;
         display: flex;
         padding-top: 16px;
         padding-left: 10px;
@@ -914,7 +545,7 @@ export default {
         .contentBox__target {
           font-size: 12px;
           font-weight: 400;
-          color: #EF9868;
+          color: #ef9868;
           line-height: 17px;
           margin-top: 16px;
         }
@@ -930,5 +561,3 @@ export default {
   }
 }
 </style>
-
-
