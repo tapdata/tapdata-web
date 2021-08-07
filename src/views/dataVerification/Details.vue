@@ -1,6 +1,6 @@
 <template>
-  <section class="verification-result-wrap" v-loading="loading">
-    <div class="panel-main" style="padding: 0 20px">
+  <section class="verification-details-wrap" v-loading="loading">
+    <div class="panel-main" style="padding: 0 20px" v-if="inspect">
       <div class="main main-border">
         <div class="title mt-5">{{ inspect.name }}</div>
         <div class="text">
@@ -10,6 +10,30 @@
           <i class="iconfont icon-warning-circle"></i>
           <span>{{ errorMsg }}</span>
         </div>
+        <div class="flex align-items-center justify-content-sm-between mt-2" v-else-if="!isRoot">
+          <div class="flex align-items-center">
+            <template v-if="inspect.result !== 'passed' && !(inspect.status === 'error' && !resultInfo.parentId)">
+              <ElButton
+                v-if="!['running', 'scheduling'].includes(inspect.status)"
+                size="mini"
+                type="primary"
+                @click="diffInspect"
+                >差异校验</ElButton
+              >
+              <ElButton v-else size="mini">校验中</ElButton>
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content" style="width: 232px">
+                  对本次全量校验的差异数据结果进行再次校验，行数差异暂不支持差异校验
+                </div>
+                <i class="el-icon-warning-outline ml-2 color-info"></i>
+              </el-tooltip>
+            </template>
+          </div>
+          <div v-if="resultInfo.parentId" class="color-info ml-3" style="font-size: 12px">
+            最后校验时间: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+            <ElLink class="ml-5" type="primary" @click="toDiffHistory">校验历史</ElLink>
+          </div>
+        </div>
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
       </div>
     </div>
@@ -18,7 +42,7 @@
 </template>
 <style lang="scss">
 $margin: 10px;
-.verification-result-wrap {
+.verification-details-wrap {
   display: flex;
   width: 100%;
   height: 100%;
@@ -101,7 +125,7 @@ export default {
   methods: {
     getData() {
       this.loading = true
-      this.$api('InspectResults')
+      this.$api('Inspects')
         .get({
           filter: JSON.stringify({
             where: {
@@ -110,27 +134,39 @@ export default {
           })
         })
         .then(res => {
-          let result = res.data[0]
-          if (result) {
-            if (result) {
-              this.resultInfo = result
-              let stats = result.stats
-              this.inspect = result.inspect
-              if (stats.length) {
-                this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                this.taskId = stats[0].taskId
-                this.$refs.resultView.fetch(1)
-                if (this.type !== 'row_count') {
-                  this.$nextTick(() => {
-                    this.$refs.singleTable.setCurrentRow(stats[0])
-                  })
+          let inspect = res.data[0]
+          let inspectResult = inspect.InspectResult
+          this.inspect = inspect
+          this.$api('InspectResults')
+            .get({
+              filter: JSON.stringify({
+                where: {
+                  id: inspectResult.id
+                }
+              })
+            })
+            .then(res => {
+              let result = res.data[0]
+              if (result) {
+                if (result) {
+                  this.resultInfo = result
+                  let stats = result.stats
+                  if (stats.length) {
+                    this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+                    this.taskId = stats[0].taskId
+                    this.$refs.resultView.fetch(1)
+                    if (this.type !== 'row_count') {
+                      this.$nextTick(() => {
+                        this.$refs.singleTable.setCurrentRow(stats[0])
+                      })
+                    }
+                  }
                 }
               }
-            }
-          }
-        })
-        .finally(() => {
-          this.loading = false
+            })
+            .finally(() => {
+              this.loading = false
+            })
         })
     },
     getResultData({ current, size }) {
@@ -171,6 +207,23 @@ export default {
           }
         })
       }
+    },
+    diffInspect() {
+      let firstCheckId = this.resultInfo.firstCheckId
+      if (!firstCheckId) {
+        return this.$message.error('旧数据暂不支持二次校验')
+      }
+      this.$api('Inspects')
+        .update(
+          {
+            id: this.inspect.id
+          },
+          { status: 'scheduling', ping_time: 0, byFirstChenkId: firstCheckId }
+        )
+        .then(() => {
+          this.$message.success(this.$t('dataVerification.startVerify'))
+          this.getData()
+        })
     },
     rowClick(row) {
       this.taskId = row.taskId
@@ -215,6 +268,17 @@ export default {
         })
       })
       return data
+    },
+    toDiffHistory() {
+      let url = ''
+      let route = this.$router.resolve({
+        path: '/dataVerifyHistory',
+        query: {
+          firstCheckId: this.resultInfo.firstCheckId
+        }
+      })
+      url = route.href
+      window.open(url, '_blank')
     }
   }
 }
