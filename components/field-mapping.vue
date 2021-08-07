@@ -116,7 +116,7 @@
         v-if="['precision', 'scale'].includes(currentOperationType)"
       ></el-input-number>
       <el-select v-model="editValueType[currentOperationType]" v-if="['data_type'].includes(currentOperationType)">
-        <el-option label="VARCHAR" value="VARCHAR"></el-option>
+        <el-option :label="item" :value="item" v-for="(item, index) in typeMapping" :key="index"></el-option>
       </el-select>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose()">取 消</el-button>
