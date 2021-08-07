@@ -135,7 +135,7 @@ export default {
       }
       if (firstCheckId) {
         where = {
-          byFirstChenkId: firstCheckId
+          firstCheckId: firstCheckId
         }
       }
       let filter = {

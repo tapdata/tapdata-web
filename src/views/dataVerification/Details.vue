@@ -218,7 +218,7 @@ export default {
           {
             id: this.inspect.id
           },
-          { status: 'scheduling', ping_time: 0, byFirstChenkId: firstCheckId }
+          { status: 'scheduling', ping_time: 0, byFirstCheckId: firstCheckId }
         )
         .then(() => {
           this.$message.success(this.$t('dataVerification.startVerify'))
