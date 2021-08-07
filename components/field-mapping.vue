@@ -44,7 +44,7 @@
         <ElTableColumn label="源表长度" prop="scale" width="80"></ElTableColumn>
         <ElTableColumn label="源表精度" prop="precision" width="80"></ElTableColumn>
         <ElTableColumn label="目标表名" width="190">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'field_name')">
               <span>{{ scope.row.t_field_name }}</span>
               <i class="icon el-icon-edit-outline"></i>
@@ -55,7 +55,7 @@
           </template>
         </ElTableColumn>
         <ElTableColumn label="目标表类型">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'data_type')">
               <span>{{ scope.row.t_data_type }}</span>
               <i class="icon el-icon-arrow-down"></i>
@@ -66,7 +66,7 @@
           </template>
         </ElTableColumn>
         <ElTableColumn label="目标表长度">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div v-if="scope.row.t_scale && !scope.row.is_deleted" @click="edit(scope.row, 'scale')">
               <span>{{ scope.row.t_scale }}</span>
               <i class="icon el-icon-edit-outline"></i>
@@ -77,7 +77,7 @@
           </template>
         </ElTableColumn>
         <ElTableColumn label="目标表精度">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div v-if="scope.row.t_precision && !scope.row.is_deleted" @click="edit(scope.row, 'precision')">
               <span>{{ scope.row.t_precision }}</span>
               <i class="icon el-icon-edit-outline"></i>
@@ -269,7 +269,7 @@ export default {
     },
     //初始化字段类型
     async getTypeMapping() {
-      let promise = await this.$api('TypeMapping').get(this.currentNav.sinkQulifiedName)
+      let promise = await this.$api('TypeMapping').getId(this.currentNav.sinkDbType)
       this.typeMapping = promise.data
     },
     //字段修改统一弹窗
