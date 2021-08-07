@@ -234,11 +234,9 @@ export default {
     },
     //初始化table数据
     async initTableData() {
-      let sourceFilter = { where: { qualified_name: this.currentNav.sourceQualifiedName } }
-      let source = await this.$api('MetadataInstances').get({ filter: JSON.stringify(sourceFilter) })
+      let source = await this.$api('MetadataInstances').originalData(this.currentNav.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
-      let targetFilter = { where: { qualified_name: this.currentNav.sinkQulifiedName } }
-      this.target = await this.$api('MetadataInstances').get({ filter: JSON.stringify(targetFilter) })
+      this.target = await this.$api('MetadataInstances').originalData(this.currentNav.sinkQulifiedName)
       this.target = this.target.data && this.target.data.length > 0 ? this.target.data[0].fields : []
       this.fieldMappingTableData = []
       //源表 目标表数据组合
