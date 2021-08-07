@@ -1,7 +1,7 @@
 import PublicApi from './publicApi'
 // import axios from 'axios';
-export default class Metadata extends PublicApi {
+export default class TypeMapping extends PublicApi {
   constructor() {
-    super('/api/metadata')
+    super('/api/typeMappings/dataType')
   }
 }

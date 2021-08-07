@@ -574,7 +574,7 @@ export default {
         Object.assign(self.dataFlow, dat)
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
       })
-      if (timer) return
+      if (timer && !this.dataFlowId) return
       timer = setInterval(() => {
         self.updateDataFlow()
       }, 5000)
@@ -1088,7 +1088,11 @@ export default {
             if ((item.type === 'hbase' || item.database_type === 'hbase') && this.sync_type !== 'initial_sync') {
               checkSetting = false
             }
-            if (item.outputLanes.length && (item.databaseType === 'greenplum' || item.database_type === 'greenplum') && this.sync_type !== 'initial_sync') {
+            if (
+              item.outputLanes.length &&
+              (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
+              this.sync_type !== 'initial_sync'
+            ) {
               greentplumSettingFalg = false
             }
           })
