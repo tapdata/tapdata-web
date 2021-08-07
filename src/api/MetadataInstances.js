@@ -42,4 +42,7 @@ export default class MetadataInstancesAPI extends PublicApi {
   compareHistory(id, params) {
     return axios.get(this.url + '/compareHistory?id=' + id, params)
   }
+  originalData(qualified_name) {
+    return axios.get(this.url + '/originalData?qualified_name=' + qualified_name)
+  }
 }

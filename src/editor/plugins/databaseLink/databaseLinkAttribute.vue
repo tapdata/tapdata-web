@@ -809,6 +809,11 @@ export default {
   }
 }
 .databaseLinkDialog {
+  height: 800px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   .e-row {
     padding: 0 50px;
   }
