@@ -201,16 +201,14 @@ export default {
       this.position = '' //再次点击清空去一个样式
       //保存上一表操作
       if (this.operations.length > 0) {
-        let filter = {
-          where: {
-            qualified_name: this.currentNav.sinkQulifiedName
-          }
+        let where = {
+          qualified_name: this.currentNav.sinkQulifiedName
         }
         let data = {
           fields: this.target
         }
         this.$api('MetadataInstances')
-          .update(filter, data)
+          .update(where, data)
           .then(() => {
             this.currentNav = item
             this.position = index
