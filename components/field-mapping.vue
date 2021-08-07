@@ -4,11 +4,11 @@
     <div class="search">
       <div class="item">
         <span> 搜索表：</span>
-        <el-input v-model="searchTable" @blur="search('table')"></el-input>
+        <el-input v-model="searchTable" size="mini" @blur="search('table')"></el-input>
       </div>
       <div class="item">
         <span> 搜索字段：</span>
-        <el-input v-model="searchField" @blur="search('field')"></el-input>
+        <el-input v-model="searchField" size="mini" @blur="search('field')"></el-input>
       </div>
     </div>
     <div class="task-form-body">
@@ -37,6 +37,7 @@
         height="100%"
         :data="fieldMappingTableData"
         :row-class-name="tableRowClassName"
+        v-loading="loading"
       >
         <el-table-column type="index" width="55"> </el-table-column>
         <ElTableColumn show-overflow-tooltip label="源表名" prop="field_name" min-width="250"></ElTableColumn>
@@ -129,12 +130,19 @@
 <script>
 export default {
   name: 'FieldMapping',
-  props: ['fieldMappingNavData', 'field_process'],
+  props: {
+    fieldMappingNavData: Array,
+    field_process: Array,
+    remoteMethod: Function,
+    typeMappingMethod: Function
+  },
   data() {
     return {
-      currentNav: '',
+      selectRow: '',
       searchField: '',
       searchTable: '',
+      loading: false,
+      typeMapping: [],
       defaultFieldMappingNavData: '',
       defaultFieldMappingTableData: '',
       position: 0,
@@ -163,8 +171,7 @@ export default {
   mounted() {
     this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
     this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData))
-    //默认选中第一个
-    this.currentNav = this.fieldMappingNavData[0]
+    this.selectRow = this.fieldMappingNavData[0]
     this.initTableData()
   },
   methods: {
@@ -199,68 +206,41 @@ export default {
     },
     select(item, index) {
       this.position = '' //再次点击清空去一个样式
-      //保存上一表操作
-      if (this.operations.length > 0) {
-        let where = {
-          qualified_name: this.currentNav.sinkQulifiedName
-        }
-        let data = {
-          fields: this.target
-        }
-        this.$api('MetadataInstances')
-          .update(where, data)
-          .then(() => {
-            this.currentNav = item
-            this.position = index
-            this.initTableData()
-            this.getTypeMapping()
-            this.getFieldProcess()
-          })
-      } else {
-        this.currentNav = item
-        this.position = index
-        this.initTableData()
-        this.getTypeMapping()
-        if (this.field_process.length > 0) {
-          this.getFieldProcess()
-        }
+      this.$emit('row-click', item, this.operations, this.target)
+      this.selectRow = item
+      this.position = index
+      this.initTableData()
+      this.initTypeMapping()
+      if (this.field_process.length > 0) {
+        this.getFieldProcess()
       }
     },
     //获取字段处理器
     getFieldProcess() {
       this.operations = ''
-      let field_process = this.field_process.filter(process => process.table_id === this.currentNav.sourceQualifiedName)
+      let field_process = this.field_process.filter(process => process.table_id === this.selectRow.sourceQualifiedName)
       if (field_process.length > 0) {
         this.operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
       }
     },
     //初始化table数据
-    async initTableData() {
-      let source = await this.$api('MetadataInstances').originalData(this.currentNav.sourceQualifiedName)
-      source = source.data && source.data.length > 0 ? source.data[0].fields : []
-      this.target = await this.$api('MetadataInstances').originalData(this.currentNav.sinkQulifiedName)
-      this.target = this.target.data && this.target.data.length > 0 ? this.target.data[0].fields : []
-      this.fieldMappingTableData = []
-      //源表 目标表数据组合
-      source.forEach(item => {
-        this.target.forEach(field => {
-          if (item.field_name === field.field_name) {
-            let node = {
-              t_id: field.id,
-              t_field_name: field.field_name,
-              t_data_type: field.data_type,
-              t_scale: field.scale,
-              t_precision: field.precision
-            }
-            this.fieldMappingTableData.push(Object.assign({}, item, node))
-          }
-        })
+    initTableData() {
+      this.loading = true
+      this.$nextTick(() => {
+        this.remoteMethod &&
+          this.remoteMethod(this.selectRow)
+            .then(({ data, target }) => {
+              this.target = target
+              this.fieldMappingTableData = data
+              this.fieldCount = this.fieldMappingTableData.length
+            })
+            .finally(() => {
+              this.loading = false
+            })
       })
-      this.fieldCount = this.fieldMappingTableData.length
     },
     //更新table数据
     updateTableData(id, key, value) {
-      console.log(id, key, value)
       this.fieldMappingTableData.forEach(field => {
         if (field.id === id) {
           field[key] = value
@@ -268,9 +248,13 @@ export default {
       })
     },
     //初始化字段类型
-    async getTypeMapping() {
-      let promise = await this.$api('TypeMapping').getId(this.currentNav.sinkDbType)
-      this.typeMapping = promise.data
+    initTypeMapping() {
+      this.$nextTick(() => {
+        this.typeMappingMethod &&
+          this.typeMappingMethod(this.selectRow).then(data => {
+            this.typeMapping = data
+          })
+      })
     },
     //字段修改统一弹窗
     edit(row, type) {
@@ -310,6 +294,7 @@ export default {
         precision: '',
         scale: ''
       }
+      this.$emit('row-click', this.selectRow, this.operations, this.target)
     },
     //字段删除
     del(id, value) {
@@ -440,16 +425,16 @@ export default {
     },
     saveFileOperations() {
       let field_process = {
-        table_id: this.currentNav.sourceQualifiedName,
-        table_name: this.currentNav.sourceObjectName,
+        table_id: this.selectRow.sourceQualifiedName,
+        table_name: this.selectRow.sourceObjectName,
         operations: this.operations
       }
       if (this.field_process && this.field_process.length > 0) {
-        let process = this.field_process.filter(fields => fields.table_id === this.currentNav.sourceQualifiedName)
+        let process = this.field_process.filter(fields => fields.table_id === this.selectRow.sourceQualifiedName)
         if (process.length > 0) {
           field_process = process[0]
-          field_process.table_id = this.currentNav.sourceQualifiedName
-          field_process.table_name = this.currentNav.sourceObjectName
+          field_process.table_id = this.selectRow.sourceQualifiedName
+          field_process.table_name = this.selectRow.sourceObjectName
           field_process.operations = this.operations
         } else this.field_process.push(field_process)
       } else this.field_process.push(field_process)
@@ -494,7 +479,7 @@ export default {
       margin-right: 20px;
       span {
         display: inline-block;
-        width: 80px;
+        width: 110px;
       }
     }
   }
