@@ -560,13 +560,16 @@ export default {
       let fieldMappingTableData = []
       source.forEach(item => {
         target.forEach(field => {
-          if (item.field_name === field.field_name) {
+          //先检查是否被改过名
+          let checked = this.handleFieldName(row, field.field_name)
+          if (item.field_name === field.field_name || checked) {
             let node = {
               t_id: field.id,
               t_field_name: field.field_name,
               t_data_type: field.data_type,
               t_scale: field.scale,
-              t_precision: field.precision
+              t_precision: field.precision,
+              is_deleted: field.is_deleted //目标决定这个字段是被删除？
             }
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
@@ -576,6 +579,27 @@ export default {
         data: fieldMappingTableData,
         target: target
       }
+    },
+    //判断是否改名
+    getFieldOperations(row) {
+      let operations = []
+      if (!this.model.field_process || this.model.field_process.length === 0) return
+      let field_process = this.model.field_process.filter(process => process.table_id === row.sourceQualifiedName)
+      if (field_process.length > 0) {
+        operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
+      }
+      return operations
+    },
+    //判断是否改名
+    handleFieldName(row, fieldName) {
+      let operations = this.getFieldOperations(row)
+      if (operations.length === 0) return
+      let result = false
+      let ops = operations.filter(op => op.field === fieldName)
+      if (ops.length > 0) {
+        result = true
+      }
+      return result
     },
     //获取typeMapping
     async getTypeMapping(row) {

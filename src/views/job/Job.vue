@@ -821,7 +821,11 @@ export default {
         if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
           let sourceId = cell.source.id
           let targetId = cell.target.id
-          if (sourceId && stages[sourceId]) stages[sourceId].outputLanes.push(targetId)
+          if (sourceId && stages[sourceId]) {
+            stages[sourceId].outputLanes.push(targetId)
+            //添加字段处理器
+            stages[sourceId]['field_process'] = editorData.field_process
+          }
           if (targetId && stages[targetId]) stages[targetId].inputLanes.push(sourceId)
         }
       })
