@@ -215,6 +215,9 @@
         :field_process="model.field_process"
         @row-click="saveOperations"
       ></FieldMapping>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
+      </div>
     </el-dialog>
     <!-- <el-dialog
 			:title="$t('message.modifyName')"
@@ -569,11 +572,11 @@ export default {
             t_precision: field.precision,
             is_deleted: field.is_deleted //目标决定这个字段是被删除？
           }
-          let ops = this.handleFieldName(row, field.field_name)
           if (item.field_name === field.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
-          if (!ops) return
+          let ops = this.handleFieldName(row, field.field_name)
+          if (!ops || ops?.length === 0) return
           ops = ops[0]
           if (ops.operand === field.field_name && ops.field === item.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
@@ -607,9 +610,15 @@ export default {
       let promise = await this.$api('TypeMapping').getId(row.sinkDbType)
       return promise?.data
     },
+    saveReturnData() {
+      //保存字段映射
+      let returnData = this.$refs.fieldMappingDom.returnData()
+      this.saveOperations(returnData.row, returnData.operations, returnData.target)
+      this.dialogFieldProcessVisible = false
+    },
     //保存字段处理器
     saveOperations(row, operations, target) {
-      if (operations.length === 0) return
+      if (!operations || operations?.length === 0 || !target || target?.length === 0) return
       let where = {
         qualified_name: row.sinkQulifiedName
       }
