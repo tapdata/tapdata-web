@@ -72,8 +72,12 @@
             <!-- 步骤5 -->
             <div class="step-5" v-if="steps[activeStep].index === 5">
               <FieldMapping
+                ref="fieldMappingDom"
+                :remoteMethod="intiFieldMappingTableData"
+                :typeMappingMethod="getTypeMapping"
                 :fieldMappingNavData="fieldMappingNavData"
                 :field_process="transferData.field_process"
+                @row-click="saveOperations"
               ></FieldMapping>
             </div>
           </el-main>
@@ -654,14 +658,19 @@ export default {
         })
       }
       if (type === 'mapping') {
+        this.transferData = this.$refs.transfer.returnData()
+        if (this.transferData.selectSourceArr.length === 0) {
+          this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
+          return
+        }
         this.activeStep += 1
-        this.metaData()
+        this.fieldProcess()
       }
     },
     back() {
       let type = this.steps[this.activeStep].type || 'instance'
       //将复制表内容存起来
-      if (type === 'mapping') {
+      if (type === 'mapping' || type === 'table') {
         this.transferData = this.$refs.transfer.returnData()
       }
       this.activeStep -= 1
@@ -975,11 +984,10 @@ export default {
       if (this.loading) {
         return
       }
+      //保存字段映射
+      let returnData = this.$refs.fieldMapping.returnData()
+      this.saveOperations(returnData.row, returnData.operations, returnData.target)
       this.transferData = this.$refs.transfer.returnData()
-      if (this.transferData.selectSourceArr.length === 0) {
-        this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
-        return
-      }
       let postData = this.daft()
       let promise = null
       if (this.id) {
@@ -1021,31 +1029,84 @@ export default {
       })
     },
     //表设置
-    metaData() {
-      //let promise = this.$axios.patch('tm/api/DataFlows/metadata', postData)
-      let data = [
-        {
-          sourceQualifiedName: '', // MetadataInstances的唯一键，源表
-          sourceDbName: 'dbName', // 源库名
-          sourceObjectName: 'tableName', // 源表名
-          sourceFieldCount: 16, // 源表字段总数
-          sinkQulifiedName: '', // MetadataInstances的唯一键，目标表
-          sinkDbName: 'dbName', // 目标库名
-          sinkObjectName: 'tableName', // 目标表名
-          invalid: true // 是否可用(1. 有字段无法映射，置空，则需要手动处理)
-        },
-        {
-          sourceQualifiedName: '', // MetadataInstances的唯一键，源表
-          sourceDbName: 'fannie', // 源库名
-          sourceObjectName: 'fannie', // 源表名
-          sourceFieldCount: 16, // 源表字段总数
-          sinkQulifiedName: '', // MetadataInstances的唯一键，目标表
-          sinkDbName: 'fannie', // 目标库名
-          sinkObjectName: 'fannie', // 目标表名
-          invalid: true // 是否可用(1. 有字段无法映射，置空，则需要手动处理)
-        }
-      ]
-      this.fieldMappingNavData = data
+    fieldProcess() {
+      let data = this.daft()
+      if (!data) return
+      let promise = this.$axios.post('tm/api/DataFlows/metadata', data)
+      promise.then(data => {
+        this.fieldMappingNavData = data?.data
+      })
+    },
+    //获取表设置
+    async intiFieldMappingTableData(row) {
+      let source = await this.$axios.get(
+        'tm/api/MetadataInstances/originalData?qualified_name=' + row.sourceQualifiedName
+      )
+      source = source.data && source.data.length > 0 ? source.data[0].fields : []
+      let target = await this.$axios.get('tm/api/MetadataInstances/originalData?qualified_name=' + row.sinkQulifiedName)
+      target = target.data && target.data.length > 0 ? target.data[0].fields : []
+      //源表 目标表数据组合
+      let fieldMappingTableData = []
+      source.forEach(item => {
+        target.forEach(field => {
+          //先检查是否被改过名
+          let checked = this.handleFieldName(row, field.field_name)
+          if (item.field_name === field.field_name || checked) {
+            let node = {
+              t_id: field.id,
+              t_field_name: field.field_name,
+              t_data_type: field.data_type,
+              t_scale: field.scale,
+              t_precision: field.precision,
+              is_deleted: field.is_deleted //目标决定这个字段是被删除？
+            }
+            fieldMappingTableData.push(Object.assign({}, item, node))
+          }
+        })
+      })
+      return {
+        data: fieldMappingTableData,
+        target: target
+      }
+    },
+    //判断是否改名
+    getFieldOperations(row) {
+      let operations = []
+      if (!this.model.field_process || this.model.field_process.length === 0) return
+      let field_process = this.model.field_process.filter(process => process.table_id === row.sourceQualifiedName)
+      if (field_process.length > 0) {
+        operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
+      }
+      return operations
+    },
+    //判断是否改名
+    handleFieldName(row, fieldName) {
+      let operations = this.getFieldOperations(row)
+      if (operations.length === 0) return
+      let result = false
+      let ops = operations.filter(op => op.field === fieldName)
+      if (ops.length > 0) {
+        result = true
+      }
+      return result
+    },
+    //获取typeMapping
+    async getTypeMapping(row) {
+      let promise = await this.$axios.get('tm/api/typeMappings/dataType?databaseType=' + row.sinkDbTyp)
+      return promise?.data
+    },
+    //保存字段处理器
+    saveOperations(row, operations, target) {
+      if (operations.length === 0) return
+      let where = {
+        qualified_name: row.sinkQulifiedName
+      }
+      let data = {
+        fields: target
+      }
+      if (typeof where === 'object') where = JSON.stringify(where)
+      this.axios.post('tm/api/MetadataInstances/update?where=' + encodeURIComponent(where), data)
+      this.transferData.field_process = this.$refs.fieldMappingDom.saveFileOperations()
     }
   }
 }
