@@ -173,6 +173,7 @@ export default {
     this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData))
     this.selectRow = this.fieldMappingNavData[0]
     this.initTableData()
+    this.initTypeMapping()
   },
   methods: {
     search(type) {
