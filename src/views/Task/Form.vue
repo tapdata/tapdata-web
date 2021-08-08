@@ -1064,7 +1064,7 @@ export default {
           if (item.field_name === field.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
-          if (ops.length === 0) return
+          if (!ops || ops?.length === 0) return
           ops = ops[0]
           if (ops.operand === field.field_name && ops.field === item.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
@@ -1097,12 +1097,12 @@ export default {
     },
     //获取typeMapping
     async getTypeMapping(row) {
-      let data = await this.$axios.get('tm/api/typeMappings/dataType?databaseType=' + row.sinkDbTyp)
+      let data = await this.$axios.get('tm/api/typeMappings/dataType?databaseType=' + row.sinkDbType)
       return data
     },
     //保存字段处理器
     saveOperations(row, operations, target) {
-      if (operations.length === 0) return
+      if (!operations || operations?.length === 0 || !target || target?.length === 0) return
       let where = {
         qualified_name: row.sinkQulifiedName
       }
