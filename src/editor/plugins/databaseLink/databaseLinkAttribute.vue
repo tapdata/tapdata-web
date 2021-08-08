@@ -573,7 +573,7 @@ export default {
           if (item.field_name === field.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
-          if (ops.length === 0) return
+          if (!ops) return
           ops = ops[0]
           if (ops.operand === field.field_name && ops.field === item.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
