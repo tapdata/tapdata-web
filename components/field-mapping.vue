@@ -206,7 +206,7 @@ export default {
     },
     select(item, index) {
       this.position = '' //再次点击清空去一个样式
-      this.$emit('row-click', item, this.operations, this.target)
+      this.$emit('row-click', this.selectRow, this.operations, this.target)
       this.selectRow = item
       this.position = index
       this.initTableData()
