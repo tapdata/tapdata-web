@@ -440,6 +440,13 @@ export default {
       } else this.field_process.push(field_process)
       return this.field_process
     },
+    returnData() {
+      return {
+        row: this.selectRow,
+        operations: this.operations,
+        target: this.target
+      }
+    },
     //动态样式
     tableRowClassName({ row }) {
       if (row.is_deleted) {
@@ -455,6 +462,9 @@ export default {
 .field-mapping {
   .el-table .delete-row {
     background: #f2f2f2;
+  }
+  .el-table th {
+    background: #f4f5f7;
   }
 }
 </style>
@@ -479,7 +489,7 @@ export default {
       margin-right: 20px;
       span {
         display: inline-block;
-        width: 110px;
+        width: 115px;
       }
     }
   }
