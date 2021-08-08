@@ -271,6 +271,17 @@ export default {
       let value = this.editValueType[this.currentOperationType]
       //任务-字段处理器
       if (key === 'field_name') {
+        let option = this.target.filter(v => v.id === id)
+        if (option.length === 0) return
+        option = option[0]
+        if (value === option.field_name) {
+          this.handleClose() //名字无改变
+          return
+        }
+        let existsName = this.handleExistsName(value) //检查是否重名
+        if (existsName) {
+          return
+        }
         this.fieldProcessRename(id, key, value)
       } else if (key === 'data_type') {
         this.fieldProcessConvert(id, key, value)
@@ -294,7 +305,6 @@ export default {
         precision: '',
         scale: ''
       }
-      this.$emit('row-click', this.selectRow, this.operations, this.target)
     },
     //字段删除
     del(id, value) {
@@ -302,7 +312,7 @@ export default {
       if (value) {
         this.fieldProcessRemove(id)
       } else {
-        this.fieldProcessCancelRemove(id, 'is_deleted', value)
+        this.fieldProcessCancelRemove(id)
       }
       //元数据-字段操作
       this.target.forEach(field => {
@@ -316,10 +326,6 @@ export default {
     //目标任务 字段处理器
     //rename操作
     fieldProcessRename(id, key, value) {
-      let existsName = this.handleExistsName(value) //检查是否重名
-      if (existsName) {
-        return
-      }
       //字段名限制
       if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value)) {
         this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
@@ -337,7 +343,8 @@ export default {
         table_name: option.table_name,
         type: option.data_type,
         primary_key_position: option.primary_key_position,
-        label: value
+        label: value,
+        original_field_name: option.original_field_name
       }
       let ops = this.operations.filter(v => v.id === option.id && v.op === 'RENAME')
       if (ops.length === 0) {
@@ -360,6 +367,7 @@ export default {
     },
     //删除操作
     fieldProcessRemove(id) {
+      this.restOperation(id) //先还原被操作
       for (let i = 0; i < this.operations.length; i++) {
         // 删除所有的rename convert的操作
         let ops = this.operations[i]
@@ -379,13 +387,15 @@ export default {
         table_name: option.table_name,
         type: option.data_type,
         primary_key_position: option.primary_key_position,
-        label: option.field_name
+        label: option.field_name,
+        original_field_name: option.original_field_name
       }
       this.operations.push(op)
       //更新当前选中行数
       this.fieldCount = this.fieldCount - 1
     },
-    fieldProcessCancelRemove(id, key, value) {
+    fieldProcessCancelRemove(id) {
+      this.restOperation(id)
       for (let i = 0; i < this.operations.length; i++) {
         // 撤销删除操作
         let ops = this.operations[i]
@@ -393,8 +403,6 @@ export default {
           this.operations.splice(i, 1)
         }
       }
-      //若rename 还原name
-      this.fieldProcessRename(id, key, value)
       //更新当前选中行数
       this.fieldCount = this.fieldCount + 1
     },
@@ -412,6 +420,7 @@ export default {
         table_name: option.table_name,
         type: option.data_type,
         primary_key_position: option.primary_key_position,
+        original_field_name: option.original_field_name,
         label: option.value
       }
       let ops = this.operations.filter(v => v.id === option.id && v.op === 'CONVERT')
@@ -421,6 +430,28 @@ export default {
         op = ops[0]
         op.operand = value
         op.label = value
+      }
+    },
+    restOperation(id) {
+      let opr = this.operations.filter(v => v.id === id && v.op === 'RENAME')
+      if (opr.length > 0) {
+        //元数据-字段操作
+        this.target.forEach(field => {
+          if (field.id === id) {
+            field.field_name = opr[0].original_field_name
+            this.updateTableData(id, 't_field_name', opr[0].original_field_name)
+          }
+        })
+      }
+      let opc = this.operations.filter(v => v.id === id && v.op === 'CONVERT')
+      if (opc.length > 0) {
+        //元数据-字段操作
+        this.target.forEach(field => {
+          if (field.id === id) {
+            field.data_type = opc[0].originalDataType
+            this.updateTableData(id, 't_data_type', opc[0].originalDataType)
+          }
+        })
       }
     },
     saveFileOperations() {
