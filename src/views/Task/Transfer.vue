@@ -18,11 +18,12 @@
     >
       <span slot-scope="{ option }">
         <span> {{ option.label }}</span>
-        <span
-          v-if="selectSourceArr.includes(option.key) && !isTwoWay"
-          @click.stop.prevent="handleFiled(option)"
-          class="el-icon-setting field-transfer__icon"
-        ></span>
+        <!-- 字段映射 放在表设置了 -->
+        <!--        <span-->
+        <!--          v-if="selectSourceArr.includes(option.key) && !isTwoWay"-->
+        <!--          @click.stop.prevent="handleFiled(option)"-->
+        <!--          class="el-icon-setting field-transfer__icon"-->
+        <!--        ></span>-->
       </span>
     </el-transfer>
     <el-dialog
