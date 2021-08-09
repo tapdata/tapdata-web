@@ -1142,6 +1142,7 @@ const tc = {
             },
             originalName: '原字段名: ',
             originalType: '原類型: ',
+            fieldDesc: '字段說明: ',
             errorUndefined:
               '檢測到源節點的模型有變化，字段處理器無法使用，請在上一級節點的配置面板點擊更新模型按鈕以更新模型',
             errorOperationSaveTip: '字段處理節點檢測到衝突待處理',
@@ -3118,8 +3119,8 @@ const tc = {
     verifyContentLength: '長度不能超過100',
     msgPostApi: '請先基於這張表發布一個api',
     msgNoValidApi: '沒有可用API服務器',
-    msgNotStartApi: '沒有啟用api服務？',
-    ifDel: '是否刪除當前行？',
+    msgNotStartApi: '沒有啟用api服務？ ',
+    ifDel: '是否刪除當前行？ ',
     unlikeAjv: '輸入的內容不符合數據規則',
     allUpdateSuccessTip1: '操作成功，一共修改',
     allUpdateSuccessTip2: '條數據',
@@ -3129,7 +3130,17 @@ const tc = {
     countTitle: '重新統計',
     connectTip: '請至少選擇一個數據源',
     countTip: '正在統計，請稍後',
-    errCheck: '顯示出錯列'
+    errCheck: '顯示出錯列',
+    dataRevision: '數據修訂',
+    modifyContent: '修訂內容',
+    revisionType: '修訂類型',
+    selectMidifyType: '請選擇要修改的類型',
+    baseBoolean: '布爾值',
+    basedate: '日期',
+    baseString: '字符串',
+    baseArray: '數組',
+    baseNumber: '數字',
+    baseDictionary: '字典對象'
   },
   dictionary: {
     creatDictionary: '創建字典模板',

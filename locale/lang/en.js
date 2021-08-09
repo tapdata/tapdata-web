@@ -1170,6 +1170,7 @@ const en = {
             },
             originalName: 'Original field name: ',
             originalType: 'Original type: ',
+            fieldDesc: 'Comment: ',
             errorUndefined:
               'The model of the source node has changed, so that the field processor does not work, please click the UPDATE MODEL button in the configuration panel of the upper node to handle this issue',
             errorOperationSaveTip: 'The field processor node has conflict to be handled',
@@ -3205,7 +3206,17 @@ const en = {
     countTitle: 'Recount',
     connectTip: 'Select at least one data source',
     countTip: 'Statistic in progress, please hold on',
-    errCheck: 'Display error columns'
+    errCheck: 'Display error columns',
+    dataRevision: 'Data Revision',
+    modifyContent: 'Revision Content',
+    revisionType: 'Revision Type',
+    selectMidifyType: 'Please select the type to be modified',
+    baseBoolean: 'Boolean',
+    basedate: 'Date',
+    baseString: 'String',
+    baseArray: 'Array',
+    baseNumber: 'Number',
+    baseDictionary: 'Dictionary Object'
   },
   dictionary: {
     creatDictionary: 'Create a dictionary template',
