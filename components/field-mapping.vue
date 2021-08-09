@@ -34,7 +34,7 @@
         </ul>
       </div>
       <El-table
-        class="connection-table table-border"
+        class="field-mapping-table table-border"
         height="100%"
         :data="fieldMappingTableData"
         :row-class-name="tableRowClassName"
@@ -105,7 +105,7 @@
             <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
           </template>
         </ElTableColumn>
-        <div class="connection-table__empty" slot="empty">
+        <div class="field-mapping-table__empty" slot="empty">
           <i class="el-icon-folder-opened"></i>
           <span class="ml-1">暂无数据</span>
         </div>
