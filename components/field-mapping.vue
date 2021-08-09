@@ -181,7 +181,6 @@ export default {
   },
   mounted() {
     this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
-    this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData))
     this.selectRow = this.fieldMappingNavData[0]
     this.initTableData()
     this.initTypeMapping()
@@ -229,7 +228,7 @@ export default {
     },
     //获取字段处理器
     getFieldProcess() {
-      this.operations = ''
+      this.operations = []
       let field_process = this.field_process.filter(process => process.table_id === this.selectRow.sourceQualifiedName)
       if (field_process.length > 0) {
         this.operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
@@ -245,6 +244,7 @@ export default {
               this.target = target
               this.fieldMappingTableData = data
               this.fieldCount = this.fieldMappingTableData.length
+              this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
             .finally(() => {
               this.loading = false
