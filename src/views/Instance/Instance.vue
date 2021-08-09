@@ -671,7 +671,7 @@ export default {
     },
     upgradingProgres(row) {
       let { tmInfo } = row
-      return tmInfo?.progres ?? 0
+      return Number(tmInfo?.progres || 0)
     },
     upgradeFailedFlag(row) {
       let { tmInfo } = row
