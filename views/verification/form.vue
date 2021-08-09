@@ -378,7 +378,7 @@ export default {
       }).then(data => {
         this.flowOptions = data || []
         let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
-        this.form.name = this.form.name || flow.name
+        this.form.name = this.form.name || flow.name || ''
         this.form['dataFlowName'] = flow.name
         let id = this.$route.params.id
         if (id) {
