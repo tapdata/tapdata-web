@@ -596,6 +596,9 @@ export default {
         }
       }
     }
+    .icon-yuechi1 {
+      color: darkorange;
+    }
   }
 }
 </style>
