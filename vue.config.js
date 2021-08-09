@@ -142,6 +142,7 @@ module.exports = {
         ]
       })
       .end()
+    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('src/_packages/tapdata-web-core'))
   },
   css: {
     loaderOptions: {

@@ -43,9 +43,7 @@
                 class="mr-2"
                 style="width: 24px; height: 24px"
                 :src="
-                  require('../../../packages/tapdata-web-core/assets/images/connection-type/' +
-                    scope.row.database_type.toLowerCase() +
-                    '.png')
+                  require('web-core/assets/images/connection-type/' + scope.row.database_type.toLowerCase() + '.png')
                 "
               />
               <ElLink

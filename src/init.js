@@ -9,7 +9,7 @@ import VueClipboard from 'vue-clipboard2'
 import { Message } from 'element-ui'
 import ElementLocale from 'element-ui/lib/locale'
 import settings from './settings'
-import TapdataWebCore, { langs } from '../packages/tapdata-web-core'
+import TapdataWebCore, { langs } from 'web-core'
 import VueI18n from 'vue-i18n'
 
 require('./assets/theme/dfs/index.scss')
