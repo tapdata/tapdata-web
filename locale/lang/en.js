@@ -3329,7 +3329,7 @@ const en = {
     tip: '*Current task progress view only supports: MySQL, Oracle, SQL Server, PostgreSQL and MongoDB',
     fullSyuncProgress: 'Full synchronization progress',
     takeTime: 'It is estimated that it will take time to complete the full amount',
-    planMigrationTableNum: 'Total number of tables to be migrated',
+    planMigrationTableNum: 'Number of planned migration tables',
     completedMigrationTableNum: 'Number of completed migration tables',
     planMigrateData: 'Planned migration data volume (rows)',
     completedMigrateData: 'The amount of data that has been migrated (rows)',
