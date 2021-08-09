@@ -1142,6 +1142,7 @@ const tc = {
             },
             originalName: '原字段名: ',
             originalType: '原類型: ',
+            fieldDesc: '字段說明: ',
             errorUndefined:
               '檢測到源節點的模型有變化，字段處理器無法使用，請在上一級節點的配置面板點擊更新模型按鈕以更新模型',
             errorOperationSaveTip: '字段處理節點檢測到衝突待處理',
