@@ -65,6 +65,7 @@
                     >{{ $t('editor.cell.processor.field.form.originalType')
                     }}{{ handleOriginalType(data.type, data.id) }}</span
                   >
+                  <div v-if="data.comment">{{ $t('editor.cell.processor.field.form.fieldDesc') + data.comment }}</div>
                 </span>
                 <span
                   class="e-label"
