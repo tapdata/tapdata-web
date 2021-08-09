@@ -480,7 +480,6 @@ export default {
             let index = targetCellIds.indexOf(formData.connectionId)
             if (index >= 0) {
               targetCellIds.splice(index, 1)
-
             } else {
               return formData.connectionId
             }

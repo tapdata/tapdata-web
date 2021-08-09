@@ -187,7 +187,6 @@ import CreateTable from '@/components/dialog/createTable'
 
 import ws from '@/api/ws'
 const connections = factory('connections')
-let allschema = []
 // let editorMonitor = null;
 export default {
   name: 'ApiNode',
