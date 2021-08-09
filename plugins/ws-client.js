@@ -36,7 +36,6 @@ class WSClient extends EventEmitter {
         console.log('websocket 连接失败，准备尝试重连', e)
       }
       this.reconnect()
-      return
     }
   }
 
