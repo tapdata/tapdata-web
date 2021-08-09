@@ -135,7 +135,7 @@ export default {
       }
       if (firstCheckId) {
         where = {
-          firstCheckId: firstCheckId
+          firstCheckId: { regexp: `^${firstCheckId}$` }
         }
       }
       let filter = {
