@@ -187,9 +187,7 @@
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center" v-if="showAutoUpgrade">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">自动升级</ElButton>
-            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
-              (Agent离线时无法使用自动升级)
-            </div>
+            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">(Agent离线时无法使用自动升级)</div>
           </div>
           <div>
             <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
