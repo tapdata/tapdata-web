@@ -26,8 +26,8 @@ select {
   padding: 0;
 }
 body {
-  font-family: PingFang SC, Roboto, Helvetica Neue, Segoe UI, Verdana, Tahoma,
-    Hiragino Sans GB, Microsoft YaHei, WenQuanYi Micro Hei, sans-serif;
+  font-family: PingFang SC, Roboto, Helvetica Neue, Segoe UI, Verdana, Tahoma, Hiragino Sans GB, Microsoft YaHei,
+    WenQuanYi Micro Hei, sans-serif;
 }
 i,
 address,
@@ -306,6 +306,9 @@ $borderColor: (
 }
 .color-primary {
   color: map-get($color, primary);
+}
+.color-info {
+  color: map-get($color, info);
 }
 .el-input__inner {
   border-radius: 2px;
