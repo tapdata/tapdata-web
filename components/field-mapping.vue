@@ -40,7 +40,17 @@
         v-loading="loading"
       >
         <el-table-column type="index" width="55"> </el-table-column>
-        <ElTableColumn show-overflow-tooltip label="源表名" prop="field_name" min-width="250"></ElTableColumn>
+        <ElTableColumn show-overflow-tooltip label="源表名" prop="field_name" min-width="250">
+          <template slot-scope="scope">
+            <div v-if="scope.row.primary_key_position === 1" @click="edit(scope.row, 'field_name')">
+              <span>{{ scope.row.field_name }}</span>
+              <i class="iconfont icon-yuechi1"></i>
+            </div>
+            <div v-else>
+              <span>{{ scope.row.field_name }}</span>
+            </div>
+          </template>
+        </ElTableColumn>
         <ElTableColumn label="源表类型" prop="data_type"></ElTableColumn>
         <ElTableColumn label="源表长度" prop="scale" width="80"></ElTableColumn>
         <ElTableColumn label="源表精度" prop="precision" width="80"></ElTableColumn>
