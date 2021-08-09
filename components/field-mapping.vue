@@ -34,14 +34,24 @@
         </ul>
       </div>
       <El-table
-        class="connection-table table-border"
+        class="field-mapping-table table-border"
         height="100%"
         :data="fieldMappingTableData"
         :row-class-name="tableRowClassName"
         v-loading="loading"
       >
         <el-table-column type="index" width="55"> </el-table-column>
-        <ElTableColumn show-overflow-tooltip label="源表名" prop="field_name" min-width="250"></ElTableColumn>
+        <ElTableColumn show-overflow-tooltip label="源表名" prop="field_name" min-width="250">
+          <template slot-scope="scope">
+            <div v-if="scope.row.primary_key_position === 1" @click="edit(scope.row, 'field_name')">
+              <span>{{ scope.row.field_name }}</span>
+              <i class="iconfont icon-yuechi1"></i>
+            </div>
+            <div v-else>
+              <span>{{ scope.row.field_name }}</span>
+            </div>
+          </template>
+        </ElTableColumn>
         <ElTableColumn label="源表类型" prop="data_type"></ElTableColumn>
         <ElTableColumn label="源表长度" prop="scale" width="80"></ElTableColumn>
         <ElTableColumn label="源表精度" prop="precision" width="80"></ElTableColumn>
@@ -95,7 +105,7 @@
             <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
           </template>
         </ElTableColumn>
-        <div class="connection-table__empty" slot="empty">
+        <div class="field-mapping-table__empty" slot="empty">
           <i class="el-icon-folder-opened"></i>
           <span class="ml-1">暂无数据</span>
         </div>
@@ -171,7 +181,6 @@ export default {
   },
   mounted() {
     this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
-    this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData))
     this.selectRow = this.fieldMappingNavData[0]
     this.initTableData()
     this.initTypeMapping()
@@ -219,7 +228,7 @@ export default {
     },
     //获取字段处理器
     getFieldProcess() {
-      this.operations = ''
+      this.operations = []
       let field_process = this.field_process.filter(process => process.table_id === this.selectRow.sourceQualifiedName)
       if (field_process.length > 0) {
         this.operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
@@ -235,6 +244,7 @@ export default {
               this.target = target
               this.fieldMappingTableData = data
               this.fieldCount = this.fieldMappingTableData.length
+              this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
             .finally(() => {
               this.loading = false
@@ -585,6 +595,9 @@ export default {
           margin-top: 10px;
         }
       }
+    }
+    .icon-yuechi1 {
+      color: darkorange;
     }
   }
 }
