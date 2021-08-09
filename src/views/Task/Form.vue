@@ -736,6 +736,9 @@ export default {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')
           }
+          if (this.dataSourceModel['target_databaseType'] === 'kafka') {
+            this.changeConfig([], 'setting_distinctWriteType')
+          }
 
           break
         }
@@ -881,6 +884,20 @@ export default {
           let op = items.find(it => it.field === 'isOpenAutoDDL')
           if (op) {
             op.show = false
+          }
+          break
+        }
+        case 'setting_distinctWriteType': {
+          //kafka 作为目标 不支持删除模式
+          let op = items.find(it => it.field === 'distinctWriteType')
+          if (op) {
+            op.options = [
+              {
+                label: '更新写入模式',
+                tip: '更新写入模式会判断源端的每条数据在目标端是否存在，若存在则更新，不存在则新增。',
+                value: 'intellect'
+              }
+            ]
           }
           break
         }
