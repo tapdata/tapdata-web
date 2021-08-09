@@ -3205,7 +3205,17 @@ const en = {
     countTitle: 'Recount',
     connectTip: 'Select at least one data source',
     countTip: 'Statistic in progress, please hold on',
-    errCheck: 'Display error columns'
+    errCheck: 'Display error columns',
+    dataRevision: 'Data Revision',
+    modifyContent: 'Revision Content',
+    revisionType: 'Revision Type',
+    selectMidifyType: 'Please select the type to be modified',
+    baseBoolean: 'Boolean',
+    basedate: 'Date',
+    baseString: 'String',
+    baseArray: 'Array',
+    baseNumber: 'Number',
+    baseDictionary: 'Dictionary Object'
   },
   dictionary: {
     creatDictionary: 'Create a dictionary template',

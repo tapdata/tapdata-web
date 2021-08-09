@@ -3144,7 +3144,17 @@ const cn = {
     countTitle: '重新统计',
     connectTip: '请至少选择一个数据源',
     countTip: '正在统计，请稍后',
-    errCheck: '显示出错列'
+    errCheck: '显示出错列',
+    dataRevision: '数据修订',
+    modifyContent: '修订内容',
+    revisionType: '修订类型',
+    selectMidifyType: '请选择要修改的类型',
+    baseBoolean: '布尔值',
+    basedate: '日期',
+    baseString: '字符串',
+    baseArray: '数组',
+    baseNumber: '数字',
+    baseDictionary: '字典对象'
   },
   dictionary: {
     creatDictionary: '创建字典模板',
