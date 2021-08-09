@@ -301,7 +301,7 @@ export default {
       transform: scale(1);
     }
     .text-white {
-      color: #fff;
+      color: #fff !important;
     }
     .guide-mark {
       img {
