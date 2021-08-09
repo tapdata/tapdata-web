@@ -36,23 +36,17 @@
 
       <el-table-column
         :label="$t('taskProgress.sourceLibraryeName')"
+        prop="statsData.sourceDbName"
+        sortable
+        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+      >
+      </el-table-column>
+      <el-table-column
+        :label="$t('taskProgress.sourceType')"
         prop="statsData.sourceConnectionName"
         sortable
         v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
       >
-        <template slot-scope="scope">
-          {{ scope.row.statsData.sourceTableName }}
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('taskProgress.sourceType')"
-        prop="statsData.sourceConnectionType"
-        sortable
-        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-      >
-        <template slot-scope="scope">
-          {{ scope.row.statsData.sourceTableName }}
-        </template>
       </el-table-column>
 
       <el-table-column :label="$t('taskProgress.totalDataVolume')" prop="statsData.sourceRowNum" sortable>
@@ -67,23 +61,17 @@
       </el-table-column>
       <el-table-column
         :label="$t('taskProgress.targetLibraryName')"
+        prop="statsData.targetDbName"
+        sortable
+        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+      >
+      </el-table-column>
+      <el-table-column
+        :label="$t('taskProgress.targetType')"
         prop="statsData.targetConnectionName"
         sortable
         v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
       >
-        <template slot-scope="scope">
-          {{ scope.row.statsData.sourceTableName }}
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('taskProgress.targetType')"
-        prop="statsData.targetConnectionType"
-        sortable
-        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-      >
-        <template slot-scope="scope">
-          {{ scope.row.statsData.sourceTableName }}
-        </template>
       </el-table-column>
 
       <el-table-column :label="$t('taskProgress.completedMigrateData')" prop="statsData.targetRowNum" sortable>
@@ -191,9 +179,9 @@ export default {
   height: 100%;
   overflow: hidden;
   .tip {
-    height: 30px;
+    height: 40px;
     padding-left: 20px;
-    line-height: 30px;
+    line-height: 40px;
     font-size: 12px;
     background: #f5f5f5;
     border: 1px solid #dedee4;

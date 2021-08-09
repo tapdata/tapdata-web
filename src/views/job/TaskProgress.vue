@@ -6,7 +6,7 @@
         <!--  全量+增量  -->
         <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
           <div class="progress-container__header flex justify-between">
-            <div class="fw-bolder">{{ $t('taskProgress.taskProgressOverview') }}</div>
+            <div class="fw-normal">{{ $t('taskProgress.taskProgressOverview') }}</div>
             <ElLink
               class="progress-header_btn"
               type="primary"
@@ -97,7 +97,7 @@
         <!--  全量  -->
         <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'initial_sync'">
           <div class="progress-container__header flex justify-between">
-            <div class="fw-bolder">{{ $t('taskProgress.taskProgressOverview') }}</div>
+            <div class="fw-normal">{{ $t('taskProgress.taskProgressOverview') }}</div>
             <ElLink
               class="progress-header_btn"
               type="primary"
@@ -156,7 +156,7 @@
         <!--  增量  -->
         <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'cdc'">
           <div class="progress-container__header flex justify-between">
-            <div class="fw-bolder">{{ $t('taskProgress.taskProgressOverview') }}</div>
+            <div class="fw-normal">{{ $t('taskProgress.taskProgressOverview') }}</div>
             <!--          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>-->
           </div>
           <div class="progress-container__footer">
@@ -187,23 +187,23 @@
     <div class="progress-database" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
       <div class="progress-container">
         <div class="progress-container__header flex justify-between">
-          <div class="fw-bolder">{{ $t('taskProgress.currentMigration') }}</div>
+          <div class="fw-normal">{{ $t('taskProgress.currentMigration') }}</div>
         </div>
         <div class="progress-container__body flex">
-          <el-table :data="progressData" height="250" border style="width: 100%" class="progress-container__table">
-            <el-table-column prop="sourceName" :label="$t('taskProgress.sourceLibraryeName')"> </el-table-column>
-            <el-table-column prop="sourceTableNum" :label="$t('taskProgress.planMigrationTableNum')"> </el-table-column>
-            <el-table-column prop="sourceRowNum" :label="$t('taskProgress.planMigrateData')"> </el-table-column>
-            <el-table-column prop="targetName" :label="$t('taskProgress.targetLibraryName')"> </el-table-column>
-            <el-table-column prop="status" :label="$t('taskProgress.fullMigrationProgress')">
-              <template slot-scope="scope">{{ scope.row.status }} %</template>
+          <el-table :data="progressGroupByDB" height="250" border style="width: 100%" class="progress-container__table">
+            <el-table-column prop="sourceDbName" :label="$t('taskProgress.sourceLibraryeName')"> </el-table-column>
+            <el-table-column prop="sourceRowNum" :label="$t('taskProgress.planMigrationTableNum')"> </el-table-column>
+            <el-table-column prop="targetRowNum" :label="$t('taskProgress.planMigrateData')"> </el-table-column>
+            <el-table-column prop="targetDbName" :label="$t('taskProgress.targetLibraryName')"> </el-table-column>
+            <el-table-column prop="statusNum" :label="$t('taskProgress.fullMigrationProgress')">
+              <template slot-scope="scope">{{ scope.row.statusNum }} %</template>
             </el-table-column>
             <el-table-column :label="$t('taskProgress.operate')">
               <template slot-scope="scope">
-                <el-button type="text" @click="handleInfo(scope.row)" v-if="scope.row.status === 100">{{
+                <div v-if="scope.row.statusNum === 100">-</div>
+                <el-button type="text" @click="handleInfo(scope.row)" v-else>{{
                   $t('taskProgress.details')
                 }}</el-button>
-                <div v-else>-</div>
               </template>
             </el-table-column>
           </el-table>
@@ -232,32 +232,7 @@ export default {
       progressBar: 0,
       completeTime: '',
       overviewStats: {},
-      progressData: [
-        {
-          sourceName: 'mmm',
-          sourceTableNum: 60,
-          sourceRowNum: 90000,
-          targatRowNum: 4000,
-          targetName: 'ddd',
-          status: 'running'
-        },
-        {
-          sourceName: 'tt',
-          sourceTableNum: 50,
-          sourceRowNum: 70000,
-          targatRowNum: 70000,
-          targetName: 'uu',
-          status: 'running'
-        },
-        {
-          sourceName: 'yy',
-          sourceTableNum: 90,
-          sourceRowNum: 20000,
-          targatRowNum: 5000,
-          targetName: 'ii',
-          status: 'running'
-        }
-      ]
+      progressGroupByDB: []
     }
   },
   computed: {
@@ -395,12 +370,18 @@ export default {
         }
       }
 
-      if (data?.progressData?.length) {
-        data.progressData.forEach(item => {
-          let num = (item.targatRowNum / item.sourceRowNum) * 100
-          item.status = num ? num.toFixed(2) * 1 : 0
+      if (data?.stats?.progressGroupByDB?.length) {
+        data.stats.progressGroupByDB.forEach(statusItem => {
+          let num = (statusItem.targetRowNum / statusItem.sourceRowNum) * 100,
+            statusNum = num > 0 ? num.toFixed(2) * 1 : 0
+          if (statusItem.statusNum) {
+            statusItem.statusNum = statusNum
+          } else {
+            this.$set(statusItem, 'statusNum', statusNum)
+          }
         })
       }
+      this.progressGroupByDB = data.stats.progressGroupByDB
 
       this.completeTime = completeTime
 
@@ -439,6 +420,7 @@ export default {
 }
 .progress-container__header {
   padding: 10px 16px;
+  font-size: 14px;
   justify-content: space-between;
   background: #fafafa;
   border-bottom: 1px solid #d3d3d3;
@@ -457,6 +439,7 @@ export default {
 .progress-container__overview {
   flex: 1;
   font-size: 12px;
+  color: #9c9c9c;
   .el-progress {
     width: 180px;
     flex: 1;
@@ -513,6 +496,7 @@ export default {
         background-color: #ecf0f5;
         .cell {
           padding: 0 6px;
+          color: #1e1e1e;
           white-space: nowrap;
         }
       }
