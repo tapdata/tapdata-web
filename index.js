@@ -41,4 +41,4 @@ const langs = locale
 export default {
   install
 }
-export { langs, ConnectionTypeSelector, ConnectionFormSelector, ConnectionTest, JsEditor, WSClient, FieldMapping}
+export { langs, ConnectionTypeSelector, ConnectionFormSelector, ConnectionTest, JsEditor, WSClient, FieldMapping }
