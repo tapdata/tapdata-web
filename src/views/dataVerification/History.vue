@@ -74,9 +74,7 @@
           <el-table-column :label="$t('dataVerification.verifyStatus')" prop="status"></el-table-column>
           <el-table-column :label="$t('dataFlow.operate')" width="60px">
             <template slot-scope="scope">
-              <ElLink type="primary" @click="changeInspectResult(scope.row.id, scope.row.inspect_id)">{{
-                $t('button.details')
-              }}</ElLink>
+              <ElLink type="primary" @click="changeInspectResult(scope.row.id)">{{ $t('button.details') }}</ElLink>
             </template>
           </el-table-column>
         </el-table>
@@ -103,7 +101,6 @@ export default {
     return {
       loading: true,
       type: '',
-      inspect_id: '',
       name: '',
       page: {
         data: null,
@@ -130,18 +127,29 @@ export default {
       this.loading = true
       let { current, size } = this.page
       let currentPage = pageNum || current + 1
+      let inspectId = this.$route.query.inspectId
+      let firstCheckId = this.$route.query.firstCheckId
       let where = {
-        where: {
-          inspect_id: { regexp: `^${this.inspect_id}$` }
-        },
+        inspect_id: { regexp: `^${inspectId}$` },
+        parentId: { eq: null }
+      }
+      if (firstCheckId) {
+        where = {
+          firstCheckId: { regexp: `^${firstCheckId}$` }
+        }
+      }
+      let filter = {
+        where,
         order: 'start DESC',
         limit: size,
         skip: (currentPage - 1) * size
       }
       Promise.all([
-        this.$api('InspectResults').count(where),
+        this.$api('InspectResults').count({
+          where: JSON.stringify(where)
+        }),
         this.$api('InspectResults').get({
-          filter: JSON.stringify(where)
+          filter: JSON.stringify(filter)
         })
       ])
         .then(([countRes, res]) => {
@@ -156,21 +164,18 @@ export default {
         })
     },
     rowClick(row) {
-      this.changeInspectResult(row.id, row.inspect_id)
+      this.changeInspectResult(row.id)
     },
-    GoBack() {
-      this.$router.push({
-        name: 'dataVerification'
-      })
-    },
-    changeInspectResult(id, inspect_id) {
-      this.$router.push({
+    changeInspectResult(id) {
+      let url = ''
+      let route = this.$router.resolve({
         name: 'dataVerifyResult',
-        query: {
-          id: id,
-          inspectId: inspect_id
+        params: {
+          id
         }
       })
+      url = route.href
+      window.open(url, '_blank')
     }
   }
 }
