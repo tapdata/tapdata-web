@@ -16,6 +16,7 @@
         <ul>
           <li
             v-for="(item, index) in fieldMappingNavData"
+            :key="index"
             :class="{ active: position === index }"
             @click="select(item, index)"
           >

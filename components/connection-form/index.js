@@ -5,7 +5,7 @@
  */
 
 import ConnectionFormSelector from './formBuilder.vue'
-ConnectionFormSelector.install = function(Vue) {
+ConnectionFormSelector.install = function (Vue) {
   Vue.component(ConnectionFormSelector.name, ConnectionFormSelector)
 }
 export default ConnectionFormSelector

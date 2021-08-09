@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { createForm, onFormValuesChange, onFormSubmit } from '@formily/core'
+import { createForm } from '@formily/core'
 import { FormProvider, createSchemaField } from '@formily/vue'
 import { components } from '../form'
 import '../form/styles/index.scss'
