@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import { langs } from '../../packages/tapdata-web-core'
+import { langs } from 'web-core'
 import locale from 'element-ui/lib/locale'
 
 Vue.use(VueI18n)
