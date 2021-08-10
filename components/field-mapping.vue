@@ -144,7 +144,7 @@
             <div v-if="item.minPrecision">
               <div v-if="index === 0">长度范围</div>
               <div v-if="item.minPrecision && item.minPrecision !== item.maxPrecision">
-                {{ `- [${item.minPrecision},${item.maxPrecision}]` }}
+                {{ `- [${item.minPrecision} , ${item.maxPrecision}]` }}
               </div>
               <div v-if="item.minPrecision && item.minPrecision === item.maxPrecision">
                 {{ `- ${item.maxPrecision}` }}
@@ -153,7 +153,7 @@
             <div v-if="item.minScale">
               <div>精度范围</div>
               <div v-if="item.minScale !== item.maxScale">
-                {{ `- [${item.minScale},${item.maxScale}]` }}
+                {{ `- [${item.minScale} , ${item.maxScale}]` }}
               </div>
               <div v-if="item.minScale === item.maxScale">{{ `- ${item.maxScale}` }}</div>
             </div>
