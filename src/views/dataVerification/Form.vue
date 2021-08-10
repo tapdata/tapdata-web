@@ -34,7 +34,7 @@ export default {
         .then(res => res.data)
     },
     submitFunc(id, params) {
-      this.$api('Inspects')
+      return this.$api('Inspects')
         [id ? 'patch' : 'post'](params)
         .then(res => res.data)
     }
