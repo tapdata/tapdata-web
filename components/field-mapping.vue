@@ -14,7 +14,7 @@
         <el-input v-model="searchField" size="mini" @blur="search('field')"></el-input>
       </div>
       <div class="item">
-        <el-button size="mini">全部恢复默认</el-button>
+        <el-button size="mini" @click="rollbackAll">全部恢复默认</el-button>
       </div>
     </div>
     <div class="task-form-body">
@@ -24,7 +24,7 @@
             v-for="(item, index) in fieldMappingNavData"
             :key="index"
             :class="{ active: position === index }"
-            @click="select(item, index)"
+            @click.prevent="select(item, index)"
           >
             <div class="imgBox">
               <img src="../assets/images/fieldMapping-table.png" alt="" />
@@ -34,7 +34,7 @@
               <div class="contentBox__target">{{ item.sinkObjectName }}</div>
               <div class="contentBox__select">
                 {{ `已选中 ${position === index ? fieldCount : 0}/${item.sourceFieldCount}` }}
-                <el-button size="mini" @click.prevent="callbackTable">恢复默认</el-button>
+                <el-button size="mini" @click.stop="rollbackTable(item.sinkObjectName)">恢复默认</el-button>
               </div>
             </div>
           </li>
@@ -204,7 +204,8 @@ export default {
     fieldMappingNavData: Array,
     field_process: Array,
     remoteMethod: Function,
-    typeMappingMethod: Function
+    typeMappingMethod: Function,
+    fieldProcessMethod: Function
   },
   data() {
     return {
@@ -280,6 +281,10 @@ export default {
       this.$emit('row-click', this.selectRow, this.operations, this.target)
       this.selectRow = item
       this.position = index
+      this.updateView()
+    },
+    //页面刷新
+    updateView() {
       this.initTableData()
       this.initTypeMapping()
       if (this.field_process.length > 0) {
@@ -337,6 +342,20 @@ export default {
           this.typeMappingMethod(this.selectRow).then(data => {
             this.typeMapping = data
           })
+      })
+    },
+    //恢复默认单表
+    rollbackTable(name) {
+      this.$nextTick(() => {
+        this.fieldProcessMethod && this.fieldProcessMethod('table', name)
+        this.updateView()
+      })
+    },
+    //恢复默认全部
+    rollbackAll() {
+      this.$nextTick(() => {
+        this.fieldProcessMethod && this.fieldProcessMethod('all')
+        this.updateView()
       })
     },
     //字段修改统一弹窗
@@ -434,10 +453,6 @@ export default {
         precision: '',
         scale: ''
       }
-    },
-    //恢复默认单表
-    callbackTable() {
-      console.log('点击了')
     },
     //字段删除
     del(id, value) {
