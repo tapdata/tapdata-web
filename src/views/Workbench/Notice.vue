@@ -70,9 +70,8 @@
                   服务号人工客服（通过公众号首页菜单联系客服），即可领取 64G U盘/ 充电宝 / 小爱音箱 / 保温杯 4选1！
                 </div>
                 <div class="text-center">
-                  <div class="fw-bolder mb-3">Tapdata Cloud 官网↓↓</div>
+                  <div class="fw-bolder mt-6 mb-3">Tapdata Cloud 官网↓↓</div>
                   <div class="mb-3">https://cloud.tapdata.net/</div>
-                  <div class="fs-8">（执行同步任务请到PC端进行）</div>
                 </div>
               </div>
             </div>
@@ -102,7 +101,7 @@
                   Apple AirPods 等），邀请人数达标后系统将自动通知您（ps：邀请人数越多，将有机会获得更高价值的礼品）！
                 </div>
                 <div class="QR-code-section text-center">
-                  <div class="mb-3">扫描识别二维码成为产品推荐官↓↓</div>
+                  <div class="mt-6 mb-2">扫描识别二维码成为产品推荐官↓↓</div>
                   <img src="../../../public/images/notice/poster.png" alt="" />
                 </div>
               </div>
