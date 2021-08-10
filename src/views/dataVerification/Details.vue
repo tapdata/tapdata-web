@@ -10,7 +10,10 @@
           <i class="iconfont icon-warning-circle"></i>
           <span>{{ errorMsg }}</span>
         </div>
-        <div class="flex align-items-center justify-content-sm-between mt-2" v-else-if="!isRoot">
+        <div
+          class="flex align-items-center justify-content-sm-between mt-2"
+          v-else-if="inspect.inspectMethod !== 'row_count'"
+        >
           <div class="flex align-items-center">
             <template v-if="inspect.result !== 'passed' && !(inspect.status === 'error' && !resultInfo.parentId)">
               <ElButton
@@ -18,20 +21,22 @@
                 size="mini"
                 type="primary"
                 @click="diffInspect"
-                >差异校验</ElButton
+                >{{ $t('verify_button_diff_verify') }}</ElButton
               >
-              <ElButton v-else size="mini">校验中</ElButton>
+              <ElButton v-else size="mini">{{ $t('verify_button_diff_verify_running') }}</ElButton>
               <el-tooltip effect="dark" placement="top">
                 <div slot="content" style="width: 232px">
-                  对本次全量校验的差异数据结果进行再次校验，行数差异暂不支持差异校验
+                  {{ $t('verify_button_diff_verify_tips') }}
                 </div>
                 <i class="el-icon-warning-outline ml-2 color-info"></i>
               </el-tooltip>
             </template>
           </div>
           <div v-if="resultInfo.parentId" class="color-info ml-3" style="font-size: 12px">
-            最后校验时间: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
-            <ElLink class="ml-5" type="primary" @click="toDiffHistory">校验历史</ElLink>
+            {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+            <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
+              $t('verify_button_diff_task_history')
+            }}</ElLink>
           </div>
         </div>
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
@@ -211,14 +216,20 @@ export default {
     diffInspect() {
       let firstCheckId = this.resultInfo.firstCheckId
       if (!firstCheckId) {
-        return this.$message.error('旧数据暂不支持二次校验')
+        return this.$message.error(this.$t('verify_message_old_data_not_support'))
+      }
+      let inspect = this.inspect
+      let keep = inspect?.limit?.keep || 0
+      let totalFailed = inspect?.difference_number || 0
+      if (keep < totalFailed) {
+        return this.$message.error(this.$t('verify_message_out_of_limit'))
       }
       this.$api('Inspects')
         .update(
           {
             id: this.inspect.id
           },
-          { status: 'scheduling', ping_time: 0, byFirstCheckId: firstCheckId }
+          { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: firstCheckId }
         )
         .then(() => {
           this.$message.success(this.$t('dataVerification.startVerify'))

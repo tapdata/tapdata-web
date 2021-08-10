@@ -131,7 +131,8 @@ export default {
       let firstCheckId = this.$route.query.firstCheckId
       let where = {
         inspect_id: { regexp: `^${inspectId}$` },
-        parentId: { eq: null }
+        parentId: { eq: null },
+        inspectGroupByFirstCheckId: true
       }
       if (firstCheckId) {
         where = {
