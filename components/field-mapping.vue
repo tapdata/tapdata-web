@@ -131,11 +131,18 @@
         v-if="['precision', 'scale'].includes(currentOperationType)"
       ></el-input-number>
       <div v-if="['data_type'].includes(currentOperationType)">
+        <el-select v-model="editValueType[currentOperationType]" filterable @change="handleDataType">
+          <el-option
+            :label="item.dbType"
+            :value="item.dbType"
+            v-for="(item, index) in typeMapping"
+            :key="index"
+          ></el-option>
+        </el-select>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
-          <span>字段类型规则：</span>
-          <div v-for="item in currentTypeRules" :key="item.dbType">
+          <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.minPrecision">
-              <div>长度范围</div>
+              <div v-if="index === 0">长度范围</div>
               <div v-if="item.minPrecision && item.minPrecision !== item.maxPrecision">
                 {{ `- [${item.minPrecision},${item.maxPrecision}]` }}
               </div>
@@ -152,14 +159,6 @@
             </div>
           </div>
         </div>
-        <el-select v-model="editValueType[currentOperationType]" filterable @change="handleDataType">
-          <el-option
-            :label="item.dbType"
-            :value="item.dbType"
-            v-for="(item, index) in typeMapping"
-            :key="index"
-          ></el-option>
-        </el-select>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose()">取 消</el-button>
@@ -633,6 +632,11 @@ export default {
           margin-top: 10px;
         }
       }
+    }
+    .field-mapping-data-type {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #999;
     }
     .icon-yuechi1 {
       color: darkorange;
