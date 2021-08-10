@@ -99,6 +99,7 @@
                   <div class="upgrading-box" v-if="upgradingFlag(scope.row)">
                     <VIcon class="v-icon" size="20">upgradeLoadingColor</VIcon>
                     <el-progress
+                      v-if="upgradingProgres(scope.row) !== undefined"
                       class="upgrading-progress"
                       type="circle"
                       color="rgb(61, 156, 64)"
@@ -595,7 +596,8 @@ export default {
         case 'preparing':
         case 'downloading':
         case 'upgrading':
-          result = `自动升级中，进度：${this.upgradingProgres(row)}%`
+          result =
+            `自动升级中` + (this.upgradingProgres(row) === undefined ? '' : `，进度：${this.upgradingProgres(row)}%`)
           break
         case 'fail':
           result = '自动升级失败，请手动升级'
@@ -671,6 +673,9 @@ export default {
     },
     upgradingProgres(row) {
       let { tmInfo } = row
+      if ([undefined, null, ''].includes(tmInfo?.progres)) {
+        return
+      }
       return Number(tmInfo?.progres || 0)
     },
     upgradeFailedFlag(row) {
