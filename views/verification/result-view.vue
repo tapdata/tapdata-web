@@ -127,9 +127,10 @@ $margin: 10px;
   flex-direction: column;
   overflow: hidden;
   &.panel-box {
-    margin-bottom: 10px;
+    margin: 20px 20px 20px 0;
     border-left: 1px solid #dedee4;
     border-bottom: 1px solid #dedee4;
+    border-right: 1px solid #dedee4;
   }
   .tip {
     height: 30px;
@@ -137,6 +138,7 @@ $margin: 10px;
     background: #f5f5f5;
     border: 1px solid #dedee4;
     border-left: 0;
+    border-right: 0;
     line-height: 30px;
   }
   .main {
@@ -304,7 +306,6 @@ $margin: 10px;
   }
   .pagination {
     border-top: 1px solid #dedee4;
-    border-right: 1px solid #dedee4;
     padding: 10px 5px;
   }
   .back-btn-icon-box {

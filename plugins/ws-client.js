@@ -124,7 +124,7 @@ class WSClient extends EventEmitter {
   }
 
   ready(cb) {
-    if (this.ws.readyState == 1) {
+    if (this.ws?.readyState == 1) {
       cb && cb()
     } else {
       setTimeout(() => {
