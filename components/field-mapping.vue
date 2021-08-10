@@ -13,6 +13,9 @@
         <span> 搜索字段：</span>
         <el-input v-model="searchField" size="mini" @blur="search('field')"></el-input>
       </div>
+      <div class="item">
+        <el-button size="mini">全部恢复默认</el-button>
+      </div>
     </div>
     <div class="task-form-body">
       <div class="nav">
@@ -31,6 +34,7 @@
               <div class="contentBox__target">{{ item.sinkObjectName }}</div>
               <div class="contentBox__select">
                 {{ `已选中 ${position === index ? fieldCount : 0}/${item.sourceFieldCount}` }}
+                <el-button size="mini" @click.prevent="callbackTable">恢复默认</el-button>
               </div>
             </div>
           </li>
@@ -82,7 +86,10 @@
         </ElTableColumn>
         <ElTableColumn label="目标表长度" width="150">
           <template slot-scope="scope">
-            <div v-if="scope.row.t_precision && !scope.row.is_deleted" @click="edit(scope.row, 'precision')">
+            <div
+              v-if="scope.row.t_precision !== null && scope.row.t_precision !== undefined && !scope.row.is_deleted"
+              @click="edit(scope.row, 'precision')"
+            >
               <span>{{ scope.row.t_precision }}</span>
               <i class="icon el-icon-edit-outline"></i>
             </div>
@@ -93,7 +100,10 @@
         </ElTableColumn>
         <ElTableColumn label="目标表精度" width="100">
           <template slot-scope="scope">
-            <div v-if="scope.row.t_scale && !scope.row.is_deleted" @click="edit(scope.row, 'scale')">
+            <div
+              v-if="scope.row.t_scale !== null && scope.row.t_scale !== undefined && !scope.row.is_deleted"
+              @click="edit(scope.row, 'scale')"
+            >
               <span>{{ scope.row.t_scale }}</span>
               <i class="icon el-icon-edit-outline"></i>
             </div>
@@ -309,6 +319,17 @@ export default {
         }
       })
     },
+    //更新target 数据
+    updateTarget(id, key, value) {
+      this.target.forEach(field => {
+        if (field.id === id) {
+          field[key] = value
+          field['source'] = 'manual'
+        }
+      })
+      //触发页面重新渲染
+      this.updateTableData(id, `t_${key}`, value)
+    },
     //初始化字段类型
     initTypeMapping() {
       this.$nextTick(() => {
@@ -347,7 +368,9 @@ export default {
         }
         this.fieldProcessRename(id, key, value)
       } else if (key === 'data_type') {
+        //如果是改类型 需要手动修改字段的长度以及精度
         this.fieldProcessConvert(id, key, value)
+        this.influences(id)
       } else if (key === 'precision') {
         let verify = true
         this.currentTypeRules.forEach(r => {
@@ -377,14 +400,23 @@ export default {
           return
         }
       }
-      this.target.forEach(field => {
-        if (field.id === id) {
-          field[key] = value
+      //触发target更新
+      this.updateTarget(id, key, value)
+      this.handleClose()
+    },
+    influences(id) {
+      this.currentTypeRules.forEach(r => {
+        if (r.maxScale) {
+          this.updateTarget(id, 'scale', r.maxScale)
+        } else {
+          this.updateTarget(id, 'scale', null)
+        }
+        if (r.maxPrecision) {
+          this.updateTarget(id, 'precision', r.maxPrecision)
+        } else {
+          this.updateTarget(id, 'precision', null)
         }
       })
-      //触发页面重新渲染
-      this.updateTableData(id, `t_${key}`, value)
-      this.handleClose()
     },
     initDataType(val) {
       let target = this.typeMapping.filter(type => type.dbType === val)
@@ -403,6 +435,10 @@ export default {
         scale: ''
       }
     },
+    //恢复默认单表
+    callbackTable() {
+      console.log('点击了')
+    },
     //字段删除
     del(id, value) {
       //任务-字段处理器
@@ -415,6 +451,7 @@ export default {
       this.target.forEach(field => {
         if (field.id === id) {
           field.is_deleted = value
+          field['source'] = 'manual'
         }
       })
       //触发页面重新渲染
@@ -533,22 +570,12 @@ export default {
       let opr = this.operations.filter(v => v.id === id && v.op === 'RENAME')
       if (opr.length > 0) {
         //元数据-字段操作
-        this.target.forEach(field => {
-          if (field.id === id) {
-            field.field_name = opr[0].original_field_name
-            this.updateTableData(id, 't_field_name', opr[0].original_field_name)
-          }
-        })
+        this.updateTarget(id, 't_field_name', opr[0].original_field_name)
       }
       let opc = this.operations.filter(v => v.id === id && v.op === 'CONVERT')
       if (opc.length > 0) {
         //元数据-字段操作
-        this.target.forEach(field => {
-          if (field.id === id) {
-            field.data_type = opc[0].originalDataType
-            this.updateTableData(id, 't_data_type', opc[0].originalDataType)
-          }
-        })
+        this.updateTarget(id, 't_data_type', opc[0].originalDataType)
       }
     },
     saveFileOperations() {
