@@ -212,6 +212,7 @@
         ref="fieldMappingDom"
         :remoteMethod="intiFieldMappingTableData"
         :typeMappingMethod="getTypeMapping"
+        :fieldProcessMethod="updateFieldProcess"
         :fieldMappingNavData="fieldMappingNavData"
         :field_process="model.field_process"
         @row-click="saveOperations"
@@ -227,7 +228,7 @@
 			:close-on-click-modal="false"
 		>
 			<el-form>
-				<el-form-item :label="$t('message.modifyName')">
+				<el-form-item :label="$t('message.modifyName')">+
 					<el-input
 						v-model="databaseName"
 						autocomplete="off"
@@ -552,6 +553,20 @@ export default {
       promise.then(data => {
         this.dialogFieldProcessVisible = true
         this.fieldMappingNavData = data?.data
+      })
+    },
+    updateFieldProcess(rollback, rollbackTable) {
+      let data = this.scope.getDataFlowData()
+      if (!data) return
+      if (rollback) {
+        data['rollback'] = rollback
+      }
+      if (rollbackTable) {
+        data['rollbackTable'] = rollbackTable
+      }
+      let promise = this.$api('DataFlows').getMetadata(data)
+      promise.then(data => {
+        this.fieldMappingNavData = data?.data || []
       })
     },
     //获取表设置
