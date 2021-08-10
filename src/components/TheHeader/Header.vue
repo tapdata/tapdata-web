@@ -24,7 +24,7 @@
 
           <ElDropdownMenu slot="dropdown">
             <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
-            <ElDropdownItem command="userCenter"> 用户中心 </ElDropdownItem>
+            <!--            <ElDropdownItem command="userCenter"> 用户中心 </ElDropdownItem>-->
             <ElDropdownItem command="home"> 官网 </ElDropdownItem>
             <ElDropdownItem command="signOut"> 退出登录 </ElDropdownItem>
           </ElDropdownMenu>

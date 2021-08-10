@@ -99,6 +99,7 @@
                   <div class="upgrading-box" v-if="upgradingFlag(scope.row)">
                     <VIcon class="v-icon" size="20">upgradeLoadingColor</VIcon>
                     <el-progress
+                      v-if="upgradingProgres(scope.row) !== undefined"
                       class="upgrading-progress"
                       type="circle"
                       color="rgb(61, 156, 64)"
@@ -187,9 +188,7 @@
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center" v-if="showAutoUpgrade">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">自动升级</ElButton>
-            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8" @click="manualUpgradeFnc">
-              (Agent离线时无法使用自动升级)
-            </div>
+            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">(Agent离线时无法使用自动升级)</div>
           </div>
           <div>
             <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
@@ -597,7 +596,8 @@ export default {
         case 'preparing':
         case 'downloading':
         case 'upgrading':
-          result = `自动升级中，进度：${this.upgradingProgres(row)}%`
+          result =
+            `自动升级中` + (this.upgradingProgres(row) === undefined ? '' : `，进度：${this.upgradingProgres(row)}%`)
           break
         case 'fail':
           result = '自动升级失败，请手动升级'
@@ -673,7 +673,10 @@ export default {
     },
     upgradingProgres(row) {
       let { tmInfo } = row
-      return tmInfo?.progres ?? 0
+      if ([undefined, null, ''].includes(tmInfo?.progres)) {
+        return
+      }
+      return Number(tmInfo?.progres || 0)
     },
     upgradeFailedFlag(row) {
       let { tmInfo } = row
