@@ -1,6 +1,9 @@
 <template>
   <div class="field-mapping">
-    <div><strong>表设置</strong>: 用户可以在此页面勾选源端每个表要同步的字</div>
+    <div>
+      <strong>表设置</strong>:
+      用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
+    </div>
     <div class="search">
       <div class="item">
         <span> 搜索表：</span>
@@ -10,6 +13,9 @@
         <span> 搜索字段：</span>
         <el-input v-model="searchField" size="mini" @blur="search('field')"></el-input>
       </div>
+      <div class="item">
+        <el-button size="mini" @click="rollbackAll">全部恢复默认</el-button>
+      </div>
     </div>
     <div class="task-form-body">
       <div class="nav">
@@ -18,7 +24,7 @@
             v-for="(item, index) in fieldMappingNavData"
             :key="index"
             :class="{ active: position === index }"
-            @click="select(item, index)"
+            @click.prevent="select(item, index)"
           >
             <div class="imgBox">
               <img src="../assets/images/fieldMapping-table.png" alt="" />
@@ -28,6 +34,7 @@
               <div class="contentBox__target">{{ item.sinkObjectName }}</div>
               <div class="contentBox__select">
                 {{ `已选中 ${position === index ? fieldCount : 0}/${item.sourceFieldCount}` }}
+                <el-button size="mini" @click.stop="rollbackTable(item.sinkObjectName)">恢复默认</el-button>
               </div>
             </div>
           </li>
@@ -41,9 +48,9 @@
         v-loading="loading"
       >
         <el-table-column type="index" width="55"> </el-table-column>
-        <ElTableColumn show-overflow-tooltip label="源表名" prop="field_name" min-width="250">
+        <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="100">
           <template slot-scope="scope">
-            <div v-if="scope.row.primary_key_position === 1" @click="edit(scope.row, 'field_name')">
+            <div v-if="scope.row.primary_key_position === 1">
               <span>{{ scope.row.field_name }}</span>
               <i class="iconfont icon-yuechi1"></i>
             </div>
@@ -52,10 +59,10 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="源表类型" prop="data_type"></ElTableColumn>
-        <ElTableColumn label="源表长度" prop="scale" width="80"></ElTableColumn>
-        <ElTableColumn label="源表精度" prop="precision" width="80"></ElTableColumn>
-        <ElTableColumn label="目标表名" width="190">
+        <ElTableColumn label="源表类型" prop="data_type" width="150"></ElTableColumn>
+        <ElTableColumn label="源表长度" prop="precision" width="150"></ElTableColumn>
+        <ElTableColumn label="源表精度" prop="scale" width="100"></ElTableColumn>
+        <ElTableColumn label="目标表字段名">
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'field_name')">
               <span>{{ scope.row.t_field_name }}</span>
@@ -66,7 +73,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="目标表类型">
+        <ElTableColumn label="目标表类型" width="150">
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'data_type')">
               <span>{{ scope.row.t_data_type }}</span>
@@ -77,20 +84,12 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="目标表长度">
+        <ElTableColumn label="目标表长度" width="150">
           <template slot-scope="scope">
-            <div v-if="scope.row.t_scale && !scope.row.is_deleted" @click="edit(scope.row, 'scale')">
-              <span>{{ scope.row.t_scale }}</span>
-              <i class="icon el-icon-edit-outline"></i>
-            </div>
-            <div v-else>
-              <span>{{ scope.row.t_scale }}</span>
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="目标表精度">
-          <template slot-scope="scope">
-            <div v-if="scope.row.t_precision && !scope.row.is_deleted" @click="edit(scope.row, 'precision')">
+            <div
+              v-if="scope.row.t_precision !== null && scope.row.t_precision !== undefined && !scope.row.is_deleted"
+              @click="edit(scope.row, 'precision')"
+            >
               <span>{{ scope.row.t_precision }}</span>
               <i class="icon el-icon-edit-outline"></i>
             </div>
@@ -99,8 +98,22 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="操作">
-          <template scope="scope">
+        <ElTableColumn label="目标表精度" width="100">
+          <template slot-scope="scope">
+            <div
+              v-if="scope.row.t_scale !== null && scope.row.t_scale !== undefined && !scope.row.is_deleted"
+              @click="edit(scope.row, 'scale')"
+            >
+              <span>{{ scope.row.t_scale }}</span>
+              <i class="icon el-icon-edit-outline"></i>
+            </div>
+            <div v-else>
+              <span>{{ scope.row.t_scale }}</span>
+            </div>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn label="操作" width="80">
+          <template slot-scope="scope">
             <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.id, true)"> 删除 </ElLink>
             <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
           </template>
@@ -123,13 +136,59 @@
         v-model="editValueType[currentOperationType]"
         v-if="['field_name'].includes(currentOperationType)"
       ></el-input>
-      <el-input-number
-        v-model="editValueType[currentOperationType]"
-        v-if="['precision', 'scale'].includes(currentOperationType)"
-      ></el-input-number>
-      <el-select v-model="editValueType[currentOperationType]" v-if="['data_type'].includes(currentOperationType)">
-        <el-option :label="item" :value="item" v-for="(item, index) in typeMapping" :key="index"></el-option>
-      </el-select>
+      <div v-if="['precision', 'scale'].includes(currentOperationType)">
+        <el-input-number v-model="editValueType[currentOperationType]"></el-input-number>
+        <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
+          <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
+            <div v-if="item.maxPrecision && currentOperationType === 'precision'">
+              <div v-if="index === 0">长度范围</div>
+              <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
+                {{ `. [ ${item.minPrecision} , ${item.maxPrecision} ]` }}
+              </div>
+              <div v-if="item.maxPrecision && item.minPrecision === item.maxPrecision">
+                {{ `. ${item.maxPrecision}` }}
+              </div>
+            </div>
+            <div v-if="item.maxScale && currentOperationType === 'scale'" style="margin-top: 10px">
+              <div>精度范围</div>
+              <div v-if="item.minScale !== item.maxScale">
+                {{ `. [ ${item.minScale} , ${item.maxScale} ]` }}
+              </div>
+              <div v-if="item.minScale === item.maxScale">{{ `. ${item.maxScale}` }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="['data_type'].includes(currentOperationType)">
+        <el-select v-model="editValueType[currentOperationType]" filterable @change="initDataType">
+          <el-option
+            :label="item.dbType"
+            :value="item.dbType"
+            v-for="(item, index) in typeMapping"
+            :key="index"
+          ></el-option>
+        </el-select>
+        <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
+          <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
+            <div v-if="item.maxPrecision">
+              <div v-if="index === 0">长度范围</div>
+              <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
+                {{ `. [ ${item.minPrecision} , ${item.maxPrecision} ]` }}
+              </div>
+              <div v-if="item.maxPrecision && item.minPrecision === item.maxPrecision">
+                {{ `. ${item.maxPrecision}` }}
+              </div>
+            </div>
+            <div v-if="item.maxScale" style="margin-top: 10px">
+              <div>精度范围</div>
+              <div v-if="item.minScale !== item.maxScale">
+                {{ `. [ ${item.minScale} , ${item.maxScale} ]` }}
+              </div>
+              <div v-if="item.minScale === item.maxScale">{{ `. ${item.maxScale}` }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose()">取 消</el-button>
         <el-button type="primary" @click="editSave()">确 定</el-button>
@@ -145,7 +204,8 @@ export default {
     fieldMappingNavData: Array,
     field_process: Array,
     remoteMethod: Function,
-    typeMappingMethod: Function
+    typeMappingMethod: Function,
+    fieldProcessMethod: Function
   },
   data() {
     return {
@@ -154,6 +214,7 @@ export default {
       searchTable: '',
       loading: false,
       typeMapping: [],
+      currentTypeRules: [],
       defaultFieldMappingNavData: '',
       defaultFieldMappingTableData: '',
       position: 0,
@@ -171,9 +232,9 @@ export default {
         scale: ''
       },
       titleType: {
-        field_name: '修改目标表名',
-        data_type: '修改目标表类型',
-        precision: '修改目标长度',
+        field_name: '修改目标字段名',
+        data_type: '修改目标表字段类型',
+        precision: '修改目标字段长度',
         scale: '修改目标表精度'
       },
       operations: [] //字段操作
@@ -220,6 +281,10 @@ export default {
       this.$emit('row-click', this.selectRow, this.operations, this.target)
       this.selectRow = item
       this.position = index
+      this.updateView()
+    },
+    //页面刷新
+    updateView() {
       this.initTableData()
       this.initTypeMapping()
       if (this.field_process.length > 0) {
@@ -259,6 +324,17 @@ export default {
         }
       })
     },
+    //更新target 数据
+    updateTarget(id, key, value) {
+      this.target.forEach(field => {
+        if (field.id === id) {
+          field[key] = value
+          field['source'] = 'manual'
+        }
+      })
+      //触发页面重新渲染
+      this.updateTableData(id, `t_${key}`, value)
+    },
     //初始化字段类型
     initTypeMapping() {
       this.$nextTick(() => {
@@ -268,13 +344,40 @@ export default {
           })
       })
     },
+    //恢复默认单表
+    rollbackTable(name) {
+      this.$confirm('您确认要恢复默认吗？', '提示', {
+        type: 'warning'
+      }).then(resFlag => {
+        if (resFlag) {
+          this.$nextTick(() => {
+            this.fieldProcessMethod && this.fieldProcessMethod('table', name)
+            this.updateView()
+          })
+        }
+      })
+    },
+    //恢复默认全部
+    rollbackAll() {
+      this.$confirm('您确认要全部恢复默认吗？', '提示', {
+        type: 'warning'
+      }).then(resFlag => {
+        if (resFlag) {
+          this.$nextTick(() => {
+            this.fieldProcessMethod && this.fieldProcessMethod('all')
+            this.updateView()
+          })
+        }
+      })
+    },
     //字段修改统一弹窗
     edit(row, type) {
       this.dialogVisible = true
       this.editValueType[type] = row[`t_${type}`]
       this.currentOperationType = type
       this.currentOperationData = row
-      //修改类型
+      //初始化
+      this.initDataType(row[`t_data_type`])
     },
     editSave() {
       //元数据-字段操作
@@ -296,16 +399,61 @@ export default {
         }
         this.fieldProcessRename(id, key, value)
       } else if (key === 'data_type') {
+        //如果是改类型 需要手动修改字段的长度以及精度
         this.fieldProcessConvert(id, key, value)
+        this.influences(id)
+      } else if (key === 'precision') {
+        let verify = true
+        this.currentTypeRules.forEach(r => {
+          if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision) {
+            this.$message.error('当前值不符合该字段范围')
+            verify = false
+          } else if (r.minPrecision > value || value > r.maxPrecision) {
+            verify = false
+            this.$message.error('当前值不符合该字段范围')
+          }
+        })
+        if (!verify) {
+          return
+        }
+      } else if (key === 'scale') {
+        let verify = true
+        this.currentTypeRules.forEach(r => {
+          if (r.minScale === r.maxScale && value !== r.maxScale) {
+            this.$message.error('当前值不符合该字段范围')
+            verify = false
+          } else if (r.minScale > value || value > r.maxScale) {
+            verify = false
+            this.$message.error('当前值不符合该字段范围')
+          }
+        })
+        if (!verify) {
+          return
+        }
       }
-      this.target.forEach(field => {
-        if (field.id === id) {
-          field[key] = value
+      //触发target更新
+      this.updateTarget(id, key, value)
+      this.handleClose()
+    },
+    influences(id) {
+      this.currentTypeRules.forEach(r => {
+        if (r.maxScale) {
+          this.updateTarget(id, 'scale', r.maxScale)
+        } else {
+          this.updateTarget(id, 'scale', null)
+        }
+        if (r.maxPrecision) {
+          this.updateTarget(id, 'precision', r.maxPrecision)
+        } else {
+          this.updateTarget(id, 'precision', null)
         }
       })
-      //触发页面重新渲染
-      this.updateTableData(id, `t_${key}`, value)
-      this.handleClose()
+    },
+    initDataType(val) {
+      let target = this.typeMapping.filter(type => type.dbType === val)
+      if (target?.length > 0) {
+        this.currentTypeRules = target[0]?.rules
+      }
     },
     handleClose() {
       this.dialogVisible = false
@@ -330,6 +478,7 @@ export default {
       this.target.forEach(field => {
         if (field.id === id) {
           field.is_deleted = value
+          field['source'] = 'manual'
         }
       })
       //触发页面重新渲染
@@ -448,22 +597,12 @@ export default {
       let opr = this.operations.filter(v => v.id === id && v.op === 'RENAME')
       if (opr.length > 0) {
         //元数据-字段操作
-        this.target.forEach(field => {
-          if (field.id === id) {
-            field.field_name = opr[0].original_field_name
-            this.updateTableData(id, 't_field_name', opr[0].original_field_name)
-          }
-        })
+        this.updateTarget(id, 't_field_name', opr[0].original_field_name)
       }
       let opc = this.operations.filter(v => v.id === id && v.op === 'CONVERT')
       if (opc.length > 0) {
         //元数据-字段操作
-        this.target.forEach(field => {
-          if (field.id === id) {
-            field.data_type = opc[0].originalDataType
-            this.updateTableData(id, 't_data_type', opc[0].originalDataType)
-          }
-        })
+        this.updateTarget(id, 't_data_type', opc[0].originalDataType)
       }
     },
     saveFileOperations() {
@@ -509,6 +648,11 @@ export default {
   .el-table th {
     background: #f4f5f7;
   }
+}
+.field-mapping-data-type {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #999;
 }
 </style>
 <style scoped lang="scss">
