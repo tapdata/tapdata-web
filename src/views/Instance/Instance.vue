@@ -6,12 +6,22 @@
           <ul>
             <li>
               <ElSelect v-model="searchParams.status" @input="search()">
-                <ElOption label="全部状态" value=""></ElOption>
-                <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"></ElOption>
+                <ElOption :label="$t('agent_status_all')" value=""></ElOption>
+                <ElOption
+                  v-for="(item, index) in statusItems"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                ></ElOption>
               </ElSelect>
             </li>
             <li class="ml-3">
-              <ElInput width="200" v-model="searchParams.keyword" placeholder="按ID/实例名称搜索" @input="search(800)">
+              <ElInput
+                width="200"
+                v-model="searchParams.keyword"
+                :placeholder="$t('agent_search')"
+                @input="search(800)"
+              >
                 <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
               </ElInput>
             </li>
@@ -25,22 +35,22 @@
         <div class="instance-operation-right">
           <ElButton type="primary" @click="createAgent">
             <i class="el-icon-plus" style="margin-right: 5px"></i>
-            <span>创建 Agent</span>
+            <span>{{ $t('agent_button_create') }}</span>
           </ElButton>
           <template v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'">
             <ElButton type="primary" @click="toOldPurchase">
               <i class="iconfont td-icon-dinggou mr-1"></i>
-              <span>订购托管实例</span>
+              <span>{{ $t('agent_button_order1') }}</span>
             </ElButton>
             <ElButton type="primary" @click="toPurchase">
               <i class="iconfont td-icon-dinggou mr-1"></i>
-              <span>实例订购</span>
+              <span>{{ $t('agent_button_order2') }}</span>
             </ElButton>
           </template>
         </div>
       </div>
       <El-table class="instance-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
-        <ElTableColumn min-width="200px" label="实例ID/名称">
+        <ElTableColumn min-width="200px" :label="$t('agent_name')">
           <template slot-scope="scope">
             <div class="flex">
               <div>
@@ -58,29 +68,31 @@
                 ></InlineInput>
               </div>
               <div class="flex align-center">
-                <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">仅供测试使用</span>
+                <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">{{
+                  $t('agent_test_use')
+                }}</span>
               </div>
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="状态" width="120">
+        <ElTableColumn :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
             <StatusTag type="text" :status="scope.row.status"></StatusTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="任务数" width="120">
+        <ElTableColumn :label="$t('agent_task_number')" width="120">
           <template slot-scope="scope">
             <ElTooltip effect="dark" placement="top" :disabled="!scope.row.metric || !scope.row.metric.runningTaskNum">
               <div slot="content">
                 <template v-for="(item, index) in scope.row.metric.dataFlows">
-                  <div v-if="index < 3" :key="item.id">任务名称：{{ item.name }}</div>
+                  <div v-if="index < 3" :key="item.id">{{ $t('task_name') }}：{{ item.name }}</div>
                 </template>
                 <ElLink
                   v-if="scope.row.metric.runningTaskNum > 3"
                   class="block text-center"
                   type="primary"
                   @click="toDataFlow(scope.row.tmInfo.agentId)"
-                  >查看更多</ElLink
+                  >{{ $t('gl_see_more') }}</ElLink
                 >
               </div>
               <ElLink type="primary" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
@@ -89,7 +101,7 @@
             </ElTooltip>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="版本" width="200">
+        <ElTableColumn :label="$t('agent_version')" width="200">
           <template slot-scope="scope">
             <div class="flex align-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
@@ -137,21 +149,21 @@
             <span>{{ $moment(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="操作" width="120" fixed="right">
+        <ElTableColumn :label="$t('agent_operate')" width="120" fixed="right">
           <template slot-scope="scope">
             <ElLink
               type="primary"
               class="mr-2"
               :disabled="scope.row.agentType === 'Cloud' || !!scope.row.deployDisable"
               @click="toDeploy(scope.row)"
-              >部署</ElLink
+              >{{ $t('agent_button_deploy') }}</ElLink
             >
             <ElLink
               type="primary"
               class="mr-2"
               :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Running'"
               @click="handleStop(scope.row)"
-              >停止</ElLink
+              >{{ $t('agent_button_stop') }}</ElLink
             >
             <ElLink
               type="danger"
@@ -159,14 +171,16 @@
               @click="handleDel(scope.row)"
               :loading="delLoading"
               :disabled="delBtnDisabled(scope.row)"
-              >删除</ElLink
+              >{{ $t('agent_button_delete') }}</ElLink
             >
           </template>
         </ElTableColumn>
         <div class="instance-table__empty" slot="empty">
           <i class="el-icon-folder-opened"></i>
-          <span class="ml-1" v-if="!searchParams.keyword && !searchParams.status">暂无数据</span>
-          <span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
+          <span class="ml-1" v-if="!searchParams.keyword && !searchParams.status">{{ $t('gl_no_data') }}</span>
+          <span v-else>
+            {{ $t('gl_no_match_result') }}，<ElLink type="primary" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
+          </span>
         </div>
       </El-table>
       <ElPagination
@@ -254,21 +268,18 @@ export default {
     }
   },
   computed: {
-    statusOptions() {
-      let options = {}
-      let map = this.statusMap
-      let dfsFilter = ['Creating', 'Running', 'Stopped']
-      for (const key in map) {
-        const item = map[key]
-        let value = key
-        if (options[item.text]) {
-          value = options[item.text] + ',' + value
-        }
-        if (dfsFilter.indexOf(value) > -1) {
-          options[item.text] = value
-        }
-      }
-      return options
+    statusItems() {
+      let result = []
+      let filter = ['Creating', 'Running', 'Stopped']
+      let { statusMap } = this
+
+      filter.forEach(el => {
+        result.push({
+          label: this.$t('agent_status_' + statusMap[el]?.key),
+          value: el
+        })
+      })
+      return result
     },
     disabledAutoUpgradeBtn() {
       return this.selectedRow?.status !== 'Running'
