@@ -597,7 +597,8 @@ export default {
         case 'downloading':
         case 'upgrading':
           result =
-            `自动升级中` + (this.upgradingProgres(row) === undefined ? '' : `，进度：${this.upgradingProgres(row)}%`)
+            `自动升级中` +
+            (this.upgradingProgres(row) === undefined ? '' : `，升级包下载进度：${this.upgradingProgres(row)}%`)
           break
         case 'fail':
           result = '自动升级失败，请手动升级'
