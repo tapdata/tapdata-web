@@ -63,6 +63,111 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
+  '/tm/api/DataFlows/findOne': {
+    data: {
+      id: '60dc5941fdbc9e1764636842',
+      name: 'test js ',
+      mappingTemplate: 'custom',
+      stages: [
+        {
+          id: '76a33ab1-cb0f-42ac-9240-41bb1f421ff0',
+          inputLanes: [],
+          outputLanes: ['c44fdef0-a4c7-4f75-964a-8e920b044420'],
+          connectionId: '60cda022f0e73a0067428c38',
+          databaseType: 'mysql',
+          tableName: 'CLAIM',
+          sql: '',
+          dropTable: false,
+          type: 'table',
+          isFilter: false,
+          custFields: [],
+          custSql: {
+            filterType: 'field',
+            selectedFields: [],
+            fieldFilterType: 'keepAllFields',
+            limitLines: '',
+            cSql: '',
+            editSql: '',
+            conditions: []
+          },
+          initialOffset: '',
+          initialSyncOrder: 0,
+          enableInitialOrder: false,
+          tableId: '60cda023f0e73a0067428c4b',
+          name: 'CLAIM',
+          dataQualityTag: false,
+          joinTables: [],
+          statsStatus: 'cdc'
+        },
+        {
+          id: '9a74cec4-db3e-488f-bd17-ff844f846f50',
+          inputLanes: ['c44fdef0-a4c7-4f75-964a-8e920b044420'],
+          outputLanes: [],
+          connectionId: '60cda022f0e73a0067428c38',
+          databaseType: 'mysql',
+          tableName: 'CLAIM_C1',
+          sql: '',
+          dropTable: true,
+          type: 'table',
+          isFilter: false,
+          custFields: [],
+          custSql: {
+            filterType: 'field',
+            selectedFields: [],
+            fieldFilterType: 'keepAllFields',
+            limitLines: '',
+            cSql: '',
+            editSql: '',
+            conditions: [],
+            custFields: [
+              'CLAIM_ID',
+              'POLICY_ID',
+              'CLAIM_DATE',
+              'SETTLED_DATE',
+              'CLAIM_TYPE',
+              'CLAIM_AMOUNT',
+              'SETTLED_AMOUNT',
+              'CLAIM_REASON',
+              'LAST_CHANGE',
+              'P2'
+            ]
+          },
+          initialOffset: '',
+          initialSyncOrder: 0,
+          enableInitialOrder: false,
+          tableId: '60dc35702340b60e00088d0d',
+          cSql: '',
+          name: 'CLAIM_C1',
+          dataQualityTag: false,
+          joinTables: [
+            {
+              tableName: 'CLAIM',
+              joinType: 'upsert',
+              joinPath: '',
+              manyOneUpsert: false,
+              joinKeys: [{ source: 'CLAIM_ID', target: 'CLAIM_ID' }],
+              stageId: '76a33ab1-cb0f-42ac-9240-41bb1f421ff0',
+              isArray: false,
+              arrayUniqueKey: ''
+            }
+          ],
+          statsStatus: null
+        },
+        {
+          id: 'c44fdef0-a4c7-4f75-964a-8e920b044420',
+          inputLanes: ['76a33ab1-cb0f-42ac-9240-41bb1f421ff0'],
+          outputLanes: ['9a74cec4-db3e-488f-bd17-ff844f846f50'],
+          name: 'JavaScript',
+          type: 'js_processor',
+          script:
+            "function process(record){\n\n\tif (record.CLAIM_ID == 'CL_000000000'){record.CLAIM_ID=null};\n    if (record.CLAIM_ID == 'CL_000000002'){record.CLAIM_ID=null};\n\treturn record; }",
+          statsStatus: null
+        }
+      ]
+    },
+    code: 'ok',
+    msg: 'ok'
+  },
   '/tm/api/DataFlows/count': { data: { count: 41 }, code: 'ok', msg: 'ok' },
   '/tm/api/DataFlows/:id/reset': {
     code: 'ok',

@@ -142,6 +142,18 @@ module.exports = {
         ]
       })
       .end()
+
+    // markdown loader
+    config.module
+      .rule('md')
+      .test(/\.md$/)
+      .use('html')
+      .loader('html-loader')
+      .end()
+      .use('markdown')
+      .loader('markdown-loader')
+      .end()
+
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('src/_packages/tapdata-web-core'))
   },
   css: {

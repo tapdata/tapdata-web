@@ -47,7 +47,9 @@ import {
   Transfer,
   Steps,
   Step,
-  Badge
+  Badge,
+  Cascader,
+  ButtonGroup
 } from 'element-ui'
 
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
@@ -123,3 +125,5 @@ Vue.use(Transfer)
 Vue.use(Badge)
 Vue.use(Steps)
 Vue.use(Step)
+Vue.use(Cascader)
+Vue.use(ButtonGroup)
