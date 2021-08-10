@@ -346,16 +346,28 @@ export default {
     },
     //恢复默认单表
     rollbackTable(name) {
-      this.$nextTick(() => {
-        this.fieldProcessMethod && this.fieldProcessMethod('table', name)
-        this.updateView()
+      this.$confirm('您确认要恢复默认吗？', '提示', {
+        type: 'warning'
+      }).then(resFlag => {
+        if (resFlag) {
+          this.$nextTick(() => {
+            this.fieldProcessMethod && this.fieldProcessMethod('table', name)
+            this.updateView()
+          })
+        }
       })
     },
     //恢复默认全部
     rollbackAll() {
-      this.$nextTick(() => {
-        this.fieldProcessMethod && this.fieldProcessMethod('all')
-        this.updateView()
+      this.$confirm('您确认要全部恢复默认吗？', '提示', {
+        type: 'warning'
+      }).then(resFlag => {
+        if (resFlag) {
+          this.$nextTick(() => {
+            this.fieldProcessMethod && this.fieldProcessMethod('all')
+            this.updateView()
+          })
+        }
       })
     },
     //字段修改统一弹窗
