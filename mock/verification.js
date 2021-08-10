@@ -54,7 +54,7 @@ module.exports = {
             showAdvancedVerification: false,
             script: '',
             webScript: '',
-            taskId: '6110cb2b25d71e00512d9888-'
+            taskId: '60ded447412e0b08d632d9c3-'
           }
         ],
         dataFlowName: '数据校验测试',
@@ -1034,6 +1034,7 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
+  '/tm/api/InspectResults/count': { data: { count: 65 }, code: 'ok', msg: 'ok' },
   '/tm/api/InspectResults': {
     data: [
       {

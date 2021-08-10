@@ -19,10 +19,11 @@
 <style lang="scss">
 $margin: 10px;
 .verification-result-wrap {
+  margin: 20px;
   display: flex;
-  width: 100%;
   height: 100%;
   overflow: hidden;
+  background: #fff;
   .panel-main {
     flex: 1;
     display: flex;
@@ -38,6 +39,7 @@ $margin: 10px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      padding-bottom: 20px;
       .title {
         font-weight: bold;
         color: #409eff;
@@ -101,16 +103,18 @@ export default {
   methods: {
     getData() {
       this.loading = true
-      this.$api('InspectResults')
-        .get({
-          filter: JSON.stringify({
-            where: {
-              id: this.$route.params.id
-            }
-          })
+      this.$axios
+        .get('tm/api/InspectResults', {
+          params: {
+            filter: JSON.stringify({
+              where: {
+                id: this.$route.params.id
+              }
+            })
+          }
         })
-        .then(res => {
-          let result = res.data[0]
+        .then(data => {
+          let result = data[0]
           if (result) {
             if (result) {
               this.resultInfo = result
@@ -140,32 +144,31 @@ export default {
         let showAdvancedVerification = task.showAdvancedVerification
         let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
         let where = {
-          where: {
-            taskId,
-            inspect_id: { regexp: `^${this.inspect.id}$` },
-            inspectResultId: { regexp: `^${this.resultInfo.id}$` }
-          },
+          taskId,
+          inspect_id: { regexp: `^${this.inspect.id}$` },
+          inspectResultId: { regexp: `^${this.resultInfo.id}$` }
+        }
+        let filter = {
+          where,
           order: 'createTime DESC',
           limit: showAdvancedVerification ? 1 : size,
           skip: (current - 1) * (showAdvancedVerification ? 1 : size)
         }
         return Promise.all([
-          this.$api('InspectDetails').count(where),
-          this.$api('InspectDetails').get({
-            filter: JSON.stringify(where)
-          })
-        ]).then(([countRes, res]) => {
+          this.$axios.get('tm/api/InspectDetails/count?where=' + encodeURIComponent(JSON.stringify(where))),
+          this.$axios.get('tm/api/InspectDetails?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        ]).then(([countData, data]) => {
           let resultList = []
-          if (res.data) {
+          if (data) {
             if (showAdvancedVerification) {
-              resultList = res.data || []
+              resultList = data || []
             } else {
-              resultList = this.handleOtherVerify(res.data)
+              resultList = this.handleOtherVerify(data)
             }
           }
           return {
             showAdvancedVerification, // 是否高级校验
-            total: countRes.data.count, // 总条数
+            total: countData.count, // 总条数
             statsInfo, // 结果信息
             resultList // 结果详情
           }

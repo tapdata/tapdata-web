@@ -14,7 +14,7 @@
           class="flex align-items-center justify-content-sm-between mt-2"
           v-else-if="inspect.inspectMethod !== 'row_count'"
         >
-          <div class="flex align-items-center">
+          <div class="flex align-center">
             <template v-if="inspect.result !== 'passed' && !(inspect.status === 'error' && !resultInfo.parentId)">
               <ElButton
                 v-if="!['running', 'scheduling'].includes(inspect.status)"
@@ -28,7 +28,7 @@
                 <div slot="content" style="width: 232px">
                   {{ $t('verify_button_diff_verify_tips') }}
                 </div>
-                <i class="el-icon-warning-outline ml-2 color-info"></i>
+                <i class="el-icon-warning-outline ml-2 color-info" style="font-size: 14px"></i>
               </el-tooltip>
             </template>
           </div>
@@ -48,7 +48,7 @@
 <style lang="scss">
 $margin: 10px;
 .verification-details-wrap {
-  margin: 0 20px 20px 20px;
+  margin: 20px;
   display: flex;
   height: 100%;
   overflow: hidden;

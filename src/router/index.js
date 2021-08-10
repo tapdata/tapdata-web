@@ -177,7 +177,7 @@ const routes = [
             }
           },
           {
-            path: 'result',
+            path: 'result/:id',
             name: 'VerifyResult',
             component: () => import(/* webpackChunkName: "verify-result" */ '../views/Verify/Result.vue'),
             meta: {
