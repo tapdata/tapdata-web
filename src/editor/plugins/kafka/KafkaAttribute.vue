@@ -130,7 +130,6 @@
           v-if="dataNodeInfo.isTarget"
           :label="$t('dataForm.form.kafka.kafkaPartitionKey')"
           prop="kafkaPartitionKey"
-          required
         >
           <el-select
             v-model="model.kafkaPartitionKey"

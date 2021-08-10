@@ -69,6 +69,7 @@ export default function (vm) {
       {
         type: 'select',
         field: 'hiveConnType',
+        required: true,
         label: vm.$t('dataForm.form.hiveType'),
         options: [
           {
