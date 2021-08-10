@@ -1,9 +1,11 @@
 export default {
-  verify_button_diff_verify: '差异校验',
-  verify_button_diff_verify_running: '校验中',
-  verify_button_diff_verify_tips: '对本次全量校验的差异数据结果进行再次校验，行数差异暂不支持差异校验',
-  verify_last_start_time: '最后校验时间',
-  verify_button_diff_task_history: '校验历史',
-  verify_message_old_data_not_support: '旧数据暂不支持二次校验',
-  verify_message_out_of_limit: '您的差异数据量已超出任务支持的最大错误数据保存条数，暂时无法进行二次校验'
+  verify_button_diff_verify: 'Diff verification',
+  verify_button_diff_verify_running: 'Verification in progress',
+  verify_button_diff_verify_tips:
+    'Re-verify the difference data result of this full verification, the difference in the number of rows does not support the difference verification',
+  verify_last_start_time: 'Last verification time',
+  verify_button_diff_task_history: 'Verify history',
+  verify_message_old_data_not_support: 'Old data does not support secondary verification',
+  verify_message_out_of_limit:
+    'Your discrepancy data volume has exceeded the maximum number of error data saved by the task support, and the second verification is temporarily impossible.'
 }
