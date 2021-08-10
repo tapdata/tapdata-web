@@ -206,6 +206,7 @@
       :modal-append-to-body="false"
       custom-class="databaseLinkDialog"
       :close-on-click-modal="false"
+      v-if="dialogFieldProcessVisible"
     >
       <FieldMapping
         ref="fieldMappingDom"
