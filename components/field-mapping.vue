@@ -1,6 +1,9 @@
 <template>
   <div class="field-mapping">
-    <div><strong>表设置</strong>: 用户可以在此页面勾选源端每个表要同步的字</div>
+    <div>
+      <strong>表设置</strong>:
+      用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
+    </div>
     <div class="search">
       <div class="item">
         <span> 搜索表：</span>
@@ -53,8 +56,8 @@
           </template>
         </ElTableColumn>
         <ElTableColumn label="源表类型" prop="data_type"></ElTableColumn>
-        <ElTableColumn label="源表长度" prop="scale" width="80"></ElTableColumn>
-        <ElTableColumn label="源表精度" prop="precision" width="80"></ElTableColumn>
+        <ElTableColumn label="源表长度" prop="precision" width="80"></ElTableColumn>
+        <ElTableColumn label="源表精度" prop="scale" width="80"></ElTableColumn>
         <ElTableColumn label="目标表名" width="190">
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'field_name')">
@@ -79,17 +82,6 @@
         </ElTableColumn>
         <ElTableColumn label="目标表长度">
           <template slot-scope="scope">
-            <div v-if="scope.row.t_scale && !scope.row.is_deleted" @click="edit(scope.row, 'scale')">
-              <span>{{ scope.row.t_scale }}</span>
-              <i class="icon el-icon-edit-outline"></i>
-            </div>
-            <div v-else>
-              <span>{{ scope.row.t_scale }}</span>
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="目标表精度">
-          <template slot-scope="scope">
             <div v-if="scope.row.t_precision && !scope.row.is_deleted" @click="edit(scope.row, 'precision')">
               <span>{{ scope.row.t_precision }}</span>
               <i class="icon el-icon-edit-outline"></i>
@@ -99,8 +91,19 @@
             </div>
           </template>
         </ElTableColumn>
+        <ElTableColumn label="目标表精度">
+          <template slot-scope="scope">
+            <div v-if="scope.row.t_scale && !scope.row.is_deleted" @click="edit(scope.row, 'scale')">
+              <span>{{ scope.row.t_scale }}</span>
+              <i class="icon el-icon-edit-outline"></i>
+            </div>
+            <div v-else>
+              <span>{{ scope.row.t_scale }}</span>
+            </div>
+          </template>
+        </ElTableColumn>
         <ElTableColumn label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.id, true)"> 删除 </ElLink>
             <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
           </template>
@@ -127,9 +130,37 @@
         v-model="editValueType[currentOperationType]"
         v-if="['precision', 'scale'].includes(currentOperationType)"
       ></el-input-number>
-      <el-select v-model="editValueType[currentOperationType]" v-if="['data_type'].includes(currentOperationType)">
-        <el-option :label="item" :value="item" v-for="(item, index) in typeMapping" :key="index"></el-option>
-      </el-select>
+      <div v-if="['data_type'].includes(currentOperationType)">
+        <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
+          <span>字段类型规则：</span>
+          <div v-for="item in currentTypeRules" :key="item.dbType">
+            <div v-if="item.minPrecision">
+              <div>长度范围</div>
+              <div v-if="item.minPrecision && item.minPrecision !== item.maxPrecision">
+                {{ `- [${item.minPrecision},${item.maxPrecision}]` }}
+              </div>
+              <div v-if="item.minPrecision && item.minPrecision === item.maxPrecision">
+                {{ `- ${item.maxPrecision}` }}
+              </div>
+            </div>
+            <div v-if="item.minScale">
+              <div>精度范围</div>
+              <div v-if="item.minScale !== item.maxScale">
+                {{ `- [${item.minScale},${item.maxScale}]` }}
+              </div>
+              <div v-if="item.minScale === item.maxScale">{{ `- ${item.maxScale}` }}</div>
+            </div>
+          </div>
+        </div>
+        <el-select v-model="editValueType[currentOperationType]" filterable @change="handleDataType">
+          <el-option
+            :label="item.dbType"
+            :value="item.dbType"
+            v-for="(item, index) in typeMapping"
+            :key="index"
+          ></el-option>
+        </el-select>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose()">取 消</el-button>
         <el-button type="primary" @click="editSave()">确 定</el-button>
@@ -154,6 +185,7 @@ export default {
       searchTable: '',
       loading: false,
       typeMapping: [],
+      currentTypeRules: [],
       defaultFieldMappingNavData: '',
       defaultFieldMappingTableData: '',
       position: 0,
@@ -306,6 +338,12 @@ export default {
       //触发页面重新渲染
       this.updateTableData(id, `t_${key}`, value)
       this.handleClose()
+    },
+    handleDataType(val) {
+      let target = this.typeMapping.filter(type => type.dbType === val)
+      if (target?.length > 0) {
+        this.currentTypeRules = target[0]?.rules
+      }
     },
     handleClose() {
       this.dialogVisible = false
