@@ -21,7 +21,6 @@ const proxy = {
 }
 
 //如果环境变量中主题参数存在，则嵌入主题中相关的标量
-let varUrl = '~@/assets/theme/dfs/var.scss'
 let pages = {
   index: {
     entry: 'src/pages/main.js',
@@ -143,12 +142,5 @@ module.exports = {
       })
       .end()
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('src/_packages/tapdata-web-core'))
-  },
-  css: {
-    loaderOptions: {
-      scss: {
-        additionalData: `@import "${varUrl}";`
-      }
-    }
   }
 }

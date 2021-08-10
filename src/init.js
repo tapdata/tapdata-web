@@ -12,8 +12,6 @@ import settings from './settings'
 import TapdataWebCore, { langs } from 'web-core'
 import VueI18n from 'vue-i18n'
 
-require('./assets/theme/dfs/index.scss')
-
 Vue.config.productionTip = false
 Vue.prototype.$settings = settings
 Vue.use(VueClipboard)
