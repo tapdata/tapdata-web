@@ -76,6 +76,7 @@
                 :remoteMethod="intiFieldMappingTableData"
                 :typeMappingMethod="getTypeMapping"
                 :fieldMappingNavData="fieldMappingNavData"
+                :fieldProcessMethod="updateFieldProcess"
                 :field_process="transferData.field_process"
                 @row-click="saveOperations"
               ></FieldMapping>
@@ -1037,6 +1038,21 @@ export default {
       })
       promise.catch(() => {
         this.$message.error('no permission')
+      })
+    },
+    //恢复默认
+    updateFieldProcess(rollback, rollbackTable) {
+      let data = this.daft()
+      if (!data) return
+      if (rollback) {
+        data['rollback'] = rollback
+      }
+      if (rollbackTable) {
+        data['rollbackTable'] = rollbackTable
+      }
+      let promise = this.$axios.post('tm/api/DataFlows/metadata', data)
+      promise.then(data => {
+        this.fieldMappingNavData = data?.data || []
       })
     },
     //获取表设置
