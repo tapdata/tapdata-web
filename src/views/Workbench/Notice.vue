@@ -10,12 +10,12 @@
         <span>2021-07-31</span>
       </div>
     </div>
-    <div class="notice-body mt-6 p-6 fs-6">
+    <div class="notice-body mt-6 fs-6">
       <div class="notice-body__content">
-        <div class="mb-10">
+        <div class="banner-box mb-10">
           <img src="../../../public/images/notice/top.png" alt="" />
         </div>
-        <div class="info-section mb-10">
+        <div class="info-section section-margin mb-10">
           <div class="info-section__header inline-block p-2">Tapdata Cloud 介绍</div>
           <div class="info-section__body p-3 fs-7">
             Tapdata Cloud 是 Tapdata「深圳钛铂数据有限公司 」自研的国内首个
@@ -26,7 +26,7 @@
             的形式提供给所有开发者和企业使用。
           </div>
         </div>
-        <div class="index-section mb-3">
+        <div class="index-section section-margin mb-3">
           <div class="index-section__header flex">
             <div class="index-section__number">01</div>
             <div class="index-section__slash"></div>
@@ -38,17 +38,17 @@
             </div>
           </div>
         </div>
-        <div class="activity-section fs-7 pb-5 px-5">
+        <div class="activity-section section-margin fs-7 pb-5 px-5">
           自开放公测以来，Tapdata Cloud 在与用户交互过程中不断升级迭代，为了回馈和鼓励用户更好地使用产品和提出宝贵建议，
           <span class="fw-bolder">即日起至2021年10月1日，Tapdata 面向全体用户送出公测福利！</span>
           不论您是Tapdata Cloud 的用户还是产品推荐官，都有机会赢取 AirPods
           、Kindle、机械键盘、小爱音响、充电宝、定制保温杯和U盘等好礼！
         </div>
-        <div class="prize-section p-4">
+        <div class="prize-section section-margin flex justify-center p-4">
           <img src="../../../public/images/notice/prize1.png" alt="" />
           <img src="../../../public/images/notice/prize2.png" alt="" />
         </div>
-        <div class="index-section mb-3">
+        <div class="index-section section-margin mb-3">
           <div class="index-section__header flex">
             <div class="index-section__number">02</div>
             <div class="index-section__slash"></div>
@@ -60,49 +60,50 @@
             </div>
           </div>
         </div>
-        <div class="mode-section">
-          <div class="mode-section__connect">
-            <div class="mode-section__header">方式一 ：顺利完成1个同步任务</div>
-            <div class="p-5 clear">
-              <div class="line-heiht-2">
-                活动期间顺利完成至少1个 Tapdata Cloud 数据同步任务，截图发给 Tapdata
-                服务号人工客服（通过公众号首页菜单联系客服），即可领取 64G U盘/ 充电宝 / 小爱音箱 / 保温杯 4选1！
-              </div>
-              <div class="text-center">
-                <div class="fw-bolder mb-3">Tapdata Cloud 官网↓↓</div>
-                <div class="mb-3">https://cloud.tapdata.net/</div>
-                <div class="fs-8">（执行同步任务请到PC端进行）</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="mode-section">
-          <div class="mode-section__connect">
-            <div class="mode-section__header">方式二：撰写并分享产品体验博客</div>
-            <div class="p-5 clear">
-              <div class="line-heiht-2">
-                活动期间，体验 Tapdata Cloud / Tapdata Enterprise，并撰写和分享使用经验博客文章，完成后将文章链接发给
-                Tapdata 服务号人工客服，可根据内容质量获得Apple AirPods / Kindle /
-                机械键盘（文章质量越高，奖品价值越高）！
-              </div>
-              <div class="mt-6 fs-8">
-                * 内容判断维度：主题切合度，逻辑清晰度，可读性，参考价值等；本奖品也可以折合成京东购物卡兑换。
+        <div class="mode-container section-margin flex pb-7">
+          <div class="mode-section">
+            <div class="mode-section__connect">
+              <div class="mode-section__header">方式一 ：顺利完成1个同步任务</div>
+              <div class="p-5 clear">
+                <div class="line-heiht-2">
+                  活动期间顺利完成至少1个 Tapdata Cloud 数据同步任务，截图发给 Tapdata
+                  服务号人工客服（通过公众号首页菜单联系客服），即可领取 64G U盘/ 充电宝 / 小爱音箱 / 保温杯 4选1！
+                </div>
+                <div class="text-center">
+                  <div class="fw-bolder mt-6 mb-3">Tapdata Cloud 官网↓↓</div>
+                  <div class="mb-3">https://cloud.tapdata.net/</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="mode-section">
-          <div class="mode-section__connect">
-            <div class="mode-section__header">方式三：成为 Tapdata 产品推荐官</div>
-            <div class="p-5 clear">
-              <div class="line-heiht-2">
-                活动期间成功邀请朋友关注 Tapdata
-                微信服务号（邀请数≥15名）的推荐官，将获得礼品盲盒1个（包括不限于机械键盘，保温杯，充电宝，Kindle， Apple
-                AirPods 等），邀请人数达标后系统将自动通知您（ps：邀请人数越多，将有机会获得更高价值的礼品）！
+          <div class="mode-section">
+            <div class="mode-section__connect">
+              <div class="mode-section__header">方式二：撰写并分享产品体验博客</div>
+              <div class="p-5 clear">
+                <div class="line-heiht-2">
+                  活动期间，体验 Tapdata Cloud / Tapdata Enterprise，并撰写和分享使用经验博客文章，完成后将文章链接发给
+                  Tapdata 服务号人工客服，可根据内容质量获得Apple AirPods / Kindle /
+                  机械键盘（文章质量越高，奖品价值越高）！
+                </div>
+                <div class="mt-6 fs-8">
+                  * 内容判断维度：主题切合度，逻辑清晰度，可读性，参考价值等；本奖品也可以折合成京东购物卡兑换。
+                </div>
               </div>
-              <div class="QR-code-section text-center">
-                <div class="mb-3">扫描识别二维码成为产品推荐官↓↓</div>
-                <img src="../../../public/images/notice/poster.png" alt="" />
+            </div>
+          </div>
+          <div class="mode-section">
+            <div class="mode-section__connect">
+              <div class="mode-section__header">方式三：成为 Tapdata 产品推荐官</div>
+              <div class="p-5 clear">
+                <div class="line-heiht-2">
+                  活动期间成功邀请朋友关注 Tapdata
+                  微信服务号（邀请数≥15名）的推荐官，将获得礼品盲盒1个（包括不限于机械键盘，保温杯，充电宝，Kindle，
+                  Apple AirPods 等），邀请人数达标后系统将自动通知您（ps：邀请人数越多，将有机会获得更高价值的礼品）！
+                </div>
+                <div class="QR-code-section text-center">
+                  <div class="mt-6 mb-2">扫描识别二维码成为产品推荐官↓↓</div>
+                  <img src="../../../public/images/notice/poster.png" alt="" />
+                </div>
               </div>
             </div>
           </div>
@@ -246,11 +247,22 @@ export default {
 
 .ws-main-container {
   .notice-body__content {
-    width: 700px;
+    //width: 700px;
+    .banner-box {
+      text-align: center;
+      //padding: 0 15%;
+      background-color: rgb(22, 32, 98);
+      img {
+        width: 50%;
+      }
+    }
   }
   .line-heiht-2 {
     line-height: 2;
   }
+}
+.section-margin {
+  margin: 0 15%;
 }
 .info-section__header {
   border-radius: 12px 12px 0 0;
@@ -259,7 +271,7 @@ export default {
 }
 .info-section__body {
   border: 1px solid rgb(1, 121, 179);
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 12px 12px 12px;
   line-height: 2;
 }
 .activity-section {
@@ -360,7 +372,10 @@ export default {
   }
 }
 .mode-section {
-  border-left: 1px solid rgb(1, 121, 179);
+  //border-left: 1px solid rgb(1, 121, 179);
+  &:not(:first-child) {
+    border-left: 1px solid #0179b3;
+  }
   font-size: 14px;
   color: #646464;
   overflow: hidden;
