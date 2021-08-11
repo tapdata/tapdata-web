@@ -76,7 +76,7 @@
 
       <el-table-column
         :label="
-          $route.query.mappingFlag ? $t('taskProgress.completedSyncData') : $t('taskProgress.completedMigrateData')
+          $route.query.mappingFlag ? $t('taskprogress_completed_sync_data') : $t('taskProgress.completedMigrateData')
         "
         prop="statsData.targetRowNum"
         sortable
@@ -87,7 +87,7 @@
       </el-table-column>
       <el-table-column
         :label="
-          $route.query.mappingFlag ? $t('taskProgress.fullSyncProgress') : $t('taskProgress.fullMigrationProgress')
+          $route.query.mappingFlag ? $t('taskprogress_full_sync_progress') : $t('taskProgress.fullMigrationProgress')
         "
         prop="statsData.status"
         sortable

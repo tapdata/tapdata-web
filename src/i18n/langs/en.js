@@ -7,5 +7,12 @@ export default {
   verify_button_diff_task_history: 'Verify history',
   verify_message_old_data_not_support: 'Old data does not support secondary verification',
   verify_message_out_of_limit:
-    'Your discrepancy data volume has exceeded the maximum number of error data saved by the task support, and the second verification is temporarily impossible.'
+    'Your discrepancy data volume has exceeded the maximum number of error data saved by the task support, and the second verification is temporarily impossible.',
+
+  taskprogress_plan_sync_table_num: 'Number of plan synchronization tables',
+  taskprogress_completed_sync_table_num: 'Number of completed synchronization tables',
+  taskprogress_plan_sync_data: 'Planned synchronization data volume (rows)',
+  taskprogress_completed_sync_data: 'Completed synchronization data volume (rows)',
+  taskprogress_current_sync: 'Current synchronization status of each library',
+  taskprogress_full_sync_progress: 'Full sync progress'
 }
