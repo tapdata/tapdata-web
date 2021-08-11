@@ -4,6 +4,7 @@ export default {
   gl_no_data: '暂无数据',
   gl_no_match_result: '没有查到符合条件的结果',
   gl_back_to_list: '返回列表',
+  gl_button_cancel: '取消',
   /** 模块 */
   // agent
   agent_name: '实例ID/名称',
@@ -24,6 +25,16 @@ export default {
   agent_button_deploy: '部署',
   agent_button_stop: '停止',
   agent_button_delete: '删除',
+  agent_button_auto_upgrade: '自动升级',
+  agent_button_manual_upgrade: '手动升级',
+  agent_tip_auto_upgrade: 'Agent离线时无法使用自动升级',
+  agent_dialog_upgrade_title:
+    'Agent版本有更新，您可以通过以下方式将您的Agent升级到最新版本。升级过程中将无法运行任务。',
+  agent_dialog_upgrade_fail: '自动升级失败，请尝试手动升级。',
+  agent_link_to_purchase_msg: '确认后跳转下载页面',
+  agent_link_to_purchase_title: '是否确认订购实例？',
+  agent_link_to_old_purchase_msg: '确认后跳转订购托管实例页面',
+  agent_link_to_old_purchase_title: '是否确认订购托管实例？',
   // 任务
   task_name: '任务名称',
 
