@@ -47,7 +47,7 @@
         </li>
       </ul>
       <div class="success-band" v-if="statsInfo.result === 'passed'">
-        <i class="iconfont icon-zhuhe"></i>
+        <img style="height: 30px; margin-right: 5px" src="../../assets/images/zhuhe.png" />
         <span>{{ $t('dataVerification.success') }}</span>
       </div>
       <div class="error-band" v-if="statsInfo.status === 'error'">
