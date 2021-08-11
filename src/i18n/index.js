@@ -33,8 +33,6 @@ Object.values(langMap).forEach(l => {
   i18n.mergeLocaleMessage(l, langs[l])
   i18n.mergeLocaleMessage(l, localLangs[l])
 })
-console.log(i18n)
-console.log(i18n.t('verify_button_diff_verify', 'zh-CN'))
 
 locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
 
