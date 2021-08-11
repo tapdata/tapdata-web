@@ -85,6 +85,7 @@
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'data_type')">
               <span>{{ scope.row.t_data_type }}</span>
+              <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
               <i class="icon el-icon-arrow-down"></i>
             </div>
             <div v-else>
@@ -315,7 +316,7 @@ export default {
             .then(({ data, target }) => {
               this.target = target
               this.fieldMappingTableData = data
-              this.fieldCount = this.fieldMappingTableData.length
+              this.fieldCount = this.fieldMappingTableData.length || 0
               this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
             .finally(() => {
@@ -659,6 +660,10 @@ export default {
   .el-table .delete-row {
     background: #f2f2f2;
   }
+  .el-table .error-row {
+    background: rgba(255, 0, 0, 0.3);
+    color: #fff;
+  }
   .el-table th {
     background: #f4f5f7;
   }
@@ -678,6 +683,9 @@ export default {
   overflow: hidden;
   .icon {
     color: #6dc5e8;
+  }
+  .icon-error {
+    color: red;
   }
   .search {
     display: flex;
