@@ -193,7 +193,7 @@ const routes = [
             }
           },
           {
-            path: ':id/history',
+            path: 'result/:id/history',
             name: 'VerifyDiffHistory',
             component: () => import(/* webpackChunkName: "verify-history" */ '../views/Verify/History.vue'),
             meta: {
