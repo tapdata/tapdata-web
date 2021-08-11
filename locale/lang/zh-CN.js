@@ -1,4 +1,10 @@
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
+const newCn = {
+  verify_history_source_rows: '本次校验行数',
+  verify_history_target_rows: '目标行数',
+  verify_history_source_total_rows: '源总行数',
+  verify_history_target_total_rows: '目标总行数'
+}
 const cn = {
   ...zhLocale,
   tap: {
@@ -3350,4 +3356,4 @@ const cn = {
   }
 }
 
-export default cn
+export default Object.assign({}, cn, newCn)

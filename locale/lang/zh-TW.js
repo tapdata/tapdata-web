@@ -1,5 +1,12 @@
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
 
+const newTc = {
+  verify_history_source_rows: '本次校驗行數',
+  verify_history_target_rows: '目標行數',
+  verify_history_source_total_rows: '源總行數',
+  verify_history_target_total_rows: '目標總行數'
+}
+
 const tc = {
   ...tcLocale,
   tap: {
@@ -3298,4 +3305,4 @@ const tc = {
   }
 }
 
-export default tc
+export default Object.assign({}, tc, newTc)

@@ -1,5 +1,10 @@
 import enLocale from 'element-ui/lib/locale/lang/en'
-
+const newEn = {
+  verify_history_source_rows: 'Verfify Rows',
+  verify_history_target_rows: 'Target Rows',
+  verify_history_source_total_rows: 'Source Total Rows',
+  verify_history_target_total_rows: 'Target Total Rows'
+}
 const en = {
   ...enLocale,
   tap: {
@@ -3374,4 +3379,4 @@ const en = {
   }
 }
 
-export default en
+export default Object.assign({}, en, newEn)
