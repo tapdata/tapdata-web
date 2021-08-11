@@ -289,7 +289,7 @@ export default {
       let list = this.list || []
       let ids = []
       list.forEach(item => {
-        if (['running'].includes(item.status)) {
+        if (['running', 'scheduling'].includes(item.status)) {
           ids.push(item.id)
         }
       })
@@ -453,7 +453,7 @@ export default {
                 id
               })
             ),
-          { status: 'scheduling', ping_time: 0, byFirstCheckId: '' }
+          { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
         )
         .then(() => {
           this.$message.success(this.$t('dataVerification.startVerify'))
