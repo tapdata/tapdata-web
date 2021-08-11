@@ -47,7 +47,6 @@
         :row-class-name="tableRowClassName"
         v-loading="loading"
       >
-        <el-table-column type="index" width="55"> </el-table-column>
         <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="100">
           <template slot-scope="scope">
             <div v-if="scope.row.primary_key_position === 1">
@@ -330,6 +329,7 @@ export default {
         if (field.id === id) {
           field[key] = value
           field['source'] = 'manual'
+          field['is_auto_allowed'] = false
         }
       })
       //触发页面重新渲染
