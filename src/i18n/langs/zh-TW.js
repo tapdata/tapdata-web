@@ -5,6 +5,8 @@ export default {
   gl_no_match_result: '沒有查到符合條件的結果',
   gl_back_to_list: '返回列表',
   gl_button_cancel: '取消',
+  gl_button_delete_fail: '刪除失敗',
+  gl_button_update_success: '修改成功',
   /** 模块 */
   // agent
   agent_name: '實例ID/名稱',
@@ -35,6 +37,23 @@ export default {
   agent_link_to_purchase_title: '是否確認訂購實例？',
   agent_link_to_old_purchase_msg: '確認後跳轉訂購託管實例頁面',
   agent_link_to_old_purchase_title: '是否確認訂購託管實例？',
+  agent_button_stop_tip: '是否停止',
+  agent_button_stop_tip_running: '當前Agent有任務正在運行，強行停止Agent可能會導致任務出現異常，是否要強行停止！',
+  agent_button_stop_tip_no_running:
+    'Agent停止後將無法再繼續運行任務，您需要去Agent安裝目錄下才能再次啟動Agent，是否確認停止？',
+  agent_button_stop_msg_success: 'Agent 已停止',
+  agent_button_stop_msg_fail: 'Agent 停止失敗',
+  agent_button_delete_confirm_title: '刪除後該Agent將無法再繼續使用，是否確認刪除？',
+  agent_button_delete_confirm_msg: '當前Agent上有任務正在運行，請先停止任務後再刪除。',
+  agent_button_delete_success: 'Agent 删除成功',
+  agent_button_delete_fail: 'Agent 刪除失敗',
+  agent_auto_upgrade_tip_running_task: '檢測到您有任務正在運行，請先停止所有任務再進行升級操作!',
+  agent_auto_upgrade_tip_start: '開始升級',
+  agent_auto_upgrade_tip_upgrading: '自動升級中',
+  agent_auto_upgrade_tip_progress: '升級包下載進度',
+  agent_auto_upgrade_tip_fail: '自動升級失敗，請手動升級',
+  agent_auto_upgrade_tip_have_new: 'Agent版本有更新，點擊升級',
+  agent_button_create_tip: '是否創建 Agent？',
   // 任务
   task_name: '任務名稱',
 

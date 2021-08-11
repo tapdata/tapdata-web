@@ -446,21 +446,19 @@ export default {
       if (row.metric?.runningTaskNum) {
         flag = true
       }
-      let message = flag
-        ? '当前Agent有任务正在运行，强行停止Agent可能会导致任务出现异常，是否要强行停止！'
-        : 'Agent停止后将无法再继续运行任务，您需要去Agent安装目录下才能再次启动Agent，是否确认停止？'
-      this.$confirm(message, '是否停止', {
+      let message = flag ? this.$t('agent_button_stop_tip_running') : this.$t('agent_button_stop_tip_no_running')
+      this.$confirm(message, this.$t('agent_button_stop_tip'), {
         type: 'warning'
       }).then(res => {
         if (res) {
           this.$axios
             .patch('api/tcm/agent/stop/' + row.id)
             .then(() => {
-              this.$message.success('Agent 已停止')
+              this.$message.success(this.$t('agent_button_stop_msg_success'))
               this.fetch()
             })
             .catch(() => {
-              this.$message.error('Agent 停止失败')
+              this.$message.error(this.$t('agent_button_stop_msg_fail'))
               this.loading = false
             })
         }
@@ -473,11 +471,11 @@ export default {
       }
       let runningTaskNum = row?.metric?.runningTaskNum ?? 0 // 运行中的任务数
       let noDelFlag = runningTaskNum > 0 // 不能删除
-      let title = '删除后该Agent将无法再继续使用，是否确认删除？'
+      let title = this.$t('agent_button_delete_confirm_title')
       let message = null
       if (noDelFlag) {
-        title = '删除失败'
-        message = '当前Agent上有任务正在运行，请先停止任务后再删除。'
+        title = this.$t('gl_button_delete_fail')
+        message = this.$t('agent_button_delete_confirm_msg')
       }
       this.$confirm(message, title, {
         type: 'warning',
@@ -494,11 +492,11 @@ export default {
                 instanceId: row.id
               })
               .then(() => {
-                this.$message.success('Agent 删除成功')
+                this.$message.success(this.$t('agent_button_delete_success'))
                 this.fetch()
               })
               .catch(() => {
-                this.$message.error('Agent 删除失败')
+                this.$message.error(this.$t('agent_button_delete_fail'))
               })
               .finally(() => {
                 this.delLoading = false
@@ -507,11 +505,11 @@ export default {
             this.$axios
               .patch('api/tcm/agent/delete/' + row.id)
               .then(() => {
-                this.$message.success('Agent 删除成功')
+                this.$message.success(this.$t('agent_button_delete_success'))
                 this.fetch()
               })
               .catch(() => {
-                this.$message.error('Agent 删除失败')
+                this.$message.error(this.$t('agent_button_delete_fail'))
               })
               .finally(() => {
                 this.delLoading = false
@@ -529,7 +527,7 @@ export default {
           name: val
         })
         .then(() => {
-          this.$message.success('修改成功')
+          this.$message.success(this.$t('gl_button_update_success'))
           this.fetch()
         })
         .catch(() => {
@@ -563,7 +561,7 @@ export default {
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
       if (this.selectedRow?.metric?.runningTaskNum) {
-        this.$alert('检测到您有任务正在运行，请先停止所有任务再进行升级操作!')
+        this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
         return
       }
       this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
@@ -574,7 +572,7 @@ export default {
             version: this.version
           })
           .then(() => {
-            this.$message.success('开始升级')
+            this.$message.success(this.$t('agent_auto_upgrade_tip_start'))
             this.fetch()
           })
       })
@@ -583,7 +581,7 @@ export default {
       let row = this.selectedRow
       this.closeDialog() // 关闭升级方式选择窗口
       if (row.metric?.runningTaskNum) {
-        this.$alert('检测到您有任务正在运行，请先停止所有任务再进行升级操作!')
+        this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
       } else {
         let routeUrl = this.$router.resolve({
           name: 'UpgradeVersion',
@@ -609,17 +607,17 @@ export default {
         case 'downloading':
         case 'upgrading':
           result =
-            `自动升级中` +
-            (this.upgradingProgres(row) === undefined ? '' : `，升级包下载进度：${this.upgradingProgres(row)}%`)
+            this.$t('agent_auto_upgrade_tip_upgrading') +
+            (this.upgradingProgres(row) === undefined
+              ? ''
+              : `，${this.$t('agent_auto_upgrade_tip_progress')}：${this.upgradingProgres(row)}%`)
           break
         case 'fail':
-          result = '自动升级失败，请手动升级'
-          break
         case 'error':
-          result = '自动升级失败，请手动升级'
+          result = this.$t('agent_auto_upgrade_tip_fail')
           break
         default:
-          result = 'Agent版本有更新，点击升级'
+          result = this.$t('agent_auto_upgrade_tip_have_new')
           break
       }
       return result
@@ -639,7 +637,7 @@ export default {
     },
     // 创建Agent
     createAgent() {
-      this.$confirm('是否创建 Agent？', '创建 Agent', {
+      this.$confirm(this.$t('agent_button_create_tip'), this.$t('agent_button_create'), {
         type: 'warning'
       }).then(res => {
         if (res) {

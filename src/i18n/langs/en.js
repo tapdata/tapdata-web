@@ -5,6 +5,8 @@ export default {
   gl_no_match_result: 'No matching results were found',
   gl_back_to_list: 'Back to list',
   gl_button_cancel: 'Cancel',
+  gl_button_delete_fail: 'Failed to delete',
+  gl_button_update_success: 'Successfully modified',
   /** 模块 */
   // agent
   agent_name: 'Agent ID/Name',
@@ -35,6 +37,26 @@ export default {
   agent_link_to_purchase_title: 'Whether to confirm the order instance？',
   agent_link_to_old_purchase_msg: 'After confirmation, jump to the page for ordering hosting instances',
   agent_link_to_old_purchase_title: 'Confirm to order managed instance？',
+  agent_button_stop_tip: 'Whether to stop',
+  agent_button_stop_tip_running:
+    'There is a task currently running on the Agent. Forcibly stopping the Agent may cause the task to be abnormal. Do you want to forcibly stop it?',
+  agent_button_stop_tip_no_running:
+    'After the Agent is stopped, the task can no longer be run. You need to go to the Agent installation directory to start the Agent again. Are you sure to stop?',
+  agent_button_stop_msg_success: 'Agent is stopped',
+  agent_button_stop_msg_fail: 'Agent failed to stop',
+  agent_button_delete_confirm_title: 'The agent can no longer be used after it is deleted. Are you sure to delete it?',
+  agent_button_delete_confirm_msg:
+    'There are tasks currently running on the Agent. Please stop the tasks before deleting them.',
+  agent_button_delete_success: 'Agent deleted successfully',
+  agent_button_delete_fail: 'Agent deletion failed',
+  agent_auto_upgrade_tip_running_task:
+    'It has been detected that you have tasks running, please stop all tasks before proceeding with the upgrade operation!',
+  agent_auto_upgrade_tip_start: 'Start to upgrade',
+  agent_auto_upgrade_tip_upgrading: 'Automatically upgrading',
+  agent_auto_upgrade_tip_progress: 'Upgrade package download progress',
+  agent_auto_upgrade_tip_fail: 'Automatic upgrade failed, please upgrade manually',
+  agent_auto_upgrade_tip_have_new: 'Agent version is updated, click to upgrade',
+  agent_button_create_tip: 'Create an Agent？',
   // 任务
   task_name: 'Task Name',
 
