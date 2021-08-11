@@ -388,9 +388,9 @@ export default {
     toTableHistory(id) {
       let url = ''
       let route = this.$router.resolve({
-        path: '/dataVerifyHistory',
-        query: {
-          inspectId: id
+        name: 'dataVerifyHistory',
+        params: {
+          id
         }
       })
       url = route.href
@@ -405,7 +405,7 @@ export default {
               inq: multipleSelection
             }
           },
-          { status: 'scheduling', ping_time: 0 }
+          { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
         )
         .then(() => {
           this.$message.success(this.$t('dataVerification.startVerify'))
