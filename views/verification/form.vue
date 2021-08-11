@@ -440,6 +440,8 @@ export default {
       this.form.tasks = []
       this.sourceTree = []
       this.targetTree = []
+      let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
+      this.form.name = this.form.name || flow.name || ''
       this.getFlowStages()
     },
     dealData(flowData, callback, isDB) {
