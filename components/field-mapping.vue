@@ -26,7 +26,10 @@
             :class="{ active: position === index }"
             @click.prevent="select(item, index)"
           >
-            <div class="imgBox">
+            <div class="imgBox" v-if="item.invalid">
+              <img src="../assets/images/fieldMapping-table-error.png" alt="" />
+            </div>
+            <div class="imgBox" v-else>
               <img src="../assets/images/fieldMapping-table.png" alt="" />
             </div>
             <div class="contentBox">
@@ -34,7 +37,7 @@
               <div class="contentBox__target">{{ item.sinkObjectName }}</div>
               <div class="contentBox__select">
                 {{ `已选中 ${position === index ? fieldCount : 0}/${item.sourceFieldCount}` }}
-                <el-button size="mini" @click.stop="rollbackTable(item.sinkObjectName)">恢复默认</el-button>
+                <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName)">恢复默认</el-button>
               </div>
             </div>
           </li>
@@ -47,15 +50,17 @@
         :row-class-name="tableRowClassName"
         v-loading="loading"
       >
-        <el-table-column type="index" width="55"> </el-table-column>
         <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="100">
           <template slot-scope="scope">
             <div v-if="scope.row.primary_key_position === 1">
-              <span>{{ scope.row.field_name }}</span>
-              <i class="iconfont icon-yuechi1"></i>
+              <el-tooltip class="item" :content="scope.row.field_name" placement="right">
+                <span>{{ scope.row.field_name }} <i class="iconfont icon-yuechi1"></i></span>
+              </el-tooltip>
             </div>
             <div v-else>
-              <span>{{ scope.row.field_name }}</span>
+              <el-tooltip class="item" :content="scope.row.field_name" placement="right">
+                <span>{{ scope.row.field_name }}</span>
+              </el-tooltip>
             </div>
           </template>
         </ElTableColumn>
@@ -65,11 +70,14 @@
         <ElTableColumn label="目标表字段名">
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'field_name')">
-              <span>{{ scope.row.t_field_name }}</span>
-              <i class="icon el-icon-edit-outline"></i>
+              <el-tooltip class="item" :content="scope.row.t_field_name" placement="right">
+                <span>{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i></span>
+              </el-tooltip>
             </div>
             <div v-else>
-              <span>{{ scope.row.t_field_name }}</span>
+              <el-tooltip class="item" :content="scope.row.t_field_name" placement="right">
+                <span>{{ scope.row.t_field_name }}</span>
+              </el-tooltip>
             </div>
           </template>
         </ElTableColumn>
@@ -77,6 +85,7 @@
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'data_type')">
               <span>{{ scope.row.t_data_type }}</span>
+              <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
               <i class="icon el-icon-arrow-down"></i>
             </div>
             <div v-else>
@@ -243,8 +252,7 @@ export default {
   mounted() {
     this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
     this.selectRow = this.fieldMappingNavData[0]
-    this.initTableData()
-    this.initTypeMapping()
+    this.updateView()
   },
   methods: {
     search(type) {
@@ -308,7 +316,7 @@ export default {
             .then(({ data, target }) => {
               this.target = target
               this.fieldMappingTableData = data
-              this.fieldCount = this.fieldMappingTableData.length
+              this.fieldCount = this.fieldMappingTableData.length || 0
               this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
             .finally(() => {
@@ -330,6 +338,7 @@ export default {
         if (field.id === id) {
           field[key] = value
           field['source'] = 'manual'
+          field['is_auto_allowed'] = false
         }
       })
       //触发页面重新渲染
@@ -351,8 +360,11 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           this.$nextTick(() => {
-            this.fieldProcessMethod && this.fieldProcessMethod('table', name)
-            this.updateView()
+            this.fieldProcessMethod &&
+              this.fieldProcessMethod('table', name).then(data => {
+                this.$emit('update-nav', data)
+                this.updateView()
+              })
           })
         }
       })
@@ -364,8 +376,11 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           this.$nextTick(() => {
-            this.fieldProcessMethod && this.fieldProcessMethod('all')
-            this.updateView()
+            this.fieldProcessMethod &&
+              this.fieldProcessMethod('all').then(data => {
+                this.$emit('update-nav', data)
+                this.updateView()
+              })
           })
         }
       })
@@ -404,30 +419,32 @@ export default {
         this.influences(id)
       } else if (key === 'precision') {
         let verify = true
+        let verifySame = true
         this.currentTypeRules.forEach(r => {
           if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision) {
             this.$message.error('当前值不符合该字段范围')
-            verify = false
+            verifySame = false
           } else if (r.minPrecision > value || value > r.maxPrecision) {
             verify = false
             this.$message.error('当前值不符合该字段范围')
           }
         })
-        if (!verify) {
+        if (!verify && !verifySame) {
           return
         }
       } else if (key === 'scale') {
+        let verifySame = true
         let verify = true
         this.currentTypeRules.forEach(r => {
           if (r.minScale === r.maxScale && value !== r.maxScale) {
             this.$message.error('当前值不符合该字段范围')
-            verify = false
+            verifySame = false
           } else if (r.minScale > value || value > r.maxScale) {
             verify = false
             this.$message.error('当前值不符合该字段范围')
           }
         })
-        if (!verify) {
+        if (!verify && !verifySame) {
           return
         }
       }
@@ -435,6 +452,7 @@ export default {
       this.updateTarget(id, key, value)
       this.handleClose()
     },
+    //改类型影响字段长度 精度
     influences(id) {
       this.currentTypeRules.forEach(r => {
         if (r.maxScale) {
@@ -453,7 +471,7 @@ export default {
       let target = this.typeMapping.filter(type => type.dbType === val)
       if (target?.length > 0) {
         this.currentTypeRules = target[0]?.rules
-      }
+      } else this.currentTypeRules = '' //清除上一个字段范围
     },
     handleClose() {
       this.dialogVisible = false
@@ -623,10 +641,46 @@ export default {
       return this.field_process
     },
     returnData() {
+      let result = this.checkTable()
+      if (result.checkDataType || result.checkInvalid) {
+        this.$message.error(
+          `检测到您还有 ${result.count} 张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理`
+        )
+        return {
+          valid: false,
+          row: '',
+          operations: '',
+          target: ''
+        }
+      }
       return {
+        valid: true,
         row: this.selectRow,
         operations: this.operations,
         target: this.target
+      }
+    },
+    //保存校验
+    checkTable() {
+      //左边所有invalid 为false 右边所有目标字段有类型
+      let checkInvalid = false
+      let count = 0
+      this.fieldMappingNavData.forEach(table => {
+        if (table.invalid) {
+          checkInvalid = true
+          count += 1
+        }
+      })
+      let checkDataType = false
+      this.target.forEach(field => {
+        if (!field.data_type) {
+          checkDataType = true
+        }
+      })
+      return {
+        checkInvalid: checkInvalid,
+        checkDataType: checkDataType,
+        count: count
       }
     },
     //动态样式
@@ -644,6 +698,10 @@ export default {
 .field-mapping {
   .el-table .delete-row {
     background: #f2f2f2;
+  }
+  .el-table .error-row {
+    background: rgba(255, 0, 0, 0.3);
+    color: #fff;
   }
   .el-table th {
     background: #f4f5f7;
@@ -664,6 +722,9 @@ export default {
   overflow: hidden;
   .icon {
     color: #6dc5e8;
+  }
+  .icon-error {
+    color: red;
   }
   .search {
     display: flex;
@@ -702,9 +763,11 @@ export default {
         &:hover {
           background: rgba(44, 101, 255, 0.05);
           cursor: pointer;
+          border-left: 2px solid #2c65ff;
         }
         &.active {
           background: rgba(44, 101, 255, 0.05);
+          border-left: 2px solid #2c65ff;
           cursor: pointer;
         }
         .imgBox {
