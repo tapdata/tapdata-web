@@ -135,8 +135,7 @@ export default {
       let id = this.$route.params.id
       let where = {
         inspect_id: { regexp: `^${id}$` },
-        parentId: { eq: null },
-        inspectGroupByFirstCheckId: true
+        parentId: { eq: null }
       }
       if (this.$route.name === 'VerifyDiffHistory') {
         where = {
@@ -147,7 +146,8 @@ export default {
         where,
         order: 'start DESC',
         limit: size,
-        skip: (currentPage - 1) * size
+        skip: (currentPage - 1) * size,
+        inspectGroupByFirstCheckId: true
       }
       this.remoteMethod(filter, where)
         .then(([countData, data]) => {
