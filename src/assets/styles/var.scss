@@ -1,14 +1,15 @@
-
+// 变量
+// 会在每个style元素以及scss文件中注入，因此不允许写具体选择器样式
 $borderRadius: 2px;
-$color:(
+$color: (
   primary: #337dff,
-  lprimary: #5392FF,
-  success: #10C038,
-  lsuccess: #DBEFD1,
-  danger: #F04134,
+  lprimary: #5392ff,
+  success: #10c038,
+  lsuccess: #dbefd1,
+  danger: #f04134,
   warning: #f7a237,
-  info: #75849B,
-  linfo: #E9EDF2,
+  info: #75849b,
+  linfo: #e9edf2,
   disable: #bbb
 );
 $fontColor: (

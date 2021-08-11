@@ -56,8 +56,6 @@ export default {
     let menus = this.dfsMenus.map(el => {
       return children.find(item => item.name === el)
     })
-    // let menus = this.$router.options.routes.find(r => r.path === '/').children?.filter(item => !item.hidden)
-    console.log('menus', menus)
     this.menus = menus
     this.getBreadcrumb(this.$route)
     this.$root.$on('select-connection-type', this.selectConnectionType)
