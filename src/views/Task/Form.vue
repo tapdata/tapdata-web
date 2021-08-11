@@ -1065,7 +1065,9 @@ export default {
         'tm/api/MetadataInstances/originalData?qualified_name=' + row.sourceQualifiedName
       )
       source = source && source.length > 0 ? source[0].fields : []
-      let target = await this.$axios.get('tm/api/MetadataInstances/originalData?qualified_name=' + row.sinkQulifiedName)
+      let target = await this.$axios.get(
+        'tm/api/MetadataInstances/originalData?isTarget=true&qualified_name=' + row.sinkQulifiedName
+      )
       target = target && target.length > 0 ? target[0].fields : []
       //源表 目标表数据组合
       let fieldMappingTableData = []
