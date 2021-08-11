@@ -531,8 +531,18 @@ const childRoutes = [
     }
   },
   {
-    path: '/dataVerifyHistory',
+    path: '/dataVerification/:id/history',
     name: 'dataVerifyHistory',
+    component: () => import('@/views/dataVerification/History'),
+    meta: {
+      title: i18n.t('dataVerification.verifyHistory'),
+      isCollapse: true,
+      code: 'Data_verify'
+    }
+  },
+  {
+    path: '/dataVerifyResult/:id/history',
+    name: 'VerifyDiffHistory',
     component: () => import('@/views/dataVerification/History'),
     meta: {
       title: i18n.t('dataVerification.verifyHistory'),

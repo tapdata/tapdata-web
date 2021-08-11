@@ -283,9 +283,9 @@ export default {
     toDiffHistory() {
       let url = ''
       let route = this.$router.resolve({
-        path: '/dataVerifyHistory',
-        query: {
-          firstCheckId: this.resultInfo.firstCheckId
+        name: 'VerifyDiffHistory',
+        params: {
+          id: this.resultInfo.firstCheckId
         }
       })
       url = route.href

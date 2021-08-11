@@ -388,9 +388,9 @@ export default {
     toTableHistory(id) {
       let url = ''
       let route = this.$router.resolve({
-        path: '/dataVerifyHistory',
-        query: {
-          inspectId: id
+        name: 'dataVerifyHistory',
+        params: {
+          id
         }
       })
       url = route.href
