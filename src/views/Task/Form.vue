@@ -1053,7 +1053,7 @@ export default {
         data['rollbackTable'] = rollbackTable
       }
       let promise = await this.$axios.post('tm/api/DataFlows/metadata', data)
-      return promise?.data
+      return promise
     },
     //更新左边导航
     updateFieldMappingNavData(data) {
