@@ -114,3 +114,6 @@ $utilities: map-merge(
 .color-info {
   color: map-get($color, info);
 }
+.cursor-pointer {
+  cursor: pointer;
+}

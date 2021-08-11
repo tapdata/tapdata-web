@@ -4,6 +4,7 @@ export default {
   gl_no_data: 'No data',
   gl_no_match_result: 'No matching results were found',
   gl_back_to_list: 'Back to list',
+  gl_button_cancel: 'Cancel',
   /** 模块 */
   // agent
   agent_name: 'Agent ID/Name',
@@ -24,6 +25,16 @@ export default {
   agent_button_deploy: 'deploy',
   agent_button_stop: 'stop',
   agent_button_delete: 'delete',
+  agent_button_auto_upgrade: 'Auto update',
+  agent_button_manual_upgrade: 'Manual upgrade',
+  agent_tip_auto_upgrade: 'Unable to use "Auto upgrade" when Agent is offline',
+  agent_dialog_upgrade_title:
+    'The Agent version is updated. You can upgrade your Agent to the latest version in the following ways. Tasks cannot be run during the upgrade process.',
+  agent_dialog_upgrade_fail: 'Automatic upgrade failed, please try to upgrade manually.',
+  agent_link_to_purchase_msg: 'Jump to the download page after confirmation',
+  agent_link_to_purchase_title: 'Whether to confirm the order instance？',
+  agent_link_to_old_purchase_msg: 'After confirmation, jump to the page for ordering hosting instances',
+  agent_link_to_old_purchase_title: 'Confirm to order managed instance？',
   // 任务
   task_name: 'Task Name',
 

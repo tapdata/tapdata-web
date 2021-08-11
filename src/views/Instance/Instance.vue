@@ -5,67 +5,67 @@
         <div class="instance-operation-left">
           <ul>
             <li>
-              <ElSelect v-model="searchParams.status" @input="search()">
-                <ElOption :label="$t('agent_status_all')" value=""></ElOption>
-                <ElOption
+              <el-select v-model="searchParams.status" @input="search()">
+                <el-option :label="$t('agent_status_all')" value=""></el-option>
+                <el-option
                   v-for="(item, index) in statusItems"
                   :key="index"
                   :label="item.label"
                   :value="item.value"
-                ></ElOption>
-              </ElSelect>
+                ></el-option>
+              </el-select>
             </li>
             <li class="ml-3">
-              <ElInput
+              <el-input
                 width="200"
                 v-model="searchParams.keyword"
                 :placeholder="$t('agent_search')"
                 @input="search(800)"
               >
                 <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
-              </ElInput>
+              </el-input>
             </li>
             <li class="ml-3">
-              <ElButton plain class="btn-refresh" @click="fetch()">
+              <el-button plain class="btn-refresh" @click="fetch()">
                 <i class="iconfont td-icon-shuaxin"></i>
-              </ElButton>
+              </el-button>
             </li>
           </ul>
         </div>
         <div class="instance-operation-right">
-          <ElButton type="primary" @click="createAgent">
+          <el-button type="primary" @click="createAgent">
             <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>{{ $t('agent_button_create') }}</span>
-          </ElButton>
+          </el-button>
           <template v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'">
-            <ElButton type="primary" @click="toOldPurchase">
+            <el-button type="primary" @click="toOldPurchase">
               <i class="iconfont td-icon-dinggou mr-1"></i>
               <span>{{ $t('agent_button_order1') }}</span>
-            </ElButton>
-            <ElButton type="primary" @click="toPurchase">
+            </el-button>
+            <el-button type="primary" @click="toPurchase">
               <i class="iconfont td-icon-dinggou mr-1"></i>
               <span>{{ $t('agent_button_order2') }}</span>
-            </ElButton>
+            </el-button>
           </template>
         </div>
       </div>
-      <El-table class="instance-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
-        <ElTableColumn min-width="200px" :label="$t('agent_name')">
+      <el-table class="instance-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
+        <el-table-column min-width="200px" :label="$t('agent_name')">
           <template slot-scope="scope">
             <div class="flex">
               <div>
-                <ElLink
+                <el-link
                   class="agent-link"
                   :type="scope.row.agentType === 'Cloud' ? '' : 'primary'"
                   @click="handleDetails(scope.row)"
-                  >{{ scope.row.id }}</ElLink
+                  >{{ scope.row.id }}</el-link
                 >
                 <ClipButton :value="scope.row.id"></ClipButton>
-                <InlineInput
+                <inline-input
                   style="display: block"
                   :value="scope.row.name"
                   @save="updateName($event, scope.row.id)"
-                ></InlineInput>
+                ></inline-input>
               </div>
               <div class="flex align-center">
                 <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">{{
@@ -74,116 +74,117 @@
               </div>
             </div>
           </template>
-        </ElTableColumn>
-        <ElTableColumn :label="$t('agent_status')" width="120">
+        </el-table-column>
+        <el-table-column :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
-            <StatusTag type="text" :status="scope.row.status"></StatusTag>
+            <status-tag type="text" :status="scope.row.status"></status-tag>
           </template>
-        </ElTableColumn>
-        <ElTableColumn :label="$t('agent_task_number')" width="120">
+        </el-table-column>
+        <el-table-column :label="$t('agent_task_number')" width="120">
           <template slot-scope="scope">
-            <ElTooltip effect="dark" placement="top" :disabled="!scope.row.metric || !scope.row.metric.runningTaskNum">
+            <el-tooltip effect="dark" placement="top" :disabled="!scope.row.metric || !scope.row.metric.runningTaskNum">
               <div slot="content">
                 <template v-for="(item, index) in scope.row.metric.dataFlows">
                   <div v-if="index < 3" :key="item.id">{{ $t('task_name') }}：{{ item.name }}</div>
                 </template>
-                <ElLink
+                <el-link
                   v-if="scope.row.metric.runningTaskNum > 3"
                   class="block text-center"
                   type="primary"
                   @click="toDataFlow(scope.row.tmInfo.agentId)"
-                  >{{ $t('gl_see_more') }}</ElLink
+                  >{{ $t('gl_see_more') }}</el-link
                 >
               </div>
-              <ElLink type="primary" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
+              <el-link type="primary" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
                 scope.row.metric ? scope.row.metric.runningTaskNum : 0
-              }}</ElLink>
-            </ElTooltip>
+              }}</el-link>
+            </el-tooltip>
           </template>
-        </ElTableColumn>
-        <ElTableColumn :label="$t('agent_version')" width="200">
+        </el-table-column>
+        <el-table-column :label="$t('agent_version')" width="200">
           <template slot-scope="scope">
             <div class="flex align-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
-                <!--                <VIcon v-if="upgradingFlag(scope.row)" size="20" class="cursor-pointer">upgradeLoadingColor</VIcon>-->
-                <ElTooltip class="ml-1" effect="dark" :content="getTooltipContent(scope.row)" placement="top-start">
-                  <div class="upgrading-box" v-if="upgradingFlag(scope.row)">
-                    <VIcon class="v-icon" size="20">upgradeLoadingColor</VIcon>
-                    <el-progress
-                      v-if="upgradingProgres(scope.row) !== undefined"
-                      class="upgrading-progress"
-                      type="circle"
-                      color="rgb(61, 156, 64)"
-                      :percentage="upgradingProgres(scope.row)"
-                      :show-text="false"
-                      :format="
-                        value => {
-                          return value
-                        }
-                      "
-                    ></el-progress>
+                <el-tooltip class="ml-1" effect="dark" placement="top">
+                  <div slot="content">{{ getTooltipContent(scope.row) }}</div>
+                  <div class="upgrade-tooltip">
+                    <div class="upgrading-box" v-if="upgradingFlag(scope.row)">
+                      <VIcon class="v-icon" size="20">upgradeLoadingColor</VIcon>
+                      <el-progress
+                        v-if="upgradingProgres(scope.row) !== undefined"
+                        class="upgrading-progress"
+                        type="circle"
+                        color="rgb(61, 156, 64)"
+                        :percentage="upgradingProgres(scope.row)"
+                        :show-text="false"
+                        :format="
+                          value => {
+                            return value
+                          }
+                        "
+                      ></el-progress>
+                    </div>
+                    <VIcon
+                      v-else-if="upgradeFailedFlag(scope.row)"
+                      size="20"
+                      class="cursor-pointer block"
+                      @click="showUpgradeErrorDialogFnc(scope.row)"
+                      >upgradeErrorColor</VIcon
+                    >
+                    <VIcon
+                      v-else-if="!upgradeFlag(scope.row)"
+                      size="20"
+                      class="cursor-pointer block"
+                      @click="showUpgradeDialogFnc(scope.row)"
+                      >upgradeColor</VIcon
+                    >
                   </div>
-                  <!--                  <VIcon v-if="upgradingFlag(scope.row)" size="20" class="cursor-pointer">upgradeLoadingColor</VIcon>-->
-                  <VIcon
-                    v-else-if="upgradeFailedFlag(scope.row)"
-                    size="20"
-                    class="cursor-pointer"
-                    @click="showUpgradeErrorDialogFnc(scope.row)"
-                    >upgradeErrorColor</VIcon
-                  >
-                  <VIcon
-                    v-else-if="!upgradeFlag(scope.row)"
-                    size="20"
-                    class="cursor-pointer"
-                    @click="showUpgradeDialogFnc(scope.row)"
-                    >upgradeColor</VIcon
-                  >
-                </ElTooltip>
+                </el-tooltip>
               </template>
             </div>
           </template>
-        </ElTableColumn>
-        <ElTableColumn prop="createAt" sortable="custom" label="创建时间" width="150">
+        </el-table-column>
+        <el-table-column prop="createAt" sortable="custom" :label="$t('agent_create_time')" width="150">
           <template slot-scope="scope">
             <span>{{ $moment(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </template>
-        </ElTableColumn>
-        <ElTableColumn :label="$t('agent_operate')" width="120" fixed="right">
+        </el-table-column>
+        <el-table-column :label="$t('agent_operate')" width="120" fixed="right">
           <template slot-scope="scope">
-            <ElLink
+            <el-link
               type="primary"
               class="mr-2"
               :disabled="scope.row.agentType === 'Cloud' || !!scope.row.deployDisable"
               @click="toDeploy(scope.row)"
-              >{{ $t('agent_button_deploy') }}</ElLink
+              >{{ $t('agent_button_deploy') }}</el-link
             >
-            <ElLink
+            <el-link
               type="primary"
               class="mr-2"
               :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Running'"
               @click="handleStop(scope.row)"
-              >{{ $t('agent_button_stop') }}</ElLink
+              >{{ $t('agent_button_stop') }}</el-link
             >
-            <ElLink
+            <el-link
               type="danger"
               class="mr-2"
               @click="handleDel(scope.row)"
               :loading="delLoading"
               :disabled="delBtnDisabled(scope.row)"
-              >{{ $t('agent_button_delete') }}</ElLink
+              >{{ $t('agent_button_delete') }}</el-link
             >
           </template>
-        </ElTableColumn>
+        </el-table-column>
         <div class="instance-table__empty" slot="empty">
           <i class="el-icon-folder-opened"></i>
           <span class="ml-1" v-if="!searchParams.keyword && !searchParams.status">{{ $t('gl_no_data') }}</span>
           <span v-else>
-            {{ $t('gl_no_match_result') }}，<ElLink type="primary" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
+            {{ $t('gl_no_match_result') }}，<el-link type="primary" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
           </span>
         </div>
-      </El-table>
-      <ElPagination
+      </el-table>
+      <el-pagination
         background
         class="mt-3"
         layout="total, sizes, ->, prev, pager, next, jumper"
@@ -194,33 +195,33 @@
         @size-change="fetch(1)"
         @current-change="fetch"
       >
-      </ElPagination>
-      <ElDialog :visible.sync="upgradeDialog" width="450px" top="30vh" center>
-        <div class="dialog-content">
-          Agent版本有更新，您可以通过以下方式将您的Agent升级到最新版本。升级过程中将无法运行任务。
-        </div>
+      </el-pagination>
+      <el-dialog :visible.sync="upgradeDialog" width="450px" top="30vh" center>
+        <div class="dialog-content">{{ $t('agent_dialog_upgrade_title') }}</div>
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center" v-if="showAutoUpgrade">
-            <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">自动升级</ElButton>
-            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">(Agent离线时无法使用自动升级)</div>
+            <el-button type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
+              $t('agent_button_auto_upgrade')
+            }}</el-button>
+            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">({{ $t('agent_tip_auto_upgrade') }})</div>
           </div>
           <div>
-            <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
+            <el-button type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</el-button>
           </div>
         </div>
-      </ElDialog>
+      </el-dialog>
       <!--   升级失败   -->
-      <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
-        <div class="dialog-content text-center">自动升级失败，请尝试手动升级。</div>
+      <el-dialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
+        <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center">
-            <ElButton type="primary" @click="cancelUpgradeFnc">取消</ElButton>
+            <el-button type="primary" @click="cancelUpgradeFnc">{{ $t('gl_button_cancel') }}</el-button>
           </div>
           <div>
-            <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
+            <el-button type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</el-button>
           </div>
         </div>
-      </ElDialog>
+      </el-dialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -403,7 +404,7 @@ export default {
       this.fetch(1)
     },
     toOldPurchase() {
-      this.$confirm('确认后跳转订购托管实例页面', '是否确认订购托管实例？', {
+      this.$confirm(this.$t('agent_link_to_old_purchase_msg'), this.$t('agent_link_to_old_purchase_title'), {
         type: 'warning'
       }).then(res => {
         if (!res) {
@@ -416,7 +417,7 @@ export default {
       })
     },
     toPurchase() {
-      this.$confirm('确认后跳转下载页面', '是否确认订购实例？', {
+      this.$confirm(this.$t('agent_link_to_purchase_msg'), this.$t('agent_link_to_purchase_title'), {
         type: 'warning'
       }).then(res => {
         if (!res) {
@@ -750,9 +751,12 @@ export default {
     color: map-get($fontColor, light);
   }
 }
+.upgrade-tooltip {
+  width: 20px;
+  height: 20px;
+}
 .upgrading-box {
   position: relative;
-  height: 20px;
   ::v-deep {
     .v-icon {
       position: absolute;
