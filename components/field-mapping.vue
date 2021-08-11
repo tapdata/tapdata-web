@@ -663,6 +663,21 @@ export default {
     //保存校验
     checkTable() {
       //左边所有invalid 为false 右边所有目标字段有类型
+      let checkDataType = false
+      this.target.forEach(field => {
+        if (!field.data_type) {
+          checkDataType = true
+        }
+      })
+      if (!checkDataType) {
+        //当前表 所有字段类型通过 将当前表的invalid 设置为false 校验通过
+        this.fieldMappingNavData.forEach(table => {
+          if (table.sinkObjectName === this.selectRow.sinkObjectName) {
+            //当前表
+            table.invalid = false
+          }
+        })
+      }
       let checkInvalid = false
       let count = 0
       this.fieldMappingNavData.forEach(table => {
@@ -671,12 +686,7 @@ export default {
           count += 1
         }
       })
-      let checkDataType = false
-      this.target.forEach(field => {
-        if (!field.data_type) {
-          checkDataType = true
-        }
-      })
+      console.log(checkDataType, checkInvalid)
       return {
         checkInvalid: checkInvalid,
         checkDataType: checkDataType,
