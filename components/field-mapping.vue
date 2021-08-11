@@ -26,7 +26,10 @@
             :class="{ active: position === index }"
             @click.prevent="select(item, index)"
           >
-            <div class="imgBox">
+            <div class="imgBox" v-if="item.invalid">
+              <img src="../assets/images/fieldMapping-table-error.png" alt="" />
+            </div>
+            <div class="imgBox" v-else>
               <img src="../assets/images/fieldMapping-table.png" alt="" />
             </div>
             <div class="contentBox">
@@ -34,7 +37,7 @@
               <div class="contentBox__target">{{ item.sinkObjectName }}</div>
               <div class="contentBox__select">
                 {{ `已选中 ${position === index ? fieldCount : 0}/${item.sourceFieldCount}` }}
-                <el-button size="mini" @click.stop="rollbackTable(item.sinkObjectName)">恢复默认</el-button>
+                <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName)">恢复默认</el-button>
               </div>
             </div>
           </li>
@@ -50,11 +53,14 @@
         <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="100">
           <template slot-scope="scope">
             <div v-if="scope.row.primary_key_position === 1">
-              <span>{{ scope.row.field_name }}</span>
-              <i class="iconfont icon-yuechi1"></i>
+              <el-tooltip class="item" :content="scope.row.field_name" placement="right">
+                <span>{{ scope.row.field_name }} <i class="iconfont icon-yuechi1"></i></span>
+              </el-tooltip>
             </div>
             <div v-else>
-              <span>{{ scope.row.field_name }}</span>
+              <el-tooltip class="item" :content="scope.row.field_name" placement="right">
+                <span>{{ scope.row.field_name }}</span>
+              </el-tooltip>
             </div>
           </template>
         </ElTableColumn>
@@ -64,11 +70,14 @@
         <ElTableColumn label="目标表字段名">
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'field_name')">
-              <span>{{ scope.row.t_field_name }}</span>
-              <i class="icon el-icon-edit-outline"></i>
+              <el-tooltip class="item" :content="scope.row.t_field_name" placement="right">
+                <span>{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i></span>
+              </el-tooltip>
             </div>
             <div v-else>
-              <span>{{ scope.row.t_field_name }}</span>
+              <el-tooltip class="item" :content="scope.row.t_field_name" placement="right">
+                <span>{{ scope.row.t_field_name }}</span>
+              </el-tooltip>
             </div>
           </template>
         </ElTableColumn>
@@ -242,8 +251,7 @@ export default {
   mounted() {
     this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
     this.selectRow = this.fieldMappingNavData[0]
-    this.initTableData()
-    this.initTypeMapping()
+    this.updateView()
   },
   methods: {
     search(type) {
@@ -351,8 +359,11 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           this.$nextTick(() => {
-            this.fieldProcessMethod && this.fieldProcessMethod('table', name)
-            this.updateView()
+            this.fieldProcessMethod &&
+              this.fieldProcessMethod('table', name).then(data => {
+                this.$emit('update-nav', data)
+                this.updateView()
+              })
           })
         }
       })
@@ -364,8 +375,11 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           this.$nextTick(() => {
-            this.fieldProcessMethod && this.fieldProcessMethod('all')
-            this.updateView()
+            this.fieldProcessMethod &&
+              this.fieldProcessMethod('all').then(data => {
+                this.$emit('update-nav', data)
+                this.updateView()
+              })
           })
         }
       })
@@ -702,9 +716,11 @@ export default {
         &:hover {
           background: rgba(44, 101, 255, 0.05);
           cursor: pointer;
+          border-left: 2px solid #2c65ff;
         }
         &.active {
           background: rgba(44, 101, 255, 0.05);
+          border-left: 2px solid #2c65ff;
           cursor: pointer;
         }
         .imgBox {
