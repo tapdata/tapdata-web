@@ -262,7 +262,7 @@
             <el-table-column :label="$t('taskProgress.operate')">
               <template slot-scope="scope">
                 <div v-if="scope.row.statusNum === 100">-</div>
-                <el-button type="text" @click="handleInfo(scope.row)">{{ $t('taskProgress.details') }}</el-button>
+                <el-button type="text" @click="handleInfo(scope.row)" v-else>{{ $t('taskProgress.details') }}</el-button>
               </template>
             </el-table-column>
           </el-table>
