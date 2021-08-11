@@ -64,21 +64,37 @@
             </el-row> -->
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.planMigrationTableNum') }}：</span>
+                <span class="footer-item__name"
+                  >{{
+                    mappingFlag ? $t('taskProgress.planSyncTableNum') : $t('taskProgress.planMigrationTableNum')
+                  }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
               </el-col>
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.completedMigrationTableNum') }}：</span>
+                <span class="footer-item__name"
+                  >{{
+                    mappingFlag
+                      ? $t('taskProgress.completedSyncTableNum')
+                      : $t('taskProgress.completedMigrationTableNum')
+                  }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
               </el-col>
             </el-row>
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.planMigrateData') }}：</span>
+                <span class="footer-item__name"
+                  >{{ mappingFlag ? $t('taskProgress.planSyncData') : $t('taskProgress.planMigrateData') }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
               </el-col>
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.completedMigrateData') }}：</span>
+                <span class="footer-item__name"
+                  >{{
+                    mappingFlag ? $t('taskProgress.completedSyncData') : $t('taskProgress.completedMigrateData')
+                  }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
               </el-col>
             </el-row>
@@ -133,21 +149,37 @@
           <div class="progress-container__footer mt-border">
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.planMigrationTableNum') }}：</span>
+                <span class="footer-item__name"
+                  >{{
+                    mappingFlag ? $t('taskProgress.planSyncTableNum') : $t('taskProgress.planMigrationTableNum')
+                  }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
               </el-col>
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.completedMigrationTableNum') }}：</span>
+                <span class="footer-item__name"
+                  >{{
+                    mappingFlag
+                      ? $t('taskProgress.completedSyncTableNum')
+                      : $t('taskProgress.completedMigrationTableNum')
+                  }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
               </el-col>
             </el-row>
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.planMigrateData') }}：</span>
+                <span class="footer-item__name"
+                  >{{ mappingFlag ? $t('taskProgress.planSyncData') : $t('taskProgress.planMigrateData') }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
               </el-col>
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.completedMigrateData') }}：</span>
+                <span class="footer-item__name"
+                  >{{
+                    mappingFlag ? $t('taskProgress.completedSyncData') : $t('taskProgress.completedMigrateData')
+                  }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
               </el-col>
             </el-row>
@@ -162,21 +194,37 @@
           <div class="progress-container__footer">
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.planMigrationTableNum') }}：</span>
+                <span class="footer-item__name"
+                  >{{
+                    mappingFlag ? $t('taskProgress.planSyncTableNum') : $t('taskProgress.planMigrationTableNum')
+                  }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.sourceTableNum }}</span>
               </el-col>
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.completedMigrationTableNum') }}：</span>
+                <span class="footer-item__name"
+                  >{{
+                    mappingFlag
+                      ? $t('taskProgress.completedSyncTableNum')
+                      : $t('taskProgress.completedMigrationTableNum')
+                  }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.waitingForSyecTableNums }}</span>
               </el-col>
             </el-row>
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.planMigrateData') }}：</span>
+                <span class="footer-item__name"
+                  >{{ mappingFlag ? $t('taskProgress.planSyncData') : $t('taskProgress.planMigrateData') }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
               </el-col>
               <el-col class="footer-item" :span="12">
-                <span class="footer-item__name">{{ $t('taskProgress.completedMigrateData') }}：</span>
+                <span class="footer-item__name"
+                  >{{
+                    mappingFlag ? $t('taskProgress.completedSyncData') : $t('taskProgress.completedMigrateData')
+                  }}：</span
+                >
                 <span class="footer-item__value">{{ overviewStats.targatRowNum }}</span>
               </el-col>
             </el-row>
@@ -187,23 +235,34 @@
     <div class="progress-database" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
       <div class="progress-container">
         <div class="progress-container__header flex justify-between">
-          <div class="fw-normal">{{ $t('taskProgress.currentMigration') }}</div>
+          <div class="fw-normal">
+            {{ mappingFlag ? $t('taskProgress.currentSync') : $t('taskProgress.currentMigration') }}
+          </div>
         </div>
         <div class="progress-container__body flex">
           <el-table :data="progressGroupByDB" height="250" border style="width: 100%" class="progress-container__table">
             <el-table-column prop="sourceDbName" :label="$t('taskProgress.sourceLibraryeName')"> </el-table-column>
-            <el-table-column prop="sourceRowNum" :label="$t('taskProgress.planMigrationTableNum')"> </el-table-column>
-            <el-table-column prop="targetRowNum" :label="$t('taskProgress.planMigrateData')"> </el-table-column>
+            <el-table-column
+              prop="sourceTableNum"
+              :label="mappingFlag ? $t('taskProgress.planSyncTableNum') : $t('taskProgress.planMigrationTableNum')"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="targetRowNum"
+              :label="mappingFlag ? $t('taskProgress.planSyncData') : $t('taskProgress.planMigrateData')"
+            >
+            </el-table-column>
             <el-table-column prop="targetDbName" :label="$t('taskProgress.targetLibraryName')"> </el-table-column>
-            <el-table-column prop="statusNum" :label="$t('taskProgress.fullMigrationProgress')">
+            <el-table-column
+              prop="statusNum"
+              :label="mappingFlag ? $t('taskProgress.fullSyncProgress') : $t('taskProgress.fullMigrationProgress')"
+            >
               <template slot-scope="scope">{{ scope.row.statusNum }} %</template>
             </el-table-column>
             <el-table-column :label="$t('taskProgress.operate')">
               <template slot-scope="scope">
                 <div v-if="scope.row.statusNum === 100">-</div>
-                <el-button type="text" @click="handleInfo(scope.row)" v-else>{{
-                  $t('taskProgress.details')
-                }}</el-button>
+                <el-button type="text" @click="handleInfo(scope.row)">{{ $t('taskProgress.details') }}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -232,7 +291,8 @@ export default {
       progressBar: 0,
       completeTime: '',
       overviewStats: {},
-      progressGroupByDB: []
+      progressGroupByDB: [],
+      mappingFlag: false
     }
   },
   computed: {
@@ -257,6 +317,10 @@ export default {
         item.status = num ? num.toFixed(2) * 1 : 0
       })
     }
+    if (window.App.$route.query.mapping === 'custom') {
+      this.mappingFlag = true
+    }
+
     //及时更新输入输出的数据
     // ws.on('watch', function (data) {
     //   this.handleData(data)
@@ -388,8 +452,19 @@ export default {
       this.overviewStats = overview
     },
     // 跳转详情
-    handleInfo() {
-      window.open(location.href.split('#/')[0] + '#/taskProgressInfo?id=' + this.dataFlow.id, '_blank')
+    handleInfo(data) {
+      if (data) {
+        window.open(
+          location.href.split('#/')[0] +
+            `#/taskProgressInfo?sourceConnectionId=${data.sourceConnectionId}&targetConnectionId=${data.targetConnectionId}&id=${this.dataFlow.id}&mappingFlag=${this.mappingFlag}`,
+          '_blank'
+        )
+      } else {
+        window.open(
+          location.href.split('#/')[0] + `#/taskProgressInfo?id=${this.dataFlow.id}&mappingFlag=${this.mappingFlag}`,
+          '_blank'
+        )
+      }
     }
   }
   // beforeDestroy() {

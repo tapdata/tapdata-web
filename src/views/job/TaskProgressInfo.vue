@@ -74,12 +74,24 @@
       >
       </el-table-column>
 
-      <el-table-column :label="$t('taskProgress.completedMigrateData')" prop="statsData.targetRowNum" sortable>
+      <el-table-column
+        :label="
+          $route.query.mappingFlag ? $t('taskProgress.completedSyncData') : $t('taskProgress.completedMigrateData')
+        "
+        prop="statsData.targetRowNum"
+        sortable
+      >
         <template slot-scope="scope">
           {{ scope.row.statsData.targetRowNum }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('taskProgress.fullMigrationProgress')" prop="statsData.status" sortable>
+      <el-table-column
+        :label="
+          $route.query.mappingFlag ? $t('taskProgress.fullSyncProgress') : $t('taskProgress.fullMigrationProgress')
+        "
+        prop="statsData.status"
+        sortable
+      >
         <template slot-scope="scope">
           {{ scope.row.statsData.status }}
         </template>
@@ -122,9 +134,17 @@ export default {
         dataFlowId: { like: this.$route.query.id },
         statsType: 'dataFlowDetailsStats'
       }
+      if (this.$route.query.sourceConnectionId) {
+        where['statsData.sourceConnectionId'] = this.$route.query.sourceConnectionId
+        where['statsData.targetConnectionId'] = this.$route.query.targetConnectionId
+      }
       let countWhere = {
         dataFlowId: this.$route.query.id,
         statsType: 'dataFlowDetailsStats'
+      }
+      if (this.$route.query.sourceConnectionId) {
+        countWhere.sourceConnectionId = this.$route.query.sourceConnectionId
+        countWhere.targetConnectionId = this.$route.query.targetConnectionId
       }
       if (keyword && keyword.trim()) {
         let filterObj = { like: toRegExp(keyword), options: 'i' }
