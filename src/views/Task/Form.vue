@@ -79,6 +79,7 @@
                 :fieldProcessMethod="updateFieldProcess"
                 :field_process="transferData.field_process"
                 @row-click="saveOperations"
+                @update-nav="updateFieldMappingNavData"
               ></FieldMapping>
             </div>
           </el-main>
@@ -1041,7 +1042,7 @@ export default {
       })
     },
     //恢复默认
-    updateFieldProcess(rollback, rollbackTable) {
+    async updateFieldProcess(rollback, rollbackTable) {
       let data = this.daft()
       if (!data) return
       if (rollback) {
@@ -1050,10 +1051,12 @@ export default {
       if (rollbackTable) {
         data['rollbackTable'] = rollbackTable
       }
-      let promise = this.$axios.post('tm/api/DataFlows/metadata', data)
-      promise.then(data => {
-        this.fieldMappingNavData = data?.data || []
-      })
+      let promise = await this.$axios.post('tm/api/DataFlows/metadata', data)
+      return promise?.data
+    },
+    //更新左边导航
+    updateFieldMappingNavData(data) {
+      this.fieldMappingNavData = data
     },
     //获取表设置
     async intiFieldMappingTableData(row) {
