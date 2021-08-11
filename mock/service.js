@@ -258,7 +258,8 @@ module.exports = Object.assign({}, dataflow, connection, messages, verification,
     code: 'ok',
     data: {
       payMode: 'POSTPAID', // PREPAID-预付费 POSTPAID-后付费 REVIEW_POSTPAID-审批后付费
-      orderId: '@guid'
+      orderId: '@guid',
+      agentId: '@guid'
     }
   },
   '/api/tcm/orders/prepare': {

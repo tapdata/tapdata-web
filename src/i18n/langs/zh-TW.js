@@ -25,6 +25,8 @@ export default {
   agent_button_order1: '訂購託管實例',
   agent_button_order2: '實例訂購',
   agent_button_deploy: '部署',
+  agent_button_deploy_now: '立即部署',
+  agent_button_deploy_later: '稍後部署',
   agent_button_stop: '停止',
   agent_button_delete: '删除',
   agent_button_auto_upgrade: '自動升級',
@@ -37,6 +39,8 @@ export default {
   agent_link_to_purchase_title: '是否確認訂購實例？',
   agent_link_to_old_purchase_msg: '確認後跳轉訂購託管實例頁面',
   agent_link_to_old_purchase_title: '是否確認訂購託管實例？',
+  agent_button_create_msg_success: 'Agent創建成功',
+  agent_button_create_msg_success_desc: '請點擊【立即部署】進入部署頁面，按照操作指引完成Agent部署。',
   agent_button_stop_tip: '是否停止',
   agent_button_stop_tip_running: '當前Agent有任務正在運行，強行停止Agent可能會導致任務出現異常，是否要強行停止！',
   agent_button_stop_tip_no_running:
