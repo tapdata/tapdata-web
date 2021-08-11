@@ -632,6 +632,7 @@ export default {
     saveReturnData() {
       //保存字段映射
       let returnData = this.$refs.fieldMappingDom.returnData()
+      if (!returnData.valid) return //检验不通过
       this.saveOperations(returnData.row, returnData.operations, returnData.target)
       this.dialogFieldProcessVisible = false
     },
