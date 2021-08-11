@@ -105,11 +105,10 @@
       </template>
     </div>
     <el-pagination
-      v-if="!showAdvancedVerification"
       class="pagination"
       background
       layout="total,prev, pager, next,sizes"
-      :page-sizes="[20, 30, 50, 100]"
+      :page-sizes="!showAdvancedVerification ? [20, 30, 50, 100] : [1]"
       :page-size.sync="page.size"
       :total="page.total"
       :current-page.sync="page.current"
