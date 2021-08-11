@@ -216,6 +216,7 @@
         :fieldMappingNavData="fieldMappingNavData"
         :field_process="model.field_process"
         @row-click="saveOperations"
+        @update-nav="updateFieldMappingNavData"
       ></FieldMapping>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
@@ -555,7 +556,7 @@ export default {
         this.fieldMappingNavData = data?.data
       })
     },
-    updateFieldProcess(rollback, rollbackTable) {
+    async updateFieldProcess(rollback, rollbackTable) {
       let data = this.scope.getDataFlowData()
       if (!data) return
       if (rollback) {
@@ -564,10 +565,12 @@ export default {
       if (rollbackTable) {
         data['rollbackTable'] = rollbackTable
       }
-      let promise = this.$api('DataFlows').getMetadata(data)
-      promise.then(data => {
-        this.fieldMappingNavData = data?.data || []
-      })
+      let promise = await this.$api('DataFlows').getMetadata(data)
+      return promise?.data
+    },
+    //更新左边导航
+    updateFieldMappingNavData(data) {
+      this.fieldMappingNavData = data
     },
     //获取表设置
     async intiFieldMappingTableData(row) {
