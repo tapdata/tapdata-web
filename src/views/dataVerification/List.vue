@@ -405,7 +405,7 @@ export default {
               inq: multipleSelection
             }
           },
-          { status: 'scheduling', ping_time: 0, byFirstCheckId: '' }
+          { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
         )
         .then(() => {
           this.$message.success(this.$t('dataVerification.startVerify'))
