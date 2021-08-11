@@ -53,10 +53,14 @@
         <div class="inspect-result-status">
           <div v-if="scope.row.result === 'failed'">
             <span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
-              <i class="el-icon-error"></i>
-              <span>{{
-                $t('dataVerification.rowConsistent') + ' : ' + Math.abs(scope.row.target_total - scope.row.source_total)
-              }}</span>
+              <i class="verify-icon el-icon-error color-danger"></i>
+              <span>
+                {{
+                  $t('dataVerification.rowConsistent') +
+                  ' : ' +
+                  Math.abs(scope.row.target_total - scope.row.source_total)
+                }}
+              </span>
             </span>
           </div>
           <div
@@ -67,7 +71,7 @@
             "
           >
             <span class="error">
-              <i class="el-icon-error"></i>
+              <i class="verify-icon el-icon-error color-danger"></i>
               <span>
                 {{ $t('dataVerification.contConsistent') + ' : ' }}
                 {{ scope.row.source_only + scope.row.target_only + scope.row.row_failed }}
@@ -75,7 +79,7 @@
             </span>
           </div>
           <span class="success" v-if="scope.row.result === 'passed'">
-            <i class="el-icon-success"></i>
+            <i class="verify-icon el-icon-success color-success"></i>
             <span>{{ $t('dataVerification.consistent') }}</span>
           </span>
         </div>
@@ -83,7 +87,12 @@
     </ElTableColumn>
   </el-table>
 </template>
-
+<style lang="scss" scoped>
+.verify-icon {
+  margin: 0 4px;
+  font-size: 14;
+}
+</style>
 <script>
 export default {
   props: {
@@ -112,5 +121,3 @@ export default {
   }
 }
 </script>
-
-<style></style>

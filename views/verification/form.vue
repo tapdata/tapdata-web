@@ -833,9 +833,7 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$router.push({
-          name: 'dataVerification'
-        })
+        this.$router.back()
       })
     },
     nextStep() {
