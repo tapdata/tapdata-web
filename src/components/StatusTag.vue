@@ -10,14 +10,6 @@
         v-else-if="statusObj.icon === 'running'"
         class="iconfont td-status-tag__icon td-icon-yunhangzhong color-success"
       ></i>
-      <i
-        v-else-if="statusObj.icon === 'warning'"
-        class="iconfont td-status-tag__icon td-icon-yichang color-warning"
-      ></i>
-      <i
-        v-else-if="statusObj.icon === 'waiting'"
-        class="iconfont td-status-tag__icon td-icon-daiqidong color-primary"
-      ></i>
       <i v-else :class="'td-status-tag__icon el-icon-' + statusObj.icon + ' color-' + statusObj.type"></i>
       <span class="td-status-tag__text">{{ statusObj.text }}</span>
     </span>
@@ -71,9 +63,6 @@ export default {
   text-align: center;
   &.td-icon-yunhangzhong {
     color: map-get($color, success);
-  }
-  &.td-icon-yichang {
-    color: map-get($color, warning);
   }
 }
 .td-status-tag__text {

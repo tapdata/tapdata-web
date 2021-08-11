@@ -12,12 +12,12 @@
             </li>
             <li class="ml-3">
               <ElInput width="200" v-model="searchParams.keyword" placeholder="按ID/实例名称搜索" @input="search(800)">
-                <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
+                <i slot="prefix" class="el-icon-search el-input__icon"></i>
               </ElInput>
             </li>
             <li class="ml-3">
               <ElButton plain class="btn-refresh" @click="fetch()">
-                <i class="iconfont td-icon-shuaxin"></i>
+                <i class="el-icon-refresh"></i>
               </ElButton>
             </li>
           </ul>
@@ -29,11 +29,9 @@
           </ElButton>
           <template v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'">
             <ElButton type="primary" @click="toOldPurchase">
-              <i class="iconfont td-icon-dinggou mr-1"></i>
               <span>订购托管实例</span>
             </ElButton>
             <ElButton type="primary" @click="toPurchase">
-              <i class="iconfont td-icon-dinggou mr-1"></i>
               <span>实例订购</span>
             </ElButton>
           </template>

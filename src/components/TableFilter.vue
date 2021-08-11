@@ -1,7 +1,7 @@
 <template>
   <span class="table-filter">
     <i
-      class="iconfont td-icon-shaixuan2 table-filter__icon"
+      class="el-icon-refresh table-filter__icon"
       style="margin-left: 2px"
       :class="{ 'is-active': !!value }"
       @click="toggole"
