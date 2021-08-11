@@ -419,30 +419,32 @@ export default {
         this.influences(id)
       } else if (key === 'precision') {
         let verify = true
+        let verifySame = true
         this.currentTypeRules.forEach(r => {
           if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision) {
             this.$message.error('当前值不符合该字段范围')
-            verify = false
+            verifySame = false
           } else if (r.minPrecision > value || value > r.maxPrecision) {
             verify = false
             this.$message.error('当前值不符合该字段范围')
           }
         })
-        if (!verify) {
+        if (!verify && !verifySame) {
           return
         }
       } else if (key === 'scale') {
+        let verifySame = true
         let verify = true
         this.currentTypeRules.forEach(r => {
           if (r.minScale === r.maxScale && value !== r.maxScale) {
             this.$message.error('当前值不符合该字段范围')
-            verify = false
+            verifySame = false
           } else if (r.minScale > value || value > r.maxScale) {
             verify = false
             this.$message.error('当前值不符合该字段范围')
           }
         })
-        if (!verify) {
+        if (!verify && !verifySame) {
           return
         }
       }
@@ -450,6 +452,7 @@ export default {
       this.updateTarget(id, key, value)
       this.handleClose()
     },
+    //改类型影响字段长度 精度
     influences(id) {
       this.currentTypeRules.forEach(r => {
         if (r.maxScale) {
@@ -468,7 +471,7 @@ export default {
       let target = this.typeMapping.filter(type => type.dbType === val)
       if (target?.length > 0) {
         this.currentTypeRules = target[0]?.rules
-      }
+      } else this.currentTypeRules = '' //清除上一个字段范围
     },
     handleClose() {
       this.dialogVisible = false
@@ -638,10 +641,46 @@ export default {
       return this.field_process
     },
     returnData() {
+      let result = this.checkTable()
+      if (result.checkDataType || result.checkInvalid) {
+        this.$message.error(
+          `检测到您还有 ${result.count} 张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理`
+        )
+        return {
+          valid: false,
+          row: '',
+          operations: '',
+          target: ''
+        }
+      }
       return {
+        valid: true,
         row: this.selectRow,
         operations: this.operations,
         target: this.target
+      }
+    },
+    //保存校验
+    checkTable() {
+      //左边所有invalid 为false 右边所有目标字段有类型
+      let checkInvalid = false
+      let count = 0
+      this.fieldMappingNavData.forEach(table => {
+        if (table.invalid) {
+          checkInvalid = true
+          count += 1
+        }
+      })
+      let checkDataType = false
+      this.target.forEach(field => {
+        if (!field.data_type) {
+          checkDataType = true
+        }
+      })
+      return {
+        checkInvalid: checkInvalid,
+        checkDataType: checkDataType,
+        count: count
       }
     },
     //动态样式
