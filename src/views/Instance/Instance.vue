@@ -311,7 +311,7 @@ export default {
         }
       })
       if (flag && this.$route.name === 'Instance') {
-        // this.fetch(null, true)
+        this.fetch(null, true)
       }
     }, 10000)
   },
