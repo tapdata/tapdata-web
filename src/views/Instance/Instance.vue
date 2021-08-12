@@ -681,6 +681,9 @@ export default {
       return (
         tmInfo.updateVersion && tmInfo.updateVersion === this.version && ['fail', 'error'].includes(tmInfo.updateStatus)
       )
+    },
+    getStatusIcon(row) {
+      return this.statusMap[row.status] || {}
     }
   }
 }

@@ -9,24 +9,24 @@ for (const dKey in directionMap) {
 }
 export const TOPOLOGY_MAP = topologyMap,
   INSTANCE_STATUS_MAP = {
-    Creating: { text: '待部署', icon: 'creating', type: 'info' },
-    Running: { text: '运行中', icon: 'running', type: 'success' },
-    Stopping: { text: '停止中', icon: 'loading', type: 'info' },
+    Creating: { text: '待部署', icon: 'creating', type: 'warning' },
+    Running: { text: '运行中', icon: 'rightArrowCircle', type: 'success' },
+    Stopping: { text: '停止中', icon: 'loading', type: 'success' },
     Stopped: { text: '离线', icon: 'warning', type: 'warning' }
   },
   TASK_STATUS_MAP = {
-    running: { text: '运行中', icon: 'running' },
-    paused: { text: '待启动', icon: 'waiting' },
-    error: { text: '错误', icon: 'warning' },
-    draft: { text: '待启动', icon: 'waiting' },
-    scheduled: { text: '启动中', icon: 'loading' },
-    stopping: { text: '停止中', icon: 'loading' },
-    'force stopping': { text: '强制停止中', icon: 'loading' }
+    running: { text: '运行中', icon: 'arrowright', type: 'success' },
+    paused: { text: '待启动', icon: 'waitFillColor' },
+    error: { text: '错误', icon: 'warning', type: 'warning' },
+    draft: { text: '待启动', icon: 'waitFillColor' },
+    scheduled: { text: '启动中', icon: 'loading', type: 'success' },
+    stopping: { text: '停止中', icon: 'loading', type: 'success' },
+    'force stopping': { text: '强制停止中', icon: 'loading', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
-    ready: { text: '有效', icon: 'success', type: 'success' },
-    invalid: { text: '失效', icon: 'error', type: 'danger' },
-    testing: { text: '测试中', icon: 'loading', type: 'info' }
+    ready: { text: '有效', icon: 'successFillColor', type: 'success' },
+    invalid: { text: '失效', icon: 'errorFillColor', type: 'danger' },
+    testing: { text: '测试中', icon: 'loading', type: 'success' }
   },
   SPEC_MAP = {
     micro: '小规格',

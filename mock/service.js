@@ -10,7 +10,8 @@ const agent = {
   name: 'DRS_@id', // 实例名称
   region: 'CIDC-RP-@increment()', // 地域
   zone: 'CIDC-RP-@increment()-@increment()', // 可用区
-  'status|+1': ['Creating', 'Running', 'Stopping', 'Stopped'], // 实例状态，参考《状态变迁》章节
+  status: 'Stopped',
+  // 'status|+1': ['Creating', 'Running', 'Stopping', 'Stopped'], // 实例状态，参考《状态变迁》章节
   freeTime: {
     // 可维护时间设置
     start: '@now',
@@ -60,6 +61,11 @@ const agent = {
   'agentType|1': ['Cloud', '']
 }
 module.exports = Object.assign({}, dataflow, connection, Messages, {
+  '/tm/api/DatabaseTypes': {
+    data: {},
+    code: 'ok',
+    msg: 'ok'
+  },
   '/tm/api/users/self': {
     data: {
       account_status: 1,

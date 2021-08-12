@@ -52,15 +52,6 @@ const routes = [
           title: '系统通知'
         }
       },
-      // {
-      // 	path: '/dashboard',
-      // 	name: 'Dashboard',
-      // 	component: Dashboard,
-      // 	meta: {
-      // 		title: '运行概览',
-      // 		icon: 'dashboard'
-      // 	}
-      // },
       {
         path: '/instance',
         name: 'Instance',
