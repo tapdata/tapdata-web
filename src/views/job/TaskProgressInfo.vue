@@ -135,25 +135,15 @@ export default {
         statsType: 'dataFlowDetailsStats'
       }
       if (this.$route.query.sourceConnectionId) {
-        where['statsData.sourceConnectionId'] = this.$route.query.sourceConnectionId
-        where['statsData.targetConnectionId'] = this.$route.query.targetConnectionId
-      }
-      let countWhere = {
-        dataFlowId: this.$route.query.id,
-        statsType: 'dataFlowDetailsStats'
-      }
-      if (this.$route.query.sourceConnectionId) {
-        countWhere.sourceConnectionId = this.$route.query.sourceConnectionId
-        countWhere.targetConnectionId = this.$route.query.targetConnectionId
+        where['statsData.sourceConnectionId'] = { like: this.$route.query.sourceConnectionId }
+        where['statsData.targetConnectionId'] = { like: this.$route.query.targetConnectionId }
       }
       if (keyword && keyword.trim()) {
         let filterObj = { like: toRegExp(keyword), options: 'i' }
         where.or = [{ 'statsData.sourceTableName': filterObj }, { 'statsData.targetTableName': filterObj }]
-        countWhere.or = [{ 'statsData.sourceTableName': filterObj }, { 'statsData.targetTableName': filterObj }]
       }
       if (metaType !== 'all' && metaType) {
         where['statsData.status'] = metaType
-        countWhere['statsData.status'] = metaType
       }
 
       let filter = {
@@ -163,7 +153,7 @@ export default {
         where
       }
       return Promise.all([
-        this.$api('DataFlowInsights').count({ where: JSON.stringify(countWhere) }),
+        this.$api('DataFlowInsights').count({ where: JSON.stringify(where) }),
         this.$api('DataFlowInsights').get({
           filter: JSON.stringify(filter)
         })
