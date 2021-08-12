@@ -54,7 +54,7 @@
                   </el-button>
                 </li>
                 <li class="item">
-                  <el-button class="btn" size="mini" @click="reload()">
+                  <el-button class="btn" size="mini" :loading="reloadLoading" @click="reload()">
                     <i class="iconfont icon-kujitongbucopy">{{ $t('connection.preview.reloadName') }}</i>
                   </el-button>
                 </li>
@@ -137,6 +137,7 @@ export default {
       timer: null,
       showProgress: false,
       previewLoading: false,
+      reloadLoading: false,
       userId: '',
       kafkaACK: [
         { label: this.$t('dataForm.form.kafka.kafkaAcks0'), value: '0' },
@@ -419,6 +420,7 @@ export default {
       })
     },
     reloadApi(type) {
+      this.reloadLoading = true
       this.clearInterval()
       let parms
       if (type === 'first') {
@@ -441,6 +443,7 @@ export default {
               this.showProgress = false
               this.progress = 0 //加载完成
             }, 800)
+            this.reloadLoading = false
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
@@ -453,6 +456,7 @@ export default {
           this.$message.error(this.$t('connection.reloadFail'))
           this.showProgress = false
           this.progress = 0 //加载完成
+          this.reloadLoading = false
         })
     }
   }
