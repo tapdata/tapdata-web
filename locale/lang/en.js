@@ -1,5 +1,10 @@
 import enLocale from 'element-ui/lib/locale/lang/en'
-
+const newEn = {
+  verify_history_source_rows: 'Verfify Rows',
+  verify_history_target_rows: 'Target Rows',
+  verify_history_source_total_rows: 'Source Total Rows',
+  verify_history_target_total_rows: 'Target Total Rows'
+}
 const en = {
   ...enLocale,
   tap: {
@@ -2495,8 +2500,8 @@ const en = {
     tableDetail: ' Table detail',
     configuration: 'Configuration',
     verifyName: 'Verify name',
-    sourceTotalRows: 'Source Total Rows',
-    targetTotalRows: 'Target Total Rows',
+    sourceTotalRows: 'Verfify Rows',
+    targetTotalRows: 'Target Rows',
     verifyStatus: 'Verify Status',
     verifystatus: 'Verify status',
     result: 'Verification result',
@@ -3340,7 +3345,7 @@ const en = {
     tip: '*Current task progress view only supports: MySQL, Oracle, SQL Server, PostgreSQL and MongoDB',
     fullSyuncProgress: 'Full synchronization progress',
     takeTime: 'It is estimated that it will take time to complete the full amount',
-    planMigrationTableNum: 'Total number of tables to be migrated',
+    planMigrationTableNum: 'Number of planned migration tables',
     completedMigrationTableNum: 'Number of completed migration tables',
     planMigrateData: 'Planned migration data volume (rows)',
     completedMigrateData: 'The amount of data that has been migrated (rows)',
@@ -3374,4 +3379,4 @@ const en = {
   }
 }
 
-export default en
+export default Object.assign({}, en, newEn)

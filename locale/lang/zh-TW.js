@@ -1,5 +1,12 @@
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
 
+const newTc = {
+  verify_history_source_rows: '本次校驗行數',
+  verify_history_target_rows: '目標行數',
+  verify_history_source_total_rows: '源總行數',
+  verify_history_target_total_rows: '目標總行數'
+}
+
 const tc = {
   ...tcLocale,
   tap: {
@@ -2430,8 +2437,8 @@ const tc = {
     tableDetail: '表明細',
     configuration: '查看配置',
     verifyName: '校驗任務',
-    sourceTotalRows: '源總行數',
-    targetTotalRows: '目標總行數',
+    sourceTotalRows: '本次校驗行數',
+    targetTotalRows: '目標行數',
     verifyStatus: '校驗狀態',
     verifystatus: '校驗狀態',
     result: '校驗結果',
@@ -3264,7 +3271,7 @@ const tc = {
     tip: '*目前任務進度查看僅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB',
     fullSyuncProgress: '全量同步進度',
     takeTime: '預計全量完成還需時間',
-    planMigrationTableNum: '待遷移表總數',
+    planMigrationTableNum: '計劃遷移表數量',
     completedMigrationTableNum: '已完成遷移表數量',
     planMigrateData: '計劃遷移數據量（行）',
     completedMigrateData: '已完成遷移數據量（行）',
@@ -3298,4 +3305,4 @@ const tc = {
   }
 }
 
-export default tc
+export default Object.assign({}, tc, newTc)

@@ -1,4 +1,10 @@
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
+const newCn = {
+  verify_history_source_rows: '本次校验行数',
+  verify_history_target_rows: '目标行数',
+  verify_history_source_total_rows: '源总行数',
+  verify_history_target_total_rows: '目标总行数'
+}
 const cn = {
   ...zhLocale,
   tap: {
@@ -2442,8 +2448,8 @@ const cn = {
     tableDetail: '表明细',
     configuration: '查看配置',
     verifyName: '校验任务',
-    sourceTotalRows: '源总行数',
-    targetTotalRows: '目标总行数',
+    sourceTotalRows: '本次校验行数',
+    targetTotalRows: '目标行数',
     verifyStatus: '校验状态',
     verifystatus: '校验状态',
     result: '校验结果',
@@ -3316,7 +3322,7 @@ const cn = {
     tip: '*目前任务进度查看仅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB',
     fullSyuncProgress: '全量同步进度',
     takeTime: '预计全量完成还需时间',
-    planMigrationTableNum: '待迁移表总数',
+    planMigrationTableNum: '计划迁移表数量',
     completedMigrationTableNum: '已完成迁移表数量',
     planMigrateData: '计划迁移数据量（行）',
     completedMigrateData: '已完成迁移数据量（行）',
@@ -3350,4 +3356,4 @@ const cn = {
   }
 }
 
-export default cn
+export default Object.assign({}, cn, newCn)
