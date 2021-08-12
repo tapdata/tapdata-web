@@ -65,7 +65,7 @@
                   @save="updateName($event, scope.row.id)"
                 ></inline-input>
               </div>
-              <div class="flex align-center">
+              <div class="flex align-items-center">
                 <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">{{
                   $t('agent_test_use')
                 }}</span>

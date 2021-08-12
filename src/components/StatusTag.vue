@@ -58,9 +58,6 @@ export default {
   height: 26px;
   line-height: 26px;
   text-align: center;
-  &.td-icon-yunhangzhong {
-    color: map-get($color, success);
-  }
 }
 .td-status-tag__text {
   display: inline-block;

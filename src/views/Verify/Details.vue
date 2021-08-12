@@ -14,7 +14,7 @@
           class="flex align-items-center justify-content-sm-between mt-2"
           v-else-if="inspect.inspectMethod !== 'row_count'"
         >
-          <div class="flex align-center">
+          <div class="flex align-items-center">
             <template v-if="inspect.result !== 'passed' && !(inspect.status === 'error' && !resultInfo.parentId)">
               <ElButton
                 v-if="!['running', 'scheduling'].includes(inspect.status)"
