@@ -3,7 +3,9 @@ const Random = Mock.Random
 const settings = require('./settings.json')
 const dataflow = require('./dataflow.js')
 const connection = require('./connection.js')
-const Messages = require('./Messages.js')
+const messages = require('./messages.js')
+const verification = require('./verification.js')
+const metadata = require('./metadata.js')
 
 const agent = {
   id: '@guid',
@@ -59,7 +61,7 @@ const agent = {
   },
   'agentType|1': ['Cloud', '']
 }
-module.exports = Object.assign({}, dataflow, connection, Messages, {
+module.exports = Object.assign({}, dataflow, connection, messages, verification, metadata, {
   '/tm/api/users/self': {
     data: {
       account_status: 1,
@@ -256,7 +258,8 @@ module.exports = Object.assign({}, dataflow, connection, Messages, {
     code: 'ok',
     data: {
       payMode: 'POSTPAID', // PREPAID-预付费 POSTPAID-后付费 REVIEW_POSTPAID-审批后付费
-      orderId: '@guid'
+      orderId: '@guid',
+      agentId: '@guid'
     }
   },
   '/api/tcm/orders/prepare': {

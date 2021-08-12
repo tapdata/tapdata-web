@@ -130,8 +130,7 @@ const routes = [
             name: 'DataflowCreate',
             component: TaskForm,
             meta: {
-              title: '创建任务',
-              link: './tm/#/createTask/create'
+              title: '创建任务'
             }
           },
           {
@@ -144,7 +143,65 @@ const routes = [
           }
         ]
       },
-
+      {
+        path: '/verify',
+        name: 'Verify',
+        component: () => import(/* webpackChunkName: "verify" */ '../views/Verify/List.vue'),
+        meta: {
+          title: '数据校验',
+          icon: 'shujuxiaoyan'
+        },
+        children: [
+          {
+            path: 'create',
+            name: 'VerifyCreate',
+            component: () => import(/* webpackChunkName: "verify-form" */ '../views/Verify/Form.vue'),
+            meta: {
+              title: '创建校验任务'
+            }
+          },
+          {
+            path: ':id/edit',
+            name: 'VerifyEdit',
+            component: () => import(/* webpackChunkName: "verify-form" */ '../views/Verify/Form.vue'),
+            meta: {
+              title: '编辑校验任务'
+            }
+          },
+          {
+            path: ':id/details',
+            name: 'VerifyDetails',
+            component: () => import(/* webpackChunkName: "verify-details" */ '../views/Verify/Details.vue'),
+            meta: {
+              title: '校验详情'
+            }
+          },
+          {
+            path: 'result/:id',
+            name: 'VerifyResult',
+            component: () => import(/* webpackChunkName: "verify-result" */ '../views/Verify/Result.vue'),
+            meta: {
+              title: '校验结果'
+            }
+          },
+          {
+            path: ':id/history',
+            name: 'VerifyHistory',
+            component: () => import(/* webpackChunkName: "verify-history" */ '../views/Verify/History.vue'),
+            meta: {
+              title: '校验历史'
+            }
+          },
+          {
+            path: 'result/:id/history',
+            name: 'VerifyDiffHistory',
+            component: () => import(/* webpackChunkName: "verify-history" */ '../views/Verify/History.vue'),
+            meta: {
+              title: '差异校验历史'
+            }
+          }
+        ]
+      },
       {
         path: '/operationLog',
         name: 'OperationLog',

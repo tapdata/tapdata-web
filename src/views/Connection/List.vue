@@ -29,7 +29,7 @@
           </ElButton>
         </div>
       </div>
-      <El-table
+      <ElTable
         class="connection-table table-border"
         style="margin-top: 10px"
         height="100%"
@@ -96,7 +96,7 @@
           <span class="ml-1" v-if="!isSearching">暂无数据</span>
           <span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
         </div>
-      </El-table>
+      </ElTable>
       <ElPagination
         background
         class="mt-3"

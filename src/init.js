@@ -7,10 +7,9 @@ import VueRouter from 'vue-router'
 import './assets/app.scss'
 import VueClipboard from 'vue-clipboard2'
 import { Message } from 'element-ui'
-import ElementLocale from 'element-ui/lib/locale'
 import settings from './settings'
-import TapdataWebCore, { langs } from 'web-core'
-import VueI18n from 'vue-i18n'
+import TapdataWebCore from 'web-core'
+import i18n from './i18n'
 
 require('./assets/theme/dfs/index.scss')
 
@@ -19,15 +18,6 @@ Vue.prototype.$settings = settings
 Vue.use(VueClipboard)
 Vue.use(VueRouter)
 Vue.use(TapdataWebCore)
-Vue.use(VueI18n)
-const i18n = new VueI18n({
-  // locale: localStorage.lang || 'en',
-  locale: 'zh-CN',
-  messages: langs
-})
-ElementLocale.i18n((key, value) => {
-  return i18n.t(key, value)
-}) // 重点：为了实现element插件的多语言切换
 
 Vue.prototype.$checkAgentStatus = callback => {
   window.axios.get('api/tcm/agent/agentCount').then(data => {

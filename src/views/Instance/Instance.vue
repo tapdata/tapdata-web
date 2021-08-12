@@ -5,170 +5,186 @@
         <div class="instance-operation-left">
           <ul>
             <li>
-              <ElSelect v-model="searchParams.status" @input="search()">
-                <ElOption label="全部状态" value=""></ElOption>
-                <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"></ElOption>
-              </ElSelect>
+              <el-select v-model="searchParams.status" @input="search()">
+                <el-option :label="$t('agent_status_all')" value=""></el-option>
+                <el-option
+                  v-for="(item, index) in statusItems"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
             </li>
             <li class="ml-3">
-              <ElInput width="200" v-model="searchParams.keyword" placeholder="按ID/实例名称搜索" @input="search(800)">
+              <el-input
+                width="200"
+                v-model="searchParams.keyword"
+                :placeholder="$t('agent_search')"
+                @input="search(800)"
+              >
                 <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
-              </ElInput>
+              </el-input>
             </li>
             <li class="ml-3">
-              <ElButton plain class="btn-refresh" @click="fetch()">
+              <el-button plain class="btn-refresh" @click="fetch()">
                 <i class="iconfont td-icon-shuaxin"></i>
-              </ElButton>
+              </el-button>
             </li>
           </ul>
         </div>
         <div class="instance-operation-right">
-          <ElButton type="primary" @click="createAgent">
+          <el-button type="primary" @click="createAgent" :loading="createAgentLoading">
             <i class="el-icon-plus" style="margin-right: 5px"></i>
-            <span>创建 Agent</span>
-          </ElButton>
+            <span>{{ $t('agent_button_create') }}</span>
+          </el-button>
           <template v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'">
-            <ElButton type="primary" @click="toOldPurchase">
+            <el-button type="primary" @click="toOldPurchase">
               <i class="iconfont td-icon-dinggou mr-1"></i>
-              <span>订购托管实例</span>
-            </ElButton>
-            <ElButton type="primary" @click="toPurchase">
+              <span>{{ $t('agent_button_order1') }}</span>
+            </el-button>
+            <el-button type="primary" @click="toPurchase">
               <i class="iconfont td-icon-dinggou mr-1"></i>
-              <span>实例订购</span>
-            </ElButton>
+              <span>{{ $t('agent_button_order2') }}</span>
+            </el-button>
           </template>
         </div>
       </div>
-      <El-table class="instance-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
-        <ElTableColumn min-width="200px" label="实例ID/名称">
+      <el-table class="instance-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
+        <el-table-column min-width="200px" :label="$t('agent_name')">
           <template slot-scope="scope">
             <div class="flex">
               <div>
-                <ElLink
+                <el-link
                   class="agent-link"
                   :type="scope.row.agentType === 'Cloud' ? '' : 'primary'"
                   @click="handleDetails(scope.row)"
-                  >{{ scope.row.id }}</ElLink
+                  >{{ scope.row.id }}</el-link
                 >
                 <ClipButton :value="scope.row.id"></ClipButton>
-                <InlineInput
+                <inline-input
                   style="display: block"
                   :value="scope.row.name"
                   @save="updateName($event, scope.row.id)"
-                ></InlineInput>
+                ></inline-input>
               </div>
               <div class="flex align-center">
-                <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">仅供测试使用</span>
+                <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">{{
+                  $t('agent_test_use')
+                }}</span>
               </div>
             </div>
           </template>
-        </ElTableColumn>
-        <ElTableColumn label="状态" width="120">
+        </el-table-column>
+        <el-table-column :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
-            <StatusTag type="text" :status="scope.row.status"></StatusTag>
+            <status-tag type="text" :status="scope.row.status"></status-tag>
           </template>
-        </ElTableColumn>
-        <ElTableColumn label="任务数" width="120">
+        </el-table-column>
+        <el-table-column :label="$t('agent_task_number')" width="120">
           <template slot-scope="scope">
-            <ElTooltip effect="dark" placement="top" :disabled="!scope.row.metric || !scope.row.metric.runningTaskNum">
+            <el-tooltip effect="dark" placement="top" :disabled="!scope.row.metric || !scope.row.metric.runningTaskNum">
               <div slot="content">
                 <template v-for="(item, index) in scope.row.metric.dataFlows">
-                  <div v-if="index < 3" :key="item.id">任务名称：{{ item.name }}</div>
+                  <div v-if="index < 3" :key="item.id">{{ $t('task_name') }}：{{ item.name }}</div>
                 </template>
-                <ElLink
+                <el-link
                   v-if="scope.row.metric.runningTaskNum > 3"
                   class="block text-center"
                   type="primary"
                   @click="toDataFlow(scope.row.tmInfo.agentId)"
-                  >查看更多</ElLink
+                  >{{ $t('gl_see_more') }}</el-link
                 >
               </div>
-              <ElLink type="primary" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
+              <el-link type="primary" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
                 scope.row.metric ? scope.row.metric.runningTaskNum : 0
-              }}</ElLink>
-            </ElTooltip>
+              }}</el-link>
+            </el-tooltip>
           </template>
-        </ElTableColumn>
-        <ElTableColumn label="版本" width="200">
+        </el-table-column>
+        <el-table-column :label="$t('agent_version')" width="200">
           <template slot-scope="scope">
             <div class="flex align-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
-                <!--                <VIcon v-if="upgradingFlag(scope.row)" size="20" class="cursor-pointer">upgradeLoadingColor</VIcon>-->
-                <ElTooltip class="ml-1" effect="dark" :content="getTooltipContent(scope.row)" placement="top-start">
-                  <div class="upgrading-box" v-if="upgradingFlag(scope.row)">
-                    <VIcon class="v-icon" size="20">upgradeLoadingColor</VIcon>
-                    <el-progress
-                      class="upgrading-progress"
-                      type="circle"
-                      color="rgb(61, 156, 64)"
-                      :percentage="upgradingProgres(scope.row)"
-                      :show-text="false"
-                      :format="
-                        value => {
-                          return value
-                        }
-                      "
-                    ></el-progress>
+                <el-tooltip class="ml-1" effect="dark" placement="top">
+                  <div slot="content">{{ getTooltipContent(scope.row) }}</div>
+                  <div class="upgrade-tooltip">
+                    <div class="upgrading-box" v-if="upgradingFlag(scope.row)">
+                      <VIcon class="v-icon" size="20">upgradeLoadingColor</VIcon>
+                      <el-progress
+                        v-if="upgradingProgres(scope.row) !== undefined"
+                        class="upgrading-progress"
+                        type="circle"
+                        color="rgb(61, 156, 64)"
+                        :percentage="upgradingProgres(scope.row)"
+                        :show-text="false"
+                        :format="
+                          value => {
+                            return value
+                          }
+                        "
+                      ></el-progress>
+                    </div>
+                    <VIcon
+                      v-else-if="upgradeFailedFlag(scope.row)"
+                      size="20"
+                      class="cursor-pointer block"
+                      @click="showUpgradeErrorDialogFnc(scope.row)"
+                      >upgradeErrorColor</VIcon
+                    >
+                    <VIcon
+                      v-else-if="!upgradeFlag(scope.row)"
+                      size="20"
+                      class="cursor-pointer block"
+                      @click="showUpgradeDialogFnc(scope.row)"
+                      >upgradeColor</VIcon
+                    >
                   </div>
-                  <!--                  <VIcon v-if="upgradingFlag(scope.row)" size="20" class="cursor-pointer">upgradeLoadingColor</VIcon>-->
-                  <VIcon
-                    v-else-if="upgradeFailedFlag(scope.row)"
-                    size="20"
-                    class="cursor-pointer"
-                    @click="showUpgradeErrorDialogFnc(scope.row)"
-                    >upgradeErrorColor</VIcon
-                  >
-                  <VIcon
-                    v-else-if="!upgradeFlag(scope.row)"
-                    size="20"
-                    class="cursor-pointer"
-                    @click="showUpgradeDialogFnc(scope.row)"
-                    >upgradeColor</VIcon
-                  >
-                </ElTooltip>
+                </el-tooltip>
               </template>
             </div>
           </template>
-        </ElTableColumn>
-        <ElTableColumn prop="createAt" sortable="custom" label="创建时间" width="150">
+        </el-table-column>
+        <el-table-column prop="createAt" sortable="custom" :label="$t('agent_create_time')" width="150">
           <template slot-scope="scope">
             <span>{{ $moment(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </template>
-        </ElTableColumn>
-        <ElTableColumn label="操作" width="120" fixed="right">
+        </el-table-column>
+        <el-table-column :label="$t('agent_operate')" width="120" fixed="right">
           <template slot-scope="scope">
-            <ElLink
+            <el-link
               type="primary"
               class="mr-2"
               :disabled="scope.row.agentType === 'Cloud' || !!scope.row.deployDisable"
               @click="toDeploy(scope.row)"
-              >部署</ElLink
+              >{{ $t('agent_button_deploy') }}</el-link
             >
-            <ElLink
+            <el-link
               type="primary"
               class="mr-2"
               :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Running'"
               @click="handleStop(scope.row)"
-              >停止</ElLink
+              >{{ $t('agent_button_stop') }}</el-link
             >
-            <ElLink
+            <el-link
               type="danger"
               class="mr-2"
               @click="handleDel(scope.row)"
               :loading="delLoading"
               :disabled="delBtnDisabled(scope.row)"
-              >删除</ElLink
+              >{{ $t('agent_button_delete') }}</el-link
             >
           </template>
-        </ElTableColumn>
+        </el-table-column>
         <div class="instance-table__empty" slot="empty">
           <i class="el-icon-folder-opened"></i>
-          <span class="ml-1" v-if="!searchParams.keyword && !searchParams.status">暂无数据</span>
-          <span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
+          <span class="ml-1" v-if="!searchParams.keyword && !searchParams.status">{{ $t('gl_no_data') }}</span>
+          <span v-else>
+            {{ $t('gl_no_match_result') }}，<el-link type="primary" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
+          </span>
         </div>
-      </El-table>
-      <ElPagination
+      </el-table>
+      <el-pagination
         background
         class="mt-3"
         layout="total, sizes, ->, prev, pager, next, jumper"
@@ -179,33 +195,33 @@
         @size-change="fetch(1)"
         @current-change="fetch"
       >
-      </ElPagination>
-      <ElDialog :visible.sync="upgradeDialog" width="450px" top="30vh" center>
-        <div class="dialog-content">
-          Agent版本有更新，您可以通过以下方式将您的Agent升级到最新版本。升级过程中将无法运行任务。
-        </div>
+      </el-pagination>
+      <el-dialog :visible.sync="upgradeDialog" width="450px" top="30vh" center>
+        <div class="dialog-content">{{ $t('agent_dialog_upgrade_title') }}</div>
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center" v-if="showAutoUpgrade">
-            <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">自动升级</ElButton>
-            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">(Agent离线时无法使用自动升级)</div>
+            <el-button type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
+              $t('agent_button_auto_upgrade')
+            }}</el-button>
+            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">({{ $t('agent_tip_auto_upgrade') }})</div>
           </div>
           <div>
-            <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
+            <el-button type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</el-button>
           </div>
         </div>
-      </ElDialog>
+      </el-dialog>
       <!--   升级失败   -->
-      <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
-        <div class="dialog-content text-center">自动升级失败，请尝试手动升级。</div>
+      <el-dialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
+        <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
         <div class="dialog-btn flex justify-evenly mt-6">
           <div class="text-center">
-            <ElButton type="primary" @click="cancelUpgradeFnc">取消</ElButton>
+            <el-button type="primary" @click="cancelUpgradeFnc">{{ $t('gl_button_cancel') }}</el-button>
           </div>
           <div>
-            <ElButton type="primary" @click="manualUpgradeFnc">手动升级</ElButton>
+            <el-button type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</el-button>
           </div>
         </div>
-      </ElDialog>
+      </el-dialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -230,6 +246,7 @@ export default {
   data() {
     return {
       loading: true,
+      createAgentLoading: false,
       delLoading: false,
       searchParams: {
         status: '',
@@ -253,21 +270,18 @@ export default {
     }
   },
   computed: {
-    statusOptions() {
-      let options = {}
-      let map = this.statusMap
-      let dfsFilter = ['Creating', 'Running', 'Stopped']
-      for (const key in map) {
-        const item = map[key]
-        let value = key
-        if (options[item.text]) {
-          value = options[item.text] + ',' + value
-        }
-        if (dfsFilter.indexOf(value) > -1) {
-          options[item.text] = value
-        }
-      }
-      return options
+    statusItems() {
+      let result = []
+      let filter = ['Creating', 'Running', 'Stopped']
+      let { statusMap } = this
+
+      filter.forEach(el => {
+        result.push({
+          label: this.$t('agent_status_' + statusMap[el]?.key),
+          value: el
+        })
+      })
+      return result
     },
     disabledAutoUpgradeBtn() {
       return this.selectedRow?.status !== 'Running'
@@ -391,7 +405,7 @@ export default {
       this.fetch(1)
     },
     toOldPurchase() {
-      this.$confirm('确认后跳转订购托管实例页面', '是否确认订购托管实例？', {
+      this.$confirm(this.$t('agent_link_to_old_purchase_msg'), this.$t('agent_link_to_old_purchase_title'), {
         type: 'warning'
       }).then(res => {
         if (!res) {
@@ -404,7 +418,7 @@ export default {
       })
     },
     toPurchase() {
-      this.$confirm('确认后跳转下载页面', '是否确认订购实例？', {
+      this.$confirm(this.$t('agent_link_to_purchase_msg'), this.$t('agent_link_to_purchase_title'), {
         type: 'warning'
       }).then(res => {
         if (!res) {
@@ -433,21 +447,19 @@ export default {
       if (row.metric?.runningTaskNum) {
         flag = true
       }
-      let message = flag
-        ? '当前Agent有任务正在运行，强行停止Agent可能会导致任务出现异常，是否要强行停止！'
-        : 'Agent停止后将无法再继续运行任务，您需要去Agent安装目录下才能再次启动Agent，是否确认停止？'
-      this.$confirm(message, '是否停止', {
+      let message = flag ? this.$t('agent_button_stop_tip_running') : this.$t('agent_button_stop_tip_no_running')
+      this.$confirm(message, this.$t('agent_button_stop_tip'), {
         type: 'warning'
       }).then(res => {
         if (res) {
           this.$axios
             .patch('api/tcm/agent/stop/' + row.id)
             .then(() => {
-              this.$message.success('Agent 已停止')
+              this.$message.success(this.$t('agent_button_stop_msg_success'))
               this.fetch()
             })
             .catch(() => {
-              this.$message.error('Agent 停止失败')
+              this.$message.error(this.$t('agent_button_stop_msg_fail'))
               this.loading = false
             })
         }
@@ -460,11 +472,11 @@ export default {
       }
       let runningTaskNum = row?.metric?.runningTaskNum ?? 0 // 运行中的任务数
       let noDelFlag = runningTaskNum > 0 // 不能删除
-      let title = '删除后该Agent将无法再继续使用，是否确认删除？'
+      let title = this.$t('agent_button_delete_confirm_title')
       let message = null
       if (noDelFlag) {
-        title = '删除失败'
-        message = '当前Agent上有任务正在运行，请先停止任务后再删除。'
+        title = this.$t('gl_button_delete_fail')
+        message = this.$t('agent_button_delete_confirm_msg')
       }
       this.$confirm(message, title, {
         type: 'warning',
@@ -481,11 +493,11 @@ export default {
                 instanceId: row.id
               })
               .then(() => {
-                this.$message.success('Agent 删除成功')
+                this.$message.success(this.$t('agent_button_delete_success'))
                 this.fetch()
               })
               .catch(() => {
-                this.$message.error('Agent 删除失败')
+                this.$message.error(this.$t('agent_button_delete_fail'))
               })
               .finally(() => {
                 this.delLoading = false
@@ -494,11 +506,11 @@ export default {
             this.$axios
               .patch('api/tcm/agent/delete/' + row.id)
               .then(() => {
-                this.$message.success('Agent 删除成功')
+                this.$message.success(this.$t('agent_button_delete_success'))
                 this.fetch()
               })
               .catch(() => {
-                this.$message.error('Agent 删除失败')
+                this.$message.error(this.$t('agent_button_delete_fail'))
               })
               .finally(() => {
                 this.delLoading = false
@@ -516,7 +528,7 @@ export default {
           name: val
         })
         .then(() => {
-          this.$message.success('修改成功')
+          this.$message.success(this.$t('gl_button_update_success'))
           this.fetch()
         })
         .catch(() => {
@@ -550,7 +562,7 @@ export default {
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
       if (this.selectedRow?.metric?.runningTaskNum) {
-        this.$alert('检测到您有任务正在运行，请先停止所有任务再进行升级操作!')
+        this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
         return
       }
       this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
@@ -561,7 +573,7 @@ export default {
             version: this.version
           })
           .then(() => {
-            this.$message.success('开始升级')
+            this.$message.success(this.$t('agent_auto_upgrade_tip_start'))
             this.fetch()
           })
       })
@@ -570,7 +582,7 @@ export default {
       let row = this.selectedRow
       this.closeDialog() // 关闭升级方式选择窗口
       if (row.metric?.runningTaskNum) {
-        this.$alert('检测到您有任务正在运行，请先停止所有任务再进行升级操作!')
+        this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
       } else {
         let routeUrl = this.$router.resolve({
           name: 'UpgradeVersion',
@@ -595,16 +607,18 @@ export default {
         case 'preparing':
         case 'downloading':
         case 'upgrading':
-          result = `自动升级中，进度：${this.upgradingProgres(row)}%`
+          result =
+            this.$t('agent_auto_upgrade_tip_upgrading') +
+            (this.upgradingProgres(row) === undefined
+              ? ''
+              : `，${this.$t('agent_auto_upgrade_tip_progress')}：${this.upgradingProgres(row)}%`)
           break
         case 'fail':
-          result = '自动升级失败，请手动升级'
-          break
         case 'error':
-          result = '自动升级失败，请手动升级'
+          result = this.$t('agent_auto_upgrade_tip_fail')
           break
         default:
-          result = 'Agent版本有更新，点击升级'
+          result = this.$t('agent_auto_upgrade_tip_have_new')
           break
       }
       return result
@@ -624,20 +638,32 @@ export default {
     },
     // 创建Agent
     createAgent() {
-      this.$confirm('是否创建 Agent？', '创建 Agent', {
-        type: 'warning'
+      this.createAgentLoading = true
+      this.$axios
+        .post('api/tcm/orders', {
+          agentType: 'Local'
+        })
+        .then(data => {
+          this.fetch()
+          this.deployConfirm(data.agentId)
+        })
+        .catch(() => {
+          this.$router.replace('/500')
+        })
+        .finally(() => {
+          this.createAgentLoading = false
+        })
+    },
+    deployConfirm(id) {
+      this.$confirm(this.$t('agent_button_create_msg_success_desc'), this.$t('agent_button_create_msg_success'), {
+        type: 'success',
+        confirmButtonText: this.$t('agent_button_deploy_now'),
+        cancelButtonText: this.$t('agent_button_deploy_later')
       }).then(res => {
         if (res) {
-          this.$axios
-            .post('api/tcm/orders', {
-              agentType: 'Local'
-            })
-            .then(() => {
-              this.fetch()
-            })
-            .catch(() => {
-              this.$router.replace('/500')
-            })
+          this.toDeploy({
+            id: id
+          })
         }
       })
     },
@@ -671,6 +697,9 @@ export default {
     },
     upgradingProgres(row) {
       let { tmInfo } = row
+      if ([undefined, null, ''].includes(tmInfo?.progres)) {
+        return
+      }
       return Number(tmInfo?.progres || 0)
     },
     upgradeFailedFlag(row) {
@@ -733,9 +762,12 @@ export default {
     color: map-get($fontColor, light);
   }
 }
+.upgrade-tooltip {
+  width: 20px;
+  height: 20px;
+}
 .upgrading-box {
   position: relative;
-  height: 20px;
   ::v-deep {
     .v-icon {
       position: absolute;

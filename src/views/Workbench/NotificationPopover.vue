@@ -92,6 +92,8 @@ export default {
           if (data.data && data.data.length > 0) {
             this.listData.unshift(...data.data)
             this.getUnReadNum()
+          } else {
+            this.unRead = 0
           }
           //格式化日期
           if (this.listData && this.listData.length > 0) {

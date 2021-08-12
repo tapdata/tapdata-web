@@ -16,7 +16,7 @@ for (const url in service) {
     res.status(200).end(JSON.stringify(Mock.mock(mockData)))
   })
 }
-app.ws('/ws/agent', (ws, req) => {
+app.ws('/tm/ws/agent', (ws, req) => {
   ws.on('message', msg => {
     console.log('ws:', msg)
     ws.send(
