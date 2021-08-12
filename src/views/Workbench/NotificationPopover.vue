@@ -28,16 +28,12 @@
                   {{ item.serverName }}
                 </span>
                 <span>{{ typeMap[item.msg] }}</span>
-                <!--              <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>-->
               </div>
-              <!--            <div class="list-item-time">-->
-              <!--              <span>{{ item.createTime }}</span>-->
-              <!--            </div>-->
             </div>
           </li>
         </ul>
         <div class="connection-table__empty" v-if="listData.length < 1">
-          <img src="../../assets/image/noNotive.png" class="code" />
+          <VIcon size="76">wutongzhi</VIcon>
           <span>暂无通知</span>
         </div>
       </div>

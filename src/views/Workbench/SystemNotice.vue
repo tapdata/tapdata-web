@@ -42,15 +42,11 @@
                 <span v-if="scope.row.restDay">{{ scope.row.restDay }} 天</span>
               </div>
             </div>
-            <!--              <div class="list-item-time">-->
-            <!--                <span>{{ scope.row.createTime }}</span>-->
-            <!--              </div>-->
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip label="通知时间" prop="createTime" width="150"></ElTableColumn>
         <div class="connection-table__empty" slot="empty">
-          <!--          <i class="el-icon-folder-opened"></i>-->
-          <img src="../../assets/image/noData.png" class="code" />
+          <VIcon size="100">noNoticeColor</VIcon>
           <span v-if="!isSearching">暂无通知</span>
         </div>
       </El-table>
@@ -72,8 +68,10 @@
 
 <script>
 import { TYPEMAP } from './tyepMap'
+import VIcon from '@/components/VIcon'
 
 export default {
+  components: { VIcon },
   data() {
     return {
       list: [],

@@ -3,8 +3,8 @@
     <!--	快速开始	-->
     <div class="workbench-start workbench-section">
       <el-row :gutter="40" class="section-header py-6">
-        <el-col :span="18" class="main-title fs-6 fw-bolder">快速开始</el-col>
-        <el-col :span="6" class="aside-title fs-6 fw-bolder">公告通知</el-col>
+        <el-col :span="18" class="main-title">快速开始</el-col>
+        <el-col :span="6" class="aside-title">公告通知</el-col>
       </el-row>
       <el-row :gutter="40" class="section-body">
         <el-col :span="6" v-for="(item, index) in createList" :key="index">
@@ -28,7 +28,7 @@
               <li
                 v-for="(item, index) in notices.slice(0, 5)"
                 :key="index"
-                class="notice-list__item flex align-center py-3 px-1 pointer"
+                class="notice-list__item flex align-center mb-4 px-1 pointer"
               >
                 <div v-if="item.type" class="notice-list__type mr-4 p-1">
                   {{ item.type }}
@@ -48,8 +48,8 @@
     <!--	概览	-->
     <div class="workbench-overview workbench-section">
       <el-row :gutter="40" class="section-header py-6">
-        <el-col :span="18" class="main-title fs-6 fw-bolder">概览</el-col>
-        <el-col :span="6" class="aside-title fs-6 fw-bolder">新手入门</el-col>
+        <el-col :span="18" class="main-title">概览</el-col>
+        <el-col :span="6" class="aside-title">新手入门</el-col>
       </el-row>
       <el-row :gutter="40" class="section-body">
         <el-col :span="18">
@@ -80,7 +80,7 @@
         </el-col>
         <el-col :span="6">
           <div class="aside-main guide-list flex-grow-1 p-6">
-            <ul class="guide-list__list pt-3">
+            <ul class="guide-list__list">
               <li
                 v-for="(item, index) in guides"
                 :key="index"
@@ -100,7 +100,9 @@
       <li>
         <el-popover placement="left" width="200" trigger="hover" content="电话咨询：0755-26656080">
           <a href="tel:0755-26656080" slot="reference">
-            <div class="tapdata-contact__icon"><img src="../../assets/image/phone.png" alt="" /></div>
+            <div class="tapdata-contact__icon">
+              <VIcon size="20">dianhuaColor</VIcon>
+            </div>
           </a>
         </el-popover>
       </li>
@@ -111,7 +113,9 @@
             <div class="tapdata-contact__img"><img src="../../assets/image/weiixn_larg.png" /></div>
             <div class="tapdata-contact__text">扫码咨询</div>
           </div>
-          <div class="tapdata-contact__icon" slot="reference"><img src="../../assets/image/weixin.png" alt="" /></div>
+          <div class="tapdata-contact__icon" slot="reference">
+            <VIcon size="20">weixinColor</VIcon>
+          </div>
         </el-popover>
       </li>
       <li>
@@ -121,7 +125,9 @@
             <div class="tapdata-contact__img"><img src="../../assets/image/LarkQR.jpeg" alt="" /></div>
             <div class="tapdata-contact__text">扫码咨询</div>
           </div>
-          <div class="tapdata-contact__icon" slot="reference"><img src="../../assets/image/kefu.png" alt="" /></div>
+          <div class="tapdata-contact__icon" slot="reference">
+            <VIcon size="20">kefuColor</VIcon>
+          </div>
         </el-popover>
       </li>
     </ul>
@@ -398,7 +404,9 @@ export default {
     cursor: pointer;
   }
 }
-.main-title {
+.main-title,
+.aside-title {
+  font-size: 18px;
   height: 24px;
   line-height: 24px;
 }

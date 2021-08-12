@@ -1,7 +1,7 @@
 <template>
   <div v-if="$route.name === 'NoviceGuide'" class="novice-guide-wrapper main-container">
     <div class="container-title">
-      <span class="fs-5 fw-bolder">新手引导</span>
+      <span class="main-title">新手引导</span>
       <span class="sub-title ml-4"></span>
     </div>
     <div class="container-section mt-6 p-6">
@@ -11,19 +11,6 @@
         <el-step title="创建目标连接"></el-step>
         <el-step title="配置同步任务"></el-step>
       </el-steps>
-      <!--      <ul class="step-box">-->
-      <!--        <li-->
-      <!--          v-for="(step, index) in steps"-->
-      <!--          :key="index"-->
-      <!--          :class="[{ active: activeStep >= index }, { 'color-primary': activeStep >= index }]"-->
-      <!--        >-->
-      <!--          <span class="step-index">-->
-      <!--            <i v-if="activeStep > index" class="el-icon-check"></i>-->
-      <!--            <span v-else>{{ index + 1 }}</span>-->
-      <!--          </span>-->
-      <!--          <span>{{ step.text }}</span>-->
-      <!--        </li>-->
-      <!--      </ul>-->
       <!--   第1步   -->
       <div v-if="step === 0" class="step-content mt-7">
         <div class="step-content__title fs-6 fw-bolder">安装 Agent</div>
@@ -37,8 +24,8 @@
         <div class="agent-info flex justify-between mt-6 p-4">
           <div>
             <div class="agent-status fs-7 mt-4">
-              <span class="status-icon mr-2"></span>
-              <span class="fw-bolder">{{ agentStatus }}</span>
+              <span class="status-icon mr-1"></span>
+              <span class="fw-bolder" style="margin-left: 2px">{{ agentStatus }}</span>
             </div>
             <div class="agent-desc mt-4 ml-3" :class="[{ invisible: !agent.name }]">名称：{{ agent.name }}</div>
             <div class="ml-3 mt-2 text-black-50">
@@ -101,7 +88,7 @@
 
         <el-form ref="sourceElForm" v-model="sourceForm" label-width="80px" class="source-form mt-6">
           <el-form-item label="数据库类型" prop="database_type" class="database-type">
-            <div class="flex w-100" :class="[{ 'justify-between': databaseTypeItems.length > 2 }]">
+            <div class="flex w-100">
               <el-radio-group v-model="sourceForm.database_type" @change="changeSourceDatabaseType">
                 <el-radio-button v-for="(item, index) in databaseTypeItems" :key="index" :label="item.value">
                   {{ item.label }}
@@ -732,6 +719,9 @@ export default {
   }
 }
 .container-title {
+  .main-title {
+    font-size: 18px;
+  }
   .sub-title {
     color: #7a7a7a;
   }
@@ -779,9 +769,6 @@ export default {
         font-size: 14px;
         font-weight: normal;
         color: #000;
-        &.is-success {
-          font-weight: 700;
-        }
       }
     }
   }
