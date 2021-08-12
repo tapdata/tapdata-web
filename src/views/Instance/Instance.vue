@@ -33,7 +33,7 @@
           </ul>
         </div>
         <div class="instance-operation-right">
-          <el-button type="primary" @click="createAgent">
+          <el-button type="primary" @click="createAgent" :loading="createAgentLoading">
             <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>{{ $t('agent_button_create') }}</span>
           </el-button>
@@ -246,6 +246,7 @@ export default {
   data() {
     return {
       loading: true,
+      createAgentLoading: false,
       delLoading: false,
       searchParams: {
         status: '',
@@ -637,20 +638,32 @@ export default {
     },
     // 创建Agent
     createAgent() {
-      this.$confirm(this.$t('agent_button_create_tip'), this.$t('agent_button_create'), {
-        type: 'warning'
+      this.createAgentLoading = true
+      this.$axios
+        .post('api/tcm/orders', {
+          agentType: 'Local'
+        })
+        .then(data => {
+          this.fetch()
+          this.deployConfirm(data.agentId)
+        })
+        .catch(() => {
+          this.$router.replace('/500')
+        })
+        .finally(() => {
+          this.createAgentLoading = false
+        })
+    },
+    deployConfirm(id) {
+      this.$confirm(this.$t('agent_button_create_msg_success_desc'), this.$t('agent_button_create_msg_success'), {
+        type: 'success',
+        confirmButtonText: this.$t('agent_button_deploy_now'),
+        cancelButtonText: this.$t('agent_button_deploy_later')
       }).then(res => {
         if (res) {
-          this.$axios
-            .post('api/tcm/orders', {
-              agentType: 'Local'
-            })
-            .then(() => {
-              this.fetch()
-            })
-            .catch(() => {
-              this.$router.replace('/500')
-            })
+          this.toDeploy({
+            id: id
+          })
         }
       })
     },

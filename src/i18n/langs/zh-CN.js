@@ -25,6 +25,8 @@ export default {
   agent_button_order1: '订购托管实例',
   agent_button_order2: '实例订购',
   agent_button_deploy: '部署',
+  agent_button_deploy_now: '立即部署',
+  agent_button_deploy_later: '稍后部署',
   agent_button_stop: '停止',
   agent_button_delete: '删除',
   agent_button_auto_upgrade: '自动升级',
@@ -37,6 +39,8 @@ export default {
   agent_link_to_purchase_title: '是否确认订购实例？',
   agent_link_to_old_purchase_msg: '确认后跳转订购托管实例页面',
   agent_link_to_old_purchase_title: '是否确认订购托管实例？',
+  agent_button_create_msg_success: 'Agent创建成功',
+  agent_button_create_msg_success_desc: '请点击【立即部署】进入部署页面，按照操作指引完成Agent部署。',
   agent_button_stop_tip: '是否停止',
   agent_button_stop_tip_running: '当前Agent有任务正在运行，强行停止Agent可能会导致任务出现异常，是否要强行停止！',
   agent_button_stop_tip_no_running:

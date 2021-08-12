@@ -24,7 +24,9 @@ export default {
   agent_button_create: 'Create Agent',
   agent_button_order1: 'Order Instance1',
   agent_button_order2: 'Order Instance2',
-  agent_button_deploy: 'deploy',
+  agent_button_deploy: 'Deploy',
+  agent_button_deploy_now: 'Deploy now',
+  agent_button_deploy_later: 'Deploy later',
   agent_button_stop: 'stop',
   agent_button_delete: 'delete',
   agent_button_auto_upgrade: 'Auto update',
@@ -37,6 +39,9 @@ export default {
   agent_link_to_purchase_title: 'Whether to confirm the order instance？',
   agent_link_to_old_purchase_msg: 'After confirmation, jump to the page for ordering hosting instances',
   agent_link_to_old_purchase_title: 'Confirm to order managed instance？',
+  agent_button_create_msg_success: 'Agent created successfully',
+  agent_button_create_msg_success_desc:
+    'Please click [Deploy] to enter the deployment page and follow the instructions to complete the Agent deployment.',
   agent_button_stop_tip: 'Whether to stop',
   agent_button_stop_tip_running:
     'There is a task currently running on the Agent. Forcibly stopping the Agent may cause the task to be abnormal. Do you want to forcibly stop it?',
