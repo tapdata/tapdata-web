@@ -71,7 +71,28 @@ export default {
         descStr = descStr.replaceAll('$pre)', '</pre>')
         this.nodeDesc = descStr
       }
-
+      let checkField = it => {
+        if (it.type === 'field') {
+          let options = []
+          fields.forEach(f => {
+            if (f.field_name) {
+              options.push({
+                label: f.field_name,
+                value: f.field_name
+              })
+            }
+          })
+          it.options = options
+        }
+        if (it.type === 'array') {
+          checkField(it.itemConfig)
+        }
+        if (it.type === 'group') {
+          it.items.map(d => {
+            checkField(d)
+          })
+        }
+      }
       if (formConfig && formConfig.items) {
         let items = formConfig.items || []
         let formData = this.model.formData
@@ -127,18 +148,7 @@ export default {
             value = ''
           }
           this.$set(this.model.formData, it.field, value)
-          if (it.type === 'field') {
-            let options = []
-            fields.forEach(f => {
-              if (f.field_name) {
-                options.push({
-                  label: f.field_name,
-                  value: f.field_name
-                })
-              }
-            })
-            it.options = options
-          }
+          checkField(it)
         })
         this.ifFields = ifFields
       }
