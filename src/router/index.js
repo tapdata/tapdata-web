@@ -1,6 +1,7 @@
 import Layout from '../views/Layout.vue'
 import Iframe from '../views/Iframe.vue'
 import Error from '../views/Error.vue'
+import SvgList from '../views/SvgList.vue'
 import AgentDownload from '@/views/AgentDownload/AgentPage.vue'
 import FastDownload from '@/views/AgentDownload/FastDownload.vue'
 import UpgradeVersion from '@/views/AgentDownload/UpgradeVersion.vue'
@@ -272,6 +273,11 @@ const routes = [
     path: '/off',
     name: 'Off',
     component: Error
+  },
+  {
+    path: '/svg',
+    name: 'SvgList',
+    component: SvgList
   }
 ]
 if (process.env.VUE_APP_INSTANCE_TEST_BTN === 'true') {
