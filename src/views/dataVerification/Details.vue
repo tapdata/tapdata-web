@@ -15,6 +15,9 @@
           v-else-if="inspect.inspectMethod !== 'row_count'"
         >
           <div class="flex align-items-center">
+            <ElButton v-if="['running', 'scheduling'].includes(inspect.status)" size="mini">{{
+              $t('verify_button_diff_verify_running')
+            }}</ElButton>
             <template v-if="inspect.result !== 'passed' && !(inspect.status === 'error' && !resultInfo.parentId)">
               <ElButton
                 v-if="!['running', 'scheduling'].includes(inspect.status)"
@@ -23,7 +26,7 @@
                 @click="diffInspect"
                 >{{ $t('verify_button_diff_verify') }}</ElButton
               >
-              <ElButton v-else size="mini">{{ $t('verify_button_diff_verify_running') }}</ElButton>
+
               <el-tooltip effect="dark" placement="top">
                 <div slot="content" style="width: 232px">
                   {{ $t('verify_button_diff_verify_tips') }}
@@ -32,17 +35,27 @@
               </el-tooltip>
             </template>
           </div>
-          <div v-if="resultInfo.parentId" class="color-info ml-3" style="font-size: 12px">
+          <div v-if="resultInfo.parentId" class="color-info" style="font-size: 12px">
             {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
             <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
               $t('verify_button_diff_task_history')
             }}</ElLink>
           </div>
         </div>
-        <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+        <ResultTable
+          v-if="!['running', 'scheduling'].includes(inspect.status)"
+          ref="singleTable"
+          :type="type"
+          :data="tableData"
+          @row-click="rowClick"
+        ></ResultTable>
       </div>
     </div>
-    <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+    <ResultView
+      v-if="type !== 'row_count' && !['running', 'scheduling'].includes(inspect.status)"
+      ref="resultView"
+      :remoteMethod="getResultData"
+    ></ResultView>
   </section>
 </template>
 <style lang="scss">
