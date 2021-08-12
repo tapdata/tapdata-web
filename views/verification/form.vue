@@ -125,102 +125,104 @@
             </el-form-item>
           </el-form>
         </div>
-        <div class="form-panel" v-if="flowStages">
-          <div class="panel-label">
-            <span>{{ $t('dataVerification.verifyCondition') }}</span>
-            <el-button style="height: 24px; line-height: 24px; padding: 0 10px" size="mini" @click="clear">
-              {{ $t('dataVerification.clear') }}
-            </el-button>
+        <div v-if="flowStages" v-loading="!flowStages.length">
+          <div class="form-panel">
+            <div class="panel-label">
+              <span>{{ $t('dataVerification.verifyCondition') }}</span>
+              <el-button style="height: 24px; line-height: 24px; padding: 0 10px" size="mini" @click="clear">
+                {{ $t('dataVerification.clear') }}
+              </el-button>
+            </div>
+            <ul class="panel-container" id="data-verification-form">
+              <li class="condition-item" v-for="(item, index) in form.tasks" :key="index">
+                <div class="condition-setting">
+                  <div class="setting-item">
+                    <label class="item-label is-required">{{ $t('dataVerification.table') }}</label>
+                    <el-cascader
+                      class="item-select"
+                      :class="{ red: !item.sourceTable }"
+                      size="mini"
+                      v-model="item.sourceTable"
+                      :options="item.sourceTree"
+                      @input="tableChangeHandler(item, 'source', index)"
+                    ></el-cascader>
+                    <span class="item-icon">
+                      <i class="el-icon-right"></i>
+                    </span>
+                    <el-cascader
+                      class="item-select"
+                      size="mini"
+                      :class="{ red: !item.targetTable }"
+                      v-model="item.targetTable"
+                      :options="item.targetTree"
+                      @input="tableChangeHandler(item, 'target')"
+                    ></el-cascader>
+                  </div>
+                  <div class="setting-item" v-show="form.inspectMethod !== 'row_count'">
+                    <label class="item-label is-required">{{ $t('dataVerification.indexField') }}</label>
+                    <MultiSelection
+                      v-model="item.source.sortColumn"
+                      :options="item.source.fields"
+                      :class="{ red: !item.source.sortColumn }"
+                      :placeholder="$t('dataVerification.ChoosePKField')"
+                      :id="'itemSource' + index"
+                    ></MultiSelection>
+                    <span class="item-icon"></span>
+                    <MultiSelection
+                      v-model="item.target.sortColumn"
+                      :class="{ red: !item.target.sortColumn }"
+                      :options="item.target.fields"
+                      :placeholder="$t('dataVerification.ChoosePKField')"
+                    ></MultiSelection>
+                    <el-checkbox
+                      style="margin-left: 10px"
+                      v-model="item.showAdvancedVerification"
+                      v-show="form.inspectMethod === 'field'"
+                      >{{ $t('dataVerification.advanceVerify') }}</el-checkbox
+                    >
+                  </div>
+                  <div class="setting-item" v-if="item.showAdvancedVerification">
+                    <label class="item-label is-required">{{ $t('dataVerification.JSVerifyLogic') }}</label>
+                    <el-button
+                      v-if="!item.webScript || item.webScript === ''"
+                      size="mini"
+                      icon="el-icon-plus"
+                      @click="addScript(index)"
+                      >{{ $t('dataVerification.addJS') }}</el-button
+                    >
+                    <span v-if="item.webScript && item.webScript !== ''">
+                      <el-input
+                        class="item-select item-textarea"
+                        type="textarea"
+                        v-model="item.webScript"
+                        disabled
+                      ></el-input>
+                      <el-button-group class="setting-buttons">
+                        <el-button size="mini" icon="el-icon-edit" @click="editScript(index)"></el-button>
+                      </el-button-group>
+                      <el-button-group class="setting-buttons">
+                        <el-button size="mini" icon="el-icon-close" @click="removeScript(index)"></el-button>
+                      </el-button-group>
+                    </span>
+                  </div>
+                </div>
+                <el-button-group class="setting-buttons">
+                  <el-button size="mini" icon="el-icon-close" @click="removeItem(index)"></el-button>
+                </el-button-group>
+              </li>
+              <li style="color: #ccc" v-show="!form.tasks.length">
+                {{ $t('dataVerification.clickVerified') }}
+              </li>
+            </ul>
           </div>
-          <ul class="panel-container" id="data-verification-form">
-            <li class="condition-item" v-for="(item, index) in form.tasks" :key="index">
-              <div class="condition-setting">
-                <div class="setting-item">
-                  <label class="item-label is-required">{{ $t('dataVerification.table') }}</label>
-                  <el-cascader
-                    class="item-select"
-                    :class="{ red: !item.sourceTable }"
-                    size="mini"
-                    v-model="item.sourceTable"
-                    :options="item.sourceTree"
-                    @input="tableChangeHandler(item, 'source', index)"
-                  ></el-cascader>
-                  <span class="item-icon">
-                    <i class="el-icon-right"></i>
-                  </span>
-                  <el-cascader
-                    class="item-select"
-                    size="mini"
-                    :class="{ red: !item.targetTable }"
-                    v-model="item.targetTable"
-                    :options="item.targetTree"
-                    @input="tableChangeHandler(item, 'target')"
-                  ></el-cascader>
-                </div>
-                <div class="setting-item" v-show="form.inspectMethod !== 'row_count'">
-                  <label class="item-label is-required">{{ $t('dataVerification.indexField') }}</label>
-                  <MultiSelection
-                    v-model="item.source.sortColumn"
-                    :options="item.source.fields"
-                    :class="{ red: !item.source.sortColumn }"
-                    :placeholder="$t('dataVerification.ChoosePKField')"
-                    :id="'itemSource' + index"
-                  ></MultiSelection>
-                  <span class="item-icon"></span>
-                  <MultiSelection
-                    v-model="item.target.sortColumn"
-                    :class="{ red: !item.target.sortColumn }"
-                    :options="item.target.fields"
-                    :placeholder="$t('dataVerification.ChoosePKField')"
-                  ></MultiSelection>
-                  <el-checkbox
-                    style="margin-left: 10px"
-                    v-model="item.showAdvancedVerification"
-                    v-show="form.inspectMethod === 'field'"
-                    >{{ $t('dataVerification.advanceVerify') }}</el-checkbox
-                  >
-                </div>
-                <div class="setting-item" v-if="item.showAdvancedVerification">
-                  <label class="item-label is-required">{{ $t('dataVerification.JSVerifyLogic') }}</label>
-                  <el-button
-                    v-if="!item.webScript || item.webScript === ''"
-                    size="mini"
-                    icon="el-icon-plus"
-                    @click="addScript(index)"
-                    >{{ $t('dataVerification.addJS') }}</el-button
-                  >
-                  <span v-if="item.webScript && item.webScript !== ''">
-                    <el-input
-                      class="item-select item-textarea"
-                      type="textarea"
-                      v-model="item.webScript"
-                      disabled
-                    ></el-input>
-                    <el-button-group class="setting-buttons">
-                      <el-button size="mini" icon="el-icon-edit" @click="editScript(index)"></el-button>
-                    </el-button-group>
-                    <el-button-group class="setting-buttons">
-                      <el-button size="mini" icon="el-icon-close" @click="removeScript(index)"></el-button>
-                    </el-button-group>
-                  </span>
-                </div>
-              </div>
-              <el-button-group class="setting-buttons">
-                <el-button size="mini" icon="el-icon-close" @click="removeItem(index)"></el-button>
-              </el-button-group>
-            </li>
-            <li style="color: #ccc" v-show="!form.tasks.length">
-              {{ $t('dataVerification.clickVerified') }}
-            </li>
-          </ul>
-        </div>
-        <div style="margin-top: 10px" v-if="flowStages">
-          <el-button size="mini" icon="el-icon-plus" @click="addTable()">{{
-            $t('dataVerification.addTable')
-          }}</el-button>
-          <el-button size="mini" icon="el-icon-plus" @click="autoAddTable()">{{
-            $t('dataVerification.automaticallyAdd')
-          }}</el-button>
+          <div style="margin-top: 10px">
+            <el-button size="mini" icon="el-icon-plus" @click="addTable()">{{
+              $t('dataVerification.addTable')
+            }}</el-button>
+            <el-button size="mini" icon="el-icon-plus" @click="autoAddTable()">{{
+              $t('dataVerification.automaticallyAdd')
+            }}</el-button>
+          </div>
         </div>
       </div>
     </div>
@@ -663,9 +665,9 @@ export default {
     //根据表的连线关系自动添加校验条件
     autoAddTable() {
       this.form.tasks = []
-      let stages = this.flowStages
-      let map = this.stageMap
       this.$nextTick(() => {
+        let stages = this.flowStages
+        let map = this.stageMap
         for (const key in map) {
           const lanes = map[key]
           let stg = stages.find(stg => stg.id === key)
