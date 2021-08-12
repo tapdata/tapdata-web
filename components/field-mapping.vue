@@ -414,6 +414,13 @@ export default {
         }
         this.fieldProcessRename(id, key, value)
       } else if (key === 'data_type') {
+        let option = this.target.filter(v => v.id === id)
+        if (option.length === 0) return
+        option = option[0]
+        if (value === option.data_type) {
+          this.handleClose() //类型无改变
+          return
+        }
         //如果是改类型 需要手动修改字段的长度以及精度
         this.fieldProcessConvert(id, key, value)
         this.influences(id)
@@ -450,6 +457,7 @@ export default {
       }
       //触发target更新
       this.updateTarget(id, key, value)
+      this.checkTable() //消除感叹号
       this.handleClose()
     },
     //改类型影响字段长度 精度
@@ -501,6 +509,7 @@ export default {
       })
       //触发页面重新渲染
       this.updateTableData(id, 'is_deleted', value)
+      this.checkTable() //消除感叹号
     },
     //目标任务 字段处理器
     //rename操作
@@ -663,18 +672,28 @@ export default {
     //保存校验
     checkTable() {
       //左边所有invalid 为false 右边所有目标字段有类型
+      let checkDataType = false
+      this.target.forEach(field => {
+        if (!field.data_type && !field.is_deleted) {
+          checkDataType = true
+        }
+      })
+      //当前表 所有字段类型通过 将当前表的invalid 设置为false 校验通过
+      this.fieldMappingNavData.forEach(table => {
+        if (table.sinkObjectName === this.selectRow.sinkObjectName) {
+          //当前表
+          if (!checkDataType) {
+            table.invalid = false
+          } else table.invalid = true
+        }
+      })
+
       let checkInvalid = false
       let count = 0
       this.fieldMappingNavData.forEach(table => {
         if (table.invalid) {
           checkInvalid = true
           count += 1
-        }
-      })
-      let checkDataType = false
-      this.target.forEach(field => {
-        if (!field.data_type) {
-          checkDataType = true
         }
       })
       return {
