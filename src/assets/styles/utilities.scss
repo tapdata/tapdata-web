@@ -11901,13 +11901,6 @@
     display: none !important;
   }
 }
-.justify-center {
-  justify-content: center !important;
-}
-
-.align-center {
-  align-items: center !important;
-}
 
 .grabbable {
   cursor: grab;
@@ -11945,6 +11938,12 @@
 /*
 * public 具体的样式类
 */
+.fs-7 {
+  font-size: 0.875rem !important;
+}
+.fs-8 {
+  font-size: 0.75rem !important;
+}
 .ellipsis {
   white-space: nowrap;
   overflow: hidden;

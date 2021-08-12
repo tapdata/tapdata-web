@@ -4,7 +4,7 @@
       <div class="notice-header__title fw-bolder fs-7">
         <span>推荐 | 异构数据库同步云平台 Tapdata Cloud 开启有奖公测</span>
       </div>
-      <div class="notice-header__time mt-5 ml-1 flex align-center">
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
         <img src="../../assets/image/logoIconColour.png" alt="" />
         <span class="ml-5 mr-4">Cloud@Tapdata</span>
         <span>2021-07-31</span>
@@ -44,7 +44,7 @@
           不论您是Tapdata Cloud 的用户还是产品推荐官，都有机会赢取 AirPods
           、Kindle、机械键盘、小爱音响、充电宝、定制保温杯和U盘等好礼！
         </div>
-        <div class="prize-section section-margin flex justify-center p-4">
+        <div class="prize-section section-margin flex justify-content-center p-4">
           <img src="../../../public/images/notice/prize1.png" alt="" />
           <img src="../../../public/images/notice/prize2.png" alt="" />
         </div>
@@ -116,7 +116,7 @@
       <div class="notice-header__title fw-bolder fs-7">
         <span>新手必看 ！如何玩转 Tapdata Cloud 数据同步功能</span>
       </div>
-      <div class="notice-header__time mt-5 ml-1 flex align-center">
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
         <img src="../../assets/image/logoIconColour.png" alt="" />
         <span class="ml-5 mr-4">Cloud@Tapdata</span>
         <span>2021-05-28</span>

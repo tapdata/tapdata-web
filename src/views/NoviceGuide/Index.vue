@@ -5,7 +5,7 @@
       <span class="sub-title ml-4"></span>
     </div>
     <div class="container-section mt-6 p-6">
-      <el-steps class="pb-6" :active="step" process-status="process" finish-status="success" align-center>
+      <el-steps class="pb-6" :active="step" process-status="process" finish-status="success" align-items-center>
         <el-step title="安装 Agent"></el-step>
         <el-step title="创建源连接"></el-step>
         <el-step title="创建目标连接"></el-step>
@@ -34,7 +34,7 @@
           </div>
           <div class="mt-2">点击启用agent开始下一步吧！</div>
         </div>
-        <div class="agent-info flex justify-between mt-6 p-4">
+        <div class="agent-info flex justify-content-between mt-6 p-4">
           <div>
             <div class="agent-status fs-7 mt-4">
               <span class="status-icon mr-2"></span>
@@ -64,7 +64,7 @@
               >
             </div>
           </div>
-          <div v-if="agent.status === 'Running'" class="flex justify-center align-center">
+          <div v-if="agent.status === 'Running'" class="flex justify-content-center align-items-center">
             <VIcon size="57" color="#8ACD54">successCircle</VIcon>
           </div>
         </div>
@@ -101,7 +101,7 @@
 
         <el-form ref="sourceElForm" v-model="sourceForm" label-width="80px" class="source-form mt-6">
           <el-form-item label="数据库类型" prop="database_type" class="database-type">
-            <div class="flex w-100" :class="[{ 'justify-between': databaseTypeItems.length > 2 }]">
+            <div class="flex w-100" :class="[{ 'justify-content-between': databaseTypeItems.length > 2 }]">
               <el-radio-group v-model="sourceForm.database_type" @change="changeSourceDatabaseType">
                 <el-radio-button v-for="(item, index) in databaseTypeItems" :key="index" :label="item.value">
                   {{ item.label }}
@@ -125,7 +125,7 @@
               </el-input>
             </el-form-item>
             <el-form-item label="地址/端口" prop="database_host" class="database-uri-port">
-              <div class="flex justify-between w-100">
+              <div class="flex justify-content-between w-100">
                 <el-input v-model="sourceForm.database_host" class="database-uri" readonly disabled></el-input>
                 <el-input v-model="sourceForm.database_port" class="database-port ml-3" readonly disabled></el-input>
               </div>
@@ -153,7 +153,7 @@
       <div v-if="step === 3" class="step-content mt-7">
         <div class="step-content__title fs-6 fw-bolder">配置同步任务</div>
         <div class="flex mt-6">
-          <div class="task-item-label mr-4 flex align-center">同步类型</div>
+          <div class="task-item-label mr-4 flex align-items-center">同步类型</div>
           <el-radio-group v-model="taskForm.type">
             <el-radio-button v-for="(item, index) in taskTypeItems" :key="index" :label="item.value">
               {{ item.label }}

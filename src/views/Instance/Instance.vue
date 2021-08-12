@@ -55,7 +55,7 @@
                   @save="updateName($event, scope.row.id)"
                 ></InlineInput>
               </div>
-              <div class="flex align-center">
+              <div class="flex align-items-center">
                 <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">仅供测试使用</span>
               </div>
             </div>
@@ -89,7 +89,7 @@
         </ElTableColumn>
         <ElTableColumn label="版本" width="200">
           <template slot-scope="scope">
-            <div class="flex align-center">
+            <div class="flex align-items-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
                 <!--                <VIcon v-if="upgradingFlag(scope.row)" size="20" class="cursor-pointer">upgradeLoadingColor</VIcon>-->
@@ -183,7 +183,7 @@
         <div class="dialog-content">
           Agent版本有更新，您可以通过以下方式将您的Agent升级到最新版本。升级过程中将无法运行任务。
         </div>
-        <div class="dialog-btn flex justify-evenly mt-6">
+        <div class="dialog-btn flex justify-content-evenly mt-6">
           <div class="text-center" v-if="showAutoUpgrade">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">自动升级</ElButton>
             <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">(Agent离线时无法使用自动升级)</div>
@@ -196,7 +196,7 @@
       <!--   升级失败   -->
       <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
         <div class="dialog-content text-center">自动升级失败，请尝试手动升级。</div>
-        <div class="dialog-btn flex justify-evenly mt-6">
+        <div class="dialog-btn flex justify-content-evenly mt-6">
           <div class="text-center">
             <ElButton type="primary" @click="cancelUpgradeFnc">取消</ElButton>
           </div>

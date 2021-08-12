@@ -38,7 +38,7 @@
       >
         <ElTableColumn label="连接名" prop="name" min-width="150">
           <template slot-scope="scope">
-            <div class="flex flex-row align-center p-2">
+            <div class="flex flex-row align-items-center p-2">
               <img
                 class="mr-2"
                 style="width: 24px; height: 24px"
@@ -53,7 +53,7 @@
               >
                 {{ scope.row.name }}
               </ElLink>
-              <div class="flex align-center">
+              <div class="flex align-items-center">
                 <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">仅供测试使用</span>
               </div>
             </div>
