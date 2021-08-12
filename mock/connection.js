@@ -154,7 +154,7 @@ module.exports = {
         'schemaAutoUpdate|1': Boolean,
         sslCA: '',
         search_databaseType: '',
-        status: 'ready',
+        'status|1': ['ready', 'invalid', 'testing'],
         fill: 'uri',
         user_id: '@id',
         last_updated: Random.datetime(),

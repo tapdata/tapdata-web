@@ -1,24 +1,8 @@
 <template>
   <span class="td-status-tag">
     <ElTag :type="statusObj.type" v-if="type === 'tag'">{{ statusObj.text }}</ElTag>
-    <span style="display: flex; align-items: center" v-else>
-      <VIcon v-if="statusObj.icon === 'loading'" style="font-size: 18px; margin: 0 4px" color="#10C038">loading</VIcon>
-      <VIcon v-else-if="statusObj.icon === 'creating'" style="font-size: 18px; margin: 0 4px" color="#f7a237"
-        >creating</VIcon
-      >
-      <i
-        v-else-if="statusObj.icon === 'running'"
-        class="iconfont td-status-tag__icon td-icon-yunhangzhong color-success"
-      ></i>
-      <i
-        v-else-if="statusObj.icon === 'warning'"
-        class="iconfont td-status-tag__icon td-icon-yichang color-warning"
-      ></i>
-      <i
-        v-else-if="statusObj.icon === 'waiting'"
-        class="iconfont td-status-tag__icon td-icon-daiqidong color-primary"
-      ></i>
-      <i v-else :class="'td-status-tag__icon el-icon-' + statusObj.icon + ' color-' + statusObj.type"></i>
+    <span :class="['flex', 'align-items-center', 'icon-span', `color-${statusObj.type}`, status]" v-else>
+      <VIcon class="v-icon" size="16">{{ statusObj.icon }}</VIcon>
       <span class="td-status-tag__text">{{ statusObj.text }}</span>
     </span>
   </span>
@@ -61,6 +45,11 @@ export default {
 .td-status-tag {
   display: inline-block;
   vertical-align: middle;
+  .icon-span {
+    .v-icon {
+      margin: 0 4px;
+    }
+  }
 }
 .td-status-tag__icon {
   font-size: 14px;
@@ -72,13 +61,11 @@ export default {
   &.td-icon-yunhangzhong {
     color: map-get($color, success);
   }
-  &.td-icon-yichang {
-    color: map-get($color, warning);
-  }
 }
 .td-status-tag__text {
   display: inline-block;
   height: 26px;
   line-height: 26px;
+  color: #333 !important;
 }
 </style>

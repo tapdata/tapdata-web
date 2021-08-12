@@ -4,14 +4,12 @@ import './plugins/axios'
 import './plugins/monent'
 import App from './App.vue'
 import VueRouter from 'vue-router'
-import './assets/app.scss'
+import './assets/styles/app.scss'
 import VueClipboard from 'vue-clipboard2'
 import { Message } from 'element-ui'
 import settings from './settings'
 import TapdataWebCore from 'web-core'
 import i18n from './i18n'
-
-require('./assets/theme/dfs/index.scss')
 
 Vue.config.productionTip = false
 Vue.prototype.$settings = settings

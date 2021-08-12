@@ -22,12 +22,12 @@
                 :placeholder="$t('agent_search')"
                 @input="search(800)"
               >
-                <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
+                <i slot="prefix" class="el-icon-search el-input__icon"></i>
               </el-input>
             </li>
             <li class="ml-3">
               <el-button plain class="btn-refresh" @click="fetch()">
-                <i class="iconfont td-icon-shuaxin"></i>
+                <i class="el-icon-refresh"></i>
               </el-button>
             </li>
           </ul>
@@ -39,11 +39,9 @@
           </el-button>
           <template v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'">
             <el-button type="primary" @click="toOldPurchase">
-              <i class="iconfont td-icon-dinggou mr-1"></i>
               <span>{{ $t('agent_button_order1') }}</span>
             </el-button>
             <el-button type="primary" @click="toPurchase">
-              <i class="iconfont td-icon-dinggou mr-1"></i>
               <span>{{ $t('agent_button_order2') }}</span>
             </el-button>
           </template>
@@ -103,7 +101,7 @@
         </el-table-column>
         <el-table-column :label="$t('agent_version')" width="200">
           <template slot-scope="scope">
-            <div class="flex align-center">
+            <div class="flex align-items-center">
               <span>{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
                 <el-tooltip class="ml-1" effect="dark" placement="top">
@@ -198,7 +196,7 @@
       </el-pagination>
       <el-dialog :visible.sync="upgradeDialog" width="450px" top="30vh" center>
         <div class="dialog-content">{{ $t('agent_dialog_upgrade_title') }}</div>
-        <div class="dialog-btn flex justify-evenly mt-6">
+        <div class="dialog-btn flex justify-content-evenly mt-6">
           <div class="text-center" v-if="showAutoUpgrade">
             <el-button type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
               $t('agent_button_auto_upgrade')
@@ -213,7 +211,7 @@
       <!--   升级失败   -->
       <el-dialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
         <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
-        <div class="dialog-btn flex justify-evenly mt-6">
+        <div class="dialog-btn flex justify-content-evenly mt-6">
           <div class="text-center">
             <el-button type="primary" @click="cancelUpgradeFnc">{{ $t('gl_button_cancel') }}</el-button>
           </div>
@@ -707,6 +705,9 @@ export default {
       return (
         tmInfo.updateVersion && tmInfo.updateVersion === this.version && ['fail', 'error'].includes(tmInfo.updateStatus)
       )
+    },
+    getStatusIcon(row) {
+      return this.statusMap[row.status] || {}
     }
   }
 }

@@ -81,13 +81,13 @@
       <ul class="info-list">
         <li v-for="item in form" :key="item.label" v-show="item.show">
           <span class="label">{{ item.label }}</span>
-          <span class="value align-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
+          <span class="value align-items-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
             item.value
           }}</span>
         </li>
         <!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
 					<span class="label">{{ $t('dataForm.form.port') }}</span>
-					<span class="value align-center"> {{ data.database_port }}</span>
+					<span class="value align-items-center"> {{ data.database_port }}</span>
 				</li> -->
         <div
           v-for="(item, index) in data.file_sources"
@@ -101,11 +101,11 @@
         >
           <li>
             <span class="label">{{ $t('dataForm.form.file.fileUrl') + (index + 1) }}</span>
-            <span class="value align-center"> {{ item.path }}</span>
+            <span class="value align-items-center"> {{ item.path }}</span>
           </li>
           <li>
             <span class="label">{{ $t('dataForm.form.file.recursive') }}</span>
-            <span class="value align-center"> {{ item.recursive }}</span>
+            <span class="value align-items-center"> {{ item.recursive }}</span>
           </li>
         </div>
       </ul>
@@ -568,7 +568,7 @@ export default {
   .align-top {
     vertical-align: top;
   }
-  .align-center {
+  .align-items-center {
     vertical-align: center;
   }
   .schema-load {

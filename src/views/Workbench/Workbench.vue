@@ -9,7 +9,7 @@
       <el-row :gutter="40" class="section-body">
         <el-col :span="6" v-for="(item, index) in createList" :key="index">
           <div class="create-list__item flex p-6">
-            <div class="create-list__index block flex justify-center align-center flex-shrink-0">
+            <div class="create-list__index block flex justify-content-center align-items-center flex-shrink-0">
               {{ index + 1 }}
             </div>
             <div class="create-list__main ml-4">
@@ -28,7 +28,7 @@
               <li
                 v-for="(item, index) in notices.slice(0, 5)"
                 :key="index"
-                class="notice-list__item flex align-center mb-4 px-1 pointer"
+                class="notice-list__item flex align-items-center mb-4 px-1 pointer"
               >
                 <div v-if="item.type" class="notice-list__type mr-4 p-1">
                   {{ item.type }}
@@ -53,16 +53,16 @@
       </el-row>
       <el-row :gutter="40" class="section-body">
         <el-col :span="18">
-          <ul class="agent-list__list flex-grow-1 flex justify-around">
+          <ul class="agent-list__list flex-grow-1 flex justify-content-around">
             <li v-for="(item, index) in agentList" :key="index" class="agent-list__item p-6" :ref="item.key">
-              <div class="agent-list__name flex align-center justify-center mx-auto mb-3">
+              <div class="agent-list__name flex align-items-center justify-content-center mx-auto mb-3">
                 <VIcon size="12" class="icon" color="#888">{{ item.icon }}</VIcon>
                 <span class="ml-1 fs-7">{{ item.name }}</span>
               </div>
               <div class="agent-list__value text-center fs-1">
                 {{ item.value }}
               </div>
-              <div class="agent-list__detail flex flex-wrap justify-around mt-3 py-2 px-1">
+              <div class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1">
                 <div v-for="(detail, dIndex) in item.list" :key="dIndex" class="agent-list__status mr-2">
                   <template v-if="detail.key === 'agent'">
                     <span class="success ml-2">运行中：{{ detail.running }}</span>

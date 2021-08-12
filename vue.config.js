@@ -20,8 +20,8 @@ const proxy = {
   changeOrigin: false
 }
 
-//如果环境变量中主题参数存在，则嵌入主题中相关的标量
-let varUrl = '~@/assets/theme/dfs/var.scss'
+//sass变量
+let varUrl = '~@/assets/styles/var.scss'
 let pages = {
   index: {
     entry: 'src/pages/main.js',

@@ -3,7 +3,7 @@
     <span class="inline-input-body" v-show="!editing">
       <span class="ellipsis" :title="value">{{ value }}</span>
       <ElLink class="inline-input-link" style="margin-left: 5px" @click="editing = true">
-        <i class="iconfont td-icon-bianji"></i>
+        <i class="el-icon-edit"></i>
       </ElLink>
     </span>
     <span class="inline-input-body" v-show="editing">

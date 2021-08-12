@@ -8,7 +8,7 @@
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <!--				<div class="mr-6 pointer" @click="command('toCommunity')">社区</div>-->
         <div class="mr-6 pointer" @click="command('source-center')">文档中心</div>
-        <div class="flex align-center mr-6 pointer" @click="command('contact-us')">
+        <div class="flex align-items-center mr-6 pointer" @click="command('contact-us')">
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>联系我们</span>
         </div>
@@ -17,7 +17,7 @@
           <!--					<el-button class="menu-button" size="mini">-->
           <!--						{{ user.username }}-->
           <!--					</el-button>-->
-          <div class="username flex align-center">
+          <div class="username flex align-items-center">
             <VIcon class="mr-2" size="17">account</VIcon>
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
           </div>
@@ -50,7 +50,7 @@
             我们为您准备了详细的新手引导教程，方便您更快上手哦～
             <el-checkbox v-model="noShow" class="no-show-checkbox text-white position-absolute">不再提醒</el-checkbox>
           </div>
-          <div class="guide-operation flex justify-center mt-8">
+          <div class="guide-operation flex justify-content-center mt-8">
             <img src="../../../public/images/guide/guid_no.png" alt="" @click="leaveGuide" />
             <img class="ml-9" src="../../../public/images/guide/guid_yes.png" alt="" @click="toGuidePage" />
           </div>
@@ -299,9 +299,6 @@ export default {
     box-sizing: border-box;
     &.active {
       transform: scale(1);
-    }
-    .text-white {
-      color: #fff !important;
     }
     .guide-mark {
       img {
