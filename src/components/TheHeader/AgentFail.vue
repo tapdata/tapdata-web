@@ -7,7 +7,7 @@
     custom-class="agentErrorDialog"
   >
     <h1>
-      <i class="el-icon-warning"></i>
+      <VIcon size="18" color="#d54e21">warning</VIcon>
       Agent 服务状态异常
     </h1>
 
@@ -33,7 +33,9 @@
   </ElDialog>
 </template>
 <script>
+import VIcon from '@/components/VIcon'
 export default {
+  components: { VIcon },
   props: {
     value: Boolean,
     isClose: Boolean

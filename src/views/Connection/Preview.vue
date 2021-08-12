@@ -36,7 +36,7 @@
                 </span>
               </span>
               <span class="warning" v-if="['testing'].includes(status)">
-                <i class="el-icon-warning"></i>
+                <VIcon size="18" color="#d54e21">warning</VIcon>
                 <span>
                   {{ $t('connection.status.testing') }}
                 </span>
@@ -116,6 +116,7 @@
 
 <script>
 import formConfig from './config'
+import VIcon from '@/components/VIcon'
 const TYPEMAPCONFIG = {
   'gbase-8s': 'gbase8s',
   'sybase ase': 'sybasease',
@@ -125,6 +126,7 @@ const TYPEMAPCONFIG = {
 }
 export default {
   name: 'Preview',
+  components: { VIcon },
   data() {
     return {
       visible: false,

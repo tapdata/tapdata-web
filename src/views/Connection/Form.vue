@@ -500,7 +500,7 @@
                 </span>
               </span>
               <span class="warning" v-if="['testing'].includes(status)">
-                <i class="el-icon-warning"></i>
+                <VIcon size="18" color="#d54e21">warning</VIcon>
                 <span>
                   {{ $t('connection.status.testing') }}
                 </span>
@@ -546,9 +546,10 @@
 <script>
 import { DEFAULT_MODEL } from './const'
 import formConfig from './config'
-
+import VIcon from '@/components/VIcon'
 let defaultConfig = []
 export default {
+  components: { VIcon },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start
