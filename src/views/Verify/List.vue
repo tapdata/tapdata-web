@@ -62,7 +62,7 @@
         </li>
       </ul>
       <div>
-        <ElButton type="primary" @click="$router.push({ name: 'VerifyCreate' })">
+        <ElButton type="primary" @click="toCreate">
           <i class="el-icon-plus"></i>
           <span> {{ $t('dataVerification.addVerifyTip') }}</span>
         </ElButton>
@@ -445,21 +445,28 @@ export default {
         }
       })
     },
+    toCreate() {
+      this.$checkAgentStatus(() => {
+        this.$router.push({ name: 'VerifyCreate' })
+      })
+    },
     startTask(id) {
-      this.$axios
-        .post(
-          'tm/api/Inspects/update?where=' +
-            encodeURIComponent(
-              JSON.stringify({
-                id
-              })
-            ),
-          { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
-        )
-        .then(() => {
-          this.$message.success(this.$t('dataVerification.startVerify'))
-          this.updateStatusByIds([id])
-        })
+      this.$checkAgentStatus(() => {
+        this.$axios
+          .post(
+            'tm/api/Inspects/update?where=' +
+              encodeURIComponent(
+                JSON.stringify({
+                  id
+                })
+              ),
+            { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
+          )
+          .then(() => {
+            this.$message.success(this.$t('dataVerification.startVerify'))
+            this.updateStatusByIds([id])
+          })
+      })
     },
     remove(name, id) {
       this.$confirm(`${this.$t('dataVerification.deleteMessage')} ${name}?`, this.$t('dataFlow.importantReminder'), {
