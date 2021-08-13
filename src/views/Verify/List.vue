@@ -93,7 +93,7 @@
         </template>
       </ElTableColumn>
       <ElTableColumn prop="sourceTotal" width="120" :label="$t('verify_history_source_total_rows')"></ElTableColumn>
-      <ElTableColumn prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></ElTableColumn>
+      <!-- <ElTableColumn prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></ElTableColumn> -->
       <ElTableColumn :label="$t('dataVerification.verifyResult')" width="140">
         <template slot-scope="scope">
           <template v-if="scope.row.result && ['waiting', 'done'].includes(scope.row.status)">
