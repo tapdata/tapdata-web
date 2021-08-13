@@ -144,8 +144,8 @@
           >
             <el-option
               v-for="(item, idx) in tableList"
-              :label="`${item.table_name}`"
-              :value="item.table_name"
+              :label="`${item.field_name}`"
+              :value="item.field_name"
               v-bind:key="idx"
             ></el-option>
           </el-select>
@@ -295,6 +295,8 @@ export default {
                     partitionSet: [-1]
                   }
             this.partitionSet = schema.partitionSet ? schema.partitionSet : []
+            this.tableList = schema.fields ? schema.fields : []
+
             this.$emit('schemaChange', _.cloneDeep(schema))
             this.mergedSchema = schema
           }
@@ -348,7 +350,6 @@ export default {
                 return item
               }
             })
-            self.tableList = self.schemas.concat()
           }
         })
         .finally(() => {
@@ -365,14 +366,11 @@ export default {
             data.kafkaPartitionKey = data.kafkaPartitionKey.split(',')
           }
         }
-        this.schemas.filter(item => {
-          if (data.tableName === item.table_name) {
-            this.partitionSet = item.partitionSet ? item.partitionSet : []
-          }
-        })
         _.merge(this.model, data)
       }
       this.mergedSchema = cell.getOutputSchema()
+      this.tableList = this.mergedSchema?.fields || []
+      this.partitionSet = this.mergedSchema?.partitionSet || []
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
       })
@@ -437,6 +435,7 @@ export default {
             if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
               schema = item.schema
               this.partitionSet = item.partitionSet ? item.partitionSet : []
+              this.tableList = item.fields ? item.fields : []
             }
           })
         }

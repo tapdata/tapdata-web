@@ -10,8 +10,10 @@
             <ElLink
               class="progress-header_btn"
               type="primary"
-              @click="handleInfo"
-              v-if="completeTime !== '全量已完成' && !$window.getSettingByKey('DFS_TCM_PLATFORM')"
+              @click="handleInfo()"
+              v-if="
+                completeTime !== this.$t('taskProgress.fullyCompleted') && !$window.getSettingByKey('DFS_TCM_PLATFORM')
+              "
             >
               {{ $t('taskProgress.seeDetails') }}
             </ElLink>
@@ -117,8 +119,10 @@
             <ElLink
               class="progress-header_btn"
               type="primary"
-              @click="handleInfo"
-              v-if="completeTime !== '全量已完成' && !$window.getSettingByKey('DFS_TCM_PLATFORM')"
+              @click="handleInfo()"
+              v-if="
+                completeTime !== this.$t('taskProgress.fullyCompleted') && !$window.getSettingByKey('DFS_TCM_PLATFORM')
+              "
               >{{ $t('taskProgress.seeDetails') }}</ElLink
             >
           </div>
@@ -262,7 +266,9 @@
             <el-table-column :label="$t('taskProgress.operate')">
               <template slot-scope="scope">
                 <div v-if="scope.row.statusNum === 100">-</div>
-                <el-button type="text" @click="handleInfo(scope.row)" v-else>{{ $t('taskProgress.details') }}</el-button>
+                <el-button type="text" @click="handleInfo(scope.row)" v-else>{{
+                  $t('taskProgress.details')
+                }}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -453,6 +459,7 @@ export default {
     },
     // 跳转详情
     handleInfo(data) {
+      debugger
       if (data) {
         window.open(
           location.href.split('#/')[0] +
