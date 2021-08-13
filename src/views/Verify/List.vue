@@ -334,6 +334,7 @@ export default {
       }, debounce)
     },
     fetch(pageNum) {
+      this.loading = true
       let current = pageNum || this.page.current
       let size = this.page.size
       let { keyword, inspectMethod, mode, enabled, result } = this.searchParams
