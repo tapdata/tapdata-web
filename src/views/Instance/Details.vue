@@ -11,10 +11,6 @@
         </div>
       </div>
       <div class="panel mt-5">
-        <!-- <div class="title">
-          <i class="el-icon-notebook-2"></i>
-          <span style="margin-left: 1px">实例信息</span>
-        </div> -->
         <ul class="info">
           <li class="info-item">
             <div class="label">Agent ID：</div>

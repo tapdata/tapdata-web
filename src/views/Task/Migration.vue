@@ -22,19 +22,19 @@
             </li>
             <li class="ml-3">
               <ElInput v-model="searchParams.keyword" placeholder="任务名称/节点名/库名称" @input="search(800)">
-                <i slot="prefix" class="el-icon-search el-input__icon"></i>
+                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </ElInput>
             </li>
             <li class="ml-3">
               <ElButton plain class="btn-refresh" @click="fetch()">
-                <i class="el-icon-refresh"></i>
+                <VIcon>refresh</VIcon>
               </ElButton>
             </li>
           </ul>
         </div>
         <div class="migration-operation-right">
           <ElButton type="primary" @click="createTask">
-            <i class="el-icon-plus" style="margin-right: 5px"></i>
+            <VIcon style="margin-right: 5px">plus</VIcon>
             <span>创建任务</span>
           </ElButton>
         </div>
@@ -113,7 +113,7 @@
             <ElDropdown @command="handleMore($event, scope.row, scope.$index)">
               <ElLink type="primary">
                 更多
-                <i class="el-icon-arrow-down"></i>
+                <VIcon>arrowDownSingle</VIcon>
               </ElLink>
               <ElDropdownMenu slot="dropdown">
                 <ElDropdownItem command="copy">复制</ElDropdownItem>
@@ -128,7 +128,7 @@
           </template>
         </ElTableColumn>
         <div class="migration-table__empty" slot="empty">
-          <i class="el-icon-folder-opened"></i>
+          <VIcon>folderOpened</VIcon>
           <span class="ml-1" v-if="!isSearching">暂无数据</span>
           <span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
         </div>
@@ -199,11 +199,11 @@
 <script>
 import { TASK_STATUS_MAP } from '../../const'
 import StatusTag from '../../components/StatusTag'
-
+import VIcon from '@/components/VIcon'
 let timer = null
 
 export default {
-  components: { StatusTag },
+  components: { StatusTag, VIcon },
   data() {
     return {
       loading: true,

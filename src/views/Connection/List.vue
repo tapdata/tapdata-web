@@ -12,19 +12,19 @@
             </li>
             <li class="ml-3">
               <ElInput v-model="searchParams.keyword" placeholder="按连接名搜索" @input="search(800)">
-                <i slot="prefix" class="el-icon-search el-input__icon"></i>
+                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </ElInput>
             </li>
             <li class="ml-3">
               <ElButton plain class="btn-refresh" @click="fetch()">
-                <i class="el-icon-refresh"></i>
+                <VIcon>refresh</VIcon>
               </ElButton>
             </li>
           </ul>
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
-            <i class="el-icon-plus" style="margin-right: 5px"></i>
+            <VIcon style="margin-right: 5px">plus</VIcon>
             <span>创建连接</span>
           </ElButton>
         </div>
@@ -92,7 +92,7 @@
           </template>
         </ElTableColumn>
         <div class="connection-table__empty" slot="empty">
-          <i class="el-icon-folder-opened"></i>
+          <VIcon>folderOpened</VIcon>
           <span class="ml-1" v-if="!isSearching">暂无数据</span>
           <span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
         </div>
@@ -169,10 +169,10 @@
 import { CONNECTION_STATUS_MAP, SUPPORT_DB } from '../../const'
 import StatusTag from '../../components/StatusTag'
 import Preview from './Preview.vue'
-
+import VIcon from '@/components/VIcon'
 let timer = null
 export default {
-  components: { StatusTag, Preview },
+  components: { StatusTag, Preview, VIcon },
   data() {
     return {
       loading: true,

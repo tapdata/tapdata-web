@@ -25,7 +25,7 @@ export const TOPOLOGY_MAP = topologyMap,
   },
   CONNECTION_STATUS_MAP = {
     ready: { text: '有效', icon: 'successFillColor', type: 'success' },
-    invalid: { text: '失效', icon: 'errorFillColor', type: 'danger' },
+    invalid: { text: '失效', icon: 'errorFill', type: 'danger' },
     testing: { text: '测试中', icon: 'loading', type: 'success' }
   },
   SPEC_MAP = {

@@ -17,7 +17,7 @@
             </li>
             <li class="ml-3">
               <ElInput v-model="searchParams.parameter1" placeholder="操作对象" clearable @input="search(800)">
-                <i slot="prefix" class="el-icon-search el-input__icon"></i>
+                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </ElInput>
             </li>
             <li class="ml-3">
@@ -48,12 +48,12 @@
             </li>
             <li class="ml-3">
               <ElInput v-model="searchParams.username" placeholder="用户名" clearable @input="search(800)">
-                <i slot="prefix" class="el-icon-search el-input__icon"></i>
+                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </ElInput>
             </li>
             <li class="ml-3">
               <ElButton plain class="btn-refresh" @click="fetch()">
-                <i class="el-icon-refresh"></i>
+                <VIcon>refresh</VIcon>
               </ElButton>
             </li>
           </ul>
@@ -117,7 +117,9 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
 export default {
+  components: { VIcon },
   data() {
     return {
       loading: true,

@@ -22,19 +22,19 @@
                 :placeholder="$t('agent_search')"
                 @input="search(800)"
               >
-                <i slot="prefix" class="el-icon-search el-input__icon"></i>
+                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </el-input>
             </li>
             <li class="ml-3">
               <el-button plain class="btn-refresh" @click="fetch()">
-                <i class="el-icon-refresh"></i>
+                <VIcon>refresh</VIcon>
               </el-button>
             </li>
           </ul>
         </div>
         <div class="instance-operation-right">
           <el-button type="primary" @click="createAgent" :loading="createAgentLoading">
-            <i class="el-icon-plus" style="margin-right: 5px"></i>
+            <VIcon style="margin-right: 5px">plus</VIcon>
             <span>{{ $t('agent_button_create') }}</span>
           </el-button>
           <template v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'">
@@ -175,7 +175,7 @@
           </template>
         </el-table-column>
         <div class="instance-table__empty" slot="empty">
-          <i class="el-icon-folder-opened"></i>
+          <VIcon>folderOpened</VIcon>
           <span class="ml-1" v-if="!searchParams.keyword && !searchParams.status">{{ $t('gl_no_data') }}</span>
           <span v-else>
             {{ $t('gl_no_match_result') }}，<el-link type="primary" @click="reset">{{ $t('gl_back_to_list') }}</el-link>

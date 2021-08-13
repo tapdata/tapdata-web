@@ -11,7 +11,7 @@
     <div class="connection-drawer-wrap" v-loading="previewLoading" v-if="visible">
       <div class="bar">
         <button type="button" class="el-button back-btn-icon-box el-button--default" @click="handleClose">
-          <i class="el-icon-arrow-right"></i>
+          <VIcon size="18">arrowRightSingle</VIcon>
         </button>
         <span class="ml-2 back-btn-text">{{ $t('connection.info') }}</span>
       </div>
@@ -24,13 +24,13 @@
             <div>{{ name }}</div>
             <div class="status">
               <span class="error" v-if="['invalid'].includes(status)">
-                <i class="el-icon-error"></i>
+                <VIcon class="color-danger" size="18">errorFill</VIcon>
                 <span>
                   {{ $t('connection.status.invalid') }}
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
-                <i class="el-icon-success"></i>
+                <VIcon size="18">successFillColor</VIcon>
                 <span>
                   {{ $t('connection.status.ready') }}
                 </span>
@@ -50,19 +50,17 @@
               <ul>
                 <li class="item">
                   <el-button class="btn" size="mini" :disabled="data.agentType === 'Cloud'" @click="edit()">
-                    <i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
+                    {{ $t('connection.preview.edit') }}
                   </el-button>
                 </li>
                 <li class="item">
                   <el-button class="btn" size="mini" :loading="reloadLoading" @click="reload()">
-                    <i class="iconfont icon-kujitongbucopy">{{ $t('connection.preview.reloadName') }}</i>
+                    {{ $t('connection.preview.reloadName') }}
                   </el-button>
                 </li>
                 <li class="item">
                   <el-button class="btn" size="mini" @click="beforeTest(id)">
-                    <i class="iconfont icon-lianjie1">
-                      {{ $t('connection.preview.test') }}
-                    </i>
+                    {{ $t('connection.preview.test') }}
                   </el-button>
                 </li>
               </ul>

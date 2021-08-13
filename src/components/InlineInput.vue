@@ -3,7 +3,7 @@
     <span class="inline-input-body" v-show="!editing">
       <span class="ellipsis" :title="value">{{ value }}</span>
       <ElLink class="inline-input-link" style="margin-left: 5px" @click="editing = true">
-        <i class="el-icon-edit"></i>
+        <VIcon color="#999" size="14">edit</VIcon>
       </ElLink>
     </span>
     <span class="inline-input-body" v-show="editing">
@@ -25,7 +25,9 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
 export default {
+  components: { VIcon },
   props: {
     value: [String, Number]
   },

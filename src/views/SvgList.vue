@@ -4,26 +4,42 @@
     <div class="header">{{ 'Tapdata Cloud' }}</div>
     <div class="svg-container p-6">
       <div class="mb-6 text-center fs-5 fw-bolder">svg文件枚举，按照文件名排序</div>
-      <div class="py-3 fs-6 fw-bolder">svg目录（可以修改颜色）</div>
+      <div class="ml-1 py-3 fs-6 fw-bolder">svg目录（可以修改颜色）</div>
       <ul class="icon-list svg-list">
         <li
           v-for="(item, index) in list"
           :key="index"
-          class="m-1 flex flex-column justify-content-center text-center shadow"
+          class="m-1 flex flex-column justify-content-center text-center position-relative shadow"
         >
           <VIcon class="mx-auto mb-3" size="24">{{ item }}</VIcon>
           <div class="icon-name">{{ item }}</div>
+          <el-button
+            type="primary"
+            class="mt-2 position-absolute bottom-0 w-100"
+            size="mini"
+            v-clipboard:copy="`<VIcon>${item}</VIcon>`"
+            v-clipboard:success="copySuccess"
+            >Copy</el-button
+          >
         </li>
       </ul>
-      <div class="py-3 fs-6 fw-bolder">colorSvg目录（不支持修改颜色）</div>
+      <div class="ml-1 py-3 fs-6 fw-bolder">colorSvg目录（不支持修改颜色）</div>
       <ul class="icon-list color-svg-list">
         <li
           v-for="(item, index) in colorList"
           :key="index"
-          class="m-1 flex flex-column justify-content-center text-center shadow"
+          class="m-1 flex flex-column justify-content-center text-center position-relative shadow"
         >
           <VIcon class="mx-auto mb-3" size="24">{{ item }}</VIcon>
           <div class="icon-name">{{ item }}</div>
+          <el-button
+            type="primary"
+            class="mt-2 position-absolute bottom-0 w-100"
+            size="mini"
+            v-clipboard:copy="`<VIcon>${item}</VIcon>`"
+            v-clipboard:success="copySuccess"
+            >Copy</el-button
+          >
         </li>
       </ul>
     </div>
@@ -46,6 +62,11 @@ export default {
     },
     colorList() {
       return colorSvgFiles.map(item => item.replace('./', '').replace('.svg', ''))
+    }
+  },
+  methods: {
+    copySuccess() {
+      this.$message.success('Copy success')
     }
   }
 }
@@ -70,6 +91,14 @@ export default {
     height: 120px;
     color: #666;
     background-color: #fff;
+    .el-button {
+      opacity: 0;
+    }
+    &:hover {
+      .el-button {
+        opacity: 1;
+      }
+    }
   }
   &.svg-list {
     li {

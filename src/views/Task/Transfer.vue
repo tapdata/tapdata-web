@@ -54,14 +54,15 @@
               @keyup.enter.native="checkInput(option)"
               :ref="option.id"
             ></el-input>
-            <i class="el-icon-close" @click.stop.prevent="closeInput(option)"></i>
-            <i class="el-icon-check" @click.stop.prevent="checkInput(option)"></i>
+            <VIcon class="v-icon-close" @click.stop.prevent="closeInput(option)">close</VIcon>
+            <VIcon class="v-icon-check" @click.stop.prevent="checkInput(option)">check</VIcon>
           </span>
-          <span
+          <VIcon
             v-if="selectSourceFileArr.includes(option.key) && !option.showInput"
             @click.stop.prevent="rename(option)"
-            class="el-icon-edit field-transfer__icon"
-          ></span>
+            class="field-transfer__icon"
+            >edit</VIcon
+          >
         </span>
       </el-transfer>
       <div slot="footer" class="dialog-footer">
@@ -123,8 +124,10 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
 let selectKeepArr = []
 export default {
+  components: { VIcon },
   props: ['transferData', 'isTwoWay'],
   data() {
     var validatePrefix = (rule, value, callback) => {
@@ -570,13 +573,13 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .el-icon-close {
+  .v-icon-close {
     display: inline-block;
     position: absolute;
     right: 30px;
     top: 10px;
   }
-  .el-icon-check {
+  .v-icon-check {
     display: inline-block;
     position: absolute;
     right: 10px;

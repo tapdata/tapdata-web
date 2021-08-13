@@ -166,7 +166,7 @@
       <template v-if="pageType === 'confirm'">
         <div class="confirm-top">
           <ElButton class="btn-back" size="mini" @click="pageType = 'form'">
-            <i class="el-icon-arrow-left"></i>
+            <VIcon>arrowLeft</VIcon>
           </ElButton>
           <ElLink style="font-size: 14px; margin-left: 3px" type="primary" @click="pageType = 'form'">
             修改配置

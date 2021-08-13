@@ -7,7 +7,7 @@
           {{ typeMap[type] }}
         </div>
         <div class="error-band" style="width: 96.5%" v-if="errorMsg && type === 'row_count'">
-          <i class="iconfont icon-warning-circle"></i>
+          <VIcon class="color-info">warningOutline</VIcon>
           <span>{{ errorMsg }}</span>
         </div>
         <div
@@ -28,7 +28,7 @@
                 <div slot="content" style="width: 232px">
                   {{ $t('verify_button_diff_verify_tips') }}
                 </div>
-                <i class="el-icon-warning-outline ml-2 color-info" style="font-size: 14px"></i>
+                <VIcon class="ml-2 color-info" size="14">warningOutline</VIcon>
               </el-tooltip>
             </template>
           </div>
@@ -97,8 +97,9 @@ $margin: 10px;
 <script>
 import ResultTable from 'web-core/views/verification/result-table'
 import ResultView from 'web-core/views/verification/result-view'
+import VIcon from '@/components/VIcon'
 export default {
-  components: { ResultTable, ResultView },
+  components: { ResultTable, ResultView, VIcon },
   data() {
     return {
       loading: false,
