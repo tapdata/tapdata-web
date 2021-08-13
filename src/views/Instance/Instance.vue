@@ -108,7 +108,7 @@
               <template v-if="showUpgradeIcon(scope.row)">
                 <el-tooltip class="ml-1" effect="dark" placement="top">
                   <div slot="content">{{ getTooltipContent(scope.row) }}</div>
-                  <div class="upgrade-tooltip">
+                  <div>
                     <div class="upgrading-box" v-if="upgradingFlag(scope.row)">
                       <VIcon class="v-icon" size="20">upgradeLoadingColor</VIcon>
                       <el-progress
@@ -762,11 +762,9 @@ export default {
     color: map-get($fontColor, light);
   }
 }
-.upgrade-tooltip {
+.upgrading-box {
   width: 20px;
   height: 20px;
-}
-.upgrading-box {
   position: relative;
   ::v-deep {
     .v-icon {
