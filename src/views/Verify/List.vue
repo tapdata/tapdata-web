@@ -62,7 +62,7 @@
         </li>
       </ul>
       <div>
-        <ElButton type="primary" @click="$router.push({ name: 'VerifyCreate' })">
+        <ElButton type="primary" @click="toCreate">
           <i class="el-icon-plus"></i>
           <span> {{ $t('dataVerification.addVerifyTip') }}</span>
         </ElButton>
@@ -93,7 +93,7 @@
         </template>
       </ElTableColumn>
       <ElTableColumn prop="sourceTotal" width="120" :label="$t('verify_history_source_total_rows')"></ElTableColumn>
-      <ElTableColumn prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></ElTableColumn>
+      <!-- <ElTableColumn prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></ElTableColumn> -->
       <ElTableColumn :label="$t('dataVerification.verifyResult')" width="140">
         <template slot-scope="scope">
           <template v-if="scope.row.result && ['waiting', 'done'].includes(scope.row.status)">
@@ -445,21 +445,28 @@ export default {
         }
       })
     },
+    toCreate() {
+      this.$checkAgentStatus(() => {
+        this.$router.push({ name: 'VerifyCreate' })
+      })
+    },
     startTask(id) {
-      this.$axios
-        .post(
-          'tm/api/Inspects/update?where=' +
-            encodeURIComponent(
-              JSON.stringify({
-                id
-              })
-            ),
-          { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
-        )
-        .then(() => {
-          this.$message.success(this.$t('dataVerification.startVerify'))
-          this.updateStatusByIds([id])
-        })
+      this.$checkAgentStatus(() => {
+        this.$axios
+          .post(
+            'tm/api/Inspects/update?where=' +
+              encodeURIComponent(
+                JSON.stringify({
+                  id
+                })
+              ),
+            { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
+          )
+          .then(() => {
+            this.$message.success(this.$t('dataVerification.startVerify'))
+            this.updateStatusByIds([id])
+          })
+      })
     },
     remove(name, id) {
       this.$confirm(`${this.$t('dataVerification.deleteMessage')} ${name}?`, this.$t('dataFlow.importantReminder'), {
