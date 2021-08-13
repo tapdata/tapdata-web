@@ -124,7 +124,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="sourceTotal" width="120" :label="$t('verify_history_source_total_rows')"></el-table-column>
-      <el-table-column prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></el-table-column>
+      <!-- <el-table-column prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></el-table-column> -->
       <el-table-column :label="$t('dataVerification.verifyResult')" width="140">
         <template slot-scope="scope">
           <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
