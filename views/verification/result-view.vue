@@ -71,11 +71,11 @@
                 }}
               </li>
               <li>{{ detail.source.key }}</li>
-              <li :class="{ red: detail.source.value !== detail.target.value }">
+              <li :class="{ red: detail.red }">
                 {{ detail.source.value }}
               </li>
               <li>{{ detail.target.key }}</li>
-              <li :class="{ red: detail.source.value !== detail.target.value }">
+              <li :class="{ red: detail.red }">
                 {{ detail.target.value }}
               </li>
             </ul>

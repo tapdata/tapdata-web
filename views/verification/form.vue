@@ -363,6 +363,7 @@ export default {
   methods: {
     //获取dataflow数据
     getFlowOptions() {
+      this.loading = true
       let where = {
         status: {
           inq: ['running', 'paused', 'error']
