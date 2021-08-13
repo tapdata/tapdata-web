@@ -362,13 +362,24 @@ export default {
     this.validationLevel = this.validaData.validationLevel || 'off'
   },
   mounted() {
-    if (this.validaData.fields)
+    if (this.validaData.fields?.length) {
       this.fieldsArr = this.validaData.fields.map(item => {
         return {
           name: item.alias_name || item.field_name,
           value: item.field_name
         }
       })
+      let object = {}
+      this.fildsArr =
+        this.fildsArr?.length &&
+        this.fildsArr.reduce((cur, next) => {
+          if (!object[next.name]) {
+            object[next.name] = true
+            cur.push(next)
+          }
+          return cur
+        }, [])
+    }
   },
   watch: {
     'createForm.rule_def': {
@@ -556,32 +567,31 @@ export default {
     // 删除验证规则
     remove(item) {
       const h = this.$createElement
+      let _this = this
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
         h('span', { style: { color: '#48b6e2' } }, item.field_name)
       ])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning',
-        closeOnClickModal: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            let idx = -1
-            let i = 0
-            this.items.forEach(v => {
+        closeOnClickModal: false
+      }).then(action => {
+        if (action) {
+          let idx = -1
+          let i = 0
+          _this.validationTableData?.length &&
+            _this.validationTableData.forEach(v => {
               if (v.field_name === item.field_name) {
                 idx = i
               }
               i++
             })
-            this.items.splice(idx, 1)
-            let result = this.doSave()
-            if (result) {
-              this.$message.success(this.$t('message.deleteOK'))
-            } else {
-              this.$message.info(this.$t('message.deleteFail'))
-            }
+          _this.validationTableData.splice(idx, 1)
+          let result = this.doSave()
+          if (result) {
+            this.$message.success(this.$t('message.deleteOK'))
           } else {
-            done()
+            this.$message.info(this.$t('message.deleteFail'))
           }
         }
       })
