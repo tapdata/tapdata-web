@@ -96,7 +96,7 @@
       <ElTableColumn prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></ElTableColumn>
       <ElTableColumn :label="$t('dataVerification.verifyResult')" width="140">
         <template slot-scope="scope">
-          <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
+          <template v-if="scope.row.result && ['waiting', 'done'].includes(scope.row.status)">
             <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
               <i class="verify-status-icon el-icon-error color-danger"></i>
               <span v-if="scope.row.inspectMethod === 'row_count'">

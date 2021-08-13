@@ -267,6 +267,11 @@ export default {
         let sourceKeys = Object.keys(source)
         let targetKeys = Object.keys(target)
         let key = Array.from(new Set([...sourceKeys, ...targetKeys])) //找出所有的key的并集
+        let message = item.message
+        let diffFields = []
+        if (message.includes('Different fields')) {
+          diffFields = message.split(':')[1].split(',')
+        }
         key.forEach(i => {
           let sourceValue = ''
           let targetValue = ''
@@ -282,6 +287,7 @@ export default {
           }
           let node = {
             type: item.type,
+            red: diffFields.includes(i),
             source: {
               key: i,
               value: sourceValue
