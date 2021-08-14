@@ -94,11 +94,6 @@ export default {
   },
   created() {
     this.getData()
-    setInterval(() => {
-      if (['running', 'scheduling'].includes(this.inspect?.status)) {
-        this.getData()
-      }
-    }, 10000)
   },
   methods: {
     getData() {

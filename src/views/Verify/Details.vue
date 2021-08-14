@@ -174,12 +174,12 @@ export default {
                   if (stats.length) {
                     this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
                     this.taskId = stats[0].taskId
-                    this.$refs.resultView.fetch(1)
-                    if (this.type !== 'row_count') {
-                      this.$nextTick(() => {
-                        this.$refs.singleTable.setCurrentRow(stats[0])
-                      })
-                    }
+                    this.$nextTick(() => {
+                      this.$refs.resultView?.fetch(1)
+                      if (this.type !== 'row_count') {
+                        this.$refs.singleTable?.setCurrentRow(stats[0])
+                      }
+                    })
                   }
                 }
               }
@@ -226,6 +226,7 @@ export default {
           }
         })
       }
+      return Promise.reject()
     },
     diffInspect() {
       let firstCheckId = this.resultInfo.firstCheckId
@@ -267,7 +268,7 @@ export default {
         let sourceKeys = Object.keys(source)
         let targetKeys = Object.keys(target)
         let key = Array.from(new Set([...sourceKeys, ...targetKeys])) //找出所有的key的并集
-        let message = item.message
+        let message = item.message || ''
         let diffFields = []
         if (message.includes('Different fields')) {
           diffFields = message.split(':')[1].split(',')
