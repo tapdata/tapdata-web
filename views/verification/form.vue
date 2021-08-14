@@ -364,6 +364,7 @@ export default {
     //获取dataflow数据
     getFlowOptions() {
       this.loading = true
+      let id = this.$route.params.id
       let where = {
         status: {
           inq: ['running', 'paused', 'error']
@@ -378,16 +379,19 @@ export default {
           },
           order: 'createTime DESC'
         })
-      }).then(data => {
-        this.flowOptions = data || []
-        let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
-        this.form.name = this.form.name || flow.name || ''
-        this.form['dataFlowName'] = flow.name
-        let id = this.$route.params.id
-        if (id) {
-          this.getData(id)
-        }
       })
+        .then(data => {
+          this.flowOptions = data || []
+          let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
+          this.form.name = this.form.name || flow.name || ''
+          this.form['dataFlowName'] = flow.name
+          if (id) {
+            this.getData(id)
+          }
+        })
+        .finally(() => {
+          id && (this.loading = false)
+        })
     },
     //获取表单数据
     getData(id) {
