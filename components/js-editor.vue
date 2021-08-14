@@ -71,7 +71,7 @@ export default {
       if (script) this.code = script
       self.$refs.container.innerHTML = ''
       var editor = monaco.editor.create(this.$refs.container, {
-        value: this.code,
+        value: this.code || '\n' + '\n' + '\n' + '\n'+ '\n'+ '\n'+ '\n'+ '\n'+ '\n',
         language: 'javascript',
         minimap: {
           enabled: false
