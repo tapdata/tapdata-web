@@ -390,7 +390,7 @@ export default {
           }
         })
         .finally(() => {
-          id && (this.loading = false)
+          !id && (this.loading = false)
         })
     },
     //获取表单数据
