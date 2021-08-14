@@ -76,12 +76,12 @@ export default {
   },
   methods: {
     toDashboard() {
-      location.href = process.env.VUE_APP_BASE_URL + '/'
+      location.href = process.env.BASE_URL + '/'
     },
     toOrder() {
       let orderId = this.result.orderId
       if (orderId) {
-        window.open(process.env.VUE_APP_BASE_URL + `/usercenter/mop/order/orderdetail/${orderId}`, '_blank')
+        window.open(process.env.BASE_URL + `/usercenter/mop/order/orderdetail/${orderId}`, '_blank')
       } else {
         this.$message.warning('订单创建中，请稍后再试')
       }
@@ -93,7 +93,7 @@ export default {
         Modify: 'modify/' + id,
         Renew: 'renew/' + id
       }
-      location.href = process.env.VUE_APP_BASE_URL + '/#/' + map[this.result.action]
+      location.href = process.env.BASE_URL + '/#/' + map[this.result.action]
     }
   }
 }

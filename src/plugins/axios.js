@@ -10,7 +10,7 @@ import { Message } from 'element-ui'
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 let config = {
-  baseURL: process.env.VUE_APP_BASE_URL || ''
+  // baseURL: ''
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 }

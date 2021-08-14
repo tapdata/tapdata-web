@@ -77,7 +77,7 @@ export default {
       btnLoading: false,
       noShow: false, // 不再显示新手引导
       selfUser: {}, // self用户信息
-      VUE_APP_USER_CENTER: process.env.VUE_APP_USER_CENTER
+      USER_CENTER: window.__config__.USER_CENTER
     }
   },
   created() {
@@ -126,7 +126,7 @@ export default {
           window.open('https://cloud.tapdata.net/', '_blank')
           break
         case 'userCenter':
-          window.open(this.VUE_APP_USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
+          window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
           break
         case 'signOut':
           this.$confirm('您确定要退出登录吗？', '退出登录', {

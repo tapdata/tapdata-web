@@ -5,7 +5,6 @@ import AgentDownload from '@/views/AgentDownload/AgentPage.vue'
 import FastDownload from '@/views/AgentDownload/FastDownload.vue'
 import UpgradeVersion from '@/views/AgentDownload/UpgradeVersion.vue'
 import ContactUs from '@/views/ContactUs'
-import Purchase from '@/views/Purchase/Purchase'
 
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/Task/Form.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/Connection/Form.vue')
@@ -283,12 +282,5 @@ const routes = [
     component: Error
   }
 ]
-if (process.env.VUE_APP_INSTANCE_TEST_BTN === 'true') {
-  routes.push({
-    path: '/Purchase',
-    name: 'Purchase',
-    component: Purchase
-  })
-}
 
 export default routes

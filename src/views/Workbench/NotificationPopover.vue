@@ -82,7 +82,7 @@ export default {
       }
       // msg.userId = this.$cookie.get('user_id')
 
-      this.getUnReadNum()
+      // this.getUnReadNum()
       if (this.$ws) {
         this.$ws.on('notification', data => {
           if (data.data && data.data.length > 0) {

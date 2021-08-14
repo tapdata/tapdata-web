@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import axios from 'axios'
 import './plugins/element'
 import './plugins/axios'
 import './plugins/monent'
@@ -10,6 +11,7 @@ import { Message } from 'element-ui'
 import settings from './settings'
 import TapdataWebCore from 'web-core'
 import i18n from './i18n'
+import Purchase from '@/views/Purchase/Purchase'
 
 require('./assets/theme/dfs/index.scss')
 
@@ -30,14 +32,21 @@ Vue.prototype.$checkAgentStatus = callback => {
 }
 
 export default ({ routes }) => {
-  const router = new VueRouter({
-    routes
-  })
   let loading = null
-  router.beforeEach((to, from, next) => {
-    next()
-  })
   const init = () => {
+    if (window.__config__.ENV === 'dev') {
+      routes.push({
+        path: '/Purchase',
+        name: 'Purchase',
+        component: Purchase
+      })
+    }
+    const router = new VueRouter({
+      routes
+    })
+    router.beforeEach((to, from, next) => {
+      next()
+    })
     var loc = window.location,
       wsUrl = 'ws://'
     if (loc.protocol === 'https:') {
@@ -56,10 +65,12 @@ export default ({ routes }) => {
   }
   loading = window.loading({ fullscreen: true })
   let count = 0
+
   let getData = () => {
-    Promise.all([window.axios.get('api/tcm/user')])
-      .then(([user]) => {
-        let userInfo = user
+    window.axios
+      .get('api/tcm/user')
+      .then(data => {
+        let userInfo = data
         window.__USER_INFO__ = userInfo
         loading.close()
         init()
@@ -77,6 +88,9 @@ export default ({ routes }) => {
         }
       })
   }
-  getData()
+  axios.get('config/config.json').then(res => {
+    window.__config__ = res.data
+    getData()
+  })
 }
 sessionStorage.setItem('TM_CONFIG', JSON.stringify(settings))

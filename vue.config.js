@@ -31,7 +31,7 @@ let pages = {
 module.exports = {
   pages,
   lintOnSave: true,
-  publicPath: '',
+  publicPath: '/console',
   productionSourceMap: false,
 
   devServer: {

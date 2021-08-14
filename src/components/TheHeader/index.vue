@@ -7,12 +7,6 @@ import Header from './Header'
 export default {
   name: 'TheHeader',
   components: { Header },
-  data() {
-    return {
-      headerType: process.env.VUE_APP_HEADER,
-      env: process.env.VUE_APP_ENV
-    }
-  },
   methods: {
     showGuide(key) {
       this.$nextTick(() => {

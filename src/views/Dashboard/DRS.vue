@@ -104,7 +104,7 @@ export default {
       this.regions = list
     },
     toPurchase() {
-      window.open(process.env.VUE_APP_BASE_URL + '/', '_blank')
+      window.open(process.env.BASE_URL + '/', '_blank')
     },
     toInstance(query) {
       let status = query.status

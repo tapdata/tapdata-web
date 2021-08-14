@@ -37,7 +37,7 @@
             <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>{{ $t('agent_button_create') }}</span>
           </el-button>
-          <template v-if="VUE_APP_INSTANCE_TEST_BTN === 'true'">
+          <template v-if="isShowTestBtn">
             <el-button type="primary" @click="toOldPurchase">
               <i class="iconfont td-icon-dinggou mr-1"></i>
               <span>{{ $t('agent_button_order1') }}</span>
@@ -245,6 +245,7 @@ export default {
   },
   data() {
     return {
+      isShowTestBtn: window.__config__.ENV === 'dev',
       loading: true,
       createAgentLoading: false,
       delLoading: false,
@@ -260,7 +261,6 @@ export default {
       },
       order: 'createAt desc',
       statusMap: INSTANCE_STATUS_MAP,
-      VUE_APP_INSTANCE_TEST_BTN: process.env.VUE_APP_INSTANCE_TEST_BTN,
       upgradeDialog: false,
       upgradeErrorDialog: false,
       selectedRow: {},

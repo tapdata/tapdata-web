@@ -237,7 +237,7 @@
           </div>
           <div class="agreement">
             <ElCheckbox style="vertical-align: middle" v-model="agree"> 我已阅读并同意 </ElCheckbox>
-            <ElLink size="mini" type="primary" @click="toDoc()">《移动云产品销售协议》</ElLink>
+            <!-- <ElLink size="mini" type="primary" @click="toDoc()">《移动云产品销售协议》</ElLink> -->
           </div>
           <ElButton style="margin-top: 10px" type="primary" @click="submit()"> 确认购买 </ElButton>
         </div>
@@ -659,13 +659,13 @@ export default {
       })
     },
     toDoc() {
-      window.open(process.env.VUE_APP_BASE_URL + '/home/about/market', '_blank')
+      // window.open(process.env.BASE_URL + '/home/about/market', '_blank')
     },
     toHelp() {
-      window.open(process.env.VUE_APP_BASE_URL + '/op-help-center/', '_blank')
+      // window.open(process.env.BASE_URL + '/op-help-center/', '_blank')
     },
     toChargeDetails() {
-      window.open(process.env.VUE_APP_BASE_URL + '/op-help-center/doc/article/42279', '_blank')
+      // window.open(process.env.BASE_URL + '/op-help-center/doc/article/42279', '_blank')
     }
   }
 }

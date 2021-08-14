@@ -36,10 +36,10 @@ export default {
   },
   methods: {
     toHistory() {
-      location.href = process.env.VUE_APP_BASE_URL + '/usercenter/orders/list'
+      location.href = process.env.BASE_URL + '/usercenter/orders/list'
     },
     toHelp() {
-      location.href = process.env.VUE_APP_BASE_URL + '/op-help-center/'
+      location.href = process.env.BASE_URL + '/op-help-center/'
     },
     toProduct() {
       //TODO 跳转产品详情
