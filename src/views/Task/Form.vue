@@ -992,7 +992,9 @@ export default {
         setting: this.settingModel,
         dataFlowType: 'normal', //区分创建方式
         dataSourceModel: this.dataSourceModel,
-        platformInfo: this.platformInfo
+        platformInfo: Object.assign(this.platformInfo, {
+          agentType: 'private'
+        })
       }
       let stageDefault = {
         connectionId: '',
