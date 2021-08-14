@@ -12,5 +12,8 @@ export default {
   taskprogress_plan_sync_data: '计划同步数据量（行）',
   taskprogress_completed_sync_data: '已完成同步数据量（行）',
   taskprogress_current_sync: '各库当前同步情况',
-  taskprogress_full_sync_progress: '全量同步进度'
+  taskprogress_full_sync_progress: '全量同步进度',
+
+  // 任务设置
+  task_settings_cdc_sync_point_date: '【任务设置】增量采集开始时刻，请选择时间'
 }

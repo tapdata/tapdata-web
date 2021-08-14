@@ -1111,6 +1111,15 @@ export default {
             }
           })
         }
+        // 【增量采集时间】仅增量任务时，选择浏览器时区，时间设置未作必填校验，导致任务启动后不增量同步。
+        if (data?.setting?.sync_type === 'cdc') {
+          let { syncPoints } = data.setting
+          let findOne = syncPoints.find(el => el.type !== 'current' && !el.date)
+          if (findOne) {
+            this.$message.error(this.$t('task_settings_cdc_sync_point_date'))
+            return
+          }
+        }
         if (!checkSetting) {
           this.$message.error(this.$t('editor.cell.data_node.hbase_check'))
           return

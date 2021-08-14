@@ -5,6 +5,7 @@
       <span class="back-btn-text">{{ $t('editor.ui.sidebar.setting') }}</span>
     </head>
     <el-form
+      ref="settingForm"
       class="e-form"
       label-position="right"
       label-width="162px"
@@ -206,7 +207,12 @@
             size="mini"
           ></el-input-number>
         </el-form-item>
-        <el-form-item :label="$t('dataFlow.SyncPoint')" v-show="formData.sync_type === 'cdc'" size="mini">
+        <el-form-item
+          :label="$t('dataFlow.SyncPoint')"
+          v-show="formData.sync_type === 'cdc'"
+          size="mini"
+          prop="syncPoints"
+        >
           <el-row v-for="item in formData.syncPoints" :key="item.name">
             <div class="labelTxt">
               {{ $t('dataFlow.cdcLabel') }}
@@ -333,6 +339,22 @@ export default {
               }
             },
             trigger: 'blur'
+          }
+        ],
+        syncPoints: [
+          {
+            required: true,
+            validator: (rule, v, callback) => {
+              let value = this.formData.syncPoints || []
+              value.forEach(el => {
+                if (el.type !== 'current' && !el.date) {
+                  callback(this.$t('task_settings_cdc_sync_point_date'))
+                } else {
+                  callback()
+                }
+              })
+            },
+            trigger: 'change'
           }
         ]
       },
