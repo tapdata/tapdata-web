@@ -486,7 +486,10 @@ export default {
         isUrl: true,
         agentType: 'Cloud',
         connection_type: this.step === 2 ? 'target' : 'source',
-        initId: this.sourceForm.initId
+        initId: this.sourceForm.initId,
+        platformInfo: {
+          agentType: 'trusteeship'
+        }
       })
       if (params.database_type === 'mongodb') {
         params.database_host += ':' + params.database_port
@@ -599,7 +602,8 @@ export default {
           region: '', //区域
           zone: '', //可用区,
           regionName: '', //区域
-          zoneName: '' //可用区,
+          zoneName: '', //可用区,
+          agentType: 'trusteeship'
         }
       }
       let stageDefault = {

@@ -1302,7 +1302,10 @@ export default {
               nextRetry: null,
               response_body: {},
               project: '',
-              submit: true
+              submit: true,
+              platformInfo: {
+                agentType: 'private'
+              }
             },
             data
           )
