@@ -927,7 +927,7 @@ export default {
               }
             })
             .catch(err => {
-              let message = err.response.msg || err.dta.message || ''
+              let message = err?.response?.msg || err?.data?.msg || ''
               if (message === 'duplication for names') {
                 this.$message.error(this.$t('message.exists_name'))
               }
