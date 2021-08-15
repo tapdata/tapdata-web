@@ -286,9 +286,10 @@ export default {
           } else {
             targetValue = ''
           }
+          let isDiff = diffFields.length ? diffFields.includes(i) : sourceValue !== targetValue
           let node = {
             type: item.type,
-            red: diffFields.includes(i),
+            red: isDiff,
             source: {
               key: i,
               value: sourceValue
