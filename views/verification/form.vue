@@ -918,7 +918,10 @@ export default {
                     webScript
                   }
                 }
-              )
+              ),
+              platformInfo: {
+                agentType: 'private'
+              }
             })
           )
             .then(data => {
