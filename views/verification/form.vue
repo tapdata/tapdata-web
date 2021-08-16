@@ -921,7 +921,8 @@ export default {
               ),
               platformInfo: {
                 agentType: 'private'
-              }
+              },
+              byFirstCheckId: ''
             })
           )
             .then(data => {
