@@ -604,7 +604,8 @@ export default {
           regionName: '', //区域
           zoneName: '', //可用区,
           agentType: 'trusteeship'
-        }
+        },
+        agentType: 'Cloud'
       }
       let stageDefault = {
         connectionId: '',
