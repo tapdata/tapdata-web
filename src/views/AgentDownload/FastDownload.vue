@@ -156,51 +156,20 @@ export default {
       dockerLink: '',
       downloadUrl: '',
       agentId: ''
-      // user: window.__USER_INFO__ || {}
     }
   },
   created() {
-    this.$axios.get('api/tcm/productRelease/command/' + this.$route.query?.id).then(async res => {
-      this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then(async data => {
-        let version = data?.spec?.version
-        this.downloadUrl = await this.getDownloadUrl(version)
-        this.handleGetUrl(res, data?.tmInfo)
-      })
-    })
+    this.getUrl()
   },
   methods: {
-    getDownloadUrl(version) {
-      return this.$axios.get(`api/tcm/productRelease/${version}`)
-    },
-    // 获取路径地址
-    handleGetUrl(res = [], data) {
-      if (!data) {
-        return
-      }
-      res.forEach(el => {
-        this[el.os + 'Link'] = el.command
+    getUrl() {
+      this.$axios.get('api/tcm/productRelease/deploy/' + this.$route.query?.id).then(async data => {
+        this.downloadUrl = data.downloadUrl || ''
+        let links = data.links || []
+        links.forEach(el => {
+          this[el.os + 'Link'] = el.command
+        })
       })
-      let downloadUrl = (this.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
-      this.downloadUrl = downloadUrl
-      let windowsLinkOld = 'tapdata start backend --downloadUrl ' + `${downloadUrl} --token ` + data.token
-      let linuxLinkOld =
-        'wget "' +
-        `${downloadUrl}tapdata` +
-        '" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
-        `${downloadUrl} --token ` +
-        data.token
-      let dockerLinkOld =
-        'docker run -itd ' +
-        `ccr.ccs.tencentyun.com/tapdata/flow-engine:0.1 '` +
-        'wget "' +
-        `${downloadUrl}tapdata` +
-        '" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
-        `${downloadUrl} --token ` +
-        data.token +
-        `'`
-      console.log('window:', this.windowsLink, windowsLinkOld, this.windowsLink === windowsLinkOld)
-      console.log('Linux:', this.linuxLink, linuxLinkOld, this.linuxLink === linuxLinkOld)
-      console.log('docker:', this.dockerLink, dockerLinkOld, this.dockerLink === dockerLinkOld)
     },
     // windows下载
     handleDownLoad() {

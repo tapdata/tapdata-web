@@ -2724,26 +2724,29 @@ module.exports = Object.assign({}, dataflow, connection, messages, verification,
       }
     ]
   },
-  '/api/tcm/productRelease/command/:agentId': {
-    reqId: 'e7b1a2c1-d8eb-45da-9571-7eb72aa52684',
+  '/api/tcm/productRelease/deploy/:agentId': {
+    reqId: 'a5d27040-92d5-4fbc-9604-79bfe7fb35ef',
     code: 'ok',
-    data: [
-      {
-        os: 'windows',
-        command:
-          'tapdata start backend --downloadUrl http://resource.tapdata.net/package/feagent/dfs-v1.0.4-072701-test/ --token a/HZzXh5MDbwPGd8hCzZYYF0XXgDZ287oY34Sx3QAq5Z7zikkMRcI62kZHXq8RRJj6VrJcSY6ehw4iM8d8LW1ZzYUNHGRnJEk2X4G9sJmnxSNEx9s4VxUiCqtYEHZsby8CdqzyKRV+X1Oji+FmTnLB3ZIixKS7ZNhQBwHnT4walzeJC82LVUMnNUoaR5kaMTY7ckbUhdcxVrnuCTNgbQl55LgOPp4wUnwaT0gCU25fr3K9z5UB1xedPbvCvLk9WG9Ow0k3TSdx/WoKrpcJ0lSkEWZGd16lAvp9KJTQcKsP17bsMb+HDeEE1ZyYQ9tQcvOUzemzRFDdk+M+HHrBNTV3bJ7ejoLXRMTceWq9XRYL8Vtbg97gwUKJxICzeXTWB087K8l0HbHj4iVXiJK4t/WjaB6ZC2MvSxEhkmiLFxbhVK9Oalb3Xkas5J00uIGfosfdCh6sSJHXGMgVj2IclpMybspGG/kUM5o6alv+sMe6Qfu7LPzNGD/iuDnGuj2DPHCt3RRixVA+bGDENd5xheMdS0sTuM9Sqzs86CGJ+dicVCAmtsmFKrof9Q3V8MWkBtCK1V4RPvaUaFBo3pPNIoFKK5XxIZ880WiQf2eb5j8/uc9vKecCCjIbHgM+FrbFNf'
-      },
-      {
-        os: 'linux',
-        command:
-          "wget 'http://resource.tapdata.net/package/feagent/dfs-v1.0.4-072701-test/tapdata' && chmod +x tapdata && ./tapdata start backend --downloadUrl http://resource.tapdata.net/package/feagent/dfs-v1.0.4-072701-test/ --token a/HZzXh5MDbwPGd8hCzZYYF0XXgDZ287oY34Sx3QAq5Z7zikkMRcI62kZHXq8RRJj6VrJcSY6ehw4iM8d8LW1ZzYUNHGRnJEk2X4G9sJmnxSNEx9s4VxUiCqtYEHZsby8CdqzyKRV+X1Oji+FmTnLB3ZIixKS7ZNhQBwHnT4walzeJC82LVUMnNUoaR5kaMTY7ckbUhdcxVrnuCTNgbQl55LgOPp4wUnwaT0gCU25fr3K9z5UB1xedPbvCvLk9WG9Ow0k3TSdx/WoKrpcJ0lSkEWZGd16lAvp9KJTQcKsP17bsMb+HDeEE1ZyYQ9tQcvOUzemzRFDdk+M+HHrBNTV3bJ7ejoLXRMTceWq9XRYL8Vtbg97gwUKJxICzeXTWB087K8l0HbHj4iVXiJK4t/WjaB6ZC2MvSxEhkmiLFxbhVK9Oalb3Xkas5J00uIGfosfdCh6sSJHXGMgVj2IclpMybspGG/kUM5o6alv+sMe6Qfu7LPzNGD/iuDnGuj2DPHCt3RRixVA+bGDENd5xheMdS0sTuM9Sqzs86CGJ+dicVCAmtsmFKrof9Q3V8MWkBtCK1V4RPvaUaFBo3pPNIoFKK5XxIZ880WiQf2eb5j8/uc9vKecCCjIbHgM+FrbFNf"
-      },
-      {
-        os: 'docker',
-        command:
-          "docker run -itd ccr.ccs.tencentyun.com/tapdata/dfs-flow-engine:v1.0.4-072701 'tapdata start backend  --token a/HZzXh5MDbwPGd8hCzZYYF0XXgDZ287oY34Sx3QAq5Z7zikkMRcI62kZHXq8RRJj6VrJcSY6ehw4iM8d8LW1ZzYUNHGRnJEk2X4G9sJmnxSNEx9s4VxUiCqtYEHZsby8CdqzyKRV+X1Oji+FmTnLB3ZIixKS7ZNhQBwHnT4walzeJC82LVUMnNUoaR5kaMTY7ckbUhdcxVrnuCTNgbQl55LgOPp4wUnwaT0gCU25fr3K9z5UB1xedPbvCvLk9WG9Ow0k3TSdx/WoKrpcJ0lSkEWZGd16lAvp9KJTQcKsP17bsMb+HDeEE1ZyYQ9tQcvOUzemzRFDdk+M+HHrBNTV3bJ7ejoLXRMTceWq9XRYL8Vtbg97gwUKJxICzeXTWB087K8l0HbHj4iVXiJK4t/WjaB6ZC2MvSxEhkmiLFxbhVK9Oalb3Xkas5J00uIGfosfdCh6sSJHXGMgVj2IclpMybspGG/kUM5o6alv+sMe6Qfu7LPzNGD/iuDnGuj2DPHCt3RRixVA+bGDENd5xheMdS0sTuM9Sqzs86CGJ+dicVCAmtsmFKrof9Q3V8MWkBtCK1V4RPvaUaFBo3pPNIoFKK5XxIZ880WiQf2eb5j8/uc9vKecCCjIbHgM+FrbFNf'"
-      }
-    ]
+    data: {
+      downloadUrl: 'http://resource.tapdata.net/package/feagent/dfs-v1.0.4-072701-test/',
+      links: [
+        {
+          os: 'windows',
+          command:
+            'tapdata start backend --downloadUrl http://resource.tapdata.net/package/feagent/dfs-v1.0.4-072701-test/ --token a/HZzXh5MDbwPGd8hCzZYYF0XXgDZ287oY34Sx3QAq5Z7zikkMRcI62kZHXq8RRJj6VrJcSY6ehw4iM8d8LW1ZzYUNHGRnJEk2X4G9sJmnxSNEx9s4VxUiCqtYEHZsby8CdqzyKRV+X1Oji+FmTnLB3ZIixKS7ZNhQBwHnT4walzeJC82LVUMnNUoaR5kaMTY7ckbUhdcxVrnuCTNgbQl55LgOPp4wUnwaT0gCU25fr3K9z5UB1xedPbvCvLk9WG9Ow0k3TSdx/WoKrpcJ0lSkEWZGd16lAvp9KJTQcKsP17bsMb+HDeEE1ZyYQ9tQcvOUzemzRFDdk+M+HHrBNTV3bJ7ejoLXRMTceWq9XRYL8Vtbg97gwUKJxICzeXTWB087K8l0HbHj4iVXiJK4t/WjaB6ZC2MvSxEhkmiLFxbhVK9Oalb3Xkas5J00uIGfosfdCh6sSJHXGMgVj2IclpMybspGG/kUM5o6alv+sMe6Qfu7LPzNGD/iuDnGuj2DPHCt3RRixVA+bGDENd5xheMdS0sTuM9Sqzs86CGJ+dicVCAmtsmFKrof9Q3V8MWkBtCK1V4RPvaUaFBo3pPNIoFKK5XxIZ880WiQf2eb5j8/uc9vKecCCjIbHgM+FrbFNf'
+        },
+        {
+          os: 'linux',
+          command:
+            "wget 'http://resource.tapdata.net/package/feagent/dfs-v1.0.4-072701-test/tapdata' && chmod +x tapdata && ./tapdata start backend --downloadUrl http://resource.tapdata.net/package/feagent/dfs-v1.0.4-072701-test/ --token a/HZzXh5MDbwPGd8hCzZYYF0XXgDZ287oY34Sx3QAq5Z7zikkMRcI62kZHXq8RRJj6VrJcSY6ehw4iM8d8LW1ZzYUNHGRnJEk2X4G9sJmnxSNEx9s4VxUiCqtYEHZsby8CdqzyKRV+X1Oji+FmTnLB3ZIixKS7ZNhQBwHnT4walzeJC82LVUMnNUoaR5kaMTY7ckbUhdcxVrnuCTNgbQl55LgOPp4wUnwaT0gCU25fr3K9z5UB1xedPbvCvLk9WG9Ow0k3TSdx/WoKrpcJ0lSkEWZGd16lAvp9KJTQcKsP17bsMb+HDeEE1ZyYQ9tQcvOUzemzRFDdk+M+HHrBNTV3bJ7ejoLXRMTceWq9XRYL8Vtbg97gwUKJxICzeXTWB087K8l0HbHj4iVXiJK4t/WjaB6ZC2MvSxEhkmiLFxbhVK9Oalb3Xkas5J00uIGfosfdCh6sSJHXGMgVj2IclpMybspGG/kUM5o6alv+sMe6Qfu7LPzNGD/iuDnGuj2DPHCt3RRixVA+bGDENd5xheMdS0sTuM9Sqzs86CGJ+dicVCAmtsmFKrof9Q3V8MWkBtCK1V4RPvaUaFBo3pPNIoFKK5XxIZ880WiQf2eb5j8/uc9vKecCCjIbHgM+FrbFNf"
+        },
+        {
+          os: 'docker',
+          command:
+            "docker run -itd ccr.ccs.tencentyun.com/tapdata/dfs-flow-engine:v1.0.4-072701 'tapdata start backend  --token a/HZzXh5MDbwPGd8hCzZYYF0XXgDZ287oY34Sx3QAq5Z7zikkMRcI62kZHXq8RRJj6VrJcSY6ehw4iM8d8LW1ZzYUNHGRnJEk2X4G9sJmnxSNEx9s4VxUiCqtYEHZsby8CdqzyKRV+X1Oji+FmTnLB3ZIixKS7ZNhQBwHnT4walzeJC82LVUMnNUoaR5kaMTY7ckbUhdcxVrnuCTNgbQl55LgOPp4wUnwaT0gCU25fr3K9z5UB1xedPbvCvLk9WG9Ow0k3TSdx/WoKrpcJ0lSkEWZGd16lAvp9KJTQcKsP17bsMb+HDeEE1ZyYQ9tQcvOUzemzRFDdk+M+HHrBNTV3bJ7ejoLXRMTceWq9XRYL8Vtbg97gwUKJxICzeXTWB087K8l0HbHj4iVXiJK4t/WjaB6ZC2MvSxEhkmiLFxbhVK9Oalb3Xkas5J00uIGfosfdCh6sSJHXGMgVj2IclpMybspGG/kUM5o6alv+sMe6Qfu7LPzNGD/iuDnGuj2DPHCt3RRixVA+bGDENd5xheMdS0sTuM9Sqzs86CGJ+dicVCAmtsmFKrof9Q3V8MWkBtCK1V4RPvaUaFBo3pPNIoFKK5XxIZ880WiQf2eb5j8/uc9vKecCCjIbHgM+FrbFNf'"
+        }
+      ]
+    }
   },
   '/api/tcm/productRelease/': {
     code: 'ok',
