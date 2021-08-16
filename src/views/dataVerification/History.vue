@@ -21,8 +21,12 @@ export default {
         return [countRes.data, res.data]
       })
     },
-    rowClickHandler(id) {
+    rowClickHandler(item) {
       let url = ''
+      let id = item.id
+      if (this.$route.name === 'dataVerifyHistory') {
+        id = item.firstCheckId
+      }
       let route = this.$router.resolve({
         name: 'dataVerifyResult',
         params: {
