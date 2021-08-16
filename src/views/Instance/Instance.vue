@@ -104,7 +104,7 @@
         <el-table-column :label="$t('agent_version')" width="200">
           <template slot-scope="scope">
             <div class="flex align-center">
-              <span>{{ scope.row.spec && scope.row.spec.version }}</span>
+              <span v-if="showVersionFlag(scope.row)">{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
                 <el-tooltip class="ml-1" effect="dark" placement="top">
                   <div slot="content">{{ getTooltipContent(scope.row) }}</div>
@@ -677,6 +677,10 @@ export default {
         flag = !['Creating', 'Stopped'].includes(row.status)
       }
       return flag
+    },
+    showVersionFlag(row) {
+      let { status, tmInfo } = row
+      return !(status === 'Creating' && !tmInfo?.pingTime)
     },
     showUpgradeIcon(row) {
       let { version } = this
