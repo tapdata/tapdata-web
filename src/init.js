@@ -53,7 +53,7 @@ export default ({ routes }) => {
       wsUrl = 'wss://'
     }
     let preUrl = settings.DFS_TM_API_PRE_URL || ''
-    wsUrl = wsUrl + loc.host + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__.token}`
+    wsUrl = wsUrl + loc.host + preUrl + `/ws/agent?X-Token=${window.__USER_INFO__?.token}`
     window.App = new Vue({
       router,
       i18n,

@@ -9,7 +9,7 @@ const hostname = '0.0.0.0'
 
 for (const url in service) {
   let mockData = service[url]
-  app.all(url, (req, res) => {
+  app.all('/console' + url, (req, res) => {
     if (Object.prototype.toString.call(mockData) == '[object Function]') {
       mockData = mockData({ req, res })
     }
