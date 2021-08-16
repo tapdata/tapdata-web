@@ -5,7 +5,7 @@
  */
 import redis from './redis'
 import mysql from './mysql'
-import defaultConfig from './defaultConfig'
+import defaultConfig from './default-config'
 export default {
   redis,
   mysql,
