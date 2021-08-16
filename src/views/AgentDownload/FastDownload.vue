@@ -37,11 +37,11 @@
             Agent的自动部署及启动
           </li>
           <li class="box title-text mt-2">
-            <span class="link-line">{{ windowLink }}</span>
+            <span class="link-line">{{ windowsLink }}</span>
             <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
               <span
                 class="operaKey"
-                v-clipboard:copy="windowLink"
+                v-clipboard:copy="windowsLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
@@ -72,11 +72,11 @@
           </li>
           <li>1.请复制下方命令并在本地部署环境执行，其包含 Tapdata Agent 的下载、自动部署及启动</li>
           <li class="box title-text my-2">
-            <span class="link-line">{{ LinuxLink }}</span>
+            <span class="link-line">{{ linuxLink }}</span>
             <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
               <span
                 class="operaKey"
-                v-clipboard:copy="LinuxLink"
+                v-clipboard:copy="linuxLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
@@ -151,8 +151,8 @@ export default {
         { name: 'Docker', value: 'Docker' }
       ],
       showTooltip: false,
-      windowLink: '',
-      LinuxLink: '',
+      windowsLink: '',
+      linuxLink: '',
       dockerLink: '',
       downloadUrl: '',
       agentId: ''
@@ -160,10 +160,12 @@ export default {
     }
   },
   created() {
-    this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then(async data => {
-      let version = data?.spec?.version
-      this.downloadUrl = await this.getDownloadUrl(version)
-      this.handleGetUrl(data?.tmInfo)
+    this.$axios.get('api/tcm/productRelease/command/' + this.$route.query?.id).then(async res => {
+      this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then(async data => {
+        let version = data?.spec?.version
+        this.downloadUrl = await this.getDownloadUrl(version)
+        this.handleGetUrl(res, data?.tmInfo)
+      })
     })
   },
   methods: {
@@ -171,20 +173,23 @@ export default {
       return this.$axios.get(`api/tcm/productRelease/${version}`)
     },
     // 获取路径地址
-    handleGetUrl(data) {
+    handleGetUrl(res = [], data) {
       if (!data) {
         return
       }
+      res.forEach(el => {
+        this[el.os + 'Link'] = el.command
+      })
       let downloadUrl = (this.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
       this.downloadUrl = downloadUrl
-      this.windowLink = 'tapdata start backend --downloadUrl ' + `${downloadUrl} --token ` + data.token
-      this.LinuxLink =
+      let windowsLinkOld = 'tapdata start backend --downloadUrl ' + `${downloadUrl} --token ` + data.token
+      let linuxLinkOld =
         'wget "' +
         `${downloadUrl}tapdata` +
         '" && chmod +x tapdata && ./tapdata start backend --downloadUrl ' +
         `${downloadUrl} --token ` +
         data.token
-      this.dockerLink =
+      let dockerLinkOld =
         'docker run -itd ' +
         `ccr.ccs.tencentyun.com/tapdata/flow-engine:0.1 '` +
         'wget "' +
@@ -193,6 +198,9 @@ export default {
         `${downloadUrl} --token ` +
         data.token +
         `'`
+      console.log('window:', this.windowsLink, windowsLinkOld, this.windowsLink === windowsLinkOld)
+      console.log('Linux:', this.linuxLink, linuxLinkOld, this.linuxLink === linuxLinkOld)
+      console.log('docker:', this.dockerLink, dockerLinkOld, this.dockerLink === dockerLinkOld)
     },
     // windows下载
     handleDownLoad() {
