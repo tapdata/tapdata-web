@@ -17,8 +17,12 @@ export default {
         return data
       })
     },
-    rowClickHandler(id) {
+    rowClickHandler(item) {
       let url = ''
+      let id = item.id
+      if (this.$route.name === 'VerifyHistory') {
+        id = item.firstCheckId
+      }
       let route = this.$router.resolve({
         name: 'VerifyResult',
         params: {

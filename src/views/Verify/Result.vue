@@ -104,7 +104,8 @@ export default {
             filter: JSON.stringify({
               where: {
                 id: this.$route.params.id
-              }
+              },
+              inspectGroupByFirstCheckId: true
             })
           }
         })
