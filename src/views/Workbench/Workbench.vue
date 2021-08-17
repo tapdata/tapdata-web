@@ -149,7 +149,7 @@ export default {
           // icon: 'account',
           icon: 'agent',
           title: '部署Agent，并对已有Agent的状态进行查看和管理',
-          desc: '欢迎来到Tapdata Cloud，即将开启您的实时数据同步之旅！初次使用请先安装部署Agent，不然无法创建连接和任务哦。',
+          desc: '欢迎来到Tapdata Cloud，即将开启您的实时数据同步之旅！初次使用请先安装部署Agent，不然无法运行任务哦。',
           btnName: '创建Agent',
           hiddenBtnIcon: true,
           action: this.createAgent
