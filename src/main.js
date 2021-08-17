@@ -4,13 +4,12 @@ import router, { childRoutes } from '@/router'
 import moment from 'moment' // 时间格式化
 import store from '@/vuex' // 引入全局数据控制
 import VueCookie from 'vue-cookie'
-import VueI18n from 'vue-i18n'
+import i18n from './i18n'
 import VueBus from 'vue-bus'
 import VueClipboard from 'vue-clipboard2'
 import factory from '@/api/factory'
 import Cache from '@/utils/cache'
-import TapdataWebCore, { langs } from '../packages/tapdata-web-core'
-import locale from 'element-ui/lib/locale'
+import TapdataWebCore from 'web-core'
 
 import '@/plugins/element'
 import '@/plugins/icon'
@@ -28,7 +27,6 @@ Vue.use(VueCookie)
 Vue.use(VueBus)
 Vue.use(VueClipboard)
 Vue.use(LoadMore)
-Vue.use(VueI18n)
 Vue.use(TapdataWebCore)
 
 Vue.prototype.$moment = moment
@@ -81,17 +79,6 @@ let init = settings => {
     lang = window.getSettingByKey('DEFAULT_LANGUAGE')
     localStorage.setItem('tapdata_localize_lang', lang || 'en')
   }
-
-  const i18n = new VueI18n({
-    locale:
-      {
-        sc: 'zh-CN',
-        tc: 'zh-TW',
-        en: 'en'
-      }[lang] || 'zh-CN',
-    messages: langs
-  })
-  locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
 
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
 

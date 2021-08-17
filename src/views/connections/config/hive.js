@@ -67,6 +67,22 @@ export default function (vm) {
         required: true
       },
       {
+        type: 'select',
+        field: 'hiveConnType',
+        required: true,
+        label: vm.$t('dataForm.form.hiveType'),
+        options: [
+          {
+            label: 'JDBC',
+            value: 'JDBC'
+          },
+          {
+            label: 'Stream',
+            value: 'Stream'
+          }
+        ]
+      },
+      {
         type: 'input',
         field: 'database_username',
         label: vm.$t('dataForm.form.userName')

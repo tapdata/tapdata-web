@@ -1,6 +1,6 @@
 <template>
-  <section class="verification-result-wrap" v-loading="loading">
-    <div class="panel-main" style="padding: 0 20px">
+  <section class="verification-details-wrap" v-loading="loading">
+    <div class="panel-main" style="padding: 0 20px" v-if="inspect">
       <div class="main main-border">
         <div class="title mt-5">{{ inspect.name }}</div>
         <div class="text">
@@ -10,15 +10,57 @@
           <i class="iconfont icon-warning-circle"></i>
           <span>{{ errorMsg }}</span>
         </div>
-        <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+        <div
+          class="flex align-items-center justify-content-sm-between mt-2"
+          v-else-if="inspect.inspectMethod !== 'row_count'"
+        >
+          <div class="flex align-items-center">
+            <ElButton v-if="['running', 'scheduling'].includes(inspect.status)" size="mini">{{
+              $t('verify_button_diff_verify_running')
+            }}</ElButton>
+            <template v-if="inspect.result !== 'passed' && !(inspect.status === 'error' && !resultInfo.parentId)">
+              <ElButton
+                v-if="!['running', 'scheduling'].includes(inspect.status)"
+                size="mini"
+                type="primary"
+                @click="diffInspect"
+                >{{ $t('verify_button_diff_verify') }}</ElButton
+              >
+
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content" style="width: 232px">
+                  {{ $t('verify_button_diff_verify_tips') }}
+                </div>
+                <i class="el-icon-warning-outline ml-2 color-info"></i>
+              </el-tooltip>
+            </template>
+          </div>
+          <div v-if="resultInfo.parentId" class="color-info" style="font-size: 12px">
+            {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+            <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
+              $t('verify_button_diff_task_history')
+            }}</ElLink>
+          </div>
+        </div>
+        <ResultTable
+          v-if="!['running', 'scheduling'].includes(inspect.status)"
+          ref="singleTable"
+          :type="type"
+          :data="tableData"
+          @row-click="rowClick"
+        ></ResultTable>
       </div>
     </div>
-    <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+    <ResultView
+      v-if="type !== 'row_count' && !['running', 'scheduling'].includes(inspect.status)"
+      ref="resultView"
+      :remoteMethod="getResultData"
+    ></ResultView>
   </section>
 </template>
 <style lang="scss">
 $margin: 10px;
-.verification-result-wrap {
+.verification-details-wrap {
   display: flex;
   width: 100%;
   height: 100%;
@@ -92,11 +134,16 @@ export default {
   },
   created() {
     this.getData()
+    setInterval(() => {
+      if (['running', 'scheduling'].includes(this.inspect?.status)) {
+        this.getData()
+      }
+    }, 10000)
   },
   methods: {
     getData() {
       this.loading = true
-      this.$api('InspectResults')
+      this.$api('Inspects')
         .get({
           filter: JSON.stringify({
             where: {
@@ -105,27 +152,39 @@ export default {
           })
         })
         .then(res => {
-          let result = res.data[0]
-          if (result) {
-            if (result) {
-              this.resultInfo = result
-              let stats = result.stats
-              this.inspect = result.inspect
-              if (stats.length) {
-                this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                this.taskId = stats[0].taskId
-                this.$refs.resultView.fetch(1)
-                if (this.type !== 'row_count') {
-                  this.$nextTick(() => {
-                    this.$refs.singleTable.setCurrentRow(stats[0])
-                  })
+          let inspect = res.data[0]
+          let inspectResult = inspect.InspectResult
+          this.inspect = inspect
+          this.$api('InspectResults')
+            .get({
+              filter: JSON.stringify({
+                where: {
+                  id: inspectResult.id
+                }
+              })
+            })
+            .then(res => {
+              let result = res.data[0]
+              if (result) {
+                if (result) {
+                  this.resultInfo = result
+                  let stats = result.stats
+                  if (stats.length) {
+                    this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+                    this.taskId = stats[0].taskId
+                    this.$nextTick(() => {
+                      this.$refs?.resultView.fetch(1)
+                      if (this.type !== 'row_count') {
+                        this.$refs.singleTable?.setCurrentRow(stats[0])
+                      }
+                    })
+                  }
                 }
               }
-            }
-          }
-        })
-        .finally(() => {
-          this.loading = false
+            })
+            .finally(() => {
+              this.loading = false
+            })
         })
     },
     getResultData({ current, size }) {
@@ -166,6 +225,30 @@ export default {
           }
         })
       }
+      return Promise.reject()
+    },
+    diffInspect() {
+      let firstCheckId = this.resultInfo.firstCheckId
+      if (!firstCheckId) {
+        return this.$message.error(this.$t('verify_message_old_data_not_support'))
+      }
+      let inspect = this.inspect
+      let keep = inspect?.limit?.keep || 0
+      let totalFailed = inspect?.difference_number || 0
+      if (keep < totalFailed) {
+        return this.$message.error(this.$t('verify_message_out_of_limit'))
+      }
+      this.$api('Inspects')
+        .update(
+          {
+            id: this.inspect.id
+          },
+          { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: firstCheckId }
+        )
+        .then(() => {
+          this.$message.success(this.$t('dataVerification.startVerify'))
+          this.getData()
+        })
     },
     rowClick(row) {
       this.taskId = row.taskId
@@ -217,6 +300,17 @@ export default {
         })
       })
       return data
+    },
+    toDiffHistory() {
+      let url = ''
+      let route = this.$router.resolve({
+        name: 'VerifyDiffHistory',
+        params: {
+          id: this.resultInfo.firstCheckId
+        }
+      })
+      url = route.href
+      window.open(url, '_blank')
     }
   }
 }

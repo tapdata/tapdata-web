@@ -51,7 +51,7 @@ export default {
         'jira',
         'mq',
         'dameng',
-        // 'hive',
+        'hive',
         'tcp_udp',
         'hbase',
         'kudu',

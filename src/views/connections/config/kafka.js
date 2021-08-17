@@ -61,7 +61,18 @@ export default function (vm) {
         show: true,
         required: true
       },
-
+      {
+        type: 'input',
+        field: 'database_username',
+        label: vm.$t('dataForm.form.userName')
+      },
+      {
+        type: 'input',
+        field: 'plain_password',
+        label: vm.$t('dataForm.form.password'),
+        domType: 'password',
+        showPassword: true
+      },
       {
         type: 'switch', // 忽略非JSON Object格式消息
         field: 'kafkaIgnoreInvalidRecord',

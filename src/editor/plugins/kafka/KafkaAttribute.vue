@@ -21,6 +21,7 @@
             :clearable="true"
             @change="changeFnc"
           >
+            <!--           -->
             <el-option
               v-for="(item, idx) in databases"
               :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
@@ -30,25 +31,20 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item
-          :label="$t('editor.cell.data_node.table.form.table.label')"
-          prop="tableName"
-          :rules="rules"
-          required
-        >
+        <el-form-item :label="$t('metadata.details.theme')" prop="tableName" :rules="rules" required>
           <div class="flex-block">
             <!-- <FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect> -->
             <el-select
               v-model="model.tableName"
-              :filterable="!schemasLoading"
+              filterable
               :loading="schemasLoading"
               default-first-option
               clearable
-              :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
+              :placeholder="$t('message.placeholderSelect') + $t('metadata.details.theme')"
               size="mini"
             >
               <el-option
-                v-for="(item, idx) in tableList"
+                v-for="(item, idx) in schemas"
                 :label="`${item.table_name}`"
                 :value="item.table_name"
                 v-bind:key="idx"
@@ -113,16 +109,31 @@
 						size="mini"
 					></el-input>
 				</el-form-item> -->
+        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="kafkaPartitionKey">
+          <el-select
+            v-model="model.partitionId"
+            default-first-option
+            clearable
+            :placeholder="$t('message.placeholderSelect') + 'Partition ID'"
+            size="mini"
+          >
+            <el-option
+              v-for="(item, idx) in partitionSet"
+              :label="`${item}`"
+              :value="item"
+              v-bind:key="idx"
+            ></el-option>
+          </el-select>
+        </el-form-item>
 
         <el-form-item
-          :label="$t('dataForm.form.kafka.kafkaPartitionKey')"
           v-if="dataNodeInfo.isTarget"
+          :label="$t('dataForm.form.kafka.kafkaPartitionKey')"
           prop="kafkaPartitionKey"
-          required
         >
           <el-select
             v-model="model.kafkaPartitionKey"
-            :filterable="!schemasLoading"
+            filterable
             :loading="schemasLoading"
             default-first-option
             clearable
@@ -132,17 +143,12 @@
             size="mini"
           >
             <el-option
-              v-for="(item, idx) in schemas"
-              :label="`${item.table_name}`"
-              :value="item.table_name"
+              v-for="(item, idx) in tableList"
+              :label="`${item.field_name}`"
+              :value="item.field_name"
               v-bind:key="idx"
             ></el-option>
           </el-select>
-          <!--					<el-input-->
-          <!--						v-model="model.kafkaPartitionKey"-->
-          <!--						:placeholder="$t('dataForm.form.kafka.kafkaPartitionKeyTip')"-->
-          <!--						size="mini"-->
-          <!--					></el-input>-->
         </el-form-item>
       </el-form>
     </div>
@@ -180,7 +186,6 @@ import CreateTable from '@/components/dialog/createTable'
 
 import ws from '@/api/ws'
 const connections = factory('connections')
-
 // let editorMonitor = null;
 export default {
   name: 'ApiNode',
@@ -196,6 +201,7 @@ export default {
       dialogData: null,
       schemas: [],
       tableList: [],
+      partitionSet: [],
       rules: {
         connectionId: [
           {
@@ -223,6 +229,7 @@ export default {
         connectionId: '',
         type: 'kafka',
         tableName: '',
+        partitionId: '',
         kafkaPartitionKey: ''
         // primaryKeys: ''
       },
@@ -284,8 +291,12 @@ export default {
                     table_name: this.model.tableName,
                     cdc_enabled: true,
                     meta_type: 'kafka',
-                    fields: []
+                    fields: [],
+                    partitionSet: [-1]
                   }
+            this.partitionSet = schema.partitionSet ? schema.partitionSet : []
+            this.tableList = schema.fields ? schema.fields : []
+
             this.$emit('schemaChange', _.cloneDeep(schema))
             this.mergedSchema = schema
           }
@@ -339,7 +350,6 @@ export default {
                 return item
               }
             })
-            self.tableList = self.schemas
           }
         })
         .finally(() => {
@@ -359,6 +369,8 @@ export default {
         _.merge(this.model, data)
       }
       this.mergedSchema = cell.getOutputSchema()
+      this.tableList = this.mergedSchema?.fields || []
+      this.partitionSet = this.mergedSchema?.partitionSet || []
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
       })
@@ -369,17 +381,19 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Kafka'
+      if (this.dataNodeInfo.isTarget) {
+        delete result.partitionId
+      } else {
+        delete result.kafkaPartitionKey
+      }
       if (result.kafkaPartitionKey instanceof Array) {
         result.kafkaPartitionKey = result.kafkaPartitionKey.join(',')
       }
       return result
     },
 
-    changeFnc(value) {
-      let findOne = this.databases.find(item => item.id === value)
-      if (findOne) {
-        this.model.tableName = findOne.name
-      }
+    changeFnc() {
+      this.model.tableName = ''
     },
 
     // 更新模型点击弹窗
@@ -420,6 +434,8 @@ export default {
           templeSchema.forEach(item => {
             if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
               schema = item.schema
+              this.partitionSet = item.partitionSet ? item.partitionSet : []
+              this.tableList = item.fields ? item.fields : []
             }
           })
         }

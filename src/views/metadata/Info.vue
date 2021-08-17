@@ -625,9 +625,13 @@ export default {
       return Promise.all([this.$api('MetadataInstances').get([this.$route.query.id])])
         .then(res => {
           this.metadataDataObj = res[0].data
-
           this.pageTotal = (res[0].data.fields && res[0].data.fields.length) || 0
           this.setCurrentPageData(this.metadataDataObj.fields || [])
+          if (['table', 'collection'].includes(this.metadataDataObj.meta_type)) {
+            this.activePanel = 'model'
+          } else if (['database'].includes(this.metadataDataObj.meta_type)) {
+            this.activePanel = 'collections'
+          }
         })
         .finally(() => {
           this.loading = false
