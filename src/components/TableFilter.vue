@@ -1,11 +1,8 @@
 <template>
   <span class="table-filter">
-    <i
-      class="iconfont td-icon-shaixuan2 table-filter__icon"
-      style="margin-left: 2px"
-      :class="{ 'is-active': !!value }"
-      @click="toggole"
-    ></i>
+    <VIcon class="table-filter__icon" style="margin-left: 2px" :class="{ 'is-active': !!value }" @click="toggole"
+      >refresh</VIcon
+    >
     <ElSelect
       popper-append-to-body
       ref="select"
@@ -21,7 +18,9 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
 export default {
+  components: { VIcon },
   props: {
     value: {
       type: String

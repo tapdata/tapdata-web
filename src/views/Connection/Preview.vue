@@ -11,7 +11,7 @@
     <div class="connection-drawer-wrap" v-loading="previewLoading" v-if="visible">
       <div class="bar">
         <button type="button" class="el-button back-btn-icon-box el-button--default" @click="handleClose">
-          <i class="el-icon-arrow-right"></i>
+          <VIcon size="18">arrowRightSingle</VIcon>
         </button>
         <span class="ml-2 back-btn-text">{{ $t('connection.info') }}</span>
       </div>
@@ -24,19 +24,19 @@
             <div>{{ name }}</div>
             <div class="status">
               <span class="error" v-if="['invalid'].includes(status)">
-                <i class="el-icon-error"></i>
+                <VIcon class="color-danger" size="18">errorFill</VIcon>
                 <span>
                   {{ $t('connection.status.invalid') }}
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
-                <i class="el-icon-success"></i>
+                <VIcon size="18">successFillColor</VIcon>
                 <span>
                   {{ $t('connection.status.ready') }}
                 </span>
               </span>
               <span class="warning" v-if="['testing'].includes(status)">
-                <i class="el-icon-warning"></i>
+                <VIcon size="18" color="#d54e21">warning</VIcon>
                 <span>
                   {{ $t('connection.status.testing') }}
                 </span>
@@ -50,19 +50,17 @@
               <ul>
                 <li class="item">
                   <el-button class="btn" size="mini" :disabled="data.agentType === 'Cloud'" @click="edit()">
-                    <i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
+                    {{ $t('connection.preview.edit') }}
                   </el-button>
                 </li>
                 <li class="item">
                   <el-button class="btn" size="mini" :loading="reloadLoading" @click="reload()">
-                    <i class="iconfont icon-kujitongbucopy">{{ $t('connection.preview.reloadName') }}</i>
+                    {{ $t('connection.preview.reloadName') }}
                   </el-button>
                 </li>
                 <li class="item">
                   <el-button class="btn" size="mini" @click="beforeTest(id)">
-                    <i class="iconfont icon-lianjie1">
-                      {{ $t('connection.preview.test') }}
-                    </i>
+                    {{ $t('connection.preview.test') }}
                   </el-button>
                 </li>
               </ul>
@@ -81,13 +79,13 @@
       <ul class="info-list">
         <li v-for="item in form" :key="item.label" v-show="item.show">
           <span class="label">{{ item.label }}</span>
-          <span class="value align-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
+          <span class="value align-items-center" :class="{ 'align-top': item.label && item.label.length > 15 }">{{
             item.value
           }}</span>
         </li>
         <!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
 					<span class="label">{{ $t('dataForm.form.port') }}</span>
-					<span class="value align-center"> {{ data.database_port }}</span>
+					<span class="value align-items-center"> {{ data.database_port }}</span>
 				</li> -->
         <div
           v-for="(item, index) in data.file_sources"
@@ -101,11 +99,11 @@
         >
           <li>
             <span class="label">{{ $t('dataForm.form.file.fileUrl') + (index + 1) }}</span>
-            <span class="value align-center"> {{ item.path }}</span>
+            <span class="value align-items-center"> {{ item.path }}</span>
           </li>
           <li>
             <span class="label">{{ $t('dataForm.form.file.recursive') }}</span>
-            <span class="value align-center"> {{ item.recursive }}</span>
+            <span class="value align-items-center"> {{ item.recursive }}</span>
           </li>
         </div>
       </ul>
@@ -116,6 +114,7 @@
 
 <script>
 import formConfig from './config'
+import VIcon from '@/components/VIcon'
 const TYPEMAPCONFIG = {
   'gbase-8s': 'gbase8s',
   'sybase ase': 'sybasease',
@@ -125,6 +124,7 @@ const TYPEMAPCONFIG = {
 }
 export default {
   name: 'Preview',
+  components: { VIcon },
   data() {
     return {
       visible: false,
@@ -568,7 +568,7 @@ export default {
   .align-top {
     vertical-align: top;
   }
-  .align-center {
+  .align-items-center {
     vertical-align: center;
   }
   .schema-load {

@@ -18,7 +18,6 @@
     "@formily/vue": "^2.0.0-beta.80",
     "@vue/composition-api": "^1.0.0-rc.14",
     "axios": "^0.21.1",
-    "bootstrap": "^5.0.0-beta3",
     "core-js": "^3.6.5",
     "echarts": "^5.0.2",
     "element-ui": "^2.15.1",

@@ -5,6 +5,7 @@ export default {
   functional: true,
 
   props: {
+    className: String,
     size: [String, Number],
     color: String,
     svg: {
@@ -21,7 +22,7 @@ export default {
     }
     iconName = `icon-${iconName}`
     let dataObj = {
-      class: 'iconfont',
+      class: 'iconfont' + (props.className ? ` ${props.className}` : ''),
       style: {
         fontSize: props.size + 'px',
         color: props.color

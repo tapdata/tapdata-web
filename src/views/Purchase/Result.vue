@@ -2,7 +2,7 @@
   <section class="result-wrap">
     <Header :action="result.action"></Header>
     <div class="main">
-      <VIcon class="result-img" size="48">{{ svgUrl }}</VIcon>
+      <VIcon class="result-img" :class-name="svgObj.class" size="48">{{ svgObj.icon }}</VIcon>
       <div class="result-text" v-if="!result.successTitle">
         {{ resultInfo.name }}{{ resultInfo.oper }}{{ isSuccess ? '成功' : '失败' }}
       </div>
@@ -64,6 +64,13 @@ export default {
     }
   },
   computed: {
+    svgObj() {
+      return this.isSuccess
+        ? this.result.successTitle
+          ? { icon: 'waitFillColor', class: 'color-primary' }
+          : { icon: 'successFillColor', class: 'color-success' }
+        : { icon: 'errorFillColor', class: 'color-danger' }
+    },
     svgUrl() {
       return this.isSuccess ? (this.result.successTitle ? 'waitFillColor' : 'successFillColor') : 'errorFillColor'
     },

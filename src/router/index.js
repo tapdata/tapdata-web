@@ -1,6 +1,7 @@
 import Layout from '../views/Layout.vue'
 import Iframe from '../views/Iframe.vue'
 import Error from '../views/Error.vue'
+import SvgList from '../views/SvgList.vue'
 import AgentDownload from '@/views/AgentDownload/AgentPage.vue'
 import FastDownload from '@/views/AgentDownload/FastDownload.vue'
 import UpgradeVersion from '@/views/AgentDownload/UpgradeVersion.vue'
@@ -51,15 +52,6 @@ const routes = [
           title: '系统通知'
         }
       },
-      // {
-      // 	path: '/dashboard',
-      // 	name: 'Dashboard',
-      // 	component: Dashboard,
-      // 	meta: {
-      // 		title: '运行概览',
-      // 		icon: 'dashboard'
-      // 	}
-      // },
       {
         path: '/instance',
         name: 'Instance',
@@ -280,6 +272,11 @@ const routes = [
     path: '/off',
     name: 'Off',
     component: Error
+  },
+  {
+    path: '/svg',
+    name: 'SvgList',
+    component: SvgList
   }
 ]
 

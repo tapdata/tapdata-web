@@ -2,7 +2,7 @@
   <div class="customer-service-wrap" v-if="value">
     <header>
       <span> 用户支持 </span>
-      <i class="btn-close el-icon-close" @click="close"></i>
+      <VIcon class="btn-close" @click="close">close</VIcon>
     </header>
     <main class="block">
       <div class="panel">
@@ -25,8 +25,10 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
 export default {
   name: 'CustomerService',
+  components: { VIcon },
   props: {
     value: Boolean
   },

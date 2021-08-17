@@ -50,20 +50,21 @@
           <ElInput
             v-model="searchParams.keyword"
             clearable
-            prefix-icon="el-icon-search"
             :placeholder="$t('dataVerification.verifyjobname')"
             @input="search(800)"
-          ></ElInput>
+          >
+            <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
+          </ElInput>
         </li>
         <li class="item">
           <ElButton plain class="btn-refresh" @click="fetch()">
-            <i class="iconfont td-icon-shuaxin"></i>
+            <VIcon>refresh</VIcon>
           </ElButton>
         </li>
       </ul>
       <div>
         <ElButton type="primary" @click="toCreate">
-          <i class="el-icon-plus"></i>
+          <VIcon>plus</VIcon>
           <span> {{ $t('dataVerification.addVerifyTip') }}</span>
         </ElButton>
       </div>
@@ -98,19 +99,19 @@
         <template slot-scope="scope">
           <template v-if="scope.row.result && ['waiting', 'done'].includes(scope.row.status)">
             <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
-              <i class="verify-status-icon el-icon-error color-danger"></i>
+              <VIcon class="color-danger" size="14">errorFill</VIcon>
               <span v-if="scope.row.inspectMethod === 'row_count'">
                 {{ $t('dataVerification.inconsistent') }}
               </span>
               <span v-else> {{ $t('dataVerification.contConsistent') }}{{ scope.row.difference_number }} </span>
             </div>
             <div v-else class="data-verify__status success">
-              <i class="verify-status-icon el-icon-success color-success"></i>
+              <VIcon size="18">successFillColor</VIcon>
               <span>{{ $t('dataVerification.consistent') }}</span>
             </div>
           </template>
           <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
-            <i class="verify-status-icon el-icon-error color-danger"></i>
+            <VIcon class="color-danger" size="14">errorFill</VIcon>
             <span>Error</span>
           </div>
           <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
@@ -165,7 +166,7 @@
         </template>
       </ElTableColumn>
       <div class="page-table__empty" slot="empty">
-        <i class="el-icon-folder-opened"></i>
+        <VIcon>folderOpened</VIcon>
         <span class="ml-1" v-if="!isSearching">暂无数据</span>
         <span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
       </div>

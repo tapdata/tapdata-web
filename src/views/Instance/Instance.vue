@@ -22,28 +22,26 @@
                 :placeholder="$t('agent_search')"
                 @input="search(800)"
               >
-                <i slot="prefix" class="iconfont td-icon-sousuo el-input__icon"></i>
+                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </el-input>
             </li>
             <li class="ml-3">
               <el-button plain class="btn-refresh" @click="fetch()">
-                <i class="iconfont td-icon-shuaxin"></i>
+                <VIcon>refresh</VIcon>
               </el-button>
             </li>
           </ul>
         </div>
         <div class="instance-operation-right">
           <el-button type="primary" @click="createAgent" :loading="createAgentLoading">
-            <i class="el-icon-plus" style="margin-right: 5px"></i>
+            <VIcon style="margin-right: 5px">plus</VIcon>
             <span>{{ $t('agent_button_create') }}</span>
           </el-button>
           <template v-if="isShowTestBtn">
             <el-button type="primary" @click="toOldPurchase">
-              <i class="iconfont td-icon-dinggou mr-1"></i>
               <span>{{ $t('agent_button_order1') }}</span>
             </el-button>
             <el-button type="primary" @click="toPurchase">
-              <i class="iconfont td-icon-dinggou mr-1"></i>
               <span>{{ $t('agent_button_order2') }}</span>
             </el-button>
           </template>
@@ -67,7 +65,7 @@
                   @save="updateName($event, scope.row.id)"
                 ></inline-input>
               </div>
-              <div class="flex align-center">
+              <div class="flex align-items-center">
                 <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">{{
                   $t('agent_test_use')
                 }}</span>
@@ -103,7 +101,7 @@
         </el-table-column>
         <el-table-column :label="$t('agent_version')" width="200">
           <template slot-scope="scope">
-            <div class="flex align-center">
+            <div class="flex align-items-center">
               <span v-if="showVersionFlag(scope.row)">{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
                 <el-tooltip class="ml-1" effect="dark" placement="top">
@@ -177,7 +175,7 @@
           </template>
         </el-table-column>
         <div class="instance-table__empty" slot="empty">
-          <i class="el-icon-folder-opened"></i>
+          <VIcon>folderOpened</VIcon>
           <span class="ml-1" v-if="!searchParams.keyword && !searchParams.status">{{ $t('gl_no_data') }}</span>
           <span v-else>
             {{ $t('gl_no_match_result') }}，<el-link type="primary" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
@@ -198,7 +196,7 @@
       </el-pagination>
       <el-dialog :visible.sync="upgradeDialog" width="450px" top="30vh" center>
         <div class="dialog-content">{{ $t('agent_dialog_upgrade_title') }}</div>
-        <div class="dialog-btn flex justify-evenly mt-6">
+        <div class="dialog-btn flex justify-content-evenly mt-6">
           <div class="text-center" v-if="showAutoUpgrade">
             <el-button type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
               $t('agent_button_auto_upgrade')
@@ -213,7 +211,7 @@
       <!--   升级失败   -->
       <el-dialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
         <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
-        <div class="dialog-btn flex justify-evenly mt-6">
+        <div class="dialog-btn flex justify-content-evenly mt-6">
           <div class="text-center">
             <el-button type="primary" @click="cancelUpgradeFnc">{{ $t('gl_button_cancel') }}</el-button>
           </div>
@@ -711,6 +709,9 @@ export default {
       return (
         tmInfo.updateVersion && tmInfo.updateVersion === this.version && ['fail', 'error'].includes(tmInfo.updateStatus)
       )
+    },
+    getStatusIcon(row) {
+      return this.statusMap[row.status] || {}
     }
   }
 }

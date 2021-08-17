@@ -9,7 +9,7 @@
             :class="[{ active: activeStep >= index }, { 'color-primary': activeStep >= index }]"
           >
             <span class="step-index">
-              <i v-if="activeStep > index" class="el-icon-check"></i>
+              <VIcon v-if="activeStep > index">check</VIcon>
               <span v-else>{{ index + 1 }}</span>
             </span>
             <span>{{ step.text }}</span>
@@ -322,21 +322,12 @@
       font-size: 12px;
       &.invalid {
         color: #f56c6c;
-        .el-icon-error {
-          display: inline-block;
-        }
       }
       &.ready {
         color: #67c23a;
-        .el-icon-success {
-          display: inline-block;
-        }
       }
       &.testing {
         color: #e6a23c;
-        .el-icon-warning {
-          display: inline-block;
-        }
       }
       .status-icon {
         display: none;

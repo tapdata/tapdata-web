@@ -242,15 +242,13 @@
                               size="mini"
                               v-model="header.value"
                             ></el-input>
-                            <i
-                              class="iconfont icon-jia add-btn-icon rest-api-margin"
-                              @click="addHeader(parentIndex)"
-                            ></i>
-                            <i
-                              class="iconfont icon-quxiao add-btn-icon rest-api-margin"
+                            <VIcon class="add-btn-icon rest-api-margin" @click="addHeader(parentIndex)">plus</VIcon>
+                            <VIcon
+                              class="add-btn-icon rest-api-margin"
                               v-show="item.headerArray.length > 1"
                               @click="removeHeader(parentIndex, headerIndex)"
-                            ></i>
+                              >close</VIcon
+                            >
                           </div>
                         </el-form-item>
                       </el-col>
@@ -273,15 +271,13 @@
                               size="mini"
                               v-model="parameter.value"
                             ></el-input>
-                            <i
-                              class="iconfont icon-jia add-btn-icon rest-api-margin"
-                              @click="addParameter(parentIndex)"
-                            ></i>
-                            <i
-                              class="iconfont icon-quxiao add-btn-icon rest-api-margin"
+                            <VIcon class="add-btn-icon rest-api-margin" @click="addParameter(parentIndex)">plus</VIcon>
+                            <VIcon
+                              class="add-btn-icon rest-api-margin"
                               v-show="item.parameterArray.length > 1"
                               @click="removeParameter(parentIndex, parameterIndex)"
-                            ></i>
+                              >close</VIcon
+                            >
                           </div>
                         </el-form-item>
                       </el-col>
@@ -472,7 +468,7 @@
                       </el-col>
                       <el-col :span="2" style="margin-right: -40px">
                         <el-button plain style="padding: 0" @click="removeRow(item, index)">
-                          <i class="iconfont icon-quxiao remove"></i>
+                          <VIcon class="remove">close</VIcon>
                         </el-button>
                       </el-col>
                     </el-row>
@@ -488,19 +484,19 @@
             }}</el-button>
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
-                <i class="el-icon-error"></i>
+                <VIcon class="color-danger" size="18">errorFill</VIcon>
                 <span>
                   {{ $t('connection.status.invalid') }}
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
-                <i class="el-icon-success"></i>
+                <VIcon size="18">successFillColor</VIcon>
                 <span>
                   {{ $t('connection.status.ready') }}
                 </span>
               </span>
               <span class="warning" v-if="['testing'].includes(status)">
-                <i class="el-icon-warning"></i>
+                <VIcon size="18" color="#d54e21">warning</VIcon>
                 <span>
                   {{ $t('connection.status.testing') }}
                 </span>
@@ -546,9 +542,10 @@
 <script>
 import { DEFAULT_MODEL } from './const'
 import formConfig from './config'
-
+import VIcon from '@/components/VIcon'
 let defaultConfig = []
 export default {
+  components: { VIcon },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start

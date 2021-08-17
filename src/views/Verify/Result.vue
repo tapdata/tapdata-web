@@ -7,7 +7,7 @@
           {{ typeMap[type] }}
         </div>
         <div class="error-band" style="width: 96.5%" v-if="errorMsg && type === 'row_count'">
-          <i class="iconfont icon-warning-circle"></i>
+          <VIcon class="color-info">warningOutline</VIcon>
           <span>{{ errorMsg }}</span>
         </div>
         <div v-if="resultInfo.parentId" class="color-info" style="font-size: 12px; text-align: right">
