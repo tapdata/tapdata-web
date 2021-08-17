@@ -1,5 +1,5 @@
 <template>
-  <History :remoteMethod="search" @row-click="rowClickHandler"></History>
+  <History style="margin: 0" :remoteMethod="search" @row-click="rowClickHandler"></History>
 </template>
 
 <script>
@@ -21,8 +21,9 @@ export default {
         return [countRes.data, res.data]
       })
     },
-    rowClickHandler(id) {
+    rowClickHandler(item) {
       let url = ''
+      let id = item.id
       let route = this.$router.resolve({
         name: 'dataVerifyResult',
         params: {

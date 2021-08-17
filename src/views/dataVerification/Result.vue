@@ -10,6 +10,12 @@
           <i class="iconfont icon-warning-circle"></i>
           <span>{{ errorMsg }}</span>
         </div>
+        <div v-if="resultInfo.parentId" class="color-info" style="font-size: 12px; text-align: right">
+          {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+          <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
+            $t('verify_button_diff_task_history')
+          }}</ElLink>
+        </div>
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
       </div>
     </div>
@@ -217,6 +223,17 @@ export default {
         })
       })
       return data
+    },
+    toDiffHistory() {
+      let url = ''
+      let route = this.$router.resolve({
+        name: 'VerifyDiffHistory',
+        params: {
+          id: this.resultInfo.firstCheckId
+        }
+      })
+      url = route.href
+      window.open(url, '_blank')
     }
   }
 }
