@@ -33,9 +33,9 @@
     </ElTableColumn>
     <ElTableColumn :label="$t('dataVerification.sourceRows')">
       <template slot-scope="scope">
-        <span>{{ scope.row.source_total ? scope.row.source_total : 0 }}</span>
+        <span>{{ scope.row.firstSourceTotal || scope.row.source_total || 0 }}</span>
         <div>
-          {{ scope.row.target_total ? scope.row.target_total : 0 }}
+          {{ scope.row.firstTargetTotal || scope.row.target_total || 0 }}
         </div>
       </template>
     </ElTableColumn>

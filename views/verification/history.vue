@@ -24,7 +24,7 @@
         </template>
         <template v-else>
           <el-table-column :label="$t('verify_history_source_total_rows')" prop="source_total"></el-table-column>
-          <el-table-column :label="$t('verify_history_target_total_rows')" prop="target_total"></el-table-column>
+          <!-- <el-table-column :label="$t('verify_history_target_total_rows')" prop="target_total"></el-table-column> -->
         </template>
         <el-table-column prop="progress" :label="$t('dataVerification.verifyProgress')" width="80px">
           <template slot-scope="scope">
@@ -78,7 +78,7 @@
         <el-table-column :label="$t('dataVerification.verifyStatus')" prop="status"></el-table-column>
         <el-table-column :label="$t('dataFlow.operate')" width="60px">
           <template slot-scope="scope">
-            <ElLink type="primary" @click="changeInspectResult(scope.row.id)">{{ $t('button.details') }}</ElLink>
+            <ElLink type="primary" @click="rowClick(scope.row)">{{ $t('button.details') }}</ElLink>
           </template>
         </el-table-column>
       </el-table>
@@ -137,18 +137,19 @@ export default {
         inspect_id: { regexp: `^${id}$` },
         parentId: { eq: null }
       }
-      if (this.$route.name === 'VerifyDiffHistory') {
-        where = {
-          firstCheckId: { regexp: `^${id}$` }
-        }
-      }
       let filter = {
-        where,
         order: 'start DESC',
         limit: size,
         skip: (currentPage - 1) * size,
         inspectGroupByFirstCheckId: true
       }
+      if (this.$route.name === 'VerifyDiffHistory') {
+        where = {
+          firstCheckId: { regexp: `^${id}$` }
+        }
+        delete filter.inspectGroupByFirstCheckId
+      }
+      filter.where = where
       this.remoteMethod(filter, where)
         .then(([countData, data]) => {
           if (data) {
@@ -162,10 +163,7 @@ export default {
         })
     },
     rowClick(row) {
-      this.changeInspectResult(row.id)
-    },
-    changeInspectResult(id) {
-      this.$emit('row-click', id)
+      this.$emit('row-click', row)
     }
   }
 }

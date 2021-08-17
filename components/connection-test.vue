@@ -157,7 +157,7 @@ export default {
     },
     hanlderTestConnectionResult(data) {
       this.isTimeout = false //有回调
-      this.wsErrorMsg = data.error
+      //this.wsErrorMsg = data.error
       let result = data.result || []
       this.wsError = data.status
       let testData = {
@@ -194,7 +194,7 @@ export default {
     },
     hanldleTestConnection(data) {
       this.wsError = data.status
-      this.wsErrorMsg = data.error
+      //this.wsErrorMsg = data.error
       let testData = {
         wsError: data.status
       }
@@ -241,7 +241,7 @@ export default {
       self.timer = setTimeout(() => {
         if (self.isTimeout) {
           self.wsError = 'ERROR'
-          self.wsErrorMsg = self.wsErrorMsg ? self.wsErrorMsg : self.$t('dataForm.test.retryTest')
+          self.wsErrorMsg = self.$t('dataForm.test.retryTest')
           let testData = {
             wsError: 'ERROR'
           }
