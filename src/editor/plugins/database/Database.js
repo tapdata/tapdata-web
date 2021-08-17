@@ -123,6 +123,12 @@ export const databaseConfig = {
           !['hbase'].includes(targetCell?.attributes?.form_data?.database_type) &&
           targetCell.graph.getConnectedLinks(this, {
             inbound: true
+          }).length < 1 &&
+          this.graph.getConnectedLinks(targetCell, {
+            inbound: true
+          }).length < 1 &&
+          this.graph.getConnectedLinks(targetCell, {
+            outbound: true
           }).length < 1
         )
       },
@@ -133,9 +139,19 @@ export const databaseConfig = {
        * @return {boolean}
        */
       allowSource(sourceCell) {
+        const outLinks = this.graph.getConnectedLinks(sourceCell, {
+          outbound: true,
+          includeEnclosed: false
+        })
+        let databaseType = sourceCell.getFormData().database_type
+
+        // sourceCell 拖动的时候会产生一条outLink,但是没有target.id，以此来限制当节点有目标时，不允许再去连接其他目标
         return (
           ['app.Database'].includes(sourceCell.get('type')) &&
-          !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type)
+          !['hive'].includes(databaseType) &&
+          !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type) &&
+          outLinks.length === 1 &&
+          !outLinks[0].attributes.target.id
         )
       }
     }

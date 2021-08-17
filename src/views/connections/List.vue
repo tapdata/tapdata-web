@@ -292,7 +292,7 @@ export default {
         'mysql pxc',
         'jira',
         'dameng',
-        // 'hive',
+        'hive',
         'gbase-8s',
         'sybase ase',
         'gaussdb200',
@@ -303,7 +303,8 @@ export default {
         'tcp_udp',
         'mq',
         'hbase',
-        'kudu'
+        'kudu',
+        'greenplum'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -683,6 +684,7 @@ export default {
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
       //drs 检查实例是否可用 dfs 检查agent是否可用
+      // this.dialogDatabaseTypeVisible = true
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
         this.dialogDatabaseTypeVisible = true
       } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
@@ -715,8 +717,7 @@ export default {
       let loading = this.$loading()
       this.testData = Object.assign({}, defaultModel['default'], item)
       if (['gridfs', 'mongodb'].includes(item.database_type)) {
-        this.testData.database_uri = ''
-        this.testData.isUrl = true
+        delete this.testData.database_uri
         this.testData.justTest = true
       }
       if (item.database_type !== 'redis') {

@@ -223,11 +223,13 @@
                 <template slot-scope="scope">
                   <ul class="attributes">
                     <li class="more">
-                      <label class="label">{{ $t('metadata.details.moreAttributes') }}</label>
+                      <label class="label">{{ $t('metadata.details.moreAttributes') }} </label>
                       <span>{{ $t('metadata.details.allowOverwrite') }} : {{ scope.row.is_auto_allowed }}</span>
+                      <span>{{ $t('metadata.details.is_nullable') }} : {{ scope.row.is_nullable }}</span>
                       <span>{{ $t('metadata.details.fieldLength') }} : {{ scope.row.columnSize }}</span>
                       <span>{{ $t('metadata.details.accuracy') }} : {{ scope.row.precision }}</span>
                       <span>{{ $t('metadata.details.numberLength') }} : {{ scope.row.scale }}</span>
+                      <span>{{ $t('metadata.details.selfIncreasing') }} : {{ scope.row.autoincrement }}</span>
                     </li>
                     <li v-if="scope.row.dictionary && scope.row.dictionary.length">
                       <label class="label">{{ $t('metadata.details.filedDictionary') }}</label>
@@ -250,6 +252,13 @@
               </el-table-column>
               <!-- <el-table-column type="selection" width="45" :reserve-selection="true"> </el-table-column> -->
               <el-table-column prop="field_name" :label="$t('metadata.details.filedAliasName')" width="150">
+                <template slot-scope="scope">
+                  <div class="database-text" style="margin-left: 0">
+                    <div>
+                      {{ scope.row.field_name }} <i v-if="scope.row.primary_key" class="iconfont icon-yuechi1"></i>
+                    </div>
+                  </div>
+                </template>
               </el-table-column>
               <el-table-column prop="alias_name" :label="$t('metadata.details.alias')" width="80">
                 <template slot-scope="scope">
@@ -616,9 +625,13 @@ export default {
       return Promise.all([this.$api('MetadataInstances').get([this.$route.query.id])])
         .then(res => {
           this.metadataDataObj = res[0].data
-
           this.pageTotal = (res[0].data.fields && res[0].data.fields.length) || 0
           this.setCurrentPageData(this.metadataDataObj.fields || [])
+          if (['table', 'collection'].includes(this.metadataDataObj.meta_type)) {
+            this.activePanel = 'model'
+          } else if (['database'].includes(this.metadataDataObj.meta_type)) {
+            this.activePanel = 'collections'
+          }
         })
         .finally(() => {
           this.loading = false
@@ -860,6 +873,9 @@ export default {
   width: 100%;
   height: 100%;
   background-color: rgba(239, 241, 244, 100);
+  .icon-yuechi1 {
+    color: darkorange;
+  }
   .header {
     position: relative;
     height: 50px;

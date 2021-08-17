@@ -399,7 +399,11 @@ export default class Editor extends BaseObject {
 
       this.getBottomTabPanel().add(milestone)
       this.getBottomTabPanel().add(logsPanel)
-      this.getBottomTabPanel().add(progress)
+      // if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+      if (dataFlow.setting.sync_type !== 'cdc') {
+        this.getBottomTabPanel().add(progress)
+        // }
+      }
     }
 
     if (this.getBottomSidebar().isShow() && milestone.selected && !isShow) {

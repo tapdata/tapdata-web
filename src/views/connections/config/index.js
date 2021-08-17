@@ -44,6 +44,7 @@ import dfs_elasticsearch from './dfs_elasticsearch'
 import mq from './mq'
 import hbase from './hbase'
 import kudu from './kudu'
+import greenplum from './greenplum'
 
 export default {
   mysql,
@@ -91,5 +92,6 @@ export default {
   dameng,
   tcp_udp,
   hbase,
-  kudu
+  kudu,
+  greenplum
 }

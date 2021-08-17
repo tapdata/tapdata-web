@@ -171,13 +171,19 @@ export const FORM_DATA_KEY = 'form_data',
       name: 'Elasticsearch',
       shapeImage: 'static/editor/o-elasticsearch.svg',
       stencilImage: 'static/editor/elasticsearch.svg'
+    },
+    greenplum: {
+      type: 'greenplum',
+      name: 'Greenplum',
+      shapeImage: 'static/editor/o-greenplum.svg',
+      stencilImage: 'static/editor/greenplum.svg'
+    },
+    hive: {
+      type: 'hive',
+      name: 'Hive',
+      shapeImage: 'static/editor/o-hive.svg',
+      stencilImage: 'static/editor/hive.svg'
     }
-    // hive: {
-    //   type: 'hive',
-    //   name: 'Hive',
-    //   shapeImage: 'static/editor/o-hive.svg',
-    //   stencilImage: 'static/editor/hive.svg'
-    // }
   },
   FILE_TYPE_MAPPING = {
     xml: {

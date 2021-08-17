@@ -226,7 +226,7 @@ export const messageProcessConfig = {
     size: { width: 5, height: 4 },
     attrs: {
       root: {
-        dataTooltip: i18n.t('editor.cell.processor.script.tip'),
+        dataTooltip: i18n.t('editor.cell.processor.transform.tip'),
         dataTooltipPosition: 'left',
         dataTooltipPositionSelector: '.joint-stencil'
       },

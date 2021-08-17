@@ -501,6 +501,16 @@ const childRoutes = [
     }
   },
   {
+    path: '/dataVerification/:id/details',
+    name: 'dataVerifyDetails',
+    component: () => import('@/views/dataVerification/Details'),
+    meta: {
+      title: i18n.t('dataVerification.verifyDetail'),
+      isCollapse: true,
+      code: 'Data_verify'
+    }
+  },
+  {
     path: '/dataVerification/create',
     name: 'dataVerificationCreate',
     component: () => import('@/views/dataVerification/Form'),
@@ -521,7 +531,7 @@ const childRoutes = [
     }
   },
   {
-    path: '/dataVerifyHistory',
+    path: '/dataVerification/:id/history',
     name: 'dataVerifyHistory',
     component: () => import('@/views/dataVerification/History'),
     meta: {
@@ -531,7 +541,17 @@ const childRoutes = [
     }
   },
   {
-    path: '/dataVerifyResult',
+    path: '/dataVerifyResult/:id/history',
+    name: 'VerifyDiffHistory',
+    component: () => import('@/views/dataVerification/History'),
+    meta: {
+      title: i18n.t('dataVerification.verifyHistory'),
+      isCollapse: true,
+      code: 'Data_verify'
+    }
+  },
+  {
+    path: '/dataVerifyResult/:id',
     name: 'dataVerifyResult',
     component: () => import('@/views/dataVerification/Result'),
     meta: {

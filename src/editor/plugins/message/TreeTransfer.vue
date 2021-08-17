@@ -56,6 +56,7 @@
         :allow-drop="allowDropRight"
         @node-click="nodeClickRight"
         @check-change="checkChangeRight"
+        @node-drag-end="nodeDragEndRight"
       >
         <div class="custom-tree-node flex justify-between" slot-scope="{ node, data }">
           <slot name="right-tree" :data="data" :node="node"></slot>
@@ -110,16 +111,16 @@ export default {
     }
   },
   methods: {
-    toRight(noRemove = false, data = null) {
+    toRight(noRemove = false, data = null, addLeftData = true) {
       // 移到右侧
       let getCurrentNodeRight = this.getCurrentNodeRight()
       let currentNodeRightParent = this.rightTreeData?.node?.parent
       if (getCurrentNodeRight?.message) {
-        this.toRightNode(data)
+        this.toRightNode(data, null)
       } else if (currentNodeRightParent?.parent) {
         this.toRightNode(data, currentNodeRightParent?.data)
       } else {
-        this.toRightTree(data)
+        this.toRightTree(data, addLeftData)
       }
 
       if (noRemove) {
@@ -138,11 +139,14 @@ export default {
       this.rightTreeData = null
     },
     // 移动到右侧树
-    toRightTree(data = null) {
+    toRightTree(data = null, addLeftData = true) {
       let getCheckedNodesLeft = this.getCheckedNodesLeft()
       this.toRightBefore?.(getCheckedNodesLeft)
       this.resetRightTree()
-      let result = [...this.rightData, ...getCheckedNodesLeft]
+      let result = [...this.rightData]
+      if (addLeftData) {
+        result = [...this.rightData, ...getCheckedNodesLeft]
+      }
       if (data) {
         result.push(data)
       }
@@ -201,6 +205,9 @@ export default {
     // 获取选中的节点-右树
     getCheckedNodesRight() {
       return this.$refs.rightTree.getCheckedNodes()
+    },
+    nodeDragEndRight() {
+      this.$emit('node-drag-end-right', arguments)
     },
     // 设置选中的节点-左树
     setCheckedKeysRight(keys = []) {

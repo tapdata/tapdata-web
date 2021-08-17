@@ -1,6 +1,6 @@
 <template>
   <div class="task-progressInfo">
-    <div class="tip">迁移详情</div>
+    <div class="tip">{{ $t('taskProgress.progressInfo') }}</div>
     <TablePage
       ref="table"
       row-key="id"
@@ -16,39 +16,82 @@
             class="input-with-select"
             size="mini"
             v-model="searchParams.keyword"
-            placeholder="输入表名关键字查询"
+            :placeholder="$t('taskProgress.querySearch')"
             @input="table.fetch(1, 800)"
           >
           </el-input>
         </li>
         <li class="item">
-          全量迁移进度筛选：
+          {{ $t('taskProgress.progressScreening') }}：
           <el-select clearable size="mini" v-model="searchParams.metaType" @input="table.fetch(1)">
             <el-option v-for="opt in typeList" :key="opt.value" :label="opt.label" :value="opt.value"></el-option>
           </el-select>
         </li>
       </ul>
-      <el-table-column label="源表名" prop="statsData.sourceTableName" sortable>
+      <el-table-column :label="$t('taskProgress.sourceTableName')" prop="statsData.sourceTableName" sortable>
         <template slot-scope="scope">
           {{ scope.row.statsData.sourceTableName }}
         </template>
       </el-table-column>
-      <el-table-column label="总数据量（行）" prop="statsData.sourceRowNum" sortable>
+
+      <el-table-column
+        :label="$t('taskProgress.sourceLibraryeName')"
+        prop="statsData.sourceDbName"
+        sortable
+        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+      >
+      </el-table-column>
+      <el-table-column
+        :label="$t('taskProgress.sourceType')"
+        prop="statsData.sourceConnectionName"
+        sortable
+        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+      >
+      </el-table-column>
+
+      <el-table-column :label="$t('taskProgress.totalDataVolume')" prop="statsData.sourceRowNum" sortable>
         <template slot-scope="scope">
           {{ scope.row.statsData.sourceRowNum }}
         </template>
       </el-table-column>
-      <el-table-column label="目标表名" prop="statsData.targetTableName" sortable>
+      <el-table-column :label="$t('taskProgress.targetTableName')" prop="statsData.targetTableName" sortable>
         <template slot-scope="scope">
           {{ scope.row.statsData.targetTableName }}
         </template>
       </el-table-column>
-      <el-table-column label="已迁移数据量" prop="statsData.targetRowNum" sortable>
+      <el-table-column
+        :label="$t('taskProgress.targetLibraryName')"
+        prop="statsData.targetDbName"
+        sortable
+        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+      >
+      </el-table-column>
+      <el-table-column
+        :label="$t('taskProgress.targetType')"
+        prop="statsData.targetConnectionName"
+        sortable
+        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+      >
+      </el-table-column>
+
+      <el-table-column
+        :label="
+          $route.query.mappingFlag ? $t('taskprogress_completed_sync_data') : $t('taskProgress.completedMigrateData')
+        "
+        prop="statsData.targetRowNum"
+        sortable
+      >
         <template slot-scope="scope">
           {{ scope.row.statsData.targetRowNum }}
         </template>
       </el-table-column>
-      <el-table-column label="全量迁移进度" prop="statsData.status" sortable>
+      <el-table-column
+        :label="
+          $route.query.mappingFlag ? $t('taskprogress_full_sync_progress') : $t('taskProgress.fullMigrationProgress')
+        "
+        prop="statsData.status"
+        sortable
+      >
         <template slot-scope="scope">
           {{ scope.row.statsData.status }}
         </template>
@@ -72,9 +115,9 @@ export default {
         metaType: 'all'
       },
       typeList: [
-        { label: '全部', value: 'all' },
-        { label: '运行中', value: 'running' },
-        { label: '等待中', value: 'waiting' }
+        { label: this.$t('taskProgress.all'), value: 'all' },
+        { label: this.$t('taskProgress.running'), value: 'running' },
+        { label: this.$t('taskProgress.waiting'), value: 'waiting' }
       ]
     }
   },
@@ -91,18 +134,16 @@ export default {
         dataFlowId: { like: this.$route.query.id },
         statsType: 'dataFlowDetailsStats'
       }
-      let countWhere = {
-        dataFlowId: this.$route.query.id,
-        statsType: 'dataFlowDetailsStats'
+      if (this.$route.query.sourceConnectionId) {
+        where['statsData.sourceConnectionId'] = { like: this.$route.query.sourceConnectionId }
+        where['statsData.targetConnectionId'] = { like: this.$route.query.targetConnectionId }
       }
       if (keyword && keyword.trim()) {
         let filterObj = { like: toRegExp(keyword), options: 'i' }
         where.or = [{ 'statsData.sourceTableName': filterObj }, { 'statsData.targetTableName': filterObj }]
-        countWhere.or = [{ 'statsData.sourceTableName': filterObj }, { 'statsData.targetTableName': filterObj }]
       }
       if (metaType !== 'all' && metaType) {
         where['statsData.status'] = metaType
-        countWhere['statsData.status'] = metaType
       }
 
       let filter = {
@@ -112,7 +153,7 @@ export default {
         where
       }
       return Promise.all([
-        this.$api('DataFlowInsights').count({ where: JSON.stringify(countWhere) }),
+        this.$api('DataFlowInsights').count({ where: JSON.stringify(where) }),
         this.$api('DataFlowInsights').get({
           filter: JSON.stringify(filter)
         })
@@ -123,9 +164,9 @@ export default {
               let num = (item.statsData.targetRowNum / item.statsData.sourceRowNum) * 100
               item.statsData.status = num ? num.toFixed(2) + '%' : 0 + '%'
             } else if (item.statsData.status === 'done') {
-              item.statsData.status = '完成'
+              item.statsData.status = this.$t('taskProgress.done')
             } else {
-              item.statsData.status = '等待中'
+              item.statsData.status = this.$t('taskProgress.waiting')
             }
           })
         }
@@ -148,9 +189,9 @@ export default {
   height: 100%;
   overflow: hidden;
   .tip {
-    height: 30px;
+    height: 40px;
     padding-left: 20px;
-    line-height: 30px;
+    line-height: 40px;
     font-size: 12px;
     background: #f5f5f5;
     border: 1px solid #dedee4;
@@ -166,6 +207,7 @@ export default {
     .item {
       margin-right: 10px;
       font-size: 12px;
+      white-space: nowrap;
     }
   }
 }

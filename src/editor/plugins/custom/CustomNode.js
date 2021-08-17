@@ -48,7 +48,16 @@ export const customNodeConfig = {
        * @return {boolean}
        */
       allowSource(sourceCell) {
-        return ['app.Dummy', 'app.Collection', 'app.Table', 'app.HiveNode'].includes(sourceCell.get('type'))
+        return [
+          'app.Dummy',
+          'app.Collection',
+          'app.Table',
+          'app.HiveNode',
+          'app.FieldProcess',
+          'app.Script',
+          'app.DataFilter',
+          'app.MemCache'
+        ].includes(sourceCell.get('type'))
       },
 
       validate(data) {
