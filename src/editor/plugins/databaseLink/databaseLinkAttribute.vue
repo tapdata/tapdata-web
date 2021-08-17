@@ -559,7 +559,7 @@ export default {
     async updateFieldProcess(rollback, rollbackTable, id) {
       let data = this.scope.getDataFlowData()
       if (!data) return
-      if (rollback === 'table') {
+      if (rollback === 'all') {
         data['rollback'] = rollback
         //删除整个字段处理器
         this.model.field_process = []
