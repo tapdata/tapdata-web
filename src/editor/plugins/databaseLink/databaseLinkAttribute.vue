@@ -556,27 +556,37 @@ export default {
         this.fieldMappingNavData = data?.data
       })
     },
-    async updateFieldProcess(rollback, rollbackTable) {
+    async updateFieldProcess(rollback, rollbackTable, id) {
       let data = this.scope.getDataFlowData()
       if (!data) return
-      if (rollback) {
+      if (rollback === 'all') {
         data['rollback'] = rollback
-      }
-      if (rollbackTable) {
+        //删除整个字段处理器
+        this.model.field_process = []
+      } else if (rollbackTable) {
+        data['rollback'] = rollback
         data['rollbackTable'] = rollbackTable
+        for (let i = 0; i < this.model.field_process.length; i++) {
+          // 删除操作
+          let ops = this.model.field_process[i]
+          if (ops.table_id === id) {
+            this.model.field_process.splice(i, 1)
+          }
+        }
       }
       let promise = await this.$api('DataFlows').getMetadata(data)
       return promise?.data
     },
     //更新左边导航
     updateFieldMappingNavData(data) {
+      console.log(data)
       this.fieldMappingNavData = data
     },
     //获取表设置
     async intiFieldMappingTableData(row) {
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
-      let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName)
+      let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
       target = target.data && target.data.length > 0 ? target.data[0].fields : []
       //源表 目标表数据组合
       let fieldMappingTableData = []
