@@ -157,6 +157,23 @@ export default {
       return {
         type: 'object',
         properties: {
+          "flowEngineVersion":{
+            title: '同步引擎',
+            type: 'string',
+            'x-decorator': 'ElFormItem',
+            'x-component': 'Select',
+            default:'Data_Flow_Engine_V1',
+            enum: [
+              {
+                label: 'V1 Flow Engine',
+                value: "Data_Flow_Engine_V1"
+              },
+              {
+                label: 'Jet Flow Engine',
+                value: "Jet_Flow_Engine_V2"
+              }
+            ]
+          },
           sync_type: {
             title: '同步类型',
             type: 'string',
