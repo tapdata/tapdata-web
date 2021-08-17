@@ -33,7 +33,7 @@
           </li>
         </ul>
         <div class="connection-table__empty" v-if="listData.length < 1">
-          <VIcon size="76">wutongzhi</VIcon>
+          <VIcon size="76">notice-color</VIcon>
           <span>暂无通知</span>
         </div>
       </div>

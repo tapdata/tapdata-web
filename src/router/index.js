@@ -199,7 +199,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "instance" */ '../views/OperationLog/List.vue'),
         meta: {
           title: '操作日志',
-          icon: 'operationLog'
+          icon: 'operation-log'
         }
       },
       {

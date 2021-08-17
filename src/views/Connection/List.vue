@@ -92,7 +92,7 @@
           </template>
         </ElTableColumn>
         <div class="connection-table__empty" slot="empty">
-          <VIcon>folderOpened</VIcon>
+          <VIcon>folder-opened</VIcon>
           <span class="ml-1" v-if="!isSearching">暂无数据</span>
           <span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
         </div>

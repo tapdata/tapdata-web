@@ -108,7 +108,7 @@
                   <div slot="content">{{ getTooltipContent(scope.row) }}</div>
                   <div>
                     <div class="upgrading-box" v-if="upgradingFlag(scope.row)">
-                      <VIcon class="v-icon" size="20">upgradeLoadingColor</VIcon>
+                      <VIcon class="v-icon" size="20">upgrade-loading-color</VIcon>
                       <el-progress
                         v-if="upgradingProgres(scope.row) !== undefined"
                         class="upgrading-progress"
@@ -128,14 +128,14 @@
                       size="20"
                       class="cursor-pointer block"
                       @click="showUpgradeErrorDialogFnc(scope.row)"
-                      >upgradeErrorColor</VIcon
+                      >upgrade-error-color</VIcon
                     >
                     <VIcon
                       v-else-if="!upgradeFlag(scope.row)"
                       size="20"
                       class="cursor-pointer block"
                       @click="showUpgradeDialogFnc(scope.row)"
-                      >upgradeColor</VIcon
+                      >upgrade-color</VIcon
                     >
                   </div>
                 </el-tooltip>
@@ -175,7 +175,7 @@
           </template>
         </el-table-column>
         <div class="instance-table__empty" slot="empty">
-          <VIcon>folderOpened</VIcon>
+          <VIcon>folder-opened</VIcon>
           <span class="ml-1" v-if="!searchParams.keyword && !searchParams.status">{{ $t('gl_no_data') }}</span>
           <span v-else>
             {{ $t('gl_no_match_result') }}，<el-link type="primary" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
@@ -709,9 +709,6 @@ export default {
       return (
         tmInfo.updateVersion && tmInfo.updateVersion === this.version && ['fail', 'error'].includes(tmInfo.updateStatus)
       )
-    },
-    getStatusIcon(row) {
-      return this.statusMap[row.status] || {}
     }
   }
 }

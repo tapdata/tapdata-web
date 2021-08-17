@@ -17,7 +17,7 @@
               <div class="create-list__desc">{{ item.desc }}</div>
               <div class="create-list__btn text-end pointer" @click="item.action">
                 <span>{{ item.btnName }}</span>
-                <VIcon class="ml-2" size="12">arrowright</VIcon>
+                <VIcon class="ml-2" size="12">right</VIcon>
               </div>
             </div>
           </div>
@@ -101,7 +101,7 @@
         <el-popover placement="left" width="200" trigger="hover" content="电话咨询：0755-26656080">
           <a href="tel:0755-26656080" slot="reference">
             <div class="tapdata-contact__icon">
-              <VIcon size="20">dianhuaColor</VIcon>
+              <VIcon size="20">telephone-color</VIcon>
             </div>
           </a>
         </el-popover>
@@ -114,7 +114,7 @@
             <div class="tapdata-contact__text">扫码咨询</div>
           </div>
           <div class="tapdata-contact__icon" slot="reference">
-            <VIcon size="20">weixinColor</VIcon>
+            <VIcon size="20">wx-color</VIcon>
           </div>
         </el-popover>
       </li>
@@ -126,7 +126,7 @@
             <div class="tapdata-contact__text">扫码咨询</div>
           </div>
           <div class="tapdata-contact__icon" slot="reference">
-            <VIcon size="20">kefuColor</VIcon>
+            <VIcon size="20">service-color</VIcon>
           </div>
         </el-popover>
       </li>

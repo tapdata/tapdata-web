@@ -67,12 +67,12 @@ export default {
     svgObj() {
       return this.isSuccess
         ? this.result.successTitle
-          ? { icon: 'waitFillColor', class: 'color-primary' }
-          : { icon: 'successFillColor', class: 'color-success' }
-        : { icon: 'errorFillColor', class: 'color-danger' }
+          ? { icon: 'wait-fill-color', class: 'color-primary' }
+          : { icon: 'success-fill-color', class: 'color-success' }
+        : { icon: 'error-fill-color', class: 'color-danger' }
     },
     svgUrl() {
-      return this.isSuccess ? (this.result.successTitle ? 'waitFillColor' : 'successFillColor') : 'errorFillColor'
+      return this.isSuccess ? (this.result.successTitle ? 'wait-fill-color' : 'success-fill-color') : 'error-fill-color'
     },
     isSuccess() {
       return this.result.type === 'success'

@@ -72,7 +72,7 @@
                     </template>
                     <ElLink style="font-size: 12px" type="primary" @click="toHelp()">了解更多</ElLink>
                   </div>
-                  <VIcon size="16">questionCircle</VIcon>
+                  <VIcon size="16">question-circle</VIcon>
                 </ElTooltip>
               </div>
             </ElFormItem>
@@ -99,7 +99,7 @@
                       可用区：同一地域内独立的物理区域，电力和网络均互相独立的物理数据中心，可以保障可用区间系统性故障的相互隔离
                     </p>
                   </div>
-                  <VIcon size="16">questionCircle</VIcon>
+                  <VIcon size="16">question-circle</VIcon>
                 </ElTooltip>
               </div>
               <p class="form-item-tips">
@@ -166,7 +166,7 @@
       <template v-if="pageType === 'confirm'">
         <div class="confirm-top">
           <ElButton class="btn-back" size="mini" @click="pageType = 'form'">
-            <VIcon>arrowLeft</VIcon>
+            <VIcon>arrow-left</VIcon>
           </ElButton>
           <ElLink style="font-size: 14px; margin-left: 3px" type="primary" @click="pageType = 'form'">
             修改配置

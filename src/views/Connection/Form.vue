@@ -484,13 +484,13 @@
             }}</el-button>
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
-                <VIcon class="color-danger" size="18">errorFill</VIcon>
+                <VIcon class="color-danger" size="18">error-fill</VIcon>
                 <span>
                   {{ $t('connection.status.invalid') }}
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
-                <VIcon size="18">successFillColor</VIcon>
+                <VIcon size="18">success-fill-color</VIcon>
                 <span>
                   {{ $t('connection.status.ready') }}
                 </span>

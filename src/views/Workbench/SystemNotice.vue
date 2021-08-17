@@ -46,7 +46,7 @@
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip label="通知时间" prop="createTime" width="150"></ElTableColumn>
         <div class="connection-table__empty" slot="empty">
-          <VIcon size="100">noNoticeColor</VIcon>
+          <VIcon size="100">no-notice-color</VIcon>
           <span v-if="!isSearching" style="display: inline-block; margin-left: 6px">暂无通知</span>
         </div>
       </El-table>

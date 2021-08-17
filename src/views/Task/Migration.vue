@@ -113,7 +113,7 @@
             <ElDropdown @command="handleMore($event, scope.row, scope.$index)">
               <ElLink type="primary">
                 更多
-                <VIcon>arrowDownSingle</VIcon>
+                <VIcon>arrow-down</VIcon>
               </ElLink>
               <ElDropdownMenu slot="dropdown">
                 <ElDropdownItem command="copy">复制</ElDropdownItem>
@@ -128,7 +128,7 @@
           </template>
         </ElTableColumn>
         <div class="migration-table__empty" slot="empty">
-          <VIcon>folderOpened</VIcon>
+          <VIcon>folder-opened</VIcon>
           <span class="ml-1" v-if="!isSearching">暂无数据</span>
           <span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
         </div>

@@ -11,7 +11,7 @@
     <div class="connection-drawer-wrap" v-loading="previewLoading" v-if="visible">
       <div class="bar">
         <button type="button" class="el-button back-btn-icon-box el-button--default" @click="handleClose">
-          <VIcon size="18">arrowRightSingle</VIcon>
+          <VIcon size="18">arrow-right</VIcon>
         </button>
         <span class="ml-2 back-btn-text">{{ $t('connection.info') }}</span>
       </div>
@@ -24,13 +24,13 @@
             <div>{{ name }}</div>
             <div class="status">
               <span class="error" v-if="['invalid'].includes(status)">
-                <VIcon class="color-danger" size="18">errorFill</VIcon>
+                <VIcon class="color-danger" size="18">error-fill</VIcon>
                 <span>
                   {{ $t('connection.status.invalid') }}
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
-                <VIcon size="18">successFillColor</VIcon>
+                <VIcon size="18">success-fill-color</VIcon>
                 <span>
                   {{ $t('connection.status.ready') }}
                 </span>

@@ -99,19 +99,19 @@
         <template slot-scope="scope">
           <template v-if="scope.row.result && ['waiting', 'done'].includes(scope.row.status)">
             <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
-              <VIcon class="color-danger" size="14">errorFill</VIcon>
+              <VIcon class="color-danger" size="14">error-fill</VIcon>
               <span v-if="scope.row.inspectMethod === 'row_count'">
                 {{ $t('dataVerification.inconsistent') }}
               </span>
               <span v-else> {{ $t('dataVerification.contConsistent') }}{{ scope.row.difference_number }} </span>
             </div>
             <div v-else class="data-verify__status success">
-              <VIcon size="18">successFillColor</VIcon>
+              <VIcon size="18">success-fill-color</VIcon>
               <span>{{ $t('dataVerification.consistent') }}</span>
             </div>
           </template>
           <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
-            <VIcon class="color-danger" size="14">errorFill</VIcon>
+            <VIcon class="color-danger" size="14">error-fill</VIcon>
             <span>Error</span>
           </div>
           <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
@@ -166,7 +166,7 @@
         </template>
       </ElTableColumn>
       <div class="page-table__empty" slot="empty">
-        <VIcon>folderOpened</VIcon>
+        <VIcon>folder-opened</VIcon>
         <span class="ml-1" v-if="!isSearching">暂无数据</span>
         <span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
       </div>

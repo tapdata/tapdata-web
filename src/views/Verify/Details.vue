@@ -7,7 +7,7 @@
           {{ typeMap[type] }}
         </div>
         <div class="error-band" style="width: 96.5%" v-if="errorMsg && type === 'row_count'">
-          <VIcon class="color-info">warningOutline</VIcon>
+          <VIcon class="color-info">warning-outline</VIcon>
           <span>{{ errorMsg }}</span>
         </div>
         <div
@@ -30,7 +30,7 @@
                 <div slot="content" style="width: 232px">
                   {{ $t('verify_button_diff_verify_tips') }}
                 </div>
-                <VIcon class="ml-2 color-info" size="14">warningOutline</VIcon>
+                <VIcon class="ml-2 color-info" size="14">warning-outline</VIcon>
               </el-tooltip>
             </template>
           </div>
