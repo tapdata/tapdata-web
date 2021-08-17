@@ -1043,14 +1043,23 @@ export default {
       })
     },
     //恢复默认
-    async updateFieldProcess(rollback, rollbackTable) {
+    async updateFieldProcess(rollback, rollbackTable, id) {
       let data = this.daft()
       if (!data) return
-      if (rollback) {
+      if (rollback === 'all') {
         data['rollback'] = rollback
-      }
-      if (rollbackTable) {
+        //删除整个字段处理器
+        this.transferData.field_process = []
+      } else if (rollbackTable) {
+        data['rollback'] = rollback
         data['rollbackTable'] = rollbackTable
+        for (let i = 0; i < this.transferData.field_process.length; i++) {
+          // 删除操作
+          let ops = this.transferData.field_process[i]
+          if (ops.table_id === id) {
+            this.transferData.field_process.splice(i, 1)
+          }
+        }
       }
       let promise = await this.$axios.post('tm/api/DataFlows/metadata', data)
       return promise
