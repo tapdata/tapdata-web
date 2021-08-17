@@ -566,7 +566,6 @@ export default {
       } else if (rollbackTable) {
         data['rollback'] = rollback
         data['rollbackTable'] = rollbackTable
-        if (this.model?.field_process?.length === 0) return
         for (let i = 0; i < this.model.field_process.length; i++) {
           // 删除操作
           let ops = this.model.field_process[i]
@@ -575,12 +574,12 @@ export default {
           }
         }
       }
-
       let promise = await this.$api('DataFlows').getMetadata(data)
       return promise?.data
     },
     //更新左边导航
     updateFieldMappingNavData(data) {
+      console.log(data)
       this.fieldMappingNavData = data
     },
     //获取表设置
