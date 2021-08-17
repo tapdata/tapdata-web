@@ -343,6 +343,12 @@ export default class Graph extends Component {
       cursor: 'grab',
       contentOptions: function (paperScroller) {
         let visibleArea = paperScroller.getVisibleArea()
+        console.log('visibleArea', visibleArea, {
+          bottom: visibleArea.height / 2,
+          top: visibleArea.height / 2,
+          left: visibleArea.width / 2,
+          right: visibleArea.width / 2
+        })
         return {
           padding: {
             bottom: visibleArea.height / 2,

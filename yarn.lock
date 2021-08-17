@@ -921,48 +921,48 @@
     "@babel/helper-validator-identifier" "^7.14.8"
     to-fast-properties "^2.0.0"
 
-"@formily/core@2.0.0-beta.82", "@formily/core@^2.0.0-beta.80":
-  version "2.0.0-beta.82"
-  resolved "https://registry.npmjs.org/@formily/core/-/core-2.0.0-beta.82.tgz#8042fa8bbf85763273643abfeff4dec527fe03aa"
-  integrity sha512-sfemLZDq1wDJZ3PSpGcCJYH7mCrtqvwxywtcEQXhFLIWEB1dbCWIqilEwEkfqFz9PB5bbSpVzv6dsZT7yB22cA==
+"@formily/core@2.0.0-beta.84", "@formily/core@^2.0.0-beta.84":
+  version "2.0.0-beta.84"
+  resolved "https://registry.nlark.com/@formily/core/download/@formily/core-2.0.0-beta.84.tgz?cache=0&sync_timestamp=1627703441819&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40formily%2Fcore%2Fdownload%2F%40formily%2Fcore-2.0.0-beta.84.tgz#545499a09e543bb8f16e7bb1d8c7bcbba84841ed"
+  integrity sha1-VFSZoJ5UO7jxbnux2Me8u6hIQe0=
   dependencies:
-    "@formily/reactive" "2.0.0-beta.82"
-    "@formily/shared" "2.0.0-beta.82"
-    "@formily/validator" "2.0.0-beta.82"
+    "@formily/reactive" "2.0.0-beta.84"
+    "@formily/shared" "2.0.0-beta.84"
+    "@formily/validator" "2.0.0-beta.84"
 
-"@formily/json-schema@2.0.0-beta.82":
-  version "2.0.0-beta.82"
-  resolved "https://registry.npmjs.org/@formily/json-schema/-/json-schema-2.0.0-beta.82.tgz#9f089a1049f0dc76a1b96f8a03a577dd0af313ea"
-  integrity sha512-eIQDqZuYbXnjFalTwfLXTAbgeEHunz9/dMC6q3eROk0Ny59H/zQErjerA3ahuQpf9Va1+tnz0rqmHY8d+J31Yg==
+"@formily/json-schema@2.0.0-beta.84":
+  version "2.0.0-beta.84"
+  resolved "https://registry.nlark.com/@formily/json-schema/download/@formily/json-schema-2.0.0-beta.84.tgz?cache=0&sync_timestamp=1627704315826&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40formily%2Fjson-schema%2Fdownload%2F%40formily%2Fjson-schema-2.0.0-beta.84.tgz#e1796953a9fbea7a797c7ebb850159f5b355e6b6"
+  integrity sha1-4XlpU6n76np5fH67hQFZ9bNV5rY=
   dependencies:
-    "@formily/core" "2.0.0-beta.82"
-    "@formily/reactive" "2.0.0-beta.82"
-    "@formily/shared" "2.0.0-beta.82"
+    "@formily/core" "2.0.0-beta.84"
+    "@formily/reactive" "2.0.0-beta.84"
+    "@formily/shared" "2.0.0-beta.84"
 
-"@formily/path@2.0.0-beta.82":
-  version "2.0.0-beta.82"
-  resolved "https://registry.npmjs.org/@formily/path/-/path-2.0.0-beta.82.tgz#f11632577d21d2cd98f6dfffe20f1ef5f03eaf56"
-  integrity sha512-luaKOQDFOVzyw9QbjD9aHVFt12omelO7MSfIHPvOP5t1gKLIVi0+ifgTlJYOlmXeE0uTBcr09rz6zG7Nypvuvw==
+"@formily/path@2.0.0-beta.84":
+  version "2.0.0-beta.84"
+  resolved "https://registry.nlark.com/@formily/path/download/@formily/path-2.0.0-beta.84.tgz?cache=0&sync_timestamp=1627704315092&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40formily%2Fpath%2Fdownload%2F%40formily%2Fpath-2.0.0-beta.84.tgz#efb7d204a59cb2d1193b7db3550fe7d1e567bb1b"
+  integrity sha1-77fSBKWcstEZO32zVQ/n0eVnuxs=
 
-"@formily/reactive-vue@2.0.0-beta.82", "@formily/reactive-vue@^2.0.0-beta.80":
-  version "2.0.0-beta.82"
-  resolved "https://registry.npmjs.org/@formily/reactive-vue/-/reactive-vue-2.0.0-beta.82.tgz#2b608089743a05783c1668f3db7cf9c62389234c"
-  integrity sha512-Wu9jJtus9KSM53JOwgcKF4ZNLJIUj5Pu/Ehx1yR0N2a3s5ZEQ0YccJVWNHsrYstaofxZmeMaeCHnZ/pf9SdGDw==
+"@formily/reactive-vue@2.0.0-beta.84", "@formily/reactive-vue@^2.0.0-beta.84":
+  version "2.0.0-beta.84"
+  resolved "https://registry.nlark.com/@formily/reactive-vue/download/@formily/reactive-vue-2.0.0-beta.84.tgz#e0db640e3d2d28cd8a5922e6bf86da7059c86436"
+  integrity sha1-4NtkDj0tKM2KWSLmv4bacFnIZDY=
   dependencies:
-    "@formily/reactive" "2.0.0-beta.82"
+    "@formily/reactive" "2.0.0-beta.84"
     vue-demi "^0.9.0"
 
-"@formily/reactive@2.0.0-beta.82", "@formily/reactive@^2.0.0-beta.80":
-  version "2.0.0-beta.82"
-  resolved "https://registry.npmjs.org/@formily/reactive/-/reactive-2.0.0-beta.82.tgz#0411943ae93da899cd1584b7f258bf4a523d49ab"
-  integrity sha512-7zA4BMMg2+qh0lzRTqXb8OEB8/t/4qDYzuZMwGIYF/mQzxQlgQHKdYdCq/F8Ex/43P/rxx1VgTUPYpyiL1fo1A==
+"@formily/reactive@2.0.0-beta.84", "@formily/reactive@^2.0.0-beta.84":
+  version "2.0.0-beta.84"
+  resolved "https://registry.nlark.com/@formily/reactive/download/@formily/reactive-2.0.0-beta.84.tgz?cache=0&sync_timestamp=1627704315183&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40formily%2Freactive%2Fdownload%2F%40formily%2Freactive-2.0.0-beta.84.tgz#4faec3e6fb58d913d4d8534064e57d7b86374959"
+  integrity sha1-T67D5vtY2RPU2FNAZOV9e4Y3SVk=
 
-"@formily/shared@2.0.0-beta.82":
-  version "2.0.0-beta.82"
-  resolved "https://registry.npmjs.org/@formily/shared/-/shared-2.0.0-beta.82.tgz#06ee71cc9a13214dbf528d8066b1cfe7ba4d8845"
-  integrity sha512-ZXaR+eT63uv1ZlJpR/6hciI5XuxPYdOkIlvesy6PK+IiNHcqg5J0VRwTzo746GLJuGt7rKC9jvFlN21/PsEgAw==
+"@formily/shared@2.0.0-beta.84":
+  version "2.0.0-beta.84"
+  resolved "https://registry.nlark.com/@formily/shared/download/@formily/shared-2.0.0-beta.84.tgz#3d5d5b8575952bb48910ee82070bc704a7fa4445"
+  integrity sha1-PV1bhXWVK7SJEO6CBwvHBKf6REU=
   dependencies:
-    "@formily/path" "2.0.0-beta.82"
+    "@formily/path" "2.0.0-beta.84"
     camel-case "^4.1.1"
     lower-case "^2.0.1"
     no-case "^3.0.4"
@@ -970,24 +970,24 @@
     pascal-case "^3.1.1"
     upper-case "^2.0.1"
 
-"@formily/validator@2.0.0-beta.82":
-  version "2.0.0-beta.82"
-  resolved "https://registry.npmjs.org/@formily/validator/-/validator-2.0.0-beta.82.tgz#e787e752725bf46f871e7790886221a77e8d198e"
-  integrity sha512-nj9azxRYGmRRe1GzqPm0O1JwOnH9DUHKmbl1xBNJBrnkfYeX5cHDNsIve4X26Uuc38pkzaXlnHyL33Hcum6dwg==
+"@formily/validator@2.0.0-beta.84":
+  version "2.0.0-beta.84"
+  resolved "https://registry.nlark.com/@formily/validator/download/@formily/validator-2.0.0-beta.84.tgz#bbeb4cb535872fc213a6a528536d382b065bc00b"
+  integrity sha1-u+tMtTWHL8ITpqUoU204KwZbwAs=
   dependencies:
-    "@formily/shared" "2.0.0-beta.82"
+    "@formily/shared" "2.0.0-beta.84"
 
-"@formily/vue@^2.0.0-beta.80":
-  version "2.0.0-beta.82"
-  resolved "https://registry.npmjs.org/@formily/vue/-/vue-2.0.0-beta.82.tgz#62391ed2cad813e9c43e95c7ca66e229db3c5f8c"
-  integrity sha512-2+PEFxfH/HLuZhHBmgeLb4XLYAzdY/mcdPZUerI82sbkwFuAnuMSvPR3CaFHmIXw3zy2u8Woa3IRNNxhOq5Hlw==
+"@formily/vue@^2.0.0-beta.84":
+  version "2.0.0-beta.84"
+  resolved "https://registry.nlark.com/@formily/vue/download/@formily/vue-2.0.0-beta.84.tgz#a2c9d5daaa21ef27d96d6262591a768e943f1dfd"
+  integrity sha1-osnV2qoh7yfZbWJiWRp2jpQ/Hf0=
   dependencies:
-    "@formily/core" "2.0.0-beta.82"
-    "@formily/json-schema" "2.0.0-beta.82"
-    "@formily/reactive" "2.0.0-beta.82"
-    "@formily/reactive-vue" "2.0.0-beta.82"
-    "@formily/shared" "2.0.0-beta.82"
-    "@formily/validator" "2.0.0-beta.82"
+    "@formily/core" "2.0.0-beta.84"
+    "@formily/json-schema" "2.0.0-beta.84"
+    "@formily/reactive" "2.0.0-beta.84"
+    "@formily/reactive-vue" "2.0.0-beta.84"
+    "@formily/shared" "2.0.0-beta.84"
+    "@formily/validator" "2.0.0-beta.84"
     "@type-helper/vue2" "npm:vue@2"
     "@type-helper/vue3" "npm:vue@3"
     vue-demi "^0.9.0"

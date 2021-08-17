@@ -73,27 +73,19 @@
                   自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作
                 </div>
                 <template slot="syncPoints" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
-                  <el-row  style="margin-bottom: 10px">
+                  <el-row style="margin-bottom: 10px">
                     <el-col :span="8" style="margin-right: 10px">
-                      <el-select
-                        v-model="settingModel.syncPoints[0].type"
-                        placeholder="请选择"
-                      >
+                      <el-select v-model="settingModel.syncPoints[0].type" placeholder="请选择">
                         <el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
                         </el-option>
                       </el-select>
                     </el-col>
-                    <el-col
-                      :span="12"
-                      v-if="settingModel.syncPoints[0].type !== 'current'"
-                    >
+                    <el-col :span="12" v-if="settingModel.syncPoints[0].type !== 'current'">
                       <el-date-picker
                         format="yyyy-MM-dd HH:mm:ss"
                         v-model="settingModel.syncPoints[0].date"
                         type="datetime"
-                        :disabled="
-                          settingModel.syncPoints[0].type === 'current'
-                        "
+                        :disabled="settingModel.syncPoints[0].type === 'current'"
                       ></el-date-picker>
                     </el-col>
                   </el-row>
@@ -469,9 +461,7 @@ export default {
           if (valid) {
             //源端目标端不可选择相同库 规则: id一致
             this.showSysncTableTip = false
-            if (
-              this.dataSourceModel.source_connectionId === this.dataSourceModel.target_connectionId
-            ) {
+            if (this.dataSourceModel.source_connectionId === this.dataSourceModel.target_connectionId) {
               if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
                 this.showSysncTableTip = true // dfs 仅提示
               } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
@@ -504,10 +494,7 @@ export default {
         this.$refs.setting.validate(valid => {
           if (valid) {
             //设置同步时间 必须填写时间
-            if (
-              this.settingModel.syncPoints[0].type !== 'current' &&
-              this.settingModel.syncPoints[0].date === ''
-            ) {
+            if (this.settingModel.syncPoints[0].type !== 'current' && this.settingModel.syncPoints[0].date === '') {
               this.$message.error('设置同步时间不能为空')
               return
             }

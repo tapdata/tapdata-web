@@ -157,6 +157,22 @@ export default {
       return {
         type: 'object',
         properties: {
+          flowEngineVersion: {
+            title: this.$t('dataFlow.flowEngineVersion'),
+            type: 'string',
+            'x-decorator': 'ElFormItem',
+            'x-component': 'Select',
+            enum: [
+              {
+                label: this.$t('dataFlow.flowEngineV1'),
+                value: 'Data_Flow_Engine_V1'
+              },
+              {
+                label: this.$t('dataFlow.jetFlowEngineV2'),
+                value: 'Jet_Flow_Engine_V2'
+              }
+            ]
+          },
           sync_type: {
             title: '同步类型',
             type: 'string',
@@ -380,10 +396,7 @@ export default {
             title: '每次读取数量',
             type: 'string',
             'x-decorator': 'ElFormItem',
-            'x-component': 'Input',
-            'x-content': {
-              append: 'row'
-            }
+            'x-component': 'Input'
             // default: 100
           },
           processorConcurrency: {

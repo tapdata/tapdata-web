@@ -3,9 +3,9 @@
     <el-form>
       <el-form-item class="e-form-item">
         <el-col :span="16">
-          <el-select v-model="stageId" size="mini">
+          <el-select v-model="stageId" size="mini" @change="handleChange">
             <el-option key="all" :label="$t('dataFlow.allNode')" value="all"> </el-option>
-            <el-option v-for="item in flow.stages" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+            <el-option v-for="item in allNodes" :key="item.id" :label="item.name" :value="item.id"> </el-option>
           </el-select>
         </el-col>
       </el-form-item>
@@ -480,6 +480,7 @@ import factory from '@/api/factory'
 import { EditorEventType } from '@/editor/lib/events'
 import i18n from '@/i18n'
 import ws from '@/api/ws'
+import { mapGetters, mapMutations } from 'vuex'
 // import _ from "lodash";
 const dataFlows = factory('DataFlows')
 const connectionApi = factory('connections')
@@ -818,6 +819,89 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters('dataflow', ['allNodes', 'nodeById', 'activeNode'])
+  },
+
+  watch: {
+    dataflow: {
+      handler(val) {
+        this.flow = val
+        this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
+        this.flow.startTime = val.startTime ? this.$moment(val.startTime).format('YYYY-MM-DD HH:mm:ss') : ''
+        this.flow.finishTime = val.finishTime ? this.$moment(val.finishTime).format('YYYY-MM-DD HH:mm:ss') : ''
+
+        if (this.dataflow.user) {
+          this.flow.username = this.dataflow.user.username || this.dataflow.user.email
+        }
+        this.flow.status = val.status
+        if (this.flow.status === 'force stopping') {
+          this.flow.status = 'force_stopping'
+        }
+
+        let cdcList = []
+        if (this.flow.cdcLastTimes && this.flow.cdcLastTimes.length) {
+          this.flow.cdcLastTimes.forEach(item => {
+            let flag = cdcList.find(ele => ele.sourceConnectionId === item.sourceConnectionId)
+            if (!flag) {
+              cdcList.push({
+                sourceConnectionName: item.sourceConnectionName,
+                sourceConnectionId: item.sourceConnectionId,
+                targetList: [item]
+              })
+            } else {
+              flag.targetList.push(item)
+            }
+          })
+        }
+        this.cdcLastTimes = cdcList || []
+      },
+      deep: true
+    },
+
+    'activeNode.id'(v) {
+      if (v) {
+        this.stageId = v
+      }
+    },
+
+    stageId(val) {
+      // this.getNodeName()
+      if (val === 'all') {
+        this.selectFlow = 'flow_'
+        this.stageType = ''
+      } else {
+        this.selectFlow = 'stage_'
+        const node = this.nodeById(val)
+        this.stageType = node.type
+        if (this.stageType === 'database') {
+          this.getStageDataApi(node.connectionId, node.name)
+        } else if (
+          [
+            'table',
+            'collection',
+            'json',
+            'excel',
+            'csv',
+            'xml',
+            'kafka',
+            'mariadb',
+            'mysql pxc',
+            'hive',
+            'mq',
+            'hbase',
+            'kudu',
+            'tcp_udp'
+          ].includes(this.stageType)
+        ) {
+          this.getStageDataApi(node.connectionId, node.name)
+        }
+      }
+      this.getFlowInsightData()
+      this.getApiData()
+    }
+  },
+
   mounted() {
     // this.sliderBar = this.editor.rightSidebar
     this.$on(EditorEventType.SELECTED_STAGE, selectStage => {
@@ -912,89 +996,9 @@ export default {
     this.getApiData()
   },
 
-  watch: {
-    dataflow: {
-      handler(val) {
-        this.flow = val
-        this.flow.createTime = val.createTime ? this.$moment(val.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
-        this.flow.startTime = val.startTime ? this.$moment(val.startTime).format('YYYY-MM-DD HH:mm:ss') : ''
-        this.flow.finishTime = val.finishTime ? this.$moment(val.finishTime).format('YYYY-MM-DD HH:mm:ss') : ''
-
-        if (this.dataflow.user) {
-          this.flow.username = this.dataflow.user.username || this.dataflow.user.email
-        }
-        this.flow.status = val.status
-        if (this.flow.status === 'force stopping') {
-          this.flow.status = 'force_stopping'
-        }
-
-        let cdcList = []
-        if (this.flow.cdcLastTimes && this.flow.cdcLastTimes.length) {
-          this.flow.cdcLastTimes.forEach(item => {
-            let flag = cdcList.find(ele => ele.sourceConnectionId === item.sourceConnectionId)
-            if (!flag) {
-              cdcList.push({
-                sourceConnectionName: item.sourceConnectionName,
-                sourceConnectionId: item.sourceConnectionId,
-                targetList: [item]
-              })
-            } else {
-              flag.targetList.push(item)
-            }
-          })
-        }
-        this.cdcLastTimes = cdcList || []
-      },
-      deep: true
-    },
-    stageId: {
-      handler(val) {
-        this.getNodeName()
-        let cell = this.editor.getAllCells()
-        this.selectId = val
-        if (val === 'all') {
-          this.selectFlow = 'flow_'
-          this.stageType = ''
-        } else {
-          this.selectFlow = 'stage_'
-
-          cell.forEach(item => {
-            if (item.get('id') === val) {
-              currentStageData = item.getFormData()
-            }
-          })
-          this.stageType = currentStageData.type
-          if (this.stageType === 'database') {
-            this.getStageDataApi(currentStageData.connectionId, currentStageData.name)
-          } else if (
-            [
-              'table',
-              'collection',
-              'json',
-              'excel',
-              'csv',
-              'xml',
-              'kafka',
-              'mariadb',
-              'mysql pxc',
-              'hive',
-              'mq',
-              'hbase',
-              'kudu',
-              'tcp_udp'
-            ].includes(this.stageType)
-          ) {
-            this.getStageDataApi(currentStageData.connectionId, this.tableName)
-          }
-        }
-        this.getFlowInsightData()
-        this.getApiData()
-      },
-      deep: true
-    }
-  },
-
   methods: {
+    ...mapMutations('dataflow', ['setActiveNode']),
+
     getFlowInsightData() {
       this.getTwoRadio(this.dataOverviewAll, 'screening', true)
       this.getSpeed(this.isThroughputAll, this.throughputTime, true)
@@ -1474,6 +1478,10 @@ export default {
         // 否则为不溢出
         this.tooltipFlag = false
       }
+    },
+
+    handleChange(v) {
+      v !== all && this.setActiveNode(v)
     }
   },
 

@@ -14,10 +14,10 @@
     "mock": "nodemon mock/mock.js"
   },
   "dependencies": {
-    "@formily/core": "^2.0.0-beta.80",
-    "@formily/reactive": "^2.0.0-beta.80",
-    "@formily/reactive-vue": "^2.0.0-beta.80",
-    "@formily/vue": "^2.0.0-beta.80",
+    "@formily/core": "^2.0.0-beta.84",
+    "@formily/reactive": "^2.0.0-beta.84",
+    "@formily/reactive-vue": "^2.0.0-beta.84",
+    "@formily/vue": "^2.0.0-beta.84",
     "@vue/composition-api": "^1.0.0-rc.14",
     "ace-builds": "^1.4.12",
     "axios": "^0.21.1",

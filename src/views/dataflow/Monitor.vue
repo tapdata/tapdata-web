@@ -11,7 +11,7 @@
     <section class="layout-wrap layout-has-sider">
       <!--内容体-->
       <main class="layout-content flex flex-column">
-        <section class="flex-fill" @wheel="wheelScroll">
+        <section ref="layoutContent" class="flex-fill" @mousedown="mouseDown" @wheel="wheelScroll">
           <div id="node-view-background" class="node-view-background" :style="backgroundStyle"></div>
           <div id="node-view" class="node-view" :style="dataflowStyle">
             <DFNode
@@ -49,11 +49,11 @@
       </main>
       <!--右侧边栏-->
       <RightSidebar is-monitor>
-        <ElTabs class="border-0 flex flex-column h-100 absolute-fill" type="border-card">
+        <ElTabs v-model="rightTab" class="border-0 flex flex-column h-100 absolute-fill" type="border-card">
           <ElTabPane label="统计">
             <Statistical v-if="dataflow" :dataflow="dataflow"></Statistical>
           </ElTabPane>
-          <ElTabPane v-if="activeType" label="配置">
+          <ElTabPane v-if="activeType" :label="activeType === 'settings' ? '任务设置' : '配置'">
             <FormPanel is-monitor></FormPanel>
           </ElTabPane>
         </ElTabs>
@@ -84,6 +84,8 @@ import RightSidebar from '@/views/dataflow/components/RightSidebar'
 import FormPanel from '@/views/dataflow/components/FormPanel'
 import DatabaseTypes from '@/api/DatabaseTypes'
 import { connectorActiveStyle } from '@/views/dataflow/style'
+import { off, on } from '@/utils/dom'
+import deviceSupportHelpers from '@/mixins/deviceSupportHelpers'
 
 const databaseTypesApi = new DatabaseTypes()
 const dataFlowsApi = new DataFlows()
@@ -94,13 +96,14 @@ const HEADER_HEIGHT = 0
 
 export default {
   name: 'Monitor',
+
   components: { FormPanel, RightSidebar, DFNode, TopHeader, DebugLogs, Milestone, Statistical },
 
   directives: {
     resize
   },
 
-  mixins: [moveDataflow],
+  mixins: [moveDataflow, deviceSupportHelpers],
 
   data() {
     return {
@@ -113,7 +116,8 @@ export default {
       dataflow: null,
       statusBtMap,
       mapping: this.$route.query?.mapping,
-      creatUserId: ''
+      creatUserId: '',
+      rightTab: ''
     }
   },
 
@@ -549,6 +553,7 @@ export default {
       this.resetSelectedNodes()
       this.setActiveNode(null)
       this.deselectConnection()
+      this.rightTab = '0'
     },
 
     deselectConnection() {
@@ -683,6 +688,93 @@ export default {
       }*/
       this.deselectAllNodes()
       this.setActiveType('settings')
+      this.$nextTick(() => {
+        this.rightTab = '1'
+      })
+    },
+
+    mouseDown(e) {
+      console.log('mouseDown', e.button)
+      on(window, 'mouseup', this.mouseUp)
+
+      this.mouseDownMouseSelect(e)
+    },
+
+    mouseDownMouseSelect(e) {
+      if (this.isCtrlKeyPressed(e) === true) {
+        // 忽略按下ctrl||command键，此键已用来触发画布拖动
+        return
+      }
+
+      if (this.isActionActive('dragActive')) {
+        // 节点正在拖动
+        return
+      }
+
+      this.mouseClickPosition = this.getMousePositionWithinNodeView(e)
+      this.selectActive = true
+
+      // this.showSelectBox(e)
+
+      on(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
+    },
+
+    mouseMoveSelect(e) {
+      e.preventDefault() // 防止拖动时文字被选中
+      this.showSelectBox = true
+      let w, h, x, y
+      const pos = this.getMousePositionWithinNodeView(e)
+
+      console.log('mouseMoveSelect', pos)
+
+      x = Math.min(this.mouseClickPosition.x, pos.x)
+      y = Math.min(this.mouseClickPosition.y, pos.y)
+      w = Math.abs(this.mouseClickPosition.x - pos.x)
+      h = Math.abs(this.mouseClickPosition.y - pos.y)
+
+      this.selectBoxAttr = { x, y, w, h, right: x + w, bottom: y + h }
+    },
+
+    mouseUp() {
+      off(window, 'mouseup', this.mouseUp)
+
+      if (!this.selectActive) {
+        return
+      }
+
+      this.mouseUpMouseSelect()
+    },
+
+    mouseUpMouseSelect() {
+      off(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
+      console.log('mouseUpMouseSelect')
+      this.deselectAllNodes()
+      // 清空激活状态
+      this.setActiveType(null)
+
+      if (this.showSelectBox) {
+        const selectedNodes = this.getNodesInSelection()
+        selectedNodes.forEach(node => this.nodeSelected(node))
+      }
+
+      this.hideSelectBox()
+    },
+
+    hideSelectBox() {
+      this.selectActive = false
+      this.showSelectBox = false
+      this.selectBoxAttr = null
+    },
+
+    getMousePositionWithinNodeView(e) {
+      const nodeViewScale = this.nodeViewScale
+      // const nodeViewOffset = this.nodeViewOffsetPosition
+      // const [x, y] = this.nodeViewOffsetPosition
+      let { x, y } = this.$refs.layoutContent.getBoundingClientRect()
+      return {
+        x: (e.pageX - x) / nodeViewScale,
+        y: (e.pageY - y) / nodeViewScale
+      }
     }
   }
 }
