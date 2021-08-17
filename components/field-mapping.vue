@@ -36,8 +36,10 @@
               <div class="contentBox__source">{{ item.sourceObjectName }}</div>
               <div class="contentBox__target">{{ item.sinkObjectName }}</div>
               <div class="contentBox__select">
-                {{ `已选中 ${position === index ? fieldCount : 0}/${item.sourceFieldCount}` }}
-                <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName)">恢复默认</el-button>
+                {{ `已选中 ${position === index ? fieldCount : item.sourceFieldCount}/${item.sourceFieldCount}` }}
+                <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName, item.sinkQulifiedName)"
+                  >恢复默认</el-button
+                >
               </div>
             </div>
           </li>
@@ -123,7 +125,7 @@
         </ElTableColumn>
         <ElTableColumn label="操作" width="80">
           <template slot-scope="scope">
-            <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.id, true)"> 删除 </ElLink>
+            <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)"> 删除 </ElLink>
             <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
           </template>
         </ElTableColumn>
@@ -327,7 +329,8 @@ export default {
     //更新table数据
     updateTableData(id, key, value) {
       this.fieldMappingTableData.forEach(field => {
-        if (field.id === id) {
+        if (field.t_id === id) {
+          //改目标表
           field[key] = value
         }
       })
@@ -354,14 +357,14 @@ export default {
       })
     },
     //恢复默认单表
-    rollbackTable(name) {
+    rollbackTable(name, id) {
       this.$confirm('您确认要恢复默认吗？', '提示', {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
           this.$nextTick(() => {
             this.fieldProcessMethod &&
-              this.fieldProcessMethod('table', name).then(data => {
+              this.fieldProcessMethod('table', name, id).then(data => {
                 this.$emit('update-nav', data)
                 this.updateView()
               })
@@ -404,6 +407,11 @@ export default {
         let option = this.target.filter(v => v.id === id)
         if (option.length === 0) return
         option = option[0]
+        //字段名限制
+        if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value)) {
+          this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
+          return
+        }
         if (value === option.field_name) {
           this.handleClose() //名字无改变
           return
@@ -514,11 +522,6 @@ export default {
     //目标任务 字段处理器
     //rename操作
     fieldProcessRename(id, key, value) {
-      //字段名限制
-      if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value)) {
-        this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
-        return
-      }
       let option = this.target.filter(v => v.id === id)
       if (option.length === 0) return
       option = option[0]
@@ -582,6 +585,7 @@ export default {
       //更新当前选中行数
       this.fieldCount = this.fieldCount - 1
     },
+    //还原
     fieldProcessCancelRemove(id) {
       this.restOperation(id)
       for (let i = 0; i < this.operations.length; i++) {
