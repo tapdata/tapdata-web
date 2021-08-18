@@ -217,7 +217,7 @@
         width="180"
       >
         <template #default="{ row }">
-          <div class="flex align-center">
+          <div class="flex align-items-center">
             <span>{{ row.tcm && (row.tcm.agentName || row.tcm.agentId || '-') }}</span>
           </div>
         </template>
@@ -251,7 +251,7 @@
       ></el-table-column>
       <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
         <template #default="{ row }">
-          <div class="flex align-center">
+          <div class="flex align-items-center">
             <template v-if="statusMap[row.status]">
               <img
                 v-if="statusMap[row.status].icon == 'loading'"

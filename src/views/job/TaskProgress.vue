@@ -4,7 +4,7 @@
     <template>
       <!--  全量+增量  -->
       <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
-        <div class="progress-container__header flex justify-between">
+        <div class="progress-container__header flex justify-content-between">
           <div class="fw-bolder">任务进度概览</div>
           <ElLink class="progress-header_btn" type="primary" @click="handleInfo" v-if="completeTime !== '全量已完成'">
             查看详情
@@ -89,7 +89,7 @@
       </div>
       <!--  全量  -->
       <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'initial_sync'">
-        <div class="progress-container__header flex justify-between">
+        <div class="progress-container__header flex justify-content-between">
           <div class="fw-bolder">任务进度概览</div>
           <ElLink class="progress-header_btn" type="primary" @click="handleInfo" v-if="completeTime !== '全量已完成'"
             >查看详情</ElLink
@@ -163,7 +163,7 @@
       </div>
       <!--  增量  -->
       <div class="progress-container" v-else-if="dataFlowSettings.sync_type === 'cdc'">
-        <div class="progress-container__header flex justify-between">
+        <div class="progress-container__header flex justify-content-between">
           <div class="fw-bolder">任务进度概览</div>
           <!--          <el-button class="progress-header_btn" type="text" @click="handleInfo">查看详情</el-button>-->
         </div>
