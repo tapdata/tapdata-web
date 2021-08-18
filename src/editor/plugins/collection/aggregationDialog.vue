@@ -15,8 +15,8 @@
         <div class="title">
           Pipeline
           <el-button type="primary" size="mini" class="pipeline-button" @click="handlePreview">
-            <i class="el-icon-loading" v-if="previewLoading"></i
-            >{{ $t('editor.cell.data_node.collection.form.aggregation.preview') }}</el-button
+            <VIcon v-if="previewLoading">loading-circle</VIcon>
+            {{ $t('editor.cell.data_node.collection.form.aggregation.preview') }}</el-button
           >
         </div>
         <!-- [ <el-input class="e-textarea" type="textarea" v-model="script"></el-input>] -->
@@ -57,7 +57,8 @@
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" size="mini" :disabled="returnFalg == 'error' || !script" @click="aggregationSave">
-        <i class="el-icon-loading" v-if="saveLoading"></i>{{ $t('app.save') }}</el-button
+        <VIcon v-if="saveLoading">loading-circle</VIcon>
+        {{ $t('app.save') }}</el-button
       >
     </span>
   </el-dialog>
@@ -66,9 +67,10 @@
 import ws from '@/api/ws'
 import JsonEditor from '@/components/jsonEditor'
 import Jsonviewer from 'vue-json-viewer'
+import VIcon from '@/components/VIcon'
 export default {
   name: 'collectionAggregation',
-  components: { JsonEditor, Jsonviewer },
+  components: { JsonEditor, Jsonviewer, VIcon },
   props: {
     aggregationDialog: {
       type: Boolean

@@ -14,7 +14,7 @@
         </el-select>
       </el-form-item>
 
-      <i class="el-icon-loading" v-if="loading"></i>
+      <VIcon v-if="loading" style="right: 10px; top: 10px; position: absolute">loading-circle</VIcon>
     </el-form>
 
     <el-table
@@ -39,10 +39,11 @@ import factory from '../../api/factory'
 import { EditorEventType } from '../../editor/lib/events'
 import '../../editor/index'
 import log from '../../log'
-
+import VIcon from '@/components/VIcon'
 const DataFlowsDebugs = factory('DataFlowsDebugs')
 export default {
   name: 'Preview',
+  components: { VIcon },
   props: {
     dataFlow: {
       type: Object,
@@ -221,12 +222,6 @@ export default {
   // }
   .el-form {
     position: relative;
-
-    .el-icon-loading {
-      right: 10px;
-      top: 10px;
-      position: absolute;
-    }
   }
 
   .metadata-tap-bar {

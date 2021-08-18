@@ -22,10 +22,10 @@ export default class UI extends Component {
     let taskName = ''
     let changeName = i18n.t('dataFlow.changeName')
     let backList = i18n.t('dataFlow.backlistText')
-    // <i class='iconfont icon-baocun el-icon' id="submit" title="${saveTitle}" style="display: none;color:##409EFF;cursor: pointer" ></i>
+
     this.el = $(`<div class="editor">
 			<div class="e-header">
-				<i title="${backList}" class="iconfont icon-sanheng" id="backIcon" style="width: 41px;height: 41px;line-height: 41px;font-size: 24px;text-align: center;color:#fff;cursor: pointer;background-color: #409EFF"></i>
+				<div title="${backList}" class="iconfont" id="backIcon" style="width: 41px;height: 41px;line-height: 41px;font-size: 24px;text-align: center;color:#fff;cursor: pointer;background-color: #409EFF"></div>
 				<div class="e-title" style="margin-left: 10px">
 					<input value="${taskName}" class="ui-input" id="taskNameInput" type="text"  maxlength="150"/>
 					<div id="edit" title="${editTitle}"

@@ -15,7 +15,9 @@
           @clear="clear"
           @change="handleSearch"
         >
-          <i slot="prefix" class="el-input__icon el-icon-search"></i>
+          <span slot="prefix" class="el-input__icon h-100">
+            <VIcon size="14">search</VIcon>
+          </span>
         </el-input>
         <!-- <div class="select-nav">
 					<el-select
@@ -71,6 +73,7 @@
 import factory from '../api/factory'
 import log from '../log'
 import SelectClassify from './../components/SelectClassify'
+import VIcon from '@/components/VIcon'
 
 const MetadataDefinitions = factory('MetadataDefinitions')
 const MetadataInstances = factory('MetadataInstances')
@@ -79,7 +82,8 @@ const modules = factory('modules')
 export default {
   name: 'apiPath',
   components: {
-    SelectClassify
+    SelectClassify,
+    VIcon
   },
   props: {
     selectNodeId: {

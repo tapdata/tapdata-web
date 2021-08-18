@@ -18,7 +18,6 @@
               clearable
               class="input-with-select"
               size="mini"
-              suffix-icon="el-icon-search"
               v-model="searchParams.keyword"
               :placeholder="$t('dataQuality.sourceName')"
               @input="table.fetch(1, 800)"
@@ -27,6 +26,9 @@
                 <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
                 <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
               </el-select>
+              <span slot="suffix" class="el-input__icon h-100">
+                <VIcon size="14">search</VIcon>
+              </span>
             </el-input>
           </li>
           <template>

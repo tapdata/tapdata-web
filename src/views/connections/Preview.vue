@@ -13,7 +13,7 @@
       <div class="bar">
         <button type="button" class="el-button back-btn-icon-box el-button--default" @click="handleClose">
           <span>
-            <i class="iconfont icon-you2 back-btn-icon"></i>
+            <VIcon class="back-btn-icon">arrow-right-circle</VIcon>
           </span>
         </button>
         <span class="back-btn-text">{{ $t('connection.info') }}</span>
@@ -27,7 +27,7 @@
             <div>{{ name }}</div>
             <div class="status">
               <span class="error" v-if="['invalid'].includes(status)">
-                <i class="el-icon-error"></i>
+                <VIcon>error</VIcon>
                 <span>
                   {{ $t('connection.status.invalid') }}
                 </span>
@@ -146,10 +146,11 @@
 import { getImgByType, TYPEMAPCONFIG } from './util'
 import formConfig from './config'
 import Test from './Test'
+import VIcon from '@/components/VIcon'
 
 export default {
   name: 'Preview',
-  components: { Test },
+  components: { Test, VIcon },
   props: {
     id: {
       required: true,

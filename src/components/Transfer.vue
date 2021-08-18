@@ -57,7 +57,7 @@
               :ref="option.id"
             ></el-input>
             <i class="el-icon-close" @click.stop.prevent="closeInput(option)"></i>
-            <i class="el-icon-check" @click.stop.prevent="checkInput(option)"></i>
+            <VIcon class="v-icon-check" size="14" @click.stop.prevent="checkInput(option)">check</VIcon>
           </span>
           <span
             v-if="selectSourceFileArr.includes(option.key)"
@@ -127,7 +127,9 @@
 <script>
 let selectKeepArr = []
 import _ from 'lodash'
+import VIcon from '@/components/VIcon'
 export default {
+  components: { VIcon },
   props: ['transferData', 'isTwoWay'],
   data() {
     var validatePrefix = (rule, value, callback) => {
@@ -563,7 +565,7 @@ export default {
     right: 30px;
     top: 10px;
   }
-  .el-icon-check {
+  .v-icon-check {
     display: inline-block;
     position: absolute;
     right: 10px;

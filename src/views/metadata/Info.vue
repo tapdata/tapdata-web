@@ -187,11 +187,14 @@
                     <el-input
                       :placeholder="$t('metadata.details.searchPlaceholder')"
                       clearable
-                      prefix-icon="el-icon-search"
                       v-model="searchParams.keyword"
                       size="mini"
                       style="width: 160px"
-                    ></el-input>
+                    >
+                      <span slot="prefix" class="el-input__icon h-100">
+                        <VIcon size="14">search</VIcon>
+                      </span>
+                    </el-input>
                   </li>
                   <li class="item">
                     <el-button type="text" class="restBtn" size="mini" @click="reset()">
@@ -423,6 +426,7 @@ import Validation from './Validation'
 import Preview from './Preview'
 import Pipeline from './Pipeline'
 import Collections from './Collections'
+import VIcon from '@/components/VIcon'
 export default {
   components: {
     VersionList,
@@ -432,7 +436,8 @@ export default {
     Validation,
     Preview,
     Pipeline,
-    Collections
+    Collections,
+    VIcon
   },
   data() {
     return {

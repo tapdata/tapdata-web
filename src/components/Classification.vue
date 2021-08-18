@@ -15,7 +15,9 @@
       </div>
       <div class="search-box" v-if="searchFalg">
         <el-input class="search" size="mini" v-model="filterText">
-          <i slot="prefix" class="el-icon-search"></i>
+          <span slot="prefix" class="el-input__icon h-100">
+            <VIcon size="14">search</VIcon>
+          </span>
         </el-input>
       </div>
     </div>
@@ -77,10 +79,12 @@
 
 <script>
 import factory from '../api/factory'
+import VIcon from '@/components/VIcon'
 
 const MetadataDefinitions = factory('MetadataDefinitions')
 
 export default {
+  components: { VIcon },
   props: {
     types: {
       type: Array,

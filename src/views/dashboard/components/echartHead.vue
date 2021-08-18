@@ -10,8 +10,7 @@
 			:content="tip"
 		>
 			<span class="icon iconfont icon-tishi1" slot="reference"></span>
-		</el-popover>
-		<i class="el-icon-loading" v-if="data && data.loading"></i> -->
+		</el-popover> -->
     <div class="rightOpt fr" v-if="textObj.overviewFalg">
       <el-radio-group v-model="num" size="mini" :class="selectColor" @change="changeUnit">
         <el-radio-button label="flow">{{ $t('dataFlow.rowCount') }}</el-radio-button>

@@ -71,7 +71,7 @@
               <div class="inspect-result-status">
                 <div v-if="scope.row.result === 'failed'">
                   <span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
-                    <i class="el-icon-error"></i>
+                    <VIcon>error</VIcon>
                     <span>{{
                       $t('dataVerification.rowConsistent') +
                       ' : ' +
@@ -87,7 +87,7 @@
                   "
                 >
                   <span class="error">
-                    <i class="el-icon-error"></i>
+                     <VIcon>error</VIcon>
                     <span>
                       {{ $t('dataVerification.contConsistent') + ' : ' }}
                       {{ scope.row.source_only + scope.row.target_only + scope.row.row_failed }}
@@ -246,8 +246,9 @@
 
 <script>
 import JsonViewer from 'vue-json-viewer'
+import VIcon from '@/components/VIcon'
 export default {
-  components: { JsonViewer },
+  components: { JsonViewer, VIcon },
   data() {
     return {
       tableData: [],

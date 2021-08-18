@@ -41,7 +41,7 @@
               <div class="inspect-result">
                 <div v-if="scope.row.target_total !== scope.row.source_total && scope.row.result !== 'passed'">
                   <span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
-                    <i class="data-verify-history__icon el-icon-error"></i>
+                    <VIcon class="data-verify-history__icon">error</VIcon>
                     <span>
                       {{ $t('dataVerification.rowConsistent') }}
                       {{ Math.abs(scope.row.target_total - scope.row.source_total) }}
@@ -57,7 +57,7 @@
                   "
                 >
                   <span class="error" v-if="scope.row.difference_number">
-                    <i class="data-verify-history__icon el-icon-error"></i>
+                    <VIcon class="data-verify-history__icon">error</VIcon>
                     <span>
                       {{ $t('dataVerification.contConsistent') }}
                       {{ scope.row.difference_number }}
@@ -98,7 +98,9 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
 export default {
+  components: { VIcon },
   data() {
     return {
       loading: true,

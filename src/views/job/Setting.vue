@@ -1,7 +1,9 @@
 <template>
   <div class="data-flow-setting" style="background-color: white">
     <head v-if="!isSimple" class="head">
-      <el-button class="back-btn-icon-box" @click="GoBack"><i class="iconfont icon-you2 back-btn-icon"></i></el-button>
+      <el-button class="back-btn-icon-box" @click="GoBack">
+        <VIcon class="back-btn-icon">arrow-right-circle</VIcon>
+      </el-button>
       <span class="back-btn-text">{{ $t('editor.ui.sidebar.setting') }}</span>
     </head>
     <el-form
@@ -285,10 +287,12 @@ import { DEFAULT_SETTING } from '../../editor/constants'
 import _ from 'lodash'
 import * as moment from 'moment'
 import factory from '../../api/factory'
+import VIcon from '@/components/VIcon'
 
 const connections = factory('connections')
 export default {
   name: 'Setting',
+  components: { VIcon },
   data() {
     return {
       conncetionStage: [],
