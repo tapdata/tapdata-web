@@ -99,7 +99,7 @@
         <template slot-scope="scope">
           <template v-if="scope.row.result && ['waiting', 'done'].includes(scope.row.status)">
             <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
-              <VIcon class="color-danger" size="14">error-fill</VIcon>
+              <VIcon class="color-danger" size="14">error</VIcon>
               <span v-if="scope.row.inspectMethod === 'row_count'">
                 {{ $t('dataVerification.inconsistent') }}
               </span>
@@ -111,7 +111,7 @@
             </div>
           </template>
           <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
-            <VIcon class="color-danger" size="14">error-fill</VIcon>
+            <VIcon class="color-danger" size="14">error</VIcon>
             <span>Error</span>
           </div>
           <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">

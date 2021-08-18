@@ -24,7 +24,7 @@
             <div>{{ name }}</div>
             <div class="status">
               <span class="error" v-if="['invalid'].includes(status)">
-                <VIcon class="color-danger" size="18">error-fill</VIcon>
+                <VIcon class="color-danger" size="18">error</VIcon>
                 <span>
                   {{ $t('connection.status.invalid') }}
                 </span>
