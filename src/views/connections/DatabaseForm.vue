@@ -1,5 +1,5 @@
 <template>
-  <div class="databaseFrom">
+  <div class="databaseFrom" v-loading="loadingFrom">
     <header class="header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
       {{ $route.params.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
     </header>
@@ -685,6 +685,7 @@ export default {
       typeMap: TYPEMAP,
       timer: null,
       status: '',
+      loadingFrom: true,
       dialogTestVisible: false,
       dialogDatabaseTypeVisible: false,
       dialogEditNameVisible: false,
@@ -1101,6 +1102,7 @@ export default {
         this.checkItems = config.checkItems //根据model变化更新表单项显示或隐藏
         this.checkItems && this.checkItems()
       }
+      this.loadingFrom = false
     },
     //第一步 选择实例
     getInstanceRegion() {
