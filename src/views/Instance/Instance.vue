@@ -112,7 +112,7 @@
                   :content="getTooltipContent(scope.row, 'upgrading')"
                 >
                   <div class="upgrading-box">
-                    <VIcon class="v-icon" size="20">upgradeLoadingColor</VIcon>
+                    <VIcon class="v-icon" size="14" color="rgb(61, 156, 64)" rotating>loading-circle</VIcon>
                     <el-progress
                       v-if="upgradingProgres(scope.row) !== undefined"
                       class="upgrading-progress"
@@ -136,7 +136,7 @@
                   :content="getTooltipContent(scope.row, 'fail')"
                 >
                   <VIcon size="20" class="cursor-pointer block" @click="showUpgradeErrorDialogFnc(scope.row)"
-                    >upgradeErrorColor</VIcon
+                    >upgrade-error-color</VIcon
                   >
                 </el-tooltip>
                 <el-tooltip
@@ -147,7 +147,7 @@
                   :content="getTooltipContent(scope.row)"
                 >
                   <VIcon size="20" class="cursor-pointer block" @click="showUpgradeDialogFnc(scope.row)"
-                    >upgradeColor</VIcon
+                    >upgrade-color</VIcon
                   >
                 </el-tooltip>
               </template>
@@ -782,43 +782,12 @@ export default {
   ::v-deep {
     .v-icon {
       position: absolute;
-      left: 0;
-      top: 0;
-      font-size: 20px;
-      -moz-animation: rotate 10s infinite linear;
-      -webkit-animation: rotate 10s infinite linear;
-      animation: rotate 10s infinite linear;
-      border-radius: 50%;
-    }
-
-    .el-progress {
-      position: relative;
+      top: 50%;
+      left: 50%;
       z-index: 1;
+      margin-top: -7px;
+      margin-left: -7px;
     }
-  }
-}
-@-moz-keyframes rotate {
-  0% {
-    -moz-transform: rotate(0deg);
-  }
-  100% {
-    -moz-transform: rotate(360deg);
-  }
-}
-@-webkit-keyframes rotate {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
 .upgrading-progress {
@@ -826,9 +795,6 @@ export default {
     .el-progress-circle {
       width: 20px !important;
       height: 20px !important;
-    }
-    .el-progress__text {
-      font-size: 12px !important;
     }
   }
 }

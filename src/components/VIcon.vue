@@ -173,7 +173,7 @@ svg.iconfont {
   pointer-events: none;
 }
 .v-icon--rotating {
-  animation: rotating 2s linear infinite;
+  animation: rotating 5s linear infinite;
 }
 @keyframes rotating {
   0% {
