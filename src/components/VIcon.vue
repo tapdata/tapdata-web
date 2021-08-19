@@ -175,6 +175,22 @@ svg.iconfont {
 .v-icon--rotating {
   animation: rotating 5s linear infinite;
 }
+@-moz-keyframes rotate {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(1turn);
+  }
+}
+@-webkit-keyframes rotate {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(1turn);
+  }
+}
 @keyframes rotating {
   0% {
     transform: rotate(0deg);
