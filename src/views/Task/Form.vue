@@ -73,8 +73,9 @@
               <div class="desc">
                 用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。
               </div>
-              <div>
-                没有可用的表，<span style="color: #999; cursor: pointer" @click="reload()">重新加载schema</span>
+              <div class="reload-schema">
+                没有可用的表，<span style="color: #999; cursor: pointer" @click="reload()">重新加载schema </span>
+                <span v-if="showProgress"> {{ progress }} %</span>
               </div>
               <div class="CT-task-transfer">
                 <Transfer ref="transfer" :transferData="transferData" :isTwoWay="settingModel.bidirectional"></Transfer>
@@ -244,6 +245,10 @@
         margin-bottom: 20px;
         color: #999;
         font-size: 12px;
+      }
+      .reload-schema {
+        padding: 0 200px;
+        margin-top: 10px;
       }
       .CT-task-transfer {
         margin-left: 200px;
@@ -429,7 +434,10 @@ export default {
           label: this.$t('dataFlow.SyncInfo.currentType'),
           value: 'current'
         }
-      ]
+      ],
+      progress: '',
+      showProgress: '',
+      timer: ''
     }
   },
   created() {
@@ -1115,7 +1123,6 @@ export default {
       })
     },
     reloadApi(type) {
-      this.reloadLoading = true
       let parms = {}
       if (type === 'first') {
         parms = {
@@ -1127,7 +1134,6 @@ export default {
       this.$axios
         .patch('tm/api/Connections/' + this.dataSourceModel.source_connectionId, parms)
         .then(data => {
-          this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (type === 'first') {
             this.$refs.test.start(data, false, true)
           }
@@ -1137,20 +1143,18 @@ export default {
               this.showProgress = false
               this.progress = 0 //加载完成
             }, 800)
-            this.reloadLoading = false
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
-            this.timer = setInterval(() => {
+            setTimeout(() => {
               this.reloadApi()
-            }, 800)
+            }, 1000)
           }
         })
         .catch(() => {
           this.$message.error(this.$t('connection.reloadFail'))
           this.showProgress = false
           this.progress = 0 //加载完成
-          this.reloadLoading = false
         })
     },
     receiveTestData(data) {
