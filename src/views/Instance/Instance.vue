@@ -104,40 +104,51 @@
             <div class="flex align-items-center">
               <span v-if="showVersionFlag(scope.row)">{{ scope.row.spec && scope.row.spec.version }}</span>
               <template v-if="showUpgradeIcon(scope.row)">
-                <el-tooltip class="ml-1" effect="dark" placement="top">
-                  <div slot="content">{{ getTooltipContent(scope.row) }}</div>
-                  <div>
-                    <div class="upgrading-box" v-if="upgradingFlag(scope.row)">
-                      <VIcon class="v-icon" size="20">upgrade-loading-color</VIcon>
-                      <el-progress
-                        v-if="upgradingProgres(scope.row) !== undefined"
-                        class="upgrading-progress"
-                        type="circle"
-                        color="rgb(61, 156, 64)"
-                        :percentage="upgradingProgres(scope.row)"
-                        :show-text="false"
-                        :format="
-                          value => {
-                            return value
-                          }
-                        "
-                      ></el-progress>
-                    </div>
-                    <VIcon
-                      v-else-if="upgradeFailedFlag(scope.row)"
-                      size="20"
-                      class="cursor-pointer block"
-                      @click="showUpgradeErrorDialogFnc(scope.row)"
-                      >upgrade-error-color</VIcon
-                    >
-                    <VIcon
-                      v-else-if="!upgradeFlag(scope.row)"
-                      size="20"
-                      class="cursor-pointer block"
-                      @click="showUpgradeDialogFnc(scope.row)"
-                      >upgrade-color</VIcon
-                    >
+                <el-tooltip
+                  v-if="upgradingFlag(scope.row)"
+                  class="ml-1"
+                  effect="dark"
+                  placement="top"
+                  :content="getTooltipContent(scope.row, 'upgrading')"
+                >
+                  <div class="upgrading-box">
+                    <VIcon class="v-icon" size="20">upgradeLoadingColor</VIcon>
+                    <el-progress
+                      v-if="upgradingProgres(scope.row) !== undefined"
+                      class="upgrading-progress"
+                      type="circle"
+                      color="rgb(61, 156, 64)"
+                      :percentage="upgradingProgres(scope.row)"
+                      :show-text="false"
+                      :format="
+                        value => {
+                          return value
+                        }
+                      "
+                    ></el-progress>
                   </div>
+                </el-tooltip>
+                <el-tooltip
+                  v-else-if="upgradeFailedFlag(scope.row)"
+                  class="ml-1"
+                  effect="dark"
+                  placement="top"
+                  :content="getTooltipContent(scope.row, 'fail')"
+                >
+                  <VIcon size="20" class="cursor-pointer block" @click="showUpgradeErrorDialogFnc(scope.row)"
+                    >upgradeErrorColor</VIcon
+                  >
+                </el-tooltip>
+                <el-tooltip
+                  v-else-if="!upgradeFlag(scope.row)"
+                  class="ml-1"
+                  effect="dark"
+                  placement="top"
+                  :content="getTooltipContent(scope.row)"
+                >
+                  <VIcon size="20" class="cursor-pointer block" @click="showUpgradeDialogFnc(scope.row)"
+                    >upgradeColor</VIcon
+                  >
                 </el-tooltip>
               </template>
             </div>
@@ -599,9 +610,9 @@ export default {
     cancelUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
     },
-    getTooltipContent(row) {
+    getTooltipContent(row, type) {
       let result
-      switch (row.tmInfo.updateStatus) {
+      switch (type) {
         case 'preparing':
         case 'downloading':
         case 'upgrading':

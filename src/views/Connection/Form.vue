@@ -1,5 +1,5 @@
 <template>
-  <div class="databaseFrom">
+  <div class="databaseFrom" v-loading="loadingFrom">
     <div class="databaseFrom-body">
       <main class="databaseFrom-main">
         <header v-if="$route.params.id" class="edit-header-box">
@@ -625,6 +625,7 @@ export default {
       typeMap: this.$const.TYPEMAP,
       timer: null,
       status: '',
+      loadingFrom: true,
       dialogEditNameVisible: false,
       submitBtnLoading: false,
       editBtnLoading: false,
@@ -978,6 +979,7 @@ export default {
         this.checkItems = config.checkItems //根据model变化更新表单项显示或隐藏
         this.checkItems && this.checkItems()
       }
+      this.loadingFrom = false
     },
     //第一步 选择实例
     getInstanceRegion() {
