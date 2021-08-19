@@ -43,35 +43,18 @@
         <el-table-column :label="$t('dataVerification.verifyResult')" width="180">
           <template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
             <div class="inspect-result">
-              <div v-if="scope.row.target_total !== scope.row.source_total && scope.row.result !== 'passed'">
-                <span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
-                  <i class="data-verify-history__icon el-icon-error"></i>
-                  <span>
-                    {{ $t('dataVerification.rowConsistent') }}
-                    {{ Math.abs(scope.row.target_total - scope.row.source_total) }}
-                  </span>
+              <span v-if="scope.row.result !== 'passed'" class="error">
+                <i class="data-verify-history__icon el-icon-error"></i>
+                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'row_count'">
+                  {{ $t('verify_result_count_inconsistent') }}
                 </span>
-              </div>
-              <div
-                v-if="
-                  scope.row.difference_number !== 0 &&
-                  scope.row.inspect &&
-                  scope.row.result !== 'passed' &&
-                  scope.row.inspect.inspectMethod !== 'row_count'
-                "
-              >
-                <span class="error" v-if="scope.row.difference_number">
-                  <i class="data-verify-history__icon el-icon-error"></i>
-                  <span>
-                    {{ $t('dataVerification.contConsistent') }}
-                    {{ scope.row.difference_number }}
-                  </span>
-                </span>
-              </div>
+                <span v-else>{{ $t('verify_result_content_diff', [scope.row.difference_number]) }}</span>
+              </span>
               <span class="success" v-if="scope.row.result === 'passed'">
                 <i class="data-verify-history__icon el-icon-success"></i>
                 <span>{{ $t('dataVerification.consistent') }}</span>
               </span>
+              <VIcon v-if="scope.row.parentId" class="ml-2" size="14">ercijiaoyan</VIcon>
             </div>
           </template>
         </el-table-column>
@@ -99,7 +82,9 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
 export default {
+  components: { VIcon },
   props: {
     remoteMethod: Function
   },

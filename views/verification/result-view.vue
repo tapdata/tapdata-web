@@ -37,13 +37,10 @@
           <span>{{ $t('dataVerification.verifyResult') + ' : ' + statsInfo.result }}</span>
         </li>
         <li v-if="statsInfo.result !== 'passed'">
-          <span>{{
-            $t('dataVerification.rowConsistent') + ' : ' + Math.abs(statsInfo.target_total - statsInfo.source_total)
-          }}</span>
+          <span>{{ statsInfo.countResultText }}</span>
         </li>
         <li v-if="statsInfo.result !== 'passed'">
-          <span>{{ $t('dataVerification.contConsistent') + ' : ' }}</span>
-          <span>{{ statsInfo.source_only + statsInfo.target_only + statsInfo.row_failed }}</span>
+          <span>{{ statsInfo.contentResultText }}</span>
         </li>
       </ul>
       <div class="success-band" v-if="statsInfo.result === 'passed'">
@@ -361,6 +358,26 @@ export default {
       this.loading = true
       this.remoteMethod({ current, size: this.page.size })
         .then(({ statsInfo, resultList, total, showAdvancedVerification }) => {
+          if (statsInfo.result === 'failed') {
+            let countResultText = ''
+            let contentResultText = ''
+            let diffCount = statsInfo.target_total - statsInfo.source_total
+            let diffCountNum = Math.abs(diffCount)
+            if (diffCount > 0) {
+              countResultText = this.$t('verify_result_count_more', [diffCountNum])
+            }
+            if (diffCount < 0) {
+              countResultText = this.$t('verify_result_count_less', [diffCountNum])
+            }
+            if (this.type !== 'row_count') {
+              let diffContentNum = statsInfo.source_only + statsInfo.target_only + statsInfo.row_failed
+              if (diffContentNum !== 0) {
+                contentResultText = this.$t('verify_result_content_diff', [diffContentNum])
+              }
+            }
+            statsInfo.countResultText = countResultText
+            statsInfo.contentResultText = contentResultText
+          }
           this.statsInfo = statsInfo
           this.resultList = resultList
           this.page.total = total
