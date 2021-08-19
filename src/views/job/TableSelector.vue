@@ -5,7 +5,7 @@
         <i class="iconfont icon-fangdajing" @click="isActive = !isActive"></i>
         <i class="iconfont icon-xiangshanghebing2" @click="handleDefault_expanded"></i>
         <i class="el-icon-refresh" v-if="!loading" @click="loadDataBase"></i>
-        <i class="el-icon-loading" v-if="loading"></i>
+        <VIcon v-if="loading">loading-circle</VIcon>
       </div>
     </div>
     <div class="box-head-search" v-show="!isActive">
@@ -82,11 +82,13 @@
 <script>
 import factory from '../../api/factory'
 import log from '../../log'
+import VIcon from '@/components/VIcon'
 
 const MetadataInstances = factory('MetadataInstances')
 
 export default {
   name: 'TableSelector',
+  components: { VIcon },
   data() {
     return {
       loadingError: false,

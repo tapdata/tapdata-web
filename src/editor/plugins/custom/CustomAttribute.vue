@@ -1,7 +1,7 @@
 <template>
   <div class="customName nodeStyle">
     <head>
-      <span class="headIcon iconfont icon-you2" type="primary"></span>
+      <VIcon class="headIcon color-primary">arrow-right-circle</VIcon>
       <span class="txt">{{ $t('editor.nodeSettings') }}</span>
     </head>
     <div class="nodeBody">
@@ -92,7 +92,7 @@
               size="mini"
               @click="hanlderLoadSchema"
             >
-              <i class="el-icon-loading" v-if="reloadModelLoading"></i>
+              <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
               <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
               <span v-else>{{ $t('dataFlow.updateModel') }}</span>
             </el-button>
@@ -123,12 +123,12 @@ import ClipButton from '@/components/ClipButton'
 import Entity from '../link/Entity'
 import ws from '../../../api/ws'
 import { convertSchemaToTreeData, uuid } from '../../util/Schema'
-
+import VIcon from '@/components/VIcon'
 let connectionApi = factory('connections')
 // let editorMonitor = null;
 export default {
   name: 'CustomNode',
-  components: { Entity, ClipButton, RelatedTasks },
+  components: { Entity, ClipButton, RelatedTasks, VIcon },
   props: {
     connection_type: {
       type: String,

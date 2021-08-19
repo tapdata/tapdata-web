@@ -56,7 +56,9 @@
             :placeholder="$t('connection.dataBaseSearch')"
             @input="table.fetch(1, 800)"
           >
-            <i slot="prefix" class="el-input__icon el-icon-search"></i>
+            <span slot="prefix" class="el-input__icon h-100">
+              <VIcon size="14">search</VIcon>
+            </span>
           </ElInput>
         </li>
         <li class="item">
@@ -133,7 +135,7 @@
         <template slot-scope="scope">
           <div>
             <span class="error" v-if="['invalid'].includes(scope.row.status)">
-              <i class="connections-status__icon el-icon-error"></i>
+              <VIcon class="connections-status__icon">error</VIcon>
               <span>
                 {{ $t('connection.status.invalid') }}
               </span>
@@ -145,7 +147,7 @@
               </span>
             </span>
             <span class="warning" v-if="['testing'].includes(scope.row.status)">
-              <i class="connections-status__icon el-icon-loading"></i>
+              <VIcon class="connections-status__icon">loading-circle</VIcon>
               <span>
                 {{ $t('connection.status.testing') }}
               </span>
@@ -227,7 +229,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import TableFilter from '@/components/TableFilter'
-
+import VIcon from '@/components/VIcon'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import { defaultModel, verify, desensitization } from './util'
@@ -236,7 +238,7 @@ import Test from './Test'
 let timeout = null
 
 export default {
-  components: { TablePage, TableFilter, DatabaseTypeDialog, Preview, Test },
+  components: { TablePage, TableFilter, DatabaseTypeDialog, Preview, Test, VIcon },
   data() {
     return {
       user_id: this.$cookie.get('user_id'),

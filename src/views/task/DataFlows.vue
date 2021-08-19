@@ -76,7 +76,9 @@
               :placeholder="$t('dataFlow.searchPlaceholder')"
               @input="table.fetch(1, 800)"
             >
-              <i slot="prefix" class="el-input__icon el-icon-search"></i>
+              <span slot="prefix" class="el-input__icon h-100">
+                <VIcon size="14">search</VIcon>
+              </span>
             </el-input>
           </li>
           <li>
@@ -215,7 +217,7 @@
         width="180"
       >
         <template #default="{ row }">
-          <div class="flex align-center">
+          <div class="flex align-items-center">
             <span>{{ row.tcm && (row.tcm.agentName || row.tcm.agentId || '-') }}</span>
           </div>
         </template>
@@ -249,7 +251,7 @@
       ></el-table-column>
       <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
         <template #default="{ row }">
-          <div class="flex align-center">
+          <div class="flex align-items-center">
             <template v-if="statusMap[row.status]">
               <img
                 v-if="statusMap[row.status].icon == 'loading'"
@@ -478,10 +480,11 @@ import SkipError from '../../components/SkipError'
 import DownAgent from '../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import TableFilter from '@/components/TableFilter'
+import VIcon from '@/components/VIcon'
 
 let interval = null
 export default {
-  components: { TablePage, TableFilter, DownAgent, SkipError },
+  components: { TablePage, TableFilter, DownAgent, SkipError, VIcon },
   data() {
     return {
       restLoading: false,

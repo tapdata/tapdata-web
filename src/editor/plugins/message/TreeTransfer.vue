@@ -17,12 +17,12 @@
         @check-change="checkChangeLeft"
       >
         <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span class="flex align-center">{{ data.name }}</span>
+          <span class="flex align-items-center">{{ data.name }}</span>
         </span>
       </el-tree>
     </div>
 
-    <div class="opertion flex flex-column align-center justify-center mx-5">
+    <div class="opertion flex flex-column align-items-center justify-center mx-5">
       <div>
         <el-button class="flex justify-center" type="primary" @click="toRight()" :disabled="disabledBtnLeft">
           <i class="el-icon-right"></i>
@@ -58,7 +58,7 @@
         @check-change="checkChangeRight"
         @node-drag-end="nodeDragEndRight"
       >
-        <div class="custom-tree-node flex justify-between" slot-scope="{ node, data }">
+        <div class="custom-tree-node flex justify-content-between" slot-scope="{ node, data }">
           <slot name="right-tree" :data="data" :node="node"></slot>
         </div>
       </el-tree>

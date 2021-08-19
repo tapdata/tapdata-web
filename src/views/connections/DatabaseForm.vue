@@ -503,7 +503,7 @@
             }}</el-button>
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
-                <i class="el-icon-error"></i>
+                <VIcon>error</VIcon>
                 <span>
                   {{ $t('connection.status.invalid') }}
                 </span>
@@ -593,13 +593,14 @@ import JsEditor from '@/components/JsEditor'
 import Test from './Test'
 import { getImgByType, TYPEMAP, TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
+import VIcon from '@/components/VIcon'
 
 const databaseTypesModel = factory('DatabaseTypes')
 const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { gitbook, Test, DatabaseTypeDialog, JsEditor },
+  components: { gitbook, Test, DatabaseTypeDialog, JsEditor, VIcon },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start

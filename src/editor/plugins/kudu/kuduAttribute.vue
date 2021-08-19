@@ -1,7 +1,7 @@
 <template>
   <div class="hiveNode nodeStyle">
     <head>
-      <span class="headIcon iconfont icon-you2" type="primary"></span>
+      <VIcon class="headIcon color-primary">arrow-right-circle</VIcon>
       <span class="txt">{{ $t('editor.nodeSettings') }}</span>
     </head>
     <div class="nodeBody">
@@ -93,7 +93,7 @@
         v-if="model.connectionId && model.tableName"
         @click="hanlderLoadSchema"
       >
-        <i class="el-icon-loading" v-if="reloadModelLoading"></i>
+        <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
         <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
         <span v-else>{{ $t('dataFlow.updateModel') }}</span>
       </el-button>
@@ -118,12 +118,13 @@ import ClipButton from '@/components/ClipButton'
 import CreateTable from '@/components/dialog/createTable'
 
 import ws from '@/api/ws'
+import VIcon from '@/components/VIcon'
 const connections = factory('connections')
 
 // let editorMonitor = null;
 export default {
   name: 'ApiNode',
-  components: { Entity, ClipButton, CreateTable },
+  components: { Entity, ClipButton, CreateTable, VIcon },
   data() {
     return {
       disabled: false,

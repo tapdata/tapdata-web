@@ -7,7 +7,9 @@
       class="action-buttons"
       style="display: flex; align-items: center; justify-content: space-between; padding-right: 10px"
     >
-      <i @click="backDataFlow" :title="$t('dataFlow.backlistText')" class="iconfont icon-sanheng backIcon"></i>
+      <div class="backIcon">
+        <VIcon @click="backDataFlow" :title="$t('dataFlow.backlistText')">menu</VIcon>
+      </div>
       <div class="flex-center">
         <el-button
           v-if="isEditable() && !isMoniting"
@@ -16,7 +18,7 @@
           :loading="isSaving"
           @click="draftSave"
         >
-          <i class="iconfont icon-baocun"></i>
+          <VIcon>save</VIcon>
           <span>{{ isSaving ? $t('dataFlow.button.saveing') : $t('dataFlow.button.save') }}</span>
         </el-button>
 
@@ -30,8 +32,11 @@
           @select="handleSearchNode"
           hide-loading
           clearable
-          suffix-icon="el-icon-search"
-        ></el-autocomplete>
+        >
+          <span slot="suffix" class="h-100">
+            <VIcon size="14">search</VIcon>
+          </span>
+        </el-autocomplete>
 
         <el-button-group class="action-btn-group">
           <el-button
@@ -276,6 +281,7 @@ import { EditorEventType } from '../../editor/lib/events'
 import _ from 'lodash'
 import SkipError from '../../components/SkipError'
 import { uuid } from '../../editor/util/Schema'
+import VIcon from '@/components/VIcon'
 
 const dataFlowsApi = factory('DataFlows')
 const Setting = factory('Setting')
@@ -285,7 +291,7 @@ let timer = null
 export default {
   name: 'Job',
   dataFlow: null,
-  components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError },
+  components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError, VIcon },
   data() {
     return {
       downLoadNum: 0,

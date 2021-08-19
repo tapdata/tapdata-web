@@ -199,7 +199,7 @@
               size="mini"
               @click="hanlderLoadSchema"
             >
-              <i class="el-icon-loading" v-if="reloadModelLoading"></i>
+              <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
               <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
               <span v-else>{{ $t('dataFlow.updateModel') }}</span>
             </el-button>
@@ -233,14 +233,14 @@ import Entity from '../link/Entity'
 import _ from 'lodash'
 import ws from '@/api/ws'
 import factory from '@/api/factory'
-
+import VIcon from '@/components/VIcon'
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editor = null;
 let tempSchemas = []
 export default {
   name: 'Table',
-  components: { Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder },
+  components: { Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder, VIcon },
   props: {
     database_types: {
       type: Array,
