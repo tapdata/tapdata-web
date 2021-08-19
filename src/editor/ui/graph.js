@@ -340,8 +340,8 @@ export default class Graph extends Component {
     const paperScroller = (this.paperScroller = new joint.ui.PaperScroller({
       paper: paper,
       autoResizePaper: true,
-      cursor: 'grab',
-      contentOptions: function (paperScroller) {
+      cursor: 'grab'
+      /*contentOptions: function (paperScroller) {
         let visibleArea = paperScroller.getVisibleArea()
         console.log('visibleArea', visibleArea, {
           bottom: visibleArea.height / 2,
@@ -358,7 +358,7 @@ export default class Graph extends Component {
           },
           allowNewOrigin: 'any'
         }
-      }
+      }*/
     }))
 
     this.el = paperScroller.el

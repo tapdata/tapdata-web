@@ -1,5 +1,5 @@
 <template>
-  <aside class="layout-sidebar --left border-end flex flex-column">
+  <aside class="layout-sidebar --left border-end flex flex-column flex-shrink-0">
     <SearchBar v-model="search"></SearchBar>
 
     <div v-if="searchFilter.length === 0" class="overflow-auto flex-fill">
@@ -78,7 +78,11 @@ const databaseTypesApi = new DatabaseTypes()
 
 export default {
   name: 'LeftSidebar',
+
+  props: ['eventBus'],
+
   components: { EmptyItem, SearchBar, NodeItem },
+
   data() {
     return {
       search: '',
@@ -189,7 +193,13 @@ export default {
     },
 
     onDrop(item, position) {
-      const bound = document.getElementById('node-view').getBoundingClientRect()
+      // const bound = document.getElementById('node-view').getBoundingClientRect()
+
+      console.log('onDrop', item, position)
+
+      this.eventBus.$emit('drop-node', item, position)
+
+      return
 
       let [x, y] = position
       x -= bound.x

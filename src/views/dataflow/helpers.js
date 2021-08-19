@@ -35,7 +35,7 @@ export const getDataflowCorners = nodes => {
   )
 }
 
-export const scaleSmaller = ({ scale, offset }) => {
+export const scaleSmaller = ({ scale, offset: [xOffset, yOffset] }) => {
   scale /= 1.25
   xOffset /= 1.25
   yOffset /= 1.25
@@ -48,7 +48,7 @@ export const scaleSmaller = ({ scale, offset }) => {
   }
 }
 
-export const scaleBigger = ({ scale, offset }) => {
+export const scaleBigger = ({ scale, offset: [xOffset, yOffset] }) => {
   scale *= 1.25
   xOffset -= window.innerWidth / 10
   yOffset -= window.innerHeight / 10

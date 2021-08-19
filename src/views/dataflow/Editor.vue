@@ -18,16 +18,31 @@
 
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
-      <LeftSidebar></LeftSidebar>
+      <LeftSidebar :event-bus="editBus"></LeftSidebar>
       <!--内容体-->
       <main
         id="dfEditorContent"
         ref="layoutContent"
-        class="layout-content flex-grow-1"
+        class="layout-content flex-fill overflow-hidden"
         @mousedown="mouseDown"
         @wheel="wheelScroll"
       >
-        <div id="node-view-background" class="node-view-background" :style="backgroundStyle"></div>
+        <PaperScroller :event-bus="editBus">
+          <DFNode
+            v-for="n in nodes"
+            :key="n.id"
+            :node-id="n.id"
+            :id="NODE_PREFIX + n.id"
+            :js-plumb-ins="jsPlumbIns"
+            @drag-start="onNodeDragStart"
+            @drag-move="onNodeDragMove"
+            @drag-stop="onNodeDragStop"
+            @deselectAllNodes="deselectAllNodes"
+            @deselectNode="nodeDeselectedById"
+            @nodeSelected="nodeSelectedById"
+          ></DFNode>
+        </PaperScroller>
+        <!--<div id="node-view-background" class="node-view-background" :style="backgroundStyle"></div>
 
         <div id="node-view" class="node-view" :style="dataflowStyle">
           <DFNode
@@ -46,7 +61,7 @@
         </div>
 
         <div v-show="showSelectBox" class="select-box" :style="selectBoxStyle"></div>
-        <div class="nav-line" v-for="(l, i) in navLines" :key="`l-${i}`" :style="l"></div>
+        <div class="nav-line" v-for="(l, i) in navLines" :key="`l-${i}`" :style="l"></div>-->
       </main>
       <!--右侧边栏-->
       <RightSidebar @hide="onHideSidebar"></RightSidebar>
@@ -78,6 +93,8 @@ import DataFlowFormSchemas from '@/api/DataFlowFormSchemas'
 import DatabaseTypes from '@/api/DatabaseTypes'
 import { getDataflowCorners } from '@/views/dataflow/helpers'
 import VIcon from '@/components/VIcon'
+import PaperScroller from '@/views/dataflow/components/PaperScroller'
+import Vue from 'vue'
 
 const dataFlowsApi = new DataFlows()
 const dataFlowFormSchemasApi = new DataFlowFormSchemas()
@@ -92,6 +109,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, moveDataflow],
 
   components: {
+    PaperScroller,
     VIcon,
     TopHeader,
     DFNode,
@@ -119,7 +137,8 @@ export default {
       selectActive: false,
       showSelectBox: false,
       nodeViewScale: 1,
-      mapping: this.$route.query?.mapping
+      mapping: this.$route.query?.mapping,
+      editBus: new Vue()
     }
   },
 
