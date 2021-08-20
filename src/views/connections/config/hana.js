@@ -102,7 +102,7 @@ export default function (vm) {
       },
       {
         type: 'input',
-        field: 'database_name',
+        field: 'database_owner',
         label: vm.$t('dataForm.form.databaseName'),
         required: true
       },
