@@ -283,18 +283,13 @@
           :mergedSchema="defaultSchema"
         ></queryBuilder>
       </el-form>
-      <div class="e-entity-wrap" style="text-align: center">
-        <el-button
-          class="fr"
-          type="success"
-          size="mini"
-          v-if="model.connectionId && model.tableName"
-          @click="hanlderLoadSchema"
-        >
+      <div class="e-entity-wrap" style="text-align: center" v-if="model.connectionId && model.tableName">
+        <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
           <i class="el-icon-loading" v-if="reloadModelLoading"></i>
           <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
           <span v-else>{{ $t('dataFlow.updateModel') }}</span>
         </el-button>
+        <FieldMapping v-else :dataFlow="dataFlow" class="fr"></FieldMapping>
         <entity
           v-loading="schemaSelectConfig.loading"
           :schema="convertSchemaToTreeData(defaultSchema)"
@@ -351,6 +346,7 @@ import ClipButton from '@/components/ClipButton'
 import queryBuilder from '@/components/QueryBuilder'
 import CreateTable from '@/components/dialog/createTable'
 import AggregationDialog from './aggregationDialog'
+import FieldMapping from '@/components/FieldMapping'
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, removeDeleted, uuid } from '../../util/Schema'
 import Entity from '../link/Entity'
 import _ from 'lodash'
@@ -377,7 +373,8 @@ export default {
     RelatedTasks,
     CreateTable,
     queryBuilder,
-    AggregationDialog
+    AggregationDialog,
+    FieldMapping
   },
   props: {
     database_types: {
@@ -609,7 +606,10 @@ export default {
       loading: false,
       collectionAggregateTip: true,
       repeatTableDiao: false,
-      repeatTable: []
+      repeatTable: [],
+      scope: '',
+      dataFlow: '',
+      showFieldMapping: 0
     }
   },
 
@@ -887,6 +887,12 @@ export default {
       this.model.tableName = ''
     },
     setData(data, cell, dataNodeInfo, vueAdapter) {
+      this.scope = vueAdapter?.editor?.scope
+      this.getDataFlow()
+      this.showfieldMapping = cell.graph.getConnectedLinks(this, {
+        inbound: true
+      }).length
+      console.log(cell.target)
       if (data) {
         let conds
         if (data.custSql && data.custSql.conditions) {
@@ -1094,6 +1100,10 @@ export default {
       }
 
       this.aggregationDialog = false
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
     }
   }
 }

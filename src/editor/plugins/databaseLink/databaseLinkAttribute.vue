@@ -579,7 +579,6 @@ export default {
     },
     //更新左边导航
     updateFieldMappingNavData(data) {
-      console.log(data)
       this.fieldMappingNavData = data
     },
     //获取表设置
