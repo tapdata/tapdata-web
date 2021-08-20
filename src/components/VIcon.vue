@@ -99,7 +99,7 @@ const VIcon = {
               width: fontSize,
               color: this.color
             }
-          : undefined
+          : { color: this.color }
       }
 
       return wrapperData
