@@ -179,7 +179,7 @@ export const FORM_DATA_KEY = 'form_data',
     },
     hana: {
       type: 'hana',
-      name: 'Hana',
+      name: 'SPA Hana',
       shapeImage: 'static/editor/o-hana.svg',
       stencilImage: 'static/editor/hana.svg'
     },

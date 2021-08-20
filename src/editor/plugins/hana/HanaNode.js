@@ -13,7 +13,7 @@ export const HanaNodeConfig = {
           xlinkHref: 'static/editor/o-hana.svg'
         },
         label: {
-          text: 'hana'
+          text: 'SAP HANA'
         }
       },
       [FORM_DATA_KEY]: {
@@ -176,7 +176,7 @@ export const HanaNodeConfig = {
     size: { width: 5, height: 4 },
     attrs: {
       root: {
-        dataTooltip: 'Hana',
+        dataTooltip: 'SAP HANA',
         dataTooltipPosition: 'left',
         dataTooltipPositionSelector: '.joint-stencil'
       },
@@ -196,7 +196,7 @@ export const HanaNodeConfig = {
         refY: '0%'
       },
       label: {
-        text: 'hana',
+        text: 'SAP HANA',
         textAnchor: 'middle',
         fill: '#666',
         fontFamily: 'Roboto Condensed',

@@ -151,7 +151,7 @@ const connections = factory('connections')
 
 // let editorMonitor = null;
 export default {
-  name: 'ApiNode',
+  name: 'HanaNode',
   components: { Entity, ClipButton, CreateTable },
   data() {
     return {
