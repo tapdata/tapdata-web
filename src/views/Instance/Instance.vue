@@ -110,6 +110,7 @@
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(scope.row, 'upgrading')"
+                  key="upgrading"
                 >
                   <div class="upgrading-box">
                     <VIcon class="v-icon animation-rotate" size="14" color="rgb(61, 156, 64)">loading-circle</VIcon>
@@ -134,6 +135,7 @@
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(scope.row, 'fail')"
+                  key="fail"
                 >
                   <VIcon size="20" class="cursor-pointer block" @click="showUpgradeErrorDialogFnc(scope.row)"
                     >upgrade-error-color</VIcon
@@ -145,6 +147,7 @@
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(scope.row)"
+                  key="done"
                 >
                   <VIcon size="20" class="cursor-pointer block" @click="showUpgradeDialogFnc(scope.row)"
                     >upgrade-color</VIcon
