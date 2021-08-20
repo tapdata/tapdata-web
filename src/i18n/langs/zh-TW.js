@@ -1,4 +1,9 @@
 export default {
+  verify_details_title: '任務校驗詳情',
+  verify_history_title: '任務校驗歷史',
+  verify_diff_history_title: '差異校驗歷史',
+  verify_diff_details_title: '差異校驗詳情',
+  verify_result_title: '校驗結果',
   verify_button_diff_verify: '差異校驗',
   verify_button_diff_verify_running: '校驗中',
   verify_button_diff_verify_tips: '對本次全量校驗的差異數據結果進行再次校驗，行數差異暫不支持差異校驗',
@@ -6,6 +11,11 @@ export default {
   verify_button_diff_task_history: '校驗歷史',
   verify_message_old_data_not_support: '舊數據暫不支持二次校驗',
   verify_message_out_of_limit: '您的差異數據量已超出任務支持的最大錯誤數據保存條數，暫時無法進行二次校驗',
+  verify_result_count_more: '目標count多: {0}',
+  verify_result_count_less: '目標count少: {0}',
+  verify_result_content_diff: '表數據差: {0}',
+  verify_result_count_inconsistent: '不一致',
+  verify_result_count_consistent: '一致',
 
   taskprogress_plan_sync_table_num: '計劃同步表數量',
   taskprogress_completed_sync_table_num: '已完成同步表數量',

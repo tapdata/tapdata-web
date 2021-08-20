@@ -24,8 +24,12 @@ export default {
     rowClickHandler(item) {
       let url = ''
       let id = item.id
+      let routeName = 'dataVerifyResult'
+      if (this.$route.name === 'VerifyDiffHistory') {
+        routeName = 'dataVerifyResultDetails'
+      }
       let route = this.$router.resolve({
-        name: 'dataVerifyResult',
+        name: routeName,
         params: {
           id
         }
