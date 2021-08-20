@@ -15,7 +15,7 @@ export const TOPOLOGY_MAP = topologyMap,
     Stopped: { text: '离线', icon: 'warning', type: 'warning' }
   },
   TASK_STATUS_MAP = {
-    running: { text: '运行中', icon: 'right', type: 'success' },
+    running: { text: '运行中', icon: 'right-fill', type: 'success' },
     paused: { text: '待启动', icon: 'wait-fill-color' },
     error: { text: '错误', icon: 'warning', type: 'warning' },
     draft: { text: '待启动', icon: 'wait-fill-color' },

@@ -51,7 +51,11 @@
         <ElTableColumn label="任务类型" prop="syncTypeText"></ElTableColumn>
         <ElTableColumn label="任务状态">
           <template slot-scope="scope">
-            <StatusTag type="text" target="task" :status="scope.row.status"></StatusTag>
+            <span v-if="scope.row.isFinished" :class="['flex', 'align-items-center', status]">
+              <VIcon class="v-icon color-success mx-1" size="16">success</VIcon>
+              <span class="td-status-tag__text">已完成</span>
+            </span>
+            <StatusTag v-else type="text" target="task" :status="scope.row.status"></StatusTag>
           </template>
         </ElTableColumn>
         <ElTableColumn label="启动时间" prop="startTime" sortable="custom">
@@ -193,6 +197,9 @@
   }
   .migration-table__empty {
     color: map-get($fontColor, light);
+  }
+  .v-icon {
+    margin: 0 4px;
   }
 }
 </style>
@@ -415,6 +422,20 @@ export default {
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
       item.startTimeFmt = item.startTime ? this.$moment(item.startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+      // 全量状态下，任务完成状态时，前端识别为已停止
+      if (item.status === 'paused' && item.setting.sync_type === 'initial_sync') {
+        let flag = true
+        let stagesMetrics = item.stats?.stagesMetrics || []
+        stagesMetrics.forEach(el => {
+          if (el.status !== 'initialized') {
+            flag = false
+          }
+        })
+        if (flag) {
+          // 别为已完成
+          item.isFinished = true
+        }
+      }
       return item
     },
     sortChange({ prop, order }) {
