@@ -203,10 +203,9 @@ const childRoutes = [
   {
     path: '/modules',
     name: 'modules',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/Modules'),
     meta: {
       code: 'API_management_menu',
-      url: '/old/index.html#/modules',
       title: i18n.t('tap.apiManagement'),
       isCollapse: false
     }
@@ -214,7 +213,7 @@ const childRoutes = [
   {
     path: '/module',
     name: 'module',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/ModuleForm'),
     meta: {
       code: 'API_creation'
     }
@@ -222,7 +221,7 @@ const childRoutes = [
   {
     path: '/module/:id',
     name: 'editModule',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/ModuleForm'),
     meta: {
       code: 'API_edition'
     }

@@ -1,0 +1,641 @@
+<template>
+  <div class="module-form">
+    <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
+    <el-form ref="form" :model="model" label-width="80px">
+      <el-form-item :label="$t('module_form_path')">
+        <el-input v-model="path" disabled size="mini" maxlength="100" show-word-limit></el-input>
+      </el-form-item>
+      <el-form-item :label="$t('module_form_method')">
+        <el-radio-group v-model="model.apiType">
+          <el-radio label="defaultApi">{{ $t('module_form_default_Api') }}</el-radio>
+          <el-radio label="customerApi">{{ $t('module_form_customer_Api') }}</el-radio>
+        </el-radio-group>
+      </el-form-item>
+    </el-form>
+    <div class="module-path">
+      <div class="module-path-header">
+        <span>{{ $t('module_form_path') }}</span>
+        <div class="module-path-button">
+          <el-button
+            size="mini"
+            @click="customeApiPath"
+            v-if="model.apiType == 'customerApi' && createForm.paths.length < 1"
+            >{{ $t('module_form_customer_Api') }}</el-button
+          >
+          <el-button size="mini" @click="updateAuthority" v-if="apiAuthority === 'edit'">{{
+            $t('module_form_security')
+          }}</el-button>
+          <el-button size="mini" @click="updateAuthority" v-else>{{ $t('module_form_edit') }}</el-button>
+          <el-button size="mini" @click="openDocument" v-if="createForm.status === 'active'">{{
+            $t('module_form_document')
+          }}</el-button>
+          <el-button size="mini" v-if="createForm.status === 'active'">{{ $t('module_form_preview') }}</el-button>
+        </div>
+      </div>
+      <div class="module-path-content">
+        <div class="module-path-item" v-for="(item, index) in createForm.paths" :key="index">
+          <div class="module-path-item-group" v-if="apiAuthority === 'edit'">
+            <div>
+              <span class="module-path-item-method" :class="'label-' + getstyle(item)">{{ item.method }}</span>
+              <span class="module-path-item-text">{{ item.path }}</span>
+            </div>
+            <div>
+              <div class="module-path-item-button" style="margin-left: 10px">
+                <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
+                  ><i class="fa fa-edit"></i
+                ></span>
+                <span title="remove" @click="removeApiPath(index)" style="cursor: pointer"
+                  ><i class="fa fa-times"></i
+                ></span>
+              </div>
+              <div class="module-path-item-description">{{ item.description }}</div>
+            </div>
+          </div>
+          <template v-else>
+            <div>
+              <span class="module-path-item-method" :class="'label-' + getstyle(item)">{{ item.method }}</span>
+              <span class="module-path-item-text">{{ item.path }}</span>
+            </div>
+            <div class="module-path-item-role">
+              <el-select v-model="item.acl" multiple size="mini" placeholder="请选择">
+                <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.name"> </el-option>
+              </el-select>
+            </div>
+          </template>
+        </div>
+        <div class="module-path-item" v-if="createForm.paths.length === 0">No record found</div>
+      </div>
+    </div>
+    <CustomerApiForm
+      :apiData="apiData"
+      :dialogVisible="dialogVisible"
+      @dialogVisible="handleDialogVisible"
+      @newApiPath="handleNewApiPath"
+      v-if="dialogVisible"
+    ></CustomerApiForm>
+  </div>
+</template>
+
+<script>
+import APIClient from '../../api/ApiClient'
+import CustomerApiForm from './CustomerApiForm'
+export default {
+  name: 'ModuleForm',
+  components: { CustomerApiForm },
+  data() {
+    return {
+      createFormConfig: null,
+      apiData: {},
+      dialogVisible: false,
+      apiClient: null,
+      createForm: {
+        targetConnection: '',
+        tablename: '',
+        readPreference: '',
+        readConcern: '',
+        apiVersion: 'v1',
+        name: '',
+        describtion: '',
+        prefix: '',
+        basePath: '',
+        path: '',
+        paths: []
+      },
+      model: {
+        apiType: ''
+      },
+      roles: [],
+      fields: [],
+      apiAuthority: 'edit'
+    }
+  },
+  created() {
+    this.getForm()
+    this.getConnection()
+    this.getDetail()
+    this.getRoles()
+  },
+  watch: {
+    // 数据库切换获取表
+    'createForm.targetConnection'() {
+      this.getTableData()
+    },
+    'module.tablename'(val) {
+      let fields = []
+      let selectedCollections = this.createFormConfig.items[1].options.filter(v => v.table_name === val)
+      selectedCollections.forEach(v => {
+        fields = fields.concat(v.fields)
+      })
+      this.fields = fields
+    },
+    'model.apiType'(newType, oldType) {
+      if (this.$route.query.id && (newType === oldType || oldType === '')) return
+      this.createForm.paths = []
+      if (newType === 'defaultApi') {
+        this.initPresetPaths()
+      }
+    },
+    'createForm.apiVersion'() {
+      this.updatePath()
+    },
+    'createForm.basePath'() {
+      this.updatePath()
+    },
+    'createForm.prefix'() {
+      this.updatePath()
+    }
+  },
+  computed: {
+    path() {
+      let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
+      return '/api/' + this.createForm.apiVersion.toLowerCase() + '/' + prefix + this.createForm.basePath
+    }
+  },
+  methods: {
+    // 关闭自定义api弹窗
+    handleDialogVisible() {
+      this.dialogVisible = false
+    },
+    // 自定义api数据返回
+    handleNewApiPath() {},
+    // 编辑api路径
+    editApiPath(item) {},
+    // 移除api路径
+    removeApiPath(index) {
+      this.createForm.paths.splice(index, 1)
+    },
+    // 更新路径
+    updatePath() {
+      this.createForm.paths.forEach(v => {
+        let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
+        if (['findById', 'updateById', 'deleteById'].indexOf(v.name) !== -1) {
+          v.path = '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath + '/{id}'
+        } else if (v.type !== 'custom') {
+          v.path = '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath
+        } else {
+          v.path = '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath //+'/'+ v.namespace;//+'/'+ v.name//"/cust/"+
+        }
+      })
+    },
+    // 获取api数据
+    getDetail() {
+      let _this = this
+      this.$api('modules')
+        .get([this.$route.query.id])
+        .then(res => {
+          if (res) {
+            Object.assign(_this.createForm, res.data)
+            _this.model.apiType = res.data.apiType
+            _this.createForm.targetConnection = res.data.datasource
+            _this.fields = res.data.fields
+            _this.getTableData()
+          }
+        })
+    },
+    // 获取数据库
+    getConnection() {
+      let fields = {
+        id: true,
+        name: true,
+        connection_type: true,
+        status: true,
+        user_id: true
+      }
+      let where = {
+        or: [{ connection_type: 'source_and_target' }, { connection_type: 'target' }],
+        database_type: {
+          in: ['mongodb', 'gridfs', 'oracle', 'mysql', 'sqlserver', 'postgres']
+        }
+      }
+      let params = {
+        fields: fields,
+        where
+      }
+      this.$api('connections')
+        .get({
+          filter: JSON.stringify(params)
+        })
+        .then(res => {
+          let options = []
+          options = res.data.map(db => {
+            return {
+              label: db.name,
+              value: db.id
+            }
+          })
+          this.createFormConfig.items[0].options = options
+        })
+    },
+    // 获取表数据
+    getTableData() {
+      let params = {
+        where: {
+          id: this.createForm.targetConnection
+        }
+      }
+      this.$api('connections')
+        .get({
+          filter: JSON.stringify(params)
+        })
+        .then(res => {
+          let options = []
+          console.log(res.data)
+          if (res.data?.length && res.data[0].schema?.tables?.length)
+            options = res.data[0].schema.tables.map(table => {
+              return {
+                label: table.table_name,
+                value: table.table_name,
+                fileds: table.fileds
+              }
+            })
+          this.createFormConfig.items[1].options = options
+        })
+    },
+
+    // 初始化pai路径
+    initPresetPaths() {
+      let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
+      let preset = {
+        path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath,
+        method: 'POST',
+        description: this.$t('module_form_create_a_new_record'),
+        name: 'create',
+        result: 'Document',
+        type: 'preset',
+        acl: ['admin']
+      }
+      this.createForm.paths.push(preset)
+      preset = {
+        path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath + '/{id}',
+        method: 'GET',
+        description: this.$t('module_form_get_record_by_id'),
+        name: 'findById',
+        params: [{ name: 'id', type: 'string', defaultvalue: 1, description: 'document id' }],
+        result: 'Document',
+        type: 'preset',
+        acl: ['admin']
+      }
+      this.createForm.paths.push(preset)
+      preset = {
+        path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath + '/{id}',
+        method: 'PATCH',
+        name: 'updateById',
+        params: [{ name: 'id', type: 'string', defaultvalue: 1, description: 'document id' }],
+        description: this.$t('module_form_update_record_by_id'),
+        result: 'Document',
+        type: 'preset',
+        acl: ['admin']
+      }
+      this.createForm.paths.push(preset)
+      preset = {
+        path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath + '/{id}',
+        method: 'DELETE',
+        name: 'deleteById',
+        params: [{ name: 'id', type: 'string', description: 'document id' }],
+        description: this.$t('module_form_delete_record_by_id'),
+        type: 'preset',
+        acl: ['admin']
+      }
+      this.createForm.paths.push(preset)
+      preset = {
+        path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath,
+        method: 'GET',
+        name: 'findPage',
+        params: [
+          { name: 'page', type: 'int', defaultvalue: 1, description: 'page number' },
+          { name: 'limit', type: 'int', defaultvalue: 20, description: 'max records per page' },
+          { name: 'sort', type: 'object', description: "sort setting,Array ,format like [{'propertyName':'ASC'}]" },
+          { name: 'filter', type: 'object', description: 'search filter object,Array' }
+        ],
+        description: this.$t('module_form_get_record_list_by_page_and_limit'),
+        result: 'Page<Document>',
+        type: 'preset',
+        acl: ['admin']
+      }
+      this.createForm.paths.push(preset)
+    },
+    // 自定义api
+    customeApiPath() {
+      this.apiData = {
+        method: 'GET',
+        condition: {},
+        status: 'add',
+        fields: JSON.parse(JSON.stringify(this.fields)),
+        availableQueryField: [],
+        requiredQueryField: [],
+        type: 'custom',
+        acl: ['admin']
+      }
+      // if (this.apiData?.field?.length) {
+      //   this.apiData.fields.forEach(v => (v.visible = true))
+      // }
+      this.dialogVisible = true
+    },
+    // 打开api文档
+    openDocument() {
+      this.apiClient = new APIClient()
+      this.$api('ApiServer')
+        .get({ 'filter[limit]': 1 })
+        .then(res => {
+          if (res?.data?.length) {
+            let apiServer = res.data[0]
+            let apiServerUri = apiServer.clientURI
+            let openApiUri = apiServerUri + '/openapi.json'
+            let api = this.createForm.basePath + '_' + this.createForm.apiVersion
+            let token = this.apiClient.getAPIServerToken()
+
+            this.$router.push({
+              name: 'apiDocAndTest',
+              query: {
+                id: api,
+                openApi: openApiUri,
+                token: token
+              }
+            })
+          } else {
+            this.$message.error(this.$t('module_form_no_server_preview_api'))
+          }
+        })
+        .catch(() => {
+          this.$message.error(this.$t('module_form_get_api_uri_fail'))
+        })
+    },
+    // 获取角色权限
+    getRoles() {
+      this.$api('role')
+        .get({})
+        .then(res => {
+          if (res) {
+            this.roles = res.data
+            this.roles.push({
+              name: this.$t('module_form_public_api'),
+              id: '$everyone'
+            })
+          }
+        })
+        .catch(e => {
+          this.$message.error(e.response.msg)
+        })
+    },
+    // 更新权限编辑按钮展示
+    updateAuthority() {
+      this.apiAuthority = this.apiAuthority === 'edit' ? 'security' : 'edit'
+    },
+    // 路径颜色
+    getstyle(item) {
+      switch (item.method) {
+        case 'STREAM':
+          return 'purple'
+        case 'GET':
+          return 'blue'
+        case 'POST':
+          return 'green'
+        case 'PATCH':
+          return 'yellow'
+        case 'DELETE':
+          return 'red'
+      }
+    },
+    // 表单
+    getForm() {
+      this.createFormConfig = {
+        form: {
+          labelPosition: 'right',
+          labelWidth: '100px'
+        },
+        items: [
+          {
+            type: 'select',
+            label: this.$t('module_form_connection'),
+            field: 'targetConnection',
+            options: [],
+            required: true
+          },
+          {
+            type: 'select',
+            label: this.$t('module_form_tablename'),
+            field: 'tablename',
+            options: [],
+            required: true
+          },
+          {
+            type: 'select',
+            label: 'readPreference',
+            field: 'readPreference',
+            options: [
+              { label: '', value: '' },
+              { label: 'primary', value: 'primary' },
+              { label: 'primaryPreferred', value: 'primaryPreferred' },
+              { label: 'secondary', value: 'secondary' },
+              { label: 'secondaryPreferred', value: 'secondaryPreferred' },
+              { label: 'nearest', value: 'nearest' }
+            ]
+          },
+          {
+            type: 'input',
+            label: 'readPreference Tag',
+            field: 'readPreferenceTag',
+            show: true,
+            dependOn: [
+              {
+                triggerOptions: [
+                  {
+                    field: 'readPreference',
+                    value: 'primary'
+                  }
+                ],
+                triggerConfig: {
+                  show: false
+                }
+              },
+              {
+                triggerOptions: [
+                  {
+                    field: 'readPreference',
+                    value: ''
+                  }
+                ],
+                triggerConfig: {
+                  show: false
+                }
+              }
+            ]
+          },
+          {
+            type: 'select',
+            label: 'readConcern',
+            field: 'readConcern',
+            options: [
+              { label: '', value: '' },
+              { label: 'local', value: 'local' },
+              { label: 'available', value: 'available' },
+              { label: 'majority', value: 'majority' },
+              { label: 'linearizable', value: 'linearizable' },
+              { label: 'snapshot', value: 'snapshot' }
+            ]
+          },
+          {
+            type: 'input',
+            label: this.$t('module_form_version'),
+            field: 'apiVersion',
+            required: true
+          },
+          {
+            type: 'input',
+            label: this.$t('module_form_name'),
+            field: 'name',
+            required: true,
+            rules: [
+              {
+                required: true,
+                validator: (rule, v, callback) => {
+                  const flag = /^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(v) // eslint-disable-line
+                  if (!flag) {
+                    return callback(new Error(this.$t('module_form_validator_name')))
+                  }
+                  return callback()
+                }
+              }
+            ]
+          },
+          {
+            type: 'input',
+            label: this.$t('module_form_describtion'),
+            field: 'describtion',
+            domType: 'textarea',
+            maxlength: 100,
+            showWordLimit: true
+          },
+          {
+            type: 'input',
+            label: this.$t('module_form_prefix'),
+            field: 'prefix',
+            maxlength: 100,
+            showWordLimit: true,
+            rules: [
+              {
+                validator: (rule, v, callback) => {
+                  const flag = /^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(v) // eslint-disable-line
+                  if (!flag) {
+                    return callback(new Error(this.$t('module_form_validator_name')))
+                  }
+                  return callback()
+                }
+              }
+            ]
+          },
+          {
+            type: 'input',
+            label: this.$t('module_form_basePath'),
+            field: 'basePath',
+            required: true,
+            maxlength: 100,
+            showWordLimit: true,
+            rules: [
+              {
+                required: true,
+                validator: (rule, v, callback) => {
+                  const flag = /^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(v) // eslint-disable-line
+                  if (!flag) {
+                    return callback(new Error(this.$t('module_form_validator_name')))
+                  }
+                  return callback()
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+.module-form {
+  width: 1000px;
+  margin: 30px auto;
+  box-sizing: border-box;
+  overflow: hidden;
+  .module-path-header {
+    display: flex;
+    justify-content: space-between;
+    span {
+      display: inline-block;
+      width: 140px;
+      padding-right: 20px;
+      text-align: right;
+      box-sizing: border-box;
+    }
+  }
+  .module-path-content {
+    padding: 20px 0 20px 70px;
+    .module-path-item {
+      padding: 10px 15px 12px;
+      border: 1px solid #eee;
+      border-top: 0;
+      color: #999;
+      font-size: 10px;
+      cursor: pointer;
+      &:first-child {
+        border-top: 1px solid #eee;
+      }
+      .module-path-item-group {
+        display: flex;
+        justify-content: space-between;
+      }
+      .module-path-item-method {
+        display: inline-block;
+        width: 80px;
+        padding: 3px;
+        text-align: center;
+        font-size: 11px;
+        color: #fff;
+      }
+      .module-path-item-text {
+        padding-left: 20px;
+      }
+      .module-path-item-role {
+        margin-top: 10px;
+      }
+      .label-default {
+        background-color: #999 !important;
+      }
+      .label-primary {
+        background-color: #dc6767 !important;
+      }
+      .label-red {
+        background-color: #bf4346 !important;
+      }
+      .label-orange {
+        background-color: #e9662c !important;
+      }
+      .label-green {
+        background-color: #488c6c !important;
+      }
+      .label-yellow {
+        background-color: #f2994b !important;
+      }
+      .label-blue {
+        background-color: #0a819c !important;
+      }
+    }
+  }
+}
+</style>
+<style lang="scss">
+.module-form {
+  .el-form {
+    .el-form-item {
+      margin-bottom: 12px;
+      .el-form-item__label {
+        width: 140px !important;
+        text-align: right;
+      }
+      .el-form-item__content {
+        margin-left: 140px !important;
+      }
+    }
+  }
+}
+</style>
