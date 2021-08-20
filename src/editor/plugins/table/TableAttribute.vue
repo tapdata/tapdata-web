@@ -256,8 +256,7 @@ export default {
           'gaussdb200',
           'postgres',
           'mariadb',
-          'greenplum',
-          'hana'
+          'greenplum'
         ]
       }
     }
