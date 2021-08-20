@@ -227,7 +227,7 @@ module.exports = {
         ],
         setting: {
           name: 'sudu 8',
-          sync_type: 'initial_sync+cdc',
+          'sync_type|1': ['initial_sync+cdc', 'initial_sync', 'cdc'],
           distinctWriteType: 'intellect',
           stopOnError: false,
           isOpenAutoDDL: false,
