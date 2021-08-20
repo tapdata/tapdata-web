@@ -31,6 +31,9 @@
             <div class="ml-3 mt-2 text-black-50">
               测试Agent的同步速度限制为最多200行/S，您自己部署安装的Agent不受该限制。
             </div>
+            <div class="ml-3 mt-2 color-warning">
+              如果您超过一周没有访问系统，测试Agent会被自动回收，您可以通过新手引导再次创建使用。
+            </div>
             <div class="agent-btn mt-4">
               <el-button
                 v-if="!agent.status"
