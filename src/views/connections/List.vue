@@ -693,7 +693,7 @@ export default {
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
       //drs 检查实例是否可用 dfs 检查agent是否可用
-      this.dialogDatabaseTypeVisible = true
+      // this.dialogDatabaseTypeVisible = true
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
         this.dialogDatabaseTypeVisible = true
       } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
