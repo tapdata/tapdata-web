@@ -31,7 +31,6 @@ const VIcon = {
     small: Boolean,
     xLarge: Boolean,
     xSmall: Boolean,
-    rotating: Boolean,
     tag: {
       type: String,
       required: false,
@@ -75,8 +74,7 @@ const VIcon = {
         class: {
           'v-icon--disabled': this.disabled,
           'v-icon--link': this.hasClickListener,
-          'v-icon--dense': this.dense,
-          'v-icon--rotating': this.rotating
+          'v-icon--dense': this.dense
         },
         attrs: {
           'aria-hidden': !this.hasClickListener,
@@ -99,7 +97,7 @@ const VIcon = {
               width: fontSize,
               color: this.color
             }
-          : undefined
+          : { color: this.color }
       }
 
       return wrapperData
@@ -171,33 +169,5 @@ svg.iconfont {
 }
 .v-icon--disabled {
   pointer-events: none;
-}
-.v-icon--rotating {
-  animation: rotating 2s linear infinite;
-}
-@-moz-keyframes rotate {
-  0% {
-    -moz-transform: rotate(0deg);
-  }
-  to {
-    -moz-transform: rotate(1turn);
-  }
-}
-@-webkit-keyframes rotate {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  to {
-    -webkit-transform: rotate(1turn);
-  }
-}
-@keyframes rotating {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(1turn);
-  }
 }
 </style>
