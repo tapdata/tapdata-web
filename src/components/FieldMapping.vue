@@ -16,7 +16,7 @@
         :typeMappingMethod="getTypeMapping"
         :fieldProcessMethod="updateFieldProcess"
         :fieldMappingNavData="fieldMappingNavData"
-        :field_process="model.field_process"
+        :field_process="field_process"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
       ></FieldMapping>
@@ -30,15 +30,19 @@
 <script>
 export default {
   name: 'FiledMapping',
-  props: ['dataFlow'],
+  props: ['dataFlow', 'parentFieldProcess'],
   data() {
     return {
       //表设置
       fieldMappingNavData: '',
       fieldMappingTableData: '',
       dialogFieldProcessVisible: false,
-      scope: ''
+      scope: '',
+      field_process: []
     }
+  },
+  mounted() {
+    this.field_process = this.parentFieldProcess
   },
   methods: {
     //表设置
@@ -60,15 +64,15 @@ export default {
       if (rollback === 'all') {
         data['rollback'] = rollback
         //删除整个字段处理器
-        this.model.field_process = []
+        this.field_process = []
       } else if (rollbackTable) {
         data['rollback'] = rollback
         data['rollbackTable'] = rollbackTable
-        for (let i = 0; i < this.model.field_process.length; i++) {
+        for (let i = 0; i < this.field_process.length; i++) {
           // 删除操作
-          let ops = this.model.field_process[i]
+          let ops = this.field_process[i]
           if (ops.table_id === id) {
-            this.model.field_process.splice(i, 1)
+            this.field_process.splice(i, 1)
           }
         }
       }
@@ -117,8 +121,8 @@ export default {
     //获取字段处理器
     getFieldOperations(row) {
       let operations = []
-      if (!this.model.field_process || this.model.field_process.length === 0) return
-      let field_process = this.model.field_process.filter(process => process.table_id === row.sourceQualifiedName)
+      if (!this.field_process || this.field_process.length === 0) return
+      let field_process = this.field_process.filter(process => process.table_id === row.sourceQualifiedName)
       if (field_process.length > 0) {
         operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
       }
@@ -153,7 +157,11 @@ export default {
         fields: target
       }
       this.$api('MetadataInstances').update(where, data)
-      this.model.field_process = this.$refs.fieldMappingDom.saveFileOperations()
+      this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
+    },
+    //返回field_process
+    returnFieldProcess() {
+      return this.field_process
     }
   }
 }

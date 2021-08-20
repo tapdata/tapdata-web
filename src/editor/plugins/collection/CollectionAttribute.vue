@@ -289,7 +289,13 @@
           <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
           <span v-else>{{ $t('dataFlow.updateModel') }}</span>
         </el-button>
-        <FieldMapping v-else :dataFlow="dataFlow" class="fr"></FieldMapping>
+        <FieldMapping
+          v-else
+          :dataFlow="dataFlow"
+          :fieldProcess="model.fieldProcess"
+          ref="fieldMapping"
+          class="fr"
+        ></FieldMapping>
         <entity
           v-loading="schemaSelectConfig.loading"
           :schema="convertSchemaToTreeData(defaultSchema)"
@@ -595,7 +601,8 @@ export default {
         operations: [],
         collectionAggregate: false,
         collectionAggrPipeline: '',
-        pipelineFalg: false
+        pipelineFalg: false,
+        fieldProcess: ''
       },
       primaryKeyOptions: [],
       fieldFilterOptions: [],
@@ -889,10 +896,6 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       this.scope = vueAdapter?.editor?.scope
       this.getDataFlow()
-      this.showfieldMapping = cell.graph.getConnectedLinks(this, {
-        inbound: true
-      }).length
-      console.log(cell.target)
       if (data) {
         let conds
         if (data.custSql && data.custSql.conditions) {
@@ -948,6 +951,7 @@ export default {
           this.model.dropTable = true
         }
       }
+      this.$refs.fieldMapping.returnFieldProcess()
     },
     getData() {
       if (this.model.isFilter) {
