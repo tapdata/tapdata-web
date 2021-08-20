@@ -574,17 +574,21 @@ export default {
         this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
         return
       }
-      this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
-        this.$axios
-          .post('tm/api/clusterStates/updataAgent', {
-            downloadUrl,
-            process_id: this.selectedRow?.tmInfo?.agentId,
-            version: this.version
-          })
-          .then(() => {
-            this.$message.success(this.$t('agent_auto_upgrade_tip_start'))
-            this.fetch()
-          })
+      let row = this.selectedRow
+      this.$axios.get('api/tcm/config/version/latest/' + row.id).then(({ token }) => {
+        this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
+          this.$axios
+            .post('tm/api/clusterStates/updataAgent', {
+              downloadUrl,
+              process_id: this.selectedRow?.tmInfo?.agentId,
+              version: this.version,
+              token: token
+            })
+            .then(() => {
+              this.$message.success(this.$t('agent_auto_upgrade_tip_start'))
+              this.fetch()
+            })
+        })
       })
     },
     manualUpgradeFnc() {
