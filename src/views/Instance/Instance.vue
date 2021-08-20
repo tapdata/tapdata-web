@@ -112,7 +112,7 @@
                   :content="getTooltipContent(scope.row, 'upgrading')"
                 >
                   <div class="upgrading-box">
-                    <VIcon class="v-icon" size="14" color="rgb(61, 156, 64)" rotating>loading-circle</VIcon>
+                    <VIcon class="v-icon animation-rotate" size="14" color="rgb(61, 156, 64)">loading-circle</VIcon>
                     <el-progress
                       v-if="upgradingProgres(scope.row) !== undefined"
                       class="upgrading-progress"
