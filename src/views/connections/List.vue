@@ -304,7 +304,8 @@ export default {
         'mq',
         'hbase',
         'kudu',
-        'greenplum'
+        'greenplum',
+        'hana'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -688,10 +689,11 @@ export default {
         localStorage.setItem('connectionDatabaseType', type)
       }
     },
+
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
       //drs 检查实例是否可用 dfs 检查agent是否可用
-      // this.dialogDatabaseTypeVisible = true
+      this.dialogDatabaseTypeVisible = true
       if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
         this.dialogDatabaseTypeVisible = true
       } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {

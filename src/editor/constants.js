@@ -177,6 +177,12 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-greenplum.svg',
       stencilImage: 'static/editor/greenplum.svg'
     },
+    hana: {
+      type: 'hana',
+      name: 'Hana',
+      shapeImage: 'static/editor/o-hana.svg',
+      stencilImage: 'static/editor/hana.svg'
+    },
     hive: {
       type: 'hive',
       name: 'Hive',
