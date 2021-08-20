@@ -116,18 +116,20 @@
 				</el-form-item> -->
       </el-form>
     </div>
-    <div class="e-entity-wrap" style="text-align: center; overflow: auto">
-      <el-button
-        class="fr marR20"
-        type="success"
-        size="mini"
-        v-if="model.connectionId && model.tableName"
-        @click="hanlderLoadSchema"
-      >
+    <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
+      <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
         <i class="el-icon-loading" v-if="reloadModelLoading"></i>
         <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
         <span v-else>{{ $t('dataFlow.updateModel') }}</span>
       </el-button>
+      <FieldMapping
+        v-else
+        :dataFlow="dataFlow"
+        :fieldProcess="model.fieldProcess"
+        :returnFieldMapping="returnFieldMapping"
+        ref="fieldMapping"
+        class="fr"
+      ></FieldMapping>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
     <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
@@ -147,6 +149,7 @@ import Entity from '../link/Entity'
 import { convertSchemaToTreeData } from '../../util/Schema'
 import ClipButton from '@/components/ClipButton'
 import CreateTable from '@/components/dialog/createTable'
+import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
 const connections = factory('connections')
@@ -154,7 +157,7 @@ const connections = factory('connections')
 // let editorMonitor = null;
 export default {
   name: 'ApiNode',
-  components: { Entity, ClipButton, CreateTable },
+  components: { Entity, ClipButton, CreateTable, FieldMapping },
   data() {
     return {
       disabled: false,
@@ -188,12 +191,16 @@ export default {
           }
         ]
       },
+      dataNodeInfo: {},
       model: {
         connectionId: '',
         type: 'hive',
-        tableName: ''
-        // primaryKeys: ''
+        tableName: '',
+        // primaryKeys: '',
+        field_process: []
       },
+      scope: '',
+      dataFlow: '',
       schemasLoading: false,
       mergedSchema: null
     }
@@ -313,11 +320,14 @@ export default {
         })
     },
 
-    setData(data, cell) {
+    setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        this.scope = vueAdapter?.editor?.scope
+        this.getDataFlow()
         _.merge(this.model, data)
       }
       this.mergedSchema = cell.getOutputSchema()
+      this.dataNodeInfo = dataNodeInfo || {}
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
       })
@@ -385,8 +395,14 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    returnFieldMapping(fieldProcess) {
+      this.model.field_process = fieldProcess
     }
-
     // seeMonitor() {
     // 	editorMonitor.goBackMontior();
     // }

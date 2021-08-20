@@ -191,18 +191,20 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <div class="flex-block fr">
-            <el-button
-              class="fr"
-              type="success"
-              v-if="model.connectionId && model.tableName"
-              size="mini"
-              @click="hanlderLoadSchema"
-            >
+          <div class="flex-block fr" v-if="model.connectionId && model.tableName">
+            <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
               <i class="el-icon-loading" v-if="reloadModelLoading"></i>
               <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
               <span v-else>{{ $t('dataFlow.updateModel') }}</span>
             </el-button>
+            <FieldMapping
+              v-else
+              :dataFlow="dataFlow"
+              :fieldProcess="model.fieldProcess"
+              :returnFieldMapping="returnFieldMapping"
+              ref="fieldMapping"
+              class="fr"
+            ></FieldMapping>
           </div>
         </el-form-item>
       </el-form>
@@ -226,6 +228,7 @@
 // import DatabaseForm from '@/views/job/components/DatabaseForm/DatabaseForm';
 import ClipButton from '@/components/ClipButton'
 import queryBuilder from '@/components/QueryBuilder'
+import FieldMapping from '@/components/FieldMapping'
 import { convertSchemaToTreeData, removeDeleted } from '../../util/Schema'
 import RelatedTasks from '@/components/relatedTasks'
 import CreateTable from '@/components/dialog/createTable'
@@ -240,7 +243,7 @@ const MetadataInstances = factory('MetadataInstances')
 let tempSchemas = []
 export default {
   name: 'Table',
-  components: { Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder },
+  components: { Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder, FieldMapping },
   props: {
     database_types: {
       type: Array,
@@ -400,9 +403,11 @@ export default {
         type: 'table',
         // primaryKeys: '',
         initialSyncOrder: 0,
-        enableInitialOrder: false
+        enableInitialOrder: false,
+        field_process: []
       },
-
+      scope: '',
+      dataFlow: '',
       mergedSchema: null,
 
       primaryKeyOptions: [],
@@ -663,8 +668,10 @@ export default {
       // });
     },
 
-    setData(data, cell, dataNodeInfo) {
+    setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        this.scope = vueAdapter?.editor?.scope
+        this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
           conds = JSON.parse(JSON.stringify(data.custSql.conditions))
@@ -775,6 +782,13 @@ export default {
         })
       })
       this.dialogVisible = false
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    returnFieldMapping(fieldProcess) {
+      this.model.field_process = fieldProcess
     }
   }
 }

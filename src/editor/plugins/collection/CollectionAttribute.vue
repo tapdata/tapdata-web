@@ -604,7 +604,7 @@ export default {
         collectionAggregate: false,
         collectionAggrPipeline: '',
         pipelineFalg: false,
-        fieldProcess: ''
+        fieldProcess: []
       },
       primaryKeyOptions: [],
       fieldFilterOptions: [],
@@ -617,8 +617,7 @@ export default {
       repeatTableDiao: false,
       repeatTable: [],
       scope: '',
-      dataFlow: '',
-      showFieldMapping: 0
+      dataFlow: ''
     }
   },
 
@@ -896,9 +895,9 @@ export default {
       this.model.tableName = ''
     },
     setData(data, cell, dataNodeInfo, vueAdapter) {
-      this.scope = vueAdapter?.editor?.scope
-      this.getDataFlow()
       if (data) {
+        this.scope = vueAdapter?.editor?.scope
+        this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
           conds = JSON.parse(JSON.stringify(data.custSql.conditions))
