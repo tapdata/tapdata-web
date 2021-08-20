@@ -764,7 +764,7 @@ const cn = {
     reloadTittle: '重新加载 schema',
     deteleDatabaseTittle: '是否删除该连接？',
     deteleDatabaseMsg: '删除连接 xxx 后，此连接将无法恢复',
-    reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema : ',
+    reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema ',
     checkMsg: '此数据源被传输任务或API所占用，无法删除',
     copyFailedMsg: '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
     change: '更换',
