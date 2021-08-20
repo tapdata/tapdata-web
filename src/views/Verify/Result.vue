@@ -10,7 +10,11 @@
           <VIcon class="color-info">warning-outline</VIcon>
           <span>{{ errorMsg }}</span>
         </div>
-        <div v-if="resultInfo.parentId" class="color-info" style="font-size: 12px; text-align: right">
+        <div
+          v-if="resultInfo.parentId && $route.name === 'VerifyResult'"
+          class="color-info"
+          style="font-size: 12px; text-align: right"
+        >
           {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
           <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
             $t('verify_button_diff_task_history')
@@ -95,7 +99,13 @@ export default {
       return this.inspect?.inspectMethod || ''
     },
     tableData() {
-      return this.resultInfo.stats || []
+      let list = this.resultInfo.stats || []
+      if (this.$route.name === 'VerifyDiffDetails') {
+        list = list.filter(item => {
+          return item.result !== 'passed'
+        })
+      }
+      return list
     }
   },
   created() {

@@ -20,8 +20,12 @@ export default {
     rowClickHandler(item) {
       let url = ''
       let id = item.id
+      let routeName = 'VerifyResult'
+      if (this.$route.name === 'VerifyDiffHistory') {
+        routeName = 'VerifyDiffDetails'
+      }
       let route = this.$router.resolve({
-        name: 'VerifyResult',
+        name: routeName,
         params: {
           id
         }

@@ -164,7 +164,15 @@ const routes = [
             name: 'VerifyDetails',
             component: () => import(/* webpackChunkName: "verify-details" */ '../views/Verify/Details.vue'),
             meta: {
-              title: '校验详情'
+              title: '任务校验详情'
+            }
+          },
+          {
+            path: 'result/:id/details',
+            name: 'VerifyDiffDetails',
+            component: () => import(/* webpackChunkName: "verify-result" */ '../views/Verify/Result.vue'),
+            meta: {
+              title: '差异校验详情'
             }
           },
           {
@@ -180,7 +188,7 @@ const routes = [
             name: 'VerifyHistory',
             component: () => import(/* webpackChunkName: "verify-history" */ '../views/Verify/History.vue'),
             meta: {
-              title: '校验历史'
+              title: '任务校验历史'
             }
           },
           {
