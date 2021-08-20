@@ -158,10 +158,7 @@ export default {
       }
       this.$api('MetadataInstances').update(where, data)
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
-    },
-    //返回field_process
-    returnFieldProcess() {
-      return this.field_process
+      this.$emit('returnFieldMapping', this.field_process)
     }
   }
 }
