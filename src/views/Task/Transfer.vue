@@ -1,5 +1,9 @@
 <template>
   <section class="tapdata-transfer-wrap">
+    <div class="reload-schema">
+      没有可用的表，<span style="color: #999; cursor: pointer" @click="reload()">重新加载schema </span>
+      <span v-if="showProgress"><VIcon>loading</VIcon> {{ progress }} %</span>
+    </div>
     <div class="box-btn" v-show="!showOperationBtn">
       <el-button class="e-button" size="mini" @click="dialogVisible = true">{{ $t('dataFlow.changeName') }} </el-button>
       <el-button size="mini" class="e-button" @click="handleReduction"
@@ -120,6 +124,7 @@
         <el-button type="primary" @click="changeName">{{ $t('dataVerify.confirm') }} </el-button>
       </div>
     </el-dialog>
+    <ConnectionTest ref="test"></ConnectionTest>
   </section>
 </template>
 
@@ -173,19 +178,27 @@ export default {
       currentTableId: '',
       currentTableName: '',
       operations: [], //存储字段改名操作,
-      field_process: []
+      field_process: [],
+      progress: '',
+      showProgress: '',
+      sourceId: '',
+      bidirectional: '',
+      loadFieldsStatus: 'finished'
     }
   },
   methods: {
     //获取左边数据
     getTable(id, bidirectional) {
       this.transferLoading = true
+      this.sourceId = id
+      this.bidirectional = bidirectional
       this.$axios
         .get(`tm/api/Connections/${id}/customQuery`, {
           params: { schema: true }
         })
         .then(data => {
           if (data) {
+            this.loadFieldsStatus = data.loadFieldsStatus
             let tables = data?.schema?.tables || []
             tables = tables.sort((t1, t2) =>
               t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
@@ -527,6 +540,66 @@ export default {
           }
         }
       }
+    },
+    //重新加载模型
+    async reload() {
+      this.$checkAgentStatus(() => {
+        let config = {
+          title: this.$t('connection.reloadTittle'),
+          Message: this.$t('connection.reloadMsg'),
+          confirmButtonText: this.$t('message.confirm'),
+          cancelButtonText: this.$t('message.cancel'),
+          id: this.sourceId
+        }
+        this.$confirm(config.Message + '?', config.title, {
+          confirmButtonText: config.confirmButtonText,
+          cancelButtonText: config.cancelButtonText,
+          type: 'warning',
+          closeOnClickModal: false
+        }).then(resFlag => {
+          if (resFlag) {
+            this.showProgress = true
+            this.progress = 0
+            this.reloadApi('first')
+          }
+        })
+      })
+    },
+    reloadApi(type) {
+      let parms = {}
+      if (type === 'first') {
+        parms = {
+          loadCount: 0,
+          loadFieldsStatus: 'loading'
+        }
+        this.loadFieldsStatus = 'loading'
+      }
+      this.$axios
+        .patch('tm/api/Connections/' + this.sourceId, parms)
+        .then(data => {
+          if (type === 'first') {
+            this.$refs.test.start(data, false, true)
+          }
+          if (data.loadFieldsStatus === 'finished') {
+            this.progress = 100
+            this.getTable(this.sourceId, this.bidirectional) //重新加载表
+            setTimeout(() => {
+              this.showProgress = false
+              this.progress = 0 //加载完成
+            }, 800)
+          } else {
+            let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
+            this.progress = progress ? progress : 0
+            setTimeout(() => {
+              this.reloadApi()
+            }, 800)
+          }
+        })
+        .catch(() => {
+          this.$message.error(this.$t('connection.reloadFail'))
+          this.showProgress = false
+          this.progress = 0 //加载完成
+        })
     },
     returnData() {
       return {

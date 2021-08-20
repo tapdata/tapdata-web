@@ -241,6 +241,10 @@
         color: #999;
         font-size: 12px;
       }
+      .reload-schema {
+        padding: 0 200px;
+        margin-top: 10px;
+      }
       .CT-task-transfer {
         margin-left: 200px;
         height: 500px;
@@ -371,11 +375,12 @@
 <script>
 import formConfig from './config'
 import Transfer from './Transfer'
+import VIcon from '@/components/VIcon'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from './const'
 
 let defaultConfig = []
 export default {
-  components: { Transfer },
+  components: { Transfer, VIcon },
   data() {
     return {
       id: '',
@@ -734,14 +739,18 @@ export default {
           break
         }
         case 'mapping': {
-          let id = this.dataSourceModel.source_connectionId || ''
-          this.$nextTick(() => {
-            this.$refs.transfer.getTable(id, this.settingModel.bidirectional)
-            this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
-          })
+          this.getSchema()
           break
         }
       }
+    },
+    //获取schema
+    getSchema() {
+      let id = this.dataSourceModel.source_connectionId || ''
+      this.$nextTick(() => {
+        this.$refs.transfer.getTable(id, this.settingModel.bidirectional)
+        this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
+      })
     },
     //获取当前是否可以展示双向开关
     getSupportTwoWay() {
