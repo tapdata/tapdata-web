@@ -45,7 +45,7 @@ export default {
     return {
       activeMenu: '',
       menus: [],
-      sortMenus: ['Workbench', 'Instance', 'Connection', 'Task', 'OperationLog'],
+      sortMenus: ['Workbench', 'Instance', 'Connection', 'Task', 'Verify', 'OperationLog'],
       breadcrumbData: [],
       dialogVisible: false
     }

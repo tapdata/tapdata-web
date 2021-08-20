@@ -95,30 +95,35 @@
       </ElTableColumn>
       <ElTableColumn prop="sourceTotal" width="120" :label="$t('verify_history_source_total_rows')"></ElTableColumn>
       <!-- <ElTableColumn prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></ElTableColumn> -->
-      <ElTableColumn :label="$t('dataVerification.verifyResult')" width="140">
+      <ElTableColumn :label="$t('dataVerification.verifyResult')" width="180">
         <template slot-scope="scope">
-          <template v-if="scope.row.result && ['waiting', 'done'].includes(scope.row.status)">
-            <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
-              <VIcon class="color-danger" size="14">error</VIcon>
-              <span v-if="scope.row.inspectMethod === 'row_count'">
-                {{ $t('dataVerification.inconsistent') }}
-              </span>
-              <span v-else> {{ $t('dataVerification.contConsistent') }}{{ scope.row.difference_number }} </span>
+          <div class="flex align-items-center">
+            <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
+              <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
+                <VIcon class="verify-status-icon color-danger" size="14">error</VIcon>
+                <span v-if="scope.row.inspectMethod === 'row_count'">
+                  {{ $t('dataVerification.inconsistent') }}
+                </span>
+                <span v-else>{{ $t('dataVerification.contConsistent') }}{{ scope.row.difference_number }} </span>
+              </div>
+              <div v-else class="data-verify__status success">
+                <VIcon class="verify-status-icon" size="14">success-fill-color</VIcon>
+                <span>{{ $t('dataVerification.consistent') }}</span>
+              </div>
+            </template>
+            <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
+              <VIcon class="verify-status-icon color-danger" size="14">error</VIcon>
+              <span>Error</span>
             </div>
-            <div v-else class="data-verify__status success">
-              <VIcon size="18">success-fill-color</VIcon>
-              <span>{{ $t('dataVerification.consistent') }}</span>
+            <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
+              <VIcon style="font-size: 18px" color="#10C038">loading</VIcon>
+              <span>{{ statusMap[scope.row.status] }}</span>
             </div>
-          </template>
-          <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
-            <VIcon class="color-danger" size="14">error</VIcon>
-            <span>Error</span>
+            <div v-else>-</div>
+            <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="14"
+              >ercijiaoyan</VIcon
+            >
           </div>
-          <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
-            <VIcon style="font-size: 18px; margin: 0 4px" color="#10C038">loading</VIcon>
-            <span>{{ statusMap[scope.row.status] }}</span>
-          </div>
-          <div v-else>-</div>
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('dataVerification.verifyStatus')" width="120" prop="status">
@@ -397,16 +402,13 @@ export default {
       let result = item.InspectResult
       let sourceTotal = '-'
       let targetTotal = '-'
-      let diffNum = 0
       if (result) {
         sourceTotal = result.source_total
         targetTotal = result.target_total
-        diffNum = Math.abs(targetTotal - sourceTotal)
       }
       item.lastStartTime = item.lastStartTime ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       item.sourceTotal = sourceTotal
       item.targetTotal = targetTotal
-      item.diffNum = diffNum
       return item
     },
     inspectMethodChange(val) {
