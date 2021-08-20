@@ -425,12 +425,19 @@ export default {
       // 全量状态下，任务完成状态时，前端识别为已停止
       if (item.status === 'paused' && item.setting.sync_type === 'initial_sync') {
         let flag = true
-        let stagesMetrics = item.stats?.stagesMetrics || []
-        stagesMetrics.forEach(el => {
-          if (el.status !== 'initialized') {
-            flag = false
-          }
-        })
+        // 有节点
+        if (item.stats) {
+          let stagesMetrics = item.stats.stagesMetrics || []
+          stagesMetrics.forEach(el => {
+            if (el.status !== 'initialized') {
+              flag = false
+            }
+          })
+        } else {
+          // 无节点的任务
+          flag = false
+        }
+
         if (flag) {
           // 别为已完成
           item.isFinished = true
