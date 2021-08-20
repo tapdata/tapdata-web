@@ -27,5 +27,5 @@ export const TYPEMAP = {
   hbase: 'HBase',
   mq: 'MQ',
   greenplum: 'Greenplum',
-  hana: 'Hana'
+  hana: 'SAP HANA'
 }
