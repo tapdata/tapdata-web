@@ -297,9 +297,10 @@ export default {
     updateView() {
       this.initTableData()
       this.initTypeMapping()
-      if (this.field_process.length > 0) {
+      if (this.field_process?.length > 0) {
         this.getFieldProcess()
       }
+      ;('')
     },
     //获取字段处理器
     getFieldProcess() {
