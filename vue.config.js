@@ -5,8 +5,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://backend:3030',
-  test: 'http://192.168.1.181:30300'
-  // test: 'http://192.168.2.4:3030'
+  test: 'http://192.168.1.181:31703'
 }
 let origin
 const { argv } = process
@@ -90,7 +89,7 @@ module.exports = {
       })
       .end()
 
-    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('packages/tapdata-web-core'))
+    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('src/_packages/tapdata-web-core'))
   },
   configureWebpack: config => {
     if (process.env.NODE_ENV === 'production') {
