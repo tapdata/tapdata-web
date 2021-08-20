@@ -73,10 +73,6 @@
               <div class="desc">
                 用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。
               </div>
-              <div class="reload-schema">
-                没有可用的表，<span style="color: #999; cursor: pointer" @click="reload()">重新加载schema </span>
-                <span v-if="showProgress"> {{ progress }} %</span>
-              </div>
               <div class="CT-task-transfer">
                 <Transfer ref="transfer" :transferData="transferData" :isTwoWay="settingModel.bidirectional"></Transfer>
               </div>
@@ -107,7 +103,6 @@
             </el-button>
             <el-button v-else type="primary" class="btn-step" :loading="loading" @click="save()"> 完成 </el-button>
           </el-footer>
-          <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
         </el-container>
       </el-container>
     </el-container>
@@ -380,11 +375,12 @@
 <script>
 import formConfig from './config'
 import Transfer from './Transfer'
+import VIcon from '@/components/VIcon'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from './const'
 
 let defaultConfig = []
 export default {
-  components: { Transfer },
+  components: { Transfer, VIcon },
   data() {
     return {
       id: '',
@@ -434,10 +430,7 @@ export default {
           label: this.$t('dataFlow.SyncInfo.currentType'),
           value: 'current'
         }
-      ],
-      progress: '',
-      showProgress: '',
-      timer: ''
+      ]
     }
   },
   created() {
@@ -746,14 +739,18 @@ export default {
           break
         }
         case 'mapping': {
-          let id = this.dataSourceModel.source_connectionId || ''
-          this.$nextTick(() => {
-            this.$refs.transfer.getTable(id, this.settingModel.bidirectional)
-            this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
-          })
+          this.getSchema()
           break
         }
       }
+    },
+    //获取schema
+    getSchema() {
+      let id = this.dataSourceModel.source_connectionId || ''
+      this.$nextTick(() => {
+        this.$refs.transfer.getTable(id, this.settingModel.bidirectional)
+        this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
+      })
     },
     //获取当前是否可以展示双向开关
     getSupportTwoWay() {
@@ -1097,69 +1094,6 @@ export default {
         }
         this.routerBack()
       })
-    },
-    //重新加载模型
-    async reload() {
-      this.$checkAgentStatus(() => {
-        let config = {
-          title: this.$t('connection.reloadTittle'),
-          Message: this.$t('connection.reloadMsg'),
-          confirmButtonText: this.$t('message.confirm'),
-          cancelButtonText: this.$t('message.cancel'),
-          id: this.dataSourceModel.source_connectionId
-        }
-        this.$confirm(config.Message + '?', config.title, {
-          confirmButtonText: config.confirmButtonText,
-          cancelButtonText: config.cancelButtonText,
-          type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
-          if (resFlag) {
-            this.showProgress = true
-            this.progress = 0
-            this.reloadApi('first')
-          }
-        })
-      })
-    },
-    reloadApi(type) {
-      let parms = {}
-      if (type === 'first') {
-        parms = {
-          loadCount: 0,
-          loadFieldsStatus: 'loading'
-        }
-        this.loadFieldsStatus = 'loading'
-      }
-      this.$axios
-        .patch('tm/api/Connections/' + this.dataSourceModel.source_connectionId, parms)
-        .then(data => {
-          if (type === 'first') {
-            this.$refs.test.start(data, false, true)
-          }
-          if (data.loadFieldsStatus === 'finished') {
-            this.progress = 100
-            setTimeout(() => {
-              this.showProgress = false
-              this.progress = 0 //加载完成
-            }, 800)
-          } else {
-            let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
-            this.progress = progress ? progress : 0
-            setTimeout(() => {
-              this.reloadApi()
-            }, 1000)
-          }
-        })
-        .catch(() => {
-          this.$message.error(this.$t('connection.reloadFail'))
-          this.showProgress = false
-          this.progress = 0 //加载完成
-        })
-    },
-    receiveTestData(data) {
-      if (!data.status || data.status === null) return
-      this.status = data.status
     },
     //选择创建类型
     handleDialogDatabaseTypeVisible() {
