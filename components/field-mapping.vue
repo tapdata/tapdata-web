@@ -1,6 +1,6 @@
 <template>
   <div class="field-mapping">
-    <div>
+    <div style="text-align: left">
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
     </div>
@@ -48,6 +48,7 @@
       <El-table
         class="field-mapping-table table-border"
         height="100%"
+        border
         :data="fieldMappingTableData"
         :row-class-name="tableRowClassName"
         v-loading="loading"
@@ -754,6 +755,7 @@ export default {
     display: flex;
     justify-content: flex-start;
     margin-top: 10px;
+    text-align: left;
     .item {
       display: flex;
       justify-content: flex-start;
@@ -762,6 +764,7 @@ export default {
       span {
         display: inline-block;
         width: 115px;
+        text-align: left;
       }
     }
   }
