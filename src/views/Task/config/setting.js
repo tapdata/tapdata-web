@@ -90,6 +90,17 @@ export default function () {
             triggerConfig: {
               show: false
             }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'noPrimaryKey',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              value: false
+            }
           }
         ]
       },
@@ -131,7 +142,31 @@ export default function () {
         type: 'switch',
         field: 'noPrimaryKey',
         label: '是否无主键同步',
-        show: true
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'initial_sync'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'cdcConcurrency',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              value: false
+            }
+          }
+        ]
       },
       {
         type: 'switch',
