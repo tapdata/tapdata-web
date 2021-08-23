@@ -46,8 +46,9 @@ export default {
   methods: {
     //表设置
     fieldProcess() {
-      debugger
       if (!this.dataFlow) return
+      delete this.dataFlow['rollback']
+      delete this.dataFlow['rollbackTable']
       let promise = this.$api('DataFlows').getMetadata(this.dataFlow)
       promise
         .then(data => {

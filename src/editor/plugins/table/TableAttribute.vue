@@ -200,7 +200,7 @@
             <FieldMapping
               v-else
               :dataFlow="dataFlow"
-              :fieldProcess="model.fieldProcess"
+              :parentFieldProcess="model.field_process"
               @returnFieldMapping="returnFieldMapping"
               ref="fieldMapping"
               class="fr"
@@ -404,7 +404,7 @@ export default {
         // primaryKeys: '',
         initialSyncOrder: 0,
         enableInitialOrder: false,
-        fieldProcess: []
+        field_process: []
       },
       scope: '',
       dataFlow: '',
@@ -788,8 +788,8 @@ export default {
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
     },
-    returnFieldMapping(fieldProcess) {
-      this.model.fieldProcess = fieldProcess
+    returnFieldMapping(field_process) {
+      this.model.field_process = field_process
     }
   }
 }
