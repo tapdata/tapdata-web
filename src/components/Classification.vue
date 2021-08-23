@@ -15,7 +15,7 @@
       </div>
       <div class="search-box" v-if="searchFalg">
         <el-input class="search" size="mini" v-model="filterText">
-          <span slot="prefix" class="el-input__icon h-100">
+          <span slot="prefix" class="el-input__icon h-100 ml-1">
             <VIcon size="14">search</VIcon>
           </span>
         </el-input>

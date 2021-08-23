@@ -5,11 +5,7 @@
         <el-input class="inputStyle" v-model="search" size="mini" :placeholder="$t('message.search')"> </el-input>
       </el-form-item>
       <el-form-item>
-        <el-button size="mini" :disabled="loading" @click="loadNew">
-          <span slot="prefix" class="el-input__icon h-100">
-            <VIcon size="14">search</VIcon>
-          </span>
-        </el-button>
+        <el-button icon="el-icon-search" size="mini" :disabled="loading" @click="loadNew"></el-button>
       </el-form-item>
 
       <VIcon v-if="loading" style="right: 10px; top: 10px; position: absolute">loading-circle</VIcon>

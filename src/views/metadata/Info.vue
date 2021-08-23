@@ -191,7 +191,7 @@
                       size="mini"
                       style="width: 160px"
                     >
-                      <span slot="prefix" class="el-input__icon h-100">
+                      <span slot="prefix" class="el-input__icon h-100 ml-1">
                         <VIcon size="14">search</VIcon>
                       </span>
                     </el-input>

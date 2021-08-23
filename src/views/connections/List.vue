@@ -56,9 +56,7 @@
             :placeholder="$t('connection.dataBaseSearch')"
             @input="table.fetch(1, 800)"
           >
-            <span slot="prefix" class="el-input__icon h-100">
-              <VIcon size="14">search</VIcon>
-            </span>
+            <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </ElInput>
         </li>
         <li class="item">

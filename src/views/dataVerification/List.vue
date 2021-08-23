@@ -17,7 +17,7 @@
             :placeholder="$t('dataVerification.verifyjobname')"
             @input="table.fetch(1, 800)"
           >
-            <span slot="prefix" class="el-input__icon h-100">
+            <span slot="prefix" class="el-input__icon h-100 ml-1">
               <VIcon size="14">search</VIcon>
             </span>
           </ElInput>

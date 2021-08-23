@@ -28,14 +28,12 @@
           v-model="state"
           size="mini"
           :fetch-suggestions="querySearch"
+          suffix-icon="el-icon-search"
           :placeholder="$t('dataFlow.searchNode')"
           @select="handleSearchNode"
           hide-loading
           clearable
         >
-          <span slot="suffix" class="h-100">
-            <VIcon size="14">search</VIcon>
-          </span>
         </el-autocomplete>
 
         <el-button-group class="action-btn-group">

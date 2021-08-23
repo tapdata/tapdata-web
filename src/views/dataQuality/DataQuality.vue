@@ -26,7 +26,7 @@
                 <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
                 <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
               </el-select>
-              <span slot="suffix" class="el-input__icon h-100">
+              <span slot="suffix" class="el-input__icon h-100 ml-1">
                 <VIcon size="14">search</VIcon>
               </span>
             </el-input>
