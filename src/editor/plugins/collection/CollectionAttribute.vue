@@ -293,7 +293,7 @@
           v-else
           :dataFlow="dataFlow"
           :fieldProcess="model.fieldProcess"
-          :returnFieldMapping="returnFieldMapping"
+          @returnFieldMapping="returnFieldMapping"
           ref="fieldMapping"
           class="fr"
         ></FieldMapping>
@@ -359,7 +359,6 @@ import Entity from '../link/Entity'
 import _ from 'lodash'
 import ws from '../../../api/ws'
 import factory from '../../../api/factory'
-import { fieldProcessConfig } from '@/editor/plugins'
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editorMonitor = null;
@@ -1110,7 +1109,7 @@ export default {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
     },
     returnFieldMapping(fieldProcess) {
-      this.model.field_process = fieldProcess
+      this.model.fieldProcess = fieldProcess
     }
   }
 }

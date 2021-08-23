@@ -37,7 +37,6 @@ export default {
       fieldMappingNavData: '',
       fieldMappingTableData: '',
       dialogFieldProcessVisible: false,
-      scope: '',
       field_process: []
     }
   },
@@ -59,15 +58,14 @@ export default {
         })
     },
     async updateFieldProcess(rollback, rollbackTable, id) {
-      let data = this.scope.getDataFlowData()
-      if (!data) return
+      if (!this.dataFlow) return
       if (rollback === 'all') {
-        data['rollback'] = rollback
+        this.dataFlow['rollback'] = rollback
         //删除整个字段处理器
         this.field_process = []
       } else if (rollbackTable) {
-        data['rollback'] = rollback
-        data['rollbackTable'] = rollbackTable
+        this.dataFlow['rollback'] = rollback
+        this.dataFlow['rollbackTable'] = rollbackTable
         for (let i = 0; i < this.field_process.length; i++) {
           // 删除操作
           let ops = this.field_process[i]
@@ -76,7 +74,7 @@ export default {
           }
         }
       }
-      let promise = await this.$api('DataFlows').getMetadata(data)
+      let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       return promise?.data
     },
     //更新左边导航

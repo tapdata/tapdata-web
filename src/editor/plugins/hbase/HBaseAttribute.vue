@@ -95,7 +95,7 @@
         v-else
         :dataFlow="dataFlow"
         :fieldProcess="model.fieldProcess"
-        :returnFieldMapping="returnFieldMapping"
+        @returnFieldMapping="returnFieldMapping"
         ref="fieldMapping"
         class="fr"
       ></FieldMapping>
@@ -165,7 +165,7 @@ export default {
         connectionId: '',
         type: 'hbase',
         tableName: '',
-        field_process: []
+        fieldProcess: []
       },
       scope: '',
       dataFlow: '',
@@ -369,7 +369,7 @@ export default {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
     },
     returnFieldMapping(fieldProcess) {
-      this.model.field_process = fieldProcess
+      this.model.fieldProcess = fieldProcess
     }
 
     // seeMonitor() {
