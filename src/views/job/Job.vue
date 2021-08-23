@@ -1091,7 +1091,7 @@ export default {
       }
     },
     //保存逻辑启动
-    doSaveStartDataFlow(data) {
+    async doSaveStartDataFlow(data) {
       if (data) {
         if (this.form.taskName) {
           data.name = this.form.taskName
@@ -1152,7 +1152,7 @@ export default {
           this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
-        this.autoFieldMapping() //触发自动推演
+        await this.autoFieldMapping() //触发自动推演
         let check = this.returnFieldMapping()
         if (!check) {
           return
