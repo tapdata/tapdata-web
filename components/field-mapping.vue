@@ -1,6 +1,6 @@
 <template>
   <div class="field-mapping">
-    <div>
+    <div style="text-align: left">
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
     </div>
@@ -48,6 +48,7 @@
       <El-table
         class="field-mapping-table table-border"
         height="100%"
+        border
         :data="fieldMappingTableData"
         :row-class-name="tableRowClassName"
         v-loading="loading"
@@ -297,9 +298,10 @@ export default {
     updateView() {
       this.initTableData()
       this.initTypeMapping()
-      if (this.field_process.length > 0) {
+      if (this.field_process?.length > 0) {
         this.getFieldProcess()
       }
+      ;('')
     },
     //获取字段处理器
     getFieldProcess() {
@@ -404,7 +406,7 @@ export default {
       let value = this.editValueType[this.currentOperationType]
       //任务-字段处理器
       if (key === 'field_name') {
-        let option = this.target.filter(v => v.id === id)
+        let option = this.target.filter(v => v.id === id && !v.is_deleted)
         if (option.length === 0) return
         option = option[0]
         //字段名限制
@@ -412,7 +414,7 @@ export default {
           this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
           return
         }
-        if (value === option.field_name) {
+        if (value === option.field_name && !option.is_deleted) {
           this.handleClose() //名字无改变
           return
         }
@@ -549,7 +551,7 @@ export default {
     handleExistsName(value) {
       // 改名前查找同级中是否重名，若有则return且还原改动并提示
       let exist = false
-      let filterData = this.target.filter(v => value === v.field_name)
+      let filterData = this.target.filter(v => value === v.field_name && !v.is_deleted)
       if (filterData.length > 0) {
         this.$message.error(value + this.$t('message.exists_name'))
         exist = true
@@ -753,6 +755,7 @@ export default {
     display: flex;
     justify-content: flex-start;
     margin-top: 10px;
+    text-align: left;
     .item {
       display: flex;
       justify-content: flex-start;
@@ -761,6 +764,7 @@ export default {
       span {
         display: inline-block;
         width: 115px;
+        text-align: left;
       }
     }
   }
