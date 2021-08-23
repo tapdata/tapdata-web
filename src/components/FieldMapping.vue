@@ -42,7 +42,7 @@ export default {
     }
   },
   mounted() {
-    this.field_process = this.parentFieldProcess
+    this.field_process = this.parentFieldProcess || []
   },
   methods: {
     //表设置
