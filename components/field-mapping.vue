@@ -413,7 +413,7 @@ export default {
           this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
           return
         }
-        if (value === option.field_name) {
+        if (value === option.field_name && !option.is_deleted) {
           this.handleClose() //名字无改变
           return
         }
@@ -550,7 +550,7 @@ export default {
     handleExistsName(value) {
       // 改名前查找同级中是否重名，若有则return且还原改动并提示
       let exist = false
-      let filterData = this.target.filter(v => value === v.field_name)
+      let filterData = this.target.filter(v => value === v.field_name && !v.is_deleted)
       if (filterData.length > 0) {
         this.$message.error(value + this.$t('message.exists_name'))
         exist = true
