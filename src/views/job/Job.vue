@@ -1152,12 +1152,12 @@ export default {
           this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
-        let data = await this.autoFieldMapping() //触发自动推演
+        let fieldData = await this.autoFieldMapping() //触发自动推演
         let checkFiledMapping = ''
-        if (data?.data.length === 0) {
+        if (fieldData?.data.length === 0) {
           checkFiledMapping = true
         } else {
-          this.$refs.fieldMapping.autoFiledProcess(data?.data)
+          this.$refs.fieldMapping.autoFiledProcess(fieldData?.data)
         }
         if (!checkFiledMapping) {
           return
