@@ -1152,13 +1152,15 @@ export default {
           this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
-        await this.autoFieldMapping() //触发自动推演
-        let check = this.returnFieldMapping()
-        if (!check) {
-          return
+        let data = await this.autoFieldMapping() //触发自动推演
+        let checkFiledMapping = ''
+        if (data?.data.length === 0) {
+          checkFiledMapping = true
+        } else {
+          this.$refs.fieldMapping.autoFiledProcess(data?.data)
         }
-        if (check === 'changeDataFlow') {
-          data = this.dataFlow
+        if (!checkFiledMapping) {
+          return
         }
         let start = () => {
           data.status = 'scheduled'
@@ -1209,14 +1211,13 @@ export default {
     },
     //保存自动推演
     autoFieldMapping() {
-      this.$refs.fieldMapping.autoFieldMapping()
+      if (!this.dataFlow) return
+      let promise = this.$api('DataFlows').autoMetadata(this.dataFlow)
+      return promise
     },
     returnFieldMapping(data, id) {
-      if (id) {
-        //要根据id 存 dataFlow
-        this.getStage(data, id)
-        return 'changeDataFlow'
-      } else return data
+      //保存操作要根据id 存 dataFlow
+      this.getStage(data, id)
     },
     //当前节点数据保存
     getStage(field_process, id) {
@@ -1227,6 +1228,7 @@ export default {
           this.dataFlow['stages'][i].field_process = field_process
         }
       }
+      this.doSaveStartDataFlow(this.dataFlow)
     },
     /**
      * stop button handler

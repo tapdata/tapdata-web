@@ -177,22 +177,9 @@ export default {
       }
     },
     //job 字段映射逻辑 自动推演 //保存前 自动推演
-    autoFieldMapping() {
-      if (!this.dataFlow) return
-      let promise = this.$api('DataFlows').autoMetadata(this.dataFlow)
-      promise
-        .then(data => {
-          if (data?.data.length === 0) {
-            this.$emit('returnFieldMapping', true)
-          } else {
-            this.$emit('returnFieldMapping', false)
-            this.dialogFieldProcessVisible = true
-            this.fieldMappingNavData = data?.data
-          }
-        })
-        .catch(() => {
-          this.$message.error('接口请求失败')
-        })
+    autoFiledProcess(data) {
+      this.dialogFieldProcessVisible = true
+      this.fieldMappingNavData = data
     }
   }
 }
