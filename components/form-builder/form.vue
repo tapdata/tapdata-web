@@ -55,7 +55,8 @@ export default {
         on: {}
       },
       form: null,
-      itemsConfig: this.config.items.concat()
+      itemsConfig: this.config.items.concat(),
+      oldValue: {}
     }
   },
   watch: {
@@ -116,11 +117,17 @@ export default {
           let triggerConfig = depend.triggerConfig
           if (triggerOptions.every(opt => opt.value === this.value[opt.field])) {
             config = Object.assign(config, depend.triggerConfig)
-            if (Object.hasOwnProperty.call(triggerConfig, 'value') && triggerConfig.value === '') {
-              this.value[config.field] = ''
+            //需要判断本次渲染是否修改的当前值，如果是，则不走dependOn逻辑，
+            //否则会导致本次值永远无法修改的情况，无限被triggerConfig.value的值覆盖
+            if (
+              Object.hasOwnProperty.call(triggerConfig, 'value') &&
+              this.oldValue[config.field] === this.value[config.field]
+            ) {
+              this.value[config.field] = triggerConfig.value
             }
           }
         })
+        this.oldValue[config.field] = this.value[config.field]
       }
       //改变必填项的默认提示
       if (config.required && !rules.find(r => r.required)) {
