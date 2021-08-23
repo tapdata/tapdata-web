@@ -28,8 +28,8 @@
         <div :class="'status ' + item.status" v-else>
           <span class="milestone-icon-wrap">
             <i class="milestone-status__icon el-icon-success"></i>
-            <VIcon class="milestone-status__icon">error</VIcon>
-            <VIcon class="milestone-status__icon">loading-circle</VIcon>
+            <i class="milestone-status__icon el-icon-error"></i>
+            <i class="milestone-status__icon el-icon-loading"></i>
           </span>
           <span>{{ $t('milestone.status_' + item.status) }}</span>
         </div>
@@ -45,13 +45,11 @@
 <script>
 import factory from '../../api/factory'
 import ws from '../../api/ws'
-import VIcon from '@/components/VIcon'
 const dataFlowsAPI = factory('DataFlows')
 
 let event = null
 
 export default {
-  components: { VIcon },
   props: {
     dataFlow: {
       type: Object,
