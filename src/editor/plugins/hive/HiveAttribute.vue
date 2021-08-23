@@ -323,13 +323,13 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.getDataFlow()
         _.merge(this.model, data)
       }
       this.mergedSchema = cell.getOutputSchema()
       this.dataNodeInfo = dataNodeInfo || {}
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
+        this.getDataFlow()
       })
 
       // editorMonitor = vueAdapter.editor;

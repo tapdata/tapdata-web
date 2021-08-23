@@ -381,6 +381,7 @@ export default {
       this.partitionSet = this.mergedSchema?.partitionSet || []
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
+        this.getDataFlow()
       })
       this.dataNodeInfo = dataNodeInfo || {}
       // editorMonitor = vueAdapter.editor;

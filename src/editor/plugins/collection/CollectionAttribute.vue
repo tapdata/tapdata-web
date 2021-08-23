@@ -926,7 +926,6 @@ export default {
         if (data.connectionId) {
           this.loadDataModels(data.connectionId)
         }
-
         this.tableIsLink()
       }
 
@@ -934,6 +933,7 @@ export default {
       this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema())
       cell.on('change:outputSchema', () => {
         this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema())
+        this.getDataFlow()
       })
       // editorMonitor = vueAdapter.editor;
       let settingData = vueAdapter.editor.getData().settingData

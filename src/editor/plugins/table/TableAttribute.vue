@@ -710,6 +710,7 @@ export default {
 
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
+        this.getDataFlow()
       })
       // editor = vueAdapter.editor;
     },

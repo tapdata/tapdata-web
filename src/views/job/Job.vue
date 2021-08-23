@@ -834,7 +834,7 @@ export default {
           if (sourceId && stages[sourceId]) {
             stages[sourceId].outputLanes.push(targetId)
             //添加字段处理器
-            stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
+            stages[sourceId]['fieldProcess'] = cell[FORM_DATA_KEY].fieldProcess
           }
           if (targetId && stages[targetId]) stages[targetId].inputLanes.push(sourceId)
         }
@@ -1102,12 +1102,12 @@ export default {
             if ((item.type === 'hbase' || item.database_type === 'hbase') && this.sync_type !== 'initial_sync') {
               checkSetting = false
             }
-            if (
-              item.type === 'hive' || item.database_type === 'hive') {
+            if (item.type === 'hive' || item.database_type === 'hive') {
               data.setting.transformerConcurrency = 1
               data.setting.readBatchSize = 10000
             }
-            if (item.outputLanes.length &&
+            if (
+              item.outputLanes.length &&
               (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
               this.sync_type !== 'initial_sync'
             ) {

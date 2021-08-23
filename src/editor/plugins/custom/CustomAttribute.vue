@@ -281,6 +281,7 @@ export default {
       this.mergedSchema = cell.getOutputSchema()
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
+        this.getDataFlow()
       })
 
       // editorMonitor = vueAdapter.editor;

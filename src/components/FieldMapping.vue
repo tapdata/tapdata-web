@@ -46,6 +46,7 @@ export default {
   methods: {
     //表设置
     fieldProcess() {
+      debugger
       if (!this.dataFlow) return
       let promise = this.$api('DataFlows').getMetadata(this.dataFlow)
       promise
