@@ -424,12 +424,15 @@ export default {
       item.startTimeFmt = item.startTime ? this.$moment(item.startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       // 全量状态下，任务完成状态时，前端识别为已停止
       if (item.status === 'paused' && item.setting.sync_type === 'initial_sync') {
+        let { stages, stats } = item
         let flag = true
         // 有节点
-        if (item.stats) {
-          let stagesMetrics = item.stats.stagesMetrics || []
+        if (stats) {
+          let stagesMetrics = stats.stagesMetrics || []
           stagesMetrics.forEach(el => {
-            if (el.status !== 'initialized') {
+            let findOne = stages.find(stageItem => stageItem.id === el.stageId)
+            // 作为源节点，未全量完成
+            if (findOne?.outputLanes?.length > 0 && el.status !== 'initialized') {
               flag = false
             }
           })
