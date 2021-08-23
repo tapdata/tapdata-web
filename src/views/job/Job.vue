@@ -1157,6 +1157,9 @@ export default {
         if (!check) {
           return
         }
+        if (check === 'changeDataFlow') {
+          data = this.dataFlow
+        }
         let start = () => {
           data.status = 'scheduled'
           data.executeMode = 'normal'
@@ -1208,8 +1211,22 @@ export default {
     autoFieldMapping() {
       this.$refs.fieldMapping.autoFieldMapping()
     },
-    returnFieldMapping(check) {
-      return check
+    returnFieldMapping(data, id) {
+      if (id) {
+        //要根据id 存 dataFlow
+        this.getStage(data, id)
+        return 'changeDataFlow'
+      } else return data
+    },
+    //当前节点数据保存
+    getStage(field_process, id) {
+      let stages = this.dataFlow['stages'] || []
+      if (!stages || stages.length === 0) return
+      for (let i = 0; i < stages.length; i++) {
+        if (stages[i].id === id) {
+          this.dataFlow['stages'][i].field_process = field_process
+        }
+      }
     },
     /**
      * stop button handler

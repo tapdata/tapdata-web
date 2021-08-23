@@ -200,6 +200,8 @@
             <FieldMapping
               v-else
               :dataFlow="dataFlow"
+              :stageId="stageId"
+              :showBtn="true"
               :parentFieldProcess="model.field_process"
               @returnFieldMapping="returnFieldMapping"
               ref="fieldMapping"
@@ -671,6 +673,7 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
         this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {

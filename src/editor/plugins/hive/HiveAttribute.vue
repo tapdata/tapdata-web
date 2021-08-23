@@ -125,6 +125,8 @@
       <FieldMapping
         v-else
         :dataFlow="dataFlow"
+        :stageId="stageId"
+        :showBtn="true"
         :fieldProcess="model.fieldProcess"
         @returnFieldMapping="returnFieldMapping"
         ref="fieldMapping"
@@ -323,6 +325,7 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
         _.merge(this.model, data)
       }
       this.mergedSchema = cell.getOutputSchema()

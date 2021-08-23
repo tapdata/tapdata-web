@@ -170,7 +170,11 @@ export default {
       }
       this.$api('MetadataInstances').update(where, data)
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
-      this.$emit('returnFieldMapping', this.field_process)
+      if (!this.showBtn) {
+        this.$emit('returnFieldMapping', this.field_process, this.fieldMappingNavData.sinkStageId)
+      } else {
+        this.$emit('returnFieldMapping', this.field_process)
+      }
     },
     //job 字段映射逻辑 自动推演 //保存前 自动推演
     autoFieldMapping() {
