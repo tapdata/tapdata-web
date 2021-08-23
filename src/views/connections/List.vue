@@ -304,7 +304,8 @@ export default {
         'mq',
         'hbase',
         'kudu',
-        'greenplum'
+        'greenplum',
+        'tidb'
       ], //目前白名单,
       searchParams: {
         databaseType: '',

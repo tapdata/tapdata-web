@@ -45,6 +45,7 @@ import mq from './mq'
 import hbase from './hbase'
 import kudu from './kudu'
 import greenplum from './greenplum'
+import tidb from './tidb'
 
 export default {
   mysql,
@@ -93,5 +94,6 @@ export default {
   tcp_udp,
   hbase,
   kudu,
-  greenplum
+  greenplum,
+  tidb
 }

@@ -498,7 +498,8 @@ export default {
           'tcp_udp',
           'hbase',
           'kudu',
-          'greenplum'
+          'greenplum',
+          'tidb'
         ].includes(type)
       ) {
         this.$router.push({

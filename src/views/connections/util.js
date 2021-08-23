@@ -67,7 +67,8 @@ export const TYPEMAP = {
   mq: 'MQ',
   hbase: 'HBase',
   kudu: 'KUDU',
-  greenplum: 'Greenplum'
+  greenplum: 'Greenplum',
+  tidb: 'TiDB'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {

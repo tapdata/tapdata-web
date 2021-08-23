@@ -132,7 +132,8 @@ export default {
         'gridfs',
         'mq',
         'tcp_udp',
-        'greenplum'
+        'greenplum',
+        'tidb'
       ] //目前白名单,
     }
   },
