@@ -6,6 +6,9 @@ export const SETTING_MODEL = {
   isOpenAutoDDL: false,
   bidirectional: false,
   readBatchSize: 1000,
+  cdcConcurrency: true,
+  transformerConcurrency: 8,
+  noPrimaryKey: false,
   syncPoints: [
     {
       connectionId: '',

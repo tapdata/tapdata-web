@@ -76,6 +76,100 @@ export default function () {
       },
       {
         type: 'switch',
+        field: 'cdcConcurrency',
+        label: '是否开启增量并发',
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'initial_sync'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'noPrimaryKey',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              value: false
+            }
+          }
+        ]
+      },
+      {
+        type: 'input',
+        field: 'transformerConcurrency',
+        label: '增量并发数',
+        required: true,
+        show: true,
+        rules: [
+          {
+            required: true,
+            validator(rule, value, callback) {
+              if (!value) {
+                callback(new Error('增量并发数不能为空，默认是8'))
+              } else if (!/^\d+$/.test(value)) {
+                callback(new Error('每次读取数量只能为数字'))
+              } else {
+                callback()
+              }
+            }
+          }
+        ],
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'cdcConcurrency',
+                value: false
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
+      },
+      {
+        type: 'switch',
+        field: 'noPrimaryKey',
+        label: '是否无主键同步',
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'initial_sync'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'cdcConcurrency',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              value: false
+            }
+          }
+        ]
+      },
+      {
+        type: 'switch',
         field: 'isOpenAutoDDL',
         label: '自动DDL',
         show: true
