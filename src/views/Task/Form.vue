@@ -1069,10 +1069,10 @@ export default {
           this.routerBack()
         })
         .catch(e => {
-          if (e.response.msg === 'duplication for names') {
+          if (e.response?.msg === 'duplication for names') {
             this.$message.error(this.$t('message.exists_name'))
           } else {
-            this.$message.error(e.response.msg)
+            this.$message.error(e.response?.msg || e.data?.msg)
           }
         })
         .finally(() => {
