@@ -405,7 +405,7 @@ export default {
       let value = this.editValueType[this.currentOperationType]
       //任务-字段处理器
       if (key === 'field_name') {
-        let option = this.target.filter(v => v.id === id)
+        let option = this.target.filter(v => v.id === id && !v.is_deleted)
         if (option.length === 0) return
         option = option[0]
         //字段名限制
