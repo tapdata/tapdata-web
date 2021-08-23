@@ -255,6 +255,13 @@
     <AddBtnTip v-if="!loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')"></AddBtnTip>
     <DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <FieldMapping
+      :dataFlow="dataFlow"
+      :showBtn="false"
+      @returnFieldMapping="returnFieldMapping"
+      ref="fieldMapping"
+      class="fr"
+    ></FieldMapping>
   </div>
 </template>
 
@@ -270,6 +277,7 @@ import ws from '../../api/ws'
 import AddBtnTip from './addBtnTip'
 import simpleScene from './SimpleScene'
 import newDataFlow from '@/components/newDataflowName'
+import FieldMapping from '@/components/FieldMapping'
 import DownAgent from '../downAgent/agentDown'
 import { FORM_DATA_KEY, JOIN_TABLE_TPL, DATABASE_TYPE_MAPPING } from '../../editor/constants'
 import { EditorEventType } from '../../editor/lib/events'
@@ -285,7 +293,7 @@ let timer = null
 export default {
   name: 'Job',
   dataFlow: null,
-  components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError },
+  components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError, FieldMapping },
   data() {
     return {
       downLoadNum: 0,
@@ -834,9 +842,17 @@ export default {
           if (sourceId && stages[sourceId]) {
             stages[sourceId].outputLanes.push(targetId)
             //添加字段处理器
-            stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
+            if (postData.mappingTemplate === 'cluster-clone') {
+              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
+            }
           }
-          if (targetId && stages[targetId]) stages[targetId].inputLanes.push(sourceId)
+          if (targetId && stages[targetId]) {
+            stages[targetId].inputLanes.push(sourceId)
+            //添加字段处理器
+            if (postData.mappingTemplate === 'custom') {
+              stages[targetId]['field_process'] = cell[FORM_DATA_KEY].field_process
+            }
+          }
         }
       })
       postData.stages = Object.values(stages)
@@ -1136,6 +1152,11 @@ export default {
           this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
+        this.autoFieldMapping() //触发自动推演
+        let check = this.returnFieldMapping()
+        if (!check) {
+          return
+        }
         let start = () => {
           data.status = 'scheduled'
           data.executeMode = 'normal'
@@ -1182,6 +1203,13 @@ export default {
         // }
       }
       this.dialogFormVisible = false
+    },
+    //保存自动推演
+    autoFieldMapping() {
+      this.$refs.fieldMapping.autoFieldMapping()
+    },
+    returnFieldMapping(check) {
+      return check
     },
     /**
      * stop button handler

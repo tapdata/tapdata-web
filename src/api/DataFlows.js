@@ -90,4 +90,7 @@ export default class DataFlows extends PublicAPI {
   getMetadata(params) {
     return axios.post(this.url + '/metadata', params)
   }
+  autoMetadata(params) {
+    return axios.post(this.url + '/autoMetadata', params)
+  }
 }

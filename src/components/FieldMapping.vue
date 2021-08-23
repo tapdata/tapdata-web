@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-button size="mini" @click="fieldProcess()">字段映射</el-button>
+    <el-button size="mini" v-if="showBtn" @click="fieldProcess()">字段映射</el-button>
     <el-dialog
       width="85%"
       title="映射配置"
@@ -30,7 +30,7 @@
 <script>
 export default {
   name: 'FiledMapping',
-  props: ['dataFlow', 'parentFieldProcess'],
+  props: ['dataFlow', 'parentFieldProcess', 'stageId', 'showBtn'],
   data() {
     return {
       //表设置
@@ -76,8 +76,20 @@ export default {
           }
         }
       }
+      this.getStage(this.field_process)
+      this.$emit('returnFieldMapping', this.field_process)
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       return promise?.data
+    },
+    //当前节点
+    getStage(field_process) {
+      let stages = this.dataFlow['stages'] || []
+      if (!stages || stages.length === 0) return
+      for (let i = 0; i < stages.length; i++) {
+        if (stages[i].id === this.stageId) {
+          this.dataFlow['stages'][i].field_process = field_process
+        }
+      }
     },
     //更新左边导航
     updateFieldMappingNavData(data) {
@@ -159,6 +171,24 @@ export default {
       this.$api('MetadataInstances').update(where, data)
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.field_process)
+    },
+    //job 字段映射逻辑 自动推演 //保存前 自动推演
+    autoFieldMapping() {
+      if (!this.dataFlow) return
+      let promise = this.$api('DataFlows').autoMetadata(this.dataFlow)
+      promise
+        .then(data => {
+          if (data?.data.length === 0) {
+            this.$emit('returnFieldMapping', true)
+          } else {
+            this.$emit('returnFieldMapping', false)
+            this.dialogFieldProcessVisible = true
+            this.fieldMappingNavData = data?.data
+          }
+        })
+        .catch(() => {
+          this.$message.error('接口请求失败')
+        })
     }
   }
 }

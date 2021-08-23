@@ -293,6 +293,8 @@
           v-else
           :dataFlow="dataFlow"
           :parentFieldProcess="model.field_process"
+          :stageId="stageId"
+          :showBtn="true"
           @returnFieldMapping="returnFieldMapping"
           ref="fieldMapping"
           class="fr"
@@ -574,6 +576,7 @@ export default {
         }
       },
       dataNodeInfo: {},
+      stageId: '',
       model: {
         connectionId: '',
         databaseType: 'mongodb',
@@ -896,6 +899,7 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
         this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
