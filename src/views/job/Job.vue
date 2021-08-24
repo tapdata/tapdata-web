@@ -843,6 +843,10 @@ export default {
           let targetId = cell.target.id
           if (sourceId && stages[sourceId]) {
             stages[sourceId].outputLanes.push(targetId)
+            //添加字段处理器
+            if (postData.mappingTemplate === 'cluster-clone') {
+              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
+            }
           }
           if (targetId && stages[targetId]) {
             stages[targetId].inputLanes.push(sourceId)
