@@ -306,6 +306,7 @@ export default {
           this.model.custSql.fieldFilterType = 'keepAllFields'
           this.model.custSql.editSql = ''
         }
+        this.getDataFlow()
       }
     },
     mergedSchema: {
@@ -633,20 +634,22 @@ export default {
         self.loading = true
         MetadataInstances.schema(params).then(res => {
           if (res.data) {
-            let fields = res.data.records[0].schema.tables[0].fields
-            // let primaryKeys = fields
-            // 	.filter(f => f.primary_key_position > 0)
-            // 	.map(f => f.field_name)
-            // 	.join(',');
-            self.primaryKeyOptions = fields.map(f => f.field_name)
-            self.model.custSql.custFields = fields.map(f => f.field_name)
-            // if (primaryKeys) {
-            // 	self.model.primaryKeys = primaryKeys;
-            // } else {
-            // 	self.model.primaryKeys = '';
-            // }
-            this.loadSchema = res.data.records[0].schema.tables[0]
-            self.$emit('schemaChange', _.cloneDeep(res.data.records[0].schema.tables[0]))
+            let fields = res.data?.records[0]?.schema?.tables[0]?.fields
+            if (fields) {
+              // let primaryKeys = fields
+              // 	.filter(f => f.primary_key_position > 0)
+              // 	.map(f => f.field_name)
+              // 	.join(',');
+              self.primaryKeyOptions = fields.map(f => f.field_name)
+              self.model.custSql.custFields = fields.map(f => f.field_name)
+              // if (primaryKeys) {
+              // 	self.model.primaryKeys = primaryKeys;
+              // } else {
+              // 	self.model.primaryKeys = '';
+              // }
+            }
+            this.loadSchema = res.data?.records[0]?.schema?.tables[0] || []
+            self.$emit('schemaChange', _.cloneDeep(this.loadSchema))
           }
         })
       } else {
