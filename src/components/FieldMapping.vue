@@ -112,7 +112,9 @@ export default {
             t_data_type: field.data_type,
             t_scale: field.scale,
             t_precision: field.precision,
-            is_deleted: field.is_deleted //目标决定这个字段是被删除？
+            is_deleted: field.is_deleted, //目标决定这个字段是被删除？
+            t_isPrecisionEdit: true, //默认不能编辑
+            t_isScaleEdit: true //默认不能编辑
           }
           if (item.field_name === field.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
