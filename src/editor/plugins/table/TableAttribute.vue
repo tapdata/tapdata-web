@@ -307,6 +307,7 @@ export default {
           this.model.custSql.editSql = ''
         }
         this.getDataFlow()
+        this.model.field_process = []
       }
     },
     mergedSchema: {

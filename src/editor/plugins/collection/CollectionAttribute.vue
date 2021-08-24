@@ -481,6 +481,7 @@ export default {
 
         this.taskData.tableName = this.model.tableName
         this.tableIsLink()
+        this.model.field_process = []
       }
     },
     defaultSchema: {
