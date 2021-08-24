@@ -533,6 +533,7 @@ export default {
         if (field.id === id) {
           field.is_deleted = value
           field['source'] = 'manual'
+          field['is_auto_allowed'] = false
         }
       })
       //触发页面重新渲染
