@@ -1,4 +1,9 @@
 export default {
+  verify_details_title: 'Task verification details',
+  verify_history_title: 'Task verification history',
+  verify_diff_history_title: 'Diff verification history',
+  verify_diff_details_title: 'Diff verification details',
+  verify_result_title: 'Verification result',
   verify_button_diff_verify: 'Diff verification',
   verify_button_diff_verify_running: 'Verification in progress',
   verify_button_diff_verify_tips:
@@ -8,6 +13,11 @@ export default {
   verify_message_old_data_not_support: 'Old data does not support secondary verification',
   verify_message_out_of_limit:
     'Your discrepancy data volume has exceeded the maximum number of error data saved by the task support, and the second verification is temporarily impossible.',
+  verify_result_count_more: 'Target count more: {0}',
+  verify_result_count_less: 'Target count less: {0}',
+  verify_result_content_diff: 'Table data difference: {0}',
+  verify_result_count_inconsistent: 'inconsistent',
+  verify_result_count_consistent: 'consistent',
 
   taskprogress_plan_sync_table_num: 'Number of plan synchronization tables',
   taskprogress_completed_sync_table_num: 'Number of completed synchronization tables',

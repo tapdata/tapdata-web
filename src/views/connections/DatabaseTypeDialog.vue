@@ -55,7 +55,8 @@ export default {
         'tcp_udp',
         'hbase',
         'kudu',
-        'greenplum'
+        'greenplum',
+        'hana'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
