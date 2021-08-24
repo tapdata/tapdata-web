@@ -473,13 +473,13 @@ export default {
     //改类型影响字段长度 精度
     influences(id) {
       this.currentTypeRules.forEach(r => {
-        if (r.maxScale) {
-          this.updateTarget(id, 'scale', r.maxScale)
+        if (r.minScale) {
+          this.updateTarget(id, 'scale', r.minScale)
         } else {
           this.updateTarget(id, 'scale', null)
         }
-        if (r.maxPrecision) {
-          this.updateTarget(id, 'precision', r.maxPrecision)
+        if (r.minPrecision) {
+          this.updateTarget(id, 'precision', r.minPrecision)
         } else {
           this.updateTarget(id, 'precision', null)
         }
