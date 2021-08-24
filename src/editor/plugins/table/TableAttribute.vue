@@ -200,10 +200,8 @@
             <FieldMapping
               v-else
               :dataFlow="dataFlow"
-              :stageId="stageId"
               :showBtn="true"
-              :parentFieldProcess="model.field_process"
-              @returnFieldMapping="returnFieldMapping"
+              :hiddenFieldProcess="true"
               ref="fieldMapping"
               class="fr"
             ></FieldMapping>
@@ -307,7 +305,6 @@ export default {
           this.model.custSql.editSql = ''
         }
         this.getDataFlow()
-        this.model.field_process = []
       }
     },
     mergedSchema: {
@@ -407,8 +404,7 @@ export default {
         type: 'table',
         // primaryKeys: '',
         initialSyncOrder: 0,
-        enableInitialOrder: false,
-        field_process: []
+        enableInitialOrder: false
       },
       scope: '',
       dataFlow: '',
@@ -677,7 +673,6 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
         this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
@@ -794,9 +789,6 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
-    },
-    returnFieldMapping(field_process) {
-      this.model.field_process = field_process
     }
   }
 }

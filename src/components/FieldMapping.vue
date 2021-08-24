@@ -17,6 +17,7 @@
         :fieldProcessMethod="updateFieldProcess"
         :fieldMappingNavData="fieldMappingNavData"
         :field_process="field_process"
+        :hiddenFieldProcess="hiddenFieldProcess"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
       ></FieldMapping>
@@ -30,7 +31,7 @@
 <script>
 export default {
   name: 'FiledMapping',
-  props: ['dataFlow', 'parentFieldProcess', 'stageId', 'showBtn'],
+  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess'],
   data() {
     return {
       //表设置
@@ -39,9 +40,6 @@ export default {
       dialogFieldProcessVisible: false,
       field_process: []
     }
-  },
-  mounted() {
-    this.field_process = this.parentFieldProcess || []
   },
   methods: {
     //表设置
@@ -76,20 +74,9 @@ export default {
           }
         }
       }
-      this.getStage(this.field_process)
       this.$emit('returnFieldMapping', this.field_process)
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       return promise?.data
-    },
-    //当前节点
-    getStage(field_process) {
-      let stages = this.dataFlow['stages'] || []
-      if (!stages || stages.length === 0) return
-      for (let i = 0; i < stages.length; i++) {
-        if (stages[i].id === this.stageId) {
-          this.dataFlow['stages'][i].field_process = field_process
-        }
-      }
     },
     //更新左边导航
     updateFieldMappingNavData(data) {
@@ -105,7 +92,6 @@ export default {
       let fieldMappingTableData = []
       source.forEach(item => {
         target.forEach(field => {
-          //先检查是否被改过名
           let node = {
             t_id: field.id,
             t_field_name: field.field_name,
@@ -119,6 +105,8 @@ export default {
           if (item.field_name === field.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
+          //先检查是否被改过名 任务同步不需要检测字段处理器
+          if (this.hiddenFieldProcess) return
           let ops = this.handleFieldName(row, field.field_name)
           if (!ops || ops?.length === 0) return
           ops = ops[0]
@@ -163,7 +151,7 @@ export default {
     },
     //保存字段处理器
     saveOperations(row, operations, target) {
-      if (!operations || operations?.length === 0 || !target || target?.length === 0) return
+      if (!target || target?.length === 0) return
       let where = {
         qualified_name: row.sinkQulifiedName
       }
@@ -171,12 +159,9 @@ export default {
         fields: target
       }
       this.$api('MetadataInstances').update(where, data)
+      if (this.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
-      if (!this.showBtn) {
-        this.$emit('returnFieldMapping', this.field_process, this.fieldMappingNavData.sinkStageId)
-      } else {
-        this.$emit('returnFieldMapping', this.field_process)
-      }
+      this.$emit('returnFieldMapping', this.field_process)
     },
     //job 字段映射逻辑 自动推演 //保存前 自动推演
     autoFiledProcess(data) {

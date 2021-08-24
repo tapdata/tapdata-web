@@ -161,10 +161,8 @@
       <FieldMapping
         v-else
         :dataFlow="dataFlow"
-        :stageId="stageId"
         :showBtn="true"
-        :parentFieldProcess="model.field_process"
-        @returnFieldMapping="returnFieldMapping"
+        :hiddenFieldProcess="true"
         ref="fieldMapping"
         class="fr"
       ></FieldMapping>
@@ -235,9 +233,7 @@ export default {
         type: 'kafka',
         tableName: '',
         partitionId: '',
-        kafkaPartitionKey: '',
-        // primaryKeys: '',
-        field_process: []
+        kafkaPartitionKey: ''
       },
       scope: '',
       dataFlow: '',
@@ -368,7 +364,6 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
         this.getDataFlow()
         if (typeof data.kafkaPartitionKey === 'string') {
           if (!data.kafkaPartitionKey) {

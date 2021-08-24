@@ -216,6 +216,7 @@
         :fieldMappingNavData="fieldMappingNavData"
         :field_process="model.field_process"
         @row-click="saveOperations"
+        :hiddenFieldProcess="false"
         @update-nav="updateFieldMappingNavData"
       ></FieldMapping>
       <div slot="footer" class="dialog-footer">

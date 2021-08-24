@@ -258,6 +258,7 @@
     <FieldMapping
       :dataFlow="dataFlow"
       :showBtn="false"
+      :hiddenFieldProcess="hiddenFieldProcess"
       @returnFieldMapping="returnFieldMapping"
       ref="fieldMapping"
       class="fr"
@@ -333,6 +334,7 @@ export default {
       mappingTemplate: '',
       creatUserId: '',
       dataChangeFalg: false,
+      hiddenFieldProcess: false, //要字段处理器
       statusBtMap
     }
   },
@@ -841,17 +843,9 @@ export default {
           let targetId = cell.target.id
           if (sourceId && stages[sourceId]) {
             stages[sourceId].outputLanes.push(targetId)
-            //添加字段处理器
-            if (postData.mappingTemplate === 'cluster-clone') {
-              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
-            }
           }
           if (targetId && stages[targetId]) {
             stages[targetId].inputLanes.push(sourceId)
-            //添加字段处理器
-            if (postData.mappingTemplate === 'custom') {
-              stages[targetId]['field_process'] = cell[FORM_DATA_KEY].field_process
-            }
           }
         }
       })
@@ -1152,6 +1146,7 @@ export default {
           this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
+        if (this.dataFlow.mappingTemplate === 'custom') this.hiddenFieldProcess = true
         let fieldData = await this.autoFieldMapping() //触发自动推演
         let checkFiledMapping = ''
         if (fieldData?.data.length === 0) {
@@ -1215,20 +1210,19 @@ export default {
       let promise = this.$api('DataFlows').autoMetadata(this.dataFlow)
       return promise
     },
-    returnFieldMapping(data, id) {
-      //保存操作要根据id 存 dataFlow
-      this.getStage(data, id)
-    },
-    //当前节点数据保存
-    getStage(field_process, id) {
-      let stages = this.dataFlow['stages'] || []
-      if (!stages || stages.length === 0) return
-      for (let i = 0; i < stages.length; i++) {
-        if (stages[i].id === id) {
-          this.dataFlow['stages'][i].field_process = field_process
+    returnFieldMapping(field_process) {
+      if (this.dataFlow.mappingTemplate === 'custom') {
+        this.doSaveStartDataFlow(this.dataFlow)
+      } else {
+        let stages = this.dataFlow['stages'] || []
+        if (!stages || stages.length === 0) return
+        for (let i = 0; i < stages.length; i++) {
+          if (stages[i].outputLanes) {
+            this.dataFlow['stages'][i].field_process = field_process
+          }
         }
+        this.doSaveStartDataFlow(this.dataFlow)
       }
-      this.doSaveStartDataFlow(this.dataFlow)
     },
     /**
      * stop button handler

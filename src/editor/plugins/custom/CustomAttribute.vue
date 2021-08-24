@@ -93,10 +93,8 @@
             <FieldMapping
               v-else
               :dataFlow="dataFlow"
-              :stageId="stageId"
               :showBtn="true"
-              :parentFieldProcess="model.field_process"
-              @returnFieldMapping="returnFieldMapping"
+              :hiddenFieldProcess="true"
               ref="fieldMapping"
               class="fr"
             ></FieldMapping>
@@ -166,9 +164,7 @@ export default {
       model: {
         connectionId: '',
         tableName: '',
-        type: 'custom_connection',
-        // primaryKeys: ''
-        field_process: []
+        type: 'custom_connection'
       },
       scope: '',
       dataFlow: '',
@@ -276,7 +272,6 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
         this.getDataFlow()
         _.merge(this.model, data)
       }
@@ -387,9 +382,6 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
-    },
-    returnFieldMapping(field_process) {
-      this.model.field_process = field_process
     }
   }
 }

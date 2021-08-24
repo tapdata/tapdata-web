@@ -292,10 +292,8 @@
         <FieldMapping
           v-else
           :dataFlow="dataFlow"
-          :parentFieldProcess="model.field_process"
-          :stageId="stageId"
           :showBtn="true"
-          @returnFieldMapping="returnFieldMapping"
+          :hiddenFieldProcess="true"
           ref="fieldMapping"
           class="fr"
         ></FieldMapping>
@@ -481,7 +479,6 @@ export default {
 
         this.taskData.tableName = this.model.tableName
         this.tableIsLink()
-        this.model.field_process = []
       }
     },
     defaultSchema: {
@@ -577,7 +574,6 @@ export default {
         }
       },
       dataNodeInfo: {},
-      stageId: '',
       model: {
         connectionId: '',
         databaseType: 'mongodb',
@@ -606,8 +602,7 @@ export default {
         operations: [],
         collectionAggregate: false,
         collectionAggrPipeline: '',
-        pipelineFalg: false,
-        field_process: []
+        pipelineFalg: false
       },
       primaryKeyOptions: [],
       fieldFilterOptions: [],
@@ -900,7 +895,6 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
         this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
@@ -1112,9 +1106,6 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
-    },
-    returnFieldMapping(field_process) {
-      this.model.field_process = field_process
     }
   }
 }
