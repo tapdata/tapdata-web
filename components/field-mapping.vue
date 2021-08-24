@@ -72,7 +72,7 @@
         <ElTableColumn label="源表精度" prop="scale" width="100"></ElTableColumn>
         <ElTableColumn label="目标表字段名">
           <template slot-scope="scope">
-            <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'field_name')">
+            <div v-if="!scope.row.is_deleted && !hiddenFieldProcess" @click="edit(scope.row, 'field_name')">
               <el-tooltip class="item" :content="scope.row.t_field_name" placement="right">
                 <span>{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i></span>
               </el-tooltip>
@@ -134,7 +134,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="操作" width="80">
+        <ElTableColumn label="操作" width="80" v-if="!hiddenFieldProcess">
           <template slot-scope="scope">
             <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)"> 删除 </ElLink>
             <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
@@ -227,7 +227,8 @@ export default {
     field_process: Array,
     remoteMethod: Function,
     typeMappingMethod: Function,
-    fieldProcessMethod: Function
+    fieldProcessMethod: Function,
+    hiddenFieldProcess: Boolean
   },
   data() {
     return {
@@ -444,7 +445,6 @@ export default {
           return
         }
         //如果是改类型 需要手动修改字段的长度以及精度
-        this.fieldProcessConvert(id, key, value)
         this.influences(id)
       } else if (key === 'precision') {
         this.currentTypeRules.forEach(r => {
@@ -582,7 +582,7 @@ export default {
       for (let i = 0; i < this.operations.length; i++) {
         // 删除所有的rename convert的操作
         let ops = this.operations[i]
-        if (ops.id === id && ['RENAME', 'CONVERT'].includes(ops.op)) {
+        if (ops.id === id && ['RENAME'].includes(ops.op)) {
           this.operations.splice(i, 1)
         }
       }
@@ -618,56 +618,25 @@ export default {
       //更新当前选中行数
       this.fieldCount = this.fieldCount + 1
     },
-    fieldProcessConvert(id, key, value) {
-      let option = this.target.filter(v => v.id === id)
-      if (option.length === 0) return
-      option = option[0]
-      //修改字段类型
-      let op = {
-        op: 'CONVERT',
-        id: option.id,
-        field: option.field_name,
-        operand: value, //改过的字段类型
-        originalDataType: option.data_type,
-        table_name: option.table_name,
-        type: option.data_type,
-        primary_key_position: option.primary_key_position,
-        original_field_name: option.original_field_name,
-        label: option.value
-      }
-      let ops = this.operations.filter(v => v.id === option.id && v.op === 'CONVERT')
-      if (ops.length === 0) {
-        this.operations.push(op)
-      } else {
-        op = ops[0]
-        op.operand = value
-        op.label = value
-      }
-    },
     restOperation(id) {
       let opr = this.operations.filter(v => v.id === id && v.op === 'RENAME')
       if (opr.length > 0) {
         //元数据-字段操作
         this.updateTarget(id, 't_field_name', opr[0].original_field_name)
       }
-      let opc = this.operations.filter(v => v.id === id && v.op === 'CONVERT')
-      if (opc.length > 0) {
-        //元数据-字段操作
-        this.updateTarget(id, 't_data_type', opc[0].originalDataType)
-      }
     },
     saveFileOperations() {
       let field_process = {
-        table_id: this.selectRow.sinkQulifiedName,
-        table_name: this.selectRow.sinkObjectName,
+        table_id: this.selectRow.sourceQualifiedName,
+        table_name: this.selectRow.sourceObjectName,
         operations: this.operations
       }
       if (this.field_process && this.field_process.length > 0) {
-        let process = this.field_process.filter(fields => fields.table_id === this.selectRow.sinkQulifiedName)
+        let process = this.field_process.filter(fields => fields.table_id === this.selectRow.sourceQualifiedName)
         if (process.length > 0) {
           field_process = process[0]
-          field_process.table_id = this.selectRow.sinkQulifiedName
-          field_process.table_name = this.selectRow.sinkObjectName
+          field_process.table_id = this.selectRow.sourceQualifiedName
+          field_process.table_name = this.selectRow.sourceObjectName
           field_process.operations = this.operations
         } else this.field_process.push(field_process)
       } else this.field_process.push(field_process)
