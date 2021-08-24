@@ -72,6 +72,23 @@ export default function (vm) {
       // },
       {
         type: 'input',
+        field: 'tidbPdServer',
+        label: vm.$t('connection_form_tidb_server'),
+        rules: [
+          {
+            required: true,
+            validator(rule, value, callback) {
+              if (!value || !value.trim()) {
+                callback(new Error(vm.$t('dataForm.error.noneHost')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
+      },
+      {
+        type: 'input',
         field: 'database_host',
 
         label: vm.$t('dataForm.form.host'),

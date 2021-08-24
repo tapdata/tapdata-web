@@ -25,5 +25,8 @@ export default {
   taskprogress_full_sync_progress: '全量同步進度',
 
   // 任务设置
-  task_settings_cdc_sync_point_date: '【任務設置】增量採集開始時刻，請選擇時間'
+  task_settings_cdc_sync_point_date: '【任務設置】增量採集開始時刻，請選擇時間'，
+
+  // 数据源
+  connection_form_tidb_server: 'TiDB地址'
 }

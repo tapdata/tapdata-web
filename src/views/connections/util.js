@@ -118,7 +118,8 @@ export const defaultModel = {
     increamentalTps: 100, //dummy
     initialReadSize: 100000, //dummy
     hiveConnType: 'Stream', // kafka
-    schema: ''
+    schema: '',
+    tidbPdServer: '' // TiDB
   },
   kafka: {
     id: '',
