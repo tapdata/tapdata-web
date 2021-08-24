@@ -151,27 +151,27 @@ export default {
       },
       operationTypeOptions: [
         // 连接
-        { label: '创建连接', value: 'connection_create', desc: '创建了连接【@{p1}】' },
-        { label: '编辑连接', value: 'connection_update', desc: '编辑了连接【@{p1}】的配置信息' },
-        { label: '复制连接', value: 'connection_copy', desc: '复制了连接[${p1}]为【@{p2}】' },
-        { label: '删除连接', value: 'connection_delete', desc: '删除了连接【${p1}】' },
+        { label: '创建连接', value: 'connection_create', desc: '创建了连接【@{parameter1}】' },
+        { label: '编辑连接', value: 'connection_update', desc: '编辑了连接【@{parameter1}】的配置信息' },
+        { label: '复制连接', value: 'connection_copy', desc: '复制了连接[${parameter1}]为【@{parameter2}】' },
+        { label: '删除连接', value: 'connection_delete', desc: '删除了连接【${parameter1}】' },
         // 任务
-        { label: '创建任务', value: 'migration_create', desc: '创建了任务【@{p1}】' },
-        { label: '启动任务', value: 'migration_start', desc: '启动了任务【@{p1}】' },
-        { label: '编辑任务', value: 'migration_update', desc: '编辑了任务【@{p1}】的配置信息' },
-        { label: '复制任务', value: 'migration_copy', desc: '复制了任务[${p2}] 为【@{p1}】' },
-        { label: '重置任务', value: 'migration_reset', desc: '重置了任务【@{p1}】' },
-        { label: '删除任务', value: 'migration_delete', desc: '删除了任务【${p1}】' },
-        { label: '停止任务', value: 'migration_stop', desc: '停止了任务【@{p1}】' },
-        { label: '强制停止任务', value: 'migration_forceStop', desc: '强制停止了任务【@{p1}】' },
+        { label: '创建任务', value: 'migration_create', desc: '创建了任务【@{parameter1}】' },
+        { label: '启动任务', value: 'migration_start', desc: '启动了任务【@{parameter1}】' },
+        { label: '编辑任务', value: 'migration_update', desc: '编辑了任务【@{parameter1}】的配置信息' },
+        { label: '复制任务', value: 'migration_copy', desc: '复制了任务[${parameter2}] 为【@{parameter1}】' },
+        { label: '重置任务', value: 'migration_reset', desc: '重置了任务【@{parameter1}】' },
+        { label: '删除任务', value: 'migration_delete', desc: '删除了任务【${parameter1}】' },
+        { label: '停止任务', value: 'migration_stop', desc: '停止了任务【@{parameter1}】' },
+        { label: '强制停止任务', value: 'migration_forceStop', desc: '强制停止了任务【@{parameter1}】' },
         // Agent
-        { label: '修改Agent名称', value: 'agent_rename', desc: '将Agent名称[${p2}]修改为【@{p1}】' },
+        { label: '修改Agent名称', value: 'agent_rename', desc: '将Agent名称[${parameter2}]修改为【@{parameter1}】' },
         { label: 'Agent升级', value: 'agent_update', desc: '进行了Agent升级' },
         // 校验
-        { label: '新建数据校验', value: 'inspect_create', desc: '新建了数据校验任务【@{p1}】' },
-        { label: '执行数据校验', value: 'inspect_start', desc: '执行数据校验任务【@{p1}】' },
-        { label: '编辑数据校验', value: 'inspect_update', desc: '编辑了数据校验任务【@{p1}】' },
-        { label: '删除数据校验', value: 'inspect_delete', desc: '删除了数据校验任务【${p1}】' }
+        { label: '新建数据校验', value: 'inspect_create', desc: '新建了数据校验任务【@{parameter1}】' },
+        { label: '执行数据校验', value: 'inspect_start', desc: '执行数据校验任务【@{parameter1}】' },
+        { label: '编辑数据校验', value: 'inspect_update', desc: '编辑了数据校验任务【@{parameter1}】' },
+        { label: '删除数据校验', value: 'inspect_delete', desc: '删除了数据校验任务【${parameter1}】' }
       ]
     }
   },
@@ -283,27 +283,30 @@ export default {
       return this.operationTypeOptions.find(item => item.value === `${row.modular}_${row.operation}`)?.label
     },
     descFnc(row) {
-      let { modular, operation, rename, parameter1, parameter2 } = row
+      let { modular, operation, rename } = row
       let findOne = this.operationTypeOptions.find(item => item.value === `${modular}_${operation}`)
       let desc = findOne?.desc ?? ''
       if (modular === 'connection' && operation === 'update' && rename) {
-        desc = '将连接名称由[${p2}]修改为【@{p1}】'
+        desc = '将连接名称由[${parameter2}]修改为【@{parameter1}】'
       }
-      // 不添加事件  ${p1} ${p2}  添加事件@{1} @{2}
-      let result = desc.replace('${p1}', parameter1).replace('${p2}', parameter2)
-      let cArr = result.split(/@{[^{]*[}$]/gi) // 非变量
-      let vArr = result.match(/@{[^{]*[}$]/gi) || [] // 变量
-      let splitArr = []
-      cArr.forEach((el, index) => {
-        splitArr.push({ text: el })
-        if (vArr[index]) {
-          splitArr.push({
-            text: vArr[index].replace('@{p1}', parameter1).replace('@{p2}', parameter2),
+      // 不添加事件  ${parameter1} ${parameter2}  添加事件@{parameter1} @{parameter2}
+      let replaceStr = desc.replace(/\${(parameter\d+)}/gi, (item, subItem) => {
+        return row[subItem]
+      }) // 替换掉所有${}
+      let vReg = /(@{parameter\d+})/gi
+      // 根据@{}分割，保留分割符
+      return replaceStr.split(vReg).map(item => {
+        // @{}添加标记，做事件处理
+        if (vReg.test(item)) {
+          return {
+            text: row[item.match(/\w+/g)?.[0]],
             variable: true
-          })
+          }
+        }
+        return {
+          text: item
         }
       })
-      return splitArr
     },
     clickDescSpan(item, row) {
       if (!item.variable) {
