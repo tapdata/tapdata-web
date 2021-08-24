@@ -99,7 +99,12 @@
         <ElTableColumn label="目标表长度" width="150">
           <template slot-scope="scope">
             <div
-              v-if="scope.row.t_precision !== null && scope.row.t_precision !== undefined && !scope.row.is_deleted"
+              v-if="
+                scope.row.t_precision !== null &&
+                scope.row.t_precision !== undefined &&
+                !scope.row.is_deleted &&
+                scope.row.t_isPrecisionEdit
+              "
               @click="edit(scope.row, 'precision')"
             >
               <span>{{ scope.row.t_precision }}</span>
@@ -113,7 +118,12 @@
         <ElTableColumn label="目标表精度" width="100">
           <template slot-scope="scope">
             <div
-              v-if="scope.row.t_scale !== null && scope.row.t_scale !== undefined && !scope.row.is_deleted"
+              v-if="
+                scope.row.t_scale !== null &&
+                scope.row.t_scale !== undefined &&
+                !scope.row.is_deleted &&
+                scope.row.t_isScaleEdit
+              "
               @click="edit(scope.row, 'scale')"
             >
               <span>{{ scope.row.t_scale }}</span>
@@ -155,18 +165,18 @@
             <div v-if="item.maxPrecision && currentOperationType === 'precision'">
               <div v-if="index === 0">长度范围</div>
               <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
-                {{ `. [ ${item.minPrecision} , ${item.maxPrecision} ]` }}
+                {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
               <div v-if="item.maxPrecision && item.minPrecision === item.maxPrecision">
-                {{ `. ${item.maxPrecision}` }}
+                {{ `${item.maxPrecision}` }}
               </div>
             </div>
             <div v-if="item.maxScale && currentOperationType === 'scale'" style="margin-top: 10px">
               <div>精度范围</div>
               <div v-if="item.minScale !== item.maxScale">
-                {{ `. [ ${item.minScale} , ${item.maxScale} ]` }}
+                {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
-              <div v-if="item.minScale === item.maxScale">{{ `. ${item.maxScale}` }}</div>
+              <div v-if="item.minScale === item.maxScale">{{ `${item.maxScale}` }}</div>
             </div>
           </div>
         </div>
@@ -404,6 +414,8 @@ export default {
       let id = this.currentOperationData.t_id
       let key = this.currentOperationType
       let value = this.editValueType[this.currentOperationType]
+      let verify = true
+      let verifySame = true
       //任务-字段处理器
       if (key === 'field_name') {
         let option = this.target.filter(v => v.id === id && !v.is_deleted)
@@ -435,8 +447,6 @@ export default {
         this.fieldProcessConvert(id, key, value)
         this.influences(id)
       } else if (key === 'precision') {
-        let verify = true
-        let verifySame = true
         this.currentTypeRules.forEach(r => {
           if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision) {
             this.$message.error('当前值不符合该字段范围')
@@ -450,8 +460,6 @@ export default {
           return
         }
       } else if (key === 'scale') {
-        let verifySame = true
-        let verify = true
         this.currentTypeRules.forEach(r => {
           if (r.minScale === r.maxScale && value !== r.maxScale) {
             this.$message.error('当前值不符合该字段范围')
@@ -461,9 +469,9 @@ export default {
             this.$message.error('当前值不符合该字段范围')
           }
         })
-        if (!verify && !verifySame) {
-          return
-        }
+      }
+      if (!verify || !verifySame) {
+        return
       }
       //触发target更新
       this.updateTarget(id, key, value)
@@ -473,12 +481,22 @@ export default {
     //改类型影响字段长度 精度
     influences(id) {
       this.currentTypeRules.forEach(r => {
-        if (r.minScale) {
+        if (r.minScale || r.minScale === 0) {
+          if (r.minScale === r.maxScale) {
+            this.updateTarget(id, 'isScaleEdit', false)
+          } else {
+            this.updateTarget(id, 'isScaleEdit', true)
+          }
           this.updateTarget(id, 'scale', r.minScale)
         } else {
           this.updateTarget(id, 'scale', null)
         }
-        if (r.minPrecision) {
+        if (r.minPrecision || r.minPrecision === 0) {
+          if (r.minPrecision === r.maxPrecision) {
+            this.updateTarget(id, 'isPrecisionEdit', false)
+          } else {
+            this.updateTarget(id, 'isPrecisionEdit', true)
+          }
           this.updateTarget(id, 'precision', r.minPrecision)
         } else {
           this.updateTarget(id, 'precision', null)
