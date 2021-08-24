@@ -658,16 +658,16 @@ export default {
     },
     saveFileOperations() {
       let field_process = {
-        table_id: this.selectRow.sourceQualifiedName,
-        table_name: this.selectRow.sourceObjectName,
+        table_id: this.selectRow.sinkQulifiedName,
+        table_name: this.selectRow.sinkObjectName,
         operations: this.operations
       }
       if (this.field_process && this.field_process.length > 0) {
-        let process = this.field_process.filter(fields => fields.table_id === this.selectRow.sourceQualifiedName)
+        let process = this.field_process.filter(fields => fields.table_id === this.selectRow.sinkQulifiedName)
         if (process.length > 0) {
           field_process = process[0]
-          field_process.table_id = this.selectRow.sourceQualifiedName
-          field_process.table_name = this.selectRow.sourceObjectName
+          field_process.table_id = this.selectRow.sinkQulifiedName
+          field_process.table_name = this.selectRow.sinkObjectName
           field_process.operations = this.operations
         } else this.field_process.push(field_process)
       } else this.field_process.push(field_process)
