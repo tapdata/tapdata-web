@@ -826,7 +826,11 @@ export default {
             readCdcInterval: 500,
             readBatchSize: 1000
           })
-        } else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode','app.HanaNode'].includes(cell.type)) {
+        } else if (
+          ['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode', 'app.HanaNode'].includes(
+            cell.type
+          )
+        ) {
           postData.mappingTemplate = 'custom'
 
           Object.assign(stage, {
@@ -1047,6 +1051,7 @@ export default {
         this.checkAgentStatus(() => {
           let doStart = () => {
             let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
+            this.dataFlow = data //将dataFlow 存当前数据
             if (data) {
               this.doSaveStartDataFlow(data)
             }
@@ -1150,9 +1155,13 @@ export default {
           this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
-        if (this.dataFlow.mappingTemplate === 'custom') this.hiddenFieldProcess = true
-        let fieldData = await this.autoFieldMapping() //触发自动推演
+        if (this.mappingTemplate === 'custom') this.hiddenFieldProcess = true
+        let fieldData = await this.autoFieldMapping(data) //触发自动推演
         let checkFiledMapping = ''
+        if (!fieldData) {
+          this.$message.error('模型自动推演失败')
+          return
+        }
         if (fieldData?.data.length === 0) {
           checkFiledMapping = true
         } else {
@@ -1209,13 +1218,13 @@ export default {
       this.dialogFormVisible = false
     },
     //保存自动推演
-    autoFieldMapping() {
-      if (!this.dataFlow) return
-      let promise = this.$api('DataFlows').autoMetadata(this.dataFlow)
+    autoFieldMapping(data) {
+      if (!data) return
+      let promise = this.$api('DataFlows').autoMetadata(data)
       return promise
     },
     returnFieldMapping(field_process) {
-      if (this.dataFlow.mappingTemplate === 'custom') {
+      if (this.mappingTemplate === 'custom') {
         this.doSaveStartDataFlow(this.dataFlow)
       } else {
         let stages = this.dataFlow['stages'] || []
