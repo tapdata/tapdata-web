@@ -1229,6 +1229,7 @@ export default class Graph extends Component {
   }
 
   onMousewheel(cellView, evt, x, y, delta) {
+    console.log('onMousewheel', arguments)
     if (this.keyboard.isActive('alt', evt)) {
       evt.preventDefault()
       this.paperScroller.zoom(delta * 0.2, {

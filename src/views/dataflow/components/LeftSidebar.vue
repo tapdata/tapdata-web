@@ -192,12 +192,12 @@ export default {
       // console.log('onMove')
     },
 
-    onDrop(item, position) {
+    onDrop(item, position, size) {
       // const bound = document.getElementById('node-view').getBoundingClientRect()
 
       console.log('onDrop', item, position)
 
-      this.eventBus.$emit('drop-node', item, position)
+      this.eventBus.$emit('drop-node', item, position, size)
 
       return
 

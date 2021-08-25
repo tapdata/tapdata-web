@@ -20,14 +20,8 @@
       <!--左侧边栏-->
       <LeftSidebar :event-bus="editBus"></LeftSidebar>
       <!--内容体-->
-      <main
-        id="dfEditorContent"
-        ref="layoutContent"
-        class="layout-content flex-fill overflow-hidden"
-        @mousedown="mouseDown"
-        @wheel="wheelScroll"
-      >
-        <PaperScroller :event-bus="editBus">
+      <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
+        <PaperScroller :event-bus="editBus" @mouse-select="handleMouseSelect" @change-scale="handleChangeScale">
           <DFNode
             v-for="n in nodes"
             :key="n.id"
@@ -43,6 +37,7 @@
           ></DFNode>
         </PaperScroller>
         <!--<div id="node-view-background" class="node-view-background" :style="backgroundStyle"></div>
+
 
         <div id="node-view" class="node-view" :style="dataflowStyle">
           <DFNode
@@ -85,7 +80,6 @@ import { NODE_PREFIX, DEFAULT_SETTINGS } from '@/views/dataflow/constants'
 import TopHeader from '@/views/dataflow/components/TopHeader'
 import { titleChange } from '@/mixins/titleChange'
 import { showMessage } from '@/mixins/showMessage'
-import moveDataflow from './mixins/moveDataflow'
 import ws from '@/api/ws'
 import DataFlows from '@/api/DataFlows'
 import i18n from '@/i18n'
@@ -106,7 +100,7 @@ const HEADER_HEIGHT = 60
 export default {
   name: 'Editor',
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage, moveDataflow],
+  mixins: [deviceSupportHelpers, titleChange, showMessage],
 
   components: {
     PaperScroller,
@@ -756,6 +750,8 @@ export default {
       this.ifNodeDragStart = false
       this.navLines = []
 
+      this.editBus.$emit('auto-resize-paper')
+
       /*this.updateNodeProperties({
         id,
         properties: {
@@ -835,17 +831,19 @@ export default {
       this.setActiveType(null)
     },
 
-    getNodesInSelection() {
+    getNodesInSelection(selectBoxAttr) {
       let $node = this.$refs.layoutContent.querySelector('.df-node')
       if (!$node) return []
       let nw = $node.offsetWidth
       let nh = $node.offsetHeight
-      let { x, y, bottom, right } = this.selectBoxAttr
-      const nodeViewOffset = this.nodeViewOffsetPosition
+      let { x, y, bottom, right } = selectBoxAttr
+
+      console.log('getNodesInSelection', selectBoxAttr)
+      /*const nodeViewOffset = this.nodeViewOffsetPosition
       x -= nodeViewOffset[0]
       right -= nodeViewOffset[0]
       y -= nodeViewOffset[1]
-      bottom -= nodeViewOffset[1]
+      bottom -= nodeViewOffset[1]*/
       return this.nodes.filter(({ position }) => {
         console.log('position', position, { x, y, bottom, right })
         return position[0] + nw > x && position[0] < right && bottom > position[1] && y < position[1] + nh
@@ -853,7 +851,6 @@ export default {
     },
 
     mouseDown(e) {
-      console.log('mouseDown', e.button)
       on(window, 'mouseup', this.mouseUp)
 
       this.mouseDownMouseSelect(e)
@@ -880,6 +877,13 @@ export default {
 
     mouseMoveSelect(e) {
       e.preventDefault() // 防止拖动时文字被选中
+
+      if (e.buttons === 0) {
+        // 没有按键或者是没有初始化
+        this.mouseUpMouseSelect(e)
+        return
+      }
+
       this.showSelectBox = true
       let w, h, x, y
       const pos = this.getMousePositionWithinNodeView(e)
@@ -1333,6 +1337,23 @@ export default {
       element.style['transform'] = scaleString
 
       this.jsPlumbIns.setZoom(zoomLevel)
+    },
+
+    handleMouseSelect(showSelectBox, selectBoxAttr) {
+      console.log('handleMouseSelect', arguments)
+      // 取消选中所有节点
+      this.deselectAllNodes()
+      // 清空激活状态
+      this.setActiveType(null)
+
+      if (showSelectBox) {
+        const selectedNodes = this.getNodesInSelection(selectBoxAttr)
+        selectedNodes.forEach(node => this.nodeSelected(node))
+      }
+    },
+
+    handleChangeScale(scale) {
+      this.jsPlumbIns.setZoom(scale)
     }
   }
 }
@@ -1422,8 +1443,8 @@ $sidebarBg: #fff;
 
 .select-box {
   position: absolute;
-  background: rgba(215, 215, 215, 0.2);
-  border: 1px solid #b2b2b3;
+  background: rgba(23, 159, 251, 0.1);
+  border: 1px solid #179ffb;
 }
 
 .node-view {

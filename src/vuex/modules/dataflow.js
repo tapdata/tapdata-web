@@ -33,7 +33,7 @@ const state = () => ({
   stateIsDirty: false, // 状态是否被污染，标识数据改变
   nodeTypes: [], // 所有节点类型
   nodeViewOffsetPosition: [0, 0],
-  nodeViewMoveInProgress: false,
+  paperMoveInProgress: false,
   ctorTypes: {}, // 所有节点构造类型
   activeNode: null, // 当前激活的节点ID
   activeConnection: null, // 当前激活的连接
@@ -143,8 +143,8 @@ const getters = {
     return state.nodeViewOffsetPosition
   },
 
-  isNodeViewMoveInProgress: state => {
-    return state.nodeViewMoveInProgress
+  isPaperMoveInProgress: state => {
+    return state.paperMoveInProgress
   },
 
   activeType: state => {
@@ -210,8 +210,8 @@ const mutations = {
     }
   },
 
-  setNodeViewMoveInProgress(state, value) {
-    state.nodeViewMoveInProgress = value
+  setPaperMoveInProgress(state, value) {
+    state.paperMoveInProgress = value
   },
 
   setNodeViewOffsetPosition(state, data) {

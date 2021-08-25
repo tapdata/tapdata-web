@@ -75,7 +75,7 @@ export default {
           if ($con) {
             const bound = $con.getBoundingClientRect()
             if (posX > bound.left && posX < bound.right && posY > bound.top && posY < bound.bottom) {
-              onDrop?.(item, [posX - width / 2, posY - height / 2])
+              onDrop?.(item, [posX - width / 2, posY - height / 2], { width, height })
             }
           }
         }

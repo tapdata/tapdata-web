@@ -115,10 +115,10 @@ export default {
     uniteKey: {
       immediate: true,
       async handler() {
-        console.log('FormPanel', arguments)
+        console.log('FormPanel', arguments, this.activeType)
         if (this.activeType) {
           const formSchema = this.$store.getters['dataflow/formSchema'] || {}
-          console.log('formSchema')
+          console.log('formSchema', this.activeType)
           switch (this.activeType) {
             case 'node':
               await this.setSchema(this.ins.formSchema || formSchema.node)
@@ -140,7 +140,7 @@ export default {
 
     // 设置schema
     async setSchema(schema, values) {
-      // console.log('setSchema', schema)
+      console.log('setSchema', schema)
       this.schema = null
 
       await this.$nextTick()
