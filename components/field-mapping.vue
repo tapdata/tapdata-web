@@ -37,7 +37,7 @@
               <div class="contentBox__target">{{ item.sinkObjectName }}</div>
               <div class="contentBox__select">
                 {{ `已选中 ${position === index ? fieldCount : item.sourceFieldCount}/${item.sourceFieldCount}` }}
-                <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName, item.sinkQulifiedName)"
+                <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName, item.sourceQualifiedName)"
                   >恢复默认</el-button
                 >
               </div>
@@ -73,7 +73,7 @@
         <ElTableColumn label="目标表字段名">
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted && !hiddenFieldProcess" @click="edit(scope.row, 'field_name')">
-              <el-tooltip class="item" :content="scope.row.t_field_name" placement="right">
+              <el-tooltip class="item" :content="scope.row.t_field_name">
                 <span>{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i></span>
               </el-tooltip>
             </div>
@@ -309,10 +309,10 @@ export default {
     updateView() {
       this.initTableData()
       this.initTypeMapping()
+      this.operations = []
       if (this.field_process?.length > 0) {
         this.getFieldProcess()
       }
-      ;('')
     },
     //获取字段处理器
     getFieldProcess() {
@@ -546,6 +546,10 @@ export default {
       let option = this.target.filter(v => v.id === id)
       if (option.length === 0) return
       option = option[0]
+      if (option.operand === option.original_field_name) {
+        this.restRename() //用户手动改为最原始的名字
+        return
+      }
       //rename类型
       let op = {
         op: 'RENAME',
@@ -618,6 +622,15 @@ export default {
       }
       //更新当前选中行数
       this.fieldCount = this.fieldCount + 1
+    },
+    restRename(id) {
+      for (let i = 0; i < this.operations.length; i++) {
+        // 还原改名
+        let ops = this.operations[i]
+        if (ops.id === id && ops.op === 'RENAME') {
+          this.operations.splice(i, 1)
+        }
+      }
     },
     restOperation(id) {
       let opr = this.operations.filter(v => v.id === id && v.op === 'RENAME')
