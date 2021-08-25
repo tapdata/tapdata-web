@@ -254,8 +254,10 @@ export default {
     }
   },
   mounted() {
-    this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
-    this.selectRow = this.fieldMappingNavData[0]
+    if (this.fieldMappingNavData) {
+      this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
+      this.selectRow = this.fieldMappingNavData[0]
+    }
     this.updateView()
   },
   methods: {
