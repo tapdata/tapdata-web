@@ -549,14 +549,10 @@ export default {
     },
     //表设置
     fieldProcess() {
-      let data = this.scope.getDataFlowData()
+      let data = this.getDataFlowData()
       if (!data) return
-      //添加字段处理器
-      for (let i = 0; i < data.stages.length; i++) {
-        if (data.stages[i].outputLanes) {
-          data['stages'][i].field_process = this.model.field_process
-        }
-      }
+      delete data['rollback']
+      delete data['rollbackTable']
       let promise = this.$api('DataFlows').getMetadata(data)
       promise.then(data => {
         this.dialogFieldProcessVisible = true
@@ -564,8 +560,7 @@ export default {
       })
     },
     async updateFieldProcess(rollback, rollbackTable, id) {
-      let data = this.scope.getDataFlowData()
-      if (!data) return
+      let data = this.getDataFlowData()
       if (rollback === 'all') {
         data['rollback'] = rollback
         //删除整个字段处理器
@@ -581,12 +576,28 @@ export default {
           }
         }
       }
-      let promise = await this.$api('DataFlows').getMetadata(data)
+      let result = this.updateAutoFieldProcess(data)
+      let promise = await this.$api('DataFlows').getMetadata(result)
       return promise?.data
     },
     //更新左边导航
     updateFieldMappingNavData(data) {
       this.fieldMappingNavData = data
+    },
+    //获取当前任务所有的节点
+    getDataFlowData() {
+      //手动同步更新字段处理器
+      let data = this.scope.getDataFlowData()
+      let result = this.updateAutoFieldProcess(data)
+      return result
+    },
+    updateAutoFieldProcess(data) {
+      for (let i = 0; i < data.stages.length; i++) {
+        if (data.stages[i].outputLanes) {
+          data['stages'][i].field_process = this.model.field_process
+        }
+      }
+      return data
     },
     //获取表设置
     async intiFieldMappingTableData(row) {
