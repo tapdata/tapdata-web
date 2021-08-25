@@ -24,7 +24,7 @@
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
-            <VIcon style="margin-right: 5px">plus</VIcon>
+            <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>创建连接</span>
           </ElButton>
         </div>

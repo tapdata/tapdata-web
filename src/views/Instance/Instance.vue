@@ -34,7 +34,7 @@
         </div>
         <div class="instance-operation-right">
           <el-button type="primary" @click="createAgent" :loading="createAgentLoading">
-            <VIcon style="margin-right: 5px">plus</VIcon>
+            <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>{{ $t('agent_button_create') }}</span>
           </el-button>
           <template v-if="isShowTestBtn">

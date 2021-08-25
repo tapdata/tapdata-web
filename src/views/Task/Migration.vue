@@ -34,7 +34,7 @@
         </div>
         <div class="migration-operation-right">
           <ElButton type="primary" @click="createTask">
-            <VIcon style="margin-right: 5px">plus</VIcon>
+            <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>创建任务</span>
           </ElButton>
         </div>

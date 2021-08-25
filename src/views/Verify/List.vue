@@ -64,7 +64,7 @@
       </ul>
       <div>
         <ElButton type="primary" @click="toCreate">
-          <VIcon>plus</VIcon>
+          <i class="el-icon-plus" style="margin-right: 5px"></i>
           <span> {{ $t('dataVerification.addVerifyTip') }}</span>
         </ElButton>
       </div>
