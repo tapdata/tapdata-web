@@ -135,6 +135,17 @@ export default function () {
             triggerConfig: {
               show: false
             }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'initial_sync'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
           }
         ]
       },
