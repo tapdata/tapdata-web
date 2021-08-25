@@ -321,13 +321,19 @@ export default {
             .then(({ data, target }) => {
               this.target = target
               this.fieldMappingTableData = data
-              this.fieldCount = this.fieldMappingTableData.length || 0
+              let isDeleteLens = this.getIsDeleteLens()
+              this.fieldCount = this.fieldMappingTableData.length - isDeleteLens || 0
               this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
             .finally(() => {
               this.loading = false
             })
       })
+    },
+    //获取当前被删除的字段
+    getIsDeleteLens() {
+      let data = this.fieldMappingTableData.filter(v => v.is_deleted)
+      return data.length
     },
     //更新table数据
     updateTableData(id, key, value) {
