@@ -204,7 +204,7 @@
       title="映射配置"
       :visible.sync="dialogFieldProcessVisible"
       :modal-append-to-body="false"
-      custom-class="databaseLinkDialog"
+      custom-class="database-filed-mapping-dialog"
       :close-on-click-modal="false"
       v-if="dialogFieldProcessVisible"
     >
@@ -473,6 +473,9 @@ export default {
       //   }
       // })
       // this.preFixSuffixData()
+
+      //前后缀 表名改动 需要清空字段处理器
+      this.model.field_process = []
     },
 
     // 穿梭框搜索
@@ -529,6 +532,8 @@ export default {
       // }
       this.mqActiveData.table_prefix = this.model.table_prefix
       this.mqActiveData.table_suffix = this.model.table_suffix
+      //前后缀 表名改动 需要清空字段处理器
+      this.model.field_process = []
     },
 
     // 还原
@@ -537,6 +542,8 @@ export default {
       this.model.table_prefix = ''
       this.mqActiveData.table_prefix = ''
       this.mqActiveData.table_suffix = ''
+      //前后缀 表名改动 需要清空字段处理器
+      this.model.field_process = []
       // if (this.sourceData.length) {
       //   for (let i = 0; i < this.sourceData.length; i++) {
       //     for (let k = 0; k < this.model.selectSourceArr.length; k++) {
@@ -626,7 +633,7 @@ export default {
           let ops = this.handleFieldName(row, field.field_name)
           if (!ops || ops?.length === 0) return
           ops = ops[0]
-          if (ops.operand === field.field_name && ops.field === item.field_name) {
+          if (ops.operand === field.field_name && ops.original_field_name === item.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })
@@ -941,7 +948,7 @@ export default {
     }
   }
 }
-.databaseLinkDialog {
+.database-filed-mapping-dialog {
   height: 800px;
   overflow: hidden;
   display: flex;
