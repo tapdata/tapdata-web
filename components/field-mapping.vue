@@ -55,33 +55,23 @@
       >
         <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="100">
           <template slot-scope="scope">
-            <div v-if="scope.row.primary_key_position === 1">
-              <el-tooltip class="item" :content="scope.row.field_name" placement="right">
-                <span>{{ scope.row.field_name }} <i class="iconfont icon-yuechi1"></i></span>
-              </el-tooltip>
-            </div>
-            <div v-else>
-              <el-tooltip class="item" :content="scope.row.field_name" placement="right">
-                <span>{{ scope.row.field_name }}</span>
-              </el-tooltip>
-            </div>
+            <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
+              >{{ scope.row.field_name }} <i class="iconfont icon-yuechi1"></i
+            ></span>
+            <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn label="源表类型" prop="data_type" width="150"></ElTableColumn>
         <ElTableColumn label="源表长度" prop="precision" width="150"></ElTableColumn>
         <ElTableColumn label="源表精度" prop="scale" width="100"></ElTableColumn>
-        <ElTableColumn label="目标表字段名">
+        <ElTableColumn label="目标表字段名" width="210">
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted && !hiddenFieldProcess" @click="edit(scope.row, 'field_name')">
-              <el-tooltip class="item" :content="scope.row.t_field_name">
-                <span>{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i></span>
-              </el-tooltip>
+              <span :show-overflow-tooltip="true"
+                >{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i
+              ></span>
             </div>
-            <div v-else>
-              <el-tooltip class="item" :content="scope.row.t_field_name" placement="right">
-                <span>{{ scope.row.t_field_name }}</span>
-              </el-tooltip>
-            </div>
+            <span v-else :show-overflow-tooltip="true">{{ scope.row.t_field_name }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn label="目标表类型" width="150">
