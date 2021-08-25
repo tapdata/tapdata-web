@@ -337,5 +337,6 @@ module.exports = {
     },
     code: 'ok',
     msg: 'ok'
-  }
+  },
+  '/tm/api/DatabaseTypes': { data: [], code: 'ok', msg: 'ok' }
 }
