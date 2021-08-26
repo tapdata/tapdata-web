@@ -294,6 +294,7 @@
           :dataFlow="dataFlow"
           :showBtn="true"
           :hiddenFieldProcess="true"
+          :stageId="stageId"
           ref="fieldMapping"
           class="fr"
         ></FieldMapping>
@@ -617,7 +618,8 @@ export default {
       repeatTableDiao: false,
       repeatTable: [],
       scope: '',
-      dataFlow: ''
+      dataFlow: '',
+      stageId: ''
     }
   },
 
@@ -897,6 +899,7 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
         this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {

@@ -127,6 +127,7 @@
         :dataFlow="dataFlow"
         :showBtn="true"
         :hiddenFieldProcess="true"
+        :stageId="stageId"
         ref="fieldMapping"
         class="fr"
       ></FieldMapping>
@@ -201,6 +202,7 @@ export default {
       },
       scope: '',
       dataFlow: '',
+      stageId: '',
       schemasLoading: false,
       mergedSchema: null
     }
@@ -323,6 +325,8 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
+        this.getDataFlow()
         _.merge(this.model, data)
       }
       this.mergedSchema = cell.getOutputSchema()

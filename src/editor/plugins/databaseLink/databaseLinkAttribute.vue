@@ -673,7 +673,7 @@ export default {
     },
     //保存字段处理器
     saveOperations(row, operations, target) {
-      if (!operations || operations?.length === 0 || !target || target?.length === 0) return
+      if (!target || target?.length === 0) return
       let where = {
         qualified_name: row.sinkQulifiedName
       }
