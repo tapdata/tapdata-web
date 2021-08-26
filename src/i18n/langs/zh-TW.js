@@ -7,8 +7,36 @@ export default {
   gl_button_cancel: '取消',
   gl_button_delete_fail: '刪除失敗',
   gl_button_update_success: '修改成功',
+  gl_qr_code_wx_public_account: '微信公眾號',
+  gl_qr_code_tip: '掃碼諮詢',
+  gl_qr_code_wx_customer_service: '微信客服',
+  gl_telephone_tip: '電話諮詢',
   /** 模块 */
-  // agent
+  // 工作台
+  workbench_manage: '工作台',
+  workbench_quick_start: '快速開始',
+  workbench_notice: '公告通知',
+  workbench_overview: '概覽',
+  workbench_guide: '新手入門',
+  workbench_agent_desc:
+    '歡迎來到Tapdata Cloud，即將開啟您的實時數據同步之旅！初次使用請先安裝部署Agent，不然無法運行任務哦。 ',
+  workbench_agent_button_create: '創建Agent',
+  workbench_connection_desc:
+    '數據連接主要用來建立Agent與用戶源數據庫和目標數據庫的連接。快來創建數據連接，並對已有數據連接的狀態進行測試和管理吧。 ',
+  workbench_connection_button_create: '創建連接',
+  workbench_task_desc:
+    '任務管理主要用來創建同步任務並進行管理。快來創建數據同步任務，並對已有數據同步任務的類型和狀態進行查看和管理吧。 ',
+  workbench_task_button_create: '創建任務',
+  workbench_overview_connection: '連接',
+  workbench_overview_connection_ready: '有效連接',
+  workbench_overview_connection_invalid: '無效連接',
+  workbench_overview_task: '任務',
+  workbench_guide_novice: '新手引導',
+  workbench_guide_documentation: '產品文檔',
+  workbench_guide_problem: '常見問題',
+
+  // Agent
+  agent_manage: 'Agent管理',
   agent_name: '實例ID/名稱',
   agent_task_number: '任務數',
   agent_create_time: '创建时间',
@@ -58,8 +86,16 @@ export default {
   agent_auto_upgrade_tip_fail: '自動升級失敗，請手動升級',
   agent_auto_upgrade_tip_have_new: 'Agent版本有更新，點擊升級',
   agent_button_create_tip: '是否創建 Agent？',
+
+  // 连接
+  connection_manage: '連接管理',
+
   // 任务
+  task_manage: '任務管理',
   task_name: '任務名稱',
+  task_sync_type_initial_sync: '全量',
+  task_sync_type_cdc: '增量',
+  task_sync_type_initial_sync_cdc: '全量+增量',
 
   // 数据校验
   verify_button_diff_verify: '差異校驗',

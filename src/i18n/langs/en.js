@@ -7,8 +7,36 @@ export default {
   gl_button_cancel: 'Cancel',
   gl_button_delete_fail: 'Failed to delete',
   gl_button_update_success: 'Successfully modified',
+  gl_qr_code_wx_public_account: 'WeChat public account',
+  gl_qr_code_tip: 'Code scanning consultation',
+  gl_qr_code_wx_customer_service: 'WeChat customer service',
+  gl_telephone_tip: 'Telephone consultation',
   /** 模块 */
-  // agent
+  // 工作台
+  workbench_manage: 'Workbench',
+  workbench_quick_start: 'Quick start',
+  workbench_notice: 'Announcement notice',
+  workbench_overview: 'Overview',
+  workbench_guide: "Beginner's guide",
+  workbench_agent_desc:
+    'Welcome to Tapdata Cloud, you are about to start your real-time data synchronization journey! Please install and deploy the Agent for the first use, otherwise the task cannot be run. ',
+  workbench_agent_button_create: 'Create Agent',
+  workbench_connection_desc:
+    "Data connection is mainly used to establish the connection between the Agent and the user's source database and target database. Come and create a data connection, and test and manage the status of the existing data connection. ",
+  workbench_connection_button_create: 'Create connection',
+  workbench_task_desc:
+    'Task management is mainly used to create and manage synchronization tasks. Come and create a data synchronization task, and view and manage the types and status of existing data synchronization tasks. ',
+  workbench_task_button_create: 'Create task',
+  workbench_overview_connection: 'Connect',
+  workbench_overview_connection_ready: 'Active connection',
+  workbench_overview_connection_invalid: 'Invalid connection',
+  workbench_overview_task: 'Task',
+  workbench_guide_novice: 'Novice Guide',
+  workbench_guide_documentation: 'Product Documentation',
+  workbench_guide_problem: 'Common problems',
+
+  // Agent
+  agent_manage: 'Agent Management',
   agent_name: 'Agent ID/Name',
   agent_task_number: 'Number of tasks',
   agent_create_time: 'Creation time',
@@ -62,8 +90,16 @@ export default {
   agent_auto_upgrade_tip_fail: 'Automatic upgrade failed, please upgrade manually',
   agent_auto_upgrade_tip_have_new: 'Agent version is updated, click to upgrade',
   agent_button_create_tip: 'Create an Agent？',
+
+  // 连接
+  connection_manage: 'Connection Management',
+
   // 任务
-  task_name: 'Task Name',
+  task_manage: 'Task Management',
+  task_name: 'Task name',
+  task_sync_type_initial_sync: 'full amount',
+  task_sync_type_cdc: 'Incremental',
+  task_sync_type_initial_sync_cdc: 'Full amount + incremental',
 
   // 数据校验
   verify_button_diff_verify: 'Diff verification',
