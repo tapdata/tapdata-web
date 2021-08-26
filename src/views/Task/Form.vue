@@ -75,6 +75,7 @@
                 ref="fieldMappingDom"
                 :remoteMethod="intiFieldMappingTableData"
                 :typeMappingMethod="getTypeMapping"
+                :hiddenFieldProcess="false"
                 :fieldMappingNavData="fieldMappingNavData"
                 :fieldProcessMethod="updateFieldProcess"
                 :field_process="transferData.field_process"
@@ -1033,6 +1034,8 @@ export default {
     fieldProcess() {
       let data = this.daft()
       if (!data) return
+      delete data['rollback']
+      delete data['rollbackTable'] //确保不会有恢复默认
       let promise = this.$axios.post('tm/api/DataFlows/metadata', data)
       promise.then(data => {
         this.activeStep += 1
@@ -1135,7 +1138,7 @@ export default {
     },
     //保存字段处理器
     saveOperations(row, operations, target) {
-      if (!operations || operations?.length === 0 || !target || target?.length === 0) return
+      if (!target || target?.length === 0) return
       let where = {
         qualified_name: row.sinkQulifiedName
       }
