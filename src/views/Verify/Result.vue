@@ -102,7 +102,7 @@ export default {
       let list = this.resultInfo.stats || []
       if (this.$route.name === 'VerifyDiffDetails') {
         list = list.filter(item => {
-          return item.result !== 'passed'
+          return item.source_total > 0
         })
       }
       return list
@@ -127,19 +127,17 @@ export default {
         .then(data => {
           let result = data[0]
           if (result) {
-            if (result) {
-              this.resultInfo = result
-              let stats = result.stats
-              this.inspect = result.inspect
-              if (stats.length) {
-                this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                this.taskId = stats[0].taskId
-                this.$refs.resultView.fetch(1)
-                if (this.type !== 'row_count') {
-                  this.$nextTick(() => {
-                    this.$refs.singleTable.setCurrentRow(stats[0])
-                  })
-                }
+            this.resultInfo = result
+            let stats = result.stats
+            this.inspect = result.inspect
+            if (stats.length) {
+              this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+              this.taskId = stats[0].taskId
+              this.$refs.resultView.fetch(1)
+              if (this.type !== 'row_count') {
+                this.$nextTick(() => {
+                  this.$refs.singleTable.setCurrentRow(stats[0])
+                })
               }
             }
           }
