@@ -15,6 +15,9 @@ export default class MetadataInstancesAPI extends PublicApi {
   patchId(id, params) {
     return axios.patch(this.url + '/' + id, params)
   }
+  patch(id, params) {
+    return axios.patch(this.url + '/' + id, params)
+  }
   classification(params) {
     return axios.patch(this.url + '/classifications', params)
   }
