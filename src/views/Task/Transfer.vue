@@ -1,7 +1,8 @@
 <template>
   <section class="tapdata-transfer-wrap">
     <div class="reload-schema">
-      没有可用的表，<span style="color: #999; cursor: pointer" @click="reload()">重新加载schema </span>
+      没有可用的表？
+      <el-button class="border-0" type="text" :loading="reloadLoading" @click="reload()">重新加载</el-button>
       <span v-if="showProgress"><VIcon>loading</VIcon> {{ progress }} %</span>
     </div>
     <div class="box-btn" v-show="!showOperationBtn">
@@ -183,7 +184,8 @@ export default {
       showProgress: '',
       sourceId: '',
       bidirectional: '',
-      loadFieldsStatus: 'finished'
+      loadFieldsStatus: 'finished',
+      reloadLoading: false // 重新加载
     }
   },
   methods: {
@@ -559,6 +561,7 @@ export default {
         }).then(resFlag => {
           if (resFlag) {
             this.showProgress = true
+            this.reloadLoading = true
             this.progress = 0
             this.reloadApi('first')
           }
@@ -585,6 +588,7 @@ export default {
             this.getTable(this.sourceId, this.bidirectional) //重新加载表
             setTimeout(() => {
               this.showProgress = false
+              this.reloadLoading = false
               this.progress = 0 //加载完成
             }, 800)
           } else {
@@ -598,6 +602,7 @@ export default {
         .catch(() => {
           this.$message.error(this.$t('connection.reloadFail'))
           this.showProgress = false
+          this.reloadLoading = false
           this.progress = 0 //加载完成
         })
     },
