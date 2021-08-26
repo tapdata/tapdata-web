@@ -18,7 +18,7 @@
       </el-header>
       <el-container style="overflow: hidden; flex: 1">
         <el-container>
-          <el-main class="CT-task-main">
+          <el-main :class="['CT-task-main', 'task-main-' + steps[activeStep].index]">
             <!--步骤2-->
             <div class="body" v-if="steps[activeStep].index === 2">
               <div class="title">选择源端与目标端连接</div>
@@ -230,6 +230,9 @@
   .CT-task-main {
     background: #fff;
     overflow: hidden;
+    &:not(.task-main-5) {
+      overflow-y: auto;
+    }
     .body {
       margin: 0 auto;
       padding-bottom: 50px;
@@ -560,7 +563,7 @@ export default {
     intiData(id) {
       this.$axios.get('tm/api/DataFlows/' + id).then(data => {
         this.status = data.status
-        this.settingModel = data.setting
+        this.settingModel = Object.assign(this.settingModel, data.setting)
         this.settingModel.name = data.name
         this.platformInfo = data.platformInfo
         this.dataSourceModel = data.dataSourceModel
