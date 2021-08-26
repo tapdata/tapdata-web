@@ -285,11 +285,9 @@ export default {
     statusItems() {
       let result = []
       let filter = ['Creating', 'Running', 'Stopped']
-      let { statusMap } = this
-
       filter.forEach(el => {
         result.push({
-          label: this.$t('agent_status_' + statusMap[el]?.key),
+          label: this.$t('agent_status_' + el.toLowerCase()),
           value: el
         })
       })
