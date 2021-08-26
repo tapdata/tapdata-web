@@ -816,7 +816,7 @@ export default {
             readCdcInterval: 500,
             readBatchSize: 1000
           })
-        } else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode'].includes(cell.type)) {
+        } else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode','app.HanaNode'].includes(cell.type)) {
           postData.mappingTemplate = 'custom'
 
           Object.assign(stage, {
@@ -1470,7 +1470,8 @@ export default {
         row_filter_processor: 'app.DataFilter',
         java_processor: 'app.FieldProcess',
         redis: 'app.Redis',
-        hive: 'app.HiveNode'
+        hive: 'app.HiveNode',
+        hana: 'app.HanaNode'
       }
       if (data) {
         let stageMap = {}
