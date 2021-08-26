@@ -317,6 +317,7 @@ export default {
     //初始化table数据
     initTableData() {
       this.loading = true
+      this.fieldCount = 0 //清空上一个数据长度
       this.$nextTick(() => {
         this.remoteMethod &&
           this.remoteMethod(this.selectRow)
@@ -777,6 +778,9 @@ export default {
       border-top: 1px solid #f2f2f2;
       border-right: 1px solid #f2f2f2;
       overflow-y: auto;
+      ul {
+        padding-bottom: 100px;
+      }
       li {
         height: 93px;
         background: #ffffff;
@@ -806,6 +810,7 @@ export default {
         }
         .contentBox {
           margin-left: 16px;
+          width: 200px;
         }
         .contentBox__source {
           font-size: 12px;
@@ -826,6 +831,9 @@ export default {
           color: #000000;
           line-height: 17px;
           margin-top: 10px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
         }
       }
     }
