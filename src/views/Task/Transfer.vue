@@ -494,6 +494,7 @@ export default {
         if (valid) {
           this.dialogVisible = false
           this.preFixSuffixData()
+          this.field_process = [] //表名有变动 改名清空字段处理器
         }
       })
     },
@@ -507,6 +508,7 @@ export default {
     handleReduction() {
       this.formData.table_suffix = ''
       this.formData.table_prefix = ''
+      this.field_process = [] //改名清空字段处理器
       if (this.sourceData.length) {
         for (let i = 0; i < this.sourceData.length; i++) {
           for (let k = 0; k < this.selectSourceArr.length; k++) {

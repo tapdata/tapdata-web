@@ -1059,7 +1059,7 @@ export default {
     },
     //表设置
     fieldProcess() {
-      let data = this.daft()
+      let data = this.getDataFlowData()
       if (!data) return
       delete data['rollback']
       delete data['rollbackTable'] //确保不会有恢复默认
@@ -1074,7 +1074,7 @@ export default {
     },
     //恢复默认
     async updateFieldProcess(rollback, rollbackTable, id) {
-      let data = this.daft()
+      let data = this.getDataFlowData()
       if (!data) return
       if (rollback === 'all') {
         data['rollback'] = rollback
@@ -1091,8 +1091,22 @@ export default {
           }
         }
       }
-      let promise = await this.$axios.post('tm/api/DataFlows/metadata', data)
+      let result = this.updateAutoFieldProcess(data) //更新字段处理器
+      let promise = await this.$axios.post('tm/api/DataFlows/metadata', result)
       return promise
+    },
+    //获取当前任务所有的节点
+    getDataFlowData() {
+      //手动同步更新字段处理器
+      let data = this.daft()
+      let result = this.updateAutoFieldProcess(data)
+      return result
+    },
+    updateAutoFieldProcess(data) {
+      if (data.stages[0]) {
+        data['stages'][0].field_process = this.transferData.field_process
+      }
+      return data
     },
     //更新左边导航
     updateFieldMappingNavData(data) {
@@ -1129,7 +1143,7 @@ export default {
           }
           if (!ops || ops?.length === 0) return
           ops = ops[0]
-          if (ops.operand === field.field_name && ops.field === item.field_name) {
+          if (ops.operand === field.field_name && ops.original_field_name === item.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })
