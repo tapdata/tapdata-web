@@ -37,7 +37,7 @@
               <div class="contentBox__target">{{ item.sinkObjectName }}</div>
               <div class="contentBox__select">
                 {{ `已选中 ${position === index ? fieldCount : item.sourceFieldCount}/${item.sourceFieldCount}` }}
-                <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName, item.sinkQulifiedName)"
+                <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName, item.sourceQualifiedName)"
                   >恢复默认</el-button
                 >
               </div>
@@ -53,38 +53,28 @@
         :row-class-name="tableRowClassName"
         v-loading="loading"
       >
-        <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="100">
+        <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="150">
           <template slot-scope="scope">
-            <div v-if="scope.row.primary_key_position === 1">
-              <el-tooltip class="item" :content="scope.row.field_name" placement="right">
-                <span>{{ scope.row.field_name }} <i class="iconfont icon-yuechi1"></i></span>
-              </el-tooltip>
-            </div>
-            <div v-else>
-              <el-tooltip class="item" :content="scope.row.field_name" placement="right">
-                <span>{{ scope.row.field_name }}</span>
-              </el-tooltip>
-            </div>
+            <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
+              >{{ scope.row.field_name }} <i class="iconfont icon-yuechi1"></i
+            ></span>
+            <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn label="源表类型" prop="data_type" width="150"></ElTableColumn>
         <ElTableColumn label="源表长度" prop="precision" width="150"></ElTableColumn>
         <ElTableColumn label="源表精度" prop="scale" width="100"></ElTableColumn>
-        <ElTableColumn label="目标表字段名">
+        <ElTableColumn label="目标表字段名" width="260">
           <template slot-scope="scope">
-            <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'field_name')">
-              <el-tooltip class="item" :content="scope.row.t_field_name" placement="right">
-                <span>{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i></span>
-              </el-tooltip>
+            <div v-if="!scope.row.is_deleted && !hiddenFieldProcess" @click="edit(scope.row, 'field_name')">
+              <span :show-overflow-tooltip="true"
+                >{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i
+              ></span>
             </div>
-            <div v-else>
-              <el-tooltip class="item" :content="scope.row.t_field_name" placement="right">
-                <span>{{ scope.row.t_field_name }}</span>
-              </el-tooltip>
-            </div>
+            <span v-else :show-overflow-tooltip="true">{{ scope.row.t_field_name }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="目标表类型" width="150">
+        <ElTableColumn label="目标表类型">
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'data_type')">
               <span>{{ scope.row.t_data_type }}</span>
@@ -99,7 +89,12 @@
         <ElTableColumn label="目标表长度" width="150">
           <template slot-scope="scope">
             <div
-              v-if="scope.row.t_precision !== null && scope.row.t_precision !== undefined && !scope.row.is_deleted"
+              v-if="
+                scope.row.t_precision !== null &&
+                scope.row.t_precision !== undefined &&
+                !scope.row.is_deleted &&
+                scope.row.t_isPrecisionEdit
+              "
               @click="edit(scope.row, 'precision')"
             >
               <span>{{ scope.row.t_precision }}</span>
@@ -113,7 +108,12 @@
         <ElTableColumn label="目标表精度" width="100">
           <template slot-scope="scope">
             <div
-              v-if="scope.row.t_scale !== null && scope.row.t_scale !== undefined && !scope.row.is_deleted"
+              v-if="
+                scope.row.t_scale !== null &&
+                scope.row.t_scale !== undefined &&
+                !scope.row.is_deleted &&
+                scope.row.t_isScaleEdit
+              "
               @click="edit(scope.row, 'scale')"
             >
               <span>{{ scope.row.t_scale }}</span>
@@ -124,7 +124,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="操作" width="80">
+        <ElTableColumn label="操作" width="80" v-if="!hiddenFieldProcess">
           <template slot-scope="scope">
             <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)"> 删除 </ElLink>
             <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
@@ -155,18 +155,18 @@
             <div v-if="item.maxPrecision && currentOperationType === 'precision'">
               <div v-if="index === 0">长度范围</div>
               <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
-                {{ `. [ ${item.minPrecision} , ${item.maxPrecision} ]` }}
+                {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
               <div v-if="item.maxPrecision && item.minPrecision === item.maxPrecision">
-                {{ `. ${item.maxPrecision}` }}
+                {{ `${item.maxPrecision}` }}
               </div>
             </div>
             <div v-if="item.maxScale && currentOperationType === 'scale'" style="margin-top: 10px">
               <div>精度范围</div>
               <div v-if="item.minScale !== item.maxScale">
-                {{ `. [ ${item.minScale} , ${item.maxScale} ]` }}
+                {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
-              <div v-if="item.minScale === item.maxScale">{{ `. ${item.maxScale}` }}</div>
+              <div v-if="item.minScale === item.maxScale">{{ `${item.maxScale}` }}</div>
             </div>
           </div>
         </div>
@@ -217,7 +217,8 @@ export default {
     field_process: Array,
     remoteMethod: Function,
     typeMappingMethod: Function,
-    fieldProcessMethod: Function
+    fieldProcessMethod: Function,
+    hiddenFieldProcess: Boolean
   },
   data() {
     return {
@@ -253,8 +254,10 @@ export default {
     }
   },
   mounted() {
-    this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
-    this.selectRow = this.fieldMappingNavData[0]
+    if (this.fieldMappingNavData) {
+      this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
+      this.selectRow = this.fieldMappingNavData[0]
+    }
     this.updateView()
   },
   methods: {
@@ -298,10 +301,10 @@ export default {
     updateView() {
       this.initTableData()
       this.initTypeMapping()
+      this.operations = []
       if (this.field_process?.length > 0) {
         this.getFieldProcess()
       }
-      ;('')
     },
     //获取字段处理器
     getFieldProcess() {
@@ -320,13 +323,19 @@ export default {
             .then(({ data, target }) => {
               this.target = target
               this.fieldMappingTableData = data
-              this.fieldCount = this.fieldMappingTableData.length || 0
+              let isDeleteLens = this.getIsDeleteLens()
+              this.fieldCount = this.fieldMappingTableData.length - isDeleteLens || 0
               this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
             .finally(() => {
               this.loading = false
             })
       })
+    },
+    //获取当前被删除的字段
+    getIsDeleteLens() {
+      let data = this.fieldMappingTableData.filter(v => v.is_deleted)
+      return data.length
     },
     //更新table数据
     updateTableData(id, key, value) {
@@ -404,6 +413,8 @@ export default {
       let id = this.currentOperationData.t_id
       let key = this.currentOperationType
       let value = this.editValueType[this.currentOperationType]
+      let verify = true
+      let verifySame = true
       //任务-字段处理器
       if (key === 'field_name') {
         let option = this.target.filter(v => v.id === id && !v.is_deleted)
@@ -432,11 +443,8 @@ export default {
           return
         }
         //如果是改类型 需要手动修改字段的长度以及精度
-        this.fieldProcessConvert(id, key, value)
         this.influences(id)
       } else if (key === 'precision') {
-        let verify = true
-        let verifySame = true
         this.currentTypeRules.forEach(r => {
           if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision) {
             this.$message.error('当前值不符合该字段范围')
@@ -450,8 +458,6 @@ export default {
           return
         }
       } else if (key === 'scale') {
-        let verifySame = true
-        let verify = true
         this.currentTypeRules.forEach(r => {
           if (r.minScale === r.maxScale && value !== r.maxScale) {
             this.$message.error('当前值不符合该字段范围')
@@ -461,9 +467,9 @@ export default {
             this.$message.error('当前值不符合该字段范围')
           }
         })
-        if (!verify && !verifySame) {
-          return
-        }
+      }
+      if (!verify || !verifySame) {
+        return
       }
       //触发target更新
       this.updateTarget(id, key, value)
@@ -473,13 +479,23 @@ export default {
     //改类型影响字段长度 精度
     influences(id) {
       this.currentTypeRules.forEach(r => {
-        if (r.maxScale) {
-          this.updateTarget(id, 'scale', r.maxScale)
+        if (r.minScale || r.minScale === 0) {
+          if (r.minScale === r.maxScale) {
+            this.updateTarget(id, 'isScaleEdit', false)
+          } else {
+            this.updateTarget(id, 'isScaleEdit', true)
+          }
+          this.updateTarget(id, 'scale', r.minScale)
         } else {
           this.updateTarget(id, 'scale', null)
         }
-        if (r.maxPrecision) {
-          this.updateTarget(id, 'precision', r.maxPrecision)
+        if (r.minPrecision || r.minPrecision === 0) {
+          if (r.minPrecision === r.maxPrecision) {
+            this.updateTarget(id, 'isPrecisionEdit', false)
+          } else {
+            this.updateTarget(id, 'isPrecisionEdit', true)
+          }
+          this.updateTarget(id, 'precision', r.minPrecision)
         } else {
           this.updateTarget(id, 'precision', null)
         }
@@ -515,6 +531,7 @@ export default {
         if (field.id === id) {
           field.is_deleted = value
           field['source'] = 'manual'
+          field['is_auto_allowed'] = false
         }
       })
       //触发页面重新渲染
@@ -527,6 +544,10 @@ export default {
       let option = this.target.filter(v => v.id === id)
       if (option.length === 0) return
       option = option[0]
+      if (option.operand === option.original_field_name) {
+        this.restRename() //用户手动改为最原始的名字
+        return
+      }
       //rename类型
       let op = {
         op: 'RENAME',
@@ -564,7 +585,7 @@ export default {
       for (let i = 0; i < this.operations.length; i++) {
         // 删除所有的rename convert的操作
         let ops = this.operations[i]
-        if (ops.id === id && ['RENAME', 'CONVERT'].includes(ops.op)) {
+        if (ops.id === id && ['RENAME'].includes(ops.op)) {
           this.operations.splice(i, 1)
         }
       }
@@ -600,30 +621,13 @@ export default {
       //更新当前选中行数
       this.fieldCount = this.fieldCount + 1
     },
-    fieldProcessConvert(id, key, value) {
-      let option = this.target.filter(v => v.id === id)
-      if (option.length === 0) return
-      option = option[0]
-      //修改字段类型
-      let op = {
-        op: 'CONVERT',
-        id: option.id,
-        field: option.field_name,
-        operand: value, //改过的字段类型
-        originalDataType: option.data_type,
-        table_name: option.table_name,
-        type: option.data_type,
-        primary_key_position: option.primary_key_position,
-        original_field_name: option.original_field_name,
-        label: option.value
-      }
-      let ops = this.operations.filter(v => v.id === option.id && v.op === 'CONVERT')
-      if (ops.length === 0) {
-        this.operations.push(op)
-      } else {
-        op = ops[0]
-        op.operand = value
-        op.label = value
+    restRename(id) {
+      for (let i = 0; i < this.operations.length; i++) {
+        // 还原改名
+        let ops = this.operations[i]
+        if (ops.id === id && ops.op === 'RENAME') {
+          this.operations.splice(i, 1)
+        }
       }
     },
     restOperation(id) {
@@ -631,11 +635,6 @@ export default {
       if (opr.length > 0) {
         //元数据-字段操作
         this.updateTarget(id, 't_field_name', opr[0].original_field_name)
-      }
-      let opc = this.operations.filter(v => v.id === id && v.op === 'CONVERT')
-      if (opc.length > 0) {
-        //元数据-字段操作
-        this.updateTarget(id, 't_data_type', opc[0].originalDataType)
       }
     },
     saveFileOperations() {
