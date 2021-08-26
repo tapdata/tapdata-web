@@ -6,7 +6,7 @@
       title="映射配置"
       :visible.sync="dialogFieldProcessVisible"
       :modal-append-to-body="false"
-      custom-class="databaseLinkDialog"
+      custom-class="database-filed-mapping-dialog"
       :close-on-click-modal="false"
       v-if="dialogFieldProcessVisible"
     >
@@ -31,7 +31,7 @@
 <script>
 export default {
   name: 'FiledMapping',
-  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess'],
+  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId'],
   data() {
     return {
       //表设置
@@ -47,6 +47,9 @@ export default {
       if (!this.dataFlow) return
       delete this.dataFlow['rollback']
       delete this.dataFlow['rollbackTable']
+      if (this.stageId) {
+        this.dataFlow['stageId'] = this.stageId //任务同步目标节点stageID 推演
+      }
       let promise = this.$api('DataFlows').getMetadata(this.dataFlow)
       promise
         .then(data => {
