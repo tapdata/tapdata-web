@@ -53,7 +53,7 @@
         :row-class-name="tableRowClassName"
         v-loading="loading"
       >
-        <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="100">
+        <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="150">
           <template slot-scope="scope">
             <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
               >{{ scope.row.field_name }} <i class="iconfont icon-yuechi1"></i
@@ -64,7 +64,7 @@
         <ElTableColumn label="源表类型" prop="data_type" width="150"></ElTableColumn>
         <ElTableColumn label="源表长度" prop="precision" width="150"></ElTableColumn>
         <ElTableColumn label="源表精度" prop="scale" width="100"></ElTableColumn>
-        <ElTableColumn label="目标表字段名" width="210">
+        <ElTableColumn label="目标表字段名" width="260">
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted && !hiddenFieldProcess" @click="edit(scope.row, 'field_name')">
               <span :show-overflow-tooltip="true"
@@ -74,7 +74,7 @@
             <span v-else :show-overflow-tooltip="true">{{ scope.row.t_field_name }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="目标表类型" width="150">
+        <ElTableColumn label="目标表类型">
           <template slot-scope="scope">
             <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'data_type')">
               <span>{{ scope.row.t_data_type }}</span>
