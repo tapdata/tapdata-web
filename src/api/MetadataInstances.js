@@ -12,7 +12,7 @@ export default class MetadataInstancesAPI extends PublicApi {
   getId(id, params) {
     return axios.get(this.url + '/' + id, { params })
   }
-  patch(id, params) {
+  patchId(id, params) {
     return axios.patch(this.url + '/' + id, params)
   }
   classification(params) {
@@ -41,5 +41,10 @@ export default class MetadataInstancesAPI extends PublicApi {
   }
   compareHistory(id, params) {
     return axios.get(this.url + '/compareHistory?id=' + id, params)
+  }
+  originalData(qualified_name, target) {
+    if (target) {
+      return axios.get(this.url + '/originalData?qualified_name=' + qualified_name + target)
+    } else return axios.get(this.url + '/originalData?qualified_name=' + qualified_name)
   }
 }

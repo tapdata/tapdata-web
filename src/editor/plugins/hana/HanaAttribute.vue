@@ -1,7 +1,7 @@
 <template>
-  <div class="hiveNode nodeStyle">
+  <div class="hanaNode nodeStyle">
     <head>
-      <VIcon class="headIcon color-primary">arrow-right-circle</VIcon>
+      <span class="headIcon iconfont icon-you2" type="primary"></span>
       <span class="txt">{{ $t('editor.nodeSettings') }}</span>
     </head>
     <div class="nodeBody">
@@ -12,12 +12,12 @@
 			</div> -->
       <el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
         <!-- <span class="addTxt">+新建文件</span> -->
-        <el-form-item :label="$t('editor.choose') + ' KUDU'" prop="connectionId" :rules="rules" required>
+        <el-form-item :label="$t('editor.choose') + ' hana'" prop="connectionId" :rules="rules" required>
           <el-select
             :filterable="!databaseLoading"
             :loading="databaseLoading"
             v-model="model.connectionId"
-            :placeholder="$t('message.placeholderSelect') + 'KUDU'"
+            :placeholder="$t('message.placeholderSelect') + 'hana'"
             :clearable="true"
           >
             <el-option
@@ -30,9 +30,7 @@
         </el-form-item>
 
         <el-form-item
-          :label="
-            $t('editor.cell.data_node.table.form.table.label') + $t('editor.cell.data_node.table.form.table.labelTips')
-          "
+          :label="$t('editor.cell.data_node.table.form.table.label')"
           prop="tableName"
           :rules="rules"
           required
@@ -45,7 +43,7 @@
               :loading="schemasLoading"
               default-first-option
               clearable
-              :placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
+              :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
               size="mini"
             >
               <el-option
@@ -83,22 +81,51 @@
             </el-tooltip>
           </div>
         </el-form-item>
+
+        <!-- <el-form-item
+					:label="$t('editor.cell.data_node.collection.form.collection.label')"
+					prop="tableName"
+					required
+				>
+					<el-select
+						v-model="model.tableName"
+						:filterable="!schemasLoading"
+						:loading="schemasLoading"
+						allow-create
+						default-first-option
+						clearable
+						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
+						size="mini"
+					>
+						<el-option
+							v-for="(item, idx) in schemas"
+							:label="`${item.table_name}`"
+							:value="item.table_name"
+							v-bind:key="idx"
+						></el-option>
+					</el-select>
+				</el-form-item> -->
+        <!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
+					<el-input
+						v-model="model.primaryKeys"
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+						size="mini"
+					></el-input>
+				</el-form-item> -->
       </el-form>
     </div>
-    <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
-      <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
-        <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
+    <div class="e-entity-wrap" style="text-align: center; overflow: auto">
+      <el-button
+        class="fr marR20"
+        type="success"
+        size="mini"
+        v-if="model.connectionId && model.tableName"
+        @click="hanlderLoadSchema"
+      >
+        <i class="el-icon-loading" v-if="reloadModelLoading"></i>
         <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
         <span v-else>{{ $t('dataFlow.updateModel') }}</span>
       </el-button>
-      <FieldMapping
-        v-else
-        :dataFlow="dataFlow"
-        :hiddenFieldProcess="true"
-        :showBtn="true"
-        ref="fieldMapping"
-        class="fr"
-      ></FieldMapping>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
     <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
@@ -118,16 +145,14 @@ import Entity from '../link/Entity'
 import { convertSchemaToTreeData } from '../../util/Schema'
 import ClipButton from '@/components/ClipButton'
 import CreateTable from '@/components/dialog/createTable'
-import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
-import VIcon from '@/components/VIcon'
 const connections = factory('connections')
 
 // let editorMonitor = null;
 export default {
-  name: 'ApiNode',
-  components: { Entity, ClipButton, CreateTable, VIcon, FieldMapping },
+  name: 'HanaNode',
+  components: { Entity, ClipButton, CreateTable },
   data() {
     return {
       disabled: false,
@@ -161,15 +186,12 @@ export default {
           }
         ]
       },
-      dataNodeInfo: {},
       model: {
         connectionId: '',
-        type: 'kudu',
-        tableName: '',
-        field_process: []
+        type: 'hana',
+        tableName: ''
+        // primaryKeys: ''
       },
-      scope: '',
-      dataFlow: '',
       schemasLoading: false,
       mergedSchema: null
     }
@@ -180,7 +202,7 @@ export default {
     let result = await connections.get({
       filter: JSON.stringify({
         where: {
-          database_type: 'kudu'
+          database_type: 'hana'
         },
         fields: {
           name: 1,
@@ -226,7 +248,7 @@ export default {
                 : {
                     table_name: this.model.tableName,
                     cdc_enabled: true,
-                    meta_type: 'kudu',
+                    meta_type: 'hana',
                     fields: []
                   }
             this.$emit('schemaChange', _.cloneDeep(schema))
@@ -289,17 +311,13 @@ export default {
         })
     },
 
-    setData(data, cell, dataNodeInfo, vueAdapter) {
+    setData(data, cell) {
       if (data) {
-        this.scope = vueAdapter?.editor?.scope
-        this.getDataFlow()
         _.merge(this.model, data)
       }
       this.mergedSchema = cell.getOutputSchema()
-      this.dataNodeInfo = dataNodeInfo || {}
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
-        this.getDataFlow()
       })
 
       // editorMonitor = vueAdapter.editor;
@@ -307,7 +325,7 @@ export default {
 
     getData() {
       let result = _.cloneDeep(this.model)
-      result.name = result.tableName || 'KUDU'
+      result.name = result.tableName || 'hana'
       return result
     },
 
@@ -365,10 +383,6 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
-    },
-    //获取dataFlow
-    getDataFlow() {
-      this.dataFlow = this.scope.getDataFlowData(true) //不校验
     }
 
     // seeMonitor() {
@@ -378,7 +392,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.hiveNode {
+.hanaNode {
   .el-form-item {
     margin-bottom: 10px;
   }

@@ -18,7 +18,7 @@ export const mqConfig = {
           xlinkHref: 'static/editor/o-mq-o.svg'
         },
         label: {
-          text: 'Mq'
+          text: 'MQ'
         }
       },
       [FORM_DATA_KEY]: {
@@ -186,7 +186,7 @@ export const mqConfig = {
     size: { width: 5, height: 4 },
     attrs: {
       root: {
-        dataTooltip: 'Mq',
+        dataTooltip: 'MQ',
         dataTooltipPosition: 'left',
         dataTooltipPositionSelector: '.joint-stencil'
       },

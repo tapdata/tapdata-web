@@ -675,7 +675,8 @@ export default {
         'tcp_udp',
         'hbase',
         'kudu',
-        'greenplum'
+        'greenplum',
+        'hana'
       ],
       model: '',
       config: {

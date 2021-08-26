@@ -85,18 +85,20 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="e-entity-wrap" style="text-align: center; overflow: auto">
-      <el-button
-        class="fr marR20"
-        type="success"
-        size="mini"
-        v-if="model.connectionId && model.tableName"
-        @click="hanlderLoadSchema"
-      >
+    <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
+      <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
         <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
         <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
         <span v-else>{{ $t('dataFlow.updateModel') }}</span>
       </el-button>
+      <FieldMapping
+        v-else
+        :dataFlow="dataFlow"
+        :showBtn="true"
+        :hiddenFieldProcess="true"
+        ref="fieldMapping"
+        class="fr"
+      ></FieldMapping>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
     <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
@@ -117,13 +119,15 @@ import { convertSchemaToTreeData } from '../../util/Schema'
 import ClipButton from '@/components/ClipButton'
 import CreateTable from '@/components/dialog/createTable'
 import VIcon from '@/components/VIcon'
+import FieldMapping from '@/components/FieldMapping'
+
 import ws from '@/api/ws'
 const connections = factory('connections')
 
 // let editorMonitor = null;
 export default {
   name: 'ApiNode',
-  components: { Entity, ClipButton, CreateTable, VIcon },
+  components: { Entity, ClipButton, CreateTable, VIcon, FieldMapping },
   data() {
     return {
       disabled: false,
@@ -157,11 +161,15 @@ export default {
           }
         ]
       },
+      dataNodeInfo: {},
       model: {
         connectionId: '',
         type: 'hbase',
-        tableName: ''
+        tableName: '',
+        field_process: []
       },
+      scope: '',
+      dataFlow: '',
       schemasLoading: false,
       mergedSchema: null
     }
@@ -281,13 +289,17 @@ export default {
         })
     },
 
-    setData(data, cell) {
+    setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        this.scope = vueAdapter?.editor?.scope
+        this.getDataFlow()
         _.merge(this.model, data)
       }
       this.mergedSchema = cell.getOutputSchema()
+      this.dataNodeInfo = dataNodeInfo || {}
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
+        this.getDataFlow()
       })
 
       // editorMonitor = vueAdapter.editor;
@@ -353,6 +365,10 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
     }
 
     // seeMonitor() {

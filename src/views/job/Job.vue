@@ -258,6 +258,14 @@
     <AddBtnTip v-if="!loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')"></AddBtnTip>
     <DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <FieldMapping
+      :dataFlow="dataFlow"
+      :showBtn="false"
+      :hiddenFieldProcess="hiddenFieldProcess"
+      @returnFieldMapping="returnFieldMapping"
+      ref="fieldMapping"
+      class="fr"
+    ></FieldMapping>
   </div>
 </template>
 
@@ -273,6 +281,7 @@ import ws from '../../api/ws'
 import AddBtnTip from './addBtnTip'
 import simpleScene from './SimpleScene'
 import newDataFlow from '@/components/newDataflowName'
+import FieldMapping from '@/components/FieldMapping'
 import DownAgent from '../downAgent/agentDown'
 import { FORM_DATA_KEY, JOIN_TABLE_TPL, DATABASE_TYPE_MAPPING } from '../../editor/constants'
 import { EditorEventType } from '../../editor/lib/events'
@@ -289,7 +298,7 @@ let timer = null
 export default {
   name: 'Job',
   dataFlow: null,
-  components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError, VIcon },
+  components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError, VIcon, FieldMapping },
   data() {
     return {
       downLoadNum: 0,
@@ -329,6 +338,7 @@ export default {
       mappingTemplate: '',
       creatUserId: '',
       dataChangeFalg: false,
+      hiddenFieldProcess: false, //要字段处理器
       statusBtMap
     }
   },
@@ -578,7 +588,7 @@ export default {
         Object.assign(self.dataFlow, dat)
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
       })
-      if (timer) return
+      if (timer && !this.dataFlowId) return
       timer = setInterval(() => {
         self.updateDataFlow()
       }, 5000)
@@ -820,7 +830,11 @@ export default {
             readCdcInterval: 500,
             readBatchSize: 1000
           })
-        } else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode'].includes(cell.type)) {
+        } else if (
+          ['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode', 'app.HanaNode'].includes(
+            cell.type
+          )
+        ) {
           postData.mappingTemplate = 'custom'
 
           Object.assign(stage, {
@@ -835,8 +849,16 @@ export default {
         if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
           let sourceId = cell.source.id
           let targetId = cell.target.id
-          if (sourceId && stages[sourceId]) stages[sourceId].outputLanes.push(targetId)
-          if (targetId && stages[targetId]) stages[targetId].inputLanes.push(sourceId)
+          if (sourceId && stages[sourceId]) {
+            stages[sourceId].outputLanes.push(targetId)
+            //添加字段处理器
+            if (postData.mappingTemplate === 'cluster-clone') {
+              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
+            }
+          }
+          if (targetId && stages[targetId]) {
+            stages[targetId].inputLanes.push(sourceId)
+          }
         }
       })
       postData.stages = Object.values(stages)
@@ -1033,6 +1055,7 @@ export default {
         this.checkAgentStatus(() => {
           let doStart = () => {
             let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
+            this.dataFlow = data //将dataFlow 存当前数据
             if (data) {
               this.doSaveStartDataFlow(data)
             }
@@ -1075,7 +1098,7 @@ export default {
       }
     },
     //保存逻辑启动
-    doSaveStartDataFlow(data) {
+    async doSaveStartDataFlow(data) {
       if (data) {
         if (this.form.taskName) {
           data.name = this.form.taskName
@@ -1136,6 +1159,21 @@ export default {
           this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
+        if (this.mappingTemplate === 'custom') this.hiddenFieldProcess = true
+        let fieldData = await this.autoFieldMapping(data) //触发自动推演
+        let checkFiledMapping = ''
+        if (!fieldData) {
+          this.$message.error('模型自动推演失败')
+          return
+        }
+        if (fieldData?.data.length === 0) {
+          checkFiledMapping = true
+        } else {
+          this.$refs.fieldMapping.autoFiledProcess(fieldData?.data)
+        }
+        if (!checkFiledMapping) {
+          return
+        }
         let start = () => {
           data.status = 'scheduled'
           data.executeMode = 'normal'
@@ -1182,6 +1220,26 @@ export default {
         // }
       }
       this.dialogFormVisible = false
+    },
+    //保存自动推演
+    autoFieldMapping(data) {
+      if (!data) return
+      let promise = this.$api('DataFlows').autoMetadata(data)
+      return promise
+    },
+    returnFieldMapping(field_process) {
+      if (this.mappingTemplate === 'custom') {
+        this.doSaveStartDataFlow(this.dataFlow)
+      } else {
+        let stages = this.dataFlow['stages'] || []
+        if (!stages || stages.length === 0) return
+        for (let i = 0; i < stages.length; i++) {
+          if (stages[i].outputLanes) {
+            this.dataFlow['stages'][i].field_process = field_process
+          }
+        }
+        this.doSaveStartDataFlow(this.dataFlow)
+      }
     },
     /**
      * stop button handler
@@ -1474,7 +1532,8 @@ export default {
         row_filter_processor: 'app.DataFilter',
         java_processor: 'app.FieldProcess',
         redis: 'app.Redis',
-        hive: 'app.HiveNode'
+        hive: 'app.HiveNode',
+        hana: 'app.HanaNode'
       }
       if (data) {
         let stageMap = {}
