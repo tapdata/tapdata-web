@@ -57,7 +57,7 @@
               <span>{{ scope.row.countResultText }}</span>
             </span>
           </div>
-          <div v-if="scope.row.result === 'failed' && scope.row.resultText">
+          <div v-if="scope.row.result === 'failed' && scope.row.contentResultText">
             <span class="error">
               <i class="verify-icon el-icon-error color-danger"></i>
               <span>{{ scope.row.contentResultText }}</span>
