@@ -1059,6 +1059,7 @@ export default {
     },
     //表设置
     fieldProcess() {
+      this.loading = true
       let data = this.getDataFlowData()
       if (!data) return
       delete data['rollback']
@@ -1066,10 +1067,12 @@ export default {
       let promise = this.$axios.post('tm/api/DataFlows/metadata', data)
       promise.then(data => {
         this.activeStep += 1
+        this.loading = false
         this.fieldMappingNavData = data
       })
       promise.catch(() => {
-        this.$message.error('no permission')
+        this.loading = false
+        this.$message.error('模型推演失败')
       })
     },
     //恢复默认
