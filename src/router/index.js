@@ -476,6 +476,7 @@ const childRoutes = [
   {
     path: '/jsFuncs',
     name: 'jsFuncs',
+    // component: () => import('@/views/task/JsFuncs'),
     component: () => import('@/views/ExternalLink'),
     meta: {
       url: '/old/index.html#/jsFuncs',
