@@ -173,7 +173,7 @@ export default {
     // 保存
     saveSubmit() {
       this.$api('MetadataInstances')
-        .patch(this.pipelineData.id, {
+        .patchId(this.pipelineData.id, {
           pipline: this.model
         })
         .then(() => {

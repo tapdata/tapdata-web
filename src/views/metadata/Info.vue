@@ -403,7 +403,7 @@
       :visible.sync="editCommentDialogVisible"
       custom-class="dialogForm"
     >
-      <el-form :model="editCommentForm" ref="ruleForm" label-width="60px" class="demo-ruleForm">
+      <el-form :model="editCommentForm" ref="ruleForm" label-width="90px" class="demo-ruleForm">
         <el-form-item :label="$t('metadata.details.description')" prop="name">
           <el-input type="textarea" v-model="editCommentForm.comment" maxlength="500" show-word-limit></el-input>
         </el-form-item>
@@ -706,7 +706,7 @@ export default {
               relation: relation
             }
             this.$api('MetadataInstances')
-              .patch(this.metadataDataObj.id, params)
+              .patchId(this.metadataDataObj.id, params)
               .then(() => {
                 this.getData()
                 this.$message.success(this.$t('message.deleteOK'))
@@ -778,7 +778,7 @@ export default {
               custom_properties: this.metadataDataObj.custom_properties
             }
             this.$api('MetadataInstances')
-              .patch(this.metadataDataObj.id, params)
+              .patchId(this.metadataDataObj.id, params)
               .then(() => {
                 this.getData()
                 this.$message.success(this.$t('metadata.details.success_Release'))
@@ -805,7 +805,7 @@ export default {
         custom_properties: Object.assign(custom_properties, obj)
       }
       this.$api('MetadataInstances')
-        .patch(this.metadataDataObj.id, params)
+        .patchId(this.metadataDataObj.id, params)
         .then(() => {
           this.getData()
           this.$message.success(this.$t('metadata.details.success_Release'))
@@ -833,7 +833,7 @@ export default {
       // params.alias_name = this.editNameForm.alias_name;
 
       this.$api('MetadataInstances')
-        .patch(this.metadataDataObj.id, params)
+        .patchId(this.metadataDataObj.id, params)
         .then(() => {
           this.getData()
           this.$message.success(this.$t('metadata.details.success_Release'))
@@ -851,7 +851,7 @@ export default {
         comment: this.editCommentForm.comment
       }
       this.$api('MetadataInstances')
-        .patch(this.metadataDataObj.id, params)
+        .patchId(this.metadataDataObj.id, params)
         .then(() => {
           this.getData()
           this.$message.success(this.$t('metadata.details.success_Release'))
