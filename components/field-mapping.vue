@@ -7,11 +7,11 @@
     <div class="search">
       <div class="item">
         <span> 搜索表：</span>
-        <el-input v-model="searchTable" size="mini" @blur="search('table')"></el-input>
+        <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
       </div>
       <div class="item">
         <span> 搜索字段：</span>
-        <el-input v-model="searchField" size="mini" @blur="search('field')"></el-input>
+        <el-input v-model="searchField" size="mini" @change="search('field')"></el-input>
       </div>
       <div class="item">
         <el-button size="mini" @click="rollbackAll">全部恢复默认</el-button>
@@ -36,7 +36,11 @@
               <div class="contentBox__source">{{ item.sourceObjectName }}</div>
               <div class="contentBox__target">{{ item.sinkObjectName }}</div>
               <div class="contentBox__select">
-                {{ `已选中 ${position === index ? fieldCount : item.userDeletedNum}/${item.sourceFieldCount}` }}
+                {{
+                  `已选中 ${position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum}/${
+                    item.sourceFieldCount
+                  }`
+                }}
                 <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName, item.sourceQualifiedName)"
                   >恢复默认</el-button
                 >
@@ -264,27 +268,21 @@ export default {
     search(type) {
       if (type === 'table') {
         if (this.searchTable.trim()) {
-          let data = []
           this.searchTable = this.searchTable.trim().toString() //去空格
-          this.fieldMappingNavData.forEach(v => {
-            if (v.sourceObjectName.indexOf(this.searchTable) > -1 || v.sinkObjectName.indexOf(this.searchTable) > -1) {
-              data.push(v)
-            }
+          this.fieldMappingNavData = this.defaultFieldMappingNavData.filter(v => {
+            let str = (v.sourceObjectName + '' + v.sinkObjectName).toLowerCase()
+            return str.indexOf(this.searchTable.toLowerCase()) > -1
           })
-          this.fieldMappingNavData = data
         } else {
           this.fieldMappingNavData = this.defaultFieldMappingNavData
         }
       } else {
         if (this.searchField.trim()) {
-          let data = []
           this.searchField = this.searchField.trim().toString() //去空格
-          this.fieldMappingTableData.forEach(v => {
-            if (v.field_name.indexOf(this.searchField) > -1 || v.t_field_name.indexOf(this.searchField) > -1) {
-              data.push(v)
-            }
+          this.fieldMappingTableData = this.defaultFieldMappingTableData.filter(v => {
+            let str = (v.field_name + '' + v.t_field_name).toLowerCase()
+            return str.indexOf(this.searchField.toLowerCase()) > -1
           })
-          this.fieldMappingTableData = data
         } else {
           this.fieldMappingTableData = this.defaultFieldMappingTableData
         }
@@ -292,6 +290,7 @@ export default {
     },
     select(item, index) {
       this.position = '' //再次点击清空去一个样式
+      this.searchField = ''
       this.$emit('row-click', this.selectRow, this.operations, this.target)
       this.selectRow = item
       this.position = index
