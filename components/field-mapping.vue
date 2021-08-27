@@ -261,6 +261,7 @@ export default {
     if (this.fieldMappingNavData) {
       this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
       this.selectRow = this.fieldMappingNavData[0]
+      this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
     }
     this.updateView()
   },
@@ -291,8 +292,10 @@ export default {
     select(item, index) {
       this.position = '' //再次点击清空去一个样式
       this.searchField = ''
+      this.fieldCount = 0
       this.$emit('row-click', this.selectRow, this.operations, this.target)
       this.selectRow = item
+      this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
       this.position = index
       this.updateView()
     },
@@ -316,15 +319,12 @@ export default {
     //初始化table数据
     initTableData() {
       this.loading = true
-      this.fieldCount = 0 //清空上一个数据长度
       this.$nextTick(() => {
         this.remoteMethod &&
           this.remoteMethod(this.selectRow)
             .then(({ data, target }) => {
               this.target = target
               this.fieldMappingTableData = data
-              let isDeleteLens = this.getIsDeleteLens()
-              this.fieldCount = this.fieldMappingTableData.length - isDeleteLens || 0
               this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
             .finally(() => {
@@ -332,10 +332,19 @@ export default {
             })
       })
     },
-    //获取当前被删除的字段
-    getIsDeleteLens() {
-      let data = this.fieldMappingTableData.filter(v => v.is_deleted)
-      return data.length
+    //更新左边被删除字段
+    updateFieldCount(type) {
+      let id = this.selectRow.sinkQulifiedName
+      if (this.fieldMappingNavData) {
+        for (let i = 0; i < this.fieldMappingNavData.length; i++) {
+          if (this.fieldMappingNavData[i].sinkQulifiedName === id && type === 'remove') {
+            this.fieldMappingNavData[i].userDeletedNum = this.fieldMappingNavData[i].userDeletedNum + 1
+          } else if (this.fieldMappingNavData[i].sinkQulifiedName === id && type === 'add') {
+            this.fieldMappingNavData[i].userDeletedNum = this.fieldMappingNavData[i].userDeletedNum - 1
+          }
+          console.log(this.fieldMappingNavData[i].userDeletedNum)
+        }
+      }
     },
     //更新table数据
     updateTableData(id, key, value) {
@@ -607,6 +616,7 @@ export default {
       this.operations.push(op)
       //更新当前选中行数
       this.fieldCount = this.fieldCount - 1
+      this.updateFieldCount('remove')
     },
     //还原
     fieldProcessCancelRemove(id) {
@@ -620,6 +630,7 @@ export default {
       }
       //更新当前选中行数
       this.fieldCount = this.fieldCount + 1
+      this.updateFieldCount('add')
     },
     restRename(id) {
       for (let i = 0; i < this.operations.length; i++) {
@@ -771,7 +782,7 @@ export default {
     display: flex;
     flex: 1;
     margin-top: 20px;
-    height: 100%;
+    height: 0;
     .nav {
       width: 293px;
       border-top: 1px solid #f2f2f2;
