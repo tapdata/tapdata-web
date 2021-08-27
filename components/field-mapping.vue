@@ -36,7 +36,7 @@
               <div class="contentBox__source">{{ item.sourceObjectName }}</div>
               <div class="contentBox__target">{{ item.sinkObjectName }}</div>
               <div class="contentBox__select">
-                {{ `已选中 ${position === index ? fieldCount : item.sourceFieldCount}/${item.sourceFieldCount}` }}
+                {{ `已选中 ${position === index ? fieldCount : item.userDeletedNum}/${item.sourceFieldCount}` }}
                 <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName, item.sourceQualifiedName)"
                   >恢复默认</el-button
                 >
