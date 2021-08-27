@@ -210,6 +210,7 @@
     >
       <FieldMapping
         ref="fieldMappingDom"
+        class="custom-field-mapping"
         :remoteMethod="intiFieldMappingTableData"
         :typeMappingMethod="getTypeMapping"
         :fieldProcessMethod="updateFieldProcess"
@@ -612,6 +613,8 @@ export default {
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
       target = target.data && target.data.length > 0 ? target.data[0].fields : []
+      // 初始化所有字段都映射 只取顶级字段
+      source = source.filter(field => field.field_name.indexOf('.') === -1)
       //源表 目标表数据组合
       let fieldMappingTableData = []
       source.forEach(item => {
@@ -669,6 +672,11 @@ export default {
       //保存字段映射
       let returnData = this.$refs.fieldMappingDom.returnData()
       if (!returnData.valid) return //检验不通过
+      let deleteLen = returnData.target.filter(v => !v.is_deleted)
+      if (deleteLen.length === 0) {
+        this.$message.error('当前表被删除了所有字段，不允许保存操作')
+        return //所有字段被删除了 不可以保存任务
+      }
       this.saveOperations(returnData.row, returnData.operations, returnData.target)
       this.dialogFieldProcessVisible = false
     },
@@ -954,6 +962,9 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 1;
+  .custom-field-mapping {
+    height: 500px;
+  }
   .el-dialog__body {
     display: flex;
     flex: 1;
