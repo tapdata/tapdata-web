@@ -185,18 +185,18 @@
             <div v-if="item.maxPrecision">
               <div v-if="index === 0">长度范围</div>
               <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
-                {{ `. [ ${item.minPrecision} , ${item.maxPrecision} ]` }}
+                {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
               <div v-if="item.maxPrecision && item.minPrecision === item.maxPrecision">
-                {{ `. ${item.maxPrecision}` }}
+                {{ `${item.maxPrecision}` }}
               </div>
             </div>
             <div v-if="item.maxScale" style="margin-top: 10px">
               <div>精度范围</div>
               <div v-if="item.minScale !== item.maxScale">
-                {{ `. [ ${item.minScale} , ${item.maxScale} ]` }}
+                {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
-              <div v-if="item.minScale === item.maxScale">{{ `. ${item.maxScale}` }}</div>
+              <div v-if="item.minScale === item.maxScale">{{ `${item.maxScale}` }}</div>
             </div>
           </div>
         </div>
@@ -544,8 +544,8 @@ export default {
       let option = this.target.filter(v => v.id === id)
       if (option.length === 0) return
       option = option[0]
-      if (option.operand === option.original_field_name) {
-        this.restRename() //用户手动改为最原始的名字
+      if (value === option.original_field_name) {
+        this.restRename(id) //用户手动改为最原始的名字
         return
       }
       //rename类型
