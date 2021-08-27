@@ -968,6 +968,7 @@ export default {
   .el-dialog__body {
     display: flex;
     flex: 1;
+    overflow: hidden;
   }
   .e-row {
     padding: 0 50px;
