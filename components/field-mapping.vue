@@ -451,12 +451,12 @@ export default {
         this.influences(id)
       } else if (key === 'precision') {
         this.currentTypeRules.forEach(r => {
-          if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision) {
-            this.$message.error('当前值不符合该字段范围')
-            verifySame = false
-          } else if (r.minPrecision > value || value > r.maxPrecision) {
+          if (r.minPrecision > value || value > r.maxPrecision) {
             verify = false
             this.$message.error('当前值不符合该字段范围')
+          } else if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision && verify) {
+            this.$message.error('当前值不符合该字段范围')
+            verifySame = false
           }
         })
         if (!verify && !verifySame) {
@@ -464,12 +464,12 @@ export default {
         }
       } else if (key === 'scale') {
         this.currentTypeRules.forEach(r => {
-          if (r.minScale === r.maxScale && value !== r.maxScale) {
-            this.$message.error('当前值不符合该字段范围')
-            verifySame = false
-          } else if (r.minScale > value || value > r.maxScale) {
+          if (r.minScale > value || value > r.maxScale) {
             verify = false
             this.$message.error('当前值不符合该字段范围')
+          } else if (r.minScale === r.maxScale && value !== r.maxScale && verify) {
+            this.$message.error('当前值不符合该字段范围')
+            verifySame = false
           }
         })
       }
@@ -483,11 +483,14 @@ export default {
     },
     //改类型影响字段长度 精度
     influences(id) {
+      let verify = true
+      let verifySame = true
       this.currentTypeRules.forEach(r => {
         if (r.minScale || r.minScale === 0) {
           if (r.minScale !== r.maxScale) {
             this.updateTarget(id, 'isScaleEdit', true)
-          } else {
+            verify = false
+          } else if (r.minScale === r.maxScale && verify) {
             this.updateTarget(id, 'isScaleEdit', false)
           }
           this.updateTarget(id, 'scale', r.minScale < 0 ? 0 : r.minScale)
@@ -497,10 +500,11 @@ export default {
         if (r.minPrecision || r.minPrecision === 0) {
           if (r.minPrecision !== r.maxPrecision) {
             this.updateTarget(id, 'isPrecisionEdit', true)
-          } else {
+            verifySame = false
+          } else if (r.minPrecision === r.maxPrecision && verifySame) {
             this.updateTarget(id, 'isPrecisionEdit', false)
           }
-          this.updateTarget(id, 'precision',r.minPrecision < 0 ? 0 : r.minPrecision)
+          this.updateTarget(id, 'precision', r.minPrecision < 0 ? 0 : r.minPrecision)
         } else {
           this.updateTarget(id, 'precision', null)
         }
