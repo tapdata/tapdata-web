@@ -161,16 +161,12 @@
               <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
-              <div v-if="item.maxPrecision && item.minPrecision === item.maxPrecision">
-                {{ `${item.maxPrecision}` }}
-              </div>
             </div>
             <div v-if="item.maxScale && currentOperationType === 'scale'" style="margin-top: 10px">
               <div>精度范围</div>
               <div v-if="item.minScale !== item.maxScale">
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
-              <div v-if="item.minScale === item.maxScale">{{ `${item.maxScale}` }}</div>
             </div>
           </div>
         </div>
@@ -191,16 +187,12 @@
               <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
-              <div v-if="item.maxPrecision && item.minPrecision === item.maxPrecision">
-                {{ `${item.maxPrecision}` }}
-              </div>
             </div>
             <div v-if="item.maxScale" style="margin-top: 10px">
               <div>精度范围</div>
               <div v-if="item.minScale !== item.maxScale">
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
-              <div v-if="item.minScale === item.maxScale">{{ `${item.maxScale}` }}</div>
             </div>
           </div>
         </div>
@@ -489,22 +481,22 @@ export default {
     influences(id) {
       this.currentTypeRules.forEach(r => {
         if (r.minScale || r.minScale === 0) {
-          if (r.minScale === r.maxScale) {
-            this.updateTarget(id, 'isScaleEdit', false)
-          } else {
+          if (r.minScale !== r.maxScale) {
             this.updateTarget(id, 'isScaleEdit', true)
+          } else {
+            this.updateTarget(id, 'isScaleEdit', false)
           }
-          this.updateTarget(id, 'scale', r.minScale)
+          this.updateTarget(id, 'scale', r.minScale < 0 ? 0 : r.minScale)
         } else {
           this.updateTarget(id, 'scale', null)
         }
         if (r.minPrecision || r.minPrecision === 0) {
-          if (r.minPrecision === r.maxPrecision) {
-            this.updateTarget(id, 'isPrecisionEdit', false)
-          } else {
+          if (r.minPrecision !== r.maxPrecision) {
             this.updateTarget(id, 'isPrecisionEdit', true)
+          } else {
+            this.updateTarget(id, 'isPrecisionEdit', false)
           }
-          this.updateTarget(id, 'precision', r.minPrecision)
+          this.updateTarget(id, 'precision',r.minPrecision < 0 ? 0 : r.minPrecision)
         } else {
           this.updateTarget(id, 'precision', null)
         }
@@ -513,7 +505,7 @@ export default {
     initDataType(val) {
       let target = this.typeMapping.filter(type => type.dbType === val)
       if (target?.length > 0) {
-        this.currentTypeRules = target[0]?.rules
+        this.currentTypeRules = target[0]?.rules || []
       } else this.currentTypeRules = '' //清除上一个字段范围
     },
     handleClose() {
@@ -650,15 +642,15 @@ export default {
     },
     saveFileOperations() {
       let field_process = {
-        table_id: this.selectRow.sourceQualifiedName,
+        table_id: this.selectRow.sourceTableId, //存源表名 兼容旧版字段处理器
         table_name: this.selectRow.sourceObjectName,
         operations: this.operations
       }
       if (this.field_process && this.field_process.length > 0) {
-        let process = this.field_process.filter(fields => fields.table_id === this.selectRow.sourceQualifiedName)
+        let process = this.field_process.filter(fields => fields.table_id === this.selectRow.sourceTableId)
         if (process.length > 0) {
           field_process = process[0]
-          field_process.table_id = this.selectRow.sourceQualifiedName
+          field_process.table_id = this.selectRow.sourceTableId
           field_process.table_name = this.selectRow.sourceObjectName
           field_process.operations = this.operations
         } else this.field_process.push(field_process)
