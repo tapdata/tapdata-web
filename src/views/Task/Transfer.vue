@@ -6,8 +6,8 @@
       <span v-if="showProgress"><VIcon>loading</VIcon> {{ progress }} %</span>
     </div>
     <div class="box-btn" v-show="!showOperationBtn">
-      <el-button class="e-button" size="mini" @click="dialogVisible = true">{{ $t('dataFlow.changeName') }} </el-button>
-      <el-button size="mini" class="e-button" @click="handleReduction"
+      <el-button class="e-button" size="mini" @click="beforeRename">{{ $t('dataFlow.changeName') }} </el-button>
+      <el-button size="mini" class="e-button" @click="beforeReduction"
         >{{ $t('editor.cell.link.reduction') }}
       </el-button>
     </div>
@@ -506,7 +506,40 @@ export default {
       this.$refs.form.clearValidate()
       this.dialogVisible = false
     },
+    //改名
+    beforeRename() {
+      if (this.field_process?.length > 0) {
+        this.$confirm('此时修改表名会重置已有的表设置，是否确认修改?', {
+          confirmButtonText: this.$t('message.confirm'),
+          cancelButtonText: this.$t('message.cancel'),
+          type: 'warning',
+          closeOnClickModal: false
+        }).then(resFlag => {
+          if (resFlag) {
+            this.dialogVisible = true
+          }
+        })
+      } else {
+        this.dialogVisible = true
+      }
+    },
     //还原
+    beforeReduction() {
+      if (this.field_process?.length > 0) {
+        this.$confirm('此时还原表名会重置已有的表设置，是否确认还原?', {
+          confirmButtonText: this.$t('message.confirm'),
+          cancelButtonText: this.$t('message.cancel'),
+          type: 'warning',
+          closeOnClickModal: false
+        }).then(resFlag => {
+          if (resFlag) {
+            this.handleReduction()
+          }
+        })
+      } else {
+        this.handleReduction()
+      }
+    },
     handleReduction() {
       this.formData.table_suffix = ''
       this.formData.table_prefix = ''
