@@ -41,7 +41,7 @@
                     item.sourceFieldCount
                   }`
                 }}
-                <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName, item.sourceQualifiedName)"
+                <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName, item.sourceTableId)"
                   >恢复默认</el-button
                 >
               </div>
@@ -282,6 +282,11 @@ export default {
       }
     },
     select(item, index) {
+      let deleteLen = this.target.filter(v => !v.is_deleted)
+      if (deleteLen.length === 0) {
+        this.$message.error('当前表被删除了所有字段，不允许保存操作')
+        return //所有字段被删除了 不可以保存任务
+      }
       this.position = '' //再次点击清空去一个样式
       this.searchField = ''
       this.fieldCount = 0
@@ -303,7 +308,7 @@ export default {
     //获取字段处理器
     getFieldProcess() {
       this.operations = []
-      let field_process = this.field_process.filter(process => process.table_id === this.selectRow.sourceQualifiedName)
+      let field_process = this.field_process.filter(process => process.table_id === this.selectRow.sourceTableId)
       if (field_process.length > 0) {
         this.operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
       }
@@ -334,7 +339,6 @@ export default {
           } else if (this.fieldMappingNavData[i].sinkQulifiedName === id && type === 'add') {
             this.fieldMappingNavData[i].userDeletedNum = this.fieldMappingNavData[i].userDeletedNum - 1
           }
-          console.log(this.fieldMappingNavData[i].userDeletedNum)
         }
       }
     },
