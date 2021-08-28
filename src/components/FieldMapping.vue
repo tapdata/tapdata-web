@@ -191,9 +191,6 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 1;
-  .custom-field-mapping {
-    height: 500px;
-  }
   .el-dialog__body {
     display: flex;
     flex: 1;
