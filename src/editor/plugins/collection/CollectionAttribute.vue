@@ -293,6 +293,8 @@
           v-else
           :dataFlow="dataFlow"
           :showBtn="true"
+          :isFirst="model.isFirst"
+          @update-first="returnModel"
           :hiddenFieldProcess="true"
           :stageId="stageId"
           ref="fieldMapping"
@@ -576,6 +578,7 @@ export default {
       },
       dataNodeInfo: {},
       model: {
+        isFirst: true,
         connectionId: '',
         databaseType: 'mongodb',
         tableName: '',
@@ -1109,6 +1112,10 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
   }
 }

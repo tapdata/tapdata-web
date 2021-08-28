@@ -94,6 +94,8 @@
               v-else
               :dataFlow="dataFlow"
               :showBtn="true"
+              :isFirst="model.isFirst"
+              @update-first="returnModel"
               :hiddenFieldProcess="true"
               :stageId="stageId"
               ref="fieldMapping"
@@ -165,7 +167,8 @@ export default {
       model: {
         connectionId: '',
         tableName: '',
-        type: 'custom_connection'
+        type: 'custom_connection',
+        isFilter: false
       },
       scope: '',
       dataFlow: '',
@@ -385,6 +388,10 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
   }
 }

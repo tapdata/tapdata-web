@@ -127,6 +127,8 @@
         :dataFlow="dataFlow"
         :showBtn="true"
         :hiddenFieldProcess="true"
+        :isFirst="model.isFirst"
+        @update-first="returnModel"
         :stageId="stageId"
         ref="fieldMapping"
         class="fr"
@@ -196,7 +198,8 @@ export default {
       model: {
         connectionId: '',
         type: 'hive',
-        tableName: ''
+        tableName: '',
+        isFirst: false
       },
       scope: '',
       dataFlow: '',
@@ -401,6 +404,10 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
     // seeMonitor() {
     // 	editorMonitor.goBackMontior();
