@@ -169,7 +169,7 @@ export default {
         type: 'kudu',
         tableName: '',
         field_process: [],
-        isFilter: false
+        isFirst: true
       },
       scope: '',
       dataFlow: '',

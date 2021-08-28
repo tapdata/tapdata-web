@@ -387,7 +387,7 @@ export default {
       dataNodeInfo: {},
 
       model: {
-        isFirst: false,
+        isFirst: true,
         connectionId: '',
         databaseType: '',
         tableName: '',

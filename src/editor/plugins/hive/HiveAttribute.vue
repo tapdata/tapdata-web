@@ -199,7 +199,7 @@ export default {
         connectionId: '',
         type: 'hive',
         tableName: '',
-        isFirst: false
+        isFirst: true
       },
       scope: '',
       dataFlow: '',

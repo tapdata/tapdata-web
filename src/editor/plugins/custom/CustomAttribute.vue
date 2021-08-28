@@ -168,7 +168,7 @@ export default {
         connectionId: '',
         tableName: '',
         type: 'custom_connection',
-        isFilter: false
+        isFirst: true
       },
       scope: '',
       dataFlow: '',

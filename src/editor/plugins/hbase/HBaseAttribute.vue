@@ -169,7 +169,7 @@ export default {
         type: 'hbase',
         tableName: '',
         field_process: [],
-        isFilter: false
+        isFirst: true
       },
       scope: '',
       dataFlow: '',

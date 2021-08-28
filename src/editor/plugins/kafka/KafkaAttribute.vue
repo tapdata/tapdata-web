@@ -237,7 +237,7 @@ export default {
         tableName: '',
         partitionId: '',
         kafkaPartitionKey: '',
-        isFilter: false
+        isFirst: true
       },
       scope: '',
       dataFlow: '',
