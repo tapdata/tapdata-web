@@ -656,7 +656,7 @@ export default {
     getFieldOperations(row) {
       let operations = []
       if (!this.model.field_process || this.model.field_process.length === 0) return
-      let field_process = this.model.field_process.filter(process => process.table_id === row.sourceQualifiedName)
+      let field_process = this.model.field_process.filter(process => process.table_id === row.sourceTableId)
       if (field_process.length > 0) {
         operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
       }
@@ -678,17 +678,17 @@ export default {
       //保存字段映射
       let returnData = this.$refs.fieldMappingDom.returnData()
       if (!returnData.valid) return //检验不通过
-      let deleteLen = returnData.target.filter(v => !v.is_deleted)
-      if (deleteLen.length === 0) {
-        this.$message.error('当前表被删除了所有字段，不允许保存操作')
-        return //所有字段被删除了 不可以保存任务
-      }
       this.saveOperations(returnData.row, returnData.operations, returnData.target)
       this.dialogFieldProcessVisible = false
     },
     //保存字段处理器
     saveOperations(row, operations, target) {
       if (!target || target?.length === 0) return
+      let deleteLen = target.filter(v => !v.is_deleted)
+      if (deleteLen.length === 0) {
+        this.$message.error('当前表被删除了所有字段，不允许保存操作')
+        return //所有字段被删除了 不可以保存任务
+      }
       let where = {
         qualified_name: row.sinkQulifiedName
       }
