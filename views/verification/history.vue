@@ -19,8 +19,8 @@
           </template>
         </el-table-column>
         <template v-if="$route.name === 'VerifyDiffHistory'">
-          <el-table-column :label="$t('verify_history_source_rows')" prop="firstSourceTotal"></el-table-column>
-          <el-table-column :label="$t('verify_history_target_rows')" prop="firstTargetTotal"></el-table-column>
+          <el-table-column :label="$t('verify_history_source_rows')" prop="source_total"></el-table-column>
+          <el-table-column :label="$t('verify_history_target_rows')" prop="target_total"></el-table-column>
         </template>
         <template v-else>
           <el-table-column :label="$t('verify_history_source_total_rows')" prop="source_total"></el-table-column>
