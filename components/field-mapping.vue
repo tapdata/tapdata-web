@@ -419,7 +419,6 @@ export default {
       let key = this.currentOperationType
       let value = this.editValueType[this.currentOperationType]
       let verify = true
-      let verifySame = true
       //任务-字段处理器
       if (key === 'field_name') {
         let option = this.target.filter(v => v.id === id && !v.is_deleted)
@@ -450,30 +449,48 @@ export default {
         //如果是改类型 需要手动修改字段的长度以及精度
         this.influences(id)
       } else if (key === 'precision') {
-        this.currentTypeRules.forEach(r => {
-          if (r.minPrecision > value || value > r.maxPrecision) {
-            verify = false
-            this.$message.error('当前值不符合该字段范围')
-          } else if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision && verify) {
-            this.$message.error('当前值不符合该字段范围')
-            verifySame = false
-          }
-        })
-        if (!verify && !verifySame) {
+        let isPrecision = this.currentTypeRules.filter(v => v.minPrecision < v.maxPrecision)
+        if (isPrecision.length === 0) {
+          this.currentTypeRules.forEach(r => {
+            if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision) {
+              this.$message.error('当前值不符合该字段范围')
+              verify = false
+            }
+          })
+        } else {
+          this.currentTypeRules.forEach(r => {
+            if (r.minPrecision < r.maxPrecision) {
+              if (r.minPrecision > value || value > r.maxPrecision) {
+                verify = false
+                this.$message.error('当前值不符合该字段范围')
+              }
+            }
+          })
+        }
+        if (!verify) {
           return
         }
       } else if (key === 'scale') {
-        this.currentTypeRules.forEach(r => {
-          if (r.minScale > value || value > r.maxScale) {
-            verify = false
-            this.$message.error('当前值不符合该字段范围')
-          } else if (r.minScale === r.maxScale && value !== r.maxScale && verify) {
-            this.$message.error('当前值不符合该字段范围')
-            verifySame = false
-          }
-        })
+        let isScale = this.currentTypeRules.filter(v => v.minScale < v.maxScale)
+        if (isScale.length === 0) {
+          this.currentTypeRules.forEach(r => {
+            if (r.minScale === r.maxScale && value !== r.maxScale) {
+              this.$message.error('当前值不符合该字段范围')
+              verify = false
+            }
+          })
+        } else {
+          this.currentTypeRules.forEach(r => {
+            if (r.minScale < r.maxScale) {
+              if (r.minScale > value || value > r.maxScale) {
+                verify = false
+                this.$message.error('当前值不符合该字段范围')
+              }
+            }
+          })
+        }
       }
-      if (!verify || !verifySame) {
+      if (!verify) {
         return
       }
       //触发target更新
