@@ -33,7 +33,6 @@ th {
   -webkit-font-smoothing: unset;
 }
 
-
 /*
 * element-ui
 */
@@ -113,7 +112,7 @@ th {
 }
 .el-radio-button__orig-radio:checked + .el-radio-button__inner {
   color: map-get($color, primary);
-  background-color: rgb(225, 236, 255);
+  background-color: #fff;
   border-color: map-get($color, primary);
 }
 .el-divider__text,
@@ -257,7 +256,8 @@ th {
   line-height: 40px;
   border-left: 3px solid #fff;
 }
-.el-menu-item:hover, .el-menu-item:focus {
+.el-menu-item:hover,
+.el-menu-item:focus {
   background-color: map-get($bgColor, hover);
 }
 .el-menu-item.is-active {
@@ -306,7 +306,7 @@ th {
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   background-color: map-get($color, primary);
 }
-.el-breadcrumb__inner a{
+.el-breadcrumb__inner a {
   font-weight: normal;
   color: map-get($color, primary);
 }
@@ -392,6 +392,43 @@ th {
     font-size: 12px;
   }
 }
-
-
-
+// 步骤条
+.el-steps {
+  .el-step__head {
+    border-color: rgba(0, 0, 0, 0.25);
+    color: rgba(0, 0, 0, 0.25);
+    &.is-process {
+      border-color: rgba(44, 101, 255, 1);
+      color: rgba(44, 101, 255, 1);
+    }
+    &.is-success {
+      border-color: rgba(44, 101, 255, 1);
+      color: rgba(44, 101, 255, 1);
+      .el-step__line {
+        background-color: rgba(44, 101, 255, 0.05);
+      }
+    }
+    .el-step__line {
+      height: 5px;
+      top: 9px;
+      left: 57%;
+      right: -43%;
+      background-color: rgba(1, 1, 1, 0.05);
+      .el-step__line-inner {
+        display: none;
+      }
+    }
+    .el-step__icon {
+      border: 1px solid #2c65ff;
+      .el-step__icon-inner {
+        font-weight: normal;
+        color: #2c65ff;
+      }
+    }
+  }
+  .el-step__title {
+    font-size: 14px;
+    font-weight: normal;
+    color: #000;
+  }
+}
