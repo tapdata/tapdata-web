@@ -32,7 +32,7 @@
 <script>
 export default {
   name: 'FiledMapping',
-  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId'],
+  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId', 'isFirst'],
   data() {
     return {
       //表设置
@@ -46,8 +46,13 @@ export default {
     //表设置
     fieldProcess() {
       if (!this.dataFlow) return
-      delete this.dataFlow['rollback']
-      delete this.dataFlow['rollbackTable']
+      let dataFlowId = this.dataFlow.id
+      if (this.isFirst && dataFlowId) {
+        this.dataFlow['rollback'] = 'all' //新建任务重置恢复默认
+      } else {
+        delete this.dataFlow['rollback']
+        delete this.dataFlow['rollbackTable']
+      }
       if (this.stageId) {
         this.dataFlow['stageId'] = this.stageId //任务同步目标节点stageID 推演
       }
@@ -56,6 +61,7 @@ export default {
         .then(data => {
           this.dialogFieldProcessVisible = true
           this.fieldMappingNavData = data?.data
+          this.$emit('update-first', false)
         })
         .catch(() => {
           this.$message.error('接口请求失败')

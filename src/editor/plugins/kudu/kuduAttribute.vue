@@ -96,6 +96,8 @@
         :dataFlow="dataFlow"
         :hiddenFieldProcess="true"
         :showBtn="true"
+        :isFirst="model.isFirst"
+        @update-first="returnModel"
         :stageId="stageId"
         ref="fieldMapping"
         class="fr"
@@ -167,7 +169,8 @@ export default {
         connectionId: '',
         type: 'kudu',
         tableName: '',
-        field_process: []
+        field_process: [],
+        isFirst: true
       },
       scope: '',
       dataFlow: '',
@@ -372,6 +375,10 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
 
     // seeMonitor() {

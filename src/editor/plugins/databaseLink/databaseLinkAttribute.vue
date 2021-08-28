@@ -289,6 +289,7 @@ export default {
         queueData: [],
         field_process: [], //字段处理器
         transferFlag: false,
+        isFirst: true, //初始值
 
         selectSourceDatabase: {
           table: true,
@@ -558,11 +559,17 @@ export default {
     fieldProcess() {
       let data = this.getDataFlowData()
       if (!data) return
-      delete data['rollback']
-      delete data['rollbackTable']
+      let dataFlowId = data.id
+      if (this.model.isFirst && !dataFlowId) {
+        data['rollback'] = 'all' //新建任务重置恢复默认
+      } else {
+        delete data['rollback']
+        delete data['rollbackTable']
+      }
       let promise = this.$api('DataFlows').getMetadata(data)
       promise.then(data => {
         this.dialogFieldProcessVisible = true
+        this.model.isFirst = false
         this.fieldMappingNavData = data?.data
       })
     },

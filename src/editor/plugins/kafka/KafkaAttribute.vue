@@ -162,6 +162,8 @@
         v-else
         :dataFlow="dataFlow"
         :showBtn="true"
+        :isFirst="model.isFirst"
+        @update-first="returnModel"
         :hiddenFieldProcess="true"
         :stageId="stageId"
         ref="fieldMapping"
@@ -235,7 +237,8 @@ export default {
         type: 'kafka',
         tableName: '',
         partitionId: '',
-        kafkaPartitionKey: ''
+        kafkaPartitionKey: '',
+        isFirst: true
       },
       scope: '',
       dataFlow: '',
@@ -468,8 +471,9 @@ export default {
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
     },
-    returnFieldMapping(field_process) {
-      this.model.field_process = field_process
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
 
     // seeMonitor() {
