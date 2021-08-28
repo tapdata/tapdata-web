@@ -79,7 +79,7 @@
                 :fieldMappingNavData="fieldMappingNavData"
                 :fieldProcessMethod="updateFieldProcess"
                 :field_process="transferData.field_process"
-                @row-click="saveFieldMapping"
+                @row-click="saveOperations"
                 @update-nav="updateFieldMappingNavData"
               ></FieldMapping>
             </div>
@@ -685,7 +685,7 @@ export default {
       }
       //当前表的字段映射保存
       if (type === 'table') {
-        this.saveFieldMapping()
+        this.saveOperations()
       }
       this.activeStep -= 1
       this.getFormConfig()
@@ -1022,7 +1022,9 @@ export default {
         return
       }
       //保存字段映射
-      this.saveFieldMapping()
+      let returnData = this.$refs.fieldMappingDom.returnData()
+      if (!returnData.valid) return //检验不通过
+      this.saveOperations(returnData.row, returnData.operations, returnData.target)
       let postData = this.daft()
       let promise = null
       if (this.id) {
@@ -1188,21 +1190,9 @@ export default {
       let data = await this.$axios.get('tm/api/typeMappings/dataType?databaseType=' + row.sinkDbType)
       return data
     },
-    //保存字段映射
-    saveFieldMapping() {
-      let returnData = this.$refs.fieldMappingDom.returnData()
-      if (!returnData.valid) return //检验不通过
-      if (!returnData.target || returnData.target?.length === 0) return
-      let deleteLen = returnData.target.filter(v => !v.is_deleted)
-      if (deleteLen.length === 0) {
-        this.$message.error('当前表被删除了所有字段，不允许保存操作')
-        return //所有字段被删除了 不可以保存任务
-      }
-      this.saveOperations(returnData.row, returnData.operations, returnData.target)
-    },
     //保存字段处理器
     saveOperations(row, operations, target) {
-      this.loading = true
+      if (!target || target?.length === 0) return
       let where = {
         qualified_name: row.sinkQulifiedName
       }
@@ -1210,13 +1200,8 @@ export default {
         fields: target
       }
       if (typeof where === 'object') where = JSON.stringify(where)
-      let promise = this.axios.post('tm/api/MetadataInstances/update?where=' + encodeURIComponent(where), data)
-      promise.then(() => {
-        this.transferData.field_process = this.$refs.fieldMappingDom.saveFileOperations()
-      })
-      promise.finally(() => {
-        this.loading = false
-      })
+      this.axios.post('tm/api/MetadataInstances/update?where=' + encodeURIComponent(where), data)
+      this.transferData.field_process = this.$refs.fieldMappingDom.saveFileOperations()
     }
   }
 }
