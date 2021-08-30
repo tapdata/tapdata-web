@@ -955,7 +955,6 @@ export default {
     daft() {
       let source = this.dataSourceModel
       let target = this.dataSourceModel
-
       //设置为增量模式
       let timeZone = new Date().getTimezoneOffset() / 60
       let systemTimeZone = ''
@@ -1004,6 +1003,7 @@ export default {
         type: ''
       }
       //第四步 数据组装
+      this.transferData = this.$refs.transfer.returnData()
       let selectTable = []
       if (this.transferData && this.transferData.selectSourceArr.length > 0) {
         selectTable.push({
