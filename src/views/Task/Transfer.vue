@@ -207,12 +207,18 @@ export default {
               t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
             if (tables && tables.length) {
-              this.sourceData = tables.map(table => ({
-                label: table.table_name,
-                key: table.table_name,
-                disabled: this.disabled,
-                id: table.id
-              }))
+              let obj = {}
+              this.sourceData = tables
+                .map(table => ({
+                  label: table.table_name,
+                  key: table.table_name,
+                  disabled: this.disabled,
+                  id: table.id
+                }))
+                .reduce((item, next) => {
+                  obj[next.key] ? '' : (obj[next.key] = true && item.push(next))
+                  return item
+                }, [])
             }
             //初始化数据
             if (this.transferData) {
