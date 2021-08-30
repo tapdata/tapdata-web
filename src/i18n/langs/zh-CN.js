@@ -5,6 +5,7 @@ export default {
   gl_no_match_result: '没有查到符合条件的结果',
   gl_back_to_list: '返回列表',
   gl_button_cancel: '取消',
+  gl_button_finish: '完成',
   gl_button_delete_fail: '删除失败',
   gl_button_update_success: '修改成功',
   gl_qr_code_wx_public_account: '微信公众号',
@@ -94,6 +95,43 @@ export default {
   agent_detail_host_cpu_number: '宿主机CPU数量',
   agent_detail_host_memory_size: '宿主机内存大小',
   agent_detail_installation_manual: '安装目录',
+
+  // agent部署
+  agent_deploy_title: 'Agent 下载与安装',
+  agent_deploy_select_tip:
+    'Tapdata DFS 云版需要先在本地安装 Agent 以确保连接数据库和数据传输服务的正常运行, 您可以根据要安装服务器的类型在下方选择相应的类型进行下载安装',
+  agent_deploy_before_prepare_title: '安装前准备',
+  agent_deploy_before_prepare_windows_first: '1. 安装前请确认您的部署环境中已安装Java1.8版本并正确配置环境变量。',
+  agent_deploy_before_prepare_windows_first_link: '点击查看Java1.8安装和配置方式',
+  agent_deploy_before_prepare_windows_second: '2.点击下方的下载按钮将Tapdata Agent安装包下载到本地环境。',
+  agent_deploy_before_prepare_windows_second_download: '点击下载 Tapdata Agent',
+  agent_deploy_start_install: '开始安装',
+  agent_deploy_start_install_button_copy: '复制',
+  agent_deploy_start_install_button_copied: '已复制',
+  agent_deploy_start_install_windows_first:
+    '1. 将下载好的Tapdata Agent放入要安装Agent的目录，并通过cmd窗口在目录下执行下方命令即可实现Tapdata Agent的自动部署及启动',
+  agent_deploy_start_install_windows_second: '2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：',
+  agent_deploy_start_install_windows_third: '3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考',
+  agent_deploy_link_agent_operation: '《Agent基本操作》',
+  agent_deploy_before_prepare_linux_first: '1.安装前请确认您的部署环境中已安装Java1.8版本并正确配置环境变量。',
+  agent_deploy_before_prepare_linux_first_link: '点击查看Java1.8安装和配置方式',
+  agent_deploy_before_prepare_linux_second: '2.我们非常建议在一个独立、干净的文件夹内部署 Tapdata Agent',
+  agent_deploy_before_prepare_linux_third:
+    '3.下载、部署 Tapdata Agent 无需 root 权限，只需要对部署目录具备读写权限即可',
+  agent_deploy_start_install_linux_first:
+    '1.请复制下方命令并在本地部署环境执行，其包含 Tapdata Agent 的下载、自动部署及启动',
+  agent_deploy_start_install_linux_second: '2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：',
+  agent_deploy_start_install_linux_third: '3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考',
+  agent_deploy_before_prepare_docker_first: '1.我们提供了包含 Tapdata Agent 运行所需环境的镜像',
+  agent_deploy_before_prepare_docker_second:
+    '2.首先您的部署环境必须已经安装Docker才可使用Docker方式安装，如未安装可参考',
+  agent_deploy_before_prepare_docker_install_link: '《Docker安装》',
+  agent_deploy_before_prepare_docker_second_install: '进行安装',
+  agent_deploy_start_install_docker_first:
+    '1.请复制下方命令并在部署环境执行，其包含镜像的下载及运行，Tapdata Agent 的下载、自动部署及启动',
+  agent_deploy_start_install_docker_second:
+    '2.docker安装成功后，会自动输出已安装Agent的容器ID，您可以通过docker ps命令来查看正在运行的docker',
+  agent_deploy_start_install_docker_third: '3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考',
 
   // 连接
   connection_manage: '连接管理',

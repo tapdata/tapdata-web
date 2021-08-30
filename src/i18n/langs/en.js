@@ -5,6 +5,7 @@ export default {
   gl_no_match_result: 'No matching results were found',
   gl_back_to_list: 'Back to list',
   gl_button_cancel: 'Cancel',
+  gl_button_finish: '完成',
   gl_button_delete_fail: 'Failed to delete',
   gl_button_update_success: 'Successfully modified',
   gl_qr_code_wx_public_account: 'WeChat public account',
@@ -98,6 +99,53 @@ export default {
   agent_detail_host_cpu_number: 'Host CPU number',
   agent_detail_host_memory_size: 'Host memory size',
   agent_detail_installation_manual: 'Installation directory',
+
+  // agent 部署
+  agent_deploy_title: 'Agent download and installation',
+  agent_deploy_select_tip:
+    'Tapdata DFS Cloud Edition needs to install the Agent locally to ensure the normal operation of the database connection and data transmission service. You can select the corresponding type below to download and install according to the type of server to be installed.',
+  agent_deploy_before_prepare_title: 'Prepare before installation',
+  agent_deploy_before_prepare_windows_first:
+    '1. Before installation, please make sure that Java 1.8 is installed in your deployment environment and the environment variables are correctly configured. ',
+  agent_deploy_before_prepare_windows_first_link: 'Click to see how to install and configure Java 1.8',
+  agent_deploy_before_prepare_windows_second:
+    '2. Click the download button below to download the Tapdata Agent installation package to the local environment. ',
+  agent_deploy_before_prepare_windows_second_download: 'Click to download Tapdata Agent',
+  agent_deploy_start_install: 'Start installation',
+  agent_deploy_start_install_button_copy: 'Copy',
+  agent_deploy_start_install_button_copied: 'Copied',
+  agent_deploy_start_install_windows_first:
+    '1. Put the downloaded Tapdata Agent into the directory where you want to install the Agent, and execute the following commands in the directory through the cmd window to realize the automatic deployment and startup of the Tapdata Agent',
+  agent_deploy_start_install_windows_second:
+    '2. After the above command is executed, the log as shown in the figure below appears, which means that the agent started successfully:',
+  agent_deploy_start_install_windows_third:
+    "3. If you need to view the agent's log or start and stop the agent, please refer to",
+  agent_deploy_link_agent_operation: '《Agent Basic Operations》',
+  agent_deploy_before_prepare_linux_first:
+    '1. Before installation, please make sure that Java 1.8 is installed in your deployment environment and the environment variables are correctly configured. ',
+  agent_deploy_before_prepare_linux_first_link: 'Click to see how to install and configure Java 1.8',
+  agent_deploy_before_prepare_linux_second:
+    '2. We highly recommend deploying Tapdata Agent in a separate and clean folder',
+  agent_deploy_before_prepare_linux_third:
+    '3. Download and deploy Tapdata Agent without root permission, only need to have read and write permissions on the deployment directory',
+  agent_deploy_start_install_linux_first:
+    '1. Please copy the following command and execute it in the local deployment environment, which includes the download, automatic deployment and startup of Tapdata Agent',
+  agent_deploy_start_install_linux_second:
+    '2. After the above command is executed, the log as shown in the figure below appears, which means that the agent started successfully:',
+  agent_deploy_start_install_linux_third:
+    "3. If you need to view the agent's log or start and stop the agent, please refer to",
+  agent_deploy_before_prepare_docker_first:
+    '1. We provide an image that contains the environment required for Tapdata Agent to run',
+  agent_deploy_before_prepare_docker_second:
+    '2. First, your deployment environment must have Docker installed before you can use Docker to install, if not installed, please refer to',
+  agent_deploy_before_prepare_docker_install_link: '《Docker Installation》',
+  agent_deploy_before_prepare_docker_second_install: 'Proceed to install',
+  agent_deploy_start_install_docker_first:
+    '1. Please copy the following command and execute it in the deployment environment, which includes the download and operation of the image, the download, automatic deployment and start of the Tapdata Agent',
+  agent_deploy_start_install_docker_second:
+    '2. After the docker installation is successful, the container ID of the installed Agent will be automatically output. You can use the docker ps command to view the running docker',
+  agent_deploy_start_install_docker_third:
+    "3. If you need to view the agent's log or start and stop the agent, please refer to",
 
   // 连接
   connection_manage: 'Connection Management',
