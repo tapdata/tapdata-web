@@ -573,7 +573,7 @@ export default {
       let option = this.target.filter(v => v.id === id)
       if (option.length === 0) return
       option = option[0]
-      if (value === option.original_field_name) {
+      if (value === option.original_field_name || option.field) {
         this.restRename(id) //用户手动改为最原始的名字
         return
       }
@@ -665,7 +665,7 @@ export default {
       let opr = this.operations.filter(v => v.id === id && v.op === 'RENAME')
       if (opr.length > 0) {
         //元数据-字段操作
-        this.updateTarget(id, 't_field_name', opr[0].original_field_name)
+        this.updateTarget(id, 't_field_name', opr[0].original_field_name || opr[0].field)
       }
     },
     saveFileOperations() {
