@@ -1,24 +1,25 @@
 import { options } from '../../lib/rappid/config'
-import CustomAttribute from './CustomAttribute'
+import HanaAttribute from './HanaAttribute'
 import { FORM_DATA_KEY } from '../../constants'
 import i18n from '@/i18n'
 
-export const customNodeConfig = {
-  type: 'app.CustomNode',
+export const HanaNodeConfig = {
+  type: 'app.HanaNode',
   shape: {
     extends: 'app.BaseElement',
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-custom.svg'
+          xlinkHref: 'static/editor/o-hana.svg'
         },
         label: {
-          text: i18n.t('editor.cell.data_node.custom.name')
+          text: 'SAP HANA'
         }
       },
       [FORM_DATA_KEY]: {
-        type: 'custom_connection',
-        connectionId: ''
+        type: 'hana',
+        connectionId: '',
+        tableName: ''
       }
     },
     prototypeProperties: {
@@ -39,7 +40,7 @@ export const customNodeConfig = {
        * @return {boolean}
        */
       allowTarget() {
-        return true
+        return false
       },
 
       /**
@@ -47,24 +48,15 @@ export const customNodeConfig = {
        * @param sourceCell
        * @return {boolean}
        */
-      allowSource(sourceCell) {
-        return [
-          'app.Dummy',
-          'app.Collection',
-          'app.Table',
-          'app.HiveNode',
-          'app.HanaNode',
-          'app.FieldProcess',
-          'app.Script',
-          'app.DataFilter',
-          'app.MemCache'
-        ].includes(sourceCell.get('type'))
+      allowSource() {
+        return true
       },
 
       validate(data) {
         data = data || this.getFormData()
         let name = this.attr('label/text')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.custom.none_fileName')}`)
+        if (!data.connectionId) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_database')}`)
+        if (!data.tableName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.api.none_collection')}`)
         return true
       }
     }
@@ -179,12 +171,12 @@ export const customNodeConfig = {
     /**
      * 界面显示的分组名称
      */
-    // groupLabel: '',
+    //groupLabel: '',
 
-    size: { width: 5, height: 3 },
+    size: { width: 5, height: 4 },
     attrs: {
       root: {
-        dataTooltip: i18n.t('editor.cell.data_node.custom.tip'),
+        dataTooltip: 'SAP HANA',
         dataTooltipPosition: 'left',
         dataTooltipPositionSelector: '.joint-stencil'
       },
@@ -197,14 +189,14 @@ export const customNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/custom.svg',
+        xlinkHref: 'static/editor/hana.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',
         refY: '0%'
       },
       label: {
-        text: i18n.t('editor.cell.data_node.custom.name'),
+        text: 'SAP HANA',
         textAnchor: 'middle',
         fill: '#666',
         fontFamily: 'Roboto Condensed',
@@ -213,7 +205,7 @@ export const customNodeConfig = {
         strokeWidth: 0,
         refX: '75%',
         refY: '40%',
-        x: -35,
+        x: -32,
         y: 27
       }
     }
@@ -224,6 +216,6 @@ export const customNodeConfig = {
    * @type {null}
    */
   settingFormConfig: {
-    component: CustomAttribute
+    component: HanaAttribute
   }
 }

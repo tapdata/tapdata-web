@@ -499,7 +499,8 @@ export default {
           'hbase',
           'kudu',
           'greenplum',
-          'tidb'
+          'tidb',
+          'hana'
         ].includes(type)
       ) {
         this.$router.push({

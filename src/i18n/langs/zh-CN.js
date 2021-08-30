@@ -28,5 +28,23 @@ export default {
   task_settings_cdc_sync_point_date: '【任务设置】增量采集开始时刻，请选择时间',
 
   // 数据源
-  connection_form_tidb_server: 'TiDB地址'
+  connection_form_tidb_server: 'TiDB地址',
+
+  // 路由名
+  app_menu_jsFuncs: '函数',
+
+  // 函数
+  js_func_name: '函数名',
+  js_func_parameters: '参数',
+  js_func_function_body: '函数体',
+  js_func_last_update: '更新时间',
+  js_func_create: '创建',
+  js_func_function_name_repeat: '方法名称重复',
+  js_func_dialog_format: '格式化代码',
+  js_func_dialog_code: 'Javascript函数代码',
+  js_func_dialog_Linenumbers: '显示行号',
+  js_func_dialog_nofunctions: '代码缺少JS函数',
+  js_func_dialog_create_title: '新增记录',
+  js_func_dialog_edit_title: '更新记录',
+  js_func_delete_remind: '确定要删除函数'
 }

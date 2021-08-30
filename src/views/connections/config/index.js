@@ -46,6 +46,7 @@ import hbase from './hbase'
 import kudu from './kudu'
 import greenplum from './greenplum'
 import tidb from './tidb'
+import hana from './hana'
 
 export default {
   mysql,
@@ -95,5 +96,6 @@ export default {
   hbase,
   kudu,
   greenplum,
-  tidb
+  tidb,
+  hana
 }

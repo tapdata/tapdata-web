@@ -183,6 +183,12 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-tidb.svg',
       stencilImage: 'static/editor/tidb.svg'
     },
+    hana: {
+      type: 'hana',
+      name: 'SPA Hana',
+      shapeImage: 'static/editor/o-hana.svg',
+      stencilImage: 'static/editor/hana.svg'
+    },
     hive: {
       type: 'hive',
       name: 'Hive',

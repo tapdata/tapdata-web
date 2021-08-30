@@ -675,7 +675,8 @@ export default {
         'hbase',
         'kudu',
         'greenplum',
-        'tidb'
+        'tidb',
+        'hana'
       ],
       model: '',
       config: {
