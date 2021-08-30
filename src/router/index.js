@@ -213,6 +213,7 @@ const childRoutes = [
   {
     path: '/module',
     name: 'module',
+    // component: () => import('@/views/ExternalLink'),
     component: () => import('@/views/apiPage/ModuleForm'),
     meta: {
       code: 'API_creation'

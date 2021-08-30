@@ -112,7 +112,7 @@
       <el-table-column :label="$t('modules_header_version')" prop="version" sortable="custom"> </el-table-column>
       <el-table-column :label="$t('modules_header_classifications')" prop="classifications" sortable="classifications">
         <template slot-scope="scope" v-if="scope.row.listtags">
-          <div v-for="item in scope.row.listtags">{{ item.value }}</div>
+          <div v-for="item in scope.row.listtags" :key="item">{{ item.value }}</div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_username')" prop="user" sortable="user"> </el-table-column>
@@ -260,6 +260,7 @@ export default {
     // }
   },
   methods: {
+    // 重置查询条件
     reset(name) {
       if (name === 'reset') {
         this.searchParams = {
@@ -268,7 +269,6 @@ export default {
           status: ''
         }
       }
-
       this.table.fetch(1)
     },
     // 获取数据
@@ -298,19 +298,10 @@ export default {
       }
 
       if (tags && tags.length) {
-        where['classifications.id'] = {
+        where['listtags.id'] = {
           in: tags
         }
       }
-      // let types = this.$route.meta.types
-      // if (metaType) {
-      //   where.meta_type = metaType
-      // } else if (types) {
-      //   where.meta_type = {
-      //     in: types
-      //   }
-      // }
-      // dbId && (where['source.id'] = dbId)
       let filter = {
         order: this.order,
         limit: size,
@@ -329,81 +320,45 @@ export default {
           keyword,
           status
         })
-        // if (res?.data?.length) {
-        //   res.data.forEach(item => {
-        //     item.
-        //   })
-        // }
         return {
           total: countRes.data.count,
           data: res.data
         }
       })
     },
-    // getDbOptions() {
-    //   let filter = {
-    //     fields: {
-    //       name: true,
-    //       id: true,
-    //       database_type: true,
-    //       connection_type: true,
-    //       status: true
-    //     }
-    //   }
-    //   this.$api('connections')
-    //     .get({
-    //       filter: JSON.stringify(filter)
-    //     })
-    //     .then(res => {
-    //       let dbOptions = res.data
-    //       this.dbOptions = dbOptions
-    //       let options = []
-    //       dbOptions.forEach(db => {
-    //         if (db.database_type === 'mongodb' && ['target', 'source_and_target'].includes(db.connection_type)) {
-    //           options.push({
-    //             label: db.name,
-    //             value: db.id
-    //           })
-    //         }
-    //       })
-    //       this.createFormConfig.items[1].options = options
-    //     })
-    // },
     // 获取状态
     getWorkers() {
-      try {
-        let where = {
-          worker_type: 'api-server',
-          ping_time: {
-            gte: '$serverDate',
-            gte_offset: 30000
-          }
+      let where = {
+        worker_type: 'api-server',
+        ping_time: {
+          gte: '$serverDate',
+          gte_offset: 30000
         }
-        let filter = {
-          order: 'ping_time DESC',
-          limit: 1,
-          fields: {
-            worker_status: true
-          },
-          where
-        }
-        this.$api('Workers')
-          .get(filter)
-          .then(res => {
-            if (res) {
-              let record = res.data[0] || {}
-              let workerStatus = record.worker_status || {}
-              if (this.status !== workerStatus.status) {
-                this.status = workerStatus.status
-              }
-            } else {
-              this.status = 'stop'
+      }
+      let filter = {
+        order: 'ping_time DESC',
+        limit: 1,
+        fields: {
+          worker_status: true
+        },
+        where
+      }
+      this.$api('Workers')
+        .get(filter)
+        .then(res => {
+          if (res) {
+            let record = res.data[0] || {}
+            let workerStatus = record.worker_status || {}
+            if (this.status !== workerStatus.status) {
+              this.status = workerStatus.status
             }
-          })
-      } catch (e) {}
+          } else {
+            this.status = 'stop'
+          }
+        })
       this.intervalId = setTimeout(this.loadData, 5000)
     },
-
+    // 表格排序
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
@@ -411,6 +366,7 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+    // 选中分类
     handleSelectTag() {
       let tagList = {}
       this.multipleSelection.forEach(row => {
@@ -422,6 +378,7 @@ export default {
       })
       return tagList
     },
+    // 数据分类查询数据
     handleOperationClassify(classifications) {
       this.$api('MetadataInstances')
         .classification({
@@ -436,6 +393,7 @@ export default {
           this.table.fetch()
         })
     },
+    // 状态改变查询
     statusChange() {
       this.table.fetch(1)
     },
@@ -443,41 +401,14 @@ export default {
     openCreateDialog() {
       this.$router.push({ name: 'module' })
     },
-    createNewModel() {
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          let { model_type, database, tableName } = this.createForm
-          let db = this.dbOptions.find(it => it.id === database)
-          let params = {
-            connectionId: db.id,
-            original_name: tableName,
-            is_deleted: false,
-            meta_type: model_type,
-            create_source: 'manual',
-            databaseId: db.id,
-            classifications: db.classifications,
-            alias_name: '',
-            comment: ''
-          }
-          this.$api('MetadataInstances')
-            .post(params)
-            .then(() => {
-              // this.createDialogVisible = false
-              // this.toDetails(res.data);
-            })
-        }
-      })
-    },
     // 预览
     toDetails(item) {
       this.$router.push({ name: 'dataExplorer', query: { id: item.basePath + '_' + item.apiVersion } })
     },
-
     // api文档及测试
     toDocumentTest(item) {
       this.$router.push({ name: 'apiDocAndTest', query: { id: item.basePath + '_' + item.apiVersion } })
     },
-
     // 发布api
     publish(item) {
       this.$confirm(this.$t('modules_sure') + this.$t('modules_publish_api'), this.$t('modules_publish_api'), {
@@ -542,7 +473,7 @@ export default {
         }
       })
     },
-    // 删除
+    // 删除列表
     remove(item) {
       const h = this.$createElement
       let message = h('p', [

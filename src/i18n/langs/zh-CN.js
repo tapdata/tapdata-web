@@ -31,6 +31,7 @@ export default {
   button_close: '关闭',
   button_filter: '筛选',
   button_search: '搜索',
+  button_back: '返回',
 
   message_delete_ornot: '是否删除',
   message_save_ok: '保存成功',
@@ -108,6 +109,7 @@ export default {
   module_form_security: '权限设置',
   module_form_edit: '编辑',
   module_form_document: 'API 文档',
+  module_form_tags: '数据目录',
   module_form_preview: '数据预览',
   module_form_public_api: '公共的',
   module_form_private_api: '私有的',
@@ -125,5 +127,19 @@ export default {
   module_form_datatype: '数据类型',
   module_form_condition: '过滤条件',
   module_form_no_server_preview_api: '没有 API 服务器预览 API 文档.',
-  module_form_get_api_uri_fail: '获取 API Server Uri 失败'
+  module_form_get_api_uri_fail: '获取 API Server Uri 失败',
+
+  query_build_match: '匹配',
+  query_build_condition: '条件',
+  query_build_all: '全部',
+  query_build_any: '任意',
+  query_build_addGroup: '添加组',
+  query_build_removeGroup: '删除组',
+  query_build_addCondition: '添加条件',
+  query_build_removeCondition: '删除条件',
+  query_build_show_filter: '显示过滤条件',
+  query_build_queryValue: '字段值',
+  query_build_add: '添加',
+  query_build_remove: '删除',
+  query_build_selectField: '选择字段'
 }
