@@ -2429,7 +2429,7 @@ const tc = {
     verifyDetail: '校驗詳情',
     sourceTable: '源表',
     targetTable: '目標表',
-    sourceRows: '源/目標表行數',
+    sourceRows: '源表行數',
     verifyResult: '校驗結果',
     rowConsistent: '行數差異',
     contConsistent: '內容差異',
