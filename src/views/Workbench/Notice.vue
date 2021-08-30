@@ -111,6 +111,60 @@
       </div>
     </div>
   </div>
+  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 2">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>Tapdata Cloud 1.0.6 版本发布啦！</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2021-08-30</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-3 fw-bolder">1.数据一致性如何保证？数据校验来帮忙</div>
+        <div class="mb-3">
+          多样化的校验手段：快速count校验、表全字段值校验和关联字段值校验，可增量式的差异化校验能力，让用户快速精准实现同步结果的校验。
+        </div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/verify.png" alt="" />
+        </div>
+        <div class="mb-3 fw-bolder">2. 异构迁移无从下手？类型映射帮您高效解决</div>
+        <div class="mb-3">
+          在异构数据库之间做迁移，类型转换是一大难题，也是导致迁移失败的重要原因，本次上线的类型映射功能，在系统推演的基础上，提供了人工调整的能力，进一步保证迁移的成功率。
+        </div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/verify_diff.png" alt="" />
+        </div>
+        <div class="mb-3 fw-bolder">3. 支持任务配置过程手动加载schema，轻松解决结构初始化问题</div>
+        <div class="mb-3">
+          配置同步任务时，源表信息不完整？没关系，手动加载来解决。充分满足网络波动等情况下，加载异常的问题。
+        </div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/task_load_schema.png" alt="" />
+        </div>
+        <div class="mb-3 fw-bolder">4. 任务支持设置增量并发写入，高性能同步不再是难题</div>
+        <div class="mb-3">为了提升数据同步时的目标端高性能写入，本次上线开放了增量并发开关，方便用户调优。</div>
+        <div class="mb-3">
+          <img src="../../../public/images/notice/task_write.png" alt="" />
+        </div>
+        <div class="mb-8">温馨提醒：增量并发默认未打开，需要自行开启。</div>
+        <div class="mb-3 fw-bolder">5. 全新增加对阿里云数仓AnalyticDB MySQL支持</div>
+        <div class="mb-8">在本版本中，增加了对AnalyticDB MySQL作为目标的支持，满足用户对于数据入仓的需求。</div>
+        <div class="mb-3 fw-bolder">6. 支持standalone模式MongoDB的全量同步</div>
+        <div class="mb-6">
+          在前面的版本中，Tapdata Cloud已支持在两个 MongoDB
+          集群之间复制数据。本次版本应MongoDB用户要求，支持standalone模式MongoDB的全量同步。
+        </div>
+        <div class="mb-4">更多新功能具体介绍，敬请关注Tapdata服务号后续发布。</div>
+        <div class="mb-3">
+          <img style="width: 100px" src="../../../public/images/notice/wx_code.png" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="notice main-container fs-8" v-else>
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">

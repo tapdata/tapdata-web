@@ -353,6 +353,12 @@ export default {
           type: '',
           name: '异构数据库同步云平台 Tapdata Cloud 开启有奖公测',
           time: '2021-07-31'
+        },
+        {
+          id: 2,
+          type: '',
+          name: 'Tapdata Cloud 1.0.6 版本发布啦！',
+          time: '2021-08-30'
         }
       ]
     },
