@@ -700,7 +700,7 @@ export default {
       //当前表的字段映射保存
       if (type === 'table') {
         //保存字段映射
-        let returnData = this.$refs.fieldMappingDom.returnData()
+        let returnData = this.$refs.fieldMappingDom.returnData(true)
         let deleteLen = returnData.target.filter(v => !v.is_deleted)
         if (deleteLen.length !== 0) {
           this.saveOperations()
