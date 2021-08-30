@@ -31,11 +31,19 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn :label="$t('dataVerification.sourceRows')">
+    <ElTableColumn v-if="$route.name === 'VerifyDiffDetails'" :label="$t('dataVerification.sourceRows')">
       <template slot-scope="scope">
-        <span>{{ scope.row.firstSourceTotal || scope.row.source_total || 0 }}</span>
+        <span>{{ scope.row.source_total || 0 }}</span>
         <div>
-          {{ scope.row.firstTargetTotal || scope.row.target_total || 0 }}
+          {{ scope.row.target_total || 0 }}
+        </div>
+      </template>
+    </ElTableColumn>
+    <ElTableColumn v-else :label="$t('dataVerification.sourceRows')">
+      <template slot-scope="scope">
+        <span>{{ scope.row.firstSourceTotal || 0 }}</span>
+        <div>
+          {{ scope.row.firstTargetTotal || 0 }}
         </div>
       </template>
     </ElTableColumn>
