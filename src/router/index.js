@@ -553,7 +553,7 @@ const childRoutes = [
   },
   {
     path: '/dataVerifyResult/:id/details',
-    name: 'dataVerifyResultDetails',
+    name: 'VerifyDiffDetails',
     component: () => import('@/views/dataVerification/Result'),
     meta: {
       title: i18n.t('verify_diff_details_title'),
