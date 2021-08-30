@@ -736,6 +736,11 @@ export default {
       } else if (DEFAULT_MODEL[type]) {
         this.model = Object.assign({}, DEFAULT_MODEL[type])
       }
+      if (!this.model.platformInfo) {
+        this.model.platformInfo = { agentType: 'private' }
+      } else if (!this.model.platformInfo.agentType) {
+        this.model.platformInfo.agentType = 'private'
+      }
 
       this.getDT(this.databaseType)
       this.initTimezones()
