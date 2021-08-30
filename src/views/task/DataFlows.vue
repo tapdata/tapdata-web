@@ -1116,7 +1116,7 @@ export default {
 
             if (res.data?.length) {
               res.data.forEach(item => {
-                if (item.errorEvents?.length) {
+                if (item?.errorEvents?.length) {
                   falg = true
                 }
               })
