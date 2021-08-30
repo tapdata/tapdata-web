@@ -480,7 +480,8 @@ export default {
       ],
       //表设置
       fieldMappingNavData: '',
-      fieldMappingTableData: ''
+      fieldMappingTableData: '',
+      hiddenFieldMapping: false
     }
   },
   created() {
@@ -620,6 +621,9 @@ export default {
       if (this.id) {
         this.steps = steps.slice(1, 4)
       }
+      if (this.hiddenFieldMapping) {
+        this.steps = steps.slice(1, 3)
+      }
     },
     //下一步
     next() {
@@ -651,6 +655,15 @@ export default {
             this.dataSourceModel.target_connectionName = target.name
             this.activeStep += 1
             this.getFormConfig()
+            //判断是否有第五步
+            this.$axios
+              .get('tm/api/typeMappings/dataType?databaseType=' + this.dataSourceModel.target_databaseType)
+              .then(data => {
+                if (data?.length === 0) {
+                  this.hiddenFieldMapping = true
+                  this.getSteps()
+                }
+              })
           }
         })
       }
@@ -688,13 +701,10 @@ export default {
       if (type === 'table') {
         //保存字段映射
         let returnData = this.$refs.fieldMappingDom.returnData()
-        if (!returnData.valid) return //检验不通过
         let deleteLen = returnData.target.filter(v => !v.is_deleted)
-        if (deleteLen.length === 0) {
-          this.$message.error('当前表被删除了所有字段，不允许保存操作')
-          return //所有字段被删除了 不可以保存任务
+        if (deleteLen.length !== 0) {
+          this.saveOperations()
         }
-        this.saveOperations()
       }
       this.activeStep -= 1
       this.getFormConfig()
@@ -1031,14 +1041,16 @@ export default {
         return
       }
       //保存字段映射
-      let returnData = this.$refs.fieldMappingDom.returnData()
-      if (!returnData.valid) return //检验不通过
-      let deleteLen = returnData.target.filter(v => !v.is_deleted)
-      if (deleteLen.length === 0) {
-        this.$message.error('当前表被删除了所有字段，不允许保存操作')
-        return //所有字段被删除了 不可以保存任务
+      if (!this.hiddenFieldMapping) {
+        let returnData = this.$refs.fieldMappingDom.returnData()
+        if (!returnData.valid) return //检验不通过
+        let deleteLen = returnData.target.filter(v => !v.is_deleted)
+        if (deleteLen.length === 0) {
+          this.$message.error('当前表被删除了所有字段，不允许保存操作')
+          return //所有字段被删除了 不可以保存任务
+        }
+        this.saveOperations(returnData.row, returnData.operations, returnData.target)
       }
-      this.saveOperations(returnData.row, returnData.operations, returnData.target)
       let postData = this.daft()
       let promise = null
       if (this.id) {
