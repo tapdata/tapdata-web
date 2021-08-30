@@ -60,8 +60,9 @@
         <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="150">
           <template slot-scope="scope">
             <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
-              >{{ scope.row.field_name }} <i class="iconfont icon-yuechi1"></i
-            ></span>
+              >{{ scope.row.field_name }}
+              <VIcon size="12" class="color-darkorange">key</VIcon>
+            </span>
             <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
           </template>
         </ElTableColumn>
@@ -206,8 +207,10 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
 export default {
   name: 'FieldMapping',
+  components: { VIcon },
   props: {
     fieldMappingNavData: Array,
     field_process: Array,
@@ -864,7 +867,7 @@ export default {
         }
       }
     }
-    .icon-yuechi1 {
+    .color-darkorange {
       color: darkorange;
     }
   }
