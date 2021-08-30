@@ -1055,7 +1055,6 @@ export default {
         this.checkAgentStatus(() => {
           let doStart = () => {
             let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
-            this.dataFlow = data //将dataFlow 存当前数据
             if (data) {
               this.doSaveStartDataFlow(data)
             }
