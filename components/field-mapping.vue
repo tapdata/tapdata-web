@@ -1,5 +1,5 @@
 <template>
-  <div class="field-mapping">
+  <div class="field-mapping" v-loading="loadingPage">
     <div style="text-align: left">
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
@@ -232,6 +232,7 @@ export default {
       searchField: '',
       searchTable: '',
       loading: false,
+      loadingPage: false,
       typeMapping: [],
       currentTypeRules: [],
       defaultFieldMappingNavData: '',
@@ -401,11 +402,14 @@ export default {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
+          this.loadingPage = true
           this.$nextTick(() => {
             this.fieldProcessMethod &&
               this.fieldProcessMethod('table', name, id).then(data => {
                 this.$emit('update-nav', data)
                 this.updateView()
+              }).finally( ()=>{
+                this.loadingPage = false
               })
           })
         }
@@ -418,10 +422,13 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           this.$nextTick(() => {
+            this.loadingPage = true
             this.fieldProcessMethod &&
               this.fieldProcessMethod('all').then(data => {
                 this.$emit('update-nav', data)
                 this.updateView()
+              }).finally(()=>{
+                this.loadingPage = true
               })
           })
         }
