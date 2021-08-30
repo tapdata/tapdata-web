@@ -508,6 +508,10 @@ export default {
           this.fetch()
           this.responseHandler(data, '操作成功')
         })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('任务启动失败，请编辑任务完成映射配置')
+        })
     },
     responseHandler(data, msg) {
       let failList = data.fail || []

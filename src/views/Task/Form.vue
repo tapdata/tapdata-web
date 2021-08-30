@@ -85,22 +85,17 @@
             </div>
           </el-main>
           <el-footer class="CT-task-footer" height="80px">
-            <el-button class="btn-step" v-if="[2].includes(steps[activeStep].index)" @click="goBackList()">
-              取消
-            </el-button>
+            <el-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </el-button>
             <el-button
               class="btn-step"
               :loading="loading"
-              v-else-if="[2, 4, 5].includes(steps[activeStep].index) || (steps[activeStep].index === 3 && !id)"
+              v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
               @click="back()"
             >
               {{ $t('guide.btn_back') }}
             </el-button>
-            <el-button class="btn-step" v-if="[1].includes(steps[activeStep].index)" @click="goBackList()">
-              取消
-            </el-button>
             <el-button
-              v-if="steps[activeStep].index !== 5"
+              v-if="steps[activeStep].showNextBtn"
               type="primary"
               class="btn-step"
               :loading="loading"
@@ -108,7 +103,15 @@
             >
               <span>{{ $t('guide.btn_next') }}</span>
             </el-button>
-            <el-button v-else type="primary" class="btn-step" :loading="loading" @click="save()"> 完成 </el-button>
+            <el-button
+              v-if="steps[activeStep].showSaveBtn"
+              type="primary"
+              class="btn-step"
+              :loading="loading"
+              @click="save()"
+            >
+              完成
+            </el-button>
           </el-footer>
         </el-container>
       </el-container>
@@ -611,18 +614,32 @@ export default {
       }
     },
     getSteps() {
-      const steps = [
-        { index: 2, text: '选择源端与目标端连接', type: 'dataSource' },
-        { index: 3, text: '任务设置', type: 'setting' },
-        { index: 4, text: '映射设置', type: 'mapping' },
-        { index: 5, text: '表设置', type: 'table' }
-      ]
-      this.steps = steps.slice(0, 4)
-      if (this.id) {
-        this.steps = steps.slice(1, 4)
-      }
-      if (this.hiddenFieldMapping) {
-        this.steps = steps.slice(1, 3)
+      this.steps = []
+      if (this.id && this.hiddenFieldMapping) {
+        //编辑模式 无字段映射功能
+        this.steps = [
+          { index: 3, text: '任务设置', type: 'setting', showExitBtn: true, showNextBtn: true },
+          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showSaveBtn: true }
+        ]
+      } else if (!this.id && !this.hiddenFieldMapping) {
+        this.steps = [
+          { index: 2, text: '选择源端与目标端连接', type: 'dataSource', showExitBtn: true, showNextBtn: true }, //创建模式 有字段功能
+          { index: 3, text: '任务设置', type: 'setting', showBackBtn: true, showNextBtn: true },
+          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showNextBtn: true },
+          { index: 5, text: '表设置', type: 'table', showBackBtn: true, showSaveBtn: true }
+        ]
+      } else if (this.id && !this.hiddenFieldMapping) {
+        this.steps = [
+          { index: 3, text: '任务设置', type: 'setting', showExitBtn: true, showNextBtn: true }, //编辑模式 有字段功能
+          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showNextBtn: true },
+          { index: 5, text: '表设置', type: 'table', showBackBtn: true, showSaveBtn: true }
+        ]
+      } else if (!this.id && this.hiddenFieldMapping) {
+        this.steps = [
+          { index: 2, text: '选择源端与目标端连接', type: 'dataSource', showExitBtn: true, showNextBtn: true }, //创建模式 无字段功能
+          { index: 3, text: '任务设置', type: 'setting', showBackBtn: true, showNextBtn: true },
+          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showSaveBtn: true }
+        ]
       }
     },
     //下一步
@@ -655,15 +672,6 @@ export default {
             this.dataSourceModel.target_connectionName = target.name
             this.activeStep += 1
             this.getFormConfig()
-            //判断是否有第五步
-            this.$axios
-              .get('tm/api/typeMappings/dataType?databaseType=' + this.dataSourceModel.target_databaseType)
-              .then(data => {
-                if (data?.length === 0) {
-                  this.hiddenFieldMapping = true
-                  this.getSteps()
-                }
-              })
           }
         })
       }
@@ -753,7 +761,16 @@ export default {
           if (this.dataSourceModel['target_databaseType'] === 'kafka') {
             this.changeConfig([], 'setting_distinctWriteType')
           }
-
+          //判断是否有第五步
+          this.$axios
+            .get('tm/api/typeMappings/dataType?databaseType=' + this.dataSourceModel.target_databaseType)
+            .then(data => {
+              console.log(data)
+              if (data?.length === 0) {
+                this.hiddenFieldMapping = true
+                this.getSteps()
+              }
+            })
           break
         }
         case 'mapping': {
@@ -1082,7 +1099,7 @@ export default {
     },
     //返回任务列表
     goBackList() {
-      this.$confirm('此操作会丢失当前正在创建的任务', '是否放弃创建该任务', {
+      this.$confirm('此操作会丢失当前正在创建/编辑的任务', '是否放弃创建/编辑该任务', {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {

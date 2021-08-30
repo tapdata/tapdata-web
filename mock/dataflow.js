@@ -562,6 +562,11 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
+  '/tm/api/typeMappings/dataType': {
+    data: [{ dbType: 'mysql', rules: [] }],
+    code: 'ok',
+    msg: 'ok'
+  },
   '/tm/api/DataFlows/:id/copy': {
     data: {
       last_updated: '2021-05-10T07:58:26.739Z',
