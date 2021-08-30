@@ -38,6 +38,7 @@ export default {
   // Agent
   agent_manage: 'Agent管理',
   agent_name: '实例ID/名称',
+  agent_id: 'Agent ID',
   agent_task_number: '任务数',
   agent_create_time: '创建时间',
   agent_version: '版本',
@@ -86,6 +87,13 @@ export default {
   agent_auto_upgrade_tip_fail: '自动升级失败，请手动升级',
   agent_auto_upgrade_tip_have_new: 'Agent版本有更新，点击升级',
   agent_button_create_tip: '是否创建 Agent？',
+  agent_detail_synchronization_task_number: '同步任务数',
+  agent_detail_version: 'Agent 版本',
+  agent_detail_create_time: 'Agent 创建时间',
+  agent_detail_host_ip: '宿主机IP',
+  agent_detail_host_cpu_number: '宿主机CPU数量',
+  agent_detail_host_memory_size: '宿主机内存大小',
+  agent_detail_installation_manual: '安装目录',
 
   // 连接
   connection_manage: '连接管理',
@@ -98,6 +106,7 @@ export default {
   task_sync_type_initial_sync_cdc: '全量+增量',
 
   // 数据校验
+  verify_manage: '数据校验',
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',
   verify_diff_history_title: '差异校验历史',
@@ -114,5 +123,8 @@ export default {
   verify_result_count_less: '目标count少: {0}',
   verify_result_content_diff: '表数据差: {0}',
   verify_result_count_inconsistent: '不一致',
-  verify_result_count_consistent: '一致'
+  verify_result_count_consistent: '一致',
+
+  // 操作日志
+  operation_log_manage: '操作日志'
 }

@@ -38,6 +38,7 @@ export default {
   // Agent
   agent_manage: 'Agent Management',
   agent_name: 'Agent ID/Name',
+  agent_id: 'Agent ID',
   agent_task_number: 'Number of tasks',
   agent_create_time: 'Creation time',
   agent_version: 'Version',
@@ -90,6 +91,13 @@ export default {
   agent_auto_upgrade_tip_fail: 'Automatic upgrade failed, please upgrade manually',
   agent_auto_upgrade_tip_have_new: 'Agent version is updated, click to upgrade',
   agent_button_create_tip: 'Create an Agent？',
+  agent_detail_synchronization_task_number: 'Number of synchronization tasks',
+  agent_detail_version: 'Agent version',
+  agent_detail_create_time: 'Agent creation time',
+  agent_detail_host_ip: 'Host IP',
+  agent_detail_host_cpu_number: 'Host CPU number',
+  agent_detail_host_memory_size: 'Host memory size',
+  agent_detail_installation_manual: 'Installation directory',
 
   // 连接
   connection_manage: 'Connection Management',
@@ -102,13 +110,27 @@ export default {
   task_sync_type_initial_sync_cdc: 'Full amount + incremental',
 
   // 数据校验
-  verify_button_diff_verify: 'Diff verification',
-  verify_button_diff_verify_running: 'Verification in progress',
+  verify_manage: 'Data verification',
+  verify_details_title: 'Task verification details',
+  verify_history_title: 'Task verification history',
+  verify_diff_history_title: 'Diff verification history',
+  verify_diff_details_title: 'Diff verification details',
+  verify_result_title: 'Verification result',
+  verify_button_diff_verify: 'diff verification',
+  verify_button_diff_verify_running: 'verification in progress',
   verify_button_diff_verify_tips:
     'Re-verify the difference data result of this full verification, the difference in the number of rows does not support the difference verification',
   verify_last_start_time: 'Last verification time',
-  verify_button_diff_task_history: 'Verify history',
+  verify_button_diff_task_history: 'Verify History',
   verify_message_old_data_not_support: 'Old data does not support secondary verification',
   verify_message_out_of_limit:
-    'Your discrepancy data volume has exceeded the maximum number of error data saved by the task support, and the second verification is temporarily impossible.'
+    'Your discrepancy data volume has exceeded the maximum number of error data saved by the task support, and the second verification is temporarily unable to be performed',
+  verify_result_count_more: 'Target count more: {0}',
+  verify_result_count_less: 'Target count less: {0}',
+  verify_result_content_diff: 'Table data difference: {0}',
+  verify_result_count_inconsistent: 'inconsistent',
+  verify_result_count_consistent: 'consistent',
+
+  // 操作日志
+  operation_log_manage: 'Operation log'
 }
