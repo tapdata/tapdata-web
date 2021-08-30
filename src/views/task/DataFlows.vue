@@ -1289,8 +1289,9 @@ export default {
           this.table.fetch()
           this.responseHandler(res.data, this.$t('message.operationSuccuess'))
         })
-        .catch(data => {
-          this.$message.error('任务启动失败，请编辑任务完成映射配置', data)
+        .catch(err => {
+          console.log(err.response.msg)
+          this.$message.error('任务启动失败，请编辑任务完成映射配置')
         })
     },
     skipHandler(id, errorEvents) {
