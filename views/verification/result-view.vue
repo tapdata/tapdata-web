@@ -48,7 +48,7 @@
         <span>{{ $t('dataVerification.success') }}</span>
       </div>
       <div class="error-band" v-if="statsInfo.status === 'error'">
-        <i class="iconfont icon-warning-circle"></i>
+        <VIcon size="12">warning-circle</VIcon>
         <span>{{ statsInfo.errorMsg }}</span>
       </div>
       <template v-if="statsInfo.result !== 'passed'">
@@ -333,9 +333,11 @@ $margin: 10px;
 </style>
 <script>
 import JsonViewer from 'vue-json-viewer'
+import VIcon from '@/components/VIcon'
 export default {
   components: {
-    JsonViewer
+    JsonViewer,
+    VIcon
   },
   props: {
     remoteMethod: Function

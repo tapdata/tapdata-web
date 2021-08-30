@@ -60,8 +60,9 @@
         <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="150">
           <template slot-scope="scope">
             <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
-              >{{ scope.row.field_name }} <i class="iconfont icon-yuechi1"></i
-            ></span>
+              >{{ scope.row.field_name }}
+              <VIcon size="12" class="color-darkorange">key</VIcon>
+            </span>
             <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
           </template>
         </ElTableColumn>
@@ -213,8 +214,10 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
 export default {
   name: 'FieldMapping',
+  components: { VIcon },
   props: {
     fieldMappingNavData: Array,
     field_process: Array,
@@ -593,7 +596,7 @@ export default {
       let option = this.target.filter(v => v.id === id)
       if (option.length === 0) return
       option = option[0]
-      if (value === option.original_field_name) {
+      if (value === option.original_field_name || option.field) {
         this.restRename(id) //用户手动改为最原始的名字
         return
       }
@@ -685,7 +688,7 @@ export default {
       let opr = this.operations.filter(v => v.id === id && v.op === 'RENAME')
       if (opr.length > 0) {
         //元数据-字段操作
-        this.updateTarget(id, 't_field_name', opr[0].original_field_name)
+        this.updateTarget(id, 't_field_name', opr[0].original_field_name || opr[0].field)
       }
     },
     saveFileOperations() {
@@ -887,7 +890,7 @@ export default {
         }
       }
     }
-    .icon-yuechi1 {
+    .color-darkorange {
       color: darkorange;
     }
   }
