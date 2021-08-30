@@ -405,12 +405,14 @@ export default {
           this.loadingPage = true
           this.$nextTick(() => {
             this.fieldProcessMethod &&
-              this.fieldProcessMethod('table', name, id).then(data => {
-                this.$emit('update-nav', data)
-                this.updateView()
-              }).finally( ()=>{
-                this.loadingPage = false
-              })
+              this.fieldProcessMethod('table', name, id)
+                .then(data => {
+                  this.$emit('update-nav', data)
+                  this.updateView()
+                })
+                .finally(() => {
+                  this.loadingPage = false
+                })
           })
         }
       })
@@ -424,12 +426,14 @@ export default {
           this.$nextTick(() => {
             this.loadingPage = true
             this.fieldProcessMethod &&
-              this.fieldProcessMethod('all').then(data => {
-                this.$emit('update-nav', data)
-                this.updateView()
-              }).finally(()=>{
-                this.loadingPage = true
-              })
+              this.fieldProcessMethod('all')
+                .then(data => {
+                  this.$emit('update-nav', data)
+                  this.updateView()
+                })
+                .finally(() => {
+                  this.loadingPage = false
+                })
           })
         }
       })
