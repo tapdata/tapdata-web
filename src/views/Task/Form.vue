@@ -703,12 +703,14 @@ export default {
         let returnData = this.$refs.fieldMappingDom.returnData()
         if (!returnData.valid) {
           this.activeStep -= 1
+          this.getFormConfig()
           return //检验不通过
         }
         let deleteLen = returnData.target.filter(v => !v.is_deleted)
         if (deleteLen.length === 0) {
           this.$message.error('当前表被删除了所有字段，不允许保存操作')
           this.activeStep -= 1
+          this.getFormConfig()
           return //所有字段被删除了 不可以保存任务
         }
         this.saveOperations()
