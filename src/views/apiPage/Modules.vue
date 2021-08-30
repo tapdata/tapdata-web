@@ -94,7 +94,7 @@
       <el-table-column :label="$t('modules_header_dataSource')" prop="connection" sortable="connection">
         <template slot-scope="scope" v-if="scope.row.source">
           <span
-            @click.stop="dataSourceFn(props.item)"
+            @click.stop="dataSourceFn(scope.row)"
             :title="scope.row.source.name"
             style="cursor: pointer; color: #1976d2"
             >{{ scope.row.source.name }}({{
@@ -546,8 +546,12 @@ export default {
     // 跳转数据源
     dataSourceFn(data) {
       if (data.source) {
-        localStorage.setItem('connectionDatabaseType', data.source.database_type)
-        window.open('/#/connection/' + data.source.id, '_blank')
+        let routeUrl = this.$router.resolve({
+          name: 'connectionsEdit',
+          params: { id: data.source.id },
+          query: { databaseType: data.source.database_type }
+        })
+        window.open(routeUrl.href, '_blank')
       }
     },
     // 导入按钮
