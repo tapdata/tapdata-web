@@ -156,15 +156,22 @@
         <el-input-number v-model="editValueType[currentOperationType]"></el-input-number>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
-            <div v-if="item.maxPrecision && currentOperationType === 'precision'">
+            <div
+              v-if="
+                item.maxPrecision && currentOperationType === 'precision' && item.minPrecision !== item.maxPrecision
+              "
+            >
               <div v-if="index === 0">长度范围</div>
-              <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
+              <div>
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
             </div>
-            <div v-if="item.maxScale && currentOperationType === 'scale'" style="margin-top: 10px">
+            <div
+              v-if="item.maxScale && currentOperationType === 'scale' && item.minScale !== item.maxScale"
+              style="margin-top: 10px"
+            >
               <div>精度范围</div>
-              <div v-if="item.minScale !== item.maxScale">
+              <div>
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
             </div>
@@ -182,15 +189,15 @@
         </el-select>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
-            <div v-if="item.maxPrecision">
+            <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
               <div v-if="index === 0">长度范围</div>
-              <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
+              <div>
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
             </div>
-            <div v-if="item.maxScale" style="margin-top: 10px">
+            <div v-if="item.maxScale && item.minScale !== item.maxScale" style="margin-top: 10px">
               <div>精度范围</div>
-              <div v-if="item.minScale !== item.maxScale">
+              <div>
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
             </div>
@@ -322,6 +329,7 @@ export default {
             .then(({ data, target }) => {
               this.target = target
               this.fieldMappingTableData = data
+              this.initShowEdit()
               this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
             .finally(() => {
@@ -371,6 +379,18 @@ export default {
             this.typeMapping = data
           })
       })
+    },
+    //初始化目标字段、长度是否可编辑
+    initShowEdit() {
+      let data = this.fieldMappingTableData
+      if (this.fieldMappingTableData?.length === 0) return
+      for (let i = 0; i < data.length; i++) {
+        let rules = this.typeMapping.filter(v => v.dbType === data[i].t_data_type)
+        if (rules?.length > 0) {
+          rules = rules[0].rules
+          this.showFieldEdit(data[i].t_id, rules || [])
+        }
+      }
     },
     //恢复默认单表
     rollbackTable(name, id) {
@@ -500,32 +520,35 @@ export default {
     },
     //改类型影响字段长度 精度
     influences(id) {
-      let verify = true
-      let verifySame = true
+      this.showFieldEdit(id, this.currentTypeRules)
       this.currentTypeRules.forEach(r => {
         if (r.minScale || r.minScale === 0) {
-          if (r.minScale !== r.maxScale) {
-            this.updateTarget(id, 'isScaleEdit', true)
-            verify = false
-          } else if (r.minScale === r.maxScale && verify) {
-            this.updateTarget(id, 'isScaleEdit', false)
-          }
           this.updateTarget(id, 'scale', r.minScale < 0 ? 0 : r.minScale)
         } else {
           this.updateTarget(id, 'scale', null)
         }
         if (r.minPrecision || r.minPrecision === 0) {
-          if (r.minPrecision !== r.maxPrecision) {
-            this.updateTarget(id, 'isPrecisionEdit', true)
-            verifySame = false
-          } else if (r.minPrecision === r.maxPrecision && verifySame) {
-            this.updateTarget(id, 'isPrecisionEdit', false)
-          }
           this.updateTarget(id, 'precision', r.minPrecision < 0 ? 0 : r.minPrecision)
         } else {
           this.updateTarget(id, 'precision', null)
         }
       })
+    },
+    showFieldEdit(id, data) {
+      let isPrecision = data.filter(v => v.minPrecision < v.maxPrecision)
+      if (isPrecision.length !== 0) {
+        //固定值
+        this.updateTarget(id, 'isPrecisionEdit', true)
+      } else {
+        this.updateTarget(id, 'isPrecisionEdit', false)
+      }
+      let isScale = data.filter(v => v.minScale < v.maxScale)
+      if (isScale.length !== 0) {
+        //固定值
+        this.updateTarget(id, 'isScaleEdit', true)
+      } else {
+        this.updateTarget(id, 'isScaleEdit', false)
+      }
     },
     initDataType(val) {
       let target = this.typeMapping.filter(type => type.dbType === val)
