@@ -100,7 +100,7 @@ export default {
   agent_detail_host_memory_size: 'Host memory size',
   agent_detail_installation_manual: 'Installation directory',
 
-  // agent 部署
+  // Agent部署
   agent_deploy_title: 'Agent download and installation',
   agent_deploy_select_tip:
     'Tapdata DFS Cloud Edition needs to install the Agent locally to ensure the normal operation of the database connection and data transmission service. You can select the corresponding type below to download and install according to the type of server to be installed.',
@@ -146,6 +146,41 @@ export default {
     '2. After the docker installation is successful, the container ID of the installed Agent will be automatically output. You can use the docker ps command to view the running docker',
   agent_deploy_start_install_docker_third:
     "3. If you need to view the agent's log or start and stop the agent, please refer to",
+
+  // Agent升级
+  agent_upgrade_title: 'Agent version upgrade',
+  agent_upgrade_select_tip:
+    'The system has detected that your Agent is not the latest version, please follow the instructions to upgrade',
+  agent_upgrade_before_title: 'Before upgrade',
+  agent_upgrade_step_title: 'Upgrade step',
+  agent_deploy_upgrade_button_copy: 'Copy',
+  agent_deploy_upgrade_button_copied: 'copied',
+  agent_upgrade_before_windows_first: '1. Backup the tapdata.exe of the existing program',
+  agent_upgrade_before_windows_second:
+    '2. Download the new version of tapdata.exe program and put it in the program directory',
+  agent_upgrade_before_windows_second_download: 'Click to download',
+  agent_upgrade_before_windows_third: '3. Follow the upgrade steps',
+  agent_upgrade_step_windows_first: '1. Open the cmd window and enter the original Agent installation directory',
+  agent_upgrade_step_windows_second:
+    '2. Copy the upgrade command below and execute it in the directory. The upgrade command will automatically back up, upgrade and start. If the upgrade fails, it will automatically roll back the version.',
+  agent_upgrade_step_windows_third:
+    '3. After the upgrade command is executed, if the following appears, it means that the Agent upgrade is successful: Update finished.',
+  agent_upgrade_step_linux_first: '1. Enter the original Agent installation directory',
+  agent_upgrade_step_linux_second:
+    '2. Copy the upgrade command below and execute it in the directory. The upgrade command will automatically back up, upgrade and start. If the upgrade fails, it will automatically roll back the version.',
+  agent_upgrade_step_linux_third:
+    '3. After the upgrade command is executed, if the following appears, it means that the Agent upgrade is successful: Update finished.',
+  agent_upgrade_step_docker_first: '1. Enter the docker container of the original Agent',
+  agent_upgrade_step_docker_first_one: "(1) Found the original agent's docker container CONTAINER ID",
+  agent_upgrade_step_docker_first_two: '(2) Enter the container through the container ID',
+  agent_upgrade_step_docker_first_three:
+    '(3) If the container has stopped running, you can start the container first and then enter the container to upgrade',
+  agent_upgrade_step_docker_first_four: 'Start the container',
+  agent_upgrade_step_docker_first_five: 'Enter the container',
+  agent_upgrade_step_docker_second:
+    '2. Copy the upgrade command below to execute directly in the container, the upgrade command will automatically back up, upgrade and start, if the upgrade fails, it will automatically roll back the version',
+  agent_upgrade_step_docker_third:
+    '3. After the upgrade command is executed, if the following appears, it means that the Agent upgrade is successful: Update finished.',
 
   // 连接
   connection_manage: 'Connection Management',

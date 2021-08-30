@@ -96,7 +96,7 @@ export default {
   agent_detail_host_memory_size: '宿主机内存大小',
   agent_detail_installation_manual: '安装目录',
 
-  // agent部署
+  // Agent部署
   agent_deploy_title: 'Agent 下载与安装',
   agent_deploy_select_tip:
     'Tapdata DFS 云版需要先在本地安装 Agent 以确保连接数据库和数据传输服务的正常运行, 您可以根据要安装服务器的类型在下方选择相应的类型进行下载安装',
@@ -132,6 +132,35 @@ export default {
   agent_deploy_start_install_docker_second:
     '2.docker安装成功后，会自动输出已安装Agent的容器ID，您可以通过docker ps命令来查看正在运行的docker',
   agent_deploy_start_install_docker_third: '3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考',
+
+  // Agent升级
+  agent_upgrade_title: 'Agent 版本升级',
+  agent_upgrade_select_tip: '系统检测到您的Agent不是最新版本，请按照指引进行升级',
+  agent_upgrade_before_title: '升级前',
+  agent_upgrade_step_title: '升级步骤',
+  agent_deploy_upgrade_button_copy: '复制',
+  agent_deploy_upgrade_button_copied: '已复制',
+  agent_upgrade_before_windows_first: '1.备份现有程序的tapdata.exe',
+  agent_upgrade_before_windows_second: '2.下载新版的tapdata.exe程序放到程序目录',
+  agent_upgrade_before_windows_second_download: '点击下载',
+  agent_upgrade_before_windows_third: '3.按照升级步骤操作',
+  agent_upgrade_step_windows_first: '1.打开cmd窗口，进入原Agent安装目录',
+  agent_upgrade_step_windows_second:
+    '2.复制下方的升级命令并在目录下执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
+  agent_upgrade_step_windows_third: '3.待升级命令执行完毕后，出现如下所示则代表Agent升级成功：Update finished.',
+  agent_upgrade_step_linux_first: '1.进入原Agent安装目录下',
+  agent_upgrade_step_linux_second:
+    '2.复制下方的升级命令并在目录下执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
+  agent_upgrade_step_linux_third: '3.待升级命令执行完毕后，出现如下所示则代表Agent升级成功：Update finished.',
+  agent_upgrade_step_docker_first: '1.进入原Agent的docker容器内',
+  agent_upgrade_step_docker_first_one: '(1)找到原Agent的docker容器CONTAINER ID',
+  agent_upgrade_step_docker_first_two: '(2)通过容器ID进入容器',
+  agent_upgrade_step_docker_first_three: '(3)如果容器已停止运行，可以先启动容器再进入容器进行升级',
+  agent_upgrade_step_docker_first_four: '启动容器',
+  agent_upgrade_step_docker_first_five: '进入容器',
+  agent_upgrade_step_docker_second:
+    '2.复制下方的升级命令直接在容器内执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
+  agent_upgrade_step_docker_third: '3.待升级命令执行完毕后，出现如下所示则代表Agent升级成功：Update finished.',
 
   // 连接
   connection_manage: '连接管理',

@@ -133,6 +133,35 @@ export default {
     '2.docker安裝成功後，會自動輸出已安裝Agent的容器ID，您可以通過docker ps命令來查看正在運行的docker',
   agent_deploy_start_install_docker_third: '3.如果您需要查看Agent的日誌或者對Agent進行啟停操作，請參考',
 
+  // Agent升級
+  agent_upgrade_title: 'Agent 版本升級',
+  agent_upgrade_select_tip: '系統檢測到您的Agent不是最新版本，請按照指引進行升級',
+  agent_upgrade_before_title: '升級前',
+  agent_upgrade_step_title: '升級步驟',
+  agent_deploy_upgrade_button_copy: '複製',
+  agent_deploy_upgrade_button_copied: '已復制',
+  agent_upgrade_before_windows_first: '1.備份現有程序的tapdata.exe',
+  agent_upgrade_before_windows_second: '2.下載新版的tapdata.exe程序放到程序目錄',
+  agent_upgrade_before_windows_second_download: '點擊下載',
+  agent_upgrade_before_windows_third: '3.按照升級步驟操作',
+  agent_upgrade_step_windows_first: '1.打開cmd窗口，進入原Agent安裝目錄',
+  agent_upgrade_step_windows_second:
+    '2.複製下方的升級命令並在目錄下執行，該升級命令會自動進行備份、升級和啟動，如果升級失敗會自動回退版本',
+  agent_upgrade_step_windows_third: '3.待升級命令執行完畢後，出現如下所示則代表Agent升級成功：Update finished.',
+  agent_upgrade_step_linux_first: '1.進入原Agent安裝目錄下',
+  agent_upgrade_step_linux_second:
+    '2.複製下方的升級命令並在目錄下執行，該升級命令會自動進行備份、升級和啟動，如果升級失敗會自動回退版本',
+  agent_upgrade_step_linux_third: '3.待升級命令執行完畢後，出現如下所示則代表Agent升級成功：Update finished.',
+  agent_upgrade_step_docker_first: '1.進入原Agent的docker容器內',
+  agent_upgrade_step_docker_first_one: '(1)找到原Agent的docker容器CONTAINER ID',
+  agent_upgrade_step_docker_first_two: '(2)通過容器ID進入容器',
+  agent_upgrade_step_docker_first_three: '(3)如果容器已停止運行，可以先啟動容器再進入容器進行升級',
+  agent_upgrade_step_docker_first_four: '啟動容器',
+  agent_upgrade_step_docker_first_five: '進入容器',
+  agent_upgrade_step_docker_second:
+    '2.複製下方的升級命令直接在容器內執行，該升級命令會自動進行備份、升級和啟動，如果升級失敗會自動回退版本',
+  agent_upgrade_step_docker_third: '3.待升級命令執行完畢後，出現如下所示則代表Agent升級成功：Update finished.',
+
   // 连接
   connection_manage: '連接管理',
 
