@@ -1280,10 +1280,15 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      dataFlows.update(where, attributes).then(res => {
-        this.table.fetch()
-        this.responseHandler(res.data, this.$t('message.operationSuccuess'))
-      })
+      dataFlows
+        .update(where, attributes)
+        .then(res => {
+          this.table.fetch()
+          this.responseHandler(res.data, this.$t('message.operationSuccuess'))
+        })
+        .catch(data => {
+          this.$message.error('任务启动失败，请编辑任务完成映射配置', data)
+        })
     },
     skipHandler(id, errorEvents) {
       this.changeStatus([id], { status: 'scheduled', errorEvents })
