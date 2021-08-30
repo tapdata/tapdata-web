@@ -765,7 +765,6 @@ export default {
           this.$axios
             .get('tm/api/typeMappings/dataType?databaseType=' + this.dataSourceModel.target_databaseType)
             .then(data => {
-              console.log(data)
               if (data?.length === 0) {
                 this.hiddenFieldMapping = true
                 this.getSteps()
@@ -1003,7 +1002,10 @@ export default {
         type: ''
       }
       //第四步 数据组装
-      this.transferData = this.$refs.transfer.returnData()
+      if (this.hiddenFieldMapping) {
+        //没有第五步 表设置 需要主动调用 transfer.returnData
+        this.transferData = this.$refs.transfer.returnData()
+      }
       let selectTable = []
       if (this.transferData && this.transferData.selectSourceArr.length > 0) {
         selectTable.push({
