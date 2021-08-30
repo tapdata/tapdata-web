@@ -719,17 +719,19 @@ export default {
       } else this.field_process.push(field_process)
       return this.field_process
     },
-    returnData() {
+    returnData(hiddenMsg) {
       let result = this.checkTable()
       if (result.checkDataType || result.checkInvalid) {
-        this.$message.error(
-          `检测到您还有 ${result.count} 张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理`
-        )
+        if (!hiddenMsg) {
+          this.$message.error(
+            `检测到您还有 ${result.count} 张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理`
+          )
+        }
         return {
           valid: false,
           row: '',
           operations: '',
-          target: ''
+          target: []
         }
       }
       return {
