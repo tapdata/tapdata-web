@@ -65,7 +65,17 @@
           <div class="box-text">
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
-              <el-button class="e-button" size="mini" @click="fieldProcess">映射配置</el-button>
+              <FieldMapping
+                :dataFlow="dataFlow"
+                :showBtn="true"
+                mappingType="cluster-clone"
+                :hiddenFieldProcess="false"
+                :isFirst="model.isFirst"
+                @update-first="returnModel"
+                @returnFieldMapping="returnFieldMapping"
+                ref="fieldMapping"
+                class="fr"
+              ></FieldMapping>
               <el-button class="e-button" size="mini" :disabled="model.selectSourceDatabase.view" @click="handDialog">{{
                 $t('dataFlow.changeName')
               }}</el-button>
@@ -208,18 +218,6 @@
       :close-on-click-modal="false"
       v-if="dialogFieldProcessVisible"
     >
-      <FieldMapping
-        ref="fieldMappingDom"
-        class="custom-field-mapping"
-        :remoteMethod="intiFieldMappingTableData"
-        :typeMappingMethod="getTypeMapping"
-        :fieldProcessMethod="updateFieldProcess"
-        :fieldMappingNavData="fieldMappingNavData"
-        :field_process="model.field_process"
-        @row-click="saveOperations"
-        :hiddenFieldProcess="false"
-        @update-nav="updateFieldMappingNavData"
-      ></FieldMapping>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
@@ -253,11 +251,12 @@ import _ from 'lodash'
 import log from '../../../log'
 import factory from '../../../api/factory'
 import MqTransfer from './mqTransfer'
+import FieldMapping from '@/components/FieldMapping'
 let connections = factory('connections')
 let editorMonitor = null
 export default {
   name: 'databaseLink',
-  components: { MqTransfer },
+  components: { MqTransfer, FieldMapping },
   data() {
     return {
       mysqlDisable: false,
@@ -291,6 +290,8 @@ export default {
         field_process: [], //字段处理器
         transferFlag: false,
         isFirst: true, //初始值
+        scope: '',
+        dataFlow: '',
 
         selectSourceDatabase: {
           table: true,
@@ -384,6 +385,7 @@ export default {
 
       editorMonitor = vueAdapter.editor
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
+      this.getDataFlow()
 
       // if (!this.configJoinTable) return
     },
@@ -435,7 +437,7 @@ export default {
           }
         }
       }
-
+      this.getDataFlow()
       return result
     },
 
@@ -556,153 +558,17 @@ export default {
       //   }
       // }
     },
-    //表设置
-    fieldProcess() {
-      let data = this.getDataFlowData()
-      if (!data) return
-      let dataFlowId = data.id
-      if (this.model.isFirst && !dataFlowId) {
-        data['rollback'] = 'all' //新建任务重置恢复默认
-      } else {
-        delete data['rollback']
-        delete data['rollbackTable']
-      }
-      let promise = this.$api('DataFlows').getMetadata(data)
-      promise.then(data => {
-        this.dialogFieldProcessVisible = true
-        this.model.isFirst = false
-        this.fieldMappingNavData = data?.data
-      })
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
     },
-    async updateFieldProcess(rollback, rollbackTable, id) {
-      let data = this.getDataFlowData()
-      if (rollback === 'all') {
-        data['rollback'] = rollback
-        //删除整个字段处理器
-        this.model.field_process = []
-      } else if (rollbackTable) {
-        data['rollback'] = rollback
-        data['rollbackTable'] = rollbackTable
-        for (let i = 0; i < this.model.field_process.length; i++) {
-          // 删除操作
-          let ops = this.model.field_process[i]
-          if (ops.table_id === id) {
-            this.model.field_process.splice(i, 1)
-          }
-        }
-      }
-      let result = this.updateAutoFieldProcess(data)
-      let promise = await this.$api('DataFlows').getMetadata(result)
-      return promise?.data
+    returnFieldMapping(field_process) {
+      this.model.field_process = field_process
+      console.log(this.model.field_process)
     },
-    //更新左边导航
-    updateFieldMappingNavData(data) {
-      this.fieldMappingNavData = data
-    },
-    //获取当前任务所有的节点
-    getDataFlowData() {
-      //手动同步更新字段处理器
-      let data = this.scope.getDataFlowData()
-      let result = this.updateAutoFieldProcess(data)
-      return result
-    },
-    updateAutoFieldProcess(data) {
-      for (let i = 0; i < data.stages.length; i++) {
-        if (data.stages[i].outputLanes) {
-          data['stages'][i].field_process = this.model.field_process
-        }
-      }
-      return data
-    },
-    //获取表设置
-    async intiFieldMappingTableData(row) {
-      let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
-      source = source.data && source.data.length > 0 ? source.data[0].fields : []
-      let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
-      target = target.data && target.data.length > 0 ? target.data[0].fields : []
-      // 初始化所有字段都映射 只取顶级字段
-      source = source.filter(field => field.field_name.indexOf('.') === -1)
-      //源表 目标表数据组合
-      let fieldMappingTableData = []
-      source.forEach(item => {
-        target.forEach(field => {
-          //先检查是否被改过名
-          let node = {
-            t_id: field.id,
-            t_field_name: field.field_name,
-            t_data_type: field.data_type,
-            t_scale: field.scale,
-            t_precision: field.precision,
-            is_deleted: field.is_deleted, //目标决定这个字段是被删除？
-            t_isPrecisionEdit: true, //默认不能编辑
-            t_isScaleEdit: true //默认不能编辑
-          }
-          if (item.field_name === field.field_name) {
-            fieldMappingTableData.push(Object.assign({}, item, node))
-          }
-          let ops = this.handleFieldName(row, field.field_name)
-          if (!ops || ops?.length === 0) return
-          ops = ops[0]
-          if (ops.operand === field.field_name && ops.original_field_name === item.field_name) {
-            fieldMappingTableData.push(Object.assign({}, item, node))
-          }
-        })
-      })
-      return {
-        data: fieldMappingTableData,
-        target: target
-      }
-    },
-    //判断是否改名
-    getFieldOperations(row) {
-      let operations = []
-      if (!this.model.field_process || this.model.field_process.length === 0) return
-      let field_process = this.model.field_process.filter(process => process.table_id === row.sourceTableId)
-      if (field_process.length > 0) {
-        operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
-      }
-      return operations || []
-    },
-    //判断是否改名
-    handleFieldName(row, fieldName) {
-      let operations = this.getFieldOperations(row)
-      if (!operations) return
-      let ops = operations.filter(op => op.operand === fieldName && op.op === 'RENAME')
-      return ops
-    },
-    //获取typeMapping
-    async getTypeMapping(row) {
-      let promise = await this.$api('TypeMapping').getId(row.sinkDbType)
-      return promise?.data
-    },
-    saveReturnData() {
-      //保存字段映射
-      let returnData = this.$refs.fieldMappingDom.returnData()
-      if (!returnData.valid) return //检验不通过
-      let deleteLen = returnData.target.filter(v => !v.is_deleted)
-      if (deleteLen.length === 0) {
-        this.$message.error('当前表被删除了所有字段，不允许保存操作')
-        return //所有字段被删除了 不可以保存任务
-      }
-      this.saveOperations(returnData.row, returnData.operations, returnData.target)
-      this.dialogFieldProcessVisible = false
-    },
-    //保存字段处理器
-    saveOperations(row, operations, target) {
-      if (!target || target?.length === 0) return
-      let deleteLen = target.filter(v => !v.is_deleted)
-      if (deleteLen.length === 0) {
-        this.$message.error('当前表被删除了所有字段，不允许保存操作')
-        return //所有字段被删除了 不可以保存任务
-      }
-      let where = {
-        qualified_name: row.sinkQulifiedName
-      }
-      let data = {
-        fields: target
-      }
-      this.$api('MetadataInstances').update(where, data)
-      this.model.field_process = this.$refs.fieldMappingDom.saveFileOperations()
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     },
     // 获取表名称
     loadDataModels(connectionId) {
