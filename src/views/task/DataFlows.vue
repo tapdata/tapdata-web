@@ -76,7 +76,9 @@
               :placeholder="$t('dataFlow.searchPlaceholder')"
               @input="table.fetch(1, 800)"
             >
-              <i slot="prefix" class="el-input__icon el-icon-search"></i>
+              <span slot="prefix" class="el-input__icon h-100 ml-1">
+                <VIcon size="14">search</VIcon>
+              </span>
             </el-input>
           </li>
           <li>
@@ -215,7 +217,7 @@
         width="180"
       >
         <template #default="{ row }">
-          <div class="flex align-center">
+          <div class="flex align-items-center">
             <span>{{ row.tcm && (row.tcm.agentName || row.tcm.agentId || '-') }}</span>
           </div>
         </template>
@@ -249,7 +251,7 @@
       ></el-table-column>
       <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
         <template #default="{ row }">
-          <div class="flex align-center">
+          <div class="flex align-items-center">
             <template v-if="statusMap[row.status]">
               <img
                 v-if="statusMap[row.status].icon == 'loading'"
@@ -478,10 +480,11 @@ import SkipError from '../../components/SkipError'
 import DownAgent from '../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import TableFilter from '@/components/TableFilter'
+import VIcon from '@/components/VIcon'
 
 let interval = null
 export default {
-  components: { TablePage, TableFilter, DownAgent, SkipError },
+  components: { TablePage, TableFilter, DownAgent, SkipError, VIcon },
   data() {
     return {
       restLoading: false,
@@ -1116,7 +1119,7 @@ export default {
 
             if (res.data?.length) {
               res.data.forEach(item => {
-                if (item.errorEvents?.length) {
+                if (item?.errorEvents?.length) {
                   falg = true
                 }
               })
@@ -1280,10 +1283,16 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      dataFlows.update(where, attributes).then(res => {
-        this.table.fetch()
-        this.responseHandler(res.data, this.$t('message.operationSuccuess'))
-      })
+      dataFlows
+        .update(where, attributes)
+        .then(res => {
+          this.table.fetch()
+          this.responseHandler(res.data, this.$t('message.operationSuccuess'))
+        })
+        .catch(err => {
+          console.log(err.response.msg)
+          this.$message.error('任务启动失败，请编辑任务完成映射配置')
+        })
     },
     skipHandler(id, errorEvents) {
       this.changeStatus([id], { status: 'scheduled', errorEvents })

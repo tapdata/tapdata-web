@@ -14,10 +14,13 @@
             v-model="searchParams.keyword"
             clearable
             size="small"
-            prefix-icon="el-icon-search"
             :placeholder="$t('dataVerification.verifyjobname')"
             @input="table.fetch(1, 800)"
-          ></ElInput>
+          >
+            <span slot="prefix" class="el-input__icon h-100 ml-1">
+              <VIcon size="14">search</VIcon>
+            </span>
+          </ElInput>
         </li>
         <li class="item">
           <ElSelect
@@ -130,7 +133,7 @@
           <div class="flex align-center">
             <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
               <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
-                <i class="data-verify__icon el-icon-error"></i>
+                <VIcon class="data-verify__icon">error</VIcon>
                 <span v-if="scope.row.inspectMethod === 'row_count'">
                   {{ $t('dataVerification.inconsistent') }}
                 </span>
@@ -142,7 +145,7 @@
               </div>
             </template>
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
-              <i class="data-verify__icon el-icon-error"></i>
+              <VIcon class="data-verify__icon">error</VIcon>
               <span>Error</span>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">

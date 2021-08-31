@@ -4,7 +4,7 @@
       <div class="header">{{ $t('notification.noticeCenter') }}</div>
       <ul class="menu">
         <li :class="{ active: activePanel === 'system' }" @click="selectPanel('system')">
-          <i class="iconfont icon-lingdang"></i>
+          <VIcon>bells</VIcon>
           <span class="content">{{ $t('notification.systemNotice') }}</span>
           <span class="unread" v-show="unRead > 0">{{ unRead }}</span>
         </li>

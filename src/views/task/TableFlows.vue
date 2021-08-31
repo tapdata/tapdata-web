@@ -170,7 +170,7 @@
               </el-table-column>
               <el-table-column :label="$t('tableFlow.rows')" width="150" align="center">
                 <template slot-scope="scope">
-                  <i class="el-icon-loading" v-show="scope.row.noshow"></i>
+                  <VIcon v-show="scope.row.noshow">loading-circle</VIcon>
                   <div v-show="!scope.row.noshow">
                     <div class="table-target">[S] {{ scope.row.output }}</div>
                     <div v-show="!scope.row.noshow" v-for="item in scope.row.outf" :key="item.name">
@@ -216,12 +216,12 @@
 import factory from '../../api/factory'
 import Classification from '@/components/Classification'
 import SelectClassify from '../../components/SelectClassify'
-
+import VIcon from '@/components/VIcon'
 const dataFlows = factory('DataFlows')
 
 export default {
   name: 'TableFlows',
-  components: { Classification, SelectClassify },
+  components: { Classification, SelectClassify, VIcon },
   data() {
     return {
       loading: true,
