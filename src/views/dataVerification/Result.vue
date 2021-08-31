@@ -10,7 +10,11 @@
           <i class="iconfont icon-warning-circle"></i>
           <span>{{ errorMsg }}</span>
         </div>
-        <div v-if="resultInfo.parentId" class="color-info" style="font-size: 12px; text-align: right">
+        <div
+          v-if="resultInfo.parentId && $route.name === 'dataVerifyResult'"
+          class="color-info"
+          style="font-size: 12px; text-align: right"
+        >
           {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
           <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
             $t('verify_button_diff_task_history')
@@ -93,7 +97,13 @@ export default {
       return this.inspect?.inspectMethod || ''
     },
     tableData() {
-      return this.resultInfo.stats || []
+      let list = this.resultInfo.stats || []
+      if (this.$route.name === 'dataVerifyResultDetails') {
+        list = list.filter(item => {
+          return item.source_total > 0
+        })
+      }
+      return list
     }
   },
   created() {
@@ -113,19 +123,17 @@ export default {
         .then(res => {
           let result = res.data[0]
           if (result) {
-            if (result) {
-              this.resultInfo = result
-              let stats = result.stats
-              this.inspect = result.inspect
-              if (stats.length) {
-                this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                this.taskId = stats[0].taskId
-                this.$refs.resultView.fetch(1)
-                if (this.type !== 'row_count') {
-                  this.$nextTick(() => {
-                    this.$refs.singleTable.setCurrentRow(stats[0])
-                  })
-                }
+            this.resultInfo = result
+            let stats = result.stats
+            this.inspect = result.inspect
+            if (stats.length) {
+              this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+              this.taskId = stats[0].taskId
+              this.$refs.resultView.fetch(1)
+              if (this.type !== 'row_count') {
+                this.$nextTick(() => {
+                  this.$refs.singleTable.setCurrentRow(stats[0])
+                })
               }
             }
           }
