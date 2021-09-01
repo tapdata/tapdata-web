@@ -306,6 +306,7 @@ export default function (vm) {
         type: 'input',
         field: 'sslPass',
         label: vm.$t('dataForm.form.sslPass'),
+        domType: 'password',
         show: false,
         dependOn: [
           {
@@ -319,7 +320,8 @@ export default function (vm) {
               show: true
             }
           }
-        ]
+        ],
+        showPassword: true
       },
       {
         type: 'switch',
