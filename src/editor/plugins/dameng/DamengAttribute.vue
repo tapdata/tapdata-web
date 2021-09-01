@@ -1,5 +1,5 @@
 <template>
-  <div class="hbaseNode nodeStyle">
+  <div class="damengNode nodeStyle">
     <head>
       <VIcon class="headIcon color-primary">arrow-right-circle</VIcon>
       <span class="txt">{{ $t('editor.nodeSettings') }}</span>
@@ -12,12 +12,12 @@
 			</div> -->
       <el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
         <!-- <span class="addTxt">+新建文件</span> -->
-        <el-form-item :label="$t('editor.choose') + ' HBase'" prop="connectionId" :rules="rules" required>
+        <el-form-item :label="$t('editor.choose') + ' Dameng'" prop="connectionId" :rules="rules" required>
           <el-select
             :filterable="!databaseLoading"
             :loading="databaseLoading"
             v-model="model.connectionId"
-            :placeholder="$t('message.placeholderSelect') + 'HBase'"
+            :placeholder="$t('message.placeholderSelect') + 'Dameng'"
             :clearable="true"
           >
             <el-option
@@ -167,7 +167,7 @@ export default {
       dataNodeInfo: {},
       model: {
         connectionId: '',
-        type: 'hbase',
+        type: 'dameng',
         tableName: '',
         field_process: [],
         isFirst: true
@@ -185,7 +185,7 @@ export default {
     let result = await connections.get({
       filter: JSON.stringify({
         where: {
-          database_type: 'hbase'
+          database_type: 'dameng'
         },
         fields: {
           name: 1,
@@ -231,7 +231,7 @@ export default {
                 : {
                     table_name: this.model.tableName,
                     cdc_enabled: true,
-                    meta_type: 'hbase',
+                    meta_type: 'dameng',
                     fields: []
                   }
             this.$emit('schemaChange', _.cloneDeep(schema))
@@ -313,7 +313,7 @@ export default {
 
     getData() {
       let result = _.cloneDeep(this.model)
-      result.name = result.tableName || 'HBase'
+      result.name = result.tableName || 'Dameng'
       return result
     },
 
@@ -388,7 +388,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.hbaseNode {
+.damengNode {
   .el-form-item {
     margin-bottom: 10px;
   }

@@ -43,5 +43,7 @@ export default {
   js_func_dialog_nofunctions: '代码缺少JS函数',
   js_func_dialog_create_title: '新增记录',
   js_func_dialog_edit_title: '更新记录',
-  js_func_delete_remind: '确定要删除函数'
+  js_func_delete_remind: '确定要删除函数',
+
+  dag_data_node_label_dameng: 'Dameng节点'
 }

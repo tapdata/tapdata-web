@@ -384,7 +384,7 @@ export default {
       })
     },
     supportEmbedArray() {
-      return !['app.Table', 'app.HiveNode'].includes(this.targetCellType)
+      return !['app.Table', 'app.HiveNode', 'app.DamengNode'].includes(this.targetCellType)
     },
     removeCondition(idx) {
       this.model.joinTable.joinKeys.splice(idx, 1)
