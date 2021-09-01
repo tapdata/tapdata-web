@@ -175,20 +175,6 @@
         </template>
       </el-table-column>
     </TablePage>
-    <!-- 创建模型 -->
-    <!--    <el-dialog-->
-    <!--      width="600px"-->
-    <!--      custom-class="create-dialog"-->
-    <!--      :title="$t('metadata.createNewModel')"-->
-    <!--      :close-on-click-modal="false"-->
-    <!--      :visible.sync="createDialogVisible"-->
-    <!--    >-->
-    <!--      <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>-->
-    <!--      <span slot="footer" class="dialog-footer">-->
-    <!--        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>-->
-    <!--        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>-->
-    <!--      </span>-->
-    <!--    </el-dialog>-->
   </section>
 </template>
 
@@ -478,7 +464,7 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#409EFF' } }, item.original_name)
+        h('span', { style: { color: '#409EFF' } }, item.name)
       ])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning'
@@ -487,13 +473,13 @@ export default {
           return
         }
         this.$api('modules')
-          .delete(item.id, item.tablename)
+          .delete(item.id, item.name)
           .then(() => {
-            this.$message.success(this.$t('message.deleteOK'))
+            this.$message.success(this.$t('message_delete_ok'))
             this.table.fetch()
           })
           .catch(() => {
-            this.$message.info(this.$t('message.deleteFail'))
+            this.$message.info(this.$t('message_delete_fail'))
           })
       })
     },

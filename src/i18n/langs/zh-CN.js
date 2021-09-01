@@ -18,6 +18,7 @@ export default {
   task_settings_cdc_sync_point_date: '【任务设置】增量采集开始时刻，请选择时间',
 
   // 公共区
+  menu_help: '帮助',
   button_copy: '复制',
   button_delete: '删除',
   button_details: '详情',
@@ -31,7 +32,13 @@ export default {
   button_close: '关闭',
   button_filter: '筛选',
   button_search: '搜索',
+  button_query: '查询',
   button_back: '返回',
+  button_reset: '重置',
+  button_create: '创建',
+
+  query_fuzzy: '模糊匹配',
+  query_precise: '精准匹配',
 
   message_delete_ornot: '是否删除',
   message_save_ok: '保存成功',
@@ -141,5 +148,44 @@ export default {
   query_build_queryValue: '字段值',
   query_build_add: '添加',
   query_build_remove: '删除',
-  query_build_selectField: '选择字段'
+  query_build_selectField: '选择字段',
+
+  // 客户端
+  application_header_id: '客户端ID',
+  application_header_client_name: '客户端名称',
+  application_header_grant_type: '授权类型',
+  application_header_client_secret: '客户端密钥',
+  application_header_redirect_uri: '重定向URI',
+  application_header_scopes: '权限范围',
+  application_generator: '生成',
+  application_show_menu: '显示到菜单',
+  application_scopes_tip: '多个权限范围使用逗号分割',
+  application_true: '是',
+  application_false: '否',
+  application_create: '创建客户端',
+
+  // api统计
+  api_asnalysis_header_api: 'API',
+  api_asnalysis_header_method: '方法',
+  api_asnalysis_header_url: '地址',
+  api_asnalysis_header_users: '用户数',
+  api_asnalysis_header_calls: '调用次数',
+  api_asnalysis_header_lastTime: '最后调用',
+  api_asnalysis_header_rows: '返回行数',
+  api_asnalysis_header_in_bytes: '流入',
+  api_asnalysis_header_out_bytes: '流出',
+  api_asnalysis_header_sum_res_timespan: '总运算时间（秒）',
+  api_asnalysis_header_avg_res_timespan: '平均响应时间（毫秒）',
+  api_asnalysis_total: '统计',
+  api_asnalysis_name: '名称',
+
+
+  // api服务器
+  api_server_name: '名称',
+  api_server_user: '用户',
+  api_server_process_id: 'API 服务器唯一标识',
+  api_server_client_name: ' API 服务器名称',
+  api_server_client_uri: 'API 服务器访问地址',
+  api_server_download: '下载',
+  api_server_download_API_Server_config: '下载API配置文件'
 }

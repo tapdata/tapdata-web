@@ -41,9 +41,10 @@
             </div>
             <div>
               <div class="module-path-item-button" style="margin-left: 10px">
-               <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
-                <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
-                  ><i class="fa fa-edit el-icon-edit-outline"></i></span>
+                <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
+                  <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
+                    ><i class="fa fa-edit el-icon-edit-outline"></i
+                  ></span>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" :content="$t('button_delete')" placement="bottom">
                   <span title="remove" @click="removeApiPath(index)" style="cursor: pointer"
@@ -69,8 +70,8 @@
         <div class="module-path-item" v-if="createForm.paths.length === 0">No record found</div>
       </div>
       <div class="module-tags">
-        <span>{{$t('module_form_tags')}}</span>
-        <span v-for="item in createForm.listtags" :key="item.id">{{item.value}}</span>
+        <span>{{ $t('module_form_tags') }}</span>
+        <span v-for="item in createForm.listtags" :key="item.id">{{ item.value }}</span>
         <el-button type="primary" @click="handleOpenTag()" size="small">
           {{ $t('module_form_edit') }}
         </el-button>
@@ -89,11 +90,7 @@
       @backApiPath="handleBackApiPath"
       v-if="dialogVisible"
     ></CustomerApiForm>
-    <SelectClassify
-      ref="classify"
-      :types="['api']"
-      @operationsClassify="saveClassify"
-    ></SelectClassify>
+    <SelectClassify ref="classify" :types="['api']" @operationsClassify="saveClassify"></SelectClassify>
   </div>
 </template>
 
@@ -103,7 +100,7 @@ import CustomerApiForm from './CustomerApiForm'
 import SelectClassify from '@/components/SelectClassify'
 export default {
   name: 'ModuleForm',
-  components: { CustomerApiForm,SelectClassify },
+  components: { CustomerApiForm, SelectClassify },
   data() {
     return {
       createFormConfig: null,
@@ -136,7 +133,7 @@ export default {
   created() {
     this.getForm()
     this.getConnection()
-    if(this.$route.query.id) {
+    if (this.$route.query.id) {
       this.getDetail()
     }
 
@@ -218,7 +215,7 @@ export default {
             Object.assign(_this.createForm, res.data)
             // _this.createForm.apiType = res.data.apiType
             // _this.createForm.datasource = res.data.datasource
-            console.log('获取数据',_this.createForm)
+            console.log('获取数据', _this.createForm)
             _this.fields = res.data.fields
             _this.getTableData()
           }
@@ -363,13 +360,12 @@ export default {
       // }
       this.dialogVisible = true
     },
-     // 编辑自定义api路径
+    // 编辑自定义api路径
     editApiPath(item) {
       this.apiData = item
       this.apiData.createType = 'edit'
-      console.log('edit-item',item)
+      console.log('edit-item', item)
       this.dialogVisible = true
-
     },
     // 打开api文档
     openDocument() {
@@ -425,14 +421,14 @@ export default {
     // 打开数据目录
     handleOpenTag() {
       let id = this.$route.query.id
-      if(id) {
+      if (id) {
         this.$refs.classify.show(this.apiData.listtags)
       } else {
         this.$refs.classify.show({})
       }
     },
     // 保存数据目录
-    saveClassify(tag){
+    saveClassify(tag) {
       this.createForm.listtags = tag
     },
 
@@ -458,8 +454,8 @@ export default {
       let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
       this.createForm.apiVersion
       this.apiData.path = '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath //+'/'+ this.api.namespace;//+'/'+ this.api.name;//"/cust/"+
-     debugger
-     if (this.apiData.createType == 'add') {
+      debugger
+      if (this.apiData.createType == 'add') {
         this.createForm.paths.push(this.apiData)
       }
       delete this.createForm.createType
@@ -501,17 +497,19 @@ export default {
                 }
               })
             }
-            console.log('createForm',this.createForm)
-            this.$api('modules')[method](this.createForm).then(res=>{
-              this.$message.success(this.$t('message_save_ok'))
-            })
+            console.log('createForm', this.createForm)
+            this.$api('modules')
+              [method](this.createForm)
+              .then(res => {
+                this.$message.success(this.$t('message_save_ok'))
+              })
           }
         })
       }
     },
     // 返回列表
     handleBack() {
-      this.$router.push({ name: 'modules'})
+      this.$router.push({ name: 'modules' })
     },
     // 表单
     getForm() {

@@ -252,10 +252,11 @@ const childRoutes = [
   {
     path: '/apiAnalysis',
     name: 'apiAnalysis',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/ApiAnalysis'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'API_stats_menu',
-      url: '/old/index.html#/apiAnalysis',
+      // url: '/old/index.html#/apiAnalysis',
       title: i18n.t('tap.apiStats'),
       isCollapse: false
     }
@@ -263,10 +264,11 @@ const childRoutes = [
   {
     path: '/applications',
     name: 'applications',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/Applications'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'API_clients_menu',
-      url: '/old/index.html#/applications',
+      // url: '/old/index.html#/applications',
       title: i18n.t('tap.apiClients'),
       isCollapse: false
     }
@@ -274,10 +276,11 @@ const childRoutes = [
   {
     path: '/apiServers',
     name: 'apiServers',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/ApiServers'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'API_server_menu',
-      url: '/old/index.html#/apiServers',
+      // url: '/old/index.html#/apiServers',
       title: i18n.t('tap.apiSever'),
       isCollapse: false
     }

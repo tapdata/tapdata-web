@@ -10,6 +10,25 @@ export default class Modules extends PublicAPI {
   constructor() {
     super('/api/Modules')
   }
+  post(params, name) {
+    if (name) {
+      return axios.post(`${this.url}/${params.uri}`, params)
+    }
+
+    if (params.uri) {
+      return axios.post(`${this.url}/${params.uri}`, params)
+    }
+
+    return axios.post(this.url, params)
+  }
+
+  delete(id, name) {
+    if (name == '') {
+      return axios.delete(`${this.url}/${id}`)
+    } else {
+      return axios.delete(`${this.url}/${id}?tablename=${name}`)
+    }
+  }
 
   getApiDocument(id) {
     return axios.get(this.url + '/getApiDocument?id=' + id)
