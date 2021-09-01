@@ -423,7 +423,7 @@ export default {
       item.statusIcon = statusInfo.icon || ''
       item.startTimeFmt = item.startTime ? this.$moment(item.startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       // 全量状态下，任务完成状态时，前端识别为已停止
-      if (item.status === 'paused' && item.setting.sync_type === 'initial_sync') {
+      if (item.status === 'paused' && item.setting?.sync_type === 'initial_sync') {
         let { stages, stats } = item
         let flag = true
         // 有节点
