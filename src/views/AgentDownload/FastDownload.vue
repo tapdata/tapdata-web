@@ -2,10 +2,9 @@
   <section :class="['fast-download', 'down-page']">
     <TheHeader></TheHeader>
     <main class="page-main block">
-      <div class="title">Agent 下载与安装</div>
+      <div class="title">{{ $t('agent_deploy_title') }}</div>
       <p class="title-text pt-10">
-        Tapdata DFS 云版需要先在本地安装 Agent 以确保连接数据库和数据传输服务的正常运行,
-        您可以根据要安装服务器的类型在下方选择相应的类型进行下载安装
+        {{ $t('agent_deploy_select_tip') }}
       </p>
 
       <div class="down-type">
@@ -18,122 +17,145 @@
           <span>{{ down.name }}</span>
         </div>
       </div>
-      <div class="text-style">安装前准备</div>
+      <div class="text-style">{{ $t('agent_deploy_before_prepare_title') }}</div>
       <template v-if="downLoadType === 'windows'">
         <ul class="pt-5 ul-style">
           <li class="flex">
-            <span>1. 安装前请确认您的部署环境中已安装Java1.8版本并正确配置环境变量。</span>
-            <ElLink class="ml-3" type="primary" @click="windowsToJava">点击查看Java1.8安装和配置方式</ElLink>
+            <span>{{ $t('agent_deploy_before_prepare_windows_first') }}</span>
+            <ElLink class="ml-3" type="primary" @click="windowsToJava">{{
+              $t('agent_deploy_before_prepare_windows_first_link')
+            }}</ElLink>
           </li>
-          <li>2.点击下方的下载按钮将Tapdata Agent安装包下载到本地环境。</li>
+          <li>{{ $t('agent_deploy_before_prepare_windows_second') }}</li>
           <li>
-            <ElButton class="mt-5" type="primary" @click="handleDownLoad">点击下载 Tapdata Agent</ElButton>
+            <ElButton class="mt-5" type="primary" @click="handleDownLoad">{{
+              $t('agent_deploy_before_prepare_windows_second_download')
+            }}</ElButton>
           </li>
           <li>
-            <div class="my-5 text-style">开始安装</div>
+            <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
           </li>
           <li>
-            1. 将下载好的Tapdata Agent放入要安装Agent的目录，并通过cmd窗口在目录下执行下方命令即可实现Tapdata
-            Agent的自动部署及启动
+            {{ $t('agent_deploy_start_install_windows_first') }}
           </li>
           <li class="box title-text mt-2">
             <span class="link-line">{{ windowsLink }}</span>
-            <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_start_install_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
               <span
                 class="operaKey"
                 v-clipboard:copy="windowsLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">复制</i>
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
           <li class="mt-3">
-            <span>2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：</span>
+            <span>{{ $t('agent_deploy_start_install_windows_second') }}</span>
             <img class="mt-2 block" :src="getImg('downloadWindows')" alt="" />
           </li>
           <li class="flex">
-            <span>3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
-            <ElLink type="primary" @click="windowsToAgent">《Agent基本操作》</ElLink>
+            <span>{{ $t('agent_deploy_start_install_windows_third') }}</span>
+            <ElLink type="primary" @click="windowsToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
           </li>
         </ul>
       </template>
       <template v-if="downLoadType === 'Linux'">
         <ul class="pt-5 ul-style">
           <li>
-            <span>1.安装前请确认您的部署环境中已安装Java1.8版本并正确配置环境变量。</span>
-            <ElLink type="primary" @click="linuxToJava">点击查看Java1.8安装和配置方式</ElLink>
+            <span>{{ $t('agent_deploy_before_prepare_linux_first') }}</span>
+            <ElLink type="primary" @click="linuxToJava">{{
+              $t('agent_deploy_before_prepare_linux_first_link')
+            }}</ElLink>
           </li>
-          <li>2.我们非常建议在一个独立、干净的文件夹内部署 Tapdata Agent</li>
-          <li>3.下载、部署 Tapdata Agent 无需 root 权限，只需要对部署目录具备读写权限即可</li>
+          <li>{{ $t('agent_deploy_before_prepare_linux_second') }}</li>
+          <li>{{ $t('agent_deploy_before_prepare_linux_third') }}</li>
           <li>
-            <div class="my-5 text-style">开始安装</div>
+            <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
           </li>
-          <li>1.请复制下方命令并在本地部署环境执行，其包含 Tapdata Agent 的下载、自动部署及启动</li>
+          <li>{{ $t('agent_deploy_start_install_linux_first') }}</li>
           <li class="box title-text my-2">
             <span class="link-line">{{ linuxLink }}</span>
-            <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_start_install_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
               <span
                 class="operaKey"
                 v-clipboard:copy="linuxLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">复制</i>
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
           <li>
-            <span>2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：</span>
+            <span>{{ $t('agent_deploy_start_install_linux_second') }}</span>
             <img class="mt-2 block" :src="getImg('downloadLinux')" alt="" />
           </li>
           <li>
-            <span>4.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
-            <ElLink type="primary" @click="linuxToAgent">《Agent基本操作》</ElLink>
+            <span>{{ $t('agent_deploy_start_install_linux_third') }}</span>
+            <ElLink type="primary" @click="linuxToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
           </li>
         </ul>
       </template>
       <template v-if="downLoadType === 'Docker'">
         <ul class="pt-5 ul-style">
-          <li>1.我们提供了包含 Tapdata Agent 运行所需环境的镜像</li>
+          <li>{{ $t('agent_deploy_before_prepare_docker_first') }}</li>
           <li>
-            <span>2.首先您的部署环境必须已经安装Docker才可使用Docker方式安装，如未安装可参考</span>
-            <ElLink type="primary" @click="dockerToInstall">《Docker安装》</ElLink>
-            <span>进行安装</span>
+            <span>{{ $t('agent_deploy_before_prepare_docker_second') }}</span>
+            <ElLink type="primary" @click="dockerToInstall">{{
+              $t('agent_deploy_before_prepare_docker_install_link')
+            }}</ElLink>
+            <span>{{ $t('agent_deploy_before_prepare_docker_second_install') }}</span>
           </li>
           <li>
-            <div class="my-5 text-style">开始安装</div>
+            <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
           </li>
-          <li>1.请复制下方命令并在部署环境执行，其包含镜像的下载及运行，Tapdata Agent 的下载、自动部署及启动</li>
+          <li>{{ $t('agent_deploy_start_install_docker_first') }}</li>
           <li class="box title-text my-2">
             <span class="link-line">{{ dockerLink }}</span>
-            <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_start_install_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
               <span
                 class="operaKey"
                 v-clipboard:copy="dockerLink"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">复制</i>
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
               </span>
             </ElTooltip>
           </li>
           <li>
-            <span
-              >2.docker安装成功后，会自动输出已安装Agent的容器ID，您可以通过docker ps命令来查看正在运行的docker</span
-            >
+            <span>{{ $t('agent_deploy_start_install_docker_second') }}</span>
             <img class="mt-2 block" :src="getImg('downloadDocker')" alt="" />
           </li>
           <li class="flex">
-            <span>3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考</span>
-            <ElLink type="primary" @click="dockerToAgent">《Agent基本操作》</ElLink>
+            <span>{{ $t('agent_deploy_start_install_docker_third') }}</span>
+            <ElLink type="primary" @click="dockerToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
           </li>
         </ul>
       </template>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="handleNextStep()">完成</ElButton>
+      <ElButton type="primary" @click="handleNextStep()">{{ $t('gl_button_finish') }}</ElButton>
     </footer>
   </section>
 </template>

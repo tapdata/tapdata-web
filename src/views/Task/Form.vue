@@ -9,7 +9,7 @@
             :class="[{ active: activeStep >= index }, { 'color-primary': activeStep >= index }]"
           >
             <span class="step-index">
-              <VIcon v-if="activeStep > index">check</VIcon>
+              <VIcon v-if="activeStep > index" size="12">check</VIcon>
               <span v-else>{{ index + 1 }}</span>
             </span>
             <span>{{ step.text }}</span>

@@ -740,66 +740,6 @@ export default {
   background: #fff;
   .el-steps {
     border-bottom: 1px solid #f2f2f2;
-    ::v-deep {
-      .el-step__head {
-        border-color: rgba(0, 0, 0, 0.25);
-        color: rgba(0, 0, 0, 0.25);
-        &.is-process {
-          border-color: rgba(44, 101, 255, 1);
-          color: rgba(44, 101, 255, 1);
-        }
-        &.is-success {
-          border-color: rgba(44, 101, 255, 1);
-          color: rgba(44, 101, 255, 1);
-          .el-step__line {
-            background-color: rgba(44, 101, 255, 0.05);
-          }
-        }
-        .el-step__line {
-          height: 5px;
-          top: 9px;
-          left: 57%;
-          right: -43%;
-          background-color: rgba(1, 1, 1, 0.05);
-          .el-step__line-inner {
-            display: none;
-          }
-        }
-        .el-step__icon {
-          border: 1px solid #2c65ff;
-          .el-step__icon-inner {
-            font-weight: normal;
-            color: #2c65ff;
-          }
-        }
-      }
-      .el-step__title {
-        font-size: 14px;
-        font-weight: normal;
-        color: #000;
-      }
-    }
-  }
-  .el-radio-group {
-    ::v-deep {
-      .el-radio-button {
-        &:first-child {
-          .el-radio-button__inner {
-            border-top-left-radius: 4px;
-            border-bottom-left-radius: 4px;
-          }
-        }
-        &:last-child {
-          .el-radio-button__inner {
-            border-top-right-radius: 4px;
-            border-bottom-right-radius: 4px;
-          }
-        }
-        .el-radio-button__inner {
-          background-color: #fff;
-        }
-      }
-    }
   }
   .agent-info {
     background: rgba(44, 101, 255, 0.1);
