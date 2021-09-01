@@ -158,6 +158,7 @@
           在前面的版本中，Tapdata Cloud已支持在两个 MongoDB
           集群之间复制数据。本次版本应MongoDB用户要求，支持standalone模式MongoDB的全量同步。
         </div>
+        <div class="mb-4" style="color: #d83931">温馨提示：体验新功能，需要更新Agent到最新版本哦。</div>
         <div class="mb-4">更多新功能具体介绍，敬请关注Tapdata服务号后续发布。</div>
         <div class="mb-3">
           <img style="width: 100px" src="../../../public/images/notice/wx_code.png" alt="" />
