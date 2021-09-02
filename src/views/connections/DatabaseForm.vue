@@ -1,5 +1,5 @@
 <template>
-  <div class="databaseFrom">
+  <div class="databaseFrom" v-loading="loadingFrom">
     <header class="header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
       {{ $route.params.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
     </header>
@@ -670,10 +670,12 @@ export default {
         'rest api',
         'custom_connection',
         'gridfs',
-        // 'hive',
+        'hive',
         'tcp_udp',
         'hbase',
-        'kudu'
+        'kudu',
+        'greenplum',
+        'hana'
       ],
       model: '',
       config: {
@@ -684,6 +686,7 @@ export default {
       typeMap: TYPEMAP,
       timer: null,
       status: '',
+      loadingFrom: true,
       dialogTestVisible: false,
       dialogDatabaseTypeVisible: false,
       dialogEditNameVisible: false,
@@ -1074,9 +1077,10 @@ export default {
         let sslCA = items.find(it => it.field === 'sslCAFile')
         if (this.model.database_type === 'mongodb' && this.$route.params.id && itemIsUrl) {
           itemIsUrl.options[0].disabled = true //编辑模式下mongodb不支持URL模式
-        } else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
-          itemIsUrl.options[1].disabled = true
         }
+        // else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
+        //   itemIsUrl.options[1].disabled = true
+        // }
         ////编辑模式下mongodb 不校验证书
         if (this.model.database_type === 'mongodb' && this.$route.params.id && sslKey) {
           sslKey.rules = []
@@ -1099,6 +1103,7 @@ export default {
         this.checkItems = config.checkItems //根据model变化更新表单项显示或隐藏
         this.checkItems && this.checkItems()
       }
+      this.loadingFrom = false
     },
     //第一步 选择实例
     getInstanceRegion() {
@@ -1416,9 +1421,18 @@ export default {
         return
       }
       let data = Object.assign({}, this.model)
-      if (data.database_type === 'mq' && (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string')) {
-        data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
-        data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
+      if (data.database_type === 'mq') {
+        if (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string') {
+          data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
+          data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
+        }
+
+        if (data.mqType === '0') {
+          delete data.database_host
+          delete data.database_port
+        } else {
+          delete data.brokerURL
+        }
       }
 
       // if (this.model.database_type === 'mysqlpxc') {
@@ -1454,7 +1468,7 @@ export default {
           if (params.database_type === 'mongodb') {
             //params['database_uri'] = encodeURIComponent(params['database_uri'])
             params.fill = params.isUrl ? 'uri' : ''
-            delete params.isUrl
+            params.isUrl
           }
           //rest api 数据组装
           if (params.database_type === 'rest api') {
@@ -1553,6 +1567,10 @@ export default {
               //编辑需要特殊标识 updateSchema = false editTest = true
               this.$refs.test.start(false, true)
             } else {
+              delete this.model.id
+              if (!data.isUrl && data.database_type === 'mongodb') {
+                this.model.database_password = data.plain_password || ''
+              }
               this.$refs.test.start(false)
             }
           }

@@ -115,10 +115,10 @@ export default {
     uniteKey: {
       immediate: true,
       async handler() {
-        console.log('FormPanel', arguments, this.activeType)
+        console.log('FormPanel', arguments)
         if (this.activeType) {
           const formSchema = this.$store.getters['dataflow/formSchema'] || {}
-          console.log('formSchema', this.activeType)
+          console.log('formSchema')
           switch (this.activeType) {
             case 'node':
               await this.setSchema(this.ins.formSchema || formSchema.node)
@@ -140,7 +140,7 @@ export default {
 
     // 设置schema
     async setSchema(schema, values) {
-      console.log('setSchema', schema)
+      // console.log('setSchema', schema)
       this.schema = null
 
       await this.$nextTick()
@@ -162,6 +162,7 @@ export default {
             type: 'string',
             'x-decorator': 'ElFormItem',
             'x-component': 'Select',
+            default: 'Data_Flow_Engine_V1',
             enum: [
               {
                 label: this.$t('dataFlow.flowEngineV1'),
@@ -396,7 +397,10 @@ export default {
             title: '每次读取数量',
             type: 'string',
             'x-decorator': 'ElFormItem',
-            'x-component': 'Input'
+            'x-component': 'Input',
+            'x-content': {
+              append: 'row'
+            }
             // default: 100
           },
           processorConcurrency: {

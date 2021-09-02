@@ -43,7 +43,8 @@
               'mq',
               'hbase',
               'kudu',
-              'kafka'
+              'kafka',
+              'hana'
             ].includes(stageType)
           "
           v-loading="apiLoading"
@@ -543,7 +544,9 @@ export default {
         custom_processor: this.$t('editor.cell.processor.customProcessor.name'),
         kafka: this.$t('editor.cell.data_node.kafkaText'),
         mariadb: 'mariadb',
-        'mysql pxc': 'mysql pxc'
+        'mysql pxc': 'mysql pxc',
+        message_processor: this.$t('editor.cell.processor.transform.tip'),
+        protobuf_convert_processor: this.$t('editor.cell.processor.transform.tip')
       },
       flow: {
         name: '',
@@ -996,12 +999,14 @@ export default {
               'mq',
               'hbase',
               'kudu',
-              'tcp_udp'
+              'tcp_udp',
+              'hana'
             ].includes(this.stageType)
           ) {
             this.getStageDataApi(currentStageData.connectionId, this.tableName)
           }
         }
+        this.stage.nodeName = currentStageData.name
         this.getFlowInsightData()
         this.getApiData()
       },

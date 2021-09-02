@@ -1,9 +1,9 @@
 <template>
   <div class="database-link nodeStyle">
-    <head class="head">
-      <span @click="hanleClose" class="headIcon iconfont icon-you2" type="primary"></span>
-      <span class="txt">{{ $t('editor.cell.link.mappingRelations') }}</span>
-    </head>
+    <!--    <head class="head">-->
+    <!--      <span @click="hanleClose" class="headIcon iconfont icon-you2" type="primary"></span>-->
+    <!--      <span class="txt">{{ $t('editor.cell.link.mappingRelations') }}</span>-->
+    <!--    </head>-->
     <div class="nodeBody">
       <!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
@@ -19,45 +19,48 @@
         ref="form"
         action="javascript:void(0);"
       >
-        <el-form-item>
-          <div class="e-label">
-            <label class="el-form-item__label">{{ $t('editor.cell.link.copySourceDatabase') }}</label>
-            <el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
-              <span>{{ $t('editor.cell.link.formTip') }}</span>
-              <span class="icon iconfont icon-tishi1" slot="reference"></span>
-            </el-popover>
-          </div>
+        <template v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+          <el-form-item>
+            <div class="e-label">
+              <label class="el-form-item__label">{{ $t('editor.cell.link.copySourceDatabase') }}</label>
+              <el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
+                <span>{{ $t('editor.cell.link.formTip') }}</span>
+                <span class="icon iconfont icon-tishi1" slot="reference"></span>
+              </el-popover>
+            </div>
 
-          <el-checkbox v-model="model.selectSourceDatabase.table" disabled
-            >Table
-            <el-popover placement="top-start" width="400" trigger="hover">
-              <span>{{ $t('editor.cell.link.tableTip') }}</span>
-              <span class="icon iconfont icon-tishi1" slot="reference"></span>
-            </el-popover>
-          </el-checkbox>
+            <el-checkbox v-model="model.selectSourceDatabase.table" disabled
+              >Table
+              <el-popover placement="top-start" width="400" trigger="hover">
+                <span>{{ $t('editor.cell.link.tableTip') }}</span>
+                <span class="icon iconfont icon-tishi1" slot="reference"></span>
+              </el-popover>
+            </el-checkbox>
 
-          <el-checkbox v-model="model.selectSourceDatabase.view" :disabled="mysqlDisable" @change="changeView"
-            >View
-            <el-popover placement="top-start" width="400" trigger="hover">
-              <span>{{ $t('editor.cell.link.viewTip') }}</span>
-              <span class="icon iconfont icon-tishi1" slot="reference"></span>
-            </el-popover>
-          </el-checkbox>
+            <el-checkbox v-model="model.selectSourceDatabase.view" :disabled="mysqlDisable" @change="changeView"
+              >View
+              <el-popover placement="top-start" width="400" trigger="hover">
+                <span>{{ $t('editor.cell.link.viewTip') }}</span>
+                <span class="icon iconfont icon-tishi1" slot="reference"></span>
+              </el-popover>
+            </el-checkbox>
 
-          <el-checkbox v-model="model.selectSourceDatabase.function" :disabled="mysqlDisable">Function</el-checkbox>
-          <el-checkbox v-model="model.selectSourceDatabase.procedure" :disabled="mysqlDisable">Procedure</el-checkbox>
-        </el-form-item>
-        <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
-          <el-select v-model="model.dropType" size="mini">
-            <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
-            <el-option :label="$t('editor.cell.link.existingSchema.keepExistedData')" value="drop_data"></el-option>
-            <el-option
-              v-if="targetDatabaseType === 'mongodb'"
-              :label="$t('editor.cell.link.existingSchema.removeSchema')"
-              value="drop_schema"
-            ></el-option>
-          </el-select>
-        </el-form-item>
+            <el-checkbox v-model="model.selectSourceDatabase.function" :disabled="mysqlDisable">Function</el-checkbox>
+            <el-checkbox v-model="model.selectSourceDatabase.procedure" :disabled="mysqlDisable">Procedure</el-checkbox>
+          </el-form-item>
+          <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
+            <el-select v-model="model.dropType" size="mini">
+              <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
+              <el-option :label="$t('editor.cell.link.existingSchema.keepExistedData')" value="drop_data"></el-option>
+              <el-option
+                v-if="targetDatabaseType === 'mongodb'"
+                :label="$t('editor.cell.link.existingSchema.removeSchema')"
+                value="drop_schema"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </template>
+
         <div class="database-tableBox" v-loading="transferLoading">
           <div class="box-text">
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
@@ -349,7 +352,7 @@ export default {
       editorMonitor = vueAdapter.editor
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
 
-      if (!this.configJoinTable) return
+      // if (!this.configJoinTable) return
     },
 
     getData() {

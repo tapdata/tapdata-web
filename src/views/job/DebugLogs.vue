@@ -98,7 +98,7 @@ export default {
           }
         },
         order: 'id DESC',
-        limit: 20
+        limit: 35
       }
       this.addFilter(filter)
       this.getLogsData(filter, false, false)
@@ -112,7 +112,7 @@ export default {
           }
         },
         order: 'id DESC',
-        limit: 20
+        limit: 35
       }
       this.addFilter(filter)
 

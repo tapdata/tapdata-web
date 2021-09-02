@@ -307,6 +307,9 @@ $borderColor: (
 .color-primary {
   color: map-get($color, primary);
 }
+.color-info {
+  color: map-get($color, info);
+}
 /*.el-input__inner {
   border-radius: 2px;
   border: 1px solid #d9d9d9;

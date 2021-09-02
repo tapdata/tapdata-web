@@ -7,12 +7,13 @@
             v-model="model.name"
             class="form-item-width"
             :placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
+            @change="changeNameFnc"
           ></el-input>
         </el-form-item>
       </el-form>
       <div class="box box-content">
         <div class="btn-line mb-3 text-rf">
-          <span class="mr-2" style="font-size: 12px; color: #999">{{ $t('dataForm.form.transform.isDrag') }}</span>
+          <span class="mr-2" style="font-size: 12px; color: #999">{{ $t('dataForm.form.transform.dragSort') }}</span>
           <el-button size="mini" @click="addFieldDialog">{{ $t('dataForm.form.transform.addField') }}</el-button>
         </div>
         <TreeTransfer
@@ -30,6 +31,7 @@
           :to-right-before="toRightBefore"
           @change-left-data="changeLeftData"
           @change-right-data="changeRightData"
+          @node-drag-end-right="nodeDragEndRight"
         >
           <template v-slot:right-tree="{ node, data }">
             <div class="transfer-item-content flex">
@@ -282,6 +284,9 @@ export default {
       this.rightData = _.cloneDeep(data)
       this.setConfig()
     },
+    nodeDragEndRight() {
+      this.setConfig()
+    },
     formatRightDataName(data = []) {
       data.forEach(el => {
         if (el.name.includes('.')) {
@@ -363,7 +368,8 @@ export default {
       })
     },
     addField() {
-      this.$refs.treeTransfer.toRight(true, _.cloneDeep(this.createForm))
+      let form = Object.assign(_.cloneDeep(this.createForm), { key: '_FIELD_' + this.createForm.name })
+      this.$refs.treeTransfer.toRight(true, form, false)
     },
     editField() {
       const data = this.editData.data
@@ -485,6 +491,8 @@ export default {
         // 更新右树
         const index = children.findIndex(d => d[this.nodeKey] === data[this.nodeKey])
         children.splice(index, 1)
+        // 清空右侧选中
+        this.$refs.treeTransfer.resetRightTree()
         this.changeRightData([...this.rightData])
       })
     },
@@ -599,6 +607,9 @@ export default {
         mapping: getMapping,
         schema: getSchema
       }
+    },
+    changeNameFnc() {
+      this.setConfig()
     }
   }
 }

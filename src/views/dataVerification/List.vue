@@ -77,7 +77,7 @@
         <el-button
           v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
           v-readonlybtn="'SYNC_job_import'"
-          size="mini"
+          size="small"
           class="btn"
           @click="handleImport"
         >
@@ -86,7 +86,7 @@
         </el-button>
         <el-button
           v-readonlybtn="'SYNC_category_application'"
-          size="mini"
+          size="small"
           class="btn"
           v-show="multipleSelection.length > 0"
           @click="handleExport"
@@ -123,32 +123,37 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="sourceTotal" width="120" :label="$t('dataVerification.sourceTotalRows')"></el-table-column>
-      <el-table-column prop="targetTotal" width="120" :label="$t('dataVerification.targetTotalRows')"></el-table-column>
-      <el-table-column :label="$t('dataVerification.verifyResult')" width="140">
+      <el-table-column prop="sourceTotal" width="120" :label="$t('verify_history_source_total_rows')"></el-table-column>
+      <!-- <el-table-column prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></el-table-column> -->
+      <el-table-column :label="$t('dataVerification.verifyResult')" width="180">
         <template slot-scope="scope">
-          <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
-            <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
+          <div class="flex align-center">
+            <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
+              <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
+                <i class="data-verify__icon el-icon-error"></i>
+                <span v-if="scope.row.inspectMethod === 'row_count'">
+                  {{ $t('dataVerification.inconsistent') }}
+                </span>
+                <span v-else> {{ $t('dataVerification.contConsistent') }}{{ scope.row.difference_number }} </span>
+              </div>
+              <div v-else class="data-verify__status success">
+                <i class="data-verify__icon el-icon-success"></i>
+                <span>{{ $t('dataVerification.consistent') }}</span>
+              </div>
+            </template>
+            <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
               <i class="data-verify__icon el-icon-error"></i>
-              <span v-if="scope.row.inspectMethod === 'row_count'">
-                {{ $t('dataVerification.inconsistent') }}
-              </span>
-              <span v-else> {{ $t('dataVerification.contConsistent') }}{{ scope.row.difference_number }} </span>
+              <span>Error</span>
             </div>
-            <div v-else class="data-verify__status success">
-              <i class="data-verify__icon el-icon-success"></i>
-              <span>{{ $t('dataVerification.consistent') }}</span>
+            <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
+              <img style="width: 26px; vertical-align: middle" :src="$window._TAPDATA_OPTIONS_.loadingImg" />
+              <span>{{ statusMap[scope.row.status] }}</span>
             </div>
-          </template>
-          <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
-            <i class="data-verify__icon el-icon-error"></i>
-            <span>Error</span>
+            <div v-else>-</div>
+            <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="14"
+              >ercijiaoyan</VIcon
+            >
           </div>
-          <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
-            <img style="width: 26px; vertical-align: middle" :src="$window._TAPDATA_OPTIONS_.loadingImg" />
-            <span>{{ statusMap[scope.row.status] }}</span>
-          </div>
-          <div v-else>-</div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('dataVerification.verifyStatus')" width="120" prop="status">
@@ -181,7 +186,7 @@
             style="margin-left: 10px"
             type="primary"
             :disabled="!scope.row.InspectResult"
-            @click="toTableInfo(scope.row.id, scope.row.InspectResult.id, scope.row.inspectMethod, scope.row.name)"
+            @click="toTableInfo(scope.row.id)"
             >{{ $t('dataVerification.detailTip') }}</ElLink
           >
           <ElLink
@@ -216,10 +221,12 @@
 <script>
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
+import VIcon from '@/components/VIcon'
 let timeout = null
 export default {
   components: {
-    TablePage
+    TablePage,
+    VIcon
   },
   data() {
     return {
@@ -357,65 +364,40 @@ export default {
             let result = item.InspectResult
             let sourceTotal = '-'
             let targetTotal = '-'
-            let diffNum = 0
             if (result) {
               sourceTotal = result.source_total
               targetTotal = result.target_total
-              diffNum = Math.abs(targetTotal - sourceTotal)
             }
             item.lastStartTime = item.lastStartTime
               ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
               : '-'
             item.sourceTotal = sourceTotal
             item.targetTotal = targetTotal
-            item.diffNum = diffNum
             return item
           })
         }
       })
     },
-    toTableInfo(id, resultId, type, name) {
+    toTableInfo(id) {
       let url = ''
-      let query = {
-        id: resultId,
-        inspectId: id,
-        type: type,
-        name: name
-      }
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        let route = top.App.$router.resolve({
-          name: 'VerificationResult',
-          query
-        })
-        url = top.location.href.split('#/')[0] + route.href
-      } else {
-        let route = this.$router.resolve({
-          path: '/dataVerifyResult',
-          query
-        })
-        url = route.href
-      }
+      let route = this.$router.resolve({
+        name: 'dataVerifyDetails',
+        params: {
+          id
+        }
+      })
+      url = route.href
       window.open(url, '_blank')
     },
     toTableHistory(id) {
       let url = ''
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        let route = top.App.$router.resolve({
-          name: 'VerificationHistory',
-          query: {
-            inspectId: id
-          }
-        })
-        url = top.location.href.split('#/')[0] + route.href
-      } else {
-        let route = this.$router.resolve({
-          path: '/dataVerifyHistory',
-          query: {
-            inspectId: id
-          }
-        })
-        url = route.href
-      }
+      let route = this.$router.resolve({
+        name: 'dataVerifyHistory',
+        params: {
+          id
+        }
+      })
+      url = route.href
       window.open(url, '_blank')
     },
     startTask(id) {
@@ -427,7 +409,7 @@ export default {
               inq: multipleSelection
             }
           },
-          { status: 'scheduling', ping_time: 0 }
+          { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
         )
         .then(() => {
           this.$message.success(this.$t('dataVerification.startVerify'))

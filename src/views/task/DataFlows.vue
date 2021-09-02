@@ -1090,52 +1090,42 @@ export default {
       let _this = this
       let id = ids[0]
       let filter = {
+        fields: {
+          id: true,
+          errorEvents: true
+        },
         where: {
-          'contextMap.dataFlowId': {
-            eq: id
-          },
-          level: 'ERROR'
+          id: {
+            inq: ids
+          }
         }
+        // where: {
+        //   or: ids.map(item => {
+        //     return {
+        //       'contextMap.dataFlowId': {
+        //         like: item
+        //       }
+        //     }
+        //   }),
+        //   level: 'ERROR'
+        // }
       }
-      if (this.$refs.agentDialog.checkAgent()) {
-        // if (node) {
-        // 	this.$refs.errorHandler.checkError(node, () => {
-        // 		//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
-        // 		if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
-        // 			const h = this.$createElement;
-        // 			let arr = this.$t('message.startAggregation_message').split('XXX');
-        // 			this.$confirm(
-        // 				h('p', [
-        // 					arr[0] + '(',
-        // 					h('span', { style: { color: '#409EFF' } }, node.name),
-        // 					')' + arr[1]
-        // 				]),
-        // 				this.$t('dataFlow.importantReminder'),
-        // 				{
-        // 					type: 'warning',
-        // 					closeOnClickModal: false
-        // 				}
-        // 			)
-        // 				.then(() => {
-        // 					//若任务内存在聚合处理器，启动前先重置
-        // 					dataFlows.reset(node.id).then(() => {
-        // 						this.changeStatus(ids, { status: 'scheduled' });
-        // 					});
-        // 				})
-        // 				.catch(() => {
-        // 					this.table.fetch();
-        // 				});
-        // 		} else {
-        // 			this.changeStatus(ids, { status: 'scheduled' });
-        // 		}
-        // 	});
-        // } else {
 
+      if (this.$refs.agentDialog.checkAgent()) {
         _this
-          .$api('logs')
+          .$api('DataFlows')
           .get({ filter: JSON.stringify(filter) })
           .then(res => {
+            let falg = false
+
             if (res.data?.length) {
+              res.data.forEach(item => {
+                if (item.errorEvents?.length) {
+                  falg = true
+                }
+              })
+            }
+            if (falg) {
               _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
                 _this.changeStatus(ids, { status: 'scheduled' })
               })
@@ -1144,6 +1134,38 @@ export default {
             }
           })
       }
+      // if (node) {
+      // 	this.$refs.errorHandler.checkError(node, () => {
+      // 		//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
+      // 		if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
+      // 			const h = this.$createElement;
+      // 			let arr = this.$t('message.startAggregation_message').split('XXX');
+      // 			this.$confirm(
+      // 				h('p', [
+      // 					arr[0] + '(',
+      // 					h('span', { style: { color: '#409EFF' } }, node.name),
+      // 					')' + arr[1]
+      // 				]),
+      // 				this.$t('dataFlow.importantReminder'),
+      // 				{
+      // 					type: 'warning',
+      // 					closeOnClickModal: false
+      // 				}
+      // 			)
+      // 				.then(() => {
+      // 					//若任务内存在聚合处理器，启动前先重置
+      // 					dataFlows.reset(node.id).then(() => {
+      // 						this.changeStatus(ids, { status: 'scheduled' });
+      // 					});
+      // 				})
+      // 				.catch(() => {
+      // 					this.table.fetch();
+      // 				});
+      // 		} else {
+      // 			this.changeStatus(ids, { status: 'scheduled' });
+      // 		}
+      // 	});
+      // } else {
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)

@@ -52,10 +52,12 @@ export default {
         'jira',
         'mq',
         'dameng',
-        // 'hive',
+        'hive',
         'tcp_udp',
         'hbase',
-        'kudu'
+        'kudu',
+        'greenplum',
+        'hana'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],

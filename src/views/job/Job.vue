@@ -635,7 +635,17 @@ export default {
       if (result && result.data.length > 0) {
         this.flowDataName = result.data[0].name
       }
+
       log('DataFlows Draft Save Params: ', data)
+      if (data?.stages?.length) {
+        data.stages.forEach(item => {
+          // 是否有hive
+          if (item.type === 'hive' || item.database_type === 'hive') {
+            data.setting.transformerConcurrency = 1
+            data.setting.readBatchSize = 10000
+          }
+        })
+      }
       promise = dataFlowsApi.draft(data)
 
       if (promise) {
@@ -807,7 +817,7 @@ export default {
             readCdcInterval: 500,
             readBatchSize: 1000
           })
-        } else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode'].includes(cell.type)) {
+        } else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode','app.HanaNode'].includes(cell.type)) {
           postData.mappingTemplate = 'custom'
 
           Object.assign(stage, {
@@ -994,6 +1004,21 @@ export default {
         this.doSaveStartDataFlow(data)
       }
     },
+    checkAgentStatus(callback) {
+      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
+        this.$api('tcm')
+          .getAgentCount()
+          .then(res => {
+            if (res?.data?.agentRunningCount > 0) {
+              callback && callback()
+            } else {
+              this.$message.error('Agent当前状态异常，请检查')
+            }
+          })
+      } else {
+        callback && callback()
+      }
+    },
     /**
      * start button handler
      */
@@ -1002,36 +1027,38 @@ export default {
       let id = this.$route.query.id
 
       if (this.$refs.agentDialog.checkAgent()) {
-        let doStart = () => {
-          let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
-          if (data) {
-            this.doSaveStartDataFlow(data)
+        this.checkAgentStatus(() => {
+          let doStart = () => {
+            let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
+            if (data) {
+              this.doSaveStartDataFlow(data)
+            }
           }
-        }
-        let filter = {
-          where: {
-            'contextMap.dataFlowId': {
-              eq: id
-            },
-            level: 'ERROR'
+          let filter = {
+            where: {
+              'contextMap.dataFlowId': {
+                eq: id
+              },
+              level: 'ERROR'
+            }
           }
-        }
-        if (id) {
-          _this
-            .$api('logs')
-            .get({ filter: JSON.stringify(filter) })
-            .then(res => {
-              if (res.data?.length && this.$route.query && id) {
-                _this.$refs.errorHandler.checkError({ id, status: this.status }, () => {
+          if (id) {
+            _this
+              .$api('logs')
+              .get({ filter: JSON.stringify(filter) })
+              .then(res => {
+                if (res.data?.length && this.$route.query && id) {
+                  _this.$refs.errorHandler.checkError({ id, status: this.status }, () => {
+                    doStart()
+                  })
+                } else {
                   doStart()
-                })
-              } else {
-                doStart()
-              }
-            })
-        } else {
-          doStart()
-        }
+                }
+              })
+          } else {
+            doStart()
+          }
+        })
         // if (this.$route.query && id) {
         //   this.$refs.errorHandler.checkError(
         //     { id, status: this.status },
@@ -1053,7 +1080,8 @@ export default {
         // 数据库节点连线至少保留一张表开始
         let objectNamesList = [],
           stageTypeFalg = false,
-          checkSetting = true
+          checkSetting = true,
+          greentplumSettingFalg = true
         if (data && data.stages && data.stages.length) {
           stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
@@ -1071,7 +1099,27 @@ export default {
             if ((item.type === 'hbase' || item.database_type === 'hbase') && this.sync_type !== 'initial_sync') {
               checkSetting = false
             }
+            if (item.type === 'hive' || item.database_type === 'hive') {
+              data.setting.transformerConcurrency = 1
+              data.setting.readBatchSize = 10000
+            }
+            if (
+              item.outputLanes.length &&
+              (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
+              this.sync_type !== 'initial_sync'
+            ) {
+              greentplumSettingFalg = false
+            }
           })
+        }
+        // 【增量采集时间】仅增量任务时，选择浏览器时区，时间设置未作必填校验，导致任务启动后不增量同步。
+        if (data?.setting?.sync_type === 'cdc') {
+          let { syncPoints } = data.setting
+          let findOne = syncPoints.find(el => el.type !== 'current' && !el.date)
+          if (findOne) {
+            this.$message.error(this.$t('task_settings_cdc_sync_point_date'))
+            return
+          }
         }
         if (!checkSetting) {
           this.$message.error(this.$t('editor.cell.data_node.hbase_check'))
@@ -1079,6 +1127,10 @@ export default {
         }
         if (stageTypeFalg && objectNamesList.length === 0) {
           this.$message.error(this.$t('editor.cell.link.chooseATableTip'))
+          return
+        }
+        if (!greentplumSettingFalg) {
+          this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
         let start = () => {
@@ -1419,7 +1471,8 @@ export default {
         row_filter_processor: 'app.DataFilter',
         java_processor: 'app.FieldProcess',
         redis: 'app.Redis',
-        hive: 'app.HiveNode'
+        hive: 'app.HiveNode',
+        hana: 'app.HanaNode'
       }
       if (data) {
         let stageMap = {}
