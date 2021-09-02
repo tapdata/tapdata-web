@@ -1318,6 +1318,7 @@ const en = {
             },
             joinKey: {
               label: 'Target path',
+              tips: 'Reminder: The current association condition setting will cause the data deletion operation to fail to be synchronized. Please add an intermediate mongodb node to complete the synchronization setting.',
               placeholder: 'Enter or choose target path field.'
             }
           }
