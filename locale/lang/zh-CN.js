@@ -2441,7 +2441,7 @@ const cn = {
     verifyDetail: '校验详情',
     sourceTable: '源表',
     targetTable: '目标表',
-    sourceRows: '源/目标表行数',
+    sourceRows: '源表行数',
     verifyResult: '校验结果',
     rowConsistent: 'Count差',
     contConsistent: '表数据差',

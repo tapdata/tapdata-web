@@ -2,6 +2,7 @@ import { connect, useForm, mapProps } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import EmptyItem from 'web-core/components/EmptyItem'
+import VIcon from '@/components/VIcon'
 
 export const DatabaseInfo = connect(
   observer(
@@ -82,7 +83,9 @@ export const DatabaseInfo = connect(
                 {databaseTables.map(item => {
                   return (
                     <li key={item} class="list-item flex align-center">
-                      <i class="iconfont icon-table2 mr-1"></i>
+                      <VIcon class="mr-1" size="12">
+                        table
+                      </VIcon>
                       <span class="list-item-text">{item}</span>
                     </li>
                   )

@@ -2492,7 +2492,7 @@ const en = {
     verifyDetail: 'Verify Detail',
     sourceTable: 'Source Table',
     targetTable: 'Target Table',
-    sourceRows: 'Source/Target Table Rows',
+    sourceRows: 'Source Table Rows',
     verifyResult: 'Verify Result',
     rowConsistent: 'Count diff',
     contConsistent: 'Value diff',
