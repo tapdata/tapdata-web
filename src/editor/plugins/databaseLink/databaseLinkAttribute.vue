@@ -68,6 +68,7 @@
               <FieldMapping
                 :dataFlow="dataFlow"
                 :showBtn="true"
+                :stageId="stageId"
                 mappingType="cluster-clone"
                 :hiddenFieldProcess="false"
                 :isFirst="model.isFirst"
@@ -292,6 +293,7 @@ export default {
         isFirst: true, //初始值
         scope: '',
         dataFlow: '',
+        stageId: '',
 
         selectSourceDatabase: {
           table: true,
@@ -381,6 +383,8 @@ export default {
           }
         }
         this.loadDataModels(connectionId)
+        //获取目标节点ID
+        this.stageId = targetCell.id || ''
       }
 
       editorMonitor = vueAdapter.editor
