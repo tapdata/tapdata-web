@@ -1,22 +1,18 @@
-import { merge } from '@formily/shared'
+export function isValidElement(element) {
+  return (
+    isVueOptions(element) ||
+    (element &&
+      typeof element === 'object' &&
+      'componentOptions' in element &&
+      'context' in element &&
+      element.tag !== undefined)
+  ) // remove text node
+}
 
-export const getComponentByTag = (tag, transformRules, defaultProps) => {
-  return {
-    functional: true,
-    render(h, context) {
-      const data = context.data
-      if (transformRules) {
-        const listeners = transformRules
-        Object.keys(listeners).forEach(extract => {
-          if (data.on !== undefined) {
-            data.on[listeners[extract]] = context.listeners[extract]
-          }
-        })
-      }
-      if (defaultProps) {
-        data.props = merge(defaultProps, data.props)
-      }
-      return h(tag, data, context.children)
-    }
-  }
+export function isVueOptions(options) {
+  return options && (typeof options.template === 'string' || typeof options.render === 'function')
+}
+
+export function composeExport(s0, s1) {
+  return Object.assign(s0, s1)
 }
