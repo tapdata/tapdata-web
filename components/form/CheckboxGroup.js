@@ -1,6 +1,7 @@
-import { connect, mapProps } from '@formily/vue'
+import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { getComponentByTag } from './utils/util'
 import { Checkbox } from './Checkbox'
+import PreviewText from 'web-core/components/form/preview-text'
 
 const ElCheckboxGroup = getComponentByTag('el-checkbox-group', {
   change: 'input'
@@ -38,4 +39,10 @@ const CheckboxGroupOption = {
   }
 }
 
-export const CheckboxGroup = connect(CheckboxGroupOption, mapProps({ dataSource: 'options' }))
+export const CheckboxGroup = connect(
+  CheckboxGroupOption,
+  mapProps({ dataSource: 'options' }),
+  mapReadPretty(PreviewText.Select, {
+    multiple: true
+  })
+)

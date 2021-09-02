@@ -1,5 +1,6 @@
-import { connect, mapProps } from '@formily/vue'
+import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { getComponentByTag } from './utils/util'
+import PreviewText from 'web-core/components/form/preview-text'
 
 const ElInputNumber = getComponentByTag('el-input-number', {
   change: 'input'
@@ -15,5 +16,6 @@ export const InputNumber = connect(
     return {
       controlsPosition
     }
-  })
+  }),
+  mapReadPretty(PreviewText.Input)
 )

@@ -42,6 +42,7 @@ import { PreviewSql } from './PreviewSql'
 import { SqlEditor } from './SqlEditor'
 import { ArrayTable, ArrayTableColumn } from './ArrayTable'
 import { DatePicker } from './DatePicker'
+import Password from './Password'
 
 export const components = {
   Checkbox,
@@ -49,6 +50,7 @@ export const components = {
   FormGrid,
   FormGridColumn,
   Input,
+  Password,
   ElFormItem,
   ElForm,
   Radio,

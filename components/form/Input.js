@@ -1,4 +1,5 @@
-import { connect, mapProps } from '@formily/vue'
+import { connect, mapProps, mapReadPretty } from '@formily/vue'
+import PreviewText from 'web-core/components/form/preview-text'
 
 const ElInput = {
   functional: true,
@@ -11,13 +12,7 @@ const ElInput = {
       delete data.attrs.append
     }
     return h('el-input', data, context.children)
-    // return <ElInput scopedSlots={{ append: () => <div>xsss</div> }}></ElInput>
-    /*return (
-      <ElInput>
-        <template slot="append">xxx</template>
-      </ElInput>
-    )*/
   }
 }
 
-export const Input = connect(ElInput, mapProps({ readOnly: 'readonly' }))
+export const Input = connect(ElInput, mapProps({ readOnly: 'readonly' }), mapReadPretty(PreviewText.Input))
