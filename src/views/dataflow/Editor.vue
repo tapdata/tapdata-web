@@ -13,7 +13,13 @@
       @save="save"
       @start="start"
       @delete="handleDelete"
+      @undo="handleUndo"
+      @redo="handleRedo"
+      @zoom-out="handleZoomOut"
+      @zoom-in="handleZoomIn"
       @showSettings="handleShowSettings"
+      @center-content="handleCenterContent"
+      @auto-layout="handleAutoLayout"
     ></TopHeader>
 
     <section class="layout-wrap layout-has-sider">
@@ -21,7 +27,13 @@
       <LeftSidebar :event-bus="editBus"></LeftSidebar>
       <!--内容体-->
       <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
-        <PaperScroller :event-bus="editBus" @mouse-select="handleMouseSelect" @change-scale="handleChangeScale">
+        <PaperScroller
+          ref="paperScroller"
+          :event-bus="editBus"
+          @add-node="handleAddNodeByDrag"
+          @mouse-select="handleMouseSelect"
+          @change-scale="handleChangeScale"
+        >
           <DFNode
             v-for="n in nodes"
             :key="n.id"
@@ -76,7 +88,7 @@ import RightSidebar from '@/views/dataflow/components/RightSidebar'
 import { off, on } from '@/utils/dom'
 import deviceSupportHelpers from '@/mixins/deviceSupportHelpers'
 import { connectorActiveStyle } from '@/views/dataflow/style'
-import { NODE_PREFIX, DEFAULT_SETTINGS } from '@/views/dataflow/constants'
+import { NODE_PREFIX, DEFAULT_SETTINGS, NODE_WIDTH, NODE_HEIGHT } from '@/views/dataflow/constants'
 import TopHeader from '@/views/dataflow/components/TopHeader'
 import { titleChange } from '@/mixins/titleChange'
 import { showMessage } from '@/mixins/showMessage'
@@ -89,6 +101,12 @@ import { getDataflowCorners } from '@/views/dataflow/helpers'
 import VIcon from '@/components/VIcon'
 import PaperScroller from '@/views/dataflow/components/PaperScroller'
 import Vue from 'vue'
+import { uuid } from '@/utils/util'
+import { AddConnectionCommand, AddNodeCommand, CommandManager, MoveNodeCommand, RemoveNodeCommand } from './command'
+import Mousetrap from 'mousetrap'
+// import * as d3 from 'd3-hierarchy'
+// import * as D3 from 'd3'
+import dagre from 'dagre'
 
 const dataFlowsApi = new DataFlows()
 const dataFlowFormSchemasApi = new DataFlowFormSchemas()
@@ -192,27 +210,15 @@ export default {
       try {
         this.initNodeView()
         await this.initView()
+        this.initCommand()
       } catch (error) {
         console.error(error)
       }
     })
-
-    /*formSchemaApi.post({
-      name: 'DB2',
-      icon: 'db2',
-      group: 'data',
-      type: 'database',
-      constructor: 'Database',
-      attr: {
-        databaseType: 'db2'
-      }
-    })*/
-    /*formSchemaApi.get().then(res => {
-      console.log('formSchemaApi', res)
-    })*/
   },
 
   destroyed() {
+    this.command = null
     this.resetWorkspace()
   },
 
@@ -292,6 +298,16 @@ export default {
       }
     },
 
+    initCommand() {
+      this.command = new CommandManager(this.$store, this.jsPlumbIns)
+      Mousetrap.bind('mod+z', () => {
+        this.command.undo()
+      })
+      Mousetrap.bind('mod+shift+z', () => {
+        this.command.redo()
+      })
+    },
+
     async initNodeType() {
       let _nodeTypes = nodeTypes
       let dataFlowType
@@ -351,7 +367,7 @@ export default {
       jsPlumbIns.setContainer('#node-view')
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
 
-      jsPlumbIns.bind('connection', info => {
+      jsPlumbIns.bind('connection', (info, event) => {
         console.log('connectionEvent', info)
         const { sourceId: source, targetId: target } = info
         const sourceId = this.getRealId(source)
@@ -389,15 +405,13 @@ export default {
 
         console.log('连接状态', this.isConnected(sourceId, targetId))
 
-        // this.setDependsOn(info.sourceId, info.targetId)
-        // this.checkConnect()
-        // this.checkOutputStep()
+        // 设置节点的input和output属性
         this.addConnection({
           sourceId,
           targetId
         })
 
-        return
+        event && this.command.exec(new AddConnectionCommand(info.connection), true)
       })
 
       // 连接线拖动结束事件
@@ -548,7 +562,7 @@ export default {
       await this.addNodes(data.stages)
 
       this.setStateDirty(false)
-      this.zoomToFit()
+      // this.zoomToFit()
     },
 
     newDataflow() {
@@ -746,18 +760,13 @@ export default {
       this.navLines = lines
     },
 
-    onNodeDragStop() {
+    onNodeDragStop(isNotMove, oldProperties, newProperties) {
       this.ifNodeDragStart = false
       this.navLines = []
 
       this.editBus.$emit('auto-resize-paper')
 
-      /*this.updateNodeProperties({
-        id,
-        properties: {
-          position: [...pos]
-        }
-      })*/
+      !isNotMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties), true)
     },
 
     nodeSelectedById(id, setActive, deselectAllOthers) {
@@ -1185,16 +1194,29 @@ export default {
       this.dialogFormVisible = false
     },
 
+    handleUndo() {
+      this.command.undo()
+    },
+
+    handleRedo() {
+      this.command.redo()
+    },
+
+    /**
+     * 删除选中的节点
+     */
     handleDelete() {
       const selectNodes = this.$store.getters['dataflow/getSelectedNodes']
-
-      selectNodes.forEach(node => {
-        const nodeElID = NODE_PREFIX + node.id
-        this.jsPlumbIns.remove(nodeElID)
-        this.removeNode(node)
-      })
-
+      this.command.exec(new RemoveNodeCommand(selectNodes))
       this.resetSelectedNodes()
+    },
+
+    handleZoomIn() {
+      this.$refs.paperScroller.zoomIn()
+    },
+
+    handleZoomOut() {
+      this.$refs.paperScroller.zoomOut()
     },
 
     handleShowSettings() {
@@ -1206,6 +1228,62 @@ export default {
       }*/
       this.deselectAllNodes()
       this.setActiveType('settings')
+    },
+
+    handleCenterContent() {
+      this.$refs.paperScroller.centerContent()
+    },
+
+    /**
+     * 自动布局
+     */
+    handleAutoLayout() {
+      const nodes = this.nodes
+      if (nodes.length < 2) return
+
+      let hasMove = false
+      const nodePositionMap = {}
+      const dg = new dagre.graphlib.Graph()
+      const newProperties = []
+      const oldProperties = []
+
+      dg.setGraph({ nodesep: 30, ranksep: 60, marginx: 50, marginy: 50, rankdir: 'LR' })
+      dg.setDefaultEdgeLabel(function () {
+        return {}
+      })
+
+      nodes.forEach(n => {
+        dg.setNode(NODE_PREFIX + n.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
+        nodePositionMap[NODE_PREFIX + n.id] = n.position
+      })
+      this.jsPlumbIns.getAllConnections().forEach(edge => {
+        dg.setEdge(edge.source.id, edge.target.id)
+      })
+
+      dagre.layout(dg)
+      dg.nodes().forEach(n => {
+        const node = dg.node(n)
+        const top = Math.round(node.y - node.height / 2)
+        const left = Math.round(node.x - node.width / 2)
+
+        if (nodePositionMap[n].join(',') !== `${left},${top}`) {
+          hasMove = true
+          oldProperties.push({
+            id: this.getRealId(n),
+            properties: {
+              position: nodePositionMap[n]
+            }
+          })
+          newProperties.push({
+            id: this.getRealId(n),
+            properties: {
+              position: [left, top]
+            }
+          })
+        }
+      })
+
+      hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
     },
 
     /**
@@ -1337,6 +1415,29 @@ export default {
       element.style['transform'] = scaleString
 
       this.jsPlumbIns.setZoom(zoomLevel)
+    },
+
+    handleAddNodeByDrag(position, item) {
+      console.log('handleAddNodeByDrag')
+      const getCtor = this.$store.getters['dataflow/getCtor']
+      const Ctor = getCtor(item.constructor)
+      const ins = new Ctor(item)
+      const node = {
+        id: uuid(),
+        name: item.name,
+        type: item.type,
+        position,
+        ...ins.getExtraAttr() // 附加属性
+      }
+
+      // 设置属性__Ctor不可枚举
+      Object.defineProperty(node, '__Ctor', {
+        value: ins,
+        enumerable: false
+      })
+
+      this.command.exec(new AddNodeCommand(node))
+      // this.addNode(node)
     },
 
     handleMouseSelect(showSelectBox, selectBoxAttr) {

@@ -146,3 +146,16 @@ export function escapeHTML(value) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#x27;')
 }
+
+/**
+ * 比较两个数字是否近似相等
+ * 0.1 + 0.2 === 0.3 => false
+ * sameNumber(0.1+0.2, 0.3) => true
+ * @param num1
+ * @param num2
+ * @param tolerance 宽松度
+ * @returns {boolean}
+ */
+export function sameNumber(num1, num2, tolerance = Number.EPSILON) {
+  return Math.abs(num1 - num2) <= tolerance || num1 === num2
+}

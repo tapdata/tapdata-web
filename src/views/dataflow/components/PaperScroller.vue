@@ -18,6 +18,8 @@ import { getDataflowCorners } from '@/views/dataflow/helpers'
 import { on, off } from '@/utils/dom'
 import deviceSupportHelpers from '@/mixins/deviceSupportHelpers'
 import movePaper from '../mixins/movePaper'
+import { NODE_HEIGHT, NODE_WIDTH } from '@/views/dataflow/constants'
+import Mousetrap from 'mousetrap'
 
 export default {
   name: 'PaperScroller',
@@ -59,7 +61,7 @@ export default {
       // 累积的缩放系数
       cumulativeZoomFactor: 1,
       // 缩放系数
-      zoomFactor: 1.2
+      zoomFactor: 1.1
     }
   },
 
@@ -142,7 +144,8 @@ export default {
     ...mapMutations('dataflow', ['addNode', 'setActiveType']),
 
     bindEvent() {
-      // 节点放置在画布内
+      // 节点放置在画布内，获取画布上的坐标
+      // FIXME 这个事件监听可以去掉，对外提供坐标转换方法即可
       this.eventBus.$on('drop-node', (item, position, size) => {
         const bound = this.$refs.paper.getBoundingClientRect()
         const scale = this.paperScale
@@ -154,23 +157,8 @@ export default {
         x /= scale
         y /= scale
 
-        const Ctor = this.getCtor(item.constructor)
-        const ins = new Ctor(item)
-        const node = {
-          id: uuid(),
-          name: item.name,
-          type: item.type,
-          position: [x, y],
-          ...ins.getExtraAttr() // 附加属性
-        }
+        this.$emit('add-node', [x, y], item)
 
-        // 设置属性__Ctor不可枚举
-        Object.defineProperty(node, '__Ctor', {
-          value: ins,
-          enumerable: false
-        })
-
-        this.addNode(node)
         // 自动改变页面大小
         this.autoResizePaper()
       })
@@ -179,6 +167,22 @@ export default {
 
       on(document, 'keydown', this.keyDown)
       on(document, 'keyup', this.keyUp)
+
+      // 放大
+      Mousetrap.bind('mod+=', e => {
+        e.preventDefault()
+        this.zoomIn()
+      })
+      // 缩小
+      Mousetrap.bind('mod+-', e => {
+        e.preventDefault()
+        this.zoomOut()
+      })
+      // 画布适应内容区
+      Mousetrap.bind('mod+0', e => {
+        e.preventDefault()
+        this.centerContent()
+      })
     },
 
     offEvent() {
@@ -187,12 +191,10 @@ export default {
     },
 
     initVisibleArea() {
-      this.visibleArea = {
-        width: this.$el.clientWidth,
-        height: this.$el.clientHeight
-      }
+      this.visibleArea = this.$el.getBoundingClientRect()
     },
 
+    // 画布居中
     center() {
       const paper = this.$refs.paper
       const scrollLeft = this.paperOffset.left - (this.visibleArea.width - paper.offsetWidth) / 2
@@ -201,10 +203,37 @@ export default {
       this.$el.scrollTop = scrollTop
     },
 
+    // 画布内容居中
+    centerContent() {
+      let { minX, minY, maxX, maxY } = getDataflowCorners(this.$store.getters['dataflow/allNodes'])
+      console.log('centerContent', minX, minY, maxX, maxY)
+      // 包含节点尺寸
+      maxX += NODE_WIDTH
+      maxY += NODE_HEIGHT
+      let contentW = maxX - minX
+      let contentH = maxY - minY
+      const scale = Math.min(this.visibleArea.width / contentW, this.visibleArea.height / contentH)
+      contentW *= scale
+      contentH *= scale
+
+      this.changeScale(scale)
+
+      const scrollLeft =
+        this.paperOffset.left + (minX + this.paperReverseSize.w) * scale - (this.visibleArea.width - contentW) / 2
+      const scrollTop =
+        this.paperOffset.top + (minY + this.paperReverseSize.h) * scale - (this.visibleArea.height - contentH) / 2
+
+      this.doChangePageScroll(scrollLeft, scrollTop)
+    },
+
     // 自动延伸画布，类似于无限画布
     autoResizePaper() {
       const { width, height } = this.options
-      const { minX, minY, maxX, maxY } = getDataflowCorners(this.$store.getters['dataflow/allNodes'])
+      let { minX, minY, maxX, maxY } = getDataflowCorners(this.$store.getters['dataflow/allNodes'])
+
+      // 包含节点尺寸
+      maxX += NODE_WIDTH
+      maxY += NODE_HEIGHT
 
       let w = 0
       let h = 0
@@ -267,7 +296,6 @@ export default {
     },
 
     mouseDown(e) {
-      console.log('mouseDown', e.button)
       on(window, 'mouseup', this.mouseUp)
 
       // 鼠标拖选
@@ -367,19 +395,13 @@ export default {
     },
 
     wheelScroll(e) {
-      /*e.preventDefault()
-      const bound = this.$refs.paper.getBoundingClientRect()
-      console.log('wheelScroll', e.pageX - bound.x, e.pageY - bound.y)
-      return*/
-
       if (this.isCtrlKeyPressed(e) || e.ctrlKey) {
+        e.preventDefault()
         if (e.deltaY > 0) {
           this.zoomOut(e)
         } else {
           this.zoomIn(e)
         }
-
-        e.preventDefault()
       }
     },
 
@@ -387,7 +409,6 @@ export default {
      * 缩小
      */
     zoomOut(e) {
-      console.log('缩小')
       if (this.paperScale * this.cumulativeZoomFactor <= 0.15) {
         this.cumulativeZoomFactor *= (this.paperScale - 0.05) / this.paperScale
       } else {
@@ -395,14 +416,15 @@ export default {
         // and to avoid rounding errors for zoom steps
         this.cumulativeZoomFactor /= this.zoomFactor
         this.cumulativeZoomFactor = Math.round(this.paperScale * this.cumulativeZoomFactor * 20) / 20 / this.paperScale
-        this.setZoomLevel(e)
+        const scale = this.paperScale * this.cumulativeZoomFactor
+        this.wheelToScaleArtboard(scale, e && { x: e.pageX, y: e.pageY })
+        this.changeScale(scale)
       }
     },
     /**
      * 放大
      */
     zoomIn(e) {
-      console.log('放大')
       if (this.paperScale * this.cumulativeZoomFactor <= 0.15) {
         this.cumulativeZoomFactor *= (this.paperScale + 0.05) / this.paperScale
       } else {
@@ -411,53 +433,77 @@ export default {
       }
       this.cumulativeZoomFactor =
         Math.max(0.05, Math.min(this.paperScale * this.cumulativeZoomFactor, 160)) / this.paperScale
-      this.setZoomLevel(e)
+      console.log('this.cumulativeZoomFactor', this.cumulativeZoomFactor)
+      const scale = this.paperScale * this.cumulativeZoomFactor
+      this.wheelToScaleArtboard(scale, e && { x: e.pageX, y: e.pageY })
+      this.changeScale(scale)
     },
 
-    setZoomLevel(e) {
-      /*const bound = this.$refs.paper.getBoundingClientRect()
-      let prevScale = this.paperScale
-      this.paperScale = this.cumulativeZoomFactor
-      const cx = (e.pageX - bound.x) / prevScale
-      const cy = (e.pageY - bound.y) / prevScale
-      this.scalePosition = [cx, cy]
-      prevScale = this.paperScale
-      console.log('scalePosition', this.scalePosition, e.pageX, e.pageY, bound)*/
+    /**
+     * 改变缩放
+     * @param scale
+     */
+    changeScale(scale) {
+      this.paperScale = scale
+      this.$emit('change-scale', scale)
+      this.cumulativeZoomFactor = 1
+    },
 
-      console.log('pageXY', e.pageX, e.pageY, e.clientX, e.clientY)
+    /**
+     * 获取相对于画布的坐标
+     * @param e
+     * @returns {{x: number, y: number}}
+     */
+    getMouseToPage(e) {
+      const scale = this.paperScale
+      const paper = this.$refs.paper.getBoundingClientRect()
+      return { x: (e.x - paper.left) / scale, y: (e.y - paper.top) / scale }
+    },
 
-      const px = e.pageX
-      const py = e.pageY
+    /**
+     * 滚轮缩放画布
+     * @param scale
+     * @param scalePoint
+     */
+    wheelToScaleArtboard(scale, scalePoint) {
+      scalePoint = scalePoint || this.getScaleAbsolutePoint()
+      const scaleOrigin = this.getMouseToPage(scalePoint)
+      const area = this.visibleArea
+      const offset = this.paperOffset
+      const left = scalePoint.x - area.left // 光标与可视区左边的距离
+      const top = scalePoint.y - area.top // 光标与可视区上边的距离
 
-      let prevScale = this.paperScale
+      // 缩放后的坐标
+      const _x = scaleOrigin.x * scale
+      const _y = scaleOrigin.y * scale
 
-      let pointX = this.$el.scrollLeft
-      let pointY = this.$el.scrollTop
+      console.log('left,top', left, top, _x, _y)
 
-      let xs = (px - pointX) / prevScale
-      let ys = (py - pointY) / prevScale
+      const _left = Math.round(left - _x)
+      const _top = Math.round(top - _y)
 
-      this.paperScale = this.cumulativeZoomFactor
+      this.doChangePageScroll(offset.left - _left, offset.top - _top)
+    },
 
-      pointX = px - xs * this.paperScale
-      pointY = py - ys * this.paperScale
+    /**
+     * 设置页面滚动
+     * @param left
+     * @param top
+     */
+    doChangePageScroll(left, top) {
+      this.$nextTick(() => {
+        this.$el.scrollLeft = left
+        this.$el.scrollTop = top
+      })
+    },
 
-      // this.$el.scrollLeft = pointX
-      // this.$el.scrollTop = pointY
-
-      this.$el.scrollLeft = pointX
-      this.$el.scrollTop = pointY
-
-      console.log('scroll', pointX, pointY)
-
-      /*var xs = (e.clientX - pointX) / scale,
-        ys = (e.clientY - pointY) / scale,
-        delta = (e.wheelDelta ? e.wheelDelta : -e.deltaY);
-      (delta > 0) ? (scale *= 1.2) : (scale /= 1.2);
-      pointX = e.clientX - xs * scale;
-      pointY = e.clientY - ys * scale;*/
-      // this.cumulativeZoomFactor = 1
-      this.$emit('change-scale', this.paperScale)
+    /**
+     * 获取固定的缩放坐标，可视区域的中心
+     * @returns {{x: *, y: *}}
+     */
+    getScaleAbsolutePoint() {
+      const area = this.visibleArea
+      return { x: Math.round(area.width / 2) + area.left, y: Math.round(area.height / 2) + area.top }
     }
   }
 }
@@ -473,8 +519,9 @@ export default {
     position: relative;
     .paper {
       position: absolute;
-      background: linear-gradient(45deg, black, transparent);
-      transform-origin: left top;
+      background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJ2LTc2IiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48ZGVmcyBpZD0idi03NSI+PHBhdHRlcm4gaWQ9InBhdHRlcm5fMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cmVjdCBpZD0idi03NyIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0FBQUFBQSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgaWQ9InYtNzkiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybl8wKSIvPjwvc3ZnPg==);
+      background-color: #f6f6f6;
+      transform-origin: 0 0;
     }
   }
 }

@@ -9,28 +9,30 @@
       </div>
     </div>
     <div class="flex align-center flex-grow-1 pr-3">
-      <button class="icon-btn">
+      <button @click="$emit('undo')" class="icon-btn">
         <VIcon size="18">undo</VIcon>
       </button>
-      <button class="icon-btn">
+      <button @click="$emit('redo')" class="icon-btn">
         <VIcon size="18">redo</VIcon>
       </button>
       <button @click="$emit('delete')" class="icon-btn">
         <VIcon size="18">delete</VIcon>
       </button>
-      <button class="icon-btn">
+      <button @click="$emit('fullscreen')" class="icon-btn">
         <VIcon size="18">fullscreen</VIcon>
       </button>
-      <button class="icon-btn">
+      <button @click="$emit('center-content')" class="icon-btn">
         <VIcon size="18">compress</VIcon>
       </button>
-      <button class="icon-btn">
+      <button @click="$emit('zoom-out')" class="icon-btn">
         <VIcon size="18">zoom-out</VIcon>
       </button>
-      <button class="icon-btn">
+      <button @click="$emit('zoom-in')" class="icon-btn">
         <VIcon size="18">zoom-in</VIcon>
       </button>
       <VDivider class="mx-3" vertical></VDivider>
+
+      <ElButton @click="$emit('auto-layout')" class="btn-base" size="mini"> 自动布局 </ElButton>
 
       <ElButton v-if="!isMonitor" @click="$emit('save')" class="btn-base mr-3" size="mini" :loading="isSaving">
         <VIcon size="12" class="mr-1">save</VIcon>

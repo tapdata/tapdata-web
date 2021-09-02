@@ -1,4 +1,6 @@
 export const NODE_PREFIX = 'node-'
+export const NODE_WIDTH = 160
+export const NODE_HEIGHT = 36
 
 export const DEFAULT_SETTINGS = {
   isSerialMode: false,

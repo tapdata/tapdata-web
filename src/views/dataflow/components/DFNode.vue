@@ -112,6 +112,9 @@ export default {
           console.log('node-drag-stop', params)
           // 更新节点坐标
           this.isNotMove = false
+          const newProperties = []
+          const oldProperties = []
+
           if (this.isActionActive('dragActive')) {
             const moveNodes = this.$store.getters['dataflow/getSelectedNodes']
             const selectedNodeNames = moveNodes.map(node => node.id)
@@ -129,7 +132,6 @@ export default {
               this.isNotMove = true
             }
 
-            let newNodePosition
             moveNodes.forEach(node => {
               const nodeElement = NODE_PREFIX + node.id
               const element = document.getElementById(nodeElement)
@@ -137,7 +139,7 @@ export default {
                 return
               }
 
-              newNodePosition = [parseFloat(element.style.left), parseFloat(element.style.top)]
+              let newNodePosition = [parseFloat(element.style.left), parseFloat(element.style.top)]
 
               const updateInformation = {
                 id: node.id,
@@ -146,11 +148,19 @@ export default {
                 }
               }
 
+              oldProperties.push({
+                id: node.id,
+                properties: {
+                  position: node.position
+                }
+              })
+              newProperties.push(updateInformation)
+
               this.updateNodeProperties(updateInformation)
             })
           }
 
-          this.$emit('drag-stop', params)
+          this.$emit('drag-stop', this.isNotMove, oldProperties, newProperties)
         }
       })
 

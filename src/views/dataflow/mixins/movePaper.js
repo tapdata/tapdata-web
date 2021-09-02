@@ -33,6 +33,7 @@ export default {
     },
 
     mouseDownMovePaper(e) {
+      console.log('spaceKeyPressed', this.spaceKeyPressed)
       if (!this.spaceKeyPressed) return
 
       if (this.isActionActive('dragActive')) return
