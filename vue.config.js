@@ -2,7 +2,7 @@ const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
 const serveUrlMap = {
-  mock: 'http://localhost:3000',
+  mock: 'http://localhost:8086',
   dev: 'http://backend:3030',
   test: 'http://test.cloud.tapdata.net'
 }
@@ -31,7 +31,7 @@ let pages = {
 module.exports = {
   pages,
   lintOnSave: true,
-  publicPath: '/console',
+  // publicPath: '/console',
   productionSourceMap: false,
 
   devServer: {
@@ -51,7 +51,8 @@ module.exports = {
         pathRewrite: {
           '^/tm': '/'
         }
-      }
+      },
+      '/login': proxy
     }
   },
   configureWebpack: config => {
