@@ -35,6 +35,7 @@ export default {
   workbench_guide_novice: '新手引導',
   workbench_guide_documentation: '產品文檔',
   workbench_guide_problem: '常見問題',
+  workbench_guide_data_safe: 'Tapdata cloud 如何保障數據安全？ ',
 
   // Agent
   agent_manage: 'Agent管理',

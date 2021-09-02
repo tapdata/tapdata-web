@@ -219,18 +219,19 @@ export default {
       guides: [
         {
           name: $t('workbench_guide_novice'),
-          icon: 'quick_to_start',
           action: 'guide'
         },
         {
           name: $t('workbench_guide_documentation'),
-          icon: 'document',
           url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme'
         },
         {
           name: $t('workbench_guide_problem'),
-          icon: 'document',
           url: 'https://www.yuque.com/tapdata/cloud/iff88o'
+        },
+        {
+          name: $t('workbench_guide_data_safe'),
+          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_chan-pin-jia-gou-ji-yuan-li'
         }
       ],
       isGuide: true

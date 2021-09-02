@@ -35,6 +35,7 @@ export default {
   workbench_guide_novice: 'Novice Guide',
   workbench_guide_documentation: 'Product Documentation',
   workbench_guide_problem: 'Common problems',
+  workbench_guide_data_safe: 'How does Tapdata cloud ensure data security? ',
 
   // Agent
   agent_manage: 'Agent Management',
