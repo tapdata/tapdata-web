@@ -4,10 +4,10 @@
     <ElAside class="left-aside" width="200px">
       <ElMenu :default-active="activeMenu" @select="menuTrigger">
         <ElMenuItem v-for="m in menus" :key="m.name" :index="m.path">
-          <span class="mr-4" slot v-if="m.meta.icon"
-            ><VIcon class="v-icon" size="12">{{ m.meta.icon }}</VIcon></span
+          <span class="mr-4" slot v-if="m.icon"
+            ><VIcon class="v-icon" size="12">{{ m.icon }}</VIcon></span
           >
-          <span slot="title">{{ m.meta.title }}</span>
+          <span slot="title">{{ m.title }}</span>
         </ElMenuItem>
       </ElMenu>
     </ElAside>
@@ -52,10 +52,43 @@ export default {
     VIcon
   },
   data() {
+    const $t = this.$t.bind(this)
     return {
       activeMenu: '',
       menus: [],
-      sortMenus: ['Workbench', 'Instance', 'Connection', 'Task', 'Verify', 'OperationLog'],
+      sortMenus: [
+        {
+          name: 'Workbench',
+          title: $t('workbench_manage'),
+          icon: 'workbench'
+        },
+        {
+          name: 'Instance',
+          title: $t('agent_manage'),
+          icon: 'agent'
+        },
+        {
+          name: 'Connection',
+          title: $t('connection_manage'),
+          link: './tm/#/connections',
+          icon: 'connection'
+        },
+        {
+          name: 'Task',
+          title: $t('task_manage'),
+          icon: 'task'
+        },
+        {
+          name: 'Verify',
+          title: $t('verify_manage'),
+          icon: 'shujuxiaoyan'
+        },
+        {
+          name: 'OperationLog',
+          title: $t('operation_log_manage'),
+          icon: 'operation-log'
+        }
+      ],
       breadcrumbData: [],
       dialogVisible: false
     }
@@ -63,10 +96,11 @@ export default {
   created() {
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
-    let menus = this.sortMenus.map(el => {
-      return children.find(item => item.name === el)
+    this.menus = this.sortMenus.map(el => {
+      let findOne = children.find(item => item.name === el.name)
+      el.path = findOne.path
+      return el
     })
-    this.menus = menus
     this.getBreadcrumb(this.$route)
     this.$root.$on('select-connection-type', this.selectConnectionType)
     this.$root.$on('show-guide', this.showGuide)

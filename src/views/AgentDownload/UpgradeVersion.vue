@@ -2,8 +2,8 @@
   <section class="upgrade-version">
     <TheHeader></TheHeader>
     <main class="page-main block">
-      <div class="title">Agent 版本升级</div>
-      <p class="title-text pt-10">系统检测到您的Agent不是最新版本，请按照指引进行升级</p>
+      <div class="title">{{ $t('agent_upgrade_title') }}</div>
+      <p class="title-text pt-10">{{ $t('agent_upgrade_select_tip') }}</p>
       <div class="down-type">
         <div
           v-for="down in downType"
@@ -16,94 +16,113 @@
       </div>
       <!--	windowns  -->
       <div v-if="downLoadType === 'windows'" class="content-container">
-        <div class="py-2 text-style">升级前</div>
-        <div>1.备份现有程序的tapdata.exe</div>
+        <div class="py-2 text-style">{{ $t('agent_upgrade_before_title') }}</div>
+        <div>{{ $t('agent_upgrade_before_windows_first') }}</div>
         <div>
-          2.下载新版的tapdata.exe程序放到程序目录<ElLink class="ml-3" type="primary" @click="handleDownLoad"
-            >点击下载</ElLink
-          >
+          {{ $t('agent_upgrade_before_windows_second')
+          }}<ElLink class="ml-3" type="primary" @click="handleDownLoad">{{
+            $t('agent_upgrade_before_windows_second_download')
+          }}</ElLink>
         </div>
-        <div>3.按照升级步骤操作</div>
-        <div class="py-2 text-style">升级步骤</div>
-        <div>1.打开cmd窗口，进入原Agent安装目录</div>
-        <div>2.复制下方的升级命令并在目录下执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本</div>
+        <div>{{ $t('agent_upgrade_before_windows_third') }}</div>
+        <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
+        <div>{{ $t('agent_upgrade_step_windows_first') }}</div>
+        <div>{{ $t('agent_upgrade_step_windows_second') }}</div>
         <div>
           <div class="box title-text">
             <span class="com-url">{{ comUrl }}</span>
-            <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_upgrade_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
               <span
                 class="operaKey"
                 v-clipboard:copy="comUrl"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">复制</i>
+                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
         </div>
-        <div>3.待升级命令执行完毕后，出现如下所示则代表Agent升级成功：Update finished.</div>
+        <div>{{ $t('agent_upgrade_step_windows_third') }}</div>
       </div>
       <!--   Linux   -->
       <div v-else-if="downLoadType === 'Linux'" class="content-container">
-        <div class="py-2 text-style">升级步骤</div>
-        <div>1.进入原Agent安装目录下</div>
-        <div>2.复制下方的升级命令并在目录下执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本</div>
+        <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
+        <div>{{ $t('agent_upgrade_step_linux_first') }}</div>
+        <div>{{ $t('agent_upgrade_step_linux_second') }}</div>
         <div>
           <div class="box title-text">
             <span class="com-url">{{ comUrl }}</span>
-            <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_upgrade_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
               <span
                 class="operaKey"
                 v-clipboard:copy="comUrl"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">复制</i>
+                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
         </div>
-        <div>3.待升级命令执行完毕后，出现如下所示则代表Agent升级成功：Update finished.</div>
+        <div>{{ $t('agent_upgrade_step_linux_third') }}</div>
       </div>
       <!--   Docker   -->
       <div v-else-if="downLoadType === 'Docker'" class="content-container">
-        <div class="py-2 text-style">升级步骤</div>
-        <div>1.进入原Agent的docker容器内</div>
+        <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
+        <div>{{ $t('agent_upgrade_step_docker_first') }}</div>
         <div class="box docker-command">
-          <div class="desc">(1)找到原Agent的docker容器CONTAINER ID</div>
+          <div class="desc">{{ $t('agent_upgrade_step_docker_first_one') }}</div>
           <div>docker ps -a|grep tapdata|awk -F' ' '{print $1}'</div>
-          <div class="desc">(2)通过容器ID进入容器</div>
+          <div class="desc">{{ $t('agent_upgrade_step_docker_first_two') }}</div>
           <div>docker exec -it 容器ID bash</div>
-          <div class="desc">(3)如果容器已停止运行，可以先启动容器再进入容器进行升级</div>
-          <div class="desc">启动容器</div>
+          <div class="desc">{{ $t('agent_upgrade_step_docker_first_three') }}</div>
+          <div class="desc">{{ $t('agent_upgrade_step_docker_first_four') }}</div>
           <div>docker start 容器ID</div>
-          <div class="desc">进入容器</div>
+          <div class="desc">{{ $t('agent_upgrade_step_docker_first_five') }}</div>
           <div>docker exec -it 容器ID bash</div>
         </div>
         <div>
-          2.复制下方的升级命令直接在容器内执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本
+          {{ $t('agent_upgrade_step_docker_second') }}
         </div>
         <div>
           <div class="box title-text">
             <span class="com-url">{{ comUrl }}</span>
-            <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_upgrade_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
               <span
                 class="operaKey"
                 v-clipboard:copy="comUrl"
                 v-clipboard:success="onCopy"
                 @mouseleave="showTooltip = false"
               >
-                <i class="click-style">复制</i>
+                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
               </span>
             </ElTooltip>
           </div>
         </div>
-        <div>3.待升级命令执行完毕后，出现如下所示则代表Agent升级成功：Update finished.</div>
+        <div>{{ $t('agent_upgrade_step_docker_third') }}</div>
       </div>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="goBack()">完成</ElButton>
+      <ElButton type="primary" @click="goBack()">{{ $t('gl_button_finish') }}</ElButton>
     </footer>
   </section>
 </template>

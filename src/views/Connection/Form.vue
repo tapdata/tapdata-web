@@ -513,6 +513,7 @@
           </div>
         </footer>
       </main>
+      <gitbook></gitbook>
     </div>
     <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
     <el-dialog
@@ -543,9 +544,10 @@
 import { DEFAULT_MODEL } from './const'
 import formConfig from './config'
 import VIcon from '@/components/VIcon'
+import gitbook from './GitBook'
 let defaultConfig = []
 export default {
-  components: { VIcon },
+  components: { VIcon, gitbook },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start

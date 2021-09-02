@@ -3,8 +3,8 @@
     <!--	快速开始	-->
     <div class="workbench-start workbench-section">
       <el-row :gutter="40" class="section-header py-6">
-        <el-col :span="18" class="main-title">快速开始</el-col>
-        <el-col :span="6" class="aside-title">公告通知</el-col>
+        <el-col :span="18" class="main-title">{{ $t('workbench_quick_start') }}</el-col>
+        <el-col :span="6" class="aside-title">{{ $t('workbench_notice') }}</el-col>
       </el-row>
       <el-row :gutter="40" class="section-body">
         <el-col :span="6" v-for="(item, index) in createList" :key="index">
@@ -48,8 +48,8 @@
     <!--	概览	-->
     <div class="workbench-overview workbench-section">
       <el-row :gutter="40" class="section-header py-6">
-        <el-col :span="18" class="main-title">概览</el-col>
-        <el-col :span="6" class="aside-title">新手入门</el-col>
+        <el-col :span="18" class="main-title">{{ $t('workbench_overview') }}</el-col>
+        <el-col :span="6" class="aside-title">{{ $t('workbench_guide') }}</el-col>
       </el-row>
       <el-row :gutter="40" class="section-body">
         <el-col :span="18">
@@ -65,8 +65,8 @@
               <div class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1">
                 <div v-for="(detail, dIndex) in item.list" :key="dIndex" class="agent-list__status mr-2">
                   <template v-if="detail.key === 'agent'">
-                    <span class="success ml-2">运行中：{{ detail.running }}</span>
-                    <span class="error ml-2">离线：{{ detail.offline }}</span>
+                    <span class="success ml-2">{{ $t('agent_status_running') }}：{{ detail.running }}</span>
+                    <span class="error ml-2">{{ $t('agent_status_stopped') }}：{{ detail.offline }}</span>
                   </template>
                   <template v-else>
                     <span>{{ detail.label }}</span>
@@ -98,7 +98,7 @@
     </div>
     <ul class="tapdata-contact-warp">
       <li>
-        <el-popover placement="left" width="200" trigger="hover" content="电话咨询：0755-26656080">
+        <el-popover placement="left" width="200" trigger="hover" :content="$t('gl_telephone_tip') + '：0755-26656080'">
           <a href="tel:0755-26656080" slot="reference">
             <div class="tapdata-contact__icon">
               <VIcon size="20">telephone-color</VIcon>
@@ -109,9 +109,9 @@
       <li>
         <el-popover placement="left" width="200" trigger="hover">
           <div class="tapdata-contact__tip">
-            <div class="tapdata-contact__text">微信公众号</div>
-            <div class="tapdata-contact__img"><img src="../../assets/image/weiixn_larg.png" /></div>
-            <div class="tapdata-contact__text">扫码咨询</div>
+            <div class="tapdata-contact__text">{{ $t('gl_qr_code_wx_public_account') }}</div>
+            <div class="tapdata-contact__img"><img src="../../assets/image/weiixn_larg.png" alt="" /></div>
+            <div class="tapdata-contact__text">{{ $t('gl_qr_code_tip') }}</div>
           </div>
           <div class="tapdata-contact__icon" slot="reference">
             <VIcon size="20">wx-color</VIcon>
@@ -121,9 +121,9 @@
       <li>
         <el-popover placement="left" width="200" trigger="hover">
           <div class="tapdata-contact__tip">
-            <div class="tapdata-contact__text">微信客服</div>
+            <div class="tapdata-contact__text">{{ $t('gl_qr_code_wx_customer_service') }}</div>
             <div class="tapdata-contact__img"><img src="../../assets/image/LarkQR.jpeg" alt="" /></div>
-            <div class="tapdata-contact__text">扫码咨询</div>
+            <div class="tapdata-contact__text">{{ $t('gl_qr_code_tip') }}</div>
           </div>
           <div class="tapdata-contact__icon" slot="reference">
             <VIcon size="20">service-color</VIcon>
@@ -142,32 +142,25 @@ export default {
   name: 'Workbench',
   components: { VIcon },
   data() {
+    const $t = this.$t.bind(this)
     return {
       createList: [
         {
-          name: 'Agent管理',
-          // icon: 'account',
-          icon: 'agent',
-          title: '部署Agent，并对已有Agent的状态进行查看和管理',
-          desc: '欢迎来到Tapdata Cloud，即将开启您的实时数据同步之旅！初次使用请先安装部署Agent，不然无法运行任务哦。',
-          btnName: '创建Agent',
-          hiddenBtnIcon: true,
+          name: $t('agent_manage'),
+          desc: $t('workbench_agent_desc'),
+          btnName: $t('workbench_agent_button_create'),
           action: this.createAgent
         },
         {
-          name: '连接管理',
-          icon: 'connection',
-          title: '创建数据连接，并对已有数据连接的状态进行测试和管理',
-          desc: '数据连接主要用来建立Agent与用户源数据库和目标数据库的连接。快来创建数据连接，并对已有数据连接的状态进行测试和管理吧。',
-          btnName: '创建连接',
+          name: $t('connection_manage'),
+          desc: $t('workbench_connection_desc'),
+          btnName: $t('workbench_connection_button_create'),
           action: this.createConnection
         },
         {
-          name: '任务管理',
-          icon: 'task',
-          title: '创建数据同步任务，并对已有数据同步任务的类型和状态进行查看和管理',
-          desc: '任务管理主要用来创建同步任务并进行管理。快来创建数据同步任务，并对已有数据同步任务的类型和状态进行查看和管理吧。',
-          btnName: '创建任务',
+          name: $t('task_manage'),
+          desc: $t('workbench_task_desc'),
+          btnName: $t('workbench_task_button_create'),
           action: this.createTask
         }
       ], // 创建列表
@@ -179,7 +172,6 @@ export default {
           value: 1,
           list: [
             {
-              label: 'Agent状态',
               key: 'agent',
               running: 0,
               offline: 0
@@ -187,87 +179,59 @@ export default {
           ]
         },
         {
-          name: '连接',
+          name: $t('workbench_overview_connection'),
           key: 'connection',
           icon: 'connection',
           value: 0,
           list: [
             {
-              label: '有效连接',
+              label: $t('workbench_overview_connection_ready'),
               value: 0
             },
             {
-              label: '无效连接',
+              label: $t('workbench_overview_connection_invalid'),
               value: 0
             }
           ]
         },
         {
-          name: '任务',
+          name: $t('workbench_overview_task'),
           key: 'task',
           icon: 'task',
           value: 0,
           list: [
             {
-              label: '全量',
+              label: $t('task_sync_type_initial_sync'),
               value: 0
             },
             {
-              label: '增量',
+              label: $t('task_sync_type_cdc'),
               value: 0
             },
             {
-              label: '全量增量',
+              label: $t('task_sync_type_initial_sync_cdc'),
               value: 0
             }
           ]
-        }
-      ],
-      introductionList: [
-        {
-          name: '什么是Tapdata Cloud',
-          title: [
-            'Tapdata Cloud是由Tapdata提供的集数据同步、数据融合（即将上线）、数据服务（即将上线）为一体的实时数据融合服务'
-            // 'Tapdata提供的集数据同步、数据融合（即将上线）、数据服务（即将上线）为一体实时数据融合服务'
-          ],
-          icon: 'introduction_1',
-          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_shen-me-shi-dfs'
-        },
-        {
-          name: '产品架构及工作原理',
-          title: ['-Tapdata cloud manager', '-Tapdata agent'],
-          icon: 'introduction_2',
-          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_chan-pin-jia-gou-ji-yuan-li'
-        },
-        {
-          name: '产品优势',
-          title: ['-创新的实时数据同步技术', '-零代码可视化拖拽操作', '-完美支持SQL->NOSQL', '-全面的数据库支持'],
-          icon: 'introduction_3',
-          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_chan-pin-you-shi'
-        },
-        {
-          name: '典型应用场景',
-          title: ['-数据库现代化', '-不停机迁移数据库', '-数据异地灾备', '-异地多活'],
-          icon: 'introduction_4',
-          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_dian-xing-ying-yong-chang-jing'
         }
       ], // 介绍列表
       notices: [], // 公告列表
       guides: [
         {
-          name: '新手引导',
-          icon: 'quick_to_start',
+          name: $t('workbench_guide_novice'),
           action: 'guide'
         },
         {
-          name: '产品文档',
-          icon: 'document',
+          name: $t('workbench_guide_documentation'),
           url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme'
         },
         {
-          name: '常见问题',
-          icon: 'document',
+          name: $t('workbench_guide_problem'),
           url: 'https://www.yuque.com/tapdata/cloud/iff88o'
+        },
+        {
+          name: $t('workbench_guide_data_safe'),
+          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_chan-pin-jia-gou-ji-yuan-li'
         }
       ],
       isGuide: true

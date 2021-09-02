@@ -5,47 +5,46 @@
         <InlineInput class="agent-name" :value="agent.name" @save="updateName($event, agent.id)"></InlineInput>
         <div class="agent-status" style="margin-top: 10px">
           <StatusTag :status="agent.status"></StatusTag>
-          <span class="lignt" style="margin-left: 5px">同步任务数：</span>
+          <span class="lignt" style="margin-left: 5px">{{ $t('agent_detail_synchronization_task_number') }}：</span>
           <span>{{ agent.metric ? agent.metric.runningTaskNum : 0 }}</span>
-          <!-- <ElLink class="ml-2" type="primary" @click="toDataflow">查看任务</ElLink> -->
         </div>
       </div>
       <div class="panel mt-5">
         <ul class="info">
           <li class="info-item">
-            <div class="label">Agent ID：</div>
+            <div class="label">{{ $t('agent_id') }}：</div>
             <div class="value">{{ agent.id }}</div>
           </li>
           <li class="info-item">
-            <div class="label">Agent 版本：</div>
+            <div class="label">{{ $t('agent_detail_version') }}：</div>
             <div class="value">
               {{ agent.spec.version }}
             </div>
           </li>
           <li class="info-item">
-            <div class="label">Agent 创建时间：</div>
+            <div class="label">{{ $t('agent_detail_create_time') }}：</div>
             <div class="value">{{ agent.createAt }}</div>
           </li>
           <li class="info-item">
-            <div class="label">宿主机IP：</div>
+            <div class="label">{{ $t('agent_detail_host_ip') }}：</div>
             <div class="value">
               {{ agent.ips }}
             </div>
           </li>
           <li class="info-item">
-            <div class="label">宿主机CPU数量：</div>
+            <div class="label">{{ $t('agent_detail_host_cpu_number') }}：</div>
             <div class="value">
               {{ agent.cpus }}
             </div>
           </li>
           <li class="info-item">
-            <div class="label">宿主机内存大小：</div>
+            <div class="label">{{ $t('agent_detail_host_memory_size') }}：</div>
             <div class="value">
               {{ agent.totalmem }}
             </div>
           </li>
           <li class="info-item">
-            <div class="label">安装目录：</div>
+            <div class="label">{{ $t('agent_detail_installation_manual') }}：</div>
             <div class="value">
               {{ agent.installationDirectory }}
             </div>
