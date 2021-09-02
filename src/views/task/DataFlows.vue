@@ -177,7 +177,6 @@
           <span>
             {{ row.sync_type ? syncType[row.sync_type] : '' }}
           </span>
-          <span>{{ row.sync_type }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column>
