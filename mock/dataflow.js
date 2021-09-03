@@ -681,6 +681,7 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
+  '/tm/api/UserLogs/count': { data: { count: 130 }, code: 'ok', msg: 'ok' },
   '/tm/api/UserLogs': {
     code: 'ok',
     msg: 'ok',

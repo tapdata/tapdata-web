@@ -266,17 +266,17 @@ export default {
       }
       let filter = {
         where,
-        size: this.page.size,
-        page: current,
-        order: [this.order]
+        limit: this.page.size,
+        skip: current - 1,
+        order: this.order
       }
-      this.$axios
-        .get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        .then(data => {
-          this.source = data || []
-          this.page.current = 1
-          this.page.total = this.source.length
-          this.changePage()
+      Promise.all([
+        this.$axios.get('tm/api/UserLogs/count?where=' + encodeURIComponent(JSON.stringify(where))),
+        this.$axios.get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
+      ])
+        .then(([countData, data]) => {
+          this.list = data || []
+          this.page.total = countData.count
         })
         .finally(() => {
           this.loading = false
@@ -287,9 +287,7 @@ export default {
       this.fetch(1)
     },
     changePage() {
-      let size = this.page.size
-      let current = this.page.current
-      this.list = this.source.slice((current - 1) * size, current * size)
+      this.fetch(this.page.current)
     },
     getOperationTypeLabel(row) {
       return this.operationTypeOptions.find(item => item.value === `${row.modular}_${row.operation}`)?.label
