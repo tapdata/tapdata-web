@@ -114,6 +114,7 @@ import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 
 export default {
+  name: 'ApiServers',
   components: {
     TablePage
   },

@@ -25,7 +25,7 @@
               :placeholder="$t('metadata.namePlaceholder')"
               @input="table.fetch(1, 800)"
             >
-              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
+              <el-select v-model="searchParams.isFuzzy" style="width: 120px" slot="prepend" @input="table.fetch(1)">
                 <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
                 <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
               </el-select>
@@ -33,9 +33,9 @@
           </li>
           <li>
             <el-select
+              v-model="searchParams.status"
               clearable
               size="mini"
-              v-model="searchParams.status"
               :placeholder="$t('metadata.typePlaceholder')"
               @input="statusChange"
             >
@@ -57,21 +57,21 @@
         </ul>
       </div>
       <div slot="operation">
-        <el-button size="mini" @click="batch('active')" v-if="selectedStopped.length">{{
+        <el-button size="mini" v-if="selectedStopped.length" @click="batch('active')">{{
           $t('modules_allarelease')
         }}</el-button>
 
-        <el-button size="mini" @click="batch('pending')" v-if="selectedRunning.length">{{
+        <el-button size="mini" v-if="selectedRunning.length" @click="batch('pending')">{{
           $t('modules_allacancel')
         }}</el-button>
         <el-button size="mini" @click.native="exportFile">{{ $t('modules_export') }}</el-button>
         <el-button size="mini" @click.native="importFile">{{ $t('modules_import') }}</el-button>
         <el-button
           v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-show="multipleSelection.length > 0"
           v-readonlybtn="'data_catalog_category_application'"
           size="mini"
           class="btn"
-          v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
@@ -112,7 +112,7 @@
       <el-table-column :label="$t('modules_header_version')" prop="version" sortable="custom"> </el-table-column>
       <el-table-column :label="$t('modules_header_classifications')" prop="classifications" sortable="classifications">
         <template slot-scope="scope" v-if="scope.row.listtags">
-          <div v-for="item in scope.row.listtags" :key="item">{{ item.value }}</div>
+          <div v-for="item in scope.row.listtags" :key="item.value">{{ item.value }}</div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_username')" prop="user" sortable="user"> </el-table-column>
@@ -131,20 +131,20 @@
           </el-button>
           <el-button
             v-readonlybtn="'API_doc_&_test'"
+            v-if="scope.row.status === 'active'"
             size="mini"
             type="text"
             @click="toDocumentTest(scope.row)"
-            v-if="scope.row.status === 'active'"
           >
             {{ $t('modules_api_test') }}
           </el-button>
           <el-button
             v-readonlybtn="'API_publish'"
+            v-if="scope.row.status === 'pending'"
             size="mini"
             type="text"
             :disabled="$disabledByPermission('API_publish_all_data', scope.row.user_id)"
             @click="publish(scope.row)"
-            v-if="scope.row.status === 'pending'"
           >
             {{ $t('modules_publish_api') }}
           </el-button>
@@ -180,9 +180,10 @@
 
 <script>
 import TablePage from '@/components/TablePage'
-import { toRegExp } from '../../utils/util'
+import { toRegExp } from '@/utils/util'
 
 export default {
+  name: 'Modules',
   components: {
     TablePage
   },
@@ -210,7 +211,6 @@ export default {
           value: 'pending'
         }
       ],
-      list: null,
       multipleSelection: [],
       intervalId: 0
     }
@@ -234,16 +234,7 @@ export default {
     },
     selectedStopped() {
       return this.multipleSelection.filter(v => v.status === 'pending' || v.status === 'error' || v.status === 'draft')
-      // active
     }
-    // metaType() {
-    //   let metaType = this.searchParams.metaType
-    //   if (metaType) {
-    //     return [metaType]
-    //   } else {
-    //     return this.$route.meta.types || []
-    //   }
-    // }
   },
   methods: {
     // 重置查询条件

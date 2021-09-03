@@ -1,32 +1,21 @@
 <template>
   <div class="module-form">
     <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
-    <!-- <el-form ref="form" :model="model" label-width="80px"> -->
-    <!-- <el-form-item :label="$t('module_form_path')">
-        <el-input v-model="path" disabled size="mini" maxlength="100" show-word-limit></el-input>
-      </el-form-item> -->
-    <!-- <el-form-item :label="$t('module_form_method')">
-        <el-radio-group v-model="model.apiType">
-          <el-radio label="defaultApi">{{ $t('module_form_default_Api') }}</el-radio>
-          <el-radio label="customerApi">{{ $t('module_form_customer_Api') }}</el-radio>
-        </el-radio-group>
-      </el-form-item> -->
-    <!-- </el-form> -->
     <div class="module-path">
       <div class="module-path-header">
         <span>{{ $t('module_form_path') }}</span>
         <div class="module-path-button">
           <el-button
+            v-if="createForm.apiType == 'customerApi' && createForm.paths.length < 1"
             size="mini"
             @click="customeApiPath"
-            v-if="createForm.apiType == 'customerApi' && createForm.paths.length < 1"
             >{{ $t('module_form_customer_Api') }}</el-button
           >
-          <el-button size="mini" @click="updateAuthority" v-if="apiAuthority === 'edit'">{{
+          <el-button size="mini" v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
             $t('module_form_security')
           }}</el-button>
-          <el-button size="mini" @click="updateAuthority" v-else>{{ $t('module_form_edit') }}</el-button>
-          <el-button size="mini" @click="openDocument" v-if="createForm.status === 'active'">{{
+          <el-button size="mini" v-else @click="updateAuthority">{{ $t('module_form_edit') }}</el-button>
+          <el-button size="mini" v-if="createForm.status === 'active'" @click="openDocument">{{
             $t('module_form_document')
           }}</el-button>
           <el-button size="mini" v-if="createForm.status === 'active'">{{ $t('module_form_preview') }}</el-button>
@@ -84,18 +73,18 @@
       </div>
     </div>
     <CustomerApiForm
+      v-if="dialogVisible"
       :apiData="apiData"
       :dialogVisible="dialogVisible"
       @dialogVisible="handleDialogVisible"
       @backApiPath="handleBackApiPath"
-      v-if="dialogVisible"
     ></CustomerApiForm>
     <SelectClassify ref="classify" :types="['api']" @operationsClassify="saveClassify"></SelectClassify>
   </div>
 </template>
 
 <script>
-import APIClient from '../../api/ApiClient'
+import APIClient from '@/api/ApiClient'
 import CustomerApiForm from './CustomerApiForm'
 import SelectClassify from '@/components/SelectClassify'
 export default {
@@ -170,12 +159,6 @@ export default {
     'createForm.prefix'() {
       this.updatePath()
     }
-  },
-  computed: {
-    // path() {
-    //   let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
-    //   return '/api/' + this.createForm.apiVersion.toLowerCase() + '/' + prefix + this.createForm.basePath
-    // }
   },
   methods: {
     // 关闭自定义api弹窗
@@ -454,7 +437,7 @@ export default {
       let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
       this.createForm.apiVersion
       this.apiData.path = '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath //+'/'+ this.api.namespace;//+'/'+ this.api.name;//"/cust/"+
-      debugger
+
       if (this.apiData.createType == 'add') {
         this.createForm.paths.push(this.apiData)
       }
@@ -471,20 +454,6 @@ export default {
       const id = this.$route.query.id
       const method = id ? 'patch' : 'post'
 
-      // let parmas = {
-      //   filter: {
-      //     fields: {
-      //       id: true,
-      //       basePath: true,
-      //       datasource: true,
-      //       tablename: true,
-      //       description: true
-      //     },
-      //     where: {
-      //       basePath: this.createForm.basePath
-      //     }
-      //   }
-      // }
       if (!id) {
         this.$refs.form.validate(valid => {
           if (valid) {
@@ -501,7 +470,12 @@ export default {
             this.$api('modules')
               [method](this.createForm)
               .then(res => {
-                this.$message.success(this.$t('message_save_ok'))
+                if (res) {
+                  this.$message.success(this.$t('message_save_ok'))
+                }
+              })
+              .catch(() => {
+                this.$message.error(this.$t('message_save_fail'))
               })
           }
         })

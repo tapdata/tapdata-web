@@ -98,7 +98,6 @@ export default {
   },
   created() {
     this.model = this.apiData
-     console.log(this.apiData, this.model.fields,this.fields)
     if (this.model.fields.length) {
       this.model.fields.forEach(item => {
         if (item.visible === undefined) {

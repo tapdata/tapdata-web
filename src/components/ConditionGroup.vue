@@ -26,7 +26,7 @@
         <template v-if="item.type === 'group'">
           <ConditionGroup
             v-model="conditions[index]"
-            :fields="fields"
+            :fields="fieldList"
             :field-label="fieldLabel"
             :field-value="fieldValue"
             :key="index"
@@ -41,7 +41,7 @@
               <Condition
                 :field-label="fieldLabel"
                 :field-value="fieldValue"
-                :fields="fields"
+                :fields="fieldList"
                 v-model="conditions[index]"
                 :key="index"
                 :level="childLevel"
@@ -117,7 +117,8 @@ export default {
   },
   data() {
     return {
-      color: ''
+      color: '',
+      fieldList: []
     }
   },
   watch: {
@@ -143,6 +144,9 @@ export default {
     conditionCount() {
       return this.value.conditions.length
     }
+  },
+  created() {
+    this.fieldList = this.fields
   },
   mounted() {
     this.color = 'level' + ((this.level % 7) + 1)

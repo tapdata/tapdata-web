@@ -73,9 +73,10 @@
 
 <script>
 import TablePage from '@/components/TablePage'
-import { toRegExp } from '../../utils/util'
+import { toRegExp } from '@/utils/util'
 
 export default {
+  name: 'ApiAnalysis',
   components: {
     TablePage
   },
@@ -227,11 +228,7 @@ export default {
     },
     // 时间换算
     formatDate(params) {
-      // console.log(params);
-      if (!params) {
-        return ''
-      }
-      if (params == '') {
+      if (!params || params == '') {
         return ''
       }
 

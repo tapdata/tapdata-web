@@ -6,7 +6,7 @@
       <div class="condition-warp-group-item">
         <el-select v-model="model.queryField" size="mini" @change="queryFieldChange" style="width: 170px">
           <el-option
-            v-for="field in fields"
+            v-for="field in fieldList"
             :label="field.field_name"
             :value="field.field_name"
             :key="field.field_name"
@@ -103,14 +103,14 @@ export default {
       }
     },
     value: {
-       type: Object,
-        default(){
-          return {
-            field: '',
-            command: '',
-            value: ''
-          }
+      type: Object,
+      default() {
+        return {
+          field: '',
+          command: '',
+          value: ''
         }
+      }
     },
     level: {
       type: Number,
@@ -128,6 +128,7 @@ export default {
   data() {
     return {
       color: '',
+      fieldList: [],
       model: {
         queryField: '',
         queryCommand: '',
@@ -150,6 +151,9 @@ export default {
         { text: 'Regexp', value: 'regexp' }
       ]
     }
+  },
+  created() {
+    this.fieldList = this.fields
   },
   watch: {
     // showFilterDialog: {
@@ -277,7 +281,7 @@ export default {
       } else if (['inq', 'nin'].includes(this.model.queryCommand)) {
         data.value = this.model.queryValue.split(',')
       }
-      console.log('data',data)
+      console.log('data', data)
       this.$emit('input', data)
     },
     commandChange() {
