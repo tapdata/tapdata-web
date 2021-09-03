@@ -2988,6 +2988,7 @@ const tc = {
     Clean_Message_Time: '清除消息時間',
     Keep_Alive_Message: '保持在線消息',
     Sample_Rate: '採樣率',
+    task_load_threshold: '負載閾值（百分比）',
     ApiServer: 'API分發設置',
     Default_Limit: '默認查詢返回行數',
     Max_Limit: '最大查詢返回行數',
