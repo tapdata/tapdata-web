@@ -1,4 +1,5 @@
-import { connect, mapProps } from '@formily/vue'
+import { connect, mapProps, mapReadPretty } from '@formily/vue'
+import PreviewText from './preview-text'
 
 const SelectOption = {
   render(h) {
@@ -29,4 +30,8 @@ const SelectOption = {
   }
 }
 
-export const Select = connect(SelectOption, mapProps({ dataSource: 'options', loading: true }))
+export const Select = connect(
+  SelectOption,
+  mapProps({ dataSource: 'options', loading: true }),
+  mapReadPretty(PreviewText.Select)
+)

@@ -1,5 +1,5 @@
 import { useForm } from '@formily/vue'
-import { getComponentByTag } from './utils/util'
+import { getComponentByTag } from './utils'
 
 const ElButton = getComponentByTag('el-button')
 

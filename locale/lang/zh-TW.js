@@ -1333,6 +1333,7 @@ const tc = {
           },
           joinKeys: {
             label: '關聯條件',
+            tips: '溫馨提示: 當前關聯條件設置會導致數據刪除操作無法同步的情況，請添加中間mongodb節點來完成同步設置。',
             sourceField: '源字段',
             targetField: '目標字段'
           },
