@@ -3,17 +3,34 @@
     <header class="system-header">系统通知</header>
     <div class="main">
       <div class="system-operation">
-        <div class="system-operation-left">通知列表</div>
+        <div class="system-operation-left">
+          <span>通知列表</span>
+          <span class="system-operation-setting" @click="handleSetting">设置</span>
+        </div>
         <div class="system-operation-right">
           <ul>
+            <li class="ml-3">
+              <ElButton plain class="btn-refresh" @click="handleDelete('all')" :disabled="list.length < 1">
+                全部删除
+              </ElButton>
+            </li>
             <li class="ml-3">
               <ElButton plain class="btn-refresh" @click="handleDelete('one')" :disabled="multipleSelection.length < 1">
                 删除
               </ElButton>
             </li>
             <li class="ml-3">
-              <ElButton plain class="btn-refresh" @click="handleDelete('all')" :disabled="list.length < 1">
-                全部删除
+              <ElButton plain size="mini" class="btn-refresh" @click="handleReadNotice('all')"> 全部已读 </ElButton>
+            </li>
+            <li class="ml-3">
+              <ElButton
+                plain
+                size="mini"
+                class="btn-refresh"
+                @click="handleReadNotice('one')"
+                :disabled="multipleSelection.length < 1"
+              >
+                标记为已读
               </ElButton>
             </li>
           </ul>
@@ -63,6 +80,37 @@
       >
       </ElPagination>
     </div>
+    <ElDialog
+      custom-class="notice-setting-dialog"
+      title="通知设置"
+      width="480px"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
+      <ElForm ref="form" class="e-form" label-width="140px" :model="form">
+        <div class="notice-setting-title">agent通知</div>
+        <ElFormItem label="agent状态为离线时">
+          <span class="notice-setting-label">短信通知</span>
+          <ElSwitch v-model="form.connected.sms" size="mini"></ElSwitch>
+          <span class="notice-setting-label">邮件通知</span>
+          <ElSwitch v-model="form.connected.email" size="mini"></ElSwitch>
+        </ElFormItem>
+        <ElFormItem label="agent状态为运行中时">
+          <span class="notice-setting-label">短信通知</span>
+          <ElSwitch v-model="form.connectionInterrupted.sms" size="mini"></ElSwitch>
+          <span class="notice-setting-label">邮件通知</span>
+          <ElSwitch v-model="form.connectionInterrupted.email"></ElSwitch>
+        </ElFormItem>
+        <div class="notice-setting-title">任务运行通知</div>
+        <ElFormItem label="任务运行出错时">
+          <span class="notice-setting-label">短信通知</span>
+          <ElSwitch v-model="form.stoppedByError.sms"></ElSwitch>
+          <span class="notice-setting-label">邮件通知</span>
+          <ElSwitch v-model="form.stoppedByError.email"></ElSwitch>
+        </ElFormItem>
+      </ElForm>
+    </ElDialog>
   </section>
 </template>
 
@@ -74,6 +122,7 @@ export default {
   components: { VIcon },
   data() {
     return {
+      user: window.__USER_INFO__ || {},
       list: [],
       unReadCount: 0,
       read: true,
@@ -98,7 +147,22 @@ export default {
         size: 20,
         total: 0
       },
-      taskFalg: false
+      taskFalg: false,
+      dialogVisible: false,
+      form: {
+        connected: {
+          email: true,
+          sms: true
+        },
+        connectionInterrupted: {
+          email: true,
+          sms: true
+        },
+        stoppedByError: {
+          email: true,
+          sms: true
+        }
+      }
     }
   },
   created() {
@@ -108,6 +172,18 @@ export default {
       // this.getUnreadNum() //未读消息数量
       this.fetch()
     })
+  },
+  watch: {
+    form: {
+      handler(value) {
+        let data = {
+          notification: value
+        }
+        console.log(this.user)
+        this.$axios.patch(`tm/api/user/${this.user.id}`, data)
+      },
+      deep: true
+    }
   },
   methods: {
     fetch(pageNum, debounce) {
@@ -288,6 +364,32 @@ export default {
             this.$root.$emit('notificationUpdate')
           }
         })
+    },
+    // 全部已读
+    handleReadNotice(type) {
+      let where = {}
+      if (type === 'one') {
+        let ids = this.multipleSelection.map(item => item.id)
+        where.id = { inq: ids }
+      } else {
+        where = {}
+      }
+      this.$axios
+        .post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), {
+          read: true
+        })
+        .then(res => {
+          if (res) {
+            // this.getUnreadNum() //未读消息数量
+            this.fetch()
+            // this.read = read
+            this.$root.$emit('notificationUpdate')
+          }
+        })
+    },
+    // 通知设置
+    handleSetting() {
+      this.dialogVisible = true
     }
     // 未读消息
     // getUnreadNum() {
@@ -338,10 +440,26 @@ $unreadColor: #ee5353;
     .system-operation-left {
       font-size: 14px;
       color: #000;
+      span {
+        padding-right: 20px;
+      }
+      .system-operation-setting {
+        cursor: pointer;
+        color: #2c65ff;
+      }
     }
     .system-operation-right {
       li {
         float: right;
+        .btn-refresh {
+          // border-color: #409eff;
+          // color: #409eff;
+        }
+        .border-red:focus,
+        .border-red:hover {
+          border-color: $unreadColor !important;
+          color: $unreadColor !important;
+        }
       }
     }
   }
@@ -371,6 +489,37 @@ $unreadColor: #ee5353;
         margin-left: -20px;
         line-height: 20px;
       }
+    }
+  }
+}
+</style>
+<style lang="scss">
+.notice-setting-dialog {
+  .el-dialog__header {
+    padding: 40px 40px 0 40px;
+    .el-dialog__title {
+      font-weight: 500;
+      color: #000;
+    }
+    .el-dialog__headerbtn {
+      top: 40px;
+      right: 40px;
+    }
+  }
+  .el-dialog__body {
+    padding: 30px 40px;
+    .notice-setting-title {
+      padding-bottom: 10px;
+      font-size: 12px;
+      color: #2c65ff;
+    }
+    .notice-setting-label {
+      padding: 0 8px 0 30px;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.65);
+    }
+    .el-form-item__label {
+      text-align: left;
     }
   }
 }
