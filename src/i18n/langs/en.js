@@ -1,4 +1,11 @@
 export default {
+  // 连接
+  connection_list_column_schema_status: 'Schema loading progress',
+  connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
+  connection_list_column_schema_status_error: 'Error',
+  connection_dialog_title_schema_error: 'Schema loading error',
+
+  // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',
   verify_diff_history_title: 'Diff verification history',
@@ -29,5 +36,8 @@ export default {
   // 任务设置
   task_settings_cdc_sync_point_date: '【Task settings】Incremental acquisition start time, please select the time',
 
-  dag_data_node_label_dameng: 'Dameng Node'
+  dag_data_node_label_dameng: 'Dameng Node',
+
+  // dialog 通用
+  dialog_button_close: 'Close'
 }

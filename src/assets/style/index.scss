@@ -310,6 +310,15 @@ $borderColor: (
 .color-info {
   color: map-get($color, info);
 }
+.color-success {
+  color: map-get($color, success);
+}
+.color-error {
+  color: map-get($color, danger);
+}
+.color-warning {
+  color: map-get($color, warning);
+}
 .el-input__inner {
   border-radius: 2px;
   border: 1px solid #d9d9d9;
