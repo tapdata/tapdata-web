@@ -121,7 +121,7 @@
           :required="model.joinTableRequired"
           v-if="!['append'].includes(model.joinTable.joinType)"
         >
-          <div v-if="showTips" class="link-show-tips">
+          <div v-if="showTips && sourceType === 'mongodb'" class="link-show-tips">
             {{ $t('editor.cell.link.form.joinKeys.tips') }}
           </div>
           <table class="e-table">
