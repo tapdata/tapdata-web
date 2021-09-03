@@ -1163,8 +1163,10 @@ export default {
               if (err.response.msg === 'Error: Loading data source schema') {
                 this.$message.error(this.$t('message.loadingSchema'))
               } else if (err.response.msg === 'DataFlow has add or del stages') {
-                this.showCheckStagesVisible = true
-                this.checkStagesData = err.response.data
+                if (err.response?.data && err.response?.data?.length > 0) {
+                  this.showCheckStagesVisible = true
+                  this.checkStagesData = err.response.data
+                }
               } else {
                 this.$message.error(err.response.msg)
               }
