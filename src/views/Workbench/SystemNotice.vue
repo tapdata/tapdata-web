@@ -441,7 +441,11 @@ $unreadColor: #ee5353;
       font-size: 14px;
       color: #000;
       span {
-        padding-right: 30px;
+        padding-right: 20px;
+      }
+      .system-operation-setting {
+        cursor: pointer;
+        color: #2c65ff;
       }
     }
     .system-operation-right {
