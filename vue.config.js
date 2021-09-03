@@ -2,7 +2,7 @@ const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
 const serveUrlMap = {
-  mock: 'http://localhost:8086',
+  mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
   test: 'http://test.cloud.tapdata.net'
 }
