@@ -689,7 +689,7 @@ module.exports = {
         createTime: '2021-06-18T07:25:46.688Z',
         id: '@guid',
         last_updated: '2021-06-18T07:25:46.688Z',
-        'modular|1': ['connection', 'migration', 'agent', 'inspect'],
+        'modular|1': ['connection', 'migration', 'agent', 'inspect', 'differenceInspect'],
         'operation|1': ['create', 'update', 'copy', 'delete', 'start', 'reset', 'stop', 'forceStop', 'rename'],
         parameter1: '@name',
         parameter2: '@name',

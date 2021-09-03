@@ -171,7 +171,19 @@ export default {
         { label: '新建数据校验', value: 'inspect_create', desc: '新建了数据校验任务【@{parameter1}】' },
         { label: '执行数据校验', value: 'inspect_start', desc: '执行数据校验任务【@{parameter1}】' },
         { label: '编辑数据校验', value: 'inspect_update', desc: '编辑了数据校验任务【@{parameter1}】' },
-        { label: '删除数据校验', value: 'inspect_delete', desc: '删除了数据校验任务【${parameter1}】' }
+        { label: '删除数据校验', value: 'inspect_delete', desc: '删除了数据校验任务【${parameter1}】' },
+
+        {
+          label: '执行差异校验',
+          value: 'differenceInspect_start',
+          desc: '对数据校验任务【@{parameter1}】执行了差异校验'
+        }
+        // // 通知
+        // { label: '已读全部通知', value: 'notice_1', desc: '设置全部通知为已读' },
+        // { label: '删除全部通知', value: 'notice_2', desc: '删除了全部通知' },
+        // { label: '标记通知为已读', value: 'notice_3', desc: '将选中的通知全部标记为已读' },
+        // { label: '删除通知', value: 'notice_4', desc: '将选中的通知全部删除' },
+        // { label: '修改通知设置', value: 'notice_5', desc: '修改了系统通知设置' }
       ]
     }
   },
@@ -349,6 +361,16 @@ export default {
             }
           })
           break
+        // 二次校验
+        case 'differenceInspect':
+          this.$router.push({
+            name: 'Verify',
+            query: {
+              keyword: parameter1
+            }
+          })
+          break
+        // 数据校验
         case 'inspect':
           this.$router.push({
             name: 'Verify',
