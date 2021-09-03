@@ -11,8 +11,16 @@
   >
     <el-table :data="data" style="width: 100%" class="test-block">
       <el-table-column type="index">序号</el-table-column>
-      <el-table-column :prop="stages[0].tableName" label="源表名"></el-table-column>
-      <el-table-column :prop="stages[-1].tableName" label="源表名"></el-table-column>
+      <el-table-column :prop="stages[0].tableName" label="源表名">
+        <template slot-scope="scope">
+          {{ scope.row.stages[0].tableName }}
+        </template>
+      </el-table-column>
+      <el-table-column label="源表名">
+        <template slot-scope="scope">
+          {{ scope.row.stages[-1].tableName }}
+        </template>
+      </el-table-column>
       <el-table-column prop="syncType" label="目标表名">
         <template slot-scope="scope">
           <el-radio-group v-model="scope.row.syncType">
@@ -70,6 +78,7 @@ export default {
      * 只展示type类型为add
      * stages 过滤其他的处理器*/
     initData(initData) {
+      console.log(initData)
       return initData.filter(v => v.type === 'add')
     },
     Save() {
