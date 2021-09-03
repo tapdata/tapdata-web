@@ -33,6 +33,7 @@ import dfs_redis from './dfs_redis'
 import dfs_elasticsearch from './dfs_elasticsearch'
 import dfs_dameng from './dfs_dameng'
 import dfs_kafka from './dfs_kafka'
+import dfs_greenplum from './dfs_greenplum'
 import mq from './mq'
 
 export default {
@@ -62,6 +63,7 @@ export default {
   dfs_elasticsearch,
   dfs_dameng,
   dfs_kafka,
+  dfs_greenplum,
   sybasease,
   gbase8s,
   gaussdb200,

@@ -31,7 +31,7 @@ let pages = {
 module.exports = {
   pages,
   lintOnSave: true,
-  publicPath: '/console',
+  // publicPath: '/console',
   productionSourceMap: false,
 
   devServer: {
@@ -51,7 +51,8 @@ module.exports = {
         pathRewrite: {
           '^/tm': '/'
         }
-      }
+      },
+      '/login': proxy
     }
   },
   configureWebpack: config => {
