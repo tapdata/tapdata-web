@@ -1,5 +1,5 @@
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
-import { getComponentByTag } from './utils/util'
+import { getComponentByTag } from './utils'
 import { Checkbox } from './Checkbox'
 import PreviewText from 'web-core/components/form/preview-text'
 

@@ -1,6 +1,6 @@
 import { isVoidField } from '@formily/core'
 import { connect, mapProps } from '@formily/vue'
-import { getComponentByTag } from './utils/util'
+import { getComponentByTag } from './utils'
 
 const ElFormItemComponent = getComponentByTag('el-form-item')
 

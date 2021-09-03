@@ -1,5 +1,5 @@
 import { FormProvider, createForm } from '@formily/vue'
-import { getComponentByTag } from './utils/util'
+import { getComponentByTag } from './utils'
 
 const ElFormComponent = getComponentByTag('el-form')
 

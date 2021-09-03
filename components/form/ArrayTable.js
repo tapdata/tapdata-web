@@ -3,7 +3,7 @@ import { useField, useFieldSchema, RecursionField, h } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { isArr, uid, shallowClone } from '@formily/shared'
 import { ArrayBase, ArrayBaseItem, useArray } from './ArrayBase'
-import { getComponentByTag } from './utils/util'
+import { getComponentByTag } from './utils'
 import { stylePrefix } from './configs'
 
 const ElTable = getComponentByTag('el-table')

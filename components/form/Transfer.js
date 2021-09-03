@@ -1,5 +1,5 @@
 import { connect, mapProps } from '@formily/vue'
-import { getComponentByTag } from './utils/util'
+import { getComponentByTag } from './utils'
 
 const ElTransfer = getComponentByTag('el-transfer')
 
