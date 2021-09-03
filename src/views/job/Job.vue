@@ -258,7 +258,7 @@
     <AddBtnTip v-if="!loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')"></AddBtnTip>
     <DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
-    <CheckStage :visible="showCheckStagesVisible" :data="checkStagesData" @complete="saveCheckStages"></CheckStage>
+    <CheckStage v-if="showCheckStagesVisible" :visible="showCheckStagesVisible" :data="checkStagesData" @complete="saveCheckStages"></CheckStage>
   </div>
 </template>
 
@@ -332,7 +332,7 @@ export default {
       dataChangeFalg: false,
       statusBtMap,
       showCheckStagesVisible: false,
-      checkStagesData: '',
+      checkStagesData: [],
       modPipeline: ''
     }
   },
@@ -1153,6 +1153,8 @@ export default {
           return
         }
         if (this.modPipeline) {
+          data['modPipeline'] = []
+          this.showCheckStagesVisible = false
           data['modPipeline'] = this.modPipeline
         }
         let start = () => {
@@ -1166,6 +1168,9 @@ export default {
                 if (err.response?.data && err.response?.data?.length > 0) {
                   this.showCheckStagesVisible = true
                   this.checkStagesData = err.response.data
+                  for(let i =0;i<this.checkStagesData.length; i++){
+                    this.checkStagesData[i].syncType = 'initial_sync+cdc'
+                  }
                 }
               } else {
                 this.$message.error(err.response.msg)
@@ -1212,6 +1217,7 @@ export default {
     saveCheckStages(data) {
       this.showCheckStagesVisible = false
       this.modPipeline = data
+      this.start()
     },
     /**
      * stop button handler
