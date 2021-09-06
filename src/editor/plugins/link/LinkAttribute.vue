@@ -733,6 +733,8 @@ export default {
     .link-show-tips {
       color: red;
       font-size: 12px;
+      margin-bottom: 10px;
+      line-height: 18px;
     }
     ::v-deep {
       .transfer {
