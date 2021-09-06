@@ -1299,7 +1299,6 @@ const cn = {
             },
             joinKey: {
               label: '写入路径',
-              tips: '温馨提示: 当前关联条件设置会导致数据删除操作无法同步的情况，请添加中间mongodb节点来完成同步设置。',
               placeholder: '请选择或创建写入路径字段'
             }
           }
@@ -1350,6 +1349,7 @@ const cn = {
           },
           joinKeys: {
             label: '关联条件',
+            tips: '温馨提示: 当前关联条件设置会导致数据删除操作无法同步的情况，请添加中间mongodb节点来完成同步设置。',
             sourceField: '源字段',
             targetField: '目标字段'
           },
