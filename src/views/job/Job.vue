@@ -258,7 +258,7 @@
     <AddBtnTip v-if="!loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')"></AddBtnTip>
     <DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
-    <CheckStage v-if="showCheckStagesVisible" :visible="showCheckStagesVisible" :data="checkStagesData" @complete="saveCheckStages"></CheckStage>
+    <CheckStage v-show="showCheckStagesVisible" :visible="showCheckStagesVisible" :data="checkStagesData" @complete="saveCheckStages"></CheckStage>
   </div>
 </template>
 

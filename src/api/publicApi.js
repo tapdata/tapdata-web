@@ -79,7 +79,8 @@ axios.interceptors.response.use(
               response: {
                 code: '110500',
                 status: 500,
-                msg: data.msg
+                msg: data.msg,
+                data: data.data || []
               }
             })
             break
