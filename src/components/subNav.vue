@@ -8,7 +8,7 @@
         @click="changeName(item)"
         :class="isActive === item.key ? 'active' : ''"
       >
-        <i :class="['iconfont', item.icon]"></i>
+        <VIcon>{{ item.icon }}</VIcon>
         <span slot="title">{{ item.name }}</span>
       </li>
     </ul>
@@ -16,8 +16,11 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
+
 export default {
   name: 'subNav.vue',
+  components: { VIcon },
   data() {
     return {
       settingList: [
@@ -27,7 +30,7 @@ export default {
           key: 'setting'
         },
         {
-          icon: 'icon-lingdang',
+          icon: 'bells',
           name: this.$t('notification.setting'),
           key: 'notification'
         },

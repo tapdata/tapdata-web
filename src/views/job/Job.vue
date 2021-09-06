@@ -7,7 +7,9 @@
       class="action-buttons"
       style="display: flex; align-items: center; justify-content: space-between; padding-right: 10px"
     >
-      <i @click="backDataFlow" :title="$t('dataFlow.backlistText')" class="iconfont icon-sanheng backIcon"></i>
+      <div class="backIcon">
+        <VIcon @click="backDataFlow" :title="$t('dataFlow.backlistText')">menu</VIcon>
+      </div>
       <div class="flex-center">
         <el-button
           v-if="isEditable() && !isMoniting"
@@ -16,7 +18,7 @@
           :loading="isSaving"
           @click="draftSave"
         >
-          <i class="iconfont icon-baocun"></i>
+          <VIcon>save</VIcon>
           <span>{{ isSaving ? $t('dataFlow.button.saveing') : $t('dataFlow.button.save') }}</span>
         </el-button>
 
@@ -26,12 +28,13 @@
           v-model="state"
           size="mini"
           :fetch-suggestions="querySearch"
+          suffix-icon="el-icon-search"
           :placeholder="$t('dataFlow.searchNode')"
           @select="handleSearchNode"
           hide-loading
           clearable
-          suffix-icon="el-icon-search"
-        ></el-autocomplete>
+        >
+        </el-autocomplete>
 
         <el-button-group class="action-btn-group">
           <el-button
@@ -276,6 +279,7 @@ import { EditorEventType } from '../../editor/lib/events'
 import _ from 'lodash'
 import SkipError from '../../components/SkipError'
 import { uuid } from '../../editor/util/Schema'
+import VIcon from '@/components/VIcon'
 
 const dataFlowsApi = factory('DataFlows')
 const Setting = factory('Setting')
@@ -285,7 +289,7 @@ let timer = null
 export default {
   name: 'Job',
   dataFlow: null,
-  components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError },
+  components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError, VIcon },
   data() {
     return {
       downLoadNum: 0,
@@ -574,7 +578,7 @@ export default {
         Object.assign(self.dataFlow, dat)
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
       })
-      if (timer) return
+      if (timer && !this.dataFlowId) return
       timer = setInterval(() => {
         self.updateDataFlow()
       }, 5000)
@@ -816,7 +820,11 @@ export default {
             readCdcInterval: 500,
             readBatchSize: 1000
           })
-        } else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode','app.HanaNode'].includes(cell.type)) {
+        } else if (
+          ['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode', 'app.HanaNode'].includes(
+            cell.type
+          )
+        ) {
           postData.mappingTemplate = 'custom'
 
           Object.assign(stage, {
@@ -831,8 +839,16 @@ export default {
         if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
           let sourceId = cell.source.id
           let targetId = cell.target.id
-          if (sourceId && stages[sourceId]) stages[sourceId].outputLanes.push(targetId)
-          if (targetId && stages[targetId]) stages[targetId].inputLanes.push(sourceId)
+          if (sourceId && stages[sourceId]) {
+            stages[sourceId].outputLanes.push(targetId)
+            //添加字段处理器
+            if (postData.mappingTemplate === 'cluster-clone') {
+              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
+            }
+          }
+          if (targetId && stages[targetId]) {
+            stages[targetId].inputLanes.push(sourceId)
+          }
         }
       })
       postData.stages = Object.values(stages)
@@ -1071,7 +1087,7 @@ export default {
       }
     },
     //保存逻辑启动
-    doSaveStartDataFlow(data) {
+    async doSaveStartDataFlow(data) {
       if (data) {
         if (this.form.taskName) {
           data.name = this.form.taskName

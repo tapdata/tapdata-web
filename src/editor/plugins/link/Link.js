@@ -172,9 +172,15 @@ export const link = {
           targetCell &&
           targetCell.isDataNode &&
           targetCell.isDataNode() &&
-          ['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode', 'app.HanaNode'].includes(
-            targetCell.get('type')
-          )
+          [
+            'app.Table',
+            'app.Collection',
+            'app.ESNode',
+            'app.HiveNode',
+            'app.KUDUNode',
+            'app.HanaNode',
+            'app.DamengNode'
+          ].includes(targetCell.get('type'))
         )
       },
 

@@ -1,7 +1,7 @@
 <template>
   <div class="database nodeStyle">
     <!-- <head class="head">
-			<span class="headIcon iconfont icon-you2" type="primary"></span>
+			<VIcon class="headIcon color-primary">arrow-right-circle</VIcon>
 			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
 		</head> -->
     <div class="nodeBody">

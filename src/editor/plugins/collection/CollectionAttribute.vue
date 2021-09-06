@@ -283,18 +283,23 @@
           :mergedSchema="defaultSchema"
         ></queryBuilder>
       </el-form>
-      <div class="e-entity-wrap" style="text-align: center">
-        <el-button
-          class="fr"
-          type="success"
-          size="mini"
-          v-if="model.connectionId && model.tableName"
-          @click="hanlderLoadSchema"
-        >
-          <i class="el-icon-loading" v-if="reloadModelLoading"></i>
+      <div class="e-entity-wrap" style="text-align: center" v-if="model.connectionId && model.tableName">
+        <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
+          <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
           <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
           <span v-else>{{ $t('dataFlow.updateModel') }}</span>
         </el-button>
+        <FieldMapping
+          v-else
+          :dataFlow="dataFlow"
+          :showBtn="true"
+          :isFirst="model.isFirst"
+          @update-first="returnModel"
+          :hiddenFieldProcess="true"
+          :stageId="stageId"
+          ref="fieldMapping"
+          class="fr"
+        ></FieldMapping>
         <entity
           v-loading="schemaSelectConfig.loading"
           :schema="convertSchemaToTreeData(defaultSchema)"
@@ -351,11 +356,13 @@ import ClipButton from '@/components/ClipButton'
 import queryBuilder from '@/components/QueryBuilder'
 import CreateTable from '@/components/dialog/createTable'
 import AggregationDialog from './aggregationDialog'
+import FieldMapping from '@/components/FieldMapping'
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, removeDeleted, uuid } from '../../util/Schema'
 import Entity from '../link/Entity'
 import _ from 'lodash'
 import ws from '../../../api/ws'
 import factory from '../../../api/factory'
+import VIcon from '@/components/VIcon'
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editorMonitor = null;
@@ -377,7 +384,9 @@ export default {
     RelatedTasks,
     CreateTable,
     queryBuilder,
-    AggregationDialog
+    AggregationDialog,
+    VIcon,
+    FieldMapping
   },
   props: {
     database_types: {
@@ -571,6 +580,7 @@ export default {
       },
       dataNodeInfo: {},
       model: {
+        isFirst: true,
         connectionId: '',
         databaseType: 'mongodb',
         tableName: '',
@@ -609,7 +619,10 @@ export default {
       loading: false,
       collectionAggregateTip: true,
       repeatTableDiao: false,
-      repeatTable: []
+      repeatTable: [],
+      scope: '',
+      dataFlow: '',
+      stageId: ''
     }
   },
 
@@ -888,6 +901,9 @@ export default {
     },
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
+        this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
           conds = JSON.parse(JSON.stringify(data.custSql.conditions))
@@ -917,7 +933,6 @@ export default {
         if (data.connectionId) {
           this.loadDataModels(data.connectionId)
         }
-
         this.tableIsLink()
       }
 
@@ -925,6 +940,7 @@ export default {
       this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema())
       cell.on('change:outputSchema', () => {
         this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema())
+        this.getDataFlow()
       })
       // editorMonitor = vueAdapter.editor;
       let settingData = vueAdapter.editor.getData().settingData
@@ -1094,6 +1110,14 @@ export default {
       }
 
       this.aggregationDialog = false
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
   }
 }

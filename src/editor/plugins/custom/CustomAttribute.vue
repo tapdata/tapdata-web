@@ -1,7 +1,7 @@
 <template>
   <div class="customName nodeStyle">
     <head>
-      <span class="headIcon iconfont icon-you2" type="primary"></span>
+      <VIcon class="headIcon color-primary">arrow-right-circle</VIcon>
       <span class="txt">{{ $t('editor.nodeSettings') }}</span>
     </head>
     <div class="nodeBody">
@@ -84,18 +84,23 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <div class="flex-block fr">
-            <el-button
-              class="fr"
-              type="success"
-              v-if="model.connectionId && model.tableName"
-              size="mini"
-              @click="hanlderLoadSchema"
-            >
-              <i class="el-icon-loading" v-if="reloadModelLoading"></i>
+          <div class="flex-block fr" v-if="model.connectionId && model.tableName">
+            <el-button class="fr" type="success" size="mini" v-if="isSourceDataNode" @click="hanlderLoadSchema">
+              <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
               <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
               <span v-else>{{ $t('dataFlow.updateModel') }}</span>
             </el-button>
+            <FieldMapping
+              v-else
+              :dataFlow="dataFlow"
+              :showBtn="true"
+              :isFirst="model.isFirst"
+              @update-first="returnModel"
+              :hiddenFieldProcess="true"
+              :stageId="stageId"
+              ref="fieldMapping"
+              class="fr"
+            ></FieldMapping>
           </div>
         </el-form-item>
       </el-form>
@@ -120,15 +125,16 @@ import factory from '../../../api/factory'
 // import MultiSelection from '../../../components/MultiSelection';
 import RelatedTasks from '../../../components/relatedTasks'
 import ClipButton from '@/components/ClipButton'
+import FieldMapping from '@/components/FieldMapping'
 import Entity from '../link/Entity'
 import ws from '../../../api/ws'
 import { convertSchemaToTreeData, uuid } from '../../util/Schema'
-
+import VIcon from '@/components/VIcon'
 let connectionApi = factory('connections')
 // let editorMonitor = null;
 export default {
   name: 'CustomNode',
-  components: { Entity, ClipButton, RelatedTasks },
+  components: { Entity, ClipButton, RelatedTasks, VIcon, FieldMapping },
   props: {
     connection_type: {
       type: String,
@@ -157,12 +163,16 @@ export default {
           }
         ]
       },
+      dataNodeInfo: {},
       model: {
         connectionId: '',
         tableName: '',
-        type: 'custom_connection'
-        // primaryKeys: ''
+        type: 'custom_connection',
+        isFirst: true
       },
+      scope: '',
+      dataFlow: '',
+      stageId: '',
       mergedSchema: null,
       primaryKeyOptions: []
     }
@@ -264,14 +274,18 @@ export default {
   },
   methods: {
     convertSchemaToTreeData,
-    setData(data, cell, dataNodeInfo) {
+    setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        this.scope = vueAdapter?.editor?.scope
+        this.getDataFlow()
+        this.stageId = cell.id
         _.merge(this.model, data)
       }
       this.isSourceDataNode = dataNodeInfo && (dataNodeInfo.isSource || !dataNodeInfo.isTarget)
       this.mergedSchema = cell.getOutputSchema()
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
+        this.getDataFlow()
       })
 
       // editorMonitor = vueAdapter.editor;
@@ -370,6 +384,14 @@ export default {
         })
       })
       this.dialogVisible = false
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
   }
 }

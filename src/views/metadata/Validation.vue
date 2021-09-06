@@ -500,7 +500,7 @@ export default {
     },
 
     async doSave() {
-      let result = await this.$api('MetadataInstances').patch(this.validaData.id, {
+      let result = await this.$api('MetadataInstances').patchId(this.validaData.id, {
         data_rules: { rules: this.validationTableData }
       })
       return result
