@@ -221,6 +221,12 @@ export default {
       }
     }, 5000)
   },
+  mounted() {
+    if (this.$route.query?.action === 'create') {
+      this.clearRouter()
+      this.create()
+    }
+  },
   beforeDestroy() {
     clearInterval(timer)
     timer = null
@@ -253,6 +259,12 @@ export default {
         if (changeParams) {
           Object.assign(item, changeParams)
         }
+      })
+    },
+    // 清除路由
+    clearRouter() {
+      this.$router.replace({
+        name: 'Connection'
       })
     },
     search(debounce) {
