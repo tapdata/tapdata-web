@@ -22,7 +22,7 @@ export default {
         let icon = data.loadFieldsStatus === 'loading' ? 'warning' : 'success'
         let process = (data.loadCount * 100) / data.tableCount || 100
         schemaInfo = {
-          text: process + '%',
+          text: Math.floor(process) + '%',
           icon: icon
         }
       } else {
