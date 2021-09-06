@@ -6,7 +6,6 @@
     :visible.sync="visible"
     :show-close="false"
     title="新增同步链路设置"
-    :before-close="handleClose"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
   >
