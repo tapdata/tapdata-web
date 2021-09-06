@@ -155,16 +155,7 @@
           </ElTooltip>
         </div>
         <template slot-scope="scope">
-          <div class="flex align-items-center">
-            <i class="connections-status__icon mr-1" :class="'el-icon-' + scope.row.schemaInfo.icon"></i>
-            <ElLink
-              v-if="scope.row.schemaInfo.icon === 'error'"
-              type="danger"
-              @click="schemaError = scope.row.loadFieldErrMsg"
-              >{{ scope.row.schemaInfo.text }}</ElLink
-            >
-            <span v-else :class="'color-' + scope.row.schemaInfo.icon">{{ scope.row.schemaInfo.text }}</span>
-          </div>
+          <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
       </el-table-column>
       <el-table-column :label="$t('connection.lastUpdateTime')" width="160" prop="last_updated" sortable="custom">
@@ -218,15 +209,10 @@
       :formData="testData"
       @returnTestData="returnTestData"
     ></Test>
-    <ElDialog :visible="!!schemaError" :title="$t('connection_dialog_title_schema_error')" @closed="schemaError = ''">
-      <pre class="pb-10 overflow-auto">{{ schemaError }}</pre>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="schemaError = ''">{{ $t('dialog_button_close') }}</el-button>
-      </span>
-    </ElDialog>
   </section>
 </template>
 <script>
+import SchemaProgress from 'web-core/components/SchemaProgress'
 import TablePage from '@/components/TablePage'
 import VIcon from '@/components/VIcon'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
@@ -237,7 +223,7 @@ import Test from './Test'
 let timeout = null
 
 export default {
-  components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon },
+  components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress },
   data() {
     return {
       user_id: this.$cookie.get('user_id'),
@@ -330,8 +316,7 @@ export default {
         dds: 'DDS实例'
       },
       testData: null,
-      dialogTestVisible: false, // 连接测试框
-      schemaError: ''
+      dialogTestVisible: false // 连接测试框
     }
   },
   computed: {
@@ -479,19 +464,6 @@ export default {
             }
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-            if (['loading', 'finished'].includes(item.loadFieldsStatus)) {
-              let icon = item.loadFieldsStatus === 'loading' ? 'warning' : 'success'
-              let process = (item.loadCount * 100) / item.tableCount || 100
-              item.schemaInfo = {
-                text: process + '%',
-                icon: icon
-              }
-            } else {
-              item.schemaInfo = {
-                text: this.$t('connection_list_column_schema_status_error'),
-                icon: 'error'
-              }
-            }
             return item
           })
         }

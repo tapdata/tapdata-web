@@ -2,8 +2,6 @@ export default {
   // 连接
   connection_list_column_schema_status: 'Schema加载进度',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
-  connection_list_column_schema_status_error: '出错',
-  connection_dialog_title_schema_error: 'Schema加载出错',
 
   // 数据校验
   verify_details_title: '任务校验详情',
@@ -52,8 +50,5 @@ export default {
   js_func_dialog_edit_title: '更新记录',
   js_func_delete_remind: '确定要删除函数',
 
-  dag_data_node_label_dameng: 'Dameng节点',
-
-  // dialog 通用
-  dialog_button_close: '关 闭'
+  dag_data_node_label_dameng: 'Dameng节点'
 }
