@@ -681,6 +681,7 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
+  '/tm/api/UserLogs/count': { data: { count: 130 }, code: 'ok', msg: 'ok' },
   '/tm/api/UserLogs': {
     code: 'ok',
     msg: 'ok',
@@ -689,8 +690,21 @@ module.exports = {
         createTime: '2021-06-18T07:25:46.688Z',
         id: '@guid',
         last_updated: '2021-06-18T07:25:46.688Z',
-        'modular|1': ['connection', 'migration', 'agent', 'inspect'],
-        'operation|1': ['create', 'update', 'copy', 'delete', 'start', 'reset', 'stop', 'forceStop', 'rename'],
+        'modular|1': ['connection', 'migration', 'agent', 'inspect', 'differenceInspect', 'message'],
+        'operation|1': [
+          'create',
+          'update',
+          'copy',
+          'delete',
+          'start',
+          'reset',
+          'stop',
+          'forceStop',
+          'rename',
+          'read',
+          'readAll',
+          'deleteAll'
+        ],
         parameter1: '@name',
         parameter2: '@name',
         parameter3: '',
