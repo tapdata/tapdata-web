@@ -32,7 +32,7 @@
       </el-table-column>
     </el-table>
     <span slot="footer" class="dialog-footer">
-      <el-button size="mini" type="primary" @click="Save()">{{ $t('dataForm.close') }}</el-button>
+      <el-button size="mini" type="primary" @click="Save()">{{ $t('message.ok') }}</el-button>
     </span>
   </el-dialog>
 </template>
