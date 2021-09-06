@@ -32,5 +32,7 @@ export default {
   // 任务设置
   task_settings_cdc_sync_point_date: '【任務設置】增量採集開始時刻，請選擇時間',
 
+  // 数据源
+  connection_form_tidb_server: 'TiDB地址',
   dag_data_node_label_dameng: 'Dameng節點'
 }

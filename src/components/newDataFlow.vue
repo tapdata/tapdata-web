@@ -133,6 +133,7 @@ export default {
         'mq',
         'tcp_udp',
         'greenplum',
+        'tidb',
         'hana'
       ] //目前白名单,
     }

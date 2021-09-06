@@ -502,6 +502,7 @@ export default {
           'hbase',
           'kudu',
           'greenplum',
+          'tidb',
           'hana'
         ].includes(type)
       ) {

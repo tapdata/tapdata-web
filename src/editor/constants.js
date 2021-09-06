@@ -177,6 +177,12 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-greenplum.svg',
       stencilImage: 'static/editor/greenplum.svg'
     },
+    tidb: {
+      type: 'tidb',
+      name: 'TiDB',
+      shapeImage: 'static/editor/o-tidb.svg',
+      stencilImage: 'static/editor/tidb.svg'
+    },
     hana: {
       type: 'hana',
       name: 'SPA Hana',

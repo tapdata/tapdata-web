@@ -292,6 +292,7 @@ export default {
         'hbase',
         'kudu',
         'greenplum',
+        'tidb',
         'hana'
       ], //目前白名单,
       searchParams: {
