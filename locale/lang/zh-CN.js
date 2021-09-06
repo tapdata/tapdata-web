@@ -1,5 +1,11 @@
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 const newCn = {
+  // dialog 通用
+  dialog_button_close: '关 闭',
+
+  schema_progress_status_error: '出错',
+  schema_progress_dialog_error_title: 'Schema加载出错',
+
   verify_history_source_rows: '本次校验行数',
   verify_history_target_rows: '目标行数',
   verify_history_source_total_rows: '源总行数',

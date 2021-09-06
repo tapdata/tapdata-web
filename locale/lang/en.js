@@ -1,5 +1,11 @@
 import enLocale from 'element-ui/lib/locale/lang/en'
 const newEn = {
+  // dialog 通用
+  dialog_button_close: 'Close',
+
+  schema_progress_status_error: 'Error',
+  schema_progress_dialog_error_title: 'Schema loading error',
+
   verify_history_source_rows: 'Verfify Rows',
   verify_history_target_rows: 'Target Rows',
   verify_history_source_total_rows: 'Source Total Rows',

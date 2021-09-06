@@ -1,6 +1,12 @@
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
 
 const newTc = {
+  // dialog 通用
+  dialog_button_close: '關 閉',
+
+  schema_progress_status_error: '出錯',
+  schema_progress_dialog_error_title: 'Schema加载出错',
+
   verify_history_source_rows: '本次校驗行數',
   verify_history_target_rows: '目標行數',
   verify_history_source_total_rows: '源總行數',
