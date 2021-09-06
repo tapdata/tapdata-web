@@ -185,6 +185,8 @@ export default {
 
   // 连接
   connection_manage: 'Connection Management',
+  connection_list_column_schema_status: 'Schema loading progress',
+  connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
 
   // 任务
   task_manage: 'Task Management',

@@ -23,10 +23,10 @@
             <div class="body" v-if="steps[activeStep].index === 2">
               <div class="title">选择源端与目标端连接</div>
               <div class="desc">
-                如果你还未添加数据源，请点击添加数据源按钮进行添加，为了方便你的测试，我们建议数据源的数量不少2个<span
+                如果你还未添加数据源，请先前往连接管理进行添加。<span
                   style="color: #337dff; cursor: pointer"
                   @click="handleCreateDatabase"
-                  >创建数据连接</span
+                  >前往连接管理</span
                 >
               </div>
               <form-builder ref="dataSource" v-model="dataSourceModel" :config="config" @value-change="formChange">
@@ -555,15 +555,12 @@ export default {
     },
     //兼容新手引导
     handleCreateDatabase() {
-      if (this.$route.query.step) {
-        let item = {
-          visible: true,
-          step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0
+      this.$router.push({
+        name: 'Connection',
+        query: {
+          action: 'create'
         }
-        window.noviceGuideChange(item)
-      } else {
-        this.dialogDatabaseTypeVisible = true
-      }
+      })
     },
     //初始化数据 编辑跳转
     intiData(id) {

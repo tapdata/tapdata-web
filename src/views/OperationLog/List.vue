@@ -172,18 +172,18 @@ export default {
         { label: '执行数据校验', value: 'inspect_start', desc: '执行数据校验任务【@{parameter1}】' },
         { label: '编辑数据校验', value: 'inspect_update', desc: '编辑了数据校验任务【@{parameter1}】' },
         { label: '删除数据校验', value: 'inspect_delete', desc: '删除了数据校验任务【${parameter1}】' },
-
+        // 二次校验
         {
           label: '执行差异校验',
           value: 'differenceInspect_start',
           desc: '对数据校验任务【@{parameter1}】执行了差异校验'
-        }
-        // // 通知
-        // { label: '已读全部通知', value: 'notice_1', desc: '设置全部通知为已读' },
-        // { label: '删除全部通知', value: 'notice_2', desc: '删除了全部通知' },
-        // { label: '标记通知为已读', value: 'notice_3', desc: '将选中的通知全部标记为已读' },
-        // { label: '删除通知', value: 'notice_4', desc: '将选中的通知全部删除' },
-        // { label: '修改通知设置', value: 'notice_5', desc: '修改了系统通知设置' }
+        },
+        // 通知
+        { label: '已读全部通知', value: 'message_readAll', desc: '设置全部通知为已读' },
+        { label: '删除全部通知', value: 'message_deleteAll', desc: '删除了全部通知' },
+        { label: '标记通知为已读', value: 'message_read', desc: '将选中的通知全部标记为已读' },
+        { label: '删除通知', value: 'message_delete', desc: '将选中的通知全部删除' },
+        { label: '修改通知设置', value: 'message_update', desc: '修改了系统通知设置' }
       ]
     }
   },

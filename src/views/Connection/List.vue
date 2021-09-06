@@ -76,6 +76,17 @@
             }[scope.row.connection_type]
           }}</template>
         </ElTableColumn>
+        <ElTableColumn width="160">
+          <div slot="header">
+            {{ $t('connection_list_column_schema_status') }}
+            <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
+              <VIcon>question-circle</VIcon>
+            </ElTooltip>
+          </div>
+          <template slot-scope="scope">
+            <SchemaProgress :data="scope.row"></SchemaProgress>
+          </template>
+        </ElTableColumn>
         <ElTableColumn label="修改时间" prop="last_updated" width="180" sortable="custom">
           <template slot-scope="scope">{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</template>
         </ElTableColumn>
@@ -168,11 +179,12 @@
 <script>
 import { CONNECTION_STATUS_MAP, SUPPORT_DB } from '../../const'
 import StatusTag from '../../components/StatusTag'
+import SchemaProgress from 'web-core/components/SchemaProgress'
 import Preview from './Preview.vue'
 import VIcon from '@/components/VIcon'
 let timer = null
 export default {
-  components: { StatusTag, Preview, VIcon },
+  components: { StatusTag, Preview, VIcon, SchemaProgress },
   data() {
     return {
       loading: true,
@@ -221,6 +233,12 @@ export default {
       }
     }, 5000)
   },
+  mounted() {
+    if (this.$route.query?.action === 'create') {
+      this.clearRouter()
+      this.create()
+    }
+  },
   beforeDestroy() {
     clearInterval(timer)
     timer = null
@@ -253,6 +271,12 @@ export default {
         if (changeParams) {
           Object.assign(item, changeParams)
         }
+      })
+    },
+    // 清除路由
+    clearRouter() {
+      this.$router.replace({
+        name: 'Connection'
       })
     },
     search(debounce) {
