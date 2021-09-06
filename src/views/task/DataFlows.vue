@@ -1290,8 +1290,11 @@ export default {
           this.responseHandler(res.data, this.$t('message.operationSuccuess'))
         })
         .catch(err => {
-          console.log(err.response.msg)
-          this.$message.error('任务启动失败，请编辑任务完成映射配置')
+          if(err.response.msg === 'Metadata transformer error'){
+            this.$message.error('任务启动失败，请编辑任务完成映射配置')
+          } else if(err.response.msg === 'DataFlow has add or del stages'){
+            this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
+          }
         })
     },
     skipHandler(id, errorEvents) {
