@@ -19,7 +19,7 @@
       </el-table-column>
       <el-table-column label="源表名">
         <template slot-scope="scope">
-          {{ scope.row.stages ? scope.row.stages[scope.row.stages.length - 1].tableName:'' }}
+          {{ scope.row.stages ? scope.row.stages[scope.row.stages.length - 1].tableName : '' }}
         </template>
       </el-table-column>
       <el-table-column prop="syncType" label="目标表名">

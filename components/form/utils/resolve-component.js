@@ -1,5 +1,4 @@
 import { h, toRaw } from '@vue/composition-api'
-import { Component, VNode } from 'vue'
 
 export const resolveComponent = (child, props) => {
   if (child) {
