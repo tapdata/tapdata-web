@@ -292,6 +292,9 @@ $borderColor: (
 .el-icon-error {
   color: map-get($color, danger);
 }
+.el-icon-danger {
+  color: map-get($color, danger);
+}
 .icon-daiqidong {
   color: map-get($color, primary);
 }
