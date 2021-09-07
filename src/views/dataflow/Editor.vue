@@ -204,9 +204,9 @@ export default {
   mounted() {
     this.jsPlumbIns.ready(async () => {
       try {
+        this.initCommand()
         this.initNodeView()
         await this.initView()
-        this.initCommand()
       } catch (error) {
         console.error(error)
       }
@@ -269,8 +269,6 @@ export default {
         this.setStateDirty(false)
         return Promise.resolve()
       }
-
-      console.log('this.stateIsDirty', this.stateIsDirty)
 
       if (this.stateIsDirty) {
         // 状态已被修改
@@ -555,10 +553,13 @@ export default {
       this.setDataflowId(dataflowId)
       this.setDataflowName({ newName: data.name, setStateDirty: false })
       this.setDataflowSettings(data.setting)
+
+      const isOld = this.transformStages(data.stages)
       await this.addNodes(data.stages)
 
+      // 旧版数据自动布局
+      isOld ? this.handleAutoLayout() : this.handleCenterContent()
       this.setStateDirty(false)
-      // this.zoomToFit()
     },
 
     newDataflow() {
@@ -569,10 +570,26 @@ export default {
       })
     },
 
+    /**
+     * 旧版数据转换
+     * @param stages
+     * @returns {boolean}
+     */
+    transformStages(stages) {
+      if (!stages.length) return false
+      // 判断是否是旧版数据
+      if ('position' in stages[0]) return false
+      stages.forEach(item => {
+        item.position = [0, 0]
+        item.databaseType = item.database_type
+        delete item.database_type
+      })
+      return true
+    },
+
     async addNodes(nodes) {
       if (!nodes || !nodes.length) return
       const { getters } = this.$store
-      // const allNodes = getters['dataflow/allNodeTypes']
       const getNodeType = getters['dataflow/nodeType']
       const getCtor = getters['dataflow/getCtor']
 
@@ -1216,16 +1233,13 @@ export default {
     },
 
     handleShowSettings() {
-      /*const activeType = this.$store.getters['dataflow/activeType']
-      if (activeType === 'connection') {
-        this.deselectConnection(...arguments)
-      } else if (activeType === 'node') {
-        this.setActiveNode(null)
-      }*/
       this.deselectAllNodes()
       this.setActiveType('settings')
     },
 
+    /**
+     * 画布内容居中在可视区域
+     */
     handleCenterContent() {
       this.$refs.paperScroller.centerContent()
     },
@@ -1363,39 +1377,6 @@ export default {
         link: item.linkSchema
       })
       console.log('data', data)
-    },
-
-    zoomToFit() {
-      const nodes = this.nodes
-
-      if (nodes.length === 0) {
-        return
-      }
-
-      const { minX, minY, maxX, maxY } = getDataflowCorners(nodes)
-
-      console.log('minX, minY, maxX, maxY', minX, minY, maxX, maxY)
-
-      const PADDING = NODE_SIZE * 4
-
-      const editorWidth = window.innerWidth
-      const diffX = maxX - minX + SIDEBAR_WIDTH + PADDING
-      const scaleX = editorWidth / diffX
-
-      const editorHeight = window.innerHeight
-      const diffY = maxY - minY + HEADER_HEIGHT + PADDING
-      const scaleY = editorHeight / diffY
-
-      // const zoomLevel = Math.min(scaleX, scaleY, 1)
-      const zoomLevel = 1
-      let xOffset = minX * -1 * zoomLevel + SIDEBAR_WIDTH // find top right corner
-      xOffset += (editorWidth - SIDEBAR_WIDTH - (maxX - minX + NODE_SIZE) * zoomLevel) / 2 // add padding to center workflow
-
-      let yOffset = minY * -1 * zoomLevel + HEADER_HEIGHT // find top right corner
-      yOffset += (editorHeight - HEADER_HEIGHT - (maxY - minY + NODE_SIZE * 2) * zoomLevel) / 2 // add padding to center workflow
-
-      this.setZoomLevel(zoomLevel)
-      this.$store.commit('dataflow/setNodeViewOffsetPosition', { newOffset: [xOffset, yOffset] })
     },
 
     setZoomLevel(zoomLevel) {
