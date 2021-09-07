@@ -32,7 +32,8 @@
       </el-table-column>
     </el-table>
     <span slot="footer" class="dialog-footer">
-      <el-button size="mini" type="primary" @click="Save()">{{ $t('message.ok') }}</el-button>
+      <el-button size="mini" @click="cancel()">{{ $t('message.cancel') }}</el-button>
+      <el-button size="mini" type="primary" @click="Save()">{{ $t('message.confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -44,6 +45,9 @@ export default {
   methods: {
     Save() {
       this.$emit('complete', this.data)
+    },
+    cancel() {
+      this.visible = false
     }
   }
 }
