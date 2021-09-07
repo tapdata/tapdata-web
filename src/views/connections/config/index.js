@@ -45,6 +45,7 @@ import mq from './mq'
 import hbase from './hbase'
 import kudu from './kudu'
 import greenplum from './greenplum'
+import tidb from './tidb'
 import hana from './hana'
 
 export default {
@@ -95,5 +96,6 @@ export default {
   hbase,
   kudu,
   greenplum,
+  tidb,
   hana
 }

@@ -56,6 +56,7 @@ export default {
         'hbase',
         'kudu',
         'greenplum',
+        'tidb',
         'hana'
       ],
       comingAllowDatabase: [], // 即将上线

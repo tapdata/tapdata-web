@@ -3,6 +3,7 @@ export default {
   connection_list_column_schema_status: 'Schema加载进度',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
 
+  connection_tidb_none_server: 'TiBD地址不能为空',
   // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',
@@ -31,6 +32,9 @@ export default {
 
   // 任务设置
   task_settings_cdc_sync_point_date: '【任务设置】增量采集开始时刻，请选择时间',
+
+  // 数据源
+  connection_form_tidb_server: 'TiDB地址',
 
   // 路由名
   app_menu_jsFuncs: '函数',
