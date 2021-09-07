@@ -98,7 +98,7 @@ export default {
     },
     tableData() {
       let list = this.resultInfo.stats || []
-      if (this.$route.name === 'dataVerifyResultDetails') {
+      if (this.$route.name === 'VerifyDiffDetails') {
         list = list.filter(item => {
           return item.source_total > 0
         })
