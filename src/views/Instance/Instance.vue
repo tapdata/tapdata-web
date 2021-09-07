@@ -314,13 +314,13 @@ export default {
   created() {
     this.init()
     timer = setInterval(() => {
-      let list = this.list || []
-      let flag = false
-      list.forEach(item => {
-        if (['Stopping'].includes(item.status) || (this.showUpgradeIcon(item) && this.upgradingFlag(item))) {
-          flag = true
-        }
-      })
+      // let list = this.list || []
+      let flag = true
+      // list.forEach(item => {
+      //   if (['Stopping'].includes(item.status) || (this.showUpgradeIcon(item) && this.upgradingFlag(item))) {
+      //     flag = true
+      //   }
+      // })
       if (flag && this.$route.name === 'Instance') {
         this.fetch(null, true)
       }
