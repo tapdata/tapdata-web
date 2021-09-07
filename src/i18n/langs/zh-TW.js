@@ -1,4 +1,9 @@
 export default {
+  // 连接
+  connection_list_column_schema_status: 'Schema加載進度',
+  connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
+
+  // 数据校验
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',
   verify_diff_history_title: '差異校驗歷史',
