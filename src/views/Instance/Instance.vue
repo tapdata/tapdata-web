@@ -52,16 +52,11 @@
           <template slot-scope="scope">
             <div class="flex">
               <div>
-                <el-link
-                  class="agent-link"
-                  :type="scope.row.agentType === 'Cloud' ? '' : 'primary'"
-                  @click="handleDetails(scope.row)"
-                  >{{ scope.row.id }}</el-link
-                >
-                <ClipButton :value="scope.row.id"></ClipButton>
                 <inline-input
-                  style="display: block"
+                  class="color-primary"
                   :value="scope.row.name"
+                  :icon-config="{ class: 'color-primary' }"
+                  type="icon"
                   @save="updateName($event, scope.row.id)"
                 ></inline-input>
               </div>
@@ -242,7 +237,6 @@
 <script>
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
-import ClipButton from '../../components/ClipButton'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import VIcon from '../../components/VIcon'
 
@@ -252,7 +246,6 @@ export default {
   components: {
     InlineInput,
     StatusTag,
-    ClipButton,
     VIcon
   },
   data() {
