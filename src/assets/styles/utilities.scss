@@ -11924,25 +11924,43 @@
 
 //TODO 应该通过语法生成 color-* 的颜色原子类
 .color-primary {
-  color: map-get($color, primary);
+  color: map-get($color, primary)!important;
 }
 .color-danger {
-  color: map-get($color, danger);
+  color: map-get($color, danger)!important;
 }
 .color-success {
-  color: map-get($color, success);
+  color: map-get($color, success)!important;
 }
 .color-warning {
-  color: map-get($color, warning);
+  color: map-get($color, warning)!important;
+}
+.color-lprimary {
+  color: map-get($color, lprimary)!important;
+}
+.color-lsuccess {
+  color: map-get($color, lsuccess)!important;
+}
+.color-info {
+  color: map-get($color, info)!important;
+}
+.color-linfo {
+  color: map-get($color, linfo)!important;
+}
+.color-disable {
+  color: map-get($color, disable)!important;
 }
 /*
-* public 具体的样式类
+* 补充原子类
 */
 .fs-7 {
   font-size: 0.875rem !important;
 }
 .fs-8 {
   font-size: 0.75rem !important;
+}
+.lh-unset {
+  line-height: unset !important;
 }
 .ellipsis {
   white-space: nowrap;
