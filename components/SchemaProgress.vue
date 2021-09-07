@@ -2,12 +2,10 @@
   <div class="schema-progress-wrapper flex align-items-center">
     <i
       class="connections-schema-status__icon mr-1"
-      :class="'el-icon-' + schemaInfo.icon + ' color-' + schemaInfo.icon"
+      :class="'el-icon-' + schemaInfo.icon + ' color-' + schemaInfo.color"
     ></i>
     <ElLink v-if="schemaInfo.icon === 'error'" type="danger" @click="showErrorMsg">{{ schemaInfo.text }}</ElLink>
-    <span v-else :class="'color-' + schemaInfo.icon === 'error' ? 'danger' : schemaInfo.icon">{{
-      schemaInfo.text
-    }}</span>
+    <span v-else :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
   </div>
 </template>
 
@@ -25,12 +23,14 @@ export default {
         let process = (data.loadCount * 100) / data.tableCount || 100
         schemaInfo = {
           text: Math.floor(process) + '%',
-          icon: icon
+          icon: icon,
+          color: icon
         }
       } else {
         schemaInfo = {
           text: this.$t('schema_progress_status_error'),
-          icon: 'error'
+          icon: 'error',
+          color: 'danger'
         }
       }
       return schemaInfo
