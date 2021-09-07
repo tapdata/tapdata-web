@@ -1168,6 +1168,7 @@ export default {
                 if (err.response?.data && err.response?.data?.length > 0) {
                   this.showCheckStagesVisible = true
                   this.checkStagesData = err.response.data
+                  this.checkStagesData = this.checkStagesData.filter(v => v.type === 'add') //只展示别删除的
                   for(let i =0;i<this.checkStagesData.length; i++){
                     this.checkStagesData[i].syncType = 'initial_sync+cdc'
                   }
