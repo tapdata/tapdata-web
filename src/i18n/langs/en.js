@@ -4,6 +4,8 @@ export default {
   gl_no_data: 'No data',
   gl_no_match_result: 'No matching results were found',
   gl_back_to_list: 'Back to list',
+  gl_placeholder_select: 'Please select',
+  gl_placeholder_input: 'Please enter',
   gl_button_cancel: 'Cancel',
   gl_button_finish: '完成',
   gl_button_delete_fail: 'Failed to delete',
@@ -39,7 +41,7 @@ export default {
 
   // Agent
   agent_manage: 'Agent Management',
-  agent_name: 'Agent ID/Name',
+  agent_name: 'Agent Name',
   agent_id: 'Agent ID',
   agent_task_number: 'Number of tasks',
   agent_create_time: 'Creation time',

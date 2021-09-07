@@ -2,7 +2,8 @@
   <span class="td-status-tag">
     <ElTag :type="statusObj.type" v-if="type === 'tag'">{{ statusObj.text }}</ElTag>
     <span :class="['flex', 'align-items-center', 'icon-span', `color-${statusObj.type}`, status]" v-else>
-      <VIcon class="v-icon" size="16">{{ statusObj.icon }}</VIcon>
+      <VIcon v-if="statusObj.icon" class="v-icon" size="16">{{ statusObj.icon }}</VIcon>
+      <span v-else class="circle-icon mr-2" :style="{ 'background-color': statusObj.color }"></span>
       <span class="td-status-tag__text">{{ statusObj.text }}</span>
     </span>
   </span>
@@ -12,6 +13,7 @@
 import VIcon from '@/components/VIcon'
 import { CONNECTION_STATUS_MAP, INSTANCE_STATUS_MAP, TASK_STATUS_MAP } from '../const'
 export default {
+  name: 'StatusTag',
   components: { VIcon },
   props: {
     type: {
@@ -49,6 +51,11 @@ export default {
     .v-icon {
       margin: 0 4px;
     }
+    .circle-icon {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
   }
 }
 .td-status-tag__icon {
@@ -63,6 +70,6 @@ export default {
   display: inline-block;
   height: 26px;
   line-height: 26px;
-  color: #333 !important;
+  color: rgba(0, 0, 0, 0.65);
 }
 </style>

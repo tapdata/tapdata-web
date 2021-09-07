@@ -1,12 +1,13 @@
 <template>
   <section class="instance-wrapper main-container" v-loading="loading" v-if="$route.name === 'Instance'">
+    <div class="section-header">Agent管理</div>
     <div class="main">
       <div class="instance-operation">
         <div class="instance-operation-left">
-          <ul>
-            <li>
+          <el-form inline @submit.native.prevent>
+            <el-form-item :label="$t('agent_status') + ' ：'" width="300px">
               <el-select v-model="searchParams.status" @input="search()">
-                <el-option :label="$t('agent_status_all')" value=""></el-option>
+                <el-option :label="$t('gl_placeholder_select')" value=""></el-option>
                 <el-option
                   v-for="(item, index) in statusItems"
                   :key="index"
@@ -14,27 +15,20 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-            </li>
-            <li class="ml-3">
+            </el-form-item>
+            <el-form-item :label="$t('agent_search') + ' ：'" class="ml-2">
               <el-input
                 width="200"
                 v-model="searchParams.keyword"
-                :placeholder="$t('agent_search')"
                 @input="search(800)"
+                :placeholder="$t('gl_placeholder_input')"
               >
-                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </el-input>
-            </li>
-            <li class="ml-3">
-              <el-button plain class="btn-refresh" @click="fetch()">
-                <VIcon>refresh</VIcon>
-              </el-button>
-            </li>
-          </ul>
+            </el-form-item>
+          </el-form>
         </div>
         <div class="instance-operation-right">
           <el-button type="primary" @click="createAgent" :loading="createAgentLoading">
-            <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>{{ $t('agent_button_create') }}</span>
           </el-button>
           <template v-if="isShowTestBtn">
@@ -47,16 +41,17 @@
           </template>
         </div>
       </div>
-      <el-table class="instance-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
+      <el-table class="instance-table table-border mt-1" height="100%" :data="list" @sort-change="sortChange">
         <el-table-column min-width="200px" :label="$t('agent_name')">
           <template slot-scope="scope">
             <div class="flex">
               <div>
                 <inline-input
-                  class="color-primary"
+                  :class="['color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
                   :value="scope.row.name"
                   :icon-config="{ class: 'color-primary' }"
                   type="icon"
+                  @click-text="handleDetails(scope.row)"
                   @save="updateName($event, scope.row.id)"
                 ></inline-input>
               </div>
@@ -88,7 +83,7 @@
                   >{{ $t('gl_see_more') }}</el-link
                 >
               </div>
-              <el-link type="primary" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
+              <el-link type="primary" class="ml-7" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
                 scope.row.metric ? scope.row.metric.runningTaskNum : 0
               }}</el-link>
             </el-tooltip>
@@ -157,30 +152,29 @@
             <span>{{ $moment(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('agent_operate')" width="120" fixed="right">
+        <el-table-column :label="$t('agent_operate')" width="180" fixed="right">
           <template slot-scope="scope">
-            <el-link
-              type="primary"
-              class="mr-2"
-              :disabled="scope.row.agentType === 'Cloud' || !!scope.row.deployDisable"
-              @click="toDeploy(scope.row)"
-              >{{ $t('agent_button_deploy') }}</el-link
-            >
-            <el-link
-              type="primary"
-              class="mr-2"
-              :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Running'"
-              @click="handleStop(scope.row)"
-              >{{ $t('agent_button_stop') }}</el-link
-            >
-            <el-link
-              type="danger"
-              class="mr-2"
-              @click="handleDel(scope.row)"
-              :loading="delLoading"
-              :disabled="delBtnDisabled(scope.row)"
-              >{{ $t('agent_button_delete') }}</el-link
-            >
+            <div class="operate-columns">
+              <el-link
+                type="primary"
+                :disabled="scope.row.agentType === 'Cloud' || !!scope.row.deployDisable"
+                @click="toDeploy(scope.row)"
+                >{{ $t('agent_button_deploy') }}</el-link
+              >
+              <el-link
+                type="primary"
+                :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Running'"
+                @click="handleStop(scope.row)"
+                >{{ $t('agent_button_stop') }}</el-link
+              >
+              <el-link
+                type="danger"
+                @click="handleDel(scope.row)"
+                :loading="delLoading"
+                :disabled="delBtnDisabled(scope.row)"
+                >{{ $t('agent_button_delete') }}</el-link
+              >
+            </div>
           </template>
         </el-table-column>
         <div class="instance-table__empty" slot="empty">
@@ -763,10 +757,23 @@ export default {
     flex: 1;
     overflow: auto;
     border-bottom: none;
+    color: rgba(0, 0, 0, 0.65);
     .agent-cloud {
       color: #10c038;
       border-color: #10c038;
       background-color: #dbefd1;
+    }
+    .operate-columns {
+      line-height: 14px;
+      .el-link {
+        &:not(:first-child) {
+          padding-left: 16px;
+          border-left: 1px solid #e9e9e9;
+        }
+        &:not(:last-child) {
+          padding-right: 16px;
+        }
+      }
     }
   }
   .instance-table__empty {

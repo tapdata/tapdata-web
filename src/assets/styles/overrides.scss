@@ -277,11 +277,17 @@ th {
 .el-table.table-border::before {
   display: block;
 }
+.el-table .el-table__header-wrapper {
+  border-radius: 4px 4px 0 0;
+}
 .el-table thead {
   color: map-get($fontColor, normal);
 }
-.el-table th {
-  background: #f4f5f7;
+.el-table th.el-table__cell {
+  background-color: #fafafa;
+}
+.el-table .el-table__fixed-right-patch {
+  background-color: #fafafa;
 }
 .el-table td,
 .el-table th.is-leaf {
@@ -289,7 +295,7 @@ th {
 }
 .el-table.table-border th {
   padding: 0;
-  height: 40px;
+  height: 54px;
 }
 .el-table.table-border td {
   border-bottom: 1px solid #eceef1;

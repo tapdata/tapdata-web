@@ -4,6 +4,8 @@ export default {
   gl_no_data: '暂无数据',
   gl_no_match_result: '没有查到符合条件的结果',
   gl_back_to_list: '返回列表',
+  gl_placeholder_select: '请选择',
+  gl_placeholder_input: '请输入',
   gl_button_cancel: '取消',
   gl_button_finish: '完成',
   gl_button_delete_fail: '删除失败',
@@ -39,7 +41,7 @@ export default {
 
   // Agent
   agent_manage: 'Agent管理',
-  agent_name: '实例ID/名称',
+  agent_name: 'Agent 名称',
   agent_id: 'Agent ID',
   agent_task_number: '任务数',
   agent_create_time: '创建时间',

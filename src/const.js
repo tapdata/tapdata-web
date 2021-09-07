@@ -9,10 +9,10 @@ for (const dKey in directionMap) {
 }
 export const TOPOLOGY_MAP = topologyMap,
   INSTANCE_STATUS_MAP = {
-    Creating: { text: '待部署', icon: 'creating', type: 'warning' },
-    Running: { text: '运行中', icon: 'right-fill', type: 'success' },
-    Stopping: { text: '停止中', icon: 'loading', type: 'success' },
-    Stopped: { text: '离线', icon: 'warning', type: 'warning' }
+    Creating: { text: '待部署', color: '#FFB318' },
+    Running: { text: '运行中', color: '#52C41A' },
+    Stopping: { text: '停止中', color: '#F5222D' },
+    Stopped: { text: '离线', color: 'rgba(0, 0, 0, 0.18)' }
   },
   TASK_STATUS_MAP = {
     running: { text: '运行中', icon: 'right-fill', type: 'success' },

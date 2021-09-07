@@ -219,3 +219,16 @@ export default {
   }
 }
 </style>
+<style lang="scss">
+.layout-wrap {
+  .section-header {
+    margin-bottom: 24px;
+    color: #000;
+    font-size: 18px;
+  }
+  .main-container {
+    padding: 20px;
+    box-sizing: border-box;
+  }
+}
+</style>
