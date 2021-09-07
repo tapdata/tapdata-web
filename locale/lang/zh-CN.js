@@ -3008,6 +3008,7 @@ const cn = {
     Keep_Alive_Message: '保持在线消息',
     Sample_Rate: '采样率',
     task_load_threshold: '负载阈值（百分比）',
+    task_load_statistics_time: '负载统计时间（分钟）',
     ApiServer: 'API分发设置',
     Default_Limit: '默认查询返回行数',
     Max_Limit: '最大查询返回行数',
