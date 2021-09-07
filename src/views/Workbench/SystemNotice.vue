@@ -5,7 +5,10 @@
       <div class="system-operation">
         <div class="system-operation-left">
           <span>通知列表</span>
-          <span class="system-operation-setting" @click="handleSetting">设置</span>
+          <span class="system-operation-setting" @click="handleSetting">
+            <VIcon class="ml-2" size="12">setting</VIcon>
+            <span>设置</span>
+          </span>
         </div>
         <div class="system-operation-right">
           <ul>
@@ -179,8 +182,7 @@ export default {
         let data = {
           notification: value
         }
-        console.log(this.user)
-        this.$axios.patch(`tm/api/user/${this.user.id}`, data)
+        this.$axios.patch(`tm/api/users/${this.user.id}`, data)
       },
       deep: true
     }
@@ -446,6 +448,9 @@ $unreadColor: #ee5353;
       .system-operation-setting {
         cursor: pointer;
         color: #2c65ff;
+        span {
+          padding-left: 5px;
+        }
       }
     }
     .system-operation-right {
