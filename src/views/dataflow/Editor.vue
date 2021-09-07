@@ -98,14 +98,11 @@ import i18n from '@/i18n'
 import DataFlowFormSchemas from '@/api/DataFlowFormSchemas'
 import DatabaseTypes from '@/api/DatabaseTypes'
 import { getDataflowCorners } from '@/views/dataflow/helpers'
-import VIcon from '@/components/VIcon'
 import PaperScroller from '@/views/dataflow/components/PaperScroller'
 import Vue from 'vue'
 import { uuid } from '@/utils/util'
 import { AddConnectionCommand, AddNodeCommand, CommandManager, MoveNodeCommand, RemoveNodeCommand } from './command'
 import Mousetrap from 'mousetrap'
-// import * as d3 from 'd3-hierarchy'
-// import * as D3 from 'd3'
 import dagre from 'dagre'
 
 const dataFlowsApi = new DataFlows()
@@ -122,7 +119,6 @@ export default {
 
   components: {
     PaperScroller,
-    VIcon,
     TopHeader,
     DFNode,
     LeftSidebar,
@@ -764,7 +760,7 @@ export default {
       this.ifNodeDragStart = false
       this.navLines = []
 
-      this.editBus.$emit('auto-resize-paper')
+      this.$refs.paperScroller.autoResizePaper()
 
       !isNotMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties), true)
     },
@@ -1284,6 +1280,8 @@ export default {
       })
 
       hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
+      this.$refs.paperScroller.autoResizePaper()
+      this.$refs.paperScroller.centerContent()
     },
 
     /**

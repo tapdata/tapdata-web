@@ -1,5 +1,12 @@
 <template>
-  <div class="paper-scroller" :class="scrollerClasses" tabindex="0" @mousedown="mouseDown" @wheel="wheelScroll">
+  <div
+    class="paper-scroller"
+    :class="scrollerClasses"
+    tabindex="0"
+    @mousedown="mouseDown"
+    @wheel="wheelScroll"
+    @scroll="handleScroll"
+  >
     <div ref="scrollerBg" class="paper-scroller-background" :style="scrollerBgStyle">
       <div ref="paper" class="paper" :style="paperStyle">
         <div class="paper-content-wrap" :style="contentWrapStyle">
@@ -8,11 +15,19 @@
       </div>
       <div v-show="showSelectBox" class="select-box" :style="selectBoxStyle"></div>
     </div>
+    <MiniView
+      :paper-size="paperSize"
+      :paper-reverse-size="paperReverseSize"
+      :paper-offset="paperOffset"
+      :paper-scale="paperScale"
+      :work-view="visibleArea"
+      :scroll-position="scrollPosition"
+      @drag-move="handleViewMove"
+    ></MiniView>
   </div>
 </template>
 
 <script>
-import { uuid } from '@/utils/util'
 import { mapGetters, mapMutations } from 'vuex'
 import { getDataflowCorners } from '@/views/dataflow/helpers'
 import { on, off } from '@/utils/dom'
@@ -20,10 +35,11 @@ import deviceSupportHelpers from '@/mixins/deviceSupportHelpers'
 import movePaper from '../mixins/movePaper'
 import { NODE_HEIGHT, NODE_WIDTH } from '@/views/dataflow/constants'
 import Mousetrap from 'mousetrap'
+import MiniView from '@/views/dataflow/components/MiniView'
 
 export default {
   name: 'PaperScroller',
-
+  components: { MiniView },
   mixins: [deviceSupportHelpers, movePaper],
 
   props: ['eventBus'],
@@ -61,7 +77,11 @@ export default {
       // 累积的缩放系数
       cumulativeZoomFactor: 1,
       // 缩放系数
-      zoomFactor: 1.1
+      zoomFactor: 1.1,
+      scrollPosition: {
+        x: 0,
+        y: 0
+      }
     }
   },
 
@@ -109,12 +129,18 @@ export default {
         top: this.visibleArea.height - 50
       }
     },
+    paperSize() {
+      return {
+        width: Math.max(this.options.width, this.paperForwardSize.w) + this.paperReverseSize.w,
+        height: Math.max(this.options.height, this.paperForwardSize.h) + this.paperReverseSize.h
+      }
+    },
     paperStyle() {
       return {
         left: this.paperOffset.left + 'px',
         top: this.paperOffset.top + 'px',
-        width: Math.max(this.options.width, this.paperForwardSize.w) + this.paperReverseSize.w + 'px',
-        height: Math.max(this.options.height, this.paperForwardSize.h) + this.paperReverseSize.h + 'px',
+        width: this.paperSize.width + 'px',
+        height: this.paperSize.height + 'px',
         transform: `scale(${this.paperScale})`
         // transformOrigin: `${this.scalePosition[0]}px ${this.scalePosition[1]}px`
       }
@@ -191,7 +217,19 @@ export default {
     },
 
     initVisibleArea() {
-      this.visibleArea = this.$el.getBoundingClientRect()
+      const rect = this.$el.getBoundingClientRect()
+      this.visibleArea = {
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom
+      }
+      this.visibleArea.width = this.$el.clientWidth
+      this.visibleArea.height = this.$el.clientHeight
     },
 
     // 画布居中
@@ -204,18 +242,21 @@ export default {
     },
 
     // 画布内容居中
-    centerContent() {
+    centerContent(ifZoomToFit) {
       let { minX, minY, maxX, maxY } = getDataflowCorners(this.$store.getters['dataflow/allNodes'])
-      console.log('centerContent', minX, minY, maxX, maxY)
       // 包含节点尺寸
       maxX += NODE_WIDTH
       maxY += NODE_HEIGHT
       let contentW = maxX - minX
       let contentH = maxY - minY
-      const scale = Math.min(this.visibleArea.width / contentW, this.visibleArea.height / contentH)
+      let scale = Math.min(this.visibleArea.width / contentW, this.visibleArea.height / contentH)
+
+      if (!ifZoomToFit) {
+        scale = Math.min(1, scale)
+      }
+
       contentW *= scale
       contentH *= scale
-
       this.changeScale(scale)
 
       const scrollLeft =
@@ -405,6 +446,11 @@ export default {
       }
     },
 
+    handleScroll({ target }) {
+      this.scrollPosition.x = target.scrollLeft
+      this.scrollPosition.y = target.scrollTop
+    },
+
     /**
      * 缩小
      */
@@ -412,8 +458,6 @@ export default {
       if (this.paperScale * this.cumulativeZoomFactor <= 0.15) {
         this.cumulativeZoomFactor *= (this.paperScale - 0.05) / this.paperScale
       } else {
-        // Uses to 5% zoom steps for better grid rendering in webkit
-        // and to avoid rounding errors for zoom steps
         this.cumulativeZoomFactor /= this.zoomFactor
         this.cumulativeZoomFactor = Math.round(this.paperScale * this.cumulativeZoomFactor * 20) / 20 / this.paperScale
         const scale = this.paperScale * this.cumulativeZoomFactor
@@ -433,7 +477,6 @@ export default {
       }
       this.cumulativeZoomFactor =
         Math.max(0.05, Math.min(this.paperScale * this.cumulativeZoomFactor, 160)) / this.paperScale
-      console.log('this.cumulativeZoomFactor', this.cumulativeZoomFactor)
       const scale = this.paperScale * this.cumulativeZoomFactor
       this.wheelToScaleArtboard(scale, e && { x: e.pageX, y: e.pageY })
       this.changeScale(scale)
@@ -504,6 +547,17 @@ export default {
     getScaleAbsolutePoint() {
       const area = this.visibleArea
       return { x: Math.round(area.width / 2) + area.left, y: Math.round(area.height / 2) + area.top }
+    },
+
+    /**
+     * 小地图移动，滚动画布
+     * @param x
+     * @param y
+     */
+    handleViewMove({ x, y }) {
+      const scale = this.paperScale
+      const { left, top } = this.paperOffset
+      this.doChangePageScroll(left + x * scale, top + y * scale)
     }
   }
 }
