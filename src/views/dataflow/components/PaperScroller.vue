@@ -16,6 +16,7 @@
       <div v-show="showSelectBox" class="select-box" :style="selectBoxStyle"></div>
     </div>
     <MiniView
+      v-if="showMiniView"
       :paper-size="paperSize"
       :paper-reverse-size="paperReverseSize"
       :paper-offset="paperOffset"
@@ -81,7 +82,8 @@ export default {
       scrollPosition: {
         x: 0,
         y: 0
-      }
+      },
+      showMiniView: true
     }
   },
 
@@ -313,6 +315,10 @@ export default {
       this.paperForwardSize.h = forwardH
 
       console.log('autoResizePaper', { minX, minY, maxX, maxY }, this.paperReverseSize)
+    },
+
+    toggleMiniView() {
+      this.showMiniView = !this.showMiniView
     },
 
     keyDown(e) {

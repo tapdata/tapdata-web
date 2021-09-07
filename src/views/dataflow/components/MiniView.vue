@@ -185,6 +185,7 @@ export default {
   &-paper {
     position: relative;
     transform-origin: 0 0;
+    cursor: pointer;
 
     .component-placeholder {
       position: absolute;

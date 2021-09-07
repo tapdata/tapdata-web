@@ -300,6 +300,9 @@ export default {
       Mousetrap.bind('mod+shift+z', () => {
         this.command.redo()
       })
+      Mousetrap.bind('mod+shift+o', () => {
+        this.$refs.paperScroller.toggleMiniView()
+      })
     },
 
     async initNodeType() {
