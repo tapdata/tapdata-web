@@ -3,6 +3,7 @@ export default {
   connection_list_column_schema_status: 'Schema加載進度',
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
 
+  connection_tidb_none_server: 'TiBD地址不能為空',
   // 数据校验
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',

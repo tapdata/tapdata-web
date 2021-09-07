@@ -3,6 +3,7 @@ export default {
   connection_list_column_schema_status: 'Schema loading progress',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
 
+  connection_tidb_none_server: 'TiBD address cannot be empty',
   // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',
@@ -24,12 +25,12 @@ export default {
   verify_result_count_inconsistent: 'inconsistent',
   verify_result_count_consistent: 'consistent',
 
-	taskprogress_plan_sync_table_num: 'Number of plan synchronization tables',
-	taskprogress_completed_sync_table_num: 'Number of completed synchronization tables',
-	taskprogress_plan_sync_data: 'Planned synchronization data volume (rows)',
-	taskprogress_completed_sync_data: 'Completed synchronization data volume (rows)',
-	taskprogress_current_sync: 'Current synchronization status of each library',
-	taskprogress_full_sync_progress: 'Full sync progress',
+  taskprogress_plan_sync_table_num: 'Number of plan synchronization tables',
+  taskprogress_completed_sync_table_num: 'Number of completed synchronization tables',
+  taskprogress_plan_sync_data: 'Planned synchronization data volume (rows)',
+  taskprogress_completed_sync_data: 'Completed synchronization data volume (rows)',
+  taskprogress_current_sync: 'Current synchronization status of each library',
+  taskprogress_full_sync_progress: 'Full sync progress',
 
   // 任务设置
   task_settings_cdc_sync_point_date: '【Task settings】Incremental acquisition start time, please select the time',
