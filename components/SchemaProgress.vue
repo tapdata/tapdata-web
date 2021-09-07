@@ -5,7 +5,9 @@
       :class="'el-icon-' + schemaInfo.icon + ' color-' + schemaInfo.icon"
     ></i>
     <ElLink v-if="schemaInfo.icon === 'error'" type="danger" @click="showErrorMsg">{{ schemaInfo.text }}</ElLink>
-    <span v-else :class="'color-' + schemaInfo.icon">{{ schemaInfo.text }}</span>
+    <span v-else :class="'color-' + schemaInfo.icon === 'error' ? 'danger' : schemaInfo.icon">{{
+      schemaInfo.text
+    }}</span>
   </div>
 </template>
 
