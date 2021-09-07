@@ -182,7 +182,7 @@ export default {
         let data = {
           notification: value
         }
-        this.$axios.patch(`tm/api/user/${this.user.id}`, data)
+        this.$axios.patch(`tm/api/users/${this.user.id}`, data)
       },
       deep: true
     }
