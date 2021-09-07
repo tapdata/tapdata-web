@@ -175,7 +175,6 @@ export default {
   border-radius: 3px;
   overflow: hidden;
   z-index: 100;
-  //box-shadow: 0 0 2px 1px #d1d1d1;
 
   &-paper-wrap {
     position: relative;
