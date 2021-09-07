@@ -13,7 +13,7 @@
         <div class="system-operation-right">
           <ul>
             <li class="ml-3">
-              <ElButton plain class="btn-refresh" @click="handleDelete('all')" :disabled="list.length < 1">
+              <ElButton plain class="btn-refresh border-red" @click="handleDelete('all')" :disabled="list.length < 1">
                 全部删除
               </ElButton>
             </li>
@@ -152,6 +152,7 @@ export default {
       },
       taskFalg: false,
       dialogVisible: false,
+      userId: '',
       form: {
         connected: {
           email: true,
@@ -182,7 +183,7 @@ export default {
         let data = {
           notification: value
         }
-        this.$axios.patch(`tm/api/users/${this.user.id}`, data)
+        this.$axios.patch(`tm/api/users/${this.userId}`, data)
       },
       deep: true
     }
@@ -392,6 +393,12 @@ export default {
     // 通知设置
     handleSetting() {
       this.dialogVisible = true
+      // 获取tm用户id
+      this.$axios.get('tm/api/users/self').then(data => {
+        if (data) {
+          this.userId = data.id
+        }
+      })
     }
     // 未读消息
     // getUnreadNum() {
@@ -412,7 +419,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$unreadColor: #ee5353;
+$unreadColor: #e43737;
 .system-notice {
   display: flex;
   width: 100%;
@@ -457,13 +464,27 @@ $unreadColor: #ee5353;
       li {
         float: right;
         .btn-refresh {
-          // border-color: #409eff;
-          // color: #409eff;
+          border-color: #2c65ff;
+          color: #2c65ff;
+        }
+        .border-red {
+          border-color: $unreadColor !important;
+          color: $unreadColor !important;
+        }
+        .btn-refresh:focus,
+        .btn-refresh:hover {
+          color: #fff;
+          background-color: #2c65ff;
         }
         .border-red:focus,
         .border-red:hover {
-          border-color: $unreadColor !important;
-          color: $unreadColor !important;
+          color: #fff !important;
+          background: $unreadColor !important;
+        }
+        .btn-refresh.is-disabled {
+          background-color: #fff;
+          border-color: #ebeef5;
+          color: #c0c4cc;
         }
       }
     }
@@ -499,6 +520,15 @@ $unreadColor: #ee5353;
 }
 </style>
 <style lang="scss">
+.system-notice {
+  .system-operation-right {
+    .btn-refresh.is-disabled {
+      background-color: #fff;
+      border-color: #ebeef5;
+      color: #c0c4cc;
+    }
+  }
+}
 .notice-setting-dialog {
   .el-dialog__header {
     padding: 40px 40px 0 40px;
