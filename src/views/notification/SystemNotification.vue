@@ -299,7 +299,7 @@ export default {
       })
       let where = {
         id: {
-          inq: idsS
+          inq: ids
         }
       }
       let data = {
