@@ -54,7 +54,7 @@
               <div class="list-item-desc" @click="handleRead(scope.row.id)">
                 <!--                                <span :style="`color: ${colorMap[scope.row.level]};`">【{{ scope.row.level }}】</span>-->
                 <span>您的{{ systemMap[scope.row.system] }}:</span>
-                <span style="color: #409eff; cursor: pointer" @click="handleGo(scope.row)">
+                <span style="color: #2c65ff; cursor: pointer" @click="handleGo(scope.row)">
                   {{ scope.row.serverName }}
                 </span>
                 <span>{{ typeMap[scope.row.msg] }}</span>
