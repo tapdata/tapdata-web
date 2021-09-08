@@ -1,9 +1,4 @@
 export default {
-  // 连接
-  connection_list_column_schema_status: 'Schema加载进度',
-  connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
-
-  connection_tidb_none_server: 'TiBD地址不能为空',
   // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',
@@ -35,6 +30,10 @@ export default {
 
   // 数据源
   connection_form_tidb_server: 'TiDB地址',
+  connection_tidb_none_server: 'TiBD地址不能为空',
+
+  connection_list_column_schema_status: 'Schema加载状态',
+  connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
 
   // 路由名
   app_menu_jsFuncs: '函数',
@@ -54,5 +53,6 @@ export default {
   js_func_dialog_edit_title: '更新记录',
   js_func_delete_remind: '确定要删除函数',
 
+  // Dag
   dag_data_node_label_dameng: 'Dameng节点'
 }
