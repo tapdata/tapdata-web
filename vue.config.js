@@ -59,7 +59,7 @@ module.exports = {
     // svg-sprite-loader打包svg
     config.module
       .rule('svg-sprite')
-      .test(/\/svg\/.*\.svg$/)
+      .test(/\.svg$/)
       .include.add(resolve(iconDir))
       .end()
       .use('svg-sprite-loader')
