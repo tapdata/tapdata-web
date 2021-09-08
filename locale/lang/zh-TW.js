@@ -1,6 +1,12 @@
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
 
 const newTc = {
+  // dialog 通用
+  dialog_button_close: '關 閉',
+
+  schema_progress_status_error: '出錯',
+  schema_progress_dialog_error_title: 'Schema加载出错',
+
   verify_history_source_rows: '本次校驗行數',
   verify_history_target_rows: '目標行數',
   verify_history_source_total_rows: '源總行數',
@@ -2991,6 +2997,8 @@ const tc = {
     Clean_Message_Time: '清除消息時間',
     Keep_Alive_Message: '保持在線消息',
     Sample_Rate: '採樣率',
+    task_load_threshold: '負載閾值（百分比）',
+    task_load_statistics_time: '負載統計時間（分鐘）',
     ApiServer: 'API分發設置',
     Default_Limit: '默認查詢返回行數',
     Max_Limit: '最大查詢返回行數',

@@ -1,5 +1,11 @@
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 const newCn = {
+  // dialog 通用
+  dialog_button_close: '关 闭',
+
+  schema_progress_status_error: '出错',
+  schema_progress_dialog_error_title: 'Schema加载出错',
+
   verify_history_source_rows: '本次校验行数',
   verify_history_target_rows: '目标行数',
   verify_history_source_total_rows: '源总行数',
@@ -1296,7 +1302,6 @@ const cn = {
             },
             joinKey: {
               label: '写入路径',
-              tips: '温馨提示: 当前关联条件设置会导致数据删除操作无法同步的情况，请添加中间mongodb节点来完成同步设置。',
               placeholder: '请选择或创建写入路径字段'
             }
           }
@@ -1347,6 +1352,7 @@ const cn = {
           },
           joinKeys: {
             label: '关联条件',
+            tips: '温馨提示: 当前关联条件设置会导致数据删除操作无法同步的情况，请添加中间mongodb节点来完成同步设置。',
             sourceField: '源字段',
             targetField: '目标字段'
           },
@@ -3004,6 +3010,8 @@ const cn = {
     Clean_Message_Time: '清除消息时间',
     Keep_Alive_Message: '保持在线消息',
     Sample_Rate: '采样率',
+    task_load_threshold: '负载阈值（百分比）',
+    task_load_statistics_time: '负载统计时间（分钟）',
     ApiServer: 'API分发设置',
     Default_Limit: '默认查询返回行数',
     Max_Limit: '最大查询返回行数',

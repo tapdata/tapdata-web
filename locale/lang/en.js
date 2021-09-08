@@ -1,5 +1,11 @@
 import enLocale from 'element-ui/lib/locale/lang/en'
 const newEn = {
+  // dialog 通用
+  dialog_button_close: 'Close',
+
+  schema_progress_status_error: 'Error',
+  schema_progress_dialog_error_title: 'Schema loading error',
+
   verify_history_source_rows: 'Verfify Rows',
   verify_history_target_rows: 'Target Rows',
   verify_history_source_total_rows: 'Source Total Rows',
@@ -1321,7 +1327,6 @@ const en = {
             },
             joinKey: {
               label: 'Target path',
-              tips: 'Reminder: The current association condition setting will cause the data deletion operation to fail to be synchronized. Please add an intermediate mongodb node to complete the synchronization setting.',
               placeholder: 'Enter or choose target path field.'
             }
           }
@@ -1372,6 +1377,7 @@ const en = {
           },
           joinKeys: {
             label: 'Association condition',
+            tips: 'Reminder: The current association condition setting will cause the data deletion operation to fail to be synchronized. Please add an intermediate mongodb node to complete the synchronization setting.',
             sourceField: 'Source Field',
             targetField: 'Target Field'
           },
@@ -3058,6 +3064,8 @@ const en = {
     Clean_Message_Time: 'Clear message time',
     Keep_Alive_Message: 'Keep online message',
     Sample_Rate: 'Sampling rate',
+    task_load_threshold: 'Task load threshold (percentage)',
+    task_load_statistics_time: 'Task load statistics time (minute)',
     ApiServer: 'API distribution settings',
     Default_Limit: 'The number of rows returned by the default query',
     Max_Limit: 'Maximum number of rows returned by the query',
