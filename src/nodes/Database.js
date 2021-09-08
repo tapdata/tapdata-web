@@ -138,20 +138,25 @@ export class Database extends NodeType {
     return true
   }
 
-  allowTarget(target, source, instance) {
+  allowTarget(target, source) {
+    console.log('allowTarget', arguments)
     if (source.databaseType === 'elasticsearch') {
       return target.databaseType === 'kafka'
     }
     return (
       target.type === 'database' &&
       target.databaseType !== 'hbase' &&
-      instance.getConnections({
-        target: target.id
-      }).length < 1
+      target.inputLanes.length < 1 &&
+      target.outputLanes.length < 1
     )
   }
 
   allowSource(source) {
-    return source.type === 'database' && source.databaseType !== 'kudu'
+    return (
+      source.type === 'database' &&
+      source.databaseType !== 'kudu' &&
+      source.inputLanes.length < 1 &&
+      source.outputLanes.length < 1
+    )
   }
 }
