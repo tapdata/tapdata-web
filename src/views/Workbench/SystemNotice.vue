@@ -95,15 +95,15 @@
         <div class="notice-setting-title">agent通知</div>
         <ElFormItem label="agent状态为离线时">
           <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.connected.sms" size="mini"></ElSwitch>
+          <ElSwitch v-model="form.connectionInterrupted.sms" size="mini"></ElSwitch>
           <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.connected.email" size="mini"></ElSwitch>
+          <ElSwitch v-model="form.connectionInterrupted.email" size="mini"></ElSwitch>
         </ElFormItem>
         <ElFormItem label="agent状态为运行中时">
           <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.connectionInterrupted.sms" size="mini"></ElSwitch>
+          <ElSwitch v-model="form.connected.sms" size="mini"></ElSwitch>
           <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.connectionInterrupted.email"></ElSwitch>
+          <ElSwitch v-model="form.connected.email"></ElSwitch>
         </ElFormItem>
         <div class="notice-setting-title">任务运行通知</div>
         <ElFormItem label="任务运行出错时">
