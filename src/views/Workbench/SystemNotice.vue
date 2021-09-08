@@ -397,6 +397,7 @@ export default {
       this.$axios.get('tm/api/users/self').then(data => {
         if (data) {
           this.userId = data.id
+          this.form = data.notification
         }
       })
     }
