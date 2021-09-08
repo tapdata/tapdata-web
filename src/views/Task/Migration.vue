@@ -265,7 +265,8 @@ export default {
     }
   },
   watch: {
-    '$route.query'(query) {
+    $route(route) {
+      let query = route.query
       this.searchParams = Object.assign(this.searchParams, query)
       this.fetch(1)
     }
