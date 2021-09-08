@@ -732,7 +732,10 @@ const tc = {
       taskName: '任務名',
       errorTotal: '共XX條，已選擇',
       strip: '條'
-    }
+    },
+    flowEngineVersion: '引擎版本',
+    flowEngineV1: 'Flow Engine V1',
+    jetFlowEngineV2: 'Jet Flow Engine V2'
   },
   connection: {
     dataBaseName: '連接名/連接信息',

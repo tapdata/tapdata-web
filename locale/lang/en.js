@@ -751,7 +751,10 @@ const en = {
       taskName: 'Task name',
       errorTotal: 'Total XX, selected',
       strip: 'row'
-    }
+    },
+    flowEngineVersion: 'Flow Engine Version',
+    flowEngineV1: 'Flow Engine V1',
+    jetFlowEngineV2: 'Jet Flow Engine V2'
   },
   connection: {
     dataBaseName: 'Connection name',

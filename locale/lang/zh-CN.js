@@ -734,7 +734,10 @@ const cn = {
       taskName: '任务名',
       errorTotal: '共 XX 条,已选择',
       strip: '条'
-    }
+    },
+    flowEngineVersion: '引擎版本',
+    flowEngineV1: 'Flow Engine V1',
+    jetFlowEngineV2: 'Jet Flow Engine V2'
   },
   connection: {
     dataBaseName: '连接名/连接信息',
