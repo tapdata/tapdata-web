@@ -610,7 +610,7 @@ export default {
       return field => {
         field.loading = true
         service(field, ...args).then(
-          action(data => {
+          action.bound(data => {
             if (fieldName === 'value') {
               field.setValue(data)
             } else field[fieldName] = data
