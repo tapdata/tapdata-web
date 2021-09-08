@@ -26,7 +26,7 @@
                 如果你还未添加数据源，请先前往连接管理进行添加。<span
                   style="color: #337dff; cursor: pointer"
                   @click="handleCreateDatabase"
-                  >前往连接管理</span
+                  >前往连接管理创建连接</span
                 >
               </div>
               <form-builder ref="dataSource" v-model="dataSourceModel" :config="config" @value-change="formChange">
