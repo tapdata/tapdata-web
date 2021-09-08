@@ -121,7 +121,7 @@
       >
       </ElPagination>
       <ConnectionTest ref="test"></ConnectionTest>
-      <Preview ref="preview"></Preview>
+      <Preview ref="preview" @close="fetch()"></Preview>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -211,9 +211,13 @@ export default {
     }
   },
   watch: {
-    '$route.query'(query) {
-      this.searchParams = Object.assign(this.searchParams, query)
-      this.fetch(1)
+    $route(route) {
+      if (route.name === 'Connection') {
+        let query = route.query
+        this.searchParams = Object.assign(this.searchParams, query)
+        let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
+        this.fetch(pageNum)
+      }
     }
   },
   created() {

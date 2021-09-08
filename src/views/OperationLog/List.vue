@@ -132,23 +132,6 @@ export default {
         total: 0
       },
       order: 'createTime desc',
-      modularMap: {
-        connection: '连接',
-        migration: '任务',
-        agent: 'Agent',
-        inspect: '数据校验'
-      },
-      operationMap: {
-        create: '创建',
-        start: '启动',
-        update: '编辑',
-        copy: '复制',
-        reset: '重置',
-        delete: '删除',
-        stop: '停止',
-        forceStop: '强制停止',
-        rename: '改名'
-      },
       operationTypeOptions: [
         // 连接
         { label: '创建连接', value: 'connection_create', desc: '创建了连接【@{parameter1}】' },
@@ -183,7 +166,7 @@ export default {
         { label: '删除全部通知', value: 'message_deleteAll', desc: '删除了全部通知' },
         { label: '标记通知为已读', value: 'message_read', desc: '将选中的通知全部标记为已读' },
         { label: '删除通知', value: 'message_delete', desc: '将选中的通知全部删除' },
-        { label: '修改通知设置', value: 'message_update', desc: '修改了系统通知设置' }
+        { label: '修改通知设置', value: 'userNotification_update', desc: '修改了系统通知设置' }
       ]
     }
   },
@@ -199,18 +182,21 @@ export default {
     }
   },
   watch: {
-    '$route.query'() {
-      this.init()
+    $route(route) {
+      if (route.name === 'OperationLog') {
+        let query = route.query
+        this.searchParams = Object.assign(this.searchParams, query)
+        let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
+        this.fetch(pageNum)
+      }
     }
   },
   created() {
-    this.init()
+    let query = this.$route.query
+    this.searchParams = Object.assign(this.searchParams, query)
+    this.fetch()
   },
   methods: {
-    init() {
-      Object.assign(this.searchParams, this.$route.query || {})
-      this.fetch()
-    },
     getModularAndOperation(operationType) {
       let [modular, operation] = operationType.split('_')
       return { modular, operation }

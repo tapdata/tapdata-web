@@ -513,7 +513,7 @@
           </div>
         </footer>
       </main>
-      <gitbook></gitbook>
+      <gitbook :database-type="$route.query && $route.query.databaseType"></gitbook>
     </div>
     <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
     <el-dialog
