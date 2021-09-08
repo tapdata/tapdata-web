@@ -266,9 +266,12 @@ export default {
   },
   watch: {
     $route(route) {
-      let query = route.query
-      this.searchParams = Object.assign(this.searchParams, query)
-      this.fetch(1)
+      if (route.name === 'Task') {
+        let query = route.query
+        this.searchParams = Object.assign(this.searchParams, query)
+        let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
+        this.fetch(pageNum)
+      }
     }
   },
   created() {
