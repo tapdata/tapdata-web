@@ -427,7 +427,7 @@ export default {
         let { stages, stats } = item
         let flag = true
         // 有节点
-        if (stats) {
+        if (stats?.stagesMetrics?.length > 0) {
           let stagesMetrics = stats.stagesMetrics || []
           stagesMetrics.forEach(el => {
             let findOne = stages.find(stageItem => stageItem.id === el.stageId)
