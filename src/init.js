@@ -17,6 +17,15 @@ import Purchase from '@/views/Purchase/Purchase'
 Vue.config.productionTip = false
 Vue.prototype.$settings = settings
 Vue.use(VueClipboard)
+
+const originalPush = VueRouter.prototype.push
+const originalReplace = VueRouter.prototype.replace
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+VueRouter.prototype.replace = function replace(location) {
+  return originalReplace.call(this, location).catch(err => err)
+}
 Vue.use(VueRouter)
 Vue.use(TapdataWebCore)
 

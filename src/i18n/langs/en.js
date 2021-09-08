@@ -40,6 +40,7 @@ export default {
   workbench_guide_data_safe: 'How does Tapdata cloud ensure data security? ',
 
   // Agent
+  agent_key: 'Agent',
   agent_manage: 'Agent Management',
   agent_name: 'Agent Name',
   agent_id: 'Agent ID',
@@ -98,6 +99,7 @@ export default {
   agent_detail_synchronization_task_number: 'Number of synchronization tasks',
   agent_detail_version: 'Agent version',
   agent_detail_create_time: 'Agent creation time',
+  agent_detail_host_name: 'Host host name',
   agent_detail_host_ip: 'Host IP',
   agent_detail_host_cpu_number: 'Host CPU number',
   agent_detail_host_memory_size: 'Host memory size',

@@ -40,6 +40,7 @@ export default {
   workbench_guide_data_safe: 'Tapdata cloud 如何保障數據安全？ ',
 
   // Agent
+  agent_key: 'Agent',
   agent_manage: 'Agent管理',
   agent_name: 'Agent 名稱',
   agent_id: 'Agent ID',
@@ -94,6 +95,7 @@ export default {
   agent_detail_synchronization_task_number: '同步任務數',
   agent_detail_version: 'Agent 版本',
   agent_detail_create_time: 'Agent 創建時間',
+  agent_detail_host_name: '宿主機主機名',
   agent_detail_host_ip: '宿主機IP',
   agent_detail_host_cpu_number: '宿主機CPU數量',
   agent_detail_host_memory_size: '宿主機內存大小',

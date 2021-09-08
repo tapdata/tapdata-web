@@ -164,13 +164,14 @@
               <el-link
                 type="primary"
                 :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Running'"
+                :loading="scope.row.btnLoading.stop"
                 @click="handleStop(scope.row)"
                 >{{ $t('agent_button_stop') }}</el-link
               >
               <el-link
                 type="danger"
                 @click="handleDel(scope.row)"
-                :loading="delLoading"
+                :loading="scope.row.btnLoading.delete"
                 :disabled="delBtnDisabled(scope.row)"
                 >{{ $t('agent_button_delete') }}</el-link
               >
@@ -223,6 +224,15 @@
           </div>
         </div>
       </el-dialog>
+      <!--  详情    -->
+      <DetailsDrawer
+        ref="detailsDrawer"
+        v-model="showDetails"
+        @closed="detailsClosedFnc"
+        @deploy="toDeploy(arguments[0])"
+        @stop="handleStop(arguments[0], 'details')"
+        @delete="handleDel(arguments[0])"
+      ></DetailsDrawer>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -233,6 +243,7 @@ import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import VIcon from '../../components/VIcon'
+import DetailsDrawer from './DetailsDrawer'
 
 let timer = null
 
@@ -240,7 +251,8 @@ export default {
   components: {
     InlineInput,
     StatusTag,
-    VIcon
+    VIcon,
+    DetailsDrawer
   },
   data() {
     return {
@@ -265,7 +277,8 @@ export default {
       selectedRow: {},
       agentStatus: 'stop',
       version: '',
-      upgradeList: [] // 升级列表
+      upgradeList: [], // 升级列表
+      showDetails: false
     }
   },
   computed: {
@@ -294,6 +307,7 @@ export default {
   },
   watch: {
     '$route.query'(query) {
+      console.log('watch-query')
       this.searchParams.status = query.status || ''
       this.fetch(1)
     }
@@ -302,7 +316,7 @@ export default {
     this.init()
     timer = setInterval(() => {
       // let list = this.list || []
-      let flag = true
+      let flag = false
       // list.forEach(item => {
       //   if (['Stopping'].includes(item.status) || (this.showUpgradeIcon(item) && this.upgradingFlag(item))) {
       //     flag = true
@@ -328,6 +342,11 @@ export default {
         // 清除创建标记
         this.$router.replace({
           name: 'Instance'
+        })
+      } else if (query?.detailId) {
+        console.log('详情')
+        this.$nextTick(() => {
+          this.showDetails = true
         })
       }
     },
@@ -377,6 +396,11 @@ export default {
             // item.updateStatus = ''
             if (!item.tmInfo) {
               item.tmInfo = {}
+            }
+            item.btnLoading = {
+              deploy: false,
+              stop: false,
+              delete: false
             }
             return item
           })
@@ -428,6 +452,13 @@ export default {
         window.open(downloadUrl.href, '_blank')
       })
     },
+    detailsClosedFnc() {
+      console.log('detailsClosedFnc', this.$route.query)
+      this.$router.replace({
+        name: 'Instance',
+        query: this.searchParams
+      })
+    },
     toDeploy(row) {
       let downloadUrl = window.App.$router.resolve({
         name: 'FastDownload',
@@ -439,8 +470,11 @@ export default {
       window.open(downloadUrl.href, '_blank')
     },
     // 停止
-    handleStop(row) {
+    handleStop(row, from) {
       let flag = false
+      if (from === 'details' && this.selectedRow?.id === row.id) {
+        row = this.selectedRow
+      }
       if (row.metric?.runningTaskNum) {
         flag = true
       }
@@ -449,6 +483,9 @@ export default {
         type: 'warning'
       }).then(res => {
         if (res) {
+          if (row.btnLoading) {
+            row.btnLoading.stop = true
+          }
           this.$axios
             .patch('api/tcm/agent/stop/' + row.id)
             .then(() => {
@@ -458,6 +495,11 @@ export default {
             .catch(() => {
               this.$message.error(this.$t('agent_button_stop_msg_fail'))
               this.loading = false
+            })
+            .finally(() => {
+              if (row.btnLoading) {
+                row.btnLoading.stop = false
+              }
             })
         }
       })
@@ -629,13 +671,30 @@ export default {
       if (data.agentType === 'Cloud') {
         return
       }
+      this.selectedRow = data
+      this.showDetails = true
+      // const { delayTrigger } = this.$util
+      // delayTrigger(() => {
+      //   this.$router.replace({
+      //     name: 'Instance',
+      //     query: this.searchParams
+      //   })
+      // })
+      // let query = this.$route.query
+      // this.$router.replace({
+      //   name: 'Instance',
+      //   query: Object.assign({}, query, {
+      //     detailId: this.selectedRow.id
+      //   })
+      // })
+      // return
       // this.clearTimer()  //点详情报错 暂时注释
-      this.$router.push({
-        name: 'InstanceDetails',
-        query: {
-          id: data.id
-        }
-      })
+      // this.$router.push({
+      //   name: 'InstanceDetails',
+      //   query: {
+      //     id: data.id
+      //   }
+      // })
     },
     // 创建Agent
     createAgent() {

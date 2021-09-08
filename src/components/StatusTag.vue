@@ -37,7 +37,7 @@ export default {
       }[this.target]
     },
     statusObj() {
-      return this.map[this.status]
+      return this.map[this.status] || {}
     }
   }
 }
