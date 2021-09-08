@@ -258,6 +258,7 @@
     <AddBtnTip v-if="!loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')"></AddBtnTip>
     <DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <CheckStage v-show="showCheckStagesVisible" :visible="showCheckStagesVisible" :data="checkStagesData" @complete="saveCheckStages"></CheckStage>
   </div>
 </template>
 
@@ -329,7 +330,10 @@ export default {
       mappingTemplate: '',
       creatUserId: '',
       dataChangeFalg: false,
-      statusBtMap
+      statusBtMap,
+      showCheckStagesVisible: false,
+      checkStagesData: [],
+      modPipeline: ''
     }
   },
   watch: {
@@ -1148,6 +1152,11 @@ export default {
           this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
+        if (this.modPipeline) {
+          data['modPipeline'] = []
+          this.showCheckStagesVisible = false
+          data['modPipeline'] = this.modPipeline
+        }
         let start = () => {
           data.status = 'scheduled'
           data.executeMode = 'normal'
@@ -1155,6 +1164,15 @@ export default {
             if (err) {
               if (err.response.msg === 'Error: Loading data source schema') {
                 this.$message.error(this.$t('message.loadingSchema'))
+              } else if (err.response.msg === 'DataFlow has add or del stages') {
+                if (err.response?.data && err.response?.data?.length > 0) {
+                  this.showCheckStagesVisible = true
+                  this.checkStagesData = err.response.data
+                  this.checkStagesData = this.checkStagesData.filter(v => v.type === 'add') //只展示别删除的
+                  for(let i =0;i<this.checkStagesData.length; i++){
+                    this.checkStagesData[i].syncType = 'initial_sync+cdc'
+                  }
+                }
               } else {
                 this.$message.error(err.response.msg)
               }
@@ -1194,6 +1212,13 @@ export default {
         // }
       }
       this.dialogFormVisible = false
+    },
+    /*
+     * 保存错误信息*/
+    saveCheckStages(data) {
+      this.showCheckStagesVisible = false
+      this.modPipeline = data
+      this.start()
     },
     /**
      * stop button handler
