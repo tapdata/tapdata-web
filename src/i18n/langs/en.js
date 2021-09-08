@@ -102,8 +102,10 @@ export default {
   agent_detail_host_name: 'Host host name',
   agent_detail_host_ip: 'Host IP',
   agent_detail_host_cpu_number: 'Host CPU number',
+  agent_detail_host_cpu_memory: 'Host CPU memory',
   agent_detail_host_memory_size: 'Host memory size',
   agent_detail_installation_manual: 'Installation directory',
+  agent_detail_run_manual: 'Run directory',
 
   // Agent部署
   agent_deploy_title: 'Agent download and installation',

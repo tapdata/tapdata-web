@@ -5,36 +5,25 @@
     :direction="direction"
     :show-close="false"
     :with-header="false"
-    size="304"
+    size="304px"
     @opened="openedFnc"
     @closed="closedFnc"
   >
-    <div v-if="agent.id" v-loading="loading" class="details-container">
+    <div v-loading="loading" class="details-container">
       <div class="container-item border-item flex pb-5">
         <div class="pt-2">
-          <VIcon size="24">task</VIcon>
+          <VIcon size="24">computer</VIcon>
         </div>
         <div class="ml-4">
-          <div class="fs-6 mb-2 ellipsis">{{ agent.name }}</div>
+          <div class="fs-6 mb-2 ellipsis"><slot name="title"></slot></div>
           <div><status-tag type="text" :status="agent.status"></status-tag></div>
         </div>
       </div>
-      <div class="button-line container-item border-item flex pt-4 pb-5">
-        <el-button :loading="agent.btnLoading.deploy" type="primary" class="flex-fill" @click="emitFnc('deploy')">
-          <VIcon>creating</VIcon>
-          <span>{{ $t('agent_button_deploy') }}</span>
-        </el-button>
-        <el-button :loading="agent.btnLoading.stop" type="primary" class="flex-fill" @click="emitFnc('stop')">
-          <VIcon>creating</VIcon>
-          <span>{{ $t('agent_button_stop') }}</span>
-        </el-button>
-        <el-button :loading="agent.btnLoading.delete" class="flex-fill" @click="emitFnc('delete')">
-          <VIcon>creating</VIcon>
-          <span>{{ $t('agent_button_delete') }}</span>
-        </el-button>
+      <div class="button-line container-item border-item pt-4 pb-5">
+        <slot name="operation"></slot>
       </div>
       <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
-        <div class="pt-2">
+        <div class="pt-3">
           <VIcon>{{ item.icon }}</VIcon>
         </div>
         <div class="flex-fill ml-4">
@@ -74,7 +63,7 @@ export default {
       },
       list: [
         {
-          icon: 'connection',
+          icon: 'sync-task',
           items: [
             {
               label: $t('agent_detail_synchronization_task_number'),
@@ -83,7 +72,7 @@ export default {
           ]
         },
         {
-          icon: 'connection',
+          icon: 'list',
           items: [
             {
               label: $t('agent_id'),
@@ -100,10 +89,10 @@ export default {
           ]
         },
         {
-          icon: 'connection',
+          icon: 'host',
           items: [
             {
-              label: '宿主机主机名：',
+              label: $t('agent_detail_host_name'),
               key: '-'
             },
             {
@@ -115,20 +104,20 @@ export default {
               key: 'cpus'
             },
             {
-              label: '宿主机CPU内存：',
+              label: $t('agent_detail_host_cpu_memory'),
               key: 'totalmem'
             }
           ]
         },
         {
-          icon: 'connection',
+          icon: 'install',
           items: [
             {
-              label: '安装目录：',
+              label: $t('agent_detail_installation_manual'),
               key: 'installationDirectory'
             },
             {
-              label: '运行日志所在目录：',
+              label: $t('agent_detail_run_manual'),
               key: '-'
             }
           ]
@@ -138,7 +127,6 @@ export default {
   },
   watch: {
     value(v) {
-      console.log('watch-v', v)
       this.drawer = v
       if (v) {
         this.init()
@@ -154,10 +142,7 @@ export default {
       this.$axios
         .get('api/tcm/agent/' + this.detailId)
         .then(data => {
-          console.log('data', data)
           if (data) {
-            // data.runningTaskNum = data.metric?.runningTaskNum ?? 0
-            // data.version = data.spec?.version
             Object.assign(
               data,
               data?.metric || {},
@@ -190,7 +175,7 @@ export default {
               data.totalmem = size
             }
             this.agent = Object.assign(this.agent, data)
-            console.log('this.agent', this.agent)
+            this.$emit('load-data', this.agent)
           }
         })
         .finally(() => {
@@ -198,28 +183,11 @@ export default {
         })
     },
     openedFnc() {
-      console.log('openedFnc')
       this.$emit('input', this.drawer).$emit('opened')
     },
     closedFnc() {
-      console.log('closedFnc')
       this.$emit('input', this.drawer).$emit('closed')
-    },
-    setBtnLoading(key = 'stop', value = false) {
-      this.btnLoading[key] = value
-    },
-    emitFnc(key) {
-      this.$emit(key, this.agent)
     }
-    // deployFnc() {
-    //   this.$emit('deploy')
-    // },
-    // stopFnc() {
-    //   this.$emit('stop')
-    // },
-    // deleteFnc() {
-    //   this.$emit('delete')
-    // }
   }
 }
 </script>

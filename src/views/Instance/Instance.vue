@@ -41,7 +41,13 @@
           </template>
         </div>
       </div>
-      <el-table class="instance-table table-border mt-1" height="100%" :data="list" @sort-change="sortChange">
+      <el-table
+        class="instance-table table-border mt-1"
+        height="100%"
+        :data="list"
+        @sort-change="sortChange"
+        @row-click="rowClick"
+      >
         <el-table-column min-width="200px" :label="$t('agent_name')">
           <template slot-scope="scope">
             <div class="flex">
@@ -152,28 +158,29 @@
             <span>{{ $moment(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('agent_operate')" width="180" fixed="right">
+        <el-table-column :label="$t('agent_operate')" width="200" fixed="right">
           <template slot-scope="scope">
             <div class="operate-columns">
-              <el-link
-                type="primary"
-                :disabled="scope.row.agentType === 'Cloud' || !!scope.row.deployDisable"
+              <el-button
+                size="mini"
+                type="text"
+                :disabled="deployBtnDisabled(scope.row)"
                 @click="toDeploy(scope.row)"
-                >{{ $t('agent_button_deploy') }}</el-link
+                >{{ $t('agent_button_deploy') }}</el-button
               >
-              <el-link
-                type="primary"
-                :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Running'"
+              <el-button
+                type="text"
+                :disabled="stopBtnDisabled(scope.row)"
                 :loading="scope.row.btnLoading.stop"
                 @click="handleStop(scope.row)"
-                >{{ $t('agent_button_stop') }}</el-link
+                >{{ $t('agent_button_stop') }}</el-button
               >
-              <el-link
-                type="danger"
-                @click="handleDel(scope.row)"
+              <el-button
+                type="text"
                 :loading="scope.row.btnLoading.delete"
                 :disabled="delBtnDisabled(scope.row)"
-                >{{ $t('agent_button_delete') }}</el-link
+                @click="handleDel(scope.row)"
+                >{{ $t('agent_button_delete') }}</el-button
               >
             </div>
           </template>
@@ -225,14 +232,49 @@
         </div>
       </el-dialog>
       <!--  详情    -->
-      <DetailsDrawer
-        ref="detailsDrawer"
-        v-model="showDetails"
-        @closed="detailsClosedFnc"
-        @deploy="toDeploy(arguments[0])"
-        @stop="handleStop(arguments[0], 'details')"
-        @delete="handleDel(arguments[0])"
-      ></DetailsDrawer>
+      <DetailsDrawer ref="detailsDrawer" v-model="showDetails" @closed="detailsClosedFnc" @load-data="loadDetailsData">
+        <div slot="title">
+          <inline-input
+            :class="['color-primary', { 'cursor-pointer': selectedRow.agentType !== 'Cloud' }]"
+            :value="selectedRow.name"
+            :icon-config="{ class: 'color-primary' }"
+            :input-style="{ width: '140px' }"
+            type="icon"
+            word-break
+            @save="updateName($event, selectedRow.id)"
+          ></inline-input>
+        </div>
+        <div slot="operation" class="flex">
+          <el-button
+            :loading="selectedRow.btnLoading.deploy"
+            :disabled="deployBtnDisabled(selectedRow)"
+            type="primary"
+            class="flex-fill"
+          >
+            <VIcon size="12">deploy</VIcon>
+            <span class="ml-1">{{ $t('agent_button_deploy') }}</span>
+          </el-button>
+          <el-button
+            :loading="selectedRow.btnLoading.stop"
+            :disabled="stopBtnDisabled(selectedRow)"
+            type="primary"
+            class="flex-fill"
+            @click="handleStop(selectedRow)"
+          >
+            <VIcon size="12">stop</VIcon>
+            <span class="ml-1">{{ $t('agent_button_stop') }}</span>
+          </el-button>
+          <el-button
+            :loading="selectedRow.btnLoading.delete"
+            :disabled="delBtnDisabled(selectedRow)"
+            class="flex-fill"
+            @click="handleDel(selectedRow)"
+          >
+            <VIcon size="12">delete</VIcon>
+            <span class="ml-1">{{ $t('agent_button_delete') }}</span>
+          </el-button>
+        </div>
+      </DetailsDrawer>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -259,7 +301,6 @@ export default {
       isShowTestBtn: window.__config__.ENV === 'dev',
       loading: true,
       createAgentLoading: false,
-      delLoading: false,
       searchParams: {
         status: '',
         keyword: ''
@@ -274,7 +315,13 @@ export default {
       statusMap: INSTANCE_STATUS_MAP,
       upgradeDialog: false,
       upgradeErrorDialog: false,
-      selectedRow: {},
+      selectedRow: {
+        btnLoading: {
+          deploy: false,
+          stop: false,
+          delete: false
+        }
+      },
       agentStatus: 'stop',
       version: '',
       upgradeList: [], // 升级列表
@@ -306,11 +353,11 @@ export default {
     }
   },
   watch: {
-    '$route.query'(query) {
-      console.log('watch-query')
-      this.searchParams.status = query.status || ''
-      this.fetch(1)
-    }
+    // '$route.query'(query) {
+    //   console.log('watch-query')
+    //   this.searchParams.status = query.status || ''
+    //   this.fetch(1)
+    // }
   },
   created() {
     this.init()
@@ -344,7 +391,6 @@ export default {
           name: 'Instance'
         })
       } else if (query?.detailId) {
-        console.log('详情')
         this.$nextTick(() => {
           this.showDetails = true
         })
@@ -356,6 +402,7 @@ export default {
     search(debounce) {
       const { delayTrigger } = this.$util
       delayTrigger(() => {
+        this.fetch(1)
         this.$router.replace({
           name: 'Instance',
           query: this.searchParams
@@ -425,6 +472,9 @@ export default {
       this.order = `${order ? prop : 'createAt'} ${order === 'ascending' ? 'asc' : 'desc'}`
       this.fetch(1)
     },
+    rowClick(row) {
+      this.selectedRow = row
+    },
     toOldPurchase() {
       this.$confirm(this.$t('agent_link_to_old_purchase_msg'), this.$t('agent_link_to_old_purchase_title'), {
         type: 'warning'
@@ -452,14 +502,22 @@ export default {
         window.open(downloadUrl.href, '_blank')
       })
     },
+    loadDetailsData(data) {
+      if (this.selectedRow?.id) {
+        return
+      }
+      this.selectedRow = data
+    },
     detailsClosedFnc() {
-      console.log('detailsClosedFnc', this.$route.query)
       this.$router.replace({
         name: 'Instance',
         query: this.searchParams
       })
     },
     toDeploy(row) {
+      if (this.deployBtnDisabled(row)) {
+        return
+      }
       let downloadUrl = window.App.$router.resolve({
         name: 'FastDownload',
         query: {
@@ -471,6 +529,9 @@ export default {
     },
     // 停止
     handleStop(row, from) {
+      if (this.stopBtnDisabled(row)) {
+        return
+      }
       let flag = false
       if (from === 'details' && this.selectedRow?.id === row.id) {
         row = this.selectedRow
@@ -525,8 +586,10 @@ export default {
           if (noDelFlag) {
             return
           }
+          if (row.btnLoading) {
+            row.btnLoading.delete = true
+          }
           if (row.agentType === 'Cloud') {
-            this.delLoading = true
             this.$axios
               .post('api/tcm/orders/cancel', {
                 instanceId: row.id
@@ -539,7 +602,9 @@ export default {
                 this.$message.error(this.$t('agent_button_delete_fail'))
               })
               .finally(() => {
-                this.delLoading = false
+                if (row.btnLoading) {
+                  row.btnLoading.delete = false
+                }
               })
           } else {
             this.$axios
@@ -552,7 +617,9 @@ export default {
                 this.$message.error(this.$t('agent_button_delete_fail'))
               })
               .finally(() => {
-                this.delLoading = false
+                if (row.btnLoading) {
+                  row.btnLoading.delete = false
+                }
               })
           }
         }
@@ -590,13 +657,11 @@ export default {
         }
       })
     },
-    showUpgradeDialogFnc(row) {
+    showUpgradeDialogFnc() {
       this.upgradeDialog = true
-      this.selectedRow = row
     },
-    showUpgradeErrorDialogFnc(row) {
+    showUpgradeErrorDialogFnc() {
       this.upgradeErrorDialog = true
-      this.selectedRow = row
     },
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
@@ -671,30 +736,17 @@ export default {
       if (data.agentType === 'Cloud') {
         return
       }
-      this.selectedRow = data
+      // this.selectedRow = data
       this.showDetails = true
-      // const { delayTrigger } = this.$util
-      // delayTrigger(() => {
-      //   this.$router.replace({
-      //     name: 'Instance',
-      //     query: this.searchParams
-      //   })
-      // })
-      // let query = this.$route.query
-      // this.$router.replace({
-      //   name: 'Instance',
-      //   query: Object.assign({}, query, {
-      //     detailId: this.selectedRow.id
-      //   })
-      // })
-      // return
-      // this.clearTimer()  //点详情报错 暂时注释
-      // this.$router.push({
-      //   name: 'InstanceDetails',
-      //   query: {
-      //     id: data.id
-      //   }
-      // })
+      let query = this.$route.query
+      this.$router
+        .replace({
+          name: 'Instance',
+          query: Object.assign({}, query, {
+            detailId: this.selectedRow.id
+          })
+        })
+        .catch(() => {})
     },
     // 创建Agent
     createAgent() {
@@ -727,6 +779,15 @@ export default {
         }
       })
     },
+    // 禁用部署
+    deployBtnDisabled(row) {
+      return row.agentType === 'Cloud' || !!row.deployDisable
+    },
+    // 禁用停止
+    stopBtnDisabled(row) {
+      return row.agentType === 'Cloud' || row.status !== 'Running'
+    },
+    // 禁用删除
     delBtnDisabled(row) {
       let flag = false
       if (row.agentType === 'Cloud') {
@@ -824,7 +885,11 @@ export default {
     }
     .operate-columns {
       line-height: 14px;
-      .el-link {
+      .el-button {
+        padding: 0;
+        & + .el-button {
+          margin: 0;
+        }
         &:not(:first-child) {
           padding-left: 16px;
           border-left: 1px solid #e9e9e9;

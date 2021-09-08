@@ -205,6 +205,13 @@ th {
   border-color: map-get($borderColor, disable);
   background-color: map-get($bgColor, disable);
 }
+.el-button--text {
+  border: 0;
+  color: map-get($color, primary);
+}
+.el-button--text:hover,.el-button--text:focus  {
+  background-color: unset;
+}
 .el-checkbox {
   font-weight: normal;
   color: map-get($fontColor, light);

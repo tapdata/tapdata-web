@@ -1,7 +1,9 @@
 <template>
   <div class="inline-input-wrap">
     <span class="inline-input-body" v-show="!editing">
-      <span class="ellipsis" :title="value" @click="$emit('click-text')">{{ value }}</span>
+      <span :class="[wordBreak ? 'word-break' : 'ellipsis']" :title="value" @click="$emit('click-text')">{{
+        value
+      }}</span>
       <ElLink class="inline-input-link" style="margin-left: 5px" @click="editing = true">
         <VIcon color="#999" size="14" v-bind="iconConfig">edit-outline</VIcon>
       </ElLink>
@@ -12,6 +14,7 @@
           class="input"
           :class="[{ 'valid-input': disabled }, 'block']"
           size="mini"
+          :style="inputStyle"
           v-model="inputValue"
         ></ElInput>
       </ElTooltip>
@@ -44,7 +47,9 @@ export default {
   props: {
     value: [String, Number],
     type: String,
-    iconConfig: Object
+    iconConfig: Object,
+    wordBreak: Boolean,
+    inputStyle: Object
   },
   data() {
     return {
@@ -92,6 +97,11 @@ export default {
   .inline-input-body {
     display: flex;
     align-items: center;
+    .word-break {
+      word-wrap: break-word;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
   }
   .inline-input-link {
     font-size: inherit;

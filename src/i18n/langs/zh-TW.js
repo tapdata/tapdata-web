@@ -98,8 +98,10 @@ export default {
   agent_detail_host_name: '宿主機主機名',
   agent_detail_host_ip: '宿主機IP',
   agent_detail_host_cpu_number: '宿主機CPU數量',
+  agent_detail_host_cpu_memory: '宿主機CPU內存',
   agent_detail_host_memory_size: '宿主機內存大小',
   agent_detail_installation_manual: '安裝目錄',
+  agent_detail_run_manual: '運行目錄',
 
   // agent部署
   agent_deploy_title: 'Agent 下載與安裝',

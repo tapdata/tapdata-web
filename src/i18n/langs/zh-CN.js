@@ -98,8 +98,10 @@ export default {
   agent_detail_host_name: '宿主机主机名',
   agent_detail_host_ip: '宿主机IP',
   agent_detail_host_cpu_number: '宿主机CPU数量',
+  agent_detail_host_cpu_memory: '宿主机CPU内存',
   agent_detail_host_memory_size: '宿主机内存大小',
   agent_detail_installation_manual: '安装目录',
+  agent_detail_run_manual: '运行目录',
 
   // Agent部署
   agent_deploy_title: 'Agent 下载与安装',
