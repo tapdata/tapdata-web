@@ -4,6 +4,7 @@ const newTc = {
   // dialog 通用
   dialog_button_close: '關 閉',
 
+  schema_progress_status_success: '已完成',
   schema_progress_status_error: '出錯',
   schema_progress_dialog_error_title: 'Schema加载出错',
 

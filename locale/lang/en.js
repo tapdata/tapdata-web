@@ -3,6 +3,7 @@ const newEn = {
   // dialog 通用
   dialog_button_close: 'Close',
 
+  schema_progress_status_success: 'Finished',
   schema_progress_status_error: 'Error',
   schema_progress_dialog_error_title: 'Schema loading error',
 
