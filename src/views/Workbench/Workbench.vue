@@ -15,10 +15,10 @@
             <div class="create-list__main ml-4">
               <div class="create-list__name mb-4 fs-7">{{ item.name }}</div>
               <div class="create-list__desc">{{ item.desc }}</div>
-              <div class="create-list__btn text-end pointer" @click="item.action">
+              <el-link type="primary" class="float-end pointer" @click="item.action">
                 <span>{{ item.btnName }}</span>
                 <VIcon class="ml-2" size="12">right</VIcon>
-              </div>
+              </el-link>
             </div>
           </div>
         </el-col>
@@ -33,9 +33,13 @@
                 <div v-if="item.type" class="notice-list__type mr-4 p-1">
                   {{ item.type }}
                 </div>
-                <div class="notice-list__name flex-grow-1 ellipsis pointer" @click="toNotice(item)">
+                <el-link
+                  type="primary"
+                  class="notice-list__name flex-grow-1 ellipsis block pointer"
+                  @click="toNotice(item)"
+                >
                   {{ item.name }}
-                </div>
+                </el-link>
                 <div class="notice-list__time">
                   {{ formatFromNow(item.time) }}
                 </div>
@@ -59,7 +63,7 @@
                 <VIcon size="12" class="icon" color="#888">{{ item.icon }}</VIcon>
                 <span class="ml-1 fs-7">{{ item.name }}</span>
               </div>
-              <div class="agent-list__value text-center fs-1">
+              <div class="color-primary text-center fs-1">
                 {{ item.value }}
               </div>
               <div class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1">
@@ -80,18 +84,17 @@
         </el-col>
         <el-col :span="6">
           <div class="aside-main guide-list flex-grow-1 p-6">
-            <ul class="guide-list__list">
-              <li
+            <div class="guide-list__list">
+              <el-link
                 v-for="(item, index) in guides"
                 :key="index"
-                class="guide-list__item flex mb-4 pointer"
+                type="primary"
+                class="guide-list__item mb-4 block pointer"
                 @click="clickGuide(item)"
               >
-                <div class="guide-list__name">
-                  {{ item.name }}
-                </div>
-              </li>
-            </ul>
+                {{ item.name }}
+              </el-link>
+            </div>
           </div>
         </el-col>
       </el-row>
@@ -408,9 +411,6 @@ export default {
   height: 110px;
   color: rgba(0, 0, 0, 0.49);
 }
-.create-list__btn {
-  color: map-get($color, primary);
-}
 .aside-main {
   height: 213px;
   background-color: #fff;
@@ -432,9 +432,6 @@ export default {
     color: #888;
   }
 }
-.agent-list__value {
-  color: map-get($color, primary);
-}
 .agent-list__detail {
   background-color: #fafafb;
   color: rgba(0, 0, 0, 0.5);
@@ -455,21 +452,12 @@ export default {
 .notice-list__type {
   background: #f7f8f9;
 }
-.notice-list__name {
-  color: map-get($color, primary);
-}
 .notice-list__time {
   color: rgba(0, 0, 0, 0.5);
   white-space: nowrap;
 }
-.notice-footer {
-  color: map-get($color, primary);
-}
 .guide-list {
   height: 190px;
-}
-.guide-list__name {
-  color: map-get($color, primary);
 }
 </style>
 <style lang="scss" scoped>
