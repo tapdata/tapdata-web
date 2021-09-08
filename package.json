@@ -13,6 +13,9 @@
     "lint": "vue-cli-service lint",
     "mock": "nodemon mock/mock.js"
   },
+  "resolutions": {
+    "vue": "^2.6.14"
+  },
   "dependencies": {
     "@formily/core": "^2.0.0-rc.4",
     "@formily/reactive": "^2.0.0-rc.4",
@@ -42,7 +45,7 @@
     "monaco-editor": "0.23.0",
     "mousetrap": "^1.6.5",
     "nanoid": "^3.1.25",
-    "vue": "^2.6.11",
+    "vue": "^2.6.14",
     "vue-bus": "^1.2.1",
     "vue-clipboard2": "^0.3.1",
     "vue-cookie": "^1.1.4",
