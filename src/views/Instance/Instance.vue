@@ -381,7 +381,8 @@ export default {
   methods: {
     init() {
       let query = this.$route.query
-      this.searchParams = Object.assign(this.searchParams, query)
+      let { detailId, ...searchParams } = Object.assign(this.searchParams, query)
+      this.searchParams = searchParams
       this.fetch()
       // 是否触发创建agent
       if (query?.create) {
@@ -390,7 +391,7 @@ export default {
         this.$router.replace({
           name: 'Instance'
         })
-      } else if (query?.detailId) {
+      } else if (detailId) {
         this.$nextTick(() => {
           this.showDetails = true
         })
@@ -509,6 +510,7 @@ export default {
       this.selectedRow = data
     },
     detailsClosedFnc() {
+      this.showDetails = false
       this.$router.replace({
         name: 'Instance',
         query: this.searchParams
@@ -596,6 +598,7 @@ export default {
               })
               .then(() => {
                 this.$message.success(this.$t('agent_button_delete_success'))
+                this.detailsClosedFnc()
                 this.fetch()
               })
               .catch(() => {
@@ -611,6 +614,7 @@ export default {
               .patch('api/tcm/agent/delete/' + row.id)
               .then(() => {
                 this.$message.success(this.$t('agent_button_delete_success'))
+                this.detailsClosedFnc()
                 this.fetch()
               })
               .catch(() => {
