@@ -758,7 +758,10 @@ const en = {
       taskName: 'Task name',
       errorTotal: 'Total XX, selected',
       strip: 'row'
-    }
+    },
+    flowEngineVersion: 'Flow Engine Version',
+    flowEngineV1: 'Flow Engine V1',
+    jetFlowEngineV2: 'Jet Flow Engine V2'
   },
   connection: {
     dataBaseName: 'Connection name',
@@ -3063,6 +3066,7 @@ const en = {
     Keep_Alive_Message: 'Keep online message',
     Sample_Rate: 'Sampling rate',
     task_load_threshold: 'Task load threshold (percentage)',
+    task_load_statistics_time: 'Task load statistics time (minute)',
     ApiServer: 'API distribution settings',
     Default_Limit: 'The number of rows returned by the default query',
     Max_Limit: 'Maximum number of rows returned by the query',
