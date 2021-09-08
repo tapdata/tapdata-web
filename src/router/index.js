@@ -46,6 +46,26 @@ const childRoutes = [
     }
   },
   {
+    path: '/connections/oldCreate',
+    name: 'connectionsOldCreate',
+    component: () => import('@/views/connections/DatabaseForm'),
+    meta: {
+      title: i18n.t('tap.connection'),
+      isCollapse: true,
+      code: 'datasource_creation'
+    }
+  },
+  {
+    path: '/connections/:id/oldEdit',
+    name: 'connectionsOldEdit',
+    component: () => import('@/views/connections/DatabaseForm'),
+    meta: {
+      title: i18n.t('tap.connection'),
+      isCollapse: true,
+      code: 'datasource_edition'
+    }
+  },
+  {
     path: '/connection',
     name: 'connection',
     component: () => import('@/views/ExternalLink'),

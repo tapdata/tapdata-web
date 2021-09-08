@@ -68,8 +68,8 @@ export default {
   created() {
     let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || []
     let comingAllowDataType = window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
-    let allwoType = this.allwoType
-    if (allwoType && allwoType.length) {
+    let allowType = this.allwoType
+    if (allowType && allowType.length) {
       allowDataType = allowDataType.filter(val => {
         return this.allwoType.includes(val)
       })
@@ -99,7 +99,8 @@ export default {
               item =>
                 !this.otherType.includes(item.type) &&
                 !this.database.includes(item.type) &&
-                !this.comingAllowDatabase.includes(item.type)
+                !this.comingAllowDatabase.includes(item.type) &&
+                !['mem_cache','rest api', 'log_collect'].includes(item.type)
             )
           }
         })

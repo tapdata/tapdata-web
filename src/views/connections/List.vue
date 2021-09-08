@@ -516,15 +516,27 @@ export default {
       if (item.search_databaseType) {
         type = item.search_databaseType
       }
-      this.$router.push({
-        name: 'connectionsEdit',
-        params: {
-          id: id
-        },
-        query: {
-          databaseType: type
-        }
-      })
+      if (this.whiteList.includes(type) || type === 'rest api') {
+        this.$router.push({
+          name: 'connectionsOldEdit',
+          params: {
+            id: id
+          },
+          query: {
+            databaseType: type
+          }
+        })
+      }else {
+        this.$router.push({
+          name: 'connectionsEdit',
+          params: {
+            id: id
+          },
+          query: {
+            databaseType: type
+          }
+        })
+      }
     },
     copy(data) {
       let headersName = { 'lconname-name': data.name }
@@ -673,12 +685,21 @@ export default {
     },
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
-      this.$router.push({
-        name: 'connectionsCreate',
-        query: {
-          databaseType: type
-        }
-      })
+      if (this.whiteList.includes(type) || type === 'rest api') {
+        this.$router.push({
+          name: 'connectionsOldCreate',
+          query: {
+            databaseType: type
+          }
+        })
+      }else {
+        this.$router.push({
+          name: 'connectionsCreate',
+          query: {
+            databaseType: type
+          }
+        })
+      }
       // top.location.href = '/#/connection'
       // localStorage.setItem('connectionDatabaseType', type)
     },
