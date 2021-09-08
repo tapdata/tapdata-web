@@ -121,7 +121,7 @@
       >
       </ElPagination>
       <ConnectionTest ref="test"></ConnectionTest>
-      <Preview ref="preview"></Preview>
+      <Preview ref="preview" @close="fetch()"></Preview>
     </div>
   </section>
   <RouterView v-else></RouterView>

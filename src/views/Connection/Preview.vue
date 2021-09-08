@@ -171,6 +171,7 @@ export default {
       this.clearInterval()
       this.visible = false
       this.showProgress = false
+      this.$emit('close')
     },
     getImgByType(type) {
       if (!type) {
