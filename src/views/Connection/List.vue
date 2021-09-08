@@ -121,7 +121,7 @@
       >
       </ElPagination>
       <ConnectionTest ref="test"></ConnectionTest>
-      <Preview ref="preview"></Preview>
+      <Preview ref="preview" @close="fetch()"></Preview>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -224,7 +224,7 @@ export default {
       let list = this.list || []
       let ids = []
       list.forEach(item => {
-        if (['testing'].includes(item.status)) {
+        if (['testing'].includes(item.status) || ['loading'].includes(item.loadFieldsStatus)) {
           ids.push(item.id)
         }
       })
