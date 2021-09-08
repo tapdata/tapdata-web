@@ -690,7 +690,15 @@ module.exports = {
         createTime: '2021-06-18T07:25:46.688Z',
         id: '@guid',
         last_updated: '2021-06-18T07:25:46.688Z',
-        'modular|1': ['connection', 'migration', 'agent', 'inspect', 'differenceInspect', 'message'],
+        'modular|1': [
+          'connection',
+          'migration',
+          'agent',
+          'inspect',
+          'differenceInspect',
+          'message',
+          'userNotification'
+        ],
         'operation|1': [
           'create',
           'update',
