@@ -393,6 +393,7 @@ export default {
         if (rules?.length > 0) {
           rules = rules[0].rules
           this.showFieldEdit(data[i].t_id, rules || [])
+          this.influences(data[i].t_id, rules || [])
         }
       }
     },
@@ -481,7 +482,7 @@ export default {
           return
         }
         //如果是改类型 需要手动修改字段的长度以及精度
-        this.influences(id)
+        this.influences(id,this.currentTypeRules || [])
       } else if (key === 'precision') {
         let isPrecision = this.currentTypeRules.filter(v => v.minPrecision < v.maxPrecision)
         if (isPrecision.length === 0) {
@@ -533,9 +534,9 @@ export default {
       this.handleClose()
     },
     //改类型影响字段长度 精度
-    influences(id) {
-      this.showFieldEdit(id, this.currentTypeRules)
-      this.currentTypeRules.forEach(r => {
+    influences(id,rules) {
+      this.showFieldEdit(id, rules)
+      rules.forEach(r => {
         if (r.minScale || r.minScale === 0) {
           this.updateTarget(id, 'scale', r.minScale < 0 ? 0 : r.minScale)
         } else {
