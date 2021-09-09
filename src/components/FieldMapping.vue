@@ -1,6 +1,8 @@
 <template>
   <div>
-    <el-button size="mini" v-if="showBtn" @click="fieldProcess()">字段映射</el-button>
+    <el-button size="mini" class="e-button" v-if="showBtn" :loading="loading" @click="fieldProcess()"
+      >字段映射</el-button
+    >
     <el-dialog
       width="85%"
       title="映射配置"
@@ -32,20 +34,38 @@
 <script>
 export default {
   name: 'FiledMapping',
-  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId', 'isFirst'],
+  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId', 'isFirst', 'mappingType'],
   data() {
     return {
       //表设置
-      fieldMappingNavData: '',
-      fieldMappingTableData: '',
+      fieldMappingNavData: '', //左边导航
+      fieldMappingTableData: '', //右边table
       dialogFieldProcessVisible: false,
+      loading: false,
       field_process: []
     }
   },
   methods: {
-    //表设置
+    /*
+     * 模型推演
+     * 新建任务，首次全部恢复默认
+     * 过滤条件：当前目标节点 stageId
+     * 触发父组件：首次条件
+     * */
     fieldProcess() {
       if (!this.dataFlow) return
+      //迁移任务需要同步字段处理器
+      if (this.mappingType && this.mappingType === 'cluster-clone') {
+        this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
+        if (
+          this.dataFlow?.stages?.[1]?.syncObjects.length === 0 ||
+          this.dataFlow?.stages?.[1]?.syncObjects?.[0]?.objectNames?.length === 0
+        ) {
+          this.$message.error('请先选择需要迁移的表')
+          return
+        }
+      }
+      this.loading = true
       let dataFlowId = this.dataFlow.id
       if (this.isFirst && dataFlowId) {
         this.dataFlow['rollback'] = 'all' //新建任务重置恢复默认
@@ -61,12 +81,30 @@ export default {
         .then(data => {
           this.dialogFieldProcessVisible = true
           this.fieldMappingNavData = data?.data
-          this.$emit('update-first', false)
+          this.$emit('update-first', false) //新建任务 第一次需要恢复默认
         })
         .catch(() => {
-          this.$message.error('接口请求失败')
+          this.$message.error('字段推演失败')
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
+    //任务迁移需要主动更新
+    updateAutoFieldProcess(data) {
+      for (let i = 0; i < data.stages.length; i++) {
+        if (data.stages[i].outputLanes) {
+          data['stages'][i].field_process = this.field_process
+        }
+      }
+      return data
+    },
+    /*
+     * 子模块-恢复默认操作
+     * 对应清空字段处理器
+     * 更新父组件 fromData 字段处理器
+     * 触发模型重新推演
+     * */
     async updateFieldProcess(rollback, rollbackTable, id) {
       if (!this.dataFlow) return
       if (rollback === 'all') {
@@ -85,6 +123,10 @@ export default {
         }
       }
       this.$emit('returnFieldMapping', this.field_process)
+      //迁移任务需要同步字段处理器
+      if (this.mappingType && this.mappingType === 'cluster-clone') {
+        this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
+      }
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       return promise?.data
     },
@@ -92,7 +134,13 @@ export default {
     updateFieldMappingNavData(data) {
       this.fieldMappingNavData = data
     },
-    //获取表设置
+    /*
+     * 初始化右边table数据
+     * 请求参数：QualifiedName 分别获取源表字段、目标表字段
+     * 过滤：不支持嵌套字段
+     * 数据组合：目标字段表示 "t_"标识 (is_deleted 目标表数据)
+     * 数据匹配：同步任务没有字段处理器，有字段处理器（改名），优先original_field_name || field
+     * */
     async intiFieldMappingTableData(row) {
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
@@ -122,7 +170,10 @@ export default {
           let ops = this.handleFieldName(row, field.field_name)
           if (!ops || ops?.length === 0) return
           ops = ops[0]
-          if (ops.operand === field.field_name && ops.field === item.field_name) {
+          if (
+            ops.operand === field.field_name &&
+            (ops.original_field_name === item.field_name || ops.field === item.field_name)
+          ) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })
@@ -158,6 +209,11 @@ export default {
       //保存字段映射
       let returnData = this.$refs.fieldMappingDom.returnData()
       if (!returnData.valid) return //检验不通过
+      let deleteLen = returnData.target.filter(v => !v.is_deleted)
+      if (deleteLen.length === 0) {
+        this.$message.error('当前表被删除了所有字段，不允许保存操作')
+        return //所有字段被删除了 不可以保存任务
+      }
       this.saveOperations(returnData.row, returnData.operations, returnData.target)
       this.dialogFieldProcessVisible = false
     },
@@ -174,11 +230,6 @@ export default {
       if (this.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.field_process)
-    },
-    //job 字段映射逻辑 自动推演 //保存前 自动推演
-    autoFiledProcess(data) {
-      this.dialogFieldProcessVisible = true
-      this.fieldMappingNavData = data
     }
   }
 }
@@ -203,5 +254,11 @@ export default {
     padding: 0 50px;
     color: #666;
   }
+}
+.e-button {
+  padding: 4px 10px;
+  color: #666;
+  background-color: #f5f5f5;
+  margin-left: 10px;
 }
 </style>

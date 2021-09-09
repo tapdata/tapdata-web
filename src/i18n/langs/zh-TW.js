@@ -1,9 +1,4 @@
 export default {
-  // 连接
-  connection_list_column_schema_status: 'Schema加載進度',
-  connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
-
-  connection_tidb_none_server: 'TiBD地址不能為空',
   // 数据校验
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',
@@ -35,5 +30,11 @@ export default {
 
   // 数据源
   connection_form_tidb_server: 'TiDB地址',
+  connection_tidb_none_server: 'TiBD地址不能為空',
+
+  connection_list_column_schema_status: 'Schema加載狀態',
+  connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
+
+  // Dag
   dag_data_node_label_dameng: 'Dameng節點'
 }
