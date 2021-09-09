@@ -693,7 +693,7 @@ export default {
 
     // 打开数据目录数据库
     handDatabase() {
-      let href = '/#/metadataInstances/' + this.databaseData[0].id
+      let href = '/#/metadataDetails?id=' + this.databaseData[0].id
       window.open(href)
     },
 
@@ -703,7 +703,7 @@ export default {
       this.tableIsLink()
 
       if (this.tableNameId) {
-        let href = '/#/metadataInstances/' + this.tableNameId
+        let href = '/#/metadataDetails?id=' + this.tableNameId
         window.open(href)
       }
     },
