@@ -3,6 +3,7 @@ const newCn = {
   // dialog 通用
   dialog_button_close: '关 闭',
 
+  schema_progress_status_success: '已完成',
   schema_progress_status_error: '出错',
   schema_progress_dialog_error_title: 'Schema加载出错',
 
@@ -740,7 +741,10 @@ const cn = {
       taskName: '任务名',
       errorTotal: '共 XX 条,已选择',
       strip: '条'
-    }
+    },
+    flowEngineVersion: '引擎版本',
+    flowEngineV1: 'Flow Engine V1',
+    jetFlowEngineV2: 'Jet Flow Engine V2'
   },
   connection: {
     dataBaseName: '连接名/连接信息',
@@ -3008,6 +3012,7 @@ const cn = {
     Keep_Alive_Message: '保持在线消息',
     Sample_Rate: '采样率',
     task_load_threshold: '负载阈值（百分比）',
+    task_load_statistics_time: '负载统计时间（分钟）',
     ApiServer: 'API分发设置',
     Default_Limit: '默认查询返回行数',
     Max_Limit: '最大查询返回行数',
