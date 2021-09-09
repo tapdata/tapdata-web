@@ -258,7 +258,12 @@
     <AddBtnTip v-if="!loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')"></AddBtnTip>
     <DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
-    <CheckStage v-show="showCheckStagesVisible" :visible="showCheckStagesVisible" :data="checkStagesData" @complete="saveCheckStages"></CheckStage>
+    <CheckStage
+      v-show="showCheckStagesVisible"
+      :visible="showCheckStagesVisible"
+      :data="checkStagesData"
+      @complete="saveCheckStages"
+    ></CheckStage>
   </div>
 </template>
 
@@ -1169,7 +1174,7 @@ export default {
                   this.showCheckStagesVisible = true
                   this.checkStagesData = err.response.data
                   this.checkStagesData = this.checkStagesData.filter(v => v.type === 'add') //只展示别删除的
-                  for(let i =0;i<this.checkStagesData.length; i++){
+                  for (let i = 0; i < this.checkStagesData.length; i++) {
                     this.checkStagesData[i].syncType = 'initial_sync+cdc'
                   }
                 }
