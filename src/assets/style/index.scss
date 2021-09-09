@@ -192,15 +192,18 @@ select {
     font-size: 12px;
   }
 }
-.el-table td,
-.el-table th {
-  padding: 6px 0;
-  font-size: 12px;
-  white-space: nowrap;
-  .cell {
-    white-space: nowrap;
-  }
+.el-table .cell {
+  word-break: break-word;
 }
+// .el-table td,
+// .el-table th {
+//   padding: 6px 0;
+//   font-size: 12px;
+//   white-space: nowrap;
+//   .cell {
+//     white-space: nowrap;
+//   }
+// }
 .el-table th > .cell {
   font-weight: normal;
 }
