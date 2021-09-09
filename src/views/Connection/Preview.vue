@@ -162,9 +162,12 @@ export default {
   },
   methods: {
     open(id, type) {
+      this.form = {}
+      this.clearInterval()
       this.getData(id, type)
       this.visible = true
       this.showProgress = false
+      this.reloadLoading = false
     },
     handleClose() {
       this.form = {}
