@@ -94,6 +94,7 @@
             <div class="flex w-100">
               <el-radio-group v-model="sourceForm.database_type" @change="changeSourceDatabaseType">
                 <el-radio-button v-for="(item, index) in databaseTypeItems" :key="index" :label="item.value">
+                  <VIcon size="17" class="color-primary">{{ item.icon }}</VIcon>
                   {{ item.label }}
                 </el-radio-button>
               </el-radio-group>
@@ -109,33 +110,50 @@
             </div>
           </el-form-item>
           <template v-if="sourceForm.id">
-            <el-form-item label="连接名称" prop="name">
-              <el-input v-model="sourceForm.name" readonly disabled>
+            <el-form-item label="连接名称" prop="name" class="medium-width">
+              <el-input v-model="sourceForm.name" size="mini" readonly disabled>
                 <span slot="suffix">（仅测试使用，不可编辑）</span>
               </el-input>
             </el-form-item>
-            <el-form-item label="地址/端口" prop="database_host" class="database-uri-port">
+            <el-form-item label="地址/端口" prop="database_host" class="database-uri-port medium-width">
               <div class="flex justify-content-between w-100">
-                <el-input v-model="sourceForm.database_host" class="database-uri" readonly disabled></el-input>
-                <el-input v-model="sourceForm.database_port" class="database-port ml-3" readonly disabled></el-input>
+                <el-input
+                  v-model="sourceForm.database_host"
+                  size="mini"
+                  class="database-uri"
+                  readonly
+                  disabled
+                ></el-input>
+                <el-input
+                  v-model="sourceForm.database_port"
+                  size="mini"
+                  class="database-port"
+                  readonly
+                  disabled
+                ></el-input>
               </div>
             </el-form-item>
-            <el-form-item label="数据库名" prop="database_name">
-              <el-input v-model="sourceForm.database_name" readonly disabled></el-input>
+            <el-form-item label="数据库名" prop="database_name" class="mini-width">
+              <el-input v-model="sourceForm.database_name" size="mini" readonly disabled></el-input>
             </el-form-item>
-            <el-form-item label="数据库账号" prop="database_username">
-              <el-input v-model="sourceForm.database_username" readonly disabled></el-input>
+            <el-form-item label="数据库账号" prop="database_username" class="mini-width">
+              <el-input v-model="sourceForm.database_username" size="mini" readonly disabled></el-input>
             </el-form-item>
-            <el-form-item label="数据库密码" prop="database_password">
-              <el-input v-model="sourceForm.database_password" readonly disabled></el-input>
+            <el-form-item label="数据库密码" prop="database_password" class="mini-width">
+              <el-input v-model="sourceForm.database_password" size="mini" readonly disabled></el-input>
             </el-form-item>
-            <el-form-item v-if="sourceForm.database_type === 'postgres'" label="Schema" prop="database_owner">
-              <el-input v-model="sourceForm.database_owner" readonly disabled></el-input>
+            <el-form-item
+              v-if="sourceForm.database_type === 'postgres'"
+              label="Schema"
+              prop="database_owner"
+              class="mini-width"
+            >
+              <el-input v-model="sourceForm.database_owner" size="mini" readonly disabled></el-input>
             </el-form-item>
           </template>
         </el-form>
         <div class="operation mt-7">
-          <el-button v-if="step !== 0" class="mr-4" size="mini" @click="toPrev">上一步</el-button>
+          <el-button v-if="step !== 0" class="mr-4" size="mini" @click="toPrev" key="preBtn">上一步</el-button>
           <el-button type="primary" size="mini" :disabled="!sourceForm.id" @click="toNext">下一步</el-button>
         </div>
       </div>
@@ -163,7 +181,6 @@
               :filter-placeholder="$t('editor.cell.link.searchContent')"
               :data="sourceData"
               filterable
-              class="flex"
               @change="handleChangeTransfer"
               @right-check-change="handleSelectTable"
             >
@@ -293,17 +310,20 @@ export default {
       let result = [
         {
           label: 'MySQL',
-          value: 'mysql'
+          value: 'mysql',
+          icon: 'mysql'
         },
         {
           label: 'PostgreSQL',
-          value: 'postgres'
+          value: 'postgres',
+          icon: 'pg'
         }
       ]
       if (this.step === 2) {
         result.push({
           label: 'MongoDB',
-          value: 'mongodb'
+          value: 'mongodb',
+          icon: 'mongo'
         })
       }
       return result
@@ -762,10 +782,22 @@ export default {
     }
   }
   .source-form {
-    width: 500px;
+    width: 530px;
     ::v-deep {
       .el-form-item__label {
         text-align: left;
+      }
+    }
+    .el-form-item {
+      &.medium-width {
+        ::v-deep .el-form-item__content {
+          width: 300px;
+        }
+      }
+      &.mini-width {
+        ::v-deep .el-form-item__content {
+          width: 200px;
+        }
       }
     }
     .database-uri-port {
@@ -773,47 +805,8 @@ export default {
         flex: 1;
       }
       .database-port {
+        margin-left: 10px;
         width: 90px;
-      }
-    }
-  }
-  .el-transfer {
-    ::v-deep {
-      .el-transfer-panel {
-        flex: 1;
-      }
-      .el-transfer-panel__filter {
-        width: calc(100% - 32px);
-        .el-input__inner {
-          border-radius: 2px;
-        }
-      }
-
-      .el-transfer-panel {
-        //width: 350px;
-        min-width: 240px;
-        .el-transfer-panel__header {
-          background: rgba(44, 101, 255, 0.05);
-          .el-checkbox__label {
-            margin-left: 10px;
-            border-left: 1px solid #ddd;
-            font-size: 14px;
-          }
-        }
-      }
-      .el-transfer__buttons {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        .el-button {
-          padding: 0;
-          width: 36px;
-          height: 27px;
-          &:last-child {
-            margin-left: 0;
-          }
-        }
       }
     }
   }
@@ -834,11 +827,10 @@ export default {
   }
 }
 .el-button {
-  &:not(.el-button--text) {
-    border-radius: 4px;
-    border: 1px solid #2c65ff;
-    color: #2c65ff;
-  }
+  //&:not(.el-button--text):focus {
+  //  color: unset;
+  //  border-color: unset;
+  //}
   + .el-button {
     margin-left: 0;
   }

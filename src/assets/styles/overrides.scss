@@ -98,6 +98,9 @@ th {
   color: map-get($fontColor, light);
   background: #fff;
 }
+.el-radio-button--small .el-radio-button__inner {
+  padding: 5px 16px;
+}
 .el-radio-button__inner:hover {
   color: map-get($color, primary);
 }
@@ -158,6 +161,9 @@ th {
 .el-button {
   font-weight: normal;
 }
+.el-button + .el-button {
+  margin-left: 16px;
+}
 .el-button.is-plain:focus {
   border-color: map-get($borderColor, normal);
   color: map-get($fontColor, normal);
@@ -209,7 +215,8 @@ th {
   border: 0;
   color: map-get($color, primary);
 }
-.el-button--text:hover,.el-button--text:focus  {
+.el-button--text:hover,
+.el-button--text:focus {
   background-color: unset;
 }
 .el-checkbox {
@@ -446,5 +453,51 @@ th {
     font-size: 14px;
     font-weight: normal;
     color: #000;
+  }
+}
+
+// 穿梭框
+.el-transfer {
+  display: flex;
+  .el-transfer-panel {
+    flex: 1;
+    .el-transfer-panel__header {
+      background: rgba(44, 101, 255, 0.05);
+      height: 54px;
+      line-height: 54px;
+      .el-checkbox {
+        line-height: 54px;
+      }
+      .el-checkbox__label {
+        margin-left: 8px;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.85);
+      }
+    }
+  }
+  .el-transfer-panel__body {
+    padding-top: 16px;
+    background: #fafafa;
+  }
+  .el-transfer-panel__filter {
+    margin: 0 16px 16px;
+    .el-input__inner {
+      padding-left: 36px;
+      border-radius: 2px;
+    }
+  }
+  .el-transfer__buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .el-button {
+      padding: 0;
+      width: 36px;
+      height: 27px;
+      &:last-child {
+        margin-left: 0;
+      }
+    }
   }
 }

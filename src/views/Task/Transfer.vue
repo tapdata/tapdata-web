@@ -715,12 +715,6 @@ export default {
 .tapdata-transfer-wrap {
   height: 100%;
 
-  .el-transfer-panel .el-transfer-panel__header .el-checkbox .el-checkbox__label {
-    height: 30px;
-    font-size: 12px;
-    padding-right: 6px;
-  }
-
   .el-transfer {
     height: 100%;
 
@@ -746,29 +740,6 @@ export default {
             text-overflow: ellipsis;
           }
         }
-      }
-
-      .el-transfer-panel__header {
-        height: 28px;
-        line-height: 28px;
-        background: #f5f5f5;
-
-        .el-checkbox {
-          height: 28px;
-          line-height: 28px;
-        }
-      }
-
-      .el-transfer-panel__filter {
-        margin: 10px;
-
-        .el-input__inner {
-          border-radius: 3px;
-        }
-      }
-
-      .el-transfer__button {
-        border-radius: 3px;
       }
 
       .el-transfer__button.is-disabled,

@@ -261,14 +261,6 @@
       .CT-task-transfer {
         margin-left: 200px;
         height: 500px;
-        ::v-deep {
-          .el-transfer {
-            .el-transfer-panel__filter {
-              margin: 0;
-              padding: 10px;
-            }
-          }
-        }
       }
     }
     .step-4 {
