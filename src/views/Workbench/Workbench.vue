@@ -13,7 +13,7 @@
               {{ index + 1 }}
             </div>
             <div class="create-list__main ml-4">
-              <div class="create-list__name mb-4 fs-7">{{ item.name }}</div>
+              <div class="create-list__name mb-4 fs-6">{{ item.name }}</div>
               <div class="create-list__desc">{{ item.desc }}</div>
               <el-link type="primary" class="float-end pointer" @click="item.action">
                 <span>{{ item.btnName }}</span>
@@ -57,26 +57,20 @@
       </el-row>
       <el-row :gutter="40" class="section-body">
         <el-col :span="18">
-          <ul class="agent-list__list flex-grow-1 flex justify-content-around">
-            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item p-6" :ref="item.key">
+          <ul class="agent-list__list flex-grow-1 flex justify-content-around px-5">
+            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item py-6" :ref="item.key">
               <div class="agent-list__name flex align-items-center justify-content-center mx-auto mb-3">
-                <VIcon size="12" class="icon" color="#888">{{ item.icon }}</VIcon>
+                <VIcon size="14" class="icon" color="#888">{{ item.icon }}</VIcon>
                 <span class="ml-1 fs-7">{{ item.name }}</span>
               </div>
               <div class="color-primary text-center fs-1">
                 {{ item.value }}
               </div>
               <div class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1">
-                <div v-for="(detail, dIndex) in item.list" :key="dIndex" class="agent-list__status mr-2">
-                  <template v-if="detail.key === 'agent'">
-                    <span class="success ml-2">{{ $t('agent_status_running') }}：{{ detail.running }}</span>
-                    <span class="error ml-2">{{ $t('agent_status_stopped') }}：{{ detail.offline }}</span>
-                  </template>
-                  <template v-else>
-                    <span>{{ detail.label }}</span>
-                    <span>:</span>
-                    <span :class="['ml-1']">{{ detail.value }}</span>
-                  </template>
+                <div v-for="(detail, dIndex) in item.list" :key="dIndex" :class="['agent-list__status', detail.class]">
+                  <span>{{ detail.label }}</span>
+                  <span>:</span>
+                  <span :class="['ml-1']">{{ detail.value }}</span>
                 </div>
               </div>
             </li>
@@ -175,9 +169,14 @@ export default {
           value: 1,
           list: [
             {
-              key: 'agent',
-              running: 0,
-              offline: 0
+              label: $t('agent_status_running'),
+              value: 0,
+              class: 'success'
+            },
+            {
+              label: $t('agent_status_stopped'),
+              value: 0,
+              class: 'error'
             }
           ]
         },
@@ -267,8 +266,8 @@ export default {
           let total = data?.total
           let runningCount = data.items.filter(item => item.status === 'Running')?.length ?? 0
           let offlineCount = total - runningCount
-          agentList[0].list[0].running = runningCount
-          agentList[0].list[0].offline = offlineCount
+          agentList[0].list[0].value = runningCount
+          agentList[0].list[1].value = offlineCount
         })
         .finally(() => {
           loading.close()
@@ -433,12 +432,14 @@ export default {
   }
 }
 .agent-list__detail {
+  width: 232px;
   background-color: #fafafb;
   color: rgba(0, 0, 0, 0.5);
   .agent-list__status {
     white-space: nowrap;
+    margin-right: 8px;
     &:last-child {
-      margin-right: 0 !important;
+      margin-right: 0;
     }
   }
   .success {

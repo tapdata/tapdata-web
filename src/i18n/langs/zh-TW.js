@@ -7,6 +7,7 @@ export default {
   gl_placeholder_select: '請選擇',
   gl_placeholder_input: '請輸入',
   gl_button_cancel: '取消',
+  gl_button_confirm: '確定',
   gl_button_finish: '完成',
   gl_button_delete_fail: '刪除失敗',
   gl_button_update_success: '修改成功',

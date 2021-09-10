@@ -1,13 +1,13 @@
 <template>
   <section class="instance-wrapper main-container" v-loading="loading" v-if="$route.name === 'Instance'">
-    <div class="section-header">Agent管理</div>
+    <div class="main-container__header">Agent管理</div>
     <div class="main">
       <div class="instance-operation">
         <div class="instance-operation-left">
           <el-form inline @submit.native.prevent>
             <el-form-item :label="$t('agent_status') + ' ：'" width="300px">
               <el-select v-model="searchParams.status" @input="search()">
-                <el-option :label="$t('gl_placeholder_select')" value=""></el-option>
+                <el-option :label="$t('gl_placeholder_select')" value="" class="select-all"></el-option>
                 <el-option
                   v-for="(item, index) in statusItems"
                   :key="index"
@@ -24,6 +24,11 @@
                 :placeholder="$t('gl_placeholder_input')"
               >
               </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button plain class="btn-refresh" @click="fetch()">
+                <VIcon>refresh</VIcon>
+              </el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -235,7 +240,6 @@
       <DetailsDrawer ref="detailsDrawer" v-model="showDetails" @closed="detailsClosedFnc" @load-data="loadDetailsData">
         <div slot="title">
           <inline-input
-            :class="['color-primary', { 'cursor-pointer': selectedRow.agentType !== 'Cloud' }]"
             :value="selectedRow.name"
             :icon-config="{ class: 'color-primary' }"
             :input-style="{ width: '140px' }"
@@ -874,6 +878,22 @@ export default {
     .instance-operation-left {
       li {
         float: left;
+      }
+    }
+    .el-form {
+      .el-input {
+        display: block;
+        height: 32px;
+        ::v-deep .el-input__inner {
+          display: block;
+        }
+      }
+      .el-select {
+        display: block;
+        height: 32px;
+        ::v-deep .el-input__inner {
+          color: rgba(0, 0, 0, 0.25);
+        }
       }
     }
   }
