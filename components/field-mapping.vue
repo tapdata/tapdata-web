@@ -482,7 +482,7 @@ export default {
           return
         }
         //如果是改类型 需要手动修改字段的长度以及精度
-        this.influences(id,this.currentTypeRules || [])
+        this.influences(id, this.currentTypeRules || [])
       } else if (key === 'precision') {
         let isPrecision = this.currentTypeRules.filter(v => v.minPrecision < v.maxPrecision)
         if (isPrecision.length === 0) {
@@ -534,7 +534,7 @@ export default {
       this.handleClose()
     },
     //改类型影响字段长度 精度
-    influences(id,rules) {
+    influences(id, rules) {
       this.showFieldEdit(id, rules)
       rules.forEach(r => {
         if (r.minScale || r.minScale === 0) {
