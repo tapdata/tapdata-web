@@ -211,9 +211,13 @@ export default {
     }
   },
   watch: {
-    '$route.query'(query) {
-      this.searchParams = Object.assign(this.searchParams, query)
-      this.fetch(1)
+    $route(route) {
+      if (route.name === 'Connection') {
+        let query = route.query
+        this.searchParams = Object.assign(this.searchParams, query)
+        let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
+        this.fetch(pageNum)
+      }
     }
   },
   created() {
@@ -248,7 +252,11 @@ export default {
       let fields = {
         id: true,
         name: true,
-        status: true
+        status: true,
+        loadFieldsStatus: true,
+        loadCount: true,
+        tableCount: true,
+        loadFieldErrMsg: true
       }
       let filter = {
         fields,
@@ -262,8 +270,7 @@ export default {
       let changeList = data || []
       let statusMap = {}
       changeList.forEach(item => {
-        let { statusText, statusIcon, status } = this.formatData(item)
-        statusMap[item.id] = { statusText, statusIcon, status }
+        statusMap[item.id] = this.formatData(item)
       })
       let list = this.list || []
       list.forEach(item => {

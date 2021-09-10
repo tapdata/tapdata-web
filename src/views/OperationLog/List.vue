@@ -182,18 +182,21 @@ export default {
     }
   },
   watch: {
-    '$route.query'() {
-      this.init()
+    $route(route) {
+      if (route.name === 'OperationLog') {
+        let query = route.query
+        this.searchParams = Object.assign(this.searchParams, query)
+        let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
+        this.fetch(pageNum)
+      }
     }
   },
   created() {
-    this.init()
+    let query = this.$route.query
+    this.searchParams = Object.assign(this.searchParams, query)
+    this.fetch()
   },
   methods: {
-    init() {
-      Object.assign(this.searchParams, this.$route.query || {})
-      this.fetch()
-    },
     getModularAndOperation(operationType) {
       let [modular, operation] = operationType.split('_')
       return { modular, operation }

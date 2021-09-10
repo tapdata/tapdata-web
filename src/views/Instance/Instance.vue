@@ -306,9 +306,12 @@ export default {
     }
   },
   watch: {
-    '$route.query'(query) {
-      this.searchParams.status = query.status || ''
-      this.fetch(1)
+    $route(route) {
+      if (route.name === 'Instance') {
+        this.searchParams.status = route.query.status || ''
+        let pageNum = JSON.stringify(route.query) === '{}' ? undefined : 1
+        this.fetch(pageNum)
+      }
     }
   },
   created() {
