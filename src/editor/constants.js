@@ -221,4 +221,16 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-json.svg',
       stencilImage: 'static/editor/json.svg'
     }
-  }
+  },
+  ALLOW_FIELD_MAPPING = [
+    'hive',
+    'mssql',
+    'mysql',
+    'mysql_pxc',
+    'mariadb',
+    'oracle',
+    'dameng',
+    'postgres',
+    'kafka',
+    'mongodb'
+  ]

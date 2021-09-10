@@ -153,7 +153,13 @@
       </el-form>
     </div>
     <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
-      <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
+      <el-button
+        class="fr"
+        type="success"
+        size="mini"
+        v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+        @click="hanlderLoadSchema"
+      >
         <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
         <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
         <span v-else>{{ $t('dataFlow.updateModel') }}</span>
@@ -192,6 +198,7 @@ import VIcon from '@/components/VIcon'
 import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
+import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 const connections = factory('connections')
 // let editorMonitor = null;
 export default {
@@ -243,6 +250,7 @@ export default {
       scope: '',
       dataFlow: '',
       stageId: '',
+      showFieldMapping: false,
       schemasLoading: false,
       mergedSchema: null,
       dataNodeInfo: {}
@@ -372,6 +380,21 @@ export default {
         this.scope = vueAdapter?.editor?.scope
         this.stageId = cell.id
         this.getDataFlow()
+        let isTargetSupport = true
+        if (cell.getInputSchema()) {
+          let targetDatabaseType = cell.getInputSchema().map(v => v.databaseType)
+          if (targetDatabaseType?.length > 0) {
+            targetDatabaseType.forEach(v => {
+              if (!ALLOW_FIELD_MAPPING.includes(v)) {
+                isTargetSupport = false
+              }
+            })
+          }
+        }
+        //是否显示字段推演
+        if (ALLOW_FIELD_MAPPING.includes(data.databaseType) && isTargetSupport) {
+          this.showFieldMapping = true
+        }
         if (typeof data.kafkaPartitionKey === 'string') {
           if (!data.kafkaPartitionKey) {
             data.kafkaPartitionKey = []

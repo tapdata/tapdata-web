@@ -65,16 +65,17 @@
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
               <FieldMapping
+                ref="fieldMapping"
+                class="fr"
+                mappingType="cluster-clone"
+                v-if="showFieldMapping"
                 :dataFlow="dataFlow"
                 :showBtn="true"
                 :stageId="stageId"
-                mappingType="cluster-clone"
                 :hiddenFieldProcess="false"
                 :isFirst="model.isFirst"
                 @update-first="returnModel"
                 @returnFieldMapping="returnFieldMapping"
-                ref="fieldMapping"
-                class="fr"
               ></FieldMapping>
               <el-button class="e-button" size="mini" :disabled="model.selectSourceDatabase.view" @click="handDialog">{{
                 $t('dataFlow.changeName')
@@ -252,6 +253,7 @@ import log from '../../../log'
 import factory from '../../../api/factory'
 import MqTransfer from './mqTransfer'
 import FieldMapping from '@/components/FieldMapping'
+import { ALLOW_FIELD_MAPPING } from '../../constants'
 let connections = factory('connections')
 let editorMonitor = null
 export default {
@@ -308,7 +310,8 @@ export default {
       fieldMappingNavData: '',
       fieldMappingTableData: '',
       dialogFieldProcessVisible: false,
-      scope: ''
+      scope: '',
+      showFieldMapping: false
     }
   },
 
@@ -352,6 +355,10 @@ export default {
             function: false,
             procedure: false
           }
+        }
+        //是否显示字段推演
+        if (ALLOW_FIELD_MAPPING.includes(sourceDatabaseType) && ALLOW_FIELD_MAPPING.includes(targetDatabaseType)) {
+          this.showFieldMapping = true
         }
         // 获取目标节点的数据显示右侧选择表
         if (targetCell && this.model.selectSourceArr.length === 0) {
