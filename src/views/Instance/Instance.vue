@@ -25,6 +25,11 @@
               >
               </el-input>
             </el-form-item>
+            <el-form-item>
+              <el-button plain class="btn-refresh" @click="fetch()">
+                <VIcon>refresh</VIcon>
+              </el-button>
+            </el-form-item>
           </el-form>
         </div>
         <div class="instance-operation-right">
@@ -235,7 +240,6 @@
       <DetailsDrawer ref="detailsDrawer" v-model="showDetails" @closed="detailsClosedFnc" @load-data="loadDetailsData">
         <div slot="title">
           <inline-input
-            :class="['color-primary', { 'cursor-pointer': selectedRow.agentType !== 'Cloud' }]"
             :value="selectedRow.name"
             :icon-config="{ class: 'color-primary' }"
             :input-style="{ width: '140px' }"
@@ -874,6 +878,19 @@ export default {
     .instance-operation-left {
       li {
         float: left;
+      }
+    }
+    .el-form {
+      .el-input {
+        display: block;
+        height: 32px;
+        ::v-deep .el-input__inner {
+          display: block;
+        }
+      }
+      .el-select {
+        display: block;
+        height: 32px;
       }
     }
   }
