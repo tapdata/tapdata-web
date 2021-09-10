@@ -7,7 +7,7 @@
           <el-form inline @submit.native.prevent>
             <el-form-item :label="$t('agent_status') + ' ：'" width="300px">
               <el-select v-model="searchParams.status" @input="search()">
-                <el-option :label="$t('gl_placeholder_select')" value=""></el-option>
+                <el-option :label="$t('gl_placeholder_select')" value="" class="select-all"></el-option>
                 <el-option
                   v-for="(item, index) in statusItems"
                   :key="index"
@@ -891,6 +891,9 @@ export default {
       .el-select {
         display: block;
         height: 32px;
+        ::v-deep .el-input__inner {
+          color: rgba(0, 0, 0, 0.25);
+        }
       }
     }
   }
