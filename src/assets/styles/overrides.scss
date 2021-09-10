@@ -214,6 +214,7 @@ th {
 .el-button--text {
   border: 0;
   color: map-get($color, primary);
+  border-radius: unset;
 }
 .el-button--text:hover,
 .el-button--text:focus {
@@ -406,6 +407,29 @@ th {
   }
   .el-message-box__btns {
     padding: 5px 30px 10px;
+  }
+}
+// 表单
+.el-form-item {
+  &.medium {
+    .el-form-item__content {
+      width: 226px;
+    }
+  }
+  &.small {
+    .el-form-item__content {
+      width: 128px;
+    }
+  }
+  &.mini {
+    .el-form-item__content {
+      width: 80px;
+    }
+  }
+}
+.el-form--inline {
+  .el-form-item {
+    margin-right: 16px;
   }
 }
 .el-form-item--small,
