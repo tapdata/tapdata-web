@@ -23,7 +23,7 @@
         <RouterView></RouterView>
       </ElMain>
     </ElContainer>
-    <ElDialog title="选择数据源类型" :visible.sync="dialogVisible">
+    <ElDialog title="创建连接" :visible.sync="dialogVisible" width="790px">
       <ConnectionTypeSelector
         :types="[
           'mysql',
