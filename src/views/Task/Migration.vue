@@ -1,40 +1,60 @@
 <template>
-  <section class="migration-wrapper" v-loading="loading" v-if="$route.name === 'Task'">
+  <section class="migration-wrapper main-container" v-loading="loading" v-if="$route.name === 'Task'">
+    <div class="main-container__header">{{ $t('task_manage') }}</div>
     <div class="main">
       <div class="migration-operation">
         <div class="migration-operation-left">
-          <ul>
-            <li>
-              <ElSelect v-model="searchParams.status" @input="search()">
-                <ElOption label="全部状态" value=""></ElOption>
-                <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"></ElOption>
-              </ElSelect>
-            </li>
-            <li class="ml-3">
-              <ElSelect v-model="searchParams.syncType" clearable placeholder="请选择任务同步类型" @input="search()">
-                <ElOption v-for="(label, value) in syncTypeMap" :key="value" :label="label" :value="value"></ElOption>
-              </ElSelect>
-            </li>
-            <li class="ml-3">
-              <ElSelect v-model="searchParams.agentId" clearable placeholder="实例名称" @input="search()">
-                <ElOption v-for="opt in agentOptions" :key="opt.value" :label="opt.label" :value="opt.value"></ElOption>
-              </ElSelect>
-            </li>
-            <li class="ml-3">
-              <ElInput v-model="searchParams.keyword" placeholder="任务名称/节点名/库名称" @input="search(800)">
+          <el-form inline @submit.native.prevent>
+            <el-form-item :label="$t('task_status') + ' ：'" class="small">
+              <el-select v-model="searchParams.status" @input="search()">
+                <el-option :label="$t('gl_placeholder_select')" value="" class="select-all"></el-option>
+                <el-option
+                  v-for="(value, label) in statusOptions"
+                  :key="value"
+                  :label="label"
+                  :value="value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('task_sync_type') + ' ：'" class="small">
+              <el-select
+                v-model="searchParams.syncType"
+                clearable
+                :placeholder="$t('gl_placeholder_select')"
+                @input="search()"
+              >
+                <el-option v-for="(label, value) in syncTypeMap" :key="value" :label="label" :value="value"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('agent_name') + ' ：'" class="medium">
+              <el-select
+                v-model="searchParams.agentId"
+                clearable
+                :placeholder="$t('gl_placeholder_select')"
+                @input="search()"
+              >
+                <el-option
+                  v-for="opt in agentOptions"
+                  :key="opt.value"
+                  :label="opt.label"
+                  :value="opt.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('task_name_or_node_name_or_library_name') + ' ：'" class="medium">
+              <ElInput v-model="searchParams.keyword" :placeholder="$t('gl_placeholder_input')" @input="search(800)">
                 <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </ElInput>
-            </li>
-            <li class="ml-3">
+            </el-form-item>
+            <el-form-item>
               <ElButton plain class="btn-refresh" @click="fetch()">
                 <VIcon>refresh</VIcon>
               </ElButton>
-            </li>
-          </ul>
+            </el-form-item>
+          </el-form>
         </div>
         <div class="migration-operation-right">
           <ElButton type="primary" @click="createTask">
-            <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>创建任务</span>
           </ElButton>
         </div>
@@ -55,7 +75,7 @@
               <VIcon class="v-icon color-success mx-1" size="16">success</VIcon>
               <span class="td-status-tag__text">已完成</span>
             </span>
-            <StatusTag v-else type="text" target="task" :status="scope.row.status"></StatusTag>
+            <StatusTag v-else type="text" target="task" :status="scope.row.status" only-img></StatusTag>
           </template>
         </ElTableColumn>
         <ElTableColumn label="启动时间" prop="startTime" sortable="custom">

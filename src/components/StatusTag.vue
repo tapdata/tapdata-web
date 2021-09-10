@@ -1,6 +1,9 @@
 <template>
-  <span class="td-status-tag">
-    <ElTag :type="statusObj.type" v-if="type === 'tag'">{{ statusObj.text }}</ElTag>
+  <span v-if="onlyImg" class="td-status-tag inline-flex align-items-center">
+    <img :src="imgSrc" alt="" />
+  </span>
+  <span v-else class="td-status-tag">
+    <ElTag v-if="type === 'tag'" :type="statusObj.type">{{ statusObj.text }}</ElTag>
     <span :class="['flex', 'align-items-center', 'icon-span', `color-${statusObj.type}`, status]" v-else>
       <VIcon v-if="statusObj.icon" class="v-icon" size="16">{{ statusObj.icon }}</VIcon>
       <span v-else class="circle-icon mr-2" :style="{ 'background-color': statusObj.color }"></span>
@@ -26,6 +29,10 @@ export default {
     target: {
       type: String,
       default: 'instance'
+    },
+    onlyImg: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -38,6 +45,9 @@ export default {
     },
     statusObj() {
       return this.map[this.status] || {}
+    },
+    imgSrc() {
+      return require(`../../public/images/task/${this.statusObj.icon}.png`)
     }
   }
 }
@@ -47,6 +57,9 @@ export default {
 .td-status-tag {
   display: inline-block;
   vertical-align: middle;
+  img {
+    height: 25px;
+  }
   .icon-span {
     .v-icon {
       margin: 0 4px;
