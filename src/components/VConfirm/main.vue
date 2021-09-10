@@ -8,7 +8,7 @@
         <div class="message-box__header position-relative">
           <div class="message-box__title flex align-items-center">
             <VIcon v-if="icon" :size="iconSize" :color="iconColor" :class="['v-icon', iconClass]">{{ icon }}</VIcon>
-            <span>{{ title }}</span>
+            <span v-if="title" :class="titleClass">{{ title }}</span>
           </div>
           <button
             type="button"
@@ -25,8 +25,8 @@
           <div class="el-message-box__container">
             <div class="el-message-box__message" v-if="message !== ''">
               <slot>
-                <div v-if="!dangerouslyUseHTMLString">{{ message }}</div>
-                <div v-else v-html="message"></div>
+                <div v-if="!dangerouslyUseHTMLString" :class="messageClass">{{ message }}</div>
+                <div v-else v-html="message" :class="messageClass"></div>
               </slot>
             </div>
           </div>
@@ -68,44 +68,19 @@ export default {
   props: {
     value: Boolean
   },
-
-  watch: {
-    value(v) {
-      this.visible = v
-    },
-    type(v) {
-      if (!v) {
-        return
-      }
-      this.icon = v
-      this.iconClass = 'color-' + v
-    }
-  },
-
-  computed: {
-    confirmButtonClasses() {
-      return `el-button--primary ${this.confirmButtonClass}`
-    },
-    cancelButtonClasses() {
-      return `${this.cancelButtonClass}`
-    }
-  },
-
-  beforeDestroy() {
-    this.doClose()
-  },
-
   data() {
     return {
       visible: false,
       uid: 1,
-      icon: '',
+      icon: '', // 图标
       iconColor: '',
       iconSize: 25,
-      title: undefined,
-      message: '',
-      type: '',
-      iconClass: '',
+      title: '', // 标题
+      message: '', // 内容
+      type: '', // 常用的几种提示类型： success、info、warning、error。不然需要自己传递 icon的属性
+      iconClass: '', // 图标的类名
+      titleClass: '', // 标题的类名
+      messageClass: '', // 内容的类名
       showClose: true,
       center: false,
       customClass: '',
@@ -122,18 +97,40 @@ export default {
       callback: null,
       dangerouslyUseHTMLString: false,
       distinguishCancelAndClose: false,
-      width: '416px'
+      width: '416px' // 需要完整的像素字符串
     }
   },
-
+  computed: {
+    confirmButtonClasses() {
+      return `el-button--primary ${this.confirmButtonClass}`
+    },
+    cancelButtonClasses() {
+      return `${this.cancelButtonClass}`
+    }
+  },
+  watch: {
+    value(v) {
+      this.visible = v
+    },
+    type(v) {
+      if (!v) {
+        return
+      }
+      this.icon = v
+      this.iconClass = 'color-' + v
+    }
+  },
+  beforeDestroy() {
+    this.close()
+  },
   methods: {
     handleAction(action) {
-      this.doClose()
+      this.close()
       if (action !== 'close') {
         this.callback(action, this)
       }
     },
-    doClose() {
+    close() {
       this.visible = false
     }
   }
