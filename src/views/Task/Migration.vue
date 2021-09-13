@@ -1,6 +1,5 @@
 <template>
   <section class="migration-wrapper main-container" v-loading="loading" v-if="$route.name === 'Task'">
-    <div class="main-container__header">{{ $t('task_manage') }}</div>
     <div class="main">
       <div class="migration-operation">
         <div class="migration-operation-left">
@@ -180,7 +179,6 @@
   height: 100%;
   flex-direction: column;
   overflow: hidden;
-  padding: 20px;
   box-sizing: border-box;
   .btn-refresh {
     padding: 0;
