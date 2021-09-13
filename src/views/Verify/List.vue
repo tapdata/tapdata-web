@@ -44,7 +44,7 @@
       </ElForm>
       <div>
         <VButton type="primary" @click="toCreate">
-          <span> {{ $t('verify_button_create') }}</span>
+          <span>{{ $t('verify_button_create') }}</span>
         </VButton>
       </div>
     </div>
