@@ -321,7 +321,9 @@ export default {
         where
       }
       this.$api('Workers')
-        .get(filter)
+        .get({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
           if (res) {
             let record = res.data[0] || {}
@@ -333,7 +335,7 @@ export default {
             this.status = 'stop'
           }
         })
-      this.intervalId = setTimeout(this.loadData, 5000)
+      this.intervalId = setTimeout(this.getWorkers, 5000)
     },
     // 表格排序
     handleSortTable({ order, prop }) {
