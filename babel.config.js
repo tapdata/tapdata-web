@@ -1,13 +1,4 @@
 module.exports = {
   presets: ['@vue/cli-plugin-babel/preset'],
-  plugins: [
-    [
-      'component',
-      {
-        libraryName: 'element-ui',
-        styleLibraryName: 'theme-chalk'
-      }
-    ],
-    ['@babel/plugin-transform-arrow-functions', { spec: true }]
-  ]
+  plugins: [['@babel/plugin-transform-arrow-functions', { spec: true }]]
 }

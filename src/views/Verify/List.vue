@@ -63,10 +63,9 @@
         </li>
       </ul>
       <div>
-        <ElButton type="primary" @click="toCreate">
-          <i class="el-icon-plus" style="margin-right: 5px"></i>
-          <span> {{ $t('dataVerification.addVerifyTip') }}</span>
-        </ElButton>
+        <VButton type="primary" @click="toCreate">
+          <span> {{ $t('verify_button_create') }}</span>
+        </VButton>
       </div>
     </div>
     <ElTable
