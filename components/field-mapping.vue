@@ -392,8 +392,17 @@ export default {
         let rules = this.typeMapping.filter(v => v.dbType === data[i].t_data_type)
         if (rules?.length > 0) {
           rules = rules[0].rules
-          this.showFieldEdit(data[i].t_id, rules || [])
-          this.influences(data[i].t_id, rules || [])
+          if (!data[i].t_precision) {
+            this.showPrecisionEdit(data[i].t_id, rules || [])
+            this.influencesPrecision(data[i].t_id, rules || [])
+          } else if (!data[i].t_scale) {
+            this.showScaleEdit(data[i].t_id, rules || [])
+            this.influencesScale(data[i].t_id, rules || [])
+          } else if (!data[i].t_precision && !data[i].t_scale) {
+            this.showPrecisionEdit(data[i].t_id, rules || [])
+            this.showScaleEdit(data[i].t_id, rules || [])
+            this.influences(data[i].t_id, rules || [])
+          }
         }
       }
     },
@@ -535,13 +544,22 @@ export default {
     },
     //改类型影响字段长度 精度
     influences(id, rules) {
-      this.showFieldEdit(id, rules)
+      this.showScaleEdit(id, rules)
+      this.showPrecisionEdit(id, rules)
+      this.influencesScale(id, rules)
+      this.influencesPrecision(id, rules)
+    },
+    influencesScale(id, rules) {
       rules.forEach(r => {
         if (r.minScale || r.minScale === 0) {
           this.updateTarget(id, 'scale', r.minScale < 0 ? 0 : r.minScale)
         } else {
           this.updateTarget(id, 'scale', null)
         }
+      })
+    },
+    influencesPrecision(id, rules) {
+      rules.forEach(r => {
         if (r.minPrecision || r.minPrecision === 0) {
           this.updateTarget(id, 'precision', r.minPrecision < 0 ? 0 : r.minPrecision)
         } else {
@@ -549,20 +567,22 @@ export default {
         }
       })
     },
-    showFieldEdit(id, data) {
-      let isPrecision = data.filter(v => v.minPrecision < v.maxPrecision)
-      if (isPrecision.length !== 0) {
-        //固定值
-        this.updateTarget(id, 'isPrecisionEdit', true)
-      } else {
-        this.updateTarget(id, 'isPrecisionEdit', false)
-      }
+    showScaleEdit(id, data) {
       let isScale = data.filter(v => v.minScale < v.maxScale)
       if (isScale.length !== 0) {
         //固定值
         this.updateTarget(id, 'isScaleEdit', true)
       } else {
         this.updateTarget(id, 'isScaleEdit', false)
+      }
+    },
+    showPrecisionEdit(id, data) {
+      let isPrecision = data.filter(v => v.minPrecision < v.maxPrecision)
+      if (isPrecision.length !== 0) {
+        //固定值
+        this.updateTarget(id, 'isPrecisionEdit', true)
+      } else {
+        this.updateTarget(id, 'isPrecisionEdit', false)
       }
     },
     initDataType(val) {
