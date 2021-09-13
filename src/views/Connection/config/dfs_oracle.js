@@ -1,18 +1,14 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
       connection_type: 'source_and_target',
       thin_type: 'SID'
     },
     items: [
-      {
-        type: 'slot',
-        slot: 'name'
-      },
       {
         type: 'input',
         field: 'database_host',

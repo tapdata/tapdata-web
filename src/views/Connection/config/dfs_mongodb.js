@@ -13,8 +13,8 @@ export default function (vm) {
   }
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
       connection_type: 'source_and_target',
@@ -24,10 +24,6 @@ export default function (vm) {
       sslValidate: false
     },
     items: [
-      {
-        type: 'slot',
-        slot: 'name'
-      },
       {
         type: 'radio',
         field: 'isUrl',

@@ -1,8 +1,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
       connection_type: 'source_and_target',
@@ -184,7 +184,6 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        tips: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
         show: true
       },
