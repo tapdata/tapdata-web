@@ -1,52 +1,32 @@
 <template>
-  <section class="verify-wrapper page-wrapper" v-loading="loading" v-if="$route.name === 'Verify'">
+  <section class="verify-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Verify'">
     <div class="page-header">
-      <ul class="search-bar">
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.inspectMethod"
-            clearable
-            :placeholder="$t('dataVerification.verifyType')"
-            @input="inspectMethodChange"
-          >
+      <ElForm inline>
+        <ElFormItem label="类型: ">
+          <ElSelect v-model="searchParams.inspectMethod" clearable @input="inspectMethodChange">
             <ElOption :label="$t('dataVerification.rowVerify')" value="row_count"></ElOption>
             <ElOption :label="$t('dataVerification.contentVerify')" value="field"></ElOption>
             <ElOption :label="$t('dataVerification.jointVerify')" value="jointField"></ElOption>
           </ElSelect>
-        </li>
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.mode"
-            clearable
-            :placeholder="$t('dataVerification.singleRepeatingVerify')"
-            @input="search()"
-          >
+        </ElFormItem>
+        <ElFormItem label="频次: ">
+          <ElSelect v-model="searchParams.mode" clearable @input="search()">
             <ElOption :label="$t('dataVerification.singleVerify')" value="manual"></ElOption>
             <ElOption :label="$t('dataVerification.repeatingVerify')" value="cron"></ElOption>
           </ElSelect>
-        </li>
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.enabled"
-            clearable
-            :placeholder="$t('dataVerification.isEnabled')"
-            @input="search()"
-          >
+        </ElFormItem>
+        <ElFormItem label="状态: ">
+          <ElSelect v-model="searchParams.enabled" clearable @input="search()">
             <ElOption :label="$t('dataVerification.enable')" :value="1"></ElOption>
             <ElOption :label="$t('dataVerification.disable')" :value="2"></ElOption>
           </ElSelect>
-        </li>
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.result"
-            clearable
-            :placeholder="$t('dataVerification.result')"
-            @input="search()"
-          >
+        </ElFormItem>
+        <ElFormItem label="结果: ">
+          <ElSelect v-model="searchParams.result" clearable @input="search()">
             <ElOption v-for="item in validList" :key="item.value" :label="item.name" :value="item.value"></ElOption>
           </ElSelect>
-        </li>
-        <li class="item">
+        </ElFormItem>
+        <ElFormItem label="名称: ">
           <ElInput
             v-model="searchParams.keyword"
             clearable
@@ -55,27 +35,20 @@
           >
             <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
           </ElInput>
-        </li>
-        <li class="item">
+        </ElFormItem>
+        <ElFormItem>
           <ElButton plain class="btn-refresh" @click="fetch()">
             <VIcon>refresh</VIcon>
           </ElButton>
-        </li>
-      </ul>
+        </ElFormItem>
+      </ElForm>
       <div>
-        <ElButton type="primary" @click="toCreate">
-          <i class="el-icon-plus" style="margin-right: 5px"></i>
-          <span> {{ $t('dataVerification.addVerifyTip') }}</span>
-        </ElButton>
+        <VButton type="primary" @click="toCreate">
+          <span> {{ $t('verify_button_create') }}</span>
+        </VButton>
       </div>
     </div>
-    <ElTable
-      class="page-table table-border"
-      style="margin-top: 10px"
-      height="100%"
-      :data="list"
-      @sort-change="handleSortTable"
-    >
+    <ElTable class="page-table table-border mt-1" height="100%" :data="list" @sort-change="handleSortTable">
       <ElTableColumn :label="$t('dataVerification.verifyJobName')" min-width="180">
         <template slot-scope="scope">
           <div>{{ scope.row.name }}</div>
@@ -140,7 +113,7 @@
         sortable="custom"
         width="160"
       ></ElTableColumn>
-      <ElTableColumn :label="$t('dataVerification.operation')" width="320" fixed="right">
+      <ElTableColumn :label="$t('dataVerification.operation')" width="400" fixed="right">
         <template slot-scope="scope">
           <ElLink
             type="primary"
@@ -148,24 +121,20 @@
             @click="startTask(scope.row.id)"
             >{{ $t('dataVerification.executeVerifyTip') }}</ElLink
           >
-          <ElLink
-            style="margin-left: 10px"
-            type="primary"
-            :disabled="!scope.row.InspectResult"
-            @click="toTableInfo(scope.row.id)"
-            >{{ $t('dataVerification.detailTip') }}</ElLink
-          >
-          <ElLink
-            style="margin-left: 10px"
-            type="primary"
-            :disabled="!scope.row.InspectResult"
-            @click="toTableHistory(scope.row.id)"
-            >{{ $t('dataVerification.historyTip') }}</ElLink
-          >
-          <ElLink style="margin-left: 10px" type="primary" @click="goEdit(scope.row.id, scope.row.flowId)">{{
+          <ElDivider direction="vertical"></ElDivider>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
+            $t('dataVerification.detailTip')
+          }}</ElLink>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableHistory(scope.row.id)">{{
+            $t('dataVerification.historyTip')
+          }}</ElLink>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElLink type="primary" @click="goEdit(scope.row.id, scope.row.flowId)">{{
             $t('dataVerification.configurationTip')
           }}</ElLink>
-          <ElLink style="margin-left: 10px" type="primary" @click="remove(scope.row.name, scope.row.id)">{{
+          <ElDivider direction="vertical"></ElDivider>
+          <ElLink type="primary" @click="remove(scope.row.name, scope.row.id)">{{
             $t('dataVerification.deleteTip')
           }}</ElLink>
         </template>
@@ -192,14 +161,11 @@
   <RouterView v-else></RouterView>
 </template>
 <style lang="scss" scoped>
-.page-wrapper {
+.verify-wrapper {
   display: flex;
-  margin: 0 20px 20px;
-  padding: 20px;
   height: 100%;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
   box-sizing: border-box;
   .page-header {
     display: flex;
@@ -229,6 +195,9 @@
   }
   .page-table__empty {
     color: map-get($fontColor, light);
+  }
+  .el-divider--vertical {
+    margin: 0 16px;
   }
 }
 </style>

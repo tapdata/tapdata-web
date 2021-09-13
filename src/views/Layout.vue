@@ -203,7 +203,7 @@ export default {
     flex-direction: column;
     flex-basis: 0%;
     margin: 0;
-    padding: 0;
+    padding: 0 24px 24px 24px;
   }
   .breadcrumb {
     padding: 24px 0 24px 24px;
@@ -223,14 +223,6 @@ export default {
     width: 24px;
     height: 24px;
     font-size: 12px;
-  }
-}
-</style>
-<style lang="scss">
-.layout-wrap {
-  .main-container {
-    padding: 0 24px 24px;
-    box-sizing: border-box;
   }
 }
 </style>

@@ -51,7 +51,8 @@ import {
   Badge,
   Cascader,
   ButtonGroup,
-  Upload
+  Upload,
+  Divider
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -117,3 +118,4 @@ Vue.use(Step)
 Vue.use(Cascader)
 Vue.use(ButtonGroup)
 Vue.use(Upload)
+Vue.use(Divider)
