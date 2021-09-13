@@ -75,8 +75,9 @@ export default class {
    * @returns {Promise<*>}
    */
   async loadOpenAPI() {
+    const token = await this.getAPIServerToken()
     try {
-      let openAPIUrl = this.getAPIServerUrl('/openapi.json')
+      let openAPIUrl = this.getAPIServerUrl('/openapi.json?access_token=' + token)
       let response = await axios.create().get(openAPIUrl)
       if (response && response.data) {
         this.openAPI = response.data
@@ -178,6 +179,7 @@ export default class {
         headers = headers.filter(v => !!showFields[v.value])
       }
     }
+    console.log('------', headers)
     return headers
   }
 

@@ -37,4 +37,8 @@ export default class Modules extends PublicAPI {
   getByCollectionName(params) {
     return axios.get(this.url + '/api/getByCollectionName', { params })
   }
+
+  getdata(id) {
+    return axios.get(this.url + '/getSchema/' + id.mondeid)
+  }
 }

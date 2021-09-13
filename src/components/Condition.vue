@@ -7,9 +7,9 @@
         <el-select v-model="model.queryField" size="mini" @change="queryFieldChange" style="width: 170px">
           <el-option
             v-for="field in fieldList"
-            :label="field.field_name"
-            :value="field.field_name"
-            :key="field.field_name"
+            :label="field[fieldLabel]"
+            :value="field[fieldValue]"
+            :key="field[fieldValue]"
           ></el-option>
         </el-select>
 
@@ -72,7 +72,7 @@
             type="datetime"
             format="yyyy-MM-dd HH:mm:ss"
             size="mini"
-            style="width: 120px"
+            style="width: 160px"
           >
           </el-date-picker>
         </template>

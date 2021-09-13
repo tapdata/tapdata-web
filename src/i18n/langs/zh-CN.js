@@ -36,6 +36,9 @@ export default {
   button_back: '返回',
   button_reset: '重置',
   button_create: '创建',
+  button_export: '导出',
+  button_import: '导入',
+  button_download: '下载',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -179,7 +182,6 @@ export default {
   api_asnalysis_total: '统计',
   api_asnalysis_name: '名称',
 
-
   // api服务器
   api_server_name: '名称',
   api_server_user: '用户',
@@ -187,5 +189,34 @@ export default {
   api_server_client_name: ' API 服务器名称',
   api_server_client_uri: 'API 服务器访问地址',
   api_server_download: '下载',
-  api_server_download_API_Server_config: '下载API配置文件'
+  api_server_download_API_Server_config: '下载API配置文件',
+
+  // api浏览
+  dataExplorer_collection_required: '请选择API',
+  dataExplorer_zone: '时区设置',
+  dataExplorer_api_server: 'API 服务器',
+  dataExplorer_collection: 'API',
+  dataExplorer_query: '查询',
+  dataExplorer_document: 'API 文档',
+  dataExplorer_query_time: '查询使用',
+  dataExplorer_render_time: '渲染使用',
+  dataExplorer_tag_title: '设置标签',
+  dataExplorer_show_column: '显示列',
+  dataExplorer_document_sql: '请输入SELECT语句：',
+  dataExplorer_document_required: '不能为空',
+  dataExplorer_format_sql: '格式化SQL',
+  dataExplorer_new_document: '新增记录',
+  dataExplorer_query_field: '查询字段',
+  dataExplorer_query_command: '查询命令',
+  dataExplorer_timeout: '超时时间',
+  dataExplorer_unauthenticated: '您无权访问API。',
+  dataExplorer_message_timeout: '连接API服务器超时,请检查API服务器是否已启动。',
+  dataExplorer_publish: '在API服务器上没有找到 {id} 的API，请检查是否已发布。',
+  dataExplorer_no_permissions: '您的令牌已过期，请刷新页面重试。',
+  dataExplorer_zone_setting: '时区设置',
+  dataExplorer_datetype_without_timezone: '时间类型的时区（可选）',
+  dataExplorer_mysql_datetype_without_timezone: '影响的类型：DATETIME',
+  dataExplorer_file_type: '选择文件类型',
+  dataExplorer_add_favorite: '收藏',
+  dataExplorer_format: '格式化代码'
 }

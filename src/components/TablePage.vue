@@ -42,6 +42,9 @@
         >
           <slot></slot>
         </el-table>
+        <div class="table-footer">
+          <slot name="tableFooter"></slot>
+        </div>
         <el-pagination
           background
           class="table-page-pagination"
@@ -285,6 +288,10 @@ export default {
     }
     .el-table--border th {
       border-right: 1px solid #ebeef5;
+    }
+    .table-footer {
+      height: 38px;
+      line-height: 38px;
     }
     .table-page-pagination {
       margin-top: 5px;

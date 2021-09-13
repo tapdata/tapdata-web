@@ -8,12 +8,11 @@
       v-model="root"
       :level="1"
       :max-level="maxLevel"
-
     ></ConditionGroup>
     <div class="query-build-show-filter">
       <el-collapse accordion>
         <el-collapse-item class="query-build-pre" :title="$t('query_build_show_filter')" name="1">
-          <pre>{{value}}</pre>
+          <pre>{{ value }}</pre>
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -54,7 +53,7 @@ export default {
     maxLevel: {
       type: Number,
       default: 3
-    },
+    }
     // showFilterDialog: {
     //   type: Boolean,
     //   default() {
@@ -77,7 +76,7 @@ export default {
       deep: true,
       handler() {
         let condition = this.flat(this.root)
-        console.log('root',this.root)
+        console.log('root', this.root)
         this.$emit('input', condition)
       }
     },
@@ -85,7 +84,7 @@ export default {
       deep: true,
       immediate: true,
       handler() {}
-    },
+    }
     // showFilterDialog: {
     //   deep: true,
     //   immediate: true,
@@ -101,7 +100,7 @@ export default {
   },
   methods: {
     setCondition(condition) {
-      console.log('setCondition',condition)
+      console.log('setCondition', condition)
       let result = this.standard(condition) || []
 
       if (result.length === 1 && result[0].type === 'group') {
@@ -237,7 +236,7 @@ export default {
     margin-top: 10px;
     padding: 0 10px;
     max-height: 500px;
-    overflow-y: auto ;
+    overflow-y: auto;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     pre {
       line-height: 20px;
