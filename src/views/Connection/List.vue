@@ -1,5 +1,6 @@
 <template>
   <section class="connection-wrapper main-container" v-loading="loading" v-if="$route.name === 'Connection'">
+    <div class="main-container__header">连接管理</div>
     <div class="main">
       <div class="connection-operation">
         <div class="connection-operation-left">
@@ -24,7 +25,6 @@
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
-            <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>创建连接</span>
           </ElButton>
         </div>
@@ -36,7 +36,7 @@
         :data="list"
         @sort-change="sortChange"
       >
-        <ElTableColumn label="连接名" prop="name" min-width="150">
+        <ElTableColumn label="连接名" prop="name" min-width="200px">
           <template slot-scope="scope">
             <div class="flex flex-row align-items-center p-2">
               <img
@@ -59,15 +59,12 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip label="连接信息" prop="connectionUrl" min-width="150">
-          <template slot-scope="scope">{{ scope.row.connectionUrl }}</template>
-        </ElTableColumn>
-        <ElTableColumn label="状态">
+        <ElTableColumn label="状态" width="120">
           <template slot-scope="scope">
             <StatusTag type="text" target="connection" :status="scope.row.status"></StatusTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="连接类型">
+        <ElTableColumn label="连接类型" width="120">
           <template slot-scope="scope">{{
             {
               source: '源头',
@@ -76,7 +73,7 @@
             }[scope.row.connection_type]
           }}</template>
         </ElTableColumn>
-        <ElTableColumn width="160">
+        <ElTableColumn width="180">
           <div slot="header">
             {{ $t('connection_list_column_schema_status') }}
             <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
@@ -87,19 +84,21 @@
             <SchemaProgress :data="scope.row"></SchemaProgress>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="修改时间" prop="last_updated" width="180" sortable="custom">
+        <ElTableColumn label="修改时间" prop="last_updated" width="150" sortable="custom">
           <template slot-scope="scope">{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</template>
         </ElTableColumn>
-        <ElTableColumn label="操作" width="180">
+        <ElTableColumn label="操作" width="280">
           <template slot-scope="scope">
-            <ElLink type="primary" class="mr-2" @click="testConnection(scope.row)">连接测试</ElLink>
-            <ElLink type="primary" class="mr-2" :disabled="scope.row.agentType === 'Cloud'" @click="edit(scope.row)"
-              >编辑</ElLink
-            >
-            <ElLink type="primary" class="mr-2" :disabled="scope.row.agentType === 'Cloud'" @click="copy(scope.row)"
-              >复制</ElLink
-            >
-            <ElLink type="danger" @click="del(scope.row)">删除</ElLink>
+            <div class="operate-columns">
+              <el-button size="mini" type="text" @click="testConnection(scope.row)">连接测试</el-button>
+              <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="edit(scope.row)"
+                >编辑</el-button
+              >
+              <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="copy(scope.row)"
+                >复制</el-button
+              >
+              <el-button type="text" @click="del(scope.row)">删除</el-button>
+            </div>
           </template>
         </ElTableColumn>
         <div class="connection-table__empty" slot="empty">
@@ -169,6 +168,22 @@
       color: #10c038;
       border-color: #10c038;
       background-color: #dbefd1;
+    }
+    .operate-columns {
+      line-height: 14px;
+      .el-button {
+        padding: 0;
+        & + .el-button {
+          margin: 0;
+        }
+        &:not(:first-child) {
+          padding-left: 16px;
+          border-left: 1px solid #e9e9e9;
+        }
+        &:not(:last-child) {
+          padding-right: 16px;
+        }
+      }
     }
   }
   .connection-table__empty {
@@ -328,28 +343,6 @@ export default {
       let statusInfo = this.statusMap[item.status] || {}
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
-      if (item.database_type !== 'mongodb') {
-        item.connectionUrl = ''
-        if (item.database_username) {
-          item.connectionUrl += item.database_username + ':***@'
-        }
-        item.connectionUrl += item.database_host + ':' + item.database_port
-      } else {
-        item.connectionUrl = item.database_uri || item.connection_name
-      }
-      if (item.database_type === 'mq' && item.mqType === '0') {
-        item.connectionUrl = item.brokerURL
-      }
-      // 不存在uri 和 port === 0
-      if (!item.database_uri && !item.database_port && item.mqType !== '0') {
-        item.connectionUrl = ''
-      }
-      if (item.database_type === 'kudu') {
-        item.connectionUrl = item.database_host
-      }
-      if (item.database_type === 'kafka') {
-        item.connectionUrl = item.kafkaBootstrapServers
-      }
       return item
     },
     sortChange({ prop, order }) {

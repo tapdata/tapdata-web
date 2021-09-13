@@ -24,9 +24,9 @@ export const TOPOLOGY_MAP = topologyMap,
     'force stopping': { text: '强制停止中', icon: 'loading', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
-    ready: { text: '有效', icon: 'success-fill-color', type: 'success' },
-    invalid: { text: '失效', icon: 'error', type: 'danger' },
-    testing: { text: '测试中', icon: 'loading', type: 'success' }
+    ready: { text: '有效', color: '#52C41A' },
+    invalid: { text: '失效', color: '#F5222D' },
+    testing: { text: '测试中', color: '#FFB318' }
   },
   SPEC_MAP = {
     micro: '小规格',
