@@ -15,13 +15,13 @@ export const TOPOLOGY_MAP = topologyMap,
     Stopped: { text: '离线', color: 'rgba(0, 0, 0, 0.18)' }
   },
   TASK_STATUS_MAP = {
-    running: { text: '运行中', icon: 'right-fill', type: 'success' },
-    paused: { text: '待启动', icon: 'wait-fill-color' },
-    error: { text: '错误', icon: 'warning', type: 'warning' },
-    draft: { text: '待启动', icon: 'wait-fill-color' },
+    running: { text: '运行中', icon: 'yunxingzhong', type: 'success' },
+    paused: { text: '待启动', icon: 'daiqidong' },
+    error: { text: '错误', icon: 'cuowu', type: 'warning' },
+    draft: { text: '待启动', icon: 'daiqidong' },
     scheduled: { text: '启动中', icon: 'loading', type: 'success' },
-    stopping: { text: '停止中', icon: 'loading', type: 'success' },
-    'force stopping': { text: '强制停止中', icon: 'loading', type: 'success' }
+    stopping: { text: '停止中', icon: 'tingzhizhong', type: 'success' },
+    'force stopping': { text: '强制停止中', icon: 'qiangzhitingzhi', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
     ready: { text: '有效', color: '#52C41A' },

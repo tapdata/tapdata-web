@@ -178,6 +178,9 @@ export default {
   // 任务
   task_manage: '任务管理',
   task_name: '任务名称',
+  task_status: '任务状态',
+  task_sync_type: '任务同步类型',
+  task_name_or_node_name_or_library_name: '任务名称/节点名/库名称',
   task_sync_type_initial_sync: '全量',
   task_sync_type_cdc: '增量',
   task_sync_type_initial_sync_cdc: '全量+增量',
