@@ -1,5 +1,5 @@
 <template>
-  <section class="data-verify-history-wrap" v-loading="loading">
+  <section class="data-verify-history-wrap g-panel-container" v-loading="loading">
     <div class="panel-main">
       <el-table :data="page.data" height="100%" class="table-border">
         <el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
@@ -157,12 +157,9 @@ export default {
 <style lang="scss" scoped>
 .data-verify-history-wrap {
   display: flex;
-  margin: 20px;
-  padding: 20px;
   height: 100%;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
   box-sizing: border-box;
   .data-verify-history__icon {
     color: #fff;
