@@ -1,5 +1,5 @@
 <template>
-  <section class="verify-wrapper page-wrapper" v-loading="loading" v-if="$route.name === 'Verify'">
+  <section class="verify-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Verify'">
     <div class="page-header">
       <ElForm inline>
         <ElFormItem label="类型: ">
@@ -161,14 +161,11 @@
   <RouterView v-else></RouterView>
 </template>
 <style lang="scss" scoped>
-.page-wrapper {
+.verify-wrapper {
   display: flex;
-  margin: 0 20px 20px;
-  padding: 20px;
   height: 100%;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
   box-sizing: border-box;
   .page-header {
     display: flex;
