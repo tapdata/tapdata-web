@@ -19,7 +19,7 @@ export const TOPOLOGY_MAP = topologyMap,
     paused: { text: '待启动', icon: 'daiqidong' },
     error: { text: '错误', icon: 'cuowu', type: 'warning' },
     draft: { text: '待启动', icon: 'daiqidong' },
-    scheduled: { text: '启动中', icon: 'loading', type: 'success' },
+    scheduled: { text: '启动中', icon: 'qidongzhong', type: 'success' },
     stopping: { text: '停止中', icon: 'tingzhizhong', type: 'success' },
     'force stopping': { text: '强制停止中', icon: 'qiangzhitingzhi', type: 'success' }
   },
