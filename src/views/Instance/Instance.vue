@@ -1,6 +1,5 @@
 <template>
   <section class="instance-wrapper main-container" v-loading="loading" v-if="$route.name === 'Instance'">
-    <div class="main-container__header">Agent管理</div>
     <div class="main">
       <div class="instance-operation">
         <div class="instance-operation-left">

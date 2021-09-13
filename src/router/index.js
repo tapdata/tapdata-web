@@ -31,7 +31,8 @@ const routes = [
         component: () => import('../views/Workbench/Workbench.vue'),
         meta: {
           title: '工作台',
-          icon: 'workbench'
+          icon: 'workbench',
+          hideTitle: true
         },
         children: [
           {

@@ -1,6 +1,5 @@
 <template>
   <section class="migration-wrapper main-container" v-loading="loading" v-if="$route.name === 'Task'">
-    <div class="main-container__header">{{ $t('task_manage') }}</div>
     <div class="main">
       <div class="migration-operation">
         <div class="migration-operation-left">
@@ -81,11 +80,10 @@
         <el-table-column label="启动时间" prop="startTime" sortable="custom">
           <template slot-scope="scope">{{ scope.row.startTimeFmt }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="240">
+        <el-table-column label="操作" width="300">
           <template slot-scope="scope">
             <el-tooltip
               v-if="!['running', 'stopping'].includes(scope.row.status)"
-              class="mr-2"
               effect="dark"
               content="任务配置未完成，无法启动"
               :manual="!(scope.row.status === 'draft' && scope.row.checked === false)"
@@ -103,7 +101,6 @@
             </el-tooltip>
             <el-link
               v-if="scope.row.status === 'running'"
-              class="mr-2"
               type="primary"
               :disabled="!statusBtMap['stop'][scope.row.status]"
               @click="stop([scope.row.id])"
@@ -112,32 +109,31 @@
             </el-link>
             <el-link
               v-if="scope.row.status === 'stopping'"
-              class="mr-2"
               type="primary"
               :disabled="!statusBtMap['forceStop'][scope.row.status]"
               @click="forceStop([scope.row.id])"
             >
               强制停止
             </el-link>
+            <ElDivider direction="vertical"></ElDivider>
             <el-link
               type="primary"
-              class="mr-2"
               @click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
               运行监控
             </el-link>
+            <ElDivider direction="vertical"></ElDivider>
             <el-link
               type="primary"
-              class="mr-2"
               :disabled="!statusBtMap['edit'][scope.row.status]"
               @click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
               编辑
             </el-link>
+            <ElDivider direction="vertical"></ElDivider>
             <el-dropdown @command="handleMore($event, scope.row, scope.$index)">
               <el-link type="primary">
-                更多
-                <VIcon>arrow-down</VIcon>
+                <i class="el-icon-more"></i>
               </el-link>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="copy">复制</el-dropdown-item>
@@ -180,7 +176,6 @@
   height: 100%;
   flex-direction: column;
   overflow: hidden;
-  padding: 20px;
   box-sizing: border-box;
   .btn-refresh {
     padding: 0;
@@ -220,6 +215,9 @@
   }
   .v-icon {
     margin: 0 4px;
+  }
+  .el-divider--vertical {
+    margin: 0 16px;
   }
 }
 </style>

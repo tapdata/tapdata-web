@@ -1,8 +1,10 @@
 // 变量
 // 会在每个style元素以及scss文件中注入，因此不允许写具体选择器样式
-$borderRadius: 4px;
+$borderRadiusBtn: 4px;
+$borderRadius: 2px;
 $color: (
-  primary: #337dff,
+  primary: #2c65ff,
+  dprimary: #3a5fc4,
   lprimary: #5392ff,
   success: #10c038,
   lsuccess: #dbefd1,

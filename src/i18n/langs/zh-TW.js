@@ -204,6 +204,7 @@ export default {
   verify_result_content_diff: '表數據差: {0}',
   verify_result_count_inconsistent: '不一致',
   verify_result_count_consistent: '一致',
+  verify_button_create: '新建',
 
   // 操作日志
   operation_log_manage: '操作日誌'

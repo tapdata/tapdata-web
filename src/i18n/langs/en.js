@@ -226,6 +226,7 @@ export default {
   verify_result_content_diff: 'Table data difference: {0}',
   verify_result_count_inconsistent: 'inconsistent',
   verify_result_count_consistent: 'consistent',
+  verify_button_create: 'Create',
 
   // 操作日志
   operation_log_manage: 'Operation log'

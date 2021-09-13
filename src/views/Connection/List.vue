@@ -1,6 +1,5 @@
 <template>
   <section class="connection-wrapper main-container" v-loading="loading" v-if="$route.name === 'Connection'">
-    <div class="main-container__header">连接管理</div>
     <div class="main">
       <div class="connection-operation">
         <div class="connection-operation-left">

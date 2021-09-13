@@ -1,2 +1,7 @@
-@import "utilities";
-@import "overrides";
+@import 'utilities';
+@import 'overrides';
+
+.g-panel-container {
+  background: #fff;
+  padding: 24px;
+}
