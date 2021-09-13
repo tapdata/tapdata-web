@@ -29,7 +29,7 @@ export default {
   .el-button--mini.is-active,
   .el-button--mini:active {
     min-width: 80px;
-    padding: 7.5px 15px;
+    padding: 7.5px 0;
     &:hover {
       border-color: map-get($color, primary);
     }
