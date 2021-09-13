@@ -12,13 +12,16 @@
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical">
-      <ElHeader class="header" v-if="breadcrumbData.length > 1" height="40px">
-        <ElBreadcrumb class="breadcrumb" separator-class="el-icon-arrow-right">
+      <div v-if="!hideBreadcrumb" class="header">
+        <ElBreadcrumb
+          :class="['breadcrumb', { 'one-breadcrumb': breadcrumbData.length === 1 }]"
+          separator-class="el-icon-arrow-right"
+        >
           <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
             {{ item.name }}
           </ElBreadcrumbItem>
         </ElBreadcrumb>
-      </ElHeader>
+      </div>
       <ElMain class="main">
         <RouterView></RouterView>
       </ElMain>
@@ -90,6 +93,7 @@ export default {
         }
       ],
       breadcrumbData: [],
+      hideBreadcrumb: false,
       dialogVisible: false
     }
   },
@@ -109,6 +113,16 @@ export default {
     $route(route) {
       this.activeMenu = route.path
       this.getBreadcrumb(route)
+    },
+    breadcrumbData: {
+      deep: true,
+      handler(v) {
+        let flag = false
+        v?.forEach(el => {
+          flag = !!el.hideTitle
+        })
+        this.hideBreadcrumb = flag
+      }
     }
   },
   methods: {
@@ -137,10 +151,11 @@ export default {
       if (matched.length) {
         data = matched.map(route => {
           return {
-            name: route.meta.title,
+            name: route.meta?.title,
             to: {
               name: route.name === this.$route.name ? null : route.name
-            }
+            },
+            hideTitle: !!route.meta?.hideTitle
           }
         })
       }
@@ -157,22 +172,6 @@ export default {
 .layout-wrap {
   height: 100%;
   padding-top: 68px;
-  //&.dfs {
-  //	.left-aside {
-  //		background-color: rgba(0, 0, 0, 0.05);
-  //		.el-menu {
-  //			background-color: unset;
-  //		}
-  //		.el-menu-item {
-  //			border-left: 3px solid transparent;
-  //			&.is-active {
-  //				color: #337dff;
-  //				border-color: #337dff;
-  //				background-color: #fff;
-  //			}
-  //		}
-  //	}
-  //}
   .left-aside {
     border-right: 1px solid #f2f4f6;
     background: #fff;
@@ -207,9 +206,17 @@ export default {
     padding: 0;
   }
   .breadcrumb {
-    padding-top: 20px;
-    height: 40px;
+    padding: 24px 0 24px 24px;
+    //height: 40px;
     box-sizing: border-box;
+    &.one-breadcrumb {
+      font-size: 18px;
+      ::v-deep {
+        .el-breadcrumb__inner {
+          color: #000;
+        }
+      }
+    }
   }
   .btn-back {
     padding: 0;
@@ -222,13 +229,8 @@ export default {
 <style lang="scss">
 .layout-wrap {
   .main-container {
-    padding: 20px;
+    padding: 0 24px 24px;
     box-sizing: border-box;
-    .main-container__header {
-      margin-bottom: 24px;
-      color: #000;
-      font-size: 18px;
-    }
   }
 }
 </style>

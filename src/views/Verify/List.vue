@@ -163,7 +163,7 @@
 <style lang="scss" scoped>
 .page-wrapper {
   display: flex;
-  margin: 20px;
+  margin: 0 20px 20px;
   padding: 20px;
   height: 100%;
   flex-direction: column;

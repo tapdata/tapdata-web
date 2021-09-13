@@ -6,6 +6,7 @@
     :show-close="false"
     :with-header="false"
     size="304px"
+    style="top: 70px"
     @opened="openedFnc"
     @closed="closedFnc"
   >
