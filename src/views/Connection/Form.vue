@@ -1,72 +1,23 @@
 <template>
-  <div class="databaseFrom" v-loading="loadingFrom">
-    <div class="databaseFrom-body">
-      <main class="databaseFrom-main">
-        <header v-if="$route.params.id" class="edit-header-box">
-          <div class="edit-header">
-            <div class="img-box">
+  <div class="connection-from" v-loading="loadingFrom">
+    <div class="connection-from-body">
+      <main class="connection-from-main">
+        <div class="connection-from-title">创建连接</div>
+        <div class="connection-from-label">
+          <label class="label">数据源类型:</label>
+          <div class="content-box">
+            <div class="img-box ml-2">
               <img :src="$util.getConnectionTypeImg(databaseType)" />
             </div>
-            <div class="content">{{ model.name }}</div>
-            <div class="addBtn color-primary" @click="dialogEditNameVisible = true">
-              {{ $t('connection.rename') }}
-            </div>
+            <span class="ml-2">{{ typeMap[databaseType] }}</span>
+            <el-button class="ml-2" type="text" @click="$root.$emit('select-connection-type')">
+              {{ $t('connection.change') }}
+            </el-button>
           </div>
-        </header>
-        <header class="edit-header-box" v-else>
-          <div class="edit-header">
-            <div class="img-box">
-              <img :src="$util.getConnectionTypeImg(databaseType)" />
-            </div>
-            <div class="content-box">
-              <div class="content">
-                {{ typeMap[databaseType] }}
-                <div class="addBtn color-primary" @click="$root.$emit('select-connection-type')">
-                  {{ $t('connection.change') }}
-                </div>
-              </div>
-              <div class="tip">
-                请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
-              </div>
-            </div>
-          </div>
-        </header>
+        </div>
         <div class="form-wrap">
           <div class="form">
             <form-builder ref="form" v-model="model" :config="config" @value-change="formChange">
-              <div class="url-tip" slot="name" v-if="!$route.params.id">
-                中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
-              </div>
-              <div class="url-tip" slot="ecsList" v-if="model.sourceType === 'ecs'">
-                <el-select
-                  v-model="model.ecs"
-                  clearable
-                  placeholder="请选择"
-                  v-loadmore="loadMore"
-                  style="width: 100%; margin-top: 10px"
-                  @change="handleEcsList"
-                >
-                  <el-option v-for="item in ecsList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
-                <el-select v-model="model.vpc" clearable placeholder="请选择" style="width: 100%; margin-top: 10px">
-                  <el-option v-for="item in vpcList" :key="item.portId" :label="item.vpcName" :value="item.portId">
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="url-tip" slot="vpc-setting" v-if="model.ecs">
-                <el-checkbox v-model="model.checkedVpc">授权允许数据同步服务访问您的ECS实例</el-checkbox>
-                <span v-if="model.checkedVpc">
-                  <el-link
-                    v-if="!model.platformInfo.strategyExistence"
-                    :underline="false"
-                    @click="createStrategy()"
-                    style="color: #d54e21"
-                    :disabled="createStrategyDisabled"
-                    >点击开通</el-link
-                  >
-                  <span v-else>已开通</span>
-                </span>
-              </div>
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
               <div class="url-tip" slot="tableFilter">
                 {{ $t('dataForm.form.tableFilterTips') }}
@@ -296,7 +247,7 @@
               "
             >
               <div class="gridfs-box">
-                <el-form label-width="200px" label-position="right" :rules="gridFSrules" :model="model" ref="excelForm">
+                <el-form label-width="100px" label-position="right" :rules="gridFSrules" :model="model" ref="excelForm">
                   <!--工作页 -->
                   <el-form-item :label="$t('editor.fileFormBuilder.sheet_range')" prop="sheet_start">
                     <el-input
@@ -479,9 +430,7 @@
                 </div>
               </div>
             </template>
-            <el-button type="primary" size="mini" class="test" @click="startTest()">{{
-              $t('connection.testConnection')
-            }}</el-button>
+            <el-button type="text" size="mini" @click="startTest()">{{ $t('connection.testConnection') }}</el-button>
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
                 <VIcon class="color-danger" size="18">error</VIcon>
@@ -502,16 +451,14 @@
                 </span>
               </span>
             </span>
+            <footer class="mt-2 pb-4">
+              <el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
+                {{ $t('dataForm.submit') }}
+              </el-button>
+              <el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
+            </footer>
           </div>
         </div>
-        <footer slot="footer" class="footer">
-          <div class="footer-btn">
-            <el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
-            <el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
-              {{ $t('dataForm.submit') }}
-            </el-button>
-          </div>
-        </footer>
       </main>
       <gitbook></gitbook>
     </div>
@@ -754,6 +701,7 @@ export default {
           label: self.$t('dataForm.form.connectionName'),
           required: true,
           maxlength: 100,
+          width: '504px',
           showWordLimit: true,
           show: true,
           rules: [
@@ -1522,218 +1470,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.databaseFrom {
+.connection-from {
+  height: 100%;
+  padding: 0 24px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  .databaseFrom-body {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-    background: #fff;
-    .databaseFrom-main {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      .form-wrap {
-        display: flex;
-        overflow-y: auto;
-        flex: 1;
-      }
-      .form {
-        padding: 0 20px;
-        width: 640px;
-        margin: 0 auto;
-        padding-right: 200px;
-        .url-tip {
-          font-size: 12px;
-          color: #999;
-          line-height: 18px;
-        }
-        .rest-api-box {
-          display: flex;
-          flex: 1;
-          div.rest-api-label {
-            width: 210px;
-            padding-right: 20px;
-            line-height: 28px;
-            font-size: 12px;
-            color: #606266;
-            text-align: right;
-            box-sizing: border-box;
-          }
-          .rest-api-url {
-            width: calc(100% - 200px);
-            border: 1px solid #dedee4;
-            padding: 10px;
-            margin-top: 5px;
-            .rest-api-row {
-              margin-bottom: 10px;
-            }
-            .rest-api-margin {
-              margin-left: 10px;
-            }
-            .rest-api-marginB {
-              margin-bottom: 10px;
-            }
-            .rest-api-label {
-              display: inline-block;
-              width: 80px;
-            }
-            .rest-api-FloatL {
-              float: left;
-            }
-            .small-input {
-              width: 104px;
-            }
-            .min-input {
-              width: 80px;
-            }
-            .medium-input {
-              width: 130px;
-            }
-            .rest-api-Array {
-              margin-bottom: 10px;
-            }
-            .add-btn-icon {
-              cursor: pointer;
-            }
-          }
-        }
-        .custom-connection-box {
-          display: flex;
-          justify-content: flex-start;
-          .custom-connection-label {
-            font-size: 12px;
-            width: 200px;
-            text-align: right;
-            color: #606266;
-            margin-right: 23px;
-          }
-          .custom-connection-main {
-            width: calc(100% - 200px);
-          }
-        }
-        .gridfs-box {
-          font-size: 12px;
-          .separate {
-            margin: 0 10px;
-          }
-        }
-        .fileBox {
-          display: flex;
-          flex: 1;
-          div.file-label {
-            width: 210px;
-            padding-right: 20px;
-            line-height: 28px;
-            font-size: 12px;
-            color: #606266;
-            text-align: right;
-            box-sizing: border-box;
-          }
-          .file-form-content {
-            width: calc(100% - 200px);
-            padding: 0 10px;
-          }
-          .fromLoopBox {
-            padding: 10px 20px 20px !important;
-            margin-bottom: 12px;
-            box-sizing: border-box;
-            background-color: #fff;
-            border: 1px solid #dedee4;
-            border-radius: 3px;
-            .el-input--mini .el-input__inner {
-              width: 100%;
-            }
-          }
-        }
-      }
-      .edit-header-box {
-        border-bottom: 1px solid #eee;
-        margin-bottom: 20px;
-      }
-      .edit-header {
-        display: flex;
-        justify-content: flex-start;
-        width: 578px;
-        margin: 30px auto;
-      }
-      .title {
-        display: flex;
-        justify-content: flex-start;
-        width: 568px;
-        margin: 40px auto 20px auto;
-      }
-      .img-box {
-        display: flex;
-        width: 52px;
-        height: 52px;
-        justify-content: center;
-        align-items: center;
-        background: #fff;
-        border-radius: 3px;
-        margin-right: 10px;
-        img {
-          width: 100%;
-        }
-      }
-      .content {
-        display: flex;
-        align-items: center;
-        margin-left: 15px;
-        font-size: 22px;
-        max-width: 445px;
-        white-space: nowrap;
-        word-break: break-word;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-      .addBtn {
-        cursor: pointer;
-        font-size: 12px;
-        margin-top: 22px;
-        margin-left: 10px;
-      }
-      .content-box {
-        .addBtn {
-          cursor: pointer;
-          font-size: 12px;
-          margin-top: 0;
-          margin-left: 10px;
-        }
-
-        .tip {
-          margin-left: 15px;
-          font-size: 12px;
-          color: #999;
-          margin-top: 5px;
-          line-height: 18px;
-          width: 430px;
-        }
-      }
-      .test {
-        margin-left: 200px;
-        margin-bottom: 20px;
-        margin-top: 16px;
-      }
-    }
-    .status {
-      font-size: 12px;
-      margin-top: 2px;
-      .error {
-        color: #f56c6c;
-      }
-      .success {
-        color: #67c23a;
-      }
-      .warning {
-        color: #e6a23c;
-      }
-    }
-  }
   .header {
     height: 50px;
     line-height: 50px;
@@ -1747,46 +1489,232 @@ export default {
     border-left: none;
     position: relative;
   }
-  .footer {
-    margin: 10px auto;
-    width: 100%;
-    height: 62px;
-    background-color: #fff;
-    border-left: none;
-    line-height: 62px;
-    border-top: 1px solid #dedee4;
-    .footer-btn {
+}
+.connection-from-body {
+  padding-left: 24px;
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  background: #fff;
+  .status {
+    font-size: 12px;
+    margin-top: 2px;
+    .error {
+      color: #f56c6c;
+    }
+    .success {
+      color: #67c23a;
+    }
+    .warning {
+      color: #e6a23c;
+    }
+  }
+}
+.connection-from-title {
+  padding-top: 20px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 28px;
+}
+.connection-from-label {
+  display: flex;
+  align-items: center;
+  .label:before {
+    content: '*';
+    color: #f56c6c;
+    margin-right: 4px;
+  }
+  .label {
+    width: 100px;
+  }
+  .content-box {
+    font-size: 12px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #000000;
+    line-height: 22px;
+    display: flex;
+    align-items: center;
+    max-width: 680px;
+    white-space: nowrap;
+    word-break: break-word;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .img-box {
+    display: flex;
+    width: 25px;
+    height: 25px;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    border-radius: 3px;
+    img {
+      width: 100%;
+    }
+  }
+}
+.connection-from-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  .form-wrap {
+    display: flex;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .form {
+    .url-tip {
+      font-size: 12px;
+      color: #999;
+      line-height: 18px;
+    }
+    .rest-api-box {
       display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      margin: 0 auto;
-      padding-top: 18px;
-      width: 450px;
+      flex: 1;
+      div.rest-api-label {
+        width: 210px;
+        padding-right: 20px;
+        line-height: 28px;
+        font-size: 12px;
+        color: #606266;
+        text-align: right;
+        box-sizing: border-box;
+      }
+      .rest-api-url {
+        width: calc(100% - 100px);
+        border: 1px solid #dedee4;
+        padding: 10px;
+        margin-top: 5px;
+        .rest-api-row {
+          margin-bottom: 10px;
+        }
+        .rest-api-margin {
+          margin-left: 10px;
+        }
+        .rest-api-marginB {
+          margin-bottom: 10px;
+        }
+        .rest-api-label {
+          display: inline-block;
+          width: 80px;
+        }
+        .rest-api-FloatL {
+          float: left;
+        }
+        .small-input {
+          width: 104px;
+        }
+        .min-input {
+          width: 80px;
+        }
+        .medium-input {
+          width: 130px;
+        }
+        .rest-api-Array {
+          margin-bottom: 10px;
+        }
+        .add-btn-icon {
+          cursor: pointer;
+        }
+      }
     }
-    button {
-      margin-left: 10px;
-      padding: 0 15px;
-      height: 32px;
-      line-height: 32px;
-      border-radius: 2px;
+    .custom-connection-box {
+      display: flex;
+      justify-content: flex-start;
+      .custom-connection-label {
+        font-size: 12px;
+        width: 100px;
+        text-align: right;
+        color: #606266;
+        margin-right: 23px;
+      }
+      .custom-connection-main {
+        width: calc(100% - 100px);
+      }
     }
+    .gridfs-box {
+      font-size: 12px;
+      .separate {
+        margin: 0 10px;
+      }
+    }
+    .fileBox {
+      display: flex;
+      flex: 1;
+      div.file-label {
+        width: 210px;
+        padding-right: 20px;
+        line-height: 28px;
+        font-size: 12px;
+        color: #606266;
+        text-align: right;
+        box-sizing: border-box;
+      }
+      .file-form-content {
+        width: calc(100% - 100px);
+        padding: 0 10px;
+      }
+      .fromLoopBox {
+        padding: 10px 20px 20px !important;
+        margin-bottom: 12px;
+        box-sizing: border-box;
+        background-color: #fff;
+        border: 1px solid #dedee4;
+        border-radius: 3px;
+        .el-input--mini .el-input__inner {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .edit-header-box {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+  }
+  .edit-header {
+    display: flex;
+    justify-content: flex-start;
+    width: 578px;
+    margin: 30px auto;
+  }
+  .title {
+    display: flex;
+    justify-content: flex-start;
+    width: 568px;
+    margin: 40px auto 20px auto;
   }
 }
 </style>
 <style lang="scss">
-.databaseFrom .el-form--label-right .el-form-item {
-  .el-form-item__label .e-form-builder-item-label {
-    float: right;
+.connection-from .el-form-item {
+  width: 396px;
+  margin-top: 32px;
+  .el-input__inner {
+    height: 32px;
+    line-height: 32px;
+    background: #eff1f4;
+    border-radius: 2px;
+    border: 1px solid rgba(221, 221, 221, 0.4);
+    background: #eff1f4;
+    border-radius: 2px;
+    border: 1px solid rgba(221, 221, 221, 0.4);
   }
-  margin-top: 16px;
 }
-.databaseFrom .el-form--label-right .el-form-item {
+.connection-from .el-form-item:first-child {
+  width: 680px;
+}
+.connection-from .el-form-item {
   .el-form-item__label {
     display: inline-block;
     padding: 0 20px 0 0;
+    text-align: left;
   }
 }
-.databaseFrom .form {
+.connection-from .form {
   .url-tip {
     margin-top: -14px;
     b {
@@ -1812,7 +1740,7 @@ export default {
     }
   }
 }
-.databaseFrom .gridfs-box {
+.connection-from .gridfs-box {
   .el-form-item {
     margin-bottom: 0;
     margin-top: 0;
