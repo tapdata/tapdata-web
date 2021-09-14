@@ -1,8 +1,9 @@
 export default function () {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px',
+      labelColon: true
     },
     defaultModel: {
       connection_type: 'target'
@@ -29,7 +30,11 @@ export default function () {
             value: 'cdc'
           }
         ],
-        required: true
+        required: true,
+        customClass: 'sync-type-item',
+        isVertical: false,
+        button: true,
+        outerTip: true
       },
       {
         type: 'radio',
@@ -47,7 +52,11 @@ export default function () {
             value: 'compel'
           }
         ],
-        required: true
+        required: true,
+        customClass: 'distinct-write-type-item',
+        isVertical: false,
+        button: true,
+        outerTip: true
       },
       {
         type: 'input',
@@ -67,12 +76,13 @@ export default function () {
               }
             }
           }
-        ]
+        ],
+        customClass: 'read-batch-size'
       },
       {
         type: 'switch',
         field: 'stopOnError',
-        label: '遇到错误停止'
+        label: '遇到错误停止：'
       },
       {
         type: 'switch',
@@ -181,19 +191,17 @@ export default function () {
       },
       {
         type: 'switch',
-        field: 'isOpenAutoDDL',
-        label: '自动DDL',
-        show: true
-      },
-      {
-        type: 'switch',
         field: 'bidirectional',
         label: '是否双向',
         show: false
       },
       {
-        type: 'slot',
-        slot: 'needToCreateIndex'
+        type: 'switch',
+        field: 'isOpenAutoDDL',
+        label: '自动DDL',
+        show: true,
+        customClass: 'auto-ddl-item',
+        tip: '自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作'
       }
       // {
       //   type: 'slot',

@@ -1,16 +1,19 @@
 <template>
   <section class="tapdata-transfer-wrap">
-    <div class="reload-schema">
-      没有可用的表？
-      <el-button class="border-0" type="text" :loading="reloadLoading" @click="reload()">重新加载</el-button>
-      <span v-if="showProgress"><VIcon>loading</VIcon> {{ progress }} %</span>
+    <div class="reload-schema flex justify-content-between mb-5">
+      <div class="text-wrap" style="width: 240px">
+        没有可用的表？
+        <el-button class="border-0" type="text" :loading="reloadLoading" @click="reload()">重新加载</el-button>
+        <span v-if="showProgress" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
+      </div>
+      <div class="box-btn" v-show="!showOperationBtn">
+        <v-button class="e-button" size="mini" @click="beforeRename">{{ $t('dataFlow.changeName') }} </v-button>
+        <v-button size="mini" class="e-button" @click="beforeReduction"
+          >{{ $t('editor.cell.link.reduction') }}
+        </v-button>
+      </div>
     </div>
-    <div class="box-btn" v-show="!showOperationBtn">
-      <el-button class="e-button" size="mini" @click="beforeRename">{{ $t('dataFlow.changeName') }} </el-button>
-      <el-button size="mini" class="e-button" @click="beforeReduction"
-        >{{ $t('editor.cell.link.reduction') }}
-      </el-button>
-    </div>
+
     <el-transfer
       filterable
       :titles="titles"
@@ -663,15 +666,6 @@ export default {
 .tapdata-transfer-wrap {
   display: flex;
   flex-direction: column;
-
-  .box-btn {
-    display: flex;
-    justify-content: flex-end;
-    width: 88.5%;
-    margin-bottom: 10px;
-    padding: 4px 10px;
-  }
-
   .tip {
     color: #999;
     font-size: 12px;
@@ -714,17 +708,12 @@ export default {
 <style lang="scss">
 .tapdata-transfer-wrap {
   height: 100%;
-
   .el-transfer {
-    height: 100%;
-
+    height: 353px;
     .el-transfer-panel {
-      width: 300px;
-
       .el-transfer-panel__body {
         .box {
           display: inline-block;
-
           .nameStyle {
             display: none;
             color: #48b6e2;
@@ -771,19 +760,6 @@ export default {
     color: #666;
   }
 
-  .transfer {
-    height: calc(100% - 32px);
-  }
-
-  .el-transfer,
-  .el-transfer-panel {
-    height: 100%;
-  }
-
-  .el-transfer-panel__body {
-    height: calc(100% - 38px);
-  }
-
   .el-checkbox-group {
     height: calc(100% - 32px);
     padding-bottom: 5px;
@@ -798,9 +774,6 @@ export default {
     box-sizing: border-box;
   }
 
-  .el-transfer-panel__list.is-filterable {
-    height: calc(100% - 38px);
-  }
   .field-transfer {
     .el-transfer-panel {
       width: 39%;

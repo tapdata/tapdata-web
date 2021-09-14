@@ -101,7 +101,7 @@ th {
   color: map-get($fontColor, light);
   background: #fff;
 }
-.el-radio-button--small .el-radio-button__inner {
+.el-radio-button--mini .el-radio-button__inner {
   padding: 5px 16px;
 }
 .el-radio-button__inner:hover {
@@ -487,6 +487,8 @@ th {
 .el-transfer {
   display: flex;
   .el-transfer-panel {
+    display: inline-flex;
+    flex-direction: column;
     flex: 1;
     .el-transfer-panel__header {
       background: rgba(44, 101, 255, 0.05);
@@ -503,8 +505,14 @@ th {
     }
   }
   .el-transfer-panel__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     padding-top: 16px;
     background: #fafafa;
+  }
+  .el-transfer-panel__list {
+    flex: 1;
   }
   .el-transfer-panel__filter {
     margin: 0 16px 16px;

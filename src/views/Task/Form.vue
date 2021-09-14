@@ -1,69 +1,65 @@
 <template>
-  <el-container class="CT-task-wrap" v-if="steps[activeStep]">
-    <el-container style="overflow: hidden; flex: 1" class="CT-task-container">
-      <el-header class="step-header" height="42px">
-        <ul class="step-box">
-          <li
-            v-for="(step, index) in steps"
-            :key="index"
-            :class="[{ active: activeStep >= index }, { 'color-primary': activeStep >= index }]"
-          >
-            <span class="step-index">
-              <VIcon v-if="activeStep > index" size="12">check</VIcon>
-              <span v-else>{{ index + 1 }}</span>
-            </span>
-            <span>{{ step.text }}</span>
-          </li>
-        </ul>
-      </el-header>
-      <el-container style="overflow: hidden; flex: 1">
-        <el-container>
+  <el-container class="CT-task-wrap bg-white" v-if="steps[activeStep]">
+    <el-container style="overflow: hidden; flex: 1" class="CT-task-container flex-column">
+      <div class="steps-header">
+        <el-steps class="pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
+          <el-step title="选择连接"></el-step>
+          <el-step title="设置任务属性"></el-step>
+          <el-step title="选择表"></el-step>
+          <el-step title="表字段映射"></el-step>
+        </el-steps>
+      </div>
+      <el-container :class="['task-container', 'task-container-' + steps[activeStep].index]">
+        <div class="task-container-box flex-fill">
           <el-main :class="['CT-task-main', 'task-main-' + steps[activeStep].index]">
             <!--步骤2-->
             <div class="body" v-if="steps[activeStep].index === 2">
-              <div class="title">选择源端与目标端连接</div>
-              <div class="desc">
-                如果你还未添加数据源，请先前往连接管理进行添加。<span
-                  style="color: #337dff; cursor: pointer"
-                  @click="handleCreateDatabase"
-                  >前往连接管理创建连接</span
-                >
+              <div class="mb-8">
+                <span class="title">选择连接</span>
+                <span class="desc">
+                  如果你还未添加数据源，请先前往连接管理进行添加。<span
+                    style="color: #337dff; cursor: pointer"
+                    @click="handleCreateDatabase"
+                    >前往连接管理创建连接</span
+                  >
+                </span>
               </div>
-              <form-builder ref="dataSource" v-model="dataSourceModel" :config="config" @value-change="formChange">
-                <div slot="source" class="dataSource-title">源端连接</div>
-                <div slot="target" class="dataSource-title">目标端连接</div>
+              <form-builder
+                ref="dataSource"
+                v-model="dataSourceModel"
+                :config="config"
+                style="width: 376px"
+                class="form-builder"
+                @value-change="formChange"
+              >
               </form-builder>
             </div>
             <!-- 步骤3 -->
             <div class="body step-3" v-if="steps[activeStep].index === 3">
-              <div class="title">任务设置</div>
-              <div class="desc">
-                用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
+              <div class="mb-8">
+                <span class="title">任务设置</span>
+                <span class="desc">
+                  用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
+                </span>
               </div>
               <form-builder
                 ref="setting"
                 v-model="settingModel"
                 :config="config"
+                class="form-builder"
+                style="width: 820px"
                 @submit.native.prevent
                 @value-change="formChangeSetting"
               >
-                <div
-                  slot="needToCreateIndex"
-                  class="ddl-tip"
-                  v-show="
-                    dataSourceModel['source_databaseType'] === 'mysql' &&
-                    dataSourceModel['target_databaseType'] === 'mysql'
-                  "
-                >
-                  自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作
-                </div>
               </form-builder>
             </div>
             <!-- 步骤4 -->
             <div class="body step-4" v-if="steps[activeStep].index === 4">
-              <div class="title">映射设置</div>
-              <div class="desc">
-                用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。
+              <div class="mb-6">
+                <span class="title">选择表</span>
+                <span class="desc">
+                  用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。
+                </span>
               </div>
               <div class="CT-task-transfer">
                 <Transfer ref="transfer" :transferData="transferData" :isTwoWay="settingModel.bidirectional"></Transfer>
@@ -84,17 +80,8 @@
               ></FieldMapping>
             </div>
           </el-main>
-          <el-footer class="CT-task-footer" height="80px">
-            <el-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </el-button>
-            <el-button
-              class="btn-step"
-              :loading="loading"
-              v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
-              @click="back()"
-            >
-              {{ $t('guide.btn_back') }}
-            </el-button>
-            <el-button
+          <div :class="['pb-6', 'px-6', 'btns-step-' + steps[activeStep].index]">
+            <v-button
               v-if="steps[activeStep].showNextBtn"
               type="primary"
               class="btn-step"
@@ -102,8 +89,8 @@
               @mousedown.native.prevent="next()"
             >
               <span>{{ $t('guide.btn_next') }}</span>
-            </el-button>
-            <el-button
+            </v-button>
+            <v-button
               v-if="steps[activeStep].showSaveBtn"
               type="primary"
               class="btn-step"
@@ -111,9 +98,18 @@
               @click="save()"
             >
               完成
-            </el-button>
-          </el-footer>
-        </el-container>
+            </v-button>
+            <v-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </v-button>
+            <v-button
+              class="btn-step"
+              :loading="loading"
+              v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
+              @click="back()"
+            >
+              {{ $t('guide.btn_back') }}
+            </v-button>
+          </div>
+        </div>
       </el-container>
     </el-container>
   </el-container>
@@ -149,33 +145,11 @@
       }
     }
   }
-  .step-3 {
-    .ddl-tip {
-      font-size: 12px;
-      margin-top: -10px;
-      color: #aaa;
-    }
-  }
-  .step-header {
-    .step-box {
-      li {
-        &.active {
-          color: #409eff;
-          &::before {
-            background: #409eff;
-          }
-          .step-index {
-            background: #409eff;
-          }
-        }
-      }
-    }
-  }
 }
 </style>
 <style lang="scss" scoped>
 .CT-task-wrap {
-  padding: 0 20px;
+  //padding: 0 20px;
   height: 100%;
   background: rgba(250, 250, 250, 1);
   .step-header {
@@ -231,40 +205,79 @@
     background: #fafafa;
     border-left: 1px solid #dedee4;
   }
+  .task-container {
+    overflow-y: auto;
+    &.task-container-5 {
+      flex: 1;
+      .task-container-box {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .CT-task-main {
+        margin-bottom: 0;
+        padding: 24px 0 0;
+      }
+      ::v-deep {
+        .field-mapping {
+          .field-mapping__desc,
+          .search {
+            padding-left: 24px;
+          }
+          .search {
+            margin-top: 24px;
+          }
+          .field-mapping-table {
+            padding-bottom: 50px;
+          }
+        }
+      }
+    }
+  }
   .CT-task-main {
+    padding: 24px 24px 0;
     background: #fff;
     overflow: hidden;
     &:not(.task-main-5) {
       overflow-y: auto;
     }
+    //&.task-main-5 {
+    //  margin-bottom: 24px;
+    //  padding: 24px 0 0;
+    //}
     .body {
-      margin: 0 auto;
-      padding-bottom: 50px;
-      width: 910px;
+      //margin: 0 auto;
+      //padding-bottom: 50px;
+      //width: 910px;
       .title {
-        padding: 20px 200px;
-        color: rgba(51, 51, 51, 100);
-        font-size: 28px;
-        font-weight: bold;
-        text-align: left;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.85);
+        //padding: 20px 200px;
+        //color: rgba(51, 51, 51, 100);
+        //font-size: 28px;
+        //font-weight: bold;
+        //text-align: left;
       }
       .desc {
-        padding: 0 200px;
-        margin-bottom: 20px;
-        color: #999;
+        margin-left: 16px;
         font-size: 12px;
+        color: rgba(0, 0, 0, 0.5);
+        //padding: 0 200px;
+        //margin-bottom: 20px;
+        //color: #999;
+        //font-size: 12px;
       }
       .reload-schema {
         padding: 0 200px;
         margin-top: 10px;
       }
       .CT-task-transfer {
-        margin-left: 200px;
-        height: 500px;
+        margin-bottom: 24px;
+        //height: 400px;
       }
     }
     .step-4 {
-      width: 1050px;
+      //width: 1050px;
     }
     .dataSource-title {
       font-size: 16px;
@@ -412,16 +425,68 @@
     }
   }
 }
+.steps-header {
+  margin: 0 20px;
+  padding: 20px 0 0;
+  border-bottom: 1px solid #f2f2f2;
+}
+.btns-step-5 {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  text-align: right;
+}
+.el-main {
+  padding: 24px 0 0;
+}
+.form-builder {
+  ::v-deep {
+    .e-form-builder-item {
+      .el-form-item__content {
+        padding-bottom: 32px;
+        height: 32px;
+        .el-input__inner {
+          background: rgba(221, 221, 221, 0.4);
+        }
+        .el-input__count-inner {
+          background-color: unset;
+        }
+      }
+      &.sync-type-item,
+      &.distinct-write-type-item,
+      &.auto-ddl-item {
+        margin-bottom: 24px;
+      }
+      &.read-batch-size {
+        .el-input__inner {
+          width: 277px;
+        }
+      }
+      &.slot-item {
+        .el-form-item__content {
+          //padding-bottom: 32px;
+          //height: 32px;
+        }
+      }
+    }
+  }
+}
+.step-3 {
+  .ddl-tip {
+    font-size: 12px;
+    margin-top: -10px;
+    color: #aaa;
+  }
+}
 </style>
 <script>
 import formConfig from './config'
 import Transfer from './Transfer'
-import VIcon from '@/components/VIcon'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from './const'
 
 let defaultConfig = []
 export default {
-  components: { Transfer, VIcon },
+  components: { Transfer },
   data() {
     return {
       id: '',
@@ -439,8 +504,8 @@ export default {
       mappingModel: {},
       config: {
         form: {
-          labelPosition: 'right',
-          labelWidth: '200px',
+          labelPosition: 'left',
+          labelWidth: '80px',
           itemStyle: 'margin-bottom: 16px;',
           size: 'small'
         },
@@ -476,7 +541,8 @@ export default {
       //表设置
       fieldMappingNavData: '',
       fieldMappingTableData: '',
-      hiddenFieldMapping: false
+      hiddenFieldMapping: false,
+      taskStep: 0
     }
   },
   created() {
@@ -488,6 +554,7 @@ export default {
         type: 'input',
         field: 'name',
         label: '任务名称',
+        labelColon: true,
         maxlength: 300,
         showWordLimit: true,
         required: true,
@@ -528,6 +595,11 @@ export default {
 
     if (this.id) {
       this.intiData(this.id)
+    }
+  },
+  watch: {
+    config(v) {
+      console.log('watch-config', v)
     }
   },
   mounted() {
@@ -687,6 +759,7 @@ export default {
         }
         this.fieldProcess()
       }
+      this.taskStep++
     },
     back() {
       let type = this.steps[this.activeStep].type || 'instance'
@@ -704,6 +777,7 @@ export default {
         }
       }
       this.activeStep -= 1
+      this.taskStep--
       this.getFormConfig()
       // 重置 数据源类型列表
       this.allowDatabaseType()

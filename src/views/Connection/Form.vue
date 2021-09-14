@@ -2,7 +2,7 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div class="connection-from-title">创建连接</div>
+        <div class="connection-from-title">{{ $route.params.id ? '编辑连接' : '创建连接' }}</div>
         <div class="connection-from-label">
           <label class="label">数据源类型:</label>
           <div class="content-box">
@@ -17,7 +17,7 @@
         </div>
         <div class="form-wrap">
           <div class="form">
-            <form-builder ref="form" v-model="model" :config="config" @value-change="formChange">
+            <form-builder ref="form" class="form-builder" v-model="model" :config="config" @value-change="formChange">
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
               <div class="url-tip" slot="tableFilter">
                 {{ $t('dataForm.form.tableFilterTips') }}
@@ -649,26 +649,6 @@ export default {
       if (!val) {
         this.model.pdb = ''
       }
-    },
-    'model.region'() {
-      this.changeInstanceRegion()
-    },
-    'model.s_region'() {
-      this.changeDataSourceRegion()
-    },
-    'model.zone'() {
-      this.getDataSourceRegion() //选择完zone 联动实例vip 接口
-    },
-    'model.s_zone'() {
-      this.changeDatabaseHost()
-    },
-    'model.sourceType'() {
-      this.getEcsList()
-    },
-    'model.ecs'() {
-      this.ecsList = this.ecsList || []
-      if (!this.ecsList || this.ecsList.length === 0) return
-      this.handleStrategy()
     }
   },
   methods: {
@@ -704,6 +684,7 @@ export default {
           width: '504px',
           showWordLimit: true,
           show: true,
+          customClass: 'large-item',
           rules: [
             {
               required: true,
@@ -1472,7 +1453,6 @@ export default {
 <style scoped lang="scss">
 .connection-from {
   height: 100%;
-  padding: 0 24px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1696,6 +1676,9 @@ export default {
   .el-input__inner {
     height: 32px;
     line-height: 32px;
+  }
+  .el-input__inner,
+  .el-textarea__inner {
     background: #eff1f4;
     border-radius: 2px;
     border: 1px solid rgba(221, 221, 221, 0.4);
@@ -1704,8 +1687,11 @@ export default {
     border: 1px solid rgba(221, 221, 221, 0.4);
   }
 }
-.connection-from .el-form-item:first-child {
+.connection-from .large-item {
   width: 680px;
+}
+.connection-from .small-item {
+  width: 240px;
 }
 .connection-from .el-form-item {
   .el-form-item__label {

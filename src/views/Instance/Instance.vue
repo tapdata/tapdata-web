@@ -172,6 +172,7 @@
                 @click="toDeploy(scope.row)"
                 >{{ $t('agent_button_deploy') }}</el-button
               >
+              <el-divider direction="vertical"></el-divider>
               <el-button
                 type="text"
                 :disabled="stopBtnDisabled(scope.row)"
@@ -179,6 +180,7 @@
                 @click="handleStop(scope.row)"
                 >{{ $t('agent_button_stop') }}</el-button
               >
+              <el-divider direction="vertical"></el-divider>
               <el-button
                 type="text"
                 :loading="scope.row.btnLoading.delete"
@@ -913,13 +915,9 @@ export default {
         & + .el-button {
           margin: 0;
         }
-        &:not(:first-child) {
-          padding-left: 16px;
-          border-left: 1px solid #e9e9e9;
-        }
-        &:not(:last-child) {
-          padding-right: 16px;
-        }
+      }
+      .el-divider {
+        margin: 0 16px;
       }
     }
   }

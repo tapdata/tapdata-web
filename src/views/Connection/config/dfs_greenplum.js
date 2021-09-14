@@ -15,6 +15,10 @@ export default function (vm) {
         type: 'radio',
         field: 'connection_type',
         label: vm.$t('dataForm.form.connectionType'),
+        customClass: 'large-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
         options: [
           {
             label: vm.$t('dataForm.form.options.sourceAndTarget'),
@@ -55,6 +59,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
+        customClass: 'small-item',
         label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
@@ -171,6 +176,7 @@ export default function (vm) {
         type: 'input',
         field: 'table_filter',
         domType: 'textarea',
+        customClass: 'large-item',
         label: vm.$t('dataForm.form.tableFilter'),
         // tips: vm.$t('dataForm.form.tableFilterTips'),
         maxlength: 500,
