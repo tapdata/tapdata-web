@@ -48,5 +48,6 @@ export default {
   dag_data_node_label_memcache_type_all: 'Global cache',
   dag_data_node_label_memcache_type_local: 'Local cache',
   dag_data_node_label_memcache_type_tip:
-    'All tasks in the global cache can be referenced, and the local cache can only be referenced by the current DAG. '
+    'All tasks in the global cache can be referenced, and the local cache can only be referenced by the current DAG. ',
+  dag_data_node_label_clickhouse: 'ClickHouse Node'
 }

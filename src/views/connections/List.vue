@@ -293,7 +293,8 @@ export default {
         'kudu',
         'greenplum',
         'tidb',
-        'hana'
+        'hana',
+        'clickhouse'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -670,6 +671,7 @@ export default {
 
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
+      this.dialogDatabaseTypeVisible = true
       let result = await this.$api('Workers').getAvailableAgent()
       if (!result.data.result || result.data.result.length === 0) {
         this.$message.error(this.$t('dataForm.form.agentMsg'))

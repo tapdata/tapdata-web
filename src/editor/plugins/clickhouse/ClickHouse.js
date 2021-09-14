@@ -1,23 +1,23 @@
 import { options } from '../../lib/rappid/config'
-import HBaseAttribute from './HBaseAttribute'
+import ClickHouseAttribute from './ClickHouseAttribute'
 import { FORM_DATA_KEY } from '../../constants'
 import i18n from '@/i18n'
 
-export const HBaseNodeConfig = {
-  type: 'app.HBaseNode',
+export const ClickHouseConfig = {
+  type: 'app.ClickHouse',
   shape: {
     extends: 'app.BaseElement',
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-hbase.svg'
+          xlinkHref: 'static/editor/o-click.svg'
         },
         label: {
-          text: 'HBase'
+          text: 'Clickhouse'
         }
       },
       [FORM_DATA_KEY]: {
-        type: 'hbase',
+        type: 'clickhouse',
         connectionId: '',
         tableName: ''
       }
@@ -189,14 +189,14 @@ export const HBaseNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/hbase.svg',
+        xlinkHref: 'static/editor/click.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',
         refY: '0%'
       },
       label: {
-        text: 'Hbase',
+        text: 'Clickhouse',
         textAnchor: 'middle',
         fill: '#666',
         fontFamily: 'Roboto Condensed',
@@ -216,6 +216,6 @@ export const HBaseNodeConfig = {
    * @type {null}
    */
   settingFormConfig: {
-    component: HBaseAttribute
+    component: ClickHouseAttribute
   }
 }

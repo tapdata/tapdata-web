@@ -47,6 +47,7 @@ import kudu from './kudu'
 import greenplum from './greenplum'
 import tidb from './tidb'
 import hana from './hana'
+import clickhouse from './clickhouse'
 
 export default {
   mysql,
@@ -97,5 +98,6 @@ export default {
   kudu,
   greenplum,
   tidb,
-  hana
+  hana,
+  clickhouse
 }

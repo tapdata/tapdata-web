@@ -69,7 +69,8 @@ export const TYPEMAP = {
   kudu: 'KUDU',
   greenplum: 'Greenplum',
   tidb: 'TiDB',
-  hana: 'SAP HANA'
+  hana: 'SAP HANA',
+  clickhouse: 'ClickHouse'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {

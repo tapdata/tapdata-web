@@ -677,7 +677,8 @@ export default {
         'kudu',
         'greenplum',
         'tidb',
-        'hana'
+        'hana',
+        'clickhouse'
       ],
       model: '',
       config: {

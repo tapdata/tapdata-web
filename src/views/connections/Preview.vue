@@ -503,7 +503,8 @@ export default {
           'kudu',
           'greenplum',
           'tidb',
-          'hana'
+          'hana',
+          'clickhouse'
         ].includes(type)
       ) {
         this.$router.push({

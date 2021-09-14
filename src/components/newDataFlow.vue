@@ -134,7 +134,8 @@ export default {
         'tcp_udp',
         'greenplum',
         'tidb',
-        'hana'
+        'hana',
+        'clickhouse'
       ] //目前白名单,
     }
   },

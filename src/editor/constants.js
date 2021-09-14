@@ -194,6 +194,12 @@ export const FORM_DATA_KEY = 'form_data',
       name: 'Hive',
       shapeImage: 'static/editor/o-hive.svg',
       stencilImage: 'static/editor/hive.svg'
+    },
+    clickhouse: {
+      type: 'clickhouse',
+      name: 'ClickHouse',
+      shapeImage: 'static/editor/o-click.svg',
+      stencilImage: 'static/editor/click.svg'
     }
   },
   FILE_TYPE_MAPPING = {
