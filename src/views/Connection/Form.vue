@@ -17,7 +17,7 @@
         </div>
         <div class="form-wrap">
           <div class="form">
-            <form-builder ref="form" v-model="model" :config="config" @value-change="formChange">
+            <form-builder ref="form" class="form-builder" v-model="model" :config="config" @value-change="formChange">
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
               <div class="url-tip" slot="tableFilter">
                 {{ $t('dataForm.form.tableFilterTips') }}
@@ -684,6 +684,7 @@ export default {
           width: '504px',
           showWordLimit: true,
           show: true,
+          customClass: 'large-item',
           rules: [
             {
               required: true,
@@ -1675,6 +1676,9 @@ export default {
   .el-input__inner {
     height: 32px;
     line-height: 32px;
+  }
+  .el-input__inner,
+  .el-textarea__inner {
     background: #eff1f4;
     border-radius: 2px;
     border: 1px solid rgba(221, 221, 221, 0.4);
@@ -1683,8 +1687,11 @@ export default {
     border: 1px solid rgba(221, 221, 221, 0.4);
   }
 }
-.connection-from .el-form-item:first-child {
+.connection-from .large-item {
   width: 680px;
+}
+.connection-from .small-item {
+  width: 240px;
 }
 .connection-from .el-form-item {
   .el-form-item__label {

@@ -30,6 +30,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
+        customClass: 'small-item',
         label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
