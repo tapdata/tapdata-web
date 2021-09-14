@@ -53,13 +53,11 @@
           </el-form>
         </div>
         <div class="migration-operation-right">
-          <ElButton type="primary" @click="createTask">
-            <span>创建任务</span>
-          </ElButton>
+          <VButton type="primary" @click="createTask"><span>创建任务</span></VButton>
         </div>
       </div>
-      <El-table
-        class="migration-table table-border"
+      <el-table
+        class="migration-table table-border font-color-sub"
         style="margin-top: 10px"
         height="100%"
         :data="list"
@@ -132,7 +130,7 @@
             </el-link>
             <ElDivider direction="vertical"></ElDivider>
             <el-dropdown @command="handleMore($event, scope.row, scope.$index)">
-              <el-link type="primary">
+              <el-link type="primary" class="rotate-90">
                 <i class="el-icon-more"></i>
               </el-link>
               <el-dropdown-menu slot="dropdown">
@@ -152,7 +150,7 @@
           <span class="ml-1" v-if="!isSearching">暂无数据</span>
           <span v-else> 没有查到符合条件的结果，<el-link type="primary" @click="reset">返回列表</el-link> </span>
         </div>
-      </El-table>
+      </el-table>
       <el-pagination
         background
         class="mt-3"

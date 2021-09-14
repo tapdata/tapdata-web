@@ -1,8 +1,8 @@
 export default function () {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
       connection_type: 'target'
@@ -12,6 +12,7 @@ export default function () {
         type: 'radio',
         field: 'sync_type',
         label: '同步类型',
+        labelColon: true,
         options: [
           {
             label: '全量 + 增量同步',
@@ -29,12 +30,20 @@ export default function () {
             value: 'cdc'
           }
         ],
-        required: true
+        required: true,
+        customClass: 'sync-type-item',
+        isVertical: false
+      },
+      {
+        type: 'slot',
+        slot: 'sync_type_tip',
+        customClass: 'slot-item'
       },
       {
         type: 'radio',
         field: 'distinctWriteType',
         label: '全量写入模式',
+        labelColon: true,
         options: [
           {
             label: '更新写入模式',
@@ -47,12 +56,14 @@ export default function () {
             value: 'compel'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false
       },
       {
         type: 'input',
         field: 'readBatchSize',
         label: '每次读取数量',
+        labelColon: true,
         required: true,
         rules: [
           {
@@ -67,17 +78,19 @@ export default function () {
               }
             }
           }
-        ]
+        ],
+        customClass: 'read-batch-size'
       },
       {
         type: 'switch',
         field: 'stopOnError',
-        label: '遇到错误停止'
+        label: '遇到错误停止：'
       },
       {
         type: 'switch',
         field: 'cdcConcurrency',
         label: '是否开启增量并发',
+        labelColon: true,
         show: true,
         dependOn: [
           {
@@ -108,6 +121,7 @@ export default function () {
         type: 'input',
         field: 'transformerConcurrency',
         label: '增量并发数',
+        labelColon: true,
         required: true,
         show: true,
         rules: [
@@ -153,6 +167,7 @@ export default function () {
         type: 'switch',
         field: 'noPrimaryKey',
         label: '是否无主键同步',
+        labelColon: true,
         show: true,
         dependOn: [
           {
@@ -181,19 +196,23 @@ export default function () {
       },
       {
         type: 'switch',
-        field: 'isOpenAutoDDL',
-        label: '自动DDL',
-        show: true
-      },
-      {
-        type: 'switch',
         field: 'bidirectional',
         label: '是否双向',
+        labelColon: true,
         show: false
       },
       {
+        type: 'switch',
+        field: 'isOpenAutoDDL',
+        label: '自动DDL',
+        labelColon: true,
+        show: true,
+        customClass: 'auto-ddl-item'
+      },
+      {
         type: 'slot',
-        slot: 'needToCreateIndex'
+        slot: 'needToCreateIndex',
+        customClass: 'slot-item'
       }
       // {
       //   type: 'slot',

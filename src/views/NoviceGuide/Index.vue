@@ -1,10 +1,6 @@
 <template>
   <div v-if="$route.name === 'NoviceGuide'" class="novice-guide-wrapper main-container">
-    <div class="container-title">
-      <span class="main-title">新手引导</span>
-      <span class="sub-title ml-4"></span>
-    </div>
-    <div class="container-section mt-6 p-6">
+    <div class="container-section p-6">
       <el-steps class="pb-6" :active="step" process-status="process" finish-status="success" align-center>
         <el-step title="安装 Agent"></el-step>
         <el-step title="创建源连接"></el-step>
@@ -92,9 +88,9 @@
         <el-form ref="sourceElForm" v-model="sourceForm" label-width="80px" class="source-form mt-6">
           <el-form-item label="数据库类型" prop="database_type" class="database-type">
             <div class="flex w-100">
-              <el-radio-group v-model="sourceForm.database_type" @change="changeSourceDatabaseType">
+              <el-radio-group v-model="sourceForm.database_type" size="mini" @change="changeSourceDatabaseType">
                 <el-radio-button v-for="(item, index) in databaseTypeItems" :key="index" :label="item.value">
-                  <VIcon size="17" class="color-primary">{{ item.icon }}</VIcon>
+                  <VIcon size="16" class="color-primary">{{ item.icon }}</VIcon>
                   {{ item.label }}
                 </el-radio-button>
               </el-radio-group>
@@ -162,7 +158,7 @@
         <div class="step-content__title fs-6 fw-bolder">配置同步任务</div>
         <div class="flex mt-6">
           <div class="task-item-label mr-4 flex align-items-center">同步类型</div>
-          <el-radio-group v-model="taskForm.type">
+          <el-radio-group v-model="taskForm.type" size="mini">
             <el-radio-button v-for="(item, index) in taskTypeItems" :key="index" :label="item.value">
               {{ item.label }}
             </el-radio-button>
