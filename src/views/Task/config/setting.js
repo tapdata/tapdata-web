@@ -32,7 +32,9 @@ export default function () {
         ],
         required: true,
         customClass: 'sync-type-item',
-        isVertical: false
+        isVertical: false,
+        button: true,
+        outerTip: true
       },
       {
         type: 'radio',
@@ -52,7 +54,9 @@ export default function () {
         ],
         required: true,
         customClass: 'distinct-write-type-item',
-        isVertical: false
+        isVertical: false,
+        button: true,
+        outerTip: true
       },
       {
         type: 'input',

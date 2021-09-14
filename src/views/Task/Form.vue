@@ -47,7 +47,7 @@
                 v-model="settingModel"
                 :config="config"
                 class="form-builder"
-                style="width: 800px"
+                style="width: 820px"
                 @submit.native.prevent
                 @value-change="formChangeSetting"
               >
