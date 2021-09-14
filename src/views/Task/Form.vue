@@ -9,24 +9,8 @@
           <el-step title="表字段映射"></el-step>
         </el-steps>
       </div>
-
-      <!--      <el-header class="step-header" height="42px">-->
-      <!--        <ul class="step-box">-->
-      <!--          <li-->
-      <!--            v-for="(step, index) in steps"-->
-      <!--            :key="index"-->
-      <!--            :class="[{ active: activeStep >= index }, { 'color-primary': activeStep >= index }]"-->
-      <!--          >-->
-      <!--            <span class="step-index">-->
-      <!--              <VIcon v-if="activeStep > index" size="12">check</VIcon>-->
-      <!--              <span v-else>{{ index + 1 }}</span>-->
-      <!--            </span>-->
-      <!--            <span>{{ step.text }}</span>-->
-      <!--          </li>-->
-      <!--        </ul>-->
-      <!--      </el-header>-->
-      <el-container style="overflow-y: auto" :class="['task-container-' + taskStep]">
-        <div class="flex-fill">
+      <el-container :class="['task-container', 'task-container-' + steps[activeStep].index]">
+        <div class="task-container-box flex-fill">
           <el-main :class="['CT-task-main', 'task-main-' + steps[activeStep].index]">
             <!--步骤2-->
             <div class="body" v-if="steps[activeStep].index === 2">
@@ -48,8 +32,6 @@
                 class="form-builder"
                 @value-change="formChange"
               >
-                <!--                <div slot="source" class="dataSource-title none mb-0">源端连接</div>-->
-                <!--                <div slot="target" class="dataSource-title none mb-0">目标端连接</div>-->
               </form-builder>
             </div>
             <!-- 步骤3 -->
@@ -112,7 +94,7 @@
               ></FieldMapping>
             </div>
           </el-main>
-          <div :class="['pb-8', 'btns-step-' + taskStep]">
+          <div :class="['pb-8', 'px-6', 'btns-step-' + steps[activeStep].index]">
             <v-button
               v-if="steps[activeStep].showNextBtn"
               type="primary"
@@ -141,35 +123,6 @@
               {{ $t('guide.btn_back') }}
             </v-button>
           </div>
-          <el-footer v-if="false" class="CT-task-footer" height="80px">
-            <el-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </el-button>
-            <el-button
-              class="btn-step"
-              :loading="loading"
-              v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
-              @click="back()"
-            >
-              {{ $t('guide.btn_back') }}
-            </el-button>
-            <el-button
-              v-if="steps[activeStep].showNextBtn"
-              type="primary"
-              class="btn-step"
-              :loading="loading"
-              @mousedown.native.prevent="next()"
-            >
-              <span>{{ $t('guide.btn_next') }}</span>
-            </el-button>
-            <el-button
-              v-if="steps[activeStep].showSaveBtn"
-              type="primary"
-              class="btn-step"
-              :loading="loading"
-              @click="save()"
-            >
-              完成
-            </el-button>
-          </el-footer>
         </div>
       </el-container>
     </el-container>
@@ -203,31 +156,6 @@
       }
       .name {
         margin-left: 10px;
-      }
-    }
-  }
-  .step-3 {
-    .ddl-tip {
-      font-size: 12px;
-      margin-top: -10px;
-      color: #aaa;
-    }
-  }
-  .btns-step-3 {
-    text-align: right;
-  }
-  .step-header {
-    .step-box {
-      li {
-        &.active {
-          color: #409eff;
-          &::before {
-            background: #409eff;
-          }
-          .step-index {
-            background: #409eff;
-          }
-        }
       }
     }
   }
@@ -291,7 +219,18 @@
     background: #fafafa;
     border-left: 1px solid #dedee4;
   }
+  .task-container {
+    overflow-y: auto;
+    &.task-container-5 {
+      flex: 1;
+      .task-container-box {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
   .CT-task-main {
+    padding: 24px 24px 0;
     background: #fff;
     overflow: hidden;
     &:not(.task-main-5) {
@@ -485,8 +424,8 @@
   padding: 20px 0 0;
   border-bottom: 1px solid #f2f2f2;
 }
-.el-container {
-  //padding: 0 0 0 20px;
+.btns-step-5 {
+  text-align: right;
 }
 .el-main {
   padding: 24px 0 0;
@@ -523,6 +462,13 @@
         }
       }
     }
+  }
+}
+.step-3 {
+  .ddl-tip {
+    font-size: 12px;
+    margin-top: -10px;
+    color: #aaa;
   }
 }
 </style>

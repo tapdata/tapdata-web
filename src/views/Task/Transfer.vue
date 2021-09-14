@@ -7,10 +7,10 @@
         <span v-if="showProgress" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
       </div>
       <div class="box-btn" v-show="!showOperationBtn">
-        <el-button class="e-button" size="mini" @click="beforeRename">{{ $t('dataFlow.changeName') }} </el-button>
-        <el-button size="mini" class="e-button" @click="beforeReduction"
+        <v-button class="e-button" size="mini" @click="beforeRename">{{ $t('dataFlow.changeName') }} </v-button>
+        <v-button size="mini" class="e-button" @click="beforeReduction"
           >{{ $t('editor.cell.link.reduction') }}
-        </el-button>
+        </v-button>
       </div>
     </div>
 
