@@ -2,7 +2,7 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div class="connection-from-title">创建连接</div>
+        <div class="connection-from-title">{{ $route.params.id ? '编辑连接' : '创建连接' }}</div>
         <div class="connection-from-label">
           <label class="label">数据源类型:</label>
           <div class="content-box">
@@ -649,26 +649,6 @@ export default {
       if (!val) {
         this.model.pdb = ''
       }
-    },
-    'model.region'() {
-      this.changeInstanceRegion()
-    },
-    'model.s_region'() {
-      this.changeDataSourceRegion()
-    },
-    'model.zone'() {
-      this.getDataSourceRegion() //选择完zone 联动实例vip 接口
-    },
-    'model.s_zone'() {
-      this.changeDatabaseHost()
-    },
-    'model.sourceType'() {
-      this.getEcsList()
-    },
-    'model.ecs'() {
-      this.ecsList = this.ecsList || []
-      if (!this.ecsList || this.ecsList.length === 0) return
-      this.handleStrategy()
     }
   },
   methods: {
@@ -1472,7 +1452,6 @@ export default {
 <style scoped lang="scss">
 .connection-from {
   height: 100%;
-  padding: 0 24px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
