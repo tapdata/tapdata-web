@@ -80,7 +80,7 @@
               ></FieldMapping>
             </div>
           </el-main>
-          <div :class="['pb-8', 'px-6', 'btns-step-' + steps[activeStep].index]">
+          <div :class="['pb-6', 'px-6', 'btns-step-' + steps[activeStep].index]">
             <v-button
               v-if="steps[activeStep].showNextBtn"
               type="primary"
@@ -212,6 +212,25 @@
       .task-container-box {
         display: flex;
         flex-direction: column;
+        position: relative;
+      }
+      .CT-task-main {
+        margin-bottom: 0;
+        padding: 24px 0 0;
+      }
+      ::v-deep {
+        .field-mapping {
+          .field-mapping__desc,
+          .search {
+            padding-left: 24px;
+          }
+          .search {
+            margin-top: 24px;
+          }
+          .field-mapping-table {
+            padding-bottom: 50px;
+          }
+        }
       }
     }
   }
@@ -222,9 +241,10 @@
     &:not(.task-main-5) {
       overflow-y: auto;
     }
-    &.task-main-5 {
-      margin-bottom: 24px;
-    }
+    //&.task-main-5 {
+    //  margin-bottom: 24px;
+    //  padding: 24px 0 0;
+    //}
     .body {
       //margin: 0 auto;
       //padding-bottom: 50px;
@@ -411,6 +431,9 @@
   border-bottom: 1px solid #f2f2f2;
 }
 .btns-step-5 {
+  position: absolute;
+  right: 0;
+  bottom: 0;
   text-align: right;
 }
 .el-main {
