@@ -573,7 +573,6 @@ export default {
                   filter.where['id'] = { neq: this.id }
                 }
                 this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-                  callback()
                   if (data && data.length !== 0) {
                     callback(new Error('任务名称已存在'))
                   } else callback()
