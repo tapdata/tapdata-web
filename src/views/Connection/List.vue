@@ -252,7 +252,11 @@ export default {
       let fields = {
         id: true,
         name: true,
-        status: true
+        status: true,
+        loadFieldsStatus: true,
+        loadCount: true,
+        tableCount: true,
+        loadFieldErrMsg: true
       }
       let filter = {
         fields,
@@ -266,8 +270,7 @@ export default {
       let changeList = data || []
       let statusMap = {}
       changeList.forEach(item => {
-        let { statusText, statusIcon, status } = this.formatData(item)
-        statusMap[item.id] = { statusText, statusIcon, status }
+        statusMap[item.id] = this.formatData(item)
       })
       let list = this.list || []
       list.forEach(item => {
