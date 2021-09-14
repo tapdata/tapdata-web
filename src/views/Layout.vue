@@ -34,7 +34,8 @@
           'elasticsearch',
           'kafka',
           'dameng',
-          'greenplum'
+          'greenplum',
+          'mq'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
         @select="createConnection"
