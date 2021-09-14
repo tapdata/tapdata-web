@@ -76,9 +76,4 @@ export default {
 .multi-selection-data-verify .el-select__input.is-mini {
   height: 16px;
 }
-.multi-selection-data-verify {
-  .item-select {
-    width: 600px;
-  }
-}
 </style>

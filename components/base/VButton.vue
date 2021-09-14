@@ -51,5 +51,8 @@ export default {
     opacity: 0.5;
     border: 1px solid #d9d9d9;
   }
+  & + & {
+    margin-left: 16px;
+  }
 }
 </style>

@@ -1,5 +1,9 @@
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 const newCn = {
+  // button 通用
+  button_delete: '删除',
+  button_edit: '编辑',
+
   // dialog 通用
   dialog_button_close: '关 闭',
 
@@ -7,10 +11,38 @@ const newCn = {
   schema_progress_status_error: '出错',
   schema_progress_dialog_error_title: 'Schema加载出错',
 
+  // 数据校验
   verify_history_source_rows: '本次校验行数',
   verify_history_target_rows: '目标行数',
   verify_history_source_total_rows: '源总行数',
-  verify_history_target_total_rows: '目标总行数'
+  verify_history_target_total_rows: '目标总行数',
+  verify_type_row_count: '快速count校验',
+  verify_type_field: '表全字段值校验',
+  verify_type_joint_field: '关联字段值校验',
+  verify_tips_type_row_count: '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容',
+  verify_tips_type_field: '全表字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢',
+  verify_tips_type_joint_field: '关联键校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式',
+  verify_frequency_manual: '单次校验',
+  verify_frequency_cron: '重复校验',
+  verify_job_enable: '已启用',
+  verify_job_disable: '已禁止',
+  verify_job_name: '校验任务名',
+  verify_form_label_select_job: '选择任务',
+  verify_form_label_type: '校验类型',
+  verify_form_label_frequency: '校验频次',
+  verify_form_label_start_and_end_time: '起止时间',
+  verify_form_label_interval: '校验间隔',
+  verify_form_label_error_save_count: '错误保存条数',
+  verify_form_label_index_field: '索引字段',
+  verify_form_label_script: 'JS校验逻辑',
+  verify_form_label_table: '待校验表',
+  verify_form_joint_table_header: '校验条件',
+  verify_button_joint_table_clear: '清空',
+  verify_button_add_table: '添加表',
+  verify_button_auto_add_table: '自动添加表',
+  verify_switch_job_enable_or_not: '是否启用',
+  verify_button_add_script: '添加逻辑',
+  verify_checkbox_advance: '高级校验'
 }
 const cn = {
   ...zhLocale,
