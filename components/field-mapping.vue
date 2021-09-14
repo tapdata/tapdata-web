@@ -1,6 +1,6 @@
 <template>
   <div class="field-mapping" v-loading="loadingPage">
-    <div style="text-align: left">
+    <div class="field-mapping__desc" style="text-align: left">
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
     </div>
