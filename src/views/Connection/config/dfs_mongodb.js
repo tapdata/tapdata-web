@@ -29,6 +29,10 @@ export default function (vm) {
         field: 'isUrl',
         show: true,
         label: vm.$t('dataForm.form.options.connectionMode'),
+        customClass: 'large-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
         options: [
           {
             label: vm.$t('dataForm.form.options.URIMode'),
@@ -84,6 +88,7 @@ export default function (vm) {
         domType: 'textarea',
         required: true,
         show: false,
+        customClass: 'large-item',
         dependOn: [
           {
             triggerOptions: [
@@ -232,6 +237,10 @@ export default function (vm) {
         type: 'radio',
         field: 'ssl',
         label: vm.$t('dataForm.form.ssl'),
+        customClass: 'large-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
         options: [
           {
             label: vm.$t('dataForm.form.options.sslTSL'),
