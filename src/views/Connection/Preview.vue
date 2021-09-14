@@ -66,6 +66,12 @@ export default {
           delete: false
         }
       },
+      kafkaACK: {
+        0: '不确认',
+        '-1': '仅写入master分区',
+        1: '仅写入master分区',
+        all: '写入所有ISR分区'
+      },
       list: [
         {
           icon: 'time',
@@ -179,6 +185,48 @@ export default {
       this.connection = data
       //组装数据
       this.connection['last_updated'] = this.$moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      if (type === 'kafka') {
+        this.list = [
+          {
+            icon: 'time',
+            items: [
+              {
+                label: '加载schema',
+                key: 'last_updated'
+              }
+            ]
+          },
+          {
+            icon: 'database',
+            items: [
+              {
+                label: '数据库地址',
+                key: 'kafkaBootstrapServers'
+              },
+              {
+                label: '主题表达式',
+                key: 'kafkaPatternTopics'
+              },
+              {
+                label: '忽略非JSON Object格式消息',
+                key: 'kafkaIgnoreInvalidRecord'
+              },
+              {
+                label: 'ACK 确认机制',
+                key: 'kafkaAcks'
+              },
+              {
+                label: '消息压缩类型',
+                key: 'kafkaCompressionType'
+              },
+              {
+                label: '忽略推送消息异常',
+                key: 'kafkaIgnorePushError'
+              }
+            ]
+          }
+        ]
+      }
     },
     edit() {
       if (this.connection.agentType === 'Cloud') {
