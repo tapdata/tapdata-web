@@ -35,11 +35,6 @@ export default function () {
         isVertical: false
       },
       {
-        type: 'slot',
-        slot: 'sync_type_tip',
-        customClass: 'slot-item'
-      },
-      {
         type: 'radio',
         field: 'distinctWriteType',
         label: '全量写入模式',
@@ -56,6 +51,7 @@ export default function () {
           }
         ],
         required: true,
+        customClass: 'distinct-write-type-item',
         isVertical: false
       },
       {
@@ -200,12 +196,8 @@ export default function () {
         field: 'isOpenAutoDDL',
         label: '自动DDL',
         show: true,
-        customClass: 'auto-ddl-item'
-      },
-      {
-        type: 'slot',
-        slot: 'needToCreateIndex',
-        customClass: 'slot-item'
+        customClass: 'auto-ddl-item',
+        tip: '自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作'
       }
       // {
       //   type: 'slot',

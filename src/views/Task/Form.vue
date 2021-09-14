@@ -51,20 +51,6 @@
                 @submit.native.prevent
                 @value-change="formChangeSetting"
               >
-                <div slot="sync_type_tip">
-                  <VIcon size="14" class="color-primary">warning</VIcon>
-                  <span class="ml-2 font-color-sub">任务会在全量同步执行结束后自动进入增量同步状态</span>
-                </div>
-                <div
-                  slot="needToCreateIndex"
-                  class="ddl-tip"
-                  v-show="
-                    dataSourceModel['source_databaseType'] === 'mysql' &&
-                    dataSourceModel['target_databaseType'] === 'mysql'
-                  "
-                >
-                  自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作
-                </div>
               </form-builder>
             </div>
             <!-- 步骤4 -->
@@ -444,11 +430,9 @@
         }
       }
       &.sync-type-item,
+      &.distinct-write-type-item,
       &.auto-ddl-item {
-        .el-form-item__content {
-          padding-bottom: 16px;
-          height: 16px;
-        }
+        margin-bottom: 24px;
       }
       &.read-batch-size {
         .el-input__inner {
@@ -475,12 +459,11 @@
 <script>
 import formConfig from './config'
 import Transfer from './Transfer'
-import VIcon from '@/components/VIcon'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from './const'
 
 let defaultConfig = []
 export default {
-  components: { Transfer, VIcon },
+  components: { Transfer },
   data() {
     return {
       id: '',
