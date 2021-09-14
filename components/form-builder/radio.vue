@@ -27,10 +27,8 @@ export default {
     }
     let tip = config.options.find(item => item.value === this.value)?.tip || ''
     const outerTip = !!config.outerTip
-    let innerTip
-    if (config.innerTip === undefined) {
-      innerTip = true
-    } else {
+    let innerTip = true
+    if (config.innerTip !== undefined) {
       innerTip = config.innerTip
     }
     let arr = [
