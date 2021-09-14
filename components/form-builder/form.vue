@@ -146,7 +146,7 @@ export default {
       let item = h(
         'ElFormItem',
         {
-          class: 'e-form-builder-item',
+          class: 'e-form-builder-item ' + (config.customClass || ''),
           style: formConfig.itemStyle,
           props: {
             prop: config.field,

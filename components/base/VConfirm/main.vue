@@ -22,10 +22,7 @@
           </button>
         </div>
         <div class="message-box__content">
-          <div class="el-message-box__container flex">
-            <VIcon v-if="icon" :size="iconSize" :color="iconColor" :class="['invisible', 'v-icon', iconClass]">{{
-              icon
-            }}</VIcon>
+          <div class="el-message-box__container">
             <div class="el-message-box__message" v-if="message !== ''">
               <slot>
                 <div v-if="!dangerouslyUseHTMLString" :class="messageClass">{{ message }}</div>
