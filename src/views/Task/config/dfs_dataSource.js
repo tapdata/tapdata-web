@@ -3,10 +3,7 @@ export default function () {
     form: {
       labelPosition: 'left',
       labelWidth: '100px',
-      itemStyle: {
-        // 'padding-bottom': '32px',
-        // 'box-sizing': 'border-box'
-      },
+      labelColon: true,
       size: 'small'
     },
     items: [
@@ -14,7 +11,6 @@ export default function () {
         type: 'select',
         field: 'source_databaseType',
         label: '源端类型',
-        labelColon: true,
         options: [],
         required: true
       },
@@ -22,7 +18,6 @@ export default function () {
         type: 'select',
         field: 'source_connectionId',
         label: '源端连接',
-        labelColon: true,
         loading: false,
         options: [],
         required: true
@@ -31,7 +26,6 @@ export default function () {
         type: 'select',
         field: 'target_databaseType',
         label: '目标端类型',
-        labelColon: true,
         options: [],
         required: true
       },
@@ -39,7 +33,6 @@ export default function () {
         type: 'select',
         field: 'target_connectionId',
         label: '目标端连接',
-        labelColon: true,
         loading: false,
         options: [],
         required: true
