@@ -3,24 +3,28 @@
     <div class="main">
       <div class="connection-operation">
         <div class="connection-operation-left">
-          <ul>
-            <li>
-              <ElSelect v-model="searchParams.status" @input="search()">
-                <ElOption label="全部状态" value=""></ElOption>
-                <ElOption v-for="(opt, value) in statusMap" :key="value" :label="opt.text" :value="value"></ElOption>
-              </ElSelect>
-            </li>
-            <li class="ml-3">
-              <ElInput v-model="searchParams.keyword" placeholder="按连接名搜索" @input="search(800)">
-                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
-              </ElInput>
-            </li>
-            <li class="ml-3">
-              <ElButton plain class="btn-refresh" @click="fetch()">
+          <el-form inline @submit.native.prevent>
+            <el-form-item label="全部状态 :" width="300px">
+              <el-select v-model="searchParams.status" @input="search()">
+                <el-option :label="$t('gl_placeholder_select')" value="" class="select-all"></el-option>
+                <el-option v-for="(opt, value) in statusMap" :key="value" :label="opt.text" :value="value"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="按连接名搜索 : " class="ml-2">
+              <el-input
+                width="200"
+                v-model="searchParams.keyword"
+                @input="search(800)"
+                :placeholder="$t('gl_placeholder_input')"
+              >
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button plain class="btn-refresh" @click="fetch()">
                 <VIcon>refresh</VIcon>
-              </ElButton>
-            </li>
-          </ul>
+              </el-button>
+            </el-form-item>
+          </el-form>
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
@@ -118,7 +122,9 @@
         @current-change="fetch"
       >
       </ElPagination>
+      <!-- 连接测试 -->
       <ConnectionTest ref="test"></ConnectionTest>
+      <!--  详情    -->
       <Preview ref="preview"></Preview>
     </div>
   </section>
@@ -206,7 +212,6 @@ export default {
         status: '',
         keyword: ''
       },
-
       list: [],
       page: {
         current: 1,
@@ -214,9 +219,9 @@ export default {
         total: 0
       },
       order: 'createTime desc',
-
       statusMap: CONNECTION_STATUS_MAP,
-      whiteList: SUPPORT_DB
+      whiteList: SUPPORT_DB,
+      showDetails: false
     }
   },
   computed: {
@@ -446,6 +451,19 @@ export default {
       } catch (error) {
         this.$message.error(error?.response?.msg || '测试连接失败')
       }
+    },
+    loadDetailsData(data) {
+      if (this.selectedRow?.id) {
+        return
+      }
+      this.selectedRow = data
+    },
+    detailsClosedFnc() {
+      this.showDetails = false
+      this.$router.replace({
+        name: 'Instance',
+        query: this.searchParams
+      })
     },
     preview(id, type) {
       this.$refs.preview.open(id, type)
