@@ -94,12 +94,15 @@
           <template slot-scope="scope">
             <div class="operate-columns">
               <el-button size="mini" type="text" @click="testConnection(scope.row)">连接测试</el-button>
+              <el-divider direction="vertical"></el-divider>
               <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="edit(scope.row)"
                 >编辑</el-button
               >
+              <el-divider direction="vertical"></el-divider>
               <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="copy(scope.row)"
                 >复制</el-button
               >
+              <el-divider direction="vertical"></el-divider>
               <el-button type="text" @click="del(scope.row)">删除</el-button>
             </div>
           </template>
@@ -181,13 +184,9 @@
         & + .el-button {
           margin: 0;
         }
-        &:not(:first-child) {
-          padding-left: 16px;
-          border-left: 1px solid #e9e9e9;
-        }
-        &:not(:last-child) {
-          padding-right: 16px;
-        }
+      }
+      .el-divider {
+        margin: 0 16px;
       }
     }
   }
