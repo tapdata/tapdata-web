@@ -28,5 +28,6 @@ export const TYPEMAP = {
   mq: 'MQ',
   greenplum: 'Greenplum',
   tidb: 'TiDB',
-  hana: 'SAP HANA'
+  hana: 'SAP HANA',
+  clickhouse: 'ClickHouse'
 }
