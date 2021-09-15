@@ -238,7 +238,13 @@
         </div>
       </el-dialog>
       <!--  详情    -->
-      <DetailsDrawer ref="detailsDrawer" v-model="showDetails" @closed="detailsClosedFnc" @load-data="loadDetailsData">
+      <DetailsDrawer
+        v-model="showDetails"
+        ref="detailsDrawer"
+        :detail-id="detailId"
+        @closed="detailsClosedFnc"
+        @load-data="loadDetailsData"
+      >
         <div slot="title">
           <inline-input
             :value="selectedRow.name"
@@ -330,7 +336,8 @@ export default {
       agentStatus: 'stop',
       version: '',
       upgradeList: [], // 升级列表
-      showDetails: false
+      showDetails: false,
+      detailId: null
     }
   },
   computed: {
@@ -399,6 +406,7 @@ export default {
       } else if (detailId) {
         this.$nextTick(() => {
           this.showDetails = true
+          this.detailId = detailId
         })
       }
     },
@@ -747,6 +755,7 @@ export default {
       }
       // this.selectedRow = data
       this.showDetails = true
+      this.detailId = data.id
       let query = this.$route.query
       this.$router
         .replace({
