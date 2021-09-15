@@ -67,47 +67,59 @@ export default {
         ]
       )
     }
-    return h('div', { class: 'fb-select' }, [
-      h(
-        'ElSelect',
-        {
-          domProps: {
-            readonly: true
-          },
-          props: {
-            value: self.value,
-            placeholder: config.placeholder,
-            size: config.size,
-            filterable: config.filterable,
-            filterMethod: config.filterable ? this.filterMethod : null,
-            allowCreate: config.allowCreate,
-            defaultFirstOption: config.defaultFirstOption,
-            clearable: config.clearable,
-            multiple: config.multiple,
-            disabled: config.disabled ? config.disabled : false
-          },
-          on: Object.assign(this.on, {
-            'visible-change'(value) {
-              if (value && config.filterable) {
-                self.filterMethod('')
+    const tip = self.config?.tip || ''
+    let arr = [
+      h('div', { class: 'fb-select' }, [
+        h(
+          'ElSelect',
+          {
+            domProps: {
+              readonly: true
+            },
+            props: {
+              value: self.value,
+              placeholder: config.placeholder,
+              size: config.size,
+              filterable: config.filterable,
+              filterMethod: config.filterable ? this.filterMethod : null,
+              allowCreate: config.allowCreate,
+              defaultFirstOption: config.defaultFirstOption,
+              clearable: config.clearable,
+              multiple: config.multiple,
+              disabled: config.disabled ? config.disabled : false
+            },
+            on: Object.assign(this.on, {
+              'visible-change'(value) {
+                if (value && config.filterable) {
+                  self.filterMethod('')
+                }
               }
+            }),
+            ref: 'select'
+          },
+          [checkboxEl, ...options]
+        ),
+        h(
+          'div',
+          {
+            class: {
+              'fb-select-mask': true,
+              'is-show': config.loading
             }
-          }),
-          ref: 'select'
-        },
-        [checkboxEl, ...options]
-      ),
-      h(
-        'div',
-        {
-          class: {
-            'fb-select-mask': true,
-            'is-show': config.loading
-          }
-        },
-        [h('i', { class: 'el-icon-loading' })]
+          },
+          [h('i', { class: 'el-icon-loading' })]
+        )
+      ])
+    ]
+    if (tip) {
+      arr.push(
+        h('div', { class: 'fb-switch-tip' }, [
+          h('i', { class: 'el-icon-info' }),
+          h('span', { class: 'fb-switch-tip__text' }, tip)
+        ])
       )
-    ])
+    }
+    return h('div', { class: 'select-item' }, arr)
   },
   methods: {
     filterMethod(keyword = '') {
