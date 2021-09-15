@@ -238,5 +238,6 @@ export const FORM_DATA_KEY = 'form_data',
     'dameng',
     'postgres',
     'kafka',
-    'mongodb'
+    'mongodb',
+    'clickhouse'
   ]
