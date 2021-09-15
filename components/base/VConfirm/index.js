@@ -15,6 +15,10 @@ const defaultCallback = action => {
       } else if (currentMsg.reject && action === 'cancel') {
         currentMsg.reject(action)
       }
+      // 清除之前的内容
+      let $el = instance?.$el
+      $el.parentNode.removeChild($el)
+      instance = null
     }
   }
 }
