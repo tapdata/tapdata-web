@@ -830,9 +830,15 @@ export default {
             readBatchSize: 1000
           })
         } else if (
-          ['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode', 'app.HanaNode'].includes(
-            cell.type
-          )
+          [
+            'app.Table',
+            'app.Collection',
+            'app.ESNode',
+            'app.HiveNode',
+            'app.KUDUNode',
+            'app.HanaNode',
+            'app.ClickHouse'
+          ].includes(cell.type)
         ) {
           postData.mappingTemplate = 'custom'
 
