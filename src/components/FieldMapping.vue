@@ -58,8 +58,8 @@ export default {
       if (this.mappingType && this.mappingType === 'cluster-clone') {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
         if (
-          this.dataFlow?.stages?.[1]?.syncObjects.length === 0 ||
-          this.dataFlow?.stages?.[1]?.syncObjects?.[0]?.objectNames?.length === 0
+          this.dataFlow?.stages?.[0]?.syncObjects.length === 0 ||
+          this.dataFlow?.stages?.[0]?.syncObjects?.[0]?.objectNames?.length === 0
         ) {
           this.$message.error('请先选择需要迁移的表')
           return
