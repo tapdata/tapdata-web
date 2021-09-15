@@ -179,7 +179,8 @@ export const link = {
             'app.HiveNode',
             'app.KUDUNode',
             'app.HanaNode',
-            'app.DamengNode'
+            'app.DamengNode',
+            'app.ClickHouse'
           ].includes(targetCell.get('type'))
         )
       },

@@ -830,9 +830,15 @@ export default {
             readBatchSize: 1000
           })
         } else if (
-          ['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode', 'app.HanaNode'].includes(
-            cell.type
-          )
+          [
+            'app.Table',
+            'app.Collection',
+            'app.ESNode',
+            'app.HiveNode',
+            'app.KUDUNode',
+            'app.HanaNode',
+            'app.ClickHouse'
+          ].includes(cell.type)
         ) {
           postData.mappingTemplate = 'custom'
 
@@ -1517,7 +1523,8 @@ export default {
         java_processor: 'app.FieldProcess',
         redis: 'app.Redis',
         hive: 'app.HiveNode',
-        hana: 'app.HanaNode'
+        hana: 'app.HanaNode',
+        clickhouse: 'app.ClickHouse'
       }
       if (data) {
         let stageMap = {}
