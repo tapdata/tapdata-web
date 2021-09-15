@@ -1,114 +1,89 @@
 <template>
-  <section class="verification-details-wrap" v-loading="loading">
-    <div class="panel-main" style="padding: 0 20px" v-if="inspect">
-      <div class="main main-border">
-        <div class="title mt-5">{{ inspect.name }}</div>
-        <div class="text">
-          {{ typeMap[type] }}
-        </div>
-        <div class="error-band" style="width: 96.5%" v-if="errorMsg && type === 'row_count'">
-          <VIcon class="color-info">warning-circle</VIcon>
-          <span>{{ errorMsg }}</span>
-        </div>
-        <div
-          class="flex align-items-center justify-content-sm-between mt-2"
-          v-else-if="inspect.inspectMethod !== 'row_count'"
-        >
-          <div class="flex align-items-center">
-            <ElButton v-if="['running', 'scheduling'].includes(inspect.status)" size="mini">{{
-              $t('verify_button_diff_verify_running')
-            }}</ElButton>
-            <template v-if="inspect.result !== 'passed' && !(inspect.status === 'error' && !resultInfo.parentId)">
-              <ElButton
-                v-if="!['running', 'scheduling'].includes(inspect.status)"
-                size="mini"
-                type="primary"
-                @click="diffInspect"
-                >{{ $t('verify_button_diff_verify') }}</ElButton
-              >
-              <el-tooltip effect="dark" placement="top">
-                <div slot="content" style="width: 232px">
-                  {{ $t('verify_button_diff_verify_tips') }}
-                </div>
-                <VIcon class="ml-2 color-info" size="14">warning-circle</VIcon>
-              </el-tooltip>
-            </template>
-          </div>
-          <div v-if="resultInfo.parentId" class="color-info" style="font-size: 12px">
+  <section class="verify-details-wrap g-panel-container" v-loading="loading">
+    <div class="verify-details-header" v-if="inspect">
+      <div>
+        <span style="font-size: 14px">{{ inspect.name }}</span>
+        <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
+      </div>
+      <div v-if="inspect.inspectMethod !== 'row_count'">
+        <VButton v-if="['running', 'scheduling'].includes(inspect.status)">{{
+          $t('verify_button_diff_verify_running')
+        }}</VButton>
+        <div class="flex align-items-center">
+          <div v-if="resultInfo.parentId" class="color-info flex align-items-center" style="font-size: 12px">
             {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
             <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
               $t('verify_button_diff_task_history')
             }}</ElLink>
           </div>
+          <div
+            v-if="inspect.result !== 'passed' && !(inspect.status === 'error' && !resultInfo.parentId)"
+            class="flex align-items-center ml-4"
+          >
+            <VButton v-if="!['running', 'scheduling'].includes(inspect.status)" type="primary" @click="diffInspect">{{
+              $t('verify_button_diff_verify')
+            }}</VButton>
+            <el-tooltip effect="dark" placement="top">
+              <div slot="content" style="width: 232px">
+                {{ $t('verify_button_diff_verify_tips') }}
+              </div>
+              <VIcon class="ml-2 color-info" size="14">warning-circle</VIcon>
+            </el-tooltip>
+          </div>
         </div>
-        <ResultTable
-          v-if="!['running', 'scheduling'].includes(inspect.status)"
-          ref="singleTable"
-          :type="type"
-          :data="tableData"
-          @row-click="rowClick"
-        ></ResultTable>
       </div>
     </div>
-    <ResultView
-      v-if="type !== 'row_count' && !['running', 'scheduling'].includes(inspect.status)"
-      ref="resultView"
-      :remoteMethod="getResultData"
-    ></ResultView>
+    <div class="error-tips mt-4" v-if="errorMsg && type === 'row_count'">
+      <VIcon class="color-warning">warning-circle</VIcon>
+      <span class="ml-2">{{ errorMsg }}</span>
+    </div>
+    <div class="result-table mt-4" v-if="inspect">
+      <ResultTable
+        v-if="!['running', 'scheduling'].includes(inspect.status)"
+        ref="singleTable"
+        :type="type"
+        :data="tableData"
+        @row-click="rowClick"
+      ></ResultTable>
+      <ResultView
+        v-if="type !== 'row_count' && !['running', 'scheduling'].includes(inspect.status)"
+        ref="resultView"
+        :remoteMethod="getResultData"
+      ></ResultView>
+    </div>
   </section>
 </template>
 <style lang="scss">
-$margin: 10px;
-.verification-details-wrap {
-  margin: 20px;
+.verify-details-wrap {
+  flex: 1;
   display: flex;
-  height: 100%;
+  flex-direction: column;
   overflow: hidden;
-  background: #fff;
-  .panel-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    &.panel-box {
-      margin-bottom: 10px;
-      border-left: 1px solid #dedee4;
-      border-bottom: 1px solid #dedee4;
-    }
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      padding-bottom: 20px;
-      .title {
-        font-weight: bold;
-        color: #409eff;
-      }
-      .text {
-        margin-top: 6px;
-        color: #666;
-        font-size: 12px;
-      }
-      .error-band {
-        background: #fdf6ec;
-        border: 1px solid #f8e2c0;
-        color: #e6a23c;
-        margin: 10px;
-        line-height: 20px;
-        max-height: 160px;
-        text-overflow: ellipsis;
-        overflow-y: auto;
-        font-size: 12px;
-        padding: 8px;
-      }
-    }
-  }
+}
+.verify-details-header {
+  display: flex;
+  justify-content: space-between;
+}
+.error-tips {
+  background: #fdf6ec;
+  border: 1px solid #f8e2c0;
+  color: #e6a23c;
+  line-height: 20px;
+  max-height: 160px;
+  text-overflow: ellipsis;
+  overflow-y: auto;
+  font-size: 12px;
+  padding: 8px;
+}
+.result-table {
+  flex: 1;
+  display: flex;
+  overflow: auto;
 }
 </style>
 <script>
-import ResultTable from 'web-core/views/verification/result-table'
-import ResultView from 'web-core/views/verification/result-view'
+import ResultTable from 'web-core/views/verification/ResultTable'
+import ResultView from 'web-core/views/verification/ResultView'
 import VIcon from '@/components/VIcon'
 export default {
   components: { ResultTable, ResultView, VIcon },

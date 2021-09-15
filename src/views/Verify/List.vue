@@ -4,21 +4,21 @@
       <ElForm inline>
         <ElFormItem label="类型: ">
           <ElSelect v-model="searchParams.inspectMethod" clearable @input="inspectMethodChange">
-            <ElOption :label="$t('dataVerification.rowVerify')" value="row_count"></ElOption>
-            <ElOption :label="$t('dataVerification.contentVerify')" value="field"></ElOption>
-            <ElOption :label="$t('dataVerification.jointVerify')" value="jointField"></ElOption>
+            <ElOption :label="$t('verify_type_row_count')" value="row_count"></ElOption>
+            <ElOption :label="$t('verify_type_field')" value="field"></ElOption>
+            <ElOption :label="$t('verify_type_joint_field')" value="jointField"></ElOption>
           </ElSelect>
         </ElFormItem>
         <ElFormItem label="频次: ">
           <ElSelect v-model="searchParams.mode" clearable @input="search()">
-            <ElOption :label="$t('dataVerification.singleVerify')" value="manual"></ElOption>
-            <ElOption :label="$t('dataVerification.repeatingVerify')" value="cron"></ElOption>
+            <ElOption :label="$t('verify_frequency_manual')" value="manual"></ElOption>
+            <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
           </ElSelect>
         </ElFormItem>
         <ElFormItem label="状态: ">
           <ElSelect v-model="searchParams.enabled" clearable @input="search()">
-            <ElOption :label="$t('dataVerification.enable')" :value="1"></ElOption>
-            <ElOption :label="$t('dataVerification.disable')" :value="2"></ElOption>
+            <ElOption :label="$t('verify_job_enable')" :value="1"></ElOption>
+            <ElOption :label="$t('verify_job_disable')" :value="2"></ElOption>
           </ElSelect>
         </ElFormItem>
         <ElFormItem label="结果: ">
@@ -27,12 +27,7 @@
           </ElSelect>
         </ElFormItem>
         <ElFormItem label="名称: ">
-          <ElInput
-            v-model="searchParams.keyword"
-            clearable
-            :placeholder="$t('dataVerification.verifyjobname')"
-            @input="search(800)"
-          >
+          <ElInput v-model="searchParams.keyword" clearable :placeholder="$t('verify_job_name')" @input="search(800)">
             <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
           </ElInput>
         </ElFormItem>
@@ -49,17 +44,13 @@
       </div>
     </div>
     <ElTable class="page-table table-border mt-1" height="100%" :data="list" @sort-change="handleSortTable">
-      <ElTableColumn :label="$t('dataVerification.verifyJobName')" min-width="180">
+      <ElTableColumn :label="$t('verify_job_name')" min-width="180">
         <template slot-scope="scope">
           <div>{{ scope.row.name }}</div>
           <div style="color: #aaa">
             <span
               >{{ inspectMethod[scope.row.inspectMethod] }} (
-              {{
-                scope.row.mode === 'manual'
-                  ? $t('dataVerification.singleVerify')
-                  : $t('dataVerification.repeatingVerify')
-              }}
+              {{ scope.row.mode === 'manual' ? $t('verify_frequency_manual') : $t('verify_frequency_cron') }}
               )
             </span>
             <span v-if="!scope.row.enabled" style="color: #f56c6c">&nbsp;Disabled</span>
@@ -75,13 +66,13 @@
               <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
                 <VIcon class="verify-status-icon color-danger" size="14">error</VIcon>
                 <span v-if="scope.row.inspectMethod === 'row_count'">
-                  {{ $t('dataVerification.inconsistent') }}
+                  {{ $t('verify_result_count_inconsistent') }}
                 </span>
-                <span v-else>{{ $t('dataVerification.contConsistent') }}{{ scope.row.difference_number }} </span>
+                <span v-else>{{ $t('verify_result_content_diff', [scope.row.difference_number]) }}</span>
               </div>
               <div v-else class="data-verify__status success">
                 <VIcon class="verify-status-icon" size="14">success-fill-color</VIcon>
-                <span>{{ $t('dataVerification.consistent') }}</span>
+                <span>{{ $t('verify_result_count_consistent') }}</span>
               </div>
             </template>
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
@@ -89,7 +80,7 @@
               <span>Error</span>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
-              <VIcon style="font-size: 18px" color="#10C038">loading</VIcon>
+              <VIcon color="#10C038" size="18">loading</VIcon>
               <span>{{ statusMap[scope.row.status] }}</span>
             </div>
             <div v-else>-</div>
@@ -113,30 +104,24 @@
         sortable="custom"
         width="160"
       ></ElTableColumn>
-      <ElTableColumn :label="$t('dataVerification.operation')" width="400" fixed="right">
+      <ElTableColumn :label="$t('dataVerification.operation')" width="300" fixed="right">
         <template slot-scope="scope">
           <ElLink
             type="primary"
             :disabled="['running', 'scheduling'].includes(scope.row.status)"
             @click="startTask(scope.row.id)"
-            >{{ $t('dataVerification.executeVerifyTip') }}</ElLink
+            >执行</ElLink
           >
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
-            $t('dataVerification.detailTip')
-          }}</ElLink>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">详情</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableHistory(scope.row.id)">{{
-            $t('dataVerification.historyTip')
-          }}</ElLink>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableHistory(scope.row.id)"
+            >历史</ElLink
+          >
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="goEdit(scope.row.id, scope.row.flowId)">{{
-            $t('dataVerification.configurationTip')
-          }}</ElLink>
+          <ElLink type="primary" @click="goEdit(scope.row.id, scope.row.flowId)">配置</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="remove(scope.row.name, scope.row.id)">{{
-            $t('dataVerification.deleteTip')
-          }}</ElLink>
+          <ElLink type="primary" @click="remove(scope.row.name, scope.row.id)">删除</ElLink>
         </template>
       </ElTableColumn>
       <div class="page-table__empty" slot="empty">
