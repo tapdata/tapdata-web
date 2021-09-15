@@ -90,7 +90,7 @@ const showNextMsg = () => {
   instance.action = ''
   let options = currentMsg.options
   for (let prop in options) {
-    if (options.hasOwnProperty(prop)) {
+    if (window.hasOwnProperty.call(options, prop)) {
       instance[prop] = options[prop]
     }
   }
