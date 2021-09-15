@@ -3,6 +3,35 @@ import Vue from 'vue'
 const MessageBoxConstructor = Vue.extend(msgboxVue)
 
 let currentMsg, instance
+
+const defaults = {
+  icon: '', // 图标
+  iconColor: '',
+  iconSize: 25,
+  title: '', // 标题
+  message: '', // 内容
+  type: '', // 常用的几种提示类型： success、info、warning、error。不然需要自己传递 icon的属性
+  iconClass: '', // 图标的类名
+  titleClass: '', // 标题的类名
+  messageClass: '', // 内容的类名
+  showClose: true,
+  center: false,
+  customClass: '',
+  showConfirmButton: true,
+  showCancelButton: false,
+  action: '',
+  confirmButtonText: '',
+  cancelButtonText: '',
+  confirmButtonLoading: false,
+  cancelButtonLoading: false,
+  confirmButtonClass: '',
+  confirmButtonDisabled: false,
+  cancelButtonClass: '',
+  dangerouslyUseHTMLString: false,
+  distinguishCancelAndClose: false,
+  width: '416px' // 需要完整的像素字符串
+}
+
 const defaultCallback = action => {
   if (currentMsg) {
     let callback = currentMsg.callback
@@ -15,10 +44,6 @@ const defaultCallback = action => {
       } else if (currentMsg.reject && action === 'cancel') {
         currentMsg.reject(action)
       }
-      // 清除之前的内容
-      let $el = instance?.$el
-      $el.parentNode.removeChild($el)
-      instance = null
     }
   }
 }
@@ -36,7 +61,7 @@ const MessageBox = function (options, callback) {
   if (typeof Promise !== 'undefined') {
     return new Promise((resolve, reject) => {
       currentMsg = {
-        options: Object.assign({}, options),
+        options: Object.assign({}, defaults, options),
         callback: callback,
         resolve: resolve,
         reject: reject
@@ -46,7 +71,7 @@ const MessageBox = function (options, callback) {
     })
   } else {
     currentMsg = {
-      options: Object.assign({}, options),
+      options: Object.assign({}, defaults, options),
       callback: callback
     }
     showNextMsg()
@@ -61,7 +86,7 @@ const showNextMsg = () => {
   instance.action = ''
   let options = currentMsg.options
   for (let prop in options) {
-    if (options[prop]) {
+    if (options.hasOwnProperty(prop)) {
       instance[prop] = options[prop]
     }
   }

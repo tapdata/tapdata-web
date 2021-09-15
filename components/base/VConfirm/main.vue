@@ -71,6 +71,7 @@ export default {
     return {
       visible: false,
       uid: 1,
+      callback: null,
       icon: '', // 图标
       iconColor: '',
       iconSize: 25,
@@ -93,7 +94,6 @@ export default {
       confirmButtonClass: '',
       confirmButtonDisabled: false,
       cancelButtonClass: '',
-      callback: null,
       dangerouslyUseHTMLString: false,
       distinguishCancelAndClose: false,
       width: '416px' // 需要完整的像素字符串
@@ -111,18 +111,17 @@ export default {
     value(v) {
       this.visible = v
     },
-    type(v) {
-      if (!v) {
-        return
-      }
-      this.icon = v
-      this.iconClass = 'color-' + v
+    visible(v) {
+      v && this.init()
     }
   },
   beforeDestroy() {
     this.close()
   },
   methods: {
+    init() {
+      this.getIconByType(this.type)
+    },
     handleAction(action) {
       this.close()
       if (action !== 'close') {
@@ -131,6 +130,10 @@ export default {
     },
     close() {
       this.visible = false
+    },
+    getIconByType(type) {
+      this.icon = type
+      this.iconClass = 'color-' + type
     }
   }
 }
