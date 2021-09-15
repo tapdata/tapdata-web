@@ -15,6 +15,7 @@ export default function (vm) {
         field: 'kafkaBootstrapServers',
         label: vm.$t('dataForm.form.host'),
         required: true,
+        tip: '输入 IP/host:port , 多个地址以逗号隔开',
         rules: [
           {
             validator(rule, value, callback) {
@@ -28,10 +29,6 @@ export default function (vm) {
         ]
       },
       {
-        type: 'slot',
-        slot: 'kafkaUri'
-      },
-      {
         type: 'input',
         field: 'kafkaPatternTopics',
         label: vm.$t('dataForm.form.kafka.topicExpression'),
@@ -42,26 +39,10 @@ export default function (vm) {
       {
         type: 'switch', // 忽略非JSON Object格式消息
         field: 'kafkaIgnoreInvalidRecord',
+        customClass: 'large-item',
         label: vm.$t('dataForm.form.kafka.lonoreFormat'),
         show: true,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'connection_type',
-                value: 'target'
-              }
-            ],
-            triggerConfig: {
-              show: false
-            }
-          }
-        ]
-      },
-
-      {
-        type: 'slot',
-        slot: 'lonoreFormatTip',
+        tip: '如果开启则遇到解析异常会忽略该消息，否则停止拉取消息',
         dependOn: [
           {
             triggerOptions: [
@@ -131,23 +112,8 @@ export default function (vm) {
         field: 'kafkaIgnorePushError',
         label: vm.$t('dataForm.form.kafka.kafkaIgnorePushError'),
         show: true,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'connection_type',
-                value: 'source'
-              }
-            ],
-            triggerConfig: {
-              show: false
-            }
-          }
-        ]
-      },
-      {
-        type: 'slot',
-        slot: 'pushErrorTip',
+        customClass: 'large-item',
+        tip: '如果开启则忽略该次推送的消息(存在消息丢失)，否则停止推送消息',
         dependOn: [
           {
             triggerOptions: [
@@ -162,330 +128,6 @@ export default function (vm) {
           }
         ]
       }
-      // {
-      // 	type: 'radio',
-      // 	field: 'kafkaSelectTopics',
-      // 	label: vm.$t('dataForm.form.kafka.chooseTheme'),
-      // 	options: [
-      // 		{
-      // 			label: vm.$t('dataForm.form.kafka.topicName'),
-      // 			tip: vm.$t('dataForm.form.kafka.directlyNameTip'),
-      // 			value: 'kafkaRawTopics'
-      // 		},
-      // 		{
-      // 			label: vm.$t('dataForm.form.kafka.topicExpression'),
-      // 			tip: vm.$t('dataForm.form.kafka.hostPlaceHolder'),
-      // 			value: 'kafkaPatternTopics'
-      // 		}
-      // 	],
-      // 	required: true
-      // },
-      // {
-      // 	type: 'input',
-      // 	field: 'kafkaRawTopics',
-      // 	label: vm.$t('dataForm.form.kafka.topicName'),
-      // 	show: false,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'kafkaSelectTopics',
-      // 					value: 'kafkaRawTopics'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: true
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input', //拉取请求超时时间
-      // 	field: 'kafkaConsumerRequestTimeout',
-      // 	label: vm.$t('dataForm.form.kafka.requestTimeoutPeriod'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'target'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'switch', // 消息提交读隔离级别
-      // 	field: 'kafkaConsumerUseTransactional',
-      // 	label: vm.$t('dataForm.form.kafka.readIsolationLevel'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'target'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input', //单次poll消息最大返回记录数
-      // 	field: 'kafkaMaxPollRecords',
-      // 	label: vm.$t('dataForm.form.kafka.maximumNumber'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'target'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input',
-      // 	field: 'kafkaPollTimeoutMS', // 单次poll消息阻塞超时时间
-      // 	label: vm.$t('dataForm.form.kafka.blockingTimeoutTime'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'target'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input', // 单次fetch消息最大字节数
-      // 	field: 'kafkaMaxFetchBytes',
-      // 	label: vm.$t('dataForm.form.kafka.fetchMaximumNumber'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'target'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input', // 单次fetch消息阻塞超时时间
-      // 	field: 'kafkaMaxFetchWaitMS',
-      // 	label: vm.$t('dataForm.form.kafka.fetchBlockTime'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'target'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input', //推送请求超时时间
-      // 	field: 'kafkaProducerRequestTimeout',
-      // 	label: vm.$t('dataForm.form.kafka.requestTimeoutPeriod'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'source'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input', //使用事务消息
-      // 	field: 'kafkaProducerUseTransactional',
-      // 	label: vm.$t('dataForm.form.kafka.transactionMessage'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'source'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input', //请求重试次数
-      // 	field: 'kafkaRetries',
-      // 	label: vm.$t('dataForm.form.kafka.kafkaRetries'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'source'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input', //分区消息批次字节数
-      // 	field: 'kafkaBatchSize',
-      // 	label: vm.$t('dataForm.form.kafka.kafkaBatchSize'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'source'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-
-      // {
-      // 	type: 'input', //分区消息批次最大等待时间
-      // 	field: 'kafkaLingerMS	',
-      // 	label: vm.$t('dataForm.form.kafka.kafkaLingerMS	'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'source'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input', //消息传输超时时间
-      // 	field: 'kafkaDeliveryTimeoutMS',
-      // 	label: vm.$t('dataForm.form.kafka.kafkaDeliveryTimeoutMS'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'source'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input', //请求最大字节数
-      // 	field: 'kafkaMaxRequestSize',
-      // 	label: vm.$t('dataForm.form.kafka.kafkaMaxRequestSize'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'source'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-      // {
-      // 	type: 'input', //缓存消息字节数
-      // 	field: 'kafkaBufferMemory',
-      // 	label: vm.$t('dataForm.form.kafka.kafkaBufferMemory'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'source'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
-
-      // {
-      // 	type: 'input', //分区键字段名
-      // 	field: 'kafkaPartitionKey',
-      // 	label: vm.$t('dataForm.form.kafka.kafkaPartitionKey'),
-      // 	show: true,
-      // 	dependOn: [
-      // 		{
-      // 			triggerOptions: [
-      // 				{
-      // 					field: 'connection_type',
-      // 					value: 'source'
-      // 				}
-      // 			],
-      // 			triggerConfig: {
-      // 				show: false
-      // 			}
-      // 		}
-      // 	]
-      // },
     ]
   }
 }

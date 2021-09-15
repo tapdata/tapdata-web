@@ -71,45 +71,6 @@ export default function (vm) {
           }
         ]
       },
-      // {
-      // 	type: 'input',
-      // 	field: 'database_host',
-      // 	label: vm.$t('dataForm.form.host'),
-      // 	rules: [
-      // 		{
-      // 			required: true,
-      // 			validator: (rule, value, callback) => {
-      // 				let port = vm.model['database_port'];
-      // 				if (!value || !value.trim()) {
-      // 					callback(new Error(vm.$t('dataForm.error.noneHost')));
-      // 				} else if (!port) {
-      // 					callback(new Error(vm.$t('dataForm.error.nonePort')));
-      // 				} else if (!/\d+/.test(port)) {
-      // 					callback(new Error(vm.$t('dataForm.error.portNumber')));
-      // 				} else if (port < 1 || port > 65535) {
-      // 					callback(new Error(vm.$t('dataForm.error.portRange')));
-      // 				} else {
-      // 					callback();
-      // 				}
-      // 			}
-      // 		}
-      // 	],
-      // 	appendSlot: h => {
-      // 		return h('FbInput', {
-      // 			props: {
-      // 				value: vm.model['database_port'],
-      // 				config: {
-      // 					placeholder: vm.$t('dataForm.form.port')
-      // 				}
-      // 			},
-      // 			on: {
-      // 				input(val) {
-      // 					vm.model['database_port'] = val;
-      // 				}
-      // 			}
-      // 		});
-      // 	}
-      // },
       {
         type: 'input',
         field: 'database_name',
@@ -134,19 +95,6 @@ export default function (vm) {
         label: vm.$t('dataForm.form.databaseOwner'),
         required: true
       },
-      // {
-      //   type: 'switch',
-      //   field: 'schemaAutoUpdate',
-      //   label: vm.$t('dataForm.form.ReloadSchema')
-      // },
-      // {
-      //   type: 'input',
-      //   field: 'table_filter',
-      //   label: vm.$t('dataForm.form.tableFilter'),
-      //   tips: vm.$t('dataForm.form.tableFilterTips'),
-      //   maxlength: 500,
-      //   showWordLimit: true
-      // },
       {
         type: 'input',
         field: 'additionalString',
@@ -156,13 +104,8 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        //tips: vm.$t('dataForm.form.timeZoneTips'),
+        tip: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
-        show: true
-      },
-      {
-        type: 'slot',
-        slot: 'timezone',
         show: true
       }
     ]

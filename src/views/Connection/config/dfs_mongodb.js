@@ -29,7 +29,7 @@ export default function (vm) {
         field: 'isUrl',
         show: true,
         label: vm.$t('dataForm.form.options.connectionMode'),
-        customClass: 'large-item',
+        customClass: 'mongodb-item',
         isVertical: false,
         button: true,
         outerTip: true,
@@ -107,6 +107,7 @@ export default function (vm) {
         type: 'slot',
         slot: 'urlTip',
         show: false,
+        customClass: 'mongodb-tip-item',
         dependOn: [
           {
             triggerOptions: [
@@ -237,7 +238,7 @@ export default function (vm) {
         type: 'radio',
         field: 'ssl',
         label: vm.$t('dataForm.form.ssl'),
-        customClass: 'large-item',
+        customClass: 'mongodb-item',
         isVertical: false,
         button: true,
         outerTip: true,
