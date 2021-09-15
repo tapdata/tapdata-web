@@ -56,7 +56,7 @@ export default {
   agent_status_stopped: '離線',
   agent_search: '按ID/實例名稱搜索',
   agent_test_use: '僅供測試使用',
-  agent_button_create: '創建 Agent',
+  agent_button_create: '創建Agent',
   agent_button_order1: '訂購託管實例',
   agent_button_order2: '實例訂購',
   agent_button_deploy: '部署',
@@ -103,6 +103,8 @@ export default {
   agent_detail_host_memory_size: '宿主機內存大小',
   agent_detail_installation_manual: '安裝目錄',
   agent_detail_run_manual: '運行目錄',
+  agent_list_empty_desc1: '快來',
+  agent_list_empty_desc2: '開始實時數據同步吧~',
 
   // agent部署
   agent_deploy_title: 'Agent 下載與安裝',
