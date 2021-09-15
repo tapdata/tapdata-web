@@ -1517,7 +1517,8 @@ export default {
         java_processor: 'app.FieldProcess',
         redis: 'app.Redis',
         hive: 'app.HiveNode',
-        hana: 'app.HanaNode'
+        hana: 'app.HanaNode',
+        clickhouse: 'app.ClickHouse'
       }
       if (data) {
         let stageMap = {}

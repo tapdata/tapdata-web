@@ -416,7 +416,7 @@ export default {
           name: data.source.name || data.label,
           type: data.source.database_type
         }
-      } else if (['table', 'view', 'collection', 'mongo_view', 'hive'].includes(data.meta_type)) {
+      } else if (['table', 'view', 'collection', 'mongo_view', 'hive', 'clickhouse'].includes(data.meta_type)) {
         // let primaryKeys = '';
         if (data.fields) {
           // primaryKeys = data.fields
