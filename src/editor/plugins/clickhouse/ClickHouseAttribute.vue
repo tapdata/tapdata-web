@@ -300,6 +300,15 @@ export default {
         this.stageId = cell.id
         this.getDataFlow()
         _.merge(this.model, data)
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.stageId]
+          })
       }
       this.mergedSchema = cell.getOutputSchema()
       this.dataNodeInfo = dataNodeInfo || {}

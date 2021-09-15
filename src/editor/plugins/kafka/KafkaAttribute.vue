@@ -380,21 +380,6 @@ export default {
         this.scope = vueAdapter?.editor?.scope
         this.stageId = cell.id
         this.getDataFlow()
-        let isTargetSupport = true
-        if (cell.getInputSchema()) {
-          let targetDatabaseType = cell.getInputSchema().map(v => v.databaseType)
-          if (targetDatabaseType?.length > 0) {
-            targetDatabaseType.forEach(v => {
-              if (!ALLOW_FIELD_MAPPING.includes(v)) {
-                isTargetSupport = false
-              }
-            })
-          }
-        }
-        //是否显示字段推演
-        if (ALLOW_FIELD_MAPPING.includes(data.databaseType) && isTargetSupport) {
-          this.showFieldMapping = true
-        }
         if (typeof data.kafkaPartitionKey === 'string') {
           if (!data.kafkaPartitionKey) {
             data.kafkaPartitionKey = []
@@ -403,6 +388,15 @@ export default {
           }
         }
         _.merge(this.model, data)
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.stageId]
+          })
       }
       this.mergedSchema = cell.getOutputSchema()
       this.tableList = this.mergedSchema?.fields || []
