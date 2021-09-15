@@ -23,6 +23,8 @@ const proxy = {
   changeOrigin: false
 }
 
+//sass变量
+let varUrl = '~@/styles/var.scss'
 module.exports = {
   assetsDir: 'static',
   lintOnSave: true,
@@ -151,7 +153,7 @@ module.exports = {
   css: {
     loaderOptions: {
       scss: {
-        additionalData: `@import "~@/styles/var.scss";`
+        additionalData: `@import "${varUrl}";`
       }
     }
   }
