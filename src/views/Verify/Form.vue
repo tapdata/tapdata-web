@@ -1,6 +1,6 @@
 <template>
   <VerficationForm
-    class="verify-form-wrapper"
+    class="g-panel-container"
     :remoteFunc="remoteFunc"
     :optionsFunc="optionsFunc"
     :dataflowFunc="dataflowFunc"
@@ -8,13 +8,8 @@
     :submitFunc="submitFunc"
   ></VerficationForm>
 </template>
-<style lang="scss" scoped>
-.verify-form-wrapper {
-  background: #fff;
-}
-</style>
 <script>
-import VerficationForm from 'web-core/views/verification/form.vue'
+import VerficationForm from 'web-core/views/verification/Form.vue'
 export default {
   components: { VerficationForm },
   methods: {

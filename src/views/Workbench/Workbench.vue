@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$route.name === 'Workbench'" class="workbench-container px-8">
+  <div v-if="$route.name === 'Workbench'" class="workbench-container">
     <!--	快速开始	-->
     <div class="workbench-start workbench-section">
       <el-row :gutter="40" class="section-header py-6">
