@@ -56,7 +56,7 @@ export default {
         {
           type: 'error',
           customClass: 'schema-error-dialog',
-          confirmButtonText: this.$t('dialog_button_close')
+          confirmButtonText: this.$t('button_close')
         }
       )
     }

@@ -1,7 +1,7 @@
 <template>
   <section class="verify-form-wrap" v-loading="loading">
     <div class="verify-form-title">
-      {{ $route.params.id ? $t('dataVerification.edit') : $t('dataVerification.newVerify') }}
+      {{ $route.params.id ? $t('verify_title_edit') : $t('verify_title_create') }}
     </div>
     <ElForm
       inline-message
@@ -18,7 +18,6 @@
           filterable
           class="form-select"
           v-model="form.flowId"
-          :placeholder="$t('dataVerification.chooseJob')"
           :loading="!flowOptions"
           @input="flowChangeHandler"
         >
@@ -60,8 +59,8 @@
             :value="[form.timing.start, form.timing.end]"
             type="datetimerange"
             range-separator="-"
-            :start-placeholder="$t('dataVerification.startTime')"
-            :end-placeholder="$t('dataVerification.LastTime')"
+            :start-placeholder="$t('date_picker_start_time')"
+            :end-placeholder="$t('date_picker_end_time')"
             align="right"
             :default-time="['00:00:00', '23:59:59']"
             value-format="timestamp"
@@ -92,14 +91,23 @@
         </ElSelect>
       </ElFormItem>
     </ElForm>
-    <div class="joint-table mt-3">
+    <div
+      v-if="flowStages"
+      v-loading="!flowStages.length"
+      class="joint-table mt-3"
+      :class="{ error: !!jointErrorMessage }"
+      @click="jointErrorMessage = ''"
+    >
       <div class="joint-table-header">
-        <span>{{ $t('verify_form_joint_table_header') }}</span>
+        <div>
+          <span>{{ $t('verify_form_joint_table_header') }}</span>
+          <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
+        </div>
         <ElLink type="primary" :disabled="!form.tasks.length" @click="clear">{{
           $t('verify_button_joint_table_clear')
         }}</ElLink>
       </div>
-      <ul v-if="flowStages" v-loading="!flowStages.length" class="joint-table-main" id="data-verification-form">
+      <ul class="joint-table-main" id="data-verification-form">
         <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="index">
           <div class="joint-table-setting">
             <div class="setting-item">
@@ -158,7 +166,7 @@
               <pre class="item-script">{{ item.webScript }}</pre>
             </div>
           </div>
-          <div class="ml-6 py-3">
+          <div class="ml-6">
             <ElLink type="primary" @click="removeItem(index)">{{ $t('button_delete') }}</ElLink>
           </div>
         </li>
@@ -169,8 +177,8 @@
       </div>
     </div>
     <div class="mt-8">
-      <VButton @click="goBack()">{{ $t('dataVerification.back') }}</VButton>
-      <VButton type="primary" @click="nextStep()">{{ $t('app.save') }}</VButton>
+      <VButton @click="goBack()">{{ $t('button_back') }}</VButton>
+      <VButton type="primary" @click="nextStep()">{{ $t('button_save') }}</VButton>
     </div>
     <ElDialog
       :title="$t('dataVerification.JSVerifyLogic')"
@@ -189,8 +197,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <VButton @click="handleAddScriptClose">{{ $t('dataForm.cancel') }}</VButton>
-        <VButton type="primary" @click="submitScript">{{ $t('message.confirm') }}</VButton>
+        <VButton @click="handleAddScriptClose">{{ $t('button_cancel') }}</VButton>
+        <VButton type="primary" @click="submitScript">{{ $t('button_confirm') }}</VButton>
       </span>
     </ElDialog>
   </section>
@@ -211,6 +219,9 @@
 .joint-table {
   border-radius: 4px;
   border: 1px solid #e8e8e8;
+  &.error {
+    border-color: map-get($color, danger);
+  }
 }
 .joint-table-header {
   padding: 16px 24px;
@@ -233,7 +244,6 @@
   }
   .setting-item {
     display: flex;
-    align-items: center;
     margin-bottom: 0;
     .el-form-item__content {
       display: flex;
@@ -242,14 +252,16 @@
     }
     .item-label {
       width: 80px;
+      line-height: 32px;
       text-align: left;
     }
     .item-icon {
       margin: 0 10px;
-      font-size: 16px;
       width: 20px;
-      text-align: center;
+      line-height: 32px;
       color: rgba(0, 0, 0, 0.6);
+      font-size: 16px;
+      text-align: center;
     }
     .item-time-picker,
     .item-input,
@@ -279,6 +291,13 @@
 }
 </style>
 <style lang="scss">
+.joint-table {
+  .red .el-input__inner {
+    border: none;
+    border: 1px solid #ee5353;
+    border-radius: 4px;
+  }
+}
 .js-wrap {
   display: flex;
   flex-wrap: nowrap;
@@ -373,22 +392,22 @@ export default {
       rules: {
         flowId: [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksDataFlow'))
+            validator: requiredValidator(this.$t('verify_validator_message_task'))
           }
         ],
         name: [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksJobName'))
+            validator: requiredValidator(this.$t('verify_validator_message_job_name'))
           }
         ],
         'timing.start': [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksTime'), true)
+            validator: requiredValidator(this.$t('verify_validator_message_time'), true)
           }
         ],
         'timing.intervals': [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksVerifyInterval'), true)
+            validator: requiredValidator(this.$t('verify_validator_message_frequency'), true)
           }
         ]
       },
@@ -401,7 +420,8 @@ export default {
       formIndex: '',
       webScript: '',
       width: '600',
-      allStages: null
+      allStages: null,
+      jointErrorMessage: ''
     }
   },
   created() {
@@ -860,7 +880,7 @@ export default {
       this.dialogAddScriptVisible = true
     },
     removeScript(index) {
-      this.$confirm(this.$t('message.verifyConfirm'), this.$t('message.delete'), {
+      this.$confirm(this.$t('verify_message_confirm_delete_script'), this.$t('button_delete'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
@@ -884,7 +904,7 @@ export default {
       this.dialogAddScriptVisible = false
     },
     goBack() {
-      this.$confirm(this.$t('dataVerification.backConfirmMessage'), this.$t('dataVerification.backConfirmTitle'), {
+      this.$confirm(this.$t('verify_message_confirm_back'), this.$t('verify_message_title_confirm_back'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
@@ -899,7 +919,8 @@ export default {
           let tasks = this.form.tasks
           let index = 0
           if (!tasks.length) {
-            return this.$message.error(this.$t('dataVerification.tasksVerifyCondition'))
+            this.jointErrorMessage = this.$t('verify_message_error_joint_table_not_set')
+            return
           }
           if (
             tasks.some((c, i) => {
@@ -908,7 +929,8 @@ export default {
             })
           ) {
             document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-            return this.$message.error(this.$t('dataVerification.lackSource'))
+            this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_set')
+            return this.$message.error(this.$t('verify_message_error_joint_table_target_or_source_not_set'))
           }
           index = 0
           if (
@@ -919,7 +941,8 @@ export default {
             })
           ) {
             document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-            return this.$message.error(this.$t('dataVerification.lackIndex'))
+            this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_set')
+            return this.$message.error(this.$t('verify_message_error_joint_table_field_not_set'))
           }
           index = 0
           if (
@@ -931,7 +954,8 @@ export default {
           ) {
             let item = document.getElementById('item-source-' + (index - 1))
             item.querySelector('input').focus()
-            return this.$message.error(this.$t('dataVerification.tasksAmount'))
+            this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_match')
+            return this.$message.error(this.$t('verify_message_error_joint_table_field_not_match'))
           }
           if (this.form.inspectMethod === 'jointField') {
             tasks.forEach(item => {
@@ -981,7 +1005,7 @@ export default {
             .catch(err => {
               let message = err?.response?.msg || err?.data?.msg || ''
               if (message === 'duplication for names') {
-                this.$message.error(this.$t('message.exists_name'))
+                this.$message.error(this.$t('message_name_exist'))
               }
             })
         }
