@@ -114,5 +114,12 @@ module.exports = {
         maxAssetSize: 30000000
       }
     }
+  },
+  css: {
+    loaderOptions: {
+      scss: {
+        additionalData: `@import "~@/styles/var.scss";`
+      }
+    }
   }
 }

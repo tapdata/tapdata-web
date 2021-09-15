@@ -284,7 +284,13 @@
         ></queryBuilder>
       </el-form>
       <div class="e-entity-wrap" style="text-align: center" v-if="model.connectionId && model.tableName">
-        <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
+        <el-button
+          class="fr"
+          type="success"
+          size="mini"
+          v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+          @click="hanlderLoadSchema"
+        >
           <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
           <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
           <span v-else>{{ $t('dataFlow.updateModel') }}</span>
@@ -363,6 +369,7 @@ import _ from 'lodash'
 import ws from '../../../api/ws'
 import factory from '../../../api/factory'
 import VIcon from '@/components/VIcon'
+import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editorMonitor = null;
@@ -622,7 +629,8 @@ export default {
       repeatTable: [],
       scope: '',
       dataFlow: '',
-      stageId: ''
+      stageId: '',
+      showFieldMapping: false
     }
   },
 
@@ -908,6 +916,21 @@ export default {
         if (data.custSql && data.custSql.conditions) {
           conds = JSON.parse(JSON.stringify(data.custSql.conditions))
           delete data.custSql.conditions
+        }
+        let isTargetSupport = true
+        if (cell.getInputSchema()) {
+          let targetDatabaseType = cell.getInputSchema().map(v => v.databaseType)
+          if (targetDatabaseType?.length > 0) {
+            targetDatabaseType.forEach(v => {
+              if (!ALLOW_FIELD_MAPPING.includes(v)) {
+                isTargetSupport = false
+              }
+            })
+          }
+        }
+        //是否显示字段推演
+        if (ALLOW_FIELD_MAPPING.includes(data.databaseType) && isTargetSupport) {
+          this.showFieldMapping = true
         }
         _.merge(this.model, data)
         if (this.model.custSql && this.model.custSql.conditions && conds && conds.length > 0)

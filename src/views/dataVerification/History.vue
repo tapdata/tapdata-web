@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import History from 'web-core/views/verification/history.vue'
+import History from './old/history.vue'
 export default {
   components: {
     History
