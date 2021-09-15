@@ -2,7 +2,8 @@ export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '120px'
+      labelWidth: '120px',
+      labelColon: true
     },
     defaultModel: {
       connection_type: 'source_and_target'
@@ -79,12 +80,8 @@ export default function (vm) {
         label: vm.$t('dataForm.form.timeZone'),
         //tips: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
-        show: true
-      },
-      {
-        type: 'slot',
-        slot: 'timezone',
-        show: true
+        show: true,
+        tip: '影响类型: DATE'
       }
     ]
   }
