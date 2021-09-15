@@ -719,7 +719,7 @@ export default {
         this.$api('DataFlows')
           .tranModelVersionControl(param)
           .then(data => {
-            this.showFieldMapping = data.stageId
+            this.showFieldMapping = data[this.stageId]
           })
       }
       this.cell = cell
