@@ -54,5 +54,14 @@ export default {
   js_func_delete_remind: '确定要删除函数',
 
   // Dag
-  dag_data_node_label_dameng: 'Dameng节点'
+  dag_data_node_label_dameng: 'Dameng节点',
+  dag_data_node_label_database_link_table: '表名大小写',
+  dag_data_node_label_database_link_field: '字段名大小写',
+  dag_data_node_label_database_link_unchang: '不变',
+  dag_data_node_label_database_link_to_uppercase: '转为大写',
+  dag_data_node_label_database_link_to_lowercase: '转为小写',
+  dag_data_node_label_memcache_type: '缓存类型',
+  dag_data_node_label_memcache_type_all: '全局缓存',
+  dag_data_node_label_memcache_type_local: '局部缓存',
+  dag_data_node_label_memcache_type_tip: '全局缓存所有任务可引用，局部缓存仅限当前DAG引用。'
 }

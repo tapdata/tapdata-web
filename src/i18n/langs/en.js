@@ -38,5 +38,15 @@ export default {
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
 
   //Dag
-  dag_data_node_label_dameng: 'Dameng Node'
+  dag_data_node_label_dameng: 'Dameng Node',
+  dag_data_node_label_database_link_table: 'Table name case',
+  dag_data_node_label_database_link_field: 'Field name case',
+  dag_data_node_label_database_link_unchang: 'Unchanged',
+  dag_data_node_label_database_link_to_uppercase: 'Uppercase',
+  dag_data_node_label_database_link_to_lowercase: 'Lowercase',
+  dag_data_node_label_memcache_type: 'Cache Type',
+  dag_data_node_label_memcache_type_all: 'Global cache',
+  dag_data_node_label_memcache_type_local: 'Local cache',
+  dag_data_node_label_memcache_type_tip:
+    'All tasks in the global cache can be referenced, and the local cache can only be referenced by the current DAG. '
 }

@@ -26,7 +26,7 @@
             :placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
           ></MultiSelection>
         </el-form-item>
-        <el-form-item required>
+        <!-- <el-form-item required>
           <span slot="label">
             <span>{{ $t('editor.cell.processor.aggregate.aggregateSizeLabel') }}</span>
             <el-tooltip effect="dark" placement="top">
@@ -71,12 +71,6 @@
           </el-switch>
         </el-form-item>
         <el-form-item :label="$t('dataFlow.aggrCleanSecond')" prop="aggrCleanSecond" required>
-          <!-- :value="form.aggrCleanSecond <= 3600 ? 3600 : form.aggrCleanSecond"
-						@blur="
-							v => {
-								form.aggrCleanSecond = !v || v <= 3600 ? 3600 : v;
-							}
-						" -->
           <el-input type="number" v-model="form.aggrCleanSecond">
             <template slot="append">
               {{ $t('dataFlow.secondUnit') }}
@@ -89,7 +83,7 @@
               {{ $t('dataFlow.secondUnit') }}
             </template>
           </el-input>
-        </el-form-item>
+        </el-form-item> -->
       </el-col>
       <el-col style="padding: 0 10px">
         <el-row type="flex" :gutter="20" class="loopFrom" v-for="(item, index) in form.aggregations" :key="index">
@@ -244,8 +238,8 @@ export default {
       form: {
         name: '',
         type: 'aggregation_processor',
-        aggrCleanSecond: 3600,
-        aggrFullSyncSecond: 3600,
+        // aggrCleanSecond: 3600,
+        // aggrFullSyncSecond: 3600,
         aggregations: [
           {
             name: 'COUNT',
@@ -255,33 +249,33 @@ export default {
             groupByExpression: ''
           }
         ],
-        primaryKeys: '',
-        aggCacheMaxSize: 100000,
-        keepAggRet: false
+        primaryKeys: ''
+        // aggCacheMaxSize: 100000,
+        // keepAggRet: false
       },
       rules: {
-        aggrCleanSecond: [
-          {
-            required: true,
-            trigger: 'blur',
-            validator: (rule, value, callback) => {
-              if (!value || value < 3600) {
-                callback(new Error(this.$t('editor.cell.processor.aggregate.cleanSecondTimeLess3600')))
-              }
-            }
-          }
-        ],
-        aggrFullSyncSecond: [
-          {
-            required: true,
-            trigger: 'blur',
-            validator: (rule, value, callback) => {
-              if (!value || value < 3600) {
-                callback(new Error(this.$t('editor.cell.processor.aggregate.fullSyncSecondTimeLess3600')))
-              }
-            }
-          }
-        ]
+        // aggrCleanSecond: [
+        //   {
+        //     required: true,
+        //     trigger: 'blur',
+        //     validator: (rule, value, callback) => {
+        //       if (!value || value < 3600) {
+        //         callback(new Error(this.$t('editor.cell.processor.aggregate.cleanSecondTimeLess3600')))
+        //       }
+        //     }
+        //   }
+        // ],
+        // aggrFullSyncSecond: [
+        //   {
+        //     required: true,
+        //     trigger: 'blur',
+        //     validator: (rule, value, callback) => {
+        //       if (!value || value < 3600) {
+        //         callback(new Error(this.$t('editor.cell.processor.aggregate.fullSyncSecondTimeLess3600')))
+        //       }
+        //     }
+        //   }
+        // ]
       },
       primaryKeyOptions: [],
       aggaggExpression: '1',

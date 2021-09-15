@@ -36,5 +36,14 @@ export default {
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
 
   // Dag
-  dag_data_node_label_dameng: 'Dameng節點'
+  dag_data_node_label_dameng: 'Dameng節點',
+  dag_data_node_label_database_link_table: '表名大小寫',
+  dag_data_node_label_database_link_field: '字段名大小寫',
+  dag_data_node_label_database_link_unchang: '不變',
+  dag_data_node_label_database_link_to_uppercase: '轉為大寫',
+  dag_data_node_label_database_link_to_lowercase: '轉為小寫',
+  dag_data_node_label_memcache_type: '緩存類型',
+  dag_data_node_label_memcache_type_all: '全局緩存',
+  dag_data_node_label_memcache_type_local: '局部緩存',
+  dag_data_node_label_memcache_type_tip: '全局緩存所有任務可引用，局部緩存僅限當前DAG引用。 '
 }
