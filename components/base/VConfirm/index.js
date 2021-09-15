@@ -32,6 +32,10 @@ const defaults = {
   width: '416px' // 需要完整的像素字符串
 }
 
+function isVNode(node) {
+  return node !== null && typeof node === 'object' && hasOwnProperty.call(node, 'componentOptions')
+}
+
 const defaultCallback = action => {
   if (currentMsg) {
     let callback = currentMsg.callback
@@ -89,6 +93,12 @@ const showNextMsg = () => {
     if (options.hasOwnProperty(prop)) {
       instance[prop] = options[prop]
     }
+  }
+  if (isVNode(instance.message)) {
+    instance.$slots.default = [instance.message]
+    instance.message = null
+  } else {
+    delete instance.$slots.default
   }
   if (options.callback === undefined) {
     instance.callback = defaultCallback
