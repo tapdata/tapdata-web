@@ -166,7 +166,7 @@
               <pre class="item-script">{{ item.webScript }}</pre>
             </div>
           </div>
-          <div class="ml-6 py-3">
+          <div class="ml-6">
             <ElLink type="primary" @click="removeItem(index)">{{ $t('button_delete') }}</ElLink>
           </div>
         </li>
@@ -244,7 +244,6 @@
   }
   .setting-item {
     display: flex;
-    align-items: center;
     margin-bottom: 0;
     .el-form-item__content {
       display: flex;
@@ -253,14 +252,16 @@
     }
     .item-label {
       width: 80px;
+      line-height: 32px;
       text-align: left;
     }
     .item-icon {
       margin: 0 10px;
-      font-size: 16px;
       width: 20px;
-      text-align: center;
+      line-height: 32px;
       color: rgba(0, 0, 0, 0.6);
+      font-size: 16px;
+      text-align: center;
     }
     .item-time-picker,
     .item-input,
