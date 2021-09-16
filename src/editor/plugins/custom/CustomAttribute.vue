@@ -288,21 +288,15 @@ export default {
         this.getDataFlow()
         this.stageId = cell.id
         _.merge(this.model, data)
-      }
-      let isTargetSupport = true
-      if (cell.getInputSchema()) {
-        let targetDatabaseType = cell.getInputSchema().map(v => v.databaseType)
-        if (targetDatabaseType?.length > 0) {
-          targetDatabaseType.forEach(v => {
-            if (!ALLOW_FIELD_MAPPING.includes(v)) {
-              isTargetSupport = false
-            }
-          })
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.stageId
         }
-      }
-      //是否显示字段推演
-      if (ALLOW_FIELD_MAPPING.includes(data.databaseType) && isTargetSupport) {
-        this.showFieldMapping = true
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.stageId]
+          })
       }
       this.isSourceDataNode = dataNodeInfo && (dataNodeInfo.isSource || !dataNodeInfo.isTarget)
       this.mergedSchema = cell.getOutputSchema()

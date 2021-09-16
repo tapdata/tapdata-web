@@ -93,4 +93,7 @@ export default class DataFlows extends PublicAPI {
   autoMetadata(params) {
     return axios.post(this.url + '/autoMetadata', params)
   }
+  tranModelVersionControl(params) {
+    return axios.post(this.url + '/tranModelVersionControl', params)
+  }
 }

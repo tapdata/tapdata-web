@@ -695,21 +695,6 @@ export default {
           conds = JSON.parse(JSON.stringify(data.custSql.conditions))
           delete data.custSql.conditions
         }
-        let isTargetSupport = true
-        if (cell.getInputSchema()) {
-          let targetDatabaseType = cell.getInputSchema().map(v => v.databaseType)
-          if (targetDatabaseType?.length > 0) {
-            targetDatabaseType.forEach(v => {
-              if (!ALLOW_FIELD_MAPPING.includes(v)) {
-                isTargetSupport = false
-              }
-            })
-          }
-        }
-        //是否显示字段推演
-        if (ALLOW_FIELD_MAPPING.includes(data.databaseType) && isTargetSupport) {
-          this.showFieldMapping = true
-        }
         _.merge(this.model, data)
         if (this.model.custSql && this.model.custSql.conditions && conds && conds.length > 0)
           conds.forEach(it => {
@@ -727,6 +712,15 @@ export default {
           this.model.enableInitialOrder = true
         }
         this.tableIsLink()
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.stageId]
+          })
       }
       this.cell = cell
       tempSchemas.length = 0
