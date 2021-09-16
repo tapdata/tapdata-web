@@ -66,7 +66,12 @@
                 用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。
               </div>
               <div class="CT-task-transfer">
-                <Transfer ref="transfer" :transferData="transferData" :isTwoWay="settingModel.bidirectional"></Transfer>
+                <Transfer
+                  ref="transfer"
+                  :transferData="transferData"
+                  :tableNameTransform="settingModel.tableNameTransform"
+                  :isTwoWay="settingModel.bidirectional"
+                ></Transfer>
               </div>
             </div>
             <!-- 步骤5 -->

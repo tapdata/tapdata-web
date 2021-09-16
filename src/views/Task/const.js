@@ -8,6 +8,8 @@ export const SETTING_MODEL = {
   readBatchSize: 1000,
   cdcConcurrency: false,
   transformerConcurrency: 8,
+  fieldNameTransform: '',
+  tableNameTransform: '',
   noPrimaryKey: true,
   syncPoints: [
     {

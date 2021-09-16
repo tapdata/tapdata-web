@@ -194,6 +194,44 @@ export default function () {
       {
         type: 'slot',
         slot: 'needToCreateIndex'
+      },
+      {
+        type: 'select',
+        field: 'tableNameTransform',
+        label: '表名大小写',
+        options: [
+          {
+            label: '不变',
+            value: ''
+          },
+          {
+            label: '转为大写',
+            value: 'toUpperCase'
+          },
+          {
+            label: '转为小写',
+            value: 'toLowerCase'
+          }
+        ]
+      },
+      {
+        type: 'select',
+        field: 'fieldNameTransform',
+        label: '字段名大小写',
+        options: [
+          {
+            label: '不变',
+            value: ''
+          },
+          {
+            label: '转为大写',
+            value: 'toUpperCase'
+          },
+          {
+            label: '转为小写',
+            value: 'toLowerCase'
+          }
+        ]
       }
       // {
       //   type: 'slot',

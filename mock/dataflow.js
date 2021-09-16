@@ -623,6 +623,8 @@ module.exports = {
         distinctWriteType: 'intellect',
         stopOnError: false,
         isOpenAutoDDL: false,
+        fieldNameTransform: '',
+        tableNameTransform: '',
         twoWay: false,
         syncPoints: [
           {

@@ -22,7 +22,16 @@
       @right-check-change="handleSelectTable"
     >
       <span slot-scope="{ option }">
-        <span> {{ option.label }}</span>
+        <span v-if="selectSourceArr.includes(option.label)">{{ formData.table_prefix }}</span>
+        <span v-if="selectSourceArr.includes(option.label) && tableNameTrans === 'toLowerCase'">{{
+          option.label.toLowerCase()
+        }}</span>
+        <span v-else-if="selectSourceArr.includes(option.label) && tableNameTrans === 'toUpperCase'">{{
+          option.label.toUpperCase()
+        }}</span>
+        <span v-else>{{ option.label }}</span>
+        <span v-if="selectSourceArr.includes(option.label)">{{ formData.table_suffix }}</span>
+        <!-- <span> {{ option.label }}</span> -->
         <!-- 字段映射 放在表设置了 -->
         <!--        <span-->
         <!--          v-if="selectSourceArr.includes(option.key) && !isTwoWay"-->
@@ -135,7 +144,7 @@ import VIcon from '@/components/VIcon'
 let selectKeepArr = []
 export default {
   components: { VIcon },
-  props: ['transferData', 'isTwoWay'],
+  props: ['transferData', 'isTwoWay', 'tableNameTransform'],
   data() {
     var validatePrefix = (rule, value, callback) => {
       if (value === '') {
@@ -186,8 +195,12 @@ export default {
       sourceId: '',
       bidirectional: '',
       loadFieldsStatus: 'finished',
-      reloadLoading: false // 重新加载
+      reloadLoading: false, // 重新加载
+      tableNameTrans: ''
     }
+  },
+  created() {
+    this.tableNameTrans = this.tableNameTransform
   },
   methods: {
     //获取左边数据
@@ -234,7 +247,7 @@ export default {
               this.selectSourceArr = []
               this.field_process = []
             }
-            this.preFixSuffixData()
+            // this.preFixSuffixData()
             this.$forceUpdate()
           }
         })
@@ -454,7 +467,7 @@ export default {
           el.label = el.key
         }
       })
-      this.preFixSuffixData()
+      // this.preFixSuffixData()
     },
     saveFileOperations() {
       //如果右边为空  则提示不可以保存
@@ -501,7 +514,7 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           this.dialogVisible = false
-          this.preFixSuffixData()
+          // this.preFixSuffixData()
           this.field_process = [] //表名有变动 改名清空字段处理器
         }
       })
@@ -562,28 +575,28 @@ export default {
     },
     // 添加前后缀数据处理
     preFixSuffixData() {
-      if (this.sourceData.length && this.selectSourceArr.length) {
-        let selectSourceArr = []
-        this.selectSourceArr = Array.from(new Set(this.selectSourceArr))
-        this.sourceData.forEach(sourceName => {
-          this.selectSourceArr.map(k => {
-            if (k === sourceName.key) {
-              selectSourceArr.push(k)
-            }
-          })
-        })
-        this.selectSourceArr = selectSourceArr
-      }
-      if (this.sourceData && this.sourceData.length && this.selectSourceArr.length) {
-        for (let i = 0; i < this.sourceData.length; i++) {
-          for (let j = 0; j < this.selectSourceArr.length; j++) {
-            if (this.sourceData[i].key === this.selectSourceArr[j]) {
-              this.sourceData[i].label =
-                this.formData.table_prefix + this.sourceData[i].key + this.formData.table_suffix
-            }
-          }
-        }
-      }
+      // if (this.sourceData.length && this.selectSourceArr.length) {
+      //   let selectSourceArr = []
+      //   this.selectSourceArr = Array.from(new Set(this.selectSourceArr))
+      //   this.sourceData.forEach(sourceName => {
+      //     this.selectSourceArr.map(k => {
+      //       if (k === sourceName.key) {
+      //         selectSourceArr.push(k)
+      //       }
+      //     })
+      //   })
+      //   this.selectSourceArr = selectSourceArr
+      // }
+      // if (this.sourceData && this.sourceData.length && this.selectSourceArr.length) {
+      //   for (let i = 0; i < this.sourceData.length; i++) {
+      //     for (let j = 0; j < this.selectSourceArr.length; j++) {
+      //       if (this.sourceData[i].key === this.selectSourceArr[j]) {
+      //         this.sourceData[i].label =
+      //           this.formData.table_prefix + this.sourceData[i].key + this.formData.table_suffix
+      //       }
+      //     }
+      //   }
+      // }
     },
     //重新加载模型
     async reload() {
