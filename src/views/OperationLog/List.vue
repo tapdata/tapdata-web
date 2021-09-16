@@ -51,14 +51,14 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <el-button plain class="btn-refresh" @click="fetch()">
+              <el-button plain class="btn-refresh" @click="table.fetch(1)">
                 <VIcon>refresh</VIcon>
               </el-button>
             </el-form-item>
           </el-form>
         </div>
       </div>
-      <VList ref="table" row-key="id" :remoteMethod="fetch" @sort-change="sortChange">
+      <VList ref="table" row-key="id" :remoteMethod="getData" @sort-change="sortChange">
         <el-table-column label="用户名" width="200">
           <template slot-scope="scope">
             <div>{{ scope.row.username }}</div>
@@ -173,14 +173,13 @@ export default {
         let query = route.query
         this.searchParams = Object.assign(this.searchParams, query)
         let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
-        this.fetch(pageNum)
+        this.table.fetch(pageNum)
       }
     }
   },
   created() {
     let query = this.$route.query
     this.searchParams = Object.assign(this.searchParams, query)
-    this.fetch()
   },
   methods: {
     getModularAndOperation(operationType) {
@@ -207,7 +206,7 @@ export default {
       }, debounce)
     },
 
-    fetch({ page }) {
+    getData({ page }) {
       const { toRegExp } = this.$util
       this.loading = true
       let { current, size } = page
