@@ -3,7 +3,17 @@
     <div class="connection-from-body">
       <main class="connection-from-main">
         <div class="connection-from-title">{{ $route.params.id ? '编辑连接' : '创建连接' }}</div>
-        <div class="connection-from-label">
+        <div class="connection-from-label" v-if="$route.params.id">
+          <label class="label">数据源: </label>
+          <div class="content-box">
+            <div class="img-box ml-2">
+              <img :src="$util.getConnectionTypeImg(databaseType)" />
+            </div>
+            <span class="ml-2">{{ model.name }}</span>
+            <el-button class="ml-2" type="text" @click="dialogEditNameVisible = true"> 改名 </el-button>
+          </div>
+        </div>
+        <div class="connection-from-label" v-else>
           <label class="label">数据源类型:</label>
           <div class="content-box">
             <div class="img-box ml-2">
@@ -17,450 +27,29 @@
         </div>
         <div class="form-wrap">
           <div class="form">
-            <form-builder ref="form" class="form-builder" v-model="model" :config="config" @value-change="formChange">
+            <form-builder ref="form" class="form-builder" v-model="model" :config="config">
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
-              <div class="url-tip" slot="tableFilter">
-                {{ $t('dataForm.form.tableFilterTips') }}
-              </div>
-              <div class="url-tip" slot="timezone">
-                {{ $t('dataForm.form.timeZoneTips') }}
-              </div>
-              <div class="url-tip" slot="kafkaUri">
-                {{ $t('dataForm.form.kafka.hostPlaceHolder') }}
-              </div>
-              <div class="url-tip" slot="lonoreFormatTip">
-                {{ $t('dataForm.form.kafka.lonoreFormatTip') }}
-              </div>
-              <div class="url-tip" slot="pushErrorTip">
-                {{ $t('dataForm.form.kafka.pushErrorTip') }}
-              </div>
-
-              <div class="url-tip" slot="queueTip" v-if="model.mqType === '0'">
-                {{ $t('dataForm.form.mq.queueSetTip') }}
-              </div>
-              <div class="url-tip" slot="topicTip">
-                {{ $t('dataForm.form.mq.topicSetTip') }}
-              </div>
-              <div class="url-tip" slot="brokerUrlTip" v-if="model.mqType === '0'">
-                {{ $t('dataForm.form.mq.brokerUrlTip') }}
-              </div>
-              <!-- rest api -->
-              <div class="url-tip" slot="req_pre_process">
-                <div>function request_process(url, headers, request_params, offset) {</div>
-                <el-input type="textarea" :rows="5" v-model="model.req_pre_process"></el-input>
-                <div>return {'url': url, 'headers':headers,'request_params':request_params, 'offset': offset};}</div>
-              </div>
-              <div class="url-tip" slot="resp_pre_process">
-                <div>function response_process(result) {</div>
-                <div>var tapdata_result = { data_rows:[], access_token:null, 'tapdata_offset': offset }</div>
-                <el-input type="textarea" :rows="5" v-model="model.resp_pre_process"></el-input>
-                <div>return tapdata_result; }</div>
-              </div>
             </form-builder>
-            <!-- custom_connection -->
-            <template v-if="databaseType === 'custom_connection'">
-              <div
-                class="custom-connection-box"
-                v-if="
-                  ['cdc', 'initial_sync+cdc'].includes(model.custom_type) && ['source'].includes(model.connection_type)
-                "
-              >
-                <div class="custom-connection-label">
-                  {{ $t('dataForm.form.custom_connection.cdc_custom_code') }}
-                </div>
-                <div class="custom-connection-main">
-                  <div>function requestData(ctx) {</div>
-                  <JsEditor ref="jsCdcEditor" :code.sync="model.custom_cdc_script" :width.sync="width"></JsEditor>
-                  <div>}</div>
-                </div>
-              </div>
-              <div
-                class="custom-connection-box"
-                v-if="
-                  ['initial_sync', 'initial_sync+cdc'].includes(model.custom_type) &&
-                  ['source'].includes(model.connection_type)
-                "
-              >
-                <div class="custom-connection-label">
-                  {{ $t('dataForm.form.custom_connection.history_custom_code') }}
-                </div>
-                <div class="custom-connection-main">
-                  <div>function requestData() {</div>
-                  <JsEditor
-                    ref="jsInitialEditor"
-                    :code.sync="model.custom_initial_script"
-                    :width.sync="width"
-                  ></JsEditor>
-                  <div>}</div>
-                </div>
-              </div>
-              <div class="custom-connection-box" v-if="['target'].includes(model.connection_type)">
-                <div class="custom-connection-label">
-                  {{ $t('dataForm.form.custom_connection.on_data_code') }}
-                </div>
-                <div class="custom-connection-main">
-                  <div style="margin-top: 10px; font-size: 14px">Info</div>
-                  <div>
-                    data = [{
-                    <span style="color: #998; font-style: italic"> // data is an array</span>
-                  </div>
-                  <div style="margin-left: 30px">
-                    op : " i ",
-                    <span style="color: #998; font-style: italic"> // i - insert, u - update, d - delete</span>
-                  </div>
-                  <div style="margin-left: 30px">
-                    from : " ",
-                    <span style="color: #998; font-style: italic"> // source table name</span>
-                  </div>
-                  <div style="margin-left: 30px">
-                    data : { },
-                    <span style="color: #998; font-style: italic"> // master data</span>
-                  </div>
-                  <div>}]</div>
-                  <div style="padding-bottom: 5px; margin-top: 10px; font-weight: bold">function onData(data) {</div>
-                  <JsEditor ref="jsOndataEditor" :code.sync="model.custom_ondata_script" :width.sync="width"></JsEditor>
-                  <div>}</div>
-                </div>
-              </div>
-            </template>
-            <!-- rest api -->
-            <template v-if="databaseType === 'rest api'">
-              <div class="rest-api-box">
-                <div class="rest-api-label">URL</div>
-                <div class="url-tip rest-api-url">
-                  <el-form :model="model" ref="urlInfoForm" label-width="104px" class="urlInfoForm">
-                    <el-row v-for="(item, parentIndex) in model.url_info" :key="parentIndex">
-                      <div class="rest-api-row">
-                        {{ model.data_sync_mode === 'INITIAL_INCREMENTAL_SYNC' ? item.url_type : model.data_sync_mode }}
-                      </div>
-                      <el-col :span="24" class="fromLoopBox">
-                        <el-form-item
-                          label="URL"
-                          :prop="'url_info.' + parentIndex + '.url'"
-                          :rules="{
-                            required: true,
-                            message: 'URL不能为空',
-                            trigger: 'blur'
-                          }"
-                        >
-                          <el-input v-model="item.url" size="mini"></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="12" class="fromLoopBox" type="flex" :gutter="20">
-                        <el-form-item :label="$t('dataForm.form.restApi.url_info_method')" :prop="item.method">
-                          <el-select v-model="item.method" class="min-input" size="mini">
-                            <el-option label="GET" value="GET"></el-option>
-                            <el-option label="POST" value="POST"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="12" class="fromLoopBox">
-                        <el-form-item label="Content Type" :prop="item.content_type">
-                          <el-select v-model="item.content_type" class="small-input" size="mini">
-                            <el-option label="form-data" value="application/form-data"></el-option>
-                            <el-option
-                              label="x-www-form-urlencoded"
-                              value="application/x-www-form-urlencoded;charset=UTF-8"
-                            ></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="24" class="fromLoopBox">
-                        <el-form-item
-                          :label="$t('dataForm.form.restApi.url_info_initial_offset')"
-                          :prop="item.offset_field"
-                          v-if="model.data_sync_mode === 'INCREMENTAL_SYNC' || item.url_type === 'INCREMENTAL_SYNC'"
-                        >
-                          <el-input v-model="item.offset_field" size="mini"></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="24" class="fromLoopBox">
-                        <el-form-item label="Headers">
-                          <div
-                            v-for="(header, headerIndex) in item.headerArray"
-                            :key="headerIndex"
-                            class="rest-api-Array"
-                          >
-                            <el-input
-                              :placeholder="$t('dataForm.form.restApi.url_info_header_name')"
-                              class="medium-input"
-                              size="mini"
-                              v-model="header.name"
-                            ></el-input>
-                            <el-input
-                              :placeholder="$t('dataForm.form.restApi.url_info_header_value')"
-                              class="medium-input rest-api-margin"
-                              size="mini"
-                              v-model="header.value"
-                            ></el-input>
-                            <VIcon class="add-btn-icon rest-api-margin" @click="addHeader(parentIndex)">plus</VIcon>
-                            <VIcon
-                              class="add-btn-icon rest-api-margin"
-                              v-show="item.headerArray.length > 1"
-                              @click="removeHeader(parentIndex, headerIndex)"
-                              >close</VIcon
-                            >
-                          </div>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="24" class="fromLoopBox">
-                        <el-form-item label="Parameters" prop="parameters">
-                          <div
-                            v-for="(parameter, parameterIndex) in item.parameterArray"
-                            :key="parameterIndex"
-                            class="rest-api-Array"
-                          >
-                            <el-input
-                              :placeholder="$t('dataForm.form.restApi.url_info_parameter_name')"
-                              class="medium-input"
-                              size="mini"
-                              v-model="parameter.name"
-                            ></el-input>
-                            <el-input
-                              :placeholder="$t('dataForm.form.restApi.url_info_parameter_value')"
-                              class="medium-input rest-api-margin"
-                              size="mini"
-                              v-model="parameter.value"
-                            ></el-input>
-                            <VIcon class="add-btn-icon rest-api-margin" @click="addParameter(parentIndex)">plus</VIcon>
-                            <VIcon
-                              class="add-btn-icon rest-api-margin"
-                              v-show="item.parameterArray.length > 1"
-                              @click="removeParameter(parentIndex, parameterIndex)"
-                              >close</VIcon
-                            >
-                          </div>
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                  </el-form>
-                </div>
-              </div>
-            </template>
-            <!-- grid fs -->
-            <template
-              v-if="
-                databaseType === 'gridfs' &&
-                model.file_type === 'excel' &&
-                model.gridfsReadMode === 'data' &&
-                model.connection_type === 'source'
-              "
-            >
-              <div class="gridfs-box">
-                <el-form label-width="100px" label-position="right" :rules="gridFSrules" :model="model" ref="excelForm">
-                  <!--工作页 -->
-                  <el-form-item :label="$t('editor.fileFormBuilder.sheet_range')" prop="sheet_start">
-                    <el-input
-                      v-model.number="model.sheet_start"
-                      maxlength="3"
-                      show-word-limit
-                      size="mini"
-                      onkeyup="model.sheet_start = model.sheet_start.replace(/[^\d.]/g,'');"
-                      :placeholder="$t('editor.fileFormBuilder.sheet_start')"
-                    ></el-input>
-                    <span class="separate"> ~ </span>
-                    <el-input
-                      v-model="model.sheet_end"
-                      maxlength="3"
-                      show-word-limit
-                      size="mini"
-                      onkeyup="model.sheet_end = model.sheet_end.replace(/[^\d.]/g,'');"
-                      :placeholder="$t('editor.fileFormBuilder.sheet_end')"
-                    ></el-input>
-                  </el-form-item>
-                  <!--字段范围 -->
-                  <el-form-item
-                    :label="$t('editor.fileFormBuilder.excel_header_type')"
-                    class="headerType"
-                    prop="excel_header_start"
-                  >
-                    <div>
-                      <el-radio-group v-model="model.gridfs_header_type" @change="changeHeaderType">
-                        <el-radio label="specified_line">{{
-                          $t('editor.fileFormBuilder.excel_header_coordinate')
-                        }}</el-radio>
-                        <el-radio label="custom">{{ $t('editor.fileFormBuilder.excel_header_range') }}</el-radio>
-                      </el-radio-group>
-                      <el-input
-                        v-model="model.gridfs_header_config"
-                        size="mini"
-                        :placeholder="$t('editor.fileFormBuilder.header_type_custom_label')"
-                        v-show="model.gridfs_header_type === 'custom'"
-                      ></el-input>
-                      <div v-show="model.gridfs_header_type !== 'custom'" class="excel_header_start">
-                        <el-input
-                          v-model="model.excel_header_start"
-                          size="mini"
-                          :placeholder="$t('editor.fileFormBuilder.excel_header_start')"
-                        ></el-input>
-                        <span class="separate"> ~ </span>
-                        <el-input
-                          v-model="model.excel_header_end"
-                          size="mini"
-                          :placeholder="$t('editor.fileFormBuilder.excel_header_end')"
-                        ></el-input>
-                      </div>
-                    </div>
-                  </el-form-item>
-                  <el-form-item v-show="model.gridfs_header_type !== 'custom'"
-                    ><div style="color: #999">
-                      {{ $t('editor.fileFormBuilder.excel_cell_point') }}
-                    </div></el-form-item
-                  >
-                  <!--字段获取方式 -->
-                  <el-form-item :label="$t('editor.fileFormBuilder.header_mapping')" class="excelHeaderType">
-                    <el-radio-group v-model="model.excel_header_type">
-                      <el-radio label="value">{{ $t('editor.fileFormBuilder.header_mapping_value') }}</el-radio>
-                      <el-radio label="index">{{ $t('editor.fileFormBuilder.header_mapping_index') }}</el-radio>
-                    </el-radio-group>
-                  </el-form-item>
-                  <!-- 内容 -->
-                  <el-form-item
-                    :label="$t('editor.fileFormBuilder.excel_value_type')"
-                    prop="excel_value_start"
-                    class="excel_value_start"
-                  >
-                    <el-input
-                      v-model.number="model.excel_value_start"
-                      maxlength="10"
-                      show-word-limit
-                      size="mini"
-                      onkeyup="model.excel_value_start = model.excel_value_start.replace(/[^\d.]/g,'');"
-                      :placeholder="$t('editor.fileFormBuilder.excel_value_start')"
-                    ></el-input>
-                    <span class="separate"> ~ </span>
-                    <el-input
-                      v-model.number="model.excel_value_end"
-                      maxlength="10"
-                      show-word-limit
-                      size="mini"
-                      onkeyup="model.excel_value_end = model.excel_value_end.replace(/[^\d.]/g,'');"
-                      :placeholder="$t('editor.fileFormBuilder.excel_value_end')"
-                    ></el-input>
-                  </el-form-item>
-                  <el-form-item
-                    ><div style="margin-top: -10px; color: #999">
-                      {{ $t('editor.fileFormBuilder.excel_value_range') }}
-                    </div></el-form-item
-                  >
-                </el-form>
-              </div>
-            </template>
-            <!-- 文件数据库 -->
-            <template v-if="model.database_type === 'file' && model.connection_type === 'source'">
-              <div class="fileBox">
-                <div class="file-label">
-                  {{ $t('dataForm.form.file.fileUrl') }}
-                </div>
-                <div class="file-form-content">
-                  <el-form
-                    :model="model"
-                    ref="fileForm"
-                    label-width="100px"
-                    class="demo-ruleForm"
-                    label-position="top"
-                    :inline-message="true"
-                  >
-                    <el-row
-                      type="flex"
-                      :gutter="20"
-                      class="loopFrom"
-                      v-for="(item, index) in model.file_sources"
-                      :key="index"
-                    >
-                      <el-col :span="24" class="fromLoopBox">
-                        <el-form-item
-                          required
-                          :label="$t('dataForm.form.file.path')"
-                          :prop="'file_sources.' + index + '.path'"
-                          :rules="{
-                            required: true,
-                            message: $t('dataForm.form.file.fileNone'),
-                            trigger: 'blur'
-                          }"
-                        >
-                          <el-input
-                            v-model="item.path"
-                            size="mini"
-                            :placeholder="$t('dataForm.form.file.pathPlaceholder')"
-                          ></el-input>
-                        </el-form-item>
-                        <el-form-item :label="$t('dataForm.form.file.recursive')" prop="path">
-                          <el-switch v-model="item.recursive"></el-switch>
-                        </el-form-item>
-                        <el-form-item :label="$t('dataForm.form.file.csvFijlter')">
-                          <el-select
-                            v-model="item.selectFileType"
-                            size="mini"
-                            style="width: 100%"
-                            @change="changeFileInclude(item, item.selectFileType)"
-                          >
-                            <el-option :label="$t('dataForm.form.file.include_filename')" value="include"></el-option>
-                            <el-option :label="$t('dataForm.form.file.exclude_filename')" value="exclude"></el-option>
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item v-if="item.selectFileType === 'include'">
-                          <el-input
-                            v-model="item.include_filename"
-                            size="mini"
-                            :placeholder="$t('dataForm.form.file.includePlaceholder')"
-                          ></el-input>
-                        </el-form-item>
-                        <el-form-item v-else>
-                          <el-input
-                            v-model="item.exclude_filename"
-                            size="mini"
-                            :placeholder="$t('dataForm.form.file.excludePlaceholder')"
-                          ></el-input>
-                        </el-form-item>
-                        <p style="font-size: 12px; color: #666">
-                          {{ $t('dataForm.form.file.viewExpression') }}
-                        </p>
-                      </el-col>
-                      <el-col :span="2" style="margin-right: -40px">
-                        <el-button plain style="padding: 0" @click="removeRow(item, index)">
-                          <VIcon class="remove">close</VIcon>
-                        </el-button>
-                      </el-col>
-                    </el-row>
-                    <el-button type="text" style="padding: 0" @click="addPathRow()">
-                      {{ $t('dataForm.form.file.addPath') }}
-                    </el-button>
-                  </el-form>
-                </div>
-              </div>
-            </template>
             <el-button type="text" size="mini" @click="startTest()">{{ $t('connection.testConnection') }}</el-button>
-            <span class="status">
-              <span class="error" v-if="['invalid'].includes(status)">
-                <VIcon class="color-danger" size="18">error</VIcon>
-                <span>
-                  {{ $t('connection.status.invalid') }}
-                </span>
-              </span>
-              <span class="success" v-if="['ready'].includes(status)">
-                <VIcon size="18">success-fill-color</VIcon>
-                <span>
-                  {{ $t('connection.status.ready') }}
-                </span>
-              </span>
-              <span class="warning" v-if="['testing'].includes(status)">
-                <VIcon size="18" color="#d54e21">warning</VIcon>
-                <span>
-                  {{ $t('connection.status.testing') }}
-                </span>
-              </span>
-            </span>
+            <StatusTag type="text" class="ml-4" target="connection" :status="status"></StatusTag>
             <footer class="mt-2 pb-4">
-              <el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
+              <el-button
+                size="mini"
+                class="connection-from-btn"
+                type="primary"
+                :loading="submitBtnLoading"
+                @click="submit"
+              >
                 {{ $t('dataForm.submit') }}
               </el-button>
-              <el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
+              <el-button size="mini" class="connection-from-btn" @click="goBack()">{{
+                $t('dataForm.cancel')
+              }}</el-button>
             </footer>
           </div>
         </div>
       </main>
-      <gitbook></gitbook>
+      <GitBook ref="gitBook"></GitBook>
     </div>
     <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
     <el-dialog
@@ -490,41 +79,13 @@
 <script>
 import { DEFAULT_MODEL } from './const'
 import formConfig from './config'
-import VIcon from '@/components/VIcon'
-import gitbook from './GitBook'
+import GitBook from './GitBook'
+import StatusTag from '../../components/StatusTag'
+import { SUPPORT_DB } from '../../const'
 let defaultConfig = []
 export default {
-  components: { VIcon, gitbook },
+  components: { GitBook, StatusTag },
   data() {
-    let validateExcelHeader = (rule, value, callback) => {
-      let start = this.model.excel_header_start
-      let end = this.model.excel_header_end
-      let config = this.model.gridfs_header_config
-      if (start === '') {
-        callback(new Error(this.$t('editor.fileFormBuilder.excel_header_start') + this.$t('formBuilder.noneText')))
-      } else if (end === '') {
-        callback(new Error(this.$t('editor.fileFormBuilder.excel_header_end') + this.$t('formBuilder.noneText')))
-      } else if (config === '' && this.model.gridfs_header_type === 'custom') {
-        callback(new Error(this.$t('editor.fileFormBuilder.header_type_required')))
-      } else if ((!/^[A-Z]+[1-9]+$/.test(start) && start !== '') || (!/^[A-Z]+[1-9]+$/.test(end) && end !== '')) {
-        callback(new Error(this.$t('editor.fileFormBuilder.excel_cell_tip')))
-      } else {
-        callback()
-      }
-    }
-    let validateSheet = (rule, value, callback) => {
-      let start = this.model.sheet_start
-      let end = this.model.sheet_end
-      if (start === '') {
-        callback(new Error(this.$t('editor.fileFormBuilder.sheet_start') + this.$t('formBuilder.noneText')))
-      } else if (end === '') {
-        callback(new Error(this.$t('editor.fileFormBuilder.sheet_end') + this.$t('formBuilder.noneText')))
-      } else if (start > end) {
-        callback(new Error(this.$t('editor.fileFormBuilder.excel_value_end_gt_start')))
-      } else {
-        callback()
-      }
-    }
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
         callback(new Error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText')))
@@ -540,31 +101,7 @@ export default {
       createStrategyDisabled: false,
       timezones: [],
       dataTypes: [],
-      whiteList: [
-        'mysql',
-        'oracle',
-        'mongodb',
-        'sqlserver',
-        'postgres',
-        'elasticsearch',
-        'redis',
-        'file',
-        'db2',
-        'kafka',
-        'mariadb',
-        'mysql pxc',
-        'jira',
-        'mq',
-        'dameng',
-        'gbase-8s',
-        'sybase ase',
-        'gaussdb200',
-        'dummy db',
-        'rest api',
-        'custom_connection',
-        'gridfs',
-        'tcp_udp'
-      ],
+      whiteList: SUPPORT_DB,
       model: {},
       config: {
         items: []
@@ -602,29 +139,7 @@ export default {
       dataSourceMock: [],
       ecsPageSize: 10,
       ecsPage: 1,
-      vpcList: [],
       ecsList: [],
-      gridFSrules: {
-        gridfs_header_config: [
-          {
-            required: true,
-            message: this.$t('editor.fileFormBuilder.gridfs_header_config'),
-            trigger: 'blur'
-          }
-        ],
-        excel_header_start: [
-          {
-            validator: validateExcelHeader,
-            trigger: 'blur'
-          }
-        ],
-        sheet_start: [
-          {
-            validator: validateSheet,
-            trigger: 'blur'
-          }
-        ]
-      },
       renameRules: {
         rename: [{ validator: validateRename, trigger: 'blur' }]
       }
@@ -636,6 +151,7 @@ export default {
   watch: {
     $route() {
       this.init()
+      this.$refs.gitBook.getHtmlMD(this.$route.query.databaseType)
     },
     // 文件选中类型默认端口号
     'model.file_source_protocol'(val) {
@@ -643,11 +159,6 @@ export default {
         this.model.database_port = '445'
       } else if (val === 'ftp') {
         this.model.database_port = '21'
-      }
-    },
-    'model.multiTenant'(val) {
-      if (!val) {
-        this.model.pdb = ''
       }
     }
   },
@@ -670,7 +181,6 @@ export default {
       } else if (!this.model.platformInfo.agentType) {
         this.model.platformInfo.agentType = 'private'
       }
-
       this.getDT(this.databaseType)
       this.initTimezones()
       let self = this
@@ -727,53 +237,6 @@ export default {
         }
       ]
     },
-    formChange(data) {
-      let filed = data.field || ''
-      let value = data.value
-      if (filed === 'sourceType') {
-        this.model.database_host = ''
-      }
-      if (filed === 'region') {
-        this.model.zone = ''
-      }
-      if (filed === 'zone') {
-        this.getDataSourceRegion() //选择完zone 联动实例vip 接口
-      }
-      if (filed === 's_region') {
-        this.model.s_zone = ''
-      }
-      //rest api
-      if (filed === 'data_sync_mode') {
-        if (value === 'INITIAL_INCREMENTAL_SYNC') {
-          this.model.url_info[0]['url_type'] = 'INCREMENTAL_SYNC'
-          let urlInfo = {
-            url: '',
-            method: 'GET',
-            url_type: 'INITIAL_SYNC',
-            headers: {},
-            request_parameters: {},
-            offset_field: '',
-            initial_offset: '',
-            content_type: '',
-            headerArray: [{ name: '', value: '' }],
-            parameterArray: [{ name: '', value: '' }]
-          }
-          this.model.url_info.push(urlInfo)
-        } else {
-          this.model.url_info.splice(1, 1)
-          this.model.url_info[0]['url_type'] = value
-        }
-      }
-      // custom_connection
-      if (filed === 'connection_type' || filed === 'custom_type') {
-        this.model.custom_ondata_script = ''
-        this.model.custom_cdc_script = ''
-        this.model.custom_initial_script = ''
-        if (this.$refs.jsCdcEditor) this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
-        if (this.$refs.jsInitialEditor) this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
-        if (this.$refs.jsOndataEditor) this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
-      }
-    },
     async initData(data) {
       let editData = null
       let id = this.$route.params.id
@@ -783,49 +246,17 @@ export default {
         } else {
           editData = await this.$axios.get(`tm/api/Connections/${id}?noSchema=1`)
         }
-        if (
-          editData.database_type === 'mq' &&
-          (typeof editData.mqQueueSet === 'object' || typeof editData.mqTopicSet === 'object')
-        ) {
-          let mqQueueSet = editData.mqQueueSet.length ? editData.mqQueueSet.join(',') : ''
-          let mqTopicSet = editData.mqTopicSet.length ? editData.mqTopicSet.join(',') : ''
-          editData.mqQueueSet = mqQueueSet
-          editData.mqTopicSet = mqTopicSet
-        }
         this.model = Object.assign(this.model, editData)
-        if (this.model.sourceType === 'ecs') {
-          this.getEcsList()
-        }
+
         this.renameData.rename = this.model.name
         this.model.isUrl = false
       } else {
         this.model = Object.assign(this.model, data, { name: this.model.name })
         this.model.isUrl = true
       }
-      if (this.model.database_type === 'file' && this.model.file_sources) {
-        this.model.file_sources.forEach(item => {
-          if (item.exclude_filename) {
-            this.$set(item, 'selectFileType', 'exclude')
-          } else {
-            this.$set(item, 'selectFileType', 'include')
-          }
-        })
-      }
-      this.$nextTick(() => {
-        if (this.model.database_type === 'custom_connection') {
-          this.updateJsEditor()
-        }
-      })
-    },
-    //手动更新JSEditor
-    updateJsEditor() {
-      if (this.$refs.jsCdcEditor) this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
-      if (this.$refs.jsInitialEditor) this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
-      if (this.$refs.jsOndataEditor) this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
     },
     initTimezones() {
       let timezones = [{ label: '(Database Timezone)', value: '' }]
-
       for (let i = -11; i < 15; i++) {
         let timezone = ''
         if (i >= -9 && i <= 9) {
@@ -917,205 +348,6 @@ export default {
       }
       this.loadingFrom = false
     },
-    //第一步 选择实例
-    getInstanceRegion() {
-      this.$axios
-        .get('api/tcm/agent/regionZone')
-        .then(data => {
-          this.instanceMock = data || []
-          if (this.model.region === '' && this.instanceMock.length > 0) {
-            this.model.region = this.instanceMock[0].code
-          }
-          this.changeConfig(this.instanceMock || [], 'region')
-          this.changeInstanceRegion()
-        })
-        .catch(() => {
-          this.$message.error('请求失败')
-        })
-    },
-    changeInstanceRegion() {
-      let zone = this.instanceMock.filter(item => item.code === this.model.region)
-      if (zone.length > 0) {
-        this.model.zone = this.model.zone || zone[0].zones[0].code
-        this.instanceModelZone = zone[0].zones
-      } else {
-        this.instanceModelZone = []
-      }
-      let data = zone.length ? zone[0].zones : []
-      this.changeConfig(data, 'zone')
-      this.getDataSourceRegion() //选择完zone 联动实例vip 接口
-    },
-    //第二步 source_type DRS实例
-    getDataSourceRegion() {
-      let params = {
-        productType: this.model.database_type,
-        agentPoolId: this.model.region,
-        agentZoneId: this.model.zone
-      }
-      this.$axios.get('api/tcm/product/vip', { params }).then(data => {
-        this.dataSourceMock = data.poolList || []
-        if (this.model.s_region === '' && this.dataSourceMock.length > 0) {
-          this.model.s_region = this.dataSourceMock[0].poolId
-        }
-        this.changeConfig(this.dataSourceMock || [], 's_defaultRegion')
-        this.changeDataSourceRegion()
-      }) //华东上海
-    },
-    changeDataSourceRegion() {
-      let zone = this.dataSourceMock.filter(item => item.poolId === this.model.s_region)
-      if (zone.length > 0) {
-        this.model.s_zone = this.model.s_zone || zone[0].zoneInfo[0].zoneCode
-        this.dataSourceZone = zone[0].zoneInfo
-      } else {
-        this.dataSourceZone = []
-      }
-      let data = zone.length ? zone[0].zones : []
-      this.changeConfig(data, 's_defaultZone')
-    },
-    //可用区联动database host
-    changeDatabaseHost() {
-      if (!this.dataSourceZone || this.dataSourceZone.length === 0) {
-        return
-      }
-      let currentZone = this.dataSourceZone.filter(item => item.zoneCode === this.model.s_zone)
-      if (currentZone.length > 0 && this.model.sourceType === 'rds' && this.model.s_zone !== '') {
-        this.model.database_host = currentZone[0].ipv4 || currentZone[0].ipv6 || ''
-      }
-    },
-    //change config
-    changeConfig(data, type) {
-      let items = this.config.items
-      switch (type) {
-        case 'region': {
-          // 第一步 选择实例 选择区域
-          let region = items.find(it => it.field === 'region')
-          if (region) {
-            region.options = data.map(item => {
-              return {
-                id: item.code,
-                name: item.name,
-                label: item.name,
-                value: item.code
-              }
-            })
-          }
-          break
-        }
-        case 'zone': {
-          //映射可用区
-          let zone = items.find(it => it.field === 'zone')
-          if (zone) {
-            zone.options = this.instanceModelZone.map(item => {
-              return {
-                id: item.code,
-                name: item.name,
-                label: item.name,
-                value: item.code
-              }
-            })
-          }
-          break
-        }
-        case 's_defaultRegion': {
-          //源端默认等于选择实例可用区
-          let s_region = items.find(it => it.field === 's_region')
-          if (s_region) {
-            s_region.options = this.dataSourceMock.map(item => {
-              return {
-                id: item.poolId,
-                name: item.poolName,
-                label: item.poolName,
-                value: item.poolId
-              }
-            })
-          }
-          break
-        }
-        case 's_defaultZone': {
-          //映射可用区
-          let s_zone = items.find(it => it.field === 's_zone')
-          if (s_zone) {
-            s_zone.options = this.dataSourceZone.map(item => {
-              return {
-                id: item.zoneCode,
-                name: item.zoneName,
-                label: item.zoneName,
-                value: item.zoneCode
-              }
-            })
-          }
-          break
-        }
-      }
-    },
-    handleEcsList() {
-      let ecs = this.ecsList.filter(item => item.id === this.model.ecs)
-      this.model.vpc = '' //清空当前子级值
-      if (ecs.length > 0) {
-        this.vpcList = ecs[0].portDetail
-      } else {
-        this.vpcList = []
-      }
-    },
-    loadMore() {
-      this.ecsPage = this.ecsPage + 1
-      this.getEcsList()
-    },
-    //切换sourceType ecs需要请求ecs列表 开通网络策略
-    getEcsList() {
-      if (this.model.sourceType !== 'ecs') return
-      let params = {
-        page: this.ecsPage || 1,
-        pageSize: this.ecsPageSize || 10,
-        region: this.model.region || ''
-      }
-      this.$axios.get('api/tcm/ecs/list/' + window.__USER_INFO__userId, { params }).then(data => {
-        const newList = data?.ecsList || []
-        if (newList.length) {
-          this.ecsList.push(...newList)
-        }
-      })
-    },
-    //控制是否开通网络策略
-    handleStrategy() {
-      let currentData = this.ecsList.filter(item => item.id === this.model.ecs)
-      if (currentData.length === 0) return
-      this.model.platformInfo.strategyExistence = currentData[0].strategyExistence
-      if (this.model.platformInfo.strategyExistence) {
-        this.createStrategy()
-      }
-    },
-    //创建网络策略
-    createStrategy() {
-      this.createStrategyDisabled = true
-      let currentData = this.vpcList.filter(item => item.portId === this.model.vpc)
-      if (currentData.length === 0) return
-      let params = {
-        userId: window.__USER_INFO__userId,
-        ecsId: this.model.ecs,
-        region: this.model.region,
-        zone: this.model.zone,
-        routerId: currentData[0].routerId
-      }
-      this.$axios
-        .post('api/tcm/strategy', params)
-        .then(data => {
-          this.model.platformInfo.strategyExistence = true
-          if (data) {
-            this.getEcsList() //更新Ecs列表
-            this.model.database_host = data.dummyFipAddress
-            if (this.model.database_type === 'mongodb') {
-              this.model.database_uri = `mongodb://${data.dummyFipAddress}/test`
-            }
-          }
-        })
-        .catch(() => {
-          this.$message.error('开通失败')
-        })
-        .finally(() => {
-          this.createStrategyDisabled = false
-        })
-    },
     goBack() {
       let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
       let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
@@ -1139,94 +371,11 @@ export default {
       if (data.length === 0) return
       return data[0][ops.name]
     },
-    //处理不同rds 场景 platformInfo
-    handlePlatformInfo(params) {
-      let platformInfo = {
-        region: params.region || '',
-        zone: params.zone || '',
-        sourceType: params.sourceType || '',
-        DRS_region: params.s_region || '',
-        DRS_zone: params.s_zone || '',
-        DRS_regionName: '',
-        DRS_zoneName: '',
-        DRS_instances: params.DRS_instances || '',
-        IP_type: params.IP_type || '',
-        checkedVpc: params.checkedVpc || '',
-        vpc: params.vpc || '',
-        ecs: params.ecs || '',
-        strategyExistence: params.strategyExistence || ''
-      }
-      //存实例名称
-      platformInfo['regionName'] = this.handleName({
-        sourceData: this.instanceMock,
-        field: platformInfo.region,
-        target: 'code',
-        name: 'name'
-      })
-      platformInfo['zoneName'] = this.handleName({
-        sourceData: this.instanceModelZone,
-        field: platformInfo.zone,
-        target: 'code',
-        name: 'name'
-      })
-      //数据源名称
-      if (platformInfo.DRS_region !== '') {
-        platformInfo['DRS_regionName'] = this.handleName({
-          sourceData: this.dataSourceMock,
-          field: platformInfo.DRS_region,
-          target: 'poolId',
-          name: 'poolName'
-        })
-      }
-      if (platformInfo.DRS_zone !== '') {
-        platformInfo['DRS_zoneName'] = this.handleName({
-          sourceData: this.dataSourceZone,
-          field: platformInfo.DRS_zone,
-          target: 'zoneCode',
-          name: 'zoneName'
-        })
-      }
-      return platformInfo
-    },
     submit() {
       this.submitBtnLoading = true
       let flag = true
       this.model.search_databaseType = ''
-      if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
-        this.$refs.fileForm.validate(valid => {
-          if (!valid) {
-            flag = false
-          }
-        })
-      }
-      if (this.model.database_type === 'rest api') {
-        this.$refs.urlInfoForm.validate(valid => {
-          if (!valid) {
-            flag = false
-          }
-        })
-      }
-      if (this.model.database_type === 'gridfs' && this.model.file_type === 'excel') {
-        this.$refs.excelForm.validate(valid => {
-          if (!valid) {
-            flag = false
-          }
-        })
-      }
-      if (!this.model.checkedVpc && this.model.sourceType === 'ecs') {
-        this.$message.error('请授权允许数据同步服务访问您的ECS实例')
-        return
-      }
-      if (this.model.platformInfo && !this.model.platformInfo.strategyExistence && this.model.sourceType === 'ecs') {
-        this.$message.error('请"点击开通"开通网络策略')
-        return
-      }
       let data = Object.assign({}, this.model)
-      if (data.database_type === 'mq' && (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string')) {
-        data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
-        data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
-      }
-
       this.$refs.form.validate(valid => {
         if (valid && flag) {
           let params = Object.assign(
@@ -1255,23 +404,6 @@ export default {
           if (params.database_type === 'mongodb') {
             params.fill = params.isUrl ? 'uri' : ''
             //delete params.isUrl
-          }
-          //rest api 数据组装
-          if (params.database_type === 'rest api') {
-            params.url_info.forEach(v => {
-              if (v) {
-                v.headerArray.forEach(header => {
-                  if (header && header.name) {
-                    v.headers[header.name] = header.value
-                  }
-                })
-                v.parameterArray.forEach(parameter => {
-                  if (parameter && parameter.name) {
-                    v.request_parameters[parameter.name] = parameter.value
-                  }
-                })
-              }
-            })
           }
           let promise = null
           if (this.model.id) {
@@ -1325,13 +457,6 @@ export default {
         this.$refs.form.validate(valid => {
           if (valid) {
             let data = Object.assign({}, this.model)
-            if (
-              data.database_type === 'mq' &&
-              (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string')
-            ) {
-              data.mqQueueSet = data.mqQueueSet.split(',')
-              data.mqTopicSet = data.mqTopicSet.split(',')
-            }
             if (this.$route.params.id) {
               //编辑需要特殊标识 updateSchema = false editTest = true
               this.$refs.test.start(data, true, false, true)
@@ -1347,8 +472,7 @@ export default {
       })
     },
     receiveTestData(data) {
-      if (!data.status || data.status === null) return
-      this.status = data.status
+      this.status = data.status || ''
     },
     //取消
     handleCancelRename() {
@@ -1396,55 +520,6 @@ export default {
             })
         }
       })
-    },
-    // 跳转到重复数据源
-    clickLinkSource() {
-      window.open('/#/connection/' + this.connectionObj.id, '_blank')
-    },
-    // 文件类型添加文件路径
-    addPathRow() {
-      let list = {
-        path: '',
-        recursive: false,
-        selectFileType: 'include',
-        include_filename: '',
-        exclude_filename: ''
-      }
-      this.model.file_sources.push(list)
-    },
-
-    // 文件类型删除文件路径
-    removeRow(item, index) {
-      // this.index = this.model.file_sources.indexOf(item);
-      if (this.model.file_sources.length > 1) {
-        if (index !== -1) {
-          this.model.file_sources.splice(index, 1)
-        }
-      }
-    },
-
-    // 文件保留丢弃字段
-    changeFileInclude(item, val) {
-      val === 'include' ? (item.exclude_filename = '') : (item.include_filename = '')
-    },
-    //rest api
-    addHeader(index) {
-      this.model.url_info[index].headerArray.push({
-        name: '',
-        value: ''
-      })
-    },
-    removeHeader(parentIndex, index) {
-      this.model.url_info[parentIndex].headerArray.splice(index, 1)
-    },
-    addParameter(index) {
-      this.model.url_info[index].parameterArray.push({
-        name: '',
-        value: ''
-      })
-    },
-    removeParameter(parentIndex, index) {
-      this.model.url_info[parentIndex].parameterArray.splice(index, 1)
     }
   }
 }
@@ -1476,19 +551,6 @@ export default {
   flex: 1;
   overflow: hidden;
   background: #fff;
-  .status {
-    font-size: 12px;
-    margin-top: 2px;
-    .error {
-      color: #f56c6c;
-    }
-    .success {
-      color: #67c23a;
-    }
-    .warning {
-      color: #e6a23c;
-    }
-  }
 }
 .connection-from-title {
   padding-top: 20px;
@@ -1502,6 +564,7 @@ export default {
 .connection-from-label {
   display: flex;
   align-items: center;
+  margin-bottom: 24px;
   .label:before {
     content: '*';
     color: #f56c6c;
@@ -1546,235 +609,49 @@ export default {
     overflow-y: auto;
     flex: 1;
   }
-  .form {
-    .url-tip {
-      font-size: 12px;
-      color: #999;
-      line-height: 18px;
-    }
-    .rest-api-box {
-      display: flex;
-      flex: 1;
-      div.rest-api-label {
-        width: 210px;
-        padding-right: 20px;
-        line-height: 28px;
+}
+.connection-from-btn {
+  width: 80px;
+}
+.form-builder {
+  ::v-deep {
+    .e-form-builder-item {
+      width: 396px;
+      .el-form-item__content {
+        padding-bottom: 32px;
+        height: 32px;
+        .el-input__inner,
+        .el-textarea__inner {
+          background: rgba(221, 221, 221, 0.4);
+        }
+        .el-input__count-inner,
+        .el-input__count {
+          background-color: unset;
+        }
+      }
+      &.large-item {
+        width: 680px;
+      }
+      &.small-item {
+        width: 240px;
+      }
+      &.mongodb-item {
+        width: 680px;
+        padding-bottom: 24px;
+      }
+      &.mongodb-tip-item .el-form-item__content {
+        padding-bottom: 194px;
+        width: 680px;
+      }
+      .url-tip {
         font-size: 12px;
-        color: #606266;
-        text-align: right;
-        box-sizing: border-box;
-      }
-      .rest-api-url {
-        width: calc(100% - 100px);
-        border: 1px solid #dedee4;
-        padding: 10px;
-        margin-top: 5px;
-        .rest-api-row {
-          margin-bottom: 10px;
-        }
-        .rest-api-margin {
-          margin-left: 10px;
-        }
-        .rest-api-marginB {
-          margin-bottom: 10px;
-        }
-        .rest-api-label {
-          display: inline-block;
-          width: 80px;
-        }
-        .rest-api-FloatL {
-          float: left;
-        }
-        .small-input {
-          width: 104px;
-        }
-        .min-input {
-          width: 80px;
-        }
-        .medium-input {
-          width: 130px;
-        }
-        .rest-api-Array {
-          margin-bottom: 10px;
-        }
-        .add-btn-icon {
-          cursor: pointer;
+        color: map-get($fontColor, slight);
+        b {
+          font-size: 12px;
+          font-weight: 400;
+          color: map-get($fontColor, slight);
         }
       }
-    }
-    .custom-connection-box {
-      display: flex;
-      justify-content: flex-start;
-      .custom-connection-label {
-        font-size: 12px;
-        width: 100px;
-        text-align: right;
-        color: #606266;
-        margin-right: 23px;
-      }
-      .custom-connection-main {
-        width: calc(100% - 100px);
-      }
-    }
-    .gridfs-box {
-      font-size: 12px;
-      .separate {
-        margin: 0 10px;
-      }
-    }
-    .fileBox {
-      display: flex;
-      flex: 1;
-      div.file-label {
-        width: 210px;
-        padding-right: 20px;
-        line-height: 28px;
-        font-size: 12px;
-        color: #606266;
-        text-align: right;
-        box-sizing: border-box;
-      }
-      .file-form-content {
-        width: calc(100% - 100px);
-        padding: 0 10px;
-      }
-      .fromLoopBox {
-        padding: 10px 20px 20px !important;
-        margin-bottom: 12px;
-        box-sizing: border-box;
-        background-color: #fff;
-        border: 1px solid #dedee4;
-        border-radius: 3px;
-        .el-input--mini .el-input__inner {
-          width: 100%;
-        }
-      }
-    }
-  }
-  .edit-header-box {
-    border-bottom: 1px solid #eee;
-    margin-bottom: 20px;
-  }
-  .edit-header {
-    display: flex;
-    justify-content: flex-start;
-    width: 578px;
-    margin: 30px auto;
-  }
-  .title {
-    display: flex;
-    justify-content: flex-start;
-    width: 568px;
-    margin: 40px auto 20px auto;
-  }
-}
-</style>
-<style lang="scss">
-.connection-from .el-form-item {
-  width: 396px;
-  margin-top: 32px;
-  .el-input__inner {
-    height: 32px;
-    line-height: 32px;
-  }
-  .el-input__inner,
-  .el-textarea__inner {
-    background: #eff1f4;
-    border-radius: 2px;
-    border: 1px solid rgba(221, 221, 221, 0.4);
-    background: #eff1f4;
-    border-radius: 2px;
-    border: 1px solid rgba(221, 221, 221, 0.4);
-  }
-}
-.connection-from .large-item {
-  width: 680px;
-}
-.connection-from .small-item {
-  width: 240px;
-}
-.connection-from .el-form-item {
-  .el-form-item__label {
-    display: inline-block;
-    padding: 0 20px 0 0;
-    text-align: left;
-  }
-}
-.connection-from .form {
-  .url-tip {
-    margin-top: -14px;
-    b {
-      color: #666;
-    }
-  }
-  .file-form-content {
-    .el-form-item {
-      margin-bottom: 6px;
-    }
-    .el-form-item__label {
-      padding-bottom: 0;
-      line-height: 28px;
-      font-size: 12px;
-    }
-    .el-form-item__content {
-      line-height: 30px;
-    }
-  }
-  .urlInfoForm {
-    .el-form-item {
-      margin-bottom: 0;
-    }
-  }
-}
-.connection-from .gridfs-box {
-  .el-form-item {
-    margin-bottom: 0;
-    margin-top: 0;
-  }
-
-  .el-form-item__content {
-    display: flex;
-    font-size: 12px;
-    margin-right: 20px;
-  }
-
-  .el-form-item__error {
-    padding-top: 0;
-  }
-
-  .el-form-item__label:before {
-    content: '*';
-    color: #f56c6c;
-    margin-right: 4px;
-  }
-
-  .excel_value_start {
-    .el-form-item__label:before {
-      content: '';
-    }
-  }
-
-  .el-form-item__label {
-    font-size: 12px;
-  }
-
-  .el-radio__label {
-    font-size: 12px;
-  }
-
-  .headerType .el-form-item__content {
-    flex-direction: column;
-
-    .excel_header_start {
-      display: flex;
-      font-size: 12px;
-    }
-  }
-
-  .excelHeaderType {
-    .el-form-item__content {
-      display: block;
-      font-size: 12px;
     }
   }
 }

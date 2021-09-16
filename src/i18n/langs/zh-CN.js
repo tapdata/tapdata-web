@@ -56,7 +56,7 @@ export default {
   agent_status_stopped: '离线',
   agent_search: '按ID/实例名称搜索',
   agent_test_use: '仅供测试使用',
-  agent_button_create: '创建 Agent',
+  agent_button_create: '创建Agent',
   agent_button_order1: '订购托管实例',
   agent_button_order2: '实例订购',
   agent_button_deploy: '部署',
@@ -103,6 +103,8 @@ export default {
   agent_detail_host_memory_size: '宿主机内存大小',
   agent_detail_installation_manual: '安装目录',
   agent_detail_run_manual: '运行目录',
+  agent_list_empty_desc1: '快来',
+  agent_list_empty_desc2: '开始实时数据同步吧~',
 
   // Agent部署
   agent_deploy_title: 'Agent 下载与安装',

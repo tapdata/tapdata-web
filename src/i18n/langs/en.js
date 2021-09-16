@@ -107,6 +107,8 @@ export default {
   agent_detail_host_memory_size: 'Host memory size',
   agent_detail_installation_manual: 'Installation directory',
   agent_detail_run_manual: 'Run directory',
+  agent_list_empty_desc1: 'Come soon',
+  agent_list_empty_desc2: 'Start real-time data synchronization~',
 
   // Agent部署
   agent_deploy_title: 'Agent download and installation',

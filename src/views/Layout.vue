@@ -217,6 +217,11 @@ export default {
         }
       }
     }
+    ::v-deep {
+      .el-breadcrumb__separator {
+        color: map-get($fontColor, sub);
+      }
+    }
   }
   .btn-back {
     padding: 0;

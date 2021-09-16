@@ -178,13 +178,9 @@ export default function (vm) {
         domType: 'textarea',
         customClass: 'large-item',
         label: vm.$t('dataForm.form.tableFilter'),
-        // tips: vm.$t('dataForm.form.tableFilterTips'),
+        tip: vm.$t('dataForm.form.tableFilterTips'),
         maxlength: 500,
         showWordLimit: true
-      },
-      {
-        type: 'slot',
-        slot: 'tableFilter'
       },
       {
         type: 'input',
@@ -195,13 +191,8 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        // tips: vm.$t('dataForm.form.timeZoneTips'),
+        tip: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
-        show: true
-      },
-      {
-        type: 'slot',
-        slot: 'timezone',
         show: true
       }
     ]

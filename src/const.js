@@ -21,7 +21,8 @@ export const TOPOLOGY_MAP = topologyMap,
     draft: { text: '待启动', icon: 'daiqidong' },
     scheduled: { text: '启动中', icon: 'qidongzhong', type: 'success' },
     stopping: { text: '停止中', icon: 'tingzhizhong', type: 'success' },
-    'force stopping': { text: '强制停止中', icon: 'qiangzhitingzhi', type: 'success' }
+    'force stopping': { text: '强制停止中', icon: 'qiangzhitingzhi', type: 'success' },
+    finished: { text: '已完成', icon: 'yiwancheng', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
     ready: { text: '有效', color: '#52C41A' },

@@ -68,11 +68,12 @@
         <el-table-column label="任务类型" prop="syncTypeText"></el-table-column>
         <el-table-column label="任务状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.isFinished" :class="['flex', 'align-items-center', scope.row.status]">
-              <VIcon class="v-icon color-success mx-1" size="16">success</VIcon>
-              <span class="td-status-tag__text">已完成</span>
-            </span>
-            <status-tag v-else type="text" target="task" :status="scope.row.status" only-img></status-tag>
+            <status-tag
+              type="text"
+              target="task"
+              :status="scope.row.isFinished ? 'finished' : scope.row.status"
+              only-img
+            ></status-tag>
           </template>
         </el-table-column>
         <el-table-column label="启动时间" prop="startTime" sortable="custom">

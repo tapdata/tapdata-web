@@ -56,19 +56,19 @@ export default {
     font-size: 12px;
     line-height: 24px;
     color: #666666;
-    margin-top: 0px;
-    margin: 8px 0;
     margin: 14px 0 14px;
   }
   pre {
     background-color: #eee;
-    margin-bottom: 8px;
-    margin-top: 8px;
     margin: 12px 0 12px;
+    overflow: hidden;
+    > code {
+      word-wrap: break-word;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
   }
   blockquote {
-    margin-bottom: 8px;
-    margin-top: 8px;
     margin: 14px 0 14px;
     background-color: #eee;
     padding: 16px 16px;
@@ -86,7 +86,6 @@ export default {
     font-size: 12px;
     line-height: 20px;
     color: #666666;
-    margin-top: 0px;
     margin: 8px 0;
   }
   blockquote {
