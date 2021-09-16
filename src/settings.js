@@ -12,6 +12,7 @@ module.exports = {
     'elasticsearch',
     'dameng',
     'kafka',
-    'greenplum'
+    'greenplum',
+    'mq'
   ]
 }

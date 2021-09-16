@@ -241,31 +241,15 @@
     &:not(.task-main-5) {
       overflow-y: auto;
     }
-    //&.task-main-5 {
-    //  margin-bottom: 24px;
-    //  padding: 24px 0 0;
-    //}
     .body {
-      //margin: 0 auto;
-      //padding-bottom: 50px;
-      //width: 910px;
       .title {
         font-size: 14px;
         color: rgba(0, 0, 0, 0.85);
-        //padding: 20px 200px;
-        //color: rgba(51, 51, 51, 100);
-        //font-size: 28px;
-        //font-weight: bold;
-        //text-align: left;
       }
       .desc {
         margin-left: 16px;
         font-size: 12px;
         color: rgba(0, 0, 0, 0.5);
-        //padding: 0 200px;
-        //margin-bottom: 20px;
-        //color: #999;
-        //font-size: 12px;
       }
       .reload-schema {
         padding: 0 200px;
@@ -273,11 +257,7 @@
       }
       .CT-task-transfer {
         margin-bottom: 24px;
-        //height: 400px;
       }
-    }
-    .step-4 {
-      //width: 1050px;
     }
     .dataSource-title {
       font-size: 16px;
@@ -460,12 +440,6 @@
       &.read-batch-size {
         .el-input__inner {
           width: 277px;
-        }
-      }
-      &.slot-item {
-        .el-form-item__content {
-          //padding-bottom: 32px;
-          //height: 32px;
         }
       }
     }

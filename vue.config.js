@@ -1,5 +1,6 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
+const crypto = require('crypto')
 
 const serveUrlMap = {
   mock: 'http://localhost:3000',
@@ -17,7 +18,7 @@ if (~argv.indexOf('--origin')) {
 }
 const proxy = {
   target: origin || serveUrlMap[SERVE_ENV],
-  changeOrigin: false
+  changeOrigin: true
 }
 
 //sass变量
@@ -38,21 +39,19 @@ module.exports = {
     proxy: {
       '/api/tcm/': proxy,
       '/tm/api/': proxy,
-      '/ws/': {
-        ...proxy,
-        ws: true,
-        secure: false,
-        logLevel: 'debug',
-        target: proxy.target.replace(/^https?/, 'ws')
-      },
+      // '/tm/ws/': {
+      //   // ...proxy,
+      //   ws: true,
+      //   secure: false,
+      //   target: proxy.target.replace(/^https?/, 'ws')
+      // },
       '/tm/#/': {
         target: 'http://localhost:8081',
         changeOrigin: true,
         pathRewrite: {
           '^/tm': '/'
         }
-      },
-      '/login': proxy
+      }
     }
   },
   configureWebpack: config => {
@@ -164,4 +163,30 @@ module.exports = {
       }
     }
   }
+}
+// 设置本地环境的token
+const getToken = userId => {
+  const secret = 'Q3HraAbDkmKoPzaBEYzPXB1zJXmWlQ169'
+  function __encrypt(string) {
+    return crypto
+      .createHmac('sha256', secret)
+      .update(string + secret)
+      .digest('hex')
+  }
+  function encodeBase64(string) {
+    if (typeof string !== 'string') return null
+    return Buffer.from(string || '').toString('base64')
+  }
+  function encodeStaticTokenByUserId(userId) {
+    let token = __encrypt(userId)
+    return encodeBase64(userId) + '.' + encodeBase64(token)
+  }
+  const token = encodeStaticTokenByUserId(userId)
+  return token
+}
+if (process.env.NODE_ENV === 'development') {
+  let userId = '60cc0c304e190a579cbe306c'
+  process.env.VUE_APP_ACCESS_TOKEN = getToken(userId)
+  console.log('本地用户调试ID: ' + userId)
+  console.log('本地用户调试Token: ' + process.env.VUE_APP_ACCESS_TOKEN)
 }

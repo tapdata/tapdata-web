@@ -320,6 +320,7 @@ module.exports = {
   },
   '/tm/api/DataFlows/:id': {
     data: {
+      isFinished: true,
       createTime: '2021-04-28T11:10:57.691Z',
       last_updated: '2021-05-10T07:55:32.824Z',
       id: '@id',

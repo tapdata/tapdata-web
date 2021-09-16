@@ -282,9 +282,13 @@ export default {
     }
   },
   watch: {
-    '$route.query'(query) {
-      this.searchParams = Object.assign(this.searchParams, query)
-      this.fetch(1)
+    $route(route) {
+      if (route.name === 'Task') {
+        let query = route.query
+        this.searchParams = Object.assign(this.searchParams, query)
+        let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
+        this.fetch(pageNum)
+      }
     }
   },
   created() {
@@ -698,11 +702,12 @@ export default {
           }
         })
       } else {
-        let routeUrl = this.$router.resolve({
-          path: '/monitor',
-          query: { id: id, isMoniting: true, mapping: mappingTemplate }
+        this.$router.push({
+          name: 'Monitor',
+          params: {
+            id: id
+          }
         })
-        window.open(routeUrl.href, '_blank')
       }
       setTimeout(() => {
         document.querySelectorAll('.el-tooltip__popper').forEach(it => {

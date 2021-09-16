@@ -5,12 +5,15 @@
       <div class="system-operation">
         <div class="system-operation-left">
           <span>通知列表</span>
-          <span class="system-operation-setting" @click="handleSetting">设置</span>
+          <span class="system-operation-setting" @click="handleSetting">
+            <VIcon class="ml-2" size="12">setting</VIcon>
+            <span>设置</span>
+          </span>
         </div>
         <div class="system-operation-right">
           <ul>
             <li class="ml-3">
-              <ElButton plain class="btn-refresh" @click="handleDelete('all')" :disabled="list.length < 1">
+              <ElButton plain class="btn-refresh border-red" @click="handleDelete('all')" :disabled="list.length < 1">
                 全部删除
               </ElButton>
             </li>
@@ -51,7 +54,7 @@
               <div class="list-item-desc" @click="handleRead(scope.row.id)">
                 <!--                                <span :style="`color: ${colorMap[scope.row.level]};`">【{{ scope.row.level }}】</span>-->
                 <span>您的{{ systemMap[scope.row.system] }}:</span>
-                <span style="color: #409eff; cursor: pointer" @click="handleGo(scope.row)">
+                <span style="color: #2c65ff; cursor: pointer" @click="handleGo(scope.row)">
                   {{ scope.row.serverName }}
                 </span>
                 <span>{{ typeMap[scope.row.msg] }}</span>
@@ -92,15 +95,15 @@
         <div class="notice-setting-title">agent通知</div>
         <ElFormItem label="agent状态为离线时">
           <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.connected.sms" size="mini"></ElSwitch>
+          <ElSwitch v-model="form.connectionInterrupted.sms" size="mini"></ElSwitch>
           <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.connected.email" size="mini"></ElSwitch>
+          <ElSwitch v-model="form.connectionInterrupted.email" size="mini"></ElSwitch>
         </ElFormItem>
         <ElFormItem label="agent状态为运行中时">
           <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.connectionInterrupted.sms" size="mini"></ElSwitch>
+          <ElSwitch v-model="form.connected.sms" size="mini"></ElSwitch>
           <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.connectionInterrupted.email"></ElSwitch>
+          <ElSwitch v-model="form.connected.email"></ElSwitch>
         </ElFormItem>
         <div class="notice-setting-title">任务运行通知</div>
         <ElFormItem label="任务运行出错时">
@@ -149,6 +152,7 @@ export default {
       },
       taskFalg: false,
       dialogVisible: false,
+      userId: '',
       form: {
         connected: {
           email: true,
@@ -179,8 +183,7 @@ export default {
         let data = {
           notification: value
         }
-        console.log(this.user)
-        this.$axios.patch(`tm/api/user/${this.user.id}`, data)
+        this.$axios.patch(`tm/api/users/${this.userId}`, data)
       },
       deep: true
     }
@@ -390,6 +393,15 @@ export default {
     // 通知设置
     handleSetting() {
       this.dialogVisible = true
+      // 获取tm用户id
+      this.$axios.get('tm/api/users/self').then(data => {
+        if (data) {
+          this.userId = data.id
+          if (data.notification) {
+            this.form = data.notification
+          }
+        }
+      })
     }
     // 未读消息
     // getUnreadNum() {
@@ -410,7 +422,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$unreadColor: #ee5353;
+$unreadColor: #e43737;
 .system-notice {
   display: flex;
   width: 100%;
@@ -446,19 +458,36 @@ $unreadColor: #ee5353;
       .system-operation-setting {
         cursor: pointer;
         color: #2c65ff;
+        span {
+          padding-left: 5px;
+        }
       }
     }
     .system-operation-right {
       li {
         float: right;
         .btn-refresh {
-          // border-color: #409eff;
-          // color: #409eff;
+          border-color: #2c65ff;
+          color: #2c65ff;
+        }
+        .border-red {
+          border-color: $unreadColor !important;
+          color: $unreadColor !important;
+        }
+        .btn-refresh:focus,
+        .btn-refresh:hover {
+          color: #fff;
+          background-color: #2c65ff;
         }
         .border-red:focus,
         .border-red:hover {
-          border-color: $unreadColor !important;
-          color: $unreadColor !important;
+          color: #fff !important;
+          background: $unreadColor !important;
+        }
+        .btn-refresh.is-disabled {
+          background-color: #fff;
+          border-color: #ebeef5;
+          color: #c0c4cc;
         }
       }
     }
@@ -494,6 +523,15 @@ $unreadColor: #ee5353;
 }
 </style>
 <style lang="scss">
+.system-notice {
+  .system-operation-right {
+    .btn-refresh.is-disabled {
+      background-color: #fff;
+      border-color: #ebeef5;
+      color: #c0c4cc;
+    }
+  }
+}
 .notice-setting-dialog {
   .el-dialog__header {
     padding: 40px 40px 0 40px;

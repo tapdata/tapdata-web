@@ -404,5 +404,6 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
+  '/tm/api/Messages/update': { data: { count: 1 }, code: 'ok', msg: 'ok' },
   '/tm/api/Messages/count': { data: { count: 25040 }, code: 'ok', msg: 'ok' }
 }
