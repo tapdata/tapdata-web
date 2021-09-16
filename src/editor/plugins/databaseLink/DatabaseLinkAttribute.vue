@@ -134,6 +134,7 @@ import ws from '@/api/ws'
 const metadataApi = new MetadataInstances()
 
 import CodeEditor from '@/components/CodeEditor'
+import { ALLOW_FIELD_MAPPING } from '../../constants'
 let connections = factory('connections')
 let editorMonitor = null
 export default {
@@ -173,6 +174,7 @@ export default {
         type: 'databaseLink',
         tableNameTransform: '',
         fieldsNameTransform: '',
+        fieldNameTransform: '',
         selectSourceArr: [],
         topicData: [],
         queueData: [],
@@ -186,6 +188,7 @@ export default {
         hiddenChangeValue: false, //是否显示表改大小写
         showBtn: true,
         script: '',
+        dataFlow: '',
 
         selectSourceDatabase: {
           table: true,
@@ -295,6 +298,7 @@ export default {
         }
         //获取目标节点ID
         this.model.stageId = targetCell?.id || ''
+
         // 获取目标节点的数据显示右侧选择表
 
         let targetFormData = targetCell && targetCell.getFormData()
@@ -602,7 +606,6 @@ export default {
         h3 {
           color: #606266;
         }
-
         .box-btn {
           color: #409eff;
           cursor: pointer;
