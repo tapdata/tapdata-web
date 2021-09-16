@@ -309,5 +309,8 @@ export default {
   .fb-form-item-append-slot {
     margin-left: 5px;
   }
+  .fb-radio-tip__text {
+    line-height: 18px;
+  }
 }
 </style>
