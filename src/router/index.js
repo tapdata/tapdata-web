@@ -1,5 +1,4 @@
 import Layout from '../views/Layout.vue'
-import Iframe from '../views/Iframe.vue'
 import Error from '../views/Error.vue'
 import SvgList from '../views/SvgList.vue'
 import AgentDownload from '@/views/AgentDownload/AgentPage.vue'
@@ -82,7 +81,6 @@ const routes = [
         component: () => import(/* webpackChunkName: "connection-list" */ '../views/Connection/List.vue'),
         meta: {
           title: '连接管理',
-          link: './tm/#/connections',
           icon: 'connection'
         },
         children: [
@@ -93,7 +91,6 @@ const routes = [
             //component: Iframe,
             meta: {
               title: '创建连接'
-              // link: './tm/#/connections/create'
             }
           },
           {
@@ -103,7 +100,6 @@ const routes = [
             //component: Iframe,
             meta: {
               title: '编辑连接'
-              //link: './tm/#/connections/:id/edit'
             }
           }
         ]
@@ -251,15 +247,6 @@ const routes = [
     component: UpgradeVersion,
     meta: {
       title: 'Agent 升级'
-    }
-  },
-  {
-    path: '/monitor',
-    name: 'Monitor',
-    component: Iframe,
-    meta: {
-      title: '任务监控',
-      link: './tm/#/job'
     }
   },
   {
