@@ -132,6 +132,14 @@ const routes = [
             meta: {
               title: '编辑任务'
             }
+          },
+          {
+            path: ':id/monitor',
+            name: 'Monitor',
+            component: () => import(/* webpackChunkName: "task-monitor" */ '../views/Monitor/Dashboard.vue'),
+            meta: {
+              title: '运行监控'
+            }
           }
         ]
       },
