@@ -323,6 +323,9 @@ th {
 }
 .el-table th.el-table__cell {
   background-color: #fafafa;
+  &.el-table__cell.is-leaf {
+    border-bottom: 0;
+  }
 }
 .el-table .el-table__fixed-right-patch {
   background-color: #fafafa;

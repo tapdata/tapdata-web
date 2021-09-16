@@ -175,132 +175,137 @@ module.exports = {
     data: {}
   },
   '/tm/api/DataFlows': {
-    'data|0-30': [
-      {
-        createTime: '2021-04-28T11:10:57.691Z',
-        last_updated: '2021-04-28T13:03:49.326Z',
-        id: '@id',
-        name: '@name',
-        'status|1': ['running', 'paused', 'error', 'draft', 'scheduled', 'stopping', 'force stopping'],
-        executeMode: 'normal',
-        category: '数据库克隆',
-        'stopOnError|1': Boolean,
-        mappingTemplate: 'cluster-clone',
-        stages: [
-          {
-            connectionId: '60803202ddc0f40343b87e35',
-            dataQualityTag: false,
-            distance: 1,
-            freeTransform: false,
-            id: '860486ba-a620-44e8-82a4-dc98b62778ec',
-            inputLanes: [],
-            joinTables: [],
-            name: 'local_179',
-            outputLanes: ['76dfca82-f8d1-4909-b6e4-d341fb310bb2'],
-            type: 'database',
-            database_type: 'mysql',
-            dropType: 'no_drop',
-            readBatchSize: 1000,
-            readCdcInterval: 500,
-            statsStatus: 'cdc'
-          },
-          {
-            connectionId: '6087c2ee0786e30010d4c882',
-            dataQualityTag: false,
-            distance: 0,
-            freeTransform: false,
-            id: '76dfca82-f8d1-4909-b6e4-d341fb310bb2',
-            inputLanes: ['860486ba-a620-44e8-82a4-dc98b62778ec'],
-            joinTables: [],
-            name: 'DRS-ALI-DEST',
-            outputLanes: [],
-            type: 'database',
-            syncObjects: [{ objectNames: ['my_test1'], type: 'table' }],
-            table_prefix: 'ff013_',
-            table_suffix: '',
-            readBatchSize: 1000,
-            readCdcInterval: 500,
-            dropType: 'no_drop',
-            database_type: 'mysql',
-            statsStatus: null
-          }
-        ],
-        setting: {
-          name: 'sudu 8',
-          'sync_type|1': ['initial_sync+cdc', 'initial_sync', 'cdc'],
-          distinctWriteType: 'intellect',
-          stopOnError: false,
-          isOpenAutoDDL: false,
-          twoWay: false,
-          syncPoints: [
+    code: 'ok',
+    msg: 'ok',
+    data: {
+      size: 20,
+      total: '@integer(0, 100)',
+      totalPage: 1,
+      'items|0-30': [
+        {
+          createTime: '2021-04-28T11:10:57.691Z',
+          last_updated: '2021-04-28T13:03:49.326Z',
+          id: '@id',
+          name: '@name',
+          'status|1': ['running', 'paused', 'error', 'draft', 'scheduled', 'stopping', 'force stopping'],
+          executeMode: 'normal',
+          category: '数据库克隆',
+          'stopOnError|1': Boolean,
+          mappingTemplate: 'cluster-clone',
+          stages: [
             {
               connectionId: '60803202ddc0f40343b87e35',
-              type: 'current',
-              time: '',
-              date: '',
-              name: '',
-              timezone: '+8'
-            }
-          ],
-          readBatchSize: 25000,
-          notificationWindow: 0,
-          notificationInterval: 300,
-          readCdcInterval: 500,
-          description: '',
-          drop_target: false,
-          needToCreateIndex: false,
-          increment: false,
-          isSchedule: false,
-          emailWaring: {
-            edited: false,
-            started: false,
-            error: true,
-            paused: true
-          }
-        },
-        platformInfo: { region: '', zone: '' },
-        user_id: '@id',
-        agentId: '',
-        startTime: '2021-04-28T11:11:05.961Z',
-        stats: {
-          input: { rows: 4990000, dataSize: 239520000 },
-          output: { rows: 4990000, dataSize: 239520000 },
-          insert: { rows: 4990000, dataSize: 0 },
-          update: { rows: 0, dataSize: 0 },
-          delete: { rows: 0, dataSize: 0 },
-          transmissionTime: 662899,
-          transTimeAvg: 0,
-          replicationLag: 7872,
-          'stagesMetrics|1-10': [
+              dataQualityTag: false,
+              distance: 1,
+              freeTransform: false,
+              id: '860486ba-a620-44e8-82a4-dc98b62778ec',
+              inputLanes: [],
+              joinTables: [],
+              name: 'local_179',
+              outputLanes: ['76dfca82-f8d1-4909-b6e4-d341fb310bb2'],
+              type: 'database',
+              database_type: 'mysql',
+              dropType: 'no_drop',
+              readBatchSize: 1000,
+              readCdcInterval: 500,
+              statsStatus: 'cdc'
+            },
             {
-              stageId: '860486ba-a620-44e8-82a4-dc98b62778ec',
-              input: { rows: 0, dataSize: 0 },
-              output: { rows: 4990000, dataSize: 239520000 },
-              insert: { rows: 0, dataSize: 0 },
-              update: { rows: 0, dataSize: 0 },
-              delete: { rows: 0, dataSize: 0 },
-              transmissionTime: Random.integer(0, 100000),
-              transTimeAvg: Random.integer(0, 100000),
-              replicationLag: Random.integer(0, 10000),
-              status: 'cdc'
+              connectionId: '6087c2ee0786e30010d4c882',
+              dataQualityTag: false,
+              distance: 0,
+              freeTransform: false,
+              id: '76dfca82-f8d1-4909-b6e4-d341fb310bb2',
+              inputLanes: ['860486ba-a620-44e8-82a4-dc98b62778ec'],
+              joinTables: [],
+              name: 'DRS-ALI-DEST',
+              outputLanes: [],
+              type: 'database',
+              syncObjects: [{ objectNames: ['my_test1'], type: 'table' }],
+              table_prefix: 'ff013_',
+              table_suffix: '',
+              readBatchSize: 1000,
+              readCdcInterval: 500,
+              dropType: 'no_drop',
+              database_type: 'mysql',
+              statsStatus: null
             }
           ],
-          totalCount: null
-        },
-        user: {
-          email: '60718c178fbae2c47bc294b3@custom.com',
-          username: '小瓶套',
-          emailVerified: true
-        },
-        errorEvents: [],
-        tcm: {
-          agentId: '@id',
-          agentName: '@name'
+          setting: {
+            name: 'sudu 8',
+            'sync_type|1': ['initial_sync+cdc', 'initial_sync', 'cdc'],
+            distinctWriteType: 'intellect',
+            stopOnError: false,
+            isOpenAutoDDL: false,
+            twoWay: false,
+            syncPoints: [
+              {
+                connectionId: '60803202ddc0f40343b87e35',
+                type: 'current',
+                time: '',
+                date: '',
+                name: '',
+                timezone: '+8'
+              }
+            ],
+            readBatchSize: 25000,
+            notificationWindow: 0,
+            notificationInterval: 300,
+            readCdcInterval: 500,
+            description: '',
+            drop_target: false,
+            needToCreateIndex: false,
+            increment: false,
+            isSchedule: false,
+            emailWaring: {
+              edited: false,
+              started: false,
+              error: true,
+              paused: true
+            }
+          },
+          platformInfo: { region: '', zone: '' },
+          user_id: '@id',
+          agentId: '',
+          startTime: '2021-04-28T11:11:05.961Z',
+          stats: {
+            input: { rows: 4990000, dataSize: 239520000 },
+            output: { rows: 4990000, dataSize: 239520000 },
+            insert: { rows: 4990000, dataSize: 0 },
+            update: { rows: 0, dataSize: 0 },
+            delete: { rows: 0, dataSize: 0 },
+            transmissionTime: 662899,
+            transTimeAvg: 0,
+            replicationLag: 7872,
+            'stagesMetrics|1-10': [
+              {
+                stageId: '860486ba-a620-44e8-82a4-dc98b62778ec',
+                input: { rows: 0, dataSize: 0 },
+                output: { rows: 4990000, dataSize: 239520000 },
+                insert: { rows: 0, dataSize: 0 },
+                update: { rows: 0, dataSize: 0 },
+                delete: { rows: 0, dataSize: 0 },
+                transmissionTime: Random.integer(0, 100000),
+                transTimeAvg: Random.integer(0, 100000),
+                replicationLag: Random.integer(0, 10000),
+                status: 'cdc'
+              }
+            ],
+            totalCount: null
+          },
+          user: {
+            email: '60718c178fbae2c47bc294b3@custom.com',
+            username: '小瓶套',
+            emailVerified: true
+          },
+          errorEvents: [],
+          tcm: {
+            agentId: '@id',
+            agentName: '@name'
+          }
         }
-      }
-    ],
-    code: 'ok',
-    msg: 'ok'
+      ]
+    }
   },
   '/tm/api/DataFlows/update': {
     data: {
@@ -682,47 +687,51 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
-  '/tm/api/UserLogs/count': { data: { count: 130 }, code: 'ok', msg: 'ok' },
   '/tm/api/UserLogs': {
     code: 'ok',
     msg: 'ok',
-    'data|10-100': [
-      {
-        createTime: '2021-06-18T07:25:46.688Z',
-        id: '@guid',
-        last_updated: '2021-06-18T07:25:46.688Z',
-        'modular|1': [
-          'connection',
-          'migration',
-          'agent',
-          'inspect',
-          'differenceInspect',
-          'message',
-          'userNotification'
-        ],
-        'operation|1': [
-          'create',
-          'update',
-          'copy',
-          'delete',
-          'start',
-          'reset',
-          'stop',
-          'forceStop',
-          'rename',
-          'read',
-          'readAll',
-          'deleteAll'
-        ],
-        parameter1: '@name',
-        parameter2: '@name',
-        parameter3: '',
-        'rename|1': [true, false],
-        oldName: '@name', //原名称
-        type: 'userOperation',
-        user_id: '60cc0c5887e32100106b6a17',
-        username: '@name'
-      }
-    ]
+    data: {
+      size: 20,
+      total: '@integer(0, 100)',
+      totalPage: 1,
+      'items|10-100': [
+        {
+          createTime: '2021-06-18T07:25:46.688Z',
+          id: '@guid',
+          last_updated: '2021-06-18T07:25:46.688Z',
+          'modular|1': [
+            'connection',
+            'migration',
+            'agent',
+            'inspect',
+            'differenceInspect',
+            'message',
+            'userNotification'
+          ],
+          'operation|1': [
+            'create',
+            'update',
+            'copy',
+            'delete',
+            'start',
+            'reset',
+            'stop',
+            'forceStop',
+            'rename',
+            'read',
+            'readAll',
+            'deleteAll'
+          ],
+          parameter1: '@name',
+          parameter2: '@name',
+          parameter3: '',
+          'rename|1': [true, false],
+          oldName: '@name', //原名称
+          type: 'userOperation',
+          user_id: '60cc0c5887e32100106b6a17',
+          username: '@name'
+        }
+      ]
+    }
   }
 }

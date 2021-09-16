@@ -417,15 +417,13 @@ export default {
         skip: (current - 1) * this.page.size,
         order: this.order
       }
-      Promise.all([
-        this.$axios.get('tm/api/DataFlows/count?where=' + encodeURIComponent(JSON.stringify(where))),
-        this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      ])
-        .then(([countData, data]) => {
-          this.page.total = countData.count
-          let list = data || []
+      this.$axios
+        .get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(({ total, items }) => {
+          this.page.total = total
+          let list = items || []
           this.list = list.map(this.formatData)
-          if (!list.length && data.total > 0) {
+          if (!list.length && total > 0) {
             setTimeout(() => {
               this.fetch(this.page.current - 1)
             }, 0)
