@@ -51,29 +51,29 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <span class="span-label">{{ $t('dag_data_node_label_database_link_table') }}</span>
-                <el-select v-model="model.dropType" size="mini">
-                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="no_drop"></el-option>
+                <el-select v-model="model.tableNameTransform" size="mini">
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value=""></el-option>
                   <el-option
                     :label="$t('dag_data_node_label_database_link_to_uppercase')"
-                    value="drop_data"
+                    value="toUpperCase"
                   ></el-option>
                   <el-option
                     :label="$t('dag_data_node_label_database_link_to_lowercase')"
-                    value="drop_schema"
+                    value="toLowerCase"
                   ></el-option>
                 </el-select>
               </el-col>
               <el-col :span="12">
                 <span class="span-label">{{ $t('dag_data_node_label_database_link_field') }}</span>
-                <el-select v-model="model.dropType" size="mini">
-                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="no_drop"></el-option>
+                <el-select v-model="model.fieldNameTransform" size="mini">
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value=""></el-option>
                   <el-option
                     :label="$t('dag_data_node_label_database_link_to_uppercase')"
-                    value="drop_data"
+                    value="toUpperCase"
                   ></el-option>
                   <el-option
                     :label="$t('dag_data_node_label_database_link_to_lowercase')"
-                    value="drop_schema"
+                    value="toLowerCase"
                   ></el-option>
                 </el-select>
               </el-col>
@@ -135,7 +135,16 @@
               <span class="box" slot-scope="{ option }">
                 <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
                 <!-- :class="[{ active: option.label !== option.key }, 'text']" -->
-                <span :title="option.label">{{ option.label }}</span>
+                <!-- <span :title="option.label">{{ option.label }}</span> -->
+                <span
+                  v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
+                  >{{ option.label.toLowerCase() }}</span
+                >
+                <span
+                  v-else-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toUpperCase'"
+                  >{{ option.label.toUpperCase() }}</span
+                >
+                <span v-else>{{ option.label }}</span>
                 <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span>
                 <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
@@ -147,6 +156,7 @@
               <MqTransfer
                 v-model="mqActiveData"
                 :source="sourceData"
+                :tableNameTransform="model.tableNameTransform"
                 :table_prefix="model.table_prefix"
                 :table_suffix="model.table_suffix"
               ></MqTransfer>
@@ -318,6 +328,8 @@ export default {
         table_suffix: '',
         dropType: 'no_drop',
         type: 'databaseLink',
+        tableNameTransform: '',
+        fieldNameTransform: '',
         selectSourceArr: [],
         topicData: [],
         queueData: [],
@@ -359,6 +371,12 @@ export default {
       deep: true,
       handler() {
         this.$emit('dataChanged', this.getData())
+      }
+    },
+    'model.tableNameTransform': {
+      deep: true,
+      handler(val) {
+        this.model.tableNameTransform = val
       }
     }
   },
@@ -434,15 +452,6 @@ export default {
 
     getData() {
       let result = JSON.parse(JSON.stringify(this.model))
-      // console.log(this.model)
-      // let includeTables = []
-      // for (let i = 0; i < this.sourceData.length; i++) {
-      //   for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-      //     if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-      //       includeTables.push(this.sourceData[i].key)
-      //     }
-      //   }
-      // }
       if (this.cell) {
         let targetCell = this.cell.getTargetCell()
         if (targetCell && targetCell.getFormData()) {
@@ -452,6 +461,8 @@ export default {
             targetFormData.dropType = this.model.dropType
             targetFormData.table_prefix = this.model.table_prefix
             targetFormData.table_suffix = this.model.table_suffix
+            targetFormData.tableNameTransform = this.model.tableNameTransform
+            targetFormData.fieldNameTransform = this.model.fieldNameTransform
             targetFormData.syncObjects = []
             if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
               targetFormData.syncObjects = [
@@ -547,35 +558,6 @@ export default {
 
     // 添加前后缀数据处理
     preFixSuffixData() {
-      // if (
-      //   this.sourceData &&
-      //   this.sourceData.length &&
-      //   this.model.selectSourceArr.length
-      // ) {
-      //   let selectSourceArr = []
-      //   this.model.selectSourceArr = Array.from(
-      //     new Set(this.model.selectSourceArr)
-      //   )
-      //   this.sourceData.forEach(sourceName => {
-      //     this.model.selectSourceArr.map(k => {
-      //       if (k == sourceName.key) {
-      //         selectSourceArr.push(k)
-      //       }
-      //     })
-      //   })
-      //   this.model.selectSourceArr = selectSourceArr
-
-      //   for (let i = 0; i < this.sourceData.length; i++) {
-      //     for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-      //       if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-      //         this.sourceData[i].label =
-      //           this.model.table_prefix +
-      //           this.sourceData[i].key +
-      //           this.model.table_suffix
-      //       }
-      //     }
-      //   }
-      // }
       this.mqActiveData.table_prefix = this.model.table_prefix
       this.mqActiveData.table_suffix = this.model.table_suffix
       //前后缀 表名改动 需要清空字段处理器
@@ -590,15 +572,6 @@ export default {
       this.mqActiveData.table_suffix = ''
       //前后缀 表名改动 需要清空字段处理器
       this.model.field_process = []
-      // if (this.sourceData.length) {
-      //   for (let i = 0; i < this.sourceData.length; i++) {
-      //     for (let k = 0; k < this.model.selectSourceArr.length; k++) {
-      //       if (this.sourceData[i].key === this.model.selectSourceArr[k]) {
-      //         this.sourceData[i].label = this.sourceData[i].key
-      //       }
-      //     }
-      //   }
-      // }
     },
     //获取dataFlow
     getDataFlow() {
