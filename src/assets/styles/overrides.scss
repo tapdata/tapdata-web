@@ -36,6 +36,16 @@ th {
 /*
 * element-ui
 */
+// 下拉选择
+.el-select {
+  .el-input {
+    &.is-focus {
+      .el-input__inner {
+        border-color: map-get($color, primary);
+      }
+    }
+  }
+}
 .el-select-dropdown {
   border-radius: $borderRadius;
   .popper__arrow {
