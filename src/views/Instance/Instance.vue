@@ -378,17 +378,19 @@ export default {
     }
   },
   watch: {
-    // '$route.query'(query) {
-    //   console.log('watch-query')
-    //   this.searchParams.status = query.status || ''
-    //   this.fetch(1)
-    // }
+    $route(route) {
+      if (route.name === 'Instance') {
+        this.searchParams.status = route.query.status || ''
+        let pageNum = JSON.stringify(route.query) === '{}' ? undefined : 1
+        this.fetch(pageNum)
+      }
+    }
   },
   created() {
     this.init()
     timer = setInterval(() => {
       // let list = this.list || []
-      let flag = false
+      let flag = true
       // list.forEach(item => {
       //   if (['Stopping'].includes(item.status) || (this.showUpgradeIcon(item) && this.upgradingFlag(item))) {
       //     flag = true

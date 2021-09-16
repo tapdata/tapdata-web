@@ -39,7 +39,7 @@ export default {
   methods: {
     toHome() {
       let baseUrl = process.env.BASE_URL || ''
-      location.href = baseUrl + '/'
+      location.href = baseUrl
     }
   }
 }

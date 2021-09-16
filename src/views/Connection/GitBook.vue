@@ -7,13 +7,24 @@
 <script>
 export default {
   name: 'GitBook',
+  props: {
+    databaseType: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       htmlMD: ''
     }
   },
+  watch: {
+    databaseType(v) {
+      this.getHtmlMD(v)
+    }
+  },
   mounted() {
-    this.getHtmlMD(this.$route.query.databaseType)
+    this.getHtmlMD(this.databaseType)
   },
   methods: {
     getHtmlMD(type) {

@@ -174,7 +174,7 @@ export default {
 
   // 连接
   connection_manage: '连接管理',
-  connection_list_column_schema_status: 'Schema加载进度',
+  connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
 
   // 任务

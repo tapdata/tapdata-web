@@ -127,8 +127,7 @@
       </ElPagination>
       <!-- 连接测试 -->
       <ConnectionTest ref="test"></ConnectionTest>
-      <!--  详情    -->
-      <Preview ref="preview"></Preview>
+      <Preview ref="preview" @close="fetch()"></Preview>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -229,9 +228,13 @@ export default {
     }
   },
   watch: {
-    '$route.query'(query) {
-      this.searchParams = Object.assign(this.searchParams, query)
-      this.fetch(1)
+    $route(route) {
+      if (route.name === 'Connection') {
+        let query = route.query
+        this.searchParams = Object.assign(this.searchParams, query)
+        let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
+        this.fetch(pageNum)
+      }
     }
   },
   created() {
@@ -242,7 +245,7 @@ export default {
       let list = this.list || []
       let ids = []
       list.forEach(item => {
-        if (['testing'].includes(item.status)) {
+        if (['testing'].includes(item.status) || ['loading'].includes(item.loadFieldsStatus)) {
           ids.push(item.id)
         }
       })
@@ -266,7 +269,11 @@ export default {
       let fields = {
         id: true,
         name: true,
-        status: true
+        status: true,
+        loadFieldsStatus: true,
+        loadCount: true,
+        tableCount: true,
+        loadFieldErrMsg: true
       }
       let filter = {
         fields,
@@ -280,8 +287,7 @@ export default {
       let changeList = data || []
       let statusMap = {}
       changeList.forEach(item => {
-        let { statusText, statusIcon, status } = this.formatData(item)
-        statusMap[item.id] = { statusText, statusIcon, status }
+        statusMap[item.id] = this.formatData(item)
       })
       let list = this.list || []
       list.forEach(item => {

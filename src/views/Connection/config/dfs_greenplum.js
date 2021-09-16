@@ -167,21 +167,25 @@ export default function (vm) {
       //     }
       //   ]
       // },
-      {
-        type: 'switch',
-        field: 'schemaAutoUpdate',
-        label: vm.$t('dataForm.form.ReloadSchema')
-      },
-      {
-        type: 'input',
-        field: 'table_filter',
-        domType: 'textarea',
-        customClass: 'large-item',
-        label: vm.$t('dataForm.form.tableFilter'),
-        tip: vm.$t('dataForm.form.tableFilterTips'),
-        maxlength: 500,
-        showWordLimit: true
-      },
+      // {
+      //   type: 'switch',
+      //   field: 'schemaAutoUpdate',
+      //   label: vm.$t('dataForm.form.ReloadSchema')
+      // },
+      // {
+      //   type: 'input',
+      //   field: 'table_filter',
+      //   domType: 'textarea',
+      //   customClass: 'large-item',
+      //   label: vm.$t('dataForm.form.tableFilter'),
+      //   tip: vm.$t('dataForm.form.tableFilterTips'),
+      //   maxlength: 500,
+      //   showWordLimit: true
+      // },
+      // {
+      //   type: 'slot',
+      //   slot: 'tableFilter'
+      // },
       {
         type: 'input',
         field: 'additionalString',
