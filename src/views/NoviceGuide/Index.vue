@@ -63,6 +63,9 @@
             @click="toNext"
             >下一步</el-button
           >
+          <span v-if="agentNextLoading" class="ml-2 font-color-sub"
+            >测试Agent的启动大概需要1～5分钟的时间，请耐心等待。</span
+          >
         </div>
       </div>
       <!--   第2步、第3步   -->
