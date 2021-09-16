@@ -75,7 +75,25 @@ const newCn = {
   verify_message_error_joint_table_field_not_match: '校验条件中源表与目标表的索引字段个数不相等',
   verify_message_confirm_delete_script: '确定要删除自定义JS校验逻辑吗',
   verify_message_confirm_back: '此操作会丢失当前正在创建（编辑）的校验任务',
-  verify_message_title_confirm_back: '是否放弃创建（编辑）校验任务？'
+  verify_message_title_confirm_back: '是否放弃创建（编辑）校验任务？',
+
+  milestone_label_init_dataflow: '【前期准备】解析dag路径创建子任务',
+  milestone_label_connect_to_source: '【前期准备】连接源端数据源',
+  milestone_label_connect_to_target: '【前期准备】连接目标端数据源',
+  milestone_label_init_connector: '【前期准备】扫描源端信息，初始化源端采集器',
+  milestone_label_init_transformer: '【前期准备】扫描目标端信息，初始化目标端处理器',
+  milestone_label_read_source_ddl: '【前期准备】读取源端ddl信息',
+  milestone_label_drop_target_schema: '【前期准备】删除目标端模型',
+  milestone_label_clear_target_data: '【前期准备】清空目标表数据',
+  milestone_label_create_target_table: '【前期准备】自动创建目标表',
+  milestone_label_create_target_index: '【前期准备】创建目标表索引',
+  milestone_label_create_target_view: '【前期准备】自动创建目标端视图',
+  milestone_label_create_target_function: '【前期准备】自动创建目标端函数',
+  milestone_label_create_target_procedure: '【前期准备】自动创建目标端存储过程',
+  milestone_label_read_snapshot: '【数据传输】全量读取源端数据快照',
+  milestone_label_write_snapshot: '【数据传输】目标端全量写入数据快照',
+  milestone_label_read_cdc_event: '【数据传输】源端采集器进入增量读取模式',
+  milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式'
 }
 const cn = {
   ...zhLocale,
