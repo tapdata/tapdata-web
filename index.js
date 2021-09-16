@@ -1,4 +1,6 @@
 import locale from './locale'
+import baseComponents from './components/base'
+import VConfirm from './components/base/VConfirm'
 import FormBuilder from './components/form-builder'
 import ConnectionTypeSelector from './components/connection-type-selector'
 import ConnectionFormSelector from './components/connection-form'
@@ -11,11 +13,29 @@ import WSClient from './plugins/ws-client'
 import * as _util from './util'
 import * as _const from './const'
 
-const components = [ConnectionTypeSelector, ConnectionFormSelector, ConnectionTest, JsEditor, FieldMapping, CheckStage]
+const components = [
+  ConnectionTypeSelector,
+  ConnectionFormSelector,
+  ConnectionTest,
+  JsEditor,
+  FieldMapping,
+  CheckStage
+].concat(baseComponents)
 
 const install = Vue => {
   Vue.prototype.$util = _util
   Vue.prototype.$const = _const
+  Vue.prototype.$confirm = (param1, param2, param3) => {
+    return new Promise((resolve, reject) => {
+      VConfirm.confirm(param1, param2, param3)
+        .then(() => {
+          resolve(true)
+        })
+        .catch(() => {
+          reject(false)
+        })
+    }).catch(() => {})
+  }
 
   Vue.use(FormBuilder)
 

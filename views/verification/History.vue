@@ -1,7 +1,7 @@
 <template>
-  <section class="data-verify-history-wrap" v-loading="loading">
+  <section class="data-verify-history-wrap g-panel-container" v-loading="loading">
     <div class="panel-main">
-      <el-table :data="page.data" height="100%" class="table-border">
+      <el-table :data="page.data" height="100%">
         <el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
           <template slot-scope="scope">
             {{
@@ -44,15 +44,15 @@
           <template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
             <div class="inspect-result">
               <span v-if="scope.row.result !== 'passed'" class="error">
-                <i class="data-verify-history__icon el-icon-error"></i>
+                <VIcon class="verify-status-icon color-danger mr-1" size="14">error</VIcon>
                 <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'row_count'">
                   {{ $t('verify_result_count_inconsistent') }}
                 </span>
                 <span v-else>{{ $t('verify_result_content_diff', [scope.row.difference_number]) }}</span>
               </span>
               <span class="success" v-if="scope.row.result === 'passed'">
-                <i class="data-verify-history__icon el-icon-success"></i>
-                <span>{{ $t('dataVerification.consistent') }}</span>
+                <VIcon class="verify-status-icon mr-1" size="14">success-fill-color</VIcon>
+                <span>{{ $t('verify_result_count_consistent') }}</span>
               </span>
               <VIcon v-if="scope.row.parentId" class="ml-2" size="14">ercijiaoyan</VIcon>
             </div>
@@ -157,12 +157,9 @@ export default {
 <style lang="scss" scoped>
 .data-verify-history-wrap {
   display: flex;
-  margin: 20px;
-  padding: 20px;
   height: 100%;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
   box-sizing: border-box;
   .data-verify-history__icon {
     color: #fff;
@@ -193,17 +190,13 @@ export default {
     .inspect-result {
       .error,
       .success {
-        padding: 0 8px 0 5px;
         display: inline-block;
-        line-height: 20px;
-        color: #fff;
-        border-radius: 20px;
       }
       .error {
-        background: #f56c6c;
+        color: map-get($color, danger);
       }
       .success {
-        background: #70ae48;
+        color: map-get($color, success);
       }
     }
     .pagination {

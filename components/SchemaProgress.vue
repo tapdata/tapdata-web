@@ -18,13 +18,18 @@ export default {
     schemaInfo() {
       let data = this.data
       let schemaInfo = {}
-      if (['loading', 'finished'].includes(data.loadFieldsStatus)) {
-        let icon = data.loadFieldsStatus === 'loading' ? 'warning' : 'success'
-        let process = (data.loadCount * 100) / data.tableCount || 100
+      if (data.loadFieldsStatus === 'loading') {
+        let process = (data.loadCount * 100) / data.tableCount || 0
         schemaInfo = {
           text: Math.floor(process) + '%',
-          icon: icon,
-          color: icon
+          icon: 'warning',
+          color: 'warning'
+        }
+      } else if (data.loadFieldsStatus === 'finished') {
+        schemaInfo = {
+          text: this.$t('schema_progress_status_success'),
+          icon: 'success',
+          color: 'success'
         }
       } else {
         schemaInfo = {
@@ -51,7 +56,7 @@ export default {
         {
           type: 'error',
           customClass: 'schema-error-dialog',
-          confirmButtonText: this.$t('dialog_button_close')
+          confirmButtonText: this.$t('button_close')
         }
       )
     }

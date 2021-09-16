@@ -1,6 +1,6 @@
 <template>
   <div class="verification-result-view panel-box" v-loading="loading">
-    <div class="tip" style="padding-left: 10px">
+    <div class="header">
       {{ $t('dataVerification.verifyDetail') }}
     </div>
     <div class="main">
@@ -101,10 +101,10 @@
         </div>
       </template>
     </div>
-    <el-pagination
-      class="pagination"
+    <ElPagination
+      class="result-view-pagination"
       background
-      layout="total,prev, pager, next,sizes"
+      layout="total, ->, prev, pager, next, sizes"
       :page-sizes="!showAdvancedVerification ? [20, 30, 50, 100] : [1]"
       :page-size.sync="page.size"
       :total="page.total"
@@ -112,7 +112,7 @@
       @current-change="fetch"
       @size-change="fetch(1)"
     >
-    </el-pagination>
+    </ElPagination>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -122,22 +122,16 @@ $margin: 10px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  &.panel-box {
-    margin: 20px 20px 20px 0;
-    border-left: 1px solid #dedee4;
-    border-bottom: 1px solid #dedee4;
-    border-right: 1px solid #dedee4;
-  }
-  .tip {
-    height: 30px;
+  border-left: 1px solid #f2f2f2;
+  .header {
+    padding: 16px 24px;
     font-size: 12px;
     background: #f5f5f5;
-    border: 1px solid #dedee4;
-    border-left: 0;
-    border-right: 0;
-    line-height: 30px;
+    font-size: 14px;
+    line-height: 22px;
   }
   .main {
+    padding-bottom: 16px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -168,10 +162,11 @@ $margin: 10px;
       }
     }
     .inspect-result {
+      padding: 16px 24px;
       font-size: 12px;
-      margin: $margin;
       li {
-        margin-top: 10px;
+        line-height: 22px;
+        margin-top: 8px;
       }
     }
     .inspect-ad-box {
@@ -230,12 +225,6 @@ $margin: 10px;
           overflow: auto;
           height: 350px;
         }
-        li:last-child {
-          border-right: 1px solid #dedee4;
-        }
-      }
-      .sub-table:last-child {
-        border-bottom: 1px solid #dedee4;
       }
     }
     .inspect-result-box {
@@ -244,8 +233,8 @@ $margin: 10px;
         color: #ee5353;
       }
       .inspect-details {
-        margin: 0 10px;
         li {
+          padding: 8px;
           min-width: 0;
           font-size: 12px;
           box-sizing: border-box;
@@ -253,34 +242,34 @@ $margin: 10px;
           vertical-align: middle;
           position: relative;
           text-align: left;
-          padding: 3px 10px;
           word-wrap: break-word;
+        }
+        li + li {
+          border-left: 1px solid #f2f2f2;
         }
         .father-table {
           display: flex;
+          border-top: 1px solid #f2f2f2;
           li {
+            padding-top: 16px;
+            padding-bottom: 16px;
             flex: 1;
-            background-color: #f5f5f5;
-            border-left: 1px solid #dedee4;
-            border-top: 1px solid #dedee4;
-          }
-          li:last-child {
-            border-right: 1px solid #dedee4;
+            &:first-child {
+              padding-left: 24px;
+            }
           }
         }
         .sub-table {
           display: flex;
+          &:nth-child(2n + 1) {
+            background: #fafafa;
+          }
           li {
             flex: 1;
-            border-left: 1px solid #dedee4;
-            border-top: 1px solid #dedee4;
+            &:first-child {
+              padding-left: 24px;
+            }
           }
-          li:last-child {
-            border-right: 1px solid #dedee4;
-          }
-        }
-        .sub-table:last-child {
-          border-bottom: 1px solid #dedee4;
         }
         div {
           font-size: 12px;
@@ -294,15 +283,7 @@ $margin: 10px;
           border: 1px solid #dedee4;
         }
       }
-      .inspect-details {
-        margin-bottom: 10px;
-        margin-top: 10px;
-      }
     }
-  }
-  .pagination {
-    border-top: 1px solid #dedee4;
-    padding: 10px 5px;
   }
   .back-btn-icon-box {
     width: 30px;
@@ -314,13 +295,10 @@ $margin: 10px;
     cursor: pointer;
     background: #409eff;
     border: 0;
-    -webkit-appearance: none;
     text-align: center;
-    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     outline: 0;
     margin: 0;
-    -webkit-transition: 0.1s;
     transition: 0.1s;
     font-weight: normal;
     padding: 0;
@@ -328,6 +306,17 @@ $margin: 10px;
   }
   .back-btn-icon-box:hover {
     background: #6dc5e8;
+  }
+}
+</style>
+<style lang="scss">
+.result-view-pagination {
+  padding-left: 24px;
+  .el-pagination__sizes {
+    margin-right: 0;
+    .el-select .el-input {
+      margin-right: 0;
+    }
   }
 }
 </style>
@@ -392,5 +381,3 @@ export default {
   }
 }
 </script>
-
-<style></style>

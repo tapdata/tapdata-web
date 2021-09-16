@@ -10,19 +10,19 @@
     :close-on-press-escape="false"
   >
     <div>检测到当前任务有以下新增链路，请设置同步方式（默认全量 + 增量）</div>
-    <el-table :data="data" style="width: 100%" class="test-block">
-      <el-table-column type="index">序号</el-table-column>
+    <el-table :data="data" height="500" style="width: 100%" class="test-block">
+      <el-table-column type="index" label="序号"></el-table-column>
       <el-table-column label="源表名">
         <template slot-scope="scope">
           {{ scope.row.stages ? scope.row.stages[0].tableName : '' }}
         </template>
       </el-table-column>
-      <el-table-column label="源表名">
+      <el-table-column label="目标表名">
         <template slot-scope="scope">
           {{ scope.row.stages ? scope.row.stages[scope.row.stages.length - 1].tableName : '' }}
         </template>
       </el-table-column>
-      <el-table-column prop="syncType" label="目标表名">
+      <el-table-column prop="syncType" label="同步方式">
         <template slot-scope="scope">
           <el-radio-group v-model="scope.row.syncType">
             <el-radio label="initial_sync+cdc">全量+增量</el-radio>

@@ -1,6 +1,6 @@
 <template>
   <div class="field-mapping" v-loading="loadingPage">
-    <div style="text-align: left">
+    <div class="field-mapping__desc" style="text-align: left">
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
     </div>
@@ -392,7 +392,17 @@ export default {
         let rules = this.typeMapping.filter(v => v.dbType === data[i].t_data_type)
         if (rules?.length > 0) {
           rules = rules[0].rules
-          this.showFieldEdit(data[i].t_id, rules || [])
+          if (!data[i].t_precision) {
+            this.showPrecisionEdit(data[i].t_id, rules || [])
+            this.influencesPrecision(data[i].t_id, rules || [])
+          } else if (!data[i].t_scale) {
+            this.showScaleEdit(data[i].t_id, rules || [])
+            this.influencesScale(data[i].t_id, rules || [])
+          } else if (!data[i].t_precision && !data[i].t_scale) {
+            this.showPrecisionEdit(data[i].t_id, rules || [])
+            this.showScaleEdit(data[i].t_id, rules || [])
+            this.influences(data[i].t_id, rules || [])
+          }
         }
       }
     },
@@ -481,7 +491,7 @@ export default {
           return
         }
         //如果是改类型 需要手动修改字段的长度以及精度
-        this.influences(id)
+        this.influences(id, this.currentTypeRules || [])
       } else if (key === 'precision') {
         let isPrecision = this.currentTypeRules.filter(v => v.minPrecision < v.maxPrecision)
         if (isPrecision.length === 0) {
@@ -533,14 +543,23 @@ export default {
       this.handleClose()
     },
     //改类型影响字段长度 精度
-    influences(id) {
-      this.showFieldEdit(id, this.currentTypeRules)
-      this.currentTypeRules.forEach(r => {
+    influences(id, rules) {
+      this.showScaleEdit(id, rules)
+      this.showPrecisionEdit(id, rules)
+      this.influencesScale(id, rules)
+      this.influencesPrecision(id, rules)
+    },
+    influencesScale(id, rules) {
+      rules.forEach(r => {
         if (r.minScale || r.minScale === 0) {
           this.updateTarget(id, 'scale', r.minScale < 0 ? 0 : r.minScale)
         } else {
           this.updateTarget(id, 'scale', null)
         }
+      })
+    },
+    influencesPrecision(id, rules) {
+      rules.forEach(r => {
         if (r.minPrecision || r.minPrecision === 0) {
           this.updateTarget(id, 'precision', r.minPrecision < 0 ? 0 : r.minPrecision)
         } else {
@@ -548,20 +567,22 @@ export default {
         }
       })
     },
-    showFieldEdit(id, data) {
-      let isPrecision = data.filter(v => v.minPrecision < v.maxPrecision)
-      if (isPrecision.length !== 0) {
-        //固定值
-        this.updateTarget(id, 'isPrecisionEdit', true)
-      } else {
-        this.updateTarget(id, 'isPrecisionEdit', false)
-      }
+    showScaleEdit(id, data) {
       let isScale = data.filter(v => v.minScale < v.maxScale)
       if (isScale.length !== 0) {
         //固定值
         this.updateTarget(id, 'isScaleEdit', true)
       } else {
         this.updateTarget(id, 'isScaleEdit', false)
+      }
+    },
+    showPrecisionEdit(id, data) {
+      let isPrecision = data.filter(v => v.minPrecision < v.maxPrecision)
+      if (isPrecision.length !== 0) {
+        //固定值
+        this.updateTarget(id, 'isPrecisionEdit', true)
+      } else {
+        this.updateTarget(id, 'isPrecisionEdit', false)
       }
     },
     initDataType(val) {

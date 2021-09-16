@@ -146,7 +146,7 @@ export default {
       let item = h(
         'ElFormItem',
         {
-          class: 'e-form-builder-item',
+          class: config.customClass ? 'e-form-builder-item ' + config.customClass : 'e-form-builder-item ',
           style: formConfig.itemStyle,
           props: {
             prop: config.field,
@@ -161,11 +161,11 @@ export default {
           },
           key: config.field || index
         },
-        [this.getLabel(h, config), this.getBody(h, config, formConfig)]
+        [this.getLabel(h, config, formConfig), this.getBody(h, config, formConfig)]
       )
       return config.show ? item : ''
     },
-    getLabel(h, config) {
+    getLabel(h, config, formConfig) {
       return !config.label
         ? null
         : h(
@@ -175,7 +175,7 @@ export default {
               slot: 'label'
             },
             [
-              config.label,
+              formConfig.labelColon ? config.label + '：' : config.label,
               config.tips &&
                 h(
                   'ElPopover',
@@ -308,6 +308,9 @@ export default {
   }
   .fb-form-item-append-slot {
     margin-left: 5px;
+  }
+  .fb-radio-tip__text {
+    line-height: 18px;
   }
 }
 </style>
