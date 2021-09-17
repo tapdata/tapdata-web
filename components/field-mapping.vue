@@ -1,10 +1,10 @@
 <template>
   <div class="field-mapping" v-loading="loadingPage">
-    <div class="field-mapping__desc" style="text-align: left">
+    <div v-if="!readOnly" class="field-mapping__desc" style="text-align: left">
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
     </div>
-    <div class="search">
+    <div class="search" v-if="!readOnly">
       <div class="item">
         <span> 搜索表：</span>
         <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
@@ -41,7 +41,11 @@
                     item.sourceFieldCount
                   }`
                 }}
-                <el-button size="mini" round @click.stop="rollbackTable(item.sinkObjectName, item.sourceTableId)"
+                <el-button
+                  v-if="!readOnly"
+                  size="mini"
+                  round
+                  @click.stop="rollbackTable(item.sinkObjectName, item.sourceTableId)"
                   >恢复默认</el-button
                 >
               </div>
@@ -71,7 +75,10 @@
         <ElTableColumn label="源表精度" prop="scale" width="100"></ElTableColumn>
         <ElTableColumn label="目标表字段名" width="260">
           <template slot-scope="scope">
-            <div v-if="!scope.row.is_deleted && !hiddenFieldProcess" @click="edit(scope.row, 'field_name')">
+            <div
+              v-if="!scope.row.is_deleted && !hiddenFieldProcess && !readOnly"
+              @click="edit(scope.row, 'field_name')"
+            >
               <span :show-overflow-tooltip="true"
                 >{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i
               ></span>
@@ -81,7 +88,7 @@
         </ElTableColumn>
         <ElTableColumn label="目标表类型">
           <template slot-scope="scope">
-            <div v-if="!scope.row.is_deleted" @click="edit(scope.row, 'data_type')">
+            <div v-if="!scope.row.is_deleted && !readOnly" @click="edit(scope.row, 'data_type')">
               <span>{{ scope.row.t_data_type }}</span>
               <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
               <i class="icon el-icon-arrow-down"></i>
@@ -117,7 +124,8 @@
                 scope.row.t_scale !== null &&
                 scope.row.t_scale !== undefined &&
                 !scope.row.is_deleted &&
-                scope.row.t_isScaleEdit
+                scope.row.t_isScaleEdit &&
+                !readOnly
               "
               @click="edit(scope.row, 'scale')"
             >
@@ -129,7 +137,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="操作" width="80" v-if="!hiddenFieldProcess">
+        <ElTableColumn label="操作" width="80" v-if="!hiddenFieldProcess && !readOnly">
           <template slot-scope="scope">
             <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)"> 删除 </ElLink>
             <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
@@ -224,7 +232,14 @@ export default {
     remoteMethod: Function,
     typeMappingMethod: Function,
     fieldProcessMethod: Function,
-    hiddenFieldProcess: Boolean
+    hiddenFieldProcess: {
+      type: Boolean,
+      default: false
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
