@@ -39,12 +39,12 @@ module.exports = {
     proxy: {
       '/api/tcm/': proxy,
       '/tm/api/': proxy,
-      // '/tm/ws/': {
-      //   // ...proxy,
-      //   ws: true,
-      //   secure: false,
-      //   target: proxy.target.replace(/^https?/, 'ws')
-      // },
+      '/tm/ws/': {
+        // ...proxy,
+        ws: true,
+        secure: false,
+        target: proxy.target.replace(/^https?/, 'ws')
+      },
       '/tm/#/': {
         target: 'http://localhost:8081',
         changeOrigin: true,
