@@ -123,13 +123,11 @@ export default {
           neq: true
         }
       }
-      this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-        if (res) {
-          this.unRead = res
-          // this.$store.commit('notification', {
-          //   unRead: res.data.count
-          // })
-        }
+      return this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
+        this.unRead = res
+        // this.$store.commit('notification', {
+        //   unRead: res.data.count
+        // })
       })
     },
     // 已读消息
