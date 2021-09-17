@@ -426,7 +426,10 @@
         padding-bottom: 32px;
         height: 32px;
         .el-input__inner {
-          background: rgba(221, 221, 221, 0.4);
+          background: #f5f6f8;
+          &:focus {
+            background: unset;
+          }
         }
         .el-input__count-inner {
           background-color: unset;
