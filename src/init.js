@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import 'default-passive-events'
 import './plugins/element'
 import './plugins/axios'
 import './plugins/monent'

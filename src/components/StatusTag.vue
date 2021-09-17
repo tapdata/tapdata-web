@@ -14,7 +14,7 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import { CONNECTION_STATUS_MAP, INSTANCE_STATUS_MAP, TASK_STATUS_MAP } from '../const'
+import { CONNECTION_STATUS_MAP, INSTANCE_STATUS_MAP, TASK_STATUS_MAP, MILESTONE_STATUS_MAP } from '../const'
 export default {
   name: 'StatusTag',
   components: { VIcon },
@@ -40,7 +40,8 @@ export default {
       return {
         instance: INSTANCE_STATUS_MAP,
         task: TASK_STATUS_MAP,
-        connection: CONNECTION_STATUS_MAP
+        connection: CONNECTION_STATUS_MAP,
+        milestone: MILESTONE_STATUS_MAP
       }[this.target]
     },
     statusObj() {

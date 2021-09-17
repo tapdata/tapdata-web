@@ -18,7 +18,7 @@ export default {
   props: ['fieldProcess', 'readOnly'],
   data() {
     return {
-      fieldMappingNavData: '',
+      fieldMappingNavData: null,
       fieldMappingTableData: '',
       hiddenFieldMapping: false
     }
