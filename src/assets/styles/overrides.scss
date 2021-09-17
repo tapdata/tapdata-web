@@ -36,12 +36,32 @@ th {
 /*
 * element-ui
 */
-.el-select-dropdown__item.selected {
-  color: map-get($color, primary);
-  font-weight: normal;
+// 下拉选择
+.el-select {
+  .el-input {
+    &.is-focus {
+      .el-input__inner {
+        border-color: map-get($color, primary);
+      }
+    }
+  }
 }
 .el-select-dropdown {
   border-radius: $borderRadius;
+  .popper__arrow {
+    display: none;
+  }
+  .el-select-dropdown__item {
+    color: map-get($fontColor, sub);
+    font-weight: normal;
+    &.selected {
+      color: map-get($fontColor, main);
+      background: rgba(44, 101, 255, 0.2);
+    }
+  }
+}
+.el-select-dropdown__list {
+  padding: 0;
 }
 .el-select-dropdown .el-select-group__wrap {
   padding-top: 10px;
@@ -303,6 +323,9 @@ th {
 }
 .el-table th.el-table__cell {
   background-color: #fafafa;
+  &.el-table__cell.is-leaf {
+    border-bottom: 0;
+  }
 }
 .el-table .el-table__fixed-right-patch {
   background-color: #fafafa;

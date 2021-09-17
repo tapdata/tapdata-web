@@ -192,20 +192,15 @@
           </template>
         </el-table-column>
         <div v-if="!searchParams.keyword && !searchParams.status" class="instance-table__empty" slot="empty">
-          <VIcon size="100">no-data-color</VIcon>
+          <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('agent_list_empty_desc1') }}</span>
             <el-link type="primary" class="fs-7" @click="createAgent">{{ $t('agent_button_create') }}</el-link>
             <span>{{ $t('agent_list_empty_desc2') }}</span>
           </div>
-          <!--          <VIcon>folder-opened</VIcon>-->
-          <!--          <span class="ml-1" v-if="!searchParams.keyword && !searchParams.status">{{ $t('gl_no_data') }}</span>-->
-          <!--          <span v-else>-->
-          <!--            {{ $t('gl_no_match_result') }}，<el-link type="primary" @click="reset">{{ $t('gl_back_to_list') }}</el-link>-->
-          <!--          </span>-->
         </div>
         <div v-else class="instance-table__empty" slot="empty">
-          <VIcon size="100">no-data-color</VIcon>
+          <VIcon size="120">search-no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_match_result') }}</span>
             <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>

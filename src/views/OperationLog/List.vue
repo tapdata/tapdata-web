@@ -5,7 +5,7 @@
         <div class="list-operation-left">
           <el-form inline @submit.native.prevent>
             <el-form-item label="操作类型 :" width="300px">
-              <el-select v-model="searchParams.operationType" @input="search()">
+              <el-select v-model="searchParams.operationType" clearable @input="search()">
                 <el-option
                   v-for="(item, key) in operationTypeOptions"
                   :key="key"
@@ -51,14 +51,14 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <el-button plain class="btn-refresh" @click="fetch()">
+              <el-button plain class="btn-refresh" @click="table.fetch(1)">
                 <VIcon>refresh</VIcon>
               </el-button>
             </el-form-item>
           </el-form>
         </div>
       </div>
-      <VList ref="table" row-key="id" :remoteMethod="fetch" @sort-change="sortChange">
+      <VList ref="table" row-key="id" :remoteMethod="getData" @sort-change="sortChange">
         <el-table-column label="用户名" width="200">
           <template slot-scope="scope">
             <div>{{ scope.row.username }}</div>
@@ -173,14 +173,13 @@ export default {
         let query = route.query
         this.searchParams = Object.assign(this.searchParams, query)
         let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
-        this.fetch(pageNum)
+        this.table.fetch(pageNum)
       }
     }
   },
   created() {
     let query = this.$route.query
     this.searchParams = Object.assign(this.searchParams, query)
-    this.fetch()
   },
   methods: {
     getModularAndOperation(operationType) {
@@ -207,7 +206,7 @@ export default {
       }, debounce)
     },
 
-    fetch({ page }) {
+    getData({ page }) {
       const { toRegExp } = this.$util
       this.loading = true
       let { current, size } = page
@@ -237,18 +236,16 @@ export default {
       }
       let filter = {
         where,
-        limit: size,
-        skip: (current - 1) * size,
+        size: size,
+        page: current,
         order: this.order
       }
-      return Promise.all([
-        this.$axios.get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter))),
-        this.$axios.get('tm/api/UserLogs/count?where=' + encodeURIComponent(JSON.stringify(where)))
-      ])
-        .then(([data, countData]) => {
+      return this.$axios
+        .get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(({ total, items }) => {
           return {
-            total: countData.count,
-            data: data
+            total: total,
+            data: items
           }
         })
         .finally(() => {

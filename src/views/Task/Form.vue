@@ -426,7 +426,10 @@
         padding-bottom: 32px;
         height: 32px;
         .el-input__inner {
-          background: rgba(221, 221, 221, 0.4);
+          background: #f9fafd;
+          &:focus {
+            background: unset;
+          }
         }
         .el-input__count-inner {
           background-color: unset;
@@ -553,7 +556,7 @@ export default {
                   filter.where['id'] = { neq: this.id }
                 }
                 this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-                  if (data && data.length !== 0) {
+                  if (data?.total > 0) {
                     callback(new Error('任务名称已存在'))
                   } else callback()
                 })
@@ -871,8 +874,8 @@ export default {
         fields: fields,
         order: ['status DESC', 'name ASC']
       }
-      this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-        this.changeConfig(data || [], type, reset)
+      this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
+        this.changeConfig(items || [], type, reset)
       })
     },
     //change config

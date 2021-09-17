@@ -79,12 +79,16 @@
         </div>
       </div>
       <div class="panel-right flex-fit h-100 overflow-hidden p-6">
-        <ElTabs class="dashboard-tabs flex flex-column overflow-hidden h-100" v-model="activeTab">
+        <ElTabs
+          class="dashboard-tabs flex flex-column overflow-hidden h-100"
+          v-model="activeTab"
+          @tab-click="tabHandler"
+        >
           <ElTabPane label="任务进度" name="progress">用户管理</ElTabPane>
-          <ElTabPane class="h-100 overflow-hidden" label="运行日志" name="log">
+          <ElTabPane lazy class="h-100 overflow-hidden" label="运行日志" name="log">
             <Log :id="$route.params.id"></Log>
           </ElTabPane>
-          <ElTabPane class="h-100 overflow-hidden" label="任务里程碑" name="milestone">
+          <ElTabPane lazy class="h-100 overflow-hidden" label="任务里程碑" name="milestone">
             <ElTable fit height="100%" empty-text="此任务尚未启动或已被重置，暂无运行里程碑数据" :data="milestoneList">
               <ElTableColumn label="任务详情" prop="label"></ElTableColumn>
               <ElTableColumn label="状态" prop="status" width="100px">
@@ -95,7 +99,9 @@
               <ElTableColumn label="时间" prop="fromNow" width="160px"></ElTableColumn>
             </ElTable>
           </ElTabPane>
-          <ElTabPane label="同步内容" name="content"></ElTabPane>
+          <ElTabPane lazy label="同步内容" name="content">
+            <FieldMapping ref="fieldMapping" :readOnly="true"></FieldMapping>
+          </ElTabPane>
         </ElTabs>
       </div>
     </div>
@@ -140,14 +146,15 @@
 </style>
 <script>
 import StatusTag from '@/components/StatusTag'
+import FieldMapping from '@/components/FieldMappings'
 import Log from './Log.vue'
 export default {
-  components: { StatusTag, Log },
+  components: { StatusTag, Log, FieldMapping },
   data() {
     return {
       loading: true,
       task: null,
-      activeTab: 'log'
+      activeTab: 'progress'
     }
   },
   created() {
@@ -422,6 +429,13 @@ export default {
           .catch(() => {
             this.$message.success('重置失败')
           })
+      })
+    },
+    tabHandler() {
+      this.$nextTick(() => {
+        if (this.activeTab === 'content') {
+          this.$refs.fieldMapping.getMetaData(this.task)
+        }
       })
     }
   }
