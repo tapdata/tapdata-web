@@ -4,7 +4,7 @@
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
     </div>
-    <div class="search" v-if="!readOnly">
+    <div class="search">
       <div class="item">
         <span> 搜索表：</span>
         <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
@@ -13,7 +13,7 @@
         <span> 搜索字段：</span>
         <el-input v-model="searchField" size="mini" @change="search('field')"></el-input>
       </div>
-      <div class="item">
+      <div class="item" v-if="!readOnly">
         <el-button size="mini" @click="rollbackAll">全部恢复默认</el-button>
       </div>
     </div>
