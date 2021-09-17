@@ -105,7 +105,8 @@
                 scope.row.t_precision !== null &&
                 scope.row.t_precision !== undefined &&
                 !scope.row.is_deleted &&
-                scope.row.t_isPrecisionEdit
+                scope.row.t_isPrecisionEdit &&
+                !readOnly
               "
               @click="edit(scope.row, 'precision')"
             >
