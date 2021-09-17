@@ -79,7 +79,7 @@
         </div>
       </div>
       <div class="panel-right flex-fill h-100 overflow-hidden p-6">
-        <ElTabs class="dashboard-tabs flex flex-column overflow-hidden h-100" v-model="activeTab">
+        <ElTabs class="dashboard-tabs flex flex-column overflow-hidden h-100" v-model="activeTab" @tab-click="tabClick">
           <ElTabPane label="任务进度" name="progress">用户管理</ElTabPane>
           <ElTabPane label="运行日志" name="log">配置管理</ElTabPane>
           <ElTabPane class="h-100 overflow-hidden" label="任务里程碑" name="milestone">
@@ -89,7 +89,9 @@
               <ElTableColumn label="时间" prop="fromNow" width="160px"></ElTableColumn>
             </ElTable>
           </ElTabPane>
-          <ElTabPane label="同步内容" name="content">定时任务补偿</ElTabPane>
+          <ElTabPane label="同步内容" name="content">
+            <FieldMapping ref="fieldMapping" :readOnly="true"></FieldMapping>
+          </ElTabPane>
         </ElTabs>
       </div>
     </div>
@@ -134,8 +136,9 @@
 </style>
 <script>
 import StatusTag from '@/components/StatusTag'
+import FieldMapping from '@/components/FieldMappings'
 export default {
-  components: { StatusTag },
+  components: { StatusTag, FieldMapping },
   data() {
     return {
       loading: true,
@@ -202,6 +205,11 @@ export default {
       data.sourceType = source.databaseType || source.database_type
       data.targetType = target.databaseType || target.database_type
       return data
+    },
+    tabClick(val) {
+      if (val.name === 'content') {
+        this.$refs.fieldMapping.getMetaData(this.task)
+      }
     },
     start() {},
     stop() {},
