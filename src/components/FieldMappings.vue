@@ -6,7 +6,7 @@
     :readOnly="readOnly"
     :fieldMappingNavData="fieldMappingNavData"
     :fieldProcessMethod="updateFieldProcess"
-    :field_process="fieldProcess"
+    :field_process="field_process"
     @row-click="saveOperations"
     @update-nav="updateFieldMappingNavData"
   ></FieldMapping>
@@ -20,7 +20,8 @@ export default {
     return {
       fieldMappingNavData: null,
       fieldMappingTableData: '',
-      hiddenFieldMapping: false
+      hiddenFieldMapping: false,
+      field_process: []
     }
   },
   methods: {
@@ -63,15 +64,15 @@ export default {
       if (rollback === 'all') {
         data['rollback'] = rollback
         //删除整个字段处理器
-        this.transferData.field_process = []
+        this.field_process = []
       } else if (rollbackTable) {
         data['rollback'] = rollback
         data['rollbackTable'] = rollbackTable
-        for (let i = 0; i < this.transferData.field_process.length; i++) {
+        for (let i = 0; i < this.field_process.length; i++) {
           // 删除操作
-          let ops = this.transferData.field_process[i]
+          let ops = this.field_process[i]
           if (ops.table_id === id) {
-            this.transferData.field_process.splice(i, 1)
+            this.field_process.splice(i, 1)
           }
         }
       }
@@ -88,7 +89,7 @@ export default {
     },
     updateAutoFieldProcess(data) {
       if (data.stages[0]) {
-        data['stages'][0].field_process = this.transferData.field_process
+        data['stages'][0].field_process = this.field_process
       }
       return data
     },
@@ -148,8 +149,8 @@ export default {
     //获取字段操作记录
     getFieldOperations(row) {
       let operations = []
-      if (!this.transferData.field_process || this.transferData.field_process.length === 0) return
-      let field_process = this.transferData.field_process.filter(process => process.table_id === row.sourceTableId)
+      if (!this.field_process || this.field_process.length === 0) return
+      let field_process = this.field_process.filter(process => process.table_id === row.sourceTableId)
       if (field_process.length > 0) {
         operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
       }
@@ -178,7 +179,7 @@ export default {
       }
       if (typeof where === 'object') where = JSON.stringify(where)
       this.axios.post('tm/api/MetadataInstances/update?where=' + encodeURIComponent(where), data)
-      this.transferData.field_process = this.$refs.fieldMappingDom.saveFileOperations()
+      this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
     }
   }
 }

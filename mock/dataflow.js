@@ -354,6 +354,21 @@ module.exports = {
         sourceQualifiedName: 'T_mysql_source_CAR_POLICY_6130a1f21b3c6200548d5c45',
         sourceTableId: '6130a1f31b3c6200548d5c69',
         userDeletedNum: 0
+      },
+      {
+        invalid: false,
+        sinkDbName: 'auto_mysql',
+        sinkDbType: 'mysql',
+        sinkObjectName: 'CAR_POLICY',
+        sinkQulifiedName: 'T_mysql_source_CAR_POLICY_6130a1f21b3c6200548d5c45w',
+        sinkStageId: 'd832dec3-a42c-4c39-ac7a-86fff95bebb7',
+        sinkTableId: '6130a1f31b3c6200548d5c69',
+        sourceDbName: 'auto_mysql',
+        sourceFieldCount: 7,
+        sourceObjectName: 'CAR_POLICY',
+        sourceQualifiedName: 'T_mysql_source_CAR_POLICY_6130a1f21b3c6200548d5c45w',
+        sourceTableId: '6130a1f31b3c6200548d5c69',
+        userDeletedNum: 0
       }
     ],
     code: 'ok',

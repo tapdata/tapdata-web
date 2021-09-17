@@ -99,7 +99,7 @@
               <ElTableColumn label="时间" prop="fromNow" width="160px"></ElTableColumn>
             </ElTable>
           </ElTabPane>
-          <ElTabPane lazy label="同步内容" name="content">
+          <ElTabPane lazy class="h-100 overflow-hidden" label="同步内容" name="content">
             <FieldMapping ref="fieldMapping" :readOnly="true"></FieldMapping>
           </ElTabPane>
         </ElTabs>
@@ -153,7 +153,6 @@ export default {
   data() {
     return {
       loading: true,
-      task: null,
       activeTab: 'progress'
     }
   },
