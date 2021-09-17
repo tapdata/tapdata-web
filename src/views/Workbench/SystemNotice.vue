@@ -197,19 +197,18 @@ export default {
         let current = pageNum || this.page.current
         let filter = {
           where,
-          order: 'createTime DESC',
+          order: ['createTime DESC'],
           limit: this.page.size,
           skip: (current - 1) * this.page.size
         }
 
         this.loading = true
-        Promise.all([
-          this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))),
-          this.$axios.get('tm/api/Messages?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        ])
-          .then(([countData, data]) => {
-            this.page.total = countData.count
-            let list = data || []
+        // this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))),
+        this.$axios
+          .get('tm/api/Messages?filter=' + encodeURIComponent(JSON.stringify(filter)))
+          .then(data => {
+            this.page.total = data.total
+            let list = data.items || []
             this.list = list.map(this.formatData)
             // if (!list.length && data.total > 0) {
             //   setTimeout(() => {

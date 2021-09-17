@@ -125,7 +125,7 @@ export default {
       }
       this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
         if (res) {
-          this.unRead = res.count
+          this.unRead = res
           // this.$store.commit('notification', {
           //   unRead: res.data.count
           // })
