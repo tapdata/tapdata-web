@@ -874,8 +874,8 @@ export default {
         fields: fields,
         order: ['status DESC', 'name ASC']
       }
-      this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-        this.changeConfig(data || [], type, reset)
+      this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
+        this.changeConfig(items || [], type, reset)
       })
     },
     //change config
