@@ -309,22 +309,27 @@ export default {
       }
     },
     select(item, index) {
-      let deleteLen = this.target.filter(v => !v.is_deleted)
-      if (deleteLen.length === 0) {
-        this.$message.error('当前表被删除了所有字段，不允许保存操作')
-        return //所有字段被删除了 不可以保存任务
+      if (!this.readOnly) {
+        let deleteLen = this.target.filter(v => !v.is_deleted)
+        if (deleteLen.length === 0) {
+          this.$message.error('当前表被删除了所有字段，不允许保存操作')
+          return //所有字段被删除了 不可以保存任务
+        }
+        this.$emit('row-click', this.selectRow, this.operations, this.target)
       }
       this.position = '' //再次点击清空去一个样式
       this.searchField = ''
       this.fieldCount = 0
-      this.$emit('row-click', this.selectRow, this.operations, this.target)
       this.selectRow = item
       this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
       this.position = index
       this.updateView()
     },
     //页面刷新
-    updateView() {
+    updateView(data) {
+      if (data) {
+        this.selectRow = data
+      }
       this.initTableData()
       this.initTypeMapping()
       this.operations = []
