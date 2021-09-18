@@ -1,16 +1,21 @@
 <template>
-  <!--监控模式下，常驻显示-->
   <section
-    v-if="isMonitor || activeType"
+    v-show="isMonitor || activeType"
     v-resize.top="{
-      minHeight: 300,
-      maxHeight: 800
+      minHeight: 40
     }"
     class="config-panel border-top"
   >
-    <slot>
+    <ElTabs v-model="currentTab" class="config-tabs">
+      <ElTabPane label="属性设置" name="first">
+        <FormPanel v-on="$listeners"></FormPanel>
+      </ElTabPane>
+      <ElTabPane label="元数据" name="second">元数据</ElTabPane>
+      <ElTabPane label="数据详情" name="third">数据详情</ElTabPane>
+    </ElTabs>
+    <!--<slot>
       <FormPanel v-on="$listeners"></FormPanel>
-    </slot>
+    </slot>-->
   </section>
 </template>
 
@@ -18,7 +23,7 @@
 import { mapGetters } from 'vuex'
 import '@/directives/resize/index.scss'
 import resize from '@/directives/resize'
-import FormPanel from '@/views/dataflow/components/FormPanel'
+import FormPanel from 'web-core/views/dataflow/components/FormPanel'
 
 export default {
   name: 'ConfigPanel',
@@ -29,6 +34,12 @@ export default {
 
   props: {
     isMonitor: Boolean
+  },
+
+  data() {
+    return {
+      currentTab: '1'
+    }
   },
 
   components: { FormPanel },
@@ -51,6 +62,9 @@ export default {
 }
 </style>
 <style scoped lang="scss">
+//$color: #2c65ff;
+$color: var(--primary);
+
 .config-panel {
   position: relative;
   z-index: 10;
@@ -58,5 +72,36 @@ export default {
   overflow: auto;
   transition: height 0.24s;
   will-change: height;
+
+  ::v-deep {
+    .config-tabs {
+      height: 100%;
+      .el-tabs__nav-wrap {
+        padding: 0 16px;
+        &::after {
+          height: 1px;
+        }
+      }
+      .el-tabs__header {
+        margin: 0;
+      }
+      .el-tabs__active-bar {
+        background-color: $color;
+      }
+      .el-tabs__item {
+        font-weight: 400;
+        &.is-active,
+        &:hover {
+          color: $color;
+        }
+      }
+      .el-tabs__content {
+        height: calc(100% - 40px);
+      }
+    }
+    .resize-trigger {
+      background: 0 0 !important;
+    }
+  }
 }
 </style>
