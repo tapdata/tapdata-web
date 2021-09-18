@@ -19,6 +19,7 @@
     "@vue/composition-api": "^1.0.0-rc.14",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "default-passive-events": "^2.0.0",
     "echarts": "^5.0.2",
     "element-ui": "^2.15.1",
     "github-markdown-css": "^4.0.0",

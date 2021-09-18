@@ -29,6 +29,13 @@ export const TOPOLOGY_MAP = topologyMap,
     invalid: { text: '失效', color: '#F5222D' },
     testing: { text: '测试中', color: '#FFB318' }
   },
+  MILESTONE_STATUS_MAP = {
+    waiting: { text: '待执行', icon: 'daizhixing' },
+    running: { text: '进行中', icon: 'jinxingzhong' },
+    error: { text: '错误', icon: 'cuowu' },
+    finish: { text: '已完成', icon: 'yiwancheng' },
+    paused: { text: '已暂停', icon: 'yizanting' }
+  },
   SPEC_MAP = {
     micro: '小规格',
     small: '标准规格',

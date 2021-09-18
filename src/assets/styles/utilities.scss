@@ -596,7 +596,9 @@
 .min-vh-100 {
   min-height: 100vh !important;
 }
-
+.flex-fit {
+  flex: 1 !important;
+}
 .flex-fill {
   flex: 1 1 auto !important;
 }
