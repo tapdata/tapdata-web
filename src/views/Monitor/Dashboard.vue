@@ -84,7 +84,9 @@
           v-model="activeTab"
           @tab-click="tabHandler"
         >
-          <ElTabPane label="任务进度" name="progress">用户管理</ElTabPane>
+          <ElTabPane label="任务进度" name="progress" class="h-100">
+            <TaskProgress :task="task"></TaskProgress>
+          </ElTabPane>
           <ElTabPane lazy class="h-100 overflow-hidden" label="运行日志" name="log">
             <Log :id="$route.params.id"></Log>
           </ElTabPane>
@@ -146,14 +148,17 @@
 </style>
 <script>
 import StatusTag from '@/components/StatusTag'
+import TaskProgress from './TaskProgress'
+
 import FieldMapping from '@/components/FieldMappings'
 import Log from './Log.vue'
 export default {
-  components: { StatusTag, Log, FieldMapping },
+  components: { StatusTag, TaskProgress, Log, FieldMapping },
   data() {
     return {
       loading: true,
-      activeTab: 'progress'
+      activeTab: 'progress',
+      task: null
     }
   },
   created() {

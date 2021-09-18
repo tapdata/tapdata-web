@@ -622,7 +622,7 @@ export default {
         height: 32px;
         .el-input__inner,
         .el-textarea__inner {
-          background: #f5f6f8;
+          background: #f9fafd;
           &:focus {
             background: unset;
           }
