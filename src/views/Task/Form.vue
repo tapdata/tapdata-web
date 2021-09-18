@@ -555,11 +555,13 @@ export default {
                 if (this.id) {
                   filter.where['id'] = { neq: this.id }
                 }
-                this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-                  if (data?.total > 0) {
-                    callback(new Error('任务名称已存在'))
-                  } else callback()
-                })
+                this.$axios
+                  .get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
+                  .then(({ items }) => {
+                    if (items?.total > 0) {
+                      callback(new Error('任务名称已存在'))
+                    } else callback()
+                  })
               }
             }
           }
