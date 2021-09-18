@@ -645,7 +645,7 @@ export default {
     },
     del(ids, item = {}) {
       let where = {
-        _id: {
+        id: {
           inq: ids
         }
       }

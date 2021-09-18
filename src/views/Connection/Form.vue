@@ -49,7 +49,7 @@
           </div>
         </div>
       </main>
-      <GitBook ref="gitBook"></GitBook>
+      <GitBook ref="gitBook" :database-type="$route.query.databaseType"></GitBook>
     </div>
     <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
     <el-dialog
@@ -151,7 +151,6 @@ export default {
   watch: {
     $route() {
       this.init()
-      this.$refs.gitBook.getHtmlMD(this.$route.query.databaseType)
     },
     // 文件选中类型默认端口号
     'model.file_source_protocol'(val) {
