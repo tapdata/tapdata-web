@@ -512,17 +512,13 @@ export default {
       })
     },
     changeStatus(ids, { status, errorEvents }) {
-      let where = {
-        _id: {
-          in: ids
-        }
-      }
       let attributes = {
-        status
+        status,
+        id: ids?.[0] || ''
       }
       errorEvents && (attributes.errorEvents = errorEvents)
       this.$axios
-        .post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
+        .patch('tm/api/DataFlows?where=', attributes)
         .then(data => {
           this.fetch()
           this.responseHandler(data, '操作成功')
