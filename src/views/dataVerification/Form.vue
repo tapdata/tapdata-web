@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import VerficationForm from 'web-core/views/verification/form.vue'
+import VerficationForm from './old/form.vue'
 export default {
   components: { VerficationForm },
   methods: {

@@ -89,7 +89,7 @@
                     {{ $t('connection.testConnection') }}
                   </el-button>
                   <span :class="'status ' + status" v-if="status">
-                    <i class="status-icon el-icon-error"></i>
+                    <VIcon class="status-icon inline-block">error</VIcon>
                     <i class="status-icon el-icon-success"></i>
                     <i class="status-icon el-icon-warning"></i>
                     <span>{{ $t('connection.status.' + status) }}</span>
@@ -157,6 +157,7 @@ import { signOut } from '@/utils/util'
 import { getImgByType, TYPEMAP } from './connections/util'
 import { uuid } from '@/editor/util/Schema'
 import Test from '@/views/connections/Test'
+import VIcon from '@/components/VIcon'
 
 import formConfig from './connections/config'
 
@@ -164,7 +165,8 @@ export default {
   components: {
     AgentDownloadContent,
     DatabaseTypeDialog,
-    Test
+    Test,
+    VIcon
   },
   data() {
     return {
@@ -788,9 +790,6 @@ export default {
       font-size: 12px;
       &.invalid {
         color: #f56c6c;
-        .el-icon-error {
-          display: inline-block;
-        }
       }
       &.ready {
         color: #67c23a;

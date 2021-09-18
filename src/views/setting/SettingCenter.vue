@@ -14,6 +14,7 @@
           @click="changeName(item.key)"
         >
           <i :class="['iconfont', item.icon]"></i>
+          <VIcon>{{ item.icon }}</VIcon>
           <span slot="title">{{ item.name }}</span>
         </li>
       </ul>
@@ -25,7 +26,10 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
+
 export default {
+  components: { VIcon },
   data() {
     return {
       settingList: [
@@ -35,7 +39,7 @@ export default {
         // 	key: 'settings'
         // },
         {
-          icon: 'icon-lingdang',
+          icon: 'bells',
           name: this.$t('notification.setting'),
           key: 'notificationSetting'
         },

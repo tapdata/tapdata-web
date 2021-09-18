@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import History from 'web-core/views/verification/history.vue'
+import History from './old/history.vue'
 export default {
   components: {
     History
@@ -26,7 +26,7 @@ export default {
       let id = item.id
       let routeName = 'dataVerifyResult'
       if (this.$route.name === 'VerifyDiffHistory') {
-        routeName = 'dataVerifyResultDetails'
+        routeName = 'VerifyDiffDetails'
       }
       let route = this.$router.resolve({
         name: routeName,

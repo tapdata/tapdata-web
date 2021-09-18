@@ -11932,6 +11932,35 @@
 .cursor-grabbing {
   cursor: grabbing;
 }
+// 动画类
+.animation-rotate {
+  animation: rotate 5s linear infinite;
+}
+@-moz-keyframes rotate {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(1turn);
+  }
+}
+@-webkit-keyframes rotate {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(1turn);
+  }
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(1turn);
+  }
+}
 
 .absolute-fill {
   position: absolute;

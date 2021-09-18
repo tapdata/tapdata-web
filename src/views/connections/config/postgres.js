@@ -197,6 +197,25 @@ export default function (vm) {
         type: 'slot',
         slot: 'timezone',
         show: true
+      },
+      {
+        type: 'switch',
+        field: 'supportUpdatePk',
+        label: vm.$t('dataForm.form.supportUpdatePk'),
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'source'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
       }
     ]
   }

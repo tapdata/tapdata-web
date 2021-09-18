@@ -24,7 +24,9 @@
       </div>
     </div>
     <div class="back-btn-box" v-if="!loading">
-      <el-button class="back-btn-icon-box" @click="GoBack"><i class="iconfont icon-you2 back-btn-icon"></i></el-button>
+      <el-button class="back-btn-icon-box" @click="GoBack">
+        <VIcon class="back-btn-icon">arrow-right-circle</VIcon>
+      </el-button>
       <span class="back-btn-text">{{ $t('dataVerify.dataVerify') }}</span>
     </div>
     <div class="data-contPreView" v-if="!loading">
@@ -182,8 +184,10 @@ import getUrlSearch from './getUrlSearch'
 const dataFlows = factory('DataFlows')
 const ValidationResults = factory('validationResults')
 import * as moment from 'moment'
+import VIcon from '@/components/VIcon'
 
 export default {
+  components: { VIcon },
   data() {
     return {
       loading: true,

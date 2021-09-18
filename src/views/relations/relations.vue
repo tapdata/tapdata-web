@@ -32,8 +32,8 @@
       <div id="paper" class="relation"></div>
     </div>
     <el-dialog :title="$t('message.preview')" :visible.sync="errorVisible" width="650px">
-      <span class="value align-center"> {{ refreshResult.message }}</span>
-      <pre class="align-center pre"> {{ refreshResult.stack }}</pre>
+      <span class="value align-items-center"> {{ refreshResult.message }}</span>
+      <pre class="align-items-center pre"> {{ refreshResult.stack }}</pre>
     </el-dialog>
     <Info ref="info" :model="model" v-on:previewVisible="handlePreviewVisible" v-on:handleFields="changeLevel"></Info>
   </div>

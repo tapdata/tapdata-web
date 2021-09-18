@@ -45,7 +45,11 @@
             </el-tooltip>
           </template>
           <img class="pk" v-if="data.primary_key_position > 0" src="../../../assets/images/PK.png" />
-          <span class="node-label">{{ node.label }}</span>
+
+          <el-tooltip class="item" effect="dark" v-if="data.comment" :content="data.comment" placement="right">
+            <span class="node-label">{{ node.label }}</span>
+          </el-tooltip>
+          <span class="node-label" v-else>{{ node.label }}</span>
         </div>
       </el-tree>
     </div>
@@ -307,7 +311,8 @@ $color: #4aaf47;
       margin-left: 5px;
     }
     .node-label {
-      flex: 1;
+      // flex: 1;
+      max-width: 250px;
       overflow: hidden;
       padding: 0 5px;
       box-sizing: border-box;
