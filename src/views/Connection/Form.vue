@@ -223,8 +223,8 @@ export default {
                   }
                   this.$axios
                     .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
-                    .then(data => {
-                      if (data && data.length !== 0) {
+                    .then(({ items }) => {
+                      if (items && items.length !== 0) {
                         callback(new Error('名称已存在'))
                       } else callback()
                     })
