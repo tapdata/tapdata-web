@@ -37,7 +37,8 @@ export const DFSDATASOURCE_MODEL = {
   source_connectionId: '',
   target_connectionId: '',
   source_connectionName: '',
-  target_connectionName: ''
+  target_connectionName: '',
+  mqType: '0'
 }
 
 export const INSTANCE_MODEL = {

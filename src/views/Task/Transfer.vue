@@ -12,11 +12,12 @@
       </el-button>
     </div>
     <el-transfer
+      v-model="selectSourceArr"
+      v-if="!transferFlag"
       filterable
       :titles="titles"
       :filter-method="filterMethod"
       :filter-placeholder="$t('editor.cell.link.searchContent')"
-      v-model="selectSourceArr"
       :data="sourceData"
       @change="handleChangeTransfer"
       @right-check-change="handleSelectTable"
@@ -40,6 +41,15 @@
         <!--        ></span>-->
       </span>
     </el-transfer>
+    <template v-else>
+      <MqTransfer
+        v-model="mqActiveData"
+        :source="sourceData"
+        :tableNameTransform="tableNameTrans"
+        :table_prefix="formData.table_prefix"
+        :table_suffix="formData.table_suffix"
+      ></MqTransfer>
+    </template>
     <el-dialog
       title="字段映射"
       :visible.sync="dialogFileVisible"
@@ -141,10 +151,11 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import MqTransfer from './mqTransfer'
 let selectKeepArr = []
 export default {
-  components: { VIcon },
-  props: ['transferData', 'isTwoWay', 'tableNameTransform'],
+  components: { VIcon, MqTransfer },
+  props: ['transferData', 'isTwoWay', 'tableNameTransform', 'mqTransferFlag'],
   data() {
     var validatePrefix = (rule, value, callback) => {
       if (value === '') {
@@ -171,6 +182,13 @@ export default {
       showOperationBtn: false,
       sourceData: [],
       selectSourceArr: [],
+      mqActiveData: {
+        topicData: [],
+        queueData: [],
+        table_prefix: '',
+        table_suffix: ''
+      },
+      transferFlag: this.mqTransferFlag,
       titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
       formData: {
         table_prefix: '',
@@ -201,6 +219,15 @@ export default {
   },
   created() {
     this.tableNameTrans = this.tableNameTransform
+  },
+  watch: {
+    mqActiveData: {
+      deep: true,
+      handler() {
+        this.formData.topicData = this.mqActiveData.topicData
+        this.formData.queueData = this.mqActiveData.queueData
+      }
+    }
   },
   methods: {
     //获取左边数据
@@ -235,8 +262,8 @@ export default {
             }
             //初始化数据
             if (this.transferData) {
-              this.formData.table_prefix = this.transferData.table_prefix
-              this.formData.table_suffix = this.transferData.table_suffix
+              this.formData.table_prefix = this.mqActiveData.table_prefix = this.transferData.table_prefix
+              this.formData.table_suffix = this.mqActiveData.table_suffix = this.transferData.table_suffix
               this.selectSourceArr = this.transferData.selectSourceArr
               this.field_process = this.transferData.field_process
             }
@@ -514,7 +541,7 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           this.dialogVisible = false
-          // this.preFixSuffixData()
+          this.preFixSuffixData()
           this.field_process = [] //表名有变动 改名清空字段处理器
         }
       })
@@ -562,6 +589,8 @@ export default {
     handleReduction() {
       this.formData.table_suffix = ''
       this.formData.table_prefix = ''
+      this.mqActiveData.table_prefix = ''
+      this.mqActiveData.table_suffix = ''
       this.field_process = [] //改名清空字段处理器
       if (this.sourceData.length) {
         for (let i = 0; i < this.sourceData.length; i++) {
@@ -575,6 +604,8 @@ export default {
     },
     // 添加前后缀数据处理
     preFixSuffixData() {
+      this.mqActiveData.table_prefix = this.formData.table_prefix
+      this.mqActiveData.table_suffix = this.formData.table_suffix
       // if (this.sourceData.length && this.selectSourceArr.length) {
       //   let selectSourceArr = []
       //   this.selectSourceArr = Array.from(new Set(this.selectSourceArr))
@@ -666,7 +697,9 @@ export default {
         selectSourceArr: this.selectSourceArr,
         table_prefix: this.formData.table_prefix,
         table_suffix: this.formData.table_suffix,
-        field_process: this.field_process || []
+        field_process: this.field_process || [],
+        topicData: this.mqActiveData.topicData || [],
+        queueData: this.mqActiveData.queueData || []
       }
     }
   }
