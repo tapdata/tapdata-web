@@ -10,6 +10,7 @@
       @sort-change="$emit('sort-change', $event)"
     >
       <slot></slot>
+      <div slot="empty"><slot name="empty"></slot></div>
     </El-table>
     <ElPagination
       background

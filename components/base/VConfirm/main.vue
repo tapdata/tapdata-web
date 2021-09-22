@@ -7,7 +7,9 @@
       >
         <div class="message-box__header position-relative">
           <div class="message-box__title flex align-items-center">
-            <VIcon v-if="icon" :size="iconSize" :color="iconColor" :class="['v-icon', iconClass]">{{ icon }}</VIcon>
+            <VIcon v-if="icon && !onlyMessage" :size="iconSize" :color="iconColor" :class="['v-icon', iconClass]">{{
+              icon
+            }}</VIcon>
             <span v-if="title" :class="titleClass">{{ title }}</span>
           </div>
           <button
@@ -21,12 +23,21 @@
             <i class="el-message-box__close el-icon-close"></i>
           </button>
         </div>
-        <div class="message-box__content">
+        <div class="message-box__body">
           <div class="el-message-box__container">
-            <div class="el-message-box__message" v-if="message !== ''">
+            <div class="el-message-box__message flex" v-if="message !== ''">
+              <VIcon
+                v-if="icon && onlyMessage"
+                :size="iconSize"
+                :color="iconColor"
+                :class="['v-icon', 'flex-shrink-0', iconClass]"
+                >{{ icon }}</VIcon
+              >
               <slot>
-                <div v-if="!dangerouslyUseHTMLString" :class="messageClass">{{ message }}</div>
-                <div v-else v-html="message" :class="messageClass"></div>
+                <div v-if="!dangerouslyUseHTMLString" :class="['message-box__content', messageClass]">
+                  {{ message }}
+                </div>
+                <div v-else v-html="message" :class="['message-box__content', messageClass]"></div>
               </slot>
             </div>
           </div>
@@ -72,6 +83,7 @@ export default {
       visible: false,
       uid: 1,
       callback: null,
+      hideIcon: false,
       icon: '', // 图标
       iconColor: '',
       iconSize: 25,
@@ -105,6 +117,11 @@ export default {
     },
     cancelButtonClasses() {
       return `${this.cancelButtonClass}`
+    },
+    onlyMessage() {
+      let { title, message } = this
+      console.log('onlyMessage', !title && !!message)
+      return !title && !!message
     }
   },
   watch: {
@@ -120,6 +137,7 @@ export default {
   },
   methods: {
     init() {
+      console.log('init', this.type)
       this.getIconByType(this.type)
     },
     handleAction(action) {
@@ -198,13 +216,16 @@ export default {
   font-size: 16px;
   cursor: pointer;
 }
-.message-box__content {
+.message-box__body {
   margin: 24px 0;
   padding: 0 24px;
   flex: 1;
   overflow: auto;
   font-size: 12px;
   color: rgba(0, 0, 0, 0.65);
+}
+.message-box__content {
+  padding-top: 4px;
 }
 .message-box__btns {
   padding: 0 24px 24px;
