@@ -63,6 +63,9 @@ th {
 .el-select-dropdown__list {
   padding: 0;
 }
+.el-select-dropdown.el-popper {
+  max-width: 500px;
+}
 .el-select-dropdown .el-select-group__wrap {
   padding-top: 10px;
   padding-bottom: 0;
@@ -576,7 +579,4 @@ th {
   padding: 0 40px;
   color: map-get($fontColor, sub);
   font-weight: 400;
-}
-.el-select-dropdown.el-popper {
-  max-width: 0;
 }

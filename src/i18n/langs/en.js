@@ -202,8 +202,8 @@ export default {
   task_name: 'Task name',
   task_status: 'Task Status',
   task_sync_type: 'Task synchronization type',
-  task_name_or_node_name_or_library_name: 'task name/node name/library name',
-  task_sync_type_initial_sync: 'full amount',
+  task_name_or_node_name_or_library_name: 'Name',
+  task_sync_type_initial_sync: 'Full amount',
   task_sync_type_cdc: 'Incremental',
   task_sync_type_initial_sync_cdc: 'Full amount + incremental',
 

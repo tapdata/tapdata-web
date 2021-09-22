@@ -4,7 +4,7 @@
       <div class="list-operation">
         <div class="list-operation-left">
           <el-form inline @submit.native.prevent>
-            <el-form-item label="操作类型 :" width="300px">
+            <el-form-item label="操作类型 :" class="small">
               <el-select v-model="searchParams.operationType" clearable @input="search()">
                 <el-option
                   v-for="(item, key) in operationTypeOptions"
@@ -14,12 +14,12 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="操作对象 : ">
+            <el-form-item label="操作对象 : " class="small">
               <el-input v-model="searchParams.parameter1" clearable @input="search(800)">
                 <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </el-input>
             </el-form-item>
-            <el-form-item label="开始时间 : " class="ml-2">
+            <el-form-item label="开始时间 : ">
               <el-datePicker
                 v-model="searchParams.start"
                 type="datetime"
@@ -45,7 +45,7 @@
                 ></el-datePicker>
               </el-tooltip>
             </el-form-item>
-            <el-form-item label="用户名称 : ">
+            <el-form-item label="用户名称 : " class="medium">
               <el-input v-model="searchParams.username" clearable @input="search(800)">
                 <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </el-input>
@@ -59,12 +59,12 @@
         </div>
       </div>
       <VList ref="table" row-key="id" :remoteMethod="getData" @sort-change="sortChange">
-        <el-table-column label="用户名" width="200">
+        <el-table-column label="用户名" min-width="160">
           <template slot-scope="scope">
             <div>{{ scope.row.username }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="操作时间" prop="createTime" sortable="custom" width="200">
+        <el-table-column label="操作时间" prop="createTime" sortable="custom" width="180">
           <template slot-scope="scope">
             <div>{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
           </template>
@@ -357,7 +357,6 @@ export default {
   display: flex;
   width: 100%;
   height: 100%;
-  min-width: 1260px;
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
