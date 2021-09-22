@@ -443,10 +443,8 @@ export default {
       }
       this.mergedSchema = cell.getOutputSchema()
       this.tableList = this.mergedSchema?.fields || []
-      // this.partitionSet = this.mergedSchema?.partitionSet || []
-      this.partitionSet = [0, 1, 2, 3, 4]
-      // this.partitionSet.unshift('all')
-      debugger
+      this.partitionSet = this.mergedSchema?.partitionSet || []
+
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
         this.getDataFlow()
