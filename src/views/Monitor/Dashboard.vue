@@ -239,7 +239,7 @@ export default {
       this.$axios
         .get(`tm/api/Dataflows/${this.$route.params.id}`)
         .then(data => {
-          this.task = this.formatTask(data)
+          this.task = data
           this.getConnections(data)
         })
         .finally(() => {
@@ -284,20 +284,6 @@ export default {
           this.$set(this.task, type + 'Url', c.database_host + ':' + c.database_port)
         })
       })
-    },
-    formatTask(data) {
-      data.totalOutput = data.stats?.output?.rows || 0
-      data.totalInput = data.stats?.input?.rows || 0
-      data.creator = data.username || data.user.username || '-'
-      data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
-      let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
-      data.startTimeFmt = this.formatTime(data.startTime)
-      data.endTimeFmt = this.formatTime(data.finishTime)
-      data.cdcTimeFmt = this.formatTime(cdcTime)
-      return data
-    },
-    formatTime(time) {
-      return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     // 以下方法需要考虑和列表的重构合并，暂时先复制过来
     changeStatus({ status, errorEvents }) {
