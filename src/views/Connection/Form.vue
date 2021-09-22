@@ -151,6 +151,7 @@ export default {
   watch: {
     $route() {
       this.init()
+      this.$refs.gitBook.getHtmlMD(this.$route.query.databaseType)
     },
     // 文件选中类型默认端口号
     'model.file_source_protocol'(val) {
@@ -222,8 +223,8 @@ export default {
                   }
                   this.$axios
                     .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
-                    .then(({ items }) => {
-                      if (items && items.length !== 0) {
+                    .then(data => {
+                      if (data && data.length !== 0) {
                         callback(new Error('名称已存在'))
                       } else callback()
                     })
@@ -617,11 +618,9 @@ export default {
     .e-form-builder-item {
       width: 396px;
       .el-form-item__content {
-        padding-bottom: 32px;
-        height: 32px;
         .el-input__inner,
         .el-textarea__inner {
-          background: #f5f6f8;
+          background: #f9fafd;
           &:focus {
             background: unset;
           }
