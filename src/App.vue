@@ -12,8 +12,9 @@ export default {
 
 <style lang="scss">
 #app {
+  position: relative;
   height: 100%;
-  min-width: 1000px;
+  min-width: 1440px;
   font-size: 12px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
     'Helvetica Neue', sans-serif;
