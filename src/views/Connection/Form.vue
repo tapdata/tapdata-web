@@ -49,7 +49,7 @@
           </div>
         </div>
       </main>
-      <GitBook ref="gitBook"></GitBook>
+      <GitBook :database-type="$route.query && $route.query.databaseType" ref="gitBook"></GitBook>
     </div>
     <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
     <el-dialog
