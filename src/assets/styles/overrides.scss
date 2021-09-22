@@ -326,9 +326,9 @@ th {
   &.el-table__cell.is-leaf {
     border-bottom: 0;
   }
-  &>.cell {
+  & > .cell {
     font-size: 14px;
-    color: map-get($fontColor, main)
+    color: map-get($fontColor, main);
   }
 }
 .el-table .el-table__fixed-right-patch {
@@ -576,4 +576,7 @@ th {
   padding: 0 40px;
   color: map-get($fontColor, sub);
   font-weight: 400;
+}
+.el-select-dropdown.el-popper {
+  max-width: 0;
 }
