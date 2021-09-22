@@ -104,7 +104,6 @@ export default {
   display: flex;
   width: 100%;
   height: 100%;
-  min-width: 1260px;
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
