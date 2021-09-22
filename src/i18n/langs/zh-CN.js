@@ -64,7 +64,8 @@ export default {
   dag_data_node_label_memcache_type_all: '全局缓存',
   dag_data_node_label_memcache_type_local: '局部缓存',
   dag_data_node_label_memcache_type_tip: '全局缓存所有任务可引用，局部缓存仅限当前DAG引用。',
-  dag_data_node_label_kafka_high_performance: '高性能模式',
+  dag_data_node_label_kafka_high_performance_mode: '高性能模式',
+  dag_data_node_label_kafka_all: '所有',
 
   //任务编辑
   task_job_setting_tip_title: '设置提醒',

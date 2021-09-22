@@ -109,7 +109,7 @@
 						size="mini"
 					></el-input>
 				</el-form-item> -->
-        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="kafkaPartitionKey">
+        <!-- <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="kafkaPartitionKey">
           <el-select
             v-model="model.partitionId"
             default-first-option
@@ -124,7 +124,7 @@
               v-bind:key="idx"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item
           v-if="dataNodeInfo.isTarget"
@@ -150,12 +150,26 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('dag_data_node_label_kafka_high_performance')" prop="performanceMode">
+        <el-form-item :label="$t('dag_data_node_label_kafka_high_performance_mode')" prop="performanceMode">
           <el-switch
             v-model="model.performanceMode"
             :active-text="model.performanceMode ? $t('dataFlow.yes') : $t('dataFlow.no')"
           >
           </el-switch>
+        </el-form-item>
+        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="partitionIdSet">
+          <el-select
+            v-model="model.partitionId"
+            default-first-option
+            clearable
+            multiple
+            :disabled="model.performanceMode"
+            :placeholder="$t('message.placeholderSelect') + 'Partition ID'"
+            size="mini"
+          >
+            <el-option :label="$t('dag_data_node_label_kafka_all')" value="all"></el-option>
+            <el-option v-for="(item, idx) in partitionSet" :label="item" :value="item" v-bind:key="idx"></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
     </div>
@@ -250,7 +264,7 @@ export default {
         connectionId: '',
         type: 'kafka',
         tableName: '',
-        partitionId: '',
+        partitionId: [],
         kafkaPartitionKey: '',
         isFirst: true,
         performanceMode: false,
@@ -333,7 +347,14 @@ export default {
     'model.performanceMode': {
       immediate: true,
       handler(val) {
-        val ? (this.model.partitionIdSet = this.partitionSet) : []
+        this.model.partitionId = ['all']
+        this.model.partitionIdSet = val ? this.partitionSet : []
+      }
+    },
+    'model.partitionId': {
+      immediate: true,
+      handler(val) {
+        this.model.partitionIdSet = val !== ['all'] ? val : this.partitionSet
       }
     }
   },
@@ -416,6 +437,8 @@ export default {
       this.mergedSchema = cell.getOutputSchema()
       this.tableList = this.mergedSchema?.fields || []
       this.partitionSet = this.mergedSchema?.partitionSet || []
+      // this.partitionSet.unshift('all')
+      debugger
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
         this.getDataFlow()
@@ -428,9 +451,9 @@ export default {
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Kafka'
 
-      if (!this.model.performanceMode) {
-        this.model.performanceMode = []
-      }
+      // if (!this.model.performanceMode) {
+      //   this.model.partitionIdSet = []
+      // }
 
       if (result.kafkaPartitionKey instanceof Array) {
         result.kafkaPartitionKey = result.kafkaPartitionKey.join(',')
