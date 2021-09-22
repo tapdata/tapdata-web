@@ -110,7 +110,7 @@
         <div v-if="!isSearching" class="connection-table__empty" slot="empty">
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-            <span>暂无数据</span>
+            <span>{{ $t('gl_no_data') }}</span>
             <el-link type="primary" class="fs-7" @click="create">创建连接</el-link>
           </div>
         </div>
