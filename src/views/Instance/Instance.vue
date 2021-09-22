@@ -195,7 +195,7 @@
             </div>
           </template>
         </el-table-column>
-        <div v-if="!searchParams.keyword && !searchParams.status" class="instance-table__empty" slot="empty">
+        <div v-if="!isSearching" class="instance-table__empty" slot="empty">
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('agent_list_empty_desc1') }}</span>
@@ -374,6 +374,9 @@ export default {
         flag = false
       }
       return flag
+    },
+    isSearching() {
+      return !!Object.values(this.searchParams).join('')
     }
   },
   watch: {
@@ -601,8 +604,8 @@ export default {
       }
       let runningTaskNum = row?.metric?.runningTaskNum ?? 0 // 运行中的任务数
       let noDelFlag = runningTaskNum > 0 // 不能删除
-      let title = this.$t('agent_button_delete_confirm_title')
-      let message = null
+      let title = null
+      let message = this.$t('agent_button_delete_confirm_title')
       if (noDelFlag) {
         title = this.$t('gl_button_delete_fail')
         message = this.$t('agent_button_delete_confirm_msg')
