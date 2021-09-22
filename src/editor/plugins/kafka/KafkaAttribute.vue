@@ -168,7 +168,12 @@
             size="mini"
           >
             <el-option :label="$t('dag_data_node_label_kafka_all')" value="all"></el-option>
-            <el-option v-for="(item, idx) in partitionSet" :label="item" :value="item" v-bind:key="idx"></el-option>
+            <el-option
+              v-for="(item, idx) in partitionSet"
+              :label="item === 'all' ? $t('dag_data_node_label_kafka_all') : item"
+              :value="item"
+              v-bind:key="idx"
+            ></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -219,7 +224,7 @@ import VIcon from '@/components/VIcon'
 import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
-import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
+// import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 const connections = factory('connections')
 // let editorMonitor = null;
 export default {
@@ -361,7 +366,7 @@ export default {
             }
           })
         }
-        this.model.partitionIdSet = val !== ['all'] ? val : this.partitionSet
+        this.model.partitionIdSet = val.includes('all') ? this.partitionSet : val
       }
     }
   },
@@ -444,6 +449,8 @@ export default {
       this.mergedSchema = cell.getOutputSchema()
       this.tableList = this.mergedSchema?.fields || []
       this.partitionSet = this.mergedSchema?.partitionSet || []
+      this.partitionSet = [0, 1, 2, 3, 4]
+      // this.partitionSet.unshift('all')
 
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
