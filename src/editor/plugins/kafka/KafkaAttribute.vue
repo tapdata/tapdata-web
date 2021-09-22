@@ -354,6 +354,13 @@ export default {
     'model.partitionId': {
       immediate: true,
       handler(val) {
+        if (val.length > 1) {
+          val.forEach((item, index) => {
+            if (item === 'all') {
+              val.splice(index, 1)
+            }
+          })
+        }
         this.model.partitionIdSet = val !== ['all'] ? val : this.partitionSet
       }
     }
@@ -436,7 +443,8 @@ export default {
       }
       this.mergedSchema = cell.getOutputSchema()
       this.tableList = this.mergedSchema?.fields || []
-      this.partitionSet = this.mergedSchema?.partitionSet || []
+      // this.partitionSet = this.mergedSchema?.partitionSet || []
+      this.partitionSet = [0, 1, 2, 3, 4]
       // this.partitionSet.unshift('all')
       debugger
       cell.on('change:outputSchema', () => {
