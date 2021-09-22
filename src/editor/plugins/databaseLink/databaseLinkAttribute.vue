@@ -411,12 +411,15 @@ export default {
           this.showFieldMapping = true
         }
         // 获取目标节点的数据显示右侧选择表
-        if (targetCell && this.model.selectSourceArr.length === 0) {
-          let targetFormData = targetCell.getFormData()
-          let selectTargetType = []
 
+        let targetFormData = targetCell && targetCell.getFormData()
+        let selectTargetType = []
+        if (targetFormData && targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
+          this.model.transferFlag = true
+        }
+        if (targetCell && this.model.selectSourceArr.length === 0) {
           if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
-            this.model.transferFlag = true
+            // this.model.transferFlag = true
             this.mqActiveData.topicData = data.topicData
             this.mqActiveData.queueData = data.queueData
           }

@@ -49,5 +49,11 @@ export default {
   dag_data_node_label_memcache_type_local: 'Local cache',
   dag_data_node_label_memcache_type_tip:
     'All tasks in the global cache can be referenced, and the local cache can only be referenced by the current DAG. ',
-  dag_data_node_label_clickhouse: 'ClickHouse Node'
+  dag_data_node_label_clickhouse: 'ClickHouse Node',
+  dag_data_node_label_aggregate_filter: 'Filter',
+
+  //Task edit
+  task_job_setting_tip_title: 'Set reminder',
+  task_job_tip_text:
+    'The setting of the cache node (xxx) already exists in the task (###), please confirm whether to continue to create it? '
 }

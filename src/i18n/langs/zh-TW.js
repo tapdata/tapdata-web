@@ -46,5 +46,10 @@ export default {
   dag_data_node_label_memcache_type_all: '全局緩存',
   dag_data_node_label_memcache_type_local: '局部緩存',
   dag_data_node_label_memcache_type_tip: '全局緩存所有任務可引用，局部緩存僅限當前DAG引用。 ',
-  dag_data_node_label_clickhouse: 'ClickHouse節點'
+  dag_data_node_label_clickhouse: 'ClickHouse節點',
+  dag_data_node_label_aggregate_filter: '過濾器',
+
+  // 緩存節點提示
+  task_job_setting_tip_title: '設置提醒',
+  task_job_tip_text: '該緩存節點(xxx)的設置已存在於任務(###)中，請確認是否還繼續創建？ '
 }
