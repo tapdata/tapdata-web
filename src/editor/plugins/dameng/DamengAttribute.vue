@@ -175,6 +175,7 @@ export default {
       model: {
         connectionId: '',
         type: 'dameng',
+        databaseType: 'dameng',
         tableName: '',
         field_process: [],
         isFirst: true
