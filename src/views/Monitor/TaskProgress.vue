@@ -33,7 +33,10 @@
                 :show-text="false"
                 :width="166"
               ></el-progress>
-              <div class="progress-box__value flex justify-content-center align-items-center">未开始</div>
+              <div class="progress-box__value flex justify-content-center align-items-center">
+                <div class="fs-6">延迟</div>
+                <div class="mt-2">{{ replicateObj.currentValue }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -196,7 +199,8 @@ export default {
           hideSecond: true,
           loading: false
         },
-        body: null
+        body: null,
+        currentValue: 0 // 当前延迟
       },
       selectFlow: 'flow_', // 选中节点
       stageId: 'all',
@@ -240,8 +244,96 @@ export default {
   },
   methods: {
     init() {
+      this.loadInfo()
       this.loadWS()
       this.sendMsg()
+    },
+    loadInfo() {
+      // let currentData = data
+      let overview = {}
+      let waitingForSyecTableNums = 0
+      let completeTime = ''
+      let data = this.task
+      if (data?.stats?.overview) {
+        overview = JSON.parse(JSON.stringify(data.stats.overview))
+
+        if (overview.currentStatus === undefined) {
+          this.$set(overview, 'currentStatus', '未开始')
+        }
+
+        if (overview.waitingForSyecTableNums !== undefined) {
+          waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
+        } else {
+          waitingForSyecTableNums = 0
+        }
+        overview.waitingForSyecTableNums = waitingForSyecTableNums
+
+        let num = (overview.targatRowNum / overview.sourceRowNum) * 100
+        this.progressBar = num ? num.toFixed(2) * 1 : 0
+
+        let now = new Date().getTime()
+        let startTime = new Date(data.runningTime).getTime(),
+          runningTime = now - startTime,
+          speed = overview.targatRowNum / runningTime
+        // lefts = Math.floor((spendTime / 1000) % 60) //计算秒数
+
+        let time = (overview.sourceRowNum - overview.targatRowNum) / speed / 1000
+
+        let r = ''
+        if (time) {
+          let s = time,
+            m = 0,
+            h = 0,
+            d = 0
+          if (s > 60) {
+            m = parseInt(s / 60)
+            s = parseInt(s % 60)
+            if (m > 60) {
+              h = parseInt(m / 60)
+              m = parseInt(m % 60)
+              if (h > 24) {
+                d = parseInt(h / 24)
+                h = parseInt(h % 24)
+              }
+            }
+          }
+          if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
+            r = 1 + this.$t('taskProgress.m')
+          }
+          // r = parseInt(s) + this.$t('timeToLive.s')
+          if (m > 0) {
+            r = parseInt(m) + this.$t('taskProgress.m')
+          }
+          if (h > 0) {
+            r = parseInt(h) + this.$t('taskProgress.h') + r
+          }
+          if (d > 0) {
+            r = parseInt(d) + this.$t('taskProgress.d') + r
+          }
+          // 全量未完成 停止任务
+          if (['paused', 'error'].includes(data.status)) {
+            completeTime = this.$t('taskProgress.taskStopped') // 任务已停止
+          } else {
+            completeTime = r
+          }
+        }
+
+        if (this.progressBar === 100) {
+          overview.currentStatus = this.$t('taskProgress.progress') // 进行中
+          completeTime = this.$t('taskProgress.fullyCompleted') // 全量已完成
+        }
+        // 任务暂停、错误  增量状态都为停止
+        if (completeTime === this.$t('taskProgress.fullyCompleted')) {
+          if (['paused', 'error'].includes(data.status)) {
+            overview.currentStatus = this.$t('taskProgress.stopped') // 已停止
+          }
+        }
+      }
+
+      this.completeTime = completeTime
+
+      this.overviewStats = overview
+      console.log('this.overviewStats', completeTime, this.overviewStats)
     },
     formatTime(time, type) {
       let result
@@ -498,6 +590,7 @@ export default {
         timeList.push(this.formatTime(item.t, timeType)) // 时间
         dataList.push(item.d)
       })
+      this.replicateObj.currentValue = dataList[dataList.length - 1] || 0
       this.replicateObj.body = {
         tooltip: {
           trigger: 'axis'

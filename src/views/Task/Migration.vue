@@ -146,10 +146,19 @@
             </el-dropdown>
           </template>
         </el-table-column>
-        <div class="migration-table__empty" slot="empty">
-          <VIcon>folder-opened</VIcon>
-          <span class="ml-1" v-if="!isSearching">暂无数据</span>
-          <span v-else> 没有查到符合条件的结果，<el-link type="primary" @click="reset">返回列表</el-link> </span>
+        <div v-if="!isSearching" class="migration-table__empty" slot="empty">
+          <VIcon size="120">no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_data') }}</span>
+            <el-link type="primary" class="fs-7" @click="createTask">创建任务</el-link>
+          </div>
+        </div>
+        <div v-else class="migration-table__empty" slot="empty">
+          <VIcon size="120">search-no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_match_result') }}</span>
+            <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
+          </div>
         </div>
       </el-table>
       <el-pagination

@@ -66,9 +66,13 @@
                 ></inline-input>
               </div>
               <div class="flex align-items-center">
-                <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">{{
-                  $t('agent_test_use')
-                }}</span>
+                <img
+                  v-if="scope.row.agentType === 'Cloud'"
+                  src="../../../public/images/only_test.png"
+                  alt=""
+                  class="ml-3"
+                  style="height: 18px"
+                />
               </div>
             </div>
           </template>
@@ -922,11 +926,6 @@ export default {
     overflow: auto;
     border-bottom: none;
     color: rgba(0, 0, 0, 0.65);
-    .agent-cloud {
-      color: #10c038;
-      border-color: #10c038;
-      background-color: #dbefd1;
-    }
     .operate-columns {
       line-height: 14px;
       .el-button {
