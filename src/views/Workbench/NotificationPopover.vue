@@ -84,10 +84,19 @@ export default {
 
       // this.getUnReadNum()
       if (this.$ws) {
-        this.$ws.on('notification', data => {
+        this.$ws.on('notification', async data => {
+          await this.getUnReadNum()
           if (data.data && data.data.length > 0) {
-            this.listData.unshift(...data.data)
-            this.getUnReadNum()
+            if (this.unRead > data.data.length) {
+              this.listData.unshift(...data.data)
+              let obj = {}
+              this.listData = this.listData.reduce((cur, next) => {
+                obj[next.id] ? '' : (obj[next.id] = true && cur.push(next))
+                return cur
+              }, [])
+            } else {
+              this.listData = data.data
+            }
           } else {
             this.unRead = 0
           }
@@ -205,13 +214,13 @@ export default {
       }
     },
     // 获取任务数据
-    getTaskData(id) {
-      this.$axios.get('tm/api/DataFlows?id=' + id).then(res => {
-        if (res) {
-          debugger
-        }
-      })
-    },
+    // getTaskData(id) {
+    //   this.$axios.get('tm/api/DataFlows?id=' + id).then(res => {
+    //     if (res) {
+    //       debugger
+    //     }
+    //   })
+    // },
     toCenter() {
       if (this.$route.name === 'SystemNotice') {
         return
