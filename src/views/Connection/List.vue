@@ -114,7 +114,7 @@
             <el-link type="primary" class="fs-7" @click="create">创建连接</el-link>
           </div>
         </div>
-        <div v-else class="instance-table__empty" slot="empty">
+        <div v-else class="connection-table__empty" slot="empty">
           <VIcon size="120">search-no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_match_result') }}</span>
