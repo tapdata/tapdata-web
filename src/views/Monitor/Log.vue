@@ -79,7 +79,7 @@ export default {
       }, 1000)
     },
     updateLogs(data) {
-      this.getNew(data.data)
+      this.loadNew(data.data)
     },
     loadOld(event) {
       let el = event.target
@@ -88,9 +88,13 @@ export default {
         this.getLogs()
       }
     },
-    getNew(data) {
+    loadNew(data) {
       let list = data || []
-      this.logs = list.reverse().map(this.formatLog)
+      list = data.reverse().map(this.formatLog)
+      this.logs.push(...list)
+      this.scrollToBottom()
+    },
+    scrollToBottom() {
       this.$nextTick(() => {
         let el = this.$refs.logs
         if (this.isScrollBottom) {
@@ -129,7 +133,9 @@ export default {
           if (isSearch) {
             this.noMore = false
             this.isScrollBottom = true
-            this.getNew(data)
+            let list = data || []
+            this.logs = list.reverse().map(this.formatLog)
+            this.scrollToBottom()
             return
           }
           if (!data.length) {
