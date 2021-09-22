@@ -84,7 +84,9 @@
           v-model="activeTab"
           @tab-click="tabHandler"
         >
-          <ElTabPane label="任务进度" name="progress">用户管理</ElTabPane>
+          <ElTabPane label="任务进度" name="progress" class="h-100">
+            <TaskProgress :task="task"></TaskProgress>
+          </ElTabPane>
           <ElTabPane lazy class="h-100 overflow-hidden" label="运行日志" name="log">
             <Log :id="$route.params.id"></Log>
           </ElTabPane>
@@ -146,30 +148,22 @@
 </style>
 <script>
 import StatusTag from '@/components/StatusTag'
+import TaskProgress from './TaskProgress'
+
 import FieldMapping from '@/components/FieldMappings'
 import Log from './Log.vue'
 export default {
-  components: { StatusTag, Log, FieldMapping },
+  components: { StatusTag, TaskProgress, Log, FieldMapping },
   data() {
     return {
       loading: true,
-      activeTab: 'progress'
+      activeTab: 'progress',
+      task: null
     }
   },
   created() {
     this.getData()
-    // this.$ws.on('dataFlowInsight', this.insightChange)
     this.$ws.on('watch', this.taskChange)
-    // this.$ws.send({
-    //   type: 'dataFlowInsight',
-    //   // granularity: {
-    //   //   throughput: this.selectFlow + this.throughputTime,
-    //   //   trans_time: this.selectFlow + this.transfTime,
-    //   //   repl_lag: this.selectFlow + this.replicateTime,
-    //   //   data_overview: this.dataOverviewAll
-    //   // },
-    //   dataFlowId: this.$route.params.id
-    // })
     this.$ws.send({
       type: 'watch',
       collection: 'DataFlows',
@@ -191,13 +185,14 @@ export default {
           'fullDocument.finishTime': true,
           'fullDocument.startTime': true,
           'fullDocument.errorEvents': true,
-          'fullDocument.milestones': true
+          'fullDocument.milestones': true,
+          'fullDocument.user': true,
+          'fullDocument.mappingTemplate': true
         }
       }
     })
   },
   destroyed() {
-    // this.$ws.off('dataFlowInsight', this.insightChange)
     this.$ws.off('watch', this.taskChange)
   },
   computed: {
@@ -219,13 +214,10 @@ export default {
     }
   },
   methods: {
-    // insightChange(data) {
-    //   console.log(data)
-    // },
     taskChange(data) {
       let task = data.data?.fullDocument || {}
       if (this.task) {
-        Object.assign(this.task, task)
+        Object.assign(this.task, this.formatTask(task))
       }
     },
     // 获取任务数据
@@ -283,7 +275,7 @@ export default {
     formatTask(data) {
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
-      data.creator = data.username || data.user.username || '-'
+      data.creator = this.task?.creator || data.username || data.user?.username || '-'
       data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
       let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
       data.startTimeFmt = this.formatTime(data.startTime)

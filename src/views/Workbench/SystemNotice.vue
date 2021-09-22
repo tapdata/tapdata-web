@@ -1,6 +1,5 @@
 <template>
-  <section class="system-notice main-containe" v-if="$route.name === 'SystemNotice'">
-    <header class="system-header">系统通知</header>
+  <section class="system-notice g-panel-container" v-if="$route.name === 'SystemNotice'">
     <div class="main">
       <div class="system-operation">
         <div class="system-operation-left">
