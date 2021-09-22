@@ -163,18 +163,7 @@ export default {
   },
   created() {
     this.getData()
-    // this.$ws.on('dataFlowInsight', this.insightChange)
     this.$ws.on('watch', this.taskChange)
-    // this.$ws.send({
-    //   type: 'dataFlowInsight',
-    //   // granularity: {
-    //   //   throughput: this.selectFlow + this.throughputTime,
-    //   //   trans_time: this.selectFlow + this.transfTime,
-    //   //   repl_lag: this.selectFlow + this.replicateTime,
-    //   //   data_overview: this.dataOverviewAll
-    //   // },
-    //   dataFlowId: this.$route.params.id
-    // })
     this.$ws.send({
       type: 'watch',
       collection: 'DataFlows',
@@ -202,7 +191,6 @@ export default {
     })
   },
   destroyed() {
-    // this.$ws.off('dataFlowInsight', this.insightChange)
     this.$ws.off('watch', this.taskChange)
   },
   computed: {
@@ -224,13 +212,10 @@ export default {
     }
   },
   methods: {
-    // insightChange(data) {
-    //   console.log(data)
-    // },
     taskChange(data) {
       let task = data.data?.fullDocument || {}
       if (this.task) {
-        Object.assign(this.task, task)
+        Object.assign(this.task, this.formatTask(task))
       }
     },
     // 获取任务数据
