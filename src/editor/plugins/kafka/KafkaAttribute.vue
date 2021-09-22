@@ -150,6 +150,13 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item :label="$t('dag_data_node_label_kafka_high_performance')" prop="performanceMode">
+          <el-switch
+            v-model="model.performanceMode"
+            :active-text="model.performanceMode ? $t('dataFlow.yes') : $t('dataFlow.no')"
+          >
+          </el-switch>
+        </el-form-item>
       </el-form>
     </div>
     <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
@@ -245,7 +252,9 @@ export default {
         tableName: '',
         partitionId: '',
         kafkaPartitionKey: '',
-        isFirst: true
+        isFirst: true,
+        performanceMode: false,
+        partitionIdSet: []
       },
       scope: '',
       dataFlow: '',
@@ -319,6 +328,12 @@ export default {
             this.mergedSchema = schema
           }
         }
+      }
+    },
+    'model.performanceMode': {
+      immediate: true,
+      handler(val) {
+        val ? (this.model.partitionIdSet = this.partitionSet) : []
       }
     }
   },
@@ -412,11 +427,11 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Kafka'
-      if (this.dataNodeInfo.isTarget) {
-        delete result.partitionId
-      } else {
-        delete result.kafkaPartitionKey
+
+      if (!this.model.performanceMode) {
+        this.model.performanceMode = []
       }
+
       if (result.kafkaPartitionKey instanceof Array) {
         result.kafkaPartitionKey = result.kafkaPartitionKey.join(',')
       }

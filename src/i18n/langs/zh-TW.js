@@ -46,5 +46,6 @@ export default {
   dag_data_node_label_memcache_type_all: '全局緩存',
   dag_data_node_label_memcache_type_local: '局部緩存',
   dag_data_node_label_memcache_type_tip: '全局緩存所有任務可引用，局部緩存僅限當前DAG引用。 ',
-  dag_data_node_label_clickhouse: 'ClickHouse節點'
+  dag_data_node_label_clickhouse: 'ClickHouse節點',
+  dag_data_node_label_kafka_high_performance: '高性能模式'
 }
