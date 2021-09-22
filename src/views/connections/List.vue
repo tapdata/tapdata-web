@@ -277,7 +277,7 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira',
+        // 'jira',
         'dameng',
         'hive',
         'gbase-8s',
