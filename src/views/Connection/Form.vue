@@ -618,8 +618,6 @@ export default {
     .e-form-builder-item {
       width: 396px;
       .el-form-item__content {
-        padding-bottom: 32px;
-        height: 32px;
         .el-input__inner,
         .el-textarea__inner {
           background: #f9fafd;

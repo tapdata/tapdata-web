@@ -163,18 +163,7 @@ export default {
   },
   created() {
     this.getData()
-    // this.$ws.on('dataFlowInsight', this.insightChange)
     this.$ws.on('watch', this.taskChange)
-    // this.$ws.send({
-    //   type: 'dataFlowInsight',
-    //   // granularity: {
-    //   //   throughput: this.selectFlow + this.throughputTime,
-    //   //   trans_time: this.selectFlow + this.transfTime,
-    //   //   repl_lag: this.selectFlow + this.replicateTime,
-    //   //   data_overview: this.dataOverviewAll
-    //   // },
-    //   dataFlowId: this.$route.params.id
-    // })
     this.$ws.send({
       type: 'watch',
       collection: 'DataFlows',
@@ -196,13 +185,14 @@ export default {
           'fullDocument.finishTime': true,
           'fullDocument.startTime': true,
           'fullDocument.errorEvents': true,
-          'fullDocument.milestones': true
+          'fullDocument.milestones': true,
+          'fullDocument.user': true,
+          'fullDocument.mappingTemplate': true
         }
       }
     })
   },
   destroyed() {
-    // this.$ws.off('dataFlowInsight', this.insightChange)
     this.$ws.off('watch', this.taskChange)
   },
   computed: {
@@ -224,13 +214,10 @@ export default {
     }
   },
   methods: {
-    // insightChange(data) {
-    //   console.log(data)
-    // },
     taskChange(data) {
       let task = data.data?.fullDocument || {}
       if (this.task) {
-        Object.assign(this.task, task)
+        Object.assign(this.task, this.formatTask(task))
       }
     },
     // 获取任务数据
@@ -239,7 +226,7 @@ export default {
       this.$axios
         .get(`tm/api/Dataflows/${this.$route.params.id}`)
         .then(data => {
-          this.task = data
+          this.task = this.formatTask(data)
           this.getConnections(data)
         })
         .finally(() => {
@@ -284,6 +271,20 @@ export default {
           this.$set(this.task, type + 'Url', c.database_host + ':' + c.database_port)
         })
       })
+    },
+    formatTask(data) {
+      data.totalOutput = data.stats?.output?.rows || 0
+      data.totalInput = data.stats?.input?.rows || 0
+      data.creator = this.task?.creator || data.username || data.user?.username || '-'
+      data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
+      let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
+      data.startTimeFmt = this.formatTime(data.startTime)
+      data.endTimeFmt = this.formatTime(data.finishTime)
+      data.cdcTimeFmt = this.formatTime(cdcTime)
+      return data
+    },
+    formatTime(time) {
+      return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     // 以下方法需要考虑和列表的重构合并，暂时先复制过来
     changeStatus({ status, errorEvents }) {
