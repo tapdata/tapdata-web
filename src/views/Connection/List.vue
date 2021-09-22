@@ -57,7 +57,13 @@
                 {{ scope.row.name }}
               </ElLink>
               <div class="flex align-items-center">
-                <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">仅供测试使用</span>
+                <img
+                  v-if="scope.row.agentType === 'Cloud'"
+                  src="../../../public/images/only_test.png"
+                  alt=""
+                  class="ml-3"
+                  style="height: 18px"
+                />
               </div>
             </div>
           </template>
@@ -179,11 +185,6 @@
     .agent-link {
       color: unset;
       cursor: unset;
-    }
-    .agent-cloud {
-      color: #10c038;
-      border-color: #10c038;
-      background-color: #dbefd1;
     }
     .operate-columns {
       line-height: 14px;
