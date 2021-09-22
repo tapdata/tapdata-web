@@ -91,6 +91,19 @@
             </span>
           </template>
         </el-table-column>
+        <div v-if="!isSearching" class="migration-table__empty" slot="empty">
+          <VIcon size="120">no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_data') }}</span>
+          </div>
+        </div>
+        <div v-else class="migration-table__empty" slot="empty">
+          <VIcon size="120">search-no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_match_result') }}</span>
+            <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
+          </div>
+        </div>
       </VList>
     </div>
   </section>
@@ -165,6 +178,9 @@ export default {
     },
     table() {
       return this.$refs.table
+    },
+    isSearching() {
+      return !!Object.values(this.searchParams).join('')
     }
   },
   watch: {
