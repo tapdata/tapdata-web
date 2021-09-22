@@ -1233,184 +1233,48 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
+  '/tm/api/UserLogs/count': { data: { count: 0 }, code: 'ok', msg: 'ok' },
   '/tm/api/UserLogs': {
     code: 'ok',
     msg: 'ok',
-    data: {
-      size: 20,
-      total: '@integer(0, 100)',
-      totalPage: 1,
-      'items|10-100': [
-        {
-          createTime: '2021-06-18T07:25:46.688Z',
-          id: '@guid',
-          last_updated: '2021-06-18T07:25:46.688Z',
-          'modular|1': [
-            'connection',
-            'migration',
-            'agent',
-            'inspect',
-            'differenceInspect',
-            'message',
-            'userNotification'
-          ],
-          'operation|1': [
-            'create',
-            'update',
-            'copy',
-            'delete',
-            'start',
-            'reset',
-            'stop',
-            'forceStop',
-            'rename',
-            'read',
-            'readAll',
-            'deleteAll'
-          ],
-          parameter1: '@name',
-          parameter2: '@name',
-          parameter3: '',
-          'rename|1': [true, false],
-          oldName: '@name', //原名称
-          type: 'userOperation',
-          user_id: '60cc0c5887e32100106b6a17',
-          username: '@name'
-        }
-      ]
-    }
-  },
-  '/tm/api/DataFlowInsights/runtimeMonitor': ({ req }) => {
-    console.log('req', req.query)
-    let data = {
-      throughput: {
-        data: [
-          {
-            statsType: 'throughput',
-            createTime: 1631865754246,
-            dataFlowId: '61383399c0cacd00a5c319ea',
-            granularity: 'flow_minute',
-            statsData: [
-              { t: '2021-09-08 03:33:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:34:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:35:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:36:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:37:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:38:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:39:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:40:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:41:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:42:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:43:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:44:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:45:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:46:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:47:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:48:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:49:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:50:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:51:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 },
-              { t: '2021-09-08 03:52:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 }
-            ]
-          }
+    data: [],
+    'data1|10-100': [
+      {
+        createTime: '2021-06-18T07:25:46.688Z',
+        id: '@guid',
+        last_updated: '2021-06-18T07:25:46.688Z',
+        'modular|1': [
+          'connection',
+          'migration',
+          'agent',
+          'inspect',
+          'differenceInspect',
+          'message',
+          'userNotification'
         ],
-        code: 'ok',
-        msg: 'ok'
-      },
-      trans_time: {
-        data: [
-          {
-            statsType: 'trans_time',
-            createTime: 1620633775585,
-            dataFlowId: '608940e76ea5330010a5e00e',
-            granularity: 'flow_minute',
-            statsData: [
-              { t: '2021-04-28 18:50:00', d: 0 },
-              { t: '2021-04-28 18:51:00', d: 0 },
-              { t: '2021-04-28 18:52:00', d: 0 },
-              { t: '2021-04-28 18:53:00', d: 0 },
-              { t: '2021-04-28 18:54:00', d: 0 },
-              { t: '2021-04-28 18:55:00', d: 0 },
-              { t: '2021-04-28 18:56:00', d: 0 },
-              { t: '2021-04-28 18:57:00', d: 0 },
-              { t: '2021-04-28 18:58:00', d: 0 },
-              { t: '2021-04-28 18:59:00', d: 0 },
-              { t: '2021-04-28 19:00:00', d: 0 },
-              { t: '2021-04-28 19:01:00', d: 0 },
-              { t: '2021-04-28 19:02:00', d: 0 },
-              { t: '2021-04-28 19:03:00', d: '0.56' },
-              { t: '2021-04-28 19:04:00', d: '1.43' },
-              { t: '2021-04-28 19:05:00', d: '1.12' },
-              { t: '2021-04-28 19:06:00', d: '1.38' },
-              { t: '2021-04-28 19:07:00', d: '1.44' },
-              { t: '2021-04-28 19:08:00', d: '1.57' },
-              { t: '2021-04-28 19:09:00', d: '1.35' }
-            ]
-          }
+        'operation|1': [
+          'create',
+          'update',
+          'copy',
+          'delete',
+          'start',
+          'reset',
+          'stop',
+          'forceStop',
+          'rename',
+          'read',
+          'readAll',
+          'deleteAll'
         ],
-        code: 'ok',
-        msg: 'ok'
-      },
-      repl_lag: {
-        data: [
-          {
-            statsType: 'repl_lag',
-            createTime: 1620633775588,
-            dataFlowId: '608940e76ea5330010a5e00e',
-            granularity: 'flow_minute',
-            statsData: [
-              { t: '2021-04-28 18:50:00', d: 0 },
-              { t: '2021-04-28 18:51:00', d: 0 },
-              { t: '2021-04-28 18:52:00', d: 0 },
-              { t: '2021-04-28 18:53:00', d: 0 },
-              { t: '2021-04-28 18:54:00', d: 0 },
-              { t: '2021-04-28 18:55:00', d: 0 },
-              { t: '2021-04-28 18:56:00', d: 0 },
-              { t: '2021-04-28 18:57:00', d: 0 },
-              { t: '2021-04-28 18:58:00', d: 0 },
-              { t: '2021-04-28 18:59:00', d: 0 },
-              { t: '2021-04-28 19:00:00', d: 0 },
-              { t: '2021-04-28 19:01:00', d: 0 },
-              { t: '2021-04-28 19:02:00', d: 0 },
-              { t: '2021-04-28 19:03:00', d: 0 },
-              { t: '2021-04-28 19:04:00', d: 0 },
-              { t: '2021-04-28 19:05:00', d: 0 },
-              { t: '2021-04-28 19:06:00', d: 0 },
-              { t: '2021-04-28 19:07:00', d: 0 },
-              { t: '2021-04-28 19:08:00', d: 0 },
-              { t: '2021-04-28 19:09:00', d: 0 }
-            ]
-          }
-        ],
-        code: 'ok',
-        msg: 'ok'
-      },
-      data_overview: {
-        data: [
-          {
-            statsType: 'data_overview',
-            createTime: 1620633775572,
-            dataFlowId: '608940e76ea5330010a5e00e',
-            granularity: 'flow',
-            statsData: {
-              deleteCount: 0,
-              deleteSize: 0,
-              inputCount: 5,
-              inputSize: 0,
-              insertCount: 5,
-              insertSize: 0,
-              outputCount: 5,
-              outputSize: 0,
-              t: '2021-09-08 03:53:23',
-              updateCount: 0,
-              updateSize: 0
-            }
-          }
-        ],
-        code: 'ok',
-        msg: 'ok'
+        parameter1: '@name',
+        parameter2: '@name',
+        parameter3: '',
+        'rename|1': [true, false],
+        oldName: '@name', //原名称
+        type: 'userOperation',
+        user_id: '60cc0c5887e32100106b6a17',
+        username: '@name'
       }
-    }
-    return data[req.query?.statsType]
+    ]
   }
 }
