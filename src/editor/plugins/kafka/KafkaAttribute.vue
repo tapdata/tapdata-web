@@ -406,7 +406,7 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         if (!data.performanceMode) {
-          data.partitionIdSet = data.partitionIdSet[0]
+          data.partitionIdSet = data.partitionIdSet && data.partitionIdSet[0]
         }
 
         this.scope = vueAdapter?.editor?.scope
