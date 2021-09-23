@@ -406,17 +406,22 @@ export default {
             procedure: false
           }
         }
+        //获取目标节点ID
+        this.stageId = targetCell.id || ''
         //是否显示字段推演
         if (ALLOW_FIELD_MAPPING.includes(sourceDatabaseType) && ALLOW_FIELD_MAPPING.includes(targetDatabaseType)) {
           this.showFieldMapping = true
         }
         // 获取目标节点的数据显示右侧选择表
-        if (targetCell && this.model.selectSourceArr.length === 0) {
-          let targetFormData = targetCell.getFormData()
-          let selectTargetType = []
 
+        let targetFormData = targetCell && targetCell.getFormData()
+        let selectTargetType = []
+        if (targetFormData && targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
+          this.model.transferFlag = true
+        }
+        if (targetCell && this.model.selectSourceArr.length === 0) {
           if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
-            this.model.transferFlag = true
+            // this.model.transferFlag = true
             this.mqActiveData.topicData = data.topicData
             this.mqActiveData.queueData = data.queueData
           }
@@ -439,8 +444,6 @@ export default {
           }
         }
         this.loadDataModels(connectionId)
-        //获取目标节点ID
-        this.stageId = targetCell.id || ''
       }
 
       editorMonitor = vueAdapter.editor
