@@ -5,7 +5,7 @@
     </div>
     <ElForm
       inline-message
-      class="overflow-hidden"
+      class="overflow-hidden grey"
       ref="baseForm"
       label-position="left"
       label-width="96px"
