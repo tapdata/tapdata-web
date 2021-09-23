@@ -647,10 +647,8 @@ export default {
       }
       &.mongodb-item {
         width: 680px;
-        padding-bottom: 24px;
       }
       &.mongodb-tip-item .el-form-item__content {
-        padding-bottom: 194px;
         width: 680px;
       }
       .url-tip {

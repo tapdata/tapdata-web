@@ -428,11 +428,6 @@
 .form-builder {
   ::v-deep {
     .e-form-builder-item {
-      &.sync-type-item,
-      &.distinct-write-type-item,
-      &.auto-ddl-item {
-        margin-bottom: 24px;
-      }
       &.read-batch-size {
         .el-input__inner {
           width: 277px;
