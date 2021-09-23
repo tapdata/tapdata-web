@@ -33,6 +33,9 @@
             <el-button type="text" size="mini" @click="startTest()">{{ $t('connection.testConnection') }}</el-button>
             <StatusTag type="text" class="ml-4" target="connection" :status="status"></StatusTag>
             <footer class="mt-2 pb-4">
+              <el-button size="mini" class="connection-from-btn" @click="goBack()">{{
+                $t('dataForm.cancel')
+              }}</el-button>
               <el-button
                 size="mini"
                 class="connection-from-btn"
@@ -42,9 +45,6 @@
               >
                 {{ $t('dataForm.submit') }}
               </el-button>
-              <el-button size="mini" class="connection-from-btn" @click="goBack()">{{
-                $t('dataForm.cancel')
-              }}</el-button>
             </footer>
           </div>
         </div>

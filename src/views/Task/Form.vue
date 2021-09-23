@@ -81,6 +81,15 @@
             </div>
           </el-main>
           <div :class="['pb-6', 'px-6', 'btns-step-' + steps[activeStep].index]">
+            <v-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </v-button>
+            <v-button
+              class="btn-step"
+              :loading="loading"
+              v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
+              @click="back()"
+            >
+              {{ $t('guide.btn_back') }}
+            </v-button>
             <v-button
               v-if="steps[activeStep].showNextBtn"
               type="primary"
@@ -98,15 +107,6 @@
               @click="save()"
             >
               完成
-            </v-button>
-            <v-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </v-button>
-            <v-button
-              class="btn-step"
-              :loading="loading"
-              v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
-              @click="back()"
-            >
-              {{ $t('guide.btn_back') }}
             </v-button>
           </div>
         </div>
