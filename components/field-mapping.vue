@@ -93,15 +93,7 @@
         </ElTableColumn>
         <ElTableColumn label="目标表长度" width="150">
           <template slot-scope="scope">
-            <div
-              v-if="
-                scope.row.t_precision !== null &&
-                scope.row.t_precision !== undefined &&
-                !scope.row.is_deleted &&
-                scope.row.t_isPrecisionEdit
-              "
-              @click="edit(scope.row, 'precision')"
-            >
+            <div v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit" @click="edit(scope.row, 'precision')">
               <span>{{ scope.row.t_precision }}</span>
               <i class="icon el-icon-edit-outline"></i>
             </div>
@@ -112,15 +104,7 @@
         </ElTableColumn>
         <ElTableColumn label="目标表精度" width="100">
           <template slot-scope="scope">
-            <div
-              v-if="
-                scope.row.t_scale !== null &&
-                scope.row.t_scale !== undefined &&
-                !scope.row.is_deleted &&
-                scope.row.t_isScaleEdit
-              "
-              @click="edit(scope.row, 'scale')"
-            >
+            <div v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit" @click="edit(scope.row, 'scale')">
               <span>{{ scope.row.t_scale }}</span>
               <i class="icon el-icon-edit-outline"></i>
             </div>
@@ -333,7 +317,7 @@ export default {
             .then(({ data, target }) => {
               this.target = target
               this.fieldMappingTableData = data
-              this.initShowEdit()
+              //this.initShowEdit() 字段默认值暂时依赖后端数据
               this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
             .finally(() => {
