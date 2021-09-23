@@ -1,0 +1,27 @@
+.jtk-connector {
+  z-index: 4;
+  &.jtk-hover {
+    z-index: 1000;
+  }
+}
+
+.jtk-endpoint {
+  z-index: 5;
+  &.jtk-hover {
+    z-index: 1001;
+  }
+  &.sourcePoint {
+    cursor: crosshair;
+  }
+  &.dropHover {
+    transform: scale(1.5);
+  }
+}
+
+.jtk-overlay {
+  z-index: 6;
+}
+
+.jtk-drag-select {
+  user-select: none;
+}

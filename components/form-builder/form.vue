@@ -76,9 +76,7 @@ export default {
         class: 'e-form-builder-container',
         ref: 'form',
 
-        props: Object.assign(formConfig, {
-          inlineMessage: true
-        })
+        props: Object.assign(formConfig)
       },
       formItems.map((item, index) => {
         return this.getFormItem(h, item, formConfig, index)
@@ -151,6 +149,7 @@ export default {
           props: {
             prop: config.field,
             label: config.label,
+            inlineMessage: !!config.inlineMeesage,
             rules: rules.map(r => {
               let rule = Object.assign({}, r)
               if (rule.validator) {
@@ -294,7 +293,7 @@ export default {
     padding-bottom: 0px;
   }
   .el-form-item {
-    margin-bottom: 5px;
+    margin-bottom: 32px;
     .el-form-item__error {
       line-height: 20px;
     }
@@ -308,6 +307,9 @@ export default {
   }
   .fb-form-item-append-slot {
     margin-left: 5px;
+  }
+  .fb-radio-tip__text {
+    line-height: 18px;
   }
 }
 </style>

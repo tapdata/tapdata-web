@@ -11,6 +11,9 @@ export const uuid = function () {
 export const getConnectionTypeImg = function (type) {
   return require(`./assets/images/connection-type/${type}.png`)
 }
+export const getConnectionTypeDialogImg = function (type) {
+  return require(`./assets/images/connection-type-dialog/${type}.png`)
+}
 
 let timeout = null
 export function delayTrigger(func, t) {
