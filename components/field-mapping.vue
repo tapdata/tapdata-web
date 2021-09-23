@@ -317,7 +317,7 @@ export default {
             .then(({ data, target }) => {
               this.target = target
               this.fieldMappingTableData = data
-              //this.initShowEdit() 字段默认值暂时依赖后端数据
+              this.initShowEdit()
               this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
             .finally(() => {
@@ -378,14 +378,14 @@ export default {
           rules = rules[0].rules
           if (!data[i].t_precision) {
             this.showPrecisionEdit(data[i].t_id, rules || [])
-            this.influencesPrecision(data[i].t_id, rules || [])
+            //this.influencesPrecision(data[i].t_id, rules || [])
           } else if (!data[i].t_scale) {
             this.showScaleEdit(data[i].t_id, rules || [])
-            this.influencesScale(data[i].t_id, rules || [])
+            //this.influencesScale(data[i].t_id, rules || [])
           } else if (!data[i].t_precision && !data[i].t_scale) {
             this.showPrecisionEdit(data[i].t_id, rules || [])
             this.showScaleEdit(data[i].t_id, rules || [])
-            this.influences(data[i].t_id, rules || [])
+            // this.influences(data[i].t_id, rules || [])
           }
         }
       }
