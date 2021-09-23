@@ -162,8 +162,14 @@ export default {
             t_isPrecisionEdit: true, //默认不能编辑
             t_isScaleEdit: true //默认不能编辑
           }
-          if (item.field_name === field.field_name) {
-            fieldMappingTableData.push(Object.assign({}, item, node))
+          //检查当前name个数
+          if (item.field_name === field.original_field_name) {
+            let targetNames = this.checkFieldName(item.field_name, target)
+            if (!field.is_deleted && targetNames?.length > 1) {
+              fieldMappingTableData.push(Object.assign({}, item, node))
+            } else if (targetNames?.length === 1) {
+              fieldMappingTableData.push(Object.assign({}, item, node))
+            }
           }
           //先检查是否被改过名 任务同步不需要检测字段处理器
           if (this.hiddenFieldProcess) return
@@ -182,6 +188,9 @@ export default {
         data: fieldMappingTableData,
         target: target
       }
+    },
+    checkFieldName(field_name, target) {
+      return target.filter(field => field_name === field.original_field_name)
     },
     //获取字段处理器
     getFieldOperations(row) {

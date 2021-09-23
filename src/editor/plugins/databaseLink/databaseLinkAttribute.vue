@@ -406,6 +406,8 @@ export default {
             procedure: false
           }
         }
+        //获取目标节点ID
+        this.stageId = targetCell.id || ''
         //是否显示字段推演
         if (ALLOW_FIELD_MAPPING.includes(sourceDatabaseType) && ALLOW_FIELD_MAPPING.includes(targetDatabaseType)) {
           this.showFieldMapping = true
@@ -439,8 +441,6 @@ export default {
           }
         }
         this.loadDataModels(connectionId)
-        //获取目标节点ID
-        this.stageId = targetCell.id || ''
       }
 
       editorMonitor = vueAdapter.editor
