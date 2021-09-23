@@ -422,23 +422,7 @@
 .form-builder {
   ::v-deep {
     .e-form-builder-item {
-      <<<<<<< HEAD .el-form-item__content {
-        .el-input__inner {
-          background: #f9fafd;
-          &:focus {
-            background: unset;
-          }
-        }
-        .el-input__count-inner {
-          background-color: unset;
-        }
-      }
-      &.sync-type-item,
-      &.distinct-write-type-item,
-      &.auto-ddl-item {
-        margin-bottom: 24px;
-      }
-      =======>>>>>>>a632841660beaaacb6771ed3e7ed3be2c62a11cf &.read-batch-size {
+      &.read-batch-size {
         .el-input__inner {
           width: 277px;
         }
