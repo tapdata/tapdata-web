@@ -27,7 +27,7 @@
         </div>
         <div class="form-wrap">
           <div class="form">
-            <form-builder ref="form" class="form-builder" v-model="model" :config="config">
+            <form-builder ref="form" class="form-builder grey" v-model="model" :config="config">
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
             </form-builder>
             <el-button type="text" size="mini" @click="startTest()">{{ $t('connection.testConnection') }}</el-button>
@@ -617,19 +617,6 @@ export default {
   ::v-deep {
     .e-form-builder-item {
       width: 396px;
-      .el-form-item__content {
-        .el-input__inner,
-        .el-textarea__inner {
-          background: #f9fafd;
-          &:focus {
-            background: unset;
-          }
-        }
-        .el-input__count-inner,
-        .el-input__count {
-          background-color: unset;
-        }
-      }
       &.large-item {
         width: 680px;
       }
@@ -638,10 +625,8 @@ export default {
       }
       &.mongodb-item {
         width: 680px;
-        padding-bottom: 24px;
       }
       &.mongodb-tip-item .el-form-item__content {
-        padding-bottom: 194px;
         width: 680px;
       }
       .url-tip {

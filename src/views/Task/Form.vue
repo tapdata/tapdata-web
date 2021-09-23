@@ -29,7 +29,7 @@
                 v-model="dataSourceModel"
                 :config="config"
                 style="width: 376px"
-                class="form-builder"
+                class="form-builder grey"
                 @value-change="formChange"
               >
               </form-builder>
@@ -46,7 +46,7 @@
                 ref="setting"
                 v-model="settingModel"
                 :config="config"
-                class="form-builder"
+                class="form-builder grey"
                 style="width: 820px"
                 @submit.native.prevent
                 @value-change="formChangeSetting"
@@ -422,7 +422,7 @@
 .form-builder {
   ::v-deep {
     .e-form-builder-item {
-      .el-form-item__content {
+      <<<<<<< HEAD .el-form-item__content {
         .el-input__inner {
           background: #f9fafd;
           &:focus {
@@ -438,7 +438,7 @@
       &.auto-ddl-item {
         margin-bottom: 24px;
       }
-      &.read-batch-size {
+      =======>>>>>>>a632841660beaaacb6771ed3e7ed3be2c62a11cf &.read-batch-size {
         .el-input__inner {
           width: 277px;
         }
