@@ -423,8 +423,6 @@
   ::v-deep {
     .e-form-builder-item {
       .el-form-item__content {
-        padding-bottom: 32px;
-        height: 32px;
         .el-input__inner {
           background: #f9fafd;
           &:focus {
