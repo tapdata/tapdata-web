@@ -159,21 +159,14 @@
         </el-form-item>
         <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="partitionIdSet">
           <el-select
-            v-model="model.partitionId"
+            v-model="model.partitionIdSet"
             default-first-option
             clearable
-            multiple
             :disabled="model.performanceMode"
             :placeholder="$t('message.placeholderSelect') + 'Partition ID'"
             size="mini"
           >
-            <el-option :label="$t('dag_data_node_label_kafka_all')" value="all"></el-option>
-            <el-option
-              v-for="(item, idx) in partitionSet"
-              :label="item === 'all' ? $t('dag_data_node_label_kafka_all') : item"
-              :value="item"
-              v-bind:key="idx"
-            ></el-option>
+            <el-option v-for="(item, idx) in partitionSet" :label="item" :value="item" v-bind:key="idx"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -269,11 +262,11 @@ export default {
         connectionId: '',
         type: 'kafka',
         tableName: '',
-        partitionId: [],
+        // partitionId: [],
         kafkaPartitionKey: '',
         isFirst: true,
         performanceMode: false,
-        partitionIdSet: []
+        partitionIdSet: ''
       },
       scope: '',
       dataFlow: '',
@@ -352,21 +345,8 @@ export default {
     'model.performanceMode': {
       immediate: true,
       handler(val) {
-        this.model.partitionId = ['all']
-        this.model.partitionIdSet = val ? this.partitionSet : []
-      }
-    },
-    'model.partitionId': {
-      immediate: true,
-      handler(val) {
-        if (val.length > 1) {
-          val.forEach((item, index) => {
-            if (item === 'all') {
-              val.splice(index, 1)
-            }
-          })
-        }
-        this.model.partitionIdSet = val.includes('all') ? this.partitionSet : val
+        val = val ? this.partitionSet : []
+        this.model.partitionIdSet = val.toString()
       }
     }
   },
@@ -461,10 +441,6 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Kafka'
-
-      // if (!this.model.performanceMode) {
-      //   this.model.partitionIdSet = []
-      // }
 
       if (result.kafkaPartitionKey instanceof Array) {
         result.kafkaPartitionKey = result.kafkaPartitionKey.join(',')
