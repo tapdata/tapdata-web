@@ -443,6 +443,25 @@ th {
   }
 }
 // 表单
+.el-form {
+  &.grey {
+    .el-form-item {
+      .el-form-item__content {
+        .el-input__inner,
+        .el-textarea__inner {
+          background: #f9fafd;
+          &:focus {
+            background: unset;
+          }
+        }
+        .el-input__count-inner,
+        .el-input__count {
+          background-color: unset;
+        }
+      }
+    }
+  }
+}
 .el-form-item {
   &.medium {
     .el-form-item__content {
