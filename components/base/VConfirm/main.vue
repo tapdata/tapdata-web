@@ -44,6 +44,16 @@
         </div>
         <div class="message-box__btns">
           <el-button
+            :loading="cancelButtonLoading"
+            :class="[cancelButtonClasses]"
+            v-if="showCancelButton"
+            size="small"
+            @click.native="handleAction('cancel')"
+            @keydown.enter="handleAction('cancel')"
+          >
+            {{ cancelButtonText || '取消' }}
+          </el-button>
+          <el-button
             type="primary"
             :loading="confirmButtonLoading"
             ref="confirm"
@@ -54,16 +64,6 @@
             @keydown.enter="handleAction('confirm')"
           >
             {{ confirmButtonText || '确认' }}
-          </el-button>
-          <el-button
-            :loading="cancelButtonLoading"
-            :class="[cancelButtonClasses]"
-            v-if="showCancelButton"
-            size="small"
-            @click.native="handleAction('cancel')"
-            @keydown.enter="handleAction('cancel')"
-          >
-            {{ cancelButtonText || '取消' }}
           </el-button>
         </div>
       </div>
