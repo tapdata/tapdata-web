@@ -252,18 +252,16 @@ export default {
       }
       let filter = {
         where,
-        limit: size,
-        skip: (current - 1) * size,
+        size: size,
+        page: current,
         order: this.order
       }
-      return Promise.all([
-        this.$axios.get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter))),
-        this.$axios.get('tm/api/UserLogs/count?where=' + encodeURIComponent(JSON.stringify(where)))
-      ])
-        .then(([data, countData]) => {
+      return this.$axios
+        .get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(({ total, items }) => {
           return {
-            total: countData.count,
-            data: data
+            total: total,
+            data: items
           }
         })
         .finally(() => {
