@@ -109,7 +109,7 @@
       </div>
       <ul class="joint-table-main" id="data-verification-form">
         <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="index">
-          <div class="joint-table-setting">
+          <div class="joint-table-setting overflow-hidden">
             <div class="setting-item">
               <label class="item-label">{{ $t('verify_form_label_table') }}: </label>
               <ElCascader
@@ -181,18 +181,18 @@
       <VButton type="primary" @click="nextStep()">{{ $t('button_save') }}</VButton>
     </div>
     <ElDialog
+      width="60%"
       :title="$t('dataVerification.JSVerifyLogic')"
       :visible.sync="dialogAddScriptVisible"
-      width="60%"
       :before-close="handleAddScriptClose"
     >
       <div class="js-wrap">
         <div class="jsBox">
           <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <JsEditor v-if="dialogAddScriptVisible" :code.sync="webScript" ref="jsEditor" :width.sync="width"></JsEditor>
+          <CodeEditor class="js-editor" v-model="webScript" lang="javascript" theme="eclipse"></CodeEditor>
           <div class="js-fixText">}</div>
         </div>
-        <div class="markdown-body-wrap example">
+        <div class="markdown-body-wrap example ml-4">
           <div class="markdown-body" v-html="htmlMD"></div>
         </div>
       </div>
@@ -303,21 +303,21 @@
   flex-wrap: nowrap;
   flex-direction: row;
   .jsBox {
-    width: 70%;
-    height: 478px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     .js-fixText {
       line-height: 25px;
-      margin-left: 28px;
     }
     .js-fixContent {
       margin-left: 60px;
     }
   }
   .example {
-    width: calc(100% - 70%);
-    height: 478px;
-    overflow-y: auto;
-    padding-right: 10px;
+    width: 300px;
+  }
+  .js-editor {
+    border: 1px solid #f2f2f2;
   }
 }
 </style>
@@ -343,9 +343,9 @@ const META_INSTANCE_FIELDS = {
   meta_type: true
 }
 import MultiSelection from './MultiSelection.vue'
-import JsEditor from '../../components/js-editor.vue'
+import CodeEditor from '../../components/CodeEditor.vue'
 export default {
-  components: { MultiSelection, JsEditor },
+  components: { MultiSelection, CodeEditor },
   props: {
     remoteFunc: Function,
     optionsFunc: Function,
@@ -419,7 +419,6 @@ export default {
       dialogAddScriptVisible: false,
       formIndex: '',
       webScript: '',
-      width: '600',
       allStages: null,
       jointErrorMessage: ''
     }
