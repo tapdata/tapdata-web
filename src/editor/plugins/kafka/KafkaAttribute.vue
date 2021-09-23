@@ -447,7 +447,11 @@ export default {
       result.name = result.tableName || 'Kafka'
 
       if (!result.performanceMode) {
-        result.partitionIdSet = result.partitionIdSet ? [result.partitionIdSet] : []
+        if (!result.partitionIdSet) {
+          result.partitionIdSet = []
+        } else if (result.partitionIdSet && !(result.partitionIdSet instanceof Array)) {
+          result.partitionIdSet =  [result.partitionIdSet]
+        }
       }
 
       if (result.kafkaPartitionKey instanceof Array) {
