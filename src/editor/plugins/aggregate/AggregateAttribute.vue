@@ -212,22 +212,35 @@
     </el-form>
     <div class="example">
       <h3>{{ $t('editor.cell.processor.aggregate.returnExample') }}</h3>
-      <ul class="example-box">
-        {
-        <li>
-          <span class="text">_id: {{ form.aggregations[0].name }},</span>
-          <span class="comment">{{ $t('editor.cell.processor.aggregate.idComment') }}</span>
+      <ul class="example-box" form.aggregations>
+        [
+        <li v-for="(item, index) in form.aggregations" :key="index" style="padding-left: 10px">
+          {
+          <div>
+            <span v-if="item.groupByExpression.length" class="text">
+              {
+              <div style="padding-left: 10px">_tapd8_sub_name : {{ item.name }}</div>
+              <div v-for="(group, groupIndex) in item.groupByExpression" :key="groupIndex" style="padding-left: 10px">
+                {{ group }} : XXX
+              </div>
+              },
+            </span>
+            <span class="text" v-else>_id: {{ item.name }},</span>
+            <span class="comment">{{ $t('editor.cell.processor.aggregate.idComment') }}</span>
+          </div>
+          <div>
+            <span class="text"
+              >{{ item.aggFunction }}: {{ item.aggFunction === 'COUNT' ? 100 : item.aggExpression }},</span
+            >
+            <span class="comment">{{ $t('editor.cell.processor.aggregate.countComment') }}</span>
+          </div>
+          <div v-for="(group, groupIndex) in item.groupByExpression" :key="groupIndex">
+            <span class="text">{{ group }}: XXX</span>
+            <span class="comment">{{ $t('editor.cell.processor.aggregate.school_nameComment') }}</span>
+          </div>
+          },
         </li>
-        <li>
-          <span class="text">{{ form.aggregations[0].aggFunction }}: {{ form.aggregations[0].aggExpression }},</span>
-          <span class="comment">{{ $t('editor.cell.processor.aggregate.countComment') }}</span>
-        </li>
-        <li>
-          <span class="text">'school_name': {{ form.aggregations[0].groupByExpression }}</span>
-          <!-- <span class="text">{{ $t('editor.cell.processor.aggregate.school_name') }}</span> -->
-          <span class="comment">{{ $t('editor.cell.processor.aggregate.school_nameComment') }}</span>
-        </li>
-        }
+        ]
       </ul>
     </div>
   </div>
@@ -477,7 +490,7 @@ export default {
         padding: 5px 0;
         .text {
           display: inline-block;
-          width: 160px;
+          width: 280px;
           padding-left: 10px;
         }
         .comment {
