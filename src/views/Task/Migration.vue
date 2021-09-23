@@ -338,7 +338,7 @@ export default {
         }
       }
       let data = await this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      let changeList = data || []
+      let changeList = data?.items || []
       let statusMap = {}
       changeList.forEach(item => {
         let { statusText, statusIcon, status } = this.formatData(item)
