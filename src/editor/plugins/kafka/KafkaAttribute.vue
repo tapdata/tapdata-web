@@ -162,6 +162,7 @@
             v-model="model.partitionIdSet"
             default-first-option
             clearable
+            :multiple="model.performanceMode"
             :disabled="model.performanceMode"
             :placeholder="$t('message.placeholderSelect') + 'Partition ID'"
             size="mini"
@@ -266,7 +267,7 @@ export default {
         kafkaPartitionKey: '',
         isFirst: true,
         performanceMode: false,
-        partitionIdSet: ''
+        partitionIdSet: []
       },
       scope: '',
       dataFlow: '',
@@ -345,8 +346,7 @@ export default {
     'model.performanceMode': {
       immediate: true,
       handler(val) {
-        val = val ? this.partitionSet : []
-        this.model.partitionIdSet = val.toString()
+        this.model.partitionIdSet = val ? this.partitionSet : []
       }
     }
   },
@@ -405,6 +405,10 @@ export default {
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        if (!data.performanceMode) {
+          data.partitionIdSet = data.partitionIdSet[0]
+        }
+
         this.scope = vueAdapter?.editor?.scope
         this.stageId = cell.id
         this.getDataFlow()
@@ -441,6 +445,10 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Kafka'
+
+      if (!result.performanceMode) {
+        result.partitionIdSet = [result.partitionIdSet]
+      }
 
       if (result.kafkaPartitionKey instanceof Array) {
         result.kafkaPartitionKey = result.kafkaPartitionKey.join(',')
