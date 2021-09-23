@@ -29,7 +29,7 @@
                 v-model="dataSourceModel"
                 :config="config"
                 style="width: 376px"
-                class="form-builder"
+                class="form-builder grey"
                 @value-change="formChange"
               >
               </form-builder>
@@ -428,19 +428,6 @@
 .form-builder {
   ::v-deep {
     .e-form-builder-item {
-      //.el-form-item__content {
-      //  padding-bottom: 32px;
-      //  height: 32px;
-      //  .el-input__inner {
-      //    background: #f9fafd;
-      //    &:focus {
-      //      background: unset;
-      //    }
-      //  }
-      //  .el-input__count-inner {
-      //    background-color: unset;
-      //  }
-      //}
       &.sync-type-item,
       &.distinct-write-type-item,
       &.auto-ddl-item {
