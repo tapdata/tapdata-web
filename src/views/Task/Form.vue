@@ -46,7 +46,7 @@
                 ref="setting"
                 v-model="settingModel"
                 :config="config"
-                class="form-builder"
+                class="form-builder grey"
                 style="width: 820px"
                 @submit.native.prevent
                 @value-change="formChangeSetting"
@@ -422,19 +422,19 @@
 .form-builder {
   ::v-deep {
     .e-form-builder-item {
-      .el-form-item__content {
-        padding-bottom: 32px;
-        height: 32px;
-        .el-input__inner {
-          background: #f9fafd;
-          &:focus {
-            background: unset;
-          }
-        }
-        .el-input__count-inner {
-          background-color: unset;
-        }
-      }
+      //.el-form-item__content {
+      //  padding-bottom: 32px;
+      //  height: 32px;
+      //  .el-input__inner {
+      //    background: #f9fafd;
+      //    &:focus {
+      //      background: unset;
+      //    }
+      //  }
+      //  .el-input__count-inner {
+      //    background-color: unset;
+      //  }
+      //}
       &.sync-type-item,
       &.distinct-write-type-item,
       &.auto-ddl-item {
