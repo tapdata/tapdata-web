@@ -422,8 +422,8 @@ export default {
       let filter = {
         fields,
         where,
-        limit: this.page.size,
-        skip: (current - 1) * this.page.size,
+        size: this.page.size,
+        page: current,
         order: this.order
       }
       this.$axios

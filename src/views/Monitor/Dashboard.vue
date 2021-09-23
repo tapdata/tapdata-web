@@ -261,7 +261,7 @@ export default {
         }
       }
       this.$axios.get(`tm/api/Connections?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
-        let connections = data || []
+        let connections = data?.items || []
         connections.forEach(c => {
           let type = 'source'
           if (c.id === ids[1]) {

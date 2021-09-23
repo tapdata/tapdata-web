@@ -133,39 +133,44 @@ module.exports = {
   '/tm/api/Connections': {
     code: 'ok',
     msg: 'ok',
-    'data|0-10': [
-      {
-        name: '@name',
-        connection_type: 'target',
-        'database_type|1': ['mysql', 'oracle', 'mongodb'],
-        database_host: '192.168.1.' + Random.integer(0, 999),
-        database_username: 'root@name',
-        database_password: '@cuid',
-        database_port: Random.integer(0, 5000),
-        database_uri: 'mongodb://192.168.1.191:27017/tapdata_test',
-        database_name: 'root@name',
-        database_owner: 'owner_@name',
-        id: '@id',
-        sslCert: '',
-        additionalString: '',
-        'ssl|1': Boolean,
-        sslKey: '',
-        sslPass: '',
-        'schemaAutoUpdate|1': Boolean,
-        sslCA: '',
-        search_databaseType: '',
-        'status|1': ['ready', 'invalid', 'testing'],
-        fill: 'uri',
-        user_id: '@id',
-        last_updated: Random.datetime(),
-        loadCount: Random.integer(0, 100),
-        'loadFieldsStatus|1': ['loading', 'finished', 'error'],
-        tableCount: 100,
-        username: '@name',
-        'agentType|1': ['Cloud', ''],
-        loadFieldErrMsg: '@paragraph'
-      }
-    ]
+    data: {
+      total: '@integer(0, 100)',
+      size: 20,
+      totalPage: 1,
+      'items|0-10': [
+        {
+          name: '@name',
+          connection_type: 'target',
+          'database_type|1': ['mysql', 'oracle', 'mongodb'],
+          database_host: '192.168.1.' + Random.integer(0, 999),
+          database_username: 'root@name',
+          database_password: '@cuid',
+          database_port: Random.integer(0, 5000),
+          database_uri: 'mongodb://192.168.1.191:27017/tapdata_test',
+          database_name: 'root@name',
+          database_owner: 'owner_@name',
+          id: '@id',
+          sslCert: '',
+          additionalString: '',
+          'ssl|1': Boolean,
+          sslKey: '',
+          sslPass: '',
+          'schemaAutoUpdate|1': Boolean,
+          sslCA: '',
+          search_databaseType: '',
+          'status|1': ['ready', 'invalid', 'testing'],
+          fill: 'uri',
+          user_id: '@id',
+          last_updated: Random.datetime(),
+          loadCount: Random.integer(0, 100),
+          'loadFieldsStatus|1': ['loading', 'finished', 'error'],
+          tableCount: 100,
+          username: '@name',
+          'agentType|1': ['Cloud', ''],
+          loadFieldErrMsg: '@paragraph'
+        }
+      ]
+    }
   },
   '/tm/api/Connections/:id': {
     data: {
