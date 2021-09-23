@@ -6,9 +6,6 @@
         <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
       </div>
       <div v-if="inspect.inspectMethod !== 'row_count'">
-        <VButton v-if="['running', 'scheduling'].includes(inspect.status)">{{
-          $t('verify_button_diff_verify_running')
-        }}</VButton>
         <div class="flex align-items-center">
           <div v-if="resultInfo.parentId" class="color-info flex align-items-center" style="font-size: 12px">
             {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
@@ -17,39 +14,41 @@
             }}</ElLink>
           </div>
           <div
-            v-if="inspect.result !== 'passed' && !(inspect.status === 'error' && !resultInfo.parentId)"
+            v-if="
+              inspect.result !== 'passed' &&
+              !['running', 'scheduling'].includes(inspect.status) &&
+              !(inspect.status === 'error' && !resultInfo.parentId)
+            "
             class="flex align-items-center ml-4"
           >
-            <VButton v-if="!['running', 'scheduling'].includes(inspect.status)" type="primary" @click="diffInspect">{{
-              $t('verify_button_diff_verify')
-            }}</VButton>
-            <el-tooltip effect="dark" placement="top">
+            <VButton type="primary" @click="diffInspect">{{ $t('verify_button_diff_verify') }}</VButton>
+            <ElTooltip effect="dark" placement="top">
               <div slot="content" style="width: 232px">
                 {{ $t('verify_button_diff_verify_tips') }}
               </div>
               <VIcon class="ml-2 color-info" size="14">warning-circle</VIcon>
-            </el-tooltip>
+            </ElTooltip>
           </div>
         </div>
       </div>
     </div>
-    <div class="error-tips mt-4" v-if="errorMsg && type === 'row_count'">
-      <VIcon class="color-warning">warning-circle</VIcon>
-      <span class="ml-2">{{ errorMsg }}</span>
+    <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
+      <VIcon class="color-danger">error</VIcon>
+      <span>
+        <ElLink type="danger" @click="showErrorMessage">查看详情</ElLink>
+        <VIcon class="ml-2 color-info" size="12">close</VIcon>
+      </span>
     </div>
-    <div class="result-table mt-4" v-if="inspect">
-      <ResultTable
-        v-if="!['running', 'scheduling'].includes(inspect.status)"
-        ref="singleTable"
-        :type="type"
-        :data="tableData"
-        @row-click="rowClick"
-      ></ResultTable>
-      <ResultView
-        v-if="type !== 'row_count' && !['running', 'scheduling'].includes(inspect.status)"
-        ref="resultView"
-        :remoteMethod="getResultData"
-      ></ResultView>
+    <div
+      class="result-table mt-4"
+      v-if="inspect"
+      v-loading="['running', 'scheduling'].includes(inspect.status)"
+      element-loading-text="校验中..."
+    >
+      <template v-if="!['running', 'scheduling'].includes(inspect.status)">
+        <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+        <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+      </template>
     </div>
   </section>
 </template>
@@ -65,15 +64,13 @@
   justify-content: space-between;
 }
 .error-tips {
-  background: #fdf6ec;
-  border: 1px solid #f8e2c0;
-  color: #e6a23c;
-  line-height: 20px;
-  max-height: 160px;
-  text-overflow: ellipsis;
-  overflow-y: auto;
-  font-size: 12px;
-  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  background: rgba(219, 80, 80, 0.07);
+  border-radius: 4px;
+  border: 1px solid #db5050;
 }
 .result-table {
   flex: 1;
@@ -291,6 +288,9 @@ export default {
           id: this.resultInfo.firstCheckId
         }
       })
+    },
+    showErrorMessage() {
+      this.$alert(this.errorMsg)
     }
   }
 }
