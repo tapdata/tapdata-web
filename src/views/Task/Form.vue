@@ -62,7 +62,13 @@
                 </span>
               </div>
               <div class="CT-task-transfer">
-                <Transfer ref="transfer" :transferData="transferData" :isTwoWay="settingModel.bidirectional"></Transfer>
+                <Transfer
+                  ref="transfer"
+                  :transferData="transferData"
+                  :tableNameTransform="settingModel.tableNameTransform"
+                  :mqTransferFlag="mqTransferFlag"
+                  :isTwoWay="settingModel.bidirectional"
+                ></Transfer>
               </div>
             </div>
             <!-- 步骤5 -->
@@ -475,6 +481,7 @@ export default {
       showSysncTableTip: false, //dfs 同库不同表提示
       isFirst: true,
       twoWayAgentRunningCount: '',
+      mqTransferFlag: false,
       platformInfo: JSON.parse(JSON.stringify(INSTANCE_MODEL)),
       dataSourceModel: JSON.parse(JSON.stringify(DFSDATASOURCE_MODEL)),
       settingModel: JSON.parse(JSON.stringify(SETTING_MODEL)),
@@ -710,6 +717,7 @@ export default {
             }
             this.dataSourceModel.source_connectionName = source.name
             this.dataSourceModel.target_connectionName = target.name
+            this.dataSourceModel.mqType = target.mqType
             this.activeStep += 1
             this.getFormConfig()
           }
@@ -803,6 +811,9 @@ export default {
           if (this.dataSourceModel['target_databaseType'] === 'kafka') {
             this.changeConfig([], 'setting_distinctWriteType')
           }
+          if (this.dataSourceModel['target_databaseType'] === 'mq' && this.dataSourceModel['mqType'] === '0') {
+            this.mqTransferFlag = true
+          }
           //判断是否有第五步
           this.$axios
             .get('tm/api/typeMappings/dataType?databaseType=' + this.dataSourceModel.target_databaseType)
@@ -866,7 +877,8 @@ export default {
         database_host: 1,
         database_port: 1,
         database_name: 1,
-        database_uri: 1
+        database_uri: 1,
+        mqType: 1
       }
       if (type === 'source_connectionId') {
         fields['database_username'] = 1
@@ -898,7 +910,8 @@ export default {
                 name: item.name,
                 label: item.name,
                 value: item.id,
-                type: item.database_type
+                type: item.database_type,
+                mqType: item.mqType || ''
               }
             })
           }
@@ -917,7 +930,8 @@ export default {
                 name: item.name,
                 label: item.name,
                 value: item.id,
-                type: item.database_type
+                type: item.database_type,
+                mqType: item.mqType || ''
               }
             })
           }
@@ -1049,11 +1063,25 @@ export default {
         this.transferData = this.$refs.transfer.returnData()
       }
       let selectTable = []
-      if (this.transferData && this.transferData.selectSourceArr.length > 0) {
-        selectTable.push({
-          objectNames: this.transferData.selectSourceArr,
-          type: 'table'
-        })
+      if (this.transferData) {
+        if (this.transferData.selectSourceArr.length > 0) {
+          selectTable.push({
+            objectNames: this.transferData.selectSourceArr,
+            type: 'table'
+          })
+        }
+        if (this.transferData.topicData.length) {
+          selectTable.push({
+            objectNames: this.transferData.topicData,
+            type: 'topic'
+          })
+        }
+        if (this.transferData.queueData.length) {
+          selectTable.push({
+            objectNames: this.transferData.queueData,
+            type: 'queue'
+          })
+        }
       }
       //编辑时传原status
       if (this.id) {

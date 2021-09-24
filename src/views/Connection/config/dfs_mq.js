@@ -6,8 +6,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
       connection_type: 'source_and_target'
@@ -37,6 +37,10 @@ export default function (vm) {
         type: 'radio',
         field: 'connection_type',
         label: vm.$t('dataForm.form.connectionType'),
+        customClass: 'large-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
         options: [
           {
             label: vm.$t('dataForm.form.options.sourceAndTarget'),

@@ -15,11 +15,12 @@
     </div>
 
     <el-transfer
+      v-model="selectSourceArr"
+      v-if="!transferFlag"
       filterable
       :titles="titles"
       :filter-method="filterMethod"
       :filter-placeholder="$t('editor.cell.link.searchContent')"
-      v-model="selectSourceArr"
       :data="sourceData"
       @change="handleChangeTransfer"
       @right-check-change="handleSelectTable"
@@ -34,6 +35,15 @@
         <!--        ></span>-->
       </span>
     </el-transfer>
+    <template v-else>
+      <MqTransfer
+        v-model="mqActiveData"
+        :source="sourceData"
+        :tableNameTransform="tableNameTrans"
+        :table_prefix="formData.table_prefix"
+        :table_suffix="formData.table_suffix"
+      ></MqTransfer>
+    </template>
     <el-dialog
       title="字段映射"
       :visible.sync="dialogFileVisible"
@@ -135,10 +145,11 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import MqTransfer from './mqTransfer'
 let selectKeepArr = []
 export default {
-  components: { VIcon },
-  props: ['transferData', 'isTwoWay'],
+  components: { VIcon, MqTransfer },
+  props: ['transferData', 'isTwoWay', 'tableNameTransform', 'mqTransferFlag'],
   data() {
     var validatePrefix = (rule, value, callback) => {
       if (value === '') {
@@ -165,6 +176,13 @@ export default {
       showOperationBtn: false,
       sourceData: [],
       selectSourceArr: [],
+      mqActiveData: {
+        topicData: [],
+        queueData: [],
+        table_prefix: '',
+        table_suffix: ''
+      },
+      transferFlag: this.mqTransferFlag,
       titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
       formData: {
         table_prefix: '',
@@ -189,7 +207,20 @@ export default {
       sourceId: '',
       bidirectional: '',
       loadFieldsStatus: 'finished',
-      reloadLoading: false // 重新加载
+      reloadLoading: false, // 重新加载
+      tableNameTrans: ''
+    }
+  },
+  created() {
+    this.tableNameTrans = this.tableNameTransform
+  },
+  watch: {
+    mqActiveData: {
+      deep: true,
+      handler() {
+        this.formData.topicData = this.mqActiveData.topicData
+        this.formData.queueData = this.mqActiveData.queueData
+      }
     }
   },
   methods: {
@@ -237,7 +268,7 @@ export default {
               this.selectSourceArr = []
               this.field_process = []
             }
-            this.preFixSuffixData()
+            // this.preFixSuffixData()
             this.$forceUpdate()
           }
         })
@@ -457,7 +488,7 @@ export default {
           el.label = el.key
         }
       })
-      this.preFixSuffixData()
+      // this.preFixSuffixData()
     },
     saveFileOperations() {
       //如果右边为空  则提示不可以保存
@@ -552,6 +583,8 @@ export default {
     handleReduction() {
       this.formData.table_suffix = ''
       this.formData.table_prefix = ''
+      this.mqActiveData.table_prefix = ''
+      this.mqActiveData.table_suffix = ''
       this.field_process = [] //改名清空字段处理器
       if (this.sourceData.length) {
         for (let i = 0; i < this.sourceData.length; i++) {
@@ -565,28 +598,30 @@ export default {
     },
     // 添加前后缀数据处理
     preFixSuffixData() {
-      if (this.sourceData.length && this.selectSourceArr.length) {
-        let selectSourceArr = []
-        this.selectSourceArr = Array.from(new Set(this.selectSourceArr))
-        this.sourceData.forEach(sourceName => {
-          this.selectSourceArr.map(k => {
-            if (k === sourceName.key) {
-              selectSourceArr.push(k)
-            }
-          })
-        })
-        this.selectSourceArr = selectSourceArr
-      }
-      if (this.sourceData && this.sourceData.length && this.selectSourceArr.length) {
-        for (let i = 0; i < this.sourceData.length; i++) {
-          for (let j = 0; j < this.selectSourceArr.length; j++) {
-            if (this.sourceData[i].key === this.selectSourceArr[j]) {
-              this.sourceData[i].label =
-                this.formData.table_prefix + this.sourceData[i].key + this.formData.table_suffix
-            }
-          }
-        }
-      }
+      this.mqActiveData.table_prefix = this.formData.table_prefix
+      this.mqActiveData.table_suffix = this.formData.table_suffix
+      // if (this.sourceData.length && this.selectSourceArr.length) {
+      //   let selectSourceArr = []
+      //   this.selectSourceArr = Array.from(new Set(this.selectSourceArr))
+      //   this.sourceData.forEach(sourceName => {
+      //     this.selectSourceArr.map(k => {
+      //       if (k === sourceName.key) {
+      //         selectSourceArr.push(k)
+      //       }
+      //     })
+      //   })
+      //   this.selectSourceArr = selectSourceArr
+      // }
+      // if (this.sourceData && this.sourceData.length && this.selectSourceArr.length) {
+      //   for (let i = 0; i < this.sourceData.length; i++) {
+      //     for (let j = 0; j < this.selectSourceArr.length; j++) {
+      //       if (this.sourceData[i].key === this.selectSourceArr[j]) {
+      //         this.sourceData[i].label =
+      //           this.formData.table_prefix + this.sourceData[i].key + this.formData.table_suffix
+      //       }
+      //     }
+      //   }
+      // }
     },
     //重新加载模型
     async reload() {
@@ -656,7 +691,9 @@ export default {
         selectSourceArr: this.selectSourceArr,
         table_prefix: this.formData.table_prefix,
         table_suffix: this.formData.table_suffix,
-        field_process: this.field_process || []
+        field_process: this.field_process || [],
+        topicData: this.mqActiveData.topicData || [],
+        queueData: this.mqActiveData.queueData || []
       }
     }
   }
@@ -666,6 +703,15 @@ export default {
 .tapdata-transfer-wrap {
   display: flex;
   flex-direction: column;
+
+  .box-btn {
+    display: flex;
+    justify-content: flex-end;
+    width: 88.5%;
+    margin-bottom: 10px;
+    padding: 4px 10px;
+  }
+
   .tip {
     color: #999;
     font-size: 12px;
@@ -708,12 +754,22 @@ export default {
 <style lang="scss">
 .tapdata-transfer-wrap {
   height: 100%;
+
+  .el-transfer-panel .el-transfer-panel__header .el-checkbox .el-checkbox__label {
+    height: 30px;
+    font-size: 12px;
+    padding-right: 6px;
+  }
+
   .el-transfer {
     height: 353px;
     .el-transfer-panel {
+      width: 300px;
+
       .el-transfer-panel__body {
         .box {
           display: inline-block;
+
           .nameStyle {
             display: none;
             color: #48b6e2;
@@ -729,6 +785,29 @@ export default {
             text-overflow: ellipsis;
           }
         }
+      }
+
+      .el-transfer-panel__header {
+        height: 28px;
+        line-height: 28px;
+        background: #f5f5f5;
+
+        .el-checkbox {
+          height: 28px;
+          line-height: 28px;
+        }
+      }
+
+      .el-transfer-panel__filter {
+        margin: 10px;
+
+        .el-input__inner {
+          border-radius: 3px;
+        }
+      }
+
+      .el-transfer__button {
+        border-radius: 3px;
       }
 
       .el-transfer__button.is-disabled,
@@ -760,6 +839,19 @@ export default {
     color: #666;
   }
 
+  .transfer {
+    height: calc(100% - 32px);
+  }
+
+  .el-transfer,
+  .el-transfer-panel {
+    height: 100%;
+  }
+
+  .el-transfer-panel__body {
+    height: calc(100% - 38px);
+  }
+
   .el-checkbox-group {
     height: calc(100% - 32px);
     padding-bottom: 5px;
@@ -774,6 +866,9 @@ export default {
     box-sizing: border-box;
   }
 
+  .el-transfer-panel__list.is-filterable {
+    height: calc(100% - 38px);
+  }
   .field-transfer {
     .el-transfer-panel {
       width: 39%;
