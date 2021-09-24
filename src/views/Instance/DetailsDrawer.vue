@@ -13,7 +13,7 @@
     <div v-loading="loading" class="details-container">
       <div class="container-item border-item flex pb-5">
         <div class="pt-2">
-          <VIcon size="24">computer</VIcon>
+          <VIcon size="24" class="font-color-sub">computer</VIcon>
         </div>
         <div class="ml-4">
           <div class="fs-6 mb-2 ellipsis"><slot name="title"></slot></div>
@@ -25,7 +25,7 @@
       </div>
       <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
         <div class="pt-3">
-          <VIcon>{{ item.icon }}</VIcon>
+          <VIcon class="font-color-sub">{{ item.icon }}</VIcon>
         </div>
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">

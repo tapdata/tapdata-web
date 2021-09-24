@@ -5,8 +5,7 @@
         <div class="instance-operation-left">
           <el-form inline @submit.native.prevent>
             <el-form-item :label="$t('agent_status') + ' ：'" width="300px">
-              <el-select v-model="searchParams.status" @input="search()">
-                <el-option :label="$t('gl_placeholder_select')" value="" class="select-all"></el-option>
+              <el-select v-model="searchParams.status" clearable @input="search()">
                 <el-option
                   v-for="(item, index) in statusItems"
                   :key="index"
@@ -268,7 +267,7 @@
           ></inline-input>
         </div>
         <div slot="operation" class="flex">
-          <el-button
+          <VButton
             :loading="selectedRow.btnLoading.deploy"
             :disabled="deployBtnDisabled(selectedRow)"
             type="primary"
@@ -277,8 +276,8 @@
           >
             <VIcon size="12">deploy</VIcon>
             <span class="ml-1">{{ $t('agent_button_deploy') }}</span>
-          </el-button>
-          <el-button
+          </VButton>
+          <VButton
             :loading="selectedRow.btnLoading.stop"
             :disabled="stopBtnDisabled(selectedRow)"
             type="primary"
@@ -287,8 +286,8 @@
           >
             <VIcon size="12">stop</VIcon>
             <span class="ml-1">{{ $t('agent_button_stop') }}</span>
-          </el-button>
-          <el-button
+          </VButton>
+          <VButton
             :loading="selectedRow.btnLoading.delete"
             :disabled="delBtnDisabled(selectedRow)"
             class="flex-fill"
@@ -296,7 +295,7 @@
           >
             <VIcon size="12">delete</VIcon>
             <span class="ml-1">{{ $t('agent_button_delete') }}</span>
-          </el-button>
+          </VButton>
         </div>
       </DetailsDrawer>
     </div>

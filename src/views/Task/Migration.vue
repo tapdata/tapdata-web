@@ -79,7 +79,7 @@
         <el-table-column label="启动时间" prop="startTime" sortable="custom" width="150">
           <template slot-scope="scope">{{ scope.row.startTimeFmt }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="260">
+        <el-table-column label="操作" width="280">
           <template slot-scope="scope">
             <el-tooltip
               v-if="!['running', 'stopping'].includes(scope.row.status)"

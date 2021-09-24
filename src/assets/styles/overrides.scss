@@ -56,7 +56,7 @@ th {
     font-weight: normal;
     &.selected {
       color: map-get($fontColor, main);
-      background: rgba(44, 101, 255, 0.2);
+      background: rgba(44, 101, 255, 0.1);
     }
   }
 }
@@ -351,9 +351,22 @@ th {
 .el-table--small td {
   padding: 5px 0;
 }
-.el-table .cell {
-  line-height: 30px;
+.el-table .el-table__cell {
+  .cell {
+    line-height: 30px;
+  }
+  &:first-child {
+    > .cell {
+      padding-left: 24px;
+    }
+  }
+  &:last-child {
+    > .cell {
+      padding-right: 24px;
+    }
+  }
 }
+
 .table-border.el-table--enable-row-hover .el-table__body tr:hover > td {
   background-color: inherit;
 }
@@ -598,4 +611,8 @@ th {
   padding: 0 40px;
   color: map-get($fontColor, sub);
   font-weight: 400;
+}
+// 抽屉
+.el-drawer {
+  box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%), 0 16px 24px 2px rgb(0 0 0 / 1%), 0 6px 30px 5px rgb(0 0 0 / 1%);
 }
