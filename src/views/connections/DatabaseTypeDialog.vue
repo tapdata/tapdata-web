@@ -3,7 +3,7 @@
     :title="$t('connection.createNewDataSource')"
     :visible="dialogVisible"
     :append-to-body="true"
-    width="770px"
+    width="730px"
     :before-close="handleClose"
   >
     <ConnectionTypeSelector
