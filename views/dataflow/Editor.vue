@@ -49,6 +49,26 @@
               @quick-add-node="quickAddNode"
             ></DFNode>
           </PaperScroller>
+          <ElPopover
+            ref="nodeMenu"
+            v-model="nodeMenu.show"
+            trigger="hover"
+            placement="bottom"
+            width="88"
+            popper-class="min-width-unset rounded-xl"
+            :reference="nodeMenu.reference"
+          >
+            <div class="df-menu-list">
+              <div
+                v-for="(n, ni) in processorNodeTypes"
+                :key="ni"
+                class="df-menu-item"
+                @click="addNodeOnConnByNodeMenu(n)"
+              >
+                {{ n.name }}
+              </div>
+            </div>
+          </ElPopover>
         </main>
         <!--配置面板-->
         <ConfigPanel @hide="onHideSidebar"></ConfigPanel>
@@ -88,6 +108,7 @@ import {
 } from './command'
 import Mousetrap from 'mousetrap'
 import dagre from 'dagre'
+import DFMenu from 'web-core/views/dataflow/components/DFMenu'
 
 const dataFlowsApi = new DataFlows()
 const dataFlowFormSchemasApi = new DataFlowFormSchemas()
@@ -99,6 +120,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage],
 
   components: {
+    DFMenu,
     ConfigPanel,
     PaperScroller,
     TopHeader,
@@ -126,7 +148,13 @@ export default {
       selectActive: false,
       showSelectBox: false,
       nodeViewScale: 1,
-      mapping: this.$route.query?.mapping
+      mapping: this.$route.query?.mapping,
+
+      nodeMenu: {
+        show: false,
+        reference: null,
+        connectionData: {}
+      }
     }
   },
 
@@ -137,7 +165,8 @@ export default {
       isActionActive: 'isActionActive',
       nodeById: 'nodeById',
       stateIsDirty: 'getStateIsDirty',
-      nodeViewOffsetPosition: 'getNodeViewOffsetPosition'
+      nodeViewOffsetPosition: 'getNodeViewOffsetPosition',
+      processorNodeTypes: 'processorNodeTypes'
     }),
 
     dataflowStyle() {
@@ -276,17 +305,19 @@ export default {
       this.command = new CommandManager(this.$store, this.jsPlumbIns)
       Mousetrap.bind('mod+z', () => {
         this.command.undo()
-        console.log('this.command', this.command)
       })
       Mousetrap.bind('mod+shift+z', () => {
         this.command.redo()
-        console.log('this.command', this.command)
       })
       Mousetrap.bind('mod+shift+o', () => {
         this.$refs.paperScroller.toggleMiniView()
       })
       Mousetrap.bind('backspace', () => {
         this.handleDelete()
+      })
+      Mousetrap.bind(['option+command+l', 'ctrl+alt+l'], e => {
+        e.preventDefault()
+        this.handleAutoLayout()
       })
     },
 
@@ -355,41 +386,56 @@ export default {
         const sourceId = this.getRealId(source)
         const targetId = this.getRealId(target)
 
-        let timer
         info.connection.bind('mouseover', () => {
-          if (timer !== undefined) {
-            clearTimeout(timer)
-          }
-          info.connection.showOverlay('remove-connection')
+          info.connection.showOverlay('removeConn')
+          info.connection.showOverlay('addNodeOnConn')
         })
         info.connection.bind('mouseout', () => {
-          timer = setTimeout(() => {
-            info.connection.hideOverlay('remove-connection')
-            timer = undefined
-          }, 200)
+          info.connection.hideOverlay('removeConn')
+          info.connection.hideOverlay('addNodeOnConn')
         })
 
-        /*info.connection.bind('click', conn => {
-          console.log('connectionClickEvent', conn)
-          // 设置按钮可见
-          info.connection.showOverlay('remove-connection')
-          // 高亮连接
-          info.connection.addClass('connection-selected')
-
-          this.setActiveConnection({
-            sourceId,
-            targetId
-          })
-        })*/
-
-        // 添加删除按钮，并且绑定事件，默认不可见
+        // 添加新增按钮，并且绑定事件，默认不可见
         info.connection.addOverlay([
-          'Label',
+          'Custom',
           {
-            id: 'remove-connection',
-            location: 0.25,
-            label: '<div class="remove-connection-btn" title="删除连接"></span>',
-            cssClass: 'remove-connection-label cursor-pointer',
+            id: 'addNodeOnConn',
+            location: 0.35,
+            create() {
+              const div = document.createElement('div')
+              div.title = '添加节点'
+              div.classList.add('conn-btn__wrap')
+              div.innerHTML = `<div class="conn-btn"><span class="v-icon"> <svg class="v-icon__svg"><use xlink:href="#icon-plus"></use></svg> </span></div>`
+              return div
+            },
+            visible: false,
+            events: {
+              mousedown: overlay => {
+                const rect = info.connection.canvas.getBoundingClientRect()
+                // 更新reference
+                this.nodeMenu.reference = overlay.canvas
+                this.$refs.nodeMenu.referenceElm = overlay.canvas
+                this.nodeMenu.connectionData = { source, target }
+                this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
+                // 显示菜单
+                this.nodeMenu.show = true
+              }
+            }
+          }
+        ])
+
+        info.connection.addOverlay([
+          'Custom',
+          {
+            id: 'removeConn',
+            location: 0.65,
+            create() {
+              const div = document.createElement('div')
+              div.title = '删除连接'
+              div.classList.add('conn-btn__wrap')
+              div.innerHTML = `<div class="conn-btn"><span class="v-icon"> <svg class="v-icon__svg"><use xlink:href="#icon-close"></use></svg> </span></div>`
+              return div
+            },
             visible: false,
             events: {
               mousedown: () => {
@@ -399,13 +445,10 @@ export default {
                     target: info.connection.targetId
                   })
                 )
-                // this.__removeConnection(source, target)
               }
             }
           }
         ])
-
-        console.log('连接状态', this.isConnected(sourceId, targetId))
 
         // 设置节点的input和output属性
         this.addConnection({
@@ -1388,32 +1431,8 @@ export default {
 
       // 节点拖放在连线上
       if ($elemBelow.nodeName === 'path' && $elemBelow.parentElement._jsPlumb) {
-        const node = this.createNode(newPosition, item)
         const connection = $elemBelow.parentElement._jsPlumb
-        const source = this.nodeById(this.getRealId(connection.sourceId))
-        const target = this.nodeById(this.getRealId(connection.targetId))
-        const sourceCtor = source.__Ctor
-        const targetCtor = target.__Ctor
-        const nodeCtor = node.__Ctor
-
-        console.log('handleAddNodeByDrag', { ...connection })
-
-        if (
-          nodeCtor.allowSource(source) &&
-          sourceCtor.allowTarget(node, source) &&
-          targetCtor.allowSource(node) &&
-          nodeCtor.allowTarget(targetCtor, node)
-        ) {
-          this.command.exec(
-            new AddNodeOnConnectionCommand(
-              {
-                source: connection.sourceId,
-                target: connection.targetId
-              },
-              node
-            )
-          )
-        }
+        this.addNodeOnConn(item, newPosition, connection.sourceId, connection.targetId)
       } else {
         this.handleAddNodeToPos(newPosition, item)
       }
@@ -1478,6 +1497,45 @@ export default {
       if (target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source)) {
         this.command.exec(new QuickAddTargetCommand(source.id, target))
       }
+    },
+
+    /**
+     * 在连线上添加节点
+     * @param nodeType
+     * @param position
+     * @param source 连线源节点的id
+     * @param target 连线目标节点的id
+     */
+    addNodeOnConn(nodeType, position, source, target) {
+      const a = this.nodeById(this.getRealId(source))
+      const b = this.createNode(position, nodeType)
+      const c = this.nodeById(this.getRealId(target))
+      const aCtor = a.__Ctor
+      const bCtor = b.__Ctor
+      const cCtor = c.__Ctor
+
+      if (bCtor.allowSource(a) && aCtor.allowTarget(b, a) && cCtor.allowSource(b) && bCtor.allowTarget(cCtor, b)) {
+        this.command.exec(
+          new AddNodeOnConnectionCommand(
+            {
+              source,
+              target
+            },
+            b
+          )
+        )
+      }
+    },
+
+    addNodeOnConnByNodeMenu(nodeType) {
+      const { nodeMenu } = this
+      nodeMenu.show = false
+      console.log('nodeMenu.connectionCenterPos', nodeMenu.connectionCenterPos)
+      const position = this.$refs.paperScroller.getDropPositionWithinPaper(nodeMenu.connectionCenterPos, {
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT
+      })
+      this.addNodeOnConn(nodeType, position, nodeMenu.connectionData.source, nodeMenu.connectionData.target)
     },
 
     canUsePosition(position1, position2) {
@@ -1589,6 +1647,37 @@ $sidebarBg: #fff;
       &:hover {
         .remove-connection-btn {
           font-size: 10px;
+        }
+      }
+    }
+
+    .conn-btn__wrap {
+      z-index: 1002;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+      &:hover {
+        transform: translate(-50%, -50%) scale(1.2) !important;
+      }
+    }
+    .conn-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 20px;
+      height: 20px;
+      background-color: #9bb6ff;
+      border-radius: 100%;
+      pointer-events: none;
+      .v-icon {
+        width: 16px;
+        height: 16px;
+        font-size: 12px;
+        background-color: #2c65ff;
+        color: #fff;
+        border-radius: 100%;
+        &__svg {
+          width: 1em;
+          height: 1em;
         }
       }
     }

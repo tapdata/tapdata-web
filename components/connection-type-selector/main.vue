@@ -81,7 +81,6 @@ export default {
   overflow: auto;
   .title {
     color: #999;
-    margin-left: 37px;
     margin-bottom: 32px;
     display: inline-block;
   }
@@ -129,7 +128,7 @@ export default {
     }
     .content {
       margin-top: 5px;
-      max-width: 124px;
+      max-width: 82px;
       font-weight: 400;
       font-size: 14px;
       text-overflow: ellipsis;

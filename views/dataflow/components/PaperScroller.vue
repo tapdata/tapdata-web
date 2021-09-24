@@ -1,6 +1,6 @@
 <template>
   <div
-    class="paper-scroller"
+    class="paper-scroller hide-scrollbar"
     :class="scrollerClasses"
     tabindex="0"
     @mousedown="mouseDown"

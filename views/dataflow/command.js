@@ -146,10 +146,7 @@ class RemoveConnectionCommand extends Command {
   exec(state) {
     const connection = state.instance.getConnections(this.connection)[0]
     state.instance.deleteConnection(connection)
-    state.store.commit('dataflow/removeConnection', {
-      sourceId: this.sourceId,
-      targetId: this.targetId
-    })
+    state.store.commit('dataflow/removeConnection', this.connectionData)
   }
 
   undo(state) {
@@ -194,18 +191,17 @@ class AddNodeOnConnectionCommand extends Command {
     super()
     this.node = node
     this.connection = connection
-    this.sourceId = getRealId(connection.source)
-    this.targetId = getRealId(connection.target)
+    this.connectionData = {
+      sourceId: getRealId(connection.source),
+      targetId: getRealId(connection.target)
+    }
     this.uuids = [connection.source + '_source', connection.target + '_target']
   }
 
   exec(state) {
     const connection = state.instance.getConnections(this.connection)[0]
     state.instance.deleteConnection(connection)
-    state.store.commit('dataflow/removeConnection', {
-      sourceId: this.sourceId,
-      targetId: this.targetId
-    })
+    state.store.commit('dataflow/removeConnection', this.connectionData)
     state.store.commit('dataflow/addNode', this.node)
     Vue.nextTick(() => {
       const nodeId = NODE_PREFIX + this.node.id
