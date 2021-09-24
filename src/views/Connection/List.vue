@@ -294,7 +294,7 @@ export default {
         }
       }
       let data = await this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      let changeList = data || []
+      let changeList = data?.items || []
       let statusMap = {}
       changeList.forEach(item => {
         statusMap[item.id] = this.formatData(item)
@@ -336,8 +336,8 @@ export default {
         // fields, noSchema:1 不加载schema
         noSchema: 1,
         where,
-        limit: this.page.size,
-        skip: (current - 1) * this.page.size,
+        size: this.page.size,
+        page: current,
         order: this.order
       }
       this.$axios

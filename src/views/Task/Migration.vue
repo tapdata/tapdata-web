@@ -25,7 +25,7 @@
                 <el-option v-for="(label, value) in syncTypeMap" :key="value" :label="label" :value="value"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('agent_name') + ' ：'" class="medium">
+            <el-form-item :label="$t('agent_name') + ' ：'" class="small">
               <el-select
                 v-model="searchParams.agentId"
                 clearable
@@ -64,7 +64,7 @@
         @sort-change="sortChange"
       >
         <el-table-column label="任务名称" prop="name" min-width="200"></el-table-column>
-        <el-table-column label="所属agent" prop="belongAgent"></el-table-column>
+        <el-table-column label="所属agent" prop="belongAgent" min-width="200"></el-table-column>
         <el-table-column label="任务类型" prop="syncTypeText"></el-table-column>
         <el-table-column label="任务状态">
           <template slot-scope="scope">
@@ -76,10 +76,10 @@
             ></status-tag>
           </template>
         </el-table-column>
-        <el-table-column label="启动时间" prop="startTime" sortable="custom">
+        <el-table-column label="启动时间" prop="startTime" sortable="custom" width="150">
           <template slot-scope="scope">{{ scope.row.startTimeFmt }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="300">
+        <el-table-column label="操作" width="260">
           <template slot-scope="scope">
             <el-tooltip
               v-if="!['running', 'stopping'].includes(scope.row.status)"
@@ -338,7 +338,7 @@ export default {
         }
       }
       let data = await this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      let changeList = data || []
+      let changeList = data?.items || []
       let statusMap = {}
       changeList.forEach(item => {
         let { statusText, statusIcon, status } = this.formatData(item)
@@ -422,8 +422,8 @@ export default {
       let filter = {
         fields,
         where,
-        limit: this.page.size,
-        skip: (current - 1) * this.page.size,
+        size: this.page.size,
+        page: current,
         order: this.order
       }
       this.$axios

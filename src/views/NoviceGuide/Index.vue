@@ -551,12 +551,12 @@ export default {
           agentType: 'Cloud',
           connection_type: this.step === 2 ? 'target' : 'source'
         },
-        limit: 10
+        size: 10
       }
       this.$axios
         .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
         .then(data => {
-          let sourceConnection = data?.[0]
+          let sourceConnection = data?.items?.[0]
           if (!sourceConnection) {
             this.sourceForm.id = '' // 标记为空
             return

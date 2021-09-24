@@ -565,7 +565,7 @@ export default {
                 this.$axios
                   .get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
                   .then(({ items }) => {
-                    if (items?.total > 0) {
+                    if (items?.length !== 0) {
                       callback(new Error('任务名称已存在'))
                     } else callback()
                   })

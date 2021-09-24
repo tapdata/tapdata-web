@@ -2,31 +2,31 @@
   <section class="verify-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Verify'">
     <div class="page-header">
       <ElForm inline>
-        <ElFormItem label="类型: ">
+        <ElFormItem label="类型: " class="small">
           <ElSelect v-model="searchParams.inspectMethod" clearable @input="inspectMethodChange">
             <ElOption :label="$t('verify_type_row_count')" value="row_count"></ElOption>
             <ElOption :label="$t('verify_type_field')" value="field"></ElOption>
             <ElOption :label="$t('verify_type_joint_field')" value="jointField"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem label="频次: ">
+        <ElFormItem label="频次: " class="small">
           <ElSelect v-model="searchParams.mode" clearable @input="search()">
             <ElOption :label="$t('verify_frequency_manual')" value="manual"></ElOption>
             <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem label="状态: ">
+        <ElFormItem label="状态: " class="small">
           <ElSelect v-model="searchParams.enabled" clearable @input="search()">
             <ElOption :label="$t('verify_job_enable')" :value="1"></ElOption>
             <ElOption :label="$t('verify_job_disable')" :value="2"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem label="结果: ">
+        <ElFormItem label="结果: " class="small">
           <ElSelect v-model="searchParams.result" clearable @input="search()">
             <ElOption v-for="item in validList" :key="item.value" :label="item.name" :value="item.value"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem label="名称: ">
+        <ElFormItem label="名称: " class="medium">
           <ElInput v-model="searchParams.keyword" clearable :placeholder="$t('verify_job_name')" @input="search(800)">
             <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
           </ElInput>
@@ -164,12 +164,6 @@
   .page-header {
     display: flex;
     justify-content: space-between;
-  }
-  .search-bar {
-    .item {
-      margin-right: 10px;
-      float: left;
-    }
   }
   .btn-refresh {
     padding: 0;
