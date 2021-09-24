@@ -592,7 +592,7 @@ export default {
         this.settingModel = Object.assign(this.settingModel, data.setting)
         this.settingModel.name = data.name
         this.platformInfo = data.platformInfo
-        this.dataSourceModel = data.dataSourceModel
+        this.dataSourceModel = data.dataSourceModel || {}
         let stages = data.stages
         this.transferData = {
           table_prefix: stages[1].table_prefix,
