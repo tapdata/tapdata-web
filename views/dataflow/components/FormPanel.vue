@@ -1,15 +1,13 @@
 <template>
   <div class="attr-panel">
-    <header v-if="!isMonitor && (activeType === 'connection' || activeType === 'settings')" class="attr-panel-header">
-      <div @click="$emit('hide')" class="header-icon">
+    <!--<header class="attr-panel-header border-bottom">
+      <h4 class="header-txt">节点名称</h4>
+      &lt;!&ndash;<div @click="$emit('hide')" class="header-icon">
         <VIcon>right-circle</VIcon>
-      </div>
-      <span class="header-txt pl-2">{{
-        $t(activeType === 'settings' ? 'editor.ui.sidebar.setting' : 'editor.cell.link.mappingRelations')
-      }}</span>
-    </header>
+      </div>&ndash;&gt;
+    </header>-->
     <div class="attr-panel-body overflow-auto">
-      <Form :form="form" :schema="schema"></Form>
+      <!--<Form :form="form" :schema="schema"></Form>-->
       <ElForm class="flex flex-column" v-bind="formProps">
         <FormProvider :form="form">
           <SchemaField
@@ -793,8 +791,10 @@ export default {
 
 <style lang="scss" scoped>
 $radius: 4px;
-$headerH: 28px;
-$headerBg: #f5f7fa;
+$headerH: 48px;
+$padding: 16px;
+//$headerBg: #f5f7fa;
+$headerBg: #fff;
 .attr-panel {
   position: absolute;
   top: 0;
@@ -808,10 +808,11 @@ $headerBg: #f5f7fa;
   &-header {
     display: flex;
     align-items: center;
-    width: 100%;
+    padding: 0 $padding;
     height: $headerH;
     line-height: $headerH;
-    border-bottom: 1px solid #ebeef5;
+    font-size: 14px;
+    //box-shadow: 0 0 4px 0 rgb(0 0 0 / 10%);
     background-color: $headerBg;
 
     .header-icon {
@@ -825,7 +826,7 @@ $headerBg: #f5f7fa;
     }
 
     .header-txt {
-      font-size: 12px;
+      font-size: 14px;
     }
   }
 
@@ -833,7 +834,7 @@ $headerBg: #f5f7fa;
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 20px;
+    padding: $padding;
     height: 0;
 
     .el-form-item.--label-w100 {

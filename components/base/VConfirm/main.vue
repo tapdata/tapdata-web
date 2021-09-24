@@ -120,7 +120,6 @@ export default {
     },
     onlyMessage() {
       let { title, message } = this
-      console.log('onlyMessage', !title && !!message)
       return !title && !!message
     }
   },
@@ -137,7 +136,6 @@ export default {
   },
   methods: {
     init() {
-      console.log('init', this.type)
       this.getIconByType(this.type)
     },
     handleAction(action) {
@@ -166,7 +164,7 @@ export default {
   right: 0;
   text-align: center;
   background-color: rgba(0, 0, 0, 0.6);
-  z-index: 3001;
+  z-index: 3010;
   &::after {
     content: '';
     display: inline-block;

@@ -111,26 +111,12 @@ const showNextMsg = () => {
 }
 
 MessageBox.confirm = (message, title, options) => {
-  console.log('1', message, title, options)
   if (title && typeof title === 'object') {
     options = title
     title = ''
   } else if (title === undefined) {
     title = ''
   }
-  console.log('options', options)
-  console.log(
-    'kaikaiaiaia',
-    Object.assign(
-      {
-        title: title,
-        message: message,
-        $type: 'confirm',
-        showCancelButton: true
-      },
-      options
-    )
-  )
   return MessageBox(
     Object.assign(
       {

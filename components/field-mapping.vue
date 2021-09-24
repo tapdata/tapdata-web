@@ -315,6 +315,9 @@ export default {
     updateView(data) {
       if (data) {
         this.selectRow = data
+        this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
+        this.selectRow = this.fieldMappingNavData[0]
+        this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
       }
       this.initTableData()
       this.initTypeMapping()

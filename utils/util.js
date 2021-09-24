@@ -160,3 +160,24 @@ export function escapeHTML(value) {
 export function sameNumber(num1, num2, tolerance = Number.EPSILON) {
   return Math.abs(num1 - num2) <= tolerance || num1 === num2
 }
+
+export const os = (function () {
+  var ua = navigator.userAgent,
+    isWindowsPhone = /(Windows Phone)/.test(ua),
+    isSymbian = /SymbianOS/.test(ua) || isWindowsPhone,
+    isAndroid = /Android/.test(ua),
+    isFireFox = /Firefox/.test(ua),
+    isChrome = /Chrome|CriOS/.test(ua),
+    isTablet = /iPad|PlayBook/.test(ua) || (isAndroid && !/Mobile/.test(ua)) || (isFireFox && /(?:Tablet)/.test(ua)),
+    isIPhone = /iPhone/.test(ua) && !isTablet,
+    isWeixin = /MicroMessenger/.test(ua),
+    isPc = !isIPhone && !isAndroid && !isSymbian
+  return {
+    isChrome,
+    isTablet,
+    isIPhone,
+    isAndroid,
+    isWeixin,
+    isPc
+  }
+})()
