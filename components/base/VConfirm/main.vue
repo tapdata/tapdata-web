@@ -166,7 +166,7 @@ export default {
   right: 0;
   text-align: center;
   background-color: rgba(0, 0, 0, 0.6);
-  z-index: 3001;
+  z-index: 3010;
   &::after {
     content: '';
     display: inline-block;
