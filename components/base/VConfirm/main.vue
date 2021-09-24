@@ -120,7 +120,6 @@ export default {
     },
     onlyMessage() {
       let { title, message } = this
-      console.log('onlyMessage', !title && !!message)
       return !title && !!message
     }
   },
@@ -137,7 +136,6 @@ export default {
   },
   methods: {
     init() {
-      console.log('init', this.type)
       this.getIconByType(this.type)
     },
     handleAction(action) {
