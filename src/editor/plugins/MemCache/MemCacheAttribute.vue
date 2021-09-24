@@ -55,6 +55,21 @@
             <el-radio label="local">{{ $t('dag_data_node_label_memcache_type_local') }}</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item :required="true">
+          <div class="e-label" slot="label">
+            <label class="el-form-item__label">{{ $t('dag_data_node_label_memcache_type') }}</label>
+            <el-tooltip effect="dark" :content="$t('dag_data_node_label_memcache_type_tip')" placement="top">
+              <!-- <div style="max-width: 300px" slot="content">
+                {{ $t('dag_data_node_label_memcache_type_tip') }}
+              </div> -->
+              <span class="icon iconfont icon-tishi1" style="padding-left: 5px; vertical-align: bottom"></span>
+            </el-tooltip>
+          </div>
+          <el-radio-group v-model="model.cacheType" size="mini">
+            <el-radio label="all">{{ $t('dag_data_node_label_memcache_type_all') }}</el-radio>
+            <el-radio label="local">{{ $t('dag_data_node_label_memcache_type_local') }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.maxSize.label')">
           <el-row :gutter="20">
             <el-col :span="12">

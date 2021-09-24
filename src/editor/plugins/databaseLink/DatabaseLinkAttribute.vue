@@ -29,6 +29,38 @@
               </ElPopover>
             </ElCheckbox>
           </el-form-item>
+          <el-form-item>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <span class="span-label">{{ $t('dag_data_node_label_database_link_table') }}</span>
+                <el-select v-model="model.dropType" size="mini">
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="no_drop"></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
+                    value="drop_data"
+                  ></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
+                    value="drop_schema"
+                  ></el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="12">
+                <span class="span-label">{{ $t('dag_data_node_label_database_link_field') }}</span>
+                <el-select v-model="model.dropType" size="mini">
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="no_drop"></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
+                    value="drop_data"
+                  ></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
+                    value="drop_schema"
+                  ></el-option>
+                </el-select>
+              </el-col>
+            </el-row>
+          </el-form-item>
           <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
             <el-select v-model="model.dropType" size="mini">
               <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
@@ -606,6 +638,7 @@ export default {
         h3 {
           color: #606266;
         }
+
         .box-btn {
           color: #409eff;
           cursor: pointer;
