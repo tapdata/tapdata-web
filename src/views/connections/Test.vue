@@ -16,7 +16,7 @@
       </div>
       <div v-else>
         <div class="test-status" v-if="['invalid', 'ERROR'].includes(status)">
-          <i class="el-icon-error" :style="{ color: colorMap[status] }"></i>
+          <VIcon :style="{ color: colorMap[status] }">error</VIcon>
           <span class="test-title">{{ $t('dataForm.test.testResultFail') }}</span>
         </div>
         <div class="test-status" v-if="['ready'].includes(status)">
@@ -60,7 +60,7 @@
             {{ statusMap[scope.row.status] }}
           </span>
           <span v-else :style="`color: ${colorMap[scope.row.status]};`">
-            <i :class="iconMap[scope.row.status]" :style="{ color: colorMap[scope.row.status] }"></i>
+            <VIcon :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
             {{ statusMap[scope.row.status] }}
           </span>
         </template>
@@ -82,9 +82,10 @@
 
 <script>
 import ws from '../../api/ws'
-
+import VIcon from '@/components/VIcon'
 export default {
   name: 'Test',
+  components: { VIcon },
   props: {
     dialogTestVisible: {
       required: true,
@@ -121,11 +122,11 @@ export default {
       },
       iconMap: {
         ready: 'el-icon-success',
-        invalid: 'el-icon-error',
+        invalid: 'error',
         testing: '',
         passed: 'el-icon-success',
         waiting: 'el-icon-question',
-        failed: 'el-icon-error',
+        failed: 'error',
         unTest: ''
       },
       statusMap: {

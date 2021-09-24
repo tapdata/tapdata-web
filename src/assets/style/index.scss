@@ -192,15 +192,18 @@ select {
     font-size: 12px;
   }
 }
-.el-table td,
-.el-table th {
-  padding: 6px 0;
-  font-size: 12px;
-  white-space: nowrap;
-  .cell {
-    white-space: nowrap;
-  }
+.el-table .cell {
+  word-break: break-word;
 }
+// .el-table td,
+// .el-table th {
+//   padding: 6px 0;
+//   font-size: 12px;
+//   white-space: nowrap;
+//   .cell {
+//     white-space: nowrap;
+//   }
+// }
 .el-table th > .cell {
   font-weight: normal;
 }
@@ -292,6 +295,9 @@ $borderColor: (
 .el-icon-error {
   color: map-get($color, danger);
 }
+.el-icon-danger {
+  color: map-get($color, danger);
+}
 .icon-daiqidong {
   color: map-get($color, primary);
 }
@@ -310,7 +316,16 @@ $borderColor: (
 .color-info {
   color: map-get($color, info);
 }
-/*.el-input__inner {
+/*.color-success {
+  color: map-get($color, success);
+}
+.color-error {
+  color: map-get($color, danger);
+}
+.color-warning {
+  color: map-get($color, warning);
+}
+.el-input__inner {
   border-radius: 2px;
   border: 1px solid #d9d9d9;
 }*/

@@ -16,7 +16,7 @@
       >
         <span>{{ down.text }}</span>
         <span class="choose" v-show="activeOS === index">
-          <i class="el-icon-upload-success el-icon-check"></i>
+          <VIcon class="color-success">check</VIcon>
         </span>
       </div>
     </div>
@@ -79,10 +79,13 @@
 </template>
 
 <script>
+import VIcon from '@/components/VIcon'
+
 export default {
   // props: {
   // 	agentNum: [Number, String]
   // },
+  components: { VIcon },
   data() {
     let token = this.$cookie.get('token')
     let userId = this.$cookie.get('user_id')

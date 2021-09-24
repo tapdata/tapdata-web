@@ -8,7 +8,7 @@
         <el-button icon="el-icon-search" size="mini" :disabled="loading" @click="loadNew"></el-button>
       </el-form-item>
 
-      <i class="el-icon-loading" v-if="loading"></i>
+      <VIcon v-if="loading" style="right: 10px; top: 10px; position: absolute">loading-circle</VIcon>
     </el-form>
     <!-- v-loading="loading" :element-loading-text="$t('dataFlow.loadLogTip')" -->
     <div class="logBox">
@@ -21,12 +21,14 @@
 import factory from '../../api/factory'
 import ws from '../../api/ws'
 import LogBox from '@/components/LogBox'
+import VIcon from '@/components/VIcon'
 
 const logsModel = factory('logs')
 export default {
   name: 'DebugLogs',
   components: {
-    LogBox
+    LogBox,
+    VIcon
   },
   props: {
     dataFlow: {
@@ -168,12 +170,6 @@ export default {
 
     .el-form-item {
       margin-bottom: 0;
-    }
-
-    .el-icon-loading {
-      right: 10px;
-      top: 10px;
-      position: absolute;
     }
   }
 }

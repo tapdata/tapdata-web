@@ -26,3 +26,4 @@ pnpm-debug.log*
 *.sw?
 .npmrc
 package-lock.json
+yarn.lock

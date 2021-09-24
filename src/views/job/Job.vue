@@ -7,7 +7,9 @@
       class="action-buttons"
       style="display: flex; align-items: center; justify-content: space-between; padding-right: 10px"
     >
-      <i @click="backDataFlow" :title="$t('dataFlow.backlistText')" class="iconfont icon-sanheng backIcon"></i>
+      <div class="backIcon">
+        <VIcon @click="backDataFlow" :title="$t('dataFlow.backlistText')">menu</VIcon>
+      </div>
       <div class="flex-center">
         <el-button
           v-if="isEditable() && !isMoniting"
@@ -16,7 +18,7 @@
           :loading="isSaving"
           @click="draftSave"
         >
-          <i class="iconfont icon-baocun"></i>
+          <VIcon>save</VIcon>
           <span>{{ isSaving ? $t('dataFlow.button.saveing') : $t('dataFlow.button.save') }}</span>
         </el-button>
 
@@ -26,12 +28,13 @@
           v-model="state"
           size="mini"
           :fetch-suggestions="querySearch"
+          suffix-icon="el-icon-search"
           :placeholder="$t('dataFlow.searchNode')"
           @select="handleSearchNode"
           hide-loading
           clearable
-          suffix-icon="el-icon-search"
-        ></el-autocomplete>
+        >
+        </el-autocomplete>
 
         <el-button-group class="action-btn-group">
           <el-button
@@ -255,6 +258,12 @@
     <AddBtnTip v-if="!loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')"></AddBtnTip>
     <DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <CheckStage
+      v-show="showCheckStagesVisible"
+      :visible="showCheckStagesVisible"
+      :data="checkStagesData"
+      @complete="saveCheckStages"
+    ></CheckStage>
   </div>
 </template>
 
@@ -276,6 +285,7 @@ import { EditorEventType } from '../../editor/lib/events'
 import _ from 'lodash'
 import SkipError from '../../components/SkipError'
 import { uuid } from '../../editor/util/Schema'
+import VIcon from '@/components/VIcon'
 
 const dataFlowsApi = factory('DataFlows')
 const Setting = factory('Setting')
@@ -285,7 +295,7 @@ let timer = null
 export default {
   name: 'Job',
   dataFlow: null,
-  components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError },
+  components: { AddBtnTip, simpleScene, newDataFlow, DownAgent, SkipError, VIcon },
   data() {
     return {
       downLoadNum: 0,
@@ -325,7 +335,10 @@ export default {
       mappingTemplate: '',
       creatUserId: '',
       dataChangeFalg: false,
-      statusBtMap
+      statusBtMap,
+      showCheckStagesVisible: false,
+      checkStagesData: [],
+      modPipeline: ''
     }
   },
   watch: {
@@ -574,7 +587,7 @@ export default {
         Object.assign(self.dataFlow, dat)
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
       })
-      if (timer) return
+      if (timer && !this.dataFlowId) return
       timer = setInterval(() => {
         self.updateDataFlow()
       }, 5000)
@@ -817,7 +830,17 @@ export default {
             readCdcInterval: 500,
             readBatchSize: 1000
           })
-        } else if (['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode','app.HanaNode'].includes(cell.type)) {
+        } else if (
+          [
+            'app.Table',
+            'app.Collection',
+            'app.ESNode',
+            'app.HiveNode',
+            'app.KUDUNode',
+            'app.HanaNode',
+            'app.ClickHouse'
+          ].includes(cell.type)
+        ) {
           postData.mappingTemplate = 'custom'
 
           Object.assign(stage, {
@@ -832,8 +855,16 @@ export default {
         if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
           let sourceId = cell.source.id
           let targetId = cell.target.id
-          if (sourceId && stages[sourceId]) stages[sourceId].outputLanes.push(targetId)
-          if (targetId && stages[targetId]) stages[targetId].inputLanes.push(sourceId)
+          if (sourceId && stages[sourceId]) {
+            stages[sourceId].outputLanes.push(targetId)
+            //添加字段处理器
+            if (postData.mappingTemplate === 'cluster-clone') {
+              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
+            }
+          }
+          if (targetId && stages[targetId]) {
+            stages[targetId].inputLanes.push(sourceId)
+          }
         }
       })
       postData.stages = Object.values(stages)
@@ -1072,7 +1103,7 @@ export default {
       }
     },
     //保存逻辑启动
-    doSaveStartDataFlow(data) {
+    async doSaveStartDataFlow(data) {
       if (data) {
         if (this.form.taskName) {
           data.name = this.form.taskName
@@ -1133,6 +1164,11 @@ export default {
           this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
+        if (this.modPipeline) {
+          data['modPipeline'] = []
+          this.showCheckStagesVisible = false
+          data['modPipeline'] = this.modPipeline
+        }
         let start = () => {
           data.status = 'scheduled'
           data.executeMode = 'normal'
@@ -1140,6 +1176,15 @@ export default {
             if (err) {
               if (err.response.msg === 'Error: Loading data source schema') {
                 this.$message.error(this.$t('message.loadingSchema'))
+              } else if (err.response.msg === 'DataFlow has add or del stages') {
+                if (err.response?.data && err.response?.data?.length > 0) {
+                  this.showCheckStagesVisible = true
+                  this.checkStagesData = err.response.data
+                  this.checkStagesData = this.checkStagesData.filter(v => v.type === 'add') //只展示别删除的
+                  for (let i = 0; i < this.checkStagesData.length; i++) {
+                    this.checkStagesData[i].syncType = 'initial_sync+cdc'
+                  }
+                }
               } else {
                 this.$message.error(err.response.msg)
               }
@@ -1179,6 +1224,13 @@ export default {
         // }
       }
       this.dialogFormVisible = false
+    },
+    /*
+     * 保存错误信息*/
+    saveCheckStages(data) {
+      this.showCheckStagesVisible = false
+      this.modPipeline = data
+      this.start()
     },
     /**
      * stop button handler
@@ -1472,7 +1524,8 @@ export default {
         java_processor: 'app.FieldProcess',
         redis: 'app.Redis',
         hive: 'app.HiveNode',
-        hana: 'app.HanaNode'
+        hana: 'app.HanaNode',
+        clickhouse: 'app.ClickHouse'
       }
       if (data) {
         let stageMap = {}

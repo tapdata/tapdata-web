@@ -5,7 +5,7 @@
       <i class="echart-head-tooltip__icon el-icon-warning-outline"></i>
     </ElTooltip>
     <span style="flex: 1">
-      <i class="el-icon-loading" v-if="data && data.loading"></i>
+      <VIcon v-if="data && data.loading">loading-circle</VIcon>
     </span>
     <div class="unit" v-if="data.isIput && !data.isSpeed">
       <span v-if="data.type !== 'replicate'">{{ $t('dataFlow.unit') }} : ms / {{ $t('dataFlow.article') }}</span>
@@ -51,8 +51,10 @@
   </div>
 </template>
 <script>
+import VIcon from '@/components/VIcon'
 export default {
   name: 'EchartHeader',
+  components: { VIcon },
   props: {
     data: {
       type: Object,

@@ -1,5 +1,5 @@
 <template>
-  <div class="hiveNode nodeStyle">
+  <div class="clickhouse_node nodeStyle">
     <head>
       <span class="headIcon iconfont icon-you2" type="primary"></span>
       <span class="txt">{{ $t('editor.nodeSettings') }}</span>
@@ -12,12 +12,12 @@
 			</div> -->
       <el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
         <!-- <span class="addTxt">+新建文件</span> -->
-        <el-form-item :label="$t('editor.choose') + ' HBase'" prop="connectionId" :rules="rules" required>
+        <el-form-item :label="$t('editor.choose') + ' hana'" prop="connectionId" :rules="rules" required>
           <el-select
             :filterable="!databaseLoading"
             :loading="databaseLoading"
             v-model="model.connectionId"
-            :placeholder="$t('message.placeholderSelect') + 'HBase'"
+            :placeholder="$t('message.placeholderSelect') + 'clickhouse_node '"
             :clearable="true"
           >
             <el-option
@@ -30,9 +30,7 @@
         </el-form-item>
 
         <el-form-item
-          :label="
-            $t('editor.cell.data_node.table.form.table.label') + $t('editor.cell.data_node.table.form.table.labelTips')
-          "
+          :label="$t('editor.cell.data_node.table.form.table.label')"
           prop="tableName"
           :rules="rules"
           required
@@ -45,7 +43,7 @@
               :loading="schemasLoading"
               default-first-option
               clearable
-              :placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
+              :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
               size="mini"
             >
               <el-option
@@ -83,6 +81,37 @@
             </el-tooltip>
           </div>
         </el-form-item>
+
+        <!-- <el-form-item
+					:label="$t('editor.cell.data_node.collection.form.collection.label')"
+					prop="tableName"
+					required
+				>
+					<el-select
+						v-model="model.tableName"
+						:filterable="!schemasLoading"
+						:loading="schemasLoading"
+						allow-create
+						default-first-option
+						clearable
+						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
+						size="mini"
+					>
+						<el-option
+							v-for="(item, idx) in schemas"
+							:label="`${item.table_name}`"
+							:value="item.table_name"
+							v-bind:key="idx"
+						></el-option>
+					</el-select>
+				</el-form-item> -->
+        <!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
+					<el-input
+						v-model="model.primaryKeys"
+						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
+						size="mini"
+					></el-input>
+				</el-form-item> -->
       </el-form>
     </div>
     <div class="e-entity-wrap" style="text-align: center; overflow: auto">
@@ -122,7 +151,7 @@ const connections = factory('connections')
 
 // let editorMonitor = null;
 export default {
-  name: 'ApiNode',
+  name: 'HanaNode',
   components: { Entity, ClipButton, CreateTable },
   data() {
     return {
@@ -159,8 +188,9 @@ export default {
       },
       model: {
         connectionId: '',
-        type: 'hbase',
+        type: 'hana',
         tableName: ''
+        // primaryKeys: ''
       },
       schemasLoading: false,
       mergedSchema: null
@@ -172,7 +202,7 @@ export default {
     let result = await connections.get({
       filter: JSON.stringify({
         where: {
-          database_type: 'hbase'
+          database_type: 'hana'
         },
         fields: {
           name: 1,
@@ -218,7 +248,7 @@ export default {
                 : {
                     table_name: this.model.tableName,
                     cdc_enabled: true,
-                    meta_type: 'hbase',
+                    meta_type: 'hana',
                     fields: []
                   }
             this.$emit('schemaChange', _.cloneDeep(schema))
@@ -295,7 +325,7 @@ export default {
 
     getData() {
       let result = _.cloneDeep(this.model)
-      result.name = result.tableName || 'HBase'
+      result.name = result.tableName || 'hana'
       return result
     },
 
@@ -362,7 +392,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.hiveNode {
+.clickhouse_node {
   .el-form-item {
     margin-bottom: 10px;
   }

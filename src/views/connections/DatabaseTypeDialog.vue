@@ -57,7 +57,9 @@ export default {
         'hbase',
         'kudu',
         'greenplum',
-        'hana'
+        'tidb',
+        'hana',
+        'clickhouse'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],

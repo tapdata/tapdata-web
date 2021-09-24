@@ -45,7 +45,9 @@ import mq from './mq'
 import hbase from './hbase'
 import kudu from './kudu'
 import greenplum from './greenplum'
+import tidb from './tidb'
 import hana from './hana'
+import clickhouse from './clickhouse'
 
 export default {
   mysql,
@@ -95,5 +97,7 @@ export default {
   hbase,
   kudu,
   greenplum,
-  hana
+  tidb,
+  hana,
+  clickhouse
 }
