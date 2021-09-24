@@ -6,8 +6,20 @@
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div> -->
-      <el-form class="e-form" label-position="top" label-width="130px" :disabled="disabled" :model="model" ref="form">
-        <el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheName.label')">
+      <el-form
+        class="e-form"
+        label-position="top"
+        label-width="130px"
+        :rules="rules"
+        :disabled="disabled"
+        :model="model"
+        ref="form"
+      >
+        <el-form-item
+          prop="cacheName"
+          :required="true"
+          :label="$t('editor.cell.data_node.memCache.form.cacheName.label')"
+        >
           <el-input
             v-model.trim="model.cacheName"
             size="mini"
@@ -15,7 +27,11 @@
             @input="nameHandler"
           ></el-input>
         </el-form-item>
-        <el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheKeys.label')">
+        <el-form-item
+          prop="cacheKeys"
+          :required="true"
+          :label="$t('editor.cell.data_node.memCache.form.cacheKeys.label')"
+        >
           <MultiSelection
             v-model="model.cacheKeys"
             :options="primaryKeyOptions"
@@ -144,7 +160,6 @@ import { removeDeleted } from '../../util/Schema'
 // let editorMonitor = null;
 export default {
   name: 'memCache',
-
   components: { MultiSelection },
 
   data() {
@@ -172,6 +187,7 @@ export default {
         }
       ],
       model: {
+        type: 'mem_cache',
         name: '',
         cacheName: '',
         cacheType: 'all',
@@ -184,7 +200,17 @@ export default {
       vueAdapter: null,
       primaryKeyOptions: [],
       maxSizeLimited: 0,
-      maxRowsLimited: 0
+      maxRowsLimited: 0,
+      rules: {
+        cacheName: [
+          { required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.memCache.form.cacheName.none') }
+        ],
+        cacheKeys: {
+          required: true,
+          trigger: 'blur',
+          message: this.$t('editor.cell.data_node.memCache.form.cacheKeys.none')
+        }
+      }
     }
   },
 
@@ -307,7 +333,7 @@ export default {
           this.handleconfirm(name.join(','), dataflow.name)
         }
       }
-
+      console.log('------', nameData, keyData, keygroupBy, dataflow, window.App.$route.query)
       // handleconfirm(res.data[0].name, res.data[0].name)
       let where = {
         or: [
@@ -320,8 +346,9 @@ export default {
           }
         ]
       }
-      if (dataflow && dataflow.id) {
-        where.id = { neq: dataflow.id }
+      if ((dataflow && dataflow.id) || window.App.$route.query.id) {
+        let id = dataflow && dataflow.id ? dataflow.id : window.App.$route.query && window.App.$route.query.id
+        where.id = { neq: id }
       }
       let filter = {
         where

@@ -212,35 +212,38 @@
     </el-form>
     <div class="example">
       <h3>{{ $t('editor.cell.processor.aggregate.returnExample') }}</h3>
-      <ul class="example-box" form.aggregations>
-        [
-        <li v-for="(item, index) in form.aggregations" :key="index" style="padding-left: 10px">
-          {
-          <div>
-            <span v-if="item.groupByExpression.length" class="text">
-              {
-              <div style="padding-left: 10px">_tapd8_sub_name : {{ item.name }}</div>
-              <div v-for="(group, groupIndex) in item.groupByExpression" :key="groupIndex" style="padding-left: 10px">
-                {{ group }} : XXX
-              </div>
-              },
-            </span>
-            <span class="text" v-else>_id: {{ item.name }},</span>
-            <span class="comment">{{ $t('editor.cell.processor.aggregate.idComment') }}</span>
-          </div>
-          <div>
-            <span class="text"
-              >{{ item.aggFunction }}: {{ item.aggFunction === 'COUNT' ? 100 : item.aggExpression }},</span
+      <ul class="example-box">
+        {
+        <li v-if="form.aggregations[0].groupByExpression.length">
+          <div class="text" style="padding-left: 10px">
+            {
+            <div style="padding-left: 10px">_tapd8_sub_name : {{ form.aggregations[0].name }}</div>
+            <div
+              v-for="(group, groupIndex) in form.aggregations[0].groupByExpression"
+              :key="groupIndex"
+              style="padding-left: 10px"
             >
-            <span class="comment">{{ $t('editor.cell.processor.aggregate.countComment') }}</span>
+              {{ group }} : XXX
+            </div>
+            },
           </div>
-          <div v-for="(group, groupIndex) in item.groupByExpression" :key="groupIndex">
-            <span class="text">{{ group }}: XXX</span>
-            <span class="comment">{{ $t('editor.cell.processor.aggregate.school_nameComment') }}</span>
-          </div>
-          },
         </li>
-        ]
+        <li v-else>
+          <span class="text">_id: {{ form.aggregations[0].name }},</span>
+          <span class="comment">{{ $t('editor.cell.processor.aggregate.idComment') }}</span>
+        </li>
+        <li>
+          <span class="text"
+            >{{ form.aggregations[0].aggFunction }}:
+            {{ form.aggregations[0].aggFunction === 'COUNT' ? 100 : form.aggregations[0].aggExpression }},</span
+          >
+          <span class="comment">{{ $t('editor.cell.processor.aggregate.countComment') }}</span>
+        </li>
+        <li v-for="(group, groupIndex) in form.aggregations[0].groupByExpression" :key="groupIndex">
+          <span class="text">{{ group }}: XXX</span>
+          <span class="comment">{{ $t('editor.cell.processor.aggregate.school_nameComment') }}</span>
+        </li>
+        }
       </ul>
     </div>
   </div>

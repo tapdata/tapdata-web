@@ -813,7 +813,7 @@ export default {
     },
     //获取dataFlow
     getDataFlow() {
-      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      this.dataFlow = this.scope && this.scope.getDataFlowData(true) //不校验
     },
     //接收是否第一次打开
     returnModel(value) {
