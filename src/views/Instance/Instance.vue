@@ -273,6 +273,7 @@
             :disabled="deployBtnDisabled(selectedRow)"
             type="primary"
             class="flex-fill"
+            @click="toDeploy(selectedRow)"
           >
             <VIcon size="12">deploy</VIcon>
             <span class="ml-1">{{ $t('agent_button_deploy') }}</span>
