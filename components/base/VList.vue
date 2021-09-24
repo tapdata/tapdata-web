@@ -1,6 +1,6 @@
 <template>
-  <div class="v-list__container">
-    <El-table
+  <div class="v-list">
+    <ElTable
       v-loading="loading"
       ref="table"
       class="v-list__table mt-3"
@@ -11,7 +11,7 @@
     >
       <slot></slot>
       <div slot="empty"><slot name="empty"></slot></div>
-    </El-table>
+    </ElTable>
     <ElPagination
       background
       class="mt-3"
@@ -101,7 +101,7 @@ export default {
 </script>
 
 <style scoped>
-.v-list__container {
+.v-list {
   display: flex;
   width: 100%;
   height: 100%;

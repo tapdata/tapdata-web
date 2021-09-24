@@ -100,16 +100,9 @@
         </ElTableColumn>
         <ElTableColumn label="目标表长度" width="150">
           <template slot-scope="scope">
-            <div
-              v-if="
-                scope.row.t_precision !== null &&
-                scope.row.t_precision !== undefined &&
-                !scope.row.is_deleted &&
-                scope.row.t_isPrecisionEdit &&
+            <div v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit&&
                 !readOnly
-              "
-              @click="edit(scope.row, 'precision')"
-            >
+              " @click="edit(scope.row, 'precision')">
               <span>{{ scope.row.t_precision }}</span>
               <i class="icon el-icon-edit-outline"></i>
             </div>
@@ -120,16 +113,9 @@
         </ElTableColumn>
         <ElTableColumn label="目标表精度" width="100">
           <template slot-scope="scope">
-            <div
-              v-if="
-                scope.row.t_scale !== null &&
-                scope.row.t_scale !== undefined &&
-                !scope.row.is_deleted &&
-                scope.row.t_isScaleEdit &&
+            <div v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit&&
                 !readOnly
-              "
-              @click="edit(scope.row, 'scale')"
-            >
+              " @click="edit(scope.row, 'scale')">
               <span>{{ scope.row.t_scale }}</span>
               <i class="icon el-icon-edit-outline"></i>
             </div>
@@ -329,6 +315,9 @@ export default {
     updateView(data) {
       if (data) {
         this.selectRow = data
+        this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
+        this.selectRow = this.fieldMappingNavData[0]
+        this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
       }
       this.initTableData()
       this.initTypeMapping()
@@ -415,14 +404,14 @@ export default {
           rules = rules[0].rules
           if (!data[i].t_precision) {
             this.showPrecisionEdit(data[i].t_id, rules || [])
-            this.influencesPrecision(data[i].t_id, rules || [])
+            //this.influencesPrecision(data[i].t_id, rules || [])
           } else if (!data[i].t_scale) {
             this.showScaleEdit(data[i].t_id, rules || [])
-            this.influencesScale(data[i].t_id, rules || [])
+            //this.influencesScale(data[i].t_id, rules || [])
           } else if (!data[i].t_precision && !data[i].t_scale) {
             this.showPrecisionEdit(data[i].t_id, rules || [])
             this.showScaleEdit(data[i].t_id, rules || [])
-            this.influences(data[i].t_id, rules || [])
+            // this.influences(data[i].t_id, rules || [])
           }
         }
       }
