@@ -268,7 +268,7 @@ export default {
     // 重复
     handelDuplicate(vueAdapter, cacheName, cacheKeys) {
       let dataCells = vueAdapter.editor.getAllCells()
-      let dataflow = vueAdapter.editor.scope.getDataFlowData()
+      let dataflow = vueAdapter.editor.getData()
       let cacheList = []
       // 获取当前所有缓存节点数据
       dataCells.forEach(item => {
@@ -315,17 +315,19 @@ export default {
       if (nameData.length) {
         let name = []
         nameData.filter(n => {
-          if (n.name !== this.model.name) {
+          if (n.name !== this.model.cacheName) {
             name.push(n.name)
           }
         })
         if (name.length) {
           this.handleconfirm(name.join(','), dataflow.name)
+        } else {
+          this.handleconfirm(nameData[0].name, dataflow.name)
         }
       } else if (keyData.length) {
         let name = []
         keyData.filter(n => {
-          if (n.name && n.name !== this.model.name) {
+          if (n.name && n.name !== this.model.cacheName) {
             name.push(n.name)
           }
         })
@@ -333,7 +335,6 @@ export default {
           this.handleconfirm(name.join(','), dataflow.name)
         }
       }
-      console.log('------', nameData, keyData, keygroupBy, dataflow, window.App.$route.query)
       // handleconfirm(res.data[0].name, res.data[0].name)
       let where = {
         or: [
@@ -346,9 +347,8 @@ export default {
           }
         ]
       }
-      if ((dataflow && dataflow.id) || window.App.$route.query.id) {
-        let id = dataflow && dataflow.id ? dataflow.id : window.App.$route.query && window.App.$route.query.id
-        where.id = { neq: id }
+      if (window.App.$route.query.id) {
+        where.id = { neq: window.App.$route.query.id }
       }
       let filter = {
         where
@@ -367,9 +367,11 @@ export default {
           }
         })
     },
+    // 改变缓存键
     handleCacheKey() {
       this.handelDuplicate(this.vueAdapter, '', this.model.cacheKeys)
     },
+    // 重复弹窗
     handleconfirm(name, task) {
       if (name || task) {
         const h = this.$createElement
@@ -394,10 +396,6 @@ export default {
           ),
           taskArr[1]
         ])
-        // let message = h('p', [
-        //   this.$t('message.deleteOrNot') + ' ',
-        //   h('span', { style: { color: '#409EFF' } }, item.clientName)
-        // ])
         this.$confirm(msg, this.$t('task_job_setting_tip_title'), {
           type: 'warning'
         })
