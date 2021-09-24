@@ -61,6 +61,7 @@ export default function (vm) {
         field: 'mqQueueSet',
         label: vm.$t('dataForm.form.mq.mqQueueSet'),
         required: true,
+        tip: '多个队列用逗号隔开',
         dependOn: [
           {
             triggerOptions: [
@@ -76,14 +77,11 @@ export default function (vm) {
         ]
       },
       {
-        type: 'slot',
-        slot: 'queueTip'
-      },
-      {
         type: 'input',
         field: 'mqTopicSet',
         show: true,
         label: vm.$t('dataForm.form.mq.mqTopicSet'),
+        tip: '多个主题用逗号隔开',
         dependOn: [
           {
             triggerOptions: [
@@ -108,10 +106,6 @@ export default function (vm) {
             }
           }
         ]
-      },
-      {
-        type: 'slot',
-        slot: 'topicTip'
       },
       {
         type: 'input',
