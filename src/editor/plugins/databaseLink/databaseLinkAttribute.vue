@@ -105,6 +105,7 @@
                 :showBtn="true"
                 :stageId="stageId"
                 :hiddenFieldProcess="false"
+                :selectSourceArr="model.selectSourceArr"
                 :isFirst="model.isFirst"
                 @update-first="returnModel"
                 @returnFieldMapping="returnFieldMapping"
@@ -408,10 +409,6 @@ export default {
         }
         //获取目标节点ID
         this.stageId = targetCell.id || ''
-        //是否显示字段推演
-        if (ALLOW_FIELD_MAPPING.includes(sourceDatabaseType) && ALLOW_FIELD_MAPPING.includes(targetDatabaseType)) {
-          this.showFieldMapping = true
-        }
         // 获取目标节点的数据显示右侧选择表
 
         let targetFormData = targetCell && targetCell.getFormData()
@@ -449,6 +446,16 @@ export default {
       editorMonitor = vueAdapter.editor
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
       this.getDataFlow()
+      //是否显示字段推演
+      let param = {
+        stages: this.dataFlow?.stages,
+        stageId: this.stageId
+      }
+      this.$api('DataFlows')
+        .tranModelVersionControl(param)
+        .then(data => {
+          this.showFieldMapping = data?.data[this.stageId]
+        })
 
       // if (!this.configJoinTable) return
     },

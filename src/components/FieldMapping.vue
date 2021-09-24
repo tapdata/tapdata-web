@@ -34,7 +34,7 @@
 <script>
 export default {
   name: 'FiledMapping',
-  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId', 'isFirst', 'mappingType'],
+  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId', 'isFirst', 'mappingType', 'selectSourceArr'],
   data() {
     return {
       //表设置
@@ -57,10 +57,8 @@ export default {
       //迁移任务需要同步字段处理器
       if (this.mappingType && this.mappingType === 'cluster-clone') {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
-        if (
-          this.dataFlow?.stages?.[1]?.syncObjects.length === 0 ||
-          this.dataFlow?.stages?.[1]?.syncObjects?.[0]?.objectNames?.length === 0
-        ) {
+        //是否有选中的表
+        if (this.selectSourceArr?.length === 0) {
           this.$message.error('请先选择需要迁移的表')
           return
         }
