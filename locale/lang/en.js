@@ -18,7 +18,7 @@ const newEn = {
 
   // schema progress
   schema_progress_status_success: 'Finished',
-  schema_progress_status_error: 'Error',
+  schema_progress_status_error: 'Loading error',
   schema_progress_dialog_error_title: 'Schema loading error',
 
   // Data validation

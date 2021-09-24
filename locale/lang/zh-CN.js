@@ -18,7 +18,7 @@ const newCn = {
 
   // schema progress
   schema_progress_status_success: '已完成',
-  schema_progress_status_error: '出错',
+  schema_progress_status_error: '加载错误',
   schema_progress_dialog_error_title: 'Schema加载出错',
 
   // 数据校验
