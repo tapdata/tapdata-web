@@ -236,10 +236,10 @@ export default {
       this.$router.push({
         name: 'ConnectionEdit',
         params: {
-          id: this.data.id
+          id: this.connection.id
         },
         query: {
-          databaseType: this.type
+          databaseType: this.connection.database_type
         }
       })
     },
