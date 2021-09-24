@@ -33,9 +33,9 @@
                 :show-text="false"
                 :width="166"
               ></el-progress>
-              <div class="progress-box__value flex justify-content-center align-items-center">
-                <div class="fs-6">延迟</div>
-                <div class="mt-2">{{ replicateObj.currentValue }}</div>
+              <div class="progress-box__value flex flex-column justify-content-center align-items-center">
+                <div class="fs-5">{{ replicateObj.currentStatus || '延迟' }}</div>
+                <div class="mt-2" v-if="!replicateObj.currentStatus">{{ replicateObj.currentValue }}ms</div>
               </div>
             </div>
           </div>
@@ -56,9 +56,11 @@
         <div v-if="task && task.setting.sync_type !== 'initial_sync'">
           <div class="mb-10 dots">增量详情</div>
           <el-table :data="cdcLastTimes">
-            <el-table-column label="源库" prop="name" min-width="200"></el-table-column>
-            <el-table-column label="时间" prop="belongAgent"></el-table-column>
-            <el-table-column label="目标库" prop="syncTypeText"></el-table-column>
+            <el-table-column label="源库" prop="sourceConnectionName"></el-table-column>
+            <el-table-column label="时间" prop="cdcTime">
+              <template slot-scope="scope">{{ $moment(scope.row.cdcTime).format('YYYY-MM-DD HH:mm:ss') }}</template>
+            </el-table-column>
+            <el-table-column label="目标库" prop="targetConnectionName"></el-table-column>
           </el-table>
         </div>
       </div>
@@ -200,7 +202,8 @@ export default {
           loading: false
         },
         body: null,
-        currentValue: 0 // 当前延迟
+        currentValue: 0, // 当前延迟
+        currentStatus: '未开始'
       },
       selectFlow: 'flow_', // 选中节点
       stageId: 'all',
@@ -213,20 +216,7 @@ export default {
   },
   computed: {
     cdcLastTimes() {
-      let result = []
-      this.task?.cdcLastTimes?.forEach(item => {
-        let flag = result.find(ele => ele.sourceConnectionId === item.sourceConnectionId)
-        if (!flag) {
-          result.push({
-            sourceConnectionName: item.sourceConnectionName,
-            sourceConnectionId: item.sourceConnectionId,
-            targetList: [item]
-          })
-        } else {
-          flag.targetList.push(item)
-        }
-      })
-      return result
+      return this.task?.cdcLastTimes || []
     }
   },
   watch: {
@@ -257,9 +247,7 @@ export default {
       if (data?.stats?.overview) {
         overview = JSON.parse(JSON.stringify(data.stats.overview))
 
-        if (overview.currentStatus === undefined) {
-          this.$set(overview, 'currentStatus', '未开始')
-        }
+        this.replicateObj.currentStatus = !overview?.status ? '未开始' : ''
 
         if (overview.waitingForSyecTableNums !== undefined) {
           waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
