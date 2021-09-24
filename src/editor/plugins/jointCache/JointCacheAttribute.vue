@@ -130,10 +130,11 @@ export default {
         .then(res => {
           if (res?.data?.length) {
             let data = res.data.map(item => ({
-              label: item.name,
-              value: item.id
+              name: item.name,
+              cacheKeys: item.cacheKeys,
+              fields: item.outputSchema ? item.outputSchema.fields : []
             }))
-            this.cacheList = [...this.cacheList, ...data]
+            this.config.items[1].options = [...this.config.items[1].options, ...data]
           }
         })
     },
