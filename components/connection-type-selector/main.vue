@@ -3,13 +3,13 @@
     <ul class="database-ul">
       <li v-for="item in types" :key="item" @click="$emit('select', item)">
         <div class="img-box">
-          <img :src="$util.getConnectionTypeImg(item)" />
+          <img :src="$util.getConnectionTypeDialogImg(item)" />
         </div>
         <div class="content">{{ typeMap[item] }}</div>
       </li>
       <li v-for="item in comingTypes" :key="item" class="item--disabled">
         <div class="img-box position-relative">
-          <img :src="$util.getConnectionTypeImg(item)" />
+          <img :src="$util.getConnectionTypeDialogImg(item)" />
           <div class="img-box__mask position-absolute">
             <span class="mask-text">即将上线</span>
           </div>
@@ -21,7 +21,7 @@
     <ul class="database-ul">
       <li v-for="(item, index) in otherTypes" :key="index" @click="$emit('select', item)">
         <div class="img-box">
-          <img :src="$util.getConnectionTypeImg(item)" />
+          <img :src="$util.getConnectionTypeDialogImg(item)" />
         </div>
         <div class="content">{{ typeMap[item] }}</div>
       </li>
@@ -30,7 +30,7 @@
     <ul class="database-ul">
       <li v-for="(item, index) in automationType" :key="index" @click="$emit('select', item.type)">
         <div class="img-box">
-          <img :src="$util.getConnectionTypeImg('default')" />
+          <img :src="$util.getConnectionTypeDialogImg('default')" />
         </div>
         <div class="content">{{ item.name }}</div>
       </li>
@@ -77,7 +77,7 @@ export default {
 
 <style scoped lang="scss">
 .database {
-  max-height: 600px;
+  max-height: 270px;
   overflow: auto;
   .title {
     color: #999;
@@ -89,8 +89,8 @@ export default {
     display: flex;
     flex-wrap: wrap;
     li {
-      margin-left: 48px;
-      margin-bottom: 48px;
+      margin-left: 32px;
+      margin-bottom: 32px;
       text-align: center;
     }
     li:nth-child(6n + 1) {
@@ -110,7 +110,7 @@ export default {
         width: 35%;
       }
       &:hover {
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(0, 0, 0, 0.3);
       }
       .img-box__mask {
         width: 65px;

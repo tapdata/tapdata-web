@@ -111,7 +111,7 @@ const showNextMsg = () => {
 }
 
 MessageBox.confirm = (message, title, options) => {
-  if (typeof title === 'object') {
+  if (title && typeof title === 'object') {
     options = title
     title = ''
   } else if (title === undefined) {

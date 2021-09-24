@@ -1,16 +1,17 @@
 <template>
-  <div class="base-list-container">
-    <El-table
-      ref="table"
-      class="base-list-table table-border mt-3"
-      height="100%"
+  <div class="v-list">
+    <ElTable
       v-loading="loading"
+      ref="table"
+      class="v-list__table mt-3"
+      height="100%"
       :data="list"
       @selection-change="handleSelectionChange"
       @sort-change="$emit('sort-change', $event)"
     >
       <slot></slot>
-    </El-table>
+      <div slot="empty"><slot name="empty"></slot></div>
+    </ElTable>
     <ElPagination
       background
       class="mt-3"
@@ -100,16 +101,15 @@ export default {
 </script>
 
 <style scoped>
-.base-list-container {
+.v-list {
   display: flex;
   width: 100%;
   height: 100%;
-  min-width: 1260px;
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
 }
-.base-list-table {
+.v-list__table {
   flex: 1;
   overflow: auto;
   border-bottom: none;
