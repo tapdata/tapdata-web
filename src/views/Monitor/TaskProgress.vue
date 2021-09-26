@@ -223,23 +223,18 @@ export default {
     task: {
       deep: true,
       handler(v) {
-        if (v) {
-          this.init(v)
-        }
+        v && this.init(v)
       }
     }
-  },
-  mounted() {
-    this.init()
   },
   methods: {
     init() {
       this.loadInfo()
+      this.loadHttp()
       this.loadWS()
       this.sendMsg()
     },
     loadInfo() {
-      // let currentData = data
       let overview = {}
       let waitingForSyecTableNums = 0
       let completeTime = ''
@@ -257,6 +252,9 @@ export default {
         overview.waitingForSyecTableNums = waitingForSyecTableNums
 
         let num = (overview.targatRowNum / overview.sourceRowNum) * 100
+        if (num > 100) {
+          num = 100
+        }
         this.progressBar = num ? num.toFixed(2) * 1 : 0
 
         let now = new Date().getTime()
@@ -321,7 +319,18 @@ export default {
       this.completeTime = completeTime
 
       this.overviewStats = overview
-      console.log('this.overviewStats', completeTime, this.overviewStats)
+    },
+    // http请求
+    loadHttp() {
+      let arr = ['overviewObj', 'throughputObj', 'transfObj', 'replicateObj']
+      arr.forEach(el => {
+        let item = this[el]?.title
+        let params = {
+          statsType: item.statsType,
+          granularity: item.time ? 'flow_' + item.time : 'flow'
+        }
+        this.loadData(params, item)
+      })
     },
     formatTime(time, type) {
       let result
@@ -707,11 +716,14 @@ export default {
         })
     },
     changeHeaderFnc(timeType, item) {
-      let params = {
-        statsType: item.statsType,
-        granularity: 'flow_' + timeType
-      }
-      this.loadData(params, item)
+      item.time = timeType
+      this.sendMsg()
+      // http请求
+      // let params = {
+      //   statsType: item.statsType,
+      //   granularity: 'flow_' + timeType
+      // }
+      // this.loadData(params, item)
     }
   }
 }
