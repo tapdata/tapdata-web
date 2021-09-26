@@ -52,7 +52,7 @@
               <el-col :span="12">
                 <span class="span-label">{{ $t('dag_data_node_label_database_link_table') }}</span>
                 <el-select v-model="model.tableNameTransform" size="mini">
-                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value=""></el-option>
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
                   <el-option
                     :label="$t('dag_data_node_label_database_link_to_uppercase')"
                     value="toUpperCase"
@@ -65,8 +65,8 @@
               </el-col>
               <el-col :span="12">
                 <span class="span-label">{{ $t('dag_data_node_label_database_link_field') }}</span>
-                <el-select v-model="model.fieldNameTransform" size="mini">
-                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value=""></el-option>
+                <el-select v-model="model.fieldsNameTransform" size="mini">
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
                   <el-option
                     :label="$t('dag_data_node_label_database_link_to_uppercase')"
                     value="toUpperCase"
@@ -296,7 +296,7 @@ import log from '../../../log'
 import factory from '../../../api/factory'
 import MqTransfer from './mqTransfer'
 import FieldMapping from '@/components/FieldMapping'
-import { ALLOW_FIELD_MAPPING } from '../../constants'
+// import { ALLOW_FIELD_MAPPING } from '../../constants'
 let connections = factory('connections')
 let editorMonitor = null
 export default {
@@ -329,8 +329,8 @@ export default {
         table_suffix: '',
         dropType: 'no_drop',
         type: 'databaseLink',
-        tableNameTransform: '',
-        fieldNameTransform: '',
+        tableNameTransform: 'noOperation',
+        fieldsNameTransform: 'noOperation',
         selectSourceArr: [],
         topicData: [],
         queueData: [],
