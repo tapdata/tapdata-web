@@ -181,11 +181,10 @@ export default {
           this.$axios
             .get('tm/api/DataFlows/' + item.sourceId)
             .then(() => {
-              routeUrl = this.$router.resolve({
-                path: '/monitor',
-                query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
+              this.$router.push({
+                name: 'Monitor',
+                params: { id: item.sourceId }
               })
-              window.open(routeUrl.href, '_blank')
             })
             .catch(err => {
               if (err?.data?.msg === 'no permission') {

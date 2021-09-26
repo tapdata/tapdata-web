@@ -106,7 +106,7 @@ export default {
   agent_detail_host_cpu_memory: 'Host CPU memory',
   agent_detail_host_memory_size: 'Host memory size',
   agent_detail_installation_manual: 'Installation directory',
-  agent_detail_run_manual: 'The directory where the run log is located',
+  agent_detail_run_manual: 'Log directory',
   agent_list_empty_desc1: 'Come soon',
   agent_list_empty_desc2: 'Start real-time data synchronization~',
 

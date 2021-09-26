@@ -102,7 +102,7 @@ export default {
   agent_detail_host_cpu_memory: '宿主机CPU内存',
   agent_detail_host_memory_size: '宿主机内存大小',
   agent_detail_installation_manual: '安装目录',
-  agent_detail_run_manual: '运行日志所在目录',
+  agent_detail_run_manual: '日志目录',
   agent_list_empty_desc1: '快来',
   agent_list_empty_desc2: '开始实时数据同步吧~',
 

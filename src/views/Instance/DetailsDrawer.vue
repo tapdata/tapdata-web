@@ -92,10 +92,10 @@ export default {
         {
           icon: 'host',
           items: [
-            // {
-            //   label: $t('agent_detail_host_name'),
-            //   key: '-'
-            // },
+            {
+              label: $t('agent_detail_host_name'),
+              key: 'hostname'
+            },
             {
               label: $t('agent_detail_host_ip'),
               key: 'ips'
@@ -116,11 +116,11 @@ export default {
             {
               label: $t('agent_detail_installation_manual'),
               key: 'installationDirectory'
+            },
+            {
+              label: $t('agent_detail_run_manual'),
+              key: 'logDir'
             }
-            // {
-            //   label: $t('agent_detail_run_manual'),
-            //   key: '-'
-            // }
           ]
         }
       ]
@@ -154,10 +154,10 @@ export default {
             // this.agent = data
             data.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
             if (data?.metric?.systemInfo) {
-              data.cpus = data.metric.systemInfo.cpus || ''
-              data.installationDirectory = data.metric.systemInfo.installationDirectory || ''
-              data.ips = data.metric.systemInfo.ips || ''
-
+              let arr = ['cpus', 'installationDirectory', 'ips', 'hostname', 'logDir']
+              arr.forEach(el => {
+                data[el] = data.metric?.systemInfo?.[el] || ''
+              })
               let num = Number(data.metric.systemInfo.totalmem) || 0
               let size = ''
               if (num < 0.1 * 1024) {
