@@ -36,7 +36,10 @@
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
             <div class="box-line__label">{{ temp.label + '：' }}</div>
-            <div class="box-line__value">{{ connection[temp.key] || '-' }}</div>
+            <el-tooltip v-if="connection[temp.key]" effect="dark" :content="connection[temp.key]" placement="right-end">
+              <div class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
+            </el-tooltip>
+            <div v-else class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
           </div>
         </div>
       </div>
@@ -362,6 +365,7 @@ export default {
   color: rgba(0, 0, 0, 0.6);
 }
 .box-line__value {
+  max-width: 200px;
   margin-top: 8px;
   color: #000;
 }
