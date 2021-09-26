@@ -6,8 +6,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
       connection_type: 'source_and_target'
@@ -17,6 +17,10 @@ export default function (vm) {
         type: 'select',
         field: 'mqType',
         label: vm.$t('dataForm.form.mq.mqType'),
+        customClass: 'large-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
         options: [
           {
             label: 'ActiveMQ',
