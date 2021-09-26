@@ -10,7 +10,10 @@
           <img v-if="task.isFinished" style="height: 25px" src="../../../public/images/task/yiwancheng.png" alt="" />
           <StatusTag v-else type="text" target="task" :status="task.status" only-img></StatusTag>
         </div>
-        <div class="mt-1">创建人: {{ task.creator }}</div>
+        <div class="mt-1">
+          <span>创建人: {{ task.creator }}</span>
+          <span class="ml-4">任务类型：{{ taskType.label }}</span>
+        </div>
         <div class="mt-2">
           <VButton type="primary" @click="start">启动</VButton>
           <VButton @click="stop">停止</VButton>
@@ -27,19 +30,19 @@
     </div>
     <div v-if="task" class="dashboard-main flex mt-6 flex-fit overflow-hidden">
       <div class="panel-left h-100 overflow-auto p-6">
-        <div class="info-item">
-          <span class="font-color-sub">任务类型: </span>
-          <span class="font-color-main">{{ task.typeText }}</span>
-        </div>
+        <!--        <div class="info-item">-->
+        <!--          <span class="font-color-sub">任务类型: </span>-->
+        <!--          <span class="font-color-main">{{ task.typeText }}</span>-->
+        <!--        </div>-->
         <div class="info-item">
           <span class="font-color-sub">本次执行时间: </span>
           <span class="font-color-main">{{ task.startTimeFmt }}</span>
         </div>
-        <div class="info-item">
+        <div v-if="taskType.value === 'initial_sync'" class="info-item">
           <span class="font-color-sub">本次结束时间: </span>
           <span class="font-color-main">{{ task.endTimeFmt }}</span>
         </div>
-        <div class="info-item">
+        <div v-if="taskType.value !== 'initial_sync'" class="info-item">
           <span class="font-color-sub">增量所处时间点: </span>
           <span class="font-color-main">{{ task.cdcTimeFmt }}</span>
         </div>
@@ -211,6 +214,18 @@ export default {
           tipDisabled: true
         }
       })
+    },
+    taskType() {
+      let sync_type = this.task.setting?.sync_type
+      let map = {
+        initial_sync: this.$t('task_sync_type_initial_sync'),
+        cdc: this.$t('task_sync_type_cdc'),
+        'initial_sync+cdc': this.$t('task_sync_type_initial_sync_cdc')
+      }
+      return {
+        label: map[sync_type],
+        value: sync_type
+      }
     }
   },
   methods: {
