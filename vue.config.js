@@ -46,7 +46,7 @@ module.exports = {
   },
   chainWebpack(config) {
     const iconDir = resolve('src/assets/icons/svg')
-    const colorIconDir = resolve('src/assets/icons/colorful')
+    const colorIconDir = resolve('src/assets/icons/colorSvg')
 
     // svg loader排除 icon 目录
     config.module.rule('svg').exclude.add(resolve(iconDir)).end().use('svgo-loader').loader('svgo-loader').end()
