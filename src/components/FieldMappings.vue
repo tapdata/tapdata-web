@@ -1,6 +1,7 @@
 <template>
   <FieldMapping
     ref="fieldMappingDom"
+    v-loading="loadingMetadata"
     :remoteMethod="intiFieldMappingTableData"
     :typeMappingMethod="getTypeMapping"
     :readOnly="readOnly"
@@ -21,6 +22,7 @@ export default {
       fieldMappingNavData: null,
       fieldMappingTableData: '',
       hiddenFieldMapping: false,
+      loadingMetadata: false,
       field_process: []
     }
   },
@@ -32,7 +34,6 @@ export default {
      * 触发父组件：首次条件
      * */
     getMetaData(taskData) {
-      this.loading = true
       if (!taskData) return
       if (this.isFirst && !this.id) {
         taskData['rollback'] = 'all'
@@ -40,15 +41,17 @@ export default {
         delete taskData['rollback']
         delete taskData['rollbackTable'] //确保不会有恢复默认
       }
+      this.loadingMetadata = true
       let promise = this.$axios.post('tm/api/DataFlows/metadata', taskData)
       promise.then(data => {
         this.activeStep += 1
-        this.loading = false
         this.isFirst = false
         this.fieldMappingNavData = data
+        this.loadingMetadata = false
+        this.$refs.fieldMappingDom.updateView(data) //左侧导航栏有数据再请求列表数据
       })
       promise.catch(() => {
-        this.loading = false
+        this.loadingMetadata = false
         this.$message.error('模型推演失败')
       })
     },
