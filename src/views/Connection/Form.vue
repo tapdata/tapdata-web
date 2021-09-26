@@ -336,7 +336,7 @@ export default {
           defaultConfig[0].show = false
           defaultConfig[0].required = false
         }
-        this.config.form = config.form
+        this.config.form = Object.assign({}, config.form, { size: 'small' })
         this.config.items = items
         this.initData(
           Object.assign(this.model, config.defaultModel, {
