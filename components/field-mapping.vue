@@ -100,9 +100,10 @@
         </ElTableColumn>
         <ElTableColumn label="目标表长度" width="150">
           <template slot-scope="scope">
-            <div v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit&&
-                !readOnly
-              " @click="edit(scope.row, 'precision')">
+            <div
+              v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && !readOnly"
+              @click="edit(scope.row, 'precision')"
+            >
               <span>{{ scope.row.t_precision }}</span>
               <i class="icon el-icon-edit-outline"></i>
             </div>
@@ -113,9 +114,7 @@
         </ElTableColumn>
         <ElTableColumn label="目标表精度" width="100">
           <template slot-scope="scope">
-            <div v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit&&
-                !readOnly
-              " @click="edit(scope.row, 'scale')">
+            <div v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && !readOnly" @click="edit(scope.row, 'scale')">
               <span>{{ scope.row.t_scale }}</span>
               <i class="icon el-icon-edit-outline"></i>
             </div>
@@ -297,7 +296,7 @@ export default {
     select(item, index) {
       if (!this.readOnly) {
         let deleteLen = this.target.filter(v => !v.is_deleted)
-        if (deleteLen.length === 0) {
+        if (deleteLen.length === 0 && this.target?.length > 0) {
           this.$message.error('当前表被删除了所有字段，不允许保存操作')
           return //所有字段被删除了 不可以保存任务
         }
@@ -314,9 +313,8 @@ export default {
     //页面刷新
     updateView(data) {
       if (data) {
-        this.selectRow = data
-        this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
-        this.selectRow = this.fieldMappingNavData[0]
+        this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(data))
+        this.selectRow = data[0]
         this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
       }
       this.initTableData()
