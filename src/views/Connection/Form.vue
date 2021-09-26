@@ -246,6 +246,15 @@ export default {
         } else {
           editData = await this.$axios.get(`tm/api/Connections/${id}?noSchema=1`)
         }
+        if (
+          editData.data.database_type === 'mq' &&
+          (typeof editData.data.mqQueueSet === 'object' || typeof editData.data.mqTopicSet === 'object')
+        ) {
+          let mqQueueSet = editData.data.mqQueueSet.length ? editData.data.mqQueueSet.join(',') : ''
+          let mqTopicSet = editData.data.mqTopicSet.length ? editData.data.mqTopicSet.join(',') : ''
+          editData.data.mqQueueSet = mqQueueSet
+          editData.data.mqTopicSet = mqTopicSet
+        }
         this.model = Object.assign(this.model, editData)
 
         this.renameData.rename = this.model.name
@@ -376,6 +385,19 @@ export default {
       let flag = true
       this.model.search_databaseType = ''
       let data = Object.assign({}, this.model)
+      if (data.database_type === 'mq') {
+        if (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string') {
+          data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
+          data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
+        }
+
+        if (data.mqType === '0') {
+          delete data.database_host
+          delete data.database_port
+        } else {
+          delete data.brokerURL
+        }
+      }
       this.$refs.form.validate(valid => {
         if (valid && flag) {
           let params = Object.assign(
