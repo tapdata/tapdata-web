@@ -193,15 +193,26 @@ export default {
 <style lang="scss" scoped>
 .mq-transfer {
   position: relative;
-  height: 100%;
+  height: 500px;
   white-space: nowrap;
   overflow: auto;
   ::v-deep {
     .topic-transfer,
     .queue-transfer {
+      display: inline-block;
       & > div:last-child {
         position: absolute;
         height: 48% !important;
+      }
+      .el-transfer-panel {
+        display: inline-block;
+        width: 502px;
+      }
+      .el-transfer__buttons {
+        display: inline-block;
+        & > :last-child {
+          margin-left: 10px;
+        }
       }
     }
     .topic-transfer {
@@ -217,6 +228,7 @@ export default {
     .queue-transfer {
       position: absolute;
       top: 0;
+      left: 0;
       width: 0;
       z-index: 1;
       & > div:first-child {
