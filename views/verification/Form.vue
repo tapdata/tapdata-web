@@ -50,7 +50,7 @@
           <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
         </ElSelect>
         <span class="mx-3">{{ $t('verify_switch_job_enable_or_not') }}</span>
-        <ElSwitch v-model="form.enable"></ElSwitch>
+        <ElSwitch v-model="form.enabled"></ElSwitch>
       </ElFormItem>
       <template v-if="form.mode === 'cron'">
         <ElFormItem class="form-item" prop="timing.start" :label="$t('verify_form_label_start_and_end_time') + ': '">
@@ -152,7 +152,7 @@
                 $t('verify_checkbox_advance')
               }}</ElCheckbox>
             </div>
-            <div class="setting-item mt-4" v-if="item.showAdvancedVerification">
+            <div class="setting-item mt-4" v-if="item.showAdvancedVerification && form.inspectMethod === 'field'">
               <label class="item-label">{{ $t('verify_form_label_script') }}: </label>
               <VButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
                 $t('verify_button_add_script')
