@@ -106,7 +106,7 @@ export default {
   agent_detail_host_cpu_memory: 'Host CPU memory',
   agent_detail_host_memory_size: 'Host memory size',
   agent_detail_installation_manual: 'Installation directory',
-  agent_detail_run_manual: 'Run directory',
+  agent_detail_run_manual: 'The directory where the run log is located',
   agent_list_empty_desc1: 'Come soon',
   agent_list_empty_desc2: 'Start real-time data synchronization~',
 
@@ -174,12 +174,12 @@ export default {
   agent_upgrade_step_windows_second:
     '2. Copy the upgrade command below and execute it in the directory. The upgrade command will automatically back up, upgrade and start. If the upgrade fails, it will automatically roll back the version.',
   agent_upgrade_step_windows_third:
-    '3. After the upgrade command is executed, if the following appears, it means that the Agent upgrade is successful: Update finished.',
+    '3. After the upgrade command is executed, the message shown on the right indicates that the Agent upgrade was successful: Update finished.',
   agent_upgrade_step_linux_first: '1. Enter the original Agent installation directory',
   agent_upgrade_step_linux_second:
     '2. Copy the upgrade command below and execute it in the directory. The upgrade command will automatically back up, upgrade and start. If the upgrade fails, it will automatically roll back the version.',
   agent_upgrade_step_linux_third:
-    '3. After the upgrade command is executed, if the following appears, it means that the Agent upgrade is successful: Update finished.',
+    '3. After the upgrade command is executed, the message shown on the right indicates that the Agent upgrade was successful: Update finished.',
   agent_upgrade_step_docker_first: '1. Enter the docker container of the original Agent',
   agent_upgrade_step_docker_first_one: "(1) Found the original agent's docker container CONTAINER ID",
   agent_upgrade_step_docker_first_two: '(2) Enter the container through the container ID',
@@ -190,7 +190,7 @@ export default {
   agent_upgrade_step_docker_second:
     '2. Copy the upgrade command below to execute directly in the container, the upgrade command will automatically back up, upgrade and start, if the upgrade fails, it will automatically roll back the version',
   agent_upgrade_step_docker_third:
-    '3. After the upgrade command is executed, if the following appears, it means that the Agent upgrade is successful: Update finished.',
+    '3. After the upgrade command is executed, the message shown on the right indicates that the Agent upgrade was successful: Update finished.',
 
   // 连接
   connection_manage: 'Connection Management',
