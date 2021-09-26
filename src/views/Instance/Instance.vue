@@ -918,9 +918,6 @@ export default {
       .el-select {
         display: block;
         height: 32px;
-        ::v-deep .el-input__inner {
-          color: rgba(0, 0, 0, 0.25);
-        }
       }
     }
   }

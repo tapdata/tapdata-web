@@ -92,10 +92,10 @@ export default {
         {
           icon: 'host',
           items: [
-            {
-              label: $t('agent_detail_host_name'),
-              key: '-'
-            },
+            // {
+            //   label: $t('agent_detail_host_name'),
+            //   key: '-'
+            // },
             {
               label: $t('agent_detail_host_ip'),
               key: 'ips'
@@ -116,11 +116,11 @@ export default {
             {
               label: $t('agent_detail_installation_manual'),
               key: 'installationDirectory'
-            },
-            {
-              label: $t('agent_detail_run_manual'),
-              key: '-'
             }
+            // {
+            //   label: $t('agent_detail_run_manual'),
+            //   key: '-'
+            // }
           ]
         }
       ]

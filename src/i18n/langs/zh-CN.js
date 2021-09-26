@@ -102,7 +102,7 @@ export default {
   agent_detail_host_cpu_memory: '宿主机CPU内存',
   agent_detail_host_memory_size: '宿主机内存大小',
   agent_detail_installation_manual: '安装目录',
-  agent_detail_run_manual: '运行目录',
+  agent_detail_run_manual: '运行日志所在目录',
   agent_list_empty_desc1: '快来',
   agent_list_empty_desc2: '开始实时数据同步吧~',
 
@@ -157,11 +157,11 @@ export default {
   agent_upgrade_step_windows_first: '1.打开cmd窗口，进入原Agent安装目录',
   agent_upgrade_step_windows_second:
     '2.复制下方的升级命令并在目录下执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
-  agent_upgrade_step_windows_third: '3.待升级命令执行完毕后，出现如下所示则代表Agent升级成功：Update finished.',
+  agent_upgrade_step_windows_third: '3.待升级命令执行完毕后，出现如右所示则代表Agent升级成功：Update finished.',
   agent_upgrade_step_linux_first: '1.进入原Agent安装目录下',
   agent_upgrade_step_linux_second:
     '2.复制下方的升级命令并在目录下执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
-  agent_upgrade_step_linux_third: '3.待升级命令执行完毕后，出现如下所示则代表Agent升级成功：Update finished.',
+  agent_upgrade_step_linux_third: '3.待升级命令执行完毕后，出现如右所示则代表Agent升级成功：Update finished.',
   agent_upgrade_step_docker_first: '1.进入原Agent的docker容器内',
   agent_upgrade_step_docker_first_one: '(1)找到原Agent的docker容器CONTAINER ID',
   agent_upgrade_step_docker_first_two: '(2)通过容器ID进入容器',
@@ -170,7 +170,7 @@ export default {
   agent_upgrade_step_docker_first_five: '进入容器',
   agent_upgrade_step_docker_second:
     '2.复制下方的升级命令直接在容器内执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
-  agent_upgrade_step_docker_third: '3.待升级命令执行完毕后，出现如下所示则代表Agent升级成功：Update finished.',
+  agent_upgrade_step_docker_third: '3.待升级命令执行完毕后，出现如右所示则代表Agent升级成功：Update finished.',
 
   // 连接
   connection_manage: '连接管理',
