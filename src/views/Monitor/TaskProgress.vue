@@ -252,6 +252,9 @@ export default {
         overview.waitingForSyecTableNums = waitingForSyecTableNums
 
         let num = (overview.targatRowNum / overview.sourceRowNum) * 100
+        if (num > 100) {
+          num = 100
+        }
         this.progressBar = num ? num.toFixed(2) * 1 : 0
 
         let now = new Date().getTime()
