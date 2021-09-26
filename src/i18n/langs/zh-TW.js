@@ -102,7 +102,7 @@ export default {
   agent_detail_host_cpu_memory: '宿主機CPU內存',
   agent_detail_host_memory_size: '宿主機內存大小',
   agent_detail_installation_manual: '安裝目錄',
-  agent_detail_run_manual: '運行日誌所在目錄',
+  agent_detail_run_manual: '日誌目錄',
   agent_list_empty_desc1: '快來',
   agent_list_empty_desc2: '開始實時數據同步吧~',
 
