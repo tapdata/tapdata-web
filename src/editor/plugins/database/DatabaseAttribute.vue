@@ -96,7 +96,7 @@
             <span>{{ databaseTables.length }}</span>
           </div>
           <ul class="table-box" v-loading="tableLoading">
-            <RecycleScroller :item-size="36" :buffer="50" :items="databaseTables">
+            <RecycleScroller :item-size="36" :buffer="50" :items="databaseTables" page-mode>
               <template #default="{ item }">
                 <li :key="item" class="list">
                   <i class="iconfont icon-table2"></i>
