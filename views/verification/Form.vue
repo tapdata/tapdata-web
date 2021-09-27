@@ -33,12 +33,12 @@
         <div>
           <i class="el-icon-info color-primary mr-1"></i>
           <span style="font-size: 12px">{{
-              {
-                row_count: $t('verify_tips_type_row_count'),
-                field: $t('verify_tips_type_field'),
-                jointField: $t('verify_tips_type_joint_field')
-              }[form.inspectMethod]
-            }}</span>
+            {
+              row_count: $t('verify_tips_type_row_count'),
+              field: $t('verify_tips_type_field'),
+              jointField: $t('verify_tips_type_joint_field')
+            }[form.inspectMethod]
+          }}</span>
         </div>
       </ElFormItem>
       <ElFormItem required class="form-item" prop="name" :label="$t('verify_job_name') + ': '">
@@ -104,8 +104,8 @@
           <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
         </div>
         <ElLink type="primary" :disabled="!form.tasks.length" @click="clear">{{
-            $t('verify_button_joint_table_clear')
-          }}</ElLink>
+          $t('verify_button_joint_table_clear')
+        }}</ElLink>
       </div>
       <ul class="joint-table-main" id="data-verification-form">
         <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="index">
@@ -149,20 +149,23 @@
             </div>
             <div class="setting-item mt-4">
               <ElCheckbox v-model="item.showAdvancedVerification" v-show="form.inspectMethod === 'field'">{{
-                  $t('verify_checkbox_advance')
-                }}</ElCheckbox>
+                $t('verify_checkbox_advance')
+              }}</ElCheckbox>
             </div>
             <div class="setting-item mt-4" v-if="item.showAdvancedVerification && form.inspectMethod === 'field'">
               <label class="item-label">{{ $t('verify_form_label_script') }}: </label>
               <VButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
-                  $t('verify_button_add_script')
-                }}</VButton>
+                $t('verify_button_add_script')
+              }}</VButton>
               <template v-else>
                 <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
                 <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
               </template>
             </div>
-            <div class="setting-item mt-4" v-if="item.showAdvancedVerification && item.webScript">
+            <div
+              class="setting-item mt-4"
+              v-if="form.inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
+            >
               <pre class="item-script">{{ item.webScript }}</pre>
             </div>
           </div>
