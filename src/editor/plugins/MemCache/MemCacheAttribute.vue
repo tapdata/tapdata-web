@@ -363,8 +363,8 @@ export default {
           {
             'stages.type': 'mem_cache',
             'stages.cacheKeys': this.model.cacheKeys,
-            'stages.connectionId': this.model.cacheConnectionId,
-            'stages.tableName': this.model.cacheTableName
+            'stages.cacheConnectionId': this.model.cacheConnectionId,
+            'stages.cacheTableName': this.model.cacheTableName
           }
         ]
       }
