@@ -96,10 +96,14 @@
             <span>{{ databaseTables.length }}</span>
           </div>
           <ul class="table-box" v-loading="tableLoading">
-            <li v-for="item in databaseTables" :key="item" class="list">
-              <i class="iconfont icon-table2"></i>
-              <span class="tableName">{{ item }}</span>
-            </li>
+            <RecycleScroller :item-size="36" :buffer="50" :items="databaseTables">
+              <template #default="{ item }">
+                <li :key="item" class="list">
+                  <i class="iconfont icon-table2"></i>
+                  <span class="tableName">{{ item }}</span>
+                </li>
+              </template>
+            </RecycleScroller>
           </ul>
         </div>
       </div>
@@ -110,6 +114,8 @@
 <script>
 import factory from '../../../api/factory'
 import _ from 'lodash'
+import { RecycleScroller } from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 // import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
 
 let connections = factory('connections')
@@ -117,9 +123,9 @@ let connections = factory('connections')
 export default {
   name: 'Database',
 
-  // components: {
-  // 	DatabaseForm
-  // },
+  components: {
+    RecycleScroller
+  },
 
   props: {
     connection_type: {
