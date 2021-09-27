@@ -53,6 +53,7 @@ export const customNodeConfig = {
           'app.Collection',
           'app.Table',
           'app.HiveNode',
+          'app.HanaNode',
           'app.FieldProcess',
           'app.Script',
           'app.DataFilter',

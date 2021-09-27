@@ -2,7 +2,7 @@
   <el-popover placement="bottom" trigger="hover" @show="activeTab = 'system'">
     <div class="btn" slot="reference" @click="toCenter()">
       <el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
-        <i class="iconfont icon-lingdang"></i>
+        <VIcon>bells</VIcon>
       </el-badge>
     </div>
     <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" type="border-card" @tab-click="tabHandler">
@@ -101,10 +101,12 @@ import ws from '../../api/ws'
 import UserOperation from './UserOperation'
 import { TYPEMAP } from './tyepMap'
 import { mapState } from 'vuex'
+import VIcon from '@/components/VIcon'
 
 export default {
   components: {
-    UserOperation
+    UserOperation,
+    VIcon
   },
   data() {
     return {

@@ -5,7 +5,9 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://backend:3030',
-  test: 'http://192.168.1.181:30891'
+  test: 'http://192.168.1.181:30300'
+  // test: 'http://192.168.1.181:31703'
+  // test: 'http://192.168.1.181:30891'
 }
 let origin
 const { argv } = process
@@ -22,6 +24,8 @@ const proxy = {
   changeOrigin: false
 }
 
+//sass变量
+let varUrl = '~@/styles/var.scss'
 module.exports = {
   assetsDir: 'static',
   lintOnSave: true,
@@ -33,7 +37,6 @@ module.exports = {
       '/oauth/': proxy,
       '/old/': { target: 'http://localhost:8081' },
       '/ws/': {
-        ...proxy,
         ws: true,
         secure: false,
         logLevel: 'debug',
@@ -43,25 +46,13 @@ module.exports = {
   },
   chainWebpack(config) {
     const iconDir = resolve('src/assets/icons/svg')
-
-    // 多页面时会产生多请求预加载，带宽敏感的关闭此配置
-    config.plugins.delete('prefetch')
-
-    // markdown loader
-    config.module
-      .rule('md')
-      .test(/\.md$/)
-      .use('html')
-      .loader('html-loader')
-      .end()
-      .use('markdown')
-      .loader('markdown-loader')
-      .end()
+    const colorIconDir = resolve('src/assets/icons/colorSvg')
 
     // svg loader排除 icon 目录
     config.module
       .rule('svg')
       .exclude.add(resolve(iconDir))
+      .add(resolve(colorIconDir))
       .end()
       .use('svgo-loader')
       .loader('svgo-loader')
@@ -95,6 +86,44 @@ module.exports = {
       })
       .end()
 
+    config.module
+      .rule('color-svg-sprite')
+      .test(/\.svg$/)
+      .include.add(resolve(colorIconDir))
+      .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({
+        symbolId: 'icon-[name]'
+      })
+      .end()
+      .use('svgo-loader')
+      .loader('svgo-loader')
+      .options({
+        plugins: [
+          { name: 'removeStyleElement', active: true },
+          {
+            name: 'removeAttrs',
+            active: true,
+            params: {
+              attrs: ['class', 'p-id']
+            }
+          }
+        ]
+      })
+      .end()
+
+    // markdown loader
+    config.module
+      .rule('md')
+      .test(/\.md$/)
+      .use('html')
+      .loader('html-loader')
+      .end()
+      .use('markdown')
+      .loader('markdown-loader')
+      .end()
+
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('src/_packages/tapdata-web-core'))
   },
   configureWebpack: config => {
@@ -118,6 +147,13 @@ module.exports = {
         //打包文件大小配置
         maxEntrypointSize: 10000000,
         maxAssetSize: 30000000
+      }
+    }
+  },
+  css: {
+    loaderOptions: {
+      scss: {
+        additionalData: `@import "${varUrl}";`
       }
     }
   }

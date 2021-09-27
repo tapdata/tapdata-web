@@ -1,5 +1,4 @@
 <template>
-  <!--TODO 代码合并遇到冲突过多，留意此文件出现的问题！！！-->
   <section class="connection-list-wrap">
     <TablePage
       ref="table"
@@ -23,7 +22,7 @@
             </ElOption>
           </ElSelect>
         </li>
-        <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')" class="item">
+        <li class="item">
           <el-select
             v-model="searchParams.databaseModel"
             clearable
@@ -35,7 +34,7 @@
             </el-option>
           </el-select>
         </li>
-        <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')" class="item">
+        <li class="item">
           <el-select
             v-model="searchParams.databaseType"
             clearable
@@ -102,16 +101,6 @@
               <img :src="getImgByType(scope.row.database_type)" />
             </div>
             <div class="database-text">
-              <!-- TODO: 缺少分类tag -->
-              <!-- <span class="name" @click="preview(scope.row.id, scope.row.database_type)"
-								>{{ scope.row.name }}
-								<span class="tag" v-if="scope.row.listtags && scope.row.listtags.length > 0">{{
-									formatterListTags(scope.row)
-								}}</span></span
-							> -->
-              <!-- <div class="user" v-if="scope.row.database_uri">
-								{{ formatterDatabaseType(scope.row) }}
-							</div> -->
               <ElLink
                 type="primary"
                 style="display: block; line-height: 20px"
@@ -145,7 +134,7 @@
               </span>
             </span>
             <span class="warning" v-if="['testing'].includes(scope.row.status)">
-              <i class="connections-status__icon el-icon-loading"></i>
+              <VIcon class="connections-status__icon">loading-circle</VIcon>
               <span>
                 {{ $t('connection.status.testing') }}
               </span>
@@ -158,17 +147,15 @@
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
       </el-table-column>
-      <el-table-column v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'" width="160">
+      <el-table-column width="160">
         <div slot="header">
-          {{ $t('connection.connectionSource') }}
-          <TableFilter
-            v-model="searchParams.sourceType"
-            :options="sourceTypeOptions"
-            @input="table.fetch(1)"
-          ></TableFilter>
+          {{ $t('connection_list_column_schema_status') }}
+          <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
+            <VIcon>question-circle</VIcon>
+          </ElTooltip>
         </div>
         <template slot-scope="scope">
-          {{ scope.row.connectionSource }}
+          <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
       </el-table-column>
       <el-table-column :label="$t('connection.lastUpdateTime')" width="160" prop="last_updated" sortable="custom">
@@ -225,9 +212,9 @@
   </section>
 </template>
 <script>
+import SchemaProgress from 'web-core/components/SchemaProgress'
 import TablePage from '@/components/TablePage'
-import TableFilter from '@/components/TableFilter'
-
+import VIcon from '@/components/VIcon'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import { defaultModel, verify, desensitization } from './util'
@@ -236,7 +223,7 @@ import Test from './Test'
 let timeout = null
 
 export default {
-  components: { TablePage, TableFilter, DatabaseTypeDialog, Preview, Test },
+  components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress },
   data() {
     return {
       user_id: this.$cookie.get('user_id'),
@@ -290,7 +277,7 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira',
+        // 'jira',
         'dameng',
         'hive',
         'gbase-8s',
@@ -304,7 +291,10 @@ export default {
         'mq',
         'hbase',
         'kudu',
-        'greenplum'
+        'greenplum',
+        'tidb',
+        'hana',
+        'clickhouse'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -350,11 +340,9 @@ export default {
       '</a>'
     this.description = this.$t('connection.desc') + guideDoc
     //定时轮询
-    if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs') {
-      timeout = setInterval(() => {
-        this.table.fetch(null, 0, true)
-      }, 10000)
-    }
+    timeout = setInterval(() => {
+      this.table.fetch(null, 0, true)
+    }, 10000)
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -447,10 +435,6 @@ export default {
         })
       ]).then(([countRes, res]) => {
         let list = res.data
-        // dfs添加检测方法：测试中
-        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-          this.reloadDataOnTesting(list)
-        }
         return {
           total: countRes.data.count,
           data: list.map(item => {
@@ -590,11 +574,7 @@ export default {
           .catch(({ response }) => {
             let msg = response && response.msg
             if (msg && (msg.jobs || msg.modules)) {
-              if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-                this.$message.error(this.$t('connection.dfs_cannot_delete_remind'))
-              } else {
-                this.$message.error(this.$t('connection.cannot_delete_remind'))
-              }
+              this.$message.error(this.$t('connection.cannot_delete_remind'))
               // const h = this.$createElement;
               // this.$message.error(
               // 	h('div', {}, [
@@ -688,38 +668,22 @@ export default {
         localStorage.setItem('connectionDatabaseType', type)
       }
     },
+
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
-      //drs 检查实例是否可用 dfs 检查agent是否可用
-      // this.dialogDatabaseTypeVisible = true
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-        this.dialogDatabaseTypeVisible = true
-      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        let result = await this.$api('tcm').getAgentCount()
-        if (!result.data || !result.data.agentTotalCount || result.data.agentTotalCount <= 0) {
-          this.$message.error('您尚未订购同步实例，请先订购实例')
-        } else {
-          this.dialogDatabaseTypeVisible = true
-        }
+      this.dialogDatabaseTypeVisible = true
+      let result = await this.$api('Workers').getAvailableAgent()
+      if (!result.data.result || result.data.result.length === 0) {
+        this.$message.error(this.$t('dataForm.form.agentMsg'))
       } else {
-        let result = await this.$api('Workers').getAvailableAgent()
-        if (!result.data.result || result.data.result.length === 0) {
-          this.$message.error(this.$t('dataForm.form.agentMsg'))
-        } else {
-          this.dialogDatabaseTypeVisible = true
-        }
+        this.dialogDatabaseTypeVisible = true
       }
     },
     async testConnection(item) {
       let result = await this.$api('Workers').getAvailableAgent()
       if (!result.data.result || result.data.result.length === 0) {
-        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-          this.$message.error(this.$t('dataForm.form.agentConnectionMsg'))
-          return
-        } else {
-          this.$message.error(this.$t('dataForm.form.agentMsg'))
-          return
-        }
+        this.$message.error(this.$t('dataForm.form.agentMsg'))
+        return
       }
       let loading = this.$loading()
       this.testData = Object.assign({}, defaultModel['default'], item)
@@ -741,10 +705,7 @@ export default {
           )
         )
         .then(() => {
-          if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
-            //企业版跟DFS都有弹出框
-            this.dialogTestVisible = true
-          }
+          this.dialogTestVisible = true
           this.$refs.test.start()
           this.table.fetch()
         })

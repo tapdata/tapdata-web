@@ -1,7 +1,6 @@
 <template>
   <div class="database-link nodeStyle">
     <!--    <head class="head">-->
-    <!--      <span @click="hanleClose" class="headIcon iconfont icon-you2" type="primary"></span>-->
     <!--      <span class="txt">{{ $t('editor.cell.link.mappingRelations') }}</span>-->
     <!--    </head>-->
     <div class="nodeBody">
@@ -48,6 +47,38 @@
             <el-checkbox v-model="model.selectSourceDatabase.function" :disabled="mysqlDisable">Function</el-checkbox>
             <el-checkbox v-model="model.selectSourceDatabase.procedure" :disabled="mysqlDisable">Procedure</el-checkbox>
           </el-form-item>
+          <el-form-item>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <span class="span-label">{{ $t('dag_data_node_label_database_link_table') }}</span>
+                <el-select v-model="model.tableNameTransform" size="mini">
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
+                    value="toUpperCase"
+                  ></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
+                    value="toLowerCase"
+                  ></el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="12">
+                <span class="span-label">{{ $t('dag_data_node_label_database_link_field') }}</span>
+                <el-select v-model="model.fieldsNameTransform" size="mini">
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
+                    value="toUpperCase"
+                  ></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
+                    value="toLowerCase"
+                  ></el-option>
+                </el-select>
+              </el-col>
+            </el-row>
+          </el-form-item>
           <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
             <el-select v-model="model.dropType" size="mini">
               <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
@@ -65,6 +96,20 @@
           <div class="box-text">
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
+              <FieldMapping
+                ref="fieldMapping"
+                class="fr"
+                mappingType="cluster-clone"
+                v-if="showFieldMapping"
+                :dataFlow="dataFlow"
+                :showBtn="true"
+                :stageId="stageId"
+                :hiddenFieldProcess="false"
+                :selectSourceArr="model.selectSourceArr"
+                :isFirst="model.isFirst"
+                @update-first="returnModel"
+                @returnFieldMapping="returnFieldMapping"
+              ></FieldMapping>
               <el-button class="e-button" size="mini" :disabled="model.selectSourceDatabase.view" @click="handDialog">{{
                 $t('dataFlow.changeName')
               }}</el-button>
@@ -91,7 +136,16 @@
               <span class="box" slot-scope="{ option }">
                 <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
                 <!-- :class="[{ active: option.label !== option.key }, 'text']" -->
-                <span :title="option.label">{{ option.label }}</span>
+                <!-- <span :title="option.label">{{ option.label }}</span> -->
+                <span
+                  v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
+                  >{{ option.label.toLowerCase() }}</span
+                >
+                <span
+                  v-else-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toUpperCase'"
+                  >{{ option.label.toUpperCase() }}</span
+                >
+                <span v-else>{{ option.label }}</span>
                 <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span>
                 <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
@@ -103,6 +157,7 @@
               <MqTransfer
                 v-model="mqActiveData"
                 :source="sourceData"
+                :tableNameTransform="model.tableNameTransform"
                 :table_prefix="model.table_prefix"
                 :table_suffix="model.table_suffix"
               ></MqTransfer>
@@ -198,6 +253,19 @@
         <el-button type="primary" @click="confirm">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      width="85%"
+      title="映射配置"
+      :visible.sync="dialogFieldProcessVisible"
+      :modal-append-to-body="false"
+      custom-class="database-filed-mapping-dialog"
+      :close-on-click-modal="false"
+      v-if="dialogFieldProcessVisible"
+    >
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
+      </div>
+    </el-dialog>
     <!-- <el-dialog
 			:title="$t('message.modifyName')"
 			:visible.sync="modifyNameDialog"
@@ -205,7 +273,7 @@
 			:close-on-click-modal="false"
 		>
 			<el-form>
-				<el-form-item :label="$t('message.modifyName')">
+				<el-form-item :label="$t('message.modifyName')">+
 					<el-input
 						v-model="databaseName"
 						autocomplete="off"
@@ -227,11 +295,13 @@ import _ from 'lodash'
 import log from '../../../log'
 import factory from '../../../api/factory'
 import MqTransfer from './mqTransfer'
+import FieldMapping from '@/components/FieldMapping'
+// import { ALLOW_FIELD_MAPPING } from '../../constants'
 let connections = factory('connections')
 let editorMonitor = null
 export default {
   name: 'databaseLink',
-  components: { MqTransfer },
+  components: { MqTransfer, FieldMapping },
   data() {
     return {
       mysqlDisable: false,
@@ -259,10 +329,17 @@ export default {
         table_suffix: '',
         dropType: 'no_drop',
         type: 'databaseLink',
+        tableNameTransform: 'noOperation',
+        fieldsNameTransform: 'noOperation',
         selectSourceArr: [],
         topicData: [],
         queueData: [],
+        field_process: [], //字段处理器
         transferFlag: false,
+        isFirst: true, //初始值
+        scope: '',
+        dataFlow: '',
+        stageId: '',
 
         selectSourceDatabase: {
           table: true,
@@ -273,7 +350,13 @@ export default {
       },
       topicSelected: [],
 
-      titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')]
+      titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
+      //表设置
+      fieldMappingNavData: '',
+      fieldMappingTableData: '',
+      dialogFieldProcessVisible: false,
+      scope: '',
+      showFieldMapping: false
     }
   },
 
@@ -290,11 +373,17 @@ export default {
       handler() {
         this.$emit('dataChanged', this.getData())
       }
+    },
+    'model.tableNameTransform': {
+      deep: true,
+      handler(val) {
+        this.model.tableNameTransform = val
+      }
     }
   },
-
   methods: {
     setData(data, cell, isSourceDataNode, vueAdapter) {
+      this.scope = vueAdapter?.editor?.scope
       if (data) {
         _.merge(this.model, data)
         // this.model.selectSourceDatabase = data.selectSourceDatabase;
@@ -318,13 +407,18 @@ export default {
             procedure: false
           }
         }
+        //获取目标节点ID
+        this.stageId = targetCell.id || ''
         // 获取目标节点的数据显示右侧选择表
-        if (targetCell && this.model.selectSourceArr.length === 0) {
-          let targetFormData = targetCell.getFormData()
-          let selectTargetType = []
 
+        let targetFormData = targetCell && targetCell.getFormData()
+        let selectTargetType = []
+        if (targetFormData && targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
+          this.model.transferFlag = true
+        }
+        if (targetCell && this.model.selectSourceArr.length === 0) {
           if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
-            this.model.transferFlag = true
+            // this.model.transferFlag = true
             this.mqActiveData.topicData = data.topicData
             this.mqActiveData.queueData = data.queueData
           }
@@ -351,21 +445,23 @@ export default {
 
       editorMonitor = vueAdapter.editor
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
+      this.getDataFlow()
+      //是否显示字段推演
+      let param = {
+        stages: this.dataFlow?.stages,
+        stageId: this.stageId
+      }
+      this.$api('DataFlows')
+        .tranModelVersionControl(param)
+        .then(data => {
+          this.showFieldMapping = data?.data[this.stageId]
+        })
 
       // if (!this.configJoinTable) return
     },
 
     getData() {
       let result = JSON.parse(JSON.stringify(this.model))
-      // console.log(this.model)
-      // let includeTables = []
-      // for (let i = 0; i < this.sourceData.length; i++) {
-      //   for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-      //     if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-      //       includeTables.push(this.sourceData[i].key)
-      //     }
-      //   }
-      // }
       if (this.cell) {
         let targetCell = this.cell.getTargetCell()
         if (targetCell && targetCell.getFormData()) {
@@ -375,6 +471,8 @@ export default {
             targetFormData.dropType = this.model.dropType
             targetFormData.table_prefix = this.model.table_prefix
             targetFormData.table_suffix = this.model.table_suffix
+            targetFormData.tableNameTransform = this.model.tableNameTransform
+            targetFormData.fieldNameTransform = this.model.fieldNameTransform
             targetFormData.syncObjects = []
             if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
               targetFormData.syncObjects = [
@@ -402,7 +500,7 @@ export default {
           }
         }
       }
-
+      this.getDataFlow()
       return result
     },
 
@@ -442,6 +540,9 @@ export default {
       //   }
       // })
       // this.preFixSuffixData()
+
+      //前后缀 表名改动 需要清空字段处理器
+      this.model.field_process = []
     },
 
     // 穿梭框搜索
@@ -467,37 +568,10 @@ export default {
 
     // 添加前后缀数据处理
     preFixSuffixData() {
-      // if (
-      //   this.sourceData &&
-      //   this.sourceData.length &&
-      //   this.model.selectSourceArr.length
-      // ) {
-      //   let selectSourceArr = []
-      //   this.model.selectSourceArr = Array.from(
-      //     new Set(this.model.selectSourceArr)
-      //   )
-      //   this.sourceData.forEach(sourceName => {
-      //     this.model.selectSourceArr.map(k => {
-      //       if (k == sourceName.key) {
-      //         selectSourceArr.push(k)
-      //       }
-      //     })
-      //   })
-      //   this.model.selectSourceArr = selectSourceArr
-
-      //   for (let i = 0; i < this.sourceData.length; i++) {
-      //     for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-      //       if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-      //         this.sourceData[i].label =
-      //           this.model.table_prefix +
-      //           this.sourceData[i].key +
-      //           this.model.table_suffix
-      //       }
-      //     }
-      //   }
-      // }
       this.mqActiveData.table_prefix = this.model.table_prefix
       this.mqActiveData.table_suffix = this.model.table_suffix
+      //前后缀 表名改动 需要清空字段处理器
+      this.model.field_process = []
     },
 
     // 还原
@@ -506,17 +580,21 @@ export default {
       this.model.table_prefix = ''
       this.mqActiveData.table_prefix = ''
       this.mqActiveData.table_suffix = ''
-      // if (this.sourceData.length) {
-      //   for (let i = 0; i < this.sourceData.length; i++) {
-      //     for (let k = 0; k < this.model.selectSourceArr.length; k++) {
-      //       if (this.sourceData[i].key === this.model.selectSourceArr[k]) {
-      //         this.sourceData[i].label = this.sourceData[i].key
-      //       }
-      //     }
-      //   }
-      // }
+      //前后缀 表名改动 需要清空字段处理器
+      this.model.field_process = []
     },
-
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    returnFieldMapping(field_process) {
+      this.model.field_process = field_process
+      console.log(this.model.field_process)
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
+    },
     // 获取表名称
     loadDataModels(connectionId) {
       let self = this
@@ -566,7 +644,6 @@ export default {
           this.transferLoading = false
         })
     }
-
     // 修改名称弹窗返回
     // confirmName() {
     // 	let self = this;
@@ -611,6 +688,10 @@ export default {
   }
   .e-form {
     height: 100%;
+    .span-label {
+      font-size: 12px;
+      color: #606266;
+    }
     .database-tableBox {
       padding-top: 10px;
       height: calc(100% - 140px);
@@ -624,6 +705,7 @@ export default {
         h3 {
           color: #606266;
         }
+
         .box-btn {
           color: #409eff;
           cursor: pointer;
@@ -782,7 +864,17 @@ export default {
     }
   }
 }
-.databaseLinkDialog {
+.database-filed-mapping-dialog {
+  height: 800px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  .el-dialog__body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
   .e-row {
     padding: 0 50px;
   }

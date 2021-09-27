@@ -120,7 +120,7 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira',
+        // 'jira',
         'dameng',
         'hive',
         'gbase-8s',
@@ -132,7 +132,10 @@ export default {
         'gridfs',
         'mq',
         'tcp_udp',
-        'greenplum'
+        'greenplum',
+        'tidb',
+        'hana',
+        'clickhouse'
       ] //目前白名单,
     }
   },

@@ -51,13 +51,20 @@ export const memCacheConfig = {
         data = data || this.getFormData()
         let name = this.attr('label/text')
         log('MemCache Formdata')
-        if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
-        if (!data.cacheName) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.cacheName.none')}`)
-        if (!data.cacheKeys) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.cacheKeys.none')}`)
-        if (data.maxSize !== 0 && !data.maxSize)
+        if (!data) {
+          throw new Error(`${name}: ${i18n.t('editor.cell.validate.none_setting')}`)
+        } else if (!data.cacheName) {
+          console.log('(&&&&&&&&&&&&&&)')
+          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.cacheName.none')}`)
+        } else if (!data.cacheKeys) {
+          console.log('##############')
+          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.cacheKeys.none')}`)
+        } else if (data.maxSize !== 0 && !data.maxSize) {
           throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.maxSize.none')}`)
-        if (data.maxRows !== 0 && !data.maxRows)
+        } else if (data.maxRows !== 0 && !data.maxRows) {
           throw new Error(`${name}: ${i18n.t('editor.cell.data_node.memCache.form.maxRows.none')}`)
+        }
+
         return true
       },
 

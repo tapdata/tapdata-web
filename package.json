@@ -28,6 +28,8 @@
     "dagre": "^0.8.5",
     "echarts": "^4.6.0",
     "element-ui": "^2.15.1",
+    "escodegen": "^2.0.0",
+    "esprima": "^4.0.1",
     "github-markdown-css": "^4.0.0",
     "graphlib": "^2.1.8",
     "highlight.js": "^11.0.1",
@@ -38,7 +40,8 @@
     "mavon-editor": "^2.9.0",
     "moment": "^2.24.0",
     "monaco-editor": "0.23.0",
-    "vue": "^2.6.11",
+    "nanoid": "^3.1.25",
+    "vue": "^2.6.14",
     "vue-bus": "^1.2.1",
     "vue-clipboard2": "^0.3.1",
     "vue-cookie": "^1.1.4",
@@ -58,7 +61,7 @@
     "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-dynamic-import-node": "^2.3.3",
-    "compression-webpack-plugin": "^5.0.1",
+    "compression-webpack-plugin": "~5.0.1",
     "cross-env": "^7.0.3",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
@@ -82,6 +85,9 @@
     "pre-commit": "lint-staged",
     "post-merge": "git submodule update",
     "post-checkout": "git submodule update"
+  },
+  "resolutions": {
+    "vue": "^2.6.14"
   },
   "lint-staged": {
     "*.{js,jsx,vue}": [

@@ -1,9 +1,9 @@
 <template>
-  <History :remoteMethod="search" @row-click="rowClickHandler"></History>
+  <History style="margin: 0" :remoteMethod="search" @row-click="rowClickHandler"></History>
 </template>
 
 <script>
-import History from 'web-core/views/verification/history.vue'
+import History from './old/history.vue'
 export default {
   components: {
     History
@@ -21,10 +21,15 @@ export default {
         return [countRes.data, res.data]
       })
     },
-    rowClickHandler(id) {
+    rowClickHandler(item) {
       let url = ''
+      let id = item.id
+      let routeName = 'dataVerifyResult'
+      if (this.$route.name === 'VerifyDiffHistory') {
+        routeName = 'VerifyDiffDetails'
+      }
       let route = this.$router.resolve({
-        name: 'dataVerifyResult',
+        name: routeName,
         params: {
           id
         }

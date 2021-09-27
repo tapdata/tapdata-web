@@ -3,7 +3,7 @@
     :title="$t('connection.createNewDataSource')"
     :visible="dialogVisible"
     :append-to-body="true"
-    width="770px"
+    width="730px"
     :before-close="handleClose"
   >
     <ConnectionTypeSelector
@@ -48,14 +48,17 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira',
+        // 'jira',
         'mq',
         'dameng',
         'hive',
         'tcp_udp',
         'hbase',
         'kudu',
-        'greenplum'
+        'greenplum',
+        'tidb',
+        'hana',
+        'clickhouse'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],

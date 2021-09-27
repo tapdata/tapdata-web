@@ -177,11 +177,29 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-greenplum.svg',
       stencilImage: 'static/editor/greenplum.svg'
     },
+    tidb: {
+      type: 'tidb',
+      name: 'TiDB',
+      shapeImage: 'static/editor/o-tidb.svg',
+      stencilImage: 'static/editor/tidb.svg'
+    },
+    hana: {
+      type: 'hana',
+      name: 'SPA Hana',
+      shapeImage: 'static/editor/o-hana.svg',
+      stencilImage: 'static/editor/hana.svg'
+    },
     hive: {
       type: 'hive',
       name: 'Hive',
       shapeImage: 'static/editor/o-hive.svg',
       stencilImage: 'static/editor/hive.svg'
+    },
+    clickhouse: {
+      type: 'clickhouse',
+      name: 'ClickHouse',
+      shapeImage: 'static/editor/o-click.svg',
+      stencilImage: 'static/editor/click.svg'
     }
   },
   FILE_TYPE_MAPPING = {
@@ -209,4 +227,17 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/o-json.svg',
       stencilImage: 'static/editor/json.svg'
     }
-  }
+  },
+  ALLOW_FIELD_MAPPING = [
+    'hive',
+    'mssql',
+    'mysql',
+    'mysql_pxc',
+    'mariadb',
+    'oracle',
+    'dameng',
+    'postgres',
+    'kafka',
+    'mongodb',
+    'clickhouse'
+  ]

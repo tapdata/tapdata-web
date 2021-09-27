@@ -87,7 +87,9 @@ export default class Editor extends BaseObject {
     'app.Dummy': 'connectionId',
     'app.GridFSNode': 'connectionId',
     'app.ApiNode': 'connectionId',
-    'app.HiveNode': 'connectionId'
+    'app.HiveNode': 'connectionId',
+    'app.HanaNode': 'connectionId',
+    'app.DamengNode': 'connectionId'
   }
 
   /**

@@ -115,6 +115,10 @@ export const databaseConfig = {
        * @return {boolean}
        */
       allowTarget(targetCell, sourceCell) {
+        // DM 不允许作为源
+        if (['dameng'].includes(sourceCell?.attributes?.form_data?.database_type)) {
+          return false
+        }
         if (sourceCell?.attributes?.form_data?.database_type === 'elasticsearch') {
           return ['kafka'].includes(targetCell?.attributes?.form_data?.database_type)
         }
@@ -148,7 +152,7 @@ export const databaseConfig = {
         // sourceCell 拖动的时候会产生一条outLink,但是没有target.id，以此来限制当节点有目标时，不允许再去连接其他目标
         return (
           ['app.Database'].includes(sourceCell.get('type')) &&
-          !['hive'].includes(databaseType) &&
+          !['hive', 'hana', 'clickhouse'].includes(databaseType) &&
           !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type) &&
           outLinks.length === 1 &&
           !outLinks[0].attributes.target.id

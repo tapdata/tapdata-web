@@ -30,7 +30,7 @@
           >
             <span>{{ down.name }}</span>
             <span class="choose" v-if="downLoadType === down.value">
-              <i class="el-icon-upload-success el-icon-check"></i>
+              <VIcon class="color-success">check</VIcon>
             </span>
           </div>
         </div>
@@ -107,7 +107,6 @@
       </section>
       <span slot="footer" class="dialog-footer">
         <!-- <el-button type="primary" size="mini" @click="handleRefresh">
-					<i class="el-icon-loading" v-if="refreshLoading"></i>
 					{{ $t('dialog.downAgent.refresh') }}</el-button
 				> -->
         <template v-if="downLoadNum < 1">
@@ -153,7 +152,6 @@
       <span slot="footer" class="dialog-footer">
         <!-- <span class="operaKey" @click="handleRefresh">
 					<i class="iconfont icon-shuaxin3 clickIcont" v-if="refreshLoading"></i>
-					<i class="el-icon-loading" v-else></i>
 					{{ $t('dialog.downAgent.refresh') }}
 				</span> -->
         <el-button class="e-button" type="primary" size="mini" @click="closeSuccessDialog">{{
@@ -185,9 +183,11 @@
 </template>
 <script>
 import factory from '@/api/factory'
+import VIcon from '@/components/VIcon'
 const cluster = factory('cluster')
 export default {
   name: 'agentDown',
+  components: { VIcon },
   props: {
     // downLoadNum: {
     // 	type: Number

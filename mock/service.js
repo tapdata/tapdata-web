@@ -17,11 +17,7 @@ module.exports = Object.assign({}, dataflow, {
         database_username: '',
         database_port: Random.integer(0, 5000),
         database_uri: () => {
-          return (
-            'mongodb://192.168.1.191:' +
-            Random.integer(0, 5000) +
-            '/tapdata_test'
-          )
+          return 'mongodb://192.168.1.191:' + Random.integer(0, 5000) + '/tapdata_test'
         },
         database_name: '',
         id: '@id',
@@ -38,7 +34,7 @@ module.exports = Object.assign({}, dataflow, {
         user_id: '@id',
         last_updated: Random.datetime(),
         loadCount: Random.integer(0, 100),
-        'loadFieldsStatus|1': ['loading', 'finished'],
+        'loadFieldsStatus|1': ['loading', 'finished', 'error'],
         tableCount: Random.integer(0, 100),
         username: '@name'
       }
@@ -1504,16 +1500,7 @@ module.exports = Object.assign({}, dataflow, {
         id: '@guid',
         last_updated: '2021-06-18T07:25:46.688Z',
         'modular|1': ['connection', 'sync'],
-        'operation|1': [
-          'create',
-          'update',
-          'copy',
-          'delete',
-          'start',
-          'reset',
-          'stop',
-          'forceStop'
-        ],
+        'operation|1': ['create', 'update', 'copy', 'delete', 'start', 'reset', 'stop', 'forceStop'],
         parameter1: '@name',
         parameter2: '',
         parameter3: '',

@@ -1,7 +1,7 @@
 <template>
   <div class="kafkaNode nodeStyle">
     <head>
-      <span class="headIcon iconfont icon-you2" type="primary"></span>
+      <VIcon class="headIcon color-primary">arrow-right-circle</VIcon>
       <span class="txt">{{ $t('editor.nodeSettings') }}</span>
     </head>
     <div class="nodeBody">
@@ -109,7 +109,7 @@
 						size="mini"
 					></el-input>
 				</el-form-item> -->
-        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="kafkaPartitionKey">
+        <!-- <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="kafkaPartitionKey">
           <el-select
             v-model="model.partitionId"
             default-first-option
@@ -124,7 +124,7 @@
               v-bind:key="idx"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item
           v-if="dataNodeInfo.isTarget"
@@ -150,20 +150,51 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item :label="$t('dag_data_node_label_kafka_high_performance_mode')" prop="performanceMode">
+          <el-switch
+            v-model="model.performanceMode"
+            :active-text="model.performanceMode ? $t('dataFlow.yes') : $t('dataFlow.no')"
+          >
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="partitionIdSet">
+          <el-select
+            v-model="model.partitionIdSet"
+            default-first-option
+            clearable
+            :multiple="model.performanceMode"
+            :disabled="model.performanceMode"
+            :placeholder="$t('message.placeholderSelect') + 'Partition ID'"
+            size="mini"
+          >
+            <el-option v-for="(item, idx) in partitionSet" :label="item" :value="item" v-bind:key="idx"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
     </div>
-    <div class="e-entity-wrap" style="text-align: center; overflow: auto">
+    <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
       <el-button
-        class="fr marR20"
+        class="fr"
         type="success"
         size="mini"
-        v-if="model.connectionId && model.tableName"
+        v-if="!dataNodeInfo.isTarget || !showFieldMapping"
         @click="hanlderLoadSchema"
       >
-        <i class="el-icon-loading" v-if="reloadModelLoading"></i>
+        <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
         <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
         <span v-else>{{ $t('dataFlow.updateModel') }}</span>
       </el-button>
+      <FieldMapping
+        v-else
+        :dataFlow="dataFlow"
+        :showBtn="true"
+        :isFirst="model.isFirst"
+        @update-first="returnModel"
+        :hiddenFieldProcess="true"
+        :stageId="stageId"
+        ref="fieldMapping"
+        class="fr"
+      ></FieldMapping>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
     <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
@@ -183,13 +214,16 @@ import Entity from '../link/Entity'
 import { convertSchemaToTreeData } from '../../util/Schema'
 import ClipButton from '@/components/ClipButton'
 import CreateTable from '@/components/dialog/createTable'
+import VIcon from '@/components/VIcon'
+import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
+// import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 const connections = factory('connections')
 // let editorMonitor = null;
 export default {
   name: 'ApiNode',
-  components: { Entity, ClipButton, CreateTable },
+  components: { Entity, ClipButton, CreateTable, VIcon, FieldMapping },
   data() {
     return {
       disabled: false,
@@ -229,10 +263,16 @@ export default {
         connectionId: '',
         type: 'kafka',
         tableName: '',
-        partitionId: '',
-        kafkaPartitionKey: ''
-        // primaryKeys: ''
+        // partitionId: [],
+        kafkaPartitionKey: '',
+        isFirst: true,
+        performanceMode: false,
+        partitionIdSet: []
       },
+      scope: '',
+      dataFlow: '',
+      stageId: '',
+      showFieldMapping: false,
       schemasLoading: false,
       mergedSchema: null,
       dataNodeInfo: {}
@@ -302,6 +342,12 @@ export default {
           }
         }
       }
+    },
+    'model.performanceMode': {
+      immediate: true,
+      handler(val) {
+        this.model.partitionIdSet = val ? this.partitionSet : []
+      }
     }
   },
 
@@ -357,8 +403,15 @@ export default {
         })
     },
 
-    setData(data, cell, dataNodeInfo) {
+    setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        if (!data.performanceMode) {
+          data.partitionIdSet = data.partitionIdSet && data.partitionIdSet[0]
+        }
+
+        this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
+        this.getDataFlow()
         if (typeof data.kafkaPartitionKey === 'string') {
           if (!data.kafkaPartitionKey) {
             data.kafkaPartitionKey = []
@@ -367,12 +420,23 @@ export default {
           }
         }
         _.merge(this.model, data)
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.stageId]
+          })
       }
       this.mergedSchema = cell.getOutputSchema()
       this.tableList = this.mergedSchema?.fields || []
       this.partitionSet = this.mergedSchema?.partitionSet || []
+
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
+        this.getDataFlow()
       })
       this.dataNodeInfo = dataNodeInfo || {}
       // editorMonitor = vueAdapter.editor;
@@ -381,11 +445,15 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Kafka'
-      if (this.dataNodeInfo.isTarget) {
-        delete result.partitionId
-      } else {
-        delete result.kafkaPartitionKey
+
+      if (!result.performanceMode) {
+        if (!result.partitionIdSet) {
+          result.partitionIdSet = []
+        } else if (result.partitionIdSet && !(result.partitionIdSet instanceof Array)) {
+          result.partitionIdSet =  [result.partitionIdSet]
+        }
       }
+
       if (result.kafkaPartitionKey instanceof Array) {
         result.kafkaPartitionKey = result.kafkaPartitionKey.join(',')
       }
@@ -452,6 +520,14 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
 
     // seeMonitor() {

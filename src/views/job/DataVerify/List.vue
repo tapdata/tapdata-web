@@ -1,7 +1,9 @@
 <template>
   <div class="data-verify" v-loading="loading">
     <div class="back-btn-box">
-      <el-button class="back-btn-icon-box" @click="GoBack"><i class="iconfont icon-you2 back-btn-icon"></i></el-button>
+      <el-button class="back-btn-icon-box" @click="GoBack">
+        <VIcon class="back-btn-icon">arrow-right-circle</VIcon>
+      </el-button>
       <span class="back-btn-text">{{ $t('dataVerify.dataVerify') }}</span>
     </div>
     <div class="operation">
@@ -283,10 +285,12 @@ import getUrlSearch from './getUrlSearch'
 const dataFlows = factory('DataFlows')
 import { DEFAULT_DATAVERIFY } from './constants'
 import _ from 'lodash'
+import VIcon from '@/components/VIcon'
 
 export default {
   components: {
-    Drawer
+    Drawer,
+    VIcon
   },
   data() {
     return {

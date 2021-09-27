@@ -9,7 +9,7 @@
             :class="[{ active: activeStep >= index }, { 'color-primary': activeStep >= index }]"
           >
             <span class="step-index">
-              <i v-if="activeStep > index" class="el-icon-check"></i>
+              <VIcon v-if="activeStep > index">check</VIcon>
               <span v-else>{{ index + 1 }}</span>
             </span>
             <span>{{ step.text }}</span>
@@ -151,9 +151,10 @@ import { SETTING_MODEL, DATASOURCE_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } 
 import { uuid } from '../../editor/util/Schema'
 import { TYPEMAP } from '../connections/util'
 import * as moment from 'moment'
+import VIcon from '@/components/VIcon'
 let defaultConfig = []
 export default {
-  components: { Transfer, DatabaseTypeDialog },
+  components: { Transfer, DatabaseTypeDialog, VIcon },
   data() {
     return {
       id: '',
@@ -1220,9 +1221,6 @@ export default {
       font-size: 12px;
       &.invalid {
         color: #f56c6c;
-        .el-icon-error {
-          display: inline-block;
-        }
       }
       &.ready {
         color: #67c23a;

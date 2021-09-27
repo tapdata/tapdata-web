@@ -283,18 +283,29 @@
           :mergedSchema="defaultSchema"
         ></queryBuilder>
       </el-form>
-      <div class="e-entity-wrap" style="text-align: center">
+      <div class="e-entity-wrap" style="text-align: center" v-if="model.connectionId && model.tableName">
         <el-button
           class="fr"
           type="success"
           size="mini"
-          v-if="model.connectionId && model.tableName"
+          v-if="!dataNodeInfo.isTarget || !showFieldMapping"
           @click="hanlderLoadSchema"
         >
-          <i class="el-icon-loading" v-if="reloadModelLoading"></i>
+          <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
           <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
           <span v-else>{{ $t('dataFlow.updateModel') }}</span>
         </el-button>
+        <FieldMapping
+          v-else
+          :dataFlow="dataFlow"
+          :showBtn="true"
+          :isFirst="model.isFirst"
+          @update-first="returnModel"
+          :hiddenFieldProcess="true"
+          :stageId="stageId"
+          ref="fieldMapping"
+          class="fr"
+        ></FieldMapping>
         <entity
           v-loading="schemaSelectConfig.loading"
           :schema="convertSchemaToTreeData(defaultSchema)"
@@ -351,11 +362,14 @@ import ClipButton from '@/components/ClipButton'
 import queryBuilder from '@/components/QueryBuilder'
 import CreateTable from '@/components/dialog/createTable'
 import AggregationDialog from './aggregationDialog'
+import FieldMapping from '@/components/FieldMapping'
 import { convertSchemaToTreeData, mergeJoinTablesToTargetSchema, removeDeleted, uuid } from '../../util/Schema'
 import Entity from '../link/Entity'
 import _ from 'lodash'
 import ws from '../../../api/ws'
 import factory from '../../../api/factory'
+import VIcon from '@/components/VIcon'
+import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editorMonitor = null;
@@ -377,7 +391,9 @@ export default {
     RelatedTasks,
     CreateTable,
     queryBuilder,
-    AggregationDialog
+    AggregationDialog,
+    VIcon,
+    FieldMapping
   },
   props: {
     database_types: {
@@ -571,6 +587,7 @@ export default {
       },
       dataNodeInfo: {},
       model: {
+        isFirst: true,
         connectionId: '',
         databaseType: 'mongodb',
         tableName: '',
@@ -609,7 +626,11 @@ export default {
       loading: false,
       collectionAggregateTip: true,
       repeatTableDiao: false,
-      repeatTable: []
+      repeatTable: [],
+      scope: '',
+      dataFlow: '',
+      stageId: '',
+      showFieldMapping: false
     }
   },
 
@@ -680,7 +701,7 @@ export default {
 
     // 打开数据目录数据库
     handDatabase() {
-      let href = '/#/metadataInstances/' + this.databaseData[0].id
+      let href = '/#/metadataDetails?id=' + this.databaseData[0].id
       window.open(href)
     },
 
@@ -690,7 +711,7 @@ export default {
       this.tableIsLink()
 
       if (this.tableNameId) {
-        let href = '/#/metadataInstances/' + this.tableNameId
+        let href = '/#/metadataDetails?id=' + this.tableNameId
         window.open(href)
       }
     },
@@ -888,6 +909,9 @@ export default {
     },
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
+        this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
           conds = JSON.parse(JSON.stringify(data.custSql.conditions))
@@ -917,14 +941,23 @@ export default {
         if (data.connectionId) {
           this.loadDataModels(data.connectionId)
         }
-
         this.tableIsLink()
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.stageId]
+          })
       }
 
       this.dataNodeInfo = dataNodeInfo || {}
       this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema())
       cell.on('change:outputSchema', () => {
         this.defaultSchema = mergeJoinTablesToTargetSchema(cell.getSchema(), cell.getInputSchema())
+        this.getDataFlow()
       })
       // editorMonitor = vueAdapter.editor;
       let settingData = vueAdapter.editor.getData().settingData
@@ -1094,6 +1127,14 @@ export default {
       }
 
       this.aggregationDialog = false
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
   }
 }

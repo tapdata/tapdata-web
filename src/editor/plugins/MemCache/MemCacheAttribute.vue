@@ -6,8 +6,20 @@
 					{{ $t('dataFlow.button.viewMonitoring') }}
 				</el-button>
 			</div> -->
-      <el-form class="e-form" label-position="top" label-width="130px" :disabled="disabled" :model="model" ref="form">
-        <el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheName.label')">
+      <el-form
+        class="e-form"
+        label-position="top"
+        label-width="130px"
+        :rules="rules"
+        :disabled="disabled"
+        :model="model"
+        ref="form"
+      >
+        <el-form-item
+          prop="cacheName"
+          :required="true"
+          :label="$t('editor.cell.data_node.memCache.form.cacheName.label')"
+        >
           <el-input
             v-model.trim="model.cacheName"
             size="mini"
@@ -15,12 +27,32 @@
             @input="nameHandler"
           ></el-input>
         </el-form-item>
-        <el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.cacheKeys.label')">
+        <el-form-item
+          prop="cacheKeys"
+          :required="true"
+          :label="$t('editor.cell.data_node.memCache.form.cacheKeys.label')"
+        >
           <MultiSelection
             v-model="model.cacheKeys"
             :options="primaryKeyOptions"
+            @change="handleCacheKey"
             :placeholder="$t('editor.cell.data_node.memCache.form.cacheKeys.placeholder')"
           ></MultiSelection>
+        </el-form-item>
+        <el-form-item :required="true">
+          <div class="e-label" slot="label">
+            <label class="el-form-item__label">{{ $t('dag_data_node_label_memcache_type') }}</label>
+            <el-tooltip effect="dark" :content="$t('dag_data_node_label_memcache_type_tip')" placement="top">
+              <!-- <div style="max-width: 300px" slot="content">
+                {{ $t('dag_data_node_label_memcache_type_tip') }}
+              </div> -->
+              <span class="icon iconfont icon-tishi1" style="padding-left: 5px; vertical-align: bottom"></span>
+            </el-tooltip>
+          </div>
+          <el-radio-group v-model="model.cacheType" size="mini">
+            <el-radio label="all">{{ $t('dag_data_node_label_memcache_type_all') }}</el-radio>
+            <el-radio label="local">{{ $t('dag_data_node_label_memcache_type_local') }}</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item :required="true" :label="$t('editor.cell.data_node.memCache.form.maxSize.label')">
           <el-row :gutter="20">
@@ -128,7 +160,6 @@ import { removeDeleted } from '../../util/Schema'
 // let editorMonitor = null;
 export default {
   name: 'memCache',
-
   components: { MultiSelection },
 
   data() {
@@ -156,16 +187,30 @@ export default {
         }
       ],
       model: {
+        type: 'mem_cache',
         name: '',
         cacheName: '',
+        cacheType: 'all',
         cacheKeys: '',
         maxSize: 50,
-        maxRows: 10000
+        maxRows: 10000,
+        cacheConnectionId: '',
+        cacheTableName: ''
       },
-
+      vueAdapter: null,
       primaryKeyOptions: [],
       maxSizeLimited: 0,
-      maxRowsLimited: 0
+      maxRowsLimited: 0,
+      rules: {
+        cacheName: [
+          { required: true, trigger: 'blur', message: this.$t('editor.cell.data_node.memCache.form.cacheName.none') }
+        ],
+        cacheKeys: {
+          required: true,
+          trigger: 'blur',
+          message: this.$t('editor.cell.data_node.memCache.form.cacheKeys.none')
+        }
+      }
     }
   },
 
@@ -176,10 +221,17 @@ export default {
         this.$emit('dataChanged', this.getData())
       }
     }
+    // 'model.cacheKeys': {
+    //   deep: true,
+    //   handler(val) {
+    //     this.handelDuplicate(this.vueAdapter, '', val)
+    //   }
+    // }
   },
 
   methods: {
-    setData(data, cell) {
+    setData(data, cell, isSourceDataNode, vueAdapter) {
+      this.vueAdapter = vueAdapter
       if (data) {
         _.merge(this.model, data)
         this.setLimited(data.maxSize)
@@ -203,9 +255,151 @@ export default {
             .join(',')
           this.model.cacheKeys = primaryKeys || this.primaryKeyOptions[0] || ''
         }
+
+        // if (!window.App.$route.query.id) {
+        this.handelDuplicate(vueAdapter)
+        // }
       }
+      // this.cacheMap = map
+      // this.config.items.find(it => it.field === 'cacheId').options = cacheList
 
       // editorMonitor = vueAdapter.editor;
+    },
+    // 重复
+    handelDuplicate(vueAdapter, cacheName, cacheKeys) {
+      let dataCells = vueAdapter.editor.getAllCells()
+      let dataflow = vueAdapter.editor.getData()
+      let cacheList = []
+      // 获取当前所有缓存节点数据
+      dataCells.forEach(item => {
+        let attr = item.attributes
+        if (attr.type === 'app.MemCache') {
+          let formData = item.getFormData()
+          cacheList.push({
+            name: cacheName || formData.name,
+            cacheKeys: cacheKeys || formData.cacheKeys,
+            tableName: formData.cacheTableName,
+            connectionId: formData.cacheConnectionId
+          })
+        }
+      })
+      // 判断当前缓存节点是否有重命名或重复键值
+      let nameData = []
+      let keyData = []
+      let keygroupBy = []
+      const map = new Map()
+      cacheList.forEach(v => {
+        if (map.get(v.name) && nameData.every(nD => nD.name != v.name)) {
+          nameData.push(v)
+        } else {
+          map.set(v.name, v)
+        }
+        let key = v.connectionId + v.tableName + v.cacheKeys
+        keygroupBy.push({
+          name: v.name,
+          connectionId: v.connectionId,
+          tableName: v.tableName,
+          cacheKeys: v.cacheKeys,
+          key: key
+        })
+      })
+      // 获取缓存节点同数据源同表同缓存值的值
+      for (let i = 0; i < keygroupBy.length - 1; i++) {
+        for (let j = 0; j < keygroupBy.length - 1; j++) {
+          if (i !== j && keygroupBy[i].key === keygroupBy[j].key) {
+            keyData.push(keygroupBy[i])
+            break
+          }
+        }
+      }
+      if (nameData.length) {
+        let name = []
+        nameData.filter(n => {
+          if (n.name !== this.model.cacheName) {
+            name.push(n.name)
+          }
+        })
+        if (name.length) {
+          this.handleconfirm(name.join(','), dataflow.name)
+        } else {
+          this.handleconfirm(nameData[0].name, dataflow.name)
+        }
+      } else if (keyData.length) {
+        let name = []
+        keyData.filter(n => {
+          if (n.name && n.name !== this.model.cacheName) {
+            name.push(n.name)
+          }
+        })
+        if (name.length) {
+          this.handleconfirm(name.join(','), dataflow.name)
+        }
+      }
+      // handleconfirm(res.data[0].name, res.data[0].name)
+      let where = {
+        or: [
+          { 'stages.type': 'mem_cache', 'stages.name': this.model.name },
+          {
+            'stages.type': 'mem_cache',
+            'stages.cacheKeys': this.model.cacheKeys,
+            'stages.connectionId': this.model.cacheConnectionId,
+            'stages.tableName': this.model.cacheCocacheTableNamennectionId
+          }
+        ]
+      }
+      if (window.App.$route.query.id) {
+        where.id = { neq: window.App.$route.query.id }
+      }
+      let filter = {
+        where
+      }
+
+      this.$api('DataFlows')
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          if (res?.data?.length) {
+            let taskName = res.data.map(name => {
+              return name.name
+            })
+            this.handleconfirm(this.model.cacheName, taskName.join(','))
+          }
+        })
+    },
+    // 改变缓存键
+    handleCacheKey() {
+      this.handelDuplicate(this.vueAdapter, '', this.model.cacheKeys)
+    },
+    // 重复弹窗
+    handleconfirm(name, task) {
+      if (name || task) {
+        const h = this.$createElement
+        let strArr = this.$t('task_job_tip_text').split('xxx')
+        let taskArr = strArr[1].split('###')
+        let msg = h('p', null, [
+          strArr[0],
+          h(
+            'span',
+            {
+              class: 'color-primary'
+            },
+            name
+          ),
+          taskArr[0],
+          h(
+            'span',
+            {
+              class: 'color-primary'
+            },
+            task
+          ),
+          taskArr[1]
+        ])
+        this.$confirm(msg, this.$t('task_job_setting_tip_title'), {
+          type: 'warning'
+        })
+      }
     },
 
     getData() {
@@ -219,6 +413,7 @@ export default {
 
     nameHandler(val) {
       this.model.name = val
+      this.handelDuplicate(this.vueAdapter, val, '')
     },
 
     maxSizeLimitedHandler(value) {

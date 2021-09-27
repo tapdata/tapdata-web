@@ -192,15 +192,18 @@ select {
     font-size: 12px;
   }
 }
-.el-table td,
-.el-table th {
-  padding: 6px 0;
-  font-size: 12px;
-  white-space: nowrap;
-  .cell {
-    white-space: nowrap;
-  }
+.el-table .cell {
+  word-break: break-word;
 }
+// .el-table td,
+// .el-table th {
+//   padding: 6px 0;
+//   font-size: 12px;
+//   white-space: nowrap;
+//   .cell {
+//     white-space: nowrap;
+//   }
+// }
 .el-table th > .cell {
   font-weight: normal;
 }
@@ -245,30 +248,6 @@ input[type='password'] + .el-input__suffix {
   }
 }
 
-$color: (
-  primary: #409eff,
-  lprimary: #66b1ff,
-  success: #67c23a,
-  lsuccess: #85ce61,
-  danger: #f56c6c,
-  warning: #e6a23c,
-  info: #909399,
-  linfo: rgb(233, 233, 235),
-  disable: #bbb
-);
-$fontColor: (
-  normal: #333,
-  light: #555,
-  slight: #999
-);
-$bgColor: (
-  disable: #f5f5f5,
-  hover: #f5f8ff
-);
-$borderColor: (
-  disable: #d9d9d9,
-  normal: #ddd
-);
 #app {
   font-weight: 400;
   font-style: normal;
@@ -292,6 +271,9 @@ $borderColor: (
 .el-icon-error {
   color: map-get($color, danger);
 }
+.el-icon-danger {
+  color: map-get($color, danger);
+}
 .icon-daiqidong {
   color: map-get($color, primary);
 }
@@ -309,6 +291,15 @@ $borderColor: (
 }
 .color-info {
   color: map-get($color, info);
+}
+.color-success {
+  color: map-get($color, success);
+}
+.color-error {
+  color: map-get($color, danger);
+}
+.color-warning {
+  color: map-get($color, warning);
 }
 .el-input__inner {
   border-radius: 2px;

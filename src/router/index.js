@@ -470,6 +470,7 @@ const childRoutes = [
   {
     path: '/jsFuncs',
     name: 'jsFuncs',
+    // component: () => import('@/views/task/JsFuncs'),
     component: () => import('@/views/ExternalLink'),
     meta: {
       url: '/old/index.html#/jsFuncs',
@@ -499,7 +500,7 @@ const childRoutes = [
     name: 'dataVerifyDetails',
     component: () => import('@/views/dataVerification/Details'),
     meta: {
-      title: i18n.t('dataVerification.verifyDetail'),
+      title: i18n.t('verify_details_title'),
       isCollapse: true,
       code: 'Data_verify'
     }
@@ -529,7 +530,7 @@ const childRoutes = [
     name: 'dataVerifyHistory',
     component: () => import('@/views/dataVerification/History'),
     meta: {
-      title: i18n.t('dataVerification.verifyHistory'),
+      title: i18n.t('verify_history_title'),
       isCollapse: true,
       code: 'Data_verify'
     }
@@ -539,7 +540,17 @@ const childRoutes = [
     name: 'VerifyDiffHistory',
     component: () => import('@/views/dataVerification/History'),
     meta: {
-      title: i18n.t('dataVerification.verifyHistory'),
+      title: i18n.t('verify_diff_history_title'),
+      isCollapse: true,
+      code: 'Data_verify'
+    }
+  },
+  {
+    path: '/dataVerifyResult/:id/details',
+    name: 'VerifyDiffDetails',
+    component: () => import('@/views/dataVerification/Result'),
+    meta: {
+      title: i18n.t('verify_diff_details_title'),
       isCollapse: true,
       code: 'Data_verify'
     }
@@ -549,7 +560,7 @@ const childRoutes = [
     name: 'dataVerifyResult',
     component: () => import('@/views/dataVerification/Result'),
     meta: {
-      title: i18n.t('dataVerification.verifyResult'),
+      title: i18n.t('verify_result_title'),
       isCollapse: true,
       code: 'Data_verify'
     }

@@ -551,7 +551,7 @@ export default {
           }
           if (!falg) {
             this.$api('MetadataInstances')
-              .patch(this.metadata.id, params)
+              .patchId(this.metadata.id, params)
               .then(() => {
                 this.dialogFormVisible = false
                 this.$emit('dialogVisible', false)

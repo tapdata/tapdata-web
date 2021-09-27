@@ -191,18 +191,29 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <div class="flex-block fr">
+          <div class="flex-block fr" v-if="model.connectionId && model.tableName">
             <el-button
               class="fr"
               type="success"
-              v-if="model.connectionId && model.tableName"
               size="mini"
+              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
               @click="hanlderLoadSchema"
             >
-              <i class="el-icon-loading" v-if="reloadModelLoading"></i>
+              <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
               <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
               <span v-else>{{ $t('dataFlow.updateModel') }}</span>
             </el-button>
+            <FieldMapping
+              v-else
+              :dataFlow="dataFlow"
+              :showBtn="true"
+              :hiddenFieldProcess="true"
+              :isFirst="model.isFirst"
+              @update-first="returnModel"
+              :stageId="stageId"
+              ref="fieldMapping"
+              class="fr"
+            ></FieldMapping>
           </div>
         </el-form-item>
       </el-form>
@@ -226,6 +237,7 @@
 // import DatabaseForm from '@/views/job/components/DatabaseForm/DatabaseForm';
 import ClipButton from '@/components/ClipButton'
 import queryBuilder from '@/components/QueryBuilder'
+import FieldMapping from '@/components/FieldMapping'
 import { convertSchemaToTreeData, removeDeleted } from '../../util/Schema'
 import RelatedTasks from '@/components/relatedTasks'
 import CreateTable from '@/components/dialog/createTable'
@@ -233,14 +245,15 @@ import Entity from '../link/Entity'
 import _ from 'lodash'
 import ws from '@/api/ws'
 import factory from '@/api/factory'
-
+import VIcon from '@/components/VIcon'
+import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editor = null;
 let tempSchemas = []
 export default {
   name: 'Table',
-  components: { Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder },
+  components: { Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder, VIcon, FieldMapping },
   props: {
     database_types: {
       type: Array,
@@ -256,7 +269,9 @@ export default {
           'gaussdb200',
           'postgres',
           'mariadb',
-          'greenplum'
+          'greenplum',
+          'tidb',
+          'clickhouse'
         ]
       }
     }
@@ -301,6 +316,7 @@ export default {
           this.model.custSql.fieldFilterType = 'keepAllFields'
           this.model.custSql.editSql = ''
         }
+        this.getDataFlow()
       }
     },
     mergedSchema: {
@@ -380,6 +396,7 @@ export default {
       dataNodeInfo: {},
 
       model: {
+        isFirst: true,
         connectionId: '',
         databaseType: '',
         tableName: '',
@@ -402,7 +419,10 @@ export default {
         initialSyncOrder: 0,
         enableInitialOrder: false
       },
-
+      scope: '',
+      dataFlow: '',
+      stageId: '',
+      showFieldMapping: false,
       mergedSchema: null,
 
       primaryKeyOptions: [],
@@ -467,7 +487,7 @@ export default {
 
     // 打开数据目录数据库
     handDatabase() {
-      let href = '/#/metadataInstances/' + this.databaseData[0].id
+      let href = '/#/metadataDetails?id=' + this.databaseData[0].id
       window.open(href)
     },
 
@@ -477,7 +497,7 @@ export default {
       this.tableIsLink()
 
       if (this.tableNameId) {
-        let href = '/#/metadataInstances/' + this.tableNameId
+        let href = '/#/metadataDetails?id=' + this.tableNameId
         window.open(href)
       }
     },
@@ -626,20 +646,22 @@ export default {
         self.loading = true
         MetadataInstances.schema(params).then(res => {
           if (res.data) {
-            let fields = res.data.records[0].schema.tables[0].fields
-            // let primaryKeys = fields
-            // 	.filter(f => f.primary_key_position > 0)
-            // 	.map(f => f.field_name)
-            // 	.join(',');
-            self.primaryKeyOptions = fields.map(f => f.field_name)
-            self.model.custSql.custFields = fields.map(f => f.field_name)
-            // if (primaryKeys) {
-            // 	self.model.primaryKeys = primaryKeys;
-            // } else {
-            // 	self.model.primaryKeys = '';
-            // }
-            this.loadSchema = res.data.records[0].schema.tables[0]
-            self.$emit('schemaChange', _.cloneDeep(res.data.records[0].schema.tables[0]))
+            let fields = res.data?.records[0]?.schema?.tables[0]?.fields
+            if (fields) {
+              // let primaryKeys = fields
+              // 	.filter(f => f.primary_key_position > 0)
+              // 	.map(f => f.field_name)
+              // 	.join(',');
+              self.primaryKeyOptions = fields.map(f => f.field_name)
+              self.model.custSql.custFields = fields.map(f => f.field_name)
+              // if (primaryKeys) {
+              // 	self.model.primaryKeys = primaryKeys;
+              // } else {
+              // 	self.model.primaryKeys = '';
+              // }
+            }
+            this.loadSchema = res.data?.records[0]?.schema?.tables[0] || []
+            self.$emit('schemaChange', _.cloneDeep(this.loadSchema))
           }
         })
       } else {
@@ -663,8 +685,11 @@ export default {
       // });
     },
 
-    setData(data, cell, dataNodeInfo) {
+    setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
+        this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
           conds = JSON.parse(JSON.stringify(data.custSql.conditions))
@@ -687,6 +712,15 @@ export default {
           this.model.enableInitialOrder = true
         }
         this.tableIsLink()
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.stageId]
+          })
       }
       this.cell = cell
       tempSchemas.length = 0
@@ -703,6 +737,7 @@ export default {
 
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
+        this.getDataFlow()
       })
       // editor = vueAdapter.editor;
     },
@@ -775,6 +810,14 @@ export default {
         })
       })
       this.dialogVisible = false
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope && this.scope.getDataFlowData(true) //不校验
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
   }
 }

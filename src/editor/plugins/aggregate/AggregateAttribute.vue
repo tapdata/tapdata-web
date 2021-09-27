@@ -26,7 +26,7 @@
             :placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
           ></MultiSelection>
         </el-form-item>
-        <el-form-item required>
+        <!-- <el-form-item required>
           <span slot="label">
             <span>{{ $t('editor.cell.processor.aggregate.aggregateSizeLabel') }}</span>
             <el-tooltip effect="dark" placement="top">
@@ -71,12 +71,6 @@
           </el-switch>
         </el-form-item>
         <el-form-item :label="$t('dataFlow.aggrCleanSecond')" prop="aggrCleanSecond" required>
-          <!-- :value="form.aggrCleanSecond <= 3600 ? 3600 : form.aggrCleanSecond"
-						@blur="
-							v => {
-								form.aggrCleanSecond = !v || v <= 3600 ? 3600 : v;
-							}
-						" -->
           <el-input type="number" v-model="form.aggrCleanSecond">
             <template slot="append">
               {{ $t('dataFlow.secondUnit') }}
@@ -89,7 +83,7 @@
               {{ $t('dataFlow.secondUnit') }}
             </template>
           </el-input>
-        </el-form-item>
+        </el-form-item> -->
       </el-col>
       <el-col style="padding: 0 10px">
         <el-row type="flex" :gutter="20" class="loopFrom" v-for="(item, index) in form.aggregations" :key="index">
@@ -153,7 +147,27 @@
 						</el-popover> -->
               <el-input v-model="item.name"></el-input>
             </el-form-item>
-            <el-form-item :label="$t('dataFlow.filterPredicate')" :prop="'aggregations.' + index + '.filterPredicate'">
+            <el-form-item :prop="'aggregations.' + index + '.filterPredicate'">
+              <div class="e-label" slot="label">
+                <label class="el-form-item__label">{{ $t('dag_data_node_label_aggregate_filter') }}</label>
+                <el-tooltip effect="light" placement="top" popper-class="aggregate-tooltip">
+                  <div style="max-width: 600px" slot="content">
+                    <div class="title">过滤器示例：</div>
+                    <p>
+                      筛选出50岁以上的男性或者收入一万以下的30岁以上的人,表达式如下：<br />
+                      ( record.gender == 0 && record.age > 50 )|| ( record.age ≥30 && record.salary ≤ 10000 )
+                    </p>
+                    <p>支持的符号:</p>
+                    <el-table border :data="tooltipTableData">
+                      <el-table-column prop="A" label="A" width="40"> </el-table-column>
+                      <el-table-column prop="B" label="B" width="40"> </el-table-column>
+                      <el-table-column prop="C" label="C" width="40"> </el-table-column>
+                      <el-table-column prop="D" label="D" width="40"> </el-table-column>
+                    </el-table>
+                  </div>
+                  <span class="icon iconfont icon-tishi1"></span>
+                </el-tooltip>
+              </div>
               <el-input
                 style="margin: 5px 0"
                 type="textarea"
@@ -200,16 +214,33 @@
       <h3>{{ $t('editor.cell.processor.aggregate.returnExample') }}</h3>
       <ul class="example-box">
         {
-        <li>
-          <span class="text">_id: "students_sum",</span>
+        <li v-if="form.aggregations[0].groupByExpression.length">
+          <div class="text" style="padding-left: 10px">
+            {
+            <div style="padding-left: 10px">_tapd8_sub_name : {{ form.aggregations[0].name }}</div>
+            <div
+              v-for="(group, groupIndex) in form.aggregations[0].groupByExpression"
+              :key="groupIndex"
+              style="padding-left: 10px"
+            >
+              {{ group }} : XXX
+            </div>
+            },
+          </div>
+        </li>
+        <li v-else>
+          <span class="text">_id: {{ form.aggregations[0].name }},</span>
           <span class="comment">{{ $t('editor.cell.processor.aggregate.idComment') }}</span>
         </li>
         <li>
-          <span class="text">COUNT: 132,</span>
+          <span class="text"
+            >{{ form.aggregations[0].aggFunction }}:
+            {{ form.aggregations[0].aggFunction === 'COUNT' ? 100 : form.aggregations[0].aggExpression }},</span
+          >
           <span class="comment">{{ $t('editor.cell.processor.aggregate.countComment') }}</span>
         </li>
-        <li>
-          <span class="text">{{ $t('editor.cell.processor.aggregate.school_name') }}</span>
+        <li v-for="(group, groupIndex) in form.aggregations[0].groupByExpression" :key="groupIndex">
+          <span class="text">{{ group }}: XXX</span>
           <span class="comment">{{ $t('editor.cell.processor.aggregate.school_nameComment') }}</span>
         </li>
         }
@@ -239,13 +270,19 @@ export default {
         { label: 'MIN', value: 'MIN' },
         { label: 'COUNT', value: 'COUNT' }
       ],
+      tooltipTableData: [
+        { A: '>, <', B: '大于、小于', C: '≥, ≤', D: '大于等于、小于等于' },
+        { A: '==', B: '等于', C: '!', D: '非' },
+        { A: '&&', B: '且', C: '||', D: '或' },
+        { A: '/^.*$/.test( )', B: '正则表达式', C: '( )', D: '条件分组' }
+      ],
       groupList: [],
       expressionList: [],
       form: {
         name: '',
         type: 'aggregation_processor',
-        aggrCleanSecond: 3600,
-        aggrFullSyncSecond: 3600,
+        // aggrCleanSecond: 3600,
+        // aggrFullSyncSecond: 3600,
         aggregations: [
           {
             name: 'COUNT',
@@ -255,33 +292,33 @@ export default {
             groupByExpression: ''
           }
         ],
-        primaryKeys: '',
-        aggCacheMaxSize: 100000,
-        keepAggRet: false
+        primaryKeys: ''
+        // aggCacheMaxSize: 100000,
+        // keepAggRet: false
       },
       rules: {
-        aggrCleanSecond: [
-          {
-            required: true,
-            trigger: 'blur',
-            validator: (rule, value, callback) => {
-              if (!value || value < 3600) {
-                callback(new Error(this.$t('editor.cell.processor.aggregate.cleanSecondTimeLess3600')))
-              }
-            }
-          }
-        ],
-        aggrFullSyncSecond: [
-          {
-            required: true,
-            trigger: 'blur',
-            validator: (rule, value, callback) => {
-              if (!value || value < 3600) {
-                callback(new Error(this.$t('editor.cell.processor.aggregate.fullSyncSecondTimeLess3600')))
-              }
-            }
-          }
-        ]
+        // aggrCleanSecond: [
+        //   {
+        //     required: true,
+        //     trigger: 'blur',
+        //     validator: (rule, value, callback) => {
+        //       if (!value || value < 3600) {
+        //         callback(new Error(this.$t('editor.cell.processor.aggregate.cleanSecondTimeLess3600')))
+        //       }
+        //     }
+        //   }
+        // ],
+        // aggrFullSyncSecond: [
+        //   {
+        //     required: true,
+        //     trigger: 'blur',
+        //     validator: (rule, value, callback) => {
+        //       if (!value || value < 3600) {
+        //         callback(new Error(this.$t('editor.cell.processor.aggregate.fullSyncSecondTimeLess3600')))
+        //       }
+        //     }
+        //   }
+        // ]
       },
       primaryKeyOptions: [],
       aggaggExpression: '1',
@@ -456,7 +493,7 @@ export default {
         padding: 5px 0;
         .text {
           display: inline-block;
-          width: 160px;
+          width: 280px;
           padding-left: 10px;
         }
         .comment {
@@ -532,6 +569,25 @@ export default {
   }
   .btnClass .el-form-item__content {
     line-height: 30px !important;
+  }
+}
+.aggregate-tooltip {
+  padding: 20px;
+  .title {
+    padding: 5px 0 10px;
+    font-size: 14px;
+  }
+  p {
+    padding-bottom: 12px;
+    font-size: 12px;
+    line-height: 20px;
+    color: #666;
+  }
+  .el-table {
+    .el-table__header,
+    .el-table__body {
+      width: 100% !important;
+    }
   }
 }
 </style>

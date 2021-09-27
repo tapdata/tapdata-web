@@ -11,10 +11,9 @@
               class="progress-header_btn"
               type="primary"
               @click="handleInfo()"
-              v-if="
-                completeTime !== this.$t('taskProgress.fullyCompleted') && !$window.getSettingByKey('DFS_TCM_PLATFORM')
-              "
+              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
             >
+              <!-- completeTime !== this.$t('taskProgress.fullyCompleted') && -->
               {{ $t('taskProgress.seeDetails') }}
             </ElLink>
           </div>
@@ -120,10 +119,10 @@
               class="progress-header_btn"
               type="primary"
               @click="handleInfo()"
-              v-if="
-                completeTime !== this.$t('taskProgress.fullyCompleted') && !$window.getSettingByKey('DFS_TCM_PLATFORM')
-              "
-              >{{ $t('taskProgress.seeDetails') }}</ElLink
+              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+            >
+              <!-- completeTime !== this.$t('taskProgress.fullyCompleted') && -->
+              {{ $t('taskProgress.seeDetails') }}</ElLink
             >
           </div>
           <div class="progress-tip">{{ $t('taskProgress.tip') }}</div>
