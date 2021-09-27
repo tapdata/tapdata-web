@@ -73,6 +73,10 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import error from '../../../assets/icons/error.svg'
+import info from '../../../assets/icons/info.svg'
+import success from '../../../assets/icons/success.svg'
+import warning from '../../../assets/icons/warning.svg'
 export default {
   components: { VIcon },
   props: {
@@ -83,6 +87,10 @@ export default {
       visible: false,
       uid: 1,
       callback: null,
+      error,
+      info,
+      success,
+      warning,
       hideIcon: false,
       icon: '', // 图标
       iconColor: '',
