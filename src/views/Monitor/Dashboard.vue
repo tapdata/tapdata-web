@@ -300,8 +300,13 @@ export default {
           if (c.id === ids[1]) {
             type = 'target'
           }
+          let host = c.database_host
+          // mongo 不追加port
+          if (c.database_type !== 'mongodb') {
+            host += ':' + c.database_port
+          }
           this.$set(this.task, type + 'DB', c.database_name)
-          this.$set(this.task, type + 'Url', c.database_host + ':' + c.database_port)
+          this.$set(this.task, type + 'Url', host)
         })
       })
     },
