@@ -15,10 +15,15 @@
           <span class="ml-4">任务类型：{{ taskType.label }}</span>
         </div>
         <div class="mt-2">
-          <VButton type="primary" @click="start">启动</VButton>
-          <VButton @click="stop">停止</VButton>
-          <VButton @click="reset">重置</VButton>
-          <VButton @click="forceStop">强制停止</VButton>
+          <VButton
+            type="primary"
+            :disabled="!statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)"
+            @click="start"
+            >启动</VButton
+          >
+          <VButton :disabled="!statusBtMap['stop'][task.status]" @click="stop">停止</VButton>
+          <VButton :disabled="!statusBtMap['reset'][task.status]" @click="reset">重置</VButton>
+          <VButton :disabled="!statusBtMap['forceStop'][task.status]" @click="forceStop">强制停止</VButton>
         </div>
       </div>
       <div class="input-and-output flex align-center">
@@ -161,7 +166,16 @@ export default {
     return {
       loading: true,
       activeTab: 'progress',
-      task: null
+      task: null,
+      statusBtMap: {
+        // scheduled, draft, running, stopping, error, paused, force stopping
+        run: { draft: true, error: true, paused: true },
+        stop: { running: true },
+        delete: { draft: true, error: true, paused: true },
+        edit: { draft: true, error: true, paused: true },
+        reset: { draft: true, error: true, paused: true },
+        forceStop: { stopping: true }
+      }
     }
   },
   created() {
