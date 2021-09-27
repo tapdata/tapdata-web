@@ -234,7 +234,7 @@
             margin-top: 24px;
           }
           .field-mapping-table {
-            padding-bottom: 50px;
+            height: calc(100% - 70px) !important;
           }
         }
       }
