@@ -77,7 +77,7 @@ export default {
           items: [
             {
               label: $t('agent_id'),
-              key: 'agentId'
+              key: 'id'
             },
             {
               label: $t('agent_version'),
