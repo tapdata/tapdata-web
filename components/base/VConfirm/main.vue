@@ -72,11 +72,11 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
-import error from '../../../assets/icons/error.svg'
-import info from '../../../assets/icons/info.svg'
-import success from '../../../assets/icons/success.svg'
-import warning from '../../../assets/icons/warning.svg'
+import VIcon from 'web-core/components/VIcon'
+import error from 'web-core/assets/icons/svg/error.svg'
+import info from 'web-core/assets/icons/svg/info.svg'
+import success from 'web-core/assets/icons/svg/success.svg'
+import warning from 'web-core/assets/icons/svg/warning.svg'
 export default {
   components: { VIcon },
   props: {
