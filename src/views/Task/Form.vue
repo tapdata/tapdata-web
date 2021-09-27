@@ -233,8 +233,20 @@
           .search {
             margin-top: 24px;
           }
+          .icon {
+            color: map-get($color, primary);
+          }
+          .task-form-body .nav li {
+            border-radius: unset;
+          }
           .field-mapping-table {
             height: calc(100% - 70px) !important;
+            .el-table__header-wrapper {
+              border-radius: unset;
+            }
+            th {
+              background-color: #fafafa;
+            }
           }
         }
       }
@@ -263,6 +275,17 @@
       }
       .CT-task-transfer {
         margin-bottom: 24px;
+        ::v-deep {
+          .el-transfer-panel__header {
+            background: rgba(44, 101, 255, 0.05);
+            height: 54px;
+            line-height: 54px;
+            .el-checkbox {
+              height: 54px;
+              line-height: 54px;
+            }
+          }
+        }
       }
     }
     .dataSource-title {
@@ -545,6 +568,7 @@ export default {
                   filter.where['id'] = { neq: this.id }
                 }
                 this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
+                  callback()
                   if (data && data.length !== 0) {
                     callback(new Error('任务名称已存在'))
                   } else callback()
