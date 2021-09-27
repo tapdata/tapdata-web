@@ -162,7 +162,10 @@
                 <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
               </template>
             </div>
-            <div class="setting-item mt-4" v-if="item.showAdvancedVerification && item.webScript">
+            <div
+              v-if="form.inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
+              class="setting-item mt-4"
+            >
               <pre class="item-script">{{ item.webScript }}</pre>
             </div>
           </div>
