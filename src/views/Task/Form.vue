@@ -234,7 +234,7 @@
             margin-top: 24px;
           }
           .field-mapping-table {
-            padding-bottom: 50px;
+            height: calc(100% - 70px) !important;
           }
         }
       }
@@ -563,11 +563,6 @@ export default {
       this.intiData(this.id)
     }
   },
-  watch: {
-    config(v) {
-      console.log('watch-config', v)
-    }
-  },
   mounted() {
     let timeZone = new Date().getTimezoneOffset() / 60
     if (timeZone > 0) {
@@ -758,6 +753,7 @@ export default {
       let func = formConfig[type]
       if (func) {
         let config = func(this)
+        config.form.size = 'small'
         this.config = config
         if (type === 'setting') {
           this.config.items = defaultConfig.concat(config.items)
