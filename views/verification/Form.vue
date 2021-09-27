@@ -1,326 +1,259 @@
 <template>
-  <section class="verify-form-wrap" v-loading="loading">
-    <div class="verify-form-title">
-      {{ $route.params.id ? $t('verify_title_edit') : $t('verify_title_create') }}
-    </div>
-    <ElForm
-      inline-message
-      class="overflow-hidden grey"
-      ref="baseForm"
-      label-position="left"
-      label-width="96px"
-      :model="form"
-      :rules="rules"
-      :validate-on-rule-change="false"
-    >
-      <ElFormItem required class="form-item" prop="flowId" :label="$t('verify_form_label_select_job') + ': '">
-        <ElSelect
-          filterable
-          class="form-select"
-          v-model="form.flowId"
-          :loading="!flowOptions"
-          @input="flowChangeHandler"
-        >
-          <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>
-        </ElSelect>
-      </ElFormItem>
-      <ElFormItem required class="form-item" :label="$t('verify_form_label_type') + ': '">
-        <ElRadioGroup v-model="form.inspectMethod">
-          <ElRadioButton label="row_count">{{ $t('verify_type_row_count') }}</ElRadioButton>
-          <ElRadioButton label="field">{{ $t('verify_type_field') }}</ElRadioButton>
-          <ElRadioButton label="jointField">{{ $t('verify_type_joint_field') }}</ElRadioButton>
-        </ElRadioGroup>
-        <div>
-          <i class="el-icon-info color-primary mr-1"></i>
-          <span style="font-size: 12px">{{
-            {
-              row_count: $t('verify_tips_type_row_count'),
-              field: $t('verify_tips_type_field'),
-              jointField: $t('verify_tips_type_joint_field')
-            }[form.inspectMethod]
-          }}</span>
-        </div>
-      </ElFormItem>
-      <ElFormItem required class="form-item" prop="name" :label="$t('verify_job_name') + ': '">
-        <ElInput class="form-input" v-model="form.name"></ElInput>
-      </ElFormItem>
-      <ElFormItem class="form-item" :label="$t('verify_form_label_frequency') + ': '">
-        <ElSelect class="form-select" v-model="form.mode">
-          <ElOption :label="$t('verify_frequency_manual')" value="manual"></ElOption>
-          <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
-        </ElSelect>
-        <span class="mx-3">{{ $t('verify_switch_job_enable_or_not') }}</span>
-        <ElSwitch v-model="form.enabled"></ElSwitch>
-      </ElFormItem>
-      <template v-if="form.mode === 'cron'">
-        <ElFormItem class="form-item" prop="timing.start" :label="$t('verify_form_label_start_and_end_time') + ': '">
-          <ElDatePicker
-            class="form-input"
-            :value="[form.timing.start, form.timing.end]"
-            type="datetimerange"
-            range-separator="-"
-            :start-placeholder="$t('date_picker_start_time')"
-            :end-placeholder="$t('date_picker_end_time')"
-            align="right"
-            :default-time="['00:00:00', '23:59:59']"
-            value-format="timestamp"
-            @input="timingChangeHandler"
-          >
-          </ElDatePicker>
-        </ElFormItem>
-        <ElFormItem class="form-item" prop="timing.intervals" :label="$t('verify_form_label_interval') + ': '">
-          <ElInput
-            class="form-input"
-            v-model="form.timing.intervals"
-            onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-            onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-          >
-            <template slot="append">
-              <ElSelect style="width: 100px" v-model="form.timing.intervalsUnit">
-                <ElOption v-for="unit in timeUnitOptions" :key="unit" :label="unit" :value="unit"></ElOption>
-              </ElSelect>
-            </template>
-          </ElInput>
-        </ElFormItem>
-      </template>
-      <ElFormItem class="form-item" :label="$t('verify_form_label_error_save_count') + ': '">
-        <ElSelect class="form-select" v-model="form.limit.keep">
-          <ElOption :value="100" label="100(rows)"></ElOption>
-          <ElOption :value="1000" label="1000(rows)"></ElOption>
-          <ElOption :value="10000" label="10000(rows)"></ElOption>
-        </ElSelect>
-      </ElFormItem>
-    </ElForm>
-    <div
-      v-if="flowStages"
-      v-loading="!flowStages.length"
-      class="joint-table mt-3"
-      :class="{ error: !!jointErrorMessage }"
-      @click="jointErrorMessage = ''"
-    >
-      <div class="joint-table-header">
-        <div>
-          <span>{{ $t('verify_form_joint_table_header') }}</span>
-          <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
-        </div>
-        <ElLink type="primary" :disabled="!form.tasks.length" @click="clear">{{
-          $t('verify_button_joint_table_clear')
-        }}</ElLink>
-      </div>
-      <ul class="joint-table-main" id="data-verification-form">
-        <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="index">
-          <div class="joint-table-setting overflow-hidden">
-            <div class="setting-item">
-              <label class="item-label">{{ $t('verify_form_label_table') }}: </label>
-              <ElCascader
-                v-model="item.sourceTable"
-                class="item-select"
-                :class="{ red: !item.sourceTable }"
-                :options="item.sourceTree"
-                @input="tableChangeHandler(item, 'source', index)"
-              ></ElCascader>
-              <span class="item-icon">
-                <i class="el-icon-arrow-right"></i>
-              </span>
-              <ElCascader
-                v-model="item.targetTable"
-                class="item-select"
-                :class="{ red: !item.targetTable }"
-                :options="item.targetTree"
-                @input="tableChangeHandler(item, 'target')"
-              ></ElCascader>
-            </div>
-            <div class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">
-              <label class="item-label">{{ $t('verify_form_label_index_field') }}: </label>
-              <MultiSelection
-                v-model="item.source.sortColumn"
-                class="item-select"
-                :class="{ red: !item.source.sortColumn }"
-                :options="item.source.fields"
-                :id="'item-source-' + index"
-              ></MultiSelection>
-              <span class="item-icon"></span>
-              <MultiSelection
-                v-model="item.target.sortColumn"
-                class="item-select"
-                :class="{ red: !item.target.sortColumn }"
-                :options="item.target.fields"
-              ></MultiSelection>
-            </div>
-            <div class="setting-item mt-4">
-              <ElCheckbox v-model="item.showAdvancedVerification" v-show="form.inspectMethod === 'field'">{{
-                $t('verify_checkbox_advance')
-              }}</ElCheckbox>
-            </div>
-            <div class="setting-item mt-4" v-if="item.showAdvancedVerification && form.inspectMethod === 'field'">
-              <label class="item-label">{{ $t('verify_form_label_script') }}: </label>
-              <VButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
-                $t('verify_button_add_script')
-              }}</VButton>
-              <template v-else>
-                <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
-                <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
-              </template>
-            </div>
-            <div class="setting-item mt-4" v-if="item.showAdvancedVerification && item.webScript">
-              <pre class="item-script">{{ item.webScript }}</pre>
-            </div>
+  <section class="data-verification-form" v-loading="loading">
+    <div class="form-container">
+      <div class="form-body">
+        <h1 class="title">
+          <span>{{ $route.params.id ? $t('dataVerification.edit') : $t('dataVerification.newVerify') }}</span>
+          <div style="font-size: 12px" v-show="form.mode === 'cron'">
+            <span style="color: #409eff" v-show="form.enabled">{{ $t('dataVerification.enable') }}</span>
+            <span style="color: #9a9a9a" v-show="!form.enabled">{{ $t('dataVerification.disable') }}</span>
+            <el-switch size="mini" v-model="form.enabled"></el-switch>
           </div>
-          <div class="ml-6">
-            <ElLink type="primary" @click="removeItem(index)">{{ $t('button_delete') }}</ElLink>
+        </h1>
+        <div class="form-panel">
+          <div class="panel-label">
+            <span>{{ $t('dataVerification.BasicSettings') }}</span>
           </div>
-        </li>
-      </ul>
-      <div class="joint-table-footer">
-        <VButton @click="addTable()">{{ $t('verify_button_add_table') }}</VButton>
-        <VButton type="primary" @click="autoAddTable()">{{ $t('verify_button_auto_add_table') }}</VButton>
+          <el-form
+            inline-message
+            ref="baseForm"
+            :model="form"
+            :rules="rules"
+            :validate-on-rule-change="false"
+            class="panel-container"
+            label-position="right"
+            style="padding: 10px 20px"
+          >
+            <el-form-item class="setting-item" prop="flowId">
+              <label class="item-label is-required">{{ $t('dataVerification.chooseJob') }}</label>
+              <el-select
+                filterable
+                class="item-select"
+                size="mini"
+                v-model="form.flowId"
+                :placeholder="$t('dataVerification.chooseJob')"
+                :loading="!flowOptions"
+                @input="flowChangeHandler"
+              >
+                <el-option v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item class="setting-item">
+              <label class="item-label">{{ $t('dataVerification.verifytype') }}</label>
+              <el-radio-group v-model="form.inspectMethod" style="margin-left: 10px">
+                <el-radio label="row_count">
+                  {{ $t('dataVerification.rowVerify') }}
+                  <el-tooltip class="item" effect="dark" :content="$t('dataVerification.fastCountTip')" placement="top">
+                    <i class="el-icon-warning-outline"></i>
+                  </el-tooltip>
+                </el-radio>
+                <el-radio label="field">
+                  {{ $t('dataVerification.contentVerify') }}
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="$t('dataVerification.contentVerifyTip')"
+                    placement="top"
+                  >
+                    <i class="el-icon-warning-outline"></i>
+                  </el-tooltip>
+                </el-radio>
+                <el-radio label="jointField">
+                  {{ $t('dataVerification.jointVerify') }}
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="$t('dataVerification.jointFieldTip')"
+                    placement="top"
+                  >
+                    <i class="el-icon-warning-outline"></i>
+                  </el-tooltip>
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item class="setting-item" prop="name">
+              <label class="item-label is-required">{{ $t('dataVerification.verifyJobName') }}</label>
+              <el-input class="item-input" size="mini" v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item class="setting-item">
+              <label class="item-label">{{ $t('dataVerification.frequency') }}</label>
+              <el-select class="item-select" v-model="form.mode" size="mini" placeholder="请选择">
+                <el-option :label="$t('dataVerification.singleVerify')" value="manual"></el-option>
+                <el-option :label="$t('dataVerification.repeatingVerify')" value="cron"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item class="setting-item" prop="timing.start" v-show="form.mode === 'cron'">
+              <label class="item-label">{{ $t('dataVerification.startAndStopTime') }}</label>
+              <el-date-picker
+                class="item-select"
+                size="mini"
+                :value="[form.timing.start, form.timing.end]"
+                type="datetimerange"
+                range-separator="-"
+                :start-placeholder="$t('dataVerification.startTime')"
+                :end-placeholder="$t('dataVerification.LastTime')"
+                align="right"
+                :default-time="['00:00:00', '23:59:59']"
+                value-format="timestamp"
+                @input="timingChangeHandler"
+              >
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item class="setting-item" prop="timing.intervals" v-show="form.mode === 'cron'">
+              <label class="item-label">{{ $t('dataVerification.verifyInterval') }}</label>
+              <el-input
+                class="item-input"
+                size="mini"
+                v-model="form.timing.intervals"
+                onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+              >
+                <template slot="append">
+                  <el-select style="width: 100px" size="mini" v-model="form.timing.intervalsUnit">
+                    <el-option v-for="unit in timeUnitOptions" :key="unit" :label="unit" :value="unit"></el-option>
+                  </el-select>
+                </template>
+              </el-input>
+            </el-form-item>
+            <el-form-item class="setting-item">
+              <label class="item-label">{{ $t('dataVerification.inconsistentCount') }}</label>
+              <el-select class="item-select" size="mini" v-model="form.limit.keep">
+                <el-option :value="100" label="100(rows)"></el-option>
+                <el-option :value="1000" label="1000(rows)"></el-option>
+                <el-option :value="10000" label="10000(rows)"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div v-if="flowStages" v-loading="!flowStages.length">
+          <div class="form-panel">
+            <div class="panel-label">
+              <span>{{ $t('dataVerification.verifyCondition') }}</span>
+              <el-button style="height: 24px; line-height: 24px; padding: 0 10px" size="mini" @click="clear">
+                {{ $t('dataVerification.clear') }}
+              </el-button>
+            </div>
+            <ul class="panel-container" id="data-verification-form">
+              <li class="condition-item" v-for="(item, index) in form.tasks" :key="index">
+                <div class="condition-setting">
+                  <div class="setting-item">
+                    <label class="item-label is-required">{{ $t('dataVerification.table') }}</label>
+                    <el-cascader
+                      class="item-select"
+                      :class="{ red: !item.sourceTable }"
+                      size="mini"
+                      v-model="item.sourceTable"
+                      :options="item.sourceTree"
+                      @input="tableChangeHandler(item, 'source', index)"
+                    ></el-cascader>
+                    <span class="item-icon">
+                      <i class="el-icon-right"></i>
+                    </span>
+                    <el-cascader
+                      class="item-select"
+                      size="mini"
+                      :class="{ red: !item.targetTable }"
+                      v-model="item.targetTable"
+                      :options="item.targetTree"
+                      @input="tableChangeHandler(item, 'target')"
+                    ></el-cascader>
+                  </div>
+                  <div class="setting-item" v-show="form.inspectMethod !== 'row_count'">
+                    <label class="item-label is-required">{{ $t('dataVerification.indexField') }}</label>
+                    <MultiSelection
+                      v-model="item.source.sortColumn"
+                      :options="item.source.fields"
+                      :class="{ red: !item.source.sortColumn }"
+                      :placeholder="$t('dataVerification.ChoosePKField')"
+                      :id="'itemSource' + index"
+                    ></MultiSelection>
+                    <span class="item-icon"></span>
+                    <MultiSelection
+                      v-model="item.target.sortColumn"
+                      :class="{ red: !item.target.sortColumn }"
+                      :options="item.target.fields"
+                      :placeholder="$t('dataVerification.ChoosePKField')"
+                    ></MultiSelection>
+                    <el-checkbox
+                      style="margin-left: 10px"
+                      v-model="item.showAdvancedVerification"
+                      v-show="form.inspectMethod === 'field'"
+                      >{{ $t('dataVerification.advanceVerify') }}</el-checkbox
+                    >
+                  </div>
+                  <div class="setting-item" v-if="item.showAdvancedVerification">
+                    <label class="item-label is-required">{{ $t('dataVerification.JSVerifyLogic') }}</label>
+                    <el-button
+                      v-if="!item.webScript || item.webScript === ''"
+                      size="mini"
+                      icon="el-icon-plus"
+                      @click="addScript(index)"
+                      >{{ $t('dataVerification.addJS') }}</el-button
+                    >
+                    <span v-if="item.webScript && item.webScript !== ''">
+                      <el-input
+                        class="item-select item-textarea"
+                        type="textarea"
+                        v-model="item.webScript"
+                        disabled
+                      ></el-input>
+                      <el-button-group class="setting-buttons">
+                        <el-button size="mini" icon="el-icon-edit" @click="editScript(index)"></el-button>
+                      </el-button-group>
+                      <el-button-group class="setting-buttons">
+                        <el-button size="mini" icon="el-icon-close" @click="removeScript(index)"></el-button>
+                      </el-button-group>
+                    </span>
+                  </div>
+                </div>
+                <el-button-group class="setting-buttons">
+                  <el-button size="mini" icon="el-icon-close" @click="removeItem(index)"></el-button>
+                </el-button-group>
+              </li>
+              <li style="color: #ccc" v-show="!form.tasks.length">
+                {{ $t('dataVerification.clickVerified') }}
+              </li>
+            </ul>
+          </div>
+          <div style="margin-top: 10px">
+            <el-button size="mini" icon="el-icon-plus" @click="addTable()">{{
+              $t('dataVerification.addTable')
+            }}</el-button>
+            <el-button size="mini" icon="el-icon-plus" @click="autoAddTable()">{{
+              $t('dataVerification.automaticallyAdd')
+            }}</el-button>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="mt-8">
-      <VButton @click="goBack()">{{ $t('button_back') }}</VButton>
-      <VButton type="primary" @click="nextStep()">{{ $t('button_save') }}</VButton>
+    <div class="footer">
+      <el-button size="mini" @click="goBack()">{{ $t('dataVerification.back') }}</el-button>
+      <el-button type="primary" size="mini" @click="nextStep()">{{ $t('app.save') }}</el-button>
     </div>
-    <ElDialog
-      width="60%"
+    <el-dialog
       :title="$t('dataVerification.JSVerifyLogic')"
       :visible.sync="dialogAddScriptVisible"
+      width="60%"
       :before-close="handleAddScriptClose"
     >
       <div class="js-wrap">
         <div class="jsBox">
           <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <CodeEditor class="js-editor" v-model="webScript" lang="javascript" theme="eclipse"></CodeEditor>
+          <JsEditor v-if="dialogAddScriptVisible" :code.sync="webScript" ref="jsEditor" :width.sync="width"></JsEditor>
           <div class="js-fixText">}</div>
         </div>
-        <div class="markdown-body-wrap example ml-4">
+        <div class="markdown-body-wrap example">
           <div class="markdown-body" v-html="htmlMD"></div>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <VButton @click="handleAddScriptClose">{{ $t('button_cancel') }}</VButton>
-        <VButton type="primary" @click="submitScript">{{ $t('button_confirm') }}</VButton>
+        <el-button @click="handleAddScriptClose" size="mini">{{ $t('dataForm.cancel') }}</el-button>
+        <el-button type="primary" @click="submitScript" size="mini">{{ $t('message.confirm') }}</el-button>
       </span>
-    </ElDialog>
+    </el-dialog>
   </section>
 </template>
-<style lang="scss" scoped>
-.verify-form-title {
-  margin-bottom: 24px;
-  line-height: 22px;
-  font-size: 14px;
-  color: map-get($fontColor, main);
-}
-.form-select {
-  width: 276px;
-}
-.form-input {
-  width: 505px;
-}
-.joint-table {
-  border-radius: 4px;
-  border: 1px solid #e8e8e8;
-  &.error {
-    border-color: map-get($color, danger);
-  }
-}
-.joint-table-header {
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  background: #fafafa;
-}
-.joint-table-footer {
-  padding: 16px 24px;
-}
-.joint-table-main {
-  .joint-table-item {
-    padding: 16px 24px;
-    display: flex;
-    border-bottom: 1px solid #f2f2f2;
-  }
-  .joint-table-setting {
-    flex: 1;
-    background: #fff;
-  }
-  .setting-item {
-    display: flex;
-    margin-bottom: 0;
-    .el-form-item__content {
-      display: flex;
-      align-items: center;
-      line-height: 1;
-    }
-    .item-label {
-      width: 80px;
-      line-height: 32px;
-      text-align: left;
-    }
-    .item-icon {
-      margin: 0 10px;
-      width: 20px;
-      line-height: 32px;
-      color: rgba(0, 0, 0, 0.6);
-      font-size: 16px;
-      text-align: center;
-    }
-    .item-time-picker,
-    .item-input,
-    .item-select {
-      flex: 1;
-      width: 600px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .item-script {
-      margin: 0;
-      padding: 16px 24px;
-      width: 100%;
-      max-height: 130px;
-      overflow: auto;
-      border-radius: 5px;
-      border-left: 5px solid map-get($color, primary);
-      background: #eff1f4;
-      font-size: 12px;
-      font-family: PingFangSC-Medium, PingFang SC;
-      font-weight: 500;
-      color: rgba(0, 0, 0, 0.6);
-      line-height: 17px;
-    }
-  }
-}
-</style>
-<style lang="scss">
-.joint-table {
-  .red .el-input__inner {
-    border: none;
-    border: 1px solid #ee5353;
-    border-radius: 4px;
-  }
-}
-.js-wrap {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: row;
-  .jsBox {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    .js-fixText {
-      line-height: 25px;
-    }
-    .js-fixContent {
-      margin-left: 60px;
-    }
-  }
-  .example {
-    width: 300px;
-  }
-  .js-editor {
-    border: 1px solid #f2f2f2;
-  }
-}
-</style>
+
 <script>
 const TABLE_PARAMS = {
   connectionId: '',
@@ -342,10 +275,10 @@ const META_INSTANCE_FIELDS = {
   databaseId: true,
   meta_type: true
 }
-import MultiSelection from './MultiSelection.vue'
-import CodeEditor from '../../components/CodeEditor.vue'
+import MultiSelection from './multi-selection.vue'
+import JsEditor from 'web-core/components/js-editor.vue'
 export default {
-  components: { MultiSelection, CodeEditor },
+  components: { MultiSelection, JsEditor },
   props: {
     remoteFunc: Function,
     optionsFunc: Function,
@@ -392,22 +325,22 @@ export default {
       rules: {
         flowId: [
           {
-            validator: requiredValidator(this.$t('verify_validator_message_task'))
+            validator: requiredValidator(this.$t('dataVerification.tasksDataFlow'))
           }
         ],
         name: [
           {
-            validator: requiredValidator(this.$t('verify_validator_message_job_name'))
+            validator: requiredValidator(this.$t('dataVerification.tasksJobName'))
           }
         ],
         'timing.start': [
           {
-            validator: requiredValidator(this.$t('verify_validator_message_time'), true)
+            validator: requiredValidator(this.$t('dataVerification.tasksTime'), true)
           }
         ],
         'timing.intervals': [
           {
-            validator: requiredValidator(this.$t('verify_validator_message_frequency'), true)
+            validator: requiredValidator(this.$t('dataVerification.tasksVerifyInterval'), true)
           }
         ]
       },
@@ -419,8 +352,8 @@ export default {
       dialogAddScriptVisible: false,
       formIndex: '',
       webScript: '',
-      allStages: null,
-      jointErrorMessage: ''
+      width: '600',
+      allStages: null
     }
   },
   created() {
@@ -879,7 +812,7 @@ export default {
       this.dialogAddScriptVisible = true
     },
     removeScript(index) {
-      this.$confirm(this.$t('verify_message_confirm_delete_script'), this.$t('button_delete'), {
+      this.$confirm(this.$t('message.verifyConfirm'), this.$t('message.delete'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
@@ -903,7 +836,7 @@ export default {
       this.dialogAddScriptVisible = false
     },
     goBack() {
-      this.$confirm(this.$t('verify_message_confirm_back'), this.$t('verify_message_title_confirm_back'), {
+      this.$confirm(this.$t('dataVerification.backConfirmMessage'), this.$t('dataVerification.backConfirmTitle'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
@@ -918,8 +851,7 @@ export default {
           let tasks = this.form.tasks
           let index = 0
           if (!tasks.length) {
-            this.jointErrorMessage = this.$t('verify_message_error_joint_table_not_set')
-            return
+            return this.$message.error(this.$t('dataVerification.tasksVerifyCondition'))
           }
           if (
             tasks.some((c, i) => {
@@ -928,8 +860,7 @@ export default {
             })
           ) {
             document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-            this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_set')
-            return this.$message.error(this.$t('verify_message_error_joint_table_target_or_source_not_set'))
+            return this.$message.error(this.$t('dataVerification.lackSource'))
           }
           index = 0
           if (
@@ -940,8 +871,7 @@ export default {
             })
           ) {
             document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-            this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_set')
-            return this.$message.error(this.$t('verify_message_error_joint_table_field_not_set'))
+            return this.$message.error(this.$t('dataVerification.lackIndex'))
           }
           index = 0
           if (
@@ -951,10 +881,9 @@ export default {
               return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
             })
           ) {
-            let item = document.getElementById('item-source-' + (index - 1))
+            let item = document.getElementById('itemSource' + (index - 1))
             item.querySelector('input').focus()
-            this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_match')
-            return this.$message.error(this.$t('verify_message_error_joint_table_field_not_match'))
+            return this.$message.error(this.$t('dataVerification.tasksAmount'))
           }
           if (this.form.inspectMethod === 'jointField') {
             tasks.forEach(item => {
@@ -1004,7 +933,7 @@ export default {
             .catch(err => {
               let message = err?.response?.msg || err?.data?.msg || ''
               if (message === 'duplication for names') {
-                this.$message.error(this.$t('message_name_exist'))
+                this.$message.error(this.$t('message.exists_name'))
               }
             })
         }
@@ -1013,3 +942,156 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.el-select-dropdown__item {
+  max-width: 600px;
+}
+.data-verification-form {
+  .red .el-input__inner {
+    border: none;
+    border: 1px solid #ee5353;
+    border-radius: 4px;
+  }
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding-bottom: 68px;
+  .el-form-item__label,
+  .el-form-item__content,
+  .el-radio__label {
+    font-size: 12px;
+  }
+  .el-radio {
+    line-height: 16px;
+  }
+  .form-container {
+    height: 100%;
+    overflow: auto;
+    .form-body {
+      display: inline-block;
+      margin: 0 auto;
+      padding: 15px 30px;
+      box-sizing: border-box;
+    }
+  }
+  .title {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    line-height: 28px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #343434;
+    margin-bottom: 10px;
+  }
+  .form-panel {
+    background: #fafafa;
+    font-size: 12px;
+    border: 1px solid #dedee4;
+    color: #666;
+    margin-bottom: 10px;
+    .panel-label {
+      padding: 2px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #dedee4;
+    }
+    .panel-container {
+      padding: 10px;
+      .condition-item {
+        display: flex;
+        margin-bottom: 10px;
+      }
+      .condition-setting {
+        flex: 1;
+        background: #fff;
+        padding: 5px 10px;
+        border: 1px solid #dedee4;
+      }
+      .setting-item {
+        display: flex;
+        align-items: center;
+        padding: 5px 0;
+        margin-bottom: 0;
+        .el-form-item__content {
+          display: flex;
+          align-items: center;
+          line-height: 1;
+        }
+        .is-required::before {
+          content: '*';
+          color: #f56c6c;
+          margin-right: 3px;
+        }
+        .item-label {
+          padding: 0 10px;
+          width: 120px;
+          text-align: right;
+        }
+        .item-textarea {
+          font-size: 12px;
+          font-family: element-icons;
+          line-height: 16px;
+          color: #aaa;
+        }
+        .item-icon {
+          width: 20px;
+          text-align: center;
+        }
+        .item-time-picker,
+        .item-input,
+        .item-select {
+          width: 600px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+      .setting-buttons {
+        margin-left: 10px;
+        .el-button {
+          padding: 7px;
+        }
+      }
+    }
+  }
+  .footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 20px;
+    border-top: 1px solid #f2f2f2;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    background: #fff;
+    overflow: hidden;
+  }
+}
+</style>
+<style lang="scss">
+.js-wrap {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  .jsBox {
+    width: 70%;
+    height: 478px;
+    .js-fixText {
+      line-height: 25px;
+      margin-left: 28px;
+    }
+    .js-fixContent {
+      margin-left: 60px;
+    }
+  }
+  .example {
+    width: calc(100% - 70%);
+    height: 478px;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+}
+</style>
