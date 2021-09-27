@@ -11,7 +11,7 @@
 			</div> -->
       <el-form
         :disabled="disabled"
-        class="e-form"
+        class="e-form flex flex-column"
         label-position="top"
         label-width="160px"
         :model="model"
@@ -92,7 +92,7 @@
           </el-form-item>
         </template>
 
-        <div class="database-tableBox" v-loading="transferLoading">
+        <div class="database-tableBox flex-fill overflow-hidden" v-loading="transferLoading">
           <div class="box-text">
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
@@ -124,35 +124,35 @@
             </div>
           </div>
           <div class="transfer">
-            <el-transfer
-              filterable
+            <VirtualTransfer
               v-if="!model.transferFlag"
+              v-model="model.selectSourceArr"
+              filterable
+              :item-size="30"
               :titles="titles"
               :filter-method="filterMethod"
-              :filter-placeholder="$t('editor.cell.link.searchContent')"
-              v-model="model.selectSourceArr"
               :data="sourceData"
+              :filter-placeholder="$t('editor.cell.link.searchContent')"
               @change="handleChangeTransfer"
             >
-              <span class="box" slot-scope="{ option }">
-                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
-                <!-- :class="[{ active: option.label !== option.key }, 'text']" -->
-                <!-- <span :title="option.label">{{ option.label }}</span> -->
-                <!-- <span
-                  v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
-                  >{{ option.label.toLowerCase() }}</span
-                >
-                <span
-                  v-else-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toUpperCase'"
-                  >{{ option.label.toUpperCase() }}</span
-                > -->
-                <span>{{ option.label }}</span>
-                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span>
-                <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
-								$t('dataFlow.changeName')
-							}}</span> -->
-              </span>
-            </el-transfer>
+              <template #default="{ option }">
+                <span class="box">
+                  <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
+                  <!--<span
+                    v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
+                    >{{ option.label.toLowerCase() }}</span
+                  >
+                  <span
+                    v-else-if="
+                      model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toUpperCase'
+                    "
+                    >{{ option.label.toUpperCase() }}</span
+                  >-->
+                  <span v-else>{{ option.label }}</span>
+                  <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span>
+                </span>
+              </template>
+            </VirtualTransfer>
             <!-- MQ穿梭框 start -->
             <template v-else>
               <MqTransfer
@@ -161,52 +161,6 @@
                 :table_prefix="model.table_prefix"
                 :table_suffix="model.table_suffix"
               ></MqTransfer>
-              <!-- <el-transfer
-                filterable
-                class="topic-transfer"
-                :titles="topicTitles"
-                :filter-method="filterMethod"
-                :filter-placeholder="$t('editor.cell.link.searchContent')"
-                v-model="model.topicData"
-                :data="sourceData"
-                :left-default-checked="topicSelected"
-                @change="handleChangeTopic"
-                @right-check-change="handleSelectTopic"
-              >
-                <span class="box" slot-scope="{ option }">
-                  <span
-                    class="text"
-                    :title="option.label"
-                    :class="[{ active: option.label !== option.key }, 'text']"
-                    >{{ option.label }}</span
-                  >
-                </span>
-              </el-transfer> -->
-              <!-- <el-tabs v-model="seletecTab" type="border-card">
-                <el-tab-pane label="topic" name="topic">Topic</el-tab-pane>
-                <el-tab-pane label="queue" name="queue">Queue</el-tab-pane>
-              </el-tabs>
-              <el-transfer
-                filterable
-                class="queue-transfer"
-                :titles="seletecTab === 'topic' ? topicTitles : queueTitles"
-                :filter-method="filterMethod"
-                :filter-placeholder="$t('editor.cell.link.searchContent')"
-                v-model="mq[seletecTab].value"
-                :data="mq[seletecTab].list"
-                @change="handleChangeQueueData"
-                @left-check-change="handleLeftTable"
-                @right-check-change="handleSelectQueue"
-              >
-                <span class="box" slot-scope="{ option }">
-                  <span
-                    class="text"
-                    :title="option.label"
-                    :class="[{ active: option.label !== option.key }, 'text']"
-                    >{{ option.label }}</span
-                  >
-                </span>
-              </el-transfer> -->
             </template>
           </div>
         </div>
@@ -294,14 +248,14 @@
 import _ from 'lodash'
 import log from '../../../log'
 import factory from '../../../api/factory'
-import MqTransfer from './mqTransfer'
+import MqTransfer from './MqTransfer'
 import FieldMapping from '@/components/FieldMapping'
-// import { ALLOW_FIELD_MAPPING } from '../../constants'
+import VirtualTransfer from 'web-core/components/virtual-transfer'
 let connections = factory('connections')
 let editorMonitor = null
 export default {
-  name: 'databaseLink',
-  components: { MqTransfer, FieldMapping },
+  name: 'DatabaseLinkAttribute',
+  components: { MqTransfer, VirtualTransfer, FieldMapping },
   data() {
     return {
       mysqlDisable: false,
@@ -419,7 +373,7 @@ export default {
         }
         if (targetCell && this.model.selectSourceArr.length === 0) {
           // 修改库清空连线选中的表
-          if(sourceFormData.isChangeConnectionFlag) {
+          if (sourceFormData.isChangeConnectionFlag) {
             targetFormData.syncObjects = []
             sourceFormData.isChangeConnectionFlag = false
           }
@@ -690,7 +644,7 @@ export default {
     display: block;
   }
   .nodeBody {
-    height: calc(100% - 30px);
+    height: 100%;
     overflow: hidden;
   }
   .e-form {
