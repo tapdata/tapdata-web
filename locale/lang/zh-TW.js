@@ -1,10 +1,82 @@
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
 
 const newTc = {
+  // input 通用
+  date_picker_start_time: '開始時間',
+  date_picker_end_time: '結束時間',
+
+  // button 通用
+  button_delete: '刪除',
+  button_edit: '編輯',
+  button_cancel: '取消',
+  button_confirm: '確定',
+  button_back: '返回',
+  button_save: '保存',
+  button_close: '關閉',
+
+  // message 通用
+  message_name_exist: '名稱已存在',
+
+  // schema progress
+  schema_progress_status_success: '已完成',
+  schema_progress_status_error: '加載錯誤',
+  schema_progress_dialog_error_title: 'Schema加載出錯',
+
+  // 數據校驗
+  verify_title_create: '新建校驗',
+  verify_title_edit: '編輯校驗',
+
   verify_history_source_rows: '本次校驗行數',
   verify_history_target_rows: '目標行數',
   verify_history_source_total_rows: '源總行數',
-  verify_history_target_total_rows: '目標總行數'
+  verify_history_target_total_rows: '目標總行數',
+
+  verify_type_row_count: '快速count校驗',
+  verify_type_field: '表全欄位值校驗',
+  verify_type_joint_field: '關聯欄位值校驗',
+
+  verify_tips_type_row_count: '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體欄位內容',
+  verify_tips_type_field: '全表欄位值校驗會對源表和目標表的全部欄位進行逐行校驗，能查出所有欄位的差異，但是速度慢',
+  verify_tips_type_joint_field: '關聯鍵校驗只對源表和目標表的關聯欄位的值進行比對校驗，速度快於全表欄位值校驗模式',
+
+  verify_frequency_manual: '單次校驗',
+  verify_frequency_cron: '重複校驗',
+
+  verify_job_enable: '已啟用',
+  verify_job_disable: '已禁止',
+  verify_job_name: '校驗任務名',
+
+  verify_form_label_select_job: '選擇任務',
+  verify_form_label_type: '校驗類型',
+  verify_form_label_frequency: '校驗頻次',
+  verify_form_label_start_and_end_time: '起止時間',
+  verify_form_label_interval: '校驗間隔',
+  verify_form_label_error_save_count: '錯誤保存條數',
+  verify_form_label_index_field: '索引欄位',
+  verify_form_label_script: 'JS校驗邏輯',
+  verify_form_label_table: '待校驗表',
+  verify_form_joint_table_header: '校驗條件',
+
+  verify_button_joint_table_clear: '清空',
+  verify_button_add_table: '添加表',
+  verify_button_auto_add_table: '自動添加表',
+  verify_button_add_script: '添加邏輯',
+
+  verify_switch_job_enable_or_not: '是否啟用',
+  verify_checkbox_advance: '高級校驗',
+
+  verify_validator_message_task: '請選擇任務',
+  verify_validator_message_job_name: '請輸入校驗任務名稱',
+  verify_validator_message_time: '請選擇起止時間',
+  verify_validator_message_frequency: '請輸入校驗間隔',
+
+  verify_message_error_joint_table_not_set: '請添加校驗條件',
+  verify_message_error_joint_table_target_or_source_not_set: '校驗條件中源表或目標表未選擇',
+  verify_message_error_joint_table_field_not_set: '校驗條件中源表或目標表的索引欄位未選擇',
+  verify_message_error_joint_table_field_not_match: '校驗條件中源表與目標表的索引欄位個數不相等',
+  verify_message_confirm_delete_script: '確定要刪除自定義JS校驗邏輯嗎',
+  verify_message_confirm_back: '此操作會丟失當前正在創建（編輯）的校驗任務',
+  verify_message_title_confirm_back: '是否放棄創建（編輯）校驗任務？'
 }
 
 const tc = {
@@ -732,7 +804,10 @@ const tc = {
       taskName: '任務名',
       errorTotal: '共XX條，已選擇',
       strip: '條'
-    }
+    },
+    flowEngineVersion: '引擎版本',
+    flowEngineV1: 'Flow Engine V1',
+    jetFlowEngineV2: 'Jet Flow Engine V2'
   },
   connection: {
     dataBaseName: '連接名/連接信息',
@@ -762,7 +837,7 @@ const tc = {
     deteleDatabaseTittle: '是否刪除該連接？',
     deteleDatabaseMsg: '刪除連接 xxx 後，此連接將無法恢復',
     desc: '數據源包括數據庫，結構化文件，應用程序RESTful API，自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除基礎的配置項之外，數據源還有定期/手動加載數據庫結構 ，設置時區，表過濾設置等功能。更多配置說明，請點擊',
-    reloadMsg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema : ',
+    reloadMsg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema ',
     checkMsg: '此數據源被傳輸任務或API所佔用，無法刪除',
     copyFailedMsg: '複製失敗，原因：系統設置中 "連接設置 - 允許創建重複數據源" 被設置為 "false"',
     change: '更換',
@@ -1333,6 +1408,7 @@ const tc = {
           },
           joinKeys: {
             label: '關聯條件',
+            tips: '溫馨提示: 當前關聯條件設置會導致數據刪除操作無法同步的情況，請添加中間mongodb節點來完成同步設置。',
             sourceField: '源字段',
             targetField: '目標字段'
           },
@@ -2429,7 +2505,7 @@ const tc = {
     verifyDetail: '校驗詳情',
     sourceTable: '源表',
     targetTable: '目標表',
-    sourceRows: '源/目標表行數',
+    sourceRows: '源表行數',
     verifyResult: '校驗結果',
     rowConsistent: '行數差異',
     contConsistent: '內容差異',
@@ -2987,6 +3063,8 @@ const tc = {
     Clean_Message_Time: '清除消息時間',
     Keep_Alive_Message: '保持在線消息',
     Sample_Rate: '採樣率',
+    task_load_threshold: '負載閾值（百分比）',
+    task_load_statistics_time: '負載統計時間（分鐘）',
     ApiServer: 'API分發設置',
     Default_Limit: '默認查詢返回行數',
     Max_Limit: '最大查詢返回行數',

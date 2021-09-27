@@ -1,5 +1,6 @@
-import { connect, mapProps, h } from '@formily/vue'
-import { getComponentByTag } from './utils/util'
+import { connect, mapProps, h, mapReadPretty } from '@formily/vue'
+import { getComponentByTag } from './utils'
+import PreviewText from 'web-core/components/form/preview-text'
 
 const ElRadioGroup = getComponentByTag('el-radio-group', { change: 'input' })
 const ElRadio = getComponentByTag('el-radio')
@@ -47,5 +48,9 @@ const RadioGroupOption = {
   }
 }
 
-export const RadioGroup = connect(RadioGroupOption, mapProps({ dataSource: 'options' }))
+export const RadioGroup = connect(
+  RadioGroupOption,
+  mapProps({ dataSource: 'options' }),
+  mapReadPretty(PreviewText.Select)
+)
 export const Radio = ElRadio

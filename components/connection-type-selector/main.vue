@@ -1,17 +1,16 @@
 <template>
   <div class="database">
-    <span class="title" v-if="types.length">Database</span>
-    <ul class="item clearfix">
+    <ul class="database-ul">
       <li v-for="item in types" :key="item" @click="$emit('select', item)">
         <div class="img-box">
-          <img :src="$util.getConnectionTypeImg(item)" />
+          <img :src="$util.getConnectionTypeDialogImg(item)" />
         </div>
         <div class="content">{{ typeMap[item] }}</div>
       </li>
       <li v-for="item in comingTypes" :key="item" class="item--disabled">
         <div class="img-box position-relative">
-          <img :src="$util.getConnectionTypeImg(item)" />
-          <div class="img-box__mask flex justify-center align-center position-absolute top-0 bottom-0 start-0 end-0">
+          <img :src="$util.getConnectionTypeDialogImg(item)" />
+          <div class="img-box__mask position-absolute">
             <span class="mask-text">即将上线</span>
           </div>
         </div>
@@ -19,19 +18,19 @@
       </li>
     </ul>
     <span class="title" v-if="otherTypes && otherTypes.length > 0">Other Type</span>
-    <ul class="item clearfix">
+    <ul class="database-ul">
       <li v-for="(item, index) in otherTypes" :key="index" @click="$emit('select', item)">
         <div class="img-box">
-          <img :src="$util.getConnectionTypeImg(item)" />
+          <img :src="$util.getConnectionTypeDialogImg(item)" />
         </div>
         <div class="content">{{ typeMap[item] }}</div>
       </li>
     </ul>
     <span class="title" v-if="automationType && automationType.length > 0">Automation Type</span>
-    <ul class="item clearfix">
+    <ul class="database-ul">
       <li v-for="(item, index) in automationType" :key="index" @click="$emit('select', item.type)">
         <div class="img-box">
-          <img :src="$util.getConnectionTypeImg('default')" />
+          <img :src="$util.getConnectionTypeDialogImg('default')" />
         </div>
         <div class="content">{{ item.name }}</div>
       </li>
@@ -78,75 +77,71 @@ export default {
 
 <style scoped lang="scss">
 .database {
-  max-height: 600px;
+  max-height: 270px;
   overflow: auto;
   .title {
     color: #999;
-    margin-left: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 32px;
     display: inline-block;
   }
-  .item {
+  .database-ul {
+    display: flex;
+    flex-wrap: wrap;
     li {
-      float: left;
-      margin-left: 20px;
-      margin-bottom: 20px;
+      margin-left: 32px;
+      margin-bottom: 32px;
       text-align: center;
     }
+    li:nth-child(6n + 1) {
+      margin-left: 0;
+    }
     .img-box {
+      width: 78px;
+      height: 78px;
+      border: 1px solid #dedee4;
+      border-radius: 6px;
+      background: #fafafa;
+      cursor: pointer;
       display: flex;
-      width: 120px;
-      height: 70px;
       justify-content: center;
       align-items: center;
-      background: #fafafa;
-      border: 1px solid #dedee4;
-      border-radius: 3px;
-      cursor: pointer;
       img {
         width: 35%;
       }
       &:hover {
-        box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+        background: rgba(0, 0, 0, 0.3);
       }
       .img-box__mask {
-        margin: -1px;
-        font-size: 13px;
-        background: rgba(0, 0, 0, 0.4);
+        width: 65px;
+        height: 20px;
+        top: 5px;
+        right: -20px;
+        border-radius: 12px;
+        align-items: center;
+        background: #ff9c00;
         .mask-text {
-          opacity: 0;
+          font-size: 11px;
           color: #fff;
-          font-weight: bold;
-        }
-        &:hover {
-          .mask-text {
-            opacity: 1;
-          }
+          font-family: PingFangSC-Regular, PingFang SC;
         }
       }
     }
     .content {
-      font-size: 12px;
       margin-top: 5px;
-      max-width: 124px;
+      max-width: 82px;
+      font-weight: 400;
+      font-size: 14px;
       text-overflow: ellipsis;
       white-space: nowrap;
       word-break: break-word;
       overflow: hidden;
     }
-  }
-  .clearfix:before,
-  .clearfix:after {
-    display: table;
-    content: '';
-  }
-
-  .clearfix:after {
-    clear: both;
-  }
-
-  .clearfix {
-    *zoom: 1;
+    .coming-icon {
+      width: 46px;
+      height: 16px;
+      background: #ff9c00;
+      border-radius: 7px;
+    }
   }
 }
 </style>

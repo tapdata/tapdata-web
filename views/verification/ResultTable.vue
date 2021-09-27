@@ -1,20 +1,12 @@
 <template>
   <el-table
     highlight-current-row
-    class="dv-table border mt-2"
     ref="table"
     height="100%"
-    :data="data"
+    :data="list"
     :element-loading-text="$t('dataFlow.dataLoading')"
     @row-click="rowClickHandler"
   >
-    <ElTableColumn width="45">
-      <template slot-scope="scope">
-        <ElRadio :value="current" :label="scope.row.taskId">
-          <span></span>
-        </ElRadio>
-      </template>
-    </ElTableColumn>
     <ElTableColumn :label="$t('dataVerification.sourceTable')">
       <template slot-scope="scope">
         <span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
@@ -31,12 +23,20 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn :label="$t('dataVerification.sourceRows')">
+    <ElTableColumn v-if="$route.name === 'VerifyDiffDetails'" :label="$t('dataVerification.sourceRows')">
       <template slot-scope="scope">
-        <span>{{ scope.row.firstSourceTotal || scope.row.source_total || 0 }}</span>
-        <div>
-          {{ scope.row.firstTargetTotal || scope.row.target_total || 0 }}
-        </div>
+        <span>{{ scope.row.source_total || 0 }}</span>
+        <!--        <div>-->
+        <!--          {{ scope.row.target_total || 0 }}-->
+        <!--        </div>-->
+      </template>
+    </ElTableColumn>
+    <ElTableColumn v-else :label="$t('dataVerification.sourceRows')">
+      <template slot-scope="scope">
+        <span>{{ scope.row.firstSourceTotal || 0 }}</span>
+        <!--        <div>-->
+        <!--          {{ scope.row.firstTargetTotal || 0 }}-->
+        <!--        </div>-->
       </template>
     </ElTableColumn>
     <ElTableColumn prop="progress" :label="$t('dataVerification.verifyProgress')" width="80px">
@@ -51,31 +51,16 @@
     <ElTableColumn prop="status" :label="$t('dataVerification.verifyResult')">
       <template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
         <div class="inspect-result-status">
-          <div v-if="scope.row.result === 'failed'">
-            <span class="error" v-if="scope.row.target_total - scope.row.source_total !== 0">
-              <i class="verify-icon el-icon-error color-danger"></i>
-              <span>
-                {{
-                  $t('dataVerification.rowConsistent') +
-                  ' : ' +
-                  Math.abs(scope.row.target_total - scope.row.source_total)
-                }}
-              </span>
-            </span>
-          </div>
-          <div
-            v-if="
-              scope.row.source_only + scope.row.target_only + scope.row.row_failed !== 0 &&
-              type !== 'row_count' &&
-              scope.row.result === 'failed'
-            "
-          >
+          <div v-if="scope.row.result === 'failed' && scope.row.countResultText">
             <span class="error">
               <i class="verify-icon el-icon-error color-danger"></i>
-              <span>
-                {{ $t('dataVerification.contConsistent') + ' : ' }}
-                {{ scope.row.source_only + scope.row.target_only + scope.row.row_failed }}
-              </span>
+              <span>{{ scope.row.countResultText }}</span>
+            </span>
+          </div>
+          <div v-if="scope.row.result === 'failed' && scope.row.contentResultText">
+            <span class="error">
+              <i class="verify-icon el-icon-error color-danger"></i>
+              <span>{{ scope.row.contentResultText }}</span>
             </span>
           </div>
           <span class="success" v-if="scope.row.result === 'passed'">
@@ -107,6 +92,34 @@ export default {
   data() {
     return {
       current: 0
+    }
+  },
+  computed: {
+    list() {
+      let list = this.data.map(item => {
+        if (item.result === 'failed') {
+          let countResultText = ''
+          let contentResultText = ''
+          let diffCount = item.target_total - item.source_total
+          let diffCountNum = Math.abs(diffCount)
+          if (diffCount > 0) {
+            countResultText = this.$t('verify_result_count_more', [diffCountNum])
+          }
+          if (diffCount < 0) {
+            countResultText = this.$t('verify_result_count_less', [diffCountNum])
+          }
+          if (this.type !== 'row_count') {
+            let diffContentNum = item.source_only + item.target_only + item.row_failed
+            if (diffContentNum !== 0) {
+              contentResultText = this.$t('verify_result_content_diff', [diffContentNum])
+            }
+          }
+          item.countResultText = countResultText
+          item.contentResultText = contentResultText
+        }
+        return item
+      })
+      return list
     }
   },
   methods: {

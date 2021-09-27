@@ -26,5 +26,8 @@ export const TYPEMAP = {
   kudu: 'KUDU',
   hbase: 'HBase',
   mq: 'MQ',
-  greenplum: 'Greenplum'
+  greenplum: 'Greenplum',
+  tidb: 'TiDB',
+  hana: 'SAP HANA',
+  clickhouse: 'ClickHouse'
 }

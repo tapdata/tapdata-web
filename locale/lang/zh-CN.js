@@ -1,9 +1,99 @@
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 const newCn = {
+  // input 通用
+  date_picker_start_time: '开始时间',
+  date_picker_end_time: '结束时间',
+
+  // button 通用
+  button_delete: '删除',
+  button_edit: '编辑',
+  button_cancel: '取消',
+  button_confirm: '确定',
+  button_back: '返回',
+  button_save: '保存',
+  button_close: '关闭',
+
+  // message 通用
+  message_name_exist: '名称已存在',
+
+  // schema progress
+  schema_progress_status_success: '已完成',
+  schema_progress_status_error: '加载错误',
+  schema_progress_dialog_error_title: 'Schema加载出错',
+
+  // 数据校验
+  verify_title_create: '新建校验',
+  verify_title_edit: '编辑校验',
+
   verify_history_source_rows: '本次校验行数',
   verify_history_target_rows: '目标行数',
   verify_history_source_total_rows: '源总行数',
-  verify_history_target_total_rows: '目标总行数'
+  verify_history_target_total_rows: '目标总行数',
+
+  verify_type_row_count: '快速count校验',
+  verify_type_field: '表全字段值校验',
+  verify_type_joint_field: '关联字段值校验',
+
+  verify_tips_type_row_count: '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容',
+  verify_tips_type_field: '全表字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢',
+  verify_tips_type_joint_field: '关联键校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式',
+
+  verify_frequency_manual: '单次校验',
+  verify_frequency_cron: '重复校验',
+
+  verify_job_enable: '已启用',
+  verify_job_disable: '已禁止',
+  verify_job_name: '校验任务名',
+
+  verify_form_label_select_job: '选择任务',
+  verify_form_label_type: '校验类型',
+  verify_form_label_frequency: '校验频次',
+  verify_form_label_start_and_end_time: '起止时间',
+  verify_form_label_interval: '校验间隔',
+  verify_form_label_error_save_count: '错误保存条数',
+  verify_form_label_index_field: '索引字段',
+  verify_form_label_script: 'JS校验逻辑',
+  verify_form_label_table: '待校验表',
+  verify_form_joint_table_header: '校验条件',
+
+  verify_button_joint_table_clear: '清空',
+  verify_button_add_table: '添加表',
+  verify_button_auto_add_table: '自动添加表',
+  verify_button_add_script: '添加逻辑',
+
+  verify_switch_job_enable_or_not: '是否启用',
+  verify_checkbox_advance: '高级校验',
+
+  verify_validator_message_task: '请选择任务',
+  verify_validator_message_job_name: '请输入校验任务名称',
+  verify_validator_message_time: '请选择起止时间',
+  verify_validator_message_frequency: '请输入校验间隔',
+
+  verify_message_error_joint_table_not_set: '请添加校验条件',
+  verify_message_error_joint_table_target_or_source_not_set: '校验条件中源表或目标表未选择',
+  verify_message_error_joint_table_field_not_set: '校验条件中源表或目标表的索引字段未选择',
+  verify_message_error_joint_table_field_not_match: '校验条件中源表与目标表的索引字段个数不相等',
+  verify_message_confirm_delete_script: '确定要删除自定义JS校验逻辑吗',
+  verify_message_confirm_back: '此操作会丢失当前正在创建（编辑）的校验任务',
+  verify_message_title_confirm_back: '是否放弃创建（编辑）校验任务？',
+
+  milestone_label_init_dataflow: '【前期准备】解析dag路径创建子任务',
+  milestone_label_connect_to_source: '【前期准备】连接源端数据源',
+  milestone_label_connect_to_target: '【前期准备】连接目标端数据源',
+  milestone_label_init_connector: '【前期准备】扫描源端信息，初始化源端采集器',
+  milestone_label_init_transformer: '【前期准备】扫描目标端信息，初始化目标端处理器',
+  milestone_label_read_source_ddl: '【前期准备】读取源端ddl信息',
+  milestone_label_drop_target_schema: '【前期准备】删除目标端模型',
+  milestone_label_clear_target_data: '【前期准备】清空目标表数据',
+  milestone_label_create_target_table: '【前期准备】自动创建目标表',
+  milestone_label_create_target_index: '【前期准备】创建目标表索引',
+  milestone_label_create_target_view: '【前期准备】自动创建目标端视图',
+  milestone_label_create_target_function: '【前期准备】自动创建目标端函数',
+  milestone_label_create_target_procedure: '【前期准备】自动创建目标端存储过程',
+  milestone_label_read_snapshot: '【数据传输】全量读取源端数据快照',
+  milestone_label_write_snapshot: '【数据传输】目标端全量写入数据快照',
+  milestone_label_read_cdc_event: '【数据传输】源端采集器进入增量读取模式',
+  milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式'
 }
 const cn = {
   ...zhLocale,
@@ -734,7 +824,10 @@ const cn = {
       taskName: '任务名',
       errorTotal: '共 XX 条,已选择',
       strip: '条'
-    }
+    },
+    flowEngineVersion: '引擎版本',
+    flowEngineV1: 'Flow Engine V1',
+    jetFlowEngineV2: 'Jet Flow Engine V2'
   },
   connection: {
     dataBaseName: '连接名/连接信息',
@@ -764,7 +857,7 @@ const cn = {
     reloadTittle: '重新加载 schema',
     deteleDatabaseTittle: '是否删除该连接？',
     deteleDatabaseMsg: '删除连接 xxx 后，此连接将无法恢复',
-    reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema : ',
+    reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema ',
     checkMsg: '此数据源被传输任务或API所占用，无法删除',
     copyFailedMsg: '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
     change: '更换',
@@ -1343,6 +1436,7 @@ const cn = {
           },
           joinKeys: {
             label: '关联条件',
+            tips: '温馨提示: 当前关联条件设置会导致数据删除操作无法同步的情况，请添加中间mongodb节点来完成同步设置。',
             sourceField: '源字段',
             targetField: '目标字段'
           },
@@ -2440,7 +2534,7 @@ const cn = {
     verifyDetail: '校验详情',
     sourceTable: '源表',
     targetTable: '目标表',
-    sourceRows: '源/目标表行数',
+    sourceRows: '源表行数',
     verifyResult: '校验结果',
     rowConsistent: 'Count差',
     contConsistent: '表数据差',
@@ -3000,6 +3094,8 @@ const cn = {
     Clean_Message_Time: '清除消息时间',
     Keep_Alive_Message: '保持在线消息',
     Sample_Rate: '采样率',
+    task_load_threshold: '负载阈值（百分比）',
+    task_load_statistics_time: '负载统计时间（分钟）',
     ApiServer: 'API分发设置',
     Default_Limit: '默认查询返回行数',
     Max_Limit: '最大查询返回行数',

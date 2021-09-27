@@ -1,7 +1,8 @@
 import { connect, mapProps } from '@formily/vue'
-import { getComponentByTag } from './utils/util'
+// import { DatePicker as ElDatePicker } from 'element-ui'
+import { getComponentByTag } from './utils'
 
-const TransformElDatePicker = getComponentByTag('el-data-picker', {
+const TransformElDatePicker = getComponentByTag('el-date-picker', {
   change: 'input'
 })
 

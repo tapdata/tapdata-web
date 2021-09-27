@@ -1,9 +1,87 @@
 import enLocale from 'element-ui/lib/locale/lang/en'
 const newEn = {
+  // input general
+  date_picker_start_time: 'Start time',
+  date_picker_end_time: 'End time',
+
+  // button general
+  button_delete: 'Delete',
+  button_edit: 'Edit',
+  button_cancel: 'Cancel',
+  button_confirm: 'OK',
+  button_back: 'Return',
+  button_save: 'Save',
+  button_close: 'Close',
+
+  // message general
+  message_name_exist: 'Name already exists',
+
+  // schema progress
+  schema_progress_status_success: 'Finished',
+  schema_progress_status_error: 'Loading error',
+  schema_progress_dialog_error_title: 'Schema loading error',
+
+  // Data validation
+  verify_title_create: 'New verification',
+  verify_title_edit: 'Edit Verification',
+
   verify_history_source_rows: 'Verfify Rows',
   verify_history_target_rows: 'Target Rows',
   verify_history_source_total_rows: 'Source Total Rows',
-  verify_history_target_total_rows: 'Target Total Rows'
+  verify_history_target_total_rows: 'Target Total Rows',
+
+  verify_type_row_count: 'Quick count verification',
+  verify_type_field: 'Check all field values ​​of the table',
+  verify_type_joint_field: 'Associated field value verification',
+
+  verify_tips_type_row_count:
+    'Quick count only performs count verification on the number of rows in the source table and the target table. The speed is extremely fast, but the specific field content of the difference will not be displayed.',
+  verify_tips_type_field:
+    'Full table field value verification will verify all the fields of the source table and the target table row by row. It can detect the differences in all fields, but the speed is slow.',
+  verify_tips_type_joint_field:
+    'Associated key verification only compares and verifies the values ​​of the associated fields of the source table and the target table, which is faster than the full-table field value verification mode',
+
+  verify_frequency_manual: 'Single verification',
+  verify_frequency_cron: 'Repeat verification',
+
+  verify_job_enable: 'Enabled',
+  verify_job_disable: 'Disabled',
+  verify_job_name: 'Verify job name',
+
+  verify_form_label_select_job: 'Select task',
+  verify_form_label_type: 'Verification Type',
+  verify_form_label_frequency: 'Verify frequency',
+  verify_form_label_start_and_end_time: 'Start and end time',
+  verify_form_label_interval: 'Verification interval',
+  verify_form_label_error_save_count: 'Number of saved errors',
+  verify_form_label_index_field: 'Index field',
+  verify_form_label_script: 'JS verification logic',
+  verify_form_label_table: 'Table to be verified',
+  verify_form_joint_table_header: 'Verification condition',
+
+  verify_button_joint_table_clear: 'Clear',
+  verify_button_add_table: 'Add table',
+  verify_button_auto_add_table: 'Automatically add table',
+  verify_button_add_script: 'Add logic',
+
+  verify_switch_job_enable_or_not: 'Is it enabled?',
+  verify_checkbox_advance: 'Advanced Checkbox',
+
+  verify_validator_message_task: 'Please select a task',
+  verify_validator_message_job_name: 'Please enter the verification job name',
+  verify_validator_message_time: 'Please select the start and end time',
+  verify_validator_message_frequency: 'Please enter the verification interval',
+
+  verify_message_error_joint_table_not_set: 'Please add verification conditions',
+  verify_message_error_joint_table_target_or_source_not_set:
+    'The source table or the target table is not selected in the verification condition',
+  verify_message_error_joint_table_field_not_set:
+    'The index field of the source table or the target table in the verification condition is not selected',
+  verify_message_error_joint_table_field_not_match:
+    'The number of index fields of the source table and the target table in the verification condition are not equal',
+  verify_message_confirm_delete_script: 'Are you sure you want to delete the custom JS verification logic',
+  verify_message_confirm_back: 'This operation will lose the verification task currently being created (edited)',
+  verify_message_title_confirm_back: 'Would you give up creating (editing) verification tasks? '
 }
 const en = {
   ...enLocale,
@@ -751,7 +829,10 @@ const en = {
       taskName: 'Task name',
       errorTotal: 'Total XX, selected',
       strip: 'row'
-    }
+    },
+    flowEngineVersion: 'Flow Engine Version',
+    flowEngineV1: 'Flow Engine V1',
+    jetFlowEngineV2: 'Jet Flow Engine V2'
   },
   connection: {
     dataBaseName: 'Connection name',
@@ -1368,6 +1449,7 @@ const en = {
           },
           joinKeys: {
             label: 'Association condition',
+            tips: 'Reminder: The current association condition setting will cause the data deletion operation to fail to be synchronized. Please add an intermediate mongodb node to complete the synchronization setting.',
             sourceField: 'Source Field',
             targetField: 'Target Field'
           },
@@ -2491,7 +2573,7 @@ const en = {
     verifyDetail: 'Verify Detail',
     sourceTable: 'Source Table',
     targetTable: 'Target Table',
-    sourceRows: 'Source/Target Table Rows',
+    sourceRows: 'Source Table Rows',
     verifyResult: 'Verify Result',
     rowConsistent: 'Count diff',
     contConsistent: 'Value diff',
@@ -3054,6 +3136,8 @@ const en = {
     Clean_Message_Time: 'Clear message time',
     Keep_Alive_Message: 'Keep online message',
     Sample_Rate: 'Sampling rate',
+    task_load_threshold: 'Task load threshold (percentage)',
+    task_load_statistics_time: 'Task load statistics time (minute)',
     ApiServer: 'API distribution settings',
     Default_Limit: 'The number of rows returned by the default query',
     Max_Limit: 'Maximum number of rows returned by the query',

@@ -55,7 +55,8 @@ export default {
         on: {}
       },
       form: null,
-      itemsConfig: this.config.items.concat()
+      itemsConfig: this.config.items.concat(),
+      oldValue: {}
     }
   },
   watch: {
@@ -75,9 +76,7 @@ export default {
         class: 'e-form-builder-container',
         ref: 'form',
 
-        props: Object.assign(formConfig, {
-          inlineMessage: true
-        })
+        props: Object.assign(formConfig)
       },
       formItems.map((item, index) => {
         return this.getFormItem(h, item, formConfig, index)
@@ -116,11 +115,17 @@ export default {
           let triggerConfig = depend.triggerConfig
           if (triggerOptions.every(opt => opt.value === this.value[opt.field])) {
             config = Object.assign(config, depend.triggerConfig)
-            if (Object.hasOwnProperty.call(triggerConfig, 'value') && triggerConfig.value === '') {
-              this.value[config.field] = ''
+            //需要判断本次渲染是否修改的当前值，如果是，则不走dependOn逻辑，
+            //否则会导致本次值永远无法修改的情况，无限被triggerConfig.value的值覆盖
+            if (
+              Object.hasOwnProperty.call(triggerConfig, 'value') &&
+              this.oldValue[config.field] === this.value[config.field]
+            ) {
+              this.value[config.field] = triggerConfig.value
             }
           }
         })
+        this.oldValue[config.field] = this.value[config.field]
       }
       //改变必填项的默认提示
       if (config.required && !rules.find(r => r.required)) {
@@ -139,11 +144,12 @@ export default {
       let item = h(
         'ElFormItem',
         {
-          class: 'e-form-builder-item',
+          class: config.customClass ? 'e-form-builder-item ' + config.customClass : 'e-form-builder-item ',
           style: formConfig.itemStyle,
           props: {
             prop: config.field,
             label: config.label,
+            inlineMessage: !!config.inlineMeesage,
             rules: rules.map(r => {
               let rule = Object.assign({}, r)
               if (rule.validator) {
@@ -154,11 +160,11 @@ export default {
           },
           key: config.field || index
         },
-        [this.getLabel(h, config), this.getBody(h, config, formConfig)]
+        [this.getLabel(h, config, formConfig), this.getBody(h, config, formConfig)]
       )
       return config.show ? item : ''
     },
-    getLabel(h, config) {
+    getLabel(h, config, formConfig) {
       return !config.label
         ? null
         : h(
@@ -168,7 +174,7 @@ export default {
               slot: 'label'
             },
             [
-              config.label,
+              formConfig.labelColon ? config.label + '：' : config.label,
               config.tips &&
                 h(
                   'ElPopover',
@@ -287,7 +293,7 @@ export default {
     padding-bottom: 0px;
   }
   .el-form-item {
-    margin-bottom: 5px;
+    margin-bottom: 32px;
     .el-form-item__error {
       line-height: 20px;
     }
@@ -301,6 +307,9 @@ export default {
   }
   .fb-form-item-append-slot {
     margin-left: 5px;
+  }
+  .fb-radio-tip__text {
+    line-height: 18px;
   }
 }
 </style>

@@ -25,47 +25,66 @@ export default {
       config.options = []
       throw new Error(`The component "FbRadio" is not config options!`)
     }
-    return h(
-      'ElRadioGroup',
-      {
-        class: {
-          'fb-radio': true,
-          'radio-border': config.border,
-          verical: config.isVertical
-        },
-        props: {
-          value: self.value
-        },
-        on: self.on
-      },
-      config.options.map(opt => {
-        return h(
-          config.button ? 'ElRadioButton' : 'ElRadio',
-          {
-            class: {
-              'fb-radio-option': true
-            },
-            props: {
-              label: opt.value,
-              disabled: opt.disabled,
-              border: config.border
-            }
+    let tip = config.options.find(item => item.value === this.value)?.tip || ''
+    const outerTip = !!config.outerTip
+    let innerTip = true
+    if (config.innerTip !== undefined) {
+      innerTip = config.innerTip
+    }
+    let arr = [
+      h(
+        'ElRadioGroup',
+        {
+          class: {
+            'fb-radio': true,
+            'radio-border': config.border,
+            verical: config.isVertical,
+            'radio-button': !!config.button
           },
-          [
-            h('span', opt.label),
-            opt.tip && config.isVertical && config.border
-              ? h(
-                  'div',
-                  {
-                    class: 'fb-radio-option-tip'
-                  },
-                  opt.tip
-                )
-              : null
-          ]
-        )
-      })
-    )
+          props: {
+            value: self.value
+          },
+          on: self.on
+        },
+        config.options.map(opt => {
+          let optArr = [h('span', opt.label)]
+          if (innerTip && opt.tip && config.isVertical && config.border) {
+            optArr.push(
+              h(
+                'div',
+                {
+                  class: 'fb-radio-option-tip'
+                },
+                opt.tip
+              )
+            )
+          }
+          return h(
+            config.button ? 'ElRadioButton' : 'ElRadio',
+            {
+              class: {
+                'fb-radio-option': true
+              },
+              props: {
+                label: opt.value,
+                disabled: opt.disabled,
+                border: config.border
+              }
+            },
+            optArr
+          )
+        })
+      )
+    ]
+    if (outerTip && tip) {
+      arr.push(
+        h('div', { class: 'fb-radio-tip' }, [
+          h('i', { class: 'el-icon-info color-primary' }),
+          h('span', { class: 'fb-radio-tip__text' }, tip)
+        ])
+      )
+    }
+    return h('div', { class: 'fb-radio-group' }, arr)
   }
 }
 </script>
@@ -125,8 +144,27 @@ export default {
       margin-left: 0;
     }
   }
+  &.radio-button {
+    display: inline-block;
+    .fb-radio-option {
+      display: inline-block;
+      margin-right: unset;
+      padding: 0;
+    }
+  }
   .el-radio.is-checked {
     border: 2px solid #409eff;
+  }
+}
+.fb-radio-tip {
+  i {
+    font-size: 14px;
+    color: map-get($color, primary);
+  }
+  .fb-radio-tip__text {
+    margin-left: 8px;
+    font-size: 12px;
+    color: map-get($fontColor, sub);
   }
 }
 </style>
