@@ -247,13 +247,13 @@ export default {
           editData = await this.$axios.get(`tm/api/Connections/${id}?noSchema=1`)
         }
         if (
-          editData.data.database_type === 'mq' &&
-          (typeof editData.data.mqQueueSet === 'object' || typeof editData.data.mqTopicSet === 'object')
+          editData.database_type === 'mq' &&
+          (typeof editData.mqQueueSet === 'object' || typeof editData.mqTopicSet === 'object')
         ) {
-          let mqQueueSet = editData.data.mqQueueSet.length ? editData.data.mqQueueSet.join(',') : ''
-          let mqTopicSet = editData.data.mqTopicSet.length ? editData.data.mqTopicSet.join(',') : ''
-          editData.data.mqQueueSet = mqQueueSet
-          editData.data.mqTopicSet = mqTopicSet
+          let mqQueueSet = editData.mqQueueSet.length ? editData.mqQueueSet.join(',') : ''
+          let mqTopicSet = editData.mqTopicSet.length ? editData.mqTopicSet.join(',') : ''
+          editData.mqQueueSet = mqQueueSet
+          editData.mqTopicSet = mqTopicSet
         }
         this.model = Object.assign(this.model, editData)
 
