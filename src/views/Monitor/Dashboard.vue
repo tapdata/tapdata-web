@@ -43,7 +43,7 @@
           <span class="font-color-sub">本次执行时间: </span>
           <span class="font-color-main">{{ task.startTimeFmt }}</span>
         </div>
-        <div v-if="taskType.value === 'initial_sync'" class="info-item">
+        <div class="info-item">
           <span class="font-color-sub">本次结束时间: </span>
           <span class="font-color-main">{{ task.endTimeFmt }}</span>
         </div>
