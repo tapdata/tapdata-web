@@ -291,6 +291,10 @@ export default {
       }
       this.$axios.get(`tm/api/Connections?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
         let connections = data || []
+        // 源和目标一样的情况
+        if (connections.length === 1) {
+          connections.push(Object.assign({}, connections[0], { id: 'targetId' }))
+        }
         connections.forEach(c => {
           let type = 'source'
           if (c.id === ids[1]) {
