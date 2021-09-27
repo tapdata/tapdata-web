@@ -1,116 +1,168 @@
 <template>
-  <section class="agent-details-wrap" v-loading="loading">
-    <template v-if="agent">
-      <div class="panel header">
-        <InlineInput class="agent-name" :value="agent.name" @save="updateName($event, agent.id)"></InlineInput>
-        <div class="agent-status" style="margin-top: 10px">
-          <StatusTag :status="agent.status"></StatusTag>
-          <span class="lignt" style="margin-left: 5px">{{ $t('agent_detail_synchronization_task_number') }}：</span>
-          <span>{{ agent.metric ? agent.metric.runningTaskNum : 0 }}</span>
+  <el-drawer
+    :modal="false"
+    :visible.sync="drawer"
+    :direction="direction"
+    :show-close="false"
+    :with-header="false"
+    size="304px"
+    style="top: 70px"
+    @opened="openedFnc"
+    @closed="closedFnc"
+  >
+    <div v-loading="loading" class="details-container">
+      <div class="container-item border-item flex pb-5">
+        <div class="pt-2">
+          <VIcon size="24" class="font-color-sub">computer</VIcon>
+        </div>
+        <div class="ml-4">
+          <div class="fs-6 mb-2 ellipsis"><slot name="title"></slot></div>
+          <div><status-tag type="text" :status="agent.status"></status-tag></div>
         </div>
       </div>
-      <div class="panel mt-5">
-        <ul class="info">
-          <li class="info-item">
-            <div class="label">{{ $t('agent_id') }}：</div>
-            <div class="value">{{ agent.id }}</div>
-          </li>
-          <li class="info-item">
-            <div class="label">{{ $t('agent_detail_version') }}：</div>
-            <div class="value">
-              {{ agent.spec.version }}
-            </div>
-          </li>
-          <li class="info-item">
-            <div class="label">{{ $t('agent_detail_create_time') }}：</div>
-            <div class="value">{{ agent.createAt }}</div>
-          </li>
-          <li class="info-item">
-            <div class="label">{{ $t('agent_detail_host_ip') }}：</div>
-            <div class="value">
-              {{ agent.ips }}
-            </div>
-          </li>
-          <li class="info-item">
-            <div class="label">{{ $t('agent_detail_host_cpu_number') }}：</div>
-            <div class="value">
-              {{ agent.cpus }}
-            </div>
-          </li>
-          <li class="info-item">
-            <div class="label">{{ $t('agent_detail_host_memory_size') }}：</div>
-            <div class="value">
-              {{ agent.totalmem }}
-            </div>
-          </li>
-          <li class="info-item">
-            <div class="label">{{ $t('agent_detail_installation_manual') }}：</div>
-            <div class="value">
-              {{ agent.installationDirectory }}
-            </div>
-          </li>
-        </ul>
+      <div class="button-line container-item border-item pt-4 pb-5">
+        <slot name="operation"></slot>
       </div>
-      <ChangeInstance :region="agent.region" :zone="agent.zone" :dialogVisible.sync="dialogVisible"></ChangeInstance>
-    </template>
-    <template v-else>
-      <div class="agent-list__empty" v-if="!agent">
-        <img src="../../assets/image/noAgent.png" class="code" />
-        <span>您的 Agent 已不存在</span>
+      <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
+        <div class="pt-3">
+          <VIcon class="font-color-sub">{{ item.icon }}</VIcon>
+        </div>
+        <div class="flex-fill ml-4">
+          <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
+            <div class="box-line__label">{{ temp.label + '：' }}</div>
+            <div class="box-line__value">{{ agent[temp.key] || '-' }}</div>
+          </div>
+        </div>
       </div>
-    </template>
-  </section>
+    </div>
+  </el-drawer>
 </template>
 
 <script>
-import { SPEC_MAP, CHARGE_MAP } from '../../const'
-// import { formatAgent } from '../../util'
-import InlineInput from '../../components/InlineInput'
-import StatusTag from '../../components/StatusTag'
-import ChangeInstance from '../../components/ChangeInstance'
+import VIcon from '@/components/VIcon'
+import StatusTag from '@/components/StatusTag'
+
 export default {
-  components: {
-    InlineInput,
-    StatusTag,
-    ChangeInstance
+  name: 'Details',
+  components: { VIcon, StatusTag },
+  props: {
+    value: Boolean,
+    detailId: [String, Number]
   },
   data() {
+    const $t = this.$t.bind(this)
     return {
-      isInternet: window.__USER_INFO__.isInternet,
-      agent: null,
-      specMap: SPEC_MAP,
-      chargeMap: CHARGE_MAP,
-      loading: true,
-      dialogVisible: false
+      drawer: false,
+      direction: 'rtl',
+      loading: false,
+      agent: {
+        btnLoading: {
+          deploy: false,
+          stop: false,
+          delete: false
+        }
+      },
+      list: [
+        {
+          icon: 'sync-task',
+          items: [
+            {
+              label: $t('agent_detail_synchronization_task_number'),
+              key: 'runningTaskNum'
+            }
+          ]
+        },
+        {
+          icon: 'list',
+          items: [
+            {
+              label: $t('agent_id'),
+              key: 'agentId'
+            },
+            {
+              label: $t('agent_version'),
+              key: 'version'
+            },
+            {
+              label: $t('agent_key') + $t('agent_create_time'),
+              key: 'createAt'
+            }
+          ]
+        },
+        {
+          icon: 'host',
+          items: [
+            {
+              label: $t('agent_detail_host_name'),
+              key: 'hostname'
+            },
+            {
+              label: $t('agent_detail_host_ip'),
+              key: 'ips'
+            },
+            {
+              label: $t('agent_detail_host_cpu_number'),
+              key: 'cpus'
+            },
+            {
+              label: $t('agent_detail_host_cpu_memory'),
+              key: 'totalmem'
+            }
+          ]
+        },
+        {
+          icon: 'install',
+          items: [
+            {
+              label: $t('agent_detail_installation_manual'),
+              key: 'installationDirectory'
+            },
+            {
+              label: $t('agent_detail_run_manual'),
+              key: 'logDir'
+            }
+          ]
+        }
+      ]
     }
   },
-  computed: {
-    isMonth() {
-      return this.agent.orderInfo.periodType === 'month'
-    },
-    comSpecType() {
-      return this.specMap[this.agent?.spec?.specType]
+  watch: {
+    value(v) {
+      this.drawer = v
+      if (v) {
+        this.init()
+      }
     }
-  },
-  created() {
-    this.fetch()
   },
   methods: {
-    fetch() {
+    init() {
+      this.loadData()
+    },
+    loadData() {
       this.loading = true
       this.$axios
-        .get('api/tcm/agent/' + this.$route.query.id)
+        .get('api/tcm/agent/' + this.detailId)
         .then(data => {
-          // this.agent = formatAgent(data)
           if (data) {
-            this.agent = data
-            this.agent.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
-            if (this.agent?.metric?.systemInfo) {
-              this.agent.cpus = this.agent.metric.systemInfo.cpus || ''
-              this.agent.installationDirectory = this.agent.metric.systemInfo.installationDirectory || ''
-              this.agent.ips = this.agent.metric.systemInfo.ips || ''
-
-              let num = Number(this.agent.metric.systemInfo.totalmem) || 0
+            // 是否显示版本号：待部署不显示
+            if (!this.showVersionFlag(data) && data.spec) {
+              data.spec.version = ''
+            }
+            Object.assign(
+              data,
+              data?.metric || {},
+              data?.metric?.systemInfo || {},
+              data?.spec || {},
+              data?.tmInfo || {}
+            )
+            // this.agent = data
+            data.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
+            if (data?.metric?.systemInfo) {
+              let arr = ['cpus', 'installationDirectory', 'ips', 'hostname', 'logDir']
+              arr.forEach(el => {
+                data[el] = data.metric?.systemInfo?.[el] || ''
+              })
+              let num = Number(data.metric.systemInfo.totalmem) || 0
               let size = ''
               if (num < 0.1 * 1024) {
                 //小于0.1KB，则转化成B
@@ -125,122 +177,58 @@ export default {
                 //其他转化成GB
                 size = (num / (1024 * 1024 * 1024)).toFixed(2) + 'GB'
               }
-              this.agent.totalmem = size
+              data.totalmem = size
             }
+            this.agent = Object.assign(this.agent, data)
+            this.$emit('load-data', this.agent)
           }
         })
         .finally(() => {
           this.loading = false
         })
     },
-    updateName(val, id) {
-      this.$axios
-        .post('api/tcm/agent', {
-          id,
-          name: val
-        })
-        .then(() => {
-          this.$message.success('修改成功')
-          this.fetch()
-        })
+    showVersionFlag(row) {
+      let { status, tmInfo } = row
+      return !(status === 'Creating' && !tmInfo?.pingTime)
     },
-    toModify() {
-      let item = this.agent
-      if (item.modifyTips) {
-        return this.$alert(item.modifyTips, {
-          type: 'warning',
-          customClass: 'el-message-box--alert'
-        })
-      }
-      location.href = process.env.BASE_URL + '/#/modify/' + item.id
+    openedFnc() {
+      this.$emit('input', this.drawer).$emit('opened')
     },
-    //打开切换版本
-    handleOpen() {
-      this.dialogVisible = true
+    closedFnc() {
+      this.$emit('input', this.drawer).$emit('closed')
     }
-    // toDataflow() {
-    // 	this.$router.push({
-    // 		name: 'Task'
-    // 	});
-    // }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.agent-details-wrap {
-  height: 100%;
-  padding: 10px 20px;
-  .panel {
-    position: relative;
-    background: #fff;
-    border-radius: 2px;
-    padding: 20px;
-    .title {
-      font-size: 14px;
-    }
-    .changeAgent {
-      float: right;
-      margin-right: 10px;
-    }
-    .info {
-      display: flex;
-      flex-wrap: wrap;
-      .info-item {
-        margin: 30px 0;
-        display: flex;
-        width: 30%;
-        .label {
-          width: 100px;
-          text-align: right;
-          color: map-get($fontColor, slight);
-        }
-        .value {
-          flex: 1;
-          margin-left: 20px;
-          box-sizing: border-box;
-        }
-      }
-    }
+.details-container {
+  padding: 16px 12px 16px 20px;
+  overflow-y: auto;
+}
+.container-item {
+  &.border-item {
+    border-bottom: 1px solid #f2f2f2;
   }
-  .header {
-    // border-left: 3px solid map-get($color, primary);
-    .lignt {
-      color: map-get($fontColor, slight);
-    }
-    .agent-name {
-      display: block;
-      font-size: 20px;
-      font-weight: 650;
-    }
-    .agent-status {
-      display: flex;
-      align-items: center;
-    }
+  &.button-line {
+    margin-bottom: -1px;
   }
-  .btn-create,
-  .btn-change {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-  }
-  .agent-list__empty {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    border-radius: 4px;
-    background-color: #fff;
-    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
-    span {
-      display: inline-block;
-      line-height: 20px;
-      padding-top: 10px;
-      font-size: 12px;
-      color: #000;
-    }
-  }
+}
+.el-button + .el-button {
+  margin-left: 16px;
+}
+.box-line {
+  padding: 8px 0;
+  border-top: 1px solid #f2f2f2;
+  //&:first-child {
+  //  border-top: 0;
+  //}
+}
+.box-line__label {
+  color: rgba(0, 0, 0, 0.6);
+}
+.box-line__value {
+  margin-top: 8px;
+  color: #000;
 }
 </style>
