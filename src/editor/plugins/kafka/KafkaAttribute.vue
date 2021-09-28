@@ -150,7 +150,11 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('dag_data_node_label_kafka_high_performance_mode')" prop="performanceMode">
+        <el-form-item
+          v-if="dataNodeInfo.isSource"
+          :label="$t('dag_data_node_label_kafka_high_performance_mode')"
+          prop="performanceMode"
+        >
           <el-switch
             v-model="model.performanceMode"
             :active-text="model.performanceMode ? $t('dataFlow.yes') : $t('dataFlow.no')"
