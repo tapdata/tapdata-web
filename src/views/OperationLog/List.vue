@@ -1,5 +1,5 @@
 <template>
-  <section class="operation-logs-wrapper main-container" v-loading="loading" v-if="$route.name === 'OperationLog'">
+  <section class="operation-logs-wrapper main-container" v-if="$route.name === 'OperationLog'">
     <div class="main">
       <div class="list-operation">
         <div class="list-operation-left">
@@ -224,7 +224,6 @@ export default {
 
     getData({ page }) {
       const { toRegExp } = this.$util
-      this.loading = true
       let { current, size } = page
       let { operationType, parameter1, start, end, username } = this.searchParams
       let where = {
@@ -263,9 +262,6 @@ export default {
             total: total,
             data: items
           }
-        })
-        .finally(() => {
-          this.loading = false
         })
     },
     sortChange({ prop, order }) {

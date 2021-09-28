@@ -87,6 +87,15 @@
             </div>
           </el-main>
           <div :class="['pb-6', 'px-6', 'btns-step-' + steps[activeStep].index]">
+            <v-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </v-button>
+            <v-button
+              class="btn-step"
+              :loading="loading"
+              v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
+              @click="back()"
+            >
+              {{ $t('guide.btn_back') }}
+            </v-button>
             <v-button
               v-if="steps[activeStep].showNextBtn"
               type="primary"
@@ -104,15 +113,6 @@
               @click="save()"
             >
               完成
-            </v-button>
-            <v-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </v-button>
-            <v-button
-              class="btn-step"
-              :loading="loading"
-              v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
-              @click="back()"
-            >
-              {{ $t('guide.btn_back') }}
             </v-button>
           </div>
         </div>
@@ -233,8 +233,20 @@
           .search {
             margin-top: 24px;
           }
+          .icon {
+            color: map-get($color, primary);
+          }
+          .task-form-body .nav li {
+            border-radius: unset;
+          }
           .field-mapping-table {
-            padding-bottom: 50px;
+            height: calc(100% - 70px) !important;
+            .el-table__header-wrapper {
+              border-radius: unset;
+            }
+            th {
+              background-color: #fafafa;
+            }
           }
         }
       }
@@ -263,6 +275,17 @@
       }
       .CT-task-transfer {
         margin-bottom: 24px;
+        ::v-deep {
+          .el-transfer-panel__header {
+            background: rgba(44, 101, 255, 0.05);
+            height: 54px;
+            line-height: 54px;
+            .el-checkbox {
+              height: 54px;
+              line-height: 54px;
+            }
+          }
+        }
       }
     }
     .dataSource-title {
@@ -565,11 +588,6 @@ export default {
       this.intiData(this.id)
     }
   },
-  watch: {
-    config(v) {
-      console.log('watch-config', v)
-    }
-  },
   mounted() {
     let timeZone = new Date().getTimezoneOffset() / 60
     if (timeZone > 0) {
@@ -601,7 +619,7 @@ export default {
         this.settingModel = Object.assign(this.settingModel, data.setting)
         this.settingModel.name = data.name
         this.platformInfo = data.platformInfo
-        this.dataSourceModel = data.dataSourceModel
+        this.dataSourceModel = data.dataSourceModel || {}
         let stages = data.stages
         this.transferData = {
           table_prefix: stages[1].table_prefix,
@@ -760,6 +778,7 @@ export default {
       let func = formConfig[type]
       if (func) {
         let config = func(this)
+        config.form.size = 'small'
         this.config = config
         if (type === 'setting') {
           this.config.items = defaultConfig.concat(config.items)

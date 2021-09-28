@@ -210,11 +210,6 @@ export default {
             this.page.total = data.total
             let list = data.items || []
             this.list = list.map(this.formatData)
-            // if (!list.length && data.total > 0) {
-            //   setTimeout(() => {
-            //     this.fetch(this.page.current - 1)
-            //   }, 0)
-            // }
           })
           .finally(() => {
             this.loading = false
@@ -243,42 +238,35 @@ export default {
       return item
     },
     handleGo(item) {
-      let routeUrl = {}
       this.handleRead(item.id)
       switch (item.system) {
         case 'dataFlow':
           this.$axios
             .get('tm/api/DataFlows/' + item.sourceId)
             .then(() => {
-              routeUrl = this.$router.resolve({
-                path: '/monitor',
-                query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
+              this.$router.push({
+                name: 'Monitor',
+                params: {
+                  id: item.sourceId
+                }
               })
-              window.open(routeUrl.href, '_blank')
             })
             .catch(err => {
               if (err?.data?.msg === 'no permission') {
                 this.$message.error('您的任务已不存在')
               }
             })
-          // this.$router.push({
-          //   name: 'job',
-          //   query: {
-          //     id: item.sourceId,
-          //     isMoniting: true,
-          //     mapping: item.mappingTemplate
-          //   }
-          // })
           break
         case 'migration':
           this.$axios
             .get('tm/api/DataFlows/' + item.sourceId)
             .then(() => {
-              routeUrl = this.$router.resolve({
-                path: '/monitor',
-                query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
+              this.$router.push({
+                name: 'Monitor',
+                params: {
+                  id: item.sourceId
+                }
               })
-              window.open(routeUrl.href, '_blank')
             })
             .catch(err => {
               if (err?.data?.msg === 'no permission') {
@@ -287,10 +275,10 @@ export default {
             })
           break
         case 'agent':
-          this.$router.push({
-            name: 'InstanceDetails',
+          this.$router.replace({
+            name: 'Instance',
             query: {
-              id: item.agentId
+              keyword: item.serverName
             }
           })
           break

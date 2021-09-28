@@ -1,11 +1,14 @@
 export default function (vm) {
-  const fileChange = (file, field) => {
+  const fileChange = (file, field, field2) => {
     if (file) {
       let reader = new FileReader()
       reader.readAsText(file)
       reader.onload = () => {
         let text = reader.result
         vm.model[field] = text
+        if (field2) {
+          vm.model[field2] = text
+        }
       }
     } else {
       vm.model[field] = ''
@@ -304,7 +307,7 @@ export default function (vm) {
         ],
         on: {
           change(file) {
-            fileChange(file, 'sslKey')
+            fileChange(file, 'sslKey', 'sslCert')
           }
         }
       },
