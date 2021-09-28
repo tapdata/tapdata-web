@@ -113,7 +113,7 @@ export default {
             eq: this.id
           }
         },
-        order: `id ${isSearch ? 'DESC' : 'ASC'}`,
+        order: `id DESC`,
         limit: 35
       }
       let keyword = this.keyword
@@ -144,7 +144,7 @@ export default {
           }
           let el = this.$refs.logs
           let itemEl = el.querySelector('li:nth-child(2)')
-          let list = data.map(this.formatLog)
+          let list = data.reverse().map(this.formatLog)
           this.logs.unshift(...list)
           this.$nextTick(() => {
             if (itemEl) {

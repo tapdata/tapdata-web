@@ -17,6 +17,10 @@ export default function (vm) {
         type: 'select',
         field: 'mqType',
         label: vm.$t('dataForm.form.mq.mqType'),
+        customClass: 'large-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
         options: [
           {
             label: 'ActiveMQ',
@@ -114,9 +118,10 @@ export default function (vm) {
       {
         type: 'input',
         field: 'brokerURL',
-        label: 'BrokerURL',
+        label: 'MQ连接串',
         required: true,
         show: false,
+        tip: '示例tcp://127.0.0.1:61616,支持tcp,nio,udp,ssl,http(s)',
         dependOn: [
           {
             triggerOptions: [
@@ -221,9 +226,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'mqUserName',
-        label: vm.$t('dataForm.form.userName'),
-        domType: 'password',
-        showPassword: true
+        label: vm.$t('dataForm.form.userName')
       },
       {
         type: 'input',
@@ -236,7 +239,6 @@ export default function (vm) {
         type: 'input',
         field: 'routeKeyField',
         label: vm.$t('dataForm.form.mq.routeKeyField'),
-        required: true,
         show: false,
         dependOn: [
           {

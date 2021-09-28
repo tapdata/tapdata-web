@@ -180,6 +180,7 @@
               :filter-placeholder="$t('editor.cell.link.searchContent')"
               :data="sourceData"
               filterable
+              class="transfer"
               @change="handleChangeTransfer"
               @right-check-change="handleSelectTable"
             >
@@ -725,12 +726,10 @@ export default {
     },
     toTaskDetail() {
       let id = this.form.task.id
-      let mappingTemplate = 'cluster-clone'
-      let routeUrl = this.$router.resolve({
-        path: '/monitor',
-        query: { id: id, isMoniting: true, mapping: mappingTemplate }
+      this.$router.push({
+        name: 'Monitor',
+        params: { id: id }
       })
-      window.open(routeUrl.href, '_blank')
     }
   }
 }
@@ -842,5 +841,8 @@ export default {
       background-color: #f5f5f5;
     }
   }
+}
+.transfer {
+  height: 300px;
 }
 </style>
