@@ -366,7 +366,7 @@ export default {
         })
       } else if (msg) {
         this.$message.success(msg)
-        // this.getData()
+        this.getData()
       }
     },
     getConfirmMessage(operateStr, name) {
