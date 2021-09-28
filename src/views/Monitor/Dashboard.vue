@@ -10,12 +10,20 @@
           <img v-if="task.isFinished" style="height: 25px" src="../../../public/images/task/yiwancheng.png" alt="" />
           <StatusTag v-else type="text" target="task" :status="task.status" only-img></StatusTag>
         </div>
-        <div class="mt-1">创建人: {{ task.creator }}</div>
+        <div class="mt-1">
+          <span>创建人: {{ task.creator }}</span>
+          <span class="ml-4">任务类型：{{ taskType.label }}</span>
+        </div>
         <div class="mt-2">
-          <VButton type="primary" @click="start">启动</VButton>
-          <VButton @click="stop">停止</VButton>
-          <VButton @click="reset">重置</VButton>
-          <VButton @click="forceStop">强制停止</VButton>
+          <VButton
+            type="primary"
+            :disabled="!statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)"
+            @click="start"
+            >启动</VButton
+          >
+          <VButton :disabled="!statusBtMap['stop'][task.status]" @click="stop">停止</VButton>
+          <VButton :disabled="!statusBtMap['reset'][task.status]" @click="reset">重置</VButton>
+          <VButton :disabled="!statusBtMap['forceStop'][task.status]" @click="forceStop">强制停止</VButton>
         </div>
       </div>
       <div class="input-and-output flex align-center">
@@ -27,10 +35,10 @@
     </div>
     <div v-if="task" class="dashboard-main flex mt-6 flex-fit overflow-hidden">
       <div class="panel-left h-100 overflow-auto p-6">
-        <div class="info-item">
-          <span class="font-color-sub">任务类型: </span>
-          <span class="font-color-main">{{ task.typeText }}</span>
-        </div>
+        <!--        <div class="info-item">-->
+        <!--          <span class="font-color-sub">任务类型: </span>-->
+        <!--          <span class="font-color-main">{{ task.typeText }}</span>-->
+        <!--        </div>-->
         <div class="info-item">
           <span class="font-color-sub">本次执行时间: </span>
           <span class="font-color-main">{{ task.startTimeFmt }}</span>
@@ -39,7 +47,7 @@
           <span class="font-color-sub">本次结束时间: </span>
           <span class="font-color-main">{{ task.endTimeFmt }}</span>
         </div>
-        <div class="info-item">
+        <div v-if="taskType.value !== 'initial_sync'" class="info-item">
           <span class="font-color-sub">增量所处时间点: </span>
           <span class="font-color-main">{{ task.cdcTimeFmt }}</span>
         </div>
@@ -158,7 +166,16 @@ export default {
     return {
       loading: true,
       activeTab: 'progress',
-      task: null
+      task: null,
+      statusBtMap: {
+        // scheduled, draft, running, stopping, error, paused, force stopping
+        run: { draft: true, error: true, paused: true },
+        stop: { running: true },
+        delete: { draft: true, error: true, paused: true },
+        edit: { draft: true, error: true, paused: true },
+        reset: { draft: true, error: true, paused: true },
+        forceStop: { stopping: true }
+      }
     }
   },
   created() {
@@ -211,6 +228,18 @@ export default {
           tipDisabled: true
         }
       })
+    },
+    taskType() {
+      let sync_type = this.task.setting?.sync_type
+      let map = {
+        initial_sync: this.$t('task_sync_type_initial_sync'),
+        cdc: this.$t('task_sync_type_cdc'),
+        'initial_sync+cdc': this.$t('task_sync_type_initial_sync_cdc')
+      }
+      return {
+        label: map[sync_type],
+        value: sync_type
+      }
     }
   },
   methods: {
@@ -262,13 +291,22 @@ export default {
       }
       this.$axios.get(`tm/api/Connections?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
         let connections = data?.items || []
+        // 源和目标一样的情况
+        if (connections.length === 1) {
+          connections.push(Object.assign({}, connections[0], { id: 'targetId' }))
+        }
         connections.forEach(c => {
           let type = 'source'
           if (c.id === ids[1]) {
             type = 'target'
           }
+          let host = c.database_host
+          // mongo 不追加port
+          if (c.database_type !== 'mongodb') {
+            host += ':' + c.database_port
+          }
           this.$set(this.task, type + 'DB', c.database_name)
-          this.$set(this.task, type + 'Url', c.database_host + ':' + c.database_port)
+          this.$set(this.task, type + 'Url', host)
         })
       })
     },
@@ -328,6 +366,7 @@ export default {
         })
       } else if (msg) {
         this.$message.success(msg)
+        this.getData()
       }
     },
     getConfirmMessage(operateStr, name) {

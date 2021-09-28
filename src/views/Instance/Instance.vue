@@ -5,8 +5,7 @@
         <div class="instance-operation-left">
           <el-form inline @submit.native.prevent>
             <el-form-item :label="$t('agent_status') + ' ：'" width="300px">
-              <el-select v-model="searchParams.status" @input="search()">
-                <el-option :label="$t('gl_placeholder_select')" value="" class="select-all"></el-option>
+              <el-select v-model="searchParams.status" clearable @input="search()">
                 <el-option
                   v-for="(item, index) in statusItems"
                   :key="index"
@@ -250,13 +249,7 @@
         </div>
       </el-dialog>
       <!--  详情    -->
-      <DetailsDrawer
-        v-model="showDetails"
-        ref="detailsDrawer"
-        :detail-id="detailId"
-        @closed="detailsClosedFnc"
-        @load-data="loadDetailsData"
-      >
+      <Details v-model="showDetails" :detail-id="detailId" @closed="detailsClosedFnc" @load-data="loadDetailsData">
         <div slot="title">
           <inline-input
             :value="selectedRow.name"
@@ -268,16 +261,17 @@
           ></inline-input>
         </div>
         <div slot="operation" class="flex">
-          <el-button
+          <VButton
             :loading="selectedRow.btnLoading.deploy"
             :disabled="deployBtnDisabled(selectedRow)"
             type="primary"
             class="flex-fill"
+            @click="toDeploy(selectedRow)"
           >
             <VIcon size="12">deploy</VIcon>
             <span class="ml-1">{{ $t('agent_button_deploy') }}</span>
-          </el-button>
-          <el-button
+          </VButton>
+          <VButton
             :loading="selectedRow.btnLoading.stop"
             :disabled="stopBtnDisabled(selectedRow)"
             type="primary"
@@ -286,8 +280,8 @@
           >
             <VIcon size="12">stop</VIcon>
             <span class="ml-1">{{ $t('agent_button_stop') }}</span>
-          </el-button>
-          <el-button
+          </VButton>
+          <VButton
             :loading="selectedRow.btnLoading.delete"
             :disabled="delBtnDisabled(selectedRow)"
             class="flex-fill"
@@ -295,9 +289,9 @@
           >
             <VIcon size="12">delete</VIcon>
             <span class="ml-1">{{ $t('agent_button_delete') }}</span>
-          </el-button>
+          </VButton>
         </div>
-      </DetailsDrawer>
+      </Details>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -308,7 +302,7 @@ import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import VIcon from '../../components/VIcon'
-import DetailsDrawer from './DetailsDrawer'
+import Details from './Details'
 
 let timer = null
 
@@ -317,7 +311,7 @@ export default {
     InlineInput,
     StatusTag,
     VIcon,
-    DetailsDrawer
+    Details
   },
   data() {
     return {
@@ -918,9 +912,6 @@ export default {
       .el-select {
         display: block;
         height: 32px;
-        ::v-deep .el-input__inner {
-          color: rgba(0, 0, 0, 0.25);
-        }
       }
     }
   }

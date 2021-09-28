@@ -18,6 +18,7 @@
       v-model="selectSourceArr"
       v-if="!transferFlag"
       filterable
+      class="e-transfer"
       :titles="titles"
       :filter-method="filterMethod"
       :filter-placeholder="$t('editor.cell.link.searchContent')"
@@ -703,7 +704,6 @@ export default {
 .tapdata-transfer-wrap {
   display: flex;
   flex-direction: column;
-
   .box-btn {
     display: flex;
     justify-content: flex-end;
@@ -720,6 +720,9 @@ export default {
   .field-transfer__icon {
     display: inline-block;
     margin-left: 15px;
+  }
+  .e-transfer {
+    display: flex;
   }
 }
 .field-transfer {
@@ -845,7 +848,7 @@ export default {
 
   .el-transfer,
   .el-transfer-panel {
-    height: 100%;
+    // height: 100%;
   }
 
   .el-transfer-panel__body {

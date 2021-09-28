@@ -27,12 +27,15 @@
         </div>
         <div class="form-wrap">
           <div class="form">
-            <form-builder ref="form" class="form-builder" v-model="model" :config="config">
+            <form-builder ref="form" class="form-builder grey" v-model="model" :config="config">
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
             </form-builder>
             <el-button type="text" size="mini" @click="startTest()">{{ $t('connection.testConnection') }}</el-button>
             <StatusTag type="text" class="ml-4" target="connection" :status="status"></StatusTag>
             <footer class="mt-2 pb-4">
+              <el-button size="mini" class="connection-from-btn" @click="goBack()">{{
+                $t('dataForm.cancel')
+              }}</el-button>
               <el-button
                 size="mini"
                 class="connection-from-btn"
@@ -42,9 +45,6 @@
               >
                 {{ $t('dataForm.submit') }}
               </el-button>
-              <el-button size="mini" class="connection-from-btn" @click="goBack()">{{
-                $t('dataForm.cancel')
-              }}</el-button>
             </footer>
           </div>
         </div>
@@ -247,13 +247,13 @@ export default {
           editData = await this.$axios.get(`tm/api/Connections/${id}?noSchema=1`)
         }
         if (
-          editData.data.database_type === 'mq' &&
-          (typeof editData.data.mqQueueSet === 'object' || typeof editData.data.mqTopicSet === 'object')
+          editData.database_type === 'mq' &&
+          (typeof editData.mqQueueSet === 'object' || typeof editData.mqTopicSet === 'object')
         ) {
-          let mqQueueSet = editData.data.mqQueueSet.length ? editData.data.mqQueueSet.join(',') : ''
-          let mqTopicSet = editData.data.mqTopicSet.length ? editData.data.mqTopicSet.join(',') : ''
-          editData.data.mqQueueSet = mqQueueSet
-          editData.data.mqTopicSet = mqTopicSet
+          let mqQueueSet = editData.mqQueueSet.length ? editData.mqQueueSet.join(',') : ''
+          let mqTopicSet = editData.mqTopicSet.length ? editData.mqTopicSet.join(',') : ''
+          editData.mqQueueSet = mqQueueSet
+          editData.mqTopicSet = mqTopicSet
         }
         this.model = Object.assign(this.model, editData)
 
@@ -345,7 +345,7 @@ export default {
           defaultConfig[0].show = false
           defaultConfig[0].required = false
         }
-        this.config.form = config.form
+        this.config.form = Object.assign({}, config.form, { size: 'small' })
         this.config.items = items
         this.initData(
           Object.assign(this.model, config.defaultModel, {
@@ -639,19 +639,6 @@ export default {
   ::v-deep {
     .e-form-builder-item {
       width: 396px;
-      .el-form-item__content {
-        .el-input__inner,
-        .el-textarea__inner {
-          background: #f9fafd;
-          &:focus {
-            background: unset;
-          }
-        }
-        .el-input__count-inner,
-        .el-input__count {
-          background-color: unset;
-        }
-      }
       &.large-item {
         width: 680px;
       }
@@ -660,10 +647,8 @@ export default {
       }
       &.mongodb-item {
         width: 680px;
-        padding-bottom: 24px;
       }
       &.mongodb-tip-item .el-form-item__content {
-        padding-bottom: 194px;
         width: 680px;
       }
       .url-tip {

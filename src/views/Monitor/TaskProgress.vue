@@ -33,9 +33,9 @@
                 :show-text="false"
                 :width="166"
               ></el-progress>
-              <div class="progress-box__value flex justify-content-center align-items-center">
-                <div class="fs-6">延迟</div>
-                <div class="mt-2">{{ replicateObj.currentValue }}</div>
+              <div class="progress-box__value flex flex-column justify-content-center align-items-center">
+                <div class="fs-5">{{ replicateObj.currentStatus || '延迟' }}</div>
+                <div class="mt-2" v-if="!replicateObj.currentStatus">{{ replicateObj.currentValue }}ms</div>
               </div>
             </div>
           </div>
@@ -56,9 +56,11 @@
         <div v-if="task && task.setting.sync_type !== 'initial_sync'">
           <div class="mb-10 dots">增量详情</div>
           <el-table :data="cdcLastTimes">
-            <el-table-column label="源库" prop="name" min-width="200"></el-table-column>
-            <el-table-column label="时间" prop="belongAgent"></el-table-column>
-            <el-table-column label="目标库" prop="syncTypeText"></el-table-column>
+            <el-table-column label="源库" prop="sourceConnectionName"></el-table-column>
+            <el-table-column label="时间" prop="cdcTime">
+              <template slot-scope="scope">{{ $moment(scope.row.cdcTime).format('YYYY-MM-DD HH:mm:ss') }}</template>
+            </el-table-column>
+            <el-table-column label="目标库" prop="targetConnectionName"></el-table-column>
           </el-table>
         </div>
       </div>
@@ -200,7 +202,8 @@ export default {
           loading: false
         },
         body: null,
-        currentValue: 0 // 当前延迟
+        currentValue: 0, // 当前延迟
+        currentStatus: '未开始'
       },
       selectFlow: 'flow_', // 选中节点
       stageId: 'all',
@@ -213,43 +216,25 @@ export default {
   },
   computed: {
     cdcLastTimes() {
-      let result = []
-      this.task?.cdcLastTimes?.forEach(item => {
-        let flag = result.find(ele => ele.sourceConnectionId === item.sourceConnectionId)
-        if (!flag) {
-          result.push({
-            sourceConnectionName: item.sourceConnectionName,
-            sourceConnectionId: item.sourceConnectionId,
-            targetList: [item]
-          })
-        } else {
-          flag.targetList.push(item)
-        }
-      })
-      return result
+      return this.task?.cdcLastTimes || []
     }
   },
   watch: {
     task: {
       deep: true,
       handler(v) {
-        if (v) {
-          this.init(v)
-        }
+        v && this.init(v)
       }
     }
-  },
-  mounted() {
-    this.init()
   },
   methods: {
     init() {
       this.loadInfo()
+      this.loadHttp()
       this.loadWS()
       this.sendMsg()
     },
     loadInfo() {
-      // let currentData = data
       let overview = {}
       let waitingForSyecTableNums = 0
       let completeTime = ''
@@ -257,9 +242,7 @@ export default {
       if (data?.stats?.overview) {
         overview = JSON.parse(JSON.stringify(data.stats.overview))
 
-        if (overview.currentStatus === undefined) {
-          this.$set(overview, 'currentStatus', '未开始')
-        }
+        this.replicateObj.currentStatus = !overview?.status ? '未开始' : ''
 
         if (overview.waitingForSyecTableNums !== undefined) {
           waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
@@ -269,6 +252,9 @@ export default {
         overview.waitingForSyecTableNums = waitingForSyecTableNums
 
         let num = (overview.targatRowNum / overview.sourceRowNum) * 100
+        if (num > 100) {
+          num = 100
+        }
         this.progressBar = num ? num.toFixed(2) * 1 : 0
 
         let now = new Date().getTime()
@@ -333,7 +319,18 @@ export default {
       this.completeTime = completeTime
 
       this.overviewStats = overview
-      console.log('this.overviewStats', completeTime, this.overviewStats)
+    },
+    // http请求
+    loadHttp() {
+      let arr = ['overviewObj', 'throughputObj', 'transfObj', 'replicateObj']
+      arr.forEach(el => {
+        let item = this[el]?.title
+        let params = {
+          statsType: item.statsType,
+          granularity: item.time ? 'flow_' + item.time : 'flow'
+        }
+        this.loadData(params, item)
+      })
     },
     formatTime(time, type) {
       let result
@@ -719,11 +716,14 @@ export default {
         })
     },
     changeHeaderFnc(timeType, item) {
-      let params = {
-        statsType: item.statsType,
-        granularity: 'flow_' + timeType
-      }
-      this.loadData(params, item)
+      item.time = timeType
+      this.sendMsg()
+      // http请求
+      // let params = {
+      //   statsType: item.statsType,
+      //   granularity: 'flow_' + timeType
+      // }
+      // this.loadData(params, item)
     }
   }
 }

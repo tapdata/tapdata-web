@@ -20,23 +20,16 @@
         </div>
       </div>
     </div>
-    <div class="error-tips mt-4" v-if="errorMsg && type === 'row_count'">
-      <VIcon class="color-warning">warning-circle</VIcon>
-      <span class="ml-2">{{ errorMsg }}</span>
+    <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
+      <VIcon class="color-danger">error</VIcon>
+      <span>
+        <ElLink type="danger" @click="showErrorMessage">查看详情</ElLink>
+        <VIcon class="ml-2 color-info" size="12">close</VIcon>
+      </span>
     </div>
-    <div class="result-table mt-4" v-if="inspect">
-      <ResultTable
-        v-if="!['running', 'scheduling'].includes(inspect.status)"
-        ref="singleTable"
-        :type="type"
-        :data="tableData"
-        @row-click="rowClick"
-      ></ResultTable>
-      <ResultView
-        v-if="type !== 'row_count' && !['running', 'scheduling'].includes(inspect.status)"
-        ref="resultView"
-        :remoteMethod="getResultData"
-      ></ResultView>
+    <div class="result-table mt-4" v-if="inspect && !['running', 'scheduling'].includes(inspect.status)">
+      <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+      <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
     </div>
   </section>
 </template>
@@ -122,14 +115,16 @@ export default {
           if (result) {
             this.resultInfo = result
             let stats = result.stats
-            this.inspect = result.inspect
+            let inspect = result.inspect
+            inspect.status = result.status
+            this.inspect = inspect
             if (stats.length) {
               this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
               this.taskId = stats[0].taskId
               this.$refs.resultView.fetch(1)
               if (this.type !== 'row_count') {
                 this.$nextTick(() => {
-                  this.$refs.singleTable.setCurrentRow(stats[0])
+                  this.$refs.singleTable?.setCurrentRow(stats[0])
                 })
               }
             }
@@ -235,6 +230,9 @@ export default {
           id: this.resultInfo.firstCheckId
         }
       })
+    },
+    showErrorMessage() {
+      this.$alert(this.errorMsg)
     }
   }
 }

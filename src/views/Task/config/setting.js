@@ -31,7 +31,6 @@ export default function () {
           }
         ],
         required: true,
-        customClass: 'sync-type-item',
         isVertical: false,
         button: true,
         outerTip: true
@@ -53,7 +52,6 @@ export default function () {
           }
         ],
         required: true,
-        customClass: 'distinct-write-type-item',
         isVertical: false,
         button: true,
         outerTip: true
@@ -82,7 +80,7 @@ export default function () {
       {
         type: 'switch',
         field: 'stopOnError',
-        label: '遇到错误停止：'
+        label: '遇到错误停止'
       },
       {
         type: 'switch',
@@ -200,7 +198,6 @@ export default function () {
         field: 'isOpenAutoDDL',
         label: '自动DDL',
         show: true,
-        customClass: 'auto-ddl-item',
         tip: '自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作'
       }
       // {

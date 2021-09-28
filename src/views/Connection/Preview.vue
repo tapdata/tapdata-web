@@ -36,7 +36,10 @@
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
             <div class="box-line__label">{{ temp.label + '：' }}</div>
-            <div class="box-line__value">{{ connection[temp.key] || '-' }}</div>
+            <el-tooltip v-if="connection[temp.key]" effect="dark" :content="connection[temp.key]" placement="right-end">
+              <div class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
+            </el-tooltip>
+            <div v-else class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
           </div>
         </div>
       </div>
@@ -72,80 +75,7 @@ export default {
         1: '仅写入master分区',
         all: '写入所有ISR分区'
       },
-      list: [
-        {
-          icon: 'time',
-          items: [
-            {
-              label: '加载schema',
-              key: 'last_updated'
-            }
-          ]
-        },
-        {
-          icon: 'database',
-          items: [
-            {
-              label: '数据库地址',
-              key: 'database_host'
-            }
-          ]
-        },
-        {
-          icon: 'port',
-          items: [
-            {
-              label: '端口',
-              key: 'database_port'
-            }
-          ]
-        },
-        {
-          icon: 'name',
-          items: [
-            {
-              label: '数据库名称',
-              key: 'database_name'
-            }
-          ]
-        },
-        {
-          icon: 'database-user-name',
-          items: [
-            {
-              label: '账号',
-              key: 'database_username'
-            }
-          ]
-        },
-        {
-          icon: 'database-password',
-          items: [
-            {
-              label: '密码',
-              key: '-'
-            }
-          ]
-        },
-        {
-          icon: 'additional-string',
-          items: [
-            {
-              label: '其他连接串参数',
-              key: 'additionalString'
-            }
-          ]
-        },
-        {
-          icon: 'origin-time',
-          items: [
-            {
-              label: '时间类型的时区',
-              key: 'database_datetype_without_timezone'
-            }
-          ]
-        }
-      ]
+      list: []
     }
   },
   methods: {
@@ -186,48 +116,7 @@ export default {
       this.connection = data
       //组装数据
       this.connection['last_updated'] = this.$moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
-      if (type === 'kafka') {
-        this.list = [
-          {
-            icon: 'time',
-            items: [
-              {
-                label: '加载schema',
-                key: 'last_updated'
-              }
-            ]
-          },
-          {
-            icon: 'database',
-            items: [
-              {
-                label: '数据库地址',
-                key: 'kafkaBootstrapServers'
-              },
-              {
-                label: '主题表达式',
-                key: 'kafkaPatternTopics'
-              },
-              {
-                label: '忽略非JSON Object格式消息',
-                key: 'kafkaIgnoreInvalidRecord'
-              },
-              {
-                label: 'ACK 确认机制',
-                key: 'kafkaAcks'
-              },
-              {
-                label: '消息压缩类型',
-                key: 'kafkaCompressionType'
-              },
-              {
-                label: '忽略推送消息异常',
-                key: 'kafkaIgnorePushError'
-              }
-            ]
-          }
-        ]
-      }
+      this.loadList(type)
     },
     edit() {
       if (this.connection.agentType === 'Cloud') {
@@ -236,10 +125,10 @@ export default {
       this.$router.push({
         name: 'ConnectionEdit',
         params: {
-          id: this.data.id
+          id: this.connection.id
         },
         query: {
-          databaseType: this.type
+          databaseType: this.connection.database_type
         }
       })
     },
@@ -328,6 +217,125 @@ export default {
     },
     closedFnc() {
       this.$emit('input', this.drawer).$emit('closed')
+    },
+    loadList(type) {
+      if (type === 'kafka') {
+        this.list = [
+          {
+            icon: 'time',
+            items: [
+              {
+                label: '加载schema',
+                key: 'last_updated'
+              }
+            ]
+          },
+          {
+            icon: 'database',
+            items: [
+              {
+                label: '数据库地址',
+                key: 'kafkaBootstrapServers'
+              },
+              {
+                label: '主题表达式',
+                key: 'kafkaPatternTopics'
+              },
+              {
+                label: '忽略非JSON Object格式消息',
+                key: 'kafkaIgnoreInvalidRecord'
+              },
+              {
+                label: 'ACK 确认机制',
+                key: 'kafkaAcks'
+              },
+              {
+                label: '消息压缩类型',
+                key: 'kafkaCompressionType'
+              },
+              {
+                label: '忽略推送消息异常',
+                key: 'kafkaIgnorePushError'
+              }
+            ]
+          }
+        ]
+        return
+      }
+      this.list = [
+        {
+          icon: 'time',
+          items: [
+            {
+              label: '加载schema',
+              key: 'last_updated'
+            }
+          ]
+        },
+        {
+          icon: 'database',
+          items: [
+            {
+              label: '数据库地址',
+              key: 'database_host'
+            }
+          ]
+        },
+        {
+          icon: 'port',
+          items: [
+            {
+              label: '端口',
+              key: 'database_port'
+            }
+          ]
+        },
+        {
+          icon: 'name',
+          items: [
+            {
+              label: '数据库名称',
+              key: 'database_name'
+            }
+          ]
+        },
+        {
+          icon: 'database-user-name',
+          items: [
+            {
+              label: '账号',
+              key: 'database_username'
+            }
+          ]
+        },
+        {
+          icon: 'database-password',
+          items: [
+            {
+              label: '密码',
+              key: '-'
+            }
+          ]
+        },
+        {
+          icon: 'additional-string',
+          items: [
+            {
+              label: '其他连接串参数',
+              key: 'additionalString'
+            }
+          ]
+        },
+        {
+          icon: 'origin-time',
+          items: [
+            {
+              label: '时间类型的时区',
+              key: 'database_datetype_without_timezone'
+            }
+          ]
+        }
+      ]
     }
   }
 }
@@ -357,6 +365,7 @@ export default {
   color: rgba(0, 0, 0, 0.6);
 }
 .box-line__value {
+  max-width: 200px;
   margin-top: 8px;
   color: #000;
 }
