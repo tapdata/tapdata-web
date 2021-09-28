@@ -233,7 +233,72 @@ export default {
       if (['mongodb', 'gridfs'].includes(type)) {
         result = await this.$api('connections').customQuery([id])
       } else {
-        result = await this.$api('connections').get([id])
+        // 仅仅是为了排除schema字段，schema.tables 如果表上万数据请求很慢
+        // get里的filter.fields无效，所以这里用的是findOne
+        result = await this.$api('connections').findOne({
+          filter: JSON.stringify({
+            where: {
+              id
+            },
+            fields: {
+              additionalString: true,
+              connection_type: true,
+              createTime: true,
+              database_datetype_without_timezone: true,
+              database_host: true,
+              database_name: true,
+              database_owner: true,
+              database_password: true,
+              database_port: true,
+              database_schema: true,
+              database_type: true,
+              database_uri: true,
+              database_username: true,
+              everLoadSchema: true,
+              fill: true,
+              id: true,
+              increamentalTps: true,
+              initialReadSize: true,
+              isUrl: true,
+              last_updated: true,
+              loadCount: true,
+              loadFieldErrMsg: true,
+              loadFieldsStatus: true,
+              loadSchemaDate: true,
+              loadSchemaField: true,
+              multiTenant: true,
+              name: true,
+              nextRetry: true,
+              node_name: true,
+              pdb: true,
+              pgsql_log_decorder_plugin_name: true,
+              plugin_name: true,
+              project: true,
+              response_body: true,
+              retry: true,
+              schema: false,
+              schemaAutoUpdate: true,
+              schemaVersion: true,
+              search_databaseType: true,
+              ssl: true,
+              sslCA: true,
+              sslCert: true,
+              sslKey: true,
+              sslPass: true,
+              sslValidate: true,
+              status: true,
+              submit: true,
+              supportUpdatePk: true,
+              tableCount: true,
+              table_filter: true,
+              testTime: true,
+              thin_type: true,
+              transformed: true,
+              user_id: true,
+              username: true
+            }
+          })
+        })
       }
       this.previewLoading = false
       if (result && result.data) {
