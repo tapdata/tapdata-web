@@ -1,5 +1,5 @@
 <template>
-  <section class="operation-logs-wrapper main-container" v-loading="loading" v-if="$route.name === 'OperationLog'">
+  <section class="operation-logs-wrapper main-container" v-if="$route.name === 'OperationLog'">
     <div class="main">
       <div class="list-operation">
         <div class="list-operation-left">
@@ -224,7 +224,6 @@ export default {
 
     getData({ page }) {
       const { toRegExp } = this.$util
-      this.loading = true
       let { current, size } = page
       let { operationType, parameter1, start, end, username } = this.searchParams
       let where = {
@@ -259,16 +258,12 @@ export default {
       return Promise.all([
         this.$axios.get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter))),
         this.$axios.get('tm/api/UserLogs/count?where=' + encodeURIComponent(JSON.stringify(where)))
-      ])
-        .then(([data, countData]) => {
-          return {
-            total: countData.count,
-            data: data
-          }
-        })
-        .finally(() => {
-          this.loading = false
-        })
+      ]).then(([data, countData]) => {
+        return {
+          total: countData.count,
+          data: data
+        }
+      })
     },
     sortChange({ prop, order }) {
       this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'asc' : 'desc'}`

@@ -43,7 +43,7 @@
           <span class="font-color-sub">本次执行时间: </span>
           <span class="font-color-main">{{ task.startTimeFmt }}</span>
         </div>
-        <div v-if="taskType.value === 'initial_sync'" class="info-item">
+        <div class="info-item">
           <span class="font-color-sub">本次结束时间: </span>
           <span class="font-color-main">{{ task.endTimeFmt }}</span>
         </div>
@@ -300,8 +300,13 @@ export default {
           if (c.id === ids[1]) {
             type = 'target'
           }
+          let host = c.database_host
+          // mongo 不追加port
+          if (c.database_type !== 'mongodb') {
+            host += ':' + c.database_port
+          }
           this.$set(this.task, type + 'DB', c.database_name)
-          this.$set(this.task, type + 'Url', c.database_host + ':' + c.database_port)
+          this.$set(this.task, type + 'Url', host)
         })
       })
     },
@@ -361,6 +366,7 @@ export default {
         })
       } else if (msg) {
         this.$message.success(msg)
+        this.getData()
       }
     },
     getConfirmMessage(operateStr, name) {
