@@ -366,7 +366,7 @@ export default {
         })
       } else if (msg) {
         this.$message.success(msg)
-        this.getData()
+        // this.getData()
       }
     },
     getConfirmMessage(operateStr, name) {
@@ -457,7 +457,7 @@ export default {
             this.responseHandler(data, '操作成功')
           })
           .catch(() => {
-            this.$message.success('重置失败')
+            this.$message.error('重置失败')
           })
       })
     },
