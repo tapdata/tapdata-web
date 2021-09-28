@@ -49,10 +49,9 @@
           <ElOption :label="$t('verify_frequency_manual')" value="manual"></ElOption>
           <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
         </ElSelect>
-        <template v-if="form.mode === 'cron'">
-          <span class="mx-3">{{ $t('verify_switch_job_enable_or_not') }}</span>
-          <ElSwitch v-model="form.enabled"></ElSwitch>
-        </template>
+      </ElFormItem>
+      <ElFormItem v-if="form.mode === 'cron'" class="form-item" :label="$t('verify_switch_job_enable_or_not') + ': '">
+        <ElSwitch v-model="form.enabled"></ElSwitch>
       </ElFormItem>
       <template v-if="form.mode === 'cron'">
         <ElFormItem class="form-item" prop="timing.start" :label="$t('verify_form_label_start_and_end_time') + ': '">
