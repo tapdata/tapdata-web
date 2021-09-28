@@ -124,7 +124,7 @@ $margin: 10px;
   overflow: hidden;
   border-left: 1px solid #f2f2f2;
   .header {
-    padding: 16px 24px;
+    padding: 12px 24px;
     font-size: 12px;
     background: #f5f5f5;
     font-size: 14px;

@@ -39,7 +39,7 @@
         <!--        </div>-->
       </template>
     </ElTableColumn>
-    <ElTableColumn prop="progress" :label="$t('dataVerification.verifyProgress')" width="80px">
+    <ElTableColumn prop="progress" :label="$t('dataVerification.verifyProgress')" width="120px">
       <template slot-scope="scope">
         <div>
           <span>{{

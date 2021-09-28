@@ -96,7 +96,7 @@
     <div
       v-if="flowStages"
       v-loading="!flowStages.length"
-      class="joint-table mt-3"
+      class="joint-table"
       :class="{ error: !!jointErrorMessage }"
       @click="jointErrorMessage = ''"
     >
@@ -214,6 +214,9 @@
   line-height: 22px;
   font-size: 14px;
   color: map-get($fontColor, main);
+}
+.form-item {
+  margin-bottom: 32px;
 }
 .form-select {
   width: 276px;
