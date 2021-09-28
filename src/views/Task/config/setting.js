@@ -80,7 +80,7 @@ export default function () {
       {
         type: 'switch',
         field: 'stopOnError',
-        label: '遇到错误停止：'
+        label: '遇到错误停止'
       },
       {
         type: 'switch',
