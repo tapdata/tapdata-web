@@ -161,16 +161,16 @@
           >
           </el-switch>
         </el-form-item>
-        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="partitionIdSet">
+        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="partitionId">
           <el-select
-            v-model="model.partitionIdSet"
+            v-model="model.partitionId"
             default-first-option
             clearable
-            :multiple="model.performanceMode"
             :disabled="model.performanceMode"
             :placeholder="$t('message.placeholderSelect') + 'Partition ID'"
             size="mini"
           >
+            <el-option :label="$t('dag_data_node_label_kafka_all')" value="all" key="all"></el-option>
             <el-option v-for="(item, idx) in partitionSet" :label="item" :value="item" v-bind:key="idx"></el-option>
           </el-select>
         </el-form-item>
@@ -267,7 +267,7 @@ export default {
         connectionId: '',
         type: 'kafka',
         tableName: '',
-        // partitionId: [],
+        partitionId: '',
         kafkaPartitionKey: '',
         isFirst: true,
         performanceMode: false,
@@ -339,6 +339,7 @@ export default {
                     partitionSet: [-1]
                   }
             this.partitionSet = schema.partitionSet ? schema.partitionSet : []
+
             this.tableList = schema.fields ? schema.fields : []
 
             this.$emit('schemaChange', _.cloneDeep(schema))
@@ -350,7 +351,12 @@ export default {
     'model.performanceMode': {
       immediate: true,
       handler(val) {
-        this.model.partitionIdSet = val ? this.partitionSet : []
+        if (val) {
+          this.model.partitionId = 'all'
+          this.model.partitionIdSet = this.partitionSet || []
+        } else {
+          this.model.partitionId = ''
+        }
       }
     }
   },
@@ -409,8 +415,8 @@ export default {
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
-        if (!data.performanceMode) {
-          data.partitionIdSet = data.partitionIdSet && data.partitionIdSet[0]
+        if (data.performanceMode) {
+          data.partitionId = 'all'
         }
 
         this.scope = vueAdapter?.editor?.scope
@@ -451,10 +457,12 @@ export default {
       result.name = result.tableName || 'Kafka'
 
       if (!result.performanceMode) {
-        if (!result.partitionIdSet) {
+        if (!result.partitionId) {
           result.partitionIdSet = []
-        } else if (result.partitionIdSet && !(result.partitionIdSet instanceof Array)) {
-          result.partitionIdSet =  [result.partitionIdSet]
+        } else if (result.partitionId === 'all') {
+          result.partitionIdSet = this.partitionSet || []
+        } else {
+          result.partitionIdSet = [this.model.partitionId]
         }
       }
 
