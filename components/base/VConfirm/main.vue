@@ -172,7 +172,7 @@ export default {
   right: 0;
   text-align: center;
   background-color: rgba(0, 0, 0, 0.6);
-  z-index: 3010;
+  z-index: 3200;
   &::after {
     content: '';
     display: inline-block;
