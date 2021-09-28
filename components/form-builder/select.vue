@@ -142,6 +142,10 @@ export default {
 </script>
 
 <style lang="scss">
+.select-item {
+  position: relative;
+  width: 100%;
+}
 .fb-select {
   position: relative;
   width: 100%;
