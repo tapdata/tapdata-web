@@ -107,6 +107,9 @@ export default {
   function_return_value_placeholder: '請輸入返回值',
   function_describe_label: '描述',
   function_describe_placeholder: '請輸入描述',
+  data_flow_automatically: '自動挖掘',
+  data_flow_manually: '手動挖掘',
+  data_flow_oracle_logminer: 'Oracle日誌挖掘模式',
 
   // 用户
   login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄'
