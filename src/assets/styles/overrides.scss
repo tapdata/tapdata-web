@@ -616,3 +616,23 @@ th {
 .el-drawer {
   box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%), 0 16px 24px 2px rgb(0 0 0 / 1%), 0 6px 30px 5px rgb(0 0 0 / 1%);
 }
+// 级联选择
+.el-cascader__dropdown {
+  .popper__arrow {
+    display: none;
+  }
+  .el-cascader-menu__list {
+    padding: 0;
+    .el-cascader-node {
+      font-weight: 300;
+      color: map-get($fontColor, sub);
+      &.in-active-path,
+      &.is-active,
+      &.is-selectable,
+      &.in-checked-path {
+        background-color: rgba(44, 101, 255, 0.1);
+        color: map-get($fontColor, main);
+      }
+    }
+  }
+}
