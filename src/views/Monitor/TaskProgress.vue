@@ -226,6 +226,9 @@ export default {
       }
     }
   },
+  destroyed() {
+    this.$ws.off('dataFlowInsight')
+  },
   methods: {
     init() {
       this.loadInfo()
