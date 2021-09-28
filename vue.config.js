@@ -5,9 +5,11 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://backend:3030',
-  test: 'http://192.168.1.181:30300'
-  // test: 'http://192.168.1.181:31703'
-  // test: 'http://192.168.1.181:30891'
+  // test: 'http://192.168.1.181:30300'
+  test: 'http://192.168.1.181:30390' // v1-25
+  // test: 'http://192.168.1.181:30649'  // v1-24
+  // test: 'http://192.168.1.181:31703'  // v1-23
+  // test: 'http://192.168.1.181:30891'  // v1-22
 }
 let origin
 const { argv } = process

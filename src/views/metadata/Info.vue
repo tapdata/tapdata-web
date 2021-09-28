@@ -733,6 +733,7 @@ export default {
     setCurrentPageData(tableData) {
       let begin = (this.pageCurrent - 1) * this.pageSize
       let end = this.pageCurrent * this.pageSize
+      tableData = tableData.filter(item => !item.field_name.includes('__tapd8'))
       this.tableFieldList = tableData.slice(begin, end)
     },
     handleSizeChange(val) {
