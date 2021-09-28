@@ -348,8 +348,8 @@ export default {
     fetch(current) {
       this.loading = true
       this.remoteMethod({ current, size: this.page.size })
-        .then(({ statsInfo, resultList, total, showAdvancedVerification }) => {
-          if (statsInfo.result === 'failed') {
+        .then(({ statsInfo = {}, resultList, total, showAdvancedVerification }) => {
+          if (statsInfo?.result === 'failed') {
             let countResultText = ''
             let contentResultText = ''
             let diffCount = statsInfo.target_total - statsInfo.source_total
