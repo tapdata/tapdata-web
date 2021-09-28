@@ -171,6 +171,7 @@ export default {
         where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
         fields: {
           'fullDocument.id': true,
+          'fullDocument._id': true,
           'fullDocument.name': true,
           'fullDocument.status': true,
           'fullDocument.executeMode': true,
