@@ -27,7 +27,10 @@
       @right-check-change="handleSelectTable"
     >
       <span slot-scope="{ option }">
-        <span> {{ option.label }}</span>
+        <!-- <span> {{ option.label }}</span> -->
+        <span v-if="selectSourceArr.includes(option.key)">{{ formData.table_prefix }}</span>
+        <span>{{ option.label }}</span>
+        <span v-if="selectSourceArr.includes(option.key)">{{ formData.table_suffix }}</span>
         <!-- 字段映射 放在表设置了 -->
         <!--        <span-->
         <!--          v-if="selectSourceArr.includes(option.key) && !isTwoWay"-->
