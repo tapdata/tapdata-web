@@ -72,7 +72,11 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import VIcon from 'web-core/components/VIcon'
+import error from 'web-core/assets/icons/svg/error.svg'
+import info from 'web-core/assets/icons/svg/info.svg'
+import success from 'web-core/assets/icons/svg/success.svg'
+import warning from 'web-core/assets/icons/svg/warning.svg'
 export default {
   components: { VIcon },
   props: {
@@ -83,6 +87,10 @@ export default {
       visible: false,
       uid: 1,
       callback: null,
+      error,
+      info,
+      success,
+      warning,
       hideIcon: false,
       icon: '', // 图标
       iconColor: '',
@@ -164,7 +172,7 @@ export default {
   right: 0;
   text-align: center;
   background-color: rgba(0, 0, 0, 0.6);
-  z-index: 3010;
+  z-index: 3200;
   &::after {
     content: '';
     display: inline-block;
