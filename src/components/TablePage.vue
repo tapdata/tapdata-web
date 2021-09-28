@@ -156,6 +156,7 @@ export default {
       this.$cache.set('TABLE_PAGE_PARAMS', params)
     },
     fetch(pageNum, debounce = 0, hideLoading, callback) {
+      let timer = null
       if (pageNum === 1) {
         this.multipleSelection = []
         this.$emit('selection-change', [])
@@ -185,9 +186,10 @@ export default {
                 this.$cache.set('TABLE_PAGE_SIZE', pageData)
 
                 if (total > 0 && (!data || !data.length)) {
-                  setTimeout(() => {
+                  clearTimeout(timer)
+                  timer = setTimeout(() => {
                     this.fetch(this.page.current - 1)
-                  }, 0)
+                  }, 2000)
                 }
               })
               .finally(() => {

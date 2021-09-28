@@ -1,6 +1,6 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
@@ -45,6 +45,7 @@ module.exports = {
       '/oauth/': proxy,
       '/old/': { target: 'http://localhost:8081' },
       '/ws/': {
+        ...proxy,
         ws: true,
         secure: false,
         logLevel: 'debug',
@@ -56,6 +57,9 @@ module.exports = {
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
     const webCoreIconDir = resolve('src/_packages/tapdata-web-core/assets/icons/svg')
+
+    // 多页面时会产生多请求预加载，带宽敏感的关闭此配置
+    config.plugins.delete('prefetch')
 
     // svg loader排除 icon 目录
     config.module
@@ -147,6 +151,10 @@ module.exports = {
           // 大于10kb的会压缩
           threshold: 10240
           // 其余配置查看compression-webpack-plugin
+        }),
+        new MonacoWebpackPlugin({
+          languages: ['javascript', 'json'],
+          features: ['coreCommands', 'find']
         })
       )
 
@@ -156,15 +164,6 @@ module.exports = {
         maxAssetSize: 30000000
       }
     }
-
-    config.plugins.push(
-      new HardSourceWebpackPlugin(),
-      new HardSourceWebpackPlugin.ExcludeModulePlugin([
-        {
-          test: /.*\.DS_Store/
-        }
-      ])
-    )
   },
   css: {
     loaderOptions: {
