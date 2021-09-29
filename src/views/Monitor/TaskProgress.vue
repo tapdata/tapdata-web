@@ -219,7 +219,7 @@ export default {
     }
   },
   watch: {
-    task: {
+    'task.stats': {
       deep: true,
       handler(v) {
         v && this.init(v)
