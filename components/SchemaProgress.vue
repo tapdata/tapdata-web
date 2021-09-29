@@ -18,18 +18,19 @@ export default {
     schemaInfo() {
       let data = this.data
       let schemaInfo = {}
-      if (data.loadFieldsStatus === 'loading') {
+      // 加载数量大于等于实际的视为已完成
+      if (data.loadFieldsStatus === 'finished' || data.loadCount >= data.tableCount) {
+        schemaInfo = {
+          text: this.$t('schema_progress_status_success'),
+          icon: 'success',
+          color: 'success'
+        }
+      } else if (data.loadFieldsStatus === 'loading') {
         let process = (data.loadCount * 100) / data.tableCount || 0
         schemaInfo = {
           text: Math.floor(process) + '%',
           icon: 'warning',
           color: 'warning'
-        }
-      } else if (data.loadFieldsStatus === 'finished') {
-        schemaInfo = {
-          text: this.$t('schema_progress_status_success'),
-          icon: 'success',
-          color: 'success'
         }
       } else {
         schemaInfo = {
