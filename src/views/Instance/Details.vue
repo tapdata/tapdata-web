@@ -148,17 +148,11 @@ export default {
             if (!this.showVersionFlag(data) && data.spec) {
               data.spec.version = ''
             }
-            Object.assign(
-              data,
-              data?.metric || {},
-              data?.metric?.systemInfo || {},
-              data?.spec || {},
-              data?.tmInfo || {}
-            )
-            // this.agent = data
+            Object.assign(data, data?.metric || {}, data?.spec || {}, data?.tmInfo || {})
+            data.hostname = data?.tmInfo?.hostname
             data.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
             if (data?.metric?.systemInfo) {
-              let arr = ['cpus', 'installationDirectory', 'ips', 'hostname', 'logDir']
+              let arr = ['cpus', 'installationDirectory', 'ips']
               arr.forEach(el => {
                 data[el] = data.metric?.systemInfo?.[el] || ''
               })
