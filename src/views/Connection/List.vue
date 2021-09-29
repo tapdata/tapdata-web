@@ -254,7 +254,11 @@ export default {
       let list = this.list || []
       let ids = []
       list.forEach(item => {
-        if (['testing'].includes(item.status) || ['loading'].includes(item.loadFieldsStatus)) {
+        if (
+          ['testing'].includes(item.status) ||
+          ['loading'].includes(item.loadFieldsStatus) ||
+          !item.loadFieldsStatus
+        ) {
           ids.push(item.id)
         }
       })
