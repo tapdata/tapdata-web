@@ -49,7 +49,8 @@
           <ElOption :label="$t('verify_frequency_manual')" value="manual"></ElOption>
           <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
         </ElSelect>
-        <span class="mx-3">{{ $t('verify_switch_job_enable_or_not') }}</span>
+      </ElFormItem>
+      <ElFormItem v-if="form.mode === 'cron'" class="form-item" :label="$t('verify_switch_job_enable_or_not') + ': '">
         <ElSwitch v-model="form.enabled"></ElSwitch>
       </ElFormItem>
       <template v-if="form.mode === 'cron'">
@@ -94,7 +95,7 @@
     <div
       v-if="flowStages"
       v-loading="!flowStages.length"
-      class="joint-table mt-3"
+      class="joint-table"
       :class="{ error: !!jointErrorMessage }"
       @click="jointErrorMessage = ''"
     >
@@ -170,7 +171,10 @@
                 <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
               </template>
             </div>
-            <div class="setting-item mt-4" v-if="item.showAdvancedVerification && item.webScript">
+            <div
+              class="setting-item mt-4"
+              v-if="form.inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
+            >
               <pre class="item-script">{{ item.webScript }}</pre>
             </div>
           </div>
@@ -217,6 +221,9 @@
   line-height: 22px;
   font-size: 14px;
   color: map-get($fontColor, main);
+}
+.form-item {
+  margin-bottom: 32px;
 }
 .form-select {
   width: 276px;

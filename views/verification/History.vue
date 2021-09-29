@@ -26,7 +26,7 @@
           <el-table-column :label="$t('verify_history_source_total_rows')" prop="firstSourceTotal"></el-table-column>
           <!--          <el-table-column :label="$t('verify_history_target_total_rows')" prop="firstTargetTotal"></el-table-column>-->
         </template>
-        <el-table-column prop="progress" :label="$t('dataVerification.verifyProgress')" width="80px">
+        <el-table-column prop="progress" :label="$t('dataVerification.verifyProgress')" width="120px">
           <template slot-scope="scope">
             <div>
               <span>{{
