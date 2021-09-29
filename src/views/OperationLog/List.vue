@@ -389,15 +389,6 @@ export default {
     flex-direction: column;
     overflow: hidden;
   }
-  .list-operation {
-    display: flex;
-    justify-content: space-between;
-    .list-operation-left {
-      li {
-        float: left;
-      }
-    }
-  }
   .operation-logs-table {
     flex: 1;
     overflow: auto;

@@ -317,7 +317,7 @@ export default {
       data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
       let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
       data.startTimeFmt = this.formatTime(data.startTime)
-      data.endTimeFmt = this.formatTime(data.finishTime)
+      data.endTimeFmt = data.startTime ? this.formatTime(data.finishTime) : '-'
       data.cdcTimeFmt = this.formatTime(cdcTime)
       return data
     },
@@ -457,7 +457,7 @@ export default {
             this.responseHandler(data, '操作成功')
           })
           .catch(() => {
-            this.$message.success('重置失败')
+            this.$message.error('重置失败')
           })
       })
     },

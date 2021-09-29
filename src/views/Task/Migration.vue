@@ -5,8 +5,7 @@
         <div class="migration-operation-left">
           <el-form inline @submit.native.prevent>
             <el-form-item :label="$t('task_status') + ' ：'" class="small">
-              <el-select v-model="searchParams.status" @input="search()">
-                <el-option :label="$t('gl_placeholder_select')" value="" class="select-all"></el-option>
+              <el-select v-model="searchParams.status" clearable @input="search()">
                 <el-option
                   v-for="(value, label) in statusOptions"
                   :key="value"

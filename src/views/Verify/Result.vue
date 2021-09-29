@@ -88,7 +88,8 @@ export default {
       let list = this.resultInfo.stats || []
       if (this.$route.name === 'VerifyDiffDetails') {
         list = list.filter(item => {
-          return item.source_total > 0
+          // return item.source_total > 0
+          return item.source_total !== item.target_total
         })
       }
       return list
