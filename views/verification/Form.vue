@@ -49,7 +49,8 @@
           <ElOption :label="$t('verify_frequency_manual')" value="manual"></ElOption>
           <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
         </ElSelect>
-        <span class="mx-3">{{ $t('verify_switch_job_enable_or_not') }}</span>
+      </ElFormItem>
+      <ElFormItem v-if="form.mode === 'cron'" class="form-item" :label="$t('verify_switch_job_enable_or_not') + ': '">
         <ElSwitch v-model="form.enabled"></ElSwitch>
       </ElFormItem>
       <template v-if="form.mode === 'cron'">
@@ -94,7 +95,7 @@
     <div
       v-if="flowStages"
       v-loading="!flowStages.length"
-      class="joint-table mt-3"
+      class="joint-table"
       :class="{ error: !!jointErrorMessage }"
       @click="jointErrorMessage = ''"
     >
@@ -108,44 +109,52 @@
         }}</ElLink>
       </div>
       <ul class="joint-table-main" id="data-verification-form">
-        <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="index">
+        <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="item.id" @click.stop="editIndex = index">
           <div class="joint-table-setting overflow-hidden">
             <div class="setting-item">
               <label class="item-label">{{ $t('verify_form_label_table') }}: </label>
               <ElCascader
+                v-if="editIndex === index"
                 v-model="item.sourceTable"
                 class="item-select"
                 :class="{ red: !item.sourceTable }"
                 :options="item.sourceTree"
                 @input="tableChangeHandler(item, 'source', index)"
               ></ElCascader>
+              <span v-else class="item-value-text">{{ item.sourceTable ? item.sourceTable[1] : '-' }}</span>
               <span class="item-icon">
                 <i class="el-icon-arrow-right"></i>
               </span>
               <ElCascader
+                v-if="editIndex === index"
                 v-model="item.targetTable"
                 class="item-select"
                 :class="{ red: !item.targetTable }"
                 :options="item.targetTree"
                 @input="tableChangeHandler(item, 'target')"
               ></ElCascader>
+              <span v-else class="item-value-text">{{ item.targetTable ? item.targetTable[1] : '-' }}</span>
             </div>
             <div class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">
               <label class="item-label">{{ $t('verify_form_label_index_field') }}: </label>
               <MultiSelection
+                v-if="editIndex === index"
                 v-model="item.source.sortColumn"
                 class="item-select"
                 :class="{ red: !item.source.sortColumn }"
                 :options="item.source.fields"
                 :id="'item-source-' + index"
               ></MultiSelection>
+              <span v-else class="item-value-text">{{ item.source.sortColumn }}</span>
               <span class="item-icon"></span>
               <MultiSelection
+                v-if="editIndex === index"
                 v-model="item.target.sortColumn"
                 class="item-select"
                 :class="{ red: !item.target.sortColumn }"
                 :options="item.target.fields"
               ></MultiSelection>
+              <span v-else class="item-value-text">{{ item.target.sortColumn }}</span>
             </div>
             <div class="setting-item mt-4">
               <ElCheckbox v-model="item.showAdvancedVerification" v-show="form.inspectMethod === 'field'">{{
@@ -162,7 +171,10 @@
                 <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
               </template>
             </div>
-            <div class="setting-item mt-4" v-if="item.showAdvancedVerification && item.webScript">
+            <div
+              class="setting-item mt-4"
+              v-if="form.inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
+            >
               <pre class="item-script">{{ item.webScript }}</pre>
             </div>
           </div>
@@ -210,6 +222,9 @@
   font-size: 14px;
   color: map-get($fontColor, main);
 }
+.form-item {
+  margin-bottom: 32px;
+}
 .form-select {
   width: 276px;
 }
@@ -237,6 +252,7 @@
     padding: 16px 24px;
     display: flex;
     border-bottom: 1px solid #f2f2f2;
+    cursor: pointer;
   }
   .joint-table-setting {
     flex: 1;
@@ -267,10 +283,14 @@
     .item-input,
     .item-select {
       flex: 1;
-      width: 600px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+    .item-value-text {
+      flex: 1;
+      line-height: 32px;
+      padding: 0 16px;
     }
     .item-script {
       margin: 0;
@@ -372,6 +392,7 @@ export default {
       htmlMD: '',
       removeVisible: false,
       isDbClone: false,
+      editIndex: -1,
       form: {
         flowId: '',
         name: '',
@@ -746,6 +767,7 @@ export default {
           lanes.forEach(id => {
             let targetStage = stages.find(it => it.id === id)
             let task = {
+              id: this.$util.uuid(),
               source: this.setTable(stg),
               target: Object.assign({}, TABLE_PARAMS),
               sourceTable: [stg.connectionId, stg.tableName],
@@ -821,6 +843,7 @@ export default {
     },
     addTable() {
       this.form.tasks.push({
+        id: this.$util.uuid(),
         source: Object.assign({}, TABLE_PARAMS),
         target: Object.assign({}, TABLE_PARAMS),
         sourceTree: [],
@@ -927,7 +950,10 @@ export default {
               return !c.source.table || !c.target.table
             })
           ) {
-            document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
+            this.editIndex = index - 1
+            this.$nextTick(() => {
+              document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
+            })
             this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_set')
             return this.$message.error(this.$t('verify_message_error_joint_table_target_or_source_not_set'))
           }
@@ -939,7 +965,10 @@ export default {
               return !c.source.sortColumn || !c.target.sortColumn
             })
           ) {
-            document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
+            this.editIndex = index - 1
+            this.$nextTick(() => {
+              document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
+            })
             this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_set')
             return this.$message.error(this.$t('verify_message_error_joint_table_field_not_set'))
           }
@@ -951,8 +980,11 @@ export default {
               return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
             })
           ) {
-            let item = document.getElementById('item-source-' + (index - 1))
-            item.querySelector('input').focus()
+            this.editIndex = index - 1
+            this.$nextTick(() => {
+              let item = document.getElementById('item-source-' + (index - 1))
+              item.querySelector('input').focus()
+            })
             this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_match')
             return this.$message.error(this.$t('verify_message_error_joint_table_field_not_match'))
           }

@@ -1,5 +1,5 @@
 <script>
-import bindsAttrs from '@/mixins/bindsAttrs'
+import bindsAttrs from 'web-core/mixins/bindsAttrs'
 
 const SIZE_MAP = {
   xSmall: '12px',
