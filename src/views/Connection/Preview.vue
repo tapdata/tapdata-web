@@ -313,7 +313,7 @@ export default {
           items: [
             {
               label: '密码',
-              key: '-'
+              key: 'database_password'
             }
           ]
         },
