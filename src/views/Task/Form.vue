@@ -619,11 +619,14 @@ export default {
         this.platformInfo = data.platformInfo
         this.dataSourceModel = data.dataSourceModel || {}
         let stages = data.stages
+        let syncObjects = stages[1].syncObjects
         this.transferData = {
           table_prefix: stages[1].table_prefix,
           table_suffix: stages[1].table_suffix,
           field_process: stages[0].field_process,
-          selectSourceArr: stages[1].syncObjects[0] ? stages[1].syncObjects[0].objectNames : []
+          selectSourceArr: syncObjects[0] ? syncObjects[0].objectNames : [],
+          topicData: syncObjects[0]?.type === 'topic' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || [],
+          queueData: syncObjects[0]?.type === 'queue' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || []
         }
         // TODO 临时为了解决bug现在这里加，回头优化
         this.getFormConfig()
@@ -812,6 +815,8 @@ export default {
           }
           if (this.dataSourceModel['target_databaseType'] === 'mq' && this.dataSourceModel['mqType'] === '0') {
             this.mqTransferFlag = true
+          } else {
+            this.mqTransferFlag = false
           }
           //判断是否有第五步
           this.$axios

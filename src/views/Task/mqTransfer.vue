@@ -2,8 +2,9 @@
   <div class="mq-transfer">
     <el-transfer
       class="topic-transfer"
-      :titles="topicTitles"
+      filterable
       v-model="topicData"
+      :titles="topicTitles"
       :data="data1"
       @left-check-change="firstLeftCheckedFnc"
       @change="firstChangeFnc"
@@ -24,8 +25,9 @@
     </el-transfer>
     <el-transfer
       class="queue-transfer"
-      :titles="queueTitles"
       v-model="queueData"
+      filterable
+      :titles="queueTitles"
       :data="data2"
       :left-default-checked="secondLeftCheckedArr"
       :right-default-checked="secondRightCheckedArr"
@@ -200,13 +202,18 @@ export default {
     .topic-transfer,
     .queue-transfer {
       display: inline-block;
+      height: 100%;
       & > div:last-child {
         position: absolute;
         height: 48% !important;
       }
       .el-transfer-panel {
-        display: inline-block;
+        // display: inline-block;
         width: 502px;
+        height: 100%;
+        .el-transfer-panel__body {
+          height: calc(100% - 68px);
+        }
       }
       .el-transfer__buttons {
         display: inline-block;
