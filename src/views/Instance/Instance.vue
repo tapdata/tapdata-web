@@ -249,13 +249,7 @@
         </div>
       </el-dialog>
       <!--  详情    -->
-      <DetailsDrawer
-        v-model="showDetails"
-        ref="detailsDrawer"
-        :detail-id="detailId"
-        @closed="detailsClosedFnc"
-        @load-data="loadDetailsData"
-      >
+      <Details v-model="showDetails" :detail-id="detailId" @closed="detailsClosedFnc" @load-data="loadDetailsData">
         <div slot="title">
           <inline-input
             :value="selectedRow.name"
@@ -297,7 +291,7 @@
             <span class="ml-1">{{ $t('agent_button_delete') }}</span>
           </VButton>
         </div>
-      </DetailsDrawer>
+      </Details>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -308,7 +302,7 @@ import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import VIcon from '../../components/VIcon'
-import DetailsDrawer from './DetailsDrawer'
+import Details from './Details'
 
 let timer = null
 
@@ -317,7 +311,7 @@ export default {
     InlineInput,
     StatusTag,
     VIcon,
-    DetailsDrawer
+    Details
   },
   data() {
     return {
@@ -918,9 +912,6 @@ export default {
       .el-select {
         display: block;
         height: 32px;
-        ::v-deep .el-input__inner {
-          color: rgba(0, 0, 0, 0.25);
-        }
       }
     }
   }

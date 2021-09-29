@@ -5,8 +5,7 @@
         <div class="migration-operation-left">
           <el-form inline @submit.native.prevent>
             <el-form-item :label="$t('task_status') + ' ：'" class="small">
-              <el-select v-model="searchParams.status" @input="search()">
-                <el-option :label="$t('gl_placeholder_select')" value="" class="select-all"></el-option>
+              <el-select v-model="searchParams.status" clearable @input="search()">
                 <el-option
                   v-for="(value, label) in statusOptions"
                   :key="value"
@@ -64,7 +63,14 @@
         @sort-change="sortChange"
       >
         <el-table-column label="任务名称" prop="name" min-width="200"></el-table-column>
-        <el-table-column label="所属agent" prop="belongAgent" min-width="200"></el-table-column>
+        <el-table-column label="所属agent" prop="belongAgent" min-width="200">
+          <template slot-scope="scope">
+            <el-link v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
+              scope.row.belongAgent
+            }}</el-link>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
         <el-table-column label="任务类型" prop="syncTypeText"></el-table-column>
         <el-table-column label="任务状态">
           <template slot-scope="scope">
@@ -446,7 +452,7 @@ export default {
     },
     formatData(item) {
       let tcmInfo = item.tcm || {}
-      item.belongAgent = tcmInfo.agentName || tcmInfo.agentId || '-'
+      item.belongAgent = tcmInfo.agentName || tcmInfo.agentId || ''
       item.syncTypeText = this.syncTypeMap[item.setting?.sync_type] || '-'
       let statusInfo = TASK_STATUS_MAP[item.status] || {}
       item.statusText = statusInfo.text || ''
@@ -726,6 +732,18 @@ export default {
     },
     handleMore(command, node) {
       this[command]([node.id], node)
+    },
+    toAgent(row) {
+      let { belongAgent } = row
+      if (!belongAgent) {
+        return
+      }
+      this.$router.replace({
+        name: 'Instance',
+        query: {
+          keyword: belongAgent
+        }
+      })
     }
   }
 }

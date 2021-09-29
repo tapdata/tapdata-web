@@ -94,22 +94,22 @@
         <div class="notice-setting-title">agent通知</div>
         <ElFormItem label="agent状态为离线时">
           <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.connectionInterrupted.sms" size="mini"></ElSwitch>
+          <ElSwitch v-model="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue"></ElSwitch>
           <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.connectionInterrupted.email" size="mini"></ElSwitch>
+          <ElSwitch v-model="form.connectionInterrupted.email" size="mini" @change="handleSettingValue"></ElSwitch>
         </ElFormItem>
         <ElFormItem label="agent状态为运行中时">
           <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.connected.sms" size="mini"></ElSwitch>
+          <ElSwitch v-model="form.connected.sms" size="mini" @change="handleSettingValue"></ElSwitch>
           <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.connected.email"></ElSwitch>
+          <ElSwitch v-model="form.connected.email" @change="handleSettingValue"></ElSwitch>
         </ElFormItem>
         <div class="notice-setting-title">任务运行通知</div>
         <ElFormItem label="任务运行出错时">
           <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.stoppedByError.sms"></ElSwitch>
+          <ElSwitch v-model="form.stoppedByError.sms" @change="handleSettingValue"></ElSwitch>
           <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.stoppedByError.email"></ElSwitch>
+          <ElSwitch v-model="form.stoppedByError.email" @change="handleSettingValue"></ElSwitch>
         </ElFormItem>
       </ElForm>
     </ElDialog>
@@ -176,18 +176,14 @@ export default {
       this.fetch()
     })
   },
-  watch: {
-    form: {
-      handler(value) {
-        let data = {
-          notification: value
-        }
-        this.$axios.patch(`tm/api/users/${this.userId}`, data)
-      },
-      deep: true
-    }
-  },
   methods: {
+    // 通知设置改变值时请求接口
+    handleSettingValue() {
+      let data = {
+        notification: this.form
+      }
+      this.$axios.patch(`tm/api/users/${this.userId}`, data)
+    },
     fetch(pageNum, debounce) {
       const { delayTrigger } = this.$util
       delayTrigger(() => {
@@ -215,11 +211,6 @@ export default {
             this.page.total = countData.count
             let list = data || []
             this.list = list.map(this.formatData)
-            // if (!list.length && data.total > 0) {
-            //   setTimeout(() => {
-            //     this.fetch(this.page.current - 1)
-            //   }, 0)
-            // }
           })
           .finally(() => {
             this.loading = false
@@ -248,42 +239,35 @@ export default {
       return item
     },
     handleGo(item) {
-      let routeUrl = {}
       this.handleRead(item.id)
       switch (item.system) {
         case 'dataFlow':
           this.$axios
             .get('tm/api/DataFlows/' + item.sourceId)
             .then(() => {
-              routeUrl = this.$router.resolve({
-                path: '/monitor',
-                query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
+              this.$router.push({
+                name: 'Monitor',
+                params: {
+                  id: item.sourceId
+                }
               })
-              window.open(routeUrl.href, '_blank')
             })
             .catch(err => {
               if (err?.data?.msg === 'no permission') {
                 this.$message.error('您的任务已不存在')
               }
             })
-          // this.$router.push({
-          //   name: 'job',
-          //   query: {
-          //     id: item.sourceId,
-          //     isMoniting: true,
-          //     mapping: item.mappingTemplate
-          //   }
-          // })
           break
         case 'migration':
           this.$axios
             .get('tm/api/DataFlows/' + item.sourceId)
             .then(() => {
-              routeUrl = this.$router.resolve({
-                path: '/monitor',
-                query: { id: item.sourceId, isMoniting: true, mapping: 'cluster-clone' }
+              this.$router.push({
+                name: 'Monitor',
+                params: {
+                  id: item.sourceId
+                }
               })
-              window.open(routeUrl.href, '_blank')
             })
             .catch(err => {
               if (err?.data?.msg === 'no permission') {
@@ -292,10 +276,10 @@ export default {
             })
           break
         case 'agent':
-          this.$router.push({
-            name: 'InstanceDetails',
+          this.$router.replace({
+            name: 'Instance',
             query: {
-              id: item.agentId
+              keyword: item.serverName
             }
           })
           break

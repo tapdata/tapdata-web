@@ -246,6 +246,15 @@ export default {
         } else {
           editData = await this.$axios.get(`tm/api/Connections/${id}?noSchema=1`)
         }
+        if (
+          editData.database_type === 'mq' &&
+          (typeof editData.mqQueueSet === 'object' || typeof editData.mqTopicSet === 'object')
+        ) {
+          let mqQueueSet = editData.mqQueueSet.length ? editData.mqQueueSet.join(',') : ''
+          let mqTopicSet = editData.mqTopicSet.length ? editData.mqTopicSet.join(',') : ''
+          editData.mqQueueSet = mqQueueSet
+          editData.mqTopicSet = mqTopicSet
+        }
         this.model = Object.assign(this.model, editData)
 
         this.renameData.rename = this.model.name
@@ -336,7 +345,7 @@ export default {
           defaultConfig[0].show = false
           defaultConfig[0].required = false
         }
-        this.config.form = config.form
+        this.config.form = Object.assign({}, config.form, { size: 'small' })
         this.config.items = items
         this.initData(
           Object.assign(this.model, config.defaultModel, {
@@ -376,6 +385,19 @@ export default {
       let flag = true
       this.model.search_databaseType = ''
       let data = Object.assign({}, this.model)
+      if (data.database_type === 'mq') {
+        if (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string') {
+          data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
+          data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
+        }
+
+        if (data.mqType === '0') {
+          delete data.database_host
+          delete data.database_port
+        } else {
+          delete data.brokerURL
+        }
+      }
       this.$refs.form.validate(valid => {
         if (valid && flag) {
           let params = Object.assign(

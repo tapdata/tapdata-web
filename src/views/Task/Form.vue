@@ -62,7 +62,13 @@
                 </span>
               </div>
               <div class="CT-task-transfer">
-                <Transfer ref="transfer" :transferData="transferData" :isTwoWay="settingModel.bidirectional"></Transfer>
+                <Transfer
+                  ref="transfer"
+                  :transferData="transferData"
+                  :tableNameTransform="settingModel.tableNameTransform"
+                  :mqTransferFlag="mqTransferFlag"
+                  :isTwoWay="settingModel.bidirectional"
+                ></Transfer>
               </div>
             </div>
             <!-- 步骤5 -->
@@ -227,8 +233,20 @@
           .search {
             margin-top: 24px;
           }
+          .icon {
+            color: map-get($color, primary);
+          }
+          .task-form-body .nav li {
+            border-radius: unset;
+          }
           .field-mapping-table {
-            padding-bottom: 50px;
+            height: calc(100% - 70px) !important;
+            .el-table__header-wrapper {
+              border-radius: unset;
+            }
+            th {
+              background-color: #fafafa;
+            }
           }
         }
       }
@@ -257,6 +275,17 @@
       }
       .CT-task-transfer {
         margin-bottom: 24px;
+        ::v-deep {
+          .el-transfer-panel__header {
+            background: rgba(44, 101, 255, 0.05);
+            height: 54px;
+            line-height: 54px;
+            .el-checkbox {
+              height: 54px;
+              line-height: 54px;
+            }
+          }
+        }
       }
     }
     .dataSource-title {
@@ -457,6 +486,7 @@ export default {
       showSysncTableTip: false, //dfs 同库不同表提示
       isFirst: true,
       twoWayAgentRunningCount: '',
+      mqTransferFlag: false,
       platformInfo: JSON.parse(JSON.stringify(INSTANCE_MODEL)),
       dataSourceModel: JSON.parse(JSON.stringify(DFSDATASOURCE_MODEL)),
       settingModel: JSON.parse(JSON.stringify(SETTING_MODEL)),
@@ -554,11 +584,6 @@ export default {
 
     if (this.id) {
       this.intiData(this.id)
-    }
-  },
-  watch: {
-    config(v) {
-      console.log('watch-config', v)
     }
   },
   mounted() {
@@ -690,6 +715,7 @@ export default {
             }
             this.dataSourceModel.source_connectionName = source.name
             this.dataSourceModel.target_connectionName = target.name
+            this.dataSourceModel.mqType = target.mqType
             this.activeStep += 1
             this.getFormConfig()
           }
@@ -750,6 +776,7 @@ export default {
       let func = formConfig[type]
       if (func) {
         let config = func(this)
+        config.form.size = 'small'
         this.config = config
         if (type === 'setting') {
           this.config.items = defaultConfig.concat(config.items)
@@ -782,6 +809,9 @@ export default {
           }
           if (this.dataSourceModel['target_databaseType'] === 'kafka') {
             this.changeConfig([], 'setting_distinctWriteType')
+          }
+          if (this.dataSourceModel['target_databaseType'] === 'mq' && this.dataSourceModel['mqType'] === '0') {
+            this.mqTransferFlag = true
           }
           //判断是否有第五步
           this.$axios
@@ -846,7 +876,8 @@ export default {
         database_host: 1,
         database_port: 1,
         database_name: 1,
-        database_uri: 1
+        database_uri: 1,
+        mqType: 1
       }
       if (type === 'source_connectionId') {
         fields['database_username'] = 1
@@ -878,7 +909,8 @@ export default {
                 name: item.name,
                 label: item.name,
                 value: item.id,
-                type: item.database_type
+                type: item.database_type,
+                mqType: item.mqType || ''
               }
             })
           }
@@ -897,7 +929,8 @@ export default {
                 name: item.name,
                 label: item.name,
                 value: item.id,
-                type: item.database_type
+                type: item.database_type,
+                mqType: item.mqType || ''
               }
             })
           }
@@ -1029,11 +1062,25 @@ export default {
         this.transferData = this.$refs.transfer.returnData()
       }
       let selectTable = []
-      if (this.transferData && this.transferData.selectSourceArr.length > 0) {
-        selectTable.push({
-          objectNames: this.transferData.selectSourceArr,
-          type: 'table'
-        })
+      if (this.transferData) {
+        if (this.transferData.selectSourceArr.length > 0) {
+          selectTable.push({
+            objectNames: this.transferData.selectSourceArr,
+            type: 'table'
+          })
+        }
+        if (this.transferData.topicData.length) {
+          selectTable.push({
+            objectNames: this.transferData.topicData,
+            type: 'topic'
+          })
+        }
+        if (this.transferData.queueData.length) {
+          selectTable.push({
+            objectNames: this.transferData.queueData,
+            type: 'queue'
+          })
+        }
       }
       //编辑时传原status
       if (this.id) {

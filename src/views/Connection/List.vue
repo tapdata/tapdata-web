@@ -5,8 +5,7 @@
         <div class="connection-operation-left">
           <el-form inline @submit.native.prevent>
             <el-form-item label="全部状态 :" width="300px">
-              <el-select v-model="searchParams.status" @input="search()">
-                <el-option :label="$t('gl_placeholder_select')" value="" class="select-all"></el-option>
+              <el-select v-model="searchParams.status" clearable @input="search()">
                 <el-option v-for="(opt, value) in statusMap" :key="value" :label="opt.text" :value="value"></el-option>
               </el-select>
             </el-form-item>

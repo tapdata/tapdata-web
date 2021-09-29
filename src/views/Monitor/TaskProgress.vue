@@ -35,7 +35,7 @@
               ></el-progress>
               <div class="progress-box__value flex flex-column justify-content-center align-items-center">
                 <div class="fs-5">{{ replicateObj.currentStatus || '延迟' }}</div>
-                <div class="mt-2" v-if="!replicateObj.currentStatus">{{ replicateObj.currentValue }}ms</div>
+                <div class="mt-2" v-if="!replicateObj.currentStatus">{{ replicateObj.value }}ms</div>
               </div>
             </div>
           </div>
@@ -76,10 +76,10 @@
           <EchartHeader :data="throughputObj.title" @change="changeHeaderFnc"></EchartHeader>
           <div class="floatLayer">
             <span style="background-color: rgba(72, 182, 226, 0.3); color: #409eff"
-              >{{ $t('dataFlow.input') }}:{{ this.inputAverage }}</span
+              >{{ $t('dataFlow.input') }}:<span class="ml-1">{{ throughputObj.input }}</span></span
             >
             <span style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
-              >{{ $t('dataFlow.output') }}:{{ this.outputAverage }}</span
+              >{{ $t('dataFlow.output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
             >
           </div>
           <VEchart :option="throughputObj.body" class="v-echart"></VEchart>
@@ -88,7 +88,7 @@
           <EchartHeader :data="transfObj.title" @change="changeHeaderFnc"></EchartHeader>
           <div class="floatLayer">
             <span style="background-color: rgba(251, 142, 0, 0.3); color: #fb8e00"
-              >{{ $t('dataFlow.current') }}:{{ this.currentTime }}</span
+              >{{ $t('dataFlow.current') }}:<span class="ml-1">{{ transfObj.value }}</span></span
             >
           </div>
           <VEchart :option="transfObj.body" class="v-echart"></VEchart>
@@ -97,7 +97,7 @@
           <EchartHeader :data="replicateObj.title" @change="changeHeaderFnc"></EchartHeader>
           <div class="floatLayer">
             <span style="background-color: rgba(7245, 108, 108, 0.3); color: #f56c6c"
-              >{{ $t('dataFlow.current') }}:{{ this.ransfTime }}</span
+              >{{ $t('dataFlow.current') }}:<span class="ml-1">{{ replicateObj.value }}</span></span
             >
           </div>
           <VEchart :option="replicateObj.body" class="v-echart"></VEchart>
@@ -172,7 +172,9 @@ export default {
           class: 'putColor',
           loading: false
         },
-        body: null
+        body: null,
+        input: 0,
+        output: 0
       },
       // 传输耗时
       transfObj: {
@@ -186,7 +188,8 @@ export default {
           class: 'transfColor',
           loading: false
         },
-        body: null
+        body: null,
+        value: 0
       },
       // 数据同步差距
       replicateObj: {
@@ -202,15 +205,11 @@ export default {
           loading: false
         },
         body: null,
-        currentValue: 0, // 当前延迟
+        value: 0, // 当前延迟
         currentStatus: '未开始'
       },
       selectFlow: 'flow_', // 选中节点
       stageId: 'all',
-      inputAverage: '', // 输入平均值
-      outputAverage: '', // 输出平均值
-      currentTime: '', // 当前耗时
-      ransfTime: '', // 传输耗时
       dataOverviewAll: 'flow'
     }
   },
@@ -223,23 +222,21 @@ export default {
     task: {
       deep: true,
       handler(v) {
-        if (v) {
-          this.init(v)
-        }
+        v && this.init(v)
       }
     }
   },
-  mounted() {
-    this.init()
+  destroyed() {
+    this.$ws.off('dataFlowInsight')
   },
   methods: {
     init() {
       this.loadInfo()
+      this.loadHttp()
       this.loadWS()
       this.sendMsg()
     },
     loadInfo() {
-      // let currentData = data
       let overview = {}
       let waitingForSyecTableNums = 0
       let completeTime = ''
@@ -257,6 +254,9 @@ export default {
         overview.waitingForSyecTableNums = waitingForSyecTableNums
 
         let num = (overview.targatRowNum / overview.sourceRowNum) * 100
+        if (num > 100) {
+          num = 100
+        }
         this.progressBar = num ? num.toFixed(2) * 1 : 0
 
         let now = new Date().getTime()
@@ -321,7 +321,18 @@ export default {
       this.completeTime = completeTime
 
       this.overviewStats = overview
-      console.log('this.overviewStats', completeTime, this.overviewStats)
+    },
+    // http请求
+    loadHttp() {
+      let arr = ['overviewObj', 'throughputObj', 'transfObj', 'replicateObj']
+      arr.forEach(el => {
+        let item = this[el]?.title
+        let params = {
+          statsType: item.statsType,
+          granularity: item.time ? 'flow_' + item.time : 'flow'
+        }
+        this.loadData(params, item)
+      })
     },
     formatTime(time, type) {
       let result
@@ -506,6 +517,8 @@ export default {
           }
         ]
       }
+      this.throughputObj.input = inputCountList[inputCountList.length - 1] || 0
+      this.throughputObj.output = outputCountList[outputCountList.length - 1] || 0
     },
     getTransfOpt(data) {
       let timeList = [],
@@ -569,6 +582,7 @@ export default {
           }
         ]
       }
+      this.transfObj.value = dataList[dataList.length - 1] || 0
     },
     getReplicateOpt(data) {
       let timeList = [],
@@ -578,7 +592,7 @@ export default {
         timeList.push(this.formatTime(item.t, timeType)) // 时间
         dataList.push(item.d)
       })
-      this.replicateObj.currentValue = dataList[dataList.length - 1] || 0
+      this.replicateObj.value = dataList[dataList.length - 1] || 0
       this.replicateObj.body = {
         tooltip: {
           trigger: 'axis'
@@ -707,11 +721,14 @@ export default {
         })
     },
     changeHeaderFnc(timeType, item) {
-      let params = {
-        statsType: item.statsType,
-        granularity: 'flow_' + timeType
-      }
-      this.loadData(params, item)
+      item.time = timeType
+      this.sendMsg()
+      // http请求
+      // let params = {
+      //   statsType: item.statsType,
+      //   granularity: 'flow_' + timeType
+      // }
+      // this.loadData(params, item)
     }
   }
 }
@@ -784,7 +801,7 @@ export default {
     left: 20px;
     top: 50px;
 
-    span {
+    > span {
       display: inline-block;
       min-width: 60px;
       margin-bottom: 10px;
