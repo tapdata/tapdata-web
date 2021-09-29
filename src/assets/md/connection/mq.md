@@ -19,6 +19,7 @@ activemq-5.14.x、 rabbitmq-3.8.x、 rocketmq-4.9.x
 - MQ连接串: 必填项
 - 主题名称，允许为空
 - 队列名称，允许为空
+
 #### **RabbitMQ专用配置**<br>
 - MQ地址，MQ端口
 - 队列名称，必填项
