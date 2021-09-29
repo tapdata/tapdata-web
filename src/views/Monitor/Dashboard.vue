@@ -212,6 +212,7 @@ export default {
   },
   destroyed() {
     this.$ws.off('watch', this.taskChange)
+    this.$ws.send({ type: 'unsubscribe', messageType: 'watch,logs' })
   },
   computed: {
     milestoneList() {
