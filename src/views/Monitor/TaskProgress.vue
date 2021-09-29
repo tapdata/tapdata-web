@@ -199,7 +199,7 @@ export default {
           time: 'minute',
           title: this.$t('dataFlow.replicate'),
           tip: this.$t('dataFlow.replicate_pop'),
-          unit: '单位：',
+          unit: '单位：/秒',
           class: 'transfColor',
           hideSecond: true,
           loading: false
@@ -219,7 +219,7 @@ export default {
     }
   },
   watch: {
-    task: {
+    'task.stats': {
       deep: true,
       handler(v) {
         v && this.init(v)

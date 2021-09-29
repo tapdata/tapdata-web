@@ -51,39 +51,15 @@
           <span class="font-color-sub">增量所处时间点: </span>
           <span class="font-color-main">{{ task.cdcTimeFmt }}</span>
         </div>
-        <div class="info-item info-title fs-7">源端信息</div>
-        <div class="info-item">
-          <span class="font-color-sub">节点名称: </span>
-          <span class="font-color-main">{{ task.sourceName }}</span>
+        <div class="info-item info-title fs-7">{{ infoObj.source.title }}</div>
+        <div v-for="(item, index) in infoObj.source.items" :key="'source' + index" class="info-item">
+          <span class="font-color-sub">{{ item.label }}: </span>
+          <span class="font-color-main">{{ task[item.key] }}</span>
         </div>
-        <div class="info-item">
-          <span class="font-color-sub">所属库: </span>
-          <span class="font-color-main">{{ task.sourceDB }}</span>
-        </div>
-        <div class="info-item">
-          <span class="font-color-sub">数据库地址: </span>
-          <span class="font-color-main">{{ task.sourceUrl }}</span>
-        </div>
-        <div class="info-item">
-          <span class="font-color-sub">数据库类型: </span>
-          <span class="font-color-main">{{ task.sourceType }}</span>
-        </div>
-        <div class="info-item info-title fs-7">目标端信息</div>
-        <div class="info-item">
-          <span class="font-color-sub">节点名称: </span>
-          <span class="font-color-main">{{ task.targetName }}</span>
-        </div>
-        <div class="info-item">
-          <span class="font-color-sub">所属库: </span>
-          <span class="font-color-main">{{ task.targetDB }}</span>
-        </div>
-        <div class="info-item">
-          <span class="font-color-sub">数据库地址: </span>
-          <span class="font-color-main">{{ task.targetUrl }}</span>
-        </div>
-        <div class="info-item">
-          <span class="font-color-sub">数据库类型: </span>
-          <span class="font-color-main">{{ task.targetType }}</span>
+        <div class="info-item info-title fs-7">{{ infoObj.target.title }}</div>
+        <div v-for="(item, index) in infoObj.target.items" :key="'target' + index" class="info-item">
+          <span class="font-color-sub">{{ item.label }}: </span>
+          <span class="font-color-main">{{ task[item.key] }}</span>
         </div>
       </div>
       <div class="panel-right flex-fit h-100 overflow-hidden p-6">
@@ -103,7 +79,12 @@
               <ElTableColumn label="任务详情" prop="label"></ElTableColumn>
               <ElTableColumn label="状态" prop="status" width="100px">
                 <template slot-scope="scope">
-                  <StatusTag type="text" target="milestone" :status="scope.row.status" only-img></StatusTag>
+                  <StatusTag
+                    type="text"
+                    target="milestone"
+                    :status="getMilestoneStatus(scope.row.status)"
+                    only-img
+                  ></StatusTag>
                 </template>
               </ElTableColumn>
               <ElTableColumn label="时间" prop="fromNow" width="160px"></ElTableColumn>
@@ -175,6 +156,50 @@ export default {
         edit: { draft: true, error: true, paused: true },
         reset: { draft: true, error: true, paused: true },
         forceStop: { stopping: true }
+      },
+      infoObj: {
+        source: {
+          title: '源端信息',
+          items: [
+            {
+              label: '节点名称',
+              key: 'sourceName'
+            },
+            {
+              label: '所属库',
+              key: 'sourceDB'
+            },
+            {
+              label: '数据库地址',
+              key: 'sourceUrl'
+            },
+            {
+              label: '数据库类型',
+              key: 'sourceType'
+            }
+          ]
+        },
+        target: {
+          title: '目标端信息',
+          items: [
+            {
+              label: '节点名称',
+              key: 'targetName'
+            },
+            {
+              label: '所属库',
+              key: 'targetDB'
+            },
+            {
+              label: '数据库地址',
+              key: 'targetUrl'
+            },
+            {
+              label: '数据库类型',
+              key: 'targetType'
+            }
+          ]
+        }
       }
     }
   },
@@ -302,8 +327,54 @@ export default {
           }
           let host = c.database_host
           // mongo 不追加port
-          if (c.database_type !== 'mongodb') {
+          if (!['mongodb', 'mq'].includes(c.database_type)) {
             host += ':' + c.database_port
+          }
+          switch (c.database_type) {
+            case 'mq':
+              this.infoObj[type].items = [
+                {
+                  label: '节点名称',
+                  key: type + 'Name'
+                },
+                {
+                  label: '主题名称',
+                  key: type + 'MqQueueSet'
+                },
+                {
+                  label: 'MQ连接串',
+                  key: type + 'BrokerURL'
+                },
+                {
+                  label: '数据库类型',
+                  key: type + 'Type'
+                }
+              ]
+              this.$set(this.task, type + 'MqQueueSet', c.mqQueueSet)
+              this.$set(this.task, type + 'BrokerURL', c.brokerURL)
+              break
+            case 'kafka':
+              this.infoObj[type].items = [
+                {
+                  label: '节点名称',
+                  key: type + 'Name'
+                },
+                {
+                  label: '主题表达式',
+                  key: type + 'KafkaPatternTopics'
+                },
+                {
+                  label: '数据库地址',
+                  key: type + 'KafkaBootstrapServers'
+                },
+                {
+                  label: '数据库类型',
+                  key: type + 'Type'
+                }
+              ]
+              this.$set(this.task, type + 'KafkaPatternTopics', c.kafkaPatternTopics)
+              this.$set(this.task, type + 'KafkaBootstrapServers', c.kafkaBootstrapServers)
+              break
           }
           this.$set(this.task, type + 'DB', c.database_name)
           this.$set(this.task, type + 'Url', host)
@@ -366,7 +437,7 @@ export default {
         })
       } else if (msg) {
         this.$message.success(msg)
-        this.getData()
+        // this.getData()
       }
     },
     getConfirmMessage(operateStr, name) {
@@ -467,6 +538,13 @@ export default {
           this.$refs.fieldMapping.getMetaData(this.task)
         }
       })
+    },
+    getMilestoneStatus(status) {
+      let result = status
+      if (['draft', 'paused', 'error'].includes(this.task?.status) && status === 'running') {
+        result = 'paused'
+      }
+      return result
     }
   }
 }
