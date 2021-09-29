@@ -103,7 +103,12 @@
               <ElTableColumn label="任务详情" prop="label"></ElTableColumn>
               <ElTableColumn label="状态" prop="status" width="100px">
                 <template slot-scope="scope">
-                  <StatusTag type="text" target="milestone" :status="scope.row.status" only-img></StatusTag>
+                  <StatusTag
+                    type="text"
+                    target="milestone"
+                    :status="getMilestoneStatus(scope.row.status)"
+                    only-img
+                  ></StatusTag>
                 </template>
               </ElTableColumn>
               <ElTableColumn label="时间" prop="fromNow" width="160px"></ElTableColumn>
@@ -467,6 +472,13 @@ export default {
           this.$refs.fieldMapping.getMetaData(this.task)
         }
       })
+    },
+    getMilestoneStatus(status) {
+      let result = status
+      if (['draft', 'paused', 'error'].includes(this.task?.status) && status === 'running') {
+        result = 'paused'
+      }
+      return result
     }
   }
 }
