@@ -358,6 +358,16 @@ export default {
           })
           break
       }
+    },
+    reset() {
+      this.searchParams = {
+        operationType: '',
+        parameter1: '',
+        start: '',
+        end: '',
+        username: ''
+      }
+      this.search()
     }
   }
 }
