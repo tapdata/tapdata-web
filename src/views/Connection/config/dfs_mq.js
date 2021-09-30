@@ -181,7 +181,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
-        label: vm.$t('dataForm.form.mq.database_host'),
+        label: '数据库地址',
         rules: [
           {
             required: true,
@@ -212,7 +212,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
-        label: vm.$t('dataForm.form.mq.database_port'),
+        label: '端口',
         required: true,
         rules: [
           {
