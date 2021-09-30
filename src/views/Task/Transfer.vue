@@ -775,6 +775,7 @@ export default {
       width: 300px;
 
       .el-transfer-panel__body {
+        padding-top: 0;
         .box {
           display: inline-block;
 
