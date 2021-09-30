@@ -735,28 +735,19 @@ export default {
       }
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api('ScheduleTasks')
-              .post(params)
-              .then(() => {
-                this.$message.success(this.$t('timeToLive.status_deleted'))
-                this.table.fetch()
-                done()
-              })
-              .catch(() => {
-                this.$message.info(this.$t('message.deleteFail'))
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-              })
-          } else {
-            done()
-          }
-        }
+        closeOnClickModal: false
       })
+        .then(() => {
+          this.$api('ScheduleTasks')
+            .post(params)
+            .then(() => {
+              this.$message.success(this.$t('timeToLive.status_deleted'))
+              this.table.fetch()
+            })
+        })
+        .catch(() => {
+          this.$message.info(this.$t('message.deleteFail'))
+        })
     },
 
     // 重置生命周期

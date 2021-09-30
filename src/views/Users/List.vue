@@ -766,28 +766,19 @@ export default {
         confirmButtonText: this.$t('user.delete'),
         confirmButtonClass: 'delConfirmbtn',
         customClass: 'user-confirm',
-        showClose: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api('users')
-              .delete(item.id)
-              .then(() => {
-                this.$message.success(this.$t('message.deleteOK'))
-                this.table.fetch()
-                done()
-              })
-              .catch(() => {
-                this.$message.info(this.$t('message.deleteFail'))
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-              })
-          } else {
-            done()
-          }
-        }
+        showClose: false
       })
+        .then(() => {
+          this.$api('users')
+            .delete(item.id)
+            .then(() => {
+              this.$message.success(this.$t('message.deleteOK'))
+              this.table.fetch()
+            })
+        })
+        .catch(() => {
+          this.$message.info(this.$t('message.deleteFail'))
+        })
     },
     // 激活
     handleActive(item) {
@@ -823,7 +814,9 @@ export default {
       }
       let successMsg = this.$t('user.activetionSuccess')
       let errorMsg = this.$t('user.activetionError')
-      this.$confirm(message, this.handleStatus(params, successMsg, errorMsg, this.$t('user.activation')))
+      this.handleStatus(message, params, successMsg, errorMsg, this.$t('user.activation'))
+
+      // this.$confirm(message, )
     },
     // 冻结
     handleFreeze(item) {
@@ -860,11 +853,11 @@ export default {
       }
       let successMsg = this.$t('user.freezeSuccess')
       let errorMsg = this.$t('user.freezeError')
-      this.$confirm(
-        message,
+      // this.$confirm(
+      //   message,
 
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user.freeze'))
-      )
+      this.handleStatus(message, params, successMsg, errorMsg, this.$t('user.freeze'))
+      // )
     },
     // 校验
     handleCheck(item) {
@@ -901,40 +894,31 @@ export default {
       }
       let successMsg = this.$t('user.checkSuccess')
       let errorMsg = this.$t('user.checkError')
-      this.$confirm(
-        message,
+      // this.$confirm(
+      //   message,
 
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user.checkSuccess'))
-      )
+      this.handleStatus(message, params, successMsg, errorMsg, this.$t('user.checkSuccess'))
+      // )
     },
     // 改变状态提示
-    handleStatus(data, successMsg, errorMsg, confirmButton) {
-      return {
+    handleStatus(message, data, successMsg, errorMsg, confirmButton) {
+      this.$confirm(message, {
         closeOnClickModal: false,
         confirmButtonText: confirmButton,
         customClass: 'user-confirm',
-        showClose: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api('users')
-              .patch(data)
-              .then(() => {
-                this.$message.success(successMsg)
-                this.table.fetch()
-                done()
-              })
-              .catch(() => {
-                this.$message.info(errorMsg)
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-              })
-          } else {
-            done()
-          }
-        }
-      }
+        showClose: false
+      })
+        .then(() => {
+          this.$api('users')
+            .patch(data)
+            .then(() => {
+              this.$message.success(successMsg)
+              this.table.fetch()
+            })
+        })
+        .catch(() => {
+          this.$message.info(errorMsg)
+        })
     },
     // 批量操作处理
     handleCommand(command) {

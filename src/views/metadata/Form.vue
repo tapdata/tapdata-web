@@ -306,6 +306,7 @@ export default {
       let unavailableTable = []
       for (let i = 0; i < this.form.relation.length; i++) {
         if (index === i) {
+          continue
         } else {
           unavailableTable.push(this.form.relation[i].table_name)
         }
@@ -631,16 +632,6 @@ export default {
         }
       }
       .e-table {
-        &::before {
-          position: absolute;
-          left: 0;
-          bottom: 0;
-          width: 100%;
-          height: 1px;
-          content: '';
-          background-color: #ebeef5;
-          z-index: 1;
-        }
         th {
           padding: 4px 10px;
           color: #666;
