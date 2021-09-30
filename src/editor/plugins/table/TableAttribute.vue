@@ -317,6 +317,7 @@ export default {
           this.model.custSql.editSql = ''
         }
         this.getDataFlow()
+        this.getTranModelVersionControl()
       }
     },
     mergedSchema: {
@@ -712,15 +713,7 @@ export default {
           this.model.enableInitialOrder = true
         }
         this.tableIsLink()
-        let param = {
-          stages: this.dataFlow?.stages,
-          stageId: this.stageId
-        }
-        this.$api('DataFlows')
-          .tranModelVersionControl(param)
-          .then(data => {
-            this.showFieldMapping = data?.data[this.stageId]
-          })
+        this.getTranModelVersionControl()
       }
       this.cell = cell
       tempSchemas.length = 0
@@ -758,6 +751,18 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+    //判断节点是否支持字段映射
+    getTranModelVersionControl() {
+      let param = {
+        stages: this.dataFlow?.stages,
+        stageId: this.stageId
+      }
+      this.$api('DataFlows')
+        .tranModelVersionControl(param)
+        .then(data => {
+          this.showFieldMapping = data?.data[this.stageId]
+        })
     },
 
     // 更新模型
