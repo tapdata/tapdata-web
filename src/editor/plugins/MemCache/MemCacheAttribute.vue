@@ -24,6 +24,7 @@
             v-model.trim="model.cacheName"
             size="mini"
             :placeholder="$t('editor.cell.data_node.memCache.form.cacheName.placeholder')"
+            @change="handleChangeName"
             @input="nameHandler"
           ></el-input>
         </el-form-item>
@@ -39,7 +40,7 @@
             :placeholder="$t('editor.cell.data_node.memCache.form.cacheKeys.placeholder')"
           ></MultiSelection>
         </el-form-item>
-        <el-form-item :required="true">
+        <el-form-item>
           <div class="e-label" slot="label">
             <label class="el-form-item__label">{{ $t('dag_data_node_label_memcache_type') }}</label>
             <el-tooltip effect="dark" :content="$t('dag_data_node_label_memcache_type_tip')" placement="top">
@@ -413,6 +414,9 @@ export default {
 
     nameHandler(val) {
       this.model.name = val
+    },
+
+    handleChangeName(val) {
       this.handelDuplicate(this.vueAdapter, val, '')
     },
 
