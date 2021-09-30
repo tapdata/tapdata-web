@@ -251,8 +251,8 @@ export default {
       }
       let filter = {
         where,
-        size: size,
-        page: current,
+        limit: size,
+        skip: size * (current - 1),
         order: this.order
       }
       return this.$axios
