@@ -24,6 +24,7 @@
             v-model.trim="model.cacheName"
             size="mini"
             :placeholder="$t('editor.cell.data_node.memCache.form.cacheName.placeholder')"
+            @change="handleChangeName"
             @input="nameHandler"
           ></el-input>
         </el-form-item>
@@ -413,6 +414,9 @@ export default {
 
     nameHandler(val) {
       this.model.name = val
+    },
+
+    handleChangeName(val) {
       this.handelDuplicate(this.vueAdapter, val, '')
     },
 
