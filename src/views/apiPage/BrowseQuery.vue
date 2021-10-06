@@ -17,7 +17,7 @@
         field-label="text"
         field-value="value"
       ></QueryBuild>
-      <div>
+      <div class="browse_button">
         <el-button type="primary" @click="handleFavorite()" size="small">
           {{ $t('dataExplorer_add_favorite') }}
         </el-button>
@@ -26,7 +26,7 @@
         </el-button>
       </div>
     </div>
-    <div>
+    <div class="browse_rows">
       <h3>{{ $t('dataExplorer_show_column') }}</h3>
       <el-checkbox :indeterminate="isIndeterminate" v-model="showAllColumn" @change="showAllColumns">全选</el-checkbox>
       <div style="margin: 15px 0"></div>
@@ -149,6 +149,13 @@ export default {
     .el-form-item {
       margin-bottom: 10px;
     }
+  }
+  .browse_rows {
+    padding-top: 10px;
+  }
+  .browse_button {
+    padding-top: 10px;
+    text-align: right;
   }
 }
 </style>
