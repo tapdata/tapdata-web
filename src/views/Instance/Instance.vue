@@ -229,7 +229,7 @@
             <el-button type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
               $t('agent_button_auto_upgrade')
             }}</el-button>
-            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">({{ $t('agent_tip_auto_upgrade') }})</div>
+            <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8">({{ $t('agent_tip_auto_upgrade') }})</div>
           </div>
           <div>
             <el-button type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</el-button>
