@@ -176,6 +176,8 @@ export default {
   connection_manage: '连接管理',
   connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
+  connection_form_database_host_placeholder: '请输入数据库地址',
+  connection_form_database_host_tips: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
 
   // 任务
   task_manage: '任务管理',

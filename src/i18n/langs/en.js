@@ -196,6 +196,9 @@ export default {
   connection_manage: 'Connection Management',
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
+  connection_form_database_host_placeholder: 'Please enter the database address',
+  connection_form_database_host_tips:
+    'Database address (127.0.0.1/Domain: (port), please use multiple addresses, separate)',
 
   // 任务
   task_manage: 'Task Management',
