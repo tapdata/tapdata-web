@@ -109,12 +109,7 @@
         }}</ElLink>
       </div>
       <ul class="joint-table-main" id="data-verification-form">
-        <li
-          class="joint-table-item"
-          v-for="(item, index) in form.tasks"
-          :key="item.id"
-          @click.stop.prevent="editItem(item.id)"
-        >
+        <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="item.id" @click="editItem(item.id)">
           <div class="joint-table-setting overflow-hidden">
             <div class="setting-item">
               <label class="item-label">{{ $t('verify_form_label_table') }}: </label>

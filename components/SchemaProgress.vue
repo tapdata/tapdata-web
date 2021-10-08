@@ -8,7 +8,8 @@
     <ElTooltip v-else-if="schemaInfo.tips" :content="schemaInfo.tips" placement="top">
       <span :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
     </ElTooltip>
-    <span v-else :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
+    <span v-else-if="schemaInfo.color" :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
+    <span v-else>-</span>
   </div>
 </template>
 
@@ -39,7 +40,7 @@ export default {
           icon: 'warning',
           color: 'warning'
         }
-      } else {
+      } else if (data.loadFieldsStatus) {
         schemaInfo = {
           text: this.$t('schema_progress_status_error'),
           icon: 'error',
