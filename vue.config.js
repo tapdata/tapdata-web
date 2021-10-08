@@ -23,6 +23,8 @@ const proxy = {
   changeOrigin: false
 }
 
+//sass变量
+let varUrl = '~@/styles/var.scss'
 module.exports = {
   assetsDir: 'static',
   lintOnSave: true,
@@ -145,6 +147,13 @@ module.exports = {
         //打包文件大小配置
         maxEntrypointSize: 10000000,
         maxAssetSize: 30000000
+      }
+    }
+  },
+  css: {
+    loaderOptions: {
+      scss: {
+        additionalData: `@import "${varUrl}";`
       }
     }
   }
