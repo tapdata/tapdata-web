@@ -109,52 +109,65 @@
         }}</ElLink>
       </div>
       <ul class="joint-table-main" id="data-verification-form">
-        <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="item.id" @click.stop="editIndex = index">
+        <li
+          class="joint-table-item"
+          v-for="(item, index) in form.tasks"
+          :key="item.id"
+          @click.stop.prevent="editItem(item.id)"
+        >
           <div class="joint-table-setting overflow-hidden">
             <div class="setting-item">
               <label class="item-label">{{ $t('verify_form_label_table') }}: </label>
               <ElCascader
-                v-if="editIndex === index"
+                v-if="editId === item.id"
                 v-model="item.sourceTable"
                 class="item-select"
                 :class="{ red: !item.sourceTable }"
                 :options="item.sourceTree"
                 @input="tableChangeHandler(item, 'source', index)"
               ></ElCascader>
-              <span v-else class="item-value-text">{{ item.sourceTable ? item.sourceTable[1] : '-' }}</span>
+              <span v-else :class="['item-value-text', { 'color-danger': !item.sourceTable }]">{{
+                item.sourceTable ? item.sourceTable[1] : $t('message.placeholderSelect')
+              }}</span>
               <span class="item-icon">
                 <i class="el-icon-arrow-right"></i>
               </span>
               <ElCascader
-                v-if="editIndex === index"
+                v-if="editId === item.id"
                 v-model="item.targetTable"
                 class="item-select"
                 :class="{ red: !item.targetTable }"
                 :options="item.targetTree"
                 @input="tableChangeHandler(item, 'target')"
               ></ElCascader>
-              <span v-else class="item-value-text">{{ item.targetTable ? item.targetTable[1] : '-' }}</span>
+              <span v-else :class="['item-value-text', { 'color-danger': !item.targetTable }]">{{
+                item.targetTable ? item.targetTable[1] : $t('message.placeholderSelect')
+              }}</span>
             </div>
             <div class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">
               <label class="item-label">{{ $t('verify_form_label_index_field') }}: </label>
               <MultiSelection
-                v-if="editIndex === index"
+                v-if="editId === item.id"
                 v-model="item.source.sortColumn"
                 class="item-select"
                 :class="{ red: !item.source.sortColumn }"
                 :options="item.source.fields"
                 :id="'item-source-' + index"
               ></MultiSelection>
-              <span v-else class="item-value-text">{{ item.source.sortColumn }}</span>
+              <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
+                item.source.sortColumn || $t('message.placeholderSelect')
+              }}</span>
               <span class="item-icon"></span>
               <MultiSelection
-                v-if="editIndex === index"
+                v-if="editId === item.id"
                 v-model="item.target.sortColumn"
                 class="item-select"
                 :class="{ red: !item.target.sortColumn }"
                 :options="item.target.fields"
               ></MultiSelection>
-              <span v-else class="item-value-text">{{ item.target.sortColumn }}</span>
+              <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
+                item.target.sortColumn || $t('message.placeholderSelect')
+              }}</span>
             </div>
             <div class="setting-item mt-4">
               <ElCheckbox v-model="item.showAdvancedVerification" v-show="form.inspectMethod === 'field'">{{
@@ -179,7 +192,8 @@
             </div>
           </div>
           <div class="ml-6">
-            <ElLink type="primary" @click="removeItem(index)">{{ $t('button_delete') }}</ElLink>
+            <ElLink type="primary" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElLink>
+            <ElLink type="primary" class="block mt-2" @click="editItem(item.id)">{{ $t('button_edit') }}</ElLink>
           </div>
         </li>
       </ul>
@@ -392,7 +406,7 @@ export default {
       htmlMD: '',
       removeVisible: false,
       isDbClone: false,
-      editIndex: -1,
+      editId: -1,
       form: {
         flowId: '',
         name: '',
@@ -857,6 +871,9 @@ export default {
     removeItem(idx) {
       this.form.tasks.splice(idx, 1)
     },
+    editItem(id) {
+      this.editId = id
+    },
     clear() {
       this.form.tasks = []
     },
@@ -950,7 +967,7 @@ export default {
               return !c.source.table || !c.target.table
             })
           ) {
-            this.editIndex = index - 1
+            this.editId = tasks[index - 1]?.id
             this.$nextTick(() => {
               document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
             })
@@ -965,7 +982,7 @@ export default {
               return !c.source.sortColumn || !c.target.sortColumn
             })
           ) {
-            this.editIndex = index - 1
+            this.editId = tasks[index - 1]?.id
             this.$nextTick(() => {
               document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
             })
@@ -980,7 +997,7 @@ export default {
               return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
             })
           ) {
-            this.editIndex = index - 1
+            this.editId = tasks[index - 1]?.id
             this.$nextTick(() => {
               let item = document.getElementById('item-source-' + (index - 1))
               item.querySelector('input').focus()
