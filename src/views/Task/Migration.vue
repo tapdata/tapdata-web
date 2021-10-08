@@ -524,8 +524,10 @@ export default {
       })
     },
     createTask() {
-      this.$router.push({
-        path: '/task/create'
+      this.$checkAgentStatus(() => {
+        this.$router.push({
+          path: '/task/create'
+        })
       })
     },
     changeStatus(ids, { status, errorEvents }) {
