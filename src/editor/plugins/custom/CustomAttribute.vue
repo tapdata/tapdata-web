@@ -136,7 +136,6 @@ import Entity from '../link/Entity'
 import ws from '../../../api/ws'
 import { convertSchemaToTreeData, uuid } from '../../util/Schema'
 import VIcon from '@/components/VIcon'
-import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 let connectionApi = factory('connections')
 // let editorMonitor = null;
 export default {

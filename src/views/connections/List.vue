@@ -94,7 +94,7 @@
         :reserve-selection="true"
       >
       </el-table-column>
-      <el-table-column prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
+      <el-table-column prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true" min-width="150">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
@@ -113,7 +113,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('connection.connectionInfo')">
+      <el-table-column :label="$t('connection.connectionInfo')" min-width="150">
         <template slot-scope="scope">
           {{ scope.row.connectionUrl }}
         </template>
@@ -756,7 +756,7 @@ export default {
     float: left;
 
     img {
-      width: 60%;
+      width: 24px;
     }
   }
 

@@ -246,7 +246,6 @@ import _ from 'lodash'
 import ws from '@/api/ws'
 import factory from '@/api/factory'
 import VIcon from '@/components/VIcon'
-import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editor = null;

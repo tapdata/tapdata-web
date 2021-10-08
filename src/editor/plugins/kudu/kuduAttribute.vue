@@ -131,7 +131,6 @@ import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
 import VIcon from '@/components/VIcon'
-import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 const connections = factory('connections')
 
 // let editorMonitor = null;
