@@ -127,7 +127,8 @@ export default function (vm) {
         field: 'database_host',
 
         label: vm.$t('dataForm.form.host'),
-        placeholder: vm.$t('dataForm.form.databaseHostPlaceholder'),
+        placeholder: vm.$t('connection_form_database_host_placeholder'),
+        tip: vm.$t('connection_form_database_host_tips'),
         rules: [
           {
             required: true,
