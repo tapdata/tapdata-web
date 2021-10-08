@@ -130,6 +130,7 @@ export default {
         data = await this.$axios.get('tm/api/Connections/' + id)
       }
       this.loading = false
+      data['database_password'] = data.agentType === 'Cloud' ? data['database_username'] : '-'
       this.connection = data
       //组装数据
       this.connection['last_updated'] = this.$moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss')

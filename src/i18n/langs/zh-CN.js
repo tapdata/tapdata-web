@@ -157,11 +157,11 @@ export default {
   agent_upgrade_step_windows_first: '1.打开cmd窗口，进入原Agent安装目录',
   agent_upgrade_step_windows_second:
     '2.复制下方的升级命令并在目录下执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
-  agent_upgrade_step_windows_third: '3.待升级命令执行完毕后，出现如右所示则代表Agent升级成功：Update finished.',
+  agent_upgrade_step_windows_third: '3.出现“Update finished.”则代表Agent升级成功',
   agent_upgrade_step_linux_first: '1.进入原Agent安装目录下',
   agent_upgrade_step_linux_second:
     '2.复制下方的升级命令并在目录下执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
-  agent_upgrade_step_linux_third: '3.待升级命令执行完毕后，出现如右所示则代表Agent升级成功：Update finished.',
+  agent_upgrade_step_linux_third: '3.出现“Update finished.”则代表Agent升级成功',
   agent_upgrade_step_docker_first: '1.进入原Agent的docker容器内',
   agent_upgrade_step_docker_first_one: '(1)找到原Agent的docker容器CONTAINER ID',
   agent_upgrade_step_docker_first_two: '(2)通过容器ID进入容器',
@@ -170,12 +170,14 @@ export default {
   agent_upgrade_step_docker_first_five: '进入容器',
   agent_upgrade_step_docker_second:
     '2.复制下方的升级命令直接在容器内执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
-  agent_upgrade_step_docker_third: '3.待升级命令执行完毕后，出现如右所示则代表Agent升级成功：Update finished.',
+  agent_upgrade_step_docker_third: '3.出现“Update finished.”则代表Agent升级成功',
 
   // 连接
   connection_manage: '连接管理',
   connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
+  connection_form_database_host_placeholder: '请输入数据库地址',
+  connection_form_database_host_tips: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
 
   // 任务
   task_manage: '任务管理',

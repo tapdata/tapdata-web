@@ -174,12 +174,11 @@ export default {
   agent_upgrade_step_windows_second:
     '2. Copy the upgrade command below and execute it in the directory. The upgrade command will automatically back up, upgrade and start. If the upgrade fails, it will automatically roll back the version.',
   agent_upgrade_step_windows_third:
-    '3. After the upgrade command is executed, the message shown on the right indicates that the Agent upgrade was successful: Update finished.',
+    '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
   agent_upgrade_step_linux_first: '1. Enter the original Agent installation directory',
   agent_upgrade_step_linux_second:
     '2. Copy the upgrade command below and execute it in the directory. The upgrade command will automatically back up, upgrade and start. If the upgrade fails, it will automatically roll back the version.',
-  agent_upgrade_step_linux_third:
-    '3. After the upgrade command is executed, the message shown on the right indicates that the Agent upgrade was successful: Update finished.',
+  agent_upgrade_step_linux_third: '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
   agent_upgrade_step_docker_first: '1. Enter the docker container of the original Agent',
   agent_upgrade_step_docker_first_one: "(1) Found the original agent's docker container CONTAINER ID",
   agent_upgrade_step_docker_first_two: '(2) Enter the container through the container ID',
@@ -190,12 +189,15 @@ export default {
   agent_upgrade_step_docker_second:
     '2. Copy the upgrade command below to execute directly in the container, the upgrade command will automatically back up, upgrade and start, if the upgrade fails, it will automatically roll back the version',
   agent_upgrade_step_docker_third:
-    '3. After the upgrade command is executed, the message shown on the right indicates that the Agent upgrade was successful: Update finished.',
+    '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
 
   // 连接
   connection_manage: 'Connection Management',
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
+  connection_form_database_host_placeholder: 'Please enter the database address',
+  connection_form_database_host_tips:
+    'Database address (127.0.0.1/Domain: (port), please use multiple addresses, separate)',
 
   // 任务
   task_manage: 'Task Management',
