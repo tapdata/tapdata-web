@@ -5,6 +5,9 @@
       :class="'el-icon-' + schemaInfo.icon + ' color-' + schemaInfo.color"
     ></i>
     <ElLink v-if="schemaInfo.icon === 'error'" type="danger" @click="showErrorMsg">{{ schemaInfo.text }}</ElLink>
+    <ElTooltip v-else-if="schemaInfo.tips" :content="schemaInfo.tips" placement="top">
+      <span :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
+    </ElTooltip>
     <span v-else :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
   </div>
 </template>
@@ -20,10 +23,14 @@ export default {
       let schemaInfo = {}
       // 加载数量大于等于实际的视为已完成
       if (data.loadFieldsStatus === 'finished' || data.loadCount >= data.tableCount) {
+        let loadTime = data.loadSchemaDate
         schemaInfo = {
           text: this.$t('schema_progress_status_success'),
           icon: 'success',
-          color: 'success'
+          color: 'success',
+          tips: loadTime
+            ? this.$t('schema_progress_load_time', [this.$moment(loadTime).format('YYYY-MM-DD HH:mm:ss')])
+            : ''
         }
       } else if (data.loadFieldsStatus === 'loading') {
         let process = (data.loadCount * 100) / data.tableCount || 0

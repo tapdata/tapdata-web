@@ -20,6 +20,7 @@ const newCn = {
   schema_progress_status_success: '已完成',
   schema_progress_status_error: '加载错误',
   schema_progress_dialog_error_title: 'Schema加载出错',
+  schema_progress_load_time: '加载时间：{0}',
 
   // 数据校验
   verify_title_create: '新建校验',

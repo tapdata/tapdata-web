@@ -21,6 +21,7 @@ const newTc = {
   schema_progress_status_success: '已完成',
   schema_progress_status_error: '加載錯誤',
   schema_progress_dialog_error_title: 'Schema加載出錯',
+  schema_progress_load_time: '加載時間：{0}',
 
   // 數據校驗
   verify_title_create: '新建校驗',
