@@ -42,8 +42,9 @@ export default {
         this.apiClient.setApiServer(apiServers.data[0])
 
         let openApi = `${apiServers.data[0].clientURI}/openapi.json`
-        debugger
-        let openApiObj = await axios.get(openApi)
+        // let openApiObj = await axios.get(openApi)
+        let res = await fetch(openApi)
+        let openApiObj = await res.json()
 
         if (openApiObj) {
           this.openapi = openApiObj.data
@@ -52,7 +53,7 @@ export default {
         let token = await this.apiClient.getAPIServerToken()
         this.token = token
 
-        let url = `${location.protocol}//${location.hostname}:${location.port}/static/explorer/index.html?url=${openApi}&token=${token}#/`
+        let url = `${location.protocol}//${location.hostname}:${location.port}/explorer/index.html?url=${openApi}&token=${token}#/`
 
         if (defaultCollection) {
           url = url + defaultCollection
@@ -181,12 +182,11 @@ export default {
     position: absolute;
     left: 10px;
     top: 20px;
-    width: 50px;
     overflow: hidden;
   }
   .doc-test-iframe {
     min-height: 100%;
-    width: 100%;
+    width: calc(100% - 50px);
     padding-left: 60px;
   }
 }

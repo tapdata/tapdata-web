@@ -196,9 +196,9 @@
 
 <script src="./swagger-ui-bundle.js"> </script>
 <script src="./swagger-ui-standalone-preset.js"> </script>
-<script src="js/jquery-3.3.1.min.js"></script>
+<script src="./js/jquery-3.3.1.min.js"></script>
 <!-- Bootstrap core JavaScript -->
-<script src="js/bootstrap.min.js"></script>
+<script src="./js/bootstrap.min.js"></script>
 
 <script>
   // function onchange(params) {
@@ -209,14 +209,16 @@
   $(document).ready(function(){
     function getCode(key,name) {
       // var i18n =  parent.window.jQuery.i18n
-      return parent && parent.window && parent.window.jQuery && parent.window.jQuery.i18n ? (parent.window.jQuery.i18n.map[key] || name) : name
+      return parent && parent.window && parent.window.jQuery && parent.window.jQuery.i18n ? (parent.window.jQuery.i18n(key) || name) : name
     }
 
-    $(".generate_code").text(getCode('FileTest.generate_code','FileTest.generate_code'));
-    $(".choose_option").text(getCode('FileTest.choose_option','FileTest.choose_option'));
-    
+    // $(".generate_code").text(getCode('file_test_generate_code','file_test_generate_code'));
+    // $(".choose_option").text(getCode('FileTest.choose_option','FileTest.choose_option'));
+    $(".generate_code").text('生成代码');
+    $(".choose_option").text('请选择一个选项');
+
   })
-  
+
   window.onload = function() {
     const selectElement = document.querySelector('#codes');
 
