@@ -58,7 +58,7 @@
               <div class="mb-6">
                 <span class="title">选择表</span>
                 <span class="desc">
-                  用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。
+                  用户可以点击中间向右的箭头按钮勾选源端待同步表，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输）
                 </span>
               </div>
               <div class="CT-task-transfer">
@@ -813,6 +813,12 @@ export default {
           if (this.dataSourceModel['target_databaseType'] === 'kafka') {
             this.changeConfig([], 'setting_distinctWriteType')
           }
+          //greenplum做源时不能增量
+          if (this.dataSourceModel['source_databaseType'] === 'greenplum') {
+            this.changeConfig([], 'setting_sync_type')
+            //设置默认值
+            this.settingModel.sync_type = 'initial_sync'
+          }
           if (this.dataSourceModel['target_databaseType'] === 'mq' && this.dataSourceModel['mqType'] === '0') {
             this.mqTransferFlag = true
           } else {
@@ -958,6 +964,20 @@ export default {
                 label: '更新写入模式',
                 tip: '更新写入模式会判断源端的每条数据在目标端是否存在，若存在则更新，不存在则新增。',
                 value: 'intellect'
+              }
+            ]
+          }
+          break
+        }
+        case 'setting_sync_type': {
+          //greenplum做源时不能增量
+          let op = items.find(it => it.field === 'sync_type')
+          if (op) {
+            op.options = [
+              {
+                label: '全量同步',
+                tip: '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
+                value: 'initial_sync'
               }
             ]
           }
