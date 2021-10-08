@@ -238,10 +238,11 @@ const childRoutes = [
   {
     path: '/apiDocAndTest',
     name: 'apiDocAndTest',
-    component: () => import('@/views/ExternalLink'),
+    // component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/ApiDocAndTest'),
     meta: {
       code: 'API_doc_&_test_menu',
-      url: '/old/index.html#/apiDocAndTest',
+      // url: '/old/index.html#/apiDocAndTest',
       title: i18n.t('tap.docTest'),
       isCollapse: false
     }

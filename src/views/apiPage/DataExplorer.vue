@@ -50,7 +50,7 @@
             </li>
           </template>
           <li v-if="status">
-            {{ $t('modules.apiServerStatus') }}:
+            {{ $t('modules_apiServerStatus') }}:
             <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
           </li>
         </ul>
@@ -76,27 +76,25 @@
       </div>
 
       <!-- 列表项 -->
-      <el-table-column
-        v-for="(item, index) in tableHeader.filter(v => v.show && v.value !== '__operation' && v.value !== '__tapd8')"
-        :key="index"
-        min-width="120"
-      >
+      <el-table-column v-for="(item, index) in tableHeaders" :key="index" v-show="item.show" min-width="120">
         <template slot="header">
           <span :title="item.text">{{ handleAliasName(item.text) }}</span>
         </template>
         <template slot-scope="scope">
           <!-- <div>{{scope.row[item.text]}}</div> -->
           <div
+            class="edit-text"
             v-if="scope.row.isspancen[item.text]"
             :title="scope.row[item.text]"
             @dblclick="editItem(scope.row, item.text)"
           >
             {{ scope.row[item.text] }}
           </div>
+          <div v-else class="edit-text" @dblclick="editItem(scope.row, item.text)"></div>
           <template v-if="scope.row.istrue">
             <div v-if="scope.row.isshow[item.text]">
               <el-input
-                @keyup.enter.native="editOk(scope.row, item.text)"
+                @keyup.enter.native="editOk(scope.row, item.text, item.type)"
                 ref="editInput"
                 v-model="editValue"
                 class="edit-input"
@@ -104,16 +102,10 @@
                 size="mini"
               />
               <div>
-                <el-button
-                  @click="editOk(scope.row, item.text)"
-                  :loading="editLoading"
-                  class="btn-text"
-                  type="text"
-                  size="small"
-                >
+                <el-button @click="editOk(scope.row, item.text, item.type)" class="btn-text" type="text" size="small">
                   {{ $t('dataQuality.save') }}
                 </el-button>
-                <el-button @click="editCancel" class="btn-text" type="text" size="small">
+                <el-button @click="editCancel(scope.row, item.text)" class="btn-text" type="text" size="small">
                   {{ $t('dataQuality.cancel') }}
                 </el-button>
               </div>
@@ -190,11 +182,15 @@
     </el-dialog>
     <!-- 查询 -->
     <BrowseQuery
+      ref="queryBuild"
       v-if="showFilterDialog"
       :key="queryBuildKey"
       :fieldData="queryFields"
+      :header="tableHeader"
       :conditionData="condition"
       :dialogVisible="showFilterDialog"
+      @backShowColumn="backShowColumn"
+      @backDialogVisible="backDialogVisible"
     ></BrowseQuery>
     <!-- 创建 -->
     <el-dialog
@@ -265,7 +261,8 @@ export default {
       tag: '',
       order: '_id DESC',
       createDialogVisible: false,
-      classifyTag: [] //选中分类tag
+      classifyTag: [], //选中分类tag
+      editDocId: ''
     }
   },
   created() {
@@ -309,9 +306,20 @@ export default {
         }
       },
       deep: true
+    },
+    tableHeader: {
+      handler(val) {
+        if (val) {
+          this.tableHeader = val
+        }
+      },
+      deep: true
     }
   },
   computed: {
+    tableHeaders() {
+      return this.tableHeader.filter(v => v.show && v.value !== '__operation' && v.value !== '__tapd8')
+    },
     table() {
       return this.$refs.table
     },
@@ -542,7 +550,7 @@ export default {
             if (arrquery?.length) {
               _this.tableHeader = arrquery.map(item => {
                 if (
-                  item.apiServer === _this.getApiId() &&
+                  item.apiServer === _this.getApiId('') &&
                   item.processId === _this.searchParams.api_server_process_id
                 ) {
                   _this.tableHeader = JSON.parse(item.condition)
@@ -581,14 +589,69 @@ export default {
         })
     },
     // 获取当前apiId
-    getApiId() {
-      let apiid = ''
+    getApiId(apiid) {
       this.collectionsList.forEach(item => {
         if (item.value == this.searchParams.collection) {
           apiid = item.apiId
         }
       })
       return apiid
+    },
+    // 查询保存返回值
+    backShowColumn(data, condition) {
+      this.showFilterDialog = false
+      let apiId = '',
+        _this = this
+      let parmas = {
+        apiServer: _this.getApiId(apiId), //API服务器ID
+        processId: _this.searchParams.api_server_process_id, //API ID
+        condition: JSON.stringify(_this.tableHeader)
+      }
+      _this.tableHeader.forEach(item => {
+        if (!data.includes(item.value) && item.value !== '__operation') {
+          item.show = false
+        }
+      })
+      this.condition = condition
+      this.table.fetch()
+      console.log(data, _this.tableHeader, this.queryFields, this.condition)
+      this.$api('users')
+        .get()
+        .then(res => {
+          if (res?.data) {
+            let arrquery = res.data.arrquery
+            let isproid = 0
+            if (arrquery === undefined || arrquery === 'undefined') {
+              this.$api('users').patch({ arrquery: [parmas] })
+            } else {
+              let userData = { arrquery: arrquery }
+              arrquery.forEach((item, index) => {
+                if (item.processId === _this.searchParams.api_server_process_id) {
+                  if (item.apiServer === _this.getApiId(apiId)) {
+                    // parmas.parmas[index].condition = JSON.stringify(_this)
+                  } else {
+                    userData.arrquery.push(parmas)
+                  }
+                } else {
+                  isproid = 1
+                }
+              })
+              if (isproid === 1) {
+                userData.arrquery.push(parmas)
+              }
+              this.$api('users').patch(userData)
+            }
+          }
+        })
+      // this.table.fetch()
+    },
+    // 查询弹窗关闭
+    backDialogVisible() {
+      this.showFilterDialog = false
+    },
+    // 查询字段
+    backSearch() {
+      this.table.fetch()
     },
 
     // 选中
@@ -631,8 +694,59 @@ export default {
         this.apiClient.downloadById(item)
       }
     },
-    // 确认编辑字段
-    editOk() {},
+    // 确认编辑字段保存
+    async editOk(item, value, type) {
+      let _this = this
+      let text = String(value)
+      let newValue = ''
+      let id = item['_id'] || this.editDocId
+      _this.editDocId = item['_id']
+      if (['float', 'double', 'short', 'bigDecimal', 'integer', 'long', 'number'].includes(type)) {
+        if (!/^\d+$/.test(_this.editValue)) {
+          _this.$message.error(_this.$t('message_save_ok') + '-' + _this.$t('message_save_fail'))
+        } else {
+          newValue = Number(_this.editValue)
+        }
+      } else if (type === 'object') {
+        try {
+          newValue = JSON.parse(_this.editValue)
+        } catch (e) {
+          _this.$message.error(_this.$t('message_save_ok') + '-' + _this.$t('message_save_fail'))
+          return false
+        }
+      } else if (/^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$/.test(item[text])) {
+        newValue = new Date(_this.editValue).toISOString()
+      } else if (type === 'date') {
+        newValue = new Date(_this.editValue).toISOString()
+      } else if (type === 'boolean') {
+        newValue = _this.editValue === 'true'
+      } else if (type === 'string') {
+        newValue = _this.editValue
+      } else {
+        newValue = _this.editValue
+      }
+      _this.jsonDocHint = []
+
+      let result = await this.apiClient.updateById(id, {
+        [value]: newValue
+      })
+      if (result.success) {
+        // console.log("保存成功进来了....")
+        this.showEditDialog = false
+        this.editDocId = ''
+        this.jsonDoc = ''
+        _this.table.fetch()
+        _this.$message.success(_this.$t('message_save_ok'))
+      } else {
+        _this.$message.error(_this.$t('message_save_fail'))
+      }
+    },
+    // 取消保存
+    editCancel(item, key) {
+      item.isspancen[key] = true
+      item.istrue = false
+      this.table.fetch()
+    },
     // 创建
     openCreate() {
       this.$nextTick(() => {
@@ -894,7 +1008,6 @@ export default {
       let tableData = []
       let fields = []
       let { current, size } = page
-      let { collection, api_server_process_id } = this.searchParams
       let where = {}
       let formatTime = time => {
         return Math.floor(time / 10) / 100
@@ -903,11 +1016,10 @@ export default {
       this.getCollections(tags)
 
       if (_this.condition && Object.keys(_this.condition)?.length) {
-        where = collection
+        where = this.condition
       }
 
       let filter = {
-        order: this.order,
         limit: size,
         skip: (current - 1) * size,
         fields: {}, // 查询所有字段
@@ -1016,7 +1128,6 @@ export default {
             401: _this.$t('dataExplorer_unauthenticated'), // user not have permissions
             403: _this.$t('dataExplorer_no_permissions') // token expired
           }
-          let respMsg = ''
           if (e?.response) {
             _this.$message.error(msg['' + (e.response ? e.response.status : '')] || e.msg)
           }
@@ -1050,7 +1161,7 @@ export default {
         if (this.$route.query.fields) {
           let fields = JSON.parse(this.$route.query.fields)
           if (typeof fields === 'object') {
-            this.headers.forEach(h => {
+            this.tableHeaders.forEach(h => {
               if (fields.hasOwnProperty(h.value)) {
                 h.show = fields[h.value]
               }
@@ -1063,7 +1174,7 @@ export default {
     getFieldFilter() {
       let showFields = {}
       let hideFields = {}
-      this.headers.forEach(h => {
+      this.tableHeaders.forEach(h => {
         if (h.value !== '__operation') {
           if (h.show) {
             showFields[h.value] = true
@@ -1080,11 +1191,13 @@ export default {
       }
     },
     // 导出
-    exportData(type) {
+    async exportData(type) {
       let params = {
         type: type || 'json'
       }
-      if (this.condition && Object.keys(this.condition).length > 0) {
+      console.log(this.condition, Object.keys(this.condition))
+      debugger
+      if (this.condition && Object.keys(this.condition).length) {
         // 有查询条件
         let queryString = this.$refs.queryBuild.serializationToRestFilter('filter', { where: this.condition })
         if (queryString) {
@@ -1102,7 +1215,7 @@ export default {
           params[`filter[fields][${field}]`] = fieldFilter[field]
         })
       }
-      this.apiClient.exportData(params)
+      await this.apiClient.exportData(params)
 
       this.exportDialog = false
     },
@@ -1248,6 +1361,9 @@ export default {
     }
     .btn + .btn {
       margin-left: 5px;
+    }
+    .edit-text {
+      height: 22px;
     }
     .table-footer {
       border: 1px solid #ebeef5;

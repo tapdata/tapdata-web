@@ -201,6 +201,7 @@ export default {
   api_server_client_uri: 'API 服务器访问地址',
   api_server_download: '下载',
   api_server_download_API_Server_config: '下载API配置文件',
+  api_server_no_available: '没有可用API服务器',
 
   // api浏览
   dataExplorer_collection_required: '请选择API',
@@ -230,6 +231,7 @@ export default {
   dataExplorer_file_type: '选择文件类型',
   dataExplorer_add_favorite: '收藏',
   dataExplorer_format: '格式化代码',
+  dataExplorer_exists: '已存在',
   // 数据源
   connection_form_tidb_server: 'TiDB地址',
   connection_tidb_none_server: 'TiBD地址不能为空',

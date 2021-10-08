@@ -450,7 +450,7 @@ export default {
         if (!result.partitionIdSet) {
           result.partitionIdSet = []
         } else if (result.partitionIdSet && !(result.partitionIdSet instanceof Array)) {
-          result.partitionIdSet =  [result.partitionIdSet]
+          result.partitionIdSet = [result.partitionIdSet]
         }
       }
 

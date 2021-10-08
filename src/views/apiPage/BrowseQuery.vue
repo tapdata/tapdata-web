@@ -21,9 +21,9 @@
         <el-button type="primary" @click="handleFavorite()" size="small">
           {{ $t('dataExplorer_add_favorite') }}
         </el-button>
-        <el-button type="primary" @click="search(1)" size="small">
+        <!-- <el-button type="primary" @click="search(1)" size="small">
           {{ $t('dataExplorer_query') }}
-        </el-button>
+        </el-button> -->
       </div>
     </div>
     <div class="browse_rows">
@@ -31,7 +31,12 @@
       <el-checkbox :indeterminate="isIndeterminate" v-model="showAllColumn" @change="showAllColumns">全选</el-checkbox>
       <div style="margin: 15px 0"></div>
       <el-checkbox-group v-model="selectionRow" @change="handleCheckedFieldChange">
-        <el-checkbox v-for="item in fields" :label="item.value" :key="item.value">{{ item.text }}</el-checkbox>
+        <el-checkbox
+          v-for="item in header.filter(v => v.value !== '__operation' && v.value !== '__tapd8' && v.value !== '_id')"
+          :label="item.text"
+          :key="item.value"
+          >{{ item.text }}</el-checkbox
+        >
       </el-checkbox-group>
     </div>
 
@@ -51,6 +56,10 @@ export default {
   components: { QueryBuild },
   props: {
     fieldData: {
+      required: true,
+      value: Array
+    },
+    header: {
       required: true,
       value: Array
     },
@@ -117,7 +126,7 @@ export default {
     handleCheckedFieldChange(value) {
       let checkedCount = value.length
       this.showAllColumn = checkedCount === this.fields.length
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.fields.length
       this.fields.forEach(v => {
         if (value.includes(v.value)) {
           v.show = true
@@ -127,11 +136,92 @@ export default {
       //   this.querysavefn()
       // }, 2000)
     },
+    // 保存
+    save() {
+      console.log(this.selectionRow)
+      this.dialogFormVisible = false
+      this.$emit('backShowColumn', this.selectionRow, this.condition)
+      this.$emit('backDialogVisible', false)
+    },
 
+    // 收藏
+    handleFavorite() {
+      this.$prompt('', this.$t('connection.rename'), {
+        customClass: 'changeName-prompt',
+        inputValue: this.favoriteName,
+        beforeClose: (action, instance, done) => {
+          let exists = false
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+
+            this.$api('users')
+              .get()
+              .then(res => {
+                if (res) {
+                  let collect = res.data.favorites.filter(v => v.meta.title === this.favoriteName)
+                  exists = collect.length > 0
+                }
+                if (exists) {
+                  this.$message.error('dataExplorer_exists')
+                }
+                // let collection = this.collections.filter(v => v.value === this.collection)
+                // let fields = {}
+                // this.fieldData.forEach(h => {
+                //   fields[h.value] = h.show
+                // })
+                // this.$emit('addFavorite', {
+                //   name: 'dataExplorer',
+                //   query: {
+                //     apiServer: 'apiServerId',
+                //     collection: collection,
+                //     condition: JSON.stringify(this.condition),
+                //     sortBy: this.pagination.sortBy,
+                //     fields: JSON.stringify(fields)
+                //   },
+                //   meta: {
+                //     title: this.favoriteName + ''
+                //   }
+                // })
+                done()
+              })
+              .finally(() => {
+                instance.confirmButtonLoading = false
+              })
+          } else {
+            done()
+          }
+        }
+      })
+    },
+    // // 查询
+    // search() {
+    //   this.$emit('backSearch')
+    // },
+    // 查询条件
+    serializationToRestFilter(key, val) {
+      if (typeof val === 'object') {
+        if (Array.isArray(val)) {
+          let result = []
+          for (let i = 0; i < val.length; i++) result.push(this.serializationToRestFilter(`${key}[${i}]`, val[i]))
+          return result.join('&')
+        } else {
+          let result = []
+          for (let name in val) {
+            if (name && val.hasOwnProperty(name)) {
+              let temp = this.serializationToRestFilter(`${key}[${name}]`, val[name])
+              if (temp) result.push(temp)
+            }
+          }
+          return result.join('&')
+        }
+      } else {
+        return `${key}=${typeof val === 'string' ? val.trim() : val}`
+      }
+    },
     // 关闭弹窗
     handleClose() {
       this.dialogFormVisible = false
-      this.$emit('dialogVisible', false)
+      this.$emit('backDialogVisible', false)
     }
   }
 }
