@@ -157,11 +157,11 @@ export default {
   agent_upgrade_step_windows_first: '1.打開cmd窗口，進入原Agent安裝目錄',
   agent_upgrade_step_windows_second:
     '2.複製下方的升級命令並在目錄下執行，該升級命令會自動進行備份、升級和啟動，如果升級失敗會自動回退版本',
-  agent_upgrade_step_windows_third: '3.待升級命令執行完畢後，出現如右所示則代表Agent升級成功：Update finished.',
+  agent_upgrade_step_windows_third: '3.出現“Update finished.”則代表Agent升級成功',
   agent_upgrade_step_linux_first: '1.進入原Agent安裝目錄下',
   agent_upgrade_step_linux_second:
     '2.複製下方的升級命令並在目錄下執行，該升級命令會自動進行備份、升級和啟動，如果升級失敗會自動回退版本',
-  agent_upgrade_step_linux_third: '3.待升級命令執行完畢後，出現如右所示則代表Agent升級成功：Update finished.',
+  agent_upgrade_step_linux_third: '3.出現“Update finished.”則代表Agent升級成功',
   agent_upgrade_step_docker_first: '1.進入原Agent的docker容器內',
   agent_upgrade_step_docker_first_one: '(1)找到原Agent的docker容器CONTAINER ID',
   agent_upgrade_step_docker_first_two: '(2)通過容器ID進入容器',
@@ -170,7 +170,7 @@ export default {
   agent_upgrade_step_docker_first_five: '進入容器',
   agent_upgrade_step_docker_second:
     '2.複製下方的升級命令直接在容器內執行，該升級命令會自動進行備份、升級和啟動，如果升級失敗會自動回退版本',
-  agent_upgrade_step_docker_third: '3.待升級命令執行完畢後，出現如右所示則代表Agent升級成功：Update finished.',
+  agent_upgrade_step_docker_third: '3.出現“Update finished.”則代表Agent升級成功',
 
   // 连接
   connection_manage: '連接管理',
