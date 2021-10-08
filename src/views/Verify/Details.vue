@@ -107,8 +107,8 @@ $margin: 10px;
 }
 </style>
 <script>
-import ResultTable from 'web-core/views/verification/result-table'
-import ResultView from 'web-core/views/verification/result-view'
+import ResultTable from 'web-core/views/verification/ResultTable'
+import ResultView from 'web-core/views/verification/ResultView'
 import VIcon from '@/components/VIcon'
 export default {
   components: { ResultTable, ResultView, VIcon },

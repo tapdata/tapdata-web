@@ -14,7 +14,7 @@
 }
 </style>
 <script>
-import VerficationForm from 'web-core/views/verification/form.vue'
+import VerficationForm from 'web-core/views/verification/Form'
 export default {
   components: { VerficationForm },
   methods: {
