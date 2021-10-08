@@ -24,7 +24,7 @@
                 <el-option v-for="(label, value) in syncTypeMap" :key="value" :label="label" :value="value"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('agent_name') + ' ：'" class="small">
+            <el-form-item :label="$t('agent_name') + ' ：'" class="medium">
               <el-select
                 v-model="searchParams.agentId"
                 clearable
