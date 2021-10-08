@@ -264,6 +264,8 @@ export default {
               this.formData.table_suffix = this.transferData.table_suffix
               this.selectSourceArr = this.transferData.selectSourceArr
               this.field_process = this.transferData.field_process
+              this.mqActiveData.queueData = this.transferData.queueData
+              this.mqActiveData.topicData = this.transferData.topicData
             }
             if (bidirectional && (this.transferData.table_prefix !== '' || this.transferData.table_suffix !== '')) {
               //true 表示 双向且有修改过前后缀
@@ -773,6 +775,7 @@ export default {
       width: 300px;
 
       .el-transfer-panel__body {
+        padding-top: 0;
         .box {
           display: inline-block;
 
@@ -855,7 +858,7 @@ export default {
   }
 
   .el-transfer-panel__body {
-    height: calc(100% - 38px);
+    height: calc(100% - 80px);
   }
 
   .el-checkbox-group {

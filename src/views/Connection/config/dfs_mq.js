@@ -75,11 +75,33 @@ export default function (vm) {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '2'
+                value: '1'
               }
             ],
             triggerConfig: {
               show: false
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '0'
+              }
+            ],
+            triggerConfig: {
+              required: false
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              required: false
             }
           }
         ]
@@ -95,7 +117,7 @@ export default function (vm) {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '1'
+                value: '2'
               }
             ],
             triggerConfig: {
@@ -106,7 +128,7 @@ export default function (vm) {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '2'
+                value: '1'
               }
             ],
             triggerConfig: {
@@ -136,30 +158,30 @@ export default function (vm) {
           }
         ]
       },
-      {
-        type: 'input',
-        field: 'nameSrvAddr',
-        label: 'nameSrvAddr',
-        required: true,
-        show: false,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'mqType',
-                value: '2'
-              }
-            ],
-            triggerConfig: {
-              show: true
-            }
-          }
-        ]
-      },
+      // {
+      //   type: 'input',
+      //   field: 'nameSrvAddr',
+      //   label: 'nameSrvAddr',
+      //   required: true,
+      //   show: false,
+      //   dependOn: [
+      //     {
+      //       triggerOptions: [
+      //         {
+      //           field: 'mqType',
+      //           value: '2'
+      //         }
+      //       ],
+      //       triggerConfig: {
+      //         show: true
+      //       }
+      //     }
+      //   ]
+      // },
       {
         type: 'input',
         field: 'database_host',
-        label: vm.$t('dataForm.form.mq.database_host'),
+        label: '数据库地址',
         rules: [
           {
             required: true,
@@ -172,17 +194,17 @@ export default function (vm) {
             }
           }
         ],
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '1'
+                value: '0'
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ]
@@ -190,7 +212,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
-        label: vm.$t('dataForm.form.mq.database_port'),
+        label: '端口',
         required: true,
         rules: [
           {
@@ -208,17 +230,17 @@ export default function (vm) {
             }
           }
         ],
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '1'
+                value: '0'
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ]
