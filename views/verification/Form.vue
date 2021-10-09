@@ -45,7 +45,7 @@
         <ElInput class="form-input" v-model="form.name"></ElInput>
       </ElFormItem>
       <ElFormItem class="form-item" :label="$t('verify_form_label_frequency') + ': '">
-        <ElSelect class="form-select" v-model="form.mode">
+        <ElSelect class="form-select" v-model="form.mode" @input="form.enabled = true">
           <ElOption :label="$t('verify_frequency_manual')" value="manual"></ElOption>
           <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
         </ElSelect>
