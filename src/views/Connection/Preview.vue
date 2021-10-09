@@ -27,7 +27,7 @@
           <el-button class="flex-fill" :disabled="connection.agentType === 'Cloud'" @click="edit()"> 编辑 </el-button>
           <el-button class="flex-fill" @click="beforeTest()"> 连接测试 </el-button>
         </div>
-        <el-progress v-if="showProgress" class="mt-2" :percentage="progress" :format="format"></el-progress>
+        <el-progress v-if="showProgress" class="mt-2" color="#2c65ff" :percentage="progress"></el-progress>
       </div>
       <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
         <div class="pt-3">
@@ -40,7 +40,7 @@
             <el-tooltip
               v-if="connection[temp.key] && temp.key !== 'mqType'"
               effect="dark"
-              :content="connection[temp.key]"
+              :content="toString(connection[temp.key])"
               placement="right-end"
             >
               <div class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
