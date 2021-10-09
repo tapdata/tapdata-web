@@ -222,14 +222,13 @@ export default function (vm) {
       },
       {
         type: 'input',
-        field: 'mqUserName',
+        field: 'database_username',
         label: vm.$t('dataForm.form.userName'),
-        domType: 'password',
         showPassword: true
       },
       {
         type: 'input',
-        field: 'mqPassword',
+        field: 'plain_password',
         label: vm.$t('dataForm.form.password'),
         domType: 'password',
         showPassword: true
