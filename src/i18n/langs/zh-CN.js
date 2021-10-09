@@ -115,14 +115,16 @@ export default {
   agent_deploy_before_prepare_windows_first_link: '点击查看Java1.8安装和配置方式',
   agent_deploy_before_prepare_windows_second: '2.点击下方的下载按钮将Tapdata Agent安装包下载到本地环境。',
   agent_deploy_before_prepare_windows_second_download: '点击下载 Tapdata Agent',
+  agent_deploy_before_prepare_windows_third: '3.请严格按照下方的安装步骤部署，不要直接双击安装包！',
   agent_deploy_start_install: '开始安装',
   agent_deploy_start_install_button_copy: '复制',
   agent_deploy_start_install_button_copied: '已复制',
   agent_deploy_start_install_windows_first:
     '1. 将下载好的Tapdata Agent放入要安装Agent的目录，并通过cmd窗口在目录下执行下方命令即可实现Tapdata Agent的自动部署及启动',
   agent_deploy_start_install_windows_second: '2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：',
-  agent_deploy_start_install_windows_third: '3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考',
-  agent_deploy_link_agent_operation: '《Agent基本操作》',
+  agent_deploy_start_install_windows_third: '3.如果您在安装和使用过程中遇到任何问题，请参考',
+  agent_deploy_link_agent_operation: '《Agent安装手册及常见QA》',
+  agent_deploy_link_agent_operation_desc: '或者直接扫描右方二维码加入社群获取技术支持。',
   agent_deploy_before_prepare_linux_first: '1.安装前请确认您的部署环境中已安装Java1.8版本并正确配置环境变量。',
   agent_deploy_before_prepare_linux_first_link: '点击查看Java1.8安装和配置方式',
   agent_deploy_before_prepare_linux_second: '2.我们非常建议在一个独立、干净的文件夹内部署 Tapdata Agent',
@@ -131,7 +133,7 @@ export default {
   agent_deploy_start_install_linux_first:
     '1.请复制下方命令并在本地部署环境执行，其包含 Tapdata Agent 的下载、自动部署及启动',
   agent_deploy_start_install_linux_second: '2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：',
-  agent_deploy_start_install_linux_third: '3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考',
+  agent_deploy_start_install_linux_third: '3.如果您在安装和使用过程中遇到任何问题，请参考',
   agent_deploy_before_prepare_docker_first: '1.我们提供了包含 Tapdata Agent 运行所需环境的镜像',
   agent_deploy_before_prepare_docker_second:
     '2.首先您的部署环境必须已经安装Docker才可使用Docker方式安装，如未安装可参考',
