@@ -269,8 +269,7 @@ export default {
           'postgres',
           'mariadb',
           'greenplum',
-          'tidb',
-          'clickhouse'
+          'tidb'
         ]
       }
     }
