@@ -27,6 +27,7 @@
           <el-button class="flex-fill" :disabled="connection.agentType === 'Cloud'" @click="edit()"> 编辑 </el-button>
           <el-button class="flex-fill" @click="beforeTest()"> 连接测试 </el-button>
         </div>
+        <el-progress v-if="showProgress" class="mt-2" :percentage="progress" :format="format"></el-progress>
       </div>
       <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
         <div class="pt-3">
@@ -73,6 +74,8 @@ export default {
       timer: null,
       direction: 'rtl',
       loading: false,
+      showProgress: false,
+      progress: 0,
       connection: {
         btnLoading: {
           deploy: false,
