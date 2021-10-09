@@ -95,14 +95,14 @@ export default {
       }
     }
   },
+  beforeDestroy() {
+    this.clearInterval()
+  },
   methods: {
     clearInterval() {
       // 清除定时器
       clearInterval(this.timer)
       this.timer = null
-    },
-    beforeDestroy() {
-      this.clearInterval()
     },
     handleClose() {
       this.clearInterval()
