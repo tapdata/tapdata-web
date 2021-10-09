@@ -90,7 +90,7 @@
               <ElTableColumn label="时间" prop="fromNow" width="160px"></ElTableColumn>
             </ElTable>
           </ElTabPane>
-          <ElTabPane lazy class="h-100 overflow-hidden" label="同步内容" name="content">
+          <ElTabPane v-if="showContent" lazy class="h-100 overflow-hidden" label="同步内容" name="content">
             <FieldMapping ref="fieldMapping" :readOnly="true"></FieldMapping>
           </ElTabPane>
         </ElTabs>
@@ -146,6 +146,7 @@ export default {
   data() {
     return {
       loading: true,
+      showContent: true,
       activeTab: 'progress',
       task: null,
       statusBtMap: {
@@ -282,6 +283,7 @@ export default {
         .then(data => {
           this.task = this.formatTask(data)
           this.getConnections(data)
+          this.showContentTab(data)
         })
         .finally(() => {
           this.loading = false
@@ -545,6 +547,15 @@ export default {
         result = 'paused'
       }
       return result
+    },
+    //是否支持同步内容
+    showContentTab(data) {
+      let param = {
+        stages: data?.stages
+      }
+      this.$axios.post('tm/api/DataFlows/tranModelVersionControl', param).then(data => {
+        this.showContent = data?.data[this.stageId]
+      })
     }
   }
 }

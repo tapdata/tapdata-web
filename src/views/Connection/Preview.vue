@@ -36,9 +36,20 @@
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
             <div class="box-line__label">{{ temp.label + '：' }}</div>
-            <el-tooltip v-if="connection[temp.key]" effect="dark" :content="connection[temp.key]" placement="right-end">
+
+            <el-tooltip
+              v-if="connection[temp.key] && temp.key !== 'mqType'"
+              effect="dark"
+              :content="connection[temp.key]"
+              placement="right-end"
+            >
               <div class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
             </el-tooltip>
+            <!-- MQ文字转换 start -->
+            <div v-else-if="connection[temp.key] && temp.key === 'mqType'" class="box-line__value ellipsis">
+              {{ mqType[connection[temp.key]] || '-' }}
+            </div>
+            <!-- MQ文字转换 end -->
             <div v-else class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
           </div>
         </div>
@@ -76,7 +87,12 @@ export default {
         1: '仅写入master分区',
         all: '写入所有ISR分区'
       },
-      list: []
+      list: [],
+      mqType: {
+        0: 'ActiveMQ',
+        1: 'RabbitMQ',
+        2: 'RocketMQ'
+      }
     }
   },
   methods: {
@@ -108,11 +124,7 @@ export default {
     async loadData(id, type) {
       this.loading = true
       let data = null
-      if (['mongodb'].includes(type)) {
-        data = await this.$axios.get('tm/api/Connections/' + id + '/customQuery')
-      } else {
-        data = await this.$axios.get('tm/api/Connections/' + id)
-      }
+      data = await this.$axios.get('tm/api/Connections/' + id)
       this.loading = false
       data['database_password'] = data.agentType === 'Cloud' ? data['database_username'] : '-'
       this.connection = data
