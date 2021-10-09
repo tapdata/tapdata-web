@@ -1088,23 +1088,26 @@ export default {
       }
       let selectTable = []
       if (this.transferData) {
-        if (this.transferData.selectSourceArr.length > 0) {
-          selectTable.push({
-            objectNames: this.transferData.selectSourceArr,
-            type: 'table'
-          })
-        }
-        if (this.transferData.topicData.length) {
-          selectTable.push({
-            objectNames: this.transferData.topicData,
-            type: 'topic'
-          })
-        }
-        if (this.transferData.queueData.length) {
-          selectTable.push({
-            objectNames: this.transferData.queueData,
-            type: 'queue'
-          })
+        if (this.transferData.topicData.length || this.transferData.queueData.length) {
+          if (this.transferData.topicData.length) {
+            selectTable.push({
+              objectNames: this.transferData.topicData,
+              type: 'topic'
+            })
+          }
+          if (this.transferData.queueData.length) {
+            selectTable.push({
+              objectNames: this.transferData.queueData,
+              type: 'queue'
+            })
+          }
+        } else {
+          if (this.transferData.selectSourceArr.length > 0) {
+            selectTable.push({
+              objectNames: this.transferData.selectSourceArr,
+              type: 'table'
+            })
+          }
         }
       }
       //编辑时传原status
