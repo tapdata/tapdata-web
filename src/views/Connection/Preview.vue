@@ -135,7 +135,15 @@ export default {
             status: 'testing'
           })
           .then(data => {
-            this.$refs.test.start(this.connection)
+            let testData = JSON.parse(JSON.stringify(this.connection))
+            if (['gridfs', 'mongodb'].includes(testData.database_type)) {
+              delete testData.database_uri
+              testData.justTest = true
+            }
+            if (testData.database_type !== 'redis') {
+              delete testData['database_password']
+            }
+            this.$refs.test.start(testData)
             this.responseHandler(data, '操作成功')
           })
       })
