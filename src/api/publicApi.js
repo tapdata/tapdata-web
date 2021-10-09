@@ -8,6 +8,8 @@ import Qs from 'qs'
 let pending = [] //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
 const CancelToken = axios.CancelToken
 
+axios.defaults.baseURL = process.env.BASE_URL
+
 axios.interceptors.request.use(
   function (config) {
     config.paramsSerializer = params => {
