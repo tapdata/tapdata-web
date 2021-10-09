@@ -107,7 +107,10 @@ export default {
     async loadData(id, type) {
       this.loading = true
       let data = null
-      data = await this.$axios.get('tm/api/Connections/' + id)
+      let filter = {
+        noSchema: 1
+      }
+      data = await this.$axios.get('tm/api/Connections/' + id + '?filter=' + encodeURIComponent(JSON.stringify(filter)))
       this.loading = false
       this.connection = data
       //组装数据
