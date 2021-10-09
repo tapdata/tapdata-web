@@ -980,7 +980,8 @@ export default {
 
       if (data.name) {
         let params = {
-          name: data.name
+          name: data.name,
+          user_id: data.user_id
         }
         if (data.id) {
           params.id = {
