@@ -153,7 +153,14 @@
         </el-form>
         <div class="operation mt-7">
           <el-button v-if="step !== 0" class="mr-4" size="mini" @click="toPrev" key="preBtn">上一步</el-button>
-          <el-button type="primary" size="mini" :disabled="!sourceForm.id" @click="toNext">下一步</el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            :disabled="!sourceForm.id"
+            :loading="connectionNextLoading"
+            @click="toNext"
+            >下一步</el-button
+          >
         </div>
       </div>
       <!--   第4步   -->
@@ -211,6 +218,7 @@
         </div>
       </div>
     </div>
+    <ConnectionTest ref="test"></ConnectionTest>
   </div>
   <RouterView v-else></RouterView>
 </template>
@@ -224,6 +232,7 @@ export default {
   data() {
     return {
       timer: null,
+      schemaTimer: null,
       step: 0,
       steps: [
         { index: 0, text: '安装 Agent', type: 'agent' },
@@ -234,6 +243,7 @@ export default {
       agent: {},
       startAgentLoading: false, // 启动agent
       stopAgentLoading: false, // 停用agent
+      connectionNextLoading: false, // 创建连接的下一步
       createTaskLoading: false, // 创建任务
       form: {
         agent: {},
@@ -356,6 +366,7 @@ export default {
     },
     clearTimer() {
       this.timer && clearInterval(this.timer)
+      this.schemaTimer && clearInterval(this.schemaTimer)
     },
     stepFnc(isTimer = false) {
       switch (this.step) {
@@ -390,8 +401,12 @@ export default {
         // 创建目标连接
         this.form.target = this.deepCopy(this.sourceForm)
       }
-      this.step++
-      // if (this.step++ > 3) this.step = 0
+      // 下一步
+      if (this.step === 2) {
+        this.loadSchema('first')
+      } else {
+        this.step++
+      }
     },
     // 步骤-安装agent
     initAgent(isTimer) {
@@ -415,15 +430,8 @@ export default {
         return
       }
       // let id = this.form.source?.id
-      let { id, database_username } = this.form.source ?? {}
+      let { id } = this.form.source ?? {}
       this.$axios.get(`tm/api/Connections/${id}/customQuery?schema=true`).then(data => {
-        this.sourceData = [
-          {
-            label: database_username,
-            key: database_username,
-            id: database_username
-          }
-        ]
         let tables = data.schema?.tables || []
         tables = tables.sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1))
         if (tables?.length) {
@@ -537,6 +545,7 @@ export default {
     resetFormField() {
       this.$refs.sourceElForm.resetFields() // 清空表单数据
       this.sourceForm.database_type = this.databaseTypeItems[0].value
+      this.connectionNextLoading = false
     },
     changeSourceDatabaseType(value) {
       this.resetFormField()
@@ -576,6 +585,39 @@ export default {
         })
         .finally(() => {
           this.initDatabaseLoading = false
+        })
+    },
+    loadSchema(type) {
+      this.connectionNextLoading = true
+      let params
+      if (type === 'first') {
+        params = {
+          loadCount: 0,
+          loadFieldsStatus: 'loading'
+        }
+        this.loadFieldsStatus = 'loading'
+      }
+      if (this.schemaTimer) {
+        clearInterval(this.schemaTimer)
+        this.schemaTimer = null
+      }
+      this.$axios
+        .patch('tm/api/Connections/' + this.form.source.id, params)
+        .then(data => {
+          if (type === 'first') {
+            this.$refs.test.start(this.form.source, false, true)
+          }
+          if (data.loadFieldsStatus === 'finished') {
+            this.connectionNextLoading = false
+            this.step++
+          } else {
+            this.schemaTimer = setInterval(() => {
+              this.loadSchema()
+            }, 800)
+          }
+        })
+        .catch(() => {
+          this.connectionNextLoading = false
         })
     },
     createTask() {
@@ -780,7 +822,7 @@ export default {
     }
   }
   .source-form {
-    width: 530px;
+    width: 550px;
     ::v-deep {
       .el-form-item__label {
         text-align: left;

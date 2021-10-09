@@ -124,11 +124,7 @@ export default {
     async loadData(id, type) {
       this.loading = true
       let data = null
-      if (['mongodb'].includes(type)) {
-        data = await this.$axios.get('tm/api/Connections/' + id + '/customQuery')
-      } else {
-        data = await this.$axios.get('tm/api/Connections/' + id)
-      }
+      data = await this.$axios.get('tm/api/Connections/' + id)
       this.loading = false
       data['database_password'] = data.agentType === 'Cloud' ? data['database_username'] : '-'
       this.connection = data
