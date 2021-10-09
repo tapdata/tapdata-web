@@ -76,7 +76,7 @@
       </div>
 
       <!-- 列表项 -->
-      <el-table-column v-for="(item, index) in tableHeaders" :key="index" v-show="item.show" min-width="120">
+      <el-table-column v-for="item in tableHeaders" :key="item.text" v-show="item.show" min-width="120">
         <template slot="header">
           <span :title="item.text">{{ handleAliasName(item.text) }}</span>
         </template>
@@ -611,6 +611,8 @@ export default {
       _this.tableHeader.forEach(item => {
         if (!data.includes(item.value) && item.value !== '__operation') {
           item.show = false
+        } else {
+          item.show = true
         }
       })
       this.condition = condition
