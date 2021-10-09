@@ -65,7 +65,7 @@ export default {
         this.$message.error(this.$t('api_server_no_available')) || 'No available API Server'
       }
     } catch (e) {
-      console.log(e)
+      // console.log(e)
     }
   },
   methods: {

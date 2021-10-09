@@ -107,7 +107,6 @@ export default {
           this.selectionRow.push(item)
         }
       })
-
     }
 
     this.$nextTick(() => {
@@ -145,13 +144,13 @@ export default {
     // 默认选中字段
     toggleSelection(rows) {
       rows.forEach(row => {
-        if(row.visible) {
+        if (row.visible) {
           this.$nextTick(() => {
             this.$refs.table.toggleRowSelection(row, true)
           })
         } else {
           this.$nextTick(() => {
-            this.$refs.table.toggleRowSelection(row,false)
+            this.$refs.table.toggleRowSelection(row, false)
           })
         }
       })
@@ -178,7 +177,6 @@ export default {
             { name: 'filter', type: 'object', description: 'search filter object,Array' }
           ]
           this.$emit('backApiPath', this.model)
-          console.log(_this.model)
         }
       })
     },

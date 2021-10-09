@@ -191,11 +191,9 @@ export default {
 
       if (str !== 'undefined' || str !== undefined) {
         if (str > 1000) {
-          // console.log(str.indexOf)
           str = str.toString()
 
           if (str.indexOf('.') == -1) {
-            // console.log("进来了333")
             for (var i = str.length - 1; i >= 0; i--) {
               if (count % 3 == 0 && count != 0) {
                 newStr = str.charAt(i) + ',' + newStr
@@ -209,7 +207,6 @@ export default {
           }
           // 当数字带有小数
           else {
-            // console.log("进来了222")
             for (let i = str.indexOf('.') - 1; i >= 0; i--) {
               if (count % 3 == 0 && count != 0) {
                 newStr = str.charAt(i) + ',' + newStr

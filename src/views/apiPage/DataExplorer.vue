@@ -519,7 +519,7 @@ export default {
             504: this.$t('dataExplorer_timeout'),
             401: this.$t('dataExplorer_unauthenticated')
           }
-          console.log('-------', e)
+          // console.log('-------', e)
           this.$message.error(msg['' + (e?.response?.status || '')])
         })
     },
@@ -617,7 +617,7 @@ export default {
       })
       this.condition = condition
       this.table.fetch()
-      console.log(data, _this.tableHeader, this.queryFields, this.condition)
+      // console.log(data, _this.tableHeader, this.queryFields, this.condition)
       this.$api('users')
         .get()
         .then(res => {
@@ -625,7 +625,7 @@ export default {
             let arrquery = res.data.arrquery
             let isproid = 0
             if (arrquery === undefined || arrquery === 'undefined') {
-              this.$api('users').patch({ arrquery: [parmas] })
+              this.$api('users').patch({arrquery: [parmas]})
             } else {
               let userData = { arrquery: arrquery }
               arrquery.forEach((item, index) => {
@@ -1065,7 +1065,7 @@ export default {
           oldHeaders.forEach(v => {
             headerMap[v.value] = v
           })
-          console.log('res[0].data.data', res[0].data.data)
+          // console.log('res[0].data.data', res[0].data.data)
           res[0].data.data.forEach(record => {
             Object.keys(record).forEach(v => {
               let isValidDate =
@@ -1113,7 +1113,6 @@ export default {
             record.istrue = false
           })
           this.tableData = tableData
-          console.log('$$$$$$$$', tableData)
           // 表头字段赋值
           // if (!searchBtn) {
           //   _this.tableHeader = Object.values(headerMap);
@@ -1198,7 +1197,7 @@ export default {
       let params = {
         type: type || 'json'
       }
-      console.log(this.condition, Object.keys(this.condition))
+      // console.log(this.condition, Object.keys(this.condition))
       debugger
       if (this.condition && Object.keys(this.condition).length) {
         // 有查询条件

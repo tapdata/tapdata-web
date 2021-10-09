@@ -83,7 +83,6 @@ export default {
   },
   created() {
     this.condition = this.conditionData
-    console.log('fieldData', this.fieldData)
     this.fieldData.forEach(v => {
       if (v.show) {
         this.selectionRow.push(v.value)
@@ -138,7 +137,6 @@ export default {
     },
     // 保存
     save() {
-      console.log(this.selectionRow)
       this.dialogFormVisible = false
       this.$emit('backShowColumn', this.selectionRow, this.condition)
       this.$emit('backDialogVisible', false)

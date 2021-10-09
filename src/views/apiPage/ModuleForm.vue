@@ -198,7 +198,6 @@ export default {
             Object.assign(_this.createForm, res.data)
             // _this.createForm.apiType = res.data.apiType
             // _this.createForm.datasource = res.data.datasource
-            console.log('获取数据', _this.createForm)
             _this.fields = res.data.fields
             _this.getTableData()
           }
@@ -251,7 +250,6 @@ export default {
         })
         .then(res => {
           let options = []
-          console.log(res.data)
           if (res.data?.length && res.data[0].schema?.tables?.length)
             options = res.data[0].schema.tables.map(table => {
               return {
@@ -347,7 +345,6 @@ export default {
     editApiPath(item) {
       this.apiData = item
       this.apiData.createType = 'edit'
-      console.log('edit-item', item)
       this.dialogVisible = true
     },
     // 打开api文档
@@ -465,7 +462,6 @@ export default {
               }
             })
           }
-          console.log('createForm', this.createForm)
           this.$api('modules')
             [method](this.createForm)
             .then(res => {
