@@ -357,8 +357,9 @@ export default {
 .applications-wrap {
   .table-span {
     margin: 0 2px;
-    padding: 2px;
-    border: 1px solid #ccc;
+    padding: 2px 5px;
+    background: #eee;
+    border-radius: 3px;
   }
   .applications-form {
     .el-form-item {

@@ -108,7 +108,7 @@ export default {
         basePath: '',
         path: '',
         apiType: '',
-        status: 'pedding',
+        status: 'pending',
         createType: '',
         paths: [],
         listtags: []
@@ -454,32 +454,30 @@ export default {
       const id = this.$route.query.id
       const method = id ? 'patch' : 'post'
 
-      if (!id) {
-        this.$refs.form.validate(valid => {
-          if (valid) {
-            if (this.createForm.paths?.length) {
-              let publicPermission = this.$t('module_form_public_api')
-              this.createForm.paths.forEach(item => {
-                if (item.cal) {
-                  if (item.cal.indexOf(publicPermission) !== -1 && item.cal.index('$everyone') === -1)
-                    item.acl.push('$everyone')
-                }
-              })
-            }
-            console.log('createForm', this.createForm)
-            this.$api('modules')
-              [method](this.createForm)
-              .then(res => {
-                if (res) {
-                  this.$message.success(this.$t('message_save_ok'))
-                }
-              })
-              .catch(() => {
-                this.$message.error(this.$t('message_save_fail'))
-              })
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          if (this.createForm.paths?.length) {
+            let publicPermission = this.$t('module_form_public_api')
+            this.createForm.paths.forEach(item => {
+              if (item.cal) {
+                if (item.cal.indexOf(publicPermission) !== -1 && item.cal.index('$everyone') === -1)
+                  item.acl.push('$everyone')
+              }
+            })
           }
-        })
-      }
+          console.log('createForm', this.createForm)
+          this.$api('modules')
+            [method](this.createForm)
+            .then(res => {
+              if (res) {
+                this.$message.success(this.$t('message_save_ok'))
+              }
+            })
+            .catch(() => {
+              this.$message.error(this.$t('message_save_fail'))
+            })
+        }
+      })
     },
     // 返回列表
     handleBack() {

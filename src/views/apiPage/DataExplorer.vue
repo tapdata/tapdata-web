@@ -69,7 +69,7 @@
         <el-button v-readonlybtn="'API_doc_&_test'" class="btn" size="mini" @click="openDocument">
           <span>{{ $t('dataExplorer_document') }}</span>
         </el-button>
-        <el-button v-readonlybtn="'API_creation'" class="btn btn-create" size="mini" @click="openCreate">
+        <el-button v-if="enableEdit" v-readonlybtn="'API_creation'" class="btn btn-create" size="mini" @click="openCreate">
           <i class="iconfont icon-jia add-btn-icon"></i>
           <span>{{ $t('button_create') }}</span>
         </el-button>
@@ -119,10 +119,10 @@
           <el-button v-if="!downloadFileUrl" size="mini" type="text" @click="downloadFile(scope.row)">
             {{ $t('button_download') }}
           </el-button>
-          <el-button v-readonlybtn="'API_data_explorer_tagging'" size="mini" type="text" @click="settingTag(scope.row)">
+          <el-button v-if="enableTag" v-readonlybtn="'API_data_explorer_tagging'" size="mini" type="text" @click="settingTag(scope.row)">
             {{ $t('dataExplorer_tag_title') }}
           </el-button>
-          <el-button v-readonlybtn="'API_data_explorer_deleting'" size="mini" type="text" @click="remove(scope.row)">{{
+          <el-button v-if="enableEdit" v-readonlybtn="'API_data_explorer_deleting'" size="mini" type="text" @click="remove(scope.row)">{{
             $t('button_delete')
           }}</el-button>
           <el-tooltip class="item" effect="dark" :content="$t('api_server_download_API_Server_config')" placement="top">
@@ -241,7 +241,8 @@ export default {
       apiClient: null,
       downloadFileUrl: '',
       enableTag: true,
-      editTag: false,
+      editTag: false,   // 设置标签按钮
+      enableEdit: true, // 删除按钮显示
       apiType: '',
       intervalId: 0,
       queryTime: 0, // 查询使用
