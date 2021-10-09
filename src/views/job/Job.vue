@@ -788,7 +788,7 @@ export default {
 
       let postData = Object.assign(
         {
-          name: editorData.name,
+          name: editorData.name.trim(),
           description: '',
           status: this.status || 'draft',
           executeMode: this.executeMode || 'normal',
