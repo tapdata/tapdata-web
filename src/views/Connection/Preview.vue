@@ -7,8 +7,7 @@
     :with-header="false"
     size="304px"
     style="top: 70px"
-    @opened="openedFnc"
-    @closed="closedFnc"
+    @closed="handleClose"
   >
     <div v-loading="loading" class="details-container">
       <div class="container-item border-item flex pb-5">
@@ -178,6 +177,7 @@ export default {
             this.showProgress = true
             this.progress = 0
             this.reloadApi('first')
+            this.$emit('reload-schema')
           }
         })
       })
@@ -225,12 +225,6 @@ export default {
     receiveTestData(data) {
       if (!data.status || data.status === null) return
       this.status = data.status
-    },
-    openedFnc() {
-      this.$emit('input', this.drawer).$emit('opened')
-    },
-    closedFnc() {
-      this.$emit('input', this.drawer).$emit('closed')
     },
     loadList(type) {
       let whiteList = ['kafka', 'mq']

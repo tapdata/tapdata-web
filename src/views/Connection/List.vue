@@ -141,7 +141,7 @@
       </ElPagination>
       <!-- 连接测试 -->
       <ConnectionTest ref="test"></ConnectionTest>
-      <Preview ref="preview" @close="fetch()"></Preview>
+      <Preview ref="preview" @close="fetch()" @reload-schema="fetch()"></Preview>
     </div>
   </section>
   <RouterView v-else></RouterView>
