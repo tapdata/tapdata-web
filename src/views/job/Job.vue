@@ -610,7 +610,6 @@ export default {
           delete self.dataFlow.validationSettings
           Object.assign(self.dataFlow, dat)
         }
-
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
       })
     },
@@ -981,7 +980,7 @@ export default {
       if (data.name) {
         let params = {
           name: data.name,
-          user_id: data.user_id
+          user_id: this.dataFlow.user_id || data.user_id
         }
         if (data.id) {
           params.id = {
