@@ -135,7 +135,7 @@ $margin: 10px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: auto;
     .error-band {
       background: #fdf6ec;
       border: 1px solid #f8e2c0;
