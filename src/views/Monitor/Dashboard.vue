@@ -34,7 +34,7 @@
       </div>
     </div>
     <div v-if="task" class="dashboard-main flex mt-6 flex-fit overflow-hidden">
-      <div class="panel-left h-100 overflow-auto p-6">
+      <div class="panel-left h-100 overflow-auto pt-6 px-6">
         <!--        <div class="info-item">-->
         <!--          <span class="font-color-sub">任务类型: </span>-->
         <!--          <span class="font-color-main">{{ task.typeText }}</span>-->
@@ -121,6 +121,9 @@
   }
   .info-item {
     margin-bottom: 24px;
+    &:last-child {
+      margin-bottom: 4px;
+    }
   }
   .panel-left {
     width: 340px;
