@@ -589,7 +589,7 @@ export default {
     },
     returnFieldMapping(field_process) {
       this.model.field_process = field_process
-      console.log(this.model.field_process)
+      this.$emit('dataChanged', this.getData())
     },
     //接收是否第一次打开
     returnModel(value) {

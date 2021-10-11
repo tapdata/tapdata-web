@@ -56,7 +56,7 @@ export default {
       if (!this.dataFlow) return
       //迁移任务需要同步字段处理器
       if (this.mappingType && this.mappingType === 'cluster-clone') {
-        this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
+        //this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
         //是否有选中的表
         if (this.selectSourceArr?.length === 0) {
           this.$message.error('请先选择需要迁移的表')

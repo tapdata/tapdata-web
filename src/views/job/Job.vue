@@ -980,7 +980,7 @@ export default {
       if (data.name) {
         let params = {
           name: data.name,
-          user_id: this.dataFlow.user_id || data.user_id
+          user_id: this.dataFlow?.user_id || data.user_id || ''
         }
         if (data.id) {
           params.id = {
