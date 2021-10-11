@@ -3,7 +3,12 @@
     <ul class="database-ul">
       <li v-for="item in types" :key="item" @click="$emit('select', item)">
         <div class="img-box">
-          <img :src="$util.getConnectionTypeDialogImg(item)" />
+          <img
+            v-if="['mongodb', 'kafka'].includes(item)"
+            class="img-mini"
+            :src="$util.getConnectionTypeDialogImg(item)"
+          />
+          <img v-else :src="$util.getConnectionTypeDialogImg(item)" />
         </div>
         <div class="content">{{ typeMap[item] }}</div>
       </li>
@@ -107,6 +112,9 @@ export default {
       align-items: center;
       img {
         width: 35%;
+      }
+      .img-mini {
+        width: 26%;
       }
       &:hover {
         background: rgba(0, 0, 0, 0.3);
