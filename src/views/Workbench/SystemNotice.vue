@@ -6,32 +6,17 @@
           <span>通知列表</span>
         </div>
         <div class="system-operation-right">
-          <ul>
-            <li class="ml-3">
-              <ElButton plain class="btn-refresh border-red" @click="handleDelete('all')" :disabled="list.length < 1">
-                全部删除
-              </ElButton>
-            </li>
-            <li class="ml-3">
-              <ElButton plain class="btn-refresh" @click="handleDelete('one')" :disabled="multipleSelection.length < 1">
-                删除
-              </ElButton>
-            </li>
-            <li class="ml-3">
-              <ElButton plain size="mini" class="btn-refresh" @click="handleReadNotice('all')"> 全部已读 </ElButton>
-            </li>
-            <li class="ml-3">
-              <ElButton
-                plain
-                size="mini"
-                class="btn-refresh"
-                @click="handleReadNotice('one')"
-                :disabled="multipleSelection.length < 1"
-              >
-                标记为已读
-              </ElButton>
-            </li>
-          </ul>
+          <ElButton
+            size="mini"
+            class="btn-refresh"
+            @click="handleReadNotice('one')"
+            :disabled="multipleSelection.length < 1"
+          >
+            标记为已读
+          </ElButton>
+          <ElButton size="mini" @click="handleDelete('one')" :disabled="multipleSelection.length < 1"> 删除 </ElButton>
+          <ElButton size="mini" type="primary" @click="handleReadNotice('all')"> 全部已读 </ElButton>
+          <ElButton size="mini" @click="handleDelete('all')" :disabled="list.length < 1"> 全部删除 </ElButton>
         </div>
       </div>
       <El-table
@@ -372,34 +357,6 @@ $unreadColor: #e43737;
         color: #2c65ff;
         span {
           padding-left: 5px;
-        }
-      }
-    }
-    .system-operation-right {
-      li {
-        float: right;
-        .btn-refresh {
-          border-color: #2c65ff;
-          color: #2c65ff;
-        }
-        .border-red {
-          border-color: $unreadColor !important;
-          color: $unreadColor !important;
-        }
-        .btn-refresh:focus,
-        .btn-refresh:hover {
-          color: #fff;
-          background-color: #2c65ff;
-        }
-        .border-red:focus,
-        .border-red:hover {
-          color: #fff !important;
-          background: $unreadColor !important;
-        }
-        .btn-refresh.is-disabled {
-          background-color: #fff;
-          border-color: #ebeef5;
-          color: #c0c4cc;
         }
       }
     }
