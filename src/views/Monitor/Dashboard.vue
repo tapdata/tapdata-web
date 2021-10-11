@@ -136,6 +136,27 @@
   .dashboard-tabs .el-tabs__content {
     flex: 1;
   }
+  .field-mapping {
+    .task-form-body {
+      .nav {
+        li {
+          border-radius: 0;
+        }
+      }
+    }
+  }
+  .dashboard-main {
+    .el-table {
+      .el-table__header-wrapper {
+        border-radius: 0;
+      }
+      &.el-table--border {
+        .el-table__cell {
+          border: 0;
+        }
+      }
+    }
+  }
 }
 </style>
 <script>
