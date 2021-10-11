@@ -4,6 +4,10 @@
       <div class="system-operation">
         <div class="system-operation-left">
           <span>通知列表</span>
+          <span class="system-operation-setting" @click="handleSetting">
+            <VIcon class="ml-2" size="12">setting</VIcon>
+            <span class="fs-8">设置</span>
+          </span>
         </div>
         <div class="system-operation-right">
           <ElButton
@@ -63,15 +67,17 @@
       >
       </ElPagination>
     </div>
+    <NotificationPopover ref="NotificationPopover"></NotificationPopover>
   </section>
 </template>
 
 <script>
 import { TYPEMAP } from './tyepMap'
+import NotificationPopover from './NotificationPopover'
 import VIcon from '@/components/VIcon'
 
 export default {
-  components: { VIcon },
+  components: { NotificationPopover, VIcon },
   data() {
     return {
       user: window.__USER_INFO__ || {},
@@ -111,6 +117,9 @@ export default {
     })
   },
   methods: {
+    handleSetting() {
+      this.$refs.NotificationPopover?.handleSetting()
+    },
     fetch(pageNum, debounce) {
       const { delayTrigger } = this.$util
       delayTrigger(() => {
