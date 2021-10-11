@@ -33,16 +33,25 @@ export default {
     onlyImg: {
       type: Boolean,
       default: false
+    },
+    statusMap: {
+      type: Object,
+      default: () => {
+        return null
+      }
     }
   },
   computed: {
     map() {
-      return {
-        instance: INSTANCE_STATUS_MAP,
-        task: TASK_STATUS_MAP,
-        connection: CONNECTION_STATUS_MAP,
-        milestone: MILESTONE_STATUS_MAP
-      }[this.target]
+      return (
+        this.statusMap ||
+        {
+          instance: INSTANCE_STATUS_MAP,
+          task: TASK_STATUS_MAP,
+          connection: CONNECTION_STATUS_MAP,
+          milestone: MILESTONE_STATUS_MAP
+        }[this.target]
+      )
     },
     statusObj() {
       return this.map[this.status] || {}

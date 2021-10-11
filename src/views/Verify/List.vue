@@ -59,43 +59,39 @@
       </ElTableColumn>
       <ElTableColumn prop="sourceTotal" width="120" :label="$t('verify_history_source_total_rows')"></ElTableColumn>
       <!-- <ElTableColumn prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></ElTableColumn> -->
+      <ElTableColumn :label="$t('dataVerification.verifyStatus')" width="120" prop="status">
+        <template slot-scope="scope">
+          <StatusTag type="text" :status="scope.row.status" :status-map="statusMap"></StatusTag>
+          <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
+            {{ `(${Math.round(scope.row.InspectResult.progress * 100)}%)` }}
+          </span>
+        </template>
+      </ElTableColumn>
       <ElTableColumn :label="$t('dataVerification.verifyResult')" width="180">
         <template slot-scope="scope">
           <div class="flex align-items-center">
             <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
               <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
-                <VIcon class="verify-status-icon color-danger" size="14">error</VIcon>
                 <span v-if="scope.row.inspectMethod === 'row_count'">
                   {{ $t('verify_result_count_inconsistent') }}
                 </span>
                 <span v-else>{{ $t('verify_result_content_diff', [scope.row.difference_number]) }}</span>
               </div>
               <div v-else class="data-verify__status success">
-                <VIcon class="verify-status-icon" size="14">success-fill-color</VIcon>
                 <span>{{ $t('verify_result_count_consistent') }}</span>
               </div>
             </template>
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
-              <VIcon class="verify-status-icon color-danger" size="14">error</VIcon>
               <span>Error</span>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
-              <VIcon color="#10C038" size="18">loading</VIcon>
-              <span>{{ statusMap[scope.row.status] }}</span>
+              <span>{{ statusMap[scope.row.status].text }}</span>
             </div>
             <div v-else>-</div>
             <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="14"
               >ercijiaoyan</VIcon
             >
           </div>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn :label="$t('dataVerification.verifyStatus')" width="120" prop="status">
-        <template slot-scope="scope">
-          <span>{{ statusMap[scope.row.status] }}</span>
-          <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
-            {{ `(${Math.round(scope.row.InspectResult.progress * 100)}%)` }}
-          </span>
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -191,9 +187,10 @@
 </style>
 <script>
 import VIcon from '@/components/VIcon'
+import StatusTag from '@/components/StatusTag'
 let timer = null
 export default {
-  components: { VIcon },
+  components: { VIcon, StatusTag },
   data() {
     return {
       loading: false,
@@ -219,11 +216,26 @@ export default {
         jointField: this.$t('dataVerification.jointVerify')
       },
       statusMap: {
-        waiting: this.$t('dataVerification.waiting'),
-        scheduling: this.$t('dataVerification.scheduling'),
-        error: this.$t('dataVerification.error'),
-        done: this.$t('dataVerification.done'),
-        running: this.$t('dataVerification.running')
+        waiting: {
+          color: '#FFB318',
+          text: this.$t('dataVerification.waiting')
+        },
+        scheduling: {
+          color: '#FFB318',
+          text: this.$t('dataVerification.scheduling')
+        },
+        error: {
+          color: '#F5222D',
+          text: this.$t('dataVerification.error')
+        },
+        done: {
+          color: '#52C41A',
+          text: this.$t('dataVerification.done')
+        },
+        running: {
+          color: '#FFB318',
+          text: this.$t('dataVerification.running')
+        }
       },
       validList: [
         { name: this.$t('app.Home.checkSame'), value: 'passed' },

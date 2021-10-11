@@ -11983,6 +11983,19 @@
 .font-color-disable {
   color: map-get($fontColor, disable) !important;
 }
+// 背景颜色
+.bg-color-primary {
+  background-color: map-get($color, primary) !important;
+}
+.bg-color-danger {
+  background-color: map-get($color, danger) !important;
+}
+.bg-color-success {
+  background-color: map-get($color, success) !important;
+}
+.bg-color-warning {
+  background-color: map-get($color, warning) !important;
+}
 /*
 * 补充原子类
 */
