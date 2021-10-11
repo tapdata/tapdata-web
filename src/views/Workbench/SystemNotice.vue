@@ -4,10 +4,6 @@
       <div class="system-operation">
         <div class="system-operation-left">
           <span>通知列表</span>
-          <span class="system-operation-setting" @click="handleSetting">
-            <VIcon class="ml-2" size="12">setting</VIcon>
-            <span>设置</span>
-          </span>
         </div>
         <div class="system-operation-right">
           <ul>
@@ -82,37 +78,6 @@
       >
       </ElPagination>
     </div>
-    <ElDialog
-      custom-class="notice-setting-dialog"
-      title="通知设置"
-      width="480px"
-      :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
-      :append-to-body="true"
-    >
-      <ElForm ref="form" class="e-form" label-width="140px" :model="form">
-        <div class="notice-setting-title">agent通知</div>
-        <ElFormItem label="agent状态为离线时">
-          <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.connectionInterrupted.email" size="mini" @change="handleSettingValue"></ElSwitch>
-        </ElFormItem>
-        <ElFormItem label="agent状态为运行中时">
-          <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.connected.sms" size="mini" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.connected.email" @change="handleSettingValue"></ElSwitch>
-        </ElFormItem>
-        <div class="notice-setting-title">任务运行通知</div>
-        <ElFormItem label="任务运行出错时">
-          <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.stoppedByError.sms" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.stoppedByError.email" @change="handleSettingValue"></ElSwitch>
-        </ElFormItem>
-      </ElForm>
-    </ElDialog>
   </section>
 </template>
 
@@ -149,23 +114,7 @@ export default {
         size: 20,
         total: 0
       },
-      taskFalg: false,
-      dialogVisible: false,
-      userId: '',
-      form: {
-        connected: {
-          email: true,
-          sms: true
-        },
-        connectionInterrupted: {
-          email: true,
-          sms: true
-        },
-        stoppedByError: {
-          email: true,
-          sms: true
-        }
-      }
+      taskFalg: false
     }
   },
   created() {
@@ -177,13 +126,6 @@ export default {
     })
   },
   methods: {
-    // 通知设置改变值时请求接口
-    handleSettingValue() {
-      let data = {
-        notification: this.form
-      }
-      this.$axios.patch(`tm/api/users/${this.userId}`, data)
-    },
     fetch(pageNum, debounce) {
       const { delayTrigger } = this.$util
       delayTrigger(() => {
@@ -372,19 +314,6 @@ export default {
             this.$root.$emit('notificationUpdate')
           }
         })
-    },
-    // 通知设置
-    handleSetting() {
-      this.dialogVisible = true
-      // 获取tm用户id
-      this.$axios.get('tm/api/users/self').then(data => {
-        if (data) {
-          this.userId = data.id
-          if (data.notification) {
-            this.form = data.notification
-          }
-        }
-      })
     }
     // 未读消息
     // getUnreadNum() {
