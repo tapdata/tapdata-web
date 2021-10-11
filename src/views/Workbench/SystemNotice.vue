@@ -6,36 +6,21 @@
           <span>通知列表</span>
           <span class="system-operation-setting" @click="handleSetting">
             <VIcon class="ml-2" size="12">setting</VIcon>
-            <span>设置</span>
+            <span class="fs-8">设置</span>
           </span>
         </div>
         <div class="system-operation-right">
-          <ul>
-            <li class="ml-3">
-              <ElButton plain class="btn-refresh border-red" @click="handleDelete('all')" :disabled="list.length < 1">
-                全部删除
-              </ElButton>
-            </li>
-            <li class="ml-3">
-              <ElButton plain class="btn-refresh" @click="handleDelete('one')" :disabled="multipleSelection.length < 1">
-                删除
-              </ElButton>
-            </li>
-            <li class="ml-3">
-              <ElButton plain size="mini" class="btn-refresh" @click="handleReadNotice('all')"> 全部已读 </ElButton>
-            </li>
-            <li class="ml-3">
-              <ElButton
-                plain
-                size="mini"
-                class="btn-refresh"
-                @click="handleReadNotice('one')"
-                :disabled="multipleSelection.length < 1"
-              >
-                标记为已读
-              </ElButton>
-            </li>
-          </ul>
+          <ElButton
+            size="mini"
+            class="btn-refresh"
+            @click="handleReadNotice('one')"
+            :disabled="multipleSelection.length < 1"
+          >
+            标记为已读
+          </ElButton>
+          <ElButton size="mini" @click="handleDelete('one')" :disabled="multipleSelection.length < 1"> 删除 </ElButton>
+          <ElButton size="mini" type="primary" @click="handleReadNotice('all')"> 全部已读 </ElButton>
+          <ElButton size="mini" @click="handleDelete('all')" :disabled="list.length < 1"> 全部删除 </ElButton>
         </div>
       </div>
       <El-table
@@ -82,46 +67,17 @@
       >
       </ElPagination>
     </div>
-    <ElDialog
-      custom-class="notice-setting-dialog"
-      title="通知设置"
-      width="480px"
-      :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
-      :append-to-body="true"
-    >
-      <ElForm ref="form" class="e-form" label-width="140px" :model="form">
-        <div class="notice-setting-title">agent通知</div>
-        <ElFormItem label="agent状态为离线时">
-          <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.connectionInterrupted.email" size="mini" @change="handleSettingValue"></ElSwitch>
-        </ElFormItem>
-        <ElFormItem label="agent状态为运行中时">
-          <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.connected.sms" size="mini" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.connected.email" @change="handleSettingValue"></ElSwitch>
-        </ElFormItem>
-        <div class="notice-setting-title">任务运行通知</div>
-        <ElFormItem label="任务运行出错时">
-          <span class="notice-setting-label">短信通知</span>
-          <ElSwitch v-model="form.stoppedByError.sms" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">邮件通知</span>
-          <ElSwitch v-model="form.stoppedByError.email" @change="handleSettingValue"></ElSwitch>
-        </ElFormItem>
-      </ElForm>
-    </ElDialog>
+    <NotificationPopover ref="NotificationPopover"></NotificationPopover>
   </section>
 </template>
 
 <script>
 import { TYPEMAP } from './tyepMap'
+import NotificationPopover from './NotificationPopover'
 import VIcon from '@/components/VIcon'
 
 export default {
-  components: { VIcon },
+  components: { NotificationPopover, VIcon },
   data() {
     return {
       user: window.__USER_INFO__ || {},
@@ -149,23 +105,7 @@ export default {
         size: 20,
         total: 0
       },
-      taskFalg: false,
-      dialogVisible: false,
-      userId: '',
-      form: {
-        connected: {
-          email: true,
-          sms: true
-        },
-        connectionInterrupted: {
-          email: true,
-          sms: true
-        },
-        stoppedByError: {
-          email: true,
-          sms: true
-        }
-      }
+      taskFalg: false
     }
   },
   created() {
@@ -177,12 +117,8 @@ export default {
     })
   },
   methods: {
-    // 通知设置改变值时请求接口
-    handleSettingValue() {
-      let data = {
-        notification: this.form
-      }
-      this.$axios.patch(`tm/api/users/${this.userId}`, data)
+    handleSetting() {
+      this.$refs.NotificationPopover?.handleSetting()
     },
     fetch(pageNum, debounce) {
       const { delayTrigger } = this.$util
@@ -372,19 +308,6 @@ export default {
             this.$root.$emit('notificationUpdate')
           }
         })
-    },
-    // 通知设置
-    handleSetting() {
-      this.dialogVisible = true
-      // 获取tm用户id
-      this.$axios.get('tm/api/users/self').then(data => {
-        if (data) {
-          this.userId = data.id
-          if (data.notification) {
-            this.form = data.notification
-          }
-        }
-      })
     }
     // 未读消息
     // getUnreadNum() {
@@ -443,34 +366,6 @@ $unreadColor: #e43737;
         color: #2c65ff;
         span {
           padding-left: 5px;
-        }
-      }
-    }
-    .system-operation-right {
-      li {
-        float: right;
-        .btn-refresh {
-          border-color: #2c65ff;
-          color: #2c65ff;
-        }
-        .border-red {
-          border-color: $unreadColor !important;
-          color: $unreadColor !important;
-        }
-        .btn-refresh:focus,
-        .btn-refresh:hover {
-          color: #fff;
-          background-color: #2c65ff;
-        }
-        .border-red:focus,
-        .border-red:hover {
-          color: #fff !important;
-          background: $unreadColor !important;
-        }
-        .btn-refresh.is-disabled {
-          background-color: #fff;
-          border-color: #ebeef5;
-          color: #c0c4cc;
         }
       }
     }
