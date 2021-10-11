@@ -11996,6 +11996,9 @@
 .bg-color-warning {
   background-color: map-get($color, warning) !important;
 }
+.bg-color-disable {
+  background-color: map-get($color, disable) !important;
+}
 /*
 * 补充原子类
 */

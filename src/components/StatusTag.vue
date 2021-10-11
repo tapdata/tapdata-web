@@ -6,7 +6,11 @@
     <ElTag v-if="type === 'tag'" :type="statusObj.type">{{ statusObj.text }}</ElTag>
     <span :class="['flex', 'align-items-center', 'icon-span', `color-${statusObj.type}`, status]" v-else>
       <VIcon v-if="statusObj.icon" class="v-icon" size="16">{{ statusObj.icon }}</VIcon>
-      <span v-else class="circle-icon mr-2" :style="{ 'background-color': statusObj.color }"></span>
+      <span
+        v-else
+        :class="['circle-icon', 'mr-2', `bg-color-${statusObj.type}`]"
+        :style="{ 'background-color': statusObj.color }"
+      ></span>
       <span class="td-status-tag__text font-color-sub">{{ statusObj.text }}</span>
     </span>
   </span>
