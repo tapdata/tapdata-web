@@ -133,8 +133,15 @@
   .panel-right {
     box-sizing: border-box;
   }
-  .dashboard-tabs .el-tabs__content {
-    flex: 1;
+  .dashboard-tabs {
+    .el-tabs__nav-wrap {
+      &::after {
+        height: 1px;
+      }
+    }
+    .el-tabs__content {
+      flex: 1;
+    }
   }
   .field-mapping {
     .task-form-body {
