@@ -34,9 +34,12 @@
     </div>
     <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
       <VIcon class="color-danger">error</VIcon>
+      <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
       <span>
-        <ElLink type="danger" @click="showErrorMessage">查看详情</ElLink>
-        <VIcon class="ml-2 color-info" size="12">close</VIcon>
+        <ElLink type="danger" @click="expandErrorMessage = !expandErrorMessage">{{
+          expandErrorMessage ? '收起' : '展开'
+        }}</ElLink>
+        <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''">close</VIcon>
       </span>
     </div>
     <div
@@ -64,10 +67,9 @@
   justify-content: space-between;
 }
 .error-tips {
+  padding: 6px 0;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  height: 32px;
   background: rgba(219, 80, 80, 0.07);
   border-radius: 4px;
   border: 1px solid #db5050;
@@ -95,7 +97,8 @@ export default {
       inspect: {},
       resultInfo: {},
       errorMsg: '',
-      taskId: null
+      taskId: null,
+      expandErrorMessage: false
     }
   },
   computed: {
@@ -148,7 +151,9 @@ export default {
                   this.resultInfo = result
                   let stats = result.stats
                   if (stats.length) {
-                    this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+                    // this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+                    this.errorMsg =
+                      'sdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdf'
                     this.taskId = stats[0].taskId
                     this.$nextTick(() => {
                       this.$refs.resultView?.fetch(1)
@@ -288,9 +293,6 @@ export default {
           id: this.resultInfo.firstCheckId
         }
       })
-    },
-    showErrorMessage() {
-      this.$alert(this.errorMsg)
     }
   }
 }
