@@ -637,3 +637,7 @@ th {
     }
   }
 }
+.el-switch.is-checked .el-switch__core {
+  border-color: map-get($color, primary);
+  background-color: map-get($color, primary);
+}
