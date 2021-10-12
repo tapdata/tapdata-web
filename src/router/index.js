@@ -285,6 +285,16 @@ const routes = [
     path: '/svg',
     name: 'SvgList',
     component: SvgList
+  },
+  {
+    path: '/dataflow/editor',
+    name: 'DataflowNew',
+    component: () => import('web-core/views/dataflow/Editor')
+  },
+  {
+    path: '/dataflow/editor/:id',
+    name: 'DataflowEdit',
+    component: () => import('web-core/views/dataflow/Editor')
   }
 ]
 

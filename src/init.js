@@ -13,6 +13,7 @@ import settings from './settings'
 import TapdataWebCore from 'web-core'
 import i18n from './i18n'
 import Purchase from '@/views/Purchase/Purchase'
+import store from '@/store'
 
 Vue.config.productionTip = false
 Vue.prototype.$settings = settings
@@ -59,6 +60,7 @@ export default ({ routes }) => {
     wsUrl = wsUrl + loc.host + preUrl + `/ws/agent?${queryString}`
     window.App = new Vue({
       router,
+      store,
       i18n,
       wsOptions: {
         url: wsUrl

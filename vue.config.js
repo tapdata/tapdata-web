@@ -77,12 +77,14 @@ module.exports = {
   chainWebpack(config) {
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
+    const webCoreIconDir = resolve('src/_packages/tapdata-web-core/assets/icons/svg')
 
     // svg loader排除 icon 目录
     config.module
       .rule('svg')
-      .exclude.add(resolve(iconDir))
-      .add(resolve(colorIconDir))
+      .exclude.add(iconDir)
+      .add(colorIconDir)
+      .add(webCoreIconDir)
       .end()
       .use('svgo-loader')
       .loader('svgo-loader')
@@ -92,7 +94,8 @@ module.exports = {
     config.module
       .rule('svg-sprite')
       .test(/\.svg$/)
-      .include.add(resolve(iconDir))
+      .include.add(iconDir)
+      .add(webCoreIconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -119,7 +122,7 @@ module.exports = {
     config.module
       .rule('color-svg-sprite')
       .test(/\.svg$/)
-      .include.add(resolve(colorIconDir))
+      .include.add(colorIconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
