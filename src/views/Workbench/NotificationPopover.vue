@@ -10,12 +10,6 @@
       <div class="tab-item-container">
         <div class="notice-header">
           <span> 通知内容 </span>
-          <span class="notice-header-text">
-            <ElLink type="primary" @click="toCenter()">查看所有通知</ElLink>
-            <!--            <router-link to="/systemNotice">-->
-            <!--              <span></span>-->
-            <!--            </router-link>-->
-          </span>
         </div>
         <ul class="tab-list cuk-list">
           <li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
@@ -36,8 +30,46 @@
           <VIcon size="76">notice-color</VIcon>
           <span>暂无通知</span>
         </div>
+        <div class="tab-item__footer flex justify-content-between py-3 font-color-sub">
+          <span class="system-operation-setting cursor-pointer" @click="handleSetting">
+            <VIcon class="mr-1" size="12">setting</VIcon>
+            <span>设置</span>
+          </span>
+          <ElLink class="font-color-sub" @click="toCenter()">查看所有通知</ElLink>
+        </div>
       </div>
     </div>
+    <ElDialog
+      custom-class="notice-setting-dialog"
+      title="通知设置"
+      width="480px"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
+      <ElForm ref="form" class="e-form" label-width="140px" :model="form">
+        <div class="notice-setting-title">agent通知</div>
+        <ElFormItem label="agent状态为离线时">
+          <span class="notice-setting-label">短信通知</span>
+          <ElSwitch v-model="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue"></ElSwitch>
+          <span class="notice-setting-label">邮件通知</span>
+          <ElSwitch v-model="form.connectionInterrupted.email" size="mini" @change="handleSettingValue"></ElSwitch>
+        </ElFormItem>
+        <ElFormItem label="agent状态为运行中时">
+          <span class="notice-setting-label">短信通知</span>
+          <ElSwitch v-model="form.connected.sms" size="mini" @change="handleSettingValue"></ElSwitch>
+          <span class="notice-setting-label">邮件通知</span>
+          <ElSwitch v-model="form.connected.email" @change="handleSettingValue"></ElSwitch>
+        </ElFormItem>
+        <div class="notice-setting-title">任务运行通知</div>
+        <ElFormItem label="任务运行出错时">
+          <span class="notice-setting-label">短信通知</span>
+          <ElSwitch v-model="form.stoppedByError.sms" @change="handleSettingValue"></ElSwitch>
+          <span class="notice-setting-label">邮件通知</span>
+          <ElSwitch v-model="form.stoppedByError.email" @change="handleSettingValue"></ElSwitch>
+        </ElFormItem>
+      </ElForm>
+    </ElDialog>
   </ElPopover>
 </template>
 
@@ -69,7 +101,23 @@ export default {
         inspect: '校验任务',
         JobDDL: 'DDL处理'
       },
-      userOperations: []
+      userOperations: [],
+      dialogVisible: false,
+      userId: '',
+      form: {
+        connected: {
+          email: true,
+          sms: true
+        },
+        connectionInterrupted: {
+          email: true,
+          sms: true
+        },
+        stoppedByError: {
+          email: true,
+          sms: true
+        }
+      }
     }
   },
   created() {
@@ -206,6 +254,25 @@ export default {
         return
       }
       this.$router.push({ name: 'SystemNotice' })
+    },
+    // 通知设置
+    handleSetting() {
+      this.dialogVisible = true
+      // 获取tm用户id
+      this.$axios.get('tm/api/users/self').then(data => {
+        if (data) {
+          this.userId = data.id
+          if (data.notification) {
+            this.form = data.notification
+          }
+        }
+      })
+    },
+    handleSettingValue() {
+      let data = {
+        notification: this.form
+      }
+      this.$axios.patch(`tm/api/users/${this.userId}`, data)
     }
   }
 }
@@ -257,7 +324,7 @@ export default {
       font-size: 14px;
       height: 50px;
       line-height: 50px;
-      padding: 0 25px;
+      //padding: 0 25px;
       color: #000;
       border-top: 1px solid rgba(222, 222, 228, 1);
       border-bottom: 1px solid #f2f2f2;
@@ -273,13 +340,21 @@ export default {
       display: flex;
       flex-direction: column;
       height: 262px;
-      padding: 0 12px;
+      padding: 0 16px;
       overflow: hidden;
       margin-bottom: -1px;
+      position: relative;
       //.tab-list {
       //  flex: 1;
       //  overflow-y: auto;
       //}
+      .tab-item__footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 0 16px;
+      }
     }
 
     .cuk-list {

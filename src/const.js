@@ -9,10 +9,10 @@ for (const dKey in directionMap) {
 }
 export const TOPOLOGY_MAP = topologyMap,
   INSTANCE_STATUS_MAP = {
-    Creating: { text: '待部署', color: '#FFB318' },
-    Running: { text: '运行中', color: '#52C41A' },
-    Stopping: { text: '停止中', color: '#F5222D' },
-    Stopped: { text: '离线', color: 'rgba(0, 0, 0, 0.18)' }
+    Creating: { text: '待部署', type: 'warning' },
+    Running: { text: '运行中', type: 'success' },
+    Stopping: { text: '停止中', type: 'danger' },
+    Stopped: { text: '离线', type: 'disable' }
   },
   TASK_STATUS_MAP = {
     running: { text: '运行中', icon: 'yunxingzhong', type: 'success' },
@@ -25,9 +25,9 @@ export const TOPOLOGY_MAP = topologyMap,
     finished: { text: '已完成', icon: 'yiwancheng', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
-    ready: { text: '有效', color: '#52C41A' },
-    invalid: { text: '失效', color: '#F5222D' },
-    testing: { text: '测试中', color: '#FFB318' }
+    ready: { text: '有效', type: 'success' },
+    invalid: { text: '失效', type: 'danger' },
+    testing: { text: '测试中', type: 'warning' }
   },
   MILESTONE_STATUS_MAP = {
     waiting: { text: '待执行', icon: 'daizhixing' },

@@ -121,6 +121,8 @@ export default {
   agent_deploy_before_prepare_windows_second:
     '2. Click the download button below to download the Tapdata Agent installation package to the local environment. ',
   agent_deploy_before_prepare_windows_second_download: 'Click to download Tapdata Agent',
+  agent_deploy_before_prepare_windows_third:
+    '3. Please strictly follow the installation steps below to deploy, do not double-click the installation package directly! ',
   agent_deploy_start_install: 'Start installation',
   agent_deploy_start_install_button_copy: 'Copy',
   agent_deploy_start_install_button_copied: 'Copied',
@@ -129,8 +131,10 @@ export default {
   agent_deploy_start_install_windows_second:
     '2. After the above command is executed, the log as shown in the figure below appears, which means that the agent started successfully:',
   agent_deploy_start_install_windows_third:
-    "3. If you need to view the agent's log or start and stop the agent, please refer to",
-  agent_deploy_link_agent_operation: '《Agent Basic Operations》',
+    '3. If you encounter any problems during installation and use, please refer to',
+  agent_deploy_link_agent_operation: '"Agent Installation Manual and Common QA"',
+  agent_deploy_link_agent_operation_desc:
+    'Or directly scan the QR code on the right to join the community for technical support. ',
   agent_deploy_before_prepare_linux_first:
     '1. Before installation, please make sure that Java 1.8 is installed in your deployment environment and the environment variables are correctly configured. ',
   agent_deploy_before_prepare_linux_first_link: 'Click to see how to install and configure Java 1.8',
@@ -143,7 +147,7 @@ export default {
   agent_deploy_start_install_linux_second:
     '2. After the above command is executed, the log as shown in the figure below appears, which means that the agent started successfully:',
   agent_deploy_start_install_linux_third:
-    "3. If you need to view the agent's log or start and stop the agent, please refer to",
+    '3. If you encounter any problems during installation and use, please refer to',
   agent_deploy_before_prepare_docker_first:
     '1. We provide an image that contains the environment required for Tapdata Agent to run',
   agent_deploy_before_prepare_docker_second:

@@ -6,7 +6,11 @@
     <ElTag v-if="type === 'tag'" :type="statusObj.type">{{ statusObj.text }}</ElTag>
     <span :class="['flex', 'align-items-center', 'icon-span', `color-${statusObj.type}`, status]" v-else>
       <VIcon v-if="statusObj.icon" class="v-icon" size="16">{{ statusObj.icon }}</VIcon>
-      <span v-else class="circle-icon mr-2" :style="{ 'background-color': statusObj.color }"></span>
+      <span
+        v-else
+        :class="['circle-icon', 'mr-2', `bg-color-${statusObj.type}`]"
+        :style="{ 'background-color': statusObj.color }"
+      ></span>
       <span class="td-status-tag__text font-color-sub">{{ statusObj.text }}</span>
     </span>
   </span>
@@ -33,16 +37,25 @@ export default {
     onlyImg: {
       type: Boolean,
       default: false
+    },
+    statusMap: {
+      type: Object,
+      default: () => {
+        return null
+      }
     }
   },
   computed: {
     map() {
-      return {
-        instance: INSTANCE_STATUS_MAP,
-        task: TASK_STATUS_MAP,
-        connection: CONNECTION_STATUS_MAP,
-        milestone: MILESTONE_STATUS_MAP
-      }[this.target]
+      return (
+        this.statusMap ||
+        {
+          instance: INSTANCE_STATUS_MAP,
+          task: TASK_STATUS_MAP,
+          connection: CONNECTION_STATUS_MAP,
+          milestone: MILESTONE_STATUS_MAP
+        }[this.target]
+      )
     },
     statusObj() {
       return this.map[this.status] || {}

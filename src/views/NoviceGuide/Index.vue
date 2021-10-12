@@ -559,7 +559,8 @@ export default {
         where: {
           database_type: this.sourceForm.database_type,
           agentType: 'Cloud',
-          connection_type: this.step === 2 ? 'target' : 'source'
+          connection_type: this.step === 2 ? 'target' : 'source',
+          status: 'ready'
         },
         limit: 10
       }
