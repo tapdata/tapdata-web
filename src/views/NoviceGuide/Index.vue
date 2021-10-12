@@ -403,7 +403,8 @@ export default {
       }
       // 下一步
       if (this.step === 2) {
-        this.loadSchema('first')
+        // this.loadSchema('first')
+        this.step++
       } else {
         this.step++
       }
@@ -534,11 +535,24 @@ export default {
       delete params.id
       this.$axios
         .post('tm/api/Connections', params)
-        .then(() => {
-          this.loadConnection()
+        .then(sourceConnection => {
+          // 填充数据
+          if (this.sourceForm.database_type === 'mongodb') {
+            let arr = sourceConnection.database_host?.split(':')
+            sourceConnection.database_host = arr[0] ?? ''
+            sourceConnection.database_port = arr[1] ?? ''
+            sourceConnection.database_password = sourceConnection.database_username
+          }
+          for (let key in this.sourceForm) {
+            if (key !== 'database_type') {
+              this.sourceForm[key] = sourceConnection[key]
+            }
+          }
         })
         .catch(() => {
           this.$message.error('创建连接失败')
+        })
+        .finally(() => {
           this.initDatabaseLoading = false
         })
     },
@@ -564,29 +578,24 @@ export default {
         },
         limit: 10
       }
-      this.$axios
-        .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        .then(data => {
-          let sourceConnection = data?.[0]
-          if (!sourceConnection) {
-            this.sourceForm.id = '' // 标记为空
-            return
+      this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
+        let sourceConnection = data?.[0]
+        if (!sourceConnection) {
+          this.sourceForm.id = '' // 标记为空
+          return
+        }
+        if (this.sourceForm.database_type === 'mongodb') {
+          let arr = sourceConnection.database_host?.split(':')
+          sourceConnection.database_host = arr[0] ?? ''
+          sourceConnection.database_port = arr[1] ?? ''
+          sourceConnection.database_password = sourceConnection.database_username
+        }
+        for (let key in this.sourceForm) {
+          if (key !== 'database_type') {
+            this.sourceForm[key] = sourceConnection[key]
           }
-          if (this.sourceForm.database_type === 'mongodb') {
-            let arr = sourceConnection.database_host?.split(':')
-            sourceConnection.database_host = arr[0] ?? ''
-            sourceConnection.database_port = arr[1] ?? ''
-            sourceConnection.database_password = sourceConnection.database_username
-          }
-          for (let key in this.sourceForm) {
-            if (key !== 'database_type') {
-              this.sourceForm[key] = sourceConnection[key]
-            }
-          }
-        })
-        .finally(() => {
-          this.initDatabaseLoading = false
-        })
+        }
+      })
     },
     loadSchema(type) {
       this.connectionNextLoading = true
