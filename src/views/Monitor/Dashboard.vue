@@ -303,7 +303,7 @@ export default {
     taskChange(data) {
       let task = data.data?.fullDocument || {}
       if (this.task) {
-        Object.assign(this.task, this.formatTask(task))
+        this.task = Object.assign({}, this.task, this.formatTask(task))
       }
     },
     // 获取任务数据
