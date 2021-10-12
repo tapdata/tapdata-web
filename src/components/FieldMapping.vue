@@ -35,7 +35,16 @@
 <script>
 export default {
   name: 'FiledMapping',
-  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId', 'isFirst', 'mappingType', 'selectSourceArr', 'data'],
+  props: [
+    'dataFlow',
+    'databaseFieldProcess',
+    'showBtn',
+    'hiddenFieldProcess',
+    'stageId',
+    'isFirst',
+    'mappingType',
+    'selectSourceArr'
+  , 'data'],
   data() {
     return {
       //表设置
@@ -43,7 +52,7 @@ export default {
       fieldMappingTableData: '', //右边table
       dialogFieldProcessVisible: false,
       loading: false,
-      field_process: []
+      field_process: this.databaseFieldProcess
     }
   },
   created() {
@@ -95,7 +104,7 @@ export default {
     //任务迁移需要主动更新
     updateAutoFieldProcess(data) {
       for (let i = 0; i < data.stages.length; i++) {
-        if (data.stages[i].outputLanes) {
+        if (data.stages[i].outputLanes?.length > 0) {
           data['stages'][i].field_process = this.field_process
         }
       }
