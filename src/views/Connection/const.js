@@ -311,7 +311,12 @@ export const CONFIG_MODEL = {
         {
           label: '数据库地址',
           key: 'database_host'
-        },
+        }
+      ]
+    },
+    {
+      icon: 'port',
+      items: [
         {
           label: '端口',
           key: 'database_port'
