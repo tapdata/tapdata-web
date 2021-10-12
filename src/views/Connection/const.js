@@ -171,7 +171,7 @@ export const DEFAULT_MODEL = {
     database_port: '',
     mqType: '0', //MQ类型
     brokerURL: '', //MQ连接串
-    database_username: '',
+    mqUserName: '',
     plain_password: '',
     mqQueueSet: '', //队列名集合
     mqTopicSet: '', //主题名称
@@ -310,7 +310,16 @@ export const CONFIG_MODEL = {
       items: [
         {
           label: '数据库地址',
-          key: 'kafkaBootstrapServers'
+          key: 'database_host'
+        }
+      ]
+    },
+    {
+      icon: 'port',
+      items: [
+        {
+          label: '端口',
+          key: 'database_port'
         },
         {
           label: 'MQ类型',
@@ -352,7 +361,7 @@ export const CONFIG_MODEL = {
       items: [
         {
           label: '密码',
-          key: 'mqPassword'
+          key: 'plain_password'
         }
       ]
     }
