@@ -1,4 +1,4 @@
-import { isFunction } from '@/utils/util'
+import { isFunction } from './util'
 
 export function matchesSelectorToParentElements(el, selector, baseNode) {
   let node = el

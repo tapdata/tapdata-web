@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { NODE_PREFIX } from '@/views/dataflow/constants'
+import { NODE_PREFIX } from './constants'
 
 function getRealId(str) {
   return str.replace(new RegExp(`^${NODE_PREFIX}`), '')

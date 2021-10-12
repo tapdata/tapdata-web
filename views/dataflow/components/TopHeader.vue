@@ -60,16 +60,13 @@
           v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
           class="btn-base"
           size="mini"
-          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
-          v-readonlybtn="'SYNC_job_operation'"
         >
           <VIcon class="mr-1" size="12">zanting3</VIcon>
           <span>{{ $t('dataFlow.button.stop_capture') }}</span>
         </ElButton>
         <ElButton
-          v-readonlybtn="'SYNC_job_operation'"
           :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
-          v-if="['running'].includes(status) && executeMode === 'normal' && $window.getSettingByKey('SHOW_DATA_TRACE')"
+          v-if="['running'].includes(status) && executeMode === 'normal'"
           class="btn-base"
           size="mini"
         >
@@ -77,8 +74,6 @@
           <span>{{ $t('dataFlow.button.capture') }}</span>
         </ElButton>
         <ElButton
-          v-readonlybtn="'SYNC_job_operation'"
-          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
           class="btn-base"
           size="mini"
         >
@@ -86,9 +81,7 @@
           <span>{{ $t('dataFlow.button.reloadSchema') }}</span>
         </ElButton>
         <ElButton
-          v-readonlybtn="'SYNC_job_operation'"
-          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
-          v-if="isEditable && $window.getSettingByKey('SHOW_DATA_TRACE')"
+          v-if="isEditable"
           class="btn-base"
           size="mini"
         >
@@ -134,10 +127,9 @@
           >{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}</span
         >
       </ElTag>
-      <ElButtonGroup class="flex" v-readonlybtn="'SYNC_job_operation'">
+      <ElButtonGroup class="flex">
         <ElButton
           @click="$emit('start')"
-          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId) || statusBtMap[status].start"
           class="btn-base btn-operation"
           size="mini"
           :loading="isStarting"
@@ -146,7 +138,6 @@
           <span>{{ $t('dataFlow.button.start') }}</span>
         </ElButton>
         <ElButton
-          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId) || statusBtMap[status].stop"
           class="btn-base btn-operation"
           size="mini"
         >
@@ -154,7 +145,6 @@
           <span>{{ $t('dataFlow.button.stop') }}</span>
         </ElButton>
         <ElButton
-          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId) || statusBtMap[status].reset"
           class="btn-base btn-operation"
           size="mini"
         >
@@ -162,7 +152,6 @@
           <span>{{ $t('dataFlow.button.reset') }}</span>
         </ElButton>
         <ElButton
-          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId) || statusBtMap[status].forceStop"
           class="btn-base btn-operation"
           size="mini"
         >
@@ -193,7 +182,7 @@ import VIcon from 'web-core/components/VIcon'
 import VDivider from 'web-core/components/VDivider'
 import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations } from 'vuex'
-import DataflowApi from '@/api/DataFlows'
+import DataflowApi from 'web-core/api/DataFlows'
 
 const dataflowApi = new DataflowApi()
 export default {
@@ -365,7 +354,7 @@ $sidebarBg: #fff;
   .nav-icon {
     width: 40px;
     height: 100%;
-    background-color: var(--primary);
+    background-color: map-get($color, primary);
     cursor: pointer;
     font-size: 24px;
     &:hover {
@@ -384,7 +373,7 @@ $sidebarBg: #fff;
         border-color: #dcdfe6;
       }
       .title-input-icon {
-        color: var(--primary);
+        color: map-get($color, primary);
       }
     }
 
@@ -405,7 +394,7 @@ $sidebarBg: #fff;
       &:focus {
         border-color: #409eff;
         & + .title-input-icon {
-          color: var(--primary);
+          color: map-get($color, primary);
         }
       }
     }
@@ -431,7 +420,7 @@ $sidebarBg: #fff;
     cursor: pointer;
 
     &:hover {
-      color: var(--primary);
+      color: map-get($color, primary);
       background: $hoverBg;
     }
   }

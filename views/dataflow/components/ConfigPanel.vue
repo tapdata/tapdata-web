@@ -22,8 +22,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import '@/directives/resize/index.scss'
-import resize from '@/directives/resize'
+import 'web-core/directives/resize/index.scss'
+import resize from 'web-core/directives/resize'
 import FormPanel from 'web-core/views/dataflow/components/FormPanel'
 import DataPane from 'web-core/views/dataflow/components/DataPane'
 import MetaPane from 'web-core/views/dataflow/components/MetaPane'
@@ -67,13 +67,14 @@ export default {
 </style>
 <style scoped lang="scss">
 //$color: #2c65ff;
-$color: var(--primary);
+$color: map-get($color, primary);
 
 .config-panel {
   position: relative;
   z-index: 10;
   height: 300px;
   overflow: auto;
+  background-color: #fff;
   transition: height 0.24s;
   will-change: height;
 
