@@ -297,6 +297,7 @@ export default {
     remoteMethod: Function,
     typeMappingMethod: Function,
     fieldProcessMethod: Function,
+    getMetadata: Function,
     data: Object,
     hiddenFieldProcess: {
       type: Boolean,
@@ -600,7 +601,6 @@ export default {
         if (existsName) {
           return
         }
-        debugger
         this.fieldProcessRename(id, key, value)
       } else if (key === 'data_type') {
         let option = this.target.filter(v => v.id === id)
@@ -661,6 +661,20 @@ export default {
       this.updateTarget(id, key, value)
       this.checkTable() //消除感叹号
       this.handleClose()
+    },
+    //更新schema
+    updateMetaData() {
+      this.$nextTick(() => {
+        this.getMetadata &&
+          this.getMetadata()
+            .then(data => {
+              this.$emit('update-nav', data)
+              this.updateView()
+            })
+            .finally(() => {
+              this.loadingTable = false
+            })
+      })
     },
     //改类型影响字段长度 精度
     influences(id, rules) {
@@ -733,40 +747,10 @@ export default {
     },
     // 表改名弹窗保存
     handleTableNameSave() {
-      if (this.fieldMappingNavData?.length) {
-        this.fieldMappingNavData.forEach(item => {
-          if (this.form.tableNameTransform === 'toUpperCase') {
-            item.sinkObjectName = (
-              this.form.table_prefix +
-              item.sourceObjectName +
-              this.form.table_suffix
-            ).toUpperCase()
-          } else if (this.form.tableNameTransform === 'toLowerCase') {
-            item.sinkObjectName = (
-              this.form.table_prefix +
-              item.sourceObjectName +
-              this.form.table_suffix
-            ).toLowerCase()
-          } else {
-            item.sinkObjectName = this.form.table_prefix + item.sourceObjectName + this.form.table_suffix
-          }
-        })
-      }
       this.dialogTableVisible = false
-      console.log(this.fieldMappingNavData)
     },
     // 字段名称弹窗保存
     handleFieldSave() {
-      if (this.fieldMappingTableData?.length) {
-        this.fieldMappingTableData.forEach(item => {
-          if (this.form.fieldsNameTransform === 'toUpperCase') {
-            item.t_field_name = item.t_field_name.toUpperCase()
-          } else if (this.form.fieldsNameTransform === 'toLowerCase') {
-            item.t_field_name = item.t_field_name.toLowerCase()
-          }
-          this.fieldProcessRename(item.id, 'field_name', item.t_field_name)
-        })
-      }
       this.dialogFieldVisible = false
     },
     //字段删除
