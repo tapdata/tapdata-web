@@ -585,7 +585,7 @@ export default {
         stages: data?.stages
       }
       this.$axios.post('tm/api/DataFlows/tranModelVersionControl', param).then(data => {
-        this.showContent = data?.data[this.stageId]
+        this.showContent = data?.[this.stageId]
       })
     }
   }
