@@ -67,7 +67,7 @@
       >
       </ElPagination>
     </div>
-    <NotificationPopover ref="NotificationPopover"></NotificationPopover>
+    <NotificationPopover class="none" ref="NotificationPopover"></NotificationPopover>
   </section>
 </template>
 

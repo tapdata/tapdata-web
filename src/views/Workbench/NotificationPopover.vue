@@ -30,7 +30,7 @@
           <VIcon size="76">notice-color</VIcon>
           <span>暂无通知</span>
         </div>
-        <div class="flex justify-content-between py-3 font-color-sub">
+        <div class="tab-item__footer flex justify-content-between py-3 font-color-sub">
           <span class="system-operation-setting cursor-pointer" @click="handleSetting">
             <VIcon class="mr-1" size="12">setting</VIcon>
             <span>设置</span>
@@ -343,10 +343,18 @@ export default {
       padding: 0 16px;
       overflow: hidden;
       margin-bottom: -1px;
+      position: relative;
       //.tab-list {
       //  flex: 1;
       //  overflow-y: auto;
       //}
+      .tab-item__footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 0 16px;
+      }
     }
 
     .cuk-list {

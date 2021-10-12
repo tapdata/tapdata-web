@@ -43,7 +43,6 @@
       <MqTransfer
         v-model="mqActiveData"
         :source="sourceData"
-        :tableNameTransform="tableNameTrans"
         :table_prefix="formData.table_prefix"
         :table_suffix="formData.table_suffix"
       ></MqTransfer>
@@ -153,7 +152,7 @@ import MqTransfer from './mqTransfer'
 let selectKeepArr = []
 export default {
   components: { VIcon, MqTransfer },
-  props: ['transferData', 'isTwoWay', 'tableNameTransform', 'mqTransferFlag'],
+  props: ['transferData', 'isTwoWay', 'mqTransferFlag'],
   data() {
     var validatePrefix = (rule, value, callback) => {
       if (value === '') {
@@ -214,9 +213,6 @@ export default {
       reloadLoading: false, // 重新加载
       tableNameTrans: ''
     }
-  },
-  created() {
-    this.tableNameTrans = this.tableNameTransform
   },
   watch: {
     mqActiveData: {

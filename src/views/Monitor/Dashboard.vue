@@ -177,7 +177,7 @@ export default {
   data() {
     return {
       loading: true,
-      showContent: true,
+      showContent: false,
       activeTab: 'progress',
       task: null,
       statusBtMap: {
