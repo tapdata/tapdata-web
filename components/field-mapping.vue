@@ -9,20 +9,6 @@
         <el-button size="mini" type="primary" @click="rollbackAll">恢复默认</el-button>
       </div>
     </div>
-
-    <div class="search">
-      <div class="item">
-        <span> 搜索表：</span>
-        <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
-      </div>
-      <div class="item">
-        <span> 搜索字段：</span>
-        <el-input v-model="searchField" size="mini" @change="search('field')"></el-input>
-      </div>
-      <div class="item" v-if="!readOnly">
-        <el-button size="mini" @click="rollbackAll">全部恢复默认</el-button>
-      </div>
-    </div>
     <div class="task-form-body">
       <div class="nav">
         <ul>
@@ -59,87 +45,105 @@
           </li>
         </ul>
       </div>
-      <El-table
-        class="field-mapping-table table-border"
-        height="100%"
-        border
-        :data="fieldMappingTableData"
-        :row-class-name="tableRowClassName"
-        v-loading="loading"
-      >
-        <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="150">
-          <template slot-scope="scope">
-            <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
-              >{{ scope.row.field_name }}
-              <VIcon size="12" class="color-darkorange">key</VIcon>
-            </span>
-            <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="源表类型" prop="data_type" width="150"></ElTableColumn>
-        <ElTableColumn label="源表长度" prop="precision" width="150"></ElTableColumn>
-        <ElTableColumn label="源表精度" prop="scale" width="100"></ElTableColumn>
-        <ElTableColumn label="目标表字段名" width="260">
-          <template slot-scope="scope">
-            <div
-              v-if="!scope.row.is_deleted && !hiddenFieldProcess && !readOnly"
-              @click="edit(scope.row, 'field_name')"
-            >
-              <span :show-overflow-tooltip="true"
-                >{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i
-              ></span>
-            </div>
-            <span v-else :show-overflow-tooltip="true">{{ scope.row.t_field_name }}</span>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="目标表类型">
-          <template slot-scope="scope">
-            <div v-if="!scope.row.is_deleted && !readOnly" @click="edit(scope.row, 'data_type')">
-              <span>{{ scope.row.t_data_type }}</span>
-              <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
-              <i class="icon el-icon-arrow-down"></i>
-            </div>
-            <div v-else>
-              <span>{{ scope.row.t_data_type }}</span>
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="目标表长度" width="150">
-          <template slot-scope="scope">
-            <div
-              v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && !readOnly"
-              @click="edit(scope.row, 'precision')"
-            >
-              <span>{{ scope.row.t_precision }}</span>
-              <i class="icon el-icon-edit-outline"></i>
-            </div>
-            <div v-else>
-              <span>{{ scope.row.t_precision }}</span>
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="目标表精度" width="100">
-          <template slot-scope="scope">
-            <div v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && !readOnly" @click="edit(scope.row, 'scale')">
-              <span>{{ scope.row.t_scale }}</span>
-              <i class="icon el-icon-edit-outline"></i>
-            </div>
-            <div v-else>
-              <span>{{ scope.row.t_scale }}</span>
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="操作" width="80" v-if="!hiddenFieldProcess && !readOnly">
-          <template slot-scope="scope">
-            <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)"> 删除 </ElLink>
-            <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
-          </template>
-        </ElTableColumn>
-        <div class="field-mapping-table__empty" slot="empty">
-          <i class="el-icon-folder-opened"></i>
-          <span class="ml-1">暂无数据</span>
+      <div class="main">
+        <div class="search">
+          <div class="item">
+            <span> 搜索表：</span>
+            <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
+          </div>
+          <div class="item">
+            <span> 搜索字段：</span>
+            <el-input v-model="searchField" size="mini" @change="search('field')"></el-input>
+          </div>
+          <div class="item" v-if="!readOnly">
+            <el-button size="mini" @click="rollbackAll">全部恢复默认</el-button>
+          </div>
         </div>
-      </El-table>
+        <El-table
+          class="field-mapping-table table-border"
+          height="100%"
+          border
+          :data="fieldMappingTableData"
+          :row-class-name="tableRowClassName"
+          v-loading="loading"
+        >
+          <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="150">
+            <template slot-scope="scope">
+              <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
+                >{{ scope.row.field_name }}
+                <VIcon size="12" class="color-darkorange">key</VIcon>
+              </span>
+              <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="源表类型" prop="data_type" width="150"></ElTableColumn>
+          <ElTableColumn label="源表长度" prop="precision" width="150"></ElTableColumn>
+          <ElTableColumn label="源表精度" prop="scale" width="100"></ElTableColumn>
+          <ElTableColumn label="目标表字段名" width="260">
+            <template slot-scope="scope">
+              <div
+                v-if="!scope.row.is_deleted && !hiddenFieldProcess && !readOnly"
+                @click="edit(scope.row, 'field_name')"
+              >
+                <span :show-overflow-tooltip="true"
+                  >{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i
+                ></span>
+              </div>
+              <span v-else :show-overflow-tooltip="true">{{ scope.row.t_field_name }}</span>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="目标表类型">
+            <template slot-scope="scope">
+              <div v-if="!scope.row.is_deleted && !readOnly" @click="edit(scope.row, 'data_type')">
+                <span>{{ scope.row.t_data_type }}</span>
+                <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
+                <i class="icon el-icon-arrow-down"></i>
+              </div>
+              <div v-else>
+                <span>{{ scope.row.t_data_type }}</span>
+              </div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="目标表长度" width="150">
+            <template slot-scope="scope">
+              <div
+                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && !readOnly"
+                @click="edit(scope.row, 'precision')"
+              >
+                <span>{{ scope.row.t_precision }}</span>
+                <i class="icon el-icon-edit-outline"></i>
+              </div>
+              <div v-else>
+                <span>{{ scope.row.t_precision }}</span>
+              </div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="目标表精度" width="100">
+            <template slot-scope="scope">
+              <div
+                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && !readOnly"
+                @click="edit(scope.row, 'scale')"
+              >
+                <span>{{ scope.row.t_scale }}</span>
+                <i class="icon el-icon-edit-outline"></i>
+              </div>
+              <div v-else>
+                <span>{{ scope.row.t_scale }}</span>
+              </div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="操作" width="80" v-if="!hiddenFieldProcess && !readOnly">
+            <template slot-scope="scope">
+              <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)"> 删除 </ElLink>
+              <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
+            </template>
+          </ElTableColumn>
+          <div class="field-mapping-table__empty" slot="empty">
+            <i class="el-icon-folder-opened"></i>
+            <span class="ml-1">暂无数据</span>
+          </div>
+        </El-table>
+      </div>
     </div>
     <el-dialog
       :title="titleType[currentOperationType]"
@@ -211,7 +215,7 @@
       </span>
     </el-dialog>
     <el-dialog
-      width="60%"
+      width="800px"
       append-to-body
       title="批量改表名设置"
       custom-class="field-maping-table-dialog"
@@ -248,7 +252,7 @@
       </span>
     </el-dialog>
     <el-dialog
-      width="60%"
+      width="600px"
       append-to-body
       title="批量改字段名设置"
       custom-class="field-maping-table-dialog"
@@ -596,6 +600,7 @@ export default {
         if (existsName) {
           return
         }
+        debugger
         this.fieldProcessRename(id, key, value)
       } else if (key === 'data_type') {
         let option = this.target.filter(v => v.id === id)
@@ -759,8 +764,10 @@ export default {
           } else if (this.form.fieldsNameTransform === 'toLowerCase') {
             item.t_field_name = item.t_field_name.toLowerCase()
           }
+          this.fieldProcessRename(item.id, 'field_name', item.t_field_name)
         })
       }
+      this.dialogFieldVisible = false
     },
     //字段删除
     del(id, value) {
@@ -1103,7 +1110,7 @@ export default {
       flex-direction: row;
       justify-content: space-between;
       .table-form {
-        width: 60%;
+        width: 56%;
         .el-form-item {
           margin-bottom: 12px;
         }
@@ -1112,7 +1119,7 @@ export default {
         }
       }
       .table-example {
-        width: 30%;
+        width: 36%;
         h3 {
           padding-bottom: 20px;
         }
