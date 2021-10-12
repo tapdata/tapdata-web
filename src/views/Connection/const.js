@@ -171,7 +171,7 @@ export const DEFAULT_MODEL = {
     database_port: '',
     mqType: '0', //MQ类型
     brokerURL: '', //MQ连接串
-    database_username: '',
+    mqUserName: '',
     plain_password: '',
     mqQueueSet: '', //队列名集合
     mqTopicSet: '', //主题名称
