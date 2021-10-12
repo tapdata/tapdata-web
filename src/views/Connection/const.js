@@ -310,7 +310,11 @@ export const CONFIG_MODEL = {
       items: [
         {
           label: '数据库地址',
-          key: 'kafkaBootstrapServers'
+          key: 'database_host'
+        },
+        {
+          label: '端口',
+          key: 'database_port'
         },
         {
           label: 'MQ类型',
@@ -352,7 +356,7 @@ export const CONFIG_MODEL = {
       items: [
         {
           label: '密码',
-          key: 'mqPassword'
+          key: 'plain_password'
         }
       ]
     }
