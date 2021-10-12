@@ -171,7 +171,8 @@ export default {
         dropType: 'no_drop',
         syncObjects: [],
         type: 'postgres',
-        mqType: ''
+        mqType: '',
+        isChangeConnectionFlag: false
       },
       databaseInfo: {
         connection_type: '',
@@ -182,7 +183,8 @@ export default {
         database_owner: '',
         database_name: '',
         database_username: ''
-      }
+      },
+      targetFormData: ''
     }
   },
 
@@ -219,6 +221,7 @@ export default {
       }
       this.cell = cell
       this.isSourceDataNode = dataNodeInfo && !dataNodeInfo.isTarget
+
       // editorMonitor = vueAdapter.editor;
 
       this.loadDataSource()
@@ -266,6 +269,7 @@ export default {
     changeConnection() {
       this.databaseTables = []
       this.lookupDatabaseType()
+      this.model.isChangeConnectionFlag = true
 
       this.cell.graph.getConnectedLinks(this.cell, { outbound: true }).forEach(link => {
         let orignData = link.getFormData()

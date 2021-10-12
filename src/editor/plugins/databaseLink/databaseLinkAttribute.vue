@@ -373,7 +373,7 @@ export default {
       handler() {
         this.$emit('dataChanged', this.getData())
       }
-    },
+    }
     // 'model.tableNameTransform': {
     //   deep: true,
     //   handler(val) {
@@ -412,11 +412,18 @@ export default {
         // 获取目标节点的数据显示右侧选择表
 
         let targetFormData = targetCell && targetCell.getFormData()
+        let sourceFormData = sourceCell && sourceCell.getFormData()
         let selectTargetType = []
         if (targetFormData && targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
           this.model.transferFlag = true
         }
         if (targetCell && this.model.selectSourceArr.length === 0) {
+          // 修改库清空连线选中的表
+          if(sourceFormData.isChangeConnectionFlag) {
+            targetFormData.syncObjects = []
+            sourceFormData.isChangeConnectionFlag = false
+          }
+          // mq数据源赋值
           if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
             // this.model.transferFlag = true
             this.mqActiveData.topicData = data.topicData
