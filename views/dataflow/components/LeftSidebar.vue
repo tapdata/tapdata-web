@@ -1,7 +1,7 @@
 <template>
   <aside class="layout-sidebar --left border-end flex flex-column flex-shrink-0">
-    <div class="db-list-wrap">
-      <ElCollapse value="db">
+    <div ref="dbListContainer" class="flex-1 min-h-0">
+      <ElCollapse class="collapse-fill" value="db">
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1">
@@ -10,7 +10,7 @@
               <VIcon>magnify</VIcon>
             </div>
           </template>
-          <div class="db-list overflow-auto">
+          <ElScrollbar ref="dbList" tag="div" wrap-class="db-list">
             <div
               v-for="(db, i) in dbList"
               :key="i"
@@ -21,12 +21,12 @@
               <ElImage class="flex-shrink-0" :src="genIconSrc(db)"></ElImage>
               <div class="db-item-txt text-truncate ml-4">{{ db.name }}</div>
             </div>
-          </div>
+          </ElScrollbar>
         </ElCollapseItem>
       </ElCollapse>
     </div>
 
-    <div class="table-list-wrap">
+    <div ref="tbListContainer" class="flex-1 min-h-0 flex flex-column border-bottom">
       <div class="px-6 py-4">
         <ElInput v-model="tbSearchTxt" size="small" @input="handleTbInput">
           <template #prefix>
@@ -34,7 +34,7 @@
           </template>
         </ElInput>
       </div>
-      <div class="tb-list overflow-auto">
+      <ElScrollbar ref="tbList" class="flex-1 min-h-0" tag="div" wrap-class="tb-list">
         <div
           v-for="tb in tbFilterList"
           v-mouse-drag="{
@@ -54,7 +54,10 @@
           </div>
           <div class="text-truncate ml-4">{{ tb.name }}</div>
         </div>
-      </div>
+      </ElScrollbar>
+      <!--<div class="tb-list overflow-auto">
+
+    </div>-->
     </div>
 
     <ElCollapse value="process">
@@ -115,13 +118,16 @@ import BaseNode from 'web-core/views/dataflow/components/BaseNode'
 import { debounce, throttle } from 'lodash'
 import ConnectionsApi from 'web-core/api/Connections'
 import MetadataApi from 'web-core/api/MetadataInstances'
+import { Select } from 'element-ui'
+// import ElScrollbar from 'element-ui/packages/scrollbar'
 const connections = new ConnectionsApi()
 const metadataApi = new MetadataApi()
+import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 
 export default {
   name: 'LeftSidebar',
 
-  components: { BaseNode, VIcon },
+  components: { BaseNode, VIcon, ElScrollbar: Select.components.ElScrollbar },
 
   data() {
     return {
@@ -164,6 +170,11 @@ export default {
 
   created() {
     this.init()
+  },
+
+  mounted() {
+    addResizeListener(this.$refs.dbListContainer, this.$refs.dbList.update)
+    addResizeListener(this.$refs.tbListContainer, this.$refs.tbList.update)
   },
 
   methods: {
@@ -314,38 +325,50 @@ $itemH: 34px;
 .layout-sidebar.--left {
   overflow: hidden;
 
-  .db-list,
-  .tb-list {
-    max-height: 150px;
-  }
+  ::v-deep {
+    /*.db-list,
+    .tb-list {
+      max-height: 272px;
+    }*/
 
-  .db-item,
-  .tb-item {
-    height: $itemH;
-    font-size: 12px;
-    &.active,
-    &:hover {
-      background-color: #eef3ff;
+    .db-item,
+    .tb-item {
+      height: $itemH;
+      font-size: 12px;
+      &.active,
+      &:hover {
+        background-color: #eef3ff;
+      }
+
+      .el-image {
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
+      }
     }
 
-    .el-image {
+    .tb-item-icon {
       width: 20px;
       height: 20px;
-      vertical-align: middle;
+      background-color: #6236ff;
+      text-align: center;
+      border-radius: 100%;
     }
-  }
 
-  .tb-item-icon {
-    width: 20px;
-    height: 20px;
-    background-color: #6236ff;
-    text-align: center;
-    border-radius: 100%;
-  }
-
-  ::v-deep {
     .el-collapse {
       border-top: 0;
+      &.collapse-fill {
+        height: 100%;
+        .el-collapse-item:first-child:last-child {
+          height: 100%;
+          .el-collapse-item__wrap {
+            height: calc(100% - 32px);
+          }
+          .el-collapse-item__content {
+            height: 100%;
+          }
+        }
+      }
 
       &-item {
         &.is-active [role='tab'] {
@@ -376,6 +399,13 @@ $itemH: 34px;
           padding-bottom: 0;
         }
       }
+    }
+
+    .el-scrollbar {
+      height: 100%;
+    }
+    .el-scrollbar__wrap {
+      height: calc(100% + 15px);
     }
   }
 }
