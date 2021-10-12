@@ -104,6 +104,7 @@
                 :dataFlow="dataFlow"
                 :showBtn="true"
                 :stageId="stageId"
+                :databaseFieldProcess="model.field_process"
                 :hiddenFieldProcess="false"
                 :selectSourceArr="model.selectSourceArr"
                 :isFirst="model.isFirst"
@@ -589,7 +590,7 @@ export default {
     },
     returnFieldMapping(field_process) {
       this.model.field_process = field_process
-      this.$emit('dataChanged', this.getData())
+      this.getDataFlow()
     },
     //接收是否第一次打开
     returnModel(value) {

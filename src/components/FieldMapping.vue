@@ -34,7 +34,16 @@
 <script>
 export default {
   name: 'FiledMapping',
-  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId', 'isFirst', 'mappingType', 'selectSourceArr'],
+  props: [
+    'dataFlow',
+    'databaseFieldProcess',
+    'showBtn',
+    'hiddenFieldProcess',
+    'stageId',
+    'isFirst',
+    'mappingType',
+    'selectSourceArr'
+  ],
   data() {
     return {
       //表设置
@@ -42,7 +51,7 @@ export default {
       fieldMappingTableData: '', //右边table
       dialogFieldProcessVisible: false,
       loading: false,
-      field_process: []
+      field_process: this.databaseFieldProcess
     }
   },
   methods: {
@@ -56,7 +65,7 @@ export default {
       if (!this.dataFlow) return
       //迁移任务需要同步字段处理器
       if (this.mappingType && this.mappingType === 'cluster-clone') {
-        //this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
+        this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
         //是否有选中的表
         if (this.selectSourceArr?.length === 0) {
           this.$message.error('请先选择需要迁移的表')
@@ -91,7 +100,7 @@ export default {
     //任务迁移需要主动更新
     updateAutoFieldProcess(data) {
       for (let i = 0; i < data.stages.length; i++) {
-        if (data.stages[i].outputLanes) {
+        if (data.stages[i].outputLanes?.length > 0) {
           data['stages'][i].field_process = this.field_process
         }
       }
