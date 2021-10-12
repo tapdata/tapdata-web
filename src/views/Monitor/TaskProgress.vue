@@ -241,6 +241,7 @@ export default {
       let waitingForSyecTableNums = 0
       let completeTime = ''
       let data = this.task
+      this.progressBar = 0
       if (data?.stats?.overview) {
         overview = JSON.parse(JSON.stringify(data.stats.overview))
 
