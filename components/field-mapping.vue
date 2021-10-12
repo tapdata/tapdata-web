@@ -1,15 +1,9 @@
 <template>
   <div class="field-mapping" v-loading="loadingPage">
-    <div v-if="!readOnly" class="field-mapping__desc" style="text-align: left; line-height: 28px">
+    <div v-if="!readOnly" class="field-mapping__desc" style="text-align: left">
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
-      <div style="float: right">
-        <el-button size="mini" @click="handleTableChangName">表改名</el-button>
-        <el-button size="mini" @click="dialogFieldVisible = true">字段改名</el-button>
-        <el-button size="mini" type="primary" @click="rollbackAll">恢复默认</el-button>
-      </div>
     </div>
-
     <div class="search">
       <div class="item">
         <span> 搜索表：</span>
@@ -210,75 +204,6 @@
         <el-button type="primary" @click="editSave()">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog
-      width="60%"
-      append-to-body
-      title="批量改表名设置"
-      custom-class="field-maping-table-dialog"
-      :visible.sync="dialogTableVisible"
-      :close-on-click-modal="false"
-      :before-close="handleTableClose"
-    >
-      <div class="table-box">
-        <el-form ref="form" class="table-form" :model="form" label-width="120px">
-          <el-form-item label="表名大小写">
-            <el-select size="mini" v-model="form.tableNameTransform">
-              <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
-              <el-option :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></el-option>
-              <el-option :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="请输入前缀">
-            <el-input size="mini" v-model="form.table_prefix"></el-input>
-          </el-form-item>
-          <el-form-item label="请输入后缀">
-            <el-input size="mini" v-model="form.table_suffix"></el-input>
-          </el-form-item>
-          <div class="tip">说明：设置的前后缀也遵循大小写规则</div>
-        </el-form>
-        <div class="table-example">
-          <h3>示例:</h3>
-          <p>原表名: tableName</p>
-          <p>修改后: {{ tableName }}</p>
-        </div>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleTableClose()">取 消</el-button>
-        <el-button size="mini" type="primary" @click="handleTableNameSave()">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      width="60%"
-      append-to-body
-      title="批量改字段名设置"
-      custom-class="field-maping-table-dialog"
-      :visible.sync="dialogFieldVisible"
-      :close-on-click-modal="false"
-      :before-close="handleTableClose"
-    >
-      <div class="table-box">
-        <el-form ref="form" class="table-form" :model="form" label-width="120px">
-          <el-form-item label="表名大小写">
-            <el-select size="mini" v-model="form.fieldsNameTransform">
-              <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
-              <el-option :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></el-option>
-              <el-option :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button
-          size="mini"
-          @click="
-            dialogFieldVisible = false
-            form.fieldsNameTransform = ''
-          "
-          >取 消</el-button
-        >
-        <el-button size="mini" type="primary" @click="handleFieldSave()">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -293,7 +218,6 @@ export default {
     remoteMethod: Function,
     typeMappingMethod: Function,
     fieldProcessMethod: Function,
-    data: Object,
     hiddenFieldProcess: {
       type: Boolean,
       default: false
@@ -334,16 +258,7 @@ export default {
         precision: '修改目标字段长度',
         scale: '修改目标表精度'
       },
-      operations: [], //字段操作
-      dialogTableVisible: false,
-      dialogFieldVisible: false,
-      form: {
-        tableNameTransform: this.data.tableNameTransform,
-        fieldsNameTransform: this.data.fieldsNameTransform,
-        table_prefix: this.data.table_prefix,
-        table_suffix: this.data.table_suffix
-      },
-      sourceTableName: 'tableName'
+      operations: [] //字段操作
     }
   },
   mounted() {
@@ -353,19 +268,6 @@ export default {
       this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
     }
     this.updateView()
-  },
-  computed: {
-    tableName() {
-      let tableName = ''
-      if (this.form.tableNameTransform === 'toUpperCase') {
-        tableName = (this.form.table_prefix + this.sourceTableName + this.form.table_suffix).toUpperCase()
-      } else if (this.form.tableNameTransform === 'toLowerCase') {
-        tableName = (this.form.table_prefix + this.sourceTableName + this.form.table_suffix).toLowerCase()
-      } else {
-        tableName = this.form.table_prefix + this.sourceTableName + this.form.table_suffix
-      }
-      return tableName
-    }
   },
   methods: {
     search(type) {
@@ -560,9 +462,6 @@ export default {
         }
       })
     },
-    handleTableChangName() {
-      this.dialogTableVisible = true
-    },
     //字段修改统一弹窗
     edit(row, type) {
       this.dialogVisible = true
@@ -715,51 +614,6 @@ export default {
         data_type: '',
         precision: '',
         scale: ''
-      }
-    },
-    // 表改名称弹窗取消
-    handleTableClose() {
-      this.dialogTableVisible = false
-      this.form = {
-        tableNameTransform: 'noOperation',
-        table_prefix: '',
-        table_suffix: ''
-      }
-    },
-    // 表改名弹窗保存
-    handleTableNameSave() {
-      if (this.fieldMappingNavData?.length) {
-        this.fieldMappingNavData.forEach(item => {
-          if (this.form.tableNameTransform === 'toUpperCase') {
-            item.sinkObjectName = (
-              this.form.table_prefix +
-              item.sourceObjectName +
-              this.form.table_suffix
-            ).toUpperCase()
-          } else if (this.form.tableNameTransform === 'toLowerCase') {
-            item.sinkObjectName = (
-              this.form.table_prefix +
-              item.sourceObjectName +
-              this.form.table_suffix
-            ).toLowerCase()
-          } else {
-            item.sinkObjectName = this.form.table_prefix + item.sourceObjectName + this.form.table_suffix
-          }
-        })
-      }
-      this.dialogTableVisible = false
-      console.log(this.fieldMappingNavData)
-    },
-    // 字段名称弹窗保存
-    handleFieldSave() {
-      if (this.fieldMappingTableData?.length) {
-        this.fieldMappingTableData.forEach(item => {
-          if (this.form.fieldsNameTransform === 'toUpperCase') {
-            item.t_field_name = item.t_field_name.toUpperCase()
-          } else if (this.form.fieldsNameTransform === 'toLowerCase') {
-            item.t_field_name = item.t_field_name.toLowerCase()
-          }
-        })
       }
     },
     //字段删除
@@ -915,18 +769,11 @@ export default {
           target: []
         }
       }
-      let changNameData = {
-        table_prefix: this.form.table_prefix,
-        table_suffix: this.form.table_suffix,
-        tableNameTransform: this.form.tableNameTransform,
-        fieldsNameTransform: this.form.fieldsNameTransform
-      }
       return {
         valid: true,
         row: this.selectRow,
         operations: this.operations,
-        target: this.target,
-        changNameData: changNameData
+        target: this.target
       }
     },
     //保存校验
@@ -1093,33 +940,6 @@ export default {
     }
     .color-darkorange {
       color: darkorange;
-    }
-  }
-}
-::v-deep {
-  .field-maping-table-dialog {
-    .table-box {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      .table-form {
-        width: 60%;
-        .el-form-item {
-          margin-bottom: 12px;
-        }
-        .tip {
-          padding-left: 40px;
-        }
-      }
-      .table-example {
-        width: 30%;
-        h3 {
-          padding-bottom: 20px;
-        }
-        p {
-          padding-bottom: 10px;
-        }
-      }
     }
   }
 }
