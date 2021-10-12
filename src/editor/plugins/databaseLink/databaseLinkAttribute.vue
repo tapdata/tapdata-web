@@ -47,7 +47,7 @@
             <el-checkbox v-model="model.selectSourceDatabase.function" :disabled="mysqlDisable">Function</el-checkbox>
             <el-checkbox v-model="model.selectSourceDatabase.procedure" :disabled="mysqlDisable">Procedure</el-checkbox>
           </el-form-item>
-          <el-form-item>
+          <!-- <el-form-item>
             <el-row :gutter="20">
               <el-col :span="12">
                 <span class="span-label">{{ $t('dag_data_node_label_database_link_table') }}</span>
@@ -78,7 +78,7 @@
                 </el-select>
               </el-col>
             </el-row>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
             <el-select v-model="model.dropType" size="mini">
               <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
@@ -137,15 +137,15 @@
                 <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
                 <!-- :class="[{ active: option.label !== option.key }, 'text']" -->
                 <!-- <span :title="option.label">{{ option.label }}</span> -->
-                <span
+                <!-- <span
                   v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
                   >{{ option.label.toLowerCase() }}</span
                 >
                 <span
                   v-else-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toUpperCase'"
                   >{{ option.label.toUpperCase() }}</span
-                >
-                <span v-else>{{ option.label }}</span>
+                > -->
+                <span>{{ option.label }}</span>
                 <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span>
                 <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
@@ -157,7 +157,6 @@
               <MqTransfer
                 v-model="mqActiveData"
                 :source="sourceData"
-                :tableNameTransform="model.tableNameTransform"
                 :table_prefix="model.table_prefix"
                 :table_suffix="model.table_suffix"
               ></MqTransfer>
@@ -329,8 +328,8 @@ export default {
         table_suffix: '',
         dropType: 'no_drop',
         type: 'databaseLink',
-        tableNameTransform: 'noOperation',
-        fieldsNameTransform: 'noOperation',
+        // tableNameTransform: 'noOperation',
+        // fieldsNameTransform: 'noOperation',
         selectSourceArr: [],
         topicData: [],
         queueData: [],
@@ -374,12 +373,12 @@ export default {
         this.$emit('dataChanged', this.getData())
       }
     },
-    'model.tableNameTransform': {
-      deep: true,
-      handler(val) {
-        this.model.tableNameTransform = val
-      }
-    }
+    // 'model.tableNameTransform': {
+    //   deep: true,
+    //   handler(val) {
+    //     this.model.tableNameTransform = val
+    //   }
+    // }
   },
   methods: {
     setData(data, cell, isSourceDataNode, vueAdapter) {
@@ -471,8 +470,8 @@ export default {
             targetFormData.dropType = this.model.dropType
             targetFormData.table_prefix = this.model.table_prefix
             targetFormData.table_suffix = this.model.table_suffix
-            targetFormData.tableNameTransform = this.model.tableNameTransform
-            targetFormData.fieldNameTransform = this.model.fieldNameTransform
+            // targetFormData.tableNameTransform = this.model.tableNameTransform
+            // targetFormData.fieldNameTransform = this.model.fieldNameTransform
             targetFormData.syncObjects = []
             if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
               targetFormData.syncObjects = [
