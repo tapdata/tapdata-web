@@ -43,6 +43,7 @@ import { SqlEditor } from './SqlEditor'
 import { ArrayTable, ArrayTableColumn } from './ArrayTable'
 import { DatePicker } from './DatePicker'
 import Password from './Password'
+import { JsEditor } from './JsEditor'
 
 export const components = {
   Checkbox,
@@ -82,5 +83,6 @@ export const components = {
   SqlEditor,
   ArrayTable,
   ArrayTableColumn,
-  DatePicker
+  DatePicker,
+  JsEditor
 }

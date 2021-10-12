@@ -75,12 +75,6 @@ export function delayTrigger(func, t = 500) {
     func && func()
   }
 }
-export const getImgByType = function (type) {
-  if (!type) {
-    type = 'default'
-  }
-  return require(`@/assets/images/types/${type.toLowerCase()}.png`)
-}
 
 const CLASSTYPES = [
   'String',

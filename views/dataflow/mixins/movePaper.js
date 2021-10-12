@@ -1,5 +1,4 @@
-import normalizeWheel from 'normalize-wheel'
-import { on, off } from '@/utils/dom'
+import { on, off } from 'web-core/utils/dom'
 
 export default {
   data() {
@@ -67,16 +66,6 @@ export default {
       }
 
       this.movePaper(e)
-    },
-
-    wheelMoveDataflow(e) {
-      const normalized = normalizeWheel(e)
-      const offsetPosition = this.$store.getters['dataflow/getNodeViewOffsetPosition']
-      const nodeViewOffsetPositionX = offsetPosition[0] - (e.shiftKey ? normalized.pixelY : normalized.pixelX)
-      const nodeViewOffsetPositionY = offsetPosition[1] - (e.shiftKey ? normalized.pixelX : normalized.pixelY)
-      this.$store.commit('dataflow/setNodeViewOffsetPosition', {
-        newOffset: [nodeViewOffsetPositionX, nodeViewOffsetPositionY]
-      })
     }
   }
 }

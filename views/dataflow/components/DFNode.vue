@@ -26,11 +26,11 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import deviceSupportHelpers from '@/mixins/deviceSupportHelpers'
+import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { sourceEndpoint, targetEndpoint } from 'web-core/views/dataflow/style'
 import { NODE_PREFIX } from 'web-core/views/dataflow/constants'
 import BaseNode from 'web-core/views/dataflow/components/BaseNode'
-import VIcon from '@/components/VIcon'
+import VIcon from 'web-core/components/VIcon'
 
 export default {
   name: 'DFNode',

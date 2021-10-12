@@ -7,7 +7,7 @@
             <div class="flex align-center flex-1">
               <span class="flex-1">连接</span>
               <VIcon class="mr-2">plus</VIcon>
-              <VIcon>search</VIcon>
+              <VIcon>magnify</VIcon>
             </div>
           </template>
           <div class="db-list overflow-auto">
@@ -46,7 +46,7 @@
             onDrop,
             onStop
           }"
-          :key="tb.tableId"
+          :key="tb.attr.tableId"
           class="tb-item grabbable flex align-center px-4"
         >
           <div class="tb-item-icon">
@@ -99,6 +99,13 @@
 </template>
 
 <script>
+import 'web-core/assets/icons/svg/magnify.svg'
+import 'web-core/assets/icons/svg/table.svg'
+import 'web-core/assets/icons/svg/js.svg'
+import 'web-core/assets/icons/svg/joint-cache.svg'
+import 'web-core/assets/icons/svg/row-filter.svg'
+import 'web-core/assets/icons/svg/aggregator.svg'
+import 'web-core/assets/icons/svg/field-processor.svg'
 import { mapGetters, mapMutations } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
 import VIcon from 'web-core/components/VIcon'
@@ -106,8 +113,8 @@ import resize from 'web-core/directives/resize'
 import { DB_ICON } from 'web-core/views/dataflow/constants'
 import BaseNode from 'web-core/views/dataflow/components/BaseNode'
 import { debounce, throttle } from 'lodash'
-import ConnectionsApi from '@/api/connections'
-import MetadataApi from '@/api/MetadataInstances'
+import ConnectionsApi from 'web-core/api/Connections'
+import MetadataApi from 'web-core/api/MetadataInstances'
 const connections = new ConnectionsApi()
 const metadataApi = new MetadataApi()
 
@@ -183,8 +190,8 @@ export default {
             order: ['status DESC', 'name ASC']
           })
         })
-        this.dbList = result.data
-        return result.data
+        this.dbList = result
+        return result
       } catch (e) {
         console.log('catch', e)
       }
@@ -194,10 +201,11 @@ export default {
     ...mapMutations('dataflow', ['addNode']),
 
     async loadDatabaseTable() {
+      const connectionId = this.currentConnectionId
       const params = {
         filter: JSON.stringify({
           where: {
-            'source.id': this.currentConnectionId,
+            'source.id': connectionId,
             meta_type: {
               in: ['collection', 'table', 'view']
             },
@@ -209,20 +217,24 @@ export default {
           }
         })
       }
-      let { data: tables } = await metadataApi.get(params)
+      let tables = await metadataApi.get(params)
       tables = tables.map(tb => ({
         name: tb.original_name,
-        tableId: tb.id,
         type: 'table',
         group: 'data',
-        constructor: 'Table'
+        constructor: 'Table',
+        attr: {
+          tableId: tb.id,
+          connectionId
+        }
       }))
       this.tbFilterList = tables
       this.tbList = tables
     },
 
     genIconSrc(item) {
-      return `static/editor/${DB_ICON[item.database_type]}.svg`
+      let icon = DB_ICON[item.database_type]
+      return require(`web-core/assets/images/db-icon/${icon}.svg`)
     },
 
     // 获取分类好的节点
