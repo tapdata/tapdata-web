@@ -35,8 +35,8 @@
                 <span class="icon iconfont icon-tishi1" slot="reference"></span>
               </el-popover>
             </el-checkbox>
-
-            <el-checkbox v-model="model.selectSourceDatabase.view" :disabled="mysqlDisable" @change="changeView"
+            <!-- @change="changeView" -->
+            <el-checkbox v-model="model.selectSourceDatabase.view" :disabled="mysqlDisable"
               >View
               <el-popover placement="top-start" width="400" trigger="hover">
                 <span>{{ $t('editor.cell.link.viewTip') }}</span>
@@ -47,7 +47,7 @@
             <el-checkbox v-model="model.selectSourceDatabase.function" :disabled="mysqlDisable">Function</el-checkbox>
             <el-checkbox v-model="model.selectSourceDatabase.procedure" :disabled="mysqlDisable">Procedure</el-checkbox>
           </el-form-item>
-          <el-form-item>
+          <!-- <el-form-item>
             <el-row :gutter="20">
               <el-col :span="12">
                 <span class="span-label">{{ $t('dag_data_node_label_database_link_table') }}</span>
@@ -78,7 +78,7 @@
                 </el-select>
               </el-col>
             </el-row>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
             <el-select v-model="model.dropType" size="mini">
               <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
@@ -91,7 +91,6 @@
             </el-select>
           </el-form-item>
         </template>
-
         <div class="database-tableBox" v-loading="transferLoading">
           <div class="box-text">
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
@@ -107,10 +106,12 @@
                 :hiddenFieldProcess="false"
                 :selectSourceArr="model.selectSourceArr"
                 :isFirst="model.isFirst"
+                :data="model"
                 @update-first="returnModel"
                 @returnFieldMapping="returnFieldMapping"
+                @returnPreFixSuffix="returnPreFixSuffix"
               ></FieldMapping>
-              <el-button class="e-button" size="mini" :disabled="model.selectSourceDatabase.view" @click="handDialog">{{
+              <!-- <el-button class="e-button" size="mini" :disabled="model.selectSourceDatabase.view" @click="handDialog">{{
                 $t('dataFlow.changeName')
               }}</el-button>
               <el-button
@@ -119,9 +120,10 @@
                 :disabled="disabled || model.selectSourceDatabase.view"
                 @click="handleReduction"
                 >{{ $t('editor.cell.link.reduction') }}</el-button
-              >
+              > -->
             </div>
           </div>
+
           <div class="transfer">
             <el-transfer
               filterable
@@ -134,9 +136,23 @@
               @change="handleChangeTransfer"
             >
               <span class="box" slot-scope="{ option }">
-                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
-                <!-- :class="[{ active: option.label !== option.key }, 'text']" -->
-                <!-- <span :title="option.label">{{ option.label }}</span> -->
+                <template
+                  v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
+                >
+                  <span>{{ (model.table_prefix + option.label + model.table_suffix).toLowerCase() }}</span>
+                </template>
+                <template
+                  v-else-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toUpperCase'"
+                >
+                  <span>{{ (model.table_prefix + option.label + model.table_suffix).toUpperCase() }}</span>
+                </template>
+                <template v-else-if="model.selectSourceArr.includes(option.label)">
+                  {{ model.table_prefix + option.label + model.table_suffix }}
+                </template>
+                <template v-else>
+                  {{ option.label }}
+                </template>
+                <!-- <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
                 <span
                   v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
                   >{{ option.label.toLowerCase() }}</span
@@ -146,7 +162,7 @@
                   >{{ option.label.toUpperCase() }}</span
                 >
                 <span v-else>{{ option.label }}</span>
-                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span>
+                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span> -->
                 <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span> -->
@@ -212,7 +228,7 @@
         </div>
       </el-form>
     </div>
-    <el-dialog
+    <!-- <el-dialog
       :title="$t('editor.cell.link.batchRename')"
       :visible.sync="dialogVisible"
       :modal-append-to-body="false"
@@ -252,7 +268,7 @@
         <el-button @click="dialogVisible = false">{{ $t('dataVerify.cancel') }}</el-button>
         <el-button type="primary" @click="confirm">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog
       width="85%"
       title="映射配置"
@@ -309,7 +325,7 @@ export default {
       currentName: null,
       databaseName: '',
       modifyNameDialog: false,
-      dialogVisible: false,
+      // dialogVisible: false,
       disabled: false,
       logsFlag: false,
       exampleName: 'tableName',
@@ -505,11 +521,11 @@ export default {
     },
 
     // 改变view
-    changeView(val) {
-      if (val) {
-        this.handleReduction()
-      }
-    },
+    // changeView(val) {
+    //   if (val) {
+    //     this.handleReduction()
+    //   }
+    // },
 
     // 关闭当前页
     hanleClose() {
@@ -556,15 +572,15 @@ export default {
     // },
 
     // 添加前后缀弹窗开关
-    handDialog() {
-      this.dialogVisible = true
-    },
+    // handDialog() {
+    //   this.dialogVisible = true
+    // },
 
     // 弹窗确认
-    confirm() {
-      this.dialogVisible = false
-      this.preFixSuffixData()
-    },
+    // confirm() {
+    //   this.dialogVisible = false
+    //   this.preFixSuffixData()
+    // },
 
     // 添加前后缀数据处理
     preFixSuffixData() {
@@ -590,6 +606,13 @@ export default {
     returnFieldMapping(field_process) {
       this.model.field_process = field_process
       console.log(this.model.field_process)
+    },
+    // 字段处理器返回前后缀
+    returnPreFixSuffix(data) {
+      this.model.table_prefix = data.table_prefix
+      this.model.table_suffix = data.table_suffix
+      this.model.tableNameTransform = data.tableNameTransform
+      this.model.fieldsNameTransform = data.fieldsNameTransform
     },
     //接收是否第一次打开
     returnModel(value) {

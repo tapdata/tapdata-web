@@ -20,6 +20,7 @@
         :fieldProcessMethod="updateFieldProcess"
         :fieldMappingNavData="fieldMappingNavData"
         :field_process="field_process"
+        :data="data"
         :hiddenFieldProcess="hiddenFieldProcess"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
@@ -34,7 +35,7 @@
 <script>
 export default {
   name: 'FiledMapping',
-  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId', 'isFirst', 'mappingType', 'selectSourceArr'],
+  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId', 'isFirst', 'mappingType', 'selectSourceArr', 'data'],
   data() {
     return {
       //表设置
@@ -44,6 +45,9 @@ export default {
       loading: false,
       field_process: []
     }
+  },
+  created() {
+    console.log(this.dataFlow)
   },
   methods: {
     /*
@@ -221,11 +225,11 @@ export default {
         this.$message.error('当前表被删除了所有字段，不允许保存操作')
         return //所有字段被删除了 不可以保存任务
       }
-      this.saveOperations(returnData.row, returnData.operations, returnData.target)
+      this.saveOperations(returnData.row, returnData.operations, returnData.target, returnData.changNameData)
       this.dialogFieldProcessVisible = false
     },
     //保存字段处理器
-    saveOperations(row, operations, target) {
+    saveOperations(row, operations, target, changNameData) {
       if (!target || target?.length === 0) return
       let where = {
         qualified_name: row.sinkQulifiedName
@@ -237,6 +241,7 @@ export default {
       if (this.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.field_process)
+      this.$emit('returnPreFixSuffix', changNameData)
     }
   }
 }
