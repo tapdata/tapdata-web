@@ -65,7 +65,6 @@
                 <Transfer
                   ref="transfer"
                   :transferData="transferData"
-                  :tableNameTransform="settingModel.tableNameTransform"
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="settingModel.bidirectional"
                 ></Transfer>
