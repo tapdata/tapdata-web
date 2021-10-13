@@ -1,4 +1,4 @@
-import { NodeType } from '@/nodes/extends/NodeType'
+import { NodeType } from './extends/NodeType'
 
 export class Table extends NodeType {
   constructor(node) {
@@ -40,9 +40,7 @@ export class Table extends NodeType {
             'x-component-props': {
               config: { placeholder: '请选择数据库' }
             },
-            'x-reactions': [
-              '{{useAsyncDataSource(loadDatabase, "dataSource", ["mysql","mysql pxc","oracle","sqlserver","sybase ase","gbase-8s","db2","gaussdb200","postgres","mariadb"])}}'
-            ]
+            'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource")}}']
           },
           databaseType: {
             type: 'string',
@@ -335,6 +333,16 @@ export class Table extends NodeType {
         'x-component': 'SyncObjects',
         'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
       }
+    }
+  }
+
+  /**
+   * 获取额外添加到节点上的属性
+   */
+  getExtraAttr() {
+    return {
+      connectionId: this.attr.connectionId,
+      tableId: this.attr.tableId
     }
   }
 }

@@ -190,13 +190,13 @@ export default {
       position: absolute;
       width: 160px;
       height: 36px;
-      background-color: var(--primary);
+      background-color: map-get($color, primary);
     }
   }
 
   .current-view {
     position: absolute;
-    border: 1px solid var(--primary);
+    border: 1px solid map-get($color, primary);
     cursor: move;
   }
 }

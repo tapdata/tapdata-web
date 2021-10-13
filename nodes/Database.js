@@ -1,4 +1,4 @@
-import { NodeType } from '@/nodes/extends/NodeType'
+import { NodeType } from './extends/NodeType'
 import i18n from '@/i18n'
 
 export class Database extends NodeType {

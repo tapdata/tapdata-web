@@ -1,4 +1,4 @@
-import { NodeType } from '@/nodes/extends/NodeType'
+import { NodeType } from './extends/NodeType'
 
 export class Collection extends NodeType {
   constructor(node) {
