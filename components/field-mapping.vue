@@ -308,7 +308,6 @@ export default {
       searchTable: '',
       loading: false,
       loadingPage: false,
-      loadingTableBtn: false,
       typeMapping: [],
       currentTypeRules: [],
       defaultFieldMappingNavData: '',
@@ -317,7 +316,6 @@ export default {
       fieldCount: '', //当前选中总数
       fieldMappingTableData: [],
       dialogVisible: false,
-      re_field: '',
       currentOperationType: '',
       currentOperationData: '',
       target: [],
@@ -346,7 +344,7 @@ export default {
       this.selectRow = this.fieldMappingNavData[0]
       this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
     }
-    if(!this.readOnly){
+    if (!this.readOnly) {
       this.form = {
         tableNameTransform: this.databaseLinkData.tableNameTransform,
         fieldsNameTransform: this.databaseLinkData.fieldsNameTransform,
@@ -370,80 +368,8 @@ export default {
     }
   },
   methods: {
-    search(type) {
-      if (type === 'table') {
-        if (this.searchTable.trim()) {
-          this.searchTable = this.searchTable.trim().toString() //去空格
-          this.fieldMappingNavData = this.defaultFieldMappingNavData.filter(v => {
-            let str = (v.sourceObjectName + '' + v.sinkObjectName).toLowerCase()
-            return str.indexOf(this.searchTable.toLowerCase()) > -1
-          })
-        } else {
-          this.fieldMappingNavData = this.defaultFieldMappingNavData
-        }
-      } else {
-        if (this.searchField.trim()) {
-          this.searchField = this.searchField.trim().toString() //去空格
-          this.fieldMappingTableData = this.defaultFieldMappingTableData.filter(v => {
-            let str = (v.field_name + '' + v.t_field_name).toLowerCase()
-            return str.indexOf(this.searchField.toLowerCase()) > -1
-          })
-        } else {
-          this.fieldMappingTableData = this.defaultFieldMappingTableData
-        }
-      }
-    },
-    select(item, index) {
-      if (!this.readOnly) {
-        let deleteLen = this.target.filter(v => !v.is_deleted)
-        if (deleteLen.length === 0 && this.target?.length > 0) {
-          this.$message.error('当前表被删除了所有字段，不允许保存操作')
-          return //所有字段被删除了 不可以保存任务
-        }
-        this.$emit('row-click', this.selectRow, this.operations, this.target)
-      }
-      this.position = '' //再次点击清空去一个样式
-      this.searchField = ''
-      this.fieldCount = 0
-      this.selectRow = item
-      this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
-      this.position = index
-      this.updateView()
-    },
-    //页面刷新
-    updateView(data) {
-      //只读模式初始化
-      if (data) {
-        this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(data))
-        this.selectRow = data[0]
-        this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
-      }
-      this.updateData()
-    },
-    //恢复默认 刷新页面
-    updateData(type) {
-      this.initTableData(type)
-      this.initTypeMapping()
-      this.clearSearch()
-      this.operations = []
-      if (this.field_process?.length > 0) {
-        this.getFieldProcess()
-      }
-    },
-    //清空搜索条件
-    clearSearch() {
-      this.searchField = ''
-      this.searchTable = ''
-    },
-    //获取字段处理器
-    getFieldProcess() {
-      this.operations = []
-      let field_process = this.field_process.filter(process => process.table_id === this.selectRow.sourceTableId)
-      if (field_process.length > 0) {
-        this.operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
-      }
-    },
-    //初始化table数据
+    //数据处理区域
+    /*初始化table数据*/
     initTableData(type) {
       this.loading = true
       this.$nextTick(() => {
@@ -460,41 +386,7 @@ export default {
             })
       })
     },
-    //更新左边被删除字段
-    updateFieldCount(type) {
-      let id = this.selectRow.sinkQulifiedName
-      if (this.fieldMappingNavData) {
-        for (let i = 0; i < this.fieldMappingNavData.length; i++) {
-          if (this.fieldMappingNavData[i].sinkQulifiedName === id && type === 'remove') {
-            this.fieldMappingNavData[i].userDeletedNum = this.fieldMappingNavData[i].userDeletedNum + 1
-          } else if (this.fieldMappingNavData[i].sinkQulifiedName === id && type === 'add') {
-            this.fieldMappingNavData[i].userDeletedNum = this.fieldMappingNavData[i].userDeletedNum - 1
-          }
-        }
-      }
-    },
-    //更新table数据
-    updateTableData(id, key, value) {
-      this.fieldMappingTableData.forEach(field => {
-        if (field.t_id === id) {
-          //改目标表
-          field[key] = value
-        }
-      })
-    },
-    //更新target 数据
-    updateTarget(id, key, value) {
-      this.target.forEach(field => {
-        if (field.id === id && field.is_deleted !== 'true' && field.is_deleted !== true) {
-          field[key] = value
-          field['source'] = 'manual'
-          field['is_auto_allowed'] = false
-        }
-      })
-      //触发页面重新渲染
-      this.updateTableData(id, `t_${key}`, value)
-    },
-    //初始化字段类型
+    /* 初始化字段类型列表*/
     initTypeMapping() {
       this.$nextTick(() => {
         this.typeMappingMethod &&
@@ -503,7 +395,7 @@ export default {
           })
       })
     },
-    //初始化目标字段、长度是否可编辑
+    /* 初始化目标字段、长度是否可编辑*/
     initShowEdit() {
       let data = this.fieldMappingTableData
       if (this.fieldMappingTableData?.length === 0) return
@@ -525,34 +417,103 @@ export default {
         }
       }
     },
-    //恢复默认单表
-    rollbackTable(name, id) {
-      this.$confirm('您确认要恢复默认吗？', '提示', {
-        type: 'warning'
-      }).then(resFlag => {
-        if (resFlag) {
-          this.loadingPage = true
-          this.form = {
-            tableNameTransform: 'noOperation',
-            fieldsNameTransform: 'noOperation',
-            table_prefix: '',
-            table_suffix: ''
+    /*页面刷新 兼容只读模式*/
+    updateView(data) {
+      //只读模式初始化
+      if (data) {
+        this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(data))
+        this.selectRow = data[0]
+        this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+      }
+      this.updateData()
+    },
+    /*数据重新加载*/
+    updateData(type) {
+      this.initTableData(type)
+      this.initTypeMapping()
+      this.clearSearch()
+      this.operations = []
+      if (this.field_process?.length > 0) {
+        this.getFieldProcess()
+      }
+    },
+    /*更新左边被删除字段*/
+    updateFieldCount(type) {
+      let id = this.selectRow.sinkQulifiedName
+      if (this.fieldMappingNavData) {
+        for (let i = 0; i < this.fieldMappingNavData.length; i++) {
+          if (this.fieldMappingNavData[i].sinkQulifiedName === id && type === 'remove') {
+            this.fieldMappingNavData[i].userDeletedNum = this.fieldMappingNavData[i].userDeletedNum + 1
+          } else if (this.fieldMappingNavData[i].sinkQulifiedName === id && type === 'add') {
+            this.fieldMappingNavData[i].userDeletedNum = this.fieldMappingNavData[i].userDeletedNum - 1
           }
-          this.$nextTick(() => {
-            this.fieldProcessMethod &&
-              this.fieldProcessMethod('table', name, id)
-                .then(data => {
-                  this.$emit('update-nav', data)
-                  this.updateData('rollback')
-                })
-                .finally(() => {
-                  this.loadingPage = false
-                })
-          })
+        }
+      }
+    },
+    /*更新table数据*/
+    updateTableData(id, key, value) {
+      this.fieldMappingTableData.forEach(field => {
+        if (field.t_id === id) {
+          //改目标表
+          field[key] = value
         }
       })
     },
-    //恢复默认全部
+    /*更新target 数据*/
+    updateTarget(id, key, value) {
+      this.target.forEach(field => {
+        if (field.id === id && field.is_deleted !== 'true' && field.is_deleted !== true) {
+          field[key] = value
+          field['source'] = 'manual'
+          field['is_auto_allowed'] = false
+        }
+      })
+      //触发页面重新渲染
+      this.updateTableData(id, `t_${key}`, value)
+    },
+    /*更新左边表导航 重新推演*/
+    updateParentMetaData(type, data) {
+      this.loadingPage = true
+      this.$nextTick(() => {
+        this.updateMetadata &&
+          this.updateMetadata(type, data)
+            .then(data => {
+              this.$emit('update-nav', data)
+            })
+            .finally(() => {
+              this.loadingPage = false
+              this.updateView()
+            })
+      })
+    },
+    //全局操作区域
+    /*打开表改名弹窗*/
+    handleChangTableName() {
+      this.dialogTableVisible = true
+    },
+    /*表改名称弹窗取消*/
+    handleTableClose() {
+      this.dialogTableVisible = false
+      this.form.tableNameTransform = 'noOperation'
+      this.form.table_prefix = ''
+      this.form.table_suffix = ''
+    },
+    /*字段改名弹窗取消*/
+    handleFieldClose() {
+      this.dialogFieldVisible = false
+      this.form.fieldsNameTransform = 'noOperation'
+    },
+    /*表改名弹窗保存*/
+    handleTableNameSave() {
+      this.dialogTableVisible = false
+      this.updateParentMetaData('table', this.form)
+    },
+    /*字段名弹窗保存*/
+    handleFieldSave() {
+      this.dialogFieldVisible = false
+      this.updateParentMetaData('field', this.form)
+    },
+    /* 恢复默认全部*/
     rollbackAll() {
       this.$confirm('您确认要全部恢复默认吗？', '提示', {
         type: 'warning'
@@ -579,10 +540,90 @@ export default {
         }
       })
     },
-    handleChangTableName() {
-      this.dialogTableVisible = true
+
+    //左边导航区域
+    /*切换表*/
+    select(item, index) {
+      if (!this.readOnly) {
+        let deleteLen = this.target.filter(v => !v.is_deleted)
+        if (deleteLen.length === 0 && this.target?.length > 0) {
+          this.$message.error('当前表被删除了所有字段，不允许保存操作')
+          return //所有字段被删除了 不可以保存任务
+        }
+        this.$emit('row-click', this.selectRow, this.operations, this.target)
+      }
+      this.position = '' //再次点击清空去一个样式
+      this.searchField = ''
+      this.fieldCount = 0
+      this.selectRow = item
+      this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
+      this.position = index
+      this.updateView()
     },
-    //字段修改统一弹窗
+
+    //右边table数据区域
+    /*
+     * 按表搜索 按字段名搜索
+     * */
+    search(type) {
+      if (type === 'table') {
+        if (this.searchTable.trim()) {
+          this.searchTable = this.searchTable.trim().toString() //去空格
+          this.fieldMappingNavData = this.defaultFieldMappingNavData.filter(v => {
+            let str = (v.sourceObjectName + '' + v.sinkObjectName).toLowerCase()
+            return str.indexOf(this.searchTable.toLowerCase()) > -1
+          })
+        } else {
+          this.fieldMappingNavData = this.defaultFieldMappingNavData
+        }
+      } else {
+        if (this.searchField.trim()) {
+          this.searchField = this.searchField.trim().toString() //去空格
+          this.fieldMappingTableData = this.defaultFieldMappingTableData.filter(v => {
+            let str = (v.field_name + '' + v.t_field_name).toLowerCase()
+            return str.indexOf(this.searchField.toLowerCase()) > -1
+          })
+        } else {
+          this.fieldMappingTableData = this.defaultFieldMappingTableData
+        }
+      }
+    },
+    /*清空搜索条件*/
+    clearSearch() {
+      this.searchField = ''
+      this.searchTable = ''
+    },
+    /*恢复默认单表*/
+    rollbackTable(name, id) {
+      this.$confirm('您确认要恢复默认吗？', '提示', {
+        type: 'warning'
+      }).then(resFlag => {
+        if (resFlag) {
+          this.loadingPage = true
+          this.form = {
+            tableNameTransform: 'noOperation',
+            fieldsNameTransform: 'noOperation',
+            table_prefix: '',
+            table_suffix: ''
+          }
+          this.$nextTick(() => {
+            this.fieldProcessMethod &&
+              this.fieldProcessMethod('table', name, id)
+                .then(data => {
+                  this.$emit('update-nav', data)
+                  this.updateData('rollback')
+                })
+                .finally(() => {
+                  this.loadingPage = false
+                })
+          })
+        }
+      })
+    },
+
+    //table字段操作区域
+    /*字段操作统一弹窗
+     * 操作:修改字段名、修改字段长度、修改字段精度、修改字段类型*/
     edit(row, type) {
       this.dialogVisible = true
       this.editValueType[type] = row[`t_${type}`]
@@ -676,21 +717,6 @@ export default {
       this.checkTable() //消除感叹号
       this.handleClose()
     },
-    //更新schema
-    updateParentMetaData(type, data) {
-      this.loadingPage = true
-      this.$nextTick(() => {
-        this.updateMetadata &&
-          this.updateMetadata(type, data)
-            .then(data => {
-              this.$emit('update-nav', data)
-            })
-            .finally(() => {
-              this.loadingPage = false
-              this.updateView()
-            })
-      })
-    },
     //改类型影响字段长度 精度
     influences(id, rules) {
       this.showScaleEdit(id, rules)
@@ -750,28 +776,6 @@ export default {
         precision: '',
         scale: ''
       }
-    },
-    // 表改名称弹窗取消
-    handleTableClose() {
-      this.dialogTableVisible = false
-      this.form.tableNameTransform = 'noOperation'
-      this.form.table_prefix = ''
-      this.form.table_suffix = ''
-    },
-    // 表改名称弹窗取消
-    handleFieldClose() {
-      this.dialogFieldVisible = false
-      this.form.fieldsNameTransform = 'noOperation'
-    },
-    // 表改名弹窗保存
-    handleTableNameSave() {
-      this.dialogTableVisible = false
-      this.updateParentMetaData('table', this.form)
-    },
-    // 字段名称弹窗保存
-    handleFieldSave() {
-      this.dialogFieldVisible = false
-      this.updateParentMetaData('field', this.form)
     },
     //字段删除
     del(id, value) {
@@ -885,6 +889,14 @@ export default {
         if (ops.id === id && ops.op === 'RENAME') {
           this.operations.splice(i, 1)
         }
+      }
+    },
+    /*获取字段处理器*/
+    getFieldProcess() {
+      this.operations = []
+      let field_process = this.field_process.filter(process => process.table_id === this.selectRow.sourceTableId)
+      if (field_process.length > 0) {
+        this.operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
       }
     },
     restOperation(id) {
