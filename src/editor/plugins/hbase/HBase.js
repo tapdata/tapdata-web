@@ -31,7 +31,7 @@ export const HBaseNodeConfig = {
       ],
 
       isDataNode() {
-        return true
+        return false
       },
 
       /**
@@ -40,7 +40,7 @@ export const HBaseNodeConfig = {
        * @return {boolean}
        */
       allowTarget() {
-        return true
+        return false
       },
 
       /**
