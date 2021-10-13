@@ -18,16 +18,6 @@ export class RowFilter extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
-      name: {
-        title: '节点名称',
-        type: 'string',
-        required: true,
-        'x-decorator': 'ElFormItem',
-        'x-component': 'Input',
-        'x-component-props': {
-          config: { placeholder: '请输入节点名称' }
-        }
-      },
       action: {
         title: '主键',
         type: 'string',
