@@ -19,7 +19,7 @@ export const AddDatabaseBtn = {
         attrs: context.attrs,
         on: {
           click: () => {
-            console.log('AddDatabaseBtn', form.values)
+            console.log('AddDatabaseBtn', form.values) // eslint-disable-line
             let href = '/#/connections/create?databaseType=' + form.values.databaseType
             window.open(href, '_blank')
           }

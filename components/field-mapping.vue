@@ -748,7 +748,6 @@ export default {
         })
       }
       this.dialogTableVisible = false
-      console.log(this.fieldMappingNavData)
     },
     // 字段名称弹窗保存
     handleFieldSave() {

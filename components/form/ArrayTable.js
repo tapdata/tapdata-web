@@ -144,7 +144,7 @@ const ArrayTableInner = observer(
       const prefixCls = `${stylePrefix}-form-array-table-inner`
       return () => {
         const field = fieldRef.value
-        console.log('ArrayTableInner:field', field)
+        console.log('ArrayTableInner:field', field) // eslint-disable-line
         const sources = getArrayTableSources(fieldRef, schemaRef)
         // Item Maybe is Proxy
         const dataSource = Array.isArray(field.value) ? field.value.slice().map(item => shallowClone(item)) : []
