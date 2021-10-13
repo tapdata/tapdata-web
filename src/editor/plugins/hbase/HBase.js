@@ -31,7 +31,7 @@ export const HBaseNodeConfig = {
       ],
 
       isDataNode() {
-        return false
+        return true
       },
 
       /**
@@ -49,7 +49,7 @@ export const HBaseNodeConfig = {
        * @return {boolean}
        */
       allowSource() {
-        return true
+        return false
       },
 
       validate(data) {
