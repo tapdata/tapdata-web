@@ -18,9 +18,10 @@
         :remoteMethod="intiFieldMappingTableData"
         :typeMappingMethod="getTypeMapping"
         :fieldProcessMethod="updateFieldProcess"
+        :updateMetadata="updateMetadata"
         :fieldMappingNavData="fieldMappingNavData"
         :field_process="field_process"
-        :data="data"
+        :databaseLinkData="databaseLinkData"
         :hiddenFieldProcess="hiddenFieldProcess"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
@@ -43,8 +44,9 @@ export default {
     'stageId',
     'isFirst',
     'mappingType',
-    'selectSourceArr'
-  , 'data'],
+    'selectSourceArr',
+    'databaseLinkData'
+  ],
   data() {
     return {
       //表设置
@@ -55,9 +57,6 @@ export default {
       field_process: this.databaseFieldProcess
     }
   },
-  created() {
-    console.log(this.dataFlow)
-  },
   methods: {
     /*
      * 模型推演
@@ -66,6 +65,7 @@ export default {
      * 触发父组件：首次条件
      * */
     fieldProcess() {
+      console.log(this.dataFlow)
       if (!this.dataFlow) return
       //迁移任务需要同步字段处理器
       if (this.mappingType && this.mappingType === 'cluster-clone') {
@@ -115,6 +115,7 @@ export default {
      * 对应清空字段处理器
      * 更新父组件 fromData 字段处理器
      * 触发模型重新推演
+     * 清空表改名 字段改名
      * */
     async updateFieldProcess(rollback, rollbackTable, id) {
       if (!this.dataFlow) return
@@ -138,6 +139,28 @@ export default {
       if (this.mappingType && this.mappingType === 'cluster-clone') {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
       }
+      //清空表改名 字段改名
+      this.clearSettingTransform()
+      let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
+      return promise?.data
+    },
+    //清空表改名 字段改名
+    clearSettingTransform() {
+      this.dataFlow['setting'].fieldsNameTransform = 'noOperation'
+      this.dataFlow['setting'].tableNameTransform = 'noOperation'
+      this.dataFlow['setting'].table_prefix = ''
+      this.dataFlow['setting'].table_suffix = ''
+    },
+    //获取左边导航数据 - 表
+    async updateMetadata(type, data) {
+      //将表改名 字段改名 放在setting里面
+      if (type === 'field') {
+        this.dataFlow['setting'].fieldsNameTransform = data.fieldsNameTransform
+      } else {
+        this.dataFlow['setting'].tableNameTransform = data.tableNameTransform
+        this.dataFlow['setting'].table_prefix = data.table_prefix
+        this.dataFlow['setting'].table_suffix = data.table_suffix
+      }
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       return promise?.data
     },
@@ -150,15 +173,46 @@ export default {
      * 请求参数：QualifiedName 分别获取源表字段、目标表字段
      * 过滤：不支持嵌套字段
      * 数据组合：目标字段表示 "t_"标识 (is_deleted 目标表数据)
-     * 数据匹配：同步任务没有字段处理器，有字段处理器（改名），优先original_field_name || field
+     * 数据匹配 源表所有字段过处理器 源表所有字段过字段改名 匹配后的数据再与目标表数据匹配
      * */
-    async intiFieldMappingTableData(row) {
+    async intiFieldMappingTableData(row, type) {
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
       target = target.data && target.data.length > 0 ? target.data[0].fields : []
       // 初始化所有字段都映射 只取顶级字段
       source = source.filter(field => field.field_name.indexOf('.') === -1)
+      //是否有字段处理器
+      let operations = this.getFieldOperations(row)
+      if (operations?.length > 0) {
+        source.forEach(item => {
+          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'RENAME')
+          if (!ops || ops?.length === 0) {
+            item.temporary_field_name = item.field_name
+            return
+          }
+          ops = ops[0]
+          item.temporary_field_name = ops.operand
+        })
+      } else {
+        source.forEach(item => {
+          item.temporary_field_name = item.field_name
+        })
+      }
+      //是否有批量字段改名操作
+      if (type === 'rollback') {
+        this.clearSettingTransform()
+      }
+      let fieldsNameTransform = this.dataFlow['setting'].fieldsNameTransform || ''
+      if (fieldsNameTransform !== '') {
+        source.forEach(item => {
+          if (fieldsNameTransform === 'toUpperCase') {
+            item.temporary_field_name = item.temporary_field_name.toUpperCase() || item.field_name.toUpperCase()
+          } else if (fieldsNameTransform === 'toLowerCase') {
+            item.temporary_field_name = item.temporary_field_name.toLowerCase() || item.field_name.toLowerCase()
+          }
+        })
+      }
       //源表 目标表数据组合
       let fieldMappingTableData = []
       source.forEach(item => {
@@ -170,27 +224,11 @@ export default {
             t_scale: field.scale,
             t_precision: field.precision,
             is_deleted: field.is_deleted, //目标决定这个字段是被删除？
-            t_isPrecisionEdit: true, //默认不能编辑
-            t_isScaleEdit: true //默认不能编辑
+            t_isPrecisionEdit: true, //默认能编辑
+            t_isScaleEdit: true //默认能编辑
           }
           //检查当前name个数
-          if (item.field_name === field.original_field_name) {
-            let targetNames = this.checkFieldName(item.field_name, target)
-            if (!field.is_deleted && targetNames?.length > 1) {
-              fieldMappingTableData.push(Object.assign({}, item, node))
-            } else if (targetNames?.length === 1) {
-              fieldMappingTableData.push(Object.assign({}, item, node))
-            }
-          }
-          //先检查是否被改过名 任务同步不需要检测字段处理器
-          if (this.hiddenFieldProcess) return
-          let ops = this.handleFieldName(row, field.field_name)
-          if (!ops || ops?.length === 0) return
-          ops = ops[0]
-          if (
-            ops.operand === field.field_name &&
-            (ops.original_field_name === item.field_name || ops.field === item.field_name)
-          ) {
+          if (item.temporary_field_name === field.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })
@@ -207,7 +245,7 @@ export default {
     getFieldOperations(row) {
       let operations = []
       if (!this.field_process || this.field_process.length === 0) return
-      let field_process = this.field_process.filter(process => process.table_id === row.sourceQualifiedName)
+      let field_process = this.field_process.filter(process => process.table_id === row.sourceTableId)
       if (field_process.length > 0) {
         operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
       }
@@ -234,11 +272,12 @@ export default {
         this.$message.error('当前表被删除了所有字段，不允许保存操作')
         return //所有字段被删除了 不可以保存任务
       }
+      this.$emit('returnPreFixSuffix', returnData.changNameData)
       this.saveOperations(returnData.row, returnData.operations, returnData.target, returnData.changNameData)
       this.dialogFieldProcessVisible = false
     },
     //保存字段处理器
-    saveOperations(row, operations, target, changNameData) {
+    saveOperations(row, operations, target) {
       if (!target || target?.length === 0) return
       let where = {
         qualified_name: row.sinkQulifiedName
@@ -250,7 +289,6 @@ export default {
       if (this.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.field_process)
-      this.$emit('returnPreFixSuffix', changNameData)
     }
   }
 }

@@ -96,10 +96,10 @@
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
               <FieldMapping
+                v-if="showFieldMapping"
                 ref="fieldMapping"
                 class="fr"
                 mappingType="cluster-clone"
-                v-if="showFieldMapping"
                 :dataFlow="dataFlow"
                 :showBtn="true"
                 :stageId="stageId"
@@ -107,7 +107,7 @@
                 :hiddenFieldProcess="false"
                 :selectSourceArr="model.selectSourceArr"
                 :isFirst="model.isFirst"
-                :data="model"
+                :databaseLinkData="model"
                 @update-first="returnModel"
                 @returnFieldMapping="returnFieldMapping"
                 @returnPreFixSuffix="returnPreFixSuffix"
@@ -345,8 +345,8 @@ export default {
         table_suffix: '',
         dropType: 'no_drop',
         type: 'databaseLink',
-        // tableNameTransform: 'noOperation',
-        // fieldsNameTransform: 'noOperation',
+        tableNameTransform: 'noOperation',
+        fieldsNameTransform: 'noOperation',
         selectSourceArr: [],
         topicData: [],
         queueData: [],
@@ -389,7 +389,7 @@ export default {
       handler() {
         this.$emit('dataChanged', this.getData())
       }
-    },
+    }
     // 'model.tableNameTransform': {
     //   deep: true,
     //   handler(val) {
@@ -602,6 +602,11 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      //同步更新表改名 改字段名
+      this.dataFlow['setting'].table_prefix = this.model.table_prefix
+      this.dataFlow['setting'].tableNameTransform = this.model.tableNameTransform
+      this.dataFlow['setting'].fieldsNameTransform = this.model.fieldsNameTransform
+      this.dataFlow['setting'].table_suffix = this.model.table_suffix
     },
     returnFieldMapping(field_process) {
       this.model.field_process = field_process
@@ -613,6 +618,7 @@ export default {
       this.model.table_suffix = data.table_suffix
       this.model.tableNameTransform = data.tableNameTransform
       this.model.fieldsNameTransform = data.fieldsNameTransform
+      this.getDataFlow()
     },
     //接收是否第一次打开
     returnModel(value) {
