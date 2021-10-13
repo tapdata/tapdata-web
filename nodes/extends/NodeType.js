@@ -1,3 +1,5 @@
+import i18n from '@/i18n'
+
 export class NodeType {
   constructor(node) {
     this.icon = node.icon
@@ -12,8 +14,8 @@ export class NodeType {
     return {}
   }
 
-  execute() {
-    // 节点功能实现
+  validate() {
+    return true
   }
 
   /**
