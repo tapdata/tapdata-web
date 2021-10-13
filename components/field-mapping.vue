@@ -4,7 +4,7 @@
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
       <div style="float: right">
-        <el-button size="mini" @click="handleTableChangName">表改名</el-button>
+        <el-button size="mini" @click="handleChangTableName">表改名</el-button>
         <el-button size="mini" @click="dialogFieldVisible = true">字段改名</el-button>
         <el-button size="mini" type="primary" @click="rollbackAll">恢复默认</el-button>
       </div>
@@ -258,11 +258,11 @@
       custom-class="field-maping-table-dialog"
       :visible.sync="dialogFieldVisible"
       :close-on-click-modal="false"
-      :before-close="handleTableClose"
+      :before-close="handleFieldClose"
     >
       <div class="table-box">
         <el-form ref="form" class="table-form" :model="form" label-width="120px">
-          <el-form-item label="表名大小写">
+          <el-form-item label="字段名大小写">
             <el-select size="mini" v-model="form.fieldsNameTransform">
               <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
               <el-option :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></el-option>
@@ -272,14 +272,7 @@
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button
-          size="mini"
-          @click="
-            dialogFieldVisible = false
-            form.fieldsNameTransform = ''
-          "
-          >取 消</el-button
-        >
+        <el-button size="mini" @click="handleFieldClose">取 消</el-button>
         <el-button size="mini" type="primary" @click="handleFieldSave()">确 定</el-button>
       </span>
     </el-dialog>
@@ -297,7 +290,7 @@ export default {
     remoteMethod: Function,
     typeMappingMethod: Function,
     fieldProcessMethod: Function,
-    getMetadata: Function,
+    updateMetadata: Function,
     data: Object,
     hiddenFieldProcess: {
       type: Boolean,
@@ -315,6 +308,7 @@ export default {
       searchTable: '',
       loading: false,
       loadingPage: false,
+      loadingTableBtn: false,
       typeMapping: [],
       currentTypeRules: [],
       defaultFieldMappingNavData: '',
@@ -565,7 +559,7 @@ export default {
         }
       })
     },
-    handleTableChangName() {
+    handleChangTableName() {
       this.dialogTableVisible = true
     },
     //字段修改统一弹窗
@@ -663,16 +657,17 @@ export default {
       this.handleClose()
     },
     //更新schema
-    updateMetaData() {
+    updateParentMetaData(type, data) {
+      this.loadingTableBtn = true
       this.$nextTick(() => {
-        this.getMetadata &&
-          this.getMetadata()
+        this.updateMetadata &&
+          this.updateMetadata(type, data)
             .then(data => {
               this.$emit('update-nav', data)
-              this.updateView()
             })
             .finally(() => {
-              this.loadingTable = false
+              this.loadingTableBtn = false
+              this.updateView()
             })
       })
     },
@@ -745,13 +740,22 @@ export default {
         table_suffix: ''
       }
     },
+    // 表改名称弹窗取消
+    handleFieldClose() {
+      this.dialogFieldVisible = false
+      this.form = {
+        fieldsNameTransform: ''
+      }
+    },
     // 表改名弹窗保存
     handleTableNameSave() {
       this.dialogTableVisible = false
+      this.updateParentMetaData('table', this.form)
     },
     // 字段名称弹窗保存
     handleFieldSave() {
       this.dialogFieldVisible = false
+      this.updateParentMetaData('table', this.form)
     },
     //字段删除
     del(id, value) {
