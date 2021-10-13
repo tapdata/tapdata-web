@@ -18,6 +18,7 @@
           <VButton
             type="primary"
             :disabled="!statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)"
+            :loading="startLoading"
             @click="start"
             >启动</VButton
           >
@@ -232,7 +233,8 @@ export default {
             }
           ]
         }
-      }
+      },
+      startLoading: false
     }
   },
   created() {
@@ -447,6 +449,9 @@ export default {
         .catch(() => {
           this.$message.error('任务启动失败，请编辑任务完成映射配置')
         })
+        .finally(() => {
+          this.startLoading = false
+        })
     },
     responseHandler(data, msg) {
       let failList = data.fail || []
@@ -508,6 +513,7 @@ export default {
     },
     start() {
       this.$checkAgentStatus(() => {
+        this.startLoading = true
         this.changeStatus({ status: 'scheduled' })
       })
     },
