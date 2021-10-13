@@ -18,23 +18,6 @@ export class JavaScript extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
-      type: {
-        title: '脚本类型',
-        type: 'string',
-        required: true,
-        enum: [
-          {
-            label: 'JavaScript',
-            value: 'js_processor'
-          },
-          {
-            label: 'Java',
-            value: 'java_processor'
-          }
-        ],
-        'x-decorator': 'ElFormItem',
-        'x-component': 'Select'
-      },
       script: {
         title: '脚本',
         type: 'string',

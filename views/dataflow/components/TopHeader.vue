@@ -1,8 +1,5 @@
 <template>
   <header class="layout-header border-bottom">
-    <!--<div class="title-wrap flex flex-shrink-0">
-
-    </div>-->
     <div class="title-input-wrap flex align-center mx-2 flex-shrink-0 h-100" :data-value="hiddenValue">
       <input
         v-focus-select
@@ -14,175 +11,50 @@
       />
       <VIcon @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
     </div>
-    <div class="flex align-center flex-grow-1 pr-3">
+    <div class="operation-center flex align-center">
       <button @click="$emit('undo')" class="icon-btn">
-        <VIcon size="18">undo</VIcon>
+        <VIcon size="20">undo</VIcon>
       </button>
       <button @click="$emit('redo')" class="icon-btn">
-        <VIcon size="18">redo</VIcon>
+        <VIcon size="20">redo</VIcon>
       </button>
       <button @click="$emit('delete')" class="icon-btn">
-        <VIcon size="18">delete</VIcon>
+        <VIcon size="20">delete</VIcon>
       </button>
       <button @click="$emit('fullscreen')" class="icon-btn">
-        <VIcon size="18">fullscreen</VIcon>
+        <VIcon size="20">fullscreen</VIcon>
       </button>
       <button @click="$emit('center-content')" class="icon-btn">
-        <VIcon size="18">compress</VIcon>
+        <VIcon size="20">compress</VIcon>
       </button>
       <button @click="$emit('zoom-out')" class="icon-btn">
-        <VIcon size="18">zoom-out</VIcon>
+        <VIcon size="20">zoom-out</VIcon>
       </button>
       <button @click="$emit('zoom-in')" class="icon-btn">
-        <VIcon size="18">zoom-in</VIcon>
+        <VIcon size="20">zoom-in</VIcon>
       </button>
-      <VDivider class="mx-3" vertical></VDivider>
 
-      <ElButton @click="$emit('auto-layout')" class="btn-base" size="mini"> 自动布局 </ElButton>
-
-      <ElButton v-if="!isMonitor" @click="$emit('save')" class="btn-base mr-3" size="mini" :loading="isSaving">
-        <VIcon size="12" class="mr-1">save</VIcon>
-        <span>{{ $t('dataFlow.button.save') }}</span>
-      </ElButton>
-
-      <ElAutocomplete
-        class="mr-3"
-        id="searchNode"
-        size="mini"
-        hide-loading
-        clearable
-        suffix-icon="el-icon-search"
-        :placeholder="$t('dataFlow.searchNode')"
-      ></ElAutocomplete>
-
-      <ElButtonGroup class="flex mr-3">
-        <ElButton
-          v-if="['scheduled', 'running'].includes(status) && executeMode === 'running_debug'"
-          class="btn-base"
-          size="mini"
-        >
-          <VIcon class="mr-1" size="12">zanting3</VIcon>
-          <span>{{ $t('dataFlow.button.stop_capture') }}</span>
-        </ElButton>
-        <ElButton
-          :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
-          v-if="['running'].includes(status) && executeMode === 'normal'"
-          class="btn-base"
-          size="mini"
-        >
-          <VIcon class="mr-1" size="12">yulan1</VIcon>
-          <span>{{ $t('dataFlow.button.capture') }}</span>
-        </ElButton>
-        <ElButton
-          class="btn-base"
-          size="mini"
-        >
-          <VIcon class="mr-1" size="12">kujitongbu</VIcon>
-          <span>{{ $t('dataFlow.button.reloadSchema') }}</span>
-        </ElButton>
-        <ElButton
-          v-if="isEditable"
-          class="btn-base"
-          size="mini"
-        >
-          <VIcon class="mr-1" size="12">yulan</VIcon>
-          <span>{{ $t('dataFlow.button.preview') }}</span>
-        </ElButton>
-        <ElButton class="btn-base" size="mini">
-          <VIcon class="mr-1" size="12">rizhi</VIcon>
-          <span>{{ $t('dataFlow.button.logs') }}</span>
-        </ElButton>
-      </ElButtonGroup>
-
-      <ElButton class="btn-base btn-setting" size="mini" @click="$emit('showSettings')">
-        <span class="btn-setting-icon inline-flex justify-center align-center">
-          <VIcon size="12">shezhi</VIcon>
-        </span>
-        <span class="btn-setting-text">{{ syncTxt }}</span>
-      </ElButton>
-
+      <button @click="$emit('auto-layout')" class="icon-btn">
+        <VIcon size="20">auto-layout</VIcon>
+      </button>
+    </div>
+    <div class="flex align-center flex-grow-1 pr-3">
       <div class="flex-grow-1"></div>
 
-      <ElTag
-        :type="
-          status === 'running' ? 'success' : status === 'error' ? 'danger' : status === 'paused' ? 'warning' : 'info'
-        "
-        effect="plain"
-        class="flex align-center mx-3 border-0"
-      >
-        <span v-if="status === 'running'" class="flex align-center px-1">
-          <el-image style="width: 15px; height: 15px" src="static/editor/running.svg"></el-image>
-        </span>
-        <span v-else-if="status === 'stopping'" class="flex align-center px-1">
-          <el-image style="width: 15px; height: 15px" src="static/editor/stopping.svg"></el-image>
-        </span>
-        <span v-else-if="status === 'scheduled'" class="flex align-center px-1">
-          <el-image style="width: 15px; height: 15px" src="static/editor/scheduled.svg"></el-image>
-        </span>
-        <span
-          class="lh-1"
-          :style="{
-            color: status === 'scheduled' ? '#b0e58c' : status === 'stopping' ? '#fccd85' : ''
-          }"
-          >{{ $t('dataFlow.state') }}: {{ $t('dataFlow.status.' + status.replace(/ /g, '_')) }}</span
-        >
-      </ElTag>
-      <ElButtonGroup class="flex">
-        <ElButton
-          @click="$emit('start')"
-          class="btn-base btn-operation"
-          size="mini"
-          :loading="isStarting"
-        >
-          <VIcon class="mr-1" size="12">play</VIcon>
-          <span>{{ $t('dataFlow.button.start') }}</span>
-        </ElButton>
-        <ElButton
-          class="btn-base btn-operation"
-          size="mini"
-        >
-          <VIcon class="mr-1" size="12">pause</VIcon>
-          <span>{{ $t('dataFlow.button.stop') }}</span>
-        </ElButton>
-        <ElButton
-          class="btn-base btn-operation"
-          size="mini"
-        >
-          <VIcon class="mr-1" size="12">shuaxin</VIcon>
-          <span>{{ $t('dataFlow.button.reset') }}</span>
-        </ElButton>
-        <ElButton
-          class="btn-base btn-operation"
-          size="mini"
-        >
-          <VIcon class="mr-1" size="12">stop</VIcon>
-          <span>{{ $t('dataFlow.button.force_stop') }}</span>
-        </ElButton>
-      </ElButtonGroup>
+      <ElButton round type="primary" class="mx-4" @click="$emit('save')"> 保存 </ElButton>
 
-      <!--<ElButton
-        v-readonlybtn="'SYNC_job_edition'"
-        :disabled="
-          $disabledByPermission('SYNC_job_edition_all_data', creatUserId)
-        "
-        v-if="!statusBtMap[status].edit && !editable"
-        class="btn-edit ml-3"
-        size="mini"
-        type="primary"
-      >
-        <i class="mr-1 iconfont icon-bianji2"></i>
-        <span>{{ $t('dataFlow.edit') }}</span>
-      </ElButton>-->
+      <button @click="$emit('showSettings')" class="icon-btn">
+        <VIcon size="20">setting</VIcon>
+      </button>
     </div>
   </header>
 </template>
 
 <script>
 import VIcon from 'web-core/components/VIcon'
-import VDivider from 'web-core/components/VDivider'
 import focusSelect from 'web-core/directives/focusSelect'
-import { mapGetters, mapMutations } from 'vuex'
 import DataflowApi from 'web-core/api/DataFlows'
+import { mapGetters, mapMutations } from 'vuex'
 
 const dataflowApi = new DataflowApi()
 export default {
@@ -204,7 +76,7 @@ export default {
     creatUserId: String
   },
 
-  components: { VDivider, VIcon },
+  components: { VIcon },
 
   data() {
     return {
@@ -284,21 +156,6 @@ export default {
         }
       }
       backToList()
-      /*if (!this.dataChangeFalg || $PLATFORM) {
-        backToList()
-      } else {
-        this.$confirm(this.$t('dataFlow.saveReminder'), this.$t('dataFlow.backlistText'), {
-          type: 'warning',
-          confirmButtonText: this.$t('dataFlow.leave'),
-          closeOnClickModal: false
-        }).then(resFlag => {
-          if (!resFlag) {
-            return
-          }
-          this.dataChangeFalg = false
-          backToList()
-        })
-      }*/
     }
   }
 }
@@ -343,7 +200,7 @@ $sidebarBg: #fff;
   z-index: 10;
   display: flex;
   width: 100%;
-  flex: 0 0 40px;
+  flex: 0 0 48px;
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
 
@@ -426,7 +283,7 @@ $sidebarBg: #fff;
   }
 
   .icon-btn + .icon-btn {
-    margin-left: 4px;
+    margin-left: 16px;
   }
 
   .btn-setting {
@@ -470,6 +327,14 @@ $sidebarBg: #fff;
     .el-input__inner {
       border-radius: $radius;
     }
+  }
+
+  .operation-center {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 </style>
