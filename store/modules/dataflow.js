@@ -55,7 +55,7 @@ const state = () => ({
       icon: 'row-filter',
       name: 'Row Filter',
       type: 'row_filter_processor',
-      constructor: 'JavaScript'
+      constructor: 'RowFilter'
     },
     {
       icon: 'joint-cache',

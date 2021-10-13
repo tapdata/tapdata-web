@@ -16,7 +16,6 @@ const Conditions = observer(
 
     render() {
       const { conditions } = this
-      console.log('conditions', this.conditions)
       return (
         <div class="cond-list">
           {conditions.map((cond, ci) => {
@@ -166,12 +165,12 @@ export const FilterConditions = connect(
           deep: true,
           handler(v) {
             this.$emit('change', v)
-            console.log('changeConditions', v)
+            console.log('changeConditions', v) // eslint-disable-line
           }
         },
 
         value(v) {
-          console.log('watch:value', v)
+          console.log('watch:value', v) // eslint-disable-line
           // this.conditions = v
         }
       },
@@ -223,7 +222,7 @@ export const FilterConditions = connect(
 
         let btns
 
-        console.log('databaseType', this.databaseType)
+        console.log('databaseType', this.databaseType) // eslint-disable-line
 
         if (this.databaseType === 'mongodb') {
           if (!conditions.length) {

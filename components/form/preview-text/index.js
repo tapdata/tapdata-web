@@ -25,7 +25,7 @@ const Input = defineComponent({
   props: [],
   setup(_props, { attrs, slots }) {
     const placeholder = usePlaceholder(attrs.value)
-    console.log('FPreviewTextInput', slots, attrs, _props)
+    console.log('FPreviewTextInput', slots, attrs, _props) // eslint-disable-line
     return () => {
       return h(
         Space,
