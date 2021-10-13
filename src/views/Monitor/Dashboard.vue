@@ -581,11 +581,13 @@ export default {
     },
     //是否支持同步内容
     showContentTab(data) {
+      let stageId = data?.stages?.[1]?.id || ''
       let param = {
-        stages: data?.stages
+        stages: data?.stages,
+        stageId: stageId
       }
       this.$axios.post('tm/api/DataFlows/tranModelVersionControl', param).then(data => {
-        this.showContent = data?.[this.stageId]
+        this.showContent = data?.[stageId] || false
       })
     }
   }
