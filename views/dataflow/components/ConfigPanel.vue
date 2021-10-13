@@ -6,33 +6,53 @@
     }"
     class="config-panel border-top"
   >
-    <ElTabs v-model="currentTab" class="config-tabs">
-      <ElTabPane label="属性设置">
-        <FormPanel v-on="$listeners"></FormPanel>
-      </ElTabPane>
-      <ElTabPane label="元数据">
-        <MetaPane></MetaPane>
-      </ElTabPane>
-      <ElTabPane label="数据详情">
-        <DataPane></DataPane>
-      </ElTabPane>
-    </ElTabs>
+    <div v-if="activeNode" class="config-tabs-wrap">
+      <div class="tabs-header flex align-center px-4">
+        <VIcon class="tabs-header-icon mr-2">{{ icon }}</VIcon>
+        <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
+          <input
+            ref="nameInput"
+            v-focus-select
+            :value="activeNode.name"
+            :readonly="isMonitor"
+            class="title-input text-truncate"
+            @change="handleChangeName"
+          />
+          <VIcon @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
+        </div>
+      </div>
+      <ElTabs v-model="currentTab" class="config-tabs">
+        <ElTabPane label="属性设置">
+          <FormPanel v-on="$listeners"></FormPanel>
+        </ElTabPane>
+        <ElTabPane label="元数据">
+          <MetaPane></MetaPane>
+        </ElTabPane>
+        <ElTabPane label="数据详情">
+          <DataPane></DataPane>
+        </ElTabPane>
+      </ElTabs>
+    </div>
   </section>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import FormPanel from 'web-core/views/dataflow/components/FormPanel'
 import DataPane from 'web-core/views/dataflow/components/DataPane'
 import MetaPane from 'web-core/views/dataflow/components/MetaPane'
+import VIcon from 'web-core/components/VIcon'
+import { NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
+import focusSelect from 'web-core/directives/focusSelect'
 
 export default {
   name: 'ConfigPanel',
 
   directives: {
-    resize
+    resize,
+    focusSelect
   },
 
   props: {
@@ -45,10 +65,32 @@ export default {
     }
   },
 
-  components: { MetaPane, DataPane, FormPanel },
+  components: { VIcon, MetaPane, DataPane, FormPanel },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType'])
+    ...mapGetters('dataflow', ['activeType', 'activeNode']),
+
+    icon() {
+      return this.activeNode ? NODE_TYPE_ICON[this.activeNode.type] : null
+    }
+  },
+
+  methods: {
+    ...mapMutations('dataflow', ['updateNodeProperties']),
+
+    handleChangeName(e) {
+      console.log('handleChangeName', e.target.value)
+      this.updateNodeProperties({
+        id: this.activeNode.id,
+        properties: {
+          name: e.target.value
+        }
+      })
+    },
+
+    focusNameInput() {
+      this.$refs.nameInput.focus()
+    }
   }
 }
 </script>
@@ -66,8 +108,50 @@ export default {
 }
 </style>
 <style scoped lang="scss">
-//$color: #2c65ff;
 $color: map-get($color, primary);
+$tabsHeaderWidth: 180px;
+
+.title-input-wrap {
+  position: relative;
+  flex: 1;
+  font-size: 13px;
+
+  &:hover {
+    .title-input {
+      border-color: #dcdfe6;
+    }
+    .title-input-icon {
+      color: $color;
+    }
+  }
+
+  .title-input {
+    position: relative;
+    padding: 2px 28px 1px 8px;
+    width: 100%;
+    height: 28px;
+    line-height: 28px;
+    outline: none;
+    box-shadow: none;
+    background: 0 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+    &:focus {
+      border-color: #409eff;
+      & + .title-input-icon {
+        color: $color;
+      }
+    }
+  }
+
+  .title-input-icon {
+    position: absolute;
+    right: 8px;
+    height: 28px;
+  }
+}
 
 .config-panel {
   position: relative;
@@ -78,6 +162,25 @@ $color: map-get($color, primary);
   transition: height 0.24s;
   will-change: height;
 
+  .config-tabs-wrap {
+    position: relative;
+    height: 100%;
+  }
+
+  .tabs-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: $tabsHeaderWidth;
+    height: 40px;
+
+    &-icon {
+      color: $color;
+      font-size: 18px;
+    }
+  }
+
   ::v-deep {
     .config-tabs.el-tabs {
       height: 100%;
@@ -85,7 +188,8 @@ $color: map-get($color, primary);
       > .el-tabs__header {
         margin: 0;
         .el-tabs__nav-wrap {
-          padding: 0 16px;
+          padding-left: $tabsHeaderWidth + 32px;
+          padding-right: 16px;
 
           &::after {
             height: 1px;
