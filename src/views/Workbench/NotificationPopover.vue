@@ -332,7 +332,7 @@ export default {
       display: flex;
       flex-direction: column;
       height: 262px;
-      padding: 0 16px;
+      padding: 0 16px 30px;
       overflow: hidden;
       margin-bottom: -1px;
       position: relative;
