@@ -7,7 +7,6 @@
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <!--				<div class="mr-6 pointer" @click="command('toCommunity')">社区</div>-->
-        <div class="mr-6 pointer" @click="command('handbook')">使用手册</div>
         <!--        <div class="mr-6 pointer" @click="command('questions')">问答支持</div>-->
         <el-popover placement="top-start" width="240" min-width="0" trigger="click">
           <div class="text-center">
@@ -15,9 +14,19 @@
             <div>扫码添加官方小助手</div>
             <div>备注“云版”即可进入群获取支持</div>
           </div>
-          <div class="mr-6 pointer" slot="reference">问答支持</div>
+          <div class="mr-6 pointer" slot="reference">
+            <VIcon class="mr-2" size="17">question</VIcon>
+            <span>问答支持</span>
+          </div>
         </el-popover>
-        <div class="mr-6 pointer" @click="command('feedback')">提交反馈</div>
+        <div class="mr-6 pointer" @click="command('handbook')">
+          <VIcon class="mr-2" size="17">send</VIcon>
+          <span>使用手册</span>
+        </div>
+        <div class="mr-6 pointer" @click="command('feedback')">
+          <VIcon class="v-icon mr-2" size="17">feedback</VIcon>
+          <span>提交反馈</span>
+        </div>
         <!--        <div class="mr-6 pointer" @click="command('source-center')">文档中心</div>-->
         <!--        <div class="flex align-items-center mr-6 pointer" @click="command('contact-us')">-->
         <!--          <VIcon class="mr-2" size="17">send</VIcon>-->
@@ -230,8 +239,14 @@ export default {
     align-items: center;
     color: rgba(255, 255, 255, 0.45);
     > div {
+      .v-icon {
+        color: #fff;
+      }
       &:hover {
         color: map-get($color, primary);
+        .v-icon {
+          color: map-get($color, primary);
+        }
       }
     }
     .agent-status {
