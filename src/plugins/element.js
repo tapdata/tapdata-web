@@ -54,7 +54,8 @@ import {
   Upload,
   Autocomplete,
   Collapse,
-  CollapseItem
+  CollapseItem,
+  Notification
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -81,6 +82,7 @@ Vue.prototype.$confirm = (param1, param2, param3 = { type: 'warning' }) => {
 
 Vue.prototype.$prompt = MessageBox.prompt
 Vue.prototype.$loading = Loading.service
+Vue.prototype.$notify = Notification
 window.loading = Loading.service
 
 Vue.use(Loading.directive)
