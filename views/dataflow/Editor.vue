@@ -593,13 +593,13 @@ export default {
       let result
       try {
         result = await dataFlowsApi.get([dataflowId])
-        this.creatUserId = result.data.user_id
+        // this.creatUserId = result.user_id
       } catch (e) {
         this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
         return
       }
 
-      const { data } = result
+      const data = result
 
       this.status = data.status
       this.setDataflowId(dataflowId)
@@ -1082,13 +1082,13 @@ export default {
       try {
         this.isSaving = true
         const data = this.getDataflowDataToSave()
-        const { data: dataflow } = await dataFlowsApi.draft(data)
+        const dataflow = await dataFlowsApi.draft(data)
         this.isSaving = false
         this.$message.success(this.$t('message.saveOK'))
         this.setDataflowId(dataflow.id) // 将生成的id保存到store
 
         await this.$router.push({
-          name: 'DataflowEdit',
+          name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowSave' },
           query: {
             mapping: this.mapping

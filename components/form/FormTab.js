@@ -7,7 +7,7 @@ const useTabs = () => {
   const tabsField = tabsFieldRef.value
   const schema = useFieldSchema()
   const tabs = []
-  console.log('tabsField', tabsField)
+  // console.log('tabsField', tabsField)
   schema.value.mapProperties((schema, name) => {
     const field = tabsField.query(tabsField.address.concat(name)).take()
     if (field?.display === 'none' || field?.display === 'hidden') return
