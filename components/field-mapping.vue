@@ -291,7 +291,7 @@ export default {
     typeMappingMethod: Function,
     fieldProcessMethod: Function,
     updateMetadata: Function,
-    data: Object,
+    databaseLinkData: Object,
     hiddenFieldProcess: {
       type: Boolean,
       default: false
@@ -337,10 +337,10 @@ export default {
       dialogTableVisible: false,
       dialogFieldVisible: false,
       form: {
-        tableNameTransform: this.data.tableNameTransform,
-        fieldsNameTransform: this.data.fieldsNameTransform,
-        table_prefix: this.data.table_prefix,
-        table_suffix: this.data.table_suffix
+        tableNameTransform: this.databaseLinkData.tableNameTransform,
+        fieldsNameTransform: this.databaseLinkData.fieldsNameTransform,
+        table_prefix: this.databaseLinkData.table_prefix,
+        table_suffix: this.databaseLinkData.table_suffix
       },
       sourceTableName: 'tableName'
     }
@@ -409,12 +409,17 @@ export default {
     },
     //页面刷新
     updateView(data) {
+      //只读模式初始化
       if (data) {
         this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(data))
         this.selectRow = data[0]
         this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
       }
-      this.initTableData()
+      this.updateData()
+    },
+    //恢复默认 刷新页面
+    updateData(type) {
+      this.initTableData(type)
       this.initTypeMapping()
       this.clearSearch()
       this.operations = []
@@ -436,11 +441,11 @@ export default {
       }
     },
     //初始化table数据
-    initTableData() {
+    initTableData(type) {
       this.loading = true
       this.$nextTick(() => {
         this.remoteMethod &&
-          this.remoteMethod(this.selectRow)
+          this.remoteMethod(this.selectRow, type)
             .then(({ data, target }) => {
               this.target = target
               this.fieldMappingTableData = data
@@ -477,7 +482,7 @@ export default {
     //更新target 数据
     updateTarget(id, key, value) {
       this.target.forEach(field => {
-        if (field.id === id) {
+        if (field.id === id && field.is_deleted !== 'true' && field.is_deleted !== true) {
           field[key] = value
           field['source'] = 'manual'
           field['is_auto_allowed'] = false
@@ -524,12 +529,18 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           this.loadingPage = true
+          this.form = {
+            tableNameTransform: 'noOperation',
+            fieldsNameTransform: 'noOperation',
+            table_prefix: '',
+            table_suffix: ''
+          }
           this.$nextTick(() => {
             this.fieldProcessMethod &&
               this.fieldProcessMethod('table', name, id)
                 .then(data => {
                   this.$emit('update-nav', data)
-                  this.updateView()
+                  this.updateData('rollback')
                 })
                 .finally(() => {
                   this.loadingPage = false
@@ -544,13 +555,19 @@ export default {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
+          this.form = {
+            tableNameTransform: 'noOperation',
+            fieldsNameTransform: 'noOperation',
+            table_prefix: '',
+            table_suffix: ''
+          }
           this.$nextTick(() => {
             this.loadingPage = true
             this.fieldProcessMethod &&
               this.fieldProcessMethod('all')
                 .then(data => {
                   this.$emit('update-nav', data)
-                  this.updateView()
+                  this.updateData('rollback')
                 })
                 .finally(() => {
                   this.loadingPage = false
@@ -658,7 +675,7 @@ export default {
     },
     //更新schema
     updateParentMetaData(type, data) {
-      this.loadingTableBtn = true
+      this.loadingPage = true
       this.$nextTick(() => {
         this.updateMetadata &&
           this.updateMetadata(type, data)
@@ -666,7 +683,7 @@ export default {
               this.$emit('update-nav', data)
             })
             .finally(() => {
-              this.loadingTableBtn = false
+              this.loadingPage = false
               this.updateView()
             })
       })
@@ -734,18 +751,14 @@ export default {
     // 表改名称弹窗取消
     handleTableClose() {
       this.dialogTableVisible = false
-      this.form = {
-        tableNameTransform: 'noOperation',
-        table_prefix: '',
-        table_suffix: ''
-      }
+      this.form.tableNameTransform = 'noOperation'
+      this.form.table_prefix = ''
+      this.form.table_suffix = ''
     },
     // 表改名称弹窗取消
     handleFieldClose() {
       this.dialogFieldVisible = false
-      this.form = {
-        fieldsNameTransform: ''
-      }
+      this.form.fieldsNameTransform = 'noOperation'
     },
     // 表改名弹窗保存
     handleTableNameSave() {
@@ -755,7 +768,7 @@ export default {
     // 字段名称弹窗保存
     handleFieldSave() {
       this.dialogFieldVisible = false
-      this.updateParentMetaData('table', this.form)
+      this.updateParentMetaData('field', this.form)
     },
     //字段删除
     del(id, value) {
@@ -1023,7 +1036,7 @@ export default {
     margin-top: 20px;
     height: 0;
     .nav {
-      width: 293px;
+      flex: 0 0 auto;
       border-top: 1px solid #f2f2f2;
       border-right: 1px solid #f2f2f2;
       overflow-y: auto;
@@ -1085,6 +1098,11 @@ export default {
           align-items: center;
         }
       }
+    }
+    .main {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
     }
     .color-darkorange {
       color: darkorange;
