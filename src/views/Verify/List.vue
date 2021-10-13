@@ -72,19 +72,23 @@
           <div class="flex align-items-center">
             <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
               <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
+                <VIcon class="verify-status-icon color-danger" size="14">error</VIcon>
                 <span v-if="scope.row.inspectMethod === 'row_count'">
                   {{ $t('verify_result_count_inconsistent') }}
                 </span>
                 <span v-else>{{ $t('verify_result_content_diff', [scope.row.difference_number]) }}</span>
               </div>
               <div v-else class="data-verify__status success">
+                <VIcon class="verify-status-icon" size="14">success-fill-color</VIcon>
                 <span>{{ $t('verify_result_count_consistent') }}</span>
               </div>
             </template>
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
+              <VIcon class="verify-status-icon color-danger" size="14">error</VIcon>
               <span>Error</span>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
+              <VIcon size="18" class="color-danger">loading</VIcon>
               <span>{{ statusMap[scope.row.status].text }}</span>
             </div>
             <div v-else>-</div>
