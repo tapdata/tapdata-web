@@ -6,7 +6,7 @@
           <template #title>
             <div class="flex align-center flex-1">
               <span class="flex-1">连接</span>
-              <VIcon @click.stop="onClick" class="mr-2">plus</VIcon>
+              <VIcon class="mr-2 click-btn" @click.stop="creat">plus</VIcon>
               <VIcon>magnify</VIcon>
             </div>
           </template>
@@ -98,6 +98,28 @@
       :node="dragNodeType"
       :class="`node--${dragNodeType.group}`"
     ></BaseNode>
+    <ElDialog
+      title="选择数据源类型"
+      :visible.sync="connectionDialog"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
+      <ConnectionTypeSelector
+        :types="[
+          'mysql',
+          'oracle',
+          'sqlserver',
+          'mongodb',
+          'postgres',
+          'elasticsearch',
+          'kafka',
+          'dameng',
+          'greenplum',
+          'mq'
+        ]"
+        @select="createConnection"
+      ></ConnectionTypeSelector>
+    </ElDialog>
   </aside>
 </template>
 
@@ -112,12 +134,14 @@ import 'web-core/assets/icons/svg/field-processor.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
 import VIcon from 'web-core/components/VIcon'
+import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
 import resize from 'web-core/directives/resize'
 import { DB_ICON } from 'web-core/views/dataflow/constants'
 import BaseNode from 'web-core/views/dataflow/components/BaseNode'
 import { debounce, throttle } from 'lodash'
 import ConnectionsApi from 'web-core/api/Connections'
 import MetadataApi from 'web-core/api/MetadataInstances'
+
 import { Select } from 'element-ui'
 // import ElScrollbar from 'element-ui/packages/scrollbar'
 const connections = new ConnectionsApi()
@@ -127,7 +151,7 @@ import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/re
 export default {
   name: 'LeftSidebar',
 
-  components: { BaseNode, VIcon, ElScrollbar: Select.components.ElScrollbar },
+  components: { BaseNode, VIcon, ConnectionTypeSelector, ElScrollbar: Select.components.ElScrollbar },
 
   data() {
     return {
@@ -142,7 +166,8 @@ export default {
       currentConnectionId: '',
       dragStarting: false,
       dragMoving: false,
-      dragNodeType: null
+      dragNodeType: null,
+      connectionDialog: false
     }
   },
 
@@ -184,10 +209,17 @@ export default {
   },
 
   methods: {
-    onClick() {
-      console.log('log')
+    // 创建连接
+    creat() {
+      this.connectionDialog = true
     },
-
+    createConnection(type) {
+      this.connectionDialog = false
+      this.$router.push({
+        name: 'ConnectionCreate',
+        query: { databaseType: type }
+      })
+    },
     async init() {
       const data = await this.loadDatabase()
       this.handleSelectDB(data[0])
@@ -283,6 +315,7 @@ export default {
     },
 
     onStart(item) {
+      console.log('OnStart', item)
       this.dragNodeType = item
       this.dragStarting = true
       this.dragMoving = false
@@ -344,7 +377,9 @@ $itemH: 34px;
     .tb-list {
       max-height: 272px;
     }*/
-
+    .click-btn {
+      z-index: 2;
+    }
     .db-item,
     .tb-item {
       height: $itemH;
