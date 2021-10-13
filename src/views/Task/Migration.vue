@@ -46,7 +46,11 @@
         :data="list"
         @sort-change="sortChange"
       >
-        <ElTableColumn label="任务名称" prop="name" min-width="200"></ElTableColumn>
+        <ElTableColumn label="任务名称" prop="name" min-width="200">
+          <template v-slot="scope">
+            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
+          </template>
+        </ElTableColumn>
         <ElTableColumn label="所属agent" prop="belongAgent"></ElTableColumn>
         <ElTableColumn label="任务类型" prop="syncTypeText"></ElTableColumn>
         <ElTableColumn label="任务状态">
@@ -120,6 +124,7 @@
                 <VIcon>arrow-down</VIcon>
               </ElLink>
               <ElDropdownMenu slot="dropdown">
+                <ElDropdownItem command="details">详情</ElDropdownItem>
                 <ElDropdownItem command="copy">复制</ElDropdownItem>
                 <ElDropdownItem command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
                   重置
@@ -456,6 +461,11 @@ export default {
       this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'asc' : 'desc'}`
       this.fetch(1)
     },
+    details(ids) {
+      this.toDetails({
+        id: ids[0]
+      })
+    },
     reset() {
       this.searchParams = {
         status: '',
@@ -494,6 +504,15 @@ export default {
     createTask() {
       this.$router.push({
         path: '/task/create'
+      })
+    },
+    toDetails(row) {
+      console.log('toDetails', row)
+      this.$router.push({
+        name: 'DataflowDetails',
+        params: {
+          id: row.id
+        }
       })
     },
     changeStatus(ids, { status, errorEvents }) {

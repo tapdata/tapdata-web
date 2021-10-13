@@ -8,6 +8,7 @@ import UpgradeVersion from '@/views/AgentDownload/UpgradeVersion.vue'
 import ContactUs from '@/views/ContactUs'
 
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/Task/Form.vue')
+const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/Task/Details.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/Connection/Form.vue')
 
 const routes = [
@@ -130,6 +131,14 @@ const routes = [
             component: TaskForm,
             meta: {
               title: '编辑任务'
+            }
+          },
+          {
+            path: ':id/details',
+            name: 'DataflowDetails',
+            component: TaskDetails,
+            meta: {
+              title: '任务详情'
             }
           }
         ]

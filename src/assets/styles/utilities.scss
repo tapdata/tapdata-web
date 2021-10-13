@@ -429,6 +429,14 @@
   transform: translateY(-50%) !important;
 }
 
+.rotate-90 {
+  transform: rotate(90deg);
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
 .border {
   border: 1px solid #dee2e6 !important;
 }
@@ -588,7 +596,9 @@
 .min-vh-100 {
   min-height: 100vh !important;
 }
-
+.flex-fit {
+  flex: 1 !important;
+}
 .flex-fill {
   flex: 1 1 auto !important;
 }
@@ -2528,6 +2538,18 @@
 
 .text-black-50 {
   color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.text-black-65 {
+  color: rgba(0, 0, 0, 0.65) !important;
+}
+
+.text-black-75 {
+  color: rgba(0, 0, 0, 0.75) !important;
+}
+
+.text-black-85 {
+  color: rgba(0, 0, 0, 0.85) !important;
 }
 
 .text-white-50 {
@@ -11909,7 +11931,8 @@
   cursor: grabbing;
 }
 
-.cursor-pointer, .clickable {
+.cursor-pointer,
+.clickable {
   cursor: pointer;
 }
 .cursor-col-resize {
@@ -11924,19 +11947,60 @@
 
 //TODO 应该通过语法生成 color-* 的颜色原子类
 .color-primary {
-  color: map-get($color, primary);
+  color: map-get($color, primary) !important;
 }
 .color-danger {
-  color: map-get($color, danger);
+  color: map-get($color, danger) !important;
 }
 .color-success {
-  color: map-get($color, success);
+  color: map-get($color, success) !important;
 }
 .color-warning {
-  color: map-get($color, warning);
+  color: map-get($color, warning) !important;
+}
+.color-lprimary {
+  color: map-get($color, lprimary) !important;
+}
+.color-lsuccess {
+  color: map-get($color, lsuccess) !important;
+}
+.color-info {
+  color: map-get($color, info) !important;
+}
+.color-linfo {
+  color: map-get($color, linfo) !important;
+}
+.color-disable {
+  color: map-get($color, disable) !important;
+}
+// 字体颜色
+.font-color-main {
+  color: map-get($fontColor, main) !important;
+}
+.font-color-sub {
+  color: map-get($fontColor, sub) !important;
+}
+.font-color-disable {
+  color: map-get($fontColor, disable) !important;
+}
+// 背景颜色
+.bg-color-primary {
+  background-color: map-get($color, primary) !important;
+}
+.bg-color-danger {
+  background-color: map-get($color, danger) !important;
+}
+.bg-color-success {
+  background-color: map-get($color, success) !important;
+}
+.bg-color-warning {
+  background-color: map-get($color, warning) !important;
+}
+.bg-color-disable {
+  background-color: map-get($color, disable) !important;
 }
 /*
-* public 具体的样式类
+* 补充原子类
 */
 .fs-7 {
   font-size: 0.875rem !important;
@@ -11944,14 +12008,13 @@
 .fs-8 {
   font-size: 0.75rem !important;
 }
+.lh-unset {
+  line-height: unset !important;
+}
 .ellipsis {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.main-container {
-  padding: 20px;
-  box-sizing: border-box;
 }
 // 动画类
 .animation-rotate {
