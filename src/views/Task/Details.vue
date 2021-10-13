@@ -33,6 +33,7 @@
             <VButton
               type="primary"
               :disabled="!statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)"
+              :loading="startLoading"
               @click="start"
               >启动</VButton
             >
@@ -102,22 +103,22 @@ export default {
       infoItems: [
         {
           key: 'creator',
-          icon: 'account',
+          icon: 'account-fill',
           label: '创建人：'
         },
         {
           key: 'updatedTime',
-          icon: 'account',
+          icon: 'time-fill',
           label: '修改时间：'
         },
         {
           key: 'syncType',
-          icon: 'account',
+          icon: 'menu',
           label: '同步类型：'
         },
         {
           key: 'description',
-          icon: 'account',
+          icon: 'document',
           label: '描述：'
         }
       ],
@@ -150,7 +151,8 @@ export default {
           name: '123',
           status: 'running'
         }
-      ]
+      ],
+      startLoading: false
     }
   },
   mounted() {
@@ -187,8 +189,10 @@ export default {
       return result
     },
     start(id) {
-      this.$checkAgentStatus(() => {
-        this.changeStatus(id, { status: 'scheduled' })
+      this.$checkAgentStatus(async () => {
+        this.startLoading = true
+        await this.changeStatus(id, { status: 'scheduled' })
+        this.startLoading = false
       })
     },
     stop(id) {
@@ -244,7 +248,7 @@ export default {
           })
       })
     },
-    changeStatus(id, { status, errorEvents }) {
+    async changeStatus(id, { status, errorEvents }) {
       let where = {
         _id: {
           in: [id]
@@ -254,7 +258,7 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      this.$axios
+      return await this.$axios
         .post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
         .then(data => {
           this.responseHandler(data, '操作成功')
