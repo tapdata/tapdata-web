@@ -336,12 +336,7 @@ export default {
       operations: [], //字段操作
       dialogTableVisible: false,
       dialogFieldVisible: false,
-      form: {
-        tableNameTransform: this.databaseLinkData.tableNameTransform,
-        fieldsNameTransform: this.databaseLinkData.fieldsNameTransform,
-        table_prefix: this.databaseLinkData.table_prefix,
-        table_suffix: this.databaseLinkData.table_suffix
-      },
+      form: {},
       sourceTableName: 'tableName'
     }
   },
@@ -350,6 +345,14 @@ export default {
       this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
       this.selectRow = this.fieldMappingNavData[0]
       this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+    }
+    if(!this.readOnly){
+      this.form = {
+        tableNameTransform: this.databaseLinkData.tableNameTransform,
+        fieldsNameTransform: this.databaseLinkData.fieldsNameTransform,
+        table_prefix: this.databaseLinkData.table_prefix,
+        table_suffix: this.databaseLinkData.table_suffix
+      }
     }
     this.updateView()
   },
