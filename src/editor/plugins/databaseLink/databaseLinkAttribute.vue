@@ -154,7 +154,7 @@
                   {{ option.label }}
                 </template>
                 <!-- <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
-                <!-- <span
+               <span
                   v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
                   >{{ option.label.toLowerCase() }}</span
                 >
@@ -163,7 +163,7 @@
                   >{{ option.label.toUpperCase() }}</span
                 > -->
                 <span>{{ option.label }}</span>
-                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span> -->
+                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span>
                 <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span> -->
