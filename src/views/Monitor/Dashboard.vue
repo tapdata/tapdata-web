@@ -431,7 +431,7 @@ export default {
       return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     // 以下方法需要考虑和列表的重构合并，暂时先复制过来
-    changeStatus({ status, errorEvents }) {
+    async changeStatus({ status, errorEvents }) {
       let where = {
         _id: {
           in: [this.$route.params.id]
@@ -441,16 +441,13 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      this.$axios
+      return await this.$axios
         .post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
         .then(data => {
           this.responseHandler(data, '操作成功')
         })
         .catch(() => {
           this.$message.error('任务启动失败，请编辑任务完成映射配置')
-        })
-        .finally(() => {
-          this.startLoading = false
         })
     },
     responseHandler(data, msg) {
@@ -512,9 +509,10 @@ export default {
       }
     },
     start() {
-      this.$checkAgentStatus(() => {
+      this.$checkAgentStatus(async () => {
         this.startLoading = true
-        this.changeStatus({ status: 'scheduled' })
+        await this.changeStatus({ status: 'scheduled' })
+        this.startLoading = false
       })
     },
     stop() {
