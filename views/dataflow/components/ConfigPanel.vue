@@ -8,7 +8,7 @@
   >
     <div v-if="activeNode" class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
-        <VIcon class="tabs-header-icon mr-2">{{ icon }}</VIcon>
+        <VIcon class="header-icon mr-2">{{ icon }}</VIcon>
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
           <input
             ref="nameInput"
@@ -32,6 +32,16 @@
           <DataPane></DataPane>
         </ElTabPane>
       </ElTabs>
+    </div>
+
+    <div v-else-if="activeType === 'settings'" class="h-100 flex flex-column">
+      <div class="panel-header flex align-center px-4 border-bottom">
+        <VIcon class="header-icon mr-2">setting</VIcon>
+        设置
+      </div>
+      <div class="flex-1 position-relative">
+        <FormPanel v-on="$listeners"></FormPanel>
+      </div>
     </div>
   </section>
 </template>
@@ -79,7 +89,6 @@ export default {
     ...mapMutations('dataflow', ['updateNodeProperties']),
 
     handleChangeName(e) {
-      console.log('handleChangeName', e.target.value)
       this.updateNodeProperties({
         id: this.activeNode.id,
         properties: {
@@ -110,6 +119,7 @@ export default {
 <style scoped lang="scss">
 $color: map-get($color, primary);
 $tabsHeaderWidth: 180px;
+$headerHeight: 40px;
 
 .title-input-wrap {
   position: relative;
@@ -173,12 +183,16 @@ $tabsHeaderWidth: 180px;
     left: 0;
     z-index: 1;
     width: $tabsHeaderWidth;
-    height: 40px;
+    height: $headerHeight;
+  }
 
-    &-icon {
-      color: $color;
-      font-size: 18px;
-    }
+  .panel-header {
+    height: $headerHeight;
+  }
+
+  .header-icon {
+    color: $color;
+    font-size: 18px;
   }
 
   ::v-deep {

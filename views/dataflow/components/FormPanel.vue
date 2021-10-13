@@ -1,13 +1,6 @@
 <template>
   <div class="attr-panel">
-    <!--<header class="attr-panel-header border-bottom">
-      <h4 class="header-txt">节点名称</h4>
-      &lt;!&ndash;<div @click="$emit('hide')" class="header-icon">
-        <VIcon>right-circle</VIcon>
-      </div>&ndash;&gt;
-    </header>-->
     <div class="attr-panel-body overflow-auto">
-      <!--<Form :form="form" :schema="schema"></Form>-->
       <ElForm class="flex flex-column" v-bind="formProps">
         <FormProvider :form="form">
           <SchemaField
@@ -26,11 +19,6 @@
               sourceConnectionId: sourceNode ? sourceNode.connectionId : null
             }"
           />
-          <!--<FormConsumer>
-            <template #default="{ form }">
-              {{ form.values }}
-            </template>
-          </FormConsumer>-->
         </FormProvider>
       </ElForm>
     </div>
@@ -46,7 +34,6 @@ import { createSchemaField, FormProvider } from '@formily/vue'
 import { components } from 'web-core/components/form'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import 'web-core/components/form/styles/index.scss'
-import VIcon from '@/components/VIcon'
 
 const { SchemaField } = createSchemaField({
   components
@@ -70,7 +57,7 @@ export default {
     }
   },
 
-  components: { VIcon, FormProvider, SchemaField },
+  components: { FormProvider, SchemaField },
 
   computed: {
     ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType']),
@@ -125,6 +112,7 @@ export default {
               await this.setSchema(this.ins.linkFormSchema || formSchema.link)
               break
             case 'settings':
+              console.log('this.getSettingSchema()', this.getSettingSchema())
               await this.setSchema(this.getSettingSchema(), this.$store.getters['dataflow/dataflowSettings'])
               break
           }
