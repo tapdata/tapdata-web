@@ -79,7 +79,7 @@
                 <span v-else>{{ $t('verify_result_content_diff', [scope.row.difference_number]) }}</span>
               </div>
               <div v-else class="data-verify__status success">
-                <VIcon class="verify-status-icon" size="14">success-fill-color</VIcon>
+                <VIcon class="verify-status-icon color-success" size="14">success</VIcon>
                 <span>{{ $t('verify_result_count_consistent') }}</span>
               </div>
             </template>
