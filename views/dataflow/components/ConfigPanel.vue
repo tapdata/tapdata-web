@@ -34,7 +34,7 @@
       </ElTabs>
     </div>
 
-    <div v-else-if="activeType === 'settings'" class="h-100 flex flex-column">
+    <div v-else-if="activeType === 'settings'" class="h-100 flex flex-column overflow-hidden">
       <div class="panel-header flex align-center px-4 border-bottom">
         <VIcon class="header-icon mr-2">setting</VIcon>
         设置
