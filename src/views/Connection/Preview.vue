@@ -38,9 +38,9 @@
             <div class="box-line__label">{{ temp.label + '：' }}</div>
 
             <el-tooltip
-              v-if="connection[temp.key] && temp.key !== 'mqType'"
+              v-if="connection[temp.key] && temp.key !== 'mqType' && connection[temp.key].toString()"
               effect="dark"
-              :content="toString(connection[temp.key])"
+              :content="connection[temp.key].toString()"
               placement="right-end"
             >
               <div class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>

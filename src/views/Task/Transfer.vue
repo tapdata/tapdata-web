@@ -766,7 +766,8 @@ export default {
   }
 
   .el-transfer {
-    height: 353px;
+    flex: 1;
+    overflow: hidden;
     .el-transfer-panel {
       width: 300px;
 
