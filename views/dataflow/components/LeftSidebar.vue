@@ -1,7 +1,7 @@
 <template>
   <aside class="layout-sidebar --left border-end flex flex-column flex-shrink-0">
-    <div ref="dbListContainer" class="flex-1 min-h-0">
-      <ElCollapse class="collapse-fill" value="db">
+    <div class="flex flex-column flex-1 min-h-0">
+      <ElCollapse ref="dbCollapse" class="collapse-fill db-list-container" value="db">
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1">
@@ -24,40 +24,40 @@
           </ElScrollbar>
         </ElCollapseItem>
       </ElCollapse>
-    </div>
 
-    <div ref="tbListContainer" class="flex-1 min-h-0 flex flex-column border-bottom">
-      <div class="px-6 py-4">
-        <ElInput v-model="tbSearchTxt" size="small" @input="handleTbInput">
-          <template #prefix>
-            <VIcon size="14" class="ml-1 h-100">search</VIcon>
-          </template>
-        </ElInput>
-      </div>
-      <ElScrollbar ref="tbList" class="flex-1 min-h-0" tag="div" wrap-class="tb-list">
-        <div
-          v-for="tb in tbFilterList"
-          v-mouse-drag="{
-            item: tb,
-            container: '#dfEditorContent',
-            getDragDom,
-            onStart,
-            onMove,
-            onDrop,
-            onStop
-          }"
-          :key="tb.attr.tableId"
-          class="tb-item grabbable flex align-center px-4"
-        >
-          <div class="tb-item-icon">
-            <VIcon class="h-100" size="14" color="#fff">table</VIcon>
-          </div>
-          <div class="text-truncate ml-4">{{ tb.name }}</div>
+      <div class="flex-1 min-h-0 flex flex-column border-bottom">
+        <div class="px-6 py-4">
+          <ElInput v-model="tbSearchTxt" size="small" @input="handleTbInput">
+            <template #prefix>
+              <VIcon size="14" class="ml-1 h-100">search</VIcon>
+            </template>
+          </ElInput>
         </div>
-      </ElScrollbar>
-      <!--<div class="tb-list overflow-auto">
+        <ElScrollbar ref="tbList" class="flex-1 min-h-0" tag="div" wrap-class="tb-list">
+          <div
+            v-for="tb in tbFilterList"
+            v-mouse-drag="{
+              item: tb,
+              container: '#dfEditorContent',
+              getDragDom,
+              onStart,
+              onMove,
+              onDrop,
+              onStop
+            }"
+            :key="tb.attr.tableId"
+            class="tb-item grabbable flex align-center px-4"
+          >
+            <div class="tb-item-icon">
+              <VIcon class="h-100" size="14" color="#fff">table</VIcon>
+            </div>
+            <div class="text-truncate ml-4">{{ tb.name }}</div>
+          </div>
+        </ElScrollbar>
+        <!--<div class="tb-list overflow-auto">
 
-    </div>-->
+      </div>-->
+      </div>
     </div>
 
     <ElCollapse value="process">
@@ -131,7 +131,7 @@ import 'web-core/assets/icons/svg/joint-cache.svg'
 import 'web-core/assets/icons/svg/row-filter.svg'
 import 'web-core/assets/icons/svg/aggregator.svg'
 import 'web-core/assets/icons/svg/field-processor.svg'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
 import VIcon from 'web-core/components/VIcon'
 import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
@@ -198,8 +198,14 @@ export default {
   },
 
   mounted() {
-    addResizeListener(this.$refs.dbListContainer, this.$refs.dbList.update)
-    addResizeListener(this.$refs.tbListContainer, this.$refs.tbList.update)
+    console.log(this.$refs.dbCollapse)
+    addResizeListener(this.$refs.dbCollapse.$el, this.$refs.dbList.update)
+    addResizeListener(this.$refs.tbList.$el, this.$refs.tbList.update)
+  },
+
+  beforeDestroy() {
+    removeResizeListener(this.$refs.dbCollapse.$el, this.$refs.dbList.update)
+    removeResizeListener(this.$refs.tbList.$el, this.$refs.tbList.update)
   },
 
   methods: {
@@ -245,8 +251,6 @@ export default {
     },
 
     // 加载数据库
-    ...mapMutations('dataflow', ['addNode']),
-
     async loadDatabaseTable() {
       const connectionId = this.currentConnectionId
       const params = {
@@ -363,6 +367,12 @@ $itemH: 34px;
   overflow: hidden;
 
   ::v-deep {
+    .db-list-container {
+      max-height: 50%;
+      .el-collapse-item:last-child {
+        margin-bottom: -2px;
+      }
+    }
     /*.db-list,
     .tb-list {
       max-height: 272px;
@@ -397,7 +407,6 @@ $itemH: 34px;
     .el-collapse {
       border-top: 0;
       &.collapse-fill {
-        height: 100%;
         .el-collapse-item:first-child:last-child {
           height: 100%;
           .el-collapse-item__wrap {
