@@ -247,7 +247,7 @@ export default function (vm) {
       },
       {
         type: 'input',
-        field: 'database_username',
+        field: 'mqUserName',
         label: vm.$t('dataForm.form.userName')
       },
       {
