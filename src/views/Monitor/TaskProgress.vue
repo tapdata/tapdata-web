@@ -3,7 +3,7 @@
     <div class="task-overview flex">
       <div class="flex-shrink-0" style="width: 300px">
         <!-- 非增量 -->
-        <div v-if="task && task.setting.sync_type !== 'cdc'">
+        <div v-if="task && task.setting.sync_type !== 'cdc'" style="height: 310px">
           <div><span class="dots">全量同步概览</span></div>
           <div>
             <div class="progress-box flex justify-content-center align-items-center position-relative">
@@ -12,7 +12,7 @@
                 color="rgba(44, 101, 255, 1)"
                 :percentage="progressBar"
                 :show-text="false"
-                :width="166"
+                :width="120"
               ></el-progress>
               <div class="progress-box__value flex justify-content-center align-items-center">{{ progressBar }}%</div>
             </div>
@@ -31,7 +31,7 @@
                 color="rgba(44, 101, 255, 1)"
                 :percentage="100"
                 :show-text="false"
-                :width="166"
+                :width="120"
               ></el-progress>
               <div class="progress-box__value flex flex-column justify-content-center align-items-center">
                 <div class="fs-5">{{ replicateObj.currentStatus || '延迟' }}</div>
@@ -43,8 +43,8 @@
       </div>
       <div class="task-overview__detail flex-fill pl-4">
         <!-- 非增量 -->
-        <div v-if="task && task.setting.sync_type !== 'cdc'">
-          <div class="mb-10 dots">进度详情</div>
+        <div v-if="task && task.setting.sync_type !== 'cdc'" style="height: 310px">
+          <div class="mb-10 fs-7 dots">进度详情</div>
           <div v-for="(item, index) in initialList" :key="index" class="initial-box">
             <span v-if="item.label" class="initial-box__title font-color-sub">{{ item.label }}：</span>
             <span class="initial-box__value" :class="{ 'font-color-sub': !!item.value }">{{
@@ -54,7 +54,7 @@
         </div>
         <!-- 非全量 -->
         <div v-if="task && task.setting.sync_type !== 'initial_sync'">
-          <div class="mb-10 dots">增量详情</div>
+          <div class="mb-10 fs-7 dots">增量详情</div>
           <el-table :data="cdcLastTimes">
             <el-table-column label="源库" prop="sourceConnectionName"></el-table-column>
             <el-table-column label="时间" prop="cdcTime">
@@ -766,8 +766,8 @@ export default {
 .progress-box {
   margin: 24px auto 0;
   padding: 24px;
-  width: 211px;
-  height: 211px;
+  width: 150px;
+  height: 150px;
   background: rgba(216, 216, 216, 0.15);
   border-radius: 50%;
   box-sizing: border-box;
@@ -778,7 +778,7 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  font-size: 35px;
+  font-size: 30px;
 }
 .initial-box {
   margin-bottom: 24px;
