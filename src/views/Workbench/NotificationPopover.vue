@@ -241,14 +241,6 @@ export default {
           break
       }
     },
-    // 获取任务数据
-    getTaskData(id) {
-      this.$axios.get('tm/api/DataFlows?id=' + id).then(res => {
-        if (res) {
-          debugger
-        }
-      })
-    },
     toCenter() {
       if (this.$route.name === 'SystemNotice') {
         return

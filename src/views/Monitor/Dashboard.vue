@@ -444,8 +444,7 @@ export default {
         .then(data => {
           this.responseHandler(data, '操作成功')
         })
-        .catch(err => {
-          console.log(err)
+        .catch(() => {
           this.$message.error('任务启动失败，请编辑任务完成映射配置')
         })
     },
