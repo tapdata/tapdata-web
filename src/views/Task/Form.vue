@@ -1,6 +1,6 @@
 <template>
-  <el-container class="CT-task-wrap bg-white" v-if="steps[activeStep]">
-    <el-container style="overflow: hidden; flex: 1" class="CT-task-container flex-column">
+  <el-container class="create-task-wrap bg-white" v-if="steps[activeStep]">
+    <el-container style="overflow: hidden; flex: 1" class="create-task-container flex-column">
       <div class="steps-header">
         <el-steps class="pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
           <el-step title="选择连接"></el-step>
@@ -10,8 +10,8 @@
         </el-steps>
       </div>
       <el-container :class="['task-container', 'task-container-' + steps[activeStep].index]">
-        <div class="task-container-box flex-fill">
-          <el-main :class="['CT-task-main', 'task-main-' + steps[activeStep].index]">
+        <div class="task-container-box flex-fill flex flex-column w-100">
+          <el-main :class="['create-task-main', 'task-main-' + steps[activeStep].index]">
             <!--步骤2-->
             <div class="body" v-if="steps[activeStep].index === 2">
               <div class="mb-8">
@@ -61,7 +61,7 @@
                   用户可以点击中间向右的箭头按钮勾选源端待同步表，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输）
                 </span>
               </div>
-              <div class="CT-task-transfer">
+              <div class="create-task-transfer">
                 <Transfer
                   ref="transfer"
                   :transferData="transferData"
@@ -85,7 +85,7 @@
               ></FieldMapping>
             </div>
           </el-main>
-          <div :class="['pb-6', 'px-6', 'btns-step-' + steps[activeStep].index]">
+          <div class="create-task-footer py-6 mx-6" :class="['btns-step-' + steps[activeStep].index]">
             <v-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </v-button>
             <v-button
               class="btn-step"
@@ -120,7 +120,7 @@
   </el-container>
 </template>
 <style lang="scss">
-.CT-task-wrap {
+.create-task-wrap {
   .select-connection-popper {
     .el-select-dropdown__item {
       height: 64px;
@@ -153,7 +153,7 @@
 }
 </style>
 <style lang="scss" scoped>
-.CT-task-wrap {
+.create-task-wrap {
   //padding: 0 20px;
   height: 100%;
   background: rgba(250, 250, 250, 1);
@@ -219,7 +219,7 @@
         flex-direction: column;
         position: relative;
       }
-      .CT-task-main {
+      .create-task-main {
         margin-bottom: 0;
         padding: 24px 0 0;
       }
@@ -251,7 +251,7 @@
       }
     }
   }
-  .CT-task-main {
+  .create-task-main {
     padding: 24px 24px 0;
     background: #fff;
     overflow: hidden;
@@ -272,8 +272,10 @@
         padding: 0 200px;
         margin-top: 10px;
       }
-      .CT-task-transfer {
+      .create-task-transfer {
         margin-bottom: 24px;
+        flex: 1;
+        overflow: hidden;
         ::v-deep {
           .el-transfer-panel__header {
             background: rgba(44, 101, 255, 0.05);
@@ -328,12 +330,6 @@
         }
       }
     }
-  }
-  .CT-task-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-top: 1px solid #dedee4;
   }
   .btn-step {
     width: 212px;
@@ -432,17 +428,19 @@
       }
     }
   }
+  .create-task-footer {
+    border-top: 1px solid #f2f2f2;
+  }
+  .step-4 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
 }
 .steps-header {
   margin: 0 20px;
   padding: 20px 0 0;
   border-bottom: 1px solid #f2f2f2;
-}
-.btns-step-5 {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  text-align: right;
 }
 .el-main {
   padding: 24px 0 0;
