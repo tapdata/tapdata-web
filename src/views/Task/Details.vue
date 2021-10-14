@@ -68,19 +68,26 @@
         </ElTableColumn>
         <ElTableColumn label="操作">
           <template v-slot="scope">
-            <VButton
+            <ElButton
               :disabled="
                 !statusBtMap['run'][scope.row.status] || (scope.row.status === 'draft' && scope.row.checked === false)
               "
-              text
+              type="text"
               @click="run([scope.row.id], scope.row)"
             >
               运行
-            </VButton>
-            <VButton :disabled="!statusBtMap['stop'][scope.row.status]" class="mr-2" text @click="stop([scope.row.id])">
-              停止任务
-            </VButton>
-            <VButton :disabled="!statusBtMap['reset'][scope.row.status]" @click="reset(scope.row.id)">重启</VButton>
+            </ElButton>
+            <ElButton
+              :disabled="!statusBtMap['stop'][scope.row.status]"
+              class="mr-2"
+              type="text"
+              @click="stop([scope.row.id])"
+            >
+              停止
+            </ElButton>
+            <ElButton :disabled="!statusBtMap['reset'][scope.row.status]" type="text" @click="reset(scope.row.id)"
+              >重启</ElButton
+            >
           </template>
         </ElTableColumn>
       </ElTable>
