@@ -140,7 +140,7 @@
               <el-link type="primary" class="rotate-90">
                 <i class="el-icon-more"></i>
               </el-link>
-              <el-dropdown-menu slot="dropdown">
+              <el-dropdown-menu slot="dropdown" class="text-nowrap">
                 <el-dropdown-item command="copy">复制</el-dropdown-item>
                 <el-dropdown-item command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
                   重置
