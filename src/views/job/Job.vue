@@ -860,10 +860,8 @@ export default {
               stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
 
               //迁移全局修改设置值
-              postData.setting.table_prefix = cell[FORM_DATA_KEY].table_prefix
-              postData.setting.table_suffix = cell[FORM_DATA_KEY].table_suffix
-              postData.setting.tableNameTransform = cell[FORM_DATA_KEY].tableNameTransform
-              postData.setting.fieldsNameTransform = cell[FORM_DATA_KEY].fieldsNameTransform
+              stages[targetId].tableNameTransform = cell[FORM_DATA_KEY].tableNameTransform
+              stages[targetId].fieldsNameTransform = cell[FORM_DATA_KEY].fieldsNameTransform
             }
           }
           if (targetId && stages[targetId]) {

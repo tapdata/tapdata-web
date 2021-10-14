@@ -21,7 +21,7 @@
         :updateMetadata="updateMetadata"
         :fieldMappingNavData="fieldMappingNavData"
         :field_process="field_process"
-        :databaseLinkData="databaseLinkData"
+        :transform="transform"
         :hiddenFieldProcess="hiddenFieldProcess"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
@@ -45,7 +45,8 @@ export default {
     'isFirst',
     'mappingType',
     'selectSourceArr',
-    'databaseLinkData'
+    'transform',
+    'getDataFlow'
   ],
   data() {
     return {
@@ -65,7 +66,8 @@ export default {
      * 触发父组件：首次条件
      * */
     fieldProcess() {
-      console.log(this.dataFlow)
+      //点击按钮重新拿值
+      this.dataFlow = this.getDataFlow()
       if (!this.dataFlow) return
       //迁移任务需要同步字段处理器
       if (this.mappingType && this.mappingType === 'cluster-clone') {
@@ -78,7 +80,7 @@ export default {
       }
       this.loading = true
       let dataFlowId = this.dataFlow.id
-      if (this.isFirst && dataFlowId) {
+      if (this.isFirst && !dataFlowId) {
         this.dataFlow['rollback'] = 'all' //新建任务重置恢复默认
       } else {
         delete this.dataFlow['rollback']
@@ -140,27 +142,49 @@ export default {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
       }
       //清空表改名 字段改名
-      this.clearSettingTransform()
+      this.clearTransform()
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       return promise?.data
     },
     //清空表改名 字段改名
-    clearSettingTransform() {
-      this.dataFlow['setting'].fieldsNameTransform = 'noOperation'
-      this.dataFlow['setting'].tableNameTransform = 'noOperation'
-      this.dataFlow['setting'].table_prefix = ''
-      this.dataFlow['setting'].table_suffix = ''
+    clearTransform() {
+      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+        if (this.dataFlow.stages[i].id === this.stageId) {
+          this.dataFlow['stages'][i].fieldsNameTransform = ''
+          this.dataFlow['stages'][i].tableNameTransform = ''
+          this.dataFlow['stages'][i].table_suffix = ''
+          this.dataFlow['stages'][i].table_prefix = ''
+        }
+      }
+    },
+    updateAutoTransform(type, data) {
+      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+        if (this.dataFlow.stages[i].id === this.stageId) {
+          if (type === 'field') {
+            this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
+          } else {
+            this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
+            this.dataFlow.dataFlowta['stages'][i].table_prefix = data.table_prefix
+            this.dataFlow['stages'][i].table_suffix = data.table_suffix
+          }
+        }
+      }
+    },
+    checkTransform() {
+      let result = ''
+      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+        if (this.dataFlow.stages[i].id === this.stageId) {
+          if (this.dataFlow['stages'][i].fieldsNameTransform !== '') {
+            result = this.dataFlow['stages'][i].fieldsNameTransform
+          }
+        }
+      }
+      return result
     },
     //获取左边导航数据 - 表
     async updateMetadata(type, data) {
       //将表改名 字段改名 放在setting里面
-      if (type === 'field') {
-        this.dataFlow['setting'].fieldsNameTransform = data.fieldsNameTransform
-      } else {
-        this.dataFlow['setting'].tableNameTransform = data.tableNameTransform
-        this.dataFlow['setting'].table_prefix = data.table_prefix
-        this.dataFlow['setting'].table_suffix = data.table_suffix
-      }
+      this.updateAutoTransform(type, data)
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       return promise?.data
     },
@@ -201,9 +225,9 @@ export default {
       }
       //是否有批量字段改名操作
       if (type === 'rollback') {
-        this.clearSettingTransform()
+        this.clearTransform()
       }
-      let fieldsNameTransform = this.dataFlow['setting'].fieldsNameTransform || ''
+      let fieldsNameTransform = this.checkTransform()
       if (fieldsNameTransform !== '') {
         source.forEach(item => {
           if (fieldsNameTransform === 'toUpperCase') {

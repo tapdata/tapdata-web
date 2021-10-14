@@ -107,8 +107,10 @@
                 :hiddenFieldProcess="false"
                 :selectSourceArr="model.selectSourceArr"
                 :isFirst="model.isFirst"
-                :databaseLinkData="model"
+                :transform="model"
+                :getDataFlow="getDataFlow"
                 @update-first="returnModel"
+                @update-transform="updateTranForm"
                 @returnFieldMapping="returnFieldMapping"
                 @returnPreFixSuffix="returnPreFixSuffix"
               ></FieldMapping>
@@ -345,8 +347,8 @@ export default {
         table_suffix: '',
         dropType: 'no_drop',
         type: 'databaseLink',
-        tableNameTransform: 'noOperation',
-        fieldsNameTransform: 'noOperation',
+        tableNameTransform: '',
+        fieldsNameTransform: '',
         selectSourceArr: [],
         topicData: [],
         queueData: [],
@@ -388,6 +390,7 @@ export default {
       deep: true,
       handler() {
         this.$emit('dataChanged', this.getData())
+        this.getDataFlow()
       }
     }
     // 'model.tableNameTransform': {
@@ -602,15 +605,10 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
-      //同步更新表改名 改字段名
-      this.dataFlow['setting'].table_prefix = this.model.table_prefix
-      this.dataFlow['setting'].tableNameTransform = this.model.tableNameTransform
-      this.dataFlow['setting'].fieldsNameTransform = this.model.fieldsNameTransform
-      this.dataFlow['setting'].table_suffix = this.model.table_suffix
+      return this.dataFlow
     },
     returnFieldMapping(field_process) {
       this.model.field_process = field_process
-      this.getDataFlow()
     },
     // 字段处理器返回前后缀
     returnPreFixSuffix(data) {
@@ -618,6 +616,21 @@ export default {
       this.model.table_suffix = data.table_suffix
       this.model.tableNameTransform = data.tableNameTransform
       this.model.fieldsNameTransform = data.fieldsNameTransform
+    },
+    // 字段处理器返回前后缀
+    updateTranForm(type, data) {
+      if (type === 'all') {
+        this.model.table_prefix = data.table_prefix
+        this.model.table_suffix = data.table_suffix
+        this.model.tableNameTransform = data.tableNameTransform
+        this.model.fieldsNameTransform = data.fieldsNameTransform
+      } else if (type === 'field') {
+        this.model.fieldsNameTransform = data.fieldsNameTransform
+      } else if (type === 'table') {
+        this.model.table_prefix = data.table_prefix
+        this.model.table_suffix = data.table_suffix
+        this.model.tableNameTransform = data.tableNameTransform
+      }
       this.getDataFlow()
     },
     //接收是否第一次打开
