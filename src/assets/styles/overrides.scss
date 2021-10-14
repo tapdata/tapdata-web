@@ -174,13 +174,12 @@ th {
 .el-button--small {
   border-radius: $borderRadius;
 }
-.el-button {
-  &:not(.el-button--text) {
-    &:focus, &:hover {
-      background-color: #fff;
-      color: map-get($color, primary);
-      border-color: map-get($color, primary);
-    }
+.el-button--default {
+  &:focus,
+  &:hover {
+    background-color: #fff;
+    color: map-get($color, primary);
+    border-color: map-get($color, primary);
   }
 }
 .el-button--text {
