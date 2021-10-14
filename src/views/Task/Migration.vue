@@ -154,6 +154,31 @@
         @current-change="fetch"
       >
       </ElPagination>
+      <ElDialog title="选择任务类型" :visible.sync="createVisible" width="416px" top="30vh">
+        <div class="select-type flex justify-content-between">
+          <div
+            class="select-type__item"
+            @click="
+              $router.push({
+                path: '/task/create'
+              })
+            "
+          >
+            <div>
+              <div>数据库迁移</div>
+              <div class="mt-4">数据库迁移</div>
+            </div>
+            <VIcon size="30" class="v-icon">right-fill</VIcon>
+          </div>
+          <div class="select-type__item data-table ml-10">
+            <div>
+              <div>数据表同步</div>
+              <div class="mt-4 font-color-sub">数据表同步</div>
+            </div>
+            <VIcon size="30" class="v-icon">right-fill</VIcon>
+          </div>
+        </div>
+      </ElDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -206,6 +231,25 @@
   .v-icon {
     margin: 0 4px;
   }
+  .select-type__item {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+    padding: 16px;
+    border-radius: 8px;
+    background: #d9ecff;
+    cursor: pointer;
+    .v-icon {
+      margin: 0;
+      color: rgba(44, 101, 255, 1);
+    }
+    &.data-table {
+      background: #ccf4ff;
+      .v-icon {
+        color: rgba(108, 218, 255, 1);
+      }
+    }
+  }
 }
 </style>
 <script>
@@ -248,7 +292,8 @@ export default {
         edit: { draft: true, error: true, paused: true },
         reset: { draft: true, error: true, paused: true },
         forceStop: { stopping: true }
-      }
+      },
+      createVisible: false
     }
   },
   computed: {
@@ -502,9 +547,10 @@ export default {
       })
     },
     createTask() {
-      this.$router.push({
-        path: '/task/create'
-      })
+      this.createVisible = true
+      // this.$router.push({
+      //   path: '/task/create'
+      // })
     },
     toDetails(row) {
       console.log('toDetails', row)
