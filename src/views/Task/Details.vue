@@ -35,7 +35,7 @@
               type="primary"
               :disabled="!statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)"
               :loading="loadingObj.start"
-              @click="start"
+              @click="start($route.params.id)"
               >启动</VButton
             >
             <VButton
@@ -184,7 +184,6 @@ export default {
     }
   },
   created() {
-    this.getData()
     this.$ws.on('watch', this.taskChange)
     this.$ws.send({
       type: 'watch',
@@ -300,6 +299,40 @@ export default {
         }
       })
     },
+    getConfirmMessage(operateStr, name) {
+      let map = {
+        delete_confirm_title: '是否删除该任务？',
+        delete_confirm_message: '删除任务 xxx 后，此任务将无法恢复',
+
+        stop_confirm_title: '是否暂停该任务？',
+        stop_confirm_message: '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+
+        force_stop_confirm_title: '是否强制停止该任务？',
+        force_stop_confirm_message: '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
+
+        initialize_confirm_title: '是否重置该任务？',
+        initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行'
+      }
+      let title = operateStr + '_confirm_title',
+        message = operateStr + '_confirm_message'
+      const h = this.$createElement
+      let strArr = map[message].split('xxx')
+      let msg = h('p', null, [
+        strArr[0],
+        h(
+          'span',
+          {
+            class: 'color-primary'
+          },
+          name
+        ),
+        strArr[1]
+      ])
+      return {
+        msg,
+        title: map[title]
+      }
+    },
     reset(id) {
       this.$confirm('是否重置该任务？', '重置', {
         type: 'warning',
@@ -364,7 +397,6 @@ export default {
         })
       } else if (msg) {
         this.$message.success(msg)
-        // this.getData()
       }
     }
   }
