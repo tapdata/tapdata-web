@@ -35,6 +35,9 @@ export default {
   connection_list_column_schema_status: 'Schema加載狀態',
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
 
+  connection_form_custom_connection_before_operate: '前置操作',
+  connection_form_custom_connection_after_operate: '後置操作',
+
   // Dag
   dag_data_node_label_dameng: 'Dameng節點',
   dag_data_node_label_database_link_table: '表名大小寫',

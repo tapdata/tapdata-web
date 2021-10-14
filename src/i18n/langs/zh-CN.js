@@ -35,6 +35,9 @@ export default {
   connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
 
+  connection_form_custom_connection_before_operate: '前置操作',
+  connection_form_custom_connection_after_operate: '后置操作',
+
   // 路由名
   app_menu_jsFuncs: '函数',
 
