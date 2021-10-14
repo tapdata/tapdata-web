@@ -227,7 +227,7 @@
         <el-form ref="form" class="table-form" :model="form" label-width="120px">
           <el-form-item label="表名大小写">
             <el-select size="mini" v-model="form.tableNameTransform">
-              <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
+              <el-option :label="$t('dag_data_node_label_database_link_unchang')" value=""></el-option>
               <el-option :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></el-option>
               <el-option :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></el-option>
             </el-select>
@@ -264,7 +264,7 @@
         <el-form ref="form" class="table-form" :model="form" label-width="120px">
           <el-form-item label="字段名大小写">
             <el-select size="mini" v-model="form.fieldsNameTransform">
-              <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
+              <el-option :label="$t('dag_data_node_label_database_link_unchang')" value=""></el-option>
               <el-option :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></el-option>
               <el-option :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></el-option>
             </el-select>
@@ -291,7 +291,7 @@ export default {
     typeMappingMethod: Function,
     fieldProcessMethod: Function,
     updateMetadata: Function,
-    databaseLinkData: Object,
+    transform: Object,
     hiddenFieldProcess: {
       type: Boolean,
       default: false
@@ -335,6 +335,7 @@ export default {
       dialogTableVisible: false,
       dialogFieldVisible: false,
       form: {},
+      currentForm: {},
       sourceTableName: 'tableName'
     }
   },
@@ -346,10 +347,10 @@ export default {
     }
     if (!this.readOnly) {
       this.form = {
-        tableNameTransform: this.databaseLinkData.tableNameTransform,
-        fieldsNameTransform: this.databaseLinkData.fieldsNameTransform,
-        table_prefix: this.databaseLinkData.table_prefix,
-        table_suffix: this.databaseLinkData.table_suffix
+        tableNameTransform: this.transform.tableNameTransform,
+        fieldsNameTransform: this.transform.fieldsNameTransform,
+        table_prefix: this.transform.table_prefix,
+        table_suffix: this.transform.table_suffix
       }
     }
     this.updateView()
@@ -494,23 +495,25 @@ export default {
     /*表改名称弹窗取消*/
     handleTableClose() {
       this.dialogTableVisible = false
-      this.form.tableNameTransform = 'noOperation'
-      this.form.table_prefix = ''
-      this.form.table_suffix = ''
+      this.form.tableNameTransform = this.currentForm.tableNameTransform
+      this.form.table_prefix = this.currentForm.table_prefix
+      this.form.table_suffix = this.currentForm.table_suffix
     },
     /*字段改名弹窗取消*/
     handleFieldClose() {
       this.dialogFieldVisible = false
-      this.form.fieldsNameTransform = 'noOperation'
+      this.form.fieldsNameTransform = this.currentForm.fieldsNameTransform
     },
     /*表改名弹窗保存*/
     handleTableNameSave() {
       this.dialogTableVisible = false
+      this.currentForm = JSON.parse(JSON.stringify(this.form))
       this.updateParentMetaData('table', this.form)
     },
     /*字段名弹窗保存*/
     handleFieldSave() {
       this.dialogFieldVisible = false
+      this.currentForm = JSON.parse(JSON.stringify(this.form))
       this.updateParentMetaData('field', this.form)
     },
     /* 恢复默认全部*/
@@ -520,8 +523,8 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           this.form = {
-            tableNameTransform: 'noOperation',
-            fieldsNameTransform: 'noOperation',
+            tableNameTransform: '',
+            fieldsNameTransform: '',
             table_prefix: '',
             table_suffix: ''
           }
@@ -601,8 +604,8 @@ export default {
         if (resFlag) {
           this.loadingPage = true
           this.form = {
-            tableNameTransform: 'noOperation',
-            fieldsNameTransform: 'noOperation',
+            tableNameTransform: '',
+            fieldsNameTransform: '',
             table_prefix: '',
             table_suffix: ''
           }
