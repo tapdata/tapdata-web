@@ -239,7 +239,6 @@
             border-radius: unset;
           }
           .field-mapping-table {
-            height: calc(100% - 70px) !important;
             .el-table__header-wrapper {
               border-radius: unset;
             }
