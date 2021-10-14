@@ -302,7 +302,7 @@ const routes = [
   },
   {
     path: '/dataflow/editor/:id',
-    name: 'DataflowEdit',
+    name: 'DataflowEditor',
     component: () => import('web-core/views/dataflow/Editor')
   }
 ]
