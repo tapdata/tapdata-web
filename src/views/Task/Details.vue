@@ -30,17 +30,33 @@
             <!--            <ElButton size="mini">停止</ElButton>-->
             <!--            <ElButton size="mini">重置</ElButton>-->
             <!--            <ElButton size="mini">强制停止</ElButton>-->
+            <VButton type="primary">编辑</VButton>
             <VButton
               type="primary"
               :disabled="!statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)"
-              :loading="startLoading"
+              :loading="loadingObj.start"
               @click="start"
               >启动</VButton
             >
-            <VButton :disabled="!statusBtMap['stop'][task.status]" @click="stop($route.params.id)">停止</VButton>
-            <VButton :disabled="!statusBtMap['reset'][task.status]" @click="reset($route.params.id)">重置</VButton>
-            <VButton :disabled="!statusBtMap['forceStop'][task.status]" @click="forceStop($route.params.id)"
+            <VButton
+              v-if="task.status === 'stopping'"
+              :disabled="!statusBtMap['forceStop'][task.status]"
+              :loading="loadingObj.forceStop"
+              @click="forceStop($route.params.id)"
               >强制停止</VButton
+            >
+            <VButton
+              v-else
+              :disabled="!statusBtMap['stop'][task.status]"
+              :loading="loadingObj.stop"
+              @click="stop($route.params.id)"
+              >停止</VButton
+            >
+            <VButton
+              :disabled="!statusBtMap['reset'][task.status]"
+              :loading="loadingObj.reset"
+              @click="reset($route.params.id)"
+              >重置</VButton
             >
           </div>
         </div>
@@ -159,11 +175,50 @@ export default {
           status: 'running'
         }
       ],
-      startLoading: false
+      loadingObj: {
+        start: false,
+        stop: false,
+        forceStop: false,
+        reset: false
+      }
     }
+  },
+  created() {
+    this.getData()
+    this.$ws.on('watch', this.taskChange)
+    this.$ws.send({
+      type: 'watch',
+      collection: 'DataFlows',
+      filter: {
+        where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
+        fields: {
+          'fullDocument.id': true,
+          'fullDocument.name': true,
+          'fullDocument.status': true,
+          'fullDocument.executeMode': true,
+          'fullDocument.stopOnError': true,
+          'fullDocument.last_updated': true,
+          'fullDocument.createTime': true,
+          'fullDocument.children': true,
+          'fullDocument.stats': true,
+          'fullDocument.setting': true,
+          'fullDocument.cdcLastTimes': true,
+          'fullDocument.listtags': true,
+          'fullDocument.finishTime': true,
+          'fullDocument.startTime': true,
+          'fullDocument.errorEvents': true,
+          'fullDocument.milestones': true,
+          'fullDocument.user': true,
+          'fullDocument.mappingTemplate': true
+        }
+      }
+    })
   },
   mounted() {
     this.init()
+  },
+  destroyed() {
+    this.$ws.off('watch', this.taskChange)
   },
   methods: {
     init() {
@@ -182,6 +237,12 @@ export default {
           this.loading = false
         })
     },
+    taskChange(data) {
+      let task = data.data?.fullDocument || {}
+      if (this.task) {
+        this.task = Object.assign({}, this.task, this.formatTask(task))
+      }
+    },
     formatTime(time) {
       return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
@@ -197,9 +258,9 @@ export default {
     },
     start(id) {
       this.$checkAgentStatus(async () => {
-        this.startLoading = true
+        this.loadingObj.start = true
         await this.changeStatus(id, { status: 'scheduled' })
-        this.startLoading = false
+        this.loadingObj.start = false
       })
     },
     stop(id) {
@@ -219,9 +280,11 @@ export default {
       }
       this.$confirm(message, title, {
         type: 'warning'
-      }).then(resFlag => {
+      }).then(async resFlag => {
         if (resFlag) {
-          this.changeStatus(id, { status: 'stopping' })
+          this.loadingObj.stop = true
+          await this.changeStatus(id, { status: 'stopping' })
+          this.loadingObj.stop = false
         }
       })
     },
@@ -229,9 +292,11 @@ export default {
       let msgObj = this.getConfirmMessage('force_stop', this.task.name)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
-      }).then(resFlag => {
+      }).then(async resFlag => {
         if (resFlag) {
-          this.changeStatus(id, { status: 'force stopping' })
+          this.loadingObj.forceStop = true
+          await this.changeStatus(id, { status: 'force stopping' })
+          this.loadingObj.forceStop = false
         }
       })
     },
@@ -243,6 +308,7 @@ export default {
         if (!flag) {
           return
         }
+        this.loadingObj.reset = true
         this.$axios
           .post('tm/api/DataFlows/resetAll', {
             id: [id]
@@ -252,6 +318,9 @@ export default {
           })
           .catch(() => {
             this.$message.error('重置失败')
+          })
+          .finally(() => {
+            this.loadingObj.reset = false
           })
       })
     },
