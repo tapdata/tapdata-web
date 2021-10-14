@@ -88,7 +88,7 @@
               <span>Error</span>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
-              <VIcon size="18" class="color-danger">loading</VIcon>
+              <VIcon size="18" class="color-success">loading</VIcon>
               <span>{{ statusMap[scope.row.status].text }}</span>
             </div>
             <div v-else>-</div>
