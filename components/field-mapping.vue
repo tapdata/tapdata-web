@@ -478,6 +478,16 @@ export default {
       //触发页面重新渲染
       this.updateTableData(id, `t_${key}`, value)
     },
+    //只是视图更新 field['source'] = 'manual' 不动
+    updateTargetView(id, key, value) {
+      this.target.forEach(field => {
+        if (field.id === id && field.is_deleted !== 'true' && field.is_deleted !== true) {
+          field[key] = value
+        }
+      })
+      //触发页面重新渲染
+      this.updateTableData(id, `t_${key}`, value)
+    },
     /*更新左边表导航 重新推演*/
     updateParentMetaData(type, data) {
       this.loadingPage = true
@@ -756,18 +766,18 @@ export default {
       let isScale = data.filter(v => v.minScale < v.maxScale)
       if (isScale.length !== 0) {
         //固定值
-        this.updateTarget(id, 'isScaleEdit', true)
+        this.updateTargetView(id, 'isScaleEdit', true)
       } else {
-        this.updateTarget(id, 'isScaleEdit', false)
+        this.updateTargetView(id, 'isScaleEdit', false)
       }
     },
     showPrecisionEdit(id, data) {
       let isPrecision = data.filter(v => v.minPrecision < v.maxPrecision)
       if (isPrecision.length !== 0) {
         //固定值
-        this.updateTarget(id, 'isPrecisionEdit', true)
+        this.updateTargetView(id, 'isPrecisionEdit', true)
       } else {
-        this.updateTarget(id, 'isPrecisionEdit', false)
+        this.updateTargetView(id, 'isPrecisionEdit', false)
       }
     },
     initDataType(val) {
