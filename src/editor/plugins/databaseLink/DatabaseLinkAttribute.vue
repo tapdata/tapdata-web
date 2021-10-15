@@ -148,7 +148,7 @@
                     "
                     >{{ option.label.toUpperCase() }}</span
                   >-->
-                  <span v-else>{{ option.label }}</span>
+                  <span>{{ option.label }}</span>
                   <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span>
                 </span>
               </template>
