@@ -19,19 +19,13 @@ export default {
       })
     },
     optionsFunc(params) {
-      return this.$axios.get('tm/api/DataFlows', {
-        params
-      })
+      return this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(params)))
     },
     dataflowFunc(params) {
-      return this.$axios.get('tm/api/DataFlows/findOne', {
-        params
-      })
+      return this.$axios.get('tm/api/DataFlows/findOne?filter=' + encodeURIComponent(JSON.stringify(params)))
     },
     metaDataFunc(params) {
-      return this.$axios.get('tm/api/MetadataInstances', {
-        params
-      })
+      return this.$axios.get('tm/api/MetadataInstances?filter=' + encodeURIComponent(JSON.stringify(params)))
     },
     submitFunc(id, params) {
       return this.$axios[id ? 'patch' : 'post']('tm/api/Inspects', params)
