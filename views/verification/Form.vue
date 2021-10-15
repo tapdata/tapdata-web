@@ -443,17 +443,19 @@ export default {
         }
       }
       this.optionsFunc({
-        filter: JSON.stringify({
-          where: where,
-          fields: {
-            id: true,
-            name: true
-          },
-          order: 'createTime DESC'
-        })
+        where: where,
+        fields: {
+          id: true,
+          name: true
+        },
+        order: 'createTime DESC'
       })
         .then(data => {
-          this.flowOptions = data || []
+          if (data?.items) {
+            this.flowOptions = data.items || []
+          } else {
+            this.flowOptions = data || []
+          }
           let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
           this.form.name = this.form.name || flow.name || ''
           this.form['dataFlowName'] = flow.name
@@ -492,17 +494,15 @@ export default {
     getFlowStages() {
       this.loading = true
       this.dataflowFunc({
-        filter: JSON.stringify({
-          where: {
-            id: this.form.flowId
-          },
-          fields: {
-            id: true,
-            name: true,
-            stages: true,
-            mappingTemplate: true
-          }
-        })
+        where: {
+          id: this.form.flowId
+        },
+        fields: {
+          id: true,
+          name: true,
+          stages: true,
+          mappingTemplate: true
+        }
       })
         .then(data => {
           let flowData = data
@@ -549,10 +549,8 @@ export default {
           }
         }
         this.metaDataFunc({
-          filter: JSON.stringify({
-            where,
-            fields: META_INSTANCE_FIELDS
-          })
+          where,
+          fields: META_INSTANCE_FIELDS
         })
           .then(data => {
             let tables = data || []
