@@ -110,7 +110,6 @@
                 :transform="model"
                 :getDataFlow="getDataFlow"
                 @update-first="returnModel"
-                @update-transform="updateTranForm"
                 @returnFieldMapping="returnFieldMapping"
                 @returnPreFixSuffix="returnPreFixSuffix"
               ></FieldMapping>
@@ -616,22 +615,6 @@ export default {
       this.model.table_suffix = data.table_suffix
       this.model.tableNameTransform = data.tableNameTransform
       this.model.fieldsNameTransform = data.fieldsNameTransform
-    },
-    // 字段处理器返回前后缀
-    updateTranForm(type, data) {
-      if (type === 'all') {
-        this.model.table_prefix = data.table_prefix
-        this.model.table_suffix = data.table_suffix
-        this.model.tableNameTransform = data.tableNameTransform
-        this.model.fieldsNameTransform = data.fieldsNameTransform
-      } else if (type === 'field') {
-        this.model.fieldsNameTransform = data.fieldsNameTransform
-      } else if (type === 'table') {
-        this.model.table_prefix = data.table_prefix
-        this.model.table_suffix = data.table_suffix
-        this.model.tableNameTransform = data.tableNameTransform
-      }
-      this.getDataFlow()
     },
     //接收是否第一次打开
     returnModel(value) {
