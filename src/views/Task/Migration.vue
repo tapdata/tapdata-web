@@ -160,7 +160,7 @@
             class="select-type__item"
             @click="
               $router.push({
-                path: '/task/create'
+                name: 'DataflowCreate'
               })
             "
           >
@@ -170,7 +170,7 @@
             </div>
             <VIcon size="30" class="v-icon">right-fill</VIcon>
           </div>
-          <div class="select-type__item data-table ml-10">
+          <div class="select-type__item data-table ml-10" @click="$router.push({ name: 'DataflowNew' })">
             <div>
               <div>数据表同步</div>
               <div class="mt-4 font-color-sub">数据表同步</div>
