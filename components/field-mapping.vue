@@ -352,6 +352,7 @@ export default {
         table_prefix: this.transform.table_prefix,
         table_suffix: this.transform.table_suffix
       }
+      this.currentForm = JSON.parse(JSON.stringify(this.form))
     }
     this.updateView()
   },
@@ -366,6 +367,11 @@ export default {
         tableName = this.form.table_prefix + this.sourceTableName + this.form.table_suffix
       }
       return tableName
+    }
+  },
+  watch: {
+    form(old, news) {
+      console.log(old, news)
     }
   },
   methods: {
@@ -548,7 +554,8 @@ export default {
     /*切换表*/
     select(item, index) {
       if (!this.readOnly) {
-        let deleteLen = this.target.filter(v => !v.is_deleted)
+        let data = JSON.parse(JSON.stringify(this.target))
+        let deleteLen = data.filter(v => !v.is_deleted)
         if (deleteLen.length === 0 && this.target?.length > 0) {
           this.$message.error('当前表被删除了所有字段，不允许保存操作')
           return //所有字段被删除了 不可以保存任务
