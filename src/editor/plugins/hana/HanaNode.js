@@ -49,7 +49,7 @@ export const HanaNodeConfig = {
        * @return {boolean}
        */
       allowSource() {
-        return true
+        return false
       },
 
       validate(data) {
