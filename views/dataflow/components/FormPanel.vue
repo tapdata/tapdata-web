@@ -1,13 +1,6 @@
 <template>
   <div class="attr-panel">
-    <!--<header class="attr-panel-header border-bottom">
-      <h4 class="header-txt">节点名称</h4>
-      &lt;!&ndash;<div @click="$emit('hide')" class="header-icon">
-        <VIcon>right-circle</VIcon>
-      </div>&ndash;&gt;
-    </header>-->
     <div class="attr-panel-body overflow-auto">
-      <!--<Form :form="form" :schema="schema"></Form>-->
       <ElForm class="flex flex-column" v-bind="formProps">
         <FormProvider :form="form">
           <SchemaField
@@ -26,11 +19,6 @@
               sourceConnectionId: sourceNode ? sourceNode.connectionId : null
             }"
           />
-          <!--<FormConsumer>
-            <template #default="{ form }">
-              {{ form.values }}
-            </template>
-          </FormConsumer>-->
         </FormProvider>
       </ElForm>
     </div>
@@ -40,13 +28,12 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import { action } from '@formily/reactive'
-import ConnectionsApi from '@/api/connections'
-import MetadataApi from '@/api/MetadataInstances'
+import ConnectionsApi from 'web-core/api/Connections'
+import MetadataApi from 'web-core/api/MetadataInstances'
 import { createSchemaField, FormProvider } from '@formily/vue'
 import { components } from 'web-core/components/form'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import 'web-core/components/form/styles/index.scss'
-import VIcon from '@/components/VIcon'
 
 const { SchemaField } = createSchemaField({
   components
@@ -70,7 +57,7 @@ export default {
     }
   },
 
-  components: { VIcon, FormProvider, SchemaField },
+  components: { FormProvider, SchemaField },
 
   computed: {
     ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType']),
@@ -125,6 +112,7 @@ export default {
               await this.setSchema(this.ins.linkFormSchema || formSchema.link)
               break
             case 'settings':
+              console.log('this.getSettingSchema()', this.getSettingSchema())
               await this.setSchema(this.getSettingSchema(), this.$store.getters['dataflow/dataflowSettings'])
               break
           }
@@ -642,7 +630,7 @@ export default {
             order: ['status DESC', 'name ASC']
           })
         })
-        return result.data.map(item => {
+        return result.map(item => {
           return {
             id: item.id,
             name: item.name,
@@ -664,11 +652,12 @@ export default {
       let result = await connections.customQuery([connectionId], {
         schema: true
       })
-      return result.data
+      return result
     },
 
     // 加载数据库的表
     async loadDatabaseTable(field, connectionId = field.query('connectionId').get('value')) {
+      console.log('connectionId')
       if (!connectionId) return
       const params = {
         filter: JSON.stringify({
@@ -685,7 +674,7 @@ export default {
           }
         })
       }
-      let { data: tables } = await metadataApi.get(params)
+      let tables = await metadataApi.get(params)
       tables = tables.map(item => ({
         label: item.original_name,
         value: item.id
@@ -694,7 +683,7 @@ export default {
     },
 
     // 加载表的详情
-    async loadTableInfo(field, id = field.query('tableId').get('value')) {
+    async loadTableInfo(field, id = field?.query('tableId')?.get('value')) {
       if (!id) return
       console.log('loadTableInfo', field, id)
       const params = {
@@ -820,7 +809,7 @@ $headerBg: #fff;
       width: $headerH;
       height: $headerH;
       text-align: center;
-      background-color: var(--primary);
+      background-color: map-get($color, primary);
       cursor: pointer;
       color: #fff;
     }
@@ -996,10 +985,10 @@ $headerBg: #fff;
           }
 
           &:hover {
-            background-color: var(--primary-hover-l);
+            background-color: #f0f7ff;
 
             .list-item-text {
-              color: var(--primary);
+              color: map-get($color, primary);
             }
 
             .el-checkbox {

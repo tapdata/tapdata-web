@@ -319,10 +319,16 @@ export default {
       }
       this.initTableData()
       this.initTypeMapping()
+      this.clearSearch()
       this.operations = []
       if (this.field_process?.length > 0) {
         this.getFieldProcess()
       }
+    },
+    //清空搜索条件
+    clearSearch() {
+      this.searchField = ''
+      this.searchTable = ''
     },
     //获取字段处理器
     getFieldProcess() {

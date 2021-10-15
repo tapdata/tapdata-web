@@ -231,7 +231,7 @@ const SyncObjectItem = observer(
           })
         )
         this.$nextTick(() => {
-          console.log('valueChanged', this.form.values)
+          console.log('valueChanged', this.form.values) // eslint-disable-line
         })
       },
 
@@ -242,7 +242,7 @@ const SyncObjectItem = observer(
       // 添加前后缀弹窗开关
       handDialog() {
         const form = this.form.values
-        console.log('handDialog', this.form)
+        console.log('handDialog', this.form) // eslint-disable-line
         this.model.table_prefix = form.table_prefix || ''
         this.model.table_suffix = form.table_suffix || ''
         this.dialogVisible = true

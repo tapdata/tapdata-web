@@ -91,11 +91,10 @@ import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from 'web-core/views/dataflow/components/ConfigPanel'
-import { off, on } from '@/utils/dom'
-import { uuid } from '@/utils/util'
-import DataFlows from '@/api/DataFlows'
-import DataFlowFormSchemas from '@/api/DataFlowFormSchemas'
-import DatabaseTypes from '@/api/DatabaseTypes'
+import { off, on } from 'web-core/utils/dom'
+import { uuid } from 'web-core/utils/util'
+import DataFlows from 'web-core/api/DataFlows'
+import DatabaseTypes from 'web-core/api/DatabaseTypes'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -108,10 +107,8 @@ import {
 } from './command'
 import Mousetrap from 'mousetrap'
 import dagre from 'dagre'
-import DFMenu from 'web-core/views/dataflow/components/DFMenu'
 
 const dataFlowsApi = new DataFlows()
-const dataFlowFormSchemasApi = new DataFlowFormSchemas()
 const databaseTypesApi = new DatabaseTypes()
 
 export default {
@@ -120,7 +117,6 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage],
 
   components: {
-    DFMenu,
     ConfigPanel,
     PaperScroller,
     TopHeader,
@@ -332,8 +328,6 @@ export default {
       }
       this.setNodeTypes(_nodeTypes)
       this.setCtorTypes(ctorTypes)
-
-      dataFlowType && (await this.setSchema(dataFlowType))
     },
 
     /**
@@ -599,13 +593,13 @@ export default {
       let result
       try {
         result = await dataFlowsApi.get([dataflowId])
-        this.creatUserId = result.data.user_id
+        // this.creatUserId = result.user_id
       } catch (e) {
         this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
         return
       }
 
-      const { data } = result
+      const data = result
 
       this.status = data.status
       this.setDataflowId(dataflowId)
@@ -621,7 +615,8 @@ export default {
     },
 
     newDataflow() {
-      this.creatUserId = this.$cookie.get('user_id')
+      // this.creatUserId = this.$cookie.get('user_id')
+      this.creatUserId = ''
       this.resetWorkspace()
       this.setDataflowName({
         newName: '新任务@' + new Date().toLocaleTimeString()
@@ -1003,21 +998,6 @@ export default {
       this.hideSelectBox()
     },
 
-    wheelScroll(e) {
-      //* Control + scroll zoom
-      if (e.ctrlKey) {
-        if (e.deltaY > 0) {
-          this.zoomOut()
-        } else {
-          this.zoomIn()
-        }
-
-        e.preventDefault()
-        return
-      }
-      this.wheelMoveDataflow(e)
-    },
-
     hideSelectBox() {
       this.selectActive = false
       this.showSelectBox = false
@@ -1102,13 +1082,13 @@ export default {
       try {
         this.isSaving = true
         const data = this.getDataflowDataToSave()
-        const { data: dataflow } = await dataFlowsApi.draft(data)
+        const dataflow = await dataFlowsApi.draft(data)
         this.isSaving = false
         this.$message.success(this.$t('message.saveOK'))
         this.setDataflowId(dataflow.id) // 将生成的id保存到store
 
         await this.$router.push({
-          name: 'DataflowEdit',
+          name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowSave' },
           query: {
             mapping: this.mapping
@@ -1370,21 +1350,6 @@ export default {
       if (this.jsPlumbIns.getConnections('*').length < 1) return this.$t('editor.cell.validate.none_link_node')
 
       return null
-    },
-
-    async setSchema(dataFlowType) {
-      const { data } = await dataFlowFormSchemasApi.get({
-        filter: {
-          dataFlowType
-        }
-      })
-      const item = data[0]
-      if (!item) return
-      this.setFormSchema({
-        node: item.nodeSchema,
-        link: item.linkSchema
-      })
-      console.log('data', data)
     },
 
     setZoomLevel(zoomLevel) {

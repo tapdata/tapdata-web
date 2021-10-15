@@ -20,6 +20,7 @@ const newEn = {
   schema_progress_status_success: 'Finished',
   schema_progress_status_error: 'Loading error',
   schema_progress_dialog_error_title: 'Schema loading error',
+  schema_progress_load_time: 'Loaded time: {0}',
 
   // Data validation
   verify_title_create: 'New verification',
