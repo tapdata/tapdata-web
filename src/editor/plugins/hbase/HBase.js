@@ -49,7 +49,7 @@ export const HBaseNodeConfig = {
        * @return {boolean}
        */
       allowSource() {
-        return false
+        return true
       },
 
       validate(data) {
