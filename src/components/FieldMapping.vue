@@ -164,7 +164,7 @@ export default {
             this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
           } else {
             this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
-            this.dataFlow.dataFlowta['stages'][i].table_prefix = data.table_prefix
+            this.dataFlow['stages'][i].table_prefix = data.table_prefix
             this.dataFlow['stages'][i].table_suffix = data.table_suffix
           }
         }
