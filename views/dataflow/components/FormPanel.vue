@@ -839,15 +839,6 @@ $headerBg: #fff;
 
   ::v-deep {
     .el-form {
-      .addTxt {
-        float: right;
-        display: inline-block;
-        height: 30px;
-        line-height: 30px;
-        font-size: 12px;
-        color: #48b6e2;
-      }
-
       &-item {
         margin-bottom: 10px;
 
