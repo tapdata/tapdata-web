@@ -1,6 +1,6 @@
 export const NODE_PREFIX = 'node-'
 export const NODE_WIDTH = 180
-export const NODE_HEIGHT = 48
+export const NODE_HEIGHT = 40
 
 export const DEFAULT_SETTINGS = {
   isSerialMode: false,
@@ -71,7 +71,7 @@ export const DB_ICON = {
 }
 
 export const NODE_TYPE_ICON = {
-  table: 'table',
+  table: 'table-line',
   js_processor: 'js',
   field_processor: 'field-processor',
   aggregation_processor: 'aggregator',
