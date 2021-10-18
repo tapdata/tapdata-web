@@ -76,7 +76,7 @@ export default {
 
     // 联合唯一key,用来做监听，切换schema
     uniteKey() {
-      console.log('activeType', this.activeType, this.node)
+      console.log('activeType', this.activeType, this.node) // eslint-disable-line
       return `${this.node?.id || ''}_${this.activeConnection?.sourceId || ''}_${this.activeType}`
     },
 
@@ -100,10 +100,9 @@ export default {
     uniteKey: {
       immediate: true,
       async handler() {
-        console.log('FormPanel', arguments)
+        console.log('FormPanel', arguments) // eslint-disable-line
         if (this.activeType) {
           const formSchema = this.$store.getters['dataflow/formSchema'] || {}
-          console.log('formSchema')
           switch (this.activeType) {
             case 'node':
               await this.setSchema(this.ins.formSchema || formSchema.node)
@@ -112,7 +111,7 @@ export default {
               await this.setSchema(this.ins.linkFormSchema || formSchema.link)
               break
             case 'settings':
-              console.log('this.getSettingSchema()', this.getSettingSchema())
+              console.log('this.getSettingSchema()', this.getSettingSchema()) // eslint-disable-line
               await this.setSchema(this.getSettingSchema(), this.$store.getters['dataflow/dataflowSettings'])
               break
           }
@@ -577,10 +576,10 @@ export default {
     // 绑定表单事件
     useEffects() {
       onFormValuesChange(form => {
-        console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values)))
+        console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
       })
       onFormInputChange(form => {
-        console.log('onFormInputChange')
+        console.log('onFormInputChange') // eslint-disable-line
         this.$nextTick(() => {
           if (this.activeType !== 'settings') {
             this.updateNodeProps(form)
@@ -640,7 +639,7 @@ export default {
           }
         })
       } catch (e) {
-        console.log('catch', e)
+        console.log('catch', e) // eslint-disable-line
         return []
       }
     },
@@ -657,7 +656,6 @@ export default {
 
     // 加载数据库的表
     async loadDatabaseTable(field, connectionId = field.query('connectionId').get('value')) {
-      console.log('connectionId')
       if (!connectionId) return
       const params = {
         filter: JSON.stringify({
@@ -685,7 +683,7 @@ export default {
     // 加载表的详情
     async loadTableInfo(field, id = field?.query('tableId')?.get('value')) {
       if (!id) return
-      console.log('loadTableInfo', field, id)
+      console.log('loadTableInfo', field, id) // eslint-disable-line
       const params = {
         filter: JSON.stringify({
           where: {
@@ -701,7 +699,7 @@ export default {
     // 加载表的
     async loadTableField(field, id = field.query('tableId').get('value')) {
       if (!id) return
-      console.log('loadTableField', field, id)
+      console.log('loadTableField', field, id) // eslint-disable-line
       const params = {
         filter: JSON.stringify({
           where: {
@@ -879,10 +877,10 @@ $headerBg: #fff;
           }
 
           //TODO: 和drs不兼容，后面需要统一样式
-          .ElButton--mini,
-          .ElButton--small {
-            //border-radius: $radius;
-          }
+          // .ElButton--mini,
+          // .ElButton--small {
+          //border-radius: $radius;
+          // }
 
           .el-input__inner::-webkit-input-placeholder {
             font-size: 12px;

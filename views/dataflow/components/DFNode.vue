@@ -107,7 +107,7 @@ export default {
     __init() {
       const { id, nodeId } = this
 
-      console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint)
+      console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint) // eslint-disable-line
 
       this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
 
@@ -155,7 +155,7 @@ export default {
 
             if (x === this.data.position[0] && y === this.data.position[1]) {
               // 拖拽结束后位置没有改变
-              console.log('没有移动')
+              console.log('没有移动') // eslint-disable-line
               this.isNotMove = true
             }
 
