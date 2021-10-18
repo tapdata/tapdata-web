@@ -403,8 +403,7 @@ export default {
       }
       // 下一步
       if (this.step === 2) {
-        // this.loadSchema('first')
-        this.step++
+        this.loadSchema('first')
       } else {
         this.step++
       }
@@ -431,15 +430,8 @@ export default {
         return
       }
       // let id = this.form.source?.id
-      let { id, database_username } = this.form.source ?? {}
+      let { id } = this.form.source ?? {}
       this.$axios.get(`tm/api/Connections/${id}/customQuery?schema=true`).then(data => {
-        this.sourceData = [
-          {
-            label: database_username,
-            key: database_username,
-            id: database_username
-          }
-        ]
         let tables = data.schema?.tables || []
         tables = tables.sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1))
         if (tables?.length) {
