@@ -38,6 +38,7 @@ import { FormTab, FormTabPane } from './FormTab'
 import { ArrayBase, ArrayBaseItem, ArrayAddition, ArrayMoveDown, ArrayMoveUp, ArrayRemove } from './ArrayBase'
 import { ArrayItems, ArrayHeader } from './ArrayItems'
 import { FilterConditions } from './FilterConditions'
+import { ArrayAggregate } from './ArrayAggregate'
 import { PreviewSql } from './PreviewSql'
 import { SqlEditor } from './SqlEditor'
 import { ArrayTable, ArrayTableColumn } from './ArrayTable'
@@ -78,6 +79,7 @@ export const components = {
   ArrayRemove,
   ArrayItems,
   FilterConditions,
+  ArrayAggregate, // 聚合处理
   ArrayHeader,
   PreviewSql,
   SqlEditor,

@@ -49,7 +49,7 @@ const state = () => ({
       icon: 'aggregator',
       name: '聚合',
       type: 'aggregation_processor',
-      constructor: 'JavaScript'
+      constructor: 'Aggregate'
     },
     {
       icon: 'row-filter',
