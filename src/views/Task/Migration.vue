@@ -9,6 +9,11 @@
                 <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"></ElOption>
               </ElSelect>
             </ElFormItem>
+            <ElFormItem :label="$t('task_type') + ' ：'" class="small">
+              <ElSelect v-model="searchParams.type" clearable @input="search()">
+                <ElOption v-for="(label, value) in typeMap" :key="value" :label="label" :value="value"></ElOption>
+              </ElSelect>
+            </ElFormItem>
             <ElFormItem :label="$t('task_sync_type') + ' ：'" class="small">
               <ElSelect
                 v-model="searchParams.syncType"
@@ -53,6 +58,7 @@
         @sort-change="sortChange"
       >
         <ElTableColumn label="任务名称" prop="name" min-width="200"></ElTableColumn>
+        <ElTableColumn label="任务类型" prop="typeText"></ElTableColumn>
         <ElTableColumn label="所属agent" prop="belongAgent" min-width="200">
           <template slot-scope="scope">
             <ElLink v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
@@ -61,7 +67,7 @@
             <span v-else>-</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="任务类型" prop="syncTypeText"></ElTableColumn>
+        <ElTableColumn label="同步类型" prop="syncTypeText"></ElTableColumn>
         <ElTableColumn label="任务状态">
           <template slot-scope="scope">
             <status-tag
@@ -284,8 +290,10 @@ export default {
         status: '',
         syncType: '',
         agentId: '',
-        keyword: ''
+        keyword: '',
+        type: ''
       },
+      typeMap: { 'cluster-clone': '数据库迁移', custom: '数据表同步' },
       syncTypeMap: {
         initial_sync: '全量',
         cdc: '增量',
@@ -415,7 +423,7 @@ export default {
       const { toRegExp } = this.$util
       this.loading = true
       let current = pageNum || this.page.current
-      let { keyword, status, syncType, agentId } = this.searchParams
+      let { keyword, status, syncType, agentId, type } = this.searchParams
       let fields = {
         id: true,
         name: true,
@@ -438,7 +446,7 @@ export default {
         agentId: true
       }
       let where = {
-        mappingTemplate: 'cluster-clone'
+        mappingTemplate: type
       }
       if (keyword && keyword.trim()) {
         where.or = [
@@ -487,6 +495,7 @@ export default {
       let tcmInfo = item.tcm || {}
       item.belongAgent = tcmInfo.agentName || tcmInfo.agentId || ''
       item.syncTypeText = this.syncTypeMap[item.setting?.sync_type] || '-'
+      item.typeText = this.typeMap[item.mappingTemplate] || '-'
       let statusInfo = TASK_STATUS_MAP[item.status] || {}
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
