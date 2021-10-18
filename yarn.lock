@@ -929,6 +929,20 @@
     "@formily/shared" "2.0.0-rc.14"
     "@formily/validator" "2.0.0-rc.14"
 
+"@formily/element@^2.0.0-rc.14":
+  version "2.0.0-rc.14"
+  resolved "https://registry.npmmirror.com/@formily/element/download/@formily/element-2.0.0-rc.14.tgz#ac17338a9f2b22b4f9c732d21c01a61533e78746"
+  integrity sha1-rBczip8rIrT5xzLSHAGmFTPnh0Y=
+  dependencies:
+    "@formily/core" "2.0.0-rc.14"
+    "@formily/json-schema" "2.0.0-rc.14"
+    "@formily/reactive" "2.0.0-rc.14"
+    "@formily/reactive-vue" "2.0.0-rc.14"
+    "@formily/shared" "2.0.0-rc.14"
+    "@formily/vue" "2.0.0-rc.14"
+    portal-vue "^2.1.7"
+    vue-slicksort "^1.2.0"
+
 "@formily/json-schema@2.0.0-rc.14":
   version "2.0.0-rc.14"
   resolved "https://registry.yarnpkg.com/@formily/json-schema/-/json-schema-2.0.0-rc.14.tgz#09eb5160f925096cee4d0cc1c0e1fc1aae95ba40"
@@ -976,7 +990,7 @@
   dependencies:
     "@formily/shared" "2.0.0-rc.14"
 
-"@formily/vue@^2.0.0-rc.14":
+"@formily/vue@2.0.0-rc.14", "@formily/vue@^2.0.0-rc.14":
   version "2.0.0-rc.14"
   resolved "https://registry.yarnpkg.com/@formily/vue/-/vue-2.0.0-rc.14.tgz#f51ac481e53787992fbb958b8130c863cd0e1679"
   integrity sha512-VQM9zCU9aOc65IlR9uF92nK3lrLjeumLzqgAsPxUnS1SilP9LMSQGX3SZSqHyW9kNcUG+Su4EKNy96yZx2G+IQ==
@@ -7476,6 +7490,11 @@ pnp-webpack-plugin@^1.6.4:
   dependencies:
     ts-pnp "^1.1.6"
 
+portal-vue@^2.1.7:
+  version "2.1.7"
+  resolved "https://registry.nlark.com/portal-vue/download/portal-vue-2.1.7.tgz#ea08069b25b640ca08a5b86f67c612f15f4e4ad4"
+  integrity sha1-6ggGmyW2QMoIpbhvZ8YS8V9OStQ=
+
 portfinder@^1.0.26:
   version "1.0.28"
   resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.28.tgz#67c4622852bd5374dd1dd900f779f53462fac778"
@@ -9934,6 +9953,11 @@ vue-router@^3.2.0:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.5.2.tgz#5f55e3f251970e36c3e8d88a7cd2d67a350ade5c"
   integrity sha512-807gn82hTnjCYGrnF3eNmIw/dk7/GE4B5h69BlyCK9KHASwSloD1Sjcn06zg9fVG4fYH2DrsNBZkpLtb25WtaQ==
+
+vue-slicksort@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.nlark.com/vue-slicksort/download/vue-slicksort-1.2.0.tgz#2bc1da2facc4350279ebc3866acea6ee5fe681ef"
+  integrity sha1-K8HaL6zENQJ568OGas6m7l/mge8=
 
 vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:
   version "4.1.3"
