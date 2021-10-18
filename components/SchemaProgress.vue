@@ -23,7 +23,7 @@ export default {
       let data = this.data
       let schemaInfo = {}
       // 加载数量大于等于实际的视为已完成
-      if (data.loadFieldsStatus === 'finished' || data.loadCount >= data.tableCount) {
+      if (data.loadFieldsStatus === 'finished') {
         let loadTime = data.loadSchemaDate
         schemaInfo = {
           text: this.$t('schema_progress_status_success'),
