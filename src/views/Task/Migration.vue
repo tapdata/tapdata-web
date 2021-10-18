@@ -3,76 +3,66 @@
     <div class="main">
       <div class="migration-operation">
         <div class="migration-operation-left">
-          <el-form inline @submit.native.prevent>
-            <el-form-item :label="$t('task_status') + ' ：'" class="small">
-              <el-select v-model="searchParams.status" clearable @input="search()">
-                <el-option
-                  v-for="(value, label) in statusOptions"
-                  :key="value"
-                  :label="label"
-                  :value="value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="$t('task_sync_type') + ' ：'" class="small">
-              <el-select
+          <ElForm inline @submit.native.prevent>
+            <ElFormItem :label="$t('task_status') + ' ：'" class="small">
+              <ElSelect v-model="searchParams.status" clearable @input="search()">
+                <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"></ElOption>
+              </ElSelect>
+            </ElFormItem>
+            <ElFormItem :label="$t('task_sync_type') + ' ：'" class="small">
+              <ElSelect
                 v-model="searchParams.syncType"
                 clearable
                 :placeholder="$t('gl_placeholder_select')"
                 @input="search()"
               >
-                <el-option v-for="(label, value) in syncTypeMap" :key="value" :label="label" :value="value"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="$t('agent_name') + ' ：'" class="medium">
-              <el-select
+                <ElOption v-for="(label, value) in syncTypeMap" :key="value" :label="label" :value="value"></ElOption>
+              </ElSelect>
+            </ElFormItem>
+            <ElFormItem :label="$t('agent_name') + ' ：'" class="medium">
+              <ElSelect
                 v-model="searchParams.agentId"
                 clearable
                 :placeholder="$t('gl_placeholder_select')"
                 @input="search()"
               >
-                <el-option
-                  v-for="opt in agentOptions"
-                  :key="opt.value"
-                  :label="opt.label"
-                  :value="opt.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="$t('task_name_or_node_name_or_library_name') + ' ：'" class="medium">
+                <ElOption v-for="opt in agentOptions" :key="opt.value" :label="opt.label" :value="opt.value"></ElOption>
+              </ElSelect>
+            </ElFormItem>
+            <ElFormItem :label="$t('task_name_or_node_name_or_library_name') + ' ：'" class="medium">
               <ElInput v-model="searchParams.keyword" :placeholder="$t('gl_placeholder_input')" @input="search(800)">
                 <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </ElInput>
-            </el-form-item>
-            <el-form-item>
+            </ElFormItem>
+            <ElFormItem>
               <ElButton plain class="btn-refresh" @click="fetch()">
                 <VIcon>refresh</VIcon>
               </ElButton>
-            </el-form-item>
-          </el-form>
+            </ElFormItem>
+          </ElForm>
         </div>
         <div class="migration-operation-right">
           <VButton type="primary" @click="createTask"><span>创建任务</span></VButton>
         </div>
       </div>
-      <el-table
+      <ElTable
         class="migration-table table-border font-color-sub"
         style="margin-top: 10px"
         height="100%"
         :data="list"
         @sort-change="sortChange"
       >
-        <el-table-column label="任务名称" prop="name" min-width="200"></el-table-column>
-        <el-table-column label="所属agent" prop="belongAgent" min-width="200">
+        <ElTableColumn label="任务名称" prop="name" min-width="200"></ElTableColumn>
+        <ElTableColumn label="所属agent" prop="belongAgent" min-width="200">
           <template slot-scope="scope">
-            <el-link v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
+            <ElLink v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
               scope.row.belongAgent
-            }}</el-link>
+            }}</ElLink>
             <span v-else>-</span>
           </template>
-        </el-table-column>
-        <el-table-column label="任务类型" prop="syncTypeText"></el-table-column>
-        <el-table-column label="任务状态">
+        </ElTableColumn>
+        <ElTableColumn label="任务类型" prop="syncTypeText"></ElTableColumn>
+        <ElTableColumn label="任务状态">
           <template slot-scope="scope">
             <status-tag
               type="text"
@@ -81,20 +71,20 @@
               only-img
             ></status-tag>
           </template>
-        </el-table-column>
-        <el-table-column label="启动时间" prop="startTime" sortable="custom" width="150">
+        </ElTableColumn>
+        <ElTableColumn label="启动时间" prop="startTime" sortable="custom" width="150">
           <template slot-scope="scope">{{ scope.row.startTimeFmt }}</template>
-        </el-table-column>
-        <el-table-column label="操作" width="280">
+        </ElTableColumn>
+        <ElTableColumn label="操作" width="280">
           <template slot-scope="scope">
-            <el-tooltip
+            <ElTooltip
               v-if="!['running', 'stopping'].includes(scope.row.status)"
               effect="dark"
               content="任务配置未完成，无法启动"
               :manual="!(scope.row.status === 'draft' && scope.row.checked === false)"
               placement="top-start"
             >
-              <el-link
+              <ElLink
                 type="primary"
                 :disabled="
                   !statusBtMap['run'][scope.row.status] || (scope.row.status === 'draft' && scope.row.checked === false)
@@ -102,72 +92,72 @@
                 @click="run([scope.row.id], scope.row)"
               >
                 启动任务
-              </el-link>
-            </el-tooltip>
-            <el-link
+              </ElLink>
+            </ElTooltip>
+            <ElLink
               v-if="scope.row.status === 'running'"
               type="primary"
               :disabled="!statusBtMap['stop'][scope.row.status]"
               @click="stop([scope.row.id])"
             >
               停止任务
-            </el-link>
-            <el-link
+            </ElLink>
+            <ElLink
               v-if="scope.row.status === 'stopping'"
               type="primary"
               :disabled="!statusBtMap['forceStop'][scope.row.status]"
               @click="forceStop([scope.row.id])"
             >
               强制停止
-            </el-link>
+            </ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <el-link
+            <ElLink
               type="primary"
               @click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
               运行监控
-            </el-link>
+            </ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <el-link
+            <ElLink
               type="primary"
               :disabled="!statusBtMap['edit'][scope.row.status]"
               @click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
               编辑
-            </el-link>
+            </ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <el-dropdown @command="handleMore($event, scope.row, scope.$index)">
-              <el-link type="primary" class="rotate-90">
+            <ElDropdown @command="handleMore($event, scope.row, scope.$index)">
+              <ElLink type="primary" class="rotate-90">
                 <i class="el-icon-more"></i>
-              </el-link>
-              <el-dropdown-menu slot="dropdown" class="text-nowrap">
-                <el-dropdown-item command="copy">复制</el-dropdown-item>
-                <el-dropdown-item command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
+              </ElLink>
+              <ElDropdownMenu slot="dropdown" class="text-nowrap">
+                <ElDropdownItem command="copy">复制</ElDropdownItem>
+                <ElDropdownItem command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
                   重置
-                </el-dropdown-item>
-                <el-dropdown-item command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
+                </ElDropdownItem>
+                <ElDropdownItem command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
                   <span :class="{ 'color-danger': statusBtMap['delete'][scope.row.status] }">删除</span>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+                </ElDropdownItem>
+              </ElDropdownMenu>
+            </ElDropdown>
           </template>
-        </el-table-column>
+        </ElTableColumn>
         <div v-if="!isSearching" class="migration-table__empty" slot="empty">
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_data') }}</span>
-            <el-link type="primary" class="fs-7" @click="createTask">创建任务</el-link>
+            <ElLink type="primary" class="fs-7" @click="createTask">创建任务</ElLink>
           </div>
         </div>
         <div v-else class="migration-table__empty" slot="empty">
           <VIcon size="120">search-no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_match_result') }}</span>
-            <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
+            <ElLink type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
           </div>
         </div>
-      </el-table>
-      <el-pagination
+      </ElTable>
+      <ElPagination
         background
         class="mt-3"
         layout="total, sizes, ->, prev, pager, next, jumper"
