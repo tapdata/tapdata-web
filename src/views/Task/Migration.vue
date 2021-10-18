@@ -567,7 +567,6 @@ export default {
       })
     },
     toDetails(row) {
-      console.log('toDetails', row)
       this.$router.push({
         name: 'DataflowDetails',
         params: {
