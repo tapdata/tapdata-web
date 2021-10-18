@@ -9,24 +9,32 @@ for (const dKey in directionMap) {
 }
 export const TOPOLOGY_MAP = topologyMap,
   INSTANCE_STATUS_MAP = {
-    Creating: { text: '待部署', icon: 'creating', type: 'warning' },
-    Running: { text: '运行中', icon: 'right-fill', type: 'success' },
-    Stopping: { text: '停止中', icon: 'loading', type: 'success' },
-    Stopped: { text: '离线', icon: 'warning', type: 'warning' }
+    Creating: { text: '待部署', type: 'warning' },
+    Running: { text: '运行中', type: 'success' },
+    Stopping: { text: '停止中', type: 'danger' },
+    Stopped: { text: '离线', type: 'disable' }
   },
   TASK_STATUS_MAP = {
-    running: { text: '运行中', icon: 'right-fill', type: 'success' },
-    paused: { text: '待启动', icon: 'wait-fill-color' },
-    error: { text: '错误', icon: 'warning', type: 'warning' },
-    draft: { text: '待启动', icon: 'wait-fill-color' },
-    scheduled: { text: '启动中', icon: 'loading', type: 'success' },
-    stopping: { text: '停止中', icon: 'loading', type: 'success' },
-    'force stopping': { text: '强制停止中', icon: 'loading', type: 'success' }
+    running: { text: '运行中', icon: 'yunxingzhong', type: 'success' },
+    paused: { text: '待启动', icon: 'daiqidong' },
+    error: { text: '错误', icon: 'cuowu', type: 'warning' },
+    draft: { text: '待启动', icon: 'daiqidong' },
+    scheduled: { text: '启动中', icon: 'qidongzhong', type: 'success' },
+    stopping: { text: '停止中', icon: 'tingzhizhong', type: 'success' },
+    'force stopping': { text: '强制停止中', icon: 'qiangzhitingzhi', type: 'success' },
+    finished: { text: '已完成', icon: 'yiwancheng', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
-    ready: { text: '有效', icon: 'success-fill-color', type: 'success' },
-    invalid: { text: '失效', icon: 'error', type: 'danger' },
-    testing: { text: '测试中', icon: 'loading', type: 'success' }
+    ready: { text: '有效', type: 'success' },
+    invalid: { text: '失效', type: 'danger' },
+    testing: { text: '测试中', type: 'warning' }
+  },
+  MILESTONE_STATUS_MAP = {
+    waiting: { text: '待执行', icon: 'daizhixing' },
+    running: { text: '进行中', icon: 'jinxingzhong' },
+    error: { text: '错误', icon: 'cuowu' },
+    finish: { text: '已完成', icon: 'yiwancheng' },
+    paused: { text: '已暂停', icon: 'yizanting' }
   },
   SPEC_MAP = {
     micro: '小规格',

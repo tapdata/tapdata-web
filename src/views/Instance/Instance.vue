@@ -3,10 +3,9 @@
     <div class="main">
       <div class="instance-operation">
         <div class="instance-operation-left">
-          <ul>
-            <li>
-              <el-select v-model="searchParams.status" @input="search()">
-                <el-option :label="$t('agent_status_all')" value=""></el-option>
+          <el-form inline @submit.native.prevent>
+            <el-form-item :label="$t('agent_status') + ' ：'" width="300px">
+              <el-select v-model="searchParams.status" clearable @input="search()">
                 <el-option
                   v-for="(item, index) in statusItems"
                   :key="index"
@@ -14,27 +13,25 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-            </li>
-            <li class="ml-3">
+            </el-form-item>
+            <el-form-item :label="$t('agent_search') + ' ：'" class="ml-2">
               <el-input
                 width="200"
                 v-model="searchParams.keyword"
-                :placeholder="$t('agent_search')"
                 @input="search(800)"
+                :placeholder="$t('gl_placeholder_input')"
               >
-                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </el-input>
-            </li>
-            <li class="ml-3">
+            </el-form-item>
+            <el-form-item>
               <el-button plain class="btn-refresh" @click="fetch()">
                 <VIcon>refresh</VIcon>
               </el-button>
-            </li>
-          </ul>
+            </el-form-item>
+          </el-form>
         </div>
         <div class="instance-operation-right">
           <el-button type="primary" @click="createAgent" :loading="createAgentLoading">
-            <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>{{ $t('agent_button_create') }}</span>
           </el-button>
           <template v-if="isShowTestBtn">
@@ -47,28 +44,34 @@
           </template>
         </div>
       </div>
-      <el-table class="instance-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
+      <el-table
+        class="instance-table table-border mt-1"
+        height="100%"
+        :data="list"
+        @sort-change="sortChange"
+        @row-click="rowClick"
+      >
         <el-table-column min-width="200px" :label="$t('agent_name')">
           <template slot-scope="scope">
             <div class="flex">
               <div>
-                <el-link
-                  class="agent-link"
-                  :type="scope.row.agentType === 'Cloud' ? '' : 'primary'"
-                  @click="handleDetails(scope.row)"
-                  >{{ scope.row.id }}</el-link
-                >
-                <ClipButton :value="scope.row.id"></ClipButton>
                 <inline-input
-                  style="display: block"
+                  :class="['color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
                   :value="scope.row.name"
+                  :icon-config="{ class: 'color-primary' }"
+                  type="icon"
+                  @click-text="handleDetails(scope.row)"
                   @save="updateName($event, scope.row.id)"
                 ></inline-input>
               </div>
               <div class="flex align-items-center">
-                <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">{{
-                  $t('agent_test_use')
-                }}</span>
+                <img
+                  v-if="scope.row.agentType === 'Cloud'"
+                  src="../../../public/images/only_test.png"
+                  alt=""
+                  class="ml-3"
+                  style="height: 18px"
+                />
               </div>
             </div>
           </template>
@@ -93,7 +96,7 @@
                   >{{ $t('gl_see_more') }}</el-link
                 >
               </div>
-              <el-link type="primary" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
+              <el-link type="primary" class="ml-7" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
                 scope.row.metric ? scope.row.metric.runningTaskNum : 0
               }}</el-link>
             </el-tooltip>
@@ -162,38 +165,49 @@
             <span>{{ $moment(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('agent_operate')" width="120" fixed="right">
+        <el-table-column :label="$t('agent_operate')" width="200" fixed="right">
           <template slot-scope="scope">
-            <el-link
-              type="primary"
-              class="mr-2"
-              :disabled="scope.row.agentType === 'Cloud' || !!scope.row.deployDisable"
-              @click="toDeploy(scope.row)"
-              >{{ $t('agent_button_deploy') }}</el-link
-            >
-            <el-link
-              type="primary"
-              class="mr-2"
-              :disabled="scope.row.agentType === 'Cloud' || scope.row.status !== 'Running'"
-              @click="handleStop(scope.row)"
-              >{{ $t('agent_button_stop') }}</el-link
-            >
-            <el-link
-              type="danger"
-              class="mr-2"
-              @click="handleDel(scope.row)"
-              :loading="delLoading"
-              :disabled="delBtnDisabled(scope.row)"
-              >{{ $t('agent_button_delete') }}</el-link
-            >
+            <div class="operate-columns">
+              <el-button
+                size="mini"
+                type="text"
+                :disabled="deployBtnDisabled(scope.row)"
+                @click="toDeploy(scope.row)"
+                >{{ $t('agent_button_deploy') }}</el-button
+              >
+              <el-divider direction="vertical"></el-divider>
+              <el-button
+                type="text"
+                :disabled="stopBtnDisabled(scope.row)"
+                :loading="scope.row.btnLoading.stop"
+                @click="handleStop(scope.row)"
+                >{{ $t('agent_button_stop') }}</el-button
+              >
+              <el-divider direction="vertical"></el-divider>
+              <el-button
+                type="text"
+                :loading="scope.row.btnLoading.delete"
+                :disabled="delBtnDisabled(scope.row)"
+                @click="handleDel(scope.row)"
+                >{{ $t('agent_button_delete') }}</el-button
+              >
+            </div>
           </template>
         </el-table-column>
-        <div class="instance-table__empty" slot="empty">
-          <VIcon>folder-opened</VIcon>
-          <span class="ml-1" v-if="!searchParams.keyword && !searchParams.status">{{ $t('gl_no_data') }}</span>
-          <span v-else>
-            {{ $t('gl_no_match_result') }}，<el-link type="primary" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
-          </span>
+        <div v-if="!isSearching" class="instance-table__empty" slot="empty">
+          <VIcon size="120">no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('agent_list_empty_desc1') }}</span>
+            <el-link type="primary" class="fs-7" @click="createAgent">{{ $t('agent_button_create') }}</el-link>
+            <span>{{ $t('agent_list_empty_desc2') }}</span>
+          </div>
+        </div>
+        <div v-else class="instance-table__empty" slot="empty">
+          <VIcon size="120">search-no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_match_result') }}</span>
+            <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
+          </div>
         </div>
       </el-table>
       <el-pagination
@@ -215,7 +229,7 @@
             <el-button type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
               $t('agent_button_auto_upgrade')
             }}</el-button>
-            <div v-if="agentStatus !== 'running'" class="mt-1 fs-8">({{ $t('agent_tip_auto_upgrade') }})</div>
+            <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8">({{ $t('agent_tip_auto_upgrade') }})</div>
           </div>
           <div>
             <el-button type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</el-button>
@@ -234,6 +248,50 @@
           </div>
         </div>
       </el-dialog>
+      <!--  详情    -->
+      <Details v-model="showDetails" :detail-id="detailId" @closed="detailsClosedFnc" @load-data="loadDetailsData">
+        <div slot="title">
+          <inline-input
+            :value="selectedRow.name"
+            :icon-config="{ class: 'color-primary' }"
+            :input-style="{ width: '140px' }"
+            type="icon"
+            word-break
+            @save="updateName($event, selectedRow.id)"
+          ></inline-input>
+        </div>
+        <div slot="operation" class="flex">
+          <VButton
+            :loading="selectedRow.btnLoading.deploy"
+            :disabled="deployBtnDisabled(selectedRow)"
+            type="primary"
+            class="flex-fill"
+            @click="toDeploy(selectedRow)"
+          >
+            <VIcon size="12">deploy</VIcon>
+            <span class="ml-1">{{ $t('agent_button_deploy') }}</span>
+          </VButton>
+          <VButton
+            :loading="selectedRow.btnLoading.stop"
+            :disabled="stopBtnDisabled(selectedRow)"
+            type="primary"
+            class="flex-fill"
+            @click="handleStop(selectedRow)"
+          >
+            <VIcon size="12">stop</VIcon>
+            <span class="ml-1">{{ $t('agent_button_stop') }}</span>
+          </VButton>
+          <VButton
+            :loading="selectedRow.btnLoading.delete"
+            :disabled="delBtnDisabled(selectedRow)"
+            class="flex-fill"
+            @click="handleDel(selectedRow)"
+          >
+            <VIcon size="12">delete</VIcon>
+            <span class="ml-1">{{ $t('agent_button_delete') }}</span>
+          </VButton>
+        </div>
+      </Details>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -242,9 +300,9 @@
 <script>
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
-import ClipButton from '../../components/ClipButton'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import VIcon from '../../components/VIcon'
+import Details from './Details'
 
 let timer = null
 
@@ -252,15 +310,14 @@ export default {
   components: {
     InlineInput,
     StatusTag,
-    ClipButton,
-    VIcon
+    VIcon,
+    Details
   },
   data() {
     return {
       isShowTestBtn: window.__config__.ENV === 'dev',
       loading: true,
       createAgentLoading: false,
-      delLoading: false,
       searchParams: {
         status: '',
         keyword: ''
@@ -275,10 +332,18 @@ export default {
       statusMap: INSTANCE_STATUS_MAP,
       upgradeDialog: false,
       upgradeErrorDialog: false,
-      selectedRow: {},
+      selectedRow: {
+        btnLoading: {
+          deploy: false,
+          stop: false,
+          delete: false
+        }
+      },
       agentStatus: 'stop',
       version: '',
-      upgradeList: [] // 升级列表
+      upgradeList: [], // 升级列表
+      showDetails: false,
+      detailId: null
     }
   },
   computed: {
@@ -303,6 +368,9 @@ export default {
         flag = false
       }
       return flag
+    },
+    isSearching() {
+      return !!Object.values(this.searchParams).join('')
     }
   },
   watch: {
@@ -336,7 +404,8 @@ export default {
   methods: {
     init() {
       let query = this.$route.query
-      this.searchParams = Object.assign(this.searchParams, query)
+      let { detailId, ...searchParams } = Object.assign(this.searchParams, query)
+      this.searchParams = searchParams
       this.fetch()
       // 是否触发创建agent
       if (query?.create) {
@@ -344,6 +413,11 @@ export default {
         // 清除创建标记
         this.$router.replace({
           name: 'Instance'
+        })
+      } else if (detailId) {
+        this.$nextTick(() => {
+          this.showDetails = true
+          this.detailId = detailId
         })
       }
     },
@@ -353,6 +427,7 @@ export default {
     search(debounce) {
       const { delayTrigger } = this.$util
       delayTrigger(() => {
+        this.fetch(1)
         this.$router.replace({
           name: 'Instance',
           query: this.searchParams
@@ -394,6 +469,11 @@ export default {
             if (!item.tmInfo) {
               item.tmInfo = {}
             }
+            item.btnLoading = {
+              deploy: false,
+              stop: false,
+              delete: false
+            }
             return item
           })
           // 版本号
@@ -416,6 +496,9 @@ export default {
     sortChange({ prop, order }) {
       this.order = `${order ? prop : 'createAt'} ${order === 'ascending' ? 'asc' : 'desc'}`
       this.fetch(1)
+    },
+    rowClick(row) {
+      this.selectedRow = row
     },
     toOldPurchase() {
       this.$confirm(this.$t('agent_link_to_old_purchase_msg'), this.$t('agent_link_to_old_purchase_title'), {
@@ -444,7 +527,23 @@ export default {
         window.open(downloadUrl.href, '_blank')
       })
     },
+    loadDetailsData(data) {
+      if (this.selectedRow?.id) {
+        return
+      }
+      this.selectedRow = data
+    },
+    detailsClosedFnc() {
+      this.showDetails = false
+      this.$router.replace({
+        name: 'Instance',
+        query: this.searchParams
+      })
+    },
     toDeploy(row) {
+      if (this.deployBtnDisabled(row)) {
+        return
+      }
       let downloadUrl = window.App.$router.resolve({
         name: 'FastDownload',
         query: {
@@ -455,8 +554,14 @@ export default {
       window.open(downloadUrl.href, '_blank')
     },
     // 停止
-    handleStop(row) {
+    handleStop(row, from) {
+      if (this.stopBtnDisabled(row)) {
+        return
+      }
       let flag = false
+      if (from === 'details' && this.selectedRow?.id === row.id) {
+        row = this.selectedRow
+      }
       if (row.metric?.runningTaskNum) {
         flag = true
       }
@@ -465,6 +570,9 @@ export default {
         type: 'warning'
       }).then(res => {
         if (res) {
+          if (row.btnLoading) {
+            row.btnLoading.stop = true
+          }
           this.$axios
             .patch('api/tcm/agent/stop/' + row.id)
             .then(() => {
@@ -474,6 +582,11 @@ export default {
             .catch(() => {
               this.$message.error(this.$t('agent_button_stop_msg_fail'))
               this.loading = false
+            })
+            .finally(() => {
+              if (row.btnLoading) {
+                row.btnLoading.stop = false
+              }
             })
         }
       })
@@ -485,8 +598,8 @@ export default {
       }
       let runningTaskNum = row?.metric?.runningTaskNum ?? 0 // 运行中的任务数
       let noDelFlag = runningTaskNum > 0 // 不能删除
-      let title = this.$t('agent_button_delete_confirm_title')
-      let message = null
+      let title = null
+      let message = this.$t('agent_button_delete_confirm_title')
       if (noDelFlag) {
         title = this.$t('gl_button_delete_fail')
         message = this.$t('agent_button_delete_confirm_msg')
@@ -499,34 +612,42 @@ export default {
           if (noDelFlag) {
             return
           }
+          if (row.btnLoading) {
+            row.btnLoading.delete = true
+          }
           if (row.agentType === 'Cloud') {
-            this.delLoading = true
             this.$axios
               .post('api/tcm/orders/cancel', {
                 instanceId: row.id
               })
               .then(() => {
                 this.$message.success(this.$t('agent_button_delete_success'))
+                this.detailsClosedFnc()
                 this.fetch()
               })
               .catch(() => {
                 this.$message.error(this.$t('agent_button_delete_fail'))
               })
               .finally(() => {
-                this.delLoading = false
+                if (row.btnLoading) {
+                  row.btnLoading.delete = false
+                }
               })
           } else {
             this.$axios
               .patch('api/tcm/agent/delete/' + row.id)
               .then(() => {
                 this.$message.success(this.$t('agent_button_delete_success'))
+                this.detailsClosedFnc()
                 this.fetch()
               })
               .catch(() => {
                 this.$message.error(this.$t('agent_button_delete_fail'))
               })
               .finally(() => {
-                this.delLoading = false
+                if (row.btnLoading) {
+                  row.btnLoading.delete = false
+                }
               })
           }
         }
@@ -564,13 +685,11 @@ export default {
         }
       })
     },
-    showUpgradeDialogFnc(row) {
+    showUpgradeDialogFnc() {
       this.upgradeDialog = true
-      this.selectedRow = row
     },
-    showUpgradeErrorDialogFnc(row) {
+    showUpgradeErrorDialogFnc() {
       this.upgradeErrorDialog = true
-      this.selectedRow = row
     },
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
@@ -645,13 +764,18 @@ export default {
       if (data.agentType === 'Cloud') {
         return
       }
-      // this.clearTimer()  //点详情报错 暂时注释
-      this.$router.push({
-        name: 'InstanceDetails',
-        query: {
-          id: data.id
-        }
-      })
+      // this.selectedRow = data
+      this.showDetails = true
+      this.detailId = data.id
+      let query = this.$route.query
+      this.$router
+        .replace({
+          name: 'Instance',
+          query: Object.assign({}, query, {
+            detailId: this.selectedRow.id
+          })
+        })
+        .catch(() => {})
     },
     // 创建Agent
     createAgent() {
@@ -684,6 +808,15 @@ export default {
         }
       })
     },
+    // 禁用部署
+    deployBtnDisabled(row) {
+      return row.agentType === 'Cloud' || !!row.deployDisable
+    },
+    // 禁用停止
+    stopBtnDisabled(row) {
+      return row.agentType === 'Cloud' || row.status !== 'Running'
+    },
+    // 禁用删除
     delBtnDisabled(row) {
       let flag = false
       if (row.agentType === 'Cloud') {
@@ -768,15 +901,36 @@ export default {
         float: left;
       }
     }
+    .el-form {
+      .el-input {
+        display: block;
+        height: 32px;
+        ::v-deep .el-input__inner {
+          display: block;
+        }
+      }
+      .el-select {
+        display: block;
+        height: 32px;
+      }
+    }
   }
   .instance-table {
     flex: 1;
     overflow: auto;
     border-bottom: none;
-    .agent-cloud {
-      color: #10c038;
-      border-color: #10c038;
-      background-color: #dbefd1;
+    color: rgba(0, 0, 0, 0.65);
+    .operate-columns {
+      line-height: 14px;
+      .el-button {
+        padding: 0;
+        & + .el-button {
+          margin: 0;
+        }
+      }
+      .el-divider {
+        margin: 0 16px;
+      }
     }
   }
   .instance-table__empty {

@@ -1,18 +1,14 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
       connection_type: 'source_and_target',
       thin_type: 'SID'
     },
     items: [
-      {
-        type: 'slot',
-        slot: 'name'
-      },
       {
         type: 'input',
         field: 'database_host',
@@ -36,6 +32,9 @@ export default function (vm) {
         type: 'radio',
         field: 'thin_type',
         label: vm.$t('dataForm.form.connectionMode'),
+        customClass: 'large-item',
+        isVertical: false,
+        button: true,
         options: [
           { label: 'SID', value: 'SID' },
           { label: 'SERVICE NAME', value: 'SERVICE_NAME' }
@@ -45,6 +44,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
+        customClass: 'small-item',
         label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
@@ -110,13 +110,8 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        //tips: vm.$t('dataForm.form.timeZoneTips'),
+        tip: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
-        show: true
-      },
-      {
-        type: 'slot',
-        slot: 'timezone',
         show: true
       }
     ]

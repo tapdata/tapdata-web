@@ -46,7 +46,13 @@ const agent = {
         id: '@id',
         name: '@name'
       }
-    ]
+    ],
+    systemInfo: {
+      cpus: 8,
+      totalmem: 8412450816,
+      installationDirectory: 'D:\\all\\agent\\test',
+      ips: ['172.17.144.1', '192.168.2.18']
+    }
   },
   tmInfo: {
     agentId: '@id',

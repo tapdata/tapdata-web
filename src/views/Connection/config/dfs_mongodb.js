@@ -1,11 +1,14 @@
 export default function (vm) {
-  const fileChange = (file, field) => {
+  const fileChange = (file, field, field2) => {
     if (file) {
       let reader = new FileReader()
       reader.readAsText(file)
       reader.onload = () => {
         let text = reader.result
         vm.model[field] = text
+        if (field2) {
+          vm.model[field2] = text
+        }
       }
     } else {
       vm.model[field] = ''
@@ -13,8 +16,8 @@ export default function (vm) {
   }
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
       connection_type: 'source_and_target',
@@ -25,14 +28,14 @@ export default function (vm) {
     },
     items: [
       {
-        type: 'slot',
-        slot: 'name'
-      },
-      {
         type: 'radio',
         field: 'isUrl',
         show: true,
         label: vm.$t('dataForm.form.options.connectionMode'),
+        customClass: 'mongodb-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
         options: [
           {
             label: vm.$t('dataForm.form.options.URIMode'),
@@ -88,6 +91,7 @@ export default function (vm) {
         domType: 'textarea',
         required: true,
         show: false,
+        customClass: 'large-item',
         dependOn: [
           {
             triggerOptions: [
@@ -106,6 +110,7 @@ export default function (vm) {
         type: 'slot',
         slot: 'urlTip',
         show: false,
+        customClass: 'mongodb-tip-item',
         dependOn: [
           {
             triggerOptions: [
@@ -125,7 +130,8 @@ export default function (vm) {
         field: 'database_host',
 
         label: vm.$t('dataForm.form.host'),
-        placeholder: vm.$t('dataForm.form.databaseHostPlaceholder'),
+        placeholder: vm.$t('connection_form_database_host_placeholder'),
+        tip: vm.$t('connection_form_database_host_tips'),
         rules: [
           {
             required: true,
@@ -236,6 +242,10 @@ export default function (vm) {
         type: 'radio',
         field: 'ssl',
         label: vm.$t('dataForm.form.ssl'),
+        customClass: 'mongodb-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
         options: [
           {
             label: vm.$t('dataForm.form.options.sslTSL'),
@@ -298,7 +308,7 @@ export default function (vm) {
         ],
         on: {
           change(file) {
-            fileChange(file, 'sslKey')
+            fileChange(file, 'sslKey', 'sslCert')
           }
         }
       },

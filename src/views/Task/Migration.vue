@@ -1,81 +1,100 @@
 <template>
-  <section class="migration-wrapper" v-loading="loading" v-if="$route.name === 'Task'">
+  <section class="migration-wrapper main-container" v-loading="loading" v-if="$route.name === 'Task'">
     <div class="main">
       <div class="migration-operation">
         <div class="migration-operation-left">
-          <ul>
-            <li>
-              <ElSelect v-model="searchParams.status" @input="search()">
-                <ElOption label="全部状态" value=""></ElOption>
-                <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"></ElOption>
-              </ElSelect>
-            </li>
-            <li class="ml-3">
-              <ElSelect v-model="searchParams.syncType" clearable placeholder="请选择任务同步类型" @input="search()">
-                <ElOption v-for="(label, value) in syncTypeMap" :key="value" :label="label" :value="value"></ElOption>
-              </ElSelect>
-            </li>
-            <li class="ml-3">
-              <ElSelect v-model="searchParams.agentId" clearable placeholder="实例名称" @input="search()">
-                <ElOption v-for="opt in agentOptions" :key="opt.value" :label="opt.label" :value="opt.value"></ElOption>
-              </ElSelect>
-            </li>
-            <li class="ml-3">
-              <ElInput v-model="searchParams.keyword" placeholder="任务名称/节点名/库名称" @input="search(800)">
+          <el-form inline @submit.native.prevent>
+            <el-form-item :label="$t('task_status') + ' ：'" class="small">
+              <el-select v-model="searchParams.status" clearable @input="search()">
+                <el-option
+                  v-for="(value, label) in statusOptions"
+                  :key="value"
+                  :label="label"
+                  :value="value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('task_sync_type') + ' ：'" class="small">
+              <el-select
+                v-model="searchParams.syncType"
+                clearable
+                :placeholder="$t('gl_placeholder_select')"
+                @input="search()"
+              >
+                <el-option v-for="(label, value) in syncTypeMap" :key="value" :label="label" :value="value"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('agent_name') + ' ：'" class="medium">
+              <el-select
+                v-model="searchParams.agentId"
+                clearable
+                :placeholder="$t('gl_placeholder_select')"
+                @input="search()"
+              >
+                <el-option
+                  v-for="opt in agentOptions"
+                  :key="opt.value"
+                  :label="opt.label"
+                  :value="opt.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('task_name_or_node_name_or_library_name') + ' ：'" class="medium">
+              <ElInput v-model="searchParams.keyword" :placeholder="$t('gl_placeholder_input')" @input="search(800)">
                 <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </ElInput>
-            </li>
-            <li class="ml-3">
+            </el-form-item>
+            <el-form-item>
               <ElButton plain class="btn-refresh" @click="fetch()">
                 <VIcon>refresh</VIcon>
               </ElButton>
-            </li>
-          </ul>
+            </el-form-item>
+          </el-form>
         </div>
         <div class="migration-operation-right">
-          <ElButton type="primary" @click="createTask">
-            <i class="el-icon-plus" style="margin-right: 5px"></i>
-            <span>创建任务</span>
-          </ElButton>
+          <VButton type="primary" @click="createTask"><span>创建任务</span></VButton>
         </div>
       </div>
-      <El-table
-        class="migration-table table-border"
+      <el-table
+        class="migration-table table-border font-color-sub"
         style="margin-top: 10px"
         height="100%"
         :data="list"
         @sort-change="sortChange"
       >
-        <ElTableColumn label="任务名称" prop="name" min-width="200">
-          <template v-slot="scope">
-            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="所属agent" prop="belongAgent"></ElTableColumn>
-        <ElTableColumn label="任务类型" prop="syncTypeText"></ElTableColumn>
-        <ElTableColumn label="任务状态">
+        <el-table-column label="任务名称" prop="name" min-width="200"></el-table-column>
+        <el-table-column label="所属agent" prop="belongAgent" min-width="200">
           <template slot-scope="scope">
-            <span v-if="scope.row.isFinished" :class="['flex', 'align-items-center', scope.row.status]">
-              <VIcon class="v-icon color-success mx-1" size="16">success</VIcon>
-              <span class="td-status-tag__text">已完成</span>
-            </span>
-            <StatusTag v-else type="text" target="task" :status="scope.row.status"></StatusTag>
+            <el-link v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
+              scope.row.belongAgent
+            }}</el-link>
+            <span v-else>-</span>
           </template>
-        </ElTableColumn>
-        <ElTableColumn label="启动时间" prop="startTime" sortable="custom">
+        </el-table-column>
+        <el-table-column label="任务类型" prop="syncTypeText"></el-table-column>
+        <el-table-column label="任务状态">
+          <template slot-scope="scope">
+            <status-tag
+              type="text"
+              target="task"
+              :status="scope.row.isFinished ? 'finished' : scope.row.status"
+              only-img
+            ></status-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="启动时间" prop="startTime" sortable="custom" width="150">
           <template slot-scope="scope">{{ scope.row.startTimeFmt }}</template>
-        </ElTableColumn>
-        <ElTableColumn label="操作" width="240">
+        </el-table-column>
+        <el-table-column label="操作" width="280">
           <template slot-scope="scope">
-            <ElTooltip
+            <el-tooltip
               v-if="!['running', 'stopping'].includes(scope.row.status)"
-              class="mr-2"
               effect="dark"
               content="任务配置未完成，无法启动"
               :manual="!(scope.row.status === 'draft' && scope.row.checked === false)"
               placement="top-start"
             >
-              <ElLink
+              <el-link
                 type="primary"
                 :disabled="
                   !statusBtMap['run'][scope.row.status] || (scope.row.status === 'draft' && scope.row.checked === false)
@@ -83,66 +102,72 @@
                 @click="run([scope.row.id], scope.row)"
               >
                 启动任务
-              </ElLink>
-            </ElTooltip>
-            <ElLink
+              </el-link>
+            </el-tooltip>
+            <el-link
               v-if="scope.row.status === 'running'"
-              class="mr-2"
               type="primary"
               :disabled="!statusBtMap['stop'][scope.row.status]"
               @click="stop([scope.row.id])"
             >
               停止任务
-            </ElLink>
-            <ElLink
+            </el-link>
+            <el-link
               v-if="scope.row.status === 'stopping'"
-              class="mr-2"
               type="primary"
               :disabled="!statusBtMap['forceStop'][scope.row.status]"
               @click="forceStop([scope.row.id])"
             >
               强制停止
-            </ElLink>
-            <ElLink
+            </el-link>
+            <ElDivider direction="vertical"></ElDivider>
+            <el-link
               type="primary"
-              class="mr-2"
               @click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
               运行监控
-            </ElLink>
-            <ElLink
+            </el-link>
+            <ElDivider direction="vertical"></ElDivider>
+            <el-link
               type="primary"
-              class="mr-2"
               :disabled="!statusBtMap['edit'][scope.row.status]"
               @click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
               编辑
-            </ElLink>
-            <ElDropdown @command="handleMore($event, scope.row, scope.$index)">
-              <ElLink type="primary">
-                更多
-                <VIcon>arrow-down</VIcon>
-              </ElLink>
-              <ElDropdownMenu slot="dropdown">
-                <ElDropdownItem command="details">详情</ElDropdownItem>
-                <ElDropdownItem command="copy">复制</ElDropdownItem>
-                <ElDropdownItem command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
+            </el-link>
+            <ElDivider direction="vertical"></ElDivider>
+            <el-dropdown @command="handleMore($event, scope.row, scope.$index)">
+              <el-link type="primary" class="rotate-90">
+                <i class="el-icon-more"></i>
+              </el-link>
+              <el-dropdown-menu slot="dropdown" class="text-nowrap">
+                <el-dropdown-item command="copy">复制</el-dropdown-item>
+                <el-dropdown-item command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
                   重置
-                </ElDropdownItem>
-                <ElDropdownItem command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
+                </el-dropdown-item>
+                <el-dropdown-item command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
                   <span :class="{ 'color-danger': statusBtMap['delete'][scope.row.status] }">删除</span>
-                </ElDropdownItem>
-              </ElDropdownMenu>
-            </ElDropdown>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
-        </ElTableColumn>
-        <div class="migration-table__empty" slot="empty">
-          <VIcon>folder-opened</VIcon>
-          <span class="ml-1" v-if="!isSearching">暂无数据</span>
-          <span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
+        </el-table-column>
+        <div v-if="!isSearching" class="migration-table__empty" slot="empty">
+          <VIcon size="120">no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_data') }}</span>
+            <el-link type="primary" class="fs-7" @click="createTask">创建任务</el-link>
+          </div>
         </div>
-      </El-table>
-      <ElPagination
+        <div v-else class="migration-table__empty" slot="empty">
+          <VIcon size="120">search-no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_match_result') }}</span>
+            <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
+          </div>
+        </div>
+      </el-table>
+      <el-pagination
         background
         class="mt-3"
         layout="total, sizes, ->, prev, pager, next, jumper"
@@ -153,10 +178,10 @@
         @size-change="fetch(1)"
         @current-change="fetch"
       >
-      </ElPagination>
+      </el-pagination>
     </div>
   </section>
-  <RouterView v-else></RouterView>
+  <router-view v-else></router-view>
 </template>
 <style lang="scss" scoped>
 .migration-wrapper {
@@ -165,7 +190,6 @@
   height: 100%;
   flex-direction: column;
   overflow: hidden;
-  padding: 20px;
   box-sizing: border-box;
   .btn-refresh {
     padding: 0;
@@ -205,6 +229,9 @@
   }
   .v-icon {
     margin: 0 4px;
+  }
+  .el-divider--vertical {
+    margin: 0 16px;
   }
 }
 </style>
@@ -425,7 +452,7 @@ export default {
     },
     formatData(item) {
       let tcmInfo = item.tcm || {}
-      item.belongAgent = tcmInfo.agentName || tcmInfo.agentId || '-'
+      item.belongAgent = tcmInfo.agentName || tcmInfo.agentId || ''
       item.syncTypeText = this.syncTypeMap[item.setting?.sync_type] || '-'
       let statusInfo = TASK_STATUS_MAP[item.status] || {}
       item.statusText = statusInfo.text || ''
@@ -460,11 +487,6 @@ export default {
     sortChange({ prop, order }) {
       this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'asc' : 'desc'}`
       this.fetch(1)
-    },
-    details(ids) {
-      this.toDetails({
-        id: ids[0]
-      })
     },
     reset() {
       this.searchParams = {
@@ -502,17 +524,10 @@ export default {
       })
     },
     createTask() {
-      this.$router.push({
-        path: '/task/create'
-      })
-    },
-    toDetails(row) {
-      console.log('toDetails', row)
-      this.$router.push({
-        name: 'DataflowDetails',
-        params: {
-          id: row.id
-        }
+      this.$checkAgentStatus(() => {
+        this.$router.push({
+          path: '/task/create'
+        })
       })
     },
     changeStatus(ids, { status, errorEvents }) {
@@ -531,8 +546,7 @@ export default {
           this.fetch()
           this.responseHandler(data, '操作成功')
         })
-        .catch(err => {
-          console.log(err)
+        .catch(() => {
           this.$message.error('任务启动失败，请编辑任务完成映射配置')
         })
     },
@@ -704,11 +718,12 @@ export default {
           }
         })
       } else {
-        let routeUrl = this.$router.resolve({
-          path: '/monitor',
-          query: { id: id, isMoniting: true, mapping: mappingTemplate }
+        this.$router.push({
+          name: 'Monitor',
+          params: {
+            id: id
+          }
         })
-        window.open(routeUrl.href, '_blank')
       }
       setTimeout(() => {
         document.querySelectorAll('.el-tooltip__popper').forEach(it => {
@@ -718,6 +733,18 @@ export default {
     },
     handleMore(command, node) {
       this[command]([node.id], node)
+    },
+    toAgent(row) {
+      let { belongAgent } = row
+      if (!belongAgent) {
+        return
+      }
+      this.$router.replace({
+        name: 'Instance',
+        query: {
+          keyword: belongAgent
+        }
+      })
     }
   }
 }

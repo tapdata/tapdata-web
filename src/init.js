@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import 'default-passive-events'
 import './plugins/element'
 import './plugins/axios'
 import './plugins/monent'
@@ -18,6 +19,15 @@ import store from '@/store'
 Vue.config.productionTip = false
 Vue.prototype.$settings = settings
 Vue.use(VueClipboard)
+
+const originalPush = VueRouter.prototype.push
+const originalReplace = VueRouter.prototype.replace
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+VueRouter.prototype.replace = function replace(location) {
+  return originalReplace.call(this, location).catch(err => err)
+}
 Vue.use(VueRouter)
 Vue.use(TapdataWebCore)
 

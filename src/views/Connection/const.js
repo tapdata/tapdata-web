@@ -172,10 +172,198 @@ export const DEFAULT_MODEL = {
     mqType: '0', //MQ类型
     brokerURL: '', //MQ连接串
     mqUserName: '',
-    mqPassword: '',
+    plain_password: '',
     mqQueueSet: '', //队列名集合
     mqTopicSet: '', //主题名称
     routeKeyField: '', //消息路由
-    virtualHost: '' //虚拟主机
+    virtualHost: '', //虚拟主机
+    nameSrvAddr: ''
   }
+}
+export const CONFIG_MODEL = {
+  default: [
+    {
+      icon: 'time',
+      items: [
+        {
+          label: '加载schema',
+          key: 'last_updated'
+        }
+      ]
+    },
+    {
+      icon: 'database',
+      items: [
+        {
+          label: '数据库地址',
+          key: 'database_host'
+        }
+      ]
+    },
+    {
+      icon: 'port',
+      items: [
+        {
+          label: '端口',
+          key: 'database_port'
+        }
+      ]
+    },
+    {
+      icon: 'name',
+      items: [
+        {
+          label: '数据库名称',
+          key: 'database_name'
+        }
+      ]
+    },
+    {
+      icon: 'database-user-name',
+      items: [
+        {
+          label: '账号',
+          key: 'database_username'
+        }
+      ]
+    },
+    {
+      icon: 'database-password',
+      items: [
+        {
+          label: '密码',
+          key: 'database_password'
+        }
+      ]
+    },
+    {
+      icon: 'additional-string',
+      items: [
+        {
+          label: '其他连接串参数',
+          key: 'additionalString'
+        }
+      ]
+    },
+    {
+      icon: 'origin-time',
+      items: [
+        {
+          label: '时间类型的时区',
+          key: 'database_datetype_without_timezone'
+        }
+      ]
+    }
+  ],
+  kafka: [
+    {
+      icon: 'time',
+      items: [
+        {
+          label: '加载schema',
+          key: 'last_updated'
+        }
+      ]
+    },
+    {
+      icon: 'database',
+      items: [
+        {
+          label: '数据库地址',
+          key: 'kafkaBootstrapServers'
+        },
+        {
+          label: '主题表达式',
+          key: 'kafkaPatternTopics'
+        },
+        {
+          label: '忽略非JSON Object格式消息',
+          key: 'kafkaIgnoreInvalidRecord'
+        },
+        {
+          label: 'ACK 确认机制',
+          key: 'kafkaAcks'
+        },
+        {
+          label: '消息压缩类型',
+          key: 'kafkaCompressionType'
+        },
+        {
+          label: '忽略推送消息异常',
+          key: 'kafkaIgnorePushError'
+        }
+      ]
+    }
+  ],
+  mq: [
+    {
+      icon: 'time',
+      items: [
+        {
+          label: '加载schema',
+          key: 'last_updated'
+        }
+      ]
+    },
+    {
+      icon: 'database',
+      items: [
+        {
+          label: '数据库地址',
+          key: 'database_host'
+        }
+      ]
+    },
+    {
+      icon: 'port',
+      items: [
+        {
+          label: '端口',
+          key: 'database_port'
+        },
+        {
+          label: 'MQ类型',
+          key: 'mqType'
+        },
+        {
+          label: 'MQ连接串',
+          key: 'brokerURL'
+        },
+        {
+          label: '队列名集合',
+          key: 'mqQueueSet'
+        },
+        {
+          label: '主题名称',
+          key: 'mqTopicSet'
+        },
+        {
+          label: '消息路由',
+          key: 'routeKeyField'
+        },
+        {
+          label: '虚拟主机',
+          key: 'virtualHost'
+        }
+      ]
+    },
+    {
+      icon: 'database-user-name',
+      items: [
+        {
+          label: '账号',
+          key: 'mqUserName'
+        }
+      ]
+    },
+    {
+      icon: 'database-password',
+      items: [
+        {
+          label: '密码',
+          key: 'plain_password'
+        }
+      ]
+    }
+  ]
 }

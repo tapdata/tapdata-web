@@ -55,7 +55,8 @@ import {
   Autocomplete,
   Collapse,
   CollapseItem,
-  Notification
+  Notification,
+  Divider
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -64,21 +65,6 @@ Vue.prototype.$message = Message
 
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$alert = MessageBox.alert
-
-// 封装确认弹窗
-Vue.prototype.$confirm = (param1, param2, param3 = { type: 'warning' }) => {
-  return new Promise((resolve, reject) => {
-    MessageBox.confirm(param1, param2, param3)
-      .then(() => {
-        resolve(true)
-      })
-      .catch(() => {
-        reject(false)
-      })
-  }).catch(() => {
-    // TODO error
-  })
-}
 
 Vue.prototype.$prompt = MessageBox.prompt
 Vue.prototype.$loading = Loading.service
@@ -140,3 +126,4 @@ Vue.use(Upload)
 Vue.use(Autocomplete)
 Vue.use(Collapse)
 Vue.use(CollapseItem)
+Vue.use(Divider)

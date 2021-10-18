@@ -27,6 +27,7 @@
             }}</ElLink>
           </li>
           <li>{{ $t('agent_deploy_before_prepare_windows_second') }}</li>
+          <li>{{ $t('agent_deploy_before_prepare_windows_third') }}</li>
           <li>
             <ElButton class="mt-5" type="primary" @click="handleDownLoad">{{
               $t('agent_deploy_before_prepare_windows_second_download')
@@ -64,6 +65,7 @@
           <li class="flex">
             <span>{{ $t('agent_deploy_start_install_windows_third') }}</span>
             <ElLink type="primary" @click="windowsToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
+            <span>{{ $t('agent_deploy_link_agent_operation_desc') }}</span>
           </li>
         </ul>
       </template>
@@ -107,6 +109,7 @@
           <li>
             <span>{{ $t('agent_deploy_start_install_linux_third') }}</span>
             <ElLink type="primary" @click="linuxToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
+            <span>{{ $t('agent_deploy_link_agent_operation_desc') }}</span>
           </li>
         </ul>
       </template>
@@ -150,9 +153,15 @@
           <li class="flex">
             <span>{{ $t('agent_deploy_start_install_docker_third') }}</span>
             <ElLink type="primary" @click="dockerToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
+            <span>{{ $t('agent_deploy_link_agent_operation_desc') }}</span>
           </li>
         </ul>
       </template>
+      <div class="wx-img text-center">
+        <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
+        <div>扫码添加官方小助手</div>
+        <div>备注“云版”即可进入群获取支持</div>
+      </div>
     </main>
     <footer class="footer">
       <ElButton type="primary" @click="handleNextStep()">{{ $t('gl_button_finish') }}</ElButton>
@@ -218,10 +227,7 @@ export default {
       )
     },
     windowsToAgent() {
-      window.open(
-        'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_windows-huan-jing-xia-zai-yu-an-zhuang#Fh83z',
-        '_blank'
-      )
+      window.open('https://sourl.cn/MK6mXF', '_blank')
     },
     linuxToJava() {
       window.open(
@@ -230,19 +236,13 @@ export default {
       )
     },
     linuxToAgent() {
-      window.open(
-        'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_linux-huan-jing-xia-zai-yu-an-zhuang#uQUK8',
-        '_blank'
-      )
+      window.open('https://sourl.cn/MK6mXF', '_blank')
     },
     dockerToInstall() {
       window.open('https://docs.docker.com/get-docker/', '_blank')
     },
     dockerToAgent() {
-      window.open(
-        'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_docker-huan-jing-xia-zai-yu-an-zhuang#DLjwF',
-        '_blank'
-      )
+      window.open('https://sourl.cn/MK6mXF', '_blank')
     }
   }
 }
@@ -364,6 +364,13 @@ export default {
     .el-button + .el-button:hover {
       background-color: map-get($color, lprimary);
     }
+  }
+  .wx-img {
+    position: fixed;
+    right: 40px;
+    bottom: 100px;
+    padding: 4px;
+    border: 1px solid #dcdcdc;
   }
 }
 </style>

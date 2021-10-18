@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$route.name === 'Workbench'" class="workbench-container px-8">
+  <div v-if="$route.name === 'Workbench'" class="workbench-container">
     <!--	快速开始	-->
     <div class="workbench-start workbench-section">
       <el-row :gutter="40" class="section-header py-6">
@@ -13,12 +13,12 @@
               {{ index + 1 }}
             </div>
             <div class="create-list__main ml-4">
-              <div class="create-list__name mb-4 fs-7">{{ item.name }}</div>
+              <div class="create-list__name mb-4 fs-6">{{ item.name }}</div>
               <div class="create-list__desc">{{ item.desc }}</div>
-              <div class="create-list__btn text-end pointer" @click="item.action">
+              <el-link type="primary" class="float-end pointer" @click="item.action">
                 <span>{{ item.btnName }}</span>
                 <VIcon class="ml-2" size="12">right</VIcon>
-              </div>
+              </el-link>
             </div>
           </div>
         </el-col>
@@ -33,9 +33,13 @@
                 <div v-if="item.type" class="notice-list__type mr-4 p-1">
                   {{ item.type }}
                 </div>
-                <div class="notice-list__name flex-grow-1 ellipsis pointer" @click="toNotice(item)">
+                <el-link
+                  type="primary"
+                  class="notice-list__name flex-grow-1 ellipsis block pointer"
+                  @click="toNotice(item)"
+                >
                   {{ item.name }}
-                </div>
+                </el-link>
                 <div class="notice-list__time">
                   {{ formatFromNow(item.time) }}
                 </div>
@@ -53,26 +57,20 @@
       </el-row>
       <el-row :gutter="40" class="section-body">
         <el-col :span="18">
-          <ul class="agent-list__list flex-grow-1 flex justify-content-around">
-            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item p-6" :ref="item.key">
+          <ul class="agent-list__list flex-grow-1 flex justify-content-around px-5">
+            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item py-6" :ref="item.key">
               <div class="agent-list__name flex align-items-center justify-content-center mx-auto mb-3">
-                <VIcon size="12" class="icon" color="#888">{{ item.icon }}</VIcon>
+                <VIcon size="14" class="icon" color="#888">{{ item.icon }}</VIcon>
                 <span class="ml-1 fs-7">{{ item.name }}</span>
               </div>
-              <div class="agent-list__value text-center fs-1">
+              <div class="color-primary text-center fs-1">
                 {{ item.value }}
               </div>
               <div class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1">
-                <div v-for="(detail, dIndex) in item.list" :key="dIndex" class="agent-list__status mr-2">
-                  <template v-if="detail.key === 'agent'">
-                    <span class="success ml-2">{{ $t('agent_status_running') }}：{{ detail.running }}</span>
-                    <span class="error ml-2">{{ $t('agent_status_stopped') }}：{{ detail.offline }}</span>
-                  </template>
-                  <template v-else>
-                    <span>{{ detail.label }}</span>
-                    <span>:</span>
-                    <span :class="['ml-1']">{{ detail.value }}</span>
-                  </template>
+                <div v-for="(detail, dIndex) in item.list" :key="dIndex" :class="['agent-list__status', detail.class]">
+                  <span>{{ detail.label }}</span>
+                  <span>:</span>
+                  <span :class="['ml-1']">{{ detail.value }}</span>
                 </div>
               </div>
             </li>
@@ -80,18 +78,17 @@
         </el-col>
         <el-col :span="6">
           <div class="aside-main guide-list flex-grow-1 p-6">
-            <ul class="guide-list__list">
-              <li
+            <div class="guide-list__list">
+              <el-link
                 v-for="(item, index) in guides"
                 :key="index"
-                class="guide-list__item flex mb-4 pointer"
+                type="primary"
+                class="guide-list__item mb-4 block pointer"
                 @click="clickGuide(item)"
               >
-                <div class="guide-list__name">
-                  {{ item.name }}
-                </div>
-              </li>
-            </ul>
+                {{ item.name }}
+              </el-link>
+            </div>
           </div>
         </el-col>
       </el-row>
@@ -172,9 +169,14 @@ export default {
           value: 1,
           list: [
             {
-              key: 'agent',
-              running: 0,
-              offline: 0
+              label: $t('agent_status_running'),
+              value: 0,
+              class: 'success'
+            },
+            {
+              label: $t('agent_status_stopped'),
+              value: 0,
+              class: 'error'
             }
           ]
         },
@@ -264,8 +266,8 @@ export default {
           let total = data?.total
           let runningCount = data.items.filter(item => item.status === 'Running')?.length ?? 0
           let offlineCount = total - runningCount
-          agentList[0].list[0].running = runningCount
-          agentList[0].list[0].offline = offlineCount
+          agentList[0].list[0].value = runningCount
+          agentList[0].list[1].value = offlineCount
         })
         .finally(() => {
           loading.close()
@@ -408,9 +410,6 @@ export default {
   height: 110px;
   color: rgba(0, 0, 0, 0.49);
 }
-.create-list__btn {
-  color: map-get($color, primary);
-}
 .aside-main {
   height: 213px;
   background-color: #fff;
@@ -432,16 +431,15 @@ export default {
     color: #888;
   }
 }
-.agent-list__value {
-  color: map-get($color, primary);
-}
 .agent-list__detail {
+  width: 232px;
   background-color: #fafafb;
   color: rgba(0, 0, 0, 0.5);
   .agent-list__status {
     white-space: nowrap;
+    margin-right: 8px;
     &:last-child {
-      margin-right: 0 !important;
+      margin-right: 0;
     }
   }
   .success {
@@ -455,21 +453,12 @@ export default {
 .notice-list__type {
   background: #f7f8f9;
 }
-.notice-list__name {
-  color: map-get($color, primary);
-}
 .notice-list__time {
   color: rgba(0, 0, 0, 0.5);
   white-space: nowrap;
 }
-.notice-footer {
-  color: map-get($color, primary);
-}
 .guide-list {
   height: 190px;
-}
-.guide-list__name {
-  color: map-get($color, primary);
 }
 </style>
 <style lang="scss" scoped>

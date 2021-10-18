@@ -1,78 +1,64 @@
 <template>
-  <section class="verification-result-wrap" v-loading="loading">
-    <div class="panel-main" style="padding: 0 20px">
-      <div class="main main-border">
-        <div class="title mt-5">{{ inspect.name }}</div>
-        <div class="text">
-          {{ typeMap[type] }}
+  <section class="verify-result-wrap g-panel-container" v-loading="loading">
+    <div class="verify-result-header" v-if="inspect">
+      <div>
+        <span style="font-size: 14px">{{ inspect.name }}</span>
+        <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
+      </div>
+      <div v-if="inspect.inspectMethod !== 'row_count'">
+        <div class="flex align-items-center">
+          <div
+            v-if="resultInfo.parentId && $route.name === 'VerifyResult'"
+            class="color-info flex align-items-center"
+            style="font-size: 12px"
+          >
+            {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+            <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
+              $t('verify_button_diff_task_history')
+            }}</ElLink>
+          </div>
         </div>
-        <div class="error-band" style="width: 96.5%" v-if="errorMsg && type === 'row_count'">
-          <VIcon class="color-info">warning-circle</VIcon>
-          <span>{{ errorMsg }}</span>
-        </div>
-        <div
-          v-if="resultInfo.parentId && $route.name === 'VerifyResult'"
-          class="color-info"
-          style="font-size: 12px; text-align: right"
-        >
-          {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
-          <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
-            $t('verify_button_diff_task_history')
-          }}</ElLink>
-        </div>
-        <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
       </div>
     </div>
-    <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+    <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
+      <VIcon class="color-danger">error</VIcon>
+      <span>
+        <ElLink type="danger" @click="showErrorMessage">查看详情</ElLink>
+        <VIcon class="ml-2 color-info" size="12">close</VIcon>
+      </span>
+    </div>
+    <div class="result-table mt-4" v-if="inspect && !['running', 'scheduling'].includes(inspect.status)">
+      <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+      <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+    </div>
   </section>
 </template>
 <style lang="scss">
-$margin: 10px;
-.verification-result-wrap {
-  margin: 20px;
+.verify-result-wrap {
+  flex: 1;
   display: flex;
-  height: 100%;
+  flex-direction: column;
   overflow: hidden;
-  background: #fff;
-  .panel-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    &.panel-box {
-      margin-bottom: 10px;
-      border-left: 1px solid #dedee4;
-      border-bottom: 1px solid #dedee4;
-    }
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      padding-bottom: 20px;
-      .title {
-        font-weight: bold;
-        color: #409eff;
-      }
-      .text {
-        margin-top: 6px;
-        color: #666;
-        font-size: 12px;
-      }
-      .error-band {
-        background: #fdf6ec;
-        border: 1px solid #f8e2c0;
-        color: #e6a23c;
-        margin: 10px;
-        line-height: 20px;
-        max-height: 160px;
-        text-overflow: ellipsis;
-        overflow-y: auto;
-        font-size: 12px;
-        padding: 8px;
-      }
-    }
-  }
+}
+.verify-result-header {
+  display: flex;
+  justify-content: space-between;
+}
+.error-tips {
+  background: #fdf6ec;
+  border: 1px solid #f8e2c0;
+  color: #e6a23c;
+  line-height: 20px;
+  max-height: 160px;
+  text-overflow: ellipsis;
+  overflow-y: auto;
+  font-size: 12px;
+  padding: 8px;
+}
+.result-table {
+  flex: 1;
+  display: flex;
+  overflow: auto;
 }
 </style>
 <script>
@@ -100,11 +86,12 @@ export default {
     },
     tableData() {
       let list = this.resultInfo.stats || []
-      if (this.$route.name === 'VerifyDiffDetails') {
-        list = list.filter(item => {
-          return item.source_total > 0
-        })
-      }
+      // if (this.$route.name === 'VerifyDiffDetails') {
+      //   list = list.filter(item => {
+      //     // return item.source_total > 0
+      //     return item.source_total !== item.target_total
+      //   })
+      // }
       return list
     }
   },
@@ -129,14 +116,16 @@ export default {
           if (result) {
             this.resultInfo = result
             let stats = result.stats
-            this.inspect = result.inspect
+            let inspect = result.inspect
+            inspect.status = result.status
+            this.inspect = inspect
             if (stats.length) {
               this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
               this.taskId = stats[0].taskId
               this.$refs.resultView.fetch(1)
               if (this.type !== 'row_count') {
                 this.$nextTick(() => {
-                  this.$refs.singleTable.setCurrentRow(stats[0])
+                  this.$refs.singleTable?.setCurrentRow(stats[0])
                 })
               }
             }
@@ -242,6 +231,9 @@ export default {
           id: this.resultInfo.firstCheckId
         }
       })
+    },
+    showErrorMessage() {
+      this.$alert(this.errorMsg)
     }
   }
 }

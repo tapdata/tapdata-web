@@ -1,20 +1,24 @@
 <template>
   <section class="tapdata-transfer-wrap">
-    <div class="reload-schema">
-      没有可用的表？
-      <el-button class="border-0" type="text" :loading="reloadLoading" @click="reload()">重新加载</el-button>
-      <span v-if="showProgress"><VIcon>loading</VIcon> {{ progress }} %</span>
+    <div class="reload-schema flex justify-content-between mb-5">
+      <div class="text-wrap" style="width: 240px">
+        没有可用的表？
+        <el-button class="border-0" type="text" :loading="reloadLoading" @click="reload()">重新加载</el-button>
+        <span v-if="showProgress" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
+      </div>
+      <div class="box-btn" v-show="!showOperationBtn">
+        <v-button class="e-button" size="mini" @click="beforeRename">{{ $t('dataFlow.changeName') }} </v-button>
+        <v-button size="mini" class="e-button" @click="beforeReduction"
+          >{{ $t('editor.cell.link.reduction') }}
+        </v-button>
+      </div>
     </div>
-    <div class="box-btn" v-show="!showOperationBtn">
-      <el-button class="e-button" size="mini" @click="beforeRename">{{ $t('dataFlow.changeName') }} </el-button>
-      <el-button size="mini" class="e-button" @click="beforeReduction"
-        >{{ $t('editor.cell.link.reduction') }}
-      </el-button>
-    </div>
+
     <el-transfer
       v-model="selectSourceArr"
       v-if="!transferFlag"
       filterable
+      class="e-transfer"
       :titles="titles"
       :filter-method="filterMethod"
       :filter-placeholder="$t('editor.cell.link.searchContent')"
@@ -23,16 +27,10 @@
       @right-check-change="handleSelectTable"
     >
       <span slot-scope="{ option }">
-        <span v-if="selectSourceArr.includes(option.label)">{{ formData.table_prefix }}</span>
-        <span v-if="selectSourceArr.includes(option.label) && tableNameTrans === 'toLowerCase'">{{
-          option.label.toLowerCase()
-        }}</span>
-        <span v-else-if="selectSourceArr.includes(option.label) && tableNameTrans === 'toUpperCase'">{{
-          option.label.toUpperCase()
-        }}</span>
-        <span v-else>{{ option.label }}</span>
-        <span v-if="selectSourceArr.includes(option.label)">{{ formData.table_suffix }}</span>
         <!-- <span> {{ option.label }}</span> -->
+        <span v-if="selectSourceArr.includes(option.key)">{{ formData.table_prefix }}</span>
+        <span>{{ option.label }}</span>
+        <span v-if="selectSourceArr.includes(option.key)">{{ formData.table_suffix }}</span>
         <!-- 字段映射 放在表设置了 -->
         <!--        <span-->
         <!--          v-if="selectSourceArr.includes(option.key) && !isTwoWay"-->
@@ -45,7 +43,6 @@
       <MqTransfer
         v-model="mqActiveData"
         :source="sourceData"
-        :tableNameTransform="tableNameTrans"
         :table_prefix="formData.table_prefix"
         :table_suffix="formData.table_suffix"
       ></MqTransfer>
@@ -155,7 +152,7 @@ import MqTransfer from './mqTransfer'
 let selectKeepArr = []
 export default {
   components: { VIcon, MqTransfer },
-  props: ['transferData', 'isTwoWay', 'tableNameTransform', 'mqTransferFlag'],
+  props: ['transferData', 'isTwoWay', 'mqTransferFlag'],
   data() {
     var validatePrefix = (rule, value, callback) => {
       if (value === '') {
@@ -217,9 +214,6 @@ export default {
       tableNameTrans: ''
     }
   },
-  created() {
-    this.tableNameTrans = this.tableNameTransform
-  },
   watch: {
     mqActiveData: {
       deep: true,
@@ -262,10 +256,12 @@ export default {
             }
             //初始化数据
             if (this.transferData) {
-              this.formData.table_prefix = this.mqActiveData.table_prefix = this.transferData.table_prefix
-              this.formData.table_suffix = this.mqActiveData.table_suffix = this.transferData.table_suffix
+              this.formData.table_prefix = this.transferData.table_prefix
+              this.formData.table_suffix = this.transferData.table_suffix
               this.selectSourceArr = this.transferData.selectSourceArr
               this.field_process = this.transferData.field_process
+              this.mqActiveData.queueData = this.transferData.queueData
+              this.mqActiveData.topicData = this.transferData.topicData
             }
             if (bidirectional && (this.transferData.table_prefix !== '' || this.transferData.table_suffix !== '')) {
               //true 表示 双向且有修改过前后缀
@@ -709,7 +705,6 @@ export default {
 .tapdata-transfer-wrap {
   display: flex;
   flex-direction: column;
-
   .box-btn {
     display: flex;
     justify-content: flex-end;
@@ -726,6 +721,9 @@ export default {
   .field-transfer__icon {
     display: inline-block;
     margin-left: 15px;
+  }
+  .e-transfer {
+    display: flex;
   }
 }
 .field-transfer {
@@ -768,12 +766,13 @@ export default {
   }
 
   .el-transfer {
-    height: 100%;
-
+    flex: 1;
+    overflow: hidden;
     .el-transfer-panel {
       width: 300px;
 
       .el-transfer-panel__body {
+        padding-top: 0;
         .box {
           display: inline-block;
 
@@ -852,11 +851,11 @@ export default {
 
   .el-transfer,
   .el-transfer-panel {
-    height: 100%;
+    // height: 100%;
   }
 
   .el-transfer-panel__body {
-    height: calc(100% - 38px);
+    height: calc(100% - 80px);
   }
 
   .el-checkbox-group {
