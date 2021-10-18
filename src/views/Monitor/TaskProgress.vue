@@ -35,7 +35,7 @@
               ></el-progress>
               <div class="progress-box__value flex flex-column justify-content-center align-items-center">
                 <div class="fs-5">{{ replicateObj.currentStatus || '延迟' }}</div>
-                <div class="mt-2" v-if="!replicateObj.currentStatus">{{ replicateObj.value }}ms</div>
+                <div class="mt-2" v-if="!replicateObj.currentStatus">{{ replicateObj.value }}</div>
               </div>
             </div>
           </div>
@@ -593,7 +593,7 @@ export default {
         timeList.push(this.formatTime(item.t, timeType)) // 时间
         dataList.push(item.d)
       })
-      this.replicateObj.value = dataList[dataList.length - 1] || 0
+      this.replicateObj.value = this.formatLag(dataList[dataList.length - 1] || 0)
       this.replicateObj.body = {
         tooltip: {
           trigger: 'axis'
@@ -646,6 +646,35 @@ export default {
           }
         ]
       }
+    },
+    formatLag(data = 0) {
+      let result = data + 'ms'
+      let ms = 0,
+        s = 0,
+        m = 0,
+        h = 0,
+        d = 0
+      if (data > 1000) {
+        s = parseInt(data / 1000)
+        ms = parseInt(data % 1000)
+        result = s + 's' + ms + 'ms'
+        if (s > 60) {
+          m = parseInt(s / 60)
+          s = parseInt(s % 60)
+          result = m + 'm' + s + 's'
+          if (m > 60) {
+            h = parseInt(m / 60)
+            m = parseInt(m % 60)
+            result = h + 'h' + m + 'm'
+            if (h > 24) {
+              d = parseInt(h / 24)
+              h = parseInt(h % 24)
+              result = d + 'd' + h + 'h'
+            }
+          }
+        }
+      }
+      return result
     },
     loadWS() {
       this.$ws.on('dataFlowInsight', data => {
