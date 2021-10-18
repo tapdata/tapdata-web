@@ -9,6 +9,11 @@
                 <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"></ElOption>
               </ElSelect>
             </ElFormItem>
+            <ElFormItem :label="$t('task_type') + ' ：'" class="small">
+              <ElSelect v-model="searchParams.type" clearable @input="search()">
+                <ElOption v-for="(label, value) in typeMap" :key="value" :label="label" :value="value"></ElOption>
+              </ElSelect>
+            </ElFormItem>
             <ElFormItem :label="$t('task_sync_type') + ' ：'" class="small">
               <ElSelect
                 v-model="searchParams.syncType"
@@ -53,6 +58,7 @@
         @sort-change="sortChange"
       >
         <ElTableColumn label="任务名称" prop="name" min-width="200"></ElTableColumn>
+        <ElTableColumn label="任务类型" prop="typeText"></ElTableColumn>
         <ElTableColumn label="所属agent" prop="belongAgent" min-width="200">
           <template slot-scope="scope">
             <ElLink v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
@@ -61,7 +67,7 @@
             <span v-else>-</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="任务类型" prop="syncTypeText"></ElTableColumn>
+        <ElTableColumn label="同步类型" prop="syncTypeText"></ElTableColumn>
         <ElTableColumn label="任务状态">
           <template slot-scope="scope">
             <status-tag
@@ -171,21 +177,14 @@
       </ElPagination>
       <ElDialog title="选择任务类型" :visible.sync="createVisible" width="416px" top="30vh">
         <div class="select-type flex justify-content-between">
-          <div
-            class="select-type__item"
-            @click="
-              $router.push({
-                name: 'DataflowCreate'
-              })
-            "
-          >
+          <div class="select-type__item" @click="createMigrate">
             <div>
               <div>数据库迁移</div>
               <div class="mt-4">数据库迁移</div>
             </div>
             <VIcon size="30" class="v-icon">right-fill</VIcon>
           </div>
-          <div class="select-type__item data-table ml-10" @click="$router.push({ name: 'DataflowNew' })">
+          <div class="select-type__item data-table ml-10" @click="createSync">
             <div>
               <div>数据表同步</div>
               <div class="mt-4 font-color-sub">数据表同步</div>
@@ -284,8 +283,10 @@ export default {
         status: '',
         syncType: '',
         agentId: '',
-        keyword: ''
+        keyword: '',
+        type: ''
       },
+      typeMap: { 'cluster-clone': '数据库迁移', custom: '数据表同步' },
       syncTypeMap: {
         initial_sync: '全量',
         cdc: '增量',
@@ -415,7 +416,7 @@ export default {
       const { toRegExp } = this.$util
       this.loading = true
       let current = pageNum || this.page.current
-      let { keyword, status, syncType, agentId } = this.searchParams
+      let { keyword, status, syncType, agentId, type } = this.searchParams
       let fields = {
         id: true,
         name: true,
@@ -438,7 +439,7 @@ export default {
         agentId: true
       }
       let where = {
-        mappingTemplate: 'cluster-clone'
+        mappingTemplate: type
       }
       if (keyword && keyword.trim()) {
         where.or = [
@@ -487,6 +488,7 @@ export default {
       let tcmInfo = item.tcm || {}
       item.belongAgent = tcmInfo.agentName || tcmInfo.agentId || ''
       item.syncTypeText = this.syncTypeMap[item.setting?.sync_type] || '-'
+      item.typeText = this.typeMap[item.mappingTemplate] || '-'
       let statusInfo = TASK_STATUS_MAP[item.status] || {}
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
@@ -565,6 +567,14 @@ export default {
       this.$checkAgentStatus(() => {
         this.createVisible = true
       })
+    },
+    createMigrate() {
+      this.$router.push({
+        name: 'DataflowCreate'
+      })
+    },
+    createSync() {
+      this.$router.push({ name: 'DataflowNew' })
     },
     toDetails(row) {
       this.$router.push({
