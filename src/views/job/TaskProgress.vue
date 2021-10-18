@@ -458,7 +458,6 @@ export default {
     },
     // 跳转详情
     handleInfo(data) {
-      debugger
       if (data) {
         window.open(
           location.href.split('#/')[0] +
@@ -533,16 +532,12 @@ export default {
   }
   // background-color: darkgreen;
 }
-.progress-container__table {
-}
 .progress-container__footer {
   margin: 0 16px 20px;
   padding: 8px;
   &.mt-border {
     border-top: 1px solid #d3d3d3;
   }
-}
-.footer-line {
 }
 .footer-item {
   margin-top: 16px;

@@ -12,7 +12,7 @@
 			</div> -->
       <el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
         <!-- <span class="addTxt">+新建文件</span> -->
-        <el-form-item :label="$t('editor.choose') + ' hana'" prop="connectionId" :rules="rules" required>
+        <el-form-item :label="$t('editor.choose') + ' hbase'" prop="connectionId" :rules="rules" required>
           <el-select
             :filterable="!databaseLoading"
             :loading="databaseLoading"
@@ -151,7 +151,7 @@ const connections = factory('connections')
 
 // let editorMonitor = null;
 export default {
-  name: 'HanaNode',
+  name: 'HBaseNode',
   components: { Entity, ClipButton, CreateTable },
   data() {
     return {
@@ -188,7 +188,7 @@ export default {
       },
       model: {
         connectionId: '',
-        type: 'hana',
+        type: 'hbase',
         tableName: ''
         // primaryKeys: ''
       },
@@ -202,7 +202,7 @@ export default {
     let result = await connections.get({
       filter: JSON.stringify({
         where: {
-          database_type: 'hana'
+          database_type: 'hbase'
         },
         fields: {
           name: 1,
@@ -248,7 +248,7 @@ export default {
                 : {
                     table_name: this.model.tableName,
                     cdc_enabled: true,
-                    meta_type: 'hana',
+                    meta_type: 'hbase',
                     fields: []
                   }
             this.$emit('schemaChange', _.cloneDeep(schema))
@@ -325,7 +325,7 @@ export default {
 
     getData() {
       let result = _.cloneDeep(this.model)
-      result.name = result.tableName || 'hana'
+      result.name = result.tableName || 'hbase'
       return result
     },
 

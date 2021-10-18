@@ -528,7 +528,6 @@ export default {
     for (const key in params) {
       params[key] = params[key] || cacheParams[key] || ''
     }
-    console.log('DataFlows', this)
   },
   beforeDestroy() {
     ws.off('watch', this.dataflowChange)

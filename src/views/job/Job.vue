@@ -836,7 +836,8 @@ export default {
             'app.HiveNode',
             'app.KUDUNode',
             'app.HanaNode',
-            'app.ClickHouse'
+            'app.ClickHouse',
+            'app.DamengNode'
           ].includes(cell.type)
         ) {
           postData.mappingTemplate = 'custom'
@@ -1524,6 +1525,7 @@ export default {
         redis: 'app.Redis',
         hive: 'app.HiveNode',
         hana: 'app.HanaNode',
+        dameng: 'app.DamengNode',
         clickhouse: 'app.ClickHouse'
       }
       if (data) {
