@@ -171,21 +171,14 @@
       </ElPagination>
       <ElDialog title="选择任务类型" :visible.sync="createVisible" width="416px" top="30vh">
         <div class="select-type flex justify-content-between">
-          <div
-            class="select-type__item"
-            @click="
-              $router.push({
-                name: 'DataflowCreate'
-              })
-            "
-          >
+          <div class="select-type__item" @click="createMigrate">
             <div>
               <div>数据库迁移</div>
               <div class="mt-4">数据库迁移</div>
             </div>
             <VIcon size="30" class="v-icon">right-fill</VIcon>
           </div>
-          <div class="select-type__item data-table ml-10" @click="$router.push({ name: 'DataflowNew' })">
+          <div class="select-type__item data-table ml-10" @click="createSync">
             <div>
               <div>数据表同步</div>
               <div class="mt-4 font-color-sub">数据表同步</div>
@@ -565,6 +558,14 @@ export default {
       this.$checkAgentStatus(() => {
         this.createVisible = true
       })
+    },
+    createMigrate() {
+      this.$router.push({
+        name: 'DataflowCreate'
+      })
+    },
+    createSync() {
+      this.$router.push({ name: 'DataflowNew' })
     },
     toDetails(row) {
       this.$router.push({
