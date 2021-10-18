@@ -216,9 +216,10 @@ th {
 }
 .el-button--text {
   color: map-get($color, primary);
-}
-.el-button--text:hover {
-  color: map-get($color, lprimary);
+  &:focus,
+  &:hover {
+    color: map-get($color, primary);
+  }
 }
 .el-button--primary:hover {
   background-color: map-get($color, lprimary);
