@@ -275,6 +275,7 @@
         margin-bottom: 24px;
         flex: 1;
         overflow: hidden;
+        min-height: 290px;
         ::v-deep {
           .el-transfer-panel__header {
             background: rgba(44, 101, 255, 0.05);
