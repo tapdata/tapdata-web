@@ -198,7 +198,6 @@ export default {
   },
 
   mounted() {
-    console.log(this.$refs.dbCollapse)
     addResizeListener(this.$refs.dbCollapse.$el, this.$refs.dbList.update)
     addResizeListener(this.$refs.tbList.$el, this.$refs.tbList.update)
   },
@@ -246,7 +245,7 @@ export default {
         this.dbList = result
         return result
       } catch (e) {
-        console.log('catch', e)
+        console.log('catch', e) // eslint-disable-line
       }
     },
 
@@ -310,12 +309,12 @@ export default {
 
     async getDragDom() {
       await this.$nextTick()
-      console.log('getDragDom', document.getElementById('dragNode'))
+      console.log('getDragDom', document.getElementById('dragNode')) // eslint-disable-line
       return document.getElementById('dragNode')
     },
 
     onStart(item) {
-      console.log('OnStart', item)
+      console.log('OnStart', item) // eslint-disable-line
       this.dragNodeType = item
       this.dragStarting = true
       this.dragMoving = false
@@ -335,7 +334,7 @@ export default {
     },
 
     onStop() {
-      console.log('onStop', arguments)
+      console.log('onStop', arguments) // eslint-disable-line
       this.dragStarting = false
       this.dragMoving = false
     },

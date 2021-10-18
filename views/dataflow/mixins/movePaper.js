@@ -32,7 +32,7 @@ export default {
     },
 
     mouseDownMovePaper(e) {
-      console.log('spaceKeyPressed', this.spaceKeyPressed)
+      console.log('spaceKeyPressed', this.spaceKeyPressed) // eslint-disable-line
       if (!this.spaceKeyPressed) return
 
       if (this.isActionActive('dragActive')) return
