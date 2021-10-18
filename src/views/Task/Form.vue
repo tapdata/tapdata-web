@@ -253,10 +253,7 @@
   .create-task-main {
     padding: 24px 24px 0;
     background: #fff;
-    overflow: hidden;
-    &:not(.task-main-5) {
-      overflow-y: auto;
-    }
+    overflow-y: auto;
     .body {
       .title {
         font-size: 14px;
@@ -296,6 +293,7 @@
     }
     .step-5 {
       height: 100%;
+      min-height: 300px;
       .search {
         display: flex;
         justify-content: flex-start;
