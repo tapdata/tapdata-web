@@ -71,7 +71,7 @@ export const DB_ICON = {
 }
 
 export const NODE_TYPE_ICON = {
-  table: 'table-line',
+  table: 'table',
   js_processor: 'js',
   field_processor: 'field-processor',
   aggregation_processor: 'aggregator',
