@@ -1252,7 +1252,7 @@ export default {
     // 任务调度设置保存
     saveTaskSetting() {
       // let data = this.formSchedule.taskData;
-      let data = this.formSchedule.taskData.setting
+      let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
       dataFlows
