@@ -379,7 +379,7 @@ export default {
         }
       }
       let data = await this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      let changeList = data || []
+      let changeList = data?.items || []
       let statusMap = {}
       changeList.forEach(item => {
         let { statusText, statusIcon, status } = this.formatData(item)
@@ -463,19 +463,17 @@ export default {
       let filter = {
         fields,
         where,
-        limit: this.page.size,
-        skip: (current - 1) * this.page.size,
+        size: this.page.size,
+        page: current,
         order: this.order
       }
-      Promise.all([
-        this.$axios.get('tm/api/DataFlows/count?where=' + encodeURIComponent(JSON.stringify(where))),
-        this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      ])
-        .then(([countData, data]) => {
-          this.page.total = countData.count
-          let list = data || []
+      this.$axios
+        .get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(({ total, items }) => {
+          this.page.total = total
+          let list = items || []
           this.list = list.map(this.formatData)
-          if (!list.length && data.total > 0) {
+          if (!list.length && total > 0) {
             setTimeout(() => {
               this.fetch(this.page.current - 1)
             }, 0)
@@ -578,17 +576,13 @@ export default {
       })
     },
     changeStatus(ids, { status, errorEvents }) {
-      let where = {
-        _id: {
-          in: ids
-        }
-      }
       let attributes = {
-        status
+        status,
+        id: ids?.[0] || ''
       }
       errorEvents && (attributes.errorEvents = errorEvents)
       this.$axios
-        .post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
+        .patch('tm/api/DataFlows?where=', attributes)
         .then(data => {
           this.fetch()
           this.responseHandler(data, '操作成功')
@@ -714,7 +708,7 @@ export default {
     },
     del(ids, item = {}) {
       let where = {
-        _id: {
+        id: {
           inq: ids
         }
       }

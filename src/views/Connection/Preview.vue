@@ -126,7 +126,10 @@ export default {
     async loadData(id, type) {
       this.loading = true
       let data = null
-      data = await this.$axios.get('tm/api/Connections/' + id)
+      let filter = {
+        noSchema: 1
+      }
+      data = await this.$axios.get('tm/api/Connections/' + id + '?filter=' + encodeURIComponent(JSON.stringify(filter)))
       this.loading = false
       data['database_password'] = data.agentType === 'Cloud' ? data['database_username'] : '-'
       this.connection = data
@@ -155,7 +158,15 @@ export default {
             status: 'testing'
           })
           .then(data => {
-            this.$refs.test.start(this.connection)
+            let testData = JSON.parse(JSON.stringify(this.connection))
+            if (['gridfs', 'mongodb'].includes(testData.database_type)) {
+              delete testData.database_uri
+              testData.justTest = true
+            }
+            if (testData.database_type !== 'redis') {
+              delete testData['database_password']
+            }
+            this.$refs.test.start(testData)
             this.responseHandler(data, '操作成功')
           })
       })

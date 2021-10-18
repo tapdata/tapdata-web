@@ -48,7 +48,7 @@ export default {
         this.isFirst = false
         this.fieldMappingNavData = data
         this.loadingMetadata = false
-        this.$refs.fieldMappingDom.updateView(data) //左侧导航栏有数据再请求列表数据
+        this.$refs.fieldMappingDom.updateView(data[0]) //左侧导航栏有数据再请求列表数据
       })
       promise.catch(() => {
         this.loadingMetadata = false

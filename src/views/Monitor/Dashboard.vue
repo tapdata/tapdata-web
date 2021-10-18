@@ -247,6 +247,7 @@ export default {
         where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
         fields: {
           'fullDocument.id': true,
+          'fullDocument._id': true,
           'fullDocument.name': true,
           'fullDocument.status': true,
           'fullDocument.executeMode': true,
@@ -270,6 +271,7 @@ export default {
   },
   destroyed() {
     this.$ws.off('watch', this.taskChange)
+    this.$ws.send({ type: 'unsubscribe', messageType: 'watch,logs' })
   },
   computed: {
     milestoneList() {
@@ -350,7 +352,7 @@ export default {
         }
       }
       this.$axios.get(`tm/api/Connections?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
-        let connections = data || []
+        let connections = data?.items || []
         // 源和目标一样的情况
         if (connections.length === 1) {
           connections.push(Object.assign({}, connections[0], { id: 'targetId' }))

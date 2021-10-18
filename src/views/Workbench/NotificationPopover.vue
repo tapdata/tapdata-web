@@ -132,10 +132,19 @@ export default {
 
       // this.getUnReadNum()
       if (this.$ws) {
-        this.$ws.on('notification', data => {
+        this.$ws.on('notification', async data => {
+          await this.getUnReadNum()
           if (data.data && data.data.length > 0) {
-            this.listData.unshift(...data.data)
-            this.getUnReadNum()
+            if (this.unRead > data.data.length) {
+              this.listData.unshift(...data.data)
+              let obj = {}
+              this.listData = this.listData.reduce((cur, next) => {
+                obj[next.id] ? '' : (obj[next.id] = true && cur.push(next))
+                return cur
+              }, [])
+            } else {
+              this.listData = data.data
+            }
           } else {
             this.unRead = 0
           }
@@ -162,13 +171,11 @@ export default {
           neq: true
         }
       }
-      this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-        if (res) {
-          this.unRead = res.count
-          // this.$store.commit('notification', {
-          //   unRead: res.data.count
-          // })
-        }
+      return this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
+        this.unRead = res.count
+        // this.$store.commit('notification', {
+        //   unRead: res.data.count
+        // })
       })
     },
     // 已读消息

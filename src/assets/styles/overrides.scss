@@ -621,6 +621,9 @@ th {
   color: map-get($fontColor, sub);
   font-weight: 400;
 }
+.el-select-dropdown.el-popper {
+  max-width: 0;
+}
 // 抽屉
 .el-drawer {
   box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%), 0 16px 24px 2px rgb(0 0 0 / 1%), 0 6px 30px 5px rgb(0 0 0 / 1%);

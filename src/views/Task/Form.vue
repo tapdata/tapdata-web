@@ -563,11 +563,13 @@ export default {
                 if (this.id) {
                   filter.where['id'] = { neq: this.id }
                 }
-                this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-                  if (data && data.length !== 0) {
-                    callback(new Error('任务名称已存在'))
-                  } else callback()
-                })
+                this.$axios
+                  .get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
+                  .then(({ items }) => {
+                    if (items?.length !== 0) {
+                      callback(new Error('任务名称已存在'))
+                    } else callback()
+                  })
               }
             }
           }
@@ -894,8 +896,8 @@ export default {
         fields: fields,
         order: ['status DESC', 'name ASC']
       }
-      this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-        this.changeConfig(data || [], type, reset)
+      this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
+        this.changeConfig(items || [], type, reset)
       })
     },
     //change config
