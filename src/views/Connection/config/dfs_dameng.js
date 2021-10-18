@@ -1,8 +1,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
       connection_type: 'target'
@@ -28,6 +28,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
+        customClass: 'small-item',
         label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
@@ -63,11 +64,8 @@ export default function (vm) {
         type: 'input',
         field: 'database_owner',
         label: vm.$t('dataForm.form.databaseOwner'),
-        required: true
-      },
-      {
-        type: 'slot',
-        slot: 'tableFilter'
+        required: true,
+        tip: '逗号分割的表达式列表，使用 * 代表任意长度任意字符'
       },
       {
         type: 'input',
@@ -78,13 +76,8 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        //tips: vm.$t('dataForm.form.timeZoneTips'),
+        tip: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
-        show: true
-      },
-      {
-        type: 'slot',
-        slot: 'timezone',
         show: true
       }
     ]

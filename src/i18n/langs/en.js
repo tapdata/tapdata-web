@@ -4,8 +4,11 @@ export default {
   gl_no_data: 'No data',
   gl_no_match_result: 'No matching results were found',
   gl_back_to_list: 'Back to list',
+  gl_placeholder_select: 'Please select',
+  gl_placeholder_input: 'Please enter',
   gl_button_cancel: 'Cancel',
-  gl_button_finish: '完成',
+  gl_button_confirm: 'OK',
+  gl_button_finish: 'Finish',
   gl_button_delete_fail: 'Failed to delete',
   gl_button_update_success: 'Successfully modified',
   gl_qr_code_wx_public_account: 'WeChat public account',
@@ -38,8 +41,9 @@ export default {
   workbench_guide_data_safe: 'How does Tapdata cloud ensure data security? ',
 
   // Agent
+  agent_key: 'Agent',
   agent_manage: 'Agent Management',
-  agent_name: 'Agent ID/Name',
+  agent_name: 'Agent Name',
   agent_id: 'Agent ID',
   agent_task_number: 'Number of tasks',
   agent_create_time: 'Creation time',
@@ -96,10 +100,15 @@ export default {
   agent_detail_synchronization_task_number: 'Number of synchronization tasks',
   agent_detail_version: 'Agent version',
   agent_detail_create_time: 'Agent creation time',
+  agent_detail_host_name: 'Host host name',
   agent_detail_host_ip: 'Host IP',
   agent_detail_host_cpu_number: 'Host CPU number',
+  agent_detail_host_cpu_memory: 'Host CPU memory',
   agent_detail_host_memory_size: 'Host memory size',
   agent_detail_installation_manual: 'Installation directory',
+  agent_detail_run_manual: 'Log directory',
+  agent_list_empty_desc1: 'Come soon',
+  agent_list_empty_desc2: 'Start real-time data synchronization~',
 
   // Agent部署
   agent_deploy_title: 'Agent download and installation',
@@ -112,6 +121,8 @@ export default {
   agent_deploy_before_prepare_windows_second:
     '2. Click the download button below to download the Tapdata Agent installation package to the local environment. ',
   agent_deploy_before_prepare_windows_second_download: 'Click to download Tapdata Agent',
+  agent_deploy_before_prepare_windows_third:
+    '3. Please strictly follow the installation steps below to deploy, do not double-click the installation package directly! ',
   agent_deploy_start_install: 'Start installation',
   agent_deploy_start_install_button_copy: 'Copy',
   agent_deploy_start_install_button_copied: 'Copied',
@@ -120,8 +131,10 @@ export default {
   agent_deploy_start_install_windows_second:
     '2. After the above command is executed, the log as shown in the figure below appears, which means that the agent started successfully:',
   agent_deploy_start_install_windows_third:
-    "3. If you need to view the agent's log or start and stop the agent, please refer to",
-  agent_deploy_link_agent_operation: '《Agent Basic Operations》',
+    '3. If you encounter any problems during installation and use, please refer to',
+  agent_deploy_link_agent_operation: '"Agent Installation Manual and Common QA"',
+  agent_deploy_link_agent_operation_desc:
+    'Or directly scan the QR code on the right to join the community for technical support. ',
   agent_deploy_before_prepare_linux_first:
     '1. Before installation, please make sure that Java 1.8 is installed in your deployment environment and the environment variables are correctly configured. ',
   agent_deploy_before_prepare_linux_first_link: 'Click to see how to install and configure Java 1.8',
@@ -134,7 +147,7 @@ export default {
   agent_deploy_start_install_linux_second:
     '2. After the above command is executed, the log as shown in the figure below appears, which means that the agent started successfully:',
   agent_deploy_start_install_linux_third:
-    "3. If you need to view the agent's log or start and stop the agent, please refer to",
+    '3. If you encounter any problems during installation and use, please refer to',
   agent_deploy_before_prepare_docker_first:
     '1. We provide an image that contains the environment required for Tapdata Agent to run',
   agent_deploy_before_prepare_docker_second:
@@ -165,12 +178,11 @@ export default {
   agent_upgrade_step_windows_second:
     '2. Copy the upgrade command below and execute it in the directory. The upgrade command will automatically back up, upgrade and start. If the upgrade fails, it will automatically roll back the version.',
   agent_upgrade_step_windows_third:
-    '3. After the upgrade command is executed, if the following appears, it means that the Agent upgrade is successful: Update finished.',
+    '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
   agent_upgrade_step_linux_first: '1. Enter the original Agent installation directory',
   agent_upgrade_step_linux_second:
     '2. Copy the upgrade command below and execute it in the directory. The upgrade command will automatically back up, upgrade and start. If the upgrade fails, it will automatically roll back the version.',
-  agent_upgrade_step_linux_third:
-    '3. After the upgrade command is executed, if the following appears, it means that the Agent upgrade is successful: Update finished.',
+  agent_upgrade_step_linux_third: '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
   agent_upgrade_step_docker_first: '1. Enter the docker container of the original Agent',
   agent_upgrade_step_docker_first_one: "(1) Found the original agent's docker container CONTAINER ID",
   agent_upgrade_step_docker_first_two: '(2) Enter the container through the container ID',
@@ -181,17 +193,23 @@ export default {
   agent_upgrade_step_docker_second:
     '2. Copy the upgrade command below to execute directly in the container, the upgrade command will automatically back up, upgrade and start, if the upgrade fails, it will automatically roll back the version',
   agent_upgrade_step_docker_third:
-    '3. After the upgrade command is executed, if the following appears, it means that the Agent upgrade is successful: Update finished.',
+    '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
 
   // 连接
   connection_manage: 'Connection Management',
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
+  connection_form_database_host_placeholder: 'Please enter the database address',
+  connection_form_database_host_tips:
+    'Database address (127.0.0.1/Domain: (port), please use multiple addresses, separate)',
 
   // 任务
   task_manage: 'Task Management',
   task_name: 'Task name',
-  task_sync_type_initial_sync: 'full amount',
+  task_status: 'Task Status',
+  task_sync_type: 'Task synchronization type',
+  task_name_or_node_name_or_library_name: 'Name',
+  task_sync_type_initial_sync: 'Full amount',
   task_sync_type_cdc: 'Incremental',
   task_sync_type_initial_sync_cdc: 'Full amount + incremental',
 
@@ -216,6 +234,7 @@ export default {
   verify_result_content_diff: 'Table data difference: {0}',
   verify_result_count_inconsistent: 'inconsistent',
   verify_result_count_consistent: 'consistent',
+  verify_button_create: 'Create',
 
   // 操作日志
   operation_log_manage: 'Operation log'

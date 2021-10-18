@@ -967,7 +967,7 @@ module.exports = {
       id: '60dc5bf4fdbc9e17646376be',
       flowId: '60dc5941fdbc9e1764636842',
       name: 'test js ',
-      mode: 'manual',
+      mode: 'cron',
       inspectMethod: 'field',
       timing: { intervals: 1440, intervalsUnit: 'minute', start: 1625054183742, end: 1625140583742 },
       limit: { keep: 100 },
@@ -1038,6 +1038,7 @@ module.exports = {
   '/tm/api/InspectResults': {
     data: [
       {
+        parentId: 'ssss',
         status: 'done',
         id: '60ded44a412e0b08d632d9d1',
         inspect_id: '60dc424afdbc9e17646325fa',
@@ -1049,6 +1050,46 @@ module.exports = {
         source_total: 51788,
         target_total: 51787,
         stats: [
+          {
+            taskId: '60ded447412e0b08d632d9c3-',
+            source: {
+              connectionId: '60cda022f0e73a0067428c38',
+              connectionName: 'jason-mysql-3306',
+              table: 'CLAIM',
+              sortColumn: 'CLAIM_ID',
+              direction: 'DESC',
+              columns: null,
+              limit: 0,
+              skip: 0,
+              where: null
+            },
+            target: {
+              connectionId: '60cda022f0e73a0067428c38',
+              connectionName: 'jason-mysql-3306',
+              table: 'CLAIM_C1',
+              sortColumn: 'CLAIM_ID',
+              direction: 'DESC',
+              columns: null,
+              limit: 0,
+              skip: 0,
+              where: null
+            },
+            start: 1625216074322,
+            end: 1625216080464,
+            status: 'done',
+            errorMsg: null,
+            result: 'failed',
+            progress: 1,
+            cycles: 51788,
+            source_total: 51788,
+            target_total: 51787,
+            both: 51787,
+            source_only: 1,
+            target_only: 0,
+            row_passed: 51787,
+            row_failed: 0,
+            speed: 7398
+          },
           {
             taskId: '60ded447412e0b08d632d9c3-',
             source: {

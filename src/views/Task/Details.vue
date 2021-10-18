@@ -36,27 +36,27 @@
               :disabled="!statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)"
               :loading="loadingObj.start"
               @click="start($route.params.id)"
-              >启动</VButton
+            >启动</VButton
             >
             <VButton
               v-if="task.status === 'stopping'"
               :disabled="!statusBtMap['forceStop'][task.status]"
               :loading="loadingObj.forceStop"
               @click="forceStop($route.params.id)"
-              >强制停止</VButton
+            >强制停止</VButton
             >
             <VButton
               v-else
               :disabled="!statusBtMap['stop'][task.status]"
               :loading="loadingObj.stop"
               @click="stop($route.params.id)"
-              >停止</VButton
+            >停止</VButton
             >
             <VButton
               :disabled="!statusBtMap['reset'][task.status]"
               :loading="loadingObj.reset"
               @click="reset($route.params.id)"
-              >重置</VButton
+            >重置</VButton
             >
           </div>
         </div>
@@ -72,7 +72,7 @@
       <div class="sub-task__header">
         <span class="fs-7">子任务</span>
         <span class="ml-4 font-color-disable"
-          >在Tapdata Cloud中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情</span
+        >在Tapdata Cloud中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情</span
         >
       </div>
       <ElTable :data="list" class="mt-5">
@@ -102,7 +102,7 @@
               停止
             </ElButton>
             <ElButton :disabled="!statusBtMap['reset'][scope.row.status]" type="text" @click="reset(scope.row.id)"
-              >重启</ElButton
+            >重启</ElButton
             >
           </template>
         </ElTableColumn>

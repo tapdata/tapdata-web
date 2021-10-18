@@ -3,28 +3,30 @@
     <div class="main">
       <div class="connection-operation">
         <div class="connection-operation-left">
-          <ul>
-            <li>
-              <ElSelect v-model="searchParams.status" @input="search()">
-                <ElOption label="全部状态" value=""></ElOption>
-                <ElOption v-for="(opt, value) in statusMap" :key="value" :label="opt.text" :value="value"></ElOption>
-              </ElSelect>
-            </li>
-            <li class="ml-3">
-              <ElInput v-model="searchParams.keyword" placeholder="按连接名搜索" @input="search(800)">
-                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
-              </ElInput>
-            </li>
-            <li class="ml-3">
-              <ElButton plain class="btn-refresh" @click="fetch()">
+          <el-form inline @submit.native.prevent>
+            <el-form-item label="全部状态 :" width="300px">
+              <el-select v-model="searchParams.status" clearable @input="search()">
+                <el-option v-for="(opt, value) in statusMap" :key="value" :label="opt.text" :value="value"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="按连接名搜索 : " class="ml-2">
+              <el-input
+                width="200"
+                v-model="searchParams.keyword"
+                @input="search(800)"
+                :placeholder="$t('gl_placeholder_input')"
+              >
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button plain class="btn-refresh" @click="fetch()">
                 <VIcon>refresh</VIcon>
-              </ElButton>
-            </li>
-          </ul>
+              </el-button>
+            </el-form-item>
+          </el-form>
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
-            <i class="el-icon-plus" style="margin-right: 5px"></i>
             <span>创建连接</span>
           </ElButton>
         </div>
@@ -36,7 +38,7 @@
         :data="list"
         @sort-change="sortChange"
       >
-        <ElTableColumn label="连接名" prop="name" min-width="150">
+        <ElTableColumn label="连接名" prop="name" min-width="200px">
           <template slot-scope="scope">
             <div class="flex flex-row align-items-center p-2">
               <img
@@ -54,20 +56,23 @@
                 {{ scope.row.name }}
               </ElLink>
               <div class="flex align-items-center">
-                <span v-if="scope.row.agentType === 'Cloud'" class="agent-cloud ml-3 px-2">仅供测试使用</span>
+                <img
+                  v-if="scope.row.agentType === 'Cloud'"
+                  src="../../../public/images/only_test.png"
+                  alt=""
+                  class="ml-3"
+                  style="height: 18px"
+                />
               </div>
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip label="连接信息" prop="connectionUrl" min-width="150">
-          <template slot-scope="scope">{{ scope.row.connectionUrl }}</template>
-        </ElTableColumn>
-        <ElTableColumn label="状态">
+        <ElTableColumn label="状态" width="120">
           <template slot-scope="scope">
             <StatusTag type="text" target="connection" :status="scope.row.status"></StatusTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="连接类型">
+        <ElTableColumn label="连接类型" width="120">
           <template slot-scope="scope">{{
             {
               source: '源头',
@@ -76,36 +81,50 @@
             }[scope.row.connection_type]
           }}</template>
         </ElTableColumn>
-        <ElTableColumn width="160">
+        <ElTableColumn width="180">
           <div slot="header">
             {{ $t('connection_list_column_schema_status') }}
             <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
-              <VIcon>question-circle</VIcon>
+              <VIcon class="color-primary" size="14">info</VIcon>
             </ElTooltip>
           </div>
           <template slot-scope="scope">
             <SchemaProgress :data="scope.row"></SchemaProgress>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="修改时间" prop="last_updated" width="180" sortable="custom">
+        <ElTableColumn label="修改时间" prop="last_updated" width="150" sortable="custom">
           <template slot-scope="scope">{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</template>
         </ElTableColumn>
-        <ElTableColumn label="操作" width="180">
+        <ElTableColumn label="操作" width="280">
           <template slot-scope="scope">
-            <ElLink type="primary" class="mr-2" @click="testConnection(scope.row)">连接测试</ElLink>
-            <ElLink type="primary" class="mr-2" :disabled="scope.row.agentType === 'Cloud'" @click="edit(scope.row)"
-              >编辑</ElLink
-            >
-            <ElLink type="primary" class="mr-2" :disabled="scope.row.agentType === 'Cloud'" @click="copy(scope.row)"
-              >复制</ElLink
-            >
-            <ElLink type="danger" @click="del(scope.row)">删除</ElLink>
+            <div class="operate-columns">
+              <el-button size="mini" type="text" @click="testConnection(scope.row)">连接测试</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="edit(scope.row)"
+                >编辑</el-button
+              >
+              <el-divider direction="vertical"></el-divider>
+              <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="copy(scope.row)"
+                >复制</el-button
+              >
+              <el-divider direction="vertical"></el-divider>
+              <el-button type="text" @click="del(scope.row)">删除</el-button>
+            </div>
           </template>
         </ElTableColumn>
-        <div class="connection-table__empty" slot="empty">
-          <VIcon>folder-opened</VIcon>
-          <span class="ml-1" v-if="!isSearching">暂无数据</span>
-          <span v-else> 没有查到符合条件的结果，<ElLink type="primary" @click="reset">返回列表</ElLink> </span>
+        <div v-if="!isSearching" class="connection-table__empty" slot="empty">
+          <VIcon size="120">no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_data') }}</span>
+            <el-link type="primary" class="fs-7" @click="create">创建连接</el-link>
+          </div>
+        </div>
+        <div v-else class="connection-table__empty" slot="empty">
+          <VIcon size="120">search-no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_match_result') }}</span>
+            <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
+          </div>
         </div>
       </ElTable>
       <ElPagination
@@ -120,8 +139,9 @@
         @current-change="fetch"
       >
       </ElPagination>
+      <!-- 连接测试 -->
       <ConnectionTest ref="test"></ConnectionTest>
-      <Preview ref="preview" @close="fetch()"></Preview>
+      <Preview ref="preview" @close="fetch()" @reload-schema="fetch()"></Preview>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -165,10 +185,17 @@
       color: unset;
       cursor: unset;
     }
-    .agent-cloud {
-      color: #10c038;
-      border-color: #10c038;
-      background-color: #dbefd1;
+    .operate-columns {
+      line-height: 14px;
+      .el-button {
+        padding: 0;
+        & + .el-button {
+          margin: 0;
+        }
+      }
+      .el-divider {
+        margin: 0 16px;
+      }
     }
   }
   .connection-table__empty {
@@ -192,7 +219,6 @@ export default {
         status: '',
         keyword: ''
       },
-
       list: [],
       page: {
         current: 1,
@@ -200,9 +226,9 @@ export default {
         total: 0
       },
       order: 'createTime desc',
-
       statusMap: CONNECTION_STATUS_MAP,
-      whiteList: SUPPORT_DB
+      whiteList: SUPPORT_DB,
+      showDetails: false
     }
   },
   computed: {
@@ -228,7 +254,11 @@ export default {
       let list = this.list || []
       let ids = []
       list.forEach(item => {
-        if (['testing'].includes(item.status) || ['loading'].includes(item.loadFieldsStatus)) {
+        if (
+          ['testing'].includes(item.status) ||
+          ['loading'].includes(item.loadFieldsStatus) ||
+          !item.loadFieldsStatus
+        ) {
           ids.push(item.id)
         }
       })
@@ -335,28 +365,6 @@ export default {
       let statusInfo = this.statusMap[item.status] || {}
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
-      if (item.database_type !== 'mongodb') {
-        item.connectionUrl = ''
-        if (item.database_username) {
-          item.connectionUrl += item.database_username + ':***@'
-        }
-        item.connectionUrl += item.database_host + ':' + item.database_port
-      } else {
-        item.connectionUrl = item.database_uri || item.connection_name
-      }
-      if (item.database_type === 'mq' && item.mqType === '0') {
-        item.connectionUrl = item.brokerURL
-      }
-      // 不存在uri 和 port === 0
-      if (!item.database_uri && !item.database_port && item.mqType !== '0') {
-        item.connectionUrl = ''
-      }
-      if (item.database_type === 'kudu') {
-        item.connectionUrl = item.database_host
-      }
-      if (item.database_type === 'kafka') {
-        item.connectionUrl = item.kafkaBootstrapServers
-      }
       return item
     },
     sortChange({ prop, order }) {
@@ -461,6 +469,19 @@ export default {
       } catch (error) {
         this.$message.error(error?.response?.msg || '测试连接失败')
       }
+    },
+    loadDetailsData(data) {
+      if (this.selectedRow?.id) {
+        return
+      }
+      this.selectedRow = data
+    },
+    detailsClosedFnc() {
+      this.showDetails = false
+      this.$router.replace({
+        name: 'Instance',
+        query: this.searchParams
+      })
     },
     preview(id, type) {
       this.$refs.preview.open(id, type)

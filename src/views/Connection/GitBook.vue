@@ -36,10 +36,10 @@ export default {
 
 <style lang="scss">
 .git-book {
-  max-width: 550px;
+  max-width: 500px;
   padding: 10px 20px;
   overflow-y: auto;
-  background-color: rgba(250, 250, 250, 100);
+  background-color: #fff;
   border: 1px solid rgba(222, 222, 228, 100);
   border-top: none;
 }
@@ -67,19 +67,19 @@ export default {
     font-size: 12px;
     line-height: 24px;
     color: #666666;
-    margin-top: 0px;
-    margin: 8px 0;
     margin: 14px 0 14px;
   }
   pre {
     background-color: #eee;
-    margin-bottom: 8px;
-    margin-top: 8px;
     margin: 12px 0 12px;
+    overflow: hidden;
+    > code {
+      word-wrap: break-word;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
   }
   blockquote {
-    margin-bottom: 8px;
-    margin-top: 8px;
     margin: 14px 0 14px;
     background-color: #eee;
     padding: 16px 16px;
@@ -97,7 +97,6 @@ export default {
     font-size: 12px;
     line-height: 20px;
     color: #666666;
-    margin-top: 0px;
     margin: 8px 0;
   }
   blockquote {

@@ -1,17 +1,14 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px',
+      labelColon: true
     },
     defaultModel: {
       connection_type: 'source_and_target'
     },
     items: [
-      {
-        type: 'slot',
-        slot: 'name'
-      },
       {
         type: 'input',
         field: 'database_host',
@@ -34,6 +31,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
+        customClass: 'small-item',
         label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
@@ -82,12 +80,8 @@ export default function (vm) {
         label: vm.$t('dataForm.form.timeZone'),
         //tips: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
-        show: true
-      },
-      {
-        type: 'slot',
-        slot: 'timezone',
-        show: true
+        show: true,
+        tip: '影响类型: DATE'
       }
     ]
   }

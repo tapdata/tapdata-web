@@ -1,3 +1,29 @@
 @import "~web-core/styles/utilities";
-//@import "utilities";
-@import "overrides";
+//@import 'utilities';
+@import 'overrides';
+
+.g-panel-container {
+  background: #fff;
+  padding: 24px;
+  border-radius: 4px;
+}
+//统一滚动条样式
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+:hover::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.1);
+}

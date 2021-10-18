@@ -1,17 +1,26 @@
 <template>
-  <span class="td-status-tag">
-    <ElTag :type="statusObj.type" v-if="type === 'tag'">{{ statusObj.text }}</ElTag>
+  <span v-if="onlyImg" class="td-status-tag inline-flex align-items-center">
+    <img :src="imgSrc" :data-status="statusObj.text" alt="" />
+  </span>
+  <span v-else class="td-status-tag">
+    <ElTag v-if="type === 'tag'" :type="statusObj.type">{{ statusObj.text }}</ElTag>
     <span :class="['flex', 'align-items-center', 'icon-span', `color-${statusObj.type}`, status]" v-else>
-      <VIcon class="v-icon" size="16">{{ statusObj.icon }}</VIcon>
-      <span class="td-status-tag__text">{{ statusObj.text }}</span>
+      <VIcon v-if="statusObj.icon" class="v-icon" size="16">{{ statusObj.icon }}</VIcon>
+      <span
+        v-else
+        :class="['circle-icon', 'mr-2', `bg-color-${statusObj.type}`]"
+        :style="{ 'background-color': statusObj.color }"
+      ></span>
+      <span class="td-status-tag__text font-color-sub">{{ statusObj.text }}</span>
     </span>
   </span>
 </template>
 
 <script>
 import VIcon from '@/components/VIcon'
-import { CONNECTION_STATUS_MAP, INSTANCE_STATUS_MAP, TASK_STATUS_MAP } from '../const'
+import { CONNECTION_STATUS_MAP, INSTANCE_STATUS_MAP, TASK_STATUS_MAP, MILESTONE_STATUS_MAP } from '../const'
 export default {
+  name: 'StatusTag',
   components: { VIcon },
   props: {
     type: {
@@ -24,18 +33,35 @@ export default {
     target: {
       type: String,
       default: 'instance'
+    },
+    onlyImg: {
+      type: Boolean,
+      default: false
+    },
+    statusMap: {
+      type: Object,
+      default: () => {
+        return null
+      }
     }
   },
   computed: {
     map() {
-      return {
-        instance: INSTANCE_STATUS_MAP,
-        task: TASK_STATUS_MAP,
-        connection: CONNECTION_STATUS_MAP
-      }[this.target]
+      return (
+        this.statusMap ||
+        {
+          instance: INSTANCE_STATUS_MAP,
+          task: TASK_STATUS_MAP,
+          connection: CONNECTION_STATUS_MAP,
+          milestone: MILESTONE_STATUS_MAP
+        }[this.target]
+      )
     },
     statusObj() {
-      return this.map[this.status]
+      return this.map[this.status] || {}
+    },
+    imgSrc() {
+      return require(`../../public/images/task/${this.statusObj.icon}.png`)
     }
   }
 }
@@ -45,9 +71,17 @@ export default {
 .td-status-tag {
   display: inline-block;
   vertical-align: middle;
+  img {
+    height: 25px;
+  }
   .icon-span {
     .v-icon {
       margin: 0 4px;
+    }
+    .circle-icon {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
     }
   }
 }
@@ -63,6 +97,5 @@ export default {
   display: inline-block;
   height: 26px;
   line-height: 26px;
-  color: #333 !important;
 }
 </style>

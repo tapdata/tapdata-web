@@ -1,10 +1,6 @@
 <template>
   <div v-if="$route.name === 'NoviceGuide'" class="novice-guide-wrapper main-container">
-    <div class="container-title">
-      <span class="main-title">新手引导</span>
-      <span class="sub-title ml-4"></span>
-    </div>
-    <div class="container-section mt-6 p-6">
+    <div class="container-section p-6">
       <el-steps class="pb-6" :active="step" process-status="process" finish-status="success" align-center>
         <el-step title="安装 Agent"></el-step>
         <el-step title="创建源连接"></el-step>
@@ -67,6 +63,9 @@
             @click="toNext"
             >下一步</el-button
           >
+          <span v-if="agentNextLoading" class="ml-2 font-color-sub"
+            >测试Agent的启动大概需要1～5分钟的时间，请耐心等待。</span
+          >
         </div>
       </div>
       <!--   第2步、第3步   -->
@@ -92,8 +91,9 @@
         <el-form ref="sourceElForm" v-model="sourceForm" label-width="80px" class="source-form mt-6">
           <el-form-item label="数据库类型" prop="database_type" class="database-type">
             <div class="flex w-100">
-              <el-radio-group v-model="sourceForm.database_type" @change="changeSourceDatabaseType">
+              <el-radio-group v-model="sourceForm.database_type" size="mini" @change="changeSourceDatabaseType">
                 <el-radio-button v-for="(item, index) in databaseTypeItems" :key="index" :label="item.value">
+                  <VIcon size="16" class="color-primary">{{ item.icon }}</VIcon>
                   {{ item.label }}
                 </el-radio-button>
               </el-radio-group>
@@ -109,34 +109,58 @@
             </div>
           </el-form-item>
           <template v-if="sourceForm.id">
-            <el-form-item label="连接名称" prop="name">
-              <el-input v-model="sourceForm.name" readonly disabled>
+            <el-form-item label="连接名称" prop="name" class="medium-width">
+              <el-input v-model="sourceForm.name" size="mini" readonly disabled>
                 <span slot="suffix">（仅测试使用，不可编辑）</span>
               </el-input>
             </el-form-item>
-            <el-form-item label="地址/端口" prop="database_host" class="database-uri-port">
+            <el-form-item label="地址/端口" prop="database_host" class="database-uri-port medium-width">
               <div class="flex justify-content-between w-100">
-                <el-input v-model="sourceForm.database_host" class="database-uri" readonly disabled></el-input>
-                <el-input v-model="sourceForm.database_port" class="database-port ml-3" readonly disabled></el-input>
+                <el-input
+                  v-model="sourceForm.database_host"
+                  size="mini"
+                  class="database-uri"
+                  readonly
+                  disabled
+                ></el-input>
+                <el-input
+                  v-model="sourceForm.database_port"
+                  size="mini"
+                  class="database-port"
+                  readonly
+                  disabled
+                ></el-input>
               </div>
             </el-form-item>
-            <el-form-item label="数据库名" prop="database_name">
-              <el-input v-model="sourceForm.database_name" readonly disabled></el-input>
+            <el-form-item label="数据库名" prop="database_name" class="mini-width">
+              <el-input v-model="sourceForm.database_name" size="mini" readonly disabled></el-input>
             </el-form-item>
-            <el-form-item label="数据库账号" prop="database_username">
-              <el-input v-model="sourceForm.database_username" readonly disabled></el-input>
+            <el-form-item label="数据库账号" prop="database_username" class="mini-width">
+              <el-input v-model="sourceForm.database_username" size="mini" readonly disabled></el-input>
             </el-form-item>
-            <el-form-item label="数据库密码" prop="database_password">
-              <el-input v-model="sourceForm.database_password" readonly disabled></el-input>
+            <el-form-item label="数据库密码" prop="database_password" class="mini-width">
+              <el-input v-model="sourceForm.database_password" size="mini" readonly disabled></el-input>
             </el-form-item>
-            <el-form-item v-if="sourceForm.database_type === 'postgres'" label="Schema" prop="database_owner">
-              <el-input v-model="sourceForm.database_owner" readonly disabled></el-input>
+            <el-form-item
+              v-if="sourceForm.database_type === 'postgres'"
+              label="Schema"
+              prop="database_owner"
+              class="mini-width"
+            >
+              <el-input v-model="sourceForm.database_owner" size="mini" readonly disabled></el-input>
             </el-form-item>
           </template>
         </el-form>
         <div class="operation mt-7">
-          <el-button v-if="step !== 0" class="mr-4" size="mini" @click="toPrev">上一步</el-button>
-          <el-button type="primary" size="mini" :disabled="!sourceForm.id" @click="toNext">下一步</el-button>
+          <el-button v-if="step !== 0" class="mr-4" size="mini" @click="toPrev" key="preBtn">上一步</el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            :disabled="!sourceForm.id"
+            :loading="connectionNextLoading"
+            @click="toNext"
+            >下一步</el-button
+          >
         </div>
       </div>
       <!--   第4步   -->
@@ -144,7 +168,7 @@
         <div class="step-content__title fs-6 fw-bolder">配置同步任务</div>
         <div class="flex mt-6">
           <div class="task-item-label mr-4 flex align-items-center">同步类型</div>
-          <el-radio-group v-model="taskForm.type">
+          <el-radio-group v-model="taskForm.type" size="mini">
             <el-radio-button v-for="(item, index) in taskTypeItems" :key="index" :label="item.value">
               {{ item.label }}
             </el-radio-button>
@@ -163,7 +187,7 @@
               :filter-placeholder="$t('editor.cell.link.searchContent')"
               :data="sourceData"
               filterable
-              class="flex"
+              class="transfer"
               @change="handleChangeTransfer"
               @right-check-change="handleSelectTable"
             >
@@ -194,6 +218,7 @@
         </div>
       </div>
     </div>
+    <ConnectionTest ref="test"></ConnectionTest>
   </div>
   <RouterView v-else></RouterView>
 </template>
@@ -207,6 +232,7 @@ export default {
   data() {
     return {
       timer: null,
+      schemaTimer: null,
       step: 0,
       steps: [
         { index: 0, text: '安装 Agent', type: 'agent' },
@@ -217,6 +243,7 @@ export default {
       agent: {},
       startAgentLoading: false, // 启动agent
       stopAgentLoading: false, // 停用agent
+      connectionNextLoading: false, // 创建连接的下一步
       createTaskLoading: false, // 创建任务
       form: {
         agent: {},
@@ -293,17 +320,20 @@ export default {
       let result = [
         {
           label: 'MySQL',
-          value: 'mysql'
+          value: 'mysql',
+          icon: 'mysql'
         },
         {
           label: 'PostgreSQL',
-          value: 'postgres'
+          value: 'postgres',
+          icon: 'pg'
         }
       ]
       if (this.step === 2) {
         result.push({
           label: 'MongoDB',
-          value: 'mongodb'
+          value: 'mongodb',
+          icon: 'mongo'
         })
       }
       return result
@@ -336,6 +366,7 @@ export default {
     },
     clearTimer() {
       this.timer && clearInterval(this.timer)
+      this.schemaTimer && clearInterval(this.schemaTimer)
     },
     stepFnc(isTimer = false) {
       switch (this.step) {
@@ -370,8 +401,13 @@ export default {
         // 创建目标连接
         this.form.target = this.deepCopy(this.sourceForm)
       }
-      this.step++
-      // if (this.step++ > 3) this.step = 0
+      // 下一步
+      if (this.step === 2) {
+        // this.loadSchema('first')
+        this.step++
+      } else {
+        this.step++
+      }
     },
     // 步骤-安装agent
     initAgent(isTimer) {
@@ -395,15 +431,8 @@ export default {
         return
       }
       // let id = this.form.source?.id
-      let { id, database_username } = this.form.source ?? {}
+      let { id } = this.form.source ?? {}
       this.$axios.get(`tm/api/Connections/${id}/customQuery?schema=true`).then(data => {
-        this.sourceData = [
-          {
-            label: database_username,
-            key: database_username,
-            id: database_username
-          }
-        ]
         let tables = data.schema?.tables || []
         tables = tables.sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1))
         if (tables?.length) {
@@ -506,17 +535,31 @@ export default {
       delete params.id
       this.$axios
         .post('tm/api/Connections', params)
-        .then(() => {
-          this.loadConnection()
+        .then(sourceConnection => {
+          // 填充数据
+          if (this.sourceForm.database_type === 'mongodb') {
+            let arr = sourceConnection.database_host?.split(':')
+            sourceConnection.database_host = arr[0] ?? ''
+            sourceConnection.database_port = arr[1] ?? ''
+            sourceConnection.database_password = sourceConnection.database_username
+          }
+          for (let key in this.sourceForm) {
+            if (key !== 'database_type') {
+              this.sourceForm[key] = sourceConnection[key]
+            }
+          }
         })
         .catch(() => {
           this.$message.error('创建连接失败')
+        })
+        .finally(() => {
           this.initDatabaseLoading = false
         })
     },
     resetFormField() {
       this.$refs.sourceElForm.resetFields() // 清空表单数据
       this.sourceForm.database_type = this.databaseTypeItems[0].value
+      this.connectionNextLoading = false
     },
     changeSourceDatabaseType(value) {
       this.resetFormField()
@@ -530,32 +573,61 @@ export default {
         where: {
           database_type: this.sourceForm.database_type,
           agentType: 'Cloud',
-          connection_type: this.step === 2 ? 'target' : 'source'
+          connection_type: this.step === 2 ? 'target' : 'source',
+          status: 'ready'
         },
         limit: 10
       }
+      this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
+        let sourceConnection = data?.[0]
+        if (!sourceConnection) {
+          this.sourceForm.id = '' // 标记为空
+          return
+        }
+        if (this.sourceForm.database_type === 'mongodb') {
+          let arr = sourceConnection.database_host?.split(':')
+          sourceConnection.database_host = arr[0] ?? ''
+          sourceConnection.database_port = arr[1] ?? ''
+          sourceConnection.database_password = sourceConnection.database_username
+        }
+        for (let key in this.sourceForm) {
+          if (key !== 'database_type') {
+            this.sourceForm[key] = sourceConnection[key]
+          }
+        }
+      })
+    },
+    loadSchema(type) {
+      this.connectionNextLoading = true
+      let params
+      if (type === 'first') {
+        params = {
+          loadCount: 0,
+          loadFieldsStatus: 'loading'
+        }
+        this.loadFieldsStatus = 'loading'
+      }
+      if (this.schemaTimer) {
+        clearInterval(this.schemaTimer)
+        this.schemaTimer = null
+      }
       this.$axios
-        .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .patch('tm/api/Connections/' + this.form.source.id, params)
         .then(data => {
-          let sourceConnection = data?.[0]
-          if (!sourceConnection) {
-            this.sourceForm.id = '' // 标记为空
-            return
+          if (type === 'first') {
+            this.$refs.test.start(this.form.source, false, true)
           }
-          if (this.sourceForm.database_type === 'mongodb') {
-            let arr = sourceConnection.database_host?.split(':')
-            sourceConnection.database_host = arr[0] ?? ''
-            sourceConnection.database_port = arr[1] ?? ''
-            sourceConnection.database_password = sourceConnection.database_username
-          }
-          for (let key in this.sourceForm) {
-            if (key !== 'database_type') {
-              this.sourceForm[key] = sourceConnection[key]
-            }
+          if (data.loadFieldsStatus === 'finished') {
+            this.connectionNextLoading = false
+            this.step++
+          } else {
+            this.schemaTimer = setInterval(() => {
+              this.loadSchema()
+            }, 800)
           }
         })
-        .finally(() => {
-          this.initDatabaseLoading = false
+        .catch(() => {
+          this.connectionNextLoading = false
         })
     },
     createTask() {
@@ -706,12 +778,10 @@ export default {
     },
     toTaskDetail() {
       let id = this.form.task.id
-      let mappingTemplate = 'cluster-clone'
-      let routeUrl = this.$router.resolve({
-        path: '/monitor',
-        query: { id: id, isMoniting: true, mapping: mappingTemplate }
+      this.$router.push({
+        name: 'Monitor',
+        params: { id: id }
       })
-      window.open(routeUrl.href, '_blank')
     }
   }
 }
@@ -762,10 +832,22 @@ export default {
     }
   }
   .source-form {
-    width: 500px;
+    width: 550px;
     ::v-deep {
       .el-form-item__label {
         text-align: left;
+      }
+    }
+    .el-form-item {
+      &.medium-width {
+        ::v-deep .el-form-item__content {
+          width: 300px;
+        }
+      }
+      &.mini-width {
+        ::v-deep .el-form-item__content {
+          width: 200px;
+        }
       }
     }
     .database-uri-port {
@@ -773,47 +855,8 @@ export default {
         flex: 1;
       }
       .database-port {
+        margin-left: 10px;
         width: 90px;
-      }
-    }
-  }
-  .el-transfer {
-    ::v-deep {
-      .el-transfer-panel {
-        flex: 1;
-      }
-      .el-transfer-panel__filter {
-        width: calc(100% - 32px);
-        .el-input__inner {
-          border-radius: 2px;
-        }
-      }
-
-      .el-transfer-panel {
-        //width: 350px;
-        min-width: 240px;
-        .el-transfer-panel__header {
-          background: rgba(44, 101, 255, 0.05);
-          .el-checkbox__label {
-            margin-left: 10px;
-            border-left: 1px solid #ddd;
-            font-size: 14px;
-          }
-        }
-      }
-      .el-transfer__buttons {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        .el-button {
-          padding: 0;
-          width: 36px;
-          height: 27px;
-          &:last-child {
-            margin-left: 0;
-          }
-        }
       }
     }
   }
@@ -834,11 +877,10 @@ export default {
   }
 }
 .el-button {
-  &:not(.el-button--text) {
-    border-radius: 4px;
-    border: 1px solid #2c65ff;
-    color: #2c65ff;
-  }
+  //&:not(.el-button--text):focus {
+  //  color: unset;
+  //  border-color: unset;
+  //}
   + .el-button {
     margin-left: 0;
   }
@@ -851,5 +893,8 @@ export default {
       background-color: #f5f5f5;
     }
   }
+}
+.transfer {
+  height: 300px;
 }
 </style>

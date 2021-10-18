@@ -1,86 +1,85 @@
 <template>
-  <section class="operation-logs-wrapper main-container" v-loading="loading" v-if="$route.name === 'OperationLog'">
+  <section class="operation-logs-wrapper main-container" v-if="$route.name === 'OperationLog'">
     <div class="main">
       <div class="list-operation">
         <div class="list-operation-left">
-          <ul>
-            <li>
-              <ElSelect v-model="searchParams.operationType" @input="search()">
-                <ElOption label="操作类型" value=""></ElOption>
-                <ElOption
+          <el-form inline @submit.native.prevent>
+            <el-form-item label="操作类型 :" class="small">
+              <el-select v-model="searchParams.operationType" clearable @input="search()">
+                <el-option
                   v-for="(item, key) in operationTypeOptions"
                   :key="key"
                   :label="item.label"
                   :value="item.value"
-                ></ElOption>
-              </ElSelect>
-            </li>
-            <li class="ml-3">
-              <ElInput v-model="searchParams.parameter1" placeholder="操作对象" clearable @input="search(800)">
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="操作对象 : " class="small">
+              <el-input v-model="searchParams.parameter1" clearable @input="search(800)">
                 <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
-              </ElInput>
-            </li>
-            <li class="ml-3">
-              <ElDatePicker
+              </el-input>
+            </el-form-item>
+            <el-form-item label="开始时间 : ">
+              <el-datePicker
                 v-model="searchParams.start"
                 type="datetime"
                 placeholder="开始时间"
                 value-format="timestamp"
                 @change="search()"
-              ></ElDatePicker>
-            </li>
-            <li class="ml-3">
-              <ElTooltip
+              ></el-datePicker>
+            </el-form-item>
+            <el-form-item label="结束时间 : ">
+              <el-tooltip
                 placement="top"
                 manual
                 content="【结束时间】不能小于【开始时间】"
                 popper-class="copy-tooltip"
                 :value="startGreaterThanEnd"
               >
-                <ElDatePicker
+                <el-datePicker
                   v-model="searchParams.end"
                   type="datetime"
                   placeholder="结束时间"
                   value-format="timestamp"
                   @change="search()"
-                ></ElDatePicker>
-              </ElTooltip>
-            </li>
-            <li class="ml-3">
-              <ElInput v-model="searchParams.username" placeholder="用户名" clearable @input="search(800)">
+                ></el-datePicker>
+              </el-tooltip>
+            </el-form-item>
+            <el-form-item label="用户名称 : " class="medium">
+              <el-input v-model="searchParams.username" clearable @input="search(800)">
                 <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
-              </ElInput>
-            </li>
-            <li class="ml-3">
-              <ElButton plain class="btn-refresh" @click="fetch()">
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button plain class="btn-refresh" @click="table.fetch(1)">
                 <VIcon>refresh</VIcon>
-              </ElButton>
-            </li>
-          </ul>
+              </el-button>
+            </el-form-item>
+          </el-form>
         </div>
       </div>
-      <El-table class="operation-logs-table table-border mt-3" height="100%" :data="list" @sort-change="sortChange">
-        <ElTableColumn label="用户名" width="200">
+      <VList ref="table" row-key="id" :remoteMethod="getData" @sort-change="sortChange">
+        <el-table-column label="用户名" min-width="160">
           <template slot-scope="scope">
             <div>{{ scope.row.username }}</div>
           </template>
-        </ElTableColumn>
-        <ElTableColumn label="操作时间" prop="createTime" sortable="custom" width="200">
+        </el-table-column>
+        <el-table-column label="操作时间" prop="createTime" sortable="custom" width="180">
           <template slot-scope="scope">
             <div>{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
           </template>
-        </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip label="操作对象" width="350">
+        </el-table-column>
+        <el-table-column show-overflow-tooltip label="操作对象" width="350">
           <template slot-scope="scope">
             <div class="ellipsis">{{ scope.row.parameter1 }}</div>
           </template>
-        </ElTableColumn>
-        <ElTableColumn label="操作类型" width="120">
+        </el-table-column>
+        <el-table-column label="操作类型" width="120">
           <template slot-scope="scope">
             <div>{{ getOperationTypeLabel(scope.row) }}</div>
           </template>
-        </ElTableColumn>
-        <ElTableColumn label="操作描述" min-width="300">
+        </el-table-column>
+        <el-table-column label="操作描述" min-width="300">
           <template slot-scope="scope">
             <span
               v-for="(item, index) in descFnc(scope.row)"
@@ -91,20 +90,21 @@
               {{ item.text || '' }}
             </span>
           </template>
-        </ElTableColumn>
-      </El-table>
-      <ElPagination
-        background
-        class="mt-3"
-        layout="total, sizes, ->, prev, pager, next, jumper"
-        :current-page.sync="page.current"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size.sync="page.size"
-        :total="page.total"
-        @size-change="changePage"
-        @current-change="changePage"
-      >
-      </ElPagination>
+        </el-table-column>
+        <div v-if="!isSearching" class="migration-table__empty" slot="empty">
+          <VIcon size="120">no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_data') }}</span>
+          </div>
+        </div>
+        <div v-else class="migration-table__empty" slot="empty">
+          <VIcon size="120">search-no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_match_result') }}</span>
+            <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
+          </div>
+        </div>
+      </VList>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -112,8 +112,9 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import VList from '../../_packages/tapdata-web-core/components/base/VList'
 export default {
-  components: { VIcon },
+  components: { VList, VIcon },
   data() {
     return {
       loading: true,
@@ -126,11 +127,6 @@ export default {
       },
       source: [], // 所有数据
       list: [], // 展示的数据
-      page: {
-        current: 1,
-        size: 10,
-        total: 0
-      },
       order: 'createTime desc',
       operationTypeOptions: [
         // 连接
@@ -153,7 +149,7 @@ export default {
         // 校验
         { label: '新建数据校验', value: 'inspect_create', desc: '新建了数据校验任务【@{parameter1}】' },
         { label: '执行数据校验', value: 'inspect_start', desc: '执行数据校验任务【@{parameter1}】' },
-        // { label: '编辑数据校验', value: 'inspect_update', desc: '编辑了数据校验任务【@{parameter1}】' },
+        { label: '编辑数据校验', value: 'inspect_update', desc: '编辑了数据校验任务【@{parameter1}】' },
         { label: '删除数据校验', value: 'inspect_delete', desc: '删除了数据校验任务【${parameter1}】' },
         // 二次校验
         {
@@ -179,6 +175,12 @@ export default {
         flag = true
       }
       return flag
+    },
+    table() {
+      return this.$refs.table
+    },
+    isSearching() {
+      return !!Object.values(this.searchParams).join('')
     }
   },
   watch: {
@@ -187,14 +189,13 @@ export default {
         let query = route.query
         this.searchParams = Object.assign(this.searchParams, query)
         let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
-        this.fetch(pageNum)
+        this.table.fetch(pageNum)
       }
     }
   },
   created() {
     let query = this.$route.query
     this.searchParams = Object.assign(this.searchParams, query)
-    this.fetch()
   },
   methods: {
     getModularAndOperation(operationType) {
@@ -221,11 +222,9 @@ export default {
       }, debounce)
     },
 
-    async fetch(pageNum = 1) {
+    getData({ page }) {
       const { toRegExp } = this.$util
-      this.loading = true
-      this.page.current = pageNum
-      let current = this.page.current
+      let { current, size } = page
       let { operationType, parameter1, start, end, username } = this.searchParams
       let where = {
         type: 'userOperation' // 默认用户操作
@@ -252,28 +251,23 @@ export default {
       }
       let filter = {
         where,
-        limit: this.page.size,
-        skip: current - 1,
+        limit: size,
+        skip: (current - 1) * size,
         order: this.order
       }
-      Promise.all([
-        this.$axios.get('tm/api/UserLogs/count?where=' + encodeURIComponent(JSON.stringify(where))),
-        this.$axios.get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      ])
-        .then(([countData, data]) => {
-          this.list = data || []
-          this.page.total = countData.count
-        })
-        .finally(() => {
-          this.loading = false
-        })
+      return Promise.all([
+        this.$axios.get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter))),
+        this.$axios.get('tm/api/UserLogs/count?where=' + encodeURIComponent(JSON.stringify(where)))
+      ]).then(([data, countData]) => {
+        return {
+          total: countData.count,
+          data: data
+        }
+      })
     },
     sortChange({ prop, order }) {
       this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'asc' : 'desc'}`
-      this.fetch(1)
-    },
-    changePage() {
-      this.fetch(this.page.current)
+      this.table.fetch(1)
     },
     getOperationTypeLabel(row) {
       return this.operationTypeOptions.find(item => item.value === `${row.modular}_${row.operation}`)?.label
@@ -364,6 +358,16 @@ export default {
           })
           break
       }
+    },
+    reset() {
+      this.searchParams = {
+        operationType: '',
+        parameter1: '',
+        start: '',
+        end: '',
+        username: ''
+      }
+      this.search()
     }
   }
 }
@@ -374,7 +378,6 @@ export default {
   display: flex;
   width: 100%;
   height: 100%;
-  min-width: 1260px;
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
@@ -395,15 +398,6 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-  }
-  .list-operation {
-    display: flex;
-    justify-content: space-between;
-    .list-operation-left {
-      li {
-        float: left;
-      }
-    }
   }
   .operation-logs-table {
     flex: 1;

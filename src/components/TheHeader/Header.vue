@@ -7,11 +7,31 @@
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <!--				<div class="mr-6 pointer" @click="command('toCommunity')">社区</div>-->
-        <div class="mr-6 pointer" @click="command('source-center')">文档中心</div>
-        <div class="flex align-items-center mr-6 pointer" @click="command('contact-us')">
+        <!--        <div class="mr-6 pointer" @click="command('questions')">问答支持</div>-->
+        <el-popover placement="top-start" width="240" min-width="0" trigger="click">
+          <div class="text-center">
+            <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
+            <div>扫码添加官方小助手</div>
+            <div>备注“云版”即可进入群获取支持</div>
+          </div>
+          <div class="mr-6 pointer" slot="reference">
+            <VIcon class="mr-2" size="17">question</VIcon>
+            <span>问答支持</span>
+          </div>
+        </el-popover>
+        <div class="mr-6 pointer" @click="command('handbook')">
           <VIcon class="mr-2" size="17">send</VIcon>
-          <span>联系我们</span>
+          <span>使用手册</span>
         </div>
+        <div class="mr-6 pointer" @click="command('feedback')">
+          <VIcon class="v-icon mr-2" size="17">feedback</VIcon>
+          <span>提交反馈</span>
+        </div>
+        <!--        <div class="mr-6 pointer" @click="command('source-center')">文档中心</div>-->
+        <!--        <div class="flex align-items-center mr-6 pointer" @click="command('contact-us')">-->
+        <!--          <VIcon class="mr-2" size="17">send</VIcon>-->
+        <!--          <span>联系我们</span>-->
+        <!--        </div>-->
         <NotificationPopover class="mr-6"></NotificationPopover>
         <ElDropdown class="menu-user" placement="bottom" @command="command">
           <!--					<el-button class="menu-button" size="mini">-->
@@ -147,6 +167,12 @@ export default {
         case 'guide':
           this.guideVisible = true
           break
+        case 'handbook':
+          window.open('https://sourl.cn/sxuj82', '_blank')
+          break
+        case 'feedback':
+          window.open('https://sourl.cn/bDjxdj', '_blank')
+          break
       }
     },
     clearCookie() {
@@ -213,8 +239,14 @@ export default {
     align-items: center;
     color: rgba(255, 255, 255, 0.45);
     > div {
+      .v-icon {
+        color: #fff;
+      }
       &:hover {
         color: map-get($color, primary);
+        .v-icon {
+          color: map-get($color, primary);
+        }
       }
     }
     .agent-status {

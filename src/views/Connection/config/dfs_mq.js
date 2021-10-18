@@ -6,8 +6,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
       connection_type: 'source_and_target'
@@ -17,6 +17,10 @@ export default function (vm) {
         type: 'select',
         field: 'mqType',
         label: vm.$t('dataForm.form.mq.mqType'),
+        customClass: 'large-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
         options: [
           {
             label: 'ActiveMQ',
@@ -37,6 +41,10 @@ export default function (vm) {
         type: 'radio',
         field: 'connection_type',
         label: vm.$t('dataForm.form.connectionType'),
+        customClass: 'large-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
         options: [
           {
             label: vm.$t('dataForm.form.options.sourceAndTarget'),
@@ -61,29 +69,7 @@ export default function (vm) {
         field: 'mqQueueSet',
         label: vm.$t('dataForm.form.mq.mqQueueSet'),
         required: true,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'mqType',
-                value: '2'
-              }
-            ],
-            triggerConfig: {
-              show: false
-            }
-          }
-        ]
-      },
-      {
-        type: 'slot',
-        slot: 'queueTip'
-      },
-      {
-        type: 'input',
-        field: 'mqTopicSet',
-        show: true,
-        label: vm.$t('dataForm.form.mq.mqTopicSet'),
+        tip: '多个队列用逗号隔开',
         dependOn: [
           {
             triggerOptions: [
@@ -100,7 +86,49 @@ export default function (vm) {
             triggerOptions: [
               {
                 field: 'mqType',
+                value: '0'
+              }
+            ],
+            triggerConfig: {
+              required: false
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              required: false
+            }
+          }
+        ]
+      },
+      {
+        type: 'input',
+        field: 'mqTopicSet',
+        show: true,
+        label: vm.$t('dataForm.form.mq.mqTopicSet'),
+        tip: '多个主题用逗号隔开',
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
                 value: '2'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '1'
               }
             ],
             triggerConfig: {
@@ -110,15 +138,12 @@ export default function (vm) {
         ]
       },
       {
-        type: 'slot',
-        slot: 'topicTip'
-      },
-      {
         type: 'input',
         field: 'brokerURL',
-        label: 'BrokerURL',
+        label: 'MQ连接串',
         required: true,
         show: false,
+        tip: '示例tcp://127.0.0.1:61616,支持tcp,nio,udp,ssl,http(s)',
         dependOn: [
           {
             triggerOptions: [
@@ -133,30 +158,30 @@ export default function (vm) {
           }
         ]
       },
-      {
-        type: 'input',
-        field: 'nameSrvAddr',
-        label: 'nameSrvAddr',
-        required: true,
-        show: false,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'mqType',
-                value: '2'
-              }
-            ],
-            triggerConfig: {
-              show: true
-            }
-          }
-        ]
-      },
+      // {
+      //   type: 'input',
+      //   field: 'nameSrvAddr',
+      //   label: 'nameSrvAddr',
+      //   required: true,
+      //   show: false,
+      //   dependOn: [
+      //     {
+      //       triggerOptions: [
+      //         {
+      //           field: 'mqType',
+      //           value: '2'
+      //         }
+      //       ],
+      //       triggerConfig: {
+      //         show: true
+      //       }
+      //     }
+      //   ]
+      // },
       {
         type: 'input',
         field: 'database_host',
-        label: vm.$t('dataForm.form.mq.database_host'),
+        label: '数据库地址',
         rules: [
           {
             required: true,
@@ -169,17 +194,17 @@ export default function (vm) {
             }
           }
         ],
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '1'
+                value: '0'
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ]
@@ -187,7 +212,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
-        label: vm.$t('dataForm.form.mq.database_port'),
+        label: '端口',
         required: true,
         rules: [
           {
@@ -205,17 +230,17 @@ export default function (vm) {
             }
           }
         ],
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'mqType',
-                value: '1'
+                value: '0'
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ]
@@ -223,13 +248,11 @@ export default function (vm) {
       {
         type: 'input',
         field: 'mqUserName',
-        label: vm.$t('dataForm.form.userName'),
-        domType: 'password',
-        showPassword: true
+        label: vm.$t('dataForm.form.userName')
       },
       {
         type: 'input',
-        field: 'mqPassword',
+        field: 'plain_password',
         label: vm.$t('dataForm.form.password'),
         domType: 'password',
         showPassword: true
@@ -238,7 +261,6 @@ export default function (vm) {
         type: 'input',
         field: 'routeKeyField',
         label: vm.$t('dataForm.form.mq.routeKeyField'),
-        required: true,
         show: false,
         dependOn: [
           {

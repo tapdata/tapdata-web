@@ -1,14 +1,12 @@
 export default function () {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '100px',
+      labelColon: true,
+      size: 'small'
     },
     items: [
-      {
-        type: 'slot',
-        slot: 'source'
-      },
       {
         type: 'select',
         field: 'source_databaseType',
@@ -23,10 +21,6 @@ export default function () {
         loading: false,
         options: [],
         required: true
-      },
-      {
-        type: 'slot',
-        slot: 'target'
       },
       {
         type: 'select',

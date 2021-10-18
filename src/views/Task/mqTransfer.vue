@@ -2,8 +2,9 @@
   <div class="mq-transfer">
     <el-transfer
       class="topic-transfer"
-      :titles="topicTitles"
+      filterable
       v-model="topicData"
+      :titles="topicTitles"
       :data="data1"
       @left-check-change="firstLeftCheckedFnc"
       @change="firstChangeFnc"
@@ -11,21 +12,16 @@
       <template #default="{ option }">
         <div>
           <span v-if="topicData.includes(option.key)">{{ table_prefix }}</span>
-          <span v-if="topicData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
-            option.label.toLowerCase()
-          }}</span>
-          <span v-else-if="topicData.includes(option.label) && tableNameTransform === 'toUpperCase'">{{
-            option.label.toUpperCase()
-          }}</span>
-          <span v-else>{{ option.label }}</span>
+          <span>{{ option.label }}</span>
           <span v-if="topicData.includes(option.key)">{{ table_suffix }}</span>
         </div>
       </template>
     </el-transfer>
     <el-transfer
       class="queue-transfer"
-      :titles="queueTitles"
       v-model="queueData"
+      filterable
+      :titles="queueTitles"
       :data="data2"
       :left-default-checked="secondLeftCheckedArr"
       :right-default-checked="secondRightCheckedArr"
@@ -35,13 +31,8 @@
       <template #default="{ option }">
         <div>
           <span v-if="queueData.includes(option.key)">{{ table_prefix }}</span>
-          <span v-if="queueData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
-            option.label.toLowerCase()
-          }}</span>
-          <span v-else-if="queueData.includes(option.label) && tableNameTransform === 'toUpperCase'">{{
-            option.label.toUpperCase()
-          }}</span>
-          <span v-else>{{ option.label }}</span>
+
+          <span>{{ option.label }}</span>
           <span v-if="queueData.includes(option.key)">{{ table_suffix }}</span>
         </div>
       </template>
@@ -73,12 +64,6 @@ export default {
         return []
       }
     },
-    tableNameTransform: {
-      type: String,
-      default: () => {
-        return ''
-      }
-    },
     value: {
       type: Object,
       default: () => {
@@ -107,9 +92,6 @@ export default {
       handler() {
         this.init()
       }
-    },
-    tableNameTransform(val) {
-      this.tableNameTransform = val
     },
     topicData: {
       deep: true,
@@ -193,15 +175,31 @@ export default {
 <style lang="scss" scoped>
 .mq-transfer {
   position: relative;
-  height: 100%;
+  height: 500px;
   white-space: nowrap;
   overflow: auto;
   ::v-deep {
     .topic-transfer,
     .queue-transfer {
+      display: inline-block;
+      height: 100%;
       & > div:last-child {
         position: absolute;
         height: 48% !important;
+      }
+      .el-transfer-panel {
+        // display: inline-block;
+        width: 502px;
+        height: 100%;
+        .el-transfer-panel__body {
+          height: calc(100% - 68px);
+        }
+      }
+      .el-transfer__buttons {
+        display: inline-block;
+        & > :last-child {
+          margin-left: 10px;
+        }
       }
     }
     .topic-transfer {
@@ -217,6 +215,7 @@ export default {
     .queue-transfer {
       position: absolute;
       top: 0;
+      left: 0;
       width: 0;
       z-index: 1;
       & > div:first-child {

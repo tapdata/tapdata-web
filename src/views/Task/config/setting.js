@@ -1,8 +1,9 @@
 export default function () {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px',
+      labelColon: true
     },
     defaultModel: {
       connection_type: 'target'
@@ -29,7 +30,10 @@ export default function () {
             value: 'cdc'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true
       },
       {
         type: 'radio',
@@ -47,7 +51,10 @@ export default function () {
             value: 'compel'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true
       },
       {
         type: 'input',
@@ -67,7 +74,8 @@ export default function () {
               }
             }
           }
-        ]
+        ],
+        customClass: 'read-batch-size'
       },
       {
         type: 'switch',
@@ -181,57 +189,16 @@ export default function () {
       },
       {
         type: 'switch',
-        field: 'isOpenAutoDDL',
-        label: '自动DDL',
-        show: true
-      },
-      {
-        type: 'switch',
         field: 'bidirectional',
         label: '是否双向',
         show: false
       },
       {
-        type: 'slot',
-        slot: 'needToCreateIndex'
-      },
-      {
-        type: 'select',
-        field: 'tableNameTransform',
-        label: '表名大小写',
-        options: [
-          {
-            label: '不变',
-            value: ''
-          },
-          {
-            label: '转为大写',
-            value: 'toUpperCase'
-          },
-          {
-            label: '转为小写',
-            value: 'toLowerCase'
-          }
-        ]
-      },
-      {
-        type: 'select',
-        field: 'fieldNameTransform',
-        label: '字段名大小写',
-        options: [
-          {
-            label: '不变',
-            value: ''
-          },
-          {
-            label: '转为大写',
-            value: 'toUpperCase'
-          },
-          {
-            label: '转为小写',
-            value: 'toLowerCase'
-          }
-        ]
+        type: 'switch',
+        field: 'isOpenAutoDDL',
+        label: '自动DDL',
+        show: true,
+        tip: '自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作'
       }
       // {
       //   type: 'slot',

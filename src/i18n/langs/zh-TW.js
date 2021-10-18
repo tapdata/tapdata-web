@@ -4,7 +4,10 @@ export default {
   gl_no_data: '暫無數據',
   gl_no_match_result: '沒有查到符合條件的結果',
   gl_back_to_list: '返回列表',
+  gl_placeholder_select: '請選擇',
+  gl_placeholder_input: '請輸入',
   gl_button_cancel: '取消',
+  gl_button_confirm: '確定',
   gl_button_finish: '完成',
   gl_button_delete_fail: '刪除失敗',
   gl_button_update_success: '修改成功',
@@ -38,8 +41,9 @@ export default {
   workbench_guide_data_safe: 'Tapdata cloud 如何保障數據安全？ ',
 
   // Agent
+  agent_key: 'Agent',
   agent_manage: 'Agent管理',
-  agent_name: '實例ID/名稱',
+  agent_name: 'Agent 名稱',
   agent_id: 'Agent ID',
   agent_task_number: '任務數',
   agent_create_time: '创建时间',
@@ -52,7 +56,7 @@ export default {
   agent_status_stopped: '離線',
   agent_search: '按ID/實例名稱搜索',
   agent_test_use: '僅供測試使用',
-  agent_button_create: '創建 Agent',
+  agent_button_create: '創建Agent',
   agent_button_order1: '訂購託管實例',
   agent_button_order2: '實例訂購',
   agent_button_deploy: '部署',
@@ -92,10 +96,15 @@ export default {
   agent_detail_synchronization_task_number: '同步任務數',
   agent_detail_version: 'Agent 版本',
   agent_detail_create_time: 'Agent 創建時間',
+  agent_detail_host_name: '宿主機主機名',
   agent_detail_host_ip: '宿主機IP',
   agent_detail_host_cpu_number: '宿主機CPU數量',
+  agent_detail_host_cpu_memory: '宿主機CPU內存',
   agent_detail_host_memory_size: '宿主機內存大小',
   agent_detail_installation_manual: '安裝目錄',
+  agent_detail_run_manual: '日誌目錄',
+  agent_list_empty_desc1: '快來',
+  agent_list_empty_desc2: '開始實時數據同步吧~',
 
   // agent部署
   agent_deploy_title: 'Agent 下載與安裝',
@@ -106,14 +115,16 @@ export default {
   agent_deploy_before_prepare_windows_first_link: '點擊查看Java1.8安裝和配置方式',
   agent_deploy_before_prepare_windows_second: '2.點擊下方的下載按鈕將Tapdata Agent安裝包下載到本地環境。 ',
   agent_deploy_before_prepare_windows_second_download: '點擊下載 Tapdata Agent',
+  agent_deploy_before_prepare_windows_third: '3.請嚴格按照下方的安裝步驟部署，不要直接雙擊安裝包！ ',
   agent_deploy_start_install: '開始安裝',
   agent_deploy_start_install_button_copy: '複製',
   agent_deploy_start_install_button_copied: '已復制',
   agent_deploy_start_install_windows_first:
     '1. 將下載好的Tapdata Agent放入要安裝Agent的目錄，並通過cmd窗口在目錄下執行下方命令即可實現Tapdata Agent的自動部署及啟動',
   agent_deploy_start_install_windows_second: '2.待上方命令執行完畢後，出現如下圖所示日誌則代表Agent啟動成功：',
-  agent_deploy_start_install_windows_third: '3.如果您需要查看Agent的日誌或者對Agent進行啟停操作，請參考',
-  agent_deploy_link_agent_operation: '《Agent基本操作》',
+  agent_deploy_start_install_windows_third: '3.如果您在安裝和使用過程中遇到任何問題，請參考',
+  agent_deploy_link_agent_operation: '《Agent安裝手冊及常見QA》',
+  agent_deploy_link_agent_operation_desc: '或者直接掃描右方二維碼加入社群獲取技術支持。 ',
   agent_deploy_before_prepare_linux_first: '1.安裝前請確認您的部署環境中已安裝Java1.8版本並正確配置環境變量。 ',
   agent_deploy_before_prepare_linux_first_link: '點擊查看Java1.8安裝和配置方式',
   agent_deploy_before_prepare_linux_second: '2.我們非常建議在一個獨立、乾淨的文件夾內部署 Tapdata Agent',
@@ -122,7 +133,7 @@ export default {
   agent_deploy_start_install_linux_first:
     '1.請複制下方命令並在本地部署環境執行，其包含 Tapdata Agent 的下載、自動部署及啟動',
   agent_deploy_start_install_linux_second: '2.待上方命令執行完畢後，出現如下圖所示日誌則代表Agent啟動成功：',
-  agent_deploy_start_install_linux_third: '3.如果您需要查看Agent的日誌或者對Agent進行啟停操作，請參考',
+  agent_deploy_start_install_linux_third: '3.如果您在安裝和使用過程中遇到任何問題，請參考',
   agent_deploy_before_prepare_docker_first: '1.我們提供了包含 Tapdata Agent 運行所需環境的鏡像',
   agent_deploy_before_prepare_docker_second:
     '2.首先您的部署環境必須已經安裝Docker才可使用Docker方式安裝，如未安裝可參考',
@@ -148,11 +159,11 @@ export default {
   agent_upgrade_step_windows_first: '1.打開cmd窗口，進入原Agent安裝目錄',
   agent_upgrade_step_windows_second:
     '2.複製下方的升級命令並在目錄下執行，該升級命令會自動進行備份、升級和啟動，如果升級失敗會自動回退版本',
-  agent_upgrade_step_windows_third: '3.待升級命令執行完畢後，出現如下所示則代表Agent升級成功：Update finished.',
+  agent_upgrade_step_windows_third: '3.出現“Update finished.”則代表Agent升級成功',
   agent_upgrade_step_linux_first: '1.進入原Agent安裝目錄下',
   agent_upgrade_step_linux_second:
     '2.複製下方的升級命令並在目錄下執行，該升級命令會自動進行備份、升級和啟動，如果升級失敗會自動回退版本',
-  agent_upgrade_step_linux_third: '3.待升級命令執行完畢後，出現如下所示則代表Agent升級成功：Update finished.',
+  agent_upgrade_step_linux_third: '3.出現“Update finished.”則代表Agent升級成功',
   agent_upgrade_step_docker_first: '1.進入原Agent的docker容器內',
   agent_upgrade_step_docker_first_one: '(1)找到原Agent的docker容器CONTAINER ID',
   agent_upgrade_step_docker_first_two: '(2)通過容器ID進入容器',
@@ -161,16 +172,21 @@ export default {
   agent_upgrade_step_docker_first_five: '進入容器',
   agent_upgrade_step_docker_second:
     '2.複製下方的升級命令直接在容器內執行，該升級命令會自動進行備份、升級和啟動，如果升級失敗會自動回退版本',
-  agent_upgrade_step_docker_third: '3.待升級命令執行完畢後，出現如下所示則代表Agent升級成功：Update finished.',
+  agent_upgrade_step_docker_third: '3.出現“Update finished.”則代表Agent升級成功',
 
   // 连接
   connection_manage: '連接管理',
   connection_list_column_schema_status: 'Schema加載狀態',
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
+  connection_form_database_host_placeholder: '請輸入數據庫地址',
+  connection_form_database_host_tips: '數據庫地址(127.0.0.1/Domain:{端口},多個地址請用,分開)',
 
   // 任务
   task_manage: '任務管理',
   task_name: '任務名稱',
+  task_status: '任務狀態',
+  task_sync_type: '任務同步類型',
+  task_name_or_node_name_or_library_name: '名稱',
   task_sync_type_initial_sync: '全量',
   task_sync_type_cdc: '增量',
   task_sync_type_initial_sync_cdc: '全量+增量',
@@ -194,6 +210,7 @@ export default {
   verify_result_content_diff: '表數據差: {0}',
   verify_result_count_inconsistent: '不一致',
   verify_result_count_consistent: '一致',
+  verify_button_create: '新建',
 
   // 操作日志
   operation_log_manage: '操作日誌'
