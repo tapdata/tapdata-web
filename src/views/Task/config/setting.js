@@ -199,6 +199,12 @@ export default function () {
         label: '自动DDL',
         show: true,
         tip: '自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作'
+      },
+      {
+        type: 'switch',
+        field: 'needToCreateIndex',
+        label: '自动创建索引',
+        show: true
       }
       // {
       //   type: 'slot',

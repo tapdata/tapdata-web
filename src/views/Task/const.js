@@ -9,6 +9,7 @@ export const SETTING_MODEL = {
   cdcConcurrency: false,
   transformerConcurrency: 8,
   noPrimaryKey: true,
+  needToCreateIndex: true,
   syncPoints: [
     {
       connectionId: '',
