@@ -1,5 +1,8 @@
 <template>
-  <header class="layout-header border-bottom">
+  <header class="layout-header border-bottom px-4">
+    <button @click="$emit('back')" class="icon-btn">
+      <VIcon size="20">left</VIcon>
+    </button>
     <div class="title-input-wrap flex align-center mx-2 flex-shrink-0 h-100" :data-value="hiddenValue">
       <input
         v-focus-select
@@ -38,7 +41,7 @@
         <VIcon size="20">auto-layout</VIcon>
       </button>
     </div>
-    <div class="flex align-center flex-grow-1 pr-3">
+    <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
 
       <ElButton round type="primary" class="mx-4" @click="$emit('save')"> 保存 </ElButton>
@@ -199,10 +202,12 @@ $sidebarBg: #fff;
   position: relative;
   z-index: 10;
   display: flex;
+  align-items: center;
   width: 100%;
   flex: 0 0 48px;
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
+  box-sizing: border-box;
 
   .title-wrap {
     width: $sidebarW;

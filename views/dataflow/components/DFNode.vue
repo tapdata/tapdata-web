@@ -107,7 +107,7 @@ export default {
     __init() {
       const { id, nodeId } = this
 
-      console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint)
+      console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint) // eslint-disable-line
 
       this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
 
@@ -155,7 +155,7 @@ export default {
 
             if (x === this.data.position[0] && y === this.data.position[1]) {
               // 拖拽结束后位置没有改变
-              console.log('没有移动')
+              console.log('没有移动') // eslint-disable-line
               this.isNotMove = true
             }
 
@@ -233,117 +233,6 @@ export default {
 
 .min-width-unset {
   min-width: unset;
-}
-
-.df-node {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  width: 180px;
-  height: 48px;
-  background-color: #fff;
-  border: 1px solid #2c65ff;
-  border-radius: 10px;
-  box-sizing: border-box;
-
-  &-icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 45px;
-    height: 100%;
-    background-color: rgba(44, 101, 255, 0.2);
-    border-right-style: solid;
-    border-right-width: inherit;
-    border-color: inherit;
-    border-top-left-radius: inherit;
-    border-bottom-left-radius: inherit;
-
-    .v-icon {
-      color: #2c65ff;
-      font-size: 24px;
-    }
-  }
-
-  &-text {
-    margin: 0 10px;
-    flex: auto;
-    width: 0;
-    font-size: 14px;
-    line-height: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &-options {
-    position: absolute;
-    top: 100%;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 32px;
-  }
-
-  .node-option {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 6px;
-    width: 20px;
-    height: 20px;
-    background-color: #9bb6ff;
-    border-radius: 100%;
-    cursor: pointer;
-    .v-icon {
-      width: 16px;
-      height: 16px;
-      font-size: 12px;
-      background-color: #2c65ff;
-      color: #fff;
-      border-radius: 100%;
-      &__svg {
-        width: 1em;
-        height: 1em;
-      }
-    }
-  }
-
-  &.node--data {
-    border-color: #6236ff;
-    .df-node-icon {
-      background-color: rgba(98, 54, 255, 0.2);
-      .v-icon {
-        width: 34px !important;
-        height: 34px !important;
-        background-color: #6236ff;
-        color: #fff;
-        font-size: 14px;
-        border-radius: 100%;
-        .v-icon__svg {
-          width: 1em;
-          height: 1em;
-        }
-      }
-    }
-  }
-
-  &.active {
-    border-width: 2px;
-  }
-
-  &.active,
-  &.jtk-drag-selected {
-    border-color: #fa6303;
-  }
-
-  &:hover,
-  &.options-active {
-    .df-node-options {
-      display: flex;
-    }
-  }
 }
 
 .df-menu-list {

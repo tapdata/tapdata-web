@@ -26,6 +26,9 @@ export default {
 </script>
 
 <style lang="scss">
+$width: 180px;
+$height: 40px;
+
 .layout-content .df-node {
   cursor: move;
 }
@@ -38,8 +41,8 @@ export default {
   position: absolute;
   display: flex;
   align-items: center;
-  width: 180px;
-  height: 48px;
+  width: $width;
+  height: $height;
   background-color: #fff;
   border: 1px solid #2c65ff;
   border-radius: 10px;
@@ -114,8 +117,8 @@ export default {
     .df-node-icon {
       background-color: rgba(98, 54, 255, 0.2);
       .v-icon {
-        width: 34px !important;
-        height: 34px !important;
+        width: 28px;
+        height: 28px;
         background-color: #6236ff;
         color: #fff;
         font-size: 14px;
