@@ -16,6 +16,7 @@
               loadCollections,
               loadDropOptions,
               loadWriteModelOptions,
+              sourceNode,
               sourceConnectionId: sourceNode ? sourceNode.connectionId : null
             }"
           />

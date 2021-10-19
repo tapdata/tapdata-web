@@ -61,7 +61,7 @@ const state = () => ({
       icon: 'joint-cache',
       name: '关联缓存',
       type: 'cache_lookup_processor',
-      constructor: 'JavaScript'
+      constructor: 'JointCache'
     }
   ],
   nodeViewOffsetPosition: [0, 0],
