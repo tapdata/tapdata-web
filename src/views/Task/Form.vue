@@ -1278,6 +1278,33 @@ export default {
       source = source.filter(field => field.field_name.indexOf('.') === -1)
       target = target && target.length > 0 ? target[0].fields : []
       //源表 目标表数据组合
+      //是否有字段处理器
+      let operations = this.getFieldOperations(row)
+      if (operations?.length > 0) {
+        source.forEach(item => {
+          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'RENAME')
+          if (!ops || ops?.length === 0) {
+            item.temporary_field_name = item.field_name
+            return
+          }
+          ops = ops[0]
+          item.temporary_field_name = ops.operand
+        })
+        //是否字段被删除
+        source.forEach(item => {
+          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'REMOVE')
+          if (!ops || ops?.length === 0) {
+            item.temporary_is_delete = false //没有被字段处理器操作过
+            return
+          }
+          item.temporary_is_delete = true
+        })
+      } else {
+        source.forEach(item => {
+          item.temporary_field_name = item.field_name
+        })
+      }
+      //源表 目标表数据组合
       let fieldMappingTableData = []
       source.forEach(item => {
         target.forEach(field => {
@@ -1292,13 +1319,10 @@ export default {
             t_isPrecisionEdit: true, //默认不能编辑
             t_isScaleEdit: true //默认不能编辑
           }
-          let ops = this.handleFieldName(row, field.field_name)
-          if (item.field_name === field.field_name) {
-            fieldMappingTableData.push(Object.assign({}, item, node))
-          }
-          if (!ops || ops?.length === 0) return
-          ops = ops[0]
-          if (ops.operand === field.field_name && ops.original_field_name === item.field_name) {
+          if (
+            (item.temporary_field_name === field.field_name && field.is_deleted === false) ||
+            (item.temporary_field_name === field.field_name && item.temporary_field_name)
+          ) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })

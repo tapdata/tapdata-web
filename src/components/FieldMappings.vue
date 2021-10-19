@@ -132,6 +132,15 @@ export default {
           ops = ops[0]
           item.temporary_field_name = ops.operand
         })
+        //是否字段被删除
+        source.forEach(item => {
+          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'REMOVE')
+          if (!ops || ops?.length === 0) {
+            item.temporary_is_delete = false //没有被字段处理器操作过
+            return
+          }
+          item.temporary_is_delete = true
+        })
       } else {
         source.forEach(item => {
           item.temporary_field_name = item.field_name
@@ -152,7 +161,10 @@ export default {
             t_isPrecisionEdit: true, //默认不能编辑
             t_isScaleEdit: true //默认不能编辑
           }
-          if (item.temporary_field_name === field.field_name) {
+          if (
+            (item.temporary_field_name === field.field_name && field.is_deleted === false) ||
+            (item.temporary_field_name === field.field_name && item.temporary_field_name)
+          ) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })
