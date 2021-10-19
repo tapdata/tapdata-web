@@ -92,7 +92,7 @@
             </ElTable>
           </ElTabPane>
           <ElTabPane v-if="showContent" lazy class="h-100 overflow-hidden" label="同步内容" name="content">
-            <FieldMapping ref="fieldMapping" :readOnly="true"></FieldMapping>
+            <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process"></FieldMapping>
           </ElTabPane>
         </ElTabs>
       </div>
@@ -180,6 +180,7 @@ export default {
       loading: true,
       showContent: false,
       activeTab: 'progress',
+      field_process: [],
       task: null,
       statusBtMap: {
         // scheduled, draft, running, stopping, error, paused, force stopping
@@ -572,6 +573,7 @@ export default {
       this.$nextTick(() => {
         if (this.activeTab === 'content') {
           this.$refs.fieldMapping.getMetaData(this.task)
+          this.field_process = this.task?.stages[0]?.field_process || []
         }
       })
     },
