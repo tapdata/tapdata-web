@@ -303,10 +303,12 @@ export default {
         statusMap[item.id] = this.formatData(item)
       })
       let list = this.list || []
-      list.forEach(item => {
+      list.forEach((item, index) => {
         let changeParams = statusMap[item.id]
         if (changeParams) {
-          Object.assign(item, changeParams)
+          for (const key in changeParams) {
+            this.$set(this.list[index], key, changeParams[key])
+          }
         }
       })
     },
