@@ -1,12 +1,16 @@
 <template>
   <div class="field-mapping" v-loading="loadingPage">
-    <div v-if="!readOnly" class="field-mapping__desc" style="text-align: left; line-height: 28px">
+    <div class="field-mapping__desc" style="text-align: left; line-height: 28px">
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
       <div style="float: right">
-        <el-button size="mini" @click="handleChangTableName">表改名</el-button>
-        <el-button size="mini" @click="dialogFieldVisible = true">字段改名</el-button>
-        <el-button size="mini" type="primary" @click="rollbackAll">恢复默认</el-button>
+        <el-button v-if="!readOnly && transform" plain type="primary" size="mini" @click="handleChangTableName"
+          >表改名</el-button
+        >
+        <el-button v-if="!readOnly && transform" plain type="primary" size="mini" @click="dialogFieldVisible = true"
+          >字段改名</el-button
+        >
+        <el-button v-if="!readOnly" size="mini" type="primary" @click="rollbackAll">恢复默认</el-button>
       </div>
     </div>
     <div class="task-form-body">
@@ -33,20 +37,13 @@
                     item.sourceFieldCount
                   }`
                 }}
-                <el-button
-                  v-if="!readOnly"
-                  size="mini"
-                  round
-                  @click.stop="rollbackTable(item.sinkObjectName, item.sourceTableId)"
-                  >恢复默认</el-button
-                >
               </div>
             </div>
           </li>
         </ul>
       </div>
       <div class="main">
-        <div class="search">
+        <div class="search mb-5 ml-2">
           <div class="item">
             <span> 搜索表：</span>
             <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
@@ -56,7 +53,9 @@
             <el-input v-model="searchField" size="mini" @change="search('field')"></el-input>
           </div>
           <div class="item" v-if="!readOnly">
-            <el-button size="mini" @click="rollbackAll">全部恢复默认</el-button>
+            <el-button size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
+              <VIcon class="color-primary" size="14">rollback</VIcon>
+            </el-button>
           </div>
         </div>
         <El-table
@@ -280,7 +279,8 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import VIcon from './VIcon'
+import rollback from 'web-core/assets/icons/svg/rollback.svg'
 export default {
   name: 'FieldMapping',
   components: { VIcon },
@@ -336,7 +336,8 @@ export default {
       dialogFieldVisible: false,
       form: {},
       currentForm: {},
-      sourceTableName: 'tableName'
+      sourceTableName: 'tableName',
+      rollback
     }
   },
   mounted() {
@@ -345,7 +346,7 @@ export default {
       this.selectRow = this.fieldMappingNavData[0]
       this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
     }
-    if (!this.readOnly) {
+    if (!this.readOnly && this.transform) {
       this.form = {
         tableNameTransform: this.transform.tableNameTransform,
         fieldsNameTransform: this.transform.fieldsNameTransform,
@@ -1135,9 +1136,10 @@ export default {
       }
     }
     .main {
+      display: flex;
       flex: 1;
-      overflow-x: auto;
-      overflow-y: hidden;
+      overflow: hidden;
+      flex-direction: column;
     }
     .color-darkorange {
       color: darkorange;
