@@ -16,14 +16,13 @@
 <script>
 export default {
   name: 'FieldMappings',
-  props: ['fieldProcess', 'readOnly'],
+  props: ['field_process', 'readOnly'],
   data() {
     return {
       fieldMappingNavData: null,
       fieldMappingTableData: '',
       hiddenFieldMapping: false,
-      loadingMetadata: false,
-      field_process: []
+      loadingMetadata: false
     }
   },
   methods: {
@@ -35,7 +34,8 @@ export default {
      * */
     getMetaData(taskData) {
       if (!taskData) return
-      if (this.isFirst && !this.id) {
+      let id = taskData?.id || ''
+      if (this.isFirst && !id) {
         taskData['rollback'] = 'all'
       } else {
         delete taskData['rollback']
@@ -48,7 +48,9 @@ export default {
         this.isFirst = false
         this.fieldMappingNavData = data
         this.loadingMetadata = false
-        this.$refs.fieldMappingDom.updateView(data[0]) //左侧导航栏有数据再请求列表数据
+        if (this.$refs.fieldMappingDom) {
+          this.$refs.fieldMappingDom.updateView(data) //左侧导航栏有数据再请求列表数据
+        }
       })
       promise.catch(() => {
         this.loadingMetadata = false
