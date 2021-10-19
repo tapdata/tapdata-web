@@ -29,8 +29,8 @@ export default {
   task_settings_cdc_sync_point_date: '【任务设置】增量采集开始时刻，请选择时间',
 
   // 数据源
-  connection_form_tidb_server: 'TiDB地址',
-  connection_tidb_none_server: 'TiBD地址不能为空',
+  connection_form_tidb_server: 'PDServer 地址',
+  connection_tidb_none_server: 'PDServer 地址不能为空',
 
   connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',

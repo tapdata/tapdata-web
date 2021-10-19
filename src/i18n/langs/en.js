@@ -31,8 +31,8 @@ export default {
   task_settings_cdc_sync_point_date: '【Task settings】Incremental acquisition start time, please select the time',
 
   // 数据源
-  connection_form_tidb_server: 'TiDB address',
-  connection_tidb_none_server: 'TiBD address cannot be empty',
+  connection_form_tidb_server: 'PDServer address',
+  connection_tidb_none_server: 'PDServer address cannot be empty',
 
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
