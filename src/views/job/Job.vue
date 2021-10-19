@@ -859,6 +859,10 @@ export default {
             //添加字段处理器
             if (postData.mappingTemplate === 'cluster-clone') {
               stages[sourceId]['field_process'] = cell[FORM_DATA_KEY]?.field_process
+
+              //迁移全局修改设置值
+              stages[targetId].tableNameTransform = cell[FORM_DATA_KEY].tableNameTransform
+              stages[targetId].fieldsNameTransform = cell[FORM_DATA_KEY].fieldsNameTransform
             }
           }
           if (targetId && stages[targetId]) {
