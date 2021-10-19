@@ -118,6 +118,23 @@ export default {
       // 初始化所有字段都映射 只取顶级字段
       source = source.filter(field => field.field_name.indexOf('.') === -1)
       target = target && target.length > 0 ? target[0].fields : []
+      //是否有字段处理器
+      let operations = this.getFieldOperations(row)
+      if (operations?.length > 0) {
+        source.forEach(item => {
+          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'RENAME')
+          if (!ops || ops?.length === 0) {
+            item.temporary_field_name = item.field_name
+            return
+          }
+          ops = ops[0]
+          item.temporary_field_name = ops.operand
+        })
+      } else {
+        source.forEach(item => {
+          item.temporary_field_name = item.field_name
+        })
+      }
       //源表 目标表数据组合
       let fieldMappingTableData = []
       source.forEach(item => {
@@ -133,13 +150,7 @@ export default {
             t_isPrecisionEdit: true, //默认不能编辑
             t_isScaleEdit: true //默认不能编辑
           }
-          let ops = this.handleFieldName(row, field.field_name)
-          if (item.field_name === field.field_name) {
-            fieldMappingTableData.push(Object.assign({}, item, node))
-          }
-          if (!ops || ops?.length === 0) return
-          ops = ops[0]
-          if (ops.operand === field.field_name && ops.original_field_name === item.field_name) {
+          if (item.temporary_field_name === field.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })
