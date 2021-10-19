@@ -608,15 +608,15 @@ export default {
     // 加载数据库
     async loadDatabase(field, databaseType = field.form.values.databaseType) {
       try {
-        let result = await connections.get({
+        let { items: result } = await connections.get({
           filter: JSON.stringify({
             where: {
               database_type: databaseType
                 ? {
-                    in: Array.isArray(databaseType) ? databaseType : [databaseType]
+                    $in: Array.isArray(databaseType) ? databaseType : [databaseType]
                   }
                 : {
-                    nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
+                    $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
                   }
             },
             fields: {

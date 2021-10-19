@@ -42,6 +42,16 @@ service.interceptors.request.use(function (config) {
     config.params = Object.assign({}, config.params, params)
   }
 
+  let url = config.url
+  // get 请求编码参数
+  if (config.method === 'get' && config.params) {
+    url += '?'
+    Object.keys(config.params).forEach(key => (url += `${key}=${encodeURIComponent(config.params[key])}&`))
+    url = url.substring(0, url.length - 1)
+    config.params = {}
+  }
+  config.url = url
+
   let user = window.__USER_INFO__
   if (user) {
     config.headers['X-Token'] = user.token
