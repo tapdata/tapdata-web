@@ -67,7 +67,10 @@ export default {
      * */
     fieldProcess() {
       //点击按钮重新拿值
-      this.dataFlow = this.getDataFlow()
+      if (this.getDataFlow) {
+        this.dataFlow = this.getDataFlow()
+      }
+
       if (!this.dataFlow) return
       //迁移任务需要同步字段处理器
       if (this.mappingType && this.mappingType === 'cluster-clone') {
@@ -128,11 +131,13 @@ export default {
       } else if (rollbackTable) {
         this.dataFlow['rollback'] = rollback
         this.dataFlow['rollbackTable'] = rollbackTable
-        for (let i = 0; i < this.field_process.length; i++) {
-          // 删除操作
-          let ops = this.field_process[i]
-          if (ops.table_id === id) {
-            this.field_process.splice(i, 1)
+        if (this.field_process?.length > 0) {
+          for (let i = 0; i < this.field_process.length; i++) {
+            // 删除操作
+            let ops = this.field_process[i]
+            if (ops.table_id === id) {
+              this.field_process.splice(i, 1)
+            }
           }
         }
       }
