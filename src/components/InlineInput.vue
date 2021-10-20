@@ -9,13 +9,14 @@
       </ElLink>
     </span>
     <span class="inline-input-body" v-show="editing">
-      <ElTooltip manual effect="dark" content="字符长度限制1-32个字符" placement="top-start" :value="disabled">
+      <ElTooltip manual effect="dark" :content="tooltip" placement="top-start" :value="disabled">
         <ElInput
           class="input"
           :class="[{ 'valid-input': disabled }, 'block']"
           size="mini"
           :style="inputStyle"
           v-model="inputValue"
+          v-bind="inputProps"
         ></ElInput>
       </ElTooltip>
       <template v-if="type === 'icon'">
@@ -49,7 +50,16 @@ export default {
     type: String,
     iconConfig: Object,
     wordBreak: Boolean,
-    inputStyle: Object
+    inputStyle: Object,
+    inputProps: Object,
+    min: {
+      type: Number,
+      default: 1
+    },
+    max: {
+      type: Number,
+      default: 32
+    }
   },
   data() {
     return {
@@ -63,10 +73,13 @@ export default {
       if (!this.editing) {
         return false
       }
-      if (!value || !value.trim() || !/^.{1,32}$/.test(value)) {
-        return true
-      }
-      return false
+      let { min, max } = this
+      let reg = new RegExp(`^.{${min},${max}}$`)
+      return !reg.test(value)
+    },
+    tooltip() {
+      let { min, max } = this
+      return `字符长度限制${min}-${max}个字符`
     }
   },
   watch: {

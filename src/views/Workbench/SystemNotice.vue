@@ -13,14 +13,14 @@
           <ElButton
             size="mini"
             class="btn-refresh"
-            @click="handleReadNotice('one')"
+            @click="handleReadNotice()"
             :disabled="multipleSelection.length < 1"
           >
             标记为已读
           </ElButton>
-          <ElButton size="mini" @click="handleDelete('one')" :disabled="multipleSelection.length < 1"> 删除 </ElButton>
-          <ElButton size="mini" type="primary" @click="handleReadNotice('all')"> 全部已读 </ElButton>
-          <ElButton size="mini" @click="handleDelete('all')" :disabled="list.length < 1"> 全部删除 </ElButton>
+          <ElButton size="mini" @click="handleDelete()" :disabled="multipleSelection.length < 1"> 删除 </ElButton>
+          <ElButton size="mini" type="primary" @click="handleReadNoticeAll()"> 全部已读 </ElButton>
+          <ElButton size="mini" @click="handleAllDelete()" :disabled="list.length < 1"> 全部删除 </ElButton>
         </div>
       </div>
       <El-table
@@ -35,7 +35,7 @@
           <template slot-scope="scope">
             <div class="list-item-content">
               <div class="unread-1zPaAXtSu" v-show="!scope.row.read"></div>
-              <div class="list-item-desc" @click="handleRead(scope.row.id)">
+              <div class="list-item-desc" @click="handleReadNotice(scope.row.id)">
                 <!--                                <span :style="`color: ${colorMap[scope.row.level]};`">【{{ scope.row.level }}】</span>-->
                 <span>您的{{ systemMap[scope.row.system] }}:</span>
                 <span style="color: #2c65ff; cursor: pointer" @click="handleGo(scope.row)">
@@ -48,7 +48,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip label="通知时间" prop="createTime" width="150"></ElTableColumn>
+        <ElTableColumn show-overflow-tooltip label="通知时间" prop="createTime" width="180"></ElTableColumn>
         <div class="connection-table__empty" slot="empty">
           <VIcon size="100">no-notice-color</VIcon>
           <span v-if="!isSearching" style="display: inline-block; margin-left: 6px">暂无通知</span>
@@ -143,6 +143,7 @@ export default {
         this.$axios
           .get('tm/api/Messages?filter=' + encodeURIComponent(JSON.stringify(filter)))
           .then(data => {
+            debugger
             this.page.total = data.total
             let list = data.items || []
             this.list = list.map(this.formatData)
@@ -174,7 +175,7 @@ export default {
       return item
     },
     handleGo(item) {
-      this.handleRead(item.id)
+      this.handleReadNotice(item.id)
       switch (item.system) {
         case 'dataFlow':
           this.$axios
@@ -249,65 +250,114 @@ export default {
       this.multipleSelection = val
     },
     // 删除消息
-    handleDelete(type) {
+    handleDelete() {
       let where = {}
-      if (type === 'one') {
-        let ids = this.multipleSelection.map(item => item.id)
-        where.id = { inq: ids }
-      } else {
-        where = {}
-      }
-      let data = {
-        isDeleted: true
-      }
+      let ids = this.multipleSelection.map(item => item.id)
+      where.id = { inq: ids }
+
       this.$confirm('是否确认删除通知？', '删除通知', {
         type: 'warning'
       }).then(res => {
         if (res) {
-          this.$axios.post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), data)
+          this.$axios.delete('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where)))
           this.fetch()
         }
       })
     },
-    // 已读消息
-    handleRead(id) {
-      // let read = this.read
-      this.$axios
-        .patch('tm/api/Messages', {
-          read: true,
-          id: id
-        })
-        .then(res => {
-          if (res) {
-            // this.getUnreadNum() //未读消息数量
-            this.fetch()
-            // this.read = read
-            this.$root.$emit('notificationUpdate')
-          }
-        })
+    // 删除全部消息
+    handleAllDelete() {
+      this.$confirm('是否确认删除全部通知？', '删除通知', {
+        type: 'warning'
+      }).then(res => {
+        if (res) {
+          this.$axios.delete('tm/api/Messages/deleteAll')
+          this.fetch()
+        }
+      })
     },
-    // 全部已读
-    handleReadNotice(type) {
+    // handleDelete(type) {
+    //   let where = {}
+    //   if (type === 'one') {
+    //     let ids = this.multipleSelection.map(item => item.id)
+    //     where.id = { inq: ids }
+    //   } else {
+    //     where = {}
+    //   }
+    //   let data = {
+    //     isDeleted: true
+    //   }
+    //   this.$confirm('是否确认删除通知？', '删除通知', {
+    //     type: 'warning'
+    //   }).then(res => {
+    //     if (res) {
+    //       this.$axios.post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), data)
+    //       this.fetch()
+    //     }
+    //   })
+    // },
+    // 已读消息
+    // handleRead(id) {
+    //   // let read = this.read
+    //   this.$axios.post('tm/api/Messages', { id: id }).then(res => {
+    //     if (res) {
+    //       // this.getUnreadNum() //未读消息数量
+    //       this.fetch()
+    //       // this.read = read
+    //       this.$root.$emit('notificationUpdate')
+    //     }
+    //   })
+    // },
+    // 标记为已读
+    handleReadNotice(id) {
       let where = {}
-      if (type === 'one') {
+      if (id) {
+        where.id = { inq: [id] }
+      } else {
         let ids = this.multipleSelection.map(item => item.id)
         where.id = { inq: ids }
-      } else {
-        where = {}
       }
-      this.$axios
-        .post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), {
-          read: true
-        })
-        .then(res => {
-          if (res) {
-            // this.getUnreadNum() //未读消息数量
-            this.fetch()
-            // this.read = read
-            this.$root.$emit('notificationUpdate')
-          }
-        })
+
+      this.$axios.post('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
+        if (res) {
+          // this.getUnreadNum() //未读消息数量
+          this.fetch()
+          // this.read = read
+          this.$root.$emit('notificationUpdate')
+        }
+      })
+    },
+    // 全部已读
+    handleReadNoticeAll() {
+      this.$axios.post('tm/api/Messages/readAll').then(res => {
+        if (res) {
+          // this.getUnreadNum() //未读消息数量
+          this.fetch()
+          // this.read = read
+          this.$root.$emit('notificationUpdate')
+        }
+      })
     }
+    // handleReadNotice(type) {
+    //   let where = {}
+    //   if (type === 'one') {
+    //     let ids = this.multipleSelection.map(item => item.id)
+    //     where.id = { inq: ids }
+    //   } else {
+    //     where = {}
+    //   }
+    //   this.$axios
+    //     .post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), {
+    //       read: true
+    //     })
+    //     .then(res => {
+    //       if (res) {
+    //         // this.getUnreadNum() //未读消息数量
+    //         this.fetch()
+    //         // this.read = read
+    //         this.$root.$emit('notificationUpdate')
+    //       }
+    //     })
+    // }
     // 未读消息
     // getUnreadNum() {
     //   let where = {

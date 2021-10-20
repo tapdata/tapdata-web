@@ -58,39 +58,20 @@
           </el-form>
         </div>
       </div>
-      <VList ref="table" row-key="id" :remoteMethod="getData" @sort-change="sortChange">
-        <el-table-column label="用户名" min-width="160">
-          <template slot-scope="scope">
-            <div>{{ scope.row.username }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作时间" prop="createTime" sortable="custom" width="180">
-          <template slot-scope="scope">
-            <div>{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column show-overflow-tooltip label="操作对象" width="350">
-          <template slot-scope="scope">
-            <div class="ellipsis">{{ scope.row.parameter1 }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作类型" width="120">
-          <template slot-scope="scope">
-            <div>{{ getOperationTypeLabel(scope.row) }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作描述" min-width="300">
-          <template slot-scope="scope">
-            <span
-              v-for="(item, index) in descFnc(scope.row)"
-              :key="index"
-              :class="[{ 'color-primary cursor-pointer': item.variable }]"
-              @click="clickDescSpan(item, scope.row)"
-            >
-              {{ item.text || '' }}
-            </span>
-          </template>
-        </el-table-column>
+      <VTable ref="table" row-key="id" :columns="columns" :remoteMethod="getData" @sort-change="sortChange">
+        <template slot="operationType" slot-scope="scope">
+          <div>{{ getOperationTypeLabel(scope.row) }}</div>
+        </template>
+        <template slot="desc" slot-scope="scope">
+          <span
+            v-for="(item, index) in descFnc(scope.row)"
+            :key="index"
+            :class="[{ 'color-primary cursor-pointer': item.variable }]"
+            @click="clickDescSpan(item, scope.row)"
+          >
+            {{ item.text || '' }}
+          </span>
+        </template>
         <div v-if="!isSearching" class="migration-table__empty" slot="empty">
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
@@ -104,7 +85,7 @@
             <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
           </div>
         </div>
-      </VList>
+      </VTable>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -112,9 +93,9 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import VList from '../../_packages/tapdata-web-core/components/base/VList'
+import VTable from 'web-core/components/base/VTable'
 export default {
-  components: { VList, VIcon },
+  components: { VTable, VIcon },
   data() {
     return {
       loading: true,
@@ -163,6 +144,30 @@ export default {
         { label: '标记通知为已读', value: 'message_read', desc: '将选中的通知全部标记为已读' },
         { label: '删除通知', value: 'message_delete', desc: '将选中的通知全部删除' },
         { label: '修改通知设置', value: 'userNotification_update', desc: '修改了系统通知设置' }
+      ],
+      columns: [
+        {
+          label: '用户名',
+          prop: 'username'
+        },
+        {
+          label: '操作时间',
+          prop: 'createTime'
+        },
+        {
+          label: '操作对象',
+          prop: 'parameter1'
+        },
+        {
+          label: '操作类型',
+          prop: 'operationType',
+          slotName: 'operationType'
+        },
+        {
+          label: '操作描述',
+          prop: 'desc',
+          slotName: 'desc'
+        }
       ]
     }
   },
