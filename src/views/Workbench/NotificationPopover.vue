@@ -180,7 +180,7 @@ export default {
     },
     // 已读消息
     handleRead(id) {
-      this.$axios.patch('tm/api/Messages', { read: true, id: id }).then(res => {
+      this.$axios.patch('tm/api/Messages', { id: [id] }).then(res => {
         if (res) {
           this.listData = []
           this.$root.$emit('notificationUpdate')
