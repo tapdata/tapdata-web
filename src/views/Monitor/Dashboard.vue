@@ -143,6 +143,9 @@
     .el-tabs__content {
       flex: 1;
     }
+    .el-tabs__item {
+      padding: 0 40px;
+    }
   }
   .field-mapping {
     .task-form-body {
