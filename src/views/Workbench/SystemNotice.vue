@@ -35,7 +35,7 @@
           <template slot-scope="scope">
             <div class="list-item-content">
               <div class="unread-1zPaAXtSu" v-show="!scope.row.read"></div>
-              <div class="list-item-desc" @click="handleRead(scope.row.id)">
+              <div class="list-item-desc" @click="handleReadNotice(scope.row.id)">
                 <!--                                <span :style="`color: ${colorMap[scope.row.level]};`">【{{ scope.row.level }}】</span>-->
                 <span>您的{{ systemMap[scope.row.system] }}:</span>
                 <span style="color: #2c65ff; cursor: pointer" @click="handleGo(scope.row)">
@@ -143,6 +143,7 @@ export default {
         this.$axios
           .get('tm/api/Messages?filter=' + encodeURIComponent(JSON.stringify(filter)))
           .then(data => {
+            debugger
             this.page.total = data.total
             let list = data.items || []
             this.list = list.map(this.formatData)
@@ -174,7 +175,7 @@ export default {
       return item
     },
     handleGo(item) {
-      this.handleRead(item.id)
+      this.handleReadNotice(item.id)
       switch (item.system) {
         case 'dataFlow':
           this.$axios
@@ -295,27 +296,26 @@ export default {
     //   })
     // },
     // 已读消息
-    handleRead(id) {
-      // let read = this.read
-      this.$axios
-        .patch('tm/api/Messages', {
-          read: true,
-          id: id
-        })
-        .then(res => {
-          if (res) {
-            // this.getUnreadNum() //未读消息数量
-            this.fetch()
-            // this.read = read
-            this.$root.$emit('notificationUpdate')
-          }
-        })
-    },
+    // handleRead(id) {
+    //   // let read = this.read
+    //   this.$axios.post('tm/api/Messages', { id: id }).then(res => {
+    //     if (res) {
+    //       // this.getUnreadNum() //未读消息数量
+    //       this.fetch()
+    //       // this.read = read
+    //       this.$root.$emit('notificationUpdate')
+    //     }
+    //   })
+    // },
     // 标记为已读
-    handleReadNotice() {
+    handleReadNotice(id) {
       let where = {}
-      let ids = this.multipleSelection.map(item => item.id)
-      where.id = { inq: ids }
+      if (id) {
+        where.id = { inq: [id] }
+      } else {
+        let ids = this.multipleSelection.map(item => item.id)
+        where.id = { inq: ids }
+      }
 
       this.$axios.post('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
         if (res) {
