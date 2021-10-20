@@ -51,3 +51,5 @@ export const JsEditor = {
     )
   }
 }
+
+export default JsEditor

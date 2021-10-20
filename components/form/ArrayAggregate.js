@@ -65,7 +65,7 @@ export const ArrayAggregate = connect(
           <div class="aggregate-list">
             {aggregations.map((item, index) => {
               // eslint-disable-next-line prettier/prettier
-            return (
+              return (
                 <el-row gutter={20} style="margin: 0 0 20px;border: 1px solid #C8CDCF">
                   <el-col span={22}>
                     <el-row gutter={10}>
@@ -164,3 +164,5 @@ export const ArrayAggregate = connect(
   ),
   mapProps({ dataSource: 'options' })
 )
+
+export default ArrayAggregate

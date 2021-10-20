@@ -206,6 +206,8 @@ svg.iconfont {
 
   &__svg {
     fill: currentColor;
+    width: 1em;
+    height: 1em;
   }
 }
 .v-icon--link {

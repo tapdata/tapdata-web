@@ -10,7 +10,7 @@
 
 <script>
 import { NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
-import VIcon from '@/components/VIcon'
+import VIcon from 'web-core/components/VIcon'
 
 export default {
   name: 'BaseNode',
@@ -47,6 +47,7 @@ $height: 40px;
   border: 1px solid #2c65ff;
   border-radius: 10px;
   box-sizing: border-box;
+  user-select: none;
 
   &-icon {
     display: flex;

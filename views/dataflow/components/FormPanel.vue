@@ -1,10 +1,17 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto">
-      <ElForm class="flex flex-column" v-bind="formProps">
-        <FormProvider :form="form">
+      <Form
+        :form="form"
+        :colon="false"
+        layout="vertical"
+        label-align="left"
+        feedbackLayout="terse"
+        @autoSubmit="log"
+        @autoSubmitFailed="log"
+      >
+        <FormProvider v-if="schema" :form="form">
           <SchemaField
-            v-if="schema"
             :schema="schema"
             :scope="{
               useAsyncDataSource,
@@ -21,23 +28,32 @@
             }"
           />
         </FormProvider>
-      </ElForm>
+      </Form>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import { action } from '@formily/reactive'
 import ConnectionsApi from 'web-core/api/Connections'
 import MetadataApi from 'web-core/api/MetadataInstances'
+import * as components from 'web-core/components/form'
+import { action } from '@formily/reactive'
 import { createSchemaField, FormProvider } from '@formily/vue'
-import { components } from 'web-core/components/form'
+import { Form, FormItem, FormTab, Switch, Input, Checkbox, Radio } from '@formily/element'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import 'web-core/components/form/styles/index.scss'
 
 const { SchemaField } = createSchemaField({
-  components
+  components: {
+    FormItem,
+    FormTab,
+    Switch,
+    Input,
+    Checkbox,
+    Radio,
+    ...components
+  }
 })
 
 const connections = new ConnectionsApi()
@@ -58,7 +74,7 @@ export default {
     }
   },
 
-  components: { FormProvider, SchemaField },
+  components: { Form, FormProvider, SchemaField },
 
   computed: {
     ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType']),
@@ -591,7 +607,13 @@ export default {
       })
     },
 
-    // 统一异步数据源方法
+    /**
+     * 统一的异步数据源方法
+     * @param service
+     * @param fieldName 数据设置指定的字段
+     * @param args 缺省参数，传递异步方法
+     * @returns {(function(*=): void)|*}
+     */
     useAsyncDataSource(service, fieldName = 'dataSource', ...args) {
       return field => {
         field.loading = true
@@ -606,10 +628,15 @@ export default {
       }
     },
 
-    // 加载数据库
+    /**
+     * 加载数据库
+     * @param field
+     * @param databaseType 数据库类型，String或Array
+     * @returns {Promise<*[]|*>}
+     */
     async loadDatabase(field, databaseType = field.form.values.databaseType) {
       try {
-        let { items: result } = await connections.get({
+        let result = await connections.get({
           filter: JSON.stringify({
             where: {
               database_type: databaseType
@@ -630,7 +657,7 @@ export default {
             order: ['status DESC', 'name ASC']
           })
         })
-        return result.map(item => {
+        return (result.items || result).map(item => {
           return {
             id: item.id,
             name: item.name,
@@ -645,9 +672,13 @@ export default {
       }
     },
 
-    // 加载数据详情
-    async loadDatabaseInfo(field, id) {
-      const connectionId = id || field.query('connectionId').get('value')
+    /**
+     * 加载数据库的详情
+     * @param field
+     * @param connectionId
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    async loadDatabaseInfo(field, connectionId = field.query('connectionId').get('value')) {
       if (!connectionId) return
       let result = await connections.customQuery([connectionId], {
         schema: true
@@ -655,7 +686,12 @@ export default {
       return result
     },
 
-    // 加载数据库的表
+    /**
+     * 加载数据库的表，只返回表名的集合
+     * @param field
+     * @param connectionId
+     * @returns {Promise<*|AxiosResponse<any>>}
+     */
     async loadDatabaseTable(field, connectionId = field.query('connectionId').get('value')) {
       if (!connectionId) return
       const params = {
@@ -668,49 +704,68 @@ export default {
             is_deleted: false
           },
           fields: {
-            id: true,
             original_name: true
           }
         })
       }
-      let tables = await metadataApi.get(params)
-      tables = tables.map(item => ({
-        label: item.original_name,
-        value: item.id
-      }))
-      return tables
+      const tables = await metadataApi.get(params)
+      return tables.map(item => item.original_name)
     },
 
-    // 加载表的详情
-    async loadTableInfo(field, id = field?.query('tableId')?.get('value')) {
-      if (!id) return
+    /**
+     * 加载表的详情，返回表的数据对象
+     * @param field
+     * @param connectionId
+     * @param tableName
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    async loadTableInfo(
+      field,
+      connectionId = field.query('connectionId').get('value'),
+      tableName = field.query('tableName').get('value')
+    ) {
+      if (!connectionId || !tableName) return
       console.log('loadTableInfo', field, id) // eslint-disable-line
       const params = {
         filter: JSON.stringify({
           where: {
-            id,
+            'source.id': connectionId,
+            original_name: tableName,
             is_deleted: false
           }
         })
       }
-      const { data } = await metadataApi.schema(params)
-      return data.records[0].schema.tables[0]
+      const table = await metadataApi.get(params)
+      return table
     },
 
-    // 加载表的
-    async loadTableField(field, id = field.query('tableId').get('value')) {
-      if (!id) return
-      console.log('loadTableField', field, id) // eslint-disable-line
+    /**
+     * 加载表字段，返回字段名的集合
+     * @param field
+     * @param connectionId
+     * @param tableName
+     * @returns {Promise<*>}
+     */
+    async loadTableField(
+      field,
+      connectionId = field.query('connectionId').get('value'),
+      tableName = field.query('tableName').get('value')
+    ) {
+      if (!connectionId || !tableName) return
       const params = {
         filter: JSON.stringify({
           where: {
-            id,
+            'source.id': connectionId,
+            original_name: tableName,
             is_deleted: false
+          },
+          fields: {
+            fields: true
           }
         })
       }
-      const { data } = await metadataApi.schema(params)
-      return data.records[0].schema.tables[0].fields.map(item => item.field_name)
+      const tableData = await metadataApi.findOne(params)
+      return tableData.fields.map(item => item.field_name)
     },
 
     // 加载数据集
@@ -772,6 +827,11 @@ export default {
         })
       }
       field.dataSource = options
+    },
+
+    log(value) {
+      // eslint-disable-next-line no-console
+      console.log('Form', value)
     }
   }
 }

@@ -274,3 +274,5 @@ export const FilterConditions = connect(
   ),
   mapProps({ dataSource: 'options' })
 )
+
+export default FilterConditions

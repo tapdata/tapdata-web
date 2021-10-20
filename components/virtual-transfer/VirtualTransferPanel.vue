@@ -74,7 +74,6 @@ export default {
         }
         const panel = getParent(this)
         const transfer = panel.$parent || panel
-        console.log('transfer', transfer)
         return panel.renderContent ? (
           panel.renderContent(h, this.option)
         ) : transfer.$scopedSlots.default ? (

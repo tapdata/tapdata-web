@@ -5,7 +5,7 @@
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1">
-              <span class="flex-1">连接</span>
+              <span class="flex-1 user-select-none">连接</span>
               <VIcon class="mr-2 click-btn" @click.stop="creat">plus</VIcon>
               <VIcon>magnify</VIcon>
             </div>
@@ -14,7 +14,7 @@
             <div
               v-for="(db, i) in dbList"
               :key="i"
-              class="db-item flex align-center px-4 clickable"
+              class="db-item flex align-center px-4 clickable user-select-none"
               :class="{ active: currentConnectionId === db.id }"
               @click="handleSelectDB(db)"
             >
@@ -46,7 +46,7 @@
               onStop
             }"
             :key="tb.attr.tableId"
-            class="tb-item grabbable flex align-center px-4"
+            class="tb-item grabbable flex align-center px-4 user-select-none"
           >
             <div class="tb-item-icon">
               <VIcon class="h-100" size="14" color="#fff">table</VIcon>
@@ -64,7 +64,7 @@
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
-            <span class="flex-1">处理节点</span>
+            <span class="flex-1 user-select-none">处理节点</span>
           </div>
         </template>
         <ElRow class="node-list flex-wrap p-2" :gutter="0" type="flex">
@@ -274,7 +274,7 @@ export default {
         group: 'data',
         constructor: 'Table',
         attr: {
-          tableId: tb.id,
+          tableName: tb.original_name,
           connectionId
         }
       }))

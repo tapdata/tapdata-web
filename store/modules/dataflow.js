@@ -423,6 +423,11 @@ const mutations = {
 
     if (index === -1) return
 
+    if (state.activeNode === nodes[index].id && state.activeType === 'node') {
+      state.activeNode = null
+      state.activeType = null
+    }
+
     nodes.splice(index, 1)
 
     if (node.outputLanes?.length || node.inputLanes?.length) {

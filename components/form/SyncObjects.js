@@ -345,3 +345,5 @@ const SyncObjectItem = observer(
 )
 
 export const SyncObjects = connect(SyncObjectItem, mapProps({ dataSource: 'options', data: true, loading: true }))
+
+export default SyncObjects

@@ -18,80 +18,33 @@ export class Table extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
-      datasource: {
+      connectionId: {
+        type: 'string',
         title: '数据库',
-        type: 'void',
-        'x-decorator': 'ElFormItem',
+        required: true,
+        'x-decorator': 'FormItem',
         'x-decorator-props': {
-          asterisk: true
+          wrapperWidth: 240
         },
-        'x-component': 'Row',
+        'x-component': 'Select',
         'x-component-props': {
-          type: 'flex',
-          gap: '8px'
+          config: { placeholder: '请选择数据库' }
         },
-        properties: {
-          connectionId: {
-            type: 'string',
-            required: true,
-            'x-decorator': 'Col',
-            'x-decorator-props': { flex: 1 },
-            'x-component': 'ComboSelect',
-            'x-component-props': {
-              config: { placeholder: '请选择数据库' }
-            },
-            'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource")}}']
-          },
-          databaseType: {
-            type: 'string',
-            'x-display': 'hidden',
-            'x-reactions': {
-              dependencies: ['connectionId'],
-              fulfill: {
-                run: '{{$self.value = $form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.databaseType}}'
-              }
-            }
-          },
-          connectionBtn: {
-            type: 'void',
-            'x-component': 'AddDatabaseBtn'
-          }
-        }
+        'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource")}}']
       },
-      tableRow: {
+      tableName: {
         title: '表',
-        type: 'void',
-        'x-decorator': 'ElFormItem',
+        type: 'string',
+        required: true,
+        'x-decorator': 'FormItem',
         'x-decorator-props': {
-          asterisk: true
+          wrapperWidth: 240
         },
-        'x-component': 'Row',
+        'x-component': 'Select',
         'x-component-props': {
-          type: 'flex',
-          gap: '8px'
+          config: { placeholder: '请选择表，区分大小写' }
         },
-        properties: {
-          tableId: {
-            type: 'string',
-            required: true,
-            'x-decorator': 'Col',
-            'x-decorator-props': { flex: 1 },
-            'x-component': 'ComboSelect',
-            'x-component-props': {
-              config: { placeholder: '请选择表，区分大小写' }
-            },
-            'x-reactions': ['{{useAsyncDataSource(loadDatabaseTable)}}']
-          },
-          table: {
-            type: 'object',
-            'x-display': 'hidden',
-            'x-reactions': ['{{useAsyncDataSource(loadTableInfo, "value")}}']
-          },
-          connectionBtn: {
-            type: 'void',
-            'x-component': 'AddDatabaseBtn'
-          }
-        }
+        'x-reactions': ['{{useAsyncDataSource(loadDatabaseTable)}}']
       },
       name: {
         type: 'string',
@@ -103,51 +56,11 @@ export class Table extends NodeType {
           }
         }
       },
-      switchSpace: {
-        type: 'void',
-        title: '启用自定义初始化顺序',
-        properties: {
-          enableInitialOrder: {
-            type: 'boolean',
-            required: true,
-            'x-component': 'Switch',
-            'x-component-props': {
-              // activeText: '开启'
-            },
-            'x-reactions': {
-              target: 'initialSyncOrder',
-              fulfill: {
-                state: {
-                  visible: '{{!!$self.value}}'
-                }
-              }
-            }
-          },
-
-          initialSyncOrder: {
-            type: 'number',
-            required: true,
-            'x-component': 'InputNumber',
-            'x-component-props': {
-              min: 1,
-              size: 'mini'
-            }
-          }
-        },
-        'x-decorator': 'ElFormItem',
-        'x-decorator-props': {
-          asterisk: true
-        },
-        'x-component': 'Space',
-        'x-component-props': {
-          size: 'middle'
-        }
-      },
       isFilter: {
         type: 'boolean',
         title: '过滤设置',
         required: true,
-        'x-decorator': 'ElFormItem',
+        'x-decorator': 'FormItem',
         'x-component': 'Switch',
         'x-reactions': {
           target: 'custSql',
@@ -158,16 +71,16 @@ export class Table extends NodeType {
           }
         }
       },
+
       custSql: {
         type: 'object',
         'x-component': 'FormTab',
-        'x-component-props': {},
         properties: {
           tab1: {
             type: 'void',
-            'x-component': 'FormTabPane',
+            'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              tab: '智能模式'
+              label: '智能模式'
             },
             properties: {
               fieldFilterType: {
@@ -188,7 +101,10 @@ export class Table extends NodeType {
                     value: 'deleteField'
                   }
                 ],
-                'x-decorator': 'ElFormItem',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  wrapperWidth: 240
+                },
                 'x-component': 'Select',
                 'x-reactions': {
                   target: 'custSql.selectedFields',
@@ -202,23 +118,17 @@ export class Table extends NodeType {
               selectedFields: {
                 type: 'array',
                 required: true,
-                'x-decorator': 'ElFormItem',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  wrapperWidth: 240
+                },
                 'x-component': 'Select',
                 'x-component-props': {
-                  size: 'mini',
                   multiple: true,
                   filterable: true,
                   defaultFirstOption: true
                 },
-                'x-reactions': {
-                  dependencies: ['table'],
-                  fulfill: {
-                    state: {
-                      dataSource: '{{$deps[0] && $deps[0].fields.map(item => item.field_name)}}'
-                    }
-                  }
-                }
-                // 'x-reactions': ['{{useAsyncDataSource(loadTableField)}}']
+                'x-reactions': ['{{useAsyncDataSource(loadTableField)}}']
               },
               limitLines: {
                 title: '行数限制',
@@ -238,13 +148,15 @@ export class Table extends NodeType {
                     value: 10000
                   }
                 ],
-                'x-decorator': 'ElFormItem',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  wrapperWidth: 240
+                },
                 'x-component': 'Select'
               },
               conditions: {
                 type: 'array',
                 'x-component': 'FilterConditions',
-                'x-component-props': {},
                 'x-reactions': {
                   dependencies: ['custSql.selectedFields'],
                   fulfill: {
@@ -254,21 +166,20 @@ export class Table extends NodeType {
               },
               previewSql: {
                 type: 'string',
-                'x-component': 'PreviewSql',
-                'x-component-props': {}
+                'x-component': 'PreviewSql'
               }
             }
           },
           tab2: {
             type: 'void',
-            'x-component': 'FormTabPane',
+            'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              tab: 'SQL模式'
+              label: 'SQL模式'
             },
             properties: {
               editSql: {
                 type: 'string',
-                'x-decorator': 'ElFormItem',
+                'x-decorator': 'FormItem',
                 'x-component': 'SqlEditor',
                 'x-component-props': {
                   options: { showPrintMargin: false, useWrapMode: true }
@@ -278,7 +189,7 @@ export class Table extends NodeType {
               initialOffset: {
                 type: 'string',
                 title: '自定义SQL增量条件',
-                'x-decorator': 'ElFormItem',
+                'x-decorator': 'FormItem',
                 'x-component': 'Input',
                 'x-component-props': {
                   placeholder: '请输入自定义SQL增量条件'
@@ -290,59 +201,12 @@ export class Table extends NodeType {
       }
     }
   }
-
-  linkFormSchema = {
-    type: 'object',
-    properties: {
-      dropType: {
-        type: 'string',
-        title: '对目标端已存在的结构和数据的处理',
-        default: 'no_drop',
-        'x-decorator': 'ElFormItem',
-        'x-component': 'Select',
-        'x-reactions': ['{{loadDropOptions}}']
-      },
-      syncObjects: {
-        type: 'array',
-        default: [
-          {
-            type: 'table'
-          }
-        ],
-        enum: [
-          {
-            label: 'Table',
-            value: 'table',
-            tooltip: 'editor.cell.link.tableTip',
-            disabled: true
-          },
-          {
-            label: 'View',
-            value: 'view',
-            tooltip: 'editor.cell.link.viewTip'
-          },
-          {
-            label: 'Function',
-            value: 'function'
-          },
-          {
-            label: 'Procedure',
-            value: 'procedure'
-          }
-        ],
-        'x-component': 'SyncObjects',
-        'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
-      }
-    }
-  }
-
   /**
    * 获取额外添加到节点上的属性
    */
   getExtraAttr() {
     return {
-      connectionId: this.attr.connectionId,
-      tableId: this.attr.tableId
+      ...this.attr
     }
   }
 }
