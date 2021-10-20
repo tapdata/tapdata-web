@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="text-wrap float-start overflow-hidden">
-      <span v-if="!showProgress" class="mr-2">没有可用的表？</span>
+      <span v-if="!showProgress" class="mr-2">{{ reloadCount ? '加载已完成' : '没有可用的表？' }}</span>
       <div v-else class="float-start mr-2">
         <VIcon size="12" class="animation-rotate font-color-main">loading-point</VIcon>
         <span class="ml-2">模型加载中</span>
@@ -213,11 +213,12 @@ export default {
       currentTableName: '',
       operations: [], //存储字段改名操作,
       field_process: [],
-      progress: '',
+      progress: 0,
       showProgress: '',
       sourceId: '',
       bidirectional: '',
       loadFieldsStatus: 'finished',
+      reloadCount: 0,
       reloadLoading: false, // 重新加载
       tableNameTrans: ''
     }
@@ -653,6 +654,7 @@ export default {
             this.showProgress = true
             this.reloadLoading = true
             this.progress = 0
+            this.reloadCount++
             this.reloadApi('first')
           }
         })
