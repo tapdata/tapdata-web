@@ -13,14 +13,14 @@
           <ElButton
             size="mini"
             class="btn-refresh"
-            @click="handleReadNotice('one')"
+            @click="handleReadNotice()"
             :disabled="multipleSelection.length < 1"
           >
             标记为已读
           </ElButton>
-          <ElButton size="mini" @click="handleDelete('one')" :disabled="multipleSelection.length < 1"> 删除 </ElButton>
-          <ElButton size="mini" type="primary" @click="handleReadNotice('all')"> 全部已读 </ElButton>
-          <ElButton size="mini" @click="handleDelete('all')" :disabled="list.length < 1"> 全部删除 </ElButton>
+          <ElButton size="mini" @click="handleDelete()" :disabled="multipleSelection.length < 1"> 删除 </ElButton>
+          <ElButton size="mini" type="primary" @click="handleReadNoticeAll()"> 全部已读 </ElButton>
+          <ElButton size="mini" @click="handleAllDelete()" :disabled="list.length < 1"> 全部删除 </ElButton>
         </div>
       </div>
       <El-table
@@ -249,26 +249,51 @@ export default {
       this.multipleSelection = val
     },
     // 删除消息
-    handleDelete(type) {
+    handleDelete() {
       let where = {}
-      if (type === 'one') {
-        let ids = this.multipleSelection.map(item => item.id)
-        where.id = { inq: ids }
-      } else {
-        where = {}
-      }
-      let data = {
-        isDeleted: true
-      }
+      let ids = this.multipleSelection.map(item => item.id)
+      where.id = { inq: ids }
+
       this.$confirm('是否确认删除通知？', '删除通知', {
         type: 'warning'
       }).then(res => {
         if (res) {
-          this.$axios.post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), data)
+          this.$axios.delete('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where)))
           this.fetch()
         }
       })
     },
+    // 删除全部消息
+    handleAllDelete() {
+      this.$confirm('是否确认删除全部通知？', '删除通知', {
+        type: 'warning'
+      }).then(res => {
+        if (res) {
+          this.$axios.delete('tm/api/Messages/deleteAll')
+          this.fetch()
+        }
+      })
+    },
+    // handleDelete(type) {
+    //   let where = {}
+    //   if (type === 'one') {
+    //     let ids = this.multipleSelection.map(item => item.id)
+    //     where.id = { inq: ids }
+    //   } else {
+    //     where = {}
+    //   }
+    //   let data = {
+    //     isDeleted: true
+    //   }
+    //   this.$confirm('是否确认删除通知？', '删除通知', {
+    //     type: 'warning'
+    //   }).then(res => {
+    //     if (res) {
+    //       this.$axios.post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), data)
+    //       this.fetch()
+    //     }
+    //   })
+    // },
     // 已读消息
     handleRead(id) {
       // let read = this.read
@@ -286,28 +311,53 @@ export default {
           }
         })
     },
-    // 全部已读
-    handleReadNotice(type) {
+    // 标记为已读
+    handleReadNotice() {
       let where = {}
-      if (type === 'one') {
-        let ids = this.multipleSelection.map(item => item.id)
-        where.id = { inq: ids }
-      } else {
-        where = {}
-      }
-      this.$axios
-        .post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), {
-          read: true
-        })
-        .then(res => {
-          if (res) {
-            // this.getUnreadNum() //未读消息数量
-            this.fetch()
-            // this.read = read
-            this.$root.$emit('notificationUpdate')
-          }
-        })
+      let ids = this.multipleSelection.map(item => item.id)
+      where.id = { inq: ids }
+
+      this.$axios.post('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
+        if (res) {
+          // this.getUnreadNum() //未读消息数量
+          this.fetch()
+          // this.read = read
+          this.$root.$emit('notificationUpdate')
+        }
+      })
+    },
+    // 全部已读
+    handleReadNoticeAll() {
+      this.$axios.post('tm/api/Messages/readAll').then(res => {
+        if (res) {
+          // this.getUnreadNum() //未读消息数量
+          this.fetch()
+          // this.read = read
+          this.$root.$emit('notificationUpdate')
+        }
+      })
     }
+    // handleReadNotice(type) {
+    //   let where = {}
+    //   if (type === 'one') {
+    //     let ids = this.multipleSelection.map(item => item.id)
+    //     where.id = { inq: ids }
+    //   } else {
+    //     where = {}
+    //   }
+    //   this.$axios
+    //     .post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), {
+    //       read: true
+    //     })
+    //     .then(res => {
+    //       if (res) {
+    //         // this.getUnreadNum() //未读消息数量
+    //         this.fetch()
+    //         // this.read = read
+    //         this.$root.$emit('notificationUpdate')
+    //       }
+    //     })
+    // }
     // 未读消息
     // getUnreadNum() {
     //   let where = {
