@@ -229,7 +229,7 @@ export default {
           filter: JSON.stringify({
             where: {
               database_type: {
-                nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
+                $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
               }
             },
             fields: {
@@ -242,8 +242,8 @@ export default {
             order: ['status DESC', 'name ASC']
           })
         })
-        this.dbList = result
-        return result
+        this.dbList = result.items || result
+        return this.dbList
       } catch (e) {
         console.log('catch', e) // eslint-disable-line
       }

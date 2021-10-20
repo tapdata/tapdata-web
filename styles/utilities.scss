@@ -601,7 +601,7 @@
   min-height: 100vh !important;
 }
 
-.flex-1 {
+.flex-1,.flex-fit {
   flex: 1 !important;
 }
 
@@ -11949,6 +11949,7 @@
 }
 .cursor-grabbing {
   cursor: grabbing;
+  user-select: none;
 }
 
 .absolute-fill {
