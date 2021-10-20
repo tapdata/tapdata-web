@@ -37,6 +37,9 @@ export default {
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
 
+  connection_form_custom_connection_before_operate: 'Pre-operation',
+  connection_form_custom_connection_after_operate: 'Post-operation',
+
   //Dag
   dag_data_node_label_dameng: 'Dameng Node',
   dag_data_node_label_database_link_table: 'Table name case',
