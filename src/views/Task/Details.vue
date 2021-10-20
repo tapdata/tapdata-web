@@ -181,10 +181,10 @@ export default {
         'initial_sync+cdc': '全量+增量'
       },
       list: [
-        {
-          name: '123',
-          status: 'running'
-        }
+        // {
+        //   name: '123',
+        //   status: 'running'
+        // }
       ],
       loadingObj: {
         start: false,
