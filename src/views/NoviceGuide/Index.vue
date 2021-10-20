@@ -403,8 +403,7 @@ export default {
       }
       // 下一步
       if (this.step === 2) {
-        // this.loadSchema('first')
-        this.step++
+        this.loadSchema('first')
       } else {
         this.step++
       }
@@ -573,8 +572,7 @@ export default {
         where: {
           database_type: this.sourceForm.database_type,
           agentType: 'Cloud',
-          connection_type: this.step === 2 ? 'target' : 'source',
-          status: 'ready'
+          connection_type: this.step === 2 ? 'target' : 'source'
         },
         size: 10
       }
