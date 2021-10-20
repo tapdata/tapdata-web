@@ -57,7 +57,11 @@
         :data="list"
         @sort-change="sortChange"
       >
-        <ElTableColumn label="任务名称" prop="name" min-width="200"></ElTableColumn>
+        <ElTableColumn label="任务名称" prop="name" min-width="200">
+          <template v-slot="scope">
+            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
+          </template>
+        </ElTableColumn>
         <ElTableColumn label="任务类型" prop="typeText"></ElTableColumn>
         <ElTableColumn label="所属agent" prop="belongAgent" min-width="200">
           <template slot-scope="scope">
@@ -438,8 +442,9 @@ export default {
         platformInfo: true,
         agentId: true
       }
-      let where = {
-        mappingTemplate: type
+      let where = {}
+      if (type) {
+        where['mappingTemplate'] = type
       }
       if (keyword && keyword.trim()) {
         where.or = [
@@ -568,12 +573,17 @@ export default {
         this.createVisible = true
       })
     },
+    closeCreateDialog() {
+      this.createVisible = false
+    },
     createMigrate() {
+      this.closeCreateDialog()
       this.$router.push({
         name: 'DataflowCreate'
       })
     },
     createSync() {
+      this.closeCreateDialog()
       this.$router.push({ name: 'DataflowNew' })
     },
     toDetails(row) {

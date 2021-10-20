@@ -1,20 +1,28 @@
 <template>
-  <section class="tapdata-transfer-wrap">
-    <div class="reload-schema flex justify-content-between mb-5">
-      <div class="text-wrap" style="width: 240px">
-        没有可用的表？
-        <el-button class="border-0" type="text" :loading="reloadLoading" @click="reload()">重新加载</el-button>
-        <span v-if="showProgress" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
-      </div>
+  <section class="tapdata-transfer-wrap position-relative">
+    <div class="reload-schema flex justify-content-end mb-2">
       <div class="box-btn" v-show="!showOperationBtn">
-        <v-button class="e-button" size="mini" @click="beforeRename">{{ $t('dataFlow.changeName') }} </v-button>
-        <v-button size="mini" class="e-button" @click="beforeReduction"
-          >{{ $t('editor.cell.link.reduction') }}
-        </v-button>
+        <VButton class="e-button" size="mini" @click="beforeRename">{{ $t('dataFlow.changeName') }} </VButton>
+        <VButton size="mini" class="e-button" @click="beforeReduction">{{ $t('editor.cell.link.reduction') }} </VButton>
       </div>
     </div>
-
-    <el-transfer
+    <div class="text-wrap float-start overflow-hidden">
+      <span v-if="!showProgress" class="mr-2">{{ reloadCount ? '加载已完成' : '没有可用的表？' }}</span>
+      <div v-else class="float-start mr-2">
+        <VIcon size="12" class="animation-rotate font-color-main">loading-point</VIcon>
+        <span class="ml-2">模型加载中</span>
+        <span class="ml-2">{{ progress }}%</span>
+      </div>
+      <ElButton class="border-0" type="text" :disabled="reloadLoading" @click="reload()">重新加载</ElButton>
+      <ElTooltip placement="top" class="ml-2">
+        <div slot="content">
+          <div>1.要等待模型加载完成后才能正常创建任务，否则任务可能无法保存</div>
+          <div>2.如果找不到您需要的表，可以尝试重新加载模型</div>
+        </div>
+        <VIcon class="color-primary" size="14">info</VIcon>
+      </ElTooltip>
+    </div>
+    <ElTransfer
       v-model="selectSourceArr"
       v-if="!transferFlag"
       filterable
@@ -38,7 +46,7 @@
         <!--          class="el-icon-setting field-transfer__icon"-->
         <!--        ></span>-->
       </span>
-    </el-transfer>
+    </ElTransfer>
     <template v-else>
       <MqTransfer
         v-model="mqActiveData"
@@ -47,7 +55,7 @@
         :table_suffix="formData.table_suffix"
       ></MqTransfer>
     </template>
-    <el-dialog
+    <ElDialog
       title="字段映射"
       :visible.sync="dialogFileVisible"
       :modal-append-to-body="true"
@@ -55,7 +63,7 @@
       :close-on-click-modal="false"
       width="65%"
     >
-      <el-transfer
+      <ElTransfer
         filterable
         :titles="transferTitles"
         :filter-method="filterMethod"
@@ -68,14 +76,14 @@
         <span slot-scope="{ option }" class="transfer-label">
           <span v-show="!option.showInput" class="transfer-label__span"> {{ option.label }}</span>
           <span v-show="option.showInput" class="field-transfer__input">
-            <el-input
+            <ElInput
               v-model="option.label"
               autofocus
               maxlength="50"
               minlength="1"
               @keyup.enter.native="checkInput(option)"
               :ref="option.id"
-            ></el-input>
+            ></ElInput>
             <VIcon class="v-icon-close" @click.stop.prevent="closeInput(option)">close</VIcon>
             <VIcon class="v-icon-check" @click.stop.prevent="checkInput(option)">check</VIcon>
           </span>
@@ -86,62 +94,62 @@
             >edit</VIcon
           >
         </span>
-      </el-transfer>
+      </ElTransfer>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelFileOperations">{{ $t('dataVerify.cancel') }}</el-button>
-        <el-button type="primary" @click="saveFileOperations">{{ $t('dataVerify.confirm') }}</el-button>
+        <ElButton @click="cancelFileOperations">{{ $t('dataVerify.cancel') }}</ElButton>
+        <ElButton type="primary" @click="saveFileOperations">{{ $t('dataVerify.confirm') }}</ElButton>
       </div>
-    </el-dialog>
-    <el-dialog
+    </ElDialog>
+    <ElDialog
       :title="$t('editor.cell.link.batchRename')"
       :visible.sync="dialogVisible"
       :modal-append-to-body="false"
       custom-class="databaseLinkDialog"
       :close-on-click-modal="false"
     >
-      <el-form :rules="rules" ref="form" :model="formData">
-        <el-row :gutter="80" class="e-row">
-          <el-col :span="12">
-            <el-form-item :label="$t('editor.cell.link.prefixPlaceholder')" prop="table_prefix">
-              <el-input
+      <ElForm :rules="rules" ref="form" :model="formData">
+        <ElRow :gutter="80" class="e-row">
+          <ElCol :span="12">
+            <ElFormItem :label="$t('editor.cell.link.prefixPlaceholder')" prop="table_prefix">
+              <ElInput
                 v-model="formData.table_prefix"
                 autocomplete="off"
                 maxlength="50"
                 show-word-limit
                 size="mini"
                 :placeholder="$t('editor.cell.link.prefixPlaceholder')"
-              ></el-input>
-            </el-form-item>
+              ></ElInput>
+            </ElFormItem>
             <div class="tip">
               <span>以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
               <div>前缀不允许以 system 开头</div>
             </div>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="$t('editor.cell.link.suffixPlaceholder')" prop="table_suffix">
-              <el-input
+          </ElCol>
+          <ElCol :span="12">
+            <ElFormItem :label="$t('editor.cell.link.suffixPlaceholder')" prop="table_suffix">
+              <ElInput
                 v-model="formData.table_suffix"
                 autocomplete="off"
                 maxlength="50"
                 show-word-limit
                 size="mini"
                 :placeholder="$t('editor.cell.link.suffixPlaceholder')"
-              ></el-input>
-            </el-form-item>
+              ></ElInput>
+            </ElFormItem>
             <div class="tip">
               <span>以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
             </div>
-          </el-col>
-        </el-row>
-      </el-form>
+          </ElCol>
+        </ElRow>
+      </ElForm>
       <div class="text">
         {{ `${$t('editor.cell.link.tableNameExample')}: ${formData.table_prefix}tablename${formData.table_suffix}` }}
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel">{{ $t('dataVerify.cancel') }} </el-button>
-        <el-button type="primary" @click="changeName">{{ $t('dataVerify.confirm') }} </el-button>
+        <ElButton @click="handleCancel">{{ $t('dataVerify.cancel') }} </ElButton>
+        <ElButton type="primary" @click="changeName">{{ $t('dataVerify.confirm') }} </ElButton>
       </div>
-    </el-dialog>
+    </ElDialog>
     <ConnectionTest ref="test"></ConnectionTest>
   </section>
 </template>
@@ -205,11 +213,12 @@ export default {
       currentTableName: '',
       operations: [], //存储字段改名操作,
       field_process: [],
-      progress: '',
+      progress: 0,
       showProgress: '',
       sourceId: '',
       bidirectional: '',
       loadFieldsStatus: 'finished',
+      reloadCount: 0,
       reloadLoading: false, // 重新加载
       tableNameTrans: ''
     }
@@ -645,6 +654,7 @@ export default {
             this.showProgress = true
             this.reloadLoading = true
             this.progress = 0
+            this.reloadCount++
             this.reloadApi('first')
           }
         })
@@ -717,6 +727,14 @@ export default {
     color: #999;
     font-size: 12px;
     margin-bottom: 10px;
+  }
+  .text-wrap {
+    position: absolute;
+    top: 68px;
+    left: 120px;
+    z-index: 1;
+    height: 30px;
+    line-height: 30px;
   }
   .field-transfer__icon {
     display: inline-block;

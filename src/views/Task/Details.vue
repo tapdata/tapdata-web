@@ -1,5 +1,5 @@
 <template>
-  <el-container v-loading="loading" class="task-details-container flex-column p-6">
+  <el-container v-loading="loading" class="task-details-container flex-column">
     <div class="task-info flex justify-content-between bg-white p-6">
       <div class="task-info__left flex align-items-center">
         <div class="task-info__img flex justify-center align-items-center mr-8">
@@ -17,13 +17,29 @@
               class="ml-6"
             ></StatusTag>
           </div>
-          <div class="flex align-items-center mt-4">
-            <div v-for="(item, index) in infoItems" :key="index" :class="[{ 'ml-6': index !== 0 }]">
+          <div class="flex align-items-center mt-4" style="height: 30px">
+            <div
+              v-for="(item, index) in infoItems"
+              :key="index"
+              :class="['flex', 'align-items-center', { 'ml-6': index !== 0 }]"
+            >
               <VIcon size="12" class="v-icon">{{ item.icon }}</VIcon>
               <span class="ml-1">{{ item.label }}</span>
               <span>{{ task[item.key] }}</span>
             </div>
-            <VIcon size="12" class="v-icon ml-4 cursor-pointer">edit-outline</VIcon>
+            <div class="ml-6 flex align-items-center">
+              <VIcon size="12" class="v-icon">document</VIcon>
+              <span class="ml-1">描述：</span>
+              <InlineInput
+                :value="task.description"
+                :icon-config="{ class: 'color-primary' }"
+                :input-props="{ placeholder: '描述内容' }"
+                :min="0"
+                :max="50"
+                type="icon"
+                @save="updateDesc($event, task.id)"
+              ></InlineInput>
+            </div>
           </div>
           <div class="operation-row mt-4">
             <!--            <ElButton type="primary" size="mini">启动</ElButton>-->
@@ -114,11 +130,11 @@
 <script>
 import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
-import VButton from '../../_packages/tapdata-web-core/components/base/VButton'
+import InlineInput from '@/components/InlineInput'
 
 export default {
   name: 'TaskDetails',
-  components: { VButton, StatusTag, VIcon },
+  components: { StatusTag, VIcon, InlineInput },
   data() {
     return {
       loading: true,
@@ -138,11 +154,6 @@ export default {
           key: 'syncType',
           icon: 'menu',
           label: '同步类型：'
-        },
-        {
-          key: 'description',
-          icon: 'document',
-          label: '描述：'
         }
       ],
       ouputItems: [
@@ -170,10 +181,10 @@ export default {
         'initial_sync+cdc': '全量+增量'
       },
       list: [
-        {
-          name: '123',
-          status: 'running'
-        }
+        // {
+        //   name: '123',
+        //   status: 'running'
+        // }
       ],
       loadingObj: {
         start: false,
@@ -251,7 +262,6 @@ export default {
       result.creator = result.username || result.user?.username || '-'
       result.updatedTime = result.last_updated ? this.formatTime(result.last_updated) : '-'
       result.syncType = this.syncTypeMap[result.setting?.sync_type]
-      result.description = result.description || '描述内容'
       return result
     },
     start(id) {
@@ -397,6 +407,15 @@ export default {
       } else if (msg) {
         this.$message.success(msg)
       }
+    },
+    updateDesc(val, id) {
+      this.$axios
+        .patch(`tm/api/DataFlows/${id}`, {
+          description: val
+        })
+        .then(() => {
+          this.$message.success(this.$t('gl_button_update_success'))
+        })
     }
   }
 }
