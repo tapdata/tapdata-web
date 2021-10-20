@@ -832,7 +832,8 @@ export default {
         username: item.user?.username,
         user_id: item.user_id,
         startTime: item.startTime,
-        checked: item.checked
+        checked: item.checked,
+        setting: item.setting
       }
     },
     handleSelectTag() {
