@@ -16,7 +16,7 @@
       <ElButton class="border-0" type="text" :disabled="reloadLoading" @click="reload()">重新加载</ElButton>
       <ElTooltip placement="top" class="ml-2">
         <div slot="content">
-          <div>1.要等待模型加载完成后才能正常创建任务，否则任务无法保存</div>
+          <div>1.要等待模型加载完成后才能正常创建任务，否则任务可能无法保存</div>
           <div>2.如果找不到您需要的表，可以尝试重新加载模型</div>
         </div>
         <VIcon class="color-primary" size="14">info</VIcon>
