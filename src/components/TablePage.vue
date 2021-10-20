@@ -290,7 +290,6 @@ export default {
       border-right: 1px solid #ebeef5;
     }
     .table-footer {
-      height: 38px;
       line-height: 38px;
     }
     .table-page-pagination {
