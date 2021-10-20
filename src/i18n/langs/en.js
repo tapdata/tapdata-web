@@ -206,8 +206,9 @@ export default {
   // 任务
   task_manage: 'Task Management',
   task_name: 'Task name',
-  task_status: 'Task Status',
-  task_sync_type: 'Task synchronization type',
+  task_status: 'Status',
+  task_type: 'Type',
+  task_sync_type: 'Synchronization type',
   task_name_or_node_name_or_library_name: 'Name',
   task_sync_type_initial_sync: 'Full amount',
   task_sync_type_cdc: 'Incremental',

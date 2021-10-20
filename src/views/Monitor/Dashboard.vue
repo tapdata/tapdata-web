@@ -272,7 +272,7 @@ export default {
   },
   destroyed() {
     this.$ws.off('watch', this.taskChange)
-    this.$ws.send({ type: 'unsubscribe', messageType: 'watch,logs' })
+    this.$ws.send({ type: 'unsubscribe', messageType: 'watch,logs,dataFlowInsight' })
   },
   computed: {
     milestoneList() {
