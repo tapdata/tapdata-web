@@ -67,7 +67,7 @@ export const ArrayAggregate = connect(
               // eslint-disable-next-line prettier/prettier
             return (
                 <el-row gutter={20} style="margin: 0 0 20px;border: 1px solid #C8CDCF">
-                  <el-col span={22}>
+                  <el-col span={23}>
                     <el-row gutter={10}>
                       <el-col span={6}>
                         <el-form-item label="聚合函数">
@@ -106,9 +106,9 @@ export const ArrayAggregate = connect(
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col span={2}>
-                    <VIcon class="clickable" color="#000" onClick={() => this.removeRow(index)} small>
-                      delete
+                  <el-col span={1}>
+                    <VIcon class="clickable" style="padding-top:12px" color="#666" onClick={() => this.removeRow(index)} small>
+                      close
                     </VIcon>
                   </el-col>
                 </el-row>
