@@ -148,27 +148,31 @@ export default {
       columns: [
         {
           label: '用户名',
-          prop: 'username'
+          prop: 'username',
+          minWidth: 160
         },
         {
           label: '操作时间',
           prop: 'createTime',
           dataType: 'time',
-          format: 'YYYY-MM-DD HH:mm:ss'
+          width: 180
         },
         {
           label: '操作对象',
-          prop: 'parameter1'
+          prop: 'parameter1',
+          width: 350
         },
         {
           label: '操作类型',
           prop: 'operationType',
-          slotName: 'operationType'
+          slotName: 'operationType',
+          width: 120
         },
         {
           label: '操作描述',
           prop: 'desc',
-          slotName: 'desc'
+          slotName: 'desc',
+          minWidth: 300
         }
       ]
     }

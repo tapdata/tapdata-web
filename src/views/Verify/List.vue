@@ -353,8 +353,8 @@ export default {
       mode && (where.mode = mode)
       let filter = {
         order: this.order,
-        size: size,
-        page: current,
+        limit: size,
+        skip: (current - 1) * size,
         where
       }
       this.$axios
