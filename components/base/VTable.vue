@@ -19,6 +19,9 @@
         <template v-if="item.slotName" v-slot="scope">
           <slot :name="item.slotName" :row="scope.row"></slot>
         </template>
+        <template v-if="item.dataType === 'time'" v-slot="scope">
+          <div>{{ formatTime(scope.row[item.prop], item.fmt) }}</div>
+        </template>
       </ElTableColumn>
       <div slot="empty"><slot name="empty"></slot></div>
     </ElTable>
@@ -39,6 +42,7 @@
 
 <script>
 import { delayTrigger } from '../../util'
+import moment from 'moment'
 export default {
   name: 'VTable',
   props: {
@@ -111,6 +115,9 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
       this.$emit('selection-change', val)
+    },
+    formatTime(time, fmt = 'YYYY-MM-DD HH:mm:ss') {
+      return moment(time).format(fmt)
     }
   }
 }
