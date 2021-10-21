@@ -152,7 +152,9 @@ export default {
         },
         {
           label: '操作时间',
-          prop: 'createTime'
+          prop: 'createTime',
+          dataType: 'time',
+          format: 'YYYY-MM-DD HH:mm:ss'
         },
         {
           label: '操作对象',
