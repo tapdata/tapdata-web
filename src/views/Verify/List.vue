@@ -353,17 +353,15 @@ export default {
       mode && (where.mode = mode)
       let filter = {
         order: this.order,
-        limit: size,
-        skip: (current - 1) * size,
+        size: size,
+        page: current,
         where
       }
-      Promise.all([
-        this.$axios.get('tm/api/Inspects/count?where=' + encodeURIComponent(JSON.stringify(where))),
-        this.$axios.get('tm/api/Inspects?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      ])
-        .then(([countData, data]) => {
-          this.page.total = countData.count
-          let list = data || []
+      this.$axios
+        .get('tm/api/Inspects?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(data => {
+          this.page.total = data.total
+          let list = data.items || []
           this.list = list.map(this.formatData)
           if (!list.length && data.total > 0) {
             setTimeout(() => {
