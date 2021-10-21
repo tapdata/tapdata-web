@@ -32,13 +32,13 @@ export class Aggregate extends NodeType {
             value: 'discard'
           }
         ],
-        'x-decorator': 'ElFormItem',
+        'x-decorator': 'FormItem',
         'x-component': 'Select'
       },
       aggregations: {
         type: 'array',
         'x-component': 'ArrayAggregate'
-        // 'x-decorator': 'ElFormItem',
+        // 'x-decorator': 'FormItem',
         // default: [
         //   {
         //     aggFunction: 'COUNT'
@@ -110,7 +110,7 @@ export class Aggregate extends NodeType {
         //                           value: 'COUNT'
         //                         }
         //                       ],
-        //                       'x-decorator': 'ElFormItem',
+        //                       'x-decorator': 'FormItem',
         //                       'x-component': 'Select'
         //                     }
         //                   }
@@ -125,7 +125,7 @@ export class Aggregate extends NodeType {
         //                     aggExpression: {
         //                       type: 'string',
         //                       title: '作用目标',
-        //                       'x-decorator': 'ElFormItem',
+        //                       'x-decorator': 'FormItem',
         //                       'x-component': 'Input',
         //                       'x-reactions': {
         //                         dependencies: ['..aggFunctionCol.aggFunction'],
@@ -145,13 +145,13 @@ export class Aggregate extends NodeType {
         //               type: 'string',
         //               title: '子处理名称',
         //               required: true,
-        //               'x-decorator': 'ElFormItem',
+        //               'x-decorator': 'FormItem',
         //               'x-component': 'Input'
         //             },
         //             filterPredicate: {
         //               type: 'string',
         //               title: '过滤器',
-        //               'x-decorator': 'ElFormItem',
+        //               'x-decorator': 'FormItem',
         //               'x-component': 'Input'
         //             },
         //             groupByExpression: {
@@ -167,7 +167,7 @@ export class Aggregate extends NodeType {
         //                   value: 'java_processor'
         //                 }
         //               ],
-        //               'x-decorator': 'ElFormItem',
+        //               'x-decorator': 'FormItem',
         //               'x-component': 'Select'
         //             }
         //           }

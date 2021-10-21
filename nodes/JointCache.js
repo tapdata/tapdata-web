@@ -32,7 +32,7 @@ export class JointCache extends NodeType {
             value: 'discard'
           }
         ],
-        'x-decorator': 'ElFormItem',
+        'x-decorator': 'FormItem',
         'x-component': 'Select'
         // 'x-component': 'ComboSelect'
       },
@@ -40,7 +40,7 @@ export class JointCache extends NodeType {
         type: 'array',
         title: '关联设置',
         required: true,
-        'x-decorator': 'ElFormItem',
+        'x-decorator': 'FormItem',
         'x-component': 'ArrayTable',
         items: {
           type: 'object',
@@ -73,7 +73,7 @@ export class JointCache extends NodeType {
       joinKey: {
         title: '写入路径',
         type: 'string',
-        'x-decorator': 'ElFormItem',
+        'x-decorator': 'FormItem',
         'x-component': 'Input',
         'x-component-props': {
           config: { placeholder: '请选择或创建写入路径字段' }
