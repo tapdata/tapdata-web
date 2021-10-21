@@ -8,6 +8,9 @@ body {
   height: 100%;
   background: rgba(239, 241, 244, 1);
   color: #333;
+  font-family: $fontFamily;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 p {
   margin: 0;
