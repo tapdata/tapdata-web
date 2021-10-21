@@ -16,10 +16,6 @@ export default {
   height: 100%;
   min-width: 1440px;
   font-size: 12px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
-    'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 .second-line .el-radio-button__inner {
   margin-top: 10px;
