@@ -836,7 +836,8 @@ export default {
             'app.HiveNode',
             'app.KUDUNode',
             'app.HanaNode',
-            'app.ClickHouse'
+            'app.ClickHouse',
+            'app.DamengNode'
           ].includes(cell.type)
         ) {
           postData.mappingTemplate = 'custom'
@@ -857,7 +858,7 @@ export default {
             stages[sourceId].outputLanes.push(targetId)
             //添加字段处理器
             if (postData.mappingTemplate === 'cluster-clone') {
-              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
+              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY]?.field_process
             }
           }
           if (targetId && stages[targetId]) {
@@ -1524,6 +1525,7 @@ export default {
         redis: 'app.Redis',
         hive: 'app.HiveNode',
         hana: 'app.HanaNode',
+        dameng: 'app.DamengNode',
         clickhouse: 'app.ClickHouse'
       }
       if (data) {

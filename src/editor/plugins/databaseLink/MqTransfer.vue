@@ -66,6 +66,7 @@
 
 <script>
 export default {
+  name: 'MqTransfer',
   props: {
     source: {
       type: Array,
