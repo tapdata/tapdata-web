@@ -2,18 +2,18 @@
   <div class="v-list">
     <ElTable
       v-loading="loading"
-      ref="table"
-      class="v-list__table mt-3"
-      height="100%"
-      :data="list"
       v-bind="$attrs"
       v-on="$listeners"
+      :data="list"
+      ref="table"
+      height="100%"
+      class="v-list__table mt-3"
       @selection-change="handleSelectionChange"
     >
       <ElTableColumn
         v-for="(item, index) in columns"
-        :key="index"
         v-bind="item"
+        :key="index"
         :sortable="item.sortable ? 'custom' : false"
       >
         <template v-if="item.slotName" v-slot="scope">
@@ -26,13 +26,15 @@
       <div slot="empty"><slot name="empty"></slot></div>
     </ElTable>
     <ElPagination
+      v-if="hasPagination"
       background
       class="mt-3"
-      layout="total, sizes, ->, prev, pager, next, jumper"
+      :layout="layout"
       :current-page.sync="page.current"
       :page-sizes="[10, 20, 50, 100]"
       :page-size.sync="page.size"
       :total="page.total"
+      :hide-on-single-page="hideOnSinglePage"
       @size-change="fetch(1)"
       @current-change="fetch"
     >
@@ -51,6 +53,18 @@ export default {
       default: () => {
         return []
       }
+    },
+    hasPagination: {
+      type: Boolean,
+      default: true
+    },
+    hideOnSinglePage: {
+      type: Boolean,
+      default: false
+    },
+    layout: {
+      type: String,
+      default: 'total, sizes, ->, prev, pager, next, jumper'
     },
     defaultPageSize: {
       type: Number,
