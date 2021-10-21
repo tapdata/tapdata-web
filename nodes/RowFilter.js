@@ -32,14 +32,14 @@ export class RowFilter extends NodeType {
             value: 'discard'
           }
         ],
-        'x-decorator': 'ElFormItem',
+        'x-decorator': 'FormItem',
         'x-component': 'Select'
       },
       expression: {
         title: '条件表达式',
         type: 'string',
         required: true,
-        'x-decorator': 'ElFormItem',
+        'x-decorator': 'FormItem',
         'x-component': 'JsEditor',
         'x-component-props': {
           options: { showPrintMargin: false, useWrapMode: true }
