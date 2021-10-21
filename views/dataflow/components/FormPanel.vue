@@ -40,7 +40,7 @@ import MetadataApi from 'web-core/api/MetadataInstances'
 import * as components from 'web-core/components/form'
 import { action } from '@formily/reactive'
 import { createSchemaField, FormProvider } from '@formily/vue'
-import { Form, FormItem, FormTab, Switch, Input, Checkbox, Radio } from '@formily/element'
+import { Form, FormItem, FormTab, Switch, Input, InputNumber, Checkbox, Radio, Space } from '@formily/element'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import 'web-core/components/form/styles/index.scss'
 
@@ -50,8 +50,10 @@ const { SchemaField } = createSchemaField({
     FormTab,
     Switch,
     Input,
+    InputNumber,
     Checkbox,
     Radio,
+    Space,
     ...components
   }
 })
@@ -152,6 +154,7 @@ export default {
         effects: this.useEffects,
         editable: !this.isMonitor
       })
+      console.log('schema', schema)
       this.schema = schema
     },
 
@@ -162,7 +165,7 @@ export default {
           flowEngineVersion: {
             title: this.$t('dataFlow.flowEngineVersion'),
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Select',
             default: 'Data_Flow_Engine_V1',
             enum: [
@@ -179,8 +182,8 @@ export default {
           sync_type: {
             title: '同步类型',
             type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'RadioGroup',
+            'x-decorator': 'FormItem',
+            'x-component': 'Radio.Group',
             // default: 'initial_sync+cdc',
             enum: [
               {
@@ -208,39 +211,39 @@ export default {
           cdcEngineFilter: {
             title: '启用引擎过滤',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
           },
           stopOnError: {
             title: '遇到错误停止',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
             // default: true
           },
           needToCreateIndex: {
             title: '自动创建索引',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
             // default: true
           },
           isOpenAutoDDL: {
             title: '自动创建索引',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
           },
           noPrimaryKey: {
             title: '支持无主键同步',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
           },
           isSerialMode: {
             title: '增量数据处理机制',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [
               {
@@ -256,7 +259,7 @@ export default {
           cdcFetchSize: {
             title: '增量批次读取条数',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'InputNumber',
             'x-component-props': {
               min: 1,
@@ -267,7 +270,7 @@ export default {
           distinctWriteType: {
             title: '去重写入机制',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [
               {
@@ -284,7 +287,7 @@ export default {
           emailWaring: {
             title: '发送邮件',
             type: 'object',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             properties: {
               paused: {
                 type: 'boolean',
@@ -327,7 +330,7 @@ export default {
           readShareLogMode: {
             title: '共享增量读取的模式',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [
               {
@@ -344,7 +347,7 @@ export default {
           increment: {
             title: '自动创建索引',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch',
             'x-reactions': {
               dependencies: ['sync_type'],
@@ -358,7 +361,7 @@ export default {
           isSchedule: {
             title: '定期调度任务',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch',
             'x-reactions': {
               dependencies: ['sync_type'],
@@ -372,7 +375,7 @@ export default {
           },
           cronExpression: {
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Input',
             'x-component-props': {
               placeholder: '请输入调度表达式'
@@ -389,7 +392,7 @@ export default {
           readCdcInterval: {
             title: '增量同步间隔',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Input',
             'x-component-props': {
               append: 'ms'
@@ -398,7 +401,7 @@ export default {
           readBatchSize: {
             title: '每次读取数量',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Input',
             'x-content': {
               append: 'row'
@@ -408,7 +411,7 @@ export default {
           processorConcurrency: {
             title: '处理器线程数',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'InputNumber',
             'x-component-props': {
               min: 1,
@@ -419,7 +422,7 @@ export default {
           cdcConcurrency: {
             title: '增量同步并发写入',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch',
             // default: false,
             'x-reactions': {
@@ -434,7 +437,7 @@ export default {
           transformerConcurrency: {
             title: '目标写入线程数',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'InputNumber',
             'x-component-props': {
               min: 1,
@@ -453,7 +456,7 @@ export default {
           syncPoints: {
             title: '增量采集开始时刻',
             type: 'array',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'ArrayItems',
             'x-reactions': {
               dependencies: ['sync_type'],
@@ -531,19 +534,19 @@ export default {
           cdcShareFilterOnServer: {
             title: '共享挖掘日志过滤',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
           },
           maxTransactionLength: {
             title: '事务最大时长(小时)',
             type: 'number',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'InputNumber'
           },
           lagTime: {
             title: '增量滞后判断时间设置(秒)',
             type: 'void',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Space',
             'x-reactions': {
               dependencies: ['sync_type'],
