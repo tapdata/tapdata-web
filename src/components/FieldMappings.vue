@@ -42,20 +42,28 @@ export default {
         delete taskData['rollbackTable'] //确保不会有恢复默认
       }
       this.loadingMetadata = true
-      let promise = this.$axios.post('tm/api/DataFlows/metadata', taskData)
-      promise.then(data => {
-        this.activeStep += 1
-        this.isFirst = false
-        this.fieldMappingNavData = data
+      if (taskData?.metadataMappings?.length > 0) {
+        this.fieldMappingNavData = taskData.metadataMappings
         this.loadingMetadata = false
         if (this.$refs.fieldMappingDom) {
-          this.$refs.fieldMappingDom.updateView(data) //左侧导航栏有数据再请求列表数据
+          this.$refs.fieldMappingDom.updateView(this.fieldMappingNavData) //左侧导航栏有数据再请求列表数据
         }
-      })
-      promise.catch(() => {
-        this.loadingMetadata = false
-        this.$message.error('模型推演失败')
-      })
+      } else {
+        let promise = this.$axios.post('tm/api/DataFlows/metadata', taskData)
+        promise.then(data => {
+          this.activeStep += 1
+          this.isFirst = false
+          this.fieldMappingNavData = data
+          this.loadingMetadata = false
+          if (this.$refs.fieldMappingDom) {
+            this.$refs.fieldMappingDom.updateView(data) //左侧导航栏有数据再请求列表数据
+          }
+        })
+        promise.catch(() => {
+          this.loadingMetadata = false
+          this.$message.error('接口请求失败')
+        })
+      }
     },
     /*
      * 子模块-恢复默认操作
