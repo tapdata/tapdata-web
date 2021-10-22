@@ -93,7 +93,7 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import VTable from 'web-core/components/base/VTable'
+import VTable from 'web-core/components/base/vTable'
 export default {
   components: { VTable, VIcon },
   data() {
