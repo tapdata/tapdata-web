@@ -10,19 +10,11 @@
       class="v-list__table mt-3"
       @selection-change="handleSelectionChange"
     >
-      <ElTableColumn
-        v-for="(item, index) in columns"
-        v-bind="item"
-        :key="index"
-        :sortable="item.sortable ? 'custom' : false"
-      >
-        <template v-if="item.slotName" v-slot="scope">
-          <slot :name="item.slotName" :row="scope.row"></slot>
+      <ColumnItem v-for="(item, index) in columns" :item="item" :key="index">
+        <template v-for="(key, slot) of $scopedSlots" v-slot:[slot]="scope">
+          <slot :name="slot" v-bind="scope"></slot>
         </template>
-        <template v-if="item.dataType === 'time'" v-slot="scope">
-          <div>{{ formatTime(scope.row[item.prop], item.fmt) }}</div>
-        </template>
-      </ElTableColumn>
+      </ColumnItem>
       <div slot="empty"><slot name="empty"></slot></div>
     </ElTable>
     <ElPagination
@@ -43,15 +35,61 @@
 </template>
 
 <script>
-import { delayTrigger } from '../../util'
+import ColumnItem from './Column'
+import { delayTrigger } from '../../../util'
 import moment from 'moment'
 export default {
   name: 'VTable',
+  components: { ColumnItem },
   props: {
     columns: {
       type: Array,
       default: () => {
         return []
+        // 格式如下：
+        // [
+        //   {
+        //     label: '地址信息',
+        //     prop: 'address',
+        //     children: [
+        //       {
+        //         label: '省份',
+        //         prop: 'province'
+        //       },
+        //       {
+        //         label: '城市',
+        //         prop: 'city',
+        //         children: [
+        //           {
+        //             label: '区',
+        //             prop: 'area'
+        //           },
+        //           {
+        //             label: '县',
+        //             prop: 'county'
+        //           }
+        //         ]
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     label: '用户名',
+        //     prop: 'username',
+        //     minWidth: 160
+        //   },
+        //   {
+        //     label: '操作时间',
+        //     prop: 'createTime',
+        //     dataType: 'time',
+        //     width: 180
+        //   },
+        //   {
+        //     label: '操作描述',
+        //     prop: 'desc',
+        //     slotName: 'desc',
+        //     minWidth: 300
+        //   }
+        // ]
       }
     },
     hasPagination: {
