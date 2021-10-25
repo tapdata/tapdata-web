@@ -295,7 +295,7 @@ export default {
         }
       }
       let data = await this.$axios.get('tm/api/Inspects?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      let changeList = data || []
+      let changeList = data.items || []
       let map = {}
       changeList.forEach(item => {
         map[item.id] = item
