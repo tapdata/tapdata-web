@@ -3,59 +3,7 @@
     <div class="main">
       <div class="list-operation">
         <div class="list-operation-left">
-          <el-form inline @submit.native.prevent>
-            <el-form-item label="操作类型 :" class="small">
-              <el-select v-model="searchParams.operationType" clearable @input="search()">
-                <el-option
-                  v-for="(item, key) in operationTypeOptions"
-                  :key="key"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="操作对象 : " class="small">
-              <el-input v-model="searchParams.parameter1" clearable @input="search(800)">
-                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
-              </el-input>
-            </el-form-item>
-            <el-form-item label="开始时间 : ">
-              <el-datePicker
-                v-model="searchParams.start"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="timestamp"
-                @change="search()"
-              ></el-datePicker>
-            </el-form-item>
-            <el-form-item label="结束时间 : ">
-              <el-tooltip
-                placement="top"
-                manual
-                content="【结束时间】不能小于【开始时间】"
-                popper-class="copy-tooltip"
-                :value="startGreaterThanEnd"
-              >
-                <el-datePicker
-                  v-model="searchParams.end"
-                  type="datetime"
-                  placeholder="结束时间"
-                  value-format="timestamp"
-                  @change="search()"
-                ></el-datePicker>
-              </el-tooltip>
-            </el-form-item>
-            <el-form-item label="用户名称 : " class="medium">
-              <el-input v-model="searchParams.username" clearable @input="search(800)">
-                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
-              </el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button plain class="btn-refresh" @click="table.fetch(1)">
-                <VIcon>refresh</VIcon>
-              </el-button>
-            </el-form-item>
-          </el-form>
+          <FilterBar v-model="searchParams" :items="items" @search="search" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </div>
       <VTable ref="table" row-key="id" :columns="columns" :remoteMethod="getData" @sort-change="sortChange">
@@ -93,9 +41,10 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import VTable from 'web-core/components/base/VTable'
+import FilterBar from '@/components/FilterBar'
+import VTable from 'web-core/components/base/vTable'
 export default {
-  components: { VTable, VIcon },
+  components: { VTable, VIcon, FilterBar },
   data() {
     return {
       loading: true,
@@ -109,6 +58,7 @@ export default {
       source: [], // 所有数据
       list: [], // 展示的数据
       order: 'createTime desc',
+      items: [],
       operationTypeOptions: [
         // 连接
         { label: '创建连接', value: 'connection_create', desc: '创建了连接【@{parameter1}】' },
@@ -178,15 +128,6 @@ export default {
     }
   },
   computed: {
-    // 开始时间大于结束时间
-    startGreaterThanEnd() {
-      let flag = false
-      let { start, end } = this.searchParams
-      if (start && end && start > end) {
-        flag = true
-      }
-      return flag
-    },
     table() {
       return this.$refs.table
     },
@@ -207,6 +148,7 @@ export default {
   created() {
     let query = this.$route.query
     this.searchParams = Object.assign(this.searchParams, query)
+    this.getSearchItems()
   },
   methods: {
     getModularAndOperation(operationType) {
@@ -215,9 +157,6 @@ export default {
     },
     search(debounce) {
       let { searchParams } = this
-      if (this.startGreaterThanEnd) {
-        return
-      }
       let query = {}
       for (let key in searchParams) {
         if (searchParams[key]) {
@@ -232,7 +171,37 @@ export default {
         })
       }, debounce)
     },
-
+    getSearchItems() {
+      this.items = [
+        {
+          label: '操作类型',
+          key: 'operationType',
+          type: 'select',
+          options: this.operationTypeOptions
+        },
+        {
+          label: '操作对象',
+          key: 'parameter1',
+          type: 'input'
+        },
+        {
+          label: '开始时间',
+          key: 'start',
+          type: 'datetime'
+        },
+        {
+          label: '结束时间',
+          key: 'end',
+          type: 'datetime',
+          rules: this.startGreaterThanEndFnc
+        },
+        {
+          label: '用户名称',
+          key: 'username',
+          type: 'input'
+        }
+      ]
+    },
     getData({ page }) {
       const { toRegExp } = this.$util
       let { current, size } = page
@@ -378,6 +347,14 @@ export default {
         username: ''
       }
       this.search()
+    },
+    startGreaterThanEndFnc() {
+      let flag = false
+      let { start, end } = this.searchParams
+      if (start && end && start > end) {
+        flag = '【结束时间】不能小于【开始时间】'
+      }
+      return flag
     }
   }
 }
