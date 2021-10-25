@@ -189,6 +189,7 @@ export default {
       model: {
         connectionId: '',
         type: 'hana',
+        databaseType: 'hana',
         tableName: ''
         // primaryKeys: ''
       },
