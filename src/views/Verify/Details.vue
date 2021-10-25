@@ -131,7 +131,7 @@ export default {
           }
         })
         .then(data => {
-          let inspect = data[0]
+          let inspect = data.items?.[0]
           let inspectResult = inspect.InspectResult
           this.inspect = inspect
           this.$axios
@@ -145,7 +145,7 @@ export default {
               }
             })
             .then(data => {
-              let result = data[0]
+              let result = data.items?.[0]
               if (result) {
                 if (result) {
                   this.resultInfo = result

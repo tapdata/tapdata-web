@@ -9,13 +9,12 @@ export default {
     History
   },
   methods: {
-    search(filter, where) {
-      return Promise.all([
-        this.$axios.get('tm/api/InspectResults/count?where=' + encodeURIComponent(JSON.stringify(where))),
-        this.$axios.get('tm/api/InspectResults?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      ]).then(data => {
-        return data
-      })
+    search(filter) {
+      return this.$axios
+        .get('tm/api/InspectResults?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(data => {
+          return data.items
+        })
     },
     rowClickHandler(item) {
       let url = ''
