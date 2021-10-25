@@ -556,7 +556,6 @@ export default {
     getData() {
       let data = JSON.parse(JSON.stringify(this.model))
       this.isShowTips(data.joinTable.joinKeys, this.sourceType, this.targetType)
-      console.log('link-data', data)
       if (this.cell) {
         // 内存缓存存储tableName
         let sourceCell = this.cell.getSourceCell(),

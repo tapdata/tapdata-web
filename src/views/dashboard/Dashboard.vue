@@ -310,11 +310,12 @@ export default {
         { name: 'ERROR', value: 'error' }
       ],
       colorMap: {
-        running: '#8DC47A',
-        paused: '#FDB01C',
-        draft: '#CCC',
-        error: '#F97066',
-        stopping: '#409EFF'
+        running: '#84AD69',
+        paused: '#DB7B38',
+        draft: '#2C65FF',
+        error: '#E06C6C',
+        stopping: '#E6B450',
+        scheduled: '#4AA3FF'
       },
       colorServeMap: {
         starting: '#409EFF',
@@ -340,11 +341,8 @@ export default {
           containLabel: true,
           bottom: '1%'
         },
-
-        color: ['#8DC47A', '#FDB01C', '#F97066', '#CCC', '#409EFF'],
         series: [
           {
-            // name: this.$t('dataFlow.status.running'),
             data: [],
             type: 'pie',
             labelLine: {
@@ -363,12 +361,6 @@ export default {
               }
             },
             radius: ['40%', '70%']
-            // itemStyle: {
-            // 	color: '#8DC47A'
-            // },
-            // lineStyle: {
-            // 	color: '#2ba7c3'
-            // }
           }
         ]
       },
@@ -616,7 +608,6 @@ export default {
         this.serverProcess.tableData = res.data
       })
     },
-
     // 获取dataflows数据
     getDataFlowApi() {
       let self = this
@@ -624,11 +615,18 @@ export default {
       DataFlows.chart()
         .then(res => {
           if (res && res.data) {
+            let setColor = list => {
+              return list.map(item => {
+                item.itemStyle = {
+                  color: this.colorMap[item.label]
+                }
+                return item
+              })
+            }
             self.migrationTaskList = self.handleDataProcessing(res.data.chart1)
             self.syncTaskList = self.handleDataProcessing(res.data.chart5)
-
-            self.allsyncJobsEchart.series[0].data = self.syncTaskList
-            self.allMigrationJobsEchart.series[0].data = self.migrationTaskList
+            self.allsyncJobsEchart.series[0].data = setColor(self.syncTaskList)
+            self.allMigrationJobsEchart.series[0].data = setColor(self.migrationTaskList)
             self.syncTotal = res.data.chart5.totalDataFlows
             self.migrationTotal = res.data.chart1.totalDataFlows
 

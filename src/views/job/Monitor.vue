@@ -45,6 +45,7 @@
               'kudu',
               'kafka',
               'hana',
+              'dameng',
               'clickhouse'
             ].includes(stageType)
           "

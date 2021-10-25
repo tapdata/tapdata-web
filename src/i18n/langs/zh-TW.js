@@ -29,11 +29,14 @@ export default {
   task_settings_cdc_sync_point_date: '【任務設置】增量採集開始時刻，請選擇時間',
 
   // 数据源
-  connection_form_tidb_server: 'TiDB地址',
-  connection_tidb_none_server: 'TiBD地址不能為空',
+  connection_form_tidb_server: 'PDServer 地址',
+  connection_tidb_none_server: 'PDServer 地址不能為空',
 
   connection_list_column_schema_status: 'Schema加載狀態',
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
+
+  connection_form_custom_connection_before_operate: '前置操作',
+  connection_form_custom_connection_after_operate: '後置操作',
 
   // Dag
   dag_data_node_label_dameng: 'Dameng節點',

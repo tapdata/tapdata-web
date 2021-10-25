@@ -52,12 +52,9 @@ export const customNodeConfig = {
           'app.Dummy',
           'app.Collection',
           'app.Table',
-          'app.HiveNode',
-          'app.HanaNode',
           'app.FieldProcess',
           'app.Script',
-          'app.DataFilter',
-          'app.MemCache'
+          'app.DataFilter'
         ].includes(sourceCell.get('type'))
       },
 

@@ -4,7 +4,7 @@
 			<VIcon class="headIcon color-primary">arrow-right-circle</VIcon>
 			<span class="txt">{{ $t('editor.nodeSettings') }}</span>
 		</head> -->
-    <div class="nodeBody">
+    <div class="nodeBody flex flex-column">
       <!-- <div class="head-btns">
 				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
 					{{ $t('dataFlow.button.viewMonitoring') }}
@@ -35,8 +35,8 @@
         </el-form-item>
       </el-form>
 
-      <div class="database-info" v-if="model.connectionId">
-        <ul class="info-box">
+      <div class="database-info flex flex-column flex-1 overflow-hidden" v-if="model.connectionId">
+        <ul class="info-box flex-shrink-0">
           <!-- <li>
 						<span class="label">{{ $t('editor.cell.data_node.database.source') }}:</span>
 						<span class="text">{{ databaseInfo.connection_type }}</span>
@@ -90,16 +90,20 @@
           </li>
         </ul>
 
-        <div class="info-table" v-if="model.connectionId">
+        <div class="info-table flex-1 overflow-hidden" v-if="model.connectionId">
           <div class="head-text">
             {{ $t('editor.cell.data_node.database.includeTable') }}
             <span>{{ databaseTables.length }}</span>
           </div>
           <ul class="table-box" v-loading="tableLoading">
-            <li v-for="item in databaseTables" :key="item" class="list">
-              <i class="iconfont icon-table2"></i>
-              <span class="tableName">{{ item }}</span>
-            </li>
+            <RecycleScroller :item-size="36" :buffer="50" :items="databaseTables" page-mode>
+              <template #default="{ item }">
+                <li :key="item" class="list">
+                  <i class="iconfont icon-table2"></i>
+                  <span class="tableName">{{ item }}</span>
+                </li>
+              </template>
+            </RecycleScroller>
           </ul>
         </div>
       </div>
@@ -110,6 +114,8 @@
 <script>
 import factory from '../../../api/factory'
 import _ from 'lodash'
+import { RecycleScroller } from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 // import DatabaseForm from '../../../view/job/components/DatabaseForm/DatabaseForm';
 
 let connections = factory('connections')
@@ -117,9 +123,9 @@ let connections = factory('connections')
 export default {
   name: 'Database',
 
-  // components: {
-  // 	DatabaseForm
-  // },
+  components: {
+    RecycleScroller
+  },
 
   props: {
     connection_type: {
@@ -515,7 +521,6 @@ export default {
   }
 
   .database-info {
-    height: calc(100% - 61px);
     .info-box {
       padding: 10px 20px;
       box-sizing: border-box;
@@ -537,7 +542,6 @@ export default {
       }
     }
     .info-table {
-      height: calc(100% - 180px);
       margin-top: 10px;
       border: 1px solid #dedee4;
       .head-text {

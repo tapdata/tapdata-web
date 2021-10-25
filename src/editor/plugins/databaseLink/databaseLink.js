@@ -6,7 +6,7 @@
 import _ from 'lodash'
 import joint from '../../lib/rappid/rappid'
 import { options } from '../../lib/rappid/config'
-import databaseLinkAttribute from './databaseLinkAttribute'
+import DatabaseLinkAttribute from './DatabaseLinkAttribute'
 import { FORM_DATA_KEY } from '../../constants'
 import log from '../../../log'
 import i18n from '@/i18n'
@@ -319,6 +319,6 @@ export const databaseLink = {
    * @type {null}
    */
   settingFormConfig: {
-    component: databaseLinkAttribute
+    component: DatabaseLinkAttribute
   }
 }

@@ -69,7 +69,17 @@
           required
         >
           <div class="flex-block">
-            <FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect>
+            <VirtualSelect
+              v-model="model.tableName"
+              size="mini"
+              filterable
+              clearable
+              :item-size="34"
+              :items="schemaSelectConfig.options"
+              :loading="schemaSelectConfig.loading"
+              :disabled="schemaSelectConfig.loading"
+              :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
+            />
             <el-tooltip
               class="item"
               effect="light"
@@ -246,13 +256,15 @@ import _ from 'lodash'
 import ws from '@/api/ws'
 import factory from '@/api/factory'
 import VIcon from '@/components/VIcon'
+import VirtualSelect from 'web-core/components/virtual-select'
+
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editor = null;
 let tempSchemas = []
 export default {
   name: 'Table',
-  components: { Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder, VIcon, FieldMapping },
+  components: { VirtualSelect, Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder, VIcon, FieldMapping },
   props: {
     database_types: {
       type: Array,
@@ -303,7 +315,6 @@ export default {
       immediate: true,
       handler() {
         this.tableIsLink()
-        this.handlerSchemaChange()
         //切换table 才清空过滤
         if (this.schemaSelectConfig.options.length > 0 && this.model.tableName) {
           this.model.custFields.length = 0
@@ -508,6 +519,7 @@ export default {
         tempSchemas.forEach(item => {
           if (item.original_name === this.model.tableName) {
             this.tableNameId = item.id
+            this.handlerSchemaChange()
           }
         })
       }
