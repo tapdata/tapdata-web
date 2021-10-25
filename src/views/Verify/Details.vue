@@ -178,8 +178,8 @@ export default {
         let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
         let where = {
           taskId,
-          inspect_id: { regexp: `^${this.inspect.id}$` },
-          inspectResultId: { regexp: `^${this.resultInfo.id}$` }
+          inspect_id: this.inspect.id,
+          inspectResultId: this.resultInfo.id
         }
         let filter = {
           where,
