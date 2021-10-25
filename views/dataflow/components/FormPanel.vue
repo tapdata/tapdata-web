@@ -40,7 +40,7 @@ import MetadataApi from 'web-core/api/MetadataInstances'
 import * as components from 'web-core/components/form'
 import { action } from '@formily/reactive'
 import { createSchemaField, FormProvider } from '@formily/vue'
-import { Form, FormItem, FormTab, Switch, Input, Checkbox, Radio } from '@formily/element'
+import { Form, FormItem, FormTab, PreviewText, ArrayTable, Switch, Input, Checkbox, Radio } from '@formily/element'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import 'web-core/components/form/styles/index.scss'
 
@@ -48,6 +48,8 @@ const { SchemaField } = createSchemaField({
   components: {
     FormItem,
     FormTab,
+    ArrayTable,
+    PreviewText,
     Switch,
     Input,
     Checkbox,
