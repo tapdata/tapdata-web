@@ -10,7 +10,6 @@ export default {
   },
   methods: {
     search(filter) {
-      console.log('filter', filter)
       if (filter?.where?.inspect_id?.regexp) {
         filter.where.inspect_id = filter.where.inspect_id.regexp.replace(/^\^(.*)\$$/, '$1')
       }
