@@ -33,7 +33,10 @@ export class Aggregate extends NodeType {
           }
         ],
         'x-decorator': 'FormItem',
-        'x-component': 'Select'
+        'x-component': 'Select',
+        'x-decorator-props': {
+          wrapperWidth: 240
+        },
       },
       aggregations: {
         type: 'array',

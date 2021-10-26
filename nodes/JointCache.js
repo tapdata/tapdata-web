@@ -32,16 +32,17 @@ export class JointCache extends NodeType {
           }
         ],
         'x-decorator': 'FormItem',
-        'x-component': 'Select'
+        'x-component': 'Select',
+        'x-decorator-props': {
+          wrapperWidth: 240
+        }
         // 'x-component': 'ComboSelect'
       },
-      joinSettings:{
+      joinSettings: {
         type: 'array',
         title: '关联设置',
         required: true,
-        default:[
-          {cacheKey: 1,}
-        ],
+        default: [{ cacheKey: 1 }],
         'x-decorator': 'FormItem',
         'x-component': 'ArrayTable',
         items: {
@@ -55,8 +56,8 @@ export class JointCache extends NodeType {
                 cacheKey: {
                   type: 'string',
                   'x-component': 'PreviewText.Input'
-                },
-              },
+                }
+              }
             },
             column2: {
               type: 'void',
@@ -90,11 +91,11 @@ export class JointCache extends NodeType {
                           value: 'COUNT'
                         }
                       ],
-                      'x-component': 'Select',
+                      'x-component': 'Select'
                     }
                   }
-                },
-              },
+                }
+              }
             }
           }
         }
@@ -106,7 +107,7 @@ export class JointCache extends NodeType {
         'x-component': 'Input',
         'x-component-props': {
           config: { placeholder: '请选择或创建写入路径字段' }
-        },
+        }
       }
     }
   }
