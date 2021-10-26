@@ -128,6 +128,8 @@ export default {
         this.dataFlow['rollback'] = rollback
         //删除整个字段处理器
         this.field_process = []
+        //清空表改名 字段改名
+        this.clearTransform()
       } else if (rollbackTable) {
         this.dataFlow['rollback'] = rollback
         this.dataFlow['rollbackTable'] = rollbackTable
@@ -146,8 +148,6 @@ export default {
       if (this.mappingType && this.mappingType === 'cluster-clone') {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
       }
-      //清空表改名 字段改名
-      this.clearTransform()
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       return promise?.data
     },
