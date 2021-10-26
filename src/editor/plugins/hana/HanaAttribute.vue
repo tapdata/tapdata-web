@@ -156,6 +156,7 @@ import Entity from '../link/Entity'
 import { convertSchemaToTreeData } from '../../util/Schema'
 import ClipButton from '@/components/ClipButton'
 import CreateTable from '@/components/dialog/createTable'
+import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
 const connections = factory('connections')
@@ -163,7 +164,7 @@ const connections = factory('connections')
 // let editorMonitor = null;
 export default {
   name: 'HanaNode',
-  components: { Entity, ClipButton, CreateTable },
+  components: { Entity, ClipButton, CreateTable, FieldMapping },
   data() {
     return {
       disabled: false,
