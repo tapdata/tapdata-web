@@ -38,7 +38,8 @@
           'kafka',
           'dameng',
           'greenplum',
-          'mq'
+          'mq',
+          'clickhouse'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
         @select="createConnection"
