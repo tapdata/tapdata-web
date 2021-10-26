@@ -552,7 +552,7 @@ export default {
               this.fieldProcessMethod('all')
                 .then(data => {
                   this.$emit('update-nav', data)
-                  this.updateData('rollback')
+                  this.updateData('rollbackAll')
                 })
                 .finally(() => {
                   this.loadingPage = false
@@ -627,7 +627,7 @@ export default {
               this.fieldProcessMethod('table', name, id)
                 .then(data => {
                   this.$emit('update-nav', data)
-                  this.updateData('rollback')
+                  this.updateData()
                 })
                 .finally(() => {
                   this.loadingPage = false
