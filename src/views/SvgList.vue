@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import TheHeader from '@/components/TheHeader'
+import TheHeader from '@/components/the-header'
 import VIcon from '@/components/VIcon'
 const svgFiles = require.context('@/assets/icons/svg', false, /\.svg$/).keys()
 const colorSvgFiles = require.context('@/assets/icons/colorSvg', false, /\.svg$/).keys()

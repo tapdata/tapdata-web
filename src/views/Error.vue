@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import TheHeader from '@/components/TheHeader'
+import TheHeader from '@/components/the-header'
 
 export default {
   components: {

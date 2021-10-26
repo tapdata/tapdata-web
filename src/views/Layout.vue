@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import TheHeader from '@/components/TheHeader'
+import TheHeader from '@/components/the-header'
 import VIcon from '@/components/VIcon'
 export default {
   components: {

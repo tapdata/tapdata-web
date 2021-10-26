@@ -11,7 +11,7 @@
   </section>
 </template>
 <script>
-import TheHeader from '@/components/TheHeader'
+import TheHeader from '@/components/the-header'
 import DownInstall from './DownInstall'
 import VersionDownload from './VersionDownload'
 import AgentList from './AgentList'
