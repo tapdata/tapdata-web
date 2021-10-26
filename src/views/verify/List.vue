@@ -89,7 +89,7 @@
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
               <VIcon size="18" class="color-success">loading</VIcon>
-              <span>{{ statusMap[scope.row.status].text }}</span>
+              <span>{{ getStatusText(scope.row) }}</span>
             </div>
             <div v-else>-</div>
             <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="14"
@@ -475,6 +475,9 @@ export default {
           )
         }
       })
+    },
+    getStatusText(row) {
+      return this.statusMap[row.status]?.text
     }
   }
 }
