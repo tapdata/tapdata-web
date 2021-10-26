@@ -62,8 +62,6 @@ export const ArrayAggregate = connect(
         }
       },
 
-
-
       render() {
         const { aggregations } = this
         return (
@@ -71,10 +69,10 @@ export const ArrayAggregate = connect(
             {aggregations.map((item, index) => {
               // eslint-disable-next-line prettier/prettier
               return (
-                <el-row gutter={20} style="margin: 0 0 20px;border: 1px solid #C8CDCF">
+                <el-row gutter={20} style="width: 770px; margin: 0 0 20px;border: 1px solid #C8CDCF">
                     <el-col span={23}>
                       <el-row gutter={10}>
-                        <el-col span={6}>
+                        <el-col span={8}>
                           <FormItem title="聚合函数" label="聚合函数">
                             <el-select
                               v-model={item.aggFunction}
@@ -87,7 +85,7 @@ export const ArrayAggregate = connect(
                             </el-select>
                           </FormItem>
                         </el-col>
-                        <el-col span={18}>
+                        <el-col span={16}>
                           <FormItem title="xxx" label="作用目标">
                             <el-input
                               v-model={item.aggExpression}
@@ -117,7 +115,6 @@ export const ArrayAggregate = connect(
                       </VIcon>
                     </el-col>
                   </el-row>
-
               )
             })}
             <el-button type="text" onClick={() => this.addRow()}>

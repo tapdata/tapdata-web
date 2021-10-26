@@ -32,7 +32,10 @@ export class JointCache extends NodeType {
           }
         ],
         'x-decorator': 'FormItem',
-        'x-component': 'Select'
+        'x-component': 'Select',
+        'x-decorator-props': {
+          wrapperWidth: 240
+        }
         // 'x-component': 'ComboSelect'
       },
       joinSettings:{
