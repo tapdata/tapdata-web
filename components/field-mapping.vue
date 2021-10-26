@@ -497,6 +497,7 @@ export default {
           this.updateMetadata(type, data)
             .then(data => {
               this.$emit('update-nav', data)
+              this.selectRow = data[0]
             })
             .finally(() => {
               this.loadingPage = false
@@ -621,12 +622,6 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           this.loadingPage = true
-          this.form = {
-            tableNameTransform: '',
-            fieldsNameTransform: '',
-            table_prefix: '',
-            table_suffix: ''
-          }
           this.$nextTick(() => {
             this.fieldProcessMethod &&
               this.fieldProcessMethod('table', name, id)
