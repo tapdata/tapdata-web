@@ -14,6 +14,11 @@
   </div>
 </template>
 <script>
+const langMap = {
+  sc: 'zh-CN',
+  tc: 'zh-TW',
+  en: 'en'
+}
 const Languages = {
   sc: '中文 (简)',
   en: 'English',
@@ -31,7 +36,7 @@ export default {
   methods: {
     langChange(lang) {
       localStorage.setItem('tapdata_localize_lang', lang)
-      this.$i18n.locale = lang
+      this.$i18n.locale = langMap[lang]
       this.lang = lang
     }
   }
