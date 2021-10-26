@@ -229,7 +229,7 @@ export default {
         })
       }
       //是否有批量字段改名操作
-      if (type === 'rollback') {
+      if (type === 'rollbackAll') {
         this.clearTransform()
       }
       let fieldsNameTransform = this.checkTransform()
