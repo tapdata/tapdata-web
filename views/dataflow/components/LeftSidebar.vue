@@ -150,7 +150,7 @@ import BaseNode from 'web-core/views/dataflow/components/BaseNode'
 import { debounce, throttle } from 'lodash'
 import ConnectionsApi from 'web-core/api/Connections'
 import MetadataApi from 'web-core/api/MetadataInstances'
-import Form from '@/views/Connection/Form'
+import Form from '@/views/connection/Form'
 
 import { Select } from 'element-ui'
 // import ElScrollbar from 'element-ui/packages/scrollbar'
