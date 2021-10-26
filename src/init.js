@@ -13,7 +13,7 @@ import { Message } from 'element-ui'
 import settings from './settings'
 import TapdataWebCore from 'web-core'
 import i18n from './i18n'
-import Purchase from '@/views/Purchase/Purchase'
+import Purchase from '@/views/purchase/Purchase'
 import store from '@/store'
 
 Vue.config.productionTip = false
