@@ -2,6 +2,9 @@ import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from '@/components/VIcon'
+import { uuid } from './util'
+import styles from './fieldProessor.scss'
+import de from 'element-ui/src/locale/lang/de'
 
 export const FieldProcess = connect(
   observer(
@@ -40,6 +43,7 @@ export const FieldProcess = connect(
               source: 'auto',
               unique: true,
               key: 'PRI',
+              desc: '描述1',
               table_name: 'eb_rule_notice_type'
             },
             {
@@ -65,7 +69,8 @@ export const FieldProcess = connect(
               source: 'auto',
               unique: true,
               key: 'PRI',
-              table_name: 'eb_rule_notice_type'
+              table_name: 'eb_rule_notice_type',
+              desc: '描述2'
             }
           ],
           nodeKey: '',
@@ -106,6 +111,7 @@ export const FieldProcess = connect(
           operations: [],
           scripts: [],
           originalFields: [],
+          checkAll: false,
           /*字段处理器支持功能类型*/
           REMOVE_OPS_TPL: {
             id: '',
@@ -149,9 +155,17 @@ export const FieldProcess = connect(
         const { fields } = this
         this.originalFields = JSON.parse(JSON.stringify(this.fields))
         return (
-          <div className="field-processor-warp">
-            <div className="field-operation-bar">
-              <VIcon class="clickable" color="#666" small onClick={() => this.handleAllToUpperCase()}>
+          <div class="field-processor-tree-warp  pt-5 pb-5">
+            <div class="field-processor-operation">
+              <el-checkbox
+                class="check-all"
+                v-model={this.checkAll}
+                onChange={() => this.handleCheckAllChange()}
+              ></el-checkbox>
+              <span class="field-name field-text">字段名称</span>
+              <span class="field-desc field-text">字段描述</span>
+              <span class="field-type field-text">类型</span>
+              <VIcon class="clickable ml-5" small onClick={() => this.handleAllToUpperCase()}>
                 toUpperCase
               </VIcon>
               <VIcon class="clickable ml-5" small onClick={() => this.handleAllToLowerCase()}>
@@ -174,44 +188,54 @@ export const FieldProcess = connect(
                 class="field-processor-tree"
                 scopedSlots={{
                   default: ({ node, data }) => (
-                    <span class="custom-tree-node" slot-scope="{ node, data }">
-                      <el-tooltip class="item" effect="dark" placement="left-start">
+                    <span class="tree-node" slot-scope="{ node, data }">
+                      <el-tooltip class="tree-tooltip" effect="dark" placement="left-start">
                         <span slot="content">
                           {data.original_field_name}
                           <br />
                           <span v-if="data.original_javaType">{data.original_type}</span>
                           <div v-if="data.comment">{data.comment}</div>
                         </span>
-                        <span class="e-label">
+                        <span
+                          class={[
+                            this.isRename(data.id) ? 'active__name' : '',
+                            this.isCreate(data.id) ? 'active__name' : '',
+                            'tree-label',
+                            'tree-item'
+                          ]}
+                        >
                           <el-input v-model={data.label} onBlur={() => this.handleRename(node, data)} />
                         </span>
                       </el-tooltip>
+                      <span class="tree-item">{data.desc}</span>
                       <el-select
                         v-model={data.data_type}
                         size="mini"
-                        class="e-select"
-                        onChange={() => this.changeFieldType(node, data)}
+                        class={[this.isConvertDataType(data.id) ? 'active__type' : '', 'tree-select', 'tree-item']}
+                        onChange={() => this.handleDataType(node, data)}
                       >
                         {this.selectList.map(op => (
                           <el-option label={op.label} value={op.value} key={op.value} />
                         ))}
                       </el-select>
-                      <VIcon class="clickable ml-5" small>
-                        js
-                      </VIcon>
-                      <VIcon class="clickable ml-5" small>
-                        delete
-                      </VIcon>
-                      <VIcon class="clickable ml-5" small onClick={() => this.handleReset(node, data)}>
-                        revoke
-                      </VIcon>
-                      <VIcon
-                        class="clickable ml-5"
-                        small
-                        onClick={() => this.handleCreate('create_sibling', node, data)}
-                      >
-                        add
-                      </VIcon>
+                      <span class="tree-item tree-desc">
+                        <VIcon class="clickable ml-5" small>
+                          js
+                        </VIcon>
+                        <VIcon class="clickable ml-5" small>
+                          delete
+                        </VIcon>
+                        <VIcon class="clickable ml-5" small onClick={() => this.handleReset(node, data)}>
+                          revoke
+                        </VIcon>
+                        <VIcon
+                          class="clickable ml-5"
+                          small
+                          onClick={() => this.handleCreate('create_sibling', node, data)}
+                        >
+                          add
+                        </VIcon>
+                      </span>
                     </span>
                   )
                 }}
@@ -355,55 +379,35 @@ export const FieldProcess = connect(
           fn(fields)
           return field
         },
-        handleAllDelete() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          this.checkAll = false
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              this.handleDelete(node, node.data)
-            })
-          }
-        },
-        handleAllToUpperCase() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          this.checkAll = false
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              node.data.label = node.data.label.toUpperCase()
-              this.handleRename(node, node.data)
-            })
-          }
-        },
-        handleAllToLowerCase() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          this.checkAll = false
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              node.data.label = node.data.label.toLowerCase()
-              this.handleRename(node, node.data)
-            })
-          }
-        },
-        handleCheckAllChange(val) {
-          if (val) {
-            this.$refs.tree.setCheckedNodes(this.schema.fields)
+        handleDataType(node, data) {
+          console.log('SchemaEditor.handleDataType', node, data)
+          let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
+          if (createOps && createOps.length > 0) {
+            let op = createOps[0]
+            op.javaType = data.type
           } else {
-            this.$refs.tree.setCheckedKeys([])
-          }
-        },
-        handleAllReset() {
-          let ids = this.$refs.tree.getCheckedNodes(false, true)
-          this.checkAll = false
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              if (node) {
-                this.handleReset(node, node.data)
-              }
-            })
+            let nativeData = this.getNativeData(data.id)
+            let ops = this.operations.filter(v => v.id === data.id && v.op === 'CONVERT')
+            let op
+            if (ops.length === 0) {
+              op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
+                id: data.id,
+                field: nativeData.original_field_name,
+                operand: data.type,
+                originalDataType: nativeData.type,
+                table_name: data.table_name,
+                type: data.type,
+                primary_key_position: data.primary_key_position,
+                color: data.color,
+                label: data.label
+              })
+              this.operations.push(op)
+            } else {
+              op = ops[0]
+              op.type = data.type
+              op.operand = data.type
+              op.originalDataType = nativeData.type
+            }
           }
         },
         handleReset(node, data) {
@@ -508,7 +512,6 @@ export const FieldProcess = connect(
             level: level - 1
           })
           this.operations.push(newFieldOperation)
-          this.$emit('dataChanged', this.model)
 
           let newNodeData = {
             id: fieldId,
@@ -578,6 +581,58 @@ export const FieldProcess = connect(
             self.scriptDialog.fn = function () {}
             self.scriptDialog.script = ''
             self.$emit('dataChanged', self.model)
+          }
+        },
+        handleAllDelete() {
+          let ids = this.$refs.tree.getCheckedNodes()
+          this.checkAll = false
+          if (ids && ids.length > 0) {
+            ids.map(id => {
+              let node = this.$refs.tree.getNode(id)
+              this.handleDelete(node, node.data)
+            })
+          }
+        },
+        handleAllToUpperCase() {
+          let ids = this.$refs.tree.getCheckedNodes()
+          this.checkAll = false
+          if (ids && ids.length > 0) {
+            ids.map(id => {
+              let node = this.$refs.tree.getNode(id)
+              node.data.label = node.data.label.toUpperCase()
+              this.handleRename(node, node.data)
+            })
+          }
+        },
+        handleAllToLowerCase() {
+          let ids = this.$refs.tree.getCheckedNodes()
+          this.checkAll = false
+          if (ids && ids.length > 0) {
+            ids.map(id => {
+              let node = this.$refs.tree.getNode(id)
+              node.data.label = node.data.label.toLowerCase()
+              this.handleRename(node, node.data)
+            })
+          }
+        },
+        handleAllReset() {
+          let ids = this.$refs.tree.getCheckedNodes(false, true)
+          this.checkAll = false
+          if (ids && ids.length > 0) {
+            ids.map(id => {
+              let node = this.$refs.tree.getNode(id)
+              if (node) {
+                this.handleReset(node, node.data)
+              }
+            })
+          }
+        },
+        handleCheckAllChange(val) {
+          debugger
+          if (val) {
+            this.$refs.tree.setCheckedNodes(this.fields)
+          } else {
+            this.$refs.tree.setCheckedKeys([])
           }
         }
       }

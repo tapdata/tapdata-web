@@ -1,0 +1,85 @@
+.field-processor-tree-warp {
+  border: 1px solid;
+  border-color: map-get($borderColor, normal);
+  .clickable{
+    color: map-get($color, primary);
+  }
+  .active__name{
+    .el-input__inner{
+      color: map-get($color, primary);
+    }
+  }
+  .active__type {
+    .el-input__inner{
+      color: map-get($color, primary);
+    }
+  }
+  .check-all{
+    padding-left: 24px;
+  }
+  .field-text{
+    display: inline-block;
+    font-weight: bold;
+  }
+  .field-name{
+    width: 484px;
+    padding-left: 24px;
+  }
+  .field-desc{
+    width: 210px;
+  }
+  .field-type{
+    width:240px;
+  }
+  .field-processor-tree {
+    .el-input__inner{
+      border: none;
+    }
+    .el-input__prefix, .el-input__suffix .el-select__caret{
+      color: map-get($color, primary);
+    }
+    .el-tree-node__content:hover{
+      background-color: #fff;
+    }
+    .tree-item{
+      display: inline-block;
+      width: 200px;
+    }
+    .tree-label{
+      width: 500px;
+    }
+    .tree-select{
+      width: 150px;
+    }
+    .tree-desc{
+      width: 243px;
+      text-align: right;
+    }
+      .e-triangle {
+        width: 0;
+        height: 0;
+        border-right: 5px solid transparent;
+        border-left: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+
+        -webkit-transform: rotate(-45deg);
+        -moz-transform: rotate(-45deg);
+        -ms-transform: rotate(-45deg);
+        -o-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+
+        position: relative;
+        left: -3px;
+        top: -11px;
+      }
+      .el-icon-more {
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        transform: rotate(90deg);
+      }
+    }
+}
+
+
