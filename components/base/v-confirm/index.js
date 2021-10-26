@@ -1,4 +1,4 @@
-import msgboxVue from './main.vue'
+import msgboxVue from './Main.vue'
 import Vue from 'vue'
 const MessageBoxConstructor = Vue.extend(msgboxVue)
 
