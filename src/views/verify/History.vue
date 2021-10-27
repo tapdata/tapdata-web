@@ -22,7 +22,7 @@ export default {
       return this.$axios
         .get('tm/api/InspectResults?filter=' + encodeURIComponent(JSON.stringify(filter)))
         .then(data => {
-          return data.items
+          return [{ count: data.total }, data.items]
         })
     },
     rowClickHandler(item) {
