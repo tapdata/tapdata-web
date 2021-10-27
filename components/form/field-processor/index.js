@@ -3,7 +3,8 @@ import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from '@/components/VIcon'
 import { uuid } from './util'
-import styles from './fieldProessor.scss'
+// import styles from './fieldProessor.scss'
+// import de from 'element-ui/src/locale/lang/de'
 
 export const FieldProcess = connect(
   observer(
@@ -327,7 +328,7 @@ export const FieldProcess = connect(
          * @node 当前tree
          * @data 当前数据*/
         handleRename(node, data) {
-          console.log('fieldProcessor.handleRename', node, data)
+          console.log('fieldProcessor.handleRename', node, data) //eslint-disable-line
           let nativeData = this.getNativeData(data.id) //查找初始schema
           //该字段若是已被删除 不可再重命名
           if (!data || data.label === '') {
@@ -362,6 +363,7 @@ export const FieldProcess = connect(
               }
             }
           } else {
+            //eslint-disable-next-line
             console.log(
               'Entity1.handlerRename(node,data,nativeData,operations',
               node,
@@ -403,7 +405,7 @@ export const FieldProcess = connect(
               }
             }
           }
-          console.log(this.operations)
+          console.log(this.operations) //eslint-disable-line
         },
         handleExistsName(node, data) {
           // 改名前查找同级中是否重名，若有则return且还原改动并提示
@@ -438,7 +440,7 @@ export const FieldProcess = connect(
           return field
         },
         handleDataType(node, data) {
-          console.log('SchemaEditor.handleDataType', node, data)
+          console.log('SchemaEditor.handleDataType', node, data) //eslint-disable-line
           let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
           if (createOps && createOps.length > 0) {
             let op = createOps[0]
@@ -469,7 +471,7 @@ export const FieldProcess = connect(
           }
         },
         handleReset(node, data) {
-          console.log('SchemaEditor.handleReset', node, data)
+          console.log('SchemaEditor.handleReset', node, data) //eslint-disable-line
           let parentId = node.parent.data.id
           let dataLabel = JSON.parse(JSON.stringify(data.label))
           let indexId = this.operations.filter(v => v.op === 'REMOVE' && v.id === parentId)
@@ -479,7 +481,6 @@ export const FieldProcess = connect(
           let self = this
           let fn = function (node, data) {
             let nativeData = self.getNativeData(data.id)
-            console.log(nativeData)
             for (let i = 0; i < node.childNodes.length; i++) {
               let childNode = node.childNodes[i]
               fn(childNode, childNode.data)
@@ -539,7 +540,7 @@ export const FieldProcess = connect(
          * @param data
          */
         handleCreate(action, node, data) {
-          console.log('SchemaEditor.handleCreate', action, node, data)
+          console.log('SchemaEditor.handleCreate', action, node, data) //eslint-disable-line
           let parentFieldName = ''
           let level = node.level
           if (action === 'create_sibling') {
@@ -633,7 +634,7 @@ export const FieldProcess = connect(
               self.scripts.push(script)
             }
 
-            console.log('SchemaEditor.handleScript', node, data, script, self.scripts)
+            console.log('SchemaEditor.handleScript', node, data, script, self.scripts) //eslint-disable-line
             self.$nextTick(() => {
               self.scriptDialog.open = false
             })

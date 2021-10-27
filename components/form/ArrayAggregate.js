@@ -3,7 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 // import * as components from 'web-core/components/form'
 // import { Form, FormItem, Switch, Input, Checkbox, Radio} from '@formily/element'
-import { FormBaseItem  as FormItem } from '@formily/element'
+import { FormBaseItem as FormItem } from '@formily/element'
 import VIcon from '@/components/VIcon'
 
 export const ArrayAggregate = connect(
@@ -70,51 +70,57 @@ export const ArrayAggregate = connect(
               // eslint-disable-next-line prettier/prettier
               return (
                 <el-row gutter={20} style="width: 770px; margin: 0 0 20px;border: 1px solid #C8CDCF">
-                    <el-col span={23}>
-                      <el-row gutter={10}>
-                        <el-col span={8}>
-                          <FormItem title="聚合函数" label="聚合函数">
-                            <el-select
-                              v-model={item.aggFunction}
-                              size="mini"
-                              onChange={() => this.changeAggFunction(item)}
-                            >
-                              {this.selectList.map(op => (
-                                <el-option label={op.label} value={op.value} key={op.value} />
-                              ))}
-                            </el-select>
-                          </FormItem>
-                        </el-col>
-                        <el-col span={16}>
-                          <FormItem title="xxx" label="作用目标">
-                            <el-input
-                              v-model={item.aggExpression}
-                              size="mini"
-                              disabled={item.aggFunction === 'COUNT'}
-                            ></el-input>
-                          </FormItem>
-                        </el-col>
-                      </el-row>
-                      <FormItem label="子处理名称">
-                        <el-input v-model={item.name} size="mini"></el-input>
-                      </FormItem>
-                      <FormItem label="过滤器">
-                        <el-input v-model={item.filterPredicate} size="mini" type="textarea"></el-input>
-                      </FormItem>
-                      <FormItem label="分组字段">
-                        <el-select v-model={item.groupByExpression} size="mini">
-                          {this.groupList.map(op => (
-                            <el-option label={op.label} value={op.value} key={op.value} />
-                          ))}
-                        </el-select>
-                      </FormItem>
-                    </el-col>
-                    <el-col span={1}>
-                      <VIcon class="clickable" style="padding-top:12px" color="#666" onClick={() => this.removeRow(index)} small>
-                        close
-                      </VIcon>
-                    </el-col>
-                  </el-row>
+                  <el-col span={23}>
+                    <el-row gutter={10}>
+                      <el-col span={8}>
+                        <FormItem title="聚合函数" label="聚合函数">
+                          <el-select
+                            v-model={item.aggFunction}
+                            size="mini"
+                            onChange={() => this.changeAggFunction(item)}
+                          >
+                            {this.selectList.map(op => (
+                              <el-option label={op.label} value={op.value} key={op.value} />
+                            ))}
+                          </el-select>
+                        </FormItem>
+                      </el-col>
+                      <el-col span={16}>
+                        <FormItem title="xxx" label="作用目标">
+                          <el-input
+                            v-model={item.aggExpression}
+                            size="mini"
+                            disabled={item.aggFunction === 'COUNT'}
+                          ></el-input>
+                        </FormItem>
+                      </el-col>
+                    </el-row>
+                    <FormItem label="子处理名称">
+                      <el-input v-model={item.name} size="mini"></el-input>
+                    </FormItem>
+                    <FormItem label="过滤器">
+                      <el-input v-model={item.filterPredicate} size="mini" type="textarea"></el-input>
+                    </FormItem>
+                    <FormItem label="分组字段">
+                      <el-select v-model={item.groupByExpression} size="mini">
+                        {this.groupList.map(op => (
+                          <el-option label={op.label} value={op.value} key={op.value} />
+                        ))}
+                      </el-select>
+                    </FormItem>
+                  </el-col>
+                  <el-col span={1}>
+                    <VIcon
+                      class="clickable"
+                      style="padding-top:12px"
+                      color="#666"
+                      onClick={() => this.removeRow(index)}
+                      small
+                    >
+                      close
+                    </VIcon>
+                  </el-col>
+                </el-row>
               )
             })}
             <el-button type="text" onClick={() => this.addRow()}>
