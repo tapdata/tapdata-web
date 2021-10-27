@@ -213,7 +213,7 @@ export default {
         this.initNodeView()
         await this.initView()
       } catch (error) {
-        console.error(error)
+        console.error(error) // eslint-disable-line
       }
     })
   },
@@ -294,6 +294,7 @@ export default {
         await this.openDataflow(dataflowId)
       } else {
         this.newDataflow()
+        this.handleShowSettings() // 默认打开设置
       }
     },
 
@@ -319,9 +320,9 @@ export default {
 
     async initNodeType() {
       let _nodeTypes = nodeTypes
-      let dataFlowType
+      // let dataFlowType
       if (this.mapping === 'cluster-clone') {
-        dataFlowType = 'database-migration' // 数据库迁移
+        // dataFlowType = 'database-migration' // 数据库迁移
         const dbTypes = await this.loadDatabaseTypes(nodeTypes)
         _nodeTypes = _nodeTypes.filter(item => item.type === 'database')
         _nodeTypes.push(...dbTypes)
@@ -375,7 +376,7 @@ export default {
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
 
       jsPlumbIns.bind('connection', (info, event) => {
-        console.log('connectionEvent', info)
+        console.log('connectionEvent', info) // eslint-disable-line
         const { sourceId: source, targetId: target } = info
         const sourceId = this.getRealId(source)
         const targetId = this.getRealId(target)
@@ -504,16 +505,16 @@ export default {
 
       // 连线移动到其他节点
       jsPlumbIns.bind('connectionMoved', info => {
-        console.log('connectionMoved', info)
+        console.log('connectionMoved', info) // eslint-disable-line
       })
       // 连线移动到其他节点
       jsPlumbIns.bind('connectionDetached', info => {
-        console.log('connectionDetachedEvent', info)
+        console.log('connectionDetachedEvent', info) // eslint-disable-line
       })
 
       const _instance = {
         getConnections(params) {
-          console.log('_instance', params)
+          console.log('_instance', params) // eslint-disable-line
           if (typeof params === 'object') {
             if (params.target) params.target = NODE_PREFIX + params.target
             if (params.source) params.source = NODE_PREFIX + params.source
@@ -523,7 +524,7 @@ export default {
       }
 
       jsPlumbIns.bind('beforeDrop', info => {
-        console.log('beforeDrop', info)
+        console.log('beforeDrop', info) // eslint-disable-line
         const { sourceId, targetId } = info
 
         const source = this.nodeById(this.getRealId(sourceId))
@@ -593,13 +594,13 @@ export default {
       let result
       try {
         result = await dataFlowsApi.get([dataflowId])
-        this.creatUserId = result.data.user_id
+        // this.creatUserId = result.user_id
       } catch (e) {
         this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
         return
       }
 
-      const { data } = result
+      const data = result
 
       this.status = data.status
       this.setDataflowId(dataflowId)
@@ -870,7 +871,7 @@ export default {
      * 取消选择所有节点
      */
     deselectAllNodes() {
-      console.log('deselectAllNodes')
+      console.log('deselectAllNodes') // eslint-disable-line
       this.jsPlumbIns.clearDragSelection()
       this.resetSelectedNodes()
       this.setActiveNode(null)
@@ -913,14 +914,14 @@ export default {
       let nh = $node.offsetHeight
       let { x, y, bottom, right } = selectBoxAttr
 
-      console.log('getNodesInSelection', selectBoxAttr)
+      console.log('getNodesInSelection', selectBoxAttr) // eslint-disable-line
       /*const nodeViewOffset = this.nodeViewOffsetPosition
       x -= nodeViewOffset[0]
       right -= nodeViewOffset[0]
       y -= nodeViewOffset[1]
       bottom -= nodeViewOffset[1]*/
       return this.nodes.filter(({ position }) => {
-        console.log('position', position, { x, y, bottom, right })
+        console.log('position', position, { x, y, bottom, right }) // eslint-disable-line
         return position[0] + nw > x && position[0] < right && bottom > position[1] && y < position[1] + nh
       })
     },
@@ -963,7 +964,7 @@ export default {
       let w, h, x, y
       const pos = this.getMousePositionWithinNodeView(e)
 
-      console.log('mouseMoveSelect', pos)
+      console.log('mouseMoveSelect', pos) // eslint-disable-line
 
       x = Math.min(this.mouseClickPosition.x, pos.x)
       y = Math.min(this.mouseClickPosition.y, pos.y)
@@ -985,7 +986,7 @@ export default {
 
     mouseUpMouseSelect() {
       off(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
-      console.log('mouseUpMouseSelect')
+      console.log('mouseUpMouseSelect') // eslint-disable-line
       this.deselectAllNodes()
       // 清空激活状态
       this.setActiveType(null)
@@ -1016,7 +1017,7 @@ export default {
     },
 
     __removeConnection(source, target) {
-      console.log('removeConnection', source, target)
+      console.log('removeConnection', source, target) // eslint-disable-line
       const connections = this.jsPlumbIns.getConnections({
         source,
         target
@@ -1082,13 +1083,13 @@ export default {
       try {
         this.isSaving = true
         const data = this.getDataflowDataToSave()
-        const { data: dataflow } = await dataFlowsApi.draft(data)
+        const dataflow = await dataFlowsApi.draft(data)
         this.isSaving = false
         this.$message.success(this.$t('message.saveOK'))
         this.setDataflowId(dataflow.id) // 将生成的id保存到store
 
         await this.$router.push({
-          name: 'DataflowEdit',
+          name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowSave' },
           query: {
             mapping: this.mapping
@@ -1432,7 +1433,7 @@ export default {
     },
 
     handleMouseSelect(showSelectBox, selectBoxAttr) {
-      console.log('handleMouseSelect', arguments)
+      console.log('handleMouseSelect', arguments) // eslint-disable-line
       // 取消选中所有节点
       this.deselectAllNodes()
       // 清空激活状态
@@ -1495,7 +1496,7 @@ export default {
     addNodeOnConnByNodeMenu(nodeType) {
       const { nodeMenu } = this
       nodeMenu.show = false
-      console.log('nodeMenu.connectionCenterPos', nodeMenu.connectionCenterPos)
+      console.log('nodeMenu.connectionCenterPos', nodeMenu.connectionCenterPos) // eslint-disable-line
       const position = this.$refs.paperScroller.getDropPositionWithinPaper(nodeMenu.connectionCenterPos, {
         width: NODE_WIDTH,
         height: NODE_HEIGHT
@@ -1578,6 +1579,8 @@ $sidebarBg: #fff;
 .layout-content {
   position: relative;
   background-color: #f9f9f9;
+  /*background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJ2LTc2IiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48ZGVmcyBpZD0idi03NSI+PHBhdHRlcm4gaWQ9InBhdHRlcm5fMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cmVjdCBpZD0idi03NyIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0FBQUFBQSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgaWQ9InYtNzkiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybl8wKSIvPjwvc3ZnPg==);
+  background-color: #f5f8fe;*/
 
   ::v-deep {
     .connection-highlight,

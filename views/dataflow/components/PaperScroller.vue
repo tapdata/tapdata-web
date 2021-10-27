@@ -311,7 +311,7 @@ export default {
       this.paperForwardSize.w = forwardW
       this.paperForwardSize.h = forwardH
 
-      console.log('autoResizePaper', { minX, minY, maxX, maxY }, this.paperReverseSize)
+      console.log('autoResizePaper', { minX, minY, maxX, maxY }, this.paperReverseSize) // eslint-disable-line
     },
 
     toggleMiniView() {
@@ -374,7 +374,7 @@ export default {
       let w, h, x, y
       const pos = this.getMousePositionWithinScroller(e)
 
-      console.log('mouseMoveSelect', pos)
+      console.log('mouseMoveSelect', pos) // eslint-disable-line
 
       x = Math.min(this.mouseClickPosition.x, pos.x)
       y = Math.min(this.mouseClickPosition.y, pos.y)

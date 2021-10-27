@@ -1,17 +1,17 @@
 <template>
   <div class="attr-panel">
-    <!--<header class="attr-panel-header border-bottom">
-      <h4 class="header-txt">节点名称</h4>
-      &lt;!&ndash;<div @click="$emit('hide')" class="header-icon">
-        <VIcon>right-circle</VIcon>
-      </div>&ndash;&gt;
-    </header>-->
     <div class="attr-panel-body overflow-auto">
-      <!--<Form :form="form" :schema="schema"></Form>-->
-      <ElForm class="flex flex-column" v-bind="formProps">
-        <FormProvider :form="form">
+      <Form
+        :form="form"
+        :colon="false"
+        layout="vertical"
+        label-align="left"
+        feedbackLayout="terse"
+        @autoSubmit="log"
+        @autoSubmitFailed="log"
+      >
+        <FormProvider v-if="schema" :form="form">
           <SchemaField
-            v-if="schema"
             :schema="schema"
             :scope="{
               useAsyncDataSource,
@@ -23,33 +23,53 @@
               loadCollections,
               loadDropOptions,
               loadWriteModelOptions,
+              sourceNode,
               sourceConnectionId: sourceNode ? sourceNode.connectionId : null
             }"
           />
-          <!--<FormConsumer>
-            <template #default="{ form }">
-              {{ form.values }}
-            </template>
-          </FormConsumer>-->
         </FormProvider>
-      </ElForm>
+      </Form>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import { action } from '@formily/reactive'
 import ConnectionsApi from 'web-core/api/Connections'
 import MetadataApi from 'web-core/api/MetadataInstances'
+import * as components from 'web-core/components/form'
+import { action } from '@formily/reactive'
 import { createSchemaField, FormProvider } from '@formily/vue'
-import { components } from 'web-core/components/form'
+import {
+  Form,
+  FormItem,
+  FormTab,
+  PreviewText,
+  ArrayTable,
+  Switch,
+  Input,
+  InputNumber,
+  Checkbox,
+  Radio,
+  Space
+} from '@formily/element'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import 'web-core/components/form/styles/index.scss'
-import VIcon from '@/components/VIcon'
 
 const { SchemaField } = createSchemaField({
-  components
+  components: {
+    FormItem,
+    FormTab,
+    ArrayTable,
+    PreviewText,
+    Switch,
+    Input,
+    InputNumber,
+    Checkbox,
+    Radio,
+    Space,
+    ...components
+  }
 })
 
 const connections = new ConnectionsApi()
@@ -70,7 +90,7 @@ export default {
     }
   },
 
-  components: { VIcon, FormProvider, SchemaField },
+  components: { Form, FormProvider, SchemaField },
 
   computed: {
     ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType']),
@@ -89,7 +109,7 @@ export default {
 
     // 联合唯一key,用来做监听，切换schema
     uniteKey() {
-      console.log('activeType', this.activeType, this.node)
+      console.log('activeType', this.activeType, this.node) // eslint-disable-line
       return `${this.node?.id || ''}_${this.activeConnection?.sourceId || ''}_${this.activeType}`
     },
 
@@ -113,10 +133,9 @@ export default {
     uniteKey: {
       immediate: true,
       async handler() {
-        console.log('FormPanel', arguments)
+        console.log('FormPanel', arguments) // eslint-disable-line
         if (this.activeType) {
           const formSchema = this.$store.getters['dataflow/formSchema'] || {}
-          console.log('formSchema')
           switch (this.activeType) {
             case 'node':
               await this.setSchema(this.ins.formSchema || formSchema.node)
@@ -125,6 +144,7 @@ export default {
               await this.setSchema(this.ins.linkFormSchema || formSchema.link)
               break
             case 'settings':
+              console.log('this.getSettingSchema()', this.getSettingSchema()) // eslint-disable-line
               await this.setSchema(this.getSettingSchema(), this.$store.getters['dataflow/dataflowSettings'])
               break
           }
@@ -148,6 +168,7 @@ export default {
         effects: this.useEffects,
         editable: !this.isMonitor
       })
+      console.log('schema', schema)
       this.schema = schema
     },
 
@@ -158,7 +179,7 @@ export default {
           flowEngineVersion: {
             title: this.$t('dataFlow.flowEngineVersion'),
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Select',
             default: 'Data_Flow_Engine_V1',
             enum: [
@@ -175,8 +196,8 @@ export default {
           sync_type: {
             title: '同步类型',
             type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'RadioGroup',
+            'x-decorator': 'FormItem',
+            'x-component': 'Radio.Group',
             // default: 'initial_sync+cdc',
             enum: [
               {
@@ -204,39 +225,39 @@ export default {
           cdcEngineFilter: {
             title: '启用引擎过滤',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
           },
           stopOnError: {
             title: '遇到错误停止',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
             // default: true
           },
           needToCreateIndex: {
             title: '自动创建索引',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
             // default: true
           },
           isOpenAutoDDL: {
             title: '自动创建索引',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
           },
           noPrimaryKey: {
             title: '支持无主键同步',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
           },
           isSerialMode: {
             title: '增量数据处理机制',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [
               {
@@ -252,7 +273,7 @@ export default {
           cdcFetchSize: {
             title: '增量批次读取条数',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'InputNumber',
             'x-component-props': {
               min: 1,
@@ -263,7 +284,7 @@ export default {
           distinctWriteType: {
             title: '去重写入机制',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [
               {
@@ -280,7 +301,7 @@ export default {
           emailWaring: {
             title: '发送邮件',
             type: 'object',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             properties: {
               paused: {
                 type: 'boolean',
@@ -323,7 +344,7 @@ export default {
           readShareLogMode: {
             title: '共享增量读取的模式',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [
               {
@@ -340,7 +361,7 @@ export default {
           increment: {
             title: '自动创建索引',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch',
             'x-reactions': {
               dependencies: ['sync_type'],
@@ -354,7 +375,7 @@ export default {
           isSchedule: {
             title: '定期调度任务',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch',
             'x-reactions': {
               dependencies: ['sync_type'],
@@ -368,7 +389,7 @@ export default {
           },
           cronExpression: {
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Input',
             'x-component-props': {
               placeholder: '请输入调度表达式'
@@ -385,7 +406,7 @@ export default {
           readCdcInterval: {
             title: '增量同步间隔',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Input',
             'x-component-props': {
               append: 'ms'
@@ -394,7 +415,7 @@ export default {
           readBatchSize: {
             title: '每次读取数量',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Input',
             'x-content': {
               append: 'row'
@@ -404,7 +425,7 @@ export default {
           processorConcurrency: {
             title: '处理器线程数',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'InputNumber',
             'x-component-props': {
               min: 1,
@@ -415,7 +436,7 @@ export default {
           cdcConcurrency: {
             title: '增量同步并发写入',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch',
             // default: false,
             'x-reactions': {
@@ -430,7 +451,7 @@ export default {
           transformerConcurrency: {
             title: '目标写入线程数',
             type: 'string',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'InputNumber',
             'x-component-props': {
               min: 1,
@@ -449,7 +470,7 @@ export default {
           syncPoints: {
             title: '增量采集开始时刻',
             type: 'array',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'ArrayItems',
             'x-reactions': {
               dependencies: ['sync_type'],
@@ -527,19 +548,19 @@ export default {
           cdcShareFilterOnServer: {
             title: '共享挖掘日志过滤',
             type: 'boolean',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Switch'
           },
           maxTransactionLength: {
             title: '事务最大时长(小时)',
             type: 'number',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'InputNumber'
           },
           lagTime: {
             title: '增量滞后判断时间设置(秒)',
             type: 'void',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'Space',
             'x-reactions': {
               dependencies: ['sync_type'],
@@ -589,10 +610,10 @@ export default {
     // 绑定表单事件
     useEffects() {
       onFormValuesChange(form => {
-        console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values)))
+        console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
       })
       onFormInputChange(form => {
-        console.log('onFormInputChange')
+        console.log('onFormInputChange') // eslint-disable-line
         this.$nextTick(() => {
           if (this.activeType !== 'settings') {
             this.updateNodeProps(form)
@@ -603,7 +624,13 @@ export default {
       })
     },
 
-    // 统一异步数据源方法
+    /**
+     * 统一的异步数据源方法
+     * @param service
+     * @param fieldName 数据设置指定的字段
+     * @param args 缺省参数，传递异步方法
+     * @returns {(function(*=): void)|*}
+     */
     useAsyncDataSource(service, fieldName = 'dataSource', ...args) {
       return field => {
         field.loading = true
@@ -618,7 +645,12 @@ export default {
       }
     },
 
-    // 加载数据库
+    /**
+     * 加载数据库
+     * @param field
+     * @param databaseType 数据库类型，String或Array
+     * @returns {Promise<*[]|*>}
+     */
     async loadDatabase(field, databaseType = field.form.values.databaseType) {
       try {
         let result = await connections.get({
@@ -626,10 +658,10 @@ export default {
             where: {
               database_type: databaseType
                 ? {
-                    in: Array.isArray(databaseType) ? databaseType : [databaseType]
+                    $in: Array.isArray(databaseType) ? databaseType : [databaseType]
                   }
                 : {
-                    nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
+                    $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
                   }
             },
             fields: {
@@ -642,7 +674,7 @@ export default {
             order: ['status DESC', 'name ASC']
           })
         })
-        return result.map(item => {
+        return (result.items || result).map(item => {
           return {
             id: item.id,
             name: item.name,
@@ -652,14 +684,18 @@ export default {
           }
         })
       } catch (e) {
-        console.log('catch', e)
+        console.log('catch', e) // eslint-disable-line
         return []
       }
     },
 
-    // 加载数据详情
-    async loadDatabaseInfo(field, id) {
-      const connectionId = id || field.query('connectionId').get('value')
+    /**
+     * 加载数据库的详情
+     * @param field
+     * @param connectionId
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    async loadDatabaseInfo(field, connectionId = field.query('connectionId').get('value')) {
       if (!connectionId) return
       let result = await connections.customQuery([connectionId], {
         schema: true
@@ -667,9 +703,13 @@ export default {
       return result
     },
 
-    // 加载数据库的表
+    /**
+     * 加载数据库的表，只返回表名的集合
+     * @param field
+     * @param connectionId
+     * @returns {Promise<*|AxiosResponse<any>>}
+     */
     async loadDatabaseTable(field, connectionId = field.query('connectionId').get('value')) {
-      console.log('connectionId')
       if (!connectionId) return
       const params = {
         filter: JSON.stringify({
@@ -681,49 +721,68 @@ export default {
             is_deleted: false
           },
           fields: {
-            id: true,
             original_name: true
           }
         })
       }
-      let tables = await metadataApi.get(params)
-      tables = tables.map(item => ({
-        label: item.original_name,
-        value: item.id
-      }))
-      return tables
+      const tables = await metadataApi.get(params)
+      return tables.map(item => item.original_name)
     },
 
-    // 加载表的详情
-    async loadTableInfo(field, id = field?.query('tableId')?.get('value')) {
-      if (!id) return
-      console.log('loadTableInfo', field, id)
+    /**
+     * 加载表的详情，返回表的数据对象
+     * @param field
+     * @param connectionId
+     * @param tableName
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    async loadTableInfo(
+      field,
+      connectionId = field.query('connectionId').get('value'),
+      tableName = field.query('tableName').get('value')
+    ) {
+      if (!connectionId || !tableName) return
+      console.log('loadTableInfo', field, id) // eslint-disable-line
       const params = {
         filter: JSON.stringify({
           where: {
-            id,
+            'source.id': connectionId,
+            original_name: tableName,
             is_deleted: false
           }
         })
       }
-      const { data } = await metadataApi.schema(params)
-      return data.records[0].schema.tables[0]
+      const table = await metadataApi.get(params)
+      return table
     },
 
-    // 加载表的
-    async loadTableField(field, id = field.query('tableId').get('value')) {
-      if (!id) return
-      console.log('loadTableField', field, id)
+    /**
+     * 加载表字段，返回字段名的集合
+     * @param field
+     * @param connectionId
+     * @param tableName
+     * @returns {Promise<*>}
+     */
+    async loadTableField(
+      field,
+      connectionId = field.query('connectionId').get('value'),
+      tableName = field.query('tableName').get('value')
+    ) {
+      if (!connectionId || !tableName) return
       const params = {
         filter: JSON.stringify({
           where: {
-            id,
+            'source.id': connectionId,
+            original_name: tableName,
             is_deleted: false
+          },
+          fields: {
+            fields: true
           }
         })
       }
-      const { data } = await metadataApi.schema(params)
-      return data.records[0].schema.tables[0].fields.map(item => item.field_name)
+      const tableData = await metadataApi.findOne(params)
+      return tableData.fields.map(item => item.field_name)
     },
 
     // 加载数据集
@@ -785,6 +844,11 @@ export default {
         })
       }
       field.dataSource = options
+    },
+
+    log(value) {
+      // eslint-disable-next-line no-console
+      console.log('Form', value)
     }
   }
 }
@@ -851,15 +915,6 @@ $headerBg: #fff;
 
   ::v-deep {
     .el-form {
-      .addTxt {
-        float: right;
-        display: inline-block;
-        height: 30px;
-        line-height: 30px;
-        font-size: 12px;
-        color: #48b6e2;
-      }
-
       &-item {
         margin-bottom: 10px;
 
@@ -891,10 +946,10 @@ $headerBg: #fff;
           }
 
           //TODO: 和drs不兼容，后面需要统一样式
-          .ElButton--mini,
-          .ElButton--small {
-            //border-radius: $radius;
-          }
+          // .ElButton--mini,
+          // .ElButton--small {
+          //border-radius: $radius;
+          // }
 
           .el-input__inner::-webkit-input-placeholder {
             font-size: 12px;

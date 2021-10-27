@@ -1,6 +1,6 @@
 import { NodeType } from './extends/NodeType'
 
-export class JavaScript extends NodeType {
+export class RowFilter extends NodeType {
   constructor(node) {
     super(node)
 
@@ -18,8 +18,28 @@ export class JavaScript extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
-      script: {
-        title: '脚本',
+      action: {
+        title: '主键',
+        type: 'string',
+        required: true,
+        enum: [
+          {
+            label: '保留匹配数据',
+            value: 'retain'
+          },
+          {
+            label: '创建匹配数据',
+            value: 'discard'
+          }
+        ],
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-decorator-props': {
+          wrapperWidth: 240
+        }
+      },
+      expression: {
+        title: '条件表达式',
         type: 'string',
         required: true,
         'x-decorator': 'FormItem',

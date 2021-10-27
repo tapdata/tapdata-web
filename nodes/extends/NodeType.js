@@ -12,8 +12,8 @@ export class NodeType {
     return {}
   }
 
-  execute() {
-    // 节点功能实现
+  validate() {
+    return true
   }
 
   /**

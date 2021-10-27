@@ -42,7 +42,7 @@ export const ArrayItems = observer(
       return () => {
         const field = fieldRef.value
         const dataSource = Array.isArray(field.value) ? field.value : []
-        console.log('schemaRef', schemaRef, field.value)
+        console.log('schemaRef', schemaRef, field.value) // eslint-disable-line
         return h(
           ArrayBase,
           {},

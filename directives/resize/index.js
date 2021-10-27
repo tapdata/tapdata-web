@@ -45,16 +45,9 @@ function initEvent($el, position, options) {
 
     let page = event.touches ? event.touches[0] : event
 
-    /*$overlay = appendHtml(
-      document.body,
-      `<div class="resizable-overlay ${
-        isHorizontal ? 'x' : 'y'
-      }-resizable-overlay"></div>`
-    )*/
-
     initOffset = page[xOry]
     oldVal = $el[`offset${attr}`]
-    document.body.classList.add(cls)
+    document.body.classList.add(cls, 'user-select-none')
 
     on(window, eventsFor.move, handleMove)
     on(window, eventsFor.stop, handleStop)
@@ -80,11 +73,7 @@ function initEvent($el, position, options) {
 
   const handleStop = () => {
     $trigger.classList.remove('active')
-    document.body.classList.remove(cls)
-    /*if ($overlay) {
-      $overlay.remove()
-      $overlay = null
-    }*/
+    document.body.classList.remove(cls, 'user-select-none')
 
     off(window, eventsFor.move, handleMove)
     off(window, eventsFor.stop, handleStop)

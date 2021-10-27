@@ -1,59 +1,62 @@
 <template>
   <aside class="layout-sidebar --left border-end flex flex-column flex-shrink-0">
-    <div class="db-list-wrap">
-      <ElCollapse value="db">
+    <div class="flex flex-column flex-1 min-h-0">
+      <ElCollapse ref="dbCollapse" class="collapse-fill db-list-container" value="db">
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1">
-              <span class="flex-1">连接</span>
-              <VIcon class="mr-2">plus</VIcon>
+              <span class="flex-1 user-select-none">连接</span>
+              <VIcon class="mr-2 click-btn" @click.stop="creat">plus</VIcon>
               <VIcon>magnify</VIcon>
             </div>
           </template>
-          <div class="db-list overflow-auto">
+          <ElScrollbar ref="dbList" tag="div" wrap-class="db-list">
             <div
               v-for="(db, i) in dbList"
               :key="i"
-              class="db-item flex align-center px-4 clickable"
+              class="db-item flex align-center px-4 clickable user-select-none"
               :class="{ active: currentConnectionId === db.id }"
               @click="handleSelectDB(db)"
             >
               <ElImage class="flex-shrink-0" :src="genIconSrc(db)"></ElImage>
               <div class="db-item-txt text-truncate ml-4">{{ db.name }}</div>
             </div>
-          </div>
+          </ElScrollbar>
         </ElCollapseItem>
       </ElCollapse>
-    </div>
 
-    <div class="table-list-wrap">
-      <div class="px-6 py-4">
-        <ElInput v-model="tbSearchTxt" size="small" @input="handleTbInput">
-          <template #prefix>
-            <VIcon size="14" class="ml-1 h-100">search</VIcon>
-          </template>
-        </ElInput>
-      </div>
-      <div class="tb-list overflow-auto">
-        <div
-          v-for="tb in tbFilterList"
-          v-mouse-drag="{
-            item: tb,
-            container: '#dfEditorContent',
-            getDragDom,
-            onStart,
-            onMove,
-            onDrop,
-            onStop
-          }"
-          :key="tb.attr.tableId"
-          class="tb-item grabbable flex align-center px-4"
-        >
-          <div class="tb-item-icon">
-            <VIcon class="h-100" size="14" color="#fff">table</VIcon>
-          </div>
-          <div class="text-truncate ml-4">{{ tb.name }}</div>
+      <div class="flex-1 min-h-0 flex flex-column border-bottom">
+        <div class="px-6 py-4">
+          <ElInput v-model="tbSearchTxt" size="small" @input="handleTbInput">
+            <template #prefix>
+              <VIcon size="14" class="ml-1 h-100">search</VIcon>
+            </template>
+          </ElInput>
         </div>
+        <ElScrollbar ref="tbList" class="flex-1 min-h-0" tag="div" wrap-class="tb-list">
+          <div
+            v-for="tb in tbFilterList"
+            v-mouse-drag="{
+              item: tb,
+              container: '#dfEditorContent',
+              getDragDom,
+              onStart,
+              onMove,
+              onDrop,
+              onStop
+            }"
+            :key="tb.attr.tableId"
+            class="tb-item grabbable flex align-center px-4 user-select-none"
+          >
+            <div class="tb-item-icon">
+              <VIcon class="h-100" size="14" color="#fff">table</VIcon>
+            </div>
+            <div class="text-truncate ml-4">{{ tb.name }}</div>
+          </div>
+        </ElScrollbar>
+        <!--<div class="tb-list overflow-auto">
+
+      </div>-->
       </div>
     </div>
 
@@ -61,7 +64,7 @@
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
-            <span class="flex-1">处理节点</span>
+            <span class="flex-1 user-select-none">处理节点</span>
           </div>
         </template>
         <ElRow class="node-list flex-wrap p-2" :gutter="0" type="flex">
@@ -95,6 +98,37 @@
       :node="dragNodeType"
       :class="`node--${dragNodeType.group}`"
     ></BaseNode>
+    <ElDialog
+      title="选择数据源类型"
+      :visible.sync="connectionDialog"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
+      <ConnectionTypeSelector
+        :types="[
+          'mysql',
+          'oracle',
+          'sqlserver',
+          'mongodb',
+          'postgres',
+          'elasticsearch',
+          'kafka',
+          'dameng',
+          'greenplum',
+          'mq'
+        ]"
+        @select="createConnection"
+      ></ConnectionTypeSelector>
+    </ElDialog>
+    <ElDialog
+      title="创建连接"
+      width="60%"
+      :visible.sync="connectionFormDialog"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
+      <Form :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>
+    </ElDialog>
   </aside>
 </template>
 
@@ -106,22 +140,28 @@ import 'web-core/assets/icons/svg/joint-cache.svg'
 import 'web-core/assets/icons/svg/row-filter.svg'
 import 'web-core/assets/icons/svg/aggregator.svg'
 import 'web-core/assets/icons/svg/field-processor.svg'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
 import VIcon from 'web-core/components/VIcon'
+import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
 import resize from 'web-core/directives/resize'
 import { DB_ICON } from 'web-core/views/dataflow/constants'
 import BaseNode from 'web-core/views/dataflow/components/BaseNode'
 import { debounce, throttle } from 'lodash'
 import ConnectionsApi from 'web-core/api/Connections'
 import MetadataApi from 'web-core/api/MetadataInstances'
+import Form from '@/views/connection/Form'
+
+import { Select } from 'element-ui'
+// import ElScrollbar from 'element-ui/packages/scrollbar'
 const connections = new ConnectionsApi()
 const metadataApi = new MetadataApi()
+import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 
 export default {
   name: 'LeftSidebar',
 
-  components: { BaseNode, VIcon },
+  components: { BaseNode, VIcon, Form, ConnectionTypeSelector, ElScrollbar: Select.components.ElScrollbar },
 
   data() {
     return {
@@ -136,7 +176,10 @@ export default {
       currentConnectionId: '',
       dragStarting: false,
       dragMoving: false,
-      dragNodeType: null
+      dragNodeType: null,
+      connectionDialog: false,
+      connectionFormDialog: false,
+      databaseType: ''
     }
   },
 
@@ -166,7 +209,30 @@ export default {
     this.init()
   },
 
+  mounted() {
+    addResizeListener(this.$refs.dbCollapse.$el, this.$refs.dbList.update)
+    addResizeListener(this.$refs.tbList.$el, this.$refs.tbList.update)
+  },
+
+  beforeDestroy() {
+    removeResizeListener(this.$refs.dbCollapse.$el, this.$refs.dbList.update)
+    removeResizeListener(this.$refs.tbList.$el, this.$refs.tbList.update)
+  },
+
   methods: {
+    // 创建连接
+    creat() {
+      this.connectionDialog = true
+    },
+    createConnection(type) {
+      this.connectionDialog = false
+      this.connectionFormDialog = true
+      this.databaseType = type
+      // this.$router.push({
+      //   name: 'ConnectionCreate',
+      //   query: { databaseType: type }
+      // })
+    },
     async init() {
       const data = await this.loadDatabase()
       this.handleSelectDB(data[0])
@@ -177,7 +243,7 @@ export default {
           filter: JSON.stringify({
             where: {
               database_type: {
-                nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
+                $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
               }
             },
             fields: {
@@ -190,16 +256,20 @@ export default {
             order: ['status DESC', 'name ASC']
           })
         })
-        this.dbList = result
-        return result
+        this.dbList = result.items || result
+        return this.dbList
       } catch (e) {
-        console.log('catch', e)
+        console.log('catch', e) // eslint-disable-line
       }
     },
 
-    // 加载数据库
-    ...mapMutations('dataflow', ['addNode']),
+    // 新增数据源保存
+    saveConnection() {
+      this.connectionFormDialog = false
+      this.init()
+    },
 
+    // 加载数据库
     async loadDatabaseTable() {
       const connectionId = this.currentConnectionId
       const params = {
@@ -224,7 +294,7 @@ export default {
         group: 'data',
         constructor: 'Table',
         attr: {
-          tableId: tb.id,
+          tableName: tb.original_name,
           connectionId
         }
       }))
@@ -259,11 +329,12 @@ export default {
 
     async getDragDom() {
       await this.$nextTick()
-      console.log('getDragDom', document.getElementById('dragNode'))
+      console.log('getDragDom', document.getElementById('dragNode')) // eslint-disable-line
       return document.getElementById('dragNode')
     },
 
     onStart(item) {
+      console.log('OnStart', item) // eslint-disable-line
       this.dragNodeType = item
       this.dragStarting = true
       this.dragMoving = false
@@ -283,7 +354,7 @@ export default {
     },
 
     onStop() {
-      console.log('onStop', arguments)
+      console.log('onStop', arguments) // eslint-disable-line
       this.dragStarting = false
       this.dragMoving = false
     },
@@ -314,38 +385,57 @@ $itemH: 34px;
 .layout-sidebar.--left {
   overflow: hidden;
 
-  .db-list,
-  .tb-list {
-    max-height: 150px;
-  }
+  ::v-deep {
+    .db-list-container {
+      max-height: 50%;
+      .el-collapse-item:last-child {
+        margin-bottom: -2px;
+      }
+    }
+    /*.db-list,
+    .tb-list {
+      max-height: 272px;
+    }*/
+    .click-btn {
+      z-index: 2;
+    }
+    .db-item,
+    .tb-item {
+      height: $itemH;
+      font-size: 12px;
+      &.active,
+      &:hover {
+        background-color: #eef3ff;
+      }
 
-  .db-item,
-  .tb-item {
-    height: $itemH;
-    font-size: 12px;
-    &.active,
-    &:hover {
-      background-color: #eef3ff;
+      .el-image {
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
+      }
     }
 
-    .el-image {
+    .tb-item-icon {
       width: 20px;
       height: 20px;
-      vertical-align: middle;
+      background-color: #6236ff;
+      text-align: center;
+      border-radius: 100%;
     }
-  }
 
-  .tb-item-icon {
-    width: 20px;
-    height: 20px;
-    background-color: #6236ff;
-    text-align: center;
-    border-radius: 100%;
-  }
-
-  ::v-deep {
     .el-collapse {
       border-top: 0;
+      &.collapse-fill {
+        .el-collapse-item:first-child:last-child {
+          height: 100%;
+          .el-collapse-item__wrap {
+            height: calc(100% - 32px);
+          }
+          .el-collapse-item__content {
+            height: 100%;
+          }
+        }
+      }
 
       &-item {
         &.is-active [role='tab'] {
@@ -376,6 +466,13 @@ $itemH: 34px;
           padding-bottom: 0;
         }
       }
+    }
+
+    .el-scrollbar {
+      height: 100%;
+    }
+    .el-scrollbar__wrap {
+      height: calc(100% + 15px);
     }
   }
 }

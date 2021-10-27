@@ -1,6 +1,6 @@
 import { NodeType } from './extends/NodeType'
 
-export class JavaScript extends NodeType {
+export class FieldProcessor extends NodeType {
   constructor(node) {
     super(node)
 
@@ -18,15 +18,13 @@ export class JavaScript extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
-      script: {
-        title: '脚本',
-        type: 'string',
+      operations: {
+        type: 'object',
+        title: '',
         required: true,
         'x-decorator': 'FormItem',
-        'x-component': 'JsEditor',
-        'x-component-props': {
-          options: { showPrintMargin: false, useWrapMode: true }
-        }
+        'x-component': 'FieldProcess',
+        'x-reactions': ['{{useAsyncDataSource(loadTableField)}}']
       }
     }
   }

@@ -43,25 +43,25 @@ const state = () => ({
       icon: 'field-processor',
       name: '字段处理',
       type: 'field_processor',
-      constructor: 'JavaScript'
+      constructor: 'FieldProcessor'
     },
     {
       icon: 'aggregator',
       name: '聚合',
       type: 'aggregation_processor',
-      constructor: 'JavaScript'
+      constructor: 'Aggregate'
     },
     {
       icon: 'row-filter',
       name: 'Row Filter',
       type: 'row_filter_processor',
-      constructor: 'JavaScript'
+      constructor: 'RowFilter'
     },
     {
       icon: 'joint-cache',
       name: '关联缓存',
       type: 'cache_lookup_processor',
-      constructor: 'JavaScript'
+      constructor: 'JointCache'
     }
   ],
   nodeViewOffsetPosition: [0, 0],
@@ -224,7 +224,7 @@ const mutations = {
   // Settings
   setDataflowSettings(state, dataflowSettings) {
     Vue.set(state.dataflow, 'settings', dataflowSettings)
-    console.log('dataflow', state.dataflow)
+    console.log('dataflow', state.dataflow) // eslint-disable-line
   },
 
   /**
@@ -269,7 +269,7 @@ const mutations = {
 
   // 设置激活节点
   setActiveNode(state, nodeId) {
-    console.log('setActiveNode', nodeId)
+    console.log('setActiveNode', nodeId) // eslint-disable-line
     state.activeNode = nodeId
     state.activeType = nodeId ? 'node' : null
   },
@@ -292,7 +292,7 @@ const mutations = {
 
   // 更新节点属性
   updateNodeProperties(state, updateInformation) {
-    console.log('updateInformation', updateInformation)
+    console.log('updateInformation', updateInformation) // eslint-disable-line
     const node = state.dataflow.nodes.find(node => {
       return node.id === updateInformation.id
     })
@@ -306,7 +306,7 @@ const mutations = {
 
   // 选择节点
   addSelectedNode(state, node) {
-    console.log('addSelectedNode', state.selectedNodes)
+    console.log('addSelectedNode', state.selectedNodes) // eslint-disable-line
     state.selectedNodes.push(node)
   },
 
@@ -320,7 +320,7 @@ const mutations = {
   // 重置选择的节点
   resetSelectedNodes(state) {
     Vue.set(state, 'selectedNodes', [])
-    console.log('resetSelectedNodes', state.selectedNodes)
+    console.log('resetSelectedNodes', state.selectedNodes) // eslint-disable-line
   },
 
   // 针对数组，修改某个项的值
@@ -423,6 +423,11 @@ const mutations = {
 
     if (index === -1) return
 
+    if (state.activeNode === nodes[index].id && state.activeType === 'node') {
+      state.activeNode = null
+      state.activeType = null
+    }
+
     nodes.splice(index, 1)
 
     if (node.outputLanes?.length || node.inputLanes?.length) {
@@ -452,7 +457,7 @@ const mutations = {
 
   setFormSchema(state, schema) {
     Vue.set(state, 'formSchema', schema)
-    console.log('state', state)
+    console.log('state', state) // eslint-disable-line
   }
 }
 

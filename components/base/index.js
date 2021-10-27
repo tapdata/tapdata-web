@@ -1,2 +1,3 @@
 import VButton from './VButton.vue'
-export default [VButton]
+import VTable from './v-table'
+export default [VButton, VTable]
