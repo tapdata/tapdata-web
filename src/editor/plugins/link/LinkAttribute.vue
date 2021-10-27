@@ -510,8 +510,8 @@ export default {
           javaType: field.javaType,
           disabled: this.disabled
         }))
-        this.sourceType = sourceCell.getFormData()?.databaseType
-        this.targetType = targetCell.getFormData()?.databaseType
+        this.sourceType = sourceCell?.getFormData()?.databaseType
+        this.targetType = targetCell?.getFormData()?.databaseType
         //showTips
         this.isShowTips(joinKeys, this.sourceType, this.targetType)
       }

@@ -1,6 +1,5 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
@@ -141,10 +140,6 @@ module.exports = {
           // 大于10kb的会压缩
           threshold: 10240
           // 其余配置查看compression-webpack-plugin
-        }),
-        new MonacoWebpackPlugin({
-          languages: ['javascript', 'json'],
-          features: ['coreCommands', 'find']
         })
       )
 

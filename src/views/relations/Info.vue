@@ -165,18 +165,18 @@
       </template>
     </div>
     <el-dialog :visible.sync="showScriptVisible" width="60%" :before-close="handleCloseScript">
-      <JsEditor :code.sync="showScript" ref="jsEditor" width="100%" v-if="showScriptVisible"></JsEditor>
+      <CodeEditor v-if="showScriptVisible" v-model="showScript" width="100%" height="300px"></CodeEditor>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import JsEditor from '@/components/JsEditor'
+import CodeEditor from 'web-core/components/CodeEditor'
 import _ from 'lodash'
 
 export default {
   name: 'Info',
-  components: { JsEditor },
+  components: { CodeEditor },
   props: {
     model: {
       required: true

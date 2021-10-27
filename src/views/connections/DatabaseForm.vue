@@ -135,7 +135,7 @@
                 </div>
                 <div class="custom-connection-main">
                   <div>function requestData(ctx) {</div>
-                  <JsEditor :code.sync="model.custom_cdc_script" ref="jsCdcEditor" :width.sync="width"></JsEditor>
+                  <CodeEditor v-model="model.custom_cdc_script" :width="width" :height="height"></CodeEditor>
                   <div>}</div>
                 </div>
               </div>
@@ -151,11 +151,7 @@
                 </div>
                 <div class="custom-connection-main">
                   <div>function requestData() {</div>
-                  <JsEditor
-                    :code.sync="model.custom_initial_script"
-                    ref="jsInitialEditor"
-                    :width.sync="width"
-                  ></JsEditor>
+                  <CodeEditor v-model="model.custom_initial_script" :width="width" :height="height"></CodeEditor>
                   <div>}</div>
                 </div>
               </div>
@@ -182,7 +178,7 @@
                   </div>
                   <div>}]</div>
                   <div style="padding-bottom: 5px; margin-top: 10px; font-weight: bold">function onData(data) {</div>
-                  <JsEditor :code.sync="model.custom_ondata_script" ref="jsOndataEditor" :width.sync="width"></JsEditor>
+                  <CodeEditor v-model="model.custom_ondata_script" :width="width" :height="height"></CodeEditor>
                   <div>}</div>
                 </div>
               </div>
@@ -589,7 +585,7 @@
 import factory from '@/api/factory'
 import formConfig from './config'
 import gitbook from './GitBook'
-import JsEditor from '@/components/JsEditor'
+import CodeEditor from 'web-core/components/CodeEditor'
 import Test from './Test'
 import { getImgByType, TYPEMAP, TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
@@ -600,7 +596,7 @@ const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { gitbook, Test, DatabaseTypeDialog, JsEditor, VIcon },
+  components: { gitbook, Test, DatabaseTypeDialog, CodeEditor, VIcon },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start
@@ -712,7 +708,8 @@ export default {
         kafkaCompressionType: '',
         kafkaIgnorePushError: false
       },
-      width: 200,
+      width: 440,
+      height: 300,
       instanceModelZone: '',
       instanceMock: [],
       dataSourceZone: '',
@@ -919,9 +916,6 @@ export default {
         this.model.custom_ondata_script = ''
         this.model.custom_cdc_script = ''
         this.model.custom_initial_script = ''
-        if (this.$refs.jsCdcEditor) this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
-        if (this.$refs.jsInitialEditor) this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
-        if (this.$refs.jsOndataEditor) this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
       }
     },
     async initData(data) {
@@ -961,17 +955,6 @@ export default {
           }
         })
       }
-      this.$nextTick(() => {
-        if (this.model.database_type === 'custom_connection') {
-          this.updateJsEditor()
-        }
-      })
-    },
-    //手动更新JSEditor
-    updateJsEditor() {
-      if (this.$refs.jsCdcEditor) this.$refs.jsCdcEditor.init(this.model.custom_cdc_script)
-      if (this.$refs.jsInitialEditor) this.$refs.jsInitialEditor.init(this.model.custom_initial_script)
-      if (this.$refs.jsOndataEditor) this.$refs.jsOndataEditor.init(this.model.custom_ondata_script)
     },
     checkDataTypeOptions(type) {
       this.model.database_type = type
@@ -1803,7 +1786,8 @@ export default {
             width: 200px;
             text-align: right;
             color: #606266;
-            margin-right: 23px;
+            padding-right: 20px;
+            box-sizing: border-box;
           }
           .custom-connection-main {
             width: calc(100% - 200px);
