@@ -1018,11 +1018,12 @@ export default {
               status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
               ping_time: 0,
               tasks: this.form.tasks.map(
-                ({ source, target, fullMatch, showAdvancedVerification, script, webScript }) => {
+                ({ taskId, source, target, fullMatch, showAdvancedVerification, script, webScript }) => {
                   if (webScript && webScript !== '') {
                     script = 'function validate(sourceRow){' + webScript + '}'
                   }
                   return {
+                    taskId,
                     source,
                     target,
                     fullMatch,
