@@ -4,6 +4,12 @@
   .clickable{
     color: map-get($color, primary);
   }
+  .disable__btn{
+    background-color: map-get($bgColor, disable);
+    border-color: #E4E7ED;
+    color: #C0C4CC;
+    cursor: not-allowed;
+  }
   .active__name{
     .el-input__inner{
       color: map-get($color, primary);
