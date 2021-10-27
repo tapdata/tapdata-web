@@ -3,7 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from '@/components/VIcon'
 import { uuid } from './util'
-// import styles from './fieldProessor.scss'
+import './fieldProessor.scss'
 // import de from 'element-ui/src/locale/lang/de'
 
 export const FieldProcess = connect(
