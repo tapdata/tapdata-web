@@ -3,7 +3,6 @@ import baseComponents from './components/base'
 import VConfirm from './components/base/v-confirm'
 import FormBuilder from './components/form-builder'
 import ConnectionTypeSelector from './components/connection-type-selector'
-import ConnectionFormSelector from './components/connection-form'
 import ConnectionTest from './components/ConnectionTest'
 import FieldMapping from './components/FieldMapping'
 import CheckStage from './components/CheckStage'
@@ -12,9 +11,7 @@ import WSClient from './plugins/ws-client'
 import * as _util from './util'
 import * as _const from './const'
 
-const components = [ConnectionTypeSelector, ConnectionFormSelector, ConnectionTest, FieldMapping, CheckStage].concat(
-  baseComponents
-)
+const components = [ConnectionTypeSelector, ConnectionTest, FieldMapping, CheckStage].concat(baseComponents)
 
 const install = Vue => {
   Vue.prototype.$util = _util
@@ -56,4 +53,4 @@ const langs = locale
 export default {
   install
 }
-export { langs, ConnectionTypeSelector, ConnectionFormSelector, ConnectionTest, WSClient, FieldMapping, CheckStage }
+export { langs, ConnectionTypeSelector, ConnectionTest, WSClient, FieldMapping, CheckStage }
