@@ -573,6 +573,41 @@ th {
       color: #000;
     }
   }
+  &.mini {
+    .el-step__icon {
+      &.is-icon {
+        width: 12px;
+      }
+    }
+    .el-step__icon-inner {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .el-step__icon-inner {
+      background-color: map-get($color, disable);
+    }
+    .is-finish {
+      .el-step__icon-inner {
+        background-color: map-get($color, primary);
+      }
+    }
+    .el-step__title {
+      font-size: 14px;
+      &.is-wait {
+        color: map-get($fontColor, disable);
+      }
+      &.is-process {
+        color: map-get($fontColor, disable);
+      }
+      &.is-finish {
+        color: map-get($fontColor, main);
+      }
+    }
+    .el-step__description {
+      color: map-get($fontColor, disable);
+    }
+  }
 }
 
 // 穿梭框
