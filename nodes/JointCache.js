@@ -3,7 +3,6 @@ import { NodeType } from './extends/NodeType'
 export class JointCache extends NodeType {
   constructor(node) {
     super(node)
-
     if (node.attr) {
       const attr = Object.assign(this.attr, node.attr)
       if (attr.formSchema) this.formSchema = attr.formSchema
@@ -33,13 +32,17 @@ export class JointCache extends NodeType {
           }
         ],
         'x-decorator': 'FormItem',
-        'x-component': 'Select'
+        'x-component': 'Select',
+        'x-decorator-props': {
+          wrapperWidth: 240
+        }
         // 'x-component': 'ComboSelect'
       },
       joinSettings: {
         type: 'array',
         title: '关联设置',
         required: true,
+        default: [{ cacheKey: 1 }],
         'x-decorator': 'FormItem',
         'x-component': 'ArrayTable',
         items: {
@@ -51,8 +54,8 @@ export class JointCache extends NodeType {
               'x-component-props': { title: '缓存表主键', align: 'center' },
               properties: {
                 cacheKey: {
-                  type: 'void',
-                  'x-component': 'String'
+                  type: 'string',
+                  'x-component': 'PreviewText.Input'
                 }
               }
             },
@@ -61,9 +64,36 @@ export class JointCache extends NodeType {
               'x-component': 'ArrayTable.Column',
               'x-component-props': { title: '源表关联键', align: 'center' },
               properties: {
-                index: {
+                sourceKey: {
                   type: 'void',
-                  'x-component': 'Select'
+                  properties: {
+                    sourceKey: {
+                      type: 'string',
+                      enum: [
+                        {
+                          label: 'AVG',
+                          value: 'AVG'
+                        },
+                        {
+                          label: 'SUM',
+                          value: 'SUM'
+                        },
+                        {
+                          label: 'MAX',
+                          value: 'MAX'
+                        },
+                        {
+                          label: 'MIN',
+                          value: 'MIN'
+                        },
+                        {
+                          label: 'COUNT',
+                          value: 'COUNT'
+                        }
+                      ],
+                      'x-component': 'Select'
+                    }
+                  }
                 }
               }
             }

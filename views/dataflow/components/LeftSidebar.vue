@@ -120,6 +120,15 @@
         @select="createConnection"
       ></ConnectionTypeSelector>
     </ElDialog>
+    <ElDialog
+      title="创建连接"
+      width="60%"
+      :visible.sync="connectionFormDialog"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
+      <Form :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>
+    </ElDialog>
   </aside>
 </template>
 
@@ -142,6 +151,7 @@ import BaseNode from 'web-core/views/dataflow/components/BaseNode'
 import { debounce, throttle } from 'lodash'
 import ConnectionsApi from 'web-core/api/Connections'
 import MetadataApi from 'web-core/api/MetadataInstances'
+import Form from '@/views/connection/Form'
 
 import { Select } from 'element-ui'
 // import ElScrollbar from 'element-ui/packages/scrollbar'
@@ -153,7 +163,7 @@ import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowToolti
 export default {
   name: 'LeftSidebar',
 
-  components: { OverflowTooltip, BaseNode, VIcon, ConnectionTypeSelector, ElScrollbar: Select.components.ElScrollbar },
+  components: { OverflowTooltip, BaseNode, VIcon, Form, ConnectionTypeSelector, ElScrollbar: Select.components.ElScrollbar },
 
   data() {
     return {
@@ -169,7 +179,9 @@ export default {
       dragStarting: false,
       dragMoving: false,
       dragNodeType: null,
-      connectionDialog: false
+      connectionDialog: false,
+      connectionFormDialog: false,
+      databaseType: ''
     }
   },
 
@@ -216,10 +228,12 @@ export default {
     },
     createConnection(type) {
       this.connectionDialog = false
-      this.$router.push({
-        name: 'ConnectionCreate',
-        query: { databaseType: type }
-      })
+      this.connectionFormDialog = true
+      this.databaseType = type
+      // this.$router.push({
+      //   name: 'ConnectionCreate',
+      //   query: { databaseType: type }
+      // })
     },
     async init() {
       const data = await this.loadDatabase()
@@ -251,6 +265,12 @@ export default {
       }
     },
 
+    // 新增数据源保存
+    saveConnection() {
+      this.connectionFormDialog = false
+      this.init()
+    },
+
     // 加载数据库
     async loadDatabaseTable() {
       const connectionId = this.currentConnectionId
@@ -278,7 +298,6 @@ export default {
         attr: {
           tableName: tb.original_name,
           connectionId
-          // isFilter: false
         }
       }))
       this.tbFilterList = tables

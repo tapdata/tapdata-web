@@ -43,7 +43,7 @@ const state = () => ({
       icon: 'field-processor',
       name: '字段处理',
       type: 'field_processor',
-      constructor: 'JavaScript'
+      constructor: 'FieldProcessor'
     },
     {
       icon: 'aggregator',

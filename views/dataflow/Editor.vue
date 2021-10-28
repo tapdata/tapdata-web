@@ -307,6 +307,7 @@ export default {
         await this.openDataflow(dataflowId)
       } else {
         this.newDataflow()
+        this.handleShowSettings() // 默认打开设置
       }
     },
 
