@@ -51,7 +51,7 @@
             <div class="tb-item-icon">
               <VIcon class="h-100" size="14" color="#fff">table</VIcon>
             </div>
-            <div class="text-truncate ml-4">{{ tb.name }}</div>
+            <OverflowTooltip class="ml-4" :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
           </div>
         </ElScrollbar>
         <!--<div class="tb-list overflow-auto">
@@ -140,6 +140,7 @@ import 'web-core/assets/icons/svg/joint-cache.svg'
 import 'web-core/assets/icons/svg/row-filter.svg'
 import 'web-core/assets/icons/svg/aggregator.svg'
 import 'web-core/assets/icons/svg/field-processor.svg'
+import 'web-core/assets/icons/svg/join.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
 import VIcon from 'web-core/components/VIcon'
@@ -157,11 +158,12 @@ import { Select } from 'element-ui'
 const connections = new ConnectionsApi()
 const metadataApi = new MetadataApi()
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
+import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 
 export default {
   name: 'LeftSidebar',
 
-  components: { BaseNode, VIcon, Form, ConnectionTypeSelector, ElScrollbar: Select.components.ElScrollbar },
+  components: { OverflowTooltip, BaseNode, VIcon, Form, ConnectionTypeSelector, ElScrollbar: Select.components.ElScrollbar },
 
   data() {
     return {

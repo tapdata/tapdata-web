@@ -22,14 +22,21 @@ export function matchesSelectorToParentElements(el, selector, baseNode) {
   return false
 }
 
-export function on(el, event, handler) {
+export function on(
+  el,
+  event,
+  handler,
+  options = {
+    capture: false
+  }
+) {
   if (!el) {
     return
   }
   if (el.attachEvent) {
     el.attachEvent('on' + event, handler)
   } else if (el.addEventListener) {
-    el.addEventListener(event, handler, false)
+    el.addEventListener(event, handler, options)
   } else {
     el['on' + event] = handler
   }

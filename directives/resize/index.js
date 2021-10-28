@@ -49,7 +49,10 @@ function initEvent($el, position, options) {
     oldVal = $el[`offset${attr}`]
     document.body.classList.add(cls, 'user-select-none')
 
-    on(window, eventsFor.move, handleMove)
+    on(window, eventsFor.move, handleMove, {
+      capture: false,
+      passive: false
+    })
     on(window, eventsFor.stop, handleStop)
   }
 
