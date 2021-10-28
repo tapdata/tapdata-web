@@ -5,7 +5,6 @@
         :form="form"
         :colon="false"
         layout="vertical"
-        label-align="left"
         feedbackLayout="terse"
         @autoSubmit="log"
         @autoSubmitFailed="log"
@@ -52,7 +51,9 @@ import {
   Checkbox,
   Radio,
   Space,
-  FormGrid
+  FormGrid,
+  ArrayTabs,
+  FormLayout
 } from '@formily/element'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import 'web-core/components/form/styles/index.scss'
@@ -70,6 +71,8 @@ const { SchemaField } = createSchemaField({
     Radio,
     Space,
     FormGrid,
+    ArrayTabs,
+    FormLayout,
     ...components
   }
 })
@@ -582,7 +585,7 @@ export default {
           maxTransactionLength: {
             title: '事务最大时长(小时)',
             type: 'number',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'InputNumber'
           },
           lagTime: {

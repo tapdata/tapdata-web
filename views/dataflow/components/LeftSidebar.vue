@@ -163,7 +163,14 @@ import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowToolti
 export default {
   name: 'LeftSidebar',
 
-  components: { OverflowTooltip, BaseNode, VIcon, Form, ConnectionTypeSelector, ElScrollbar: Select.components.ElScrollbar },
+  components: {
+    OverflowTooltip,
+    BaseNode,
+    VIcon,
+    Form,
+    ConnectionTypeSelector,
+    ElScrollbar: Select.components.ElScrollbar
+  },
 
   data() {
     return {
