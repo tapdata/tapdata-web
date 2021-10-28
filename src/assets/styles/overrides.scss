@@ -186,6 +186,21 @@ th {
 .el-tooltip__popper.is-dark {
   line-height: 20px;
   background: rgba(0, 0, 0, 0.7);
+  &[x-placement^='top'] .popper__arrow {
+    border-top-color: rgba(0, 0, 0, 0.7);
+  }
+  &[x-placement^='bottom'] .popper__arrow {
+    border-bottom-color: rgba(0, 0, 0, 0.7);
+  }
+  &[x-placement^='left'] .popper__arrow {
+    border-left-color: rgba(0, 0, 0, 0.7);
+  }
+  &[x-placement^='right'] .popper__arrow {
+    border-right-color: rgba(0, 0, 0, 0.7);
+  }
+  .popper__arrow:after {
+    opacity: 0;
+  }
 }
 .el-button {
   font-weight: normal;
