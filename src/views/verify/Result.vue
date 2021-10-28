@@ -112,7 +112,7 @@ export default {
           }
         })
         .then(data => {
-          let result = data[0]
+          let result = data.items[0]
           if (result) {
             this.resultInfo = result
             let stats = result.stats
