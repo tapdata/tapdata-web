@@ -35,6 +35,7 @@ import dfs_dameng from './dfs_dameng'
 import dfs_kafka from './dfs_kafka'
 import dfs_greenplum from './dfs_greenplum'
 import dfs_mq from './dfs_mq'
+import dfs_clickhouse from './dfs_clickhouse'
 import mq from './mq'
 
 export default {
@@ -66,6 +67,7 @@ export default {
   dfs_kafka,
   dfs_greenplum,
   dfs_mq,
+  dfs_clickhouse,
   sybasease,
   gbase8s,
   gaussdb200,

@@ -56,7 +56,8 @@ import {
   Collapse,
   CollapseItem,
   Notification,
-  Divider
+  Divider,
+  Tree
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -127,3 +128,4 @@ Vue.use(Autocomplete)
 Vue.use(Collapse)
 Vue.use(CollapseItem)
 Vue.use(Divider)
+Vue.use(Tree)

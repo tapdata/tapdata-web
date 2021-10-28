@@ -89,7 +89,7 @@
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
               <VIcon size="18" class="color-success">loading</VIcon>
-              <span>{{ statusMap[scope.row.status].text }}</span>
+              <span>{{ getStatusText(scope.row) }}</span>
             </div>
             <div v-else>-</div>
             <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="14"
@@ -295,7 +295,7 @@ export default {
         }
       }
       let data = await this.$axios.get('tm/api/Inspects?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      let changeList = data || []
+      let changeList = data.items || []
       let map = {}
       changeList.forEach(item => {
         map[item.id] = item
@@ -357,13 +357,11 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      Promise.all([
-        this.$axios.get('tm/api/Inspects/count?where=' + encodeURIComponent(JSON.stringify(where))),
-        this.$axios.get('tm/api/Inspects?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      ])
-        .then(([countData, data]) => {
-          this.page.total = countData.count
-          let list = data || []
+      this.$axios
+        .get('tm/api/Inspects?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(data => {
+          this.page.total = data.total
+          let list = data.items || []
           this.list = list.map(this.formatData)
           if (!list.length && data.total > 0) {
             setTimeout(() => {
@@ -380,7 +378,7 @@ export default {
       let sourceTotal = '-'
       let targetTotal = '-'
       if (result) {
-        sourceTotal = result.source_total
+        sourceTotal = result.sourceTotal
         targetTotal = result.target_total
       }
       item.lastStartTime = item.lastStartTime ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
@@ -477,6 +475,9 @@ export default {
           )
         }
       })
+    },
+    getStatusText(row) {
+      return this.statusMap[row.status]?.text
     }
   }
 }

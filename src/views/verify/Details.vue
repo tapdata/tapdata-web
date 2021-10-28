@@ -121,7 +121,7 @@ export default {
     getData() {
       this.loading = true
       this.$axios
-        .get('tm/api/Inspects', {
+        .get('tm/api/Inspects/findById', {
           params: {
             filter: JSON.stringify({
               where: {
@@ -131,29 +131,27 @@ export default {
           }
         })
         .then(data => {
-          let inspect = data[0]
+          let inspect = data
           let inspectResult = inspect.InspectResult
           this.inspect = inspect
           this.$axios
-            .get('tm/api/InspectResults', {
+            .get('tm/api/InspectResults/findById', {
               params: {
                 filter: JSON.stringify({
                   where: {
-                    id: inspectResult.id
+                    id: inspectResult?.id
                   }
                 })
               }
             })
             .then(data => {
-              let result = data[0]
+              let result = data
               if (result) {
                 if (result) {
                   this.resultInfo = result
                   let stats = result.stats
                   if (stats.length) {
-                    // this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                    this.errorMsg =
-                      'sdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdf'
+                    this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
                     this.taskId = stats[0].taskId
                     this.$nextTick(() => {
                       this.$refs.resultView?.fetch(1)
@@ -178,8 +176,8 @@ export default {
         let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
         let where = {
           taskId,
-          inspect_id: { regexp: `^${this.inspect.id}$` },
-          inspectResultId: { regexp: `^${this.resultInfo.id}$` }
+          inspect_id: this.inspect.id,
+          inspectResultId: this.resultInfo.id
         }
         let filter = {
           where,
@@ -187,25 +185,24 @@ export default {
           limit: showAdvancedVerification ? 1 : size,
           skip: (current - 1) * (showAdvancedVerification ? 1 : size)
         }
-        return Promise.all([
-          this.$axios.get('tm/api/InspectDetails/count?where=' + encodeURIComponent(JSON.stringify(where))),
-          this.$axios.get('tm/api/InspectDetails?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        ]).then(([countData, data]) => {
-          let resultList = []
-          if (data) {
-            if (showAdvancedVerification) {
-              resultList = data || []
-            } else {
-              resultList = this.handleOtherVerify(data)
+        return this.$axios
+          .get('tm/api/InspectDetails?filter=' + encodeURIComponent(JSON.stringify(filter)))
+          .then(data => {
+            let resultList = []
+            if (data?.items) {
+              if (showAdvancedVerification) {
+                resultList = data.items || []
+              } else {
+                resultList = this.handleOtherVerify(data.items)
+              }
             }
-          }
-          return {
-            showAdvancedVerification, // 是否高级校验
-            total: countData.count, // 总条数
-            statsInfo, // 结果信息
-            resultList // 结果详情
-          }
-        })
+            return {
+              showAdvancedVerification, // 是否高级校验
+              total: data.total, // 总条数
+              statsInfo, // 结果信息
+              resultList // 结果详情
+            }
+          })
       }
       return Promise.reject()
     },

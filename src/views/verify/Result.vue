@@ -143,8 +143,8 @@ export default {
         let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
         let where = {
           taskId,
-          inspect_id: { regexp: `^${this.inspect.id}$` },
-          inspectResultId: { regexp: `^${this.resultInfo.id}$` }
+          inspect_id: this.inspect.id,
+          inspectResultId: this.resultInfo.id
         }
         let filter = {
           where,
@@ -152,25 +152,24 @@ export default {
           limit: showAdvancedVerification ? 1 : size,
           skip: (current - 1) * (showAdvancedVerification ? 1 : size)
         }
-        return Promise.all([
-          this.$axios.get('tm/api/InspectDetails/count?where=' + encodeURIComponent(JSON.stringify(where))),
-          this.$axios.get('tm/api/InspectDetails?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        ]).then(([countData, data]) => {
-          let resultList = []
-          if (data) {
-            if (showAdvancedVerification) {
-              resultList = data || []
-            } else {
-              resultList = this.handleOtherVerify(data)
+        return this.$axios
+          .get('tm/api/InspectDetails?filter=' + encodeURIComponent(JSON.stringify(filter)))
+          .then(data => {
+            let resultList = []
+            if (data?.items) {
+              if (showAdvancedVerification) {
+                resultList = data.items || []
+              } else {
+                resultList = this.handleOtherVerify(data.items)
+              }
             }
-          }
-          return {
-            showAdvancedVerification, // 是否高级校验
-            total: countData.count, // 总条数
-            statsInfo, // 结果信息
-            resultList // 结果详情
-          }
-        })
+            return {
+              showAdvancedVerification, // 是否高级校验
+              total: data.total, // 总条数
+              statsInfo, // 结果信息
+              resultList // 结果详情
+            }
+          })
       }
     },
     rowClick(row) {

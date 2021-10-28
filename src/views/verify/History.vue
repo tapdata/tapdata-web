@@ -9,13 +9,21 @@ export default {
     History
   },
   methods: {
-    search(filter, where) {
-      return Promise.all([
-        this.$axios.get('tm/api/InspectResults/count?where=' + encodeURIComponent(JSON.stringify(where))),
-        this.$axios.get('tm/api/InspectResults?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      ]).then(data => {
-        return data
-      })
+    search(filter) {
+      if (filter?.where?.inspect_id?.regexp) {
+        filter.where.inspect_id = filter.where.inspect_id.regexp.replace(/^\^(.*)\$$/, '$1')
+      }
+      if (filter?.where?.firstCheckId?.regexp) {
+        filter.where.firstCheckId = filter.where.firstCheckId.regexp.replace(/^\^(.*)\$$/, '$1')
+      }
+      if (filter?.where?.parentId?.eq === null) {
+        delete filter.where.parentId
+      }
+      return this.$axios
+        .get('tm/api/InspectResults?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(data => {
+          return [{ count: data.total }, data.items]
+        })
     },
     rowClickHandler(item) {
       let url = ''

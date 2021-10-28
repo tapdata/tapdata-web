@@ -49,7 +49,11 @@
           </div>
         </div>
       </main>
-      <GitBook :database-type="$route.query && $route.query.databaseType" ref="gitBook"></GitBook>
+      <GitBook
+        v-if="!databaseTypeText"
+        :database-type="$route.query && $route.query.databaseType"
+        ref="gitBook"
+      ></GitBook>
     </div>
     <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
     <el-dialog
@@ -85,6 +89,11 @@ import { SUPPORT_DB } from '../../const'
 let defaultConfig = []
 export default {
   components: { GitBook, StatusTag },
+  props: {
+    databaseTypeText: {
+      type: String
+    }
+  },
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
@@ -164,7 +173,8 @@ export default {
   },
   methods: {
     init() {
-      this.databaseType = this.$route.query.databaseType || this.$store?.state?.createConnection?.databaseType
+      this.databaseType =
+        this.$route.query.databaseType || this.$store?.state?.createConnection?.databaseType || this.databaseTypeText
       this.model = Object.assign({}, DEFAULT_MODEL['default'])
       let type = this.databaseType
       if (type === 'rest api') {
@@ -310,7 +320,7 @@ export default {
           'rest api': 'restapi'
         }[type] || type //特殊数据源名称转换
       type = 'dfs_' + type
-
+      console.log('type', type)
       let func = formConfig[type]
       if (func) {
         let config = func(this)
@@ -439,6 +449,7 @@ export default {
           promise
             .then(() => {
               this.$message.success(this.$t('message.saveOK'))
+
               if (this.$route.query.step) {
                 this.$router.push({
                   name: 'Connection',
@@ -446,6 +457,8 @@ export default {
                     step: this.$route.query.step
                   }
                 })
+              } else if (this.databaseTypeText) {
+                this.$emit('saveConnection')
               } else {
                 this.$router.push({
                   name: 'Connection'

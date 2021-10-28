@@ -962,6 +962,76 @@ module.exports = {
     msg: 'ok'
   },
   '/tm/api/Inspects/update': { data: { count: 1 }, code: 'ok', msg: 'ok' },
+  '/tm/api/Inspects/findById': {
+    reqId: 'aa734018-1ac9-46e5-982d-51a369772708',
+    ts: 1635156393459,
+    code: 'ok',
+    data: {
+      id: '6172604417e4396fb056da12',
+      customId: '613f37dbb043b8350a668f4d',
+      userId: '61407a8cfa67f20019f68f9f',
+      lastUpdBy: '61407a8cfa67f20019f68f9f',
+      createUser: '18002569109',
+      name: 'ldw_local',
+      flowId: '6172603717e4396fb056da0e',
+      mode: 'manual',
+      inspectMethod: 'row_count',
+      platformInfo: { agentType: 'private' },
+      limit: { keep: 100 },
+      enabled: true,
+      tasks: [
+        {
+          fullMatch: true,
+          script: '',
+          showAdvancedVerification: false,
+          source: {
+            fields: [
+              { id: '61726035a178450013aaeab6', field_name: 'SETTLED_DATE', primary_key_position: '0' },
+              { id: '61726035a178450013aaeab9', field_name: 'SETTLED_AMOUNT', primary_key_position: '0' },
+              { id: '61726035a178450013aaeab4', field_name: 'POLICY_ID', primary_key_position: '0' },
+              { id: '61726035a178450013aaeabb', field_name: 'LAST_CHANGE', primary_key_position: '0' },
+              { id: '61726035a178450013aaeab7', field_name: 'CLAIM_TYPE', primary_key_position: '0' },
+              { id: '61726035a178450013aaeaba', field_name: 'CLAIM_REASON', primary_key_position: '0' },
+              { id: '61726035a178450013aaeab3', field_name: 'CLAIM_ID', primary_key_position: '1' },
+              { id: '61726035a178450013aaeab5', field_name: 'CLAIM_DATE', primary_key_position: '0' },
+              { id: '61726035a178450013aaeab8', field_name: 'CLAIM_AMOUNT', primary_key_position: '0' }
+            ],
+            connectionId: '61541309e2196530160a1881',
+            connectionName: 'ldw_local',
+            sortColumn: 'CLAIM_ID',
+            table: 'AUTO_CLAIM'
+          },
+          target: {
+            fields: [
+              { id: '61726035a178450013aaeab6', field_name: 'SETTLED_DATE', primary_key_position: '0' },
+              { id: '61726035a178450013aaeab9', field_name: 'SETTLED_AMOUNT', primary_key_position: '0' },
+              { id: '61726035a178450013aaeab4', field_name: 'POLICY_ID', primary_key_position: '0' },
+              { id: '61726035a178450013aaeabb', field_name: 'LAST_CHANGE', primary_key_position: '0' },
+              { id: '61726035a178450013aaeab7', field_name: 'CLAIM_TYPE', primary_key_position: '0' },
+              { id: '61726035a178450013aaeaba', field_name: 'CLAIM_REASON', primary_key_position: '0' },
+              { id: '61726035a178450013aaeab3', field_name: 'CLAIM_ID', primary_key_position: '1' },
+              { id: '61726035a178450013aaeab5', field_name: 'CLAIM_DATE', primary_key_position: '0' },
+              { id: '61726035a178450013aaeab8', field_name: 'CLAIM_AMOUNT', primary_key_position: '0' }
+            ],
+            connectionId: '6154154fe2196530160a1882',
+            connectionName: 'ldw_local - Copy',
+            sortColumn: 'CLAIM_ID',
+            table: 'AUTO_CLAIM'
+          },
+          taskId: '6172603717e4396fb056da0e'
+        }
+      ],
+      status: 'done',
+      agentTags: [],
+      agentId: '61729141ba0db526774b2bab-1fijoeq5a',
+      lastStartTime: 1635155261193,
+      scheduleTime: 1635155337778,
+      scheduleTimes: 0,
+      errorMsg: '',
+      createTime: '2021-10-22T06:55:00.023+00:00',
+      last_updated: '2021-10-25T09:49:19.618+00:00'
+    }
+  },
   '/tm/api/Inspects/findOne': {
     data: {
       id: '60dc5bf4fdbc9e17646376be',

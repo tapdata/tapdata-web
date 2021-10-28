@@ -38,7 +38,8 @@
           'kafka',
           'dameng',
           'greenplum',
-          'mq'
+          'mq',
+          'clickhouse'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
         @select="createConnection"
@@ -48,7 +49,7 @@
 </template>
 
 <script>
-import TheHeader from '@/components/TheHeader'
+import TheHeader from '@/components/the-header'
 import VIcon from '@/components/VIcon'
 export default {
   components: {
