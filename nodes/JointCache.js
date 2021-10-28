@@ -36,7 +36,7 @@ export class JointCache extends NodeType {
         'x-component': 'Select'
         // 'x-component': 'ComboSelect'
       },
-      joinSettings:{
+      joinSettings: {
         type: 'array',
         title: '关联设置',
         required: true,
@@ -52,9 +52,9 @@ export class JointCache extends NodeType {
               properties: {
                 cacheKey: {
                   type: 'void',
-                  'x-component': 'String',
-                },
-              },
+                  'x-component': 'String'
+                }
+              }
             },
             column2: {
               type: 'void',
@@ -63,9 +63,9 @@ export class JointCache extends NodeType {
               properties: {
                 index: {
                   type: 'void',
-                  'x-component': 'Select',
-                },
-              },
+                  'x-component': 'Select'
+                }
+              }
             }
           }
         }
@@ -77,7 +77,7 @@ export class JointCache extends NodeType {
         'x-component': 'Input',
         'x-component-props': {
           config: { placeholder: '请选择或创建写入路径字段' }
-        },
+        }
       }
     }
   }

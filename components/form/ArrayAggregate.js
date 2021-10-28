@@ -107,7 +107,13 @@ export const ArrayAggregate = connect(
                     </el-form-item>
                   </el-col>
                   <el-col span={1}>
-                    <VIcon class="clickable" style="padding-top:12px" color="#666" onClick={() => this.removeRow(index)} small>
+                    <VIcon
+                      class="clickable"
+                      style="padding-top:12px"
+                      color="#666"
+                      onClick={() => this.removeRow(index)}
+                      small
+                    >
                       close
                     </VIcon>
                   </el-col>

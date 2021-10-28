@@ -6,14 +6,23 @@
     }"
     class="config-panel border-top"
   >
-    <div v-if="activeNode" class="config-tabs-wrap">
+    <div v-if="activeType === 'settings'" class="h-100 flex flex-column overflow-hidden">
+      <div class="panel-header flex align-center px-4 border-bottom">
+        <VIcon class="header-icon mr-2">setting</VIcon>
+        设置
+      </div>
+      <div class="flex-1 position-relative">
+        <FormPanel v-on="$listeners"></FormPanel>
+      </div>
+    </div>
+    <div v-else class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
         <VIcon class="header-icon mr-2">{{ icon }}</VIcon>
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
           <input
             ref="nameInput"
             v-focus-select
-            :value="activeNode.name"
+            :value="activeNode ? activeNode.name : ''"
             :readonly="isMonitor"
             class="title-input text-truncate"
             @change="handleChangeName"
@@ -32,16 +41,6 @@
           <DataPane></DataPane>
         </ElTabPane>
       </ElTabs>
-    </div>
-
-    <div v-else-if="activeType === 'settings'" class="h-100 flex flex-column overflow-hidden">
-      <div class="panel-header flex align-center px-4 border-bottom">
-        <VIcon class="header-icon mr-2">setting</VIcon>
-        设置
-      </div>
-      <div class="flex-1 position-relative">
-        <FormPanel v-on="$listeners"></FormPanel>
-      </div>
     </div>
   </section>
 </template>

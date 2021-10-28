@@ -18,6 +18,14 @@ export class Table extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
+      inputLanes: {
+        type: 'string',
+        'x-display': 'hidden'
+      },
+      outputLanes: {
+        type: 'string',
+        'x-display': 'hidden'
+      },
       connectionId: {
         type: 'string',
         title: '数据库',
@@ -30,7 +38,7 @@ export class Table extends NodeType {
         'x-component-props': {
           config: { placeholder: '请选择数据库' }
         },
-        'x-reactions': ['{{useAsyncDataSource(loadDatabase, "dataSource")}}']
+        'x-reactions': '{{useAsyncDataSource(loadDatabase, "dataSource")}}'
       },
       tableName: {
         title: '表',
@@ -44,7 +52,7 @@ export class Table extends NodeType {
         'x-component-props': {
           config: { placeholder: '请选择表，区分大小写' }
         },
-        'x-reactions': ['{{useAsyncDataSource(loadDatabaseTable)}}']
+        'x-reactions': '{{useAsyncDataSource(loadDatabaseTable)}}'
       },
       name: {
         type: 'string',
@@ -56,25 +64,80 @@ export class Table extends NodeType {
           }
         }
       },
-      isFilter: {
-        type: 'boolean',
-        title: '过滤设置',
-        required: true,
+      // 产品说不要了，暂时留存
+      /*switchSpace: {
+        type: 'void',
+        title: '启用自定义初始化顺序',
         'x-decorator': 'FormItem',
-        'x-component': 'Switch',
-        'x-reactions': {
-          target: 'custSql',
-          fulfill: {
-            state: {
-              visible: '{{!!$self.value}}'
+        'x-decorator-props': {
+          wrapperWidth: 240
+        },
+        'x-component': 'Space',
+        'x-component-props': {
+          size: 'middle'
+        },
+        properties: {
+          enableInitialOrder: {
+            type: 'boolean',
+            required: true,
+            'x-component': 'Switch',
+            'x-reactions': {
+              target: 'initialSyncOrder',
+              fulfill: {
+                state: {
+                  visible: '{{!!$self.value}}'
+                }
+              }
+            }
+          },
+
+          initialSyncOrder: {
+            type: 'number',
+            required: true,
+            'x-component': 'InputNumber',
+            'x-component-props': {
+              min: 1,
+              size: 'mini'
             }
           }
         }
+      },*/
+      isFilter: {
+        type: 'boolean',
+        title: '过滤设置',
+        default: false,
+        'x-decorator': 'FormItem',
+        'x-component': 'Switch',
+        'x-reactions': [
+          {
+            dependencies: ['inputLanes', 'outputLanes'],
+            fulfill: {
+              state: {
+                visible: '{{(!!$deps[1] && $deps[1].length>0) || (!$deps[0] || !$deps[0].length)}}'
+              }
+            }
+          } /*,
+          {
+            target: 'custSql',
+            fulfill: {
+              state: {
+                visible: '{{!!$self.value}}'
+              }
+            }
+          }*/
+        ]
       },
-
       custSql: {
         type: 'object',
         'x-component': 'FormTab',
+        'x-reactions': {
+          dependencies: ['inputLanes', 'outputLanes', 'isFilter'],
+          fulfill: {
+            state: {
+              visible: '{{!!$deps[2] && ((!!$deps[1] && $deps[1].length > 0) || !$deps[0] || !$deps[0].length)}}'
+            }
+          }
+        },
         properties: {
           tab1: {
             type: 'void',
@@ -128,12 +191,13 @@ export class Table extends NodeType {
                   filterable: true,
                   defaultFirstOption: true
                 },
-                'x-reactions': ['{{useAsyncDataSource(loadTableField)}}']
+                'x-reactions': '{{useAsyncDataSource(loadTableField)}}'
               },
               limitLines: {
                 title: '行数限制',
                 type: 'string',
                 required: true,
+                default: 1000,
                 enum: [
                   {
                     label: '全部行数',
@@ -195,6 +259,34 @@ export class Table extends NodeType {
                   placeholder: '请输入自定义SQL增量条件'
                 }
               }
+            }
+          }
+        }
+      },
+      dropTable: {
+        type: 'boolean',
+        title: '已存在的数据',
+        enum: [
+          {
+            label: '保持已存在的数据',
+            value: false
+          },
+          {
+            label: '运行前删除已存在的数据',
+            value: true
+          }
+        ],
+        default: false,
+        'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          wrapperWidth: 240
+        },
+        'x-component': 'Select',
+        'x-reactions': {
+          dependencies: ['inputLanes'],
+          fulfill: {
+            state: {
+              visible: '{{!!$deps[0] && $deps[0].length>0}}'
             }
           }
         }

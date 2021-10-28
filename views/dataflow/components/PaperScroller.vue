@@ -358,7 +358,10 @@ export default {
 
       // this.showSelectBox(e)
 
-      on(document, 'mousemove', this.mouseMoveSelect)
+      on(document, 'mousemove', this.mouseMoveSelect, {
+        capture: false,
+        passive: false
+      })
     },
 
     mouseMoveSelect(e) {

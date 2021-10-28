@@ -58,9 +58,9 @@ const state = () => ({
       constructor: 'RowFilter'
     },
     {
-      icon: 'joint-cache',
-      name: '关联缓存',
-      type: 'cache_lookup_processor',
+      icon: 'join',
+      name: '连接',
+      type: 'join',
       constructor: 'JointCache'
     }
   ],
