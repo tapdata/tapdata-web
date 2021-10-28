@@ -2,7 +2,7 @@
   <el-container class="create-task-wrap bg-white" v-if="steps[activeStep]">
     <el-container style="overflow: hidden; flex: 1" class="create-task-container flex-column">
       <div class="steps-header">
-        <el-steps class="pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
+        <el-steps class="primary pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
           <el-step title="选择连接"></el-step>
           <el-step title="设置任务属性"></el-step>
           <el-step title="选择表"></el-step>

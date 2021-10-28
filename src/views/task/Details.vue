@@ -85,44 +85,54 @@
       </div>
     </div>
     <div class="sub-task flex-fill mt-6 p-6 bg-white">
-      <div class="sub-task__header">
-        <span class="fs-7">子任务</span>
-        <span class="ml-4 font-color-disable"
-          >在Tapdata Cloud中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情</span
-        >
-      </div>
-      <ElTable :data="list" class="mt-5">
-        <ElTableColumn label="子任务名称" prop="name"></ElTableColumn>
-        <ElTableColumn label="任务状态" prop="status">
-          <template v-slot="scope">
-            <StatusTag type="text" target="task" :status="scope.row.status" only-img></StatusTag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="操作">
-          <template v-slot="scope">
-            <ElButton
-              :disabled="
-                !statusBtMap['run'][scope.row.status] || (scope.row.status === 'draft' && scope.row.checked === false)
-              "
-              type="text"
-              @click="run([scope.row.id], scope.row)"
+      <ElTabs v-model="activeTab" class="dashboard-tabs flex flex-column overflow-hidden h-100">
+        <ElTabPane label="子任务" name="subTask" class="h-100">
+          <div slot="label">
+            <span class="mr-2">子任务</span>
+            <ElTooltip
+              placement="top"
+              content="在Tapdata Cloud中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情"
             >
-              运行
-            </ElButton>
-            <ElButton
-              :disabled="!statusBtMap['stop'][scope.row.status]"
-              class="mr-2"
-              type="text"
-              @click="stop([scope.row.id])"
-            >
-              停止
-            </ElButton>
-            <ElButton :disabled="!statusBtMap['reset'][scope.row.status]" type="text" @click="reset(scope.row.id)"
-              >重启</ElButton
-            >
-          </template>
-        </ElTableColumn>
-      </ElTable>
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+          <ElTable :data="list" class="mt-2">
+            <ElTableColumn label="子任务名称" prop="name"></ElTableColumn>
+            <ElTableColumn label="任务状态" prop="status">
+              <template v-slot="scope">
+                <StatusTag type="text" target="task" :status="scope.row.status" only-img></StatusTag>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn label="操作">
+              <template v-slot="scope">
+                <ElButton
+                  :disabled="
+                    !statusBtMap['run'][scope.row.status] ||
+                    (scope.row.status === 'draft' && scope.row.checked === false)
+                  "
+                  type="text"
+                  @click="run([scope.row.id], scope.row)"
+                >
+                  运行
+                </ElButton>
+                <ElButton
+                  :disabled="!statusBtMap['stop'][scope.row.status]"
+                  class="mr-2"
+                  type="text"
+                  @click="stop([scope.row.id])"
+                >
+                  停止
+                </ElButton>
+                <ElButton :disabled="!statusBtMap['reset'][scope.row.status]" type="text" @click="reset(scope.row.id)"
+                  >重启</ElButton
+                >
+              </template>
+            </ElTableColumn>
+          </ElTable>
+        </ElTabPane>
+        <ElTabPane lazy class="h-100 overflow-hidden" label="连接" name="connection"> 连接 </ElTabPane>
+        <ElTabPane lazy class="h-100 overflow-hidden" label="历史运行记录" name="logs"> 历史运行记录 </ElTabPane>
+      </ElTabs>
     </div>
   </el-container>
 </template>
@@ -138,6 +148,7 @@ export default {
   data() {
     return {
       loading: true,
+      activeTab: 'subTask',
       task: {},
       infoItems: [
         {
