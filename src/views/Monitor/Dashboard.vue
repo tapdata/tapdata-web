@@ -587,6 +587,7 @@ export default {
       if (['draft', 'paused', 'error'].includes(this.task?.status) && status === 'running') {
         result = 'paused'
       }
+      debugger
       return result
     },
     //是否支持同步内容

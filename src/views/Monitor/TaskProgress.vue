@@ -156,6 +156,7 @@ export default {
           key: 'overview',
           statsType: 'data_overview',
           title: this.$t('dataFlow.dataScreening'),
+          classFlex: true,
           loading: false
         },
         body: {}
@@ -170,6 +171,7 @@ export default {
           tip: this.$t('dataFlow.throughputpop'),
           unit: 'QPS',
           class: 'putColor',
+          classFlex: true,
           loading: false
         },
         body: null,
@@ -186,6 +188,7 @@ export default {
           tip: this.$t('dataFlow.transtime_pop'),
           unit: '单位：/条',
           class: 'transfColor',
+          classFlex: true,
           loading: false
         },
         body: null,
@@ -201,6 +204,7 @@ export default {
           tip: this.$t('dataFlow.replicate_pop'),
           unit: '单位：/秒',
           class: 'transfColor',
+          classFlex: 'flex',
           hideSecond: true,
           loading: false
         },

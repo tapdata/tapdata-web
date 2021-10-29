@@ -1,13 +1,13 @@
 <template>
-  <div class="echart-head">
-    <h2>{{ data.title }}</h2>
+  <div :class="['echart-head', { flex: data.classFlex }]">
+    <h2 v-if="data.title">{{ data.title }}</h2>
     <ElTooltip v-if="data.tip" style="margin-left: 10px" placement="top-start" :content="data.tip">
       <i class="echart-head-tooltip__icon el-icon-warning-outline"></i>
     </ElTooltip>
     <span style="flex: 1">
       <VIcon v-if="data && data.loading">loading-circle</VIcon>
     </span>
-    <div v-if="data.unit" class="unit">
+    <div v-if="data.unit" :class="['unit', 'mt-1', data.classfr]">
       <span>{{ data.unit }}</span>
     </div>
     <el-radio-group
@@ -63,7 +63,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .echart-head {
-  display: flex;
+  // display: flex;
   align-items: center;
   height: 38px;
   padding: 0 10px;

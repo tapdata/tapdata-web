@@ -8,6 +8,7 @@ import ContactUs from '@/views/ContactUs'
 
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/Task/Form.vue')
 const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/Task/Details.vue')
+// const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/Task/SubtaskDetails.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/Connection/Form.vue')
 
 const routes = [
