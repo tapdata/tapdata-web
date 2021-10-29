@@ -654,7 +654,7 @@ export default {
       if (type === 'target' && stage.syncObjects) {
         getTableNames(stage.syncObjects, stage.table_prefix, stage.table_suffix)
       }
-      let includeTables = tables.filter(tb => {
+      let includeTables = (tables?.items || tables).filter(tb => {
         let flag = true
         if (includeTableNames.length) {
           flag = includeTableNames.includes(tb.original_name)
