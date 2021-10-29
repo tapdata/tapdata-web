@@ -36,7 +36,7 @@ export class Aggregate extends NodeType {
         'x-component': 'Select',
         'x-decorator-props': {
           wrapperWidth: 240
-        },
+        }
       },
       aggregations: {
         type: 'array',
