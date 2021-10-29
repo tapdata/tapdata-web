@@ -215,14 +215,15 @@
             </el-button>
             <FieldMapping
               v-else
-              :dataFlow="dataFlow"
-              :showBtn="true"
-              :hiddenFieldProcess="true"
-              :isFirst="model.isFirst"
-              @update-first="returnModel"
-              :stageId="stageId"
               ref="fieldMapping"
               class="fr"
+              :dataFlow="dataFlow"
+              :showBtn="true"
+              :isFirst="model.isFirst"
+              :isDisable="disabled"
+              :hiddenFieldProcess="true"
+              :stageId="stageId"
+              @update-first="returnModel"
             ></FieldMapping>
           </div>
         </el-form-item>

@@ -97,14 +97,15 @@
       </el-button>
       <FieldMapping
         v-else
-        :dataFlow="dataFlow"
-        :hiddenFieldProcess="true"
-        :showBtn="true"
-        :isFirst="model.isFirst"
-        @update-first="returnModel"
-        :stageId="stageId"
         ref="fieldMapping"
         class="fr"
+        :dataFlow="dataFlow"
+        :showBtn="true"
+        :isFirst="model.isFirst"
+        :isDisable="disabled"
+        :hiddenFieldProcess="true"
+        :stageId="stageId"
+        @update-first="returnModel"
       ></FieldMapping>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
