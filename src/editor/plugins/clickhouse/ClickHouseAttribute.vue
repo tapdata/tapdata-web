@@ -84,21 +84,28 @@
       </el-form>
     </div>
     <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
-      <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
+      <el-button
+        class="fr"
+        type="success"
+        size="mini"
+        v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+        @click="hanlderLoadSchema"
+      >
         <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
         <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
         <span v-else>{{ $t('dataFlow.updateModel') }}</span>
       </el-button>
       <FieldMapping
         v-else
+        ref="fieldMapping"
+        class="fr"
         :dataFlow="dataFlow"
         :showBtn="true"
         :isFirst="model.isFirst"
-        @update-first="returnModel"
+        :isDisable="disabled"
         :hiddenFieldProcess="true"
         :stageId="stageId"
-        ref="fieldMapping"
-        class="fr"
+        @update-first="returnModel"
       ></FieldMapping>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
@@ -166,6 +173,7 @@ export default {
       model: {
         connectionId: '',
         type: 'clickhouse',
+        databaseType: 'clickhouse',
         tableName: '',
         field_process: [],
         isFirst: true
@@ -173,6 +181,7 @@ export default {
       scope: '',
       dataFlow: '',
       stageId: '',
+      showFieldMapping: false,
       schemasLoading: false,
       mergedSchema: null
     }

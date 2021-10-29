@@ -1,6 +1,12 @@
 <template>
   <div>
-    <el-button size="mini" class="e-button" v-if="showBtn" :loading="loading" @click="fieldProcess()"
+    <el-button
+      size="mini"
+      class="e-button"
+      v-if="showBtn"
+      :loading="loading"
+      :disabled="isDisable"
+      @click="fieldProcess()"
       >字段映射</el-button
     >
     <el-dialog
@@ -42,7 +48,8 @@ export default {
     'stageId',
     'isFirst',
     'mappingType',
-    'selectSourceArr'
+    'selectSourceArr',
+    'isDisable'
   ],
   data() {
     return {
