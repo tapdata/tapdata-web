@@ -587,6 +587,17 @@ export default {
       this.$router.push({ name: 'DataflowNew' })
     },
     toDetails(row) {
+      // 库迁移
+      if (row.mappingTemplate === 'cluster-clone') {
+        this.$router.push({
+          name: 'DataflowStatistics',
+          params: {
+            id: row.id
+          }
+        })
+        return
+      }
+      // 表同步
       this.$router.push({
         name: 'DataflowDetails',
         params: {

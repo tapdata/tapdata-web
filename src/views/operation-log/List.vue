@@ -42,9 +42,8 @@
 <script>
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/FilterBar'
-import VTable from 'web-core/components/base/vTable'
 export default {
-  components: { VTable, VIcon, FilterBar },
+  components: { VIcon, FilterBar },
   data() {
     return {
       loading: true,

@@ -1,7 +1,7 @@
 <template>
   <div v-if="$route.name === 'NoviceGuide'" class="novice-guide-wrapper main-container">
     <div class="container-section p-6">
-      <el-steps class="pb-6" :active="step" process-status="process" finish-status="success" align-center>
+      <el-steps class="primary pb-6" :active="step" process-status="process" finish-status="success" align-center>
         <el-step title="安装 Agent"></el-step>
         <el-step title="创建源连接"></el-step>
         <el-step title="创建目标连接"></el-step>

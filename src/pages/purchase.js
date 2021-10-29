@@ -1,6 +1,6 @@
 import init from '../init'
-import Purchase from '../views/Purchase/Purchase.vue'
-import Result from '../views/Purchase/Result.vue'
+import Purchase from '../views/purchase/Purchase.vue'
+import Result from '../views/purchase/Result.vue'
 import Error from '../views/Error.vue'
 
 const routes = [

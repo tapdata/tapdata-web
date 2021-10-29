@@ -82,7 +82,7 @@
 <script>
 import HeaderCustomerService from './HeaderCustomerService'
 // import AgentFail from './AgentFail';
-import NotificationPopover from '@/views/Workbench/NotificationPopover'
+import NotificationPopover from '@/views/workbench/NotificationPopover'
 // import ws from '../../plugins/ws.js';
 import VIcon from '@/components/VIcon'
 

@@ -53,6 +53,9 @@ export function toRegExp(word) {
   }
   return word
 }
+export function deepCopy(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
 // 支持的数据源 'mysql','mariadb','mysql pxc','mongodb','postgres','oracle','sqlserver','redis'
 // 不支持 'rest api','db2','sybase','gbase','gaussdb200','kafka','elasticsearch'
 export const TYPEMAP = {

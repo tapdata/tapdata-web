@@ -186,6 +186,21 @@ th {
 .el-tooltip__popper.is-dark {
   line-height: 20px;
   background: rgba(0, 0, 0, 0.7);
+  &[x-placement^='top'] .popper__arrow {
+    border-top-color: rgba(0, 0, 0, 0.7);
+  }
+  &[x-placement^='bottom'] .popper__arrow {
+    border-bottom-color: rgba(0, 0, 0, 0.7);
+  }
+  &[x-placement^='left'] .popper__arrow {
+    border-left-color: rgba(0, 0, 0, 0.7);
+  }
+  &[x-placement^='right'] .popper__arrow {
+    border-right-color: rgba(0, 0, 0, 0.7);
+  }
+  .popper__arrow:after {
+    opacity: 0;
+  }
 }
 .el-button {
   font-weight: normal;
@@ -519,42 +534,79 @@ th {
 }
 // 步骤条
 .el-steps {
-  .el-step__head {
-    border-color: rgba(0, 0, 0, 0.25);
-    color: rgba(0, 0, 0, 0.25);
-    &.is-process {
-      border-color: rgba(44, 101, 255, 1);
-      color: rgba(44, 101, 255, 1);
-    }
-    &.is-success {
-      border-color: rgba(44, 101, 255, 1);
-      color: rgba(44, 101, 255, 1);
+  &.primary {
+    .el-step__head {
+      border-color: rgba(0, 0, 0, 0.25);
+      color: rgba(0, 0, 0, 0.25);
+      &.is-process {
+        border-color: rgba(44, 101, 255, 1);
+        color: rgba(44, 101, 255, 1);
+      }
+      &.is-success {
+        border-color: rgba(44, 101, 255, 1);
+        color: rgba(44, 101, 255, 1);
+        .el-step__line {
+          background-color: rgba(44, 101, 255, 0.05);
+        }
+      }
       .el-step__line {
-        background-color: rgba(44, 101, 255, 0.05);
+        height: 5px;
+        top: 9px;
+        left: 57%;
+        right: -43%;
+        background-color: rgba(1, 1, 1, 0.05);
+        .el-step__line-inner {
+          display: none;
+        }
+      }
+      .el-step__icon {
+        border: 1px solid #2c65ff;
+        .el-step__icon-inner {
+          font-weight: normal;
+          color: #2c65ff;
+        }
       }
     }
-    .el-step__line {
-      height: 5px;
-      top: 9px;
-      left: 57%;
-      right: -43%;
-      background-color: rgba(1, 1, 1, 0.05);
-      .el-step__line-inner {
-        display: none;
-      }
-    }
-    .el-step__icon {
-      border: 1px solid #2c65ff;
-      .el-step__icon-inner {
-        font-weight: normal;
-        color: #2c65ff;
-      }
+    .el-step__title {
+      font-size: 14px;
+      font-weight: normal;
+      color: #000;
     }
   }
-  .el-step__title {
-    font-size: 14px;
-    font-weight: normal;
-    color: #000;
+  &.mini {
+    .el-step__icon {
+      &.is-icon {
+        width: 12px;
+      }
+    }
+    .el-step__icon-inner {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .el-step__icon-inner {
+      background-color: map-get($color, disable);
+    }
+    .is-finish {
+      .el-step__icon-inner {
+        background-color: map-get($color, primary);
+      }
+    }
+    .el-step__title {
+      font-size: 14px;
+      &.is-wait {
+        color: map-get($fontColor, disable);
+      }
+      &.is-process {
+        color: map-get($fontColor, disable);
+      }
+      &.is-finish {
+        color: map-get($fontColor, main);
+      }
+    }
+    .el-step__description {
+      color: map-get($fontColor, disable);
+    }
   }
 }
 
