@@ -1,5 +1,14 @@
 <template>
   <BaseNode :node="data" :class="nodeClass" :style="nodeStyle" @click="mouseClick">
+    <template #text="{ text }">
+      <OverflowTooltip
+        class="df-node-text"
+        :text="text"
+        popper-class="df-node-text-tooltip"
+        placement="top"
+        :open-delay="400"
+      />
+    </template>
     <div class="df-node-options" @click.stop>
       <el-popover
         v-model="showAddMenu"
@@ -21,6 +30,7 @@
         <VIcon>close</VIcon>
       </div>
     </div>
+    <!--<VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>-->
   </BaseNode>
 </template>
 
@@ -31,10 +41,15 @@ import { sourceEndpoint, targetEndpoint } from 'web-core/views/dataflow/style'
 import { NODE_PREFIX } from 'web-core/views/dataflow/constants'
 import BaseNode from 'web-core/views/dataflow/components/BaseNode'
 import VIcon from 'web-core/components/VIcon'
+import OverflowTooltip from 'web-core/components/overflow-tooltip'
 
 export default {
   name: 'DFNode',
-  components: { VIcon, BaseNode },
+  components: {
+    OverflowTooltip,
+    VIcon,
+    BaseNode
+  },
   props: {
     nodeId: {
       type: String,
@@ -248,6 +263,21 @@ export default {
     &:hover {
       background-color: #eef3ff;
     }
+  }
+}
+
+.df-node-text-tooltip {
+  transform: translateY(-6px);
+}
+
+.df-node.jtk-drag {
+  &:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
   }
 }
 </style>

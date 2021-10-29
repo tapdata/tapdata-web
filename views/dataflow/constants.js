@@ -76,7 +76,8 @@ export const NODE_TYPE_ICON = {
   field_processor: 'field-processor',
   aggregation_processor: 'aggregator',
   row_filter_processor: 'row-filter',
-  cache_lookup_processor: 'joint-cache'
+  cache_lookup_processor: 'joint-cache',
+  join: 'join'
 }
 
 export const STATUS_MAP = {

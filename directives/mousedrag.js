@@ -52,7 +52,10 @@ export default {
         let posX = event.touches ? event.touches[0].pageX : event.pageX
         let posY = event.touches ? event.touches[0].pageY : event.pageY
         moveAt(posX, posY)
-        on(document.documentElement, eventsFor.move, handleMove)
+        on(document.documentElement, eventsFor.move, handleMove, {
+          capture: false,
+          passive: false
+        })
         on(document.documentElement, eventsFor.stop, handleStop)
       }
     })
