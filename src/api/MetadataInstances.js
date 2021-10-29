@@ -47,7 +47,7 @@ export default class MetadataInstancesAPI extends PublicApi {
   }
   originalData(qualified_name, target) {
     if (target) {
-      return axios.get(this.url + '/originalData?qualified_name=' + qualified_name + target)
-    } else return axios.get(this.url + '/originalData?qualified_name=' + qualified_name)
+      return axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name) + target)
+    } else return axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
   }
 }

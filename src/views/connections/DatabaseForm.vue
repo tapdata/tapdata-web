@@ -120,69 +120,50 @@
                 <el-input type="textarea" :rows="5" v-model="model.resp_pre_process"></el-input>
                 <div>return tapdata_result; }</div>
               </div>
+              <!-- custom_connection -->
+              <div slot="cdcScrip">
+                <div>function requestData(ctx) {</div>
+                <CodeEditor v-model="model.custom_cdc_script" :width="width" :height="height"></CodeEditor>
+                <div>}</div>
+              </div>
+              <div slot="historyScrip">
+                <div>function requestData() {</div>
+                <CodeEditor v-model="model.custom_initial_script" :width="width" :height="height"></CodeEditor>
+                <div>}</div>
+              </div>
+              <div slot="targetScrip">
+                <div>
+                  data = [{
+                  <span style="color: #998; font-style: italic"> // data is an array</span>
+                </div>
+                <div style="margin-left: 30px">
+                  op : " i ",
+                  <span style="color: #998; font-style: italic"> // i - insert, u - update, d - delete</span>
+                </div>
+                <div style="margin-left: 30px">
+                  from : " ",
+                  <span style="color: #998; font-style: italic"> // source table name</span>
+                </div>
+                <div style="margin-left: 30px">
+                  data : { },
+                  <span style="color: #998; font-style: italic"> // master data</span>
+                </div>
+                <div>}]</div>
+                <div style="padding-bottom: 5px; margin-top: 10px; font-weight: bold">function onData(data) {</div>
+                <CodeEditor v-model="model.custom_ondata_script" :width="width" :height="height"></CodeEditor>
+                <div>}</div>
+              </div>
+              <div slot="custom_before_script">
+                <div>function before() {</div>
+                <CodeEditor v-model="model.custom_before_script" :width="width" :height="height"></CodeEditor>
+                <div>}</div>
+              </div>
+              <div slot="custom_after_script">
+                <div>function after() {</div>
+                <CodeEditor v-model="model.custom_after_script" :width="width" :height="height"></CodeEditor>
+                <div>}</div>
+              </div>
             </form-builder>
-            <!-- custom_connection -->
-            <template v-if="databaseType === 'custom_connection'">
-              <div
-                class="custom-connection-box"
-                v-if="
-                  ['cdc', 'initial_sync+cdc'].includes(model.custom_type) &&
-                  ['source', 'source_and_target'].includes(model.connection_type)
-                "
-              >
-                <div class="custom-connection-label">
-                  {{ $t('dataForm.form.custom_connection.cdc_custom_code') }}
-                </div>
-                <div class="custom-connection-main">
-                  <div>function requestData(ctx) {</div>
-                  <CodeEditor v-model="model.custom_cdc_script" :width="width" :height="height"></CodeEditor>
-                  <div>}</div>
-                </div>
-              </div>
-              <div
-                class="custom-connection-box"
-                v-if="
-                  ['initial_sync', 'initial_sync+cdc'].includes(model.custom_type) &&
-                  ['source', 'source_and_target'].includes(model.connection_type)
-                "
-              >
-                <div class="custom-connection-label">
-                  {{ $t('dataForm.form.custom_connection.history_custom_code') }}
-                </div>
-                <div class="custom-connection-main">
-                  <div>function requestData() {</div>
-                  <CodeEditor v-model="model.custom_initial_script" :width="width" :height="height"></CodeEditor>
-                  <div>}</div>
-                </div>
-              </div>
-              <div class="custom-connection-box" v-if="['target'].includes(model.connection_type)">
-                <div class="custom-connection-label">
-                  {{ $t('dataForm.form.custom_connection.on_data_code') }}
-                </div>
-                <div class="custom-connection-main">
-                  <div>
-                    data = [{
-                    <span style="color: #998; font-style: italic"> // data is an array</span>
-                  </div>
-                  <div style="margin-left: 30px">
-                    op : " i ",
-                    <span style="color: #998; font-style: italic"> // i - insert, u - update, d - delete</span>
-                  </div>
-                  <div style="margin-left: 30px">
-                    from : " ",
-                    <span style="color: #998; font-style: italic"> // source table name</span>
-                  </div>
-                  <div style="margin-left: 30px">
-                    data : { },
-                    <span style="color: #998; font-style: italic"> // master data</span>
-                  </div>
-                  <div>}]</div>
-                  <div style="padding-bottom: 5px; margin-top: 10px; font-weight: bold">function onData(data) {</div>
-                  <CodeEditor v-model="model.custom_ondata_script" :width="width" :height="height"></CodeEditor>
-                  <div>}</div>
-                </div>
-              </div>
-            </template>
             <!-- rest api -->
             <template v-if="databaseType === 'rest api'">
               <div class="rest-api-box">
@@ -916,6 +897,12 @@ export default {
         this.model.custom_ondata_script = ''
         this.model.custom_cdc_script = ''
         this.model.custom_initial_script = ''
+      }
+      if (filed === 'custom_before_opr') {
+        this.model.custom_before_script = ''
+      }
+      if (filed === 'custom_after_opr') {
+        this.model.custom_after_script = ''
       }
     },
     async initData(data) {
@@ -1776,21 +1763,6 @@ export default {
             .add-btn-icon {
               cursor: pointer;
             }
-          }
-        }
-        .custom-connection-box {
-          display: flex;
-          justify-content: flex-start;
-          .custom-connection-label {
-            font-size: 12px;
-            width: 200px;
-            text-align: right;
-            color: #606266;
-            padding-right: 20px;
-            box-sizing: border-box;
-          }
-          .custom-connection-main {
-            width: calc(100% - 200px);
           }
         }
         .gridfs-box {
