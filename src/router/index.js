@@ -6,8 +6,8 @@ import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import ContactUs from '@/views/ContactUs'
 
-const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/Task/Form.vue')
-const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/Task/Details.vue')
+const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
+const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/Details.vue')
 // const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/Task/SubtaskDetails.vue')
 const TaskStatistics = () => import(/* webpackChunkName: "task-form" */ '../views/task/statistics/Index.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
@@ -153,7 +153,7 @@ const routes = [
             name: 'DataflowStatistics',
             component: TaskStatistics,
             meta: {
-              title: '运行统计'
+              title: '详情'
             }
           }
         ]
