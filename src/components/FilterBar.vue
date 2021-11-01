@@ -25,7 +25,7 @@
         <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
       </ElInput>
     </ElFormItem>
-    <ElFormItem>
+    <ElFormItem v-if="!hideRefresh">
       <ElButton plain class="btn-refresh" @click="fetch">
         <VIcon>refresh</VIcon>
       </ElButton>
@@ -46,6 +46,10 @@ export default {
     items: {
       type: Array,
       default: () => []
+    },
+    hideRefresh: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
