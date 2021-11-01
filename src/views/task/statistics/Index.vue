@@ -7,7 +7,7 @@
           <Schedule :task="task"></Schedule>
         </ElTabPane>
         <ElTabPane label="运行日志" name="log" lazy>
-          <Log :id="task.id"></Log>
+          <Log :id="task.id" style="max-height: 450px"></Log>
         </ElTabPane>
         <ElTabPane label="连接" name="connect" lazy>
           <Connection :task="task" @change="loadTask"></Connection>
@@ -150,5 +150,10 @@ export default {
 .card-box {
   background: #fff;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  ::v-deep {
+    .table-list {
+      height: 300px;
+    }
+  }
 }
 </style>

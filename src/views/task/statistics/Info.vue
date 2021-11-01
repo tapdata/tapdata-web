@@ -19,7 +19,7 @@
       <div class="operation">
         <VButton type="primary" :disabled="startDisabled" @click="start">启动</VButton>
         <VButton type="danger" :disabled="stopDisabled" @click="stop">停止</VButton>
-        <VButton :disabled="editDisabled">编辑</VButton>
+        <VButton :disabled="editDisabled" @click="edit">编辑</VButton>
       </div>
     </div>
     <div class="flex justify-content-between mt-6">
@@ -368,6 +368,9 @@ export default {
           this.changeStatus({ status: 'stopping' })
         }
       })
+    },
+    edit() {
+      console.log('编辑')
     },
     async changeStatus({ status, errorEvents }) {
       let where = {
