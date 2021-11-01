@@ -43,6 +43,22 @@
             :placeholder="$t('editor.cell.data_node.es.chooseIndex')"
           ></el-input>
         </el-form-item>
+        <el-form-item>
+          <div class="flex-block fr">
+            <FieldMapping
+              v-if="dataNodeInfo.isTarget && showFieldMapping"
+              ref="fieldMapping"
+              class="fr"
+              :dataFlow="dataFlow"
+              :showBtn="true"
+              :isFirst="model.isFirst"
+              :isDisable="disabled"
+              :hiddenFieldProcess="true"
+              :stageId="stageId"
+              @update-first="returnModel"
+            ></FieldMapping>
+          </div>
+        </el-form-item>
       </el-form>
       <div class="e-entity-wrap" style="text-align: center">
         <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
@@ -53,13 +69,14 @@
 <script>
 import { convertSchemaToTreeData } from '../../util/Schema'
 import Entity from '../link/Entity'
+import FieldMapping from '@/components/FieldMapping'
 import _ from 'lodash'
 import factory from '../../../api/factory'
 let connections = factory('connections')
 // let editorMonitor = null;
 export default {
   name: 'esNode',
-  components: { Entity },
+  components: { Entity, FieldMapping },
   props: {
     database_types: {
       type: Array,
@@ -89,7 +106,12 @@ export default {
         chunkSize: 3,
         index: ''
       },
-      mergedSchema: null
+      mergedSchema: null,
+      scope: '',
+      dataFlow: '',
+      stageId: '',
+      showFieldMapping: false,
+      dataNodeInfo: {}
     }
   },
 
@@ -193,16 +215,29 @@ export default {
       }
     },
 
-    setData(data, cell) {
+    setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         _.merge(this.model, data)
+        this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
+        this.getDataFlow()
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.stageId]
+          })
       }
 
       this.mergedSchema = cell.getOutputSchema()
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
+        this.getDataFlow()
       })
-
+      this.dataNodeInfo = dataNodeInfo || {}
       // editorMonitor = vueAdapter.editor;
     },
 
@@ -219,6 +254,14 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
 
     // seeMonitor() {
