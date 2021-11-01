@@ -1,6 +1,6 @@
 <template>
   <div class="connection-container">
-    <VTable :data="list" :columns="columns" height="100%" :has-pagination="false">
+    <VTable :remoteMethod="remoteMethod" :columns="columns" height="100%" :has-pagination="false">
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
           <img
@@ -115,7 +115,34 @@ export default {
   },
   methods: {
     init() {
-      this.getData()
+      // this.getData()
+    },
+    remoteMethod({ page }) {
+      let ids = this.task?.stages.map(item => {
+        return item.connectionId
+      })
+      let { current, size } = page
+      let filter = {
+        where: {
+          id: {
+            inq: ids
+          }
+        },
+        limit: size,
+        skip: size * (current - 1)
+      }
+      return this.$axios
+        .get(`tm/api/Connections?filter=${encodeURIComponent(JSON.stringify(filter))}`)
+        .then(({ items, total }) => {
+          let data = items.map(item => {
+            item.connectType = this.connectTypeMap[item.connection_type]
+            return deepCopy(item)
+          })
+          return {
+            total: total,
+            data: data
+          }
+        })
     },
     getData() {
       let ids = this.task?.stages.map(item => {

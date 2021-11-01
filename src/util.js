@@ -56,6 +56,9 @@ export function toRegExp(word) {
 export function deepCopy(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
+export function formatTime(date, format = 'YYYY-MM-DD HH:mm:ss') {
+  return moment(date).format(format)
+}
 // 支持的数据源 'mysql','mariadb','mysql pxc','mongodb','postgres','oracle','sqlserver','redis'
 // 不支持 'rest api','db2','sybase','gbase','gaussdb200','kafka','elasticsearch'
 export const TYPEMAP = {

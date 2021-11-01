@@ -1,18 +1,20 @@
 <template>
-  <div class="statistics-container flex flex-column h-100 font-color-sub">
-    <Info :task="task" class="card-box"></Info>
+  <div class="statistics-container flex flex-column font-color-sub h-100">
+    <Info :task="task" class="card-box" @reload="loadTask"></Info>
     <div class="card-box mt-6 p-6 flex-1">
       <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
-        <ElTabPane label="任务进度" name="schedule" class="h-100">
+        <ElTabPane label="任务进度" name="schedule">
           <Schedule :task="task"></Schedule>
         </ElTabPane>
-        <ElTabPane label="运行日志" name="log" class="h-100" lazy>
+        <ElTabPane label="运行日志" name="log" lazy>
           <Log :id="task.id"></Log>
         </ElTabPane>
-        <ElTabPane label="连接" name="connect" class="h-100" lazy>
+        <ElTabPane label="连接" name="connect" lazy>
           <Connection :task="task" @change="loadTask"></Connection>
         </ElTabPane>
-        <ElTabPane label="历史运行记录" name="history" class="h-100" lazy>历史运行记录</ElTabPane>
+        <ElTabPane label="历史运行记录" name="history" lazy>
+          <History :task="task"></History>
+        </ElTabPane>
       </ElTabs>
     </div>
   </div>
@@ -23,10 +25,11 @@ import Info from './Info'
 import Schedule from './Schedule'
 import Log from './Log'
 import Connection from './Connection'
+import History from './History'
 
 export default {
   name: 'Index',
-  components: { Info, Schedule, Log, Connection },
+  components: { Info, Schedule, Log, Connection, History },
   data() {
     return {
       task: {},
@@ -66,11 +69,42 @@ export default {
       activeTab: 'schedule'
     }
   },
+  created() {
+    this.$ws.on('watch', this.taskChange)
+    this.$ws.send({
+      type: 'watch',
+      collection: 'DataFlows',
+      filter: {
+        where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
+        fields: {
+          'fullDocument.id': true,
+          'fullDocument._id': true,
+          'fullDocument.name': true,
+          'fullDocument.status': true,
+          'fullDocument.executeMode': true,
+          'fullDocument.stopOnError': true,
+          'fullDocument.last_updated': true,
+          'fullDocument.createTime': true,
+          'fullDocument.children': true,
+          'fullDocument.stats': true,
+          'fullDocument.setting': true,
+          'fullDocument.cdcLastTimes': true,
+          'fullDocument.listtags': true,
+          'fullDocument.finishTime': true,
+          'fullDocument.startTime': true,
+          'fullDocument.errorEvents': true,
+          'fullDocument.milestones': true,
+          'fullDocument.user': true,
+          'fullDocument.mappingTemplate': true
+        }
+      }
+    })
+  },
   mounted() {
     this.init()
   },
   destroyed() {
-    this.$ws.off('dataFlowInsight')
+    this.$ws.off('watch', this.taskChange)
   },
   methods: {
     init() {
@@ -88,6 +122,12 @@ export default {
           this.loading = false
         })
     },
+    taskChange(data) {
+      let task = data.data?.fullDocument || {}
+      if (this.task && JSON.stringify(task) !== JSON.stringify(this.task)) {
+        this.task = Object.assign({}, this.task, this.formatTask(task))
+      }
+    },
     formatTask(data) {
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
@@ -101,102 +141,6 @@ export default {
     },
     formatTime(time) {
       return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
-    },
-    getOverview(data) {
-      let overview = data.statsData.data_overview || {}
-      if (JSON.stringify(overview) === '{}') {
-        return
-      }
-      this.overviewObj.body = overview
-    },
-    getThroughputOpt(data) {
-      let timeList = [],
-        inputCountList = [],
-        outputCountList = [],
-        timeType = data.granularity['throughput']?.split('_')[1]
-      data.statsData.throughput.forEach(item => {
-        timeList.push(this.formatTime(item.t, timeType))
-        inputCountList.push(item.inputCount)
-        outputCountList.push(item.outputCount)
-      })
-
-      this.throughputObj.body = {
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          top: 10,
-          right: 50
-        },
-        grid: {
-          left: '5%',
-          right: '10%',
-          bottom: '3%',
-          containLabel: true,
-          borderWidth: 1,
-          borderColor: '#ccc'
-        },
-        xAxis: {
-          axisLine: {
-            lineStyle: {
-              color: '#409EFF',
-              width: 1 // 这里是为了突出显示加上的
-            }
-          },
-          data: timeList
-        },
-        yAxis: {
-          axisLine: {
-            show: true,
-            lineStyle: {
-              color: '#409EFF',
-              width: 1
-            }
-          },
-          axisLabel: {
-            formatter: function (value) {
-              if (value >= 1000) {
-                value = value / 1000 + 'K'
-              }
-              return value
-            }
-          }
-        },
-        series: [
-          {
-            name: this.$t('dataFlow.input'),
-            type: 'line',
-            smooth: true,
-            data: inputCountList,
-            itemStyle: {
-              color: '#2ba7c3'
-            },
-            lineStyle: {
-              color: '#2ba7c3'
-            },
-            areaStyle: {
-              color: '#2ba7c3'
-            }
-          },
-          {
-            name: this.$t('dataFlow.output'),
-            type: 'line',
-            smooth: true,
-            data: outputCountList,
-            itemStyle: {
-              color: '#61a569'
-            },
-            lineStyle: {
-              color: '#8cd5c2'
-            },
-            areaStyle: {
-              color: '#8cd5c2'
-            }
-          }
-        ]
-      }
-      this.throughputObj.input = inputCountList[inputCountList.length - 1] || 0
-      this.throughputObj.output = outputCountList[outputCountList.length - 1] || 0
     }
   }
 }

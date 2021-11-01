@@ -1,5 +1,5 @@
 <template>
-  <div class="monitor-log-wrap h-100 flex flex-column">
+  <div class="monitor-log-wrap flex flex-column">
     <div class="filter-row">
       <ElInput
         class="search-input mt-2"

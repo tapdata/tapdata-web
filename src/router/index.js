@@ -153,7 +153,7 @@ const routes = [
             name: 'DataflowStatistics',
             component: TaskStatistics,
             meta: {
-              title: '详情'
+              title: '任务详情'
             }
           }
         ]

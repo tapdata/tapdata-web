@@ -40,7 +40,7 @@
       >
         <ElTableColumn label="连接名" prop="name" min-width="200px">
           <template slot-scope="scope">
-            <div class="flex flex-row align-items-center p-2">
+            <div class="flex flex-row align-items-center p-2" style="height: 50px">
               <img
                 class="mr-2"
                 style="width: 24px; height: 24px"
@@ -186,7 +186,6 @@
       cursor: unset;
     }
     .operate-columns {
-      line-height: 14px;
       .el-button {
         padding: 0;
         & + .el-button {
