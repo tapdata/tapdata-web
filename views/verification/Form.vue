@@ -511,7 +511,7 @@ export default {
             t.targetTree = []
             return t
           })
-          this.form = data
+          this.form = Object.assign({}, this.form, data)
           this.getFlowStages()
         }
       })
@@ -871,6 +871,7 @@ export default {
       this.form.tasks = []
     },
     timingChangeHandler(times) {
+      console.log('this.form', this.form)
       this.form.timing.start = times[0]
       this.form.timing.end = times[1]
     },
