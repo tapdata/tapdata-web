@@ -59,6 +59,7 @@ export default {
 
   //Task edit
   task_job_setting_tip_title: 'Set reminder',
+  task_job_setting_disable: 'Do not de-duplicate',
   task_job_tip_text:
     'The setting of the cache node (xxx) already exists in the task (###), please confirm whether to continue to create it? '
 }

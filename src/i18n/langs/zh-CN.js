@@ -75,5 +75,6 @@ export default {
   dag_data_node_label_aggregate_filter: '过滤器',
   // 缓存节点提示
   task_job_setting_tip_title: '设置提醒',
+  task_job_setting_disable: '不去重',
   task_job_tip_text: '该缓存节点(xxx)的设置已存在于任务(###)中，请确认是否还继续创建？'
 }
