@@ -1,6 +1,6 @@
 <template>
   <div class="connection-container">
-    <VTable :remoteMethod="remoteMethod" :columns="columns" height="100%" :has-pagination="false">
+    <TableList :remoteMethod="remoteMethod" :columns="columns" height="100%" :has-pagination="false">
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
           <img
@@ -43,13 +43,14 @@
           <ElButton size="mini" type="text" @click="reload(scope.row)">加载Schema</ElButton>
         </div>
       </template>
-    </VTable>
+    </TableList>
     <!-- 连接测试 -->
     <ConnectionTest ref="test"></ConnectionTest>
   </div>
 </template>
 
 <script>
+import TableList from '@/components/TableList'
 import StatusTag from '@/components/StatusTag'
 import SchemaProgress from 'web-core/components/SchemaProgress'
 import VIcon from '@/components/VIcon'
@@ -57,7 +58,7 @@ import { deepCopy } from '@/util'
 
 export default {
   name: 'Connection',
-  components: { StatusTag, VIcon, SchemaProgress },
+  components: { TableList, StatusTag, VIcon, SchemaProgress },
   props: {
     task: {
       type: Object,

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <VTable
+    <TableList
       empty-text="此任务尚未启动或已被重置，暂无运行里程碑数据"
       :data="milestoneList"
       :columns="milestoneColumns"
@@ -12,16 +12,17 @@
       <template slot="status" slot-scope="scope">
         <StatusTag type="text" target="milestone" :status="getMilestoneStatus(scope.row.status)" only-img></StatusTag>
       </template>
-    </VTable>
+    </TableList>
   </div>
 </template>
 
 <script>
 import StatusTag from '@/components/StatusTag'
+import TableList from '@/components/TableList'
 
 export default {
   name: 'Milestone',
-  components: { StatusTag },
+  components: { StatusTag, TableList },
   props: {
     task: {
       type: Object,

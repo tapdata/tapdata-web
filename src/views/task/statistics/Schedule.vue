@@ -22,13 +22,13 @@
     <!--  任务初始化  -->
     <div v-if="active === 1">
       <!--  里程碑  -->
-      <Milestone :task="task"></Milestone>
+      <Milestone :task="task" class="table-list"></Milestone>
     </div>
     <!--  结构迁移  -->
     <div v-else-if="active === 2">
       <div class="mb-4 fs-7 font-color-main fw-bolder">
         <div>任务里程碑</div>
-        <Milestone :task="task"></Milestone>
+        <Milestone :task="task" class="table-list"></Milestone>
       </div>
       <div>
         <div class="mb-4 fs-7 font-color-main fw-bolder">结构迁移概览</div>
@@ -42,8 +42,8 @@
       </div>
       <div class="mt-4">
         <div class="fw-bolder">迁移详情</div>
-        <FilterBar v-model="searchParams" :items="items" hide-refresh> </FilterBar>
-        <VTable :columns="migrateColumns"></VTable>
+        <FilterBar v-model="searchParams" :items="items" hide-refresh></FilterBar>
+        <TableList :columns="migrateColumns" class="table-list"></TableList>
       </div>
     </div>
 
@@ -60,12 +60,13 @@
 </template>
 
 <script>
+import TableList from '@/components/TableList'
 import FilterBar from '@/components/FilterBar'
 import Milestone from './Milestone'
 
 export default {
   name: 'Schedule',
-  components: { FilterBar, Milestone },
+  components: { TableList, FilterBar, Milestone },
   props: {
     task: {
       type: Object,
@@ -151,4 +152,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.table-list {
+  height: 300px;
+}
+</style>

@@ -6,7 +6,7 @@
           <FilterBar v-model="searchParams" :items="items" @search="search" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </div>
-      <VTable ref="table" row-key="id" :columns="columns" :remoteMethod="getData" @sort-change="sortChange">
+      <TableList ref="table" row-key="id" :columns="columns" :remoteMethod="getData" @sort-change="sortChange">
         <template slot="operationType" slot-scope="scope">
           <div>{{ getOperationTypeLabel(scope.row) }}</div>
         </template>
@@ -33,7 +33,7 @@
             <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
           </div>
         </div>
-      </VTable>
+      </TableList>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -42,8 +42,9 @@
 <script>
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/FilterBar'
+import TableList from '@/components/TableList'
 export default {
-  components: { VIcon, FilterBar },
+  components: { VIcon, FilterBar, TableList },
   data() {
     return {
       loading: true,

@@ -1,12 +1,15 @@
 <template>
   <div>
-    <VTable :remoteMethod="remoteMethod" :columns="columns"></VTable>
+    <TableList :remoteMethod="remoteMethod" :columns="columns"></TableList>
   </div>
 </template>
 
 <script>
+import TableList from '@/components/TableList'
+
 export default {
   name: 'History',
+  components: { TableList },
   props: {
     task: {
       type: Object,
