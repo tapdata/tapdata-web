@@ -1,5 +1,10 @@
 <template>
   <ElTableColumn v-bind="item" :key="item.prop" :sortable="item.sortable ? 'custom' : false">
+    <!--  列表头  -->
+    <template v-if="item.headerSlot" slot="header">
+      <slot :name="item.headerSlot"></slot>
+    </template>
+    <!--  表体  -->
     <template v-if="!children && item.slotName" v-slot="scope">
       <slot :name="item.slotName" :row="scope.row"></slot>
     </template>

@@ -654,7 +654,7 @@ export default {
       if (type === 'target' && stage.syncObjects) {
         getTableNames(stage.syncObjects, stage.table_prefix, stage.table_suffix)
       }
-      let includeTables = tables.filter(tb => {
+      let includeTables = (tables?.items || tables).filter(tb => {
         let flag = true
         if (includeTableNames.length) {
           flag = includeTableNames.includes(tb.original_name)
@@ -1018,11 +1018,12 @@ export default {
               status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
               ping_time: 0,
               tasks: this.form.tasks.map(
-                ({ source, target, fullMatch, showAdvancedVerification, script, webScript }) => {
+                ({ taskId, source, target, fullMatch, showAdvancedVerification, script, webScript }) => {
                   if (webScript && webScript !== '') {
                     script = 'function validate(sourceRow){' + webScript + '}'
                   }
                   return {
+                    taskId,
                     source,
                     target,
                     fullMatch,
