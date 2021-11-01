@@ -297,14 +297,15 @@
         </el-button>
         <FieldMapping
           v-else
+          ref="fieldMapping"
+          class="fr"
           :dataFlow="dataFlow"
           :showBtn="true"
           :isFirst="model.isFirst"
-          @update-first="returnModel"
           :hiddenFieldProcess="true"
           :stageId="stageId"
-          ref="fieldMapping"
-          class="fr"
+          :isDisable="disabled"
+          @update-first="returnModel"
         ></FieldMapping>
         <entity
           v-loading="schemaSelectConfig.loading"

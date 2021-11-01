@@ -98,14 +98,15 @@
             </el-button>
             <FieldMapping
               v-else
+              ref="fieldMapping"
+              class="fr"
               :dataFlow="dataFlow"
               :showBtn="true"
               :isFirst="model.isFirst"
-              @update-first="returnModel"
+              :isDisable="disabled"
               :hiddenFieldProcess="true"
               :stageId="stageId"
-              ref="fieldMapping"
-              class="fr"
+              @update-first="returnModel"
             ></FieldMapping>
           </div>
         </el-form-item>
