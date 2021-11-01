@@ -3,7 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from '@/components/VIcon'
 import { uuid } from './util'
-// import styles from './fieldProessor.scss'
+import './fieldProessor.scss'
 // import de from 'element-ui/src/locale/lang/de'
 
 export const FieldProcess = connect(
@@ -112,6 +112,12 @@ export const FieldProcess = connect(
           scripts: [],
           originalFields: [],
           checkAll: false,
+          scriptDialog: {
+            open: false,
+            script: '//Enter you code at here',
+            fieldName: '',
+            fn: function () {}
+          },
           /*字段处理器支持功能类型*/
           REMOVE_OPS_TPL: {
             id: '',
@@ -204,13 +210,18 @@ export const FieldProcess = connect(
                             'tree-item'
                           ]}
                         >
-                          <el-input v-model={data.label} onBlur={() => this.handleRename(node, data)} />
+                          <el-input
+                            v-model={data.label}
+                            disabled={this.isRemove(data.id)}
+                            onBlur={() => this.handleRename(node, data)}
+                          />
                         </span>
                       </el-tooltip>
-                      <span class="tree-item">{data.desc}</span>
+                      <span class={['tree-item']}>{data.desc}</span>
                       <el-select
                         v-model={data.data_type}
                         size="mini"
+                        disabled={this.isRemove(data.id)}
                         class={[this.isConvertDataType(data.id) ? 'active__type' : '', 'tree-select', 'tree-item']}
                         onChange={() => this.handleDataType(node, data)}
                       >
@@ -219,28 +230,76 @@ export const FieldProcess = connect(
                         ))}
                       </el-select>
                       <span class="tree-item tree-desc">
-                        <VIcon class="clickable ml-5" small>
-                          js
-                        </VIcon>
-                        <VIcon class="clickable ml-5" small>
-                          delete
-                        </VIcon>
-                        <VIcon class="clickable ml-5" small onClick={() => this.handleReset(node, data)}>
-                          revoke
-                        </VIcon>
-                        <VIcon
-                          class="clickable ml-5"
-                          small
+                        <ElButton
+                          type="text"
+                          class="ml-5"
+                          disabled={this.isRemove(data.id)}
+                          onClick={() => this.handleScript(node, data)}
+                        >
+                          <VIcon>js</VIcon>
+                        </ElButton>
+                        <ElButton
+                          type="text"
+                          class="ml-5"
+                          disabled={this.isRemove(data.id)}
+                          onClick={() => this.handleDelete(node, data)}
+                        >
+                          <VIcon> delete</VIcon>
+                        </ElButton>
+                        <ElButton type="text" class="ml-5" onClick={() => this.handleReset(node, data)}>
+                          <VIcon>revoke</VIcon>
+                        </ElButton>
+                        <ElButton
+                          type="text"
+                          class="ml-5"
+                          disabled={this.isRemove(data.id)}
                           onClick={() => this.handleCreate('create_sibling', node, data)}
                         >
-                          add
-                        </VIcon>
+                          <VIcon>add</VIcon>
+                        </ElButton>
                       </span>
                     </span>
                   )
                 }}
               />
             </div>
+            <el-dialog
+              title={'字段赋值(' + this.scriptDialog.tableName + '[' + this.scriptDialog.fieldName + '])'}
+              visible={this.scriptDialog.open}
+              append-to-body
+              custom-class="scriptDialog"
+              close-on-click-modal={false}
+            >
+              <el-form>
+                <el-form-item>
+                  <el-input
+                    placeholder="$t('editor.cell.processor.field.form.expression')"
+                    v-model={this.scriptDialog.script}
+                    size="mini"
+                  >
+                    <template slot="prepend">var result = </template>
+                  </el-input>
+                </el-form-item>
+              </el-form>
+              <div class="example">
+                <div>示例:</div>
+                <div>var result = "a" + "b" // 字符串拼接, result的结果为 "ab"</div>
+                <div>var result = 1 + 2 // 数字计算, result 的结果为 3</div>
+                <div>var result = fn("1") // 调用自定义函数或内置函数, result的结果为 fn 函数的返回值</div>
+                <div>
+                  var result = record.isTrue ? true : false // 三元表达式,
+                  result的值根据判断表达式（record.isTrue）的结果为 true 或 false
+                </div>
+              </div>
+              <div slot="footer" class="dialog-footer">
+                <el-button size="mini" onClick={() => (this.scriptDialog.open = false)}>
+                  取消
+                </el-button>
+                <el-button type="primary" size="mini" onClick={() => this.scriptDialog.fn()}>
+                  确认
+                </el-button>
+              </div>
+            </el-dialog>
           </div>
         )
       },
@@ -576,12 +635,91 @@ export const FieldProcess = connect(
             }
 
             console.log('SchemaEditor.handleScript', node, data, script, self.scripts) //eslint-disable-line
-
-            self.scriptDialog.open = false
+            self.$nextTick(() => {
+              self.scriptDialog.open = false
+            })
             self.scriptDialog.fn = function () {}
             self.scriptDialog.script = ''
-            self.$emit('dataChanged', self.model)
           }
+        },
+        handleDelete(node, data) {
+          console.log('SchemaEditor.handleDelete', node, data)
+          let createOpsIndex = this.operations.findIndex(v => v.id === data.id && v.op === 'CREATE')
+          if (createOpsIndex >= 0) {
+            let fieldName = this.operations[createOpsIndex].field_name + '.'
+            this.operations.splice(createOpsIndex, 1)
+
+            for (let i = 0; i < this.operations.length; i++) {
+              let op = this.operations[i]
+              let opFieldName = op.field || op.field_name
+              if (opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
+                this.operations.splice(i, 1)
+                i--
+              }
+            }
+            this.$refs.tree.remove(node)
+          } else {
+            let originalField = this.getNativeData(data.id)
+            let self = this
+            let fn = function (field) {
+              for (let i = 0; i < self.operations.length; i++) {
+                // 删除所有的rename的操作
+                let ops = self.operations[i]
+                if (ops.id === field.id && ops.op === 'RENAME') {
+                  data.label = originalField.label
+                  self.operations.splice(i, 1)
+                }
+              }
+              for (let i = 0; i < self.operations.length; i++) {
+                // 删除所有的类型改变的操作
+                let ops = self.operations[i]
+                if (ops.id === field.id && ops.op === 'CONVERT') {
+                  data.type = originalField.type
+                  self.operations.splice(i, 1)
+                }
+              }
+              let ops = self.operations.filter(v => v.op === 'REMOVE' && v.id === field.id)
+              let op
+              if (ops.length === 0) {
+                op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
+                  id: field.id,
+                  field: field.original_field_name,
+                  operand: true,
+                  table_name: field.table_name,
+                  type: field.type,
+                  primary_key_position: field.primary_key_position,
+                  color: field.color,
+                  label: field.label
+                })
+                self.operations.push(op)
+              }
+
+              if (field.children) {
+                field.children.forEach(fn)
+              }
+            }
+            if (originalField) fn(originalField)
+          }
+          //删除 对应字段js脚本处理
+          this.scripts = this.delScript(this.operations, this.scripts, data.id)
+        },
+        delScript(operations, scripts, id) {
+          let fieldIds = []
+          if (operations) {
+            fieldIds = operations.map(field => field.id)
+          }
+          if (scripts) {
+            for (let i = 0; i < scripts.length; i++) {
+              if (!fieldIds.includes(scripts[i].id)) {
+                scripts.splice(i, 1)
+                i--
+              } else if (id === scripts[i].id) {
+                scripts.splice(i, 1)
+                i--
+              }
+            }
+          }
+          return scripts
         },
         handleAllDelete() {
           let ids = this.$refs.tree.getCheckedNodes()
@@ -627,11 +765,13 @@ export const FieldProcess = connect(
             })
           }
         },
-        handleCheckAllChange(val) {
-          if (val) {
+        handleCheckAllChange() {
+          if (!this.checkAll) {
             this.$refs.tree.setCheckedNodes(this.fields)
+            this.checkAll = true
           } else {
             this.$refs.tree.setCheckedKeys([])
+            this.checkAll = false
           }
         }
       }

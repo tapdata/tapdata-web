@@ -23,7 +23,14 @@
     ></TopHeader>
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
-      <LeftSidebar @move-node="handleDragMoveNode" @drop-node="handleAddNodeByDrag" />
+      <LeftSidebar
+        v-resize.right="{
+          minWidth: 230,
+          maxWidth: 400
+        }"
+        @move-node="handleDragMoveNode"
+        @drop-node="handleAddNodeByDrag"
+      />
       <section class="layout-wrap">
         <!--内容体-->
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
@@ -107,12 +114,18 @@ import {
 } from './command'
 import Mousetrap from 'mousetrap'
 import dagre from 'dagre'
+import { validateBySchema } from 'web-core/components/form/utils/validate'
+import resize from 'web-core/directives/resize'
 
 const dataFlowsApi = new DataFlows()
 const databaseTypesApi = new DatabaseTypes()
 
 export default {
   name: 'Editor',
+
+  directives: {
+    resize
+  },
 
   mixins: [deviceSupportHelpers, titleChange, showMessage],
 
@@ -321,12 +334,12 @@ export default {
     async initNodeType() {
       let _nodeTypes = nodeTypes
       // let dataFlowType
-      if (this.mapping === 'cluster-clone') {
+      /*if (this.mapping === 'cluster-clone') {
         // dataFlowType = 'database-migration' // 数据库迁移
         const dbTypes = await this.loadDatabaseTypes(nodeTypes)
         _nodeTypes = _nodeTypes.filter(item => item.type === 'database')
         _nodeTypes.push(...dbTypes)
-      }
+      }*/
       this.setNodeTypes(_nodeTypes)
       this.setCtorTypes(ctorTypes)
     },
@@ -1058,6 +1071,7 @@ export default {
     },
 
     async save() {
+      this.validateNodes()
       const errorMsg = this.getError()
       if (errorMsg) {
         this.$message.error(errorMsg)
@@ -1083,7 +1097,7 @@ export default {
       try {
         this.isSaving = true
         const data = this.getDataflowDataToSave()
-        const dataflow = await dataFlowsApi.draft(data)
+        const dataflow = await dataFlowsApi.post(data)
         this.isSaving = false
         this.$message.success(this.$t('message.saveOK'))
         this.setDataflowId(dataflow.id) // 将生成的id保存到store
@@ -1351,6 +1365,18 @@ export default {
       if (this.jsPlumbIns.getConnections('*').length < 1) return this.$t('editor.cell.validate.none_link_node')
 
       return null
+    },
+
+    async validateNodes() {
+      const { nodes } = this
+      const result = await Promise.all(nodes.map(node => validateBySchema(node.__Ctor.formSchema, node))).catch(
+        error => {
+          // eslint-disable-next-line no-console
+          console.log('validateNodes', error)
+        }
+      )
+      // eslint-disable-next-line no-console
+      console.log('validateNodes-result', result)
     },
 
     setZoomLevel(zoomLevel) {

@@ -3,7 +3,9 @@
     <div class="df-node-icon">
       <VIcon>{{ $options.getIcon(props.node) }}</VIcon>
     </div>
-    <div class="df-node-text">{{ props.node.name }}</div>
+    <slot name="text" v-bind:text="props.node.name">
+      <div class="df-node-text">{{ props.node.name }}</div>
+    </slot>
     <slot></slot>
   </div>
 </template>

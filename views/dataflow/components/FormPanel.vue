@@ -51,7 +51,8 @@ import {
   InputNumber,
   Checkbox,
   Radio,
-  Space
+  Space,
+  FormGrid
 } from '@formily/element'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import 'web-core/components/form/styles/index.scss'
@@ -68,6 +69,7 @@ const { SchemaField } = createSchemaField({
     Checkbox,
     Radio,
     Space,
+    FormGrid,
     ...components
   }
 })
@@ -86,7 +88,11 @@ export default {
     return {
       form: createForm(),
 
-      schema: null
+      schema: null,
+
+      lastActiveKey: null,
+
+      lastActiveNodeType: null
     }
   },
 
@@ -133,24 +139,47 @@ export default {
     uniteKey: {
       immediate: true,
       async handler() {
-        console.log('FormPanel', arguments) // eslint-disable-line
-        if (this.activeType) {
+        if (this.activeType && this.lastActiveKey !== this.uniteKey) {
+          // this.activeType 存在表示显示Panel, this.lastActiveKey !== this.uniteKey 表示不同的节点切换
           const formSchema = this.$store.getters['dataflow/formSchema'] || {}
           switch (this.activeType) {
             case 'node':
-              await this.setSchema(this.ins.formSchema || formSchema.node)
+              if (this.lastActiveNodeType === this.node.type) {
+                // 判断上一次的激活节点类型，相同表示schema也一样，不需要重置form
+                await this.form.reset() // 将表单重置，防止没有设置default的被覆盖；这里有个问题：子级别的default被清空无效了
+                this.form.setValues(this.node) // 新填充
+              } else {
+                await this.setSchema(this.ins.formSchema || formSchema.node)
+              }
+              this.lastActiveNodeType = this.node?.type // 缓存
+              this.watchInputAndOutput()
               break
             case 'connection':
               await this.setSchema(this.ins.linkFormSchema || formSchema.link)
+              this.lastActiveNodeType = null
               break
             case 'settings':
               console.log('this.getSettingSchema()', this.getSettingSchema()) // eslint-disable-line
               await this.setSchema(this.getSettingSchema(), this.$store.getters['dataflow/dataflowSettings'])
+              this.lastActiveNodeType = null
               break
           }
+          this.lastActiveKey = this.uniteKey // 缓存
+        } else if (!this.activeType) {
+          // 关闭Panel
+          this.unWatchInputAndOutput()
+        } else if (this.lastActiveKey === this.uniteKey && this.activeType === 'node') {
+          // 如果是相同节点，切换激活状态需要同步上下游
+          this.form.setValuesIn('inputLanes', this.node.inputLanes)
+          this.form.setValuesIn('outputLanes', this.node.outputLanes)
+          this.watchInputAndOutput()
         }
       }
     }
+  },
+
+  beforeDestroy() {
+    this.form.onUnmount()
   },
 
   methods: {
@@ -158,7 +187,7 @@ export default {
 
     // 设置schema
     async setSchema(schema, values) {
-      // console.log('setSchema', schema)
+      console.log('setSchema!!!!!***', schema)
       this.schema = null
 
       await this.$nextTick()
@@ -168,7 +197,6 @@ export default {
         effects: this.useEffects,
         editable: !this.isMonitor
       })
-      console.log('schema', schema)
       this.schema = schema
     },
 
@@ -554,7 +582,7 @@ export default {
           maxTransactionLength: {
             title: '事务最大时长(小时)',
             type: 'number',
-            'x-decorator': 'FormItem',
+            'x-decorator': 'ElFormItem',
             'x-component': 'InputNumber'
           },
           lagTime: {
@@ -628,13 +656,13 @@ export default {
      * 统一的异步数据源方法
      * @param service
      * @param fieldName 数据设置指定的字段
-     * @param args 缺省参数，传递异步方法
+     * @param serviceParams 缺省参数，传递给service方法
      * @returns {(function(*=): void)|*}
      */
-    useAsyncDataSource(service, fieldName = 'dataSource', ...args) {
+    useAsyncDataSource(service, fieldName = 'dataSource', ...serviceParams) {
       return field => {
         field.loading = true
-        service(field, ...args).then(
+        service(field, ...serviceParams).then(
           action.bound(data => {
             if (fieldName === 'value') {
               field.setValue(data)
@@ -849,6 +877,47 @@ export default {
     log(value) {
       // eslint-disable-next-line no-console
       console.log('Form', value)
+    },
+
+    /**
+     * 构建监听方法
+     * @param type
+     */
+    buildInputOrOutWatch(type) {
+      this.form.getFieldState(type) &&
+        this.stopWatchInputAndOutput.push(
+          this.$watch(`node.${type}`, (n /*, o*/) => {
+            // console.log('🚗buildInputOrOutWatch', type, n, o)
+            // 输入输出发生变化，同步给form
+            // const nStr = n ? (Array.isArray(n) ? n.join(',') : n) : ''
+            // const oStr = o ? (Array.isArray(o) ? o.join(',') : o) : ''
+
+            if (/*nStr !== oStr && */ this.form.getFieldState(type)) {
+              // console.log('🚗buildInputOrOutWatch', type, '可以同步')
+              this.form.setValuesIn(type, n)
+            }
+          })
+        )
+    },
+
+    /**
+     * 监听inputLanes和outputLanes
+     */
+    watchInputAndOutput() {
+      // console.log('watchInputAndOutput')
+      this.stopWatchInputAndOutput?.length && this.unWatchInputAndOutput()
+      this.stopWatchInputAndOutput = []
+      this.buildInputOrOutWatch('inputLanes')
+      this.buildInputOrOutWatch('outputLanes')
+    },
+
+    /**
+     * 取消监听inputLanes和outputLanes
+     */
+    unWatchInputAndOutput() {
+      if (!this.stopWatchInputAndOutput?.length) return
+      this.stopWatchInputAndOutput.forEach(fn => fn())
+      this.stopWatchInputAndOutput = []
     }
   }
 }
