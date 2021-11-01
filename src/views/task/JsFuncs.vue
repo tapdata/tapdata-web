@@ -6,16 +6,15 @@
       class="js-funcs-list"
       :title="$t('app_menu_' + $route.name)"
       :remoteMethod="getData"
-      @sort-change="handleSortTable"
     >
       <div slot="operation">
-        <el-button class="btn btn-create" size="mini" @click="openCreateDialog">
+        <el-button class="btn btn-create" type="primary" size="mini" @click="openCreateDialog">
           <i class="iconfont icon-jia add-btn-icon"></i>
           <span>{{ $t('js_func_create') }}</span>
         </el-button>
       </div>
-      <el-table-column :label="$t('js_func_name')" prop="function_name" sortable="function_name"> </el-table-column>
-      <el-table-column :label="$t('js_func_parameters')" prop="parameters" sortable="parameters"> </el-table-column>
+      <el-table-column :label="$t('js_func_name')" prop="function_name"> </el-table-column>
+      <el-table-column :label="$t('js_func_parameters')" prop="parameters"> </el-table-column>
       <el-table-column :label="$t('js_func_function_body')" prop="function_body"> </el-table-column>
       <el-table-column :label="$t('js_func_last_update')" prop="last_updated"> </el-table-column>
 
@@ -35,15 +34,53 @@
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
-      <el-form ref="form" :model="model">
-        <el-checkbox v-model="model.lineNumbers" class="e-checkbox">{{ $t('js_func_dialog_Linenumbers') }}</el-checkbox>
-        <CodeEditor v-model="model.jsonDoc" lang="javascript" theme="dark" height="300"></CodeEditor>
-        <ul v-if="jsonDocHint.length > 0">
-          <li v-for="item in jsonDocHint" :key="item">{{ msg }}</li>
-        </ul>
+      <el-form ref="form" label-width="100px" label-position="left" :model="model" :rules="rules">
+        <el-form-item label="函数类型：">
+          <el-select v-model="model.type" size="small">
+            <el-option label="自定义函数" value="custom"></el-option>
+            <el-option label="第三方jar包" value="jar"></el-option>
+          </el-select>
+        </el-form-item>
+        <div v-show="model.type === 'jar'">
+          <el-form-item label="函数名称：" prop="function_name">
+            <el-input v-model="model.function_name" size="small"></el-input>
+          </el-form-item>
+          <el-form-item label="类名：" prop="className">
+            <el-input v-model="model.className" size="small"></el-input>
+          </el-form-item>
+          <el-form-item label="jar文件：" prop="fileId">
+            <el-upload action="api/file/upload" :file-list="fileList" :on-change="fileChange" :on-remove="fileRemove">
+              <el-button style="margin-right: 10px" size="small" type="primary">点击上传</el-button>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="命令格式：">
+            <el-input v-model="model.function_body" size="small"></el-input>
+          </el-form-item>
+          <el-form-item label="参数说明：">
+            <el-input v-model="model.parameters" size="small"></el-input>
+          </el-form-item>
+          <el-form-item label="返回值：">
+            <el-input v-model="model.return_value" size="small"></el-input>
+          </el-form-item>
+        </div>
+        <el-form-item label="描述：">
+          <el-input v-model="model.describe" type="textarea" size="small"></el-input>
+        </el-form-item>
+        <el-form-item v-if="model.type === 'custom'">
+          <el-checkbox v-model="lineNumbers" class="e-checkbox" @input="showGutter">{{
+            $t('js_func_dialog_Linenumbers')
+          }}</el-checkbox>
+          <CodeEditor v-model="model.jsonDoc" ref="editor" lang="javascript" height="300"></CodeEditor>
+          <ul v-if="jsonDocHint.length > 0">
+            <li v-for="item in jsonDocHint" :key="item">{{ item }}</li>
+          </ul>
+        </el-form-item>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
+        <el-button v-if="model.type === 'custom'" type="primary" size="small" @click="format">{{
+          $t('js_func_dialog_format')
+        }}</el-button>
         <el-button
           @click="
             createDialogVisible = false
@@ -52,15 +89,15 @@
           size="small"
           >{{ $t('message.cancel') }}</el-button
         >
-        <el-button type="primary" @click="createSave()" size="small">{{ $t('message.confirm') }}</el-button>
+        <el-button type="primary" size="small" @click="createSave()">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
 </template>
 <script>
-import { nanoid } from 'nanoid'
 import TablePage from '@/components/TablePage'
 import CodeEditor from 'web-core/components/CodeEditor'
+import 'prismjs'
 const parser = require('esprima')
 const escodegen = require('escodegen')
 
@@ -75,9 +112,24 @@ export default {
       editDocId: '',
       jsonDocHint: [],
       model: {
-        jsonDoc: '',
-        lineNumbers: true
-      }
+        type: 'custom',
+        function_name: '',
+        className: '',
+        fileId: '',
+        function_body: '',
+        parameters: '',
+        return_value: '',
+        describe: '',
+        jsonDoc: ''
+      },
+      lineNumbers: true,
+      rules: {
+        function_name: [{ required: true, message: '请输入函数名称' }],
+        className: [{ required: true, message: '请输入类名' }],
+        fileId: [{ required: true, message: '请上传jar包' }]
+      },
+      uploadFileName: '',
+      fileList: []
     }
   },
   computed: {
@@ -86,6 +138,30 @@ export default {
     }
   },
   methods: {
+    fileRemove() {
+      this.fileList = []
+      this.model.fileId = ''
+    },
+    fileChange(file) {
+      if (file.status === 'ready') {
+        this.uploadFileName = file.name
+        this.model.fileId = ''
+      }
+      if (file.response) {
+        let code = file.response.code
+        if (code === 'ok') {
+          this.$message.success('上传成功')
+          this.model.fileId = file.response.data.id
+        }
+        this.fileList = [file]
+      }
+      if (file.status === 'fail') {
+        this.$message.error('上传失败')
+      }
+    },
+    showGutter(val) {
+      this.$refs.editor.editor.setOption('showGutter', val)
+    },
     // 获取列表数据
     getData({ page }) {
       let { current, size } = page
@@ -110,8 +186,19 @@ export default {
     // 创建
     openCreateDialog() {
       this.dialogTitle = this.$t('js_func_dialog_create_title')
-      let code = `function f${nanoid(9)} (){}` //=> "fpY8C0PKJh"
-      this.model.jsonDoc = escodegen.generate(parser.parse(code))
+      let code = `function f${this.$util.uuid().slice(0, 8)} () {}`
+      this.model = {
+        type: 'custom',
+        function_name: '',
+        className: '',
+        fileId: '',
+        function_body: '',
+        parameters: '',
+        return_value: '',
+        describe: '',
+        jsonDoc: code
+      }
+      this.lineNumbers = true
       this.createDialogVisible = true
     },
     // 编辑
@@ -122,18 +209,32 @@ export default {
       this.dialogTitle = this.$t('js_func_dialog_edit_title')
       let code = `function ${item.function_name} (${item.parameters}) ${item.function_body}`
       this.model.jsonDoc = code
+      let { function_name, className, fileId, describe, function_body, parameters, return_value } = item
+      this.model = {
+        type: item.type || 'custom',
+        function_name,
+        className,
+        fileId,
+        describe,
+        function_body,
+        parameters,
+        return_value,
+        jsonDoc: code
+      }
+      this.lineNumbers = true
       this.createDialogVisible = true
     },
     // 保存
     createSave() {
       this.$refs.form.validate(valid => {
         if (!valid) {
-          this.createConnection()
+          return
         }
         let uid = this.$cookie.get('user_id')
         let doc = this.format()
         if (doc) {
           this.jsonDocHint.splice(0, this.jsonDocHint.length)
+
           let allAst = parser.parse(doc)
           let esqueryReq = require('esquery')
           let esquery = esqueryReq.default || esqueryReq
@@ -185,6 +286,7 @@ export default {
                 this.editDocId = null
                 this.table.fetch()
                 this.$message.success(this.$t('message.saveOK'))
+                this.createDialogVisible = false
               }
             })
             .catch(e => {
@@ -196,6 +298,7 @@ export default {
         }
 
         function makeModel(m, ast) {
+          let escodegen = require('escodegen')
           m.function_body = escodegen.generate(ast.body)
           m.function_name = ast.id.name
           m.parameters = ast.params
@@ -205,6 +308,12 @@ export default {
             .join()
           m.last_updated = new Date()
           m.user_id = uid
+          let model = this.model
+          m.className = model.className
+          m.fileId = model.fileId
+          m.describe = model.describe
+          m.return_value = model.return_value
+          m.type = model.type
         }
       })
     },
@@ -240,12 +349,12 @@ export default {
         }
       }
       return false
-    },
-    // 表格排序
-    handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
-      this.table.fetch(1)
     }
+    // // 表格排序
+    // handleSortTable({ order, prop }) {
+    //   this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+    //   this.table.fetch(1)
+    // }
   }
 }
 </script>
@@ -254,8 +363,6 @@ export default {
   height: 100%;
   .js-funcs-list {
     .btn {
-      padding: 7px;
-      background: #f5f5f5;
       i.iconfont {
         font-size: 12px;
       }
@@ -267,8 +374,5 @@ export default {
       }
     }
   }
-}
-.e-checkbox {
-  padding-bottom: 20px;
 }
 </style>

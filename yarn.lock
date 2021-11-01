@@ -4110,7 +4110,7 @@ escodegen@^2.0.0:
   integrity sha1-XjKxKDPoqo+jXhvwvvqJOASEx90=
   dependencies:
     esprima "^4.0.1"
-    estraverse "^5.2.0"
+    estraverse "^4.2.0"
     esutils "^2.0.2"
     optionator "^0.8.1"
   optionalDependencies:
@@ -4249,7 +4249,7 @@ esrecurse@^4.1.0, esrecurse@^4.3.0:
   dependencies:
     estraverse "^5.2.0"
 
-estraverse@^4.1.1:
+estraverse@^4.1.1, estraverse@^4.2.0:
   version "4.3.0"
   resolved "https://registry.npm.taobao.org/estraverse/download/estraverse-4.3.0.tgz#398ad3f3c5a24948be7725e83d11a7de28cdbd1d"
   integrity sha1-OYrT88WiSUi+dyXoPRGn3ijNvR0=
@@ -8083,6 +8083,11 @@ pretty-error@^2.0.2:
   dependencies:
     lodash "^4.17.20"
     renderkid "^2.0.4"
+
+prismjs@^1.17.1:
+  version "1.25.0"
+  resolved "https://registry.nlark.com/prismjs/download/prismjs-1.25.0.tgz#6f822df1bdad965734b310b315a23315cf999756"
+  integrity sha1-b4It8b2tllc0sxCzFaIzFc+Zl1Y=
 
 process-nextick-args@~2.0.0:
   version "2.0.1"
