@@ -58,7 +58,7 @@
                 <inline-input
                   :class="['color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
                   :value="scope.row.name"
-                  :icon-config="{ class: 'color-primary' }"
+                  :icon-config="{ class: 'color-primary', size: '12' }"
                   type="icon"
                   @click-text="handleDetails(scope.row)"
                   @save="updateName($event, scope.row.id)"
@@ -921,7 +921,6 @@ export default {
     border-bottom: none;
     color: rgba(0, 0, 0, 0.65);
     .operate-columns {
-      line-height: 14px;
       .el-button {
         padding: 0;
         & + .el-button {
