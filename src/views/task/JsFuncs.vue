@@ -63,7 +63,7 @@ import TablePage from '@/components/TablePage'
 import CodeEditor from 'web-core/components/CodeEditor'
 const parser = require('esprima')
 const escodegen = require('escodegen')
-const esquery = require('esquery')
+
 export default {
   name: 'JsFuncs',
   components: { TablePage, CodeEditor },
@@ -135,6 +135,8 @@ export default {
         if (doc) {
           this.jsonDocHint.splice(0, this.jsonDocHint.length)
           let allAst = parser.parse(doc)
+          let esqueryReq = require('esquery')
+          let esquery = esqueryReq.default || esqueryReq
           let funcsSelector = esquery.parse('Program > FunctionDeclaration')
           let funcsMatches = esquery.match(allAst, funcsSelector)
 
@@ -148,7 +150,7 @@ export default {
           if (this.editDocId) {
             jsfm = {}
             jsfm.id = this.editDocId
-            method = 'pathc'
+            method = 'patch'
             makeModel(jsfm, funcsMatches[0])
           } else {
             method = 'post'
@@ -188,6 +190,7 @@ export default {
             .catch(e => {
               this.jsonDocHint.push(e.response.msg)
             })
+          this.createDialogVisible = false
         } else {
           this.jsonDocHint.push(this.$t('js_func_dialog_nofunctions'))
         }
