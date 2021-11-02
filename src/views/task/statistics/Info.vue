@@ -74,7 +74,7 @@
 import StatusTag from '@/components/StatusTag'
 import VEchart from '@/components/VEchart'
 import VIcon from '@/components/VIcon'
-import { formatTime } from '@/util'
+import { formatTime, isEmpty } from '@/util'
 
 let lastMsg
 export default {
@@ -239,7 +239,7 @@ export default {
     },
     getOverview(data) {
       let overview = data.statsData.data_overview || {}
-      if (JSON.stringify(overview) === '{}') {
+      if (isEmpty(overview)) {
         return
       }
       this.overviewObj.body = overview

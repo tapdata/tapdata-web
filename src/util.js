@@ -53,12 +53,10 @@ export function toRegExp(word) {
   }
   return word
 }
-export function deepCopy(obj) {
-  return JSON.parse(JSON.stringify(obj))
-}
-export function formatTime(date, format = 'YYYY-MM-DD HH:mm:ss') {
-  return moment(date).format(format)
-}
+export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
+export const formatTime = (date, format = 'YYYY-MM-DD HH:mm:ss') => moment(date).format(format)
+// 判断对象是否为空
+export const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
 // 支持的数据源 'mysql','mariadb','mysql pxc','mongodb','postgres','oracle','sqlserver','redis'
 // 不支持 'rest api','db2','sybase','gbase','gaussdb200','kafka','elasticsearch'
 export const TYPEMAP = {
