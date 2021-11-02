@@ -270,6 +270,13 @@ export const defaultModel = {
     mqTopicSet: '', //主题名称
     routeKeyField: '', //消息路由
     virtualHost: '' //虚拟主机
+  },
+  vika: {
+    name: '',
+    database_type: '',
+    connection_type: '',
+    plain_password: '',
+    vika_space_name: ''
   }
 }
 export const defaultCloudModel = {

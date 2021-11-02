@@ -8,7 +8,7 @@
         <header v-if="$route.params.id" class="edit-header-box">
           <div class="edit-header">
             <div class="img-box">
-              <img :src="getImgByType(databaseType)" />
+              <img :src="$util.getConnectionTypeImg(databaseType) || $util.getConnectionTypeImg('default')" />
             </div>
             <div class="content">{{ model.name }}</div>
             <div class="addBtn color-primary" @click="dialogEditNameVisible = true">
@@ -19,7 +19,7 @@
         <header class="edit-header-box" v-else>
           <div class="edit-header">
             <div class="img-box">
-              <img :src="getImgByType(databaseType)" />
+              <img :src="$util.getConnectionTypeImg(databaseType) || $util.getConnectionTypeImg('default')" />
             </div>
             <div class="content-box">
               <div class="content">
@@ -568,7 +568,7 @@ import formConfig from './config'
 import gitbook from './GitBook'
 import CodeEditor from 'web-core/components/CodeEditor'
 import Test from './Test'
-import { getImgByType, TYPEMAP, TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
+import { TYPEMAP, TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import VIcon from '@/components/VIcon'
 
@@ -655,7 +655,8 @@ export default {
         'greenplum',
         'tidb',
         'hana',
-        'clickhouse'
+        'clickhouse',
+        'vika'
       ],
       model: '',
       config: {
@@ -663,7 +664,7 @@ export default {
       },
       checkItems: null,
       databaseType: '',
-      typeMap: TYPEMAP,
+      typeMap: this.$const.TYPEMAP,
       timer: null,
       status: '',
       loadingFrom: true,
@@ -759,6 +760,9 @@ export default {
       case 'tcp_udp':
         this.model = Object.assign({}, defaultModel['tcp'])
         break
+      case 'vika':
+        this.model = Object.assign({}, defaultModel['vika'])
+        break
     }
     this.getDT(this.databaseType)
     this.initTimezones()
@@ -852,7 +856,6 @@ export default {
     }
   },
   methods: {
-    getImgByType,
     formChange(data) {
       let filed = data.field || ''
       let value = data.value
@@ -904,6 +907,10 @@ export default {
       if (filed === 'custom_after_opr') {
         this.model.custom_after_script = ''
       }
+      //维格表
+      if (filed === 'plain_password' && this.model.database_type === 'vika') {
+        this.getSpaceVika()
+      }
     },
     async initData(data) {
       let editData = null
@@ -929,6 +936,8 @@ export default {
         }
         this.renameData.rename = this.model.name
         this.model.isUrl = false
+        //初始化维格表
+        this.getSpaceVika(this.$route.params.id)
       } else {
         this.model = Object.assign(this.model, data, { name: this.model.name })
         this.model.isUrl = true
@@ -984,6 +993,19 @@ export default {
         this.dataTypes = options
         this.checkDataTypeOptions(type)
       }
+    },
+    //获取维格表的空间
+    getSpaceVika(id) {
+      let params = {
+        load_type: 'space',
+        api_token: this.model.plain_password || '',
+        connection_id: id || ''
+      }
+      this.$api('connections')
+        .getSpace(params)
+        .then(data => {
+          this.changeConfig(data.data || [], 'set_space')
+        })
     },
     //rest api addUrl
     addUrlInfo(type) {
@@ -1204,6 +1226,21 @@ export default {
                 name: item.zoneName,
                 label: item.zoneName,
                 value: item.zoneCode
+              }
+            })
+          }
+          break
+        }
+        case 'set_space': {
+          //映射可用区
+          let vika_space_name = items.find(it => it.field === 'vika_space_name')
+          if (vika_space_name) {
+            vika_space_name.options = data.map(item => {
+              return {
+                id: item.id,
+                name: item.name,
+                label: item.name,
+                value: item.id
               }
             })
           }

@@ -98,7 +98,9 @@
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
-              <img :src="getImgByType(scope.row.database_type)" />
+              <img
+                :src="$util.getConnectionTypeImg(scope.row.database_type) || $util.getConnectionTypeImg('default')"
+              />
             </div>
             <div class="database-text">
               <ElLink
@@ -294,7 +296,8 @@ export default {
         'greenplum',
         'tidb',
         'hana',
-        'clickhouse'
+        'clickhouse',
+        'vika'
       ], //目前白名单,
       searchParams: {
         databaseType: '',

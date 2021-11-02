@@ -21,6 +21,7 @@ import dummydb from './dummydb'
 import dameng from './dameng'
 import hive from './hive'
 import tcp_udp from './tcp_udp'
+import vika from './vika'
 import drs_mysql from './drs_mysql'
 import drs_mariadb from './drs_maria'
 import drs_oracle from './drs_oracle'
@@ -64,6 +65,7 @@ export default {
   mysqlpxc,
   // jira,
   hive,
+  vika,
   drs_mysql,
   drs_mariadb,
   drs_oracle,
