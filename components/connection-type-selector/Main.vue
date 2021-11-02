@@ -6,7 +6,7 @@
           <img
             v-if="['mongodb', 'kafka'].includes(item)"
             class="img-mini"
-            :src="$util.getConnectionTypeDialogImg(item)"
+            :src="$util.getConnectionTypeDialogImg(item) || $util.getConnectionTypeDialogImg('default')"
           />
           <img v-else :src="$util.getConnectionTypeDialogImg(item)" />
         </div>
@@ -14,7 +14,7 @@
       </li>
       <li v-for="item in comingTypes" :key="item" class="item--disabled">
         <div class="img-box position-relative">
-          <img :src="$util.getConnectionTypeDialogImg(item)" />
+          <img :src="$util.getConnectionTypeDialogImg(item) || $util.getConnectionTypeDialogImg('default')" />
           <div class="img-box__mask position-absolute">
             <span class="mask-text">即将上线</span>
           </div>
@@ -26,7 +26,7 @@
     <ul class="database-ul">
       <li v-for="(item, index) in otherTypes" :key="index" @click="$emit('select', item)">
         <div class="img-box">
-          <img :src="$util.getConnectionTypeDialogImg(item)" />
+          <img :src="$util.getConnectionTypeDialogImg(item) || $util.getConnectionTypeDialogImg('default')" />
         </div>
         <div class="content">{{ typeMap[item] }}</div>
       </li>
@@ -35,7 +35,7 @@
     <ul class="database-ul">
       <li v-for="(item, index) in automationType" :key="index" @click="$emit('select', item.type)">
         <div class="img-box">
-          <img :src="$util.getConnectionTypeDialogImg('default')" />
+          <img :src="$util.getConnectionTypeDialogImg('default1')" />
         </div>
         <div class="content">{{ item.name }}</div>
       </li>
