@@ -7,23 +7,20 @@
     "start": "nodemon mock/mock.js & vue-cli-service serve --open",
     "start:dev": "cross-env SERVE_ENV=dev vue-cli-service serve --open",
     "start:test": "cross-env SERVE_ENV=test vue-cli-service serve --open",
-    "start:jet": "cross-env SERVE_ENV=jet vue-cli-service serve --open",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
     "mock": "nodemon mock/mock.js"
   },
-  "resolutions": {
-    "vue": "^2.6.14"
-  },
   "dependencies": {
-    "@formily/core": "^2.0.0-rc.4",
-    "@formily/reactive": "^2.0.0-rc.4",
-    "@formily/reactive-vue": "^2.0.0-rc.4",
-    "@formily/vue": "^2.0.0-rc.4",
-    "@vue/composition-api": "^1.1.4",
-    "ace-builds": "^1.4.12",
+    "@formily/core": "^2.0.0-rc.14",
+    "@formily/element": "^2.0.0-rc.14",
+    "@formily/reactive": "^2.0.0-rc.14",
+    "@formily/reactive-vue": "^2.0.0-rc.14",
+    "@formily/vue": "^2.0.0-rc.14",
+    "@vue/composition-api": "^1.0.0-rc.14",
+    "ace-builds": "^1.4.13",
     "axios": "^0.21.1",
     "backbone": "^1.4.0",
     "core-js": "^3.6.5",
@@ -31,7 +28,7 @@
     "crypto-js": "^4.0.0",
     "dagre": "^0.8.5",
     "echarts": "^4.6.0",
-    "element-ui": "^2.15.1",
+    "element-ui": "^2.15.6",
     "escodegen": "^2.0.0",
     "esprima": "^4.0.1",
     "github-markdown-css": "^4.0.0",
@@ -43,8 +40,6 @@
     "lodash": "^4.17.15",
     "mavon-editor": "^2.9.0",
     "moment": "^2.24.0",
-    "monaco-editor": "0.23.0",
-    "mousetrap": "^1.6.5",
     "nanoid": "^3.1.25",
     "vue": "^2.6.14",
     "vue-bus": "^1.2.1",
@@ -54,6 +49,7 @@
     "vue-i18n": "^8.15.3",
     "vue-json-viewer": "^2.2.15",
     "vue-router": "^3.2.0",
+    "vue-virtual-scroller": "^1.0.10",
     "vuex": "^3.4.0",
     "vuex-persistedstate": "^3.0.0"
   },
@@ -77,10 +73,9 @@
     "lint-staged": "^9.5.0",
     "markdown-loader": "^6.0.0",
     "mockjs": "^1.1.0",
-    "monaco-editor-webpack-plugin": "^3.0.1",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
-    "sass": "^1.32.8",
+    "sass": "~1.32.6",
     "sass-loader": "^10.1.1",
     "svg-sprite-loader": "^6.0.2",
     "svgo-loader": "^3.0.0",
@@ -90,6 +85,9 @@
     "pre-commit": "lint-staged",
     "post-merge": "git submodule update",
     "post-checkout": "git submodule update"
+  },
+  "resolutions": {
+    "vue": "^2.6.14"
   },
   "lint-staged": {
     "*.{js,jsx,vue}": [

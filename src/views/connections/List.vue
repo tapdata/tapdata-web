@@ -94,7 +94,7 @@
         :reserve-selection="true"
       >
       </el-table-column>
-      <el-table-column prop="name" min-width="160" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
+      <el-table-column prop="name" min-width="150" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
@@ -113,7 +113,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('connection.connectionInfo')">
+      <el-table-column :label="$t('connection.connectionInfo')" min-width="150">
         <template slot-scope="scope">
           {{ scope.row.connectionUrl }}
         </template>
@@ -277,7 +277,7 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira',
+        // 'jira',
         'dameng',
         'hive',
         'gbase-8s',
@@ -770,7 +770,7 @@ export default {
     float: left;
 
     img {
-      width: 60%;
+      width: 24px;
     }
   }
 

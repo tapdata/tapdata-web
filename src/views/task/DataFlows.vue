@@ -528,7 +528,6 @@ export default {
     for (const key in params) {
       params[key] = params[key] || cacheParams[key] || ''
     }
-    console.log('DataFlows', this)
   },
   beforeDestroy() {
     ws.off('watch', this.dataflowChange)
@@ -833,7 +832,8 @@ export default {
         username: item.user?.username,
         user_id: item.user_id,
         startTime: item.startTime,
-        checked: item.checked
+        checked: item.checked,
+        setting: item.setting
       }
     },
     handleSelectTag() {
@@ -1256,7 +1256,7 @@ export default {
     // 任务调度设置保存
     saveTaskSetting() {
       // let data = this.formSchedule.taskData;
-      let data = this.formSchedule.taskData.setting
+      let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
       dataFlows

@@ -239,7 +239,8 @@
       <div class="js-wrap">
         <div class="jsBox">
           <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <JsEditor v-if="dialogAddScriptVisible" :code.sync="webScript" ref="jsEditor" :width.sync="width"></JsEditor>
+          <CodeEditor class="js-editor" v-model="webScript" lang="javascript" theme="eclipse"></CodeEditor>
+          <!--          <JsEditor v-if="dialogAddScriptVisible" :code.sync="webScript" ref="jsEditor" :width.sync="width"></JsEditor>-->
           <div class="js-fixText">}</div>
         </div>
         <div class="markdown-body-wrap example">
@@ -276,9 +277,10 @@ const META_INSTANCE_FIELDS = {
   meta_type: true
 }
 import MultiSelection from './multi-selection.vue'
-import JsEditor from 'web-core/components/js-editor.vue'
+import CodeEditor from 'web-core/components/CodeEditor'
+//import JsEditor from 'web-core/components/js-editor.vue'
 export default {
-  components: { MultiSelection, JsEditor },
+  components: { MultiSelection, CodeEditor },
   props: {
     remoteFunc: Function,
     optionsFunc: Function,

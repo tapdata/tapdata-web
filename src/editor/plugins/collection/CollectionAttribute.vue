@@ -297,14 +297,15 @@
         </el-button>
         <FieldMapping
           v-else
+          ref="fieldMapping"
+          class="fr"
           :dataFlow="dataFlow"
           :showBtn="true"
           :isFirst="model.isFirst"
-          @update-first="returnModel"
           :hiddenFieldProcess="true"
           :stageId="stageId"
-          ref="fieldMapping"
-          class="fr"
+          :isDisable="disabled"
+          @update-first="returnModel"
         ></FieldMapping>
         <entity
           v-loading="schemaSelectConfig.loading"
@@ -369,7 +370,6 @@ import _ from 'lodash'
 import ws from '../../../api/ws'
 import factory from '../../../api/factory'
 import VIcon from '@/components/VIcon'
-import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editorMonitor = null;

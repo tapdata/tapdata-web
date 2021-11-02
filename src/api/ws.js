@@ -234,7 +234,7 @@ class WSClient extends EventEmitter {
       new_uri = 'wss:'
     }
     let host = window.getSettingByKey('DFS_TM_WS_HOST') || loc.host
-    let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || ''
+    let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || location.pathname.replace(/\/$/, '')
     let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || ''
     let path = (tcmApiPre === '/console' ? '' : tcmApiPre) + apiPre
     new_uri += '//' + host

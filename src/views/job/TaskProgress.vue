@@ -11,10 +11,9 @@
               class="progress-header_btn"
               type="primary"
               @click="handleInfo()"
-              v-if="
-                completeTime !== this.$t('taskProgress.fullyCompleted') && !$window.getSettingByKey('DFS_TCM_PLATFORM')
-              "
+              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
             >
+              <!-- completeTime !== this.$t('taskProgress.fullyCompleted') && -->
               {{ $t('taskProgress.seeDetails') }}
             </ElLink>
           </div>
@@ -120,10 +119,10 @@
               class="progress-header_btn"
               type="primary"
               @click="handleInfo()"
-              v-if="
-                completeTime !== this.$t('taskProgress.fullyCompleted') && !$window.getSettingByKey('DFS_TCM_PLATFORM')
-              "
-              >{{ $t('taskProgress.seeDetails') }}</ElLink
+              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+            >
+              <!-- completeTime !== this.$t('taskProgress.fullyCompleted') && -->
+              {{ $t('taskProgress.seeDetails') }}</ElLink
             >
           </div>
           <div class="progress-tip">{{ $t('taskProgress.tip') }}</div>
@@ -459,7 +458,6 @@ export default {
     },
     // 跳转详情
     handleInfo(data) {
-      debugger
       if (data) {
         window.open(
           location.href.split('#/')[0] +
@@ -534,16 +532,12 @@ export default {
   }
   // background-color: darkgreen;
 }
-.progress-container__table {
-}
 .progress-container__footer {
   margin: 0 16px 20px;
   padding: 8px;
   &.mt-border {
     border-top: 1px solid #d3d3d3;
   }
-}
-.footer-line {
 }
 .footer-item {
   margin-top: 16px;

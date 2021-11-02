@@ -510,8 +510,8 @@ export default {
           javaType: field.javaType,
           disabled: this.disabled
         }))
-        this.sourceType = sourceCell.getFormData()?.databaseType
-        this.targetType = targetCell.getFormData()?.databaseType
+        this.sourceType = sourceCell?.getFormData()?.databaseType
+        this.targetType = targetCell?.getFormData()?.databaseType
         //showTips
         this.isShowTips(joinKeys, this.sourceType, this.targetType)
       }
@@ -556,17 +556,23 @@ export default {
     getData() {
       let data = JSON.parse(JSON.stringify(this.model))
       this.isShowTips(data.joinTable.joinKeys, this.sourceType, this.targetType)
-      console.log('link-data', data)
-      // if (this.cell) {
-      //   // tcp报文数据传输到目标节点
-      //   let targetCell = this.cell.getTargetCell()
-      //   let targetData = targetCell && targetCell.getFormData()
-      //   if (targetData.isShowMessage) {
-      //     delete data.tcp
-      //   } else {
-      //     targetData.tcp = data.tcp
-      //   }
-      // }
+      if (this.cell) {
+        // 内存缓存存储tableName
+        let sourceCell = this.cell.getSourceCell(),
+          sourceData = sourceCell?.getFormData(),
+          targetCell = this.cell.getTargetCell(),
+          targetData = targetCell?.getFormData()
+        if (targetData && targetData.type === 'mem_cache') {
+          targetData.cacheConnectionId = sourceData.connectionId
+          targetData.cacheTableName = sourceData.tableName
+        }
+
+        //   if (targetData.isShowMessage) {
+        //     delete data.tcp
+        //   } else {
+        //     targetData.tcp = data.tcp
+        //   }
+      }
 
       /* if( data.joinTable.joinKeys.length > 0 ){
 					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);

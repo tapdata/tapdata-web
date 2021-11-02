@@ -29,11 +29,14 @@ export default {
   task_settings_cdc_sync_point_date: '【任務設置】增量採集開始時刻，請選擇時間',
 
   // 数据源
-  connection_form_tidb_server: 'TiDB地址',
-  connection_tidb_none_server: 'TiBD地址不能為空',
+  connection_form_tidb_server: 'PDServer 地址',
+  connection_tidb_none_server: 'PDServer 地址不能為空',
 
   connection_list_column_schema_status: 'Schema加載狀態',
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
+
+  connection_form_custom_connection_before_operate: '前置操作',
+  connection_form_custom_connection_after_operate: '後置操作',
 
   // Dag
   dag_data_node_label_dameng: 'Dameng節點',
@@ -46,5 +49,13 @@ export default {
   dag_data_node_label_memcache_type_all: '全局緩存',
   dag_data_node_label_memcache_type_local: '局部緩存',
   dag_data_node_label_memcache_type_tip: '全局緩存所有任務可引用，局部緩存僅限當前DAG引用。 ',
-  dag_data_node_label_clickhouse: 'ClickHouse節點'
+  dag_data_node_label_clickhouse: 'ClickHouse節點',
+  dag_data_node_label_kafka_high_performance_mode: '高性能模式',
+  dag_data_node_label_kafka_all: '所有',
+  dag_data_node_label_aggregate_filter: '過濾器',
+
+  // 緩存節點提示
+  task_job_setting_tip_title: '設置提醒',
+  task_job_setting_disable: '不去重',
+  task_job_tip_text: '該緩存節點(xxx)的設置已存在於任務(###)中，請確認是否還繼續創建？ '
 }

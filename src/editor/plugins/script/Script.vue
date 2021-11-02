@@ -38,7 +38,7 @@
             class="form-item-width"
             v-if="disabled"
           ></el-input>
-          <JsEditor :code.sync="model.script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsEditor>
+          <CodeEditor v-if="!disabled" v-model="model.script" :width="width" height="300px"></CodeEditor>
         </el-form-item>
         <el-form-item>
           <el-button class="btn-debug" type="primary" size="mini" :loading="!!sending" @click="showDebug">
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import JsEditor from '../../../components/JsEditor'
+import CodeEditor from 'web-core/components/CodeEditor'
 import log from '../../../log'
 import { EditorEventType } from '../../lib/events'
 import Debug from './Debug'
@@ -64,7 +64,7 @@ const gData = {}
 export default {
   name: 'Script',
   components: {
-    JsEditor,
+    CodeEditor,
     Debug
   },
   data() {
@@ -96,15 +96,16 @@ export default {
         type: 'js_processor',
         script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}'
       },
-      width: '500',
+      width: '500px',
       sending: false
     }
   },
-  created() {
-    let self = this
-    self.$on(EditorEventType.RESIZE, width => {
-      self.width = width
-      this.$refs.debug.resize(width)
+  mounted() {
+    this.$nextTick(() => {
+      this.width = this.$el.clientWidth - 42
+    })
+    this.$on(EditorEventType.RESIZE, width => {
+      this.width = width - 42
     })
   },
   watch: {
@@ -115,12 +116,6 @@ export default {
       }
     }
   },
-  mounted() {
-    let self = this
-    self.$on(EditorEventType.RESIZE, width => {
-      self.width = width
-    })
-  },
   methods: {
     setData(data, cell) {
       if (data) {
@@ -128,8 +123,6 @@ export default {
       }
       gData.stageId = cell.id
       gData.dataFlowId = arguments[3].editor.scope.dataFlowId
-      // if (this.$refs.jsEditor) this.$refs.jsEditor.init(this.model.script) 这行代码会把键盘事件变为double 一次性删除两个字符 去掉测试发现没有什么问题 待观察
-      // editorMonitor = vueAdapter.editor;
     },
     getData() {
       // return JSON.parse(JSON.stringify(this.model));

@@ -274,10 +274,10 @@ export default {
     }
     .table-page-table {
       flex: 1;
-      overflow: auto;
       border-bottom: none;
       border-radius: 3px;
       background: #fff;
+      overflow: hidden;
     }
     .el-table--border td,
     .el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {

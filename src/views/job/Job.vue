@@ -610,7 +610,6 @@ export default {
           delete self.dataFlow.validationSettings
           Object.assign(self.dataFlow, dat)
         }
-
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
       })
     },
@@ -789,7 +788,7 @@ export default {
 
       let postData = Object.assign(
         {
-          name: editorData.name,
+          name: editorData.name.trim(),
           description: '',
           status: this.status || 'draft',
           executeMode: this.executeMode || 'normal',
@@ -838,7 +837,8 @@ export default {
             'app.HiveNode',
             'app.KUDUNode',
             'app.HanaNode',
-            'app.ClickHouse'
+            'app.ClickHouse',
+            'app.DamengNode'
           ].includes(cell.type)
         ) {
           postData.mappingTemplate = 'custom'
@@ -859,7 +859,11 @@ export default {
             stages[sourceId].outputLanes.push(targetId)
             //添加字段处理器
             if (postData.mappingTemplate === 'cluster-clone') {
-              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
+              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY]?.field_process
+
+              //迁移全局修改设置值
+              stages[targetId].tableNameTransform = cell[FORM_DATA_KEY].tableNameTransform
+              stages[targetId].fieldsNameTransform = cell[FORM_DATA_KEY].fieldsNameTransform
             }
           }
           if (targetId && stages[targetId]) {
@@ -981,7 +985,8 @@ export default {
 
       if (data.name) {
         let params = {
-          name: data.name
+          name: data.name,
+          user_id: this.dataFlow?.user_id || data.user_id || ''
         }
         if (data.id) {
           params.id = {
@@ -1525,6 +1530,7 @@ export default {
         redis: 'app.Redis',
         hive: 'app.HiveNode',
         hana: 'app.HanaNode',
+        dameng: 'app.DamengNode',
         clickhouse: 'app.ClickHouse'
       }
       if (data) {

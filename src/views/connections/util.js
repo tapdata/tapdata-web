@@ -211,7 +211,11 @@ export const defaultModel = {
     unique_keys: '',
     custom_ondata_script: '',
     custom_cdc_script: '',
-    custom_initial_script: ''
+    custom_initial_script: '',
+    custom_before_opr: false,
+    custom_after_opr: false,
+    custom_before_script: '',
+    custom_after_script: ''
   },
   gridfs: {
     connection_type: 'source',

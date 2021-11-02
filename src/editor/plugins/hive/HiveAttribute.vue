@@ -30,9 +30,7 @@
         </el-form-item>
 
         <el-form-item
-          :label="
-            $t('editor.cell.data_node.table.form.table.label') + $t('editor.cell.data_node.table.form.table.labelTips')
-          "
+          :label="$t('editor.cell.data_node.table.form.table.label')"
           prop="tableName"
           :rules="rules"
           required
@@ -162,7 +160,6 @@ import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
 import VIcon from '@/components/VIcon'
-import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 
 const connections = factory('connections')
 

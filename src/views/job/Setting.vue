@@ -396,6 +396,10 @@ export default {
         {
           label: this.$t('dataFlow.setting.compel'),
           value: 'compel'
+        },
+        {
+          label: this.$t('task_job_setting_disable'),
+          value: 'disable'
         }
       ]
     }

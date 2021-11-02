@@ -1,12 +1,15 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://backend:3030',
   test: 'http://192.168.1.181:30300',
   jet: 'http://jet.devops.tapdata.net:31613'
+  // test: 'http://192.168.1.181:30300'
+  // test: 'http://192.168.1.181:30649'  // v1-24
+  // test: 'http://192.168.1.181:31703'  // v1-23
+  // test: 'http://192.168.1.181:30891'  // v1-22
 }
 let origin
 const { argv } = process
@@ -36,7 +39,6 @@ module.exports = {
       '/oauth/': proxy,
       '/old/': { target: 'http://localhost:8081' },
       '/ws/': {
-        ...proxy,
         ws: true,
         secure: false,
         logLevel: 'debug',
@@ -46,29 +48,26 @@ module.exports = {
   },
   chainWebpack(config) {
     const iconDir = resolve('src/assets/icons/svg')
-
-    // 多页面时会产生多请求预加载，带宽敏感的关闭此配置
-    config.plugins.delete('prefetch')
-
-    // markdown loader
-    config.module
-      .rule('md')
-      .test(/\.md$/)
-      .use('html')
-      .loader('html-loader')
-      .end()
-      .use('markdown')
-      .loader('markdown-loader')
-      .end()
+    const colorIconDir = resolve('src/assets/icons/colorSvg')
+    const webCoreIconDir = resolve('src/_packages/tapdata-web-core/assets/icons/svg')
 
     // svg loader排除 icon 目录
-    config.module.rule('svg').exclude.add(resolve(iconDir)).end().use('svgo-loader').loader('svgo-loader').end()
+    config.module
+      .rule('svg')
+      .exclude.add(iconDir)
+      .add(colorIconDir)
+      .add(webCoreIconDir)
+      .end()
+      .use('svgo-loader')
+      .loader('svgo-loader')
+      .end()
 
     // svg-sprite-loader打包svg
     config.module
       .rule('svg-sprite')
       .test(/\.svg$/)
-      .include.add(resolve(iconDir))
+      .include.add(iconDir)
+      .add(webCoreIconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -92,6 +91,44 @@ module.exports = {
       })
       .end()
 
+    config.module
+      .rule('color-svg-sprite')
+      .test(/\.svg$/)
+      .include.add(colorIconDir)
+      .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({
+        symbolId: 'icon-[name]'
+      })
+      .end()
+      .use('svgo-loader')
+      .loader('svgo-loader')
+      .options({
+        plugins: [
+          { name: 'removeStyleElement', active: true },
+          {
+            name: 'removeAttrs',
+            active: true,
+            params: {
+              attrs: ['class', 'p-id']
+            }
+          }
+        ]
+      })
+      .end()
+
+    // markdown loader
+    config.module
+      .rule('md')
+      .test(/\.md$/)
+      .use('html')
+      .loader('html-loader')
+      .end()
+      .use('markdown')
+      .loader('markdown-loader')
+      .end()
+
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('src/_packages/tapdata-web-core'))
   },
   configureWebpack: config => {
@@ -104,10 +141,6 @@ module.exports = {
           // 大于10kb的会压缩
           threshold: 10240
           // 其余配置查看compression-webpack-plugin
-        }),
-        new MonacoWebpackPlugin({
-          languages: ['javascript', 'json'],
-          features: ['coreCommands', 'find']
         })
       )
 

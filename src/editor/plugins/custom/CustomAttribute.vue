@@ -98,14 +98,15 @@
             </el-button>
             <FieldMapping
               v-else
+              ref="fieldMapping"
+              class="fr"
               :dataFlow="dataFlow"
               :showBtn="true"
               :isFirst="model.isFirst"
-              @update-first="returnModel"
+              :isDisable="disabled"
               :hiddenFieldProcess="true"
               :stageId="stageId"
-              ref="fieldMapping"
-              class="fr"
+              @update-first="returnModel"
             ></FieldMapping>
           </div>
         </el-form-item>
@@ -136,7 +137,6 @@ import Entity from '../link/Entity'
 import ws from '../../../api/ws'
 import { convertSchemaToTreeData, uuid } from '../../util/Schema'
 import VIcon from '@/components/VIcon'
-import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 let connectionApi = factory('connections')
 // let editorMonitor = null;
 export default {

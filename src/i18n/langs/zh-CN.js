@@ -29,11 +29,14 @@ export default {
   task_settings_cdc_sync_point_date: '【任务设置】增量采集开始时刻，请选择时间',
 
   // 数据源
-  connection_form_tidb_server: 'TiDB地址',
-  connection_tidb_none_server: 'TiBD地址不能为空',
+  connection_form_tidb_server: 'PDServer 地址',
+  connection_tidb_none_server: 'PDServer 地址不能为空',
 
   connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
+
+  connection_form_custom_connection_before_operate: '前置操作',
+  connection_form_custom_connection_after_operate: '后置操作',
 
   // 路由名
   app_menu_jsFuncs: '函数',
@@ -64,8 +67,14 @@ export default {
   dag_data_node_label_memcache_type_all: '全局缓存',
   dag_data_node_label_memcache_type_local: '局部缓存',
   dag_data_node_label_memcache_type_tip: '全局缓存所有任务可引用，局部缓存仅限当前DAG引用。',
+  dag_data_node_label_kafka_high_performance_mode: '高性能模式',
+  dag_data_node_label_kafka_all: '所有',
 
   //任务编辑
+  dag_data_node_label_clickhouse: 'ClickHouse节点',
+  dag_data_node_label_aggregate_filter: '过滤器',
+  // 缓存节点提示
   task_job_setting_tip_title: '设置提醒',
-  task_job_tip_text: '该缓存节点(nodeName)的设置已存在于任务(dataflow)中，请确认是否还继续创建？'
+  task_job_setting_disable: '不去重',
+  task_job_tip_text: '该缓存节点(xxx)的设置已存在于任务(###)中，请确认是否还继续创建？'
 }

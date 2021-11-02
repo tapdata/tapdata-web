@@ -3,7 +3,7 @@
     :title="$t('connection.createNewDataSource')"
     :visible="dialogVisible"
     :append-to-body="true"
-    width="770px"
+    width="730px"
     :before-close="handleClose"
   >
     <ConnectionTypeSelector
@@ -49,7 +49,7 @@ export default {
         'kafka',
         'mariadb',
         'mysql pxc',
-        'jira',
+        // 'jira',
         'mq',
         'dameng',
         'hive',

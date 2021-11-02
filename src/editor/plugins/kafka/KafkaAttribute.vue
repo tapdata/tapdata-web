@@ -109,7 +109,7 @@
 						size="mini"
 					></el-input>
 				</el-form-item> -->
-        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="kafkaPartitionKey">
+        <!-- <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="kafkaPartitionKey">
           <el-select
             v-model="model.partitionId"
             default-first-option
@@ -124,7 +124,7 @@
               v-bind:key="idx"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item
           v-if="dataNodeInfo.isTarget"
@@ -150,6 +150,30 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item
+          v-if="dataNodeInfo.isSource"
+          :label="$t('dag_data_node_label_kafka_high_performance_mode')"
+          prop="performanceMode"
+        >
+          <el-switch
+            v-model="model.performanceMode"
+            :active-text="model.performanceMode ? $t('dataFlow.yes') : $t('dataFlow.no')"
+          >
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="partitionId">
+          <el-select
+            v-model="model.partitionId"
+            default-first-option
+            clearable
+            :disabled="model.performanceMode"
+            :placeholder="$t('message.placeholderSelect') + 'Partition ID'"
+            size="mini"
+          >
+            <el-option :label="$t('dag_data_node_label_kafka_all')" value="all" key="all"></el-option>
+            <el-option v-for="(item, idx) in partitionSet" :label="item" :value="item" v-bind:key="idx"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
     </div>
     <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
@@ -166,14 +190,15 @@
       </el-button>
       <FieldMapping
         v-else
+        ref="fieldMapping"
+        class="fr"
         :dataFlow="dataFlow"
         :showBtn="true"
         :isFirst="model.isFirst"
-        @update-first="returnModel"
+        :isDisable="disabled"
         :hiddenFieldProcess="true"
         :stageId="stageId"
-        ref="fieldMapping"
-        class="fr"
+        @update-first="returnModel"
       ></FieldMapping>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
@@ -198,7 +223,7 @@ import VIcon from '@/components/VIcon'
 import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
-import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
+// import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 const connections = factory('connections')
 // let editorMonitor = null;
 export default {
@@ -245,7 +270,9 @@ export default {
         tableName: '',
         partitionId: '',
         kafkaPartitionKey: '',
-        isFirst: true
+        isFirst: true,
+        performanceMode: false,
+        partitionIdSet: []
       },
       scope: '',
       dataFlow: '',
@@ -313,11 +340,23 @@ export default {
                     partitionSet: [-1]
                   }
             this.partitionSet = schema.partitionSet ? schema.partitionSet : []
+
             this.tableList = schema.fields ? schema.fields : []
 
             this.$emit('schemaChange', _.cloneDeep(schema))
             this.mergedSchema = schema
           }
+        }
+      }
+    },
+    'model.performanceMode': {
+      immediate: true,
+      handler(val) {
+        if (val) {
+          this.model.partitionId = 'all'
+          this.model.partitionIdSet = this.partitionSet || []
+        } else {
+          this.model.partitionId = ''
         }
       }
     }
@@ -377,6 +416,10 @@ export default {
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        if (data.performanceMode) {
+          data.partitionId = 'all'
+        }
+
         this.scope = vueAdapter?.editor?.scope
         this.stageId = cell.id
         this.getDataFlow()
@@ -401,6 +444,7 @@ export default {
       this.mergedSchema = cell.getOutputSchema()
       this.tableList = this.mergedSchema?.fields || []
       this.partitionSet = this.mergedSchema?.partitionSet || []
+
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
         this.getDataFlow()
@@ -412,11 +456,17 @@ export default {
     getData() {
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Kafka'
-      if (this.dataNodeInfo.isTarget) {
-        delete result.partitionId
-      } else {
-        delete result.kafkaPartitionKey
+
+      if (!result.performanceMode) {
+        if (!result.partitionId) {
+          result.partitionIdSet = []
+        } else if (result.partitionId === 'all') {
+          result.partitionIdSet = this.partitionSet || []
+        } else {
+          result.partitionIdSet = [this.model.partitionId]
+        }
       }
+
       if (result.kafkaPartitionKey instanceof Array) {
         result.kafkaPartitionKey = result.kafkaPartitionKey.join(',')
       }

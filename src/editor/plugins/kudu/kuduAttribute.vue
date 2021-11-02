@@ -30,9 +30,7 @@
         </el-form-item>
 
         <el-form-item
-          :label="
-            $t('editor.cell.data_node.table.form.table.label') + $t('editor.cell.data_node.table.form.table.labelTips')
-          "
+          :label="$t('editor.cell.data_node.table.form.table.label')"
           prop="tableName"
           :rules="rules"
           required
@@ -99,14 +97,15 @@
       </el-button>
       <FieldMapping
         v-else
-        :dataFlow="dataFlow"
-        :hiddenFieldProcess="true"
-        :showBtn="true"
-        :isFirst="model.isFirst"
-        @update-first="returnModel"
-        :stageId="stageId"
         ref="fieldMapping"
         class="fr"
+        :dataFlow="dataFlow"
+        :showBtn="true"
+        :isFirst="model.isFirst"
+        :isDisable="disabled"
+        :hiddenFieldProcess="true"
+        :stageId="stageId"
+        @update-first="returnModel"
       ></FieldMapping>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
@@ -131,7 +130,6 @@ import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
 import VIcon from '@/components/VIcon'
-import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 const connections = factory('connections')
 
 // let editorMonitor = null;
