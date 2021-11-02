@@ -7,30 +7,22 @@
 				</el-button>
 			</div> -->
       <el-form class="e-form" label-position="top" label-width="130px" :model="model" :disabled="disabled" ref="form">
-        <el-form-item :required="true" :label="$t('editor.cell.processor.script.form.name.label')" size="mini">
+        <ElFormItem :required="true" :label="$t('editor.cell.processor.script.form.name.label')" size="mini">
           <el-input
             v-model="model.name"
             class="form-item-width"
             :placeholder="$t('editor.cell.processor.script.form.name.placeholder')"
           ></el-input>
-        </el-form-item>
+        </ElFormItem>
 
-        <el-form-item :required="true" :label="$t('editor.cell.processor.script.form.type.label')" size="mini">
-          <el-select
-            v-model="model.type"
-            :placeholder="$t('editor.cell.processor.script.form.type.placeholder')"
-            value="js_processor"
-          >
-            <el-option
-              v-for="(item, idx) in scriptTypes"
-              :label="item.label"
-              :value="item.value"
-              v-bind:key="idx"
-            ></el-option>
-          </el-select>
-        </el-form-item>
+        <ElFormItem :required="true" label="JS引擎版本：" size="mini">
+          <ElSelect v-model="model.jsEngineName">
+            <ElOption label="新版" value="graal.js"></ElOption>
+            <ElOption label="旧版" value="nashorn"></ElOption>
+          </ElSelect>
+        </ElFormItem>
 
-        <el-form-item :required="true" :label="$t('editor.cell.processor.script.form.script.label')" size="mini">
+        <ElFormItem :required="true" :label="$t('editor.cell.processor.script.form.script.label')" size="mini">
           <el-input
             type="textarea"
             v-model="model.script"
@@ -39,12 +31,12 @@
             v-if="disabled"
           ></el-input>
           <CodeEditor v-if="!disabled" v-model="model.script" :width="width" height="300px"></CodeEditor>
-        </el-form-item>
-        <el-form-item>
+        </ElFormItem>
+        <ElFormItem>
           <el-button class="btn-debug" type="primary" size="mini" :loading="!!sending" @click="showDebug">
             {{ $t('editor.cell.processor.script.debug_button_label') }}
           </el-button>
-        </el-form-item>
+        </ElFormItem>
       </el-form>
     </div>
     <Debug ref="debug"></Debug>
@@ -94,6 +86,7 @@ export default {
       model: {
         name: 'JavaScript',
         type: 'js_processor',
+        jsEngineName: 'graal.js',
         script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}'
       },
       width: '500px',
@@ -119,6 +112,7 @@ export default {
   methods: {
     setData(data, cell) {
       if (data) {
+        data.jsEngineName = data.jsEngineName || 'nashorn'
         _.merge(this.model, data)
       }
       gData.stageId = cell.id

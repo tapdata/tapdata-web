@@ -41,6 +41,7 @@ export const scriptProcessConfig = {
       [FORM_DATA_KEY]: {
         name: 'JavaScript',
         type: 'js_processor',
+        jsEngineName: 'graal.js',
         script: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}'
       }
     },

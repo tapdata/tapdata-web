@@ -237,11 +237,17 @@
       :before-close="handleAddScriptClose"
     >
       <div class="js-wrap">
-        <div class="jsBox">
-          <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <CodeEditor class="js-editor" v-model="webScript" lang="javascript" theme="eclipse"></CodeEditor>
-          <!--          <JsEditor v-if="dialogAddScriptVisible" :code.sync="webScript" ref="jsEditor" :width.sync="width"></JsEditor>-->
-          <div class="js-fixText">}</div>
+        <div class="jsBox px-6">
+          <div>
+            <span class="mr-2 text-secondary" style="font-size: 12px">JS引擎版本：</span>
+            <ElSelect v-model="jsEngineName" style="width: 100px" size="mini">
+              <ElOption label="新版" value="graal.js"></ElOption>
+              <ElOption label="旧版" value="nashorn"></ElOption>
+            </ElSelect>
+          </div>
+          <div class="py-2"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
+          <CodeEditor class="js-editor" v-model="webScript"></CodeEditor>
+          <div class="py-2">}</div>
         </div>
         <div class="markdown-body-wrap example">
           <div class="markdown-body" v-html="htmlMD"></div>
@@ -354,7 +360,7 @@ export default {
       dialogAddScriptVisible: false,
       formIndex: '',
       webScript: '',
-      width: '600',
+      jsEngineName: 'graal.js',
       allStages: null
     }
   },
@@ -688,7 +694,8 @@ export default {
               targetTree: [],
               showAdvancedVerification: false,
               script: '', //后台使用 需要拼接function头尾
-              webScript: '' //前端使用 用于页面展示
+              webScript: '', //前端使用 用于页面展示
+              jsEngineName: 'graal.js'
             }
             if (targetStage) {
               this.setTarget(task, targetStage)
@@ -762,7 +769,8 @@ export default {
         targetTree: [],
         showAdvancedVerification: false,
         script: '', //后台使用 需要拼接function头尾
-        webScript: '' //前端使用 用于页面展示
+        webScript: '', //前端使用 用于页面展示
+        jsEngineName: 'graal.js'
       })
       this.getTaskTree()
     },
@@ -806,11 +814,13 @@ export default {
     handleAddScriptClose() {
       this.webScript = ''
       this.formIndex = ''
+      this.jsEngineName = 'graal.js'
       this.dialogAddScriptVisible = false
     },
     addScript(index) {
       this.formIndex = index
       this.webScript = ''
+      this.jsEngineName = 'graal.js'
       this.dialogAddScriptVisible = true
     },
     removeScript(index) {
@@ -826,13 +836,17 @@ export default {
     editScript(index) {
       this.formIndex = index
       let script = JSON.parse(JSON.stringify(this.form.tasks[this.formIndex].webScript))
+      this.jsEngineName = JSON.parse(JSON.stringify(this.form.tasks[this.formIndex].jsEngineName || 'nashorn'))
       this.webScript = script
       this.dialogAddScriptVisible = true
     },
     submitScript() {
       let script = JSON.parse(JSON.stringify(this.webScript))
       let formIndex = JSON.parse(JSON.stringify(this.formIndex))
+      let jsEngineName = JSON.parse(JSON.stringify(this.jsEngineName))
       this.form.tasks[formIndex].webScript = script
+      this.form.tasks[formIndex].jsEngineName = jsEngineName
+      this.jsEngineName = ''
       this.webScript = ''
       this.formIndex = ''
       this.dialogAddScriptVisible = false
@@ -907,7 +921,7 @@ export default {
               status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
               ping_time: 0,
               tasks: this.form.tasks.map(
-                ({ source, target, fullMatch, showAdvancedVerification, script, webScript }) => {
+                ({ source, target, fullMatch, showAdvancedVerification, script, webScript, jsEngineName }) => {
                   if (webScript && webScript !== '') {
                     script = 'function validate(sourceRow){' + webScript + '}'
                   }
@@ -917,7 +931,8 @@ export default {
                     fullMatch,
                     showAdvancedVerification,
                     script,
-                    webScript
+                    webScript,
+                    jsEngineName
                   }
                 }
               ),
@@ -1079,12 +1094,9 @@ export default {
   flex-wrap: nowrap;
   flex-direction: row;
   .jsBox {
-    width: 70%;
-    height: 478px;
-    .js-fixText {
-      line-height: 25px;
-      margin-left: 28px;
-    }
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     .js-fixContent {
       margin-left: 60px;
     }
