@@ -23,18 +23,18 @@
         <div class="p-4" style="background: #fafafa; border-radius: 4px 4px 0 0">
           <div class="flex justify-content-between mb-2">
             <div>
-              <span>计划迁移表数量 100</span>
-              <span class="ml-3">已完成迁移表量 100</span>
+              <span>计划{{ currentStep.label }}表数量 100</span>
+              <span class="ml-3">已完成{{ currentStep.label }}表量 100</span>
             </div>
-            <div>预计迁移完成时间：24小时23分1秒</div>
+            <div>预计{{ currentStep.label }}完成时间：{{ completeTime }}24小时23分1秒</div>
           </div>
-          <ElProgress :percentage="50"></ElProgress>
+          <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
         </div>
       </div>
       <div class="mt-4">
         <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}详情</div>
         <FilterBar v-model="searchParams" :items="items" hide-refresh></FilterBar>
-        <TableList :columns="columns" class="table-list"></TableList>
+        <TableList :columns="columns" :data="progressGroupByDB" class="table-list"></TableList>
       </div>
     </div>
   </div>
@@ -44,6 +44,7 @@
 import TableList from '@/components/TableList'
 import FilterBar from '@/components/FilterBar'
 import Milestone from './Milestone'
+import { deepCopy } from '@/util'
 
 export default {
   name: 'Schedule',
@@ -63,7 +64,10 @@ export default {
         tableName: '',
         type: ''
       },
-      columns: []
+      columns: [],
+      progressBar: 0, // 进度
+      completeTime: '', // 完成时间
+      progressGroupByDB: []
     }
   },
   computed: {
@@ -85,31 +89,119 @@ export default {
   },
   methods: {
     init() {
+      this.getInfo()
       this.getStep()
       this.getSearchItems()
       this.getColumns()
     },
+    getInfo() {
+      let overview = {}
+      let waitingForSyecTableNums = 0
+      let completeTime = ''
+      let data = this.task
+      this.progressBar = 0
+      if (data?.stats?.overview) {
+        overview = deepCopy(data.stats.overview)
+        if (overview.waitingForSyecTableNums !== undefined) {
+          waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
+        } else {
+          waitingForSyecTableNums = 0
+        }
+        overview.waitingForSyecTableNums = waitingForSyecTableNums
+
+        let num = (overview.targatRowNum / overview.sourceRowNum) * 100
+        if (num > 100) {
+          num = 100
+        }
+        this.progressBar = num ? num.toFixed(2) * 1 : 0
+
+        let now = new Date().getTime()
+        let startTime = new Date(data.runningTime).getTime(),
+          runningTime = now - startTime,
+          speed = overview.targatRowNum / runningTime
+        // lefts = Math.floor((spendTime / 1000) % 60) //计算秒数
+
+        let time = (overview.sourceRowNum - overview.targatRowNum) / speed / 1000
+
+        let r = ''
+        if (time) {
+          let s = time,
+            m = 0,
+            h = 0,
+            d = 0
+          if (s > 60) {
+            m = parseInt(s / 60)
+            s = parseInt(s % 60)
+            if (m > 60) {
+              h = parseInt(m / 60)
+              m = parseInt(m % 60)
+              if (h > 24) {
+                d = parseInt(h / 24)
+                h = parseInt(h % 24)
+              }
+            }
+          }
+          if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
+            r = 1 + this.$t('taskProgress.m')
+          }
+          // r = parseInt(s) + this.$t('timeToLive.s')
+          if (m > 0) {
+            r = parseInt(m) + this.$t('taskProgress.m')
+          }
+          if (h > 0) {
+            r = parseInt(h) + this.$t('taskProgress.h') + r
+          }
+          if (d > 0) {
+            r = parseInt(d) + this.$t('taskProgress.d') + r
+          }
+          // 全量未完成 停止任务
+          if (['paused', 'error'].includes(data.status)) {
+            completeTime = this.$t('taskProgress.taskStopped') // 任务已停止
+          } else {
+            completeTime = r
+          }
+        }
+
+        if (this.progressBar === 100) {
+          overview.currentStatus = this.$t('taskProgress.progress') // 进行中
+          completeTime = this.$t('taskProgress.fullyCompleted') // 全量已完成
+        }
+        // 任务暂停、错误  增量状态都为停止
+        if (completeTime === this.$t('taskProgress.fullyCompleted')) {
+          if (['paused', 'error'].includes(data.status)) {
+            overview.currentStatus = this.$t('taskProgress.stopped') // 已停止
+          }
+        }
+      }
+      if (data?.stats?.progressGroupByDB?.length) {
+        data.stats.progressGroupByDB.forEach(statusItem => {
+          let num = (statusItem.targetRowNum / statusItem.sourceRowNum) * 100,
+            statusNum = num > 0 ? num.toFixed(2) * 1 : 0
+          if (statusItem.statusNum) {
+            statusItem.statusNum = statusNum
+          } else {
+            this.$set(statusItem, 'statusNum', statusNum)
+          }
+        })
+      }
+      this.progressGroupByDB = data.stats.progressGroupByDB
+
+      this.completeTime = completeTime
+    },
     getStep() {
-      this.active = 1
+      this.active = 2 // 写死的测试代码
+      let base = [
+        { label: '任务初始化', title: '初始化', key: 'initStep' },
+        { label: '结构迁移', title: '迁移', key: 'migrateStep' }
+      ]
+      let cdc = { label: '增量同步', title: '增量', key: 'cdcStep' }
+      let full = { label: '全量同步', title: '全量', key: 'fullStep' }
       if (this.taskType === 'cdc') {
-        this.steps = [
-          { label: '任务初始化', key: 'initStep' },
-          { label: '结构迁移', key: 'migrateStep' },
-          { label: '增量同步', key: 'cdcStep' }
-        ]
+        this.steps = [...base, cdc]
       } else if (this.taskType === 'initial_sync') {
-        this.steps = [
-          { label: '任务初始化', key: 'initStep' },
-          { label: '结构迁移', key: 'migrateStep' },
-          { label: '全量同步', key: 'fullStep' }
-        ]
+        this.steps = [...base, full]
       } else {
-        this.steps = [
-          { label: '任务初始化', key: 'initStep' },
-          { label: '结构迁移', key: 'migrateStep' },
-          { label: '全量同步', key: 'fullStep' },
-          { label: '增量同步', key: 'cdcStep' }
-        ]
+        this.steps = [...base, full, cdc]
       }
     },
     getColumns() {
