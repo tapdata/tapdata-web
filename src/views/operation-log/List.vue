@@ -1,5 +1,5 @@
 <template>
-  <section class="operation-logs-wrapper main-container" v-if="$route.name === 'OperationLog'">
+  <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'OperationLog'">
     <div class="main">
       <div class="list-operation">
         <div class="list-operation-left">
@@ -43,6 +43,8 @@
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/FilterBar'
 import TableList from '@/components/TableList'
+import { isEmpty } from '@/util'
+
 export default {
   components: { VIcon, FilterBar, TableList },
   data() {
@@ -140,7 +142,7 @@ export default {
       if (route.name === 'OperationLog') {
         let query = route.query
         this.searchParams = Object.assign(this.searchParams, query)
-        let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
+        let pageNum = isEmpty(query) ? undefined : 1
         this.table.fetch(pageNum)
       }
     }
@@ -379,8 +381,6 @@ export default {
     font-size: 16px;
   }
   .main {
-    padding: 20px;
-    background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;

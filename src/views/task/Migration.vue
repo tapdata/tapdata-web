@@ -1,5 +1,5 @@
 <template>
-  <section class="migration-wrapper main-container" v-loading="loading" v-if="$route.name === 'Task'">
+  <section class="migration-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Task'">
     <div class="main">
       <div class="migration-operation">
         <div class="migration-operation-left">
@@ -217,8 +217,6 @@
     font-size: 16px;
   }
   .main {
-    padding: 20px;
-    background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;
