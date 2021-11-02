@@ -27,25 +27,18 @@
                 <span class="icon iconfont icon-tishi1" slot="reference"></span>
               </el-popover>
             </div>
-
-            <el-checkbox v-model="model.selectSourceDatabase.table" disabled
-              >Table
-              <el-popover placement="top-start" width="400" trigger="hover">
-                <span>{{ $t('editor.cell.link.tableTip') }}</span>
+            <ElCheckbox
+              v-for="item in checkboxList"
+              v-model="model.selectSourceDatabase[item.field]"
+              :key="item.field"
+              :disabled="item.disabled"
+            >
+              {{ item.label }}
+              <ElPopover v-if="item.tips" placement="top-start" width="400" trigger="hover">
+                <span>{{ item.tips }}</span>
                 <span class="icon iconfont icon-tishi1" slot="reference"></span>
-              </el-popover>
-            </el-checkbox>
-            <!-- @change="changeView" -->
-            <el-checkbox v-model="model.selectSourceDatabase.view" :disabled="mysqlDisable"
-              >View
-              <el-popover placement="top-start" width="400" trigger="hover">
-                <span>{{ $t('editor.cell.link.viewTip') }}</span>
-                <span class="icon iconfont icon-tishi1" slot="reference"></span>
-              </el-popover>
-            </el-checkbox>
-
-            <el-checkbox v-model="model.selectSourceDatabase.function" :disabled="mysqlDisable">Function</el-checkbox>
-            <el-checkbox v-model="model.selectSourceDatabase.procedure" :disabled="mysqlDisable">Procedure</el-checkbox>
+              </ElPopover>
+            </ElCheckbox>
           </el-form-item>
           <!-- <el-form-item>
             <el-row :gutter="20">
@@ -276,7 +269,12 @@ export default {
   components: { MqTransfer, VirtualTransfer, FieldMapping },
   data() {
     return {
-      mysqlDisable: false,
+      checkboxList: [
+        { field: 'table', label: 'Table', tips: this.$t('editor.cell.link.tableTip'), disabled: true },
+        { field: 'view', label: 'View', tips: this.$t('editor.cell.link.viewTip'), disabled: true },
+        { field: 'function', label: 'Function', disabled: true },
+        { field: 'procedure', label: 'Procedure', disabled: true }
+      ],
       transferLoading: false,
       currentName: null,
       databaseName: '',
@@ -371,14 +369,19 @@ export default {
             targetCell && targetCell.getFormData().database_type ? targetCell.getFormData().database_type : '',
           connectionId = sourceCell.getFormData().connectionId
         this.targetDatabaseType = targetDatabaseType
-        this.mysqlDisable = sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql' ? false : true
-        if (this.mysqlDisable) {
-          this.model.selectSourceDatabase = {
-            table: true,
-            view: false,
-            function: false,
-            procedure: false
-          }
+        if (sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql') {
+          this.checkboxList.forEach(item => {
+            if (item.field !== 'table') {
+              item.disabled = false
+            }
+          })
+        }
+        if (sourceDatabaseType === 'oracle' && targetDatabaseType === 'oracle') {
+          this.checkboxList.forEach(item => {
+            if (item.field === 'view') {
+              item.disabled = false
+            }
+          })
         }
         //获取目标节点ID
         this.stageId = targetCell.id || ''
