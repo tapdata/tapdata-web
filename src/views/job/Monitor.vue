@@ -1003,6 +1003,7 @@ export default {
               'kudu',
               'tcp_udp',
               'hana',
+              'dameng',
               'clickhouse'
             ].includes(this.stageType)
           ) {
