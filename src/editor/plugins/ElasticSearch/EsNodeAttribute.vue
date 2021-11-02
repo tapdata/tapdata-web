@@ -104,7 +104,8 @@ export default {
         connectionId: '',
         type: 'elasticsearch',
         chunkSize: 3,
-        index: ''
+        index: '',
+        databaseType: 'elasticsearch'
       },
       mergedSchema: null,
       scope: '',

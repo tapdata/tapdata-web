@@ -141,6 +141,7 @@ export default {
       model: {
         connectionId: '',
         type: 'mq',
+        databaseType: 'mq',
         tableName: '',
         table_type: 'topic'
         // primaryKeys: ''
