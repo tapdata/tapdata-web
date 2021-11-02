@@ -1,12 +1,14 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://backend:3030',
-  // test: 'http://192.168.1.181:31703'
-  test: 'http://192.168.1.181:30300'
+  // test: 'http://192.168.1.181:30300'
+  test: 'http://192.168.1.181:30390' // v1-25
+  // test: 'http://192.168.1.181:30649'  // v1-24
+  // test: 'http://192.168.1.181:31703'  // v1-23
+  // test: 'http://192.168.1.181:30891'  // v1-22
 }
 let origin
 const { argv } = process
@@ -36,7 +38,6 @@ module.exports = {
       '/oauth/': proxy,
       '/old/': { target: 'http://localhost:8081' },
       '/ws/': {
-        ...proxy,
         ws: true,
         secure: false,
         logLevel: 'debug',
@@ -47,12 +48,14 @@ module.exports = {
   chainWebpack(config) {
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
+    const webCoreIconDir = resolve('src/_packages/tapdata-web-core/assets/icons/svg')
 
     // svg loader排除 icon 目录
     config.module
       .rule('svg')
-      .exclude.add(resolve(iconDir))
-      .add(resolve(colorIconDir))
+      .exclude.add(iconDir)
+      .add(colorIconDir)
+      .add(webCoreIconDir)
       .end()
       .use('svgo-loader')
       .loader('svgo-loader')
@@ -62,7 +65,8 @@ module.exports = {
     config.module
       .rule('svg-sprite')
       .test(/\.svg$/)
-      .include.add(resolve(iconDir))
+      .include.add(iconDir)
+      .add(webCoreIconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -89,7 +93,7 @@ module.exports = {
     config.module
       .rule('color-svg-sprite')
       .test(/\.svg$/)
-      .include.add(resolve(colorIconDir))
+      .include.add(colorIconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -136,10 +140,6 @@ module.exports = {
           // 大于10kb的会压缩
           threshold: 10240
           // 其余配置查看compression-webpack-plugin
-        }),
-        new MonacoWebpackPlugin({
-          languages: ['javascript', 'json'],
-          features: ['coreCommands', 'find']
         })
       )
 

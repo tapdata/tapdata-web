@@ -117,6 +117,27 @@ export default {
   },
   mounted() {},
   methods: {
+    // 获取全局缓存
+    getCacheData() {
+      let where = {
+        type: 'mem_cache',
+        cacheType: 'all'
+      }
+      this.$api('DataFlowStages')
+        .get({
+          filter: JSON.stringify({ where: where })
+        })
+        .then(res => {
+          if (res?.data?.length) {
+            let data = res.data.map(item => ({
+              name: item.name,
+              cacheKeys: item.cacheKeys,
+              fields: item.outputSchema ? item.outputSchema.fields : []
+            }))
+            this.config.items[1].options = [...this.config.items[1].options, ...data]
+          }
+        })
+    },
     getCacheList(editor) {
       let cells = editor.getAllCells()
       let cacheList = []
@@ -206,6 +227,7 @@ export default {
       this.getCacheList(vueAdapter.editor)
       this.getSourceFields(schema)
       this.showMapping()
+      this.getCacheData()
 
       // editorMonitor = vueAdapter.editor;
     },

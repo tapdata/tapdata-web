@@ -1,4 +1,5 @@
 export default {
+  // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',
   verify_diff_history_title: '差异校验历史',
@@ -27,6 +28,16 @@ export default {
   // 任务设置
   task_settings_cdc_sync_point_date: '【任务设置】增量采集开始时刻，请选择时间',
 
+  // 数据源
+  connection_form_tidb_server: 'PDServer 地址',
+  connection_tidb_none_server: 'PDServer 地址不能为空',
+
+  connection_list_column_schema_status: 'Schema加载状态',
+  connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
+
+  connection_form_custom_connection_before_operate: '前置操作',
+  connection_form_custom_connection_after_operate: '后置操作',
+
   // 路由名
   app_menu_jsFuncs: '函数',
 
@@ -43,5 +54,27 @@ export default {
   js_func_dialog_nofunctions: '代码缺少JS函数',
   js_func_dialog_create_title: '新增记录',
   js_func_dialog_edit_title: '更新记录',
-  js_func_delete_remind: '确定要删除函数'
+  js_func_delete_remind: '确定要删除函数',
+
+  // Dag
+  dag_data_node_label_dameng: 'Dameng节点',
+  dag_data_node_label_database_link_table: '表名大小写',
+  dag_data_node_label_database_link_field: '字段名大小写',
+  dag_data_node_label_database_link_unchang: '不变',
+  dag_data_node_label_database_link_to_uppercase: '转为大写',
+  dag_data_node_label_database_link_to_lowercase: '转为小写',
+  dag_data_node_label_memcache_type: '缓存类型',
+  dag_data_node_label_memcache_type_all: '全局缓存',
+  dag_data_node_label_memcache_type_local: '局部缓存',
+  dag_data_node_label_memcache_type_tip: '全局缓存所有任务可引用，局部缓存仅限当前DAG引用。',
+  dag_data_node_label_kafka_high_performance_mode: '高性能模式',
+  dag_data_node_label_kafka_all: '所有',
+
+  //任务编辑
+  dag_data_node_label_clickhouse: 'ClickHouse节点',
+  dag_data_node_label_aggregate_filter: '过滤器',
+  // 缓存节点提示
+  task_job_setting_tip_title: '设置提醒',
+  task_job_setting_disable: '不去重',
+  task_job_tip_text: '该缓存节点(xxx)的设置已存在于任务(###)中，请确认是否还继续创建？'
 }

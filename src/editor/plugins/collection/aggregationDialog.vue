@@ -20,7 +20,7 @@
           >
         </div>
         <!-- [ <el-input class="e-textarea" type="textarea" v-model="script"></el-input>] -->
-        <JsonEditor :code.sync="script" ref="jsEditor" :width.sync="width" v-if="!disabled"></JsonEditor>
+        <CodeEditor v-if="!disabled" v-model="script" width="100%" height="100%" lang="json"></CodeEditor>
       </div>
       <div class="preview">
         <div class="title">
@@ -65,12 +65,12 @@
 </template>
 <script>
 import ws from '@/api/ws'
-import JsonEditor from '@/components/jsonEditor'
+import CodeEditor from 'web-core/components/CodeEditor'
 import Jsonviewer from 'vue-json-viewer'
 import VIcon from '@/components/VIcon'
 export default {
   name: 'collectionAggregation',
-  components: { JsonEditor, Jsonviewer, VIcon },
+  components: { CodeEditor, Jsonviewer, VIcon },
   props: {
     aggregationDialog: {
       type: Boolean
@@ -263,10 +263,7 @@ export default {
 </style>
 <style lang="scss">
 .collection-aggregation {
-  .monaco,
   .margin,
-  .monaco-editor,
-  .monaco-scrollable-element,
   .view-lines {
     width: 100% !important;
     // height: 410px !important;
@@ -285,14 +282,6 @@ export default {
     font-size: 12px;
     color: #409eff;
     cursor: pointer;
-  }
-  .monaco {
-    border: 0 !important;
-    height: 450px !important;
-  }
-  .monaco-editor {
-    width: 100% !important;
-    height: 450px !important;
   }
   .el-textarea__inner {
     width: 100%;

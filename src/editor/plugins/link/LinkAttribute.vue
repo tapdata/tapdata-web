@@ -121,6 +121,9 @@
           :required="model.joinTableRequired"
           v-if="!['append'].includes(model.joinTable.joinType)"
         >
+          <div v-if="showTips && sourceType === 'mongodb'" class="link-show-tips">
+            {{ $t('editor.cell.link.form.joinKeys.tips') }}
+          </div>
           <table class="e-table">
             <thead>
               <tr>
@@ -247,6 +250,9 @@ export default {
     return {
       disabled: false,
       logsFlag: false,
+      showTips: false,
+      sourceType: '',
+      targetType: '',
       sourceList: [],
       targetList: [],
       writeModels: [],
@@ -384,7 +390,7 @@ export default {
       })
     },
     supportEmbedArray() {
-      return !['app.Table', 'app.HiveNode'].includes(this.targetCellType)
+      return !['app.Table', 'app.HiveNode', 'app.DamengNode'].includes(this.targetCellType)
     },
     removeCondition(idx) {
       this.model.joinTable.joinKeys.splice(idx, 1)
@@ -504,6 +510,10 @@ export default {
           javaType: field.javaType,
           disabled: this.disabled
         }))
+        this.sourceType = sourceCell?.getFormData()?.databaseType
+        this.targetType = targetCell?.getFormData()?.databaseType
+        //showTips
+        this.isShowTips(joinKeys, this.sourceType, this.targetType)
       }
 
       this.$emit(EditorEventType.RESIZE)
@@ -511,9 +521,33 @@ export default {
 
       // editorMonitor = vueAdapter.editor;
     },
-
-    handleUpSert() {},
-
+    /*
+     * 判断当前关联主键是否为_id
+     * 前提collection节点
+     * */
+    isId(joinKeys) {
+      if (!joinKeys) return false
+      return joinKeys?.[0].source === '_id'
+    },
+    /*
+     * 1. 源节点是mongodb 关联节点不是_id
+     * 2. 目标节点不是mongodb
+     * 两个条件同事满足 才提示
+     * */
+    isShowTips(joinKeys, sourceType, targetType) {
+      let isId = false
+      this.showTips = false
+      let isTarget = false
+      if (sourceType === 'mongodb') {
+        isId = this.isId(joinKeys)
+      }
+      if (!isId && targetType === 'mongodb') {
+        isTarget = true
+      }
+      if (!isId && !isTarget) {
+        this.showTips = true
+      }
+    },
     getPKsFromSchema(schema) {
       return schema && schema.fields && schema.fields.length > 0
         ? schema.fields.filter(item => item.primary_key_position > 0)
@@ -521,17 +555,24 @@ export default {
     },
     getData() {
       let data = JSON.parse(JSON.stringify(this.model))
-      console.log('link-data', data)
-      // if (this.cell) {
-      //   // tcp报文数据传输到目标节点
-      //   let targetCell = this.cell.getTargetCell()
-      //   let targetData = targetCell && targetCell.getFormData()
-      //   if (targetData.isShowMessage) {
-      //     delete data.tcp
-      //   } else {
-      //     targetData.tcp = data.tcp
-      //   }
-      // }
+      this.isShowTips(data.joinTable.joinKeys, this.sourceType, this.targetType)
+      if (this.cell) {
+        // 内存缓存存储tableName
+        let sourceCell = this.cell.getSourceCell(),
+          sourceData = sourceCell?.getFormData(),
+          targetCell = this.cell.getTargetCell(),
+          targetData = targetCell?.getFormData()
+        if (targetData && targetData.type === 'mem_cache') {
+          targetData.cacheConnectionId = sourceData.connectionId
+          targetData.cacheTableName = sourceData.tableName
+        }
+
+        //   if (targetData.isShowMessage) {
+        //     delete data.tcp
+        //   } else {
+        //     targetData.tcp = data.tcp
+        //   }
+      }
 
       /* if( data.joinTable.joinKeys.length > 0 ){
 					let joinKeys = data.joinTable.joinKeys.filter( key => key.source && key.target);
@@ -695,6 +736,12 @@ export default {
     flex: 1;
     flex-direction: column;
     height: 100%;
+    .link-show-tips {
+      color: red;
+      font-size: 12px;
+      margin-bottom: 10px;
+      line-height: 18px;
+    }
     ::v-deep {
       .transfer {
         height: 100%;

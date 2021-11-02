@@ -44,7 +44,9 @@
               'hbase',
               'kudu',
               'kafka',
-              'hana'
+              'hana',
+              'dameng',
+              'clickhouse'
             ].includes(stageType)
           "
           v-loading="apiLoading"
@@ -1000,7 +1002,8 @@ export default {
               'hbase',
               'kudu',
               'tcp_udp',
-              'hana'
+              'hana',
+              'clickhouse'
             ].includes(this.stageType)
           ) {
             this.getStageDataApi(currentStageData.connectionId, this.tableName)

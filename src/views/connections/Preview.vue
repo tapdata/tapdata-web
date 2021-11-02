@@ -233,7 +233,16 @@ export default {
       if (['mongodb', 'gridfs'].includes(type)) {
         result = await this.$api('connections').customQuery([id])
       } else {
-        result = await this.$api('connections').get([id])
+        // 仅仅是为了排除schema字段，schema.tables 如果表上万数据请求很慢
+        // get里的filter.fields无效，所以这里用的是findOne
+        result = await this.$api('connections').findOne({
+          filter: JSON.stringify({
+            where: {
+              id
+            },
+            noSchema: 1
+          })
+        })
       }
       this.previewLoading = false
       if (result && result.data) {
@@ -487,7 +496,7 @@ export default {
           'kafka',
           'mariadb',
           'mysql pxc',
-          'jira',
+          // 'jira',
           'dameng',
           'hive',
           'gbase-8s',
@@ -502,7 +511,9 @@ export default {
           'hbase',
           'kudu',
           'greenplum',
-          'hana'
+          'tidb',
+          'hana',
+          'clickhouse'
         ].includes(type)
       ) {
         this.$router.push({

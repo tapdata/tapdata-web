@@ -24,7 +24,7 @@
           </el-tooltip>
         </template>
         <el-input type="textarea" v-model="model.expression" :autosize="{ minRows: 20 }" v-if="disabled"></el-input>
-        <JsEditor :code.sync="model.expression" :width.sync="width" v-if="!disabled"></JsEditor>
+        <CodeEditor v-if="!disabled" v-model="model.expression" height="300px" :width="width"></CodeEditor>
         <!--				<el-input-->
         <!--					type="textarea"-->
         <!--					v-model="model.expression"-->
@@ -129,14 +129,14 @@
 </template>
 
 <script>
-import JsEditor from '../../../components/JsEditor'
+import CodeEditor from 'web-core/components/CodeEditor'
 import { EditorEventType } from '../../lib/events'
 import _ from 'lodash'
 
 // let editorMonitor = null;
 export default {
   name: 'DataFilterAttribute',
-  components: { JsEditor },
+  components: { CodeEditor },
   data() {
     return {
       disabled: false,
@@ -146,7 +146,7 @@ export default {
         expression: '//code',
         action: 'retain' // discard,retain
       },
-      width: '500'
+      width: 500
     }
   },
 
@@ -159,9 +159,11 @@ export default {
     }
   },
   mounted() {
-    let self = this
-    self.$on(EditorEventType.RESIZE, width => {
-      self.width = width
+    this.$nextTick(() => {
+      this.width = this.$el.clientWidth - 42
+    })
+    this.$on(EditorEventType.RESIZE, width => {
+      this.width = width - 50
     })
   },
   methods: {

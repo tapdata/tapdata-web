@@ -342,7 +342,7 @@ export const baseElementConfig = {
                 typeof sourceCell.getFirstDataNode === 'function' ? sourceCell.getFirstDataNode() : []
               joinTable.stageId = parentDataNodes.length > 0 ? parentDataNodes[0].id : ''
               joinTable.connectionId = sourceCellFormData.connectionId
-
+              joinTable.databaseType = sourceCellFormData.databaseType
               formData.joinTable = _.cloneDeep(joinTable)
               cell.set(FORM_DATA_KEY, formData)
 

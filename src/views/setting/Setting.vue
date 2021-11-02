@@ -71,7 +71,7 @@
                   :disabled="item.category === 'license'"
                   :mask="childItem.mask"
                   size="mini"
-                  :label="$t('Settings.' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label"
+                  :label="$t('setting.' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label"
                 >
                 </el-input>
 

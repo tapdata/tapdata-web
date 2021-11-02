@@ -40,7 +40,7 @@ export const HBaseNodeConfig = {
        * @return {boolean}
        */
       allowTarget() {
-        return true
+        return false
       },
 
       /**
@@ -49,7 +49,7 @@ export const HBaseNodeConfig = {
        * @return {boolean}
        */
       allowSource() {
-        return false
+        return true
       },
 
       validate(data) {

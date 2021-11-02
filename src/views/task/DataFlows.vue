@@ -23,7 +23,7 @@
               <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"> </ElOption>
             </ElSelect>
           </li>
-          <li v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'">
+          <li>
             <el-select
               v-model="searchParams.progress"
               size="small"
@@ -40,7 +40,7 @@
               ></el-option>
             </el-select>
           </li>
-          <li v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+          <li>
             <el-select
               v-model="searchParams.executionStatus"
               size="small"
@@ -56,17 +56,6 @@
                 :value="opt"
               ></el-option>
             </el-select>
-          </li>
-          <li v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')">
-            <ElSelect
-              v-model="searchParams.agentId"
-              clearable
-              size="small"
-              :placeholder="$t('dataFlow.searchAgent')"
-              @input="table.fetch(1)"
-            >
-              <ElOption v-for="opt in agentOptions" :key="opt.value" :label="opt.label" :value="opt.value"></ElOption>
-            </ElSelect>
           </li>
           <li>
             <el-input
@@ -110,12 +99,9 @@
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item
-              command="export"
-              v-readonlybtn="'SYNC_job_export'"
-              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-              >{{ $t('dataFlow.bulkExport') }}</el-dropdown-item
-            >
+            <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
+              $t('dataFlow.bulkExport')
+            }}</el-dropdown-item>
             <el-dropdown-item command="run" v-readonlybtn="'SYNC_job_operation'">{{
               $t('dataFlow.bulkScheuled')
             }}</el-dropdown-item>
@@ -130,23 +116,11 @@
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button
-          v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-          v-readonlybtn="'SYNC_Function_management'"
-          size="small"
-          class="btn"
-          @click="handleGoFunction"
-        >
+        <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
           <i class="iconfont icon-hanshu back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkFx') }}</span>
         </el-button>
-        <el-button
-          v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-          v-readonlybtn="'SYNC_job_import'"
-          size="small"
-          class="btn"
-          @click="handleImport"
-        >
+        <el-button v-readonlybtn="'SYNC_job_import'" size="small" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
@@ -180,18 +154,7 @@
       >
       </el-table-column>
 
-      <el-table-column
-        v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
-        min-width="200"
-        :label="$t('dataFlow.taskName') + '/地域'"
-      >
-        <template #default="{ row }">
-          <div class="task-name">{{ row.name }}</div>
-          <div class="region-info">{{ row.regionInfo }}</div>
-        </template>
-      </el-table-column>
-
-      <el-table-column v-else min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
+      <el-table-column min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name">
             <span
@@ -209,46 +172,14 @@
           </span>
         </template>
       </el-table-column>
-
-      <el-table-column
-        v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'"
-        prop="status"
-        :label="$t('dataFlow.belongAgent')"
-        width="180"
-      >
-        <template #default="{ row }">
-          <div class="flex align-items-center">
-            <span>{{ row.tcm && (row.tcm.agentName || row.tcm.agentId || '-') }}</span>
-          </div>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="150">
-        <template #header>
-          <div>
-            {{ $t('dataFlow.syncType') }}
-            <TableFilter
-              v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'"
-              v-model="searchParams.syncType"
-              :options="syncType"
-              @input="table.fetch(1)"
-            ></TableFilter>
-          </div>
-        </template>
-
+      <el-table-column :label="$t('dataFlow.syncType')" min-width="150">
         <template #default="{ row }">
           <span>
             {{ row.sync_type ? syncType[row.sync_type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-        prop="lag"
-        :label="$t('dataFlow.maxLagTime')"
-        width="180"
-        sortable="custom"
-      ></el-table-column>
+      <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column>
       <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
         <template #default="{ row }">
           <div class="flex align-items-center">
@@ -270,18 +201,9 @@
               )
             </span>
           </div>
-          <div v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs' && row.status === 'running' && row.tcm">
+          <div v-if="row.status === 'running' && row.tcm">
             {{ row.tcm.agentName }}
           </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'"
-        :label="$t('dataFlow.creatdor')"
-        width="200"
-      >
-        <template #default="{ row }">
-          {{ row.username || '-' }}
         </template>
       </el-table-column>
       <el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="170" sortable="custom">
@@ -355,7 +277,6 @@
               {{ $t('button.edit') }}
             </ElLink>
             <ElLink
-              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
               type="primary"
@@ -379,18 +300,12 @@
                 <i class="el-icon-arrow-down"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
-                <el-dropdown-item
-                  v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'dfs'"
-                  command="validate"
-                  v-readonlybtn="'Data_verify'"
-                  >{{ $t('dataVerify.dataVerify') }}</el-dropdown-item
-                >
-                <el-dropdown-item
-                  v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-                  command="export"
-                  v-readonlybtn="'SYNC_job_export'"
-                  >{{ $t('dataFlow.dataFlowExport') }}</el-dropdown-item
-                >
+                <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
+                  $t('dataVerify.dataVerify')
+                }}</el-dropdown-item>
+                <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
+                  $t('dataFlow.dataFlowExport')
+                }}</el-dropdown-item>
                 <el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
                   >{{ $t('dataFlow.copy') }}
                 </el-dropdown-item>
@@ -479,12 +394,11 @@ import { toRegExp } from '../../utils/util'
 import SkipError from '../../components/SkipError'
 import DownAgent from '../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
-import TableFilter from '@/components/TableFilter'
 import VIcon from '@/components/VIcon'
 
 let interval = null
 export default {
-  components: { TablePage, TableFilter, DownAgent, SkipError, VIcon },
+  components: { TablePage, DownAgent, SkipError, VIcon },
   data() {
     return {
       restLoading: false,
@@ -519,7 +433,7 @@ export default {
           icon: 'icon-yunhangzhong'
         },
         paused: {
-          label: this.$t('dataFlow.status.' + (window.getSettingByKey('DFS_TCM_PLATFORM') ? 'draft' : 'paused')),
+          label: this.$t('dataFlow.status.paused'),
           icon: 'icon-daiqidong'
         },
         error: {
@@ -607,9 +521,6 @@ export default {
     this.searchParams.status = status ?? ''
     this.searchParams.executionStatus = executionStatus ?? ''
     ws.on('watch', this.dataflowChange)
-    if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
-      this.getAgentOptions()
-    }
   },
   mounted() {
     let cacheParams = this.table.getCache()
@@ -617,7 +528,6 @@ export default {
     for (const key in params) {
       params[key] = params[key] || cacheParams[key] || ''
     }
-    console.log('DataFlows', this)
   },
   beforeDestroy() {
     ws.off('watch', this.dataflowChange)
@@ -694,7 +604,9 @@ export default {
             'fullDocument.stages.id': true,
             'fullDocument.stages.name': true,
             'fullDocument.errorEvents': true,
-            'fullDocument.agentId': true
+            'fullDocument.agentId': true,
+            'fullDocument.setting': true,
+            'fullDocument.listtags': true
           }
         }
       }
@@ -890,13 +802,13 @@ export default {
         return r
       }
       item['lag'] = '-'
-      if (item.stats && !window.getSettingByKey('DFS_TCM_PLATFORM')) {
+      if (item.stats) {
         //企业版增加增量lag
         if (item.stats.replicationLag && item.stats.replicationLag !== 0) {
           item['lag'] = getLag(item.stats.replicationLag)
         }
       }
-      if (item.stats && window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
+      if (item.stats) {
         item.hasChildren = false
         item.children = []
       }
@@ -920,7 +832,8 @@ export default {
         username: item.user?.username,
         user_id: item.user_id,
         startTime: item.startTime,
-        checked: item.checked
+        checked: item.checked,
+        setting: item.setting
       }
     },
     handleSelectTag() {
@@ -1018,18 +931,11 @@ export default {
           }, 200)
         })
       } else {
-        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-          window.open(
-            `${location.href.split('/tm/')[0]}/#/monitor?id=${id}&isMoniting=true&mapping=${mappingTemplate}`,
-            'monitor_' + id
-          )
-        } else {
-          let routeUrl = this.$router.resolve({
-            name: 'job',
-            query: { id: id, isMoniting: true, mapping: mappingTemplate }
-          })
-          window.open(routeUrl.href, 'monitor_' + id)
-        }
+        let routeUrl = this.$router.resolve({
+          name: 'job',
+          query: { id: id, isMoniting: true, mapping: mappingTemplate }
+        })
+        window.open(routeUrl.href, 'monitor_' + id)
       }
       setTimeout(() => {
         document.querySelectorAll('.el-tooltip__popper').forEach(it => {
@@ -1290,8 +1196,11 @@ export default {
           this.responseHandler(res.data, this.$t('message.operationSuccuess'))
         })
         .catch(err => {
-          console.log(err.response.msg)
-          this.$message.error('任务启动失败，请编辑任务完成映射配置')
+          if (err.response.msg === 'Metadata transformer error') {
+            this.$message.error('任务启动失败，请编辑任务完成映射配置')
+          } else if (err.response.msg === 'DataFlow has add or del stages') {
+            this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
+          }
         })
     },
     skipHandler(id, errorEvents) {
@@ -1343,7 +1252,7 @@ export default {
     // 任务调度设置保存
     saveTaskSetting() {
       // let data = this.formSchedule.taskData;
-      let data = this.formSchedule.taskData.setting
+      let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
       dataFlows

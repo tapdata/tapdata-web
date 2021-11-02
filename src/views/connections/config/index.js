@@ -17,7 +17,7 @@ import restapi from './restapi'
 import custom_connection from './custom_connection'
 import gridfs from './gridfs'
 import dummydb from './dummydb'
-import jira from './jira'
+// import jira from './jira'
 import dameng from './dameng'
 import hive from './hive'
 import tcp_udp from './tcp_udp'
@@ -45,7 +45,9 @@ import mq from './mq'
 import hbase from './hbase'
 import kudu from './kudu'
 import greenplum from './greenplum'
+import tidb from './tidb'
 import hana from './hana'
+import clickhouse from './clickhouse'
 
 export default {
   mysql,
@@ -60,7 +62,7 @@ export default {
   kafka,
   mariadb,
   mysqlpxc,
-  jira,
+  // jira,
   hive,
   drs_mysql,
   drs_mariadb,
@@ -95,5 +97,7 @@ export default {
   hbase,
   kudu,
   greenplum,
-  hana
+  tidb,
+  hana,
+  clickhouse
 }

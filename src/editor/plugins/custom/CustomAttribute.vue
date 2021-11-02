@@ -85,21 +85,28 @@
         </el-form-item>
         <el-form-item>
           <div class="flex-block fr" v-if="model.connectionId && model.tableName">
-            <el-button class="fr" type="success" size="mini" v-if="isSourceDataNode" @click="hanlderLoadSchema">
+            <el-button
+              class="fr"
+              type="success"
+              size="mini"
+              v-if="isSourceDataNode || !showFieldMapping"
+              @click="hanlderLoadSchema"
+            >
               <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
               <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
               <span v-else>{{ $t('dataFlow.updateModel') }}</span>
             </el-button>
             <FieldMapping
               v-else
+              ref="fieldMapping"
+              class="fr"
               :dataFlow="dataFlow"
               :showBtn="true"
               :isFirst="model.isFirst"
-              @update-first="returnModel"
+              :isDisable="disabled"
               :hiddenFieldProcess="true"
               :stageId="stageId"
-              ref="fieldMapping"
-              class="fr"
+              @update-first="returnModel"
             ></FieldMapping>
           </div>
         </el-form-item>
@@ -173,6 +180,7 @@ export default {
       scope: '',
       dataFlow: '',
       stageId: '',
+      showFieldMapping: false,
       mergedSchema: null,
       primaryKeyOptions: []
     }
@@ -280,6 +288,15 @@ export default {
         this.getDataFlow()
         this.stageId = cell.id
         _.merge(this.model, data)
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.stageId]
+          })
       }
       this.isSourceDataNode = dataNodeInfo && (dataNodeInfo.isSource || !dataNodeInfo.isTarget)
       this.mergedSchema = cell.getOutputSchema()

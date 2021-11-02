@@ -11,10 +11,9 @@
               class="progress-header_btn"
               type="primary"
               @click="handleInfo()"
-              v-if="
-                completeTime !== this.$t('taskProgress.fullyCompleted') && !$window.getSettingByKey('DFS_TCM_PLATFORM')
-              "
+              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
             >
+              <!-- completeTime !== this.$t('taskProgress.fullyCompleted') && -->
               {{ $t('taskProgress.seeDetails') }}
             </ElLink>
           </div>
@@ -27,8 +26,8 @@
             <div class="progress-container__overview ml-6">
               <el-row>
                 <el-col :span="24" class="flex"
-                ><span>{{ $t('taskProgress.fullSyuncProgress') }}：</span
-                ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
+                  ><span>{{ $t('taskProgress.fullSyuncProgress') }}：</span
+                  ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
                 </el-col>
               </el-row>
               <el-row class="mt-3">
@@ -67,7 +66,7 @@
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{
+                  >{{
                     mappingFlag ? $t('taskprogress_plan_sync_table_num') : $t('taskProgress.planMigrationTableNum')
                   }}：</span
                 >
@@ -75,7 +74,7 @@
               </el-col>
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{
+                  >{{
                     mappingFlag
                       ? $t('taskprogress_completed_sync_table_num')
                       : $t('taskProgress.completedMigrationTableNum')
@@ -87,13 +86,13 @@
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{ mappingFlag ? $t('taskprogress_plan_sync_data') : $t('taskProgress.planMigrateData') }}：</span
+                  >{{ mappingFlag ? $t('taskprogress_plan_sync_data') : $t('taskProgress.planMigrateData') }}：</span
                 >
                 <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
               </el-col>
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{
+                  >{{
                     mappingFlag ? $t('taskprogress_completed_sync_data') : $t('taskProgress.completedMigrateData')
                   }}：</span
                 >
@@ -120,10 +119,10 @@
               class="progress-header_btn"
               type="primary"
               @click="handleInfo()"
-              v-if="
-                completeTime !== this.$t('taskProgress.fullyCompleted') && !$window.getSettingByKey('DFS_TCM_PLATFORM')
-              "
-            >{{ $t('taskProgress.seeDetails') }}</ElLink
+              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+            >
+              <!-- completeTime !== this.$t('taskProgress.fullyCompleted') && -->
+              {{ $t('taskProgress.seeDetails') }}</ElLink
             >
           </div>
           <div class="progress-tip">{{ $t('taskProgress.tip') }}</div>
@@ -134,8 +133,8 @@
             <div class="progress-container__overview ml-6">
               <el-row>
                 <el-col :span="24" class="flex"
-                ><span>{{ $t('taskProgress.fullSyuncProgress') }}：</span
-                ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
+                  ><span>{{ $t('taskProgress.fullSyuncProgress') }}：</span
+                  ><el-progress class="el-progress" :percentage="progressBar"></el-progress>
                 </el-col>
               </el-row>
               <el-row class="mt-3">
@@ -154,7 +153,7 @@
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{
+                  >{{
                     mappingFlag ? $t('taskprogress_plan_sync_table_num') : $t('taskProgress.planMigrationTableNum')
                   }}：</span
                 >
@@ -162,7 +161,7 @@
               </el-col>
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{
+                  >{{
                     mappingFlag
                       ? $t('taskprogress_completed_sync_table_num')
                       : $t('taskProgress.completedMigrationTableNum')
@@ -174,13 +173,13 @@
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{ mappingFlag ? $t('taskprogress_plan_sync_data') : $t('taskProgress.planMigrateData') }}：</span
+                  >{{ mappingFlag ? $t('taskprogress_plan_sync_data') : $t('taskProgress.planMigrateData') }}：</span
                 >
                 <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
               </el-col>
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{
+                  >{{
                     mappingFlag ? $t('taskprogress_completed_sync_data') : $t('taskProgress.completedMigrateData')
                   }}：</span
                 >
@@ -199,7 +198,7 @@
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{
+                  >{{
                     mappingFlag ? $t('taskprogress_plan_sync_table_num') : $t('taskProgress.planMigrationTableNum')
                   }}：</span
                 >
@@ -207,7 +206,7 @@
               </el-col>
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{
+                  >{{
                     mappingFlag
                       ? $t('taskprogress_completed_sync_table_num')
                       : $t('taskProgress.completedMigrationTableNum')
@@ -219,13 +218,13 @@
             <el-row class="footer-line">
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{ mappingFlag ? $t('taskprogress_plan_sync_data') : $t('taskProgress.planMigrateData') }}：</span
+                  >{{ mappingFlag ? $t('taskprogress_plan_sync_data') : $t('taskProgress.planMigrateData') }}：</span
                 >
                 <span class="footer-item__value">{{ overviewStats.sourceRowNum }}</span>
               </el-col>
               <el-col class="footer-item" :span="12">
                 <span class="footer-item__name"
-                >{{
+                  >{{
                     mappingFlag ? $t('taskprogress_completed_sync_data') : $t('taskProgress.completedMigrateData')
                   }}：</span
                 >
@@ -267,8 +266,8 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.statusNum === 100">-</div>
                 <el-button type="text" @click="handleInfo(scope.row)" v-else>{{
-                    $t('taskProgress.details')
-                  }}</el-button>
+                  $t('taskProgress.details')
+                }}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -459,11 +458,10 @@ export default {
     },
     // 跳转详情
     handleInfo(data) {
-      debugger
       if (data) {
         window.open(
           location.href.split('#/')[0] +
-          `#/taskProgressInfo?sourceConnectionId=${data.sourceConnectionId}&targetConnectionId=${data.targetConnectionId}&id=${this.dataFlow.id}&mappingFlag=${this.mappingFlag}`,
+            `#/taskProgressInfo?sourceConnectionId=${data.sourceConnectionId}&targetConnectionId=${data.targetConnectionId}&id=${this.dataFlow.id}&mappingFlag=${this.mappingFlag}`,
           '_blank'
         )
       } else {
@@ -534,16 +532,12 @@ export default {
   }
   // background-color: darkgreen;
 }
-.progress-container__table {
-}
 .progress-container__footer {
   margin: 0 16px 20px;
   padding: 8px;
   &.mt-border {
     border-top: 1px solid #d3d3d3;
   }
-}
-.footer-line {
 }
 .footer-item {
   margin-top: 16px;

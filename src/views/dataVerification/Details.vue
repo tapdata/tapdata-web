@@ -106,8 +106,8 @@ $margin: 10px;
 }
 </style>
 <script>
-import ResultTable from 'web-core/views/verification/result-table'
-import ResultView from 'web-core/views/verification/result-view'
+import ResultTable from './old/result-table'
+import ResultView from './old/result-view'
 export default {
   components: { ResultTable, ResultView },
   data() {

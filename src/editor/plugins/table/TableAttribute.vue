@@ -69,7 +69,17 @@
           required
         >
           <div class="flex-block">
-            <FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect>
+            <VirtualSelect
+              v-model="model.tableName"
+              size="mini"
+              filterable
+              clearable
+              :item-size="34"
+              :items="schemaSelectConfig.options"
+              :loading="schemaSelectConfig.loading"
+              :disabled="schemaSelectConfig.loading"
+              :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
+            />
             <el-tooltip
               class="item"
               effect="light"
@@ -192,21 +202,28 @@
         </el-form-item>
         <el-form-item>
           <div class="flex-block fr" v-if="model.connectionId && model.tableName">
-            <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
+            <el-button
+              class="fr"
+              type="success"
+              size="mini"
+              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+              @click="hanlderLoadSchema"
+            >
               <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
               <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
               <span v-else>{{ $t('dataFlow.updateModel') }}</span>
             </el-button>
             <FieldMapping
               v-else
-              :dataFlow="dataFlow"
-              :showBtn="true"
-              :hiddenFieldProcess="true"
-              :isFirst="model.isFirst"
-              @update-first="returnModel"
-              :stageId="stageId"
               ref="fieldMapping"
               class="fr"
+              :dataFlow="dataFlow"
+              :showBtn="true"
+              :isFirst="model.isFirst"
+              :isDisable="disabled"
+              :hiddenFieldProcess="true"
+              :stageId="stageId"
+              @update-first="returnModel"
             ></FieldMapping>
           </div>
         </el-form-item>
@@ -240,13 +257,15 @@ import _ from 'lodash'
 import ws from '@/api/ws'
 import factory from '@/api/factory'
 import VIcon from '@/components/VIcon'
+import VirtualSelect from 'web-core/components/virtual-select'
+
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editor = null;
 let tempSchemas = []
 export default {
   name: 'Table',
-  components: { Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder, VIcon, FieldMapping },
+  components: { VirtualSelect, Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder, VIcon, FieldMapping },
   props: {
     database_types: {
       type: Array,
@@ -262,7 +281,8 @@ export default {
           'gaussdb200',
           'postgres',
           'mariadb',
-          'greenplum'
+          'greenplum',
+          'tidb'
         ]
       }
     }
@@ -296,7 +316,6 @@ export default {
       immediate: true,
       handler() {
         this.tableIsLink()
-        this.handlerSchemaChange()
         //切换table 才清空过滤
         if (this.schemaSelectConfig.options.length > 0 && this.model.tableName) {
           this.model.custFields.length = 0
@@ -308,6 +327,7 @@ export default {
           this.model.custSql.editSql = ''
         }
         this.getDataFlow()
+        this.getTranModelVersionControl()
       }
     },
     mergedSchema: {
@@ -413,6 +433,7 @@ export default {
       scope: '',
       dataFlow: '',
       stageId: '',
+      showFieldMapping: false,
       mergedSchema: null,
 
       primaryKeyOptions: [],
@@ -477,7 +498,7 @@ export default {
 
     // 打开数据目录数据库
     handDatabase() {
-      let href = '/#/metadataInstances/' + this.databaseData[0].id
+      let href = '/#/metadataDetails?id=' + this.databaseData[0].id
       window.open(href)
     },
 
@@ -487,7 +508,7 @@ export default {
       this.tableIsLink()
 
       if (this.tableNameId) {
-        let href = '/#/metadataInstances/' + this.tableNameId
+        let href = '/#/metadataDetails?id=' + this.tableNameId
         window.open(href)
       }
     },
@@ -499,6 +520,7 @@ export default {
         tempSchemas.forEach(item => {
           if (item.original_name === this.model.tableName) {
             this.tableNameId = item.id
+            this.handlerSchemaChange()
           }
         })
       }
@@ -702,6 +724,7 @@ export default {
           this.model.enableInitialOrder = true
         }
         this.tableIsLink()
+        this.getTranModelVersionControl()
       }
       this.cell = cell
       tempSchemas.length = 0
@@ -739,6 +762,18 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+    //判断节点是否支持字段映射
+    getTranModelVersionControl() {
+      let param = {
+        stages: this.dataFlow?.stages,
+        stageId: this.stageId
+      }
+      this.$api('DataFlows')
+        .tranModelVersionControl(param)
+        .then(data => {
+          this.showFieldMapping = data?.data[this.stageId]
+        })
     },
 
     // 更新模型
@@ -794,7 +829,7 @@ export default {
     },
     //获取dataFlow
     getDataFlow() {
-      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      this.dataFlow = this.scope && this.scope.getDataFlowData(true) //不校验
     },
     //接收是否第一次打开
     returnModel(value) {

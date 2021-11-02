@@ -43,7 +43,7 @@
       </el-table-column>
       <el-table-column
         :label="$t('taskProgress.sourceType')"
-        prop="statsData.sourceConnectionName"
+        prop="statsData.sourceDatabaseType"
         sortable
         v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
       >
@@ -68,7 +68,7 @@
       </el-table-column>
       <el-table-column
         :label="$t('taskProgress.targetType')"
-        prop="statsData.targetConnectionName"
+        prop="statsData.targetDatabaseType"
         sortable
         v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
       >

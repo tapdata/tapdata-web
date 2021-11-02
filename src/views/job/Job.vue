@@ -258,6 +258,12 @@
     <AddBtnTip v-if="!loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')"></AddBtnTip>
     <DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <CheckStage
+      v-show="showCheckStagesVisible"
+      :visible="showCheckStagesVisible"
+      :data="checkStagesData"
+      @complete="saveCheckStages"
+    ></CheckStage>
   </div>
 </template>
 
@@ -329,7 +335,10 @@ export default {
       mappingTemplate: '',
       creatUserId: '',
       dataChangeFalg: false,
-      statusBtMap
+      statusBtMap,
+      showCheckStagesVisible: false,
+      checkStagesData: [],
+      modPipeline: ''
     }
   },
   watch: {
@@ -601,7 +610,6 @@ export default {
           delete self.dataFlow.validationSettings
           Object.assign(self.dataFlow, dat)
         }
-
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
       })
     },
@@ -779,7 +787,7 @@ export default {
 
       let postData = Object.assign(
         {
-          name: editorData.name,
+          name: editorData.name.trim(),
           description: '',
           status: this.status || 'draft',
           executeMode: this.executeMode || 'normal',
@@ -821,9 +829,16 @@ export default {
             readBatchSize: 1000
           })
         } else if (
-          ['app.Table', 'app.Collection', 'app.ESNode', 'app.HiveNode', 'app.KUDUNode', 'app.HanaNode'].includes(
-            cell.type
-          )
+          [
+            'app.Table',
+            'app.Collection',
+            'app.ESNode',
+            'app.HiveNode',
+            'app.KUDUNode',
+            'app.HanaNode',
+            'app.ClickHouse',
+            'app.DamengNode'
+          ].includes(cell.type)
         ) {
           postData.mappingTemplate = 'custom'
 
@@ -843,7 +858,11 @@ export default {
             stages[sourceId].outputLanes.push(targetId)
             //添加字段处理器
             if (postData.mappingTemplate === 'cluster-clone') {
-              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY].field_process
+              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY]?.field_process
+
+              //迁移全局修改设置值
+              stages[targetId].tableNameTransform = cell[FORM_DATA_KEY].tableNameTransform
+              stages[targetId].fieldsNameTransform = cell[FORM_DATA_KEY].fieldsNameTransform
             }
           }
           if (targetId && stages[targetId]) {
@@ -965,7 +984,8 @@ export default {
 
       if (data.name) {
         let params = {
-          name: data.name
+          name: data.name,
+          user_id: this.dataFlow?.user_id || data.user_id || ''
         }
         if (data.id) {
           params.id = {
@@ -1148,6 +1168,11 @@ export default {
           this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
           return
         }
+        if (this.modPipeline) {
+          data['modPipeline'] = []
+          this.showCheckStagesVisible = false
+          data['modPipeline'] = this.modPipeline
+        }
         let start = () => {
           data.status = 'scheduled'
           data.executeMode = 'normal'
@@ -1155,6 +1180,15 @@ export default {
             if (err) {
               if (err.response.msg === 'Error: Loading data source schema') {
                 this.$message.error(this.$t('message.loadingSchema'))
+              } else if (err.response.msg === 'DataFlow has add or del stages') {
+                if (err.response?.data && err.response?.data?.length > 0) {
+                  this.showCheckStagesVisible = true
+                  this.checkStagesData = err.response.data
+                  this.checkStagesData = this.checkStagesData.filter(v => v.type === 'add') //只展示别删除的
+                  for (let i = 0; i < this.checkStagesData.length; i++) {
+                    this.checkStagesData[i].syncType = 'initial_sync+cdc'
+                  }
+                }
               } else {
                 this.$message.error(err.response.msg)
               }
@@ -1194,6 +1228,13 @@ export default {
         // }
       }
       this.dialogFormVisible = false
+    },
+    /*
+     * 保存错误信息*/
+    saveCheckStages(data) {
+      this.showCheckStagesVisible = false
+      this.modPipeline = data
+      this.start()
     },
     /**
      * stop button handler
@@ -1487,7 +1528,9 @@ export default {
         java_processor: 'app.FieldProcess',
         redis: 'app.Redis',
         hive: 'app.HiveNode',
-        hana: 'app.HanaNode'
+        hana: 'app.HanaNode',
+        dameng: 'app.DamengNode',
+        clickhouse: 'app.ClickHouse'
       }
       if (data) {
         let stageMap = {}

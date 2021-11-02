@@ -14,12 +14,13 @@
     "mock": "nodemon mock/mock.js"
   },
   "dependencies": {
-    "@formily/core": "^2.0.0-beta.80",
-    "@formily/reactive": "^2.0.0-beta.80",
-    "@formily/reactive-vue": "^2.0.0-beta.80",
-    "@formily/vue": "^2.0.0-beta.80",
+    "@formily/core": "^2.0.0-rc.14",
+    "@formily/element": "^2.0.0-rc.14",
+    "@formily/reactive": "^2.0.0-rc.14",
+    "@formily/reactive-vue": "^2.0.0-rc.14",
+    "@formily/vue": "^2.0.0-rc.14",
     "@vue/composition-api": "^1.0.0-rc.14",
-    "ace-builds": "^1.4.12",
+    "ace-builds": "^1.4.13",
     "axios": "^0.21.1",
     "backbone": "^1.4.0",
     "core-js": "^3.6.5",
@@ -27,7 +28,7 @@
     "crypto-js": "^4.0.0",
     "dagre": "^0.8.5",
     "echarts": "^4.6.0",
-    "element-ui": "^2.15.1",
+    "element-ui": "^2.15.6",
     "escodegen": "^2.0.0",
     "esprima": "^4.0.1",
     "github-markdown-css": "^4.0.0",
@@ -39,9 +40,8 @@
     "lodash": "^4.17.15",
     "mavon-editor": "^2.9.0",
     "moment": "^2.24.0",
-    "monaco-editor": "0.23.0",
     "nanoid": "^3.1.25",
-    "vue": "^2.6.11",
+    "vue": "^2.6.14",
     "vue-bus": "^1.2.1",
     "vue-clipboard2": "^0.3.1",
     "vue-cookie": "^1.1.4",
@@ -49,6 +49,7 @@
     "vue-i18n": "^8.15.3",
     "vue-json-viewer": "^2.2.15",
     "vue-router": "^3.2.0",
+    "vue-virtual-scroller": "^1.0.10",
     "vuex": "^3.4.0",
     "vuex-persistedstate": "^3.0.0"
   },
@@ -61,7 +62,7 @@
     "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-dynamic-import-node": "^2.3.3",
-    "compression-webpack-plugin": "^5.0.1",
+    "compression-webpack-plugin": "~5.0.1",
     "cross-env": "^7.0.3",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
@@ -72,7 +73,6 @@
     "lint-staged": "^9.5.0",
     "markdown-loader": "^6.0.0",
     "mockjs": "^1.1.0",
-    "monaco-editor-webpack-plugin": "^3.0.1",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
     "sass": "~1.32.6",
@@ -85,6 +85,9 @@
     "pre-commit": "lint-staged",
     "post-merge": "git submodule update",
     "post-checkout": "git submodule update"
+  },
+  "resolutions": {
+    "vue": "^2.6.14"
   },
   "lint-staged": {
     "*.{js,jsx,vue}": [

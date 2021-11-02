@@ -68,7 +68,9 @@ export const TYPEMAP = {
   hbase: 'HBase',
   kudu: 'KUDU',
   greenplum: 'Greenplum',
-  hana: 'SAP HANA'
+  tidb: 'TiDB',
+  hana: 'SAP HANA',
+  clickhouse: 'ClickHouse'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
@@ -118,7 +120,8 @@ export const defaultModel = {
     increamentalTps: 100, //dummy
     initialReadSize: 100000, //dummy
     hiveConnType: 'Stream', // kafka
-    schema: ''
+    schema: '',
+    tidbPdServer: '' // TiDB
   },
   kafka: {
     id: '',
@@ -208,7 +211,11 @@ export const defaultModel = {
     unique_keys: '',
     custom_ondata_script: '',
     custom_cdc_script: '',
-    custom_initial_script: ''
+    custom_initial_script: '',
+    custom_before_opr: false,
+    custom_after_opr: false,
+    custom_before_script: '',
+    custom_after_script: ''
   },
   gridfs: {
     connection_type: 'source',

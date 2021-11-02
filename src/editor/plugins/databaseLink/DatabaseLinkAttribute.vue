@@ -11,7 +11,7 @@
 			</div> -->
       <el-form
         :disabled="disabled"
-        class="e-form"
+        class="e-form flex flex-column"
         label-position="top"
         label-width="160px"
         :model="model"
@@ -27,26 +27,51 @@
                 <span class="icon iconfont icon-tishi1" slot="reference"></span>
               </el-popover>
             </div>
-
-            <el-checkbox v-model="model.selectSourceDatabase.table" disabled
-              >Table
-              <el-popover placement="top-start" width="400" trigger="hover">
-                <span>{{ $t('editor.cell.link.tableTip') }}</span>
+            <ElCheckbox
+              v-for="item in checkboxList"
+              v-model="model.selectSourceDatabase[item.field]"
+              :key="item.field"
+              :disabled="item.disabled"
+            >
+              {{ item.label }}
+              <ElPopover v-if="item.tips" placement="top-start" width="400" trigger="hover">
+                <span>{{ item.tips }}</span>
                 <span class="icon iconfont icon-tishi1" slot="reference"></span>
-              </el-popover>
-            </el-checkbox>
-
-            <el-checkbox v-model="model.selectSourceDatabase.view" :disabled="mysqlDisable" @change="changeView"
-              >View
-              <el-popover placement="top-start" width="400" trigger="hover">
-                <span>{{ $t('editor.cell.link.viewTip') }}</span>
-                <span class="icon iconfont icon-tishi1" slot="reference"></span>
-              </el-popover>
-            </el-checkbox>
-
-            <el-checkbox v-model="model.selectSourceDatabase.function" :disabled="mysqlDisable">Function</el-checkbox>
-            <el-checkbox v-model="model.selectSourceDatabase.procedure" :disabled="mysqlDisable">Procedure</el-checkbox>
+              </ElPopover>
+            </ElCheckbox>
           </el-form-item>
+          <!-- <el-form-item>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <span class="span-label">{{ $t('dag_data_node_label_database_link_table') }}</span>
+                <el-select v-model="model.tableNameTransform" size="mini">
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
+                    value="toUpperCase"
+                  ></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
+                    value="toLowerCase"
+                  ></el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="12">
+                <span class="span-label">{{ $t('dag_data_node_label_database_link_field') }}</span>
+                <el-select v-model="model.fieldsNameTransform" size="mini">
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
+                    value="toUpperCase"
+                  ></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
+                    value="toLowerCase"
+                  ></el-option>
+                </el-select>
+              </el-col>
+            </el-row>
+          </el-form-item> -->
           <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
             <el-select v-model="model.dropType" size="mini">
               <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
@@ -59,13 +84,29 @@
             </el-select>
           </el-form-item>
         </template>
-
-        <div class="database-tableBox" v-loading="transferLoading">
+        <div class="database-tableBox flex-fill overflow-hidden" v-loading="transferLoading">
           <div class="box-text">
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
-              <el-button class="e-button" size="mini" @click="fieldProcess">映射配置</el-button>
-              <el-button class="e-button" size="mini" :disabled="model.selectSourceDatabase.view" @click="handDialog">{{
+              <FieldMapping
+                v-if="showFieldMapping"
+                ref="fieldMapping"
+                class="fr"
+                mappingType="cluster-clone"
+                :dataFlow="dataFlow"
+                :showBtn="true"
+                :stageId="stageId"
+                :databaseFieldProcess="model.field_process"
+                :hiddenFieldProcess="false"
+                :selectSourceArr="model.selectSourceArr"
+                :isFirst="model.isFirst"
+                :transform="model"
+                :getDataFlow="getDataFlow"
+                @update-first="returnModel"
+                @returnFieldMapping="returnFieldMapping"
+                @returnPreFixSuffix="returnPreFixSuffix"
+              ></FieldMapping>
+              <!-- <el-button class="e-button" size="mini" :disabled="model.selectSourceDatabase.view" @click="handDialog">{{
                 $t('dataFlow.changeName')
               }}</el-button>
               <el-button
@@ -74,30 +115,55 @@
                 :disabled="disabled || model.selectSourceDatabase.view"
                 @click="handleReduction"
                 >{{ $t('editor.cell.link.reduction') }}</el-button
-              >
+              > -->
             </div>
           </div>
+
           <div class="transfer">
-            <el-transfer
-              filterable
+            <VirtualTransfer
               v-if="!model.transferFlag"
+              v-model="model.selectSourceArr"
+              filterable
+              :item-size="30"
               :titles="titles"
               :filter-method="filterMethod"
-              :filter-placeholder="$t('editor.cell.link.searchContent')"
-              v-model="model.selectSourceArr"
               :data="sourceData"
+              :filter-placeholder="$t('editor.cell.link.searchContent')"
               @change="handleChangeTransfer"
             >
               <span class="box" slot-scope="{ option }">
-                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
-                <!-- :class="[{ active: option.label !== option.key }, 'text']" -->
-                <span :title="option.label">{{ option.label }}</span>
-                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span>
+                <template
+                  v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
+                >
+                  <span>{{ (model.table_prefix + option.label + model.table_suffix).toLowerCase() }}</span>
+                </template>
+                <template
+                  v-else-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toUpperCase'"
+                >
+                  <span>{{ (model.table_prefix + option.label + model.table_suffix).toUpperCase() }}</span>
+                </template>
+                <template v-else-if="model.selectSourceArr.includes(option.label)">
+                  {{ model.table_prefix + option.label + model.table_suffix }}
+                </template>
+                <template v-else>
+                  {{ option.label }}
+                </template>
+                <!-- <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
+                <span
+                  v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
+                  >{{ option.label.toLowerCase() }}</span
+                >
+                <span
+                  v-else-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toUpperCase'"
+                  >{{ option.label.toUpperCase() }}</span
+                > -->
+                <!--                <span>{{ option.label }}</span>-->
+                <!--                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span> &ndash;&gt;-->
                 <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
 								$t('dataFlow.changeName')
 							}}</span> -->
               </span>
-            </el-transfer>
+            </VirtualTransfer>
             <!-- MQ穿梭框 start -->
             <template v-else>
               <MqTransfer
@@ -106,58 +172,12 @@
                 :table_prefix="model.table_prefix"
                 :table_suffix="model.table_suffix"
               ></MqTransfer>
-              <!-- <el-transfer
-                filterable
-                class="topic-transfer"
-                :titles="topicTitles"
-                :filter-method="filterMethod"
-                :filter-placeholder="$t('editor.cell.link.searchContent')"
-                v-model="model.topicData"
-                :data="sourceData"
-                :left-default-checked="topicSelected"
-                @change="handleChangeTopic"
-                @right-check-change="handleSelectTopic"
-              >
-                <span class="box" slot-scope="{ option }">
-                  <span
-                    class="text"
-                    :title="option.label"
-                    :class="[{ active: option.label !== option.key }, 'text']"
-                    >{{ option.label }}</span
-                  >
-                </span>
-              </el-transfer> -->
-              <!-- <el-tabs v-model="seletecTab" type="border-card">
-                <el-tab-pane label="topic" name="topic">Topic</el-tab-pane>
-                <el-tab-pane label="queue" name="queue">Queue</el-tab-pane>
-              </el-tabs>
-              <el-transfer
-                filterable
-                class="queue-transfer"
-                :titles="seletecTab === 'topic' ? topicTitles : queueTitles"
-                :filter-method="filterMethod"
-                :filter-placeholder="$t('editor.cell.link.searchContent')"
-                v-model="mq[seletecTab].value"
-                :data="mq[seletecTab].list"
-                @change="handleChangeQueueData"
-                @left-check-change="handleLeftTable"
-                @right-check-change="handleSelectQueue"
-              >
-                <span class="box" slot-scope="{ option }">
-                  <span
-                    class="text"
-                    :title="option.label"
-                    :class="[{ active: option.label !== option.key }, 'text']"
-                    >{{ option.label }}</span
-                  >
-                </span>
-              </el-transfer> -->
             </template>
           </div>
         </div>
       </el-form>
     </div>
-    <el-dialog
+    <!-- <el-dialog
       :title="$t('editor.cell.link.batchRename')"
       :visible.sync="dialogVisible"
       :modal-append-to-body="false"
@@ -197,7 +217,7 @@
         <el-button @click="dialogVisible = false">{{ $t('dataVerify.cancel') }}</el-button>
         <el-button type="primary" @click="confirm">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog
       width="85%"
       title="映射配置"
@@ -207,18 +227,6 @@
       :close-on-click-modal="false"
       v-if="dialogFieldProcessVisible"
     >
-      <FieldMapping
-        ref="fieldMappingDom"
-        class="custom-field-mapping"
-        :remoteMethod="intiFieldMappingTableData"
-        :typeMappingMethod="getTypeMapping"
-        :fieldProcessMethod="updateFieldProcess"
-        :fieldMappingNavData="fieldMappingNavData"
-        :field_process="model.field_process"
-        @row-click="saveOperations"
-        :hiddenFieldProcess="false"
-        @update-nav="updateFieldMappingNavData"
-      ></FieldMapping>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
@@ -251,20 +259,27 @@
 import _ from 'lodash'
 import log from '../../../log'
 import factory from '../../../api/factory'
-import MqTransfer from './mqTransfer'
+import MqTransfer from './MqTransfer'
+import FieldMapping from '@/components/FieldMapping'
+import VirtualTransfer from 'web-core/components/virtual-transfer'
 let connections = factory('connections')
 let editorMonitor = null
 export default {
-  name: 'databaseLink',
-  components: { MqTransfer },
+  name: 'DatabaseLinkAttribute',
+  components: { MqTransfer, VirtualTransfer, FieldMapping },
   data() {
     return {
-      mysqlDisable: false,
+      checkboxList: [
+        { field: 'table', label: 'Table', tips: this.$t('editor.cell.link.tableTip'), disabled: true },
+        { field: 'view', label: 'View', tips: this.$t('editor.cell.link.viewTip'), disabled: true },
+        { field: 'function', label: 'Function', disabled: true },
+        { field: 'procedure', label: 'Procedure', disabled: true }
+      ],
       transferLoading: false,
       currentName: null,
       databaseName: '',
       modifyNameDialog: false,
-      dialogVisible: false,
+      // dialogVisible: false,
       disabled: false,
       logsFlag: false,
       exampleName: 'tableName',
@@ -284,12 +299,17 @@ export default {
         table_suffix: '',
         dropType: 'no_drop',
         type: 'databaseLink',
+        tableNameTransform: '',
+        fieldsNameTransform: '',
         selectSourceArr: [],
         topicData: [],
         queueData: [],
         field_process: [], //字段处理器
         transferFlag: false,
         isFirst: true, //初始值
+        scope: '',
+        dataFlow: '',
+        stageId: '',
 
         selectSourceDatabase: {
           table: true,
@@ -305,7 +325,8 @@ export default {
       fieldMappingNavData: '',
       fieldMappingTableData: '',
       dialogFieldProcessVisible: false,
-      scope: ''
+      scope: '',
+      showFieldMapping: false
     }
   },
 
@@ -321,8 +342,15 @@ export default {
       deep: true,
       handler() {
         this.$emit('dataChanged', this.getData())
+        this.getDataFlow()
       }
     }
+    // 'model.tableNameTransform': {
+    //   deep: true,
+    //   handler(val) {
+    //     this.model.tableNameTransform = val
+    //   }
+    // }
   },
   methods: {
     setData(data, cell, isSourceDataNode, vueAdapter) {
@@ -341,22 +369,39 @@ export default {
             targetCell && targetCell.getFormData().database_type ? targetCell.getFormData().database_type : '',
           connectionId = sourceCell.getFormData().connectionId
         this.targetDatabaseType = targetDatabaseType
-        this.mysqlDisable = sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql' ? false : true
-        if (this.mysqlDisable) {
-          this.model.selectSourceDatabase = {
-            table: true,
-            view: false,
-            function: false,
-            procedure: false
-          }
+        if (sourceDatabaseType === 'mysql' && targetDatabaseType === 'mysql') {
+          this.checkboxList.forEach(item => {
+            if (item.field !== 'table') {
+              item.disabled = false
+            }
+          })
         }
+        if (sourceDatabaseType === 'oracle' && targetDatabaseType === 'oracle') {
+          this.checkboxList.forEach(item => {
+            if (item.field === 'view') {
+              item.disabled = false
+            }
+          })
+        }
+        //获取目标节点ID
+        this.stageId = targetCell.id || ''
         // 获取目标节点的数据显示右侧选择表
-        if (targetCell && this.model.selectSourceArr.length === 0) {
-          let targetFormData = targetCell.getFormData()
-          let selectTargetType = []
 
+        let targetFormData = targetCell && targetCell.getFormData()
+        let sourceFormData = sourceCell && sourceCell.getFormData()
+        let selectTargetType = []
+        if (targetFormData && targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
+          this.model.transferFlag = true
+        }
+        if (targetCell && this.model.selectSourceArr.length === 0) {
+          // 修改库清空连线选中的表
+          if (sourceFormData.isChangeConnectionFlag) {
+            targetFormData.syncObjects = []
+            sourceFormData.isChangeConnectionFlag = false
+          }
+          // mq数据源赋值
           if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
-            this.model.transferFlag = true
+            // this.model.transferFlag = true
             this.mqActiveData.topicData = data.topicData
             this.mqActiveData.queueData = data.queueData
           }
@@ -383,21 +428,23 @@ export default {
 
       editorMonitor = vueAdapter.editor
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
+      this.getDataFlow()
+      //是否显示字段推演
+      let param = {
+        stages: this.dataFlow?.stages,
+        stageId: this.stageId
+      }
+      this.$api('DataFlows')
+        .tranModelVersionControl(param)
+        .then(data => {
+          this.showFieldMapping = data?.data[this.stageId]
+        })
 
       // if (!this.configJoinTable) return
     },
 
     getData() {
       let result = JSON.parse(JSON.stringify(this.model))
-      // console.log(this.model)
-      // let includeTables = []
-      // for (let i = 0; i < this.sourceData.length; i++) {
-      //   for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-      //     if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-      //       includeTables.push(this.sourceData[i].key)
-      //     }
-      //   }
-      // }
       if (this.cell) {
         let targetCell = this.cell.getTargetCell()
         if (targetCell && targetCell.getFormData()) {
@@ -407,6 +454,8 @@ export default {
             targetFormData.dropType = this.model.dropType
             targetFormData.table_prefix = this.model.table_prefix
             targetFormData.table_suffix = this.model.table_suffix
+            // targetFormData.tableNameTransform = this.model.tableNameTransform
+            // targetFormData.fieldNameTransform = this.model.fieldNameTransform
             targetFormData.syncObjects = []
             if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
               targetFormData.syncObjects = [
@@ -434,16 +483,16 @@ export default {
           }
         }
       }
-
+      this.getDataFlow()
       return result
     },
 
     // 改变view
-    changeView(val) {
-      if (val) {
-        this.handleReduction()
-      }
-    },
+    // changeView(val) {
+    //   if (val) {
+    //     this.handleReduction()
+    //   }
+    // },
 
     // 关闭当前页
     hanleClose() {
@@ -490,47 +539,18 @@ export default {
     // },
 
     // 添加前后缀弹窗开关
-    handDialog() {
-      this.dialogVisible = true
-    },
+    // handDialog() {
+    //   this.dialogVisible = true
+    // },
 
     // 弹窗确认
-    confirm() {
-      this.dialogVisible = false
-      this.preFixSuffixData()
-    },
+    // confirm() {
+    //   this.dialogVisible = false
+    //   this.preFixSuffixData()
+    // },
 
     // 添加前后缀数据处理
     preFixSuffixData() {
-      // if (
-      //   this.sourceData &&
-      //   this.sourceData.length &&
-      //   this.model.selectSourceArr.length
-      // ) {
-      //   let selectSourceArr = []
-      //   this.model.selectSourceArr = Array.from(
-      //     new Set(this.model.selectSourceArr)
-      //   )
-      //   this.sourceData.forEach(sourceName => {
-      //     this.model.selectSourceArr.map(k => {
-      //       if (k == sourceName.key) {
-      //         selectSourceArr.push(k)
-      //       }
-      //     })
-      //   })
-      //   this.model.selectSourceArr = selectSourceArr
-
-      //   for (let i = 0; i < this.sourceData.length; i++) {
-      //     for (let j = 0; j < this.model.selectSourceArr.length; j++) {
-      //       if (this.sourceData[i].key === this.model.selectSourceArr[j]) {
-      //         this.sourceData[i].label =
-      //           this.model.table_prefix +
-      //           this.sourceData[i].key +
-      //           this.model.table_suffix
-      //       }
-      //     }
-      //   }
-      // }
       this.mqActiveData.table_prefix = this.model.table_prefix
       this.mqActiveData.table_suffix = this.model.table_suffix
       //前后缀 表名改动 需要清空字段处理器
@@ -545,158 +565,25 @@ export default {
       this.mqActiveData.table_suffix = ''
       //前后缀 表名改动 需要清空字段处理器
       this.model.field_process = []
-      // if (this.sourceData.length) {
-      //   for (let i = 0; i < this.sourceData.length; i++) {
-      //     for (let k = 0; k < this.model.selectSourceArr.length; k++) {
-      //       if (this.sourceData[i].key === this.model.selectSourceArr[k]) {
-      //         this.sourceData[i].label = this.sourceData[i].key
-      //       }
-      //     }
-      //   }
-      // }
     },
-    //表设置
-    fieldProcess() {
-      let data = this.getDataFlowData()
-      if (!data) return
-      let dataFlowId = data.id
-      if (this.model.isFirst && !dataFlowId) {
-        data['rollback'] = 'all' //新建任务重置恢复默认
-      } else {
-        delete data['rollback']
-        delete data['rollbackTable']
-      }
-      let promise = this.$api('DataFlows').getMetadata(data)
-      promise.then(data => {
-        this.dialogFieldProcessVisible = true
-        this.model.isFirst = false
-        this.fieldMappingNavData = data?.data
-      })
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
     },
-    async updateFieldProcess(rollback, rollbackTable, id) {
-      let data = this.getDataFlowData()
-      if (rollback === 'all') {
-        data['rollback'] = rollback
-        //删除整个字段处理器
-        this.model.field_process = []
-      } else if (rollbackTable) {
-        data['rollback'] = rollback
-        data['rollbackTable'] = rollbackTable
-        for (let i = 0; i < this.model.field_process.length; i++) {
-          // 删除操作
-          let ops = this.model.field_process[i]
-          if (ops.table_id === id) {
-            this.model.field_process.splice(i, 1)
-          }
-        }
-      }
-      let result = this.updateAutoFieldProcess(data)
-      let promise = await this.$api('DataFlows').getMetadata(result)
-      return promise?.data
+    returnFieldMapping(field_process) {
+      this.model.field_process = field_process
     },
-    //更新左边导航
-    updateFieldMappingNavData(data) {
-      this.fieldMappingNavData = data
+    // 字段处理器返回前后缀
+    returnPreFixSuffix(data) {
+      this.model.table_prefix = data.table_prefix
+      this.model.table_suffix = data.table_suffix
+      this.model.tableNameTransform = data.tableNameTransform
+      this.model.fieldsNameTransform = data.fieldsNameTransform
     },
-    //获取当前任务所有的节点
-    getDataFlowData() {
-      //手动同步更新字段处理器
-      let data = this.scope.getDataFlowData()
-      let result = this.updateAutoFieldProcess(data)
-      return result
-    },
-    updateAutoFieldProcess(data) {
-      for (let i = 0; i < data.stages.length; i++) {
-        if (data.stages[i].outputLanes) {
-          data['stages'][i].field_process = this.model.field_process
-        }
-      }
-      return data
-    },
-    //获取表设置
-    async intiFieldMappingTableData(row) {
-      let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
-      source = source.data && source.data.length > 0 ? source.data[0].fields : []
-      let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
-      target = target.data && target.data.length > 0 ? target.data[0].fields : []
-      // 初始化所有字段都映射 只取顶级字段
-      source = source.filter(field => field.field_name.indexOf('.') === -1)
-      //源表 目标表数据组合
-      let fieldMappingTableData = []
-      source.forEach(item => {
-        target.forEach(field => {
-          //先检查是否被改过名
-          let node = {
-            t_id: field.id,
-            t_field_name: field.field_name,
-            t_data_type: field.data_type,
-            t_scale: field.scale,
-            t_precision: field.precision,
-            is_deleted: field.is_deleted, //目标决定这个字段是被删除？
-            t_isPrecisionEdit: true, //默认不能编辑
-            t_isScaleEdit: true //默认不能编辑
-          }
-          if (item.field_name === field.field_name) {
-            fieldMappingTableData.push(Object.assign({}, item, node))
-          }
-          let ops = this.handleFieldName(row, field.field_name)
-          if (!ops || ops?.length === 0) return
-          ops = ops[0]
-          if (ops.operand === field.field_name && ops.original_field_name === item.field_name) {
-            fieldMappingTableData.push(Object.assign({}, item, node))
-          }
-        })
-      })
-      return {
-        data: fieldMappingTableData,
-        target: target
-      }
-    },
-    //判断是否改名
-    getFieldOperations(row) {
-      let operations = []
-      if (!this.model.field_process || this.model.field_process.length === 0) return
-      let field_process = this.model.field_process.filter(process => process.table_id === row.sourceTableId)
-      if (field_process.length > 0) {
-        operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
-      }
-      return operations || []
-    },
-    //判断是否改名
-    handleFieldName(row, fieldName) {
-      let operations = this.getFieldOperations(row)
-      if (!operations) return
-      let ops = operations.filter(op => op.operand === fieldName && op.op === 'RENAME')
-      return ops
-    },
-    //获取typeMapping
-    async getTypeMapping(row) {
-      let promise = await this.$api('TypeMapping').getId(row.sinkDbType)
-      return promise?.data
-    },
-    saveReturnData() {
-      //保存字段映射
-      let returnData = this.$refs.fieldMappingDom.returnData()
-      if (!returnData.valid) return //检验不通过
-      this.saveOperations(returnData.row, returnData.operations, returnData.target)
-      this.dialogFieldProcessVisible = false
-    },
-    //保存字段处理器
-    saveOperations(row, operations, target) {
-      if (!target || target?.length === 0) return
-      let deleteLen = target.filter(v => !v.is_deleted)
-      if (deleteLen.length === 0) {
-        this.$message.error('当前表被删除了所有字段，不允许保存操作')
-        return //所有字段被删除了 不可以保存任务
-      }
-      let where = {
-        qualified_name: row.sinkQulifiedName
-      }
-      let data = {
-        fields: target
-      }
-      this.$api('MetadataInstances').update(where, data)
-      this.model.field_process = this.$refs.fieldMappingDom.saveFileOperations()
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     },
     // 获取表名称
     loadDataModels(connectionId) {
@@ -786,11 +673,15 @@ export default {
     display: block;
   }
   .nodeBody {
-    height: calc(100% - 30px);
+    height: 100%;
     overflow: hidden;
   }
   .e-form {
     height: 100%;
+    .span-label {
+      font-size: 12px;
+      color: #606266;
+    }
     .database-tableBox {
       padding-top: 10px;
       height: calc(100% - 140px);
@@ -804,6 +695,7 @@ export default {
         h3 {
           color: #606266;
         }
+
         .box-btn {
           color: #409eff;
           cursor: pointer;

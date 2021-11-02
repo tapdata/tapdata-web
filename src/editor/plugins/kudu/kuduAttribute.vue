@@ -30,9 +30,7 @@
         </el-form-item>
 
         <el-form-item
-          :label="
-            $t('editor.cell.data_node.table.form.table.label') + $t('editor.cell.data_node.table.form.table.labelTips')
-          "
+          :label="$t('editor.cell.data_node.table.form.table.label')"
           prop="tableName"
           :rules="rules"
           required
@@ -86,21 +84,28 @@
       </el-form>
     </div>
     <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
-      <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
+      <el-button
+        class="fr"
+        type="success"
+        size="mini"
+        v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+        @click="hanlderLoadSchema"
+      >
         <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
         <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
         <span v-else>{{ $t('dataFlow.updateModel') }}</span>
       </el-button>
       <FieldMapping
         v-else
-        :dataFlow="dataFlow"
-        :hiddenFieldProcess="true"
-        :showBtn="true"
-        :isFirst="model.isFirst"
-        @update-first="returnModel"
-        :stageId="stageId"
         ref="fieldMapping"
         class="fr"
+        :dataFlow="dataFlow"
+        :showBtn="true"
+        :isFirst="model.isFirst"
+        :isDisable="disabled"
+        :hiddenFieldProcess="true"
+        :stageId="stageId"
+        @update-first="returnModel"
       ></FieldMapping>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
@@ -175,6 +180,7 @@ export default {
       scope: '',
       dataFlow: '',
       stageId: '',
+      showFieldMapping: false,
       schemasLoading: false,
       mergedSchema: null
     }
@@ -300,6 +306,15 @@ export default {
         this.stageId = cell.id
         this.getDataFlow()
         _.merge(this.model, data)
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.stageId]
+          })
       }
       this.mergedSchema = cell.getOutputSchema()
       this.dataNodeInfo = dataNodeInfo || {}

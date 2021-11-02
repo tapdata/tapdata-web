@@ -1,6 +1,14 @@
 <template>
   <div>
-    <el-button size="mini" v-if="showBtn" @click="fieldProcess()">字段映射</el-button>
+    <el-button
+      size="mini"
+      class="e-button"
+      v-if="showBtn"
+      :loading="loading"
+      :disabled="isDisable"
+      @click="fieldProcess()"
+      >字段映射</el-button
+    >
     <el-dialog
       width="85%"
       title="映射配置"
@@ -16,8 +24,10 @@
         :remoteMethod="intiFieldMappingTableData"
         :typeMappingMethod="getTypeMapping"
         :fieldProcessMethod="updateFieldProcess"
+        :updateMetadata="updateMetadata"
         :fieldMappingNavData="fieldMappingNavData"
         :field_process="field_process"
+        :transform="transform"
         :hiddenFieldProcess="hiddenFieldProcess"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
@@ -32,22 +42,55 @@
 <script>
 export default {
   name: 'FiledMapping',
-  props: ['dataFlow', 'showBtn', 'hiddenFieldProcess', 'stageId', 'isFirst'],
+  props: [
+    'dataFlow',
+    'databaseFieldProcess',
+    'showBtn',
+    'hiddenFieldProcess',
+    'stageId',
+    'isFirst',
+    'mappingType',
+    'selectSourceArr',
+    'transform',
+    'getDataFlow',
+    'isDisable'
+  ],
   data() {
     return {
       //表设置
-      fieldMappingNavData: '',
-      fieldMappingTableData: '',
+      fieldMappingNavData: '', //左边导航
+      fieldMappingTableData: '', //右边table
       dialogFieldProcessVisible: false,
-      field_process: []
+      loading: false,
+      field_process: this.databaseFieldProcess
     }
   },
   methods: {
-    //表设置
+    /*
+     * 模型推演
+     * 新建任务，首次全部恢复默认
+     * 过滤条件：当前目标节点 stageId
+     * 触发父组件：首次条件
+     * */
     fieldProcess() {
+      //点击按钮重新拿值
+      if (this.getDataFlow) {
+        this.dataFlow = this.getDataFlow()
+      }
+
       if (!this.dataFlow) return
+      //迁移任务需要同步字段处理器
+      if (this.mappingType && this.mappingType === 'cluster-clone') {
+        this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
+        //是否有选中的表
+        if (this.selectSourceArr?.length === 0) {
+          this.$message.error('请先选择需要迁移的表')
+          return
+        }
+      }
+      this.loading = true
       let dataFlowId = this.dataFlow.id
-      if (this.isFirst && dataFlowId) {
+      if (this.isFirst && !dataFlowId) {
         this.dataFlow['rollback'] = 'all' //新建任务重置恢复默认
       } else {
         delete this.dataFlow['rollback']
@@ -61,30 +104,99 @@ export default {
         .then(data => {
           this.dialogFieldProcessVisible = true
           this.fieldMappingNavData = data?.data
-          this.$emit('update-first', false)
+          this.$emit('update-first', false) //新建任务 第一次需要恢复默认
         })
         .catch(() => {
-          this.$message.error('接口请求失败')
+          this.$message.error('字段推演失败')
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
+    //任务迁移需要主动更新
+    updateAutoFieldProcess(data) {
+      for (let i = 0; i < data.stages.length; i++) {
+        if (data.stages[i].outputLanes?.length > 0) {
+          data['stages'][i].field_process = this.field_process
+        }
+      }
+      return data
+    },
+    /*
+     * 子模块-恢复默认操作
+     * 对应清空字段处理器
+     * 更新父组件 fromData 字段处理器
+     * 触发模型重新推演
+     * 清空表改名 字段改名
+     * */
     async updateFieldProcess(rollback, rollbackTable, id) {
       if (!this.dataFlow) return
       if (rollback === 'all') {
         this.dataFlow['rollback'] = rollback
         //删除整个字段处理器
         this.field_process = []
+        //清空表改名 字段改名
+        this.clearTransform()
       } else if (rollbackTable) {
         this.dataFlow['rollback'] = rollback
         this.dataFlow['rollbackTable'] = rollbackTable
-        for (let i = 0; i < this.field_process.length; i++) {
-          // 删除操作
-          let ops = this.field_process[i]
-          if (ops.table_id === id) {
-            this.field_process.splice(i, 1)
+        if (this.field_process?.length > 0) {
+          for (let i = 0; i < this.field_process.length; i++) {
+            // 删除操作
+            let ops = this.field_process[i]
+            if (ops.table_id === id) {
+              this.field_process.splice(i, 1)
+            }
           }
         }
       }
       this.$emit('returnFieldMapping', this.field_process)
+      //迁移任务需要同步字段处理器
+      if (this.mappingType && this.mappingType === 'cluster-clone') {
+        this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
+      }
+      let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
+      return promise?.data
+    },
+    //清空表改名 字段改名
+    clearTransform() {
+      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+        if (this.dataFlow.stages[i].id === this.stageId) {
+          this.dataFlow['stages'][i].fieldsNameTransform = ''
+          this.dataFlow['stages'][i].tableNameTransform = ''
+          this.dataFlow['stages'][i].table_suffix = ''
+          this.dataFlow['stages'][i].table_prefix = ''
+        }
+      }
+    },
+    updateAutoTransform(type, data) {
+      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+        if (this.dataFlow.stages[i].id === this.stageId) {
+          if (type === 'field') {
+            this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
+          } else {
+            this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
+            this.dataFlow['stages'][i].table_prefix = data.table_prefix
+            this.dataFlow['stages'][i].table_suffix = data.table_suffix
+          }
+        }
+      }
+    },
+    checkTransform() {
+      let result = ''
+      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+        if (this.dataFlow.stages[i].id === this.stageId) {
+          if (this.dataFlow['stages'][i].fieldsNameTransform !== '') {
+            result = this.dataFlow['stages'][i].fieldsNameTransform
+          }
+        }
+      }
+      return result
+    },
+    //获取左边导航数据 - 表
+    async updateMetadata(type, data) {
+      //将表改名 字段改名 放在setting里面
+      this.updateAutoTransform(type, data)
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       return promise?.data
     },
@@ -92,14 +204,51 @@ export default {
     updateFieldMappingNavData(data) {
       this.fieldMappingNavData = data
     },
-    //获取表设置
-    async intiFieldMappingTableData(row) {
+    /*
+     * 初始化右边table数据
+     * 请求参数：QualifiedName 分别获取源表字段、目标表字段
+     * 过滤：不支持嵌套字段
+     * 数据组合：目标字段表示 "t_"标识 (is_deleted 目标表数据)
+     * 数据匹配 源表所有字段过处理器 源表所有字段过字段改名 匹配后的数据再与目标表数据匹配
+     * */
+    async intiFieldMappingTableData(row, type) {
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
       target = target.data && target.data.length > 0 ? target.data[0].fields : []
       // 初始化所有字段都映射 只取顶级字段
       source = source.filter(field => field.field_name.indexOf('.') === -1)
+      //是否有字段处理器
+      let operations = this.getFieldOperations(row)
+      if (operations?.length > 0) {
+        source.forEach(item => {
+          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'RENAME')
+          if (!ops || ops?.length === 0) {
+            item.temporary_field_name = item.field_name
+            return
+          }
+          ops = ops[0]
+          item.temporary_field_name = ops.operand
+        })
+      } else {
+        source.forEach(item => {
+          item.temporary_field_name = item.field_name
+        })
+      }
+      //是否有批量字段改名操作
+      if (type === 'rollbackAll') {
+        this.clearTransform()
+      }
+      let fieldsNameTransform = this.checkTransform()
+      if (fieldsNameTransform !== '') {
+        source.forEach(item => {
+          if (fieldsNameTransform === 'toUpperCase') {
+            item.temporary_field_name = item.temporary_field_name.toUpperCase() || item.field_name.toUpperCase()
+          } else if (fieldsNameTransform === 'toLowerCase') {
+            item.temporary_field_name = item.temporary_field_name.toLowerCase() || item.field_name.toLowerCase()
+          }
+        })
+      }
       //源表 目标表数据组合
       let fieldMappingTableData = []
       source.forEach(item => {
@@ -111,18 +260,11 @@ export default {
             t_scale: field.scale,
             t_precision: field.precision,
             is_deleted: field.is_deleted, //目标决定这个字段是被删除？
-            t_isPrecisionEdit: true, //默认不能编辑
-            t_isScaleEdit: true //默认不能编辑
+            t_isPrecisionEdit: true, //默认能编辑
+            t_isScaleEdit: true //默认能编辑
           }
-          if (item.field_name === field.field_name) {
-            fieldMappingTableData.push(Object.assign({}, item, node))
-          }
-          //先检查是否被改过名 任务同步不需要检测字段处理器
-          if (this.hiddenFieldProcess) return
-          let ops = this.handleFieldName(row, field.field_name)
-          if (!ops || ops?.length === 0) return
-          ops = ops[0]
-          if (ops.operand === field.field_name && ops.field === item.field_name) {
+          //检查当前name个数
+          if (item.temporary_field_name === field.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })
@@ -132,11 +274,14 @@ export default {
         target: target
       }
     },
+    checkFieldName(field_name, target) {
+      return target.filter(field => field_name === field.original_field_name)
+    },
     //获取字段处理器
     getFieldOperations(row) {
       let operations = []
       if (!this.field_process || this.field_process.length === 0) return
-      let field_process = this.field_process.filter(process => process.table_id === row.sourceQualifiedName)
+      let field_process = this.field_process.filter(process => process.table_id === row.sourceTableId)
       if (field_process.length > 0) {
         operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
       }
@@ -158,7 +303,13 @@ export default {
       //保存字段映射
       let returnData = this.$refs.fieldMappingDom.returnData()
       if (!returnData.valid) return //检验不通过
-      this.saveOperations(returnData.row, returnData.operations, returnData.target)
+      let deleteLen = returnData.target.filter(v => !v.is_deleted)
+      if (deleteLen.length === 0) {
+        this.$message.error('当前表被删除了所有字段，不允许保存操作')
+        return //所有字段被删除了 不可以保存任务
+      }
+      this.$emit('returnPreFixSuffix', returnData.changNameData)
+      this.saveOperations(returnData.row, returnData.operations, returnData.target, returnData.changNameData)
       this.dialogFieldProcessVisible = false
     },
     //保存字段处理器
@@ -174,11 +325,6 @@ export default {
       if (this.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.field_process)
-    },
-    //job 字段映射逻辑 自动推演 //保存前 自动推演
-    autoFiledProcess(data) {
-      this.dialogFieldProcessVisible = true
-      this.fieldMappingNavData = data
     }
   }
 }
@@ -203,5 +349,11 @@ export default {
     padding: 0 50px;
     color: #666;
   }
+}
+.e-button {
+  padding: 4px 10px;
+  color: #666;
+  background-color: #f5f5f5;
+  margin-left: 10px;
 }
 </style>

@@ -284,21 +284,28 @@
         ></queryBuilder>
       </el-form>
       <div class="e-entity-wrap" style="text-align: center" v-if="model.connectionId && model.tableName">
-        <el-button class="fr" type="success" size="mini" v-if="!dataNodeInfo.isTarget" @click="hanlderLoadSchema">
+        <el-button
+          class="fr"
+          type="success"
+          size="mini"
+          v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+          @click="hanlderLoadSchema"
+        >
           <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
           <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
           <span v-else>{{ $t('dataFlow.updateModel') }}</span>
         </el-button>
         <FieldMapping
           v-else
+          ref="fieldMapping"
+          class="fr"
           :dataFlow="dataFlow"
           :showBtn="true"
           :isFirst="model.isFirst"
-          @update-first="returnModel"
           :hiddenFieldProcess="true"
           :stageId="stageId"
-          ref="fieldMapping"
-          class="fr"
+          :isDisable="disabled"
+          @update-first="returnModel"
         ></FieldMapping>
         <entity
           v-loading="schemaSelectConfig.loading"
@@ -622,7 +629,8 @@ export default {
       repeatTable: [],
       scope: '',
       dataFlow: '',
-      stageId: ''
+      stageId: '',
+      showFieldMapping: false
     }
   },
 
@@ -693,7 +701,7 @@ export default {
 
     // 打开数据目录数据库
     handDatabase() {
-      let href = '/#/metadataInstances/' + this.databaseData[0].id
+      let href = '/#/metadataDetails?id=' + this.databaseData[0].id
       window.open(href)
     },
 
@@ -703,7 +711,7 @@ export default {
       this.tableIsLink()
 
       if (this.tableNameId) {
-        let href = '/#/metadataInstances/' + this.tableNameId
+        let href = '/#/metadataDetails?id=' + this.tableNameId
         window.open(href)
       }
     },
@@ -934,6 +942,15 @@ export default {
           this.loadDataModels(data.connectionId)
         }
         this.tableIsLink()
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.stageId]
+          })
       }
 
       this.dataNodeInfo = dataNodeInfo || {}
