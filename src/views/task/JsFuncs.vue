@@ -43,10 +43,14 @@
         </el-form-item>
         <div v-show="model.type === 'jar'">
           <el-form-item label="函数名称：" prop="function_name">
-            <el-input v-model="model.function_name" size="small"></el-input>
+            <el-input v-model="model.function_name" size="small" placeholder="请输入函数名称"></el-input>
           </el-form-item>
           <el-form-item label="类名：" prop="className">
-            <el-input v-model="model.className" size="small"></el-input>
+            <el-input
+              v-model="model.className"
+              size="small"
+              placeholder="请输入类名，UDF函数的类名，格式为资源名.类名"
+            ></el-input>
           </el-form-item>
           <el-form-item label="jar文件：" prop="fileId">
             <el-upload action="api/file/upload" :file-list="fileList" :on-change="fileChange" :on-remove="fileRemove">
@@ -54,17 +58,25 @@
             </el-upload>
           </el-form-item>
           <el-form-item label="命令格式：">
-            <el-input v-model="model.function_body" size="small"></el-input>
+            <el-input
+              v-model="model.function_body"
+              size="small"
+              placeholder="请输入命令格式，为该UDF的具体使用方法示例"
+            ></el-input>
           </el-form-item>
           <el-form-item label="参数说明：">
-            <el-input v-model="model.parameters" size="small"></el-input>
+            <el-input
+              v-model="model.parameters"
+              size="small"
+              placeholder="支持输入的参数类型以及返回参数类型的具体说明"
+            ></el-input>
           </el-form-item>
           <el-form-item label="返回值：">
-            <el-input v-model="model.return_value" size="small"></el-input>
+            <el-input v-model="model.return_value" size="small" placeholder="请输入返回值"></el-input>
           </el-form-item>
         </div>
         <el-form-item label="描述：">
-          <el-input v-model="model.describe" type="textarea" size="small"></el-input>
+          <el-input v-model="model.describe" type="textarea" size="small" placeholder="请输入描述"></el-input>
         </el-form-item>
         <el-form-item v-if="model.type === 'custom'">
           <el-checkbox v-model="lineNumbers" class="e-checkbox" @input="showGutter">{{
