@@ -190,7 +190,7 @@ export default {
 
     // 设置schema
     async setSchema(schema, values) {
-      console.log('setSchema!!!!!***', schema)
+      console.log('setSchema!!!!!***', schema) // eslint-disable-line
       this.schema = null
 
       await this.$nextTick()

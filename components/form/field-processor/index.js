@@ -643,7 +643,7 @@ export const FieldProcess = connect(
           }
         },
         handleDelete(node, data) {
-          console.log('SchemaEditor.handleDelete', node, data)
+          console.log('SchemaEditor.handleDelete', node, data) // eslint-disable-line
           let createOpsIndex = this.operations.findIndex(v => v.id === data.id && v.op === 'CREATE')
           if (createOpsIndex >= 0) {
             let fieldName = this.operations[createOpsIndex].field_name + '.'
