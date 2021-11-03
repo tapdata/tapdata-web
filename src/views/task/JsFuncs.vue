@@ -249,6 +249,7 @@ export default {
     },
     // 保存
     createSave() {
+      let uid = this.$cookie.get('user_id')
       let makeModel = (m, ast) => {
         let escodegen = require('escodegen')
         m.function_body = escodegen.generate(ast.body)
@@ -271,7 +272,6 @@ export default {
         if (!valid) {
           return
         }
-        let uid = this.$cookie.get('user_id')
         let doc = this.format()
         if (doc) {
           this.jsonDocHint.splice(0, this.jsonDocHint.length)
