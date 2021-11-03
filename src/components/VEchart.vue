@@ -24,7 +24,7 @@ use([
 ])
 
 export default {
-  name: 'HelloWorld',
+  name: 'VEchart',
   components: {
     VChart
   },
