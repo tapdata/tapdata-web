@@ -1,5 +1,5 @@
 <template>
-  <div class="v-list">
+  <div class="v-table-container">
     <ElTable
       v-loading="loading"
       v-bind="$attrs"
@@ -7,7 +7,7 @@
       :data="list"
       ref="table"
       height="100%"
-      class="v-list__table mt-3"
+      class="table-container__table mt-3"
       @selection-change="handleSelectionChange"
     >
       <ColumnItem v-for="(item, index) in columns" :item="item" :key="index">
@@ -193,7 +193,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-list {
+.v-table-container {
   display: flex;
   width: 100%;
   height: 100%;
@@ -201,7 +201,7 @@ export default {
   overflow: hidden;
   box-sizing: border-box;
 }
-.v-list__table {
+.table-container__table {
   flex: 1;
   overflow: auto;
   border-bottom: none;
