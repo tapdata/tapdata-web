@@ -1007,7 +1007,11 @@ export default {
       this.$api('connections')
         .getSpace(params)
         .then(data => {
-          this.changeConfig(data.data || [], 'set_space')
+          if (data.data.status === 'SUCCESS') {
+            this.changeConfig(data.data.result || [], 'set_space')
+          } else {
+            this.$message.error(data.data?.error)
+          }
         })
     },
     //rest api addUrl

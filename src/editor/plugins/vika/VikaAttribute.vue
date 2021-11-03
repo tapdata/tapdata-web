@@ -348,13 +348,20 @@ export default {
       this.$api('connections')
         .getSpace(params)
         .then(data => {
-          this.nodes = data.data
+          if (data.data.status === 'SUCCESS') {
+            this.nodes = data.data.result
+          } else {
+            this.$message.error(data.data?.error)
+          }
         })
         .catch(() => {
           this.$message.error('接口请求失败')
         })
     },
     loadNode(node, resolve) {
+      if (!this.model.connectionId) {
+        return
+      }
       var hasChild
       if (node.data.type === 'Datasheet') {
         hasChild = false
@@ -371,15 +378,19 @@ export default {
         this.$api('connections')
           .getSpace(params)
           .then(data => {
-            let children = data.data?.children || []
-            for (let i = 0; i < children.length; i++) {
-              if (children[i].type === 'Datasheet') {
-                children[i]['leaf'] = false
-              } else {
-                children[i]['leaf'] = true
+            if (data.data.status === 'SUCCESS') {
+              let children = data.data?.result.children || []
+              for (let i = 0; i < children.length; i++) {
+                if (children[i].type === 'Datasheet') {
+                  children[i]['leaf'] = false
+                } else {
+                  children[i]['leaf'] = true
+                }
               }
+              resolve(data.data?.result.children)
+            } else {
+              this.$message.error(data.data?.error)
             }
-            resolve(data.data?.children)
           })
       } else {
         resolve([])
