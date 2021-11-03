@@ -14,12 +14,31 @@ let config = {
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 }
+const getPendingKey = config => {
+  let { url, method, data } = config
+  let headers = config.headers
+  data = Object.prototype.toString.call(data) === '[object String]' ? JSON.parse(data) : data
+  let key = JSON.stringify({
+    url,
+    method,
+    data,
+    header: {
+      'Pool-Id': headers['Pool-Id']
+    }
+  })
+  return key
+}
 const removePending = config => {
-  let key = JSON.stringify(config)
+  let key = getPendingKey(config)
   let index = pending.findIndex(it => it === key)
-  pending.splice(index, 1)
+  if (index >= 0) {
+    pending.splice(index, 1)
+  }
 }
 const errorCallback = error => {
+  if (error?.config || error?.response?.config) {
+    removePending(error.config || error.response.config)
+  }
   if (error && error.response && error.response.status === 401) {
     location.href = location.origin + location.pathname.substring(0, location.pathname.lastIndexOf('/')) + '/login'
     return
@@ -30,9 +49,6 @@ const errorCallback = error => {
   if (error && error.message !== 'cancel' && (!data || data.state !== 'EXCEPTION')) {
     // Message.error('服务器错误:' + error)
     location.replace(location.href.split('#/')[0] + '#/500')
-  }
-  if (error && error.response && error.response.config) {
-    removePending(error.response.config)
   }
   return Promise.reject(error)
 }
