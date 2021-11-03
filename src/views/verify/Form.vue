@@ -25,7 +25,9 @@ export default {
       return this.$axios.get('tm/api/DataFlows/findOne?filter=' + encodeURIComponent(JSON.stringify(params)))
     },
     metaDataFunc(params) {
-      return this.$axios.get('tm/api/MetadataInstances?filter=' + encodeURIComponent(JSON.stringify(params)))
+      return this.$axios.get(
+        'tm/api/MetadataInstances/findInspect?filter=' + encodeURIComponent(JSON.stringify(params))
+      )
     },
     submitFunc(id, params) {
       return this.$axios[id ? 'patch' : 'post']('tm/api/Inspects', params)
