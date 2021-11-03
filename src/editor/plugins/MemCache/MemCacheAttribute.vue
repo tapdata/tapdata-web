@@ -256,10 +256,11 @@ export default {
             .join(',')
           this.model.cacheKeys = primaryKeys || this.primaryKeyOptions[0] || ''
         }
-
-        // if (!window.App.$route.query.id) {
-        this.handelDuplicate(vueAdapter)
-        // }
+        this.$nextTick(() => {
+          if (!this.disabled) {
+            this.handelDuplicate(vueAdapter)
+          }
+        })
       }
       // this.cacheMap = map
       // this.config.items.find(it => it.field === 'cacheId').options = cacheList
@@ -339,12 +340,12 @@ export default {
       // handleconfirm(res.data[0].name, res.data[0].name)
       let where = {
         or: [
-          { 'stages.type': 'mem_cache', 'stages.name': this.model.name },
+          { 'stages.type': 'mem_cache', 'stages.name': this.model.cacheName },
           {
             'stages.type': 'mem_cache',
             'stages.cacheKeys': this.model.cacheKeys,
-            'stages.connectionId': this.model.cacheConnectionId,
-            'stages.tableName': this.model.cacheCocacheTableNamennectionId
+            'stages.cacheConnectionId': this.model.cacheConnectionId,
+            'stages.cacheTableName': this.model.cacheTableName
           }
         ]
       }
@@ -414,9 +415,6 @@ export default {
 
     nameHandler(val) {
       this.model.name = val
-    },
-
-    handleChangeName(val) {
       this.handelDuplicate(this.vueAdapter, val, '')
     },
 
