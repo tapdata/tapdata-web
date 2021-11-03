@@ -161,9 +161,9 @@
           >
           </el-switch>
         </el-form-item>
-        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="partitionId">
+        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="partitionIds">
           <el-select
-            v-model="model.partitionId"
+            v-model="model.partitionIds"
             default-first-option
             clearable
             :disabled="model.performanceMode"
@@ -272,7 +272,7 @@ export default {
         connectionId: '',
         type: 'kafka',
         tableName: '',
-        partitionId: '',
+        partitionIds: '',
         kafkaPartitionKey: '',
         isFirst: true,
         performanceMode: false,
@@ -357,10 +357,10 @@ export default {
       immediate: true,
       handler(val) {
         if (val) {
-          this.model.partitionId = 'all'
+          this.model.partitionIds = 'all'
           this.model.partitionIdSet = this.partitionSet || []
         } else {
-          this.model.partitionId = ''
+          this.model.partitionIds = ''
         }
       }
     }
@@ -421,7 +421,10 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         if (data.performanceMode) {
-          data.partitionId = 'all'
+          data.partitionIds = 'all'
+        }
+        if (data.partitionId) {
+          data.partitionIdSet = data.partitionId
         }
 
         this.scope = vueAdapter?.editor?.scope
@@ -462,13 +465,13 @@ export default {
       result.name = result.tableName || 'Kafka'
 
       if (!result.performanceMode) {
-        if (!result.partitionId) {
-          result.partitionIdSet = []
-        } else if (result.partitionId === 'all') {
-          result.partitionIdSet = this.partitionSet || []
+        if (!result.partitionIds || result.partitionIds === 'all') {
+          result.partitionIdSet = result.partitionIds === 0 ? [this.model.partitionIds] : []
         } else {
-          result.partitionIdSet = [this.model.partitionId]
+          result.partitionIdSet = [this.model.partitionIds]
         }
+      } else {
+        result.partitionIdSet = this.partitionSet || []
       }
 
       if (result.kafkaPartitionKey instanceof Array) {

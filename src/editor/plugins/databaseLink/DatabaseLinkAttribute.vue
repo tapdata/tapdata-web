@@ -317,6 +317,7 @@ export default {
           function: false,
           procedure: false
         }
+        }
       },
       topicSelected: [],
 
