@@ -996,7 +996,7 @@ export default {
     },
     //获取维格表的空间
     getSpaceVika(id) {
-      if(!this.model.plain_password || this.model.plain_password === ''){
+      if (!this.model.plain_password || this.model.plain_password === '') {
         return
       }
       let params = {
@@ -1236,9 +1236,9 @@ export default {
         }
         case 'set_space': {
           //映射可用区
-          let vika_space_name = items.find(it => it.field === 'vika_space_name')
-          if (vika_space_name) {
-            vika_space_name.options = data.map(item => {
+          let vika_space_id = items.find(it => it.field === 'vika_space_id')
+          if (vika_space_id) {
+            vika_space_id.options = data.map(item => {
               return {
                 id: item.id,
                 name: item.name,
