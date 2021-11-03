@@ -996,9 +996,12 @@ export default {
     },
     //获取维格表的空间
     getSpaceVika(id) {
+      if(!this.model.plain_password || this.model.plain_password === ''){
+        return
+      }
       let params = {
         load_type: 'space',
-        api_token: this.model.plain_password || '',
+        api_token: this.model.plain_password,
         connection_id: id || ''
       }
       this.$api('connections')

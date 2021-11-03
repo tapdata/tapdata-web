@@ -1,4 +1,4 @@
-export default function () {
+export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
@@ -10,6 +10,29 @@ export default function () {
     },
     items: [
       {
+        type: 'radio',
+        field: 'connection_type',
+        label: vm.$t('dataForm.form.connectionType'),
+        options: [
+          {
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+            value: 'source_and_target'
+          },
+          {
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
+            value: 'source'
+          },
+          {
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
+            value: 'target'
+          }
+        ],
+        required: true
+      },
+      {
         type: 'input',
         field: 'plain_password',
         label: '接口鉴权Token',
@@ -19,7 +42,7 @@ export default function () {
       },
       {
         type: 'select',
-        field: 'vika_space_name',
+        field: 'vika_space_id',
         label: '空间站名称',
         options: [],
         required: true
