@@ -450,7 +450,7 @@ export default {
       })
     },
     async test(data, isShowDialog = true) {
-      if (['gridfs', 'mongodb'].includes(data.database_type)) {
+      if (data && ['gridfs', 'mongodb'].includes(data.database_type)) {
         delete data.database_uri
         data.justTest = true
       }

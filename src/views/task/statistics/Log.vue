@@ -170,7 +170,7 @@ export default {
       }
     },
     changeType(value) {
-      console.log('changeType', value)
+      console.log('changeType', value) // eslint-disable-line
     }
   }
 }

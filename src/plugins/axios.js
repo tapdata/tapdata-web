@@ -13,18 +13,29 @@ let config = {
   // baseURL: ''
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
+  headers: {
+    'x-requested-with': 'XMLHttpRequest'
+  }
 }
+const _axios = axios.create(config)
+const pending = []
+const CancelToken = axios.CancelToken
+
 const getPendingKey = config => {
   let { url, method, data } = config
-  let headers = config.headers
+  let headers = {}
+  for (const key in config.headers) {
+    let value = config.headers[key]
+    if (Object.prototype.toString.call(value) === '[object String]' && !['Content-Type', 'Accept'].includes(key)) {
+      headers[key] = value
+    }
+  }
   data = Object.prototype.toString.call(data) === '[object String]' ? JSON.parse(data) : data
   let key = JSON.stringify({
     url,
     method,
     data,
-    header: {
-      'Pool-Id': headers['Pool-Id']
-    }
+    headers
   })
   return key
 }
@@ -52,11 +63,7 @@ const errorCallback = error => {
   }
   return Promise.reject(error)
 }
-const _axios = axios.create(config)
 
-const pending = []
-
-const CancelToken = axios.CancelToken
 _axios.interceptors.request.use(function (config) {
   // 本地开发使用header中加__token的方式绕过网关登录
   const ACCESS_TOKEN = process.env.VUE_APP_ACCESS_TOKEN || ''
@@ -70,12 +77,11 @@ _axios.interceptors.request.use(function (config) {
     config.headers['X-Token'] = user.token
   }
   config.withCredentials = true
-  config.headers['x-requested-with'] = 'XMLHttpRequest'
   let cancelFunc = null
   config.cancelToken = new CancelToken(c => {
     cancelFunc = c
   })
-  let key = JSON.stringify(config)
+  let key = getPendingKey(config)
   if (pending.includes(key)) {
     console.log('Cancel request:', config) //eslint-disable-line
     cancelFunc('cancel')

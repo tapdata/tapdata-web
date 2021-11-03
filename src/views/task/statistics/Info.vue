@@ -370,7 +370,7 @@ export default {
       })
     },
     edit() {
-      console.log('编辑')
+      console.log('编辑') // eslint-disable-line
     },
     async changeStatus({ status, errorEvents }) {
       let where = {

@@ -143,7 +143,6 @@ export default {
         this.$axios
           .get('tm/api/Messages?filter=' + encodeURIComponent(JSON.stringify(filter)))
           .then(data => {
-            debugger
             this.page.total = data.total
             let list = data.items || []
             this.list = list.map(this.formatData)
