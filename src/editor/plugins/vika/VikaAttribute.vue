@@ -151,7 +151,7 @@ export default {
       schemasLoading: false,
       mergedSchema: null,
       nodes: [],
-      vika_space_name: '',
+      vika_space_id: '',
       props: {
         label: 'name',
         children: 'children',
@@ -234,7 +234,7 @@ export default {
         .get([connectionId])
         .then(result => {
           if (result.data) {
-            this.vika_space_name = result.data?.vika_space_name
+            this.vika_space_id = result.data?.vika_space_id
             this.getSpaceVika()
           }
         })
@@ -342,7 +342,7 @@ export default {
     getSpaceVika() {
       let params = {
         load_type: 'node',
-        space_id: this.vika_space_name,
+        space_id: this.vika_space_id,
         connection_id: this.model.connectionId || ''
       }
       this.$api('connections')
@@ -364,7 +364,7 @@ export default {
       if (hasChild) {
         let params = {
           load_type: 'node',
-          space_id: this.vika_space_name,
+          space_id: this.vika_space_id,
           connection_id: this.model.connectionId || '',
           node_id: node.data.id
         }
