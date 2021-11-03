@@ -657,19 +657,19 @@ export default {
       if (data > 1000) {
         s = parseInt(data / 1000)
         ms = parseInt(data % 1000)
-        result = s + 's' + ms + 'ms'
+        result = s + 's'
         if (s > 60) {
           m = parseInt(s / 60)
           s = parseInt(s % 60)
-          result = m + 'm' + s + 's'
+          result = m + 'm'
           if (m > 60) {
             h = parseInt(m / 60)
             m = parseInt(m % 60)
-            result = h + 'h' + m + 'm'
+            result = h + 'h'
             if (h > 24) {
               d = parseInt(h / 24)
               h = parseInt(h % 24)
-              result = d + 'd' + h + 'h'
+              result = d + 'd'
             }
           }
         }
