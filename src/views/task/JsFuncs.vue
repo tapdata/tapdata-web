@@ -253,7 +253,6 @@ export default {
       let makeModel = (m, ast) => {
         let escodegen = require('escodegen')
         m.function_body = escodegen.generate(ast.body)
-        m.function_name = ast.id.name
         m.parameters = ast.params
           .map(function (p) {
             return p.name
@@ -267,6 +266,7 @@ export default {
         m.describe = model.describe
         m.return_value = model.return_value
         m.type = model.type
+        m.function_name = m.type === 'custom' ? ast.id.name : model.function_name
       }
       this.$refs.form.validate(valid => {
         if (!valid) {
