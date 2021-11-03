@@ -81,32 +81,36 @@
             </el-tooltip>
           </div>
         </el-form-item>
+        <el-form-item>
+          <div class="flex-block fr" v-if="model.connectionId && model.tableName">
+            <el-button
+              class="fr"
+              type="success"
+              size="mini"
+              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+              @click="hanlderLoadSchema"
+            >
+              <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
+              <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+              <span v-else>{{ $t('dataFlow.updateModel') }}</span>
+            </el-button>
+            <FieldMapping
+              v-else
+              ref="fieldMapping"
+              class="fr"
+              :dataFlow="dataFlow"
+              :showBtn="true"
+              :isFirst="model.isFirst"
+              :isDisable="disabled"
+              :hiddenFieldProcess="true"
+              :stageId="stageId"
+              @update-first="returnModel"
+            ></FieldMapping>
+          </div>
+        </el-form-item>
       </el-form>
     </div>
-    <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
-      <el-button
-        class="fr"
-        type="success"
-        size="mini"
-        v-if="!dataNodeInfo.isTarget || !showFieldMapping"
-        @click="hanlderLoadSchema"
-      >
-        <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
-        <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
-        <span v-else>{{ $t('dataFlow.updateModel') }}</span>
-      </el-button>
-      <FieldMapping
-        v-else
-        ref="fieldMapping"
-        class="fr"
-        :dataFlow="dataFlow"
-        :showBtn="true"
-        :isFirst="model.isFirst"
-        :isDisable="disabled"
-        :hiddenFieldProcess="true"
-        :stageId="stageId"
-        @update-first="returnModel"
-      ></FieldMapping>
+    <div class="e-entity-wrap" style="text-align: center; overflow: auto">
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
     <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
