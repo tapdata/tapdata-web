@@ -212,7 +212,7 @@ export default {
                 : {
                     table_name: this.model.tableName,
                     cdc_enabled: true,
-                    meta_type: 'kudu',
+                    meta_type: 'Vika',
                     fields: []
                   }
             this.$emit('schemaChange', _.cloneDeep(schema))
@@ -271,7 +271,7 @@ export default {
 
     getData() {
       let result = _.cloneDeep(this.model)
-      result.name = result.tableName || 'KUDU'
+      result.name = result.tableName || 'Vika'
       return result
     },
 
@@ -345,21 +345,14 @@ export default {
         space_id: this.vika_space_name,
         connection_id: this.model.connectionId || ''
       }
-      this.nodes = [
-        {
-          id: 'fodZao6a66HV4',
-          name: '维格产品手册',
-          type: 'Folder',
-          icon: '📂',
-          fav: null
-        }
-      ]
-      // this.$api('connections')
-      //   .getSpace(params)
-      //   .then(data => {
-      //     console.log(data.data)
-      //     this.nodes = data.data
-      //   })
+      this.$api('connections')
+        .getSpace(params)
+        .then(data => {
+          this.nodes = data.data
+        })
+        .catch(() => {
+          this.$message.error('接口请求失败')
+        })
     },
     loadNode(node, resolve) {
       var hasChild
