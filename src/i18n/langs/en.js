@@ -1,4 +1,7 @@
 export default {
+  // 通用按钮
+  button_edit: 'edit',
+
   // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',
@@ -61,5 +64,40 @@ export default {
   task_job_setting_tip_title: 'Set reminder',
   task_job_setting_disable: 'Do not de-duplicate',
   task_job_tip_text:
-    'The setting of the cache node (xxx) already exists in the task (###), please confirm whether to continue to create it? '
+    'The setting of the cache node (xxx) already exists in the task (###), please confirm whether to continue to create it? ',
+  data_flow_automatically: 'automatically',
+  data_flow_manually: 'manually',
+  data_flow_oracle_logminer: 'Oracle Logminer Mode',
+
+  // Function management
+  function_tips_empty: 'Code lacks JS functions',
+  function_checkbox_Line_number: 'Display line number',
+  function_button_create: 'Create',
+  function_button_edit: 'Edit',
+  function_tips_name_repeat: 'Method name repeat',
+  function_button_code_format: 'Format code',
+  function_last_update_label: 'Update time',
+  function_parameters_label: 'Parameters',
+  function_type_label: 'Function type',
+  function_type_option_custom: 'Custom function',
+  function_type_option_jar: 'Third-party jar package',
+  function_name_label: 'Function name',
+  function_name_placeholder: 'Please enter the function name',
+  function_class_label: 'Class name',
+  function_class_placeholder:
+    'Please enter the class name, UDF function class name, the format is resource name. Class name',
+  function_file_label: 'jar file',
+  function_button_file_upload: 'Click to upload',
+  function_file_upload_tips: 'Please upload the jar package file',
+  function_file_upload_success: 'Upload successful',
+  function_file_upload_fail: 'Upload failed',
+  function_body_label: 'Function body',
+  function_body_placeholder: 'Please enter the command format, which is an example of the specific usage of this UDF',
+  function_parameters_describe_label: 'Parameter description',
+  function_parameters_describe_placeholder:
+    'Support input parameter types and specific description of return parameter types',
+  function_return_value_label: 'Return value',
+  function_return_value_placeholder: 'Please enter the return value',
+  function_describe_label: 'Description',
+  function_describe_placeholder: 'Please enter a description'
 }

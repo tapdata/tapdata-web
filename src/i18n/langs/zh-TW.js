@@ -1,4 +1,7 @@
 export default {
+  // 通用按钮
+  button_edit: '編輯',
+
   // 数据校验
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',
@@ -57,5 +60,38 @@ export default {
   // 緩存節點提示
   task_job_setting_tip_title: '設置提醒',
   task_job_setting_disable: '不去重',
-  task_job_tip_text: '該緩存節點(xxx)的設置已存在於任務(###)中，請確認是否還繼續創建？ '
+  task_job_tip_text: '該緩存節點(xxx)的設置已存在於任務(###)中，請確認是否還繼續創建？ ',
+  data_flow_automatically: '自動挖掘',
+  data_flow_manually: '手動挖掘',
+  data_flow_oracle_logminer: 'Oracle日誌挖掘模式',
+
+  // 函数管理
+  function_tips_empty: '代碼缺少JS函數',
+  function_checkbox_Line_number: '顯示行號',
+  function_button_create: '創建',
+  function_button_edit: '編輯',
+  function_tips_name_repeat: '方法名稱重複',
+  function_button_code_format: '格式化代碼',
+  function_last_update_label: '更新時間',
+  function_parameters_label: '參數',
+  function_type_label: '函數類型',
+  function_type_option_custom: '自定義函數',
+  function_type_option_jar: '第三方jar包',
+  function_name_label: '函數名稱',
+  function_name_placeholder: '請輸入函數名稱',
+  function_class_label: '類名',
+  function_class_placeholder: '請輸入類名，UDF函數的類名，格式為資源名.類名',
+  function_file_label: 'jar文件',
+  function_button_file_upload: '點擊上傳',
+  function_file_upload_tips: '請上傳jar包文件',
+  function_file_upload_success: '上傳成功',
+  function_file_upload_fail: '上傳失敗',
+  function_body_label: '函數體',
+  function_body_placeholder: '請輸入命令格式，為該UDF的具體使用方法示例',
+  function_parameters_describe_label: '參數說明',
+  function_parameters_describe_placeholder: '支持輸入的參數類型以及返回參數類型的具體說明',
+  function_return_value_label: '返回值',
+  function_return_value_placeholder: '請輸入返回值',
+  function_describe_label: '描述',
+  function_describe_placeholder: '請輸入描述'
 }
