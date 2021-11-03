@@ -276,7 +276,8 @@ export const defaultModel = {
     database_type: '',
     connection_type: '',
     plain_password: '',
-    vika_space_name: ''
+    vika_space_name: '',
+    vika_space_id: ''
   }
 }
 export const defaultCloudModel = {
