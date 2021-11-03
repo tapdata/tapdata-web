@@ -209,6 +209,7 @@ export const defaultModel = {
     custom_type: '',
     collection_name: '',
     unique_keys: '',
+    jsEngineName: 'graal.js',
     custom_ondata_script: '',
     custom_cdc_script: '',
     custom_initial_script: '',
