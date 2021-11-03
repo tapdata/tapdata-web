@@ -1,4 +1,7 @@
 export default {
+  // 通用按钮
+  button_edit: '编辑',
+
   // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',
@@ -41,21 +44,6 @@ export default {
   // 路由名
   app_menu_jsFuncs: '函数',
 
-  // 函数
-  js_func_name: '函数名',
-  js_func_parameters: '参数',
-  js_func_function_body: '函数体',
-  js_func_last_update: '更新时间',
-  js_func_create: '创建',
-  js_func_function_name_repeat: '方法名称重复',
-  js_func_dialog_format: '格式化代码',
-  js_func_dialog_code: 'Javascript函数代码',
-  js_func_dialog_Linenumbers: '显示行号',
-  js_func_dialog_nofunctions: '代码缺少JS函数',
-  js_func_dialog_create_title: '新增记录',
-  js_func_dialog_edit_title: '更新记录',
-  js_func_delete_remind: '确定要删除函数',
-
   // Dag
   dag_data_node_label_dameng: 'Dameng节点',
   dag_data_node_label_database_link_table: '表名大小写',
@@ -76,5 +64,38 @@ export default {
   // 缓存节点提示
   task_job_setting_tip_title: '设置提醒',
   task_job_setting_disable: '不去重',
-  task_job_tip_text: '该缓存节点(xxx)的设置已存在于任务(###)中，请确认是否还继续创建？'
+  task_job_tip_text: '该缓存节点(xxx)的设置已存在于任务(###)中，请确认是否还继续创建？',
+  data_flow_automatically: '自动挖掘',
+  data_flow_manually: '手动挖掘',
+  data_flow_oracle_logminer: 'Oracle日志挖掘模式',
+
+  // 函数管理
+  function_tips_empty: '代码缺少JS函数',
+  function_checkbox_Line_number: '显示行号',
+  function_button_create: '创建',
+  function_button_edit: '编辑',
+  function_tips_name_repeat: '方法名称重复',
+  function_button_code_format: '格式化代码',
+  function_last_update_label: '更新时间',
+  function_parameters_label: '参数',
+  function_type_label: '函数类型',
+  function_type_option_custom: '自定义函数',
+  function_type_option_jar: '第三方jar包',
+  function_name_label: '函数名称',
+  function_name_placeholder: '请输入函数名称',
+  function_class_label: '类名',
+  function_class_placeholder: '请输入类名，UDF函数的类名，格式为资源名.类名',
+  function_file_label: 'jar文件',
+  function_button_file_upload: '点击上传',
+  function_file_upload_tips: '请上传jar包文件',
+  function_file_upload_success: '上传成功',
+  function_file_upload_fail: '上传失败',
+  function_body_label: '函数体',
+  function_body_placeholder: '请输入命令格式，为该UDF的具体使用方法示例',
+  function_parameters_describe_label: '参数说明',
+  function_parameters_describe_placeholder: '支持输入的参数类型以及返回参数类型的具体说明',
+  function_return_value_label: '返回值',
+  function_return_value_placeholder: '请输入返回值',
+  function_describe_label: '描述',
+  function_describe_placeholder: '请输入描述'
 }

@@ -10,13 +10,13 @@
       <div slot="operation">
         <el-button class="btn btn-create" type="primary" size="mini" @click="openCreateDialog">
           <i class="iconfont icon-jia add-btn-icon"></i>
-          <span>{{ $t('js_func_create') }}</span>
+          <span>{{ $t('function_button_create') }}</span>
         </el-button>
       </div>
-      <el-table-column :label="$t('js_func_name')" prop="function_name"> </el-table-column>
-      <el-table-column :label="$t('js_func_parameters')" prop="parameters"> </el-table-column>
-      <el-table-column :label="$t('js_func_function_body')" prop="function_body"> </el-table-column>
-      <el-table-column :label="$t('js_func_last_update')" prop="last_updated"> </el-table-column>
+      <el-table-column :label="$t('function_name_label')" prop="function_name"> </el-table-column>
+      <el-table-column :label="$t('function_parameters_label')" prop="parameters"> </el-table-column>
+      <el-table-column :label="$t('function_body_label')" prop="function_body"> </el-table-column>
+      <el-table-column :label="$t('function_last_update_label')" prop="last_updated"> </el-table-column>
 
       <el-table-column :label="$t('timeToLive.header.operate')">
         <template slot-scope="scope">
@@ -35,52 +35,63 @@
       :visible.sync="createDialogVisible"
     >
       <el-form ref="form" label-width="100px" label-position="left" :model="model" :rules="rules">
-        <el-form-item label="函数类型：">
+        <el-form-item :label="$t('function_type_label') + ':'">
           <el-select v-model="model.type" size="small">
-            <el-option label="自定义函数" value="custom"></el-option>
-            <el-option label="第三方jar包" value="jar"></el-option>
+            <el-option :label="$t('function_type_option_custom')" value="custom"></el-option>
+            <el-option :label="$t('function_type_option_jar')" value="jar"></el-option>
           </el-select>
         </el-form-item>
         <div v-show="model.type === 'jar'">
-          <el-form-item label="函数名称：" prop="function_name">
-            <el-input v-model="model.function_name" size="small" placeholder="请输入函数名称"></el-input>
-          </el-form-item>
-          <el-form-item label="类名：" prop="className">
+          <el-form-item prop="function_name" :label="$t('function_name_label') + ':'">
             <el-input
-              v-model="model.className"
+              v-model="model.function_name"
               size="small"
-              placeholder="请输入类名，UDF函数的类名，格式为资源名.类名"
+              :placeholder="$t('function_name_placeholder')"
             ></el-input>
           </el-form-item>
-          <el-form-item label="jar文件：" prop="fileId">
+          <el-form-item prop="className" :label="$t('function_class_label') + ':'">
+            <el-input v-model="model.className" size="small" :placeholder="$t('function_class_placeholder')"></el-input>
+          </el-form-item>
+          <el-form-item prop="fileId" :label="$t('function_file_label') + ':'">
             <el-upload action="api/file/upload" :file-list="fileList" :on-change="fileChange" :on-remove="fileRemove">
-              <el-button style="margin-right: 10px" size="small" type="primary">点击上传</el-button>
+              <el-button style="margin-right: 10px" size="small" type="primary">{{
+                $t('function_button_file_upload')
+              }}</el-button>
             </el-upload>
           </el-form-item>
-          <el-form-item label="命令格式：">
+          <!-- <el-form-item :label="$t('function_body_label') + ':'">
             <el-input
               v-model="model.function_body"
               size="small"
-              placeholder="请输入命令格式，为该UDF的具体使用方法示例"
+              :placeholder="$t('function_body_placeholder')"
             ></el-input>
           </el-form-item>
-          <el-form-item label="参数说明：">
+          <el-form-item :label="$t('function_parameters_describe_label') + ':'">
             <el-input
               v-model="model.parameters"
               size="small"
-              placeholder="支持输入的参数类型以及返回参数类型的具体说明"
+              :placeholder="$('function_parameters_describe_placeholder')"
             ></el-input>
           </el-form-item>
-          <el-form-item label="返回值：">
-            <el-input v-model="model.return_value" size="small" placeholder="请输入返回值"></el-input>
-          </el-form-item>
+          <el-form-item :label="$t('function_return_value_label') + ':'">
+            <el-input
+              v-model="model.return_value"
+              size="small"
+              :placeholder="$t('function_return_value_placeholder')"
+            ></el-input>
+          </el-form-item> -->
         </div>
-        <el-form-item label="描述：">
-          <el-input v-model="model.describe" type="textarea" size="small" placeholder="请输入描述"></el-input>
-        </el-form-item>
+        <!-- <el-form-item :label="$t('function_describe_label') + ':'">
+          <el-input
+            v-model="model.describe"
+            type="textarea"
+            size="small"
+            :placeholder="$t('function_describe_placeholder')"
+          ></el-input>
+        </el-form-item> -->
         <el-form-item v-if="model.type === 'custom'">
           <el-checkbox v-model="lineNumbers" class="e-checkbox" @input="showGutter">{{
-            $t('js_func_dialog_Linenumbers')
+            $t('function_checkbox_Line_number')
           }}</el-checkbox>
           <CodeEditor v-model="model.jsonDoc" ref="editor" lang="javascript" height="300"></CodeEditor>
           <ul v-if="jsonDocHint.length > 0">
@@ -91,7 +102,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button v-if="model.type === 'custom'" type="primary" size="small" @click="format">{{
-          $t('js_func_dialog_format')
+          $t('function_button_code_format')
         }}</el-button>
         <el-button
           @click="
@@ -136,9 +147,9 @@ export default {
       },
       lineNumbers: true,
       rules: {
-        function_name: [{ required: true, message: '请输入函数名称' }],
-        className: [{ required: true, message: '请输入类名' }],
-        fileId: [{ required: true, message: '请上传jar包' }]
+        function_name: [{ required: true, message: this.$t('function_name_placeholder') }],
+        className: [{ required: true, message: this.$t('function_class_placeholder') }],
+        fileId: [{ required: true, message: this.$t('function_file_upload_tips') }]
       },
       uploadFileName: '',
       fileList: []
@@ -162,13 +173,13 @@ export default {
       if (file.response) {
         let code = file.response.code
         if (code === 'ok') {
-          this.$message.success('上传成功')
+          this.$message.success(this.$t('function_file_upload_success'))
           this.model.fileId = file.response.data.id
         }
         this.fileList = [file]
       }
       if (file.status === 'fail') {
-        this.$message.error('上传失败')
+        this.$message.error(this.$t('function_file_upload_fail'))
       }
     },
     showGutter(val) {
@@ -197,7 +208,7 @@ export default {
     },
     // 创建
     openCreateDialog() {
-      this.dialogTitle = this.$t('js_func_dialog_create_title')
+      this.dialogTitle = this.$t('function_button_create')
       let code = `function f${this.$util.uuid().slice(0, 8)} () {}`
       this.model = {
         type: 'custom',
@@ -218,7 +229,7 @@ export default {
       this.editDocId = item.id
       this.jsonDocHint.splice(0, this.jsonDocHint.length)
       this.format()
-      this.dialogTitle = this.$t('js_func_dialog_edit_title')
+      this.dialogTitle = this.$t('button_edit')
       let code = `function ${item.function_name} (${item.parameters}) ${item.function_body}`
       this.model.jsonDoc = code
       let { function_name, className, fileId, describe, function_body, parameters, return_value } = item
@@ -238,6 +249,24 @@ export default {
     },
     // 保存
     createSave() {
+      let makeModel = (m, ast) => {
+        let escodegen = require('escodegen')
+        m.function_body = escodegen.generate(ast.body)
+        m.function_name = ast.id.name
+        m.parameters = ast.params
+          .map(function (p) {
+            return p.name
+          })
+          .join()
+        m.last_updated = new Date()
+        m.user_id = uid
+        let model = this.model
+        m.className = model.className
+        m.fileId = model.fileId
+        m.describe = model.describe
+        m.return_value = model.return_value
+        m.type = model.type
+      }
       this.$refs.form.validate(valid => {
         if (!valid) {
           return
@@ -254,7 +283,7 @@ export default {
           let funcsMatches = esquery.match(allAst, funcsSelector)
 
           if (funcsMatches.length == 0) {
-            this.jsonDocHint.push(this.$t('js_func_dialog_nofunctions'))
+            this.jsonDocHint.push(this.$t('function_tips_empty'))
             return
           }
 
@@ -287,7 +316,7 @@ export default {
             })
           }
           if (doubleName.length > 0) {
-            this.jsonDocHint.push(this.$t('js_func_function_name_repeat') + ':' + doubleName.join(','))
+            this.jsonDocHint.push(this.$t('function_tips_name_repeat') + ':' + doubleName.join(','))
             return
           }
 
@@ -306,26 +335,7 @@ export default {
             })
           this.createDialogVisible = false
         } else {
-          this.jsonDocHint.push(this.$t('js_func_dialog_nofunctions'))
-        }
-
-        function makeModel(m, ast) {
-          let escodegen = require('escodegen')
-          m.function_body = escodegen.generate(ast.body)
-          m.function_name = ast.id.name
-          m.parameters = ast.params
-            .map(function (p) {
-              return p.name
-            })
-            .join()
-          m.last_updated = new Date()
-          m.user_id = uid
-          let model = this.model
-          m.className = model.className
-          m.fileId = model.fileId
-          m.describe = model.describe
-          m.return_value = model.return_value
-          m.type = model.type
+          this.jsonDocHint.push(this.$t('function_tips_empty'))
         }
       })
     },
@@ -362,11 +372,6 @@ export default {
       }
       return false
     }
-    // // 表格排序
-    // handleSortTable({ order, prop }) {
-    //   this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
-    //   this.table.fetch(1)
-    // }
   }
 }
 </script>
