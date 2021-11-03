@@ -1,5 +1,5 @@
 <template>
-  <section class="connection-wrapper main-container" v-loading="loading" v-if="$route.name === 'Connection'">
+  <section class="connection-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Connection'">
     <div class="main">
       <div class="connection-operation">
         <div class="connection-operation-left">
@@ -40,7 +40,7 @@
       >
         <ElTableColumn label="连接名" prop="name" min-width="200px">
           <template slot-scope="scope">
-            <div class="flex flex-row align-items-center p-2">
+            <div class="flex flex-row align-items-center p-2" style="height: 50px">
               <img
                 class="mr-2"
                 style="width: 24px; height: 24px"
@@ -161,8 +161,6 @@
     font-size: 16px;
   }
   .main {
-    padding: 20px;
-    background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -186,7 +184,6 @@
       cursor: unset;
     }
     .operate-columns {
-      line-height: 14px;
       .el-button {
         padding: 0;
         & + .el-button {

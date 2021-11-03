@@ -8,6 +8,8 @@ import ContactUs from '@/views/ContactUs'
 
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
 const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/Details.vue')
+// const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/Task/SubtaskDetails.vue')
+const TaskStatistics = () => import(/* webpackChunkName: "task-form" */ '../views/task/statistics/Index.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
 
 const routes = [
@@ -142,6 +144,14 @@ const routes = [
             path: ':id/details',
             name: 'DataflowDetails',
             component: TaskDetails,
+            meta: {
+              title: '任务详情'
+            }
+          },
+          {
+            path: ':id/statistics',
+            name: 'DataflowStatistics',
+            component: TaskStatistics,
             meta: {
               title: '任务详情'
             }

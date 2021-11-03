@@ -186,6 +186,21 @@ th {
 .el-tooltip__popper.is-dark {
   line-height: 20px;
   background: rgba(0, 0, 0, 0.7);
+  &[x-placement^='top'] .popper__arrow {
+    border-top-color: rgba(0, 0, 0, 0.7);
+  }
+  &[x-placement^='bottom'] .popper__arrow {
+    border-bottom-color: rgba(0, 0, 0, 0.7);
+  }
+  &[x-placement^='left'] .popper__arrow {
+    border-left-color: rgba(0, 0, 0, 0.7);
+  }
+  &[x-placement^='right'] .popper__arrow {
+    border-right-color: rgba(0, 0, 0, 0.7);
+  }
+  .popper__arrow:after {
+    opacity: 0;
+  }
 }
 .el-button {
   font-weight: normal;
@@ -320,67 +335,75 @@ th {
 }
 .el-table {
   color: map-get($fontColor, normal);
-}
-.el-table::before {
-  display: none;
-}
-.el-table.table-border {
-  border: none;
-}
-.el-table.table-border::before {
-  display: block;
-}
-.el-table .el-table__header-wrapper {
-  border-radius: 4px 4px 0 0;
-}
-.el-table thead {
-  color: map-get($fontColor, normal);
-}
-.el-table th.el-table__cell {
-  background-color: #fafafa;
-  &.el-table__cell.is-leaf {
-    border-bottom: 0;
+  &::before {
+    display: none;
   }
-  & > .cell {
-    font-size: 14px;
-    color: map-get($fontColor, main);
+  &.el-table--small td {
+    padding: 5px 0;
   }
-}
-.el-table .el-table__fixed-right-patch {
-  background-color: #fafafa;
-}
-.el-table td,
-.el-table th.is-leaf {
-  border-bottom: none;
-}
-.el-table.table-border th {
-  padding: 0;
-  height: 54px;
-}
-.el-table.table-border td {
-  border-bottom: 1px solid #eceef1;
-}
-.el-table--small td {
-  padding: 5px 0;
-}
-.el-table .el-table__cell {
-  .cell {
-    line-height: 30px;
-  }
-  &:first-child {
-    > .cell {
-      padding-left: 24px;
+  &.table-border {
+    border: none;
+    &::before {
+      display: block;
+    }
+    &.el-table--enable-row-hover .el-table__body tr:hover > td {
+      background-color: inherit;
+    }
+    th {
+      padding: 0;
+      height: 54px;
+    }
+    td {
+      border-bottom: 1px solid #eceef1;
     }
   }
-  &:last-child {
-    > .cell {
-      padding-right: 24px;
+  &.el-table--enable-row-hover {
+    .el-table__body {
+      tr:hover > td.el-table__cell {
+        background-color: #eff1f4;
+      }
     }
   }
-}
-
-.table-border.el-table--enable-row-hover .el-table__body tr:hover > td {
-  background-color: inherit;
+  .el-table__header-wrapper {
+    border-radius: 4px 4px 0 0;
+  }
+  thead {
+    color: map-get($fontColor, normal);
+  }
+  th {
+    &.el-table__cell {
+      background-color: #fafafa;
+      &.el-table__cell.is-leaf {
+        border-bottom: 0;
+      }
+      & > .cell {
+        font-size: 14px;
+        color: map-get($fontColor, main);
+      }
+    }
+  }
+  td,
+  th.is-leaf {
+    border-bottom: none;
+  }
+  .el-table__cell {
+    .cell {
+      line-height: 30px;
+    }
+    &:first-child {
+      > .cell {
+        padding-left: 24px;
+      }
+    }
+    &:last-child {
+      > .cell {
+        padding-right: 24px;
+      }
+    }
+  }
+  .el-table__fixed-right-patch {
+    background-color: #fafafa;
+  }
 }
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   background-color: map-get($color, primary);
@@ -519,42 +542,79 @@ th {
 }
 // 步骤条
 .el-steps {
-  .el-step__head {
-    border-color: rgba(0, 0, 0, 0.25);
-    color: rgba(0, 0, 0, 0.25);
-    &.is-process {
-      border-color: rgba(44, 101, 255, 1);
-      color: rgba(44, 101, 255, 1);
-    }
-    &.is-success {
-      border-color: rgba(44, 101, 255, 1);
-      color: rgba(44, 101, 255, 1);
+  &.primary {
+    .el-step__head {
+      border-color: rgba(0, 0, 0, 0.25);
+      color: rgba(0, 0, 0, 0.25);
+      &.is-process {
+        border-color: rgba(44, 101, 255, 1);
+        color: rgba(44, 101, 255, 1);
+      }
+      &.is-success {
+        border-color: rgba(44, 101, 255, 1);
+        color: rgba(44, 101, 255, 1);
+        .el-step__line {
+          background-color: rgba(44, 101, 255, 0.05);
+        }
+      }
       .el-step__line {
-        background-color: rgba(44, 101, 255, 0.05);
+        height: 5px;
+        top: 9px;
+        left: 57%;
+        right: -43%;
+        background-color: rgba(1, 1, 1, 0.05);
+        .el-step__line-inner {
+          display: none;
+        }
+      }
+      .el-step__icon {
+        border: 1px solid #2c65ff;
+        .el-step__icon-inner {
+          font-weight: normal;
+          color: #2c65ff;
+        }
       }
     }
-    .el-step__line {
-      height: 5px;
-      top: 9px;
-      left: 57%;
-      right: -43%;
-      background-color: rgba(1, 1, 1, 0.05);
-      .el-step__line-inner {
-        display: none;
-      }
-    }
-    .el-step__icon {
-      border: 1px solid #2c65ff;
-      .el-step__icon-inner {
-        font-weight: normal;
-        color: #2c65ff;
-      }
+    .el-step__title {
+      font-size: 14px;
+      font-weight: normal;
+      color: #000;
     }
   }
-  .el-step__title {
-    font-size: 14px;
-    font-weight: normal;
-    color: #000;
+  &.mini {
+    .el-step__icon {
+      &.is-icon {
+        width: 12px;
+      }
+    }
+    .el-step__icon-inner {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .el-step__icon-inner {
+      background-color: map-get($color, disable);
+    }
+    .is-finish {
+      .el-step__icon-inner {
+        background-color: map-get($color, primary);
+      }
+    }
+    .el-step__title {
+      font-size: 14px;
+      &.is-wait {
+        color: map-get($fontColor, disable);
+      }
+      &.is-process {
+        color: map-get($fontColor, disable);
+      }
+      &.is-finish {
+        color: map-get($fontColor, main);
+      }
+    }
+    .el-step__description {
+      color: map-get($fontColor, disable);
+    }
   }
 }
 
@@ -654,4 +714,10 @@ th {
 .el-switch.is-checked .el-switch__core {
   border-color: map-get($color, primary);
   background-color: map-get($color, primary);
+}
+// 进度条
+.el-progress {
+  .el-progress-bar__inner {
+    background-color: map-get($color, primary);
+  }
 }

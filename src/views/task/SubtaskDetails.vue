@@ -1,33 +1,30 @@
 <template>
   <el-container v-loading="loading" class="task-details-container flex-column">
-    <div class="task-info flex justify-content-between bg-white p-6">
-      <div class="task-info__left flex align-items-center">
-        <div class="task-info__img flex justify-center align-items-center mr-8">
+    <div class="task-info bg-white p-6">
+      <div class="flex justify-content-between">
+        <div class="task-info__left flex align-items-center">
+          <!-- <div class="task-info__img flex justify-center align-items-center mr-8">
           <img src="../../../public/images/task/task.png" alt="" />
-        </div>
-        <div>
+        </div> -->
           <div>
-            <span class="fs-6 color-primary">{{ task.name }}</span>
-            <StatusTag
-              v-if="task.status"
-              type="text"
-              target="task"
-              :status="task.status"
-              only-img
-              class="ml-6"
-            ></StatusTag>
-          </div>
-          <div class="flex align-items-center mt-4" style="height: 30px">
-            <div
-              v-for="(item, index) in infoItems"
-              :key="index"
-              :class="['flex', 'align-items-center', { 'ml-6': index !== 0 }]"
-            >
-              <VIcon size="12" class="v-icon">{{ item.icon }}</VIcon>
-              <span class="ml-1">{{ item.label }}</span>
-              <span>{{ task[item.key] }}</span>
+            <div>
+              <span class="fs-6 color-primary">{{ task.name }}</span>
+              <StatusTag
+                v-if="task.status"
+                type="text"
+                target="task"
+                :status="task.status"
+                only-img
+                class="ml-6"
+              ></StatusTag>
+              <span v-for="(item, index) in infoItems" :key="index" :class="['align-items-center', 'ml-6']">
+                <VIcon size="12" class="v-icon">{{ item.icon }}</VIcon>
+                <span class="ml-1">{{ item.label }}</span>
+                <span>{{ task[item.key] }}</span>
+              </span>
             </div>
-            <div class="ml-6 flex align-items-center">
+            <!-- <div class="flex align-items-center mt-4" style="height: 30px"> -->
+            <!-- <div class="ml-6 flex align-items-center">
               <VIcon size="12" class="v-icon">document</VIcon>
               <span class="ml-1">描述：</span>
               <InlineInput
@@ -39,100 +36,151 @@
                 type="icon"
                 @save="updateDesc($event, task.id)"
               ></InlineInput>
-            </div>
+            </div> -->
+            <!-- </div> -->
           </div>
-          <div class="operation-row mt-4">
-            <!--            <ElButton type="primary" size="mini">启动</ElButton>-->
-            <!--            <ElButton size="mini">停止</ElButton>-->
-            <!--            <ElButton size="mini">重置</ElButton>-->
-            <!--            <ElButton size="mini">强制停止</ElButton>-->
-            <VButton type="primary">编辑</VButton>
-            <VButton
-              type="primary"
-              :disabled="!statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)"
-              :loading="loadingObj.start"
-              @click="start($route.params.id)"
-              >启动</VButton
-            >
-            <VButton
+        </div>
+        <div class="task-info__right flex operation-row">
+          <!--            <ElButton type="primary" size="mini">启动</ElButton>-->
+          <!--            <ElButton size="mini">停止</ElButton>-->
+          <!--            <ElButton size="mini">重置</ElButton>-->
+          <!--            <ElButton size="mini">强制停止</ElButton>-->
+
+          <VButton
+            type="primary"
+            :disabled="!statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)"
+            :loading="loadingObj.start"
+            @click="start($route.params.id)"
+            >启动</VButton
+          >
+          <!-- <VButton
               v-if="task.status === 'stopping'"
               :disabled="!statusBtMap['forceStop'][task.status]"
               :loading="loadingObj.forceStop"
               @click="forceStop($route.params.id)"
               >强制停止</VButton
-            >
-            <VButton
-              v-else
-              :disabled="!statusBtMap['stop'][task.status]"
-              :loading="loadingObj.stop"
-              @click="stop($route.params.id)"
-              >停止</VButton
-            >
-            <VButton
+            > -->
+          <VButton
+            type="danger"
+            :disabled="!statusBtMap['stop'][task.status]"
+            :loading="loadingObj.stop"
+            @click="stop($route.params.id)"
+            >停止</VButton
+          >
+          <VButton>编辑</VButton>
+          <!-- <VButton
               :disabled="!statusBtMap['reset'][task.status]"
               :loading="loadingObj.reset"
               @click="reset($route.params.id)"
               >重置</VButton
-            >
+            > -->
+        </div>
+      </div>
+
+      <div class="flex mt-6">
+        <div class="task-info__left w-25">
+          <span
+            v-for="(item, index) in ouputItems"
+            :key="index"
+            :class="('align-items-center', { 'inline-block': [2, 3, 4].includes(index) })"
+          >
+            <div v-if="index === 0">
+              <span class="fs-8">总输出</span>
+              <span class="ml-4 fs-4 fw-bolder">{{ task[item.key] || 0 }}</span>
+            </div>
+            <div v-else-if="index === 1">
+              <span class="fs-8">总输入</span>
+              <span class="ml-4 fs-4 fw-bolder">{{ task[item.key] || 0 }}</span>
+            </div>
+            <template v-else>
+              <div :class="['align-items-center', 'mt-3', 'fs-8', { 'ml-6': index !== 2 }]">{{ item.label }}</div>
+              <div :class="['fw-bolder', 'text-center', 'mt-2', 'fs-6', { 'ml-6': index !== 2 }]">
+                {{ task[item.key] || 0 }}
+              </div>
+            </template>
+          </span>
+        </div>
+        <div class="task-info__right w-75">
+          <div class="task-chart__item">
+            <EchartHeader :data="throughputObj.title" @change="changeHeaderFnc"></EchartHeader>
+            <!-- <div class="floatLayer">
+              <span style="background-color: rgba(72, 182, 226, 0.3); color: #409eff"
+                >{{ $t('dataFlow.input') }}:<span class="ml-1">{{ throughputObj.input }}</span></span
+              >
+              <span style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
+                >{{ $t('dataFlow.output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
+              >
+            </div> -->
+            <VEchart :option="throughputObj.body" class="v-echart"></VEchart>
           </div>
         </div>
       </div>
-      <div class="task-info__right flex align-items-center">
-        <div v-for="(item, index) in ouputItems" :key="index" class="flex align-items-center ml-6">
+      <!-- <div class="task-info__right align-items-center ml-6">
+        <div v-for="(item, index) in ouputItems" :key="index" class="flex align-items-center">
           <span>{{ item.label }}</span>
           <span class="ml-4 fs-4 color-primary fw-bolder">{{ task[item.key] || 0 }}</span>
         </div>
       </div>
+      <div class="task-chart__item">
+        <EchartHeader :data="throughputObj.title" @change="changeHeaderFnc"></EchartHeader>
+        <div class="floatLayer">
+          <span style="background-color: rgba(72, 182, 226, 0.3); color: #409eff"
+            >{{ $t('dataFlow.input') }}:<span class="ml-1">{{ throughputObj.input }}</span></span
+          >
+          <span style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
+            >{{ $t('dataFlow.output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
+          >
+        </div>
+        <VEchart :option="throughputObj.body" class="v-echart"></VEchart>
+      </div> -->
     </div>
     <div class="sub-task flex-fill mt-6 p-6 bg-white">
-      <ElTabs v-model="activeTab" class="dashboard-tabs flex flex-column overflow-hidden h-100">
-        <ElTabPane label="子任务" name="subTask" class="h-100">
-          <div slot="label">
-            <span class="mr-2">子任务</span>
-            <ElTooltip
-              placement="top"
-              content="在Tapdata Cloud中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情"
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="任务进度" name="first">
+          <TaskProgress :task="task"></TaskProgress>
+        </el-tab-pane>
+        <el-tab-pane label="运行日志" name="second">配置管理</el-tab-pane>
+        <el-tab-pane label="连接" name="third">连接</el-tab-pane>
+        <el-tab-pane label="历史运行记录" name="fourth">历史运行记录</el-tab-pane>
+      </el-tabs>
+      <!-- <div class="sub-task__header">
+        <span class="fs-7">子任务</span>
+        <span class="ml-4 font-color-disable"
+          >在Tapdata Cloud中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情</span
+        >
+      </div>
+      <ElTable :data="list" class="mt-5">
+        <ElTableColumn label="子任务名称" prop="name"></ElTableColumn>
+        <ElTableColumn label="任务状态" prop="status">
+          <template v-slot="scope">
+            <StatusTag type="text" target="task" :status="scope.row.status" only-img></StatusTag>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn label="操作">
+          <template v-slot="scope">
+            <ElButton
+              :disabled="
+                !statusBtMap['run'][scope.row.status] || (scope.row.status === 'draft' && scope.row.checked === false)
+              "
+              type="text"
+              @click="run([scope.row.id], scope.row)"
             >
-              <VIcon class="color-primary" size="14">info</VIcon>
-            </ElTooltip>
-          </div>
-          <ElTable :data="list" class="mt-2">
-            <ElTableColumn label="子任务名称" prop="name"></ElTableColumn>
-            <ElTableColumn label="任务状态" prop="status">
-              <template v-slot="scope">
-                <StatusTag type="text" target="task" :status="scope.row.status" only-img></StatusTag>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn label="操作">
-              <template v-slot="scope">
-                <ElButton
-                  :disabled="
-                    !statusBtMap['run'][scope.row.status] ||
-                    (scope.row.status === 'draft' && scope.row.checked === false)
-                  "
-                  type="text"
-                  @click="run([scope.row.id], scope.row)"
-                >
-                  运行
-                </ElButton>
-                <ElButton
-                  :disabled="!statusBtMap['stop'][scope.row.status]"
-                  class="mr-2"
-                  type="text"
-                  @click="stop([scope.row.id])"
-                >
-                  停止
-                </ElButton>
-                <ElButton :disabled="!statusBtMap['reset'][scope.row.status]" type="text" @click="reset(scope.row.id)"
-                  >重启</ElButton
-                >
-              </template>
-            </ElTableColumn>
-          </ElTable>
-        </ElTabPane>
-        <ElTabPane lazy class="h-100 overflow-hidden" label="连接" name="connection"> 连接 </ElTabPane>
-        <ElTabPane lazy class="h-100 overflow-hidden" label="历史运行记录" name="logs"> 历史运行记录 </ElTabPane>
-      </ElTabs>
+              运行
+            </ElButton>
+            <ElButton
+              :disabled="!statusBtMap['stop'][scope.row.status]"
+              class="mr-2"
+              type="text"
+              @click="stop([scope.row.id])"
+            >
+              停止
+            </ElButton>
+            <ElButton :disabled="!statusBtMap['reset'][scope.row.status]" type="text" @click="reset(scope.row.id)"
+              >重启</ElButton
+            >
+          </template>
+        </ElTableColumn>
+      </ElTable> -->
     </div>
   </el-container>
 </template>
@@ -140,15 +188,17 @@
 <script>
 import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
-import InlineInput from '@/components/InlineInput'
+// import InlineInput from '@/components/InlineInput'
+import EchartHeader from '@/views/Monitor/EchartHeader'
+import VEchart from '@/components/VEchart'
+import TaskProgress from './TaskProgress.vue'
 
 export default {
   name: 'TaskDetails',
-  components: { StatusTag, VIcon, InlineInput },
+  components: { StatusTag, VIcon, EchartHeader, VEchart, TaskProgress },
   data() {
     return {
       loading: true,
-      activeTab: 'subTask',
       task: {},
       infoItems: [
         {
@@ -160,12 +210,12 @@ export default {
           key: 'updatedTime',
           icon: 'time-fill',
           label: '修改时间：'
-        },
-        {
-          key: 'syncType',
-          icon: 'menu',
-          label: '同步类型：'
         }
+        // {
+        //   key: 'syncType',
+        //   icon: 'menu',
+        //   label: '同步类型：'
+        // }
       ],
       ouputItems: [
         {
@@ -175,8 +225,37 @@ export default {
         {
           key: 'totalInput',
           label: '总输入'
+        },
+        {
+          key: 'totalInsert',
+          label: '总插入'
+        },
+        {
+          key: 'totalUpdate',
+          label: '总更新'
+        },
+        {
+          key: 'totalDelete',
+          label: '总删除'
         }
       ],
+      // 输入输出统计
+      throughputObj: {
+        title: {
+          key: 'throughput',
+          statsType: 'throughput',
+          time: 'minute',
+          title: '',
+          tip: '',
+          unit: 'QPS',
+          class: 'putColor float-start',
+          classfr: 'float-end',
+          loading: false
+        },
+        body: null,
+        input: 0,
+        output: 0
+      },
       statusBtMap: {
         // scheduled, draft, running, stopping, error, paused, force stopping
         run: { draft: true, error: true, paused: true },
@@ -191,18 +270,14 @@ export default {
         cdc: '增量',
         'initial_sync+cdc': '全量+增量'
       },
-      list: [
-        // {
-        //   name: '123',
-        //   status: 'running'
-        // }
-      ],
+      list: [],
       loadingObj: {
         start: false,
         stop: false,
         forceStop: false,
         reset: false
-      }
+      },
+      activeName: 'first'
     }
   },
   created() {
@@ -427,7 +502,10 @@ export default {
         .then(() => {
           this.$message.success(this.$t('gl_button_update_success'))
         })
-    }
+    },
+
+    // 图表表头返回数据
+    changeHeaderFnc() {}
   }
 }
 </script>

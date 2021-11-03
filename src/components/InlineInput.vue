@@ -5,7 +5,7 @@
         value
       }}</span>
       <ElLink class="inline-input-link" style="margin-left: 5px" @click="editing = true">
-        <VIcon color="#999" size="14" v-bind="iconConfig">edit-outline</VIcon>
+        <VIcon color="#999" v-bind="iconConfig">edit-outline</VIcon>
       </ElLink>
     </span>
     <span class="inline-input-body" v-show="editing">

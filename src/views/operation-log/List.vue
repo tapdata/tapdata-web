@@ -1,12 +1,12 @@
 <template>
-  <section class="operation-logs-wrapper main-container" v-if="$route.name === 'OperationLog'">
+  <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'OperationLog'">
     <div class="main">
       <div class="list-operation">
         <div class="list-operation-left">
           <FilterBar v-model="searchParams" :items="items" @search="search" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </div>
-      <VTable ref="table" row-key="id" :columns="columns" :remoteMethod="getData" @sort-change="sortChange">
+      <TableList ref="table" row-key="id" :columns="columns" :remoteMethod="getData" @sort-change="sortChange">
         <template slot="operationType" slot-scope="scope">
           <div>{{ getOperationTypeLabel(scope.row) }}</div>
         </template>
@@ -33,7 +33,7 @@
             <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
           </div>
         </div>
-      </VTable>
+      </TableList>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -42,8 +42,11 @@
 <script>
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/FilterBar'
+import TableList from '@/components/TableList'
+import { isEmpty } from '@/util'
+
 export default {
-  components: { VIcon, FilterBar },
+  components: { VIcon, FilterBar, TableList },
   data() {
     return {
       loading: true,
@@ -139,7 +142,7 @@ export default {
       if (route.name === 'OperationLog') {
         let query = route.query
         this.searchParams = Object.assign(this.searchParams, query)
-        let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
+        let pageNum = isEmpty(query) ? undefined : 1
         this.table.fetch(pageNum)
       }
     }
@@ -378,8 +381,6 @@ export default {
     font-size: 16px;
   }
   .main {
-    padding: 20px;
-    background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;

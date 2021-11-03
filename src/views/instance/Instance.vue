@@ -1,5 +1,5 @@
 <template>
-  <section class="instance-wrapper main-container" v-loading="loading" v-if="$route.name === 'Instance'">
+  <section class="instance-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Instance'">
     <div class="main">
       <div class="instance-operation">
         <div class="instance-operation-left">
@@ -58,7 +58,7 @@
                 <inline-input
                   :class="['color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
                   :value="scope.row.name"
-                  :icon-config="{ class: 'color-primary' }"
+                  :icon-config="{ class: 'color-primary', size: '12' }"
                   type="icon"
                   @click-text="handleDetails(scope.row)"
                   @save="updateName($event, scope.row.id)"
@@ -886,8 +886,6 @@ export default {
     height: 20px;
   }
   .main {
-    padding: 20px;
-    background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -921,7 +919,6 @@ export default {
     border-bottom: none;
     color: rgba(0, 0, 0, 0.65);
     .operate-columns {
-      line-height: 14px;
       .el-button {
         padding: 0;
         & + .el-button {
