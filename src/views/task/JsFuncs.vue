@@ -102,6 +102,12 @@
             :placeholder="$t('function_describe_placeholder')"
           ></el-input>
         </el-form-item> -->
+        <ElFormItem v-if="model.type === 'custom'" size="mini" label="JS引擎版本：">
+          <ElSelect v-model="model.jsEngineName">
+            <ElOption label="新版" value="graal.js"></ElOption>
+            <ElOption label="旧版" value="nashorn"></ElOption>
+          </ElSelect>
+        </ElFormItem>
         <el-form-item v-if="model.type === 'custom'">
           <el-checkbox v-model="lineNumbers" class="e-checkbox" @input="showGutter">{{
             $t('function_checkbox_Line_number')
@@ -150,6 +156,7 @@ export default {
       model: {
         type: 'custom',
         function_name: '',
+        jsEngineName: 'graal.js',
         className: '',
         fileId: '',
         function_body: '',
@@ -228,6 +235,7 @@ export default {
       this.model = {
         type: 'custom',
         function_name: '',
+        jsEngineName: 'graal.js',
         className: '',
         fileId: '',
         function_body: '',
@@ -247,11 +255,12 @@ export default {
       this.dialogTitle = this.$t('button_edit')
       let code = `function ${item.function_name} (${item.parameters}) ${item.function_body}`
       this.model.jsonDoc = code
-      let { function_name, className, fileId, describe, function_body, parameters, return_value } = item
+      let { function_name, className, fileId, describe, function_body, parameters, return_value, jsEngineName } = item
       this.model = {
         type: item.type || 'custom',
         function_name,
         className,
+        jsEngineName: jsEngineName || 'nashorn',
         fileId,
         describe,
         function_body,
@@ -276,6 +285,7 @@ export default {
         m.last_updated = new Date()
         m.user_id = uid
         let model = this.model
+        m.jsEngineName = model.jsEngineName
         m.className = model.className
         m.fileId = model.fileId
         m.describe = model.describe
