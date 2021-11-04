@@ -56,7 +56,14 @@
         @change="search()"
       >
       </PopInput>
-      <ElInput v-else v-model="item.value" :placeholder="item.placeholder" class="filter-el-input" @input="search(800)">
+      <ElInput
+        v-else
+        v-model="item.value"
+        :placeholder="item.placeholder"
+        clearable
+        class="filter-el-input"
+        @input="search(800)"
+      >
         <VIcon slot="suffix" size="14" class="inline-block">search</VIcon>
       </ElInput>
     </ElFormItem>
