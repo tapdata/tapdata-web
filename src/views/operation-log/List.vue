@@ -41,7 +41,7 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import FilterBar from '@/components/FilterBar'
+import FilterBar from '@/components/filter-bar'
 import TableList from '@/components/TableList'
 import { isEmpty } from '@/util'
 
@@ -178,29 +178,23 @@ export default {
         {
           label: '操作类型',
           key: 'operationType',
-          type: 'select',
+          type: 'select-inner',
           options: this.operationTypeOptions
         },
         {
           label: '操作对象',
           key: 'parameter1',
-          type: 'input'
+          type: 'input-pop'
         },
         {
-          label: '开始时间',
-          key: 'start',
-          type: 'datetime'
-        },
-        {
-          label: '结束时间',
-          key: 'end',
-          type: 'datetime',
-          rules: this.startGreaterThanEndFnc
+          label: '操作时间',
+          key: 'start,end',
+          type: 'datetimerange'
         },
         {
           label: '用户名称',
           key: 'username',
-          type: 'input'
+          type: 'input-pop'
         }
       ]
     },

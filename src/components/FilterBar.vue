@@ -1,10 +1,10 @@
 <template>
-  <ElForm :model="form" :rules="rules" ref="filterForm" inline @submit.native.prevent>
+  <ElForm :model="form" :rules="rules" ref="filterForm" inline class="filter-form" @submit.native.prevent>
     <ElFormItem
       v-for="(item, index) in items"
       :key="index"
-      :prop="item.key"
-      :label="item.label + '：'"
+      :prop="item.key + ''"
+      :label="showItemLabel(item)"
       :class="[item.class, item.type]"
     >
       <template v-if="item.slotName" v-slot="scope">
@@ -13,16 +13,58 @@
       <ElSelect v-else-if="item.type === 'select'" v-model="item.value" clearable @input="search()">
         <ElOption v-for="(temp, i) in item.options" :key="i" :label="temp.label" :value="temp.value"></ElOption>
       </ElSelect>
-      <el-datePicker
-        v-else-if="item.type === 'datetime'"
+      <SelectList
+        v-else-if="item.type === 'select-inner'"
         v-model="item.value"
-        type="datetime"
-        :placeholder="item.label"
+        :items="item.options"
+        :inner-label="item.label"
+        :menu-min-width="item.menuMinWidth"
+        last-page-text=""
+        clearable
+        class="none-border"
+        @input="search()"
+      >
+      </SelectList>
+      <Datetime
+        v-else-if="['datetime'].indexOf(item.type) > -1"
+        v-model="item.value"
+        :title="item.label"
+        v-bind="item"
+        clearable
         value-format="timestamp"
+        @input="search()"
+      ></Datetime>
+      <DatetimeRange
+        v-else-if="['datetimerange'].indexOf(item.type) > -1"
+        v-model="item.value"
+        :title="item.label"
+        v-bind="item"
+        clearable
+        value-format="timestamp"
+        @input="search()"
+      ></DatetimeRange>
+      <PopInput
+        v-else-if="item.type === 'input-pop'"
+        v-model="item.value"
+        :title="item.label"
+        placement="bottom-start"
+        overflow
+        dark
+        clearable
+        width="200"
+        trigger="click"
         @change="search()"
-      ></el-datePicker>
-      <ElInput v-else v-model="item.value" clearable @input="search(800)">
-        <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
+      >
+      </PopInput>
+      <ElInput
+        v-else
+        v-model="item.value"
+        :placeholder="item.placeholder"
+        clearable
+        class="filter-el-input"
+        @input="search(800)"
+      >
+        <VIcon slot="suffix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
       </ElInput>
     </ElFormItem>
     <ElFormItem v-if="!hideRefresh">
@@ -35,9 +77,14 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import SelectList from '@/components/SelectList'
+import PopInput from './PopInput'
+import DatetimeRange from './DatetimeRange'
+import Datetime from './Datetime'
+
 export default {
-  name: 'VSearchBox',
-  components: { VIcon },
+  name: 'FilterBar',
+  components: { VIcon, SelectList, PopInput, DatetimeRange, Datetime },
   props: {
     value: {
       type: Object,
@@ -66,7 +113,7 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     this.init()
   },
   methods: {
@@ -78,7 +125,21 @@ export default {
         if (hasOwnProperty.call(value, el.key)) {
           this.$set(el, 'value', value[el.key])
         }
-        form[el.key] = el.value
+        if (el.type === 'datetimerange') {
+          if (el.key.indexOf(',') > -1) {
+            let result = []
+            el.key.split(',').forEach(k => {
+              form[k] = value?.[k]
+              result.push(form[k])
+            })
+            form[el.key] = result
+            this.$set(el, 'value', form[el.key])
+          } else {
+            form[el.key] = el.value
+          }
+        } else {
+          form[el.key] = el.value
+        }
       })
       this.form = form
     },
@@ -86,7 +147,15 @@ export default {
       let result = {}
       this.items.forEach(el => {
         if (el.value) {
-          result[el.key] = el.value
+          if (el.type === 'datetimerange') {
+            if (el.key.indexOf(',') > -1) {
+              el.key.split(',').forEach((k, i) => {
+                result[k] = el.value[i]
+              })
+            }
+          } else {
+            result[el.key] = el.value
+          }
         }
       })
       return result
@@ -130,6 +199,14 @@ export default {
           this.$emit('fetch')
         }
       })
+    },
+    showItemLabel(item) {
+      if (item.outerLabel) {
+        return item.label
+      }
+    },
+    changeDatetimeFnc(value, item) {
+      console.log('changeDatetimeFnc', value, item)
     }
   }
 }
@@ -143,11 +220,18 @@ export default {
   width: 32px;
   font-size: 16px;
 }
-.el-form-item {
-  &:not(.datetime) {
-    ::v-deep {
-      .el-form-item__content {
-        width: 128px;
+.filter-form {
+  font-size: 12px;
+}
+.filter-el-input {
+  ::v-deep {
+    .el-input__inner {
+      &:hover {
+        border-color: #d9d9d9;
+      }
+      &:focus,
+      &:target {
+        border-color: #409eff;
       }
     }
   }
