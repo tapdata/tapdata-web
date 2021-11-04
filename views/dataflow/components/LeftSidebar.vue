@@ -115,7 +115,8 @@
           'kafka',
           'dameng',
           'greenplum',
-          'mq'
+          'mq',
+          'clickhouse'
         ]"
         @select="createConnection"
       ></ConnectionTypeSelector>
