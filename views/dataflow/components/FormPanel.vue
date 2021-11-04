@@ -756,8 +756,8 @@ export default {
           }
         })
       }
-      const tables = await metadataApi.get(params)
-      return tables.map(item => item.original_name)
+      const data = await metadataApi.get(params)
+      return data.items.map(item => item.original_name)
     },
 
     /**
