@@ -20,10 +20,10 @@
 
       <el-table-column :label="$t('timeToLive.header.operate')">
         <template slot-scope="scope">
+          <el-button size="mini" type="text" @click="edit(scope.row)">{{ $t('button.edit') }}</el-button>
           <el-button size="mini" type="text" style="color: #f56c6c" @click="remove(scope.row)">{{
             $t('button.delete')
           }}</el-button>
-          <el-button size="mini" type="text" @click="edit(scope.row)">{{ $t('button.edit') }}</el-button>
         </template>
       </el-table-column>
     </TablePage>
@@ -120,7 +120,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import CodeEditor from 'web-core/components/CodeEditor'
-// import 'prismjs'
+import 'prismjs'
 const parser = require('esprima')
 const escodegen = require('escodegen')
 
@@ -163,12 +163,17 @@ export default {
   methods: {
     fileRemove() {
       this.fileList = []
+      this.$api('file')
+        .removeFile(this.model.fileId)
+        .then(() => {})
       this.model.fileId = ''
     },
     fileChange(file) {
       if (file.status === 'ready') {
         this.uploadFileName = file.name
-        this.model.fileId = ''
+        if (this.model.fileId) {
+          this.fileRemove()
+        }
       }
       if (file.response) {
         let code = file.response.code
@@ -253,7 +258,6 @@ export default {
       let makeModel = (m, ast) => {
         let escodegen = require('escodegen')
         m.function_body = escodegen.generate(ast.body)
-        m.function_name = ast.id.name
         m.parameters = ast.params
           .map(function (p) {
             return p.name
@@ -267,6 +271,7 @@ export default {
         m.describe = model.describe
         m.return_value = model.return_value
         m.type = model.type
+        m.function_name = m.type === 'custom' ? ast.id.name : model.function_name
       }
       this.$refs.form.validate(valid => {
         if (!valid) {
