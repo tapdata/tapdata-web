@@ -13,4 +13,7 @@ export default class file extends PublicAPI {
   upload(params) {
     return axios.post(this.url + '/upload', params)
   }
+  removeFile(id) {
+    return axios.delete(this.url + '/delete?id=' + id)
+  }
 }
