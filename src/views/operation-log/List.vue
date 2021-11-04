@@ -55,8 +55,7 @@ export default {
         parameter1: '',
         start: '',
         end: '',
-        username: '',
-        timerange: ''
+        username: ''
       },
       source: [], // 所有数据
       list: [], // 展示的数据
@@ -163,13 +162,7 @@ export default {
       let query = {}
       for (let key in searchParams) {
         if (searchParams[key]) {
-          if (key === 'timerange') {
-            const [start, end] = searchParams[key]
-            query.start = start
-            query.end = end
-          } else {
-            query[key] = searchParams[key]
-          }
+          query[key] = searchParams[key]
         }
       }
       const { delayTrigger } = this.$util
@@ -186,9 +179,7 @@ export default {
           label: '操作类型',
           key: 'operationType',
           type: 'select-inner',
-          menuMinWidth: '200px',
-          options: this.operationTypeOptions,
-          class: 'none-border'
+          options: this.operationTypeOptions
         },
         {
           label: '操作对象',
@@ -197,8 +188,8 @@ export default {
         },
         {
           label: '操作时间',
-          key: 'timerange',
-          type: 'datetime-range'
+          key: 'start,end',
+          type: 'datetimerange'
         },
         {
           label: '用户名称',

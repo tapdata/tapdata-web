@@ -1,5 +1,11 @@
 <template>
-  <ElPopover v-model="visible" v-bind="$attrs" :class="['v-pop-input', { dark: dark }, { overflow: overflow }]">
+  <ElPopover
+    v-model="visible"
+    v-bind="$attrs"
+    :class="['v-pop-input', { dark: dark }, { overflow: overflow }]"
+    @mouseenter.native="mouseEnterFnc"
+    @mouseleave.native="mouseLeaveFnc"
+  >
     <div>
       <ElInput v-model="current" @change="confirm"></ElInput>
       <div class="btn-row">
@@ -10,7 +16,8 @@
     <div slot="reference" class="inner-select">
       <span class="inner-select__title">{{ title }}</span>
       <span :class="['inner-select__value', { placeholder: !value }]">{{ value || '请输入' }}</span>
-      <VIcon v-if="value" size="12" class="close-btn ml-1" @click.stop="clear">close</VIcon>
+      <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.native.stop="clear">close</VIcon>
+      <VIcon v-else size="12" class="icon-btn ml-1">arrow-down</VIcon>
     </div>
   </ElPopover>
 </template>
@@ -24,6 +31,10 @@ export default {
   props: {
     value: [Number, String],
     title: [Number, String],
+    clearable: {
+      type: Boolean,
+      default: false
+    },
     dark: {
       type: Boolean,
       dafault: false
@@ -41,13 +52,13 @@ export default {
   data() {
     return {
       visible: false,
+      showClose: false,
       current: ''
     }
   },
 
   methods: {
     init() {
-      console.log('innerLabel', this.innerLabel)
       if (this.value && this.current !== this.value) {
         this.current = this.value
       }
@@ -58,10 +69,19 @@ export default {
     },
     close() {
       this.visible = false
+      this.showClose = false
     },
     clear() {
       this.current = ''
       this.confirm()
+    },
+    mouseEnterFnc() {
+      if (this.value && this.clearable) {
+        this.showClose = true
+      }
+    },
+    mouseLeaveFnc() {
+      this.showClose = false
     }
   }
 }
@@ -71,9 +91,12 @@ export default {
 .v-pop-input {
   padding: 0 8px;
   display: inline-block;
+  font-size: 12px;
   border: 1px solid #d9d9d9;
-  border-radius: 4px;
+  border-radius: 2px;
   cursor: pointer;
+  height: 32px;
+  box-sizing: border-box;
   &.dark {
     border-color: transparent;
     &:hover {

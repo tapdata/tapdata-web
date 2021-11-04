@@ -3,7 +3,7 @@
     <ElFormItem
       v-for="(item, index) in items"
       :key="index"
-      :prop="item.key"
+      :prop="item.key + ''"
       :label="showItemLabel(item)"
       :class="[item.class, item.type]"
     >
@@ -21,29 +21,28 @@
         :menu-min-width="item.menuMinWidth"
         last-page-text=""
         clearable
+        class="none-border"
         @input="search()"
       >
       </SelectList>
-      <ElDatePicker
-        v-else-if="item.type === 'datetime'"
+      <Datetime
+        v-else-if="['datetime'].indexOf(item.type) > -1"
         v-model="item.value"
-        type="datetime"
-        :placeholder="item.label"
-        value-format="timestamp"
-        @change="search()"
-      ></ElDatePicker>
-      <DatetimePicker
-        v-else-if="item.type === 'datetime-range'"
-        v-model="item.value"
-        type="datetimerange"
         :title="item.label"
-        range-separator="至"
-        start-placeholder="开始时间"
-        end-placeholder="结束时间"
-        value-format="timestamp"
+        v-bind="item"
         clearable
-        @change="search()"
-      ></DatetimePicker>
+        value-format="timestamp"
+        @input="search()"
+      ></Datetime>
+      <DatetimeRange
+        v-else-if="['datetimerange'].indexOf(item.type) > -1"
+        v-model="item.value"
+        :title="item.label"
+        v-bind="item"
+        clearable
+        value-format="timestamp"
+        @input="search()"
+      ></DatetimeRange>
       <PopInput
         v-else-if="item.type === 'input-pop'"
         v-model="item.value"
@@ -51,13 +50,21 @@
         placement="bottom-start"
         overflow
         dark
+        clearable
         width="200"
         trigger="click"
         @change="search()"
       >
       </PopInput>
-      <ElInput v-else v-model="item.value" :placeholder="item.placeholder" clearable @input="search(800)">
-        <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
+      <ElInput
+        v-else
+        v-model="item.value"
+        :placeholder="item.placeholder"
+        clearable
+        class="filter-el-input"
+        @input="search(800)"
+      >
+        <VIcon slot="suffix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
       </ElInput>
     </ElFormItem>
     <ElFormItem v-if="!hideRefresh">
@@ -72,10 +79,12 @@
 import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
 import PopInput from './PopInput'
-import DatetimePicker from './DatetimePicker'
+import DatetimeRange from './DatetimeRange'
+import Datetime from './Datetime'
+
 export default {
   name: 'FilterBar',
-  components: { VIcon, SelectList, PopInput, DatetimePicker },
+  components: { VIcon, SelectList, PopInput, DatetimeRange, Datetime },
   props: {
     value: {
       type: Object,
@@ -104,7 +113,7 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     this.init()
   },
   methods: {
@@ -113,13 +122,24 @@ export default {
       this.getRules()
       let form = {}
       this.items.forEach(el => {
-        if (el.key === 'timerange') {
-          return
-        }
         if (hasOwnProperty.call(value, el.key)) {
           this.$set(el, 'value', value[el.key])
         }
-        form[el.key] = el.value
+        if (el.type === 'datetimerange') {
+          if (el.key.indexOf(',') > -1) {
+            let result = []
+            el.key.split(',').forEach(k => {
+              form[k] = value?.[k]
+              result.push(form[k])
+            })
+            form[el.key] = result
+            this.$set(el, 'value', form[el.key])
+          } else {
+            form[el.key] = el.value
+          }
+        } else {
+          form[el.key] = el.value
+        }
       })
       this.form = form
     },
@@ -127,7 +147,15 @@ export default {
       let result = {}
       this.items.forEach(el => {
         if (el.value) {
-          result[el.key] = el.value
+          if (el.type === 'datetimerange') {
+            if (el.key.indexOf(',') > -1) {
+              el.key.split(',').forEach((k, i) => {
+                result[k] = el.value[i]
+              })
+            }
+          } else {
+            result[el.key] = el.value
+          }
         }
       })
       return result
@@ -176,6 +204,9 @@ export default {
       if (item.outerLabel) {
         return item.label
       }
+    },
+    changeDatetimeFnc(value, item) {
+      console.log('changeDatetimeFnc', value, item)
     }
   }
 }
@@ -192,29 +223,15 @@ export default {
 .filter-form {
   font-size: 12px;
 }
-.el-form-item {
-  &:not(.datetime) {
-    ::v-deep {
-      .el-form-item__content {
-        //width: 180px;
-      }
-    }
-  }
-  &.none-border {
-    .v-select-list {
+.filter-el-input {
+  ::v-deep {
+    .el-input__inner {
       &:hover {
-        background-color: #fafafa;
+        border-color: #d9d9d9;
       }
-      ::v-deep {
-        .inner-select {
-          border-color: transparent;
-        }
-        .inner-select__selected {
-          max-width: 60px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
+      &:focus,
+      &:target {
+        border-color: #409eff;
       }
     }
   }

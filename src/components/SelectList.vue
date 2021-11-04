@@ -223,7 +223,8 @@ export default {
       default: '没有更多数据'
     },
     menuMinWidth: {
-      type: String
+      type: String,
+      default: '200px'
     },
     innerLabel: {
       type: String
@@ -279,16 +280,26 @@ export default {
 
   watch: {
     visible(val) {
-      val && this.init()
+      val && this.initWidth()
     },
-    value(val) {
-      if (this.selectedLabel === this.value) {
-        this.selectedLabel = this.items.find(item => item.value === val)?.label
-      }
+    value() {
+      this.getSelectLabel()
     }
+  },
+  mounted() {
+    this.init()
   },
   methods: {
     init() {
+      if (this.isRemote) {
+        this.resetPage()
+        this.getData()
+      } else {
+        this.filteredItems = deepCopy(this.items)
+        this.getSelectLabel()
+      }
+    },
+    initWidth() {
       // 设置列表的宽度
       const { menuMinWidth } = this
       if (menuMinWidth) {
@@ -296,13 +307,15 @@ export default {
           this.$refs.popper.minWidth = menuMinWidth
         })
       }
-
-      if (this.isRemote) {
-        this.resetPage()
-        this.getData()
-      } else {
-        this.filteredItems = deepCopy(this.items)
+    },
+    getSelectLabel() {
+      const { value } = this
+      if (!value) {
+        return
       }
+      this.$nextTick(() => {
+        this.selectedLabel = this.items.find(item => item.value === value)?.label
+      })
     },
     resetInputWidth() {
       let $reference = this.$refs.reference
@@ -350,6 +363,7 @@ export default {
             })
           )
         }
+        this.getSelectLabel()
       })
     },
     handleQueryChange(val) {
@@ -437,6 +451,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.v-select-list {
+  &.none-border {
+    &:hover {
+      background-color: #fafafa;
+    }
+    ::v-deep {
+      .inner-select {
+        border-color: transparent;
+      }
+      .inner-select__selected {
+        max-width: 60px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
 .scroller {
   height: 274px;
 }

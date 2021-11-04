@@ -184,14 +184,14 @@
           <div class="select-type__item" @click="createMigrate">
             <div>
               <div>数据库迁移</div>
-              <div class="mt-4">数据库迁移</div>
+              <div class="mt-4">对数据库进行跨库复制</div>
             </div>
             <VIcon size="30" class="v-icon">right-fill</VIcon>
           </div>
           <div class="select-type__item data-table ml-10" @click="createSync">
             <div>
               <div>数据表同步</div>
-              <div class="mt-4 font-color-sub">数据表同步</div>
+              <div class="mt-4 font-color-sub">抽取源端数据并计算转换</div>
             </div>
             <VIcon size="30" class="v-icon">right-fill</VIcon>
           </div>
