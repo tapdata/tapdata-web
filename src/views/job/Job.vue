@@ -837,7 +837,8 @@ export default {
             'app.KUDUNode',
             'app.HanaNode',
             'app.ClickHouse',
-            'app.DamengNode'
+            'app.DamengNode',
+            'app.VikaNode'
           ].includes(cell.type)
         ) {
           postData.mappingTemplate = 'custom'
@@ -1530,7 +1531,8 @@ export default {
         hive: 'app.HiveNode',
         hana: 'app.HanaNode',
         dameng: 'app.DamengNode',
-        clickhouse: 'app.ClickHouse'
+        clickhouse: 'app.ClickHouse',
+        vika: 'app.VikaNode'
       }
       if (data) {
         let stageMap = {}

@@ -141,8 +141,11 @@ export default {
         type: 'vika',
         dataBaseType: 'vika',
         tableName: '',
+        tableId: '',
         field_process: [],
-        isFirst: true
+        isFirst: true,
+        vikaNodes: [],
+        vika_space_id: ''
       },
       scope: '',
       dataFlow: '',
@@ -151,13 +154,11 @@ export default {
       schemasLoading: false,
       mergedSchema: null,
       nodes: [],
-      vika_space_id: '',
       props: {
         label: 'name',
         children: 'children',
         isLeaf: 'leaf'
-      },
-      spacePath: []
+      }
     }
   },
 
@@ -203,21 +204,8 @@ export default {
     'model.tableName': {
       immediate: true,
       handler() {
-        if (this.schemas.length > 0) {
-          if (this.model.tableName) {
-            let schema = this.schemas.filter(s => s.table_name === this.model.tableName)
-            schema =
-              schema && schema.length > 0
-                ? schema[0]
-                : {
-                    table_name: this.model.tableName,
-                    cdc_enabled: true,
-                    meta_type: 'Vika',
-                    fields: []
-                  }
-            this.$emit('schemaChange', _.cloneDeep(schema))
-            this.mergedSchema = schema
-          }
+        if (this.model.tableName && this.model.vika_space_id) {
+          this.changeSchema()
         }
       }
     }
@@ -234,7 +222,7 @@ export default {
         .get([connectionId])
         .then(result => {
           if (result.data) {
-            this.vika_space_id = result.data?.vika_space_id
+            this.model.vika_space_id = result.data?.vika_space_id
             this.getSpaceVika()
           }
         })
@@ -342,7 +330,7 @@ export default {
     getSpaceVika() {
       let params = {
         load_type: 'node',
-        space_id: this.vika_space_id,
+        space_id: this.model.vika_space_id,
         connection_id: this.model.connectionId || ''
       }
       this.$api('connections')
@@ -371,7 +359,7 @@ export default {
       if (hasChild) {
         let params = {
           load_type: 'node',
-          space_id: this.vika_space_id,
+          space_id: this.model.vika_space_id,
           connection_id: this.model.connectionId || '',
           node_id: node.data.id
         }
@@ -380,6 +368,8 @@ export default {
           .then(data => {
             if (data.data.status === 'SUCCESS') {
               let children = data.data?.result.children || []
+              //过滤目录结构
+              children = children.filter(v => v.type === 'Datasheet' || v.type === 'Folder')
               for (let i = 0; i < children.length; i++) {
                 if (children[i].type === 'Datasheet') {
                   children[i]['leaf'] = false
@@ -397,16 +387,19 @@ export default {
       }
     },
     handleNodeClick(data, node) {
+      this.model.vikaNodes = [] //每次都放入最新的node 目录
       if (data.type === 'Datasheet') {
         this.model.tableName = data.name
+        this.model.tableId = data.id
         //组装数据 递归寻找当前结构
+        let self = this
         let fn = function (node) {
           let item = {
             id: node.data.id,
             name: node.data.name,
             type: node.data.type
           }
-          this.spacePath.push(item)
+          self.model.vikaNodes.push(item)
           if (node.level !== 1) {
             fn(node.parent)
           }
@@ -414,9 +407,172 @@ export default {
         fn(node)
       } else {
         this.model.tableName = ''
+        this.model.tableId = ''
       }
+    },
+    changeSchema() {
+      let params = {
+        load_type: 'field',
+        space_id: this.model.vika_space_id,
+        connection_id: this.model.connectionId || '',
+        node_id: this.model.tableId
+      }
+      this.$api('connections')
+        .getSpace(params)
+        .then(data => {
+          if (data.data.status === 'SUCCESS') {
+            let result = data.data.result
+            let schema = result.filter(s => s.table_name === this.model.tableName)
+            schema =
+              schema && schema.length > 0
+                ? schema[0]
+                : {
+                    table_name: this.model.tableName,
+                    cdc_enabled: true,
+                    meta_type: 'Vika',
+                    fields: []
+                  }
+            this.$emit('schemaChange', _.cloneDeep(schema))
+            schema = {
+              table_name: '1017_BLOB_TEST',
+              cdc_enabled: true,
+              meta_type: 'table',
+              tableId: '616c3b8406c3d200aec61a9e',
+              partitionSet: null,
+              fields: [
+                {
+                  field_name: 'ID',
+                  table_name: '1017_BLOB_TEST',
+                  data_type: 'VARCHAR2',
+                  primary_key_position: 1,
+                  key: 'PRI',
+                  dataType: 12,
+                  is_nullable: false,
+                  parent: null,
+                  original_field_name: 'ID',
+                  original_java_type: 'String',
+                  precision: 30,
+                  scale: null,
+                  oriPrecision: null,
+                  oriScale: null,
+                  default_value: null,
+                  javaType: 'String',
+                  columnSize: 30,
+                  pkConstraintName: 'SYS_C00129195',
+                  autoincrement: 'NO',
+                  id: '612c9ca59d20d70052c24d29',
+                  columnPosition: 1,
+                  is_deleted: false,
+                  tapType: 'String'
+                },
+                {
+                  field_name: 'T_VARCHAR2',
+                  table_name: '1017_BLOB_TEST',
+                  data_type: 'VARCHAR2',
+                  primary_key_position: 0,
+                  dataType: 12,
+                  is_nullable: true,
+                  parent: null,
+                  original_field_name: 'T_VARCHAR2',
+                  original_java_type: 'String',
+                  precision: 50,
+                  scale: null,
+                  oriPrecision: null,
+                  oriScale: null,
+                  default_value: null,
+                  javaType: 'String',
+                  columnSize: 50,
+                  autoincrement: 'NO',
+                  id: '612c9ca59d20d70052c24d2a',
+                  columnPosition: 2,
+                  is_deleted: false,
+                  tapType: 'String'
+                },
+                {
+                  field_name: 'T_NVARCHAR2',
+                  table_name: '1017_BLOB_TEST',
+                  data_type: 'VARCHAR2',
+                  primary_key_position: 0,
+                  dataType: 12,
+                  is_nullable: true,
+                  parent: null,
+                  original_field_name: 'T_NVARCHAR2',
+                  original_java_type: 'String',
+                  precision: 60,
+                  scale: null,
+                  oriPrecision: null,
+                  oriScale: null,
+                  default_value: null,
+                  javaType: 'String',
+                  columnSize: 60,
+                  autoincrement: 'NO',
+                  id: '612c9ca59d20d70052c24d2b',
+                  columnPosition: 3,
+                  is_deleted: false,
+                  tapType: 'String'
+                },
+                {
+                  field_name: 'T_BLOB',
+                  table_name: '1017_BLOB_TEST',
+                  data_type: 'BLOB',
+                  primary_key_position: 0,
+                  dataType: 2004,
+                  is_nullable: true,
+                  parent: null,
+                  original_field_name: 'T_BLOB',
+                  original_java_type: 'Bytes',
+                  precision: null,
+                  scale: null,
+                  oriPrecision: null,
+                  oriScale: null,
+                  default_value: null,
+                  javaType: 'Bytes',
+                  columnSize: 4000,
+                  autoincrement: 'NO',
+                  id: '612c9ca59d20d70052c24d2c',
+                  columnPosition: 4,
+                  is_deleted: false
+                },
+                {
+                  field_name: 'T_CLOB',
+                  table_name: '1017_BLOB_TEST',
+                  data_type: 'VARCHAR2',
+                  primary_key_position: 0,
+                  dataType: 12,
+                  is_nullable: true,
+                  parent: null,
+                  original_field_name: 'T_CLOB',
+                  original_java_type: 'String',
+                  precision: 4000,
+                  scale: null,
+                  oriPrecision: null,
+                  oriScale: null,
+                  default_value: null,
+                  javaType: 'String',
+                  columnSize: 4000,
+                  autoincrement: 'NO',
+                  id: '612c9ca59d20d70052c24d2d',
+                  columnPosition: 5,
+                  is_deleted: false,
+                  tapType: 'String'
+                }
+              ],
+              indices: []
+            }
+            this.mergedSchema = schema
+          } else {
+            this.$message.error(data.data?.error)
+          }
+        })
+        .catch(() => {
+          this.$message.error('接口请求失败')
+        })
+    },
+    //初始化树形结构
+    loadTree() {
+      let data = this.model.vikaNode || []
+      for (let i = 0; i < data.length; i++) {}
     }
-
     // seeMonitor() {
     // 	editorMonitor.goBackMontior();
     // }
