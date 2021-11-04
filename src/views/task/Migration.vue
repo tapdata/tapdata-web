@@ -3,48 +3,7 @@
     <div class="main">
       <div class="migration-operation">
         <div class="migration-operation-left">
-          <ElForm inline @submit.native.prevent>
-            <ElFormItem :label="$t('task_status') + ' ：'" class="small">
-              <ElSelect v-model="searchParams.status" clearable @input="search()">
-                <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"></ElOption>
-              </ElSelect>
-            </ElFormItem>
-            <ElFormItem :label="$t('task_type') + ' ：'" class="small">
-              <ElSelect v-model="searchParams.type" clearable @input="search()">
-                <ElOption v-for="(label, value) in typeMap" :key="value" :label="label" :value="value"></ElOption>
-              </ElSelect>
-            </ElFormItem>
-            <ElFormItem :label="$t('task_sync_type') + ' ：'" class="small">
-              <ElSelect
-                v-model="searchParams.syncType"
-                clearable
-                :placeholder="$t('gl_placeholder_select')"
-                @input="search()"
-              >
-                <ElOption v-for="(label, value) in syncTypeMap" :key="value" :label="label" :value="value"></ElOption>
-              </ElSelect>
-            </ElFormItem>
-            <ElFormItem :label="$t('agent_name') + ' ：'" class="medium">
-              <ElSelect
-                v-model="searchParams.agentId"
-                clearable
-                :placeholder="$t('gl_placeholder_select')"
-                @input="search()"
-              >
-                <ElOption v-for="opt in agentOptions" :key="opt.value" :label="opt.label" :value="opt.value"></ElOption>
-              </ElSelect>
-            </ElFormItem>
-            <ElFormItem :label="$t('task_name_or_node_name_or_library_name') + ' ：'" class="medium">
-              <ElInput v-model="searchParams.keyword" :placeholder="$t('gl_placeholder_input')" @input="search(800)">
-                <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
-              </ElInput>
-            </ElFormItem>
-            <ElFormItem>
-              <ElButton plain class="btn-refresh" @click="fetch()">
-                <VIcon>refresh</VIcon>
-              </ElButton>
-            </ElFormItem>
-          </ElForm>
+          <FilterBar v-model="searchParams" :items="filterItems" @search="search(800)" @fetch="fetch"></FilterBar>
         </div>
         <div class="migration-operation-right">
           <VButton type="primary" @click="createTask"><span>创建任务</span></VButton>
@@ -274,10 +233,11 @@
 import { TASK_STATUS_MAP } from '../../const'
 import StatusTag from '../../components/StatusTag'
 import VIcon from '@/components/VIcon'
+import FilterBar from '@/components/filter-bar'
 let timer = null
 
 export default {
-  components: { StatusTag, VIcon },
+  components: { StatusTag, VIcon, FilterBar },
   data() {
     return {
       loading: true,
@@ -313,7 +273,8 @@ export default {
         reset: { draft: true, error: true, paused: true },
         forceStop: { stopping: true }
       },
-      createVisible: false
+      createVisible: false,
+      filterItems: []
     }
   },
   computed: {
@@ -329,6 +290,45 @@ export default {
         options[item.text] = value
       }
       return options
+    },
+    filterStatusOptions() {
+      let result = []
+      const { statusOptions } = this
+      for (let key in statusOptions) {
+        result.push({
+          label: key,
+          value: statusOptions[key]
+        })
+      }
+      return result
+    },
+    filterTypeMap() {
+      return [
+        {
+          label: '数据库迁移',
+          value: 'cluster-clone'
+        },
+        {
+          label: '数据表同步',
+          value: 'custom'
+        }
+      ]
+    },
+    filterSyncTypeMap() {
+      let result = []
+      let obj = this.syncTypeMap
+      for (let key in obj) {
+        result.push({
+          label: obj[key],
+          value: key
+        })
+      }
+      return result
+      // syncTypeMap: {
+      //   initial_sync: '全量',
+      //     cdc: '增量',
+      //     'initial_sync+cdc': '全量+增量'
+      // }
     },
     isSearching() {
       return !!Object.values(this.searchParams).join('')
@@ -367,6 +367,39 @@ export default {
     timer = null
   },
   methods: {
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: '任务状态',
+          key: 'status',
+          type: 'select-inner',
+          options: this.filterStatusOptions
+        },
+        {
+          label: '任务类型',
+          key: 'type',
+          type: 'select-inner',
+          options: this.filterTypeMap
+        },
+        {
+          label: '同步类型',
+          key: 'syncType',
+          type: 'select-inner',
+          options: this.filterSyncTypeMap
+        },
+        {
+          label: 'Agent 名称',
+          key: 'agentId',
+          type: 'select-inner',
+          options: this.agentOptions
+        },
+        {
+          placeholder: '名称',
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
+    },
     async updateStatusByIds(ids) {
       let fields = {
         id: true,
@@ -404,6 +437,7 @@ export default {
           value: item.tmInfo.agentId
         }
       })
+      this.getFilterItems()
     },
     search(debounce) {
       const { delayTrigger } = this.$util

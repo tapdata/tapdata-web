@@ -3,7 +3,7 @@
     <div class="main">
       <div class="list-operation">
         <div class="list-operation-left">
-          <FilterBar v-model="searchParams" :items="items" @search="search" @fetch="table.fetch(1)"> </FilterBar>
+          <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </div>
       <TableList ref="table" row-key="id" :columns="columns" :remoteMethod="getData" @sort-change="sortChange">
@@ -60,7 +60,7 @@ export default {
       source: [], // 所有数据
       list: [], // 展示的数据
       order: 'createTime desc',
-      items: [],
+      filterItems: [],
       operationTypeOptions: [
         // 连接
         { label: '创建连接', value: 'connection_create', desc: '创建了连接【@{parameter1}】' },
@@ -174,7 +174,7 @@ export default {
       }, debounce)
     },
     getSearchItems() {
-      this.items = [
+      this.filterItems = [
         {
           label: '操作类型',
           key: 'operationType',

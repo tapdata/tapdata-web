@@ -3,32 +3,7 @@
     <div class="main">
       <div class="instance-operation">
         <div class="instance-operation-left">
-          <el-form inline @submit.native.prevent>
-            <el-form-item :label="$t('agent_status') + ' ：'" width="300px">
-              <el-select v-model="searchParams.status" clearable @input="search()">
-                <el-option
-                  v-for="(item, index) in statusItems"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="$t('agent_search') + ' ：'" class="ml-2">
-              <el-input
-                width="200"
-                v-model="searchParams.keyword"
-                @input="search(800)"
-                :placeholder="$t('gl_placeholder_input')"
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button plain class="btn-refresh" @click="fetch()">
-                <VIcon>refresh</VIcon>
-              </el-button>
-            </el-form-item>
-          </el-form>
+          <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
         </div>
         <div class="instance-operation-right">
           <el-button type="primary" @click="createAgent" :loading="createAgentLoading">
@@ -303,6 +278,7 @@ import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import VIcon from '../../components/VIcon'
 import Details from './Details'
+import FilterBar from '@/components/filter-bar'
 
 let timer = null
 
@@ -311,7 +287,8 @@ export default {
     InlineInput,
     StatusTag,
     VIcon,
-    Details
+    Details,
+    FilterBar
   },
   data() {
     return {
@@ -343,7 +320,8 @@ export default {
       version: '',
       upgradeList: [], // 升级列表
       showDetails: false,
-      detailId: null
+      detailId: null,
+      filterItems: []
     }
   },
   computed: {
@@ -406,6 +384,7 @@ export default {
       let query = this.$route.query
       let { detailId, ...searchParams } = Object.assign(this.searchParams, query)
       this.searchParams = searchParams
+      this.getFilterItems()
       this.fetch()
       // 是否触发创建agent
       if (query?.create) {
@@ -420,6 +399,21 @@ export default {
           this.detailId = detailId
         })
       }
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: '状态',
+          key: 'status',
+          type: 'select-inner',
+          options: this.statusItems
+        },
+        {
+          placeholder: '按ID/实例名称搜索',
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     },
     async getVersion(id) {
       return this.$axios.get('api/tcm/config/version/latest/' + id)
