@@ -1,5 +1,5 @@
 <template>
-  <VTable v-bind="$attrs" v-on="$listeners" class="table-list">
+  <VTable v-bind="$attrs" v-on="$listeners" ref="table" class="table-list">
     <div slot="empty">
       <slot name="empty">
         <div class="instance-table__empty" slot="empty">
@@ -18,6 +18,11 @@
 import VIcon from '@/components/VIcon'
 export default {
   name: 'TableList',
-  components: { VIcon }
+  components: { VIcon },
+  methods: {
+    fetch() {
+      return this.$refs.table?.fetch(...arguments)
+    }
+  }
 }
 </script>
