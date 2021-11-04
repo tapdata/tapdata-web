@@ -588,15 +588,15 @@ export default {
     },
     toDetails(row) {
       // 库迁移
-      if (row.mappingTemplate === 'cluster-clone') {
-        this.$router.push({
-          name: 'DataflowStatistics',
-          params: {
-            id: row.id
-          }
-        })
-        return
-      }
+      // if (row.mappingTemplate === 'cluster-clone') {
+      //   this.$router.push({
+      //     name: 'DataflowStatistics',
+      //     params: {
+      //       id: row.id
+      //     }
+      //   })
+      //   return
+      // } else {
       // 表同步
       this.$router.push({
         name: 'DataflowDetails',
@@ -604,6 +604,7 @@ export default {
           id: row.id
         }
       })
+      // }
     },
     changeStatus(ids, { status, errorEvents }) {
       let attributes = {

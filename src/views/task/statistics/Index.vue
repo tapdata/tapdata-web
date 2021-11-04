@@ -199,37 +199,37 @@ export default {
     loadHttp() {
       let arr = ['overviewObj', 'throughputObj']
       arr.forEach(el => {
-        let item = this[el]?.title
-        let params = {
-          statsType: item.statsType,
-          granularity: item.time ? 'flow_' + item.time : 'flow'
-        }
-        this.loadData(params, item)
+        // let item = this[el]?.title
+        // let params = {
+        //   statsType: item.statsType,
+        //   granularity: item.time ? 'flow_' + item.time : 'flow'
+        // }
+        // this.loadData(params, item)
       })
     },
     // 通过api获取数据
     loadData(params) {
       params['dataFlowId'] = this.task.id
-      this.$axios
-        .get('tm/api/DataFlowInsights/runtimeMonitor', {
-          params: params
-        })
-        .then(res => {
-          let result = res[0] || {}
-          let data = {
-            statsData: {},
-            granularity: {}
-          }
-          data.statsData[result.statsType] = result.statsData
-          data.granularity[result.statsType] = result.granularity
-          // 组合成ws返回的格式
+      // this.$axios
+      //   .get('tm/api/DataFlowInsights/runtimeMonitor', {
+      //     params: params
+      //   })
+      //   .then(res => {
+      //     let result = res[0] || {}
+      //     let data = {
+      //       statsData: {},
+      //       granularity: {}
+      //     }
+      //     data.statsData[result.statsType] = result.statsData
+      //     data.granularity[result.statsType] = result.granularity
+      //     // 组合成ws返回的格式
 
-          switch (result.statsType) {
-            case 'throughput':
-              this.getThroughputOpt(data) // 输入输出统计
-              break
-          }
-        })
+      //     switch (result.statsType) {
+      //       case 'throughput':
+      //         this.getThroughputOpt(data) // 输入输出统计
+      //         break
+      //     }
+      //   })
     },
     formatTask(data) {
       data.totalOutput = data.stats?.output?.rows || 0
