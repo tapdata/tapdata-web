@@ -1,42 +1,7 @@
 <template>
   <section class="verify-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Verify'">
     <div class="page-header">
-      <ElForm inline>
-        <ElFormItem label="类型: " class="small">
-          <ElSelect v-model="searchParams.inspectMethod" clearable @input="inspectMethodChange">
-            <ElOption :label="$t('verify_type_row_count')" value="row_count"></ElOption>
-            <ElOption :label="$t('verify_type_field')" value="field"></ElOption>
-            <ElOption :label="$t('verify_type_joint_field')" value="jointField"></ElOption>
-          </ElSelect>
-        </ElFormItem>
-        <ElFormItem label="频次: " class="small">
-          <ElSelect v-model="searchParams.mode" clearable @input="search()">
-            <ElOption :label="$t('verify_frequency_manual')" value="manual"></ElOption>
-            <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
-          </ElSelect>
-        </ElFormItem>
-        <ElFormItem label="状态: " class="small">
-          <ElSelect v-model="searchParams.enabled" clearable @input="search()">
-            <ElOption :label="$t('verify_job_enable')" :value="1"></ElOption>
-            <ElOption :label="$t('verify_job_disable')" :value="2"></ElOption>
-          </ElSelect>
-        </ElFormItem>
-        <ElFormItem label="结果: " class="small">
-          <ElSelect v-model="searchParams.result" clearable @input="search()">
-            <ElOption v-for="item in validList" :key="item.value" :label="item.name" :value="item.value"></ElOption>
-          </ElSelect>
-        </ElFormItem>
-        <ElFormItem label="名称: " class="medium">
-          <ElInput v-model="searchParams.keyword" clearable :placeholder="$t('verify_job_name')" @input="search(800)">
-            <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
-          </ElInput>
-        </ElFormItem>
-        <ElFormItem>
-          <ElButton plain class="btn-refresh" @click="fetch()">
-            <VIcon>refresh</VIcon>
-          </ElButton>
-        </ElFormItem>
-      </ElForm>
+      <FilterBar v-model="searchParams" :items="filterItems" @search="search(800)" @fetch="fetch"></FilterBar>
       <div>
         <VButton type="primary" @click="toCreate">
           <span>{{ $t('verify_button_create') }}</span>
@@ -192,10 +157,13 @@
 <script>
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
+import FilterBar from '@/components/filter-bar'
+
 let timer = null
 export default {
-  components: { VIcon, StatusTag },
+  components: { VIcon, StatusTag, FilterBar },
   data() {
+    // const $t = this.$t.bind(this)
     return {
       loading: false,
       searchParams: {
@@ -205,7 +173,7 @@ export default {
         enabled: '',
         result: ''
       },
-
+      filterItems: [],
       page: {
         current: 1,
         size: 10,
@@ -252,6 +220,57 @@ export default {
   computed: {
     isSearching() {
       return !!Object.values(this.searchParams).join('')
+    },
+    filterInspectMethodOptions() {
+      const $t = this.$t.bind(this)
+      return [
+        {
+          label: $t('verify_type_row_count'),
+          value: 'row_count'
+        },
+        {
+          label: $t('verify_type_field'),
+          value: 'field'
+        },
+        {
+          label: $t('verify_type_joint_field'),
+          value: 'jointField'
+        }
+      ]
+    },
+    filterModeOptions() {
+      const $t = this.$t.bind(this)
+      return [
+        {
+          label: $t('verify_frequency_manual'),
+          value: 'manual'
+        },
+        {
+          label: $t('verify_frequency_cron'),
+          value: 'cron'
+        }
+      ]
+    },
+    filterEnabledOptions() {
+      const $t = this.$t.bind(this)
+      return [
+        {
+          label: $t('verify_job_enable'),
+          value: 1
+        },
+        {
+          label: $t('verify_job_disable'),
+          value: 2
+        }
+      ]
+    },
+    filterResultOptions() {
+      return this.validList.map(item => {
+        return {
+          label: item.name,
+          value: item.value
+        }
+      })
     }
   },
   watch: {
@@ -267,6 +286,7 @@ export default {
   created() {
     let query = this.$route.query
     this.searchParams = Object.assign(this.searchParams, query)
+    this.getFilterItems()
     this.fetch()
     timer = setInterval(() => {
       let list = this.list || []
@@ -286,6 +306,40 @@ export default {
     timer = null
   },
   methods: {
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: '类型',
+          key: 'inspectMethod',
+          type: 'select-inner',
+          options: this.filterInspectMethodOptions
+        },
+        {
+          label: '频次',
+          key: 'mode',
+          type: 'select-inner',
+          options: this.filterModeOptions
+        },
+        {
+          label: '状态',
+          key: 'enabled',
+          type: 'select-inner',
+          options: this.filterEnabledOptions
+        },
+        {
+          label: '结果',
+          key: 'result',
+          type: 'select-inner',
+          options: this.filterResultOptions
+        },
+
+        {
+          placeholder: '名称',
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
+    },
     async updateStatusByIds(ids) {
       let filter = {
         where: {
