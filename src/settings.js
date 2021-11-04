@@ -13,6 +13,7 @@ module.exports = {
     'dameng',
     'kafka',
     'greenplum',
-    'mq'
+    'mq',
+    'clickhouse'
   ]
 }
