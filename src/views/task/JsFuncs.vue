@@ -120,7 +120,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import CodeEditor from 'web-core/components/CodeEditor'
-import 'prismjs'
+// import 'prismjs'
 const parser = require('esprima')
 const escodegen = require('escodegen')
 
