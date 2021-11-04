@@ -1,6 +1,6 @@
 <template>
   <div
-    class="v-select-list el-select"
+    class="el-select"
     :class="[selectSize ? 'el-select--' + selectSize : '']"
     @click.stop="toggleMenu"
     v-clickoutside="handleClose"
@@ -68,7 +68,6 @@
       />
     </div>
     <ElInput
-      v-if="!innerLabel"
       ref="reference"
       v-model="selectedLabel"
       :id="id"
@@ -94,9 +93,6 @@
       @mouseenter.native="inputHovering = true"
       @mouseleave.native="inputHovering = false"
     >
-      <template slot="prepend" v-if="$slots.prepend">
-        <slot name="prepend" />
-      </template>
       <template slot="prefix" v-if="$slots.prefix">
         <slot name="prefix" />
       </template>
@@ -105,19 +101,6 @@
         <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick" />
       </template>
     </ElInput>
-    <div
-      v-else
-      ref="reference"
-      :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center fs-8']"
-      :validate-event="false"
-      @mouseenter="inputHovering = true"
-      @mouseleave="inputHovering = false"
-    >
-      <span class="inner-select__label">{{ innerLabel }}</span>
-      <span :class="['inner-select__selected', { placeholder: !selectedLabel }]">{{ selectedLabel || '请选择' }}</span>
-      <VIcon v-if="showClose" size="12" class="ml-1">close</VIcon>
-      <VIcon v-else size="12" class="ml-1" @click="handleClearClick">arrow-down</VIcon>
-    </div>
     <div v-if="loading" class="el-select__loading">
       <i class="el-icon-loading"></i>
     </div>
@@ -147,9 +130,7 @@
             </template>
             <template #after>
               <slot name="after">
-                <div v-if="!!lastPageText && isLastPage" class="pl-5 py-2 fs-8 font-color-disable">
-                  {{ lastPageText }}
-                </div>
+                <div v-if="isLastPage" class="pl-5 py-2 fs-8 font-color-disable">没有更多数据</div>
               </slot>
             </template>
           </RecycleScroller>
@@ -170,14 +151,12 @@ import { deepCopy } from '@/util'
 import { Select } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import VIcon from '@/components/VIcon'
 
 export default {
-  name: 'SelectList',
+  name: 'VirtualSelect',
 
   components: {
-    RecycleScroller,
-    VIcon
+    RecycleScroller
   },
 
   extends: Select,
@@ -217,17 +196,6 @@ export default {
     searchKey: {
       type: String,
       default: 'name'
-    },
-    lastPageText: {
-      type: String,
-      default: '没有更多数据'
-    },
-    menuMinWidth: {
-      type: String,
-      default: '200px'
-    },
-    innerLabel: {
-      type: String
     }
   },
 
@@ -280,14 +248,8 @@ export default {
 
   watch: {
     visible(val) {
-      val && this.initWidth()
-    },
-    value() {
-      this.getSelectLabel()
+      val && this.init()
     }
-  },
-  mounted() {
-    this.init()
   },
   methods: {
     init() {
@@ -296,33 +258,7 @@ export default {
         this.getData()
       } else {
         this.filteredItems = deepCopy(this.items)
-        this.getSelectLabel()
       }
-    },
-    initWidth() {
-      // 设置列表的宽度
-      const { menuMinWidth } = this
-      if (menuMinWidth) {
-        this.$nextTick(() => {
-          this.$refs.popper.minWidth = menuMinWidth
-        })
-      }
-    },
-    getSelectLabel() {
-      const { value } = this
-      if (!value) {
-        return
-      }
-      this.$nextTick(() => {
-        this.selectedLabel = this.items.find(item => item.value === value)?.label
-      })
-    },
-    resetInputWidth() {
-      let $reference = this.$refs.reference
-      if (!this.innerLabel) {
-        $reference = $reference.$el
-      }
-      this.inputWidth = $reference.getBoundingClientRect().width
     },
     resetPage() {
       let pageObj = this.pageObj
@@ -363,7 +299,6 @@ export default {
             })
           )
         }
-        this.getSelectLabel()
       })
     },
     handleQueryChange(val) {
@@ -451,24 +386,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-select-list {
-  &.none-border {
-    &:hover {
-      background-color: #fafafa;
-    }
-    ::v-deep {
-      .inner-select {
-        border-color: transparent;
-      }
-      .inner-select__selected {
-        max-width: 60px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-  }
-}
 .scroller {
   height: 274px;
 }
@@ -481,21 +398,5 @@ export default {
   position: relative;
   padding: 6px 0;
   overflow: hidden;
-}
-.inner-select {
-  padding: 0 8px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.inner-select__label {
-  color: map-get($fontColor, sub);
-}
-.inner-select__selected {
-  padding-left: 8px;
-  color: map-get($fontColor, main);
-  &.placeholder {
-    color: map-get($fontColor, sub);
-  }
 }
 </style>

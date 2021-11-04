@@ -7,8 +7,9 @@ import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import ContactUs from '@/views/ContactUs'
 
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
-// const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/statistics/Details.vue')
-const TaskStatistics = () => import(/* webpackChunkName: "task-form" */ '../views/task/statistics/SubtaskDetails.vue')
+const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/Details.vue')
+// const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/Task/SubtaskDetails.vue')
+const TaskStatistics = () => import(/* webpackChunkName: "task-form" */ '../views/task/statistics/Index.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
 
 const routes = [
@@ -142,22 +143,10 @@ const routes = [
           {
             path: ':id/details',
             name: 'DataflowDetails',
-            // component: TaskDetails,
-            component: () => import('../views/task/statistics/Details.vue'),
+            component: TaskDetails,
             meta: {
               title: '任务详情'
-            },
-            children: [
-              {
-                path: 'statistics',
-                name: 'DataflowStatistics',
-                // component: TaskStatistics,
-                component: () => import('../views/task/statistics/SubtaskDetails.vue'),
-                meta: {
-                  title: '运行统计'
-                }
-              }
-            ]
+            }
           },
           {
             path: ':id/statistics',

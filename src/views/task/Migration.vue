@@ -1,5 +1,5 @@
 <template>
-  <section class="migration-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Task'">
+  <section class="migration-wrapper main-container" v-loading="loading" v-if="$route.name === 'Task'">
     <div class="main">
       <div class="migration-operation">
         <div class="migration-operation-left">
@@ -17,9 +17,9 @@
         @sort-change="sortChange"
       >
         <ElTableColumn label="任务名称" prop="name" min-width="200">
-          <!--          <template v-slot="scope">-->
-          <!--            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>-->
-          <!--          </template>-->
+          <template v-slot="scope">
+            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
+          </template>
         </ElTableColumn>
         <ElTableColumn label="任务类型" prop="typeText"></ElTableColumn>
         <ElTableColumn label="所属agent" prop="belongAgent" min-width="200">
@@ -143,14 +143,14 @@
           <div class="select-type__item" @click="createMigrate">
             <div>
               <div>数据库迁移</div>
-              <div class="mt-4">对数据库进行跨库复制</div>
+              <div class="mt-4">数据库迁移</div>
             </div>
             <VIcon size="30" class="v-icon">right-fill</VIcon>
           </div>
           <div class="select-type__item data-table ml-10" @click="createSync">
             <div>
               <div>数据表同步</div>
-              <div class="mt-4 font-color-sub">抽取源端数据并计算转换</div>
+              <div class="mt-4 font-color-sub">数据表同步</div>
             </div>
             <VIcon size="30" class="v-icon">right-fill</VIcon>
           </div>
@@ -176,6 +176,8 @@
     font-size: 16px;
   }
   .main {
+    padding: 20px;
+    background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -620,15 +622,15 @@ export default {
     },
     toDetails(row) {
       // 库迁移
-      // if (row.mappingTemplate === 'cluster-clone') {
-      //   this.$router.push({
-      //     name: 'DataflowStatistics',
-      //     params: {
-      //       id: row.id
-      //     }
-      //   })
-      //   return
-      // } else {
+      if (row.mappingTemplate === 'cluster-clone') {
+        this.$router.push({
+          name: 'DataflowStatistics',
+          params: {
+            id: row.id
+          }
+        })
+        return
+      }
       // 表同步
       this.$router.push({
         name: 'DataflowDetails',
@@ -636,7 +638,6 @@ export default {
           id: row.id
         }
       })
-      // }
     },
     changeStatus(ids, { status, errorEvents }) {
       let attributes = {

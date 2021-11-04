@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$route.name === 'NoviceGuide'" class="novice-guide-wrapper g-panel-container">
+  <div v-if="$route.name === 'NoviceGuide'" class="novice-guide-wrapper main-container">
     <div class="container-section p-6">
       <el-steps class="primary pb-6" :active="step" process-status="process" finish-status="success" align-center>
         <el-step title="安装 Agent"></el-step>

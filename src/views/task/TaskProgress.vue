@@ -20,23 +20,23 @@
       </ElCollapseItem>
     </ElCollapse>
     <!-- 结构迁移概览 -->
-    <div class="task-progress-item pt-5" v-if="this.task.setting.sync_type !== 'initial_sync'">
+    <div class="task-progress-item pt-5">
       <div class="title pb-4">结构迁移概览</div>
       <div class="pl-4 pb-5">
         <div class="pb-1" v-if="task.mappingTemplate === 'custom'">
-          <span>计划同步表数量 {{ overviewStats.sourceTableNum }}</span>
-          <span class="pl-6">已完成同步表数量 {{ overviewStats.waitingForSyecTableNums }}</span>
-          <span class="float-end">预计全量完成还需时间：{{ completeTime }}</span>
+          <span>计划迁移表数量 100</span>
+          <span class="pl-6">已完成迁移表量 100</span>
+          <span class="float-end">预计全量完成还需时间：24小时23分1秒</span>
         </div>
         <div v-else>
-          <span>已迁移{{ overviewStats.sourceTableNum }}张表</span>
+          <span>已迁移100张表</span>
           <span class="pl-6">共100张表</span>
         </div>
-        <ElProgress class="task-progress-line" :percentage="progressBar"></ElProgress>
+        <ElProgress class="task-progress-line" :percentage="50"></ElProgress>
       </div>
     </div>
-    <div class="task-progress-item pt-5" v-if="this.task.setting.sync_type !== 'initial_sync'">
-      <div class="title pb-4">{{ detailsText }}</div>
+    <div class="task-progress-item pt-5">
+      <div class="title pb-4">迁移详情</div>
       <div class="pl-4">
         <div class="task-progress-search-bar">
           <ul class="search-bar">
@@ -60,28 +60,13 @@
           </ul>
         </div>
         <div class="task-progress-table pt-6">
-          <!-- 全量同步 -->
-          <template v-if="this.task.setting.sync_type === 'initial_sync+cdc'">
-            <ElTable class="progress-info-table" :data="progressInfoData">
-              <ElTableColumn label="数据库" prop="name"></ElTableColumn>
-              <ElTableColumn label="数据表" prop="name"></ElTableColumn>
-              <ElTableColumn label="数据量（行）" prop="name"></ElTableColumn>
-              <ElTableColumn label="进度" prop="name"></ElTableColumn>
-              <ElTableColumn label="状态" prop="name" width="100"></ElTableColumn>
-            </ElTable>
-          </template>
-          <template v-if="this.task.setting.sync_type === 'cdc'">
-            <ElTable class="progress-info-table" :data="progressInfoData">
-              <ElTableColumn label="数据库" prop="name"></ElTableColumn>
-              <ElTableColumn label="原表名称" prop="name"></ElTableColumn>
-              <ElTableColumn label="延迟" prop="name"></ElTableColumn>
-              <ElTableColumn label="增量所处时间点" prop="name"></ElTableColumn>
-              <ElTableColumn label="操作" prop="name" width="180">
-                <VButton @click="handleClear($route.params.id)">清除</VButton>
-                <VButton @click="backtracking($route.params.id)">回溯</VButton>
-              </ElTableColumn>
-            </ElTable>
-          </template>
+          <ElTable class="progress-info-table" :data="progressInfoData">
+            <ElTableColumn label="数据库" prop="name"></ElTableColumn>
+            <ElTableColumn label="数据表" prop="name"></ElTableColumn>
+            <ElTableColumn label="数据量（行）" prop="name"></ElTableColumn>
+            <ElTableColumn label="进度" prop="name"></ElTableColumn>
+            <ElTableColumn label="状态" prop="name" width="100"></ElTableColumn>
+          </ElTable>
           <ElPagination
             background
             class="mt-3"
@@ -114,9 +99,6 @@ export default {
     return {
       active: 0,
       activeNames: ['1'],
-      progressBar: 0,
-      completeTime: '',
-      overviewStats: {},
       stepData: [
         { label: '任务初始化', time: '2021-12-12 18:00:00' },
         { label: '结构迁移', time: '2021-12-12 18:00:00' }
@@ -135,8 +117,7 @@ export default {
         { label: this.$t('taskProgress.all'), value: 'all' },
         { label: this.$t('taskProgress.running'), value: 'running' },
         { label: this.$t('taskProgress.waiting'), value: 'waiting' }
-      ],
-      detailsText: '迁移详情' //详情文字
+      ]
     }
   },
   created() {
@@ -149,15 +130,12 @@ export default {
             { label: '全量同步', time: '2021-12-12 18:00:00' },
             { label: '增量同步', time: '2021-12-12 18:00:00' }
           ]
-          this.detailsText = '迁移详情'
           break
         case 'initial_sync':
           list = [{ label: '全量同步', time: '2021-12-12 18:00:00' }]
-          this.detailsText = '迁移详情'
           break
         default:
           list = [{ label: '增量同步', time: '2021-12-12 18:00:00' }]
-          this.detailsText = '增量详情'
       }
       this.stepData.push(list)
     }
@@ -180,15 +158,6 @@ export default {
       })
     }
   },
-  watch: {
-    task: {
-      deep: true,
-      immediate: true,
-      handler(data) {
-        this.handleData(data)
-      }
-    }
-  },
   methods: {
     fetch() {},
     // 里程碑状态
@@ -198,110 +167,7 @@ export default {
         result = 'paused'
       }
       return result
-    },
-    handleData(data) {
-      // let currentData = data
-      let overview = {}
-      let waitingForSyecTableNums = 0
-      let completeTime = ''
-
-      if (data?.stats?.overview) {
-        overview = JSON.parse(JSON.stringify(data.stats.overview))
-
-        if (overview.currentStatus === undefined) {
-          this.$set(overview, 'currentStatus', '未开始')
-        }
-
-        if (overview.waitingForSyecTableNums !== undefined) {
-          waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
-        } else {
-          waitingForSyecTableNums = 0
-        }
-        overview.waitingForSyecTableNums = waitingForSyecTableNums
-
-        let num = (overview.targatRowNum / overview.sourceRowNum) * 100
-        this.progressBar = num ? num.toFixed(2) * 1 : 0
-
-        let now = new Date().getTime()
-        let startTime = new Date(data.runningTime).getTime(),
-          runningTime = now - startTime,
-          speed = overview.targatRowNum / runningTime
-        // lefts = Math.floor((spendTime / 1000) % 60) //计算秒数
-
-        let time = (overview.sourceRowNum - overview.targatRowNum) / speed / 1000
-
-        let r = ''
-        if (time) {
-          let s = time,
-            m = 0,
-            h = 0,
-            d = 0
-          if (s > 60) {
-            m = parseInt(s / 60)
-            s = parseInt(s % 60)
-            if (m > 60) {
-              h = parseInt(m / 60)
-              m = parseInt(m % 60)
-              if (h > 24) {
-                d = parseInt(h / 24)
-                h = parseInt(h % 24)
-              }
-            }
-          }
-          if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
-            r = 1 + this.$t('taskProgress.m')
-          }
-          // r = parseInt(s) + this.$t('timeToLive.s')
-          if (m > 0) {
-            r = parseInt(m) + this.$t('taskProgress.m')
-          }
-          if (h > 0) {
-            r = parseInt(h) + this.$t('taskProgress.h') + r
-          }
-          if (d > 0) {
-            r = parseInt(d) + this.$t('taskProgress.d') + r
-          }
-          // 全量未完成 停止任务
-          if (['paused', 'error'].includes(data.status)) {
-            completeTime = this.$t('taskProgress.taskStopped') // 任务已停止
-          } else {
-            completeTime = r
-          }
-        }
-
-        if (this.progressBar === 100) {
-          overview.currentStatus = this.$t('taskProgress.progress') // 进行中
-          completeTime = this.$t('taskProgress.fullyCompleted') // 全量已完成
-        }
-        // 任务暂停、错误  增量状态都为停止
-        if (completeTime === this.$t('taskProgress.fullyCompleted')) {
-          if (['paused', 'error'].includes(data.status)) {
-            overview.currentStatus = this.$t('taskProgress.stopped') // 已停止
-          }
-        }
-      }
-
-      if (data?.stats?.progressGroupByDB?.length) {
-        data.stats.progressGroupByDB.forEach(statusItem => {
-          let num = (statusItem.targetRowNum / statusItem.sourceRowNum) * 100,
-            statusNum = num > 0 ? num.toFixed(2) * 1 : 0
-          if (statusItem.statusNum) {
-            statusItem.statusNum = statusNum
-          } else {
-            this.$set(statusItem, 'statusNum', statusNum)
-          }
-        })
-      }
-      this.progressGroupByDB = data.stats.progressGroupByDB
-
-      this.completeTime = completeTime
-
-      this.overviewStats = overview
-    },
-    // 清除
-    handleClear() {},
-    // 回溯
-    backtracking() {}
+    }
   }
 }
 </script>
@@ -318,7 +184,6 @@ export default {
           .el-step__head {
             .el-step__line {
               height: 2px;
-              top: 8px;
             }
             .el-step__icon {
               width: 10px;

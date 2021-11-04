@@ -23,13 +23,14 @@ cp.exec(`git config --remove-section alias`, function () {
       '\tspull = submodule update --remote --merge',
       "\tspush = submodule foreach 'git push origin HEAD:$(git config -f ../../../.gitmodules submodule.src/_packages/tapdata-web-core.branch)'",
       "\tsinit = submodule foreach 'git checkout -B $(git -C ../../../ rev-parse --abbrev-ref HEAD)-webcore && git config -f ../../../.gitmodules submodule.src/_packages/tapdata-web-core.branch $(git rev-parse --abbrev-ref HEAD)'",
+      "\tsbranch = submodule foreach 'git config -f ../../../.gitmodules submodule.src/_packages/tapdata-web-core.branch'",
       '\tsu = submodule update'
     )
 
     fs.writeFile(join(__dirname, './.git/config'), lines.join('\n'), function (err) {
       if (err) throw err
       // eslint-disable-next-line no-console
-      console.log('写入git别名成功: sdiff, sstatus, sadd, scommit, spull, spush, sinit, su')
+      console.log('写入git别名成功: sdiff, sstatus, sadd, scommit, spull, spush, sinit, sbranch, su')
     })
   })
 })

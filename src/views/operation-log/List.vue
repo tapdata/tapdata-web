@@ -1,5 +1,5 @@
 <template>
-  <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'OperationLog'">
+  <section class="operation-logs-wrapper main-container" v-if="$route.name === 'OperationLog'">
     <div class="main">
       <div class="list-operation">
         <div class="list-operation-left">
@@ -41,10 +41,8 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import FilterBar from '@/components/filter-bar'
+import FilterBar from '@/components/FilterBar'
 import TableList from '@/components/TableList'
-import { isEmpty } from '@/util'
-
 export default {
   components: { VIcon, FilterBar, TableList },
   data() {
@@ -142,7 +140,7 @@ export default {
       if (route.name === 'OperationLog') {
         let query = route.query
         this.searchParams = Object.assign(this.searchParams, query)
-        let pageNum = isEmpty(query) ? undefined : 1
+        let pageNum = JSON.stringify(query) === '{}' ? undefined : 1
         this.table.fetch(pageNum)
       }
     }
@@ -178,23 +176,29 @@ export default {
         {
           label: '操作类型',
           key: 'operationType',
-          type: 'select-inner',
+          type: 'select',
           options: this.operationTypeOptions
         },
         {
           label: '操作对象',
           key: 'parameter1',
-          type: 'input-pop'
+          type: 'input'
         },
         {
-          label: '操作时间',
-          key: 'start,end',
-          type: 'datetimerange'
+          label: '开始时间',
+          key: 'start',
+          type: 'datetime'
+        },
+        {
+          label: '结束时间',
+          key: 'end',
+          type: 'datetime',
+          rules: this.startGreaterThanEndFnc
         },
         {
           label: '用户名称',
           key: 'username',
-          type: 'input-pop'
+          type: 'input'
         }
       ]
     },
@@ -375,6 +379,8 @@ export default {
     font-size: 16px;
   }
   .main {
+    padding: 20px;
+    background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;

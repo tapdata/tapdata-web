@@ -1,5 +1,5 @@
 <template>
-  <div class="notice g-panel-container ws-main-container fs-8" v-if="$route.query.id == 1">
+  <div class="notice main-container ws-main-container fs-8" v-if="$route.query.id == 1">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>推荐 | 异构数据库同步云平台 Tapdata Cloud 开启有奖公测</span>
@@ -111,7 +111,7 @@
       </div>
     </div>
   </div>
-  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 2">
+  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 2">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>Tapdata Cloud 1.0.6 版本发布啦！</span>
@@ -166,7 +166,7 @@
       </div>
     </div>
   </div>
-  <div class="notice g-panel-container fs-8" v-else>
+  <div class="notice main-container fs-8" v-else>
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>新手必看 ！如何玩转 Tapdata Cloud 数据同步功能</span>

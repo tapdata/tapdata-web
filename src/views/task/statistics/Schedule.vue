@@ -23,12 +23,10 @@
         <div class="p-4" style="background: #fafafa; border-radius: 4px 4px 0 0">
           <div class="flex justify-content-between mb-2">
             <div>
-              <span>计划{{ currentStep.label }}表数量 {{ overviewStats.sourceTableNum || 0 }}</span>
-              <span class="ml-3"
-                >已完成{{ currentStep.label }}表数量 {{ overviewStats.waitingForSyecTableNums || 0 }}</span
-              >
+              <span>计划{{ currentStep.label }}表数量 100</span>
+              <span class="ml-3">已完成{{ currentStep.label }}表量 100</span>
             </div>
-            <div>预计{{ currentStep.label }}完成时间：{{ completeTime }}</div>
+            <div>预计{{ currentStep.label }}完成时间：{{ completeTime }}24小时23分1秒</div>
           </div>
           <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
         </div>
@@ -44,7 +42,7 @@
 
 <script>
 import TableList from '@/components/TableList'
-import FilterBar from '@/components/filter-bar'
+import FilterBar from '@/components/FilterBar'
 import Milestone from './Milestone'
 import { deepCopy } from '@/util'
 
@@ -67,9 +65,8 @@ export default {
         type: ''
       },
       columns: [],
-      overviewStats: {},
       progressBar: 0, // 进度
-      completeTime: '-', // 完成时间
+      completeTime: '', // 完成时间
       progressGroupByDB: []
     }
   },
@@ -190,7 +187,6 @@ export default {
       this.progressGroupByDB = data.stats.progressGroupByDB
 
       this.completeTime = completeTime
-      this.overviewStats = overview
     },
     getStep() {
       this.active = 2 // 写死的测试代码
