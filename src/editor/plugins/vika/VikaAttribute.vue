@@ -44,6 +44,9 @@
             :props="props"
             :load="loadNode"
             :data="nodes"
+            node-key="id"
+            :default-expanded-keys="expandedKeys"
+            :default-checked-keys="checkedKeys"
             @node-click="handleNodeClick"
           >
           </el-tree>
@@ -55,8 +58,9 @@
         class="fr"
         type="success"
         size="mini"
+        :loading="schemasLoading"
         v-if="!dataNodeInfo.isTarget || !showFieldMapping"
-        @click="hanlderLoadSchema"
+        @click="changeSchema(true)"
       >
         <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
         <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
@@ -155,7 +159,9 @@ export default {
         label: 'name',
         children: 'children',
         isLeaf: 'leaf'
-      }
+      },
+      expandedKeys: [],
+      checkedKeys: []
     }
   },
 
@@ -221,6 +227,7 @@ export default {
           if (result.data) {
             this.model.vika_space_id = result.data?.vika_space_id
             this.getSpaceVika()
+            this.loadTree()
           }
         })
         .finally(() => {
@@ -258,12 +265,6 @@ export default {
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'Vika'
       return result
-    },
-
-    // 更新模型点击弹窗
-    loadSchema() {
-      this.changeSchema()
-      this.$message.success(this.$t('message.reloadSchemaSuccess'))
     },
     setDisabled(disabled) {
       this.disabled = disabled
@@ -350,6 +351,7 @@ export default {
             type: node.data.type
           }
           self.model.vikaNodes.push(item)
+          self.model.vikaNodes.reverse()
           if (node.level !== 1) {
             fn(node.parent)
           }
@@ -360,7 +362,24 @@ export default {
         this.model.tableId = ''
       }
     },
-    changeSchema() {
+    //初始化树形结构
+    loadTree() {
+      let data = this.model.vikaNodes || []
+      this.nodes = []
+      for (let level = 0; level < data.length; level++) {
+        if (level === 0) {
+          this.nodes.push(data[level])
+          this.expandedKeys.push(data[level].id)
+        } else {
+          this.expandedKeys.push(data[level].id)
+          this.nodes['children'] = data[level]
+        }
+      }
+    },
+    changeSchema(isLoading) {
+      if (isLoading) {
+        this.schemasLoading = true
+      }
       let params = {
         load_type: 'field',
         space_id: this.model.vika_space_id,
@@ -384,6 +403,10 @@ export default {
                   }
             this.$emit('schemaChange', _.cloneDeep(schema))
             this.mergedSchema = schema
+            if (isLoading) {
+              this.schemasLoading = false
+              this.$message.success(this.$t('message.reloadSchemaSuccess'))
+            }
           } else {
             this.$message.error(data.data?.error)
           }
@@ -391,11 +414,6 @@ export default {
         .catch(() => {
           this.$message.error('接口请求失败')
         })
-    },
-    //初始化树形结构
-    loadTree() {
-      let data = this.model.vikaNode || []
-      for (let i = 0; i < data.length; i++) {}
     }
     // seeMonitor() {
     // 	editorMonitor.goBackMontior();
