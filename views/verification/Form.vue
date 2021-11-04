@@ -871,7 +871,7 @@ export default {
       this.form.tasks = []
     },
     timingChangeHandler(times) {
-      console.log('this.form', this.form)
+      console.log('this.form', this.form) // eslint-disable-line
       this.form.timing.start = times[0]
       this.form.timing.end = times[1]
     },

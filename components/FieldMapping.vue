@@ -372,7 +372,7 @@ export default {
   },
   watch: {
     form(old, news) {
-      console.log(old, news)
+      console.log(old, news) // eslint-disable-line
     }
   },
   methods: {
