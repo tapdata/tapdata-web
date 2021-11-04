@@ -83,7 +83,6 @@
         <el-button type="primary" size="mini" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
-    <CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
   </div>
 </template>
 <script>
@@ -91,17 +90,15 @@ import _ from 'lodash'
 import factory from '../../../api/factory'
 import Entity from '../link/Entity'
 import { convertSchemaToTreeData } from '../../util/Schema'
-import CreateTable from '@/components/dialog/createTable'
 import FieldMapping from '@/components/FieldMapping'
 
-import ws from '@/api/ws'
 import VIcon from '@/components/VIcon'
 const connections = factory('connections')
 
 // let editorMonitor = null;
 export default {
   name: 'ApiNode',
-  components: { Entity, CreateTable, VIcon, FieldMapping },
+  components: { Entity, VIcon, FieldMapping },
   data() {
     return {
       disabled: false,
@@ -264,57 +261,10 @@ export default {
     },
 
     // 更新模型点击弹窗
-    hanlderLoadSchema() {
-      this.dialogVisible = true
+    loadSchema() {
+      this.changeSchema()
+      this.$message.success(this.$t('message.reloadSchemaSuccess'))
     },
-
-    // 确定更新模型弹窗
-    confirmDialog() {
-      this.reloadModelLoading = true
-      let params = {
-        type: 'reloadSchema',
-        data: {
-          tables: [
-            {
-              connId: this.model.connectionId,
-              tableName: this.model.tableName
-              // userId: this.$cookie.get('user_id')
-            }
-          ]
-        }
-      }
-
-      ws.send(params)
-      let self = this,
-        schema = null,
-        templeSchema = []
-
-      ws.on('execute_load_schema_result', res => {
-        if (res.status === 'SUCCESS' && res.result && res.result.length) {
-          templeSchema = res.result
-          this.reloadModelLoading = false
-        } else {
-          self.$message.error(this.$t('message.reloadSchemaError'))
-        }
-        this.reloadModelLoading = false
-        if (templeSchema && templeSchema.length) {
-          templeSchema.forEach(item => {
-            if (item.connId === this.model.connectionId && item.tableName === this.model.tableName) {
-              schema = item.schema
-            }
-          })
-        }
-        self.$nextTick(() => {
-          if (schema) {
-            self.$emit('schemaChange', _.cloneDeep(schema))
-            this.mergedSchema = schema
-            self.$message.success(this.$t('message.reloadSchemaSuccess'))
-          }
-        })
-      })
-      this.dialogVisible = false
-    },
-
     setDisabled(disabled) {
       this.disabled = disabled
     },
@@ -433,132 +383,6 @@ export default {
                     fields: []
                   }
             this.$emit('schemaChange', _.cloneDeep(schema))
-            schema = {
-              table_name: '1017_BLOB_TEST',
-              cdc_enabled: true,
-              meta_type: 'table',
-              tableId: '616c3b8406c3d200aec61a9e',
-              partitionSet: null,
-              fields: [
-                {
-                  field_name: 'ID',
-                  table_name: '1017_BLOB_TEST',
-                  data_type: 'VARCHAR2',
-                  primary_key_position: 1,
-                  key: 'PRI',
-                  dataType: 12,
-                  is_nullable: false,
-                  parent: null,
-                  original_field_name: 'ID',
-                  original_java_type: 'String',
-                  precision: 30,
-                  scale: null,
-                  oriPrecision: null,
-                  oriScale: null,
-                  default_value: null,
-                  javaType: 'String',
-                  columnSize: 30,
-                  pkConstraintName: 'SYS_C00129195',
-                  autoincrement: 'NO',
-                  id: '612c9ca59d20d70052c24d29',
-                  columnPosition: 1,
-                  is_deleted: false,
-                  tapType: 'String'
-                },
-                {
-                  field_name: 'T_VARCHAR2',
-                  table_name: '1017_BLOB_TEST',
-                  data_type: 'VARCHAR2',
-                  primary_key_position: 0,
-                  dataType: 12,
-                  is_nullable: true,
-                  parent: null,
-                  original_field_name: 'T_VARCHAR2',
-                  original_java_type: 'String',
-                  precision: 50,
-                  scale: null,
-                  oriPrecision: null,
-                  oriScale: null,
-                  default_value: null,
-                  javaType: 'String',
-                  columnSize: 50,
-                  autoincrement: 'NO',
-                  id: '612c9ca59d20d70052c24d2a',
-                  columnPosition: 2,
-                  is_deleted: false,
-                  tapType: 'String'
-                },
-                {
-                  field_name: 'T_NVARCHAR2',
-                  table_name: '1017_BLOB_TEST',
-                  data_type: 'VARCHAR2',
-                  primary_key_position: 0,
-                  dataType: 12,
-                  is_nullable: true,
-                  parent: null,
-                  original_field_name: 'T_NVARCHAR2',
-                  original_java_type: 'String',
-                  precision: 60,
-                  scale: null,
-                  oriPrecision: null,
-                  oriScale: null,
-                  default_value: null,
-                  javaType: 'String',
-                  columnSize: 60,
-                  autoincrement: 'NO',
-                  id: '612c9ca59d20d70052c24d2b',
-                  columnPosition: 3,
-                  is_deleted: false,
-                  tapType: 'String'
-                },
-                {
-                  field_name: 'T_BLOB',
-                  table_name: '1017_BLOB_TEST',
-                  data_type: 'BLOB',
-                  primary_key_position: 0,
-                  dataType: 2004,
-                  is_nullable: true,
-                  parent: null,
-                  original_field_name: 'T_BLOB',
-                  original_java_type: 'Bytes',
-                  precision: null,
-                  scale: null,
-                  oriPrecision: null,
-                  oriScale: null,
-                  default_value: null,
-                  javaType: 'Bytes',
-                  columnSize: 4000,
-                  autoincrement: 'NO',
-                  id: '612c9ca59d20d70052c24d2c',
-                  columnPosition: 4,
-                  is_deleted: false
-                },
-                {
-                  field_name: 'T_CLOB',
-                  table_name: '1017_BLOB_TEST',
-                  data_type: 'VARCHAR2',
-                  primary_key_position: 0,
-                  dataType: 12,
-                  is_nullable: true,
-                  parent: null,
-                  original_field_name: 'T_CLOB',
-                  original_java_type: 'String',
-                  precision: 4000,
-                  scale: null,
-                  oriPrecision: null,
-                  oriScale: null,
-                  default_value: null,
-                  javaType: 'String',
-                  columnSize: 4000,
-                  autoincrement: 'NO',
-                  id: '612c9ca59d20d70052c24d2d',
-                  columnPosition: 5,
-                  is_deleted: false,
-                  tapType: 'String'
-                }
-              ],
-              indices: []
-            }
             this.mergedSchema = schema
           } else {
             this.$message.error(data.data?.error)
