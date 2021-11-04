@@ -1,6 +1,6 @@
 <template>
   <div class="connection-container">
-    <VTable :data="list" :columns="columns" height="100%" :has-pagination="false">
+    <TableList :remoteMethod="remoteMethod" :columns="columns" height="100%" :has-pagination="false">
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
           <img
@@ -43,13 +43,14 @@
           <ElButton size="mini" type="text" @click="reload(scope.row)">加载Schema</ElButton>
         </div>
       </template>
-    </VTable>
+    </TableList>
     <!-- 连接测试 -->
     <ConnectionTest ref="test"></ConnectionTest>
   </div>
 </template>
 
 <script>
+import TableList from '@/components/TableList'
 import StatusTag from '@/components/StatusTag'
 import SchemaProgress from 'web-core/components/SchemaProgress'
 import VIcon from '@/components/VIcon'
@@ -57,7 +58,7 @@ import { deepCopy } from '@/util'
 
 export default {
   name: 'Connection',
-  components: { StatusTag, VIcon, SchemaProgress },
+  components: { TableList, StatusTag, VIcon, SchemaProgress },
   props: {
     task: {
       type: Object,
@@ -115,7 +116,34 @@ export default {
   },
   methods: {
     init() {
-      this.getData()
+      // this.getData()
+    },
+    remoteMethod({ page }) {
+      let ids = this.task?.stages.map(item => {
+        return item.connectionId
+      })
+      let { current, size } = page
+      let filter = {
+        where: {
+          id: {
+            inq: ids
+          }
+        },
+        limit: size,
+        skip: size * (current - 1)
+      }
+      return this.$axios
+        .get(`tm/api/Connections?filter=${encodeURIComponent(JSON.stringify(filter))}`)
+        .then(({ items, total }) => {
+          let data = items.map(item => {
+            item.connectType = this.connectTypeMap[item.connection_type]
+            return deepCopy(item)
+          })
+          return {
+            total: total,
+            data: data
+          }
+        })
     },
     getData() {
       let ids = this.task?.stages.map(item => {

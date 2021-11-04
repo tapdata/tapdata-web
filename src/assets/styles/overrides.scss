@@ -335,67 +335,75 @@ th {
 }
 .el-table {
   color: map-get($fontColor, normal);
-}
-.el-table::before {
-  display: none;
-}
-.el-table.table-border {
-  border: none;
-}
-.el-table.table-border::before {
-  display: block;
-}
-.el-table .el-table__header-wrapper {
-  border-radius: 4px 4px 0 0;
-}
-.el-table thead {
-  color: map-get($fontColor, normal);
-}
-.el-table th.el-table__cell {
-  background-color: #fafafa;
-  &.el-table__cell.is-leaf {
-    border-bottom: 0;
+  &::before {
+    display: none;
   }
-  & > .cell {
-    font-size: 14px;
-    color: map-get($fontColor, main);
+  &.el-table--small td {
+    padding: 5px 0;
   }
-}
-.el-table .el-table__fixed-right-patch {
-  background-color: #fafafa;
-}
-.el-table td,
-.el-table th.is-leaf {
-  border-bottom: none;
-}
-.el-table.table-border th {
-  padding: 0;
-  height: 54px;
-}
-.el-table.table-border td {
-  border-bottom: 1px solid #eceef1;
-}
-.el-table--small td {
-  padding: 5px 0;
-}
-.el-table .el-table__cell {
-  .cell {
-    line-height: 30px;
-  }
-  &:first-child {
-    > .cell {
-      padding-left: 24px;
+  &.table-border {
+    border: none;
+    &::before {
+      display: block;
+    }
+    &.el-table--enable-row-hover .el-table__body tr:hover > td {
+      background-color: inherit;
+    }
+    th {
+      padding: 0;
+      height: 54px;
+    }
+    td {
+      border-bottom: 1px solid #eceef1;
     }
   }
-  &:last-child {
-    > .cell {
-      padding-right: 24px;
+  &.el-table--enable-row-hover {
+    .el-table__body {
+      tr:hover > td.el-table__cell {
+        background-color: #eff1f4;
+      }
     }
   }
-}
-
-.table-border.el-table--enable-row-hover .el-table__body tr:hover > td {
-  background-color: inherit;
+  .el-table__header-wrapper {
+    border-radius: 4px 4px 0 0;
+  }
+  thead {
+    color: map-get($fontColor, normal);
+  }
+  th {
+    &.el-table__cell {
+      background-color: #fafafa;
+      &.el-table__cell.is-leaf {
+        border-bottom: 0;
+      }
+      & > .cell {
+        font-size: 14px;
+        color: map-get($fontColor, main);
+      }
+    }
+  }
+  td,
+  th.is-leaf {
+    border-bottom: none;
+  }
+  .el-table__cell {
+    .cell {
+      line-height: 30px;
+    }
+    &:first-child {
+      > .cell {
+        padding-left: 24px;
+      }
+    }
+    &:last-child {
+      > .cell {
+        padding-right: 24px;
+      }
+    }
+  }
+  .el-table__fixed-right-patch {
+    background-color: #fafafa;
+  }
 }
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   background-color: map-get($color, primary);
@@ -706,4 +714,10 @@ th {
 .el-switch.is-checked .el-switch__core {
   border-color: map-get($color, primary);
   background-color: map-get($color, primary);
+}
+// 进度条
+.el-progress {
+  .el-progress-bar__inner {
+    background-color: map-get($color, primary);
+  }
 }
