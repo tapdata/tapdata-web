@@ -1,6 +1,6 @@
 <template>
   <header class="layout-header border-bottom px-4">
-    <button @click="$emit('back')" class="icon-btn">
+    <button @click="$router.push({ name: 'Task' })" class="icon-btn">
       <VIcon size="20">left</VIcon>
     </button>
     <div class="title-input-wrap flex align-center mx-2 flex-shrink-0 h-100" :data-value="hiddenValue">

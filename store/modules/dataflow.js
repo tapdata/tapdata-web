@@ -34,7 +34,7 @@ const state = () => ({
   nodeTypes: [], // 所有节点类型
   processorNodeTypes: [
     {
-      icon: 'js',
+      icon: 'javascript',
       name: 'JavaScript',
       type: 'js_processor',
       constructor: 'JavaScript'

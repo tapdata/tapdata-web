@@ -1855,7 +1855,8 @@ const en = {
         CHECK_LOCAL_PORT: 'Check if local port is available',
         SCAN_FILE: 'Scan the files in the directory',
         CHECK_BIN_LOG_SYNC: 'Check BINLOG sync enable',
-        CHECK_GTID: 'Check of GTID mode and GTID consistency enable'
+        CHECK_GTID: 'Check of GTID mode and GTID consistency enable',
+        CHECK_VIKA_API_TOKEN: 'Check if the vika key is correct'
       },
       file: {
         fileAddr: 'File Address',

@@ -1,5 +1,5 @@
 <template>
-  <div class="v-list">
+  <div class="v-table-container">
     <ElTable
       v-loading="loading"
       v-bind="$attrs"
@@ -7,7 +7,7 @@
       :data="list"
       ref="table"
       height="100%"
-      class="v-list__table mt-3"
+      class="table-container__table mt-3"
       @selection-change="handleSelectionChange"
     >
       <ColumnItem v-for="(item, index) in columns" :item="item" :key="index">
@@ -86,11 +86,16 @@ export default {
         //   {
         //     label: '操作描述',
         //     prop: 'desc',
+        //     headerSlot: 'descHeader', // 表头
         //     slotName: 'desc',
         //     minWidth: 300
         //   }
         // ]
       }
+    },
+    data: {
+      type: Array,
+      default: () => []
     },
     hasPagination: {
       type: Boolean,
@@ -124,11 +129,23 @@ export default {
       multipleSelection: []
     }
   },
+  watch: {
+    data: {
+      deep: true,
+      handler(v) {
+        v && this.fetch()
+      }
+    }
+  },
   mounted() {
     this.fetch(1)
   },
   methods: {
     fetch(pageNum, debounce = 0, hideLoading, callback) {
+      if (!this.remoteMethod) {
+        this.list = this.data
+        return
+      }
       if (pageNum === 1) {
         this.multipleSelection = []
         this.$emit('selection-change', [])
@@ -140,24 +157,23 @@ export default {
           if (!hideLoading) {
             this.loading = true
           }
-          this.remoteMethod &&
-            this.remoteMethod({
-              page: this.page,
-              data: this.list
+          this.remoteMethod({
+            page: this.page,
+            data: this.list
+          })
+            .then(({ data, total }) => {
+              this.page.total = total
+              this.list = data || []
+              if (total > 0 && (!data || !data.length)) {
+                setTimeout(() => {
+                  this.fetch(this.page.current - 1)
+                }, 0)
+              }
             })
-              .then(({ data, total }) => {
-                this.page.total = total
-                this.list = data || []
-                if (total > 0 && (!data || !data.length)) {
-                  setTimeout(() => {
-                    this.fetch(this.page.current - 1)
-                  }, 0)
-                }
-              })
-              .finally(() => {
-                this.loading = false
-                callback?.(this.getData())
-              })
+            .finally(() => {
+              this.loading = false
+              callback?.(this.getData())
+            })
         }, debounce)
       })
     },
@@ -176,7 +192,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-list {
+.v-table-container {
   display: flex;
   width: 100%;
   height: 100%;
@@ -184,7 +200,7 @@ export default {
   overflow: hidden;
   box-sizing: border-box;
 }
-.v-list__table {
+.table-container__table {
   flex: 1;
   overflow: auto;
   border-bottom: none;
