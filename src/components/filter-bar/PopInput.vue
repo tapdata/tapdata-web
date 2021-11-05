@@ -101,6 +101,9 @@ export default {
     border-color: transparent;
     &:hover {
       background-color: #fafafa;
+      .icon-btn {
+        color: #000;
+      }
     }
   }
   &.overflow {
@@ -135,5 +138,8 @@ export default {
   &.placeholder {
     //color: map-get($fontColor, sub);
   }
+}
+.icon-btn {
+  color: map-get($fontColor, sub);
 }
 </style>

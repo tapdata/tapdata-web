@@ -189,19 +189,19 @@ export default {
           options: this.operationTypeOptions
         },
         {
-          label: '操作对象',
-          key: 'parameter1',
-          type: 'input-pop'
-        },
-        {
           label: '操作时间',
           key: 'start,end',
           type: 'datetimerange'
         },
         {
-          label: '用户名称',
+          placeholder: '操作对象',
+          key: 'parameter1',
+          type: 'input'
+        },
+        {
+          placeholder: '用户名称',
           key: 'username',
-          type: 'input-pop'
+          type: 'input'
         }
       ]
     },

@@ -118,11 +118,15 @@ export default {
         cursor: pointer;
       }
     }
+    .icon-btn {
+      color: map-get($fontColor, main);
+    }
   }
 }
 .icon-btn {
   position: absolute;
   top: 11px;
   right: 4px;
+  color: map-get($fontColor, sub);
 }
 </style>
