@@ -52,33 +52,33 @@
           </el-tree>
         </el-form-item>
       </el-form>
-    </div>
-    <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
-      <el-button
-        class="fr"
-        type="success"
-        size="mini"
-        :loading="schemasLoading"
-        v-if="!dataNodeInfo.isTarget || !showFieldMapping"
-        @click="changeSchema(true)"
-      >
-        <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
-        <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
-        <span v-else>{{ $t('dataFlow.updateModel') }}</span>
-      </el-button>
-      <FieldMapping
-        v-else
-        ref="fieldMapping"
-        class="fr"
-        :dataFlow="dataFlow"
-        :showBtn="true"
-        :isFirst="model.isFirst"
-        :isDisable="disabled"
-        :hiddenFieldProcess="true"
-        :stageId="stageId"
-        @update-first="returnModel"
-      ></FieldMapping>
-      <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+      <div class="e-entity-wrap" style="text-align: center" v-if="model.connectionId && model.tableName">
+        <el-button
+          class="fr"
+          type="success"
+          size="mini"
+          :loading="schemasLoading"
+          v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+          @click="changeSchema(true)"
+        >
+          <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
+          <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+          <span v-else>{{ $t('dataFlow.updateModel') }}</span>
+        </el-button>
+        <FieldMapping
+          v-else
+          ref="fieldMapping"
+          class="fr"
+          :dataFlow="dataFlow"
+          :showBtn="true"
+          :isFirst="model.isFirst"
+          :isDisable="disabled"
+          :hiddenFieldProcess="true"
+          :stageId="stageId"
+          @update-first="returnModel"
+        ></FieldMapping>
+        <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+      </div>
     </div>
     <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
       <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
@@ -346,6 +346,9 @@ export default {
       }
     },
     handleNodeClick(data, node) {
+      if (this.model.tableName === data.name) {
+        return //当前node 重复点击
+      }
       this.model.vikaNodes = [] //每次都放入最新的node 目录
       if (data.type === 'Datasheet') {
         this.model.tableName = data.name
