@@ -3,27 +3,7 @@
     <div class="main">
       <div class="connection-operation">
         <div class="connection-operation-left">
-          <el-form inline @submit.native.prevent>
-            <el-form-item label="全部状态 :" width="300px">
-              <el-select v-model="searchParams.status" clearable @input="search()">
-                <el-option v-for="(opt, value) in statusMap" :key="value" :label="opt.text" :value="value"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="按连接名搜索 : " class="ml-2">
-              <el-input
-                width="200"
-                v-model="searchParams.keyword"
-                @input="search(800)"
-                :placeholder="$t('gl_placeholder_input')"
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button plain class="btn-refresh" @click="fetch()">
-                <VIcon>refresh</VIcon>
-              </el-button>
-            </el-form-item>
-          </el-form>
+          <FilterBar v-model="searchParams" :items="filterItems" @search="search(800)" @fetch="fetch"></FilterBar>
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
@@ -208,9 +188,11 @@ import StatusTag from '../../components/StatusTag'
 import SchemaProgress from 'web-core/components/SchemaProgress'
 import Preview from './Preview.vue'
 import VIcon from '@/components/VIcon'
+import FilterBar from '@/components/filter-bar'
+
 let timer = null
 export default {
-  components: { StatusTag, Preview, VIcon, SchemaProgress },
+  components: { StatusTag, Preview, VIcon, SchemaProgress, FilterBar },
   data() {
     return {
       loading: true,
@@ -227,12 +209,24 @@ export default {
       order: 'createTime desc',
       statusMap: CONNECTION_STATUS_MAP,
       whiteList: SUPPORT_DB,
-      showDetails: false
+      showDetails: false,
+      filterItems: []
     }
   },
   computed: {
     isSearching() {
       return !!Object.values(this.searchParams).join('')
+    },
+    statusOptions() {
+      let result = []
+      const { statusMap } = this
+      for (let key in statusMap) {
+        result.push({
+          label: statusMap[key].text,
+          value: key
+        })
+      }
+      return result
     }
   },
   watch: {
@@ -265,6 +259,7 @@ export default {
         this.updateStatusByIds(ids)
       }
     }, 5000)
+    this.getFilterItems()
   },
   mounted() {
     if (this.$route.query?.action === 'create') {
@@ -277,6 +272,21 @@ export default {
     timer = null
   },
   methods: {
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: '全部状态',
+          key: 'status',
+          type: 'select-inner',
+          options: this.statusOptions
+        },
+        {
+          placeholder: '按连接名搜索',
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
+    },
     async updateStatusByIds(ids) {
       let fields = {
         id: true,
