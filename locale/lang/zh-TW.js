@@ -1805,7 +1805,8 @@ const tc = {
         CHECK_LOCAL_PORT: '檢查本地端口是否可用',
         SCAN_FILE: '掃描目錄中的文件',
         CHECK_BIN_LOG_SYNC: '檢查binlog日誌同步是否開啟',
-        CHECK_GTID: ' 檢查GTID模式與GTID一致性是否開啟'
+        CHECK_GTID: ' 檢查GTID模式與GTID一致性是否開啟',
+        CHECK_VIKA_API_TOKEN: '檢查vika驗證是否正確'
       },
       initialReadSize: '初始化數據大小',
       incrementalTps: '測試速率(次/秒)',
