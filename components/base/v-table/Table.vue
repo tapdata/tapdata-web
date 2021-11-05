@@ -38,7 +38,6 @@
 import ColumnItem from './Column'
 import { delayTrigger } from '../../../util'
 import moment from 'moment'
-import { deepCopy } from '@/util'
 export default {
   name: 'VTable',
   components: { ColumnItem },
@@ -144,7 +143,7 @@ export default {
   methods: {
     fetch(pageNum, debounce = 0, hideLoading, callback) {
       if (!this.remoteMethod) {
-        this.list = deepCopy(this.data)
+        this.list = this.data
         return
       }
       if (pageNum === 1) {
