@@ -370,11 +370,6 @@ export default {
       return tableName
     }
   },
-  watch: {
-    form(old, news) {
-      console.log(old, news)
-    }
-  },
   methods: {
     //数据处理区域
     /*初始化table数据*/
@@ -497,7 +492,6 @@ export default {
           this.updateMetadata(type, data)
             .then(data => {
               this.$emit('update-nav', data)
-              this.selectRow = data[0]
             })
             .finally(() => {
               this.loadingPage = false
@@ -525,14 +519,18 @@ export default {
     /*表改名弹窗保存*/
     handleTableNameSave() {
       this.dialogTableVisible = false
-      this.currentForm = JSON.parse(JSON.stringify(this.form))
+      this.copyForm()
       this.updateParentMetaData('table', this.form)
     },
     /*字段名弹窗保存*/
     handleFieldSave() {
       this.dialogFieldVisible = false
-      this.currentForm = JSON.parse(JSON.stringify(this.form))
+      this.copyForm()
       this.updateParentMetaData('field', this.form)
+    },
+    /*copy 当前form*/
+    copyForm() {
+      this.currentForm = JSON.parse(JSON.stringify(this.form))
     },
     /* 恢复默认全部*/
     rollbackAll() {
@@ -546,6 +544,7 @@ export default {
             table_prefix: '',
             table_suffix: ''
           }
+          this.copyForm()
           this.$nextTick(() => {
             this.loadingPage = true
             this.fieldProcessMethod &&
