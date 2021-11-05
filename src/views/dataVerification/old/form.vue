@@ -1007,7 +1007,7 @@ export default {
           }
           index = 0
           if (
-            this.form.inspectMethod !== 'row_count' &&
+            ['field', 'jointField'].includes(this.form.inspectMethod) &&
             tasks.some((c, i) => {
               index = i + 1
               return !c.source.sortColumn || !c.target.sortColumn
@@ -1018,7 +1018,7 @@ export default {
           }
           index = 0
           if (
-            this.form.inspectMethod !== 'row_count' &&
+            ['field', 'jointField'].includes(this.form.inspectMethod) &&
             tasks.some((c, i) => {
               index = i + 1
               return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
