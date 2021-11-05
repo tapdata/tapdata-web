@@ -15,7 +15,7 @@
       @change="emitFnc"
     ></ElDatePicker>
     <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.native.stop="clear">close</VIcon>
-    <VIcon v-else size="12" class="icon-btn ml-1">arrow-down</VIcon>
+    <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
   </div>
 </template>
 
@@ -74,19 +74,21 @@ export default {
 <style lang="scss" scoped>
 .filter-datetime {
   padding-left: 8px;
-  font-size: 12px;
+  font-size: 14px;
   .filter-datetime__title {
     margin-right: 8px;
     cursor: pointer;
   }
   .el-date-editor {
     max-width: 150px;
-    input::placeholder {
-      color: map-get($fontColor, sub);
-    }
-    input {
-      color: map-get($fontColor, main);
-      font-size: 12px;
+    ::v-deep {
+      input::placeholder {
+        color: map-get($fontColor, main);
+      }
+      input {
+        color: map-get($fontColor, main);
+        font-size: 14px;
+      }
     }
     &.empty-time {
       width: auto;

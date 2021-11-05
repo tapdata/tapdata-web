@@ -108,15 +108,17 @@
     <div
       v-else
       ref="reference"
-      :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center fs-8']"
+      :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center fs-7']"
       :validate-event="false"
       @mouseenter="inputHovering = true"
       @mouseleave="inputHovering = false"
     >
       <span class="inner-select__label">{{ innerLabel }}</span>
-      <span :class="['inner-select__selected', { placeholder: !selectedLabel }]">{{ selectedLabel || '请选择' }}</span>
-      <VIcon v-if="showClose" size="12" class="ml-1">close</VIcon>
-      <VIcon v-else size="12" class="ml-1" @click="handleClearClick">arrow-down</VIcon>
+      <span :class="['inner-select__selected', { placeholder: !selectedLabel }]">{{
+        selectedLabel || $t('gl_placeholder_select')
+      }}</span>
+      <VIcon v-if="showClose" size="10" class="ml-1">close</VIcon>
+      <VIcon v-else size="10" class="ml-1" @click="handleClearClick">arrow-down-fill</VIcon>
     </div>
     <div v-if="loading" class="el-select__loading">
       <i class="el-icon-loading"></i>
@@ -147,7 +149,7 @@
             </template>
             <template #after>
               <slot name="after">
-                <div v-if="!!lastPageText && isLastPage" class="pl-5 py-2 fs-8 font-color-disable">
+                <div v-if="!!lastPageText && isLastPage" class="pl-5 py-2 fs-7 font-color-disable">
                   {{ lastPageText }}
                 </div>
               </slot>
@@ -452,6 +454,7 @@ export default {
 
 <style lang="scss" scoped>
 .v-select-list {
+  font-size: 14px;
   &.none-border {
     &:hover {
       background-color: #fafafa;
@@ -495,7 +498,7 @@ export default {
   padding-left: 8px;
   color: map-get($fontColor, main);
   &.placeholder {
-    color: map-get($fontColor, sub);
+    //color: map-get($fontColor, sub);
   }
 }
 </style>
