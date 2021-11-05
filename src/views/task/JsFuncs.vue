@@ -34,7 +34,14 @@
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
-      <el-form ref="form" label-width="100px" label-position="left" :model="model" :rules="rules">
+      <el-form
+        ref="form"
+        label-width="100px"
+        label-position="left"
+        :model="model"
+        :validate-on-rule-change="false"
+        :rules="model.type === 'jar' ? rules : {}"
+      >
         <el-form-item :label="$t('function_type_label') + ':'">
           <el-select v-model="model.type" size="small">
             <el-option :label="$t('function_type_option_custom')" value="custom"></el-option>
@@ -53,7 +60,13 @@
             <el-input v-model="model.className" size="small" :placeholder="$t('function_class_placeholder')"></el-input>
           </el-form-item>
           <el-form-item prop="fileId" :label="$t('function_file_label') + ':'">
-            <el-upload action="api/file/upload" :file-list="fileList" :on-change="fileChange" :on-remove="fileRemove">
+            <el-upload
+              action="api/file/upload"
+              accept=".jar"
+              :file-list="fileList"
+              :on-change="fileChange"
+              :on-remove="fileRemove"
+            >
               <el-button style="margin-right: 10px" size="small" type="primary">{{
                 $t('function_button_file_upload')
               }}</el-button>
@@ -89,6 +102,12 @@
             :placeholder="$t('function_describe_placeholder')"
           ></el-input>
         </el-form-item> -->
+        <ElFormItem v-if="model.type === 'custom'" size="mini" label="JS引擎版本：">
+          <ElSelect v-model="model.jsEngineName">
+            <ElOption label="新版" value="graal.js"></ElOption>
+            <ElOption label="旧版" value="nashorn"></ElOption>
+          </ElSelect>
+        </ElFormItem>
         <el-form-item v-if="model.type === 'custom'">
           <el-checkbox v-model="lineNumbers" class="e-checkbox" @input="showGutter">{{
             $t('function_checkbox_Line_number')
@@ -137,6 +156,7 @@ export default {
       model: {
         type: 'custom',
         function_name: '',
+        jsEngineName: 'graal.js',
         className: '',
         fileId: '',
         function_body: '',
@@ -151,7 +171,6 @@ export default {
         className: [{ required: true, message: this.$t('function_class_placeholder') }],
         fileId: [{ required: true, message: this.$t('function_file_upload_tips') }]
       },
-      uploadFileName: '',
       fileList: []
     }
   },
@@ -170,10 +189,7 @@ export default {
     },
     fileChange(file) {
       if (file.status === 'ready') {
-        this.uploadFileName = file.name
-        if (this.model.fileId) {
-          this.fileRemove()
-        }
+        this.model.fileId = ''
       }
       if (file.response) {
         let code = file.response.code
@@ -213,11 +229,13 @@ export default {
     },
     // 创建
     openCreateDialog() {
+      this.fileList = []
       this.dialogTitle = this.$t('function_button_create')
       let code = `function f${this.$util.uuid().slice(0, 8)} () {}`
       this.model = {
         type: 'custom',
         function_name: '',
+        jsEngineName: 'graal.js',
         className: '',
         fileId: '',
         function_body: '',
@@ -237,11 +255,12 @@ export default {
       this.dialogTitle = this.$t('button_edit')
       let code = `function ${item.function_name} (${item.parameters}) ${item.function_body}`
       this.model.jsonDoc = code
-      let { function_name, className, fileId, describe, function_body, parameters, return_value } = item
+      let { function_name, className, fileId, describe, function_body, parameters, return_value, jsEngineName } = item
       this.model = {
         type: item.type || 'custom',
         function_name,
         className,
+        jsEngineName: jsEngineName || 'nashorn',
         fileId,
         describe,
         function_body,
@@ -266,6 +285,7 @@ export default {
         m.last_updated = new Date()
         m.user_id = uid
         let model = this.model
+        m.jsEngineName = model.jsEngineName
         m.className = model.className
         m.fileId = model.fileId
         m.describe = model.describe

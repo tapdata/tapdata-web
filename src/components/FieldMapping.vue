@@ -10,13 +10,14 @@
       >字段映射</el-button
     >
     <el-dialog
+      v-if="dialogFieldProcessVisible"
       width="85%"
       title="映射配置"
       :visible.sync="dialogFieldProcessVisible"
       :modal-append-to-body="false"
       custom-class="database-filed-mapping-dialog"
       :close-on-click-modal="false"
-      v-if="dialogFieldProcessVisible"
+      @close="handleClose"
     >
       <FieldMapping
         ref="fieldMappingDom"
@@ -60,6 +61,7 @@ export default {
       //表设置
       fieldMappingNavData: '', //左边导航
       fieldMappingTableData: '', //右边table
+      rollbackAll: '', //是否被标记默认恢复过
       dialogFieldProcessVisible: false,
       loading: false,
       field_process: this.databaseFieldProcess
@@ -212,6 +214,9 @@ export default {
      * 数据匹配 源表所有字段过处理器 源表所有字段过字段改名 匹配后的数据再与目标表数据匹配
      * */
     async intiFieldMappingTableData(row, type) {
+      if (type) {
+        this.rollbackAll = type
+      } //标记当前页面被恢复默认过
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
@@ -236,7 +241,7 @@ export default {
         })
       }
       //是否有批量字段改名操作
-      if (type === 'rollbackAll') {
+      if (this.rollbackAll === 'rollbackAll') {
         this.clearTransform()
       }
       let fieldsNameTransform = this.checkTransform()
@@ -325,6 +330,10 @@ export default {
       if (this.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.field_process)
+    },
+    //关闭弹窗
+    handleClose() {
+      this.rollbackAll = ''
     }
   }
 }

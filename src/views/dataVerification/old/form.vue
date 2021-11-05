@@ -69,6 +69,17 @@
                     <i class="el-icon-warning-outline"></i>
                   </el-tooltip>
                 </el-radio>
+                <ElRadio label="cdcCount"
+                  >动态校验
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="基于时间窗口对动态数据进行校验，目前仅支持对行数进行校验"
+                    placement="top"
+                  >
+                    <i class="el-icon-warning-outline"></i>
+                  </el-tooltip>
+                </ElRadio>
               </el-radio-group>
             </el-form-item>
             <el-form-item class="setting-item" prop="name">
@@ -123,6 +134,79 @@
                 <el-option :value="10000" label="10000(rows)"></el-option>
               </el-select>
             </el-form-item>
+            <template v-if="form.inspectMethod === 'cdcCount'">
+              <el-form-item class="setting-item">
+                <label class="item-label">增量时间类型</label>
+                <el-radio-group
+                  v-model="cdcBeginDateType"
+                  style="margin-left: 10px"
+                  @input="cdcBeginDateTypeChangeHandler"
+                >
+                  <el-radio label="relative"> 指定时间 </el-radio>
+                  <el-radio label="absolute"> 相对时间 </el-radio>
+                </el-radio-group>
+                <el-tooltip class="item ml-6" effect="dark" placement="top">
+                  <div slot="content">
+                    <div>指定时间：用户指定一个固定的时间范围，校验任务执行时会取指定时间范围内的数据进行校验</div>
+                    <div>相对时间：用户设置一个相对时间范围，校验任务执行时会取相对时间范围内的数据来进行校验</div>
+                  </div>
+                  <i class="el-icon-warning-outline"></i>
+                </el-tooltip>
+              </el-form-item>
+              <el-form-item v-if="cdcBeginDateType === 'relative'" class="setting-item" prop="cdcBeginDate">
+                <label class="item-label">增量起止时间</label>
+                <el-date-picker
+                  class="item-select"
+                  size="mini"
+                  :value="[form.cdcBeginDate, form.cdcEndDate]"
+                  type="datetimerange"
+                  range-separator="-"
+                  :start-placeholder="$t('dataVerification.startTime')"
+                  :end-placeholder="$t('dataVerification.LastTime')"
+                  align="right"
+                  :default-time="['00:00:00', '23:59:59']"
+                  value-format="yyyy-MM-dd HH:mm"
+                  @input="cdcTimingChangeHandler"
+                >
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item v-if="cdcBeginDateType === 'absolute'" class="setting-item" prop="cdcBeginDate">
+                <label class="item-label">增量起止时间</label>
+                从校验开始执行时间前
+                <el-input
+                  class="item-input mx-1"
+                  style="width: 50px"
+                  size="mini"
+                  v-model="form.cdcBeginDate"
+                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                >
+                </el-input>
+                分钟的数据开始，向后取
+                <el-input
+                  class="item-input mx-1"
+                  style="width: 50px"
+                  size="mini"
+                  v-model="form.cdcEndDate"
+                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                >
+                </el-input>
+                分钟的数据进行校验
+              </el-form-item>
+              <el-form-item class="setting-item">
+                <label class="item-label">窗口时长</label>
+                <el-input
+                  class="item-input"
+                  size="mini"
+                  v-model="form.cdcDuration"
+                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                >
+                  <template slot="append"> 分钟 </template>
+                </el-input>
+              </el-form-item>
+            </template>
           </el-form>
         </div>
         <div v-if="flowStages" v-loading="!flowStages.length">
@@ -158,7 +242,7 @@
                       @input="tableChangeHandler(item, 'target')"
                     ></el-cascader>
                   </div>
-                  <div class="setting-item" v-show="form.inspectMethod !== 'row_count'">
+                  <div class="setting-item" v-show="['field', 'jointField'].includes(form.inspectMethod)">
                     <label class="item-label is-required">{{ $t('dataVerification.indexField') }}</label>
                     <MultiSelection
                       v-model="item.source.sortColumn"
@@ -296,15 +380,18 @@ export default {
   },
   data() {
     let self = this
-    let requiredValidator = (msg, isCheckMode) => {
+    let requiredValidator = (msg, check) => {
       return (rule, value, callback) => {
-        let valid = isCheckMode ? self.form.mode === 'cron' : true
+        let valid = check ? check() : true
         if (valid && !value) {
           callback(new Error(msg))
         } else {
           callback()
         }
       }
+    }
+    let checkMode = () => {
+      return self.form.mode === 'cron'
     }
     return {
       loading: false,
@@ -313,11 +400,16 @@ export default {
       htmlMD: '',
       removeVisible: false,
       isDbClone: false,
+      cdcBeginDateType: 'relative',
+      cdcEndDateType: 'relative',
       form: {
         flowId: '',
         name: '',
         mode: 'manual',
         inspectMethod: 'row_count',
+        cdcBeginDate: '',
+        cdcEndDate: '',
+        cdcDuration: '',
         timing: {
           intervals: 24 * 60,
           intervalsUnit: 'minute',
@@ -343,12 +435,31 @@ export default {
         ],
         'timing.start': [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksTime'), true)
+            validator: requiredValidator(this.$t('dataVerification.tasksTime'), checkMode)
           }
         ],
         'timing.intervals': [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksVerifyInterval'), true)
+            validator: requiredValidator(this.$t('dataVerification.tasksVerifyInterval'), checkMode)
+          }
+        ],
+        cdcBeginDate: [
+          {
+            validator: (rule, value, callback) => {
+              if (self.form.inspectMethod === 'cdcCount') {
+                let startTime = self.form.cdcBeginDate
+                let endTime = self.form.cdcEndDate
+                if (!startTime) {
+                  callback(new Error('请输入增量时间'))
+                } else if (!endTime) {
+                  callback(new Error('请输入增量结束时间'))
+                } else {
+                  callback()
+                }
+              } else {
+                callback()
+              }
+            }
           }
         ]
       },
@@ -420,6 +531,8 @@ export default {
             t.targetTree = []
             return t
           })
+          this.cdcBeginDateType =
+            Object.prototype.String.call(data.cdcBeginDate) === '[object Number]' ? 'absolute' : 'relative'
           this.form = data
           this.getFlowStages()
         }
@@ -460,7 +573,7 @@ export default {
       this.getFlowStages()
     },
     dealData(flowData, callback, isDB) {
-      let types = isDB ? ['database'] : ['table', 'collection']
+      let types = isDB ? ['database'] : ['table', 'collection', 'kafka']
       let flowStages = flowData.stages.filter(stg => types.includes(stg.type))
       let connectionIds = []
       let tableNames = []
@@ -473,7 +586,7 @@ export default {
       if (connectionIds.length) {
         let where = {
           meta_type: {
-            inq: ['table', 'collection']
+            inq: ['table', 'collection', 'kafka']
           },
           'source.id': {
             inq: Array.from(new Set(connectionIds))
@@ -781,8 +894,22 @@ export default {
       this.form.tasks = []
     },
     timingChangeHandler(times) {
-      this.form.timing.start = times[0]
-      this.form.timing.end = times[1]
+      this.form.timing.start = times?.[0] || ''
+      this.form.timing.end = times?.[1] || ''
+    },
+    cdcTimingChangeHandler(times) {
+      this.form.cdcBeginDate = times?.[0] || ''
+      this.form.cdcEndDate = times?.[1] || ''
+    },
+    cdcBeginDateTypeChangeHandler(val) {
+      if (val === 'relative') {
+        let now = this.$moment(new Date()).format('YYYY-MM-DD HH:mm')
+        this.form.cdcBeginDate = now
+        this.form.cdcEndDate = now
+      } else {
+        this.form.cdcBeginDate = 30
+        this.form.cdcEndDate = 30
+      }
     },
     tableChangeHandler(item, type, index) {
       let stages = this.flowStages
@@ -880,7 +1007,7 @@ export default {
           }
           index = 0
           if (
-            this.form.inspectMethod !== 'row_count' &&
+            ['field', 'jointField'].includes(this.form.inspectMethod) &&
             tasks.some((c, i) => {
               index = i + 1
               return !c.source.sortColumn || !c.target.sortColumn
@@ -891,7 +1018,7 @@ export default {
           }
           index = 0
           if (
-            this.form.inspectMethod !== 'row_count' &&
+            ['field', 'jointField'].includes(this.form.inspectMethod) &&
             tasks.some((c, i) => {
               index = i + 1
               return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
