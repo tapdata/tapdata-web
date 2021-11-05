@@ -5,7 +5,6 @@
         :form="form"
         :colon="false"
         layout="vertical"
-        label-align="left"
         feedbackLayout="terse"
         @autoSubmit="log"
         @autoSubmitFailed="log"
@@ -52,7 +51,9 @@ import {
   Checkbox,
   Radio,
   Space,
-  FormGrid
+  FormGrid,
+  ArrayTabs,
+  FormLayout
 } from '@formily/element'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import 'web-core/components/form/styles/index.scss'
@@ -70,6 +71,8 @@ const { SchemaField } = createSchemaField({
     Radio,
     Space,
     FormGrid,
+    ArrayTabs,
+    FormLayout,
     ...components
   }
 })
@@ -187,7 +190,7 @@ export default {
 
     // 设置schema
     async setSchema(schema, values) {
-      console.log('setSchema!!!!!***', schema)
+      console.log('setSchema!!!!!***', schema) // eslint-disable-line
       this.schema = null
 
       await this.$nextTick()
@@ -582,7 +585,7 @@ export default {
           maxTransactionLength: {
             title: '事务最大时长(小时)',
             type: 'number',
-            'x-decorator': 'ElFormItem',
+            'x-decorator': 'FormItem',
             'x-component': 'InputNumber'
           },
           lagTime: {
@@ -753,8 +756,8 @@ export default {
           }
         })
       }
-      const tables = await metadataApi.get(params)
-      return tables.map(item => item.original_name)
+      const data = await metadataApi.get(params)
+      return data.items.map(item => item.original_name)
     },
 
     /**
