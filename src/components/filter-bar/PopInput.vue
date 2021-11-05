@@ -17,7 +17,7 @@
       <span class="inner-select__title">{{ title }}</span>
       <span :class="['inner-select__value', { placeholder: !value }]">{{ value || '请输入' }}</span>
       <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.native.stop="clear">close</VIcon>
-      <VIcon v-else size="12" class="icon-btn ml-1">arrow-down</VIcon>
+      <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
     </div>
   </ElPopover>
 </template>
@@ -91,7 +91,7 @@ export default {
 .v-pop-input {
   padding: 0 8px;
   display: inline-block;
-  font-size: 12px;
+  font-size: 14px;
   border: 1px solid #d9d9d9;
   border-radius: 2px;
   cursor: pointer;
@@ -133,7 +133,7 @@ export default {
   padding-left: 8px;
   color: map-get($fontColor, main);
   &.placeholder {
-    color: map-get($fontColor, sub);
+    //color: map-get($fontColor, sub);
   }
 }
 </style>

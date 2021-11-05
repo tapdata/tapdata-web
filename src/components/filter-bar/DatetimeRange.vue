@@ -109,7 +109,8 @@ export default {
     }
   }
   .filter-datetime-range__title {
-    font-size: 12px;
+    font-size: 14px;
+    color: map-get($fontColor, sub);
   }
 }
 </style>
