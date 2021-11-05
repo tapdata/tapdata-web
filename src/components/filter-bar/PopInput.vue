@@ -3,18 +3,19 @@
     v-model="visible"
     v-bind="$attrs"
     :class="['v-pop-input', { dark: dark }, { overflow: overflow }]"
+    @show="show"
     @mouseenter.native="mouseEnterFnc"
     @mouseleave.native="mouseLeaveFnc"
   >
     <div>
-      <ElInput v-model="current" @change="confirm"></ElInput>
+      <ElInput v-model="current"></ElInput>
       <div class="btn-row">
         <ElButton type="primary" @click="confirm">{{ $t('gl_button_confirm') }}</ElButton>
-        <ElButton @click="close">{{ $t('gl_button_cancel') }}</ElButton>
+        <ElButton @click="cancel">{{ $t('gl_button_cancel') }}</ElButton>
       </div>
     </div>
     <div slot="reference" class="inner-select">
-      <span class="inner-select__title">{{ title }}</span>
+      <span v-if="title" class="inner-select__title">{{ title }}</span>
       <span :class="['inner-select__value', { placeholder: !value }]">{{ value || '请输入' }}</span>
       <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.native.stop="clear">close</VIcon>
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
@@ -63,8 +64,15 @@ export default {
         this.current = this.value
       }
     },
+    show() {
+      this.init()
+    },
     confirm() {
       this.$emit('input', this.current).$emit('change', this.current)
+      this.close()
+    },
+    cancel() {
+      this.current = ''
       this.close()
     },
     close() {
