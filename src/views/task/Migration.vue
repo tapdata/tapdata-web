@@ -10,8 +10,7 @@
         </div>
       </div>
       <ElTable
-        class="migration-table table-border font-color-sub"
-        style="margin-top: 10px"
+        class="migration-table table-border font-color-sub mt-4"
         height="100%"
         :data="list"
         @sort-change="sortChange"

@@ -213,6 +213,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el-form-item {
+  margin-bottom: 0;
+}
 .btn-refresh {
   padding: 0;
   height: 32px;

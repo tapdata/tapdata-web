@@ -6,7 +6,14 @@
           <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </div>
-      <TableList ref="table" row-key="id" :columns="columns" :remoteMethod="getData" @sort-change="sortChange">
+      <TableList
+        ref="table"
+        row-key="id"
+        :columns="columns"
+        :remoteMethod="getData"
+        class="mt-4"
+        @sort-change="sortChange"
+      >
         <template slot="operationType" slot-scope="scope">
           <div>{{ getOperationTypeLabel(scope.row) }}</div>
         </template>
