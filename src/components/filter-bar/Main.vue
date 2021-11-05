@@ -62,6 +62,7 @@
         :placeholder="item.placeholder"
         clearable
         class="filter-el-input"
+        :style="{ width: (item.width || 180) + 'px' }"
         @input="search(800)"
       >
         <VIcon slot="suffix" size="14" class="inline-block">search</VIcon>
