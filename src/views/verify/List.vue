@@ -8,7 +8,7 @@
         </VButton>
       </div>
     </div>
-    <ElTable class="page-table table-border mt-1" height="100%" :data="list" @sort-change="handleSortTable">
+    <ElTable class="page-table table-border mt-4" height="100%" :data="list" @sort-change="handleSortTable">
       <ElTableColumn :label="$t('verify_job_name')" min-width="180">
         <template slot-scope="scope">
           <div>{{ scope.row.name }}</div>
