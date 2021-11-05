@@ -12,15 +12,19 @@ axios.defaults.baseURL = process.env.BASE_URL
 
 const getPendingKey = config => {
   let { url, method, data } = config
-  let headers = config.headers
+  let headers = {}
+  for (const key in config.headers) {
+    let value = config.headers[key]
+    if (Object.prototype.toString.call(value) === '[object String]' && !['Content-Type', 'Accept'].includes(key)) {
+      headers[key] = value
+    }
+  }
   data = Object.prototype.toString.call(data) === '[object String]' ? JSON.parse(data) : data
   let key = JSON.stringify({
     url,
     method,
     data,
-    header: {
-      'Pool-Id': headers['Pool-Id']
-    }
+    headers
   })
   return key
 }
