@@ -6,7 +6,7 @@
           <FilterBar v-model="searchParams" :items="filterItems" @search="search(800)" @fetch="fetch"></FilterBar>
         </div>
         <div class="migration-operation-right">
-          <VButton type="primary" @click="createTask"><span>创建任务</span></VButton>
+          <VButton type="primary" :loading="createLoading" @click="createTask"><span>创建任务</span></VButton>
         </div>
       </div>
       <ElTable
@@ -241,6 +241,7 @@ export default {
   data() {
     return {
       loading: true,
+      createLoading: false,
       searchParams: {
         status: '',
         syncType: '',
@@ -601,9 +602,15 @@ export default {
       })
     },
     createTask() {
-      this.$checkAgentStatus(() => {
-        this.createVisible = true
-      })
+      this.createLoading = true
+      this.$checkAgentStatus(
+        () => {
+          this.createVisible = true
+        },
+        () => {
+          this.createLoading = false
+        }
+      )
     },
     closeCreateDialog() {
       this.createVisible = false
