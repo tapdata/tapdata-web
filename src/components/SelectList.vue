@@ -117,8 +117,8 @@
       <span :class="['inner-select__selected', { placeholder: !selectedLabel }]">{{
         selectedLabel || $t('gl_placeholder_select')
       }}</span>
-      <VIcon v-if="showClose" size="10" class="ml-1">close</VIcon>
-      <VIcon v-else size="10" class="ml-1" @click="handleClearClick">arrow-down-fill</VIcon>
+      <VIcon v-if="showClose" size="10" class="icon-btn ml-1">close</VIcon>
+      <VIcon v-else size="10" class="icon-btn ml-1" @click="handleClearClick">arrow-down-fill</VIcon>
     </div>
     <div v-if="loading" class="el-select__loading">
       <i class="el-icon-loading"></i>
@@ -458,6 +458,9 @@ export default {
   &.none-border {
     &:hover {
       background-color: #fafafa;
+      .icon-btn {
+        color: map-get($fontColor, main);
+      }
     }
     ::v-deep {
       .inner-select {
@@ -500,5 +503,8 @@ export default {
   &.placeholder {
     //color: map-get($fontColor, sub);
   }
+}
+.icon-btn {
+  color: map-get($fontColor, sub);
 }
 </style>
