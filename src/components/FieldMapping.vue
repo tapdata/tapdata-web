@@ -227,7 +227,8 @@ export default {
       let operations = this.getFieldOperations(row)
       if (operations?.length > 0) {
         source.forEach(item => {
-          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'RENAME')
+          let original_field_name = item.original_field_name || item.field_name
+          let ops = operations.filter(op => op.original_field_name === original_field_name && op.op === 'RENAME')
           if (!ops || ops?.length === 0) {
             item.temporary_field_name = item.field_name
             return
