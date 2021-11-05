@@ -7,7 +7,7 @@
       :data="list"
       ref="table"
       height="100%"
-      class="table-container__table mt-3"
+      class="table-container__table"
       @selection-change="handleSelectionChange"
     >
       <ColumnItem v-for="(item, index) in columns" :item="item" :key="index">
