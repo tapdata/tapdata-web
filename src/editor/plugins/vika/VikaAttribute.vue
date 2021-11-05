@@ -203,14 +203,6 @@ export default {
       handler() {
         this.loadDataModels(this.model.connectionId)
       }
-    },
-    'model.tableName': {
-      immediate: true,
-      handler() {
-        if (this.model.tableName && this.model.vika_space_id) {
-          this.changeSchema()
-        }
-      }
     }
   },
 
@@ -251,8 +243,14 @@ export default {
             this.showFieldMapping = data?.data[this.stageId]
           })
       }
-      this.mergedSchema = cell.getOutputSchema()
       this.dataNodeInfo = dataNodeInfo || {}
+      let ouputSchema = cell.getOutputSchema()
+      if (this.model.connectionId && this.model.tableName && !ouputSchema) {
+        this.handlerSchemaChange()
+      } else {
+        this.mergedSchema = ouputSchema
+      }
+
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
         this.getDataFlow()
@@ -371,6 +369,7 @@ export default {
         this.model.tableName = ''
         this.model.tableId = ''
       }
+      this.changeSchema()
     },
     //初始化树形结构
     loadTree() {
@@ -411,8 +410,8 @@ export default {
                     meta_type: 'Vika',
                     fields: []
                   }
-            this.$emit('schemaChange', _.cloneDeep(schema))
             this.mergedSchema = schema
+            this.$emit('schemaChange', _.cloneDeep(schema))
             if (isLoading) {
               this.schemasLoading = false
               this.$message.success(this.$t('message.reloadSchemaSuccess'))
