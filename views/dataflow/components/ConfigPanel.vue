@@ -7,7 +7,7 @@
     class="config-panel border-top"
   >
     <div v-if="activeType === 'settings'" class="h-100 flex flex-column overflow-hidden">
-      <div class="panel-header flex align-center px-4 border-bottom">
+      <div class="panel-header flex align-center px-4 border-bottom fs-7">
         <VIcon class="header-icon mr-2">setting</VIcon>
         设置
       </div>
