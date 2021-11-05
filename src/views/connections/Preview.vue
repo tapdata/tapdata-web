@@ -21,7 +21,7 @@
       <header class="header">
         <div class="tab">
           <div class="img-box">
-            <img :src="getImgByType(type)" />
+            <img :src="$util.getConnectionTypeImg(type) || $util.getConnectionTypeImg('default')" />
           </div>
           <div class="content">
             <div>{{ name }}</div>

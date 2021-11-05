@@ -936,8 +936,10 @@ export default {
         }
         this.renameData.rename = this.model.name
         this.model.isUrl = false
-        //初始化维格表
-        this.getSpaceVika(this.$route.params.id)
+        if (this.model.database_type === 'vika') {
+          //初始化维格表
+          this.getSpaceVika(this.$route.params.id)
+        }
       } else {
         this.model = Object.assign(this.model, data, { name: this.model.name })
         this.model.isUrl = true
@@ -1083,12 +1085,17 @@ export default {
         // else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
         //   itemIsUrl.options[1].disabled = true
         // }
-        ////编辑模式下mongodb 不校验证书
+        //编辑模式下mongodb 不校验证书
         if (this.model.database_type === 'mongodb' && this.$route.params.id && sslKey) {
           sslKey.rules = []
         }
         if (this.model.database_type === 'mongodb' && this.$route.params.id && sslCA) {
           sslCA.rules = []
+        }
+        //编辑模式下vika不校验plain_password
+        let plain_password = items.find(it => it.field === 'plain_password')
+        if (this.model.database_type === 'vika' && this.$route.params.id && plain_password) {
+          plain_password.required = false
         }
         if (this.$route.params.id) {
           //编辑模式下 不展示

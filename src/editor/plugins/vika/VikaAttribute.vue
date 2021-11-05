@@ -288,7 +288,17 @@ export default {
         .getSpace(params)
         .then(data => {
           if (data.data.status === 'SUCCESS') {
-            this.nodes = data.data.result
+            let result = data.data.result
+            //过滤目录结构
+            result = result.filter(v => v.type === 'Datasheet' || v.type === 'Folder')
+            for (let i = 0; i < result.length; i++) {
+              if (result[i].type === 'Datasheet') {
+                result[i]['leaf'] = true
+              } else {
+                result[i]['leaf'] = false
+              }
+            }
+            this.nodes = result
           } else {
             this.$message.error(data.data?.error)
           }
@@ -323,9 +333,9 @@ export default {
               children = children.filter(v => v.type === 'Datasheet' || v.type === 'Folder')
               for (let i = 0; i < children.length; i++) {
                 if (children[i].type === 'Datasheet') {
-                  children[i]['leaf'] = false
-                } else {
                   children[i]['leaf'] = true
+                } else {
+                  children[i]['leaf'] = false
                 }
               }
               resolve(data.data?.result.children)
