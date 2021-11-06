@@ -989,17 +989,21 @@ export default {
         case 'databaseType': {
           let source = items.find(it => it.field === 'source_databaseType')
           let TYPEMAP = this.$const.TYPEMAP
+          //不包含远端类型
+          let notContainType = ['clickhouse', 'mq']
           if (source) {
             // dfs源端不支持 redis elasticsearch
             let options = data
             let filterArr = ['redis', 'elasticsearch', 'dameng']
             options = data.filter(item => filterArr.indexOf(item) === -1)
-            source.options = options.map(item => {
-              return {
-                label: TYPEMAP[item],
-                value: item
-              }
-            })
+            source.options = options
+              .filter(item => !notContainType.includes(item))
+              .map(item => {
+                return {
+                  label: TYPEMAP[item],
+                  value: item
+                }
+              })
           }
           let target = items.find(it => it.field === 'target_databaseType')
           if (target) {
