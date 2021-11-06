@@ -11,7 +11,7 @@ const CancelToken = axios.CancelToken
 axios.defaults.baseURL = process.env.BASE_URL
 
 const getPendingKey = config => {
-  let { url, method, data } = config
+  let { url, method, data, params } = config
   let headers = {}
   for (const key in config.headers) {
     let value = config.headers[key]
@@ -24,6 +24,7 @@ const getPendingKey = config => {
     url,
     method,
     data,
+    params,
     headers
   })
   return key
@@ -196,9 +197,7 @@ axios.interceptors.response.use(
         message: i18n.t('errorCode.timeout')
       })
     }
-    return new Promise(() => {
-      return Promise.reject(error)
-    })
+    return Promise.reject(error)
   }
 )
 
