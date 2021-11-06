@@ -373,11 +373,11 @@ export default {
   methods: {
     //数据处理区域
     /*初始化table数据*/
-    initTableData(type) {
+    initTableData() {
       this.loading = true
       this.$nextTick(() => {
         this.remoteMethod &&
-          this.remoteMethod(this.selectRow, type)
+          this.remoteMethod(this.selectRow)
             .then(({ data, target }) => {
               this.target = target
               this.fieldMappingTableData = data
@@ -431,8 +431,8 @@ export default {
       this.updateData()
     },
     /*数据重新加载*/
-    updateData(type) {
-      this.initTableData(type)
+    updateData() {
+      this.initTableData()
       this.initTypeMapping()
       this.clearSearch()
       this.operations = []
@@ -551,7 +551,7 @@ export default {
               this.fieldProcessMethod('all')
                 .then(data => {
                   this.$emit('update-nav', data)
-                  this.updateData('rollbackAll')
+                  this.updateData()
                 })
                 .finally(() => {
                   this.loadingPage = false
