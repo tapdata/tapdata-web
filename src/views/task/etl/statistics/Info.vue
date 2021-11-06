@@ -98,8 +98,7 @@ import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
 import Chart from 'web-core/components/chart'
-import { formatTime, isEmpty } from '@/utils/util'
-import { splitTime } from 'web-core/utils/util'
+import { formatTime, isEmpty, formatTimeByTime } from '@/utils/util'
 
 let lastMsg
 export default {
@@ -504,7 +503,7 @@ export default {
         outputCountList = [],
         timeType = data.granularity['throughput']?.split('_')[1]
       data.statsData.throughput.forEach(item => {
-        timeList.push(splitTime(item.t, timeType))
+        timeList.push(formatTimeByTime(item.t, timeType))
         inputCountList.push(item.inputCount)
         outputCountList.push(item.outputCount)
       })
