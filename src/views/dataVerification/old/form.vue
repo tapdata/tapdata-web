@@ -532,7 +532,7 @@ export default {
             return t
           })
           this.cdcBeginDateType =
-            Object.prototype.String.call(data.cdcBeginDate) === '[object Number]' ? 'absolute' : 'relative'
+            Object.prototype.toString.call(data.cdcBeginDate) === '[object Number]' ? 'absolute' : 'relative'
           this.form = data
           this.getFlowStages()
         }
