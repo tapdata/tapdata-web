@@ -20,6 +20,10 @@ export default {
   verify_result_content_diff: '表數據差: {0}',
   verify_result_count_inconsistent: '不一致',
   verify_result_count_consistent: '一致',
+  verify_result_field_name: '字段名',
+  verify_result_source_info: '源信息',
+  verify_result_target_info: '目標信息',
+  verify_create_window_duration: '窗口時長',
 
   taskprogress_plan_sync_table_num: '計劃同步表數量',
   taskprogress_completed_sync_table_num: '已完成同步表數量',
