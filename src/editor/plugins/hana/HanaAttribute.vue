@@ -306,8 +306,9 @@ export default {
     'model.tableName': {
       immediate: true,
       handler() {
-        this.handlerSchemaChange()
+        // this.handlerSchemaChange()
         if (this.schemas.length > 0) {
+          this.handlerSchemaChange()
           if (this.model.tableName) {
             let schema = this.schemas.filter(s => s.table_name === this.model.tableName)
             schema =
@@ -407,7 +408,7 @@ export default {
         let schemas = tempSchemas.filter(s => s.table_name === this.model.tableName)
 
         if (schemas && schemas.length > 0) {
-          this.model.tableId = schemas[0].id
+          this.model.tableId = schemas[0].tableId
         } else {
           this.model.tableId = ''
         }
