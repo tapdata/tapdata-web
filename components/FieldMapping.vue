@@ -1006,6 +1006,9 @@ export default {
         return 'delete-row'
       }
       return ''
+    },
+    returnForm() {
+      return this.form
     }
   }
 }
