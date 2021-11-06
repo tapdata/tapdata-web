@@ -83,8 +83,15 @@ export default {
       if (this.mappingType && this.mappingType === 'cluster-clone') {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
         //是否有选中的表
-        if (this.selectSourceArr?.length === 0) {
+        if (
+          this.transform?.topicData?.length === 0 &&
+          this.transform?.queueData?.length === 0 &&
+          this.transform.transferFlag //mq判断
+        ) {
           this.$message.error('请先选择需要迁移的表')
+          return
+        } else if (this.selectSourceArr?.length === 0 && !this.transform.transferFlag) {
+          this.$message.error('请先选择需要迁移的表') //其他数据源
           return
         }
       }
