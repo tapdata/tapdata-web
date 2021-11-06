@@ -22,6 +22,10 @@ export default {
   verify_result_content_diff: 'Table data difference: {0}',
   verify_result_count_inconsistent: 'inconsistent',
   verify_result_count_consistent: 'consistent',
+  verify_result_field_name: 'Field name',
+  verify_result_source_info: 'Source Information',
+  verify_result_target_info: 'Target Information',
+  verify_create_window_duration:'Window duration',
 
   taskprogress_plan_sync_table_num: 'Number of plan synchronization tables',
   taskprogress_completed_sync_table_num: 'Number of completed synchronization tables',
