@@ -81,33 +81,6 @@
             </el-tooltip>
           </div>
         </el-form-item>
-        <el-form-item>
-          <div class="flex-block fr" v-if="model.connectionId && model.tableName">
-            <el-button
-              class="fr marR20"
-              type="success"
-              size="mini"
-              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
-              @click="hanlderLoadSchema"
-            >
-              <i class="el-icon-loading" v-if="reloadModelLoading"></i>
-              <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
-              <span v-else>{{ $t('dataFlow.updateModel') }}</span>
-            </el-button>
-            <FieldMapping
-              v-else
-              :dataFlow="dataFlow"
-              :showBtn="true"
-              :isFirst="model.isFirst"
-              @update-first="returnModel"
-              :hiddenFieldProcess="true"
-              :stageId="stageId"
-              ref="fieldMapping"
-              class="fr"
-            ></FieldMapping>
-          </div>
-        </el-form-item>
-
         <el-form-item
           required
           :label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
@@ -166,6 +139,32 @@
           :databaseType="model.databaseType"
           :mergedSchema="mergedSchema"
         ></queryBuilder>
+        <el-form-item>
+          <div class="flex-block fr" style="padding-top: 10px" v-if="model.connectionId && model.tableName">
+            <el-button
+              class="fr marR20"
+              type="success"
+              size="mini"
+              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+              @click="hanlderLoadSchema"
+            >
+              <i class="el-icon-loading" v-if="reloadModelLoading"></i>
+              <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+              <span v-else>{{ $t('dataFlow.updateModel') }}</span>
+            </el-button>
+            <FieldMapping
+              v-else
+              :dataFlow="dataFlow"
+              :showBtn="true"
+              :isFirst="model.isFirst"
+              @update-first="returnModel"
+              :hiddenFieldProcess="true"
+              :stageId="stageId"
+              ref="fieldMapping"
+              class="fr"
+            ></FieldMapping>
+          </div>
+        </el-form-item>
       </el-form>
     </div>
     <div class="e-entity-wrap" style="text-align: center; overflow: auto">
@@ -406,7 +405,7 @@ export default {
       let self = this
       if (tempSchemas.length > 0) {
         let schemas = tempSchemas.filter(s => s.table_name === this.model.tableName)
-        debugger
+
         if (schemas && schemas.length > 0) {
           this.model.tableId = schemas[0].id
         } else {
