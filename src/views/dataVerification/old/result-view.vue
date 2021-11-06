@@ -44,7 +44,7 @@
         </li>
       </ul>
       <div class="success-band" v-if="statsInfo.result === 'passed'">
-        <img style="height: 30px; margin-right: 5px" src="web-core/assets/images/zhuhe.png" />
+        <img style="height: 30px; margin-right: 5px" :src="require('web-core/assets/images/zhuhe.png')" />
         <span>{{ $t('dataVerification.success') }}</span>
       </div>
       <div class="error-band" v-if="statsInfo.status === 'error'">
