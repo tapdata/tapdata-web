@@ -53,30 +53,52 @@
       </div>
       <template v-if="statsInfo.result !== 'passed'">
         <div class="inspect-result-box" v-if="!showAdvancedVerification">
-          <div v-for="item in resultList" :key="item.id" class="inspect-details">
-            <ul class="father-table">
-              <li>{{ $t('dataVerification.inconsistentType') }}</li>
-              <li>{{ $t('dataVerification.sourceFieldName') }}</li>
-              <li>{{ $t('dataVerification.Value') }}</li>
-              <li>{{ $t('dataVerification.targetFieldName') }}</li>
-              <li>{{ $t('dataVerification.Value') }}</li>
-            </ul>
-            <ul class="sub-table" v-for="detail in item.details" :key="detail.id">
-              <li>
-                {{
-                  detail.type === 'uniqueField' ? $t('dataVerification.uniqueField') : $t('dataVerification.otherField')
-                }}
-              </li>
-              <li>{{ detail.source.key }}</li>
-              <li :class="{ red: detail.red }">
-                {{ detail.source.value }}
-              </li>
-              <li>{{ detail.target.key }}</li>
-              <li :class="{ red: detail.red }">
-                {{ detail.target.value }}
-              </li>
-            </ul>
-          </div>
+          <template v-if="verifyType === 'cdcCount'">
+            <div v-for="item in resultList" :key="item.id" class="inspect-details">
+              <ul class="father-table">
+                <li>{{ $t('verify_details_field_name') }}</li>
+                <li>{{ $t('verify_details_source_value') }}</li>
+                <li>{{ $t('verify_details_target_value') }}</li>
+              </ul>
+              <ul class="sub-table" v-for="detail in item.details" :key="detail.id">
+                <li>{{ detail.source.key }}</li>
+                <li :class="{ red: detail.red }">
+                  {{ detail.source.value }}
+                </li>
+                <li :class="{ red: detail.red }">
+                  {{ detail.target.value }}
+                </li>
+              </ul>
+            </div>
+          </template>
+          <template v-else>
+            <div v-for="item in resultList" :key="item.id" class="inspect-details">
+              <ul class="father-table">
+                <li>{{ $t('dataVerification.inconsistentType') }}</li>
+                <li>{{ $t('dataVerification.sourceFieldName') }}</li>
+                <li>{{ $t('dataVerification.Value') }}</li>
+                <li>{{ $t('dataVerification.targetFieldName') }}</li>
+                <li>{{ $t('dataVerification.Value') }}</li>
+              </ul>
+              <ul class="sub-table" v-for="detail in item.details" :key="detail.id">
+                <li>
+                  {{
+                    detail.type === 'uniqueField'
+                      ? $t('dataVerification.uniqueField')
+                      : $t('dataVerification.otherField')
+                  }}
+                </li>
+                <li>{{ detail.source.key }}</li>
+                <li :class="{ red: detail.red }">
+                  {{ detail.source.value }}
+                </li>
+                <li>{{ detail.target.key }}</li>
+                <li :class="{ red: detail.red }">
+                  {{ detail.target.value }}
+                </li>
+              </ul>
+            </div>
+          </template>
         </div>
         <div class="inspect-ad-box" v-if="showAdvancedVerification">
           <div class="title-box">
@@ -340,7 +362,8 @@ export default {
     VIcon
   },
   props: {
-    remoteMethod: Function
+    remoteMethod: Function,
+    verifyType: String
   },
   data() {
     return {
