@@ -87,6 +87,7 @@ export default {
   function_type_option_jar: '第三方jar包',
   function_name_label: '函数名称',
   function_name_placeholder: '请输入函数名称',
+  function_name_repeat: '函数名称重复',
   function_class_label: '类名',
   function_class_placeholder: '请输入类名，UDF函数的类名，格式为资源名.类名',
   function_file_label: 'jar文件',

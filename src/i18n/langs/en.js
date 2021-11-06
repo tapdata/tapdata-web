@@ -87,6 +87,7 @@ export default {
   function_type_option_jar: 'Third-party jar package',
   function_name_label: 'Function name',
   function_name_placeholder: 'Please enter the function name',
+  function_name_repeat: 'Function name repeat',
   function_class_label: 'Class name',
   function_class_placeholder:
     'Please enter the class name, UDF function class name, the format is resource name. Class name',

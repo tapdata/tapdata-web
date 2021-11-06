@@ -83,6 +83,7 @@ export default {
   function_type_option_jar: '第三方jar包',
   function_name_label: '函數名稱',
   function_name_placeholder: '請輸入函數名稱',
+  function_name_repeat: '函數名稱重復',
   function_class_label: '類名',
   function_class_placeholder: '請輸入類名，UDF函數的類名，格式為資源名.類名',
   function_file_label: 'jar文件',
