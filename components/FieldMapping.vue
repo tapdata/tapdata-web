@@ -492,6 +492,7 @@ export default {
           this.updateMetadata(type, data)
             .then(data => {
               this.$emit('update-nav', data)
+              this.selectRow = data[this.position]
             })
             .finally(() => {
               this.loadingPage = false
@@ -552,6 +553,7 @@ export default {
                 .then(data => {
                   this.$emit('update-nav', data)
                   this.updateData()
+                  this.selectRow = data[this.position]
                 })
                 .finally(() => {
                   this.loadingPage = false
