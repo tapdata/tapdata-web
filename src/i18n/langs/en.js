@@ -25,7 +25,7 @@ export default {
   verify_result_field_name: 'Field name',
   verify_result_source_info: 'Source Information',
   verify_result_target_info: 'Target Information',
-  verify_create_window_duration:'Window duration',
+  verify_create_window_duration: 'Window duration',
 
   taskprogress_plan_sync_table_num: 'Number of plan synchronization tables',
   taskprogress_completed_sync_table_num: 'Number of completed synchronization tables',
@@ -103,5 +103,8 @@ export default {
   function_return_value_label: 'Return value',
   function_return_value_placeholder: 'Please enter the return value',
   function_describe_label: 'Description',
-  function_describe_placeholder: 'Please enter a description'
+  function_describe_placeholder: 'Please enter a description',
+
+  // 用户
+  login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes'
 }

@@ -101,5 +101,8 @@ export default {
   function_return_value_label: '返回值',
   function_return_value_placeholder: '请输入返回值',
   function_describe_label: '描述',
-  function_describe_placeholder: '请输入描述'
+  function_describe_placeholder: '请输入描述',
+
+  // 用户
+  login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录'
 }
