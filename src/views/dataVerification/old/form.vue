@@ -801,9 +801,11 @@ export default {
     setTable(stage, source) {
       let sortColumn = ''
       let sortField = list => {
-        return list.sort((a, b) => {
-          return a.field_name > b.field_name ? -1 : 1
-        })
+        return (
+          list?.sort((a, b) => {
+            return a.field_name > b.field_name ? -1 : 1
+          }) || []
+        )
       }
       if (stage && stage.fields && stage.fields.length) {
         if (source && source.sortColumn) {
