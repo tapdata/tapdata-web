@@ -147,14 +147,27 @@
                   <template slot="append"> {{ $t('timeToLive.m') }} </template>
                 </el-input>
               </el-form-item>
-              <el-form-item class="setting-item">
-                <label class="item-label">{{ $t('dataVerification.startTime') }}</label>
+              <el-form-item class="setting-item" prop="cdcBeginDate">
+                <label class="item-label is-required">校验开始时间</label>
                 <el-date-picker
                   class="item-select"
                   size="mini"
                   v-model="form.cdcBeginDate"
                   type="datetime"
-                  :placeholder="$t('dataVerification.startTime')"
+                  placeholder="校验开始时间"
+                  format="yyyy-MM-dd HH:mm"
+                  value-format="yyyy-MM-dd HH:mm"
+                >
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item class="setting-item">
+                <label class="item-label">校验结束时间</label>
+                <el-date-picker
+                  class="item-select"
+                  size="mini"
+                  v-model="form.cdcEndDate"
+                  type="datetime"
+                  placeholder="校验结束时间"
                   format="yyyy-MM-dd HH:mm"
                   value-format="yyyy-MM-dd HH:mm"
                 >
@@ -354,8 +367,6 @@ export default {
       htmlMD: '',
       removeVisible: false,
       isDbClone: false,
-      cdcBeginDateType: 'absolute',
-      cdcEndDateType: 'relative',
       form: {
         flowId: '',
         name: '',
@@ -399,21 +410,9 @@ export default {
         ],
         cdcBeginDate: [
           {
-            validator: (rule, value, callback) => {
-              if (self.form.inspectMethod === 'cdcCount') {
-                let startTime = self.form.cdcBeginDate
-                let endTime = self.form.cdcEndDate
-                if (!startTime) {
-                  callback(new Error('请输入增量时间'))
-                } else if (!endTime) {
-                  callback(new Error('请输入增量结束时间'))
-                } else {
-                  callback()
-                }
-              } else {
-                callback()
-              }
-            }
+            validator: requiredValidator('请输入开始时间', () => {
+              return self.form.inspectMethod === 'cdcCount'
+            })
           }
         ]
       },
@@ -485,8 +484,6 @@ export default {
             t.targetTree = []
             return t
           })
-          this.cdcBeginDateType =
-            Object.prototype.toString.call(data.cdcBeginDate) === '[object Number]' ? 'absolute' : 'relative'
           this.form = data
           this.getFlowStages()
         }
@@ -850,16 +847,6 @@ export default {
     timingChangeHandler(times) {
       this.form.timing.start = times?.[0] || ''
       this.form.timing.end = times?.[1] || ''
-    },
-    cdcBeginDateTypeChangeHandler(val) {
-      if (val === 'relative') {
-        let now = this.$moment(new Date()).format('YYYY-MM-DD HH:mm')
-        this.form.cdcBeginDate = now
-        this.form.cdcEndDate = now
-      } else {
-        this.form.cdcBeginDate = 30
-        this.form.cdcEndDate = 30
-      }
     },
     tableChangeHandler(item, type, index) {
       let stages = this.flowStages
