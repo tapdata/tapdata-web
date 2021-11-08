@@ -10,7 +10,7 @@ cp.exec(
 )
 
 // 删除alias重建
-cp.exec(`git config --remove-section alias`, function () {
+cp.exec(`git conLfig --remove-section alias`, function () {
   fs.readFile(join(__dirname, './.git/config'), 'utf8', function (err, data) {
     if (err) throw err
     let lines = data.split('\n').filter(str => !!str)
