@@ -197,7 +197,9 @@ axios.interceptors.response.use(
         message: i18n.t('errorCode.timeout')
       })
     }
-    return Promise.reject(error)
+    return new Promise(() => {
+      return Promise.reject(error)
+    })
   }
 )
 

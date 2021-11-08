@@ -782,7 +782,7 @@ export default class Graph extends Component {
       }
     } else {
       if (cell.isElement()) {
-        if ($('.monitorTab').html().length < 50) {
+        if ($('.monitorTab')?.html()?.length < 50) {
           $('.monitorTab').html(
             `<div class="e-tab-title active">${i18n.t(
               'editor.ui.sidebar.statistics'
