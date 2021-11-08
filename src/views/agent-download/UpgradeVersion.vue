@@ -134,11 +134,11 @@ export default {
   components: { TheHeader },
   data() {
     return {
-      downLoadType: 'windows',
+      downLoadType: 'Linux',
       downType: [
-        { name: 'Windows (64 bit)', value: 'windows' },
         { name: 'Linux (64 bit)', value: 'Linux' },
-        { name: 'Docker', value: 'Docker' }
+        { name: 'Docker', value: 'Docker' },
+        { name: 'Windows (64 bit)', value: 'windows' }
       ],
       showTooltip: false,
       agentId: '',
