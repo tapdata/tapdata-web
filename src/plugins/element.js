@@ -58,7 +58,10 @@ import {
   Notification,
   Divider,
   Tree,
-  CheckboxGroup
+  CheckboxGroup,
+  Skeleton,
+  SkeletonItem,
+  InfiniteScroll
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -131,3 +134,6 @@ Vue.use(CollapseItem)
 Vue.use(Divider)
 Vue.use(Tree)
 Vue.use(CheckboxGroup)
+Vue.use(Skeleton)
+Vue.use(SkeletonItem)
+Vue.use(InfiniteScroll)
