@@ -32,6 +32,7 @@ const findByCod = (arr, cond) => {
 const state = () => ({
   stateIsDirty: false, // 状态是否被污染，标识数据改变
   nodeTypes: [], // 所有节点类型
+  nodeErrorState: {}, // 节点错误状态
   processorNodeTypes: [
     {
       icon: 'javascript',
@@ -78,7 +79,7 @@ const state = () => ({
     name: '',
     settings: {},
     // 编辑器配置
-    nodes: [] // 画布上的所有节点
+    nodes: [] // 画布上的所有节点s
   }
 })
 

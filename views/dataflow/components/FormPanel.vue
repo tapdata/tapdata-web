@@ -116,7 +116,8 @@ export default {
       return this.node?.__Ctor
     },
 
-    // 联合唯一key,用来做监听，切换schema
+    // 联合唯一key，用来做监听，切换schema
+    // 用下划线分割，所以注意内容不要包含下划线！！！
     uniteKey() {
       console.log('activeType', this.activeType, this.node) // eslint-disable-line
       return `${this.node?.id || ''}_${this.activeConnection?.sourceId || ''}_${this.activeType}`
@@ -141,7 +142,13 @@ export default {
     // 切换节点和连线的FormSchema
     uniteKey: {
       immediate: true,
-      async handler() {
+      async handler(n) {
+        // console.log('watch:uniteKey', n, o)
+        // let lastActiveNodeId
+        // if (o) {
+        //   lastActiveNodeId = o.split('_').shift()
+        // }
+        // console.log('lastActiveNodeId', lastActiveNodeId)
         if (this.activeType && this.lastActiveKey !== this.uniteKey) {
           // this.activeType 存在表示显示Panel, this.lastActiveKey !== this.uniteKey 表示不同的节点切换
           const formSchema = this.$store.getters['dataflow/formSchema'] || {}
@@ -167,11 +174,11 @@ export default {
               this.lastActiveNodeType = null
               break
           }
-          this.lastActiveKey = this.uniteKey // 缓存
+          this.lastActiveKey = n // 缓存
         } else if (!this.activeType) {
           // 关闭Panel
           this.unWatchInputAndOutput()
-        } else if (this.lastActiveKey === this.uniteKey && this.activeType === 'node') {
+        } else if (this.lastActiveKey === n && this.activeType === 'node') {
           // 如果是相同节点，切换激活状态需要同步上下游
           this.form.setValuesIn('inputLanes', this.node.inputLanes)
           this.form.setValuesIn('outputLanes', this.node.outputLanes)
@@ -190,7 +197,6 @@ export default {
 
     // 设置schema
     async setSchema(schema, values) {
-      console.log('setSchema!!!!!***', schema) // eslint-disable-line
       this.schema = null
 
       await this.$nextTick()
@@ -824,8 +830,10 @@ export default {
           }
         })
       }
-      const tableData = await metadataApi.findOne(params)
-      return tableData.fields.map(item => item.field_name)
+      const data = await metadataApi.get(params)
+      return data.items[0]?.fields.map(item => item.field_name) || []
+      // const tableData = await metadataApi.findOne(params)
+      // return tableData.fields.map(item => item.field_name)
     },
 
     // 加载数据集
