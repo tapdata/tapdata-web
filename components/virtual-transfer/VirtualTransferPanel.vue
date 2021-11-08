@@ -25,7 +25,13 @@
         :class="{ 'is-filterable': filterable }"
         class="el-transfer-panel__list"
       >
-        <RecycleScroller :key-field="keyProp" :item-size="36" :buffer="50" :items="filteredData" page-mode>
+        <RecycleScroller
+          class="el-transfer-panel__scroller"
+          :key-field="keyProp"
+          :item-size="36"
+          :buffer="50"
+          :items="filteredData"
+        >
           <template #default="{ item }">
             <el-checkbox
               class="el-transfer-panel__item"
@@ -99,3 +105,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.el-transfer-panel__scroller {
+  height: 100%;
+}
+</style>
