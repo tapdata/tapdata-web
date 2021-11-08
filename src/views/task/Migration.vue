@@ -606,7 +606,8 @@ export default {
       this.createLoading = true
       this.$checkAgentStatus(
         () => {
-          this.createVisible = true
+          // this.createVisible = true
+          this.createMigrate()
         },
         () => {
           this.createLoading = false
