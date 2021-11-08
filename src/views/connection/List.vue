@@ -1,5 +1,5 @@
 <template>
-  <section class="connection-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Connection'">
+  <section class="connection-wrapper main-container" v-loading="loading" v-if="$route.name === 'Connection'">
     <div class="main">
       <div class="connection-operation">
         <div class="connection-operation-left">
@@ -135,6 +135,8 @@
     font-size: 16px;
   }
   .main {
+    padding: 20px;
+    background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;
