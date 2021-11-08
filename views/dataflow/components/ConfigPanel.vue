@@ -55,6 +55,7 @@ import MetaPane from 'web-core/views/dataflow/components/MetaPane'
 import VIcon from 'web-core/components/VIcon'
 import { NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
 import focusSelect from 'web-core/directives/focusSelect'
+import { validateBySchema } from 'web-core/components/form/utils/validate'
 
 export default {
   name: 'ConfigPanel',
@@ -77,10 +78,26 @@ export default {
   components: { VIcon, MetaPane, DataPane, FormPanel },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode']),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById']),
 
     icon() {
       return this.activeNode ? NODE_TYPE_ICON[this.activeNode.type] : null
+    }
+  },
+
+  watch: {
+    async 'activeNode.id'(n, o) {
+      console.log('activeNode.id', n, o)
+      if (o) {
+        const node = this.nodeById(o)
+        try {
+          const result = await validateBySchema(node.__Ctor.formSchema, node)
+          console.log('上一个激活的节点校验结果', result)
+        } catch (e) {
+          console.error(e)
+        }
+        // console.log('上一个激活的节点校验结果', result)
+      }
     }
   },
 
