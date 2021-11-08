@@ -6,7 +6,14 @@
           <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </div>
-      <TableList ref="table" row-key="id" :columns="columns" :remoteMethod="getData" @sort-change="sortChange">
+      <TableList
+        ref="table"
+        row-key="id"
+        :columns="columns"
+        :remoteMethod="getData"
+        class="mt-4"
+        @sort-change="sortChange"
+      >
         <template slot="operationType" slot-scope="scope">
           <div>{{ getOperationTypeLabel(scope.row) }}</div>
         </template>
@@ -182,19 +189,19 @@ export default {
           options: this.operationTypeOptions
         },
         {
-          label: '操作对象',
-          key: 'parameter1',
-          type: 'input-pop'
-        },
-        {
           label: '操作时间',
           key: 'start,end',
           type: 'datetimerange'
         },
         {
-          label: '用户名称',
+          placeholder: '操作对象',
+          key: 'parameter1',
+          type: 'input'
+        },
+        {
+          placeholder: '用户名称',
           key: 'username',
-          type: 'input-pop'
+          type: 'input'
         }
       ]
     },

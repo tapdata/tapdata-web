@@ -20,7 +20,7 @@
         </div>
       </div>
       <el-table
-        class="instance-table table-border mt-1"
+        class="instance-table table-border mt-4"
         height="100%"
         :data="list"
         @sort-change="sortChange"
