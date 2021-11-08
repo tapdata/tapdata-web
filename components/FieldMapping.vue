@@ -370,19 +370,14 @@ export default {
       return tableName
     }
   },
-  watch: {
-    form(old, news) {
-      console.log(old, news) // eslint-disable-line
-    }
-  },
   methods: {
     //数据处理区域
     /*初始化table数据*/
-    initTableData(type) {
+    initTableData() {
       this.loading = true
       this.$nextTick(() => {
         this.remoteMethod &&
-          this.remoteMethod(this.selectRow, type)
+          this.remoteMethod(this.selectRow)
             .then(({ data, target }) => {
               this.target = target
               this.fieldMappingTableData = data
@@ -436,8 +431,8 @@ export default {
       this.updateData()
     },
     /*数据重新加载*/
-    updateData(type) {
-      this.initTableData(type)
+    updateData() {
+      this.initTableData()
       this.initTypeMapping()
       this.clearSearch()
       this.operations = []
@@ -497,7 +492,7 @@ export default {
           this.updateMetadata(type, data)
             .then(data => {
               this.$emit('update-nav', data)
-              this.selectRow = data[0]
+              this.selectRow = data[this.position]
             })
             .finally(() => {
               this.loadingPage = false
@@ -525,14 +520,18 @@ export default {
     /*表改名弹窗保存*/
     handleTableNameSave() {
       this.dialogTableVisible = false
-      this.currentForm = JSON.parse(JSON.stringify(this.form))
+      this.copyForm()
       this.updateParentMetaData('table', this.form)
     },
     /*字段名弹窗保存*/
     handleFieldSave() {
       this.dialogFieldVisible = false
-      this.currentForm = JSON.parse(JSON.stringify(this.form))
+      this.copyForm()
       this.updateParentMetaData('field', this.form)
+    },
+    /*copy 当前form*/
+    copyForm() {
+      this.currentForm = JSON.parse(JSON.stringify(this.form))
     },
     /* 恢复默认全部*/
     rollbackAll() {
@@ -546,13 +545,15 @@ export default {
             table_prefix: '',
             table_suffix: ''
           }
+          this.copyForm()
           this.$nextTick(() => {
             this.loadingPage = true
             this.fieldProcessMethod &&
               this.fieldProcessMethod('all')
                 .then(data => {
                   this.$emit('update-nav', data)
-                  this.updateData('rollbackAll')
+                  this.updateData()
+                  this.selectRow = data[this.position]
                 })
                 .finally(() => {
                   this.loadingPage = false
@@ -1007,6 +1008,9 @@ export default {
         return 'delete-row'
       }
       return ''
+    },
+    returnForm() {
+      return this.form
     }
   }
 }
