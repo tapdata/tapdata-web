@@ -393,7 +393,8 @@ export default {
           label: 'Agent 名称',
           key: 'agentId',
           type: 'select-inner',
-          options: this.agentOptions
+          options: this.agentOptions,
+          menuMinWidth: '250px'
         },
         {
           placeholder: '名称',
