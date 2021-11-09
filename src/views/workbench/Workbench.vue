@@ -288,17 +288,17 @@ export default {
           const chart8 = data.chart8
           if (chart8) {
             agentList[1].value = chart8.total
-            agentList[1].list[0].value = chart8.ready
-            agentList[1].list[1].value = chart8.invalid
+            agentList[1].list[0].value = chart8.ready || 0
+            agentList[1].list[1].value = chart8.invalid || 0
           }
 
           // 任务
           const chart9 = data.chart9
           if (chart9) {
             agentList[2].value = chart9.total
-            agentList[2].list[0].value = chart9.initial_sync
-            agentList[2].list[1].value = chart9.cdc
-            agentList[2].list[2].value = chart9['initial_sync+cdc']
+            agentList[2].list[0].value = chart9.initial_sync || 0
+            agentList[2].list[1].value = chart9.cdc || 0
+            agentList[2].list[2].value = chart9['initial_sync+cdc'] || 0
           }
         })
         .finally(() => {
