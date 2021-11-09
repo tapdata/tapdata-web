@@ -3,7 +3,7 @@
     <div class="main">
       <div class="migration-operation">
         <div class="migration-operation-left">
-          <FilterBar v-model="searchParams" :items="filterItems" @search="search(800)" @fetch="fetch"></FilterBar>
+          <FilterBar v-model="searchParams" :items="filterItems" @search="search()" @fetch="fetch"></FilterBar>
         </div>
         <div class="migration-operation-right">
           <VButton type="primary" :loading="createLoading" @click="createTask"><span>创建任务</span></VButton>
@@ -442,14 +442,11 @@ export default {
       })
       this.getFilterItems()
     },
-    search(debounce) {
-      const { delayTrigger } = this.$util
-      delayTrigger(() => {
-        this.$router.replace({
-          name: 'Task',
-          query: this.searchParams
-        })
-      }, debounce)
+    search() {
+      this.$router.replace({
+        name: 'Task',
+        query: this.searchParams
+      })
     },
     fetch(pageNum) {
       const { toRegExp } = this.$util

@@ -185,13 +185,16 @@ export default {
       })
       this.rules = result
     },
-    search() {
-      this.$emit('input', this.getValue())
-      this.$refs.filterForm.validate(res => {
-        if (res) {
-          this.$emit('search')
-        }
-      })
+    search(debounce) {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$emit('input', this.getValue())
+        this.$refs.filterForm.validate(res => {
+          if (res) {
+            this.$emit('search')
+          }
+        })
+      }, debounce)
     },
     fetch() {
       this.$emit('input', this.getValue())

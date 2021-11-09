@@ -3,7 +3,7 @@
     <div class="main">
       <div class="instance-operation">
         <div class="instance-operation-left">
-          <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
+          <FilterBar v-model="searchParams" :items="filterItems" @search="search()" @fetch="fetch"></FilterBar>
         </div>
         <div class="instance-operation-right">
           <el-button type="primary" @click="createAgent" :loading="createAgentLoading">
@@ -418,15 +418,11 @@ export default {
     async getVersion(id) {
       return this.$axios.get('api/tcm/config/version/latest/' + id)
     },
-    search(debounce) {
-      const { delayTrigger } = this.$util
-      delayTrigger(() => {
-        this.fetch(1)
-        this.$router.replace({
-          name: 'Instance',
-          query: this.searchParams
-        })
-      }, debounce)
+    search() {
+      this.$router.replace({
+        name: 'Instance',
+        query: this.searchParams
+      })
     },
     fetch(pageNum, hideLoading) {
       if (!hideLoading) {
@@ -470,9 +466,12 @@ export default {
             }
             return item
           })
+
           // 版本号
-          let getVersion = await this.getVersion(this.list[0]?.id)
-          this.version = getVersion?.version
+          if (this.list?.[0]?.id) {
+            let getVersion = await this.getVersion(this.list[0]?.id)
+            this.version = getVersion?.version
+          }
 
           this.page.total = data.total
           if (!list.length && data.total > 0) {

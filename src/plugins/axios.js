@@ -22,7 +22,7 @@ const pending = []
 const CancelToken = axios.CancelToken
 
 const getPendingKey = config => {
-  let { url, method, data } = config
+  let { url, method, params } = config
   let headers = {}
   for (const key in config.headers) {
     let value = config.headers[key]
@@ -30,38 +30,38 @@ const getPendingKey = config => {
       headers[key] = value
     }
   }
-  data = Object.prototype.toString.call(data) === '[object String]' ? JSON.parse(data) : data
   let key = JSON.stringify({
     url,
     method,
-    data,
+    params,
     headers
   })
   return key
 }
 const removePending = config => {
-  let key = JSON.stringify(config)
+  let key = getPendingKey(config)
   let index = pending.findIndex(it => it === key)
   pending.splice(index, 1)
 }
 const errorCallback = error => {
-  if (error && error.response && error.response.status === 401) {
-    location.href = location.origin + location.pathname.substring(0, location.pathname.lastIndexOf('/')) + '/login'
-    return
-  } else if (error && error.response && error.response.status === 502) {
-    return
+  let status = error?.response?.status
+  // 从请求池清除掉错误请求
+  if (error?.response?.config || error?.config) {
+    removePending(error.config || error.response.config)
   }
-  let data = error?.response?.data
-  if (error && error.message !== 'cancel' && (!data || data.state !== 'EXCEPTION')) {
-    // Message.error('服务器错误:' + error)
+  if (status === 401) {
+    // 未登录
+    location.replace(location.href.split('#/')[0] + '#/login')
+  } else if ((status + '').startsWith('5')) {
+    // 500 报错
     location.replace(location.href.split('#/')[0] + '#/500')
-  }
-  if (error && error.response && error.response.config) {
-    removePending(error.response.config)
+  } else if (status && !(status + '').startsWith('2')) {
+    // 其他错误
+    Message.error(`请求失败(${status})： ${error.message || error}`)
   }
   return Promise.reject(error)
 }
-
+// 请求发起拦截器
 _axios.interceptors.request.use(function (config) {
   // 本地开发使用header中加__token的方式绕过网关登录
   const ACCESS_TOKEN = process.env.VUE_APP_ACCESS_TOKEN || ''
@@ -70,44 +70,48 @@ _axios.interceptors.request.use(function (config) {
     config.params = Object.assign({}, config.params, params)
   }
 
+  // headers里面注入用户token，并开启鉴权
   let user = window.__USER_INFO__
   if (user) {
     config.headers['X-Token'] = user.token
   }
   config.withCredentials = true
+
+  // 获取取消请求的函数
   let cancelFunc = null
   config.cancelToken = new CancelToken(c => {
     cancelFunc = c
   })
   let key = getPendingKey(config)
+  // 判断请求池是否有相同请求，有则取消当前请求（后一条）,没有则将请求注入请求池
   if (pending.includes(key)) {
     console.log('Cancel request:', config) //eslint-disable-line
     cancelFunc('cancel')
   } else {
     pending.push(key)
   }
-  // console.log('Vue.confirm', Vue.prototype.$confirm, MessageBox.confirm)
-  // Vue.prototype.$confirm?.('您确定要跳转至登录吗？', '用户未登录').then(res => {
-  // 	if (res) {
-  // 		alert(1)
-  // 	}
-  // })
   return config
 }, errorCallback)
 
-// Add a response interceptor
+// 请求返回拦截器
 _axios.interceptors.response.use(function (response) {
   return new Promise((resolve, reject) => {
+    // 从请求池清除掉错误请求
     removePending(response.config)
-    let code = response.data.code
+
+    let data = response?.data
+    let code = data?.code
     if (code === 'ok') {
-      return resolve(response.data.data)
+      // code 为 ok 则表示请求正常返回，进入then逻辑
+      return resolve(data?.data)
     } else if (code === 'SystemError') {
-      // location.replace(location.href.split('#/')[0] + '#/500?message=' + response.data.message)
-      Message.error(response.data.message)
-      reject(response)
+      // code 为 SystemError 则表示请求异常，提示信息
+      let msg = data?.message || data?.msg
+      Message.error(`SystemError： ${msg}`)
+      return reject(msg)
     }
-    reject(response)
+    // 其他情况交由业务端自行处理
+    reject(Object.assign(response, { isException: true }))
   })
 }, errorCallback)
 

@@ -1,7 +1,7 @@
 <template>
   <section class="verify-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Verify'">
     <div class="page-header">
-      <FilterBar v-model="searchParams" :items="filterItems" @search="search(800)" @fetch="fetch"></FilterBar>
+      <FilterBar v-model="searchParams" :items="filterItems" @search="search()" @fetch="fetch"></FilterBar>
       <div>
         <VButton type="primary" @click="toCreate">
           <span>{{ $t('verify_button_create') }}</span>
@@ -361,14 +361,11 @@ export default {
         }
       })
     },
-    search(debounce) {
-      const { delayTrigger } = this.$util
-      delayTrigger(() => {
-        this.$router.replace({
-          name: 'Verify',
-          query: this.searchParams
-        })
-      }, debounce)
+    search() {
+      this.$router.replace({
+        name: 'Verify',
+        query: this.searchParams
+      })
     },
     fetch(pageNum) {
       this.loading = true

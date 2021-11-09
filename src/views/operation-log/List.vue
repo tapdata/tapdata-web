@@ -164,7 +164,7 @@ export default {
       let [modular, operation] = operationType.split('_')
       return { modular, operation }
     },
-    search(debounce) {
+    search() {
       let { searchParams } = this
       let query = {}
       for (let key in searchParams) {
@@ -172,13 +172,10 @@ export default {
           query[key] = searchParams[key]
         }
       }
-      const { delayTrigger } = this.$util
-      delayTrigger(() => {
-        this.$router.replace({
-          name: 'OperationLog',
-          query: query
-        })
-      }, debounce)
+      this.$router.replace({
+        name: 'OperationLog',
+        query: query
+      })
     },
     getSearchItems() {
       this.filterItems = [

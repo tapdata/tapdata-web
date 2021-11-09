@@ -3,7 +3,7 @@
     <div class="main">
       <div class="connection-operation">
         <div class="connection-operation-left">
-          <FilterBar v-model="searchParams" :items="filterItems" @search="search(800)" @fetch="fetch"></FilterBar>
+          <FilterBar v-model="searchParams" :items="filterItems" @search="search()" @fetch="fetch"></FilterBar>
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
@@ -321,14 +321,11 @@ export default {
         name: 'Connection'
       })
     },
-    search(debounce) {
-      const { delayTrigger } = this.$util
-      delayTrigger(() => {
-        this.$router.replace({
-          name: 'Connection',
-          query: this.searchParams
-        })
-      }, debounce)
+    search() {
+      this.$router.replace({
+        name: 'Connection',
+        query: this.searchParams
+      })
     },
     fetch(pageNum) {
       const { toRegExp } = this.$util
