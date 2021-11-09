@@ -16,9 +16,9 @@
         @sort-change="sortChange"
       >
         <ElTableColumn label="任务名称" prop="name" min-width="200">
-          <template v-slot="scope">
-            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
-          </template>
+          <!--          <template v-slot="scope">-->
+          <!--            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>-->
+          <!--          </template>-->
         </ElTableColumn>
         <ElTableColumn label="任务类型" prop="typeText"></ElTableColumn>
         <ElTableColumn label="所属agent" prop="belongAgent" min-width="200">
