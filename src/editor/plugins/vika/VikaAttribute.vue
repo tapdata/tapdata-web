@@ -35,18 +35,20 @@
           :rules="rules"
           required
         >
-          <el-input v-model="model.tableName"></el-input>
+          <el-input v-model="model.tableName" placeholder="请根据下面提供的数据，选择您需要的表"></el-input>
           <!-- <FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect> -->
           <el-tree
             highlight-current
             lazy
             accordion
+            check-on-click-node
+            node-key="id"
+            ref="vikaTree"
             :props="props"
             :load="loadNode"
             :data="nodes"
-            node-key="id"
             :default-expanded-keys="expandedKeys"
-            :default-checked-keys="checkedKeys"
+            :current-node-key="currentNodeKey"
             @node-click="handleNodeClick"
           >
           </el-tree>
@@ -80,13 +82,6 @@
         <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
       </div>
     </div>
-    <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
-      <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" size="mini" @click="confirmDialog">{{ $t('message.confirm') }}</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -161,7 +156,7 @@ export default {
         isLeaf: 'leaf'
       },
       expandedKeys: [],
-      checkedKeys: []
+      currentNodeKey: ''
     }
   },
 
@@ -197,11 +192,22 @@ export default {
         this.$emit('dataChanged', this.getData())
       }
     },
-
     'model.connectionId': {
       immediate: true,
       handler() {
         this.loadDataModels(this.model.connectionId)
+      }
+    },
+    'model.tableName': {
+      immediate: true,
+      handler() {
+        if (!this.model.tableName || this.model.tableName === '') {
+          this.currentNodeKey = ''
+          this.model.tableId = ''
+          this.$nextTick(function () {
+            this.$refs.vikaTree.setCurrentKey('')
+          })
+        }
       }
     }
   },
@@ -244,12 +250,7 @@ export default {
           })
       }
       this.dataNodeInfo = dataNodeInfo || {}
-      let ouputSchema = cell.getOutputSchema()
-      if (this.model.connectionId && this.model.tableName && !ouputSchema) {
-        this.handlerSchemaChange()
-      } else {
-        this.mergedSchema = ouputSchema
-      }
+      this.mergedSchema = cell.getOutputSchema()
 
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
@@ -344,6 +345,10 @@ export default {
       } else {
         resolve([])
       }
+      this.currentNodeKey = this.model.tableId
+      this.$nextTick(function () {
+        this.$refs.vikaTree.setCurrentKey(this.currentNodeKey)
+      })
     },
     handleNodeClick(data, node) {
       if (this.model.tableName === data.name) {
