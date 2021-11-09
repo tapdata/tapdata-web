@@ -62,8 +62,7 @@ export default {
         disabledDate: time => {
           const { start } = this
           if (start) {
-            // 86400000
-            return time.getTime() <= new Date(start).getTime()
+            return time.getTime() < new Date(start).getTime() - 1
           }
         }
       }
