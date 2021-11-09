@@ -52,6 +52,71 @@ import VirtualTransferPanel from './VirtualTransferPanel'
 export default {
   name: 'VirtualTransfer',
   components: { VirtualTransferPanel },
-  extends: Transfer
+  extends: Transfer,
+
+  computed: {
+    sourceData() {
+      // console.time('sourceData')
+      const valueObj = {}
+      this.value.forEach(item => {
+        valueObj[item] = true
+      })
+      const data = this.data.filter(item => !valueObj[item[this.props.key]])
+      // console.timeEnd('sourceData')
+      return data
+    },
+
+    targetData() {
+      // console.time('targetData')
+      let data
+      if (this.targetOrder === 'original') {
+        const valueObj = {}
+        this.value.forEach(item => {
+          valueObj[item] = true
+        })
+        data = this.data.filter(item => valueObj[item[this.props.key]])
+      } else {
+        data = this.value.reduce((arr, cur) => {
+          const val = this.dataObj[cur]
+          if (val) {
+            arr.push(val)
+          }
+          return arr
+        }, [])
+      }
+      // console.timeEnd('targetData')
+      return data
+    }
+  },
+
+  methods: {
+    addToRight() {
+      // console.time('addToRight')
+      let currentValue = this.value.slice()
+      const itemsToBeMoved = []
+      const key = this.props.key
+
+      let leftCheckedKeyPropsObj = {}
+      this.leftChecked.forEach(item => {
+        leftCheckedKeyPropsObj[item] = true
+      })
+      let valueKeyPropsObj = {}
+      this.value.forEach(item => {
+        valueKeyPropsObj[item] = true
+      })
+
+      this.data.forEach(item => {
+        const itemKey = item[key]
+        if (leftCheckedKeyPropsObj[itemKey] && !valueKeyPropsObj[itemKey]) {
+          itemsToBeMoved.push(itemKey)
+        }
+      })
+      currentValue =
+        this.targetOrder === 'unshift' ? itemsToBeMoved.concat(currentValue) : currentValue.concat(itemsToBeMoved)
+      this.$emit('input', currentValue)
+      this.$emit('change', currentValue, 'right', this.leftChecked)
+      // console.timeEnd('addToRight')
+    }
+  }
 }
 </script>
