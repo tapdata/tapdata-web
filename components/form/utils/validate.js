@@ -99,6 +99,6 @@ export const validateBySchema = (schema, values, basePath) => {
   recursiveField(new Schema(JSON.parse(JSON.stringify(schema))), basePath)
 
   return form.validate().finally(() => {
-    // form.onUnmount() // 触发卸载
+    form.onUnmount() // 触发卸载
   })
 }

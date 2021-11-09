@@ -389,7 +389,7 @@ export default {
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
 
       jsPlumbIns.bind('connection', (info, event) => {
-        console.log('connectionEvent', info) // eslint-disable-line
+        // console.log('connectionEvent', info) // eslint-disable-line
         const { sourceId: source, targetId: target } = info
         const sourceId = this.getRealId(source)
         const targetId = this.getRealId(target)
@@ -517,17 +517,17 @@ export default {
       })*/
 
       // 连线移动到其他节点
-      jsPlumbIns.bind('connectionMoved', info => {
-        console.log('connectionMoved', info) // eslint-disable-line
-      })
+      // jsPlumbIns.bind('connectionMoved', info => {
+      //   console.log('connectionMoved', info) // eslint-disable-line
+      // })
       // 连线移动到其他节点
-      jsPlumbIns.bind('connectionDetached', info => {
-        console.log('connectionDetachedEvent', info) // eslint-disable-line
-      })
+      // jsPlumbIns.bind('connectionDetached', info => {
+      //   console.log('connectionDetachedEvent', info) // eslint-disable-line
+      // })
 
       const _instance = {
         getConnections(params) {
-          console.log('_instance', params) // eslint-disable-line
+          // console.log('_instance', params) // eslint-disable-line
           if (typeof params === 'object') {
             if (params.target) params.target = NODE_PREFIX + params.target
             if (params.source) params.source = NODE_PREFIX + params.source
@@ -537,7 +537,7 @@ export default {
       }
 
       jsPlumbIns.bind('beforeDrop', info => {
-        console.log('beforeDrop', info) // eslint-disable-line
+        // console.log('beforeDrop', info) // eslint-disable-line
         const { sourceId, targetId } = info
 
         const source = this.nodeById(this.getRealId(sourceId))
@@ -884,7 +884,7 @@ export default {
      * 取消选择所有节点
      */
     deselectAllNodes() {
-      console.log('deselectAllNodes') // eslint-disable-line
+      // console.log('deselectAllNodes') // eslint-disable-line
       this.jsPlumbIns.clearDragSelection()
       this.resetSelectedNodes()
       this.setActiveNode(null)
@@ -927,14 +927,14 @@ export default {
       let nh = $node.offsetHeight
       let { x, y, bottom, right } = selectBoxAttr
 
-      console.log('getNodesInSelection', selectBoxAttr) // eslint-disable-line
+      // console.log('getNodesInSelection', selectBoxAttr) // eslint-disable-line
       /*const nodeViewOffset = this.nodeViewOffsetPosition
       x -= nodeViewOffset[0]
       right -= nodeViewOffset[0]
       y -= nodeViewOffset[1]
       bottom -= nodeViewOffset[1]*/
       return this.nodes.filter(({ position }) => {
-        console.log('position', position, { x, y, bottom, right }) // eslint-disable-line
+        // console.log('position', position, { x, y, bottom, right }) // eslint-disable-line
         return position[0] + nw > x && position[0] < right && bottom > position[1] && y < position[1] + nh
       })
     },
@@ -977,7 +977,7 @@ export default {
       let w, h, x, y
       const pos = this.getMousePositionWithinNodeView(e)
 
-      console.log('mouseMoveSelect', pos) // eslint-disable-line
+      // console.log('mouseMoveSelect', pos) // eslint-disable-line
 
       x = Math.min(this.mouseClickPosition.x, pos.x)
       y = Math.min(this.mouseClickPosition.y, pos.y)
@@ -999,7 +999,7 @@ export default {
 
     mouseUpMouseSelect() {
       off(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
-      console.log('mouseUpMouseSelect') // eslint-disable-line
+      // console.log('mouseUpMouseSelect') // eslint-disable-line
       this.deselectAllNodes()
       // 清空激活状态
       this.setActiveType(null)
@@ -1030,7 +1030,7 @@ export default {
     },
 
     __removeConnection(source, target) {
-      console.log('removeConnection', source, target) // eslint-disable-line
+      // console.log('removeConnection', source, target) // eslint-disable-line
       const connections = this.jsPlumbIns.getConnections({
         source,
         target
@@ -1459,7 +1459,7 @@ export default {
     },
 
     handleMouseSelect(showSelectBox, selectBoxAttr) {
-      console.log('handleMouseSelect', arguments) // eslint-disable-line
+      // console.log('handleMouseSelect', arguments) // eslint-disable-line
       // 取消选中所有节点
       this.deselectAllNodes()
       // 清空激活状态
@@ -1522,7 +1522,7 @@ export default {
     addNodeOnConnByNodeMenu(nodeType) {
       const { nodeMenu } = this
       nodeMenu.show = false
-      console.log('nodeMenu.connectionCenterPos', nodeMenu.connectionCenterPos) // eslint-disable-line
+      // console.log('nodeMenu.connectionCenterPos', nodeMenu.connectionCenterPos) // eslint-disable-line
       const position = this.$refs.paperScroller.getDropPositionWithinPaper(nodeMenu.connectionCenterPos, {
         width: NODE_WIDTH,
         height: NODE_HEIGHT
