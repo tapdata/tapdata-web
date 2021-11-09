@@ -31,7 +31,7 @@
               </ElLink>
               <div class="flex align-items-center">
                 <img
-                  v-if="scope.row.agentType === 'Cloud'"
+                  v-if="isCloud(scope.row)"
                   src="../../../public/images/only_test.png"
                   alt=""
                   class="ml-3"
@@ -72,17 +72,13 @@
         <ElTableColumn label="操作" width="280">
           <template slot-scope="scope">
             <div class="operate-columns">
-              <el-button size="mini" type="text" @click="testConnection(scope.row)">连接测试</el-button>
-              <el-divider direction="vertical"></el-divider>
-              <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="edit(scope.row)"
-                >编辑</el-button
-              >
-              <el-divider direction="vertical"></el-divider>
-              <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="copy(scope.row)"
-                >复制</el-button
-              >
-              <el-divider direction="vertical"></el-divider>
-              <el-button type="text" @click="del(scope.row)">删除</el-button>
+              <ElButton size="mini" type="text" @click="testConnection(scope.row)">连接测试</ElButton>
+              <ElDivider direction="vertical"></ElDivider>
+              <ElButton type="text" :disabled="isCloud(scope.row)" @click="edit(scope.row)">编辑</ElButton>
+              <ElDivider direction="vertical"></ElDivider>
+              <ElButton type="text" :disabled="isCloud(scope.row)" @click="copy(scope.row)">复制</ElButton>
+              <ElDivider direction="vertical"></ElDivider>
+              <ElButton type="text" @click="del(scope.row)">删除</ElButton>
             </div>
           </template>
         </ElTableColumn>
@@ -90,14 +86,14 @@
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_data') }}</span>
-            <el-link type="primary" class="fs-7" @click="create">创建连接</el-link>
+            <ElLink type="primary" class="fs-7" @click="create">创建连接</ElLink>
           </div>
         </div>
         <div v-else class="connection-table__empty" slot="empty">
           <VIcon size="120">search-no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_match_result') }}</span>
-            <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
+            <ElLink type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
           </div>
         </div>
       </ElTable>
@@ -382,7 +378,7 @@ export default {
       this.$root.$emit('select-connection-type')
     },
     edit(item) {
-      if (item.agentType === 'Cloud') {
+      if (this.isCloud(item)) {
         return
       }
       this.$router.push({
@@ -390,7 +386,7 @@ export default {
       })
     },
     async copy(item) {
-      if (item.agentType === 'Cloud') {
+      if (this.isCloud(item)) {
         return
       }
       try {
@@ -416,7 +412,7 @@ export default {
         if (resFlag) {
           try {
             await this.$axios.delete(`tm/api/Connections/${item.id}?name=${item.name}`)
-            if (item.agentType === 'Cloud') {
+            if (this.isCloud(item)) {
               // 释放资源
               this.$axios
                 .post('api/tcm/connection/delete', {
@@ -485,6 +481,9 @@ export default {
     },
     preview(id, type) {
       this.$refs.preview.open(id, type)
+    },
+    isCloud(row) {
+      return row.agentType === 'Cloud'
     }
   }
 }
