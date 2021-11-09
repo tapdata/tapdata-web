@@ -244,7 +244,7 @@
       </div>
     </el-dialog>
     <el-dialog
-      :title="$t('message.prompt')"
+      :title="$t('message_title_prompt')"
       :visible.sync="reloadSchemaDialog"
       :close-on-click-modal="false"
       width="30%"

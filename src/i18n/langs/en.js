@@ -2,6 +2,9 @@ export default {
   // 通用按钮
   button_edit: 'edit',
 
+  // 通用消息
+  message_title_prompt: 'hint',
+
   // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',
@@ -72,6 +75,11 @@ export default {
   data_flow_automatically: 'automatically',
   data_flow_manually: 'manually',
   data_flow_oracle_logminer: 'Oracle Logminer Mode',
+  task_job_link_type_table_tips: 'Table does not currently support foreign key replication',
+  task_job_link_type_view_tips:
+    'The setting of field mapping is temporarily not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset.',
+  task_job_link_confirm_message_rollback:
+    'The setting of field mapping is not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset. Are you sure to check it? ',
 
   // Function management
   function_tips_empty: 'Code lacks JS functions',
