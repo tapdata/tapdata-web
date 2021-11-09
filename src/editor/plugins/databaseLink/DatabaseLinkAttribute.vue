@@ -89,7 +89,7 @@
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
               <FieldMapping
-                v-if="showFieldMapping"
+                v-if="showFieldMapping && !model.selectSourceDatabase['view']"
                 ref="fieldMapping"
                 class="fr"
                 mappingType="cluster-clone"
