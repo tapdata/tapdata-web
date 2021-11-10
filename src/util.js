@@ -57,6 +57,30 @@ export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 export const formatTime = (date, format = 'YYYY-MM-DD HH:mm:ss') => moment(date).format(format)
 // 判断对象是否为空
 export const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
+// cookie
+export const cookie = {
+  // 设置cookie
+  set: (name, value, day) => {
+    const date = new Date()
+    date.setDate(date.getDate() + day)
+    document.cookie = name + '=' + value + ';expires=' + date.toUTCString()
+  },
+  // 获取cookie
+  get: key => {
+    var arr = document.cookie.split('; ')
+    for (var i = 0; i < arr.length; i++) {
+      var arr1 = arr[i].split('=')
+      if (arr1[0] == key) {
+        return arr1[1]
+      }
+    }
+    return ''
+  },
+  // 删除cookie
+  remove: name => {
+    cookie.set(name, '', -1)
+  }
+}
 // 支持的数据源 'mysql','mariadb','mysql pxc','mongodb','postgres','oracle','sqlserver','redis'
 // 不支持 'rest api','db2','sybase','gbase','gaussdb200','kafka','elasticsearch'
 export const TYPEMAP = {
