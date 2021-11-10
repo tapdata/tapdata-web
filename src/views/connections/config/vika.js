@@ -6,7 +6,8 @@ export default function (vm) {
       labelColon: true
     },
     defaultModel: {
-      connection_type: 'target'
+      connection_type: 'target',
+      database_host: 'https://api.vika.cn/fusion/v1'
     },
     items: [
       {
@@ -21,6 +22,11 @@ export default function (vm) {
           }
         ],
         required: true
+      },
+      {
+        type: 'input',
+        field: 'database_host',
+        label: vm.$t('dataForm.form.host')
       },
       {
         type: 'input',
