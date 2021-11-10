@@ -226,9 +226,7 @@ export default {
         this.initNodeView()
         await this.initView()
       } catch (error) {
-        if (error?.isException) {
           console.error(error) // eslint-disable-line
-        }
       }
     })
   },
@@ -611,9 +609,7 @@ export default {
         result = await dataFlowsApi.get([dataflowId])
         // this.creatUserId = result.user_id
       } catch (e) {
-        if (e?.isException) {
-          this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
-        }
+        this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
         return
       }
 
@@ -1114,9 +1110,7 @@ export default {
           }
         })
       } catch (e) {
-        if (e?.isException) {
-          this.$showError(e, '数据流保存出错', '出现的问题:')
-        }
+        this.$showError(e, '数据流保存出错', '出现的问题:')
       }
     },
 
