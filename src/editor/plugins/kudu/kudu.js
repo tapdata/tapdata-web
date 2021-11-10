@@ -40,7 +40,7 @@ export const KUDUNodeConfig = {
        * @return {boolean}
        */
       allowTarget() {
-        return false
+        return true
       },
 
       /**
