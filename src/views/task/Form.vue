@@ -823,7 +823,7 @@ export default {
           }
           //判断是否有第五步
           this.$axios
-            .get('tm/api/typeMappings/dataType?databaseType=' + this.dataSourceModel.target_databaseType)
+            .get('tm/api/TypeMappings/dataType?databaseType=' + this.dataSourceModel.target_databaseType)
             .then(data => {
               if (data?.length === 0) {
                 this.hiddenFieldMapping = true
@@ -1357,7 +1357,7 @@ export default {
     },
     //获取typeMapping
     async getTypeMapping(row) {
-      let data = await this.$axios.get('tm/api/typeMappings/dataType?databaseType=' + row.sinkDbType)
+      let data = await this.$axios.get('tm/api/TypeMappings/dataType?databaseType=' + row.sinkDbType)
       return data
     },
     //保存字段处理器

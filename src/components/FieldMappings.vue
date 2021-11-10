@@ -201,7 +201,7 @@ export default {
     },
     //获取typeMapping
     async getTypeMapping(row) {
-      let data = await this.$axios.get('tm/api/typeMappings/dataType?databaseType=' + row.sinkDbType)
+      let data = await this.$axios.get('tm/api/TypeMappings/dataType?databaseType=' + row.sinkDbType)
       return data
     },
     //保存字段处理器

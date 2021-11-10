@@ -1114,7 +1114,7 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
-  '/tm/api/typeMappings/dataType': {
+  '/tm/api/TypeMappings/dataType': {
     data: [{ dbType: 'mysql', rules: [] }],
     code: 'ok',
     msg: 'ok'
