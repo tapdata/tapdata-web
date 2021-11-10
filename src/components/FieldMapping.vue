@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-button
+      v-if="showBtn"
       size="mini"
       class="e-button"
-      v-if="showBtn"
       :loading="loading"
       :disabled="isDisable"
       @click="fieldProcess()"
@@ -43,7 +43,6 @@
 export default {
   name: 'FiledMapping',
   props: [
-    'dataFlow',
     'databaseFieldProcess',
     'showBtn',
     'hiddenFieldProcess',

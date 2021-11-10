@@ -93,7 +93,6 @@
                 ref="fieldMapping"
                 class="fr"
                 mappingType="cluster-clone"
-                :dataFlow="dataFlow"
                 :showBtn="true"
                 :stageId="stageId"
                 :databaseFieldProcess="model.field_process"
