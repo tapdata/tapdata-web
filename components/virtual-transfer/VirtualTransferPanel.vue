@@ -54,9 +54,14 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
 import { Transfer } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
+const TransferPanel = cloneDeep(Transfer.components.TransferPanel)
+
+delete TransferPanel.watch.checked
 
 export default {
   name: 'VirtualTransferPanel',
@@ -91,7 +96,7 @@ export default {
     }
   },
 
-  extends: Transfer.components.TransferPanel,
+  extends: TransferPanel,
 
   props: {
     buffer: {
@@ -101,6 +106,45 @@ export default {
     itemSize: {
       type: Number,
       default: null
+    }
+  },
+
+  watch: {
+    checked(val, oldVal) {
+      // console.time('checked')
+      this.updateAllChecked()
+
+      const newObj = {}
+      val.every(item => {
+        newObj[item] = true
+      })
+      const oldObj = {}
+      oldVal.every(item => {
+        oldObj[item] = true
+      })
+      if (this.checkChangeByUser) {
+        const movedKeys = val.concat(oldVal).filter(v => newObj[v] || oldVal[v])
+        this.$emit('checked-change', val, movedKeys)
+      } else {
+        this.$emit('checked-change', val)
+        this.checkChangeByUser = true
+      }
+      // console.timeEnd('checked')
+    }
+  },
+
+  methods: {
+    updateAllChecked() {
+      // console.time('do-updateAllChecked')
+      const checkObj = {}
+      this.checked.forEach(item => {
+        checkObj[item] = true
+      })
+      this.allChecked =
+        this.checkableData.length > 0 &&
+        this.checked.length > 0 &&
+        this.checkableData.every(item => checkObj[item[this.keyProp]])
+      // console.timeEnd('do-updateAllChecked')
     }
   }
 }
