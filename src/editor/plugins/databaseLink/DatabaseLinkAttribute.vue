@@ -363,6 +363,8 @@ export default {
         }).then(action => {
           if (action) {
             this.$refs.fieldMapping.updateFieldProcess('all')
+            //执行还原方法
+            this.handleReduction()
           } else {
             this.model.selectSourceDatabase[field] = false
           }
@@ -581,6 +583,8 @@ export default {
       this.mqActiveData.table_suffix = ''
       //前后缀 表名改动 需要清空字段处理器
       this.model.field_process = []
+      this.model.tableNameTransform = ''
+      this.model.fieldsNameTransform = ''
     },
     //获取dataFlow
     getDataFlow() {
