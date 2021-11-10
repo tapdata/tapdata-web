@@ -430,7 +430,10 @@ export default {
           } catch (error) {
             // 删除失败
             let errorTip = '删除失败'
-            if (error?.data?.msg) {
+            const data = error?.data
+            if (data.code === 'Datasource.LinkJobs') {
+              errorTip = data.message
+            } else if (error?.data?.msg) {
               let { dataFlows, jobs, modules } = error?.data?.msg
               if ([...dataFlows, ...jobs, ...modules].length > 0) {
                 errorTip = '此连接被任务所占用，无法删除'
