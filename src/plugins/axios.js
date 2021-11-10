@@ -52,6 +52,7 @@ const errorCallback = error => {
   if (status === 401) {
     // 未登录
     location.replace(location.href.split('#/')[0] + '#/login')
+    return
   } else if ((status + '').startsWith('5')) {
     // 500 报错
     location.replace(location.href.split('#/')[0] + '#/500')
