@@ -224,8 +224,34 @@ export default {
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
+            this.getSchemaProgress()
+          }
+        })
+        .catch(() => {
+          this.$message.error(this.$t('connection.reloadFail'))
+          this.showProgress = false
+          this.progress = 0 //加载完成
+          this.reloadLoading = false
+        })
+    },
+    getSchemaProgress() {
+      this.clearInterval()
+      this.$axios
+        .get('tm/api/Connections/' + this.connection.id)
+        .then(data => {
+          this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
+          if (data.loadFieldsStatus === 'finished') {
+            this.progress = 100
+            setTimeout(() => {
+              this.showProgress = false
+              this.progress = 0 //加载完成
+            }, 800)
+            this.reloadLoading = false
+          } else {
+            let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
+            this.progress = progress ? progress : 0
             this.timer = setInterval(() => {
-              this.reloadApi()
+              this.getSchemaProgress()
             }, 800)
           }
         })
