@@ -607,19 +607,14 @@ export default {
         })
       }
       self.loading = true
-      MetadataInstances.get(params)
+      MetadataInstances.getTables(connectionId)
         .then(res => {
           this.tableIsLink()
-          let schemas = res.data.map(it => {
-            it.table_name = it.original_name
-            return it
-          })
-          tempSchemas = schemas.sort((t1, t2) =>
-            t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-          )
+          let schemas = res.data
+          tempSchemas = schemas.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
           self.schemaSelectConfig.options = tempSchemas.map(item => ({
-            label: item.table_name,
-            value: item.table_name
+            label: item,
+            value: item
           }))
           this.tableIsLink()
         })
