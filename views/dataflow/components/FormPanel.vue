@@ -102,7 +102,7 @@ export default {
   components: { Form, FormProvider, SchemaField },
 
   computed: {
-    ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType']),
+    ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType', 'hasNodeError']),
 
     node() {
       return this.activeConnection ? this.nodeById(this.activeConnection.targetId) : this.activeNode
@@ -163,6 +163,7 @@ export default {
               }
               this.lastActiveNodeType = this.node?.type // 缓存
               this.watchInputAndOutput()
+              this.hasNodeError(this.node?.id) && this.form.validate()
               break
             case 'connection':
               await this.setSchema(this.ins.linkFormSchema || formSchema.link)
@@ -183,6 +184,7 @@ export default {
           this.form.setValuesIn('inputLanes', this.node.inputLanes)
           this.form.setValuesIn('outputLanes', this.node.outputLanes)
           this.watchInputAndOutput()
+          this.hasNodeError(this.node?.id) && this.form.validate().catch()
         }
       }
     }

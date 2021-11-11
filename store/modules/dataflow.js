@@ -192,7 +192,9 @@ const getters = {
     return state.activeType
   },
 
-  formSchema: state => state.formSchema
+  formSchema: state => state.formSchema,
+
+  hasNodeError: state => id => state.nodeErrorState[id]
 }
 
 // actions
@@ -459,6 +461,24 @@ const mutations = {
   setFormSchema(state, schema) {
     Vue.set(state, 'formSchema', schema)
     console.log('state', state) // eslint-disable-line
+  },
+
+  /**
+   * 标记节点错误状态
+   * @param state
+   * @param id
+   */
+  setNodeError(state, id) {
+    Vue.set(state.nodeErrorState, id, true)
+  },
+
+  /**
+   * 清除节点错误状态
+   * @param state
+   * @param id
+   */
+  clearNodeError(state, id) {
+    Vue.delete(state.nodeErrorState, id)
   }
 }
 

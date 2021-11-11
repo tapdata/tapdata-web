@@ -255,7 +255,7 @@ const tc = {
       favorite: '我的收藏',
       dataVerification: '数据校验',
       delFavMenu: '删除收藏',
-      license: 'License信息',
+      license: 'License管理',
       licenseBefore: '提醒：License剩餘 ',
       licenseAfter: ' 天到期',
       licenseAfterOneDay: ' 天到期',

@@ -261,7 +261,7 @@ const en = {
       favorite: 'Favorite',
       dataVerification: 'Data Verification',
       delFavMenu: 'Delete Favorite',
-      license: 'License info',
+      license: 'License manage',
       licenseBefore: 'Info: License remaining ',
       licenseAfter: ' days',
       licenseDate: 'License expiration time',

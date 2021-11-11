@@ -1046,9 +1046,11 @@ export default {
               }
             })
             .catch(err => {
-              let message = err?.response?.msg || err?.data?.msg || ''
-              if (message === 'duplication for names') {
-                this.$message.error(this.$t('message_name_exist'))
+              if (err?.isException) {
+                let message = err?.response?.msg || err?.data?.msg || ''
+                if (message === 'duplication for names') {
+                  this.$message.error(this.$t('message_name_exist'))
+                }
               }
             })
         }

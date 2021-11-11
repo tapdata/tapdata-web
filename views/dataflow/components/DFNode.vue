@@ -30,7 +30,7 @@
         <VIcon>close</VIcon>
       </div>
     </div>
-    <!--<VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>-->
+    <VIcon v-if="hasNodeError(data.id)" class="mr-2" size="14" color="#FF7474">warning</VIcon>
   </BaseNode>
 </template>
 
@@ -74,7 +74,8 @@ export default {
       'isNodeActive',
       'isNodeSelected',
       'isMultiSelect',
-      'processorNodeTypes'
+      'processorNodeTypes',
+      'hasNodeError'
     ]),
 
     data() {

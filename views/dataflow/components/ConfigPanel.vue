@@ -87,14 +87,15 @@ export default {
 
   watch: {
     async 'activeNode.id'(n, o) {
-      console.log('activeNode.id', n, o)
+      // console.log('activeNode.id', n, o)
       if (o) {
         const node = this.nodeById(o)
         try {
-          const result = await validateBySchema(node.__Ctor.formSchema, node)
-          console.log('上一个激活的节点校验结果', result)
+          await validateBySchema(node.__Ctor.formSchema, node)
+          // console.log('上一个激活的节点校验结果', result)
+          this.clearNodeError(o)
         } catch (e) {
-          console.error(e)
+          this.setNodeError(o)
         }
         // console.log('上一个激活的节点校验结果', result)
       }
@@ -102,7 +103,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['updateNodeProperties']),
+    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError']),
 
     handleChangeName(e) {
       this.updateNodeProperties({
