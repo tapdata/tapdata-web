@@ -2,6 +2,9 @@ export default {
   // 通用按钮
   button_edit: '编辑',
 
+  // 通用消息
+  message_title_prompt: '提示',
+
   // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',
@@ -72,6 +75,11 @@ export default {
   data_flow_automatically: '自动挖掘',
   data_flow_manually: '手动挖掘',
   data_flow_oracle_logminer: 'Oracle日志挖掘模式',
+  task_job_link_type_table_tips: 'Table暂不支持外键复制',
+  task_job_link_type_view_tips:
+    '复制view时暂不支持设置字段映射，勾选此项下方字段映射功能会被禁用，已设置的字段映射将会被重置',
+  task_job_link_confirm_message_rollback:
+    '复制view时暂不支持设置字段映射，勾选此项下方字段映射功能会被禁用，已设置的字段映射将会被重置，是否确认勾选？',
 
   // 函数管理
   function_tips_empty: '代码缺少JS函数',

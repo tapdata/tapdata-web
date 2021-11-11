@@ -160,7 +160,7 @@
                 >
                 </el-date-picker>
               </el-form-item>
-              <el-form-item class="setting-item">
+              <el-form-item class="setting-item" v-if="form.mode === 'manual'">
                 <label class="item-label">校验结束时间</label>
                 <el-date-picker
                   class="item-select"

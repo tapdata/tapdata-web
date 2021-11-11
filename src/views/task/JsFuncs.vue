@@ -264,7 +264,17 @@ export default {
       this.dialogTitle = this.$t('button_edit')
       let code = `function ${item.function_name} (${item.parameters}) ${item.function_body}`
       this.model.jsonDoc = code
-      let { function_name, className, fileId, fileName, describe, function_body, parameters, return_value, jsEngineName } = item
+      let {
+        function_name,
+        className,
+        fileId,
+        fileName,
+        describe,
+        function_body,
+        parameters,
+        return_value,
+        jsEngineName
+      } = item
       this.model = {
         type: item.type || 'custom',
         function_name,
@@ -386,7 +396,7 @@ export default {
         this.$t('message.deleteOrNot') + ' ',
         h('span', { style: { color: '#409EFF' } }, item.function_name)
       ])
-      this.$confirm(message, this.$t('message.prompt'), {
+      this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {

@@ -2,6 +2,9 @@ export default {
   // 通用按钮
   button_edit: '編輯',
 
+  // 通用消息
+  message_title_prompt: '提示',
+
   // 数据校验
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',
@@ -68,6 +71,11 @@ export default {
   data_flow_automatically: '自動挖掘',
   data_flow_manually: '手動挖掘',
   data_flow_oracle_logminer: 'Oracle日誌挖掘模式',
+  task_job_link_type_table_tips: 'Table暫不支持外鍵複製',
+  task_job_link_type_view_tips:
+    '複製view時暫不支持設置欄位映射，勾選此項下方欄位映射功能會被禁用，已設置的欄位映射將會被重置',
+  task_job_link_confirm_message_rollback:
+    '複製view時暫不支持設置欄位映射，勾選此項下方欄位映射功能會被禁用，已設置的欄位映射將會被重置，是否確認勾選？',
 
   // 函数管理
   function_tips_empty: '代碼缺少JS函數',
@@ -99,6 +107,9 @@ export default {
   function_return_value_placeholder: '請輸入返回值',
   function_describe_label: '描述',
   function_describe_placeholder: '請輸入描述',
+  data_flow_automatically: '自動挖掘',
+  data_flow_manually: '手動挖掘',
+  data_flow_oracle_logminer: 'Oracle日誌挖掘模式',
 
   // 用户
   login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄'
