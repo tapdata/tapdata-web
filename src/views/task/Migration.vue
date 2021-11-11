@@ -660,7 +660,7 @@ export default {
           this.$message.error('任务启动失败，请编辑任务完成映射配置')
         })
     },
-    responseHandler(data, msg) {
+    responseHandler(data = {}, msg) {
       let failList = data.fail || []
       if (failList.length) {
         let msgMapping = {

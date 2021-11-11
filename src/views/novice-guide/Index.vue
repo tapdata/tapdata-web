@@ -656,9 +656,10 @@ export default {
           isOpenAutoDDL: false,
           bidirectional: false,
           readBatchSize: 1000,
+          needToCreateIndex: true,
           syncPoints: [
             {
-              connectionId: '',
+              connectionId: source.id,
               type: 'current', // localTZ: 本地时区； connTZ：连接时区
               time: '',
               date: '',
