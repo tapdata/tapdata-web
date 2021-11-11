@@ -141,7 +141,8 @@ export default {
         field_process: [],
         isFirst: true,
         vikaNodes: [],
-        vika_space_id: ''
+        vika_space_id: '',
+        database_host: ''
       },
       scope: '',
       dataFlow: '',
@@ -224,6 +225,7 @@ export default {
         .then(result => {
           if (result.data) {
             this.model.vika_space_id = result.data?.vika_space_id
+            this.model.database_host = result.data?.database_host
             this.getSpaceVika()
             this.loadTree()
           }
@@ -281,6 +283,7 @@ export default {
       let params = {
         load_type: 'node',
         space_id: this.model.vika_space_id,
+        database_host: this.model.database_host,
         connection_id: this.model.connectionId || ''
       }
       this.$api('connections')
@@ -320,6 +323,7 @@ export default {
         let params = {
           load_type: 'node',
           space_id: this.model.vika_space_id,
+          database_host: this.model.database_host,
           connection_id: this.model.connectionId || '',
           node_id: node.data.id
         }
@@ -400,6 +404,7 @@ export default {
       let params = {
         load_type: 'field',
         space_id: this.model.vika_space_id,
+        database_host: this.model.database_host,
         connection_id: this.model.connectionId || '',
         node_id: this.model.tableId
       }
