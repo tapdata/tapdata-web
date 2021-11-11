@@ -377,11 +377,11 @@ export default {
           }
         }
         fn(node)
+        this.changeSchema()
       } else {
         this.model.tableName = ''
         this.model.tableId = ''
       }
-      this.changeSchema()
     },
     //初始化树形结构
     loadTree() {
