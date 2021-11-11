@@ -229,9 +229,6 @@
           .search {
             padding-left: 24px;
           }
-          .search {
-            margin-top: 24px;
-          }
           .icon {
             color: map-get($color, primary);
           }
@@ -758,7 +755,7 @@ export default {
         let returnData = this.$refs.fieldMappingDom.returnData(true)
         let deleteLen = returnData.target.filter(v => !v.is_deleted)
         if (deleteLen.length !== 0) {
-          this.saveOperations()
+          this.saveOperations(returnData.row, returnData.operations, returnData.target)
         }
       }
       this.activeStep -= 1
