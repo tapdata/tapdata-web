@@ -95,9 +95,7 @@ export default {
           // console.log('上一个激活的节点校验结果', result)
           this.clearNodeError(o)
         } catch (e) {
-          if (e?.isException) {
-            this.setNodeError(o)
-          }
+          this.setNodeError(o)
         }
         // console.log('上一个激活的节点校验结果', result)
       }
