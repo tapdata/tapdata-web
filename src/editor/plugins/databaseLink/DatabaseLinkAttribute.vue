@@ -22,10 +22,6 @@
           <el-form-item>
             <div class="e-label">
               <label class="el-form-item__label">{{ $t('editor.cell.link.copySourceDatabase') }}</label>
-              <el-popover class="aggtip" placement="top-start" width="400" trigger="hover">
-                <span>{{ $t('editor.cell.link.formTip') }}</span>
-                <span class="icon iconfont icon-tishi1" slot="reference"></span>
-              </el-popover>
             </div>
             <ElCheckbox
               v-for="item in checkboxList"
