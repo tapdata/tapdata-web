@@ -32,6 +32,7 @@
               v-model="model.selectSourceDatabase[item.field]"
               :key="item.field"
               :disabled="item.disabled"
+              @input="rollbackAll(item.field, $event)"
             >
               {{ item.label }}
               <ElPopover v-if="item.tips" placement="top-start" width="400" trigger="hover">
@@ -90,6 +91,7 @@
             <div class="box-btn">
               <FieldMapping
                 v-if="showFieldMapping"
+                v-show="!model.selectSourceDatabase['view']"
                 ref="fieldMapping"
                 class="fr"
                 mappingType="cluster-clone"
@@ -270,8 +272,8 @@ export default {
   data() {
     return {
       checkboxList: [
-        { field: 'table', label: 'Table', tips: this.$t('editor.cell.link.tableTip'), disabled: true },
-        { field: 'view', label: 'View', tips: this.$t('editor.cell.link.viewTip'), disabled: true },
+        { field: 'table', label: 'Table', tips: this.$t('task_job_link_type_table_tips'), disabled: true },
+        { field: 'view', label: 'View', tips: this.$t('task_job_link_type_view_tips'), disabled: true },
         { field: 'function', label: 'Function', disabled: true },
         { field: 'procedure', label: 'Procedure', disabled: true }
       ],
@@ -353,6 +355,22 @@ export default {
     // }
   },
   methods: {
+    rollbackAll(field, val) {
+      if (field === 'view' && val === true) {
+        this.$confirm(this.$t('task_job_link_confirm_message_rollback'), this.$t('message_title_prompt'), {
+          type: 'warning',
+          closeOnClickModal: false
+        }).then(action => {
+          if (action) {
+            this.$refs.fieldMapping.updateFieldProcess('all')
+            //执行还原方法
+            this.handleReduction()
+          } else {
+            this.model.selectSourceDatabase[field] = false
+          }
+        })
+      }
+    },
     setData(data, cell, isSourceDataNode, vueAdapter) {
       this.scope = vueAdapter?.editor?.scope
       if (data) {
@@ -565,6 +583,8 @@ export default {
       this.mqActiveData.table_suffix = ''
       //前后缀 表名改动 需要清空字段处理器
       this.model.field_process = []
+      this.model.tableNameTransform = ''
+      this.model.fieldsNameTransform = ''
     },
     //获取dataFlow
     getDataFlow() {

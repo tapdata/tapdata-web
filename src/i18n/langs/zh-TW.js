@@ -2,6 +2,9 @@ export default {
   // 通用按钮
   button_edit: '編輯',
 
+  // 通用消息
+  message_title_prompt: '提示',
+
   // 数据校验
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',
@@ -20,6 +23,10 @@ export default {
   verify_result_content_diff: '表數據差: {0}',
   verify_result_count_inconsistent: '不一致',
   verify_result_count_consistent: '一致',
+  verify_result_field_name: '字段名',
+  verify_result_source_info: '源信息',
+  verify_result_target_info: '目標信息',
+  verify_create_window_duration: '窗口時長',
 
   taskprogress_plan_sync_table_num: '計劃同步表數量',
   taskprogress_completed_sync_table_num: '已完成同步表數量',
@@ -64,6 +71,11 @@ export default {
   data_flow_automatically: '自動挖掘',
   data_flow_manually: '手動挖掘',
   data_flow_oracle_logminer: 'Oracle日誌挖掘模式',
+  task_job_link_type_table_tips: 'Table暫不支持外鍵複製',
+  task_job_link_type_view_tips:
+    '複製view時暫不支持設置欄位映射，勾選此項下方欄位映射功能會被禁用，已設置的欄位映射將會被重置',
+  task_job_link_confirm_message_rollback:
+    '複製view時暫不支持設置欄位映射，勾選此項下方欄位映射功能會被禁用，已設置的欄位映射將會被重置，是否確認勾選？',
 
   // 函数管理
   function_tips_empty: '代碼缺少JS函數',
@@ -79,6 +91,7 @@ export default {
   function_type_option_jar: '第三方jar包',
   function_name_label: '函數名稱',
   function_name_placeholder: '請輸入函數名稱',
+  function_name_repeat: '函數名稱重復',
   function_class_label: '類名',
   function_class_placeholder: '請輸入類名，UDF函數的類名，格式為資源名.類名',
   function_file_label: 'jar文件',
@@ -93,5 +106,8 @@ export default {
   function_return_value_label: '返回值',
   function_return_value_placeholder: '請輸入返回值',
   function_describe_label: '描述',
-  function_describe_placeholder: '請輸入描述'
+  function_describe_placeholder: '請輸入描述',
+
+  // 用户
+  login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄'
 }

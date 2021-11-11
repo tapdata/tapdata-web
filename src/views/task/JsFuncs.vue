@@ -36,6 +36,7 @@
     >
       <el-form
         ref="form"
+        status-icon
         label-width="100px"
         label-position="left"
         :model="model"
@@ -159,6 +160,7 @@ export default {
         jsEngineName: 'graal.js',
         className: '',
         fileId: '',
+        fileName: '', // 保存文件名
         function_body: '',
         parameters: '',
         return_value: '',
@@ -167,7 +169,10 @@ export default {
       },
       lineNumbers: true,
       rules: {
-        function_name: [{ required: true, message: this.$t('function_name_placeholder') }],
+        function_name: [
+          { required: true, message: this.$t('function_name_placeholder') },
+          { validator: this.validateFuncName, trigger: 'blur' }
+        ],
         className: [{ required: true, message: this.$t('function_class_placeholder') }],
         fileId: [{ required: true, message: this.$t('function_file_upload_tips') }]
       },
@@ -186,6 +191,7 @@ export default {
         .removeFile(this.model.fileId)
         .then(() => {})
       this.model.fileId = ''
+      this.model.fileName = ''
     },
     fileChange(file) {
       if (file.status === 'ready') {
@@ -196,6 +202,7 @@ export default {
         if (code === 'ok') {
           this.$message.success(this.$t('function_file_upload_success'))
           this.model.fileId = file.response.data.id
+          this.model.fileName = file.name
         }
         this.fileList = [file]
       }
@@ -238,6 +245,7 @@ export default {
         jsEngineName: 'graal.js',
         className: '',
         fileId: '',
+        fileName: '',
         function_body: '',
         parameters: '',
         return_value: '',
@@ -250,18 +258,30 @@ export default {
     // 编辑
     edit(item) {
       this.editDocId = item.id
+      this.editFuncName = item.function_name // 存放编辑的函数名，判断是否改名，改名跑校验
       this.jsonDocHint.splice(0, this.jsonDocHint.length)
       this.format()
       this.dialogTitle = this.$t('button_edit')
       let code = `function ${item.function_name} (${item.parameters}) ${item.function_body}`
       this.model.jsonDoc = code
-      let { function_name, className, fileId, describe, function_body, parameters, return_value, jsEngineName } = item
+      let {
+        function_name,
+        className,
+        fileId,
+        fileName,
+        describe,
+        function_body,
+        parameters,
+        return_value,
+        jsEngineName
+      } = item
       this.model = {
         type: item.type || 'custom',
         function_name,
         className,
         jsEngineName: jsEngineName || 'nashorn',
         fileId,
+        fileName: fileName || fileId + '.jar', // 历史数据没有保存文件名，默认id.jar
         describe,
         function_body,
         parameters,
@@ -270,6 +290,7 @@ export default {
       }
       this.lineNumbers = true
       this.createDialogVisible = true
+      this.fileList = [{ name: this.model.fileName }]
     },
     // 保存
     createSave() {
@@ -292,6 +313,7 @@ export default {
         m.return_value = model.return_value
         m.type = model.type
         m.function_name = m.type === 'custom' ? ast.id.name : model.function_name
+        m.fileName = model.fileName
       }
       this.$refs.form.validate(valid => {
         if (!valid) {
@@ -356,9 +378,12 @@ export default {
               }
             })
             .catch(e => {
-              this.jsonDocHint.push(e.response.msg)
+              if (this.model.type === 'jar') {
+                this.$message.error(e.response.msg)
+              } else {
+                this.jsonDocHint.push(e.response.msg)
+              }
             })
-          this.createDialogVisible = false
         } else {
           this.jsonDocHint.push(this.$t('function_tips_empty'))
         }
@@ -371,7 +396,7 @@ export default {
         this.$t('message.deleteOrNot') + ' ',
         h('span', { style: { color: '#409EFF' } }, item.function_name)
       ])
-      this.$confirm(message, this.$t('message.prompt'), {
+      this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
@@ -396,6 +421,28 @@ export default {
         }
       }
       return false
+    },
+
+    /**
+     * 函数名称重名校验
+     * @param rule
+     * @param value
+     * @param callback
+     * @returns {Promise<*>}
+     */
+    async validateFuncName(rule, value, callback) {
+      value = value.trim()
+      if (this.editDocId && value === this.editFuncName) return callback() // 如果是编辑且函数名没变则不跑重名校验
+      const result = await this.$api('Javascript_functions').count({
+        where: {
+          function_name: value
+        }
+      })
+      if (result.data.count > 0) {
+        callback(new Error(this.$t('function_name_repeat')))
+      } else {
+        callback()
+      }
     }
   }
 }

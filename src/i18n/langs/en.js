@@ -2,6 +2,9 @@ export default {
   // 通用按钮
   button_edit: 'edit',
 
+  // 通用消息
+  message_title_prompt: 'hint',
+
   // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',
@@ -22,6 +25,10 @@ export default {
   verify_result_content_diff: 'Table data difference: {0}',
   verify_result_count_inconsistent: 'inconsistent',
   verify_result_count_consistent: 'consistent',
+  verify_result_field_name: 'Field name',
+  verify_result_source_info: 'Source Information',
+  verify_result_target_info: 'Target Information',
+  verify_create_window_duration: 'Window duration',
 
   taskprogress_plan_sync_table_num: 'Number of plan synchronization tables',
   taskprogress_completed_sync_table_num: 'Number of completed synchronization tables',
@@ -68,6 +75,11 @@ export default {
   data_flow_automatically: 'automatically',
   data_flow_manually: 'manually',
   data_flow_oracle_logminer: 'Oracle Logminer Mode',
+  task_job_link_type_table_tips: 'Table does not currently support foreign key replication',
+  task_job_link_type_view_tips:
+    'The setting of field mapping is temporarily not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset.',
+  task_job_link_confirm_message_rollback:
+    'The setting of field mapping is not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset. Are you sure to check it? ',
 
   // Function management
   function_tips_empty: 'Code lacks JS functions',
@@ -83,6 +95,7 @@ export default {
   function_type_option_jar: 'Third-party jar package',
   function_name_label: 'Function name',
   function_name_placeholder: 'Please enter the function name',
+  function_name_repeat: 'Function name repeat',
   function_class_label: 'Class name',
   function_class_placeholder:
     'Please enter the class name, UDF function class name, the format is resource name. Class name',
@@ -99,5 +112,8 @@ export default {
   function_return_value_label: 'Return value',
   function_return_value_placeholder: 'Please enter the return value',
   function_describe_label: 'Description',
-  function_describe_placeholder: 'Please enter a description'
+  function_describe_placeholder: 'Please enter a description',
+
+  // 用户
+  login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes'
 }

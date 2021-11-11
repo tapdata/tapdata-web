@@ -130,12 +130,9 @@ export default {
     handleChange(file) {
       this.fileList = [file]
       this.action =
-        window.location.protocol +
-        '//' +
-        window.location.hostname +
-        ':' +
-        window.location.port +
-        '/api/MetadataInstances/upload?upsert=' +
+        window.location.origin +
+        window.location.pathname +
+        'api/MetadataInstances/upload?upsert=' +
         this.upsert +
         '&listtags=' +
         JSON.stringify(this.tagList) +

@@ -65,7 +65,7 @@
               <span>{{ scope.row.countResultText }}</span>
             </span>
           </div>
-          <div v-if="scope.row.result === 'failed' && scope.row.contentResultText">
+          <div v-if="scope.row.result === 'failed' && scope.row.contentResultText && verifyType !== 'cdcCount'">
             <span class="error">
               <i class="verify-icon el-icon-error color-danger"></i>
               <span>{{ scope.row.contentResultText }}</span>
@@ -83,7 +83,7 @@
 <style lang="scss" scoped>
 .verify-icon {
   margin: 0 4px;
-  font-size: 14;
+  font-size: 14px;
 }
 </style>
 <script>
@@ -95,7 +95,8 @@ export default {
       default: () => {
         return []
       }
-    }
+    },
+    verifyType: String
   },
   data() {
     return {

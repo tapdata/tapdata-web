@@ -156,6 +156,8 @@ export default {
             this.errorMessage = this.$t('app.signIn.hasVerified')
           } else if (e.response.msg === 'ACCOUNT_DISABLED') {
             this.errorMessage = this.$t('app.signIn.accountDisabled')
+          } else if (e.response.msg === 'Too many logins') {
+            this.errorMessage = this.$t('login_fail_too_many')
           } else {
             this.errorMessage = this.$t('app.signIn.signInFail')
           }

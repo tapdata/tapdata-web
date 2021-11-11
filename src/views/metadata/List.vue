@@ -515,7 +515,7 @@ export default {
         this.$t('message.deleteOrNot') + ' ',
         h('span', { style: { color: '#409EFF' } }, item.original_name)
       ])
-      this.$confirm(message, this.$t('message.prompt'), {
+      this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false,
         beforeClose: (action, instance, done) => {

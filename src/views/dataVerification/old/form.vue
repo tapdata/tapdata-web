@@ -136,66 +136,7 @@
             </el-form-item>
             <template v-if="form.inspectMethod === 'cdcCount'">
               <el-form-item class="setting-item">
-                <label class="item-label">增量时间类型</label>
-                <el-radio-group
-                  v-model="cdcBeginDateType"
-                  style="margin-left: 10px"
-                  @input="cdcBeginDateTypeChangeHandler"
-                >
-                  <el-radio label="relative"> 指定时间 </el-radio>
-                  <el-radio label="absolute"> 相对时间 </el-radio>
-                </el-radio-group>
-                <el-tooltip class="item ml-6" effect="dark" placement="top">
-                  <div slot="content">
-                    <div>指定时间：用户指定一个固定的时间范围，校验任务执行时会取指定时间范围内的数据进行校验</div>
-                    <div>相对时间：用户设置一个相对时间范围，校验任务执行时会取相对时间范围内的数据来进行校验</div>
-                  </div>
-                  <i class="el-icon-warning-outline"></i>
-                </el-tooltip>
-              </el-form-item>
-              <el-form-item v-if="cdcBeginDateType === 'relative'" class="setting-item" prop="cdcBeginDate">
-                <label class="item-label">增量起止时间</label>
-                <el-date-picker
-                  class="item-select"
-                  size="mini"
-                  :value="[form.cdcBeginDate, form.cdcEndDate]"
-                  type="datetimerange"
-                  range-separator="-"
-                  :start-placeholder="$t('dataVerification.startTime')"
-                  :end-placeholder="$t('dataVerification.LastTime')"
-                  align="right"
-                  :default-time="['00:00:00', '23:59:59']"
-                  value-format="yyyy-MM-dd HH:mm"
-                  @input="cdcTimingChangeHandler"
-                >
-                </el-date-picker>
-              </el-form-item>
-              <el-form-item v-if="cdcBeginDateType === 'absolute'" class="setting-item" prop="cdcBeginDate">
-                <label class="item-label">增量起止时间</label>
-                从校验开始执行时间前
-                <el-input
-                  class="item-input mx-1"
-                  style="width: 50px"
-                  size="mini"
-                  v-model="form.cdcBeginDate"
-                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                >
-                </el-input>
-                分钟的数据开始，向后取
-                <el-input
-                  class="item-input mx-1"
-                  style="width: 50px"
-                  size="mini"
-                  v-model="form.cdcEndDate"
-                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                >
-                </el-input>
-                分钟的数据进行校验
-              </el-form-item>
-              <el-form-item class="setting-item">
-                <label class="item-label">窗口时长</label>
+                <label class="item-label">{{ $t('verify_create_window_duration') }}</label>
                 <el-input
                   class="item-input"
                   size="mini"
@@ -203,8 +144,34 @@
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
-                  <template slot="append"> 分钟 </template>
+                  <template slot="append"> {{ $t('timeToLive.m') }} </template>
                 </el-input>
+              </el-form-item>
+              <el-form-item class="setting-item" prop="cdcBeginDate">
+                <label class="item-label is-required">校验开始时间</label>
+                <el-date-picker
+                  class="item-select"
+                  size="mini"
+                  v-model="form.cdcBeginDate"
+                  type="datetime"
+                  placeholder="校验开始时间"
+                  format="yyyy-MM-dd HH:mm"
+                  value-format="yyyy-MM-dd HH:mm"
+                >
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item class="setting-item">
+                <label class="item-label">校验结束时间</label>
+                <el-date-picker
+                  class="item-select"
+                  size="mini"
+                  v-model="form.cdcEndDate"
+                  type="datetime"
+                  placeholder="校验结束时间"
+                  format="yyyy-MM-dd HH:mm"
+                  value-format="yyyy-MM-dd HH:mm"
+                >
+                </el-date-picker>
               </el-form-item>
             </template>
           </el-form>
@@ -400,8 +367,6 @@ export default {
       htmlMD: '',
       removeVisible: false,
       isDbClone: false,
-      cdcBeginDateType: 'relative',
-      cdcEndDateType: 'relative',
       form: {
         flowId: '',
         name: '',
@@ -445,21 +410,9 @@ export default {
         ],
         cdcBeginDate: [
           {
-            validator: (rule, value, callback) => {
-              if (self.form.inspectMethod === 'cdcCount') {
-                let startTime = self.form.cdcBeginDate
-                let endTime = self.form.cdcEndDate
-                if (!startTime) {
-                  callback(new Error('请输入增量时间'))
-                } else if (!endTime) {
-                  callback(new Error('请输入增量结束时间'))
-                } else {
-                  callback()
-                }
-              } else {
-                callback()
-              }
-            }
+            validator: requiredValidator('请输入开始时间', () => {
+              return self.form.inspectMethod === 'cdcCount'
+            })
           }
         ]
       },
@@ -531,8 +484,6 @@ export default {
             t.targetTree = []
             return t
           })
-          this.cdcBeginDateType =
-            Object.prototype.String.call(data.cdcBeginDate) === '[object Number]' ? 'absolute' : 'relative'
           this.form = data
           this.getFlowStages()
         }
@@ -850,9 +801,11 @@ export default {
     setTable(stage, source) {
       let sortColumn = ''
       let sortField = list => {
-        return list.sort((a, b) => {
-          return a.field_name > b.field_name ? -1 : 1
-        })
+        return (
+          list?.sort((a, b) => {
+            return a.field_name > b.field_name ? -1 : 1
+          }) || []
+        )
       }
       if (stage && stage.fields && stage.fields.length) {
         if (source && source.sortColumn) {
@@ -896,20 +849,6 @@ export default {
     timingChangeHandler(times) {
       this.form.timing.start = times?.[0] || ''
       this.form.timing.end = times?.[1] || ''
-    },
-    cdcTimingChangeHandler(times) {
-      this.form.cdcBeginDate = times?.[0] || ''
-      this.form.cdcEndDate = times?.[1] || ''
-    },
-    cdcBeginDateTypeChangeHandler(val) {
-      if (val === 'relative') {
-        let now = this.$moment(new Date()).format('YYYY-MM-DD HH:mm')
-        this.form.cdcBeginDate = now
-        this.form.cdcEndDate = now
-      } else {
-        this.form.cdcBeginDate = 30
-        this.form.cdcEndDate = 30
-      }
     },
     tableChangeHandler(item, type, index) {
       let stages = this.flowStages

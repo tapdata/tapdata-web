@@ -10,13 +10,13 @@
       >字段映射</el-button
     >
     <el-dialog
+      v-if="dialogFieldProcessVisible"
       width="85%"
       title="映射配置"
       :visible.sync="dialogFieldProcessVisible"
       :modal-append-to-body="false"
       custom-class="database-filed-mapping-dialog"
       :close-on-click-modal="false"
-      v-if="dialogFieldProcessVisible"
     >
       <FieldMapping
         ref="fieldMappingDom"
@@ -83,8 +83,15 @@ export default {
       if (this.mappingType && this.mappingType === 'cluster-clone') {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
         //是否有选中的表
-        if (this.selectSourceArr?.length === 0) {
+        if (
+          this.transform?.topicData?.length === 0 &&
+          this.transform?.queueData?.length === 0 &&
+          this.transform.transferFlag //mq判断
+        ) {
           this.$message.error('请先选择需要迁移的表')
+          return
+        } else if (this.selectSourceArr?.length === 0 && !this.transform.transferFlag) {
+          this.$message.error('请先选择需要迁移的表') //其他数据源
           return
         }
       }
@@ -172,26 +179,16 @@ export default {
     updateAutoTransform(type, data) {
       for (let i = 0; i < this.dataFlow.stages.length; i++) {
         if (this.dataFlow.stages[i].id === this.stageId) {
-          if (type === 'field') {
-            this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
-          } else {
-            this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
-            this.dataFlow['stages'][i].table_prefix = data.table_prefix
-            this.dataFlow['stages'][i].table_suffix = data.table_suffix
-          }
+          this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
+          this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
+          this.dataFlow['stages'][i].table_prefix = data.table_prefix
+          this.dataFlow['stages'][i].table_suffix = data.table_suffix
         }
       }
     },
     checkTransform() {
-      let result = ''
-      for (let i = 0; i < this.dataFlow.stages.length; i++) {
-        if (this.dataFlow.stages[i].id === this.stageId) {
-          if (this.dataFlow['stages'][i].fieldsNameTransform !== '') {
-            result = this.dataFlow['stages'][i].fieldsNameTransform
-          }
-        }
-      }
-      return result
+      let result = this.$refs.fieldMappingDom.returnForm()
+      return result.fieldsNameTransform
     },
     //获取左边导航数据 - 表
     async updateMetadata(type, data) {
@@ -211,7 +208,7 @@ export default {
      * 数据组合：目标字段表示 "t_"标识 (is_deleted 目标表数据)
      * 数据匹配 源表所有字段过处理器 源表所有字段过字段改名 匹配后的数据再与目标表数据匹配
      * */
-    async intiFieldMappingTableData(row, type) {
+    async intiFieldMappingTableData(row) {
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
@@ -222,7 +219,8 @@ export default {
       let operations = this.getFieldOperations(row)
       if (operations?.length > 0) {
         source.forEach(item => {
-          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'RENAME')
+          let original_field_name = item.original_field_name || item.field_name
+          let ops = operations.filter(op => op.original_field_name === original_field_name && op.op === 'RENAME')
           if (!ops || ops?.length === 0) {
             item.temporary_field_name = item.field_name
             return
@@ -236,9 +234,6 @@ export default {
         })
       }
       //是否有批量字段改名操作
-      if (type === 'rollbackAll') {
-        this.clearTransform()
-      }
       let fieldsNameTransform = this.checkTransform()
       if (fieldsNameTransform !== '') {
         source.forEach(item => {

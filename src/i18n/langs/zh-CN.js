@@ -2,6 +2,9 @@ export default {
   // 通用按钮
   button_edit: '编辑',
 
+  // 通用消息
+  message_title_prompt: '提示',
+
   // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',
@@ -20,6 +23,10 @@ export default {
   verify_result_content_diff: '表数据差: {0}',
   verify_result_count_inconsistent: '不一致',
   verify_result_count_consistent: '一致',
+  verify_result_field_name: '字段名',
+  verify_result_source_info: '源信息',
+  verify_result_target_info: '目标信息',
+  verify_create_window_duration: '窗口时长',
 
   taskprogress_plan_sync_table_num: '计划同步表数量',
   taskprogress_completed_sync_table_num: '已完成同步表数量',
@@ -68,6 +75,11 @@ export default {
   data_flow_automatically: '自动挖掘',
   data_flow_manually: '手动挖掘',
   data_flow_oracle_logminer: 'Oracle日志挖掘模式',
+  task_job_link_type_table_tips: 'Table暂不支持外键复制',
+  task_job_link_type_view_tips:
+    '复制view时暂不支持设置字段映射，勾选此项下方字段映射功能会被禁用，已设置的字段映射将会被重置',
+  task_job_link_confirm_message_rollback:
+    '复制view时暂不支持设置字段映射，勾选此项下方字段映射功能会被禁用，已设置的字段映射将会被重置，是否确认勾选？',
 
   // 函数管理
   function_tips_empty: '代码缺少JS函数',
@@ -83,6 +95,7 @@ export default {
   function_type_option_jar: '第三方jar包',
   function_name_label: '函数名称',
   function_name_placeholder: '请输入函数名称',
+  function_name_repeat: '函数名称重复',
   function_class_label: '类名',
   function_class_placeholder: '请输入类名，UDF函数的类名，格式为资源名.类名',
   function_file_label: 'jar文件',
@@ -97,5 +110,8 @@ export default {
   function_return_value_label: '返回值',
   function_return_value_placeholder: '请输入返回值',
   function_describe_label: '描述',
-  function_describe_placeholder: '请输入描述'
+  function_describe_placeholder: '请输入描述',
+
+  // 用户
+  login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录'
 }
