@@ -18,7 +18,7 @@
       custom-class="database-filed-mapping-dialog"
       :close-on-click-modal="false"
     >
-      <FieldMapping
+      <FieldMappingDialog
         ref="fieldMappingDom"
         class="custom-field-mapping"
         :remoteMethod="intiFieldMappingTableData"
@@ -31,7 +31,7 @@
         :hiddenFieldProcess="hiddenFieldProcess"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
-      ></FieldMapping>
+      ></FieldMappingDialog>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
@@ -40,8 +40,12 @@
 </template>
 
 <script>
+import FieldMappingDialog from './FieldMappingDialog'
+import { verify } from '@/views/connections/util'
+
 export default {
   name: 'FiledMapping',
+  components: { FieldMappingDialog },
   props: [
     'databaseFieldProcess',
     'showBtn',
@@ -105,18 +109,19 @@ export default {
       if (this.stageId) {
         this.dataFlow['stageId'] = this.stageId //任务同步目标节点stageID 推演
       }
-      let promise = this.$api('DataFlows').getMetadata(this.dataFlow)
-      promise
-        .then(data => {
+      let filter = {
+        limit: 10,
+        skip: 0
+      }
+      this.$api('metadataTransformer')
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          let list = res.data
           this.dialogFieldProcessVisible = true
-          this.fieldMappingNavData = data?.data
+          this.fieldMappingNavData = list
           this.$emit('update-first', false) //新建任务 第一次需要恢复默认
-        })
-        .catch(() => {
-          this.$message.error('字段推演失败')
-        })
-        .finally(() => {
-          this.loading = false
         })
     },
     //任务迁移需要主动更新

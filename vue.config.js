@@ -6,7 +6,7 @@ const serveUrlMap = {
   dev: 'http://backend:3030',
   // test: 'http://192.168.1.181:30300'
   // test: 'http://192.168.3.3:8080/' // haosheng
-  test: 'http://192.168.1.181:31012/' // v1-26
+  test: 'http://192.168.1.193:31704' // table-many
   // test: 'http://192.168.1.181:30390' // v1-25
   // test: 'http://192.168.1.181:30649'  // v1-24
   // test: 'http://192.168.1.181:31703'  // v1-23
