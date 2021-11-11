@@ -438,17 +438,13 @@ export default {
     },
     // 以下方法需要考虑和列表的重构合并，暂时先复制过来
     async changeStatus({ status, errorEvents }) {
-      let where = {
-        _id: {
-          in: [this.$route.params.id]
-        }
-      }
       let attributes = {
-        status
+        status,
+        id: this.$route.params.id
       }
       errorEvents && (attributes.errorEvents = errorEvents)
       return await this.$axios
-        .post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
+        .patch('tm/api/DataFlows?where=', attributes)
         .then(data => {
           this.responseHandler(data, '操作成功')
         })
