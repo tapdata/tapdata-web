@@ -257,6 +257,18 @@
             </el-popover>
           </div>
         </el-form-item>
+
+        <el-form-item :label="$t('dataFlow.oracleLogminer')" v-show="formData.sync_type !== 'initial_sync'">
+          <el-select
+            v-model="formData.oracleLogminer"
+            size="mini"
+            :placeholder="$t('message.placeholderSelect')"
+            class="dataWrite-list"
+          >
+            <el-option :label="$t('dataFlow.automatically')" value="automatically"> </el-option>
+            <el-option :label="$t('dataFlow.manually')" value="manually"> </el-option>
+          </el-select>
+        </el-form-item>
       </div>
       <el-form-item v-if="isSimple">
         <div v-if="!showMore" @click="showMore = true" class="advance-setting">
