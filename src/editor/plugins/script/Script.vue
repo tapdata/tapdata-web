@@ -32,11 +32,11 @@
           ></el-input>
           <CodeEditor v-if="!disabled" v-model="model.script" :width="width" height="300px"></CodeEditor>
         </ElFormItem>
-        <ElFormItem>
+        <!-- <ElFormItem>
           <el-button class="btn-debug" type="primary" size="mini" :loading="!!sending" @click="showDebug">
             {{ $t('editor.cell.processor.script.debug_button_label') }}
           </el-button>
-        </ElFormItem>
+        </ElFormItem> -->
       </el-form>
     </div>
     <Debug ref="debug"></Debug>
