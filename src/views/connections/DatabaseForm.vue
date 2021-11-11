@@ -1003,6 +1003,7 @@ export default {
       }
       let params = {
         load_type: 'space',
+        database_host: this.model.database_host,
         api_token: this.model.plain_password,
         connection_id: id || ''
       }
