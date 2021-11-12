@@ -81,6 +81,7 @@ export default {
     'The setting of field mapping is temporarily not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset.',
   task_job_link_confirm_message_rollback:
     'The setting of field mapping is not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset. Are you sure to check it? ',
+  task_setting_oracle_custom_analysis: 'OracleSQL custom analysis',
 
   // Function management
   function_tips_empty: 'Code lacks JS functions',

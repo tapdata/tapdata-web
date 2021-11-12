@@ -446,8 +446,8 @@ export default {
         this.creatUserId = this.$cookie.get('user_id')
         this.editor.ui.setName(this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7))
         // if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
+        this.setSelector(this.$route.query.mapping)
       }
-      this.setSelector(this.$route.query.mapping)
     },
 
     simpleRefresh() {
