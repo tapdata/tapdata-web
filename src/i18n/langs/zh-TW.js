@@ -1,6 +1,8 @@
 export default {
   // 通用按钮
   button_edit: '編輯',
+  button_confirm: '確定',
+  button_cancel: '取消',
 
   // 数据校验
   verify_details_title: '任務校驗詳情',
@@ -60,6 +62,7 @@ export default {
   dag_data_node_label_kafka_high_performance_mode: '高性能模式',
   dag_data_node_label_kafka_all: '所有',
   dag_data_node_label_aggregate_filter: '過濾器',
+  dag_link_button_custom_script: '自定義處理腳本',
 
   // 緩存節點提示
   task_job_setting_tip_title: '設置提醒',

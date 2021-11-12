@@ -1,14 +1,6 @@
 <template>
   <div class="database-link nodeStyle">
-    <!--    <head class="head">-->
-    <!--      <span class="txt">{{ $t('editor.cell.link.mappingRelations') }}</span>-->
-    <!--    </head>-->
     <div class="nodeBody">
-      <!-- <div class="head-btns">
-				<el-button v-if="disabled" class="e-button" type="primary" @click="seeMonitor">
-					{{ $t('dataFlow.button.viewMonitoring') }}
-				</el-button>
-			</div> -->
       <el-form
         :disabled="disabled"
         class="e-form flex flex-column"
@@ -40,38 +32,6 @@
               </ElPopover>
             </ElCheckbox>
           </el-form-item>
-          <!-- <el-form-item>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <span class="span-label">{{ $t('dag_data_node_label_database_link_table') }}</span>
-                <el-select v-model="model.tableNameTransform" size="mini">
-                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
-                  <el-option
-                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
-                    value="toUpperCase"
-                  ></el-option>
-                  <el-option
-                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
-                    value="toLowerCase"
-                  ></el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="12">
-                <span class="span-label">{{ $t('dag_data_node_label_database_link_field') }}</span>
-                <el-select v-model="model.fieldsNameTransform" size="mini">
-                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
-                  <el-option
-                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
-                    value="toUpperCase"
-                  ></el-option>
-                  <el-option
-                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
-                    value="toLowerCase"
-                  ></el-option>
-                </el-select>
-              </el-col>
-            </el-row>
-          </el-form-item> -->
           <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
             <el-select v-model="model.dropType" size="mini">
               <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
@@ -106,16 +66,12 @@
                 @returnFieldMapping="returnFieldMapping"
                 @returnPreFixSuffix="returnPreFixSuffix"
               ></FieldMapping>
-              <!-- <el-button class="e-button" size="mini" :disabled="model.selectSourceDatabase.view" @click="handDialog">{{
-                $t('dataFlow.changeName')
-              }}</el-button>
-              <el-button
-                size="mini"
-                class="e-button"
-                :disabled="disabled || model.selectSourceDatabase.view"
-                @click="handleReduction"
-                >{{ $t('editor.cell.link.reduction') }}</el-button
-              > -->
+              <ElButton
+                class="fr"
+                style="padding: 4px 10px; color: #666; background-color: #f5f5f5; margin-left: 10px"
+                @click="editScript = model.script || 'function process(record) {\n\treturn record;\n}'"
+                >{{ $t('dag_link_button_custom_script') }}</ElButton
+              >
             </div>
           </div>
 
@@ -148,20 +104,6 @@
                 <template v-else>
                   {{ option.label }}
                 </template>
-                <!-- <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_prefix }}</span>
-                <span
-                  v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
-                  >{{ option.label.toLowerCase() }}</span
-                >
-                <span
-                  v-else-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toUpperCase'"
-                  >{{ option.label.toUpperCase() }}</span
-                > -->
-                <!--                <span>{{ option.label }}</span>-->
-                <!--                <span v-if="model.selectSourceArr.includes(option.label)">{{ model.table_suffix }}</span> &ndash;&gt;-->
-                <!-- <span class="nameStyle" @click="handleChageTransfer(option)">{{
-								$t('dataFlow.changeName')
-							}}</span> -->
               </span>
             </VirtualTransfer>
             <!-- MQ穿梭框 start -->
@@ -177,81 +119,18 @@
         </div>
       </el-form>
     </div>
-    <!-- <el-dialog
-      :title="$t('editor.cell.link.batchRename')"
-      :visible.sync="dialogVisible"
-      :modal-append-to-body="false"
-      custom-class="databaseLinkDialog"
+    <ElDialog
+      append-to-body
+      :title="$t('dag_link_button_custom_script')"
+      :visible="!!editScript"
       :close-on-click-modal="false"
     >
-      <el-form :model="model" :disabled="disabled">
-        <el-row :gutter="80" class="e-row">
-          <el-col :span="12">
-            <el-form-item :label="$t('editor.cell.link.prefixPlaceholder')">
-              <el-input
-                v-model="model.table_prefix"
-                autocomplete="off"
-                maxlength="20"
-                show-word-limit
-                :placeholder="$t('editor.cell.link.prefixPlaceholder')"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="$t('editor.cell.link.suffixPlaceholder')">
-              <el-input
-                v-model="model.table_suffix"
-                autocomplete="off"
-                maxlength="20"
-                show-word-limit
-                :placeholder="$t('editor.cell.link.suffixPlaceholder')"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <div class="text">
-        {{ $t('editor.cell.link.tableNameExample') }}: {{ model.table_prefix }}{{ exampleName }}{{ model.table_suffix }}
-      </div>
+      <CodeEditor v-model="editScript" height="300px"></CodeEditor>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{ $t('dataVerify.cancel') }}</el-button>
-        <el-button type="primary" @click="confirm">{{ $t('dataVerify.confirm') }}</el-button>
+        <el-button @click="editScript = ''">{{ $t('button_cancel') }}</el-button>
+        <el-button type="primary" @click="saveScript">{{ $t('button_confirm') }}</el-button>
       </div>
-    </el-dialog> -->
-    <el-dialog
-      width="85%"
-      title="映射配置"
-      :visible.sync="dialogFieldProcessVisible"
-      :modal-append-to-body="false"
-      custom-class="database-filed-mapping-dialog"
-      :close-on-click-modal="false"
-      v-if="dialogFieldProcessVisible"
-    >
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
-      </div>
-    </el-dialog>
-    <!-- <el-dialog
-			:title="$t('message.modifyName')"
-			:visible.sync="modifyNameDialog"
-			custom-class="modifyNameDialog"
-			:close-on-click-modal="false"
-		>
-			<el-form>
-				<el-form-item :label="$t('message.modifyName')">+
-					<el-input
-						v-model="databaseName"
-						autocomplete="off"
-						:placeholder="$t('message.modifyName')"
-					></el-input>
-				</el-form-item>
-			</el-form>
-
-			<div slot="footer" class="dialog-footer">
-				<el-button @click="modifyNameDialog = false">{{ $t('dataVerify.cancel') }}</el-button>
-				<el-button type="primary" @click="confirmName">{{ $t('dataVerify.confirm') }}</el-button>
-			</div>
-		</el-dialog> -->
+    </ElDialog>
   </div>
 </template>
 
@@ -262,11 +141,12 @@ import factory from '../../../api/factory'
 import MqTransfer from './MqTransfer'
 import FieldMapping from '@/components/FieldMapping'
 import VirtualTransfer from 'web-core/components/virtual-transfer'
+import CodeEditor from 'web-core/components/CodeEditor'
 let connections = factory('connections')
 let editorMonitor = null
 export default {
   name: 'DatabaseLinkAttribute',
-  components: { MqTransfer, VirtualTransfer, FieldMapping },
+  components: { MqTransfer, VirtualTransfer, FieldMapping, CodeEditor },
   data() {
     return {
       checkboxList: [
@@ -310,6 +190,7 @@ export default {
         scope: '',
         dataFlow: '',
         stageId: '',
+        script: '',
 
         selectSourceDatabase: {
           table: true,
@@ -324,8 +205,8 @@ export default {
       //表设置
       fieldMappingNavData: '',
       fieldMappingTableData: '',
-      dialogFieldProcessVisible: false,
       scope: '',
+      editScript: '',
       showFieldMapping: false
     }
   },
@@ -384,7 +265,7 @@ export default {
           })
         }
         //获取目标节点ID
-        this.stageId = targetCell.id || ''
+        this.stageId = targetCell?.id || ''
         // 获取目标节点的数据显示右侧选择表
 
         let targetFormData = targetCell && targetCell.getFormData()
@@ -407,6 +288,7 @@ export default {
           }
           this.model.table_prefix = targetFormData.table_prefix
           this.model.table_suffix = targetFormData.table_suffix
+          this.model.script = targetFormData.script
 
           if (targetFormData.syncObjects && targetFormData.syncObjects.length) {
             targetFormData.syncObjects.forEach(item => {
@@ -457,6 +339,7 @@ export default {
             // targetFormData.tableNameTransform = this.model.tableNameTransform
             // targetFormData.fieldNameTransform = this.model.fieldNameTransform
             targetFormData.syncObjects = []
+            targetFormData.script = this.model.script
             if (targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
               targetFormData.syncObjects = [
                 {
@@ -485,6 +368,11 @@ export default {
       }
       this.getDataFlow()
       return result
+    },
+
+    saveScript() {
+      this.model.script = this.editScript
+      this.editScript = ''
     },
 
     // 改变view
