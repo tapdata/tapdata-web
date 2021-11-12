@@ -1116,7 +1116,8 @@ export default {
         let objectNamesList = [],
           stageTypeFalg = false,
           checkSetting = true,
-          greentplumSettingFalg = true
+          greentplumSettingFalg = true,
+          hanaSettingFalg = true
         if (data && data.stages && data.stages.length) {
           stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
@@ -1145,6 +1146,14 @@ export default {
             ) {
               greentplumSettingFalg = false
             }
+
+            if (
+              item.outputLanes.length &&
+              (item.databaseType === 'hana' || item.database_type === 'hana') &&
+              this.sync_type !== 'initial_sync'
+            ) {
+              hanaSettingFalg = false
+            }
           })
         }
         // 【增量采集时间】仅增量任务时，选择浏览器时区，时间设置未作必填校验，导致任务启动后不增量同步。
@@ -1166,6 +1175,11 @@ export default {
         }
         if (!greentplumSettingFalg) {
           this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
+          return
+        }
+
+        if (!hanaSettingFalg) {
+          this.$message.error(this.$t('dag_data_node_hana_hana_check'))
           return
         }
         if (this.modPipeline) {

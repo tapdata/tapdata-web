@@ -63,6 +63,7 @@ export default {
   dag_data_node_label_kafka_high_performance_mode: '高性能模式',
   dag_data_node_label_kafka_all: '所有',
   dag_data_node_label_aggregate_filter: '過濾器',
+  dag_data_node_hana_hana_check: 'Hana作為源僅支持全量任務',
 
   // 緩存節點提示
   task_job_setting_tip_title: '設置提醒',

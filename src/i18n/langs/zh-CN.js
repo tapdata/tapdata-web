@@ -64,10 +64,11 @@ export default {
   dag_data_node_label_memcache_type_tip: '全局缓存所有任务可引用，局部缓存仅限当前DAG引用。',
   dag_data_node_label_kafka_high_performance_mode: '高性能模式',
   dag_data_node_label_kafka_all: '所有',
+  dag_data_node_label_aggregate_filter: '过滤器',
+  dag_data_node_hana_hana_check: 'Hana作为源仅支持全量任务',
 
   //任务编辑
   dag_data_node_label_clickhouse: 'ClickHouse节点',
-  dag_data_node_label_aggregate_filter: '过滤器',
   // 缓存节点提示
   task_job_setting_tip_title: '设置提醒',
   task_job_setting_disable: '不去重',
