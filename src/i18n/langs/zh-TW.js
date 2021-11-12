@@ -76,6 +76,7 @@ export default {
     '複製view時暫不支持設置欄位映射，勾選此項下方欄位映射功能會被禁用，已設置的欄位映射將會被重置',
   task_job_link_confirm_message_rollback:
     '複製view時暫不支持設置欄位映射，勾選此項下方欄位映射功能會被禁用，已設置的欄位映射將會被重置，是否確認勾選？',
+  task_setting_oracle_custom_analysis: 'OracleSQL自定義解析',
 
   // 函数管理
   function_tips_empty: '代碼缺少JS函數',
