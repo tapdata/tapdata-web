@@ -43,6 +43,9 @@ export default {
       default: () => {
         return null
       }
+    },
+    defaultStatus: {
+      type: String
     }
   },
   computed: {
@@ -58,7 +61,7 @@ export default {
       )
     },
     statusObj() {
-      return this.map[this.status] || {}
+      return this.map[this.status] || this.map[this.defaultStatus] || {}
     },
     imgSrc() {
       return require(`../../public/images/task/${this.statusObj.icon}.png`)

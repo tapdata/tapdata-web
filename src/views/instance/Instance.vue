@@ -53,7 +53,7 @@
         </el-table-column>
         <el-table-column :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
-            <status-tag type="text" :status="scope.row.status"></status-tag>
+            <status-tag type="text" :status="scope.row.status" default-status="Stopped"></status-tag>
           </template>
         </el-table-column>
         <el-table-column :label="$t('agent_task_number')" width="120">
