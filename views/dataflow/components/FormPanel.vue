@@ -284,7 +284,7 @@ export default {
                 // default: true
               },
               isOpenAutoDDL: {
-                title: '自动创建索引',
+                title: '自动处理DDL',
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
