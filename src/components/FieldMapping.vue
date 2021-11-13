@@ -343,8 +343,11 @@ export default {
     //实时获取schema加载进度
     initWSSed() {
       let msg = {
-        dataFlowId: this.dataFlow?.id,
-        stageId: this.stageId
+        type: 'metadataTransformerProgress',
+        data: {
+          dataFlowId: this.dataFlow?.id,
+          stageId: this.stageId
+        }
       }
       ws.ready(() => {
         ws.send(msg)
@@ -352,7 +355,10 @@ export default {
 
       //总任务
       let msgData = {
-        dataFlowId: this.dataFlow?.id
+        type: 'metadataTransformerProgress',
+        data: {
+          dataFlowId: this.dataFlow?.id
+        }
       }
       ws.ready(() => {
         ws.send(msgData)
