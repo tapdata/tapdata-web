@@ -24,6 +24,7 @@
         :remoteMethod="intiFieldMappingTableData"
         :typeMappingMethod="getTypeMapping"
         :fieldProcessMethod="updateFieldProcess"
+        :getNavDataMethod="getMetadataTransformer"
         :updateMetadata="updateMetadata"
         :fieldMappingNavData="fieldMappingNavData"
         :field_process="field_process"
@@ -41,8 +42,8 @@
 
 <script>
 import FieldMappingDialog from './FieldMappingDialog'
-import { verify } from '@/views/connections/util'
-
+import ws from '../api/ws'
+let callback = null
 export default {
   name: 'FiledMapping',
   components: { FieldMappingDialog },
@@ -109,20 +110,34 @@ export default {
       if (this.stageId) {
         this.dataFlow['stageId'] = this.stageId //任务同步目标节点stageID 推演
       }
+
+      let promise = this.$api('DataFlows').getMetadata(this.dataFlow)
+      promise
+        .then(() => {
+          this.dialogFieldProcessVisible = true
+          this.$emit('update-first', false) //新建任务 第一次需要恢复默认
+          this.initWSSed() //发送ws 监听schema进度
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    getMetadataTransformer(page) {
       let filter = {
-        limit: 10,
-        skip: 0
+        limit: page.size || 10,
+        skip: (page.current - 1) * page.size > 0 ? (page.current - 1) * page.size : 0
       }
-      this.$api('metadataTransformer')
-        .get({
+      return Promise.all([
+        this.$api('metadataTransformer').count(),
+        this.$api('metadataTransformer').get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let list = res.data
-          this.dialogFieldProcessVisible = true
-          this.fieldMappingNavData = list
-          this.$emit('update-first', false) //新建任务 第一次需要恢复默认
-        })
+      ]).then(([countRes, res]) => {
+        return {
+          total: countRes?.data?.count,
+          data: res?.data
+        }
+      })
     },
     //任务迁移需要主动更新
     updateAutoFieldProcess(data) {
@@ -324,6 +339,24 @@ export default {
       if (this.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.field_process)
+    },
+    //实时获取schema加载进度
+    initWSSed() {
+      let msg = {
+        dataFlowId: this.dataFlow?.id,
+        stageId: this.stageId
+      }
+      ws.ready(() => {
+        ws.send(msg)
+      }, true)
+
+      //总任务
+      let msgData = {
+        dataFlowId: this.dataFlow?.id
+      }
+      ws.ready(() => {
+        ws.send(msgData)
+      }, true)
     }
   }
 }

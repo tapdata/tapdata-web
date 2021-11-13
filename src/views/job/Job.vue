@@ -112,6 +112,17 @@
           }}</span>
         </el-button>
       </div>
+      <el-tag
+        v-if="progress.finished !== '100.00'"
+        effect="plain"
+        type="info"
+        size="mini"
+        style="margin-left: 10px; margin-right: 10px; border: none"
+      >
+        <span style="display: inline-block; padding: 0 5px; vertical-align: middle"
+          >加载进度: {{ progress.finished }} / {{ progress.total }}</span
+        >
+      </el-tag>
       <div class="flex-center">
         <el-tag
           :type="
@@ -338,7 +349,13 @@ export default {
       statusBtMap,
       showCheckStagesVisible: false,
       checkStagesData: [],
-      modPipeline: ''
+      modPipeline: '',
+      //schema加载进度
+      progress: {
+        total: '',
+        finished: '',
+        progress: ''
+      }
     }
   },
   watch: {
@@ -384,6 +401,7 @@ export default {
         this.loadData()
         if (this.$route.query.id) {
           this.wsWatch()
+          this.getSchemaResult()
         }
         this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
           this.draftSave()
@@ -591,6 +609,24 @@ export default {
       timer = setInterval(() => {
         self.updateDataFlow()
       }, 5000)
+    },
+    //实时获取schema加载进度
+    initWSSed(id) {
+      let msg = {
+        dataFlowId: id,
+        stageId: this.stageId
+      }
+      ws.ready(() => {
+        ws.send(msg)
+      }, true)
+    },
+    getSchemaResult() {
+      let self = this
+      ws.on('metadataTransformerProgress', function (data) {
+        let { finished, total } = data
+        self.progress.finished = finished
+        self.progress.finished = total
+      })
     },
     updateDataFlow() {
       let self = this

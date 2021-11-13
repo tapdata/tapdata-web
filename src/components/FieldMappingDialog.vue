@@ -4,13 +4,13 @@
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
       <div class="float-end">
-        <el-button v-if="!readOnly && transform" plain type="primary" size="mini" @click="handleChangTableName"
-          >表改名</el-button
+        <ElButton v-if="!readOnly && transform" plain type="primary" size="mini" @click="handleChangTableName"
+          >表改名</ElButton
         >
-        <el-button v-if="!readOnly && transform" plain type="primary" size="mini" @click="dialogFieldVisible = true"
-          >字段改名</el-button
+        <ElButton v-if="!readOnly && transform" plain type="primary" size="mini" @click="dialogFieldVisible = true"
+          >字段改名</ElButton
         >
-        <el-button v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">恢复默认</el-button>
+        <ElButton v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">恢复默认</ElButton>
       </div>
     </div>
     <div class="task-form-body">
@@ -18,8 +18,11 @@
         <div class="flex mb-2 ml-6">
           <div class="flex">
             <span class="nav__text"> 搜索表：</span>
-            <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
+            <ElInput v-model="searchTable" size="mini" @change="search('table')"></ElInput>
           </div>
+        </div>
+        <div class="mb-2 ml-6" v-if="progress.finished !== '100.00'">
+          {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon><span>加载中，请稍等...</span>
         </div>
         <ul>
           <li
@@ -52,17 +55,17 @@
         <div class="search mb-5 ml-2">
           <div class="item">
             <span> 搜索字段：</span>
-            <el-input v-model="searchField" size="mini" @change="search('field')"></el-input>
+            <ElInput v-model="searchField" size="mini" @change="search('field')"></ElInput>
           </div>
           <div class="item ml-5" v-if="!readOnly">
-            <el-button size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
-              <el-tooltip effect="dark" content="恢复默认字段" placement="top-start">
+            <ElButton size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
+              <ElTooltip effect="dark" content="恢复默认字段" placement="top-start">
                 <VIcon class="color-primary" size="14">rollback</VIcon>
-              </el-tooltip>
-            </el-button>
+              </ElTooltip>
+            </ElButton>
           </div>
         </div>
-        <El-table
+        <ElTable
           class="field-mapping-table table-border"
           height="100%"
           border
@@ -145,10 +148,10 @@
             <i class="el-icon-folder-opened"></i>
             <span class="ml-1">暂无数据</span>
           </div>
-        </El-table>
+        </ElTable>
       </div>
     </div>
-    <el-dialog
+    <ElDialog
       :title="titleType[currentOperationType]"
       :visible.sync="dialogVisible"
       width="30%"
@@ -156,12 +159,12 @@
       :close-on-click-modal="false"
       :before-close="handleClose"
     >
-      <el-input
+      <ElInput
         v-model="editValueType[currentOperationType]"
         v-if="['field_name'].includes(currentOperationType)"
-      ></el-input>
+      ></ElInput>
       <div v-if="['precision', 'scale'].includes(currentOperationType)">
-        <el-input-number v-model="editValueType[currentOperationType]"></el-input-number>
+        <ElInputNumber v-model="editValueType[currentOperationType]"></ElInputNumber>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div
@@ -187,14 +190,14 @@
         </div>
       </div>
       <div v-if="['data_type'].includes(currentOperationType)">
-        <el-select v-model="editValueType[currentOperationType]" filterable @change="initDataType">
-          <el-option
+        <ElSelect v-model="editValueType[currentOperationType]" filterable @change="initDataType">
+          <ElOption
             :label="item.dbType"
             :value="item.dbType"
             v-for="(item, index) in typeMapping"
             :key="index"
-          ></el-option>
-        </el-select>
+          ></ElOption>
+        </ElSelect>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
@@ -213,11 +216,11 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose()">取 消</el-button>
-        <el-button type="primary" @click="editSave()">确 定</el-button>
+        <ElButton @click="handleClose()">取 消</ElButton>
+        <ElButton type="primary" @click="editSave()">确 定</ElButton>
       </span>
-    </el-dialog>
-    <el-dialog
+    </ElDialog>
+    <ElDialog
       width="800px"
       append-to-body
       title="批量改表名设置"
@@ -227,22 +230,22 @@
       :before-close="handleTableClose"
     >
       <div class="table-box">
-        <el-form ref="form" class="table-form" :model="form" label-width="120px">
-          <el-form-item label="表名大小写">
-            <el-select size="mini" v-model="form.tableNameTransform">
-              <el-option :label="$t('dag_data_node_label_database_link_unchang')" value=""></el-option>
-              <el-option :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></el-option>
-              <el-option :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="请输入前缀">
-            <el-input size="mini" v-model="form.table_prefix"></el-input>
-          </el-form-item>
-          <el-form-item label="请输入后缀">
-            <el-input size="mini" v-model="form.table_suffix"></el-input>
-          </el-form-item>
+        <ElForm ref="form" class="table-form" :model="form" label-width="120px">
+          <ElFormItem label="表名大小写">
+            <ElSelect size="mini" v-model="form.tableNameTransform">
+              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value=""></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+          <ElFormItem label="请输入前缀">
+            <ElInput size="mini" v-model="form.table_prefix"></ElInput>
+          </ElFormItem>
+          <ElFormItem label="请输入后缀">
+            <ElInput size="mini" v-model="form.table_suffix"></ElInput>
+          </ElFormItem>
           <div class="tip">说明：设置的前后缀也遵循大小写规则</div>
-        </el-form>
+        </ElForm>
         <div class="table-example">
           <h3>示例:</h3>
           <p>原表名: tableName</p>
@@ -250,11 +253,11 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleTableClose()">取 消</el-button>
-        <el-button size="mini" type="primary" @click="handleTableNameSave()">确 定</el-button>
+        <ElButton size="mini" @click="handleTableClose()">取 消</ElButton>
+        <ElButton size="mini" type="primary" @click="handleTableNameSave()">确 定</ElButton>
       </span>
-    </el-dialog>
-    <el-dialog
+    </ElDialog>
+    <ElDialog
       width="600px"
       append-to-body
       title="批量改字段名设置"
@@ -264,21 +267,21 @@
       :before-close="handleFieldClose"
     >
       <div class="table-box">
-        <el-form ref="form" class="table-form" :model="form" label-width="120px">
-          <el-form-item label="字段名大小写">
-            <el-select size="mini" v-model="form.fieldsNameTransform">
-              <el-option :label="$t('dag_data_node_label_database_link_unchang')" value=""></el-option>
-              <el-option :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></el-option>
-              <el-option :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
+        <ElForm ref="form" class="table-form" :model="form" label-width="120px">
+          <ElFormItem label="字段名大小写">
+            <ElSelect size="mini" v-model="form.fieldsNameTransform">
+              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value=""></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+        </ElForm>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleFieldClose">取 消</el-button>
-        <el-button size="mini" type="primary" @click="handleFieldSave()">确 定</el-button>
+        <ElButton size="mini" @click="handleFieldClose">取 消</ElButton>
+        <ElButton size="mini" type="primary" @click="handleFieldSave()">确 定</ElButton>
       </span>
-    </el-dialog>
+    </ElDialog>
   </div>
 </template>
 
@@ -289,12 +292,12 @@ export default {
   name: 'FieldMappingDialog',
   components: { VIcon },
   props: {
-    fieldMappingNavData: Array,
-    field_process: Array,
     remoteMethod: Function,
     typeMappingMethod: Function,
     fieldProcessMethod: Function,
     updateMetadata: Function,
+    getNavDataMethod: Function,
+    field_process: Array,
     transform: Object,
     hiddenFieldProcess: {
       type: Boolean,
@@ -319,6 +322,7 @@ export default {
       position: 0,
       fieldCount: '', //当前选中总数
       fieldMappingTableData: [],
+      fieldMappingNavData: [],
       dialogVisible: false,
       currentOperationType: '',
       currentOperationData: '',
@@ -335,6 +339,16 @@ export default {
         precision: '修改目标字段长度',
         scale: '修改目标表精度'
       },
+      page: {
+        size: 10,
+        current: '',
+        total: ''
+      },
+      progress: {
+        total: '',
+        finished: '',
+        progress: ''
+      },
       operations: [], //字段操作
       dialogTableVisible: false,
       dialogFieldVisible: false,
@@ -345,11 +359,6 @@ export default {
     }
   },
   mounted() {
-    if (this.fieldMappingNavData) {
-      this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
-      this.selectRow = this.fieldMappingNavData[0]
-      this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
-    }
     if (!this.readOnly && this.transform) {
       this.form = {
         tableNameTransform: this.transform.tableNameTransform,
@@ -359,7 +368,12 @@ export default {
       }
       this.currentForm = JSON.parse(JSON.stringify(this.form))
     }
+    this.initNavData()
     this.updateView()
+    if (this.$ws) {
+      //接收数据
+      this.$ws.on('metadataTransformerProgress', this.metadataTransformerProgress)
+    }
   },
   computed: {
     tableName() {
@@ -372,6 +386,11 @@ export default {
         tableName = this.form.table_prefix + this.sourceTableName + this.form.table_suffix
       }
       return tableName
+    }
+  },
+  destroyed() {
+    if (this.$ws) {
+      this.$ws.off('metadataTransformerProgress', this.metadataTransformerProgress)
     }
   },
   methods: {
@@ -402,6 +421,27 @@ export default {
           })
       })
     },
+    /* 初始化左边列表*/
+    initNavData() {
+      //获取第一页推演结果
+      this.loadingPage = true
+      this.$nextTick(() => {
+        this.getNavDataMethod &&
+          this.getNavDataMethod(this.page)
+            .then(({ data, total }) => {
+              this.fieldMappingNavData = data
+              this.selectRow = data[0]
+              this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+              this.page.total = total
+              //初始化右侧列表
+              this.initTableData()
+              this.initTypeMapping()
+            })
+            .finally(() => {
+              this.loadingPage = false
+            })
+      })
+    },
     /* 初始化目标字段、长度是否可编辑*/
     initShowEdit() {
       let data = this.fieldMappingTableData
@@ -410,17 +450,8 @@ export default {
         let rules = this.typeMapping.filter(v => v.dbType === data[i].t_data_type)
         if (rules?.length > 0) {
           rules = rules[0].rules
-          if (!data[i].t_precision) {
-            this.showPrecisionEdit(data[i].t_id, rules || [])
-            //this.influencesPrecision(data[i].t_id, rules || [])
-          } else if (!data[i].t_scale) {
-            this.showScaleEdit(data[i].t_id, rules || [])
-            //this.influencesScale(data[i].t_id, rules || [])
-          } else if (!data[i].t_precision && !data[i].t_scale) {
-            this.showPrecisionEdit(data[i].t_id, rules || [])
-            this.showScaleEdit(data[i].t_id, rules || [])
-            // this.influences(data[i].t_id, rules || [])
-          }
+          this.showPrecisionEdit(data[i].t_id, rules || [])
+          this.showScaleEdit(data[i].t_id, rules || [])
         }
       }
     },
@@ -503,6 +534,12 @@ export default {
               this.updateView()
             })
       })
+    },
+    /*更新schema 加载进度*/
+    metadataTransformerProgress(data) {
+      let { finished, total } = data
+      this.progress.finished = finished
+      this.progress.finished = total
     },
     //全局操作区域
     /*打开表改名弹窗*/
