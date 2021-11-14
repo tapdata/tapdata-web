@@ -21,7 +21,7 @@
             <ElInput v-model="searchTable" size="mini" @change="search('table')"></ElInput>
           </div>
         </div>
-        <div class="mb-2 ml-6" v-if="progress.finished !== '100.00'">
+        <div class="mb-2 ml-6" v-if="progress.showProgress">
           {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon><span>加载中，请稍等...</span>
         </div>
         <ul>
@@ -288,6 +288,7 @@
 <script>
 import VIcon from './VIcon'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
+import ws from '../api/ws'
 export default {
   name: 'FieldMappingDialog',
   components: { VIcon },
@@ -345,9 +346,10 @@ export default {
         total: ''
       },
       progress: {
-        total: '',
-        finished: '',
-        progress: ''
+        total: 0,
+        finished: '0',
+        progress: '0',
+        showProgress: false
       },
       operations: [], //字段操作
       dialogTableVisible: false,
@@ -370,10 +372,21 @@ export default {
     }
     this.initNavData()
     this.updateView()
-    if (this.$ws) {
-      //接收数据
-      this.$ws.on('metadataTransformerProgress', this.metadataTransformerProgress)
-    }
+    //接收数据
+    let id = this.transform.stageId
+    let self = this
+    ws.on('metadataTransformerProgress', function (res) {
+      if (res?.data?.stageId === id) {
+        let { finished, total, status } = res?.data
+        self.progress.finished = finished
+        self.progress.total = total
+        if (status !== 'done') {
+          self.progress.showProgress = true
+        } else {
+          self.progress.showProgress = false
+        }
+      }
+    })
   },
   computed: {
     tableName() {
@@ -386,11 +399,6 @@ export default {
         tableName = this.form.table_prefix + this.sourceTableName + this.form.table_suffix
       }
       return tableName
-    }
-  },
-  destroyed() {
-    if (this.$ws) {
-      this.$ws.off('metadataTransformerProgress', this.metadataTransformerProgress)
     }
   },
   methods: {
@@ -470,6 +478,9 @@ export default {
       this.initTableData()
       this.initTypeMapping()
       this.clearSearch()
+      //重新更新左边导航
+      this.page.current = 1
+      this.initNavData()
       this.operations = []
       if (this.field_process?.length > 0) {
         this.getFieldProcess()

@@ -113,7 +113,7 @@
         </el-button>
       </div>
       <el-tag
-        v-if="progress.finished !== '100.00'"
+        v-if="progress.showProgress"
         effect="plain"
         type="info"
         size="mini"
@@ -275,6 +275,30 @@
       :data="checkStagesData"
       @complete="saveCheckStages"
     ></CheckStage>
+    <el-dialog
+      title="任务启动预检查未通过"
+      :visible.sync="showSchemaProgress"
+      :close-on-click-modal="false"
+      width="30%"
+    >
+      <span>错误原因: 模型推演进行中</span>
+      <div>当前进度: {{ progress.finished }} / {{ progress.total }}</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="showSchemaProgress = false">关闭</el-button>
+        <el-button type="primary" size="mini" @click="start()">重试</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="任务启动预检查未通过"
+      :visible.sync="showFieldMappingProgress"
+      :close-on-click-modal="false"
+      width="30%"
+    >
+      <span>错误原因: 字段映射错误请校正</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="showFieldMappingProgress = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -352,10 +376,13 @@ export default {
       modPipeline: '',
       //schema加载进度
       progress: {
-        total: '',
-        finished: '',
-        progress: ''
-      }
+        total: '0',
+        finished: '0',
+        progress: '0',
+        showProgress: false
+      },
+      showSchemaProgress: false,
+      showFieldMappingProgress: false
     }
   },
   watch: {
@@ -622,10 +649,18 @@ export default {
     },
     getSchemaResult() {
       let self = this
-      ws.on('metadataTransformerProgress', function (data) {
-        let { finished, total } = data
-        self.progress.finished = finished
-        self.progress.finished = total
+      ws.on('metadataTransformerProgress', function (res) {
+        if (!res?.data?.stageId) {
+          let { finished, total, status } = res?.data
+          self.progress.finished = finished
+          self.progress.total = total
+          self.progress.progress = status
+          if (status !== 'done') {
+            self.progress.showProgress = true
+          } else {
+            self.progress.showProgress = false
+          }
+        }
       })
     },
     updateDataFlow() {
@@ -1225,6 +1260,10 @@ export default {
                     this.checkStagesData[i].syncType = 'initial_sync+cdc'
                   }
                 }
+              } else if (err.response.msg === 'running transformer') {
+                this.showSchemaProgress = true
+              } else if (err.response.msg === 'invalid') {
+                this.showFieldMappingProgress = true
               } else {
                 this.$message.error(err.response.msg)
               }

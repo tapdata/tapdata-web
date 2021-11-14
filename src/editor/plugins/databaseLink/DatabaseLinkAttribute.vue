@@ -94,7 +94,7 @@
                 class="fr"
                 mappingType="cluster-clone"
                 :showBtn="true"
-                :stageId="stageId"
+                :stageId="model.stageId"
                 :databaseFieldProcess="model.field_process"
                 :hiddenFieldProcess="false"
                 :selectSourceArr="model.selectSourceArr"
@@ -306,7 +306,7 @@ export default {
           })
         }
         //获取目标节点ID
-        this.stageId = targetCell?.id || ''
+        this.model.stageId = targetCell?.id || ''
         // 获取目标节点的数据显示右侧选择表
 
         let targetFormData = targetCell && targetCell.getFormData()
@@ -354,12 +354,12 @@ export default {
       //是否显示字段推演
       let param = {
         stages: this.dataFlow?.stages,
-        stageId: this.stageId
+        stageId: this.model.stageId
       }
       this.$api('DataFlows')
         .tranModelVersionControl(param)
         .then(data => {
-          this.showFieldMapping = data?.data[this.stageId]
+          this.showFieldMapping = data?.data[this.model.stageId]
         })
 
       // if (!this.configJoinTable) return

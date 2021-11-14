@@ -43,7 +43,6 @@
 <script>
 import FieldMappingDialog from './FieldMappingDialog'
 import ws from '../api/ws'
-let callback = null
 export default {
   name: 'FiledMapping',
   components: { FieldMappingDialog },
@@ -51,7 +50,6 @@ export default {
     'databaseFieldProcess',
     'showBtn',
     'hiddenFieldProcess',
-    'stageId',
     'isFirst',
     'mappingType',
     'selectSourceArr',
@@ -107,8 +105,8 @@ export default {
         delete this.dataFlow['rollback']
         delete this.dataFlow['rollbackTable']
       }
-      if (this.stageId) {
-        this.dataFlow['stageId'] = this.stageId //任务同步目标节点stageID 推演
+      if (this.transform.stageId) {
+        this.dataFlow['stageId'] = this.transform.stageId //任务同步目标节点stageID 推演
       }
 
       let promise = this.$api('DataFlows').getMetadata(this.dataFlow)
@@ -181,13 +179,22 @@ export default {
       if (this.mappingType && this.mappingType === 'cluster-clone') {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
       }
-      let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
-      return promise?.data
+      let data = ''
+      this.$api('DataFlows')
+        .getMetadata(this.dataFlow)
+        .then(res => {
+          data = res
+          this.initWSSed() //发送ws 监听schema进度
+        })
+        .catch(e => {
+          this.$message.error(e)
+        })
+      return data
     },
     //清空表改名 字段改名
     clearTransform() {
       for (let i = 0; i < this.dataFlow.stages.length; i++) {
-        if (this.dataFlow.stages[i].id === this.stageId) {
+        if (this.dataFlow.stages[i].id === this.transform.stageId) {
           this.dataFlow['stages'][i].fieldsNameTransform = ''
           this.dataFlow['stages'][i].tableNameTransform = ''
           this.dataFlow['stages'][i].table_suffix = ''
@@ -197,7 +204,7 @@ export default {
     },
     updateAutoTransform(type, data) {
       for (let i = 0; i < this.dataFlow.stages.length; i++) {
-        if (this.dataFlow.stages[i].id === this.stageId) {
+        if (this.dataFlow.stages[i].id === this.transform.stageId) {
           this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
           this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
           this.dataFlow['stages'][i].table_prefix = data.table_prefix
@@ -211,8 +218,9 @@ export default {
     },
     //获取左边导航数据 - 表
     async updateMetadata(type, data) {
-      //将表改名 字段改名 放在setting里面
+      //将表改名 字段改名 rockBackAll
       this.updateAutoTransform(type, data)
+      this.dataFlow['rollback'] = 'all'
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       return promise?.data
     },
@@ -346,7 +354,7 @@ export default {
         type: 'metadataTransformerProgress',
         data: {
           dataFlowId: this.dataFlow?.id,
-          stageId: this.stageId
+          stageId: this.transform.stageId
         }
       }
       ws.ready(() => {
