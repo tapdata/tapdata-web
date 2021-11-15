@@ -55,11 +55,11 @@
             <el-input v-model="searchField" size="mini" @change="search('field')"></el-input>
           </div>
           <div class="item ml-5" v-if="!readOnly">
-            <el-button size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
-              <el-tooltip effect="dark" content="恢复默认字段" placement="top-start">
+            <el-tooltip effect="dark" content="恢复默认字段" placement="top-start">
+              <el-button size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
                 <VIcon class="color-primary" size="14">rollback</VIcon>
-              </el-tooltip>
-            </el-button>
+              </el-button>
+            </el-tooltip>
           </div>
         </div>
         <El-table
@@ -410,17 +410,8 @@ export default {
         let rules = this.typeMapping.filter(v => v.dbType === data[i].t_data_type)
         if (rules?.length > 0) {
           rules = rules[0].rules
-          if (!data[i].t_precision) {
-            this.showPrecisionEdit(data[i].t_id, rules || [])
-            //this.influencesPrecision(data[i].t_id, rules || [])
-          } else if (!data[i].t_scale) {
-            this.showScaleEdit(data[i].t_id, rules || [])
-            //this.influencesScale(data[i].t_id, rules || [])
-          } else if (!data[i].t_precision && !data[i].t_scale) {
-            this.showPrecisionEdit(data[i].t_id, rules || [])
-            this.showScaleEdit(data[i].t_id, rules || [])
-            // this.influences(data[i].t_id, rules || [])
-          }
+          this.showPrecisionEdit(data[i].t_id, rules || [])
+          this.showScaleEdit(data[i].t_id, rules || [])
         }
       }
     },
