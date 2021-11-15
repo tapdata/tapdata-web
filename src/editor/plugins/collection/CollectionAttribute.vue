@@ -307,12 +307,12 @@
           :isDisable="disabled"
           @update-first="returnModel"
         ></FieldMapping>
-        <entity
+        <Entity
           v-loading="schemaSelectConfig.loading"
           :schema="convertSchemaToTreeData(defaultSchema)"
           :editable="false"
           :operations="model.operations"
-        ></entity>
+        ></Entity>
       </div>
     </div>
     <CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>

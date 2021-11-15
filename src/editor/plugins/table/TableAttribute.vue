@@ -229,7 +229,7 @@
         </el-form-item>
       </el-form>
       <div class="e-entity-wrap" style="text-align: center">
-        <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
+        <Entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></Entity>
       </div>
     </div>
     <CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
