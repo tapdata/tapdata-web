@@ -85,10 +85,16 @@ export default {
         }
         const panel = getParent(this)
         const transfer = panel.$parent || panel
+        const transferSlots = transfer.$scopedSlots
+
         return panel.renderContent ? (
           panel.renderContent(h, this.option)
-        ) : transfer.$scopedSlots.default ? (
-          transfer.$scopedSlots.default({ option: this.option })
+        ) : transferSlots.default ? (
+          transferSlots.default({ option: this.option })
+        ) : transferSlots.left || transferSlots.right ? (
+          panel.$scopedSlots.default({ option: this.option }) || (
+            <span>{this.option[panel.labelProp] || this.option[panel.keyProp]}</span>
+          )
         ) : (
           <span>{this.option[panel.labelProp] || this.option[panel.keyProp]}</span>
         )
