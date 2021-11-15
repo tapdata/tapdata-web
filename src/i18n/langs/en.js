@@ -1,6 +1,8 @@
 export default {
   // 通用按钮
   button_edit: 'edit',
+  button_confirm: 'confirm',
+  button_cancel: 'cancel',
 
   // 数据校验
   verify_details_title: 'Task verification details',
@@ -63,6 +65,7 @@ export default {
   dag_data_node_label_kafka_high_performance_mode: 'High performance mode',
   dag_data_node_label_kafka_all: 'All',
   dag_data_node_label_aggregate_filter: 'Filter',
+  dag_link_button_custom_script: 'Custom processing script',
 
   //Task edit
   task_job_setting_tip_title: 'Set reminder',

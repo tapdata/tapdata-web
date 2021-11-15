@@ -1,6 +1,8 @@
 export default {
   // 通用按钮
   button_edit: '编辑',
+  button_confirm: '确定',
+  button_cancel: '取消',
 
   // 数据校验
   verify_details_title: '任务校验详情',
@@ -61,6 +63,7 @@ export default {
   dag_data_node_label_memcache_type_tip: '全局缓存所有任务可引用，局部缓存仅限当前DAG引用。',
   dag_data_node_label_kafka_high_performance_mode: '高性能模式',
   dag_data_node_label_kafka_all: '所有',
+  dag_link_button_custom_script: '自定义处理脚本',
 
   //任务编辑
   dag_data_node_label_clickhouse: 'ClickHouse节点',
