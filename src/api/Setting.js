@@ -27,4 +27,7 @@ export default class Settings extends PublicAPI {
   save(params) {
     return axios.patch(`${this.url}/save`, params)
   }
+  getObjectId() {
+    return axios.post(`${this.url}/ObjectId`)
+  }
 }

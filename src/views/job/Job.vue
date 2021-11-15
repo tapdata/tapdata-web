@@ -381,6 +381,7 @@ export default {
         progress: '0',
         showProgress: false
       },
+      queryId: '', //新建任务没有id 则由前端生成
       showSchemaProgress: false,
       showFieldMappingProgress: false
     }
@@ -428,7 +429,16 @@ export default {
         this.loadData()
         if (this.$route.query.id) {
           this.wsWatch()
+          this.initWSSed() //有id 主动监听当前任务schema进度
           this.getSchemaResult()
+        } else {
+          //新建任务由前端生成任务id
+          this.$api('Setting')
+            .getObjectId()
+            .then(res => {
+              this.queryId = res.data
+              this.getSchemaResult()
+            })
         }
         this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
           this.draftSave()
@@ -638,10 +648,10 @@ export default {
       }, 5000)
     },
     //实时获取schema加载进度
-    initWSSed(id) {
+    initWSSed() {
+      let id = this.dataFlowId || this.queryId
       let msg = {
-        dataFlowId: id,
-        stageId: this.stageId
+        dataFlowId: id
       }
       ws.ready(() => {
         ws.send(msg)
@@ -649,8 +659,9 @@ export default {
     },
     getSchemaResult() {
       let self = this
+      let id = self.dataFlowId || self.queryId
       ws.on('metadataTransformerProgress', function (res) {
-        if (!res?.data?.stageId) {
+        if (!res?.data?.stageId && res?.data?.dataFlowId === id) {
           let { finished, total, status } = res?.data
           self.progress.finished = finished
           self.progress.total = total
@@ -944,7 +955,9 @@ export default {
       postData.stages = Object.values(stages)
 
       if (this.dataFlowId) postData.id = this.dataFlowId
-
+      if (!this.$route.query.id && !this.dataFlowId) {
+        postData.id = this.queryId || '' //当前路由没有id 保存任务则用前端生成id
+      }
       return postData
     },
 
@@ -1002,8 +1015,7 @@ export default {
       if (!this.checkJoinTableStageId()) return
       localStorage.removeItem(this.tempId)
       const _doSave = function () {
-        let promise = data.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
-
+        let promise = self.$route.query.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
         promise
           .then(result => {
             if (result && result.data) {
@@ -1261,6 +1273,7 @@ export default {
                   }
                 }
               } else if (err.response.msg === 'running transformer') {
+                this.initWSSed()
                 this.showSchemaProgress = true
               } else if (err.response.msg === 'invalid') {
                 this.showFieldMappingProgress = true
@@ -1807,6 +1820,10 @@ export default {
       //选中当前节点
       this.editor.graph.selectionPosition(item.cell)
     }
+  },
+  //获取当前queryID
+  getDataFlowQueryId() {
+    return this.queryId
   },
 
   beforeDestroy() {

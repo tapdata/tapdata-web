@@ -121,12 +121,20 @@ export default {
         })
     },
     getMetadataTransformer(page) {
+      let id = this.dataFlow?.id
+      let where = {
+        dataFlowId: {
+          like: id
+        },
+        sinkStageId: this.transform.stageId
+      }
       let filter = {
+        where: where,
         limit: page.size || 10,
         skip: (page.current - 1) * page.size > 0 ? (page.current - 1) * page.size : 0
       }
       return Promise.all([
-        this.$api('metadataTransformer').count(),
+        this.$api('metadataTransformer').count({ where: where }),
         this.$api('metadataTransformer').get({
           filter: JSON.stringify(filter)
         })
@@ -350,10 +358,11 @@ export default {
     },
     //实时获取schema加载进度
     initWSSed() {
+      let id = this.dataFlow?.id
       let msg = {
         type: 'metadataTransformerProgress',
         data: {
-          dataFlowId: this.dataFlow?.id,
+          dataFlowId: id,
           stageId: this.transform.stageId
         }
       }
