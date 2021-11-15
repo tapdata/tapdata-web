@@ -299,12 +299,9 @@
           v-else
           ref="fieldMapping"
           class="fr"
-          :dataFlow="dataFlow"
-          :showBtn="true"
-          :isFirst="model.isFirst"
-          :hiddenFieldProcess="true"
-          :stageId="stageId"
           :isDisable="disabled"
+          :transform="model"
+          :getDataFlow="getDataFlow"
           @update-first="returnModel"
         ></FieldMapping>
         <entity
@@ -587,7 +584,11 @@ export default {
       },
       dataNodeInfo: {},
       model: {
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
         isFirst: true,
+        hiddenChangeValue: true,
         connectionId: '',
         databaseType: 'mongodb',
         tableName: '',
@@ -628,8 +629,6 @@ export default {
       repeatTableDiao: false,
       repeatTable: [],
       scope: '',
-      dataFlow: '',
-      stageId: '',
       showFieldMapping: false
     }
   },
@@ -910,7 +909,7 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
+        this.model.stageId = cell.id
         this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
@@ -944,12 +943,12 @@ export default {
         this.tableIsLink()
         let param = {
           stages: this.dataFlow?.stages,
-          stageId: this.stageId
+          stageId: this.model.stageId
         }
         this.$api('DataFlows')
           .tranModelVersionControl(param)
           .then(data => {
-            this.showFieldMapping = data?.data[this.stageId]
+            this.showFieldMapping = data?.data[this.model.stageId]
           })
       }
 
@@ -1131,6 +1130,7 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

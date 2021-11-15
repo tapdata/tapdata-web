@@ -93,12 +93,6 @@
                 ref="fieldMapping"
                 class="fr"
                 mappingType="cluster-clone"
-                :showBtn="true"
-                :stageId="model.stageId"
-                :databaseFieldProcess="model.field_process"
-                :hiddenFieldProcess="false"
-                :selectSourceArr="model.selectSourceArr"
-                :isFirst="model.isFirst"
                 :transform="model"
                 :getDataFlow="getDataFlow"
                 @update-first="returnModel"
@@ -230,9 +224,10 @@ export default {
         transferFlag: false,
         isFirst: true, //初始值
         scope: '',
-        dataFlow: '',
         stageId: '',
-
+        hiddenFieldProcess: false,
+        hiddenChangeValue: false, //是否显示表改大小写
+        showBtn: true,
         selectSourceDatabase: {
           table: true,
           view: false,

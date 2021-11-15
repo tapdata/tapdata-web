@@ -217,12 +217,9 @@
               v-else
               ref="fieldMapping"
               class="fr"
-              :dataFlow="dataFlow"
-              :showBtn="true"
-              :isFirst="model.isFirst"
               :isDisable="disabled"
-              :hiddenFieldProcess="true"
-              :stageId="stageId"
+              :transform="model"
+              :getDataFlow="getDataFlow"
               @update-first="returnModel"
             ></FieldMapping>
           </div>
@@ -407,12 +404,16 @@ export default {
       dataNodeInfo: {},
 
       model: {
-        isFirst: true,
         connectionId: '',
         databaseType: '',
         tableName: '',
         sql: '',
         isFilter: false,
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true,
         custFields: [],
         custSql: {
           filterType: 'field',
@@ -431,11 +432,8 @@ export default {
         enableInitialOrder: false
       },
       scope: '',
-      dataFlow: '',
-      stageId: '',
       showFieldMapping: false,
       mergedSchema: null,
-
       primaryKeyOptions: [],
       loadSchema: null
     }
@@ -695,7 +693,7 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
+        this.model.stageId = cell.id
         this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
@@ -762,12 +760,12 @@ export default {
     getTranModelVersionControl() {
       let param = {
         stages: this.dataFlow?.stages,
-        stageId: this.stageId
+        stageId: this.model.stageId
       }
       this.$api('DataFlows')
         .tranModelVersionControl(param)
         .then(data => {
-          this.showFieldMapping = data?.data[this.stageId]
+          this.showFieldMapping = data?.data[this.model.stageId]
         })
     },
 
@@ -825,6 +823,7 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope && this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

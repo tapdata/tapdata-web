@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button
-      v-if="showBtn"
+      v-if="transform.showBtn"
       size="mini"
       class="e-button"
       :loading="loading"
@@ -26,10 +26,8 @@
         :fieldProcessMethod="updateFieldProcess"
         :getNavDataMethod="getMetadataTransformer"
         :updateMetadata="updateMetadata"
-        :fieldMappingNavData="fieldMappingNavData"
-        :field_process="field_process"
+        :field_process="transform.field_process"
         :transform="transform"
-        :hiddenFieldProcess="hiddenFieldProcess"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
       ></FieldMappingDialog>
@@ -46,17 +44,7 @@ import ws from '../api/ws'
 export default {
   name: 'FiledMapping',
   components: { FieldMappingDialog },
-  props: [
-    'databaseFieldProcess',
-    'showBtn',
-    'hiddenFieldProcess',
-    'isFirst',
-    'mappingType',
-    'selectSourceArr',
-    'transform',
-    'getDataFlow',
-    'isDisable'
-  ],
+  props: ['mappingType', 'transform', 'getDataFlow', 'isDisable'],
   data() {
     return {
       //表设置
@@ -64,7 +52,7 @@ export default {
       fieldMappingTableData: '', //右边table
       dialogFieldProcessVisible: false,
       loading: false,
-      field_process: this.databaseFieldProcess
+      field_process: this.transform.field_process
     }
   },
   methods: {
@@ -92,14 +80,14 @@ export default {
         ) {
           this.$message.error('请先选择需要迁移的表')
           return
-        } else if (this.selectSourceArr?.length === 0 && !this.transform.transferFlag) {
+        } else if (this.transform.selectSourceArr?.length === 0 && !this.transform.transferFlag) {
           this.$message.error('请先选择需要迁移的表') //其他数据源
           return
         }
       }
       this.loading = true
       let dataFlowId = this.dataFlow.id
-      if (this.isFirst && !dataFlowId) {
+      if (this.transform.isFirst && !dataFlowId) {
         this.dataFlow['rollback'] = 'all' //新建任务重置恢复默认
       } else {
         delete this.dataFlow['rollback']
@@ -352,7 +340,7 @@ export default {
         fields: target
       }
       this.$api('MetadataInstances').update(where, data)
-      if (this.hiddenFieldProcess) return //任务同步 没有字段处理器
+      if (this.transform.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.field_process)
     },

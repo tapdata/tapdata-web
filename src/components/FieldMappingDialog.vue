@@ -4,10 +4,20 @@
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
       <div class="float-end">
-        <ElButton v-if="!readOnly && transform" plain type="primary" size="mini" @click="handleChangTableName"
+        <ElButton
+          v-if="!readOnly && !transform.hiddenChangeValue"
+          plain
+          type="primary"
+          size="mini"
+          @click="handleChangTableName"
           >表改名</ElButton
         >
-        <ElButton v-if="!readOnly && transform" plain type="primary" size="mini" @click="dialogFieldVisible = true"
+        <ElButton
+          v-if="!readOnly && !transform.hiddenChangeValue"
+          plain
+          type="primary"
+          size="mini"
+          @click="dialogFieldVisible = true"
           >字段改名</ElButton
         >
         <ElButton v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">恢复默认</ElButton>
@@ -55,8 +65,8 @@
           layout="total, prev, pager, next"
           :current-page.sync="page.current"
           :page-size.sync="page.size"
-          :total="progress.finished"
-          :pager-count="3"
+          :total="page.total"
+          :page-count="3"
           @current-change="initNavData"
         >
         </ElPagination>
@@ -352,8 +362,8 @@ export default {
       },
       page: {
         size: 10,
-        current: '',
-        total: ''
+        current: 1,
+        total: 0
       },
       progress: {
         total: 0,
@@ -383,6 +393,7 @@ export default {
     this.initNavData()
     this.updateView()
     //接收数据
+    console.log(this.transform)
     let id = this.transform.stageId
     let self = this
     ws.on('metadataTransformerProgress', function (res) {
@@ -390,6 +401,7 @@ export default {
         let { finished, total, status } = res?.data
         self.progress.finished = finished
         self.progress.total = total
+        self.page.total = finished
         if (status !== 'done') {
           self.progress.showProgress = true
         } else {

@@ -98,12 +98,9 @@
               v-else
               ref="fieldMapping"
               class="fr"
-              :dataFlow="dataFlow"
-              :showBtn="true"
-              :isFirst="model.isFirst"
               :isDisable="disabled"
-              :hiddenFieldProcess="true"
-              :stageId="stageId"
+              :transform="model"
+              :getDataFlow="getDataFlow"
               @update-first="returnModel"
             ></FieldMapping>
           </div>
@@ -205,7 +202,12 @@ export default {
       model: {
         connectionId: '',
         type: 'hbase',
-        tableName: ''
+        tableName: '',
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true
         // primaryKeys: ''
       },
       schemasLoading: false,
@@ -327,9 +329,21 @@ export default {
         })
     },
 
-    setData(data, cell) {
+    setData(data, cell, dataNodeInfo, vueAdapter) {
+      this.scope = vueAdapter?.editor?.scope
+      this.model.stageId = cell.id
+      this.getDataFlow()
       if (data) {
         _.merge(this.model, data)
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.model.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.model.stageId]
+          })
       }
       this.mergedSchema = cell.getOutputSchema()
       cell.on('change:outputSchema', () => {
@@ -399,6 +413,15 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
 
     // seeMonitor() {

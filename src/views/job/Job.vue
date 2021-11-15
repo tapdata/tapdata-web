@@ -1144,6 +1144,9 @@ export default {
       let _this = this
       let id = this.$route.query.id
 
+      //如果有showSchemaProgress
+      this.showSchemaProgress = false
+
       if (this.$refs.agentDialog.checkAgent()) {
         this.checkAgentStatus(() => {
           let doStart = () => {
