@@ -37,7 +37,7 @@
           <VIcon size="120">search-no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_match_result') }}</span>
-            <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
+            <ElLink type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
           </div>
         </div>
       </TableList>
@@ -222,12 +222,20 @@ export default {
       if (username) {
         where['username'] = { like: toRegExp(username), options: 'i' }
       }
+      let dateObj = {}
       // 开始时间
       if (start) {
-        where['start'] = start
+        dateObj.$gt = {
+          $date: start
+        }
       }
       if (end) {
-        where['end'] = end
+        dateObj.$lt = {
+          $date: end
+        }
+      }
+      if (!isEmpty(dateObj)) {
+        where['createTime'] = dateObj
       }
       let filter = {
         where,
