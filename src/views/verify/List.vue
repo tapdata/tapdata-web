@@ -1,7 +1,7 @@
 <template>
   <section class="verify-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Verify'">
     <div class="page-header">
-      <FilterBar v-model="searchParams" :items="filterItems" @search="search()" @fetch="fetch"></FilterBar>
+      <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
       <div>
         <VButton type="primary" @click="toCreate">
           <span>{{ $t('verify_button_create') }}</span>
@@ -93,14 +93,14 @@
         <VIcon size="120">no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
           <span>{{ $t('gl_no_data') }}</span>
-          <el-link type="primary" class="fs-7" @click="toCreate">{{ $t('verify_button_create') }}</el-link>
+          <ElLink type="primary" class="fs-7" @click="toCreate">{{ $t('verify_button_create') }}</ElLink>
         </div>
       </div>
       <div v-else class="page-table__empty" slot="empty">
         <VIcon size="120">search-no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
           <span>{{ $t('gl_no_match_result') }}</span>
-          <el-link type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</el-link>
+          <ElLink type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
         </div>
       </div>
     </ElTable>
@@ -312,25 +312,25 @@ export default {
           label: '类型',
           key: 'inspectMethod',
           type: 'select-inner',
-          options: this.filterInspectMethodOptions
+          items: this.filterInspectMethodOptions
         },
         {
           label: '频次',
           key: 'mode',
           type: 'select-inner',
-          options: this.filterModeOptions
+          items: this.filterModeOptions
         },
         {
           label: '状态',
           key: 'enabled',
           type: 'select-inner',
-          options: this.filterEnabledOptions
+          items: this.filterEnabledOptions
         },
         {
           label: '结果',
           key: 'result',
           type: 'select-inner',
-          options: this.filterResultOptions
+          items: this.filterResultOptions
         },
 
         {
@@ -361,11 +361,14 @@ export default {
         }
       })
     },
-    search() {
-      this.$router.replace({
-        name: 'Verify',
-        query: this.searchParams
-      })
+    search(debounce) {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'Verify',
+          query: this.searchParams
+        })
+      }, debounce)
     },
     fetch(pageNum) {
       this.loading = true

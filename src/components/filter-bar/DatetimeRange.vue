@@ -1,14 +1,13 @@
 <template>
   <div class="filter-datetime-range flex">
-    <div class="filter-datetime-range__title">{{ title }}</div>
+    <div v-if="!!label" class="filter-datetime-range__title">{{ label }}</div>
     <Datetime
       v-model="start"
       v-bind="$attrs"
       :picker-options="startOptions"
       :placeholder="startPlaceholder"
-      type="datetime"
       ref="startTime"
-      class="none-boder"
+      class="none-border"
       @change="changeStart"
     ></Datetime>
     <Datetime
@@ -16,10 +15,9 @@
       v-bind="$attrs"
       :picker-options="endOptions"
       :placeholder="endPlaceholder"
-      type="datetime"
       ref="endTime"
       title="至"
-      class="none-boder"
+      class="none-border"
       @change="changeEnd"
     ></Datetime>
   </div>
@@ -33,7 +31,7 @@ export default {
   components: { Datetime },
   props: {
     value: [String, Array, Number, Object],
-    title: {
+    label: {
       type: String,
       default: ''
     },
@@ -54,18 +52,38 @@ export default {
         disabledDate: time => {
           const { end } = this
           if (end) {
-            return time.getTime() > new Date(end).getTime()
+            if (this.getTimestamp(end) === this.getDayStartTimestamp(end)) {
+              return this.getTimestamp(time) > this.getDayStartTimestamp(end) - 1
+            }
+            return this.getTimestamp(time) > this.getDayStartTimestamp(end)
           }
-        }
+        },
+        selectableRange: null
       },
       endOptions: {
         disabledDate: time => {
           const { start } = this
           if (start) {
-            return time.getTime() < new Date(start).getTime() - 1
+            if (this.getTimestamp(start) === this.getDayEndTimestamp(start)) {
+              return this.getTimestamp(time) < this.getDayStartTimestamp(start) + 1
+            }
+            return this.getTimestamp(time) < this.getDayStartTimestamp(start)
           }
-        }
-      }
+        },
+        selectableRange: null
+      },
+      startRange: '00:00:00',
+      endRange: '23:59:59'
+    }
+  },
+  watch: {
+    start() {
+      this.setStartValue()
+      this.setStartRange()
+    },
+    end() {
+      this.setEndValue()
+      this.setEndRange()
     }
   },
   mounted() {
@@ -80,15 +98,85 @@ export default {
       }
     },
     changeStart() {
+      this.setEndRange()
       this.emitFnc()
     },
     changeEnd() {
+      this.setStartRange()
       this.emitFnc()
     },
     emitFnc() {
       const { start, end } = this
       const arr = [start, end]
       this.$emit('input', arr).$emit('change', arr)
+    },
+    resetRange(type) {
+      const { startRange, endRange } = this
+      const all = startRange + '-' + endRange
+      switch (type) {
+        case 'start':
+          this.startOptions.selectableRange = all
+          break
+        case 'end':
+          this.endOptions.selectableRange = all
+          break
+        default:
+          this.startOptions.selectableRange = all
+          this.endOptions.selectableRange = all
+          break
+      }
+    },
+    setStartRange() {
+      if (!this.end || !this.isSameDay()) {
+        this.resetRange()
+      } else {
+        this.startOptions.selectableRange = this.startRange + '-' + this.getHMs(this.end - 1000)
+      }
+    },
+    setEndRange() {
+      if (!this.start || !this.isSameDay()) {
+        this.resetRange()
+      } else {
+        this.endOptions.selectableRange = this.getHMs(this.start + 1000) + '-' + this.endRange
+      }
+    },
+    setStartValue() {
+      const { start, end } = this
+      if (start && end && start >= end) {
+        this.start = end - 1000
+      }
+    },
+    setEndValue() {
+      const { start, end } = this
+      if (start && end && start >= end) {
+        this.end = start + 1000
+      }
+    },
+    isSameDay() {
+      const { start, end } = this
+      return this.getDayStartTimestamp(start) === this.getDayStartTimestamp(end)
+    },
+    // 获取时分秒，自动补零
+    getHMs(timestamp) {
+      if (!timestamp) {
+        return
+      }
+      const date = new Date(timestamp)
+      const hours = date.getHours().toString().padStart(2, '0')
+      const minutes = date.getMinutes().toString().padStart(2, '0')
+      const seconds = date.getSeconds().toString().padStart(2, '0')
+      return hours + ':' + minutes + ':' + seconds
+    },
+    getTimestamp(timestamp) {
+      return new Date(timestamp).getTime()
+    },
+    // 获取当天00:00:00时间戳
+    getDayStartTimestamp(timestamp) {
+      return new Date(new Date(timestamp).setHours(0, 0, 0, 0)).getTime()
+    },
+    // 获取当天23:59:59时间戳，精确到s
+    getDayEndTimestamp(timestamp) {
+      return new Date(new Date(timestamp).setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1000).getTime()
     }
   }
 }
@@ -96,7 +184,6 @@ export default {
 
 <style lang="scss" scoped>
 .filter-datetime-range {
-  //padding-left: 8px;
   cursor: pointer;
   &:hover {
     background-color: #fafafa;

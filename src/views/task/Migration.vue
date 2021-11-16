@@ -3,7 +3,7 @@
     <div class="main">
       <div class="migration-operation">
         <div class="migration-operation-left">
-          <FilterBar v-model="searchParams" :items="filterItems" @search="search()" @fetch="fetch"></FilterBar>
+          <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
         </div>
         <div class="migration-operation-right">
           <VButton type="primary" :loading="createLoading" @click="createTask"><span>创建任务</span></VButton>
@@ -350,7 +350,7 @@ export default {
     let query = this.$route.query
     this.searchParams = Object.assign(this.searchParams, query)
     this.fetch()
-    this.getAgent()
+    this.getFilterItems()
     timer = setInterval(() => {
       let list = this.list || []
       let ids = []
@@ -375,26 +375,48 @@ export default {
           label: '任务状态',
           key: 'status',
           type: 'select-inner',
-          options: this.filterStatusOptions
+          items: this.filterStatusOptions
         },
         {
           label: '任务类型',
           key: 'type',
           type: 'select-inner',
-          options: this.filterTypeMap
+          items: this.filterTypeMap
         },
         {
           label: '同步类型',
           key: 'syncType',
           type: 'select-inner',
-          options: this.filterSyncTypeMap
+          items: this.filterSyncTypeMap
         },
         {
           label: 'Agent 名称',
           key: 'agentId',
           type: 'select-inner',
-          options: this.agentOptions,
-          menuMinWidth: '250px'
+          // url: 'api/tcm/agent',
+          // filterKey: 'agentId',
+          menuMinWidth: '250px',
+          items: async () => {
+            let data = await this.$axios.get('api/tcm/agent')
+            return data.items.map(item => {
+              return {
+                label: item.name,
+                value: item.tmInfo.agentId
+              }
+            })
+          }
+          // formatData: data => {
+          //   let result = {}
+          //   result.total = data.total
+          //   result.items = data.items.map(item => {
+          //     return {
+          //       label: item.name,
+          //       // value: item.name
+          //       value: item.tmInfo.agentId
+          //     }
+          //   })
+          //   return result
+          // }
         },
         {
           placeholder: '名称',
@@ -432,21 +454,14 @@ export default {
         }
       })
     },
-    async getAgent() {
-      let data = await this.$axios.get('api/tcm/agent')
-      this.agentOptions = data.items.map(item => {
-        return {
-          label: item.name,
-          value: item.tmInfo.agentId
-        }
-      })
-      this.getFilterItems()
-    },
-    search() {
-      this.$router.replace({
-        name: 'Task',
-        query: this.searchParams
-      })
+    search(debounce) {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'Task',
+          query: this.searchParams
+        })
+      }, debounce)
     },
     fetch(pageNum) {
       const { toRegExp } = this.$util

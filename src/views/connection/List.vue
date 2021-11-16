@@ -3,7 +3,7 @@
     <div class="main">
       <div class="connection-operation">
         <div class="connection-operation-left">
-          <FilterBar v-model="searchParams" :items="filterItems" @search="search()" @fetch="fetch"></FilterBar>
+          <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
@@ -156,12 +156,6 @@
       cursor: unset;
     }
     .operate-columns {
-      .el-button {
-        padding: 0;
-        & + .el-button {
-          margin: 0;
-        }
-      }
       .el-divider {
         margin: 0 16px;
       }
@@ -268,7 +262,7 @@ export default {
           label: '全部状态',
           key: 'status',
           type: 'select-inner',
-          options: this.statusOptions
+          items: this.statusOptions
         },
         {
           placeholder: '按连接名搜索',
@@ -317,11 +311,14 @@ export default {
         name: 'Connection'
       })
     },
-    search() {
-      this.$router.replace({
-        name: 'Connection',
-        query: this.searchParams
-      })
+    search(debounce) {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'Connection',
+          query: this.searchParams
+        })
+      }, debounce)
     },
     fetch(pageNum) {
       const { toRegExp } = this.$util

@@ -10,67 +10,20 @@
       <template v-if="item.slotName" v-slot="scope">
         <slot :name="item.slotName" :row="scope.row"></slot>
       </template>
-      <ElSelect v-else-if="item.type === 'select'" v-model="item.value" clearable @input="search()">
-        <ElOption v-for="(temp, i) in item.options" :key="i" :label="temp.label" :value="temp.value"></ElOption>
-      </ElSelect>
-      <SelectList
-        v-else-if="item.type === 'select-inner'"
-        v-model="item.value"
-        :items="item.options"
-        :inner-label="item.label"
-        :menu-min-width="item.menuMinWidth"
-        last-page-text=""
-        clearable
-        class="none-border"
-        @input="search()"
-      >
-      </SelectList>
-      <Datetime
-        v-else-if="['datetime'].indexOf(item.type) > -1"
-        v-model="item.value"
-        :title="item.label"
-        v-bind="item"
-        clearable
-        value-format="timestamp"
-        @input="search()"
-      ></Datetime>
-      <DatetimeRange
-        v-else-if="['datetimerange'].indexOf(item.type) > -1"
-        v-model="item.value"
-        :title="item.label"
-        v-bind="item"
-        clearable
-        value-format="timestamp"
-        @input="search()"
-      ></DatetimeRange>
-      <PopInput
-        v-else-if="item.type === 'input-pop'"
-        v-model="item.value"
-        :title="item.label"
-        placement="bottom-start"
-        overflow
-        dark
-        clearable
-        width="200"
-        trigger="click"
-        @change="search()"
-      >
-      </PopInput>
-      <ElInput
+      <component
         v-else
+        v-bind="getOptions(item)"
         v-model="item.value"
-        :placeholder="item.placeholder"
-        clearable
-        class="filter-el-input"
-        :style="{ width: (item.width || 180) + 'px' }"
-        @input="search(800)"
+        :is="getComponent(item.type)"
+        :style="getStyle(item)"
+        @input="search(item)"
       >
-        <VIcon slot="suffix" size="14" class="inline-block">search</VIcon>
-      </ElInput>
+        <VIcon slot="suffix" size="14" class="inline-block">{{ item.icon }}</VIcon>
+      </component>
     </ElFormItem>
     <ElFormItem v-if="!hideRefresh">
       <ElButton plain class="btn-refresh" @click="fetch">
-        <VIcon>refresh</VIcon>
+        <VIcon class="font-color-sub">refresh</VIcon>
       </ElButton>
     </ElFormItem>
   </ElForm>
@@ -94,6 +47,10 @@ export default {
     items: {
       type: Array,
       default: () => []
+      /**参考src/views/operation-log/List.vue:184
+       * 1.支持表单的rules
+       * 格式 rules: () => { let flag = false;//false表示没有错误 if (可取this.searchParams的值做条件) { flag = '报错信息' } return flag }
+       */
     },
     hideRefresh: {
       type: Boolean,
@@ -185,16 +142,13 @@ export default {
       })
       this.rules = result
     },
-    search(debounce) {
-      const { delayTrigger } = this.$util
-      delayTrigger(() => {
-        this.$emit('input', this.getValue())
-        this.$refs.filterForm.validate(res => {
-          if (res) {
-            this.$emit('search')
-          }
-        })
-      }, debounce)
+    search(item) {
+      this.$emit('input', this.getValue())
+      this.$refs.filterForm.validate(res => {
+        if (res) {
+          this.$emit('search', item.debounce)
+        }
+      })
     },
     fetch() {
       this.$emit('input', this.getValue())
@@ -209,8 +163,62 @@ export default {
         return item.label
       }
     },
-    changeDatetimeFnc(value, item) {
-      console.log('changeDatetimeFnc', value, item)
+    // 匹配组件
+    getComponent(type) {
+      let obj = {
+        select: 'SelectList',
+        'select-inner': 'SelectList',
+        datetime: 'Datetime',
+        datetimerange: 'DatetimeRange',
+        'input-pop': 'PopInput',
+        input: 'ElInput'
+      }
+      return obj[type] || obj['input']
+    },
+    getStyle(item) {
+      let obj = {}
+      // { width: item.width }
+      switch (item.type) {
+        case 'input':
+          this.setDefaultValue(obj, 'width', '200px')
+          break
+      }
+      return obj
+    },
+    // 默认设置
+    getOptions(item) {
+      switch (item.type) {
+        case 'select-inner':
+          this.setDefaultValue(item, 'inner-label', item.label)
+          this.setDefaultValue(item, 'last-page-text', '')
+          this.setDefaultValue(item, 'none-border', true)
+          break
+        case 'input':
+          this.setDefaultValue(item, 'debounce', 800)
+          this.setDefaultValue(item, 'icon', 'search')
+          this.setDefaultValue(item, 'class', 'filter-el-input')
+          break
+        case 'input-pop':
+          this.setDefaultValue(item, 'placement', 'bottom-start')
+          this.setDefaultValue(item, 'trigger', 'click')
+          this.setDefaultValue(item, 'width', '200')
+          this.setDefaultValue(item, 'overflow', true)
+          this.setDefaultValue(item, 'dark', true)
+          break
+        case 'datetimerange':
+        case 'datetime':
+          this.setDefaultValue(item, 'value-format', 'timestamp')
+          break
+        default:
+          break
+      }
+      this.setDefaultValue(item, 'clearable', true)
+      return item
+    },
+    setDefaultValue(item, key, val) {
+      if (!hasOwnProperty.call(item, key)) {
+        item[key] = val
+      }
     }
   }
 }
@@ -226,6 +234,9 @@ export default {
   line-height: 32px;
   width: 32px;
   font-size: 16px;
+  &:hover {
+    border-color: #d9d9d9;
+  }
 }
 .filter-form {
   font-size: 12px;

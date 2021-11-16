@@ -57,6 +57,20 @@ export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 export const formatTime = (date, format = 'YYYY-MM-DD HH:mm:ss') => moment(date).format(format)
 // 判断对象是否为空
 export const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
+// 数组去重
+export function uniqueArr(arr = [], key = 'id') {
+  if (typeof arr[0] !== 'object') {
+    return Array.from(new Set(arr))
+  }
+  let obj = {}
+  return arr.reduce((cur, next) => {
+    if (!obj[next[key]]) {
+      obj[next[key]] = true
+      cur.push(next)
+    }
+    return cur
+  }, [])
+}
 // cookie
 export const cookie = {
   // 设置cookie

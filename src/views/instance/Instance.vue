@@ -3,7 +3,7 @@
     <div class="main">
       <div class="instance-operation">
         <div class="instance-operation-left">
-          <FilterBar v-model="searchParams" :items="filterItems" @search="search()" @fetch="fetch"></FilterBar>
+          <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
         </div>
         <div class="instance-operation-right">
           <el-button type="primary" @click="createAgent" :loading="createAgentLoading">
@@ -914,12 +914,6 @@ export default {
     border-bottom: none;
     color: rgba(0, 0, 0, 0.65);
     .operate-columns {
-      .el-button {
-        padding: 0;
-        & + .el-button {
-          margin: 0;
-        }
-      }
       .el-divider {
         margin: 0 16px;
       }

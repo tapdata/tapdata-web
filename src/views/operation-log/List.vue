@@ -164,7 +164,7 @@ export default {
       let [modular, operation] = operationType.split('_')
       return { modular, operation }
     },
-    search() {
+    search(debounce) {
       let { searchParams } = this
       let query = {}
       for (let key in searchParams) {
@@ -172,10 +172,13 @@ export default {
           query[key] = searchParams[key]
         }
       }
-      this.$router.replace({
-        name: 'OperationLog',
-        query: query
-      })
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'OperationLog',
+          query: query
+        })
+      }, debounce)
     },
     getSearchItems() {
       this.filterItems = [
@@ -183,7 +186,7 @@ export default {
           label: '操作类型',
           key: 'operationType',
           type: 'select-inner',
-          options: this.operationTypeOptions
+          items: this.operationTypeOptions
         },
         {
           label: '操作时间',
@@ -355,14 +358,6 @@ export default {
         username: ''
       }
       this.search()
-    },
-    startGreaterThanEndFnc() {
-      let flag = false
-      let { start, end } = this.searchParams
-      if (start && end && start > end) {
-        flag = '【结束时间】不能小于【开始时间】'
-      }
-      return flag
     }
   }
 }

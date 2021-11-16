@@ -1,7 +1,7 @@
 <template>
   <div
     class="v-select-list el-select"
-    :class="[selectSize ? 'el-select--' + selectSize : '']"
+    :class="[selectSize ? 'el-select--' + selectSize : '', { 'none-border': noneBorder }]"
     @click.stop="toggleMenu"
     v-clickoutside="handleClose"
   >
@@ -114,11 +114,13 @@
       @mouseleave="inputHovering = false"
     >
       <span class="inner-select__label">{{ innerLabel }}</span>
-      <span :class="['inner-select__selected', { placeholder: !selectedLabel }]">{{
-        selectedLabel || $t('gl_placeholder_select')
-      }}</span>
-      <VIcon v-if="showClose" size="10" class="icon-btn ml-1">close</VIcon>
-      <VIcon v-else size="10" class="icon-btn ml-1" @click="handleClearClick">arrow-down-fill</VIcon>
+      <span
+        :class="['inner-select__selected', { placeholder: !selectedLabel }]"
+        :style="{ 'max-width': selectedWidth }"
+        >{{ selectedLabel || $t('gl_placeholder_select') }}</span
+      >
+      <VIcon v-if="showClose" size="10" class="icon-btn ml-1" @click.native="handleClearClick">close</VIcon>
+      <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
     </div>
     <div v-if="loading" class="el-select__loading">
       <i class="el-icon-loading"></i>
@@ -168,7 +170,7 @@
 </template>
 
 <script>
-import { deepCopy } from '@/util'
+import { deepCopy, uniqueArr } from '@/util'
 import { Select } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -186,8 +188,7 @@ export default {
 
   props: {
     items: {
-      type: Array,
-      default: () => []
+      type: [Array, Function]
     },
     buffer: {
       type: Number,
@@ -210,15 +211,20 @@ export default {
     },
     labelKey: {
       type: String,
-      default: 'label'
+      default: 'name'
     },
     valueKey: {
       type: String,
-      default: 'value'
+      default: 'id'
     },
-    searchKey: {
+    filterKey: {
       type: String,
       default: 'name'
+    },
+    // 回填搜索的key
+    echoKey: {
+      type: String,
+      default: 'id'
     },
     lastPageText: {
       type: String,
@@ -230,14 +236,25 @@ export default {
     },
     innerLabel: {
       type: String
+    },
+    formatData: {
+      type: Function
+    },
+    noneBorder: {
+      type: Boolean
+    },
+    selectedWidth: {
+      type: String,
+      default: '80px'
     }
   },
 
   data() {
     return {
+      list: [], // 本地数据
       filteredItems: [],
       pageObj: {
-        size: 20,
+        size: 50,
         page: 1,
         totalPage: 1
       }
@@ -278,26 +295,37 @@ export default {
     isRemote() {
       return !!this.url
     }
+    // comItems() {
+    //   const { items } = this
+    //   if (typeof items === 'function') {
+    //     return items()
+    //   }
+    //   return items || []
+    // }
   },
 
   watch: {
     visible(val) {
       val && this.initWidth()
-    },
-    value() {
-      this.getSelectLabel()
     }
   },
   mounted() {
     this.init()
   },
   methods: {
-    init() {
+    async init() {
       if (this.isRemote) {
         this.resetPage()
+        this.value && this.getSelectLabel() // 回显
         this.getData()
       } else {
-        this.filteredItems = deepCopy(this.items)
+        const { items } = this
+        if (typeof items === 'function') {
+          this.list = await this.items()
+        } else {
+          this.list = deepCopy(this.items)
+        }
+        this.filteredItems = deepCopy(this.list)
         this.getSelectLabel()
       }
     },
@@ -315,8 +343,12 @@ export default {
       if (!value) {
         return
       }
+      if (this.isRemote) {
+        this.getData(this.value, false, true)
+        return
+      }
       this.$nextTick(() => {
-        this.selectedLabel = this.items.find(item => item.value === value)?.label
+        this.selectedLabel = this.list.find(item => item.value === value)?.label
       })
     },
     resetInputWidth() {
@@ -331,7 +363,12 @@ export default {
       pageObj.page = 1
       pageObj.totalPage = 1
     },
-    getData(val, isSearch = false) {
+    /**
+     * @param1 val 值
+     * @param2 isSearch 是否搜索
+     * @param3 isEcho 回显
+     * */
+    getData(val, isSearch = false, isEcho = false) {
       let { size, page } = this.pageObj
       let filter = deepCopy(
         Object.assign({}, this.params, {
@@ -341,31 +378,47 @@ export default {
       )
       if (isSearch) {
         this.resetPage()
-        if (filter?.where) {
-          filter.where[this.searchKey] = val
+        if (!filter?.where) {
+          filter.where = {}
         }
+        filter.where[this.filterKey] = val
+      }
+      if (isEcho) {
+        this.resetPage()
+        if (!filter?.where) {
+          filter.where = {}
+        }
+        filter.where[this.echoKey] = val
       }
       let comUrl = this.url + '?filter=' + encodeURIComponent(JSON.stringify(filter))
       this.$axios.get(comUrl).then(data => {
-        this.pageObj.totalPage = data.totalPage
-        if (isSearch) {
-          this.filteredItems = data.items.map(item => {
+        // 格式化数据
+        if (this.formatData) {
+          data = this.formatData(data, size)
+        } else {
+          data.items = data.items.map(item => {
             return {
-              label: item[this.labelKey] || item.name,
-              value: item[this.valueKey] || item.id
+              label: item[this.labelKey],
+              value: item[this.valueKey]
             }
           })
-        } else {
-          this.filteredItems.push(
-            ...data.items.map(item => {
-              return {
-                label: item[this.labelKey] || item.name,
-                value: item[this.valueKey] || item.id
-              }
-            })
-          )
         }
-        this.getSelectLabel()
+        // 分页数据
+        if (data.totalPage) {
+          this.pageObj.totalPage = data.totalPage
+        } else {
+          this.pageObj.totalPage = Math.ceil((data.total || 0) / size)
+        }
+        // 搜索，清空数组
+        if (isSearch) {
+          this.filteredItems = data.items
+        } else {
+          this.filteredItems = uniqueArr([...this.filteredItems, ...data.items], 'value')
+        }
+        // 回显
+        if (isEcho) {
+          this.selectedLabel = this.filteredItems.find(item => item.value === this.value)?.label
+        }
       })
     },
     handleQueryChange(val) {
@@ -412,11 +465,11 @@ export default {
         } else {
           // 本地数据
           if (val) {
-            this.filteredItems = this.items.filter(item => {
+            this.filteredItems = this.list.filter(item => {
               return item.label.indexOf(val) !== -1
             })
           } else {
-            this.filteredItems = deepCopy(this.items)
+            this.filteredItems = deepCopy(this.list)
           }
         }
 
@@ -467,7 +520,6 @@ export default {
         border-color: transparent;
       }
       .inner-select__selected {
-        max-width: 60px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
