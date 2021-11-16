@@ -1,6 +1,6 @@
 <template>
   <div class="setting-panel">
-    <ElForm :model="model" class="setting-panel-form">
+    <ElForm :model="model" form="{form}" class="setting-panel-form">
       <ElTabs v-model="settingPanelType" class="setting-tabs px-3 h-100">
         <ElTabPane label="基本设置" name="base">
           <div class="setting-panel-box bg-white">
@@ -45,11 +45,16 @@
           </div>
           <div class="setting-panel-box bg-white mt-5">
             <div class="setting-title fs-7 pl-4">全量设置</div>
-              <div class="pt-5 px-5">
-                <ElFormItem label="目标写入线程数">
-                  <ElInputNumber v-model="model.transformerConcurrency" controls-position="right" :min="1" :max="100"></ElInputNumber>
-                </ElFormItem>
-              </div>
+            <div class="pt-5 px-5">
+              <ElFormItem label="目标写入线程数">
+                <ElInputNumber
+                  controls-position="right"
+                  v-model="model.transformerConcurrency"
+                  :min="1"
+                  :max="100"
+                ></ElInputNumber>
+              </ElFormItem>
+            </div>
           </div>
           <div class="setting-panel-box bg-white mt-5">
             <div class="setting-title fs-7 pl-4">增量设置</div>
@@ -70,7 +75,13 @@
                 <ElCol :span="12">
                   <ElFormItem label="增量滞后判断时间设置">
                     <ElSwitch v-model="model.lagTimeFalg"></ElSwitch>
-                    <ElInputNumber v-model="model.userSetLagTime" controls-position="right" :min="1"></ElInputNumber>ms
+                    <ElInputNumber
+                      controls-position="right"
+                      class="pl-5"
+                      v-model="model.userSetLagTime"
+                      :min="1"
+                    ></ElInputNumber>
+                    ms
                   </ElFormItem>
                 </ElCol>
                 <ElCol :span="12">
@@ -79,7 +90,12 @@
                       <ElOption label="批量" value="false"></ElOption>
                       <ElOption label="逐条" value="true"></ElOption>
                     </ElSelect>
-                    <ElInputNumber v-model="model.cdcFetchSize" controls-position="right" :min="1"></ElInputNumber>
+                    <ElInputNumber
+                      controls-position="right"
+                      class="pl-5"
+                      v-model="model.cdcFetchSize"
+                      :min="1"
+                    ></ElInputNumber>
                   </ElFormItem>
                 </ElCol>
               </ElRow>
@@ -93,50 +109,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
-import { createSchemaField, FormProvider } from '@formily/vue'
-import { action } from '@formily/reactive'
-import * as components from 'web-core/components/form'
-import {
-  Form,
-  FormItem,
-  FormTab,
-  PreviewText,
-  ArrayTable,
-  Switch,
-  Input,
-  InputNumber,
-  Checkbox,
-  Radio,
-  Space,
-  FormGrid,
-  ArrayTabs,
-  FormLayout
-} from '@formily/element'
 import 'web-core/components/form/styles/index.scss'
-
-const form = createForm({
-  validateFirst: true
-})
-
-const { SchemaField } = createSchemaField({
-  components: {
-    FormItem,
-    FormTab,
-    ArrayTable,
-    PreviewText,
-    Switch,
-    Input,
-    InputNumber,
-    Checkbox,
-    Radio,
-    Space,
-    FormGrid,
-    ArrayTabs,
-    FormLayout,
-    ...components
-  }
-})
 
 export default {
   name: 'SettingPanel',
@@ -146,12 +119,19 @@ export default {
       model: {
         name: '',
         sync_type: 'initial_sync+cdc',
-        describe: ''
+        describe: '',
+        needToCreateIndex: false,
+        distinctWriteType: 'intellect',
+        transformerConcurrency: 1,
+        cdcEngineFilter: false,
+        cdcConcurrency: false,
+        lagTimeFalg: false,
+        userSetLagTime: 1,
+        isSerialMode: 'false',
+        cdcFetchSize: 1
       }
     }
   },
-
-  components: { Form, FormProvider, SchemaField },
 
   computed: {
     ...mapGetters('dataflow', [
@@ -171,17 +151,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.setting-panel{
+.setting-panel {
   height: 100%;
-  .setting-tabs,.setting-panel-form{
+  .setting-tabs,
+  .setting-panel-form {
     height: 100%;
     ::v-deep {
       .el-tabs__heade {
         margin-bottom: 0;
       }
+      .el-tabs__header {
+        margin-bottom: 0 !important;
+      }
       .el-tabs__content {
         height: calc(100% - 60px);
-        overflow: auto!important;
+        overflow: auto !important;
         .el-tab-pane {
           height: 100%;
           .setting-panel-box {
@@ -193,9 +177,20 @@ export default {
           font-weight: 500;
           border-bottom: 1px solid rgba(200, 205, 207, 0.26);
         }
+        .el-select,
+        .el-input,
+        .el-textarea {
+          width: auto;
+        }
+        .el-textarea {
+          width: 500px;
+          min-height: 100px;
+          .el-textarea__inner {
+            min-height: 100px !important;
+          }
+        }
       }
     }
   }
-
 }
 </style>
