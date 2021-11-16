@@ -285,7 +285,7 @@
       <div>当前进度: {{ progress.finished }} / {{ progress.total }}</div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="showSchemaProgress = false">关闭</el-button>
-        <el-button type="primary" size="mini" @click="start()">重试</el-button>
+        <el-button :disabled="progress.progress !== 'done'" type="primary" size="mini" @click="start()">启动</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -651,7 +651,10 @@ export default {
     initWSSed() {
       let id = this.dataFlowId || this.queryId
       let msg = {
-        dataFlowId: id
+        type: 'metadataTransformerProgress',
+        data: {
+          dataFlowId: id
+        }
       }
       ws.ready(() => {
         ws.send(msg)
