@@ -156,6 +156,8 @@ export default {
             }
           }
         }
+        let result = this.$refs.fieldMappingDom.returnForm()
+        this.updateAutoTransform('', result)
       }
       this.$emit('returnFieldMapping', this.field_process)
       //迁移任务需要同步字段处理器
@@ -192,8 +194,7 @@ export default {
     },
     //获取左边导航数据 - 表
     async updateMetadata(type, data) {
-      //将表改名 字段改名 放在setting里面
-      this.updateAutoTransform(type, data)
+      this.updateAutoTransform(type, data) //更新当前form
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       return promise?.data
     },
