@@ -649,7 +649,7 @@ export default {
     },
     //实时获取schema加载进度
     initWSSed() {
-      let id = this.dataFlowId || this.queryId
+      let id = this.$route.query.id || this.queryId
       let msg = {
         type: 'metadataTransformerProgress',
         data: {
