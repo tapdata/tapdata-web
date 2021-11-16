@@ -1005,7 +1005,8 @@ export default {
               platformInfo: {
                 agentType: 'private'
               },
-              byFirstCheckId: ''
+              byFirstCheckId: '',
+              browserTimezoneOffset: new Date().getTimezoneOffset()
             })
           )
             .then(data => {
