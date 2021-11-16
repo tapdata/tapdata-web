@@ -4,7 +4,7 @@
     @mouseenter="mouseEnterFnc"
     @mouseleave="mouseLeaveFnc"
   >
-    <div v-if="title" class="filter-datetime__title" @click="$refs.datepicker.focus()">{{ title }}</div>
+    <div v-if="title" class="filter-datetime__title" @click="focusFnc">{{ title }}</div>
     <ElDatePicker
       v-model="time"
       v-bind="$attrs"
@@ -15,7 +15,7 @@
       @change="emitFnc"
     ></ElDatePicker>
     <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.native.stop="clear">close</VIcon>
-    <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
+    <VIcon v-else size="10" class="icon-btn ml-1" @click.native="focusFnc">arrow-down-fill</VIcon>
   </div>
 </template>
 
@@ -66,6 +66,9 @@ export default {
     emitFnc() {
       const { time } = this
       this.$emit('input', time).$emit('change', time)
+    },
+    focusFnc() {
+      this.$refs.datepicker?.focus()
     }
   }
 }
