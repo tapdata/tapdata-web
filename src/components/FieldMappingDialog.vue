@@ -61,12 +61,13 @@
           </li>
         </ul>
         <ElPagination
+          small
           class="flex mt-3"
           layout="total, prev, pager, next"
           :current-page.sync="page.current"
           :page-size.sync="page.size"
           :total="page.total"
-          :page-count="3"
+          :pager-count="5"
           @current-change="initNavData"
         >
         </ElPagination>
