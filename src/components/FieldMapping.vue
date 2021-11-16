@@ -169,6 +169,8 @@ export default {
             }
           }
         }
+        let result = this.$refs.fieldMappingDom.returnForm()
+        this.updateAutoTransform('', result)
       }
       this.$emit('returnFieldMapping', this.field_process)
       //迁移任务需要同步字段处理器
