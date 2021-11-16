@@ -1,20 +1,26 @@
 <template>
   <div class="field-mapping" v-loading="loadingPage">
-    <div class="field-mapping__desc" style="text-align: left; line-height: 28px">
+    <div class="field-mapping__desc text-start lh-base">
       <strong>表设置</strong>:
       用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
-      <div style="float: right">
+      <div class="float-end">
         <el-button v-if="!readOnly && transform" plain type="primary" size="mini" @click="handleChangTableName"
           >表改名</el-button
         >
         <el-button v-if="!readOnly && transform" plain type="primary" size="mini" @click="dialogFieldVisible = true"
           >字段改名</el-button
         >
-        <el-button v-if="!readOnly" size="mini" type="primary" @click="rollbackAll">恢复默认</el-button>
+        <el-button v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">恢复默认</el-button>
       </div>
     </div>
     <div class="task-form-body">
       <div class="nav">
+        <div class="flex mb-2 ml-6">
+          <div class="flex">
+            <span class="text"> 搜索表：</span>
+            <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
+          </div>
+        </div>
         <ul>
           <li
             v-for="(item, index) in fieldMappingNavData"
@@ -45,17 +51,15 @@
       <div class="main">
         <div class="search mb-5 ml-2">
           <div class="item">
-            <span> 搜索表：</span>
-            <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
-          </div>
-          <div class="item">
             <span> 搜索字段：</span>
             <el-input v-model="searchField" size="mini" @change="search('field')"></el-input>
           </div>
-          <div class="item" v-if="!readOnly">
-            <el-button size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
-              <VIcon class="color-primary" size="14">rollback</VIcon>
-            </el-button>
+          <div class="item ml-5" v-if="!readOnly">
+            <el-tooltip effect="dark" content="恢复默认字段" placement="top-start">
+              <el-button size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
+                <VIcon class="color-primary" size="14">rollback</VIcon>
+              </el-button>
+            </el-tooltip>
           </div>
         </div>
         <El-table
@@ -91,7 +95,7 @@
               <span v-else :show-overflow-tooltip="true">{{ scope.row.t_field_name }}</span>
             </template>
           </ElTableColumn>
-          <ElTableColumn label="目标表类型">
+          <ElTableColumn label="目标表类型" width="150">
             <template slot-scope="scope">
               <div v-if="!scope.row.is_deleted && !readOnly" @click="edit(scope.row, 'data_type')">
                 <span>{{ scope.row.t_data_type }}</span>
@@ -406,17 +410,8 @@ export default {
         let rules = this.typeMapping.filter(v => v.dbType === data[i].t_data_type)
         if (rules?.length > 0) {
           rules = rules[0].rules
-          if (!data[i].t_precision) {
-            this.showPrecisionEdit(data[i].t_id, rules || [])
-            //this.influencesPrecision(data[i].t_id, rules || [])
-          } else if (!data[i].t_scale) {
-            this.showScaleEdit(data[i].t_id, rules || [])
-            //this.influencesScale(data[i].t_id, rules || [])
-          } else if (!data[i].t_precision && !data[i].t_scale) {
-            this.showPrecisionEdit(data[i].t_id, rules || [])
-            this.showScaleEdit(data[i].t_id, rules || [])
-            // this.influences(data[i].t_id, rules || [])
-          }
+          this.showPrecisionEdit(data[i].t_id, rules || [])
+          this.showScaleEdit(data[i].t_id, rules || [])
         }
       }
     },
@@ -1051,19 +1046,22 @@ export default {
   .search {
     display: flex;
     justify-content: flex-start;
-    margin-top: 10px;
     text-align: left;
     .item {
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      margin-right: 20px;
       span {
         display: inline-block;
         width: 115px;
         text-align: left;
       }
     }
+  }
+  .text {
+    display: inline-block;
+    width: 80px;
+    text-align: left;
   }
   .task-form-body {
     display: flex;
@@ -1072,11 +1070,11 @@ export default {
     height: 0;
     .nav {
       flex: 0 0 auto;
-      border-top: 1px solid #f2f2f2;
-      border-right: 1px solid #f2f2f2;
       overflow-y: auto;
       ul {
         padding-bottom: 100px;
+        border-top: 1px solid #f2f2f2;
+        border-right: 1px solid #f2f2f2;
       }
       li {
         height: 93px;

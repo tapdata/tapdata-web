@@ -1,6 +1,7 @@
 <template>
   <div class="el-transfer">
     <VirtualTransferPanel
+      v-slot="{ option }"
       v-bind="$props"
       ref="leftPanel"
       :data="sourceData"
@@ -9,6 +10,7 @@
       :placeholder="filterPlaceholder || t('el.transfer.filterPlaceholder')"
       @checked-change="onSourceCheckedChange"
     >
+      <slot name="left" :option="option"></slot>
       <slot name="left-footer"></slot>
     </VirtualTransferPanel>
     <div class="el-transfer__buttons">
@@ -32,6 +34,7 @@
       </el-button>
     </div>
     <VirtualTransferPanel
+      v-slot="{ option }"
       v-bind="$props"
       ref="rightPanel"
       :data="targetData"
@@ -40,6 +43,7 @@
       :placeholder="filterPlaceholder || t('el.transfer.filterPlaceholder')"
       @checked-change="onTargetCheckedChange"
     >
+      <slot name="right" :option="option"></slot>
       <slot name="right-footer"></slot>
     </VirtualTransferPanel>
   </div>
