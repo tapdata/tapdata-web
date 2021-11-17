@@ -133,7 +133,7 @@ export default {
           if (isSearch) {
             this.noMore = false
             this.isScrollBottom = true
-            let list = data || []
+            let list = data?.items || []
             this.logs = list.reverse().map(this.formatLog)
             this.scrollToBottom()
             return

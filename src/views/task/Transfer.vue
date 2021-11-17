@@ -22,31 +22,42 @@
         <VIcon class="color-primary" size="14">info</VIcon>
       </ElTooltip>
     </div>
-    <ElTransfer
-      v-model="selectSourceArr"
+    <VirtualTransfer
       v-if="!transferFlag"
-      filterable
-      class="e-transfer"
+      v-model="selectSourceArr"
+      :props="{ key: 'key' }"
+      :item-size="30"
       :titles="titles"
-      :filter-method="filterMethod"
       :filter-placeholder="$t('editor.cell.link.searchContent')"
+      :filter-method="filterMethod"
       :data="sourceData"
+      class="e-transfer"
+      filterable
       @change="handleChangeTransfer"
-      @right-check-change="handleSelectTable"
     >
-      <span slot-scope="{ option }">
-        <!-- <span> {{ option.label }}</span> -->
-        <span v-if="selectSourceArr.includes(option.key)">{{ formData.table_prefix }}</span>
+      <template #left="{ option }">
         <span>{{ option.label }}</span>
-        <span v-if="selectSourceArr.includes(option.key)">{{ formData.table_suffix }}</span>
-        <!-- 字段映射 放在表设置了 -->
-        <!--        <span-->
-        <!--          v-if="selectSourceArr.includes(option.key) && !isTwoWay"-->
-        <!--          @click.stop.prevent="handleFiled(option)"-->
-        <!--          class="el-icon-setting field-transfer__icon"-->
-        <!--        ></span>-->
-      </span>
-    </ElTransfer>
+      </template>
+      <template #right="{ option }">
+        <span>
+          <span v-if="selectSourceArr.includes(option.key)">{{ formData.table_prefix }}</span>
+          <span>{{ option.label }}</span>
+          <span v-if="selectSourceArr.includes(option.key)">{{ formData.table_suffix }}</span>
+        </span>
+      </template>
+      <!--      <template #left="{ option }"> {{ option.original_name }} </template>-->
+      <!--      <template #right="{ option }">-->
+      <!--        <span v-if="model.tableNameTransform === 'toLowerCase'">-->
+      <!--          {{ (model.table_prefix + option.original_name + model.table_suffix).toLowerCase() }}-->
+      <!--        </span>-->
+      <!--        <span v-else-if="model.tableNameTransform === 'toUpperCase'">-->
+      <!--          {{ (model.table_prefix + option.original_name + model.table_suffix).toUpperCase() }}-->
+      <!--        </span>-->
+      <!--        <span v-else>-->
+      <!--          {{ model.table_prefix + option.original_name + model.table_suffix }}-->
+      <!--        </span>-->
+      <!--      </template>-->
+    </VirtualTransfer>
     <template v-else>
       <MqTransfer
         v-model="mqActiveData"
@@ -157,9 +168,11 @@
 <script>
 import VIcon from '@/components/VIcon'
 import MqTransfer from './mqTransfer'
+import VirtualTransfer from 'web-core/components/virtual-transfer'
+
 let selectKeepArr = []
 export default {
-  components: { VIcon, MqTransfer },
+  components: { VIcon, MqTransfer, VirtualTransfer },
   props: ['transferData', 'isTwoWay', 'mqTransferFlag'],
   data() {
     var validatePrefix = (rule, value, callback) => {
