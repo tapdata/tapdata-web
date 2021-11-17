@@ -102,6 +102,133 @@ export default function (vm) {
         required: true
       },
       {
+        type: 'switch', //开启 kerberos 认证
+        field: 'krb5',
+        label: vm.$t('connection_kafka_kerberos_attest'),
+        show: true,
+        tip: vm.$t('connection_kafka_kerberos_tip')
+      },
+      {
+        type: 'file',
+        field: 'krb5KeytabName',
+        label: vm.$t('connection_kafka_kerberos_config_keytab'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ],
+        rules: [
+          {
+            required: true,
+            validator: (rule, v, callback) => {
+              let value = vm.model.krb5Keytab
+              if (!value) {
+                if (v) {
+                  callback()
+                }
+                callback(new Error(vm.$t('connection_kafka_kerberos_none_keytab')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ],
+        on: {
+          change(file) {
+            fileChange(file, 'krb5Keytab')
+          }
+        }
+      },
+      {
+        type: 'file',
+        field: 'krb5ConfName',
+        label: vm.$t('connection_kafka_kerberos_config_conf'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ],
+        rules: [
+          {
+            required: true,
+            validator: (rule, v, callback) => {
+              let value = vm.model.krb5Conf
+              if (!value) {
+                if (v) {
+                  callback()
+                }
+                callback(new Error(vm.$t('connection_kafka_kerberos_none_conf')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ],
+        on: {
+          change(file) {
+            fileChange(file, 'krb5Conf')
+          }
+        }
+      },
+      {
+        type: 'input', //主体配置
+        field: 'krb5Principal',
+        label: vm.$t('connection_kafka_kerberos_body_config'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true,
+              required: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'input', //服务名
+        field: 'krb5ServiceName',
+        label: vm.$t('connection_kafka_kerberos_service_name'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true,
+              required: true
+            }
+          }
+        ]
+      },
+      {
         type: 'input',
         field: 'database_username',
         label: vm.$t('dataForm.form.userName'),
@@ -260,133 +387,6 @@ export default function (vm) {
             ],
             triggerConfig: {
               show: false
-            }
-          }
-        ]
-      },
-      {
-        type: 'switch', //开启 kerberos 认证
-        field: 'krb5',
-        label: vm.$t('connection_kafka_kerberos_attest'),
-        show: true,
-        tip: vm.$t('connection_kafka_kerberos_tip')
-      },
-      {
-        type: 'file',
-        field: 'krb5KeytabName',
-        label: vm.$t('connection_kafka_kerberos_config_keytab'),
-        show: false,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'krb5',
-                value: true
-              }
-            ],
-            triggerConfig: {
-              show: true
-            }
-          }
-        ],
-        rules: [
-          {
-            required: true,
-            validator: (rule, v, callback) => {
-              let value = vm.model.krb5Keytab
-              if (!value) {
-                if (v) {
-                  callback()
-                }
-                callback(new Error(vm.$t('connection_kafka_kerberos_none_keytab')))
-              } else {
-                callback()
-              }
-            }
-          }
-        ],
-        on: {
-          change(file) {
-            fileChange(file, 'krb5Keytab')
-          }
-        }
-      },
-      {
-        type: 'file',
-        field: 'krb5ConfName',
-        label: vm.$t('connection_kafka_kerberos_config_conf'),
-        show: false,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'krb5',
-                value: true
-              }
-            ],
-            triggerConfig: {
-              show: true
-            }
-          }
-        ],
-        rules: [
-          {
-            required: true,
-            validator: (rule, v, callback) => {
-              let value = vm.model.krb5Conf
-              if (!value) {
-                if (v) {
-                  callback()
-                }
-                callback(new Error(vm.$t('connection_kafka_kerberos_none_conf')))
-              } else {
-                callback()
-              }
-            }
-          }
-        ],
-        on: {
-          change(file) {
-            fileChange(file, 'krb5Conf')
-          }
-        }
-      },
-      {
-        type: 'input', //主体配置
-        field: 'krb5Principal',
-        label: vm.$t('connection_kafka_kerberos_body_config'),
-        show: false,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'krb5',
-                value: true
-              }
-            ],
-            triggerConfig: {
-              show: true,
-              required: true
-            }
-          }
-        ]
-      },
-      {
-        type: 'input', //服务名
-        field: 'krb5ServiceName',
-        label: vm.$t('connection_kafka_kerberos_service_name'),
-        show: false,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'krb5',
-                value: true
-              }
-            ],
-            triggerConfig: {
-              show: true,
-              required: true
             }
           }
         ]
