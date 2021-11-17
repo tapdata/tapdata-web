@@ -549,7 +549,7 @@ export default {
       this.getFlowStages()
     },
     dealData(flowData, callback, isDB) {
-      let types = isDB ? ['database'] : ['table', 'collection']
+      let types = isDB ? ['database'] : ['table', 'collection', 'kafka']
       let flowStages = flowData.stages.filter(stg => types.includes(stg.type))
       let connectionIds = []
       let tableNames = []
@@ -557,7 +557,7 @@ export default {
         connectionIds.push(stg.connectionId)
         if (!isDB) {
           tableNames.push(stg.tableName)
-        } else if (stg.syncObjects) {
+        } else if (stg.syncObjects?.length) {
           let obj = stg.syncObjects[0]
           let tables = obj.objectNames || []
           tables.forEach(t => {
@@ -569,7 +569,7 @@ export default {
       if (connectionIds.length) {
         let where = {
           meta_type: {
-            inq: ['table', 'collection']
+            inq: ['table', 'collection', 'kafka']
           },
           'source.id': {
             inq: Array.from(new Set(connectionIds))
@@ -666,7 +666,7 @@ export default {
 
             let outputLanes = target.connectionId + targetTableName
             let key = source.connectionId + name
-            this.stageMap[key] = outputLanes
+            this.stageMap[key] = [outputLanes]
             this.flowStages.push({
               id: key,
               connectionId: sourceTable.source.id,
@@ -692,7 +692,7 @@ export default {
           let parent = tree.find(item => item.value === tb.source.id)
           if (!parent) {
             parent = {
-              label: tb.source.nam,
+              label: tb.source.name,
               value: tb.source.id,
               children: []
             }
