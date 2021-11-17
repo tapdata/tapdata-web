@@ -48,6 +48,15 @@ export default {
 
   connection_form_custom_connection_before_operate: 'Pre-operation',
   connection_form_custom_connection_after_operate: 'Post-operation',
+  connection_kafka_kerberos_attest: 'kerberos authentication',
+  connection_kafka_kerberos_config_keytab: 'Key representation file',
+  connection_kafka_kerberos_config_conf: 'Configuration file',
+  connection_kafka_kerberos_body_config: 'Body Configuration',
+  connection_kafka_kerberos_service_name: 'Service name',
+  connection_kafka_kerberos_tip:
+    'The instance name mapping needs to be configured on the host where the Engine is located /etc/hosts',
+  connection_kafka_kerberos_none_keytab: 'The key representation file cannot be empty',
+  connection_kafka_kerberos_none_conf: 'Configuration file cannot be empty',
 
   //Dag
   dag_data_node_label_dameng: 'Dameng Node',

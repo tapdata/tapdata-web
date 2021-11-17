@@ -46,6 +46,14 @@ export default {
 
   connection_form_custom_connection_before_operate: '前置操作',
   connection_form_custom_connection_after_operate: '後置操作',
+  connection_kafka_kerberos_attest: 'kerberos 認證',
+  connection_kafka_kerberos_config_keytab: '密鑰表示文件',
+  connection_kafka_kerberos_config_conf: '配置文件',
+  connection_kafka_kerberos_body_config: '主體配置',
+  connection_kafka_kerberos_service_name: '服務名',
+  connection_kafka_kerberos_tip: '需要在 Engine 所在主機 /etc/hosts 配置實例名映射',
+  connection_kafka_kerberos_none_keytab: '密鑰表示文件不能為空',
+  connection_kafka_kerberos_none_conf: '配置文件不能為空',
 
   // Dag
   dag_data_node_label_dameng: 'Dameng節點',

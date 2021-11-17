@@ -1,4 +1,44 @@
 export default function (vm) {
+  const fileChange = (file, field) => {
+    if (file) {
+      const isLt128KB = file.size / 1024 < 128
+      if (!isLt128KB) {
+        new Error('上传文件大小不能超过 128KB')
+      } else {
+        // 转base64
+        let reader = new FileReader()
+        reader.readAsText(file)
+        reader.onload = () => {
+          let text = reader.result
+          vm.model[field] = text
+          vm.model[field + 'Name'] = file.name
+
+          getBase64(file).then(resBase64 => {
+            vm.model[field] = resBase64.split(',')[1]
+          })
+        }
+      }
+    } else {
+      vm.model[field] = ''
+    }
+  }
+  const getBase64 = file => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      let fileResult = ''
+      reader.readAsDataURL(file)
+      //开始转
+      reader.onload = function () {
+        fileResult = reader.result
+      } //转 失败
+      reader.onerror = function (error) {
+        reject(error)
+      } //转 结束  咱就 resolve 出去
+      reader.onloadend = function () {
+        resolve(fileResult)
+      }
+    })
+  }
   return {
     form: {
       labelPosition: 'right',
@@ -64,14 +104,42 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_username',
-        label: vm.$t('dataForm.form.userName')
+        label: vm.$t('dataForm.form.userName'),
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
       },
       {
         type: 'input',
         field: 'plain_password',
         label: vm.$t('dataForm.form.password'),
         domType: 'password',
-        showPassword: true
+        showPassword: true,
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
       },
       {
         type: 'switch', // 忽略非JSON Object格式消息
@@ -192,6 +260,133 @@ export default function (vm) {
             ],
             triggerConfig: {
               show: false
+            }
+          }
+        ]
+      },
+      {
+        type: 'switch', //开启 kerberos 认证
+        field: 'krb5',
+        label: vm.$t('connection_kafka_kerberos_attest'),
+        show: true,
+        tip: vm.$t('connection_kafka_kerberos_tip')
+      },
+      {
+        type: 'file',
+        field: 'krb5KeytabName',
+        label: vm.$t('connection_kafka_kerberos_config_keytab'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ],
+        rules: [
+          {
+            required: true,
+            validator: (rule, v, callback) => {
+              let value = vm.model.krb5Keytab
+              if (!value) {
+                if (v) {
+                  callback()
+                }
+                callback(new Error(vm.$t('connection_kafka_kerberos_none_keytab')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ],
+        on: {
+          change(file) {
+            fileChange(file, 'krb5Keytab')
+          }
+        }
+      },
+      {
+        type: 'file',
+        field: 'krb5ConfName',
+        label: vm.$t('connection_kafka_kerberos_config_conf'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ],
+        rules: [
+          {
+            required: true,
+            validator: (rule, v, callback) => {
+              let value = vm.model.krb5Conf
+              if (!value) {
+                if (v) {
+                  callback()
+                }
+                callback(new Error(vm.$t('connection_kafka_kerberos_none_conf')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ],
+        on: {
+          change(file) {
+            fileChange(file, 'krb5Conf')
+          }
+        }
+      },
+      {
+        type: 'input', //主体配置
+        field: 'krb5Principal',
+        label: vm.$t('connection_kafka_kerberos_body_config'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true,
+              required: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'input', //服务名
+        field: 'krb5ServiceName',
+        label: vm.$t('connection_kafka_kerberos_service_name'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true,
+              required: true
             }
           }
         ]

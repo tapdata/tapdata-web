@@ -135,7 +135,14 @@ export const defaultModel = {
     kafkaIgnoreInvalidRecord: false,
     kafkaAcks: '',
     kafkaCompressionType: '',
-    kafkaIgnorePushError: false
+    kafkaIgnorePushError: false,
+    krb5: false,
+    krb5Keytab: '',
+    krb5Conf: '',
+    krb5KeytabName: '',
+    krb5ConfName: '',
+    krb5Principal: '',
+    krb5ServiceName: ''
   },
   file: {
     name: '',

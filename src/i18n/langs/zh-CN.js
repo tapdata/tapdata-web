@@ -46,6 +46,14 @@ export default {
 
   connection_form_custom_connection_before_operate: '前置操作',
   connection_form_custom_connection_after_operate: '后置操作',
+  connection_kafka_kerberos_attest: 'kerberos 认证',
+  connection_kafka_kerberos_config_keytab: '密钥表示文件',
+  connection_kafka_kerberos_config_conf: '配置文件',
+  connection_kafka_kerberos_body_config: '主体配置',
+  connection_kafka_kerberos_service_name: '服务名',
+  connection_kafka_kerberos_tip: '需要在 Engine 所在主机 /etc/hosts 配置实例名映射',
+  connection_kafka_kerberos_none_keytab: '密钥表示文件不能为空',
+  connection_kafka_kerberos_none_conf: '配置文件不能为空',
 
   // 路由名
   app_menu_jsFuncs: '函数',
