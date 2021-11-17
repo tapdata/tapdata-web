@@ -532,6 +532,13 @@ export default {
         connectionIds.push(stg.connectionId)
         if (!isDB) {
           tableNames.push(stg.tableName)
+        } else if (stg.syncObjects?.length) {
+          let obj = stg.syncObjects[0]
+          let tables = obj.objectNames || []
+          tables.forEach(t => {
+            tableNames.push(t)
+            tableNames.push(stg.table_prefix + t + stg.table_suffix)
+          })
         }
       })
       if (connectionIds.length) {
@@ -543,10 +550,8 @@ export default {
             inq: Array.from(new Set(connectionIds))
           }
         }
-        if (!isDB) {
-          where.original_name = {
-            inq: Array.from(new Set(tableNames))
-          }
+        where.original_name = {
+          inq: Array.from(new Set(tableNames))
         }
         this.metaDataFunc({
           filter: JSON.stringify({
@@ -558,15 +563,7 @@ export default {
             let tables = data || []
             if (isDB) {
               this.stageMap = {}
-              flowStages.forEach(stage => {
-                if (stage.outputLanes.length) {
-                  let targetDBStage = flowStages.find(stg => stg.id === stage.outputLanes[0])
-                  this.getTreeForDBFlow('source', tables, stage, targetDBStage)
-                }
-                if (stage.inputLanes.length) {
-                  this.getTreeForDBFlow('target', tables, stage)
-                }
-              })
+              this.getTreeForDBFlow(tables, flowStages)
             } else {
               this.flowStages = flowStages
               this.allStages = flowData.stages
@@ -615,65 +612,80 @@ export default {
         })
       }
     },
-    getTreeForDBFlow(type, tables, stage, targetStage) {
-      let includeTableNames = []
-      let getTableNames = (objects, prefix = '', suffix = '') => {
-        let obj = objects.find(obj => obj.type === 'table')
-        if (obj) {
-          includeTableNames = obj.objectNames.map(tName => {
-            return prefix + tName + suffix
-          })
+    getTreeForDBFlow(tables, flowStages) {
+      let stagesMap = {}
+      let targetStages = []
+      flowStages.forEach(stg => {
+        stagesMap[stg.id] = stg
+        if (stg.inputLanes?.length) {
+          targetStages.push(stg)
         }
-      }
-      if (type === 'source' && targetStage.syncObjects) {
-        getTableNames(targetStage.syncObjects)
-      }
-      if (type === 'target' && stage.syncObjects) {
-        getTableNames(stage.syncObjects, stage.table_prefix, stage.table_suffix)
-      }
-      let includeTables = tables.filter(tb => {
-        let flag = true
-        if (includeTableNames.length) {
-          flag = includeTableNames.includes(tb.original_name)
-        }
-        return tb.source.id === stage.connectionId && flag
       })
-      if (!includeTables.length) {
-        return this.$message.error("Can't found the " + type + 'node: ' + stage.tableName)
-      }
-      let parent = {
-        label: includeTables[0].source.name,
-        value: stage.connectionId,
-        children: []
-      }
-      let index = this[type + 'Tree'].findIndex(it => it.value === stage.connectionId)
-      if (index >= 0) {
-        parent = this[type + 'Tree'].splice(index, 1)[0]
-      }
-      includeTables.forEach(table => {
-        if (!parent.children.find(child => child.value === table.original_name)) {
-          parent.children.push({
-            label: table.original_name,
-            value: table.original_name
-          })
-          let outputLanes = targetStage
-            ? [targetStage.connectionId + targetStage.table_prefix + table.original_name + targetStage.table_suffix]
-            : null
-          let key = stage.connectionId + table.original_name
-          if (targetStage) {
-            this.stageMap[key] = outputLanes
+      this.sourceTree = []
+      this.targetTree = []
+      let sourceTables = []
+      let targetTables = []
+      targetStages.forEach(stage => {
+        let target = stage
+        let source = stagesMap[target.inputLanes[0]]
+
+        let obj = target.syncObjects[0]
+        let sourceTablesNames = obj.objectNames || []
+        sourceTablesNames.forEach(name => {
+          let targetTableName = target.table_prefix + name + target.table_suffix
+          let sourceTable = tables.find(tb => tb.original_name === name && tb.source.id === source.connectionId)
+          let targetTable = tables.find(
+            tb => tb.original_name === targetTableName && tb.source.id === target.connectionId
+          )
+          if (sourceTable && targetTable) {
+            sourceTables.push(sourceTable)
+            targetTables.push(targetTable)
+
+            let outputLanes = target.connectionId + targetTableName
+            let key = source.connectionId + name
+            this.stageMap[key] = [outputLanes]
+            this.flowStages.push({
+              id: key,
+              connectionId: sourceTable.source.id,
+              connectionName: sourceTable.source.name,
+              fields: sourceTable.fields,
+              tableName: sourceTable.original_name
+            })
+            this.flowStages.push({
+              id: outputLanes,
+              connectionId: targetTable.source.id,
+              connectionName: targetTable.source.name,
+              fields: targetTable.fields,
+              tableName: targetTable.original_name
+            })
+          } else {
+            this.$message.error('找不到节点对应的表信息')
           }
-          this.flowStages.push({
-            id: key,
-            connectionId: table.source.id,
-            connectionName: table.source.name,
-            fields: table.fields,
-            tableName: table.original_name,
-            outputLanes
-          })
-        }
+        })
       })
-      this[type + 'Tree'].push(parent)
+      let getTree = (type, tables) => {
+        let tree = this[type]
+        tables.forEach(tb => {
+          let parent = tree.find(item => item.value === tb.source.id)
+          if (!parent) {
+            parent = {
+              label: tb.source.name,
+              value: tb.source.id,
+              children: []
+            }
+            tree.push(parent)
+          }
+
+          if (!parent.children.some(c => c.value === tb.original_name)) {
+            parent.children.push({
+              label: tb.original_name,
+              value: tb.original_name
+            })
+          }
+        })
+      }
+      getTree('sourceTree', sourceTables)
+      getTree('targetTree', targetTables)
     },
     //获取表的连线关系
     getStageMap(stages) {
