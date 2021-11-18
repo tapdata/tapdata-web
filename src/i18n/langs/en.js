@@ -57,7 +57,7 @@ export default {
     'The instance name mapping needs to be configured on the host where the Engine is located /etc/hosts',
   connection_kafka_kerberos_none_keytab: 'The key representation file cannot be empty',
   connection_kafka_kerberos_none_conf: 'Configuration file cannot be empty',
-
+  connection_kafka_encryption: 'Encryption',
   //Dag
   dag_data_node_label_dameng: 'Dameng Node',
   dag_data_node_label_database_link_table: 'Table name case',

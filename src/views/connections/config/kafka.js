@@ -269,6 +269,39 @@ export default function (vm) {
         ]
       },
       {
+        type: 'select', //加密方式
+        field: 'KafkaSaslMechanism',
+        label: vm.$t('connection_kafka_encryption'),
+        show: true,
+        options: [
+          {
+            label: 'PLAIN',
+            value: 'PLAIN'
+          },
+          {
+            label: 'SHA256',
+            value: 'SHA256'
+          },
+          {
+            label: 'SHA512',
+            value: 'SHA512'
+          }
+        ],
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
+      },
+      {
         type: 'switch', // 忽略非JSON Object格式消息
         field: 'kafkaIgnoreInvalidRecord',
         label: vm.$t('dataForm.form.kafka.lonoreFormat'),

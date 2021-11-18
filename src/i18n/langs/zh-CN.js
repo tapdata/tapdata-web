@@ -54,7 +54,7 @@ export default {
   connection_kafka_kerberos_tip: '需要在 Engine 所在主机 /etc/hosts 配置实例名映射',
   connection_kafka_kerberos_none_keytab: '密钥表示文件不能为空',
   connection_kafka_kerberos_none_conf: '配置文件不能为空',
-
+  connection_kafka_encryption: '加密方式',
   // 路由名
   app_menu_jsFuncs: '函数',
 

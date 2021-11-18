@@ -54,6 +54,7 @@ export default {
   connection_kafka_kerberos_tip: '需要在 Engine 所在主機 /etc/hosts 配置實例名映射',
   connection_kafka_kerberos_none_keytab: '密鑰表示文件不能為空',
   connection_kafka_kerberos_none_conf: '配置文件不能為空',
+  connection_kafka_encryption: '加密方式',
 
   // Dag
   dag_data_node_label_dameng: 'Dameng節點',
