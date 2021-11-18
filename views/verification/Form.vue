@@ -1059,10 +1059,7 @@ export default {
             })
             .catch(err => {
               if (err?.isException) {
-                let message = err?.response?.msg || err?.data?.msg || ''
-                if (message === 'duplication for names') {
-                  this.$message.error(this.$t('message_name_exist'))
-                }
+                this.$message.error(err.message)
               }
             })
         }
