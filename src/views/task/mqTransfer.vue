@@ -175,60 +175,56 @@ export default {
 <style lang="scss" scoped>
 .mq-transfer {
   position: relative;
-  min-height: 450px;
+  flex: 1;
   white-space: nowrap;
+  overflow: hidden;
   ::v-deep {
     .el-transfer {
       overflow: initial;
     }
     .topic-transfer,
     .queue-transfer {
-      display: inline-block;
       height: 100%;
-      & > div:last-child {
-        position: absolute;
-        height: 48% !important;
-      }
       .el-transfer-panel {
-        // display: inline-block;
-        width: 502px;
         height: 100%;
-        .el-transfer-panel__body {
-          height: calc(100% - 68px);
-        }
       }
       .el-transfer__buttons {
-        display: inline-block;
+        display: flex;
+        width: 122px;
+        flex-direction: row;
+        box-sizing: border-box;
+        & > button {
+          margin: 0;
+        }
         & > :last-child {
           margin-left: 10px;
         }
       }
     }
     .topic-transfer {
+      display: flex;
       z-index: 2;
       & > div:last-child {
         top: 0;
+        height: 48%;
       }
       .el-transfer__buttons {
-        padding-top: 100px !important;
-        vertical-align: top;
+        height: 48%;
       }
     }
     .queue-transfer {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      z-index: 1;
+      width: calc(50% + 61px);
+      right: 0;
+      bottom: 0;
+      height: 50%;
+      z-index: 3;
       & > div:first-child {
-        visibility: hidden;
+        display: none;
       }
       & > div:last-child {
         bottom: 0;
-      }
-      .el-transfer__buttons {
-        padding-bottom: 100px !important;
-        vertical-align: bottom;
+        width: calc(100% - 122px);
       }
     }
   }
