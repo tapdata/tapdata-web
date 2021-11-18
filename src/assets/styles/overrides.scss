@@ -232,11 +232,18 @@ th {
     border-color: map-get($color, primary);
   }
 }
-.el-button--text {
+.el-button.el-button--text {
+  border: 0;
   color: map-get($color, primary);
+  border-radius: unset;
   &:focus,
   &:hover {
     color: map-get($color, primary);
+    background-color: unset;
+  }
+  &.is-disabled, &.is-disabled:hover {
+    border: 0;
+    background-color: unset;
   }
 }
 .el-button--primary:hover {
@@ -263,15 +270,6 @@ th {
   color: map-get($color, disable);
   border-color: map-get($borderColor, disable);
   background-color: map-get($bgColor, disable);
-}
-.el-button--text {
-  border: 0;
-  color: map-get($color, primary);
-  border-radius: unset;
-}
-.el-button--text:hover,
-.el-button--text:focus {
-  background-color: unset;
 }
 .el-checkbox {
   font-weight: normal;
