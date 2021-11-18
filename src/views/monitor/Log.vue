@@ -130,21 +130,21 @@ export default {
       this.$axios
         .get(`tm/api/Logs?filter=${encodeURIComponent(JSON.stringify(filter))}`)
         .then(data => {
+          let list = data?.items || data || []
           if (isSearch) {
             this.noMore = false
             this.isScrollBottom = true
-            let list = data?.items || []
             this.logs = list.reverse().map(this.formatLog)
             this.scrollToBottom()
             return
           }
-          if (!data.length) {
+          if (!list.length) {
             this.noMore = true
             return
           }
           let el = this.$refs.logs
           let itemEl = el.querySelector('li:nth-child(2)')
-          let list = data.reverse().map(this.formatLog)
+          list = list.reverse().map(this.formatLog)
           this.logs.unshift(...list)
           this.$nextTick(() => {
             if (itemEl) {
