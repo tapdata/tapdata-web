@@ -52,52 +52,59 @@
               :manual="!(scope.row.status === 'draft' && scope.row.checked === false)"
               placement="top-start"
             >
-              <ElLink
-                type="primary"
+              <ElButton
+                size="mini"
+                type="text"
                 :disabled="
                   !statusBtMap['run'][scope.row.status] || (scope.row.status === 'draft' && scope.row.checked === false)
                 "
+                :loading="scope.row.runLoading"
+                class="no-loading"
                 @click="run([scope.row.id], scope.row)"
               >
                 启动任务
-              </ElLink>
+              </ElButton>
             </ElTooltip>
-            <ElLink
+            <ElButton
               v-if="scope.row.status === 'running'"
-              type="primary"
+              size="mini"
+              type="text"
               :disabled="!statusBtMap['stop'][scope.row.status]"
               @click="stop([scope.row.id])"
             >
               停止任务
-            </ElLink>
-            <ElLink
+            </ElButton>
+            <ElButton
               v-if="scope.row.status === 'stopping'"
-              type="primary"
+              size="mini"
+              type="text"
               :disabled="!statusBtMap['forceStop'][scope.row.status]"
               @click="forceStop([scope.row.id])"
             >
               强制停止
-            </ElLink>
+            </ElButton>
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink
-              type="primary"
+            <ElButton
+              size="mini"
+              type="text"
               @click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
               运行监控
-            </ElLink>
+            </ElButton>
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink
-              type="primary"
+            <ElButton
+              size="mini"
+              type="text"
               :disabled="!statusBtMap['edit'][scope.row.status]"
               @click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
               编辑
-            </ElLink>
+            </ElButton>
             <ElDivider direction="vertical"></ElDivider>
             <ElDropdown @command="handleMore($event, scope.row, scope.$index)">
-              <ElLink type="primary" class="rotate-90">
+              <ElButton size="mini" type="text" class="rotate-90">
                 <i class="el-icon-more"></i>
-              </ElLink>
+              </ElButton>
               <ElDropdownMenu slot="dropdown" class="text-nowrap">
                 <ElDropdownItem command="copy">复制</ElDropdownItem>
                 <ElDropdownItem command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
@@ -227,6 +234,20 @@
   }
   .el-divider--vertical {
     margin: 0 16px;
+  }
+}
+.el-button.no-loading {
+  ::v-deep {
+    .el-icon-loading {
+      display: none;
+    }
+    [class*='el-icon-'] + span {
+      margin-left: 0;
+    }
+  }
+  &.is-loading {
+    color: #c0c4cc;
+    cursor: not-allowed;
   }
 }
 </style>
@@ -569,6 +590,9 @@ export default {
           item.isFinished = true
         }
       }
+      // 按钮的loading
+      let findOne = this.list.find(t => t.id === item.id)
+      item.runLoading = findOne?.runLoading === true
       return item
     },
     sortChange({ prop, order }) {
@@ -659,7 +683,7 @@ export default {
         }
       })
     },
-    changeStatus(ids, { status, errorEvents }) {
+    changeStatus(ids, { status, errorEvents, finallyEvents }) {
       let attributes = {
         status,
         id: ids?.[0] || ''
@@ -671,8 +695,13 @@ export default {
           this.fetch()
           this.responseHandler(data, '操作成功')
         })
-        .catch(() => {
-          this.$message.error('任务启动失败，请编辑任务完成映射配置')
+        .catch(error => {
+          if (error?.isException) {
+            this.$message.error('任务启动失败，请编辑任务完成映射配置')
+          }
+        })
+        .finally(() => {
+          finallyEvents?.()
         })
     },
     responseHandler(data = {}, msg) {
@@ -736,10 +765,21 @@ export default {
         title: map[title]
       }
     },
-    run(ids) {
-      this.$checkAgentStatus(() => {
-        this.changeStatus(ids, { status: 'scheduled' })
-      })
+    run(ids, row) {
+      row.runLoading = true
+      this.$checkAgentStatus(
+        () => {
+          this.changeStatus(ids, {
+            status: 'scheduled',
+            finallyEvents: () => {
+              row.runLoading = false
+            }
+          })
+        },
+        () => {
+          row.runLoading = false
+        }
+      )
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', item.name)
