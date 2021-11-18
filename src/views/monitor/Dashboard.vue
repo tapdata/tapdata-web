@@ -77,7 +77,20 @@
           </ElTabPane>
           <ElTabPane lazy class="h-100 overflow-hidden" label="任务里程碑" name="milestone">
             <ElTable fit height="100%" empty-text="此任务尚未启动或已被重置，暂无运行里程碑数据" :data="milestoneList">
-              <ElTableColumn label="任务详情" prop="label"></ElTableColumn>
+              <ElTableColumn label="任务详情" prop="label">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.label }}</span>
+                  <ElButton
+                    v-if="scope.row.status === 'error'"
+                    class="ml-2"
+                    size="mini"
+                    type="text"
+                    @click="checkError(scope.row.errorMessage)"
+                  >
+                    {{ $t('milestone.btn_check_error') }}
+                  </ElButton>
+                </template>
+              </ElTableColumn>
               <ElTableColumn label="状态" prop="status" width="100px">
                 <template slot-scope="scope">
                   <StatusTag
@@ -594,6 +607,12 @@ export default {
       }
       this.$axios.post('tm/api/DataFlows/tranModelVersionControl', param).then(data => {
         this.showContent = data?.[stageId] || false
+      })
+    },
+    checkError(msg) {
+      this.$confirm(msg, '错误', {
+        type: 'warning',
+        width: '850px'
       })
     }
   }

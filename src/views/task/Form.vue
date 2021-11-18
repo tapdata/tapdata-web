@@ -987,7 +987,7 @@ export default {
           let source = items.find(it => it.field === 'source_databaseType')
           let TYPEMAP = this.$const.TYPEMAP
           //不包含远端类型
-          let notContainType = ['clickhouse', 'mq']
+          let notContainType = ['clickhouse']
           if (source) {
             // dfs源端不支持 redis elasticsearch
             let options = data
