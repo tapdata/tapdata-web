@@ -196,7 +196,7 @@ $headerHeight: 40px;
   z-index: 10;
   height: 300px;
   overflow: auto;
-  background-color: #eff1f4;
+  background-color: #fff;
   transition: height 0.24s;
   will-change: height;
 
