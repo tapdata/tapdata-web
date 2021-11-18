@@ -175,7 +175,7 @@ export default {
 <style lang="scss" scoped>
 .mq-transfer {
   position: relative;
-  min-height: 500px;
+  min-height: 450px;
   white-space: nowrap;
   ::v-deep {
     .el-transfer {
