@@ -8,13 +8,14 @@
   >
     <VIcon class="config-panel-close" size="16" @click="handleClosePanel">close</VIcon>
     <div v-if="activeType === 'settings'" class="h-100 flex flex-column overflow-hidden">
-      <div class="panel-header flex align-center px-4 border-bottom fs-7">
+      <SettingPanel v-on="$listeners"></SettingPanel>
+      <!-- <div class="panel-header flex align-center px-4 border-bottom fs-7">
         <VIcon class="header-icon mr-2">setting</VIcon>
         设置
-      </div>
-      <div class="flex-1 position-relative">
+      </div> -->
+      <!-- <div class="flex-1 position-relative">
         <FormPanel v-on="$listeners"></FormPanel>
-      </div>
+      </div> -->
     </div>
     <div v-else class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
@@ -52,6 +53,7 @@ import { mapGetters, mapMutations } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import FormPanel from 'web-core/views/dataflow/components/FormPanel'
+import SettingPanel from 'web-core/views/dataflow/components/SettingPanel'
 import DataPane from 'web-core/views/dataflow/components/DataPane'
 import MetaPane from 'web-core/views/dataflow/components/MetaPane'
 import VIcon from 'web-core/components/VIcon'
@@ -77,10 +79,10 @@ export default {
     }
   },
 
-  components: { VIcon, MetaPane, DataPane, FormPanel },
+  components: { VIcon, MetaPane, DataPane, FormPanel, SettingPanel },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById']),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'settingPanelType']),
 
     icon() {
       const node = this.activeNode
@@ -194,7 +196,7 @@ $headerHeight: 40px;
   z-index: 10;
   height: 300px;
   overflow: auto;
-  background-color: #fff;
+  background-color: #eff1f4;
   transition: height 0.24s;
   will-change: height;
 
@@ -231,6 +233,31 @@ $headerHeight: 40px;
   .header-icon {
     color: $color;
     font-size: 18px;
+  }
+  .setting-tabs {
+    ::v-deep {
+      .el-tabs__content {
+        height: calc(100% - 55px);
+        .el-tab-pane {
+          height: 100%;
+          .setting-tabs-box {
+            box-sizing: border-box;
+            .title {
+              height: 40px;
+              line-height: 40px;
+            }
+            textarea {
+              border: 1px solid #d9d9d9;
+              min-width: 600px;
+              min-height: 100px;
+              &:focus {
+                outline: initial;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   ::v-deep {
