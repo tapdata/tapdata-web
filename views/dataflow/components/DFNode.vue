@@ -196,7 +196,7 @@ export default {
               oldProperties.push({
                 id: node.id,
                 properties: {
-                  attrs: { position: newNodePosition }
+                  attrs: { position }
                 }
               })
               newProperties.push(updateInformation)
