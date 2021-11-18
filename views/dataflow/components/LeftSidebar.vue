@@ -15,7 +15,7 @@
                 v-if="showDBInput"
                 v-model="dbSearchTxt"
                 ref="dbInput"
-                class="db-input-wrap"
+                class="header__input"
                 placeholder="请输入连接名称搜索"
                 size="mini"
                 clearable
@@ -46,7 +46,7 @@
               </template>
               <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore">
                 <div
-                  v-for="(db, i) in dbList"
+                  v-for="db in dbList"
                   :key="db.id"
                   class="db-item flex align-center px-4 clickable user-select-none"
                   :class="{ active: activeConnection.id === db.id }"
@@ -66,22 +66,42 @@
       </ElCollapse>
 
       <div class="flex-1 min-h-0 flex flex-column border-bottom">
-        <div class="px-3 py-3">
-          <ElInput v-model="tbSearchTxt" placeholder="请输入表名搜索" size="small" @input="handleTBInput" clearable>
+        <div class="tb-header flex align-center px-2">
+          <!--<ElImage class="tb-header-icon mr-2" :src="genIconSrc(activeConnection)"></ElImage>-->
+          <span class="flex-1 user-select-none text-truncate">数据表</span>
+          <VIcon @click.stop="handleShowTBInput">magnify</VIcon>
+
+          <ElInput
+            v-if="showTBInput"
+            v-model="tbSearchTxt"
+            ref="tbInput"
+            class="header__input"
+            placeholder="请输入表名称搜索"
+            size="mini"
+            clearable
+            @keydown.native.stop
+            @keyup.native.stop
+            @click.native.stop
+            @input="handleTBInput"
+            @blur="handleTBBlur"
+            @clear="handleShowTBInput"
+          >
             <template #prefix>
               <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
             </template>
           </ElInput>
         </div>
+        <!--<div class="px-3 py-3">
+          <ElInput v-model="tbSearchTxt" placeholder="请输入表名搜索" size="small" @input="handleTBInput" clearable>
+            <template #prefix>
+              <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
+            </template>
+          </ElInput>
+        </div>-->
         <ElScrollbar ref="tbList" class="flex-1 min-h-0" tag="div" wrap-class="tb-list">
           <ElSkeleton :loading="tbLoading" animated :throttle="skeletonThrottle">
             <template #template>
               <div v-for="i in 5" :key="i" class="flex p-4 align-center">
-                <ElSkeletonItem
-                  class="mr-3 flex-shrink-0"
-                  style="width: 20px; height: 20px"
-                  variant="circle"
-                ></ElSkeletonItem>
                 <ElSkeletonItem variant="text"></ElSkeletonItem>
               </div>
             </template>
@@ -100,10 +120,7 @@
                 :key="tb.id"
                 class="tb-item grabbable flex align-center px-4 user-select-none"
               >
-                <div class="tb-item-icon">
-                  <VIcon class="h-100" size="14" color="#fff">table</VIcon>
-                </div>
-                <OverflowTooltip class="ml-4" :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
+                <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
               </div>
               <EmptyItem v-if="!tbList.length"></EmptyItem>
               <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
@@ -247,10 +264,12 @@ export default {
       dbSearchTxt: '',
       tbSearchTxt: '',
       showDBInput: false,
+      showTBInput: false,
       currentConnectionId: '',
       activeConnection: {
         id: '',
-        name: ''
+        name: '',
+        database_type: ''
       },
       dragStarting: false,
       dragMoving: false,
@@ -428,7 +447,7 @@ export default {
      * @returns {Promise<void>}
      */
     async loadDatabaseTable(loadMore) {
-      const connectionId = this.activeConnection.id
+      const connection = this.activeConnection
 
       if (loadMore) {
         this.tbPage++
@@ -446,9 +465,11 @@ export default {
         type: 'table',
         group: 'data',
         constructor: 'Table',
+        databaseType: connection.database_type,
         attr: {
           tableName: tb.original_name,
-          connectionId
+          databaseType: connection.database_type,
+          connectionId: connection.id
         }
       }))
 
@@ -534,6 +555,19 @@ export default {
       this.$refs.tbList.wrap.scrollTop = 0
     },
 
+    handleTBBlur() {
+      if (!this.tbSearchTxt.trim()) {
+        this.showTBInput = false
+      }
+    },
+
+    handleShowTBInput() {
+      this.showTBInput = true
+      this.$nextTick(() => {
+        this.$refs.tbInput.focus()
+      })
+    },
+
     handleBlur() {
       if (!this.dbSearchTxt.trim()) {
         this.showDBInput = false
@@ -565,6 +599,7 @@ $itemH: 34px;
 
 .layout-sidebar.--left {
   overflow: hidden;
+  $headerH: 34px;
 
   ::v-deep {
     .db-list-container {
@@ -577,6 +612,20 @@ $itemH: 34px;
     .click-btn {
       z-index: 2;
     }
+
+    .tb-header {
+      position: relative;
+      height: $headerH;
+      font-size: 14px;
+      font-weight: 500;
+      border-bottom: 1px solid transparent;
+      &-icon {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+      }
+    }
+
     .db-item,
     .tb-item {
       height: $itemH;
@@ -603,7 +652,6 @@ $itemH: 34px;
 
     .el-collapse {
       border-top: 0;
-      $headerH: 34px;
       &.collapse-fill {
         .el-collapse-item:first-child:last-child {
           height: 100%;
@@ -646,34 +694,6 @@ $itemH: 34px;
           padding-bottom: 0;
         }
       }
-
-      .db-input-wrap {
-        position: absolute;
-        z-index: 3;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        margin-bottom: -1px;
-
-        input {
-          width: 100%;
-          height: 100%;
-          border-width: 0 0 1px;
-          border-radius: 0;
-        }
-
-        input,
-        .v-icon,
-        .el-input__icon {
-          vertical-align: top;
-        }
-
-        input,
-        .el-input__icon {
-          line-height: $headerH;
-        }
-      }
     }
 
     .el-scrollbar {
@@ -682,6 +702,34 @@ $itemH: 34px;
 
     .el-scrollbar__wrap {
       height: calc(100% + 8px);
+    }
+
+    .header__input {
+      position: absolute;
+      z-index: 3;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      margin-bottom: -1px;
+
+      input {
+        width: 100%;
+        height: 100%;
+        border-width: 0 0 1px;
+        border-radius: 0;
+      }
+
+      input,
+      .v-icon,
+      .el-input__icon {
+        vertical-align: top;
+      }
+
+      input,
+      .el-input__icon {
+        line-height: $headerH;
+      }
     }
   }
 }

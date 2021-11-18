@@ -18,8 +18,8 @@ class CommandManager {
     this.undoCommands = []
   }
 
-  exec(command, flag, isRedo) {
-    !flag && command.exec(this.state)
+  exec(command, notExec, isRedo) {
+    !notExec && command.exec(this.state)
     this.commands.push(command)
     !isRedo && (this.undoCommands = [])
   }
@@ -104,53 +104,60 @@ class RemoveNodeCommand extends Command {
   }
 }
 
-/**
- * 添加连线
- */
-class AddConnectionCommand extends Command {
+class ConnectionCommand extends Command {
   constructor(connection) {
     super()
     this.connection = connection
     this.connectionData = {
-      sourceId: getRealId(connection.source),
-      targetId: getRealId(connection.target)
+      source: NODE_PREFIX + connection.source,
+      target: NODE_PREFIX + connection.target
     }
-    this.uuids = [connection.source + '_source', connection.target + '_target']
+    this.uuids = [this.connectionData.source + '_source', this.connectionData.target + '_target']
+  }
+
+  add(state) {
+    state.instance.connect({ uuids: this.uuids })
+    state.store.commit('dataflow/addConnection', this.connection)
+  }
+
+  remove(state) {
+    const connectionIns = state.instance.getConnections(this.connectionData)[0]
+    state.instance.deleteConnection(connectionIns)
+    state.store.commit('dataflow/removeConnection', this.connection)
+  }
+}
+
+/**
+ * 添加连线
+ */
+class AddConnectionCommand extends ConnectionCommand {
+  constructor(connection) {
+    super(connection)
   }
 
   exec(state) {
-    state.instance.connect({ uuids: this.uuids })
+    this.add(state)
   }
 
   undo(state) {
-    const connection = state.instance.getConnections(this.connection)[0]
-    state.instance.deleteConnection(connection)
-    state.store.commit('dataflow/removeConnection', this.connectionData)
+    this.remove(state)
   }
 }
 
 /**
  * 删除连线
  */
-class RemoveConnectionCommand extends Command {
+class RemoveConnectionCommand extends ConnectionCommand {
   constructor(connection) {
-    super()
-    this.connection = connection
-    this.connectionData = {
-      sourceId: getRealId(connection.source),
-      targetId: getRealId(connection.target)
-    }
-    this.uuids = [connection.source + '_source', connection.target + '_target']
+    super(connection)
   }
 
   exec(state) {
-    const connection = state.instance.getConnections(this.connection)[0]
-    state.instance.deleteConnection(connection)
-    state.store.commit('dataflow/removeConnection', this.connectionData)
+    this.remove(state)
   }
 
   undo(state) {
-    state.instance.connect({ uuids: this.uuids })
+    this.add(state)
   }
 }
 
@@ -186,32 +193,24 @@ class MoveNodeCommand extends Command {
 /**
  * 在两个节点的连线上添加节点
  */
-class AddNodeOnConnectionCommand extends Command {
+class AddNodeOnConnectionCommand extends ConnectionCommand {
   constructor(connection, node) {
-    super()
+    super(connection)
     this.node = node
-    this.connection = connection
-    this.connectionData = {
-      sourceId: getRealId(connection.source),
-      targetId: getRealId(connection.target)
-    }
-    this.uuids = [connection.source + '_source', connection.target + '_target']
   }
 
   exec(state) {
-    const connection = state.instance.getConnections(this.connection)[0]
-    state.instance.deleteConnection(connection)
-    state.store.commit('dataflow/removeConnection', this.connectionData)
+    this.remove(state)
     state.store.commit('dataflow/addNode', this.node)
     Vue.nextTick(() => {
       const nodeId = NODE_PREFIX + this.node.id
-      state.instance.connect({ uuids: [this.connection.source + '_source', nodeId + '_target'] })
-      state.instance.connect({ uuids: [nodeId + '_source', this.connection.target + '_target'] })
+      state.instance.connect({ uuids: [this.connectionData.source + '_source', nodeId + '_target'] })
+      state.instance.connect({ uuids: [nodeId + '_source', this.connectionData.target + '_target'] })
     })
   }
 
   undo(state) {
-    state.instance.connect({ uuids: this.uuids })
+    this.add(state)
     state.instance.remove(NODE_PREFIX + this.node.id)
     state.store.commit('dataflow/removeNode', this.node)
   }

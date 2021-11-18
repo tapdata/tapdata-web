@@ -15,40 +15,56 @@
       <VIcon @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
     </div>
     <div class="operation-center flex align-center">
-      <button @click="$emit('undo')" class="icon-btn">
-        <VIcon size="20">undo</VIcon>
-      </button>
-      <button @click="$emit('redo')" class="icon-btn">
-        <VIcon size="20">redo</VIcon>
-      </button>
-      <button @click="$emit('delete')" class="icon-btn">
-        <VIcon size="20">delete</VIcon>
-      </button>
-      <button @click="$emit('fullscreen')" class="icon-btn">
-        <VIcon size="20">fullscreen</VIcon>
-      </button>
-      <button @click="$emit('center-content')" class="icon-btn">
-        <VIcon size="20">compress</VIcon>
-      </button>
-      <button @click="$emit('zoom-out')" class="icon-btn">
-        <VIcon size="20">zoom-out</VIcon>
-      </button>
-      <button @click="$emit('zoom-in')" class="icon-btn">
-        <VIcon size="20">zoom-in</VIcon>
-      </button>
-
-      <button @click="$emit('auto-layout')" class="icon-btn">
-        <VIcon size="20">auto-layout</VIcon>
-      </button>
+      <ElTooltip transition="tooltip-fade-in" content="撤销">
+        <button @click="$emit('undo')" class="icon-btn">
+          <VIcon size="20">undo</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="重做">
+        <button @click="$emit('redo')" class="icon-btn">
+          <VIcon size="20">redo</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="删除">
+        <button @click="$emit('delete')" class="icon-btn">
+          <VIcon size="20">delete</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="全屏">
+        <button @click="$emit('fullscreen')" class="icon-btn">
+          <VIcon size="20">fullscreen</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="内容居中">
+        <button @click="$emit('center-content')" class="icon-btn">
+          <VIcon size="20">compress</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="缩小">
+        <button @click="$emit('zoom-out')" class="icon-btn">
+          <VIcon size="20">zoom-out</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="放大">
+        <button @click="$emit('zoom-in')" class="icon-btn">
+          <VIcon size="20">zoom-in</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="自动布局">
+        <button @click="$emit('auto-layout')" class="icon-btn">
+          <VIcon size="20">auto-layout</VIcon>
+        </button>
+      </ElTooltip>
     </div>
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
 
-      <ElButton round type="primary" class="mx-4" @click="$emit('save')"> 保存 </ElButton>
+      <ElButton type="primary" class="mx-2" @click="$emit('save')"> 保存 </ElButton>
+      <ElButton plain class="mx-2" @click="$emit('showSettings')"> 设置 </ElButton>
 
-      <button @click="$emit('showSettings')" class="icon-btn">
+      <!--<button @click="$emit('showSettings')" class="icon-btn">
         <VIcon size="20">setting</VIcon>
-      </button>
+      </button>-->
     </div>
   </header>
 </template>

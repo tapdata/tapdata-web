@@ -66,8 +66,8 @@ export default {
       const { w, h } = this.paperReverseSize
       const nodes = this.$store.getters['dataflow/allNodes']
       return nodes.map(n => ({
-        left: n.position[0] + w + 'px',
-        top: n.position[1] + h + 'px'
+        left: n.attrs.position[0] + w + 'px',
+        top: n.attrs.position[1] + h + 'px'
       }))
     },
     viewPosition() {

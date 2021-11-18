@@ -6,6 +6,7 @@
     }"
     class="config-panel border-top"
   >
+    <VIcon class="config-panel-close" size="16" @click="handleClosePanel">close</VIcon>
     <div v-if="activeType === 'settings'" class="h-100 flex flex-column overflow-hidden">
       <div class="panel-header flex align-center px-4 border-bottom fs-7">
         <VIcon class="header-icon mr-2">setting</VIcon>
@@ -17,7 +18,8 @@
     </div>
     <div v-else class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
-        <VIcon class="header-icon mr-2">{{ icon }}</VIcon>
+        <!--<VIcon class="header-icon mr-2">{{ icon }}</VIcon>-->
+        <ElImage class="mr-2" :src="icon"></ElImage>
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
           <input
             ref="nameInput"
@@ -53,7 +55,7 @@ import FormPanel from 'web-core/views/dataflow/components/FormPanel'
 import DataPane from 'web-core/views/dataflow/components/DataPane'
 import MetaPane from 'web-core/views/dataflow/components/MetaPane'
 import VIcon from 'web-core/components/VIcon'
-import { NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
+import { DB_ICON, NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
 import focusSelect from 'web-core/directives/focusSelect'
 import { validateBySchema } from 'web-core/components/form/utils/validate'
 
@@ -81,7 +83,10 @@ export default {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById']),
 
     icon() {
-      return this.activeNode ? NODE_TYPE_ICON[this.activeNode.type] : null
+      const node = this.activeNode
+      if (!node) return null
+      const icon = node.type === 'table' ? DB_ICON[node.databaseType] : NODE_TYPE_ICON[node.type]
+      return icon ? require(`web-core/assets/images/node-icon/${icon}.svg`) : null
     }
   },
 
@@ -103,7 +108,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError']),
+    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
 
     handleChangeName(e) {
       this.updateNodeProperties({
@@ -116,6 +121,10 @@ export default {
 
     focusNameInput() {
       this.$refs.nameInput.focus()
+    },
+
+    handleClosePanel() {
+      this.setActiveType(null)
     }
   }
 }
@@ -189,6 +198,13 @@ $headerHeight: 40px;
   transition: height 0.24s;
   will-change: height;
 
+  &-close {
+    position: absolute;
+    z-index: 3;
+    top: 12px;
+    right: 16px;
+  }
+
   .config-tabs-wrap {
     position: relative;
     height: 100%;
@@ -201,6 +217,11 @@ $headerHeight: 40px;
     z-index: 1;
     width: $tabsHeaderWidth;
     height: $headerHeight;
+
+    .el-image {
+      width: 20px;
+      height: 20px;
+    }
   }
 
   .panel-header {

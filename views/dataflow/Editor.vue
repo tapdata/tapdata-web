@@ -102,6 +102,7 @@ import { off, on } from 'web-core/utils/dom'
 import { uuid } from 'web-core/utils/util'
 import DataFlows from 'web-core/api/DataFlows'
 import DatabaseTypes from 'web-core/api/DatabaseTypes'
+import Task from 'web-core/api/Task'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -119,6 +120,7 @@ import resize from 'web-core/directives/resize'
 
 const dataFlowsApi = new DataFlows()
 const databaseTypesApi = new DatabaseTypes()
+const taskApi = new Task()
 
 export default {
   name: 'Editor',
@@ -226,7 +228,7 @@ export default {
         this.initNodeView()
         await this.initView()
       } catch (error) {
-          console.error(error) // eslint-disable-line
+        console.error(error) // eslint-disable-line
       }
     })
   },
@@ -254,6 +256,7 @@ export default {
       'removeNode',
       'removeNodeFromSelection',
       'removeAllNodes',
+      'resetDag',
       'addNode',
       'setActiveType',
       'setFormSchema'
@@ -389,10 +392,11 @@ export default {
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
 
       jsPlumbIns.bind('connection', (info, event) => {
-        // console.log('connectionEvent', info) // eslint-disable-line
-        const { sourceId: source, targetId: target } = info
-        const sourceId = this.getRealId(source)
-        const targetId = this.getRealId(target)
+        console.log('connectionEvent', info) // eslint-disable-line
+        const { sourceId, targetId } = info
+        const source = this.getRealId(sourceId)
+        const target = this.getRealId(targetId)
+        const connection = { source, target }
 
         info.connection.bind('mouseover', () => {
           info.connection.showOverlay('removeConn')
@@ -423,7 +427,7 @@ export default {
                 // 更新reference
                 this.nodeMenu.reference = overlay.canvas
                 this.$refs.nodeMenu.referenceElm = overlay.canvas
-                this.nodeMenu.connectionData = { source, target }
+                this.nodeMenu.connection = connection
                 this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
                 // 显示菜单
                 this.nodeMenu.show = true
@@ -449,8 +453,8 @@ export default {
               mousedown: () => {
                 this.command.exec(
                   new RemoveConnectionCommand({
-                    source: info.connection.sourceId,
-                    target: info.connection.targetId
+                    source,
+                    target
                   })
                 )
               }
@@ -458,20 +462,12 @@ export default {
           }
         ])
 
-        // 设置节点的input和output属性
-        this.addConnection({
-          sourceId,
-          targetId
-        })
+        // 拖动连接
+        if (event) {
+          this.addConnection(connection)
 
-        event &&
-          this.command.exec(
-            new AddConnectionCommand({
-              source: info.connection.sourceId,
-              target: info.connection.targetId
-            }),
-            true
-          )
+          this.command.exec(new AddConnectionCommand(connection), true)
+        }
       })
 
       // 连接线拖动结束事件
@@ -606,11 +602,43 @@ export default {
 
       let result
       try {
-        result = await dataFlowsApi.get([dataflowId])
+        result = await taskApi.get([dataflowId])
         // this.creatUserId = result.user_id
       } catch (e) {
         this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
         return
+        /*result = {
+          name: '新任务@下午6:34:57',
+          description: '',
+          status: 'draft',
+          executeMode: 'normal',
+          dag: {
+            nodes: [
+              {
+                id: '46e517b6-67ea-46f9-9190-5adfe3564aa0',
+                name: 'ALP_IV_IV_STYLE_CATG_SUB_CLLCT',
+                type: 'table',
+                position: [-156, 195],
+                tableName: 'ALP_IV_IV_STYLE_CATG_SUB_CLLCT',
+                connectionId: '6181ff13a59f3d13067e0627'
+              },
+              {
+                id: '4ec03143-1db7-4df8-86eb-b508db3da8ce',
+                name: 'CAR_POLICY',
+                type: 'table',
+                position: [86, 279],
+                tableName: 'CAR_POLICY',
+                connectionId: '6181ff13a59f3d13067e0627'
+              }
+            ],
+            edges: [
+              {
+                source: '46e517b6-67ea-46f9-9190-5adfe3564aa0',
+                target: '4ec03143-1db7-4df8-86eb-b508db3da8ce'
+              }
+            ]
+          }
+        }*/
       }
 
       const data = result
@@ -618,13 +646,13 @@ export default {
       this.status = data.status
       this.setDataflowId(dataflowId)
       this.setDataflowName({ newName: data.name, setStateDirty: false })
-      this.setDataflowSettings(data.setting)
+      this.setDataflowSettings(data)
 
-      const isOld = this.transformStages(data.stages)
-      await this.addNodes(data.stages)
+      // const isOld = this.transformStages(data.stages)
+      await this.addNodes(data.dag)
 
       // 旧版数据自动布局
-      isOld ? this.handleAutoLayout() : this.handleCenterContent()
+      // isOld ? this.handleAutoLayout() : this.handleCenterContent()
       this.setStateDirty(false)
     },
 
@@ -654,12 +682,13 @@ export default {
       return true
     },
 
-    async addNodes(nodes) {
-      if (!nodes || !nodes.length) return
+    async addNodes({ nodes, edges }) {
+      if (!nodes?.length) return
       const { getters } = this.$store
       const getNodeType = getters['dataflow/nodeType']
       const getCtor = getters['dataflow/getCtor']
 
+      // 创建节点
       let nodeType
       nodes.forEach(node => {
         nodeType = getNodeType(node)
@@ -679,7 +708,12 @@ export default {
 
       await this.$nextTick()
 
-      this.nodes.forEach(node => {
+      // 连线
+      edges.forEach(({ source, target }) => {
+        this.jsPlumbIns.connect({ uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`] })
+      })
+
+      /*this.nodes.forEach(node => {
         let t = NODE_PREFIX + node.id + '_target',
           tp = this.jsPlumbIns.getEndpoint(t)
         if (node.inputLanes && node.inputLanes.length) {
@@ -689,7 +723,7 @@ export default {
             this.jsPlumbIns.connect({ source: sp, target: tp })
           })
         }
-      })
+      })*/
     },
 
     getRealId(str) {
@@ -717,7 +751,7 @@ export default {
 
       this.nodes.forEach(item => {
         if (item.id !== id) {
-          let [x, y] = item.position
+          let [x, y] = item.attrs.position
           let _x = x - pos[0]
           let _y = y - pos[1]
           if (Math.abs(_x) <= Math.abs(rangeX)) {
@@ -933,9 +967,9 @@ export default {
       right -= nodeViewOffset[0]
       y -= nodeViewOffset[1]
       bottom -= nodeViewOffset[1]*/
-      return this.nodes.filter(({ position }) => {
-        // console.log('position', position, { x, y, bottom, right }) // eslint-disable-line
-        return position[0] + nw > x && position[0] < right && bottom > position[1] && y < position[1] + nh
+      return this.nodes.filter(node => {
+        const [left, top] = node.attrs.position
+        return left + nw > x && left < right && bottom > top && y < top + nh
       })
     },
 
@@ -1048,6 +1082,7 @@ export default {
 
     getDataflowDataToSave() {
       const { getters } = this.$store
+      const dag = getters['dataflow/dag']
       const name = getters['dataflow/dataflowName']
       const settings = getters['dataflow/dataflowSettings']
       const data = {
@@ -1055,10 +1090,8 @@ export default {
         description: '',
         status: 'draft',
         executeMode: 'normal',
-        category: '\u6570\u636e\u5e93\u514b\u9686',
-        mappingTemplate: this.mapping,
-        stages: this.nodes,
-        setting: settings
+        dag
+        // ...settings
       }
 
       const dataflowId = this.$store.getters['dataflow/dataflowId']
@@ -1097,7 +1130,8 @@ export default {
       try {
         this.isSaving = true
         const data = this.getDataflowDataToSave()
-        const dataflow = await dataFlowsApi.post(data)
+        console.log('🚗', data)
+        const dataflow = await taskApi.post(data)
         this.isSaving = false
         this.$message.success(this.$t('message.saveOK'))
         this.setDataflowId(dataflow.id) // 将生成的id保存到store
@@ -1267,7 +1301,7 @@ export default {
 
       nodes.forEach(n => {
         dg.setNode(NODE_PREFIX + n.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
-        nodePositionMap[NODE_PREFIX + n.id] = n.position
+        nodePositionMap[NODE_PREFIX + n.id] = n.attrs.position
       })
       this.jsPlumbIns.getAllConnections().forEach(edge => {
         dg.setEdge(edge.source.id, edge.target.id)
@@ -1284,13 +1318,17 @@ export default {
           oldProperties.push({
             id: this.getRealId(n),
             properties: {
-              position: nodePositionMap[n]
+              attrs: {
+                position: nodePositionMap[n]
+              }
             }
           })
           newProperties.push({
             id: this.getRealId(n),
             properties: {
-              position: [left, top]
+              attrs: {
+                position: [left, top]
+              }
             }
           })
         }
@@ -1337,9 +1375,10 @@ export default {
 
       this.status = 'draft'
       this.deselectAllNodes()
-      this.removeAllNodes()
+      // this.removeAllNodes()
       this.setDataflowId(null)
       this.setDataflowName({ newName: '', setStateDirty: false })
+      this.resetDag()
       this.setDataflowSettings(DEFAULT_SETTINGS)
       this.resetSelectedNodes()
     },
@@ -1424,7 +1463,9 @@ export default {
       // 节点拖放在连线上
       if ($elemBelow.nodeName === 'path' && $elemBelow.parentElement._jsPlumb) {
         const connection = $elemBelow.parentElement._jsPlumb
-        this.addNodeOnConn(item, newPosition, connection.sourceId, connection.targetId)
+        const source = this.getRealId(connection.sourceId)
+        const target = this.getRealId(connection.targetId)
+        this.addNodeOnConn(item, newPosition, source, target)
       } else {
         this.handleAddNodeToPos(newPosition, item)
       }
@@ -1446,7 +1487,7 @@ export default {
         id: uuid(),
         name: item.name,
         type: item.type,
-        position,
+        attrs: { position },
         ...ins.getExtraAttr() // 附加属性
       }
 
@@ -1499,9 +1540,9 @@ export default {
      * @param target 连线目标节点的id
      */
     addNodeOnConn(nodeType, position, source, target) {
-      const a = this.nodeById(this.getRealId(source))
+      const a = this.nodeById(source)
       const b = this.createNode(position, nodeType)
-      const c = this.nodeById(this.getRealId(target))
+      const c = this.nodeById(target)
       const aCtor = a.__Ctor
       const bCtor = b.__Ctor
       const cCtor = c.__Ctor
@@ -1527,7 +1568,7 @@ export default {
         width: NODE_WIDTH,
         height: NODE_HEIGHT
       })
-      this.addNodeOnConn(nodeType, position, nodeMenu.connectionData.source, nodeMenu.connectionData.target)
+      this.addNodeOnConn(nodeType, position, nodeMenu.connection.source, nodeMenu.connection.target)
     },
 
     canUsePosition(position1, position2) {
