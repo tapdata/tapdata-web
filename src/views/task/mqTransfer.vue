@@ -175,10 +175,12 @@ export default {
 <style lang="scss" scoped>
 .mq-transfer {
   position: relative;
-  height: 500px;
+  min-height: 500px;
   white-space: nowrap;
-  overflow: auto;
   ::v-deep {
+    .el-transfer {
+      overflow: initial;
+    }
     .topic-transfer,
     .queue-transfer {
       display: inline-block;
