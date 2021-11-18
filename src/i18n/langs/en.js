@@ -90,7 +90,7 @@ export default {
   agent_button_delete_success: 'Agent deleted successfully',
   agent_button_delete_fail: 'Agent deletion failed',
   agent_auto_upgrade_tip_running_task:
-    'It has been detected that you have tasks running, please stop all tasks before proceeding with the upgrade operation!',
+    'It has been detected that you have a task running, please stop all tasks under this agent before proceeding with the upgrade operation!',
   agent_auto_upgrade_tip_start: 'Start to upgrade',
   agent_auto_upgrade_tip_upgrading: 'Automatically upgrading',
   agent_auto_upgrade_tip_progress: 'Upgrade package download progress',

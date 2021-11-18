@@ -86,7 +86,7 @@ export default {
   agent_button_delete_confirm_msg: '当前Agent上有任务正在运行，请先停止任务后再删除。',
   agent_button_delete_success: 'Agent 删除成功',
   agent_button_delete_fail: 'Agent 删除失败',
-  agent_auto_upgrade_tip_running_task: '检测到您有任务正在运行，请先停止所有任务再进行升级操作!',
+  agent_auto_upgrade_tip_running_task: '检测到您有任务正在运行，请先停止该agent下所有任务再进行升级操作!',
   agent_auto_upgrade_tip_start: '开始升级',
   agent_auto_upgrade_tip_upgrading: '自动升级中',
   agent_auto_upgrade_tip_progress: '升级包下载进度',
