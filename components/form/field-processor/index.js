@@ -161,7 +161,7 @@ export const FieldProcess = connect(
         const { fields } = this
         this.originalFields = JSON.parse(JSON.stringify(this.fields))
         return (
-          <div class="field-processor-tree-warp  pt-5 pb-5">
+          <div class="field-processor-tree-warp bg-body pt-5 pb-5">
             <div class="field-processor-operation">
               <el-checkbox
                 class="check-all"
