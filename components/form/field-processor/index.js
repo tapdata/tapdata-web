@@ -44,7 +44,35 @@ export const FieldProcess = connect(
               unique: true,
               key: 'PRI',
               desc: '描述1',
-              table_name: 'eb_rule_notice_type'
+              table_name: 'eb_rule_notice_type',
+              children: [
+                {
+                  id: '616fc30dda6a812a6424bb5ei',
+                  autoincrement: 'NO',
+                  columnSize: 32,
+                  data_code: 12,
+                  data_type: 'VARCHAR',
+                  dataType: 12,
+                  label: 'RULE_ID',
+                  field_name: 'RULE_ID',
+                  foreign_key_position: 0,
+                  is_auto_allowed: true,
+                  is_deleted: false,
+                  is_nullable: false,
+                  java_type: 'String',
+                  javaType: 'String',
+                  oriPrecision: 32,
+                  original_field_name: 'RULE_ID',
+                  original_java_type: 'String',
+                  precision: 32,
+                  primary_key_position: 1,
+                  source: 'auto',
+                  unique: true,
+                  key: 'PRI',
+                  desc: '描述1',
+                  table_name: 'eb_rule_notice_type'
+                }
+              ]
             },
             {
               id: '616fc30dda6a812a6424bb5f',
@@ -162,30 +190,28 @@ export const FieldProcess = connect(
         this.originalFields = JSON.parse(JSON.stringify(this.fields))
         return (
           <div class="field-processor-tree-warp bg-body pt-5 pb-5">
-            <div class="field-processor-operation">
-              <el-checkbox
-                class="check-all"
-                v-model={this.checkAll}
-                onChange={() => this.handleCheckAllChange()}
-              ></el-checkbox>
-              <span class="field-name field-text">字段名称</span>
-              <span class="field-desc field-text">字段描述</span>
-              <span class="field-type field-text">类型</span>
-              <VIcon class="clickable ml-5" small onClick={() => this.handleAllToUpperCase()}>
-                toUpperCase
-              </VIcon>
-              <VIcon class="clickable ml-5" small onClick={() => this.handleAllToLowerCase()}>
-                toLowerCase
-              </VIcon>
-              <VIcon class="clickable ml-5" small onClick={() => this.handleAllDelete()}>
-                delete
-              </VIcon>
-              <VIcon class="clickable ml-5" small onClick={() => this.handleAllReset()}>
-                revoke
-              </VIcon>
+            <div class="field-processor-operation flex">
+              <ElCheckbox class="check-all mr-4" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
+              <span class="field-name inline-block fw-bolder">字段名称</span>
+              <span class="field-desc inline-block fw-bolder">字段描述</span>
+              <span class="field-type inline-block fw-bolder">类型</span>
+              <span class="field-ops inline-block fw-bolder">
+                <VIcon class="clickable ml-5" small onClick={() => this.handleAllToUpperCase()}>
+                  toUpperCase
+                </VIcon>
+                <VIcon class="clickable ml-5" small onClick={() => this.handleAllToLowerCase()}>
+                  toLowerCase
+                </VIcon>
+                <VIcon class="clickable ml-5" small onClick={() => this.handleAllDelete()}>
+                  delete
+                </VIcon>
+                <VIcon class="clickable ml-5" small onClick={() => this.handleAllReset()}>
+                  revoke
+                </VIcon>
+              </span>
             </div>
             <div className="field-processor-tree-warp">
-              <el-tree
+              <ElTree
                 ref="tree"
                 data={fields}
                 node-key="id"
@@ -194,8 +220,11 @@ export const FieldProcess = connect(
                 class="field-processor-tree"
                 scopedSlots={{
                   default: ({ node, data }) => (
-                    <span class="tree-node" slot-scope="{ node, data }">
-                      <el-tooltip class="tree-tooltip" effect="dark" placement="left-start">
+                    <span
+                      class="tree-node flex flex-1 justify-content-center align-items flex-row"
+                      slot-scope="{ node, data }"
+                    >
+                      <ElTooltip class="item inline-block" effect="dark" placement="left-start">
                         <span slot="content">
                           {data.original_field_name}
                           <br />
@@ -206,30 +235,29 @@ export const FieldProcess = connect(
                           class={[
                             this.isRename(data.id) ? 'active__name' : '',
                             this.isCreate(data.id) ? 'active__name' : '',
-                            'tree-label',
-                            'tree-item'
+                            'e-label'
                           ]}
                         >
-                          <el-input
+                          <ElInput
                             v-model={data.label}
                             disabled={this.isRemove(data.id)}
                             onBlur={() => this.handleRename(node, data)}
                           />
                         </span>
-                      </el-tooltip>
-                      <span class={['tree-item']}>{data.desc}</span>
-                      <el-select
+                      </ElTooltip>
+                      <span class="e-desc">{data.desc}</span>
+                      <ElSelect
                         v-model={data.data_type}
                         size="mini"
                         disabled={this.isRemove(data.id)}
-                        class={[this.isConvertDataType(data.id) ? 'active__type' : '', 'tree-select', 'tree-item']}
+                        class={[this.isConvertDataType(data.id) ? 'active__type' : '', 'e-select']}
                         onChange={() => this.handleDataType(node, data)}
                       >
                         {this.selectList.map(op => (
-                          <el-option label={op.label} value={op.value} key={op.value} />
+                          <ElOption label={op.label} value={op.value} key={op.value} />
                         ))}
-                      </el-select>
-                      <span class="tree-item tree-desc">
+                      </ElSelect>
+                      <span class="e-ops">
                         <ElButton
                           type="text"
                           class="ml-5"
@@ -263,24 +291,24 @@ export const FieldProcess = connect(
                 }}
               />
             </div>
-            <el-dialog
+            <ElDialog
               title={'字段赋值(' + this.scriptDialog.tableName + '[' + this.scriptDialog.fieldName + '])'}
               visible={this.scriptDialog.open}
               append-to-body
               custom-class="scriptDialog"
               close-on-click-modal={false}
             >
-              <el-form>
-                <el-form-item>
-                  <el-input
+              <ElForm>
+                <ElFormItem>
+                  <ElInput
                     placeholder="$t('editor.cell.processor.field.form.expression')"
                     v-model={this.scriptDialog.script}
                     size="mini"
                   >
                     <template slot="prepend">var result = </template>
-                  </el-input>
-                </el-form-item>
-              </el-form>
+                  </ElInput>
+                </ElFormItem>
+              </ElForm>
               <div class="example">
                 <div>示例:</div>
                 <div>var result = "a" + "b" // 字符串拼接, result的结果为 "ab"</div>
@@ -292,14 +320,14 @@ export const FieldProcess = connect(
                 </div>
               </div>
               <div slot="footer" class="dialog-footer">
-                <el-button size="mini" onClick={() => (this.scriptDialog.open = false)}>
+                <ElButton size="mini" onClick={() => (this.scriptDialog.open = false)}>
                   取消
-                </el-button>
-                <el-button type="primary" size="mini" onClick={() => this.scriptDialog.fn()}>
+                </ElButton>
+                <ElButton type="primary" size="mini" onClick={() => this.scriptDialog.fn()}>
                   确认
-                </el-button>
+                </ElButton>
               </div>
-            </el-dialog>
+            </ElDialog>
           </div>
         )
       },
@@ -365,7 +393,7 @@ export const FieldProcess = connect(
           } else {
             //eslint-disable-next-line
             console.log(
-              'Entity1.handlerRename(node,data,nativeData,operations',
+              'fieldProcessor.handlerRename(node,data,nativeData,operations',
               node,
               data,
               nativeData,
@@ -440,7 +468,7 @@ export const FieldProcess = connect(
           return field
         },
         handleDataType(node, data) {
-          console.log('SchemaEditor.handleDataType', node, data) //eslint-disable-line
+          console.log('fieldProcessor.handleDataType', node, data) //eslint-disable-line
           let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
           if (createOps && createOps.length > 0) {
             let op = createOps[0]
@@ -471,7 +499,7 @@ export const FieldProcess = connect(
           }
         },
         handleReset(node, data) {
-          console.log('SchemaEditor.handleReset', node, data) //eslint-disable-line
+          console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
           let parentId = node.parent.data.id
           let dataLabel = JSON.parse(JSON.stringify(data.label))
           let indexId = this.operations.filter(v => v.op === 'REMOVE' && v.id === parentId)
@@ -540,7 +568,7 @@ export const FieldProcess = connect(
          * @param data
          */
         handleCreate(action, node, data) {
-          console.log('SchemaEditor.handleCreate', action, node, data) //eslint-disable-line
+          console.log('fieldProcessor.handleCreate', action, node, data) //eslint-disable-line
           let parentFieldName = ''
           let level = node.level
           if (action === 'create_sibling') {
@@ -634,7 +662,7 @@ export const FieldProcess = connect(
               self.scripts.push(script)
             }
 
-            console.log('SchemaEditor.handleScript', node, data, script, self.scripts) //eslint-disable-line
+            console.log('fieldProcessor.handleScript', node, data, script, self.scripts) //eslint-disable-line
             self.$nextTick(() => {
               self.scriptDialog.open = false
             })
@@ -643,7 +671,7 @@ export const FieldProcess = connect(
           }
         },
         handleDelete(node, data) {
-          console.log('SchemaEditor.handleDelete', node, data) // eslint-disable-line
+          console.log('fieldProcessor.handleDelete', node, data) // eslint-disable-line
           let createOpsIndex = this.operations.findIndex(v => v.id === data.id && v.op === 'CREATE')
           if (createOpsIndex >= 0) {
             let fieldName = this.operations[createOpsIndex].field_name + '.'
