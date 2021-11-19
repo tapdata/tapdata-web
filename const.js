@@ -30,5 +30,6 @@ export const TYPEMAP = {
   tidb: 'TiDB',
   hana: 'SAP HANA',
   clickhouse: 'ClickHouse',
-  vika: 'Vika'
+  vika: 'Vika',
+  kundb: 'KunDB'
 }

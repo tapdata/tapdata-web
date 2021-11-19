@@ -188,7 +188,8 @@
           'dameng',
           'greenplum',
           'mq',
-          'clickhouse'
+          'clickhouse',
+          'kundb'
         ]"
         @select="createConnection"
       ></ConnectionTypeSelector>
