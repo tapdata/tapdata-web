@@ -274,7 +274,7 @@ export default {
           label: '状态',
           key: 'type',
           type: 'select',
-          options: []
+          items: []
         }
       ]
     }

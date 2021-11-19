@@ -188,7 +188,8 @@ export default {
 
   props: {
     items: {
-      type: [Array, Function]
+      type: [Array, Function],
+      default: () => []
     },
     buffer: {
       type: Number,

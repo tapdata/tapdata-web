@@ -406,7 +406,7 @@ export default {
           label: '状态',
           key: 'status',
           type: 'select-inner',
-          options: this.statusItems
+          items: this.statusItems
         },
         {
           placeholder: '按ID/实例名称搜索',
