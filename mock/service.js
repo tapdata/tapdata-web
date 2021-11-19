@@ -1163,7 +1163,25 @@ module.exports = Object.assign({}, dataflow, {
           errorMsg: 'testing timeout',
           schema: {},
           _id: '6076ffbab0f20408b0ec0914'
-        }
+        },
+        'fields|10-30': [
+          {
+            autoincrement: false,
+            columnSize: 0,
+            dataType: 7,
+            data_type: 'OBJECT_ID',
+            field_name: '@name',
+            id: '@id',
+            is_nullable: true,
+            javaType: 'String',
+            key: 'PRI',
+            original_field_name: '@name',
+            precision: 0,
+            primary_key_position: 1,
+            scale: 0,
+            table_name: '@name'
+          }
+        ]
       }
     ]
   },
@@ -1182,6 +1200,12 @@ module.exports = Object.assign({}, dataflow, {
     code: 'ok',
     msg: 'ok'
   },
+  '/api/MetadataInstances/tables': {
+    code: 'ok',
+    msg: 'ok',
+    'data|10000-20000': ['@id']
+  },
+  '/api/MetadataInstances/schema': {},
   '/api/DataCatalogs/count': { data: { count: 6 }, code: 'ok', msg: 'ok' },
   '/api/DataCatalogs/getList': {
     'data|0-50': [
