@@ -75,15 +75,7 @@ const state = () => ({
   selectedNodes: [], // 选中的节点
   activeType: null,
   formSchema: null,
-  dataflow: {
-    id: '',
-    name: '',
-    settings: {}
-  },
   dag: {
-    // id: '',
-    // name: '',
-    // settings: {},
     nodes: [], // 节点数据
     edges: [] // 连线数据
   }
@@ -93,21 +85,6 @@ const state = () => ({
 const getters = {
   getStateIsDirty: state => {
     return state.stateIsDirty
-  },
-
-  dataflowName: state => {
-    return state.dataflow.name
-  },
-
-  dataflowId: state => {
-    return state.dataflow.id
-  },
-
-  dataflowSettings: state => {
-    if (state.dataflow.settings === undefined) {
-      return {}
-    }
-    return state.dataflow.settings
   },
 
   // 判断action是否被标记
@@ -218,25 +195,6 @@ const mutations = {
    */
   setStateDirty(state, dirty) {
     state.stateIsDirty = dirty
-  },
-
-  // Id
-  setDataflowId(state, id) {
-    state.dataflow.id = id
-  },
-
-  // Name
-  setDataflowName(state, data) {
-    if (data.setStateDirty === true) {
-      state.stateIsDirty = true
-    }
-    state.dataflow.name = data.newName
-  },
-
-  // Settings
-  setDataflowSettings(state, dataflowSettings) {
-    Vue.set(state.dataflow, 'settings', dataflowSettings)
-    console.log('dataflow', state.dataflow) // eslint-disable-line
   },
 
   /**
@@ -414,7 +372,7 @@ const mutations = {
 
   // 移除节点
   removeNode(state, node) {
-    const { nodes } = state.dag
+    const { nodes, edges } = state.dag
     const nodeId = node.id
     const index = nodes.findIndex(n => n.id === nodeId)
 
@@ -427,19 +385,7 @@ const mutations = {
 
     nodes.splice(index, 1)
 
-    if (node.outputLanes?.length || node.inputLanes?.length) {
-      nodes.forEach(n => {
-        if (n.outputLanes?.length) {
-          const ti = n.outputLanes.indexOf(nodeId)
-          if (~ti) n.outputLanes.splice(ti, 1)
-        }
-
-        if (n.inputLanes?.length) {
-          const si = n.inputLanes.indexOf(nodeId)
-          if (~si) n.inputLanes.splice(si, 1)
-        }
-      })
-    }
+    state.dag.edges = edges.filter(({ source, target }) => nodeId !== source && nodeId !== target)
 
     state.stateIsDirty = true
   },
@@ -483,6 +429,10 @@ const mutations = {
   genDBIcon(item) {
     let icon = DB_ICON[item.database_type]
     return icon ? require(`web-core/assets/images/db-icon/${icon}.svg`) : null
+  },
+
+  setEdges(state, edges) {
+    state.dag.edges = edges
   }
 }
 

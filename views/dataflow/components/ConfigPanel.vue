@@ -8,7 +8,7 @@
   >
     <VIcon class="config-panel-close" size="16" @click="handleClosePanel">close</VIcon>
     <div v-if="activeType === 'settings'" class="h-100 flex flex-column overflow-hidden">
-      <SettingPanel v-on="$listeners"></SettingPanel>
+      <SettingPanel v-bind="$attrs" v-on="$listeners"></SettingPanel>
       <!-- <div class="panel-header flex align-center px-4 border-bottom fs-7">
         <VIcon class="header-icon mr-2">setting</VIcon>
         设置
@@ -152,7 +152,7 @@ $headerHeight: 40px;
 .title-input-wrap {
   position: relative;
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
 
   &:hover {
     .title-input {
@@ -174,6 +174,7 @@ $headerHeight: 40px;
     background: 0 0;
     border: 1px solid transparent;
     border-radius: 4px;
+    font-size: inherit;
     transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
     &:focus {
@@ -234,7 +235,7 @@ $headerHeight: 40px;
     color: $color;
     font-size: 18px;
   }
-  .setting-tabs {
+  /*.setting-tabs {
     ::v-deep {
       .el-tabs__content {
         height: calc(100% - 55px);
@@ -258,7 +259,7 @@ $headerHeight: 40px;
         }
       }
     }
-  }
+  }*/
 
   ::v-deep {
     .config-tabs.el-tabs {

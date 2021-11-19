@@ -4,14 +4,7 @@
       <VIcon size="20">left</VIcon>
     </button>
     <div class="title-input-wrap flex align-center mx-2 flex-shrink-0 h-100" :data-value="hiddenValue">
-      <input
-        v-focus-select
-        :readonly="isMonitor"
-        ref="nameInput"
-        v-model="name"
-        class="title-input"
-        @blur="onNameInputBlur"
-      />
+      <input v-focus-select ref="nameInput" v-model.trim="name" class="title-input" @change="onNameInputChange" />
       <VIcon @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
     </div>
     <div class="operation-center flex align-center">
@@ -72,10 +65,10 @@
 <script>
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
-import DataflowApi from 'web-core/api/DataFlows'
 import { mapGetters, mapMutations } from 'vuex'
+import Task from 'web-core/api/Task'
 
-const dataflowApi = new DataflowApi()
+const taskApi = new Task()
 export default {
   name: 'TopHeader',
 
@@ -87,12 +80,8 @@ export default {
     isEditable: Boolean,
     isMonitor: Boolean,
     editable: Boolean,
-    statusBtMap: Object,
-    status: {
-      type: String,
-      default: ''
-    },
-    creatUserId: String
+    creatUserId: String,
+    dataflowName: String
   },
 
   components: { VIcon },
@@ -109,7 +98,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['dataflowId', 'dataflowName']),
+    ...mapGetters('dataflow', ['dataflowId']),
 
     syncTxt() {
       const settings = this.$store.getters['dataflow/dataflowSettings']
@@ -133,28 +122,18 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setDataflowName', 'setActiveType']),
+    ...mapMutations('dataflow', ['setActiveType']),
 
-    onNameInputBlur() {
-      this.setDataflowName({ newName: this.name })
-      if (this.dataflowId) {
-        dataflowApi.patchId(this.dataflowId, {
-          name: this.name
-        })
+    onNameInputChange() {
+      if (!this.name) {
+        this.name = this.dataflowName
+      } else {
+        this.$emit('change-name', this.name)
       }
     },
 
     focusNameInput() {
       this.$refs.nameInput.focus()
-    },
-
-    updateInputWidth() {
-      this.$nextTick(() => {
-        let namePre = this.$refs.namePre
-        namePre.style.display = 'inline-block'
-        this.inputWidth = Math.max(this.$refs.namePre.offsetWidth, 8) + 'px'
-        namePre.removeAttribute('style')
-      })
     },
 
     back() {

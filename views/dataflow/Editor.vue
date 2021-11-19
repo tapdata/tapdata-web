@@ -10,8 +10,8 @@
       :sync_type="sync_type"
       :creat-user-id="creatUserId"
       :is-starting="isStarting"
+      :dataflow-name="dataflow.name"
       @save="save"
-      @start="start"
       @delete="handleDelete"
       @undo="handleUndo"
       @redo="handleRedo"
@@ -20,6 +20,7 @@
       @showSettings="handleShowSettings"
       @center-content="handleCenterContent"
       @auto-layout="handleAutoLayout"
+      @change-name="handleUpdateName"
     ></TopHeader>
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
@@ -78,7 +79,7 @@
           </ElPopover>
         </main>
         <!--配置面板-->
-        <ConfigPanel @hide="onHideSidebar"></ConfigPanel>
+        <ConfigPanel :settings="dataflow" @hide="onHideSidebar"></ConfigPanel>
       </section>
     </section>
   </section>
@@ -92,7 +93,7 @@ import LeftSidebar from './components/LeftSidebar'
 import DFNode from './components/DFNode'
 import jsPlumbIns from './instance'
 import { connectorActiveStyle } from './style'
-import { NODE_PREFIX, DEFAULT_SETTINGS, NODE_WIDTH, NODE_HEIGHT, STATUS_MAP } from './constants'
+import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, STATUS_MAP } from './constants'
 import { ctorTypes, nodeTypes } from 'web-core/nodes/loader/index'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
@@ -100,7 +101,6 @@ import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from 'web-core/views/dataflow/components/ConfigPanel'
 import { off, on } from 'web-core/utils/dom'
 import { uuid } from 'web-core/utils/util'
-import DataFlows from 'web-core/api/DataFlows'
 import DatabaseTypes from 'web-core/api/DatabaseTypes'
 import Task from 'web-core/api/Task'
 import {
@@ -117,8 +117,8 @@ import Mousetrap from 'mousetrap'
 import dagre from 'dagre'
 import { validateBySchema } from 'web-core/components/form/utils/validate'
 import resize from 'web-core/directives/resize'
+import { merge } from 'lodash'
 
-const dataFlowsApi = new DataFlows()
 const databaseTypesApi = new DatabaseTypes()
 const taskApi = new Task()
 
@@ -165,13 +165,17 @@ export default {
         show: false,
         reference: null,
         connectionData: {}
+      },
+
+      dataflow: {
+        id: '',
+        name: ''
       }
     }
   },
 
   computed: {
     ...mapGetters('dataflow', {
-      dataflowId: 'dataflowId',
       nodes: 'allNodes',
       isActionActive: 'isActionActive',
       nodeById: 'nodeById',
@@ -241,7 +245,7 @@ export default {
   methods: {
     ...mapMutations('dataflow', [
       'setStateDirty',
-      'setDataflowId',
+      'setEdges',
       'setDataflowName',
       'setDataflowSettings',
       'setNodeTypes',
@@ -304,13 +308,13 @@ export default {
         }
       }
 
-      const dataflowId = this.$route.params.id
+      const { id } = this.$route.params
 
-      if (dataflowId) {
-        await this.openDataflow(dataflowId)
+      if (id) {
+        await this.openDataflow(id)
       } else {
         this.newDataflow()
-        this.handleShowSettings() // 默认打开设置
+        // this.handleShowSettings() // 默认打开设置
       }
     },
 
@@ -597,72 +601,35 @@ export default {
       })*/
     },
 
-    async openDataflow(dataflowId) {
+    async openDataflow(id) {
       this.resetWorkspace()
 
-      let result
+      let data
       try {
-        result = await taskApi.get([dataflowId])
-        // this.creatUserId = result.user_id
+        data = await taskApi.get([id]) // this.creatUserId = result.user_id
       } catch (e) {
         this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
         return
-        /*result = {
-          name: '新任务@下午6:34:57',
-          description: '',
-          status: 'draft',
-          executeMode: 'normal',
-          dag: {
-            nodes: [
-              {
-                id: '46e517b6-67ea-46f9-9190-5adfe3564aa0',
-                name: 'ALP_IV_IV_STYLE_CATG_SUB_CLLCT',
-                type: 'table',
-                position: [-156, 195],
-                tableName: 'ALP_IV_IV_STYLE_CATG_SUB_CLLCT',
-                connectionId: '6181ff13a59f3d13067e0627'
-              },
-              {
-                id: '4ec03143-1db7-4df8-86eb-b508db3da8ce',
-                name: 'CAR_POLICY',
-                type: 'table',
-                position: [86, 279],
-                tableName: 'CAR_POLICY',
-                connectionId: '6181ff13a59f3d13067e0627'
-              }
-            ],
-            edges: [
-              {
-                source: '46e517b6-67ea-46f9-9190-5adfe3564aa0',
-                target: '4ec03143-1db7-4df8-86eb-b508db3da8ce'
-              }
-            ]
-          }
-        }*/
       }
 
-      const data = result
+      const { dag } = data
+
+      delete data.dag
 
       this.status = data.status
-      this.setDataflowId(dataflowId)
-      this.setDataflowName({ newName: data.name, setStateDirty: false })
-      this.setDataflowSettings(data)
+      this.$set(this, 'dataflow', data)
 
-      // const isOld = this.transformStages(data.stages)
-      await this.addNodes(data.dag)
-
-      // 旧版数据自动布局
-      // isOld ? this.handleAutoLayout() : this.handleCenterContent()
+      await this.addNodes(dag)
+      this.setEdges(dag.edges)
       this.setStateDirty(false)
     },
 
     newDataflow() {
-      // this.creatUserId = this.$cookie.get('user_id')
-      this.creatUserId = ''
       this.resetWorkspace()
-      this.setDataflowName({
+      this.dataflow.name = '新任务@' + new Date().toLocaleTimeString()
+      /*this.setDataflowName({
         newName: '新任务@' + new Date().toLocaleTimeString()
-      })
+      })*/
     },
 
     /**
@@ -1081,26 +1048,11 @@ export default {
     },
 
     getDataflowDataToSave() {
-      const { getters } = this.$store
-      const dag = getters['dataflow/dag']
-      const name = getters['dataflow/dataflowName']
-      const settings = getters['dataflow/dataflowSettings']
-      const data = {
-        name,
-        description: '',
-        status: 'draft',
-        executeMode: 'normal',
-        dag
-        // ...settings
+      const dag = this.$store.getters['dataflow/dag']
+      return {
+        dag,
+        ...this.dataflow
       }
-
-      const dataflowId = this.$store.getters['dataflow/dataflowId']
-
-      if (dataflowId) {
-        data.id = dataflowId
-      }
-
-      return data
     },
 
     async save() {
@@ -1111,8 +1063,7 @@ export default {
         return
       }
 
-      const currentDataflow = this.$route.params.id
-      if (!currentDataflow) {
+      if (!this.dataflow.id) {
         return this.saveAsNewDataflow()
       }
 
@@ -1120,9 +1071,10 @@ export default {
 
       const data = this.getDataflowDataToSave()
 
-      await dataFlowsApi.draft(data)
+      await taskApi.patch(data)
 
       this.isSaving = false
+
       this.$message.success(this.$t('message.saveOK'))
     },
 
@@ -1130,112 +1082,18 @@ export default {
       try {
         this.isSaving = true
         const data = this.getDataflowDataToSave()
-        console.log('🚗', data)
+        console.log('🚗saveAsNewDataflow', data)
         const dataflow = await taskApi.post(data)
         this.isSaving = false
+        this.dataflow.id = dataflow.id
         this.$message.success(this.$t('message.saveOK'))
-        this.setDataflowId(dataflow.id) // 将生成的id保存到store
-
         await this.$router.push({
           name: 'DataflowEditor',
-          params: { id: dataflow.id, action: 'dataflowSave' },
-          query: {
-            mapping: this.mapping
-          }
+          params: { id: dataflow.id, action: 'dataflowSave' }
         })
       } catch (e) {
         this.$showError(e, '数据流保存出错', '出现的问题:')
       }
-    },
-
-    async start() {
-      // TODO 优化错误处理
-      const errorMsg = this.getError()
-      if (errorMsg) {
-        this.$message.error(errorMsg)
-        return
-      }
-
-      const { dataflowId } = this
-      const data = this.getDataflowDataToSave()
-      data.status = 'scheduled'
-      data.executeMode = 'normal'
-
-      this.isStarting = true
-
-      const fetch = dataflowId ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
-
-      const result = await fetch
-
-      const dataflow = result.data
-
-      await dataFlowsApi.saveStage(data.stages)
-
-      this.isStarting = false
-
-      await this.$router.push({
-        name: 'DataflowMonitor',
-        params: {
-          id: dataflow.id
-        },
-        query: {
-          mapping: this.mapping
-        }
-      })
-    },
-
-    doSaveStartDataFlow(data) {
-      if (data) {
-        if (this.form.taskName) {
-          data.name = this.form.taskName
-        }
-
-        let start = () => {
-          data.status = 'scheduled'
-          data.executeMode = 'normal'
-          this.doSave(data, (err, rest) => {
-            if (err) {
-              if (err.response.msg === 'Error: Loading data source schema') {
-                this.$message.error(this.$t('message.loadingSchema'))
-              } else {
-                this.$message.error(err.response.msg)
-              }
-            } else {
-              this.$message.success(this.$t('message.taskStart'))
-              this.$router.push({
-                path: '/job',
-                query: {
-                  id: rest.id,
-                  isMoniting: true,
-                  mapping: this.mappingTemplate
-                }
-              })
-              this.$message.success(this.$t('message.taskStart'))
-              location.reload()
-            }
-          })
-        }
-        // if (data.id && this.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
-        // 	const h = this.$createElement;
-        // 	let arr = this.$t('message.startAggregation_message').split('XXX');
-        // 	this.$confirm(
-        // 		h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, data.name), ')' + arr[1]]),
-        // 		this.$t('dataFlow.importantReminder'),
-        // 		{
-        // 			type: 'warning',
-        // 			closeOnClickModal: false
-        // 		}
-        // 	).then(() => {
-        // 		//若任务内存在聚合处理器，启动前先重置
-        // 		dataFlowsApi.reset(data.id).then(() => {
-        // 			start();
-        // 		});
-        // 	});
-        // } else {
-        start()
-        // }
-      }
-      this.dialogFormVisible = false
     },
 
     handleUndo() {
@@ -1372,30 +1230,32 @@ export default {
       if (this.jsPlumbIns) {
         this.jsPlumbIns.deleteEveryEndpoint()
       }
-
-      this.status = 'draft'
+      this.dataflow = merge(
+        {
+          id: '',
+          name: ''
+        },
+        DEFAULT_SETTINGS
+      )
       this.deselectAllNodes()
-      // this.removeAllNodes()
-      this.setDataflowId(null)
-      this.setDataflowName({ newName: '', setStateDirty: false })
       this.resetDag()
-      this.setDataflowSettings(DEFAULT_SETTINGS)
+      // this.setDataflow(DEFAULT_SETTINGS)
       this.resetSelectedNodes()
     },
 
     getError() {
-      const settings = this.$store.getters['dataflow/dataflowSettings']
+      // const settings = this.$store.getters['dataflow/dataflowSettings']
 
-      if (!this.$store.getters['dataflow/dataflowName']) return this.$t('editor.cell.validate.empty_name')
+      if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
 
-      if (settings.sync_type === 'initial_sync' && settings.isSchedule && !settings.cronExpression) {
+      /*if (settings.sync_type === 'initial_sync' && settings.isSchedule && !settings.cronExpression) {
         return this.$t('dataFlow.cronExpression')
-      }
+      }*/
 
-      for (let node of this.nodes) {
+      /*for (let node of this.nodes) {
         let res = node.__Ctor.validate(node)
         if (res !== true) return res
-      }
+      }*/
 
       if (this.nodes.length < 2) {
         return this.$t('editor.cell.validate.none_data_node')
@@ -1607,6 +1467,13 @@ export default {
       } while (conflictFound === true)
 
       return newPosition
+    },
+
+    handleUpdateName(name) {
+      this.dataflow.name = name
+      taskApi.updateById(this.dataflow.id, {
+        name
+      })
     }
   }
 }

@@ -99,6 +99,7 @@ class RemoveNodeCommand extends Command {
     Vue.nextTick(() => {
       this.connections?.forEach(c => {
         state.instance.connect({ uuids: [c.sourceId + '_source', c.targetId + '_target'] })
+        state.store.commit('dataflow/addConnection', { source: getRealId(c.sourceId), target: getRealId(c.targetId) })
       })
     })
   }
