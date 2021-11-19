@@ -38,7 +38,9 @@
           'kafka',
           'dameng',
           'greenplum',
-          'mq'
+          'mq',
+          'adb_mysql',
+          'adb_postgres'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
         @select="createConnection"

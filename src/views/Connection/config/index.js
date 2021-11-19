@@ -21,6 +21,7 @@ import jira from './jira'
 import dameng from './dameng'
 import hive from './hive'
 import tcp_udp from './tcp_udp'
+import mq from './mq'
 import dfs_mysql from './dfs_mysql'
 import dfs_mariadb from './dfs_maria'
 import dfs_oracle from './dfs_oracle'
@@ -35,7 +36,8 @@ import dfs_dameng from './dfs_dameng'
 import dfs_kafka from './dfs_kafka'
 import dfs_greenplum from './dfs_greenplum'
 import dfs_mq from './dfs_mq'
-import mq from './mq'
+import dfs_adb_postgres from './dfs_adb_postgres'
+import dfs_adb_mysql from './dfs_adb_mysql'
 
 export default {
   mysql,
@@ -52,6 +54,16 @@ export default {
   mysqlpxc,
   jira,
   hive,
+  sybasease,
+  gbase8s,
+  gaussdb200,
+  dummydb,
+  restapi,
+  custom_connection,
+  gridfs,
+  mq,
+  dameng,
+  tcp_udp,
   dfs_mysql,
   dfs_mariadb,
   dfs_oracle,
@@ -66,14 +78,6 @@ export default {
   dfs_kafka,
   dfs_greenplum,
   dfs_mq,
-  sybasease,
-  gbase8s,
-  gaussdb200,
-  dummydb,
-  restapi,
-  custom_connection,
-  gridfs,
-  mq,
-  dameng,
-  tcp_udp
+  dfs_adb_postgres,
+  dfs_adb_mysql
 }

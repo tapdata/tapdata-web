@@ -13,6 +13,8 @@ module.exports = {
     'dameng',
     'kafka',
     'greenplum',
-    'mq'
+    'mq',
+    'adb_postgres',
+    'adb_mysql'
   ]
 }
