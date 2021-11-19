@@ -29,5 +29,7 @@ export const TYPEMAP = {
   greenplum: 'Greenplum',
   tidb: 'TiDB',
   hana: 'SAP HANA',
-  clickhouse: 'ClickHouse'
+  clickhouse: 'ClickHouse',
+  adb_mysql: 'ADB MySQL',
+  adb_postgres: 'ADB PostgreSQL'
 }
