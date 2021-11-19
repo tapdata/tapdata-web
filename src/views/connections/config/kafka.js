@@ -11,7 +11,6 @@ export default function (vm) {
         reader.onload = () => {
           let text = reader.result
           vm.model[field] = text
-          vm.model[field + 'Name'] = file.name
 
           getBase64(file).then(resBase64 => {
             vm.model[field] = resBase64.split(',')[1]
