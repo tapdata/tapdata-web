@@ -79,6 +79,7 @@
               :loading="schemaSelectConfig.loading"
               :disabled="schemaSelectConfig.loading"
               :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
+              @change="schemaSelectConfig.on.change"
             />
             <el-tooltip
               class="item"
@@ -117,7 +118,7 @@
                 size="mini"
                 class="iconfont icon-dakai1"
                 style="padding: 7px; margin-left: 7px"
-                :disabled="!tableNameId"
+                :disabled="!model.tableId"
                 @click="handTableName"
               ></el-button>
             </el-tooltip>
@@ -258,8 +259,6 @@ import VirtualSelect from 'web-core/components/virtual-select'
 
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
-// let editor = null;
-let tempSchemas = []
 export default {
   name: 'Table',
   components: { VirtualSelect, Entity, ClipButton, CreateTable, RelatedTasks, queryBuilder, VIcon, FieldMapping },
@@ -312,7 +311,6 @@ export default {
     'model.tableName': {
       immediate: true,
       handler() {
-        this.tableIsLink()
         //切换table 才清空过滤
         if (this.schemaSelectConfig.options.length > 0 && this.model.tableName) {
           this.model.custFields.length = 0
@@ -353,7 +351,6 @@ export default {
       dialogData: null,
       databaseData: [],
       copyConnectionId: '',
-      tableNameId: '',
 
       dialogVisible: false,
       taskData: {
@@ -404,6 +401,7 @@ export default {
       dataNodeInfo: {},
 
       model: {
+        tableId: '',
         connectionId: '',
         databaseType: '',
         tableName: '',
@@ -451,10 +449,6 @@ export default {
         })
       }
     }
-
-    // setTimeout(() => {
-    // 	this.tableIsLink();
-    // }, 500);
   },
 
   methods: {
@@ -473,7 +467,6 @@ export default {
     // 获取新建表名称
     getAddTableName(val) {
       this.model.tableName = val
-      this.tableIsLink()
       this.mergedSchema = null
       let schema = {
         meta_type: 'table',
@@ -502,26 +495,8 @@ export default {
 
     // 跳转到数据目录当前表
     handTableName() {
-      this.tableNameId = ''
-      this.tableIsLink()
-
-      if (this.tableNameId) {
-        let href = '/#/metadataDetails?id=' + this.tableNameId
-        window.open(href)
-      }
-    },
-
-    // 判断表是否可以跳转
-    tableIsLink() {
-      this.tableNameId = ''
-      if (tempSchemas.length) {
-        tempSchemas.forEach(item => {
-          if (item.original_name === this.model.tableName) {
-            this.tableNameId = item.id
-            this.handlerSchemaChange()
-          }
-        })
-      }
+      let href = '/#/metadataDetails?id=' + this.model.tableId
+      window.open(href)
     },
 
     // 获取数据库id
@@ -589,32 +564,16 @@ export default {
       }
       let self = this
       this.schemaSelectConfig.loading = true
-      let params = {
-        filter: JSON.stringify({
-          where: {
-            'source.id': connectionId,
-            meta_type: {
-              in: ['collection', 'table', 'view'] //,
-            },
-            is_deleted: false
-          },
-          fields: {
-            id: true,
-            original_name: true
-          }
-        })
-      }
       self.loading = true
       MetadataInstances.getTables(connectionId)
         .then(res => {
-          this.tableIsLink()
           let schemas = res.data
-          tempSchemas = schemas.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
-          self.schemaSelectConfig.options = tempSchemas.map(item => ({
-            label: item,
-            value: item
-          }))
-          this.tableIsLink()
+          self.schemaSelectConfig.options = schemas
+            .sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
+            .map(item => ({
+              label: item,
+              value: item
+            }))
         })
         .finally(() => {
           this.schemaSelectConfig.loading = false
@@ -631,63 +590,51 @@ export default {
     },
     handlerSchemaChange() {
       let self = this
-      if (tempSchemas.length > 0) {
-        let schemas = tempSchemas.filter(s => s.table_name === this.model.tableName)
-        if (schemas && schemas.length > 0) {
-          this.model.tableId = schemas[0].id
-        } else {
-          this.model.tableId = ''
-        }
-      }
-      if (this.model.tableId) {
-        let params = {
-          filter: JSON.stringify({
-            where: {
-              id: this.model.tableId,
-              is_deleted: false
-            }
-          })
-        }
-        self.loading = true
-        MetadataInstances.schema(params).then(res => {
-          if (res.data) {
-            let fields = res.data?.records[0]?.schema?.tables[0]?.fields
-            if (fields) {
-              // let primaryKeys = fields
-              // 	.filter(f => f.primary_key_position > 0)
-              // 	.map(f => f.field_name)
-              // 	.join(',');
-              self.primaryKeyOptions = fields.map(f => f.field_name)
-              self.model.custSql.custFields = fields.map(f => f.field_name)
-              // if (primaryKeys) {
-              // 	self.model.primaryKeys = primaryKeys;
-              // } else {
-              // 	self.model.primaryKeys = '';
-              // }
-            }
-            this.loadSchema = res.data?.records[0]?.schema?.tables[0] || []
-            self.$emit('schemaChange', _.cloneDeep(this.loadSchema))
+      let params = {
+        filter: JSON.stringify({
+          where: {
+            'source.id': self.model.connectionId,
+            original_name: self.model.tableName,
+            is_deleted: false
           }
         })
-      } else {
-        let schema = {
-          cdc_enabled: true,
-          fields: [],
-          meta_type: 'table',
-          table_name: this.model.tableName
-        }
-        self.$emit('schemaChange', _.cloneDeep(schema))
       }
-      this.taskData.tableName = this.model.tableName
 
-      // 切换清空连线关联条件的值
-      // this.cell.graph.getConnectedLinks(this.cell, { outbound: true }).forEach(link => {
-      // 	let orignData = link.getFormData();
-      // 	if (orignData) {
-      // 		orignData.joinTable.joinKeys = [];
-      // 	}
-      // 	link.setFormData(orignData);
-      // });
+      MetadataInstances.get(params).then(res => {
+        let table = res?.data?.[0]
+        if (table) {
+          this.model.tableId = table.id
+          let params = {
+            filter: JSON.stringify({
+              where: {
+                id: this.model.tableId,
+                is_deleted: false
+              }
+            })
+          }
+          self.loading = true
+          MetadataInstances.schema(params).then(res => {
+            if (res.data) {
+              let fields = res.data?.records[0]?.schema?.tables[0]?.fields
+              if (fields) {
+                self.primaryKeyOptions = fields.map(f => f.field_name)
+                self.model.custSql.custFields = fields.map(f => f.field_name)
+              }
+              this.loadSchema = res.data?.records[0]?.schema?.tables[0] || []
+              self.$emit('schemaChange', _.cloneDeep(this.loadSchema))
+            }
+          })
+        } else {
+          let schema = {
+            cdc_enabled: true,
+            fields: [],
+            meta_type: 'table',
+            table_name: this.model.tableName
+          }
+          self.$emit('schemaChange', _.cloneDeep(schema))
+        }
+        this.taskData.tableName = this.model.tableName
+      })
     },
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
@@ -716,11 +663,9 @@ export default {
         if (data.initialSyncOrder > 0) {
           this.model.enableInitialOrder = true
         }
-        this.tableIsLink()
         this.getTranModelVersionControl()
       }
       this.cell = cell
-      tempSchemas.length = 0
       this.dataNodeInfo = dataNodeInfo || {}
 
       this.loadDataModels(this.model.connectionId)
@@ -860,7 +805,6 @@ export default {
       box-sizing: border-box;
       span {
         float: left;
-        display: inline-block;
         height: 28px;
         width: 80px;
         line-height: 28px;
@@ -883,7 +827,6 @@ export default {
         box-sizing: border-box;
         span {
           float: left;
-          display: inline-block;
           text-align: center;
           color: #999;
           font-size: 12px;

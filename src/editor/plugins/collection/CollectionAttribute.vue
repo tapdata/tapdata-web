@@ -71,12 +71,24 @@
 
         <el-form-item :label="$t('editor.cell.data_node.collection.form.collection.label')" prop="tableName" required>
           <div class="flex-block">
-            <FbSelect
-              class="e-select"
+            <!--            <FbSelect-->
+            <!--              class="e-select"-->
+            <!--              v-model="model.tableName"-->
+            <!--              :config="schemaSelectConfig"-->
+            <!--              @change="handleFieldFilterType"-->
+            <!--            ></FbSelect>-->
+            <VirtualSelect
               v-model="model.tableName"
-              :config="schemaSelectConfig"
+              size="mini"
+              filterable
+              clearable
+              :item-size="34"
+              :items="schemaSelectConfig.options"
+              :loading="schemaSelectConfig.loading"
+              :disabled="schemaSelectConfig.loading"
+              :placeholder="schemaSelectConfig.placeholder"
               @change="handleFieldFilterType"
-            ></FbSelect>
+            />
             <el-tooltip
               class="item"
               popper-class="collection-tooltip"
@@ -367,6 +379,8 @@ import _ from 'lodash'
 import ws from '../../../api/ws'
 import factory from '../../../api/factory'
 import VIcon from '@/components/VIcon'
+import VirtualSelect from 'web-core/components/virtual-select'
+
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editorMonitor = null;
@@ -390,7 +404,8 @@ export default {
     queryBuilder,
     AggregationDialog,
     VIcon,
-    FieldMapping
+    FieldMapping,
+    VirtualSelect
   },
   props: {
     database_types: {
@@ -428,7 +443,7 @@ export default {
     'model.tableName': {
       immediate: true,
       handler() {
-        let schemas = tempSchemas
+        // let schemas = tempSchemas
         if (this.schemaSelectConfig.options.length > 0) {
           let schema,
             defaultSchema = {
@@ -455,33 +470,47 @@ export default {
               ]
             }
           if (this.model.tableName) {
-            schema = schemas.filter(s => s.table_name === this.model.tableName)
-            schema = schema && schema.length > 0 ? schema[0] : defaultSchema
-
-            let fields = schema.fields || []
-            //过滤被删除的字段
-            if (fields) {
-              fields = removeDeleted(fields)
+            let params = {
+              filter: JSON.stringify({
+                where: {
+                  'source.id': this.model.connectionId,
+                  original_name: this.model.tableName,
+                  is_deleted: false
+                }
+              })
             }
-            // let primaryKeys = fields
-            // 	.filter(f => f.primary_key_position > 0)
-            // 	.map(f => f.field_name)
-            // 	.join(',');
-            this.primaryKeyOptions = fields.map(f => f.field_name)
-            // if (primaryKeys) {
-            // 	this.model.primaryKeys = primaryKeys;
-            // } else {
-            // 	this.model.primaryKeys = '';
-            // }
-            this.model.custSql.custFields = fields.map(f => f.field_name)
-            this.model.custSql.conditions.length = 0
-            this.model.custSql.fieldFilterType = 'keepAllFields'
-            this.model.custSql.cSql = ''
-            this.model.custSql.editSql = ''
-            this.model.custSql.selectedFields.length = 0
-            this.model.collectionAggregate = false
-            this.model.isFilter = false
-            this.model.collectionAggrPipeline = ''
+
+            MetadataInstances.get(params).then(res => {
+              let table = res?.data?.[0] || defaultSchema
+              // schema = schemas.filter(s => s.table_name === this.model.tableName)
+              // schema = schema && schema.length > 0 ? schema[0] : defaultSchema
+              //
+              // let fields = schema.fields || []
+              let fields = table.fields || []
+              //过滤被删除的字段
+              if (fields) {
+                fields = removeDeleted(fields)
+              }
+              // let primaryKeys = fields
+              // 	.filter(f => f.primary_key_position > 0)
+              // 	.map(f => f.field_name)
+              // 	.join(',');
+              this.primaryKeyOptions = fields.map(f => f.field_name)
+              // if (primaryKeys) {
+              // 	this.model.primaryKeys = primaryKeys;
+              // } else {
+              // 	this.model.primaryKeys = '';
+              // }
+              this.model.custSql.custFields = fields.map(f => f.field_name)
+              this.model.custSql.conditions.length = 0
+              this.model.custSql.fieldFilterType = 'keepAllFields'
+              this.model.custSql.cSql = ''
+              this.model.custSql.editSql = ''
+              this.model.custSql.selectedFields.length = 0
+              this.model.collectionAggregate = false
+              this.model.isFilter = false
+              this.model.collectionAggrPipeline = ''
+            })
           }
           this.$emit('schemaChange', _.cloneDeep(schema))
         }
@@ -670,7 +699,7 @@ export default {
     // 获取新建表名称
     getAddTableName(val) {
       this.model.tableName = val
-      this.tableIsLink()
+      // this.tableIsLink()
       this.defaultSchema = null
       let schema = {
         table_name: this.model.tableName,
@@ -706,13 +735,15 @@ export default {
 
     // 跳转到数据目录当前表
     handTableName() {
-      this.tableNameId = ''
-      this.tableIsLink()
-
-      if (this.tableNameId) {
-        let href = '/#/metadataDetails?id=' + this.tableNameId
-        window.open(href)
-      }
+      let href = '/#/metadataDetails?id=' + this.model.tableId
+      window.open(href)
+      // this.tableNameId = ''
+      // this.tableIsLink()
+      //
+      // if (this.tableNameId) {
+      //   let href = '/#/metadataDetails?id=' + this.tableNameId
+      //   window.open(href)
+      // }
     },
 
     // 判断表是否可以跳转
@@ -867,20 +898,23 @@ export default {
       let self = this
       this.schemaSelectConfig.loading = true
 
-      connectionApi
-        .get([connectionId])
+      // connectionApi
+      //   .get([connectionId])
+      MetadataInstances.getTables(connectionId)
         .then(result => {
-          if (result.data && result.data.schema && result.data.schema.tables) {
-            let schemas = (result.data.schema && result.data.schema.tables) || []
+          let schemas = result?.data || []
+          if (schemas) {
+            // let schemas = result?.data?.schema?.tables || []
             tempSchemas = schemas.sort((t1, t2) =>
               t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
             let tableList = tempSchemas.map(item => ({
-              label: item.table_name,
-              value: item.table_name
+              label: item,
+              value: item
             }))
 
             // 相同表名提示
+            let options = []
             let hash = {}
             this.repeatTable = []
             self.schemaSelectConfig.options = []
@@ -888,15 +922,17 @@ export default {
               if (hash[item.value]) {
                 this.repeatTable.push(item.value)
               } else {
-                self.schemaSelectConfig.options.push(Object.assign({}, item))
-                hash[item.value] = 1
+                // self.schemaSelectConfig.options.push(item)
+                options.push(Object.assign({}, item))
+                hash[item] = 1
               }
             })
+            self.schemaSelectConfig.options = options
             if (this.repeatTable.length > 0 && !this.disabled) {
               this.repeatTableDiao = true
             }
 
-            this.tableIsLink()
+            // this.tableIsLink()
           }
         })
         .finally(() => {
@@ -940,7 +976,7 @@ export default {
         if (data.connectionId) {
           this.loadDataModels(data.connectionId)
         }
-        this.tableIsLink()
+        // this.tableIsLink()
         let param = {
           stages: this.dataFlow?.stages,
           stageId: this.model.stageId

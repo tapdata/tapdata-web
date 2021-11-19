@@ -392,7 +392,6 @@ export default {
       this.currentForm = JSON.parse(JSON.stringify(this.form))
     }
     this.initNavData()
-    this.updateView()
     //接收数据
     let id = this.transform.stageId
     let self = this
@@ -406,6 +405,7 @@ export default {
           self.progress.showProgress = true
         } else {
           self.progress.showProgress = false
+          self.initNavData()
         }
       }
     })
@@ -460,7 +460,7 @@ export default {
           this.getNavDataMethod(this.page)
             .then(({ data, total }) => {
               this.fieldMappingNavData = data
-              this.selectRow = data[0]
+              this.selectRow = data[this.position]
               this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
               this.page.total = total
               //初始化右侧列表
@@ -655,7 +655,12 @@ export default {
       this.selectRow = item
       this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
       this.position = index
-      this.updateView()
+      this.operations = []
+      if (this.field_process?.length > 0) {
+        this.getFieldProcess()
+      }
+      this.initTableData()
+      this.initTypeMapping()
     },
 
     //右边table数据区域
