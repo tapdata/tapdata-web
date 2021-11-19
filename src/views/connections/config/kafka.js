@@ -269,7 +269,7 @@ export default function (vm) {
       },
       {
         type: 'select', //加密方式
-        field: 'KafkaSaslMechanism',
+        field: 'kafkaSaslMechanism',
         label: vm.$t('connection_kafka_encryption'),
         show: true,
         options: [

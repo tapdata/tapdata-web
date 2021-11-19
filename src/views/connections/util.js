@@ -143,7 +143,7 @@ export const defaultModel = {
     krb5ConfName: '',
     krb5Principal: '',
     krb5ServiceName: '',
-    KafkaSaslMechanism: 'PLAIN'
+    kafkaSaslMechanism: 'PLAIN'
   },
   file: {
     name: '',
