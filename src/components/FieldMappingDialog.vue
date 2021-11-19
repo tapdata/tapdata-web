@@ -667,12 +667,18 @@ export default {
       if (type === 'table') {
         if (this.searchTable.trim()) {
           this.searchTable = this.searchTable.trim().toString() //去空格
-          this.fieldMappingNavData = this.defaultFieldMappingNavData.filter(v => {
-            let str = (v.sourceObjectName + '' + v.sinkObjectName).toLowerCase()
-            return str.indexOf(this.searchTable.toLowerCase()) > -1
+          //获取第一页推演结果
+          this.loadingPage = true
+          this.$nextTick(() => {
+            this.getNavDataMethod &&
+              this.getNavDataMethod(this.page, this.searchTable)
+                .then(({ data }) => {
+                  this.fieldMappingNavData = data
+                })
+                .finally(() => {
+                  this.loadingPage = false
+                })
           })
-        } else {
-          this.fieldMappingNavData = this.defaultFieldMappingNavData
         }
       } else {
         if (this.searchField.trim()) {
