@@ -2,6 +2,7 @@ export default function (vm) {
   const fileChange = (file, field) => {
     if (file) {
       const isLt128KB = file.size / 1024 < 128
+
       if (!isLt128KB) {
         new Error('上传文件大小不能超过 128KB')
       } else {
@@ -110,6 +111,7 @@ export default function (vm) {
       {
         type: 'file',
         field: 'krb5KeytabName',
+        accept: '.keytab',
         label: vm.$t('connection_kafka_kerberos_config_keytab'),
         show: false,
         dependOn: [
@@ -150,6 +152,7 @@ export default function (vm) {
       {
         type: 'file',
         field: 'krb5ConfName',
+        accept: '.conf',
         label: vm.$t('connection_kafka_kerberos_config_conf'),
         show: false,
         dependOn: [
