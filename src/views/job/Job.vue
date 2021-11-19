@@ -662,7 +662,7 @@ export default {
     },
     getSchemaResult() {
       let self = this
-      let id = self.dataFlowId || self.queryId
+      let id = self.$route.query.id || self.queryId
       ws.on('metadataTransformerProgress', function (res) {
         if (!res?.data?.stageId && res?.data?.dataFlowId === id) {
           let { finished, total, status } = res?.data
