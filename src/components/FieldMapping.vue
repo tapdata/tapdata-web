@@ -7,12 +7,12 @@
       :loading="loading"
       :disabled="isDisable"
       @click="fieldProcess()"
-      >字段映射</el-button
+      >{{ $t('dag_link_button_field_mapping') }}</el-button
     >
     <el-dialog
       v-if="dialogFieldProcessVisible"
       width="85%"
-      title="映射配置"
+      :title="$t('dag_link_button_mapping_configuration')"
       :visible.sync="dialogFieldProcessVisible"
       :modal-append-to-body="false"
       custom-class="database-filed-mapping-dialog"
@@ -78,10 +78,10 @@ export default {
           this.transform?.queueData?.length === 0 &&
           this.transform.transferFlag //mq判断
         ) {
-          this.$message.error('请先选择需要迁移的表')
+          this.$message.error(this.$t('dag_link_field_mapping_error_no_table'))
           return
         } else if (this.transform.selectSourceArr?.length === 0 && !this.transform.transferFlag) {
-          this.$message.error('请先选择需要迁移的表') //其他数据源
+          this.$message.error(this.$t('dag_link_field_mapping_error_no_table')) //其他数据源
           return
         }
       }
@@ -329,7 +329,7 @@ export default {
       if (!returnData.valid) return //检验不通过
       let deleteLen = returnData.target.filter(v => !v.is_deleted)
       if (deleteLen.length === 0) {
-        this.$message.error('当前表被删除了所有字段，不允许保存操作')
+        this.$message.error(this.$t('dag_link_field_mapping_error_all_deleted'))
         return //所有字段被删除了 不可以保存任务
       }
       this.$emit('returnPreFixSuffix', returnData.changNameData)
