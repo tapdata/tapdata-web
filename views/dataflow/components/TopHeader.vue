@@ -66,9 +66,7 @@
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations } from 'vuex'
-import Task from 'web-core/api/Task'
 
-const taskApi = new Task()
 export default {
   name: 'TopHeader',
 
