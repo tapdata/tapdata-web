@@ -10,7 +10,7 @@
 				</el-button>
 			</div> -->
       <el-form
-        :disabled="disabled || showTransfer"
+        :disabled="disabled || disabledTransfer"
         class="e-form flex flex-column"
         label-position="top"
         label-width="160px"
@@ -236,7 +236,7 @@ export default {
           procedure: false
         }
       },
-      showTransfer: true,
+      disabledTransfer: false,
       topicSelected: [],
 
       titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
@@ -250,14 +250,14 @@ export default {
   },
   mounted() {
     let self = this
-    let id = self.$route.query.id
+    let id = self.$route?.query?.id || ''
     ws.on('metadataTransformerProgress', function (res) {
       if (res?.data?.stageId === id) {
         let { status } = res?.data
         if (status !== 'done') {
-          self.showTransfer = false
+          self.disabledTransfer = true
         } else {
-          self.showTransfer = true
+          self.disabledTransfer = false
         }
       }
     })
