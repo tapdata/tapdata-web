@@ -243,6 +243,7 @@ th {
   }
   &.is-disabled, &.is-disabled:hover {
     border: 0;
+    color: map-get($color, disable);
     background-color: unset;
   }
 }
