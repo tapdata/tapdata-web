@@ -10,7 +10,7 @@
 				</el-button>
 			</div> -->
       <el-form
-        :disabled="disabled"
+        :disabled="disabled || showTransfer"
         class="e-form flex flex-column"
         label-position="top"
         label-width="160px"
@@ -175,6 +175,7 @@ import MqTransfer from './MqTransfer'
 import FieldMapping from '@/components/FieldMapping'
 import VirtualTransfer from 'web-core/components/virtual-transfer'
 import MetadataInstances from '@/api/MetadataInstances'
+import ws from '@/api/ws'
 
 const metadataApi = new MetadataInstances()
 
@@ -235,6 +236,7 @@ export default {
           procedure: false
         }
       },
+      showTransfer: true,
       topicSelected: [],
 
       titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
@@ -246,7 +248,20 @@ export default {
       showFieldMapping: false
     }
   },
-
+  mounted() {
+    let self = this
+    let id = self.$route.query.id
+    ws.on('metadataTransformerProgress', function (res) {
+      if (res?.data?.stageId === id) {
+        let { status } = res?.data
+        if (status !== 'done') {
+          self.showTransfer = false
+        } else {
+          self.showTransfer = true
+        }
+      }
+    })
+  },
   watch: {
     mqActiveData: {
       deep: true,

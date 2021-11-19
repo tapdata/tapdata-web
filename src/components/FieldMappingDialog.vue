@@ -394,7 +394,6 @@ export default {
     this.initNavData()
     this.updateView()
     //接收数据
-    console.log(this.transform)
     let id = this.transform.stageId
     let self = this
     ws.on('metadataTransformerProgress', function (res) {
@@ -665,21 +664,18 @@ export default {
      * */
     search(type) {
       if (type === 'table') {
-        if (this.searchTable.trim()) {
-          this.searchTable = this.searchTable.trim().toString() //去空格
-          //获取第一页推演结果
-          this.loadingPage = true
-          this.$nextTick(() => {
-            this.getNavDataMethod &&
-              this.getNavDataMethod(this.page, this.searchTable)
-                .then(({ data }) => {
-                  this.fieldMappingNavData = data
-                })
-                .finally(() => {
-                  this.loadingPage = false
-                })
-          })
-        }
+        //获取第一页推演结果
+        this.loadingPage = true
+        this.$nextTick(() => {
+          this.getNavDataMethod &&
+            this.getNavDataMethod(this.page, this.searchTable)
+              .then(({ data }) => {
+                this.fieldMappingNavData = data
+              })
+              .finally(() => {
+                this.loadingPage = false
+              })
+        })
       } else {
         if (this.searchField.trim()) {
           this.searchField = this.searchField.trim().toString() //去空格
