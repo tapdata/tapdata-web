@@ -223,6 +223,7 @@ export default {
       this.updateAutoTransform(type, data)
       this.dataFlow['rollback'] = 'all'
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
+      this.initWSSed() //发送ws 监听schema进度
       return promise?.data
     },
     //更新左边导航
