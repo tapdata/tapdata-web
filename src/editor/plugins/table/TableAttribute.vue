@@ -432,8 +432,7 @@ export default {
       scope: '',
       showFieldMapping: false,
       mergedSchema: null,
-      primaryKeyOptions: [],
-      loadSchema: null
+      primaryKeyOptions: []
     }
   },
 
@@ -620,8 +619,8 @@ export default {
                 self.primaryKeyOptions = fields.map(f => f.field_name)
                 self.model.custSql.custFields = fields.map(f => f.field_name)
               }
-              this.loadSchema = res.data?.records[0]?.schema?.tables[0] || []
-              self.$emit('schemaChange', _.cloneDeep(this.loadSchema))
+              let loadSchema = res.data?.records[0]?.schema?.tables[0] || []
+              self.$emit('schemaChange', _.cloneDeep(loadSchema))
             }
           })
         } else {
@@ -667,8 +666,6 @@ export default {
       }
       this.cell = cell
       this.dataNodeInfo = dataNodeInfo || {}
-
-      this.loadDataModels(this.model.connectionId)
 
       let ouputSchema = cell.getOutputSchema()
       if (this.model.connectionId && this.model.tableName && !ouputSchema) {
