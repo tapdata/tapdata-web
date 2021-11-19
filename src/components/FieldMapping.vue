@@ -108,13 +108,16 @@ export default {
           this.loading = false
         })
     },
-    getMetadataTransformer(page) {
+    getMetadataTransformer(page, value) {
       let id = this.dataFlow?.id
       let where = {
         dataFlowId: {
           like: id
         },
         sinkStageId: this.transform.stageId
+      }
+      if (value) {
+        where.sourceObjectName = { like: value, options: 'i' }
       }
       let filter = {
         where: where,
