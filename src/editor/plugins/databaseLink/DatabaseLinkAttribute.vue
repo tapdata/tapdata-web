@@ -2,7 +2,7 @@
   <div class="database-link nodeStyle">
     <div class="nodeBody">
       <el-form
-        :disabled="disabled"
+        :disabled="disabled || disabledTransfer"
         class="e-form flex flex-column"
         label-position="top"
         label-width="160px"
@@ -53,13 +53,6 @@
                 ref="fieldMapping"
                 class="fr"
                 mappingType="cluster-clone"
-                :dataFlow="dataFlow"
-                :showBtn="true"
-                :stageId="stageId"
-                :databaseFieldProcess="model.field_process"
-                :hiddenFieldProcess="false"
-                :selectSourceArr="model.selectSourceArr"
-                :isFirst="model.isFirst"
                 :transform="model"
                 :getDataFlow="getDataFlow"
                 @update-first="returnModel"
@@ -80,31 +73,25 @@
               v-if="!model.transferFlag"
               v-model="model.selectSourceArr"
               filterable
+              :props="{ key: 'original_name' }"
               :item-size="30"
               :titles="titles"
-              :filter-method="filterMethod"
               :data="sourceData"
               :filter-placeholder="$t('editor.cell.link.searchContent')"
               @change="handleChangeTransfer"
             >
-              <span class="box" slot-scope="{ option }">
-                <template
-                  v-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toLowerCase'"
-                >
-                  <span>{{ (model.table_prefix + option.label + model.table_suffix).toLowerCase() }}</span>
-                </template>
-                <template
-                  v-else-if="model.selectSourceArr.includes(option.label) && model.tableNameTransform === 'toUpperCase'"
-                >
-                  <span>{{ (model.table_prefix + option.label + model.table_suffix).toUpperCase() }}</span>
-                </template>
-                <template v-else-if="model.selectSourceArr.includes(option.label)">
-                  {{ model.table_prefix + option.label + model.table_suffix }}
-                </template>
-                <template v-else>
-                  {{ option.label }}
-                </template>
-              </span>
+              <template #left="{ option }"> {{ option.original_name }} </template>
+              <template #right="{ option }">
+                <span v-if="model.tableNameTransform === 'toLowerCase'">
+                  {{ (model.table_prefix + option.original_name + model.table_suffix).toLowerCase() }}
+                </span>
+                <span v-else-if="model.tableNameTransform === 'toUpperCase'">
+                  {{ (model.table_prefix + option.original_name + model.table_suffix).toUpperCase() }}
+                </span>
+                <span v-else>
+                  {{ model.table_prefix + option.original_name + model.table_suffix }}
+                </span>
+              </template>
             </VirtualTransfer>
             <!-- MQ穿梭框 start -->
             <template v-else>
@@ -141,6 +128,11 @@ import factory from '../../../api/factory'
 import MqTransfer from './MqTransfer'
 import FieldMapping from '@/components/FieldMapping'
 import VirtualTransfer from 'web-core/components/virtual-transfer'
+import MetadataInstances from '@/api/MetadataInstances'
+import ws from '@/api/ws'
+
+const metadataApi = new MetadataInstances()
+
 import CodeEditor from 'web-core/components/CodeEditor'
 let connections = factory('connections')
 let editorMonitor = null
@@ -188,8 +180,10 @@ export default {
         transferFlag: false,
         isFirst: true, //初始值
         scope: '',
-        dataFlow: '',
         stageId: '',
+        hiddenFieldProcess: false,
+        hiddenChangeValue: false, //是否显示表改大小写
+        showBtn: true,
         script: '',
 
         selectSourceDatabase: {
@@ -199,6 +193,7 @@ export default {
           procedure: false
         }
       },
+      disabledTransfer: false,
       topicSelected: [],
 
       titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
@@ -210,7 +205,20 @@ export default {
       showFieldMapping: false
     }
   },
-
+  mounted() {
+    let self = this
+    let id = self.$route?.query?.id || ''
+    ws.on('metadataTransformerProgress', function (res) {
+      if (res?.data?.stageId === id) {
+        let { status } = res?.data
+        if (status !== 'done') {
+          self.disabledTransfer = true
+        } else {
+          self.disabledTransfer = false
+        }
+      }
+    })
+  },
   watch: {
     mqActiveData: {
       deep: true,
@@ -265,7 +273,7 @@ export default {
           })
         }
         //获取目标节点ID
-        this.stageId = targetCell?.id || ''
+        this.model.stageId = targetCell?.id || ''
         // 获取目标节点的数据显示右侧选择表
 
         let targetFormData = targetCell && targetCell.getFormData()
@@ -305,7 +313,7 @@ export default {
             })
           }
         }
-        this.loadDataModels(connectionId)
+        this.loadTables(connectionId, sourceFormData.database_type)
       }
 
       editorMonitor = vueAdapter.editor
@@ -314,12 +322,12 @@ export default {
       //是否显示字段推演
       let param = {
         stages: this.dataFlow?.stages,
-        stageId: this.stageId
+        stageId: this.model.stageId
       }
       this.$api('DataFlows')
         .tranModelVersionControl(param)
         .then(data => {
-          this.showFieldMapping = data?.data[this.stageId]
+          this.showFieldMapping = data?.data[this.model.stageId]
         })
 
       // if (!this.configJoinTable) return
@@ -473,73 +481,55 @@ export default {
     returnModel(value) {
       this.model.isFirst = value
     },
-    // 获取表名称
-    loadDataModels(connectionId) {
-      let self = this
-      if (!connectionId) {
-        return
-      }
+
+    /**
+     * 加载数据库表
+     * @param connectionId 连接ID
+     * @param dbType 数据库类型
+     * @returns {Promise<void>}
+     */
+    async loadTables(connectionId, dbType) {
+      if (!connectionId) return
       this.transferLoading = true
-      connections
-        .customQuery([connectionId], { schema: true })
-        .then(result => {
-          if (result.data) {
-            let tables = []
-            // 数据库为mq
-            if (result.data.database_type === 'mq') {
-              this.model.mqType = result.data.mqType
+      let tables = []
 
-              let tableData = []
-              if (result.data.mqType === '0') {
-                let data = [...result.data.mqQueueSet, ...result.data.mqTopicSet]
-                tableData = [...new Set(data)]
-              } else {
-                tableData = result.data.mqTopicSet
-              }
-              tables = tableData.map(item => {
-                return { table_name: item }
-              })
-            } else {
-              tables = (result.data.schema && result.data.schema.tables) || []
-            }
-            self.databaseInfo = result.data
-            tables = tables.sort((t1, t2) =>
-              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-            )
-
-            if (tables && tables.length) {
-              self.sourceData = tables.map(table => ({
-                label: table.table_name,
-                key: table.table_name,
-                // value: table.table_name,
-                disabled: this.disabled
-              }))
-            }
-            self.$forceUpdate()
+      try {
+        if (dbType !== 'mq') {
+          const result = await metadataApi.get({
+            filter: JSON.stringify({
+              where: {
+                'source.id': connectionId,
+                meta_type: {
+                  in: ['collection', 'table']
+                },
+                is_deleted: false
+              },
+              fields: {
+                original_name: true
+              },
+              order: 'original_name ASC'
+            })
+          })
+          tables = result.data
+        } else {
+          const { data: connectionInfo } = await connections.customQuery([connectionId], { schema: true })
+          this.model.mqType = connectionInfo.mqType
+          let tableData = []
+          if (connectionInfo.mqType === '0') {
+            tableData = [...new Set(connectionInfo.mqQueueSet.concat(connectionInfo.mqTopicSet))]
+          } else {
+            tableData = connectionInfo.mqTopicSet
           }
-        })
-        .finally(() => {
-          this.transferLoading = false
-        })
+          tableData.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
+          tables = tableData.map(item => ({ original_name: item }))
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(e)
+      }
+      this.sourceData = tables
+      this.transferLoading = false
     }
-    // 修改名称弹窗返回
-    // confirmName() {
-    // 	let self = this;
-    // 	for (let i = 0; i < this.sourceData.length; i++) {
-    // 		for (let j = 0; j < self.model.selectSourceArr.length; j++) {
-    // 			if (
-    // 				this.sourceData[i].label === self.model.selectSourceArr[j] &&
-    // 				this.sourceData[i].label === self.currentName.label
-    // 			) {
-    // 				this.sourceData[i].label = self.model.selectSourceArr[j] = this.sourceData[i].key =
-    // 					self.databaseName;
-    // 				this.sourceData[i].key = this.sourceData[i].label;
-    // 			}
-    // 		}
-    // 	}
-
-    // 	this.modifyNameDialog = false;
-    // },
   },
 
   destroyed() {

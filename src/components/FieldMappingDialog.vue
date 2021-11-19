@@ -1,0 +1,1236 @@
+<template>
+  <div class="field-mapping flex flex-column" v-loading="loadingPage">
+    <div class="field-mapping__desc text-start lh-base">
+      <strong>表设置</strong>:
+      用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
+      <div class="float-end">
+        <ElButton
+          v-if="!readOnly && !transform.hiddenChangeValue"
+          plain
+          type="primary"
+          size="mini"
+          @click="handleChangTableName"
+          >表改名</ElButton
+        >
+        <ElButton
+          v-if="!readOnly && !transform.hiddenChangeValue"
+          plain
+          type="primary"
+          size="mini"
+          @click="dialogFieldVisible = true"
+          >字段改名</ElButton
+        >
+        <ElButton v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">恢复默认</ElButton>
+      </div>
+    </div>
+    <div class="task-form-body">
+      <div class="task-form-left flex flex-column">
+        <div class="flex mb-2 ml-6">
+          <div class="flex">
+            <span class="task-form__text"> 搜索表：</span>
+            <ElInput v-model="searchTable" size="mini" @change="search('table')"></ElInput>
+          </div>
+        </div>
+        <div class="mb-2 ml-6" v-if="progress.showProgress">
+          {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon><span>加载中，请稍等...</span>
+        </div>
+        <ul class="task-form-left__ul flex flex-column">
+          <li
+            v-for="(item, index) in fieldMappingNavData"
+            :key="index"
+            :class="{ active: position === index }"
+            @click.prevent="select(item, index)"
+          >
+            <div class="task-form__img" v-if="item.invalid">
+              <img src="../assets/images/fieldMapping-table-error.png" alt="" />
+            </div>
+            <div class="task-form__img" v-else>
+              <img src="../assets/images/fieldMapping-table.png" alt="" />
+            </div>
+            <div class="task-form-text-box">
+              <div class="source">{{ item.sourceObjectName }}</div>
+              <div class="target">{{ item.sinkObjectName }}</div>
+              <div class="select">
+                {{
+                  `已选中 ${position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum}/${
+                    item.sourceFieldCount
+                  }`
+                }}
+              </div>
+            </div>
+          </li>
+        </ul>
+        <ElPagination
+          small
+          class="flex mt-3"
+          layout="total, prev, pager, next"
+          :current-page.sync="page.current"
+          :page-size.sync="page.size"
+          :total="page.total"
+          :pager-count="5"
+          @current-change="initNavData"
+        >
+        </ElPagination>
+      </div>
+      <div class="main">
+        <div class="flex mb-2 ml-2 text-start">
+          <div class="flex align-items-center">
+            <span class="task-form__text"> 搜索字段：</span>
+            <ElInput v-model="searchField" size="mini" @change="search('field')"></ElInput>
+          </div>
+          <div class="item ml-5" v-if="!readOnly">
+            <ElButton size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
+              <ElTooltip effect="dark" content="恢复默认字段" placement="top-start">
+                <VIcon class="color-primary" size="14">rollback</VIcon>
+              </ElTooltip>
+            </ElButton>
+          </div>
+        </div>
+        <ElTable
+          class="field-mapping-table table-border"
+          height="100%"
+          border
+          :data="fieldMappingTableData"
+          :row-class-name="tableRowClassName"
+          v-loading="loading"
+        >
+          <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="150">
+            <template slot-scope="scope">
+              <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
+                >{{ scope.row.field_name }}
+                <VIcon size="12" class="color-darkorange">key</VIcon>
+              </span>
+              <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="源表类型" prop="data_type" width="150"></ElTableColumn>
+          <ElTableColumn label="源表长度" prop="precision" width="150"></ElTableColumn>
+          <ElTableColumn label="源表精度" prop="scale" width="100"></ElTableColumn>
+          <ElTableColumn label="目标表字段名" width="260">
+            <template slot-scope="scope">
+              <div
+                v-if="!scope.row.is_deleted && !hiddenFieldProcess && !readOnly"
+                @click="edit(scope.row, 'field_name')"
+              >
+                <span :show-overflow-tooltip="true"
+                  >{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i
+                ></span>
+              </div>
+              <span v-else :show-overflow-tooltip="true">{{ scope.row.t_field_name }}</span>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="目标表类型" width="150">
+            <template slot-scope="scope">
+              <div v-if="!scope.row.is_deleted && !readOnly" @click="edit(scope.row, 'data_type')">
+                <span>{{ scope.row.t_data_type }}</span>
+                <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
+                <i class="icon el-icon-arrow-down"></i>
+              </div>
+              <div v-else>
+                <span>{{ scope.row.t_data_type }}</span>
+              </div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="目标表长度" width="150">
+            <template slot-scope="scope">
+              <div
+                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && !readOnly"
+                @click="edit(scope.row, 'precision')"
+              >
+                <span>{{ scope.row.t_precision }}</span>
+                <i class="icon el-icon-edit-outline"></i>
+              </div>
+              <div v-else>
+                <span>{{ scope.row.t_precision }}</span>
+              </div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="目标表精度" width="100">
+            <template slot-scope="scope">
+              <div
+                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && !readOnly"
+                @click="edit(scope.row, 'scale')"
+              >
+                <span>{{ scope.row.t_scale }}</span>
+                <i class="icon el-icon-edit-outline"></i>
+              </div>
+              <div v-else>
+                <span>{{ scope.row.t_scale }}</span>
+              </div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="操作" width="80" v-if="!hiddenFieldProcess && !readOnly">
+            <template slot-scope="scope">
+              <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)"> 删除 </ElLink>
+              <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
+            </template>
+          </ElTableColumn>
+          <div class="field-mapping-table__empty" slot="empty">
+            <i class="el-icon-folder-opened"></i>
+            <span class="ml-1">暂无数据</span>
+          </div>
+        </ElTable>
+      </div>
+    </div>
+    <ElDialog
+      :title="titleType[currentOperationType]"
+      :visible.sync="dialogVisible"
+      width="30%"
+      append-to-body
+      :close-on-click-modal="false"
+      :before-close="handleClose"
+    >
+      <ElInput
+        v-model="editValueType[currentOperationType]"
+        v-if="['field_name'].includes(currentOperationType)"
+      ></ElInput>
+      <div v-if="['precision', 'scale'].includes(currentOperationType)">
+        <ElInputNumber v-model="editValueType[currentOperationType]"></ElInputNumber>
+        <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
+          <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
+            <div
+              v-if="
+                item.maxPrecision && currentOperationType === 'precision' && item.minPrecision !== item.maxPrecision
+              "
+            >
+              <div v-if="index === 0">长度范围</div>
+              <div>
+                {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
+              </div>
+            </div>
+            <div
+              v-if="item.maxScale && currentOperationType === 'scale' && item.minScale !== item.maxScale"
+              style="margin-top: 10px"
+            >
+              <div>精度范围</div>
+              <div>
+                {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="['data_type'].includes(currentOperationType)">
+        <ElSelect v-model="editValueType[currentOperationType]" filterable @change="initDataType">
+          <ElOption
+            :label="item.dbType"
+            :value="item.dbType"
+            v-for="(item, index) in typeMapping"
+            :key="index"
+          ></ElOption>
+        </ElSelect>
+        <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
+          <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
+            <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
+              <div v-if="index === 0">长度范围</div>
+              <div>
+                {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
+              </div>
+            </div>
+            <div v-if="item.maxScale && item.minScale !== item.maxScale" style="margin-top: 10px">
+              <div>精度范围</div>
+              <div>
+                {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <ElButton @click="handleClose()">取 消</ElButton>
+        <ElButton type="primary" @click="editSave()">确 定</ElButton>
+      </span>
+    </ElDialog>
+    <ElDialog
+      width="800px"
+      append-to-body
+      title="批量改表名设置"
+      custom-class="field-maping-table-dialog"
+      :visible.sync="dialogTableVisible"
+      :close-on-click-modal="false"
+      :before-close="handleTableClose"
+    >
+      <div class="table-box">
+        <ElForm ref="form" class="table-form" :model="form" label-width="120px">
+          <ElFormItem label="表名大小写">
+            <ElSelect size="mini" v-model="form.tableNameTransform">
+              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value=""></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+          <ElFormItem label="请输入前缀">
+            <ElInput size="mini" v-model="form.table_prefix"></ElInput>
+          </ElFormItem>
+          <ElFormItem label="请输入后缀">
+            <ElInput size="mini" v-model="form.table_suffix"></ElInput>
+          </ElFormItem>
+          <div class="tip">说明：设置的前后缀也遵循大小写规则</div>
+        </ElForm>
+        <div class="table-example">
+          <h3>示例:</h3>
+          <p>原表名: tableName</p>
+          <p>修改后: {{ tableName }}</p>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="handleTableClose()">取 消</ElButton>
+        <ElButton size="mini" type="primary" @click="handleTableNameSave()">确 定</ElButton>
+      </span>
+    </ElDialog>
+    <ElDialog
+      width="600px"
+      append-to-body
+      title="批量改字段名设置"
+      custom-class="field-maping-table-dialog"
+      :visible.sync="dialogFieldVisible"
+      :close-on-click-modal="false"
+      :before-close="handleFieldClose"
+    >
+      <div class="table-box">
+        <ElForm ref="form" class="table-form" :model="form" label-width="120px">
+          <ElFormItem label="字段名大小写">
+            <ElSelect size="mini" v-model="form.fieldsNameTransform">
+              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value=""></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+        </ElForm>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="handleFieldClose">取 消</ElButton>
+        <ElButton size="mini" type="primary" @click="handleFieldSave()">确 定</ElButton>
+      </span>
+    </ElDialog>
+  </div>
+</template>
+
+<script>
+import VIcon from './VIcon'
+import rollback from 'web-core/assets/icons/svg/rollback.svg'
+import ws from '../api/ws'
+export default {
+  name: 'FieldMappingDialog',
+  components: { VIcon },
+  props: {
+    remoteMethod: Function,
+    typeMappingMethod: Function,
+    fieldProcessMethod: Function,
+    updateMetadata: Function,
+    getNavDataMethod: Function,
+    field_process: Array,
+    transform: Object,
+    hiddenFieldProcess: {
+      type: Boolean,
+      default: false
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      selectRow: '',
+      searchField: '',
+      searchTable: '',
+      loading: false,
+      loadingPage: false,
+      typeMapping: [],
+      currentTypeRules: [],
+      defaultFieldMappingNavData: '',
+      defaultFieldMappingTableData: '',
+      position: 0,
+      fieldCount: '', //当前选中总数
+      fieldMappingTableData: [],
+      fieldMappingNavData: [],
+      dialogVisible: false,
+      currentOperationType: '',
+      currentOperationData: '',
+      target: [],
+      editValueType: {
+        field_name: '',
+        data_type: '',
+        precision: '',
+        scale: ''
+      },
+      titleType: {
+        field_name: '修改目标字段名',
+        data_type: '修改目标表字段类型',
+        precision: '修改目标字段长度',
+        scale: '修改目标表精度'
+      },
+      page: {
+        size: 10,
+        current: 1,
+        total: 0
+      },
+      progress: {
+        total: 0,
+        finished: '0',
+        progress: '0',
+        showProgress: false
+      },
+      operations: [], //字段操作
+      dialogTableVisible: false,
+      dialogFieldVisible: false,
+      form: {},
+      currentForm: {},
+      sourceTableName: 'tableName',
+      rollback
+    }
+  },
+  mounted() {
+    if (!this.readOnly && this.transform) {
+      this.form = {
+        tableNameTransform: this.transform.tableNameTransform,
+        fieldsNameTransform: this.transform.fieldsNameTransform,
+        table_prefix: this.transform.table_prefix,
+        table_suffix: this.transform.table_suffix
+      }
+      this.currentForm = JSON.parse(JSON.stringify(this.form))
+    }
+    this.initNavData()
+    this.updateView()
+    //接收数据
+    let id = this.transform.stageId
+    let self = this
+    ws.on('metadataTransformerProgress', function (res) {
+      if (res?.data?.stageId === id) {
+        let { finished, total, status } = res?.data
+        self.progress.finished = finished
+        self.progress.total = total
+        self.page.total = finished
+        if (status !== 'done') {
+          self.progress.showProgress = true
+        } else {
+          self.progress.showProgress = false
+        }
+      }
+    })
+  },
+  computed: {
+    tableName() {
+      let tableName = ''
+      if (this.form.tableNameTransform === 'toUpperCase') {
+        tableName = (this.form.table_prefix + this.sourceTableName + this.form.table_suffix).toUpperCase()
+      } else if (this.form.tableNameTransform === 'toLowerCase') {
+        tableName = (this.form.table_prefix + this.sourceTableName + this.form.table_suffix).toLowerCase()
+      } else {
+        tableName = this.form.table_prefix + this.sourceTableName + this.form.table_suffix
+      }
+      return tableName
+    }
+  },
+  methods: {
+    //数据处理区域
+    /*初始化table数据*/
+    initTableData() {
+      this.loading = true
+      this.$nextTick(() => {
+        this.remoteMethod &&
+          this.remoteMethod(this.selectRow)
+            .then(({ data, target }) => {
+              this.target = target
+              this.fieldMappingTableData = data
+              this.initShowEdit()
+              this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
+            })
+            .finally(() => {
+              this.loading = false
+            })
+      })
+    },
+    /* 初始化字段类型列表*/
+    initTypeMapping() {
+      this.$nextTick(() => {
+        this.typeMappingMethod &&
+          this.typeMappingMethod(this.selectRow).then(data => {
+            this.typeMapping = data
+          })
+      })
+    },
+    /* 初始化左边列表*/
+    initNavData() {
+      //获取第一页推演结果
+      this.loadingPage = true
+      this.$nextTick(() => {
+        this.getNavDataMethod &&
+          this.getNavDataMethod(this.page)
+            .then(({ data, total }) => {
+              this.fieldMappingNavData = data
+              this.selectRow = data[0]
+              this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+              this.page.total = total
+              //初始化右侧列表
+              this.initTableData()
+              this.initTypeMapping()
+            })
+            .finally(() => {
+              this.loadingPage = false
+            })
+      })
+    },
+    /* 初始化目标字段、长度是否可编辑*/
+    initShowEdit() {
+      let data = this.fieldMappingTableData
+      if (this.fieldMappingTableData?.length === 0) return
+      for (let i = 0; i < data.length; i++) {
+        let rules = this.typeMapping.filter(v => v.dbType === data[i].t_data_type)
+        if (rules?.length > 0) {
+          rules = rules[0].rules
+          this.showPrecisionEdit(data[i].t_id, rules || [])
+          this.showScaleEdit(data[i].t_id, rules || [])
+        }
+      }
+    },
+    /*页面刷新 兼容只读模式*/
+    updateView(data) {
+      //只读模式初始化
+      if (data) {
+        this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(data))
+        this.selectRow = data[0]
+        this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+      }
+      this.updateData()
+    },
+    /*数据重新加载*/
+    updateData() {
+      this.initTableData()
+      this.initTypeMapping()
+      this.clearSearch()
+      //重新更新左边导航
+      this.page.current = 1
+      this.initNavData()
+      this.operations = []
+      if (this.field_process?.length > 0) {
+        this.getFieldProcess()
+      }
+    },
+    /*更新左边被删除字段*/
+    updateFieldCount(type) {
+      let id = this.selectRow.sinkQulifiedName
+      if (this.fieldMappingNavData) {
+        for (let i = 0; i < this.fieldMappingNavData.length; i++) {
+          if (this.fieldMappingNavData[i].sinkQulifiedName === id && type === 'remove') {
+            this.fieldMappingNavData[i].userDeletedNum = this.fieldMappingNavData[i].userDeletedNum + 1
+          } else if (this.fieldMappingNavData[i].sinkQulifiedName === id && type === 'add') {
+            this.fieldMappingNavData[i].userDeletedNum = this.fieldMappingNavData[i].userDeletedNum - 1
+          }
+        }
+      }
+    },
+    /*更新table数据*/
+    updateTableData(id, key, value) {
+      this.fieldMappingTableData.forEach(field => {
+        if (field.t_id === id) {
+          //改目标表
+          field[key] = value
+        }
+      })
+    },
+    /*更新target 数据*/
+    updateTarget(id, key, value) {
+      this.target.forEach(field => {
+        if (field.id === id && field.is_deleted !== 'true' && field.is_deleted !== true) {
+          field[key] = value
+          field['source'] = 'manual'
+          field['is_auto_allowed'] = false
+        }
+      })
+      //触发页面重新渲染
+      this.updateTableData(id, `t_${key}`, value)
+    },
+    //只是视图更新 field['source'] = 'manual' 不动
+    updateTargetView(id, key, value) {
+      this.target.forEach(field => {
+        if (field.id === id && field.is_deleted !== 'true' && field.is_deleted !== true) {
+          field[key] = value
+        }
+      })
+      //触发页面重新渲染
+      this.updateTableData(id, `t_${key}`, value)
+    },
+    /*更新左边表导航 重新推演*/
+    updateParentMetaData(type, data) {
+      this.loadingPage = true
+      this.$nextTick(() => {
+        this.updateMetadata &&
+          this.updateMetadata(type, data)
+            .then(data => {
+              this.$emit('update-nav', data)
+              this.selectRow = data[this.position]
+            })
+            .finally(() => {
+              this.loadingPage = false
+              this.updateView()
+            })
+      })
+    },
+    /*更新schema 加载进度*/
+    metadataTransformerProgress(data) {
+      let { finished, total } = data
+      this.progress.finished = finished
+      this.progress.finished = total
+    },
+    //全局操作区域
+    /*打开表改名弹窗*/
+    handleChangTableName() {
+      this.dialogTableVisible = true
+    },
+    /*表改名称弹窗取消*/
+    handleTableClose() {
+      this.dialogTableVisible = false
+      this.form.tableNameTransform = this.currentForm.tableNameTransform
+      this.form.table_prefix = this.currentForm.table_prefix
+      this.form.table_suffix = this.currentForm.table_suffix
+    },
+    /*字段改名弹窗取消*/
+    handleFieldClose() {
+      this.dialogFieldVisible = false
+      this.form.fieldsNameTransform = this.currentForm.fieldsNameTransform
+    },
+    /*表改名弹窗保存*/
+    handleTableNameSave() {
+      this.dialogTableVisible = false
+      this.copyForm()
+      this.updateParentMetaData('table', this.form)
+    },
+    /*字段名弹窗保存*/
+    handleFieldSave() {
+      this.dialogFieldVisible = false
+      this.copyForm()
+      this.updateParentMetaData('field', this.form)
+    },
+    /*copy 当前form*/
+    copyForm() {
+      this.currentForm = JSON.parse(JSON.stringify(this.form))
+    },
+    /* 恢复默认全部*/
+    rollbackAll() {
+      this.$confirm('您确认要全部恢复默认吗？', '提示', {
+        type: 'warning'
+      }).then(resFlag => {
+        if (resFlag) {
+          this.form = {
+            tableNameTransform: '',
+            fieldsNameTransform: '',
+            table_prefix: '',
+            table_suffix: ''
+          }
+          this.copyForm()
+          this.$nextTick(() => {
+            this.loadingPage = true
+            this.fieldProcessMethod &&
+              this.fieldProcessMethod('all')
+                .then(data => {
+                  this.$emit('update-nav', data)
+                  this.updateData()
+                  this.selectRow = data[this.position]
+                })
+                .finally(() => {
+                  this.loadingPage = false
+                })
+          })
+        }
+      })
+    },
+
+    //左边导航区域
+    /*切换表*/
+    select(item, index) {
+      if (!this.readOnly) {
+        let data = JSON.parse(JSON.stringify(this.target))
+        let deleteLen = data.filter(v => !v.is_deleted)
+        if (deleteLen.length === 0 && this.target?.length > 0) {
+          this.$message.error('当前表被删除了所有字段，不允许保存操作')
+          return //所有字段被删除了 不可以保存任务
+        }
+        this.$emit('row-click', this.selectRow, this.operations, this.target)
+      }
+      this.position = '' //再次点击清空去一个样式
+      this.searchField = ''
+      this.fieldCount = 0
+      this.selectRow = item
+      this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
+      this.position = index
+      this.updateView()
+    },
+
+    //右边table数据区域
+    /*
+     * 按表搜索 按字段名搜索
+     * */
+    search(type) {
+      if (type === 'table') {
+        //获取第一页推演结果
+        this.loadingPage = true
+        this.$nextTick(() => {
+          this.getNavDataMethod &&
+            this.getNavDataMethod(this.page, this.searchTable)
+              .then(({ data }) => {
+                this.fieldMappingNavData = data
+              })
+              .finally(() => {
+                this.loadingPage = false
+              })
+        })
+      } else {
+        if (this.searchField.trim()) {
+          this.searchField = this.searchField.trim().toString() //去空格
+          this.fieldMappingTableData = this.defaultFieldMappingTableData.filter(v => {
+            let str = (v.field_name + '' + v.t_field_name).toLowerCase()
+            return str.indexOf(this.searchField.toLowerCase()) > -1
+          })
+        } else {
+          this.fieldMappingTableData = this.defaultFieldMappingTableData
+        }
+      }
+    },
+    /*清空搜索条件*/
+    clearSearch() {
+      this.searchField = ''
+      this.searchTable = ''
+    },
+    /*恢复默认单表*/
+    rollbackTable(name, id) {
+      this.$confirm('您确认要恢复默认吗？', '提示', {
+        type: 'warning'
+      }).then(resFlag => {
+        if (resFlag) {
+          this.loadingPage = true
+          this.$nextTick(() => {
+            this.fieldProcessMethod &&
+              this.fieldProcessMethod('table', name, id)
+                .then(data => {
+                  this.$emit('update-nav', data)
+                  this.updateData()
+                })
+                .finally(() => {
+                  this.loadingPage = false
+                })
+          })
+        }
+      })
+    },
+
+    //table字段操作区域
+    /*字段操作统一弹窗
+     * 操作:修改字段名、修改字段长度、修改字段精度、修改字段类型*/
+    edit(row, type) {
+      this.dialogVisible = true
+      this.editValueType[type] = row[`t_${type}`]
+      this.currentOperationType = type
+      this.currentOperationData = row
+      //初始化
+      this.initDataType(row[`t_data_type`])
+    },
+    editSave() {
+      //元数据-字段操作
+      let id = this.currentOperationData.t_id
+      let key = this.currentOperationType
+      let value = this.editValueType[this.currentOperationType]
+      let verify = true
+      //任务-字段处理器
+      if (key === 'field_name') {
+        let option = this.target.filter(v => v.id === id && !v.is_deleted)
+        if (option.length === 0) return
+        option = option[0]
+        //字段名限制
+        if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value)) {
+          this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
+          return
+        }
+        if (value === option.field_name && !option.is_deleted) {
+          this.handleClose() //名字无改变
+          return
+        }
+        let existsName = this.handleExistsName(value) //检查是否重名
+        if (existsName) {
+          return
+        }
+        this.fieldProcessRename(id, key, value)
+      } else if (key === 'data_type') {
+        let option = this.target.filter(v => v.id === id)
+        if (option.length === 0) return
+        option = option[0]
+        if (value === option.data_type) {
+          this.handleClose() //类型无改变
+          return
+        }
+        //如果是改类型 需要手动修改字段的长度以及精度
+        this.influences(id, this.currentTypeRules || [])
+      } else if (key === 'precision') {
+        let isPrecision = this.currentTypeRules.filter(v => v.minPrecision < v.maxPrecision)
+        if (isPrecision.length === 0) {
+          this.currentTypeRules.forEach(r => {
+            if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision) {
+              this.$message.error('当前值不符合该字段范围')
+              verify = false
+            }
+          })
+        } else {
+          this.currentTypeRules.forEach(r => {
+            if (r.minPrecision < r.maxPrecision) {
+              if (r.minPrecision > value || value > r.maxPrecision) {
+                verify = false
+                this.$message.error('当前值不符合该字段范围')
+              }
+            }
+          })
+        }
+        if (!verify) {
+          return
+        }
+      } else if (key === 'scale') {
+        let isScale = this.currentTypeRules.filter(v => v.minScale < v.maxScale)
+        if (isScale.length === 0) {
+          this.currentTypeRules.forEach(r => {
+            if (r.minScale === r.maxScale && value !== r.maxScale) {
+              this.$message.error('当前值不符合该字段范围')
+              verify = false
+            }
+          })
+        } else {
+          this.currentTypeRules.forEach(r => {
+            if (r.minScale < r.maxScale) {
+              if (r.minScale > value || value > r.maxScale) {
+                verify = false
+                this.$message.error('当前值不符合该字段范围')
+              }
+            }
+          })
+        }
+      }
+      if (!verify) {
+        return
+      }
+      //触发target更新
+      this.updateTarget(id, key, value)
+      this.checkTable() //消除感叹号
+      this.handleClose()
+    },
+    //改类型影响字段长度 精度
+    influences(id, rules) {
+      this.showScaleEdit(id, rules)
+      this.showPrecisionEdit(id, rules)
+      this.influencesScale(id, rules)
+      this.influencesPrecision(id, rules)
+    },
+    influencesScale(id, rules) {
+      rules.forEach(r => {
+        if (r.minScale || r.minScale === 0) {
+          this.updateTarget(id, 'scale', r.minScale < 0 ? 0 : r.minScale)
+        } else {
+          this.updateTarget(id, 'scale', null)
+        }
+      })
+    },
+    influencesPrecision(id, rules) {
+      rules.forEach(r => {
+        if (r.minPrecision || r.minPrecision === 0) {
+          this.updateTarget(id, 'precision', r.minPrecision < 0 ? 0 : r.minPrecision)
+        } else {
+          this.updateTarget(id, 'precision', null)
+        }
+      })
+    },
+    showScaleEdit(id, data) {
+      let isScale = data.filter(v => v.minScale < v.maxScale)
+      if (isScale.length !== 0) {
+        //固定值
+        this.updateTargetView(id, 'isScaleEdit', true)
+      } else {
+        this.updateTargetView(id, 'isScaleEdit', false)
+      }
+    },
+    showPrecisionEdit(id, data) {
+      let isPrecision = data.filter(v => v.minPrecision < v.maxPrecision)
+      if (isPrecision.length !== 0) {
+        //固定值
+        this.updateTargetView(id, 'isPrecisionEdit', true)
+      } else {
+        this.updateTargetView(id, 'isPrecisionEdit', false)
+      }
+    },
+    initDataType(val) {
+      let target = this.typeMapping.filter(type => type.dbType === val)
+      if (target?.length > 0) {
+        this.currentTypeRules = target[0]?.rules || []
+      } else this.currentTypeRules = '' //清除上一个字段范围
+    },
+    handleClose() {
+      this.dialogVisible = false
+      this.currentOperationType = ''
+      this.currentOperationData = ''
+      this.editValueType = {
+        field_name: '',
+        data_type: '',
+        precision: '',
+        scale: ''
+      }
+    },
+    //字段删除
+    del(id, value) {
+      //任务-字段处理器
+      if (value) {
+        this.fieldProcessRemove(id)
+      } else {
+        this.fieldProcessCancelRemove(id)
+      }
+      //元数据-字段操作
+      this.target.forEach(field => {
+        if (field.id === id) {
+          field.is_deleted = value
+          field['source'] = 'manual'
+          field['is_auto_allowed'] = false
+        }
+      })
+      //触发页面重新渲染
+      this.updateTableData(id, 'is_deleted', value)
+      this.checkTable() //消除感叹号
+    },
+    //目标任务 字段处理器
+    //rename操作
+    fieldProcessRename(id, key, value) {
+      let option = this.target.filter(v => v.id === id)
+      if (option.length === 0) return
+      option = option[0]
+      if (value === option.original_field_name || option.field) {
+        this.restRename(id) //用户手动改为最原始的名字
+        return
+      }
+      //rename类型
+      let op = {
+        op: 'RENAME',
+        id: option.id,
+        field: option.field_name,
+        operand: value, //改过名的字段
+        table_name: option.table_name,
+        type: option.data_type,
+        primary_key_position: option.primary_key_position,
+        label: value,
+        original_field_name: option.original_field_name
+      }
+      let ops = this.operations.filter(v => v.id === option.id && v.op === 'RENAME')
+      if (ops.length === 0) {
+        this.operations.push(op)
+      } else {
+        op = ops[0]
+        op.operand = value
+        op.label = value
+      }
+    },
+    handleExistsName(value) {
+      // 改名前查找同级中是否重名，若有则return且还原改动并提示
+      let exist = false
+      let filterData = this.target.filter(v => value === v.field_name && !v.is_deleted)
+      if (filterData.length > 0) {
+        this.$message.error(value + this.$t('message.exists_name'))
+        exist = true
+      }
+      return exist
+    },
+    //删除操作
+    fieldProcessRemove(id) {
+      this.restOperation(id) //先还原被操作
+      for (let i = 0; i < this.operations.length; i++) {
+        // 删除所有的rename convert的操作
+        let ops = this.operations[i]
+        if (ops.id === id && ['RENAME'].includes(ops.op)) {
+          this.operations.splice(i, 1)
+        }
+      }
+      //删除类型
+      let option = this.target.filter(v => v.id === id)
+      if (option.length === 0) return
+      option = option[0]
+      let op = {
+        op: 'REMOVE',
+        id: option.id,
+        field: option.field_name,
+        operand: true,
+        table_name: option.table_name,
+        type: option.data_type,
+        primary_key_position: option.primary_key_position,
+        label: option.field_name,
+        original_field_name: option.original_field_name
+      }
+      this.operations.push(op)
+      //更新当前选中行数
+      this.fieldCount = this.fieldCount - 1
+      this.updateFieldCount('remove')
+    },
+    //还原
+    fieldProcessCancelRemove(id) {
+      this.restOperation(id)
+      for (let i = 0; i < this.operations.length; i++) {
+        // 撤销删除操作
+        let ops = this.operations[i]
+        if (ops.id === id && ops.op === 'REMOVE') {
+          this.operations.splice(i, 1)
+        }
+      }
+      //更新当前选中行数
+      this.fieldCount = this.fieldCount + 1
+      this.updateFieldCount('add')
+    },
+    restRename(id) {
+      for (let i = 0; i < this.operations.length; i++) {
+        // 还原改名
+        let ops = this.operations[i]
+        if (ops.id === id && ops.op === 'RENAME') {
+          this.operations.splice(i, 1)
+        }
+      }
+    },
+    /*获取字段处理器*/
+    getFieldProcess() {
+      this.operations = []
+      let field_process = this.field_process.filter(process => process.table_id === this.selectRow.sourceTableId)
+      if (field_process.length > 0) {
+        this.operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
+      }
+    },
+    restOperation(id) {
+      let opr = this.operations.filter(v => v.id === id && v.op === 'RENAME')
+      if (opr.length > 0) {
+        //元数据-字段操作
+        this.updateTarget(id, 't_field_name', opr[0].original_field_name || opr[0].field)
+      }
+    },
+    saveFileOperations() {
+      let field_process = {
+        table_id: this.selectRow.sourceTableId, //存源表名 兼容旧版字段处理器
+        table_name: this.selectRow.sourceObjectName,
+        operations: this.operations
+      }
+      if (this.field_process && this.field_process.length > 0) {
+        let process = this.field_process.filter(fields => fields.table_id === this.selectRow.sourceTableId)
+        if (process.length > 0) {
+          field_process = process[0]
+          field_process.table_id = this.selectRow.sourceTableId
+          field_process.table_name = this.selectRow.sourceObjectName
+          field_process.operations = this.operations
+        } else this.field_process.push(field_process)
+      } else this.field_process.push(field_process)
+      return this.field_process
+    },
+    returnData(hiddenMsg) {
+      let result = this.checkTable()
+      if (result.checkDataType || result.checkInvalid) {
+        if (!hiddenMsg) {
+          this.$message.error(
+            `检测到您还有 ${result.count} 张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理`
+          )
+        }
+        return {
+          valid: false,
+          row: '',
+          operations: '',
+          target: []
+        }
+      }
+      let changNameData = {
+        table_prefix: this.form.table_prefix,
+        table_suffix: this.form.table_suffix,
+        tableNameTransform: this.form.tableNameTransform,
+        fieldsNameTransform: this.form.fieldsNameTransform
+      }
+      return {
+        valid: true,
+        row: this.selectRow,
+        operations: this.operations,
+        target: this.target,
+        changNameData: changNameData
+      }
+    },
+    //保存校验
+    checkTable() {
+      //左边所有invalid 为false 右边所有目标字段有类型
+      let checkDataType = false
+      this.target.forEach(field => {
+        if (!field.data_type && !field.is_deleted) {
+          checkDataType = true
+        }
+      })
+      //当前表 所有字段类型通过 将当前表的invalid 设置为false 校验通过
+      this.fieldMappingNavData.forEach(table => {
+        if (table.sinkObjectName === this.selectRow.sinkObjectName) {
+          //当前表
+          if (!checkDataType) {
+            table.invalid = false
+          } else table.invalid = true
+        }
+      })
+
+      let checkInvalid = false
+      let count = 0
+      this.fieldMappingNavData.forEach(table => {
+        if (table.invalid) {
+          checkInvalid = true
+          count += 1
+        }
+      })
+      return {
+        checkInvalid: checkInvalid,
+        checkDataType: checkDataType,
+        count: count
+      }
+    },
+    //动态样式
+    tableRowClassName({ row }) {
+      if (row.is_deleted) {
+        return 'delete-row'
+      }
+      return ''
+    },
+    returnForm() {
+      return this.form
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+.field-mapping {
+  .el-table .delete-row {
+    background: #f2f2f2;
+  }
+  .el-table .error-row {
+    background: rgba(255, 0, 0, 0.3);
+    color: #fff;
+  }
+  .el-table th {
+    background: #f4f5f7;
+  }
+}
+.field-mapping-data-type {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #999;
+}
+</style>
+<style scoped lang="scss">
+.field-mapping {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  .icon {
+    color: #6dc5e8;
+  }
+  .icon-error {
+    color: red;
+  }
+  .task-form__text {
+    display: inline-block;
+    width: 100px;
+    text-align: left;
+  }
+  .task-form-body {
+    display: flex;
+    flex: 1;
+    margin-top: 20px;
+    height: 0;
+    .task-form-left__ul {
+      flex: 1;
+      border-top: 1px solid #f2f2f2;
+      border-right: 1px solid #f2f2f2;
+      overflow-y: auto;
+      li {
+        height: 93px;
+        background: #ffffff;
+        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        border-radius: 4px;
+        border-bottom: 1px solid #f2f2f2;
+        display: flex;
+        padding-top: 16px;
+        padding-left: 10px;
+        &:hover {
+          background: rgba(44, 101, 255, 0.05);
+          cursor: pointer;
+          border-left: 2px solid #2c65ff;
+        }
+        &.active {
+          background: rgba(44, 101, 255, 0.05);
+          border-left: 2px solid #2c65ff;
+          cursor: pointer;
+        }
+        .task-form__img {
+          width: 34px;
+          height: 50px;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .task-form-text-box {
+          margin-left: 16px;
+          width: 200px;
+          .source {
+            font-size: 12px;
+            font-weight: 400;
+            color: #000000;
+            line-height: 17px;
+          }
+          .target {
+            font-size: 12px;
+            font-weight: 400;
+            color: #ef9868;
+            line-height: 17px;
+            margin-top: 16px;
+          }
+          .select {
+            font-size: 12px;
+            font-weight: 400;
+            color: #000000;
+            line-height: 17px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+        }
+      }
+    }
+
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      flex-direction: column;
+    }
+    .color-darkorange {
+      color: darkorange;
+    }
+  }
+}
+::v-deep {
+  .field-maping-table-dialog {
+    .table-box {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .table-form {
+        width: 56%;
+        .el-form-item {
+          margin-bottom: 12px;
+        }
+        .tip {
+          padding-left: 40px;
+        }
+      }
+      .table-example {
+        width: 36%;
+        h3 {
+          padding-bottom: 20px;
+        }
+        p {
+          padding-bottom: 10px;
+        }
+      }
+    }
+  }
+}
+</style>

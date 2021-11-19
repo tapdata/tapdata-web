@@ -112,6 +112,17 @@
           }}</span>
         </el-button>
       </div>
+      <el-tag
+        v-if="progress.showProgress"
+        effect="plain"
+        type="info"
+        size="mini"
+        style="margin-left: 10px; margin-right: 10px; border: none"
+      >
+        <span style="display: inline-block; padding: 0 5px; vertical-align: middle"
+          >加载进度: {{ progress.finished }} / {{ progress.total }}</span
+        >
+      </el-tag>
       <div class="flex-center">
         <el-tag
           :type="
@@ -264,6 +275,30 @@
       :data="checkStagesData"
       @complete="saveCheckStages"
     ></CheckStage>
+    <el-dialog
+      title="任务启动预检查未通过"
+      :visible.sync="showSchemaProgress"
+      :close-on-click-modal="false"
+      width="30%"
+    >
+      <span>错误原因: 模型推演进行中</span>
+      <div>当前进度: {{ progress.finished }} / {{ progress.total }}</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="showSchemaProgress = false">关闭</el-button>
+        <el-button :disabled="progress.progress !== 'done'" type="primary" size="mini" @click="start()">启动</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="任务启动预检查未通过"
+      :visible.sync="showFieldMappingProgress"
+      :close-on-click-modal="false"
+      width="30%"
+    >
+      <span>错误原因: 字段映射错误请校正</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="showFieldMappingProgress = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -338,7 +373,17 @@ export default {
       statusBtMap,
       showCheckStagesVisible: false,
       checkStagesData: [],
-      modPipeline: ''
+      modPipeline: '',
+      //schema加载进度
+      progress: {
+        total: '0',
+        finished: '0',
+        progress: '0',
+        showProgress: false
+      },
+      queryId: '', //新建任务没有id 则由前端生成
+      showSchemaProgress: false,
+      showFieldMappingProgress: false
     }
   },
   watch: {
@@ -384,6 +429,16 @@ export default {
         this.loadData()
         if (this.$route.query.id) {
           this.wsWatch()
+          this.initWSSed() //有id 主动监听当前任务schema进度
+          this.getSchemaResult()
+        } else {
+          //新建任务由前端生成任务id
+          this.$api('Setting')
+            .getObjectId()
+            .then(res => {
+              this.queryId = res.data
+              this.getSchemaResult()
+            })
         }
         this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
           this.draftSave()
@@ -591,6 +646,36 @@ export default {
       timer = setInterval(() => {
         self.updateDataFlow()
       }, 5000)
+    },
+    //实时获取schema加载进度
+    initWSSed() {
+      let id = this.$route.query.id || this.queryId
+      let msg = {
+        type: 'metadataTransformerProgress',
+        data: {
+          dataFlowId: id
+        }
+      }
+      ws.ready(() => {
+        ws.send(msg)
+      }, true)
+    },
+    getSchemaResult() {
+      let self = this
+      let id = self.$route.query.id || self.queryId
+      ws.on('metadataTransformerProgress', function (res) {
+        if (!res?.data?.stageId && res?.data?.dataFlowId === id) {
+          let { finished, total, status } = res?.data
+          self.progress.finished = finished
+          self.progress.total = total
+          self.progress.progress = status
+          if (status !== 'done') {
+            self.progress.showProgress = true
+          } else {
+            self.progress.showProgress = false
+          }
+        }
+      })
     },
     updateDataFlow() {
       let self = this
@@ -861,8 +946,8 @@ export default {
               stages[sourceId]['field_process'] = cell[FORM_DATA_KEY]?.field_process
 
               //迁移全局修改设置值
-              stages[targetId].tableNameTransform = cell[FORM_DATA_KEY].tableNameTransform
-              stages[targetId].fieldsNameTransform = cell[FORM_DATA_KEY].fieldsNameTransform
+              stages[targetId].tableNameTransform = cell[FORM_DATA_KEY]?.tableNameTransform
+              stages[targetId].fieldsNameTransform = cell[FORM_DATA_KEY]?.fieldsNameTransform
             }
           }
           if (targetId && stages[targetId]) {
@@ -873,7 +958,9 @@ export default {
       postData.stages = Object.values(stages)
 
       if (this.dataFlowId) postData.id = this.dataFlowId
-
+      if (!this.$route.query.id && !this.dataFlowId) {
+        postData.id = this.queryId || '' //当前路由没有id 保存任务则用前端生成id
+      }
       return postData
     },
 
@@ -931,8 +1018,7 @@ export default {
       if (!this.checkJoinTableStageId()) return
       localStorage.removeItem(this.tempId)
       const _doSave = function () {
-        let promise = data.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
-
+        let promise = self.$route.query.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
         promise
           .then(result => {
             if (result && result.data) {
@@ -1060,6 +1146,9 @@ export default {
     async start() {
       let _this = this
       let id = this.$route.query.id
+
+      //如果有showSchemaProgress
+      this.showSchemaProgress = false
 
       if (this.$refs.agentDialog.checkAgent()) {
         this.checkAgentStatus(() => {
@@ -1189,6 +1278,11 @@ export default {
                     this.checkStagesData[i].syncType = 'initial_sync+cdc'
                   }
                 }
+              } else if (err.response.msg === 'running transformer') {
+                this.initWSSed()
+                this.showSchemaProgress = true
+              } else if (err.response.msg === 'invalid') {
+                this.showFieldMappingProgress = true
               } else {
                 this.$message.error(err.response.msg)
               }
@@ -1732,6 +1826,10 @@ export default {
       //选中当前节点
       this.editor.graph.selectionPosition(item.cell)
     }
+  },
+  //获取当前queryID
+  getDataFlowQueryId() {
+    return this.queryId
   },
 
   beforeDestroy() {
