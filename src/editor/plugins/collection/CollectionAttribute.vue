@@ -126,7 +126,7 @@
                 size="mini"
                 class="iconfont icon-dakai1"
                 style="padding: 7px; margin-left: 7px"
-                :disabled="!tableNameId"
+                :disabled="!model.tableId"
                 @click="handTableName"
               ></el-button>
             </el-tooltip>
@@ -384,7 +384,6 @@ import VirtualSelect from 'web-core/components/virtual-select'
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editorMonitor = null;
-let tempSchemas = []
 const RETAINED_OPS_TPL = {
   id: '',
   op: 'RETAINED'
@@ -443,32 +442,30 @@ export default {
     'model.tableName': {
       immediate: true,
       handler() {
-        // let schemas = tempSchemas
         if (this.schemaSelectConfig.options.length > 0) {
-          let schema,
-            defaultSchema = {
-              table_name: this.model.tableName,
-              cdc_enabled: true,
-              meta_type: 'collection',
-              fields: [
-                {
-                  autoincrement: false,
-                  columnSize: 0,
-                  dataType: 7,
-                  data_type: 'OBJECT_ID',
-                  field_name: '_id',
-                  id: uuid(),
-                  is_nullable: true,
-                  javaType: 'String',
-                  key: 'PRI',
-                  original_field_name: '_id',
-                  precision: 0,
-                  primary_key_position: 1,
-                  scale: 0,
-                  table_name: this.model.tableName
-                }
-              ]
-            }
+          let defaultSchema = {
+            table_name: this.model.tableName,
+            cdc_enabled: true,
+            meta_type: 'collection',
+            fields: [
+              {
+                autoincrement: false,
+                columnSize: 0,
+                dataType: 7,
+                data_type: 'OBJECT_ID',
+                field_name: '_id',
+                id: uuid(),
+                is_nullable: true,
+                javaType: 'String',
+                key: 'PRI',
+                original_field_name: '_id',
+                precision: 0,
+                primary_key_position: 1,
+                scale: 0,
+                table_name: this.model.tableName
+              }
+            ]
+          }
           if (this.model.tableName) {
             let params = {
               filter: JSON.stringify({
@@ -482,25 +479,13 @@ export default {
 
             MetadataInstances.get(params).then(res => {
               let table = res?.data?.[0] || defaultSchema
-              // schema = schemas.filter(s => s.table_name === this.model.tableName)
-              // schema = schema && schema.length > 0 ? schema[0] : defaultSchema
-              //
-              // let fields = schema.fields || []
+              this.defaultSchema = table
               let fields = table.fields || []
               //过滤被删除的字段
               if (fields) {
                 fields = removeDeleted(fields)
               }
-              // let primaryKeys = fields
-              // 	.filter(f => f.primary_key_position > 0)
-              // 	.map(f => f.field_name)
-              // 	.join(',');
               this.primaryKeyOptions = fields.map(f => f.field_name)
-              // if (primaryKeys) {
-              // 	this.model.primaryKeys = primaryKeys;
-              // } else {
-              // 	this.model.primaryKeys = '';
-              // }
               this.model.custSql.custFields = fields.map(f => f.field_name)
               this.model.custSql.conditions.length = 0
               this.model.custSql.fieldFilterType = 'keepAllFields'
@@ -510,13 +495,13 @@ export default {
               this.model.collectionAggregate = false
               this.model.isFilter = false
               this.model.collectionAggrPipeline = ''
+              table.tableName = this.model.tableName
+              this.$emit('schemaChange', _.cloneDeep(table))
             })
           }
-          this.$emit('schemaChange', _.cloneDeep(schema))
         }
 
         this.taskData.tableName = this.model.tableName
-        this.tableIsLink()
       }
     },
     defaultSchema: {
@@ -528,10 +513,6 @@ export default {
             fields = removeDeleted(fields)
           }
           this.primaryKeyOptions = fields.map(f => f.field_name)
-          // if (!this.model.primaryKeys) {
-          // 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
-          // 	if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys)).join(',');
-          // }
         }
       }
     }
@@ -546,7 +527,6 @@ export default {
       dialogData: null,
       databaseData: [],
       copyConnectionId: '',
-      tableNameId: '',
 
       dialogVisible: false,
       logsFlag: false,
@@ -613,6 +593,7 @@ export default {
       },
       dataNodeInfo: {},
       model: {
+        tableId: '',
         stageId: '',
         showBtn: true,
         hiddenFieldProcess: true,
@@ -699,7 +680,6 @@ export default {
     // 获取新建表名称
     getAddTableName(val) {
       this.model.tableName = val
-      // this.tableIsLink()
       this.defaultSchema = null
       let schema = {
         table_name: this.model.tableName,
@@ -737,25 +717,6 @@ export default {
     handTableName() {
       let href = '/#/metadataDetails?id=' + this.model.tableId
       window.open(href)
-      // this.tableNameId = ''
-      // this.tableIsLink()
-      //
-      // if (this.tableNameId) {
-      //   let href = '/#/metadataDetails?id=' + this.tableNameId
-      //   window.open(href)
-      // }
-    },
-
-    // 判断表是否可以跳转
-    tableIsLink() {
-      this.tableNameId = ''
-      if (tempSchemas && tempSchemas.length) {
-        tempSchemas.forEach(item => {
-          if (item.table_name === this.model.tableName) {
-            this.tableNameId = item.tableId
-          }
-        })
-      }
     },
 
     // 获取数据库id
@@ -904,14 +865,12 @@ export default {
         .then(result => {
           let schemas = result?.data || []
           if (schemas) {
-            // let schemas = result?.data?.schema?.tables || []
-            tempSchemas = schemas.sort((t1, t2) =>
-              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-            )
-            let tableList = tempSchemas.map(item => ({
-              label: item,
-              value: item
-            }))
+            let tableList = schemas
+              .sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1))
+              .map(item => ({
+                label: item,
+                value: item
+              }))
 
             // 相同表名提示
             let options = []
@@ -931,8 +890,6 @@ export default {
             if (this.repeatTable.length > 0 && !this.disabled) {
               this.repeatTableDiao = true
             }
-
-            // this.tableIsLink()
           }
         })
         .finally(() => {
@@ -973,10 +930,7 @@ export default {
         ) {
           this.model.custSql.filterType = 'field'
         }
-        if (data.connectionId) {
-          this.loadDataModels(data.connectionId)
-        }
-        // this.tableIsLink()
+
         let param = {
           stages: this.dataFlow?.stages,
           stageId: this.model.stageId
