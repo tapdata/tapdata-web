@@ -31,7 +31,7 @@ VueRouter.prototype.replace = function replace(location) {
 Vue.use(VueRouter)
 Vue.use(TapdataWebCore)
 
-Vue.prototype.$checkAgentStatus = (callback, final) => {
+Vue.prototype.$checkAgentStatus = (callback, fncObj = {}) => {
   window.axios
     .get('api/tcm/agent/agentCount')
     .then(data => {
@@ -39,10 +39,14 @@ Vue.prototype.$checkAgentStatus = (callback, final) => {
         callback && callback()
       } else {
         Message.error('Agent当前状态异常，请检查')
+        fncObj?.error?.()
       }
     })
+    .catch(() => {
+      fncObj?.catch?.()
+    })
     .finally(() => {
-      final?.()
+      fncObj?.finally?.()
     })
 }
 
