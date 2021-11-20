@@ -362,7 +362,7 @@ export default {
     },
     sortChange({ prop, order }) {
       this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'asc' : 'desc'}`
-      this.fetch(1)
+      this.fetch()
     },
     reset() {
       this.searchParams = {
