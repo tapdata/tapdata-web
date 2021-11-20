@@ -12123,6 +12123,22 @@
     transform: rotate(1turn);
   }
 }
+@keyframes showWidthAll {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+@keyframes hideWidthAll {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0;
+  }
+}
 
 .dotting {
   display: inline-block;
