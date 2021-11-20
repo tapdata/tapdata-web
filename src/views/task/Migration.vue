@@ -52,18 +52,19 @@
               :manual="!(scope.row.status === 'draft' && scope.row.checked === false)"
               placement="top-start"
             >
-              <ElButton
+              <VButton
                 size="mini"
                 type="text"
                 :disabled="
                   !statusBtMap['run'][scope.row.status] || (scope.row.status === 'draft' && scope.row.checked === false)
                 "
-                :loading="scope.row.runLoading"
+                inner-loading
+                auto-loading
                 class="no-loading"
-                @click="run([scope.row.id], scope.row)"
+                @click="run([scope.row.id], scope.row, arguments[0])"
               >
                 启动任务
-              </ElButton>
+              </VButton>
             </ElTooltip>
             <ElButton
               v-if="scope.row.status === 'running'"
@@ -234,20 +235,6 @@
   }
   .el-divider--vertical {
     margin: 0 16px;
-  }
-}
-.el-button.no-loading {
-  ::v-deep {
-    .el-icon-loading {
-      display: none;
-    }
-    [class*='el-icon-'] + span {
-      margin-left: 0;
-    }
-  }
-  &.is-loading {
-    color: #c0c4cc;
-    cursor: not-allowed;
   }
 }
 </style>
@@ -590,9 +577,6 @@ export default {
           item.isFinished = true
         }
       }
-      // 按钮的loading
-      let findOne = this.list.find(t => t.id === item.id)
-      item.runLoading = findOne?.runLoading === true
       return item
     },
     sortChange({ prop, order }) {
@@ -641,15 +625,12 @@ export default {
     },
     createTask() {
       this.createLoading = true
-      this.$checkAgentStatus(
-        () => {
-          // this.createVisible = true
-          this.createMigrate()
-        },
-        () => {
-          this.createLoading = false
-        }
-      )
+      this.$checkAgentStatus(() => {
+        // this.createVisible = true
+        this.createMigrate()
+      }).finally(() => {
+        this.createLoading = false
+      })
     },
     closeCreateDialog() {
       this.createVisible = false
@@ -765,21 +746,13 @@ export default {
         title: map[title]
       }
     },
-    run(ids, row) {
-      row.runLoading = true
-      this.$checkAgentStatus(
-        () => {
-          this.changeStatus(ids, {
-            status: 'scheduled',
-            finallyEvents: () => {
-              row.runLoading = false
-            }
-          })
-        },
-        () => {
-          row.runLoading = false
-        }
-      )
+    run(ids, row, resetLoading) {
+      this.$checkAgentStatus(() => {
+        this.changeStatus(ids, {
+          status: 'scheduled',
+          finallyEvents: resetLoading
+        })
+      }).catch(resetLoading)
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', item.name)
