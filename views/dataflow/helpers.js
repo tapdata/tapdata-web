@@ -9,28 +9,30 @@ export const getLeftmostTopNode = nodes => {
 }
 
 export const getDataflowCorners = nodes => {
+  const [left, top] = nodes[0].attrs.position
   return nodes.reduce(
     (accu, node) => {
-      if (node.position[0] < accu.minX) {
-        accu.minX = node.position[0]
+      const [left, top] = node.attrs.position
+      if (left < accu.minX) {
+        accu.minX = left
       }
-      if (node.position[1] < accu.minY) {
-        accu.minY = node.position[1]
+      if (top < accu.minY) {
+        accu.minY = top
       }
-      if (node.position[0] > accu.maxX) {
-        accu.maxX = node.position[0]
+      if (left > accu.maxX) {
+        accu.maxX = left
       }
-      if (node.position[1] > accu.maxY) {
-        accu.maxY = node.position[1]
+      if (top > accu.maxY) {
+        accu.maxY = top
       }
 
       return accu
     },
     {
-      minX: nodes[0].position[0],
-      minY: nodes[0].position[1],
-      maxX: nodes[0].position[0],
-      maxY: nodes[0].position[1]
+      minX: left,
+      minY: top,
+      maxX: left,
+      maxY: top
     }
   )
 }

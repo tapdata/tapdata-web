@@ -12176,3 +12176,15 @@
     border-right-color: transparent;
   } /* 2个点 */
 }
+
+.tooltip-fade-in-enter-active {
+  transition: opacity 200ms linear;
+}
+.tooltip-fade-in-enter,
+.tooltip-fade-in-leave,
+.tooltip-fade-in-leave-active {
+  opacity: 0;
+}
+/*.tooltip-fade-in-leave-active {
+  transition: opacity 0 linear;
+}*/
