@@ -225,10 +225,15 @@ export default {
   watch: {
     'task.stats': {
       deep: true,
-      handler(v) {
-        v && this.init(v)
+      handler(v1, v2) {
+        if (v1 && v2 && JSON.stringify(v1) !== JSON.stringify(v2)) {
+          this.init()
+        }
       }
     }
+  },
+  mounted() {
+    this.init()
   },
   destroyed() {
     this.$ws.off('dataFlowInsight')
