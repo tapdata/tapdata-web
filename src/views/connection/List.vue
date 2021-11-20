@@ -393,7 +393,7 @@ export default {
         })
         this.fetch()
         this.$message.success('复制成功')
-        this.test(data?.result, false)
+        this.test(data?.result || data, false)
       } catch (error) {
         if (error?.response?.msg === 'duplicate source') {
           this.$message.success('复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"')
