@@ -408,11 +408,9 @@ export default {
       if (this.fieldMappingTableData?.length === 0) return
       for (let i = 0; i < data.length; i++) {
         let rules = this.typeMapping.filter(v => v.dbType === data[i].t_data_type)
-        if (rules?.length > 0) {
-          rules = rules[0].rules
-          this.showPrecisionEdit(data[i].t_id, rules || [])
-          this.showScaleEdit(data[i].t_id, rules || [])
-        }
+        rules = rules?.[0]?.rules || []
+        this.showPrecisionEdit(data[i].t_id, rules )
+        this.showScaleEdit(data[i].t_id, rules)
       }
     },
     /*页面刷新 兼容只读模式*/
@@ -755,22 +753,32 @@ export default {
       })
     },
     showScaleEdit(id, data) {
-      let isScale = data.filter(v => v.minScale < v.maxScale)
-      if (isScale.length !== 0) {
-        //固定值
-        this.updateTargetView(id, 'isScaleEdit', true)
-      } else {
+      if(!data || data?.length === 0){
         this.updateTargetView(id, 'isScaleEdit', false)
+      }else{
+        let isScale = data.filter(v => v.minScale < v.maxScale)
+        if (isScale.length !== 0) {
+          //固定值
+          this.updateTargetView(id, 'isScaleEdit', true)
+        } else {
+          this.updateTargetView(id, 'isScaleEdit', false)
+        }
       }
+
     },
     showPrecisionEdit(id, data) {
-      let isPrecision = data.filter(v => v.minPrecision < v.maxPrecision)
-      if (isPrecision.length !== 0) {
-        //固定值
-        this.updateTargetView(id, 'isPrecisionEdit', true)
-      } else {
+      if(!data || data?.length === 0){
         this.updateTargetView(id, 'isPrecisionEdit', false)
+      }else{
+        let isPrecision = data.filter(v => v.minPrecision < v.maxPrecision)
+        if (isPrecision.length !== 0) {
+          //固定值
+          this.updateTargetView(id, 'isPrecisionEdit', true)
+        } else {
+          this.updateTargetView(id, 'isPrecisionEdit', false)
+        }
       }
+
     },
     initDataType(val) {
       let target = this.typeMapping.filter(type => type.dbType === val)
