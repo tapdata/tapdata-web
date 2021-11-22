@@ -630,8 +630,8 @@ export default {
     /* 恢复默认全部*/
     rollbackAll() {
       this.$confirm(
-        this.St('dag_dialog_field_mapping_error_rollback_all'),
-        this.St('dag_dialog_field_mapping_error_rollback'),
+        this.$t('dag_dialog_field_mapping_error_rollback_all'),
+        this.$t('dag_dialog_field_mapping_error_rollback'),
         {
           type: 'warning'
         }
@@ -668,7 +668,7 @@ export default {
         let data = JSON.parse(JSON.stringify(this.target))
         let deleteLen = data.filter(v => !v.is_deleted)
         if (deleteLen.length === 0 && this.target?.length > 0) {
-          this.$message.error(this.St('dag_link_field_mapping_error_all_deleted'))
+          this.$message.error(this.$t('dag_link_field_mapping_error_all_deleted'))
           return //所有字段被删除了 不可以保存任务
         }
         this.$emit('row-click', this.selectRow, this.operations, this.target)
@@ -724,7 +724,7 @@ export default {
     },
     /*恢复默认单表*/
     rollbackTable(name, id) {
-      this.$confirm(this.St('dag_dialog_field_mapping_error_rollback'), this.St('dag_dialog_field_mapping_error_tip'), {
+      this.$confirm(this.$t('dag_dialog_field_mapping_error_rollback'), this.$t('dag_dialog_field_mapping_error_tip'), {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
