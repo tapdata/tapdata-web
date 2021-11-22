@@ -81,62 +81,91 @@
             </el-tooltip>
           </div>
         </el-form-item>
+        <el-form-item
+          required
+          :label="$t('editor.cell.data_node.collection.form.initialSyncOrder.keep')"
+          v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
+        >
+          <div class="flex-block">
+            <el-switch
+              v-model="model.enableInitialOrder"
+              style="margin-right: 20px"
+              inactive-color="#dcdfe6"
+              :active-text="
+                model.enableInitialOrder
+                  ? $t('editor.cell.data_node.collection.form.initialSyncOrder.open')
+                  : $t('editor.cell.data_node.collection.form.initialSyncOrder.close')
+              "
+              @change="model.initialSyncOrder = 0"
+            ></el-switch>
+            <el-input-number
+              v-if="model.enableInitialOrder"
+              v-model="model.initialSyncOrder"
+              controls-position="right"
+              :min="1"
+              size="mini"
+            ></el-input-number>
+          </div>
+        </el-form-item>
 
-        <!-- <el-form-item
-					:label="$t('editor.cell.data_node.collection.form.collection.label')"
-					prop="tableName"
-					required
-				>
-					<el-select
-						v-model="model.tableName"
-						:filterable="!schemasLoading"
-						:loading="schemasLoading"
-						allow-create
-						default-first-option
-						clearable
-						:placeholder="$t('editor.cell.data_node.collection.form.collection.placeholder')"
-						size="mini"
-					>
-						<el-option
-							v-for="(item, idx) in schemas"
-							:label="`${item.table_name}`"
-							:value="item.table_name"
-							v-bind:key="idx"
-						></el-option>
-					</el-select>
-				</el-form-item> -->
-        <!-- <el-form-item :label="$t('editor.cell.data_node.collection.form.pk.label')" prop="primaryKeys" required>
-					<el-input
-						v-model="model.primaryKeys"
-						:placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
-						size="mini"
-					></el-input>
-				</el-form-item> -->
+        <el-form-item
+          required
+          :label="$t('editor.cell.data_node.collection.form.filter.fiflterSetting')"
+          v-if="dataNodeInfo.isSource || !dataNodeInfo.isTarget"
+        >
+          <div class="flex-block">
+            <el-switch
+              v-model="model.isFilter"
+              inactive-color="#dcdfe6"
+              :active-text="
+                model.isFilter
+                  ? $t('editor.cell.data_node.collection.form.filter.openFiflter')
+                  : $t('editor.cell.data_node.collection.form.filter.closeFiflter')
+              "
+              style="margin-right: 20px"
+            ></el-switch>
+          </div>
+        </el-form-item>
+
+        <queryBuilder
+          v-if="(dataNodeInfo.isSource || !dataNodeInfo.isTarget) && model.isFilter"
+          v-model="model.custSql"
+          v-bind:initialOffset.sync="model.initialOffset"
+          :primaryKeyOptions="primaryKeyOptions"
+          v-bind:selectedFields.sync="model.selectedFields"
+          v-bind:custFields.sync="model.custFields"
+          :tableName="model.tableName"
+          :disabled="disabled"
+          :databaseType="model.databaseType"
+          :mergedSchema="mergedSchema"
+        ></queryBuilder>
+        <el-form-item>
+          <div class="flex-block fr" style="padding-top: 10px" v-if="model.connectionId && model.tableName">
+            <el-button
+              class="fr marR20"
+              type="success"
+              size="mini"
+              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+              @click="hanlderLoadSchema"
+            >
+              <i class="el-icon-loading" v-if="reloadModelLoading"></i>
+              <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+              <span v-else>{{ $t('dataFlow.updateModel') }}</span>
+            </el-button>
+            <FieldMapping
+              v-else
+              ref="fieldMapping"
+              class="fr"
+              :isDisable="disabled"
+              :transform="model"
+              :getDataFlow="getDataFlow"
+              @update-first="returnModel"
+            ></FieldMapping>
+          </div>
+        </el-form-item>
       </el-form>
     </div>
-    <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
-      <el-button
-        class="fr marR20"
-        type="success"
-        size="mini"
-        v-if="!dataNodeInfo.isTarget || !showFieldMapping"
-        @click="hanlderLoadSchema"
-      >
-        <i class="el-icon-loading" v-if="reloadModelLoading"></i>
-        <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
-        <span v-else>{{ $t('dataFlow.updateModel') }}</span>
-      </el-button>
-      <FieldMapping
-        v-else
-        :dataFlow="dataFlow"
-        :showBtn="true"
-        :isFirst="model.isFirst"
-        @update-first="returnModel"
-        :hiddenFieldProcess="true"
-        :stageId="stageId"
-        ref="fieldMapping"
-        class="fr"
-      ></FieldMapping>
+    <div class="e-entity-wrap" style="text-align: center; overflow: auto">
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
     <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
@@ -157,14 +186,16 @@ import { convertSchemaToTreeData } from '../../util/Schema'
 import ClipButton from '@/components/ClipButton'
 import CreateTable from '@/components/dialog/createTable'
 import FieldMapping from '@/components/FieldMapping'
+import queryBuilder from '@/components/QueryBuilder'
 
 import ws from '@/api/ws'
 const connections = factory('connections')
 
 // let editorMonitor = null;
+let tempSchemas = []
 export default {
   name: 'HanaNode',
-  components: { Entity, ClipButton, CreateTable, FieldMapping },
+  components: { Entity, ClipButton, CreateTable, FieldMapping, queryBuilder },
   data() {
     return {
       disabled: false,
@@ -203,14 +234,31 @@ export default {
         type: 'hana',
         databaseType: 'hana',
         tableName: '',
-        isFirst: true
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true,
+        enableInitialOrder: false,
+        initialSyncOrder: 0,
+        isFilter: false,
+        initialOffset: '',
+        custFields: [],
+        custSql: {
+          filterType: 'field',
+          selectedFields: [],
+          fieldFilterType: 'keepAllFields',
+          limitLines: '',
+          cSql: '',
+          editSql: '',
+          conditions: []
+        }
         // primaryKeys: ''
       },
       schemasLoading: false,
       mergedSchema: null,
+      primaryKeyOptions: [],
       scope: '',
-      dataFlow: '',
-      stageId: '',
       showFieldMapping: false,
       dataNodeInfo: {}
     }
@@ -258,7 +306,9 @@ export default {
     'model.tableName': {
       immediate: true,
       handler() {
+        // this.handlerSchemaChange()
         if (this.schemas.length > 0) {
+          this.handlerSchemaChange()
           if (this.model.tableName) {
             let schema = this.schemas.filter(s => s.table_name === this.model.tableName)
             schema =
@@ -273,6 +323,28 @@ export default {
             this.$emit('schemaChange', _.cloneDeep(schema))
             this.mergedSchema = schema
           }
+          //切换table 才清空过滤
+          if (this.schema?.length && this.model.tableName) {
+            this.model.custFields.length = 0
+            this.model.custSql.selectedFields.length = 0
+            this.model.custSql.conditions.length = 0
+            this.model.custSql.limitLines = ''
+            this.model.cSql = ''
+            this.model.custSql.fieldFilterType = 'keepAllFields'
+            this.model.custSql.editSql = ''
+          }
+        }
+      }
+    },
+    mergedSchema: {
+      handler() {
+        if (this.mergedSchema?.fields?.length) {
+          let fields = this.mergedSchema.fields
+          this.primaryKeyOptions = fields.map(f => f.field_name)
+          // if (!this.model.primaryKeys) {
+          // 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
+          // 	if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys)).join(',');
+          // }
         }
       }
     }
@@ -315,7 +387,7 @@ export default {
         .then(result => {
           if (result.data) {
             let schemas = (result.data.schema && result.data.schema.tables) || []
-            schemas = schemas.sort((t1, t2) =>
+            tempSchemas = schemas = schemas.sort((t1, t2) =>
               t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
             )
             self.schemas = schemas.filter(item => {
@@ -330,12 +402,67 @@ export default {
         })
     },
 
+    handlerSchemaChange() {
+      let self = this
+      if (tempSchemas.length > 0) {
+        let schemas = tempSchemas.filter(s => s.table_name === this.model.tableName)
+
+        if (schemas && schemas.length > 0) {
+          this.model.tableId = schemas[0].tableId
+        } else {
+          this.model.tableId = ''
+        }
+      }
+      if (this.model.tableId) {
+        let params = {
+          filter: JSON.stringify({
+            where: {
+              id: this.model.tableId,
+              is_deleted: false
+            }
+          })
+        }
+        self.loading = true
+        this.$api('MetadataInstances')
+          .schema(params)
+          .then(res => {
+            if (res.data) {
+              let fields = res.data?.records[0]?.schema?.tables[0]?.fields
+              if (fields) {
+                self.primaryKeyOptions = fields.map(f => f.field_name)
+                self.model.custSql.custFields = fields.map(f => f.field_name)
+              }
+              this.loadSchema = res.data?.records[0]?.schema?.tables[0] || []
+              self.$emit('schemaChange', _.cloneDeep(this.loadSchema))
+            }
+          })
+      } else {
+        let schema = {
+          cdc_enabled: true,
+          fields: [],
+          meta_type: 'table',
+          table_name: this.model.tableName
+        }
+        self.$emit('schemaChange', _.cloneDeep(schema))
+      }
+      // this.taskData.tableName = this.model.tableName
+    },
+
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
+        this.model.stageId = cell.id
         this.getDataFlow()
         _.merge(this.model, data)
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.model.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.model.stageId]
+          })
       }
       this.dataNodeInfo = dataNodeInfo || {}
       this.mergedSchema = cell.getOutputSchema()
@@ -343,6 +470,27 @@ export default {
         this.mergedSchema = cell.getOutputSchema()
         this.getDataFlow()
       })
+      let conds
+      if (data.custSql && data.custSql.conditions) {
+        conds = JSON.parse(JSON.stringify(data.custSql.conditions))
+        delete data.custSql.conditions
+      }
+      _.merge(this.model, data)
+      if (this.model.custSql && this.model.custSql.conditions && conds && conds.length > 0)
+        conds.forEach(it => {
+          this.model.custSql.conditions.push(it)
+        })
+      if (
+        data.sql &&
+        (!Object.hasOwnProperty.call(data, 'isFilter') || Object.hasOwnProperty.call(data, 'sqlNotFromCust'))
+      ) {
+        this.model.custSql.editSql = data.sql
+        this.model.custSql.filterType = 'sql'
+        this.model.isFilter = true
+      }
+      if (data.initialSyncOrder > 0) {
+        this.model.enableInitialOrder = true
+      }
       let param = {
         stages: this.dataFlow?.stages,
         stageId: this.stageId
@@ -353,10 +501,17 @@ export default {
           this.showFieldMapping = data?.data[this.stageId]
         })
 
+      if (this.model.connectionId && this.model.tableName) {
+        this.handlerSchemaChange()
+      }
+
       // editorMonitor = vueAdapter.editor;
     },
 
     getData() {
+      if (this.model.isFilter)
+        if (this.model.custSql.filterType === 'field') this.model.sql = this.model.custSql.cSql
+        else this.model.sql = this.model.custSql.editSql
       let result = _.cloneDeep(this.model)
       result.name = result.tableName || 'hana'
       return result
@@ -420,6 +575,7 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

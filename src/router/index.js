@@ -189,10 +189,8 @@ const childRoutes = [
     path: '/dataRules',
     name: 'dataRules',
     component: () => import('@/views/dataRules/List'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'data_rules_menu',
-      // url: '/old/index.html#/dataRules',
       title: i18n.t('tap.dataRules'),
       isCollapse: false
     }
@@ -212,10 +210,8 @@ const childRoutes = [
     path: '/dictionary',
     name: 'dictionary',
     component: () => import('@/views/dictionary/List'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'dictionary_menu',
-      // url: '/old/index.html#/dictionary',
       title: i18n.t('tap.dictionary'),
       isCollapse: false
     }
@@ -317,10 +313,8 @@ const childRoutes = [
     path: '/tasks',
     name: 'tasks',
     component: () => import('@/views/scheduleTasks/List'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'schedule_jobs_menu',
-      // url: '/old/index.html#/tasks',
       title: i18n.t('tap.jobSchedule'),
       isCollapse: false
     }
@@ -329,33 +323,18 @@ const childRoutes = [
     path: '/taskHistories',
     name: 'taskHistories',
     component: () => import('@/views/scheduleTasks/Histories'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'schedule_jobs_menu',
-      // url: '/old/index.html#/tasks',
       title: i18n.t('tap.taskHistories'),
       isCollapse: false
     }
   },
-  // {
-  // 	path: '/agentdownload',
-  // 	name: 'agentdownload',
-  // 	component: () => import('@/views/ExternalLink'),
-  // 	meta: {
-  // 		requiresAuth: true,
-  // 		url: '/old/index.html#/agentdownload',
-  // 		title: i18n.t('tap.agentdownload'),
-  // 		isCollapse: false
-  // 	}
-  // },
   {
     path: '/agents',
     name: 'agents',
-    // component: () => import('@/views/ExternalLink'),
     component: () => import('@/views/process/List'),
     meta: {
       code: 'agents_menu',
-      // url: '/old/index.html#/agents',
       title: i18n.t('tap.agentManagement'),
       isCollapse: false
     }
@@ -374,33 +353,19 @@ const childRoutes = [
   {
     path: '/users',
     name: 'users',
-    // component: () => import('@/views/ExternalLink'),
     component: () => import('@/views/Users/List'),
     meta: {
       code: 'user_management_menu',
-      // url: '/old/index.html#/users',
       title: i18n.t('tap.userManagement'),
       isCollapse: false
     }
   },
-  // {
-  // 	path: '/journal',
-  // 	name: 'journal',
-  // 	component: () => import('@/views/ExternalLink'),
-  // 	meta: {
-  // 		url: '/old/index.html#/journal',
-  // 		title: i18n.t('tap.journal'),
-  // 		isCollapse: false
-  // 	}
-  // },
   {
     path: '/roles',
     name: 'roles',
     component: () => import('@/views/Role/Roles'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'role_management_menu',
-      // url: '/old/index.html#/roles',
       title: i18n.t('tap.roleManagement'),
       isCollapse: false
     }
@@ -412,7 +377,6 @@ const childRoutes = [
     meta: {
       code: 'role_creation'
     }
-    // component: () => import('@/views/ExternalLink')
   },
   {
     path: '/role/:id',
@@ -421,16 +385,13 @@ const childRoutes = [
     meta: {
       code: 'role_edition'
     }
-    // component: () => import('@/views/ExternalLink')
   },
   {
     path: '/settings',
     name: 'settings',
     component: () => import('@/views/setting/Setting'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'system_settings_menu',
-      // url: '/old/index.html#/settings',
       title: i18n.t('tap.systemSettings'),
       isCollapse: false
     }
@@ -497,9 +458,7 @@ const childRoutes = [
     path: '/jsFuncs',
     name: 'jsFuncs',
     component: () => import('@/views/task/JsFuncs'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
-      // url: '/old/index.html#/jsFuncs',
       isCollapse: false,
       code: 'SYNC_Function_management'
     }

@@ -135,7 +135,17 @@ export const defaultModel = {
     kafkaIgnoreInvalidRecord: false,
     kafkaAcks: '',
     kafkaCompressionType: '',
-    kafkaIgnorePushError: false
+    kafkaIgnorePushError: false,
+    krb5: false,
+    krb5Keytab: '',
+    krb5Conf: '',
+    krb5KeytabName: '',
+    krb5KeytabFileName: '',
+    krb5ConfName: '',
+    krb5ConfFileName: '',
+    krb5Principal: '',
+    krb5ServiceName: '',
+    kafkaSaslMechanism: 'PLAIN'
   },
   file: {
     name: '',
@@ -209,6 +219,7 @@ export const defaultModel = {
     custom_type: '',
     collection_name: '',
     unique_keys: '',
+    jsEngineName: 'graal.js',
     custom_ondata_script: '',
     custom_cdc_script: '',
     custom_initial_script: '',

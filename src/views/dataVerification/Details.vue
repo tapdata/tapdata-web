@@ -47,6 +47,7 @@
           ref="singleTable"
           :type="type"
           :data="tableData"
+          :verify-type="verifyType"
           @row-click="rowClick"
         ></ResultTable>
       </div>
@@ -54,6 +55,7 @@
     <ResultView
       v-if="type !== 'row_count' && !['running', 'scheduling'].includes(inspect.status)"
       ref="resultView"
+      :verify-type="verifyType"
       :remoteMethod="getResultData"
     ></ResultView>
   </section>
@@ -130,6 +132,9 @@ export default {
     },
     tableData() {
       return this.resultInfo.stats || []
+    },
+    verifyType() {
+      return this.resultInfo?.inspect?.inspectMethod
     }
   },
   created() {

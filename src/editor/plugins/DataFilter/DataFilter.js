@@ -41,6 +41,7 @@ export const DataFilterConfig = {
         type: 'row_filter_processor',
         name: 'Row Filter',
         expression: '//code',
+        jsEngineName: 'graal.js',
         action: 'retain' // discard,retain
       }
     },

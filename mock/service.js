@@ -1163,7 +1163,25 @@ module.exports = Object.assign({}, dataflow, {
           errorMsg: 'testing timeout',
           schema: {},
           _id: '6076ffbab0f20408b0ec0914'
-        }
+        },
+        'fields|10-30': [
+          {
+            autoincrement: false,
+            columnSize: 0,
+            dataType: 7,
+            data_type: 'OBJECT_ID',
+            field_name: '@name',
+            id: '@id',
+            is_nullable: true,
+            javaType: 'String',
+            key: 'PRI',
+            original_field_name: '@name',
+            precision: 0,
+            primary_key_position: 1,
+            scale: 0,
+            table_name: '@name'
+          }
+        ]
       }
     ]
   },
@@ -1182,6 +1200,12 @@ module.exports = Object.assign({}, dataflow, {
     code: 'ok',
     msg: 'ok'
   },
+  '/api/MetadataInstances/tables': {
+    code: 'ok',
+    msg: 'ok',
+    'data|10000-20000': ['@id']
+  },
+  '/api/MetadataInstances/schema': {},
   '/api/DataCatalogs/count': { data: { count: 6 }, code: 'ok', msg: 'ok' },
   '/api/DataCatalogs/getList': {
     'data|0-50': [
@@ -1511,5 +1535,30 @@ module.exports = Object.assign({}, dataflow, {
         username: '@name'
       }
     ]
-  }
+  },
+  '/api/Javascript_functions': {
+    data: [
+      {
+        function_name: 'processTcp',
+        parameters: 'host,port,timeout,mongoString',
+        function_body: '{\n}',
+        user_id: '61306d94725cec27ed3401e3',
+        id: '6154119f0e5b5800dbcb2989',
+        last_updated: '2021-11-02T02:59:09.129Z',
+        createTime: '2021-09-29T07:11:27.158Z'
+      },
+      {
+        function_name: 'majp',
+        parameters: '',
+        function_body: "{\n    var xx = 'xxxxxx';\n    return [{ a: 1 }];\n}",
+        user_id: '61306d94725cec27ed3401e3',
+        id: '6153e9940e5b5800dbcada25',
+        last_updated: '2021-09-29T04:26:00.518Z',
+        createTime: '2021-09-29T04:20:36.852Z'
+      }
+    ],
+    code: 'ok',
+    msg: 'ok'
+  },
+  '/api/Javascript_functions/count': { data: { count: 232 }, code: 'ok', msg: 'ok' }
 })

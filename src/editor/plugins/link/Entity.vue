@@ -83,6 +83,29 @@ export default {
   watch: {
     schema(schema) {
       this.tableMap = {}
+      this.handleSchema(schema)
+    }
+  },
+
+  data() {
+    return {
+      editable: true,
+      isCheckAll: true,
+      isIndeterminate: false,
+      tableMap: {},
+      defaultChecked: [],
+      typeMap: {},
+      fields: [],
+      interval: null
+    }
+  },
+
+  created() {
+    this.handleSchema(this.schema)
+  },
+
+  methods: {
+    handleSchema(schema) {
       if (schema && schema.fields && this.filterFields) {
         let checkedKeys = []
         schema.fields.forEach(f => {
@@ -131,23 +154,7 @@ export default {
       }
 
       log('Entity Schema Change:', schema)
-    }
-  },
-
-  data() {
-    return {
-      editable: true,
-      isCheckAll: true,
-      isIndeterminate: false,
-      tableMap: {},
-      defaultChecked: [],
-      typeMap: {},
-      fields: [],
-      interval: null
-    }
-  },
-
-  methods: {
+    },
     getImgByType(type) {
       return require(`@/assets/images/types/${type.toLowerCase()}.png`)
     },

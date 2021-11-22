@@ -1,4 +1,9 @@
 export default {
+  // 通用按钮
+  button_edit: '编辑',
+  button_confirm: '确定',
+  button_cancel: '取消',
+
   // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',
@@ -17,6 +22,10 @@ export default {
   verify_result_content_diff: '表数据差: {0}',
   verify_result_count_inconsistent: '不一致',
   verify_result_count_consistent: '一致',
+  verify_result_field_name: '字段名',
+  verify_result_source_info: '源信息',
+  verify_result_target_info: '目标信息',
+  verify_create_window_duration: '窗口时长',
 
   taskprogress_plan_sync_table_num: '计划同步表数量',
   taskprogress_completed_sync_table_num: '已完成同步表数量',
@@ -37,24 +46,17 @@ export default {
 
   connection_form_custom_connection_before_operate: '前置操作',
   connection_form_custom_connection_after_operate: '后置操作',
-
+  connection_kafka_kerberos_attest: 'kerberos 认证',
+  connection_kafka_kerberos_config_keytab: '密钥表示文件',
+  connection_kafka_kerberos_config_conf: '配置文件',
+  connection_kafka_kerberos_body_config: '主体配置',
+  connection_kafka_kerberos_service_name: '服务名',
+  connection_kafka_kerberos_tip: '需要在 Engine 所在主机 /etc/hosts 配置实例名映射',
+  connection_kafka_kerberos_none_keytab: '密钥表示文件不能为空',
+  connection_kafka_kerberos_none_conf: '配置文件不能为空',
+  connection_kafka_encryption: '加密方式',
   // 路由名
   app_menu_jsFuncs: '函数',
-
-  // 函数
-  js_func_name: '函数名',
-  js_func_parameters: '参数',
-  js_func_function_body: '函数体',
-  js_func_last_update: '更新时间',
-  js_func_create: '创建',
-  js_func_function_name_repeat: '方法名称重复',
-  js_func_dialog_format: '格式化代码',
-  js_func_dialog_code: 'Javascript函数代码',
-  js_func_dialog_Linenumbers: '显示行号',
-  js_func_dialog_nofunctions: '代码缺少JS函数',
-  js_func_dialog_create_title: '新增记录',
-  js_func_dialog_edit_title: '更新记录',
-  js_func_delete_remind: '确定要删除函数',
 
   // Dag
   dag_data_node_label_dameng: 'Dameng节点',
@@ -69,6 +71,54 @@ export default {
   dag_data_node_label_memcache_type_tip: '全局缓存所有任务可引用，局部缓存仅限当前DAG引用。',
   dag_data_node_label_kafka_high_performance_mode: '高性能模式',
   dag_data_node_label_kafka_all: '所有',
+  dag_link_button_custom_script: '自定义处理脚本',
+
+  //字段映射
+  dag_link_button_field_mapping: '字段映射',
+  dag_link_button_mapping_configuration: '映射配置',
+  dag_link_field_mapping_error_no_table: '请选择需要迁移的表',
+  dag_link_field_mapping_error_all_deleted: '当前表被删除了所有字段，不允许保存操作',
+  dag_dialog_field_mapping_table_setting: '表设置',
+  dag_dialog_field_mapping_tip:
+    '用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型',
+  dag_dialog_field_mapping_table_rename: '表改名',
+  dag_dialog_field_mapping_field_rename: '字段改名',
+  dag_dialog_field_mapping_rollback_all: '恢复默认',
+  dag_dialog_field_mapping_rollback_field: '恢复默认字段',
+  dag_dialog_field_mapping_search_table: '搜索表',
+  dag_dialog_field_mapping_loading_schema: '加载中，请稍等...',
+  dag_dialog_field_mapping_selected: '已选中',
+  dag_dialog_field_mapping_search_field: '搜索字段',
+  dag_dialog_field_mapping_source_field: '源表字段名',
+  dag_dialog_field_mapping_source_type: '源表类型',
+  dag_dialog_field_mapping_source_precision: '源表长度',
+  dag_dialog_field_mapping_source_scale: '源表精度',
+  dag_dialog_field_mapping_target_field: '目标表字段名',
+  dag_dialog_field_mapping_target_type: '目标表类型',
+  dag_dialog_field_mapping_target_precision: '目标表长度',
+  dag_dialog_field_mapping_target_scale: '目标表精度',
+  dag_dialog_field_mapping_operate: '操作',
+  dag_dialog_field_mapping_no_data: '暂无数据',
+  dag_dialog_field_mapping_range_precision: '长度范围',
+  dag_dialog_field_mapping_range_scale: '精度范围',
+  dag_dialog_field_mapping_batch_table_name: '批量改表名设置',
+  dag_dialog_field_mapping_batch_field_name: '批量改字段名设置',
+  dag_dialog_field_mapping_example_prefix: '请输入前缀',
+  dag_dialog_field_mapping_example_suffix: '请输入前缀',
+  dag_dialog_field_mapping_example_tip: '说明：设置的前后缀也遵循大小写规则',
+  dag_dialog_field_mapping_example_origin_table_name: '原表名',
+  dag_dialog_field_mapping_example_change: '修改后',
+  dag_dialog_field_mapping_example: '示例',
+  dag_dialog_field_mapping_tittle_field_name: '修改目标表字段名称',
+  dag_dialog_field_mapping_tittle_data_type: '修改目标表字段类型',
+  dag_dialog_field_mapping_tittle_precision: '修改目标字段长度',
+  dag_dialog_field_mapping_tittle_scale: '修改目标表精度',
+  dag_dialog_field_mapping_error_tip: '提示',
+  dag_dialog_field_mapping_error_rollback_all: '您确认要全部恢复默认吗',
+  dag_dialog_field_mapping_error_rollback: '您确认要全部恢复默认吗',
+  dag_dialog_field_mapping_error_range: '当前值不符合该字段范围',
+  dag_dialog_field_mapping_error_save_prefix: '检测到您还有',
+  dag_dialog_field_mapping_error_save_suffix: '张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理',
 
   //任务编辑
   dag_data_node_label_clickhouse: 'ClickHouse节点',
@@ -76,5 +126,42 @@ export default {
   // 缓存节点提示
   task_job_setting_tip_title: '设置提醒',
   task_job_setting_disable: '不去重',
-  task_job_tip_text: '该缓存节点(xxx)的设置已存在于任务(###)中，请确认是否还继续创建？'
+  task_job_tip_text: '该缓存节点(xxx)的设置已存在于任务(###)中，请确认是否还继续创建？',
+  data_flow_automatically: '自动挖掘',
+  data_flow_manually: '手动挖掘',
+  data_flow_oracle_logminer: 'Oracle日志挖掘模式',
+
+  // 函数管理
+  function_tips_empty: '代码缺少JS函数',
+  function_checkbox_Line_number: '显示行号',
+  function_button_create: '创建',
+  function_button_edit: '编辑',
+  function_tips_name_repeat: '方法名称重复',
+  function_button_code_format: '格式化代码',
+  function_last_update_label: '更新时间',
+  function_parameters_label: '参数',
+  function_type_label: '函数类型',
+  function_type_option_custom: '自定义函数',
+  function_type_option_jar: '第三方jar包',
+  function_name_label: '函数名称',
+  function_name_placeholder: '请输入函数名称',
+  function_name_repeat: '函数名称重复',
+  function_class_label: '类名',
+  function_class_placeholder: '请输入类名，UDF函数的类名，格式为资源名.类名',
+  function_file_label: 'jar文件',
+  function_button_file_upload: '点击上传',
+  function_file_upload_tips: '请上传jar包文件',
+  function_file_upload_success: '上传成功',
+  function_file_upload_fail: '上传失败',
+  function_body_label: '函数体',
+  function_body_placeholder: '请输入命令格式，为该UDF的具体使用方法示例',
+  function_parameters_describe_label: '参数说明',
+  function_parameters_describe_placeholder: '支持输入的参数类型以及返回参数类型的具体说明',
+  function_return_value_label: '返回值',
+  function_return_value_placeholder: '请输入返回值',
+  function_describe_label: '描述',
+  function_describe_placeholder: '请输入描述',
+
+  // 用户
+  login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录'
 }

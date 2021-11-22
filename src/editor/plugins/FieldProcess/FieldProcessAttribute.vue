@@ -14,6 +14,12 @@
             :placeholder="$t('editor.cell.processor.field.form.name.placeholder')"
           ></el-input>
         </el-form-item>
+        <el-form-item>
+          <ElSelect v-model="model.jsEngineName" style="width: 100px" size="mini">
+            <ElOption label="新版" value="graal.js"></ElOption>
+            <ElOption label="旧版" value="nashorn"></ElOption>
+          </ElSelect>
+        </el-form-item>
       </el-form>
       <div class="schema-editor-container">
         <div class="schema-editor-wrap schema-editor-container-left">
@@ -65,7 +71,8 @@ export default {
         name: 'Field Process',
         type: 'field_processor',
         originalSchema: '',
-        keep: true
+        keep: true,
+        jsEngineName: 'graal.js'
       },
       schema: null
     }
@@ -83,6 +90,7 @@ export default {
     convertSchemaToTreeData,
     setData(data, cell) {
       if (data) {
+        data.jsEngineName = data.jsEngineName || 'nashorn'
         //模型改变 数据的兼容处理
         Object.keys(data).forEach(key => (this.model[key] = data[key]))
       }

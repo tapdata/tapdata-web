@@ -67,6 +67,19 @@
 						size="mini"
 					></el-input>
 				</el-form-item> -->
+        <el-form-item>
+          <div class="flex-block fr" v-if="model.connectionId && model.tableName">
+            <FieldMapping
+              v-if="dataNodeInfo.isTarget && showFieldMapping"
+              ref="fieldMapping"
+              class="fr"
+              :isDisable="disabled"
+              :transform="model"
+              :getDataFlow="getDataFlow"
+              @update-first="returnModel"
+            ></FieldMapping>
+          </div>
+        </el-form-item>
       </el-form>
     </div>
     <div class="e-entity-wrap" style="text-align: center; overflow: auto">
@@ -81,6 +94,7 @@ import factory from '../../../api/factory'
 import Entity from '../link/Entity'
 import ClipButton from '@/components/ClipButton'
 import CreateTable from '@/components/dialog/createTable'
+import FieldMapping from '@/components/FieldMapping'
 import { convertSchemaToTreeData } from '../../util/Schema'
 let connections = factory('connections')
 // const MetadataInstances = factory('MetadataInstances')
@@ -89,7 +103,7 @@ let connections = factory('connections')
 let tempSchemas = []
 export default {
   name: 'ApiNode',
-  components: { Entity, ClipButton, CreateTable },
+  components: { Entity, ClipButton, CreateTable, FieldMapping },
   data() {
     let self = this
     return {
@@ -124,8 +138,14 @@ export default {
       model: {
         connectionId: '',
         type: 'mq',
+        databaseType: 'mq',
         tableName: '',
-        table_type: 'topic'
+        table_type: 'topic',
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true
         // primaryKeys: ''
       },
       mqType: '',
@@ -159,7 +179,12 @@ export default {
       },
       schemas: [],
       schemasLoading: false,
-      mergedSchema: null
+      mergedSchema: null,
+      scope: '',
+      dataFlow: '',
+      stageId: '',
+      showFieldMapping: false,
+      dataNodeInfo: {}
     }
   },
 
@@ -215,6 +240,7 @@ export default {
       immediate: true,
       handler() {
         this.handleGetFiled()
+        this.getDataFlow()
       }
     }
     // mergedSchema: {
@@ -354,15 +380,29 @@ export default {
       this.model.tableName = ''
     },
 
-    setData(data, cell) {
+    setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         _.merge(this.model, data)
+        this.scope = vueAdapter?.editor?.scope
+        this.model.stageId = cell.id
+        this.getDataFlow()
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.model.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.model.stageId]
+          })
       }
 
       this.mergedSchema = cell.getOutputSchema()
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
+        this.getDataFlow()
       })
+      this.dataNodeInfo = dataNodeInfo || {}
 
       // editorMonitor = vueAdapter.editor;
     },
@@ -381,6 +421,14 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     },
     handlerSchemaChange() {}
 

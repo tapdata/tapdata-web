@@ -161,9 +161,9 @@
           >
           </el-switch>
         </el-form-item>
-        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="partitionId">
+        <el-form-item label="Partition ID" v-if="dataNodeInfo.isSource" prop="partitionIds">
           <el-select
-            v-model="model.partitionId"
+            v-model="model.partitionIds"
             default-first-option
             clearable
             :disabled="model.performanceMode"
@@ -174,32 +174,36 @@
             <el-option v-for="(item, idx) in partitionSet" :label="item" :value="item" v-bind:key="idx"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item>
+          <div class="flex-block fr" v-if="model.connectionId && model.tableName">
+            <el-button
+              class="fr"
+              type="success"
+              size="mini"
+              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+              @click="hanlderLoadSchema"
+            >
+              <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
+              <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+              <span v-else>{{ $t('dataFlow.updateModel') }}</span>
+            </el-button>
+            <FieldMapping
+              v-else
+              ref="fieldMapping"
+              class="fr"
+              :dataFlow="dataFlow"
+              :showBtn="true"
+              :isFirst="model.isFirst"
+              :isDisable="disabled"
+              :hiddenFieldProcess="true"
+              :stageId="stageId"
+              @update-first="returnModel"
+            ></FieldMapping>
+          </div>
+        </el-form-item>
       </el-form>
     </div>
-    <div class="e-entity-wrap" style="text-align: center; overflow: auto" v-if="model.connectionId && model.tableName">
-      <el-button
-        class="fr"
-        type="success"
-        size="mini"
-        v-if="!dataNodeInfo.isTarget || !showFieldMapping"
-        @click="hanlderLoadSchema"
-      >
-        <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
-        <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
-        <span v-else>{{ $t('dataFlow.updateModel') }}</span>
-      </el-button>
-      <FieldMapping
-        v-else
-        ref="fieldMapping"
-        class="fr"
-        :dataFlow="dataFlow"
-        :showBtn="true"
-        :isFirst="model.isFirst"
-        :isDisable="disabled"
-        :hiddenFieldProcess="true"
-        :stageId="stageId"
-        @update-first="returnModel"
-      ></FieldMapping>
+    <div class="e-entity-wrap" style="text-align: center; overflow: auto">
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
     <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
@@ -268,7 +272,7 @@ export default {
         connectionId: '',
         type: 'kafka',
         tableName: '',
-        partitionId: '',
+        partitionIds: '',
         kafkaPartitionKey: '',
         isFirst: true,
         performanceMode: false,
@@ -353,10 +357,10 @@ export default {
       immediate: true,
       handler(val) {
         if (val) {
-          this.model.partitionId = 'all'
+          this.model.partitionIds = 'all'
           this.model.partitionIdSet = this.partitionSet || []
         } else {
-          this.model.partitionId = ''
+          this.model.partitionIds = ''
         }
       }
     }
@@ -417,7 +421,10 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         if (data.performanceMode) {
-          data.partitionId = 'all'
+          data.partitionIds = 'all'
+        }
+        if (data.partitionId) {
+          data.partitionIdSet = data.partitionId
         }
 
         this.scope = vueAdapter?.editor?.scope
@@ -458,13 +465,13 @@ export default {
       result.name = result.tableName || 'Kafka'
 
       if (!result.performanceMode) {
-        if (!result.partitionId) {
-          result.partitionIdSet = []
-        } else if (result.partitionId === 'all') {
-          result.partitionIdSet = this.partitionSet || []
+        if (!result.partitionIds || result.partitionIds === 'all') {
+          result.partitionIdSet = result.partitionIds === 0 ? [this.model.partitionIds] : []
         } else {
-          result.partitionIdSet = [this.model.partitionId]
+          result.partitionIdSet = [this.model.partitionIds]
         }
+      } else {
+        result.partitionIdSet = this.partitionSet || []
       }
 
       if (result.kafkaPartitionKey instanceof Array) {

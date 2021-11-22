@@ -1,37 +1,36 @@
 <template>
   <div>
     <el-button
+      v-if="transform.showBtn"
       size="mini"
       class="e-button"
-      v-if="showBtn"
       :loading="loading"
       :disabled="isDisable"
       @click="fieldProcess()"
-      >字段映射</el-button
+      >{{ $t('dag_link_button_field_mapping') }}</el-button
     >
     <el-dialog
+      v-if="dialogFieldProcessVisible"
       width="85%"
-      title="映射配置"
+      :title="$t('dag_link_button_mapping_configuration')"
       :visible.sync="dialogFieldProcessVisible"
       :modal-append-to-body="false"
       custom-class="database-filed-mapping-dialog"
       :close-on-click-modal="false"
-      v-if="dialogFieldProcessVisible"
     >
-      <FieldMapping
+      <FieldMappingDialog
         ref="fieldMappingDom"
         class="custom-field-mapping"
         :remoteMethod="intiFieldMappingTableData"
         :typeMappingMethod="getTypeMapping"
         :fieldProcessMethod="updateFieldProcess"
+        :getNavDataMethod="getMetadataTransformer"
         :updateMetadata="updateMetadata"
-        :fieldMappingNavData="fieldMappingNavData"
-        :field_process="field_process"
+        :field_process="transform.field_process"
         :transform="transform"
-        :hiddenFieldProcess="hiddenFieldProcess"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
-      ></FieldMapping>
+      ></FieldMappingDialog>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
@@ -40,21 +39,12 @@
 </template>
 
 <script>
+import FieldMappingDialog from './FieldMappingDialog'
+import ws from '../api/ws'
 export default {
   name: 'FiledMapping',
-  props: [
-    'dataFlow',
-    'databaseFieldProcess',
-    'showBtn',
-    'hiddenFieldProcess',
-    'stageId',
-    'isFirst',
-    'mappingType',
-    'selectSourceArr',
-    'transform',
-    'getDataFlow',
-    'isDisable'
-  ],
+  components: { FieldMappingDialog },
+  props: ['mappingType', 'transform', 'getDataFlow', 'isDisable'],
   data() {
     return {
       //表设置
@@ -62,7 +52,7 @@ export default {
       fieldMappingTableData: '', //右边table
       dialogFieldProcessVisible: false,
       loading: false,
-      field_process: this.databaseFieldProcess
+      field_process: this.transform.field_process
     }
   },
   methods: {
@@ -83,35 +73,68 @@ export default {
       if (this.mappingType && this.mappingType === 'cluster-clone') {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
         //是否有选中的表
-        if (this.selectSourceArr?.length === 0) {
-          this.$message.error('请先选择需要迁移的表')
+        if (
+          this.transform?.topicData?.length === 0 &&
+          this.transform?.queueData?.length === 0 &&
+          this.transform.transferFlag //mq判断
+        ) {
+          this.$message.error(this.$t('dag_link_field_mapping_error_no_table'))
+          return
+        } else if (this.transform.selectSourceArr?.length === 0 && !this.transform.transferFlag) {
+          this.$message.error(this.$t('dag_link_field_mapping_error_no_table')) //其他数据源
           return
         }
       }
       this.loading = true
       let dataFlowId = this.dataFlow.id
-      if (this.isFirst && !dataFlowId) {
+      if (this.transform.isFirst && !dataFlowId) {
         this.dataFlow['rollback'] = 'all' //新建任务重置恢复默认
       } else {
         delete this.dataFlow['rollback']
         delete this.dataFlow['rollbackTable']
       }
-      if (this.stageId) {
-        this.dataFlow['stageId'] = this.stageId //任务同步目标节点stageID 推演
+      if (this.transform.stageId) {
+        this.dataFlow['stageId'] = this.transform.stageId //任务同步目标节点stageID 推演
       }
+
       let promise = this.$api('DataFlows').getMetadata(this.dataFlow)
       promise
-        .then(data => {
+        .then(() => {
           this.dialogFieldProcessVisible = true
-          this.fieldMappingNavData = data?.data
           this.$emit('update-first', false) //新建任务 第一次需要恢复默认
-        })
-        .catch(() => {
-          this.$message.error('字段推演失败')
+          this.initWSSed() //发送ws 监听schema进度
         })
         .finally(() => {
           this.loading = false
         })
+    },
+    getMetadataTransformer(page, value) {
+      let id = this.dataFlow?.id
+      let where = {
+        dataFlowId: {
+          like: id
+        },
+        sinkStageId: this.transform.stageId
+      }
+      if (value) {
+        where.sourceObjectName = { like: value, options: 'i' }
+      }
+      let filter = {
+        where: where,
+        limit: page.size || 10,
+        skip: (page.current - 1) * page.size > 0 ? (page.current - 1) * page.size : 0
+      }
+      return Promise.all([
+        this.$api('metadataTransformer').count({ where: where }),
+        this.$api('metadataTransformer').get({
+          filter: JSON.stringify(filter)
+        })
+      ]).then(([countRes, res]) => {
+        return {
+          total: countRes?.data?.count,
+          data: res?.data
+        }
+      })
     },
     //任务迁移需要主动更新
     updateAutoFieldProcess(data) {
@@ -149,19 +172,30 @@ export default {
             }
           }
         }
+        let result = this.$refs.fieldMappingDom.returnForm()
+        this.updateAutoTransform('', result)
       }
       this.$emit('returnFieldMapping', this.field_process)
       //迁移任务需要同步字段处理器
       if (this.mappingType && this.mappingType === 'cluster-clone') {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
       }
-      let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
-      return promise?.data
+      let data = ''
+      this.$api('DataFlows')
+        .getMetadata(this.dataFlow)
+        .then(res => {
+          data = res
+          this.initWSSed() //发送ws 监听schema进度
+        })
+        .catch(e => {
+          this.$message.error(e)
+        })
+      return data
     },
     //清空表改名 字段改名
     clearTransform() {
       for (let i = 0; i < this.dataFlow.stages.length; i++) {
-        if (this.dataFlow.stages[i].id === this.stageId) {
+        if (this.dataFlow.stages[i].id === this.transform.stageId) {
           this.dataFlow['stages'][i].fieldsNameTransform = ''
           this.dataFlow['stages'][i].tableNameTransform = ''
           this.dataFlow['stages'][i].table_suffix = ''
@@ -171,33 +205,25 @@ export default {
     },
     updateAutoTransform(type, data) {
       for (let i = 0; i < this.dataFlow.stages.length; i++) {
-        if (this.dataFlow.stages[i].id === this.stageId) {
-          if (type === 'field') {
-            this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
-          } else {
-            this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
-            this.dataFlow['stages'][i].table_prefix = data.table_prefix
-            this.dataFlow['stages'][i].table_suffix = data.table_suffix
-          }
+        if (this.dataFlow.stages[i].id === this.transform.stageId) {
+          this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
+          this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
+          this.dataFlow['stages'][i].table_prefix = data.table_prefix
+          this.dataFlow['stages'][i].table_suffix = data.table_suffix
         }
       }
     },
     checkTransform() {
-      let result = ''
-      for (let i = 0; i < this.dataFlow.stages.length; i++) {
-        if (this.dataFlow.stages[i].id === this.stageId) {
-          if (this.dataFlow['stages'][i].fieldsNameTransform !== '') {
-            result = this.dataFlow['stages'][i].fieldsNameTransform
-          }
-        }
-      }
-      return result
+      let result = this.$refs.fieldMappingDom.returnForm()
+      return result.fieldsNameTransform
     },
     //获取左边导航数据 - 表
     async updateMetadata(type, data) {
-      //将表改名 字段改名 放在setting里面
+      //将表改名 字段改名 rockBackAll
       this.updateAutoTransform(type, data)
+      this.dataFlow['rollback'] = 'all'
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
+      this.initWSSed() //发送ws 监听schema进度
       return promise?.data
     },
     //更新左边导航
@@ -211,7 +237,7 @@ export default {
      * 数据组合：目标字段表示 "t_"标识 (is_deleted 目标表数据)
      * 数据匹配 源表所有字段过处理器 源表所有字段过字段改名 匹配后的数据再与目标表数据匹配
      * */
-    async intiFieldMappingTableData(row, type) {
+    async intiFieldMappingTableData(row) {
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
@@ -222,7 +248,8 @@ export default {
       let operations = this.getFieldOperations(row)
       if (operations?.length > 0) {
         source.forEach(item => {
-          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'RENAME')
+          let original_field_name = item.original_field_name || item.field_name
+          let ops = operations.filter(op => op.original_field_name === original_field_name && op.op === 'RENAME')
           if (!ops || ops?.length === 0) {
             item.temporary_field_name = item.field_name
             return
@@ -236,9 +263,6 @@ export default {
         })
       }
       //是否有批量字段改名操作
-      if (type === 'rollbackAll') {
-        this.clearTransform()
-      }
       let fieldsNameTransform = this.checkTransform()
       if (fieldsNameTransform !== '') {
         source.forEach(item => {
@@ -305,7 +329,7 @@ export default {
       if (!returnData.valid) return //检验不通过
       let deleteLen = returnData.target.filter(v => !v.is_deleted)
       if (deleteLen.length === 0) {
-        this.$message.error('当前表被删除了所有字段，不允许保存操作')
+        this.$message.error(this.$t('dag_link_field_mapping_error_all_deleted'))
         return //所有字段被删除了 不可以保存任务
       }
       this.$emit('returnPreFixSuffix', returnData.changNameData)
@@ -322,9 +346,34 @@ export default {
         fields: target
       }
       this.$api('MetadataInstances').update(where, data)
-      if (this.hiddenFieldProcess) return //任务同步 没有字段处理器
+      if (this.transform.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.field_process)
+    },
+    //实时获取schema加载进度
+    initWSSed() {
+      let id = this.dataFlow?.id
+      let msg = {
+        type: 'metadataTransformerProgress',
+        data: {
+          dataFlowId: id,
+          stageId: this.transform.stageId
+        }
+      }
+      ws.ready(() => {
+        ws.send(msg)
+      }, true)
+
+      //总任务
+      let msgData = {
+        type: 'metadataTransformerProgress',
+        data: {
+          dataFlowId: this.dataFlow?.id
+        }
+      }
+      ws.ready(() => {
+        ws.send(msgData)
+      }, true)
     }
   }
 }

@@ -108,6 +108,22 @@ export default function (vm) {
         ]
       },
       {
+        type: 'select',
+        field: 'jsEngineName',
+        label: 'JS引擎版本',
+        options: [
+          {
+            label: '新版',
+            value: 'graal.js'
+          },
+          {
+            label: '旧版',
+            value: 'nashorn'
+          }
+        ],
+        required: true
+      },
+      {
         type: 'switch',
         field: 'custom_before_opr',
         label: vm.$t('connection_form_custom_connection_before_operate')

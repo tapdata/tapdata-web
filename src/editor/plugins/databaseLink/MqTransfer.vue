@@ -11,12 +11,12 @@
       <template #default="{ option }">
         <div>
           <span v-if="topicData.includes(option.key)">{{ table_prefix }}</span>
-          <!-- <span v-if="topicData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
+          <span v-if="topicData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
             option.label.toLowerCase()
           }}</span>
           <span v-else-if="topicData.includes(option.label) && tableNameTransform === 'toUpperCase'">{{
             option.label.toUpperCase()
-          }}</span> -->
+          }}</span>
           <span>{{ option.label }}</span>
           <span v-if="topicData.includes(option.key)">{{ table_suffix }}</span>
         </div>
@@ -35,12 +35,12 @@
       <template #default="{ option }">
         <div>
           <span v-if="queueData.includes(option.key)">{{ table_prefix }}</span>
-          <!-- <span v-if="queueData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
+          <span v-if="queueData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
             option.label.toLowerCase()
           }}</span>
           <span v-else-if="queueData.includes(option.label) && tableNameTransform === 'toUpperCase'">{{
             option.label.toUpperCase()
-          }}</span> -->
+          }}</span>
           <span>{{ option.label }}</span>
           <span v-if="queueData.includes(option.key)">{{ table_suffix }}</span>
         </div>
@@ -74,12 +74,12 @@ export default {
         return []
       }
     },
-    // tableNameTransform: {
-    //   type: String,
-    //   default: () => {
-    //     return ''
-    //   }
-    // },
+    tableNameTransform: {
+      type: String,
+      default: () => {
+        return ''
+      }
+    },
     value: {
       type: Object,
       default: () => {
@@ -109,9 +109,9 @@ export default {
         this.init()
       }
     },
-    // tableNameTransform(val) {
-    //   this.tableNameTransform = val
-    // },
+    tableNameTransform(val) {
+      this.tableNameTransform = val
+    },
     topicData: {
       deep: true,
       handler() {

@@ -256,10 +256,11 @@ export default {
             .join(',')
           this.model.cacheKeys = primaryKeys || this.primaryKeyOptions[0] || ''
         }
-
-        // if (!window.App.$route.query.id) {
-        this.handelDuplicate(vueAdapter)
-        // }
+        this.$nextTick(() => {
+          if (!this.disabled) {
+            this.handelDuplicate(vueAdapter)
+          }
+        })
       }
       // this.cacheMap = map
       // this.config.items.find(it => it.field === 'cacheId').options = cacheList
@@ -267,7 +268,7 @@ export default {
       // editorMonitor = vueAdapter.editor;
     },
     // 重复
-    handelDuplicate(vueAdapter, cacheName, cacheKeys) {
+    handelDuplicate(vueAdapter) {
       let dataCells = vueAdapter.editor.getAllCells()
       let dataflow = vueAdapter.editor.getData()
       let cacheList = []
@@ -277,8 +278,8 @@ export default {
         if (attr.type === 'app.MemCache') {
           let formData = item.getFormData()
           cacheList.push({
-            name: cacheName || formData.name,
-            cacheKeys: cacheKeys || formData.cacheKeys,
+            name: attr.form_data.cacheName, // || formData.name
+            cacheKeys: attr.form_data.cacheKeys, //|| formData.cacheKeys
             tableName: formData.cacheTableName,
             connectionId: formData.cacheConnectionId
           })
@@ -305,14 +306,16 @@ export default {
         })
       })
       // 获取缓存节点同数据源同表同缓存值的值
-      for (let i = 0; i < keygroupBy.length - 1; i++) {
-        for (let j = 0; j < keygroupBy.length - 1; j++) {
-          if (i !== j && keygroupBy[i].key === keygroupBy[j].key) {
-            keyData.push(keygroupBy[i])
-            break
-          }
+      keygroupBy.forEach(item => {
+        if (
+          item.connectionId === this.model.cacheConnectionId &&
+          item.tableName === this.model.cacheTableName &&
+          item.cacheKeys === this.model.cacheKeys &&
+          item.name !== this.model.cacheName
+        ) {
+          keyData.push(item)
         }
-      }
+      })
       if (nameData.length) {
         let name = []
         nameData.filter(n => {
@@ -334,17 +337,18 @@ export default {
         })
         if (name.length) {
           this.handleconfirm(name.join(','), dataflow.name)
+        } else {
+          this.handleconfirm(keyData[0].name, dataflow.name)
         }
       }
-      // handleconfirm(res.data[0].name, res.data[0].name)
       let where = {
         or: [
-          { 'stages.type': 'mem_cache', 'stages.name': this.model.name },
+          { 'stages.type': 'mem_cache', 'stages.name': this.model.cacheName },
           {
             'stages.type': 'mem_cache',
             'stages.cacheKeys': this.model.cacheKeys,
             'stages.connectionId': this.model.cacheConnectionId,
-            'stages.tableName': this.model.cacheCocacheTableNamennectionId
+            'stages.tableName': this.model.cacheTableName
           }
         ]
       }

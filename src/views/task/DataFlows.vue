@@ -1204,6 +1204,8 @@ export default {
             this.$message.error('任务启动失败，请编辑任务完成映射配置')
           } else if (err.response.msg === 'DataFlow has add or del stages') {
             this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
+          } else if (err.response.msg === 'running transformer') {
+            this.$message.error('任务启动失败，正在模型推演中...请稍后再试')
           }
         })
     },

@@ -99,12 +99,9 @@
         v-else
         ref="fieldMapping"
         class="fr"
-        :dataFlow="dataFlow"
-        :showBtn="true"
-        :isFirst="model.isFirst"
         :isDisable="disabled"
-        :hiddenFieldProcess="true"
-        :stageId="stageId"
+        :transform="model"
+        :getDataFlow="getDataFlow"
         @update-first="returnModel"
       ></FieldMapping>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
@@ -176,11 +173,13 @@ export default {
         databaseType: 'dameng',
         tableName: '',
         field_process: [],
-        isFirst: true
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true
       },
       scope: '',
-      dataFlow: '',
-      stageId: '',
       showFieldMapping: false,
       schemasLoading: false,
       mergedSchema: null
@@ -304,17 +303,17 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
+        this.model.stageId = cell.id
         this.getDataFlow()
         _.merge(this.model, data)
         let param = {
           stages: this.dataFlow?.stages,
-          stageId: this.stageId
+          stageId: this.model.stageId
         }
         this.$api('DataFlows')
           .tranModelVersionControl(param)
           .then(data => {
-            this.showFieldMapping = data?.data[this.stageId]
+            this.showFieldMapping = data?.data[this.model.stageId]
           })
       }
       this.mergedSchema = cell.getOutputSchema()
@@ -391,6 +390,7 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

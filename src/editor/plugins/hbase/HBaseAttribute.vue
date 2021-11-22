@@ -81,6 +81,30 @@
             </el-tooltip>
           </div>
         </el-form-item>
+        <el-form-item>
+          <div class="flex-block fr" v-if="model.connectionId && model.tableName">
+            <el-button
+              class="fr"
+              type="success"
+              size="mini"
+              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+              @click="hanlderLoadSchema"
+            >
+              <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
+              <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
+              <span v-else>{{ $t('dataFlow.updateModel') }}</span>
+            </el-button>
+            <FieldMapping
+              v-else
+              ref="fieldMapping"
+              class="fr"
+              :isDisable="disabled"
+              :transform="model"
+              :getDataFlow="getDataFlow"
+              @update-first="returnModel"
+            ></FieldMapping>
+          </div>
+        </el-form-item>
 
         <!-- <el-form-item
 					:label="$t('editor.cell.data_node.collection.form.collection.label')"
@@ -115,17 +139,6 @@
       </el-form>
     </div>
     <div class="e-entity-wrap" style="text-align: center; overflow: auto">
-      <el-button
-        class="fr marR20"
-        type="success"
-        size="mini"
-        v-if="model.connectionId && model.tableName"
-        @click="hanlderLoadSchema"
-      >
-        <i class="el-icon-loading" v-if="reloadModelLoading"></i>
-        <span v-if="reloadModelLoading">{{ $t('dataFlow.loadingText') }}</span>
-        <span v-else>{{ $t('dataFlow.updateModel') }}</span>
-      </el-button>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
     <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
@@ -189,7 +202,12 @@ export default {
       model: {
         connectionId: '',
         type: 'hbase',
-        tableName: ''
+        tableName: '',
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true
         // primaryKeys: ''
       },
       schemasLoading: false,
@@ -311,9 +329,21 @@ export default {
         })
     },
 
-    setData(data, cell) {
+    setData(data, cell, dataNodeInfo, vueAdapter) {
+      this.scope = vueAdapter?.editor?.scope
+      this.model.stageId = cell.id
+      this.getDataFlow()
       if (data) {
         _.merge(this.model, data)
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.model.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.model.stageId]
+          })
       }
       this.mergedSchema = cell.getOutputSchema()
       cell.on('change:outputSchema', () => {
@@ -383,6 +413,15 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
 
     // seeMonitor() {
