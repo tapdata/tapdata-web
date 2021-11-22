@@ -565,9 +565,9 @@ export default {
       })
     },
     handleCancel() {
-      this.formData.table_suffix = ''
-      this.formData.table_prefix = ''
-      this.$refs.form.clearValidate()
+      // this.formData.table_suffix = ''
+      // this.formData.table_prefix = ''
+      // this.$refs.form.clearValidate()
       this.dialogVisible = false
     },
     //改名
