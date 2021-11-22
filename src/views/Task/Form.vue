@@ -629,7 +629,14 @@ export default {
     },
     //云版支持数据源
     allowDatabaseType() {
-      this.changeConfig(this.allowDataType, 'databaseType')
+      this.$axios
+        .get('tm/api/Connections/databaseType')
+        .then(data => {
+          this.changeConfig(data || [], 'databaseType')
+        })
+        .catch(() => {
+          this.$message.error('获取全部数据源类型接口请求失败')
+        })
     },
     formChangeSetting(data) {
       //删除模式不支持双向
@@ -998,6 +1005,7 @@ export default {
                 value: item
               }
             })
+            source.options.unshift([{ label: '全部', value: 'all' }])
           }
           let target = items.find(it => it.field === 'target_databaseType')
           if (target) {
@@ -1008,6 +1016,7 @@ export default {
               }
             })
           }
+          target.options.unshift([{ label: '全部', value: 'all' }])
           break
         }
       }

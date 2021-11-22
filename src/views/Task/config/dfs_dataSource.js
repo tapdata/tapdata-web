@@ -19,6 +19,7 @@ export default function () {
         field: 'source_connectionId',
         label: '源端连接',
         loading: false,
+        filterable: true,
         options: [],
         required: true
       },
@@ -34,6 +35,7 @@ export default function () {
         field: 'target_connectionId',
         label: '目标端连接',
         loading: false,
+        filterable: true,
         options: [],
         required: true
       }
