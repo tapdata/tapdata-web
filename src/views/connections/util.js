@@ -140,7 +140,9 @@ export const defaultModel = {
     krb5Keytab: '',
     krb5Conf: '',
     krb5KeytabName: '',
+    krb5KeytabFileName: '',
     krb5ConfName: '',
+    krb5ConfFileName: '',
     krb5Principal: '',
     krb5ServiceName: '',
     kafkaSaslMechanism: 'PLAIN'
