@@ -6,7 +6,10 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
-        <!--				<div class="mr-6 pointer" @click="command('toCommunity')">社区</div>-->
+        <div class="mr-6 pointer" @click="command('toCommunity')">
+          <VIcon class="mr-2" size="17">shequ</VIcon>
+          <span>社区</span>
+        </div>
         <!--        <div class="mr-6 pointer" @click="command('questions')">问答支持</div>-->
         <el-popover placement="top-start" width="240" min-width="0" trigger="click">
           <div class="text-center">
