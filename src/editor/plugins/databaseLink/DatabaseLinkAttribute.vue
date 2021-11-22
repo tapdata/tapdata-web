@@ -313,7 +313,7 @@ export default {
             })
           }
         }
-        this.loadTables(connectionId, sourceFormData.database_type)
+        targetCell && this.loadTables(connectionId, sourceFormData.database_type)
       }
 
       editorMonitor = vueAdapter.editor
