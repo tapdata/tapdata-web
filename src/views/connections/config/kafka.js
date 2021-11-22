@@ -111,6 +111,7 @@ export default function (vm) {
       {
         type: 'file',
         field: 'krb5KeytabName',
+        fileNameField: 'krb5KeytabFileName',
         accept: '.keytab',
         label: vm.$t('connection_kafka_kerberos_config_keytab'),
         show: false,
@@ -152,6 +153,7 @@ export default function (vm) {
       {
         type: 'file',
         field: 'krb5ConfName',
+        fileNameField: 'krb5ConfFileName',
         accept: '.conf',
         label: vm.$t('connection_kafka_kerberos_config_conf'),
         show: false,
