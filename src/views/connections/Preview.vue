@@ -456,6 +456,13 @@ export default {
               }
             })
           }
+          if (data.database_type === 'kafka') {
+            items.forEach(el => {
+              if (['krb5KeytabName', 'krb5ConfName'].includes(el.field)) {
+                el.show = false
+              }
+            })
+          }
           this.form = items
         }
       }
