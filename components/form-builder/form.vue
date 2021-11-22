@@ -212,6 +212,10 @@ export default {
       let self = this
       let appendSlot = config.appendSlot ? config.appendSlot(h, this.value) : null
       let el = null
+      if (config.type === 'file' && config.fileNameField) {
+        let fileName = self.value[config.fileNameField]
+        config.fileName = fileName
+      }
       if (config.type === 'slot') {
         el = this.$slots[config.slot]
       } else if (formConfig.mode === 'text' || config.mode === 'text') {
@@ -229,6 +233,9 @@ export default {
               }
               if (!config.allowSpace) {
                 val = val.replace(/\s+/g, '')
+              }
+              if (config.type === 'file' && config.fileNameField && val) {
+                self.value[config.fileNameField] = val.name
               }
               self.value[config.field] = val
               let influences = config.influences
