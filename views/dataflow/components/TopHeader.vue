@@ -1,54 +1,63 @@
 <template>
   <header class="layout-header border-bottom px-4">
-    <button @click="$emit('back')" class="icon-btn">
+    <button @click="$router.push({ name: 'Task' })" class="icon-btn">
       <VIcon size="20">left</VIcon>
     </button>
     <div class="title-input-wrap flex align-center mx-2 flex-shrink-0 h-100" :data-value="hiddenValue">
-      <input
-        v-focus-select
-        :readonly="isMonitor"
-        ref="nameInput"
-        v-model="name"
-        class="title-input"
-        @blur="onNameInputBlur"
-      />
+      <input v-focus-select ref="nameInput" v-model.trim="name" class="title-input" @change="onNameInputChange" />
       <VIcon @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
     </div>
     <div class="operation-center flex align-center">
-      <button @click="$emit('undo')" class="icon-btn">
-        <VIcon size="20">undo</VIcon>
-      </button>
-      <button @click="$emit('redo')" class="icon-btn">
-        <VIcon size="20">redo</VIcon>
-      </button>
-      <button @click="$emit('delete')" class="icon-btn">
-        <VIcon size="20">delete</VIcon>
-      </button>
-      <button @click="$emit('fullscreen')" class="icon-btn">
-        <VIcon size="20">fullscreen</VIcon>
-      </button>
-      <button @click="$emit('center-content')" class="icon-btn">
-        <VIcon size="20">compress</VIcon>
-      </button>
-      <button @click="$emit('zoom-out')" class="icon-btn">
-        <VIcon size="20">zoom-out</VIcon>
-      </button>
-      <button @click="$emit('zoom-in')" class="icon-btn">
-        <VIcon size="20">zoom-in</VIcon>
-      </button>
-
-      <button @click="$emit('auto-layout')" class="icon-btn">
-        <VIcon size="20">auto-layout</VIcon>
-      </button>
+      <ElTooltip transition="tooltip-fade-in" content="撤销">
+        <button @click="$emit('undo')" class="icon-btn">
+          <VIcon size="20">undo</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="重做">
+        <button @click="$emit('redo')" class="icon-btn">
+          <VIcon size="20">redo</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="删除">
+        <button @click="$emit('delete')" class="icon-btn">
+          <VIcon size="20">delete</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="全屏">
+        <button @click="$emit('fullscreen')" class="icon-btn">
+          <VIcon size="20">fullscreen</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="内容居中">
+        <button @click="$emit('center-content')" class="icon-btn">
+          <VIcon size="20">compress</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="缩小">
+        <button @click="$emit('zoom-out')" class="icon-btn">
+          <VIcon size="20">zoom-out</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="放大">
+        <button @click="$emit('zoom-in')" class="icon-btn">
+          <VIcon size="20">zoom-in</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="自动布局">
+        <button @click="$emit('auto-layout')" class="icon-btn">
+          <VIcon size="20">auto-layout</VIcon>
+        </button>
+      </ElTooltip>
     </div>
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
 
-      <ElButton round type="primary" class="mx-4" @click="$emit('save')"> 保存 </ElButton>
+      <ElButton type="primary" class="mx-2" @click="$emit('save')"> 保存 </ElButton>
+      <ElButton plain class="mx-2" @click="$emit('showSettings')"> 设置 </ElButton>
 
-      <button @click="$emit('showSettings')" class="icon-btn">
+      <!--<button @click="$emit('showSettings')" class="icon-btn">
         <VIcon size="20">setting</VIcon>
-      </button>
+      </button>-->
     </div>
   </header>
 </template>
@@ -56,10 +65,8 @@
 <script>
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
-import DataflowApi from 'web-core/api/DataFlows'
 import { mapGetters, mapMutations } from 'vuex'
 
-const dataflowApi = new DataflowApi()
 export default {
   name: 'TopHeader',
 
@@ -71,12 +78,8 @@ export default {
     isEditable: Boolean,
     isMonitor: Boolean,
     editable: Boolean,
-    statusBtMap: Object,
-    status: {
-      type: String,
-      default: ''
-    },
-    creatUserId: String
+    creatUserId: String,
+    dataflowName: String
   },
 
   components: { VIcon },
@@ -93,7 +96,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['dataflowId', 'dataflowName']),
+    ...mapGetters('dataflow', ['dataflowId']),
 
     syncTxt() {
       const settings = this.$store.getters['dataflow/dataflowSettings']
@@ -117,28 +120,18 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setDataflowName', 'setActiveType']),
+    ...mapMutations('dataflow', ['setActiveType']),
 
-    onNameInputBlur() {
-      this.setDataflowName({ newName: this.name })
-      if (this.dataflowId) {
-        dataflowApi.patchId(this.dataflowId, {
-          name: this.name
-        })
+    onNameInputChange() {
+      if (!this.name) {
+        this.name = this.dataflowName
+      } else {
+        this.$emit('change-name', this.name)
       }
     },
 
     focusNameInput() {
       this.$refs.nameInput.focus()
-    },
-
-    updateInputWidth() {
-      this.$nextTick(() => {
-        let namePre = this.$refs.namePre
-        namePre.style.display = 'inline-block'
-        this.inputWidth = Math.max(this.$refs.namePre.offsetWidth, 8) + 'px'
-        namePre.removeAttribute('style')
-      })
     },
 
     back() {

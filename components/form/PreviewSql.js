@@ -167,3 +167,5 @@ export const PreviewSql = connect(
   ),
   mapProps({ dataSource: 'fields' })
 )
+
+export default PreviewSql

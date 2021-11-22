@@ -273,7 +273,7 @@ const cn = {
       favorite: '我的收藏',
       dataVerification: '数据校验',
       delFavMenu: '删除收藏',
-      license: 'License信息',
+      license: 'License管理',
       licenseBefore: '提醒：License剩余 ',
       licenseAfter: ' 天到期',
       licenseAfterOneDay: ' 天到期',
@@ -1833,7 +1833,8 @@ const cn = {
         CHECK_LOCAL_PORT: '检查本地端口是否可用',
         SCAN_FILE: '扫描目录中的文件',
         CHECK_BIN_LOG_SYNC: '检查binlog日志同步是否开启',
-        CHECK_GTID: ' 检查GTID模式与GTID一致性是否开启'
+        CHECK_GTID: ' 检查GTID模式与GTID一致性是否开启',
+        CHECK_VIKA_API_TOKEN: '检查vika密钥是否正确'
       },
       initialReadSize: '初始化数据大小',
       incrementalTps: '测试速率(次/秒)',

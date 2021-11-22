@@ -3,18 +3,57 @@ import { Button } from 'element-ui'
 export default {
   name: 'VButton',
   props: {
-    ...Button.props
+    ...Button.props,
+    autoLoading: {
+      type: Boolean,
+      default: false
+    },
+    innerLoading: {
+      type: Boolean,
+      default: false
+    },
+    loadingColor: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      comLoading: false,
+      '--my-color': 'red'
+    }
   },
   render(h) {
+    this.$nextTick(() => {
+      const $span = this.$el?.querySelector?.('span')
+      if ($span) {
+        $span.setAttribute('data-content', $span.innerText)
+      }
+    })
+    const resetLoading = (flag = false) => {
+      this.comLoading = flag
+    }
+    const clickFnc = () => {
+      if (this.autoLoading) {
+        this.comLoading = true
+      }
+      this.$listeners.click?.(resetLoading)
+    }
+    let className = ''
+    if (this.innerLoading) {
+      className += 'inner-loading loader-width'
+    }
     return h('span', { class: 'v-button' }, [
       h(
         'el-button',
         {
           props: {
             ...this.$props,
+            loading: this.$props.loading || this.comLoading,
             size: this.$props.size || 'mini'
           },
-          on: this.$listeners
+          on: { ...this.$listeners, click: clickFnc },
+          class: className
         },
         [this.$slots.default]
       )
@@ -53,6 +92,36 @@ export default {
   }
   & + & {
     margin-left: 16px;
+  }
+  .el-button--text,
+  .el-button--text:focus,
+  .el-button--text:active,
+  .el-button--text.is-active {
+    min-width: unset;
+  }
+  .is-loading.loader-width span {
+    position: relative;
+    display: inline-block;
+  }
+  .is-loading.loader-width span:after {
+    content: attr(data-content);
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: map-get($color, disable);
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    animation: showWidthAll 4s linear infinite;
+  }
+  .inner-loading {
+    .el-icon-loading {
+      display: none;
+    }
+    [class*='el-icon-'] + span {
+      margin-left: 0;
+    }
   }
 }
 </style>

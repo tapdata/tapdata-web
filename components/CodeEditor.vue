@@ -4,34 +4,71 @@
       height: height ? px(height) : '100%',
       width: width ? px(width) : '100%'
     }"
-  ></div>
+  >
+    <VCodeEditor
+      :value="value"
+      :theme="theme"
+      :lang="lang"
+      :width="width"
+      :height="height"
+      :options="_options"
+      @init="init"
+      @input="$emit('input', $event)"
+    ></VCodeEditor>
+    <div v-if="false" class="position-absolute w-100 h-100 flex flex-column">
+      <div class="p-4" style="background: #fff">
+        <VButton>返回</VButton>
+      </div>
+      <div class="flex flex-fill">
+        <VCodeEditor
+          :value="value"
+          class="flex-fill"
+          :lang="lang"
+          :theme="theme"
+          :options="_options"
+          @init="init"
+          @input="$emit('input', $event)"
+        ></VCodeEditor>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-// TODO 输出README文档
-import ace from 'ace-builds'
-import 'ace-builds/webpack-resolver'
-import 'ace-builds/src-noconflict/ext-language_tools'
-import 'ace-builds/src-noconflict/ext-searchbox'
-
-const ACTION_EVENTS = ['change', 'blur', 'focus', 'copy', 'paste', 'input']
-
 export default {
   name: 'CodeEditor',
   props: {
-    value: {
-      required: true
+    value: String,
+    theme: {
+      type: String,
+      default: 'one_dark'
     },
-    lang: String,
-    theme: String,
-    height: [String, Number],
+    lang: {
+      type: String,
+      default: 'javascript'
+    },
     width: [String, Number],
-    options: Object
+    height: [String, Number],
+    options: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
-  data() {
-    return {
-      editor: null,
-      contentBackup: ''
+  computed: {
+    _options() {
+      return Object.assign(
+        {
+          printMargin: false,
+          enableBasicAutocompletion: true,
+          enableLiveAutocompletion: true,
+          enableSnippets: true,
+          fontSize: 18,
+          wrap: true
+        },
+        this.options
+      )
     }
   },
   methods: {
@@ -40,50 +77,32 @@ export default {
         return n + 'px'
       }
       return n
-    }
-  },
-  watch: {
-    value(val) {
-      if (typeof val === 'object') {
-        val = JSON.stringify(val)
-      }
-      if (this.contentBackup !== val) this.editor.setValue(val, 1)
-    }
-  },
-  mounted() {
-    let lang = this.lang || 'text'
-    let theme = this.theme || 'chrome'
-
-    let editor = (this.editor = ace.edit(this.$el))
-    let tools = ace.require('ace/ext/language_tools')
-    ace.require('ace/ext/searchbox')
-    this.$emit('init', editor, tools)
-
-    editor.$blockScrolling = Infinity
-    let session = editor.getSession()
-    editor.setTheme(`ace/theme/${theme}`)
-    session.setMode(`ace/mode/${lang}`)
-    session.setTabSize(2)
-
-    let val = typeof this.value === 'object' ? JSON.stringify(this.value, null, 2) : this.value
-    editor.setValue(val || '', 1)
-
-    if (this.options) {
-      session.setUseWrapMode(this.options.useWrapMode) // 自动换行
-      editor.setOptions(this.options)
-    }
-
-    editor.on('change', () => {
-      let content = editor.getValue()
-      this.$emit('input', content)
-      this.contentBackup = content
-    })
-
-    ACTION_EVENTS.forEach(ev => {
-      editor.on(ev, (event, editor) => {
-        this.$emit(ev, editor.getValue(), event, editor)
+    },
+    init(editor, tools) {
+      tools.addCompleter({
+        getCompletions: (editor, session, pos, prefix, callback) => {
+          if (prefix.length === 0) {
+            return callback(null, [])
+          } else {
+            return callback(null, [
+              { name: 'abs', value: 'Math.abs', scope: 1, meta: 'Math' },
+              {
+                caption: 'replaceFieldName',
+                snippet: 'replaceFieldName("${1}")',
+                meta: 'replaceFieldName',
+                type: 'snippet',
+                scope: 1
+              }
+            ])
+          }
+        },
+        getDocTooltip: function (item) {
+          if (item.type == 'snippet' && !item.docHTML) {
+            item.docHTML = ['<b>', item.caption, '</b>', '<hr></hr>', item.snippet].join('')
+          }
+        }
       })
-    })
+    }
   }
 }
 </script>

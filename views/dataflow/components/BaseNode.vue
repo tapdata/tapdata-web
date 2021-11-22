@@ -1,26 +1,27 @@
 <template functional>
   <div v-bind="data.attrs" v-on="listeners" class="df-node" :class="[data.class, data.staticClass]" :style="data.style">
     <div class="df-node-icon">
-      <VIcon>{{ $options.getIcon(props.node) }}</VIcon>
+      <ElImage :src="$options.getIcon(props.node)"></ElImage>
     </div>
-    <div class="df-node-text">{{ props.node.name }}</div>
+    <slot name="text" v-bind:text="props.node.name">
+      <div class="df-node-text">{{ props.node.name }}</div>
+    </slot>
     <slot></slot>
   </div>
 </template>
 
 <script>
-import { NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
-import VIcon from '@/components/VIcon'
+import { DB_ICON, NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
 
 export default {
   name: 'BaseNode',
-  components: { VIcon },
   props: {
     node: Object
   },
 
   getIcon(node) {
-    return NODE_TYPE_ICON[node.type]
+    let icon = node.type === 'table' ? DB_ICON[node.databaseType] : NODE_TYPE_ICON[node.type]
+    return icon ? require(`web-core/assets/images/node-icon/${icon}.svg`) : null
   }
 }
 </script>
@@ -47,6 +48,7 @@ $height: 40px;
   border: 1px solid #2c65ff;
   border-radius: 10px;
   box-sizing: border-box;
+  user-select: none;
 
   &-icon {
     display: flex;
@@ -64,6 +66,11 @@ $height: 40px;
     .v-icon {
       color: #2c65ff;
       font-size: 24px;
+    }
+
+    .el-image {
+      width: 28px;
+      height: 28px;
     }
   }
 

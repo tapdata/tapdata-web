@@ -31,5 +31,7 @@ export const TYPEMAP = {
   hana: 'SAP HANA',
   clickhouse: 'ClickHouse',
   adb_mysql: 'ADB MySQL',
-  adb_postgres: 'ADB PostgreSQL'
+  adb_postgres: 'ADB PostgreSQL',
+  vika: 'Vika',
+  kundb: 'KunDB'
 }

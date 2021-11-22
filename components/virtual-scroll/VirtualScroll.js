@@ -62,7 +62,6 @@ export default {
 
   render(h) {
     if (this.$scopedSlots.default === void 0) {
-      console.error('没有添加内容！！！', this)
       return
     }
 

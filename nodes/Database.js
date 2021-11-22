@@ -139,7 +139,7 @@ export class Database extends NodeType {
   }
 
   allowTarget(target, source) {
-    console.log('allowTarget', arguments)
+    console.log('allowTarget', arguments) // eslint-disable-line
     if (source.databaseType === 'elasticsearch') {
       return target.databaseType === 'kafka'
     }

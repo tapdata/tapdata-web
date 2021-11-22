@@ -16,7 +16,7 @@ const errorCallback = error => {
   if (error && error.response && error.response.status === 401) {
     location.href = location.origin + location.pathname.substring(0, location.pathname.lastIndexOf('/')) + '/login'
     return
-  } else if (error && error.response && error.response.status === 502) {
+  } else if ((error && error.response && error.response.status === 502) || error.response.status === 400) {
     return
   }
   let data = error?.response?.data
@@ -41,6 +41,16 @@ service.interceptors.request.use(function (config) {
     let params = { __token: ACCESS_TOKEN }
     config.params = Object.assign({}, config.params, params)
   }
+
+  let url = config.url
+  // get 请求编码参数
+  if (config.method === 'get' && config.params) {
+    url += '?'
+    Object.keys(config.params).forEach(key => (url += `${key}=${encodeURIComponent(config.params[key])}&`))
+    url = url.substring(0, url.length - 1)
+    config.params = {}
+  }
+  config.url = url
 
   let user = window.__USER_INFO__
   if (user) {

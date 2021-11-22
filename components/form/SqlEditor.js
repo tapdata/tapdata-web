@@ -51,3 +51,5 @@ export const SqlEditor = {
     )
   }
 }
+
+export default SqlEditor

@@ -1,10 +1,16 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto">
-      <ElForm class="flex flex-column" v-bind="formProps">
-        <FormProvider :form="form">
+      <Form
+        :form="form"
+        :colon="false"
+        layout="vertical"
+        feedbackLayout="terse"
+        @autoSubmit="log"
+        @autoSubmitFailed="log"
+      >
+        <FormProvider v-if="schema" :form="form">
           <SchemaField
-            v-if="schema"
             :schema="schema"
             :scope="{
               useAsyncDataSource,
@@ -16,27 +22,59 @@
               loadCollections,
               loadDropOptions,
               loadWriteModelOptions,
+              sourceNode,
               sourceConnectionId: sourceNode ? sourceNode.connectionId : null
             }"
           />
         </FormProvider>
-      </ElForm>
+      </Form>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import { action } from '@formily/reactive'
 import ConnectionsApi from 'web-core/api/Connections'
 import MetadataApi from 'web-core/api/MetadataInstances'
+import * as components from 'web-core/components/form'
+import { action } from '@formily/reactive'
 import { createSchemaField, FormProvider } from '@formily/vue'
-import { components } from 'web-core/components/form'
+import {
+  Form,
+  FormItem,
+  FormTab,
+  PreviewText,
+  ArrayTable,
+  Switch,
+  Input,
+  InputNumber,
+  Checkbox,
+  Radio,
+  Space,
+  FormGrid,
+  ArrayTabs,
+  FormLayout
+} from '@formily/element'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import 'web-core/components/form/styles/index.scss'
 
 const { SchemaField } = createSchemaField({
-  components
+  components: {
+    FormItem,
+    FormTab,
+    ArrayTable,
+    PreviewText,
+    Switch,
+    Input,
+    InputNumber,
+    Checkbox,
+    Radio,
+    Space,
+    FormGrid,
+    ArrayTabs,
+    FormLayout,
+    ...components
+  }
 })
 
 const connections = new ConnectionsApi()
@@ -53,14 +91,18 @@ export default {
     return {
       form: createForm(),
 
-      schema: null
+      schema: null,
+
+      lastActiveKey: null,
+
+      lastActiveNodeType: null
     }
   },
 
-  components: { FormProvider, SchemaField },
+  components: { Form, FormProvider, SchemaField },
 
   computed: {
-    ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType']),
+    ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType', 'hasNodeError']),
 
     node() {
       return this.activeConnection ? this.nodeById(this.activeConnection.targetId) : this.activeNode
@@ -74,9 +116,10 @@ export default {
       return this.node?.__Ctor
     },
 
-    // 联合唯一key,用来做监听，切换schema
+    // 联合唯一key，用来做监听，切换schema
+    // 用下划线分割，所以注意内容不要包含下划线！！！
     uniteKey() {
-      console.log('activeType', this.activeType, this.node)
+      console.log('activeType', this.activeType, this.node) // eslint-disable-line
       return `${this.node?.id || ''}_${this.activeConnection?.sourceId || ''}_${this.activeType}`
     },
 
@@ -99,26 +142,56 @@ export default {
     // 切换节点和连线的FormSchema
     uniteKey: {
       immediate: true,
-      async handler() {
-        console.log('FormPanel', arguments)
-        if (this.activeType) {
+      async handler(n) {
+        // console.log('watch:uniteKey', n, o)
+        // let lastActiveNodeId
+        // if (o) {
+        //   lastActiveNodeId = o.split('_').shift()
+        // }
+        // console.log('lastActiveNodeId', lastActiveNodeId)
+        if (this.activeType && this.lastActiveKey !== this.uniteKey) {
+          // this.activeType 存在表示显示Panel, this.lastActiveKey !== this.uniteKey 表示不同的节点切换
           const formSchema = this.$store.getters['dataflow/formSchema'] || {}
-          console.log('formSchema')
           switch (this.activeType) {
             case 'node':
-              await this.setSchema(this.ins.formSchema || formSchema.node)
+              if (this.lastActiveNodeType === this.node.type) {
+                // 判断上一次的激活节点类型，相同表示schema也一样，不需要重置form
+                await this.form.reset() // 将表单重置，防止没有设置default的被覆盖；这里有个问题：子级别的default被清空无效了
+                this.form.setValues(this.node) // 新填充
+              } else {
+                await this.setSchema(this.ins.formSchema || formSchema.node)
+              }
+              this.lastActiveNodeType = this.node?.type // 缓存
+              this.watchInputAndOutput()
+              this.hasNodeError(this.node?.id) && this.form.validate()
               break
             case 'connection':
               await this.setSchema(this.ins.linkFormSchema || formSchema.link)
+              this.lastActiveNodeType = null
               break
             case 'settings':
-              console.log('this.getSettingSchema()', this.getSettingSchema())
+              // console.log('this.getSettingSchema()', this.getSettingSchema()) // eslint-disable-line
               await this.setSchema(this.getSettingSchema(), this.$store.getters['dataflow/dataflowSettings'])
+              this.lastActiveNodeType = null
               break
           }
+          this.lastActiveKey = n // 缓存
+        } else if (!this.activeType) {
+          // 关闭Panel
+          this.unWatchInputAndOutput()
+        } else if (this.lastActiveKey === n && this.activeType === 'node') {
+          // 如果是相同节点，切换激活状态需要同步上下游
+          this.form.setValuesIn('inputLanes', this.node.inputLanes)
+          this.form.setValuesIn('outputLanes', this.node.outputLanes)
+          this.watchInputAndOutput()
+          this.hasNodeError(this.node?.id) && this.form.validate().catch()
         }
       }
     }
+  },
+
+  beforeDestroy() {
+    this.form.onUnmount()
   },
 
   methods: {
@@ -126,7 +199,6 @@ export default {
 
     // 设置schema
     async setSchema(schema, values) {
-      // console.log('setSchema', schema)
       this.schema = null
 
       await this.$nextTick()
@@ -143,416 +215,428 @@ export default {
       return {
         type: 'object',
         properties: {
-          flowEngineVersion: {
-            title: this.$t('dataFlow.flowEngineVersion'),
-            type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Select',
-            default: 'Data_Flow_Engine_V1',
-            enum: [
-              {
-                label: this.$t('dataFlow.flowEngineV1'),
-                value: 'Data_Flow_Engine_V1'
-              },
-              {
-                label: this.$t('dataFlow.jetFlowEngineV2'),
-                value: 'Jet_Flow_Engine_V2'
-              }
-            ]
-          },
-          sync_type: {
-            title: '同步类型',
-            type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'RadioGroup',
-            // default: 'initial_sync+cdc',
-            enum: [
-              {
-                label: '全量+增量',
-                value: 'initial_sync+cdc'
-              },
-              {
-                label: '全量',
-                value: 'initial_sync'
-              },
-              {
-                label: '增量',
-                value: 'cdc'
-              }
-            ],
-            'x-reactions': {
-              target: '*(isSerialMode, cdcFetchSize)',
-              fulfill: {
-                state: {
-                  visible: '{{$self.value !== "initial_sync"}}'
-                }
-              }
-            }
-          },
-          cdcEngineFilter: {
-            title: '启用引擎过滤',
-            type: 'boolean',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Switch'
-          },
-          stopOnError: {
-            title: '遇到错误停止',
-            type: 'boolean',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Switch'
-            // default: true
-          },
-          needToCreateIndex: {
-            title: '自动创建索引',
-            type: 'boolean',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Switch'
-            // default: true
-          },
-          isOpenAutoDDL: {
-            title: '自动创建索引',
-            type: 'boolean',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Switch'
-          },
-          noPrimaryKey: {
-            title: '支持无主键同步',
-            type: 'boolean',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Switch'
-          },
-          isSerialMode: {
-            title: '增量数据处理机制',
-            type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Select',
-            enum: [
-              {
-                label: '批量',
-                value: false
-              },
-              {
-                label: '逐条',
-                value: true
-              }
-            ]
-          },
-          cdcFetchSize: {
-            title: '增量批次读取条数',
-            type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'InputNumber',
+          layout: {
+            type: 'void',
+            'x-component': 'FormLayout',
             'x-component-props': {
-              min: 1,
-              max: 1000
-            }
-            // default: 1
-          },
-          distinctWriteType: {
-            title: '去重写入机制',
-            type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Select',
-            enum: [
-              {
-                label: this.$t('dataFlow.setting.intellect'),
-                value: 'intellect'
-              },
-              {
-                label: this.$t('dataFlow.setting.compel'),
-                value: 'compel'
-              }
-            ]
-            // default: 'intellect'
-          },
-          emailWaring: {
-            title: '发送邮件',
-            type: 'object',
-            'x-decorator': 'ElFormItem',
+              colon: false,
+              layout: 'vertical',
+              feedbackLayout: 'terse',
+              wrapperWidth: 300
+            },
             properties: {
-              paused: {
-                type: 'boolean',
-                'x-component': 'Checkbox',
-                'x-component-props': {
-                  option: {
-                    label: '当任务停止'
+              flowEngineVersion: {
+                title: this.$t('dataFlow.flowEngineVersion'),
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Select',
+                default: 'Data_Flow_Engine_V1',
+                enum: [
+                  {
+                    label: this.$t('dataFlow.flowEngineV1'),
+                    value: 'Data_Flow_Engine_V1'
+                  },
+                  {
+                    label: this.$t('dataFlow.jetFlowEngineV2'),
+                    value: 'Jet_Flow_Engine_V2'
+                  }
+                ]
+              },
+              sync_type: {
+                title: '同步类型',
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Radio.Group',
+                // default: 'initial_sync+cdc',
+                enum: [
+                  {
+                    label: '全量+增量',
+                    value: 'initial_sync+cdc'
+                  },
+                  {
+                    label: '全量',
+                    value: 'initial_sync'
+                  },
+                  {
+                    label: '增量',
+                    value: 'cdc'
+                  }
+                ],
+                'x-reactions': {
+                  target: '*(isSerialMode, cdcFetchSize)',
+                  fulfill: {
+                    state: {
+                      visible: '{{$self.value !== "initial_sync"}}'
+                    }
                   }
                 }
               },
-              error: {
+              cdcEngineFilter: {
+                title: '启用引擎过滤',
                 type: 'boolean',
-                'x-component': 'Checkbox',
-                'x-component-props': {
-                  option: {
-                    label: '当任务出错'
-                  }
-                }
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch'
               },
-              edited: {
+              stopOnError: {
+                title: '遇到错误停止',
                 type: 'boolean',
-                'x-component': 'Checkbox',
-                'x-component-props': {
-                  option: {
-                    label: '当任务被编辑'
-                  }
-                }
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch'
+                // default: true
               },
-              started: {
+              needToCreateIndex: {
+                title: '自动创建索引',
                 type: 'boolean',
-                'x-component': 'Checkbox',
-                'x-component-props': {
-                  option: {
-                    label: '当任务开启'
-                  }
-                }
-              }
-            }
-          },
-          readShareLogMode: {
-            title: '共享增量读取的模式',
-            type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Select',
-            enum: [
-              {
-                label: '流式读取',
-                value: 'STREAMING'
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch'
+                // default: true
               },
-              {
-                label: '轮询读取',
-                value: 'POLLING'
-              }
-            ]
-            // default: 'STREAMING'
-          },
-          increment: {
-            title: '自动创建索引',
-            type: 'boolean',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Switch',
-            'x-reactions': {
-              dependencies: ['sync_type'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0] === "initial_sync"}}'
+              isOpenAutoDDL: {
+                title: '自动创建索引',
+                type: 'boolean',
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch'
+              },
+              noPrimaryKey: {
+                title: '支持无主键同步',
+                type: 'boolean',
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch'
+              },
+              isSerialMode: {
+                title: '增量数据处理机制',
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Select',
+                enum: [
+                  {
+                    label: '批量',
+                    value: false
+                  },
+                  {
+                    label: '逐条',
+                    value: true
+                  }
+                ]
+              },
+              cdcFetchSize: {
+                title: '增量批次读取条数',
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 1,
+                  max: 1000
                 }
-              }
-            }
-          },
-          isSchedule: {
-            title: '定期调度任务',
-            type: 'boolean',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Switch',
-            'x-reactions': {
-              dependencies: ['sync_type'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
-                }
-              }
-            }
-            // default: false
-          },
-          cronExpression: {
-            type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Input',
-            'x-component-props': {
-              placeholder: '请输入调度表达式'
-            },
-            'x-reactions': {
-              dependencies: ['sync_type', 'isSchedule'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
-                }
-              }
-            }
-          },
-          readCdcInterval: {
-            title: '增量同步间隔',
-            type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Input',
-            'x-component-props': {
-              append: 'ms'
-            }
-          },
-          readBatchSize: {
-            title: '每次读取数量',
-            type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Input',
-            'x-content': {
-              append: 'row'
-            }
-            // default: 100
-          },
-          processorConcurrency: {
-            title: '处理器线程数',
-            type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'InputNumber',
-            'x-component-props': {
-              min: 1,
-              max: 100
-            }
-            // default: 1
-          },
-          cdcConcurrency: {
-            title: '增量同步并发写入',
-            type: 'boolean',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Switch',
-            // default: false,
-            'x-reactions': {
-              dependencies: ['sync_type'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0] !== "initial_sync" ? "visible" : "hidden"}}'
-                }
-              }
-            }
-          },
-          transformerConcurrency: {
-            title: '目标写入线程数',
-            type: 'string',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'InputNumber',
-            'x-component-props': {
-              min: 1,
-              max: 100
-            },
-            'x-reactions': {
-              dependencies: ['sync_type', 'cdcConcurrency'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0] !== "cdc" || ($deps[0] === "cdc" && $deps[1])}}'
-                }
-              }
-            }
-            // default: 8
-          },
-          syncPoints: {
-            title: '增量采集开始时刻',
-            type: 'array',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'ArrayItems',
-            'x-reactions': {
-              dependencies: ['sync_type'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0] === "cdc"}}'
-                }
-              }
-            },
-            items: [
-              {
+                // default: 1
+              },
+              distinctWriteType: {
+                title: '去重写入机制',
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Select',
+                enum: [
+                  {
+                    label: this.$t('dataFlow.setting.intellect'),
+                    value: 'intellect'
+                  },
+                  {
+                    label: this.$t('dataFlow.setting.compel'),
+                    value: 'compel'
+                  }
+                ]
+                // default: 'intellect'
+              },
+              emailWaring: {
+                title: '发送邮件',
                 type: 'object',
+                'x-decorator': 'FormItem',
                 properties: {
-                  row: {
-                    type: 'void',
-                    'x-component': 'Row',
+                  paused: {
+                    type: 'boolean',
+                    'x-component': 'Checkbox',
                     'x-component-props': {
-                      type: 'flex',
-                      gap: '10px'
-                    },
-                    properties: {
-                      type: {
-                        type: 'string',
-                        'x-decorator': 'Col',
-                        'x-decorator-props': {
-                          span: 8
-                        },
-                        'x-component': 'Select',
-                        'x-component-props': {
-                          placeholder: '请选择'
-                        },
-                        enum: [
-                          {
-                            label: this.$t('dataFlow.SyncInfo.localTZType'),
-                            value: 'localTZ'
-                          },
-                          {
-                            label: this.$t('dataFlow.SyncInfo.connTZType'),
-                            value: 'connTZ'
-                          },
-                          {
-                            label: this.$t('dataFlow.SyncInfo.currentType'),
-                            value: 'current'
-                          }
-                        ]
-                      },
-                      date: {
-                        type: 'string',
-                        'x-decorator': 'Col',
-                        'x-decorator-props': {
-                          span: 14
-                        },
-                        'x-component': 'DatePicker',
-                        'x-component-props': {
-                          type: 'datetime',
-                          format: 'yyyy-MM-dd HH:mm:ss'
-                        }
+                      option: {
+                        label: '当任务停止'
+                      }
+                    }
+                  },
+                  error: {
+                    type: 'boolean',
+                    'x-component': 'Checkbox',
+                    'x-component-props': {
+                      option: {
+                        label: '当任务出错'
+                      }
+                    }
+                  },
+                  edited: {
+                    type: 'boolean',
+                    'x-component': 'Checkbox',
+                    'x-component-props': {
+                      option: {
+                        label: '当任务被编辑'
+                      }
+                    }
+                  },
+                  started: {
+                    type: 'boolean',
+                    'x-component': 'Checkbox',
+                    'x-component-props': {
+                      option: {
+                        label: '当任务开启'
                       }
                     }
                   }
                 }
-              }
-            ]
-            /*default: [
-              {
-                connectionId: '',
-                type: 'current', // localTZ: 本地时区； connTZ：连接时区
-                time: '',
-                date: '',
-                name: '',
-                timezone: '+08:00' // 当type为localTZ时有该字段
-              }
-            ]*/
-          },
-          cdcShareFilterOnServer: {
-            title: '共享挖掘日志过滤',
-            type: 'boolean',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Switch'
-          },
-          maxTransactionLength: {
-            title: '事务最大时长(小时)',
-            type: 'number',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'InputNumber'
-          },
-          lagTime: {
-            title: '增量滞后判断时间设置(秒)',
-            type: 'void',
-            'x-decorator': 'ElFormItem',
-            'x-component': 'Space',
-            'x-reactions': {
-              dependencies: ['sync_type'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0] !== "initial_sync"}}'
-                }
-              }
-            },
-            properties: {
-              lagTimeFalg: {
-                type: 'boolean',
-                'x-component': 'Switch'
               },
-              userSetLagTime: {
-                type: 'number',
-                'x-component': 'InputNumber',
-                /*'x-component-props': {
-                  append: '秒'
-                },*/
+              readShareLogMode: {
+                title: '共享增量读取的模式',
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Select',
+                enum: [
+                  {
+                    label: '流式读取',
+                    value: 'STREAMING'
+                  },
+                  {
+                    label: '轮询读取',
+                    value: 'POLLING'
+                  }
+                ]
+                // default: 'STREAMING'
+              },
+              increment: {
+                title: '自动创建索引',
+                type: 'boolean',
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch',
                 'x-reactions': {
-                  dependencies: ['lagTimeFalg'],
+                  dependencies: ['sync_type'],
                   fulfill: {
                     state: {
-                      visible: '{{$deps[0] === true}}'
+                      display: '{{$deps[0] === "initial_sync"}}'
+                    }
+                  }
+                }
+              },
+              isSchedule: {
+                title: '定期调度任务',
+                type: 'boolean',
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch',
+                'x-reactions': {
+                  dependencies: ['sync_type'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+                // default: false
+              },
+              cronExpression: {
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入调度表达式'
+                },
+                'x-reactions': {
+                  dependencies: ['sync_type', 'isSchedule'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+              },
+              readCdcInterval: {
+                title: '增量同步间隔',
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  append: 'ms'
+                }
+              },
+              readBatchSize: {
+                title: '每次读取数量',
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-content': {
+                  append: 'row'
+                }
+                // default: 100
+              },
+              processorConcurrency: {
+                title: '处理器线程数',
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 1,
+                  max: 100
+                }
+                // default: 1
+              },
+              cdcConcurrency: {
+                title: '增量同步并发写入',
+                type: 'boolean',
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch',
+                // default: false,
+                'x-reactions': {
+                  dependencies: ['sync_type'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] !== "initial_sync" ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+              },
+              transformerConcurrency: {
+                title: '目标写入线程数',
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 1,
+                  max: 100
+                },
+                'x-reactions': {
+                  dependencies: ['sync_type', 'cdcConcurrency'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0] !== "cdc" || ($deps[0] === "cdc" && $deps[1])}}'
+                    }
+                  }
+                }
+                // default: 8
+              },
+              syncPoints: {
+                title: '增量采集开始时刻',
+                type: 'array',
+                'x-decorator': 'FormItem',
+                'x-component': 'ArrayItems',
+                'x-reactions': {
+                  dependencies: ['sync_type'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0] === "cdc"}}'
+                    }
+                  }
+                },
+                items: [
+                  {
+                    type: 'object',
+                    properties: {
+                      row: {
+                        type: 'void',
+                        'x-component': 'Row',
+                        'x-component-props': {
+                          type: 'flex',
+                          gap: '10px'
+                        },
+                        properties: {
+                          type: {
+                            type: 'string',
+                            'x-decorator': 'Col',
+                            'x-decorator-props': {
+                              span: 8
+                            },
+                            'x-component': 'Select',
+                            'x-component-props': {
+                              placeholder: '请选择'
+                            },
+                            enum: [
+                              {
+                                label: this.$t('dataFlow.SyncInfo.localTZType'),
+                                value: 'localTZ'
+                              },
+                              {
+                                label: this.$t('dataFlow.SyncInfo.connTZType'),
+                                value: 'connTZ'
+                              },
+                              {
+                                label: this.$t('dataFlow.SyncInfo.currentType'),
+                                value: 'current'
+                              }
+                            ]
+                          },
+                          date: {
+                            type: 'string',
+                            'x-decorator': 'Col',
+                            'x-decorator-props': {
+                              span: 14
+                            },
+                            'x-component': 'DatePicker',
+                            'x-component-props': {
+                              type: 'datetime',
+                              format: 'yyyy-MM-dd HH:mm:ss'
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+                /*default: [
+                  {
+                    connectionId: '',
+                    type: 'current', // localTZ: 本地时区； connTZ：连接时区
+                    time: '',
+                    date: '',
+                    name: '',
+                    timezone: '+08:00' // 当type为localTZ时有该字段
+                  }
+                ]*/
+              },
+              cdcShareFilterOnServer: {
+                title: '共享挖掘日志过滤',
+                type: 'boolean',
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch'
+              },
+              maxTransactionLength: {
+                title: '事务最大时长(小时)',
+                type: 'number',
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber'
+              },
+              lagTime: {
+                title: '增量滞后判断时间设置(秒)',
+                type: 'void',
+                'x-decorator': 'FormItem',
+                'x-component': 'Space',
+                'x-reactions': {
+                  dependencies: ['sync_type'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0] !== "initial_sync"}}'
+                    }
+                  }
+                },
+                properties: {
+                  lagTimeFalg: {
+                    type: 'boolean',
+                    'x-component': 'Switch'
+                  },
+                  userSetLagTime: {
+                    type: 'number',
+                    'x-component': 'InputNumber',
+                    /*'x-component-props': {
+                      append: '秒'
+                    },*/
+                    'x-reactions': {
+                      dependencies: ['lagTimeFalg'],
+                      fulfill: {
+                        state: {
+                          visible: '{{$deps[0] === true}}'
+                        }
+                      }
                     }
                   }
                 }
@@ -577,10 +661,10 @@ export default {
     // 绑定表单事件
     useEffects() {
       onFormValuesChange(form => {
-        console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values)))
+        console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
       })
       onFormInputChange(form => {
-        console.log('onFormInputChange')
+        console.log('onFormInputChange') // eslint-disable-line
         this.$nextTick(() => {
           if (this.activeType !== 'settings') {
             this.updateNodeProps(form)
@@ -591,11 +675,17 @@ export default {
       })
     },
 
-    // 统一异步数据源方法
-    useAsyncDataSource(service, fieldName = 'dataSource', ...args) {
+    /**
+     * 统一的异步数据源方法
+     * @param service
+     * @param fieldName 数据设置指定的字段
+     * @param serviceParams 缺省参数，传递给service方法
+     * @returns {(function(*=): void)|*}
+     */
+    useAsyncDataSource(service, fieldName = 'dataSource', ...serviceParams) {
       return field => {
         field.loading = true
-        service(field, ...args).then(
+        service(field, ...serviceParams).then(
           action.bound(data => {
             if (fieldName === 'value') {
               field.setValue(data)
@@ -606,7 +696,12 @@ export default {
       }
     },
 
-    // 加载数据库
+    /**
+     * 加载数据库
+     * @param field
+     * @param databaseType 数据库类型，String或Array
+     * @returns {Promise<*[]|*>}
+     */
     async loadDatabase(field, databaseType = field.form.values.databaseType) {
       try {
         let result = await connections.get({
@@ -614,10 +709,10 @@ export default {
             where: {
               database_type: databaseType
                 ? {
-                    in: Array.isArray(databaseType) ? databaseType : [databaseType]
+                    $in: Array.isArray(databaseType) ? databaseType : [databaseType]
                   }
                 : {
-                    nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
+                    $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
                   }
             },
             fields: {
@@ -630,7 +725,7 @@ export default {
             order: ['status DESC', 'name ASC']
           })
         })
-        return result.map(item => {
+        return (result.items || result).map(item => {
           return {
             id: item.id,
             name: item.name,
@@ -640,14 +735,18 @@ export default {
           }
         })
       } catch (e) {
-        console.log('catch', e)
+        console.log('catch', e) // eslint-disable-line
         return []
       }
     },
 
-    // 加载数据详情
-    async loadDatabaseInfo(field, id) {
-      const connectionId = id || field.query('connectionId').get('value')
+    /**
+     * 加载数据库的详情
+     * @param field
+     * @param connectionId
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    async loadDatabaseInfo(field, connectionId = field.query('connectionId').get('value')) {
       if (!connectionId) return
       let result = await connections.customQuery([connectionId], {
         schema: true
@@ -655,9 +754,13 @@ export default {
       return result
     },
 
-    // 加载数据库的表
+    /**
+     * 加载数据库的表，只返回表名的集合
+     * @param field
+     * @param connectionId
+     * @returns {Promise<*|AxiosResponse<any>>}
+     */
     async loadDatabaseTable(field, connectionId = field.query('connectionId').get('value')) {
-      console.log('connectionId')
       if (!connectionId) return
       const params = {
         filter: JSON.stringify({
@@ -669,49 +772,70 @@ export default {
             is_deleted: false
           },
           fields: {
-            id: true,
             original_name: true
           }
         })
       }
-      let tables = await metadataApi.get(params)
-      tables = tables.map(item => ({
-        label: item.original_name,
-        value: item.id
-      }))
-      return tables
+      const data = await metadataApi.get(params)
+      return data.items.map(item => item.original_name)
     },
 
-    // 加载表的详情
-    async loadTableInfo(field, id = field?.query('tableId')?.get('value')) {
-      if (!id) return
-      console.log('loadTableInfo', field, id)
+    /**
+     * 加载表的详情，返回表的数据对象
+     * @param field
+     * @param connectionId
+     * @param tableName
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    async loadTableInfo(
+      field,
+      connectionId = field.query('connectionId').get('value'),
+      tableName = field.query('tableName').get('value')
+    ) {
+      if (!connectionId || !tableName) return
+      console.log('loadTableInfo', field, id) // eslint-disable-line
       const params = {
         filter: JSON.stringify({
           where: {
-            id,
+            'source.id': connectionId,
+            original_name: tableName,
             is_deleted: false
           }
         })
       }
-      const { data } = await metadataApi.schema(params)
-      return data.records[0].schema.tables[0]
+      const table = await metadataApi.get(params)
+      return table
     },
 
-    // 加载表的
-    async loadTableField(field, id = field.query('tableId').get('value')) {
-      if (!id) return
-      console.log('loadTableField', field, id)
+    /**
+     * 加载表字段，返回字段名的集合
+     * @param field
+     * @param connectionId
+     * @param tableName
+     * @returns {Promise<*>}
+     */
+    async loadTableField(
+      field,
+      connectionId = field.query('connectionId').get('value'),
+      tableName = field.query('tableName').get('value')
+    ) {
+      if (!connectionId || !tableName) return
       const params = {
         filter: JSON.stringify({
           where: {
-            id,
+            'source.id': connectionId,
+            original_name: tableName,
             is_deleted: false
+          },
+          fields: {
+            fields: true
           }
         })
       }
-      const { data } = await metadataApi.schema(params)
-      return data.records[0].schema.tables[0].fields.map(item => item.field_name)
+      const data = await metadataApi.get(params)
+      return data.items[0]?.fields.map(item => item.field_name) || []
+      // const tableData = await metadataApi.findOne(params)
+      // return tableData.fields.map(item => item.field_name)
     },
 
     // 加载数据集
@@ -773,6 +897,52 @@ export default {
         })
       }
       field.dataSource = options
+    },
+
+    log(value) {
+      // eslint-disable-next-line no-console
+      console.log('Form', value)
+    },
+
+    /**
+     * 构建监听方法
+     * @param type
+     */
+    buildInputOrOutWatch(type) {
+      this.form.getFieldState(type) &&
+        this.stopWatchInputAndOutput.push(
+          this.$watch(`node.${type}`, (n /*, o*/) => {
+            // console.log('🚗buildInputOrOutWatch', type, n, o)
+            // 输入输出发生变化，同步给form
+            // const nStr = n ? (Array.isArray(n) ? n.join(',') : n) : ''
+            // const oStr = o ? (Array.isArray(o) ? o.join(',') : o) : ''
+
+            if (/*nStr !== oStr && */ this.form.getFieldState(type)) {
+              // console.log('🚗buildInputOrOutWatch', type, '可以同步')
+              this.form.setValuesIn(type, n)
+            }
+          })
+        )
+    },
+
+    /**
+     * 监听inputLanes和outputLanes
+     */
+    watchInputAndOutput() {
+      // console.log('watchInputAndOutput')
+      this.stopWatchInputAndOutput?.length && this.unWatchInputAndOutput()
+      this.stopWatchInputAndOutput = []
+      this.buildInputOrOutWatch('inputLanes')
+      this.buildInputOrOutWatch('outputLanes')
+    },
+
+    /**
+     * 取消监听inputLanes和outputLanes
+     */
+    unWatchInputAndOutput() {
+      if (!this.stopWatchInputAndOutput?.length) return
+      this.stopWatchInputAndOutput.forEach(fn => fn())
+      this.stopWatchInputAndOutput = []
     }
   }
 }
@@ -839,15 +1009,6 @@ $headerBg: #fff;
 
   ::v-deep {
     .el-form {
-      .addTxt {
-        float: right;
-        display: inline-block;
-        height: 30px;
-        line-height: 30px;
-        font-size: 12px;
-        color: #48b6e2;
-      }
-
       &-item {
         margin-bottom: 10px;
 
@@ -879,10 +1040,10 @@ $headerBg: #fff;
           }
 
           //TODO: 和drs不兼容，后面需要统一样式
-          .ElButton--mini,
-          .ElButton--small {
-            //border-radius: $radius;
-          }
+          // .ElButton--mini,
+          // .ElButton--small {
+          //border-radius: $radius;
+          // }
 
           .el-input__inner::-webkit-input-placeholder {
             font-size: 12px;

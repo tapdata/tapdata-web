@@ -10,8 +10,8 @@
       :sync_type="sync_type"
       :creat-user-id="creatUserId"
       :is-starting="isStarting"
+      :dataflow-name="dataflow.name"
       @save="save"
-      @start="start"
       @delete="handleDelete"
       @undo="handleUndo"
       @redo="handleRedo"
@@ -20,10 +20,18 @@
       @showSettings="handleShowSettings"
       @center-content="handleCenterContent"
       @auto-layout="handleAutoLayout"
+      @change-name="handleUpdateName"
     ></TopHeader>
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
-      <LeftSidebar @move-node="handleDragMoveNode" @drop-node="handleAddNodeByDrag" />
+      <LeftSidebar
+        v-resize.right="{
+          minWidth: 230,
+          maxWidth: 400
+        }"
+        @move-node="handleDragMoveNode"
+        @drop-node="handleAddNodeByDrag"
+      />
       <section class="layout-wrap">
         <!--内容体-->
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
@@ -71,7 +79,7 @@
           </ElPopover>
         </main>
         <!--配置面板-->
-        <ConfigPanel @hide="onHideSidebar"></ConfigPanel>
+        <ConfigPanel :settings="dataflow" @hide="onHideSidebar"></ConfigPanel>
       </section>
     </section>
   </section>
@@ -85,7 +93,7 @@ import LeftSidebar from './components/LeftSidebar'
 import DFNode from './components/DFNode'
 import jsPlumbIns from './instance'
 import { connectorActiveStyle } from './style'
-import { NODE_PREFIX, DEFAULT_SETTINGS, NODE_WIDTH, NODE_HEIGHT, STATUS_MAP } from './constants'
+import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, STATUS_MAP } from './constants'
 import { ctorTypes, nodeTypes } from 'web-core/nodes/loader/index'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
@@ -93,8 +101,8 @@ import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from 'web-core/views/dataflow/components/ConfigPanel'
 import { off, on } from 'web-core/utils/dom'
 import { uuid } from 'web-core/utils/util'
-import DataFlows from 'web-core/api/DataFlows'
 import DatabaseTypes from 'web-core/api/DatabaseTypes'
+import Task from 'web-core/api/Task'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -107,12 +115,19 @@ import {
 } from './command'
 import Mousetrap from 'mousetrap'
 import dagre from 'dagre'
+import { validateBySchema } from 'web-core/components/form/utils/validate'
+import resize from 'web-core/directives/resize'
+import { merge } from 'lodash'
 
-const dataFlowsApi = new DataFlows()
 const databaseTypesApi = new DatabaseTypes()
+const taskApi = new Task()
 
 export default {
   name: 'Editor',
+
+  directives: {
+    resize
+  },
 
   mixins: [deviceSupportHelpers, titleChange, showMessage],
 
@@ -150,13 +165,17 @@ export default {
         show: false,
         reference: null,
         connectionData: {}
+      },
+
+      dataflow: {
+        id: '',
+        name: ''
       }
     }
   },
 
   computed: {
     ...mapGetters('dataflow', {
-      dataflowId: 'dataflowId',
       nodes: 'allNodes',
       isActionActive: 'isActionActive',
       nodeById: 'nodeById',
@@ -213,7 +232,7 @@ export default {
         this.initNodeView()
         await this.initView()
       } catch (error) {
-        console.error(error)
+        console.error(error) // eslint-disable-line
       }
     })
   },
@@ -226,7 +245,7 @@ export default {
   methods: {
     ...mapMutations('dataflow', [
       'setStateDirty',
-      'setDataflowId',
+      'setEdges',
       'setDataflowName',
       'setDataflowSettings',
       'setNodeTypes',
@@ -241,6 +260,7 @@ export default {
       'removeNode',
       'removeNodeFromSelection',
       'removeAllNodes',
+      'resetDag',
       'addNode',
       'setActiveType',
       'setFormSchema'
@@ -288,12 +308,13 @@ export default {
         }
       }
 
-      const dataflowId = this.$route.params.id
+      const { id } = this.$route.params
 
-      if (dataflowId) {
-        await this.openDataflow(dataflowId)
+      if (id) {
+        await this.openDataflow(id)
       } else {
         this.newDataflow()
+        // this.handleShowSettings() // 默认打开设置
       }
     },
 
@@ -319,13 +340,13 @@ export default {
 
     async initNodeType() {
       let _nodeTypes = nodeTypes
-      let dataFlowType
-      if (this.mapping === 'cluster-clone') {
-        dataFlowType = 'database-migration' // 数据库迁移
+      // let dataFlowType
+      /*if (this.mapping === 'cluster-clone') {
+        // dataFlowType = 'database-migration' // 数据库迁移
         const dbTypes = await this.loadDatabaseTypes(nodeTypes)
         _nodeTypes = _nodeTypes.filter(item => item.type === 'database')
         _nodeTypes.push(...dbTypes)
-      }
+      }*/
       this.setNodeTypes(_nodeTypes)
       this.setCtorTypes(ctorTypes)
     },
@@ -375,10 +396,11 @@ export default {
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
 
       jsPlumbIns.bind('connection', (info, event) => {
-        console.log('connectionEvent', info)
-        const { sourceId: source, targetId: target } = info
-        const sourceId = this.getRealId(source)
-        const targetId = this.getRealId(target)
+        console.log('connectionEvent', info) // eslint-disable-line
+        const { sourceId, targetId } = info
+        const source = this.getRealId(sourceId)
+        const target = this.getRealId(targetId)
+        const connection = { source, target }
 
         info.connection.bind('mouseover', () => {
           info.connection.showOverlay('removeConn')
@@ -409,7 +431,7 @@ export default {
                 // 更新reference
                 this.nodeMenu.reference = overlay.canvas
                 this.$refs.nodeMenu.referenceElm = overlay.canvas
-                this.nodeMenu.connectionData = { source, target }
+                this.nodeMenu.connection = connection
                 this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
                 // 显示菜单
                 this.nodeMenu.show = true
@@ -435,8 +457,8 @@ export default {
               mousedown: () => {
                 this.command.exec(
                   new RemoveConnectionCommand({
-                    source: info.connection.sourceId,
-                    target: info.connection.targetId
+                    source,
+                    target
                   })
                 )
               }
@@ -444,20 +466,12 @@ export default {
           }
         ])
 
-        // 设置节点的input和output属性
-        this.addConnection({
-          sourceId,
-          targetId
-        })
+        // 拖动连接
+        if (event) {
+          this.addConnection(connection)
 
-        event &&
-          this.command.exec(
-            new AddConnectionCommand({
-              source: info.connection.sourceId,
-              target: info.connection.targetId
-            }),
-            true
-          )
+          this.command.exec(new AddConnectionCommand(connection), true)
+        }
       })
 
       // 连接线拖动结束事件
@@ -503,17 +517,17 @@ export default {
       })*/
 
       // 连线移动到其他节点
-      jsPlumbIns.bind('connectionMoved', info => {
-        console.log('connectionMoved', info)
-      })
+      // jsPlumbIns.bind('connectionMoved', info => {
+      //   console.log('connectionMoved', info) // eslint-disable-line
+      // })
       // 连线移动到其他节点
-      jsPlumbIns.bind('connectionDetached', info => {
-        console.log('connectionDetachedEvent', info)
-      })
+      // jsPlumbIns.bind('connectionDetached', info => {
+      //   console.log('connectionDetachedEvent', info) // eslint-disable-line
+      // })
 
       const _instance = {
         getConnections(params) {
-          console.log('_instance', params)
+          // console.log('_instance', params) // eslint-disable-line
           if (typeof params === 'object') {
             if (params.target) params.target = NODE_PREFIX + params.target
             if (params.source) params.source = NODE_PREFIX + params.source
@@ -523,7 +537,7 @@ export default {
       }
 
       jsPlumbIns.bind('beforeDrop', info => {
-        console.log('beforeDrop', info)
+        // console.log('beforeDrop', info) // eslint-disable-line
         const { sourceId, targetId } = info
 
         const source = this.nodeById(this.getRealId(sourceId))
@@ -587,40 +601,35 @@ export default {
       })*/
     },
 
-    async openDataflow(dataflowId) {
+    async openDataflow(id) {
       this.resetWorkspace()
 
-      let result
+      let data
       try {
-        result = await dataFlowsApi.get([dataflowId])
-        // this.creatUserId = result.user_id
+        data = await taskApi.get([id]) // this.creatUserId = result.user_id
       } catch (e) {
         this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
         return
       }
 
-      const data = result
+      const { dag } = data
+
+      delete data.dag
 
       this.status = data.status
-      this.setDataflowId(dataflowId)
-      this.setDataflowName({ newName: data.name, setStateDirty: false })
-      this.setDataflowSettings(data.setting)
+      this.$set(this, 'dataflow', data)
 
-      const isOld = this.transformStages(data.stages)
-      await this.addNodes(data.stages)
-
-      // 旧版数据自动布局
-      isOld ? this.handleAutoLayout() : this.handleCenterContent()
+      await this.addNodes(dag)
+      this.setEdges(dag.edges)
       this.setStateDirty(false)
     },
 
     newDataflow() {
-      // this.creatUserId = this.$cookie.get('user_id')
-      this.creatUserId = ''
       this.resetWorkspace()
-      this.setDataflowName({
+      this.dataflow.name = '新任务@' + new Date().toLocaleTimeString()
+      /*this.setDataflowName({
         newName: '新任务@' + new Date().toLocaleTimeString()
-      })
+      })*/
     },
 
     /**
@@ -640,12 +649,13 @@ export default {
       return true
     },
 
-    async addNodes(nodes) {
-      if (!nodes || !nodes.length) return
+    async addNodes({ nodes, edges }) {
+      if (!nodes?.length) return
       const { getters } = this.$store
       const getNodeType = getters['dataflow/nodeType']
       const getCtor = getters['dataflow/getCtor']
 
+      // 创建节点
       let nodeType
       nodes.forEach(node => {
         nodeType = getNodeType(node)
@@ -665,7 +675,12 @@ export default {
 
       await this.$nextTick()
 
-      this.nodes.forEach(node => {
+      // 连线
+      edges.forEach(({ source, target }) => {
+        this.jsPlumbIns.connect({ uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`] })
+      })
+
+      /*this.nodes.forEach(node => {
         let t = NODE_PREFIX + node.id + '_target',
           tp = this.jsPlumbIns.getEndpoint(t)
         if (node.inputLanes && node.inputLanes.length) {
@@ -675,7 +690,7 @@ export default {
             this.jsPlumbIns.connect({ source: sp, target: tp })
           })
         }
-      })
+      })*/
     },
 
     getRealId(str) {
@@ -703,7 +718,7 @@ export default {
 
       this.nodes.forEach(item => {
         if (item.id !== id) {
-          let [x, y] = item.position
+          let [x, y] = item.attrs.position
           let _x = x - pos[0]
           let _y = y - pos[1]
           if (Math.abs(_x) <= Math.abs(rangeX)) {
@@ -870,7 +885,7 @@ export default {
      * 取消选择所有节点
      */
     deselectAllNodes() {
-      console.log('deselectAllNodes')
+      // console.log('deselectAllNodes') // eslint-disable-line
       this.jsPlumbIns.clearDragSelection()
       this.resetSelectedNodes()
       this.setActiveNode(null)
@@ -913,15 +928,15 @@ export default {
       let nh = $node.offsetHeight
       let { x, y, bottom, right } = selectBoxAttr
 
-      console.log('getNodesInSelection', selectBoxAttr)
+      // console.log('getNodesInSelection', selectBoxAttr) // eslint-disable-line
       /*const nodeViewOffset = this.nodeViewOffsetPosition
       x -= nodeViewOffset[0]
       right -= nodeViewOffset[0]
       y -= nodeViewOffset[1]
       bottom -= nodeViewOffset[1]*/
-      return this.nodes.filter(({ position }) => {
-        console.log('position', position, { x, y, bottom, right })
-        return position[0] + nw > x && position[0] < right && bottom > position[1] && y < position[1] + nh
+      return this.nodes.filter(node => {
+        const [left, top] = node.attrs.position
+        return left + nw > x && left < right && bottom > top && y < top + nh
       })
     },
 
@@ -963,7 +978,7 @@ export default {
       let w, h, x, y
       const pos = this.getMousePositionWithinNodeView(e)
 
-      console.log('mouseMoveSelect', pos)
+      // console.log('mouseMoveSelect', pos) // eslint-disable-line
 
       x = Math.min(this.mouseClickPosition.x, pos.x)
       y = Math.min(this.mouseClickPosition.y, pos.y)
@@ -985,7 +1000,7 @@ export default {
 
     mouseUpMouseSelect() {
       off(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
-      console.log('mouseUpMouseSelect')
+      // console.log('mouseUpMouseSelect') // eslint-disable-line
       this.deselectAllNodes()
       // 清空激活状态
       this.setActiveType(null)
@@ -1016,7 +1031,7 @@ export default {
     },
 
     __removeConnection(source, target) {
-      console.log('removeConnection', source, target)
+      // console.log('removeConnection', source, target) // eslint-disable-line
       const connections = this.jsPlumbIns.getConnections({
         source,
         target
@@ -1033,38 +1048,22 @@ export default {
     },
 
     getDataflowDataToSave() {
-      const { getters } = this.$store
-      const name = getters['dataflow/dataflowName']
-      const settings = getters['dataflow/dataflowSettings']
-      const data = {
-        name,
-        description: '',
-        status: 'draft',
-        executeMode: 'normal',
-        category: '\u6570\u636e\u5e93\u514b\u9686',
-        mappingTemplate: this.mapping,
-        stages: this.nodes,
-        setting: settings
+      const dag = this.$store.getters['dataflow/dag']
+      return {
+        dag,
+        ...this.dataflow
       }
-
-      const dataflowId = this.$store.getters['dataflow/dataflowId']
-
-      if (dataflowId) {
-        data.id = dataflowId
-      }
-
-      return data
     },
 
     async save() {
+      this.validateNodes()
       const errorMsg = this.getError()
       if (errorMsg) {
         this.$message.error(errorMsg)
         return
       }
 
-      const currentDataflow = this.$route.params.id
-      if (!currentDataflow) {
+      if (!this.dataflow.id) {
         return this.saveAsNewDataflow()
       }
 
@@ -1072,9 +1071,10 @@ export default {
 
       const data = this.getDataflowDataToSave()
 
-      await dataFlowsApi.draft(data)
+      await taskApi.patch(data)
 
       this.isSaving = false
+
       this.$message.success(this.$t('message.saveOK'))
     },
 
@@ -1082,111 +1082,18 @@ export default {
       try {
         this.isSaving = true
         const data = this.getDataflowDataToSave()
-        const dataflow = await dataFlowsApi.draft(data)
+        console.log('🚗saveAsNewDataflow', data)
+        const dataflow = await taskApi.post(data)
         this.isSaving = false
+        this.dataflow.id = dataflow.id
         this.$message.success(this.$t('message.saveOK'))
-        this.setDataflowId(dataflow.id) // 将生成的id保存到store
-
         await this.$router.push({
           name: 'DataflowEditor',
-          params: { id: dataflow.id, action: 'dataflowSave' },
-          query: {
-            mapping: this.mapping
-          }
+          params: { id: dataflow.id, action: 'dataflowSave' }
         })
       } catch (e) {
         this.$showError(e, '数据流保存出错', '出现的问题:')
       }
-    },
-
-    async start() {
-      // TODO 优化错误处理
-      const errorMsg = this.getError()
-      if (errorMsg) {
-        this.$message.error(errorMsg)
-        return
-      }
-
-      const { dataflowId } = this
-      const data = this.getDataflowDataToSave()
-      data.status = 'scheduled'
-      data.executeMode = 'normal'
-
-      this.isStarting = true
-
-      const fetch = dataflowId ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
-
-      const result = await fetch
-
-      const dataflow = result.data
-
-      await dataFlowsApi.saveStage(data.stages)
-
-      this.isStarting = false
-
-      await this.$router.push({
-        name: 'DataflowMonitor',
-        params: {
-          id: dataflow.id
-        },
-        query: {
-          mapping: this.mapping
-        }
-      })
-    },
-
-    doSaveStartDataFlow(data) {
-      if (data) {
-        if (this.form.taskName) {
-          data.name = this.form.taskName
-        }
-
-        let start = () => {
-          data.status = 'scheduled'
-          data.executeMode = 'normal'
-          this.doSave(data, (err, rest) => {
-            if (err) {
-              if (err.response.msg === 'Error: Loading data source schema') {
-                this.$message.error(this.$t('message.loadingSchema'))
-              } else {
-                this.$message.error(err.response.msg)
-              }
-            } else {
-              this.$message.success(this.$t('message.taskStart'))
-              this.$router.push({
-                path: '/job',
-                query: {
-                  id: rest.id,
-                  isMoniting: true,
-                  mapping: this.mappingTemplate
-                }
-              })
-              this.$message.success(this.$t('message.taskStart'))
-              location.reload()
-            }
-          })
-        }
-        // if (data.id && this.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
-        // 	const h = this.$createElement;
-        // 	let arr = this.$t('message.startAggregation_message').split('XXX');
-        // 	this.$confirm(
-        // 		h('p', [arr[0] + '(', h('span', { style: { color: '#48b6e2' } }, data.name), ')' + arr[1]]),
-        // 		this.$t('dataFlow.importantReminder'),
-        // 		{
-        // 			type: 'warning',
-        // 			closeOnClickModal: false
-        // 		}
-        // 	).then(() => {
-        // 		//若任务内存在聚合处理器，启动前先重置
-        // 		dataFlowsApi.reset(data.id).then(() => {
-        // 			start();
-        // 		});
-        // 	});
-        // } else {
-        start()
-        // }
-      }
-      this.dialogFormVisible = false
     },
 
     handleUndo() {
@@ -1252,7 +1159,7 @@ export default {
 
       nodes.forEach(n => {
         dg.setNode(NODE_PREFIX + n.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
-        nodePositionMap[NODE_PREFIX + n.id] = n.position
+        nodePositionMap[NODE_PREFIX + n.id] = n.attrs.position
       })
       this.jsPlumbIns.getAllConnections().forEach(edge => {
         dg.setEdge(edge.source.id, edge.target.id)
@@ -1269,13 +1176,17 @@ export default {
           oldProperties.push({
             id: this.getRealId(n),
             properties: {
-              position: nodePositionMap[n]
+              attrs: {
+                position: nodePositionMap[n]
+              }
             }
           })
           newProperties.push({
             id: this.getRealId(n),
             properties: {
-              position: [left, top]
+              attrs: {
+                position: [left, top]
+              }
             }
           })
         }
@@ -1319,29 +1230,32 @@ export default {
       if (this.jsPlumbIns) {
         this.jsPlumbIns.deleteEveryEndpoint()
       }
-
-      this.status = 'draft'
+      this.dataflow = merge(
+        {
+          id: '',
+          name: ''
+        },
+        DEFAULT_SETTINGS
+      )
       this.deselectAllNodes()
-      this.removeAllNodes()
-      this.setDataflowId(null)
-      this.setDataflowName({ newName: '', setStateDirty: false })
-      this.setDataflowSettings(DEFAULT_SETTINGS)
+      this.resetDag()
+      // this.setDataflow(DEFAULT_SETTINGS)
       this.resetSelectedNodes()
     },
 
     getError() {
-      const settings = this.$store.getters['dataflow/dataflowSettings']
+      // const settings = this.$store.getters['dataflow/dataflowSettings']
 
-      if (!this.$store.getters['dataflow/dataflowName']) return this.$t('editor.cell.validate.empty_name')
+      if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
 
-      if (settings.sync_type === 'initial_sync' && settings.isSchedule && !settings.cronExpression) {
+      /*if (settings.sync_type === 'initial_sync' && settings.isSchedule && !settings.cronExpression) {
         return this.$t('dataFlow.cronExpression')
-      }
+      }*/
 
-      for (let node of this.nodes) {
+      /*for (let node of this.nodes) {
         let res = node.__Ctor.validate(node)
         if (res !== true) return res
-      }
+      }*/
 
       if (this.nodes.length < 2) {
         return this.$t('editor.cell.validate.none_data_node')
@@ -1350,6 +1264,18 @@ export default {
       if (this.jsPlumbIns.getConnections('*').length < 1) return this.$t('editor.cell.validate.none_link_node')
 
       return null
+    },
+
+    async validateNodes() {
+      const { nodes } = this
+      const result = await Promise.all(nodes.map(node => validateBySchema(node.__Ctor.formSchema, node))).catch(
+        error => {
+          // eslint-disable-next-line no-console
+          console.log('validateNodes', error)
+        }
+      )
+      // eslint-disable-next-line no-console
+      console.log('validateNodes-result', result)
     },
 
     setZoomLevel(zoomLevel) {
@@ -1397,7 +1323,9 @@ export default {
       // 节点拖放在连线上
       if ($elemBelow.nodeName === 'path' && $elemBelow.parentElement._jsPlumb) {
         const connection = $elemBelow.parentElement._jsPlumb
-        this.addNodeOnConn(item, newPosition, connection.sourceId, connection.targetId)
+        const source = this.getRealId(connection.sourceId)
+        const target = this.getRealId(connection.targetId)
+        this.addNodeOnConn(item, newPosition, source, target)
       } else {
         this.handleAddNodeToPos(newPosition, item)
       }
@@ -1419,7 +1347,7 @@ export default {
         id: uuid(),
         name: item.name,
         type: item.type,
-        position,
+        attrs: { position },
         ...ins.getExtraAttr() // 附加属性
       }
 
@@ -1432,7 +1360,7 @@ export default {
     },
 
     handleMouseSelect(showSelectBox, selectBoxAttr) {
-      console.log('handleMouseSelect', arguments)
+      // console.log('handleMouseSelect', arguments) // eslint-disable-line
       // 取消选中所有节点
       this.deselectAllNodes()
       // 清空激活状态
@@ -1472,9 +1400,9 @@ export default {
      * @param target 连线目标节点的id
      */
     addNodeOnConn(nodeType, position, source, target) {
-      const a = this.nodeById(this.getRealId(source))
+      const a = this.nodeById(source)
       const b = this.createNode(position, nodeType)
-      const c = this.nodeById(this.getRealId(target))
+      const c = this.nodeById(target)
       const aCtor = a.__Ctor
       const bCtor = b.__Ctor
       const cCtor = c.__Ctor
@@ -1495,12 +1423,12 @@ export default {
     addNodeOnConnByNodeMenu(nodeType) {
       const { nodeMenu } = this
       nodeMenu.show = false
-      console.log('nodeMenu.connectionCenterPos', nodeMenu.connectionCenterPos)
+      // console.log('nodeMenu.connectionCenterPos', nodeMenu.connectionCenterPos) // eslint-disable-line
       const position = this.$refs.paperScroller.getDropPositionWithinPaper(nodeMenu.connectionCenterPos, {
         width: NODE_WIDTH,
         height: NODE_HEIGHT
       })
-      this.addNodeOnConn(nodeType, position, nodeMenu.connectionData.source, nodeMenu.connectionData.target)
+      this.addNodeOnConn(nodeType, position, nodeMenu.connection.source, nodeMenu.connection.target)
     },
 
     canUsePosition(position1, position2) {
@@ -1539,6 +1467,13 @@ export default {
       } while (conflictFound === true)
 
       return newPosition
+    },
+
+    handleUpdateName(name) {
+      this.dataflow.name = name
+      taskApi.updateById(this.dataflow.id, {
+        name
+      })
     }
   }
 }

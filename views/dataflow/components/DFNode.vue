@@ -1,5 +1,14 @@
 <template>
   <BaseNode :node="data" :class="nodeClass" :style="nodeStyle" @click="mouseClick">
+    <template #text="{ text }">
+      <OverflowTooltip
+        class="df-node-text"
+        :text="text"
+        popper-class="df-node-text-tooltip"
+        placement="top"
+        :open-delay="400"
+      />
+    </template>
     <div class="df-node-options" @click.stop>
       <el-popover
         v-model="showAddMenu"
@@ -21,6 +30,7 @@
         <VIcon>close</VIcon>
       </div>
     </div>
+    <VIcon v-if="hasNodeError(data.id)" class="mr-2" size="14" color="#FF7474">warning</VIcon>
   </BaseNode>
 </template>
 
@@ -31,10 +41,15 @@ import { sourceEndpoint, targetEndpoint } from 'web-core/views/dataflow/style'
 import { NODE_PREFIX } from 'web-core/views/dataflow/constants'
 import BaseNode from 'web-core/views/dataflow/components/BaseNode'
 import VIcon from 'web-core/components/VIcon'
+import OverflowTooltip from 'web-core/components/overflow-tooltip'
 
 export default {
   name: 'DFNode',
-  components: { VIcon, BaseNode },
+  components: {
+    OverflowTooltip,
+    VIcon,
+    BaseNode
+  },
   props: {
     nodeId: {
       type: String,
@@ -59,7 +74,8 @@ export default {
       'isNodeActive',
       'isNodeSelected',
       'isMultiSelect',
-      'processorNodeTypes'
+      'processorNodeTypes',
+      'hasNodeError'
     ]),
 
     data() {
@@ -82,9 +98,10 @@ export default {
     },
 
     nodeStyle() {
+      const [left, top] = this.data.attrs.position
       return {
-        left: this.data.position[0] + 'px',
-        top: this.data.position[1] + 'px'
+        left: left + 'px',
+        top: top + 'px'
       }
     }
   },
@@ -107,7 +124,7 @@ export default {
     __init() {
       const { id, nodeId } = this
 
-      console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint)
+      console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint) // eslint-disable-line
 
       this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
 
@@ -139,6 +156,7 @@ export default {
           // console.log('node-drag-stop', params)
           // 更新节点坐标
           this.isNotMove = false
+          const { position } = this.data.attrs
           const newProperties = []
           const oldProperties = []
 
@@ -153,9 +171,9 @@ export default {
             let x = parseFloat(this.$el.style.left)
             let y = parseFloat(this.$el.style.top)
 
-            if (x === this.data.position[0] && y === this.data.position[1]) {
+            if (x === position[0] && y === position[1]) {
               // 拖拽结束后位置没有改变
-              console.log('没有移动')
+              console.log('没有移动') // eslint-disable-line
               this.isNotMove = true
             }
 
@@ -171,14 +189,14 @@ export default {
               const updateInformation = {
                 id: node.id,
                 properties: {
-                  position: newNodePosition
+                  attrs: { position: newNodePosition }
                 }
               }
 
               oldProperties.push({
                 id: node.id,
                 properties: {
-                  position: node.position
+                  attrs: { position }
                 }
               })
               newProperties.push(updateInformation)
@@ -235,117 +253,6 @@ export default {
   min-width: unset;
 }
 
-.df-node {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  width: 180px;
-  height: 48px;
-  background-color: #fff;
-  border: 1px solid #2c65ff;
-  border-radius: 10px;
-  box-sizing: border-box;
-
-  &-icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 45px;
-    height: 100%;
-    background-color: rgba(44, 101, 255, 0.2);
-    border-right-style: solid;
-    border-right-width: inherit;
-    border-color: inherit;
-    border-top-left-radius: inherit;
-    border-bottom-left-radius: inherit;
-
-    .v-icon {
-      color: #2c65ff;
-      font-size: 24px;
-    }
-  }
-
-  &-text {
-    margin: 0 10px;
-    flex: auto;
-    width: 0;
-    font-size: 14px;
-    line-height: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &-options {
-    position: absolute;
-    top: 100%;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 32px;
-  }
-
-  .node-option {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 6px;
-    width: 20px;
-    height: 20px;
-    background-color: #9bb6ff;
-    border-radius: 100%;
-    cursor: pointer;
-    .v-icon {
-      width: 16px;
-      height: 16px;
-      font-size: 12px;
-      background-color: #2c65ff;
-      color: #fff;
-      border-radius: 100%;
-      &__svg {
-        width: 1em;
-        height: 1em;
-      }
-    }
-  }
-
-  &.node--data {
-    border-color: #6236ff;
-    .df-node-icon {
-      background-color: rgba(98, 54, 255, 0.2);
-      .v-icon {
-        width: 34px !important;
-        height: 34px !important;
-        background-color: #6236ff;
-        color: #fff;
-        font-size: 14px;
-        border-radius: 100%;
-        .v-icon__svg {
-          width: 1em;
-          height: 1em;
-        }
-      }
-    }
-  }
-
-  &.active {
-    border-width: 2px;
-  }
-
-  &.active,
-  &.jtk-drag-selected {
-    border-color: #fa6303;
-  }
-
-  &:hover,
-  &.options-active {
-    .df-node-options {
-      display: flex;
-    }
-  }
-}
-
 .df-menu-list {
   margin: -6px;
   .df-menu-item {
@@ -359,6 +266,21 @@ export default {
     &:hover {
       background-color: #eef3ff;
     }
+  }
+}
+
+.df-node-text-tooltip {
+  transform: translateY(-6px);
+}
+
+.df-node.jtk-drag {
+  &:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
   }
 }
 </style>

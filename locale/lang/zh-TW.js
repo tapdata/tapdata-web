@@ -255,7 +255,7 @@ const tc = {
       favorite: '我的收藏',
       dataVerification: '数据校验',
       delFavMenu: '删除收藏',
-      license: 'License信息',
+      license: 'License管理',
       licenseBefore: '提醒：License剩餘 ',
       licenseAfter: ' 天到期',
       licenseAfterOneDay: ' 天到期',
@@ -1805,7 +1805,8 @@ const tc = {
         CHECK_LOCAL_PORT: '檢查本地端口是否可用',
         SCAN_FILE: '掃描目錄中的文件',
         CHECK_BIN_LOG_SYNC: '檢查binlog日誌同步是否開啟',
-        CHECK_GTID: ' 檢查GTID模式與GTID一致性是否開啟'
+        CHECK_GTID: ' 檢查GTID模式與GTID一致性是否開啟',
+        CHECK_VIKA_API_TOKEN: '檢查vika驗證是否正確'
       },
       initialReadSize: '初始化數據大小',
       incrementalTps: '測試速率(次/秒)',

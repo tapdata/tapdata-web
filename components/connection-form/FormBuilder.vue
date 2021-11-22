@@ -9,7 +9,7 @@
 <script>
 import { createForm } from '@formily/core'
 import { FormProvider, createSchemaField } from '@formily/vue'
-import { components } from '../form'
+import * as components from 'web-core/components/form'
 import '../form/styles/index.scss'
 const { SchemaField } = createSchemaField({
   components

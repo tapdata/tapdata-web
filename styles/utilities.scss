@@ -11,6 +11,7 @@
 .link-primary {
   color: #0d6efd;
 }
+
 .link-primary:hover,
 .link-primary:focus {
   color: #0a58ca;
@@ -19,6 +20,7 @@
 .link-secondary {
   color: #6c757d;
 }
+
 .link-secondary:hover,
 .link-secondary:focus {
   color: #565e64;
@@ -27,6 +29,7 @@
 .link-success {
   color: #198754;
 }
+
 .link-success:hover,
 .link-success:focus {
   color: #146c43;
@@ -35,6 +38,7 @@
 .link-info {
   color: #0dcaf0;
 }
+
 .link-info:hover,
 .link-info:focus {
   color: #3dd5f3;
@@ -43,6 +47,7 @@
 .link-warning {
   color: #ffc107;
 }
+
 .link-warning:hover,
 .link-warning:focus {
   color: #ffcd39;
@@ -51,6 +56,7 @@
 .link-danger {
   color: #dc3545;
 }
+
 .link-danger:hover,
 .link-danger:focus {
   color: #b02a37;
@@ -59,6 +65,7 @@
 .link-light {
   color: #f8f9fa;
 }
+
 .link-light:hover,
 .link-light:focus {
   color: #f9fafb;
@@ -67,6 +74,7 @@
 .link-dark {
   color: #212529;
 }
+
 .link-dark:hover,
 .link-dark:focus {
   color: #1a1e21;
@@ -76,11 +84,13 @@
   position: relative;
   width: 100%;
 }
+
 .ratio::before {
   display: block;
   padding-top: var(--bs-aspect-ratio);
   content: '';
 }
+
 .ratio > * {
   position: absolute;
   top: 0;
@@ -136,6 +146,7 @@
     z-index: 1020;
   }
 }
+
 @media (min-width: 768px) {
   .sticky-md-top {
     position: -webkit-sticky;
@@ -144,6 +155,7 @@
     z-index: 1020;
   }
 }
+
 @media (min-width: 992px) {
   .sticky-lg-top {
     position: -webkit-sticky;
@@ -152,6 +164,7 @@
     z-index: 1020;
   }
 }
+
 @media (min-width: 1200px) {
   .sticky-xl-top {
     position: -webkit-sticky;
@@ -160,6 +173,7 @@
     z-index: 1020;
   }
 }
+
 @media (min-width: 1400px) {
   .sticky-xxl-top {
     position: -webkit-sticky;
@@ -168,6 +182,7 @@
     z-index: 1020;
   }
 }
+
 .hstack {
   display: flex;
   flex-direction: row;
@@ -601,7 +616,8 @@
   min-height: 100vh !important;
 }
 
-.flex-1 {
+.flex-1,
+.flex-fit {
   flex: 1 !important;
 }
 
@@ -2406,6 +2422,14 @@
 
 .fs-6 {
   font-size: 1rem !important;
+}
+
+.fs-7 {
+  font-size: 0.8rem !important;
+}
+
+.fs-8 {
+  font-size: 0.6rem !important;
 }
 
 .fst-italic {
@@ -4524,6 +4548,7 @@
     text-align: center !important;
   }
 }
+
 @media (min-width: 768px) {
   .float-md-start {
     float: left !important;
@@ -6359,6 +6384,7 @@
     text-align: center !important;
   }
 }
+
 @media (min-width: 992px) {
   .float-lg-start {
     float: left !important;
@@ -8194,6 +8220,7 @@
     text-align: center !important;
   }
 }
+
 @media (min-width: 1200px) {
   .float-xl-start {
     float: left !important;
@@ -10029,6 +10056,7 @@
     text-align: center !important;
   }
 }
+
 @media (min-width: 1400px) {
   .float-xxl-start {
     float: left !important;
@@ -11864,6 +11892,7 @@
     text-align: center !important;
   }
 }
+
 @media (min-width: 1200px) {
   .fs-1 {
     font-size: 2.5rem !important;
@@ -11881,6 +11910,7 @@
     font-size: 1.5rem !important;
   }
 }
+
 @media print {
   .print-inline {
     display: inline !important;
@@ -11922,6 +11952,7 @@
     display: none !important;
   }
 }
+
 .justify-center {
   justify-content: center !important;
 }
@@ -11933,6 +11964,7 @@
 .grabbable {
   cursor: grab;
 }
+
 .grabbable:active {
   cursor: grabbing;
 }
@@ -11941,14 +11973,18 @@
 .clickable {
   cursor: pointer;
 }
+
 .cursor-col-resize {
   cursor: col-resize;
 }
+
 .cursor-row-resize {
   cursor: row-resize;
 }
+
 .cursor-grabbing {
   cursor: grabbing;
+  user-select: none;
 }
 
 .absolute-fill {
@@ -11967,81 +12003,99 @@
 .color-primary {
   color: map-get($color, primary) !important;
 }
+
 .color-danger {
   color: map-get($color, danger) !important;
 }
+
 .color-success {
   color: map-get($color, success) !important;
 }
+
 .color-warning {
   color: map-get($color, warning) !important;
 }
+
 .color-lprimary {
   color: map-get($color, lprimary) !important;
 }
+
 .color-lsuccess {
   color: map-get($color, lsuccess) !important;
 }
+
 .color-info {
   color: map-get($color, info) !important;
 }
+
 .color-linfo {
   color: map-get($color, linfo) !important;
 }
+
 .color-disable {
   color: map-get($color, disable) !important;
 }
+
 // 字体颜色
 .font-color-main {
   color: map-get($fontColor, main) !important;
 }
+
 .font-color-sub {
   color: map-get($fontColor, sub) !important;
 }
+
 .font-color-disable {
   color: map-get($fontColor, disable) !important;
 }
+
 // 背景颜色
 .bg-color-primary {
   background-color: map-get($color, primary) !important;
 }
+
 .bg-color-danger {
   background-color: map-get($color, danger) !important;
 }
+
 .bg-color-success {
   background-color: map-get($color, success) !important;
 }
+
 .bg-color-warning {
   background-color: map-get($color, warning) !important;
 }
+
 .bg-color-disable {
   background-color: map-get($color, disable) !important;
 }
+
 /*
 * public 具体的样式类
 */
 .fs-7 {
   font-size: 0.875rem !important;
 }
+
 .fs-8 {
   font-size: 0.75rem !important;
 }
+
 .lh-unset {
   line-height: unset !important;
 }
+
 .ellipsis {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.main-container {
-  padding: 20px;
-  box-sizing: border-box;
-}
+
 // 动画类
 .animation-rotate {
   animation: rotate 5s linear infinite;
 }
+
 @-moz-keyframes rotate {
   0% {
     -moz-transform: rotate(0deg);
@@ -12050,6 +12104,7 @@
     -moz-transform: rotate(1turn);
   }
 }
+
 @-webkit-keyframes rotate {
   0% {
     -webkit-transform: rotate(0deg);
@@ -12058,6 +12113,7 @@
     -webkit-transform: rotate(1turn);
   }
 }
+
 @keyframes rotate {
   0% {
     transform: rotate(0deg);
@@ -12067,3 +12123,68 @@
     transform: rotate(1turn);
   }
 }
+@keyframes showWidthAll {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+@keyframes hideWidthAll {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0;
+  }
+}
+
+.dotting {
+  display: inline-block;
+  width: 10px;
+  min-height: 2px;
+  padding-right: 2px;
+  border-left: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  background-color: currentColor;
+  background-clip: content-box;
+  box-sizing: border-box;
+  animation: dot 4s infinite step-start both;
+}
+.dotting:before {
+  content: '...';
+} /* IE8 */
+.dotting::before {
+  content: '';
+}
+:root .dotting {
+  margin-left: 2px;
+  padding-left: 2px;
+} /* IE9+ */
+
+@keyframes dot {
+  25% {
+    border-color: transparent;
+    background-color: transparent;
+  } /* 0个点 */
+  50% {
+    border-right-color: transparent;
+    background-color: transparent;
+  } /* 1个点 */
+  75% {
+    border-right-color: transparent;
+  } /* 2个点 */
+}
+
+.tooltip-fade-in-enter-active {
+  transition: opacity 200ms linear;
+}
+.tooltip-fade-in-enter,
+.tooltip-fade-in-leave,
+.tooltip-fade-in-leave-active {
+  opacity: 0;
+}
+/*.tooltip-fade-in-leave-active {
+  transition: opacity 0 linear;
+}*/

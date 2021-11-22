@@ -3,48 +3,50 @@ export const NODE_WIDTH = 180
 export const NODE_HEIGHT = 40
 
 export const DEFAULT_SETTINGS = {
-  isSerialMode: false,
-  sync_type: 'initial_sync+cdc',
-  readBatchSize: 100,
-  notificationWindow: 0,
-  notificationInterval: 300,
-  readCdcInterval: 500,
-  maxTransactionLength: 12,
-  description: '',
-  cdcFetchSize: 1,
-  distinctWriteType: 'intellect',
-  drop_target: false,
-  run_custom_sql: false,
-  needToCreateIndex: true,
-  increment: false,
-  isSchedule: false,
-  cronExpression: '',
-  isOpenAutoDDL: false,
-  cdcConcurrency: false,
-  cdcShareFilterOnServer: false,
-  emailWaring: {
-    edited: false,
-    started: false,
-    error: false,
-    paused: false
-  },
-  readShareLogMode: 'STREAMING',
-  stopOnError: true,
-  syncPoints: [
-    {
-      connectionId: '',
-      type: 'current', // localTZ: 本地时区； connTZ：连接时区
-      time: '',
-      date: '',
-      name: '',
-      timezone: '+08:00' // 当type为localTZ时有该字段
-    }
-  ],
-  processorConcurrency: 1,
-  transformerConcurrency: 8,
-  lagTimeFalg: false,
-  userSetLagTime: 0,
-  noPrimaryKey: false
+  name: '', // 任务名称
+  type: 'initial_sync+cdc', // 任务类型：全量+增量
+  desc: '', // 任务描述
+  increOperationMode: false // 增量数据处理模式：批量
+  // readBatchSize: 100,
+  // notificationWindow: 0,
+  // notificationInterval: 300,
+  // readCdcInterval: 500,
+  // maxTransactionLength: 12,
+  // description: '',
+  // cdcFetchSize: 1,
+  // distinctWriteType: 'intellect',
+  // drop_target: false,
+  // run_custom_sql: false,
+  // needToCreateIndex: true,
+  // increment: false,
+  // isSchedule: false,
+  // cronExpression: '',
+  // isOpenAutoDDL: false,
+  // cdcConcurrency: false,
+  // cdcShareFilterOnServer: false,
+  // emailWaring: {
+  //   edited: false,
+  //   started: false,
+  //   error: false,
+  //   paused: false
+  // },
+  // readShareLogMode: 'STREAMING',
+  // stopOnError: true,
+  // syncPoints: [
+  //   {
+  //     connectionId: '',
+  //     type: 'current', // localTZ: 本地时区； connTZ：连接时区
+  //     time: '',
+  //     date: '',
+  //     name: '',
+  //     timezone: '+08:00' // 当type为localTZ时有该字段
+  //   }
+  // ],
+  // processorConcurrency: 1,
+  // transformerConcurrency: 8,
+  // lagTimeFalg: false,
+  // userSetLagTime: 0,
+  // noPrimaryKey: false
 }
 
 export const DB_ICON = {
@@ -72,11 +74,12 @@ export const DB_ICON = {
 
 export const NODE_TYPE_ICON = {
   table: 'table',
-  js_processor: 'js',
+  js_processor: 'javascript',
   field_processor: 'field-processor',
   aggregation_processor: 'aggregator',
   row_filter_processor: 'row-filter',
-  cache_lookup_processor: 'joint-cache'
+  cache_lookup_processor: 'joint-cache',
+  join: 'join'
 }
 
 export const STATUS_MAP = {
