@@ -580,6 +580,7 @@ export default {
           })
           .then(data => {
             this.responseHandler(data, '操作成功')
+            this.getData()
           })
           .catch(() => {
             this.$message.error('重置失败')
