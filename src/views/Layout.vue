@@ -39,6 +39,7 @@
           'dameng',
           'greenplum',
           'mq',
+          'kundb',
           'adb_mysql',
           'adb_postgres'
         ]"

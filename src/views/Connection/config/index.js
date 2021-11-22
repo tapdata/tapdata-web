@@ -36,6 +36,7 @@ import dfs_dameng from './dfs_dameng'
 import dfs_kafka from './dfs_kafka'
 import dfs_greenplum from './dfs_greenplum'
 import dfs_mq from './dfs_mq'
+import dfs_kundb from './dfs_kundb'
 import dfs_adb_postgres from './dfs_adb_postgres'
 import dfs_adb_mysql from './dfs_adb_mysql'
 
@@ -78,6 +79,7 @@ export default {
   dfs_kafka,
   dfs_greenplum,
   dfs_mq,
+  dfs_kundb,
   dfs_adb_postgres,
   dfs_adb_mysql
 }
