@@ -78,7 +78,7 @@ axios.interceptors.request.use(
     if (pending.includes(key)) {
       console.log('Cancel request:', JSON.parse(key)) //eslint-disable-line
       cancelFunc()
-    } else {
+    } else if (config.method !== 'get') {
       pending.push(key)
     }
     return config
