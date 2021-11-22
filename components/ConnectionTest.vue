@@ -74,7 +74,6 @@
 </template>
 
 <script>
-let callback = null
 export default {
   name: 'ConnectionTest',
   data() {
@@ -92,6 +91,7 @@ export default {
       retryData: {}, //重试
       status: '',
       timer: null,
+      callback: null,
       // hideTableInfo: false,
       colorMap: {
         passed: '#70AD47',
@@ -133,10 +133,9 @@ export default {
   },
   destroyed() {
     if (this.$ws) {
-      if (callback) {
-        this.$ws.off('open', callback)
+      if (this.callback) {
+        this.$ws.off('open', this.callback)
       }
-      this.$ws.off('testConnectionResult', this.hanlderTestConnectionResult)
       this.$ws.off('testConnectionResult', this.hanlderTestConnectionResult)
       this.$ws.off('testConnection', this.hanldleTestConnection)
     }
@@ -156,44 +155,46 @@ export default {
       this.visible = false
     },
     hanlderTestConnectionResult(data) {
-      this.isTimeout = false //有回调
-      //this.wsErrorMsg = data.error
-      let result = data.result || []
-      this.wsError = data.status
-      let testData = {
-        wsError: data.status
-      }
-      if (result.response_body) {
-        let validate_details = result.response_body.validate_details || []
-        let res = validate_details.filter(item => item.status !== 'waiting')
-        // let unPassedNums = validate_details.filter(item => item.status !== 'passed');
-        if (res.length === 0) {
-          validate_details = validate_details.map(item => {
-            item.status = 'unTest'
+      if (!this.status && this.wsError !== 'ERROR') {
+        this.isTimeout = false //有回调
+        // this.wsErrorMsg = data.error
+        let result = data.result || []
+        this.wsError = data.status
+        let testData = {
+          wsError: data.status
+        }
+        if (result.response_body) {
+          let validate_details = result.response_body.validate_details || []
+          let res = validate_details.filter(item => item.status !== 'waiting')
+          // let unPassedNums = validate_details.filter(item => item.status !== 'passed');
+          if (res.length === 0) {
+            validate_details = validate_details.map(item => {
+              item.status = 'unTest'
+              return item
+            })
+          }
+          // if (unPassedNums.length === 0) {
+          // 	this.hideTableInfo = true;
+          // }
+          this.testData.testLogs = validate_details
+          testData['testLogs '] = validate_details
+          testData['status'] = result.status
+          this.status = result.status
+        } else {
+          let logs = this.testData.testLogs.map(item => {
+            item.status = 'invalid'
             return item
           })
+          this.testData.testLogs = logs
+          testData['testLogs '] = logs
+          testData['status'] = data.status
+          this.status = data.status
         }
-        // if (unPassedNums.length === 0) {
-        // 	this.hideTableInfo = true;
-        // }
-        this.testData.testLogs = validate_details
-        testData['testLogs '] = validate_details
-        testData['status'] = result.status
-        this.status = result.status
-      } else {
-        let logs = this.testData.testLogs.map(item => {
-          item.status = 'invalid'
-          return item
-        })
-        this.testData.testLogs = logs
-        testData['testLogs '] = logs
-        testData['status'] = data.status
-        this.status = data.status
+        this.$emit('receive', testData)
       }
-      this.$emit('receive', testData)
     },
     hanldleTestConnection(data) {
-      this.wsError = data.status
+      this.wsError = 'ERROR'
       //this.wsErrorMsg = data.error
       let testData = {
         wsError: data.status
@@ -248,11 +249,13 @@ export default {
           self.$emit('receive', testData)
         }
       }, 8000)
-      callback = () => {
-        this.$ws.send(msg)
+      this.callback = () => {
+        if (!this.status && this.wsError !== 'ERROR') {
+          this.$ws.send(msg)
+        }
       }
-      callback()
-      this.$ws.on('open', callback)
+      this.callback()
+      this.$ws.on('open', this.callback)
     }
   }
 }
