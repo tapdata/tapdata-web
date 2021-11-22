@@ -1204,6 +1204,7 @@ export default {
             font-weight: 400;
             color: #000000;
             line-height: 17px;
+            text-align: left;
           }
           .target {
             font-size: 12px;
@@ -1211,6 +1212,7 @@ export default {
             color: #ef9868;
             line-height: 17px;
             margin-top: 16px;
+            text-align: left;
           }
           .select {
             font-size: 12px;
