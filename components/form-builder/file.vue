@@ -4,7 +4,7 @@ export default {
   name: 'FbFile',
   mixins: [mixins],
   props: {
-    value: [File, String],
+    value: [File, String, Object],
     config: {
       require: true,
       type: Object
@@ -18,12 +18,12 @@ export default {
   render(h) {
     let self = this
     let config = self.config
+    let fileName = this?.value?.name || config.fileName || ''
     let selectFile = file => {
       this.fileName = file.name
       self.$emit('input', file)
       self.$emit('change', file)
     }
-    let fileName = this.value ? this.value.name : ''
     return h(
       'ElInput',
       {
