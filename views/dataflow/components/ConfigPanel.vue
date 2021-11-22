@@ -6,18 +6,21 @@
     }"
     class="config-panel border-top"
   >
+    <VIcon class="config-panel-close" size="16" @click="handleClosePanel">close</VIcon>
     <div v-if="activeType === 'settings'" class="h-100 flex flex-column overflow-hidden">
-      <div class="panel-header flex align-center px-4 border-bottom fs-7">
+      <SettingPanel v-bind="$attrs" v-on="$listeners"></SettingPanel>
+      <!-- <div class="panel-header flex align-center px-4 border-bottom fs-7">
         <VIcon class="header-icon mr-2">setting</VIcon>
         设置
-      </div>
-      <div class="flex-1 position-relative">
+      </div> -->
+      <!-- <div class="flex-1 position-relative">
         <FormPanel v-on="$listeners"></FormPanel>
-      </div>
+      </div> -->
     </div>
     <div v-else class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
-        <VIcon class="header-icon mr-2">{{ icon }}</VIcon>
+        <!--<VIcon class="header-icon mr-2">{{ icon }}</VIcon>-->
+        <ElImage class="mr-2" :src="icon"></ElImage>
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
           <input
             ref="nameInput"
@@ -50,10 +53,11 @@ import { mapGetters, mapMutations } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import FormPanel from 'web-core/views/dataflow/components/FormPanel'
+import SettingPanel from 'web-core/views/dataflow/components/SettingPanel'
 import DataPane from 'web-core/views/dataflow/components/DataPane'
 import MetaPane from 'web-core/views/dataflow/components/MetaPane'
 import VIcon from 'web-core/components/VIcon'
-import { NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
+import { DB_ICON, NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
 import focusSelect from 'web-core/directives/focusSelect'
 import { validateBySchema } from 'web-core/components/form/utils/validate'
 
@@ -75,13 +79,16 @@ export default {
     }
   },
 
-  components: { VIcon, MetaPane, DataPane, FormPanel },
+  components: { VIcon, MetaPane, DataPane, FormPanel, SettingPanel },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById']),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'settingPanelType']),
 
     icon() {
-      return this.activeNode ? NODE_TYPE_ICON[this.activeNode.type] : null
+      const node = this.activeNode
+      if (!node) return null
+      const icon = node.type === 'table' ? DB_ICON[node.databaseType] : NODE_TYPE_ICON[node.type]
+      return icon ? require(`web-core/assets/images/node-icon/${icon}.svg`) : null
     }
   },
 
@@ -103,7 +110,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError']),
+    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
 
     handleChangeName(e) {
       this.updateNodeProperties({
@@ -116,6 +123,10 @@ export default {
 
     focusNameInput() {
       this.$refs.nameInput.focus()
+    },
+
+    handleClosePanel() {
+      this.setActiveType(null)
     }
   }
 }
@@ -141,7 +152,7 @@ $headerHeight: 40px;
 .title-input-wrap {
   position: relative;
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
 
   &:hover {
     .title-input {
@@ -163,6 +174,7 @@ $headerHeight: 40px;
     background: 0 0;
     border: 1px solid transparent;
     border-radius: 4px;
+    font-size: inherit;
     transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
     &:focus {
@@ -189,6 +201,13 @@ $headerHeight: 40px;
   transition: height 0.24s;
   will-change: height;
 
+  &-close {
+    position: absolute;
+    z-index: 3;
+    top: 12px;
+    right: 16px;
+  }
+
   .config-tabs-wrap {
     position: relative;
     height: 100%;
@@ -201,6 +220,11 @@ $headerHeight: 40px;
     z-index: 1;
     width: $tabsHeaderWidth;
     height: $headerHeight;
+
+    .el-image {
+      width: 20px;
+      height: 20px;
+    }
   }
 
   .panel-header {
@@ -211,6 +235,31 @@ $headerHeight: 40px;
     color: $color;
     font-size: 18px;
   }
+  /*.setting-tabs {
+    ::v-deep {
+      .el-tabs__content {
+        height: calc(100% - 55px);
+        .el-tab-pane {
+          height: 100%;
+          .setting-tabs-box {
+            box-sizing: border-box;
+            .title {
+              height: 40px;
+              line-height: 40px;
+            }
+            textarea {
+              border: 1px solid #d9d9d9;
+              min-width: 600px;
+              min-height: 100px;
+              &:focus {
+                outline: initial;
+              }
+            }
+          }
+        }
+      }
+    }
+  }*/
 
   ::v-deep {
     .config-tabs.el-tabs {

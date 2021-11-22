@@ -21,7 +21,6 @@ export class FieldProcessor extends NodeType {
       operations: {
         type: 'object',
         title: '',
-        required: true,
         'x-decorator': 'FormItem',
         'x-component': 'FieldProcess',
         'x-reactions': ['{{useAsyncDataSource(loadTableField)}}']

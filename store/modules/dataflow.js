@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import { isObject } from 'web-core/utils/util'
+import { DB_ICON } from 'web-core/views/dataflow/constants'
 
 const find = (obj, nameParts, conditions) => {
   if (!nameParts.length) return obj
@@ -74,12 +75,9 @@ const state = () => ({
   selectedNodes: [], // 选中的节点
   activeType: null,
   formSchema: null,
-  dataflow: {
-    id: '',
-    name: '',
-    settings: {},
-    // 编辑器配置
-    nodes: [] // 画布上的所有节点s
+  dag: {
+    nodes: [], // 节点数据
+    edges: [] // 连线数据
   }
 })
 
@@ -87,21 +85,6 @@ const state = () => ({
 const getters = {
   getStateIsDirty: state => {
     return state.stateIsDirty
-  },
-
-  dataflowName: state => {
-    return state.dataflow.name
-  },
-
-  dataflowId: state => {
-    return state.dataflow.id
-  },
-
-  dataflowSettings: state => {
-    if (state.dataflow.settings === undefined) {
-      return {}
-    }
-    return state.dataflow.settings
   },
 
   // 判断action是否被标记
@@ -133,14 +116,17 @@ const getters = {
     return foundType
   },
 
+  dag: state => state.dag,
+
   // 获取画布所有节点
-  allNodes: state => {
-    return state.dataflow.nodes
-  },
+  allNodes: state => state.dag.nodes,
+
+  // 所有连线
+  allEdges: state => state.dag.edges,
 
   // 根据id获取节点
   nodeById: state => id => {
-    const foundNode = state.dataflow.nodes.find(node => node.id === id)
+    const foundNode = state.dag.nodes.find(node => node.id === id)
 
     if (foundNode === undefined) {
       return null
@@ -211,25 +197,6 @@ const mutations = {
     state.stateIsDirty = dirty
   },
 
-  // Id
-  setDataflowId(state, id) {
-    state.dataflow.id = id
-  },
-
-  // Name
-  setDataflowName(state, data) {
-    if (data.setStateDirty === true) {
-      state.stateIsDirty = true
-    }
-    state.dataflow.name = data.newName
-  },
-
-  // Settings
-  setDataflowSettings(state, dataflowSettings) {
-    Vue.set(state.dataflow, 'settings', dataflowSettings)
-    console.log('dataflow', state.dataflow) // eslint-disable-line
-  },
-
   /**
    * 标记action
    * @param state
@@ -290,20 +257,35 @@ const mutations = {
 
   // 添加节点
   addNode(state, nodeData) {
-    state.dataflow.nodes.push(nodeData)
+    state.dag.nodes.push(nodeData)
   },
 
   // 更新节点属性
   updateNodeProperties(state, updateInformation) {
     console.log('updateInformation', updateInformation) // eslint-disable-line
-    const node = state.dataflow.nodes.find(node => {
-      return node.id === updateInformation.id
-    })
+    const node = state.dag.nodes.find(node => node.id === updateInformation.id)
+
+    const updateObjVal = (target, obj) => {
+      Object.entries(obj).forEach(([key, value]) => {
+        if (isObject(value)) {
+          updateObjVal(target[key], value)
+        } else {
+          Vue.set(target, key, value)
+        }
+      })
+    }
 
     if (node) {
-      for (const key of Object.keys(updateInformation.properties)) {
+      updateObjVal(node, updateInformation.properties)
+      /*Object.entries(updateInformation.properties).forEach(([key, value]) => {
+        if (isObject(value)) {
+        } else {
+          Vue.set(node, key, value)
+        }
+      })*/
+      /*for (const key of Object.keys(updateInformation.properties)) {
         Vue.set(node, key, updateInformation.properties[key])
-      }
+      }*/
     }
   },
 
@@ -328,7 +310,7 @@ const mutations = {
 
   // 针对数组，修改某个项的值
   setNodeValueByConditions(state, updateInformation) {
-    const node = state.dataflow.nodes.find(node => node.id === updateInformation.id)
+    const node = state.dag.nodes.find(node => node.id === updateInformation.id)
     const nameParts = updateInformation.key.split('.')
     const key = nameParts[nameParts.length - 1]
     const { conditions } = updateInformation
@@ -345,7 +327,7 @@ const mutations = {
 
   // 通过Path[k1.k2]更新节点
   setNodeValueByPath(state, updateInformation) {
-    const node = state.dataflow.nodes.find(node => node.id === updateInformation.id)
+    const node = state.dag.nodes.find(node => node.id === updateInformation.id)
     const nameParts = updateInformation.path.split('.')
     const key = nameParts.pop()
     const { conditions = [] } = updateInformation
@@ -362,7 +344,7 @@ const mutations = {
 
   // 更新节点value
   setNodeValue(state, updateInformation) {
-    const node = state.dataflow.nodes.find(node => node.id === updateInformation.id)
+    const node = state.dag.nodes.find(node => node.id === updateInformation.id)
 
     if (node === undefined || node === null) {
       throw new Error('未找到节点')
@@ -374,53 +356,23 @@ const mutations = {
 
   // 添加连接，设置input、output
   addConnection(state, connection) {
-    const { sourceId, targetId } = connection
-    const sourceNode = state.dataflow.nodes.find(node => {
-      return node.id === sourceId
-    })
-    const targetNode = state.dataflow.nodes.find(node => {
-      return node.id === targetId
-    })
-    const { outputLanes = [] } = sourceNode
-    const { inputLanes = [] } = targetNode
+    const { source, target } = connection
+    const index = state.dag.edges.findIndex(item => item.source === source && item.target === target)
 
-    if (!outputLanes.includes(targetId)) {
-      outputLanes.push(targetId)
-      Vue.set(sourceNode, 'outputLanes', outputLanes)
-    }
-
-    if (!inputLanes.includes(sourceId)) {
-      inputLanes.push(sourceId)
-      Vue.set(targetNode, 'inputLanes', inputLanes)
-    }
+    if (!~index) state.dag.edges.push(connection)
   },
 
   // 删除连接，清空input中的sourceId、output中的targetId
   removeConnection(state, connection) {
-    const { sourceId, targetId } = connection
-    const sourceNode = state.dataflow.nodes.find(node => {
-      return node.id === sourceId
-    })
-    const targetNode = state.dataflow.nodes.find(node => {
-      return node.id === targetId
-    })
+    const { source, target } = connection
+    const index = state.dag.edges.findIndex(item => item.source === source && item.target === target)
 
-    const { outputLanes = [] } = sourceNode
-    const { inputLanes = [] } = targetNode
-
-    const ti = outputLanes.indexOf(targetId)
-    const si = inputLanes.indexOf(sourceId)
-
-    if (~ti) outputLanes.splice(ti, 1)
-    if (~si) inputLanes.splice(si, 1)
-
-    Vue.set(sourceNode, 'outputLanes', outputLanes)
-    Vue.set(targetNode, 'inputLanes', inputLanes)
+    if (~index) state.dag.edges.splice(index, 1)
   },
 
   // 移除节点
   removeNode(state, node) {
-    const { nodes } = state.dataflow
+    const { nodes, edges } = state.dag
     const nodeId = node.id
     const index = nodes.findIndex(n => n.id === nodeId)
 
@@ -433,19 +385,7 @@ const mutations = {
 
     nodes.splice(index, 1)
 
-    if (node.outputLanes?.length || node.inputLanes?.length) {
-      nodes.forEach(n => {
-        if (n.outputLanes?.length) {
-          const ti = n.outputLanes.indexOf(nodeId)
-          if (~ti) n.outputLanes.splice(ti, 1)
-        }
-
-        if (n.inputLanes?.length) {
-          const si = n.inputLanes.indexOf(nodeId)
-          if (~si) n.inputLanes.splice(si, 1)
-        }
-      })
-    }
+    state.dag.edges = edges.filter(({ source, target }) => nodeId !== source && nodeId !== target)
 
     state.stateIsDirty = true
   },
@@ -455,7 +395,7 @@ const mutations = {
     if (data?.setStateDirty === true) {
       state.stateIsDirty = true
     }
-    state.dataflow.nodes.splice(0, state.dataflow.nodes.length)
+    state.dag.nodes.splice(0, state.dag.nodes.length)
   },
 
   setFormSchema(state, schema) {
@@ -479,6 +419,20 @@ const mutations = {
    */
   clearNodeError(state, id) {
     Vue.delete(state.nodeErrorState, id)
+  },
+
+  resetDag(state) {
+    state.dag.nodes = []
+    state.dag.edges = []
+  },
+
+  genDBIcon(item) {
+    let icon = DB_ICON[item.database_type]
+    return icon ? require(`web-core/assets/images/db-icon/${icon}.svg`) : null
+  },
+
+  setEdges(state, edges) {
+    state.dag.edges = edges
   }
 }
 

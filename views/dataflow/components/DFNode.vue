@@ -98,9 +98,10 @@ export default {
     },
 
     nodeStyle() {
+      const [left, top] = this.data.attrs.position
       return {
-        left: this.data.position[0] + 'px',
-        top: this.data.position[1] + 'px'
+        left: left + 'px',
+        top: top + 'px'
       }
     }
   },
@@ -155,6 +156,7 @@ export default {
           // console.log('node-drag-stop', params)
           // 更新节点坐标
           this.isNotMove = false
+          const { position } = this.data.attrs
           const newProperties = []
           const oldProperties = []
 
@@ -169,7 +171,7 @@ export default {
             let x = parseFloat(this.$el.style.left)
             let y = parseFloat(this.$el.style.top)
 
-            if (x === this.data.position[0] && y === this.data.position[1]) {
+            if (x === position[0] && y === position[1]) {
               // 拖拽结束后位置没有改变
               console.log('没有移动') // eslint-disable-line
               this.isNotMove = true
@@ -187,14 +189,14 @@ export default {
               const updateInformation = {
                 id: node.id,
                 properties: {
-                  position: newNodePosition
+                  attrs: { position: newNodePosition }
                 }
               }
 
               oldProperties.push({
                 id: node.id,
                 properties: {
-                  position: node.position
+                  attrs: { position }
                 }
               })
               newProperties.push(updateInformation)
