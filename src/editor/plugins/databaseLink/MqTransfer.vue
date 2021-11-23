@@ -137,6 +137,8 @@ export default {
     },
     loadData() {
       this.data = [...this.source]
+      this.data = this.data.map(item => ({ key: item.original_name, label: item.original_name }))
+
       // // 一开始设置全部数据
       this.data2 = [...this.data]
       this.topicData = this.value?.topicData || []

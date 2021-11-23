@@ -511,9 +511,7 @@ export default {
               order: 'original_name ASC'
             })
           })
-          if (result.data?.length) {
-            tables = result.data.map(item => ({ label: item.original_name, key: item.original_name }))
-          }
+          tables = result.data
         } else {
           const { data: connectionInfo } = await connections.customQuery([connectionId], { schema: true })
           this.model.mqType = connectionInfo.mqType
