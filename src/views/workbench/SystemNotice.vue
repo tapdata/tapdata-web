@@ -23,7 +23,7 @@
           <ElButton size="mini" @click="handleAllDelete()" :disabled="list.length < 1"> 全部删除 </ElButton>
         </div>
       </div>
-      <El-table
+      <ElTable
         class="system-table table-border"
         style="margin-top: 10px"
         height="100%"
@@ -53,7 +53,7 @@
           <VIcon size="100">no-notice-color</VIcon>
           <span v-if="!isSearching" style="display: inline-block; margin-left: 6px">暂无通知</span>
         </div>
-      </El-table>
+      </ElTable>
       <ElPagination
         background
         class="mt-3"
