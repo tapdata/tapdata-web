@@ -235,7 +235,9 @@ export default {
                 val = val.replace(/\s+/g, '')
               }
               if (config.type === 'file' && config.fileNameField) {
-                self.value[config.fileNameField] = val?.name || ''
+                let file = val
+                self.value[config.fileNameField] = file?.name || ''
+                val = file?.val || ''
               }
               self.value[config.field] = val
               let influences = config.influences
