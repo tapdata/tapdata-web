@@ -30,7 +30,7 @@
         <div class="flex mb-2 ml-6">
           <div class="flex">
             <span class="task-form__text"> {{ $t('dag_dialog_field_mapping_search_table') }}：</span>
-            <ElInput v-model="searchTable" size="mini" @change="search('table')"></ElInput>
+            <ElInput v-model="searchTable" clearable size="mini" @input="search('table')"></ElInput>
           </div>
         </div>
         <div class="mb-2 ml-6" v-if="progress.showProgress">
@@ -79,7 +79,7 @@
         <div class="flex mb-2 ml-2 text-start">
           <div class="flex align-items-center">
             <span class="task-form__text"> {{ $t('dag_dialog_field_mapping_search_field') }} : </span>
-            <ElInput v-model="searchField" size="mini" @change="search('field')"></ElInput>
+            <ElInput v-model="searchField" size="mini" @input="search('field')"></ElInput>
           </div>
           <div class="item ml-5" v-if="!readOnly">
             <ElButton size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
@@ -330,6 +330,7 @@
 import VIcon from './VIcon'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import ws from '../api/ws'
+import { delayTrigger } from '@/utils/util'
 export default {
   name: 'FieldMappingDialog',
   components: { VIcon },
@@ -696,25 +697,42 @@ export default {
         //获取第一页推演结果
         this.loadingPage = true
         this.$nextTick(() => {
-          this.getNavDataMethod &&
-            this.getNavDataMethod(this.page, this.searchTable)
-              .then(({ data }) => {
-                this.fieldMappingNavData = data
-              })
-              .finally(() => {
-                this.loadingPage = false
-              })
+          delayTrigger(() => {
+            this.getNavDataMethod &&
+              this.getNavDataMethod(this.page, this.searchTable)
+                .then(({ data, total }) => {
+                  this.fieldMappingNavData = data || []
+                  if (!data || data?.length === 0) {
+                    //无表则清空右边的表
+                    this.fieldMappingTableData = []
+                    return
+                  }
+                  this.selectRow = data[0]
+                  this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+                  this.page.total = total
+                  //初始化右侧列表
+                  this.initTableData()
+                  this.initTypeMapping()
+                })
+                .finally(() => {
+                  this.loadingPage = false
+                })
+          }, 100)
         })
       } else {
-        if (this.searchField.trim()) {
-          this.searchField = this.searchField.trim().toString() //去空格
-          this.fieldMappingTableData = this.defaultFieldMappingTableData.filter(v => {
-            let str = (v.field_name + '' + v.t_field_name).toLowerCase()
-            return str.indexOf(this.searchField.toLowerCase()) > -1
-          })
-        } else {
-          this.fieldMappingTableData = this.defaultFieldMappingTableData
-        }
+        this.$nextTick(() => {
+          delayTrigger(() => {
+            if (this.searchField.trim()) {
+              this.searchField = this.searchField.trim().toString() //去空格
+              this.fieldMappingTableData = this.defaultFieldMappingTableData.filter(v => {
+                let str = (v.field_name + '' + v.t_field_name).toLowerCase()
+                return str.indexOf(this.searchField.toLowerCase()) > -1
+              })
+            } else {
+              this.fieldMappingTableData = this.defaultFieldMappingTableData
+            }
+          }, 100)
+        })
       }
     },
     /*清空搜索条件*/
