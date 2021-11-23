@@ -130,7 +130,7 @@ export default {
       }
       // msg.userId = this.$cookie.get('user_id')
 
-      // this.getUnReadNum()
+      this.getUnReadNum()
       if (this.$ws) {
         this.$ws.on('notification', async data => {
           await this.getUnReadNum()
@@ -166,16 +166,10 @@ export default {
     // 获取未读的消息数量
     getUnReadNum() {
       let where = {
-        read: false,
-        isDeleted: {
-          neq: true
-        }
+        read: false
       }
       return this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-        this.unRead = res.count
-        // this.$store.commit('notification', {
-        //   unRead: res.data.count
-        // })
+        this.unRead = res
       })
     },
     // 已读消息
