@@ -309,10 +309,10 @@ export default {
     loadNotices() {
       this.notices = [
         {
-          id: 0,
+          id: 2,
           type: '',
-          name: 'Tapdata Cloud上线公测',
-          time: '2021-07-01'
+          name: 'Tapdata Cloud 1.0.6 版本发布啦！',
+          time: '2021-08-30'
         },
         {
           id: 1,
@@ -321,10 +321,10 @@ export default {
           time: '2021-07-31'
         },
         {
-          id: 2,
+          id: 0,
           type: '',
-          name: 'Tapdata Cloud 1.0.6 版本发布啦！',
-          time: '2021-08-30'
+          name: 'Tapdata Cloud上线公测',
+          time: '2021-07-01'
         }
       ]
     },
