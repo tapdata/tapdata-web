@@ -424,6 +424,9 @@ export default {
         self.page.total = finished
         if (status !== 'done') {
           self.progress.showProgress = true
+          if (self.fieldMappingNavData?.length < self.page.size && self.page.current === 1) {
+            self.initNavData()
+          }
         } else {
           self.progress.showProgress = false
           self.initNavData()
