@@ -73,18 +73,13 @@
         <template v-if="step === 1">
           <div class="step-content__title fs-6 fw-bolder">创建源连接</div>
           <div class="step-content__desc mt-6">
-            <div>
-              数据源指的是可以作为源的数据库、file、GridFS、REST API 等类型的连接，必须先创建源连接才能创建迁移任务。
-            </div>
+            <div>数据源指的是可以作为源的数据库连接，必须先创建源连接才能创建迁移任务。</div>
           </div>
         </template>
         <template v-else>
           <div class="step-content__title fs-6 fw-bolder">创建目标连接</div>
           <div class="step-content__desc mt-6">
-            <div>
-              目标连接指的是可以作为目标的数据库、file、GridFS、REST API
-              等类型的连接，必须创建目标连接才能创建迁移任务。
-            </div>
+            <div>目标连接指的是可以作为目标的数据库连接，必须创建目标连接才能创建迁移任务。</div>
           </div>
         </template>
 
