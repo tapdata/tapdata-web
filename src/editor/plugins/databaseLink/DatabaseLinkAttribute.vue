@@ -93,6 +93,7 @@
                 </span>
               </template>
             </VirtualTransfer>
+
             <!-- MQ穿梭框 start -->
             <template v-else>
               <MqTransfer
@@ -510,7 +511,9 @@ export default {
               order: 'original_name ASC'
             })
           })
-          tables = result.data
+          if (result.data?.length) {
+            tables = result.data.map(item => ({ label: item.original_name, key: item.original_name }))
+          }
         } else {
           const { data: connectionInfo } = await connections.customQuery([connectionId], { schema: true })
           this.model.mqType = connectionInfo.mqType
