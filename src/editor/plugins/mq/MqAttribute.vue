@@ -425,6 +425,7 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {
