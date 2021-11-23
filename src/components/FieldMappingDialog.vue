@@ -635,7 +635,7 @@ export default {
     rollbackAll() {
       this.$confirm(
         this.$t('dag_dialog_field_mapping_error_rollback_all'),
-        this.$t('dag_dialog_field_mapping_error_rollback'),
+        this.$t('dag_dialog_field_mapping_error_tip'),
         {
           type: 'warning'
         }
