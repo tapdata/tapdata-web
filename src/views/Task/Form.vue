@@ -757,6 +757,9 @@ export default {
       if (type === 'mapping') {
         this.transferData = this.$refs.transfer.returnData()
       }
+      if (type === 'setting') {
+        this.allowDatabaseType()
+      }
       //当前表的字段映射保存
       if (type === 'table') {
         //保存字段映射
@@ -769,8 +772,6 @@ export default {
       this.activeStep -= 1
       this.taskStep--
       this.getFormConfig()
-      // 重置 数据源类型列表
-      this.allowDatabaseType()
     },
     // 根据步骤获取不同的表单项目
     async getFormConfig() {
@@ -861,11 +862,11 @@ export default {
     },
     getWhere(type) {
       let where = {}
-      if (type === 'source') {
+      if (type === 'source' && this.dataSourceModel.source_databaseType !== 'all') {
         where = {
           database_type: { in: [this.dataSourceModel.source_databaseType] }
         }
-      } else {
+      } else if (type === 'target' && this.dataSourceModel.target_databaseType !== 'all') {
         where = {
           database_type: { in: [this.dataSourceModel.target_databaseType] }
         }
@@ -1005,7 +1006,7 @@ export default {
                 value: item
               }
             })
-            source.options.unshift([{ label: '全部', value: 'all' }])
+            source.options.unshift({ label: '全部', value: 'all' })
           }
           let target = items.find(it => it.field === 'target_databaseType')
           if (target) {
@@ -1016,7 +1017,7 @@ export default {
               }
             })
           }
-          target.options.unshift([{ label: '全部', value: 'all' }])
+          target.options.unshift({ label: '全部', value: 'all' })
           break
         }
       }
