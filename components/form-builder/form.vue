@@ -234,8 +234,8 @@ export default {
               if (!config.allowSpace) {
                 val = val.replace(/\s+/g, '')
               }
-              if (config.type === 'file' && config.fileNameField && val) {
-                self.value[config.fileNameField] = val.name
+              if (config.type === 'file' && config.fileNameField) {
+                self.value[config.fileNameField] = val?.name || ''
               }
               self.value[config.field] = val
               let influences = config.influences
