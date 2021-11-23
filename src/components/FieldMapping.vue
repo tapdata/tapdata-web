@@ -41,6 +41,7 @@
 <script>
 import FieldMappingDialog from './FieldMappingDialog'
 import ws from '../api/ws'
+
 export default {
   name: 'FiledMapping',
   components: { FieldMappingDialog },
@@ -117,7 +118,8 @@ export default {
         sinkStageId: this.transform.stageId
       }
       if (value) {
-        where.sourceObjectName = { like: value, options: 'i' }
+        let filterObj = { like: value, options: 'i' }
+        where['or'] = [{ sinkQulifiedName: filterObj }, { sourceObjectName: filterObj }]
       }
       let filter = {
         where: where,
