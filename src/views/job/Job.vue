@@ -1841,6 +1841,7 @@ export default {
       timer = null
     }
     this.editor.destroy()
+    ws.off('metadataTransformerProgress')
   }
 }
 </script>

@@ -424,6 +424,9 @@ export default {
         self.page.total = finished
         if (status !== 'done') {
           self.progress.showProgress = true
+          if (self.fieldMappingNavData?.length < self.page.size && self.page.current === 1) {
+            self.initNavData()
+          }
         } else {
           self.progress.showProgress = false
           self.initNavData()
@@ -632,7 +635,7 @@ export default {
     rollbackAll() {
       this.$confirm(
         this.$t('dag_dialog_field_mapping_error_rollback_all'),
-        this.$t('dag_dialog_field_mapping_error_rollback'),
+        this.$t('dag_dialog_field_mapping_error_tip'),
         {
           type: 'warning'
         }
