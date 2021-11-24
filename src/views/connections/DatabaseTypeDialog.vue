@@ -77,7 +77,6 @@ export default {
         return this.allwoType.includes(val)
       })
     }
-    debugger
     this.comingAllowDatabase = comingAllowDataType.filter(type => this.database.includes(type)) || []
     this.database = allowDataType.filter(type => this.database.includes(type)) || []
     this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
