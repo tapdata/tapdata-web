@@ -200,6 +200,12 @@ export const FORM_DATA_KEY = 'form_data',
       name: 'ClickHouse',
       shapeImage: 'static/editor/o-click.svg',
       stencilImage: 'static/editor/click.svg'
+    },
+    gaussdb200: {
+      type: 'gaussdb200',
+      name: 'GaussDB200',
+      shapeImage: 'static/editor/gaussdb200.svg',
+      stencilImage: 'static/editor/gaussdb200.svg'
     }
   },
   FILE_TYPE_MAPPING = {
