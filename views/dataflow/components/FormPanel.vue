@@ -166,6 +166,7 @@ export default {
     // 监听连线变动
     'allEdges.length'() {
       if (!this.node) return
+      // eslint-disable-next-line no-console
       console.log('开始设置isSource， isTarget')
       if (this.form.getFieldState('isSource')) {
         // 节点关心isSource
