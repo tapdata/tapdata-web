@@ -112,6 +112,7 @@
       :title="$t('dag_link_button_custom_script')"
       :visible="!!editScript"
       :close-on-click-modal="false"
+      @close="editScript = ''"
     >
       <CodeEditor v-model="editScript" height="300px"></CodeEditor>
       <div slot="footer" class="dialog-footer">

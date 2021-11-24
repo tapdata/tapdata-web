@@ -523,11 +523,7 @@ export default {
     ws.on('watch', this.dataflowChange)
   },
   mounted() {
-    let cacheParams = this.table.getCache()
-    let params = this.searchParams
-    for (const key in params) {
-      params[key] = params[key] || cacheParams[key] || ''
-    }
+    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
   },
   beforeDestroy() {
     ws.off('watch', this.dataflowChange)
@@ -536,11 +532,7 @@ export default {
   watch: {
     '$route.query'(query) {
       if (this.mappingTemplate !== query.mapping) {
-        let cacheParams = this.table.getCache()
-        let params = this.searchParams
-        for (const key in params) {
-          params[key] = cacheParams[key] || ''
-        }
+        this.searchParams = Object.assign(this.searchParams, this.table.getCache())
       }
       this.mappingTemplate = query.mapping
       this.table.fetch(1)

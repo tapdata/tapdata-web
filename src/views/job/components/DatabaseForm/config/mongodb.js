@@ -140,13 +140,9 @@ export default function (vm) {
         rules: [
           {
             required: true,
-            validator: (rule, v, callback) => {
-              let value = vm.model.sslKey
+            validator: (rule, value, callback) => {
               let ssl = vm.model.ssl
               if (ssl && (!value || !value.trim())) {
-                if (v) {
-                  callback()
-                }
                 callback(new Error(vm.$t('dataForm.error.noneSslKey')))
               } else {
                 callback()
@@ -185,8 +181,7 @@ export default function (vm) {
         rules: [
           {
             required: true,
-            validator: (rule, v, callback) => {
-              let value = vm.model.sslKey
+            validator: (rule, value, callback) => {
               let ssl = vm.model.sslValidate
               if (ssl && (!value || !value.trim())) {
                 callback(new Error(vm.$t('dataForm.error.noneSslCA')))
