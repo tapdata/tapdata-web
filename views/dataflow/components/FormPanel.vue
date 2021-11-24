@@ -10,22 +10,7 @@
         @autoSubmitFailed="log"
       >
         <FormProvider v-if="schema" :form="form">
-          <SchemaField
-            :schema="schema"
-            :scope="{
-              useAsyncDataSource,
-              loadDatabase,
-              loadDatabaseInfo,
-              loadDatabaseTable,
-              loadTableField,
-              loadTableInfo,
-              loadCollections,
-              loadDropOptions,
-              loadWriteModelOptions,
-              sourceNode,
-              sourceConnectionId: sourceNode ? sourceNode.connectionId : null
-            }"
-          />
+          <SchemaField :schema="schema" :scope="scope" />
         </FormProvider>
       </Form>
     </div>
@@ -84,7 +69,7 @@ export default {
   name: 'FormPanel',
 
   props: {
-    isMonitor: Boolean
+    scope: Object
   },
 
   data() {
@@ -102,7 +87,7 @@ export default {
   components: { Form, FormProvider, SchemaField },
 
   computed: {
-    ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType', 'hasNodeError']),
+    ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType', 'hasNodeError', 'allEdges']),
 
     node() {
       return this.activeConnection ? this.nodeById(this.activeConnection.targetId) : this.activeNode
@@ -156,13 +141,15 @@ export default {
             case 'node':
               if (this.lastActiveNodeType === this.node.type) {
                 // 判断上一次的激活节点类型，相同表示schema也一样，不需要重置form
-                await this.form.reset() // 将表单重置，防止没有设置default的被覆盖；这里有个问题：子级别的default被清空无效了
-                this.form.setValues(this.node) // 新填充
+                // await this.form.reset() // 将表单重置，防止没有设置default的被覆盖；这里有个问题：子级别的default被清空无效了
+                // this.form.setValues(this.node) // 新填充
+
+                await this.setSchema(this.ins.formSchema || formSchema.node)
               } else {
                 await this.setSchema(this.ins.formSchema || formSchema.node)
               }
               this.lastActiveNodeType = this.node?.type // 缓存
-              this.watchInputAndOutput()
+              // this.watchInputAndOutput()
               this.hasNodeError(this.node?.id) && this.form.validate()
               break
             case 'connection':
@@ -178,14 +165,34 @@ export default {
           this.lastActiveKey = n // 缓存
         } else if (!this.activeType) {
           // 关闭Panel
-          this.unWatchInputAndOutput()
+          // this.unWatchInputAndOutput()
         } else if (this.lastActiveKey === n && this.activeType === 'node') {
           // 如果是相同节点，切换激活状态需要同步上下游
-          this.form.setValuesIn('inputLanes', this.node.inputLanes)
-          this.form.setValuesIn('outputLanes', this.node.outputLanes)
-          this.watchInputAndOutput()
+          // this.form.setValuesIn('inputLanes', this.node.inputLanes)
+          // this.form.setValuesIn('outputLanes', this.node.outputLanes)
+          // this.watchInputAndOutput()
           this.hasNodeError(this.node?.id) && this.form.validate().catch()
         }
+      }
+    },
+
+    // 监听连线变动
+    'allEdges.length'() {
+      if (!this.node) return
+      console.log('开始设置isSource， isTarget')
+      if (this.form.getFieldState('isSource')) {
+        // 节点关心isSource
+        this.form.setValuesIn(
+          'isSource',
+          this.allEdges.some(({ source }) => source === this.node.id)
+        )
+      }
+      if (this.form.getFieldState('isTarget')) {
+        // 节点关心isTarget
+        this.form.setValuesIn(
+          'isTarget',
+          this.allEdges.some(({ target }) => target === this.node.id)
+        )
       }
     }
   },
@@ -208,7 +215,7 @@ export default {
         effects: this.useEffects,
         editable: !this.isMonitor
       })
-      this.schema = schema
+      this.schema = JSON.parse(JSON.stringify(schema))
     },
 
     getSettingSchema() {
@@ -899,6 +906,20 @@ export default {
       field.dataSource = options
     },
 
+    isSource(field) {
+      const id = field.form.values.id
+      const allEdges = this.$store.getters['dataflow/allEdges']
+      field.setValue(allEdges.some(({ source }) => source === id))
+      console.log('isSource', allEdges, field, id)
+    },
+
+    isTarget(field) {
+      console.log('field', field)
+      const id = field.form.values.id
+      const allEdges = this.$store.getters['dataflow/allEdges']
+      field.setValue(allEdges.some(({ target }) => target === id))
+    },
+
     log(value) {
       // eslint-disable-next-line no-console
       console.log('Form', value)
@@ -919,7 +940,7 @@ export default {
 
             if (/*nStr !== oStr && */ this.form.getFieldState(type)) {
               // console.log('🚗buildInputOrOutWatch', type, '可以同步')
-              this.form.setValuesIn(type, n)
+              // this.form.setValuesIn(type, n)
             }
           })
         )
@@ -1307,6 +1328,15 @@ $headerBg: #fff;
 
       &-panel {
         flex: 1;
+      }
+    }
+
+    .formily-element-form-item {
+      .el-input-number {
+        width: 180px;
+      }
+      .el-input-number--small {
+        width: 130px;
       }
     }
   }

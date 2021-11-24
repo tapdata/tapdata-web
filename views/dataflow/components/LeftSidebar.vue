@@ -498,7 +498,7 @@ export default {
 
     genIconSrc(item) {
       let icon = DB_ICON[item.database_type]
-      return icon ? require(`web-core/assets/images/db-icon/${icon}.svg`) : null
+      return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
     },
 
     getNodeHtml(n) {

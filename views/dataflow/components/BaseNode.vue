@@ -21,7 +21,7 @@ export default {
 
   getIcon(node) {
     let icon = node.type === 'table' ? DB_ICON[node.databaseType] : NODE_TYPE_ICON[node.type]
-    return icon ? require(`web-core/assets/images/node-icon/${icon}.svg`) : null
+    return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
   }
 }
 </script>
