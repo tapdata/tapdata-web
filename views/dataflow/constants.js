@@ -70,7 +70,8 @@ export const DB_ICON = {
   greenplum: 'greenplum',
   hana: 'hana',
   hive: 'hive',
-  clickhouse: 'clickhouse'
+  clickhouse: 'clickhouse',
+  gaussdb200: 'GaussDB200'
 }
 
 export const NODE_TYPE_ICON = {
