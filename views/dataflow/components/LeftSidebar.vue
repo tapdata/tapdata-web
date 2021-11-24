@@ -189,7 +189,10 @@
           'greenplum',
           'mq',
           'clickhouse',
-          'kundb'
+          'kundb',
+          'adb_postgres',
+          'adb_mysql',
+          'hazelcast_cloud_cluster'
         ]"
         @select="createConnection"
       ></ConnectionTypeSelector>
