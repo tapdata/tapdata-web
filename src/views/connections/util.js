@@ -70,7 +70,10 @@ export const TYPEMAP = {
   greenplum: 'Greenplum',
   tidb: 'TiDB',
   hana: 'SAP HANA',
-  clickhouse: 'ClickHouse'
+  clickhouse: 'ClickHouse',
+  kundb: 'KunDB',
+  adb_mysql: 'ADB MySQL',
+  adb_postgres: 'ADB PostgreSQL'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {

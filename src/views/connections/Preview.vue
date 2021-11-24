@@ -520,7 +520,10 @@ export default {
           'greenplum',
           'tidb',
           'hana',
-          'clickhouse'
+          'clickhouse',
+          'kundb',
+          'adb_postgres',
+          'adb_mysql'
         ].includes(type)
       ) {
         this.$router.push({

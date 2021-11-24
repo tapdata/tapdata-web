@@ -294,7 +294,10 @@ export default {
         'greenplum',
         'tidb',
         'hana',
-        'clickhouse'
+        'clickhouse',
+        'kundb',
+        'adb_postgres',
+        'adb_mysql'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
