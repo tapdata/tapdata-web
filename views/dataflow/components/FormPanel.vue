@@ -1,31 +1,9 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto">
-      <Form
-        :form="form"
-        :colon="false"
-        layout="vertical"
-        feedbackLayout="terse"
-        @autoSubmit="log"
-        @autoSubmitFailed="log"
-      >
+      <Form :form="form" :colon="false" layout="vertical" feedbackLayout="terse">
         <FormProvider v-if="schema" :form="form">
-          <SchemaField
-            :schema="schema"
-            :scope="{
-              useAsyncDataSource,
-              loadDatabase,
-              loadDatabaseInfo,
-              loadDatabaseTable,
-              loadTableField,
-              loadTableInfo,
-              loadCollections,
-              loadDropOptions,
-              loadWriteModelOptions,
-              sourceNode,
-              sourceConnectionId: sourceNode ? sourceNode.connectionId : null
-            }"
-          />
+          <SchemaField :schema="schema" :scope="scope" />
         </FormProvider>
       </Form>
     </div>
@@ -34,10 +12,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import ConnectionsApi from 'web-core/api/Connections'
-import MetadataApi from 'web-core/api/MetadataInstances'
 import * as components from 'web-core/components/form'
-import { action } from '@formily/reactive'
 import { createSchemaField, FormProvider } from '@formily/vue'
 import {
   Form,
@@ -77,14 +52,11 @@ const { SchemaField } = createSchemaField({
   }
 })
 
-const connections = new ConnectionsApi()
-const metadataApi = new MetadataApi()
-
 export default {
   name: 'FormPanel',
 
   props: {
-    isMonitor: Boolean
+    scope: Object
   },
 
   data() {
@@ -102,7 +74,7 @@ export default {
   components: { Form, FormProvider, SchemaField },
 
   computed: {
-    ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType', 'hasNodeError']),
+    ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType', 'hasNodeError', 'allEdges']),
 
     node() {
       return this.activeConnection ? this.nodeById(this.activeConnection.targetId) : this.activeNode
@@ -156,13 +128,15 @@ export default {
             case 'node':
               if (this.lastActiveNodeType === this.node.type) {
                 // 判断上一次的激活节点类型，相同表示schema也一样，不需要重置form
-                await this.form.reset() // 将表单重置，防止没有设置default的被覆盖；这里有个问题：子级别的default被清空无效了
-                this.form.setValues(this.node) // 新填充
+                // await this.form.reset() // 将表单重置，防止没有设置default的被覆盖；这里有个问题：子级别的default被清空无效了
+                // this.form.setValues(this.node) // 新填充
+
+                await this.setSchema(this.ins.formSchema || formSchema.node)
               } else {
                 await this.setSchema(this.ins.formSchema || formSchema.node)
               }
               this.lastActiveNodeType = this.node?.type // 缓存
-              this.watchInputAndOutput()
+              // this.watchInputAndOutput()
               this.hasNodeError(this.node?.id) && this.form.validate()
               break
             case 'connection':
@@ -178,14 +152,35 @@ export default {
           this.lastActiveKey = n // 缓存
         } else if (!this.activeType) {
           // 关闭Panel
-          this.unWatchInputAndOutput()
+          // this.unWatchInputAndOutput()
         } else if (this.lastActiveKey === n && this.activeType === 'node') {
           // 如果是相同节点，切换激活状态需要同步上下游
-          this.form.setValuesIn('inputLanes', this.node.inputLanes)
-          this.form.setValuesIn('outputLanes', this.node.outputLanes)
-          this.watchInputAndOutput()
+          // this.form.setValuesIn('inputLanes', this.node.inputLanes)
+          // this.form.setValuesIn('outputLanes', this.node.outputLanes)
+          // this.watchInputAndOutput()
           this.hasNodeError(this.node?.id) && this.form.validate().catch()
         }
+      }
+    },
+
+    // 监听连线变动
+    'allEdges.length'() {
+      if (!this.node) return
+      // eslint-disable-next-line no-console
+      console.log('开始设置isSource， isTarget')
+      if (this.form.getFieldState('isSource')) {
+        // 节点关心isSource
+        this.form.setValuesIn(
+          'isSource',
+          this.allEdges.some(({ source }) => source === this.node.id)
+        )
+      }
+      if (this.form.getFieldState('isTarget')) {
+        // 节点关心isTarget
+        this.form.setValuesIn(
+          'isTarget',
+          this.allEdges.some(({ target }) => target === this.node.id)
+        )
       }
     }
   },
@@ -208,7 +203,7 @@ export default {
         effects: this.useEffects,
         editable: !this.isMonitor
       })
-      this.schema = schema
+      this.schema = JSON.parse(JSON.stringify(schema))
     },
 
     getSettingSchema() {
@@ -673,276 +668,6 @@ export default {
           }
         })
       })
-    },
-
-    /**
-     * 统一的异步数据源方法
-     * @param service
-     * @param fieldName 数据设置指定的字段
-     * @param serviceParams 缺省参数，传递给service方法
-     * @returns {(function(*=): void)|*}
-     */
-    useAsyncDataSource(service, fieldName = 'dataSource', ...serviceParams) {
-      return field => {
-        field.loading = true
-        service(field, ...serviceParams).then(
-          action.bound(data => {
-            if (fieldName === 'value') {
-              field.setValue(data)
-            } else field[fieldName] = data
-            field.loading = false
-          })
-        )
-      }
-    },
-
-    /**
-     * 加载数据库
-     * @param field
-     * @param databaseType 数据库类型，String或Array
-     * @returns {Promise<*[]|*>}
-     */
-    async loadDatabase(field, databaseType = field.form.values.databaseType) {
-      try {
-        let result = await connections.get({
-          filter: JSON.stringify({
-            where: {
-              database_type: databaseType
-                ? {
-                    $in: Array.isArray(databaseType) ? databaseType : [databaseType]
-                  }
-                : {
-                    $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
-                  }
-            },
-            fields: {
-              name: 1,
-              id: 1,
-              database_type: 1,
-              connection_type: 1,
-              status: 1
-            },
-            order: ['status DESC', 'name ASC']
-          })
-        })
-        return (result.items || result).map(item => {
-          return {
-            id: item.id,
-            name: item.name,
-            label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
-            value: item.id,
-            databaseType: item.database_type
-          }
-        })
-      } catch (e) {
-        console.log('catch', e) // eslint-disable-line
-        return []
-      }
-    },
-
-    /**
-     * 加载数据库的详情
-     * @param field
-     * @param connectionId
-     * @returns {Promise<AxiosResponse<any>>}
-     */
-    async loadDatabaseInfo(field, connectionId = field.query('connectionId').get('value')) {
-      if (!connectionId) return
-      let result = await connections.customQuery([connectionId], {
-        schema: true
-      })
-      return result
-    },
-
-    /**
-     * 加载数据库的表，只返回表名的集合
-     * @param field
-     * @param connectionId
-     * @returns {Promise<*|AxiosResponse<any>>}
-     */
-    async loadDatabaseTable(field, connectionId = field.query('connectionId').get('value')) {
-      if (!connectionId) return
-      const params = {
-        filter: JSON.stringify({
-          where: {
-            'source.id': connectionId,
-            meta_type: {
-              in: ['collection', 'table', 'view'] //,
-            },
-            is_deleted: false
-          },
-          fields: {
-            original_name: true
-          }
-        })
-      }
-      const data = await metadataApi.get(params)
-      return data.items.map(item => item.original_name)
-    },
-
-    /**
-     * 加载表的详情，返回表的数据对象
-     * @param field
-     * @param connectionId
-     * @param tableName
-     * @returns {Promise<AxiosResponse<any>>}
-     */
-    async loadTableInfo(
-      field,
-      connectionId = field.query('connectionId').get('value'),
-      tableName = field.query('tableName').get('value')
-    ) {
-      if (!connectionId || !tableName) return
-      console.log('loadTableInfo', field, id) // eslint-disable-line
-      const params = {
-        filter: JSON.stringify({
-          where: {
-            'source.id': connectionId,
-            original_name: tableName,
-            is_deleted: false
-          }
-        })
-      }
-      const table = await metadataApi.get(params)
-      return table
-    },
-
-    /**
-     * 加载表字段，返回字段名的集合
-     * @param field
-     * @param connectionId
-     * @param tableName
-     * @returns {Promise<*>}
-     */
-    async loadTableField(
-      field,
-      connectionId = field.query('connectionId').get('value'),
-      tableName = field.query('tableName').get('value')
-    ) {
-      if (!connectionId || !tableName) return
-      const params = {
-        filter: JSON.stringify({
-          where: {
-            'source.id': connectionId,
-            original_name: tableName,
-            is_deleted: false
-          },
-          fields: {
-            fields: true
-          }
-        })
-      }
-      const data = await metadataApi.get(params)
-      return data.items[0]?.fields.map(item => item.field_name) || []
-      // const tableData = await metadataApi.findOne(params)
-      // return tableData.fields.map(item => item.field_name)
-    },
-
-    // 加载数据集
-    async loadCollections(field, connectionId = field.query('connectionId').get('value')) {
-      if (!connectionId) return
-      let result = await connections.get([connectionId])
-      const tables = result.data?.schema?.tables || []
-      return tables
-    },
-
-    /**
-     * 对目标端已存在的结构和数据的处理，下拉选项
-     * @param field
-     */
-    loadDropOptions(field) {
-      const options = [
-        {
-          label: this.$t('editor.cell.link.existingSchema.keepSchema'),
-          value: 'no_drop'
-        },
-        {
-          label: this.$t('editor.cell.link.existingSchema.keepExistedData'),
-          value: 'drop_data'
-        }
-      ]
-      if (field.form.values.database_type === 'mongodb') {
-        options.push({
-          label: this.$t('editor.cell.link.existingSchema.removeSchema'),
-          value: 'drop_schema'
-        })
-      }
-      field.dataSource = options
-    },
-
-    /**
-     * 数据写入模式
-     * @param field
-     */
-    loadWriteModelOptions(field) {
-      const options = [
-        {
-          label: this.$t('editor.cell.link.writeMode.append'),
-          value: 'append' // insert				{source: ''} + {target: ''}  =  {source: '', target: ''}
-        },
-        {
-          label: this.$t('editor.cell.link.writeMode.upsert'),
-          value: 'upsert' // OneOne				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
-        },
-        {
-          label: this.$t('editor.cell.link.writeMode.update'),
-          value: 'update' // OneMany				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
-        }
-      ]
-      if (field.form.values.type !== 'table') {
-        // SupportEmbedArray
-        options.push({
-          label: this.$t('editor.cell.link.writeMode.merge_embed'),
-          value: 'merge_embed' // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
-        })
-      }
-      field.dataSource = options
-    },
-
-    log(value) {
-      // eslint-disable-next-line no-console
-      console.log('Form', value)
-    },
-
-    /**
-     * 构建监听方法
-     * @param type
-     */
-    buildInputOrOutWatch(type) {
-      this.form.getFieldState(type) &&
-        this.stopWatchInputAndOutput.push(
-          this.$watch(`node.${type}`, (n /*, o*/) => {
-            // console.log('🚗buildInputOrOutWatch', type, n, o)
-            // 输入输出发生变化，同步给form
-            // const nStr = n ? (Array.isArray(n) ? n.join(',') : n) : ''
-            // const oStr = o ? (Array.isArray(o) ? o.join(',') : o) : ''
-
-            if (/*nStr !== oStr && */ this.form.getFieldState(type)) {
-              // console.log('🚗buildInputOrOutWatch', type, '可以同步')
-              this.form.setValuesIn(type, n)
-            }
-          })
-        )
-    },
-
-    /**
-     * 监听inputLanes和outputLanes
-     */
-    watchInputAndOutput() {
-      // console.log('watchInputAndOutput')
-      this.stopWatchInputAndOutput?.length && this.unWatchInputAndOutput()
-      this.stopWatchInputAndOutput = []
-      this.buildInputOrOutWatch('inputLanes')
-      this.buildInputOrOutWatch('outputLanes')
-    },
-
-    /**
-     * 取消监听inputLanes和outputLanes
-     */
-    unWatchInputAndOutput() {
-      if (!this.stopWatchInputAndOutput?.length) return
-      this.stopWatchInputAndOutput.forEach(fn => fn())
-      this.stopWatchInputAndOutput = []
     }
   }
 }
@@ -1307,6 +1032,15 @@ $headerBg: #fff;
 
       &-panel {
         flex: 1;
+      }
+    }
+
+    .formily-element-form-item {
+      .el-input-number {
+        width: 180px;
+      }
+      .el-input-number--small {
+        width: 130px;
       }
     }
   }

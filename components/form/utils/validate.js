@@ -24,21 +24,23 @@ import { isString } from 'web-core/utils/util'
   }
  *
  */
-export const validateBySchema = (schema, values, basePath) => {
+export const validateBySchema = (schema, values, scope, basePath) => {
   function recursiveField(schema, basePath, name) {
     // 校验的特殊处理：1.x-reactions作为异步请求时；2.去掉默认值
     const reactions = schema['x-reactions']
     if (reactions) {
-      if (isString(reactions)) {
+      if (isString(reactions) && reactions.includes('useAsyncDataSource')) {
         delete schema['x-reactions']
-      } else if (Array.isArray(reactions)) {
+      } /* else if (Array.isArray(reactions)) {
         schema['x-reactions'] = reactions.filter(item => !isString(item))
-      }
+      }*/
     }
     delete schema.default
 
     const fieldSchema = new Schema(schema)
-    const fieldProps = fieldSchema.toFieldProps()
+    const fieldProps = fieldSchema.toFieldProps({
+      scope
+    })
 
     function recursiveProperties(propBasePath) {
       fieldSchema.mapProperties((propSchema, propName) => {

@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import { isObject } from 'web-core/utils/util'
-import { DB_ICON } from 'web-core/views/dataflow/constants'
 
 const find = (obj, nameParts, conditions) => {
   if (!nameParts.length) return obj
@@ -424,11 +423,6 @@ const mutations = {
   resetDag(state) {
     state.dag.nodes = []
     state.dag.edges = []
-  },
-
-  genDBIcon(item) {
-    let icon = DB_ICON[item.database_type]
-    return icon ? require(`web-core/assets/images/db-icon/${icon}.svg`) : null
   },
 
   setEdges(state, edges) {
