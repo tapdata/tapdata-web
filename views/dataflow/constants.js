@@ -69,7 +69,8 @@ export const DB_ICON = {
   elasticsearch: 'elasticsearch',
   greenplum: 'greenplum',
   hana: 'hana',
-  hive: 'hive'
+  hive: 'hive',
+  clickhouse: 'clickhouse'
 }
 
 export const NODE_TYPE_ICON = {
