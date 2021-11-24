@@ -293,9 +293,6 @@ export default {
   computed: {
     milestoneList() {
       let list = this.task?.milestones || []
-      if (this.task?.status === 'paused') {
-        list = []
-      }
       return list.map(m => {
         let time = m.status === 'running' ? m.start : m.end
         if (time) {
