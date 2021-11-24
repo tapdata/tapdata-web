@@ -1,5 +1,5 @@
 <template>
-  <ElTable :data="tableData" stripe style="width: 100%" height="100%">
+  <ElTable :data="tableData" stripe style="width: 100%" height="100%" v-if="activeNode">
     <ElTableColumn prop="date" label="字段名称" width="180"> </ElTableColumn>
     <ElTableColumn prop="name" label="字段类型" width="180"> </ElTableColumn>
     <ElTableColumn prop="address" label="精度"> </ElTableColumn>
@@ -9,6 +9,10 @@
 </template>
 
 <script>
+import MetadataApi from 'web-core/api/MetadataInstances'
+import { mapGetters } from 'vuex'
+const metadataApi = new MetadataApi()
+
 export default {
   name: 'MetaPane',
   data() {
@@ -50,6 +54,32 @@ export default {
           address: '上海市普陀区金沙江路 1516 弄'
         }
       ]
+    }
+  },
+
+  computed: {
+    ...mapGetters('dataflow', ['activeNode'])
+  },
+
+  watch: {
+    'activeNode.id'(n) {
+      console.log('activeNode.id', n)
+      if (n && this.lastNodeId !== n) {
+        this.loadFields()
+        this.lastNodeId = n
+      }
+    }
+  },
+
+  methods: {
+    loadFields() {
+      metadataApi.get({
+        filter: JSON.stringify({
+          where: {
+            nodeId: this.activeNode.id
+          }
+        })
+      })
     }
   }
 }

@@ -128,10 +128,10 @@ export default {
             case 'node':
               if (this.lastActiveNodeType === this.node.type) {
                 // 判断上一次的激活节点类型，相同表示schema也一样，不需要重置form
-                // await this.form.reset() // 将表单重置，防止没有设置default的被覆盖；这里有个问题：子级别的default被清空无效了
-                // this.form.setValues(this.node) // 新填充
+                await this.form.reset() // 将表单重置，防止没有设置default的被覆盖；这里有个问题：子级别的default被清空无效了
+                this.form.setValues(this.node) // 新填充
 
-                await this.setSchema(this.ins.formSchema || formSchema.node)
+                // await this.setSchema(this.ins.formSchema || formSchema.node)
               } else {
                 await this.setSchema(this.ins.formSchema || formSchema.node)
               }
@@ -167,20 +167,26 @@ export default {
     'allEdges.length'() {
       if (!this.node) return
       // eslint-disable-next-line no-console
-      console.log('开始设置isSource， isTarget')
+      console.log('开始设置isSource， isTarget', this.form.getFieldState('isSource'), this.form.query('isSource'))
       if (this.form.getFieldState('isSource')) {
         // 节点关心isSource
-        this.form.setValuesIn(
+        this.form.setFieldState('isSource', state => {
+          state.value = this.allEdges.some(({ source }) => source === this.node.id)
+        })
+        /*this.form.setValuesIn(TY
           'isSource',
           this.allEdges.some(({ source }) => source === this.node.id)
-        )
+        )*/
       }
       if (this.form.getFieldState('isTarget')) {
         // 节点关心isTarget
-        this.form.setValuesIn(
+        this.form.setFieldState('isTarget', state => {
+          state.value = this.allEdges.some(({ target }) => target === this.node.id)
+        })
+        /*this.form.setValuesIn(
           'isTarget',
           this.allEdges.some(({ target }) => target === this.node.id)
-        )
+        )*/
       }
     }
   },
@@ -659,7 +665,7 @@ export default {
         console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
       })
       onFormInputChange(form => {
-        console.log('onFormInputChange') // eslint-disable-line
+        console.log('onFormInputChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
         this.$nextTick(() => {
           if (this.activeType !== 'settings') {
             this.updateNodeProps(form)
