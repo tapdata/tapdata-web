@@ -351,9 +351,9 @@ export default {
         const node = this.nodeById(o)
         try {
           if (node) {
-            // const result = await validateBySchema(node.__Ctor.formSchema, node, this.scope)
+            const result = await validateBySchema(node.__Ctor.formSchema, node, this.scope)
             // eslint-disable-next-line no-console
-            // console.log('上一个激活的节点校验结果', result)
+            console.log('上一个激活的节点校验结果', result)
           }
           this.clearNodeError(o)
         } catch (e) {

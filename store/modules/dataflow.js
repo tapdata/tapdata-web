@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import { isObject } from 'web-core/utils/util'
-import { DB_ICON } from 'web-core/views/dataflow/constants'
 
 const find = (obj, nameParts, conditions) => {
   if (!nameParts.length) return obj
