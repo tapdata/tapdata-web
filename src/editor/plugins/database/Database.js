@@ -153,7 +153,7 @@ export const databaseConfig = {
         return (
           ['app.Database'].includes(sourceCell.get('type')) &&
           !['hive', 'dameng', 'clickhouse'].includes(databaseType) &&
-          // !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type) &&
+          !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type) &&
           outLinks.length === 1 &&
           !outLinks[0].attributes.target.id
         )
