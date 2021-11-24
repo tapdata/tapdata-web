@@ -6,7 +6,10 @@
           <template #title>
             <div class="flex align-center flex-1 overflow-hidden">
               <template v-if="collapseMode === 'db'">
-                <span class="flex-1 user-select-none text-truncate">连接</span>
+                <span class="flex-1 user-select-none text-truncate flex align-center">
+                  连接
+                  <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
+                </span>
                 <VIcon class="mr-2 click-btn" @click.stop="creat">plus</VIcon>
                 <VIcon @click.stop="handleShowDBInput">magnify</VIcon>
               </template>
@@ -67,8 +70,9 @@
 
       <div class="flex-1 min-h-0 flex flex-column border-bottom">
         <div class="tb-header flex align-center px-2">
-          <!--<ElImage class="tb-header-icon mr-2" :src="genIconSrc(activeConnection)"></ElImage>-->
-          <span class="flex-1 user-select-none text-truncate">数据表</span>
+          <span class="flex-1 user-select-none text-truncate flex align-center"
+            >数据表<span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span></span
+          >
           <VIcon @click.stop="handleShowTBInput">magnify</VIcon>
 
           <ElInput
@@ -628,6 +632,19 @@ $itemH: 34px;
 
     .click-btn {
       z-index: 2;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-left: 4px;
+      padding: 2px 6px;
+      border-radius: 18px;
+      background: #f2f4f6;
+      color: rgba(0, 0, 0, 0.4);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1;
+      vertical-align: baseline;
     }
 
     .tb-header {
