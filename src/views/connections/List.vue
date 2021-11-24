@@ -328,6 +328,7 @@ export default {
   },
   watch: {
     '$route.query'() {
+      this.searchParams = Object.assign(this.searchParams, this.table.getCache())
       this.table.fetch(1)
     }
   },
@@ -435,6 +436,14 @@ export default {
         })
       ]).then(([countRes, res]) => {
         let list = res.data
+        this.table.setCache({
+          databaseType,
+          keyword,
+          databaseModel,
+          status,
+          panelFlag: true,
+          sourceType
+        })
         return {
           total: countRes.data.count,
           data: list.map(item => {
