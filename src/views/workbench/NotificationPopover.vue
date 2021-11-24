@@ -16,7 +16,6 @@
             <div class="list-item-content">
               <div class="unread-1zPaAXtSu"></div>
               <div class="list-item-desc">
-                <!--                <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>-->
                 <span>您的{{ systemMap[item.system] }}:</span>
                 <span class="notive-item-name" @click="handleGo(item)" :title="item.serverName">
                   {{ item.serverName }}
@@ -74,11 +73,9 @@
 </template>
 
 <script>
-// import ws from '../../api/ws'
 import { TYPEMAP } from './tyepMap'
 import VIcon from '@/components/VIcon'
-// import { mapState } from 'vuex'
-
+import { formatTime, uniqueArr } from '@/util'
 export default {
   components: { VIcon },
   data() {
@@ -128,31 +125,14 @@ export default {
       let msg = {
         type: 'notification'
       }
-      // msg.userId = this.$cookie.get('user_id')
-
-      this.getUnReadNum()
+      this.getUnreadData()
       if (this.$ws) {
-        this.$ws.on('notification', async data => {
-          await this.getUnReadNum()
-          if (data.data && data.data.length > 0) {
-            if (this.unRead > data.data.length) {
-              this.listData.unshift(...data.data)
-              let obj = {}
-              this.listData = this.listData.reduce((cur, next) => {
-                obj[next.id] ? '' : (obj[next.id] = true && cur.push(next))
-                return cur
-              }, [])
-            } else {
-              this.listData = data.data
-            }
-          } else {
-            this.unRead = 0
-          }
-          //格式化日期
-          if (this.listData && this.listData.length > 0) {
-            this.listData.map(item => {
-              item['createTime'] = item.createTime ? this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
-            })
+        this.$ws.on('notification', async res => {
+          this.unRead++ // 未读消息+1
+          let data = res?.data
+          if (data) {
+            data.createTime = formatTime(data.createTime)
+            this.listData = uniqueArr([data, ...this.listData])
           }
         })
         this.$ws.ready(() => {
@@ -172,30 +152,36 @@ export default {
         this.unRead = res
       })
     },
+    getUnreadData() {
+      let filter = {
+        where: {
+          read: false
+        },
+        order: ['createTime DESC'],
+        limit: 20,
+        skip: 0
+      }
+      return this.$axios
+        .get('tm/api/Messages?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(({ items, total }) => {
+          this.unRead = total
+          this.listData = items.map(t => {
+            t.createTime = formatTime(t.createTime)
+            return t
+          })
+        })
+    },
     // 已读消息
     handleRead(id) {
-      this.$axios.patch('tm/api/Messages', { id: [id] }).then(res => {
+      let where = {
+        id: { inq: [id] }
+      }
+      this.$axios.post('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
         if (res) {
-          this.listData = []
+          this.getUnreadData()
           this.$root.$emit('notificationUpdate')
         }
       })
-    },
-    getLag(lag) {
-      let r = '0s'
-      if (lag) {
-        let m = this.$moment.duration(lag, 'seconds')
-        if (m.days()) {
-          r = m.days() + 'd'
-        } else if (m.hours()) {
-          r = m.hours() + 'h'
-        } else if (m.minutes()) {
-          r = m.minutes() + 'm'
-        } else {
-          r = lag + 's'
-        }
-      }
-      return r
     },
     // 跳转消息详情
     handleGo(item) {

@@ -464,8 +464,8 @@ export default {
         .then(data => {
           this.responseHandler(data, '操作成功')
         })
-        .catch(() => {
-          this.$message.error('任务启动失败，请编辑任务完成映射配置')
+        .catch(error => {
+          error?.isException && this.$message.error('任务启动失败，请编辑任务完成映射配置')
         })
     },
     responseHandler(data, msg) {
@@ -582,8 +582,8 @@ export default {
             this.responseHandler(data, '操作成功')
             this.getData()
           })
-          .catch(() => {
-            this.$message.error('重置失败')
+          .catch(error => {
+            error?.isException && this.$message.error('重置失败')
           })
       })
     },
