@@ -70,7 +70,7 @@
           @tab-click="tabHandler"
         >
           <ElTabPane label="任务进度" name="progress" class="h-100">
-            <TaskProgress :task="task"></TaskProgress>
+            <TaskProgress :task="task" ref="taskProgress"></TaskProgress>
           </ElTabPane>
           <ElTabPane lazy class="h-100 overflow-hidden" label="运行日志" name="log">
             <Log :id="$route.params.id"></Log>
@@ -589,6 +589,11 @@ export default {
         if (this.activeTab === 'content') {
           this.$refs.fieldMapping.getMetaData(this.task)
           this.field_process = this.task?.stages[0]?.field_process || []
+        }
+        if (this.activeTab === 'progress') {
+          this.$refs.taskProgress?.init?.()
+        } else {
+          this.$refs.taskProgress?.clearWS?.()
         }
       })
     },
