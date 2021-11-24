@@ -181,6 +181,34 @@ export default {
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
   connection_form_database_host_placeholder: '请输入数据库地址',
   connection_form_database_host_tips: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
+  connection_form_hazecast_connection_test: 'Connection test',
+  connection_form_hazecast_create: 'Create connection',
+  connection_form_hazecast_edit: 'Edit connection',
+  connection_form_hazecast_data_source: 'Data source',
+  connection_form_hazecast_data_source_type: 'Data source',
+  connection_form_hazecast_rename: 'Rename',
+  connection_form_hazecast_change: 'Change',
+  connection_form_hazecast_name_rules:
+    'Starting with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, and spaces',
+  connection_form_hazecast_no_name: 'The connection name cannot be empty',
+  connection_form_hazecast_name_exists: 'Name already exists',
+  connection_form_hazecast_cancel: 'Cancel',
+  connection_form_hazecast_save: 'Save',
+  connection_form_hazecast_give_up: 'Give up',
+  connection_form_hazecast_confirm_edit: 'This operation will lose the current edit content',
+  connection_form_hazecast_confirm_create: 'This operation will lose the connection currently being created',
+  connection_form_hazecast_confirm_create_content: 'Do you want to abandon the creation of the connection ?', //是否放弃创建该连接？
+  connection_form_hazecast_confirm_edit_content: 'Do you want to abandon the modification of the content ?', //是否放弃修改内容？
+  connection_form_hazecast_connection_name: 'Connection Name',
+  connection_form_hazecast_options_target: 'Target',
+  connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
+  connection_form_hazecast_connection_type: 'Connection Type',
+  connection_form_hazecast_database_name: 'Cluster Name', //集群名称
+  connection_form_hazecast_plain_password: 'Token',
+  connection_form_hazecast_ssl: 'Enable SSL', //是否开启ssl
+  connection_form_hazecast_sslKey: 'Key Store File',
+  connection_form_hazecast_sslCA: 'rust Key Store File',
+  connection_form_hazecast_sslPass: 'Key File Password',
 
   // 任务
   task_manage: '任务管理',

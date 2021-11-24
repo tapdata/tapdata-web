@@ -27,15 +27,15 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: 'Connection Type',
+        label: vm.$t('connection_form_hazecast_connection_type'),
         customClass: 'large-item',
         isVertical: false,
         button: true,
         outerTip: true,
         options: [
           {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
+            label: vm.$t('connection_form_hazecast_options_target'),
+            tip: vm.$t('connection_form_hazecast_options_target_tips'),
             value: 'target'
           }
         ],
@@ -44,20 +44,22 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_name',
-        label: 'Cluster Name',
+        label: vm.$t('connection_form_hazecast_database_name'),
+        placeholder: 'Please enter the cluster name',
         required: true
       },
       {
         type: 'input',
         field: 'plain_password',
-        label: 'Token',
+        label: vm.$t('connection_form_hazecast_plain_password'),
         domType: 'password',
+        placeholder: 'Please enter the token',
         showPassword: true
       },
       {
         type: 'switch',
         field: 'ssl',
-        label: 'Enable SSL',
+        label: vm.$t('connection_form_hazecast_ssl'),
         influences: [
           {
             field: 'sslKeyFile',
@@ -74,7 +76,9 @@ export default function (vm) {
       {
         type: 'file',
         field: 'sslKeyFile',
-        label: 'Key Store File',
+        placeholder: 'Please upload files',
+        label: vm.$t('connection_form_hazecast_sslKey'),
+        buttonText: 'Select',
         show: false,
         dependOn: [
           {
@@ -115,7 +119,9 @@ export default function (vm) {
       {
         type: 'file',
         field: 'sslCAFile',
-        label: 'Trust Key Store File',
+        label: vm.$t('connection_form_hazecast_sslCA'),
+        placeholder: 'Please upload files',
+        buttonText: 'Select',
         show: false,
         dependOn: [
           {
@@ -152,8 +158,9 @@ export default function (vm) {
       {
         type: 'input',
         field: 'sslPass',
-        label: 'Key File Password',
+        label: vm.$t('connection_form_hazecast_sslPass'),
         domType: 'password',
+        placeholder: 'Please enter the key file Password',
         showPassword: true,
         show: false,
         dependOn: [

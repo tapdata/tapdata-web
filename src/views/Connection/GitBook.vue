@@ -24,6 +24,10 @@ export default {
     }
   },
   mounted() {
+    if (this.databaseType === 'hazelcast_cloud_cluster') {
+      this.getHtmlMD('en_hazelcast_cloud_cluster')
+      return
+    }
     this.getHtmlMD(this.databaseType)
   },
   methods: {
