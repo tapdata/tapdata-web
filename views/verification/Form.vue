@@ -1059,7 +1059,7 @@ export default {
             })
             .catch(err => {
               if (err?.isException) {
-                this.$message.error(err.message)
+                this.$message.error(err.data?.message)
               }
             })
         }
