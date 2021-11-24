@@ -308,11 +308,11 @@ export default {
     },
 
     noMore() {
-      return this.tbList.length >= this.tbTotal
+      return this.tbPage >= Math.ceil(this.tbTotal / 20)
     },
 
     noDBMore() {
-      return this.dbList.length >= this.dbTotal
+      return this.dbPage >= Math.ceil(this.dbTotal / 20)
     },
 
     disabled() {
@@ -365,6 +365,7 @@ export default {
 
     getDbFilter() {
       const filter = {
+        page: this.dbPage,
         size: 20,
         where: {
           database_type: {
@@ -403,12 +404,20 @@ export default {
       this.dbTotal = data.total
 
       if (loadMore) {
-        this.dbList.push(...data.items)
+        // 防止重复push
+        data.items.forEach(item => {
+          if (!this.dbIdMap[item.id]) {
+            this.dbList.push(item)
+            this.dbIdMap[item.id] = true
+          }
+        })
         this.dbLoadingMore = false
       } else {
         this.scrollTopOfDBList()
         this.dbList = data.items
         this.dbLoading = false
+        // 缓存所有dbId
+        this.dbIdMap = data.items.reduce((map, item) => ((map[item.id] = true), map), {})
       }
       return this.dbList
     },
@@ -477,12 +486,19 @@ export default {
       this.tbTotal = data.total
 
       if (loadMore) {
-        this.tbList.push(...tables)
+        tables.forEach(item => {
+          if (!this.tbIdMap[item.id]) {
+            this.tbList.push(item)
+            this.tbIdMap[item.id] = true
+          }
+        })
         this.tbLoadingMore = false
       } else {
         this.scrollTopOfTableList()
         this.tbList = tables
         this.tbLoading = false
+        // 缓存所有tbId
+        this.tbIdMap = tables.reduce((map, item) => ((map[item.id] = true), map), {})
       }
     },
 
@@ -629,6 +645,7 @@ $itemH: 34px;
 
     .db-item,
     .tb-item {
+      margin-bottom: 2px;
       height: $itemH;
       font-size: 12px;
       &.active,
@@ -640,6 +657,10 @@ $itemH: 34px;
         width: 20px;
         height: 20px;
         vertical-align: middle;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
       }
     }
 
