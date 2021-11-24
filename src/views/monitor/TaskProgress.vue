@@ -234,7 +234,7 @@ export default {
     this.init()
   },
   destroyed() {
-    this.$ws.off('dataFlowInsight')
+    this.clearWS()
   },
   methods: {
     init() {
@@ -737,10 +737,11 @@ export default {
             statsData: {},
             granularity: {}
           }
-          data.statsData[result.statsType] = result.statsData
-          data.granularity[result.statsType] = result.granularity
+          if (result.statsType) {
+            data.statsData[result.statsType] = result.statsData
+            data.granularity[result.statsType] = result.granularity
+          }
           // 组合成ws返回的格式
-
           switch (result.statsType) {
             case 'throughput':
               this.getThroughputOpt(data) // 输入输出统计
@@ -766,6 +767,10 @@ export default {
       //   granularity: 'flow_' + timeType
       // }
       // this.loadData(params, item)
+    },
+    clearWS() {
+      this.$ws.off('dataFlowInsight')
+      lastMsg = ''
     }
   }
 }
