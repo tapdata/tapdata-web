@@ -120,8 +120,9 @@ export default {
   agent_deploy_start_install_button_copy: '複製',
   agent_deploy_start_install_button_copied: '已復制',
   agent_deploy_start_install_windows_first:
-    '1. 將下載好的Tapdata Agent放入要安裝Agent的目錄，並通過cmd窗口在目錄下執行下方命令即可實現Tapdata Agent的自動部署及啟動',
-  agent_deploy_start_install_windows_second: '2.待上方命令執行完畢後，出現如下圖所示日誌則代表Agent啟動成功：',
+    '1. 將下載好的Tapdata Agent放入要安裝Agent的目錄，雙擊執行安裝，在打開的窗口內輸入下方命令執行即可實現Tapdata Agent的自動部署及啟動',
+  agent_deploy_start_install_windows_second:
+    '2.待Agent啟動成功後窗口會自動關閉，tapdata會在您的安裝目錄生成如下目錄結構：',
   agent_deploy_start_install_windows_third: '3.如果您在安裝和使用過程中遇到任何問題，請參考',
   agent_deploy_link_agent_operation: '《Agent安裝手冊及常見QA》',
   agent_deploy_link_agent_operation_desc: '或者直接掃描右方二維碼加入社群獲取技術支持。 ',
