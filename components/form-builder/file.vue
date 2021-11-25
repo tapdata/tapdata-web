@@ -26,7 +26,7 @@ export default {
       }
       if (file) {
         this.fileName = file.name
-        if (config.maxFileSize && file.size / 1024 < config.maxFileSize) {
+        if (config.maxFileSize && file.size / 1024 > config.maxFileSize) {
           this.$message.error(`上传文件大小不能超过 ${config.maxFileSize}KB`)
         } else {
           let reader = new FileReader()
