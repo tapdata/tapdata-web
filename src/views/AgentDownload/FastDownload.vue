@@ -27,6 +27,8 @@
             }}</ElLink>
           </li>
           <li>{{ $t('agent_deploy_before_prepare_windows_second') }}</li>
+          <li>{{ $t('agent_deploy_before_prepare_windows_third') }}</li>
+          <li>{{ $t('agent_deploy_before_prepare_windows_four') }}</li>
           <li>
             <ElButton class="mt-5" type="primary" @click="handleDownLoad">{{
               $t('agent_deploy_before_prepare_windows_second_download')

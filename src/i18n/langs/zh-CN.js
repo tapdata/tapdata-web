@@ -116,6 +116,8 @@ export default {
   agent_deploy_before_prepare_windows_second: '2.点击下方的下载按钮将Tapdata Agent安装包下载到本地环境。',
   agent_deploy_before_prepare_windows_second_download: '点击下载 Tapdata Agent',
   agent_deploy_before_prepare_windows_third: '3.请严格按照下方的安装步骤部署，不要直接双击安装包！',
+  agent_deploy_before_prepare_windows_four: '4.若安装路径包括中文或特殊字符可能导致安装失败',
+
   agent_deploy_start_install: '开始安装',
   agent_deploy_start_install_button_copy: '复制',
   agent_deploy_start_install_button_copied: '已复制',
