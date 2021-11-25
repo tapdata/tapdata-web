@@ -104,7 +104,7 @@ export default function (vm) {
         type: 'file',
         field: 'sslCA',
         fileNameField: 'sslCAFile',
-        accept: '.keystore',
+        accept: '.truststore',
         base64: true,
         noFileType: true,
         label: vm.$t('connection_form_hazecast_sslCA'),
