@@ -154,14 +154,12 @@
             </el-button>
             <FieldMapping
               v-else
-              :dataFlow="dataFlow"
-              :showBtn="true"
-              :isFirst="model.isFirst"
-              @update-first="returnModel"
-              :hiddenFieldProcess="true"
-              :stageId="stageId"
               ref="fieldMapping"
               class="fr"
+              :isDisable="disabled"
+              :transform="model"
+              :getDataFlow="getDataFlow"
+              @update-first="returnModel"
             ></FieldMapping>
           </div>
         </el-form-item>
@@ -236,7 +234,11 @@ export default {
         type: 'hana',
         databaseType: 'hana',
         tableName: '',
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
         isFirst: true,
+        hiddenChangeValue: true,
         enableInitialOrder: false,
         initialSyncOrder: 0,
         isFilter: false,
@@ -257,8 +259,6 @@ export default {
       mergedSchema: null,
       primaryKeyOptions: [],
       scope: '',
-      dataFlow: '',
-      stageId: '',
       showFieldMapping: false,
       dataNodeInfo: {}
     }
@@ -451,9 +451,18 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
+        this.model.stageId = cell.id
         this.getDataFlow()
         _.merge(this.model, data)
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.model.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.model.stageId]
+          })
       }
       this.dataNodeInfo = dataNodeInfo || {}
       this.mergedSchema = cell.getOutputSchema()
@@ -566,6 +575,7 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

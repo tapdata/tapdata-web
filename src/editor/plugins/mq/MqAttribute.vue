@@ -73,12 +73,9 @@
               v-if="dataNodeInfo.isTarget && showFieldMapping"
               ref="fieldMapping"
               class="fr"
-              :dataFlow="dataFlow"
-              :showBtn="true"
-              :isFirst="model.isFirst"
               :isDisable="disabled"
-              :hiddenFieldProcess="true"
-              :stageId="stageId"
+              :transform="model"
+              :getDataFlow="getDataFlow"
               @update-first="returnModel"
             ></FieldMapping>
           </div>
@@ -143,7 +140,12 @@ export default {
         type: 'mq',
         databaseType: 'mq',
         tableName: '',
-        table_type: 'topic'
+        table_type: 'topic',
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true
         // primaryKeys: ''
       },
       mqType: '',
@@ -382,16 +384,16 @@ export default {
       if (data) {
         _.merge(this.model, data)
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
+        this.model.stageId = cell.id
         this.getDataFlow()
         let param = {
           stages: this.dataFlow?.stages,
-          stageId: this.stageId
+          stageId: this.model.stageId
         }
         this.$api('DataFlows')
           .tranModelVersionControl(param)
           .then(data => {
-            this.showFieldMapping = data?.data[this.stageId]
+            this.showFieldMapping = data?.data[this.model.stageId]
           })
       }
 
@@ -423,6 +425,7 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

@@ -1,6 +1,8 @@
 export default {
   // 通用按钮
   button_edit: 'edit',
+  button_confirm: 'confirm',
+  button_cancel: 'cancel',
 
   // 数据校验
   verify_details_title: 'Task verification details',
@@ -46,7 +48,16 @@ export default {
 
   connection_form_custom_connection_before_operate: 'Pre-operation',
   connection_form_custom_connection_after_operate: 'Post-operation',
-
+  connection_kafka_kerberos_attest: 'kerberos authentication',
+  connection_kafka_kerberos_config_keytab: 'Key representation file',
+  connection_kafka_kerberos_config_conf: 'Configuration file',
+  connection_kafka_kerberos_body_config: 'Body Configuration',
+  connection_kafka_kerberos_service_name: 'Service name',
+  connection_kafka_kerberos_tip:
+    'The instance name mapping needs to be configured on the host where the Engine is located /etc/hosts',
+  connection_kafka_kerberos_none_keytab: 'The key representation file cannot be empty',
+  connection_kafka_kerberos_none_conf: 'Configuration file cannot be empty',
+  connection_kafka_encryption: 'Encryption',
   //Dag
   dag_data_node_label_dameng: 'Dameng Node',
   dag_data_node_label_database_link_table: 'Table name case',
@@ -63,6 +74,56 @@ export default {
   dag_data_node_label_kafka_high_performance_mode: 'High performance mode',
   dag_data_node_label_kafka_all: 'All',
   dag_data_node_label_aggregate_filter: 'Filter',
+  dag_link_button_custom_script: 'Custom processing script',
+
+  //Field mapping
+  dag_link_button_field_mapping: 'Field mapping',
+  dag_link_button_mapping_configuration: 'Mapping configuration',
+  dag_link_field_mapping_error_no_table: 'Please select the table to be migrated',
+  dag_link_field_mapping_error_all_deleted:
+    'All fields have been deleted from the current table, and the save operation is not allowed',
+  dag_dialog_field_mapping_table_setting: 'Table Settings',
+  dag_dialog_field_mapping_tip:
+    'Users can set the fields to be synchronized for each table in the source database on this page, as well as the corresponding field names and field types when the target database is automatically created.',
+  dag_dialog_field_mapping_table_rename: 'table rename',
+  dag_dialog_field_mapping_field_rename: 'Field rename',
+  dag_dialog_field_mapping_rollback_all: 'Restore default',
+  dag_dialog_field_mapping_rollback_field: 'Restore default field',
+  dag_dialog_field_mapping_search_table: 'Search table',
+  dag_dialog_field_mapping_loading_schema: 'Loading, please wait...',
+  dag_dialog_field_mapping_selected: 'Selected',
+  dag_dialog_field_mapping_search_field: 'Search Field',
+  dag_dialog_field_mapping_source_field: 'Source table field name',
+  dag_dialog_field_mapping_source_type: 'Source table type',
+  dag_dialog_field_mapping_source_precision: 'Source table scale',
+  dag_dialog_field_mapping_source_scale: 'Source table precision',
+  dag_dialog_field_mapping_target_field: 'Target table field name',
+  dag_dialog_field_mapping_target_type: 'Target table type',
+  dag_dialog_field_mapping_target_precision: 'Target table scale',
+  dag_dialog_field_mapping_target_scale: 'Target table precision',
+  dag_dialog_field_mapping_operate: 'Operation',
+  dag_dialog_field_mapping_no_data: 'No data yet',
+  dag_dialog_field_mapping_range_precision: 'Length range',
+  dag_dialog_field_mapping_range_scale: 'Precision range',
+  dag_dialog_field_mapping_batch_table_name: 'Batch change table name setting',
+  dag_dialog_field_mapping_batch_field_name: 'Batch change field name settings',
+  dag_dialog_field_mapping_example_prefix: 'Prefix',
+  dag_dialog_field_mapping_example_suffix: 'Suffix',
+  dag_dialog_field_mapping_example_tip: 'Explanation: the prefix and suffix set also follow the capitalization rules',
+  dag_dialog_field_mapping_example_origin_table_name: 'Original table name',
+  dag_dialog_field_mapping_example_change: 'After modification',
+  dag_dialog_field_mapping_example: 'Example',
+  dag_dialog_field_mapping_tittle_field_name: 'Modify the target table field name',
+  dag_dialog_field_mapping_tittle_data_type: 'Modify the target table field type',
+  dag_dialog_field_mapping_tittle_precision: 'Modify the length of the target field',
+  dag_dialog_field_mapping_tittle_scale: 'Modify the precision of the target table',
+  dag_dialog_field_mapping_error_tip: 'tip',
+  dag_dialog_field_mapping_error_rollback_all: 'Are you sure you want to restore all to the default',
+  dag_dialog_field_mapping_error_rollback: 'Are you sure you want to restore all to the default',
+  dag_dialog_field_mapping_error_range: 'The current value does not meet the field range',
+  dag_dialog_field_mapping_error_save_prefix: 'Detected that you still have',
+  dag_dialog_field_mapping_error_save_suffix:
+    'There is a problem with the field type setting of the table, please select the table with the problem in the table area on the left for processing',
 
   //Task edit
   task_job_setting_tip_title: 'Set reminder',

@@ -523,11 +523,7 @@ export default {
     ws.on('watch', this.dataflowChange)
   },
   mounted() {
-    let cacheParams = this.table.getCache()
-    let params = this.searchParams
-    for (const key in params) {
-      params[key] = params[key] || cacheParams[key] || ''
-    }
+    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
   },
   beforeDestroy() {
     ws.off('watch', this.dataflowChange)
@@ -536,11 +532,7 @@ export default {
   watch: {
     '$route.query'(query) {
       if (this.mappingTemplate !== query.mapping) {
-        let cacheParams = this.table.getCache()
-        let params = this.searchParams
-        for (const key in params) {
-          params[key] = cacheParams[key] || ''
-        }
+        this.searchParams = Object.assign(this.searchParams, this.table.getCache())
       }
       this.mappingTemplate = query.mapping
       this.table.fetch(1)
@@ -1200,6 +1192,8 @@ export default {
             this.$message.error('任务启动失败，请编辑任务完成映射配置')
           } else if (err.response.msg === 'DataFlow has add or del stages') {
             this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
+          } else if (err.response.msg === 'running transformer') {
+            this.$message.error('任务启动失败，正在模型推演中...请稍后再试')
           }
         })
     },

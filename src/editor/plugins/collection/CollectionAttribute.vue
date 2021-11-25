@@ -71,12 +71,24 @@
 
         <el-form-item :label="$t('editor.cell.data_node.collection.form.collection.label')" prop="tableName" required>
           <div class="flex-block">
-            <FbSelect
-              class="e-select"
+            <!--            <FbSelect-->
+            <!--              class="e-select"-->
+            <!--              v-model="model.tableName"-->
+            <!--              :config="schemaSelectConfig"-->
+            <!--              @change="handleFieldFilterType"-->
+            <!--            ></FbSelect>-->
+            <VirtualSelect
               v-model="model.tableName"
-              :config="schemaSelectConfig"
+              size="mini"
+              filterable
+              clearable
+              :item-size="34"
+              :items="schemaSelectConfig.options"
+              :loading="schemaSelectConfig.loading"
+              :disabled="schemaSelectConfig.loading"
+              :placeholder="schemaSelectConfig.placeholder"
               @change="handleFieldFilterType"
-            ></FbSelect>
+            />
             <el-tooltip
               class="item"
               popper-class="collection-tooltip"
@@ -114,7 +126,7 @@
                 size="mini"
                 class="iconfont icon-dakai1"
                 style="padding: 7px; margin-left: 7px"
-                :disabled="!tableNameId"
+                :disabled="!model.tableId"
                 @click="handTableName"
               ></el-button>
             </el-tooltip>
@@ -299,20 +311,17 @@
           v-else
           ref="fieldMapping"
           class="fr"
-          :dataFlow="dataFlow"
-          :showBtn="true"
-          :isFirst="model.isFirst"
-          :hiddenFieldProcess="true"
-          :stageId="stageId"
           :isDisable="disabled"
+          :transform="model"
+          :getDataFlow="getDataFlow"
           @update-first="returnModel"
         ></FieldMapping>
-        <entity
+        <Entity
           v-loading="schemaSelectConfig.loading"
           :schema="convertSchemaToTreeData(defaultSchema)"
           :editable="false"
           :operations="model.operations"
-        ></entity>
+        ></Entity>
       </div>
     </div>
     <CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
@@ -370,10 +379,11 @@ import _ from 'lodash'
 import ws from '../../../api/ws'
 import factory from '../../../api/factory'
 import VIcon from '@/components/VIcon'
+import VirtualSelect from 'web-core/components/virtual-select'
+
 let connectionApi = factory('connections')
 const MetadataInstances = factory('MetadataInstances')
 // let editorMonitor = null;
-let tempSchemas = []
 const RETAINED_OPS_TPL = {
   id: '',
   op: 'RETAINED'
@@ -393,7 +403,8 @@ export default {
     queryBuilder,
     AggregationDialog,
     VIcon,
-    FieldMapping
+    FieldMapping,
+    VirtualSelect
   },
   props: {
     database_types: {
@@ -431,66 +442,66 @@ export default {
     'model.tableName': {
       immediate: true,
       handler() {
-        let schemas = tempSchemas
         if (this.schemaSelectConfig.options.length > 0) {
-          let schema,
-            defaultSchema = {
-              table_name: this.model.tableName,
-              cdc_enabled: true,
-              meta_type: 'collection',
-              fields: [
-                {
-                  autoincrement: false,
-                  columnSize: 0,
-                  dataType: 7,
-                  data_type: 'OBJECT_ID',
-                  field_name: '_id',
-                  id: uuid(),
-                  is_nullable: true,
-                  javaType: 'String',
-                  key: 'PRI',
-                  original_field_name: '_id',
-                  precision: 0,
-                  primary_key_position: 1,
-                  scale: 0,
-                  table_name: this.model.tableName
-                }
-              ]
-            }
-          if (this.model.tableName) {
-            schema = schemas.filter(s => s.table_name === this.model.tableName)
-            schema = schema && schema.length > 0 ? schema[0] : defaultSchema
-
-            let fields = schema.fields || []
-            //过滤被删除的字段
-            if (fields) {
-              fields = removeDeleted(fields)
-            }
-            // let primaryKeys = fields
-            // 	.filter(f => f.primary_key_position > 0)
-            // 	.map(f => f.field_name)
-            // 	.join(',');
-            this.primaryKeyOptions = fields.map(f => f.field_name)
-            // if (primaryKeys) {
-            // 	this.model.primaryKeys = primaryKeys;
-            // } else {
-            // 	this.model.primaryKeys = '';
-            // }
-            this.model.custSql.custFields = fields.map(f => f.field_name)
-            this.model.custSql.conditions.length = 0
-            this.model.custSql.fieldFilterType = 'keepAllFields'
-            this.model.custSql.cSql = ''
-            this.model.custSql.editSql = ''
-            this.model.custSql.selectedFields.length = 0
-            this.model.collectionAggregate = false
-            this.model.isFilter = false
-            this.model.collectionAggrPipeline = ''
+          let defaultSchema = {
+            table_name: this.model.tableName,
+            cdc_enabled: true,
+            meta_type: 'collection',
+            fields: [
+              {
+                autoincrement: false,
+                columnSize: 0,
+                dataType: 7,
+                data_type: 'OBJECT_ID',
+                field_name: '_id',
+                id: uuid(),
+                is_nullable: true,
+                javaType: 'String',
+                key: 'PRI',
+                original_field_name: '_id',
+                precision: 0,
+                primary_key_position: 1,
+                scale: 0,
+                table_name: this.model.tableName
+              }
+            ]
           }
-          this.$emit('schemaChange', _.cloneDeep(schema))
+          if (this.model.tableName) {
+            let params = {
+              filter: JSON.stringify({
+                where: {
+                  'source.id': this.model.connectionId,
+                  original_name: this.model.tableName,
+                  is_deleted: false
+                }
+              })
+            }
+
+            MetadataInstances.get(params).then(res => {
+              let table = res?.data?.[0] || defaultSchema
+              this.defaultSchema = table
+              let fields = table.fields || []
+              //过滤被删除的字段
+              if (fields) {
+                fields = removeDeleted(fields)
+              }
+              this.primaryKeyOptions = fields.map(f => f.field_name)
+              this.model.custSql.custFields = fields.map(f => f.field_name)
+              this.model.custSql.conditions.length = 0
+              this.model.custSql.fieldFilterType = 'keepAllFields'
+              this.model.custSql.cSql = ''
+              this.model.custSql.editSql = ''
+              this.model.custSql.selectedFields.length = 0
+              this.model.collectionAggregate = false
+              this.model.isFilter = false
+              this.model.collectionAggrPipeline = ''
+              table.tableName = this.model.tableName
+              this.$emit('schemaChange', _.cloneDeep(table))
+            })
+          }
         }
 
         this.taskData.tableName = this.model.tableName
-        this.tableIsLink()
       }
     },
     defaultSchema: {
@@ -502,10 +513,6 @@ export default {
             fields = removeDeleted(fields)
           }
           this.primaryKeyOptions = fields.map(f => f.field_name)
-          // if (!this.model.primaryKeys) {
-          // 	let primaryKeys = fields.filter(f => f.primary_key_position > 0).map(f => f.field_name);
-          // 	if (primaryKeys.length > 0) this.model.primaryKeys = Array.from(new Set(primaryKeys)).join(',');
-          // }
         }
       }
     }
@@ -520,7 +527,6 @@ export default {
       dialogData: null,
       databaseData: [],
       copyConnectionId: '',
-      tableNameId: '',
 
       dialogVisible: false,
       logsFlag: false,
@@ -587,7 +593,12 @@ export default {
       },
       dataNodeInfo: {},
       model: {
+        tableId: '',
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
         isFirst: true,
+        hiddenChangeValue: true,
         connectionId: '',
         databaseType: 'mongodb',
         tableName: '',
@@ -628,8 +639,6 @@ export default {
       repeatTableDiao: false,
       repeatTable: [],
       scope: '',
-      dataFlow: '',
-      stageId: '',
       showFieldMapping: false
     }
   },
@@ -671,7 +680,6 @@ export default {
     // 获取新建表名称
     getAddTableName(val) {
       this.model.tableName = val
-      this.tableIsLink()
       this.defaultSchema = null
       let schema = {
         table_name: this.model.tableName,
@@ -707,25 +715,8 @@ export default {
 
     // 跳转到数据目录当前表
     handTableName() {
-      this.tableNameId = ''
-      this.tableIsLink()
-
-      if (this.tableNameId) {
-        let href = '/#/metadataDetails?id=' + this.tableNameId
-        window.open(href)
-      }
-    },
-
-    // 判断表是否可以跳转
-    tableIsLink() {
-      this.tableNameId = ''
-      if (tempSchemas && tempSchemas.length) {
-        tempSchemas.forEach(item => {
-          if (item.table_name === this.model.tableName) {
-            this.tableNameId = item.tableId
-          }
-        })
-      }
+      let href = '/#/metadataDetails?id=' + this.model.tableId
+      window.open(href)
     },
 
     // 获取数据库id
@@ -868,20 +859,21 @@ export default {
       let self = this
       this.schemaSelectConfig.loading = true
 
-      connectionApi
-        .get([connectionId])
+      // connectionApi
+      //   .get([connectionId])
+      MetadataInstances.getTables(connectionId)
         .then(result => {
-          if (result.data && result.data.schema && result.data.schema.tables) {
-            let schemas = (result.data.schema && result.data.schema.tables) || []
-            tempSchemas = schemas.sort((t1, t2) =>
-              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-            )
-            let tableList = tempSchemas.map(item => ({
-              label: item.table_name,
-              value: item.table_name
-            }))
+          let schemas = result?.data || []
+          if (schemas) {
+            let tableList = schemas
+              .sort((t1, t2) => (t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1))
+              .map(item => ({
+                label: item,
+                value: item
+              }))
 
             // 相同表名提示
+            let options = []
             let hash = {}
             this.repeatTable = []
             self.schemaSelectConfig.options = []
@@ -889,15 +881,15 @@ export default {
               if (hash[item.value]) {
                 this.repeatTable.push(item.value)
               } else {
-                self.schemaSelectConfig.options.push(Object.assign({}, item))
-                hash[item.value] = 1
+                // self.schemaSelectConfig.options.push(item)
+                options.push(Object.assign({}, item))
+                hash[item] = 1
               }
             })
+            self.schemaSelectConfig.options = options
             if (this.repeatTable.length > 0 && !this.disabled) {
               this.repeatTableDiao = true
             }
-
-            this.tableIsLink()
           }
         })
         .finally(() => {
@@ -910,7 +902,7 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
+        this.model.stageId = cell.id
         this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
@@ -938,18 +930,15 @@ export default {
         ) {
           this.model.custSql.filterType = 'field'
         }
-        if (data.connectionId) {
-          this.loadDataModels(data.connectionId)
-        }
-        this.tableIsLink()
+
         let param = {
           stages: this.dataFlow?.stages,
-          stageId: this.stageId
+          stageId: this.model.stageId
         }
         this.$api('DataFlows')
           .tranModelVersionControl(param)
           .then(data => {
-            this.showFieldMapping = data?.data[this.stageId]
+            this.showFieldMapping = data?.data[this.model.stageId]
           })
       }
 
@@ -1131,6 +1120,7 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

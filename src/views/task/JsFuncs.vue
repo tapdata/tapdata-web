@@ -264,7 +264,17 @@ export default {
       this.dialogTitle = this.$t('button_edit')
       let code = `function ${item.function_name} (${item.parameters}) ${item.function_body}`
       this.model.jsonDoc = code
-      let { function_name, className, fileId, fileName, describe, function_body, parameters, return_value, jsEngineName } = item
+      let {
+        function_name,
+        className,
+        fileId,
+        fileName,
+        describe,
+        function_body,
+        parameters,
+        return_value,
+        jsEngineName
+      } = item
       this.model = {
         type: item.type || 'custom',
         function_name,
