@@ -999,7 +999,14 @@ export default {
           if (source) {
             // dfs源端不支持 redis elasticsearch
             let options = data
-            let filterArr = ['redis', 'elasticsearch', 'clickhouse', 'dameng', 'adb_postgres']
+            let filterArr = [
+              'redis',
+              'hazelcast_cloud_cluster',
+              'elasticsearch',
+              'clickhouse',
+              'dameng',
+              'adb_postgres'
+            ]
             options = data.filter(item => filterArr.indexOf(item) === -1)
             source.options = options.map(item => {
               return {
