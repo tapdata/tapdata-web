@@ -24,6 +24,7 @@
             v-model="model.connectionId"
             :placeholder="$t('editor.cell.data_node.es.chooseESName')"
             :clearable="true"
+            @input="handlerConnectionChange"
           >
             <el-option
               v-for="(item, idx) in databases"
@@ -105,7 +106,8 @@ export default {
         type: 'elasticsearch',
         chunkSize: 3,
         index: '',
-        databaseType: 'elasticsearch'
+        databaseType: 'elasticsearch',
+        database_name: ''
       },
       mergedSchema: null,
       scope: '',
@@ -188,6 +190,7 @@ export default {
 
       if (result.data) {
         this.databases = result.data
+        this.handlerConnectionChange()
       }
     },
 
@@ -208,12 +211,8 @@ export default {
     },
 
     handlerConnectionChange() {
-      this.model.tableName = ''
-      for (let i = 0; i < this.databases.length; i++) {
-        if (this.model.connectionId === this.databases[i].id) {
-          this.model.databaseType = this.databases[i]['database_type']
-        }
-      }
+      let connection = this.databases?.find(item => item.id === this.model.connectionId)
+      this.model.database_name = connection?.database_name || ''
     },
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
