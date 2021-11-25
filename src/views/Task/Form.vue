@@ -817,6 +817,12 @@ export default {
             //设置默认值
             this.settingModel.sync_type = 'initial_sync'
           }
+          //greenplum做源时不能增量
+          if (this.dataSourceModel['source_databaseType'] === 'adb_mysql') {
+            this.changeConfig([], 'setting_sync_type')
+            //设置默认值
+            this.settingModel.sync_type = 'initial_sync'
+          }
           if (this.dataSourceModel['target_databaseType'] === 'mq' && this.dataSourceModel['mqType'] === '0') {
             this.mqTransferFlag = true
           } else {
@@ -993,7 +999,7 @@ export default {
           if (source) {
             // dfs源端不支持 redis elasticsearch
             let options = data
-            let filterArr = ['redis', 'elasticsearch', 'clickhouse', 'dameng', 'adb_postgres', 'adb_mysql']
+            let filterArr = ['redis', 'elasticsearch', 'clickhouse', 'dameng', 'adb_postgres']
             options = data.filter(item => filterArr.indexOf(item) === -1)
             source.options = options.map(item => {
               return {
@@ -1003,9 +1009,12 @@ export default {
             })
             source.options.unshift({ label: '全部', value: 'all' })
           }
+
           let target = items.find(it => it.field === 'target_databaseType')
           if (target) {
-            target.options = data.map(item => {
+            let filterArr = ['adb_mysql']
+            let targetOptions = data.filter(item => filterArr.indexOf(item) === -1)
+            target.options = targetOptions.map(item => {
               return {
                 label: TYPEMAP[item],
                 value: item
@@ -1013,6 +1022,7 @@ export default {
             })
           }
           target.options.unshift({ label: '全部', value: 'all' })
+
           break
         }
       }
