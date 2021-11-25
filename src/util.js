@@ -76,5 +76,6 @@ export const TYPEMAP = {
   kafka: 'Kafka',
   mariadb: 'MariaDB',
   'mysql pxc': 'MySQL PXC',
-  jira: 'jira'
+  jira: 'jira',
+  clickhouse: 'ClickHouse'
 }
