@@ -1,23 +1,8 @@
 export default function (vm) {
-  const fileChange = (file, field, field2) => {
-    if (file) {
-      let reader = new FileReader()
-      reader.readAsText(file)
-      reader.onload = () => {
-        let text = reader.result
-        vm.model[field] = text
-        if (field2) {
-          vm.model[field2] = text
-        }
-      }
-    } else {
-      vm.model[field] = ''
-    }
-  }
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '120px',
+      labelWidth: '160px',
       labelColon: true
     },
     defaultModel: {
@@ -75,7 +60,11 @@ export default function (vm) {
       },
       {
         type: 'file',
-        field: 'sslKeyFile',
+        field: 'sslKey',
+        fileNameField: 'sslKeyFile',
+        accept: '.keystore',
+        base64: true,
+        noFileType: true,
         placeholder: 'Please upload files',
         label: vm.$t('connection_form_hazecast_sslKey'),
         buttonText: 'Select',
@@ -103,22 +92,21 @@ export default function (vm) {
                 if (v) {
                   callback()
                 }
-                callback(new Error(vm.$t('dataForm.error.noneSslKey')))
+                callback(new Error(vm.$t('connection_form_hazecast_none_sslKey')))
               } else {
                 callback()
               }
             }
           }
-        ],
-        on: {
-          change(file) {
-            fileChange(file, 'sslKey', 'sslCert')
-          }
-        }
+        ]
       },
       {
         type: 'file',
-        field: 'sslCAFile',
+        field: 'sslCA',
+        fileNameField: 'sslCAFile',
+        accept: '.keystore',
+        base64: true,
+        noFileType: true,
         label: vm.$t('connection_form_hazecast_sslCA'),
         placeholder: 'Please upload files',
         buttonText: 'Select',
@@ -140,20 +128,19 @@ export default function (vm) {
           {
             required: true,
             validator: (rule, v, callback) => {
-              let ssl = vm.model.sslValidate
-              if (ssl && !v) {
-                callback(new Error(vm.$t('dataForm.error.noneSslCA')))
+              let value = vm.model.sslCA
+              let ssl = vm.model.ssl
+              if (ssl && (!value || !value.trim())) {
+                if (v) {
+                  callback()
+                }
+                callback(new Error(vm.$t('connection_form_hazecast_none_sslCA')))
               } else {
                 callback()
               }
             }
           }
-        ],
-        on: {
-          change(file) {
-            fileChange(file, 'sslCA')
-          }
-        }
+        ]
       },
       {
         type: 'input',

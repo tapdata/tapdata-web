@@ -1,19 +1,4 @@
 export default function (vm) {
-  const fileChange = (file, field, field2) => {
-    if (file) {
-      let reader = new FileReader()
-      reader.readAsText(file)
-      reader.onload = () => {
-        let text = reader.result
-        vm.model[field] = text
-        if (field2) {
-          vm.model[field2] = text
-        }
-      }
-    } else {
-      vm.model[field] = ''
-    }
-  }
   return {
     form: {
       labelPosition: 'left',
@@ -273,7 +258,8 @@ export default function (vm) {
       },
       {
         type: 'file',
-        field: 'sslKeyFile',
+        field: 'sslKey',
+        fileNameField: 'sslKeyFile',
         label: vm.$t('dataForm.form.sslKey'),
         show: false,
         dependOn: [
@@ -305,12 +291,7 @@ export default function (vm) {
               }
             }
           }
-        ],
-        on: {
-          change(file) {
-            fileChange(file, 'sslKey', 'sslCert')
-          }
-        }
+        ]
       },
       {
         type: 'input',
@@ -361,7 +342,8 @@ export default function (vm) {
       },
       {
         type: 'file',
-        field: 'sslCAFile',
+        field: 'sslCA',
+        fileNameField: 'sslCAFile',
         label: vm.$t('dataForm.form.sslCA'),
         show: false,
         dependOn: [
@@ -393,12 +375,7 @@ export default function (vm) {
               }
             }
           }
-        ],
-        on: {
-          change(file) {
-            fileChange(file, 'sslCA')
-          }
-        }
+        ]
       }
     ]
   }

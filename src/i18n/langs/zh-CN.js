@@ -207,8 +207,10 @@ export default {
   connection_form_hazecast_plain_password: 'Token',
   connection_form_hazecast_ssl: 'Enable SSL', //是否开启ssl
   connection_form_hazecast_sslKey: 'Key Store File',
-  connection_form_hazecast_sslCA: 'rust Key Store File',
+  connection_form_hazecast_sslCA: 'Trust Key Store File',
   connection_form_hazecast_sslPass: 'Key File Password',
+  connection_form_hazecast_none_sslKey: 'The key store file cannot be empty',
+  connection_form_hazecast_none_sslCA: 'The trust key store file cannot be empty',
 
   // 任务
   task_manage: '任务管理',

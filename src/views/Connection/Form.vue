@@ -7,7 +7,7 @@
         </div>
         <div v-else class="connection-from-title">{{ $route.params.id ? '编辑连接' : '创建连接' }}</div>
         <div class="connection-from-label" v-if="$route.params.id">
-          <label v-if="databaseType === 'hazelcast_cloud_cluster'" class="label"
+          <label v-if="databaseType === 'hazelcast_cloud_cluster'" class="haze_label"
             >{{ $t('connection_form_hazecast_data_source') }}:
           </label>
           <label v-else class="label">数据源: </label>
@@ -516,8 +516,6 @@ export default {
             data
           )
           params['sslCert'] = this.model.sslKey
-          delete params.sslKeyFile
-          delete params.sslCAFile
           delete params.status //编辑的情况下不传status
           if (!params.id) {
             delete params.id
@@ -694,6 +692,9 @@ export default {
   }
   .label {
     width: 100px;
+  }
+  .haze_label {
+    width: 150px;
   }
   .content-box {
     font-size: 12px;
